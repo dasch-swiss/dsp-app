@@ -1,6 +1,7 @@
 import { Component, Inject, Input, OnChanges, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { CreateDateValue, KnoraDate, KnoraPeriod, ReadDateValue, UpdateDateValue } from '@dasch-swiss/dsp-js';
+import { Store } from '@ngxs/store';
 import { BaseValueDirective } from '../../../../main/directive/base-value.directive';
 import { ValueErrorStateMatcher } from '../value-error-state-matcher';
 
@@ -21,8 +22,11 @@ export class DateValueComponent extends BaseValueDirective implements OnInit, On
   customValidators = [];
   matcher = new ValueErrorStateMatcher();
 
-  constructor(@Inject(FormBuilder) protected _fb: FormBuilder) {
-    super();
+  constructor(
+    _store: Store,
+    @Inject(FormBuilder) protected _fb: FormBuilder
+  ) {
+    super(_store, _fb);
   }
 
   /**

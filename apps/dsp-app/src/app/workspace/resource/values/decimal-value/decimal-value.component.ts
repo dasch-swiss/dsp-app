@@ -1,6 +1,7 @@
 import { Component, Inject, Input, OnChanges, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { CreateDecimalValue, ReadDecimalValue, UpdateDecimalValue } from '@dasch-swiss/dsp-js';
+import { Store } from '@ngxs/store';
 import { BaseValueDirective } from '../../../../main/directive/base-value.directive';
 import { CustomRegex } from '../custom-regex';
 import { ValueErrorStateMatcher } from '../value-error-state-matcher';
@@ -17,8 +18,11 @@ export class DecimalValueComponent extends BaseValueDirective implements OnInit,
 
   customValidators = [Validators.pattern(CustomRegex.DECIMAL_REGEX)]; // only allow for decimal values
 
-  constructor(@Inject(FormBuilder) protected _fb: FormBuilder) {
-    super();
+  constructor(
+    _store: Store,
+    @Inject(FormBuilder) protected _fb: FormBuilder
+  ) {
+    super(_store, _fb);
   }
 
   getInitValue(): number | null {

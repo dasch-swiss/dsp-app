@@ -399,7 +399,6 @@ describe('TextValueAsStringComponent', () => {
       testHostFixture.detectChanges();
 
       testHostComponent.mode = 'read';
-      testHostComponent.inputValueComponent.shouldShowComment = true;
 
       testHostFixture.detectChanges();
 

@@ -1,6 +1,7 @@
 import { Component, Inject, Input, OnChanges, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { CreateIntValue, ReadIntValue, UpdateIntValue } from '@dasch-swiss/dsp-js';
+import { Store } from '@ngxs/store';
 import { BaseValueDirective } from '../../../../main/directive/base-value.directive';
 import { CustomRegex } from '../custom-regex';
 import { ValueErrorStateMatcher } from '../value-error-state-matcher';
@@ -19,8 +20,11 @@ export class IntValueComponent extends BaseValueDirective implements OnInit, OnC
 
   customValidators = [Validators.pattern(CustomRegex.INT_REGEX)]; // only allow for integer values (no fractions)
 
-  constructor(@Inject(FormBuilder) protected _fb: FormBuilder) {
-    super();
+  constructor(
+    _store: Store,
+    @Inject(FormBuilder) protected _fb: FormBuilder
+  ) {
+    super(_store, _fb);
   }
 
   getInitValue(): number | null {

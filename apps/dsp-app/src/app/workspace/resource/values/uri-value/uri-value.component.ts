@@ -1,6 +1,7 @@
 import { Component, Inject, Input, OnChanges, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { CreateUriValue, ReadUriValue, UpdateUriValue } from '@dasch-swiss/dsp-js';
+import { Store } from '@ngxs/store';
 import { BaseValueDirective } from '../../../../main/directive/base-value.directive';
 import { CustomRegex } from '../custom-regex';
 import { ValueErrorStateMatcher } from '../value-error-state-matcher';
@@ -18,8 +19,11 @@ export class UriValueComponent extends BaseValueDirective implements OnInit, OnC
 
   customValidators = [Validators.pattern(CustomRegex.URI_REGEX)];
 
-  constructor(@Inject(FormBuilder) protected _fb: FormBuilder) {
-    super();
+  constructor(
+    _store: Store,
+    @Inject(FormBuilder) protected _fb: FormBuilder
+  ) {
+    super(_store, _fb);
   }
 
   getInitValue(): string | null {

@@ -1,105 +1,50 @@
 @use '@angular/material' as mat;
-@use "../../../styles/config" as *;
-@use "../../../styles/typography" as t;
+@use '../../../styles/config' as *;
+@use '../../../styles/typography' as t;
+@use '../../../styles/responsive' as *;
 
 .project-tile {
+  :hover {
+    border-radius: 6px;
+    background-color: $secondary_600;
+  }
+
   border: 1px solid $cool_gray_300;
   border-radius: 6px;
   box-shadow: 0px 4px 4px $cool_gray_300;
 
   .project-tile-content {
-    padding: 10px 5px 10px 10px;
-
-    .top-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-
-      .status,
-      .settings {
-        display: inline-block;
-      }
-
-      .status {
-        .status-badge {
-          border-radius: 10px;
-          padding: 2px 10px 4px 10px;
-
-          span {
-            font-size: 12px;
-          }
-        }
-
-        .status-badge.active {
-          background-color: #99F6E4;
-
-          span {
-            color: #0F766E;
-          }
-        }
-
-        .status-badge.deactivated {
-          background-color: #E5E7EB;
-
-          span {
-            color: #6B7280;
-          }
-        }
-      }
-
-      .settings {
-        mat-icon-button {
-          width: 28px;
-          height: 28px;
-          line-height: 28px;
-
-          mat-icon {
-            height: 28px;
-            width: 28px;
-            font-size: 28px;
-            line-height: 28px;
-          }
-        }
-      }
-    }
-
-    .icon {
-      padding-top: 23px;
-
-      mat-icon {
-        font-size: 40px;
-        height: 40px;
-        width: 40px;
-      }
-    }
+    padding: 10px;
+    text-align: -webkit-center;
+    text-align: -moz-center;
 
     .title {
-      padding: 20px;
-      height: 80px;
+      padding: 10px;
+      height: 191px;
+      vertical-align: middle;
+      display: table-cell;
     }
     .title-text {
-      font-weight: 700;
-      font-size: 24px;
+      font-weight: 500;
+      font-size: 18px;
       color: $black;
       display: -webkit-box;
-      -webkit-line-clamp: 3;
+      -webkit-line-clamp: 8;
       -webkit-box-orient: vertical;
       overflow: hidden;
       overflow-wrap: break-word;
       text-overflow: ellipsis;
-      line-height: 28px;
+      line-height: 24px;
+      margin: 0;
     }
+  }
+}
 
-    .workspace-button-container {
-      margin: 14% 0%;
-
-      @include mat.button-typography(t.$dsp-typography-config);
-
-      button {
+@media (max-width: map-get($grid-breakpoints, notebook)) {
+  .project-tile {
+    .title {
+      p.title-text {
         font-size: 16px;
-        line-height: 24px;
-        font-weight: 400;
-        padding: 13px 21px;
       }
     }
   }

@@ -1,7 +1,6 @@
 name: Publish from branch
 
-on:
-  workflow_dispatch
+on: workflow_dispatch
 jobs:
   publish-from-branch:
     name: Publish from branch
@@ -18,4 +17,7 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USER }}
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
+      - run: |
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.ORG_GITHUB_PACKAGES_PAT }}" > ~/.npmrc
+          echo "@dasch-swiss:registry=https://npm.pkg.github.com/dasch-swiss" >> ~/.npmrc
       - run: make docker-publish

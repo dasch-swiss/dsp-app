@@ -1,6 +1,7 @@
 import { Component, Inject, Input, OnChanges, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { CreateBooleanValue, ReadBooleanValue, UpdateBooleanValue } from '@dasch-swiss/dsp-js';
+import { Store } from '@ngxs/store';
 import { BaseValueDirective } from '../../../../main/directive/base-value.directive';
 
 @Component({
@@ -20,8 +21,11 @@ export class BooleanValueComponent extends BaseValueDirective implements OnInit,
 
   boolValIsUnset = false; // Whether there is no boolVal set at all
 
-  constructor(@Inject(FormBuilder) protected _fb: FormBuilder) {
-    super();
+  constructor(
+    _store: Store,
+    @Inject(FormBuilder) protected _fb: FormBuilder
+  ) {
+    super(_store, _fb);
   }
 
   // return false as default value if there is no this.displayValue

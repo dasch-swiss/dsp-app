@@ -9,9 +9,6 @@
         <div class="title">
           <p>Browse Research Projects</p>
         </div>
-        <div class="create-project-button">
-          <button mat-flat-button [color]="'primary'" (click)="createNewProject()">Create New Project</button>
-        </div>
       </div>
       <div class="project-tiles">
         <div *ngFor="let proj of allProjects$ | async; trackBy: trackByFn" class="project-tile-container">

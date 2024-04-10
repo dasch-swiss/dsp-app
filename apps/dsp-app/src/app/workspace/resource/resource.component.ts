@@ -3,40 +3,59 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  EventEmitter,
   Inject,
   Input,
   OnChanges,
   OnDestroy,
+  Output,
   ViewChild,
 } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
-  ApiResponseError,
   Constants,
   CountQueryResponse,
   IHasPropertyWithPropertyDefinition,
   KnoraApiConnection,
+  PermissionUtil,
   ReadArchiveFileValue,
   ReadAudioFileValue,
   ReadDocumentFileValue,
   ReadLinkValue,
   ReadMovingImageFileValue,
+  ReadProject,
   ReadResource,
   ReadResourceSequence,
   ReadStillImageFileValue,
   ReadTextFileValue,
   ReadUser,
+  ReadValue,
+  ResourceClassDefinitionWithPropertyDefinition,
   SystemPropertyDefinition,
+  UpdateResourceMetadata,
+  UpdateResourceMetadataResponse,
 } from '@dasch-swiss/dsp-js';
-import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
-import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { DspApiConnectionToken, RouteConstants } from '@dasch-swiss/vre/shared/app-config';
+import {
+  ComponentCommunicationEventService,
+  EmitEvent,
+  Events,
+  ProjectService,
+} from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
-import { UserSelectors } from '@dasch-swiss/vre/shared/app-state';
-import { Select } from '@ngxs/store';
-import { combineLatest, Observable, Subject, Subscription } from 'rxjs';
-import { map, takeUntil, tap } from 'rxjs/operators';
+import {
+  GetAttachedProjectAction,
+  GetAttachedUserAction,
+  ResourceSelectors,
+  UserSelectors,
+} from '@dasch-swiss/vre/shared/app-state';
+import { Actions, Select, Store, ofActionSuccessful } from '@ngxs/store';
+import { Observable, Subject, Subscription, combineLatest } from 'rxjs';
+import { map, take, takeUntil, takeWhile, tap } from 'rxjs/operators';
+import { ConfirmationWithComment, DialogComponent } from '../../main/dialog/dialog.component';
 import { SplitSize } from '../results/results.component';
 import { DspCompoundPosition, DspResource } from './dsp-resource';
 import { PropertyInfoValues } from './properties/properties.component';
@@ -44,7 +63,11 @@ import { FileRepresentation, RepresentationConstants } from './representation/fi
 import { Region, StillImageComponent } from './representation/still-image/still-image.component';
 import { IncomingService } from './services/incoming.service';
 import { ResourceService } from './services/resource.service';
-import { Events, UpdatedFileEventValue, ValueOperationEventService } from './services/value-operation-event.service';
+import {
+  UpdatedFileEventValue,
+  ValueOperationEventService,
+  Events as ValueOperationEvents,
+} from './services/value-operation-event.service';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -61,6 +84,11 @@ export class ResourceComponent implements OnChanges, OnDestroy {
   @Input() resourceIri: string;
 
   @Input() splitSizeChanged: SplitSize;
+
+  @Output() regionChanged: EventEmitter<ReadValue> = new EventEmitter<ReadValue>();
+  @Output() regionDeleted: EventEmitter<void> = new EventEmitter<void>();
+
+  @ViewChild('matTabAnnotations') matTabAnnotations;
 
   oldResourceIri: string; // for change detection
 
@@ -103,8 +131,6 @@ export class ResourceComponent implements OnChanges, OnDestroy {
   // this will store the current page position information
   compoundPosition: DspCompoundPosition;
 
-  showAllProps = false;
-
   loading = true;
 
   refresh: boolean;
@@ -117,6 +143,29 @@ export class ResourceComponent implements OnChanges, OnDestroy {
 
   attachedToProjectResource = '';
 
+  project$ = this._store.select(ResourceSelectors.attachedProjects).pipe(
+    takeWhile(attachedProjects => this.resource !== undefined && attachedProjects[this.resource.res.id] !== undefined),
+    takeUntil(this.ngUnsubscribe),
+    map(attachedProjects =>
+      attachedProjects[this.resource.res.id].value.find(u => u.id === this.resource.res.attachedToProject)
+    )
+  );
+
+  resourceAttachedUser: ReadUser;
+
+  notification = this._notification;
+
+  get userCanEdit(): boolean {
+    if (!this.resource.res) {
+      return false;
+    }
+
+    const allPermissions = PermissionUtil.allUserPermissions(
+      this.resource.res.userHasPermission as 'RV' | 'V' | 'M' | 'D' | 'CR'
+    );
+    return allPermissions.indexOf(PermissionUtil.Permissions.M) !== -1;
+  }
+
   get isAdmin$(): Observable<boolean> {
     return combineLatest([this.user$, this.userProjectAdminGroups$]).pipe(
       takeUntil(this.ngUnsubscribe),
@@ -128,9 +177,12 @@ export class ResourceComponent implements OnChanges, OnDestroy {
     );
   }
 
+  get resourceClassType(): ResourceClassDefinitionWithPropertyDefinition {
+    return this.resource.res.entityInfo.classes[this.resource.res.type];
+  }
+
   @Select(UserSelectors.user) user$: Observable<ReadUser>;
-  @Select(UserSelectors.userProjectAdminGroups)
-  userProjectAdminGroups$: Observable<string[]>;
+  @Select(UserSelectors.userProjectAdminGroups) userProjectAdminGroups$: Observable<string[]>;
 
   constructor(
     @Inject(DspApiConnectionToken)
@@ -142,7 +194,11 @@ export class ResourceComponent implements OnChanges, OnDestroy {
     private _router: Router,
     private _titleService: Title,
     private _valueOperationEventService: ValueOperationEventService,
-    private _cdr: ChangeDetectorRef
+    private _cdr: ChangeDetectorRef,
+    private _store: Store,
+    private _actions$: Actions,
+    private _dialog: MatDialog,
+    private _componentCommsService: ComponentCommunicationEventService
   ) {
     this._route.params.subscribe(params => {
       this.projectCode = params.project;
@@ -160,13 +216,16 @@ export class ResourceComponent implements OnChanges, OnDestroy {
     });
 
     this.valueOperationEventSubscriptions.push(
-      this._valueOperationEventService.on(Events.FileValueUpdated, (newFileValue: UpdatedFileEventValue) => {
-        if (newFileValue) {
-          if (this.resourceIri) {
-            this.initResource(this.resourceIri);
+      this._valueOperationEventService.on(
+        ValueOperationEvents.FileValueUpdated,
+        (newFileValue: UpdatedFileEventValue) => {
+          if (newFileValue) {
+            if (this.resourceIri) {
+              this.initResource(this.resourceIri);
+            }
           }
         }
-      })
+      )
     );
   }
 
@@ -250,6 +309,7 @@ export class ResourceComponent implements OnChanges, OnDestroy {
   initResource(iri) {
     this.oldResourceIri = this.resourceIri;
     this.getResource(iri).subscribe(dspResource => {
+      this._getResourceAttachedData(dspResource);
       this.renderResource(dspResource);
     });
   }
@@ -394,6 +454,19 @@ export class ResourceComponent implements OnChanges, OnDestroy {
   representationLoaded(e: boolean) {
     this.loading = !e;
     this._cdr.detectChanges();
+  }
+
+  resourceClassLabel = (resource: DspResource): string => resource.res.entityInfo?.classes[resource.res.type].label;
+
+  resourceLabel = (incomingResource: DspResource, resource: DspResource): string =>
+    incomingResource ? `${resource.res.label}: ${incomingResource.res.label}` : resource.res.label;
+
+  openProject(project: ReadProject) {
+    window.open(`${RouteConstants.projectRelative}/${ProjectService.IriToUuid(project.id)}`, '_blank');
+  }
+
+  previewProject() {
+    // --> TODO: pop up project preview on hover
   }
 
   /**
@@ -679,5 +752,53 @@ export class ResourceComponent implements OnChanges, OnDestroy {
     if (this.stillImageComponent !== undefined) {
       this.stillImageComponent.updateRegions();
     }
+  }
+
+  openEditDialog() {
+    const dialogRef = this._dialog.open(DialogComponent, {
+      data: { mode: `editResource`, title: this.resource.res.label },
+    });
+    dialogRef.afterClosed().subscribe((answer: ConfirmationWithComment) => {
+      if (answer.confirmed === true && this.resource.res.label !== answer.comment) {
+        // update resource's label if it has changed
+        // get the correct lastModificationDate from the resource
+        this._dspApiConnection.v2.res.getResource(this.resource.res.id).subscribe((res: ReadResource) => {
+          const payload = new UpdateResourceMetadata();
+          payload.id = this.resource.res.id;
+          payload.type = this.resource.res.type;
+          payload.lastModificationDate = res.lastModificationDate;
+          payload.label = answer.comment;
+
+          this._dspApiConnection.v2.res
+            .updateResourceMetadata(payload)
+            .subscribe((response: UpdateResourceMetadataResponse) => {
+              this.resource.res.label = payload.label;
+              this.resource.res.lastModificationDate = response.lastModificationDate;
+              // if annotations tab is active; a label of a region has been changed --> update regions
+              this._componentCommsService.emit(new EmitEvent(Events.resourceChanged));
+              if (this.matTabAnnotations && this.matTabAnnotations.isActive) {
+                this.regionChanged.emit();
+              }
+              this._cdr.markForCheck();
+            });
+        });
+      }
+    });
+  }
+
+  private _getResourceAttachedData(resource: DspResource): void {
+    this._actions$
+      .pipe(ofActionSuccessful(GetAttachedUserAction))
+      .pipe(take(1))
+      .subscribe(() => {
+        const attachedUsers = this._store.selectSnapshot(ResourceSelectors.attachedUsers);
+        this.resourceAttachedUser = attachedUsers[resource.res.id].value.find(
+          u => u.id === resource.res.attachedToUser
+        );
+      });
+    this._store.dispatch([
+      new GetAttachedUserAction(resource.res.id, resource.res.attachedToUser),
+      new GetAttachedProjectAction(resource.res.id, resource.res.attachedToProject),
+    ]);
   }
 }

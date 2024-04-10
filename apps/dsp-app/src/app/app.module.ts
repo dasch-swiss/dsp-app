@@ -137,6 +137,7 @@ import { CreateLinkResourceComponent } from './workspace/resource/operations/cre
 import { DisplayEditComponent } from './workspace/resource/operations/display-edit/display-edit.component';
 import { PermissionInfoComponent } from './workspace/resource/permission-info/permission-info.component';
 import { PropertiesComponent } from './workspace/resource/properties/properties.component';
+import { ResourceToolbarComponent } from './workspace/resource/properties/resource-toolbar/resource-toolbar';
 import { AddRegionFormComponent } from './workspace/resource/representation/add-region-form/add-region-form.component';
 import { ArchiveComponent } from './workspace/resource/representation/archive/archive.component';
 import { AudioComponent } from './workspace/resource/representation/audio/audio.component';
@@ -285,6 +286,7 @@ export function httpLoaderFactory(httpClient: HttpClient) {
     ResourceInstanceFormComponent,
     ResourceLinkFormComponent,
     ResourceListComponent,
+    ResourceToolbarComponent,
     ResultsComponent,
     SearchPanelComponent,
     SelectedResourcesComponent,

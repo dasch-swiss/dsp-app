@@ -188,6 +188,9 @@
           }
         }
       }
+    },
+    "resource": {
+      "properties": "Properties"
     }
   }
 }

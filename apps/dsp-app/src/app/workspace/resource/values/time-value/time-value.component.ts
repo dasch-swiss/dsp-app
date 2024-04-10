@@ -1,6 +1,7 @@
-import { Component, OnInit, OnChanges, OnDestroy, ViewChild, Input, Inject } from '@angular/core';
+import { Component, Inject, Input, OnChanges, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { ReadTimeValue, CreateTimeValue, UpdateTimeValue } from '@dasch-swiss/dsp-js';
+import { CreateTimeValue, ReadTimeValue, UpdateTimeValue } from '@dasch-swiss/dsp-js';
+import { Store } from '@ngxs/store';
 import { BaseValueDirective } from '../../../../main/directive/base-value.directive';
 import { ValueErrorStateMatcher } from '../value-error-state-matcher';
 import { TimeInputComponent } from './time-input/time-input.component';
@@ -19,8 +20,11 @@ export class TimeValueComponent extends BaseValueDirective implements OnInit, On
 
   matcher = new ValueErrorStateMatcher();
 
-  constructor(@Inject(FormBuilder) protected _fb: FormBuilder) {
-    super();
+  constructor(
+    _store: Store,
+    @Inject(FormBuilder) protected _fb: FormBuilder
+  ) {
+    super(_store, _fb);
   }
 
   getInitValue(): string | null {

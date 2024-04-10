@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Constants, ListNodeV2 } from '@dasch-swiss/dsp-js';
 import { ComponentStore } from '@ngrx/component-store';
 import { EMPTY, Observable, of } from 'rxjs';
-import { switchMap, tap, catchError, take } from 'rxjs/operators';
+import { catchError, switchMap, take, tap } from 'rxjs/operators';
 import { v4 as uuidv4 } from 'uuid';
 import {
   AdvancedSearchService,
@@ -179,6 +179,8 @@ export class AdvancedSearchStoreService extends ComponentStore<AdvancedSearchSta
     this.propertyFormList$,
     (ontology, resourceClass, propertyFormList) => !(ontology || resourceClass || propertyFormList.length)
   );
+
+  defaultOntology: ApiData | undefined;
 
   constructor(
     private _advancedSearchService: AdvancedSearchService,
@@ -691,7 +693,7 @@ export class AdvancedSearchStoreService extends ComponentStore<AdvancedSearchSta
   }
 
   onReset() {
-    this.patchState({ selectedOntology: undefined });
+    this.patchState({ selectedOntology: this.defaultOntology });
     this.patchState({ selectedResourceClass: undefined });
     this.patchState({ propertyFormList: [] });
     this.patchState({ propertiesOrderByList: [] });
@@ -737,6 +739,7 @@ export class AdvancedSearchStoreService extends ComponentStore<AdvancedSearchSta
               this.patchState({
                 selectedOntology: response[0],
               });
+              this.defaultOntology = response[0];
               this.patchState({
                 ontologiesLoading: false,
               });

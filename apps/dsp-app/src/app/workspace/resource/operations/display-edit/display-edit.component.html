@@ -15,7 +15,8 @@
         *ngSwitchCase="'ReadTextValueAsString'"
         [mode]="mode"
         [displayValue]="$any(displayValue)"
-        [textArea]="textArea"></app-text-value-as-string>
+        [textArea]="textArea">
+      </app-text-value-as-string>
       <app-text-value-as-html
         class="parent-value-component"
         #displayVal
@@ -75,7 +76,7 @@
         [mode]="mode"
         [displayValue]="$any(displayValue)"></app-time-value>
       <app-geoname-value
-        class="parent-value-component"
+        class="parent-value-component geoname"
         #displayVal
         *ngSwitchCase="constants.GeonameValue"
         [mode]="mode"
@@ -111,7 +112,8 @@
                             displayValue.property
                         ]
                     )
-                "></app-list-value>
+                ">
+      </app-list-value>
       <span *ngSwitchDefault>{{ displayValue.strval }}</span>
     </span>
     <div class="action-bubble" *ngIf="showActionBubble && !editModeActive" [@simpleFadeAnimation]="'in'">
@@ -121,24 +123,16 @@
           class="edit"
           [matTooltip]="'edit'"
           *ngIf="
-                        !readOnlyValue &&
-                        canModify &&
-                        !editModeActive &&
-                        projectStatus
-                    "
+                  !readOnlyValue &&
+                  canModify &&
+                  !editModeActive &&
+                  projectStatus
+              "
           (click)="activateEditMode()">
           <mat-icon>edit</mat-icon>
         </button>
         <button mat-button class="info" matTooltip="{{ getTooltipText() }}" matTooltipClass="info-tooltip">
           <mat-icon>info</mat-icon>
-        </button>
-        <button
-          mat-button
-          class="comment-toggle"
-          title="toggle comment"
-          *ngIf="shouldShowCommentToggle"
-          (click)="toggleComment()">
-          <mat-icon>comment</mat-icon>
         </button>
         <span
           [matTooltip]="
@@ -171,7 +165,7 @@
       *ngIf="editModeActive"
       class="value-action save"
       title="save"
-      [disabled]="!displayValueComponent.form.valid"
+      [disabled]="!displayValueComponent?.form.valid"
       (click)="saveEditValue()">
       <mat-icon>save</mat-icon>
     </button>

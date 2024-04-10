@@ -1,6 +1,7 @@
 import { Component, Inject, Input, OnChanges, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { CreateIntervalValue, ReadIntervalValue, UpdateIntervalValue } from '@dasch-swiss/dsp-js';
+import { Store } from '@ngxs/store';
 import { BaseValueDirective } from '../../../../main/directive/base-value.directive';
 import { ValueErrorStateMatcher } from '../value-error-state-matcher';
 import { Interval, IntervalInputComponent } from './interval-input/interval-input.component';
@@ -19,8 +20,11 @@ export class IntervalValueComponent extends BaseValueDirective implements OnInit
 
   matcher = new ValueErrorStateMatcher();
 
-  constructor(@Inject(FormBuilder) protected _fb: FormBuilder) {
-    super();
+  constructor(
+    _store: Store,
+    @Inject(FormBuilder) protected _fb: FormBuilder
+  ) {
+    super(_store, _fb);
   }
 
   standardValueComparisonFunc(initValue: Interval, curValue: Interval | null): boolean {

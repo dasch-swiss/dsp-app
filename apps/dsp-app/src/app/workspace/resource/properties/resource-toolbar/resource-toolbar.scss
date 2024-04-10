@@ -1,0 +1,12 @@
+.action {
+  display: inline-flex;
+
+  .toggle-props {
+    padding: 12px;
+    height: 48px;
+  }
+
+  button {
+    border-radius: 0;
+  }
+}

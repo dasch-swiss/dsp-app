@@ -137,6 +137,9 @@
           "alreadyMember": "Der Benutzer ist bereits in diesem Projekt"
         }
       }
+    },
+    "resource": {
+      "properties": "Eigenschaften"
     }
   }
 }

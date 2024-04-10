@@ -1,18 +1,14 @@
-@use "../../../../styles/config" as *;
+@use '../../../../styles/config' as *;
 
-// toolbar
-.toolbar,
-.infobar {
+.toolbar {
   display: flex;
   box-sizing: border-box;
   flex-direction: row;
   align-items: center;
   white-space: nowrap;
-  padding: 0 16px;
+  padding-left: 16px;
   width: 100%;
   color: rgba(0, 0, 0, 0.87);
-}
-.toolbar {
   background: $primary_50;
 
   &.deleted {
@@ -28,14 +24,11 @@
     text-overflow: ellipsis;
   }
 
-  .action button {
-    border-radius: 0;
+  button {
+    font-size: 16px;
+    height: 48px;
+    padding: 12px;
   }
-}
-
-.infobar {
-  height: 24px;
-  flex-wrap: wrap;
 }
 
 .clipboard-arkurl {
@@ -73,6 +66,14 @@
   .properties {
     grid-column: 1 / span 6;
 
+    .property:has(.parent-value-component .calendar) .property-label {
+      margin-block: auto;
+    }
+
+    .property:has(.parent-value-component.geoname) .property-label h3 {
+      margin-block-start: 2px;
+    }
+
     .property {
       grid-row: 1 / 1;
 
@@ -88,6 +89,11 @@
 
       .property-label {
         grid-column: 1 / span 1;
+
+        h3 {
+          margin-block-start: 1px;
+          margin-block-end: 0;
+        }
 
         .label {
           text-align: right;
@@ -169,39 +175,46 @@
   margin: 0;
 }
 
-.pagination {
+.navigation {
   display: flex;
+  box-sizing: border-box;
+  flex-direction: row;
   align-items: center;
-  button {
-    margin: 0 15px;
-    padding: 0;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    border-radius: 100%;
-    height: fit-content;
-    padding: 10px;
-    display: flex; //centers the icon
+  white-space: nowrap;
+  height: 60px;
+  width: 100%;
 
+  .pagination-button:disabled {
+    span,
     mat-icon {
-      color: $primary;
+      color: $cool_gray_300;
+    }
+  }
+
+  .pagination-button {
+    &.previous {
+      span {
+        padding-left: 14px;
+      }
     }
 
+    &.next {
+      span {
+        padding-right: 14px;
+      }
+    }
+
+    span,
+    mat-icon {
+      color: $primary;
+      font-weight: 400;
+    }
   }
 
-  button:hover {
-    background-color: $cool_gray_300;
+  .range {
+    color: $cool_gray_500;
+    font-weight: 300;
   }
-
-  button:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-  }
-
-  button:disabled:hover {
-    background-color: transparent;
-  }
-
 }
 
 @media screen and (max-width: 768px) {

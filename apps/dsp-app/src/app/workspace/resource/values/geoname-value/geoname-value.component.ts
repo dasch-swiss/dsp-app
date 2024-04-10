@@ -1,6 +1,7 @@
 import { ChangeDetectorRef, Component, Inject, Input, OnChanges, OnDestroy, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl } from '@angular/forms';
 import { CreateGeonameValue, ReadGeonameValue, UpdateGeonameValue } from '@dasch-swiss/dsp-js';
+import { Store } from '@ngxs/store';
 import { Observable, Subscription } from 'rxjs';
 import { BaseValueDirective } from '../../../../main/directive/base-value.directive';
 import { DisplayPlace, GeonameService, SearchPlace } from '../../services/geoname.service';
@@ -38,11 +39,12 @@ export class GeonameValueComponent extends BaseValueDirective implements OnInit,
   places: SearchPlace[];
 
   constructor(
+    _store: Store,
     @Inject(FormBuilder) protected _fb: FormBuilder,
     private _geonameService: GeonameService,
     private _cd: ChangeDetectorRef
   ) {
-    super();
+    super(_store, _fb);
   }
 
   standardValueComparisonFunc(initValue: { id: string }, curValue: { id: string } | null): boolean {

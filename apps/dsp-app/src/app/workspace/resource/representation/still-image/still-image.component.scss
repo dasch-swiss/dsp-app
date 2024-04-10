@@ -8,6 +8,11 @@
     height: 364px;
   }
 
+  .mat-mdc-icon-button {
+    padding: 4px;
+    --mdc-icon-button-state-layer-size: 32px;
+  }
+
   .mat-mdc-icon-button:disabled {
     color: $grey !important;
   }
@@ -43,6 +48,12 @@
     color: $bright;
     background-color: $dark;
     border-radius: 0 0 8px 8px;
+    padding-bottom: 10px;
+    padding-top: 10px;
+
+    span.range {
+      vertical-align: super;
+    }
   }
 
   .mat-mdc-button {

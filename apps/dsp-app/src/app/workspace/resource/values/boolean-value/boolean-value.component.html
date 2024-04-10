@@ -4,7 +4,7 @@
       >{{ valueFormControl.value ? 'toggle_on' : 'toggle_off' }}</mat-icon
     >
   </span>
-  <span class="rm-comment" *ngIf="shouldShowComment">{{ commentFormControl.value }}</span>
+  <span class="rm-comment" *ngIf="commentIsVisible$ | async">{{ commentFormControl.value }}</span>
 </span>
 <ng-template #showForm>
   <span *ngIf="mode === 'create'">

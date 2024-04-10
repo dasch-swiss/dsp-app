@@ -5,10 +5,17 @@ import { Action, State, StateContext, Store } from '@ngxs/store';
 import { map, take } from 'rxjs/operators';
 import { ProjectsSelectors } from '../projects/projects.selectors';
 import { UserSelectors } from '../user/user.selectors';
-import { GetAttachedProjectAction, GetAttachedUserAction } from './resource.actions';
+import {
+  GetAttachedProjectAction,
+  GetAttachedUserAction,
+  ToggleShowAllCommentsAction,
+  ToggleShowAllPropsAction,
+} from './resource.actions';
 import { ReourceStateModel } from './resource.state-model';
 
 const defaults = <ReourceStateModel>{
+  showAllProps: false,
+  showAllComments: false,
   isLoading: false,
   attachedProjects: {},
   attachedUsers: {},
@@ -25,6 +32,16 @@ export class ResourceState {
     private _userApiService: UserApiService,
     private _projectApiService: ProjectApiService
   ) {}
+
+  @Action(ToggleShowAllPropsAction)
+  toggleShowAllPropsAction(ctx: StateContext<ReourceStateModel>) {
+    ctx.patchState({ showAllProps: !ctx.getState().showAllProps });
+  }
+
+  @Action(ToggleShowAllCommentsAction)
+  toggleShowAllCommentsAction(ctx: StateContext<ReourceStateModel>) {
+    ctx.patchState({ showAllComments: !ctx.getState().showAllComments });
+  }
 
   @Action(GetAttachedUserAction)
   getAttachedUser(ctx: StateContext<ReourceStateModel>, { resourceIri, identifier, idType }: GetAttachedUserAction) {

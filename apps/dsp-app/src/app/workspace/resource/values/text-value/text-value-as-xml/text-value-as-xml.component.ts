@@ -12,6 +12,7 @@ import {
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Constants, CreateTextValueAsXml, ReadTextValueAsXml, UpdateTextValueAsXml } from '@dasch-swiss/dsp-js';
+import { Store } from '@ngxs/store';
 import * as Editor from 'ckeditor5-custom-build';
 import { BaseValueDirective } from '../../../../../main/directive/base-value.directive';
 import { ValueErrorStateMatcher } from '../../value-error-state-matcher';
@@ -26,7 +27,6 @@ export class TextValueAsXMLComponent extends BaseValueDirective implements OnIni
   @Input() displayValue?: ReadTextValueAsXml;
 
   @Output() internalLinkClicked: EventEmitter<string> = new EventEmitter<string>();
-
   @Output() internalLinkHovered: EventEmitter<string> = new EventEmitter<string>();
 
   readonly standardMapping = Constants.StandardMapping; // todo: define this somewhere else
@@ -51,10 +51,11 @@ export class TextValueAsXMLComponent extends BaseValueDirective implements OnIni
   };
 
   constructor(
+    _store: Store,
     @Inject(FormBuilder) protected _fb: FormBuilder,
     private _cd: ChangeDetectorRef
   ) {
-    super();
+    super(_store, _fb);
   }
 
   standardValueComparisonFunc(initValue: any, curValue: any): boolean {

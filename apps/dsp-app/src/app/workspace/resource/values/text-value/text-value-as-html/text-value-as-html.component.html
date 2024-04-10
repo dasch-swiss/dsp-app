@@ -4,4 +4,6 @@
   appHtmlLink
   (internalLinkClicked)="internalLinkClicked.emit($event)"
   (internalLinkHovered)="internalLinkHovered.emit($event)"></div>
-<div *ngIf="comment"><label>{{ commentLabel }}: </label><span class="comment">{{ comment }}</span></div>
+<div *ngIf="(commentIsVisible$ | async) && comment">
+  <label>{{ commentLabel }}: </label><span class="comment">{{ comment }}</span>
+</div>

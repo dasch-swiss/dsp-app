@@ -1,8 +1,11 @@
 <span *ngIf="mode === 'read'; else showForm" class="read-mode-view">
   <span class="rm-value" (click)="refResClicked()" (mouseover)="refResHovered()">
-    <a class="link">{{ valueFormControl.value?.label }}</a>
+    <a class="link"
+      ><span *ngIf="linkLabelResourceClass">{{linkLabelResourceClass}}</span
+      ><strong>{{valueFormControl.value?.label}}</strong></a
+    >
   </span>
-  <span class="rm-comment" *ngIf="shouldShowComment">{{ commentFormControl.value }}</span>
+  <span class="rm-comment" *ngIf="commentIsVisible$ | async">{{ commentFormControl.value }}</span>
 </span>
 <ng-template #showForm>
   <span [formGroup]="form">

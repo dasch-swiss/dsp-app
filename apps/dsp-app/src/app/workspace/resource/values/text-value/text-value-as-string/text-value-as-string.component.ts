@@ -1,6 +1,7 @@
 import { Component, Inject, Input, OnChanges, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { CreateTextValueAsString, ReadTextValueAsString, UpdateTextValueAsString } from '@dasch-swiss/dsp-js';
+import { Store } from '@ngxs/store';
 import * as Editor from 'ckeditor5-custom-build';
 import { BaseValueDirective } from '../../../../../main/directive/base-value.directive';
 import { ValueErrorStateMatcher } from '../../value-error-state-matcher';
@@ -24,8 +25,11 @@ export class TextValueAsStringComponent extends BaseValueDirective implements On
   editor: Editor;
   editorConfig;
 
-  constructor(@Inject(FormBuilder) protected _fb: FormBuilder) {
-    super();
+  constructor(
+    _store: Store,
+    @Inject(FormBuilder) protected _fb: FormBuilder
+  ) {
+    super(_store, _fb);
   }
 
   getInitValue(): string | null {

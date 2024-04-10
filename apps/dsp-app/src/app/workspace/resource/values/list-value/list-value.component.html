@@ -51,7 +51,7 @@
       <span [class.last]="last">{{ item }}</span>
     </span>
   </span>
-  <span class="rm-comment" *ngIf="shouldShowComment">{{ commentFormControl.value }}</span>
+  <span class="rm-comment" *ngIf="commentIsVisible$ | async">{{ commentFormControl.value }}</span>
 </span>
 <ng-template #showForm>
   <span [formGroup]="form">

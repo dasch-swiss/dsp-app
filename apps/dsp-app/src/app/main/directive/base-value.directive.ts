@@ -1,13 +1,18 @@
 import { Directive, Input, OnDestroy, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { CreateValue, ReadValue, UpdateValue } from '@dasch-swiss/dsp-js';
-import { Subscription } from 'rxjs';
+import { ResourceSelectors } from '@dasch-swiss/vre/shared/app-state';
+import { Select, Store } from '@ngxs/store';
+import { Observable, Subject, Subscription } from 'rxjs';
+import { map, takeUntil } from 'rxjs/operators';
 
 // https://stackoverflow.com/questions/45661010/dynamic-nested-reactive-form-expressionchangedafterithasbeencheckederror
 const resolvedPromise = Promise.resolve(null);
 
 @Directive()
 export abstract class BaseValueDirective implements OnInit, OnDestroy {
+  private ngUnsubscribe: Subject<void> = new Subject<void>();
+
   /**
    * sets the mode of the component.
    */
@@ -33,8 +38,6 @@ export abstract class BaseValueDirective implements OnInit, OnDestroy {
    */
   @Input() commentDisabled? = false;
 
-  shouldShowComment = false;
-
   /**
    * subscription of comment changes.
    */
@@ -59,8 +62,8 @@ export abstract class BaseValueDirective implements OnInit, OnDestroy {
    * value to be displayed, if any.
    */
   /* eslint-disable */
-    @Input() abstract displayValue?: ReadValue;
-    /* eslint-enable */
+  @Input() abstract displayValue?: ReadValue;
+  /* eslint-enable */
 
   /**
    * custom validators for a specific value type.
@@ -68,7 +71,19 @@ export abstract class BaseValueDirective implements OnInit, OnDestroy {
    */
   abstract customValidators: ValidatorFn[];
 
-  constructor(protected _fb?: FormBuilder) {}
+  commentIsVisible$ = this._store.select(ResourceSelectors.showAllComments).pipe(
+    takeUntil(this.ngUnsubscribe),
+    map(showAllComments => {
+      return showAllComments && this.commentFormControl.value && this.commentFormControl.value.length > 0;
+    })
+  );
+
+  @Select(ResourceSelectors.showAllComments) showAllComments$: Observable<boolean>;
+
+  constructor(
+    protected _store: Store,
+    protected _fb?: FormBuilder
+  ) {}
 
   ngOnInit() {
     // initialize form control elements
@@ -91,6 +106,9 @@ export abstract class BaseValueDirective implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
+
     // unsubscribe to avoid memory leaks
     if (this.commentChangesSubscription) {
       this.commentChangesSubscription.unsubscribe();
@@ -171,20 +189,6 @@ export abstract class BaseValueDirective implements OnInit, OnDestroy {
 
       this.valueFormControl.updateValueAndValidity();
     }
-  }
-
-  /**
-   * hide comment field by default if in READ mode
-   */
-  updateCommentVisibility(): void {
-    this.shouldShowComment = this.mode === 'read';
-  }
-
-  /**
-   * toggles visibility of the comment field regardless of the mode
-   */
-  toggleCommentVisibility(): void {
-    this.shouldShowComment = !this.shouldShowComment;
   }
 
   /**

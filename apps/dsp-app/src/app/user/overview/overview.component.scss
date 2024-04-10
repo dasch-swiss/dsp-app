@@ -1,83 +1,82 @@
 @use '@angular/material' as mat;
-@use "../../../styles/responsive" as *;
-@use "../../../styles/typography" as t;
+@use '../../../styles/responsive' as *;
+@use '../../../styles/typography' as t;
 
 .overview {
-
-    .title-bar {
-        .title {
-            font-weight: 700;
-            font-size: 24px;
-            line-height: 28px;
-        }
+  .title-bar {
+    .title {
+      font-weight: 700;
+      font-size: 20px;
+      line-height: 28px;
     }
+  }
 
-    .title-bar.admin {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+  .title-bar.admin {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 
-        .title,
-        .create-project-button {
-            display: inline-block;
-        }
-
-        .create-project-button {
-            @include mat.button-typography(t.$dsp-typography-config);
-        }
+    .title {
+      display: inline-block;
     }
+  }
+
+  .project-tiles {
+    display: grid;
+    grid-template-columns: 22% 22% 22% 22%;
+    grid-column-gap: 4%;
+    padding-bottom: 2%;
+  }
+
+  .project-tile-container {
+    text-align: center;
+    padding-bottom: 15%;
+  }
+}
+
+@media (max-width: map-get($grid-breakpoints, notebook)) {
+  .overview .project-tiles {
+    grid-template-columns: 30% 30% 30%;
+    grid-column-gap: 5%;
+  }
+}
+
+@media (max-width: map-get($grid-breakpoints, tablet)) {
+  .overview {
+    padding: 5%;
 
     .project-tiles {
-        display: grid;
-        grid-template-columns: 30% 30% 30%;
-        grid-column-gap: 5%;
-        padding-bottom: 2%;
+      grid-template-columns: 47.5% 47.5%;
+      grid-column-gap: 5%;
     }
-
-    .project-tile-container {
-        text-align: center;
-        padding-bottom: 15%;
-    }
-}
-
-@media (max-width: 840px) {
-    .overview {
-      padding: 5%;
-
-        .project-tiles {
-            grid-template-columns: 47.5% 47.5%;
-            grid-column-gap: 5%;
-        }
-    }
-}
-
-@media (max-width: 640px) {
-    .overview {
-        padding: 10%;
-
-        .title-bar.admin {
-            display: block;
-            padding-bottom: 5%;
-
-            .title,
-            .create-project-button {
-                display: block;
-            }
-
-        }
-
-        .project-tiles {
-            grid-template-columns: 100%;
-        }
-
-        .project-tile-container {
-            padding-bottom: 5%;
-        }
-    }
+  }
 }
 
 @media (max-width: map-get($grid-breakpoints, phone)) {
-    .overview {
-        padding: 5%;
+  .overview {
+    padding: 10%;
+
+    .title-bar.admin {
+      display: block;
+      padding-bottom: 5%;
+
+      .title {
+        display: block;
+      }
     }
+
+    .project-tiles {
+      grid-template-columns: 100%;
+    }
+
+    .project-tile-container {
+      padding-bottom: 5%;
+    }
+  }
+}
+
+@media (max-width: map-get($grid-breakpoints, phone)) {
+  .overview {
+    padding: 5%;
+  }
 }

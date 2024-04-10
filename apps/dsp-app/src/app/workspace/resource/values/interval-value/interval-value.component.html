@@ -1,7 +1,7 @@
 <span *ngIf="mode === 'read'; else showForm" class="read-mode-view">
   <span class="rm-value interval-start">Start: {{ valueFormControl.value?.start }}</span>
   <span class="rm-value interval-end">End: {{ valueFormControl.value?.end }}</span>
-  <span class="rm-comment" *ngIf="shouldShowComment">{{ commentFormControl.value }}</span>
+  <span class="rm-comment" *ngIf="commentIsVisible$ | async">{{ commentFormControl.value }}</span>
 </span>
 <ng-template #showForm>
   <span [formGroup]="form">

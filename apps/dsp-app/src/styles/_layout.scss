@@ -31,7 +31,7 @@
   &.medium,
   &.large,
   &.extra-large {
-    padding: 36px 48px;
+    padding: 36px;
   }
 
   &.small {
@@ -119,12 +119,13 @@
         padding: 0 16px !important; // override default value
         height: auto !important; // override default value
 
-        .mat-expansion-panel-header-title, .mat-expansion-indicator {
+        .mat-expansion-panel-header-title,
+        .mat-expansion-indicator {
           color: $primary;
         }
 
         .mat-expansion-indicator::after {
-          color: $primary!important;
+          color: $primary !important;
         }
       }
 

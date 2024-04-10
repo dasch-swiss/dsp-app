@@ -1,0 +1,10 @@
+::ng-deep .read-mode-view {
+  display: flex;
+  box-sizing: border-box;
+  flex-direction: column;
+  justify-content: space-between;
+
+  .value-container {
+    display: inline-block;
+  }
+}

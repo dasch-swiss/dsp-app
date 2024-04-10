@@ -20,6 +20,7 @@ import {
   UpdateListValue,
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
+import { Store } from '@ngxs/store';
 import { BaseValueDirective } from '../../../../main/directive/base-value.directive';
 
 @Component({
@@ -42,12 +43,13 @@ export class ListValueComponent extends BaseValueDirective implements OnInit, On
   selectedNodeHierarchy: string[] = [];
 
   constructor(
+    _store: Store,
     @Inject(FormBuilder) protected _fb: FormBuilder,
     @Inject(DspApiConnectionToken)
     private _dspApiConnection: KnoraApiConnection,
     private _cd: ChangeDetectorRef
   ) {
-    super();
+    super(_store, _fb);
   }
 
   getInitValue(): string | null {

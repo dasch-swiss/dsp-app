@@ -6,6 +6,42 @@
 <div class="content large middle">
   <div class="resource-view" *ngIf="resource">
     <!-- dsp-resource-representation -->
+    <div class="resource-header">
+      <div class="resource-class-header">
+        <h3
+          [class.label-info]="resourceClassType?.comment"
+          [matTooltip]="resourceClassType?.comment"
+          matTooltipPosition="above">
+          {{resourceClassType?.label}}<span *ngIf="resource.res.isDeleted">(deleted)</span>
+        </h3>
+        <app-resource-toolbar
+          [resource]="resource"
+          [lastModificationDate]="resource.res.lastModificationDate"
+          [adminPermissions]="isAdmin$ | async"
+          [attachedProject]="project$ | async"
+          (regionChanged)="regionChanged.emit()"
+          (regionDeleted)="regionDeleted.emit()"></app-resource-toolbar>
+      </div>
+      <div class="resource-label">
+        <h4>{{resourceLabel(incomingResource, resource)}}</h4>
+        <button mat-icon-button color="primary" matTooltip="Edit label" (click)="openEditDialog()" *ngIf="userCanEdit">
+          <mat-icon>edit</mat-icon>
+        </button>
+      </div>
+      <div class="infobar mat-caption" *ngIf="(project$ | async) as project">
+        Resource of the project
+        <a class="link" [title]="project.longname" (click)="openProject(project)" (mouseover)="previewProject()">
+          <strong>{{project?.shortname}}</strong></a
+        ><span *ngIf="resourceAttachedUser || resource.res.creationDate"
+          >, created
+          <span *ngIf="resourceAttachedUser"
+            >by {{(resourceAttachedUser.username ? resourceAttachedUser.username : resourceAttachedUser.givenName + ' '
+            + resourceAttachedUser.familyName)}}</span
+          >
+          <span *ngIf="resource.res.creationDate"> on {{resource.res.creationDate | date}}</span>
+        </span>
+      </div>
+    </div>
     <div
       class="representation-container center"
       *ngIf="representationsToDisplay?.length && representationsToDisplay[0].fileValue"
@@ -16,7 +52,7 @@
         class="dsp-representation stillimage"
         *ngSwitchCase="representationConstants.stillImage"
         [images]="representationsToDisplay"
-        [imageCaption]="(incomingResource ? resource.res.label + ': ' + incomingResource.res.label : resource.res.label)"
+        [imageCaption]="resourceLabel(incomingResource, resource)"
         [compoundNavigation]="compoundPosition"
         [resourceIri]="incomingResource ? incomingResource.res.id : resource.res.id"
         [project]="resource.res.attachedToProject"
@@ -91,31 +127,33 @@
         [(selectedIndex)]="selectedTab"
         (selectedTabChange)="tabChanged($event)">
         <!-- first tab for the main resource e.g. book -->
-        <mat-tab [label]="resource.res.entityInfo?.classes[resource.res.type].label">
+        <mat-tab #matTabProperties [label]="'appLabels.resource.properties' | translate">
           <app-properties
             *ngIf="resource.res"
+            [lastModificationDate]="resource.res.lastModificationDate"
             [resource]="resource"
-            [displayProjectInfo]="true"
             [adminPermissions]="isAdmin$ | async"
+            [attachedUser]="resourceAttachedUser"
+            [attachedProject]="project$ | async"
             [valueUuidToHighlight]="valueUuid">
           </app-properties>
         </mat-tab>
 
         <!-- incoming resource -->
-        <mat-tab
-          *ngIf="incomingResource"
-          [label]="incomingResource.res.entityInfo?.classes[incomingResource.res.type].label">
+        <mat-tab *ngIf="incomingResource" #matTabIncoming [label]="resourceClassLabel(incomingResource)">
           <app-properties
             *ngIf="incomingResource.res"
             [resource]="incomingResource"
-            [displayProjectInfo]="false"
             [adminPermissions]="isAdmin$ | async"
+            [attachedUser]="resourceAttachedUser"
+            [attachedProject]="project$ | async"
             [valueUuidToHighlight]="valueUuid">
           </app-properties>
         </mat-tab>
 
         <!-- annotations -->
         <mat-tab
+          #matTabAnnotations
           label="annotations"
           *ngIf="representationsToDisplay?.length && representationsToDisplay[0].fileValue && representationsToDisplay[0].fileValue.type === representationConstants.stillImage">
           <ng-template matTabLabel class="annotations">
@@ -134,11 +172,12 @@
             [class.active]="annotation.res.id === selectedRegion">
             <app-properties
               [resource]="annotation"
-              [displayProjectInfo]="false"
-              [isAnnotation]="true"
               [adminPermissions]="isAdmin$ | async"
+              [attachedUser]="resourceAttachedUser"
+              [attachedProject]="project$ | async"
               [valueUuidToHighlight]="valueUuid"
               (regionChanged)="updateRegion()"
+              isAnnotation="true"
               (regionDeleted)="reloadWithResource()">
             </app-properties>
           </div>
@@ -148,8 +187,9 @@
         <app-properties
           *ngIf="resource.res"
           [resource]="resource"
-          [displayProjectInfo]="true"
           [adminPermissions]="isAdmin$ | async"
+          [attachedUser]="resourceAttachedUser"
+          [attachedProject]="project$ | async"
           [valueUuidToHighlight]="valueUuid">
         </app-properties>
       </ng-template>

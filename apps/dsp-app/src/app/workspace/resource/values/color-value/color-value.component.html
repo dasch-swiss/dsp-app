@@ -2,7 +2,7 @@
   <div class="rm-value" [style.background-color]="valueFormControl.value">
     <span *ngIf="showHexCode" class="hexcode" [style.color]="textColor">{{ valueFormControl.value }}</span>
   </div>
-  <span class="rm-comment" *ngIf="shouldShowComment"> {{ commentFormControl.value }} </span>
+  <span class="rm-comment" *ngIf="commentIsVisible$ | async"> {{ commentFormControl.value }} </span>
 </span>
 <ng-template #showForm>
   <span [formGroup]="form">
