@@ -73,7 +73,7 @@ describe('Data Model Class', () => {
     cy.get('[data-cy=create-class-button]').scrollIntoView().should('be.visible').click();
     cy.get(`[data-cy=${ClassType.TextRepresentation}]`).scrollIntoView().click({ force: true });
     cy.get('.mat-mdc-dialog-container').should('be.visible');
-    cy.get('.cdk-overlay-backdrop').click(-50, -50, { force: true });
+    cy.get('.cdk-overlay-backdrop-showing').click(-50, -50, { force: true });
     cy.get('.mat-mdc-dialog-container').should('not.exist');
   });
 
