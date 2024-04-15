@@ -72,7 +72,7 @@ export class ckEditor {
       },
     },
     table: {
-      contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells'],
+      contentToolbar: ['tableColumn', 'tableRow'], // mergeTableCells is not supported by the backend due to colspan html tag mapping.
     },
   };
 }
