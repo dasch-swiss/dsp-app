@@ -60,7 +60,7 @@ export class ReusableProjectFormComponent implements OnInit {
   form: ProjectForm;
   readonly shortcodePatternError = {
     errorKey: 'pattern',
-    message: 'This field must contains letters from A to F and 0 to 9',
+    message: 'This field must contain letters from A to F and 0 to 9',
   };
   readonly shortCodeExistsError = { errorKey: 'shortcodeExists', message: 'This shortcode already exists' };
   readonly keywordsValidators = [Validators.minLength(3), Validators.maxLength(64)];

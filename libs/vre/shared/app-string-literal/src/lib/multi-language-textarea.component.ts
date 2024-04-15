@@ -7,6 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { NgxsStoreModule } from '@dasch-swiss/vre/shared/app-state';
+import { TranslateModule } from '@ngx-translate/core';
 import { HumanReadableErrorPipe } from './human-readable-error.pipe';
 import { MultiLanguageFormArray } from './multi-language-form-array.type';
 import { MultiLanguageFormService } from './multi-language-form.service';
@@ -30,10 +31,10 @@ import { MultiLanguageFormService } from './multi-language-form.service';
   template: `
     <div style="display: flex; flex-direction: row-reverse">
       <mat-form-field style="flex: 1" subscriptSizing="dynamic" class="formfield">
+        <mat-label>{{ placeholder }}</mat-label>
         <textarea
           matInput
           rows="9"
-          [placeholder]="placeholder"
           #textInput
           [readonly]="!editable"
           [ngModel]="formService.inputValue"
