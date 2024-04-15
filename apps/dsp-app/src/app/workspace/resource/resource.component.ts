@@ -511,7 +511,11 @@ export class ResourceComponent implements OnChanges, OnDestroy {
 
     // sort properties by guiOrder
     props = props
-      .filter(prop => prop.propDef.objectType !== Constants.GeomValue)
+      .filter(
+        prop =>
+          prop.propDef.objectType !== Constants.GeomValue &&
+          !prop.propDef.objectType.includes(Constants.StillImageAbstractFileValue)
+      )
       .sort((a, b) => (a.guiDef.guiOrder > b.guiDef.guiOrder ? 1 : -1))
       // to get equal results on all browser engines which implements sorting in different way
       // properties list has to be sorted again, pushing all "has..." properties to the bottom
