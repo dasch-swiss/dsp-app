@@ -103,6 +103,10 @@
   color: rgba(0, 0, 0, 0.87);
 }
 
+::ng-deep .header-tooltip.mdc-tooltip .mdc-tooltip__surface {
+  max-width: unset;
+}
+
 @media (max-width: map-get($grid-breakpoints, notebook)) {
   .previousBtn {
     margin: 12px auto 0 12px;
