@@ -21,7 +21,7 @@ export class PasswordFormComponent implements OnInit {
   @Output() closeDialog: EventEmitter<any> = new EventEmitter<any>();
 
   // in case of child component inside parent form
-  @Output() sendToParent: EventEmitter<string> = new EventEmitter<string>();
+  @Output() password: EventEmitter<string> = new EventEmitter<string>();
 
   // progress indicator and error status
   loading: boolean;
@@ -171,9 +171,9 @@ export class PasswordFormComponent implements OnInit {
       }
 
       if (this.matchingPasswords && !this.formErrors['password'] && !this.formErrors['confirmPassword']) {
-        this.sendToParent.emit(this.form.controls.password.value);
+        this.password.emit(this.form.controls.password.value);
       } else {
-        this.sendToParent.emit('');
+        this.password.emit('');
       }
     });
 

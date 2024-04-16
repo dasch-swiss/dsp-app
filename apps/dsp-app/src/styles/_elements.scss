@@ -1,9 +1,9 @@
-@use "config" as *;
-@use "mixins" as *;
-@use "sass:math";
-@use "@material/snackbar" as snackbar;
-@use "@material/button" as button;
-@use "@material/menu-surface" as menu-surface;
+@use 'config' as *;
+@use 'mixins' as *;
+@use 'sass:math';
+@use '@material/snackbar' as snackbar;
+@use '@material/button' as button;
+@use '@material/menu-surface' as menu-surface;
 
 .fill-remaining-space {
   /* This fills the remaining space, by using flexbox.
@@ -151,9 +151,7 @@ a,
 //
 // menu
 .menu-content,
-
 .menu-action,
-
 .menu-content {
   .mat-grid-tile button {
     border-radius: $border-radius;
@@ -603,21 +601,21 @@ nav.mat-mdc-tab-nav-bar,
 }
 
 .mat-mdc-snack-bar-container {
-
   &.success {
     @include snackbar.fill-color(rgba($primary, 0.9));
     @include snackbar.label-ink-color($primary_contrast);
 
-    .mat-mdc-button.mat-mdc-snack-bar-action:not(:disabled){
+    .mat-mdc-button.mat-mdc-snack-bar-action:not(:disabled) {
       @include button.ink-color($primary_contrast);
     }
   }
 
-  &.failed, &.error {
+  &.failed,
+  &.error {
     @include snackbar.fill-color(rgba($red, 0.9));
     @include snackbar.label-ink-color($red_contrast);
 
-    .mat-mdc-button.mat-mdc-snack-bar-action:not(:disabled){
+    .mat-mdc-button.mat-mdc-snack-bar-action:not(:disabled) {
       @include button.ink-color($red_contrast);
     }
   }
@@ -626,7 +624,7 @@ nav.mat-mdc-tab-nav-bar,
     @include snackbar.fill-color(rgba($yellow, 0.9));
     @include snackbar.label-ink-color($yellow_contrast);
 
-    .mat-mdc-button.mat-mdc-snack-bar-action:not(:disabled){
+    .mat-mdc-button.mat-mdc-snack-bar-action:not(:disabled) {
       @include button.ink-color($yellow_contrast);
     }
   }
@@ -667,11 +665,15 @@ nav.mat-mdc-tab-nav-bar,
 // dialog box / material overlay
 
 .cdk-overlay-pane {
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+
   .mat-mdc-dialog-container {
     overflow-y: auto;
 
-    .dialog-content {
+    .mat-mdc-dialog-surface {
       padding: 24px;
+      background-color: rgba(white, 0.8);
     }
   }
 }
@@ -739,8 +741,6 @@ nav.mat-mdc-tab-nav-bar,
     button:hover {
       background-color: #c7c7c7;
     }
-
-
   }
 }
 
@@ -797,4 +797,3 @@ nav.mat-mdc-tab-nav-bar,
     min-height: 48px !important;
   }
 }
-

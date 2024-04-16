@@ -4,6 +4,7 @@ export * from './lib/app-config/dsp-api-tokens';
 export * from './lib/app-config/dsp-app-config';
 export * from './lib/app-config/app-constants';
 export * from './lib/app-config/dsp-config';
+export * from './lib/app-config/dsp-dialog-config';
 export * from './lib/app-config/dsp-iiif-config';
 export * from './lib/app-config/dsp-instrumentation-config';
 export * from './lib/build-tag/build-tag-token';

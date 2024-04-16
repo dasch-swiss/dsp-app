@@ -1,4 +1,6 @@
-import { AbstractControl, ValidatorFn } from '@angular/forms';
+import { AbstractControl, AsyncValidatorFn, ValidationErrors, ValidatorFn } from '@angular/forms';
+import { Observable, of } from 'rxjs';
+import { first, map } from 'rxjs/operators';
 
 /**
  * validation of existing name values. Array method (list of values)
@@ -23,5 +25,27 @@ export function existingNamesValidator(valArrayRegexp: [RegExp], isCaseSensitive
       }
     }
     return no ? { existingName: { name } } : null;
+  };
+}
+
+export function existingNamesAsyncValidator(
+  regexObservable: Observable<RegExp[]>,
+  isCaseSensitive = false
+): AsyncValidatorFn {
+  return (control: AbstractControl): Observable<ValidationErrors | null> => {
+    if (!control.value) {
+      return of(null); // consider valid
+    }
+
+    const name = isCaseSensitive ? control.value : control.value.toLowerCase();
+
+    return regexObservable.pipe(
+      first(), // Take the first emission of the observable and complete
+      map(regexArray => {
+        // Check if the control value matches any of the regex patterns
+        const isInvalid = regexArray.some(regex => regex.test(name));
+        return isInvalid ? { existingName: { name } } : null;
+      })
+    );
   };
 }

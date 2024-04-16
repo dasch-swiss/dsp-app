@@ -4,7 +4,7 @@ import { UserApiService } from '@dasch-swiss/vre/shared/app-api';
 import { Action, State, StateContext } from '@ngxs/store';
 import { of } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
-import { SetProjectMemberAction } from '../projects/projects.actions';
+import { AddUserToProjectMembershipAction, SetProjectMemberAction } from '../projects/projects.actions';
 import {
   CreateUserAction,
   LoadUserAction,
@@ -15,6 +15,7 @@ import {
   ResetUsersAction,
   SetUserAction,
   SetUserProjectGroupsAction,
+  UpdateUserAction,
 } from './user.actions';
 import { UserStateModel } from './user.state-model';
 
@@ -166,7 +167,7 @@ export class UserState {
   }
 
   @Action(CreateUserAction)
-  createUserAction(ctx: StateContext<UserStateModel>, { userData }: CreateUserAction) {
+  createUserAction(ctx: StateContext<UserStateModel>, { userData, enrollToProject }: CreateUserAction) {
     ctx.patchState({ isLoading: true });
     return this._userApiService.create(userData).pipe(
       take(1),
@@ -174,6 +175,32 @@ export class UserState {
         next: response => {
           const state = ctx.getState();
           state.allUsers.push(response.user);
+          state.isLoading = false;
+          ctx.patchState(state);
+          if (enrollToProject) {
+            ctx.dispatch(new AddUserToProjectMembershipAction(response.user.id, enrollToProject));
+          }
+        },
+      })
+    );
+  }
+
+  @Action(UpdateUserAction)
+  updateUserAction(ctx: StateContext<UserStateModel>, { id, userData }: UpdateUserAction) {
+    ctx.patchState({ isLoading: true });
+    return this._userApiService.updateBasicInformation(id, userData).pipe(
+      take(1),
+      tap({
+        next: response => {
+          const state = ctx.getState();
+          const userIndex = state.allUsers.findIndex(u => u.id === response.user.id);
+          if (userIndex > -1) {
+            state.allUsers[userIndex] = response.user;
+          }
+          if ((<ReadUser>state.user).id === response.user.id) {
+            state.user = response.user;
+          }
+
           state.isLoading = false;
           ctx.patchState(state);
         },

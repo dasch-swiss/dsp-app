@@ -1,8 +1,11 @@
-.form {
-  width: 580px;
-  margin-left: 48px;
+.user-form {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
 }
 
-.hidden {
-  display: none;
+.form-panel {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }

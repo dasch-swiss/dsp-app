@@ -1,92 +1,41 @@
-<!-- content -->
-<dasch-swiss-app-progress-indicator *ngIf="loadingData"></dasch-swiss-app-progress-indicator>
-<div *ngIf="!loadingData">
-  <form [formGroup]="userForm" class="form-content user-data" (ngSubmit)="submitData()">
-    <!-- username -->
-    <mat-form-field [class.large-field]="!user" [class.small-field]="user">
-      <input
-        matInput
-        type="text"
-        formControlName="username"
-        placeholder="{{ 'appLabels.form.user.general.username' | translate }}" />
-      <mat-hint *ngIf="formErrors.username"> {{ formErrors.username }} </mat-hint>
-    </mat-form-field>
-
-    <!-- email -->
-    <mat-form-field [class.large-field]="!user" [class.medium-field]="user">
-      <input
-        matInput
-        type="email"
-        formControlName="email"
-        placeholder="{{ 'appLabels.form.user.general.email' | translate }}"
-        autocomplete="email" />
-      <mat-hint *ngIf="formErrors.email"> {{ formErrors.email }} </mat-hint>
-    </mat-form-field>
-
-    <!-- given name -->
-    <mat-form-field class="small-field">
-      <input
-        matInput
-        formControlName="givenName"
-        placeholder="{{ 'appLabels.form.user.general.givenName' | translate }}"
-        autocomplete="givenname" />
-      <mat-hint *ngIf="formErrors.givenName"> {{ formErrors.givenName }} </mat-hint>
-    </mat-form-field>
-
-    <!-- family name -->
-    <mat-form-field class="medium-field">
-      <input
-        matInput
-        formControlName="familyName"
-        placeholder="{{ 'appLabels.form.user.general.familyName' | translate }}"
-        autocomplete="name" />
-      <mat-hint *ngIf="formErrors.familyName"> {{ formErrors.familyName }} </mat-hint>
-    </mat-form-field>
-
-    <!-- password // hidden in edit mode -->
-    <app-password-form *ngIf="!user" (sendToParent)="getPassword($event)"></app-password-form>
-
-    <mat-form-field class="large-field">
-      <mat-select formControlName="lang" [placeholder]="'appLabels.form.user.general.language' | translate">
-        <mat-option *ngFor="let lang of languagesList" [value]="lang.language"> {{ lang.value }} </mat-option>
-      </mat-select>
-    </mat-form-field>
-
-    <div class="large-field">
-      <mat-slide-toggle formControlName="systemAdmin" *ngIf="isSysAdmin$ | async">
-        {{ 'appLabels.form.user.general.sysAdmin' | translate }}
-      </mat-slide-toggle>
-    </div>
-
-    <div class="form-panel form-action">
-      <span>
-        <button color="primary" mat-button type="reset" (click)="closeDialog.emit()">
-          {{ 'appLabels.form.action.cancel' | translate }}
-        </button>
-      </span>
-      <span class="fill-remaining-space"></span>
-      <span>
-        <!-- Update -->
-        <button mat-raised-button type="submit" color="primary" *ngIf="user" [disabled]="!userForm.valid">
-          <dasch-swiss-app-progress-indicator [color]="'white'" [status]="0" *ngIf="loading" class="submit-progress">
-          </dasch-swiss-app-progress-indicator>
-          <mat-icon *ngIf="(hasLoadingErrors$ | async) === true && !loading">close</mat-icon>
-          {{ !loading && (hasLoadingErrors$ | async) === true ? ('appLabels.form.action.retry' | translate) :
-          ('appLabels.form.action.update' | translate) }}
-        </button>
-        <!-- Create new -->
-        <button
-          mat-raised-button
-          type="submit"
-          color="primary"
-          *ngIf="!user"
-          [disabled]="!userForm.valid || (userForm.controls['password'].value.length < 8)">
-          <dasch-swiss-app-progress-indicator [color]="'white'" [status]="0" *ngIf="loading" class="submit-progress">
-          </dasch-swiss-app-progress-indicator>
-          <mat-icon *ngIf="(hasLoadingErrors$ | async) === true && !loading">close</mat-icon>
-          {{ ('appLabels.form.action.submit' | translate) }}
-        </button>
-      </span>
-    </div>
-  </form>
-</div>
+<app-dialog-header
+  [title]="editExistingUser ? userForm.controls.username.value : ('appLabels.form.user.title.profile' | translate)"
+  [subtitle]="editExistingUser ? ('appLabels.form.user.title.edit' | translate) : ('appLabels.form.user.title.new' | translate)">
+</app-dialog-header>
+<form [formGroup]="userForm" class="form-content user-form">
+  <app-common-input
+    [class]="editExistingUser ? 'small-field' : 'large-field' "
+    [control]="userForm.controls.username"
+    [validatorErrors]="[usernamePatternErrorMsg]"
+    [placeholder]="'appLabels.form.user.general.username' | translate"></app-common-input>
+  <app-common-input
+    [class]="editExistingUser ? 'medium-field' : 'large-field' "
+    [control]="userForm.controls.email"
+    [placeholder]="'appLabels.form.user.general.email' | translate"
+    [validatorErrors]="[emailPatternErrorMsg]"></app-common-input>
+  <app-common-input
+    class="small-field"
+    [control]="userForm.controls.givenName"
+    [placeholder]="'appLabels.form.user.general.givenName' | translate"></app-common-input>
+  <app-common-input
+    class="medium-field"
+    [control]="userForm.controls.familyName"
+    [placeholder]="'appLabels.form.user.general.familyName' | translate"></app-common-input>
+  <app-password-form
+    *ngIf="!editExistingUser"
+    (password)="this.userForm.controls.password.setValue($event)"></app-password-form>
+  <mat-form-field class="large-field">
+    <mat-label>{{'appLabels.form.user.general.language' | translate}}</mat-label>
+    <mat-select [formControl]="userForm.controls.lang">
+      <mat-option *ngFor="let lang of languagesList" [value]="lang.language"> {{ lang.value }} </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <div class="large-field" *ngIf="loggedInUserIsSysAdmin$ | async">
+    <mat-slide-toggle
+      [checked]="userForm.controls.systemAdmin.value"
+      (change)="userForm.controls.systemAdmin.setValue(!userForm.controls.systemAdmin.value)"
+      [disabled]="editExistingUser">
+      {{ 'appLabels.form.user.general.sysAdmin' | translate }}
+    </mat-slide-toggle>
+  </div>
+</form>

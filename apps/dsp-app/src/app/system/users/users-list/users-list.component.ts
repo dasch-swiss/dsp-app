@@ -1,17 +1,10 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  EventEmitter,
-  Input,
-  OnInit,
-  Output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { Constants, Permissions, ReadProject, ReadUser } from '@dasch-swiss/dsp-js';
+import { Constants, ReadProject, ReadUser } from '@dasch-swiss/dsp-js';
+import { PermissionsData } from '@dasch-swiss/dsp-js/src/models/admin/permissions-data';
 import { UserApiService } from '@dasch-swiss/vre/shared/app-api';
-import { RouteConstants } from '@dasch-swiss/vre/shared/app-config';
+import { DspDialogConfig, RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { ProjectService, SortingService } from '@dasch-swiss/vre/shared/app-helper-services';
 import {
   LoadProjectMembersAction,
@@ -27,6 +20,8 @@ import { Observable, combineLatest } from 'rxjs';
 import { map, switchMap, take } from 'rxjs/operators';
 import { DialogComponent } from '../../../main/dialog/dialog.component';
 import { DialogService } from '../../../main/services/dialog.service';
+import { CreateUserPageComponent } from '../../../user/create-user-page/create-user-page.component';
+import { EditUserPageComponent } from '../../../user/edit-user-page/edit-user-page.component';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -34,12 +29,18 @@ import { DialogService } from '../../../main/services/dialog.service';
   templateUrl: './users-list.component.html',
   styleUrls: ['./users-list.component.scss'],
 })
-export class UsersListComponent implements OnInit {
+export class UsersListComponent {
   // list of users: status active or inactive (deleted)
   @Input() status: boolean;
 
   // list of users: depending on the parent
-  @Input() list: ReadUser[];
+  _list: ReadUser[];
+  get list(): ReadUser[] {
+    return this._list;
+  }
+  @Input() set list(value: ReadUser[]) {
+    this._list = this._sortingService.keySortByAlphabetical(value, this.sortBy as keyof ReadUser);
+  }
 
   // enable the button to create new user
   @Input() createNew = false;
@@ -94,7 +95,7 @@ export class UsersListComponent implements OnInit {
   ];
 
   // ... and sort by 'username'
-  sortBy = 'username';
+  sortBy = localStorage.getItem('sortUsersBy') || 'username';
 
   disableMenu$: Observable<boolean> = combineLatest([
     this._store.select(ProjectsSelectors.isCurrentProjectAdminOrSysAdmin),
@@ -111,9 +112,7 @@ export class UsersListComponent implements OnInit {
   );
 
   @Select(UserSelectors.isSysAdmin) isSysAdmin$: Observable<boolean>;
-  @Select(UserSelectors.user) user$: Observable<ReadUser>;
   @Select(UserSelectors.username) username$: Observable<string>;
-  @Select(UserSelectors.userProjectAdminGroups) userProjectAdminGroups$: Observable<string[]>;
   @Select(ProjectsSelectors.isCurrentProjectAdminOrSysAdmin) isCurrentProjectAdminOrSysAdmin$: Observable<boolean>;
   @Select(ProjectsSelectors.currentProject) project$: Observable<ReadProject>;
   @Select(UserSelectors.isLoading) isUsersLoading$: Observable<boolean>;
@@ -135,15 +134,6 @@ export class UsersListComponent implements OnInit {
     });
   }
 
-  ngOnInit() {
-    // sort list by defined key
-    if (localStorage.getItem('sortUsersBy')) {
-      this.sortBy = localStorage.getItem('sortUsersBy');
-    } else {
-      localStorage.setItem('sortUsersBy', this.sortBy);
-    }
-  }
-
   trackByFn = (index: number, item: ReadUser) => `${index}-${item.id}`;
 
   /**
@@ -155,7 +145,7 @@ export class UsersListComponent implements OnInit {
    * @param  [permissions] user's permissions
    * @returns boolean
    */
-  userIsProjectAdmin(permissions?: Permissions): boolean {
+  userIsProjectAdmin(permissions?: PermissionsData): boolean {
     if (!this.project) {
       return false;
     }
@@ -168,7 +158,7 @@ export class UsersListComponent implements OnInit {
    *
    * @param permissions PermissionData from user profile
    */
-  userIsSystemAdmin(permissions: Permissions): boolean {
+  userIsSystemAdmin(permissions: PermissionsData): boolean {
     let admin = false;
     const groupsPerProjectKeys: string[] = Object.keys(permissions.groupsPerProject);
 
@@ -230,7 +220,7 @@ export class UsersListComponent implements OnInit {
   /**
    * update user's admin-group membership
    */
-  updateProjectAdminMembership(id: string, permissions: Permissions): void {
+  updateProjectAdminMembership(id: string, permissions: PermissionsData): void {
     const currentUser = this._store.selectSnapshot(UserSelectors.user);
     const userIsProjectAdmin = this.userIsProjectAdmin(permissions);
     if (userIsProjectAdmin) {
@@ -323,6 +313,21 @@ export class UsersListComponent implements OnInit {
         })
       )
       .subscribe();
+  }
+
+  createUser() {
+    const dialogRef = this._matDialog.open(CreateUserPageComponent, DspDialogConfig.dialogDrawerConfig());
+    dialogRef.afterClosed().subscribe(() => {
+      this.refreshParent.emit();
+    });
+  }
+
+  editUser(user: ReadUser) {
+    const dialogConfig = DspDialogConfig.dialogDrawerConfig<ReadUser>(user);
+    const dialogRef = this._matDialog.open(EditUserPageComponent, dialogConfig);
+    dialogRef.afterClosed().subscribe(() => {
+      this.refreshParent.emit();
+    });
   }
 
   /**

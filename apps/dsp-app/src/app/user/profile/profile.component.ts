@@ -1,12 +1,13 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Title } from '@angular/platform-browser';
 import { ReadUser } from '@dasch-swiss/dsp-js';
-import { LoadUserAction, UserSelectors } from '@dasch-swiss/vre/shared/app-state';
-import { Select, Store } from '@ngxs/store';
+import { DspDialogConfig } from '@dasch-swiss/vre/shared/app-config';
+import { UserSelectors } from '@dasch-swiss/vre/shared/app-state';
+import { Select } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil, takeWhile } from 'rxjs/operators';
-import { DialogComponent } from '../../main/dialog/dialog.component';
+import { EditUserPageComponent } from '../edit-user-page/edit-user-page.component';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -19,16 +20,13 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   @Input() loggedInUser?: boolean = false;
 
-  @Output() refreshParent: EventEmitter<any> = new EventEmitter<any>();
-
   @Select(UserSelectors.isSysAdmin) isSysAdmin$: Observable<boolean>;
   @Select(UserSelectors.user) user$: Observable<ReadUser>;
   @Select(UserSelectors.isLoading) isLoading$: Observable<boolean>;
 
   constructor(
     private _dialog: MatDialog,
-    private _titleService: Title,
-    private _store: Store
+    private _titleService: Title
   ) {}
 
   ngOnInit() {
@@ -45,20 +43,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.ngUnsubscribe.complete();
   }
 
-  openDialog(mode: string, user: ReadUser): void {
-    const dialogConfig: MatDialogConfig = {
-      width: '560px',
-      maxHeight: '80vh',
-      position: {
-        top: '112px',
-      },
-      data: { user, mode },
-    };
-
-    const dialogRef = this._dialog.open(DialogComponent, dialogConfig);
-    dialogRef
-      .afterClosed()
-      .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe(() => this._store.dispatch(new LoadUserAction(user.username)));
+  editProfile(user: ReadUser) {
+    const dialogConfig = DspDialogConfig.dialogDrawerConfig<ReadUser>(user);
+    this._dialog.open(EditUserPageComponent, dialogConfig);
   }
 }

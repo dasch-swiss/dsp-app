@@ -1,21 +1,4 @@
-<div [ngSwitch]="data.mode" class="dialog-content">
-  <!-- all about USER -->
-  <!-- Create new user profile -->
-  <div *ngSwitchCase="'createUser'">
-    <app-dialog-header
-      [title]="'appLabels.form.user.title.profile' | translate"
-      [subtitle]="'appLabels.form.user.title.new' | translate">
-    </app-dialog-header>
-    <app-user-form [name]="data.name" [projectUuid]="data.project" (closeDialog)="dialogRef.close()"> </app-user-form>
-  </div>
-
-  <!-- Modify user data -->
-  <div *ngSwitchCase="'editUser'">
-    <app-dialog-header [title]="data.user.username" [subtitle]="'appLabels.form.user.title.edit' | translate">
-    </app-dialog-header>
-    <app-user-form [user]="data.user" (closeDialog)="dialogRef.close()"></app-user-form>
-  </div>
-
+<div [ngSwitch]="data.mode">
   <!-- Update password -->
   <div *ngSwitchCase="'editPassword'">
     <app-dialog-header [title]="data.user.username" [subtitle]="'appLabels.form.user.title.password' | translate">

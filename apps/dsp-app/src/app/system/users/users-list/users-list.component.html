@@ -1,4 +1,4 @@
-<div *ngIf="list && (((isUsersLoading$ | async) === false))">
+<div *ngIf="list">
   <!-- header toolbar -->
   <div class="app-toolbar" *ngIf="list.length > 0">
     <div class="app-toolbar-row">
@@ -26,11 +26,10 @@
       </h2>
       <span class="fill-remaining-space"></span>
       <span class="app-toolbar-action button right" *ngIf="status && createNew && (isSysAdmin$ | async)">
-        <button mat-flat-button [color]="'primary'" (click)="openDialog('createUser')">Create new</button>
+        <button mat-flat-button [color]="'primary'" (click)="createUser()">Create new</button>
       </span>
     </div>
   </div>
-
   <!-- content: list -->
   <table class="table more-space-bottom" [class.deactivated]="!status">
     <tr class="table-entry" *ngFor="let user of list; trackBy:trackByFn; let last = last" [class.no-border]="last">
@@ -102,7 +101,6 @@
             mat-menu-item
             *ngIf="
                             !projectUuid &&
-                            (user$ | async)?.status &&
                             (isSysAdmin$ | async) &&
                             user.username !== (username$ | async)
                         "
@@ -117,7 +115,7 @@
             <span>as system admin</span>
           </button>
           <!-- update user's profile data; only for system admin -->
-          <button mat-menu-item *ngIf="(isSysAdmin$ | async) && user.status" (click)="openDialog('editUser', user)">
+          <button mat-menu-item *ngIf="(isSysAdmin$ | async) && user.status" (click)="editUser(user)">
             {{ projectUuid ? 'Edit member' : 'Edit user' }}
           </button>
           <button mat-menu-item *ngIf="(isSysAdmin$ | async) && user.status" (click)="openDialog('editPassword', user)">

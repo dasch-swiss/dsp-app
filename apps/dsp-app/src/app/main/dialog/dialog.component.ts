@@ -65,14 +65,6 @@ export class DialogComponent {
     this.dialogRef.close();
   }
 
-  replaceTitle(heading: { title: string; subtitle?: string }) {
-    this.data.title = heading.title;
-
-    if (heading.subtitle) {
-      this.data.subtitle = heading.subtitle;
-    }
-  }
-
   onKey(event: KeyboardEvent) {
     this.comment = (event.target as HTMLInputElement).value;
   }

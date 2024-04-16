@@ -1,6 +1,7 @@
 <!-- select user to add to the team -->
 
 <!-- header toolbar -->
+
 <div class="app-toolbar transparent more-space-bottom">
   <div class="app-toolbar-row toolbar-subtitle">
     <h3 class="mat-body subtitle">Increase your team</h3>
@@ -53,15 +54,8 @@
         color="primary"
         [disabled]="!selectUserForm.valid"
         class="add-new create-user-btn"
-        (click)="openDialog('createUser')">
+        (click)="createUser()">
         New user
-      </button>
-      <button
-        mat-button
-        [disabled]="!selectUserForm.valid"
-        class="add-new-mobile create-user-btn"
-        (click)="openDialog('createUser')">
-        <mat-icon>add_circle_outline</mat-icon>
       </button>
     </span>
   </div>

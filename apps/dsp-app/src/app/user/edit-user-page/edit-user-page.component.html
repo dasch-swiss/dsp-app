@@ -1,0 +1,8 @@
+<app-user-form *ngIf="user" [user]="user" (afterFormInit)="form = $event"></app-user-form>
+
+<div class="form-panel">
+  <button color="primary" mat-button mat-dialog-close>{{ 'appLabels.form.action.cancel' | translate }}</button>
+  <button mat-raised-button color="primary" [disabled]="!form?.valid || form && form.pristine" (click)="updateUser()">
+    {{'appLabels.form.action.update' | translate}}
+  </button>
+</div>

@@ -11,6 +11,7 @@
         <h3
           [class.label-info]="resourceClassType?.comment"
           [matTooltip]="resourceClassType?.comment"
+          matTooltipClass="header-tooltip"
           matTooltipPosition="above">
           {{resourceClassType?.label}}<span *ngIf="resource.res.isDeleted">(deleted)</span>
         </h3>

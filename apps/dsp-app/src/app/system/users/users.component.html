@@ -1,11 +1,8 @@
 <dasch-swiss-app-progress-indicator *ngIf="isLoading$ | async"></dasch-swiss-app-progress-indicator>
+<!-- list of active users -->
+<app-users-list [list]="active$ | async" [status]="true" [createNew]="true"></app-users-list>
 
-<div *ngIf="(isLoading$ | async) === false">
-  <!-- list of active users -->
-  <app-users-list [list]="active$ | async" [status]="true" [createNew]="true"></app-users-list>
+<!-- <mat-divider class="more-space"></mat-divider> -->
 
-  <!-- <mat-divider class="more-space"></mat-divider> -->
-
-  <!-- list of inactive users -->
-  <app-users-list [list]="inactive$ | async" [status]="false"></app-users-list>
-</div>
+<!-- list of inactive users -->
+<app-users-list [list]="inactive$ | async" [status]="false"></app-users-list>

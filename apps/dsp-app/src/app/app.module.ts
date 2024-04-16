@@ -121,6 +121,8 @@ import { SystemComponent } from './system/system.component';
 import { UsersListComponent } from './system/users/users-list/users-list.component';
 import { UsersComponent } from './system/users/users.component';
 import { AccountComponent } from './user/account/account.component';
+import { CreateUserPageComponent } from './user/create-user-page/create-user-page.component';
+import { EditUserPageComponent } from './user/edit-user-page/edit-user-page.component';
 import { MembershipComponent } from './user/membership/membership.component';
 import { OverviewComponent } from './user/overview/overview.component';
 import { ProfileComponent } from './user/profile/profile.component';
@@ -219,6 +221,7 @@ export function httpLoaderFactory(httpClient: HttpClient) {
     ConfirmDialogComponent,
     ConfirmationMessageComponent,
     CookiePolicyComponent,
+    CreateUserPageComponent,
     CreateLinkResourceComponent,
     CreateResourceClassDialogComponent,
     DateValueComponent,
@@ -231,6 +234,7 @@ export function httpLoaderFactory(httpClient: HttpClient) {
     DocumentComponent,
     DragDropDirective,
     EditResourceClassDialogComponent,
+    EditUserPageComponent,
     ExpertSearchComponent,
     FooterComponent,
     FormattedBooleanPipe,
