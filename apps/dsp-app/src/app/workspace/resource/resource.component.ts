@@ -52,7 +52,7 @@ import {
   ResourceSelectors,
   UserSelectors,
 } from '@dasch-swiss/vre/shared/app-state';
-import { Actions, Select, Store, ofActionSuccessful } from '@ngxs/store';
+import { Actions, Store, ofActionSuccessful } from '@ngxs/store';
 import { Observable, Subject, Subscription, combineLatest } from 'rxjs';
 import { map, take, takeUntil, takeWhile, tap } from 'rxjs/operators';
 import { ConfirmationWithComment, DialogComponent } from '../../main/dialog/dialog.component';
@@ -166,23 +166,33 @@ export class ResourceComponent implements OnChanges, OnDestroy {
     return allPermissions.indexOf(PermissionUtil.Permissions.M) !== -1;
   }
 
-  get isAdmin$(): Observable<boolean> {
-    return combineLatest([this.user$, this.userProjectAdminGroups$]).pipe(
-      takeUntil(this.ngUnsubscribe),
-      map(([user, userProjectGroups]) => {
-        return this.attachedToProjectResource
-          ? ProjectService.IsProjectAdminOrSysAdmin(user, userProjectGroups, this.attachedToProjectResource)
-          : false;
-      })
-    );
-  }
+  isAdmin$: Observable<boolean> = combineLatest([
+    this._store.select(UserSelectors.user),
+    this._store.select(UserSelectors.userProjectAdminGroups),
+  ]).pipe(
+    takeUntil(this.ngUnsubscribe),
+    map(([user, userProjectGroups]) => {
+      return this.attachedToProjectResource
+        ? ProjectService.IsProjectAdminOrSysAdmin(user, userProjectGroups, this.attachedToProjectResource)
+        : false;
+    })
+  );
+
+  isEditor$: Observable<boolean> = combineLatest([
+    this._store.select(UserSelectors.user),
+    this._store.select(UserSelectors.userProjectAdminGroups),
+  ]).pipe(
+    takeUntil(this.ngUnsubscribe),
+    map(([user, userProjectGroups]) => {
+      return this.attachedToProjectResource
+        ? ProjectService.IsProjectMemberOrAdminOrSysAdmin(user, userProjectGroups, this.attachedToProjectResource)
+        : false;
+    })
+  );
 
   get resourceClassType(): ResourceClassDefinitionWithPropertyDefinition {
     return this.resource.res.entityInfo.classes[this.resource.res.type];
   }
-
-  @Select(UserSelectors.user) user$: Observable<ReadUser>;
-  @Select(UserSelectors.userProjectAdminGroups) userProjectAdminGroups$: Observable<string[]>;
 
   constructor(
     @Inject(DspApiConnectionToken)

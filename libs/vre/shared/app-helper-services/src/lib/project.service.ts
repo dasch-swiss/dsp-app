@@ -69,6 +69,13 @@ export class ProjectService {
     return ProjectService.IsProjectOrSysAdmin(groupsPerProject, userProjectGroups, projectIri);
   }
 
+  static IsProjectMemberOrAdminOrSysAdmin(user: ReadUser, userProjectGroups: string[], projectIri: string): boolean {
+    return (
+      ProjectService.IsProjectMember(user, userProjectGroups, projectIri) ||
+      ProjectService.IsProjectAdminOrSysAdmin(user, userProjectGroups, projectIri)
+    );
+  }
+
   static IsProjectOrSysAdmin(
     groupsPerProject: { [key: string]: string[] },
     userProjectGroups: string[],
@@ -79,12 +86,25 @@ export class ProjectService {
   }
 
   static IsProjectMember(user: ReadUser, userProjectGroups: string[], projectUuid: string): boolean {
+    projectUuid = ProjectService.IriToUuid(projectUuid);
     const isProjectAdmin = ProjectService.IsInProjectGroup(userProjectGroups, projectUuid);
     return isProjectAdmin
       ? // check if the user is member of the current project(id contains the iri)
         true
-      : !user || user.projects.length === 0
-        ? false
-        : user.projects.some(p => ProjectService.IriToUuid(p.id) === projectUuid);
+      : user && ProjectService.HasProjectMemberRights(user, projectUuid);
+  }
+
+  static HasProjectMemberRights(user: ReadUser, projectUuid: string): boolean {
+    const project = user.projects.find(p => ProjectService.IriToUuid(p.id) === projectUuid);
+    if (!project) {
+      return false;
+    }
+
+    const groupsPerProject = user.permissions.groupsPerProject;
+    const hasProjectMemberRights =
+      groupsPerProject &&
+      groupsPerProject[project.id] &&
+      groupsPerProject[project.id].includes(Constants.ProjectMemberGroupIRI);
+    return hasProjectMemberRights === true;
   }
 }

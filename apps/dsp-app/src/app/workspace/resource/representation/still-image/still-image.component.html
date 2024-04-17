@@ -67,7 +67,11 @@
       <button class="menu-content" mat-menu-item (click)="openImageInNewTab(images[0].fileValue.fileUrl)">
         Open IIIF URL in new tab
       </button>
-      <button class="menu-content" mat-menu-item [disabled]="!adminPermissions" (click)="openReplaceFileDialog()">
+      <button
+        class="menu-content"
+        mat-menu-item
+        [disabled]="failedToLoad || !editorPermissions"
+        (click)="openReplaceFileDialog()">
         Replace file
       </button>
     </mat-menu>
@@ -99,7 +103,7 @@
         mat-icon-button
         id="DSP_OSD_DRAW_REGION"
         matTooltip="Draw Region"
-        [disabled]="failedToLoad || !adminPermissions"
+        [disabled]="failedToLoad || !editorPermissions"
         (click)="drawButtonClicked()"
         [class.active]="regionDrawMode">
         <mat-icon svgIcon="draw_region_icon"></mat-icon>
