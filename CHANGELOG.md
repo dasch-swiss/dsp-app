@@ -1,5 +1,29 @@
 # Changelog
 
+## [11.9.0](https://github.com/dasch-swiss/dsp-das/compare/v11.8.0...v11.9.0) (2024-04-19)
+
+
+### Enhancements
+
+* use mat label in mat-form-field ([#1545](https://github.com/dasch-swiss/dsp-das/issues/1545)) ([2dd7f7d](https://github.com/dasch-swiss/dsp-das/commit/2dd7f7d94ce04d29db9fd4a562f4e519bec0222b))
+* ux-improvements (DEV-) ([#1542](https://github.com/dasch-swiss/dsp-das/issues/1542)) ([2f45316](https://github.com/dasch-swiss/dsp-das/commit/2f4531665d3cc8ab10d43d0e9d6175d935465477))
+
+
+### Bug Fixes
+
+* color picker style (DEV-3476) ([#1551](https://github.com/dasch-swiss/dsp-das/issues/1551)) ([aca8800](https://github.com/dasch-swiss/dsp-das/commit/aca8800849cc7ae834f41990bafe3d2731fc8091))
+* data-model-class e2e (DEV-) ([#1547](https://github.com/dasch-swiss/dsp-das/issues/1547)) ([9287674](https://github.com/dasch-swiss/dsp-das/commit/9287674aae806f6e6df72fd82db31d74d443bd74))
+* filters out "has image file" property (DEV-3477) ([#1548](https://github.com/dasch-swiss/dsp-das/issues/1548)) ([2cd4f60](https://github.com/dasch-swiss/dsp-das/commit/2cd4f6067028390cc3ba573172292d559707a651))
+* project member resource edit permissions (#DEV-3479) ([#1554](https://github.com/dasch-swiss/dsp-das/issues/1554)) ([c0909cd](https://github.com/dasch-swiss/dsp-das/commit/c0909cd57ff8a6471074bfb99583550482b53164))
+* removed mergeTableCells functionality from CKEditor (#DEV-3473) ([#1552](https://github.com/dasch-swiss/dsp-das/issues/1552)) ([b503cfc](https://github.com/dasch-swiss/dsp-das/commit/b503cfc8390a22b978611b1be6bbc361d7e80e88))
+* resource tooltip fit content (#DEV-3383) ([#1553](https://github.com/dasch-swiss/dsp-das/issues/1553)) ([63d9f17](https://github.com/dasch-swiss/dsp-das/commit/63d9f1720dfd2c0b2a082b341943b401c16894bc))
+
+
+### Maintenance
+
+* Update dsp-js to v9.1.17 ([#1555](https://github.com/dasch-swiss/dsp-das/issues/1555)) ([cefdda0](https://github.com/dasch-swiss/dsp-das/commit/cefdda08bf3bd0f5647c6bb263a6963b2e6d5fca))
+* **user-form:** Refactor user form and make proper use of dialog ([#1503](https://github.com/dasch-swiss/dsp-das/issues/1503)) ([4375f44](https://github.com/dasch-swiss/dsp-das/commit/4375f4400f65cbe225b8b677712e5622c45033bc))
+
 ## [11.8.0](https://github.com/dasch-swiss/dsp-das/compare/v11.7.5...v11.8.0) (2024-04-05)
 
 
