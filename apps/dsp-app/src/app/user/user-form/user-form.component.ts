@@ -74,7 +74,7 @@ export class UserFormComponent implements OnInit {
         [Validators.required, Validators.minLength(4), Validators.pattern(CustomRegex.USERNAME_REGEX)],
         existingNamesAsyncValidator(this._existingUserNames$),
       ],
-      password: [{ value: '', disabled: this.editExistingUser }],
+      password: [{ value: '', disabled: this.editExistingUser }, Validators.required],
       lang: [this.user.lang || 'en'],
       systemAdmin: [ProjectService.IsMemberOfSystemAdminGroup(this.user.permissions.groupsPerProject)],
     });
