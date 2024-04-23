@@ -18,6 +18,8 @@ export class AppErrorHandler implements ErrorHandler {
     private _ngZone: NgZone
   ) {}
 
+  badRequestRegexMatch = /dsp\.errors\.BadRequestException:(.*)$/;
+
   handleError(error: any): void {
     if (error instanceof ApiResponseError && error.error instanceof AjaxError) {
       // JS-LIB
@@ -38,7 +40,7 @@ export class AppErrorHandler implements ErrorHandler {
   private handleHttpErrorResponse(error: HttpErrorResponse) {
     if (error.status === 400) {
       if (error.error?.error) {
-        const badRequestRegexMatch = error.error.error.match(/dsp\.errors\.BadRequestException:(.*)$/);
+        const badRequestRegexMatch = error.error.error.match(this.badRequestRegexMatch);
 
         if (badRequestRegexMatch) {
           this.displayNotification(badRequestRegexMatch[1]);
@@ -63,6 +65,12 @@ export class AppErrorHandler implements ErrorHandler {
       message = 'It seems that you are not connected to internet.';
     } else if (error.message.includes('knora.json: 0 Unknown Error')) {
       message = 'IIIF server error: The image could not be loaded. Please try again later.';
+    } else if (
+      error.status === 400 &&
+      (error as AjaxError).response['knora-api:error'] &&
+      (error as AjaxError).response['knora-api:error'].match(this.badRequestRegexMatch).length > 0
+    ) {
+      message = (error as AjaxError).response['knora-api:error'].match(this.badRequestRegexMatch)[1];
     } else if (error.status === 404) {
       message = 'The requested resource was not found.';
     } else if (error.status === 504) {

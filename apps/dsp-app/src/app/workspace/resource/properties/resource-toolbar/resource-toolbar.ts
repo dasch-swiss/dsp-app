@@ -23,9 +23,9 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import {
-  Events as CommsEvents,
   ComponentCommunicationEventService,
   EmitEvent,
+  Events as CommsEvents,
   OntologyService,
 } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
