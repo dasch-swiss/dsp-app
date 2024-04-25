@@ -8,7 +8,7 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
+import { AbstractControl, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, ValidatorFn } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import {
   ApiResponseData,
@@ -24,9 +24,36 @@ import { ProjectsSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
-import { existingNamesValidator } from '../../../main/directive/existing-name/existing-names.validator';
 import { CreateUserPageComponent } from '../../../user/create-user-page/create-user-page.component';
 import { AutocompleteItem } from '../../../workspace/search/operator';
+
+/**
+ * validation of existing name values. Array method (list of values)
+ * Use it in a "formbuilder" group as a validator property
+ *
+ * @param {RegExp} valArrayRegexp List of regular expression values
+ * @returns ValidatorFn
+ */
+function existingUserNamesValidator(valArrayRegexp: [RegExp]): ValidatorFn {
+  return (control: AbstractControl): { [key: string]: any } => {
+    let name: string;
+
+    if (control.value?.iri) {
+      name = control.value.name.toLowerCase();
+    } else if (control.value) {
+      name = control.value.toLowerCase();
+    }
+
+    let no: boolean;
+    for (const existing of valArrayRegexp) {
+      no = existing.test(name);
+      if (no) {
+        return no ? { existingName: { name } } : null;
+      }
+    }
+    return no ? { existingName: { name } } : null;
+  };
+}
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -47,11 +74,6 @@ export class AddUserComponent implements OnInit {
   @Output() refreshParent: EventEmitter<any> = new EventEmitter<any>();
 
   /**
-   * status for the progress indicator
-   */
-  loading = true;
-
-  /**
    * form group
    */
   selectUserForm: UntypedFormGroup;
@@ -60,14 +82,14 @@ export class AddUserComponent implements OnInit {
    * form errors
    */
   selectUserErrors = {
-    username: '',
+    addUser: '',
   };
 
   /**
    * form error hints
    */
   validationMessages = {
-    username: {
+    addUser: {
       existingName: "This user is already a member of the project. You can't add him / her.",
     },
   };
@@ -81,40 +103,10 @@ export class AddUserComponent implements OnInit {
    * filter users while typing (autocomplete)
    */
   filteredUsers$: Observable<AutocompleteItem[]>;
-
-  /**
-   * list of usernames to prevent duplicate entries
-   */
-  existingUsernames: [RegExp] = [new RegExp('anEmptyRegularExpressionWasntPossible')];
-  /**
-   * list of usernames of project members to prevent duplicate entries
-   */
-  existingUsernameInProject: [RegExp] = [new RegExp('anEmptyRegularExpressionWasntPossible')];
-
-  /**
-   * list of emails to prevent duplicate entries
-   */
-  existingEmails: [RegExp] = [new RegExp('anEmptyRegularExpressionWasntPossible')];
-
-  /**
-   * list of emails of project members to prevent duplicate entries
-   */
-  existingEmailInProject: [RegExp] = [new RegExp('anEmptyRegularExpressionWasntPossible')];
-
-  /**
-   * selected user object
-   */
   selectedUser: ReadUser;
-
-  /**
-   * member status of selected user
-   */
   isAlreadyMember = false;
-
-  /**
-   * iri of the project; used for API requests
-   */
   projectIri: string;
+  loading = true;
 
   constructor(
     @Inject(DspApiConnectionToken)
@@ -138,92 +130,8 @@ export class AddUserComponent implements OnInit {
 
     // get all users
     this._dspApiConnection.admin.usersEndpoint.getUsers().subscribe((response: ApiResponseData<UsersResponse>) => {
-      // if a user is already member of the team, mark it in the list
-      const members: string[] = [];
-
-      // get all members of this project
-      const projectMembers = this._store.selectSnapshot(ProjectsSelectors.projectMembers);
-      if (projectMembers[this.projectIri]) {
-        for (const m of projectMembers[this.projectIri].value) {
-          members.push(m.id);
-
-          // if the user is already member of the project
-          // add the email to the list of existing
-          this.existingEmailInProject.push(new RegExp(`(?:^|W)${m.email.toLowerCase()}(?:$|W)`));
-          // add username to the list of existing
-          this.existingUsernameInProject.push(new RegExp(`(?:^|W)${m.username.toLowerCase()}(?:$|W)`));
-        }
-      }
-
-      let i = 0;
-      for (const u of response.body.users.filter(user => user.username.length > 0)) {
-        // if the user is already member of the project
-        // add the email to the list of existing
-        this.existingEmails.push(new RegExp(`(?:^|W)${u.email.toLowerCase()}(?:$|W)`));
-        // add username to the list of existing
-        this.existingUsernames.push(new RegExp(`(?:^|W)${u.username.toLowerCase()}(?:$|W)`));
-
-        let existsInProject = '';
-
-        if (members && members.indexOf(u.id) > -1) {
-          existsInProject = '* ';
-        }
-
-        let usernameLabel = existsInProject + u.username;
-        if (usernameLabel.length > 0) {
-          usernameLabel += ' | ';
-        }
-
-        let emailLabel = u.email;
-        if (emailLabel.length > 0) {
-          emailLabel += ' | ';
-        }
-
-        this.users[i] = {
-          iri: u.id,
-          name: u.username,
-          label: `${usernameLabel} ${emailLabel} ${u.givenName} ${u.familyName}`,
-        };
-        i++;
-      }
-
-      this.users.sort((u1: AutocompleteItem, u2: AutocompleteItem) => {
-        if (u1.label < u2.label) {
-          return -1;
-        } else if (u1.label > u2.label) {
-          return 1;
-        } else {
-          return 0;
-        }
-      });
-
-      this.loading = false;
-      this._cd.markForCheck();
+      this.setSelectUserForm(response.body.users);
     });
-
-    this.selectUserForm = this._formBuilder.group({
-      username: new UntypedFormControl(
-        {
-          value: '',
-          disabled: false,
-        },
-        [
-          existingNamesValidator(this.existingUsernames),
-          existingNamesValidator(this.existingUsernameInProject),
-          existingNamesValidator(this.existingEmails),
-          existingNamesValidator(this.existingEmailInProject),
-        ]
-      ),
-    });
-
-    this.filteredUsers$ = this.selectUserForm.controls['username'].valueChanges.pipe(
-      startWith(''),
-      map(user => (user.length >= 2 ? this.filter(this.users, user) : []))
-    );
-
-    this.selectUserForm.valueChanges.subscribe(() => this.onValueChanged());
-
-    this.onValueChanged(); // (re)set validation messages now
   }
 
   /**
@@ -233,7 +141,7 @@ export class AddUserComponent implements OnInit {
    * @returns Filtered list of options
    */
   filter(list: AutocompleteItem[], name: string) {
-    return list.filter(user => user.label.toLowerCase().includes(name.toLowerCase()));
+    return list.filter(user => user?.name.toLowerCase().includes(name?.toLowerCase()));
   }
 
   /**
@@ -251,7 +159,7 @@ export class AddUserComponent implements OnInit {
     Object.keys(this.selectUserErrors).forEach(field => {
       this.selectUserErrors[field] = '';
       const control = this.selectUserForm.get(field);
-      if (control.value.length >= 2) {
+      if (control.value.iri || control.value.length >= 2) {
         if (control && control.dirty && !control.valid) {
           const messages = this.validationMessages[field];
           Object.keys(control.errors).forEach(key => {
@@ -262,20 +170,16 @@ export class AddUserComponent implements OnInit {
     });
   }
 
-  /**
-   * add user to the project
-   *
-   * @param val The value can be e-mail address or username
-   */
-  addUser(val: string) {
-    // --> TODO add getUserByEmail
+  addUser(item: AutocompleteItem) {
+    if (this.selectUserForm.invalid) {
+      return;
+    }
+
     // you can type username or email. We have to check, what we have now
-    this._dspApiConnection.admin.usersEndpoint.getUserByUsername(val).subscribe(
+    this._dspApiConnection.admin.usersEndpoint.getUserByIri(item.iri).subscribe(
       (response: ApiResponseData<UserResponse>) => {
         // case b) result if the user exists
         this.selectedUser = response.body.user;
-
-        // the following request should never start
         this.isAlreadyMember = !!response.body.user.projects.find(p => p.id === this.projectIri);
 
         if (!this.isAlreadyMember) {
@@ -285,11 +189,8 @@ export class AddUserComponent implements OnInit {
           this._dspApiConnection.admin.usersEndpoint
             .addUserToProjectMembership(this.selectedUser.id, this.projectIri)
             .subscribe(() => {
-              // successful post
-              // reload the component
               this.buildForm();
               this.refreshParent.emit();
-
               this.loading = false;
             });
         }
@@ -300,7 +201,7 @@ export class AddUserComponent implements OnInit {
           // create new user user-profile
           this.selectedUser = new ReadUser();
 
-          this.selectedUser.email = val;
+          this.selectedUser.givenName = item.name;
         }
       }
     );
@@ -313,8 +214,101 @@ export class AddUserComponent implements OnInit {
 
   resetInput(ev: Event) {
     ev.preventDefault();
-    this.selectUserForm.controls['username'].reset('');
+    this.selectUserForm.controls['addUser'].reset('');
+  }
+
+  /**
+   * used to create a value which is displayed to the user after selection from autocomplete.
+   *
+   * @param item the user selected item.
+   */
+  displayWith(item: AutocompleteItem | null) {
+    if (item) {
+      return item.label;
+    }
   }
 
   trackByFn = (index: number, item: AutocompleteItem) => `${index}-${item.label}`;
+
+  private setSelectUserForm(users: ReadUser[]) {
+    const existingNameInProject: [RegExp] = [new RegExp('anEmptyRegularExpressionWasntPossible')];
+    const members: string[] = [];
+    const projectMembers = this._store.selectSnapshot(ProjectsSelectors.projectMembers);
+    if (projectMembers[this.projectIri]) {
+      for (const m of projectMembers[this.projectIri].value) {
+        members.push(m.id);
+        existingNameInProject.push(
+          new RegExp(`(?:^|W)${m.givenName.toLowerCase()}+\\s${m.familyName.toLowerCase()}(?:$|W)`)
+        );
+      }
+    }
+
+    this.users = users
+      .map(user => {
+        return {
+          iri: user.id,
+          name: `${user.givenName} ${user.familyName}`,
+          label: this.getLabel(members, user),
+        };
+      })
+      .sort((u1: AutocompleteItem, u2: AutocompleteItem) => {
+        if (u1.label < u2.label) {
+          return -1;
+        } else if (u1.label > u2.label) {
+          return 1;
+        } else {
+          return 0;
+        }
+      });
+
+    this.selectUserForm = this._formBuilder.group({
+      addUser: new UntypedFormControl(
+        {
+          value: '',
+          disabled: false,
+        },
+        [existingUserNamesValidator(existingNameInProject)]
+      ),
+    });
+
+    this.filteredUsers$ = this.selectUserForm.controls['addUser'].valueChanges.pipe(
+      startWith(''),
+      map(user => {
+        if (user.name) {
+          return user.name?.length >= 2 ? this.filter(this.users, user.name) : [];
+        }
+        return user.length >= 2 ? this.filter(this.users, user) : [];
+      })
+    );
+
+    this.selectUserForm.valueChanges.subscribe(() => this.onValueChanged());
+
+    this.onValueChanged(); // (re)set validation messages now
+
+    this.loading = false;
+    this._cd.markForCheck();
+  }
+
+  private getLabel(members: string[], user: ReadUser): string {
+    let existsInProject = '';
+    if (members && members.indexOf(user.id) > -1) {
+      existsInProject = '* ';
+    }
+    let usernameLabel = '';
+    let emailLabel = '';
+
+    if (user.email && user.username) {
+      usernameLabel = existsInProject + user.username;
+      if (usernameLabel.length > 0) {
+        usernameLabel += ' | ';
+      }
+
+      emailLabel = user.email;
+      if (emailLabel.length > 0) {
+        emailLabel += ' | ';
+      }
+    }
+
+    return `${usernameLabel} ${emailLabel} ${user.givenName} ${user.familyName}`;
+  }
 }

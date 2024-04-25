@@ -2,7 +2,7 @@
 
 <!-- header toolbar -->
 
-<div class="app-toolbar transparent more-space-bottom">
+<div class="app-toolbar transparent more-space-bottom" *ngIf="selectUserForm">
   <div class="app-toolbar-row toolbar-subtitle">
     <h3 class="mat-body subtitle">Increase your team</h3>
   </div>
@@ -19,28 +19,26 @@
             <input
               matInput
               [matAutocomplete]="user"
-              [formControl]="selectUserForm.controls['username']"
-              [placeholder]="
-                                'appLabels.form.user.title.select' | translate
-                            " />
-
+              [formControl]="selectUserForm.controls['addUser']"
+              [placeholder]="'appLabels.form.user.title.select' | translate" />
             <button
               class="reset-button"
               mat-icon-button
               matSuffix
-              *ngIf="selectUserForm.controls['username'].value"
+              *ngIf="selectUserForm.controls['addUser'].value"
               (click)="resetInput($event)"
               type="button">
               <mat-icon>close</mat-icon>
             </button>
-
-            <mat-autocomplete #user="matAutocomplete" (optionSelected)="addUser($event.option.value)">
-              <mat-option *ngFor="let user of filteredUsers$ | async; trackBy: trackByFn" [value]="user?.name">
+            <mat-autocomplete
+              #user="matAutocomplete"
+              [displayWith]="displayWith"
+              (optionSelected)="addUser($event.option.value)">
+              <mat-option *ngFor="let user of filteredUsers$ | async; trackBy: trackByFn" [value]="user">
                 {{ user?.label }}
               </mat-option>
             </mat-autocomplete>
-
-            <mat-hint *ngIf="selectUserErrors.username"> {{ selectUserErrors.username }} </mat-hint>
+            <mat-hint *ngIf="selectUserErrors.addUser"> {{ selectUserErrors.addUser }} </mat-hint>
           </mat-form-field>
         </div>
       </form>
