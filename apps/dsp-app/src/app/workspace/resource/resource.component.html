@@ -24,7 +24,7 @@
           (regionDeleted)="regionDeleted.emit()"></app-resource-toolbar>
       </div>
       <div class="resource-label">
-        <h4>{{resourceLabel(incomingResource, resource)}}</h4>
+        <h4>{{resource.res.label}}</h4>
         <button mat-icon-button color="primary" matTooltip="Edit label" (click)="openEditDialog()" *ngIf="userCanEdit">
           <mat-icon>edit</mat-icon>
         </button>
