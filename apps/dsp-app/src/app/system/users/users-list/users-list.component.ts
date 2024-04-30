@@ -65,11 +65,6 @@ export class UsersListComponent {
     },
   };
 
-  //
-  // project view
-  // dsp-js admin group iri
-  adminGroupIri: string = Constants.ProjectAdminGroupIRI;
-
   // project uuid; as identifier in project application state service
   projectUuid: string;
 
@@ -129,8 +124,8 @@ export class UsersListComponent {
     private _cd: ChangeDetectorRef
   ) {
     // get the uuid of the current project
-    this._route.parent.parent.paramMap.subscribe((params: Params) => {
-      this.projectUuid = params.get('uuid');
+    this._route.parent?.parent?.paramMap.subscribe((params: Params) => {
+      this.projectUuid = params.get(RouteConstants.uuidParameter);
     });
   }
 

@@ -24,27 +24,24 @@ import { map, takeUntil } from 'rxjs/operators';
 export class ProjectsComponent implements OnInit, OnDestroy {
   private ngUnsubscribe: Subject<void> = new Subject<void>();
 
-  @Input() username?: string;
+  @Input() usersProjects = false;
 
   get activeProjects$(): Observable<StoredProject[]> {
     return combineLatest([this.userActiveProjects$, this.allActiveProjects$]).pipe(
       takeUntil(this.ngUnsubscribe),
-      map(([userActiveProjects, allActiveProjects]) => (this.username ? userActiveProjects : allActiveProjects))
+      map(([userActiveProjects, allActiveProjects]) => (this.usersProjects ? userActiveProjects : allActiveProjects))
     );
   }
 
   get inactiveProjects$(): Observable<StoredProject[]> {
     return combineLatest([this.userInactiveProjects$, this.allInactiveProjects$]).pipe(
       takeUntil(this.ngUnsubscribe),
-      map(([userInactiveProjects, allInactiveProjects]) => (this.username ? userInactiveProjects : allInactiveProjects))
+      map(([userInactiveProjects, allInactiveProjects]) =>
+        this.usersProjects ? userInactiveProjects : allInactiveProjects
+      )
     );
   }
 
-  /**
-   * if username is definded: show only projects,
-   * where this user is member of;
-   * otherwise show all projects
-   */
   @Select(UserSelectors.userActiveProjects) userActiveProjects$: Observable<StoredProject[]>;
   @Select(UserSelectors.userInactiveProjects) userInactiveProjects$: Observable<StoredProject[]>;
   @Select(ProjectsSelectors.allActiveProjects) allActiveProjects$: Observable<StoredProject[]>;
@@ -59,7 +56,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    if (this.username) {
+    if (this.usersProjects) {
       this._titleService.setTitle('Your projects');
     } else {
       this._titleService.setTitle('All projects from DSP');

@@ -9,12 +9,6 @@ export class LoadUserAction {
   ) {}
 }
 
-export class LoadUserContentByIriAction {
-  static readonly type = '[User] Load User Content By Iri';
-
-  constructor(public iri: string) {}
-}
-
 export class SetUserAction {
   static readonly type = '[User] Set User';
 
@@ -39,8 +33,6 @@ export class SetUserProjectGroupsAction {
 
 export class LoadUsersAction {
   static readonly type = '[User] Load All Users';
-
-  constructor(public loadFullUserData = false) {}
 }
 
 export class ResetUsersAction {

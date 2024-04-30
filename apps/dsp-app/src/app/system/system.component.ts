@@ -1,11 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-
+import { RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { UserSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
-import { AppGlobal } from '../app-global';
-import { MenuItem } from '../main/declarations/menu-item';
 
 @Component({
   selector: 'app-system',
@@ -13,14 +11,15 @@ import { MenuItem } from '../main/declarations/menu-item';
   styleUrls: ['./system.component.scss'],
 })
 export class SystemComponent {
-  loading = true;
-
-  navigation: MenuItem[] = AppGlobal.systemNav;
-
   @Select(UserSelectors.isSysAdmin) isSysAdmin$: Observable<boolean>;
 
+  links = [
+    { name: 'All Projects', url: RouteConstants.systemProjects, icon: 'assignment' },
+    { name: 'All Users', url: RouteConstants.systemUsers, icon: 'group' },
+  ];
+  activeLink: string;
+
   constructor(private _titleService: Title) {
-    // set the page title
     this._titleService.setTitle('System administration');
   }
 }

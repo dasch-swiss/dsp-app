@@ -144,9 +144,9 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     children: [
       {
-        path: RouteConstants.home,
-        pathMatch: 'full',
+        path: '',
         redirectTo: RouteConstants.systemProjects,
+        pathMatch: 'full',
       },
       {
         path: RouteConstants.systemProjects,

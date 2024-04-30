@@ -1,37 +1,19 @@
 <div *ngIf="isSysAdmin$ | async; else notAllowed">
-  <nav
-    mat-tab-nav-bar
-    mat-align-tabs="center"
-    class="navigation tab-bar margin-from-top"
-    animationDuration="0ms"
-    [tabPanel]="tabPanel">
+  <nav mat-tab-nav-bar [tabPanel]="tabPanel" class="navigation tab-bar margin-from-top">
+    <mat-tab-nav-panel #tabPanel></mat-tab-nav-panel>
     <a
       mat-tab-link
-      class="nav-link"
-      *ngFor="let link of navigation; let first = first"
-      [routerLink]="link.route"
-      routerLinkActive="active-tab"
+      *ngFor="let link of links"
+      [routerLink]="link.url"
+      (click)="activeLink = link.name"
+      routerLinkActive
       #rla="routerLinkActive"
       [active]="rla.isActive">
       <mat-icon class="tab-icon">{{ link.icon }}</mat-icon>
-      {{ link.label }}
-    </a>
-    <!-- mobile version -->
-    <a
-      mat-tab-link
-      class="nav-link-mobile"
-      *ngFor="let link of navigation; let first = first"
-      [routerLink]="link.route"
-      routerLinkActive="active-tab"
-      #rla="routerLinkActive"
-      [active]="rla.isActive">
-      {{ link.shortLabel }}
+      {{ link.name }}
     </a>
   </nav>
-
-  <mat-tab-nav-panel class="content large middle" #tabPanel>
-    <router-outlet></router-outlet>
-  </mat-tab-nav-panel>
+  <router-outlet></router-outlet>
 </div>
 
 <ng-template #notAllowed>
