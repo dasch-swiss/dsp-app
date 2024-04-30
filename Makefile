@@ -17,17 +17,13 @@ find-ignored-tests: ## find all ignored tests (e.g. fdescribe)
 # Documentation targets
 #################################
 
-.PHONY: docs-publish
-docs-publish: ## build and publish docs to github Pages
-	mkdocs gh-deploy
-
 .PHONY: docs-build
 docs-build: ## build docs into the local 'site' folder
-	mkdocs build
+	mkdocs build --strict
 
 .PHONY: docs-serve
 docs-serve: ## serve docs for local viewing
-	mkdocs serve
+	mkdocs serve --strict
 
 .PHONY: docs-install-requirements
 docs-install-requirements: ## install requirements
@@ -36,6 +32,10 @@ docs-install-requirements: ## install requirements
 .PHONY: docs-clean
 docs-clean: ## cleans the project directory
 	@rm -rf site/
+
+.PHONY: docs-lint
+docs-lint: ## runs the markdownlint linter on the docs
+	docker run -v $$(pwd):/workdir ghcr.io/igorshubovych/markdownlint-cli:latest --config .markdownlint.json -i docs/contribution/release-notes.md -i docs/index.md --disable MD033 -- "docs/**/*.md"
 
 #################################
 # Build and publish targets

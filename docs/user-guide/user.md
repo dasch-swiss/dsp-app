@@ -2,7 +2,7 @@
 
 ## Your user profile and projects
 
-To change your personal information as well as your default language used by the interface, you can edit your profile by clicking *Edit my profile*. Currently, the avatar image comes from gravatar.com (go on their <a href="http://en.gravatar.com/" target="_blank">website</a> to register if you want your customized user photo).
+To change your personal information as well as your default language used by the interface, you can edit your profile by clicking *Edit my profile*. Currently, the avatar image comes from gravatar.com (go on their [website](http://en.gravatar.com/) to register if you want your customized user photo).
 
 ![Get access to your user profile and more](../assets/images/usermenu-to-userprofile.png)*<https://app.dasch.swiss/> - Overview of your user profile and your projects.*
 
