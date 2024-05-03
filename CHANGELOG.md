@@ -1,5 +1,21 @@
 # Changelog
 
+## [11.9.1](https://github.com/dasch-swiss/dsp-das/compare/v11.9.0...v11.9.1) (2024-05-03)
+
+
+### Bug Fixes
+
+* alerts user when a resource cannnot be erased ([#1560](https://github.com/dasch-swiss/dsp-das/issues/1560)) ([9ebc9cf](https://github.com/dasch-swiss/dsp-das/commit/9ebc9cf6c6d05894d4eec2f94e3068400e6c447b))
+* allows project admin to add members to the project (#DEV-3414) ([#1558](https://github.com/dasch-swiss/dsp-das/issues/1558)) ([6a8850c](https://github.com/dasch-swiss/dsp-das/commit/6a8850ca5ac81000bdaa277a62a786d0abc73bb7))
+* resource label (#DEV-3550) ([#1565](https://github.com/dasch-swiss/dsp-das/issues/1565)) ([9186424](https://github.com/dasch-swiss/dsp-das/commit/9186424e122649a9c838bc91223c9d2850a9e02f))
+* **system component:** don't dispatch loading state for users; faster loading, prevent reloads on tab change  ([#1562](https://github.com/dasch-swiss/dsp-das/issues/1562)) ([26bb3f4](https://github.com/dasch-swiss/dsp-das/commit/26bb3f45ef5ba017f6b8f2774a7c7b59ae4d1a3c))
+* **user form:** set form to required (DEV-3527) ([#1559](https://github.com/dasch-swiss/dsp-das/issues/1559)) ([6c5ead8](https://github.com/dasch-swiss/dsp-das/commit/6c5ead87a46f3866271217d958f945e9a5d04abe))
+
+
+### Maintenance
+
+* update dsp-js to v9.1.18 ([#1567](https://github.com/dasch-swiss/dsp-das/issues/1567)) ([6ac8de6](https://github.com/dasch-swiss/dsp-das/commit/6ac8de687d13a7c4cf0442847a060d370f6af642))
+
 ## [11.9.0](https://github.com/dasch-swiss/dsp-das/compare/v11.8.0...v11.9.0) (2024-04-19)
 
 
