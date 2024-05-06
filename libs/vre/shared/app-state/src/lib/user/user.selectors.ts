@@ -12,6 +12,11 @@ export class UserSelectors {
   }
 
   @Selector([UserState])
+  static usersLoading(state: UserStateModel): boolean {
+    return state.usersLoading;
+  }
+
+  @Selector([UserState])
   static allUsers(state: UserStateModel): ReadUser[] {
     return state.allUsers;
   }

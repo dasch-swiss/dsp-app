@@ -12,7 +12,7 @@ import { Observable } from 'rxjs';
   styleUrls: ['./users.component.scss'],
 })
 export class UsersComponent implements OnInit {
-  @Select(UserSelectors.isLoading) isLoading$: Observable<boolean>;
+  @Select(UserSelectors.usersLoading) isLoading$: Observable<boolean>;
   @Select(UserSelectors.activeUsers) active$: Observable<ReadUser[]>;
   @Select(UserSelectors.inactiveUsers) inactive$: Observable<ReadUser[]>;
 
