@@ -173,6 +173,7 @@ export class UserState {
           }
           if ((<ReadUser>state.user).id === response.user.id) {
             state.user = response.user;
+            ctx.dispatch([new SetProjectMemberAction(state.user)]);
           }
 
           state.isLoading = false;
