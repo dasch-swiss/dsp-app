@@ -68,6 +68,14 @@ import { PropertyValueService } from './property-value.service';
       <app-text-switch [control]="item" [displayMode]="displayMode"></app-text-switch>
     </ng-template>
 
+    <ng-template #paragraphTpl let-item="item" let-displayMode="displayMode">
+      <app-base-switch [control]="item" [displayMode]="displayMode" style="white-space: pre-line">
+        <mat-form-field style="width: 100%">
+          <textarea matInput [formControl]="item" rows="9" placeholder="Text value"></textarea>
+        </mat-form-field>
+      </app-base-switch>
+    </ng-template>
+
     <ng-template #dateTpl let-item="item" let-displayMode="displayMode">
       <app-date-switch [control]="item" [displayMode]="displayMode"></app-date-switch>
     </ng-template>
@@ -131,6 +139,7 @@ export class PropertyValueSwitcherComponent implements OnInit, OnChanges, AfterV
   @ViewChild('booleanTpl') booleanTpl!: TemplateRef<any>;
   @ViewChild('colorTpl') colorTpl!: TemplateRef<any>;
   @ViewChild('textTpl') textTpl!: TemplateRef<any>;
+  @ViewChild('paragraphTpl') paragraphTpl!: TemplateRef<any>;
   @ViewChild('richTextTpl') richTextTpl!: TemplateRef<any>;
   @ViewChild('dateTpl') dateTpl!: TemplateRef<any>;
   @ViewChild('timeTpl') timeTpl!: TemplateRef<any>;
@@ -182,10 +191,14 @@ export class PropertyValueSwitcherComponent implements OnInit, OnChanges, AfterV
       case Constants.ColorValue:
         return this.colorTpl;
       case Constants.TextValue:
-        if (this.propertyDefinition.guiElement === Constants.GuiRichText) {
-          return this.richTextTpl;
+        switch (this.propertyDefinition.guiElement) {
+          case Constants.GuiRichText:
+            return this.richTextTpl;
+          case Constants.GuiTextarea:
+            return this.paragraphTpl;
+          default:
+            return this.textTpl;
         }
-        return this.textTpl;
       case Constants.DateValue:
         return this.dateTpl;
       case Constants.TimeValue:

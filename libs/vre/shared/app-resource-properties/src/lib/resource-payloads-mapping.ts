@@ -126,6 +126,7 @@ export const propertiesTypeMapping = new Map<string, MappingParameters<any>>([
       mapping: (value: string, propertyDefinition: ResourcePropertyDefinition) => {
         switch (propertyDefinition.guiElement) {
           case Constants.GuiSimpleText:
+          case Constants.GuiTextarea:
             const newTextValue = new CreateTextValueAsString();
             newTextValue.text = value;
             return newTextValue;
@@ -141,6 +142,7 @@ export const propertiesTypeMapping = new Map<string, MappingParameters<any>>([
       updateMapping: (id: string, value: string, propertyDefinition: ResourcePropertyDefinition) => {
         switch (propertyDefinition.guiElement) {
           case Constants.GuiSimpleText:
+          case Constants.GuiTextarea:
             const newTextValue = new UpdateTextValueAsString();
             newTextValue.id = id;
             newTextValue.text = value;
