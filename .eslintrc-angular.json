@@ -13,7 +13,6 @@
         "plugin:@angular-eslint/template/process-inline-templates"
       ],
       "rules": {
-        // rules that need to be removed later on
         "@angular-eslint/template/no-negated-async": "off",
         "@typescript-eslint/adjacent-overload-signatures": "warn",
 
@@ -35,7 +34,7 @@
         ]
       }
     },
-    { // TODO: remove these .spec.ts eslint rules when refactoring unit tests
+    {
       "files": [
         "*.spec.ts"
       ],
@@ -55,7 +54,7 @@
         "plugin:@angular-eslint/template/recommended",
         "plugin:@angular-eslint/template/accessibility"
       ],
-      "rules": { // TODO: remove all those warnings when refactoring unit tests.
+      "rules": {
         "@angular-eslint/template/interactive-supports-focus": "off",
         "@angular-eslint/template/mouse-events-have-key-events": "off",
         "@angular-eslint/template/click-events-have-key-events": "off",

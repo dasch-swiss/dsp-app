@@ -1,0 +1,49 @@
+:host {
+  display: block;
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+.d-flex {
+  display: flex;
+}
+.node-item ::ng-deep .mat-mdc-form-field-subscript-wrapper {
+  display: none;
+}
+
+.medium-field {
+  margin-top: -6px;
+}
+
+.list-item-label {
+  width: 480px;
+  height: 48px;
+  display: inline-block;
+}
+.progress-indicator {
+  display: inline-block;
+  margin-bottom: -12px;
+}
+.add-node-btn,
+.edit-node-btn,
+.progress-indicator,
+.update-success-btn {
+  margin: 0 0 0 8px;
+}
+
+.update-success-btn {
+  color: green !important;
+  cursor: default;
+}
+
+.new-list-item {
+  display: inline-flex;
+  margin: 8px 0 0 40px;
+  width: 640px;
+}
+
+.list-item {
+  position: relative;
+  width:100%;
+  display: flex;
+}

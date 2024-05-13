@@ -8,10 +8,10 @@
         matTooltipShowDelay="750"
         [matTooltipPosition]="'above'"
         [matTooltipDisabled]="tooltipDisabled">
-        {{resClass.label}}
+        {{ resClass.label }}
       </div>
       <div class="entry-container">
-        <mat-icon>{{icon}}</mat-icon>
+        <mat-icon>{{ icon }}</mat-icon>
         <ngx-skeleton-loader
           *ngIf="(results$ | async) === undefined"
           count="1"
@@ -22,11 +22,11 @@
                     }">
         </ngx-skeleton-loader>
         <div *ngIf="(results$ | async) !== undefined" class="entry">
-          {{results$ | async | i18nPlural: itemPluralMapping['entry']}}
+          {{ results$ | async | i18nPlural: itemPluralMapping['entry'] }}
         </div>
       </div>
     </div>
-    <a class="icon link" *ngIf="projectMember" [routerLink]="getAddClassInstanceLink()">
+    <a class="icon link" *ngIf="projectMember" (click)="goToAddClassInstance()">
       <mat-icon>add_circle_outline</mat-icon>
     </a>
   </div>

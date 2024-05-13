@@ -9,7 +9,7 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ClassDefinition, Constants } from '@dasch-swiss/dsp-js';
 import { RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import {
@@ -23,8 +23,8 @@ import {
   LoadClassItemsCountAction,
   OntologyClassSelectors,
 } from '@dasch-swiss/vre/shared/app-state';
-import { Actions, Select, Store, ofActionSuccessful } from '@ngxs/store';
-import { Observable, Subject, Subscription, combineLatest } from 'rxjs';
+import { Actions, ofActionSuccessful, Select, Store } from '@ngxs/store';
+import { combineLatest, Observable, Subject, Subscription } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
 
 @Component({
@@ -74,7 +74,8 @@ export class OntologyClassItemComponent implements OnInit, AfterViewInit, OnDest
     private _cdr: ChangeDetectorRef,
     private _store: Store,
     private _actions$: Actions,
-    private _cd: ChangeDetectorRef
+    private _cd: ChangeDetectorRef,
+    private _router: Router
   ) {
     this._actions$.pipe(takeUntil(this.destroyed), ofActionSuccessful(LoadClassItemsCountAction)).subscribe(() => {
       this._cd.markForCheck();
@@ -134,7 +135,8 @@ export class OntologyClassItemComponent implements OnInit, AfterViewInit, OnDest
     }
   }
 
-  getAddClassInstanceLink(): string {
-    return `${this.classLink}/${RouteConstants.addClassInstance}`;
+  goToAddClassInstance() {
+    const link = `${this.classLink}/${RouteConstants.addClassInstance}`;
+    this._router.navigate(['/']).then(() => this._router.navigate([link]));
   }
 }

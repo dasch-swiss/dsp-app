@@ -2,11 +2,11 @@ import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular
 import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { ApiResponseError, KnoraApiConnection, ReadUser, User } from '@dasch-swiss/dsp-js';
 import { UserApiService } from '@dasch-swiss/vre/shared/app-api';
+import { CustomRegex } from '@dasch-swiss/vre/shared/app-common';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
 import { UserSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { Store } from '@ngxs/store';
-import { CustomRegex } from '../../../workspace/resource/values/custom-regex';
 
 @Component({
   selector: 'app-password-form',

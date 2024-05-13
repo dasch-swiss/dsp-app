@@ -1,9 +1,9 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { RouteConstants } from '@dasch-swiss/vre/shared/app-config';
+import { CreateResourcePageComponent } from '@dasch-swiss/vre/shared/app-resource-properties';
 import { CookiePolicyComponent } from './main/cookie-policy/cookie-policy.component';
 import { AuthGuard } from './main/guard/auth.guard';
-import { OntologyClassInstanceGuard } from './main/guard/ontology-class-instance.guard';
 import { HelpComponent } from './main/help/help.component';
 import { StatusComponent } from './main/status/status.component';
 import { CollaborationComponent } from './project/collaboration/collaboration.component';
@@ -24,6 +24,7 @@ import { SystemComponent } from './system/system.component';
 import { UsersComponent } from './system/users/users.component';
 import { OverviewComponent } from './user/overview/overview.component';
 import { UserComponent } from './user/user.component';
+import { ResourcePageComponent } from './workspace/resource/resource-page.component';
 import { ResourceComponent } from './workspace/resource/resource.component';
 import { ResultsComponent } from './workspace/results/results.component';
 import { AdvancedSearchContainerComponent } from './workspace/search/advanced-search/advanced-search-container.component';
@@ -70,14 +71,16 @@ const routes: Routes = [
         canActivate: [AuthGuard],
       },
       {
-        canActivate: [OntologyClassInstanceGuard],
         path: RouteConstants.OntologyClassRelative,
         component: OntologyClassInstanceComponent,
       },
       {
-        canActivate: [OntologyClassInstanceGuard],
-        path: RouteConstants.OntologyClassInstanceRelative,
-        component: OntologyClassInstanceComponent,
+        path: RouteConstants.OntologyClassAddRelative,
+        component: CreateResourcePageComponent,
+      },
+      {
+        path: RouteConstants.JulienOntologyClassRelative,
+        component: ResourcePageComponent,
       },
       {
         path: RouteConstants.addList,

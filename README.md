@@ -6,6 +6,18 @@
 
 This monorepo host different applications and libraries of the DaSCH Service Platform.
 
+# Install libraries
+
+Add
+
+```
+//npm.pkg.github.com/:_authToken=YOUR_NPM_TOKEN
+@dasch-swiss/dsp-js:registry=https://npm.pkg.github.com/dasch-swiss
+@dasch-swiss/jdnconvertiblecalendar:registry=https://registry.npmjs.org/
+```
+
+and run ```npm install```.
+
 ## @dasch-swiss librairies
 
 Please go to the following readme:

@@ -18,25 +18,25 @@ import {
 } from '@angular/core';
 import {
   ControlValueAccessor,
+  FormGroupDirective,
+  FormsModule,
+  NgControl,
+  NgForm,
+  ReactiveFormsModule,
   UntypedFormBuilder,
   UntypedFormControl,
   UntypedFormGroup,
-  FormGroupDirective,
-  NgControl,
-  NgForm,
   Validators,
-  FormsModule,
-  ReactiveFormsModule,
 } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import {
-  CanUpdateErrorState,
-  ErrorStateMatcher,
-  mixinErrorState,
   _AbstractConstructor,
   _Constructor,
+  CanUpdateErrorState,
+  ErrorStateMatcher,
   MatOptionModule,
+  mixinErrorState,
 } from '@angular/material/core';
 import { MatFormFieldControl, MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -82,6 +82,7 @@ class MatInputBase {
     public stateChanges: Subject<void>
   ) {}
 }
+
 const _MatInputMixinBase: CanUpdateErrorStateCtor & typeof MatInputBase = mixinErrorState(MatInputBase);
 
 @Component({
@@ -291,6 +292,7 @@ export class AppDatePickerComponent
 
     this.dateForm.valueChanges.subscribe(() => this.handleInput());
   }
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
   onChange = (_: any) => {};
 

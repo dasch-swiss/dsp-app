@@ -1,14 +1,18 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { CredentialsResponse, LoginResponse } from '@dasch-swiss/dsp-js';
+import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import { BaseApi } from '../base-api';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthenticationApiService extends BaseApi {
-  constructor(private _http: HttpClient) {
-    super('v2/authentication');
+  constructor(
+    private _http: HttpClient,
+    private _appConfig: AppConfigService
+  ) {
+    super('v2/authentication', _appConfig.dspApiConfig);
   }
 
   checkCredentials() {

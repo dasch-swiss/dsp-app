@@ -24,3 +24,9 @@ export class ToggleShowAllPropsAction {
 export class ToggleShowAllCommentsAction {
   static readonly type = '[Resource] Toggle Show All Comments';
 }
+
+export class LoadResourceAction {
+  static readonly type = '[Resource] Load resource';
+
+  constructor(public resourceIri: string) {}
+}

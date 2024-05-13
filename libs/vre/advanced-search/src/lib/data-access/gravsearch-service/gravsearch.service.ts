@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Constants } from '@dasch-swiss/dsp-js';
 import { GravsearchPropertyString, ResourceLabel } from '../advanced-search-service/advanced-search.service';
-import { PropertyFormItem, OrderByItem, Operators } from '../advanced-search-store/advanced-search-store.service';
+import { Operators, OrderByItem, PropertyFormItem } from '../advanced-search-store/advanced-search-store.service';
 
 @Injectable({
   providedIn: 'root',
@@ -58,7 +58,6 @@ export class GravsearchService {
       '}\n' +
       `${orderByString}\n` +
       'OFFSET 0';
-    // console.log('gravSearch: ', gravSearch);
 
     return gravSearch;
   }

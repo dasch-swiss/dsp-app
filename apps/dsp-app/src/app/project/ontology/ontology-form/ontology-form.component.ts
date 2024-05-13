@@ -10,6 +10,7 @@ import {
   ReadProject,
   UpdateOntologyMetadata,
 } from '@dasch-swiss/dsp-js';
+import { CustomRegex } from '@dasch-swiss/vre/shared/app-common';
 import { DspApiConnectionToken, RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { OntologyService, ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import {
@@ -26,7 +27,6 @@ import { Actions, ofActionSuccessful, Select, Store } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
 import { take, takeUntil, tap } from 'rxjs/operators';
 import { existingNamesValidator } from '../../../main/directive/existing-name/existing-names.validator';
-import { CustomRegex } from '../../../workspace/resource/values/custom-regex';
 
 export interface NewOntology {
   projectIri: string;

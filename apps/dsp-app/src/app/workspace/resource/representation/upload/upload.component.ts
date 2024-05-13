@@ -18,7 +18,7 @@ import {
   UpdateTextFileValue,
 } from '@dasch-swiss/dsp-js';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
-import { UploadedFileResponse, UploadFileService } from './upload-file.service';
+import { UploadedFileResponse, UploadFileService } from '@dasch-swiss/vre/shared/app-resource-properties';
 
 // https://stackoverflow.com/questions/45661010/dynamic-nested-reactive-form-expressionchangedafterithasbeencheckederror
 const resolvedPromise = Promise.resolve(null);
@@ -35,7 +35,7 @@ export class UploadComponent implements OnInit {
 
   @Input() formName: string;
 
-  @Output() fileInfo: EventEmitter<CreateFileValue> = new EventEmitter<CreateFileValue>();
+  @Output() fileInfo = new EventEmitter<CreateFileValue>();
 
   @Output() forceReload = new EventEmitter<void>();
 
@@ -75,7 +75,7 @@ export class UploadComponent implements OnInit {
     let files: File[] = [];
     files = event.target?.files ? event.target.files : event;
     // only one file at a time supported
-    if (this._isMoreThanOneFile(files)) {
+    if (files.length > 1) {
       const error = 'ERROR: Only one file allowed at a time';
       this._notification.openSnackBar(error);
       this.file = null;
@@ -175,7 +175,7 @@ export class UploadComponent implements OnInit {
   /**
    * initializes form group
    */
-  initializeForm(): void {
+  private initializeForm(): void {
     this.fileControl = new UntypedFormControl(null, Validators.required);
 
     this.fileControl.valueChanges.subscribe(val => {
@@ -201,16 +201,9 @@ export class UploadComponent implements OnInit {
   }
 
   /**
-   * resets form group
-   */
-  resetForm(): void {
-    this.form.reset();
-  }
-
-  /**
    * create a new file value.
    */
-  getNewValue(): CreateFileValue | false {
+  private getNewValue(): CreateFileValue | false {
     if (!this.form.valid) {
       return false;
     }
@@ -357,13 +350,5 @@ export class UploadComponent implements OnInit {
         break;
     }
     return this.allowedFileTypes;
-  }
-
-  /**
-   * checks if more than one file dropped
-   * @param files files array to be checked
-   */
-  private _isMoreThanOneFile(files: File[]): boolean {
-    return files.length > 1;
   }
 }

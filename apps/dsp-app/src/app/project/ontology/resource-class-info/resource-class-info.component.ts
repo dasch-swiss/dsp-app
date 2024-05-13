@@ -9,7 +9,6 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import {
   CanDoResponse,
   ClassDefinition,
@@ -20,31 +19,18 @@ import {
   ResourcePropertyDefinitionWithAllLanguages,
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken, RouteConstants } from '@dasch-swiss/vre/shared/app-config';
-import {
-  DefaultClass,
-  DefaultProperties,
-  DefaultProperty,
-  DefaultResourceClasses,
-  OntologyService,
-  PropertyCategory,
-  PropertyInfoObject,
-  SortingService,
-} from '@dasch-swiss/vre/shared/app-helper-services';
+import { DefaultClass, DefaultResourceClasses } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
 import {
   OntologiesSelectors,
   OntologyProperties,
-  PropertyAssignment,
-  PropToAdd,
   PropToDisplay,
   RemovePropertyAction,
   ReplacePropertyAction,
 } from '@dasch-swiss/vre/shared/app-state';
-import { Actions, ofActionSuccessful, Select, Store } from '@ngxs/store';
+import { Actions, ofActionSuccessful, Store } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
 import { map, take, takeUntil } from 'rxjs/operators';
-import { DialogComponent, DialogEvent } from '../../../main/dialog/dialog.component';
-import { GuiCardinality } from './resource-class-property-info/resource-class-property-info.component';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -63,30 +49,22 @@ export class ResourceClassInfoComponent implements OnInit, OnDestroy {
   @Input() projectUuid: string;
 
   @Input() projectStatus: boolean;
-
-  get lastModificationDate$(): Observable<string> {
-    return this.currentOntology$.pipe(
-      takeUntil(this.ngUnsubscribe),
-      map(x => x?.lastModificationDate)
-    );
-  }
-
   @Input() userCanEdit: boolean; // is user a project admin or sys admin?
 
   // event emitter when the lastModificationDate changed; bidirectional binding with lastModificationDate parameter
 
   // event emitter when the lastModificationDate changed; bidirectional binding with lastModificationDate parameter
-  @Output() ontoPropertiesChange: EventEmitter<PropertyDefinition[]> = new EventEmitter<PropertyDefinition[]>();
+  @Output() ontoPropertiesChange = new EventEmitter<PropertyDefinition[]>();
+
+  @Input() updatePropertyAssignment$: Subject<any>;
 
   // to update the resource class itself (edit or delete)
-  @Output() editResourceClass: EventEmitter<DefaultClass> = new EventEmitter<DefaultClass>();
-  @Output() deleteResourceClass: EventEmitter<DefaultClass> = new EventEmitter<DefaultClass>();
+  @Output() editResourceClass = new EventEmitter<DefaultClass>();
+  @Output() deleteResourceClass = new EventEmitter<DefaultClass>();
 
   // to update the assignment of a property to a class we need the information about property (incl. propType)
   // and resource class
-  @Output() updatePropertyAssignment: EventEmitter<string> = new EventEmitter<string>();
-
-  @Input() updatePropertyAssignment$: Subject<any>;
+  @Output() updatePropertyAssignment = new EventEmitter<string>();
 
   ontology: ReadOntology;
 
@@ -97,45 +75,22 @@ export class ResourceClassInfoComponent implements OnInit, OnDestroy {
 
   subClassOfLabel = '';
 
-  // list of default resource classes
-  defaultClasses: DefaultClass[] = DefaultResourceClasses.data;
-
-  // list of default property types
-  defaultProperties: PropertyCategory[] = DefaultProperties.data;
-
-  // load single property (in case of property cardinality action)
-  loadProperty = false;
-
-  get currentOntologyPropertiesToDisplay$(): Observable<PropToDisplay[]> {
-    return this.currentProjectOntologyProperties$.pipe(
-      takeUntil(this.ngUnsubscribe),
-      map(ontoProperties => this.getPropsToDisplay([...this.resourceClass.propertiesList], [...ontoProperties]))
-    );
-  }
-
-  // list of existing ontology properties, which are not in this resource class
-  get existingProperties$(): Observable<PropToAdd[]> {
-    return this.currentProjectOntologyProperties$.pipe(
-      takeUntil(this.ngUnsubscribe),
-      map(ontoProperties => this.getExistingProperties([...this.resourceClass.propertiesList], [...ontoProperties]))
-    );
-  }
+  readonly defaultClasses: DefaultClass[] = DefaultResourceClasses.data;
 
   // list of all ontologies with their properties
-  @Select(OntologiesSelectors.currentProjectOntologyProperties)
-  currentProjectOntologyProperties$: Observable<OntologyProperties[]>;
-  @Select(OntologiesSelectors.currentOntology)
-  currentOntology$: Observable<ReadOntology>;
+  currentProjectOntologyProperties$ = this._store.select(OntologiesSelectors.currentProjectOntologyProperties);
+
+  currentOntologyPropertiesToDisplay$: Observable<PropToDisplay[]> = this.currentProjectOntologyProperties$.pipe(
+    takeUntil(this.ngUnsubscribe),
+    map(ontoProperties => this.getPropsToDisplay([...this.resourceClass.propertiesList], [...ontoProperties]))
+  );
 
   constructor(
     @Inject(DspApiConnectionToken)
     private _dspApiConnection: KnoraApiConnection,
-    private _dialog: MatDialog,
     private _notification: NotificationService,
-    private _sortingService: SortingService,
     private _store: Store,
-    private _actions$: Actions,
-    private _ontoService: OntologyService
+    private _actions$: Actions
   ) {}
 
   ngOnInit(): void {
@@ -151,23 +106,8 @@ export class ResourceClassInfoComponent implements OnInit, OnDestroy {
     this.ngUnsubscribe.complete();
   }
 
-  trackByPropToAddFn = (index: number, item: PropToAdd) => `${index}-${item.ontologyId}`;
-
-  trackByPropCategoryFn = (index: number, item: PropertyCategory) => `${index}-${item.group}`;
-
-  trackByDefaultPropertyFn = (index: number, item: DefaultProperty) => `${index}-${item.label}`;
-
-  trackByPropFn = (index: number, item: PropertyInfoObject) => `${index}-${item.propDef?.id}`;
-
   trackByPropToDisplayFn = (index: number, item: PropToDisplay) => `${index}-${item.propertyIndex}`;
 
-  /**
-   * prepares props to display
-   * Not all props should be displayed; there are some system / API-specific
-   * properties which have to be filtered.
-   *
-   * @param classProps
-   */
   private getPropsToDisplay(classProps: PropToDisplay[], ontoProperties: OntologyProperties[]): PropToDisplay[] {
     if (classProps.length === 0 || ontoProperties.length === 0) {
       return [];
@@ -270,136 +210,6 @@ export class ResourceClassInfoComponent implements OnInit, OnDestroy {
       });
   }
 
-  addNewProperty(propType: DefaultProperty, currentOntologyPropertiesToDisplay: PropToDisplay[]) {
-    const propertyAssignment: PropertyAssignment = {
-      resClass: this.resourceClass,
-      property: {
-        propType,
-      },
-    };
-    this.assignProperty(propertyAssignment, currentOntologyPropertiesToDisplay);
-  }
-
-  addExistingProperty(prop: PropertyInfoObject, currentOntologyPropertiesToDisplay: PropToDisplay[]) {
-    const propertyAssignment: PropertyAssignment = {
-      resClass: this.resourceClass,
-      property: {
-        propType: prop.propType,
-        propDef: prop.propDef,
-      },
-    };
-    this.assignProperty(propertyAssignment, currentOntologyPropertiesToDisplay);
-  }
-
-  /**
-   * removes property from resource class
-   * @param property
-   */
-  removeProperty(property: DefaultClass, currentOntologyPropertiesToDisplay: PropToDisplay[]) {
-    // TODO temporary solution to replace eventemitter with subject because emitter loses subscriber after following subscription is triggered
-    this.updatePropertyAssignment.pipe(take(1)).subscribe(() => this.updatePropertyAssignment$.next());
-
-    this._store.dispatch(new RemovePropertyAction(property, this.resourceClass, currentOntologyPropertiesToDisplay));
-    this._actions$
-      .pipe(ofActionSuccessful(RemovePropertyAction))
-      .pipe(take(1))
-      .subscribe(res => {
-        // TODO should be the same as ontology lastModificationDate ? if yes remove commented line, otherwise add additional lastModificationDate property to the state
-        // this.lastModificationDate = res.lastModificationDate;
-        this.updatePropertyAssignment.emit(this.ontology.id);
-      });
-  }
-
-  /**
-   * assignProperty: Open the dialogue in order to add an existing property to a class or to create a new
-   * property and add it to the class
-   * @param propertyAssignment information about the link of a property to a class
-   * */
-  private assignProperty(propertyAssignment: PropertyAssignment, currentOntologyPropertiesToDisplay: PropToDisplay[]) {
-    if (!propertyAssignment) {
-      return;
-    }
-    const classLabel = propertyAssignment.resClass.label;
-
-    let mode: 'createProperty' | 'editProperty' = 'createProperty';
-    let propLabel = `${propertyAssignment.property.propType.group}: ${propertyAssignment.property.propType.label}`;
-    let title = `Add new property of type "${propLabel}" to class "${classLabel}"`;
-    if (propertyAssignment.property.propDef) {
-      // the property already exists. To assign an existing property simply open the dialog in edit mode
-      mode = 'editProperty';
-      propLabel = propertyAssignment.property.propDef.label;
-      title = `Add existing property "${propLabel}" to class "${classLabel}"`;
-    }
-
-    const dialogConfig: MatDialogConfig = {
-      width: '640px',
-      maxHeight: '80vh',
-      position: {
-        top: '112px',
-      },
-      data: {
-        propInfo: propertyAssignment.property,
-        title,
-        subtitle: 'Customize property and cardinality',
-        mode,
-        parentIri: propertyAssignment.resClass.id,
-        position: currentOntologyPropertiesToDisplay.length + 1,
-      },
-    };
-    this.openEditDialog(dialogConfig);
-  }
-
-  /**
-   * changeCardinalities: Open the dialogue in order to change the currentCardinality of an existing property and
-   * class combination
-   * @param cardRequest information about the property, its type and its new cardinalities to be set
-   * */
-  changeCardinalities(
-    cardRequest: {
-      prop: PropToDisplay;
-      propType: DefaultProperty;
-      targetCardinality: GuiCardinality;
-    },
-    currentOntologyPropertiesToDisplay: PropToDisplay[]
-  ) {
-    const dialogConfig: MatDialogConfig = {
-      width: '640px',
-      maxHeight: '80vh',
-      position: {
-        top: '112px',
-      },
-      data: {
-        propInfo: {
-          propDef: cardRequest.prop.propDef,
-          propType: cardRequest.propType,
-        },
-        title: 'Update cardinality',
-        subtitle: `Set the cardinality for property ${cardRequest.prop.propDef.label}`,
-        mode: 'updateCardinality',
-        parentIri: this.resourceClass.id,
-        currentCardinality: cardRequest.prop.cardinality,
-        targetCardinality: cardRequest.targetCardinality,
-        classProperties: currentOntologyPropertiesToDisplay,
-      },
-    };
-    this.openEditDialog(dialogConfig);
-  }
-
-  /**
-   * openEditDialog: Open the dialogue in order assign a property or change cardinalities
-   * @param dialogConfig the MatDialogConfig
-   * */
-  openEditDialog(dialogConfig: MatDialogConfig) {
-    const dialogRef = this._dialog.open(DialogComponent, dialogConfig);
-
-    dialogRef.afterClosed().subscribe((event: DialogEvent) => {
-      if (event !== DialogEvent.DialogCanceled) {
-        // update the view: list of properties in resource class
-        this.updatePropertyAssignment.emit(this.ontology.id);
-      }
-    });
-  }
-
   /**
    * drag and drop property line
    */
@@ -431,6 +241,21 @@ export class ResourceClassInfoComponent implements OnInit, OnDestroy {
     }
   }
 
+  removeProperty(property: DefaultClass, currentOntologyPropertiesToDisplay: PropToDisplay[]) {
+    // TODO temporary solution to replace eventemitter with subject because emitter loses subscriber after following subscription is triggered
+    this.updatePropertyAssignment.pipe(take(1)).subscribe(() => this.updatePropertyAssignment$.next());
+
+    this._store.dispatch(new RemovePropertyAction(property, this.resourceClass, currentOntologyPropertiesToDisplay));
+    this._actions$
+      .pipe(ofActionSuccessful(RemovePropertyAction))
+      .pipe(take(1))
+      .subscribe(res => {
+        // TODO should be the same as ontology lastModificationDate ? if yes remove commented line, otherwise add additional lastModificationDate property to the state
+        // this.lastModificationDate = res.lastModificationDate;
+        this.updatePropertyAssignment.emit(this.ontology.id);
+      });
+  }
+
   /**
    * opens resource instances in new tab using gravsearch
    * @param iri
@@ -457,59 +282,5 @@ OFFSET 0`;
 
     const doSearchRoute = `/${RouteConstants.search}/${RouteConstants.gravSearch}/${encodeURIComponent(gravsearch)}`;
     window.open(doSearchRoute, '_blank');
-  }
-
-  private getExistingProperties(classProps: PropToDisplay[], ontoProperties: OntologyProperties[]): PropToAdd[] {
-    if (classProps.length === 0 || ontoProperties.length === 0) {
-      return [];
-    }
-
-    const existingProperties: PropToAdd[] = [];
-    const currentProjectOntologies = this._store.selectSnapshot(OntologiesSelectors.currentProjectOntologies);
-    ontoProperties.forEach((op: OntologyProperties, i: number) => {
-      const onto = currentProjectOntologies.find(j => j?.id === op.ontology);
-      existingProperties.push({
-        ontologyId: op.ontology,
-        ontologyLabel: onto?.label,
-        properties: [],
-      });
-
-      op.properties.forEach((availableProp: ResourcePropertyDefinitionWithAllLanguages) => {
-        const superProp = this._ontoService.getSuperProperty(availableProp, currentProjectOntologies);
-        if (superProp && availableProp.subPropertyOf.indexOf(superProp) === -1) {
-          availableProp.subPropertyOf.push(superProp);
-        }
-
-        let propType: DefaultProperty;
-        // find corresponding default property to have more prop info
-        this._ontoService.getDefaultPropType(availableProp).subscribe((prop: DefaultProperty) => {
-          propType = prop;
-        });
-
-        const propToAdd: PropertyInfoObject = {
-          propType,
-          propDef: availableProp,
-        };
-
-        if (this.isPropertyToAdd(classProps, availableProp)) {
-          existingProperties[i].properties.push(propToAdd);
-        }
-      });
-    });
-
-    return existingProperties;
-  }
-
-  private isPropertyToAdd(
-    classProps: PropToDisplay[],
-    availableProp: ResourcePropertyDefinitionWithAllLanguages
-  ): boolean {
-    return (
-      classProps.findIndex(x => x.propertyIndex === availableProp.id) === -1 &&
-      ((availableProp.subjectType &&
-        !availableProp.subjectType.includes('Standoff') &&
-        availableProp.objectType !== Constants.LinkValue) ||
-        !availableProp.isLinkValueProperty)
-    );
   }
 }

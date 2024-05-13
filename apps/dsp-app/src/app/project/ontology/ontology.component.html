@@ -110,41 +110,6 @@
             (click)="view = 'properties'"
             >Properties</a
           >
-          <span
-            mat-list-item
-            *ngIf="(project$ | async)?.status && (isAdmin$ | async) === true && (currentOntology$ | async).id"
-            [matTooltip]="'This data model can\'t be edited because of missing \'lastModificationDate\'!'"
-            [matTooltipDisabled]="lastModificationDate$ | async">
-            <button
-              mat-button
-              data-cy="create-property-button"
-              *ngIf="view === 'properties'"
-              [matMenuTriggerFor]="addPropertyMenu"
-              [disabled]="lastModificationDate$ | async | isFalsy">
-              <mat-icon>add</mat-icon>
-              Create new property
-            </button>
-            <mat-menu #addPropertyMenu="matMenu" xPosition="before" class="switch-nested-menu">
-              <ng-container *ngFor="let type of defaultProperties; trackBy: trackByPropertyCategoryFn">
-                <button mat-menu-item [matMenuTriggerFor]="sub_menu" [attr.data-cy]="type.group">
-                  {{ type.group }}
-                </button>
-                <mat-menu #sub_menu="matMenu" class="switch-nested-sub-menu">
-                  <button
-                    mat-menu-item
-                    *ngFor="let ele of type.elements; trackBy: trackByElementFn"
-                    [attr.data-cy]="ele.label"
-                    [value]="ele"
-                    [matTooltip]="ele.description"
-                    matTooltipPosition="before"
-                    (click)="openPropertyForm('createProperty', {propType: ele})">
-                    <mat-icon>{{ ele.icon }}</mat-icon>
-                    {{ ele.label }}
-                  </button>
-                </mat-menu>
-              </ng-container>
-            </mat-menu>
-          </span>
         </mat-list>
       </mat-sidenav>
 
@@ -172,7 +137,7 @@
               *ngFor="let prop of ontoProperties?.properties; trackBy: trackByPropertyDefinitionFn; let odd = odd"
               [class.odd]="odd">
               <!-- display only properties with guiOrder and if they exist in list of properties;
-                                                                                                                     if objectType is a linkValue hide it (otherwise we have the property twice) -->
+                                                                                                                                                               if objectType is a linkValue hide it (otherwise we have the property twice) -->
               <app-property-info
                 [propDef]="(currentOntology$ | async)?.properties[prop.id]"
                 [projectUuid]="projectUuid"
@@ -180,7 +145,7 @@
                 [lastModificationDate]="lastModificationDate$ | async"
                 (lastModificationDate)="onLastModificationDateChange()"
                 [userCanEdit]="isAdmin$ | async"
-                (editResourceProperty)="openPropertyForm('editProperty', $event)"
+                (editResourceProperty)="editProperty($event)"
                 (deleteResourceProperty)="deleteProperty($event.iri)">
               </app-property-info>
             </mat-list-item>

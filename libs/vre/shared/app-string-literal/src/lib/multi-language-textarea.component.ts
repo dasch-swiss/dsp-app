@@ -39,11 +39,13 @@ import { MultiLanguageFormService } from './multi-language-form.service';
           [readonly]="!editable"
           [ngModel]="formService.inputValue"
           (blur)="formService.formArray.markAsTouched()"
-          (ngModelChange)="formService.onInputChange($event)"></textarea>
+          (ngModelChange)="formService.onInputChange($event)"
+          [disabled]="formService.selectedFormControl?.disabled ?? false"></textarea>
       </mat-form-field>
       <mat-button-toggle-group matPrefix #group="matButtonToggleGroup" vertical>
         <mat-button-toggle
           *ngFor="let lang of formService.availableLanguages; let index = index"
+          tabIndex="-1"
           (click)="formService.changeLanguage(index); textInput.focus()"
           [checked]="index === formService.selectedLanguageIndex"
           [class.bold]="formService.getFormControlWithLanguage(lang) !== undefined">

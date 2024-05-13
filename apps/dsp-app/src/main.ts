@@ -6,6 +6,8 @@ import { AppModule } from './app/app.module';
 import { environment } from './environments/environment';
 
 function initSentry(environmentName: string) {
+  if (environmentName === 'local-dev') return;
+
   Sentry.init({
     dsn: 'https://20bfc69ec9e457239886c1128cc17928@o4506122165747712.ingest.us.sentry.io/4506122171252736',
     environment: environmentName,
@@ -41,6 +43,7 @@ function configListener() {
     console.error(error);
   }
 }
+
 function configFailed() {
   console.error('Error: retrieving config.json');
 }

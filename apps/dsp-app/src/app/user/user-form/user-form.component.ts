@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ReadUser, StringLiteral } from '@dasch-swiss/dsp-js';
+import { CustomRegex } from '@dasch-swiss/vre/shared/app-common';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { UserSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { Select } from '@ngxs/store';
@@ -8,7 +9,6 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { AppGlobal } from '../../app-global';
 import { existingNamesAsyncValidator } from '../../main/directive/existing-name/existing-names.validator';
-import { CustomRegex } from '../../workspace/resource/values/custom-regex';
 import { UserForm } from './user-form.type';
 
 @Component({

@@ -1,6 +1,10 @@
 @use '../../../styles/config' as *;
 @use '../../../styles/responsive' as *;
 
+:host ::ng-deep .mat-mdc-tab-body {
+  min-height: 70vh;
+}
+
 .representation-container {
   width: 100%;
   min-width: 500px;

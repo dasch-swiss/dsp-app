@@ -144,7 +144,7 @@ export class OntologyV2ApiService extends BaseApi {
     return this._http.patch(`${this.baseUri}/cardinalities`, payload);
   }
 
-  replaceGuiOrderOfCardinalities(payload) {
+  replaceGuiOrderOfCardinalities(payload: any) {
     return this._http.put<ResourcePropertyDefinitionWithAllLanguages>(`${this.baseUri}/guiorder`, payload);
   }
 

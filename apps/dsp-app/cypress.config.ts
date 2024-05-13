@@ -10,6 +10,7 @@ export default defineConfig({
     viewportWidth: 1024,
     supportFile: 'cypress/support/e2e.ts',
     baseUrl: 'http://localhost:4200',
+    experimentalStudio: true,
     env: {
       apiUrl: 'http://0.0.0.0:3333',
     },

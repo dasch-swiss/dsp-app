@@ -93,6 +93,7 @@ export class MultiLanguageFormService {
   }
 
   changeLanguage(languageIndex: number) {
+    this._cleanEmptyValues();
     this.selectedLanguageIndex = languageIndex;
 
     const existingControl = this.formArray.controls.find(
@@ -100,6 +101,14 @@ export class MultiLanguageFormService {
     );
 
     this.inputValue = existingControl ? this.selectedLanguageControl.value : null;
+  }
+
+  private _cleanEmptyValues() {
+    this.formArray.getRawValue().forEach((v, index) => {
+      if (v.value === '') {
+        this.formArray.removeAt(index);
+      }
+    });
   }
 
   private _setupLanguageIndex(): number {

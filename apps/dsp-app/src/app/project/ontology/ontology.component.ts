@@ -34,6 +34,10 @@ import {
   SortingService,
 } from '@dasch-swiss/vre/shared/app-helper-services';
 import {
+  EditPropertyFormDialogComponent,
+  EditPropertyFormDialogProps,
+} from '@dasch-swiss/vre/shared/app-property-form';
+import {
   ClearCurrentOntologyAction,
   ClearProjectOntologiesAction,
   CurrentOntologyCanBeDeletedAction,
@@ -48,8 +52,8 @@ import {
   UserSelectors,
 } from '@dasch-swiss/vre/shared/app-state';
 import { MultiLanguages } from '@dasch-swiss/vre/shared/app-string-literal';
-import { Actions, Select, Store, ofActionSuccessful } from '@ngxs/store';
-import { Observable, Subject, combineLatest } from 'rxjs';
+import { Actions, ofActionSuccessful, Select, Store } from '@ngxs/store';
+import { combineLatest, Observable, Subject } from 'rxjs';
 import { map, switchMap, take, takeUntil } from 'rxjs/operators';
 import { DialogComponent } from '../../main/dialog/dialog.component';
 import { DialogService } from '../../main/services/dialog.service';
@@ -327,8 +331,6 @@ export class OntologyComponent extends ProjectBase implements OnInit, OnDestroy 
     };
   }
 
-  trackByPropertyCategoryFn = (index: number, item: PropertyCategory) => `${index}-${item.group}`;
-
   trackByClassDefinitionFn = (index: number, item: ClassDefinition) => `${index}-${item.id}`;
 
   trackByPropertyDefinitionFn = (index: number, item: PropertyDefinition) => `${index}-${item.id}`;
@@ -463,38 +465,23 @@ export class OntologyComponent extends ProjectBase implements OnInit, OnDestroy 
       });
   }
 
-  /**
-   * opens property form to create or edit property info
-   * @param mode whether an existing property is assigned or a new one is created
-   * @param propertyInfo the property to assign and edit
-   */
-  openPropertyForm(mode: 'createProperty' | 'editProperty', propertyInfo: PropertyInfoObject): void {
-    const title = propertyInfo.propDef
-      ? propertyInfo.propDef.label
-      : `${propertyInfo.propType.group}: ${propertyInfo.propType.label}`;
-
-    const dialogConfig: MatDialogConfig = {
-      width: '640px',
-      maxHeight: '80vh',
-      position: {
-        top: '112px',
-      },
-      data: {
-        propInfo: propertyInfo,
-        title,
-        subtitle: 'Customize property',
-        mode,
-      },
-    };
-
-    const dialogRef = this._dialog.open(DialogComponent, dialogConfig);
-
-    dialogRef.afterClosed().subscribe(() => {
-      // get the ontologies for this project
-      this.initOntologiesList();
-      // update the view of resource class or list of properties
-      this.initOntology();
-    });
+  editProperty(data: PropertyInfoObject) {
+    const ontology = this._store.selectSnapshot(OntologiesSelectors.currentOntology);
+    this._dialog
+      .open<EditPropertyFormDialogComponent, EditPropertyFormDialogProps>(EditPropertyFormDialogComponent, {
+        data: {
+          ontology,
+          lastModificationDate: ontology.lastModificationDate,
+          propertyInfo: data,
+        },
+      })
+      .afterClosed()
+      .subscribe(() => {
+        // get the ontologies for this project
+        this.initOntologiesList();
+        // update the view of resource class or list of properties
+        this.initOntology();
+      });
   }
 
   deleteOntology() {

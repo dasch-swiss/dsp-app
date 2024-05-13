@@ -28,18 +28,19 @@ Cypress.Commands.add(
 
     cy.intercept('POST', '/v2/ontologies/classes').as('createClassRequest');
 
-    cy.createOntology(projectPage);
+    return cy.createOntology(projectPage).then(() => {
+      cy.wait(3000); // TODO remove
+      cy.get('[data-cy=create-class-button]').scrollIntoView().should('be.visible').click();
+      cy.get('[data-cy=TextRepresentation]').scrollIntoView().should('be.visible').click();
+      cy.get('[data-cy=comment-textarea]').should('be.visible').clear().type(resourceClass.comment[0].value);
+      cy.get('[data-cy=name-input]').clear().type(resourceClass.name);
+      cy.get('[data-cy=label-input]').clear().type(resourceClass.label[0].value);
+      cy.get('[data-cy=submit-button]').should('be.visible').click();
 
-    cy.get('[data-cy=create-class-button]').scrollIntoView().should('be.visible').click();
-    cy.get('[data-cy=TextRepresentation]').scrollIntoView().should('be.visible').click();
-    cy.get('[data-cy=comment-textarea]').should('be.visible').clear().type(resourceClass.comment[0].value);
-    cy.get('[data-cy=name-input]').clear().type(resourceClass.name);
-    cy.get('[data-cy=label-input]').clear().type(resourceClass.label[0].value);
-    cy.get('[data-cy=submit-button]').should('be.visible').click();
+      cy.wait('@createClassRequest');
+      cy.log('Data model class created!');
 
-    cy.wait('@createClassRequest');
-    cy.log('Data model class created!');
-
-    return cy.wrap(resourceClass).as('dataModelClass');
+      return cy.wrap(resourceClass).as('dataModelClass');
+    });
   }
 );

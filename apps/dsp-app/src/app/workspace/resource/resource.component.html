@@ -13,33 +13,39 @@
           [matTooltip]="resourceClassType?.comment"
           matTooltipClass="header-tooltip"
           matTooltipPosition="above">
-          {{resourceClassType?.label}}<span *ngIf="resource.res.isDeleted">(deleted)</span>
+          {{ resourceClassType?.label }}<span *ngIf="resource.res.isDeleted">(deleted)</span>
         </h3>
         <app-resource-toolbar
           [resource]="resource"
           [lastModificationDate]="resource.res.lastModificationDate"
           [adminPermissions]="isAdmin$ | async"
-          [attachedProject]="project$ | async"
+          [showEditLabel]="false"
           (regionChanged)="regionChanged.emit()"
           (regionDeleted)="regionDeleted.emit()"></app-resource-toolbar>
+        <!-- TODO uncomment this on  top -->
       </div>
       <div class="resource-label">
-        <h4>{{resource.res.label}}</h4>
-        <button mat-icon-button color="primary" matTooltip="Edit label" (click)="openEditDialog()" *ngIf="userCanEdit">
+        <h4>{{ resource.res.label }}</h4>
+        <button
+          mat-icon-button
+          color="primary"
+          matTooltip="Edit label"
+          (click)="openEditLabelDialog()"
+          *ngIf="userCanEdit">
           <mat-icon>edit</mat-icon>
         </button>
       </div>
       <div class="infobar mat-caption" *ngIf="(project$ | async) as project">
         Resource of the project
         <a class="link" [title]="project.longname" (click)="openProject(project)" (mouseover)="previewProject()">
-          <strong>{{project?.shortname}}</strong></a
+          <strong>{{ project?.shortname }}</strong></a
         ><span *ngIf="resourceAttachedUser || resource.res.creationDate"
           >, created
           <span *ngIf="resourceAttachedUser"
-            >by {{(resourceAttachedUser.username ? resourceAttachedUser.username : resourceAttachedUser.givenName + ' '
-            + resourceAttachedUser.familyName)}}</span
+            >by {{ (resourceAttachedUser.username ? resourceAttachedUser.username : resourceAttachedUser.givenName + ' '
+            + resourceAttachedUser.familyName) }}</span
           >
-          <span *ngIf="resource.res.creationDate"> on {{resource.res.creationDate | date}}</span>
+          <span *ngIf="resource.res.creationDate"> on {{ resource.res.creationDate | date }}</span>
         </span>
       </div>
     </div>
@@ -115,7 +121,7 @@
       </app-text>
 
       <span *ngSwitchDefault>
-        The file representation type "{{representationsToDisplay[0].fileValue.type}}" is not yet implemented
+        The file representation type "{{ representationsToDisplay[0].fileValue.type }}" is not yet implemented
       </span>
 
       <!-- TODO: here we'll add more viewers and players dsp-moving-image, dsp-audio etc. -->
@@ -129,32 +135,21 @@
         (selectedTabChange)="tabChanged($event)">
         <!-- first tab for the main resource e.g. book -->
         <mat-tab #matTabProperties [label]="'appLabels.resource.properties' | translate">
-          <app-properties
-            *ngIf="resource.res"
-            [lastModificationDate]="resource.res.lastModificationDate"
+          <app-properties-display
+            *ngIf="resourceProperties"
             [resource]="resource"
-            [adminPermissions]="isAdmin$ | async"
-            [attachedUser]="resourceAttachedUser"
-            [attachedProject]="project$ | async"
-            [valueUuidToHighlight]="valueUuid">
-          </app-properties>
+            [properties]="resourceProperties"></app-properties-display>
         </mat-tab>
 
         <!-- incoming resource -->
         <mat-tab *ngIf="incomingResource" #matTabIncoming [label]="resourceClassLabel(incomingResource)">
-          <app-properties
-            *ngIf="incomingResource.res"
+          <app-properties-display
             [resource]="incomingResource"
-            [adminPermissions]="isAdmin$ | async"
-            [attachedUser]="resourceAttachedUser"
-            [attachedProject]="project$ | async"
-            [valueUuidToHighlight]="valueUuid">
-          </app-properties>
+            [properties]="incomingResource.resProps"></app-properties-display>
         </mat-tab>
 
         <!-- annotations -->
         <mat-tab
-          #matTabAnnotations
           label="annotations"
           *ngIf="representationsToDisplay?.length && representationsToDisplay[0].fileValue && representationsToDisplay[0].fileValue.type === representationConstants.stillImage">
           <ng-template matTabLabel class="annotations">
@@ -168,42 +163,34 @@
           </ng-template>
           <div
             class="region-property"
-            *ngFor="let annotation of annotationResources"
+            *ngFor="let annotation of annotationResources; trackby: trackAnnotationByFn"
             [id]="annotation.res.id"
             [class.active]="annotation.res.id === selectedRegion">
-            <app-properties
-              [resource]="annotation"
-              [adminPermissions]="isAdmin$ | async"
-              [attachedUser]="resourceAttachedUser"
-              [attachedProject]="project$ | async"
-              [valueUuidToHighlight]="valueUuid"
-              (regionChanged)="updateRegion()"
-              isAnnotation="true"
-              (regionDeleted)="reloadWithResource()">
-            </app-properties>
+            <app-properties-display [resource]="annotation" [properties]="annotation.resProps" isAnnotation="true">
+            </app-properties-display>
           </div>
         </mat-tab>
       </mat-tab-group>
       <ng-template #deletedResource>
-        <app-properties
-          *ngIf="resource.res"
-          [resource]="resource"
-          [adminPermissions]="isAdmin$ | async"
-          [attachedUser]="resourceAttachedUser"
-          [attachedProject]="project$ | async"
-          [valueUuidToHighlight]="valueUuid">
-        </app-properties>
+        <!-- TODO!!! -->
+        <!--<app-properties
+                                                                                                                                                                                                                                                                                                  *ngIf="resource.res"
+                                                                                                                                                                                                                                                                                                  [resource]="resource"
+                                                                                                                                                                                                                                                                                                  [displayProjectInfo]="true"
+                                                                                                                                                                                                                                                                                                  [adminPermissions]="isAdmin$ | async"
+                                                                                                                                                                                                                                                                                                  [valueUuidToHighlight]="valueUuid">
+                                                                                                                                                                                                                                                                                                </app-properties>-->
       </ng-template>
     </div>
     <!-- progress indicator -->
     <dasch-swiss-app-progress-indicator *ngIf="loading"></dasch-swiss-app-progress-indicator>
   </div>
-
+  <dasch-swiss-app-progress-indicator *ngIf="!resource && loading"></dasch-swiss-app-progress-indicator>
   <!-- resource not found  -->
   <div *ngIf="!resource && !loading" class="no-results">
     <p>
       The resource
-      <span *ngIf="resourceIri">&mdash; <strong> {{resourceIri}}</strong> &mdash;</span>
+      <span *ngIf="resourceIri">&mdash; <strong> {{ resourceIri }}</strong> &mdash;</span>
       could not be found.
     </p>
     <p>Reasons:</p>

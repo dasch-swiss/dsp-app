@@ -36,6 +36,10 @@ export class HumanReadableErrorPipe implements PipeTransform {
       return 'This is already taken by another entity';
     }
 
+    if (error.hasOwnProperty('whitespace')) {
+      return 'This field should not contain whitespace';
+    }
+
     throw Error(`Form control error "${Object.keys(error)[0]}" is not handled`);
   }
 }

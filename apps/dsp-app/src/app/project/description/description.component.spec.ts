@@ -24,13 +24,11 @@ import {
   ReadProject,
   StringLiteral,
 } from '@dasch-swiss/dsp-js';
-import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
-import { DspApiConfigToken, DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
+import { AppConfigService, DspApiConfigToken, DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
 import { ApplicationStateService } from '@dasch-swiss/vre/shared/app-state-service';
 import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
 import { StatusComponent } from '@dsp-app/src/app/main/status/status.component';
-import { ProjectService } from '@dsp-app/src/app/workspace/resource/services/project.service';
 import { TestConfig } from '@dsp-app/src/test.config';
 import { TranslateModule } from '@ngx-translate/core';
 import { MockProvider } from 'ng-mocks';
@@ -56,6 +54,7 @@ class MockStringLiteralInputComponent {
   @Input() value: StringLiteral[] = [];
   @Input() disabled: boolean;
   @Input() readonly: boolean;
+
   constructor() {}
 }
 
@@ -65,6 +64,7 @@ class MockStringLiteralInputComponent {
 @Component({ selector: 'app-project-form', template: '' })
 class MockProjectFormComponent {
   @Input() projectIri: string;
+
   constructor() {}
 }
 

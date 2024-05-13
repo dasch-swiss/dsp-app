@@ -35,13 +35,13 @@ import {
   UpdateValue,
   WriteValueResponse,
 } from '@dasch-swiss/dsp-js';
+import { DspCompoundPosition } from '@dasch-swiss/vre/shared/app-common';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
 import * as OpenSeadragon from 'openseadragon';
 import { Subscription } from 'rxjs';
 import { mergeMap } from 'rxjs/operators';
 import { DialogComponent } from '../../../../main/dialog/dialog.component';
-import { DspCompoundPosition } from '../../dsp-resource';
 import {
   EmitEvent,
   Events,

@@ -9,36 +9,92 @@
     "declaration": false,
     "target": "ES2022",
     "module": "ES2020",
-    "lib": ["ES2021", "dom"],
+    "lib": [
+      "ES2021",
+      "dom"
+    ],
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "typeRoots": ["node_modules/@types"],
+    "typeRoots": [
+      "node_modules/@types"
+    ],
     "useDefineForClassFields": true,
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
     "paths": {
-      "@dasch-swiss/jdnconvertiblecalendar": ["libs/jdnconvertiblecalendar/src/index.ts"],
-      "@dasch-swiss/jdnconvertiblecalendardateadapter": ["libs/jdnconvertiblecalendardateadapter/src/index.ts"],
-      "@dasch-swiss/shared/prelude": ["libs/shared/prelude/src/index.ts"],
-      "@dasch-swiss/vre/advanced-search": ["libs/vre/advanced-search/src/index.ts"],
-      "@dasch-swiss/vre/open-api": ["libs/vre/open-api/src/index.ts"],
-      "@dasch-swiss/vre/shared/app-analytics": ["libs/vre/shared/app-analytics/src/index.ts"],
-      "@dasch-swiss/vre/shared/app-api": ["libs/vre/shared/app-api/src/index.ts"],
-      "@dasch-swiss/vre/shared/app-config": ["libs/vre/shared/app-config/src/index.ts"],
-      "@dasch-swiss/vre/shared/app-date-picker": ["libs/vre/shared/app-date-picker/src/index.ts"],
-      "@dasch-swiss/vre/shared/app-error-handler": ["libs/vre/shared/app-error-handler/src/index.ts"],
-      "@dasch-swiss/vre/shared/app-helper-services": ["libs/vre/shared/app-helper-services/src/index.ts"],
-      "@dasch-swiss/vre/shared/app-logging": ["libs/vre/shared/app-logging/src/index.ts"],
-      "@dasch-swiss/vre/shared/app-notification": ["libs/vre/shared/app-notification/src/index.ts"],
-      "@dasch-swiss/vre/shared/app-progress-indicator": ["libs/vre/shared/app-progress-indicator/src/index.ts"],
-      "@dasch-swiss/vre/shared/app-session": ["libs/vre/shared/app-session/src/index.ts"],
-      "@dasch-swiss/vre/shared/app-state": ["libs/vre/shared/app-state/src/index.ts"],
-      "@dasch-swiss/vre/shared/app-state-service": ["libs/vre/shared/app-state-service/src/index.ts"],
-      "@dasch-swiss/vre/shared/app-string-literal": ["libs/vre/shared/app-string-literal/src/index.ts"],
-      "@dasch-swiss/vre/shared/assets/status-msg": ["libs/vre/shared/assets/status-msg/src/index.ts"],
-      "@dasch-swiss/vre/shared/open-api": ["libs/vre/shared/open-api/src/index.ts"],
-      "@dsp-app/*": ["apps/dsp-app/*"]
+      "@dasch-swiss/jdnconvertiblecalendar": [
+        "libs/jdnconvertiblecalendar/src/index.ts"
+      ],
+      "@dasch-swiss/jdnconvertiblecalendardateadapter": [
+        "libs/jdnconvertiblecalendardateadapter/src/index.ts"
+      ],
+      "@dasch-swiss/shared/prelude": [
+        "libs/shared/prelude/src/index.ts"
+      ],
+      "@dasch-swiss/vre/advanced-search": [
+        "libs/vre/advanced-search/src/index.ts"
+      ],
+      "@dasch-swiss/vre/open-api": [
+        "libs/vre/open-api/src/index.ts"
+      ],
+      "@dasch-swiss/vre/shared/app-analytics": [
+        "libs/vre/shared/app-analytics/src/index.ts"
+      ],
+      "@dasch-swiss/vre/shared/app-api": [
+        "libs/vre/shared/app-api/src/index.ts"
+      ],
+      "@dasch-swiss/vre/shared/app-common": [
+        "libs/vre/shared/app-common/src/index.ts"
+      ],
+      "@dasch-swiss/vre/shared/app-config": [
+        "libs/vre/shared/app-config/src/index.ts"
+      ],
+      "@dasch-swiss/vre/shared/app-date-picker": [
+        "libs/vre/shared/app-date-picker/src/index.ts"
+      ],
+      "@dasch-swiss/vre/shared/app-error-handler": [
+        "libs/vre/shared/app-error-handler/src/index.ts"
+      ],
+      "@dasch-swiss/vre/shared/app-helper-services": [
+        "libs/vre/shared/app-helper-services/src/index.ts"
+      ],
+      "@dasch-swiss/vre/shared/app-logging": [
+        "libs/vre/shared/app-logging/src/index.ts"
+      ],
+      "@dasch-swiss/vre/shared/app-notification": [
+        "libs/vre/shared/app-notification/src/index.ts"
+      ],
+      "@dasch-swiss/vre/shared/app-progress-indicator": [
+        "libs/vre/shared/app-progress-indicator/src/index.ts"
+      ],
+      "@dasch-swiss/vre/shared/app-property-form": [
+        "libs/vre/shared/app-property-form/src/index.ts"
+      ],
+      "@dasch-swiss/vre/shared/app-resource-properties": [
+        "libs/vre/shared/app-resource-properties/src/index.ts"
+      ],
+      "@dasch-swiss/vre/shared/app-session": [
+        "libs/vre/shared/app-session/src/index.ts"
+      ],
+      "@dasch-swiss/vre/shared/app-state": [
+        "libs/vre/shared/app-state/src/index.ts"
+      ],
+      "@dasch-swiss/vre/shared/app-state-service": [
+        "libs/vre/shared/app-state-service/src/index.ts"
+      ],
+      "@dasch-swiss/vre/shared/app-string-literal": [
+        "libs/vre/shared/app-string-literal/src/index.ts"
+      ],
+      "@dasch-swiss/vre/shared/assets/status-msg": [
+        "libs/vre/shared/assets/status-msg/src/index.ts"
+      ],
+      "@dasch-swiss/vre/shared/open-api": [
+        "libs/vre/shared/open-api/src/index.ts"
+      ],
+      "@dsp-app/*": [
+        "apps/dsp-app/*"
+      ]
     }
   },
   "angularCompilerOptions": {
@@ -46,5 +102,8 @@
     "preserveWhitespaces": true,
     "strictTemplate": true
   },
-  "exclude": ["node_modules", "tmp"]
+  "exclude": [
+    "node_modules",
+    "tmp"
+  ]
 }

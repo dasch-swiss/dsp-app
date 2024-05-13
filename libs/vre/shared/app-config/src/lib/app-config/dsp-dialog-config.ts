@@ -13,4 +13,18 @@ export class DspDialogConfig {
       data: dialogData,
     };
   }
+
+  static smallDialog<T = any>(dialogData?: T): MatDialogConfig<T> {
+    return {
+      minWidth: 500,
+      data: dialogData,
+    };
+  }
+
+  static mediumDialog<T = any>(dialogData?: T): MatDialogConfig<T> {
+    return {
+      minWidth: 800,
+      data: dialogData,
+    };
+  }
 }

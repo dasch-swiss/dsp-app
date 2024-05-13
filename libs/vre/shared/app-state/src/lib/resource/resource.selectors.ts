@@ -1,4 +1,5 @@
 import { ReadProject, ReadUser } from '@dasch-swiss/dsp-js';
+import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { Selector } from '@ngxs/store';
 import { IKeyValuePairs } from '../model-interfaces';
 import { ResourceState } from './resource.state';
@@ -28,5 +29,10 @@ export class ResourceSelectors {
   @Selector([ResourceState])
   static attachedProjects(state: ReourceStateModel): IKeyValuePairs<ReadProject> {
     return state.attachedProjects;
+  }
+
+  @Selector([ResourceState])
+  static resource(state: ReourceStateModel): DspResource | null {
+    return state.resource;
   }
 }

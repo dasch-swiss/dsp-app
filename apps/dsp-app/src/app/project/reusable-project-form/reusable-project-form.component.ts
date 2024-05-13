@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { ProjectsSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { DEFAULT_MULTILANGUAGE_FORM, MultiLanguages } from '@dasch-swiss/vre/shared/app-string-literal';
 import { Store } from '@ngxs/store';
@@ -76,6 +76,10 @@ export class ReusableProjectFormComponent implements OnInit {
     this.afterFormInit.emit(this.form);
   }
 
+  public noWhitespaceValidator(control: FormControl) {
+    return (control.value || '').trim().length ? null : { errorKey: 'whitespace', message: 'no whitespace' };
+  }
+
   private _buildForm() {
     const existingShortcodes = this._store.selectSnapshot(ProjectsSelectors.allProjectShortcodes);
 
@@ -92,7 +96,13 @@ export class ReusableProjectFormComponent implements OnInit {
       ],
       shortname: [
         { value: this.formData.shortname, disabled: this.formData.shortname !== '' },
-        [Validators.required, Validators.minLength(3), Validators.maxLength(20), Validators.pattern(/^[a-zA-Z]+\S*$/)],
+        [
+          Validators.required,
+          Validators.minLength(3),
+          Validators.maxLength(20),
+          this.noWhitespaceValidator,
+          Validators.pattern(/^[a-zA-Z]+\S*$/),
+        ],
       ],
       longname: [this.formData.longname, [Validators.required, Validators.minLength(3), Validators.maxLength(256)]],
       description: DEFAULT_MULTILANGUAGE_FORM(this.formData.description, this.descriptionValidators, [

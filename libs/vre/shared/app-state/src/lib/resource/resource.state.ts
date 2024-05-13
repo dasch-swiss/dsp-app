@@ -1,13 +1,16 @@
-import { Injectable } from '@angular/core';
-import { ReadProject } from '@dasch-swiss/dsp-js';
+import { Inject, Injectable } from '@angular/core';
+import { KnoraApiConnection, ReadProject, ReadResource, SystemPropertyDefinition } from '@dasch-swiss/dsp-js';
 import { ProjectApiService, UserApiService } from '@dasch-swiss/vre/shared/app-api';
+import { Common, DspResource } from '@dasch-swiss/vre/shared/app-common';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { Action, State, StateContext, Store } from '@ngxs/store';
-import { map, take } from 'rxjs/operators';
+import { map, take, tap } from 'rxjs/operators';
 import { ProjectsSelectors } from '../projects/projects.selectors';
 import { UserSelectors } from '../user/user.selectors';
 import {
   GetAttachedProjectAction,
   GetAttachedUserAction,
+  LoadResourceAction,
   ToggleShowAllCommentsAction,
   ToggleShowAllPropsAction,
 } from './resource.actions';
@@ -19,6 +22,7 @@ const defaults = <ReourceStateModel>{
   isLoading: false,
   attachedProjects: {},
   attachedUsers: {},
+  resource: null,
 };
 
 @State<ReourceStateModel>({
@@ -30,6 +34,8 @@ export class ResourceState {
   constructor(
     private store: Store,
     private _userApiService: UserApiService,
+    @Inject(DspApiConnectionToken)
+    private _dspApiConnection: KnoraApiConnection,
     private _projectApiService: ProjectApiService
   ) {}
 
@@ -98,9 +104,12 @@ export class ResourceState {
       .selectSnapshot(ProjectsSelectors.allProjects)
       .find(u => u.id === projectIri) as ReadProject;
     if (project) {
-      state.attachedProjects[resourceIri].value.push(project);
       ctx.setState({
         ...state,
+        attachedProjects: {
+          ...state.attachedProjects,
+          [resourceIri]: { value: [...state.attachedProjects[resourceIri].value, project] },
+        },
         isLoading: false,
       });
 
@@ -117,6 +126,24 @@ export class ResourceState {
         });
 
         return response.project;
+      })
+    );
+  }
+
+  @Action(LoadResourceAction)
+  loadResource(ctx: StateContext<ReourceStateModel>, { resourceIri }: LoadResourceAction) {
+    return this._dspApiConnection.v2.res.getResource(resourceIri).pipe(
+      tap(response => {
+        const state = ctx.getState();
+        const res = new DspResource(response as ReadResource);
+        res.resProps = Common.initProps(res.res);
+
+        // gather system property information
+        res.systemProps = res.res.entityInfo.getPropertyDefinitionsByType(SystemPropertyDefinition);
+        ctx.setState({
+          ...state,
+          resource: res,
+        });
       })
     );
   }
