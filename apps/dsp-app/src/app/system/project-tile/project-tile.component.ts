@@ -4,7 +4,7 @@ import { StoredProject } from '@dasch-swiss/dsp-js';
 import { RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { ClearProjectsAction, ClearProjectsMembershipAction } from '@dasch-swiss/vre/shared/app-state';
-import { Actions, Store } from '@ngxs/store';
+import { Store } from '@ngxs/store';
 
 @Component({
   selector: 'app-project-tile',
@@ -12,13 +12,13 @@ import { Actions, Store } from '@ngxs/store';
   styleUrls: ['./project-tile.component.scss'],
 })
 export class ProjectTileComponent {
+  @Input() isLoading = false;
   @Input() project: StoredProject;
   @Input() sysAdmin: boolean; // used to show settings button
 
   constructor(
     private _router: Router,
-    private _store: Store,
-    private _actions: Actions
+    private _store: Store
   ) {}
 
   navigateToProject(id: string) {

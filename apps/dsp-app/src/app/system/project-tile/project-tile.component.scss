@@ -3,6 +3,18 @@
 @use '../../../styles/typography' as t;
 @use '../../../styles/responsive' as *;
 
+.skeleton {
+  background: linear-gradient(90deg, $cool_gray_50 33%, $cool_gray_100 50%, $cool_gray_50 66%) #f2f2f2;
+  background-size: 300% 100%;
+  animation: skeleton-loading 2s infinite ease-in-out;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: right;
+  }
+}
+
 .project-tile {
   :hover {
     border-radius: 6px;

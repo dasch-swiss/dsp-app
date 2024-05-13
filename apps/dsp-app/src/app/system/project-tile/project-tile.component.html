@@ -1,4 +1,12 @@
-<a (click)="navigateToProject(project.id)" data-cy="navigate-to-project-button">
+<ng-container *ngIf="isLoading">
+  <div class="project-tile skeleton">
+    <div class="project-tile-content">
+      <div class="title"></div>
+    </div>
+  </div>
+</ng-container>
+
+<a *ngIf="isLoading === false" (click)="navigateToProject(project.id)" data-cy="navigate-to-project-button">
   <div class="project-tile" data-cy="tile">
     <div class="project-tile-content">
       <div class="title">

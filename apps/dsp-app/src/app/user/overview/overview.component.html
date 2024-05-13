@@ -1,9 +1,20 @@
 <div class="content extra-large middle">
-  <dasch-swiss-app-progress-indicator *ngIf="isProjectsLoading$ | async"></dasch-swiss-app-progress-indicator>
-
   <div class="overview">
+    <div *ngIf="isProjectsLoading$ | async" [@replaceAnimation]>
+      <div class="title-bar admin">
+        <div class="title">
+          <p>Browse Research Projects</p>
+        </div>
+      </div>
+      <div class="project-tiles">
+        <div *ngFor="let item of loadingTiles" class="project-tile-container">
+          <app-project-tile isLoading="true"></app-project-tile>
+        </div>
+      </div>
+    </div>
+
     <!-- user is a system admin -->
-    <div *ngIf="(isSysAdmin$ | async) && (isProjectsLoading$ | async) === false">
+    <div *ngIf="(allProjects$ | async).length > 0 && ((isSysAdmin$ | async) && (isProjectsLoading$ | async) === false)">
       <!-- list all projects -->
       <div class="title-bar admin">
         <div class="title">
@@ -18,32 +29,37 @@
     </div>
     <!-- user is logged in and not a system admin -->
     <div *ngIf="(isSysAdmin$ | async) === false && (user$ | async)">
-      <div class="title-bar">
-        <div class="title">
-          <p>My Projects</p>
+      <ng-container *ngIf="(userActiveProjects$ | async).length > 0">
+        <div class="title-bar">
+          <div class="title">
+            <p>My Projects</p>
+          </div>
         </div>
-      </div>
-      <div class="project-tiles">
-        <div *ngFor="let userProj of userActiveProjects$ | async; trackBy: trackByFn" class="project-tile-container">
-          <app-project-tile [project]="userProj" [sysAdmin]="false"></app-project-tile>
+        <div class="project-tiles">
+          <div *ngFor="let userProj of userActiveProjects$ | async; trackBy: trackByFn" class="project-tile-container">
+            <app-project-tile [project]="userProj" [sysAdmin]="false"></app-project-tile>
+          </div>
         </div>
-      </div>
-      <div class="title-bar other-projects">
-        <div class="title">
-          <p>Browse Other Research Projects</p>
+      </ng-container>
+      <ng-container *ngIf="(userOtherActiveProjects$ | async).length > 0">
+        <div class="title-bar other-projects">
+          <div class="title">
+            <p>Browse Other Research Projects</p>
+          </div>
         </div>
-      </div>
-      <div class="project-tiles">
-        <div
-          *ngFor="let otherProj of userOtherActiveProjects$ | async; trackBy: trackByFn"
-          class="project-tile-container">
-          <app-project-tile [project]="otherProj" [sysAdmin]="false"></app-project-tile>
+        <div class="project-tiles">
+          <div
+            *ngFor="let otherProj of userOtherActiveProjects$ | async; trackBy: trackByFn"
+            class="project-tile-container">
+            <app-project-tile [project]="otherProj" [sysAdmin]="false"></app-project-tile>
+          </div>
         </div>
-      </div>
+      </ng-container>
     </div>
 
     <!-- user is not logged in -->
-    <div *ngIf="((isProjectsLoading$ | async) === false) && user$ | async | isFalsy">
+    <div
+      *ngIf="((allActiveProjects$ | async).length > 0) && (((isProjectsLoading$ | async) === false) && user$ | async | isFalsy)">
       <!-- list all projects -->
       <div class="title-bar admin">
         <div class="title">
