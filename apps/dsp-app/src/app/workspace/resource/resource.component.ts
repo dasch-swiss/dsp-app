@@ -142,8 +142,6 @@ export class ResourceComponent implements OnChanges, OnInit, OnDestroy {
 
   showRestrictedMessage = true;
 
-  attachedToProjectResource = '';
-
   project$ = this._store.select(ResourceSelectors.attachedProjects).pipe(
     takeUntil(this.ngUnsubscribe),
     filter(attachedProjects => attachedProjects[this.resource.res.id]?.value?.length > 0),
@@ -157,6 +155,10 @@ export class ResourceComponent implements OnChanges, OnInit, OnDestroy {
   notification = this._notification;
 
   resourceProperties: PropertyInfoValues[];
+
+  get attachedToProjectResource(): string {
+    return this.resource.res.attachedToProject;
+  }
 
   get userCanEdit(): boolean {
     if (!this.resource.res) {
@@ -650,7 +652,6 @@ export class ResourceComponent implements OnChanges, OnInit, OnDestroy {
       this._renderAsMainResource(resource);
     }
 
-    this.attachedToProjectResource = resource.res.attachedToProject;
     this._cdr.markForCheck();
   }
 
