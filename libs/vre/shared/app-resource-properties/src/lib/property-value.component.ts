@@ -131,7 +131,11 @@ export class PropertyValueComponent implements OnInit {
 
     const createVal = propertiesTypeMapping
       .get(this.propertyValueService.propertyDefinition.objectType!)!
-      .mapping(this.group.controls.item.value, this.propertyValueService.propertyDefinition);
+      .createValue(this.group.controls.item.value, this.propertyValueService.propertyDefinition);
+
+    if (this.group.controls.comment.value) {
+      createVal.valueHasComment = this.group.controls.comment.value;
+    }
 
     const resource = this.propertyValueService._editModeData?.resource as ReadResource;
     const updateRes = new UpdateResource();
@@ -215,7 +219,7 @@ export class PropertyValueComponent implements OnInit {
     const id = values[index].id;
     const entity = propertiesTypeMapping
       .get(this.propertyValueService.propertyDefinition.objectType!)!
-      .updateMapping(id, group.controls.item.value, this.propertyValueService.propertyDefinition);
+      .updateValue(id, group.controls.item.value, this.propertyValueService.propertyDefinition);
     if (group.controls.comment.value) {
       entity.valueHasComment = group.controls.comment.value;
     }

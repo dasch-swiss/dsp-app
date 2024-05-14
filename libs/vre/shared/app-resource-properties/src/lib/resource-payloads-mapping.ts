@@ -54,8 +54,8 @@ import { populateValue } from './populate-value-method';
 
 interface MappingParameters<T extends ReadValue> {
   control: (value?: T) => AbstractControl;
-  mapping: (value: any, propertyDefinition?: any) => CreateValue;
-  updateMapping: (id: string, value: any, propertyDefinition?: any) => UpdateValue;
+  createValue: (value: any, propertyDefinition?: any) => CreateValue;
+  updateValue: (id: string, value: any, propertyDefinition?: any) => UpdateValue;
 }
 
 export const propertiesTypeMapping = new Map<string, MappingParameters<any>>([
@@ -63,12 +63,12 @@ export const propertiesTypeMapping = new Map<string, MappingParameters<any>>([
     Constants.IntValue,
     {
       control: (value?: ReadIntValue) => new FormControl(value?.int),
-      mapping: (value: number) => {
+      createValue: (value: number) => {
         const newIntValue = new CreateIntValue();
         newIntValue.int = value;
         return newIntValue;
       },
-      updateMapping: (id: string, value: number) => {
+      updateValue: (id: string, value: number) => {
         const newIntValue = new UpdateIntValue();
         newIntValue.id = id;
         newIntValue.int = value;
@@ -81,12 +81,12 @@ export const propertiesTypeMapping = new Map<string, MappingParameters<any>>([
     {
       control: (value?: ReadDecimalValue) => new FormControl(value?.decimal ?? 0),
 
-      mapping: (value: number) => {
+      createValue: (value: number) => {
         const newDecimalValue = new CreateDecimalValue();
         newDecimalValue.decimal = value;
         return newDecimalValue;
       },
-      updateMapping: (id: string, value: number) => {
+      updateValue: (id: string, value: number) => {
         const newDecimalValue = new UpdateDecimalValue();
         newDecimalValue.id = id;
         newDecimalValue.decimal = value;
@@ -99,12 +99,12 @@ export const propertiesTypeMapping = new Map<string, MappingParameters<any>>([
     {
       control: (value?: ReadBooleanValue) => new FormControl(value?.bool),
 
-      mapping: (value: boolean) => {
+      createValue: (value: boolean) => {
         const newBooleanValue = new CreateBooleanValue();
         newBooleanValue.bool = value;
         return newBooleanValue;
       },
-      updateMapping: (id: string, value: boolean) => {
+      updateValue: (id: string, value: boolean) => {
         const newBooleanValue = new UpdateBooleanValue();
         newBooleanValue.id = id;
         newBooleanValue.bool = value;
@@ -123,7 +123,7 @@ export const propertiesTypeMapping = new Map<string, MappingParameters<any>>([
         return new FormControl(match ? match[1] : value.strval);
       },
 
-      mapping: (value: string, propertyDefinition: ResourcePropertyDefinition) => {
+      createValue: (value: string, propertyDefinition: ResourcePropertyDefinition) => {
         switch (propertyDefinition.guiElement) {
           case Constants.GuiSimpleText:
           case Constants.GuiTextarea:
@@ -139,7 +139,7 @@ export const propertiesTypeMapping = new Map<string, MappingParameters<any>>([
             throw new Error('No default value for text');
         }
       },
-      updateMapping: (id: string, value: string, propertyDefinition: ResourcePropertyDefinition) => {
+      updateValue: (id: string, value: string, propertyDefinition: ResourcePropertyDefinition) => {
         switch (propertyDefinition.guiElement) {
           case Constants.GuiSimpleText:
           case Constants.GuiTextarea:
@@ -164,12 +164,12 @@ export const propertiesTypeMapping = new Map<string, MappingParameters<any>>([
     {
       control: (value?: ReadTextValue) => new FormControl(value?.strval),
 
-      mapping: (value: string) => {
+      createValue: (value: string) => {
         const newTextValue = new CreateTextValueAsString();
         newTextValue.text = value;
         return newTextValue;
       },
-      updateMapping: (id: string, value: string) => {
+      updateValue: (id: string, value: string) => {
         const newTextValue = new UpdateTextValueAsString();
         newTextValue.id = id;
         newTextValue.text = value;
@@ -181,12 +181,12 @@ export const propertiesTypeMapping = new Map<string, MappingParameters<any>>([
     Constants.DateValue,
     {
       control: (value?: ReadDateValue) => new FormControl(value?.date),
-      mapping: (value: any) => {
+      createValue: (value: any) => {
         const newDateValue = new CreateDateValue();
         populateValue(newDateValue, value);
         return newDateValue;
       },
-      updateMapping: (id: string, value: any) => {
+      updateValue: (id: string, value: any) => {
         const newDateValue = new UpdateDateValue();
         newDateValue.id = id;
         populateValue(newDateValue, value);
@@ -209,13 +209,13 @@ export const propertiesTypeMapping = new Map<string, MappingParameters<any>>([
         return new FormControl(new DateTime(gcd, '00:00'));
       },
 
-      mapping: (value: DateTime) => {
+      createValue: (value: DateTime) => {
         const newValue = dateTimeTimestamp(value.date, value.time);
         const newTimeValue = new CreateTimeValue();
         newTimeValue.time = newValue;
         return newTimeValue;
       },
-      updateMapping: (id: string, value: DateTime) => {
+      updateValue: (id: string, value: DateTime) => {
         const newTimeValue = new UpdateTimeValue();
         newTimeValue.id = id;
         newTimeValue.time = dateTimeTimestamp(value.date, value.time);
@@ -231,13 +231,13 @@ export const propertiesTypeMapping = new Map<string, MappingParameters<any>>([
           start: new FormControl(value?.start, Validators.required),
           end: new FormControl(value?.end, Validators.required),
         }),
-      mapping: (value: { start: string; end: string }) => {
+      createValue: (value: { start: string; end: string }) => {
         const newIntervalValue = new CreateIntervalValue();
         newIntervalValue.start = parseFloat(value.start);
         newIntervalValue.end = parseFloat(value.end);
         return newIntervalValue;
       },
-      updateMapping: (id: string, value: { start: number; end: number }) => {
+      updateValue: (id: string, value: { start: number; end: number }) => {
         const newIntervalValue = new UpdateIntervalValue();
         newIntervalValue.id = id;
         newIntervalValue.start = value.start;
@@ -250,12 +250,12 @@ export const propertiesTypeMapping = new Map<string, MappingParameters<any>>([
     Constants.ColorValue,
     {
       control: (value?: ReadColorValue) => new FormControl(value?.color ?? '#000000'),
-      mapping: (value: string) => {
+      createValue: (value: string) => {
         const newColorValue = new CreateColorValue();
         newColorValue.color = value;
         return newColorValue;
       },
-      updateMapping: (id: string, value: string) => {
+      updateValue: (id: string, value: string) => {
         const newColorValue = new UpdateColorValue();
         newColorValue.id = id;
         newColorValue.color = value;
@@ -267,12 +267,12 @@ export const propertiesTypeMapping = new Map<string, MappingParameters<any>>([
     Constants.ListValue,
     {
       control: (value?: ReadListValue) => new FormControl(value?.listNode ?? null),
-      mapping: (value: string) => {
+      createValue: (value: string) => {
         const newListValue = new CreateListValue();
         newListValue.listNode = value;
         return newListValue;
       },
-      updateMapping: (id: string, value: string) => {
+      updateValue: (id: string, value: string) => {
         const newListValue = new UpdateListValue();
         newListValue.id = id;
         newListValue.listNode = value;
@@ -285,12 +285,12 @@ export const propertiesTypeMapping = new Map<string, MappingParameters<any>>([
     {
       control: (value?: ReadGeonameValue) => new FormControl(value?.geoname),
 
-      mapping: (value: string) => {
+      createValue: (value: string) => {
         const newGeonameValue = new CreateGeonameValue();
         newGeonameValue.geoname = value;
         return newGeonameValue;
       },
-      updateMapping: (id: string, value: string) => {
+      updateValue: (id: string, value: string) => {
         const newGeonameValue = new UpdateGeonameValue();
         newGeonameValue.id = id;
         newGeonameValue.geoname = value;
@@ -303,12 +303,12 @@ export const propertiesTypeMapping = new Map<string, MappingParameters<any>>([
     {
       control: (value?: ReadLinkValue) =>
         new FormControl(value?.linkedResourceIri, [Validators.pattern(/http:\/\/rdfh.ch\/.*/)]),
-      mapping: (value: string) => {
+      createValue: (value: string) => {
         const newLinkValue = new CreateLinkValue();
         newLinkValue.linkedResourceIri = value;
         return newLinkValue;
       },
-      updateMapping: (id: string, value: string) => {
+      updateValue: (id: string, value: string) => {
         const newLinkValue = new UpdateLinkValue();
         newLinkValue.id = id;
         newLinkValue.linkedResourceIri = value;
@@ -320,12 +320,12 @@ export const propertiesTypeMapping = new Map<string, MappingParameters<any>>([
     Constants.UriValue,
     {
       control: (value?: ReadUriValue) => new FormControl(value?.uri, [Validators.pattern(CustomRegex.URI_REGEX)]),
-      mapping: (value: string) => {
+      createValue: (value: string) => {
         const newUriValue = new CreateUriValue();
         newUriValue.uri = value;
         return newUriValue;
       },
-      updateMapping: (id: string, value: string) => {
+      updateValue: (id: string, value: string) => {
         const newUriValue = new UpdateUriValue();
         newUriValue.id = id;
         newUriValue.uri = value;
