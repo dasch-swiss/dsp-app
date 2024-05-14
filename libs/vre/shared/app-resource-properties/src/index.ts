@@ -17,6 +17,7 @@ export * from './lib/switch-components/list-switch.component';
 export * from './lib/switch-components/date-switch.component';
 export * from './lib/switch-components/rich-text-switch.component';
 export * from './lib/switch-components/text-switch.component';
+export * from './lib/switch-components/text-html-switch.component';
 export * from './lib/switch-components/text-types-selector.component';
 
 export * from './lib/delete-value-dialog.component';

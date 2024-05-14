@@ -20,6 +20,7 @@ import { IntervalSwitchComponent } from './switch-components/interval-switch.com
 import { LinkSwitchComponent } from './switch-components/link-switch.component';
 import { ListSwitchComponent } from './switch-components/list-switch.component';
 import { RichTextSwitchComponent } from './switch-components/rich-text-switch.component';
+import { TextHtmlSwitchComponent } from './switch-components/text-html-switch.component';
 import { TextSwitchComponent } from './switch-components/text-switch.component';
 import { TextTypesSelectorComponent } from './switch-components/text-types-selector.component';
 import { TimeSwitchComponent } from './switch-components/time-switch.component';
@@ -53,6 +54,7 @@ const switchComponents = [
   BaseSwitchComponent,
   RichTextSwitchComponent,
   TextSwitchComponent,
+  TextHtmlSwitchComponent,
 ];
 
 export const ResourcePropertiesComponents = [
