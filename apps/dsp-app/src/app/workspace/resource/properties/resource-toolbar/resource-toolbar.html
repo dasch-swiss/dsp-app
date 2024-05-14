@@ -33,7 +33,7 @@
   <!-- more menu with: delete, erase resource -->
   <button
     color="primary"
-    *ngIf="(userCanEdit && attachedProject?.status)"
+    *ngIf="(attachedProject?.status && ((userCanEdit && showEditLabel) || userCanDelete || adminPermissions))"
     mat-icon-button
     class="more-menu"
     matTooltip="More"
