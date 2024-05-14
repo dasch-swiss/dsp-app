@@ -50,7 +50,7 @@ export class ResourceClassFormComponent implements OnInit {
 
   form: ResourceClassForm;
   ontology;
-  readonly existingNames: [RegExp] = [new RegExp('anEmptyRegularExpressionWasntPossible')];
+  readonly existingNames: RegExp[] = [];
   readonly labelsValidators = [Validators.maxLength(2000)];
   readonly commentsValidators = [Validators.maxLength(2000)];
 

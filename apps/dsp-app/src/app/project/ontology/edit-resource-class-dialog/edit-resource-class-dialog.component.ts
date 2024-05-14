@@ -31,7 +31,7 @@ export interface EditResourceClassDialogProps {
     <div mat-dialog-content>
       <app-resource-class-form
         [formData]="{ name: data.name, labels: data.labels, comments: data.comments }"
-        (afterFormInit)="form = $event"></app-resource-class-form>
+        (afterFormInit)="afterFormInit($event)"></app-resource-class-form>
     </div>
     <div mat-dialog-actions align="end">
       <button mat-button mat-dialog-close>Cancel</button>
@@ -50,8 +50,8 @@ export interface EditResourceClassDialogProps {
 })
 export class EditResourceClassDialogComponent implements OnInit {
   loading = false;
-  form: ResourceClassForm;
-  lastModificationDate: string;
+  form: ResourceClassForm | undefined;
+  lastModificationDate!: string;
 
   constructor(
     @Inject(DspApiConnectionToken)
@@ -64,6 +64,11 @@ export class EditResourceClassDialogComponent implements OnInit {
   ngOnInit() {
     this.dialogRef.updateSize('800px', ''); // Set your desired width
     this.lastModificationDate = this.data.lastModificationDate;
+  }
+
+  afterFormInit(form: ResourceClassForm) {
+    this.form = form;
+    this.form.controls.name.disable();
   }
 
   onSubmit() {

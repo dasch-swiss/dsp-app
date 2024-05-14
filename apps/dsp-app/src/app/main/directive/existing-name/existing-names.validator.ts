@@ -9,7 +9,7 @@ import { first, map } from 'rxjs/operators';
  * @param {RegExp} valArrayRegexp List of regular expression values
  * @returns ValidatorFn
  */
-export function existingNamesValidator(valArrayRegexp: [RegExp], isCaseSensitive = false): ValidatorFn {
+export function existingNamesValidator(valArrayRegexp: RegExp[], isCaseSensitive = false): ValidatorFn {
   return (control: AbstractControl): { [key: string]: any } => {
     let name: string;
 
