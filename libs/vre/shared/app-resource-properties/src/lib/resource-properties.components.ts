@@ -6,12 +6,15 @@ import { DeleteValueDialogComponent } from './delete-value-dialog.component';
 import { EditResourceLabelDialogComponent } from './edit-resource-label-dialog.component';
 import { EraseResourceDialogComponent } from './erase-resource-dialog.component';
 import { ExistingPropertyValueComponent } from './existing-property-value.component';
+import { IncomingLinkValueComponent } from './incoming-link-value.component';
 import { PropertiesToolbarComponent } from './properties-toolbar.component';
+import { PropertyRowComponent } from './property-row.component';
 import { PropertyValueActionBubbleComponent } from './property-value-action-bubble.component';
 import { PropertyValueCommentComponent } from './property-value-comment.component';
 import { PropertyValueSwitcherComponent } from './property-value-switcher.component';
 import { PropertyValueComponent } from './property-value.component';
 import { PropertyValuesComponent } from './property-values.component';
+import { StandoffLinkValueComponent } from './standoff-link-value.component';
 import { BaseSwitchComponent } from './switch-components/base-switch.component';
 import { ColorSwitchComponent } from './switch-components/color-switch.component';
 import { DateSwitchComponent } from './switch-components/date-switch.component';
@@ -76,4 +79,7 @@ export const ResourcePropertiesComponents = [
   EditResourceLabelDialogComponent,
   DeleteResourceDialogComponent,
   EraseResourceDialogComponent,
+  IncomingLinkValueComponent,
+  StandoffLinkValueComponent,
+  PropertyRowComponent,
 ];

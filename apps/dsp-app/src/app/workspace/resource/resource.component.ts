@@ -48,6 +48,7 @@ import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
 import {
   EditResourceLabelDialogComponent,
   EditResourceLabelDialogProps,
+  IncomingService,
 } from '@dasch-swiss/vre/shared/app-resource-properties';
 import {
   GetAttachedProjectAction,
@@ -62,7 +63,6 @@ import { filter, map, switchMap, take, takeUntil, tap } from 'rxjs/operators';
 import { SplitSize } from '../results/results.component';
 import { FileRepresentation, RepresentationConstants } from './representation/file-representation';
 import { Region, StillImageComponent } from './representation/still-image/still-image.component';
-import { IncomingService } from './services/incoming.service';
 import {
   EmitEvent,
   Events,

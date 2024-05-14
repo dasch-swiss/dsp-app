@@ -1,12 +1,12 @@
 import { Component, Input, OnChanges, OnDestroy } from '@angular/core';
-import { Cardinality, Constants, ReadUser } from '@dasch-swiss/dsp-js';
+import { Cardinality, Constants, ReadLinkValue, ReadUser, ResourcePropertyDefinition } from '@dasch-swiss/dsp-js';
 import { DspResource, PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
-import { PropertiesDisplayService } from '@dasch-swiss/vre/shared/app-resource-properties';
+import { IncomingLink, PropertiesDisplayService } from '@dasch-swiss/vre/shared/app-resource-properties';
 import { ResourceSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { Store } from '@ngxs/store';
-import { Observable, Subject } from 'rxjs';
-import { map, takeUntil } from 'rxjs/operators';
-import { RepresentationConstants } from '../representation/file-representation';
+import { Observable, of, Subject } from 'rxjs';
+import { map, switchMap, takeUntil } from 'rxjs/operators';
+import { PropertiesDisplayIncomingLinkService } from './properties-display-incoming-link.service';
 
 @Component({
   selector: 'app-properties-display',
@@ -18,6 +18,7 @@ import { RepresentationConstants } from '../representation/file-representation';
         <app-resource-toolbar *ngIf="isAnnotation" [resource]="resource"></app-resource-toolbar>
       </div>
     </div>
+
     <div
       class="infobar mat-caption"
       *ngIf="isAnnotation && ((resourceAttachedUser$ | async) !== undefined || resource.res.creationDate)">
@@ -36,58 +37,67 @@ import { RepresentationConstants } from '../representation/file-representation';
     <!-- list of properties -->
     <ng-container *ngIf="myProperties$ | async as myProperties">
       <ng-container *ngIf="myProperties.length > 0; else noProperties">
-        <div *ngFor="let prop of myProperties; let last = last; trackBy: trackByPropertyInfoFn">
-          <div [class.border-bottom]="prop.values && !last" style="display: flex; padding: 8px 0;">
-            <h3 class="label mat-subtitle-2" [matTooltip]="prop.propDef.comment" matTooltipPosition="above">
-              {{ prop.propDef.label
-              }}{{
-                prop.guiDef.cardinality === cardinality._1 || prop.guiDef.cardinality === cardinality._1_n ? '*' : ''
-              }}
-            </h3>
-            <app-existing-property-value [prop]="prop" [resource]="resource.res"></app-existing-property-value>
-          </div>
-        </div>
+        <app-property-row
+          *ngFor="let prop of myProperties; let last = last; trackBy: trackByPropertyInfoFn"
+          [borderBottom]="true"
+          [tooltip]="prop.propDef.comment"
+          [label]="
+            prop.propDef.label +
+            (prop.guiDef.cardinality === cardinality._1 || prop.guiDef.cardinality === cardinality._1_n ? '*' : '')
+          ">
+          <app-existing-property-value [prop]="prop" [resource]="resource.res"></app-existing-property-value>
+        </app-property-row>
       </ng-container>
     </ng-container>
 
-    <ng-template #noProperties>
-      <div *ngIf="resource.res.isDeleted; else noDefinedProperties">
-        <div>
-          <h3 class="label mat-subtitle-2">Deleted on</h3>
-          <div>{{ resource.res.deleteDate | date }}</div>
-        </div>
-        <div>
-          <h3 class="label mat-subtitle-2">Comment</h3>
-          <div>{{ resource.res.deleteComment }}</div>
-        </div>
-      </div>
-    </ng-template>
+    <!-- standoff link -->
+    <ng-container *ngIf="showStandoffLinks$ | async">
+      <app-property-row
+        *ngIf="incomingLinks$ | async as incomingLinks"
+        tooltip=" Represent a link in standoff markup from one resource to another"
+        label="has Standoff link"
+        [borderBottom]="true">
+        <app-standoff-link-value [standoffLinks]="standoffLinks"></app-standoff-link-value>
+      </app-property-row>
+    </ng-container>
 
-    <ng-template #noDefinedProperties>
-      <h3 class="label mat-subtitle-2">Info</h3>
-      <div class="property-value">This resource has no defined properties.</div>
+    <!-- incoming link -->
+    <ng-container *ngIf="showIncomingLinks$ | async">
+      <app-property-row
+        *ngIf="incomingLinks$ | async as incomingLinks"
+        tooltip="Indicates that this resource is referred to by another resource"
+        label="has incoming link"
+        [borderBottom]="true">
+        <app-incoming-link-value [incomingLinks]="incomingLinks"></app-incoming-link-value>
+      </app-property-row>
+    </ng-container>
+
+    <ng-container *ngIf="false">
+      <app-property-row label="info" [borderBottom]="false">
+        This resource has no defined properties.
+      </app-property-row>
+    </ng-container>
+
+    <ng-template #noProperties>
+      <div *ngIf="resource.res.isDeleted">
+        <app-property-row label="Deleted on" [borderBottom]="true">
+          {{ resource.res.deleteDate | date }}
+        </app-property-row>
+        <app-property-row label="Comment" [borderBottom]="false">
+          {{ resource.res.deleteComment }}
+        </app-property-row>
+      </div>
     </ng-template>
   `,
   styles: [
     `
-      .label {
-        color: rgb(107, 114, 128);
-        align-self: start;
-        cursor: help;
-        width: 150px;
-        margin-top: 0px;
-        text-align: right;
-        padding-right: 24px;
-        flex-shrink: 0;
-      }
-
       .infobar {
         text-align: right;
         padding-right: 6px;
       }
     `,
   ],
-  providers: [PropertiesDisplayService],
+  providers: [PropertiesDisplayService, PropertiesDisplayIncomingLinkService],
 })
 export class PropertiesDisplayComponent implements OnChanges, OnDestroy {
   private ngUnsubscribe: Subject<void> = new Subject<void>();
@@ -100,11 +110,17 @@ export class PropertiesDisplayComponent implements OnChanges, OnDestroy {
     takeUntil(this.ngUnsubscribe),
     map(attachedUsers => attachedUsers[this.resource.res.id].value.find(u => u.id === this.resource.res.attachedToUser))
   );
-  myProperties$!: Observable<PropertyInfoValues[]>;
+  myProperties$: Observable<PropertyInfoValues[]> = of([]);
+  incomingLinks$: Observable<IncomingLink[]> = of([]);
+  showIncomingLinks$ = of(false);
+
+  standoffLinks: ReadLinkValue[] = [];
+  showStandoffLinks$ = of(false);
 
   constructor(
     private _propertiesDisplayService: PropertiesDisplayService,
-    private _store: Store
+    private _store: Store,
+    private _propertiesDisplayIncomingLink: PropertiesDisplayIncomingLinkService
   ) {}
 
   ngOnChanges() {
@@ -118,35 +134,26 @@ export class PropertiesDisplayComponent implements OnChanges, OnDestroy {
 
   private _setupProperties() {
     this.myProperties$ = this._propertiesDisplayService.showAllProperties$.pipe(
-      map(showAllProps => PropertiesDisplayComponent.getMyProperties(showAllProps, this.properties))
+      map(showAllProps =>
+        this.properties
+          .filter(prop => (prop.propDef as ResourcePropertyDefinition).isEditable)
+          .filter(prop => {
+            return showAllProps || (prop.values && prop.values.length > 0);
+          })
+      )
     );
-  }
 
-  static getMyProperties(showAllProperties: boolean, properties: PropertyInfoValues[]) {
-    const representationConstants = RepresentationConstants;
+    this.incomingLinks$ = this._propertiesDisplayIncomingLink.getIncomingLinks$(this.resource.res.id, 0);
+    this.showIncomingLinks$ = this.incomingLinks$.pipe(
+      switchMap(links => (links.length > 0 ? of(true) : this._propertiesDisplayService.showAllProperties$))
+    );
 
-    const condition = (prop: PropertyInfoValues) =>
-      prop.propDef.id === Constants.HasIncomingLinkValue &&
-      //   numberOffAllIncomingLinkRes > 0 &&
-      ![
-        RepresentationConstants.stillImage,
-        RepresentationConstants.movingImage,
-        RepresentationConstants.audio,
-        RepresentationConstants.document,
-        RepresentationConstants.text,
-        RepresentationConstants.archive,
-      ].includes(prop.propDef.objectType) &&
-      !(
-        //         isAnnotation &&
-        (
-          prop.propDef.subjectType === representationConstants.region &&
-          prop.propDef.objectType !== representationConstants.color
-        )
-      );
-
-    return properties.filter(prop => {
-      return showAllProperties || (prop.values && prop.values.length > 0);
-    });
+    this.standoffLinks =
+      (this.properties.find(prop => prop.propDef.id === Constants.HasStandoffLinkToValue)?.values as ReadLinkValue[]) ??
+      [];
+    this.showStandoffLinks$ = this._propertiesDisplayService.showAllProperties$.pipe(
+      map(showAllProps => (this.standoffLinks.length > 0 ? true : showAllProps))
+    );
   }
 
   trackByPropertyInfoFn = (index: number, item: PropertyInfoValues) => `${index}-${item.propDef.id}`;

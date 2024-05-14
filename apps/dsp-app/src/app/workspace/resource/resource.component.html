@@ -129,7 +129,7 @@
     <div class="data-container" *ngIf="!loading">
       <!-- tabs -->
       <mat-tab-group
-        *ngIf="!resource.res.isDeleted; else deletedResource"
+        *ngIf="!resource.res.isDeleted"
         animationDuration="0ms"
         [(selectedIndex)]="selectedTab"
         (selectedTabChange)="tabChanged($event)">
@@ -171,16 +171,6 @@
           </div>
         </mat-tab>
       </mat-tab-group>
-      <ng-template #deletedResource>
-        <!-- TODO!!! -->
-        <!--<app-properties
-                                                                                                                                                                                                                                                                                                  *ngIf="resource.res"
-                                                                                                                                                                                                                                                                                                  [resource]="resource"
-                                                                                                                                                                                                                                                                                                  [displayProjectInfo]="true"
-                                                                                                                                                                                                                                                                                                  [adminPermissions]="isAdmin$ | async"
-                                                                                                                                                                                                                                                                                                  [valueUuidToHighlight]="valueUuid">
-                                                                                                                                                                                                                                                                                                </app-properties>-->
-      </ng-template>
     </div>
     <!-- progress indicator -->
     <dasch-swiss-app-progress-indicator *ngIf="loading"></dasch-swiss-app-progress-indicator>
