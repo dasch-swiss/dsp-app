@@ -488,6 +488,7 @@ export class ResourceComponent implements OnChanges, OnInit, OnDestroy {
             .pipe(take(1))
             .subscribe(() => {
               annotations.push(annotation);
+              this._cdr.markForCheck();
             });
           this._store.dispatch(new GetAttachedUserAction(annotation.res.id, annotation.res.attachedToUser));
         }
