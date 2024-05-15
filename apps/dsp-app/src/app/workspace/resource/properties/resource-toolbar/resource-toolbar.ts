@@ -1,14 +1,6 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  EventEmitter,
-  Input,
-  OnInit,
-  Output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { DeleteResourceResponse, PermissionUtil, ReadLinkValue, ReadProject, ReadValue } from '@dasch-swiss/dsp-js';
+import { DeleteResourceResponse, PermissionUtil, ReadLinkValue, ReadProject } from '@dasch-swiss/dsp-js';
 import { AdminProjectsApiService } from '@dasch-swiss/vre/open-api';
 import { DspResource, ResourceService } from '@dasch-swiss/vre/shared/app-common';
 import {
@@ -51,9 +43,6 @@ export class ResourceToolbarComponent implements OnInit {
   @Input() attachedProject: ReadProject;
 
   @Input() lastModificationDate: string;
-
-  @Output() regionChanged: EventEmitter<ReadValue> = new EventEmitter<ReadValue>();
-  @Output() regionDeleted: EventEmitter<void> = new EventEmitter<void>();
 
   userCanDelete: boolean;
   userCanEdit: boolean;
@@ -106,9 +95,6 @@ export class ResourceToolbarComponent implements OnInit {
       .pipe(filter(answer => !!answer))
       .subscribe(answer => {
         this._componentCommsService.emit(new EmitEvent(CommsEvents.resourceChanged));
-        if (this.isAnnotation) {
-          this.regionChanged.emit();
-        }
         this._cd.markForCheck();
       });
   }
@@ -154,10 +140,6 @@ export class ResourceToolbarComponent implements OnInit {
     const classId = this.resource.res.entityInfo.classes[this.resource.res.type]?.id;
     this._store.dispatch(new LoadClassItemsCountAction(ontologyIri, classId));
     this._componentCommsService.emit(new EmitEvent(CommsEvents.resourceDeleted));
-    // if it is an Annotation/Region which has been erases, we emit the
-    // regionChanged event, in order to refresh the page
-    this.regionDeleted.emit();
-
     this._cd.markForCheck();
   }
 }

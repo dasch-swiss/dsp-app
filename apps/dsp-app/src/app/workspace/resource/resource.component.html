@@ -19,10 +19,7 @@
           [resource]="resource"
           [lastModificationDate]="resource.res.lastModificationDate"
           [adminPermissions]="isAdmin$ | async"
-          [showEditLabel]="false"
-          (regionChanged)="regionChanged.emit()"
-          (regionDeleted)="regionDeleted.emit()"></app-resource-toolbar>
-        <!-- TODO uncomment this on  top -->
+          [showEditLabel]="false"></app-resource-toolbar>
       </div>
       <div class="resource-label">
         <h4>{{ resource.res.label }}</h4>
@@ -37,7 +34,7 @@
       </div>
       <div class="infobar mat-caption" *ngIf="(project$ | async) as project">
         Resource of the project
-        <a class="link" [title]="project.longname" (click)="openProject(project)" (mouseover)="previewProject()">
+        <a class="link" [title]="project.longname" (click)="openProject(project)">
           <strong>{{ project?.shortname }}</strong></a
         ><span *ngIf="resourceAttachedUser || resource.res.creationDate"
           >, created
@@ -98,7 +95,6 @@
         *ngSwitchCase="representationConstants.movingImage"
         [src]="representationsToDisplay[0]"
         [parentResource]="resource.res"
-        [splitSizeChanged]="splitSizeChanged"
         (loaded)="representationLoaded($event)">
       </app-video>
 

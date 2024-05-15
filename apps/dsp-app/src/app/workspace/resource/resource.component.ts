@@ -1,16 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  EventEmitter,
-  Inject,
-  Input,
-  OnChanges,
-  OnDestroy,
-  OnInit,
-  Output,
-  ViewChild,
-} from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, Input, OnChanges, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { Title } from '@angular/platform-browser';
@@ -31,7 +19,6 @@ import {
   ReadStillImageFileValue,
   ReadTextFileValue,
   ReadUser,
-  ReadValue,
   ResourceClassDefinitionWithPropertyDefinition,
   SystemPropertyDefinition,
 } from '@dasch-swiss/dsp-js';
@@ -43,7 +30,7 @@ import {
   ResourceService,
 } from '@dasch-swiss/vre/shared/app-common';
 import { DspApiConnectionToken, DspDialogConfig, RouteConstants } from '@dasch-swiss/vre/shared/app-config';
-import { ComponentCommunicationEventService, ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
 import {
   EditResourceLabelDialogComponent,
@@ -60,18 +47,11 @@ import {
 import { Actions, ofActionSuccessful, Store } from '@ngxs/store';
 import { combineLatest, Observable, Subject, Subscription } from 'rxjs';
 import { filter, map, switchMap, take, takeUntil, tap } from 'rxjs/operators';
-import { SplitSize } from '../results/results.component';
 import { FileRepresentation, RepresentationConstants } from './representation/file-representation';
 import { Region, StillImageComponent } from './representation/still-image/still-image.component';
-import {
-  EmitEvent,
-  Events,
-  UpdatedFileEventValue,
-  ValueOperationEventService,
-} from './services/value-operation-event.service';
+import { Events, UpdatedFileEventValue, ValueOperationEventService } from './services/value-operation-event.service';
 
 @Component({
-  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-resource',
   templateUrl: './resource.component.html',
   styleUrls: ['./resource.component.scss'],
@@ -84,28 +64,14 @@ export class ResourceComponent implements OnChanges, OnInit, OnDestroy {
 
   @Input() resourceIri: string;
 
-  @Input() splitSizeChanged: SplitSize;
-
-  @Output() regionChanged = new EventEmitter<ReadValue>();
-  @Output() regionDeleted = new EventEmitter<void>();
-
   @ViewChild('matTabAnnotations') matTabAnnotations;
 
   oldResourceIri: string; // for change detection
-
-  projectCode: string;
-
-  resourceUuid: string;
-  // used to store the uuid of the value that is parsed from the url params
-  valueUuid: string;
-
-  // this will be the main resource
   resource: DspResource;
 
   // in case of incoming representations,
   // this will be the currently selected (part-of main) resource
   incomingResource: DspResource;
-  incomingResourceSub: Subscription;
 
   // for the annotations e.g. regions in a still image representation
   annotationResources: DspResource[];
@@ -115,17 +81,9 @@ export class ResourceComponent implements OnChanges, OnInit, OnDestroy {
   selectedTab = 0;
 
   selectedTabLabel: string;
-
-  resourceIsAnnotation: 'region' | 'sequence';
-
-  // list of representations to be displayed
-  // --> TODO: will be expanded with | MovingImageRepresentation[] | AudioRepresentation[] etc.
   representationsToDisplay: FileRepresentation[] = [];
-
   stillImageRepresentationsForCompoundResourceSub: Subscription;
-
   incomingRegionsSub: Subscription;
-
   representationConstants = RepresentationConstants;
 
   // in case of compound object,
@@ -133,10 +91,6 @@ export class ResourceComponent implements OnChanges, OnInit, OnDestroy {
   compoundPosition: DspCompoundPosition;
 
   loading = true;
-
-  refresh: boolean;
-
-  navigationSubscription: Subscription;
 
   valueOperationEventSubscriptions: Subscription[] = [];
 
@@ -151,9 +105,6 @@ export class ResourceComponent implements OnChanges, OnInit, OnDestroy {
   );
 
   resourceAttachedUser: ReadUser;
-
-  notification = this._notification;
-
   resourceProperties: PropertyInfoValues[];
 
   get attachedToProjectResource(): string {
@@ -212,15 +163,13 @@ export class ResourceComponent implements OnChanges, OnInit, OnDestroy {
     private _cdr: ChangeDetectorRef,
     private _store: Store,
     private _actions$: Actions,
-    private _dialog: MatDialog,
-    private _componentCommsService: ComponentCommunicationEventService
+    private _dialog: MatDialog
   ) {
     this._route.params.subscribe(params => {
-      this.projectCode = params.project;
-      this.resourceUuid = params.resource;
-      this.valueUuid = params.value;
-      if (this.projectCode && this.resourceUuid) {
-        this.resourceIri = this._resourceService.getResourceIri(this.projectCode, this.resourceUuid);
+      const projectCode = params.project;
+      const resourceUuid = params.resource;
+      if (projectCode && resourceUuid) {
+        this.resourceIri = this._resourceService.getResourceIri(projectCode, resourceUuid);
         this.oldResourceIri = this.resourceIri;
         this._initResource(this.resourceIri);
       }
@@ -277,10 +226,6 @@ export class ResourceComponent implements OnChanges, OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    if (this.navigationSubscription !== undefined) {
-      this.navigationSubscription.unsubscribe();
-    }
-
     // unsubscribe from the ValueOperationEventService when component is destroyed
     if (this.valueOperationEventSubscriptions !== undefined) {
       this.valueOperationEventSubscriptions.forEach(sub => sub.unsubscribe());
@@ -295,15 +240,6 @@ export class ResourceComponent implements OnChanges, OnInit, OnDestroy {
 
     this.ngUnsubscribe.next();
     this.ngUnsubscribe.complete();
-  }
-
-  // ------------------------------------------------------------------------
-  // ------------------------------------------------------------------------
-  // general methods
-  // ------------------------------------------------------------------------
-
-  static getResourceProperties(properties: PropertyInfoValues[]) {
-    return properties.filter(prop => prop.guiDef.guiOrder !== undefined);
   }
 
   compoundNavigation(page: number) {
@@ -357,10 +293,6 @@ export class ResourceComponent implements OnChanges, OnInit, OnDestroy {
     window.open(`${RouteConstants.projectRelative}/${ProjectService.IriToUuid(project.id)}`, '_blank');
   }
 
-  previewProject() {
-    // --> TODO: pop up project preview on hover
-  }
-
   openRegion(iri: string) {
     // open annotation tab
     this.selectedTab = this.incomingResource ? 2 : 1;
@@ -397,11 +329,6 @@ export class ResourceComponent implements OnChanges, OnInit, OnDestroy {
       .afterClosed()
       .subscribe(response => {
         if (!response) return;
-
-        this._componentCommsService.emit(new EmitEvent(Events.ValueUpdated)); // TODO I have made changes here (it was new EmitEvent(Events.resourceChanged))
-        if (this.matTabAnnotations && this.matTabAnnotations.isActive) {
-          this.regionChanged.emit();
-        }
         this._cdr.markForCheck();
       });
   }
@@ -602,11 +529,6 @@ export class ResourceComponent implements OnChanges, OnInit, OnDestroy {
     this._getIncomingLinks(0);
   }
 
-  /**
-   * gets the incoming regions for [[this.resource]].
-   *
-   * @param offset the offset to be used (needed for paging). First request uses an offset of 0.
-   */
   private _getIncomingRegions(resource: DspResource, offset: number): void {
     if (this.incomingRegionsSub) {
       this.incomingRegionsSub.unsubscribe();
@@ -706,29 +628,31 @@ export class ResourceComponent implements OnChanges, OnInit, OnDestroy {
       this.openRegion(region.res.id);
 
       this.selectedRegion = region.res.id;
-      // define resource as annotation of type region
-      this.resourceIsAnnotation = this.resource.res.entityInfo.classes[Constants.Region] ? 'region' : 'sequence';
     });
   }
 
   private _getIncomingResource(iri: string) {
-    if (this.incomingResourceSub) {
-      this.incomingResourceSub.unsubscribe();
-    }
-    this.incomingResourceSub = this._dspApiConnection.v2.res.getResource(iri).subscribe((response: ReadResource) => {
-      this.incomingResource = new DspResource(response);
-      this.incomingResource.resProps = Common.initProps(response)
-        .filter(v => v.values.length > 0)
-        .filter(v => v.propDef.id !== 'http://api.knora.org/ontology/knora-api/v2#hasStillImageFileValue');
-      this.incomingResource.systemProps =
-        this.incomingResource.res.entityInfo.getPropertyDefinitionsByType(SystemPropertyDefinition);
+    this._dspApiConnection.v2.res
+      .getResource(iri)
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((response: ReadResource) => {
+        this.incomingResource = new DspResource(response);
+        this.incomingResource.resProps = Common.initProps(response)
+          .filter(v => v.values.length > 0)
+          .filter(v => v.propDef.id !== 'http://api.knora.org/ontology/knora-api/v2#hasStillImageFileValue');
+        this.incomingResource.systemProps =
+          this.incomingResource.res.entityInfo.getPropertyDefinitionsByType(SystemPropertyDefinition);
 
-      this.representationsToDisplay = this._collectRepresentationsAndAnnotations(this.incomingResource);
-      if (this.representationsToDisplay.length && this.representationsToDisplay[0].fileValue && this.compoundPosition) {
-        this._getIncomingRegions(this.incomingResource, 0);
-      }
+        this.representationsToDisplay = this._collectRepresentationsAndAnnotations(this.incomingResource);
+        if (
+          this.representationsToDisplay.length &&
+          this.representationsToDisplay[0].fileValue &&
+          this.compoundPosition
+        ) {
+          this._getIncomingRegions(this.incomingResource, 0);
+        }
 
-      this._cdr.markForCheck();
-    });
+        this._cdr.markForCheck();
+      });
   }
 }

@@ -27,7 +27,6 @@ import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
 import { mergeMap } from 'rxjs/operators';
 import { DialogComponent } from '../../../../main/dialog/dialog.component';
-import { SplitSize } from '../../../results/results.component';
 import {
   EmitEvent,
   Events,
@@ -50,8 +49,6 @@ export class VideoComponent implements OnChanges, AfterViewInit {
   @Input() start? = 0;
 
   @Input() parentResource: ReadResource;
-
-  @Input() splitSizeChanged: SplitSize;
 
   @Output() loaded = new EventEmitter<boolean>();
 

@@ -10,12 +10,12 @@ import {
   SimpleChange,
   ViewChild,
 } from '@angular/core';
-import { SplitSize } from '../../../results/results.component';
 
 export interface PointerValue {
   position: number;
   time: number;
 }
+
 /**
  * this component can be used in video and audio players
  */
@@ -39,9 +39,6 @@ export class AvTimelineComponent implements OnChanges {
 
   // disable in case of missing file
   @Input() disabled: boolean;
-
-  // split size changed
-  @Input() splitSizeChanged: SplitSize;
 
   // send click position to parent
   @Output() changed = new EventEmitter<number>();

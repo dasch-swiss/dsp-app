@@ -155,12 +155,6 @@ export class FulltextSearchComponent implements OnInit, OnChanges, OnDestroy {
         this.searchQuery = null;
       })
     );
-
-    this.componentCommsSubscriptions.push(
-      this._componentCommsService.on(Events.projectCreated, () => {
-        this.getAllProjects();
-      })
-    );
   }
 
   ngOnChanges() {
