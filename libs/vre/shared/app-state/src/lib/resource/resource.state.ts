@@ -1,5 +1,12 @@
 import { Inject, Injectable } from '@angular/core';
-import { KnoraApiConnection, ReadProject, ReadResource, SystemPropertyDefinition } from '@dasch-swiss/dsp-js';
+import {
+  Constants,
+  KnoraApiConnection,
+  ReadLinkValue,
+  ReadProject,
+  ReadResource,
+  SystemPropertyDefinition,
+} from '@dasch-swiss/dsp-js';
 import { ProjectApiService, UserApiService } from '@dasch-swiss/vre/shared/app-api';
 import { Common, DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
@@ -10,6 +17,7 @@ import { UserSelectors } from '../user/user.selectors';
 import {
   GetAttachedProjectAction,
   GetAttachedUserAction,
+  LoadAnnotatedResourceAction,
   LoadResourceAction,
   ToggleShowAllCommentsAction,
   ToggleShowAllPropsAction,
@@ -144,6 +152,18 @@ export class ResourceState {
           ...state,
           resource: res,
         });
+      })
+    );
+  }
+  @Action(LoadAnnotatedResourceAction)
+  loadAnnotatedResource(ctx: StateContext<ReourceStateModel>, { regionIri }: LoadAnnotatedResourceAction) {
+    return this._dspApiConnection.v2.res.getResource(regionIri).pipe(
+      tap(response => {
+        const res = new DspResource(response as ReadResource);
+        res.resProps = Common.initProps(res.res);
+        const annotatedRepresentationIri = (res.res.properties[Constants.IsRegionOfValue] as ReadLinkValue[])[0]
+          .linkedResourceIri;
+        this.store.dispatch(new LoadResourceAction(annotatedRepresentationIri));
       })
     );
   }

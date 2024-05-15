@@ -147,7 +147,7 @@
           </ng-template>
           <div
             class="region-property"
-            *ngFor="let annotation of annotationResources; trackby: trackAnnotationByFn"
+            *ngFor="let annotation of annotationResources; trackBy: trackAnnotationByFn"
             [id]="annotation.res.id"
             [class.active]="annotation.res.id === selectedRegion">
             <app-properties-display [resource]="annotation" [properties]="annotation.resProps" isAnnotation="true">

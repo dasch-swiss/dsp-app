@@ -1,3 +1,5 @@
+import { DspResource } from '@dasch-swiss/vre/shared/app-common';
+
 export class GetAttachedUserAction {
   static readonly type = '[Resource] Get Attached User';
 
@@ -29,4 +31,10 @@ export class LoadResourceAction {
   static readonly type = '[Resource] Load resource';
 
   constructor(public resourceIri: string) {}
+}
+
+export class LoadAnnotatedResourceAction {
+  static readonly type = '[Resource] Load annotated resource';
+
+  constructor(public regionIri: string) {}
 }
