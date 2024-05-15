@@ -46,3 +46,4 @@ export * from './lib/standoff-link-value.component';
 export * from './lib/property-row.component';
 export * from './lib/incoming-link.interface';
 export * from './lib/incoming.service';
+export * from './lib/resource-info-bar.component';

@@ -38,7 +38,6 @@ import {
   IncomingService,
 } from '@dasch-swiss/vre/shared/app-resource-properties';
 import {
-  GetAttachedProjectAction,
   GetAttachedUserAction,
   LoadResourceAction,
   ResourceSelectors,
@@ -58,69 +57,26 @@ import { Events, UpdatedFileEventValue, ValueOperationEventService } from './ser
   providers: [ValueOperationEventService], // provide service on the component level so that each implementation of this component has its own instance.
 })
 export class ResourceComponent implements OnChanges, OnInit, OnDestroy {
-  private ngUnsubscribe: Subject<void> = new Subject<void>();
-
-  @ViewChild('stillImage') stillImageComponent: StillImageComponent;
-
   @Input() resourceIri: string;
-
+  @ViewChild('stillImage') stillImageComponent: StillImageComponent;
   @ViewChild('matTabAnnotations') matTabAnnotations;
 
   oldResourceIri: string; // for change detection
   resource: DspResource;
-
-  // in case of incoming representations,
-  // this will be the currently selected (part-of main) resource
   incomingResource: DspResource;
-
-  // for the annotations e.g. regions in a still image representation
   annotationResources: DspResource[];
-
   selectedRegion: string;
-
   selectedTab = 0;
-
   selectedTabLabel: string;
   representationsToDisplay: FileRepresentation[] = [];
-  stillImageRepresentationsForCompoundResourceSub: Subscription;
-  incomingRegionsSub: Subscription;
-  representationConstants = RepresentationConstants;
-
-  // in case of compound object,
-  // this will store the current page position information
   compoundPosition: DspCompoundPosition;
-
   loading = true;
-
   valueOperationEventSubscriptions: Subscription[] = [];
-
   showRestrictedMessage = true;
-
-  project$ = this._store.select(ResourceSelectors.attachedProjects).pipe(
-    takeUntil(this.ngUnsubscribe),
-    filter(attachedProjects => attachedProjects[this.resource.res.id]?.value?.length > 0),
-    map(attachedProjects =>
-      attachedProjects[this.resource.res.id].value.find(u => u.id === this.resource.res.attachedToProject)
-    )
-  );
-
-  resourceAttachedUser: ReadUser;
   resourceProperties: PropertyInfoValues[];
 
-  get attachedToProjectResource(): string {
-    return this.resource.res.attachedToProject;
-  }
-
-  get userCanEdit(): boolean {
-    if (!this.resource.res) {
-      return false;
-    }
-
-    const allPermissions = PermissionUtil.allUserPermissions(
-      this.resource.res.userHasPermission as 'RV' | 'V' | 'M' | 'D' | 'CR'
-    );
-    return allPermissions.indexOf(PermissionUtil.Permissions.M) !== -1;
-  }
+  readonly representationConstants = RepresentationConstants;
+  private ngUnsubscribe: Subject<void> = new Subject<void>();
 
   isAdmin$: Observable<boolean> = combineLatest([
     this._store.select(UserSelectors.user),
@@ -148,6 +104,21 @@ export class ResourceComponent implements OnChanges, OnInit, OnDestroy {
 
   get resourceClassType(): ResourceClassDefinitionWithPropertyDefinition {
     return this.resource.res.entityInfo.classes[this.resource.res.type];
+  }
+
+  get attachedToProjectResource(): string {
+    return this.resource.res.attachedToProject;
+  }
+
+  get userCanEdit(): boolean {
+    if (!this.resource.res) {
+      return false;
+    }
+
+    const allPermissions = PermissionUtil.allUserPermissions(
+      this.resource.res.userHasPermission as 'RV' | 'V' | 'M' | 'D' | 'CR'
+    );
+    return allPermissions.indexOf(PermissionUtil.Permissions.M) !== -1;
   }
 
   constructor(
@@ -229,13 +200,6 @@ export class ResourceComponent implements OnChanges, OnInit, OnDestroy {
     // unsubscribe from the ValueOperationEventService when component is destroyed
     if (this.valueOperationEventSubscriptions !== undefined) {
       this.valueOperationEventSubscriptions.forEach(sub => sub.unsubscribe());
-    }
-    if (this.stillImageRepresentationsForCompoundResourceSub) {
-      this.stillImageRepresentationsForCompoundResourceSub.unsubscribe();
-    }
-
-    if (this.incomingRegionsSub) {
-      this.incomingRegionsSub.unsubscribe();
     }
 
     this.ngUnsubscribe.next();
@@ -334,22 +298,6 @@ export class ResourceComponent implements OnChanges, OnInit, OnDestroy {
   }
 
   trackAnnotationByFn = (index: number, item: DspResource) => `${index}-${item.res.id}`;
-
-  private _getResourceAttachedData(resource: DspResource): void {
-    this._actions$
-      .pipe(ofActionSuccessful(GetAttachedUserAction))
-      .pipe(take(1))
-      .subscribe(() => {
-        const attachedUsers = this._store.selectSnapshot(ResourceSelectors.attachedUsers);
-        this.resourceAttachedUser = attachedUsers[resource.res.id].value.find(
-          u => u.id === resource.res.attachedToUser
-        );
-      });
-    this._store.dispatch([
-      new GetAttachedUserAction(resource.res.id, resource.res.attachedToUser),
-      new GetAttachedProjectAction(resource.res.id, resource.res.attachedToProject),
-    ]);
-  }
 
   /**
    * get resources pointing to [[this.resource]] with properties other than knora-api:isPartOf and knora-api:isRegionOf.
@@ -478,12 +426,9 @@ export class ResourceComponent implements OnChanges, OnInit, OnDestroy {
       return;
     }
 
-    // get all representations for compound resource of this offset sequence
-    if (this.stillImageRepresentationsForCompoundResourceSub) {
-      this.stillImageRepresentationsForCompoundResourceSub.unsubscribe();
-    }
-    this.stillImageRepresentationsForCompoundResourceSub = this._incomingService
+    this._incomingService
       .getStillImageRepresentationsForCompoundResource(this.resource.res.id, offset)
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((incomingImageRepresentations: ReadResourceSequence) => {
         if (!this.resource) {
           return; // if there is no resource anymore when the response arrives, do nothing
@@ -530,11 +475,9 @@ export class ResourceComponent implements OnChanges, OnInit, OnDestroy {
   }
 
   private _getIncomingRegions(resource: DspResource, offset: number): void {
-    if (this.incomingRegionsSub) {
-      this.incomingRegionsSub.unsubscribe();
-    }
-    this.incomingRegionsSub = this._incomingService
+    this._incomingService
       .getIncomingRegions(resource.res.id, offset)
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((regions: ReadResourceSequence) => {
         // append elements of regions.resources to resource.incoming
         Array.prototype.push.apply(resource.incomingAnnotations, regions.resources);
@@ -554,7 +497,6 @@ export class ResourceComponent implements OnChanges, OnInit, OnDestroy {
       .pipe(switchMap(() => this._store.select(ResourceSelectors.resource)))
       .subscribe(dspResource => {
         this._renderResource(dspResource);
-        this._getResourceAttachedData(dspResource);
       });
   }
 
@@ -584,13 +526,10 @@ export class ResourceComponent implements OnChanges, OnInit, OnDestroy {
 
     this.representationsToDisplay = this._collectRepresentationsAndAnnotations(resource);
     if (!this.representationsToDisplay.length && !this.compoundPosition) {
-      // the resource could be a compound object
-      if (this.stillImageRepresentationsForCompoundResourceSub) {
-        this.stillImageRepresentationsForCompoundResourceSub.unsubscribe();
-      }
-      this.stillImageRepresentationsForCompoundResourceSub = this._incomingService
+      this._incomingService
         .getStillImageRepresentationsForCompoundResource(resource.res.id, 0, true)
         .pipe(
+          takeUntil(this.ngUnsubscribe),
           tap({
             error: () => {
               this.loading = false;

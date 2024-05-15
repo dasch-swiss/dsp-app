@@ -32,19 +32,7 @@
           <mat-icon>edit</mat-icon>
         </button>
       </div>
-      <div class="infobar mat-caption" *ngIf="(project$ | async) as project">
-        Resource of the project
-        <a class="link" [title]="project.longname" (click)="openProject(project)">
-          <strong>{{ project?.shortname }}</strong></a
-        ><span *ngIf="resourceAttachedUser || resource.res.creationDate"
-          >, created
-          <span *ngIf="resourceAttachedUser"
-            >by {{ (resourceAttachedUser.username ? resourceAttachedUser.username : resourceAttachedUser.givenName + ' '
-            + resourceAttachedUser.familyName) }}</span
-          >
-          <span *ngIf="resource.res.creationDate"> on {{ resource.res.creationDate | date }}</span>
-        </span>
-      </div>
+      <app-resource-info-bar [resource]="resource"></app-resource-info-bar>
     </div>
     <div
       class="representation-container center"
