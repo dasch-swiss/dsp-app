@@ -60,7 +60,7 @@
   </div>
   <div
     class="action-bubble"
-    *ngIf="lastModificationDate && projectStatus && showActionBubble"
+    *ngIf="userCanEdit && lastModificationDate && projectStatus && showActionBubble"
     [@simpleFadeAnimation]="'in'">
     <div class="button-container">
       <span

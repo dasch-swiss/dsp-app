@@ -8,6 +8,7 @@ import { PropertyForm } from '../property-form.type';
 
 @Component({
   selector: 'app-property-form',
+  styles: ['.toggles { display: flex; justify-content: center; gap: 16px; margin-bottom: 16px;}'],
   template: ` <form [formGroup]="form">
     <mat-form-field style="width: 100%">
       <span matPrefix>
@@ -37,10 +38,6 @@ import { PropertyForm } from '../property-form.type';
       [formArray]="form.controls.labels"
       data-cy="label-input"
       placeholder="Property label*"></dasch-swiss-multi-language-input>
-    <dasch-swiss-multi-language-textarea
-      [formArray]="form.controls.comments"
-      data-cy="comment-textarea"
-      placeholder="Comment"></dasch-swiss-multi-language-textarea>
 
     <app-gui-attr-list
       *ngIf="formData.property.propType.objectType === Constants.ListValue"
@@ -50,7 +47,7 @@ import { PropertyForm } from '../property-form.type';
       *ngIf="formData.property.propType.objectType === Constants.LinkValue"
       [control]="form.controls.guiAttr"></app-gui-attr-link>
 
-    <div style="display: flex; justify-content: center; gap: 16px">
+    <div class="toggles">
       <app-multiple-slide-toggle
         [control]="form.controls.cardinality"
         data-cy="multiple-toggle"
@@ -63,6 +60,11 @@ import { PropertyForm } from '../property-form.type';
         [label]="'Required value ?'"
         (afterCardinalityChange)="form.controls.cardinality.patchValue($event)"></app-required-slide-toggle>
     </div>
+
+    <dasch-swiss-multi-language-textarea
+      [formArray]="form.controls.comments"
+      data-cy="comment-textarea"
+      placeholder="Comment"></dasch-swiss-multi-language-textarea>
   </form>`,
 })
 export class PropertyFormComponent implements OnInit {
