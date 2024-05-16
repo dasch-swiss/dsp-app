@@ -12,8 +12,8 @@ import {
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { ProjectsSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { Store } from '@ngxs/store';
-import { of, Subscription } from 'rxjs';
-import { filter, switchMap } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
+import { filter, finalize, switchMap } from 'rxjs/operators';
 import { CreateResourceDialogComponent, CreateResourceDialogProps } from '../create-resource-dialog.component';
 import { LinkValueDataService } from './link-value-data.service';
 
@@ -35,7 +35,7 @@ import { LinkValueDataService } from './link-value-data.service';
         requireSelection
         [displayWith]="displayResource.bind(this)"
         (closed)="handleNonSelectedValues()">
-        <mat-option *ngIf="resources.length === 0" [disabled]="true"> No results were found.</mat-option>
+        <mat-option *ngIf="resources.length === 0 && !loading" [disabled]="true"> No results were found. </mat-option>
         <mat-option
           *ngFor="let rc of _linkValueDataService.resourceClasses"
           (click)="openCreateResourceDialog($event, rc.id, rc.label)">
@@ -43,6 +43,7 @@ import { LinkValueDataService } from './link-value-data.service';
         </mat-option>
         <mat-option *ngFor="let res of resources" [value]="res.id"> {{ res.label }}</mat-option>
       </mat-autocomplete>
+      <mat-spinner [diameter]="24" style="margin-right: 16px" *ngIf="loading" matSuffix></mat-spinner>
       <mat-hint>{{ 'appLabels.form.action.searchHelp' | translate }}</mat-hint>
       <mat-error *ngIf="control.errors as errors">{{ errors | humanReadableError }}</mat-error>
     </mat-form-field>
@@ -57,6 +58,7 @@ export class LinkValueComponent implements OnInit, OnDestroy {
   @ViewChild(MatAutocompleteTrigger) autoComplete!: MatAutocompleteTrigger;
   @ViewChild('input') input!: ElementRef<HTMLInputElement>;
 
+  loading = false;
   useDefaultValue = true;
   resources: ReadResource[] = [];
 
@@ -85,14 +87,20 @@ export class LinkValueComponent implements OnInit, OnDestroy {
 
   search() {
     const readResource = this.readResource as ReadResource;
-    this.subscription = of(this._getTextInput())
+    const searchTerm = this._getTextInput();
+    if (searchTerm?.length < 3) {
+      return;
+    }
+    this.loading = true;
+
+    this.subscription = this._dspApiConnection.v2.search
+      .doSearchByLabel(searchTerm, 0, {
+        limitToResourceClass: this._getRestrictToResourceClass(readResource),
+      })
       .pipe(
-        filter(searchTerm => searchTerm?.length >= 3),
-        switchMap((searchTerm: string) =>
-          this._dspApiConnection.v2.search.doSearchByLabel(searchTerm, 0, {
-            limitToResourceClass: this._getRestrictToResourceClass(readResource),
-          })
-        )
+        finalize(() => {
+          this.loading = false;
+        })
       )
       .subscribe(response => {
         this.resources = (response as ReadResourceSequence).resources;

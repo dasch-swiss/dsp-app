@@ -4,6 +4,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DeleteResource, DeleteResourceResponse, KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
+import { finalize } from 'rxjs/operators';
 
 export interface EraseResourceDialogProps {
   resource: DspResource;
@@ -33,6 +34,8 @@ export interface EraseResourceDialogProps {
         [disabled]="eraseForm.invalid"
         mat-button
         mat-raised-button
+        appLoadingButton
+        [isLoading]="loading"
         [color]="'warn'"
         class="confirm-button center"
         (click)="submit()">
@@ -45,6 +48,7 @@ export class EraseResourceDialogComponent {
   eraseForm = new FormGroup({
     comment: new FormControl('', [Validators.required]),
   });
+  loading = false;
 
   constructor(
     @Inject(DspApiConnectionToken)
@@ -55,14 +59,24 @@ export class EraseResourceDialogComponent {
   ) {}
 
   submit() {
+    if (this.eraseForm.invalid) return;
+
+    this.loading = true;
     const payload = new DeleteResource();
     payload.id = this.data.resource.res.id;
     payload.type = this.data.resource.res.type;
     payload.deleteComment = this.eraseForm.controls.comment.value ?? '';
     payload.lastModificationDate = this.data.lastModificationDate;
 
-    this._dspApiConnection.v2.res.eraseResource(payload).subscribe(response => {
-      this._dialogRef.close(response as DeleteResourceResponse);
-    });
+    this._dspApiConnection.v2.res
+      .eraseResource(payload)
+      .pipe(
+        finalize(() => {
+          this.loading = false;
+        })
+      )
+      .subscribe(response => {
+        this._dialogRef.close(response as DeleteResourceResponse);
+      });
   }
 }
