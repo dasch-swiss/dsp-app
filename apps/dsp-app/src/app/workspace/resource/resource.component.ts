@@ -18,7 +18,6 @@ import {
   ReadResourceSequence,
   ReadStillImageFileValue,
   ReadTextFileValue,
-  ReadUser,
   ResourceClassDefinitionWithPropertyDefinition,
   SystemPropertyDefinition,
 } from '@dasch-swiss/dsp-js';
@@ -30,7 +29,11 @@ import {
   ResourceService,
 } from '@dasch-swiss/vre/shared/app-common';
 import { DspApiConnectionToken, DspDialogConfig, RouteConstants } from '@dasch-swiss/vre/shared/app-config';
-import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
+import {
+  Events as CommsEvents,
+  ComponentCommunicationEventService,
+  ProjectService,
+} from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
 import {
   EditResourceLabelDialogComponent,
@@ -43,8 +46,8 @@ import {
   ResourceSelectors,
   UserSelectors,
 } from '@dasch-swiss/vre/shared/app-state';
-import { Actions, ofActionSuccessful, Store } from '@ngxs/store';
-import { combineLatest, Observable, Subject, Subscription } from 'rxjs';
+import { Actions, Store, ofActionSuccessful } from '@ngxs/store';
+import { Observable, Subject, Subscription, combineLatest } from 'rxjs';
 import { filter, map, switchMap, take, takeUntil, tap } from 'rxjs/operators';
 import { FileRepresentation, RepresentationConstants } from './representation/file-representation';
 import { Region, StillImageComponent } from './representation/still-image/still-image.component';
@@ -134,7 +137,8 @@ export class ResourceComponent implements OnChanges, OnInit, OnDestroy {
     private _cdr: ChangeDetectorRef,
     private _store: Store,
     private _actions$: Actions,
-    private _dialog: MatDialog
+    private _dialog: MatDialog,
+    private _componentCommsService: ComponentCommunicationEventService
   ) {
     this._route.params.subscribe(params => {
       const projectCode = params.project;
@@ -150,6 +154,7 @@ export class ResourceComponent implements OnChanges, OnInit, OnDestroy {
       this._titleService.setTitle('Resource view');
     });
 
+    this._componentCommsService.on(CommsEvents.resourceChanged, () => this._initResource(this.resourceIri));
     this.valueOperationEventSubscriptions.push(
       this._valueOperationEventService.on(Events.FileValueUpdated, (newFileValue: UpdatedFileEventValue) => {
         if (newFileValue) {
