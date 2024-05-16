@@ -16,7 +16,7 @@ import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
 import { LoadAnnotatedResourceAction, LoadResourceAction } from '@dasch-swiss/vre/shared/app-state';
 import { Store } from '@ngxs/store';
 import { Subscription } from 'rxjs';
-import { finalize, startWith, switchMap, take } from 'rxjs/operators';
+import { finalize, startWith, switchMap, take, tap } from 'rxjs/operators';
 import { DeleteValueDialogComponent, DeleteValueDialogProps } from './delete-value-dialog.component';
 import { PropertyValueService } from './property-value.service';
 import { propertiesTypeMapping } from './resource-payloads-mapping';
@@ -206,7 +206,7 @@ export class PropertyValueComponent implements OnInit {
       .updateValue(this._getPayload(this.index))
       .pipe(
         take(1),
-        switchMap((): any => {
+        tap((): any => {
           if (this.propertyValueService._editModeData?.resource.type === Constants.Region) {
             this._store.dispatch(new LoadAnnotatedResourceAction(this.propertyValueService._editModeData!.resource.id));
           } else {
