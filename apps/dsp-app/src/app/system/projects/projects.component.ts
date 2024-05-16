@@ -1,7 +1,12 @@
 import { ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { StoredProject } from '@dasch-swiss/dsp-js';
-import { UserSelectors, ProjectsSelectors, LoadProjectsAction } from '@dasch-swiss/vre/shared/app-state';
+import {
+  LoadProjectsAction,
+  LoadUserAction,
+  ProjectsSelectors,
+  UserSelectors,
+} from '@dasch-swiss/vre/shared/app-state';
 import { Select, Store } from '@ngxs/store';
 import { Observable, Subject, combineLatest } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
@@ -77,5 +82,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
    */
   refresh(): void {
     this._store.dispatch(new LoadProjectsAction());
+    const currentUser = this._store.selectSnapshot(UserSelectors.user);
+    this._store.dispatch(new LoadUserAction(currentUser.username));
   }
 }
