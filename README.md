@@ -61,26 +61,26 @@ The most common commands are defined in `package.json`.
 
 > **_NOTE:_** You can install `nx` globally with `npm install -g nx`. If not, then all `nx` commands below need to be prefixed with `npx`.
 
-| nx                                                   | npm                                 |
-|------------------------------------------------------|-------------------------------------|
-| `nx run dsp-app:test`                                | `npm run test-local`                |
-| `nx run dsp-app:test:ci`                             | `npm run test-ci`                   |
-| `nx run-many --all --target=test --configuration=ci` | `npm run test-ci-all`               |
-| `nx run dsp-app:serve`                               | `npm run start-dev`                 |
-| `nx run dsp-app:serve:test-server`                   | `npm run start-with-test-server`    |
-| `nx run dsp-app:serve:dev-server`                    | `npm run start-with-dev-server`     |
-| `nx run dsp-app:serve:ls-test-server`                | `npm run start-with-ls-test-server` |
-| `nx run dsp-app:serve:stage-server`                  | `npm run start-with-stage-server`   |
-| `nx run dsp-app:serve:0845-test-server`              | `npm run start-with-0845-server`    |
-| `nx run dsp-app:lint`                                | `npm run lint-ci`                   |
-| `nx run dsp-app:lint --fix`                          | `npm run lint-local`                |
-| `nx run dsp-app-e2e:e2e:development`                 | `npm run e2e-ci-dev`                |
-| `nx run dsp-app-e2e:e2e:production`                  | `npm run e2e-ci`                    |
-| `nx run dsp-app:build`                               | `build`                             |
-| `nx run dsp-app:build:production`                    | `build-prod`                        |
+| nx                                                   | npm                       |
+| ---------------------------------------------------- | ------------------------- |
+| `nx run dsp-app:test`                                | `npm run test-local`      |
+| `nx run dsp-app:test:ci`                             | `npm run test-ci`         |
+| `nx run-many --all --target=test --configuration=ci` | `npm run test-ci-all`     |
+| `nx run dsp-app:serve`                               | `npm run start-local`     |
+| `nx run dsp-app:serve:test-server`                   | `npm run start-test`      |
+| `nx run dsp-app:serve:dev-server`                    | `npm run start-dev`       |
+| `nx run dsp-app:serve:ls-test-server`                | `npm run start-ls-test`   |
+| `nx run dsp-app:serve:stage-server`                  | `npm run start-stage`     |
+| `nx run dsp-app:serve:0845-test-server`              | `npm run start-0845-test` |
+| `nx run dsp-app:lint`                                | `npm run lint-ci`         |
+| `nx run dsp-app:lint --fix`                          | `npm run lint-local`      |
+| `nx run dsp-app-e2e:e2e:development`                 | `npm run e2e-ci-dev`      |
+| `nx run dsp-app-e2e:e2e:production`                  | `npm run e2e-ci`          |
+| `nx run dsp-app:build`                               | `build`                   |
+| `nx run dsp-app:build:production`                    | `build-prod`              |
 
 | npx                                       | npm                 |
-|-------------------------------------------|---------------------|
+| ----------------------------------------- | ------------------- |
 | `cd apps/dsp-app-e2e && npx cypress open` | `npm run e2e-local` |
 
 ### IDE plugins
