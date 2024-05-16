@@ -495,9 +495,8 @@ export class ResourceComponent implements OnChanges, OnInit, OnDestroy {
     this.oldResourceIri = this.resourceIri;
     this._getResource(iri)
       .pipe(switchMap(() => this._store.select(ResourceSelectors.resource)))
-      .subscribe(dspResource => {
-        this._renderResource(dspResource);
-      });
+      .pipe(take(1))
+      .subscribe(dspResource => this._renderResource(dspResource));
   }
 
   private _getResource(iri: string): Observable<DspResource> {
