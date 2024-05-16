@@ -151,7 +151,7 @@ export class FulltextSearchComponent implements OnInit, OnChanges, OnDestroy {
 
     // in the event of a grav search (advanced or expert search), clear the input field
     this.componentCommsSubscriptions.push(
-      this._componentCommsService.on(Events.gravSearchExecuted, () => {
+      this._componentCommsService.on([Events.gravSearchExecuted], () => {
         this.searchQuery = null;
       })
     );

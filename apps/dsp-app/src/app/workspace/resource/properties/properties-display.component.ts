@@ -8,7 +8,7 @@ import {
 } from '@dasch-swiss/vre/shared/app-resource-properties';
 import { ResourceSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { Store } from '@ngxs/store';
-import { Observable, of, Subject } from 'rxjs';
+import { Observable, Subject, of } from 'rxjs';
 import { map, switchMap, takeUntil } from 'rxjs/operators';
 import { PropertiesDisplayIncomingLinkService } from './properties-display-incoming-link.service';
 
@@ -19,7 +19,10 @@ import { PropertiesDisplayIncomingLinkService } from './properties-display-incom
       <h3 style="margin: 0 16px" *ngIf="isAnnotation">{{ resource.res.label }}</h3>
       <div style="display: flex; justify-content: end; flex: 1">
         <app-properties-toolbar [showToggleProperties]="true" [showOnlyIcons]="isAnnotation"></app-properties-toolbar>
-        <app-resource-toolbar *ngIf="isAnnotation" [resource]="resource"></app-resource-toolbar>
+        <app-resource-toolbar
+          *ngIf="isAnnotation"
+          [adminPermissions]="adminPermissions"
+          [resource]="resource"></app-resource-toolbar>
       </div>
     </div>
 
@@ -109,6 +112,7 @@ export class PropertiesDisplayComponent implements OnChanges, OnDestroy {
   @Input({ required: true }) resource!: DspResource;
   @Input({ required: true }) properties!: PropertyInfoValues[];
   @Input() isAnnotation = false;
+  @Input() adminPermissions = false;
 
   resourceAttachedUser$: Observable<ReadUser> = this._store.select(ResourceSelectors.attachedUsers).pipe(
     takeUntil(this.ngUnsubscribe),

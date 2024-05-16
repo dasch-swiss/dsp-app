@@ -126,7 +126,7 @@ export class ProjectComponent extends ProjectBase implements OnInit, OnDestroy {
 
     this.listItemSelected = ProjectComponent.GetListItemSelected(this._router.url, this.projectUuid);
 
-    this.componentCommsSubscription = this._componentCommsService.on(Events.unselectedListItem, () => {
+    this.componentCommsSubscription = this._componentCommsService.on([Events.unselectedListItem], () => {
       this.listItemSelected = '';
     });
   }

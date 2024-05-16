@@ -12,11 +12,11 @@ export class ComponentCommunicationEventService {
 
   // used in the listening component.
   // i.e. this.componentCommunicationEventService = this._componentCommunicationEventService.on(Events.loginSuccess, () => doSomething());
-  on(event: Events, action: () => void): Subscription {
+  on(events: Events[], action: () => void): Subscription {
     return this._subject$
       .pipe(
         // filter down based on event name to any events that are emitted out of the subject from the emit method below.
-        filter((e: EmitEvent) => e.name === event && (e.value == null || e.value === true)) as any,
+        filter((e: EmitEvent) => events.includes(e.name) && (e.value == null || e.value === true)) as any,
         map((e: EmitEvent) => e.value)
       )
       .subscribe(action); // subscribe to the subject to get the data.

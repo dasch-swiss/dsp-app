@@ -68,7 +68,7 @@
 <mat-menu #more="matMenu" class="res-more-menu">
   <button
     *ngIf="showEditLabel"
-    [disabled]="!userCanEdit"
+    [disabled]="!adminPermissions && !userCanEdit"
     mat-menu-item
     matTooltip="Edit the label of this resource"
     matTooltipPosition="above"
@@ -77,7 +77,7 @@
     Edit label
   </button>
   <button
-    [disabled]="!userCanDelete"
+    [disabled]="!adminPermissions && userCanDelete === false"
     mat-menu-item
     matTooltip="Move resource to trash bin."
     matTooltipPosition="above"

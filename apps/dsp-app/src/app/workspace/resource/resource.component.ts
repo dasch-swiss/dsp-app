@@ -154,7 +154,9 @@ export class ResourceComponent implements OnChanges, OnInit, OnDestroy {
       this._titleService.setTitle('Resource view');
     });
 
-    this._componentCommsService.on(CommsEvents.resourceChanged, () => this._initResource(this.resourceIri));
+    this._componentCommsService.on([CommsEvents.resourceChanged, CommsEvents.resourceDeleted], () =>
+      this._initResource(this.resourceIri)
+    );
     this.valueOperationEventSubscriptions.push(
       this._valueOperationEventService.on(Events.FileValueUpdated, (newFileValue: UpdatedFileEventValue) => {
         if (newFileValue) {

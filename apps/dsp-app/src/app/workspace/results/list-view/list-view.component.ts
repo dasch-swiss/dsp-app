@@ -134,9 +134,8 @@ export class ListViewComponent implements OnChanges, OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.componentCommsSubscriptions.push(
-      this._componentCommsService.on(Events.loginSuccess, () => this.initSearch()),
-      this._componentCommsService.on(Events.resourceChanged, () => this._doSearch()),
-      this._componentCommsService.on(Events.resourceDeleted, () => this._doSearch())
+      this._componentCommsService.on([Events.loginSuccess], () => this.initSearch()),
+      this._componentCommsService.on([Events.resourceChanged, Events.resourceDeleted], () => this._doSearch())
     );
   }
 

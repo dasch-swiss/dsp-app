@@ -150,7 +150,11 @@
             *ngFor="let annotation of annotationResources; trackBy: trackAnnotationByFn"
             [id]="annotation.res.id"
             [class.active]="annotation.res.id === selectedRegion">
-            <app-properties-display [resource]="annotation" [properties]="annotation.resProps" isAnnotation="true">
+            <app-properties-display
+              [resource]="annotation"
+              [properties]="annotation.resProps"
+              isAnnotation="true"
+              [adminPermissions]="isAdmin$ | async">
             </app-properties-display>
           </div>
         </mat-tab>
