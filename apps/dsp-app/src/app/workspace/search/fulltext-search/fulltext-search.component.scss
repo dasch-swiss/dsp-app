@@ -139,6 +139,8 @@
   width: $project-filter-width;
   .mat-mdc-menu-item {
     text-transform: capitalize;
+    text-overflow: ellipsis;
+    display: block;
   }
 }
 
