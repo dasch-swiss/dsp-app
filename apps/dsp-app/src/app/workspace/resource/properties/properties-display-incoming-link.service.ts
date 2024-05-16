@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ReadResourceSequence } from '@dasch-swiss/dsp-js';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
-import { IncomingLink, IncomingService } from '@dasch-swiss/vre/shared/app-resource-properties';
+import { IncomingOrStandoffLink, IncomingService, sortByKeys } from '@dasch-swiss/vre/shared/app-resource-properties';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -11,16 +11,18 @@ export class PropertiesDisplayIncomingLinkService {
 
   constructor(private _incomingService: IncomingService) {}
 
-  getIncomingLinks$(resourceId: string, offset: number): Observable<IncomingLink[]> {
+  getIncomingLinks$(resourceId: string, offset: number): Observable<IncomingOrStandoffLink[]> {
     return this._incomingService.getIncomingLinksForResource(resourceId, offset).pipe(
       map(incomingResources => {
-        return (incomingResources as ReadResourceSequence).resources.map(resource => {
+        const array = (incomingResources as ReadResourceSequence).resources.map(resource => {
           return {
             label: resource.label,
             uri: `/resource/${resource.id.match(/[^\/]*\/[^\/]*$/)[0]}`,
             project: resource.resourceClassLabel,
           };
         });
+
+        return sortByKeys(array, ['project', 'label']);
       })
     );
   }
