@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, TemplateRef } from '@angular/core';
 import { AbstractControl, FormBuilder } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Params } from '@angular/router';
 import { Cardinality, ReadUser } from '@dasch-swiss/dsp-js';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { UserSelectors } from '@dasch-swiss/vre/shared/app-state';
@@ -41,7 +41,21 @@ export class PropertyValuesComponent implements OnInit {
     this._route.parent!.params,
   ]).pipe(
     map(([user, userProjectGroups, params, parentParams]) => {
-      const projectIri = this._projectService.uuidToIri(params.uuid ? params.uuid : parentParams.uuid);
+      // TODO this can lead to many bugs: params depend on the routing, but this component can be used everywhere!!
+      // TODO this needs to change, probably the StateManagement + Routing needs to be reviewed.
+      const uuid = ((_params: Params, _parentParams: Params) => {
+        if (_params['uuid']) {
+          return _params['uuid'];
+        }
+        if (_parentParams['uuid']) {
+          return _parentParams['uuid'];
+        }
+        if (_params['project']) {
+          return _params['project'];
+        }
+        throw new Error('Project uuid param not found');
+      })(params, parentParams);
+      const projectIri = this._projectService.uuidToIri(uuid);
       return ProjectService.IsProjectAdminOrSysAdmin(user, userProjectGroups, projectIri);
     })
   );
