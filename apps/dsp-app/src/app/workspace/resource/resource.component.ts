@@ -32,6 +32,7 @@ import { DspApiConnectionToken, DspDialogConfig, RouteConstants } from '@dasch-s
 import {
   Events as CommsEvents,
   ComponentCommunicationEventService,
+  EmitEvent,
   ProjectService,
 } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
@@ -300,6 +301,7 @@ export class ResourceComponent implements OnChanges, OnInit, OnDestroy {
       .afterClosed()
       .subscribe(response => {
         if (!response) return;
+        this._componentCommsService.emit(new EmitEvent(CommsEvents.resourceChanged));
         this._cdr.markForCheck();
       });
   }
