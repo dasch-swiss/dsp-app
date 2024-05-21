@@ -37,7 +37,7 @@
       <div class="content middle" [ngSwitch]="route" *ngIf="route">
         <!-- user profile -->
         <div *ngSwitchCase="'profile'" class="full-width">
-          <app-projects [usersProjects]="true"></app-projects>
+          <app-projects [isUsersProjects]="true"></app-projects>
         </div>
 
         <!-- edit user data -->
@@ -47,7 +47,7 @@
 
         <!-- user's projects -->
         <div *ngSwitchCase="routeConstants.projects" class="full-width">
-          <app-projects [usersProjects]="true"></app-projects>
+          <app-projects [isUsersProjects]="true"></app-projects>
         </div>
       </div>
     </mat-tab-nav-panel>

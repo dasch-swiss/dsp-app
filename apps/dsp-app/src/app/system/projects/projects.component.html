@@ -6,12 +6,14 @@
     [status]="true"
     (refreshParent)="refresh()"
     [createNew]="true"
+    [isUsersProjects]="isUsersProjects"
     data-cy="active-projects-section">
   </app-projects-list>
   <!-- already deactivated projects: disable the menu -->
   <app-projects-list
     [list]="inactiveProjects$ | async"
     [status]="false"
+    [isUsersProjects]="isUsersProjects"
     (refreshParent)="refresh()"
     data-cy="inactive-projects-section"></app-projects-list>
 </div>

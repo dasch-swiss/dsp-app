@@ -53,6 +53,7 @@ export class RouteConstants {
   static readonly listParameter = 'list';
   static readonly classes = 'classes';
   static readonly properties = 'properties';
+  static readonly assignCurrentUser = 'assign-current-user';
 
   static readonly homeRelative = `/${RouteConstants.home}`;
   static readonly userAccountRelative = `/${RouteConstants.userAccount}`;

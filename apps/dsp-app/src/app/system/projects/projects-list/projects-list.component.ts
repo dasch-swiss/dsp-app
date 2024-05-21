@@ -1,13 +1,13 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
-import { Constants, ReadProject, ReadUser, StoredProject, UpdateProjectRequest } from '@dasch-swiss/dsp-js';
+import { Constants, ReadProject, ReadUser, StoredProject } from '@dasch-swiss/dsp-js';
 import { ProjectApiService } from '@dasch-swiss/vre/shared/app-api';
 import { RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { ProjectService, SortingService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { ProjectsSelectors, UserSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { Select } from '@ngxs/store';
 import { Observable, Subject, combineLatest } from 'rxjs';
-import { map, takeUntil, tap } from 'rxjs/operators';
+import { map, takeUntil } from 'rxjs/operators';
 import { SortProp } from '../../../main/action/sort-button/sort-button.component';
 import { DialogService } from '../../../main/services/dialog.service';
 
@@ -28,6 +28,8 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
 
   // enable the button to create new project
   @Input() createNew = false;
+
+  @Input() isUsersProjects = false;
 
   // in case of modification
   @Output() refreshParent: EventEmitter<void> = new EventEmitter<void>();
@@ -131,7 +133,8 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
   }
 
   createNewProject() {
-    this._router.navigate([RouteConstants.project, RouteConstants.createNew]);
+    const queryParams = this.isUsersProjects ? { [RouteConstants.assignCurrentUser]: true } : {};
+    this._router.navigate([RouteConstants.project, RouteConstants.createNew], { queryParams });
   }
 
   editProject(iri: string) {
