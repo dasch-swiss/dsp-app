@@ -98,7 +98,7 @@ export class StatusComponent implements OnInit {
     if (!this.status) {
       // but status is defined in app.routing
       this._route.data.subscribe(data => {
-        this.status = data.status;
+        this.status = data.status ?? 0;
         this.comment = data.comment;
         this.url = data.url;
       });
