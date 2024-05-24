@@ -66,9 +66,12 @@ export class CompoundService {
       const response = res as ReadResource;
 
       const incomingResource = new DspResource(response);
-      incomingResource.resProps = Common.initProps(response)
-        .filter(v => v.values.length > 0)
-        .filter(v => v.propDef.id !== 'http://api.knora.org/ontology/knora-api/v2#hasStillImageFileValue');
+      incomingResource.resProps = Common.initProps(response).filter(
+        v =>
+          v.values.length > 0 &&
+          v.propDef.label &&
+          v.propDef.id !== 'http://api.knora.org/ontology/knora-api/v2#hasStillImageFileValue'
+      );
       incomingResource.systemProps =
         incomingResource.res.entityInfo.getPropertyDefinitionsByType(SystemPropertyDefinition);
 

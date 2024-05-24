@@ -186,6 +186,7 @@ export class PropertyValueSwitcherComponent implements OnInit, OnChanges, AfterV
 
   ngAfterViewInit() {
     this.itemTpl = this._getTemplate();
+    this._cd.detectChanges();
   }
 
   private _getTemplate(): TemplateRef<any> {

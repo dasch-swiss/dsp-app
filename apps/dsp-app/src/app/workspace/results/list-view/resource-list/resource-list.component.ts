@@ -66,7 +66,6 @@ export class ResourceListComponent implements OnInit {
    * @param linkValue
    */
   openResource(linkValue: ReadLinkValue | string) {
-    console.log('opened resource', linkValue);
     const iri = typeof linkValue == 'string' ? linkValue : linkValue.linkedResourceIri;
     const path = this._resourceService.getResourcePath(iri);
     window.open(`/resource${path}`, '_blank');
