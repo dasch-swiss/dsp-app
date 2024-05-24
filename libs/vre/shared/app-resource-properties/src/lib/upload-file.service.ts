@@ -1,18 +1,18 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import { AccessTokenService } from '@dasch-swiss/vre/shared/app-session';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
-export interface UploadedFile {
-  fileType: string;
+interface UploadedFileResponse {
   internalFilename: string;
-  originalFilename: string;
-  temporaryUrl: string;
 }
 
-export interface UploadedFileResponse {
-  uploadedFiles: UploadedFile[];
+export interface UploadedFile {
+  internalFilename: string;
+  thumbnailUrl: string;
+  baseUrl: string;
 }
 
 @Injectable({
@@ -26,21 +26,32 @@ export class UploadFileService {
   ) {}
 
   /**
-   * uploads files to SIPI
-   * @param (file)
+   * uploads files to ingest server
+   * @param (file) The file to upload
+   * @param (shortcode) The project shortcode
    */
-  upload(file: FormData): Observable<UploadedFileResponse> {
-    const uploadUrl = `${this._acs.dspIiifConfig.iiifUrl}/upload`;
-
+  upload(file: File, shortcode: string): Observable<UploadedFile> {
     const jwt = this._accessTokenService.getAccessToken()!;
-    const params = new HttpParams().set('token', jwt);
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/octet-stream}',
+      Authorization: `Bearer ${jwt}`,
+    });
 
-    // --> TODO in order to track the progress change below to true and 'events'
     const options = {
-      params,
       reportProgress: false,
       observe: 'body' as const,
+      headers,
     };
-    return this._http.post<UploadedFileResponse>(uploadUrl, file, options);
+    const url = `${this._acs.dspIngestConfig.url}/projects/${shortcode}/assets/ingest/${file.name}`;
+    return this._http.post<UploadedFileResponse>(url, file, options).pipe(
+      map((res: UploadedFileResponse) => {
+        const baseUrl = `${this._acs.dspIiifConfig.iiifUrl}/${shortcode}/${res.internalFilename}`;
+        return {
+          internalFilename: res.internalFilename,
+          thumbnailUrl: `${baseUrl}/full/^256,/0/default.jpg`,
+          baseUrl,
+        };
+      })
+    );
   }
 }

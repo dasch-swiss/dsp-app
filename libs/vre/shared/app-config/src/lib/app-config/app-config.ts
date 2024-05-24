@@ -63,6 +63,7 @@ export const AppConfig = z.object({
   iiifHost: z.string().nonempty("required 'iiifHost' value missing in config"),
   iiifPort: IiifPort,
   iiifPath: z.string(),
+  ingestUrl: z.string(),
   geonameToken: z.string().nonempty("required 'geonameToken' value missing in config"),
   jsonWebToken: z.string(),
   iriBase: z.literal('http://rdfh.ch'),

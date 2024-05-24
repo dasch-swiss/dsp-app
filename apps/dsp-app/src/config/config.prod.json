@@ -8,6 +8,7 @@
   "iiifHost": "0.0.0.0",
   "iiifPort": 1024,
   "iiifPath": "",
+  "ingestUrl": "http://0.0.0.0:3340",
   "geonameToken": "knora",
   "jsonWebToken": "",
   "logErrors": false,

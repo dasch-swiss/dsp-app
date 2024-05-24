@@ -17,8 +17,12 @@ import {
   UpdateStillImageFileValue,
   UpdateTextFileValue,
 } from '@dasch-swiss/dsp-js';
+import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
-import { UploadedFileResponse, UploadFileService } from '@dasch-swiss/vre/shared/app-resource-properties';
+import { UploadedFile, UploadFileService } from '@dasch-swiss/vre/shared/app-resource-properties';
+import { ProjectsSelectors } from '@dasch-swiss/vre/shared/app-state';
+import { Store } from '@ngxs/store';
+import { filter, map, mergeMap, take } from 'rxjs/operators';
 
 // https://stackoverflow.com/questions/45661010/dynamic-nested-reactive-form-expressionchangedafterithasbeencheckederror
 const resolvedPromise = Promise.resolve(null);
@@ -57,9 +61,11 @@ export class UploadComponent implements OnInit {
 
   constructor(
     private _fb: UntypedFormBuilder,
+    private _acs: AppConfigService,
     private _notification: NotificationService,
     private _sanitizer: DomSanitizer,
-    private _upload: UploadFileService
+    private _upload: UploadFileService,
+    private _store: Store
   ) {}
 
   ngOnInit(): void {
@@ -80,7 +86,6 @@ export class UploadComponent implements OnInit {
       this._notification.openSnackBar(error);
       this.file = null;
     } else {
-      const formData = new FormData();
       this.file = files[0];
 
       // only certain filetypes are supported
@@ -92,47 +97,52 @@ export class UploadComponent implements OnInit {
         // show loading indicator only for files > 1MB
         this.isLoading = this.file.size > 1048576;
 
-        formData.append(this.file.name, this.file);
-        this._upload.upload(formData).subscribe(
-          (res: UploadedFileResponse) => {
-            // prepare thumbnail url to display something after upload
-            switch (this.representation) {
-              case 'stillImage':
-                const temporaryUrl = res.uploadedFiles[0].temporaryUrl;
-                const thumbnailUri = '/full/256,/0/default.jpg';
-                this.thumbnailUrl = this._sanitizer.bypassSecurityTrustUrl(temporaryUrl + thumbnailUri);
-                break;
+        this._store
+          .select(ProjectsSelectors.currentProject)
+          .pipe(
+            filter(v => v !== undefined),
+            take(1),
+            map(prj => prj.shortcode),
+            mergeMap(sc => this._upload.upload(this.file, sc))
+          )
+          .subscribe(
+            (res: UploadedFile) => {
+              // prepare thumbnail url to display something after upload
+              switch (this.representation) {
+                case 'stillImage':
+                  this.thumbnailUrl = this._sanitizer.bypassSecurityTrustUrl(res.thumbnailUrl);
+                  break;
 
-              case 'document':
-                this.thumbnailUrl = res.uploadedFiles[0].temporaryUrl;
-                break;
+                case 'document':
+                  this.thumbnailUrl = res.baseUrl;
+                  break;
 
-              default:
-                this.thumbnailUrl = undefined;
-                break;
+                default:
+                  this.thumbnailUrl = undefined;
+                  break;
+              }
+
+              this.fileControl.setValue(res);
+              const fileValue = this.getNewValue();
+
+              if (fileValue) {
+                this.fileInfo.emit(fileValue);
+              }
+              this.isLoading = false;
+            },
+            (e: Error) => {
+              // as we do not get a proper error message from the server
+              if (e.message.startsWith('Http failure response for ')) {
+                e.message =
+                  'ERROR: File upload failed. The iiif server is not reachable at the moment. Please try again later.';
+              }
+              this._notification.openSnackBar(e.message);
+              this.isLoading = false;
+              this.file = null;
+              this.thumbnailUrl = null;
+              this.forceReload.emit();
             }
-
-            this.fileControl.setValue(res.uploadedFiles[0]);
-            const fileValue = this.getNewValue();
-
-            if (fileValue) {
-              this.fileInfo.emit(fileValue);
-            }
-            this.isLoading = false;
-          },
-          (e: Error) => {
-            // as we do not get a proper error message from the server
-            if (e.message.startsWith('Http failure response for ')) {
-              e.message =
-                'ERROR: File upload failed. The iiif server is not reachable at the moment. Please try again later.';
-            }
-            this._notification.openSnackBar(e.message);
-            this.isLoading = false;
-            this.file = null;
-            this.thumbnailUrl = null;
-            this.forceReload.emit();
-          }
-        );
+          );
       }
     }
     this.fileInput.nativeElement.value = null; // set the html input value to null so in case of an error the user can upload the same file again.

@@ -10,6 +10,7 @@ import { AppConfigToken } from './dsp-api-tokens';
 import { DspAppConfig } from './dsp-app-config';
 import { DspConfig } from './dsp-config';
 import { DspIiifConfig } from './dsp-iiif-config';
+import { DspIngestConfig } from './dsp-ingest-config';
 import { DspInstrumentationConfig, DspRollbarConfig } from './dsp-instrumentation-config';
 
 @Injectable({
@@ -19,6 +20,7 @@ export class AppConfigService {
   private readonly _dspConfig: DspConfig;
   private readonly _dspApiConfig: KnoraApiConfig;
   private readonly _dspIiifConfig: DspIiifConfig;
+  private readonly _dspIngestConfig: DspIngestConfig;
   private readonly _dspAppConfig: DspAppConfig;
   private readonly _dspInstrumentationConfig: DspInstrumentationConfig;
 
@@ -59,6 +61,9 @@ export class AppConfigService {
     // init iiif configuration
     this._dspIiifConfig = new DspIiifConfig(c.iiifProtocol, c.iiifHost, c.iiifPort, c.iiifPath);
 
+    // init ingest configuration
+    this._dspIngestConfig = new DspIngestConfig(c.ingestUrl);
+
     // init dsp app extended configuration
     this._dspAppConfig = new DspAppConfig(c.geonameToken, c.iriBase);
 
@@ -79,6 +84,10 @@ export class AppConfigService {
 
   get dspIiifConfig(): DspIiifConfig {
     return this._dspIiifConfig;
+  }
+
+  get dspIngestConfig(): DspIngestConfig {
+    return this._dspIngestConfig;
   }
 
   get dspAppConfig(): DspAppConfig {

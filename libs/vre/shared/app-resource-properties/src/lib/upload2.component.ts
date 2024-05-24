@@ -3,9 +3,12 @@ import { ControlValueAccessor, NgControl } from '@angular/forms';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { Constants } from '@dasch-swiss/dsp-js';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
+import { ProjectsSelectors } from '@dasch-swiss/vre/shared/app-state';
+import { Store } from '@ngxs/store';
+import { filter, map, mergeMap, take } from 'rxjs/operators';
 import { FileRepresentationType } from './file-representation.type';
 import { fileValueMapping } from './file-value-mapping';
-import { UploadedFileResponse, UploadFileService } from './upload-file.service';
+import { UploadedFile, UploadFileService } from './upload-file.service';
 
 @Component({
   selector: 'app-upload-2',
@@ -79,6 +82,7 @@ export class Upload2Component implements ControlValueAccessor {
     private _upload: UploadFileService,
     private _sanitizer: DomSanitizer,
     private _cdr: ChangeDetectorRef,
+    private _store: Store,
     @Self() public ngControl: NgControl
   ) {
     ngControl.valueAccessor = this;
@@ -117,29 +121,32 @@ export class Upload2Component implements ControlValueAccessor {
   }
 
   private _uploadFile(file: File): void {
-    const formData = new FormData();
-    formData.append(file.name, file);
+    this._store
+      .select(ProjectsSelectors.currentProject)
+      .pipe(
+        filter(v => v !== undefined),
+        take(1),
+        map(prj => prj.shortcode),
+        mergeMap(sc => this._upload.upload(file, sc))
+      )
+      .subscribe((res: UploadedFile) => {
+        switch (this.representation) {
+          case Constants.HasStillImageFileValue:
+            this.previewUrl = this._sanitizer.bypassSecurityTrustUrl(res.thumbnailUrl);
+            break;
+          case Constants.HasDocumentFileValue:
+            this.previewUrl = res.baseUrl;
+            break;
+        }
 
-    this._upload.upload(formData).subscribe((res: UploadedFileResponse) => {
-      switch (this.representation) {
-        case Constants.HasStillImageFileValue:
-          this.previewUrl = this._sanitizer.bypassSecurityTrustUrl(
-            `${res.uploadedFiles[0].temporaryUrl}/full/256,/0/default.jpg`
-          );
-          break;
-        case Constants.HasDocumentFileValue:
-          this.previewUrl = res.uploadedFiles[0].temporaryUrl;
-          break;
-      }
+        // eslint-disable-next-line new-cap
+        const fileResponse = new (fileValueMapping.get(this.representation)!.UploadClass)();
+        fileResponse.filename = res.internalFilename;
+        this.onChange(fileResponse);
+        this.onTouched();
 
-      // eslint-disable-next-line new-cap
-      const fileResponse = new (fileValueMapping.get(this.representation)!.UploadClass)();
-      fileResponse.filename = res.uploadedFiles[0].internalFilename;
-      this.onChange(fileResponse);
-      this.onTouched();
-
-      this._cdr.detectChanges();
-    });
+        this._cdr.detectChanges();
+      });
 
     this.fileInput.nativeElement.value = '';
   }

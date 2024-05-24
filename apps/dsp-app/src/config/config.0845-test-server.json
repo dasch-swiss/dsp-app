@@ -8,6 +8,7 @@
   "iiifHost": "iiif.0845-test-server.dasch.swiss",
   "iiifPort": 443,
   "iiifPath": "",
+  "ingestUrl": "https://ingest.0845-test-server.dasch.swiss",
   "geonameToken": "knora",
   "jsonWebToken": "",
   "logErrors": true,

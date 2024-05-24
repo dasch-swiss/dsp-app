@@ -21,6 +21,7 @@ describe('AppConfigService with dev config', () => {
     iiifHost: '0.0.0.0',
     iiifPort: 1024,
     iiifPath: 'mypath',
+    ingestUrl: 'http://0.0.0.0:3340',
     jsonWebToken: 'mytoken',
     logErrors: true,
     geonameToken: 'geoname_token',
@@ -84,6 +85,7 @@ describe('AppConfigService with prod config', () => {
     iiifHost: '0.0.0.0',
     iiifPort: 1024,
     iiifPath: '',
+    ingestUrl: 'http://0.0.0.0:3340',
     jsonWebToken: 'mytoken',
     logErrors: true,
     geonameToken: 'geoname_token',
@@ -126,6 +128,7 @@ describe('AppConfigService with prod config', () => {
     expect(service.dspIiifConfig.iiifHost).toEqual('0.0.0.0');
     expect(service.dspIiifConfig.iiifPort).toEqual(1024);
     expect(service.dspIiifConfig.iiifPath).toEqual('');
+    expect(service.dspIngestConfig.url).toEqual('http://0.0.0.0:3340');
     expect(service.dspApiConfig.jsonWebToken).toEqual('mytoken');
     expect(service.dspApiConfig.logErrors).toEqual(true);
     expect(service.dspAppConfig.geonameToken).toEqual('geoname_token');
