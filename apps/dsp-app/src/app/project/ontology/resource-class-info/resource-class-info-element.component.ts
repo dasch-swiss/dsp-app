@@ -10,6 +10,7 @@ import {
   UpdateOntology,
   UpdateResourceClassCardinality,
 } from '@dasch-swiss/dsp-js';
+import { GuiCardinality } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { DefaultClass, DefaultProperty } from '@dasch-swiss/vre/shared/app-helper-services';
 import { OntologiesSelectors, OntologyProperties, PropToDisplay } from '@dasch-swiss/vre/shared/app-state';
@@ -17,7 +18,6 @@ import { Select, Store } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
 import { DialogService } from '../../../main/services/dialog.service';
-import { GuiCardinality } from './resource-class-property-info/resource-class-property-info.component';
 
 @Component({
   selector: 'app-resource-class-info-element',
@@ -35,7 +35,7 @@ import { GuiCardinality } from './resource-class-property-info/resource-class-pr
         </span>
       </span>
       <!-- display only properties if they exist in list of properties;
-                                                                                                                                                                                                                                             objectType is not a linkValue (otherwise we have the property twice) -->
+                                                                                                                                                                                                                                                       objectType is not a linkValue (otherwise we have the property twice) -->
       <span matListItemTitle>
         <app-resource-class-property-info
           class="property-info"

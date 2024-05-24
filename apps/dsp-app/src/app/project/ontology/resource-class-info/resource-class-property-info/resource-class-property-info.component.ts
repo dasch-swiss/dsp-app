@@ -23,6 +23,7 @@ import {
   UpdateOntology,
   UpdateResourceClassCardinality,
 } from '@dasch-swiss/dsp-js';
+import { GuiCardinality } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { DefaultClass, DefaultProperty, OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { ListsSelectors, OntologiesSelectors } from '@dasch-swiss/vre/shared/app-state';
@@ -49,13 +50,6 @@ export class Property {
     this.guiAttr = guiAttr;
   }
 }
-
-export interface GuiCardinality {
-  key: CardinalityKey;
-  value: boolean;
-}
-
-type CardinalityKey = 'multiple' | 'required';
 
 @Component({
   selector: 'app-resource-class-property-info',

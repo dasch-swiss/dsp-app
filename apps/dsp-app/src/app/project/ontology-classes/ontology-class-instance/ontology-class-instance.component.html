@@ -10,7 +10,7 @@
     <as-split-area [size]="60" *ngIf="selectedResources?.count > 0" cdkScrollable>
       <div [ngSwitch]="viewMode">
         <!-- single resource view -->
-        <app-resource *ngSwitchCase="'single'" [resourceIri]="selectedResources.resInfo[0].id"></app-resource>
+        <app-resource-fetcher *ngSwitchCase="'single'" [resourceIri]="selectedResources.resInfo[0].id" />
 
         <!-- intermediate view -->
         <app-intermediate
@@ -31,5 +31,5 @@
 </div>
 
 <div class="single-instance" *ngIf="(instanceId$ | async) && (instanceId$ | async) !== routeConstants.addClassInstance">
-  <app-resource [resourceIri]="resourceIri$ | async"></app-resource>
+  <app-resource-fetcher [resourceIri]="resourceIri$ | async" />
 </div>

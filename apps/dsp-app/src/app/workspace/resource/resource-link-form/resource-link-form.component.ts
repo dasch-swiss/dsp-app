@@ -20,12 +20,12 @@ import {
   StoredProject,
 } from '@dasch-swiss/dsp-js';
 import { ResourceService } from '@dasch-swiss/vre/shared/app-common';
+import { FilteredResources, ShortResInfo } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { ProjectsSelectors, UserSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { Select, Store } from '@ngxs/store';
-import { Observable, Subject, combineLatest } from 'rxjs';
+import { combineLatest, Observable, Subject } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
-import { FilteredResources, ShortResInfo } from '../../results/list-view/list-view.component';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,

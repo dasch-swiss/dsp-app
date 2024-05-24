@@ -2,13 +2,14 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnIni
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { StoredProject } from '@dasch-swiss/dsp-js';
+import { FilteredResources } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { AppConfigService, RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { OntologyService, ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { IProjectOntologiesKeyValuePairs, OntologiesSelectors, UserSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { Actions, Select, Store } from '@ngxs/store';
 import { combineLatest, Observable, Subject } from 'rxjs';
 import { map, takeUntil, takeWhile } from 'rxjs/operators';
-import { FilteredResources, SearchParams } from '../../../workspace/results/list-view/list-view.component';
+import { SearchParams } from '../../../workspace/results/list-view/list-view.component';
 import { SplitSize } from '../../../workspace/results/results.component';
 import { ProjectBase } from '../../project-base';
 

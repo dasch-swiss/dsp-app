@@ -47,6 +47,9 @@
       "@dasch-swiss/vre/shared/app-common": [
         "libs/vre/shared/app-common/src/index.ts"
       ],
+      "@dasch-swiss/vre/shared/app-common-to-move": [
+        "libs/vre/shared/app-common-to-move/src/index.ts"
+      ],
       "@dasch-swiss/vre/shared/app-config": [
         "libs/vre/shared/app-config/src/index.ts"
       ],
@@ -70,6 +73,12 @@
       ],
       "@dasch-swiss/vre/shared/app-property-form": [
         "libs/vre/shared/app-property-form/src/index.ts"
+      ],
+      "@dasch-swiss/vre/shared/app-representations": [
+        "libs/vre/shared/app-representations/src/index.ts"
+      ],
+      "@dasch-swiss/vre/shared/app-resource-page": [
+        "libs/vre/shared/app-resource-page/src/index.ts"
       ],
       "@dasch-swiss/vre/shared/app-resource-properties": [
         "libs/vre/shared/app-resource-properties/src/index.ts"

@@ -1,0 +1,77 @@
+@use "../../../../../../../apps/dsp-app/src/styles/config" as *;
+
+// sizes
+$max-width: 800px;
+$panelSize: 40px;
+
+$osd-height: 460px;
+
+:host {
+  @media (max-height: 636px) {
+    height: 364px;
+  }
+
+  .mat-mdc-icon-button:disabled {
+    color: $grey !important;
+  }
+
+  app-status {
+    margin-top: 64px;
+    display: inline-block;
+  }
+
+  .pdf-container {
+    height: 100%;
+    background-color: $dark;
+    border-radius: 8px 8px 0px 0px;
+
+    pdf-viewer {
+      position: inherit;
+
+      ::ng-deep .ng2-pdf-viewer-container {
+        height: 90%;
+      }
+    }
+  }
+
+  .pdf-searchbox {
+    border-radius: $border-radius;
+    border: none;
+    padding: 4px 12px;
+    margin: 4px;
+    width: auto;
+    background: #fff;
+    font-size: inherit;
+    text-align: left;
+
+    &:active {
+      border: none;
+    }
+  }
+}
+
+.file-representation {
+  width: 100%;
+
+  .container {
+    background: $dark;
+    border-radius: 8px 8px 0px 0px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15.5% 0%;
+
+    .contents {
+      color: #ffffff;
+
+      .icon {
+        mat-icon {
+          height: 90px;
+          width: 90px;
+          font-size: 90px;
+          line-height: 90px;
+        }
+      }
+    }
+  }
+}

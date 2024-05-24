@@ -11,6 +11,7 @@ import { MatJDNConvertibleCalendarDateAdapterModule } from '@dasch-swiss/jdnconv
 import { AdvancedSearchComponent } from '@dasch-swiss/vre/advanced-search';
 import { BASE_PATH } from '@dasch-swiss/vre/open-api';
 import { PendoAnalyticsService } from '@dasch-swiss/vre/shared/app-analytics';
+import { CommonToMoveComponents, SplitPipe } from '@dasch-swiss/vre/shared/app-common-to-move';
 import {
   AppConfigService,
   buildTagFactory,
@@ -28,6 +29,8 @@ import {
   LoadingButtonDirective,
 } from '@dasch-swiss/vre/shared/app-progress-indicator';
 import { PropertyFormComponents } from '@dasch-swiss/vre/shared/app-property-form';
+import { RepresentationsComponents } from '@dasch-swiss/vre/shared/app-representations';
+import { ResourcePageComponents } from '@dasch-swiss/vre/shared/app-resource-page';
 import { ResourcePropertiesComponents } from '@dasch-swiss/vre/shared/app-resource-properties';
 import { NgxsStoreModule } from '@dasch-swiss/vre/shared/app-state';
 import {
@@ -51,8 +54,6 @@ import { LoginFormComponent } from './main/action/login-form/login-form.componen
 import { SelectedResourcesComponent } from './main/action/selected-resources/selected-resources.component';
 import { SortButtonComponent } from './main/action/sort-button/sort-button.component';
 import { CookiePolicyComponent } from './main/cookie-policy/cookie-policy.component';
-import { DialogHeaderComponent } from './main/dialog/dialog-header/dialog-header.component';
-import { DialogComponent } from './main/dialog/dialog.component';
 import { AdminImageDirective } from './main/directive/admin-image/admin-image.directive';
 import { DisableContextMenuDirective } from './main/directive/disable-context-menu.directive';
 import { InvalidControlScrollDirective } from './main/directive/invalid-control-scroll.directive';
@@ -65,7 +66,6 @@ import { IiifWithCredentialsInterceptor } from './main/http-interceptors/iiif-wi
 import { FormattedBooleanPipe } from './main/pipes/formatting/formatted-boolean.pipe';
 import { KnoraDatePipe } from './main/pipes/formatting/knoradate.pipe';
 import { IsFalsyPipe } from './main/pipes/isFalsy.piipe';
-import { SplitPipe } from './main/pipes/split.pipe';
 import { LinkifyPipe } from './main/pipes/string-transformation/linkify.pipe';
 import { StringifyStringLiteralPipe } from './main/pipes/string-transformation/stringify-string-literal.pipe';
 import { TitleFromCamelCasePipe } from './main/pipes/string-transformation/title-from-camel-case.pipe';
@@ -135,23 +135,8 @@ import { IntermediateComponent } from './workspace/intermediate/intermediate.com
 import { DragDropDirective } from './workspace/resource/directives/drag-drop.directive';
 import { TextValueHtmlLinkDirective } from './workspace/resource/directives/text-value-html-link.directive';
 import { PermissionInfoComponent } from './workspace/resource/permission-info/permission-info.component';
-import { PropertiesDisplayComponent } from './workspace/resource/properties/properties-display.component';
-import { ResourceToolbarComponent } from './workspace/resource/properties/resource-toolbar/resource-toolbar';
-import { AddRegionFormComponent } from './workspace/resource/representation/add-region-form/add-region-form.component';
-import { ArchiveComponent } from './workspace/resource/representation/archive/archive.component';
-import { AudioComponent } from './workspace/resource/representation/audio/audio.component';
-import { AvTimelineComponent } from './workspace/resource/representation/av-timeline/av-timeline.component';
-import { DocumentComponent } from './workspace/resource/representation/document/document.component';
-import { ReplaceFileFormComponent } from './workspace/resource/representation/replace-file-form/replace-file-form.component';
-import { StillImageComponent } from './workspace/resource/representation/still-image/still-image.component';
-import { TextComponent } from './workspace/resource/representation/text/text.component';
-import { UploadComponent } from './workspace/resource/representation/upload/upload.component';
-import { VideoPreviewComponent } from './workspace/resource/representation/video/video-preview/video-preview.component';
-import { VideoComponent } from './workspace/resource/representation/video/video.component';
 import { SelectProjectComponent } from './workspace/resource/resource-instance-form/select-project/select-project.component';
 import { ResourceLinkFormComponent } from './workspace/resource/resource-link-form/resource-link-form.component';
-import { ResourcePageComponent } from './workspace/resource/resource-page.component';
-import { ResourceComponent } from './workspace/resource/resource.component';
 import { ColorPickerComponent } from './workspace/resource/values/color-value/color-picker/color-picker.component';
 import { DateValueHandlerComponent } from './workspace/resource/values/date-value/date-value-handler/date-value-handler.component';
 import { JDNDatepickerDirective } from './workspace/resource/values/jdn-datepicker-directive/jdndatepicker.directive';
@@ -173,17 +158,15 @@ export function httpLoaderFactory(httpClient: HttpClient) {
   declarations: [
     ...PropertyFormComponents,
     ...ResourcePropertiesComponents,
-    PropertiesDisplayComponent,
+    ...ResourcePageComponents,
+    ...RepresentationsComponents,
+    ...CommonToMoveComponents,
     AccountComponent,
     ActionBubbleComponent,
-    AddRegionFormComponent,
     AddUserComponent,
     AdminImageDirective,
     AdvancedSearchContainerComponent,
     AppComponent,
-    ArchiveComponent,
-    AudioComponent,
-    AvTimelineComponent,
     DescriptionComponent,
     CenteredLayoutComponent,
     ChipListInputComponent,
@@ -196,10 +179,7 @@ export function httpLoaderFactory(httpClient: HttpClient) {
     CreateUserPageComponent,
     CreateResourceClassDialogComponent,
     DateValueHandlerComponent,
-    DialogComponent,
-    DialogHeaderComponent,
     DisableContextMenuDirective,
-    DocumentComponent,
     DragDropDirective,
     EditResourceClassDialogComponent,
     EditUserPageComponent,
@@ -244,15 +224,11 @@ export function httpLoaderFactory(httpClient: HttpClient) {
     ProjectsComponent,
     ProjectsListComponent,
     PropertyInfoComponent,
-    ReplaceFileFormComponent,
     ResourceClassFormComponent,
     ResourceClassInfoComponent,
     ResourceClassPropertyInfoComponent,
-    ResourceComponent,
     ResourceLinkFormComponent,
     ResourceListComponent,
-    ResourcePageComponent,
-    ResourceToolbarComponent,
     ResultsComponent,
     SearchPanelComponent,
     SelectedResourcesComponent,
@@ -262,7 +238,6 @@ export function httpLoaderFactory(httpClient: HttpClient) {
     SortButtonComponent,
     SplitPipe,
     StatusComponent,
-    StillImageComponent,
     StringifyStringLiteralPipe,
     SystemComponent,
     TextValueHtmlLinkDirective,
@@ -270,16 +245,12 @@ export function httpLoaderFactory(httpClient: HttpClient) {
     TimePipe,
     TitleFromCamelCasePipe,
     TruncatePipe,
-    UploadComponent,
     UserComponent,
     UserFormComponent,
     UserMenuComponent,
     UsersComponent,
     UsersListComponent,
-    VideoComponent,
-    VideoPreviewComponent,
     HintComponent,
-    TextComponent,
     OntologyClassesComponent,
     OntologyClassItemComponent,
     OntologyClassInstanceComponent,

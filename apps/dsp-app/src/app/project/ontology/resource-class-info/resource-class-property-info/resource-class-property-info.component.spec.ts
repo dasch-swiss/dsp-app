@@ -3,7 +3,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Component, DebugElement, Input, ViewChild } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatDialogHarness } from '@angular/material/dialog/testing';
 import { MatIconModule } from '@angular/material/icon';
 import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button';
@@ -24,13 +24,10 @@ import {
   ReadOntology,
   ResourcePropertyDefinitionWithAllLanguages,
 } from '@dasch-swiss/dsp-js';
-import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
-import { DspApiConfigToken, DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
+import { DialogComponent, DialogHeaderComponent, SplitPipe } from '@dasch-swiss/vre/shared/app-common-to-move';
+import { AppConfigService, DspApiConfigToken, DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
 import { ApplicationStateService } from '@dasch-swiss/vre/shared/app-state-service';
-import { DialogHeaderComponent } from '@dsp-app/src/app/main/dialog/dialog-header/dialog-header.component';
-import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
-import { SplitPipe } from '@dsp-app/src/app/main/pipes/split.pipe';
 import { ResourceClassPropertyInfoComponent } from '@dsp-app/src/app/project/ontology/resource-class-info/resource-class-property-info/resource-class-property-info.component';
 import { TestConfig } from '@dsp-app/src/test.config';
 import { MockProvider } from 'ng-mocks';
@@ -457,6 +454,7 @@ describe('ResourceClassPropertyInfoComponent', () => {
     function isChecked(toggle: DebugElement): boolean {
       return toggle.nativeElement.getAttribute('ng-reflect-checked') === 'true';
     }
+
     // cardinality 2 means 'multiple values'
     expect(isChecked(multipleToggle)).toEqual(true);
     // and cardinality 2 means also 'not required value'

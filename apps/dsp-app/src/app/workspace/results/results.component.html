@@ -11,7 +11,7 @@
     <as-split-area [size]="60" *ngIf="selectedResources?.count > 0" cdkScrollable>
       <div [ngSwitch]="viewMode">
         <!-- single resource view -->
-        <app-resource *ngSwitchCase="'single'" [resourceIri]="resourceIri"> </app-resource>
+        <app-resource-fetcher *ngSwitchCase="'single'" [resourceIri]="resourceIri" />
 
         <!-- intermediate view -->
         <app-intermediate

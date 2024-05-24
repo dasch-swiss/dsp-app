@@ -1,9 +1,10 @@
 import { AfterViewChecked, ChangeDetectorRef, Component } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Params } from '@angular/router';
+import { FilteredResources } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { FilteredResources, SearchParams } from './list-view/list-view.component';
+import { SearchParams } from './list-view/list-view.component';
 
 export interface SplitSize {
   gutterNum: number;

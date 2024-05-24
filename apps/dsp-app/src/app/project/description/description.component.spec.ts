@@ -24,10 +24,10 @@ import {
   ReadProject,
   StringLiteral,
 } from '@dasch-swiss/dsp-js';
+import { DialogComponent } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { AppConfigService, DspApiConfigToken, DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
 import { ApplicationStateService } from '@dasch-swiss/vre/shared/app-state-service';
-import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
 import { StatusComponent } from '@dsp-app/src/app/main/status/status.component';
 import { TestConfig } from '@dsp-app/src/test.config';
 import { TranslateModule } from '@ngx-translate/core';

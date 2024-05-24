@@ -2,10 +2,10 @@ import { OverlayContainer } from '@angular/cdk/overlay';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, ViewChild } from '@angular/core';
-import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatDialogHarness } from '@angular/material/dialog/testing';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
@@ -24,13 +24,11 @@ import {
   ProjectsEndpointAdmin,
   ReadProject,
 } from '@dasch-swiss/dsp-js';
-import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
-import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
+import { DialogComponent, DialogHeaderComponent } from '@dasch-swiss/vre/shared/app-common-to-move';
+import { AppConfigService, DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
 import { Session, SessionService } from '@dasch-swiss/vre/shared/app-session';
 import { ApplicationStateService } from '@dasch-swiss/vre/shared/app-state-service';
-import { DialogHeaderComponent } from '@dsp-app/src/app/main/dialog/dialog-header/dialog-header.component';
-import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
 import { StringifyStringLiteralPipe } from '@dsp-app/src/app/main/pipes/string-transformation/stringify-string-literal.pipe';
 import { TruncatePipe } from '@dsp-app/src/app/main/pipes/string-transformation/truncate.pipe';
 import { TestConfig } from '@dsp-app/src/test.config';

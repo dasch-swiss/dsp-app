@@ -1,6 +1,11 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { RouteConstants } from '@dasch-swiss/vre/shared/app-config';
+import {
+  ResourcePage2Component,
+  ResourcePageComponent,
+  ResourceComponent,
+} from '@dasch-swiss/vre/shared/app-resource-page';
 import { CreateResourcePageComponent } from '@dasch-swiss/vre/shared/app-resource-properties';
 import { CookiePolicyComponent } from './main/cookie-policy/cookie-policy.component';
 import { AuthGuard } from './main/guard/auth.guard';
@@ -24,8 +29,6 @@ import { SystemComponent } from './system/system.component';
 import { UsersComponent } from './system/users/users.component';
 import { OverviewComponent } from './user/overview/overview.component';
 import { UserComponent } from './user/user.component';
-import { ResourcePageComponent } from './workspace/resource/resource-page.component';
-import { ResourceComponent } from './workspace/resource/resource.component';
 import { ResultsComponent } from './workspace/results/results.component';
 import { AdvancedSearchContainerComponent } from './workspace/search/advanced-search/advanced-search-container.component';
 
@@ -183,7 +186,7 @@ const routes: Routes = [
       },
       {
         path: RouteConstants.projectResourceRelative,
-        component: ResourceComponent,
+        component: ResourcePage2Component,
       },
     ],
     runGuardsAndResolvers: 'always',

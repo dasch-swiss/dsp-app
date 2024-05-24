@@ -5,7 +5,7 @@ import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { GetAttachedProjectAction, GetAttachedUserAction, ResourceSelectors } from '@dasch-swiss/vre/shared/app-state';
-import { Actions, Store, ofActionSuccessful } from '@ngxs/store';
+import { Actions, ofActionSuccessful, Store } from '@ngxs/store';
 import { filter, map, take } from 'rxjs/operators';
 
 @Component({
@@ -29,6 +29,15 @@ import { filter, map, take } from 'rxjs/operators';
       </span>
     </div>
   `,
+  styles: [
+    `
+      .infobar {
+        box-sizing: border-box;
+        white-space: nowrap;
+        color: rgba(0, 0, 0, 0.87);
+      }
+    `,
+  ],
 })
 export class ResourceInfoBarComponent implements OnInit {
   @Input({ required: true }) resource!: DspResource;

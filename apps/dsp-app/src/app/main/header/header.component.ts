@@ -3,10 +3,10 @@ import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
+import { DialogComponent } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { AppConfigService, DspConfig, RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { Subscription } from 'rxjs';
 import { SearchParams } from '../../workspace/results/list-view/list-view.component';
-import { DialogComponent } from '../dialog/dialog.component';
 
 @Component({
   selector: 'app-header',

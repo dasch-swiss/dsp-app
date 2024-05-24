@@ -22,6 +22,7 @@ import {
   ResourceClassDefinitionWithAllLanguages,
 } from '@dasch-swiss/dsp-js';
 import { getAllEntityDefinitionsAsArray } from '@dasch-swiss/vre/shared/app-api';
+import { DialogComponent } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { DspApiConnectionToken, RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import {
   DefaultClass,
@@ -55,7 +56,6 @@ import { MultiLanguages } from '@dasch-swiss/vre/shared/app-string-literal';
 import { Actions, ofActionSuccessful, Select, Store } from '@ngxs/store';
 import { combineLatest, Observable, Subject } from 'rxjs';
 import { map, switchMap, take, takeUntil } from 'rxjs/operators';
-import { DialogComponent } from '../../main/dialog/dialog.component';
 import { DialogService } from '../../main/services/dialog.service';
 import { ProjectBase } from '../project-base';
 import {

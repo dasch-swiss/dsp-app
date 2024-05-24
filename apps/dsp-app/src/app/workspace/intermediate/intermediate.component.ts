@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { DialogComponent } from '../../main/dialog/dialog.component';
-import { FilteredResources } from '../results/list-view/list-view.component';
+import { DialogComponent, FilteredResources } from '@dasch-swiss/vre/shared/app-common-to-move';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,

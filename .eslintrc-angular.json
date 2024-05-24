@@ -14,8 +14,8 @@
       ],
       "rules": {
         "@angular-eslint/template/no-negated-async": "off",
+        "import/no-extraneous-dependencies": "off",
         "@typescript-eslint/adjacent-overload-signatures": "warn",
-
         "@angular-eslint/directive-selector": [
           "error",
           {

@@ -35,10 +35,9 @@ import {
   ResourcePropertyDefinitionWithAllLanguages,
   UsersEndpointAdmin,
 } from '@dasch-swiss/dsp-js';
+import { DialogComponent, SplitPipe } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { AppConfigService, DspApiConfigToken, DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { ApplicationStateService } from '@dasch-swiss/vre/shared/app-state-service';
-import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
-import { SplitPipe } from '@dsp-app/src/app/main/pipes/split.pipe';
 import { TruncatePipe } from '@dsp-app/src/app/main/pipes/string-transformation/truncate.pipe';
 import { StatusComponent } from '@dsp-app/src/app/main/status/status.component';
 import { TestConfig } from '@dsp-app/src/test.config';

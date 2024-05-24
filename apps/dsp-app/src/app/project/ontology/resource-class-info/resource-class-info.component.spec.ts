@@ -22,11 +22,10 @@ import {
   OntologiesEndpointV2,
   ReadOntology,
 } from '@dasch-swiss/dsp-js';
-import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
-import { DspApiConfigToken, DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
+import { SplitPipe } from '@dasch-swiss/vre/shared/app-common-to-move';
+import { AppConfigService, DspApiConfigToken, DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
 import { ApplicationStateService } from '@dasch-swiss/vre/shared/app-state-service';
-import { SplitPipe } from '@dsp-app/src/app/main/pipes/split.pipe';
 import { TruncatePipe } from '@dsp-app/src/app/main/pipes/string-transformation/truncate.pipe';
 import { SortingService } from '@dsp-app/src/app/main/services/sorting.service';
 import { TestConfig } from '@dsp-app/src/test.config';
