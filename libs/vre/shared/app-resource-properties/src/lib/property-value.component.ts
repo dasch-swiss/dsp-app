@@ -14,7 +14,7 @@ import {
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
 import { LoadAnnotatedResourceAction, LoadResourceAction } from '@dasch-swiss/vre/shared/app-state';
-import { Store } from '@ngxs/store';
+import { Actions, Store, ofActionSuccessful } from '@ngxs/store';
 import { Subscription } from 'rxjs';
 import { finalize, startWith, switchMap, take, tap } from 'rxjs/operators';
 import { DeleteValueDialogComponent, DeleteValueDialogProps } from './delete-value-dialog.component';
@@ -87,7 +87,8 @@ export class PropertyValueComponent implements OnInit {
     private _notification: NotificationService,
     private _dialog: MatDialog,
     private _viewContainerRef: ViewContainerRef,
-    private _store: Store
+    private _store: Store,
+    private _actions: Actions
   ) {}
 
   ngOnInit() {
@@ -155,6 +156,7 @@ export class PropertyValueComponent implements OnInit {
           } else {
             this._store.dispatch(new LoadResourceAction(resource.id));
           }
+          return this._actions.pipe(ofActionSuccessful(LoadAnnotatedResourceAction, LoadResourceAction)).pipe(take(1));
         }),
         finalize(() => {
           this.loading = false;

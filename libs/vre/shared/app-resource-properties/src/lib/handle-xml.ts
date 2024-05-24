@@ -1,4 +1,4 @@
-export function handleXML(xml: string, fromKnora: boolean, addXMLDocType = true) {
+export function handleXML(xml: string, fromKnora: boolean) {
   const xmlTransform: { [index: string]: string } = {
     '<hr>': '<hr/>',
     '<s>': '<strike>',
@@ -34,7 +34,7 @@ export function handleXML(xml: string, fromKnora: boolean, addXMLDocType = true)
       xml = xml.replace(new RegExp(key, 'g'), xmlTransform[key]);
     }
 
-    if (addXMLDocType) {
+    if (!xml.includes(doctype)) {
       return doctype + openingTextTag + xml + closingTextTag;
     } else {
       return xml;
