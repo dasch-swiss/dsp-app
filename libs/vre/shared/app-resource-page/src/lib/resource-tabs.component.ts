@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnChanges } from '@angular/core';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { DspResource, PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
 import { RegionService } from '@dasch-swiss/vre/shared/app-representations';
@@ -37,30 +37,30 @@ import { CompoundService } from './compound/compound.service';
     </mat-tab-group>
   `,
 })
-export class ResourceTabsComponent implements OnInit {
+export class ResourceTabsComponent implements OnChanges {
   @Input({ required: true }) resource!: DspResource;
 
   selectedTab = 0;
-  loading = true;
-
-  resourceClassLabel = (resource: DspResource) => resource.res.entityInfo?.classes[resource.res.type].label;
-
-  get resourceProperties(): PropertyInfoValues[] {
-    return this.resource.resProps
-      .filter(prop => !prop.propDef['isLinkProperty'])
-      .filter(prop => !prop.propDef.subPropertyOf.includes('http://api.knora.org/ontology/knora-api/v2#hasFileValue'));
-  }
 
   constructor(
     public regionService: RegionService,
     public compoundService: CompoundService
   ) {}
 
+  resourceProperties!: PropertyInfoValues[];
+  loading = true;
+
+  resourceClassLabel = (resource: DspResource) => resource.res.entityInfo?.classes[resource.res.type].label;
+
   tabChanged(event: MatTabChangeEvent) {
     this.regionService.displayRegions(event.tab.textLabel === 'Annotations');
   }
 
-  ngOnInit() {
+  ngOnChanges() {
+    this.resourceProperties = this.resource.resProps
+      .filter(prop => !prop.propDef['isLinkProperty'])
+      .filter(prop => !prop.propDef.subPropertyOf.includes('http://api.knora.org/ontology/knora-api/v2#hasFileValue'));
+
     this.regionService.regionAdded$.subscribe(() => {
       this.selectedTab = 2;
     });
