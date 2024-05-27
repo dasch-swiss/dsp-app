@@ -20,6 +20,7 @@ import { ResourceClassForm } from './resource-class-form.type';
         data-cy="name-input"
         [control]="form.controls.name"
         placeholder="Class name *"
+        [validatorErrors]="[{ errorKey: 'pattern', message: 'This pattern is not supported' }]"
         prefixIcon="fingerprint"></app-common-input>
 
       <dasch-swiss-multi-language-input
