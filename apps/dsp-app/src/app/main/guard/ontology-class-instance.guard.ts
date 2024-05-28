@@ -3,10 +3,11 @@ import { ActivatedRouteSnapshot, CanActivate, Router } from '@angular/router';
 import { StoredProject } from '@dasch-swiss/dsp-js';
 import { RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { AutoLoginService } from '@dasch-swiss/vre/shared/app-session';
 import { UserSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { Select, Store } from '@ngxs/store';
-import { combineLatest, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, combineLatest } from 'rxjs';
+import { filter, map, switchMap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -18,15 +19,22 @@ export class OntologyClassInstanceGuard implements CanActivate {
   constructor(
     private _store: Store,
     private projectService: ProjectService,
-    private router: Router
+    private router: Router,
+    private _autoLoginService: AutoLoginService
   ) {}
 
   canActivate(activatedRoute: ActivatedRouteSnapshot): Observable<boolean> {
-    const instanceId = activatedRoute.params[RouteConstants.instanceParameter];
-    return combineLatest([this._store.select(UserSelectors.isLoggedIn), this.isSysAdmin$, this.userProjects$]).pipe(
+    const isAddInstance = activatedRoute.url.find(p => p.path === RouteConstants.addClassInstance) !== undefined;
+    return combineLatest([
+      this._autoLoginService.hasCheckedCredentials$.pipe(
+        filter(hasChecked => hasChecked === true),
+        switchMap(() => this._store.select(UserSelectors.isLoggedIn))
+      ),
+      this.isSysAdmin$,
+      this.userProjects$,
+    ]).pipe(
       map(([isLoggedIn, isSysAdmin, userProjects]) => {
         const projectUuid = activatedRoute.parent.params[RouteConstants.uuidParameter];
-        const isAddInstance = instanceId === RouteConstants.addClassInstance;
 
         if (!isLoggedIn && isAddInstance) {
           this.router.navigateByUrl(`/${RouteConstants.project}/${projectUuid}`);
