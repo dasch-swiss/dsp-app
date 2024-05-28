@@ -96,9 +96,12 @@ export class ResourceState {
     return this._projectApiService.get(projectIri).pipe(
       take(1),
       map(response => {
-        state.attachedProjects[resourceIri].value.push(response.project);
         ctx.setState({
           ...state,
+          attachedProjects: {
+            ...state.attachedProjects,
+            [resourceIri]: { value: [...state.attachedProjects[resourceIri].value, response.project] },
+          },
           isLoading: false,
         });
 
