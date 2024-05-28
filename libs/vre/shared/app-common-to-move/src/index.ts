@@ -5,3 +5,4 @@ export * from './lib/filtered-resources.interface';
 export * from './lib/gui-cardinality.interface';
 export * from './lib/short-res-info.interface';
 export * from './lib/split.pipe';
+export * from './lib/incoming.service';

@@ -83,7 +83,7 @@ import { propertiesTypeMapping } from './resource-payloads-mapping';
     </ng-template>
   `,
   styles: [
-    '.my-row { display: flex; border-bottom: 1px solid rgba(33,33,33,.1)}',
+    '.my-row { display: flex!important; border-bottom: 1px solid rgba(33,33,33,.1)}',
     '.my-row:last-child { border-bottom: 0}',
     '.my-grid { width: 600px}',
     '.my-grid h3 {width: 140px; margin-right: 10px; text-align: right; margin-top: 16px}',

@@ -9,11 +9,9 @@ import { DialogComponent, FilteredResources } from '@dasch-swiss/vre/shared/app-
   styleUrls: ['./intermediate.component.scss'],
 })
 export class IntermediateComponent {
-  @Input() resources: FilteredResources;
+  @Input({ required: true }) resources!: FilteredResources;
+  @Output() action = new EventEmitter<string>();
 
-  @Output() action: EventEmitter<string> = new EventEmitter<string>();
-
-  // i18n plural mapping
   itemPluralMapping = {
     resource: {
       // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -24,11 +22,6 @@ export class IntermediateComponent {
 
   constructor(private _dialog: MatDialog) {}
 
-  /**
-   * opens the dialog box with a form to create a link resource, to edit resources etc.
-   * @param type 'link' --> TODO: will be expanded with other types like edit, delete etc.
-   * @param data
-   */
   openDialog(type: 'link', data: FilteredResources) {
     const title = `Create a collection of ${data.count} resources`;
 
@@ -45,10 +38,6 @@ export class IntermediateComponent {
       },
     };
 
-    const dialogRef = this._dialog.open(DialogComponent, dialogConfig);
-
-    dialogRef.afterClosed().subscribe(() => {
-      // do something with the intermediate view... but what should we do / display? Maybe the new resource...
-    });
+    this._dialog.open(DialogComponent, dialogConfig);
   }
 }

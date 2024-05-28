@@ -1,9 +1,17 @@
-import { ChangeDetectorRef, Component, Inject, Input, OnInit, TemplateRef, ViewContainerRef } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  Inject,
+  Input,
+  OnInit,
+  Optional,
+  TemplateRef,
+  ViewContainerRef,
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import {
   ApiResponseError,
   Cardinality,
-  Constants,
   CreateValue,
   KnoraApiConnection,
   ReadResource,
@@ -13,10 +21,9 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
-import { LoadAnnotatedResourceAction, LoadResourceAction } from '@dasch-swiss/vre/shared/app-state';
-import { Actions, Store, ofActionSuccessful } from '@ngxs/store';
+import { ResourceFetcherService } from '@dasch-swiss/vre/shared/app-representations';
 import { Subscription } from 'rxjs';
-import { finalize, startWith, switchMap, take, tap } from 'rxjs/operators';
+import { finalize, startWith, take, tap } from 'rxjs/operators';
 import { DeleteValueDialogComponent, DeleteValueDialogProps } from './delete-value-dialog.component';
 import { PropertyValueService } from './property-value.service';
 import { propertiesTypeMapping } from './resource-payloads-mapping';
@@ -87,8 +94,7 @@ export class PropertyValueComponent implements OnInit {
     private _notification: NotificationService,
     private _dialog: MatDialog,
     private _viewContainerRef: ViewContainerRef,
-    private _store: Store,
-    private _actions: Actions
+    @Optional() private _resourceFetcherService: ResourceFetcherService
   ) {}
 
   ngOnInit() {
@@ -150,14 +156,7 @@ export class PropertyValueComponent implements OnInit {
       .createValue(updateRes as UpdateResource<CreateValue>)
       .pipe(
         take(1),
-        switchMap((): any => {
-          if (resource.type === Constants.Region) {
-            this._store.dispatch(new LoadAnnotatedResourceAction(resource.id));
-          } else {
-            this._store.dispatch(new LoadResourceAction(resource.id));
-          }
-          return this._actions.pipe(ofActionSuccessful(LoadAnnotatedResourceAction, LoadResourceAction)).pipe(take(1));
-        }),
+        tap(() => this._resourceFetcherService.reload()),
         finalize(() => {
           this.loading = false;
         })
@@ -208,13 +207,7 @@ export class PropertyValueComponent implements OnInit {
       .updateValue(this._getPayload(this.index))
       .pipe(
         take(1),
-        tap((): any => {
-          if (this.propertyValueService._editModeData?.resource.type === Constants.Region) {
-            this._store.dispatch(new LoadAnnotatedResourceAction(this.propertyValueService._editModeData!.resource.id));
-          } else {
-            this._store.dispatch(new LoadResourceAction(this.propertyValueService._editModeData!.resource.id));
-          }
-        }),
+        tap(() => this._resourceFetcherService.reload()),
         finalize(() => {
           this.loading = false;
         })

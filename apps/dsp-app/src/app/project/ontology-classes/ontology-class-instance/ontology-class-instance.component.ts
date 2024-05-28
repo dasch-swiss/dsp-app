@@ -1,25 +1,34 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
-import { StoredProject } from '@dasch-swiss/dsp-js';
+import { ReadProject, StoredProject } from '@dasch-swiss/dsp-js';
 import { FilteredResources } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { AppConfigService, RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { OntologyService, ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
-import { IProjectOntologiesKeyValuePairs, OntologiesSelectors, UserSelectors } from '@dasch-swiss/vre/shared/app-state';
+import {
+  IProjectOntologiesKeyValuePairs,
+  OntologiesSelectors,
+  ProjectsSelectors,
+  UserSelectors,
+} from '@dasch-swiss/vre/shared/app-state';
 import { Actions, Select, Store } from '@ngxs/store';
 import { combineLatest, Observable, Subject } from 'rxjs';
 import { map, takeUntil, takeWhile } from 'rxjs/operators';
 import { SearchParams } from '../../../workspace/results/list-view/list-view.component';
 import { SplitSize } from '../../../workspace/results/results.component';
-import { ProjectBase } from '../../project-base';
 
 @Component({
-  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-ontology-class-instance',
   templateUrl: './ontology-class-instance.component.html',
   styleUrls: ['./ontology-class-instance.component.scss'],
 })
-export class OntologyClassInstanceComponent extends ProjectBase implements OnInit, OnDestroy {
+export class OntologyClassInstanceComponent implements OnDestroy {
+  @Select(OntologiesSelectors.projectOntologies)
+  projectOntologies$: Observable<IProjectOntologiesKeyValuePairs>;
+  @Select(UserSelectors.isSysAdmin) isSysAdmin$: Observable<boolean>;
+  @Select(UserSelectors.userProjects) userProjects$: Observable<StoredProject[]>;
+  @Select(ProjectsSelectors.currentProject) project$!: Observable<ReadProject>;
+
   private ngUnsubscribe: Subject<void> = new Subject<void>();
 
   get ontoId$(): Observable<string> {
@@ -84,20 +93,10 @@ export class OntologyClassInstanceComponent extends ProjectBase implements OnIni
     );
   }
 
-  // which resources are selected?
   selectedResources: FilteredResources;
-
-  // display single resource or intermediate page in case of multiple selection
   viewMode: 'single' | 'intermediate' | 'compare' = 'single';
-
   splitSizeChanged: SplitSize;
-
   routeConstants = RouteConstants;
-
-  @Select(OntologiesSelectors.projectOntologies)
-  projectOntologies$: Observable<IProjectOntologiesKeyValuePairs>;
-  @Select(UserSelectors.isSysAdmin) isSysAdmin$: Observable<boolean>;
-  @Select(UserSelectors.userProjects) userProjects$: Observable<StoredProject[]>;
 
   constructor(
     private _acs: AppConfigService,
@@ -109,14 +108,7 @@ export class OntologyClassInstanceComponent extends ProjectBase implements OnIni
     protected _store: Store,
     protected _title: Title,
     protected _actions$: Actions
-  ) {
-    super(_store, _route, _projectService, _title, _router, _cdr, _actions$);
-  }
-
-  ngOnInit() {
-    // waits for current project data to be loaded to the state if not already loaded
-    this.project$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(() => this._cdr.markForCheck());
-  }
+  ) {}
 
   ngOnDestroy() {
     this.ngUnsubscribe.next();

@@ -3,6 +3,7 @@ import { FormControl, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { KnoraApiConnection, ReadResource, UpdateResourceMetadata } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
+import { ResourceFetcherService } from '@dasch-swiss/vre/shared/app-representations';
 import { switchMap } from 'rxjs/operators';
 
 export interface EditResourceLabelDialogProps {
@@ -30,7 +31,8 @@ export class EditResourceLabelDialogComponent {
     @Inject(DspApiConnectionToken)
     private _dspApiConnection: KnoraApiConnection,
     @Inject(MAT_DIALOG_DATA) public data: EditResourceLabelDialogProps,
-    private _dialogRef: MatDialogRef<EditResourceLabelDialogComponent>
+    private _dialogRef: MatDialogRef<EditResourceLabelDialogComponent>,
+    private _resourceFetcherService: ResourceFetcherService
   ) {}
 
   submit() {
@@ -54,6 +56,7 @@ export class EditResourceLabelDialogComponent {
         })
       )
       .subscribe(() => {
+        this._resourceFetcherService.reload();
         this._dialogRef.close(true);
       });
   }

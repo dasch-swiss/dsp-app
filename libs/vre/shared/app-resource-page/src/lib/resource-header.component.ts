@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ViewContainerRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { PermissionUtil, ResourceClassDefinitionWithPropertyDefinition } from '@dasch-swiss/dsp-js';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
@@ -64,7 +64,7 @@ import { map } from 'rxjs/operators';
         display: flex;
         box-sizing: border-box;
         flex-direction: row;
-        align-items: left;
+        align-items: start;
         justify-content: space-between;
 
         h3.label-info {
@@ -93,7 +93,7 @@ import { map } from 'rxjs/operators';
   ],
 })
 export class ResourceHeaderComponent {
-  @Input({ required: true }) resource: DspResource;
+  @Input({ required: true }) resource!: DspResource;
 
   get resourceClassType(): ResourceClassDefinitionWithPropertyDefinition {
     return this.resource.res.entityInfo.classes[this.resource.res.type];
@@ -120,20 +120,24 @@ export class ResourceHeaderComponent {
   ]).pipe(
     map(([user, userProjectGroups]) => {
       return this.attachedToProjectResource
-        ? ProjectService.IsProjectAdminOrSysAdmin(user, userProjectGroups, this.attachedToProjectResource)
+        ? ProjectService.IsProjectAdminOrSysAdmin(user!, userProjectGroups, this.attachedToProjectResource)
         : false;
     })
   );
 
   constructor(
     private _dialog: MatDialog,
-    private _store: Store
+    private _store: Store,
+    private _viewContainerRef: ViewContainerRef
   ) {}
 
   openEditLabelDialog() {
     this._dialog.open<EditResourceLabelDialogComponent, EditResourceLabelDialogProps, boolean>(
       EditResourceLabelDialogComponent,
-      DspDialogConfig.smallDialog<EditResourceLabelDialogProps>({ resource: this.resource.res })
+      {
+        ...DspDialogConfig.smallDialog<EditResourceLabelDialogProps>({ resource: this.resource.res }),
+        viewContainerRef: this._viewContainerRef,
+      }
     );
   }
 }

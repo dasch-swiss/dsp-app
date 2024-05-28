@@ -19,10 +19,10 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
-import { UploadedFile, UploadFileService } from '@dasch-swiss/vre/shared/app-resource-properties';
 import { ProjectsSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { Store } from '@ngxs/store';
 import { filter, map, mergeMap, take } from 'rxjs/operators';
+import { UploadFileService } from './upload-file.service';
 
 // https://stackoverflow.com/questions/45661010/dynamic-nested-reactive-form-expressionchangedafterithasbeencheckederror
 const resolvedPromise = Promise.resolve(null);
@@ -106,7 +106,7 @@ export class UploadComponent implements OnInit {
             mergeMap(sc => this._upload.upload(this.file, sc))
           )
           .subscribe(
-            (res: UploadedFile) => {
+            res => {
               // prepare thumbnail url to display something after upload
               switch (this.representation) {
                 case 'stillImage':

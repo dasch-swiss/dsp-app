@@ -1,36 +1,17 @@
-import { Inject, Injectable } from '@angular/core';
-import {
-  Constants,
-  KnoraApiConnection,
-  ReadLinkValue,
-  ReadProject,
-  ReadResource,
-  SystemPropertyDefinition,
-} from '@dasch-swiss/dsp-js';
+import { Injectable } from '@angular/core';
+import { ReadProject } from '@dasch-swiss/dsp-js';
 import { ProjectApiService, UserApiService } from '@dasch-swiss/vre/shared/app-api';
-import { Common, DspResource } from '@dasch-swiss/vre/shared/app-common';
-import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { Action, State, StateContext, Store } from '@ngxs/store';
-import { map, take, tap } from 'rxjs/operators';
+import { map, take } from 'rxjs/operators';
 import { ProjectsSelectors } from '../projects/projects.selectors';
 import { UserSelectors } from '../user/user.selectors';
-import {
-  GetAttachedProjectAction,
-  GetAttachedUserAction,
-  LoadAnnotatedResourceAction,
-  LoadResourceAction,
-  ToggleShowAllCommentsAction,
-  ToggleShowAllPropsAction,
-} from './resource.actions';
+import { GetAttachedProjectAction, GetAttachedUserAction } from './resource.actions';
 import { ReourceStateModel } from './resource.state-model';
 
 const defaults = <ReourceStateModel>{
-  showAllProps: false,
-  showAllComments: false,
   isLoading: false,
   attachedProjects: {},
   attachedUsers: {},
-  resource: null,
 };
 
 @State<ReourceStateModel>({
@@ -42,20 +23,8 @@ export class ResourceState {
   constructor(
     private store: Store,
     private _userApiService: UserApiService,
-    @Inject(DspApiConnectionToken)
-    private _dspApiConnection: KnoraApiConnection,
     private _projectApiService: ProjectApiService
   ) {}
-
-  @Action(ToggleShowAllPropsAction)
-  toggleShowAllPropsAction(ctx: StateContext<ReourceStateModel>) {
-    ctx.patchState({ showAllProps: !ctx.getState().showAllProps });
-  }
-
-  @Action(ToggleShowAllCommentsAction)
-  toggleShowAllCommentsAction(ctx: StateContext<ReourceStateModel>) {
-    ctx.patchState({ showAllComments: !ctx.getState().showAllComments });
-  }
 
   @Action(GetAttachedUserAction)
   getAttachedUser(ctx: StateContext<ReourceStateModel>, { resourceIri, identifier, idType }: GetAttachedUserAction) {
@@ -134,36 +103,6 @@ export class ResourceState {
         });
 
         return response.project;
-      })
-    );
-  }
-
-  @Action(LoadResourceAction)
-  loadResource(ctx: StateContext<ReourceStateModel>, { resourceIri }: LoadResourceAction) {
-    return this._dspApiConnection.v2.res.getResource(resourceIri).pipe(
-      tap(response => {
-        const state = ctx.getState();
-        const res = new DspResource(response as ReadResource);
-        res.resProps = Common.initProps(res.res);
-
-        // gather system property information
-        res.systemProps = res.res.entityInfo.getPropertyDefinitionsByType(SystemPropertyDefinition);
-        ctx.setState({
-          ...state,
-          resource: res,
-        });
-      })
-    );
-  }
-  @Action(LoadAnnotatedResourceAction)
-  loadAnnotatedResource(ctx: StateContext<ReourceStateModel>, { regionIri }: LoadAnnotatedResourceAction) {
-    return this._dspApiConnection.v2.res.getResource(regionIri).pipe(
-      tap(response => {
-        const res = new DspResource(response as ReadResource);
-        res.resProps = Common.initProps(res.res);
-        const annotatedRepresentationIri = (res.res.properties[Constants.IsRegionOfValue] as ReadLinkValue[])[0]
-          .linkedResourceIri;
-        this.store.dispatch(new LoadResourceAction(annotatedRepresentationIri));
       })
     );
   }

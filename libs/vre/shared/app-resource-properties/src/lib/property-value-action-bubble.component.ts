@@ -1,8 +1,9 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { PermissionUtil } from '@dasch-swiss/dsp-js';
-import { ResourceSelectors } from '@dasch-swiss/vre/shared/app-state';
-import { Store } from '@ngxs/store';
+import { ResourceFetcherService } from '@dasch-swiss/vre/shared/app-representations';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { PropertyValueService } from './property-value.service';
 
 // TODO copied from action-bubble.component.ts -> change when we do a css refactor
@@ -21,9 +22,16 @@ import { PropertyValueService } from './property-value.service';
             data-cy="edit-button">
             <mat-icon>edit</mat-icon>
           </button>
-          <button mat-button class="edit" *ngIf="date" [matTooltip]="infoTooltip" (click)="$event.stopPropagation()">
-            <mat-icon>info</mat-icon>
-          </button>
+          <ng-container *ngIf="date">
+            <button
+              mat-button
+              class="edit"
+              *ngIf="infoTooltip$ | async as infoTooltip"
+              [matTooltip]="infoTooltip"
+              (click)="$event.stopPropagation()">
+              <mat-icon>info</mat-icon>
+            </button>
+          </ng-container>
           <span [matTooltip]="showDelete ? 'delete' : 'This value cannot be deleted because it is required'">
             <button
               *ngIf="userHasPermissionToModify"
@@ -61,17 +69,17 @@ export class PropertyValueActionBubbleComponent implements OnInit {
   @Output() editAction = new EventEmitter();
   @Output() deleteAction = new EventEmitter();
 
-  infoTooltip!: string;
+  infoTooltip$!: Observable<string>;
 
   userHasPermissionToModify = false;
 
   constructor(
-    private _store: Store,
+    private _resourceFetcherService: ResourceFetcherService,
     private _propertyValueService: PropertyValueService
   ) {}
 
   ngOnInit() {
-    this.infoTooltip = this._getInfoToolTip();
+    this.infoTooltip$ = this._getInfoToolTip();
     this._setPermissions();
   }
 
@@ -85,8 +93,11 @@ export class PropertyValueActionBubbleComponent implements OnInit {
   }
 
   private _getInfoToolTip() {
-    const resource = this._store.selectSnapshot(ResourceSelectors.resource);
-    const creator = resource!.res!.attachedToUser;
-    return `Creation date: ${this.date}. Value creator: ${creator}`;
+    return this._resourceFetcherService.resource$.pipe(
+      map(resource => {
+        const creator = resource!.res!.attachedToUser;
+        return `Creation date: ${this.date}. Value creator: ${creator}`;
+      })
+    );
   }
 }

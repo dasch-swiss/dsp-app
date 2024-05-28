@@ -18,25 +18,10 @@ export interface SplitSize {
 })
 export class ResultsComponent implements AfterViewChecked {
   searchParams: SearchParams;
-
-  resIri: string;
-
   resourceIri: string;
-
-  // display single resource or intermediate page in case of multiple selection
   viewMode: 'single' | 'intermediate' | 'compare' = 'single';
-
-  // which resources are selected?
   selectedResources: FilteredResources;
-
-  // search params
-  searchQuery: string;
-  searchMode: 'fulltext' | 'gravsearch';
-
-  loading = true;
-
   splitSize: SplitSize;
-
   projectUuid: string;
 
   constructor(
@@ -85,19 +70,19 @@ export class ResultsComponent implements AfterViewChecked {
   }
 
   private _handleSearchParams(params: Params) {
-    this.searchQuery = decodeURIComponent(params.get('q'));
-    this.searchMode = decodeURIComponent(params.get('mode')) === 'fulltext' ? 'fulltext' : 'gravsearch';
+    const searchQuery = decodeURIComponent(params.get('q'));
+    const searchMode = decodeURIComponent(params.get('mode')) === 'fulltext' ? 'fulltext' : 'gravsearch';
 
     this.searchParams = {
-      query: this.searchQuery,
-      mode: this.searchMode,
+      query: searchQuery,
+      mode: searchMode,
     };
 
     if (this.projectUuid) {
       this.searchParams.projectUuid = this.projectUuid;
     }
 
-    if (params.get('project') && this.searchMode === 'fulltext') {
+    if (params.get('project') && searchMode === 'fulltext') {
       this.searchParams.filter = {
         limitToProject: decodeURIComponent(params.get('project')),
       };

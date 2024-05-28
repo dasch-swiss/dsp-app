@@ -2,9 +2,8 @@ import { ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DeleteValue, KnoraApiConnection, ReadResource, UpdateResource } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
-import { LoadResourceAction } from '@dasch-swiss/vre/shared/app-state';
-import { Store } from '@ngxs/store';
-import { switchMap } from 'rxjs/operators';
+import { ResourceFetcherService } from '@dasch-swiss/vre/shared/app-representations';
+import { tap } from 'rxjs/operators';
 import { PropertyValueService } from './property-value.service';
 
 export interface DeleteValueDialogProps {
@@ -55,7 +54,7 @@ export class DeleteValueDialogComponent implements OnInit {
     public data: DeleteValueDialogProps,
     public dialogRef: MatDialogRef<DeleteValueDialogComponent, boolean>,
     public propertyValueService: PropertyValueService,
-    private _store: Store,
+    private _resourceFetcherService: ResourceFetcherService,
     private _cd: ChangeDetectorRef
   ) {}
 
@@ -80,7 +79,7 @@ export class DeleteValueDialogComponent implements OnInit {
 
     this._dspApiConnection.v2.values
       .deleteValue(updateRes as UpdateResource<DeleteValue>)
-      .pipe(switchMap(() => this._store.dispatch(new LoadResourceAction(resource.id))))
+      .pipe(tap(() => this._resourceFetcherService.reload()))
       .subscribe(() => {
         this.dialogRef.close();
         this._cd.detectChanges();

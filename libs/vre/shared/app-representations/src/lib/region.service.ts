@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ReadResourceSequence } from '@dasch-swiss/dsp-js';
 import { Common, DspResource } from '@dasch-swiss/vre/shared/app-common';
-import { IncomingService } from '@dasch-swiss/vre/shared/app-resource-properties';
+import { IncomingService } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { BehaviorSubject, of, Subject } from 'rxjs';
 import { map, startWith, switchMap } from 'rxjs/operators';
 

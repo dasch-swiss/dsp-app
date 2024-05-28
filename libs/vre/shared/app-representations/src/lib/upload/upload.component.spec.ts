@@ -9,7 +9,7 @@ import { CreateStillImageFileValue } from '@dasch-swiss/dsp-js';
 import { SplitPipe } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
-import { UploadFileService } from '@dasch-swiss/vre/shared/app-resource-properties';
+import { UploadFileService } from '@dasch-swiss/vre/shared/app-representations';
 import { of } from 'rxjs';
 import { UploadComponent } from './upload.component';
 

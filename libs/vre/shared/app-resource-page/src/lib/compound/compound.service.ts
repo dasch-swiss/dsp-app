@@ -1,10 +1,10 @@
 import { ChangeDetectorRef, Inject, Injectable } from '@angular/core';
 import { KnoraApiConnection, ReadResource, ReadResourceSequence, SystemPropertyDefinition } from '@dasch-swiss/dsp-js';
 import { Common, DspCompoundPosition, DspResource } from '@dasch-swiss/vre/shared/app-common';
+import { IncomingService } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
 import { RegionService } from '@dasch-swiss/vre/shared/app-representations';
-import { IncomingService } from '@dasch-swiss/vre/shared/app-resource-properties';
 
 @Injectable()
 export class CompoundService {

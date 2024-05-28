@@ -3,14 +3,52 @@ import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { Constants, CountQueryResponse, ReadFileValue } from '@dasch-swiss/dsp-js';
 import { DspCompoundPosition, DspResource } from '@dasch-swiss/vre/shared/app-common';
+import { IncomingService } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { getFileValue, RegionService, ValueOperationEventService } from '@dasch-swiss/vre/shared/app-representations';
-import { IncomingService } from '@dasch-swiss/vre/shared/app-resource-properties';
 import { take } from 'rxjs/operators';
 import { CompoundService } from './compound/compound.service';
 
 @Component({
   selector: 'app-resource',
-  templateUrl: './resource.component.html',
+  template: `
+    <div class="restricted-message" *ngIf="resource?.res?.userHasPermission === 'RV' && showRestrictedMessage">
+      <mat-icon>report_problem</mat-icon>
+      <p>
+        This resource is restricted, file representations may be of lower quality and some properties may be hidden.
+      </p>
+      <mat-icon class="close" (click)="showRestrictedMessage = false">clear</mat-icon>
+    </div>
+
+    <div class="content large middle">
+      <div class="resource-view" *ngIf="resource; else noResourceTpl">
+        <app-resource-header [resource]="resource" />
+
+        <ng-container *ngIf="isCompoundNavigation === false; else compoundViewerTpl">
+          <app-resource-representation [resource]="resource" *ngIf="!resourceIsObjectWithoutRepresentation" />
+        </ng-container>
+
+        <dasch-swiss-app-progress-indicator *ngIf="!pageIsLoaded()" />
+
+        <app-resource-tabs [resource]="resource" />
+      </div>
+    </div>
+
+    <ng-template #compoundViewerTpl>
+      <app-compound-viewer />
+    </ng-template>
+
+    <ng-template #noResourceTpl>
+      <div>
+        <p>The resource could not be found.</p>
+        <p>Reasons:</p>
+        <ul>
+          <li>It could be a deleted resource and does not exist anymore.</li>
+          <li>You don't have the permissions to open this resource.</li>
+          <li>The identifier or the ARK URL is wrong.</li>
+        </ul>
+      </div>
+    </ng-template>
+  `,
   styleUrls: ['./resource.component.scss'],
   providers: [ValueOperationEventService, CompoundService, RegionService],
 })

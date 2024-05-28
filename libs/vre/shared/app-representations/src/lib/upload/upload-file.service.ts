@@ -4,16 +4,8 @@ import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import { AccessTokenService } from '@dasch-swiss/vre/shared/app-session';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-
-interface UploadedFileResponse {
-  internalFilename: string;
-}
-
-export interface UploadedFile {
-  internalFilename: string;
-  thumbnailUrl: string;
-  baseUrl: string;
-}
+import { UploadedFileResponse } from './upload-file-response.interface';
+import { UploadedFile } from './uploaded-file.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -44,7 +36,7 @@ export class UploadFileService {
     };
     const url = `${this._acs.dspIngestConfig.url}/projects/${shortcode}/assets/ingest/${file.name}`;
     return this._http.post<UploadedFileResponse>(url, file, options).pipe(
-      map((res: UploadedFileResponse) => {
+      map(res => {
         const baseUrl = `${this._acs.dspIiifConfig.iiifUrl}/${shortcode}/${res.internalFilename}`;
         return {
           internalFilename: res.internalFilename,

@@ -2,13 +2,14 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import {
+  ResourceComponent,
   ResourcePage2Component,
   ResourcePageComponent,
-  ResourceComponent,
 } from '@dasch-swiss/vre/shared/app-resource-page';
 import { CreateResourcePageComponent } from '@dasch-swiss/vre/shared/app-resource-properties';
 import { CookiePolicyComponent } from './main/cookie-policy/cookie-policy.component';
 import { AuthGuard } from './main/guard/auth.guard';
+import { OntologyClassInstanceGuard } from './main/guard/ontology-class-instance.guard';
 import { HelpComponent } from './main/help/help.component';
 import { StatusComponent } from './main/status/status.component';
 import { CollaborationComponent } from './project/collaboration/collaboration.component';
@@ -74,10 +75,12 @@ const routes: Routes = [
         canActivate: [AuthGuard],
       },
       {
+        canActivate: [OntologyClassInstanceGuard],
         path: RouteConstants.OntologyClassRelative,
         component: OntologyClassInstanceComponent,
       },
       {
+        canActivate: [OntologyClassInstanceGuard],
         path: RouteConstants.OntologyClassAddRelative,
         component: CreateResourcePageComponent,
       },

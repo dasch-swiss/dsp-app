@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnInit, ViewContainerRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { DeleteResourceResponse, PermissionUtil, ReadLinkValue, ReadProject } from '@dasch-swiss/dsp-js';
 import { AdminProjectsApiService } from '@dasch-swiss/vre/open-api';
@@ -152,13 +152,13 @@ export class ResourceToolbarComponent implements OnInit {
   @Input() showToggleProperties = false;
   @Input() showEditLabel = true;
 
-  @Input() attachedProject: ReadProject;
+  @Input() attachedProject!: ReadProject;
 
-  @Input() lastModificationDate: string;
+  @Input() lastModificationDate!: string;
 
-  userCanDelete: boolean;
-  userCanEdit: boolean;
-  canReadComments: boolean;
+  userCanDelete!: boolean;
+  userCanEdit!: boolean;
+  canReadComments!: boolean;
 
   constructor(
     private _notification: NotificationService,
@@ -168,7 +168,8 @@ export class ResourceToolbarComponent implements OnInit {
     private _ontologyService: OntologyService,
     private _dialog: MatDialog,
     private _adminProjectsApi: AdminProjectsApiService,
-    private _store: Store
+    private _store: Store,
+    private _viewContainerRef: ViewContainerRef
   ) {}
 
   ngOnInit(): void {
@@ -202,6 +203,7 @@ export class ResourceToolbarComponent implements OnInit {
     this._dialog
       .open<EditResourceLabelDialogComponent, EditResourceLabelDialogProps, boolean>(EditResourceLabelDialogComponent, {
         data: { resource: this.resource.res },
+        viewContainerRef: this._viewContainerRef,
       })
       .afterClosed()
       .pipe(filter(answer => !!answer))
@@ -246,7 +248,6 @@ export class ResourceToolbarComponent implements OnInit {
   }
 
   private _onResourceDeleted(response: DeleteResourceResponse) {
-    // display notification and mark resource as 'erased'
     this._notification.openSnackBar(`${response.result}: ${this.resource.res.label}`);
     const ontologyIri = this._ontologyService.getOntologyIriFromRoute(this.attachedProject.shortcode);
     const classId = this.resource.res.entityInfo.classes[this.resource.res.type]?.id;
