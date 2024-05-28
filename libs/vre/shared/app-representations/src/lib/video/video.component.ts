@@ -88,9 +88,6 @@ export class VideoComponent implements OnChanges, AfterViewInit {
   // seconds per pixel to calculate preview image on timeline
   secondsPerPixel: number;
 
-  // percent of video loaded
-  currentBuffer: number;
-
   // status
   play = false;
   reachedTheEnd = false;
@@ -173,9 +170,6 @@ export class VideoComponent implements OnChanges, AfterViewInit {
   timeUpdate() {
     // current time
     this.currentTime = this.videoEle.nativeElement.currentTime;
-
-    // buffer progress
-    this.currentBuffer = (this.videoEle.nativeElement.buffered.end(0) / this.duration) * 100;
 
     let range = 0;
     const bf = this.videoEle.nativeElement.buffered;
