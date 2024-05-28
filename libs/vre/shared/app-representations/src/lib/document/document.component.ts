@@ -17,7 +17,6 @@ import { PdfViewerComponent } from 'ng2-pdf-viewer';
 import { mergeMap } from 'rxjs/operators';
 import { FileRepresentation } from '../file-representation';
 import { RepresentationService } from '../representation.service';
-import { EmitEvent, Events, UpdatedFileEventValue, ValueOperationEventService } from '../value-operation-event.service';
 
 @Component({
   selector: 'app-document',
@@ -50,8 +49,7 @@ export class DocumentComponent implements OnInit, AfterViewInit {
     @Inject(DspApiConnectionToken)
     private _dspApiConnection: KnoraApiConnection,
     private _dialog: MatDialog,
-    private _rs: RepresentationService,
-    private _valueOperationEventService: ValueOperationEventService
+    private _rs: RepresentationService
   ) {}
 
   ngOnInit(): void {
@@ -200,13 +198,6 @@ export class DocumentComponent implements OnInit, AfterViewInit {
 
         this.zoomFactor = 1.0;
         this.pdfQuery = '';
-
-        this._valueOperationEventService.emit(
-          new EmitEvent(
-            Events.FileValueUpdated,
-            new UpdatedFileEventValue(res2.properties[Constants.HasDocumentFileValue][0])
-          )
-        );
       });
   }
 }

@@ -16,7 +16,6 @@ import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { mergeMap } from 'rxjs/operators';
 import { FileRepresentation } from '../file-representation';
 import { RepresentationService } from '../representation.service';
-import { EmitEvent, Events, UpdatedFileEventValue, ValueOperationEventService } from '../value-operation-event.service';
 
 @Component({
   selector: 'app-audio',
@@ -40,8 +39,7 @@ export class AudioComponent implements OnInit, AfterViewInit {
     private _dspApiConnection: KnoraApiConnection,
     private _sanitizer: DomSanitizer,
     private _dialog: MatDialog,
-    private _rs: RepresentationService,
-    private _valueOperationEventService: ValueOperationEventService
+    private _rs: RepresentationService
   ) {}
 
   ngOnInit(): void {
@@ -177,13 +175,6 @@ export class AudioComponent implements OnInit, AfterViewInit {
         this._rs.getFileInfo(this.src.fileValue.fileUrl).subscribe(res => {
           this.originalFilename = res['originalFilename'];
         });
-
-        this._valueOperationEventService.emit(
-          new EmitEvent(
-            Events.FileValueUpdated,
-            new UpdatedFileEventValue(res2.properties[Constants.HasAudioFileValue][0])
-          )
-        );
 
         const audioElem = document.getElementById('audio');
         (audioElem as HTMLAudioElement).load();

@@ -11,7 +11,6 @@ import { MatSidenav } from '@angular/material/sidenav';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { ReadOntology, ReadProject } from '@dasch-swiss/dsp-js';
-import { ClassAndPropertyDefinitions } from '@dasch-swiss/dsp-js/src/models/v2/ontologies/ClassAndPropertyDefinitions';
 import { getAllEntityDefinitionsAsArray } from '@dasch-swiss/vre/shared/app-api';
 import { RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import {
@@ -21,7 +20,7 @@ import {
 } from '@dasch-swiss/vre/shared/app-helper-services';
 import { OntologiesSelectors, ProjectsSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { Actions, Select, Store } from '@ngxs/store';
-import { Observable, Subject, Subscription, combineLatest } from 'rxjs';
+import { combineLatest, Observable, Subject, Subscription } from 'rxjs';
 import { filter, map, take, takeUntil } from 'rxjs/operators';
 import { ProjectBase } from './project-base';
 
@@ -48,15 +47,11 @@ export class ProjectComponent extends ProjectBase implements OnInit, OnDestroy {
 
   getAllEntityDefinitionsAsArray = getAllEntityDefinitionsAsArray;
   componentCommsSubscription: Subscription;
-  classAndPropertyDefinitions: ClassAndPropertyDefinitions;
-
   sideNavOpened = true;
 
   // routes for sidenav
-  projectRoute: AvailableRoute = RouteConstants.project;
   settingsRoute: AvailableRoute = RouteConstants.settings;
   dataModelsRoute: AvailableRoute = RouteConstants.dataModels;
-  advancedSearchRoute: AvailableRoute = RouteConstants.advancedSearch;
 
   isMember$: Observable<boolean> = combineLatest([this.user$, this.userProjectAdminGroups$]).pipe(
     map(([user, userProjectAdminGroups]) =>
@@ -134,10 +129,6 @@ export class ProjectComponent extends ProjectBase implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.destroyed.next();
     this.destroyed.complete();
-    // unsubscribe from the ValueOperationEventService when component is destroyed
-    if (this.componentCommsSubscription !== undefined) {
-      this.componentCommsSubscription.unsubscribe();
-    }
   }
 
   trackByFn = (index: number, item: ReadOntology) => `${index}-${item.id}`;
