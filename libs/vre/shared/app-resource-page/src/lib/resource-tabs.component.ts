@@ -1,5 +1,6 @@
 import { Component, Input, OnChanges } from '@angular/core';
 import { MatTabChangeEvent } from '@angular/material/tabs';
+import { Constants } from '@dasch-swiss/dsp-js';
 import { DspResource, PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
 import { RegionService } from '@dasch-swiss/vre/shared/app-representations';
 import { CompoundService } from './compound/compound.service';
@@ -26,7 +27,8 @@ import { CompoundService } from './compound/compound.service';
           [displayLabel]="true" />
       </mat-tab>
 
-      <mat-tab label="Annotations">
+      <!-- annotations -->
+      <mat-tab label="Annotations" *ngIf="displayAnnotations">
         <ng-template matTabLabel class="annotations">
           <span [matBadge]="regionService.regions.length" matBadgeColor="primary" matBadgeOverlap="false">
             Annotations
@@ -41,14 +43,18 @@ export class ResourceTabsComponent implements OnChanges {
   @Input({ required: true }) resource!: DspResource;
 
   selectedTab = 0;
+  resourceProperties!: PropertyInfoValues[];
+  annotationTabSelected = false;
+
+  get displayAnnotations() {
+    return this.resource.res.properties[Constants.HasStillImageFileValue] !== undefined || this.compoundService.exists;
+  }
 
   constructor(
     public regionService: RegionService,
     public compoundService: CompoundService
   ) {}
 
-  resourceProperties!: PropertyInfoValues[];
-  annotationTabSelected = false;
 
   resourceClassLabel = (resource: DspResource) => resource.res.entityInfo?.classes[resource.res.type].label;
 

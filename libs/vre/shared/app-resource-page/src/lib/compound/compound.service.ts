@@ -12,6 +12,10 @@ export class CompoundService {
   incomingResource: DspResource | undefined;
   private _resource!: DspResource;
 
+  get exists() {
+    return this.compoundPosition !== undefined;
+  }
+
   constructor(
     @Inject(DspApiConnectionToken)
     private _dspApiConnection: KnoraApiConnection,
