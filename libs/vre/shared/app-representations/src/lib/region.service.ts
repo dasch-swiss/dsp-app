@@ -24,6 +24,9 @@ export class RegionService {
     switchMap(value => (value ? this._highlightRegion.asObservable() : of(null)))
   );
 
+  private _imageIsLoadedSubject = new BehaviorSubject(false);
+  imageIsLoaded$ = this._imageIsLoadedSubject.asObservable();
+
   constructor(private _incomingService: IncomingService) {}
 
   onInit(resource: DspResource) {
@@ -45,6 +48,10 @@ export class RegionService {
 
   highlightRegion(regionIri: string) {
     this._highlightRegion.next(regionIri);
+  }
+
+  imageIsLoaded() {
+    this._imageIsLoadedSubject.next(true);
   }
 
   private _getIncomingRegions() {

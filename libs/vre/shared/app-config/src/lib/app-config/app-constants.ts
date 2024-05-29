@@ -80,6 +80,8 @@ export class RouteConstants {
   static readonly searchRelative = `:${RouteConstants.modeParameter}/:${RouteConstants.qParameter}`;
 
   static readonly notFoundWildcardRelative = `/${RouteConstants.notFound}`;
+
+  static readonly annotationQueryParam = 'annotation';
 }
 
 export enum Auth {

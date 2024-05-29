@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, Input, OnInit, ViewContainerRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { DeleteResourceResponse, PermissionUtil, ReadLinkValue, ReadProject } from '@dasch-swiss/dsp-js';
+import { DeleteResourceResponse, PermissionUtil, ReadProject } from '@dasch-swiss/dsp-js';
 import { AdminProjectsApiService } from '@dasch-swiss/vre/open-api';
 import { DspResource, ResourceService } from '@dasch-swiss/vre/shared/app-common';
 import {
@@ -34,7 +34,7 @@ import { filter } from 'rxjs/operators';
         color="primary"
         matTooltipPosition="above"
         [disabled]="resource.res.isDeleted"
-        (click)="openResource(resource.res.id)">
+        (click)="openResource()">
         <mat-icon>open_in_new</mat-icon>
       </button>
       <!-- Share resource: copy ark url, add to favorites or open in new tab -->
@@ -155,6 +155,7 @@ export class ResourceToolbarComponent implements OnInit {
   @Input() attachedProject!: ReadProject;
 
   @Input() lastModificationDate!: string;
+  @Input() linkToNewTab?: string;
 
   userCanDelete!: boolean;
   userCanEdit!: boolean;
@@ -193,10 +194,16 @@ export class ResourceToolbarComponent implements OnInit {
     this._cd.detectChanges();
   }
 
-  openResource(linkValue: ReadLinkValue | string) {
-    const iri = typeof linkValue == 'string' ? linkValue : linkValue.linkedResourceIri;
-    const path = this._resourceService.getResourcePath(iri);
-    window.open(`/resource${path}`, '_blank');
+  openResource() {
+    window.open(`/resource${this._getResourceSharedPath()}`, '_blank');
+  }
+
+  private _getResourceSharedPath() {
+    if (this.linkToNewTab) {
+      return this.linkToNewTab;
+    }
+
+    return this._resourceService.getResourcePath(this.resource.res.id);
   }
 
   editResourceLabel() {

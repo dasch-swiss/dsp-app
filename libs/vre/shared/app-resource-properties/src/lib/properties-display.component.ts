@@ -20,7 +20,8 @@ import { sortByKeys } from './sortByKeys';
         <app-resource-toolbar
           *ngIf="displayLabel"
           [adminPermissions]="adminPermissions"
-          [resource]="resource"></app-resource-toolbar>
+          [resource]="resource"
+          [linkToNewTab]="linkToNewTab"></app-resource-toolbar>
       </div>
     </div>
 
@@ -111,6 +112,7 @@ export class PropertiesDisplayComponent implements OnChanges, OnDestroy {
   @Input({ required: true }) properties!: PropertyInfoValues[];
   @Input() displayLabel = false;
   @Input() adminPermissions = false;
+  @Input() linkToNewTab?: string;
 
   resourceAttachedUser$ = this._store.select(ResourceSelectors.attachedUsers).pipe(
     takeUntil(this.ngUnsubscribe),

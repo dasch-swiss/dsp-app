@@ -34,7 +34,7 @@ import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
 import { UserSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { Store } from '@ngxs/store';
 import * as OpenSeadragon from 'openseadragon';
-import { BehaviorSubject, combineLatest, Observable, Subscription } from 'rxjs';
+import { combineLatest, Observable, Subscription } from 'rxjs';
 import { distinctUntilChanged, filter, map, mergeMap, switchMap } from 'rxjs/operators';
 import { FileRepresentation } from '../file-representation';
 import { getFileValue } from '../get-file-value';
@@ -95,9 +95,6 @@ export class StillImageComponent implements OnInit, OnChanges, OnDestroy {
   private _viewer: OpenSeadragon.Viewer;
   private _regions: PolygonsForRegion = {};
 
-  private _imageIsLoadedSubject = new BehaviorSubject(false);
-  imageIsLoaded$ = this._imageIsLoadedSubject.asObservable();
-
   constructor(
     @Inject(DspApiConnectionToken)
     private _dspApiConnection: KnoraApiConnection,
@@ -132,7 +129,7 @@ export class StillImageComponent implements OnInit, OnChanges, OnDestroy {
       this.editorPermissions = isEditor;
     });
 
-    this.imageIsLoaded$
+    this._regionService.imageIsLoaded$
       .pipe(
         filter(loaded => loaded),
         switchMap(() =>
@@ -408,10 +405,6 @@ export class StillImageComponent implements OnInit, OnChanges, OnDestroy {
     this._addRegionDrawer();
   }
 
-  private _imageIsLoaded() {
-    this._imageIsLoadedSubject.next(true);
-  }
-
   /**
    * adds all images in this.images to the _viewer.
    * Images are positioned in a horizontal row next to each other.
@@ -432,7 +425,7 @@ export class StillImageComponent implements OnInit, OnChanges, OnDestroy {
         // enable the navigator
         this._viewer.navigator.element.style.display = 'block';
         this.loading = false;
-        this._imageIsLoaded();
+        this._regionService.imageIsLoaded();
       }
     });
     this._viewer.open(tileSources);
