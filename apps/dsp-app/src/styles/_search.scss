@@ -25,7 +25,7 @@ $advanced-search-width: 740px;
 $search-width-small-device: 360px;
 
 // width of project filter
-$project-filter-width: 160px;
+$project-filter-width: 190px;
 
 // width of project filter on smaller devices
 $project-filter-width-small-device: 120px;
@@ -143,9 +143,11 @@ app-search-date-value {
 
   .app-search-menu {
     width: calc(#{$search-width} - 32px);
+
     &.with-project-filter {
       width: calc(#{$search-width} + #{$project-filter-width} - 32px);
     }
+
     &.with-advanced-search {
       width: calc(#{$advanced-search-width} - 32px);
     }
@@ -179,12 +181,14 @@ app-search-date-value {
 
   .app-search-menu {
     width: calc(#{$search-width-small-device} - 32px);
+
     &.with-project-filter {
       width: calc(
         #{$search-width-small-device} + #{$project-filter-width-small-device} -
-          32px
+        32px
       );
     }
+
     &.with-advanced-search {
       width: 100vw;
     }
@@ -195,6 +199,7 @@ app-search-date-value {
 @media (max-width: map-get($grid-breakpoints, tablet)) and (min-width: map-get($grid-breakpoints, watch)) {
   .app-search-menu {
     width: calc(#{$search-width-small-device} - 32px);
+
     &.with-project-filter {
       width: calc(100vw - 32px);
       margin: 0 16px;

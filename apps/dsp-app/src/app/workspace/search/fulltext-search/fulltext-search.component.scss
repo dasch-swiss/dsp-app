@@ -62,10 +62,12 @@
     border-radius: 0 $border-radius $border-radius 0;
     margin: 1px 0 1px -3px;
   }
+
   .prefix {
     border-radius: $border-radius 0 0 $border-radius;
     margin: 1px 0 1px 3px;
   }
+
   .prefix,
   .suffix {
     border-style: none;
@@ -136,7 +138,8 @@
 }
 
 .app-project-filter-menu {
-  width: $project-filter-width;
+  width: 300px;
+
   .mat-mdc-menu-item {
     text-transform: capitalize;
     text-overflow: ellipsis;
@@ -224,6 +227,7 @@
     .app-fulltext-search-input {
       margin-right: 12px;
     }
+
     .app-fulltext-search-button {
       width: 96px;
       border: .8px solid $grey;
@@ -247,6 +251,7 @@
       text-align: left;
       overflow-y: auto;
     }
+
     .app-menu-action {
       position: absolute;
       bottom: 12px;
