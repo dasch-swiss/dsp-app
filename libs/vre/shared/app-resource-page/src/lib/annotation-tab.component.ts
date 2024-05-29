@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { RegionService } from '@dasch-swiss/vre/shared/app-representations';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-annotation-tab',
@@ -13,18 +14,27 @@ import { RegionService } from '@dasch-swiss/vre/shared/app-representations';
   </div>`,
   styles: ['.active {border: 1px solid}'],
 })
-export class AnnotationTabComponent implements OnInit {
+export class AnnotationTabComponent implements OnInit, OnDestroy {
   selectedRegion: string | null = null;
+
+  private _subscription!: Subscription;
 
   constructor(public regionService: RegionService) {}
 
   ngOnInit() {
-    this.regionService.highlightRegion$.subscribe(region => {
+    this.regionService.showRegions(true);
+
+    this._subscription = this.regionService.highlightRegion$.subscribe(region => {
       this.selectedRegion = region;
       if (region !== null) {
         this._openRegion(region);
       }
     });
+  }
+
+  ngOnDestroy() {
+    this._subscription.unsubscribe();
+    this.regionService.showRegions(false);
   }
 
   private _openRegion(iri: string) {

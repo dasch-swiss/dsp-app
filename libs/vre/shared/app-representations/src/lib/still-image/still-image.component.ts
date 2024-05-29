@@ -14,11 +14,6 @@ import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 import {
   Constants,
-  CreateColorValue,
-  CreateGeomValue,
-  CreateLinkValue,
-  CreateResource,
-  CreateTextValueAsString,
   KnoraApiConnection,
   Point2D,
   ReadColorValue,
@@ -39,39 +34,17 @@ import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
 import { UserSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { Store } from '@ngxs/store';
 import * as OpenSeadragon from 'openseadragon';
-import { combineLatest, Observable, Subscription } from 'rxjs';
-import { distinctUntilChanged, map, mergeMap, switchMap, tap } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, Observable, Subscription } from 'rxjs';
+import { distinctUntilChanged, filter, map, mergeMap, switchMap } from 'rxjs/operators';
 import { FileRepresentation } from '../file-representation';
 import { getFileValue } from '../get-file-value';
-import { Region } from '../region';
 import { RegionService } from '../region.service';
 import { RepresentationService } from '../representation.service';
 import { ResourceFetcherService } from '../resource-fetcher.service';
 import { osdViewerConfig } from './osd-viewer.config';
+import { StillImageHelper } from './still-image-helper';
 
-/**
- * represents a region resource.
- */
-
-/**
- * represents a geometry belonging to a specific region resource.
- */
-class GeometryForRegion {
-  /**
-   *
-   * @param geometry the geometrical information.
-   * @param region the region the geometry belongs to.
-   */
-  constructor(
-    readonly geometry: RegionGeometry,
-    readonly region: ReadResource
-  ) {}
-}
-
-/**
- * collection of `SVGPolygonElement` for individual regions.
- */
-interface PolygonsForRegion {
+export interface PolygonsForRegion {
   [key: string]: HTMLElement[];
 }
 
@@ -122,6 +95,9 @@ export class StillImageComponent implements OnInit, OnChanges, OnDestroy {
   private _viewer: OpenSeadragon.Viewer;
   private _regions: PolygonsForRegion = {};
 
+  private _imageIsLoadedSubject = new BehaviorSubject(false);
+  imageIsLoaded$ = this._imageIsLoadedSubject.asObservable();
+
   constructor(
     @Inject(DspApiConnectionToken)
     private _dspApiConnection: KnoraApiConnection,
@@ -148,24 +124,6 @@ export class StillImageComponent implements OnInit, OnChanges, OnDestroy {
     );
   }
 
-  /**
-   * calculates the surface of a rectangular region.
-   *
-   * @param geom the region's geometry.
-   * @returns the surface.
-   */
-  static surfaceOfRectangularRegion(geom: RegionGeometry): number {
-    if (geom.type !== 'rectangle') {
-      // console.log('expected rectangular region, but ' + geom.type + ' given');
-      return 0;
-    }
-
-    const w = Math.max(geom.points[0].x, geom.points[1].x) - Math.min(geom.points[0].x, geom.points[1].x);
-    const h = Math.max(geom.points[0].y, geom.points[1].y) - Math.min(geom.points[0].y, geom.points[1].y);
-
-    return w * h;
-  }
-
   ngOnInit() {
     this._setupViewer();
     this._loadImages();
@@ -174,18 +132,24 @@ export class StillImageComponent implements OnInit, OnChanges, OnDestroy {
       this.editorPermissions = isEditor;
     });
 
-    this._regionService.showRegions$.pipe(distinctUntilChanged()).subscribe(showRegion => {
-      if (showRegion) {
-        this._renderRegions();
-      } else {
+    this.imageIsLoaded$
+      .pipe(
+        filter(loaded => loaded),
+        switchMap(() =>
+          combineLatest([this._regionService.showRegions$.pipe(distinctUntilChanged()), this._regionService.regions$])
+        )
+      )
+      .subscribe(([showRegion, regions]) => {
         this._removeOverlays();
-      }
-    });
+
+        if (showRegion) {
+          this._renderRegions();
+        }
+      });
 
     this._regionService.highlightRegion$.subscribe(region => {
       if (region === null) {
         this._unhighlightAllRegions();
-        // TODO add this.removeOverlays() ?
         return;
       }
       this._highlightRegion(region);
@@ -307,10 +271,8 @@ export class StillImageComponent implements OnInit, OnChanges, OnDestroy {
     const dialogRef = this._dialog.open(DialogComponent, dialogConfig);
 
     dialogRef.afterClosed().subscribe(data => {
-      // remove the drawn rectangle as either the cancel button was clicked or the region will be displayed
       this._viewer.removeOverlay(overlay);
       if (data) {
-        // data is null if the cancel button was clicked
         this._uploadRegion(startPoint, endPoint, imageSize, data.color, data.comment, data.label);
       }
     });
@@ -334,54 +296,26 @@ export class StillImageComponent implements OnInit, OnChanges, OnDestroy {
     label: string
   ) {
     this._dspApiConnection.v2.res
-      .createResource(this._getPayloadUploadRegion(startPoint, endPoint, imageSize, color, comment, label))
+      .createResource(
+        StillImageHelper.getPayloadUploadRegion(
+          this.resourceIri,
+          this.parentResource.attachedToProject,
+          startPoint,
+          endPoint,
+          imageSize,
+          color,
+          comment,
+          label
+        )
+      )
       .subscribe(res => {
-        this._viewer.destroy();
-        this._setupViewer();
-        this._regionService.addRegion((res as ReadResource).id);
+        // this._viewer.destroy();
+        // this._setupViewer();
+        const regionId = (res as ReadResource).id;
+        this._regionService.updateRegions();
+        this._regionService.highlightRegion(regionId);
+        this._regionService.showRegions(true);
       });
-  }
-
-  private _getPayloadUploadRegion(
-    startPoint: Point2D,
-    endPoint: Point2D,
-    imageSize: Point2D,
-    color: string,
-    comment: string,
-    label: string
-  ) {
-    const x1 = Math.max(Math.min(startPoint.x, imageSize.x), 0) / imageSize.x;
-    const x2 = Math.max(Math.min(endPoint.x, imageSize.x), 0) / imageSize.x;
-    const y1 = Math.max(Math.min(startPoint.y, imageSize.y), 0) / imageSize.y;
-    const y2 = Math.max(Math.min(endPoint.y, imageSize.y), 0) / imageSize.y;
-    const geomStr = `{"status":"active","lineColor":"${color}","lineWidth":2,"points":[{"x":${x1.toString()},"y":${y1.toString()}},{"x":${x2.toString()},"y":${y2.toString()}}],"type":"rectangle"}`;
-    const createResource = new CreateResource();
-    createResource.label = label;
-    createResource.type = Constants.Region;
-    const geomVal = new CreateGeomValue();
-    geomVal.type = Constants.GeomValue;
-    geomVal.geometryString = geomStr;
-    const colorVal = new CreateColorValue();
-    colorVal.type = Constants.ColorValue;
-    colorVal.color = color;
-    const linkVal = new CreateLinkValue();
-    linkVal.type = Constants.LinkValue;
-    console.log(this);
-    linkVal.linkedResourceIri = this.resourceIri;
-    createResource.properties = {
-      [Constants.HasColor]: [colorVal],
-      [Constants.IsRegionOfValue]: [linkVal],
-      [Constants.HasGeometry]: [geomVal],
-    };
-
-    createResource.attachedToProject = this.parentResource.attachedToProject;
-    if (comment) {
-      const commentVal = new CreateTextValueAsString();
-      commentVal.type = Constants.TextValue;
-      commentVal.text = comment;
-      createResource.properties[Constants.HasComment] = [commentVal];
-    }
-    return createResource;
   }
 
   /**
@@ -435,11 +369,6 @@ export class StillImageComponent implements OnInit, OnChanges, OnDestroy {
     });
   }
 
-  /**
-   * highlights the polygon elements associated with the given region.
-   *
-   * @param regionIri the Iri of the region whose polygon elements should be highlighted..
-   */
   private _highlightRegion(regionIri: string) {
     const activeRegion: HTMLElement[] = this._regions[regionIri];
 
@@ -450,10 +379,6 @@ export class StillImageComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  /**
-   * unhighlights the polygon elements of all regions.
-   *
-   */
   private _unhighlightAllRegions() {
     for (const reg in this._regions) {
       if (reg in this._regions) {
@@ -464,9 +389,6 @@ export class StillImageComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  /**
-   * initializes the OpenSeadragon _viewer
-   */
   private _setupViewer(): void {
     const viewerContainer = this._elementRef.nativeElement.getElementsByClassName('osd-container')[0];
 
@@ -486,6 +408,10 @@ export class StillImageComponent implements OnInit, OnChanges, OnDestroy {
     this._addRegionDrawer();
   }
 
+  private _imageIsLoaded() {
+    this._imageIsLoadedSubject.next(true);
+  }
+
   /**
    * adds all images in this.images to the _viewer.
    * Images are positioned in a horizontal row next to each other.
@@ -496,9 +422,8 @@ export class StillImageComponent implements OnInit, OnChanges, OnDestroy {
     const fileValues: ReadFileValue[] = [this.image.fileValue]; // TODO this was this.images.
 
     // display only the defined range of this.images
-    const tileSources: object[] = StillImageComponent._prepareTileSourcesFromFileValues(fileValues);
+    const tileSources: object[] = StillImageHelper.prepareTileSourcesFromFileValues(fileValues);
 
-    this._removeOverlays();
     this._viewer.addOnceHandler('open', args => {
       // check if the current image exists
       if (this.image.fileValue.fileUrl.includes(args.source['id'])) {
@@ -507,57 +432,10 @@ export class StillImageComponent implements OnInit, OnChanges, OnDestroy {
         // enable the navigator
         this._viewer.navigator.element.style.display = 'block';
         this.loading = false;
+        this._imageIsLoaded();
       }
     });
     this._viewer.open(tileSources);
-  }
-
-  /**
-   * prepare tile sources from the given sequence of [[ReadFileValue]].
-   *
-   * @param imagesToDisplay the given file values to de displayed.
-   * @returns the tile sources to be passed to OSD _viewer.
-   */
-  private static _prepareTileSourcesFromFileValues(imagesToDisplay: ReadFileValue[]): object[] {
-    const images = imagesToDisplay as ReadStillImageFileValue[];
-
-    let imageXOffset = 0;
-    const imageYOffset = 0;
-    const tileSources = [];
-
-    // let i = 0;
-
-    for (const image of images) {
-      const sipiBasePath = `${image.iiifBaseUrl}/${image.filename}`;
-      const width = image.dimX;
-      const height = image.dimY;
-      // construct OpenSeadragon tileSources according to https://openseadragon.github.io/docs/OpenSeadragon.Viewer.html#open
-      tileSources.push({
-        // construct IIIF tileSource configuration according to https://iiif.io/api/image/3.0
-        tileSource: {
-          // eslint-disable-next-line @typescript-eslint/naming-convention
-          '@context': 'http://iiif.io/api/image/3/context.json',
-          id: sipiBasePath,
-          height,
-          width,
-          profile: ['level2'],
-          protocol: 'http://iiif.io/api/image',
-          tiles: [
-            {
-              scaleFactors: [1, 2, 4, 8, 16, 32],
-              width: 1024,
-            },
-          ],
-        },
-        x: imageXOffset,
-        y: imageYOffset,
-        preload: true,
-      });
-
-      imageXOffset++;
-    }
-
-    return tileSources;
   }
 
   private _createSVGOverlay(
@@ -593,7 +471,7 @@ export class StillImageComponent implements OnInit, OnChanges, OnDestroy {
         location: loc,
       })
       .addHandler('canvas-click', event => {
-        this._regionClicked((<any>event).originalTarget.dataset.regionIri);
+        this._regionService.highlightRegion((<any>event).originalTarget.dataset.regionIri);
       });
 
     this._regions[regionIri].push(regEle);
@@ -610,101 +488,37 @@ export class StillImageComponent implements OnInit, OnChanges, OnDestroy {
       comEle.setAttribute('style', 'display: none');
     });
     regEle.dataset.regionIri = regionIri;
-    regEle.addEventListener('click', () => {
-      this._regionClicked(regionIri);
-    });
   }
 
   private _loadImages() {
-    // closing, so no more loading of short in between images if turning
-    // multiple pages
     this._viewer.close();
+
     if (this.imagesSub) {
       this.imagesSub.unsubscribe();
     }
-    this.imagesSub = this._rs
-      .getFileInfo(this.image.fileValue.fileUrl, this.image.fileValue.filename)
-      .pipe(
-        tap(() => {
-          this._openImages();
-        }),
-        switchMap(() => this._regionService.showRegions$)
-      )
-      .subscribe(
-        showRegion => {
-          this._unhighlightAllRegions();
-          if (showRegion) {
-            this._renderRegions();
-          }
-        },
-        () => {
-          this.failedToLoad = true;
-          // disable mouse navigation incl. zoom
-          this._viewer.setMouseNavEnabled(false);
-          // disable the navigator
-          this._viewer.navigator.element.style.display = 'none';
-          // disable the region draw mode
-          this.regionDrawMode = false;
-          // stop loading tiles
-          this._viewer.removeAllHandlers('open');
-          this.loading = false;
-        }
-      );
+    this.imagesSub = this._rs.getFileInfo(this.image.fileValue.fileUrl, this.image.fileValue.filename).subscribe(
+      () => {
+        this._openImages();
+      },
+      () => {
+        this.failedToLoad = true;
+        this._viewer.setMouseNavEnabled(false);
+        this._viewer.navigator.element.style.display = 'none';
+        this.regionDrawMode = false;
+        this._viewer.removeAllHandlers('open');
+        this.loading = false;
+      }
+    );
   }
 
-  /**
-   * adds a ROI-overlay to the viewer for every region of every image in this.images
-   */
-  private _renderRegions(): void {
-    /**
-     * sorts rectangular regions by surface, so all rectangular regions are clickable.
-     * Non-rectangular regions are ignored.
-     *
-     * @param geom1 first region.
-     * @param geom2 second region.
-     */
-    const sortRectangularRegion = (geom1: GeometryForRegion, geom2: GeometryForRegion) => {
-      if (geom1.geometry.type === 'rectangle' && geom2.geometry.type === 'rectangle') {
-        const surf1 = StillImageComponent.surfaceOfRectangularRegion(geom1.geometry);
-        const surf2 = StillImageComponent.surfaceOfRectangularRegion(geom2.geometry);
-
-        // if reg1 is smaller than reg2, return 1
-        // reg1 then comes after reg2 and thus is rendered later
-        if (surf1 < surf2) {
-          return 1;
-        } else {
-          return -1;
-        }
-      } else {
-        return 0;
-      }
-    };
-
-    this._removeOverlays();
-
+  private _renderRegions() {
     let imageXOffset = 0; // see documentation in this.openImages() for the usage of imageXOffset
 
     const image = this.image;
     const stillImage = image.fileValue as ReadStillImageFileValue;
     const aspectRatio = stillImage.dimY / stillImage.dimX;
 
-    // collect all geometries belonging to this page
-    const geometries: GeometryForRegion[] = [];
-    this._regionService.regions
-      .map(_resource => new Region(_resource.res))
-      .forEach(reg => {
-        this._regions[reg.regionResource.id] = [];
-        const geoms = reg.getGeometries();
-
-        geoms.forEach(geom => {
-          const geomForReg = new GeometryForRegion(geom.geometry, reg.regionResource);
-
-          geometries.push(geomForReg);
-        });
-      });
-
-    // sort all geometries belonging to this page
-    geometries.sort(sortRectangularRegion);
+    const geometries = StillImageHelper.collectAndSortGeometries(this._regionService.regions, this._regions);
 
     // render all geometries for this page
     for (const geom of geometries) {
@@ -729,9 +543,6 @@ export class StillImageComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  /**
-   * removes SVG overlays from the DOM.
-   */
   private _removeOverlays() {
     for (const reg in this._regions) {
       if (reg in this._regions) {
@@ -744,11 +555,6 @@ export class StillImageComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     this._regions = {};
-
     this._viewer.clearOverlays();
-  }
-
-  private _regionClicked(regionIri: string) {
-    this._regionService.highlightRegion(regionIri);
   }
 }
