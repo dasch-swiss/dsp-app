@@ -5,7 +5,7 @@ import { KnoraApiConnection, ReadResource, UpdateResourceMetadata } from '@dasch
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { ComponentCommunicationEventService, EmitEvent, Events } from '@dasch-swiss/vre/shared/app-helper-services';
 import { ResourceFetcherService } from '@dasch-swiss/vre/shared/app-representations';
-import { switchMap } from 'rxjs/operators';
+import { finalize, switchMap } from 'rxjs/operators';
 
 export interface EditResourceLabelDialogProps {
   resource: ReadResource;
@@ -21,12 +21,21 @@ export interface EditResourceLabelDialogProps {
 
     <div mat-dialog-actions align="end">
       <button mat-button mat-dialog-close>Cancel</button>
-      <button mat-raised-button color="primary" [disabled]="control.invalid" (click)="submit()">Submit</button>
+      <button
+        mat-raised-button
+        color="primary"
+        [disabled]="control.invalid"
+        appLoadingButton
+        [isLoading]="loading"
+        (click)="submit()">
+        Submit
+      </button>
     </div>`,
 })
 export class EditResourceLabelDialogComponent {
   control = new FormControl(this.data.resource.label, { validators: [Validators.required], nonNullable: true });
   initialValue = this.data.resource.label;
+  loading = false;
 
   constructor(
     @Inject(DspApiConnectionToken)
@@ -45,6 +54,8 @@ export class EditResourceLabelDialogComponent {
 
     if (this.control.invalid) return;
 
+    this.loading = true;
+
     const payload = new UpdateResourceMetadata();
     payload.id = this.data.resource.id;
     payload.type = this.data.resource.type;
@@ -55,6 +66,9 @@ export class EditResourceLabelDialogComponent {
         switchMap(res => {
           payload.lastModificationDate = (res as ReadResource).lastModificationDate;
           return this._dspApiConnection.v2.res.updateResourceMetadata(payload);
+        }),
+        finalize(() => {
+          this.loading = false;
         })
       )
       .subscribe(() => {
