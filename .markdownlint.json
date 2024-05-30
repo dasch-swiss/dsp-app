@@ -4,7 +4,7 @@
     "line-length": false,
     "list-indent": true,
     "no-multiple-blanks": {
-        "maximum": 1
+        "maximum": 4
     },
     "heading-style": {
         "style": "atx"

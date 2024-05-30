@@ -25,9 +25,9 @@ This currently requires essential information such as the project name, a short 
 From the side panel of the project workspace, as a project admin (or a system admin), you can access:
 
 - **Project Description**: define your project information or edit it
-- **Data Model**: define your data model and the lists of controlled vocabulary
+- **Project Settings**: edit project description, edit image settings (only if you have the restricted view permission set on your images), add users as project members
+- **Data Model**: define your data model and your controlled vocabularies
 - **List of Resources**: view all resource classes, search by resource class, and create new resource instances
-- **Project Settings**: add users as project members
 
 > Project members and logged-in users from other projects can also view the project description, the data model, and the list of resource classes.
 
@@ -35,11 +35,40 @@ From the side panel of the project workspace, as a project admin (or a system ad
 
 ---
 
-## Project members
+## Project Settings
+
+On the Project Settings page, you can monitor and customize important aspects of your project. This includes updating the project description, changing image settings (only for resources that have the restricted view permissions set) and managing project members by adding, removing or changing their roles.
+
+### Project Description
+
+In this section, you can personalize key details of your project. You can change the project's name, update the description in multiple languages (de, fr, it, en, rm), and add or modify keywords. Just make the necessary changes and click "Save".
+![Collaboration page](../assets/images/project-description.png)*<https://app.dasch.swiss/project/3ABR_2i8QYGSIDvmP9mlEw/settings/edit> - Project Description page where project admin and system admin can change the project description of the project.*
+
+### Image Settings
+
+There are three statuses for image settings: Off, Apply Watermark, and Restrict Image Size. For projects without the permission set to restricted view on resources, the status is Off by default.
+![Collaboration page](../assets/images/image-settings-off.png)*<https://app.dasch.swiss/project/3ABR_2i8QYGSIDvmP9mlEw/settings/image-settings> - By default, image settings are set to Off for projects without the permission set to restricted view on resources.*
+
+
+#### Apply Watermark or Restrict Image Size
+
+If the permission is set to restricted view on resources, you have two options:
+
+- Apply Watermark: The watermark is a default one with the DaSCH logo.
+- Restrict Image Size: You can limit the image size by percentage or absolute value.
+
+Simply make your changes and click "Save."
+
+![Collaboration page](../assets/images/image-settings-watermark.png)*<https://app.dasch.swiss/project/3ABR_2i8QYGSIDvmP9mlEw/settings/image-settings> - When you choose the watermark option, a default watermark with the DaSCH logo will be applied to the images.*
+
+![Collaboration page](../assets/images/image-settings-restrict-image-size.png)*<https://app.dasch.swiss/project/3ABR_2i8QYGSIDvmP9mlEw/settings/image-settings> - When you choose the Restrict Image Size option, you can limit the image dimensions by either percentage or absolute value.*
+
+
+### Project Members
 
 As a project admin (or a system admin), you can add users as project members. The admin can grant another user as project admin (or remove this permission), edit the user's information, change the user's password if forgotten, and remove a user from the project by clicking on the three-dot icon to the right side of the user line.
 
-![Collaboration page](../assets/images/project-settings.png)*<https://app.dasch.swiss/project/3ABR_2i8QYGSIDvmP9mlEw/settings/collaboration> - Project members page where project admin and system admin can add new users to the team.*
+![Collaboration page](../assets/images/project-settings.png)*<https://app.dasch.swiss/project/3ABR_2i8QYGSIDvmP9mlEw/settings/collaboration> - Project Members page where project admin and system admin can add new users to the team.*
 
 From the project workspace, as a project member, you can:
 
@@ -50,7 +79,7 @@ From the project workspace, as a project member, you can:
 
 ---
 
-## Data model
+## Data Model
 
 The definition of the data model (*ontology*) is the most important step. The data model is indispensable for structuring your data. Our platform provides a tool for the easy creation of one or more project data models. First, you have to know which data and resources you want to work with. The data model can be flexible and customizable.
 
