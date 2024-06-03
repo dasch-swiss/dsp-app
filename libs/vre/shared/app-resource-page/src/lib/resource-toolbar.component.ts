@@ -258,11 +258,15 @@ export class ResourceToolbarComponent implements OnInit {
 
   private _onResourceDeleted(response: DeleteResourceResponse) {
     this._notification.openSnackBar(`${response.result}: ${this.resource.res.label}`);
+    if (this.resource.isRegion) {
+      this._regionService.updateRegions();
+      this._cd.markForCheck();
+      return;
+    }
+
     const ontologyIri = this._ontologyService.getOntologyIriFromRoute(this.attachedProject.shortcode);
     const classId = this.resource.res.entityInfo.classes[this.resource.res.type]?.id;
     this._store.dispatch(new LoadClassItemsCountAction(ontologyIri, classId));
     this._componentCommsService.emit(new EmitEvent(CommsEvents.resourceDeleted));
-    this._regionService.updateRegions();
-    this._cd.markForCheck();
   }
 }

@@ -306,8 +306,10 @@ export class StillImageComponent implements OnInit, OnChanges, OnDestroy {
         )
       )
       .subscribe(res => {
-        // this._viewer.destroy();
-        // this._setupViewer();
+        this._viewer.destroy(); // canvas-click event doesnt work anymore, is it viewer bug?
+        this._setupViewer();
+        this._loadImages();
+
         const regionId = (res as ReadResource).id;
         this._regionService.updateRegions();
         this._regionService.highlightRegion(regionId);
