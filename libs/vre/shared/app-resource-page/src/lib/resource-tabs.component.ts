@@ -76,6 +76,8 @@ export class ResourceTabsComponent implements OnInit, OnChanges, OnDestroy {
     this.resourceProperties = this.resource.resProps
       .filter(prop => !prop.propDef['isLinkProperty'])
       .filter(prop => !prop.propDef.subPropertyOf.includes('http://api.knora.org/ontology/knora-api/v2#hasFileValue'));
+
+    this.selectedTab = 0;
   }
 
   ngOnDestroy() {
