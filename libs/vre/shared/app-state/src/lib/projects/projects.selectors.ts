@@ -93,7 +93,9 @@ export class ProjectsSelectors {
     userProjectGroups: string[],
     params: Params
   ): boolean | undefined {
-    const projectId = params[`${RouteConstants.uuidParameter}`];
+    const projectId = params[`${RouteConstants.uuidParameter}`]
+      ? params[`${RouteConstants.uuidParameter}`]
+      : params[`${RouteConstants.projectParameter}`];
     const isProjectAdmin = ProjectService.IsProjectAdminOrSysAdmin(user, userProjectGroups, projectId);
     return isProjectAdmin;
   }

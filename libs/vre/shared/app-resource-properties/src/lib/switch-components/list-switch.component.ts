@@ -37,6 +37,10 @@ export class ListSwitchComponent implements IsSwitchComponent, OnInit {
   ) {}
 
   ngOnInit() {
+    if (!this.control.value) {
+      return;
+    }
+
     this.labels$ = (this._dspApiConnection.v2.list.getNode(this.control.value) as Observable<ListNodeV2>).pipe(
       switchMap(v => this._dspApiConnection.v2.list.getList(v.hasRootNode!)),
       map(v => {
