@@ -27,5 +27,7 @@ export * from './lib/projects/projects.state';
 export * from './lib/resource/resource.state';
 export * from './lib/user/user.state';
 
+export * from './lib/config.state';
+
 export * from './lib/model-interfaces';
 export * from './store.module';

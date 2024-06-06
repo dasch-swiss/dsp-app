@@ -2,6 +2,8 @@ import { Inject, Injectable } from '@angular/core';
 import { KnoraApiConnection, ReadResource, SystemPropertyDefinition } from '@dasch-swiss/dsp-js';
 import { Common, DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
+import { SetCurrentResourceAction } from '@dasch-swiss/vre/shared/app-state';
+import { Store } from '@ngxs/store';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
@@ -17,7 +19,8 @@ export class ResourceFetcherService {
 
   constructor(
     @Inject(DspApiConnectionToken)
-    private _dspApiConnection: KnoraApiConnection
+    private _dspApiConnection: KnoraApiConnection,
+    private _store: Store
   ) {}
 
   onInit(resourceIri: string) {
@@ -44,6 +47,7 @@ export class ResourceFetcherService {
 
         // gather system property information
         res.systemProps = res.res.entityInfo.getPropertyDefinitionsByType(SystemPropertyDefinition);
+        this._store.dispatch(new SetCurrentResourceAction(res));
         return res;
       })
     );

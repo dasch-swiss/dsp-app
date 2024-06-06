@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Constants, ReadUser } from '@dasch-swiss/dsp-js';
-import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
+import { AppConfigService, DspAppConfig } from '@dasch-swiss/vre/shared/app-config';
 
 @Injectable({
   providedIn: 'root',
@@ -23,8 +23,12 @@ export class ProjectService {
   }
 
   uuidToIri(uuid: string): string {
-    if (uuid && !uuid.startsWith(this._acs.dspAppConfig.iriBase)) {
-      return `${this._acs.dspAppConfig.iriBase}/projects/${uuid}`;
+    return ProjectService.uuidToIri(uuid, this._acs.dspAppConfig);
+  }
+
+  static uuidToIri(uuid: string, dspAppConfig: DspAppConfig): string {
+    if (uuid && !uuid.startsWith(dspAppConfig.iriBase)) {
+      return `${dspAppConfig.iriBase}/projects/${uuid}`;
     }
 
     return uuid;

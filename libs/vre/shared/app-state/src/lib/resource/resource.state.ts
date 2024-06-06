@@ -5,13 +5,14 @@ import { Action, State, StateContext, Store } from '@ngxs/store';
 import { map, take } from 'rxjs/operators';
 import { ProjectsSelectors } from '../projects/projects.selectors';
 import { UserSelectors } from '../user/user.selectors';
-import { GetAttachedProjectAction, GetAttachedUserAction } from './resource.actions';
+import { GetAttachedProjectAction, GetAttachedUserAction, SetCurrentResourceAction } from './resource.actions';
 import { ReourceStateModel } from './resource.state-model';
 
 const defaults = <ReourceStateModel>{
   isLoading: false,
   attachedProjects: {},
   attachedUsers: {},
+  resource: null,
 };
 
 @State<ReourceStateModel>({
@@ -108,5 +109,10 @@ export class ResourceState {
         return response.project;
       })
     );
+  }
+
+  @Action(SetCurrentResourceAction)
+  setCurrentOntologyAction(ctx: StateContext<ReourceStateModel>, { resource }: SetCurrentResourceAction) {
+    ctx.patchState({ resource });
   }
 }

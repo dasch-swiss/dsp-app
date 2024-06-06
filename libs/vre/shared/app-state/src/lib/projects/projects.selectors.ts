@@ -8,10 +8,13 @@ import {
   StoredProject,
 } from '@dasch-swiss/dsp-js';
 import { RestrictedViewResponse } from '@dasch-swiss/vre/open-api';
-import { RouteConstants } from '@dasch-swiss/vre/shared/app-config';
+import { DspResource } from '@dasch-swiss/vre/shared/app-common';
+import { DspAppConfig, RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { Selector } from '@ngxs/store';
+import { ConfigState } from '../config.state';
 import { IKeyValuePairs } from '../model-interfaces';
+import { ResourceSelectors } from '../resource/resource.selectors';
 import { RouterSelectors } from '../router/router.selector';
 import { UserSelectors } from '../user/user.selectors';
 import { ProjectsState } from './projects.state';
@@ -86,40 +89,86 @@ export class ProjectsSelectors {
     return project;
   }
 
-  @Selector([ProjectsState, UserSelectors.user, UserSelectors.userProjectAdminGroups, RouterSelectors.params])
-  static isCurrentProjectAdminOrSysAdmin(
+  @Selector([
+    ProjectsState,
+    ResourceSelectors.resource,
+    UserSelectors.user,
+    UserSelectors.userProjectAdminGroups,
+    ConfigState.getConfig,
+    RouterSelectors.params,
+  ])
+  static isCurrentProjectAdminSysAdminOrMember(
     state: ProjectsStateModel,
+    resource: DspResource,
     user: ReadUser,
     userProjectGroups: string[],
+    dspApiConfig: DspAppConfig,
     params: Params
   ): boolean | undefined {
-    const projectId = params[`${RouteConstants.uuidParameter}`]
-      ? params[`${RouteConstants.uuidParameter}`]
-      : params[`${RouteConstants.projectParameter}`];
-    const isProjectAdmin = ProjectService.IsProjectAdminOrSysAdmin(user, userProjectGroups, projectId);
+    const projectIri = ProjectsSelectors.getProjectIri(params, dspApiConfig, resource);
+    const isMember = ProjectService.IsProjectMemberOrAdminOrSysAdmin(user, userProjectGroups, projectIri);
+    return isMember;
+  }
+
+  @Selector([
+    ProjectsState,
+    ResourceSelectors.resource,
+    UserSelectors.user,
+    UserSelectors.userProjectAdminGroups,
+    ConfigState.getConfig,
+    RouterSelectors.params,
+  ])
+  static isCurrentProjectAdminOrSysAdmin(
+    state: ProjectsStateModel,
+    resource: DspResource,
+    user: ReadUser,
+    userProjectGroups: string[],
+    dspApiConfig: DspAppConfig,
+    params: Params
+  ): boolean | undefined {
+    const projectIri = ProjectsSelectors.getProjectIri(params, dspApiConfig, resource);
+    const isProjectAdmin = ProjectService.IsProjectAdminOrSysAdmin(user, userProjectGroups, projectIri);
     return isProjectAdmin;
   }
 
-  @Selector([ProjectsState, UserSelectors.user, UserSelectors.userProjectAdminGroups, RouterSelectors.params])
+  @Selector([
+    ProjectsState,
+    ResourceSelectors.resource,
+    UserSelectors.user,
+    UserSelectors.userProjectAdminGroups,
+    ConfigState.getConfig,
+    RouterSelectors.params,
+  ])
   static isCurrentProjectMember(
     state: ProjectsStateModel,
+    resource: DspResource,
     user: ReadUser,
     userProjectGroups: string[],
+    dspApiConfig: DspAppConfig,
     params: Params
   ): boolean | undefined {
-    const projectId = params[`${RouteConstants.uuidParameter}`];
-    const isProjectMember = ProjectService.IsProjectMember(user, userProjectGroups, projectId);
+    const projectIri = ProjectsSelectors.getProjectIri(params, dspApiConfig, resource);
+    const isProjectMember = ProjectService.IsProjectMember(user, userProjectGroups, projectIri);
     return isProjectMember;
   }
 
-  @Selector([ProjectsState, RouterSelectors.params])
+  @Selector([ProjectsState, ResourceSelectors.resource, ConfigState.getConfig, RouterSelectors.params])
   static projectRestrictedViewSettings(
     state: ProjectsStateModel,
+    resource: DspResource,
+    dspApiConfig: DspAppConfig,
     params: Params
   ): ProjectRestrictedViewSettings | RestrictedViewResponse | undefined {
-    const projectUuid = params[`${RouteConstants.uuidParameter}`];
-    return state.projectRestrictedViewSettings[projectUuid]
-      ? state.projectRestrictedViewSettings[projectUuid].value
+    const projectIri = ProjectsSelectors.getProjectIri(params, dspApiConfig, resource);
+    return state.projectRestrictedViewSettings[projectIri]
+      ? state.projectRestrictedViewSettings[projectIri].value
       : undefined;
+  }
+
+  private static getProjectIri(params: Params, dspApiConfig: DspAppConfig, resource: DspResource) {
+    const projectIri = params[`${RouteConstants.uuidParameter}`]
+      ? params[`${RouteConstants.uuidParameter}`]
+      : resource.res.attachedToProject;
+    return ProjectService.uuidToIri(projectIri, dspApiConfig);
   }
 }
