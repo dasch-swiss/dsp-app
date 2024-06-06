@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnInit } from '@angular/core';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { FileRepresentation, RepresentationConstants, getFileValue } from '@dasch-swiss/vre/shared/app-representations';
 
@@ -58,14 +58,14 @@ import { FileRepresentation, RepresentationConstants, getFileValue } from '@dasc
     </app-text>
   </div>`,
 })
-export class ResourceRepresentationComponent implements OnInit {
+export class ResourceRepresentationComponent implements OnChanges {
   @Input({ required: true }) resource!: DspResource;
   representationToDisplay!: FileRepresentation;
 
   loading = false;
   protected readonly representationConstants = RepresentationConstants;
 
-  ngOnInit() {
+  ngOnChanges() {
     this.representationToDisplay = new FileRepresentation(getFileValue(this.resource)!);
   }
 
