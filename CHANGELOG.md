@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.10.3](https://github.com/dasch-swiss/dsp-das/compare/v11.10.2...v11.10.3) (2024-06-06)
+
+
+### Bug Fixes
+
+* allows resource related project member or admin to edit its properties (DEV-3723) ([#1636](https://github.com/dasch-swiss/dsp-das/issues/1636)) ([a04bb41](https://github.com/dasch-swiss/dsp-das/commit/a04bb41abd6634063cc83bb36f0f87965598b448))
+
 ## [11.10.2](https://github.com/dasch-swiss/dsp-das/compare/v11.10.1...v11.10.2) (2024-06-06)
 
 
