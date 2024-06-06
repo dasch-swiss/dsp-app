@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.10.2](https://github.com/dasch-swiss/dsp-das/compare/v11.10.1...v11.10.2) (2024-06-06)
+
+
+### Bug Fixes
+
+* resource switching ([#1634](https://github.com/dasch-swiss/dsp-das/issues/1634)) ([173aaa0](https://github.com/dasch-swiss/dsp-das/commit/173aaa030bc1ae40a395ddf5b2435babdd6a5d0e))
+
 ## [11.10.1](https://github.com/dasch-swiss/dsp-das/compare/v11.10.0...v11.10.1) (2024-06-05)
 
 
