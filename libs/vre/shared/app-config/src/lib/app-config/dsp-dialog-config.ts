@@ -3,7 +3,9 @@ import { MatDialogConfig } from '@angular/material/dialog';
 export class DspDialogConfig {
   static dialogDrawerConfig<T = any>(dialogData?: T): MatDialogConfig<T> {
     return {
-      height: 'calc(100vh)',
+      minHeight: 'calc(100vh)',
+      minWidth: 600,
+      maxWidth: '100%',
       position: {
         right: '0px',
       },

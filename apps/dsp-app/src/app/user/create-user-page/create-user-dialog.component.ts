@@ -1,6 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { User, ReadUser } from '@dasch-swiss/dsp-js';
+import { ReadUser, User } from '@dasch-swiss/dsp-js';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
 import { CreateUserAction } from '@dasch-swiss/vre/shared/app-state';
@@ -10,10 +10,25 @@ import { take } from 'rxjs/operators';
 import { UserForm } from '../user-form/user-form.type';
 
 @Component({
-  selector: 'dsp-app-create-user-page',
-  templateUrl: './create-user-page.component.html',
+  selector: 'app-create-user-dialog',
+  template: `
+    <app-user-form [user]="user" (afterFormInit)="form = $event" />
+
+    <div mat-dialog-actions align="end">
+      <button color="primary" mat-button mat-dialog-close>{{ 'appLabels.form.action.cancel' | translate }}</button>
+      <button
+        mat-raised-button
+        color="primary"
+        appLoadingButton
+        [isLoading]="isLoading$ | async"
+        [disabled]="!form?.valid || (isLoading$ | async)"
+        (click)="createUser()">
+        {{ 'appLabels.form.action.submit' | translate }}
+      </button>
+    </div>
+  `,
 })
-export class CreateUserPageComponent {
+export class CreateUserDialogComponent {
   user = new ReadUser();
   form: UserForm;
 
@@ -24,7 +39,7 @@ export class CreateUserPageComponent {
     private _notification: NotificationService,
     private _projectService: ProjectService,
     private _store: Store,
-    private _dialogRef: MatDialogRef<CreateUserPageComponent>,
+    private _dialogRef: MatDialogRef<CreateUserDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public projectUuId: string
   ) {
     this.isLoading$ = this._store.select(state => state.user.isLoading);

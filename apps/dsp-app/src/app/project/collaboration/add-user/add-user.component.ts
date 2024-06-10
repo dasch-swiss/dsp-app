@@ -24,7 +24,7 @@ import { ProjectsSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
-import { CreateUserPageComponent } from '../../../user/create-user-page/create-user-page.component';
+import { CreateUserDialogComponent } from '../../../user/create-user-page/create-user-dialog.component';
 import { AutocompleteItem } from '../../../workspace/search/operator';
 
 /**
@@ -209,7 +209,7 @@ export class AddUserComponent implements OnInit {
 
   createUser() {
     const dialogConfig = DspDialogConfig.dialogDrawerConfig<string>(this.projectUuid);
-    this._dialog.open(CreateUserPageComponent, dialogConfig);
+    this._dialog.open(CreateUserDialogComponent, dialogConfig);
   }
 
   resetInput(ev: Event) {

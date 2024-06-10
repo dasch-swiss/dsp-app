@@ -3,6 +3,7 @@ import { Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ListNode } from '@dasch-swiss/dsp-js';
 import { ListApiService } from '@dasch-swiss/vre/shared/app-api';
+import { DspDialogConfig } from '@dasch-swiss/vre/shared/app-config';
 import { MultiLanguages } from '@dasch-swiss/vre/shared/app-string-literal';
 import { filter, switchMap } from 'rxjs/operators';
 import { DIALOG_LARGE } from '../../../main/services/dialog-sizes.constant';
@@ -103,17 +104,17 @@ export class ActionBubbleComponent {
 
   askToEditNode() {
     this._matDialog
-      .open<EditListItemDialogComponent, EditListItemDialogProps, boolean>(EditListItemDialogComponent, {
-        ...DIALOG_LARGE,
-        data: {
+      .open<EditListItemDialogComponent, EditListItemDialogProps, boolean>(
+        EditListItemDialogComponent,
+        DspDialogConfig.dialogDrawerConfig({
           nodeIri: this.node.id,
           projectIri: this._listItemService.projectInfos.projectIri,
           formData: {
             labels: this.node.labels as MultiLanguages,
             comments: this.node.comments as MultiLanguages,
           },
-        },
-      })
+        })
+      )
       .afterClosed()
       .pipe(filter(response => response === true))
       .subscribe(() => {

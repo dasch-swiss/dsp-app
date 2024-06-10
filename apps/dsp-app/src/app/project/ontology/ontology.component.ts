@@ -23,7 +23,7 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { getAllEntityDefinitionsAsArray } from '@dasch-swiss/vre/shared/app-api';
 import { DialogComponent } from '@dasch-swiss/vre/shared/app-common-to-move';
-import { DspApiConnectionToken, RouteConstants } from '@dasch-swiss/vre/shared/app-config';
+import { DspApiConnectionToken, DspDialogConfig, RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import {
   DefaultClass,
   DefaultProperties,
@@ -425,14 +425,12 @@ export class OntologyComponent extends ProjectBase implements OnInit, OnDestroy 
     this._dialog
       .open<CreateResourceClassDialogComponent, CreateResourceClassDialogProps, null>(
         CreateResourceClassDialogComponent,
-        {
-          data: {
-            id: resClassInfo.iri,
-            title: resClassInfo.label,
-            ontologyId: currentOntology.id,
-            lastModificationDate: currentOntology.lastModificationDate,
-          },
-        }
+        DspDialogConfig.dialogDrawerConfig({
+          id: resClassInfo.iri,
+          title: resClassInfo.label,
+          ontologyId: currentOntology.id,
+          lastModificationDate: currentOntology.lastModificationDate,
+        })
       )
       .afterClosed()
       .subscribe(event => {
@@ -446,8 +444,9 @@ export class OntologyComponent extends ProjectBase implements OnInit, OnDestroy 
     const currentOntology = this._store.selectSnapshot(OntologiesSelectors.currentOntology);
 
     this._dialog
-      .open<EditResourceClassDialogComponent, EditResourceClassDialogProps, boolean>(EditResourceClassDialogComponent, {
-        data: {
+      .open<EditResourceClassDialogComponent, EditResourceClassDialogProps, boolean>(
+        EditResourceClassDialogComponent,
+        DspDialogConfig.dialogDrawerConfig({
           id: resClassInfo.iri,
           title: resClassInfo.label,
           ontologyId: currentOntology.id,
@@ -455,8 +454,8 @@ export class OntologyComponent extends ProjectBase implements OnInit, OnDestroy 
           name: resClass.label,
           comments: resClass.comments as MultiLanguages,
           labels: resClass.labels as MultiLanguages,
-        },
-      })
+        })
+      )
       .afterClosed()
       .subscribe(event => {
         if (event === true) {
@@ -468,13 +467,14 @@ export class OntologyComponent extends ProjectBase implements OnInit, OnDestroy 
   editProperty(data: PropertyInfoObject) {
     const ontology = this._store.selectSnapshot(OntologiesSelectors.currentOntology);
     this._dialog
-      .open<EditPropertyFormDialogComponent, EditPropertyFormDialogProps>(EditPropertyFormDialogComponent, {
-        data: {
+      .open<EditPropertyFormDialogComponent, EditPropertyFormDialogProps>(
+        EditPropertyFormDialogComponent,
+        DspDialogConfig.dialogDrawerConfig({
           ontology,
           lastModificationDate: ontology.lastModificationDate,
           propertyInfo: data,
-        },
-      })
+        })
+      )
       .afterClosed()
       .subscribe(() => {
         // get the ontologies for this project

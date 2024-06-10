@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ListNodeInfo, StringLiteral } from '@dasch-swiss/dsp-js';
-import { AppConfigService, RouteConstants } from '@dasch-swiss/vre/shared/app-config';
+import { AppConfigService, DspDialogConfig, RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import {
   DeleteListNodeAction,
@@ -11,11 +11,10 @@ import {
   LoadListsInProjectAction,
   ProjectsSelectors,
 } from '@dasch-swiss/vre/shared/app-state';
-import { Actions, Select, Store, ofActionSuccessful } from '@ngxs/store';
-import { Observable, Subject, combineLatest } from 'rxjs';
+import { Actions, ofActionSuccessful, Select, Store } from '@ngxs/store';
+import { combineLatest, Observable, Subject } from 'rxjs';
 import { map, switchMap, take } from 'rxjs/operators';
 import { AppGlobal } from '../../app-global';
-import { DIALOG_LARGE } from '../../main/services/dialog-sizes.constant';
 import { DialogService } from '../../main/services/dialog.service';
 import { ProjectBase } from '../project-base';
 import {
@@ -103,14 +102,14 @@ export class ListComponent extends ProjectBase implements OnInit, OnDestroy {
    * edit list data, remove list from project etc.
    *
    */
-  askToEditList(list: ListNodeInfo) {
-    this._matDialog.open<EditListInfoDialogComponent, EditListInfoDialogProps, boolean>(EditListInfoDialogComponent, {
-      ...DIALOG_LARGE,
-      data: {
+  editList(list: ListNodeInfo) {
+    this._matDialog.open<EditListInfoDialogComponent, EditListInfoDialogProps, boolean>(
+      EditListInfoDialogComponent,
+      DspDialogConfig.dialogDrawerConfig({
         projectIri: this._projectService.uuidToIri(this.projectUuid),
         list,
-      },
-    });
+      })
+    );
   }
 
   askToDeleteList(list: ListNodeInfo): void {

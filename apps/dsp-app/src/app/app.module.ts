@@ -122,7 +122,7 @@ import { SystemComponent } from './system/system.component';
 import { UsersListComponent } from './system/users/users-list/users-list.component';
 import { UsersComponent } from './system/users/users.component';
 import { AccountComponent } from './user/account/account.component';
-import { CreateUserPageComponent } from './user/create-user-page/create-user-page.component';
+import { CreateUserDialogComponent } from './user/create-user-page/create-user-dialog.component';
 import { EditUserPageComponent } from './user/edit-user-page/edit-user-page.component';
 import { MembershipComponent } from './user/membership/membership.component';
 import { OverviewComponent } from './user/overview/overview.component';
@@ -177,7 +177,7 @@ export function httpLoaderFactory(httpClient: HttpClient) {
     ComparisonComponent,
     ConfirmDialogComponent,
     CookiePolicyComponent,
-    CreateUserPageComponent,
+    CreateUserDialogComponent,
     CreateResourceClassDialogComponent,
     DateValueHandlerComponent,
     DisableContextMenuDirective,

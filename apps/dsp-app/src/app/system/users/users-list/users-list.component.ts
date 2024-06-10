@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Constants, ReadProject, ReadUser } from '@dasch-swiss/dsp-js';
 import { PermissionsData } from '@dasch-swiss/dsp-js/src/models/admin/permissions-data';
@@ -20,7 +20,7 @@ import { Actions, ofActionSuccessful, Select, Store } from '@ngxs/store';
 import { combineLatest, Observable } from 'rxjs';
 import { map, switchMap, take } from 'rxjs/operators';
 import { DialogService } from '../../../main/services/dialog.service';
-import { CreateUserPageComponent } from '../../../user/create-user-page/create-user-page.component';
+import { CreateUserDialogComponent } from '../../../user/create-user-page/create-user-dialog.component';
 import { EditUserPageComponent } from '../../../user/edit-user-page/edit-user-page.component';
 
 @Component({
@@ -312,7 +312,7 @@ export class UsersListComponent {
   }
 
   createUser() {
-    const dialogRef = this._matDialog.open(CreateUserPageComponent, DspDialogConfig.dialogDrawerConfig());
+    const dialogRef = this._matDialog.open(CreateUserDialogComponent, DspDialogConfig.dialogDrawerConfig());
     dialogRef.afterClosed().subscribe(() => {
       this.refreshParent.emit();
     });
@@ -326,24 +326,8 @@ export class UsersListComponent {
     });
   }
 
-  /**
-   * open dialog in every case of modification:
-   * edit user profile data, update user's password,
-   * remove user from project or toggle project admin membership,
-   * delete and reactivate user
-   *
-   */
   openDialog(mode: string, user?: ReadUser): void {
-    const dialogConfig: MatDialogConfig = {
-      width: '560px',
-      maxHeight: '80vh',
-      position: {
-        top: '112px',
-      },
-      data: { user, mode },
-    };
-
-    const dialogRef = this._matDialog.open(DialogComponent, dialogConfig);
+    const dialogRef = this._matDialog.open(DialogComponent, DspDialogConfig.dialogDrawerConfig({ user, mode }));
 
     dialogRef.afterClosed().subscribe(response => {
       if (response === true) {
