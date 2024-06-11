@@ -66,7 +66,17 @@ import { propertiesTypeMapping } from './resource-payloads-mapping';
       <dasch-swiss-app-progress-indicator *ngIf="loading"></dasch-swiss-app-progress-indicator>
     </div>
   </div>`,
-  styles: ['.item {flex: 1; &.hover:hover{background: #f5f5f5}}'],
+  styles: [
+    `
+      @use '../../../../../../apps/dsp-app/src/styles/config' as *;
+      .item {
+        flex: 1;
+        &.hover:hover {
+          background: $primary_50;
+        }
+      }
+    `,
+  ],
 })
 export class PropertyValueComponent implements OnInit {
   @Input() itemTpl!: TemplateRef<any>;
