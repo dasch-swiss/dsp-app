@@ -5,7 +5,9 @@ import { IsSwitchComponent } from './is-switch-component.interface';
 @Component({
   selector: 'app-interval-switch',
   template: `
-    <ng-container *ngIf="displayMode; else editMode">{{ control.value.start }}- {{ control.value.end }} </ng-container>
+    <ng-container *ngIf="displayMode; else editMode"
+      >{{ control.value.start }}{{ ' ' }}- {{ control.value.end }}
+    </ng-container>
     <ng-template #editMode>
       <app-common-input
         placeholder="start"
