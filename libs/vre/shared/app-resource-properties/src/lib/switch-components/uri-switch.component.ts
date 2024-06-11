@@ -9,10 +9,7 @@ import { IsSwitchComponent } from './is-switch-component.interface';
       ><a [href]="control.value" target="_blank" style="font-weight: bold">{{ control.value }}</a>
     </ng-container>
     <ng-template #editMode>
-      <app-common-input
-        [control]="control"
-        placeholder="External link"
-        [validatorErrors]="[emailError]"></app-common-input>
+      <app-common-input [control]="control" label="External link" [validatorErrors]="[emailError]" />
     </ng-template>
   `,
 })

@@ -7,27 +7,27 @@
     [class]="editExistingUser ? 'small-field' : 'large-field' "
     [control]="userForm.controls.username"
     [validatorErrors]="[usernamePatternErrorMsg]"
-    [placeholder]="'appLabels.form.user.general.username' | translate"></app-common-input>
+    [label]="'appLabels.form.user.general.username' | translate" />
   <app-common-input
     [class]="editExistingUser ? 'medium-field' : 'large-field' "
     [control]="userForm.controls.email"
-    [placeholder]="'appLabels.form.user.general.email' | translate"
-    [validatorErrors]="[emailPatternErrorMsg]"></app-common-input>
+    [label]="'appLabels.form.user.general.email' | translate"
+    [validatorErrors]="[emailPatternErrorMsg]" />
   <app-common-input
     class="small-field"
     [control]="userForm.controls.givenName"
-    [placeholder]="'appLabels.form.user.general.givenName' | translate"></app-common-input>
+    [label]="'appLabels.form.user.general.givenName' | translate" />
   <app-common-input
     class="medium-field"
     [control]="userForm.controls.familyName"
-    [placeholder]="'appLabels.form.user.general.familyName' | translate"></app-common-input>
+    [label]="'appLabels.form.user.general.familyName' | translate" />
   <app-password-form
     *ngIf="!editExistingUser"
     (password)="this.userForm.controls.password.setValue($event)"></app-password-form>
   <mat-form-field class="large-field">
-    <mat-label>{{'appLabels.form.user.general.language' | translate}}</mat-label>
+    <mat-label>{{ 'appLabels.form.user.general.language' | translate }}</mat-label>
     <mat-select [formControl]="userForm.controls.lang">
-      <mat-option *ngFor="let lang of languagesList" [value]="lang.language"> {{ lang.value }} </mat-option>
+      <mat-option *ngFor="let lang of languagesList" [value]="lang.language"> {{ lang.value }}</mat-option>
     </mat-select>
   </mat-form-field>
   <div class="large-field" *ngIf="loggedInUserIsSysAdmin$ | async">

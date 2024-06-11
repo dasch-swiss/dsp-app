@@ -30,10 +30,10 @@ import { PropertyForm } from '../property-form.type';
       </mat-select>
     </mat-form-field>
     <app-common-input
-      placeholder="Property name *"
+      label="Property name *"
       data-cy="name-input"
       prefixIcon="fingerprint"
-      [control]="form.controls.name"></app-common-input>
+      [control]="form.controls.name" />
     <dasch-swiss-multi-language-input
       [formArray]="form.controls.labels"
       data-cy="label-input"

@@ -6,11 +6,7 @@ import { IsSwitchComponent } from './is-switch-component.interface';
 @Component({
   selector: 'app-text-switch',
   template: ` <app-base-switch [control]="myControl" [displayMode]="displayMode">
-    <app-common-input
-      [control]="myControl"
-      style="width: 100%"
-      data-cy="text-input"
-      placeholder="Text value"></app-common-input>
+    <app-common-input [control]="myControl" style="width: 100%" data-cy="text-input" label="Text value" />
   </app-base-switch>`,
 })
 export class TextSwitchComponent implements IsSwitchComponent, OnInit, OnDestroy {

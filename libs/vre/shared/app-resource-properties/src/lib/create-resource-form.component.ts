@@ -40,11 +40,7 @@ import { propertiesTypeMapping } from './resource-payloads-mapping';
             matTooltipPosition="above">
             Resource label *
           </h3>
-          <app-common-input
-            [control]="form.controls.label"
-            style="flex: 1"
-            data-cy="label-input"
-            placeholder="Text value"></app-common-input>
+          <app-common-input [control]="form.controls.label" style="flex: 1" data-cy="label-input" label="Text value" />
         </div>
       </div>
 

@@ -19,9 +19,9 @@ import { ResourceClassForm } from './resource-class-form.type';
         class="name-input"
         data-cy="name-input"
         [control]="form.controls.name"
-        placeholder="Class name *"
+        label="Class name *"
         [validatorErrors]="[{ errorKey: 'pattern', message: 'This pattern is not supported' }]"
-        prefixIcon="fingerprint"></app-common-input>
+        prefixIcon="fingerprint" />
 
       <dasch-swiss-multi-language-input
         data-cy="label-input"
