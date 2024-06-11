@@ -1,3 +1,27 @@
+@use '../../../../../../../../apps/dsp-app/src/styles/config' as *;
+
 mat-form-field {
   width: 100%;
+}
+
+::ng-deep {
+  div.mat-mdc-autocomplete-panel {
+    max-height: 40vh !important;
+
+    .mat-mdc-option.loader {
+      flex-direction: column;
+      
+      .mdc-list-item__primary-text {
+        margin-right: initial;
+      }
+    }
+    
+    .mat-mdc-option {
+      padding: 10px;
+      
+      &:nth-child(even) {
+        background-color: $primary_50;
+      }
+    }
+  }
 }

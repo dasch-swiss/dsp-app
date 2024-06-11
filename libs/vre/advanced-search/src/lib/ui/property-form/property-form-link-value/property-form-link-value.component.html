@@ -22,6 +22,8 @@
     </mat-option>
 
     <mat-option *ngFor="let res of resourcesSearchResults" [value]="res"> {{ res?.label }} </mat-option>
-    <mat-option *ngIf="resourcesSearchResultsLoading" [disabled]="true"> Loading... </mat-option>
+    <mat-option *ngIf="resourcesSearchResultsLoading" [disabled]="true" class="loader">
+      <dasch-swiss-app-progress-indicator></dasch-swiss-app-progress-indicator>
+    </mat-option>
   </mat-autocomplete>
 </mat-form-field>
