@@ -7,6 +7,7 @@ import { ReplaceFileFormComponent } from './lib/replace-file-form/replace-file-f
 import { StillImageComponent } from './lib/still-image/still-image.component';
 import { TextComponent } from './lib/text/text.component';
 import { UploadComponent } from './lib/upload/upload.component';
+import { VideoMoreButtonComponent } from './lib/video/video-more-button.component';
 import { VideoComponent } from './lib/video/video.component';
 import { VideoPreviewComponent } from './lib/video-preview/video-preview.component';
 
@@ -22,4 +23,5 @@ export const RepresentationsComponents = [
   UploadComponent,
   VideoComponent,
   VideoPreviewComponent,
+  VideoMoreButtonComponent,
 ];

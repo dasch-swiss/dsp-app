@@ -1,8 +1,7 @@
 <div class="player" appDisableContextMenu [class.cinema]="cinemaMode">
   <div class="container">
     <!-- in case of an error -->
-    <app-status [comment]="videoError" [url]="src.fileValue.fileUrl" [representation]="'video'" *ngIf="videoError">
-    </app-status>
+    <app-status [comment]="videoError" [url]="src.fileValue.fileUrl" [representation]="'video'" *ngIf="videoError" />
 
     <div class="video-container">
       <video
@@ -12,7 +11,7 @@
         [src]="video"
         type="video/mp4"
         preload="auto"
-        [muted]="muted"
+        [muted]="false"
         (click)="togglePlay()"
         (timeupdate)="timeUpdate()"
         (loadedmetadata)="loadedMetadata()"
@@ -29,14 +28,13 @@
     </div>
 
     <ng-template #loading>
-      <dasch-swiss-app-progress-indicator></dasch-swiss-app-progress-indicator>
+      <dasch-swiss-app-progress-indicator />
     </ng-template>
 
     <div class="preview-line">
       <!-- preview image -->
       <div class="preview" #preview>
-        <app-video-preview [src]="src" [time]="previewTime" [fileInfo]="fileInfo" (loaded)="displayPreview(!$event)">
-        </app-video-preview>
+        <app-video-preview [src]="src" [time]="previewTime" [fileInfo]="fileInfo" (loaded)="displayPreview(!$event)" />
       </div>
     </div>
   </div>
@@ -54,30 +52,11 @@
         (dimension)="timelineDimension = $event"
         (mouseleave)="displayPreview(false)"
         (changed)="updateTimeFromSlider($event)"
-        [disabled]="!videoEle"></app-av-timeline>
+        [disabled]="!videoEle" />
     </mat-toolbar-row>
 
     <mat-toolbar-row class="action">
-      <!-- vertical more button with menu to open and copy url -->
-      <button mat-icon-button [matMenuTriggerFor]="more">
-        <mat-icon>more_vert</mat-icon>
-      </button>
-      <mat-menu #more="matMenu" class="representation-menu">
-        <button mat-menu-item class="menu-content" (click)="openVideoInNewTab(this.src.fileValue.fileUrl)">
-          Open video in new tab
-        </button>
-        <button
-          mat-menu-item
-          class="menu-content"
-          [cdkCopyToClipboard]="this.src.fileValue.fileUrl"
-          (click)="openSnackBar('URL copied to clipboard!')">
-          Copy video URL to clipboard
-        </button>
-        <button mat-menu-item class="menu-content" (click)="downloadVideo(this.src.fileValue.fileUrl)">
-          Download video
-        </button>
-        <button mat-menu-item class="menu-content" (click)="openReplaceFileDialog()">Replace file</button>
-      </mat-menu>
+      <app-video-more-button [resource]="parentResource" [src]="src" [fileInfo]="fileInfo" />
       <button
         mat-icon-button
         (click)="goToStart()"
