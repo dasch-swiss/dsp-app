@@ -3,11 +3,11 @@ import { AfterViewInit, ChangeDetectionStrategy, Component, EventEmitter, Input,
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatInputModule } from '@angular/material/input';
+import { MatAutocompleteOptionsScrollDirective } from '@dasch-swiss/vre/shared/app-common';
 import { AppProgressIndicatorComponent } from '@dasch-swiss/vre/shared/app-progress-indicator';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { ApiData } from '../../../data-access/advanced-search-service/advanced-search.service';
 import { PropertyFormItem } from '../../../data-access/advanced-search-store/advanced-search-store.service';
-import { MatAutocompleteOptionsScrollDirective } from '../../directives/mat-autocomplete-options-scroll.directive';
 
 @Component({
   selector: 'dasch-swiss-property-form-link-value',

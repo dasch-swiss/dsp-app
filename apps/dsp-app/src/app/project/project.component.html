@@ -15,14 +15,14 @@
       </div>
       <div class="main-content">
         <!-- Project label -->
-        <div *ngIf="(readProject$ | async) !== undefined" class="project-title">
+        <div *ngIf="(currentProject$ | async) !== undefined" class="project-title">
           <p
             #projectTitle
-            matTooltip="{{(readProject$ | async)?.longname}}"
+            matTooltip="{{(currentProject$ | async)?.longname}}"
             matTooltipShowDelay="500"
             [matTooltipDisabled]="compareElementHeights(projectTitle)"
             matTooltipPosition="right">
-            {{(readProject$ | async)?.longname}}
+            {{(currentProject$ | async)?.longname}}
           </p>
         </div>
         <mat-list class="main-list">

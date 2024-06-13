@@ -72,7 +72,7 @@ import { propertiesTypeMapping } from './resource-payloads-mapping';
       .item {
         flex: 1;
         &.hover:hover {
-          background: $primary_50;
+          background: $primary_100;
         }
       }
     `,

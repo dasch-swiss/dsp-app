@@ -59,13 +59,6 @@ export class ProjectComponent extends ProjectBase implements OnInit, OnDestroy {
     )
   );
 
-  readProject$: Observable<ReadProject> = (
-    this._store.select(ProjectsSelectors.allProjects) as Observable<ReadProject[]>
-  ).pipe(
-    take(1),
-    map(projects => this.getCurrentProject(projects))
-  );
-
   projectOntologies$: Observable<ReadOntology[]> = combineLatest([
     this.isProjectsLoading$,
     this._store.select(OntologiesSelectors.isLoading),
@@ -82,6 +75,7 @@ export class ProjectComponent extends ProjectBase implements OnInit, OnDestroy {
   );
 
   @Select(OntologiesSelectors.hasLoadingErrors) hasLoadingErrors$: Observable<boolean>;
+  @Select(ProjectsSelectors.currentProject) currentProject$: Observable<ReadProject>;
 
   constructor(
     private _componentCommsService: ComponentCommunicationEventService,

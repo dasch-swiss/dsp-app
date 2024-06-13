@@ -36,7 +36,7 @@ export class LinkSwitchComponent implements IsSwitchComponent {
   }
 
   get link() {
-    return `/resource${this._resourceService.getResourcePath(this.control.value)}`;
+    return this.control.value ? `/resource${this._resourceService.getResourcePath(this.control.value)}` : '#';
   }
 
   constructor(private _resourceService: ResourceService) {}

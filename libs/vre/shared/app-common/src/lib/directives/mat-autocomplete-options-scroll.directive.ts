@@ -32,7 +32,9 @@ export class MatAutocompleteOptionsScrollDirective implements OnDestroy {
           setTimeout(() => {
             // Note: remove listner just for safety, in case the close event is skipped.
             this.removeScrollEventListener();
-            this.autoComplete.panel.nativeElement.addEventListener('scroll', this.onScroll.bind(this));
+            if (this.autoComplete.panel) {
+              this.autoComplete.panel.nativeElement.addEventListener('scroll', this.onScroll.bind(this));
+            }
           }, 500);
         }),
         takeUntil(this._onDestroy)
