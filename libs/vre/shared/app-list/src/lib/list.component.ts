@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, On
 import { MatDialog } from '@angular/material/dialog';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ListNodeInfo, StringLiteral } from '@dasch-swiss/dsp-js';
+import { ListNodeInfo } from '@dasch-swiss/dsp-js';
 import { AppConfigService, DspDialogConfig, RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import {
@@ -11,12 +11,11 @@ import {
   LoadListsInProjectAction,
   ProjectsSelectors,
 } from '@dasch-swiss/vre/shared/app-state';
+import { DialogService } from '@dasch-swiss/vre/shared/app-ui';
 import { Actions, ofActionSuccessful, Select, Store } from '@ngxs/store';
 import { combineLatest, Observable, Subject } from 'rxjs';
 import { map, switchMap, take } from 'rxjs/operators';
-import { AppGlobal } from '../../app-global';
-import { DialogService } from '../../main/services/dialog.service';
-import { ProjectBase } from '../project-base';
+import { ProjectBaseService } from './project-base.service';
 import {
   EditListInfoDialogComponent,
   EditListInfoDialogProps,
@@ -27,41 +26,24 @@ import {
   selector: 'app-list',
   templateUrl: './list.component.html',
   styleUrls: ['./list.component.scss'],
+  providers: [ProjectBaseService],
 })
-export class ListComponent extends ProjectBase implements OnInit, OnDestroy {
+export class ListComponent implements OnInit, OnDestroy {
   private ngUnsubscribe: Subject<void> = new Subject<void>();
 
-  languagesList: StringLiteral[] = AppGlobal.languagesList;
-
-  // current selected language
-  language: string;
-
-  openPanel: number;
-
-  // i18n plural mapping
-  itemPluralMapping = {
-    list: {
-      // eslint-disable-next-line @typescript-eslint/naming-convention
-      '=1': '1 list',
-      other: '# lists',
-    },
-  };
-
-  // disable content on small devices
   disableContent = false;
 
   private readonly routeListIri$ = this._route.paramMap.pipe(map(params => params.get(RouteConstants.listParameter)));
 
   list$ = combineLatest([this._store.select(ListsSelectors.listsInProject), this.routeListIri$]).pipe(
-    map(([lists, listIri]) => lists.find(i => i.id.includes(listIri)))
+    map(([lists, listIri]) => lists.find(i => i.id.includes(listIri!)))
   );
 
-  listIri$: Observable<string> = combineLatest([this._route.params, this.project$]).pipe(
+  listIri$: Observable<string> = combineLatest([this._route.params, this.projectBaseService.project$]).pipe(
     map(([params, project]) => `${this._acs.dspAppConfig.iriBase}/lists/${project.shortcode}/${params['list']}`)
   );
 
-  @Select(ListsSelectors.isListsLoading) isListsLoading$: Observable<boolean>;
-  @Select(ListsSelectors.listsInProject) listsInProject$: Observable<ListNodeInfo[]>;
+  @Select(ListsSelectors.isListsLoading) isListsLoading$!: Observable<boolean>;
 
   constructor(
     private _acs: AppConfigService,
@@ -73,10 +55,9 @@ export class ListComponent extends ProjectBase implements OnInit, OnDestroy {
     protected _projectService: ProjectService,
     protected _store: Store,
     protected _cd: ChangeDetectorRef,
-    protected _actions$: Actions
-  ) {
-    super(_store, _route, _projectService, _titleService, _router, _cd, _actions$);
-  }
+    protected _actions$: Actions,
+    public projectBaseService: ProjectBaseService
+  ) {}
 
   @HostListener('window:resize', ['$event']) onWindowResize() {
     this.disableContent = window.innerWidth <= 768;
@@ -87,26 +68,22 @@ export class ListComponent extends ProjectBase implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    super.ngOnInit();
+    this.projectBaseService.onInit();
     this.disableContent = window.innerWidth <= 768;
     this._setPageTitle();
   }
 
   ngOnDestroy() {
+    this.projectBaseService.onDestroy();
     this.ngUnsubscribe.next();
     this.ngUnsubscribe.complete();
   }
 
-  /**
-   * open dialog in every case of modification:
-   * edit list data, remove list from project etc.
-   *
-   */
   editList(list: ListNodeInfo) {
     this._matDialog.open<EditListInfoDialogComponent, EditListInfoDialogProps, boolean>(
       EditListInfoDialogComponent,
       DspDialogConfig.dialogDrawerConfig({
-        projectIri: this._projectService.uuidToIri(this.projectUuid),
+        projectIri: this._projectService.uuidToIri(this.projectBaseService.projectUuid),
         list,
       })
     );
@@ -121,8 +98,8 @@ export class ListComponent extends ProjectBase implements OnInit, OnDestroy {
       )
       .pipe(switchMap(() => this._actions$.pipe(ofActionSuccessful(DeleteListNodeAction), take(1))))
       .subscribe(() => {
-        this._store.dispatch(new LoadListsInProjectAction(this.projectIri));
-        this._router.navigate([RouteConstants.project, this.projectUuid, RouteConstants.dataModels]);
+        this._store.dispatch(new LoadListsInProjectAction(this.projectBaseService.projectIri));
+        this._router.navigate([RouteConstants.project, this.projectBaseService.projectUuid, RouteConstants.dataModels]);
       });
   }
 

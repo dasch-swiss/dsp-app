@@ -53,10 +53,10 @@ import {
   UserSelectors,
 } from '@dasch-swiss/vre/shared/app-state';
 import { MultiLanguages } from '@dasch-swiss/vre/shared/app-string-literal';
+import { DialogService } from '@dasch-swiss/vre/shared/app-ui';
 import { Actions, ofActionSuccessful, Select, Store } from '@ngxs/store';
 import { combineLatest, Observable, Subject } from 'rxjs';
 import { map, switchMap, take, takeUntil } from 'rxjs/operators';
-import { DialogService } from '../../main/services/dialog.service';
 import { ProjectBase } from '../project-base';
 import {
   CreateResourceClassDialogComponent,

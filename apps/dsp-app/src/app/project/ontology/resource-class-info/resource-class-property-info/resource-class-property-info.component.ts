@@ -27,10 +27,10 @@ import { GuiCardinality } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { DefaultClass, DefaultProperty, OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { ListsSelectors, OntologiesSelectors } from '@dasch-swiss/vre/shared/app-state';
+import { DialogService } from '@dasch-swiss/vre/shared/app-ui';
 import { Store } from '@ngxs/store';
 import { Subject } from 'rxjs';
 import { switchMap, takeUntil, tap } from 'rxjs/operators';
-import { DialogService } from '../../../../main/services/dialog.service';
 
 // property data structure
 export class Property {

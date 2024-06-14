@@ -16,10 +16,10 @@ import {
   SetUserAction,
   UserSelectors,
 } from '@dasch-swiss/vre/shared/app-state';
+import { DialogService } from '@dasch-swiss/vre/shared/app-ui';
 import { Actions, ofActionSuccessful, Select, Store } from '@ngxs/store';
 import { combineLatest, Observable } from 'rxjs';
 import { map, switchMap, take } from 'rxjs/operators';
-import { DialogService } from '../../../main/services/dialog.service';
 import { CreateUserDialogComponent } from '../../../user/create-user-page/create-user-dialog.component';
 import { EditUserPageComponent } from '../../../user/edit-user-page/edit-user-page.component';
 

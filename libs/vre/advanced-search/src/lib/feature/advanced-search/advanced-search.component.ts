@@ -1,23 +1,23 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute } from '@angular/router';
 import { Constants } from '@dasch-swiss/dsp-js';
+import { DialogService } from '@dasch-swiss/vre/shared/app-ui';
 import { take } from 'rxjs/operators';
 import { v4 as uuidv4 } from 'uuid';
 import { ApiData } from '../../data-access/advanced-search-service/advanced-search.service';
 import {
+  AdvancedSearchStateSnapshot,
   AdvancedSearchStoreService,
-  ParentChildPropertyPair,
   OrderByItem,
+  ParentChildPropertyPair,
   PropertyFormItem,
   PropertyFormListOperations,
   SearchItem,
-  AdvancedSearchStateSnapshot,
 } from '../../data-access/advanced-search-store/advanced-search-store.service';
-import { ConfirmationDialogComponent } from '../../ui/dialog/confirmation-dialog/confirmation-dialog.component';
 import { FormActionsComponent } from '../../ui/form-actions/form-actions.component';
 import { OntologyResourceFormComponent } from '../../ui/ontology-resource-form/ontology-resource-form.component';
 import { OrderByComponent } from '../../ui/order-by/order-by.component';
@@ -82,7 +82,10 @@ export class AdvancedSearchComponent implements OnInit {
   constants = Constants;
   previousSearchObject: string | null = null;
 
-  constructor(private _dialog: MatDialog) {}
+  constructor(
+    private _dialog: MatDialog,
+    private _dialogService: DialogService
+  ) {}
 
   ngOnInit(): void {
     this.store.setState({
@@ -191,12 +194,8 @@ export class AdvancedSearchComponent implements OnInit {
   }
 
   handleResetButtonClicked(): void {
-    const dialogRef = this._dialog.open(ConfirmationDialogComponent, {});
-
-    dialogRef.afterClosed().subscribe((result: boolean) => {
-      if (result) {
-        this.store.onReset();
-      }
+    this._dialogService.afterConfirmation('Are you sure you want to reset the form?').subscribe(() => {
+      this.store.onReset();
     });
   }
 

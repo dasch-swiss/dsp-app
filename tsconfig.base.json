@@ -62,6 +62,9 @@
       "@dasch-swiss/vre/shared/app-helper-services": [
         "libs/vre/shared/app-helper-services/src/index.ts"
       ],
+      "@dasch-swiss/vre/shared/app-list": [
+        "libs/vre/shared/app-list/src/index.ts"
+      ],
       "@dasch-swiss/vre/shared/app-logging": [
         "libs/vre/shared/app-logging/src/index.ts"
       ],
@@ -94,6 +97,9 @@
       ],
       "@dasch-swiss/vre/shared/app-string-literal": [
         "libs/vre/shared/app-string-literal/src/index.ts"
+      ],
+      "@dasch-swiss/vre/shared/app-ui": [
+        "libs/vre/shared/app-ui/src/index.ts"
       ],
       "@dasch-swiss/vre/shared/assets/status-msg": [
         "libs/vre/shared/assets/status-msg/src/index.ts"
