@@ -49,11 +49,12 @@ import { PropertyValueService } from './property-value.service';
     </ng-template>
 
     <ng-template #booleanTpl let-item="item" let-displayMode="displayMode">
-      <app-base-switch [control]="item" [displayMode]="displayMode">
-        <div>
-          <mat-slide-toggle [formControl]="item" data-cy="bool-toggle"></mat-slide-toggle>
-        </div>
-      </app-base-switch>
+      <mat-slide-toggle
+        *ngIf="displayMode"
+        [disabled]="displayMode"
+        [(ngModel)]="item.value"
+        data-cy="bool-toggle"></mat-slide-toggle>
+      <mat-slide-toggle *ngIf="!displayMode" [formControl]="item" data-cy="bool-toggle"></mat-slide-toggle>
     </ng-template>
 
     <ng-template #listTpl let-item="item" let-displayMode="displayMode">
