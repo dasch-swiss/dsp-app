@@ -2,7 +2,7 @@ import { Component, Input, OnChanges, OnDestroy, OnInit } from '@angular/core';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { ActivatedRoute } from '@angular/router';
 import { Constants } from '@dasch-swiss/dsp-js';
-import { DspResource, PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
+import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { RegionService } from '@dasch-swiss/vre/shared/app-representations';
 import { Subject } from 'rxjs';
@@ -18,7 +18,7 @@ import { CompoundService } from './compound/compound.service';
       [(selectedIndex)]="selectedTab"
       (selectedTabChange)="tabChanged($event)">
       <mat-tab #matTabProperties [label]="'appLabels.resource.properties' | translate">
-        <app-properties-display *ngIf="resourceProperties" [resource]="resource" [properties]="resourceProperties" />
+        <app-properties-display *ngIf="resource" [resource]="resource" [properties]="resource.resProps" />
       </mat-tab>
 
       <mat-tab
@@ -47,7 +47,6 @@ export class ResourceTabsComponent implements OnInit, OnChanges, OnDestroy {
   @Input({ required: true }) resource!: DspResource;
 
   selectedTab = 0;
-  resourceProperties!: PropertyInfoValues[];
   annotationTabSelected = false;
 
   private ngUnsubscribe = new Subject<void>();
@@ -73,10 +72,6 @@ export class ResourceTabsComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnChanges() {
-    this.resourceProperties = this.resource.resProps
-      .filter(prop => !prop.propDef['isLinkProperty'])
-      .filter(prop => !prop.propDef.subPropertyOf.includes('http://api.knora.org/ontology/knora-api/v2#hasFileValue'));
-
     this.selectedTab = 0;
   }
 

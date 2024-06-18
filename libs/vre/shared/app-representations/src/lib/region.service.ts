@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Injectable } from '@angular/core';
 import { ReadResourceSequence } from '@dasch-swiss/dsp-js';
-import { Common, DspResource } from '@dasch-swiss/vre/shared/app-common';
+import { DspResource, GenerateProperty } from '@dasch-swiss/vre/shared/app-common';
 import { IncomingService } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { BehaviorSubject, of } from 'rxjs';
 import { map, switchMap, take } from 'rxjs/operators';
@@ -65,7 +65,7 @@ export class RegionService {
       map(regions =>
         (regions as ReadResourceSequence).resources.map(_resource => {
           const z = new DspResource(_resource);
-          z.resProps = Common.initProps(_resource);
+          z.resProps = GenerateProperty.regionProperty(_resource);
           return z;
         })
       )
