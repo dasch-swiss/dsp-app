@@ -10,7 +10,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ClassDefinition, Constants } from '@dasch-swiss/dsp-js';
+import { Constants, ResourceClassDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
 import { RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import {
   ComponentCommunicationEventService,
@@ -22,6 +22,7 @@ import {
   IClassItemsKeyValuePairs,
   LoadClassItemsCountAction,
   OntologyClassSelectors,
+  UserSelectors,
 } from '@dasch-swiss/vre/shared/app-state';
 import { Actions, ofActionSuccessful, Select, Store } from '@ngxs/store';
 import { combineLatest, Observable, Subject, Subscription } from 'rxjs';
@@ -36,7 +37,7 @@ import { map, takeUntil } from 'rxjs/operators';
 export class OntologyClassItemComponent implements OnInit, AfterViewInit, OnDestroy {
   destroyed: Subject<void> = new Subject<void>();
 
-  @Input() resClass: ClassDefinition;
+  @Input({ required: true }) resClass!: ResourceClassDefinitionWithAllLanguages;
 
   @Input() projectMember: boolean;
 
@@ -66,6 +67,8 @@ export class OntologyClassItemComponent implements OnInit, AfterViewInit, OnDest
     },
   };
 
+  ontologiesLabel: string;
+
   @Select(OntologyClassSelectors.classItems) classItems$: Observable<IClassItemsKeyValuePairs>;
 
   constructor(
@@ -88,6 +91,7 @@ export class OntologyClassItemComponent implements OnInit, AfterViewInit, OnDest
     const ontologyName = OntologyService.getOntologyName(splitIri[0]);
     this.classLink = `${RouteConstants.projectRelative}/${uuid}/${RouteConstants.ontology}/${ontologyName}/${splitIri[1]}`;
     this.icon = this._getIcon();
+    this.getOntologiesLabelsInPreferredLanguage();
   }
 
   ngAfterViewInit(): void {
@@ -108,6 +112,20 @@ export class OntologyClassItemComponent implements OnInit, AfterViewInit, OnDest
   isTextOverflowing(element: HTMLElement): boolean {
     if (element) {
       return element.scrollHeight > element.clientHeight;
+    }
+  }
+
+  /**
+   * Gets the ontology label in the preferred language of the user
+   */
+  private getOntologiesLabelsInPreferredLanguage(): void {
+    // TODO: this method and changes in below PR are workourund, the label selection should be invastigated deeper to find out why DE is set as default
+    // https://github.com/dasch-swiss/dsp-das/pull/1651
+    const prefferedLanguage = this._store.selectSnapshot(UserSelectors.language);
+
+    if (this.resClass.labels) {
+      const label = this.resClass.labels.find(l => l.language === prefferedLanguage);
+      this.ontologiesLabel = label ? label.value : this.resClass.labels[0].value;
     }
   }
 
