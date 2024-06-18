@@ -69,12 +69,6 @@ export class CollaborationComponent extends ProjectBase implements OnInit, OnDes
     protected _router: Router
   ) {
     super(_store, _route, _projectService, _titleService, _router, _cd, _actions$);
-    // get the uuid of the current project
-    if (this._route.parent.parent.snapshot.url.length) {
-      this._route.parent.parent.paramMap.subscribe((params: Params) => {
-        this.projectUuid = params.get('uuid');
-      });
-    }
   }
 
   ngOnInit() {

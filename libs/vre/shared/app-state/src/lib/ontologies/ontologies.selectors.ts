@@ -52,4 +52,9 @@ export class OntologiesSelectors {
   static currentOntologyCanBeDeleted(state: OntologiesStateModel): boolean {
     return state.currentOntologyCanBeDeleted;
   }
+
+  @Selector([OntologiesState])
+  static isOntologiesLoading(state: OntologiesStateModel): boolean {
+    return state.isOntologiesLoading;
+  }
 }

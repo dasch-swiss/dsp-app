@@ -18,7 +18,7 @@ import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { OntologyClassService, ProjectService, SortingService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
 import { Action, Actions, ofActionSuccessful, State, StateContext } from '@ngxs/store';
-import { of } from 'rxjs';
+import { BehaviorSubject, of } from 'rxjs';
 import { map, switchMap, take, tap } from 'rxjs/operators';
 import { LoadListsInProjectAction } from '../lists/lists.actions';
 import { IProjectOntologiesKeyValuePairs, OntologyProperties } from '../model-interfaces';
@@ -48,6 +48,7 @@ const defaults: OntologiesStateModel = <OntologiesStateModel>{
   currentOntology: null,
   currentOntologyCanBeDeleted: false,
   currentProjectOntologyProperties: [],
+  isOntologiesLoading: false,
 };
 
 @State<OntologiesStateModel>({
@@ -103,7 +104,7 @@ export class OntologiesState {
 
   @Action(LoadProjectOntologiesAction)
   loadProjectOntologiesAction(ctx: StateContext<OntologiesStateModel>, { projectIri }: LoadProjectOntologiesAction) {
-    ctx.patchState({ isLoading: true });
+    ctx.patchState({ isOntologiesLoading: true, isLoading: true });
     projectIri = this._projectService.uuidToIri(projectIri);
 
     // get all project ontologies
@@ -156,6 +157,7 @@ export class OntologiesState {
                   );
                 }
               });
+              ctx.patchState({ isOntologiesLoading: false });
             });
         },
         error: (error: ApiResponseError) => {

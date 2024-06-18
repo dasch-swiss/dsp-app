@@ -272,7 +272,7 @@ export class OntologyFormComponent implements OnInit, OnDestroy {
         .pipe(take(1))
         .subscribe(
           (response: OntologyMetadata) => {
-            this.loadOntologies(response.id);
+            this._store.dispatch([new ClearProjectOntologiesAction(this.projectUuid)]);
             this.updateParent.emit(response.id);
             // go to the new ontology page
             const name = OntologyService.getOntologyName(response.id);

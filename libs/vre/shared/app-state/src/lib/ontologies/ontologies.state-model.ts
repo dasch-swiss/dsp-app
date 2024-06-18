@@ -1,4 +1,5 @@
 import { ReadOntology } from '@dasch-swiss/dsp-js';
+import { BehaviorSubject } from 'rxjs';
 import { IProjectOntologiesKeyValuePairs, OntologyProperties } from '../model-interfaces';
 
 export class OntologiesStateModel {
@@ -8,4 +9,5 @@ export class OntologiesStateModel {
   currentOntology: ReadOntology | null = null;
   currentOntologyCanBeDeleted = false;
   currentProjectOntologyProperties: OntologyProperties[] = [];
+  isOntologiesLoading: boolean = false;
 }
