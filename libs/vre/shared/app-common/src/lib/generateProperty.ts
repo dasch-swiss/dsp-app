@@ -18,15 +18,15 @@ export class GenerateProperty {
   }
 
   public static incomingRessourceProperty(resource: ReadResource) {
-    return this._initProps(resource).filter(
+    return this.commonProperty(resource).filter(
       v => v.propDef.id !== 'http://api.knora.org/ontology/knora-api/v2#hasStillImageFileValue'
     );
   }
 
   public static regionProperty(resource: ReadResource) {
-    return this._initProps(resource).filter(
-      v => v.propDef.objectType !== 'http://api.knora.org/ontology/knora-api/v2#Representation'
-    );
+    return this.commonProperty(resource)
+      .filter(v => v.propDef.objectType !== 'http://api.knora.org/ontology/knora-api/v2#Representation')
+      .filter(v => v.propDef.id !== 'http://api.knora.org/ontology/knora-api/v2#isRegionOfValue');
   }
 
   private static _initProps(resource: ReadResource): PropertyInfoValues[] {
