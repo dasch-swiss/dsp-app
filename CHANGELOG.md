@@ -1,5 +1,26 @@
 # Changelog
 
+## [11.12.0](https://github.com/dasch-swiss/dsp-das/compare/v11.11.0...v11.12.0) (2024-06-18)
+
+
+### Enhancements
+
+* displays slide toggle for boolean property (DEV-3752) ([#1648](https://github.com/dasch-swiss/dsp-das/issues/1648)) ([f4d5765](https://github.com/dasch-swiss/dsp-das/commit/f4d5765a4e0e2a50f495452e4f625d81000e8e43))
+
+
+### Bug Fixes
+
+* **dialog:** set height to make dialog scroll ([#1653](https://github.com/dasch-swiss/dsp-das/issues/1653)) ([fb6a9d6](https://github.com/dasch-swiss/dsp-das/commit/fb6a9d65f2c989a4b349a24ad58e870ddf075eee))
+* display all properties in compound resource ([#1654](https://github.com/dasch-swiss/dsp-das/issues/1654)) ([36184bb](https://github.com/dasch-swiss/dsp-das/commit/36184bbc941bac8e520bb98b2c46121b562db6a8))
+* display ontology labels in prefffered language (DEV-3739) ([#1651](https://github.com/dasch-swiss/dsp-das/issues/1651)) ([2dfd44d](https://github.com/dasch-swiss/dsp-das/commit/2dfd44d37ea972c62968150638130cfef2b26da1))
+* load ontologies (DEV-3758) ([#1652](https://github.com/dasch-swiss/dsp-das/issues/1652)) ([9d55966](https://github.com/dasch-swiss/dsp-das/commit/9d5596613a99d6c4319679d7dbaf74b3821d37c4))
+* property value gap adjustment (DEV-3718) ([#1655](https://github.com/dasch-swiss/dsp-das/issues/1655)) ([22b8471](https://github.com/dasch-swiss/dsp-das/commit/22b8471a80debdb71e1ca976108fe835731c1175))
+
+
+### Maintenance
+
+* move list and dialog into nx libraries ([#1649](https://github.com/dasch-swiss/dsp-das/issues/1649)) ([ad0cfb6](https://github.com/dasch-swiss/dsp-das/commit/ad0cfb67dc5bab22983d5d703c42ab6aa448399b))
+
 ## [11.11.0](https://github.com/dasch-swiss/dsp-das/compare/v11.10.3...v11.11.0) (2024-06-13)
 
 
