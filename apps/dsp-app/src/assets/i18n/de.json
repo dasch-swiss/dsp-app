@@ -138,6 +138,12 @@
         }
       }
     },
+    "uiControls": {
+      "icon": {
+        "true": "Ja",
+        "false": "Nein"
+      }
+    },
     "resource": {
       "properties": "Eigenschaften"
     }

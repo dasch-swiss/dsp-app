@@ -189,6 +189,12 @@
         }
       }
     },
+    "uiControls": {
+      "icon": {
+        "true": "Yes",
+        "false": "No"
+      }
+    },
     "resource": {
       "properties": "Properties"
     }

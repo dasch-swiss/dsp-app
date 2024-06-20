@@ -6,3 +6,4 @@ export * from './lib/generateProperty';
 export * from './lib/directives/mat-autocomplete-options-scroll.directive';
 export * from './lib/form-validators/at-least-one-string-required.validator';
 export * from './lib/form-validators/array-length-greater-than-zero-validator';
+export * from './lib/animations/replace-animation';

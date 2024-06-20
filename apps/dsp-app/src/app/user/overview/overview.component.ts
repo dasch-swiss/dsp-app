@@ -2,11 +2,11 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { ReadProject, ReadUser, StoredProject } from '@dasch-swiss/dsp-js';
+import { ReplaceAnimation } from '@dasch-swiss/vre/shared/app-common';
 import { LoadProjectsAction, ProjectsSelectors, UserSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { Select, Store } from '@ngxs/store';
 import { Observable, combineLatest } from 'rxjs';
 import { filter, take } from 'rxjs/operators';
-import { ReplaceAnimation } from '../../main/animations/replace-animation';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
