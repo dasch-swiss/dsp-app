@@ -1,5 +1,13 @@
 # Changelog
 
+## [11.12.1](https://github.com/dasch-swiss/dsp-das/compare/v11.12.0...v11.12.1) (2024-06-19)
+
+
+### Bug Fixes
+
+* no duplicates in compound, no isRegionOf property for annotation ([#1657](https://github.com/dasch-swiss/dsp-das/issues/1657)) ([b85f6a4](https://github.com/dasch-swiss/dsp-das/commit/b85f6a4ee0dd4c45b22e2c79f1634f9fe6bf8491))
+* resource link form (DEV-3767) ([#1656](https://github.com/dasch-swiss/dsp-das/issues/1656)) ([43d1edb](https://github.com/dasch-swiss/dsp-das/commit/43d1edbceced151a3048c158729f8b253063bb46))
+
 ## [11.12.0](https://github.com/dasch-swiss/dsp-das/compare/v11.11.0...v11.12.0) (2024-06-18)
 
 
