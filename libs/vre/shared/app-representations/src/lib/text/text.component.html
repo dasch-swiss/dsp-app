@@ -28,7 +28,9 @@
             [disabled]="failedToLoad">
             Download file
           </button>
-          <button class="menu-content" mat-menu-item (click)="openReplaceFileDialog()">Replace file</button>
+          <button [disabled]="!usercanEdit" class="menu-content" mat-menu-item (click)="openReplaceFileDialog()">
+            Replace file
+          </button>
         </mat-menu>
       </div>
     </div>

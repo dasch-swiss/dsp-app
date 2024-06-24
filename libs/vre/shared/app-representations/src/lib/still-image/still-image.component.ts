@@ -26,12 +26,10 @@ import {
   UpdateValue,
   WriteValueResponse,
 } from '@dasch-swiss/dsp-js';
-import { DspResource } from '@dasch-swiss/vre/shared/app-common';
+import { DspResource, ResourceUtil } from '@dasch-swiss/vre/shared/app-common';
 import { DialogComponent } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
-import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
-import { UserSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { Store } from '@ngxs/store';
 import * as OpenSeadragon from 'openseadragon';
 import { combineLatest, Observable, Subscription } from 'rxjs';
@@ -68,21 +66,9 @@ export class StillImageComponent implements OnInit, OnChanges, OnDestroy {
     return this.parentResource.id;
   }
 
-  get attachedToProjectResource() {
-    return this.parentResource.attachedToProject;
+  get usercanEdit() {
+    return ResourceUtil.userCanEdit(this.resource.res);
   }
-
-  isEditor$: Observable<boolean> = combineLatest([
-    this._store.select(UserSelectors.user),
-    this._store.select(UserSelectors.userProjectAdminGroups),
-  ]).pipe(
-    map(([user, userProjectGroups]) => {
-      return this.attachedToProjectResource
-        ? ProjectService.IsProjectMemberOrAdminOrSysAdmin(user, userProjectGroups, this.attachedToProjectResource)
-        : false;
-    })
-  );
-  editorPermissions = false;
 
   imagesSub: Subscription | undefined;
   fileInfoSub: Subscription | undefined;
@@ -124,10 +110,6 @@ export class StillImageComponent implements OnInit, OnChanges, OnDestroy {
   ngOnInit() {
     this._setupViewer();
     this._loadImages();
-
-    this.isEditor$.subscribe(isEditor => {
-      this.editorPermissions = isEditor;
-    });
 
     this._regionService.imageIsLoaded$
       .pipe(

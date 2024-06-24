@@ -1,6 +1,6 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { PermissionUtil } from '@dasch-swiss/dsp-js';
+import { ResourceUtil } from '@dasch-swiss/vre/shared/app-common';
 import { ResourceFetcherService } from '@dasch-swiss/vre/shared/app-representations';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -71,7 +71,9 @@ export class PropertyValueActionBubbleComponent implements OnInit {
 
   infoTooltip$!: Observable<string>;
 
-  userHasPermissionToModify = false;
+  get userHasPermissionToModify() {
+    return ResourceUtil.userCanEdit(this._propertyValueService._editModeData!.values[0]);
+  }
 
   constructor(
     private _resourceFetcherService: ResourceFetcherService,
@@ -80,16 +82,6 @@ export class PropertyValueActionBubbleComponent implements OnInit {
 
   ngOnInit() {
     this.infoTooltip$ = this._getInfoToolTip();
-    this._setPermissions();
-  }
-
-  private _setPermissions() {
-    const value = this._propertyValueService._editModeData!.values[0];
-    const allPermissions = value
-      ? PermissionUtil.allUserPermissions(value?.userHasPermission as 'RV' | 'V' | 'M' | 'D' | 'CR')
-      : [];
-
-    this.userHasPermissionToModify = allPermissions.indexOf(PermissionUtil.Permissions.M) !== -1;
   }
 
   private _getInfoToolTip() {

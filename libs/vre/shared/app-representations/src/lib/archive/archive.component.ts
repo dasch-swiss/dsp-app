@@ -10,6 +10,7 @@ import {
   UpdateValue,
   WriteValueResponse,
 } from '@dasch-swiss/dsp-js';
+import { ResourceUtil } from '@dasch-swiss/vre/shared/app-common';
 import { DialogComponent } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { mergeMap } from 'rxjs/operators';
@@ -31,6 +32,10 @@ export class ArchiveComponent implements OnInit, AfterViewInit {
   originalFilename: string;
 
   failedToLoad = false;
+
+  get usercanEdit() {
+    return ResourceUtil.userCanEdit(this.parentResource);
+  }
 
   constructor(
     @Inject(DspApiConnectionToken)

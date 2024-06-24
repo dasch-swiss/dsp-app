@@ -1,4 +1,5 @@
 export * from './lib/resource.service';
+export * from './lib/resource.util';
 export * from './lib/custom-regex';
 export * from './lib/dsp-resource';
 export * from './lib/property-info-values.interface';

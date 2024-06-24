@@ -1,7 +1,7 @@
 import { Component, Input, ViewContainerRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { PermissionUtil, ResourceClassDefinitionWithPropertyDefinition } from '@dasch-swiss/dsp-js';
-import { DspResource } from '@dasch-swiss/vre/shared/app-common';
+import { DspResource, ResourceUtil } from '@dasch-swiss/vre/shared/app-common';
 import { DspDialogConfig } from '@dasch-swiss/vre/shared/app-config';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import {
@@ -100,14 +100,7 @@ export class ResourceHeaderComponent {
   }
 
   get userCanEdit(): boolean {
-    if (!this.resource.res) {
-      return false;
-    }
-
-    const allPermissions = PermissionUtil.allUserPermissions(
-      this.resource.res.userHasPermission as 'RV' | 'V' | 'M' | 'D' | 'CR'
-    );
-    return allPermissions.indexOf(PermissionUtil.Permissions.M) !== -1;
+    return ResourceUtil.userCanEdit(this.resource.res);
   }
 
   get attachedToProjectResource(): string {

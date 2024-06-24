@@ -11,6 +11,7 @@ import {
   UpdateValue,
   WriteValueResponse,
 } from '@dasch-swiss/dsp-js';
+import { ResourceUtil } from '@dasch-swiss/vre/shared/app-common';
 import { DialogComponent } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
@@ -37,13 +38,19 @@ import { MovingImageSidecar } from '../moving-image-sidecar';
       <button mat-menu-item class="menu-content" (click)="downloadVideo(this.src.fileValue.fileUrl)">
         Download video
       </button>
-      <button mat-menu-item class="menu-content" (click)="openReplaceFileDialog()">Replace file</button>
+      <button [disabled]="!usercanEdit" mat-menu-item class="menu-content" (click)="openReplaceFileDialog()">
+        Replace file
+      </button>
     </mat-menu>`,
 })
 export class VideoMoreButtonComponent {
   @Input({ required: true }) src!: FileRepresentation;
   @Input({ required: true }) resource!: ReadResource;
   @Input() fileInfo?: MovingImageSidecar;
+
+  get usercanEdit() {
+    return ResourceUtil.userCanEdit(this.resource);
+  }
 
   constructor(
     private _notification: NotificationService,

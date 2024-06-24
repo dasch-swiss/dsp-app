@@ -23,7 +23,9 @@
         </button>
         <mat-menu #more="matMenu" class="representation-menu">
           <button class="menu-content" mat-menu-item (click)="download(src.fileValue.fileUrl)">Download file</button>
-          <button class="menu-content" mat-menu-item (click)="openReplaceFileDialog()">Replace file</button>
+          <button [disabled]="!usercanEdit" class="menu-content" mat-menu-item (click)="openReplaceFileDialog()">
+            Replace file
+          </button>
         </mat-menu>
       </div>
     </div>

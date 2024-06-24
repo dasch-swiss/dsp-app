@@ -11,6 +11,7 @@ import {
   UpdateValue,
   WriteValueResponse,
 } from '@dasch-swiss/dsp-js';
+import { ResourceUtil } from '@dasch-swiss/vre/shared/app-common';
 import { DialogComponent } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { mergeMap } from 'rxjs/operators';
@@ -33,6 +34,10 @@ export class AudioComponent implements OnInit, AfterViewInit {
   failedToLoad = false;
   currentTime = 0;
   audio: SafeUrl;
+
+  get usercanEdit() {
+    return ResourceUtil.userCanEdit(this.parentResource);
+  }
 
   constructor(
     @Inject(DspApiConnectionToken)

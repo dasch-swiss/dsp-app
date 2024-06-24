@@ -11,6 +11,7 @@ import {
   UpdateValue,
   WriteValueResponse,
 } from '@dasch-swiss/dsp-js';
+import { ResourceUtil } from '@dasch-swiss/vre/shared/app-common';
 import { DialogComponent } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { PdfViewerComponent } from 'ng2-pdf-viewer';
@@ -43,6 +44,10 @@ export class DocumentComponent implements OnInit, AfterViewInit {
   elem: any;
 
   fileType: string;
+
+  get usercanEdit() {
+    return ResourceUtil.userCanEdit(this.parentResource);
+  }
 
   constructor(
     @Inject(DOCUMENT) private document: any,

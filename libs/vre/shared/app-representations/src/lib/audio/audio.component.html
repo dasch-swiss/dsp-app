@@ -30,7 +30,9 @@
             Copy audio URL to clipboard
           </button>
           <button class="menu-content" mat-menu-item (click)="download(src.fileValue.fileUrl)">Download audio</button>
-          <button class="menu-content" mat-menu-item (click)="openReplaceFileDialog()">Replace file</button>
+          <button [disabled]="!usercanEdit" class="menu-content" mat-menu-item (click)="openReplaceFileDialog()">
+            Replace file
+          </button>
         </mat-menu>
         <button mat-icon-button (click)="togglePlay()" *ngIf="isPaused()">
           <mat-icon> play_circle </mat-icon>
