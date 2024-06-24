@@ -2,19 +2,15 @@
 
 ## Project
 
-Once you are [logged in](index.md#login), the projects overview page displays all the projects hosted at DaSCH.
+Once you are [logged in](index.md#login), the landing page displays all the projects hosted at DaSCH.
 
-Active projects are tagged with the status "Active". Projects tagged as "Deactivated" can no longer be edited. Only a system admin is allowed to change the project status.
+![Project list and project menu](../assets/images/landing-page.png)*<https://app.dasch.swiss/> - DSP-APP projects landing page.*
 
-The setting icon on the top right of each project tile is displayed only for projects and system admins. It leads to the project settings page.
-
-![Project list and project menu](../assets/images/dashboard.png)*<https://app.dasch.swiss/> - DSP-APP projects overview page.*
-
-By clicking on the button `Browse Data`, you go to the **project workspace**. You get access to the project information, the data model (if you are logged in), and the project settings (if you are logged in as a project admin or a system admin).
+By clicking on the project tiles, you go to the selected **project workspace**. You can access the project information, the data model (if you are logged in), and the project settings (if you are logged in as a project admin or a system admin).
 
 ### Create a new project
 
-Only a system admin can create a new research project, from the projects overview page or the page System Administration > All projects.
+Only a system admin can create a new research project from the page System Administration > All projects.
 
 ![Create a new project](../assets/images/project-create-new.png)<center>*Form to create a new project.*</center>
 

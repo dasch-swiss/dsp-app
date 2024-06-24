@@ -19,9 +19,9 @@ Additionally, you can work on the resource directly, e.g, mark regions of intere
 
 Each media viewer offers different tools and functionalities, either displayed in the bottom toolbar (e.g. zoom, open in fullscreen button, play button, etc. - captioned in orange thereafter) or in the menu - the three-dot button on the bottom-left side (e.g. copy the ARK URL to the clipboard, download/replace the file, open the file in a new tab - captioned in red thereafter).
 
-![Single resource view. The resource type in this example is "Page".](../../assets/images/resource-view-with-image.png)*Single resource view. The resource type in this example is "Page" and an image viewer displays the photograph of the manuscript page.*
+![Single resource view. The resource type in this example is "Slides and Posters".](../../assets/images/resource-view-with-image.png)*Single resource view. The resource type in this example is "Slides and Posters" and an image viewer displays the PDF of a presentation.*
 
-Everything about the resource is displayed below the media viewer (when there is one). All the information about the resource itself (e.g. type, label, permissions, creator, date of creation, etc.), the data (properties and values), and different functionalities such as editing, deleting, sharing the resource. You can find more information about the functionalities in the following sections.
+Everything about the resource is displayed on the page. All the information about the resource itself (e.g. type, label, permissions, creator, date of creation, etc.) are displayed at the top of the page, the data (properties and values), and different functionalities such as editing, deleting, sharing the resource are in the "Properties" section - below the media player when it exists. You can find more information about the functionalities in the following sections.
 
 ![Resource toolbar description.](../../assets/images/resource-toolbar.png)
 
@@ -75,7 +75,7 @@ Supported file types: **7z**, **gz**, **gzip**, **tar**, **tgz**, **z**, **zip**
 
 ### Display resource properties
 
-By default, only important properties are shown in the resource viewer. To display them all, click on the "unfold" button in the resource toolbar.
+By default, only important properties are shown in the resource viewer. To display them all, click on the button "Show all properties" in the resource toolbar.
 
 ![Show or hide properties.](../../assets/images/show-hide-properties.png)*Show or hide properties from the toolbar.*
 
@@ -83,11 +83,11 @@ To get more information about the property value, i.e. date of creation and auth
 
 ![Get more information about the value](../../assets/images/value-info.png)*Get the creation date and the author name of the value.*
 
-### Display a value comment
+### Display value comments
 
-To display the existing value comment, hover over the property value and click on the comment button (3rd icon from the left).
+To display the existing value comments, click on the button "Show all comments" in the property toolbar.
 
-![Hover over the property value to see if there is a comment.](../../assets/images/comment-value.png)*Hover over the property value to see if there is a comment and display it.*
+![Show all property comments or hide them.](../../assets/images/comment-value.png)*Show all property comments or hide them.*
 
 ---
 
@@ -126,11 +126,12 @@ If your property is linked to another resource, you can search for an existing v
 
 ### Add an image region
 
-To create a new region on an image, you click on the button `Draw a region` in the toolbar, then select the region you want on the image.
+To create a new region on an image, you click on the icon `Draw a region` in the toolbar, then draw the desired square region you want on the image.
 
 ![Select a region.](../../assets/images/region_draw.png)*Select a region on the image with the drawing tool.*
 
-Enter the information about the region, an informative label and a description as a comment. You can change the color.
+Enter the information about the region and an informative label. You may also add a description as a comment (optional). You can change the color.
+
 
 ![Fill in the form.](../../assets/images/region_fillin_form.png)*Fill in the form about the selected region.*
 
@@ -146,7 +147,7 @@ The new region information is displayed after the image viewer. You can edit or 
 
 ### Edit a resource
 
-To edit the resource label, open the resource menu on the right-side of the toolbar and click on `Edit label`.
+To edit the resource label, click on the pencil icon `Edit label` on the right-side of the resource label.
 
 ![Add a new linked resource value.](../../assets/images/edit-resource-label.png)
 
@@ -201,7 +202,7 @@ DSP-APP offers two ways to link data:
 
 ### Internal linkage
 
-To link 2 resources (A is an image and B is a document in the example), you go to your resource A that will be linked, open the **Share** menu and click on the button `Copy internal link on clipboard`. You have copied the internal link of your resource A that will be used to make the link with your resource B.
+To link 2 resources (A is an image and B is a document in the example), you go to your resource A that will be linked, click on the **Share** icon at the top of the page and click on the button `Copy internal link on clipboard`. You have copied the internal link of your resource A that will be used to make the link with your resource B.
 
 ![Copy the internal link](../../assets/images/link_copy_internal_link.png)*Copy the internal link of the resource A.*
 
@@ -239,6 +240,6 @@ It is possible to add other resources later on by clicking on the `+` button in 
 
 Each resource of your dataset gets an ARK URL (Archival Resource Key), a persistent identifier that will allow you to permanently cite your resource in papers, conference presentations, books, etc.
 
-You will find it in the **Share** menu of the resource toolbar, click on `Copy ARK to clipboard` to copy and paste it wherever you want.
+You will find it by clicking on the **Share** icon at the top of the page. Then, click on `Copy ARK url to clipboard` to copy and paste it wherever you want.
 
 ![Copy ARK URL.](../../assets/images/copy-ark.png)*Copy ARK URL.*
