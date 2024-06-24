@@ -4,7 +4,6 @@ import { ApiResponseError } from '@dasch-swiss/dsp-js';
 import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
 import * as Sentry from '@sentry/angular-ivy';
-import { SentryErrorHandler } from '@sentry/angular-ivy';
 import { AjaxError } from 'rxjs/ajax';
 import { AppError } from './app-error';
 
@@ -78,7 +77,7 @@ export class AppErrorHandler implements ErrorHandler {
             The resource(s) or a part of it cannot be displayed correctly.
             Failed on ${url}`;
     } else {
-      message = 'There is an error on our side. Our team is notified!';
+      message = 'There is an error on our side. Please contact support@dasch.swiss';
     }
 
     this.displayNotification(message);
