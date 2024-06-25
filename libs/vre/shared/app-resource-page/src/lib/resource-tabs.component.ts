@@ -12,11 +12,7 @@ import { CompoundService } from './compound/compound.service';
 @Component({
   selector: 'app-resource-tabs',
   template: `
-    <mat-tab-group
-      *ngIf="!resource.res.isDeleted"
-      animationDuration="0ms"
-      [(selectedIndex)]="selectedTab"
-      (selectedTabChange)="tabChanged($event)">
+    <mat-tab-group *ngIf="!resource.res.isDeleted" animationDuration="0ms" [(selectedIndex)]="selectedTab">
       <mat-tab #matTabProperties [label]="'appLabels.resource.properties' | translate">
         <app-properties-display *ngIf="resource" [resource]="resource" [properties]="resource.resProps" />
       </mat-tab>
@@ -38,7 +34,7 @@ import { CompoundService } from './compound/compound.service';
             Annotations
           </span>
         </ng-template>
-        <app-annotation-tab *ngIf="annotationTabSelected && regionService.regions.length > 0" [resource]="resource" />
+        <app-annotation-tab *ngIf="regionService.regions.length > 0" [resource]="resource" />
       </mat-tab>
     </mat-tab-group>
   `,
@@ -47,7 +43,6 @@ export class ResourceTabsComponent implements OnInit, OnChanges, OnDestroy {
   @Input({ required: true }) resource!: DspResource;
 
   selectedTab = 0;
-  annotationTabSelected = false;
 
   private ngUnsubscribe = new Subject<void>();
 
@@ -62,10 +57,6 @@ export class ResourceTabsComponent implements OnInit, OnChanges, OnDestroy {
   ) {}
 
   resourceClassLabel = (resource: DspResource) => resource.res.entityInfo?.classes[resource.res.type].label;
-
-  tabChanged(event: MatTabChangeEvent) {
-    this.annotationTabSelected = event.tab.textLabel === 'Annotations';
-  }
 
   ngOnInit() {
     this._highlightAnnotationFromUri();

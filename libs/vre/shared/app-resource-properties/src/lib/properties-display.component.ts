@@ -4,7 +4,7 @@ import { DspResource, PropertyInfoValues } from '@dasch-swiss/vre/shared/app-com
 import { ResourceSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { Store } from '@ngxs/store';
 import { Observable, of, Subject } from 'rxjs';
-import { map, switchMap, takeUntil } from 'rxjs/operators';
+import { map, shareReplay, switchMap, takeUntil } from 'rxjs/operators';
 import { IncomingOrStandoffLink } from './incoming-link.interface';
 import { PropertiesDisplayIncomingLinkService } from './properties-display-incoming-link.service';
 import { PropertiesDisplayService } from './properties-display.service';
@@ -153,7 +153,9 @@ export class PropertiesDisplayComponent implements OnChanges, OnDestroy {
       )
     );
 
-    this.incomingLinks$ = this._propertiesDisplayIncomingLink.getIncomingLinks$(this.resource.res.id, 0);
+    this.incomingLinks$ = this._propertiesDisplayIncomingLink
+      .getIncomingLinks$(this.resource.res.id, 0)
+      .pipe(shareReplay(1));
     this.showIncomingLinks$ = this.incomingLinks$.pipe(
       switchMap(links => (links.length > 0 ? of(true) : this._propertiesDisplayService.showAllProperties$))
     );
