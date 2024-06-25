@@ -24,16 +24,17 @@
 
 .res-list-item-content {
   display: flex;
-  flex-grow: 1; /* grow to fill remaining space */
+  width: 100%;
   cursor: pointer;
   overflow: hidden;
 }
 
 .res-list-item-text{
-  width: 85%;
-  padding-left: 16px;
+  overflow: hidden;
+  flex-grow: 1;
   padding-top: 8px;
   padding-bottom: 8px;
+  padding-left: 8px;
 }
 
 .res-class-label,
@@ -47,11 +48,11 @@
 }
 
 .res-class-label {
+  overflow: hidden;
   font-size: 14px !important;
 }
 
 .res-class-value {
-  width: 85%;
   font-weight: bold !important;
   font-size: 16px !important;
   line-height: 1.5;
@@ -61,6 +62,26 @@
   font-style: italic;
 }
 
+
+.shorten-long-text {
+  text-align: justify;
+  white-space: nowrap;
+  width: 100%;
+  overflow: hidden;
+  max-height: 2.5em;
+  text-overflow: ellipsis;
+}
+
+.shorten-multiline-text {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-height: 1.5;
+  max-height: 3em;
+}
+
 .res-checkbox {
-  min-width: 3em;
+  width: 2em;
+  flex-shrink: 0;
 }

@@ -30,7 +30,7 @@
 <!-- container with search results -->
 <div class="list-view-container">
   <dasch-swiss-app-progress-indicator *ngIf="loading"></dasch-swiss-app-progress-indicator>
-  <div class="list-view" *ngIf="!loading && (numberOfAllResults > 0 && resources)">
+  <div *ngIf="!loading && (numberOfAllResults > 0 && resources)">
     <app-resource-list
       [withMultipleSelection]="true"
       [resources]="resources"
