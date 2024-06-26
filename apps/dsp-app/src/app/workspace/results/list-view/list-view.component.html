@@ -1,31 +1,16 @@
 <!-- header / toolbar to select view and pagination -->
-<div *ngIf="!loading && (numberOfAllResults > 0 && resources?.resources?.length)" class="list-view-header">
-  <div
-    *ngIf="search.mode === 'gravsearch' && search.projectUuid && (numberOfAllResults > 0 && resources.resources.length)"
-    class="back">
+<div
+  *ngIf="!loading && (numberOfAllResults > 0 && resources?.resources?.length) && search.mode === 'gravsearch' && search.projectUuid"
+  class="list-view-header">
+  <div class="back">
     <button mat-button class="back-button" (click)="handleBackButtonClicked()">
       <span>Go Back to Search Form</span>
       <mat-icon iconPositionEnd>chevron_right</mat-icon>
     </button>
   </div>
-  <div class="navigation">
-    <button mat-button class="pagination-button previous" [disabled]="0 >= currentIndex" (click)="goToPage('previous')">
-      <mat-icon>west</mat-icon>
-      <span>Previous</span>
-    </button>
-    <span class="fill-remaining-space"></span>
-    <div class="range">{{currentRangeStart}} - {{currentRangeEnd}} of {{numberOfAllResults}}</div>
-    <span class="fill-remaining-space"></span>
-    <button
-      mat-button
-      class="pagination-button next"
-      [disabled]="(pageSize > numberOfAllResults) || nextDisabled"
-      (click)="goToPage('next')">
-      <span>Next</span>
-      <mat-icon>east</mat-icon>
-    </button>
-  </div>
 </div>
+<dasch-swiss-app-pager #pager (pageChanged)="doSearch($event)" [numberOfAllResults]="numberOfAllResults">
+</dasch-swiss-app-pager>
 
 <!-- container with search results -->
 <div class="list-view-container">

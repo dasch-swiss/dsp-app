@@ -1,0 +1,22 @@
+<div *ngIf="numberOfAllResults > 0" class="paging-container">
+  <div class="navigation">
+    <button mat-button class="pagination-button previous" [disabled]="0 >= currentIndex" (click)="goToPage('previous')">
+      <mat-icon>west</mat-icon>
+      <span>{{'appLabels.uiControls.pager.previous' | translate}}</span>
+    </button>
+    <span class="fill-remaining-space"></span>
+    <div class="range">
+      {{currentRangeStart}} - {{(currentRangeEnd < currentRangeStart) ? '...' : currentRangeEnd}}
+      <span *ngIf="showNumberOfAllResults">{{'appLabels.uiControls.pager.of' | translate}} {{numberOfAllResults}}</span>
+    </div>
+    <span class="fill-remaining-space"></span>
+    <button
+      mat-button
+      class="pagination-button next"
+      [disabled]="(PagerComponent.pageSize > numberOfAllResults) || nextDisabled"
+      (click)="goToPage('next')">
+      <span>{{'appLabels.uiControls.pager.next' | translate}}</span>
+      <mat-icon>east</mat-icon>
+    </button>
+  </div>
+</div>

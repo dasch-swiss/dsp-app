@@ -9,6 +9,7 @@ import {
   OnDestroy,
   OnInit,
   Output,
+  ViewChild,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
@@ -22,7 +23,7 @@ import { FilteredResources } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { DspApiConnectionToken, RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { ComponentCommunicationEventService, EmitEvent, Events } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
-import { Store } from '@ngxs/store';
+import { PagerComponent } from '@dasch-swiss/vre/shared/app-ui';
 import { combineLatest, of, Subject, Subscription } from 'rxjs';
 import { map, takeUntil, tap } from 'rxjs/operators';
 
@@ -90,6 +91,8 @@ export class ListViewComponent implements OnChanges, OnInit, OnDestroy {
    */
   @Output() selectedResources: EventEmitter<FilteredResources> = new EventEmitter<FilteredResources>();
 
+  @ViewChild('pager', { static: false }) pagerComponent: PagerComponent;
+
   resources: ReadResourceSequence;
 
   selectedResourceIdx: number[] = [];
@@ -99,22 +102,10 @@ export class ListViewComponent implements OnChanges, OnInit, OnDestroy {
   resetCheckBoxes = false;
 
   // number of all results including the ones not included as resources in the response bc. the user does not have the permissions to see them
-  numberOfAllResults: number;
+  numberOfAllResults: number = 0;
 
   // progress status
   loading = true;
-
-  currentIndex = 0;
-
-  currentRangeStart = 1;
-
-  currentRangeEnd = 0;
-
-  pageSize = 25;
-
-  previousDisabled = false;
-
-  nextDisabled = false;
 
   constructor(
     @Inject(DspApiConnectionToken)
@@ -123,14 +114,13 @@ export class ListViewComponent implements OnChanges, OnInit, OnDestroy {
     private _notification: NotificationService,
     private _route: ActivatedRoute,
     private _router: Router,
-    private _cd: ChangeDetectorRef,
-    private _store: Store
+    private _cd: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
     this.componentCommsSubscriptions.push(
       this._componentCommsService.on([Events.loginSuccess], () => this.initSearch()),
-      this._componentCommsService.on([Events.resourceChanged, Events.resourceDeleted], () => this._doSearch())
+      this._componentCommsService.on([Events.resourceChanged, Events.resourceDeleted], () => this.doSearch())
     );
   }
 
@@ -138,6 +128,7 @@ export class ListViewComponent implements OnChanges, OnInit, OnDestroy {
     if (this.isCurrentSearch()) {
       this.currentSearch = this.search;
       this.initSearch();
+      this.pagerComponent.initPager();
     }
   }
 
@@ -146,14 +137,9 @@ export class ListViewComponent implements OnChanges, OnInit, OnDestroy {
 
   initSearch(): void {
     // reset
-    this.currentIndex = 0;
-    this.currentRangeStart = 1;
-    this.currentRangeEnd = 0;
-    this.nextDisabled = false;
     this.resources = undefined;
     this.emitSelectedResources();
-
-    this._doSearch();
+    this.doSearch();
   }
 
   ngOnDestroy() {
@@ -179,27 +165,6 @@ export class ListViewComponent implements OnChanges, OnInit, OnDestroy {
     }
   }
 
-  goToPage(direction: 'previous' | 'next') {
-    if (direction === 'previous') {
-      if (this.currentIndex > 0) {
-        this.nextDisabled = false;
-        this.currentIndex -= 1;
-      }
-    }
-    if (direction === 'next') {
-      this.currentIndex += 1;
-
-      // if end range for the next page of results is greater than the total number of results
-      if (this.pageSize * (this.currentIndex + 1) >= this.numberOfAllResults) {
-        this.nextDisabled = true;
-      }
-    }
-
-    this._calculateRange(this.currentIndex);
-
-    this._doSearch(this.currentIndex);
-  }
-
   handleBackButtonClicked() {
     const projectUuid = this._route.parent.snapshot.paramMap.get('uuid');
     if (projectUuid) {
@@ -208,25 +173,11 @@ export class ListViewComponent implements OnChanges, OnInit, OnDestroy {
   }
 
   /**
-   * given the index number, calculate the range of results shown
-   * @param index offset of gravsearch query
-   */
-  private _calculateRange(index: number) {
-    this.currentRangeStart = this.pageSize * index + 1;
-
-    if (this.pageSize * (index + 1) > this.numberOfAllResults) {
-      this.currentRangeEnd = this.numberOfAllResults;
-    } else {
-      this.currentRangeEnd = this.pageSize * (index + 1);
-    }
-  }
-
-  /**
    * do the search and send the resources to the child components
    * like resource-list, resource-grid or resource-table
    * @param index offset of gravsearch query
    */
-  private _doSearch(index = 0) {
+  doSearch(index = 0) {
     this.loading = true;
     this._cd.markForCheck();
 
@@ -241,8 +192,6 @@ export class ListViewComponent implements OnChanges, OnInit, OnDestroy {
           .subscribe(
             (count: CountQueryResponse) => {
               this.numberOfAllResults = count.numberOfResults;
-              this.currentRangeEnd = this.numberOfAllResults > 25 ? 25 : this.numberOfAllResults;
-
               if (this.numberOfAllResults === 0) {
                 this.emitSelectedResources();
                 this.resources = undefined;
@@ -307,7 +256,6 @@ export class ListViewComponent implements OnChanges, OnInit, OnDestroy {
             .pipe(
               map((count: CountQueryResponse) => {
                 this.numberOfAllResults = count.numberOfResults;
-                this.currentRangeEnd = this.numberOfAllResults > 25 ? 25 : this.numberOfAllResults;
                 if (this.numberOfAllResults === 0) {
                   this._notification.openSnackBar('No resources to display.');
                   this.emitSelectedResources();

@@ -1,3 +1,5 @@
+import { PagerComponent } from '@dasch-swiss/vre/shared/app-ui';
+
 export * from './lib/property-value-switcher.component';
 export * from './lib/switch-components/color-switch.component';
 export * from './lib/switch-components/interval-switch.component';
