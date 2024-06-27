@@ -110,9 +110,9 @@ export class ImageSettingsComponent implements OnInit {
         )
       )
       .subscribe(settings => {
-        if (!settings.watermark && settings.size) {
+        if (settings && !settings.watermark && settings.size) {
           delete settings.watermark;
-        } else if (!settings.watermark) {
+        } else if (!settings || !settings.watermark) {
           return;
         }
 
