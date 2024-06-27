@@ -63,7 +63,7 @@ import { propertiesTypeMapping } from './resource-payloads-mapping';
         ">
         <mat-icon>save</mat-icon>
       </button>
-      <dasch-swiss-app-progress-indicator *ngIf="loading"></dasch-swiss-app-progress-indicator>
+      <dasch-swiss-app-progress-indicator *ngIf="loading" />
     </div>
   </div>`,
   styles: [
@@ -74,6 +74,9 @@ import { propertiesTypeMapping } from './resource-payloads-mapping';
         &.hover:hover {
           background: $primary_100;
         }
+      }
+      :host ::ng-deep .app-progress-indicator {
+        margin: 0 auto !important;
       }
     `,
   ],
