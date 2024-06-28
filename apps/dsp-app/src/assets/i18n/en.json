@@ -201,7 +201,8 @@
       }
     },
     "resource": {
-      "properties": "Properties"
+      "properties": "Properties",
+      "comment": "Comment"
     }
   }
 }
