@@ -40,6 +40,26 @@
         "sortTitle": "Sort by "
       }
     },
+    "projects": {
+      "list": {
+        "project": "Project",
+        "projects": "Projects",
+        "sortShortCode": "Short code",
+        "sortShortName": "Short name",
+        "sortProjectName": "Project name",
+        "statusActive": "Active",
+        "statusDeactivated": "Deactivated",
+        "createNew": "Create new project",
+        "projectAdmin": "Project Administrator",
+        "edit": "Edit project information",
+        "reactivate": "Reactivate project",
+        "deactivate": "Deactivate project",
+        "erase": "Erase project",
+        "eraseConfirmation": "Do you want to erase project “{{0}}” ?",
+        "deactivateConfirmation": "Do you want to deactivate project “{{0}}” ?",
+        "reactivateConfirmation": "Do you want to reactivate project “{{0}}” ?"
+      }
+    },
     "formDialog": {
       "discard": "You're sure to close the form and discard all changes?"
     },

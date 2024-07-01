@@ -25,6 +25,26 @@
         "sortTitle": "Sortieren nach "
       }
     },
+    "projects": {
+      "list": {
+        "project": "Projekt",
+        "projects": "Projekte",
+        "sortShortCode": "Kurzcode",
+        "sortShortName": "Abkürzung",
+        "sortProjectName": "Projekttitel",
+        "statusActive": "Aktiv",
+        "statusDeactivated": "Deaktiviert",
+        "createNew": "Neues Projekt erstellen",
+        "projectAdmin": "Projekt Administrator",
+        "edit": "Projektinformationen bearbeiten",
+        "reactivate": "Projekt reaktivieren",
+        "deactivate": "Projekt deaktivieren",
+        "erase": "Löschen",
+        "eraseConfirmation": "Möchten Sie Projekt “{{0}}” löschen?",
+        "deactivateConfirmation": "Möchten Sie Projekt “{{0}}” deaktivieren?",
+        "reactivateConfirmation": "Möchten Sie Projekt “{{0}}” reaktivieren?"
+      }
+    },
     "formDialog": {
       "discard": "Wollen Sie wirklich alle Änderungen verwerfen?"
     },

@@ -3,8 +3,8 @@
   <div class="app-toolbar">
     <div class="app-toolbar-row">
       <h3 class="mat-body subtitle">
-        <span *ngIf="status">Active</span>
-        <span *ngIf="!status">Deactivated</span>
+        <span *ngIf="status">{{ 'appLabels.projects.list.statusActive' | translate }}</span>
+        <span *ngIf="!status">{{ 'appLabels.projects.list.statusDeactivated' | translate }}</span>
       </h3>
       <span class="fill-remaining-space"></span>
       <span class="app-toolbar-action"> </span>
@@ -23,7 +23,9 @@
       <h2 class="mat-headline-6">{{ list.length | i18nPlural : itemPluralMapping['project'] }}</h2>
       <span class="fill-remaining-space"></span>
       <span class="app-toolbar-action button right" *ngIf="status && createNew && (isSysAdmin$ | async) === true">
-        <button mat-flat-button [color]="'primary'" (click)="createNewProject()">Create new</button>
+        <button mat-flat-button [color]="'primary'" (click)="createNewProject()">
+          {{ 'appLabels.projects.list.createNew' | translate }}
+        </button>
       </span>
     </div>
   </div>
@@ -32,7 +34,7 @@
   <table class="table more-space-bottom" [class.deactivated]="!status">
     <tr
       class="table-entry"
-      *ngFor="let project of list; let last = last"
+      *ngFor="let project of list; let last = last; trackBy: trackByFn"
       [class.no-border]="last"
       data-cy="project-row">
       <!-- logo -->
@@ -51,7 +53,7 @@
       </td>
       <td class="table-admin-chip">
         <mat-chip-listbox *ngIf="userIsProjectAdmin$(project.id) | async">
-          <mat-chip class="admin-chip">Project Admin</mat-chip>
+          <mat-chip class="admin-chip">{{ 'appLabels.projects.list.projectAdmin' | translate }}</mat-chip>
         </mat-chip-listbox>
       </td>
       <!-- action: menu with edit, remove, etc. -->
@@ -65,21 +67,24 @@
         </button>
         <mat-menu #projectMenu="matMenu" xPosition="before" class="menu">
           <button mat-menu-item *ngIf="status" (click)="editProject(project.id)" data-cy="edit-button">
-            Edit project information
+            {{ 'appLabels.projects.list.edit' | translate }}
           </button>
           <button
             mat-menu-item
             *ngIf="status"
             (click)="askToDeactivateProject(project.shortname,project.id)"
             data-cy="deactivate-button">
-            Deactivate project
+            {{ 'appLabels.projects.list.deactivate' | translate }}
+          </button>
+          <button mat-menu-item *ngIf="status" (click)="askToEraseProject(project)" data-cy="erase-button">
+            {{ 'appLabels.projects.list.erase' | translate }}
           </button>
           <button
             mat-menu-item
             *ngIf="!status"
             (click)="askToActivateProject(project.shortname,project.id)"
             data-cy="reactivate-button">
-            Reactivate project
+            {{ 'appLabels.projects.list.reactivate' | translate }}
           </button>
         </mat-menu>
       </td>

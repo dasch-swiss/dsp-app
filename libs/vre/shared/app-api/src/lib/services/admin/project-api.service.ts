@@ -12,7 +12,12 @@ import {
 import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import { BaseApi } from '../base-api';
 
-export type ProjectIdentifier = 'iri' | 'shortname' | 'shortcode';
+export enum ProjectIdentifier {
+  Iri = 'iri',
+  Shortname = 'shortname',
+  ShortCode = 'shortcode',
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -28,7 +33,7 @@ export class ProjectApiService extends BaseApi {
     return this._http.get<ProjectsResponse>(this.baseUri);
   }
 
-  get(id: string, idType: ProjectIdentifier = 'iri') {
+  get(id: string, idType: ProjectIdentifier = ProjectIdentifier.Iri) {
     return this._http.get<ProjectResponse>(this._projectRoute(id, idType));
   }
 
@@ -44,25 +49,29 @@ export class ProjectApiService extends BaseApi {
     return this._http.delete<ProjectResponse>(this._projectRoute(iri));
   }
 
+  erase(shortCode: string) {
+    return this._http.delete<ProjectResponse>(`${this._projectRoute(shortCode, ProjectIdentifier.ShortCode)}/erase`);
+  }
+
   getKeywordsForProject(iri: string) {
     return this._http.get<KeywordsResponse>(`${this._projectRoute(iri)}/Keywords`);
   }
 
-  getMembersForProject(id: string, idType: ProjectIdentifier = 'iri') {
+  getMembersForProject(id: string, idType: ProjectIdentifier = ProjectIdentifier.Iri) {
     return this._http.get<MembersResponse>(`${this._projectRoute(id, idType)}/members`);
   }
 
-  getAdminMembersForProject(id: string, idType: ProjectIdentifier = 'iri') {
+  getAdminMembersForProject(id: string, idType: ProjectIdentifier = ProjectIdentifier.Iri) {
     return this._http.get<MembersResponse>(`${this._projectRoute(id, idType)}/admin-members`);
   }
 
-  getRestrictedViewSettingsForProject(id: string, idType: ProjectIdentifier = 'iri') {
+  getRestrictedViewSettingsForProject(id: string, idType: ProjectIdentifier = ProjectIdentifier.Iri) {
     return this._http.get<ProjectRestrictedViewSettingsResponse>(
       `${this._projectRoute(id, idType)}/RestrictedViewSettings`
     );
   }
 
-  private _projectRoute(id: string, idType: ProjectIdentifier = 'iri') {
+  private _projectRoute(id: string, idType: ProjectIdentifier = ProjectIdentifier.Iri) {
     return `${this.baseUri}/${idType}/${encodeURIComponent(id)}`;
   }
 }

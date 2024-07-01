@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { filter } from 'rxjs/operators';
+import { filter, take } from 'rxjs/operators';
 import { ConfirmDialogComponent, ConfirmDialogProps } from './confirm-dialog.component';
 
 @Injectable({ providedIn: 'root' })
@@ -17,6 +17,9 @@ export class DialogService {
         },
       })
       .afterClosed()
-      .pipe(filter(response => response === true));
+      .pipe(
+        filter(response => response === true),
+        take(1)
+      );
   }
 }

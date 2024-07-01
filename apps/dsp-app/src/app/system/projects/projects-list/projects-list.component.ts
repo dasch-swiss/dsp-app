@@ -6,9 +6,10 @@ import { RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { ProjectService, SortingService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { ProjectsSelectors, UserSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { DialogService } from '@dasch-swiss/vre/shared/app-ui';
+import { TranslateService } from '@ngx-translate/core';
 import { Select } from '@ngxs/store';
 import { Observable, Subject, combineLatest } from 'rxjs';
-import { map, takeUntil } from 'rxjs/operators';
+import { map, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { SortProp } from '../../../main/action/sort-button/sort-button.component';
 
 @Component({
@@ -44,8 +45,8 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
   itemPluralMapping = {
     project: {
       // eslint-disable-next-line @typescript-eslint/naming-convention
-      '=1': '1 Project',
-      other: '# Projects',
+      '=1': `1 ${this.translateService.instant('appLabels.projects.list.project')}`,
+      other: `# ${this.translateService.instant('appLabels.projects.list.projects')}`,
     },
   };
 
@@ -53,33 +54,32 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
   sortProps: SortProp[] = [
     {
       key: 'shortcode',
-      label: 'Short code',
+      label: this.translateService.instant('appLabels.projects.list.sortShortCode'),
     },
     {
       key: 'shortname',
-      label: 'Short name',
+      label: this.translateService.instant('appLabels.projects.list.sortShortName'),
     },
     {
       key: 'longname',
-      label: 'Project name',
+      label: this.translateService.instant('appLabels.projects.list.sortProjectName'),
     },
   ];
 
   sortBy = 'longname'; // default sort by
 
   @Select(UserSelectors.user) user$: Observable<ReadUser>;
-  @Select(UserSelectors.userProjectAdminGroups)
-  userProjectAdminGroups$: Observable<string[]>;
+  @Select(UserSelectors.userProjectAdminGroups) userProjectAdminGroups$: Observable<string[]>;
   @Select(UserSelectors.isSysAdmin) isSysAdmin$: Observable<boolean>;
   @Select(ProjectsSelectors.allProjects) allProjects: Observable<ReadProject[]>;
-  @Select(ProjectsSelectors.isProjectsLoading)
-  isProjectsLoading$: Observable<boolean>;
+  @Select(ProjectsSelectors.isProjectsLoading) isProjectsLoading$: Observable<boolean>;
 
   constructor(
     private _projectApiService: ProjectApiService,
     private _dialog: DialogService,
     private _router: Router,
-    private _sortingService: SortingService
+    private _sortingService: SortingService,
+    private translateService: TranslateService
   ) {}
 
   ngOnInit() {
@@ -92,6 +92,8 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
     this.ngUnsubscribe.next();
     this.ngUnsubscribe.complete();
   }
+
+  trackByFn = (index: number, item: StoredProject) => `${index}-${item.id}`;
 
   /**
    * return true, when the user is entitled to edit a project. This is
@@ -143,15 +145,42 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
   }
 
   askToDeactivateProject(name: string, id: string) {
-    this._dialog.afterConfirmation(`Do you want to deactivate project ${name}?`).subscribe(() => {
-      this.deactivateProject(id);
-    });
+    this._dialog
+      .afterConfirmation(
+        this.translateService.instant('appLabels.projects.list.deactivateConfirmation', {
+          0: name,
+        })
+      )
+      .pipe(switchMap(() => this._projectApiService.delete(id)))
+      .subscribe(() => {
+        this.refreshParent.emit();
+      });
+  }
+
+  askToEraseProject(project: StoredProject) {
+    this._dialog
+      .afterConfirmation(
+        this.translateService.instant('appLabels.projects.list.eraseConfirmation', {
+          0: project.shortname,
+        })
+      )
+      .pipe(switchMap(() => this._projectApiService.erase(project.shortcode)))
+      .subscribe(() => {
+        this.refreshParent.emit();
+      });
   }
 
   askToActivateProject(name: string, id: string) {
-    this._dialog.afterConfirmation(`Do you want to reactivate project ${name}?`).subscribe(() => {
-      this.activateProject(id);
-    });
+    this._dialog
+      .afterConfirmation(
+        this.translateService.instant('appLabels.projects.list.reactivateConfirmation', {
+          0: name,
+        })
+      )
+      .pipe(switchMap(() => this._projectApiService.update(id, { status: true })))
+      .subscribe(() => {
+        this.refreshParent.emit();
+      });
   }
 
   sortList(key: any) {
@@ -161,18 +190,5 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
     }
     this.list = this._sortingService.keySortByAlphabetical(this.list, key);
     localStorage.setItem('sortProjectsBy', key);
-  }
-
-  deactivateProject(id: string) {
-    this._projectApiService.delete(id).subscribe(() => {
-      this.refreshParent.emit();
-    });
-  }
-
-  activateProject(id: string) {
-    // As there is no activate route implemented in the js lib, we use the update route to set the status to true
-    this._projectApiService.update(id, { status: true }).subscribe(() => {
-      this.refreshParent.emit();
-    });
   }
 }
