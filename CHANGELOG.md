@@ -1,5 +1,37 @@
 # Changelog
 
+## [11.13.0](https://github.com/dasch-swiss/dsp-das/compare/v11.12.1...v11.13.0) (2024-07-01)
+
+
+### Enhancements
+
+* erase project + translations (DEV-3734) ([#1674](https://github.com/dasch-swiss/dsp-das/issues/1674)) ([a439b78](https://github.com/dasch-swiss/dsp-das/commit/a439b783ffaa55270cd3fd5aea35563bc11b3021))
+* incoming links paging and pager component (DEV-3792) ([#1668](https://github.com/dasch-swiss/dsp-das/issues/1668)) ([aabb7c6](https://github.com/dasch-swiss/dsp-das/commit/aabb7c64ed32ab6d47b3d9cff4792b9d3504a71e))
+
+
+### Bug Fixes
+
+* add comment label in properties comment fields ([#1667](https://github.com/dasch-swiss/dsp-das/issues/1667)) ([9348ba8](https://github.com/dasch-swiss/dsp-das/commit/9348ba83052e0254b9c4ec397a56dfb4dce619f6))
+* change notification error message ([#1661](https://github.com/dasch-swiss/dsp-das/issues/1661)) ([8a3eb23](https://github.com/dasch-swiss/dsp-das/commit/8a3eb2380de64281245d4d9c477ba91a77db3eac))
+* loader displayed on top when editing property values ([#1669](https://github.com/dasch-swiss/dsp-das/issues/1669)) ([3ac1dd0](https://github.com/dasch-swiss/dsp-das/commit/3ac1dd046272fb7e21b8a0d379c871d9ecc6ccc7))
+* prevents from scrolling exception (DEV-3774) ([#1673](https://github.com/dasch-swiss/dsp-das/issues/1673)) ([ba4e4dd](https://github.com/dasch-swiss/dsp-das/commit/ba4e4dd89be8f1aa0bdcfee9b6c08d3c92ab14e9))
+* project selectors (DEV-3793) ([#1670](https://github.com/dasch-swiss/dsp-das/issues/1670)) ([9e69670](https://github.com/dasch-swiss/dsp-das/commit/9e696705db357d62fb033413481061fb93d3fb2c))
+* **properties:** prevent toolbar buttons to trigger unnecessary requests ([#1664](https://github.com/dasch-swiss/dsp-das/issues/1664)) ([823ae59](https://github.com/dasch-swiss/dsp-das/commit/823ae5940784866ccff0fa71006fd6f10946c622))
+* **resource permissions:** check resource permissions for replacing files ([#1662](https://github.com/dasch-swiss/dsp-das/issues/1662)) ([ed18c35](https://github.com/dasch-swiss/dsp-das/commit/ed18c35496a120695add38c0e1a04344574a904d))
+* slide toggle flickering issue (DEV-3752) ([#1659](https://github.com/dasch-swiss/dsp-das/issues/1659)) ([4910aea](https://github.com/dasch-swiss/dsp-das/commit/4910aea431740fb9a5b9d1a4f3b841909b56103e))
+* tab do not change when a resource is reloaded ([#1672](https://github.com/dasch-swiss/dsp-das/issues/1672)) ([f25f513](https://github.com/dasch-swiss/dsp-das/commit/f25f5138426e246584232858d017c9e2d16c7c10))
+* TypeError: Cannot read properties of undefined (reading 'waterma… ([#1671](https://github.com/dasch-swiss/dsp-das/issues/1671)) ([66de497](https://github.com/dasch-swiss/dsp-das/commit/66de497c76904fff7f702b39c9e917316046aa8b))
+
+
+### Maintenance
+
+* **result list:** make list items more responsive (DEV-3771) ([#1663](https://github.com/dasch-swiss/dsp-das/issues/1663)) ([f98b3c1](https://github.com/dasch-swiss/dsp-das/commit/f98b3c197cce0510539b789e143074f88c5d0b55))
+
+
+### Documentation
+
+* Update documentation ([#1645](https://github.com/dasch-swiss/dsp-das/issues/1645)) ([81c6240](https://github.com/dasch-swiss/dsp-das/commit/81c62404bbd63da2c40fe411eab1d4266adb6dba))
+
 ## [11.12.1](https://github.com/dasch-swiss/dsp-das/compare/v11.12.0...v11.12.1) (2024-06-19)
 
 
