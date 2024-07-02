@@ -1,26 +1,19 @@
-<!-- select user to add to the team -->
-
-<!-- header toolbar -->
-
-<div class="app-toolbar transparent more-space-bottom" *ngIf="selectUserForm">
+<div class="app-toolbar transparent more-space-bottom">
   <div class="app-toolbar-row toolbar-subtitle">
     <h3 class="mat-body subtitle">Increase your team</h3>
   </div>
   <div class="app-toolbar-row toolbar-form">
-    <h2 class="mat-headline-6">{{ 'appLabels.form.user.title.add2project' | translate }}</h2>
+    <h2 class="mat-headline-6">{{ 'appLabels.addProjectMember.title' | translate }}</h2>
 
     <span class="fill-remaining-space"></span>
 
     <span class="app-toolbar-action select-form">
-      <form [formGroup]="selectUserForm" class="form" *ngIf="!loading">
+      <form [formGroup]="selectUserForm" class="form">
         <!-- auto complete list to select user -->
         <div class="form-content">
           <mat-form-field class="large-field select-user">
-            <input
-              matInput
-              [matAutocomplete]="user"
-              [formControl]="selectUserForm.controls['addUser']"
-              [placeholder]="'appLabels.form.user.title.select' | translate" />
+            <mat-label>{{'appLabels.addProjectMember.select' | translate}}</mat-label>
+            <input matInput [matAutocomplete]="user" [formControl]="selectUserForm.controls['addUser']" />
             <button
               class="reset-button"
               mat-icon-button
@@ -30,15 +23,20 @@
               type="button">
               <mat-icon>close</mat-icon>
             </button>
-            <mat-autocomplete
-              #user="matAutocomplete"
-              [displayWith]="displayWith"
-              (optionSelected)="addUser($event.option.value)">
-              <mat-option *ngFor="let user of filteredUsers$ | async; trackBy: trackByFn" [value]="user">
-                {{ user?.label }}
+            <mat-autocomplete #user="matAutocomplete" (optionSelected)="addUser($event.option.value)">
+              <mat-option *ngIf="!users?.length" class="loading-option">
+                <div class="loading-container">
+                  <mat-spinner diameter="20"></mat-spinner>
+                  <span>{{ 'appLabels.addProjectMember.usersLoading' | translate }}</span>
+                </div>
+              </mat-option>
+              <mat-option
+                *ngFor="let user of filteredUsers$ | async; trackBy: trackByFn"
+                [value]="user.id"
+                [disabled]="isMember(user)">
+                {{ getLabel(user) }}
               </mat-option>
             </mat-autocomplete>
-            <mat-hint *ngIf="selectUserErrors.addUser"> {{ selectUserErrors.addUser }} </mat-hint>
           </mat-form-field>
         </div>
       </form>
@@ -47,16 +45,9 @@
     <span class="fill-remaining-space"></span>
 
     <span class="app-toolbar-action select-form">
-      <button
-        mat-raised-button
-        color="primary"
-        [disabled]="!selectUserForm.valid"
-        class="add-new create-user-btn"
-        (click)="createUser()">
-        New user
+      <button mat-raised-button color="primary" class="add-new create-user-btn" (click)="createUser()">
+        {{ 'appLabels.addProjectMember.newUser' | translate }}
       </button>
     </span>
   </div>
 </div>
-
-<dasch-swiss-app-progress-indicator *ngIf="loading"></dasch-swiss-app-progress-indicator>

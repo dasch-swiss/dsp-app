@@ -6,7 +6,6 @@
     <app-add-user
       *ngIf="(project$ | async)?.status && ((isCurrentProjectAdminOrSysAdmin$ | async) === true)"
       [projectUuid]="projectUuid"
-      (refreshParent)="refresh()"
       #addUserComponent></app-add-user>
 
     <!-- main content: list of project members -->

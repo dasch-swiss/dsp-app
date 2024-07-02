@@ -87,10 +87,5 @@ export class CollaborationComponent extends ProjectBase implements OnInit, OnDes
    */
   refresh(): void {
     this._store.dispatch(new LoadProjectMembersAction(this.projectUuid));
-
-    // refresh child component: add user
-    if (this.addUser) {
-      this.addUser.buildForm();
-    }
   }
 }

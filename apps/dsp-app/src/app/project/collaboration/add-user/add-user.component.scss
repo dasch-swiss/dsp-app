@@ -98,3 +98,12 @@
   justify-content: center;
   align-items: center;
 }
+
+.loading-option .loading-container {
+  display: flex;
+  align-items: center;
+}
+
+.loading-option mat-spinner {
+  margin-right: 10px;
+}

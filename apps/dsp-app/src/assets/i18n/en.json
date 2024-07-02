@@ -11,27 +11,12 @@
         "inactive": "Deactivated"
       }
     },
-    "frameworkForListings": {
-      "project": {
-        "list": {
-          "title": "Projects",
-          "description": ""
-        },
-        "add": {
-          "title": "Add a new project member",
-          "description": ""
-        }
-      },
-      "user": {
-        "list": {
-          "title": "Members in this project",
-          "description": ""
-        },
-        "add": {
-          "title": "Add a new project member",
-          "description": ""
-        }
-      }
+    "addProjectMember": {
+        "title": "Add project member",
+        "description": "Increase your team",
+        "select": "Select from list...",
+        "usersLoading": "Loading users ...",
+        "newUser": "New user"
     },
     "usersList": {
       "sortProps": {
@@ -112,15 +97,6 @@
           "deleteButton": "Suspend user account now",
           "password": "Update password",
           "passwordSuccess": "You have successfully updated the password.",
-          "formWizard": {
-            "step_1": "Start with username",
-            "step_2": "User data",
-            "step_3": "User role",
-            "step_4": "Confirm",
-            "more": "Add more users"
-          },
-          "add2project": "Add project member",
-          "select": "Select from list...",
           "create": "or create new",
           "deleted": "already deleted"
         }
@@ -149,13 +125,7 @@
           "deactivateHint": "You're sure to deactivate this project?",
           "deactivateButton": "Deactivate project now",
           "activate": "Do you want to reactivate?",
-          "activateButton": "Reactivate project now",
-          "formWizard": {
-            "step_1": "Project data",
-            "step_2": "Add project member",
-            "step_3": "Confirm",
-            "more": "Add more projects"
-          }
+          "activateButton": "Reactivate project now"
         },
         "imageSettings": {
           "off": "Off",
@@ -181,9 +151,6 @@
           "project": "Project membership",
           "user": "Members in the project",
           "group": "Permissions"
-        },
-        "hint": {
-          "alreadyMember": "The user is already a member of this project"
         }
       },
       "lists": {
@@ -200,12 +167,7 @@
           "editSuccess": "You have successfully updated this resource.",
           "delete": "Delete this resource",
           "deleteHint": "You're sure to delete this resource?",
-          "deleteButton": "Delete resource now",
-          "formWizard": {
-            "step_1": "Select your resource",
-            "step_2": "Add properties",
-            "step_3": "Confirm"
-          }
+          "deleteButton": "Delete resource now"
         }
       }
     },
