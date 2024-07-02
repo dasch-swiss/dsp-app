@@ -1,4 +1,4 @@
-import { Constants, ReadResource, ReadValue, SystemPropertyDefinition } from '@dasch-swiss/dsp-js';
+import { Constants, ReadResource, SystemPropertyDefinition } from '@dasch-swiss/dsp-js';
 import { PropertyInfoValues } from './property-info-values.interface';
 
 export class DspResource {
@@ -22,29 +22,17 @@ export class DspResource {
   get isRegion() {
     return this.res.entityInfo.classes[Constants.Region];
   }
-
-  get hasOutgoingReferences() {
-    return this.res.outgoingReferences.length > 0;
-  }
 }
 
 export class DspCompoundPosition {
-  offset: number; // current offset of search requests
+  offset = 1; // current offset of search requests
   maxOffsets: number; // max offsets in relation to totalPages
   position: number; // current item position in offset sequence
-  page: number; // current and real page number in compound object
+  page = 1; // current and real page number in compound object
   totalPages: number; // total pages (part of) in compound object
 
   constructor(totalPages: number) {
     this.totalPages = totalPages;
     this.maxOffsets = Math.ceil(totalPages / 25) - 1;
   }
-}
-
-export interface PropIriToNameMapping {
-  [index: string]: string;
-}
-
-export interface PropertyValues {
-  [index: string]: ReadValue[];
 }

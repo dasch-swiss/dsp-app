@@ -116,7 +116,12 @@ export class ResourceComponent implements OnChanges {
 
         if (countQuery_.numberOfResults > 0) {
           this.isCompoundNavigation = true;
-          this._compoundService.onInit(new DspCompoundPosition(countQuery_.numberOfResults), this.resource);
+          this._compoundService.onInit(
+            this._compoundService.exists
+              ? this._compoundService.compoundPosition
+              : new DspCompoundPosition(countQuery_.numberOfResults),
+            this.resource
+          );
           return;
         }
 
