@@ -1,0 +1,19 @@
+services:
+  influxdb:
+    build:
+      context: .
+      dockerfile: Dockerfile.influxdb
+    ports:
+      - '8086:8086'
+  grafana:
+    build:
+      context: .
+      dockerfile: Dockerfile.grafana
+    links:
+      - influxdb
+    environment:
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_BASIC_ENABLED=false
+    ports:
+      - '3000:3000'
