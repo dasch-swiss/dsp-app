@@ -1,16 +1,22 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Constants, ReadProject, ReadUser, StoredProject } from '@dasch-swiss/dsp-js';
 import { ProjectApiService } from '@dasch-swiss/vre/shared/app-api';
 import { RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { ProjectService, SortingService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
 import { ProjectsSelectors, UserSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { DialogService } from '@dasch-swiss/vre/shared/app-ui';
 import { TranslateService } from '@ngx-translate/core';
 import { Select } from '@ngxs/store';
 import { Observable, Subject, combineLatest } from 'rxjs';
-import { map, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { filter, map, switchMap, take, takeUntil, tap } from 'rxjs/operators';
 import { SortProp } from '../../../main/action/sort-button/sort-button.component';
+import {
+  EraseProjectDialogComponent,
+  IEraseProjectDialogProps,
+} from './erase-project-dialog/erase-project-dialog.component';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -76,10 +82,12 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
 
   constructor(
     private _projectApiService: ProjectApiService,
-    private _dialog: DialogService,
+    private _dialogService: DialogService,
     private _router: Router,
     private _sortingService: SortingService,
-    private translateService: TranslateService
+    private translateService: TranslateService,
+    private _dialog: MatDialog,
+    private _notification: NotificationService
   ) {}
 
   ngOnInit() {
@@ -145,7 +153,7 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
   }
 
   askToDeactivateProject(name: string, id: string) {
-    this._dialog
+    this._dialogService
       .afterConfirmation(
         this.translateService.instant('appLabels.projects.list.deactivateConfirmation', {
           0: name,
@@ -159,19 +167,28 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
 
   askToEraseProject(project: StoredProject) {
     this._dialog
-      .afterConfirmation(
-        this.translateService.instant('appLabels.projects.list.eraseConfirmation', {
-          0: project.shortname,
-        })
+      .open<EraseProjectDialogComponent, IEraseProjectDialogProps>(EraseProjectDialogComponent, {
+        data: <IEraseProjectDialogProps>{
+          project,
+        },
+      })
+      .afterClosed()
+      .pipe(
+        filter(response => !!response),
+        take(1)
       )
-      .pipe(switchMap(() => this._projectApiService.erase(project.shortcode)))
-      .subscribe(() => {
+      .subscribe((erasedProject: StoredProject) => {
         this.refreshParent.emit();
+        this._notification.openSnackBar(
+          this.translateService.instant('appLabels.projects.list.eraseConfirmation', {
+            0: erasedProject.shortname,
+          })
+        );
       });
   }
 
   askToActivateProject(name: string, id: string) {
-    this._dialog
+    this._dialogService
       .afterConfirmation(
         this.translateService.instant('appLabels.projects.list.reactivateConfirmation', {
           0: name,

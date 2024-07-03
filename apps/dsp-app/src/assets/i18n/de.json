@@ -36,7 +36,18 @@
         "erase": "Löschen",
         "eraseConfirmation": "Möchten Sie Projekt “{{0}}” löschen?",
         "deactivateConfirmation": "Möchten Sie Projekt “{{0}}” deaktivieren?",
-        "reactivateConfirmation": "Möchten Sie Projekt “{{0}}” reaktivieren?"
+        "reactivateConfirmation": "Möchten Sie Projekt “{{0}}” reaktivieren?",
+        "eraseConfirmationDialog": {
+          "title": "Bitte geben Sie die erforderlichen Informationen ein, um das Projekt zu löschen.",
+          "subtitle": "Projekt löschen",
+          "warning": "ACHTUNG: Diese Aktion kann nicht rückgängig gemacht werden, gehen Sie also vorsichtig damit um.",
+          "shortCode": "Projektkurzcode",
+          "systemAdminPassword": "Systemadministrator-Passwort",
+          "cancel": "Abbrechen",
+          "confirm": "Bestätigen",
+          "shortCodeValidation": "Der Kurzcode stimmt nicht überein",
+          "passwordValidation": "Falsches Passwort"
+        }
       }
     },
     "formDialog": {

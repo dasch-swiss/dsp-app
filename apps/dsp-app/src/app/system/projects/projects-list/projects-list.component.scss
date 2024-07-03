@@ -1,23 +1,28 @@
-@use "../../../../styles/responsive" as *;
+@use '../../../../styles/responsive' as *;
+@use '../../../../styles/config' as *;
 
 // phone devices
 @media (max-width: map-get($grid-breakpoints, phone)) {
-   .table {
-       .table-entry {
-           .avatar-cell {
-            padding: 6px 6px;
-           }
-           .table-info {
-            padding: 6px 6px;
-           }
-           .table-action {
-            padding: 6px 6px;
-            min-width: 36px;
-           }
-       }
-   }
+  .table {
+    .table-entry {
+      .avatar-cell {
+        padding: 6px 6px;
+      }
+      .table-info {
+        padding: 6px 6px;
+      }
+      .table-action {
+        padding: 6px 6px;
+        min-width: 36px;
+      }
+    }
+  }
 
-   .info-longname {
-       display: none;
-   }
+  .info-longname {
+    display: none;
+  }
+}
+
+button.warn {
+  color: $red;
 }

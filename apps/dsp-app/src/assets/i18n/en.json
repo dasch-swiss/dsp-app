@@ -12,11 +12,11 @@
       }
     },
     "addProjectMember": {
-        "title": "Add project member",
-        "description": "Increase your team",
-        "select": "Select from list...",
-        "usersLoading": "Loading users ...",
-        "newUser": "New user"
+      "title": "Add project member",
+      "description": "Increase your team",
+      "select": "Select from list...",
+      "usersLoading": "Loading users ...",
+      "newUser": "New user"
     },
     "usersList": {
       "sortProps": {
@@ -40,9 +40,20 @@
         "reactivate": "Reactivate project",
         "deactivate": "Deactivate project",
         "erase": "Erase project",
-        "eraseConfirmation": "Do you want to erase project “{{0}}” ?",
+        "eraseConfirmation": "Project “{{0}}” has been erased.",
         "deactivateConfirmation": "Do you want to deactivate project “{{0}}” ?",
-        "reactivateConfirmation": "Do you want to reactivate project “{{0}}” ?"
+        "reactivateConfirmation": "Do you want to reactivate project “{{0}}” ?",
+        "eraseConfirmationDialog": {
+          "title": "Please enter required information to erase the project.",
+          "subtitle": "Erase project",
+          "warning": "WARNING: This action cannot be undone, so use it with care.",
+          "shortCode": "Project short code",
+          "systemAdminPassword": "System administrator password",
+          "cancel": "Cancel",
+          "confirm": "Confirm",
+          "shortCodeValidation": "Short code does not match",
+          "passwordValidation": "Password incorrect"
+        }
       }
     },
     "formDialog": {

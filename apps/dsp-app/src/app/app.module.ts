@@ -111,6 +111,7 @@ import { ReusableProjectFormComponent } from './project/reusable-project-form/re
 import { SettingsComponent } from './project/settings/settings.component';
 import { apiConnectionTokenProvider } from './providers/api-connection-token.provider';
 import { ProjectTileComponent } from './system/project-tile/project-tile.component';
+import { EraseProjectDialogComponent } from './system/projects/projects-list/erase-project-dialog/erase-project-dialog.component';
 import { ProjectsListComponent } from './system/projects/projects-list/projects-list.component';
 import { ProjectsComponent } from './system/projects/projects.component';
 import { SystemComponent } from './system/system.component';
@@ -250,6 +251,7 @@ export function httpLoaderFactory(httpClient: HttpClient) {
     IsFalsyPipe,
     ImageDisplayAbsoluteComponent,
     MultipleViewerComponent,
+    EraseProjectDialogComponent,
   ],
   imports: [
     ...UiStandaloneComponents,

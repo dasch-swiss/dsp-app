@@ -1,0 +1,52 @@
+<app-dialog-header
+  [title]="'appLabels.projects.list.eraseConfirmationDialog.title' | translate"
+  [subtitle]="'appLabels.projects.list.eraseConfirmationDialog.subtitle' | translate">
+</app-dialog-header>
+
+<mat-dialog-content>
+  <div>{{ 'appLabels.projects.list.eraseConfirmationDialog.warning' | translate }}</div>
+  <mat-form-field>
+    <mat-label>{{ 'appLabels.projects.list.eraseConfirmationDialog.shortCode' | translate }}</mat-label>
+    <input
+      matInput
+      maxlength="4"
+      minlength="4"
+      data-cy="short-code-input"
+      [placeholder]="'appLabels.projects.list.eraseConfirmationDialog.shortCode' | translate"
+      [formControl]="eraseForm.controls.shortCode"
+      [value]="eraseForm.controls.shortCode" />
+    <mat-error *ngIf="eraseForm.controls.shortCode.hasError('shortCode') as errors">
+      {{ 'appLabels.projects.list.eraseConfirmationDialog.shortCodeValidation' | translate }}
+    </mat-error>
+  </mat-form-field>
+  <mat-form-field class="large-field">
+    <mat-label>{{ 'appLabels.projects.list.eraseConfirmationDialog.systemAdminPassword' | translate }}</mat-label>
+    <input
+      [placeholder]="'appLabels.projects.list.eraseConfirmationDialog.systemAdminPassword' | translate"
+      autocomplete="current-password"
+      data-cy="password-input"
+      [formControl]="eraseForm.controls.password"
+      matInput
+      type="password" />
+    <mat-error *ngIf="eraseForm.controls.password.hasError('password') as errors">
+      {{ 'appLabels.projects.list.eraseConfirmationDialog.passwordValidation' | translate }}
+    </mat-error>
+  </mat-form-field>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button mat-button color="primary" mat-dialog-close class="cancel-button center">
+    {{ 'appLabels.projects.list.eraseConfirmationDialog.cancel' | translate }}
+  </button>
+  <span class="fill-remaining-space"></span>
+  <button
+    [disabled]="eraseForm.invalid"
+    mat-button
+    appLoadingButton
+    [isLoading]="isLoading"
+    mat-raised-button
+    class="confirm-button center"
+    (click)="submit()">
+    {{ 'appLabels.projects.list.eraseConfirmationDialog.confirm' | translate }}
+  </button>
+</mat-dialog-actions>

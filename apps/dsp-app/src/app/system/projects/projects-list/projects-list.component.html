@@ -76,7 +76,12 @@
             data-cy="deactivate-button">
             {{ 'appLabels.projects.list.deactivate' | translate }}
           </button>
-          <button mat-menu-item *ngIf="status" (click)="askToEraseProject(project)" data-cy="erase-button">
+          <button
+            mat-menu-item
+            *ngIf="isSysAdmin$ | async"
+            class="warn"
+            (click)="askToEraseProject(project)"
+            data-cy="erase-button">
             {{ 'appLabels.projects.list.erase' | translate }}
           </button>
           <button
