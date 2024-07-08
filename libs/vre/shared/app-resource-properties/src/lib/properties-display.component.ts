@@ -224,7 +224,7 @@ export class PropertiesDisplayComponent implements OnChanges, OnDestroy {
 
       return {
         label: link.strval ?? '',
-        uri: `/resource/${resourceIdPathOnly[0]}}`,
+        uri: `/resource/${resourceIdPathOnly[0]}`,
         project: link.linkedResource?.resourceClassLabel ?? '',
       };
     });
