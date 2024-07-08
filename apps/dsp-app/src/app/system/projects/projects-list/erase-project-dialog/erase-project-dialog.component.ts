@@ -20,7 +20,7 @@ export interface IEraseProjectDialogProps {
  */
 function projectShortCodeValidator(shortCode: string): ValidatorFn {
   return (control: AbstractControl): { [key: string]: any } =>
-    shortCode !== control.value.toLowerCase() ? { shortCode: [control.value] } : null;
+    shortCode.toLowerCase() !== control.value.toLowerCase() ? { shortCode: [control.value] } : null;
 }
 
 @Component({
