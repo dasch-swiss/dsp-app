@@ -41,6 +41,7 @@ import { map, takeUntil } from 'rxjs/operators';
           class="property-info"
           [propDef]="prop?.propDef"
           [propCard]="prop"
+          [props]="props"
           [projectUuid]="projectUuid"
           [resourceIri]="resourceClass.id"
           [lastModificationDate]="lastModificationDate$ | async"

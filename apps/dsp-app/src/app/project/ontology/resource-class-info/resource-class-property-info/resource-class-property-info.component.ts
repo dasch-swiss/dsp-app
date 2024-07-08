@@ -26,7 +26,7 @@ import {
 import { GuiCardinality } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { DefaultClass, DefaultProperty, OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
-import { ListsSelectors, OntologiesSelectors } from '@dasch-swiss/vre/shared/app-state';
+import { ListsSelectors, OntologiesSelectors, PropToDisplay } from '@dasch-swiss/vre/shared/app-state';
 import { DialogService } from '@dasch-swiss/vre/shared/app-ui';
 import { Store } from '@ngxs/store';
 import { Subject } from 'rxjs';
@@ -60,6 +60,8 @@ export class ResourceClassPropertyInfoComponent implements OnInit, OnChanges, Af
   @Input() propDef: ResourcePropertyDefinitionWithAllLanguages;
 
   @Input() propCard: IHasProperty;
+
+  @Input() props: PropToDisplay[];
 
   @Input() resourceIri?: string;
 
@@ -112,7 +114,7 @@ export class ResourceClassPropertyInfoComponent implements OnInit, OnChanges, Af
   afterCardinalityChange(newValue: Cardinality) {
     this._dialog
       .afterConfirmation('Please note that this change may not be reversible. Do you wish to continue ?', 'Attention')
-      .pipe(switchMap(() => this.submitCardinalitiesChange()))
+      .pipe(switchMap(() => this.submitCardinalitiesChange(newValue)))
       .subscribe(() => {
         this.cardinalityControl.patchValue(newValue);
       });
@@ -222,22 +224,28 @@ export class ResourceClassPropertyInfoComponent implements OnInit, OnChanges, Af
     });
   }
 
-  submitCardinalitiesChange() {
+  submitCardinalitiesChange(newValue: Cardinality) {
     const ontology = this._store.selectSnapshot(OntologiesSelectors.currentOntology);
-
     // get the ontology, the class and its properties
     const classUpdate = new UpdateOntology<UpdateResourceClassCardinality>();
     classUpdate.lastModificationDate = this.lastModificationDate;
     classUpdate.id = ontology.id;
     const changedClass = new UpdateResourceClassCardinality();
     changedClass.id = this.resourceIri; // TODO this.resClassIri;
-    changedClass.cardinalities = [this.propCard]; // TODO might be wrong
+    // find the prop in the this.props array and replace with this.propCard
+    this.props.forEach((prop, index) => {
+      if (prop.propertyIndex === this.propCard.propertyIndex) {
+        this.props[index] = this.propCard;
+      }
+    });
 
+    changedClass.cardinalities = this.props;
     // get the property for replacing the cardinality
     const idx = changedClass.cardinalities.findIndex(c => c.propertyIndex === this.propDef.id);
-    changedClass.cardinalities[idx].cardinality = this.cardinalityControl.value;
+    changedClass.cardinalities[idx].cardinality = newValue;
 
     classUpdate.entity = changedClass;
+
     return this._dspApiConnection.v2.onto.replaceCardinalityOfResourceClass(classUpdate).pipe(
       tap((res: ResourceClassDefinitionWithAllLanguages) => {
         this.lastModificationDate = res.lastModificationDate;
