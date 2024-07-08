@@ -1,5 +1,26 @@
 # Changelog
 
+## [11.14.0](https://github.com/dasch-swiss/dsp-das/compare/v11.13.0...v11.14.0) (2024-07-08)
+
+
+### Enhancements
+
+* Add k6 brower performance test ([#1666](https://github.com/dasch-swiss/dsp-das/issues/1666)) ([6fb4787](https://github.com/dasch-swiss/dsp-das/commit/6fb478788af1f868e5ea0f63d7c91c21f247993b))
+* erase project confirmation dialog + translations (DEV-3734) ([#1679](https://github.com/dasch-swiss/dsp-das/issues/1679)) ([e4b7ef0](https://github.com/dasch-swiss/dsp-das/commit/e4b7ef0341bd7fb711a8317e9da40fd7b6b313ff))
+
+
+### Bug Fixes
+
+* **cardinality change:** include other properties, set the new cardinality ([#1678](https://github.com/dasch-swiss/dsp-das/issues/1678)) ([3ce729e](https://github.com/dasch-swiss/dsp-das/commit/3ce729e4f2a36da39e4b5f0116cb4a7a5a09da09))
+* editing a stillimage properties keep the same page active ([#1677](https://github.com/dasch-swiss/dsp-das/issues/1677)) ([acfa48e](https://github.com/dasch-swiss/dsp-das/commit/acfa48e247197c0d8cbebeeff78b69ec25d47256))
+* erase project short code validation (DEV-3734) ([#1683](https://github.com/dasch-swiss/dsp-das/issues/1683)) ([ce13e25](https://github.com/dasch-swiss/dsp-das/commit/ce13e2502064646fd68f20ca51df3f7ba32b4064))
+* remove closed bracket in href link ([#1682](https://github.com/dasch-swiss/dsp-das/issues/1682)) ([aebd0ed](https://github.com/dasch-swiss/dsp-das/commit/aebd0ed35378fba459245dccb29aec691fc27de6))
+
+
+### Maintenance
+
+* **add user form:** remove validation and error msgs ([#1675](https://github.com/dasch-swiss/dsp-das/issues/1675)) ([ada9505](https://github.com/dasch-swiss/dsp-das/commit/ada950568e6a3488062c1da3753a0dbdeb402c8e))
+
 ## [11.13.0](https://github.com/dasch-swiss/dsp-das/compare/v11.12.1...v11.13.0) (2024-07-01)
 
 
