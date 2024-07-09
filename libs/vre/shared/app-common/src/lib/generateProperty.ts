@@ -1,6 +1,7 @@
 import {
   Constants,
   IHasPropertyWithPropertyDefinition,
+  ReadLinkValue,
   ReadResource,
   ReadStillImageFileValue,
 } from '@dasch-swiss/dsp-js';
@@ -14,7 +15,8 @@ export class GenerateProperty {
   public static commonProperty(resource: ReadResource) {
     return this._initProps(resource)
       .filter(prop => !prop.propDef['isLinkProperty'])
-      .filter(prop => !prop.propDef.subPropertyOf.includes('http://api.knora.org/ontology/knora-api/v2#hasFileValue'));
+      .filter(prop => !prop.propDef.subPropertyOf.includes('http://api.knora.org/ontology/knora-api/v2#hasFileValue'))
+      .map(this._displayExistingLinkedValues);
   }
 
   public static incomingRessourceProperty(resource: ReadResource) {
@@ -71,4 +73,13 @@ export class GenerateProperty {
 
     return props;
   }
+
+  private static _displayExistingLinkedValues = (prop: PropertyInfoValues) => {
+    if (prop.propDef.objectType === Constants.LinkValue) {
+      prop.values = prop.values.filter(value => {
+        return (value as ReadLinkValue).linkedResource !== undefined;
+      });
+    }
+    return prop;
+  };
 }
