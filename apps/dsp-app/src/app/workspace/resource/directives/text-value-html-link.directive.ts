@@ -16,7 +16,11 @@ export class TextValueHtmlLinkDirective {
    */
   @HostListener('click', ['$event'])
   onClick(event: MouseEvent) {
-    const targetElement = event.target as HTMLAnchorElement;
+    const targetElement: HTMLAnchorElement =
+      event.target instanceof HTMLAnchorElement
+        ? event.target
+        : ((event.target as any)?.parentElement as HTMLAnchorElement);
+
     if (
       !targetElement ||
       targetElement?.nodeName?.toLowerCase() !== 'a' ||
