@@ -59,7 +59,7 @@ export class StillImageHelper {
     return createResource;
   }
 
-  static prepareTileSourcesFromFileValues(imagesToDisplay: ReadFileValue[]): object[] {
+  static prepareTileSourcesFromFileValues(imagesToDisplay: ReadFileValue[], pngFormat = false): object[] {
     const images = imagesToDisplay as ReadStillImageFileValue[];
 
     let imageXOffset = 0;
@@ -72,24 +72,30 @@ export class StillImageHelper {
       const sipiBasePath = `${image.iiifBaseUrl}/${image.filename}`;
       const width = image.dimX;
       const height = image.dimY;
+      let tileSource = {
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        '@context': 'http://iiif.io/api/image/3/context.json',
+        id: sipiBasePath,
+        height,
+        width,
+        profile: ['level2'],
+        protocol: 'http://iiif.io/api/image',
+        tiles: [
+          {
+            scaleFactors: [1, 2, 4, 8, 16, 32],
+            width: 1024,
+          },
+        ],
+      } as any;
+
+      if (pngFormat) {
+        tileSource = { ...tileSource, preferredFormats: ['png'] };
+      }
+
       // construct OpenSeadragon tileSources according to https://openseadragon.github.io/docs/OpenSeadragon.Viewer.html#open
       tileSources.push({
         // construct IIIF tileSource configuration according to https://iiif.io/api/image/3.0
-        tileSource: {
-          // eslint-disable-next-line @typescript-eslint/naming-convention
-          '@context': 'http://iiif.io/api/image/3/context.json',
-          id: sipiBasePath,
-          height,
-          width,
-          profile: ['level2'],
-          protocol: 'http://iiif.io/api/image',
-          tiles: [
-            {
-              scaleFactors: [1, 2, 4, 8, 16, 32],
-              width: 1024,
-            },
-          ],
-        },
+        tileSource,
         x: imageXOffset,
         y: imageYOffset,
         preload: true,

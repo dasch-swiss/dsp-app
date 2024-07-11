@@ -98,6 +98,11 @@
   }
 }
 
+::ng-deep .settings-menu button.mat-mdc-menu-item {
+  display: block;
+  text-align: end;
+}
+
 .mat-mdc-slider {
   display: flex;
 }

@@ -46,6 +46,14 @@
 
     <!-- right side buttons -->
     <span>
+      <button
+        mat-icon-button
+        id="DSP_OSD_SETTINGS"
+        matTooltip="Settings"
+        [matMenuTriggerFor]="settings"
+        [disabled]="failedToLoad">
+        <mat-icon>settings</mat-icon>
+      </button>
       <button mat-icon-button id="DSP_OSD_ZOOM_OUT" matTooltip="Zoom out" [disabled]="failedToLoad">
         <mat-icon>zoom_out</mat-icon>
       </button>
@@ -89,5 +97,13 @@
     (click)="openSnackBar('ARK URL copied to clipboard!')">
     <mat-icon>content_copy</mat-icon>
     Copy ARK url to clipboard
+  </button>
+</mat-menu>
+<mat-menu #settings="matMenu" class="settings-menu">
+  <button class="menu-content" mat-menu-item (click)="isPng.next(false)">
+    <mat-icon *ngIf="(isPng$ | async) === false">check</mat-icon>JPG
+  </button>
+  <button mat-menu-item [disabled]="failedToLoad" (click)="isPng.next(true)">
+    <mat-icon *ngIf="(isPng$ | async) === true">check</mat-icon>PNG
   </button>
 </mat-menu>

@@ -32,8 +32,8 @@ import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
 import { Store } from '@ngxs/store';
 import * as OpenSeadragon from 'openseadragon';
-import { combineLatest, Observable, Subscription } from 'rxjs';
-import { distinctUntilChanged, filter, map, mergeMap, switchMap } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, Observable, of, Subject, Subscription } from 'rxjs';
+import { distinctUntilChanged, filter, mergeMap, switchMap, takeUntil } from 'rxjs/operators';
 import { FileRepresentation } from '../file-representation';
 import { getFileValue } from '../get-file-value';
 import { RegionService } from '../region.service';
@@ -53,6 +53,8 @@ export interface PolygonsForRegion {
 })
 export class StillImageComponent implements OnInit, OnChanges, OnDestroy {
   @Input({ required: true }) resource!: DspResource;
+
+  destroyed: Subject<void> = new Subject<void>();
 
   get parentResource() {
     return this.resource.res;
@@ -75,6 +77,9 @@ export class StillImageComponent implements OnInit, OnChanges, OnDestroy {
 
   loading = true;
   failedToLoad = false;
+
+  isPng = new BehaviorSubject(false);
+  isPng$: Observable<boolean> = this.isPng.asObservable();
 
   regionDrawMode = false; // stores whether viewer is currently drawing a region
   private _regionDragInfo; // stores the information of the first click for drawing a region
@@ -133,6 +138,10 @@ export class StillImageComponent implements OnInit, OnChanges, OnDestroy {
       }
       this._highlightRegion(region);
     });
+
+    this.isPng$.pipe(takeUntil(this.destroyed)).subscribe((isPng: boolean) => {
+      this._loadImages();
+    });
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -154,6 +163,9 @@ export class StillImageComponent implements OnInit, OnChanges, OnDestroy {
     if (this.fileInfoSub) {
       this.fileInfoSub.unsubscribe();
     }
+
+    this.destroyed.next();
+    this.destroyed.complete();
   }
 
   /**
@@ -399,8 +411,7 @@ export class StillImageComponent implements OnInit, OnChanges, OnDestroy {
     const fileValues: ReadFileValue[] = [this.image.fileValue]; // TODO this was this.images.
 
     // display only the defined range of this.images
-    const tileSources: object[] = StillImageHelper.prepareTileSourcesFromFileValues(fileValues);
-
+    const tileSources: object[] = StillImageHelper.prepareTileSourcesFromFileValues(fileValues, this.isPng.value);
     this._viewer.addOnceHandler('open', args => {
       // check if the current image exists
       if (this.image.fileValue.fileUrl.includes(args.source['id'])) {
