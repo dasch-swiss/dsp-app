@@ -23,7 +23,7 @@ run-cloud testToRun=testToRun:
 
 # Start grafana
 grafana-up:
-    docker-compose up -d
+    docker compose up -d
     open http://localhost:3000/dashboard/new?orgId=1
     cat ./grafana_dashboard.json | pbcopy
 
