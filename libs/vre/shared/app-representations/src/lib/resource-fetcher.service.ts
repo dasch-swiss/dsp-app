@@ -17,6 +17,8 @@ export class ResourceFetcherService {
 
   private _subscription: Subscription | undefined;
 
+  settings = { imageFormatIsPng: new BehaviorSubject(false) };
+
   constructor(
     @Inject(DspApiConnectionToken)
     private _dspApiConnection: KnoraApiConnection,

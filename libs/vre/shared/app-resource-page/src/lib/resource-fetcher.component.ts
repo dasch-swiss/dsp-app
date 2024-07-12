@@ -21,6 +21,7 @@ export class ResourceFetcherComponent implements OnChanges, OnDestroy {
   ngOnChanges() {
     this._resourceFetcherService.onDestroy();
     this._resourceFetcherService.onInit(this.resourceIri);
+    this._resourceFetcherService.settings.imageFormatIsPng.next(false);
 
     this._resourceFetcherService.resource$.subscribe(resource => {
       if (resource === null) {

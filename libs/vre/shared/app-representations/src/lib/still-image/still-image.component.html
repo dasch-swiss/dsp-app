@@ -100,10 +100,10 @@
   </button>
 </mat-menu>
 <mat-menu #settings="matMenu" class="settings-menu">
-  <button class="menu-content" mat-menu-item (click)="isPng.next(false)">
-    <mat-icon *ngIf="(isPng$ | async) === false">check</mat-icon>JPG
+  <button class="menu-content" mat-menu-item (click)="imageFormatIsPng.next(false)">
+    <mat-icon *ngIf="!isPng">check</mat-icon>JPG
   </button>
-  <button mat-menu-item [disabled]="failedToLoad" (click)="isPng.next(true)">
-    <mat-icon *ngIf="(isPng$ | async) === true">check</mat-icon>PNG
+  <button mat-menu-item [disabled]="failedToLoad" (click)="imageFormatIsPng.next(true)">
+    <mat-icon *ngIf="isPng">check</mat-icon>PNG
   </button>
 </mat-menu>
