@@ -1,5 +1,25 @@
 # Changelog
 
+## [11.15.0](https://github.com/dasch-swiss/dsp-das/compare/v11.14.0...v11.15.0) (2024-07-12)
+
+
+### Enhancements
+
+* resource image format settings (DEV-3834) ([#1687](https://github.com/dasch-swiss/dsp-das/issues/1687)) ([2a4175d](https://github.com/dasch-swiss/dsp-das/commit/2a4175db7a122e9d145624c9032dcd1f342eae07))
+
+
+### Bug Fixes
+
+* does not preserve image format on resource change (DEV-3834) ([#1692](https://github.com/dasch-swiss/dsp-das/issues/1692)) ([ff35be7](https://github.com/dasch-swiss/dsp-das/commit/ff35be7ff25b191d79adc271d5364d5315ea8ad5))
+* opening Salsah links  (DEV-3830) ([#1689](https://github.com/dasch-swiss/dsp-das/issues/1689)) ([c54a249](https://github.com/dasch-swiss/dsp-das/commit/c54a2496f6cbd5eb0691959dc2c88fb8b354dcfc))
+* remove link value that is marked as deleted ([#1685](https://github.com/dasch-swiss/dsp-das/issues/1685)) ([8b74f0a](https://github.com/dasch-swiss/dsp-das/commit/8b74f0a56463e3557687a3fd5f64a2b0045ccb69))
+* Url encode ingest upload url in order to support special characters in filenames (DEV-3865) ([#1691](https://github.com/dasch-swiss/dsp-das/issues/1691)) ([b6c1f4c](https://github.com/dasch-swiss/dsp-das/commit/b6c1f4cc37eaba6fe01a4dfafb957863fff66d3a))
+
+
+### Maintenance
+
+* **test:** Use docker compose in justfile instead of deprecated docker-compose ([#1690](https://github.com/dasch-swiss/dsp-das/issues/1690)) ([0536a23](https://github.com/dasch-swiss/dsp-das/commit/0536a23287c7bbc2e2b4ee6e441fd9ed47f31845))
+
 ## [11.14.0](https://github.com/dasch-swiss/dsp-das/compare/v11.13.0...v11.14.0) (2024-07-08)
 
 
