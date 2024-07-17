@@ -166,10 +166,10 @@ export class ProjectsSelectors {
     dspApiConfig: DspAppConfig,
     params: Params
   ): ProjectRestrictedViewSettings | RestrictedViewResponse | undefined {
-    const projectIri = ProjectsSelectors.getProjectIri(params, dspApiConfig, resource);
-    return !projectIri || !state.projectRestrictedViewSettings[projectIri]
+    const projectUuid = params[`${RouteConstants.uuidParameter}`];
+    return !projectUuid || !state.projectRestrictedViewSettings[projectUuid]
       ? undefined
-      : state.projectRestrictedViewSettings[projectIri].value;
+      : state.projectRestrictedViewSettings[projectUuid].value;
   }
 
   private static getProjectIri(params: Params, dspApiConfig: DspAppConfig, resource: DspResource) {
