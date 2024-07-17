@@ -37,6 +37,7 @@ export const defaultScenario = {
 
 export const defaultOptions = {
   cloud: {
+    projectID: 3704846,
     distribution: {
       distributionLabel1: { loadZone: 'amazon:de:frankfurt', percent: 100 },
     },

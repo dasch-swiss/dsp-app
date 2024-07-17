@@ -19,7 +19,7 @@ run testToRun=testToRun:
 
 # Run the test in k6 cloud
 run-cloud testToRun=testToRun:
-    APP_URL={{appUrl}} k6 cloud tests/{{testToRun}}.js
+    k6 cloud tests/{{testToRun}}.js
 
 # Start grafana
 grafana-up:
@@ -29,7 +29,7 @@ grafana-up:
 
 # Stop grafana
 grafana-down:
-    docker-compose down
+    docker compose down
 
 # Run the test and export to local grafana
 run-grafana testToRun=testToRun:

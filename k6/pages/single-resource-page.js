@@ -1,4 +1,4 @@
-export class ResourcePage {
+export class SingleResourcePage {
   constructor(page) {
     this.page = page;
     this.resourcelabel = page.locator('.resource-header > .resource-label > h4');
