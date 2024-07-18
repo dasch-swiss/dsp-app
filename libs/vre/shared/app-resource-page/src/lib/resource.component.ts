@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { Constants, CountQueryResponse, ReadFileValue } from '@dasch-swiss/dsp-js';
@@ -71,16 +71,16 @@ export class ResourceComponent implements OnChanges {
     });
   }
 
-  ngOnChanges() {
+  ngOnChanges(changes: SimpleChanges) {
     this.showRestrictedMessage = true;
     this.resourceIsObjectWithoutRepresentation = getFileValue(this.resource) === null;
 
-    this.onInit(this.resource);
+    this.onInit(this.resource, changes['resource']?.currentValue.res.id !== changes['resource']?.previousValue?.res.id);
   }
 
-  onInit(resource: DspResource) {
+  onInit(resource: DspResource, isDifferentResource: boolean) {
     if (this._isObjectWithoutRepresentation(resource)) {
-      this._checkForCompoundNavigation(resource);
+      this._checkForCompoundNavigation(resource, isDifferentResource);
       return;
     }
 
@@ -107,7 +107,7 @@ export class ResourceComponent implements OnChanges {
     return getFileValue(resource) === null;
   }
 
-  private _checkForCompoundNavigation(resource: DspResource) {
+  private _checkForCompoundNavigation(resource: DspResource, isDifferentResource: boolean) {
     this._incomingService
       .getStillImageRepresentationsForCompoundResource(resource.res.id, 0, true)
       .pipe(take(1))
@@ -117,7 +117,7 @@ export class ResourceComponent implements OnChanges {
         if (countQuery_.numberOfResults > 0) {
           this.isCompoundNavigation = true;
           this._compoundService.onInit(
-            this._compoundService.exists
+            this._compoundService.exists && !isDifferentResource
               ? this._compoundService.compoundPosition
               : new DspCompoundPosition(countQuery_.numberOfResults),
             this.resource
