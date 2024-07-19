@@ -1,17 +1,11 @@
 import { ChangeDetectorRef, Component, Input, OnChanges, OnDestroy, ViewChild } from '@angular/core';
-import {
-  Cardinality,
-  Constants,
-  ReadLinkValue,
-  ReadResourceSequence,
-  ResourcePropertyDefinition,
-} from '@dasch-swiss/dsp-js';
+import { Cardinality, Constants, ReadLinkValue, ResourcePropertyDefinition } from '@dasch-swiss/dsp-js';
 import { DspResource, PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
 import { ResourceSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { PagerComponent } from '@dasch-swiss/vre/shared/app-ui';
 import { Store } from '@ngxs/store';
 import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
-import { map, switchMap, take, takeUntil } from 'rxjs/operators';
+import { map, take, takeUntil } from 'rxjs/operators';
 import { IncomingOrStandoffLink } from './incoming-link.interface';
 import { PropertiesDisplayIncomingLinkService } from './properties-display-incoming-link.service';
 import { PropertiesDisplayService } from './properties-display.service';
@@ -75,6 +69,7 @@ import { sortByKeys } from './sortByKeys';
     </ng-container>
 
     <!-- incoming link -->
+    <dasch-swiss-app-progress-indicator *ngIf="isIncomingLinksLoading"></dasch-swiss-app-progress-indicator>
     <app-property-row
       tooltip="Indicates that this resource is referred to by another resource"
       label="has incoming link"
@@ -82,12 +77,7 @@ import { sortByKeys } from './sortByKeys';
       class="incoming-link"
       *ngIf="(showAllProperties$ | async) || (incomingLinks$ | async)?.length > 0">
       <app-incoming-standoff-link-value [links]="incomingLinks$ | async"></app-incoming-standoff-link-value>
-      <dasch-swiss-app-pager
-        #pager
-        (pageChanged)="doIncomingLinkSearch($event)"
-        [nextPageIsAvailable]="nextPageIsAvailable"
-        [showNumberOfAllResults]="false">
-      </dasch-swiss-app-pager>
+      <dasch-swiss-app-pager #pager (pageChanged)="pageChanged()"> </dasch-swiss-app-pager>
     </app-property-row>
 
     <ng-container *ngIf="false">
@@ -134,6 +124,8 @@ export class PropertiesDisplayComponent implements OnChanges, OnDestroy {
 
   @ViewChild('pager', { static: false })
   pagerComponent: PagerComponent | undefined;
+  numberOfAllResults: number = 0;
+  isIncomingLinksLoading = false;
 
   protected readonly cardinality = Cardinality;
 
@@ -145,11 +137,11 @@ export class PropertiesDisplayComponent implements OnChanges, OnDestroy {
   );
   myProperties$: Observable<PropertyInfoValues[]> = of([]);
   incomingLinks$ = new BehaviorSubject<IncomingOrStandoffLink[]>([]);
+  incomingLinks: IncomingOrStandoffLink[] = [];
   showAllProperties$ = this._propertiesDisplayService.showAllProperties$;
 
   standoffLinks: IncomingOrStandoffLink[] = [];
   showStandoffLinks$ = of(false);
-  nextPageIsAvailable: null | boolean = null;
 
   constructor(
     private _cd: ChangeDetectorRef,
@@ -168,6 +160,7 @@ export class PropertiesDisplayComponent implements OnChanges, OnDestroy {
   }
 
   private _setupProperties(offset: number = 0) {
+    this.incomingLinks$.next([]);
     if (this.pagerComponent) {
       this.pagerComponent!.initPager();
     }
@@ -185,24 +178,21 @@ export class PropertiesDisplayComponent implements OnChanges, OnDestroy {
     this.setStandOffLinks();
   }
 
+  pageChanged() {
+    this.incomingLinks$.next(
+      this.incomingLinks.slice(this.pagerComponent?.currentRangeStart, this.pagerComponent?.currentRangeEnd)
+    );
+  }
+
   doIncomingLinkSearch(offset = 0) {
-    const searchResults$ = this._propertiesDisplayIncomingLink.searchIncomingLinks$(
-      this.resource.res.id,
-      offset
-    ) as Observable<ReadResourceSequence>;
+    this.isIncomingLinksLoading = true;
     this._propertiesDisplayIncomingLink
-      .mayHaveMoreResults$(searchResults$)
-      .pipe(
-        map(mayHaveMoreSearchResults => {
-          this.nextPageIsAvailable = mayHaveMoreSearchResults;
-        })
-      )
-      .pipe(
-        switchMap(() => this._propertiesDisplayIncomingLink.getIncomingLinks$(searchResults$)),
-        take(1)
-      )
+      .getIncomingLinksRecursively$(this.resource.res.id, offset)
+      .pipe(take(1))
       .subscribe(incomingLinks => {
-        this.incomingLinks$.next(incomingLinks);
+        this.incomingLinks = incomingLinks;
+        this.incomingLinks$.next(incomingLinks.slice(0, PagerComponent.pageSize));
+        this.isIncomingLinksLoading = false;
         this._cd.detectChanges();
         if (incomingLinks.length > 0) {
           this.pagerComponent!.calculateNumberOfAllResults(incomingLinks.length);

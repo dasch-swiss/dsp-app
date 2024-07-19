@@ -6,7 +6,7 @@
     </button>
     <span class="fill-remaining-space"></span>
     <div class="range">
-      {{currentRangeStart}} - {{(currentRangeEnd < currentRangeStart) ? '...' : currentRangeEnd}}
+      {{(currentRangeStart || 1 )}} - {{(currentRangeEnd < currentRangeStart) ? '...' : currentRangeEnd}}
       <span *ngIf="showNumberOfAllResults">{{'appLabels.uiControls.pager.of' | translate}} {{numberOfAllResults}}</span>
     </div>
     <span class="fill-remaining-space"></span>

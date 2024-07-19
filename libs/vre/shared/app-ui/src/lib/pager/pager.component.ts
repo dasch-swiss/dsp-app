@@ -77,7 +77,7 @@ export class PagerComponent {
    * @param page offset
    */
   private _calculateRange(page: number) {
-    this.currentRangeStart = PagerComponent.pageSize * page + 1;
+    this.currentRangeStart = PagerComponent.pageSize * page;
     this.currentRangeEnd =
       PagerComponent.pageSize * (page + 1) > this.numberOfAllResults
         ? this.numberOfAllResults
