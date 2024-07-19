@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnChanges } from '@angular/core';
 import { Router } from '@angular/router';
 import { ReadProject, ReadUser } from '@dasch-swiss/dsp-js';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
@@ -39,7 +39,7 @@ import { filter, map, take } from 'rxjs/operators';
     `,
   ],
 })
-export class ResourceInfoBarComponent implements OnInit {
+export class ResourceInfoBarComponent implements OnChanges {
   @Input({ required: true }) resource!: DspResource;
 
   resourceAttachedUser: ReadUser | undefined;
@@ -57,7 +57,7 @@ export class ResourceInfoBarComponent implements OnInit {
     private router: Router
   ) {}
 
-  ngOnInit() {
+  ngOnChanges() {
     this._getResourceAttachedData(this.resource);
   }
 

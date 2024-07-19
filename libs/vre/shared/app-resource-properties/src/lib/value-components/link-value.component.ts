@@ -17,7 +17,6 @@ import {
   ApiResponseError,
   CountQueryResponse,
   KnoraApiConnection,
-  ReadProject,
   ReadResource,
   ReadResourceSequence,
   ResourceClassAndPropertyDefinitions,
@@ -25,7 +24,6 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { MatAutocompleteOptionsScrollDirective } from '@dasch-swiss/vre/shared/app-common';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
-import { ProjectsSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { Store } from '@ngxs/store';
 import { Observable, Subject, of } from 'rxjs';
 import { debounceTime, filter, finalize, map, switchMap, take, takeUntil } from 'rxjs/operators';
@@ -142,13 +140,11 @@ export class LinkValueComponent implements OnInit, AfterViewInit, OnDestroy {
   openCreateResourceDialog(event: any, resourceClassIri: string, resourceType: string) {
     let myResourceId: string;
     event.stopPropagation();
-    const projectIri = (this._store.selectSnapshot(ProjectsSelectors.currentProject) as ReadProject).id;
     this._dialog
       .open<CreateResourceDialogComponent, CreateResourceDialogProps, string>(CreateResourceDialogComponent, {
         data: {
           resourceType,
           resourceClassIri,
-          projectIri,
         },
       })
       .afterClosed()

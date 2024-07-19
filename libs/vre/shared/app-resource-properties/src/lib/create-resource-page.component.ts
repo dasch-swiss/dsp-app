@@ -17,7 +17,6 @@ import { ResourceClassIriService } from './resource-class-iri.service';
       *ngIf="resourceClassIriService.resourceClassIriFromParamSubject.asObservable() | async as classIri"
       [resourceType]="(resClass$ | async)?.label"
       [resourceClassIri]="classIri"
-      [projectIri]="projectIri"
       (createdResourceIri)="afterCreation($event)"></app-create-resource-form>`,
   providers: [ResourceClassIriService],
 })
