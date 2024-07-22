@@ -77,7 +77,6 @@ import { StringifyStringLiteralPipe } from './main/pipes/string-transformation/s
 import { TitleFromCamelCasePipe } from './main/pipes/string-transformation/title-from-camel-case.pipe';
 import { TruncatePipe } from './main/pipes/string-transformation/truncate.pipe';
 import { TimePipe } from './main/pipes/time.pipe';
-import { SelectLanguageComponent } from './main/select-language/select-language.component';
 import { StatusComponent } from './main/status/status.component';
 import { MaterialModule } from './material-module';
 import { ChipListInputComponent } from './project/chip-list-input/chip-list-input.component';
@@ -223,7 +222,6 @@ export function httpLoaderFactory(httpClient: HttpClient) {
     SearchPanelComponent,
     SelectedResourcesComponent,
     SelectGroupComponent,
-    SelectLanguageComponent,
     SelectProjectComponent,
     SortButtonComponent,
     SplitPipe,

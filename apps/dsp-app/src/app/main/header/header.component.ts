@@ -1,9 +1,7 @@
 import { Component } from '@angular/core';
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
-import { DialogComponent } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { AppConfigService, DspConfig, RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { SearchParams } from '../../workspace/results/list-view/list-view.component';
 
@@ -14,7 +12,6 @@ import { SearchParams } from '../../workspace/results/list-view/list-view.compon
 })
 export class HeaderComponent {
   session = false;
-  show = false;
   searchParams: SearchParams;
   helpLink = RouteConstants.help;
 
@@ -24,7 +21,6 @@ export class HeaderComponent {
 
   constructor(
     private _appConfigService: AppConfigService,
-    private _dialog: MatDialog,
     private _domSanitizer: DomSanitizer,
     private _matIconRegistry: MatIconRegistry,
     private _router: Router
@@ -36,13 +32,6 @@ export class HeaderComponent {
     );
 
     this.dsp = this._appConfigService.dspConfig;
-  }
-
-  /**
-   * show or hide search bar in phone version
-   */
-  showSearchBar() {
-    this.show = !this.show;
   }
 
   doSearch(search: SearchParams) {
@@ -64,18 +53,5 @@ export class HeaderComponent {
 
       this._router.navigate([doSearchRoute]);
     }
-  }
-
-  openDialog(mode: string, name?: string, iri?: string): void {
-    const dialogConfig: MatDialogConfig = {
-      width: '840px',
-      maxHeight: '80vh',
-      position: {
-        top: '112px',
-      },
-      data: { mode, title: name, id: iri },
-    };
-
-    this._dialog.open(DialogComponent, dialogConfig);
   }
 }
