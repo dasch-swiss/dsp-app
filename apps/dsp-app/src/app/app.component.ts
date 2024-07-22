@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
-import { GrafanaFaroService, PendoAnalyticsService } from '@dasch-swiss/vre/shared/app-analytics';
+import { PendoAnalyticsService } from '@dasch-swiss/vre/shared/app-analytics';
 import { RouteConstants } from '@dasch-swiss/vre/shared/app-config';
+import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { AutoLoginService, LocalStorageWatcherService } from '@dasch-swiss/vre/shared/app-session';
 
 @Component({
@@ -10,7 +11,7 @@ import { AutoLoginService, LocalStorageWatcherService } from '@dasch-swiss/vre/s
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
   showCookieBanner = true;
   session = false;
 
@@ -20,7 +21,7 @@ export class AppComponent implements OnInit {
     private _autoLoginService: AutoLoginService,
     private _pendo: PendoAnalyticsService,
     private _localStorageWatcher: LocalStorageWatcherService,
-    private _grafana: GrafanaFaroService
+    private _localizationService: LocalizationService
   ) {
     this._pendo.setup();
     this._autoLoginService.setup();
@@ -29,11 +30,16 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
+    this._localizationService.init();
     if (localStorage.getItem('cookieBanner') === null) {
       localStorage.setItem('cookieBanner', JSON.stringify(this.showCookieBanner));
     } else {
       this.showCookieBanner = JSON.parse(localStorage.getItem('cookieBanner'));
     }
+  }
+
+  ngOnDestroy(): void {
+    this._localizationService.destroy();
   }
 
   goToCookiePolicy() {

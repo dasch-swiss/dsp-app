@@ -23,6 +23,7 @@ import {
 } from '@dasch-swiss/vre/shared/app-config';
 import { AppDatePickerComponent } from '@dasch-swiss/vre/shared/app-date-picker';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
+import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
 import {
   CreateListInfoPageComponent,
   ReusableListInfoFormComponent,
@@ -345,6 +346,7 @@ export function httpLoaderFactory(httpClient: HttpClient) {
         hideRequiredMarker: true,
       },
     },
+    LocalizationService,
   ],
   bootstrap: [AppComponent],
 })
