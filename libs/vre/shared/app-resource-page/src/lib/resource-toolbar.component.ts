@@ -10,7 +10,7 @@ import {
   OntologyService,
 } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
-import { RegionService } from '@dasch-swiss/vre/shared/app-representations';
+import { RegionService, ResourceFetcherService } from '@dasch-swiss/vre/shared/app-representations';
 import {
   DeleteResourceDialogComponent,
   DeleteResourceDialogProps,
@@ -178,7 +178,8 @@ export class ResourceToolbarComponent implements OnInit {
     private _adminProjectsApi: AdminProjectsApiService,
     private _store: Store,
     private _viewContainerRef: ViewContainerRef,
-    private _regionService: RegionService
+    private _regionService: RegionService,
+    private _resourceFetcher: ResourceFetcherService
   ) {}
 
   ngOnInit(): void {
@@ -212,7 +213,7 @@ export class ResourceToolbarComponent implements OnInit {
       .afterClosed()
       .pipe(filter(answer => !!answer))
       .subscribe(answer => {
-        this._componentCommsService.emit(new EmitEvent(CommsEvents.resourceChanged));
+        this._resourceFetcher.reload();
         this._cd.markForCheck();
       });
   }
