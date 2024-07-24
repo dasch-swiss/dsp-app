@@ -4,6 +4,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 export interface CreateResourceDialogProps {
   resourceType: string;
   resourceClassIri: string;
+  projectIri: string;
 }
 
 @Component({
@@ -14,6 +15,7 @@ export interface CreateResourceDialogProps {
       <app-create-resource-form
         [resourceType]="data.resourceType"
         [resourceClassIri]="data.resourceClassIri"
+        [projectIri]="data.projectIri"
         (createdResourceIri)="onCreatedResource($event)"></app-create-resource-form>
     </div>
   `,

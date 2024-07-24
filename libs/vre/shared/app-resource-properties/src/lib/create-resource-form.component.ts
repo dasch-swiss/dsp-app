@@ -89,7 +89,7 @@ import { propertiesTypeMapping } from './resource-payloads-mapping';
 export class CreateResourceFormComponent implements OnInit {
   @Input({ required: true }) resourceClassIri!: string;
   @Input({ required: true }) resourceType!: string;
-
+  @Input({ required: true }) projectIri!: string;
   @Output() createdResourceIri = new EventEmitter<string>();
 
   form: FormGroup<{
@@ -223,9 +223,7 @@ export class CreateResourceFormComponent implements OnInit {
     createResource.type = this.resourceClass.id;
     createResource.properties = this._getPropertiesObj();
     const resource = this._store.selectSnapshot(ResourceSelectors.resource);
-    if (resource) {
-      createResource.attachedToProject = resource.res.attachedToProject;
-    }
+    createResource.attachedToProject = resource ? resource.res.attachedToProject : this.projectIri;
 
     return createResource;
   }
