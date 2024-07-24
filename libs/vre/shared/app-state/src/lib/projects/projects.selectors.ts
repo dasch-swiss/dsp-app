@@ -172,6 +172,18 @@ export class ProjectsSelectors {
       : state.projectRestrictedViewSettings[projectUuid].value;
   }
 
+  @Selector([ProjectsState, ResourceSelectors.resource, ConfigState.getConfig, RouterSelectors.params])
+  static contextProject(
+    state: ProjectsStateModel,
+    resource: DspResource,
+    dspApiConfig: DspAppConfig,
+    params: Params
+  ): ReadProject | undefined {
+    const projectIri = ProjectsSelectors.getProjectIri(params, dspApiConfig, resource);
+    if (!projectIri) return undefined;
+    return state.allProjects.find(p => p.id === projectIri);
+  }
+
   private static getProjectIri(params: Params, dspApiConfig: DspAppConfig, resource: DspResource) {
     const projectIri = params[`${RouteConstants.uuidParameter}`]
       ? params[`${RouteConstants.uuidParameter}`]

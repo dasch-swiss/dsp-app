@@ -223,7 +223,7 @@ export class CreateResourceFormComponent implements OnInit {
     createResource.type = this.resourceClass.id;
     createResource.properties = this._getPropertiesObj();
     const resource = this._store.selectSnapshot(ResourceSelectors.resource);
-    createResource.attachedToProject = resource ? resource.res.attachedToProject : this.projectIri;
+    createResource.attachedToProject = this.projectIri ? this.projectIri : resource!.res.attachedToProject;
 
     return createResource;
   }

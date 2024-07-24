@@ -142,7 +142,7 @@ export class LinkValueComponent implements OnInit, AfterViewInit, OnDestroy {
   openCreateResourceDialog(event: any, resourceClassIri: string, resourceType: string) {
     let myResourceId: string;
     event.stopPropagation();
-    const projectIri = (this._store.selectSnapshot(ProjectsSelectors.currentProject) as ReadProject).id;
+    const projectIri = (this._store.selectSnapshot(ProjectsSelectors.currentProject) as ReadProject)?.id;
     this._dialog
       .open<CreateResourceDialogComponent, CreateResourceDialogProps, string>(CreateResourceDialogComponent, {
         data: {
