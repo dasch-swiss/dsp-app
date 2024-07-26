@@ -84,6 +84,10 @@ export class RouteConstants {
   static readonly annotationQueryParam = 'annotation';
 }
 
+export class ApiConstants {
+  static readonly apiKnoraOntologyUrl = 'http://api.knora.org/ontology/knora-api/v2';
+}
+
 export enum Auth {
   AccessToken = 'ACCESS_TOKEN',
   Refresh_token = 'REFRESH_TOKEN',

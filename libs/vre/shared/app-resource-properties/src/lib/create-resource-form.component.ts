@@ -13,7 +13,7 @@ import {
   ResourcePropertyDefinition,
 } from '@dasch-swiss/dsp-js';
 import { PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
-import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
+import { ApiConstants, DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { LoadClassItemsCountAction, ResourceSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { Store } from '@ngxs/store';
 import { finalize, switchMap, take } from 'rxjs/operators';
@@ -172,7 +172,7 @@ export class CreateResourceFormComponent implements OnInit {
         this.resourceClass = onto.classes[this.resourceClassIri];
         this.properties = this.resourceClass
           .getResourcePropertiesList()
-          .filter(v => v.guiOrder !== undefined)
+          .filter(v => v.propertyIndex.indexOf(ApiConstants.apiKnoraOntologyUrl))
           .map(v => {
             return { guiDef: v, propDef: v.propertyDefinition, values: [] };
           });
