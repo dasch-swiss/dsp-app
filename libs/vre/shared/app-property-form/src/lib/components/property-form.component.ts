@@ -87,7 +87,10 @@ export class PropertyFormComponent implements OnInit {
   filteredProperties!: PropertyCategory[];
 
   get selectedProperty() {
-    return this.defaultProperties.flatMap(el => el.elements).find(e => e.guiEle === this.form.controls.propType.value);
+    const selected = this.defaultProperties
+      .flatMap(el => el.elements)
+      .find(e => e.objectType === this.formData.property.propType.objectType);
+    return selected;
   }
 
   constructor(private _fb: FormBuilder) {}

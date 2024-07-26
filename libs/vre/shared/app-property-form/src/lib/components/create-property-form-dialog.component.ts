@@ -122,7 +122,7 @@ export class CreatePropertyFormDialogComponent implements OnInit {
     }
     const selectedProperty = DefaultProperties.data
       .flatMap(el => el.elements)
-      .find(e => e.guiEle === this.form.controls.propType.value);
+      .find(e => e.objectType === this.data.propertyInfo.propType.objectType);
 
     newResProp.guiElement = selectedProperty.guiEle;
     newResProp.subPropertyOf = [selectedProperty.subPropOf];
