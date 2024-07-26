@@ -44,7 +44,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   editProfile(user: ReadUser) {
-    const dialogConfig = DspDialogConfig.dialogDrawerConfig<ReadUser>(user);
+    const dialogConfig = DspDialogConfig.dialogDrawerConfig<ReadUser>(user, true);
     this._dialog.open(EditUserPageComponent, dialogConfig);
   }
 }

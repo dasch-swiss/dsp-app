@@ -113,7 +113,7 @@ export class AddUserComponent implements OnInit, OnDestroy {
   }
 
   createUser() {
-    const dialogConfig = DspDialogConfig.dialogDrawerConfig<string>(this.projectUuid);
+    const dialogConfig = DspDialogConfig.dialogDrawerConfig<string>(this.projectUuid, true);
     this._dialog.open(CreateUserDialogComponent, dialogConfig);
   }
 

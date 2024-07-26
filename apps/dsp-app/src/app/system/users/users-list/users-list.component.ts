@@ -312,14 +312,14 @@ export class UsersListComponent {
   }
 
   createUser() {
-    const dialogRef = this._matDialog.open(CreateUserDialogComponent, DspDialogConfig.dialogDrawerConfig());
+    const dialogRef = this._matDialog.open(CreateUserDialogComponent, DspDialogConfig.dialogDrawerConfig({}, true));
     dialogRef.afterClosed().subscribe(() => {
       this.refreshParent.emit();
     });
   }
 
   editUser(user: ReadUser) {
-    const dialogConfig = DspDialogConfig.dialogDrawerConfig<ReadUser>(user);
+    const dialogConfig = DspDialogConfig.dialogDrawerConfig<ReadUser>(user, true);
     const dialogRef = this._matDialog.open(EditUserPageComponent, dialogConfig);
     dialogRef.afterClosed().subscribe(() => {
       this.refreshParent.emit();
@@ -327,7 +327,7 @@ export class UsersListComponent {
   }
 
   openDialog(mode: string, user?: ReadUser): void {
-    const dialogRef = this._matDialog.open(DialogComponent, DspDialogConfig.dialogDrawerConfig({ user, mode }));
+    const dialogRef = this._matDialog.open(DialogComponent, DspDialogConfig.dialogDrawerConfig({ user, mode }, true));
 
     dialogRef.afterClosed().subscribe(response => {
       if (response === true) {
