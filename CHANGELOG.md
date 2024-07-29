@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.16.2](https://github.com/dasch-swiss/dsp-das/compare/v11.16.1...v11.16.2) (2024-07-29)
+
+
+### Bug Fixes
+
+* create user as system administrator (DEV-3934) ([#1713](https://github.com/dasch-swiss/dsp-das/issues/1713)) ([26853e9](https://github.com/dasch-swiss/dsp-das/commit/26853e97a413c17a8552cdc88628868448ee4419))
+
 ## [11.16.1](https://github.com/dasch-swiss/dsp-das/compare/v11.16.0...v11.16.1) (2024-07-29)
 
 
