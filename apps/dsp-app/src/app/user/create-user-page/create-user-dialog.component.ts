@@ -56,7 +56,11 @@ export class CreateUserDialogComponent {
     user.systemAdmin = this.form.controls.systemAdmin.value;
     user.status = true;
 
-    this._store.dispatch(new CreateUserAction(user, this._projectService.uuidToIri(this.projectUuId)));
+    const projectIri =
+      typeof this.projectUuId === 'string' && this.projectUuId.length > 0
+        ? this._projectService.uuidToIri(this.projectUuId)
+        : undefined;
+    this._store.dispatch(new CreateUserAction(user, projectIri));
     this._actions$.pipe(ofActionSuccessful(CreateUserAction), take(1)).subscribe(() => {
       this._dialogRef.close();
       const enrolled = this.projectUuId ? ' and added the user to the project' : '';
