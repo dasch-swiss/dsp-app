@@ -79,7 +79,7 @@ export const propertiesTypeMapping = new Map<string, MappingParameters<any>>([
   [
     Constants.DecimalValue,
     {
-      control: (value?: ReadDecimalValue) => new FormControl(value?.decimal ?? 0),
+      control: (value?: ReadDecimalValue) => new FormControl(value?.decimal),
 
       createValue: (value: number) => {
         const newDecimalValue = new CreateDecimalValue();
