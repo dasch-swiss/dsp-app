@@ -1,5 +1,18 @@
 # Changelog
 
+## [11.16.1](https://github.com/dasch-swiss/dsp-das/compare/v11.16.0...v11.16.1) (2024-07-29)
+
+
+### Bug Fixes
+
+* allows resource property types to be added and used properly (DE… ([#1711](https://github.com/dasch-swiss/dsp-das/issues/1711)) ([a23eeab](https://github.com/dasch-swiss/dsp-das/commit/a23eeab730bb5a98aa39541c01a7ea9e5dce442f))
+* create resource issue (DEV-3913) ([#1705](https://github.com/dasch-swiss/dsp-das/issues/1705)) ([79cd6de](https://github.com/dasch-swiss/dsp-das/commit/79cd6def4a07e1cfda8eccaaced41f091c77c69b))
+* creating resource issue (DEV-3915)  ([#1708](https://github.com/dasch-swiss/dsp-das/issues/1708)) ([963d5fa](https://github.com/dasch-swiss/dsp-das/commit/963d5fab1395de81887db6c88adcb127fd1de3f1))
+* displays all data model properties when new resource is created … ([#1710](https://github.com/dasch-swiss/dsp-das/issues/1710)) ([e2d88e4](https://github.com/dasch-swiss/dsp-das/commit/e2d88e48480afd4673a3268d755942357de0dcce))
+* prevents from saving empty property values (DEV-3919) ([#1709](https://github.com/dasch-swiss/dsp-das/issues/1709)) ([dd30cff](https://github.com/dasch-swiss/dsp-das/commit/dd30cfff9bb94fa64c21ee467e5a6fd1d20b1fce))
+* removed decimal property default value (DEV-3923) ([#1712](https://github.com/dasch-swiss/dsp-das/issues/1712)) ([53f85ce](https://github.com/dasch-swiss/dsp-das/commit/53f85ce21601afa7a3cbb019ab5b2652a81d0c6e))
+* side dialog position (DEV-3914) ([#1707](https://github.com/dasch-swiss/dsp-das/issues/1707)) ([14a7e14](https://github.com/dasch-swiss/dsp-das/commit/14a7e14641c58a29b071a6e9fb7dbddf8183c6bc))
+
 ## [11.16.0](https://github.com/dasch-swiss/dsp-das/compare/v11.15.0...v11.16.0) (2024-07-23)
 
 
