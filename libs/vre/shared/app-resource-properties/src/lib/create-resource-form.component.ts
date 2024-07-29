@@ -232,7 +232,11 @@ export class CreateResourceFormComponent implements OnInit {
     const propertiesObj: { [index: string]: CreateValue[] } = {};
 
     Object.keys(this.form.controls.properties.controls)
-      .filter(iri => this.form.controls.properties.controls[iri].controls.some(control => control.value.item !== null))
+      .filter(iri =>
+        this.form.controls.properties.controls[iri].controls.some(
+          control => control.value.item !== null && control.value.item !== ''
+        )
+      )
       .forEach(iri => {
         propertiesObj[iri] = this._getValue(iri);
       });

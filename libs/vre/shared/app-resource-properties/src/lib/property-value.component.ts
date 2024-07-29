@@ -58,6 +58,8 @@ import { propertiesTypeMapping } from './resource-payloads-mapping';
         data-cy="save-button"
         *ngIf="!displayMode && !propertyValueService.keepEditMode && !loading"
         [disabled]="
+          group.value.item === null ||
+          group.value.item === '' ||
           (initialFormValue.item === group.value.item && initialFormValue.comment === group.value.comment) ||
           (initialFormValue.comment === null && group.value.comment === '')
         ">
