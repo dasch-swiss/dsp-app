@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, Inject, Input, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { FormControl, Validators } from '@angular/forms';
 import { KnoraApiConnection, ListNodeV2, ResourcePropertyDefinition } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 
@@ -18,8 +18,15 @@ import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 export class ListValueComponent implements OnInit {
   @Input() propertyDef!: ResourcePropertyDefinition;
   @Input() control!: FormControl<string>;
+
   listRootNode: ListNodeV2 | undefined;
   mySelectedNode: ListNodeV2 | undefined;
+
+  hasInitialValue = false;
+
+  get isRequired(): boolean {
+    return this.control.hasValidator(Validators.required);
+  }
 
   constructor(
     @Inject(DspApiConnectionToken)
@@ -29,11 +36,13 @@ export class ListValueComponent implements OnInit {
 
   ngOnInit() {
     this._loadRootNodes();
+    this.hasInitialValue = !!this.control.value;
   }
 
   selectedNode(node: ListNodeV2) {
-    this.mySelectedNode = node;
-    this.control.patchValue(node.id);
+    this.mySelectedNode = node.id ? node : undefined;
+    const valueToPatch = this.mySelectedNode?.id ? this.mySelectedNode.id : '';
+    this.control.patchValue(valueToPatch);
   }
 
   private _loadRootNodes(): void {
@@ -43,8 +52,18 @@ export class ListValueComponent implements OnInit {
       this._dspApiConnection.v2.list.getList(trimmedRootNodeIRI).subscribe(response => {
         // TODO weird to have n subscribes inside ngFors
         this.listRootNode = response as ListNodeV2;
-
         this._lookForNode(response as ListNodeV2);
+        if (!this.isRequired && !this.hasInitialValue) {
+          // add an empty option if there is no value yet (creating a new value) and the field is not required
+          this.listRootNode.children.unshift({
+            id: '',
+            label: '',
+            isRootNode: false,
+            hasRootNode: '',
+            children: [],
+          } as ListNodeV2);
+        }
+
         this._cd.detectChanges();
       });
     }
