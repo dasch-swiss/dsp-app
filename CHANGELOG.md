@@ -1,5 +1,15 @@
 # Changelog
 
+## [11.16.3](https://github.com/dasch-swiss/dsp-das/compare/v11.16.2...v11.16.3) (2024-07-31)
+
+
+### Bug Fixes
+
+* added check for invalidValueItems before creating a resource (DE… ([#1718](https://github.com/dasch-swiss/dsp-das/issues/1718)) ([d7d3880](https://github.com/dasch-swiss/dsp-das/commit/d7d3880371345d548126197ad0080a89614ac1b1))
+* added linked resource autocomplete loading progress bar (DEV-3938) ([#1717](https://github.com/dasch-swiss/dsp-das/issues/1717)) ([d3b1ccb](https://github.com/dasch-swiss/dsp-das/commit/d3b1ccbd5d77bf319eeafbfadde6fe07752cb453))
+* create resource with edited properties only (DEV-3937) ([#1715](https://github.com/dasch-swiss/dsp-das/issues/1715)) ([c9f2644](https://github.com/dasch-swiss/dsp-das/commit/c9f26441df42d678a9fb87642015bd560f13db5a))
+* **list property:** introduce an empty option for new values ([#1719](https://github.com/dasch-swiss/dsp-das/issues/1719)) ([24926a5](https://github.com/dasch-swiss/dsp-das/commit/24926a581496182f8f06eb945a3e3c93c423bf48))
+
 ## [11.16.2](https://github.com/dasch-swiss/dsp-das/compare/v11.16.1...v11.16.2) (2024-07-29)
 
 
