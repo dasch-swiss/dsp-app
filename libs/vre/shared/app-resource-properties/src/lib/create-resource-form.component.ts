@@ -238,9 +238,8 @@ export class CreateResourceFormComponent implements OnInit {
         );
 
         return hasPropertyControlValue === true &&
-          this.form.controls.properties.controls[iri].controls.filter(
-            group => !group.pristine && group.value.item !== null
-          ).length === 0
+          this.getInvalidValueItems(iri, this.form.controls.properties.controls[iri].controls, this.properties)
+            .length === 0
           ? false
           : hasPropertyControlValue;
       })
@@ -253,6 +252,19 @@ export class CreateResourceFormComponent implements OnInit {
     }
     return propertiesObj;
   }
+
+  private getInvalidValueItems = (iri: string, controls: FormValueGroup[], properties: PropertyInfoValues[]) =>
+    controls.filter(group => {
+      let hasNotTouchedBoolean = false;
+      if (group.value) {
+        const foundProperty = properties.find(property => property.guiDef.propertyIndex === iri);
+        hasNotTouchedBoolean =
+          foundProperty && (foundProperty.propDef as ResourcePropertyDefinition).objectType === Constants.BooleanValue
+            ? group.pristine
+            : hasNotTouchedBoolean;
+      }
+      return !hasNotTouchedBoolean && group.value.item !== null;
+    });
 
   private _getValue(iri: string) {
     const foundProperty = this.properties.find(property => property.guiDef.propertyIndex === iri);
