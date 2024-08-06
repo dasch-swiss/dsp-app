@@ -93,7 +93,7 @@ export class CreatePropertyFormDialogComponent implements OnInit {
 
     const propCard: IHasProperty = {
       propertyIndex: prop.id,
-      cardinality: this.form.controls.cardinality.value,
+      cardinality: 1, // default: not required, not multiple
       guiOrder: this.data.maxGuiOrderProperty + 1,
     };
 

@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { Cardinality, Constants } from '@dasch-swiss/dsp-js';
+import { Constants } from '@dasch-swiss/dsp-js';
 import { StringLiteralV2 } from '@dasch-swiss/vre/open-api';
 import { DefaultProperties, PropertyCategory, PropertyInfoObject } from '@dasch-swiss/vre/shared/app-helper-services';
 import { DEFAULT_MULTILANGUAGE_FORM } from '@dasch-swiss/vre/shared/app-string-literal';
@@ -8,7 +8,6 @@ import { PropertyForm } from '../property-form.type';
 
 @Component({
   selector: 'app-property-form',
-  styles: ['.toggles { display: flex; justify-content: center; gap: 16px; margin-bottom: 16px;}'],
   template: ` <form [formGroup]="form">
     <mat-form-field style="width: 100%">
       <span matPrefix>
@@ -47,20 +46,6 @@ import { PropertyForm } from '../property-form.type';
       *ngIf="formData.property.propType.objectType === Constants.LinkValue"
       [control]="form.controls.guiAttr"></app-gui-attr-link>
 
-    <div class="toggles">
-      <app-multiple-slide-toggle
-        [control]="form.controls.cardinality"
-        data-cy="multiple-toggle"
-        [label]="'Multiple values ?'"
-        (afterCardinalityChange)="form.controls.cardinality.patchValue($event)"></app-multiple-slide-toggle>
-
-      <app-required-slide-toggle
-        [control]="form.controls.cardinality"
-        data-cy="required-toggle"
-        [label]="'Required value ?'"
-        (afterCardinalityChange)="form.controls.cardinality.patchValue($event)"></app-required-slide-toggle>
-    </div>
-
     <dasch-swiss-multi-language-textarea
       [formArray]="form.controls.comments"
       data-cy="comment-textarea"
@@ -75,7 +60,6 @@ export class PropertyFormComponent implements OnInit {
     labels?: StringLiteralV2[];
     comments?: StringLiteralV2[];
     guiAttribute?: string;
-    cardinality?: Cardinality;
   };
   @Output() afterFormInit = new EventEmitter<PropertyForm>();
 
@@ -137,7 +121,6 @@ export class PropertyFormComponent implements OnInit {
         },
         { nonNullable: true, validators: [Validators.required] }
       ),
-      cardinality: this._fb.control(this.formData.cardinality ?? Cardinality._0_1, { nonNullable: true }),
     });
 
     this.afterFormInit.emit(this.form);

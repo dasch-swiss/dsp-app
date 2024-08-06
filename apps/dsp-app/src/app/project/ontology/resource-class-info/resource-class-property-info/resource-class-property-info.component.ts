@@ -7,10 +7,8 @@ import {
   Input,
   OnChanges,
   OnDestroy,
-  OnInit,
   Output,
 } from '@angular/core';
-import { FormBuilder, FormControl } from '@angular/forms';
 import {
   CanDoResponse,
   Cardinality,
@@ -23,14 +21,12 @@ import {
   UpdateOntology,
   UpdateResourceClassCardinality,
 } from '@dasch-swiss/dsp-js';
-import { GuiCardinality } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { DefaultClass, DefaultProperty, OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { ListsSelectors, OntologiesSelectors, PropToDisplay } from '@dasch-swiss/vre/shared/app-state';
-import { DialogService } from '@dasch-swiss/vre/shared/app-ui';
 import { Store } from '@ngxs/store';
 import { Subject } from 'rxjs';
-import { switchMap, takeUntil, tap } from 'rxjs/operators';
+import { take, takeUntil, tap } from 'rxjs/operators';
 
 // property data structure
 export class Property {
@@ -56,14 +52,14 @@ export class Property {
   templateUrl: './resource-class-property-info.component.html',
   styleUrls: ['./resource-class-property-info.component.scss'],
 })
-export class ResourceClassPropertyInfoComponent implements OnInit, OnChanges, AfterContentInit, OnDestroy {
+export class ResourceClassPropertyInfoComponent implements OnChanges, AfterContentInit, OnDestroy {
   @Input() propDef: ResourcePropertyDefinitionWithAllLanguages;
 
   @Input() propCard: IHasProperty;
 
   @Input() props: PropToDisplay[];
 
-  @Input() resourceIri?: string;
+  @Input() classIri?: string;
 
   @Input() projectUuid: string;
 
@@ -75,20 +71,7 @@ export class ResourceClassPropertyInfoComponent implements OnInit, OnChanges, Af
 
   @Input() resourceClass: ClassDefinition;
 
-  @Output() changeCardinalities: EventEmitter<{
-    prop: IHasProperty;
-    propType: DefaultProperty;
-    targetCardinality: GuiCardinality;
-  }> = new EventEmitter<{
-    prop: IHasProperty;
-    propType: DefaultProperty;
-    targetCardinality: GuiCardinality;
-  }>();
-
   isDestroyed = new Subject<void>();
-
-  cardinalityControl: FormControl<Cardinality>;
-  propInfo: Property = new Property();
 
   propType: DefaultProperty;
 
@@ -102,29 +85,10 @@ export class ResourceClassPropertyInfoComponent implements OnInit, OnChanges, Af
     private _dspApiConnection: KnoraApiConnection,
     private _ontoService: OntologyService,
     private _store: Store,
-    private _fb: FormBuilder,
-    private _cd: ChangeDetectorRef,
-    private _dialog: DialogService
+    private _cd: ChangeDetectorRef
   ) {}
 
-  ngOnInit() {
-    this.cardinalityControl = this._fb.control<Cardinality>(this.propCard.cardinality);
-  }
-
-  afterCardinalityChange(newValue: Cardinality) {
-    this._dialog
-      .afterConfirmation('Please note that this change may not be reversible. Do you wish to continue ?', 'Attention')
-      .pipe(switchMap(() => this.submitCardinalitiesChange(newValue)))
-      .subscribe(() => {
-        this.cardinalityControl.patchValue(newValue);
-      });
-  }
-
   ngOnChanges(): void {
-    // set the cardinality values in the class view
-    const cards = this._ontoService.getCardinalityGuiValues(this.propCard.cardinality);
-    this.propInfo.multiple = cards.multiple;
-    this.propInfo.required = cards.required;
     const currentProjectOntologies = this._store.selectSnapshot(OntologiesSelectors.currentProjectOntologies);
 
     // get info about subproperties, if they are not a subproperty of knora base ontology
@@ -211,7 +175,7 @@ export class ResourceClassPropertyInfoComponent implements OnInit, OnChanges, Af
 
     const delCard = new UpdateResourceClassCardinality();
 
-    delCard.id = this.resourceIri;
+    delCard.id = this.classIri;
 
     delCard.cardinalities = [];
 
@@ -231,7 +195,7 @@ export class ResourceClassPropertyInfoComponent implements OnInit, OnChanges, Af
     classUpdate.lastModificationDate = this.lastModificationDate;
     classUpdate.id = ontology.id;
     const changedClass = new UpdateResourceClassCardinality();
-    changedClass.id = this.resourceIri; // TODO this.resClassIri;
+    changedClass.id = this.classIri; // TODO this.resClassIri;
     // find the prop in the this.props array and replace with this.propCard
     this.props.forEach((prop, index) => {
       if (prop.propertyIndex === this.propCard.propertyIndex) {
@@ -246,11 +210,15 @@ export class ResourceClassPropertyInfoComponent implements OnInit, OnChanges, Af
 
     classUpdate.entity = changedClass;
 
-    return this._dspApiConnection.v2.onto.replaceCardinalityOfResourceClass(classUpdate).pipe(
-      tap((res: ResourceClassDefinitionWithAllLanguages) => {
-        this.lastModificationDate = res.lastModificationDate;
-      })
-    );
+    return this._dspApiConnection.v2.onto
+      .replaceCardinalityOfResourceClass(classUpdate)
+      .pipe(
+        tap((res: ResourceClassDefinitionWithAllLanguages) => {
+          this.lastModificationDate = res.lastModificationDate;
+        }),
+        take(1)
+      )
+      .subscribe(response => {});
   }
 
   ngOnDestroy() {

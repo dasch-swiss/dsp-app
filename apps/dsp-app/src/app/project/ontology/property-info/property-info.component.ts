@@ -11,33 +11,12 @@ import { getAllEntityDefinitionsAsArray } from '@dasch-swiss/vre/shared/app-api'
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import {
   DefaultClass,
-  DefaultProperties,
   DefaultProperty,
   OntologyService,
-  PropertyCategory,
   PropertyInfoObject,
 } from '@dasch-swiss/vre/shared/app-helper-services';
 import { ListsSelectors, OntologiesSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { Store } from '@ngxs/store';
-
-// property data structure
-export class Property {
-  iri: string;
-  label: string;
-  type: DefaultProperty;
-  multiple: boolean;
-  required: boolean;
-  guiAttr: string;
-
-  constructor(iri?: string, label?: string, type?: any, multiple?: boolean, required?: boolean, guiAttr?: string) {
-    this.iri = iri;
-    this.label = label;
-    this.type = type;
-    this.multiple = multiple;
-    this.required = required;
-    this.guiAttr = guiAttr;
-  }
-}
 
 export interface ShortInfo {
   id: string;
@@ -93,8 +72,6 @@ export class PropertyInfoComponent implements OnChanges, AfterContentInit {
   // submit res class iri to open res class (not yet implemented)
   @Output() clickedOnClass: EventEmitter<ShortInfo> = new EventEmitter<ShortInfo>();
 
-  propInfo: Property = new Property();
-
   propType: DefaultProperty;
 
   propAttribute: string;
@@ -103,9 +80,6 @@ export class PropertyInfoComponent implements OnChanges, AfterContentInit {
   propCanBeDeleted: boolean;
 
   project: ReadProject;
-
-  // list of default property types
-  defaultProperties: PropertyCategory[] = DefaultProperties.data;
 
   // list of resource classes where the property is used
   resClasses: ShortInfo[] = [];

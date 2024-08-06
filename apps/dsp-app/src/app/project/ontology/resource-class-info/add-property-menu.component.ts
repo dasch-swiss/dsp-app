@@ -1,7 +1,14 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Inject, Input, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { ClassDefinition, Constants, ResourcePropertyDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
-import { DspDialogConfig } from '@dasch-swiss/vre/shared/app-config';
+import {
+  ClassDefinition,
+  Constants,
+  KnoraApiConnection,
+  ResourcePropertyDefinitionWithAllLanguages,
+  UpdateOntology,
+  UpdateResourceClassCardinality,
+} from '@dasch-swiss/dsp-js';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import {
   DefaultProperties,
   DefaultProperty,
@@ -10,21 +17,13 @@ import {
   PropertyInfoObject,
 } from '@dasch-swiss/vre/shared/app-helper-services';
 import {
-  AssignPropertyDialogComponent,
-  AssignPropertyDialogProps,
   CreatePropertyFormDialogComponent,
   CreatePropertyFormDialogProps,
 } from '@dasch-swiss/vre/shared/app-property-form';
-import {
-  OntologiesSelectors,
-  OntologyProperties,
-  PropertyAssignment,
-  PropToAdd,
-  PropToDisplay,
-} from '@dasch-swiss/vre/shared/app-state';
+import { OntologiesSelectors, OntologyProperties, PropToAdd, PropToDisplay } from '@dasch-swiss/vre/shared/app-state';
 import { Store } from '@ngxs/store';
 import { Subject } from 'rxjs';
-import { filter, map, takeUntil } from 'rxjs/operators';
+import { filter, map, take, takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-add-property-menu',
@@ -61,7 +60,7 @@ import { filter, map, takeUntil } from 'rxjs/operators';
             *ngFor="let prop of onto.properties; trackBy: trackByPropFn"
             [matTooltip]="prop.propDef.comment"
             matTooltipPosition="after"
-            (click)="assignNewProperty(prop)">
+            (click)="assignExistingProperty(prop)">
             <mat-icon>{{ prop.propType?.icon }}</mat-icon>
             {{ prop.propDef.label }}
           </button>
@@ -122,6 +121,8 @@ export class AddPropertyMenuComponent {
   );
 
   constructor(
+    @Inject(DspApiConnectionToken)
+    private _dspApiConnection: KnoraApiConnection,
     private _dialog: MatDialog,
     private _store: Store,
     private _ontoService: OntologyService
@@ -135,36 +136,36 @@ export class AddPropertyMenuComponent {
 
   trackByPropFn = (index: number, item: PropertyInfoObject) => `${index}-${item.propDef?.id}`;
 
-  assignNewProperty(prop: PropertyInfoObject) {
-    const propertyAssignment: PropertyAssignment = {
-      resClass: this.resourceClass,
-      property: {
-        propType: prop.propType,
-        propDef: prop.propDef,
-      },
-    };
-
+  assignExistingProperty(prop: PropertyInfoObject) {
     const maxGuiOrderProperty = this.resourceClass.propertiesList.reduce(
       (prev, current) => Math.max(prev, current.guiOrder ?? 0),
       0
     );
 
-    const ontology = this._store.selectSnapshot(OntologiesSelectors.currentOntology);
-    this._dialog
-      .open<AssignPropertyDialogComponent, AssignPropertyDialogProps>(
-        AssignPropertyDialogComponent,
-        DspDialogConfig.mediumDialog({
-          ontologyId: ontology.id,
-          lastModificationDate: ontology.lastModificationDate,
-          propertyInfo: propertyAssignment.property,
-          resClassIri: this.resourceClass.id,
-          maxGuiOrderProperty,
-        })
-      )
-      .afterClosed()
-      .pipe(filter(res => res === true))
-      .subscribe(res => {
-        this.updatePropertyAssignment.emit(ontology.id);
+    const currentOntology = this._store.selectSnapshot(OntologiesSelectors.currentOntology);
+
+    const onto = new UpdateOntology<UpdateResourceClassCardinality>();
+    onto.lastModificationDate = currentOntology.lastModificationDate;
+    onto.id = currentOntology.id;
+
+    const addCard = new UpdateResourceClassCardinality();
+    addCard.id = this.resourceClass.id;
+
+    addCard.cardinalities = [
+      {
+        propertyIndex: prop.propDef.id,
+        cardinality: 1,
+        guiOrder: maxGuiOrderProperty + 1,
+      },
+    ];
+
+    onto.entity = addCard;
+
+    this._dspApiConnection.v2.onto
+      .addCardinalityToResourceClass(onto)
+      .pipe(take(1))
+      .subscribe(() => {
+        this.updatePropertyAssignment.emit(currentOntology.id);
       });
   }
 
@@ -199,9 +200,10 @@ export class AddPropertyMenuComponent {
     if (classProps.length === 0 || ontoProperties.length === 0) {
       return [];
     }
-
     const existingProperties: PropToAdd[] = [];
-    const currentProjectOntologies = this._store.selectSnapshot(OntologiesSelectors.currentProjectOntologies);
+    const currentProjectOntologies = this._store
+      .selectSnapshot(OntologiesSelectors.currentProjectOntologies)
+      .filter(p => !classProps.some(c => c.propertyIndex === p.id));
     ontoProperties.forEach((op: OntologyProperties, i: number) => {
       const onto = currentProjectOntologies.find(j => j?.id === op.ontology);
       existingProperties.push({

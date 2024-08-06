@@ -1,5 +1,4 @@
 import { FormControl, FormGroup } from '@angular/forms';
-import { Cardinality } from '@dasch-swiss/dsp-js';
 import { MultiLanguageForm } from '@dasch-swiss/vre/shared/app-string-literal';
 
 export type PropertyForm = FormGroup<{
@@ -8,5 +7,4 @@ export type PropertyForm = FormGroup<{
   labels: MultiLanguageForm;
   comments: MultiLanguageForm;
   guiAttr: FormControl<string>;
-  cardinality: FormControl<Cardinality>;
 }>;

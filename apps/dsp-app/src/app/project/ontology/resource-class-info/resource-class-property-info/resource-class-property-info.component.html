@@ -1,31 +1,31 @@
 <div class="property-info">
   <div class="upper-prop-container">
-    <div mat-line class="title">
-      <span
-        class="icon"
+    <div mat-line class="prop-label">
+      <div
         *ngIf="propType"
         [matTooltip]="propType?.group + ': ' + propType?.label + ' (' + propDef.id.split('#')[1] + ')'"
         matTooltipPosition="above">
-        <mat-icon class="type">{{ propType?.icon }}</mat-icon>
-      </span>
-      <span
-        class="label"
-        [matTooltip]="propDef.comment"
-        matTooltipPosition="above"
-        matTooltipClass="multi-line-tooltip">
-        <span data-cy="property-label">{{ propDef.label ? propDef.label : propDef.id }}</span>
-      </span>
-      <!-- property is linked to a class or to a list: display connected class or list -->
-      <span
-        class="attribute additional-info"
-        *ngIf="propAttribute"
-        [matTooltip]="propAttributeComment"
-        matTooltipPosition="above"
-        [innerHTML]="'&rarr;&nbsp;' + propAttribute">
-      </span>
+        <mat-icon class="prop-type-icon">{{ propType?.icon }}</mat-icon>
+      </div>
+      <div>
+        <span
+          class="label"
+          [matTooltip]="propDef.comment"
+          matTooltipPosition="above"
+          matTooltipClass="multi-line-tooltip"
+          data-cy="property-label"
+          >{{ propDef.label ? propDef.label : propDef.id }}
+        </span>
+        <span
+          class="attribute additional-info"
+          *ngIf="propAttribute"
+          [matTooltip]="propAttributeComment"
+          matTooltipPosition="above"
+          [innerHTML]="'&rarr;&nbsp;' + propAttribute"></span>
+      </div>
     </div>
     <div class="edit-menu">
-      <span class="menu-icon">
+      <div class="menu-icon">
         <mat-icon
           [matMenuTriggerFor]="classInfoMenu"
           class="menu-icon-button"
@@ -33,7 +33,7 @@
           *ngIf="userCanEdit"
           >more_vert</mat-icon
         >
-      </span>
+      </div>
     </div>
   </div>
   <div mat-line class="lower-prop-container">
@@ -44,18 +44,12 @@
       class="mat-caption">
       {{ propDef.id | split: '#':1 }}
     </span>
-    <span class="fill-remaining-space center"></span>
-    <span class="cardinality-toggles">
-      <app-multiple-slide-toggle
-        [control]="cardinalityControl"
-        [label]="'multiple'"
-        [disabled]="!userCanEdit"
-        (afterCardinalityChange)="afterCardinalityChange($event)"></app-multiple-slide-toggle>
-      <app-required-slide-toggle
-        [control]="cardinalityControl"
-        [label]="'required'"
-        [disabled]="!userCanEdit"
-        (afterCardinalityChange)="afterCardinalityChange($event)"></app-required-slide-toggle>
+    <span>
+      <app-cardinality
+        [cardinality]="propCard.cardinality"
+        [classIri]="resourceClass.id"
+        [propertyInfo]="{ propDef: this.propDef, propType: this.propType }"
+        (cardinalityChange)="submitCardinalitiesChange($event)"></app-cardinality>
     </span>
   </div>
 </div>

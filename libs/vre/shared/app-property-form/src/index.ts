@@ -1,4 +1,3 @@
-export * from './lib/components/assign-property-dialog.component';
 export * from './lib/components/create-property-form-dialog.component';
 export * from './lib/components/edit-property-form-dialog.component';
 export * from './lib/components/gui-attr-link.component';
