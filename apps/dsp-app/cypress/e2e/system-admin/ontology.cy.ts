@@ -2,7 +2,7 @@ import { CreateOntology } from '@dasch-swiss/dsp-js';
 import { faker } from '@faker-js/faker';
 import ProjectPage from '../../support/pages/project-page';
 
-describe.skip('Ontology', () => {
+describe('Ontology', () => {
   const projectPage = new ProjectPage();
 
   beforeEach(() => {
@@ -27,8 +27,18 @@ describe.skip('Ontology', () => {
       .click();
 
     cy.get('[data-cy=name-input]').type(data.name);
-    cy.get('[data-cy=label-input]').clear().type(data.label);
+    // ensure that the label input is visible
+    cy.get('[data-cy=label-input]').scrollIntoView().should('be.visible');
+
+    cy.get('[data-cy=label-input]').clear();
+    // no label, submit button should be disabled
+    cy.get('[data-cy=submit-button]').should('be.disabled');
+    cy.get('[data-cy=label-input]').type(data.label);
+    cy.get('[data-cy=submit-button]').should('be.enabled');
+
+    cy.get('[data-cy=comment-textarea]').clear();
     cy.get('[data-cy=comment-textarea]').type(data.comment);
+
     cy.get('[data-cy=submit-button]').click();
 
     cy.wait('@submitRequest');
@@ -36,7 +46,7 @@ describe.skip('Ontology', () => {
     cy.get('[data-cy=ontology-label]').contains(data.label).should('be.visible');
   });
 
-  it('should update ontology', () => {
+  it.skip('should update ontology', () => {
     const data = <CreateOntology>{
       name: faker.string.alpha({ length: { min: 3, max: 16 } }),
       label: faker.lorem.words(5),
