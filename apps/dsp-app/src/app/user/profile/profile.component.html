@@ -25,7 +25,7 @@
             </li> -->
           <li class="status warning text-only" *ngIf="isSysAdmin$ | async">
             <mat-icon>verified_user</mat-icon>
-            <span>System admin</span>
+            <span>{{'user.profile.systemAdmin' | translate }}</span>
           </li>
         </ul>
       </div>
@@ -33,7 +33,9 @@
       <mat-divider></mat-divider>
       <br />
       <!-- edit button -->
-      <button mat-button [color]="'primary'" (click)="editProfile(user)" style="width: 100%">Edit my profile</button>
+      <button mat-button [color]="'primary'" (click)="editProfile(user)" style="width: 100%">
+        {{'user.profile.editMyProfile' | translate }}
+      </button>
     </div>
 
     <!-- phone view -->

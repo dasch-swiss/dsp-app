@@ -1,11 +1,12 @@
 import { Inject, Injectable } from '@angular/core';
-import { ApiResponseData, ApiResponseError, KnoraApiConnection, LoginResponse } from '@dasch-swiss/dsp-js';
+import { ApiResponseData, ApiResponseError, KnoraApiConnection, LoginResponse, ReadUser } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { AppError } from '@dasch-swiss/vre/shared/app-error-handler';
 import {
   Events as CommsEvents,
   ComponentCommunicationEventService,
   EmitEvent,
+  LocalizationService,
 } from '@dasch-swiss/vre/shared/app-helper-services';
 import {
   ClearListsAction,
@@ -15,7 +16,7 @@ import {
   LoadUserAction,
   LogUserOutAction,
 } from '@dasch-swiss/vre/shared/app-state';
-import { Store } from '@ngxs/store';
+import { Actions, Store, ofActionSuccessful } from '@ngxs/store';
 import { of, throwError } from 'rxjs';
 import { catchError, map, switchMap, take, tap } from 'rxjs/operators';
 import { AccessTokenService } from './access-token.service';
@@ -27,7 +28,9 @@ export class AuthService {
     private _accessTokenService: AccessTokenService,
     @Inject(DspApiConnectionToken)
     private _dspApiConnection: KnoraApiConnection,
-    private _componentCommsService: ComponentCommunicationEventService
+    private _componentCommsService: ComponentCommunicationEventService,
+    private _actions$: Actions,
+    private _localizationsService: LocalizationService
   ) {}
 
   isCredentialsValid$() {
@@ -65,7 +68,12 @@ export class AuthService {
         }
         return throwError(error);
       }),
-      switchMap(() => this.store.dispatch(new LoadUserAction(identifier, identifierType)))
+      switchMap(() => {
+        this._actions$.pipe(ofActionSuccessful(LoadUserAction), take(1)).subscribe(() => {
+          this._localizationsService.setLanguage(this.store.selectSnapshot(state => state.user.user).lang);
+        });
+        return this.store.dispatch(new LoadUserAction(identifier, identifierType));
+      })
     );
   }
 

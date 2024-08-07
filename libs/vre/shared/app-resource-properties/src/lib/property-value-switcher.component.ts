@@ -52,14 +52,14 @@ import { PropertyValueService } from './property-value.service';
       <mat-icon
         @replaceAnimation
         *ngIf="displayMode && item.value"
-        [title]="'appLabels.uiControls.icon.true' | translate"
+        [title]="'uiControls.icon.true' | translate"
         class="material-icons-outlined"
         >toggle_off</mat-icon
       >
       <mat-icon
         @replaceAnimation
         *ngIf="displayMode && !item.value"
-        [title]="'appLabels.uiControls.icon.false' | translate"
+        [title]="'uiControls.icon.false' | translate"
         class="material-icons-outlined"
         >toggle_on</mat-icon
       >

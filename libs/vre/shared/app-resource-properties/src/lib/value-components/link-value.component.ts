@@ -65,7 +65,7 @@ import { LinkValueDataService } from './link-value-data.service';
           <dasch-swiss-app-progress-indicator></dasch-swiss-app-progress-indicator>
         </mat-option>
       </mat-autocomplete>
-      <mat-hint>{{ 'appLabels.form.action.searchHelp' | translate }}</mat-hint>
+      <mat-hint>{{ 'form.action.searchHelp' | translate }}</mat-hint>
       <mat-error *ngIf="control.errors as errors">{{ errors | humanReadableError }}</mat-error>
     </mat-form-field>
   `,

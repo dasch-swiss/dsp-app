@@ -1,166 +1,208 @@
 {
-  "appLabels": {
-    "dashboardComponent": {
-      "firstParagraph": "Willkommen bei DSP-APP – einer web-basierten virtuellen Forschungsumgebung, die Forschern in den Humanities bei der Arbeit mit digitalen Daten unterstützt. DSP-APP erlaubt die Annotation und die Verknüpfung mit beliebigen Quellen, seien es digitale Texte, bewegte oder unbewegte Bilder oder Ton.",
-      "secondParagraph": "DSP-APP ist eine (generische) Benutzerschnittstelle um auf Daten von einem Haupt-Repository zuzugreifen, das hier beschrieben ist: ",
-      "projectsIntro": "Öffentliche Projekte in DSP"
-    },
-    "addProjectMember": {
-      "title": "Projektmitglied hinzufügen",
-      "description": "Projektteam erweitern",
-      "select": "Aus der Liste wählen ...",
-      "usersLoading": "Lade Benutzer ...",
-      "newUser": "Neuer Benutzer"
-    },
-    "usersList": {
-      "sortProps": {
-        "familyName": "Nachname",
-        "givenName": "Vorname",
-        "sortTitle": "Sortieren nach "
-      }
-    },
-    "projects": {
-      "list": {
-        "project": "Projekt",
-        "projects": "Projekte",
-        "sortShortCode": "Kurzcode",
-        "sortShortName": "Abkürzung",
-        "sortProjectName": "Projekttitel",
-        "statusActive": "Aktiv",
-        "statusDeactivated": "Deaktiviert",
-        "createNew": "Neues Projekt erstellen",
-        "projectAdmin": "Projekt Administrator",
-        "edit": "Projektinformationen bearbeiten",
-        "reactivate": "Projekt reaktivieren",
-        "deactivate": "Projekt deaktivieren",
-        "erase": "Löschen",
-        "eraseConfirmation": "Möchten Sie Projekt “{{0}}” löschen?",
-        "deactivateConfirmation": "Möchten Sie Projekt “{{0}}” deaktivieren?",
-        "reactivateConfirmation": "Möchten Sie Projekt “{{0}}” reaktivieren?",
-        "eraseConfirmationDialog": {
-          "title": "Bitte geben Sie die erforderlichen Informationen ein, um das Projekt zu löschen.",
-          "subtitle": "Projekt löschen",
-          "warning": "ACHTUNG: Diese Aktion kann nicht rückgängig gemacht werden, gehen Sie also vorsichtig damit um.",
-          "shortCode": "Projektkurzcode",
-          "systemAdminPassword": "Systemadministrator-Passwort",
-          "cancel": "Abbrechen",
-          "confirm": "Bestätigen",
-          "shortCodeValidation": "Der Kurzcode stimmt nicht überein",
-          "passwordValidation": "Falsches Passwort"
-        }
-      }
-    },
-    "formDialog": {
-      "discard": "Wollen Sie wirklich alle Änderungen verwerfen?"
-    },
-    "form": {
-      "action": {
+  "overview": {
+    "title": "Forschungsprojekte durchsuchen",
+    "myProjects": "Meine Projekte",
+    "browseOtherResearchProjects": "Andere Forschungsprojekte durchsuchen",
+    "firstParagraph": "Willkommen bei DSP-APP – einer web-basierten virtuellen Forschungsumgebung, die Forschern in den Humanities bei der Arbeit mit digitalen Daten unterstützt. DSP-APP erlaubt die Annotation und die Verknüpfung mit beliebigen Quellen, seien es digitale Texte, bewegte oder unbewegte Bilder oder Ton.",
+    "secondParagraph": "DSP-APP ist eine (generische) Benutzerschnittstelle um auf Daten von einem Haupt-Repository zuzugreifen, das hier beschrieben ist: ",
+    "projectsIntro": "Öffentliche Projekte in DSP"
+  },
+  "addProjectMember": {
+    "title": "Projektmitglied hinzufügen",
+    "description": "Projektteam erweitern",
+    "select": "Aus der Liste wählen ...",
+    "usersLoading": "Lade Benutzer ...",
+    "newUser": "Neuer Benutzer"
+  },
+  "usersList": {
+    "sortProps": {
+      "familyName": "Nachname",
+      "givenName": "Vorname",
+      "sortTitle": "Sortieren nach "
+    }
+  },
+  "projects": {
+    "list": {
+      "project": "Projekt",
+      "projects": "Projekte",
+      "sortShortCode": "Kurzcode",
+      "sortShortName": "Abkürzung",
+      "sortProjectName": "Projekttitel",
+      "statusActive": "Aktiv",
+      "statusDeactivated": "Deaktiviert",
+      "createNew": "Neues Projekt erstellen",
+      "projectAdmin": "Projekt Administrator",
+      "edit": "Projektinformationen bearbeiten",
+      "reactivate": "Projekt reaktivieren",
+      "deactivate": "Projekt deaktivieren",
+      "erase": "Löschen",
+      "eraseConfirmation": "Möchten Sie Projekt “{{0}}” löschen?",
+      "deactivateConfirmation": "Möchten Sie Projekt “{{0}}” deaktivieren?",
+      "reactivateConfirmation": "Möchten Sie Projekt “{{0}}” reaktivieren?",
+      "eraseConfirmationDialog": {
+        "title": "Bitte geben Sie die erforderlichen Informationen ein, um das Projekt zu löschen.",
+        "subtitle": "Projekt löschen",
+        "warning": "ACHTUNG: Diese Aktion kann nicht rückgängig gemacht werden, gehen Sie also vorsichtig damit um.",
+        "shortCode": "Projektkurzcode",
+        "systemAdminPassword": "Systemadministrator-Passwort",
         "cancel": "Abbrechen",
-        "close": "Schliessen",
-        "submit": "Speichern",
-        "add": "Hinzufügen",
-        "update": "Aktualisieren",
-        "next": "Weiter",
-        "back": "Zurück",
-        "skip": "Überspringen",
-        "reset": "Zurücksetzen",
-        "activate": "Aktivieren",
-        "deactivate": "Deaktivieren",
-        "confirm": "Ja",
-        "searchHelp": "Gebe 3 Zeichen ein um nach einer existierender Resource zu suchen.",
-        "login": "Anmelden"
+        "confirm": "Bestätigen",
+        "shortCodeValidation": "Der Kurzcode stimmt nicht überein",
+        "passwordValidation": "Falsches Passwort"
+      }
+    }
+  },
+  "formDialog": {
+    "discard": "Wollen Sie wirklich alle Änderungen verwerfen?"
+  },
+  "form": {
+    "action": {
+      "cancel": "Abbrechen",
+      "close": "Schliessen",
+      "submit": "Speichern",
+      "submitting": "Speichern ...",
+      "retry": "Wiederholen",
+      "add": "Hinzufügen",
+      "update": "Aktualisieren",
+      "next": "Weiter",
+      "back": "Zurück",
+      "skip": "Überspringen",
+      "reset": "Zurücksetzen",
+      "activate": "Aktivieren",
+      "deactivate": "Deaktivieren",
+      "confirm": "Ja",
+      "danger": "Gefahrenzone",
+      "deleted": "Bereits gelöscht",
+      "searchHelp": "Gebe 3 Zeichen ein um nach einer existierender Resource zu suchen.",
+      "login": "Anmelden"
+    },
+    "user": {
+      "general": {
+        "givenName": "Vorname",
+        "familyName": "Nachname",
+        "email": "Email Adresse",
+        "emailValidation": "Das ist keine gültige Email Adresse",
+        "username": "Benutzername",
+        "usernameHint": "Benutzername darf keine Sonder- oder Leerzeichen beinhalten",
+        "password": "Passwort",
+        "passwordHint": "Mindestens 8 Zeichen, wobein ein Grossbuchstabe und eine Zahl vorhanden sein müssen.",
+        "oldPassword": "Altes Passwort",
+        "newPassword": "Neues Passwort",
+        "confirmPassword": "Passwort bestätigen",
+        "requesterPassword": "Dein Passwort",
+        "avatar": "Profilbild hochladen",
+        "language": "Sprache",
+        "sysAdmin": "Systemadministratorregeln",
+        "updateSuccess": "Das Profil wurde erfolgreich aktualisiert"
       },
-      "user": {
-        "general": {
-          "givenName": "Vorname",
-          "familyName": "Nachname",
-          "email": "Email Adresse",
-          "emailValidation": "Das ist keine gültige Email Adresse",
-          "username": "Benutzername",
-          "usernameHint": "Benutzername darf keine Sonder- oder Leerzeichen beinhalten",
-          "password": "Passwort",
-          "passwordHint": "Mindestens 8 Zeichen, wobein ein Grossbuchstabe und eine Zahl vorhanden sein müssen.",
-          "oldPassword": "Altes Passwort",
-          "newPassword": "Neues Passwort",
-          "requesterPassword": "Dein Passwort",
-          "avatar": "Profilbild hochladen",
-          "language": "Sprache"
-        },
-        "title": {
-          "new": "Neuen Benutzer erstellen",
-          "edit": "Benutzer anpassen",
-          "editSuccess": "Das Profil wurde erfolgreich aktualisiert",
-          "delete": "Benutzer löschen",
-          "deleteHint": "Bist du sicher, dass du diesen Benutzer löschen willst?",
-          "password": "Passwort ändern",
-          "passwordSuccess": "Du hast das Passwort erfolgreich geändert.",
-          "select": "Neuen Benutzer zum Projekt hinzufügen (eMail Adresse oder Benutzername)",
-          "deleted": "bereits gelöscht"
-        }
-      },
-      "project": {
-        "general": {
-          "description": "Projektbeschrieb",
-          "shortcode": "Kurzcode",
-          "shortname": "Abkürzung",
-          "longname": "Projekttitel",
-          "institution": "Institution",
-          "logo": {
-            "upload": "Logo hochladen",
-            "or": "ODER",
-            "url": "URL zur Logo-Datei",
-            "name": "Logo Dateiname oder URL"
-          },
-          "keywords": "Stichworte"
-        },
-        "title": {
-          "new": "Projekt erstellen",
-          "edit": "Projekt aktualisieren",
-          "editSuccess": "Das Projekt wurde erfolgreich aktualisiert",
-          "deactivate": "Projekt deaktivieren",
-          "deactivateHint": "Möchtest du das Projekt wirklich deaktivieren?"
-        },
-        "imageSettings": {
-          "off": "Aus",
-          "isWatermark": "Wasserzeichen anwenden",
-          "ratio": "Verhältnis",
-          "fixed": "feste Breite",
-          "restrictImageSize": "Bildgröße einschränken",
-          "absoluteWidth": "Absolute Breite in Pixel von: {{min}} bis: {{max}}",
-          "percentageValue": "Prozentwert",
-          "percentage": "Prozentsatz",
-          "updateConfirmation": "Sie haben die Projektbildeinstellungen erfolgreich aktualisiert.",
-          "info": "Um die Größe Ihres Bildes zu begrenzen, geben Sie entweder einen Prozentsatz oder eine absolute Pixelbreite ein. Sie können nicht für beide Optionen Werte angeben.",
-          "restrictions": "Bildeinstellungen können nur auf die Ressourcen angewendet werden, für die eingeschränkte Ansichtsberechtigungen festgelegt sind."
-        }
-      },
-      "member": {
-        "select": {
-          "project": "Projekt wählen",
-          "user": "Benutzer wählen",
-          "group": "Berechtigungsgruppe wählen"
-        },
-        "title": {
-          "project": "Mitglied im Projekt",
-          "user": "Mitglieder im Projekt",
-          "group": "Berechtigungen"
-        }
+      "title": {
+        "new": "Neuen Benutzer erstellen",
+        "edit": "Benutzer anpassen",
+        "profile": "Profil",
+        "editSuccess": "Das Profil wurde erfolgreich aktualisiert",
+        "delete": "Benutzer löschen",
+        "deleteHint": "Bist du sicher, dass du diesen Benutzer löschen willst?",
+        "deleteButton": "Benutzerkonto jetzt sperren",
+        "password": "Passwort ändern",
+        "passwordSuccess": "Du hast das Passwort erfolgreich geändert.",
+        "select": "Neuen Benutzer zum Projekt hinzufügen (eMail Adresse oder Benutzername)",
+        "deleted": "bereits gelöscht"
       }
     },
-    "uiControls": {
-      "icon": {
-        "true": "Ja",
-        "false": "Nein"
+    "project": {
+      "general": {
+        "description": "Projektbeschrieb",
+        "shortcode": "Kurzcode",
+        "shortname": "Abkürzung",
+        "longname": "Projekttitel",
+        "institution": "Institution",
+        "logo": {
+          "upload": "Logo hochladen",
+          "or": "ODER",
+          "url": "URL zur Logo-Datei",
+          "name": "Logo Dateiname oder URL"
+        },
+        "keywords": "Stichworte"
       },
-      "pager": {
-        "of": "von",
-        "previous": "Zurück",
-        "next": "Weiter"
+      "title": {
+        "new": "Projekt erstellen",
+        "edit": "Projekt aktualisieren",
+        "editSuccess": "Das Projekt wurde erfolgreich aktualisiert",
+        "deactivate": "Projekt deaktivieren",
+        "deactivateHint": "Möchtest du das Projekt wirklich deaktivieren?"
+      },
+      "imageSettings": {
+        "off": "Aus",
+        "isWatermark": "Wasserzeichen anwenden",
+        "ratio": "Verhältnis",
+        "fixed": "feste Breite",
+        "restrictImageSize": "Bildgröße einschränken",
+        "absoluteWidth": "Absolute Breite in Pixel von: {{min}} bis: {{max}}",
+        "percentageValue": "Prozentwert",
+        "percentage": "Prozentsatz",
+        "updateConfirmation": "Sie haben die Projektbildeinstellungen erfolgreich aktualisiert.",
+        "info": "Um die Größe Ihres Bildes zu begrenzen, geben Sie entweder einen Prozentsatz oder eine absolute Pixelbreite ein. Sie können nicht für beide Optionen Werte angeben.",
+        "restrictions": "Bildeinstellungen können nur auf die Ressourcen angewendet werden, für die eingeschränkte Ansichtsberechtigungen festgelegt sind."
       }
     },
-    "resource": {
-      "properties": "Eigenschaften",
-      "comment": "Kommentar"
+    "member": {
+      "select": {
+        "project": "Projekt wählen",
+        "user": "Benutzer wählen",
+        "group": "Berechtigungsgruppe wählen"
+      },
+      "title": {
+        "project": "Mitglied im Projekt",
+        "user": "Mitglieder im Projekt",
+        "group": "Berechtigungen"
+      }
+    }
+  },
+  "uiControls": {
+    "icon": {
+      "true": "Ja",
+      "false": "Nein"
+    },
+    "pager": {
+      "of": "von",
+      "previous": "Zurück",
+      "next": "Weiter"
+    }
+  },
+  "resource": {
+    "properties": "Eigenschaften",
+    "comment": "Kommentar"
+  },
+  "searchPanel": {
+    "howToSearch": "Wie suchen?",
+    "expert": "Experte",
+    "advancedSearch": "Erweiterte Suche",
+    "expertSearch": "Experte suchen"
+  },
+  "fullTextSearch": {
+    "filterByProject": "Nach Projekt filtern",
+    "search": "Suche",
+    "allProjects": "All projects"
+  },
+  "header": {
+    "help": "Hilfe"
+  },
+  "user": {
+    "navigation": {
+      "myProjects": "Meine Projekte",
+      "myAccount": "Mein Konto"
+    },
+    "profile": {
+      "systemAdmin": "Systemadministrator",
+      "editMyProfile": "Mein Profil bearbeiten"
+    },
+    "userMenu": {
+      "signedInAs": "Angemeldet als",
+      "systemAdministration": "Systemadministration",
+      "logout": "Abmelden",
+      "login": "ANMELDEN",
+      "home": "DSP-App Startseite",
+      "myAccount": "Mein Konto"
     }
   }
 }

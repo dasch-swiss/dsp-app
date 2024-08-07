@@ -14,25 +14,25 @@ import { shortcodeExistsValidator } from './shortcode-exists.validator';
       <div style="display: flex">
         <app-common-input
           [control]="form.controls.shortcode"
-          [label]="'appLabels.form.project.general.shortcode' | translate"
+          [label]="'form.project.general.shortcode' | translate"
           [validatorErrors]="[shortcodePatternError, shortCodeExistsError]"
           data-cy="shortcode-input"
           style="flex: 1; margin-right: 16px" />
 
         <app-common-input
           [control]="form.controls.shortname"
-          [label]="'appLabels.form.project.general.shortname' | translate"
+          [label]="'form.project.general.shortname' | translate"
           data-cy="shortname-input"
           style="flex: 1" />
       </div>
 
       <app-common-input
-        [label]="'appLabels.form.project.general.longname' | translate"
+        [label]="'form.project.general.longname' | translate"
         [control]="form.controls.longname"
         data-cy="longname-input" />
 
       <dasch-swiss-multi-language-textarea
-        [placeholder]="('appLabels.form.project.general.description' | translate) + '*'"
+        [placeholder]="('form.project.general.description' | translate) + '*'"
         [formArray]="form.controls.description"
         [validators]="descriptionValidators"
         data-cy="description-input">

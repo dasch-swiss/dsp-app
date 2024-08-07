@@ -1,5 +1,7 @@
-export type DaschLanguage = 'de' | 'fr' | 'it' | 'en' | 'rm';
+import { AvailableLanguages } from '@dasch-swiss/vre/shared/app-config';
 
-export function isDaschLanguage(value: string): value is DaschLanguage {
-  return ['de', 'fr', 'it', 'en', 'rm'].includes(value);
+export function isDaschLanguage(value: string): boolean {
+  return AvailableLanguages.some(lang => lang.language === value);
 }
+
+export type DaschLanguage = (typeof AvailableLanguages)[number]['language'];

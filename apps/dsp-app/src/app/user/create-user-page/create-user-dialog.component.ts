@@ -15,7 +15,7 @@ import { UserForm } from '../user-form/user-form.type';
     <app-user-form [user]="user" (afterFormInit)="form = $event" />
 
     <div mat-dialog-actions align="end">
-      <button color="primary" mat-button mat-dialog-close>{{ 'appLabels.form.action.cancel' | translate }}</button>
+      <button color="primary" mat-button mat-dialog-close>{{ 'form.action.cancel' | translate }}</button>
       <button
         mat-raised-button
         color="primary"
@@ -23,7 +23,7 @@ import { UserForm } from '../user-form/user-form.type';
         [isLoading]="isLoading$ | async"
         [disabled]="!form?.valid || (isLoading$ | async)"
         (click)="createUser()">
-        {{ 'appLabels.form.action.submit' | translate }}
+        {{ 'form.action.submit' | translate }}
       </button>
     </div>
   `,

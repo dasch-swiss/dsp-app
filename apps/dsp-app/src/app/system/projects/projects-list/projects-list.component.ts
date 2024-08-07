@@ -51,8 +51,8 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
   itemPluralMapping = {
     project: {
       // eslint-disable-next-line @typescript-eslint/naming-convention
-      '=1': `1 ${this.translateService.instant('appLabels.projects.list.project')}`,
-      other: `# ${this.translateService.instant('appLabels.projects.list.projects')}`,
+      '=1': `1 ${this.translateService.instant('projects.list.project')}`,
+      other: `# ${this.translateService.instant('projects.list.projects')}`,
     },
   };
 
@@ -60,15 +60,15 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
   sortProps: SortProp[] = [
     {
       key: 'shortcode',
-      label: this.translateService.instant('appLabels.projects.list.sortShortCode'),
+      label: this.translateService.instant('projects.list.sortShortCode'),
     },
     {
       key: 'shortname',
-      label: this.translateService.instant('appLabels.projects.list.sortShortName'),
+      label: this.translateService.instant('projects.list.sortShortName'),
     },
     {
       key: 'longname',
-      label: this.translateService.instant('appLabels.projects.list.sortProjectName'),
+      label: this.translateService.instant('projects.list.sortProjectName'),
     },
   ];
 
@@ -155,7 +155,7 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
   askToDeactivateProject(name: string, id: string) {
     this._dialogService
       .afterConfirmation(
-        this.translateService.instant('appLabels.projects.list.deactivateConfirmation', {
+        this.translateService.instant('projects.list.deactivateConfirmation', {
           0: name,
         })
       )
@@ -180,7 +180,7 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
       .subscribe((erasedProject: StoredProject) => {
         this.refreshParent.emit();
         this._notification.openSnackBar(
-          this.translateService.instant('appLabels.projects.list.eraseConfirmation', {
+          this.translateService.instant('projects.list.eraseConfirmation', {
             0: erasedProject.shortname,
           })
         );
@@ -190,7 +190,7 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
   askToActivateProject(name: string, id: string) {
     this._dialogService
       .afterConfirmation(
-        this.translateService.instant('appLabels.projects.list.reactivateConfirmation', {
+        this.translateService.instant('projects.list.reactivateConfirmation', {
           0: name,
         })
       )

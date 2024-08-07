@@ -4,8 +4,10 @@ import { User } from '@dasch-swiss/dsp-js';
 import { RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { AuthService } from '@dasch-swiss/vre/shared/app-session';
 import { UserSelectors } from '@dasch-swiss/vre/shared/app-state';
+import { TranslateService } from '@ngx-translate/core';
 import { Select, Store } from '@ngxs/store';
-import { Observable, Subscription } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { MenuItem } from '../../main/declarations/menu-item';
 
 @Component({
@@ -16,45 +18,56 @@ import { MenuItem } from '../../main/declarations/menu-item';
 export class UserMenuComponent implements OnInit, OnDestroy {
   @ViewChild(MatMenuTrigger) menuTrigger: MatMenuTrigger;
 
-  subscription: Subscription;
+  destroyed: Subject<void> = new Subject<void>();
+
+  navigation: MenuItem[];
   isLoggedIn$ = this._store.select(UserSelectors.isLoggedIn);
 
   readonly systemLink = RouteConstants.system;
-  readonly navigation: MenuItem[] = [
-    {
-      label: 'DSP-App Home Page',
-      shortLabel: 'home',
-      route: RouteConstants.homeRelative,
-      icon: '',
-    },
-    {
-      label: 'My Account',
-      shortLabel: 'Account',
-      route: RouteConstants.userAccountRelative,
-      icon: '',
-    },
-  ];
   @Select(UserSelectors.user) user$: Observable<User>;
   @Select(UserSelectors.isSysAdmin) isSysAdmin$: Observable<User>;
 
   constructor(
     private _authService: AuthService,
-    private _store: Store
+    private _store: Store,
+    private _translateService: TranslateService
   ) {}
 
   ngOnInit() {
-    this.subscription = this.isLoggedIn$.subscribe(isLoggedIn => {
+    this.isLoggedIn$.pipe(takeUntil(this.destroyed)).subscribe(isLoggedIn => {
       if (isLoggedIn && this.menuTrigger.menuOpen) {
         this.menuTrigger.closeMenu();
       }
     });
+
+    this.setNav();
   }
 
   ngOnDestroy() {
-    this.subscription.unsubscribe();
+    this.destroyed.next();
+    this.destroyed.complete();
   }
 
   logout() {
     this._authService.logout();
+  }
+
+  private setNav() {
+    this._translateService.onLangChange.pipe(takeUntil(this.destroyed)).subscribe(() => {
+      this.navigation = [
+        {
+          label: this._translateService.instant('user.userMenu.home'),
+          shortLabel: this._translateService.instant('user.userMenu.home'),
+          route: RouteConstants.homeRelative,
+          icon: '',
+        },
+        {
+          label: this._translateService.instant('user.userMenu.myAccount'),
+          shortLabel: this._translateService.instant('user.userMenu.myAccount'),
+          route: RouteConstants.userAccountRelative,
+          icon: '',
+        },
+      ];
+    });
   }
 }

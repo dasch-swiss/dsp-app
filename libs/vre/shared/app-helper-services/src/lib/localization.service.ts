@@ -1,16 +1,12 @@
 import { registerLocaleData } from '@angular/common';
 import de_CH from '@angular/common/locales/de-CH';
-import en from '@angular/common/locales/en';
+import en_GB from '@angular/common/locales/en-GB';
 import fr_CH from '@angular/common/locales/fr-CH';
 import it_CH from '@angular/common/locales/it-CH';
 import { Injectable } from '@angular/core';
+import { AvailableLanguages } from '@dasch-swiss/vre/shared/app-config';
 import { TranslateService } from '@ngx-translate/core';
 import { BaseService } from './base.service';
-
-export interface ILanguage {
-  name: string;
-  value: string;
-}
 
 @Injectable({
   providedIn: 'root',
@@ -19,18 +15,9 @@ export class LocalizationService extends BaseService {
   private readonly defaultLanguage = 'en';
   private readonly localStorageLanguageKey = 'dsp_language';
 
-  private readonly languageDe: ILanguage = { name: 'German (Deutsch)', value: 'de' };
-  private readonly languageFr: ILanguage = { name: 'French (Francais)', value: 'fr' };
-  private readonly languageIt: ILanguage = { name: 'Italian (Italiano)', value: 'it' };
-
-  private _availableLanguages: ILanguage[] = new Array<ILanguage>();
-  get availableLanguages(): ILanguage[] {
-    return this._availableLanguages ? this._availableLanguages : new Array<ILanguage>();
-  }
-
   private _locale: any;
   get locale() {
-    return window['prerender'] ? window['prerender']['locale'] : this._locale;
+    return window.navigator.language ? window.navigator.language : this._locale;
   }
 
   set locale(value: string) {
@@ -39,7 +26,7 @@ export class LocalizationService extends BaseService {
   }
 
   availableLocales = [
-    { locale: 'en', localeData: en },
+    { locale: 'en-GB', localeData: en_GB },
     { locale: 'fr-CH', localeData: fr_CH },
     { locale: 'de-CH', localeData: de_CH },
     { locale: 'it-CH', localeData: it_CH },
@@ -47,12 +34,11 @@ export class LocalizationService extends BaseService {
 
   constructor(private translateService: TranslateService) {
     super();
-    this.createAvailableLanguages();
   }
 
   init() {
     this.setDefaultLanguage();
-    this.locale = 'en';
+    this.locale = 'en-GB';
   }
 
   getCurrentLanguage(): string {
@@ -75,25 +61,19 @@ export class LocalizationService extends BaseService {
 
   private getLanguageFromBrowser(): string {
     const browserLang = this.translateService.getBrowserLang();
-    return browserLang?.match(/en|de|fr|it/) ? browserLang : this.defaultLanguage;
+    const availableLanguageExp = AvailableLanguages.map(lang => lang.language).join('|');
+    return browserLang?.match(`/${availableLanguageExp}/`) ? browserLang : this.defaultLanguage;
   }
 
   private setDefaultLanguage() {
     this.setLanguage(this.getLanguage());
   }
 
-  private createAvailableLanguages() {
-    this._availableLanguages = new Array<ILanguage>();
-    this.availableLanguages.push(this.languageDe);
-    this.availableLanguages.push(this.languageFr);
-    this.availableLanguages.push(this.languageIt);
-  }
-
   private setLocale(locale: string) {
     let localeItem = this.availableLocales.find(item => item.locale === locale);
 
     if (!localeItem) {
-      localeItem = { locale: 'en', localeData: en };
+      localeItem = { locale: 'en', localeData: en_GB };
     }
 
     registerLocaleData(localeItem.localeData, locale);

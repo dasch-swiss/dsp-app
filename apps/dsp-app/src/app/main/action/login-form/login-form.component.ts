@@ -34,7 +34,7 @@ import { finalize, takeLast, tap } from 'rxjs/operators';
         [isLoading]="loading"
         type="submit"
         data-cy="submit-button">
-        {{ isLoginError ? ('appLabels.form.action.retry' | translate) : ('appLabels.form.action.login' | translate) }}
+        {{ isLoginError ? ('form.action.retry' | translate) : ('form.action.login' | translate) }}
       </button>
     </form>
   `,

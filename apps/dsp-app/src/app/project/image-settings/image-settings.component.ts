@@ -78,9 +78,7 @@ export class ImageSettingsComponent implements OnInit {
       .dispatch(new UpdateProjectRestrictedViewSettingsAction(this.projectUuid, this.getRequest()))
       .subscribe(() => {
         this.currentSettings = this._store.selectSnapshot(ProjectsSelectors.projectRestrictedViewSettings);
-        this._notification.openSnackBar(
-          this.translateService.instant('appLabels.form.project.imageSettings.updateConfirmation')
-        );
+        this._notification.openSnackBar(this.translateService.instant('form.project.imageSettings.updateConfirmation'));
       });
   }
 

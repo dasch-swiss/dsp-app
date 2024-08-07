@@ -24,7 +24,7 @@ import { FormBuilder, Validators } from '@angular/forms';
       <!-- Further inputs would be status, lineColor and lineWidth if we want to have these options-->
       <div class="form-action form-panel medium-field">
         <span>
-          <button mat-button type="button" mat-dialog-close>{{ 'appLabels.form.action.cancel' | translate }}</button>
+          <button mat-button type="button" mat-dialog-close>{{ 'form.action.cancel' | translate }}</button>
         </span>
         <span class="fill-remaining-space"></span>
         <span>

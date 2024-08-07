@@ -1,10 +1,11 @@
 import { Inject, Injectable } from '@angular/core';
 import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
+import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { LoadUserAction } from '@dasch-swiss/vre/shared/app-state';
-import { Store } from '@ngxs/store';
+import { Actions, Store, ofActionSuccessful } from '@ngxs/store';
 import { BehaviorSubject, throwError } from 'rxjs';
-import { finalize, switchMap } from 'rxjs/operators';
+import { finalize, switchMap, take } from 'rxjs/operators';
 import { AccessTokenService } from './access-token.service';
 import { AuthService } from './auth.service';
 
@@ -17,7 +18,9 @@ export class AutoLoginService {
     @Inject(DspApiConnectionToken)
     private _dspApiConnection: KnoraApiConnection,
     private _store: Store,
-    private _authService: AuthService
+    private _authService: AuthService,
+    private _actions$: Actions,
+    private _localizationsService: LocalizationService
   ) {}
 
   setup() {
@@ -51,6 +54,9 @@ export class AutoLoginService {
             return throwError('Decoded user in JWT token is not valid.');
           }
 
+          this._actions$.pipe(ofActionSuccessful(LoadUserAction), take(1)).subscribe(() => {
+            this._localizationsService.setLanguage(this._store.selectSnapshot(state => state.user.user).lang);
+          });
           return this._store.dispatch(new LoadUserAction(userIri, 'iri'));
         }),
         finalize(() => this.hasCheckedCredentials$.next(true))

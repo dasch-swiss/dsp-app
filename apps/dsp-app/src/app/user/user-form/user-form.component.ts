@@ -2,12 +2,12 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ReadUser, StringLiteral } from '@dasch-swiss/dsp-js';
 import { CustomRegex } from '@dasch-swiss/vre/shared/app-common';
+import { AvailableLanguages } from '@dasch-swiss/vre/shared/app-config';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { UserSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { AppGlobal } from '../../app-global';
 import { existingNamesAsyncValidator } from '../../main/directive/existing-name/existing-names.validator';
 import { UserForm } from './user-form.type';
 
@@ -28,7 +28,7 @@ export class UserFormComponent implements OnInit {
   private _existingUserNames$: Observable<RegExp[]>;
   private _existingUserEmails$: Observable<RegExp[]>;
 
-  readonly languagesList: StringLiteral[] = AppGlobal.languagesList;
+  readonly languagesList: StringLiteral[] = AvailableLanguages;
 
   readonly emailPatternErrorMsg = {
     errorKey: 'pattern',

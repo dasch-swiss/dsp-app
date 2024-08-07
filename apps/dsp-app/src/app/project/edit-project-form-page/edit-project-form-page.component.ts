@@ -29,7 +29,7 @@ import { ProjectForm } from '../reusable-project-form/project-form.type';
         appLoadingButton
         [isLoading]="loading"
         data-cy="submit-button">
-        {{ 'appLabels.form.action.submit' | translate }}
+        {{ 'form.action.submit' | translate }}
       </button>
     </div>
   </dasch-swiss-centered-layout>`,

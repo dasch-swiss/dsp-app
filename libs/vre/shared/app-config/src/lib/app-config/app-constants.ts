@@ -1,3 +1,28 @@
+import { StringLiteral } from '@dasch-swiss/dsp-js';
+
+export const AvailableLanguages: StringLiteral[] = [
+  {
+    language: 'en',
+    value: 'English',
+  },
+  {
+    language: 'de',
+    value: 'German (Deutsch)',
+  },
+  {
+    language: 'fr',
+    value: 'French (Francais)',
+  },
+  {
+    language: 'it',
+    value: 'Italian (Italiano)',
+  },
+  {
+    language: 'rm',
+    value: 'Romanic (Rumantsch)',
+  },
+];
+
 export class RouteConstants {
   static readonly home = '';
   static readonly help = 'help';

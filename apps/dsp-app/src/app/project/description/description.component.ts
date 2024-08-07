@@ -2,13 +2,12 @@ import { Component, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ReadUser } from '@dasch-swiss/dsp-js';
 import { StringLiteral } from '@dasch-swiss/dsp-js/src/models/admin/string-literal';
-import { RouteConstants } from '@dasch-swiss/vre/shared/app-config';
+import { AvailableLanguages, RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { ProjectsSelectors, UserSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { Select, Store } from '@ngxs/store';
 import { Observable, Subject, combineLatest } from 'rxjs';
 import { map, takeUntil, takeWhile } from 'rxjs/operators';
-import { AppGlobal } from '../../app-global';
 
 @Component({
   // changeDetection: ChangeDetectionStrategy.OnPush,
@@ -53,8 +52,7 @@ export class DescriptionComponent implements OnDestroy {
 
   constructor(
     private _route: ActivatedRoute,
-    private _store: Store,
-    private _projectService: ProjectService
+    private _store: Store
   ) {}
 
   ngOnDestroy(): void {
@@ -63,7 +61,7 @@ export class DescriptionComponent implements OnDestroy {
   }
 
   private _sortDescriptionsByLanguage(descriptions: StringLiteral[]): StringLiteral[] {
-    const languageOrder = AppGlobal.languagesList.map(l => l.language);
+    const languageOrder = AvailableLanguages.map(l => l.language);
 
     return descriptions.sort((a, b) => {
       const indexA = languageOrder.indexOf(a.language);

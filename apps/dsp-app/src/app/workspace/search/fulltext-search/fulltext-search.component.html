@@ -13,7 +13,7 @@
       [matMenuTriggerFor]="selectProject"
       #btnToSelectProject="matMenuTrigger"
       isIconButton>
-      <p class="mat-caption placeholder">Filter by project</p>
+      <p class="mat-caption placeholder">{{ 'fullTextSearch.filterByProject' | translate }}</p>
       <p class="label">{{ projectLabel }}</p>
       <mat-icon class="icon" matSuffix>keyboard_arrow_down</mat-icon>
     </button>
@@ -43,7 +43,7 @@
       name="fulltext-search"
       minlength="3"
       autocomplete="off"
-      [placeholder]="'Search'"
+      [placeholder]="'fullTextSearch.search' | translate"
       (keyup.esc)="resetSearch()"
       (keyup.enter)="doSearch()"
       (click)="setFocus()" />
@@ -110,7 +110,7 @@
         [matMenuTriggerFor]="selectProject"
         #btnToSelectProject="matMenuTrigger"
         isIconButton>
-        <p class="mat-caption placeholder">Filter by project</p>
+        <p class="mat-caption placeholder">{{ 'fullTextSearch.filterByProject' | translate }}</p>
         <p class="label">{{ projectLabel }}</p>
         <mat-icon class="icon" matSuffix>keyboard_arrow_down</mat-icon>
       </button>
@@ -134,12 +134,12 @@
         name="fulltext-search"
         minlength="3"
         autocomplete="off"
-        [placeholder]="'Search'"
+        [placeholder]="'fullTextSearch.search' | translate"
         (click)="setFocus()"
         (keyup.esc)="resetSearch()"
         (keyup.enter)="doSearch()" />
       <button mat-button color="primary" class="app-fulltext-search-button" (click)="doSearch()" type="submit">
-        Search
+        {{ 'fullTextSearch.search' | translate }}
       </button>
     </div>
 

@@ -1,7 +1,7 @@
 <div [ngSwitch]="data.mode">
   <!-- Update password -->
   <div *ngSwitchCase="'editPassword'">
-    <app-dialog-header [title]="data.user.username" [subtitle]="'appLabels.form.user.title.password' | translate">
+    <app-dialog-header [title]="data.user.username" [subtitle]="'form.user.title.password' | translate">
     </app-dialog-header>
     <app-password-form [user]="data.user" (closeDialog)="dialogRef.close()"></app-password-form>
   </div>
