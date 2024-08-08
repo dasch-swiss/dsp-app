@@ -1,5 +1,18 @@
 # Changelog
 
+## [11.16.4](https://github.com/dasch-swiss/dsp-das/compare/v11.16.3...v11.16.4) (2024-08-07)
+
+
+### Bug Fixes
+
+* reimplement cardinality change ([#1688](https://github.com/dasch-swiss/dsp-das/issues/1688)) ([9c8d94c](https://github.com/dasch-swiss/dsp-das/commit/9c8d94c0cd18f54c7be91ce224b39bd188eec573))
+* updated localization service, translations, language switching (DEV-3961) ([#1726](https://github.com/dasch-swiss/dsp-das/issues/1726)) ([19cdf99](https://github.com/dasch-swiss/dsp-das/commit/19cdf999e3bd77b6a904db5b0c4b6a1d5e651355))
+
+
+### Maintenance
+
+* separate display logic from business logic ([#1723](https://github.com/dasch-swiss/dsp-das/issues/1723)) ([a5227eb](https://github.com/dasch-swiss/dsp-das/commit/a5227ebfdac37564ceed8c6f402f912da990649d))
+
 ## [11.16.3](https://github.com/dasch-swiss/dsp-das/compare/v11.16.2...v11.16.3) (2024-07-31)
 
 
