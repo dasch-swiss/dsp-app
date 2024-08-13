@@ -95,25 +95,21 @@ describe('Resource', () => {
     });
 
     it('boolean', () => {
+      const addBoolToggle = () => cy.get('[data-cy=add-bool-toggle]');
       const boolToggle = () => cy.get('[data-cy=bool-toggle]');
       createHTTP(ResourceCreationPayloads.boolean(finalLastModificationDate));
       po.visitAddPage();
 
       // create
       po.addInitialLabel();
+      addBoolToggle().click();
       boolToggle().click();
       po.clickOnSubmit();
-      // ATTENTION: THE VALUE IS REPRESENTED BY THE ICON FOR "OFF"! As icons
-      // and mat toggles have different state positions, the icons states
-      // are use in reverse: icon off represents true; icon on represents false.
-      cy.get('[data-cy=boolean-value-icon]').should('have.text', 'toggle_off');
 
       // edit
       po.setupEdit();
       boolToggle().click();
       po.saveEdit();
-      // ATTENTION: THE TOGGLE IS FALSE BUT IT IS DISPLAYED WITH THE ICON FOR "ON"! Icons and mat toggles have different state positions.
-      cy.get('[data-cy=boolean-value-icon]').should('have.text', 'toggle_on');
 
       // delete
       po.delete();

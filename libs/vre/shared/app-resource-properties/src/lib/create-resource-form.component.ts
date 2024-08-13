@@ -237,11 +237,12 @@ export class CreateResourceFormComponent implements OnInit {
           control => control.value.item !== null && control.value.item !== ''
         );
 
-        return hasPropertyControlValue === true &&
-          this.getInvalidValueItems(iri, this.form.controls.properties.controls[iri].controls, this.properties)
-            .length === 0
-          ? false
-          : hasPropertyControlValue;
+        const optionalItems = this.getOptionalValueItems(
+          iri,
+          this.form.controls.properties.controls[iri].controls,
+          this.properties
+        );
+        return hasPropertyControlValue === true && optionalItems.length === 0 ? hasPropertyControlValue : false;
       })
       .forEach(iri => {
         propertiesObj[iri] = this._getValue(iri);
@@ -253,18 +254,24 @@ export class CreateResourceFormComponent implements OnInit {
     return propertiesObj;
   }
 
-  private getInvalidValueItems = (iri: string, controls: FormValueGroup[], properties: PropertyInfoValues[]) =>
+  private getOptionalValueItems = (iri: string, controls: FormValueGroup[], properties: PropertyInfoValues[]) =>
     controls.filter(group => {
-      let hasNotTouchedBoolean = false;
+      let hasOptionalBoolean = false;
       if (group.value) {
         const foundProperty = properties.find(property => property.guiDef.propertyIndex === iri);
-        hasNotTouchedBoolean =
-          foundProperty && (foundProperty.propDef as ResourcePropertyDefinition).objectType === Constants.BooleanValue
-            ? group.pristine
-            : hasNotTouchedBoolean;
+        hasOptionalBoolean = !!(
+          foundProperty &&
+          (foundProperty.propDef as ResourcePropertyDefinition).objectType === Constants.BooleanValue &&
+          !this.isRequired(foundProperty.guiDef.cardinality) &&
+          group.value.item === null
+        );
       }
-      return !hasNotTouchedBoolean && group.value.item !== null;
+      return hasOptionalBoolean;
     });
+
+  isRequired(cardinality: Cardinality): boolean {
+    return [Cardinality._1, Cardinality._1_n].includes(cardinality);
+  }
 
   private _getValue(iri: string) {
     const foundProperty = this.properties.find(property => property.guiDef.propertyIndex === iri);

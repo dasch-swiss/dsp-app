@@ -28,6 +28,7 @@ import { TextHtmlSwitchComponent } from './lib/switch-components/text-html-switc
 import { TextSwitchComponent } from './lib/switch-components/text-switch.component';
 import { TextTypesSelectorComponent } from './lib/switch-components/text-types-selector.component';
 import { TimeSwitchComponent } from './lib/switch-components/time-switch.component';
+import { ToggleSwitchComponent } from './lib/switch-components/toggle-switch.component';
 import { UriSwitchComponent } from './lib/switch-components/uri-switch.component';
 import { Upload2Component } from './lib/upload2.component';
 import { GeonameValueComponent } from './lib/value-components/geoname-value.component';
@@ -57,6 +58,7 @@ const switchComponents = [
   DateSwitchComponent,
   BaseSwitchComponent,
   RichTextSwitchComponent,
+  ToggleSwitchComponent,
   TextSwitchComponent,
   TextHtmlSwitchComponent,
 ];
