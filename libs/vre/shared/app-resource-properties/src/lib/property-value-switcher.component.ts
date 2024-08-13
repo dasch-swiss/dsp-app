@@ -49,7 +49,11 @@ import { PropertyValueService } from './property-value.service';
     </ng-template>
 
     <ng-template #booleanTpl let-item="item" let-displayMode="displayMode">
+      <!-- In order to match the mat toggle's state the icons are in reverse:
+              the icon for off state represents true and the icon for on state represents false
+              -->
       <mat-icon
+        data-cy="boolean-value-icon"
         @replaceAnimation
         *ngIf="displayMode && item.value"
         [title]="'uiControls.icon.true' | translate"
@@ -57,6 +61,7 @@ import { PropertyValueService } from './property-value.service';
         >toggle_off</mat-icon
       >
       <mat-icon
+        data-cy="boolean-value-icon"
         @replaceAnimation
         *ngIf="displayMode && !item.value"
         [title]="'uiControls.icon.false' | translate"

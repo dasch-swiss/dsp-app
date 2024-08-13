@@ -46,7 +46,12 @@ describe('Data Model Class', () => {
     cy.get('[data-cy=submit-button]').click();
 
     cy.wait('@createRequest');
-    cy.get('[data-cy=class-card]').should('be.visible').get('mat-card-title').contains(textClass.label.split(' ')[0]);
+    cy.get('[data-cy=class-card]')
+      .should('be.visible')
+      .within(() => {
+        cy.get('mat-card-title').contains(textClass.label.split(' ')[0]);
+      });
+    // The within function is used to scope the search for mat-card-title within the visible class-card. This ensures that Cypress waits for mat-card-title to be available within the class-card.
     cy.get('[data-cy=create-class-button]').scrollIntoView().should('be.visible').click();
     cy.get(`[data-cy=${ClassType.Resource}]`).scrollIntoView().should('be.visible').click({ force: true });
     cy.get('[data-cy=name-input]').clear().type(resourceClass.id);
@@ -99,7 +104,6 @@ describe('Data Model Class', () => {
     cy.get('[data-cy=submit-button]').click();
 
     cy.wait('@createPropertyRequest');
-    cy.reload(); // TODO remove
     cy.get('[data-cy=property-label]').should('be.visible').should('include.text', textProperty.label);
   });
 });
