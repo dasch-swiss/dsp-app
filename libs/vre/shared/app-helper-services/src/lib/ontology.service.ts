@@ -215,9 +215,9 @@ export class OntologyService {
 
   getOntologyIriFromRoute(projectShortcode: string): string | null {
     const iriBase = this.getIriBaseUrl();
-    let ontologyName = this._route.snapshot.paramMap.get(RouteConstants.ontoParameter);
-    if (!ontologyName) {
-      ontologyName = this._route.snapshot.root.children[0].children[0].paramMap.get(RouteConstants.ontoParameter);
+    let ontologyName = this._route.snapshot?.paramMap.get(RouteConstants.ontoParameter);
+    if (!ontologyName && this._route.snapshot?.root.children[0].children.length) {
+      ontologyName = this._route.snapshot?.root.children[0].children[0].paramMap.get(RouteConstants.ontoParameter);
     }
 
     return ontologyName ? `${iriBase}/${RouteConstants.ontology}/${projectShortcode}/${ontologyName}/v2` : null;

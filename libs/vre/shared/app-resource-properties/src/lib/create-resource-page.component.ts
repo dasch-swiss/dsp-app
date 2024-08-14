@@ -1,59 +1,65 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ResourceClassDefinition } from '@dasch-swiss/dsp-js';
-import { getAllEntityDefinitionsAsArray } from '@dasch-swiss/vre/shared/app-api';
+import { Project } from '@dasch-swiss/dsp-js';
 import { ResourceService } from '@dasch-swiss/vre/shared/app-common';
-import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
-import { OntologiesSelectors } from '@dasch-swiss/vre/shared/app-state';
-import { Store } from '@ngxs/store';
-import { combineLatest } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
-import { ResourceClassIriService } from './resource-class-iri.service';
+import { RouteConstants } from '@dasch-swiss/vre/shared/app-config';
+import { OntologyService, ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { ProjectsSelectors } from '@dasch-swiss/vre/shared/app-state';
+import { Select } from '@ngxs/store';
+import { Observable, Subject } from 'rxjs';
+import { take, takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-create-resource-page',
-  template: ` <h3>Create new resource of type: {{ (resClass$ | async)?.label }}</h3>
+  template: ` <h3>Create new resource of type: {{ classLabel }}</h3>
     <app-create-resource-form
-      *ngIf="resourceClassIriService.resourceClassIriFromParamSubject.asObservable() | async as classIri"
-      [resourceType]="(resClass$ | async)?.label"
-      [resourceClassIri]="classIri"
+      *ngIf="resourceClassIri"
+      [resourceType]="classLabel"
+      [resourceClassIri]="resourceClassIri"
       [projectIri]="projectIri"
       (createdResourceIri)="afterCreation($event)"></app-create-resource-form>`,
-  providers: [ResourceClassIriService],
 })
-export class CreateResourcePageComponent {
-  projectOntologies$ = this._store.select(OntologiesSelectors.projectOntologies);
-  projectUuid = this._route.snapshot.params['uuid'] ?? this._route.parent!.snapshot.params['uuid'];
+export class CreateResourcePageComponent implements OnDestroy {
+  private _destroy = new Subject<void>();
+
+  private _projectUuid = this._route.snapshot.params['uuid'] ?? this._route.parent!.snapshot.params['uuid'];
+
+  @Select(ProjectsSelectors.currentProject) project$!: Observable<Project>;
+
+  ontologyId = '';
+  resourceClassIri = '';
+
+  get classLabel() {
+    return this.resourceClassIri ? this.resourceClassIri.split('#')[1] : '';
+  }
+
+  get projectIri() {
+    return this._projectService.uuidToIri(this._projectUuid);
+  }
 
   constructor(
     private _route: ActivatedRoute,
-    private _store: Store,
+    private _ontologyService: OntologyService,
     protected _projectService: ProjectService,
     private _router: Router,
-    private _resourceService: ResourceService,
-    public resourceClassIriService: ResourceClassIriService
-  ) {}
-
-  get projectIri() {
-    return this._projectService.uuidToIri(this.projectUuid);
+    private _resourceService: ResourceService
+  ) {
+    this.project$.pipe(takeUntil(this._destroy)).subscribe(project => {
+      if (!project) {
+        return;
+      }
+      this.ontologyId = this._ontologyService.getOntologyIriFromRoute(project.shortcode) || '';
+      this.resourceClassIri = `${this.ontologyId}#${this._route.snapshot.params[RouteConstants.classParameter]}`;
+    });
   }
-
-  resClass$ = combineLatest([
-    this.projectOntologies$.pipe(filter(v => Object.keys(v).length !== 0)),
-    this.resourceClassIriService.resourceClassIriFromParamSubject.asObservable(),
-    this.resourceClassIriService.ontoId$,
-  ]).pipe(
-    map(([projectOntologies, classId, ontoId]) => {
-      const ontology = projectOntologies[this.projectIri].readOntologies.find(onto => onto.id === ontoId);
-      if (!ontology) return undefined;
-      // find ontology of current resource class to get the class label
-      const classes = getAllEntityDefinitionsAsArray(ontology.classes);
-      return <ResourceClassDefinition>classes[classes.findIndex(res => res.id === classId)];
-    })
-  );
 
   afterCreation(resourceIri: string) {
     const uuid = this._resourceService.getResourceUuid(resourceIri);
     this._router.navigate(['..', uuid], { relativeTo: this._route });
+  }
+
+  ngOnDestroy() {
+    this._destroy.next();
+    this._destroy.complete();
   }
 }
