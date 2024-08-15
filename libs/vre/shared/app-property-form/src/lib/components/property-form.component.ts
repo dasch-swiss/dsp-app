@@ -73,7 +73,10 @@ export class PropertyFormComponent implements OnInit {
   get selectedProperty() {
     const selected = this.defaultProperties
       .flatMap(el => el.elements)
-      .find(e => e.objectType === this.formData.property.propType.objectType);
+      .find(
+        e =>
+          e.objectType === this.formData.property.propType.objectType && e.guiEle === this.form.controls.propType.value
+      );
     return selected;
   }
 
