@@ -10,6 +10,7 @@ import { CardinalityChangeDialogComponent, CardinalityInfo } from './cardinality
   template: `
     <div class="toggles">
       <mat-slide-toggle
+        [disabled]="disabled"
         [matTooltip]="'Whether the property in this class can have multiple values or not'"
         matTooltipPosition="above"
         [(ngModel)]="multipleToggleState"
@@ -18,6 +19,7 @@ import { CardinalityChangeDialogComponent, CardinalityInfo } from './cardinality
       </mat-slide-toggle>
 
       <mat-slide-toggle
+        [disabled]="disabled"
         [matTooltip]="'Whether the property in this class must have one value or not'"
         matTooltipPosition="above"
         [(ngModel)]="requiredToggleState"
@@ -31,6 +33,7 @@ export class CardinalityComponent implements OnInit {
   @Input() propertyInfo!: PropertyInfoObject;
   @Input() classIri!: string;
   @Input() cardinality!: Cardinality;
+  @Input() disabled = false;
   @Output() cardinalityChange = new EventEmitter<Cardinality>();
 
   multipleToggleState = false;

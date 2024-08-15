@@ -46,6 +46,7 @@
     </span>
     <span>
       <app-cardinality
+        [disabled]="!userCanEdit"
         [cardinality]="propCard.cardinality"
         [classIri]="resourceClass.id"
         [propertyInfo]="{ propDef: this.propDef, propType: this.propType }"
