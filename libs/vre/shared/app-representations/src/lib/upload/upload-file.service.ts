@@ -25,7 +25,7 @@ export class UploadFileService {
   upload(file: File, shortcode: string): Observable<UploadedFile> {
     const jwt = this._accessTokenService.getAccessToken()!;
     const headers = new HttpHeaders({
-      'Content-Type': 'application/octet-stream}',
+      'Content-Type': 'application/octet-stream',
       Authorization: `Bearer ${jwt}`,
     });
 
