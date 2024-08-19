@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.17.1](https://github.com/dasch-swiss/dsp-das/compare/v11.17.0...v11.17.1) (2024-08-19)
+
+
+### Maintenance
+
+* fix publishing to Docker Hub ([#1740](https://github.com/dasch-swiss/dsp-das/issues/1740)) ([4eb3ab1](https://github.com/dasch-swiss/dsp-das/commit/4eb3ab1d7af4feb29cc0e98bf038ef6000f1e098))
+
 ## [11.17.0](https://github.com/dasch-swiss/dsp-das/compare/v11.16.4...v11.17.0) (2024-08-19)
 
 
