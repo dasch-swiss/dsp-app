@@ -4,52 +4,48 @@
 [![Docker](https://img.shields.io/docker/v/daschswiss/dsp-app?label=Docker%20image)](https://hub.docker.com/r/daschswiss/dsp-app)
 [![CI](https://github.com/dasch-swiss/dsp-das/workflows/CI/badge.svg)](https://github.com/dasch-swiss/dsp-das/actions?query=workflow%3ACI)
 
-This monorepo host different applications and libraries of the DaSCH Service Platform.
+This monorepo hosts various applications and libraries of the DaSCH Service Platform.
 
 # Install libraries
 
-Add
-
-```
-//npm.pkg.github.com/:_authToken=YOUR_NPM_TOKEN
-@dasch-swiss/dsp-js:registry=https://npm.pkg.github.com/dasch-swiss
-@dasch-swiss/jdnconvertiblecalendar:registry=https://registry.npmjs.org/
-```
-
-and run ```npm install```.
+To install libraries just run ```npm install```.
 
 ## @dasch-swiss librairies
 
-Please go to the following readme:
+For more information about specific library, please go to its readme, e.g.:
 
 - [@dasch-swiss/jdnconvertiblecalendar](https://github.com/dasch-swiss/dsp-das/blob/main/libs/jdnconvertiblecalendar/README.md)
 - [@dasch-swiss/jdnconvertiblecalendardateadapter](https://github.com/dasch-swiss/dsp-das/blob/main/libs/jdnconvertiblecalendardateadapter/README.md)
 
-## DSP-APP &mdash; Generic user interface of DaSCH Service Platform
+## DSP-APP &mdash; generic user interface of DaSCH Service Platform
 
-This app is a simple user interface for the research data repository of the
-Swiss National Data and Service Center for the Humanities (DaSCH), which uses
-the DSP-API server application in the backend. It's a system for annotation and
-linkage of resources in arts and humanities.
-
-DSP-APP implements [DSP-JS-LIB](https://www.npmjs.com/package/@dasch-swiss/dsp-js-lib)
-to connect with [DSP-API](https://docs.dasch.swiss/latest/DSP-API/03-endpoints/api-v2/introduction/).
 DSP (DaSCH Service Platform) is a software framework for storing, sharing, and
 working with primary resources and data in the humanities.
+
+DSP-APP is a simple user interface for the research data repository of the
+Swiss National Data and Service Center for the Humanities (DaSCH), which uses
+the [DSP-API](https://github.com/dasch-swiss/dsp-api) server application in the backend. It's a system for annotation and
+linkage of resources in arts and humanities.
+
+DSP-APP implements [DSP-JS](https://www.npmjs.com/package/@dasch-swiss/dsp-js)
+to connect with [DSP-API](https://docs.dasch.swiss/latest/DSP-API/03-endpoints/api-v2/introduction/).
+
 
 DSP-APP is [free software](http://www.gnu.org/philosophy/free-sw.en.html), released
 under [GNU Affero General Public](http://www.gnu.org/licenses/agpl-3.0.en.html) license.
 
 ## User Quickstart
 
-To try out DSP-APP you first need to start the backend [DSP-API](https://github.com/dasch-swiss/dsp-api):
+To try DSP-APP out the [DSP-API](https://github.com/dasch-swiss/dsp-api) backend should be started first:
 
+In terminal fo to DSP-API repository and start the API by running following commands:
 ```shell
-# go the dsp-api repository in a terminal and start the api
 $ make init-db-test
 $ make stack-without-app
-
-# come back to this repository and start the app
+```
+Once backend is up and running, in the second terminal instance start DSP-APP by running:
+```shell
+# come back to this repository and start the DSP-APP
 $ npx nx run dsp-app:serve
 ```
 
@@ -90,10 +86,11 @@ The most common commands are defined in `package.json`.
 
 ### E2E Tests
 
-- There are three spm scripts to run the E2E tests.
+There are three NPM scripts to run the E2E tests:
+
 - `npm run e2e-ci-dev` will run the E2E tests in the console in a development environment.
-- `npm run e2e-ci` will run the E2E tests in the console in a production environment. This is the command that is run on GitHub CI.
-- `npm run e2e-local` will open the Cypress UI which will enable you to easy run individual tests and see every step as it runs.
+- `npm run e2e-ci` will run the E2E tests in the console in a production environment. This is the command run also on GitHub CI.
+- `npm run e2e-local` will open the Cypress UI which will enable to run individual tests easily and see every step as it runs.
 
 ## Further Documentation
 
@@ -108,9 +105,9 @@ The most common commands are defined in `package.json`.
 ## Contribution
 
 If you would like to contribute to the development of the DSP-APP alongside us,
-please consult the [general DSP contribution guidelines](https://docs.dasch.swiss/latest/developers/contribution/).
+please follow the [general DSP contribution guidelines](https://docs.dasch.swiss/latest/developers/contribution/).
 
 ### Documentation / User guidelines
 
 We built the user guidelines and developer documentation with [MkDocs](https://www.mkdocs.org/).
-Get more information in the appropriate [README](https://github.com/dasch-swiss/dsp-app/blob/main/docs/contribution/docs-documentation.md).
+More information can be found in the specific [README](https://github.com/dasch-swiss/dsp-app/blob/main/docs/contribution/docs-documentation.md).
