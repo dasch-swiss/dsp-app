@@ -59,12 +59,15 @@ export class CreateListItemDialogComponent {
       parentNodeIri: this.data.parentIri,
       projectIri: this.data.projectIri,
       labels: this.form.value.labels as StringLiteral[],
-      comments: this.form.value.comments as StringLiteral[],
       position: this.data.position,
       name: `${ProjectService.IriToUuid(this.data.projectIri)}-${Math.random().toString(36).substring(2)}${Math.random()
         .toString(36)
         .substring(2)}`,
     };
+
+    if (this.form.value.comments && this.form.value.comments.length !== 0) {
+      Object.assign(payload, { comments: this.form.value.comments as StringLiteral[] });
+    }
 
     this._listApiService.createChildNode(payload.parentNodeIri, payload).subscribe(() => {
       this.loading = false;
