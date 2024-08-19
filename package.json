@@ -153,8 +153,5 @@
     "@nx/nx-darwin-x64": "16.5.3",
     "@nx/nx-linux-x64-gnu": "16.5.3",
     "@nx/nx-win32-x64-msvc": "16.5.3"
-  },
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com/dasch-swiss"
   }
 }
