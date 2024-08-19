@@ -1,5 +1,29 @@
 # Changelog
 
+## [11.17.0](https://github.com/dasch-swiss/dsp-das/compare/v11.16.4...v11.17.0) (2024-08-19)
+
+
+### Enhancements
+
+* nullable switch toggle (DEV-3954) ([#1727](https://github.com/dasch-swiss/dsp-das/issues/1727)) ([fe1fae3](https://github.com/dasch-swiss/dsp-das/commit/fe1fae3452259810e760daada30be96726ccdb46))
+* update dsp-js to 10.1.0 from npm registry ([#1736](https://github.com/dasch-swiss/dsp-das/issues/1736)) ([9c3b9a9](https://github.com/dasch-swiss/dsp-das/commit/9c3b9a9917bda75b422467de7d14b97e07dcbb6f))
+
+
+### Bug Fixes
+
+* **add resource component:** display label, remove whole unnecessary logic and simplify ([#1730](https://github.com/dasch-swiss/dsp-das/issues/1730)) ([a7b0cfb](https://github.com/dasch-swiss/dsp-das/commit/a7b0cfb5dd94d4e654237c8037b1437061698642))
+* allows to add list item without comments (DEV-4016) ([#1739](https://github.com/dasch-swiss/dsp-das/issues/1739)) ([0c347b2](https://github.com/dasch-swiss/dsp-das/commit/0c347b2b4d3944179a3337edaeec68ed8228199d))
+* **cardinality toggles:** disable if not project or sys admin ([#1734](https://github.com/dasch-swiss/dsp-das/issues/1734)) ([d0a0205](https://github.com/dasch-swiss/dsp-das/commit/d0a02051db1589e82e77b1581bafbc06bc862fad))
+* create new property type (DEV-4008) ([#1735](https://github.com/dasch-swiss/dsp-das/issues/1735)) ([32314f3](https://github.com/dasch-swiss/dsp-das/commit/32314f3e133c4306304b3f950dcc3683bad5b9b1))
+* Remove redundant brace from Content-Type ([#1731](https://github.com/dasch-swiss/dsp-das/issues/1731)) ([b9f5797](https://github.com/dasch-swiss/dsp-das/commit/b9f57974348435374c55f65856dc54a356947371))
+* **update group membership:** trigger update after each change (DEV-3857) ([#1741](https://github.com/dasch-swiss/dsp-das/issues/1741)) ([05ee687](https://github.com/dasch-swiss/dsp-das/commit/05ee687e73398a255c462ec7f10866ac650f1be0))
+* update user membership (DEV-3857) ([#1733](https://github.com/dasch-swiss/dsp-das/issues/1733)) ([2e5efee](https://github.com/dasch-swiss/dsp-das/commit/2e5efee21b14b7a57b5b429b916788ff64522b47))
+
+
+### Documentation
+
+* improve README ([#1738](https://github.com/dasch-swiss/dsp-das/issues/1738)) ([24e92d4](https://github.com/dasch-swiss/dsp-das/commit/24e92d412486c6e932deb5b02e3318dc29b1b7eb))
+
 ## [11.16.4](https://github.com/dasch-swiss/dsp-das/compare/v11.16.3...v11.16.4) (2024-08-07)
 
 
