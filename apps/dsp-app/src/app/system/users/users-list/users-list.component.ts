@@ -181,21 +181,21 @@ export class UsersListComponent {
         currentUserGroups.push(group.id);
       }
 
-      const removeOldGroups$ = from(currentUserGroups).pipe(
+      const removeOldGroup$ = from(currentUserGroups).pipe(
         filter(oldGroup => groups.indexOf(oldGroup) === -1), // Filter out groups that are no longer in 'groups'
         mergeMap(oldGroup => {
           return this._userApiService.removeFromGroupMembership(userIri, oldGroup).pipe(take(1));
         })
       );
 
-      const addNewGroups$ = from(groups).pipe(
+      const addNewGroup$ = from(groups).pipe(
         filter(newGroup => currentUserGroups.indexOf(newGroup) === -1), // Filter out groups that are already in 'currentUserGroups'
         mergeMap(newGroup => {
           return this._userApiService.addToGroupMembership(userIri, newGroup).pipe(take(1));
         })
       );
 
-      merge(removeOldGroups$, addNewGroups$)
+      merge(removeOldGroup$, addNewGroup$)
         .pipe(takeLast(1))
         .subscribe({
           next: () => {

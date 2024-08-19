@@ -97,13 +97,6 @@ export class SelectGroupComponent implements OnDestroy, AfterViewInit {
     }
   }
 
-  onGroupSelect() {
-    // if change is true, the onGroupChange is active
-    // with this method we prevent to submit data already by opening the selection
-    // it should emit the data when closing the selection and if the data has changed!
-    // this.sendData = (this.groupCtrl.value !== this.permissions);
-  }
-
   /**
    * compare two arrays and return true, if they are different
    * @param arrOne string array

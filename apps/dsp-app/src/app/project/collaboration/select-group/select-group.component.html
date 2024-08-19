@@ -1,10 +1,5 @@
 <mat-form-field *ngIf="(projectGroups$ | async)?.length > 0">
-  <mat-select
-    placeholder="Permission group"
-    [formControl]="groupCtrl"
-    multiple
-    (selectionChange)="onGroupSelect()"
-    (openedChange)="onGroupChange()">
+  <mat-select placeholder="Permission group" [formControl]="groupCtrl" multiple (selectionChange)="onGroupChange()">
     <mat-option
       *ngFor="let group of (projectGroups$ | async); trackBy: trackByFn"
       [value]="group.iri"
