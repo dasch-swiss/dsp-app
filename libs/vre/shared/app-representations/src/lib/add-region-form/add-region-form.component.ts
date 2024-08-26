@@ -9,10 +9,10 @@ import { FormBuilder, Validators } from '@angular/forms';
         <mat-label>Label</mat-label>
         <input matInput [formControl]="regionForm.controls.label" />
       </mat-form-field>
-      <mat-form-field class="large-field">
-        <mat-label>Comment</mat-label>
-        <textarea matInput rows="7" [formControl]="regionForm.controls.comment"></textarea>
-      </mat-form-field>
+
+      <div class="mat-body-2 comment-title">Comment</div>
+      <app-rich-text-value [control]="regionForm.controls.comment" class="comment-value" />
+
       <mat-form-field class="large-field without-border color-field">
         <mat-label class="color-label">Color *</mat-label>
         <app-color-picker #colorInput [formControl]="regionForm.controls.color" class="value"></app-color-picker>
@@ -43,6 +43,22 @@ import { FormBuilder, Validators } from '@angular/forms';
   `,
   styles: [
     `
+      .comment-title {
+        background: #fafafa;
+        padding: 8px;
+        margin: 0 1px;
+        position: relative;
+        top: 1px;
+        z-index: 1;
+        font-size: 12px;
+        color: rgba(0, 0, 0, 0.6);
+      }
+
+      .comment-value {
+        display: block;
+        margin-bottom: 32px;
+      }
+
       .hidden {
         display: none;
       }
