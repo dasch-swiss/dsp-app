@@ -231,13 +231,13 @@ export const propertiesTypeMapping = new Map<string, MappingParameters<any>>([
     {
       control: (value?: ReadIntervalValue) =>
         new FormGroup({
-          start: new FormControl(value?.start, Validators.required),
-          end: new FormControl(value?.end, Validators.required),
+          start: new FormControl(value?.start, [Validators.required]),
+          end: new FormControl(value?.end, [Validators.required]),
         }),
-      createValue: (value: { start: string; end: string }) => {
+      createValue: (value: { start: number; end: number }) => {
         const newIntervalValue = new CreateIntervalValue();
-        newIntervalValue.start = parseFloat(value.start);
-        newIntervalValue.end = parseFloat(value.end);
+        newIntervalValue.start = value.start;
+        newIntervalValue.end = value.end;
         return newIntervalValue;
       },
       updateValue: (id: string, value: { start: number; end: number }) => {

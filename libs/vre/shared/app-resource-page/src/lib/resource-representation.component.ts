@@ -1,6 +1,11 @@
 import { Component, Input, OnChanges } from '@angular/core';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
-import { FileRepresentation, RepresentationConstants, getFileValue } from '@dasch-swiss/vre/shared/app-representations';
+import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { FileRepresentation, getFileValue, RepresentationConstants } from '@dasch-swiss/vre/shared/app-representations';
+import { UserSelectors } from '@dasch-swiss/vre/shared/app-state';
+import { Store } from '@ngxs/store';
+import { combineLatest, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-resource-representation',
@@ -33,6 +38,7 @@ import { FileRepresentation, RepresentationConstants, getFileValue } from '@dasc
       *ngSwitchCase="representationConstants.audio"
       [src]="representationToDisplay"
       [parentResource]="resource.res"
+      [isAdmin]="isAdmin$ | async"
       (loaded)="representationLoaded($event)">
     </app-audio>
 
@@ -42,6 +48,7 @@ import { FileRepresentation, RepresentationConstants, getFileValue } from '@dasc
       *ngSwitchCase="representationConstants.movingImage"
       [src]="representationToDisplay"
       [parentResource]="resource.res"
+      [isAdmin]="isAdmin$ | async"
       (loaded)="representationLoaded($event)">
     </app-video>
 
@@ -70,6 +77,23 @@ export class ResourceRepresentationComponent implements OnChanges {
 
   loading = false;
   protected readonly representationConstants = RepresentationConstants;
+
+  get attachedToProjectResource(): string {
+    return this.resource.res.attachedToProject;
+  }
+
+  isAdmin$: Observable<boolean> = combineLatest([
+    this._store.select(UserSelectors.user),
+    this._store.select(UserSelectors.userProjectAdminGroups),
+  ]).pipe(
+    map(([user, userProjectGroups]) => {
+      return this.attachedToProjectResource
+        ? ProjectService.IsProjectAdminOrSysAdmin(user!, userProjectGroups, this.attachedToProjectResource)
+        : false;
+    })
+  );
+
+  constructor(private _store: Store) {}
 
   ngOnChanges() {
     this.representationToDisplay = new FileRepresentation(getFileValue(this.resource)!);

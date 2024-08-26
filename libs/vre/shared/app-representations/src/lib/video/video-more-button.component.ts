@@ -38,7 +38,7 @@ import { MovingImageSidecar } from '../moving-image-sidecar';
       <button mat-menu-item class="menu-content" (click)="downloadVideo(this.src.fileValue.fileUrl)">
         Download video
       </button>
-      <button [disabled]="!usercanEdit" mat-menu-item class="menu-content" (click)="openReplaceFileDialog()">
+      <button [disabled]="!userCanEdit" mat-menu-item class="menu-content" (click)="openReplaceFileDialog()">
         Replace file
       </button>
     </mat-menu>`,
@@ -46,9 +46,9 @@ import { MovingImageSidecar } from '../moving-image-sidecar';
 export class VideoMoreButtonComponent {
   @Input({ required: true }) src!: FileRepresentation;
   @Input({ required: true }) resource!: ReadResource;
-  @Input() fileInfo?: MovingImageSidecar;
+  @Input({ required: true }) fileInfo!: MovingImageSidecar;
 
-  get usercanEdit() {
+  get userCanEdit() {
     return ResourceUtil.userCanEdit(this.resource);
   }
 

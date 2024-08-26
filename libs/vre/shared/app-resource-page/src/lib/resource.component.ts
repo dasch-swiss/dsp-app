@@ -5,6 +5,7 @@ import { Constants, CountQueryResponse, ReadFileValue } from '@dasch-swiss/dsp-j
 import { DspCompoundPosition, DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { IncomingService } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { getFileValue, RegionService } from '@dasch-swiss/vre/shared/app-representations';
+import { SegmentsService } from '@dasch-swiss/vre/shared/app-segment-support';
 import { take } from 'rxjs/operators';
 import { CompoundService } from './compound/compound.service';
 
@@ -50,7 +51,7 @@ import { CompoundService } from './compound/compound.service';
     </ng-template>
   `,
   styleUrls: ['./resource.component.scss'],
-  providers: [CompoundService, RegionService],
+  providers: [CompoundService, RegionService, SegmentsService],
 })
 export class ResourceComponent implements OnChanges {
   @Input({ required: true }) resource!: DspResource;

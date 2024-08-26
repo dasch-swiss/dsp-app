@@ -7,7 +7,8 @@ import { FormControl } from '@angular/forms';
     <mat-form-field style="width: 100%">
       <mat-label>{{ label }}</mat-label>
       <mat-icon matIconPrefix *ngIf="prefixIcon">{{ prefixIcon }}</mat-icon>
-      <input matInput [placeholder]="label" [formControl]="control" [type]="type" />
+      <input matInput [placeholder]="label" [formControl]="control" *ngIf="type === 'text'" />
+      <input matInput [placeholder]="label" [formControl]="control" *ngIf="type === 'number'" type="number" />
       <mat-error *ngIf="control.errors as errors">
         {{ errors | humanReadableError: validatorErrors }}
       </mat-error>

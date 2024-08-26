@@ -89,6 +89,9 @@
       "@dasch-swiss/vre/shared/app-resource-properties": [
         "libs/vre/shared/app-resource-properties/src/index.ts"
       ],
+      "@dasch-swiss/vre/shared/app-segment-support": [
+        "libs/vre/shared/app-segment-support/src/index.ts"
+      ],
       "@dasch-swiss/vre/shared/app-session": [
         "libs/vre/shared/app-session/src/index.ts"
       ],

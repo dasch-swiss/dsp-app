@@ -11,6 +11,7 @@ import { ResourceRepresentationComponent } from './lib/resource-representation.c
 import { ResourceTabsComponent } from './lib/resource-tabs.component';
 import { ResourceToolbarComponent } from './lib/resource-toolbar.component';
 import { ResourceComponent } from './lib/resource.component';
+import { SegmentTabComponent } from './lib/segment-tab.component';
 
 const CompoundComponents = [
   CompoundArrowNavigationComponent,
@@ -29,4 +30,5 @@ export const ResourcePageComponents = [
   ResourceTabsComponent,
   ResourceToolbarComponent,
   AnnotationTabComponent,
+  SegmentTabComponent,
 ];

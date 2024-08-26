@@ -32,6 +32,12 @@ export class GenerateProperty {
       .filter(v => v.propDef.id !== `${ApiConstants.apiKnoraOntologyUrl}#isRegionOfValue`);
   }
 
+  public static segmentProperty(resource: ReadResource, type: 'VideoSegment' | 'AudioSegment') {
+    return this.commonProperty(resource).filter(
+      prop => prop.propDef.id !== `http://api.knora.org/ontology/knora-api/v2#is${type}OfValue`
+    );
+  }
+
   private static _initProps(resource: ReadResource): PropertyInfoValues[] {
     let props = resource.entityInfo.classes[resource.type]
       .getResourcePropertiesList()

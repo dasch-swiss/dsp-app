@@ -283,7 +283,7 @@ describe('Resource', () => {
       // create
       po.addInitialLabel();
       cy.get('.mat-mdc-form-field-icon-suffix > .mat-icon').click();
-      cy.get('#mat-input-6').clear().type('2023');
+      cy.get('#mat-input-6').clear({ force: true }).type('2023');
       cy.get(':nth-child(4) > :nth-child(4) > .selectable').click();
       po.clickOnSubmit();
 

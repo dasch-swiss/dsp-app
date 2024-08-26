@@ -6,3 +6,4 @@ export * from './lib/multilanguage-form.type';
 export * from './lib/multi-language-form-array.type';
 export * from './lib/dash-language.type';
 export * from './lib/default-multi-language-form';
+export * from './lib/validator-error.interface';

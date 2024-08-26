@@ -4,6 +4,7 @@ import { Constants } from '@dasch-swiss/dsp-js';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { RegionService } from '@dasch-swiss/vre/shared/app-representations';
+import { SegmentsService } from '@dasch-swiss/vre/shared/app-segment-support';
 import { Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 import { CompoundService } from './compound/compound.service';
@@ -28,12 +29,21 @@ import { CompoundService } from './compound/compound.service';
 
       <!-- annotations -->
       <mat-tab label="Annotations" *ngIf="displayAnnotations">
-        <ng-template matTabLabel class="annotations">
+        <ng-template matTabLabel>
           <span [matBadge]="regionService.regions.length" matBadgeColor="primary" matBadgeOverlap="false">
             Annotations
           </span>
         </ng-template>
         <app-annotation-tab *ngIf="regionService.regions.length > 0" [resource]="resource" />
+      </mat-tab>
+
+      <mat-tab label="Segments" *ngIf="segmentsService.segments && segmentsService.segments.length > 0">
+        <ng-template matTabLabel>
+          <span [matBadge]="segmentsService.segments.length" matBadgeColor="primary" matBadgeOverlap="false">
+            Segments
+          </span>
+        </ng-template>
+        <app-segment-tab [resource]="resource.res" />
       </mat-tab>
     </mat-tab-group>
   `,
@@ -52,6 +62,7 @@ export class ResourceTabsComponent implements OnInit, OnDestroy {
   constructor(
     public regionService: RegionService,
     public compoundService: CompoundService,
+    public segmentsService: SegmentsService,
     private _route: ActivatedRoute
   ) {}
 
@@ -59,6 +70,12 @@ export class ResourceTabsComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this._highlightAnnotationFromUri();
+
+    this.segmentsService.highlightSegment$.subscribe(segment => {
+      if (segment) {
+        this.selectedTab = 1;
+      }
+    });
   }
 
   ngOnDestroy() {

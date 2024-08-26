@@ -1,6 +1,5 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -8,13 +7,7 @@ import { Observable } from 'rxjs';
 export class RepresentationService {
   constructor(private readonly _http: HttpClient) {}
 
-  /**
-   * returns info about a file
-   * @param url url of the file
-   * @param imageFilename optional parameter if the file is an image because the url structure differs from other file types
-   * @returns an object containing the knora.json file for the given file url
-   */
-  getFileInfo(url: string, imageFilename?: string): Observable<unknown> {
+  getFileInfo(url: string, imageFilename?: string) {
     let pathToJson = '';
 
     if (imageFilename) {
@@ -24,21 +17,14 @@ export class RepresentationService {
       pathToJson = `${url.substring(0, url.lastIndexOf('/'))}/knora.json`;
     }
 
-    return this._http.get(pathToJson, { withCredentials: true });
+    return this._http.get<{ originalFilename?: string }>(pathToJson, { withCredentials: true });
   }
 
-  /**
-   * downloads the file
-   * @param url url of the file
-   * @param imageFilename optional parameter if the file is an image because the url structure differs from other file types
-   */
   async downloadFile(url: string, imageFilename?: string) {
-    let originalFilename;
-
     const res = await this._http.get(url, { responseType: 'blob', withCredentials: true }).toPromise();
 
-    await this.getFileInfo(url, imageFilename).subscribe(response => {
-      originalFilename = response['originalFilename'];
+    this.getFileInfo(url, imageFilename).subscribe(response => {
+      const originalFilename = response.originalFilename;
 
       const objUrl = window.URL.createObjectURL(res);
       const e = document.createElement('a');
@@ -55,19 +41,5 @@ export class RepresentationService {
       e.click();
       document.body.removeChild(e);
     });
-  }
-
-  /**
-   * return the jwt token from the session to authenticate
-   * @return the token
-   */
-  private _getTokenFromLocalStorage(): string {
-    let token: string;
-    const session = localStorage.getItem('session');
-    if (session) {
-      const s = JSON.parse(session);
-      token = s.user.jwt;
-    }
-    return token;
   }
 }

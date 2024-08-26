@@ -1,49 +1,29 @@
-<div class="player" appDisableContextMenu [class.cinema]="cinemaMode">
-  <div class="container">
-    <!-- in case of an error -->
-    <app-status [comment]="videoError" [url]="src.fileValue.fileUrl" [representation]="'video'" *ngIf="videoError" />
+<div appDisableContextMenu [class.cinema]="cinemaMode">
+  <app-status [comment]="videoError" [url]="src.fileValue.fileUrl" [representation]="'video'" *ngIf="videoError" />
 
-    <div class="video-container">
-      <video
-        class="video"
-        #videoEle
-        *ngIf="video; else loading"
-        [src]="video"
-        type="video/mp4"
-        preload="auto"
-        [muted]="false"
-        (click)="togglePlay()"
-        (timeupdate)="timeUpdate()"
-        (loadedmetadata)="loadedMetadata()"
-        (canplaythrough)="loadedVideo()"
-        (error)="handleVideoError($event)"></video>
-
-      <div class="overlay">
-        <div>
-          <mat-icon (click)="updateTimeFromButton(-10)">replay_10</mat-icon>
-          <mat-icon (click)="togglePlay()">{{ reachedTheEnd ? 'replay' : play ? 'pause' : 'play_arrow' }} </mat-icon>
-          <mat-icon (click)="updateTimeFromButton(10)">forward_10</mat-icon>
-        </div>
-      </div>
-    </div>
-
-    <ng-template #loading>
-      <dasch-swiss-app-progress-indicator />
-    </ng-template>
-
-    <div class="preview-line">
-      <!-- preview image -->
-      <div class="preview" #preview>
-        <app-video-preview [src]="src" [time]="previewTime" [fileInfo]="fileInfo" (loaded)="displayPreview(!$event)" />
-      </div>
-    </div>
+  <div style="margin-bottom: -4px" class="video-container">
+    <video
+      style="width: 100%"
+      id="video"
+      *ngIf="video; else loading"
+      [src]="video"
+      type="video/mp4"
+      preload="auto"
+      [muted]="false"
+      (canplay)="onVideoPlayerReady()"
+      (click)="videoPlayer.togglePlay()"
+      (error)="handleVideoError($event)"></video>
+    <app-video-overlay *ngIf="false" />
   </div>
 
-  <mat-toolbar class="controls">
-    <mat-toolbar-row style="overflow: hidden">
+  <div class="preview" #preview>
+    <app-video-preview [src]="src" [time]="previewTime" [fileInfo]="fileInfo" (loaded)="displayPreview(!$event)" />
+  </div>
+
+  <mat-toolbar *ngIf="false">
+    <mat-toolbar-row>
       <app-av-timeline
-        #timeline
-        [value]="currentTime"
+        [value]="0"
         [min]="0"
         [max]="duration"
         [resized]="cinemaMode"
@@ -51,59 +31,28 @@
         (mouseenter)="displayPreview(true)"
         (dimension)="timelineDimension = $event"
         (mouseleave)="displayPreview(false)"
-        (changed)="updateTimeFromSlider($event)"
-        [disabled]="!videoEle" />
-    </mat-toolbar-row>
-
-    <mat-toolbar-row class="action">
-      <app-video-more-button [resource]="parentResource" [src]="src" [fileInfo]="fileInfo" />
-      <button
-        mat-icon-button
-        (click)="goToStart()"
-        [disabled]="currentTime === 0 || !videoEle"
-        matTooltip="Stop and go to start"
-        [matTooltipPosition]="matTooltipPos">
-        <mat-icon>skip_previous</mat-icon>
-      </button>
-      <button
-        mat-icon-button
-        (click)="togglePlay()"
-        [matTooltip]="
-                    reachedTheEnd ? 'Replay' : play ? 'Pause' : 'Play'
-                "
-        [matTooltipPosition]="matTooltipPos"
-        [disabled]="!videoEle">
-        <mat-icon>{{ reachedTheEnd ? 'replay' : play ? 'pause' : 'play_arrow' }}</mat-icon>
-      </button>
-
-      <span class="empty-space"></span>
-      <span class="fill-remaining-space"></span>
-
-      <div (wheel)="updateTimeFromScroll($event)">
-        <p class="mat-subtitle-2 time" (click)="togglePlay()">
-          {{ currentTime | appTime }}
-          <span *ngIf="duration">/ {{ duration | appTime }}</span>
-        </p>
-      </div>
-      <!--            <button mat-icon-button (click)="muted = !muted" [matTooltip]="(muted ? 'Unmute' : 'Mute')"-->
-      <!--                [matTooltipPosition]="matTooltipPos"-->
-      <!--                [disabled]="failedToLoad">-->
-      <!--                <mat-icon>-->
-      <!--                    {{ muted ? "volume_mute" : "volume_up" }}-->
-      <!--                </mat-icon>-->
-      <!--            </button>-->
-      <span class="fill-remaining-space"></span>
-      <span class="empty-space"></span>
-      <span class="empty-space"></span>
-
-      <button
-        mat-icon-button
-        (click)="toggleCinemaMode()"
-        [disabled]="!videoEle"
-        [matTooltip]="cinemaMode ? 'Default view' : 'Cinema mode'"
-        [matTooltipPosition]="matTooltipPos">
-        <mat-icon>{{ cinemaMode ? 'fullscreen_exit' : 'fullscreen' }}</mat-icon>
-      </button>
+        (changed)="videoPlayer.navigate($event)"
+        [disabled]="!isPlayerReady" />
     </mat-toolbar-row>
   </mat-toolbar>
+  <app-media-slider
+    *ngIf="isPlayerReady"
+    [max]="videoPlayer.duration()"
+    [currentTime]="myCurrentTime"
+    (afterNavigation)="videoPlayer.navigate($event)" />
+  <app-segments-display
+    *ngIf="segmentsService.segments.length > 0 && duration > 0"
+    [segments]="segmentsService.segments"
+    [videoLengthSecs]="duration" />
+  <app-video-toolbar
+    *ngIf="fileInfo && isPlayerReady"
+    [src]="src"
+    [parentResource]="parentResource"
+    [fileInfo]="fileInfo"
+    [isAdmin]="isAdmin"
+    [(cinemaMode)]="cinemaMode" />
 </div>
+
+<ng-template #loading>
+  <dasch-swiss-app-progress-indicator />
+</ng-template>

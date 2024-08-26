@@ -26,8 +26,8 @@ import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
 import {
   CreateListInfoPageComponent,
-  ReusableListInfoFormComponent,
   ListComponents,
+  ReusableListInfoFormComponent,
 } from '@dasch-swiss/vre/shared/app-list';
 import { MathJaxComponents } from '@dasch-swiss/vre/shared/app-mathjax';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
@@ -40,6 +40,7 @@ import { PropertyFormComponents } from '@dasch-swiss/vre/shared/app-property-for
 import { RepresentationsComponents } from '@dasch-swiss/vre/shared/app-representations';
 import { ResourcePageComponents } from '@dasch-swiss/vre/shared/app-resource-page';
 import { ResourcePropertiesComponents } from '@dasch-swiss/vre/shared/app-resource-properties';
+import { SegmentSupportComponents } from '@dasch-swiss/vre/shared/app-segment-support';
 import { NgxsStoreModule } from '@dasch-swiss/vre/shared/app-state';
 import {
   HumanReadableErrorPipe,
@@ -157,6 +158,7 @@ export function httpLoaderFactory(httpClient: HttpClient) {
   declarations: [
     ...PropertyFormComponents,
     ...ResourcePropertiesComponents,
+    ...SegmentSupportComponents,
     ...ResourcePageComponents,
     ...RepresentationsComponents,
     ...CommonToMoveComponents,

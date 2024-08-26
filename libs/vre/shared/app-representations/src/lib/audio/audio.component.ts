@@ -1,188 +1,103 @@
-import { AfterViewInit, Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnDestroy, Output } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-import {
-  Constants,
-  KnoraApiConnection,
-  ReadAudioFileValue,
-  ReadResource,
-  UpdateFileValue,
-  UpdateResource,
-  UpdateValue,
-  WriteValueResponse,
-} from '@dasch-swiss/dsp-js';
-import { ResourceUtil } from '@dasch-swiss/vre/shared/app-common';
-import { DialogComponent } from '@dasch-swiss/vre/shared/app-common-to-move';
-import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
-import { mergeMap } from 'rxjs/operators';
+import { ReadResource } from '@dasch-swiss/dsp-js';
+import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
+import { MediaControlService, SegmentsService } from '@dasch-swiss/vre/shared/app-segment-support';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { FileRepresentation } from '../file-representation';
 import { RepresentationService } from '../representation.service';
+import { MediaPlayerService } from '../video/media-player.service';
 
 @Component({
   selector: 'app-audio',
   templateUrl: './audio.component.html',
   styleUrls: ['./audio.component.scss'],
+  providers: [MediaControlService, MediaPlayerService],
 })
-export class AudioComponent implements OnInit, AfterViewInit {
-  @Input() src: FileRepresentation;
-
-  @Input() parentResource: ReadResource;
+export class AudioComponent implements OnChanges, OnDestroy {
+  @Input({ required: true }) src!: FileRepresentation;
+  @Input({ required: true }) isAdmin!: boolean;
+  @Input({ required: true }) parentResource!: ReadResource;
 
   @Output() loaded = new EventEmitter<boolean>();
 
-  originalFilename: string;
+  originalFilename?: string;
   failedToLoad = false;
-  currentTime = 0;
-  audio: SafeUrl;
+  audioFileUrl!: SafeUrl;
 
-  get usercanEdit() {
-    return ResourceUtil.userCanEdit(this.parentResource);
-  }
+  duration = 0;
+  watchForPause: number | null = null;
+
+  currentTime = 0;
+
+  isPlayerReady = false;
+  private _ngUnsubscribe = new Subject<void>();
 
   constructor(
-    @Inject(DspApiConnectionToken)
-    private _dspApiConnection: KnoraApiConnection,
     private _sanitizer: DomSanitizer,
-    private _dialog: MatDialog,
-    private _rs: RepresentationService
+    public segmentsService: SegmentsService,
+    private _mediaControl: MediaControlService,
+    private _notification: NotificationService,
+    public mediaPlayer: MediaPlayerService,
+    private _rs: RepresentationService,
+    private _cd: ChangeDetectorRef
   ) {}
 
-  ngOnInit(): void {
+  ngOnChanges(): void {
+    this._ngUnsubscribe.next();
+
+    this._watchForMediaEvents();
+    this.audioFileUrl = this._sanitizer.bypassSecurityTrustUrl(this.src.fileValue.fileUrl);
+    this.segmentsService.onInit(this.parentResource.id, 'AudioSegment');
+
     this._rs.getFileInfo(this.src.fileValue.fileUrl).subscribe(
       res => {
-        this.originalFilename = res['originalFilename'];
+        this.originalFilename = res.originalFilename;
       },
       () => {
         this.failedToLoad = true;
       }
     );
-    this.audio = this._sanitizer.bypassSecurityTrustUrl(this.src.fileValue.fileUrl);
   }
 
-  ngAfterViewInit() {
-    this.loaded.emit(true);
+  ngOnDestroy() {
+    this._ngUnsubscribe.next();
   }
 
-  onTimeUpdate(event: { target: HTMLAudioElement }) {
-    this.currentTime = event.target.currentTime;
-  }
+  onAudioPlayerReady() {
+    if (this.isPlayerReady) {
+      return;
+    }
 
-  togglePlay() {
     const player = document.getElementById('audio') as HTMLAudioElement;
-    if (player.paused) {
-      player.play();
-    } else {
-      player.pause();
-    }
-  }
+    this.mediaPlayer.onInit(player);
+    this.isPlayerReady = true;
+    this.duration = this.mediaPlayer.duration();
 
-  isPaused() {
-    const player = document.getElementById('audio') as HTMLAudioElement;
-    return player.paused;
-  }
+    this.mediaPlayer.onTimeUpdate$.subscribe(v => {
+      this.currentTime = v;
+      this._cd.detectChanges();
 
-  parseTime(time) {
-    if (Number.isNaN(time)) {
-      return '00:00';
-    }
-    const minutes = Math.floor(time / 60);
-    const seconds = Math.floor(time - minutes * 60);
-    let minutesString = minutes.toString();
-    if (minutes < 10) {
-      minutesString = `0${minutesString}`;
-    }
-    let secondsString = seconds.toString();
-    if (seconds < 10) {
-      secondsString = `0${secondsString}`;
-    }
-    return `${minutesString}:${secondsString}`;
-  }
-
-  openReplaceFileDialog() {
-    const propId = this.parentResource.properties[Constants.HasAudioFileValue][0].id;
-
-    const dialogConfig: MatDialogConfig = {
-      width: '800px',
-      maxHeight: '80vh',
-      position: {
-        top: '112px',
-      },
-      data: {
-        mode: 'replaceFile',
-        title: 'Audio',
-        subtitle: 'Update the audio file of this resource',
-        representation: 'audio',
-        id: propId,
-      },
-      disableClose: true,
-    };
-    const dialogRef = this._dialog.open(DialogComponent, dialogConfig);
-
-    dialogRef.afterClosed().subscribe(data => {
-      if (data) {
-        this._replaceFile(data);
+      if (this.watchForPause !== null && this.watchForPause === Math.floor(this.currentTime)) {
+        this.mediaPlayer.pause();
+        this.watchForPause = null;
       }
     });
   }
 
-  openIIIFnewTab() {
-    window.open(this.src.fileValue.fileUrl, '_blank');
-  }
+  private _watchForMediaEvents() {
+    this._mediaControl.play$.pipe(takeUntil(this._ngUnsubscribe)).subscribe(seconds => {
+      if (seconds >= this.duration) {
+        this._notification.openSnackBar('The video cannot be played at this time.');
+        return;
+      }
+      this.mediaPlayer.navigate(seconds);
+      this.mediaPlayer.play();
+    });
 
-  download(url: string) {
-    this._rs.downloadFile(url);
-  }
-
-  onSliderChangeEnd(event) {
-    const player = document.getElementById('audio') as HTMLAudioElement;
-    player.currentTime = event.value;
-  }
-
-  getDuration() {
-    const player = document.getElementById('audio') as HTMLAudioElement;
-    return player.duration;
-  }
-
-  toggleMute() {
-    const player = document.getElementById('audio') as HTMLAudioElement;
-    player.muted = !player.muted;
-  }
-
-  isMuted() {
-    const player = document.getElementById('audio') as HTMLAudioElement;
-    return player.muted;
-  }
-
-  private _replaceFile(file: UpdateFileValue) {
-    const updateRes = new UpdateResource();
-    updateRes.id = this.parentResource.id;
-    updateRes.type = this.parentResource.type;
-    updateRes.property = Constants.HasAudioFileValue;
-    updateRes.value = file;
-
-    this._dspApiConnection.v2.values
-      .updateValue(updateRes as UpdateResource<UpdateValue>)
-      .pipe(
-        mergeMap((res: WriteValueResponse) =>
-          this._dspApiConnection.v2.values.getValue(this.parentResource.id, res.uuid)
-        )
-      )
-      .subscribe((res2: ReadResource) => {
-        this.src.fileValue.fileUrl = (res2.properties[Constants.HasAudioFileValue][0] as ReadAudioFileValue).fileUrl;
-        this.src.fileValue.filename = (res2.properties[Constants.HasAudioFileValue][0] as ReadAudioFileValue).filename;
-        this.src.fileValue.strval = (res2.properties[Constants.HasAudioFileValue][0] as ReadAudioFileValue).strval;
-        this.src.fileValue.valueCreationDate = (
-          res2.properties[Constants.HasAudioFileValue][0] as ReadAudioFileValue
-        ).valueCreationDate;
-
-        this.audio = this._sanitizer.bypassSecurityTrustUrl(this.src.fileValue.fileUrl);
-
-        this._rs.getFileInfo(this.src.fileValue.fileUrl).subscribe(res => {
-          this.originalFilename = res['originalFilename'];
-        });
-
-        const audioElem = document.getElementById('audio');
-        (audioElem as HTMLAudioElement).load();
-      });
+    this._mediaControl.watchForPause$.pipe(takeUntil(this._ngUnsubscribe)).subscribe(seconds => {
+      this.watchForPause = seconds;
+    });
   }
 }
