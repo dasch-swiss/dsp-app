@@ -22,6 +22,7 @@ export interface ShortInfo {
   id: string;
   label: string;
   comment: string;
+  restrictedToClass?: string;
 }
 
 @Component({
@@ -85,6 +86,12 @@ export class PropertyInfoComponent implements OnChanges, AfterContentInit {
   resClasses: ShortInfo[] = [];
 
   showActionBubble = false;
+
+  isLockHovered = false;
+
+  get linkPropertyIsBoundToClass(): boolean {
+    return this.propDef.isLinkProperty && !!this.propDef.subjectType && this.propDef.id.split('#')[1] !== 'partOf';
+  }
 
   constructor(
     @Inject(DspApiConnectionToken)
@@ -154,6 +161,7 @@ export class PropertyInfoComponent implements OnChanges, AfterContentInit {
 
     currentProjectOntologies.forEach(onto => {
       const classes = getAllEntityDefinitionsAsArray(onto.classes);
+      const resClasses = [];
       classes.forEach(resClass => {
         if (resClass.propertiesList.find(prop => prop.propertyIndex === this.propDef.id)) {
           // build own resClass object with id, label and comment
@@ -161,15 +169,16 @@ export class PropertyInfoComponent implements OnChanges, AfterContentInit {
             id: resClass.id,
             label: resClass.label,
             comment: onto.label + (resClass.comment ? `: ${resClass.comment}` : ''),
+            restrictedToClass: this.propDef.isLinkProperty ? this.propDef.subjectType : null,
           };
-          this.resClasses.push(propOfClass);
+          resClasses.push(propOfClass);
         }
       });
+      this.resClasses = resClasses;
     });
   }
 
-  trackByFn = (index: number, item: ShortInfo) => `${index}-${item.id}`;
-
+  trackByFn = (index: number, item: ShortInfo) => item.id;
   /**
    * determines whether a property can be deleted or not
    */

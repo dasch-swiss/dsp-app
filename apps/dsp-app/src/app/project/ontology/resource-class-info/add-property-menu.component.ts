@@ -246,7 +246,8 @@ export class AddPropertyMenuComponent {
       classProps.findIndex(x => x.propertyIndex === availableProp.id) === -1 &&
       ((availableProp.subjectType &&
         !availableProp.subjectType.includes('Standoff') &&
-        availableProp.objectType !== Constants.LinkValue) ||
+        availableProp.objectType !== Constants.LinkValue &&
+        availableProp.subjectType !== this.resourceClass.id) ||
         !availableProp.isLinkValueProperty)
     );
   }

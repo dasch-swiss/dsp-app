@@ -129,12 +129,10 @@ export class CreatePropertyFormDialogComponent implements OnInit {
 
     newResProp.guiElement = selectedProperty.guiEle;
     newResProp.subPropertyOf = [selectedProperty.subPropOf];
+    newResProp.objectType = selectedProperty.objectType;
 
-    if ([Constants.HasLinkTo, Constants.IsPartOf].includes(selectedProperty.subPropOf)) {
-      newResProp.objectType = guiAttr;
-      newResProp.subjectType = this.data.resClassIri;
-    } else {
-      newResProp.objectType = selectedProperty.objectType;
+    if (Constants.IsPartOf === selectedProperty.subPropOf) {
+      newResProp.subjectType = this.data.resClassIri; // can only be used by this resource class
     }
 
     onto.entity = newResProp;
