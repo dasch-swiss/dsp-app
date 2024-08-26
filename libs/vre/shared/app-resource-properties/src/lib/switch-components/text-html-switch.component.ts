@@ -10,6 +10,7 @@ import { IsSwitchComponent } from './is-switch-component.interface';
       *ngIf="displayMode; else editMode"
       [innerHTML]="control.value"
       appHtmlLink
+      appMathjax
       (internalLinkClicked)="_openResource($event)"></div>
     <ng-template #editMode> This value cannot be edited.</ng-template>`,
 })
