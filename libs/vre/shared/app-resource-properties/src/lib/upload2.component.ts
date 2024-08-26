@@ -1,14 +1,22 @@
 import { ChangeDetectorRef, Component, ElementRef, Input, Self, ViewChild } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-import { Constants } from '@dasch-swiss/dsp-js';
+import {
+  Constants,
+  CreateArchiveFileValue,
+  CreateAudioFileValue,
+  CreateDocumentFileValue,
+  CreateFileValue,
+  CreateMovingImageFileValue,
+  CreateStillImageFileValue,
+  CreateTextFileValue,
+} from '@dasch-swiss/dsp-js';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
 import { UploadFileService } from '@dasch-swiss/vre/shared/app-representations';
 import { LoadProjectAction, ProjectsSelectors, ResourceSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { Actions, Store, ofActionSuccessful } from '@ngxs/store';
 import { filter, finalize, map, mergeMap, take } from 'rxjs/operators';
 import { FileRepresentationType } from './file-representation.type';
-import { fileValueMapping } from './file-value-mapping';
 
 @Component({
   selector: 'app-upload-2',
@@ -80,8 +88,17 @@ export class Upload2Component implements ControlValueAccessor {
   onChange!: (value: any) => void;
   onTouched!: () => void;
 
+  private readonly _fileTypesMapping = {
+    [Constants.HasMovingImageFileValue]: ['mp4'],
+    [Constants.HasAudioFileValue]: ['mp3', 'wav'],
+    [Constants.HasDocumentFileValue]: ['doc', 'docx', 'pdf', 'ppt', 'pptx', 'xls', 'xlsx'],
+    [Constants.HasTextFileValue]: ['csv', 'odd', 'rng', 'txt', 'xml', 'xsd', 'xsl'],
+    [Constants.HasArchiveFileValue]: ['7z', 'gz', 'gzip', 'tar', 'tgz', 'z', 'zip'],
+    [Constants.HasStillImageFileValue]: ['jp2', 'jpg', 'jpeg', 'png', 'tif', 'tiff'],
+  } as const;
+
   get allowedFileTypes() {
-    return fileValueMapping.get(this.representation)!.fileTypes;
+    return this._fileTypesMapping[this.representation];
   }
 
   constructor(
@@ -148,7 +165,8 @@ export class Upload2Component implements ControlValueAccessor {
     this.fileInput.nativeElement.value = '';
   }
 
-  private _uploadProjectFile = (file: File) =>
+  private _uploadProjectFile(file: File): void {
+    this.loading = true;
     this._store
       .select(ProjectsSelectors.contextProject)
       .pipe(
@@ -173,12 +191,33 @@ export class Upload2Component implements ControlValueAccessor {
             break;
         }
 
-        // eslint-disable-next-line new-cap
-        const fileResponse = new (fileValueMapping.get(this.representation)!.UploadClass)();
-        fileResponse.filename = res.internalFilename;
-        this.onChange(fileResponse);
+        const createFile = this._createFileValue;
+        createFile.filename = res.internalFilename;
+        this.onChange(createFile);
         this.onTouched();
 
         this._cdr.detectChanges();
       });
+
+    this.fileInput.nativeElement.value = '';
+  }
+
+  private get _createFileValue(): CreateFileValue {
+    switch (this.representation) {
+      case Constants.HasStillImageFileValue:
+        return new CreateStillImageFileValue();
+      case Constants.HasMovingImageFileValue:
+        return new CreateMovingImageFileValue();
+      case Constants.HasAudioFileValue:
+        return new CreateAudioFileValue();
+      case Constants.HasDocumentFileValue:
+        return new CreateDocumentFileValue();
+      case Constants.HasTextFileValue:
+        return new CreateTextFileValue();
+      case Constants.HasArchiveFileValue:
+        return new CreateArchiveFileValue();
+      default:
+        throw new Error(`File type ${this.representation} not supported`);
+    }
+  }
 }

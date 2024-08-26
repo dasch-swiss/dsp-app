@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnInit } from '@angular/core';
+import { Component, Input, OnChanges } from '@angular/core';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { FileRepresentation, RepresentationConstants, getFileValue } from '@dasch-swiss/vre/shared/app-representations';
 
@@ -9,7 +9,13 @@ import { FileRepresentation, RepresentationConstants, getFileValue } from '@dasc
       #stillImage
       class="dsp-representation stillimage"
       *ngSwitchCase="representationConstants.stillImage"
-      [resource]="resource" />
+      [resource]="resource.res" />
+
+    <app-still-image
+      #stillImage
+      class="dsp-representation stillimage"
+      *ngSwitchCase="representationConstants.externalStillImage"
+      [resource]="resource.res" />
 
     <app-document
       #document

@@ -137,7 +137,7 @@
     "ng-mocks": "14.11.0",
     "ng-packagr": "~16.1.0",
     "nx": "16.5.3",
-    "nx-cloud": "16.1.0",
+    "nx-cloud": "^19.0.0",
     "openapi-typescript": "^6.7.4",
     "postcss": "^8.4.22",
     "postcss-import": "~14.1.0",

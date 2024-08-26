@@ -7,14 +7,13 @@ import { OntologyService, ProjectService } from '@dasch-swiss/vre/shared/app-hel
 import { ProjectsSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { Select } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
-import { take, takeUntil } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-create-resource-page',
   template: ` <h3>Create new resource of type: {{ classLabel }}</h3>
     <app-create-resource-form
       *ngIf="resourceClassIri"
-      [resourceType]="classLabel"
       [resourceClassIri]="resourceClassIri"
       [projectIri]="projectIri"
       (createdResourceIri)="afterCreation($event)"></app-create-resource-form>`,

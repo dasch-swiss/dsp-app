@@ -140,7 +140,6 @@ import { ResourceLinkFormComponent } from './workspace/resource/resource-link-fo
 import { ColorPickerComponent } from './workspace/resource/values/color-value/color-picker/color-picker.component';
 import { DateValueHandlerComponent } from './workspace/resource/values/date-value/date-value-handler/date-value-handler.component';
 import { JDNDatepickerDirective } from './workspace/resource/values/jdn-datepicker-directive/jdndatepicker.directive';
-import { ThirdPartyIiifComponent } from './workspace/resource/values/third-party-iiif/third-party-iiif.component';
 import { ListViewComponent } from './workspace/results/list-view/list-view.component';
 import { ResourceListComponent } from './workspace/results/list-view/resource-list/resource-list.component';
 import { ResultsComponent } from './workspace/results/results.component';
@@ -236,7 +235,6 @@ export function httpLoaderFactory(httpClient: HttpClient) {
     StringifyStringLiteralPipe,
     SystemComponent,
     TextValueHtmlLinkDirective,
-    ThirdPartyIiifComponent,
     TimePipe,
     TitleFromCamelCasePipe,
     TruncatePipe,

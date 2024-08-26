@@ -7,7 +7,10 @@ import { CompoundService } from './compound.service';
   template: `
     <ng-container *ngIf="compoundService.compoundPosition">
       <ng-container *ngIf="compoundService.incomingResource as incomingResource">
-        <app-still-image class="dsp-representation stillimage" *ngIf="imageIsAccessible" [resource]="incomingResource">
+        <app-still-image
+          class="dsp-representation stillimage"
+          *ngIf="imageIsAccessible"
+          [resource]="incomingResource.res">
           <div navigationArrows class="arrows">
             <app-compound-arrow-navigation [forwardNavigation]="false" class="arrow" />
             <app-compound-arrow-navigation [forwardNavigation]="true" class="arrow" />

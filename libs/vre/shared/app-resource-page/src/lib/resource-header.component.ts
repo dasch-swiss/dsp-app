@@ -31,7 +31,7 @@ import { map } from 'rxjs/operators';
         [showEditLabel]="false"></app-resource-toolbar>
     </div>
     <div class="resource-label" style="display: flex; justify-content: space-between">
-      <h4>{{ resource.res.label }}</h4>
+      <h4 data-cy="resource-header-label">{{ resource.res.label }}</h4>
       <button
         mat-icon-button
         color="primary"

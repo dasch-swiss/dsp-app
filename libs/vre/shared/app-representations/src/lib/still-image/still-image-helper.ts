@@ -6,7 +6,6 @@ import {
   CreateResource,
   CreateTextValueAsString,
   Point2D,
-  ReadFileValue,
   ReadStillImageFileValue,
   RegionGeometry,
 } from '@dasch-swiss/dsp-js';
@@ -59,14 +58,10 @@ export class StillImageHelper {
     return createResource;
   }
 
-  static prepareTileSourcesFromFileValues(imagesToDisplay: ReadFileValue[], pngFormat = false): object[] {
-    const images = imagesToDisplay as ReadStillImageFileValue[];
-
+  static prepareTileSourcesFromFileValues(images: ReadStillImageFileValue[], pngFormat = false): object[] {
     let imageXOffset = 0;
     const imageYOffset = 0;
     const tileSources = [];
-
-    // let i = 0;
 
     for (const image of images) {
       const sipiBasePath = `${image.iiifBaseUrl}/${image.filename}`;

@@ -13,7 +13,6 @@ export interface CreateResourceDialogProps {
     <app-dialog-header [title]="'Create new resource of type: ' + data.resourceType"></app-dialog-header>
     <div mat-dialog-content>
       <app-create-resource-form
-        [resourceType]="data.resourceType"
         [resourceClassIri]="data.resourceClassIri"
         [projectIri]="data.projectIri"
         (createdResourceIri)="onCreatedResource($event)"></app-create-resource-form>

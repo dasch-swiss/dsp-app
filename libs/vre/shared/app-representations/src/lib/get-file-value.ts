@@ -5,13 +5,20 @@ import {
   ReadDocumentFileValue,
   ReadMovingImageFileValue,
   ReadStillImageFileValue,
+  ReadStillImageExternalFileValue,
   ReadTextFileValue,
 } from '@dasch-swiss/dsp-js';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 
 export function getFileValue(resource: DspResource) {
   if (resource.res.properties[Constants.HasStillImageFileValue]) {
-    return resource.res.properties[Constants.HasStillImageFileValue][0] as ReadStillImageFileValue;
+    if (resource.res.properties[Constants.HasStillImageFileValue][0].type === Constants.StillImageFileValue) {
+      return resource.res.properties[Constants.HasStillImageFileValue][0] as ReadStillImageFileValue;
+    } else if (
+      resource.res.properties[Constants.HasStillImageFileValue][0].type === Constants.StillImageExternalFileValue
+    ) {
+      return resource.res.properties[Constants.HasStillImageFileValue][0] as ReadStillImageExternalFileValue;
+    }
   } else if (resource.res.properties[Constants.HasDocumentFileValue]) {
     return resource.res.properties[Constants.HasDocumentFileValue][0] as ReadDocumentFileValue;
   } else if (resource.res.properties[Constants.HasAudioFileValue]) {

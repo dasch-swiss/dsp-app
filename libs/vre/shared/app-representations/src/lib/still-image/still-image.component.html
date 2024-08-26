@@ -4,7 +4,7 @@
   <ng-content select="[navigationArrows]"></ng-content>
   <app-status
     [status]="404"
-    [url]="image.fileValue.fileUrl"
+    [url]="imageFileValue?.fileUrl"
     [representation]="'still-image'"
     *ngIf="failedToLoad"></app-status>
 </div>
@@ -18,18 +18,30 @@
     </button>
 
     <span class="action-buttons">
-      <button mat-icon-button [matMenuTriggerFor]="share" matTooltip="Share" matTooltipPosition="above">
+      <button
+        data-cy="still-image-share-button"
+        mat-icon-button
+        [matMenuTriggerFor]="share"
+        [disabled]="isReadStillImageExternalFileValue"
+        matTooltip="Share"
+        matTooltipPosition="above">
         <mat-icon>share</mat-icon>
       </button>
 
-      <button mat-icon-button matTooltip="Download" (click)="download(image.fileValue.fileUrl)">
+      <button
+        data-cy="still-image-download-button"
+        mat-icon-button
+        matTooltip="Download"
+        [disabled]="isReadStillImageExternalFileValue"
+        (click)="download(imageFileValue?.fileUrl)">
         <mat-icon>download</mat-icon>
       </button>
       <button
+        data-cy="still-image-region-button"
         mat-icon-button
         id="DSP_OSD_DRAW_REGION"
         matTooltip="Draw Region"
-        [disabled]="failedToLoad || !usercanEdit"
+        [disabled]="failedToLoad || !usercanEdit || isReadStillImageExternalFileValue"
         (click)="drawButtonClicked()"
         [class.active]="regionDrawMode">
         <mat-icon svgIcon="draw_region_icon"></mat-icon>
@@ -47,11 +59,12 @@
     <!-- right side buttons -->
     <span>
       <button
+        data-cy="still-image-settings-button"
         mat-icon-button
         id="DSP_OSD_SETTINGS"
         matTooltip="Settings"
         [matMenuTriggerFor]="settings"
-        [disabled]="failedToLoad">
+        [disabled]="failedToLoad || this.isReadStillImageExternalFileValue">
         <mat-icon>settings</mat-icon>
       </button>
       <button mat-icon-button id="DSP_OSD_ZOOM_OUT" matTooltip="Zoom out" [disabled]="failedToLoad">
@@ -71,15 +84,15 @@
 </div>
 
 <mat-menu #more="matMenu" class="representation-menu">
-  <button class="menu-content" mat-menu-item (click)="openImageInNewTab(image.fileValue.fileUrl)">
+  <button class="menu-content" mat-menu-item (click)="openImageInNewTab(imageFileValue?.fileUrl)">
     Open IIIF URL in new tab
   </button>
   <button
     class="menu-content"
     mat-menu-item
-    [disabled]="failedToLoad || !usercanEdit"
+    [disabled]="failedToLoad || !usercanEdit || isReadStillImageExternalFileValue"
     (click)="openReplaceFileDialog()">
-    Replace file
+    {{isReadStillImageExternalFileValue ? 'Replace external file url':'Replace file'}}
   </button>
 </mat-menu>
 
@@ -87,13 +100,13 @@
   <button
     mat-menu-item
     (click)="openSnackBar('IIIF URL copied to clipboard!')"
-    [cdkCopyToClipboard]="image.fileValue.fileUrl">
+    [cdkCopyToClipboard]="imageFileValue?.fileUrl">
     <mat-icon>content_copy</mat-icon>
     Copy IIIF URL to clipboard
   </button>
   <button
     mat-menu-item
-    [cdkCopyToClipboard]="image.fileValue.arkUrl"
+    [cdkCopyToClipboard]="imageFileValue?.arkUrl"
     (click)="openSnackBar('ARK URL copied to clipboard!')">
     <mat-icon>content_copy</mat-icon>
     Copy ARK url to clipboard

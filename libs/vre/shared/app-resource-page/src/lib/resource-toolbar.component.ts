@@ -60,6 +60,7 @@ import { filter } from 'rxjs/operators';
         [userHasPermission]="resource.res.userHasPermission"></app-permission-info>
       <!-- more menu with: delete, erase resource -->
       <button
+        data-cy="resource-toolbar-more-button"
         color="primary"
         *ngIf="attachedProject?.status && ((userCanEdit && showEditLabel) || userCanDelete || adminPermissions)"
         mat-icon-button
@@ -105,6 +106,7 @@ import { filter } from 'rxjs/operators';
         Edit label
       </button>
       <button
+        data-cy="resource-toolbar-delete-resource-button"
         [disabled]="!adminPermissions && userCanDelete === false"
         mat-menu-item
         matTooltip="Move resource to trash bin."

@@ -24,7 +24,10 @@
     </app-resource-list>
   </div>
   <!-- In case of 0 result -->
-  <div class="list-view no-results" *ngIf="!loading && (!(resources?.resources) || resources?.resources?.length === 0)">
+  <div
+    data-cy="list-view-no-results"
+    class="list-view no-results"
+    *ngIf="!loading && (!(resources?.resources) || resources?.resources?.length === 0)">
     <!-- Case A: user did a fulltext search -->
     <div *ngIf="search.mode === 'fulltext'">
       <p>Your search - <strong> {{search.query}}</strong> - did not match any documents.</p>

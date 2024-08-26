@@ -1,4 +1,4 @@
-export class ResourceCreationPayloads {
+export class ClassPropertyPayloads {
   private static baseData(lastModificationDate: string) {
     return {
       '@id': 'http://0.0.0.0:3333/ontology/00FF/images/v2',

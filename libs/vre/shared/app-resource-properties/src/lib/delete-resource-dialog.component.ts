@@ -18,6 +18,7 @@ export interface DeleteResourceDialogProps {
       <mat-form-field class="large-field">
         <mat-label>Comment why resource is being deleted</mat-label>
         <textarea
+          data-cy="app-delete-resource-dialog-comment"
           matInput
           class="deletion-comment"
           type="text"
@@ -28,7 +29,13 @@ export interface DeleteResourceDialogProps {
     <mat-dialog-actions>
       <button mat-button color="primary" mat-dialog-close class="cancel-button center">No, keep it</button>
       <span class="fill-remaining-space"></span>
-      <button mat-button mat-raised-button [color]="'warn'" class="confirm-button center" (click)="submit()">
+      <button
+        data-cy="app-delete-resource-dialog-button"
+        mat-button
+        mat-raised-button
+        [color]="'warn'"
+        class="confirm-button center"
+        (click)="submit()">
         Yes, delete
       </button>
     </mat-dialog-actions>`,

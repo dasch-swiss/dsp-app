@@ -6,6 +6,7 @@ import { DocumentComponent } from './lib/document/document.component';
 import { ReplaceFileFormComponent } from './lib/replace-file-form/replace-file-form.component';
 import { StillImageComponent } from './lib/still-image/still-image.component';
 import { TextComponent } from './lib/text/text.component';
+import { ThirdPartyIiifComponent } from './lib/third-party-iiif/third-party-iiif.component';
 import { UploadComponent } from './lib/upload/upload.component';
 import { VideoMoreButtonComponent } from './lib/video/video-more-button.component';
 import { VideoComponent } from './lib/video/video.component';
@@ -24,4 +25,5 @@ export const RepresentationsComponents = [
   VideoComponent,
   VideoPreviewComponent,
   VideoMoreButtonComponent,
+  ThirdPartyIiifComponent,
 ];
