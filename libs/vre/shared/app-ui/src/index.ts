@@ -9,3 +9,6 @@ export * from './lib/time-input/time-input.component';
 export * from './lib/time-input/time-string-to-seconds';
 export * from './lib/time-input/time-validator';
 export * from './lib/time-format.pipe';
+export * from './lib/ck-editor/ck-editor';
+export * from './lib/ck-editor/ck-editor.component';
+export * from './lib/ck-editor/ck-editor-control.component';

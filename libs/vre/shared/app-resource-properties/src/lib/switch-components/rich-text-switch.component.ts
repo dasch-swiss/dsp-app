@@ -12,7 +12,7 @@ import { IsSwitchComponent } from './is-switch-component.interface';
       appHtmlLink
       (internalLinkClicked)="_openResource($event)"></div>
     <ng-template #editMode>
-      <app-rich-text-value [control]="myControl"></app-rich-text-value>
+      <app-ck-editor [control]="myControl" />
     </ng-template>`,
 })
 export class RichTextSwitchComponent implements IsSwitchComponent {

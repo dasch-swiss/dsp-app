@@ -5,7 +5,6 @@ export * from './lib/value-components/geoname-value.component';
 export * from './lib/value-components/link-value.component';
 export * from './lib/value-components/list-value.component';
 export * from './lib/value-components/nested-menu.component';
-export * from './lib/value-components/rich-text-value.component';
 export * from './lib/value-components/time-value.component';
 
 export * from './lib/switch-components/base-switch.component';

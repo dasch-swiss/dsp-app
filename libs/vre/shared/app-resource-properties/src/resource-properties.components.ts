@@ -35,7 +35,6 @@ import { GeonameValueComponent } from './lib/value-components/geoname-value.comp
 import { LinkValueComponent } from './lib/value-components/link-value.component';
 import { ListValueComponent } from './lib/value-components/list-value.component';
 import { NestedMenuComponent } from './lib/value-components/nested-menu.component';
-import { RichTextValueComponent } from './lib/value-components/rich-text-value.component';
 import { TimeValueComponent } from './lib/value-components/time-value.component';
 
 const valueComponents = [
@@ -43,7 +42,6 @@ const valueComponents = [
   LinkValueComponent,
   ListValueComponent,
   NestedMenuComponent,
-  RichTextValueComponent,
   TimeValueComponent,
 ];
 

@@ -25,7 +25,7 @@ export interface CreateSegmentDialogProps {
         [formArray]="form.controls.keywords"
         data-cy="keywords-input"
         [validators]="keywordsValidators" />
-      <app-common-input label="Comment" [control]="form.controls.comment" data-cy="comment-input" />
+      <app-ck-editor-control [control]="form.controls.comment" [label]="'Comment'" />
     </div>
     <div mat-dialog-actions align="end">
       <button mat-button mat-dialog-close data-cy="cancel-button">Cancel</button>
