@@ -2,7 +2,7 @@ import { faker } from '@faker-js/faker';
 import { ListGetResponseADM } from '../../../../../libs/vre/open-api/src';
 import { ClassDefinitionPayloads } from '../../fixtures/class-definition-payloads';
 import { ClassPropertyPayloads } from '../../fixtures/property-definition-payloads';
-import { ResponseUtil, ResourceRequests } from '../../fixtures/requests';
+import { ResourceRequests, ResponseUtil } from '../../fixtures/requests';
 import { AddResourceInstancePage } from '../../support/pages/add-resource-instance-page';
 
 describe('Resource', () => {
@@ -44,8 +44,6 @@ describe('Resource', () => {
       // delete
       po.delete();
     });
-
-    xit('rich text BUGS');
 
     it('number', () => {
       const intInput = () => cy.get('[data-cy=int-input]');
@@ -128,9 +126,11 @@ describe('Resource', () => {
       const editedValue = 'Allschwil';
 
       const enterAutocomplete = (value: string) => {
-        cy.get('[data-cy=geoname-autocomplete]').type(value).click();
-        cy.wait(2000);
-        cy.get('[data-cy=geoname-autocomplete]').type('{downarrow}{enter}');
+        cy.get('[data-cy=geoname-autocomplete]')
+          .type(value)
+          .click({ force: true })
+          .wait(1000)
+          .type('{downarrow}{enter}');
       };
 
       ResourceRequests.resourceRequest(ClassPropertyPayloads.place(finalLastModificationDate));
@@ -237,7 +237,7 @@ describe('Resource', () => {
         });
     });
 
-    xit('link BUGS BECAUSE OF DISPLAY EDIT 2 TEMPLINK SERVICE', () => {
+    it('link', () => {
       // create John Smith person
       cy.request('POST', `${Cypress.env('apiUrl')}/v2/resources`, {
         '@type': 'http://0.0.0.0:3333/ontology/00FF/images/v2#person',
@@ -263,9 +263,9 @@ describe('Resource', () => {
 
           // create
           po.addInitialLabel();
-          input.type('John').click();
+          input.type('John').click({ force: true });
           cy.wait(2000);
-          input.type('{downarrow}{downarrow}{enter}');
+          input.type('{downarrow}{downarrow}{downarrow}{enter}');
           po.clickOnSubmit();
 
           // edit
@@ -296,7 +296,7 @@ describe('Resource', () => {
       po.delete();
     });
 
-    it.skip('timestamp BUGS', () => {
+    it('timestamp', () => {
       ResourceRequests.resourceRequest(ClassPropertyPayloads.timestamp(finalLastModificationDate));
       po.visitAddPage();
 
@@ -318,7 +318,7 @@ describe('Resource', () => {
       po.delete();
     });
 
-    xit('time sequence', () => {
+    it('time sequence', () => {
       ResourceRequests.resourceRequest(ClassPropertyPayloads.timesequence(finalLastModificationDate));
       po.visitAddPage();
       const start = () => cy.get('[data-cy=start-input] input');

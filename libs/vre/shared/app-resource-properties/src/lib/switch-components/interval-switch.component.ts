@@ -10,8 +10,8 @@ import { IsSwitchComponent } from './is-switch-component.interface';
       >{{ secondsToTimeString(control.value.start) }}{{ ' ' }}- {{ secondsToTimeString(control.value.end) }}
     </ng-container>
     <ng-template #editMode>
-      <app-time-input label="Start" [control]="control.controls.start" />
-      <app-time-input label="End" [control]="control.controls.end" />
+      <app-time-input label="Start" [control]="control.controls.start" data-cy="start-input" />
+      <app-time-input label="End" [control]="control.controls.end" data-cy="end-input" />
     </ng-template>
   `,
 })
