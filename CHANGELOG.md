@@ -1,5 +1,23 @@
 # Changelog
 
+## [11.18.0](https://github.com/dasch-swiss/dsp-das/compare/v11.17.1...v11.18.0) (2024-08-27)
+
+
+### Enhancements
+
+* add mathjax to html value properties ([#1732](https://github.com/dasch-swiss/dsp-das/issues/1732)) ([2e60d13](https://github.com/dasch-swiss/dsp-das/commit/2e60d13ceec846704d13e31134377bb593c18449))
+* add segments to video and audio players ([#1693](https://github.com/dasch-swiss/dsp-das/issues/1693)) ([07d8e2b](https://github.com/dasch-swiss/dsp-das/commit/07d8e2bf7d265c7e836e7458f4d8cf551b291eff))
+* implement third party iiif image ([#1722](https://github.com/dasch-swiss/dsp-das/issues/1722)) ([bfb1ebe](https://github.com/dasch-swiss/dsp-das/commit/bfb1ebec819df366192a1aec166fa0fd58e24d59))
+* transparent status bar ([#1744](https://github.com/dasch-swiss/dsp-das/issues/1744)) ([da5e8bd](https://github.com/dasch-swiss/dsp-das/commit/da5e8bd7dcbdb9e09f8ffa1be627d83dea06c2e1))
+* use rich text comments in segment / annotation  creation and link object ([#1747](https://github.com/dasch-swiss/dsp-das/issues/1747)) ([02c1c85](https://github.com/dasch-swiss/dsp-das/commit/02c1c85cab9f93b120b9333ecd001316d51ecc91))
+
+
+### Bug Fixes
+
+* a comment on a created region is of type: rich text ([#1746](https://github.com/dasch-swiss/dsp-das/issues/1746)) ([5948719](https://github.com/dasch-swiss/dsp-das/commit/5948719260f022f8d8dd949989bfbeb5ab51c8b9))
+* highlights resource value if url parameter provided (DEV-4033) ([#1748](https://github.com/dasch-swiss/dsp-das/issues/1748)) ([3756453](https://github.com/dasch-swiss/dsp-das/commit/3756453ffc262cdbc69408e44479479a52957611))
+* **ontology editor:** new link properties do not have a constraint (DEV-4029) ([#1743](https://github.com/dasch-swiss/dsp-das/issues/1743)) ([d8dcb2d](https://github.com/dasch-swiss/dsp-das/commit/d8dcb2dc0329c1207cd2b1e1064876ba134bae96))
+
 ## [11.17.1](https://github.com/dasch-swiss/dsp-das/compare/v11.17.0...v11.17.1) (2024-08-19)
 
 
