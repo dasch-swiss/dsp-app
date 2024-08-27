@@ -2,11 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { CreateListInfoPageComponent, ListComponent } from '@dasch-swiss/vre/shared/app-list';
-import {
-  ResourceComponent,
-  ResourcePage2Component,
-  ResourcePageComponent,
-} from '@dasch-swiss/vre/shared/app-resource-page';
+import { ResourcePage2Component, ResourcePageComponent } from '@dasch-swiss/vre/shared/app-resource-page';
 import { CreateResourcePageComponent } from '@dasch-swiss/vre/shared/app-resource-properties';
 import { CookiePolicyComponent } from './main/cookie-policy/cookie-policy.component';
 import { AuthGuard } from './main/guard/auth.guard';
@@ -184,7 +180,7 @@ const routes: Routes = [
     children: [
       {
         path: RouteConstants.projectResourceValueRelative,
-        component: ResourceComponent,
+        component: ResourcePage2Component,
       },
       {
         path: RouteConstants.projectResourceRelative,

@@ -52,6 +52,7 @@ import { sortByKeys } from './sortByKeys';
           *ngFor="let prop of editableProperties; let last = last; trackBy: trackByPropertyInfoFn"
           [borderBottom]="true"
           [tooltip]="prop.propDef.comment"
+          [prop]="prop"
           [label]="
             prop.propDef.label +
             (prop.guiDef.cardinality === cardinality._1 || prop.guiDef.cardinality === cardinality._1_n ? '*' : '')
