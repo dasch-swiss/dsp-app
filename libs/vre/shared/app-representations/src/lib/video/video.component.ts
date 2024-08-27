@@ -81,13 +81,10 @@ export class VideoComponent implements OnChanges, OnDestroy {
   }
 
   onVideoPlayerReady() {
-    if (this.isPlayerReady) {
-      return;
-    }
-
     const player = document.getElementById('video') as HTMLVideoElement;
 
     this.videoPlayer.onInit(player);
+
     this.duration = this.videoPlayer.duration();
     this.isPlayerReady = true;
     this.loaded.emit(true);

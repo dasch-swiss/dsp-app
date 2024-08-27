@@ -17,7 +17,12 @@
   </div>
 
   <div class="preview" #preview>
-    <app-video-preview [src]="src" [time]="previewTime" [fileInfo]="fileInfo" (loaded)="displayPreview(!$event)" />
+    <app-video-preview
+      *ngIf="false"
+      [src]="src"
+      [time]="previewTime"
+      [fileInfo]="fileInfo"
+      (loaded)="displayPreview(!$event)" />
   </div>
 
   <mat-toolbar *ngIf="false">

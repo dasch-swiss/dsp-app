@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component, Input, OnChanges, OnDestroy } from '@angu
 import { Constants, ReadLinkValue } from '@dasch-swiss/dsp-js';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { ResourceFetcherService } from '@dasch-swiss/vre/shared/app-representations';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-resource-fetcher',
@@ -13,6 +14,8 @@ export class ResourceFetcherComponent implements OnChanges, OnDestroy {
 
   resource: DspResource | undefined;
 
+  private _subscription?: Subscription;
+
   constructor(
     private _cdr: ChangeDetectorRef,
     private _resourceFetcherService: ResourceFetcherService
@@ -23,8 +26,11 @@ export class ResourceFetcherComponent implements OnChanges, OnDestroy {
     this._resourceFetcherService.onInit(this.resourceIri);
     this._resourceFetcherService.settings.imageFormatIsPng.next(false);
 
-    this._resourceFetcherService.resource$.subscribe(resource => {
-      console.log('fetched', resource);
+    if (this._subscription) {
+      this._subscription.unsubscribe();
+    }
+
+    this._subscription = this._resourceFetcherService.resource$.subscribe(resource => {
       if (resource === null) {
         return;
       }
@@ -52,9 +58,9 @@ export class ResourceFetcherComponent implements OnChanges, OnDestroy {
       .linkedResourceIri;
 
     /* TODO
-                        this._getResource(annotatedRepresentationIri).subscribe(dspResource => {
-                          this.resource = dspResource;
-                        });
-                        */
+                                    this._getResource(annotatedRepresentationIri).subscribe(dspResource => {
+                                      this.resource = dspResource;
+                                    });
+                                    */
   }
 }
