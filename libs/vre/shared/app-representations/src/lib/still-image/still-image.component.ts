@@ -198,7 +198,7 @@ export class StillImageComponent implements OnInit, OnChanges, OnDestroy {
         title: '2D Image (Still Image)',
         subtitle: 'Update image of the resource',
         representation: 'stillImage',
-        propertyId: propId,
+        id: propId,
       },
       disableClose: true,
     };
