@@ -157,7 +157,6 @@ export class StillImageComponent implements OnInit, OnChanges, OnDestroy {
       this._viewer.destroy();
       this._viewer = undefined;
     }
-    this._resourceFetcherService.onDestroy();
     this.destroyed.next();
     this.destroyed.complete();
   }
