@@ -16,16 +16,17 @@ import {
   ComponentCommunicationEventService,
   EmitEvent,
   Events,
+  LocalizationService,
   OntologyService,
 } from '@dasch-swiss/vre/shared/app-helper-services';
 import {
   IClassItemsKeyValuePairs,
   LoadClassItemsCountAction,
   OntologyClassSelectors,
-  UserSelectors,
 } from '@dasch-swiss/vre/shared/app-state';
-import { Actions, ofActionSuccessful, Select, Store } from '@ngxs/store';
-import { combineLatest, Observable, Subject, Subscription } from 'rxjs';
+import { TranslateService } from '@ngx-translate/core';
+import { Actions, Select, Store, ofActionSuccessful } from '@ngxs/store';
+import { Observable, Subject, Subscription, combineLatest } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
 
 @Component({
@@ -78,7 +79,9 @@ export class OntologyClassItemComponent implements OnInit, AfterViewInit, OnDest
     private _store: Store,
     private _actions$: Actions,
     private _cd: ChangeDetectorRef,
-    private _router: Router
+    private _router: Router,
+    private _localizationService: LocalizationService,
+    private _translateService: TranslateService
   ) {
     this._actions$.pipe(takeUntil(this.destroyed), ofActionSuccessful(LoadClassItemsCountAction)).subscribe(() => {
       this._cd.markForCheck();
@@ -91,6 +94,9 @@ export class OntologyClassItemComponent implements OnInit, AfterViewInit, OnDest
     const ontologyName = OntologyService.getOntologyName(splitIri[0]);
     this.classLink = `${RouteConstants.projectRelative}/${uuid}/${RouteConstants.ontology}/${ontologyName}/${splitIri[1]}`;
     this.icon = this._getIcon();
+    this._translateService.onLangChange.pipe(takeUntil(this.destroyed)).subscribe(() => {
+      this.getOntologiesLabelsInPreferredLanguage();
+    });
     this.getOntologiesLabelsInPreferredLanguage();
   }
 
@@ -119,13 +125,11 @@ export class OntologyClassItemComponent implements OnInit, AfterViewInit, OnDest
    * Gets the ontology label in the preferred language of the user
    */
   private getOntologiesLabelsInPreferredLanguage(): void {
-    // TODO: this method and changes in below PR are workourund, the label selection should be invastigated deeper to find out why DE is set as default
-    // https://github.com/dasch-swiss/dsp-das/pull/1651
-    const prefferedLanguage = this._store.selectSnapshot(UserSelectors.language);
-
+    const prefferedLanguage = this._localizationService.getCurrentLanguage();
     if (this.resClass.labels) {
       const label = this.resClass.labels.find(l => l.language === prefferedLanguage);
       this.ontologiesLabel = label ? label.value : this.resClass.labels[0].value;
+      this._cd.markForCheck();
     }
   }
 
