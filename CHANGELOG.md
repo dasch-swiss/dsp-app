@@ -1,5 +1,15 @@
 # Changelog
 
+## [11.18.1](https://github.com/dasch-swiss/dsp-das/compare/v11.18.0...v11.18.1) (2024-08-29)
+
+
+### Bug Fixes
+
+* refresh still image after replacing file ([#1754](https://github.com/dasch-swiss/dsp-das/issues/1754)) ([bf5d54d](https://github.com/dasch-swiss/dsp-das/commit/bf5d54d09adaa12d356a731eb1ddd17a5caccf8b))
+* segments are displayed correctly when the video is changed ([#1751](https://github.com/dasch-swiss/dsp-das/issues/1751)) ([ec7da29](https://github.com/dasch-swiss/dsp-das/commit/ec7da296aaabdbce12acc6de604636cfaca6c82e))
+* updates class list labels on language change (DEV-4052) ([#1755](https://github.com/dasch-swiss/dsp-das/issues/1755)) ([f482a73](https://github.com/dasch-swiss/dsp-das/commit/f482a73d0e4cb2e3bd06455d1c0a4084a883eb40))
+* use correct property(DEV-4056) ([#1753](https://github.com/dasch-swiss/dsp-das/issues/1753)) ([680eae8](https://github.com/dasch-swiss/dsp-das/commit/680eae81fdfd6a980d34ef933f14d9de8d1972b0))
+
 ## [11.18.0](https://github.com/dasch-swiss/dsp-das/compare/v11.17.1...v11.18.0) (2024-08-27)
 
 
