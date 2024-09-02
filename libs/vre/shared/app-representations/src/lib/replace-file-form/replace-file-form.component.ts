@@ -10,6 +10,7 @@ import { UploadComponent } from '../upload/upload.component';
 export class ReplaceFileFormComponent implements OnInit {
   @Input() representation: 'stillImage' | 'movingImage' | 'audio' | 'document' | 'text' | 'archive';
   @Input() propId: string;
+  @Input() projectUuid: string;
 
   @Output() closeDialog: EventEmitter<UpdateFileValue> = new EventEmitter<UpdateFileValue>();
 
