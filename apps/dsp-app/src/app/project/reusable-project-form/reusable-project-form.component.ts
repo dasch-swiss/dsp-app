@@ -32,7 +32,7 @@ import { shortcodeExistsValidator } from './shortcode-exists.validator';
         data-cy="longname-input" />
 
       <dasch-swiss-multi-language-textarea
-        [placeholder]="('form.project.general.description' | translate) + '*'"
+        [placeholder]="('form.project.general.description' | translate) + ' *'"
         [formArray]="form.controls.description"
         [validators]="descriptionValidators"
         data-cy="description-input">

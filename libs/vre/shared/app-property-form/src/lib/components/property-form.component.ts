@@ -36,7 +36,7 @@ import { PropertyForm } from '../property-form.type';
     <dasch-swiss-multi-language-input
       [formArray]="form.controls.labels"
       data-cy="label-input"
-      placeholder="Property label*"></dasch-swiss-multi-language-input>
+      placeholder="Property label *"></dasch-swiss-multi-language-input>
 
     <app-gui-attr-list
       *ngIf="formData.property.propType.objectType === Constants.ListValue"
@@ -49,7 +49,7 @@ import { PropertyForm } from '../property-form.type';
     <dasch-swiss-multi-language-textarea
       [formArray]="form.controls.comments"
       data-cy="comment-textarea"
-      placeholder="Comment"></dasch-swiss-multi-language-textarea>
+      placeholder="Comment *"></dasch-swiss-multi-language-textarea>
   </form>`,
 })
 export class PropertyFormComponent implements OnInit {

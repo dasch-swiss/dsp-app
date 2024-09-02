@@ -18,7 +18,7 @@ import { ResourceClassForm } from './resource-class-form.type';
         class="name-input"
         data-cy="name-input"
         [control]="form.controls.name"
-        label="Class name *"
+        label="Class name"
         [validatorErrors]="[{ errorKey: 'pattern', message: 'This pattern is not supported' }]"
         prefixIcon="fingerprint" />
 

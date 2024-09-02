@@ -6,7 +6,7 @@ import { FormBuilder, Validators } from '@angular/forms';
   template: `
     <form [formGroup]="regionForm" class="form-content">
       <mat-form-field class="large-field">
-        <mat-label>Label</mat-label>
+        <mat-label>Label *</mat-label>
         <input matInput [formControl]="regionForm.controls.label" />
       </mat-form-field>
 

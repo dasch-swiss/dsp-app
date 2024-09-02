@@ -16,7 +16,7 @@ export interface CreateSegmentDialogProps {
   selector: 'app-create-segment-dialog',
   template: ` <app-dialog-header title="Create a segment"></app-dialog-header>
     <div mat-dialog-content>
-      <app-common-input [control]="form.controls.label" label="Label*" />
+      <app-common-input [control]="form.controls.label" label="Label" />
       <app-time-input label="Start" [control]="form.controls.start" data-cy="start-input" />
       <app-time-input label="End" [control]="form.controls.end" data-cy="end-input" />
       <app-common-input label="Title" [control]="form.controls.title" data-cy="title-input" />
