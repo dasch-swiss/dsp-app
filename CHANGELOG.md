@@ -1,5 +1,13 @@
 # Changelog
 
+## [11.18.2](https://github.com/dasch-swiss/dsp-das/compare/v11.18.1...v11.18.2) (2024-09-02)
+
+
+### Bug Fixes
+
+* display asterisks for marking a field as required (DEV-4053) ([#1759](https://github.com/dasch-swiss/dsp-das/issues/1759)) ([756cb2a](https://github.com/dasch-swiss/dsp-das/commit/756cb2a055603107f253b3ad16c79b41e18314eb))
+* pass projectUuid via input (DEV-4055) ([#1757](https://github.com/dasch-swiss/dsp-das/issues/1757)) ([d84fed5](https://github.com/dasch-swiss/dsp-das/commit/d84fed5b86c9b4c221bfd97bfd18a9e492b78aca))
+
 ## [11.18.1](https://github.com/dasch-swiss/dsp-das/compare/v11.18.0...v11.18.1) (2024-08-29)
 
 
