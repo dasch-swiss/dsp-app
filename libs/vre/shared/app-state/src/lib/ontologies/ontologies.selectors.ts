@@ -1,8 +1,14 @@
+import { Params } from '@angular/router';
 import { OntologyMetadata, ReadOntology, ReadProject } from '@dasch-swiss/dsp-js';
-import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { DspResource } from '@dasch-swiss/vre/shared/app-common';
+import { DspAppConfig, RouteConstants } from '@dasch-swiss/vre/shared/app-config';
+import { OntologyService, ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { Selector } from '@ngxs/store';
+import { ConfigState } from '../config.state';
 import { IProjectOntologiesKeyValuePairs, OntologyProperties } from '../model-interfaces';
 import { ProjectsSelectors } from '../projects/projects.selectors';
+import { ResourceSelectors } from '../resource/resource.selectors';
+import { RouterSelectors } from '../router/router.selector';
 import { OntologiesState } from './ontologies.state';
 import { OntologiesStateModel } from './ontologies.state-model';
 
@@ -56,5 +62,23 @@ export class OntologiesSelectors {
   @Selector([OntologiesState])
   static isOntologiesLoading(state: OntologiesStateModel): boolean {
     return state.isOntologiesLoading;
+  }
+
+  @Selector([OntologiesState, ResourceSelectors.resource, ConfigState.getConfig, RouterSelectors.params])
+  static currentOntologyIri(
+    state: OntologiesStateModel,
+    resource: DspResource,
+    dspApiConfig: DspAppConfig,
+    params: Params
+  ): string | undefined {
+    const projectIri = ProjectService.getProjectIri(params, dspApiConfig, resource);
+    if (!projectIri) return undefined;
+
+    const projectReadOntologies = state.projectOntologies[projectIri].readOntologies;
+    const projectReadOntologiesIndex = projectReadOntologies.findIndex(
+      o => o.id.indexOf(`/${params[RouteConstants.ontoParameter]}/`) !== -1
+    );
+
+    return projectReadOntologiesIndex === -1 ? undefined : projectReadOntologies[projectReadOntologiesIndex].id;
   }
 }

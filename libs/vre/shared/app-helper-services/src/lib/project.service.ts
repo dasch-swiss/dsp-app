@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
+import { Params } from '@angular/router';
 import { Constants, ReadUser } from '@dasch-swiss/dsp-js';
-import { AppConfigService, DspAppConfig } from '@dasch-swiss/vre/shared/app-config';
+import { DspResource } from '@dasch-swiss/vre/shared/app-common';
+import { AppConfigService, DspAppConfig, RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 
 @Injectable({
   providedIn: 'root',
@@ -110,5 +112,12 @@ export class ProjectService {
       groupsPerProject[project.id] &&
       groupsPerProject[project.id].includes(Constants.ProjectMemberGroupIRI);
     return hasProjectMemberRights === true;
+  }
+
+  static getProjectIri(params: Params, dspApiConfig: DspAppConfig, resource: DspResource) {
+    const projectIri = params[`${RouteConstants.uuidParameter}`]
+      ? params[`${RouteConstants.uuidParameter}`]
+      : resource?.res.attachedToProject;
+    return projectIri ? ProjectService.uuidToIri(projectIri, dspApiConfig) : undefined;
   }
 }

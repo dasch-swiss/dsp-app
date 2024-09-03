@@ -38,6 +38,7 @@ export class EmitEvent {
 
 // possible events that can be emitted.
 export enum Events {
+  resourceLanguageChanged,
   loginSuccess,
   gravSearchExecuted,
   resourceDeleted,

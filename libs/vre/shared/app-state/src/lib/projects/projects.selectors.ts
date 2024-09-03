@@ -105,7 +105,7 @@ export class ProjectsSelectors {
     dspApiConfig: DspAppConfig,
     params: Params
   ): boolean | undefined {
-    const projectIri = ProjectsSelectors.getProjectIri(params, dspApiConfig, resource);
+    const projectIri = ProjectService.getProjectIri(params, dspApiConfig, resource);
     if (!projectIri) return false;
     const isMember = ProjectService.IsProjectMemberOrAdminOrSysAdmin(user, userProjectGroups, projectIri);
     return isMember;
@@ -131,7 +131,7 @@ export class ProjectsSelectors {
       ? ProjectService.IsMemberOfSystemAdminGroup(user.permissions.groupsPerProject)
       : false;
     if (isMemberOfSystemAdminGroup) return true;
-    const projectIri = ProjectsSelectors.getProjectIri(params, dspApiConfig, resource);
+    const projectIri = ProjectService.getProjectIri(params, dspApiConfig, resource);
     if (!projectIri) return false;
     const isProjectAdmin = ProjectService.IsProjectAdminOrSysAdmin(user, userProjectGroups, projectIri);
     return isProjectAdmin;
@@ -153,7 +153,7 @@ export class ProjectsSelectors {
     dspApiConfig: DspAppConfig,
     params: Params
   ): boolean | undefined {
-    const projectIri = ProjectsSelectors.getProjectIri(params, dspApiConfig, resource);
+    const projectIri = ProjectService.getProjectIri(params, dspApiConfig, resource);
     if (!projectIri) return false;
     const isProjectMember = ProjectService.IsProjectMember(user, userProjectGroups, projectIri);
     return isProjectMember;
@@ -179,15 +179,8 @@ export class ProjectsSelectors {
     dspApiConfig: DspAppConfig,
     params: Params
   ): ReadProject | undefined {
-    const projectIri = ProjectsSelectors.getProjectIri(params, dspApiConfig, resource);
+    const projectIri = ProjectService.getProjectIri(params, dspApiConfig, resource);
     if (!projectIri) return undefined;
     return state.allProjects.find(p => p.id === projectIri);
-  }
-
-  private static getProjectIri(params: Params, dspApiConfig: DspAppConfig, resource: DspResource) {
-    const projectIri = params[`${RouteConstants.uuidParameter}`]
-      ? params[`${RouteConstants.uuidParameter}`]
-      : resource?.res.attachedToProject;
-    return projectIri ? ProjectService.uuidToIri(projectIri, dspApiConfig) : undefined;
   }
 }
