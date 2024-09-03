@@ -76,6 +76,15 @@
       "searchHelp": "Gebe 3 Zeichen ein um nach einer existierender Resource zu suchen.",
       "login": "Anmelden"
     },
+    "ontology": {
+      "title": {
+        "create": "Neues Datenmodell erstellen",
+        "edit": "Datenmodell bearbeiten"
+      },
+      "label": {
+        "name": "Eindeutiger Name"
+      }
+    },
     "user": {
       "general": {
         "givenName": "Vorname",

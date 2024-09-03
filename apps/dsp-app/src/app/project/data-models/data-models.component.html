@@ -10,15 +10,10 @@
     </mat-icon>
   </div>
   <div *ngIf="isAdmin$ | async" class="action-buttons">
-    <a
-      color="primary"
-      data-cy="create-button"
-      mat-raised-button
-      class="create"
-      [routerLink]="['..', RouteConstants.addOntology]">
+    <button color="primary" data-cy="create-button" mat-raised-button class="create" (click)="createNewOntology()">
       <mat-icon class="v-align-middle">add_circle</mat-icon>
       <span class="v-align-middle">Create New</span>
-    </a>
+    </button>
     <a
       color="primary"
       mat-stroked-button

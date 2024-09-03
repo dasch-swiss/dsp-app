@@ -15,7 +15,6 @@ import { DataModelsComponent } from './project/data-models/data-models.component
 import { DescriptionComponent } from './project/description/description.component';
 import { EditProjectFormPageComponent } from './project/edit-project-form-page/edit-project-form-page.component';
 import { ImageSettingsComponent } from './project/image-settings/image-settings.component';
-import { OntologyFormComponent } from './project/ontology/ontology-form/ontology-form.component';
 import { OntologyComponent } from './project/ontology/ontology.component';
 import { OntologyClassInstanceComponent } from './project/ontology-classes/ontology-class-instance/ontology-class-instance.component';
 import { ProjectComponent } from './project/project.component';
@@ -49,11 +48,6 @@ const routes: Routes = [
       {
         path: RouteConstants.home,
         component: DescriptionComponent,
-      },
-      {
-        path: RouteConstants.addOntology,
-        component: OntologyFormComponent,
-        canActivate: [AuthGuard],
       },
       {
         path: RouteConstants.dataModels,

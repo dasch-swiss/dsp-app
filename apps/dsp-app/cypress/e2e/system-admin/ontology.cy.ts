@@ -46,9 +46,9 @@ describe('Ontology', () => {
     cy.get('[data-cy=ontology-label]').contains(data.label).should('be.visible');
   });
 
-  it.skip('should update ontology', () => {
+  it('should update ontology', () => {
     const data = <CreateOntology>{
-      name: faker.string.alpha({ length: { min: 3, max: 16 } }),
+      name: faker.string.alpha({ length: { min: 3, max: 16 } }).replace(' ', ''),
       label: faker.lorem.words(5),
       comment: faker.lorem.words(10),
     };

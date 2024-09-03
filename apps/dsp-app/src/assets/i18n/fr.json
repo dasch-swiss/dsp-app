@@ -82,6 +82,15 @@
       "searchHelp": "Type 3 letters to search for an existing resource.",
       "login": "Login"
     },
+    "ontology": {
+      "title": {
+        "create": "Create new data model",
+        "edit": "Customize data model"
+      },
+      "label": {
+        "name": "Set a unique name"
+      }
+    },
     "user": {
       "general": {
         "givenName": "First name",

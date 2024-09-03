@@ -41,7 +41,7 @@
               data-cy="edit-ontology-button"
               mat-button
               [disabled]="(lastModificationDate$ | async | isFalsy) || (isAdmin$ | async) === false"
-              (click)="$event.stopPropagation(); openOntologyForm('editOntology', currentOntology.id)">
+              (click)="$event.stopPropagation(); openOntologyForm(currentOntology.id)">
               <mat-icon>edit</mat-icon>
               Edit
             </button>

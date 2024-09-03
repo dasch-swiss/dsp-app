@@ -1,6 +1,7 @@
-import { Component, EventEmitter, Inject, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import {
   ApiResponseError,
   CreateOntology,
@@ -15,302 +16,175 @@ import { DspApiConnectionToken, RouteConstants } from '@dasch-swiss/vre/shared/a
 import { OntologyService, ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import {
   ClearProjectOntologiesAction,
-  CurrentOntologyCanBeDeletedAction,
-  LoadListsInProjectAction,
-  LoadProjectOntologiesAction,
   OntologiesSelectors,
   ProjectsSelectors,
-  SetCurrentOntologyAction,
-  SetCurrentProjectOntologyPropertiesAction,
 } from '@dasch-swiss/vre/shared/app-state';
-import { Actions, ofActionSuccessful, Select, Store } from '@ngxs/store';
+import { Select, Store } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
 import { take, takeUntil, tap } from 'rxjs/operators';
 import { existingNamesValidator } from '../../../main/directive/existing-name/existing-names.validator';
-
-export interface NewOntology {
-  projectIri: string;
-  name: string;
-  label: string;
-}
+import { OntologyForm, OntologyFormProps } from './ontology-form.type';
 
 @Component({
   selector: 'app-ontology-form',
   templateUrl: './ontology-form.component.html',
-  styleUrls: ['./ontology-form.component.scss'],
 })
 export class OntologyFormComponent implements OnInit, OnDestroy {
-  private ngUnsubscribe: Subject<void> = new Subject<void>();
+  private _destroy$: Subject<void> = new Subject<void>();
 
-  // project uuid
-  @Input() projectUuid: string;
+  @Select(OntologiesSelectors.currentOntology)
+  private _currentOntology$: Observable<ReadOntology>;
 
-  // ontology iri in case of edit
-  @Input() iri: string;
+  private _lastModificationDate: string;
 
-  @Output() closeDialog: EventEmitter<any> = new EventEmitter<any>();
+  ontologyForm: OntologyForm;
 
-  @Output() updateParent: EventEmitter<string> = new EventEmitter<string>();
-
-  // existing ontology names; name has to be unique
-  existingOntologyNames: string[] = [];
-
-  loading: boolean;
+  loading = false;
 
   project: ReadProject;
 
-  ontologyForm: UntypedFormGroup;
+  readonly forbiddenNames = ['knora', 'salsah', 'standoff', 'ontology', 'simple', 'shared'] as const;
 
-  ontologyLabel: string;
-  ontologyComment: string;
-
-  lastModificationDate: string;
-
-  // ontology name must not contain one of the following words
-  forbiddenNames: string[] = ['knora', 'salsah', 'standoff', 'ontology', 'simple', 'shared'];
-
-  existingNames: [RegExp];
-
-  nameMinLength = 3;
-  nameMaxLength = 16;
-
-  formErrors = {
-    name: '',
-    label: '',
+  readonly ontoNamePatternErrorMsg = {
+    errorKey: 'pattern',
+    message:
+      "Name shouldn't start with a number or v + number and spaces or special characters (except dash, dot and underscore) are not allowed.",
   };
 
-  validationMessages = {
-    name: {
-      required: 'Name is required.',
-      minlength: `Name must be at least ${this.nameMinLength} characters long.`,
-      maxlength: `Name cannot be more than ${this.nameMaxLength} characters long.`,
-      pattern:
-        "Name shouldn't start with a number or v + number and spaces or special characters (except dash, dot and underscore) are not allowed.",
-      existingName: 'This name is not allowed or exists already.',
-    },
-    label: {
-      required: 'Label is required.',
-      minlength: `Label must be at least ${this.nameMinLength} characters long.`,
-    },
+  readonly ontoNameExistsErrorMsg = {
+    errorKey: 'pattern',
+    message: 'This name is not allowed or exists already.',
   };
 
-  ontologyNameInfo = `
-    The unique name
-        - must be at least 3 characters long
-        - shouldn't begin with a number
-        - shouldn't begin with the letter v and a number
-        - spaces or special characters (except dash, dot and underscore) are not allowed
-        - may not contain these reserved words: knora, ontology, salsah, shared, simple or standoff
-        - can't be changed afterwards
-    `;
+  get ontologyName(): string {
+    return this.data.ontologyIri ? OntologyService.getOntologyName(this.data.ontologyIri) : '';
+  }
 
-  error = false;
+  get existingOntologyNames(): string[] {
+    return this._store
+      .selectSnapshot(OntologiesSelectors.currentProjectOntologies)
+      .map(onto => OntologyService.getOntologyName(onto.id));
+  }
 
-  @Select(OntologiesSelectors.currentProjectOntologies)
-  currentProjectOntologies$: Observable<ReadOntology[]>;
-  @Select(OntologiesSelectors.currentOntology)
-  currentOntology$: Observable<ReadOntology>;
+  get blackListedNames(): RegExp[] {
+    const forbiddenRegex = this.forbiddenNames.map(name => new RegExp(name));
+    const existingOntologyRegex = this.existingOntologyNames.map(name => new RegExp(`(?:^|\\W)${name}(?:$|\\W)`));
+    return [...forbiddenRegex, ...existingOntologyRegex];
+  }
 
   constructor(
     @Inject(DspApiConnectionToken)
     private _dspApiConnection: KnoraApiConnection,
-    private _fb: UntypedFormBuilder,
-    private _route: ActivatedRoute,
+    private _fb: FormBuilder,
     private _router: Router,
     private _store: Store,
-    private _actions$: Actions,
-    private _projectService: ProjectService
+    @Inject(MAT_DIALOG_DATA) public data: OntologyFormProps,
+    public dialogRef: MatDialogRef<OntologyFormComponent>
   ) {}
 
   ngOnInit() {
-    if (!this.projectUuid) {
-      // if project shorcode is missing, get it from the url
-      this.projectUuid = this._route.parent.snapshot.params.uuid;
-    }
-
-    if (!this.iri && !this.existingOntologyNames.length) {
-      // if there is no iri, we are creating a new ontology
-      const currentProjectOntologies = this._store.selectSnapshot(OntologiesSelectors.currentProjectOntologies);
-      currentProjectOntologies.forEach(onto => {
-        const name = OntologyService.getOntologyName(onto.id);
-        this.existingOntologyNames.push(name);
-      });
-    }
-
     this.project = this._store.selectSnapshot(ProjectsSelectors.currentProject);
-    this.buildForm();
 
-    if (this.iri) {
-      // edit mode: get current ontology
-      this.currentOntology$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((response: ReadOntology) => {
-        // add values to the ontology form
-        this.ontologyForm.controls['name'].disable();
-        const name = OntologyService.getOntologyName(this.iri);
-        this.ontologyForm.controls['name'].setValue(name);
-        this.ontologyForm.controls['label'].setValue(response.label);
-        this.ontologyForm.controls['label'].setValidators([Validators.required]);
-        this.ontologyForm.controls['comment'].setValue(response.comment);
-        // disable name input
-
-        this.lastModificationDate = response.lastModificationDate;
+    if (this.data.ontologyIri) {
+      this._currentOntology$.pipe(take(1)).subscribe((response: ReadOntology) => {
+        this._buildForm(response);
+        this._lastModificationDate = response.lastModificationDate;
       });
+    } else {
+      this._buildForm();
     }
+
+    this.ontologyForm.controls.name.valueChanges.pipe(takeUntil(this._destroy$)).subscribe(() => {
+      if (this.ontologyForm.controls.label.pristine) {
+        this.ontologyForm.controls.label.patchValue(this._proposeLabel(this.ontologyForm.controls.name.value));
+      }
+    });
   }
 
-  ngOnDestroy() {
-    this.ngUnsubscribe.next();
-    this.ngUnsubscribe.complete();
+  private _proposeLabel(ontoName = '') {
+    return ontoName ? `${ontoName.charAt(0).toUpperCase()}${ontoName.slice(1)}` : '';
   }
 
-  buildForm() {
-    // reset existing names
-    this.existingNames = [new RegExp('anEmptyRegularExpressionWasntPossible')];
-
-    // get all project ontologies and read the name
-    // name has to be unique; if it already exists
-    // show an error message
-    for (const name of this.existingOntologyNames) {
-      this.existingNames.push(new RegExp(`(?:^|W)${name}(?:$|W)`));
-    }
-
-    for (const name of this.forbiddenNames) {
-      this.existingNames.push(new RegExp(name));
-    }
-
-    this.ontologyLabel = '';
-
+  private _buildForm(ontology: ReadOntology = null): void {
     this.ontologyForm = this._fb.group({
-      name: new UntypedFormControl(
-        {
-          value: '',
-          disabled: false,
-        },
+      name: [
+        { value: this.ontologyName, disabled: !!ontology },
         [
           Validators.required,
-          Validators.minLength(this.nameMinLength),
-          Validators.maxLength(this.nameMaxLength),
-          existingNamesValidator(this.existingNames),
+          Validators.minLength(3),
+          Validators.maxLength(16),
           Validators.pattern(CustomRegex.ID_NAME_REGEX),
-        ]
-      ),
-      label: new UntypedFormControl(
-        {
-          value: this.ontologyLabel,
-          disabled: false,
-        },
-        [Validators.required, Validators.minLength(this.nameMinLength)]
-      ),
-      comment: new UntypedFormControl({
-        value: this.ontologyComment,
-        disabled: false,
-      }),
-    });
-
-    this.ontologyForm.valueChanges.subscribe(() => this.onValueChanged());
-
-    if (!this.iri) {
-      this.ontologyForm.get('name').valueChanges.subscribe(val => {
-        this.ontologyForm.controls.label.setValue(this.capitalizeFirstLetter(val));
-      });
-    }
-  }
-
-  onValueChanged() {
-    if (!this.ontologyForm) {
-      return;
-    }
-
-    Object.keys(this.formErrors).forEach(field => {
-      this.formErrors[field] = '';
-      const control = this.ontologyForm.get(field);
-      if (control && control.dirty && !control.valid) {
-        const messages = this.validationMessages[field];
-        Object.keys(control.errors).forEach(key => {
-          this.formErrors[field] += `${messages[key]} `;
-        });
-      }
+          existingNamesValidator(this.blackListedNames),
+        ],
+      ],
+      label: [
+        ontology?.label?.includes(':') ? ontology.label.split(':')[1] : ontology?.label || '',
+        [Validators.required, Validators.minLength(3)],
+      ],
+      comment: [ontology ? ontology.comment : ''],
     });
   }
 
   submitData() {
     this.loading = true;
-
-    if (this.iri) {
-      // edit mode
-      const ontologyData = new UpdateOntologyMetadata();
-      ontologyData.id = this.iri;
-      ontologyData.lastModificationDate = this.lastModificationDate;
-      ontologyData.label = this.ontologyForm.controls['label'].value;
-      ontologyData.comment = this.ontologyForm.controls['comment'].value;
-
-      this._dspApiConnection.v2.onto
-        .updateOntology(ontologyData)
-        .pipe(
-          take(1),
-          tap({
-            error: () => {
-              this.loading = false;
-              this.error = true;
-            },
-          })
-        )
-        .subscribe((response: OntologyMetadata) => {
-          this.loadOntologies(response.id);
-          this.updateParent.emit(response.id);
-          this.closeDialog.emit(response.id);
-        });
+    if (this.data.ontologyIri) {
+      this._updateOntology();
     } else {
-      // create mode
-      const ontologyData = new CreateOntology();
-      ontologyData.label = `${this.project.shortname}: ${this.ontologyForm.controls['label'].value}`;
-      ontologyData.name = this.ontologyForm.controls['name'].value;
-      ontologyData.comment = this.ontologyForm.controls['comment'].value;
-      ontologyData.attachedToProject = this.project.id;
-
-      this._dspApiConnection.v2.onto
-        .createOntology(ontologyData)
-        .pipe(take(1))
-        .subscribe(
-          (response: OntologyMetadata) => {
-            this._store.dispatch([new ClearProjectOntologiesAction(this.projectUuid)]);
-            this.updateParent.emit(response.id);
-            // go to the new ontology page
-            const name = OntologyService.getOntologyName(response.id);
-            this._router.navigate([RouteConstants.ontology, name, RouteConstants.editor, RouteConstants.classes], {
-              relativeTo: this._route.parent,
-            });
-          },
-          (error: ApiResponseError) => {
-            // in case of an error... e.g. because the ontolog iri is not unique, rebuild the form including the error message
-            this.formErrors['name'] += `${this.validationMessages['name']['existingName']} `;
-            this.loading = false;
-          }
-        );
+      this._createOntology();
     }
   }
 
-  capitalizeFirstLetter(text: string) {
-    return text.charAt(0).toUpperCase() + text.slice(1);
+  private _updateOntology() {
+    const ontologyData = new UpdateOntologyMetadata();
+    ontologyData.id = this.data.ontologyIri;
+    ontologyData.lastModificationDate = this._lastModificationDate;
+    ontologyData.label = `${this.project.shortname}:${this.ontologyForm.controls.label.value}`;
+    ontologyData.comment = this.ontologyForm.controls.comment.value;
+
+    const update = this._dspApiConnection.v2.onto
+      .updateOntology(ontologyData)
+      .pipe(
+        take(1),
+        tap({
+          error: () => {
+            this.loading = false;
+          },
+        })
+      )
+      .subscribe((response: OntologyMetadata) => {
+        this.dialogRef.close(true);
+      });
   }
 
-  private loadOntologies(currentOntologyId: string) {
-    const projectIri = this._projectService.uuidToIri(this.projectUuid);
-    this._store.dispatch([
-      new ClearProjectOntologiesAction(this.projectUuid),
-      new LoadProjectOntologiesAction(projectIri),
-    ]);
-    this._actions$
-      .pipe(ofActionSuccessful(LoadListsInProjectAction))
+  private _createOntology() {
+    const ontologyData = new CreateOntology();
+    ontologyData.label = `${this.project.shortname}:${this.ontologyForm.controls.label.value}`;
+    ontologyData.name = this.ontologyForm.controls.name.value;
+    if (this.ontologyForm.controls.comment.value) {
+      ontologyData.comment = this.ontologyForm.controls.comment.value;
+    }
+    ontologyData.attachedToProject = this.project.id;
+
+    this._dspApiConnection.v2.onto
+      .createOntology(ontologyData)
       .pipe(take(1))
-      .subscribe(() => {
-        const projectOntologies = this._store.selectSnapshot(OntologiesSelectors.projectOntologies);
-        const currentOntology = projectOntologies[projectIri]?.readOntologies.find(o => o.id === currentOntologyId);
-        this._store.dispatch([
-          new SetCurrentOntologyAction(currentOntology),
-          new SetCurrentProjectOntologyPropertiesAction(projectIri),
-          new CurrentOntologyCanBeDeletedAction(),
+      .subscribe((response: OntologyMetadata) => {
+        this._store.dispatch([new ClearProjectOntologiesAction(this.project.shortcode)]);
+        // go to the new ontology page
+        this._router.navigate([
+          RouteConstants.project,
+          ProjectService.IriToUuid(this.project.id),
+          RouteConstants.ontology,
+          OntologyService.getOntologyName(response.id),
+          RouteConstants.editor,
+          RouteConstants.classes,
         ]);
-        this.loading = false;
+        this.dialogRef.close();
       });
+  }
+
+  ngOnDestroy() {
+    this._destroy$.next();
+    this._destroy$.complete();
   }
 }

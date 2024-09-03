@@ -16,21 +16,6 @@
     </mat-dialog-actions>
   </div>
 
-  <!-- Ontology editor: create new ontology -->
-  <div *ngSwitchCase="'createOntology'">
-    <app-dialog-header [title]="data.title" [subtitle]="'Create new'"></app-dialog-header>
-    <app-ontology-form [projectUuid]="data.project" (closeDialog)="dialogRef.close($event)"></app-ontology-form>
-  </div>
-
-  <div *ngSwitchCase="'editOntology'">
-    <app-dialog-header [title]="data.title" [subtitle]="'Customize data model'" (closed)="dialogRef.close()">
-    </app-dialog-header>
-    <app-ontology-form
-      [iri]="data.id"
-      [projectUuid]="data.project"
-      (closeDialog)="dialogRef.close($event)"></app-ontology-form>
-  </div>
-
   <div *ngSwitchCase="'addRegion'">
     <app-dialog-header [title]="data.title" [subtitle]="data.subtitle"></app-dialog-header>
     <app-add-region-form [resourceIri]="data.id"></app-add-region-form>

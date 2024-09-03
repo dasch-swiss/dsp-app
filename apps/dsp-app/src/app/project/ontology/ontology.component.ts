@@ -8,7 +8,7 @@ import {
   OnInit,
 } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
@@ -21,7 +21,6 @@ import {
   ResourceClassDefinitionWithAllLanguages,
 } from '@dasch-swiss/dsp-js';
 import { getAllEntityDefinitionsAsArray } from '@dasch-swiss/vre/shared/app-api';
-import { DialogComponent } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { DspApiConnectionToken, DspDialogConfig, RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import {
   DefaultClass,
@@ -65,6 +64,8 @@ import {
   EditResourceClassDialogComponent,
   EditResourceClassDialogProps,
 } from './edit-resource-class-dialog/edit-resource-class-dialog.component';
+import { OntologyFormComponent } from './ontology-form/ontology-form.component';
+import { OntologyFormProps } from './ontology-form/ontology-form.type';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -370,38 +371,24 @@ export class OntologyComponent extends ProjectBase implements OnInit, OnDestroy 
     ]);
   }
 
-  /**
-   * opens ontology form to create or edit ontology info
-   * @param mode
-   * @param [iri] only in edit mode
-   */
-  openOntologyForm(mode: 'createOntology' | 'editOntology', iri?: string): void {
-    const ontology = this._store.selectSnapshot(OntologiesSelectors.currentOntology);
-    const title = iri ? ontology.label : 'Data model';
-
-    const uuid = ProjectService.IriToUuid(this.projectUuid);
-    const existingOntologyNames = this._store.selectSnapshot(OntologiesSelectors.currentProjectExistingOntologyNames);
-
-    const dialogConfig: MatDialogConfig = {
-      width: '640px',
-      maxHeight: '80vh',
-      position: {
-        top: '112px',
-      },
-      data: {
-        mode,
-        title,
-        id: iri,
-        project: uuid,
-        existing: existingOntologyNames,
-      },
-    };
-
-    const dialogRef = this._dialog.open(DialogComponent, dialogConfig);
-
-    dialogRef.afterClosed().subscribe(() => {
-      this.initOntologiesList();
-    });
+  openOntologyForm(iri = ''): void {
+    this._dialog
+      .open<OntologyFormComponent, OntologyFormProps, true>(
+        OntologyFormComponent,
+        DspDialogConfig.dialogDrawerConfig(
+          {
+            ontologyIri: iri,
+            projectIri: this.projectIri,
+          },
+          true
+        )
+      )
+      .afterClosed()
+      .subscribe(event => {
+        if (event === true) {
+          this.initOntologiesList();
+        }
+      });
   }
 
   createResourceClass(resClassInfo: DefaultClass): void {
