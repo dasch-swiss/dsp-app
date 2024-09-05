@@ -12,12 +12,14 @@ export function iiifUrlValidator(): ValidatorFn {
   };
 }
 
-function fetchUrl(url: string): Promise<void> {
-  return fetch(url, { method: 'HEAD' }).then(response => {
-    if (!response.ok) {
-      throw new Error(`HTTP Error: ${response.status}`);
+async function fetchUrl(url: string): Promise<void> {
+  const response = await fetch(url, { method: 'HEAD' });
+  if (!response.ok) {
+    const r = await fetch(url); // Some servers don't support HEAD requests
+    if (!r.ok) {
+      throw new Error(`HTTP Error: ${r.status}`);
     }
-  });
+  }
 }
 
 export function infoJsonUrlValidatorAsync(): AsyncValidatorFn {
@@ -41,7 +43,7 @@ export function previewImageUrlValidatorAsync(): AsyncValidatorFn {
       return of(null);
     }
 
-    return from(fetchUrl(iiifUrl?.previewImageUrl)).pipe(
+    return from(fetchUrl(iiifUrl.previewImageUrl)).pipe(
       map(() => null),
       catchError(() => of({ previewImageError: true }))
     );
