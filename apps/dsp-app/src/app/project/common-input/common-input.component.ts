@@ -23,7 +23,7 @@ export class CommonInputComponent {
   @Input() validatorErrors: { errorKey: string; message: string }[] | null = null;
   @Input() type: 'number' | 'text' = 'text';
 
-  markAsRequired(): string {
+  get markAsRequired(): string {
     return this.control.errors?.required ? ' *' : '';
   }
 }
