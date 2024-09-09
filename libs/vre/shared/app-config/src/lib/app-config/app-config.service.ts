@@ -9,6 +9,7 @@ import { AppConfig } from './app-config';
 import { AppConfigToken } from './dsp-api-tokens';
 import { DspAppConfig } from './dsp-app-config';
 import { DspConfig } from './dsp-config';
+import { DspFeatureFlagsConfig } from './dsp-feature-config';
 import { DspIiifConfig } from './dsp-iiif-config';
 import { DspIngestConfig } from './dsp-ingest-config';
 import { DspInstrumentationConfig, DspRollbarConfig } from './dsp-instrumentation-config';
@@ -23,6 +24,7 @@ export class AppConfigService {
   private readonly _dspIngestConfig: DspIngestConfig;
   private readonly _dspAppConfig: DspAppConfig;
   private readonly _dspInstrumentationConfig: DspInstrumentationConfig;
+  private readonly _dspFeatureFlagsConfig: DspFeatureFlagsConfig;
 
   /**
    * Watch out for AppConfig. The config.json is simply pressed into
@@ -72,6 +74,8 @@ export class AppConfigService {
       c.instrumentation.environment,
       new DspRollbarConfig(c.instrumentation.rollbar.enabled, c.instrumentation.rollbar.accessToken)
     );
+
+    this._dspFeatureFlagsConfig = new DspFeatureFlagsConfig(c.featureFlags.allowEraseProjects);
   }
 
   get dspConfig(): DspConfig {
@@ -96,5 +100,9 @@ export class AppConfigService {
 
   get dspInstrumentationConfig(): DspInstrumentationConfig {
     return this._dspInstrumentationConfig;
+  }
+
+  get dspFeatureFlagsConfig(): DspFeatureFlagsConfig {
+    return this._dspFeatureFlagsConfig;
   }
 }

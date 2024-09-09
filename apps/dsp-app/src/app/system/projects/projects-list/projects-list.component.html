@@ -78,7 +78,7 @@
           </button>
           <button
             mat-menu-item
-            *ngIf="isSysAdmin$ | async"
+            *ngIf="allowEraseProject && (isSysAdmin$ | async)"
             class="warn"
             (click)="askToEraseProject(project)"
             data-cy="erase-button">

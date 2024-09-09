@@ -20,6 +20,12 @@ export const Instrumentation = z.object({
 
 export type InstrumentationType = z.infer<typeof Instrumentation>;
 
+export const FeatureFlags = z.object({
+  allowEraseProjects: z.boolean(),
+});
+
+export type FeatureFlagsType = z.infer<typeof FeatureFlags>;
+
 /**
  * Our codebase requires number | null. The config will contain either a number
  * or an empty string. We need to transform the empty string case into a null.
@@ -69,6 +75,7 @@ export const AppConfig = z.object({
   iriBase: z.literal('http://rdfh.ch'),
   logErrors: z.boolean(),
   instrumentation: Instrumentation,
+  featureFlags: FeatureFlags,
 });
 
 /**

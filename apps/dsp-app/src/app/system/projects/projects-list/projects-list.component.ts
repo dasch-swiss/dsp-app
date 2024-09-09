@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Constants, ReadProject, ReadUser, StoredProject } from '@dasch-swiss/dsp-js';
 import { ProjectApiService } from '@dasch-swiss/vre/shared/app-api';
-import { RouteConstants } from '@dasch-swiss/vre/shared/app-config';
+import { AppConfigService, RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { ProjectService, SortingService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
 import { ProjectsSelectors, UserSelectors } from '@dasch-swiss/vre/shared/app-state';
@@ -11,7 +11,7 @@ import { DialogService } from '@dasch-swiss/vre/shared/app-ui';
 import { TranslateService } from '@ngx-translate/core';
 import { Select } from '@ngxs/store';
 import { Observable, Subject, combineLatest } from 'rxjs';
-import { filter, map, switchMap, take, takeUntil, tap } from 'rxjs/operators';
+import { filter, map, switchMap, take, takeUntil } from 'rxjs/operators';
 import { SortProp } from '../../../main/action/sort-button/sort-button.component';
 import {
   EraseProjectDialogComponent,
@@ -43,6 +43,8 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
 
   // loading for progess indicator
   loading: boolean;
+
+  allowEraseProject = this._appConfigService.dspFeatureFlagsConfig.allowEraseProjects;
 
   // list of default, dsp-specific projects, which are not able to be deleted or to be editied
   doNotDelete: string[] = [Constants.SystemProjectIRI, Constants.DefaultSharedOntologyIRI];
@@ -87,7 +89,8 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
     private _sortingService: SortingService,
     private translateService: TranslateService,
     private _dialog: MatDialog,
-    private _notification: NotificationService
+    private _notification: NotificationService,
+    private _appConfigService: AppConfigService
   ) {}
 
   ngOnInit() {

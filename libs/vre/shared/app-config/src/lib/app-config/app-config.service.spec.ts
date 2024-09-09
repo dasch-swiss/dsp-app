@@ -32,6 +32,9 @@ describe('AppConfigService with dev config', () => {
         enabled: false,
       },
     },
+    featureFlags: {
+      allowEraseProjects: true,
+    },
   };
 
   beforeEach(() => {
@@ -69,6 +72,7 @@ describe('AppConfigService with dev config', () => {
     expect(service.dspInstrumentationConfig.environment).toEqual('dev-server');
     expect(service.dspInstrumentationConfig.rollbar.enabled).toEqual(false);
     expect(service.dspInstrumentationConfig.rollbar.accessToken).toBeUndefined();
+    expect(service.dspFeatureFlagsConfig.allowEraseProjects).toEqual(true);
   });
 });
 
@@ -96,6 +100,9 @@ describe('AppConfigService with prod config', () => {
         enabled: true,
         accessToken: 'rollbar_token',
       },
+    },
+    featureFlags: {
+      allowEraseProjects: true,
     },
   };
 
@@ -136,5 +143,6 @@ describe('AppConfigService with prod config', () => {
     expect(service.dspInstrumentationConfig.environment).toEqual('prod');
     expect(service.dspInstrumentationConfig.rollbar.enabled).toEqual(true);
     expect(service.dspInstrumentationConfig.rollbar.accessToken).toEqual('rollbar_token');
+    expect(service.dspFeatureFlagsConfig.allowEraseProjects).toEqual(true);
   });
 });

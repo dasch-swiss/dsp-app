@@ -19,5 +19,8 @@
       "enabled": false,
       "accessToken": ""
     }
+  },
+  "featureFlags": {
+    "allowEraseProjects": true
   }
 }

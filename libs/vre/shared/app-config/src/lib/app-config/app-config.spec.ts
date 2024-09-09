@@ -29,6 +29,9 @@ describe('app-config schema tests', () => {
           accessToken: 'rollbar_token',
         },
       },
+      featureFlags: {
+        allowEraseProjects: true,
+      },
     };
 
     expect(() => {
@@ -56,6 +59,9 @@ describe('app-config schema tests', () => {
         rollbar: {
           enabled: false,
         },
+      },
+      featureFlags: {
+        allowEraseProjects: true,
       },
     };
 
