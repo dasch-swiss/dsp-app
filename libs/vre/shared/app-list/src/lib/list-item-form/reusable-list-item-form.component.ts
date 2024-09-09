@@ -8,16 +8,15 @@ import { ListItemForm } from './list-item-form.type';
   selector: 'app-reusable-list-item-form',
   template: `
     <dasch-swiss-multi-language-input
-      placeholder="Child node label *"
+      placeholder="Child node label"
       [formArray]="form.controls.labels"
-      [validators]="labelsValidators">
-    </dasch-swiss-multi-language-input>
-
+      [validators]="labelsValidators"
+      [isRequired]="true" />
     <dasch-swiss-multi-language-textarea
       placeholder="Child node description"
       [formArray]="form.controls.comments"
-      [validators]="commentsValidators">
-    </dasch-swiss-multi-language-textarea>
+      [validators]="commentsValidators"
+      [isRequired]="true" />
   `,
 })
 export class ReusableListItemFormComponent implements OnInit {

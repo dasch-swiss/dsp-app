@@ -5,7 +5,7 @@ import { FormControl } from '@angular/forms';
   selector: 'app-common-input',
   template: `
     <mat-form-field style="width: 100%">
-      <mat-label>{{ label }}{{ markAsRequired }}</mat-label>
+      <mat-label>{{ label }}</mat-label>
       <mat-icon matIconPrefix *ngIf="prefixIcon">{{ prefixIcon }}</mat-icon>
       <input matInput [placeholder]="label" [formControl]="control" *ngIf="type === 'text'" />
       <input matInput [placeholder]="label" [formControl]="control" *ngIf="type === 'number'" type="number" />
@@ -22,8 +22,4 @@ export class CommonInputComponent {
   @Input() prefixIcon: string | null = null;
   @Input() validatorErrors: { errorKey: string; message: string }[] | null = null;
   @Input() type: 'number' | 'text' = 'text';
-
-  get markAsRequired(): string {
-    return this.control.errors?.required ? ' *' : '';
-  }
 }

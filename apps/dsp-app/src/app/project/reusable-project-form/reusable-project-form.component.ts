@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
-import { arrayLengthGreaterThanZeroValidator, atLeastOneStringRequired } from '@dasch-swiss/vre/shared/app-common';
+import { atLeastOneStringRequired } from '@dasch-swiss/vre/shared/app-common';
 import { ProjectsSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { DEFAULT_MULTILANGUAGE_FORM, MultiLanguages } from '@dasch-swiss/vre/shared/app-string-literal';
 import { Store } from '@ngxs/store';
@@ -32,11 +32,11 @@ import { shortcodeExistsValidator } from './shortcode-exists.validator';
         data-cy="longname-input" />
 
       <dasch-swiss-multi-language-textarea
-        [placeholder]="('form.project.general.description' | translate) + ' *'"
+        [placeholder]="'form.project.general.description' | translate"
         [formArray]="form.controls.description"
         [validators]="descriptionValidators"
-        data-cy="description-input">
-      </dasch-swiss-multi-language-textarea>
+        [isRequired]="true"
+        data-cy="description-input" />
 
       <app-chip-list-input
         [formArray]="form.controls.keywords"
@@ -111,7 +111,7 @@ export class ReusableProjectFormComponent implements OnInit {
         this.formData.keywords.map(keyword => {
           return [keyword, this.keywordsValidators];
         }),
-        arrayLengthGreaterThanZeroValidator()
+        Validators.required
       ),
     });
   }

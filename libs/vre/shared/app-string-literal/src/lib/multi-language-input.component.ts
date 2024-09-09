@@ -52,6 +52,7 @@ import { MultiLanguageFormService } from './multi-language-form.service';
         matInput
         [placeholder]="placeholder"
         #textInput
+        [required]="isRequired"
         [ngModel]="formService.inputValue"
         (ngModelChange)="formService.onInputChange($event)"
         (blur)="formService.formArray.markAsTouched()"
@@ -95,6 +96,7 @@ export class MutiLanguageInputComponent implements OnInit, OnChanges {
   @Input() editable = true;
   @Input() placeholder: string;
   @Input() validators: ValidatorFn[];
+  @Input({ required: true }) isRequired!: boolean;
 
   constructor(public formService: MultiLanguageFormService) {}
 

@@ -16,8 +16,8 @@ import { ListItemService } from '../list-item/list-item.service';
         style="flex: 1"
         [formArray]="form.controls.labels"
         [placeholder]="placeholder"
-        [validators]="labelsValidators">
-      </dasch-swiss-multi-language-input>
+        [validators]="labelsValidators"
+        [isRequired]="true" />
       <button color="primary" mat-icon-button matSuffix [disabled]="form.invalid" type="submit">
         <mat-icon> add</mat-icon>
       </button>

@@ -17,8 +17,8 @@ import { ListItemService } from '../list-item/list-item.service';
             [placeholder]="node.labels | appStringifyStringLiteral: 'all' | appTruncate: 128"
             [editable]="false"
             [formArray]="readOnlyFormArray"
-            [validators]="[]">
-          </dasch-swiss-multi-language-input>
+            [validators]="[]"
+            [isRequired]="true" />
 
           <app-action-bubble
             *ngIf="showActionBubble"

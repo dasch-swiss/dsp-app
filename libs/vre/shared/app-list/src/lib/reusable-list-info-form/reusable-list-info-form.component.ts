@@ -9,15 +9,15 @@ import { ListInfoForm } from './list-info-form.type';
   template: `
     <dasch-swiss-multi-language-input
       [formArray]="form.controls.labels"
-      placeholder="Controlled vocabulary label *"
-      data-cy="labels-input">
-    </dasch-swiss-multi-language-input>
+      placeholder="Controlled vocabulary label"
+      [isRequired]="true"
+      data-cy="labels-input" />
 
     <dasch-swiss-multi-language-textarea
       [formArray]="form.controls.comments"
-      placeholder="Controlled vocabulary description *"
-      data-cy="comments-input">
-    </dasch-swiss-multi-language-textarea>
+      placeholder="Controlled vocabulary description"
+      [isRequired]="true"
+      data-cy="comments-input" />
   `,
 })
 export class ReusableListInfoFormComponent implements OnInit {

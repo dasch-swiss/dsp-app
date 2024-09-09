@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ClassDefinition, PropertyDefinition } from '@dasch-swiss/dsp-js';
 import { getAllEntityDefinitionsAsArray } from '@dasch-swiss/vre/shared/app-api';
-import { CustomRegex, atLeastOneStringRequired } from '@dasch-swiss/vre/shared/app-common';
+import { atLeastOneStringRequired, CustomRegex } from '@dasch-swiss/vre/shared/app-common';
 import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { OntologiesSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { DEFAULT_MULTILANGUAGE_FORM, MultiLanguages } from '@dasch-swiss/vre/shared/app-string-literal';
@@ -24,18 +24,18 @@ import { ResourceClassForm } from './resource-class-form.type';
 
       <dasch-swiss-multi-language-input
         data-cy="label-input"
-        placeholder="Label *"
+        placeholder="Label"
         [formArray]="form.controls.labels"
-        [validators]="labelsValidators">
-      </dasch-swiss-multi-language-input>
+        [validators]="labelsValidators"
+        [isRequired]="true" />
 
       <dasch-swiss-multi-language-textarea
         data-cy="comment-textarea"
-        placeholder="Comment *"
+        placeholder="Comment"
         [formArray]="form.controls.comments"
         [editable]="true"
-        [validators]="commentsValidators">
-      </dasch-swiss-multi-language-textarea>
+        [validators]="commentsValidators"
+        [isRequired]="true" />
     </form>
   `,
   styles: [':host ::ng-deep .name-input .mat-icon { padding-right: 24px; }'],

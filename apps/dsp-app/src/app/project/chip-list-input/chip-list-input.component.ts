@@ -1,14 +1,14 @@
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { Component, Input } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, ValidationErrors, ValidatorFn } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { MatChipInputEvent } from '@angular/material/chips';
 
 @Component({
   selector: 'app-chip-list-input',
   template: `
     <mat-form-field style="width: 100%">
-      <mat-label>{{ ('form.project.general.keywords' | translate) + (chipsRequired ? '' : '*') }}</mat-label>
-      <mat-chip-grid #chipList>
+      <mat-label>{{ 'form.project.general.keywords' | translate }}</mat-label>
+      <mat-chip-grid #chipList [required]="formArray.hasValidator(Validators.required)">
         <mat-chip-row
           *ngFor="let tag of formArray.value; let index = index; trackBy: trackByFn"
           (removed)="removeKeyword(index)">
@@ -29,11 +29,11 @@ import { MatChipInputEvent } from '@angular/material/chips';
 })
 export class ChipListInputComponent {
   @Input() formArray: FormArray<FormControl<string>>;
-  @Input() chipsRequired = true;
   @Input() validators: ValidatorFn[];
 
   separatorKeyCodes = [ENTER, COMMA];
   addChipFormError: ValidationErrors | null = null;
+  protected readonly Validators = Validators;
 
   constructor(private _fb: FormBuilder) {}
 
