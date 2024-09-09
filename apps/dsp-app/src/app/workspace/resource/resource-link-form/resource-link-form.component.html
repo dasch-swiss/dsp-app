@@ -2,7 +2,7 @@
   [formGroup]="form"
   (ngSubmit)="submitData()"
   class="form"
-  *ngIf="(usersProjects$ | async)?.length && (isCurrentProjectAdminOrSysAdmin$ | async) === true; else notProjectMember">
+  *ngIf="((isSysAdmin$ | async) === true) || ((usersProjects$ | async)?.length && (isCurrentProjectAdminOrSysAdmin$ | async) === true); else notProjectMember">
   <!-- auto complete list to select resource classes -->
   <div class="form-content">
     <app-select-project
