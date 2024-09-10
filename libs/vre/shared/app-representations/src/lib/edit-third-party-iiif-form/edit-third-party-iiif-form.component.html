@@ -1,0 +1,16 @@
+<form [formGroup]="thirdPartyIiifForm">
+  <app-third-part-iiif [formControl]="thirdPartyIiifForm.controls.fileValue"></app-third-part-iiif>
+</form>
+<div mat-dialog-actions align="end">
+  <button color="primary" mat-button mat-dialog-close>{{ 'form.action.cancel' | translate }}</button>
+  <button
+    mat-raised-button
+    color="primary"
+    appLoadingButton
+    [isLoading]="loading"
+    [disabled]="!thirdPartyIiifForm?.valid || loading"
+    (click)="submitData()"
+    data-cy="submit-button">
+    {{ 'form.action.submit' | translate }}
+  </button>
+</div>

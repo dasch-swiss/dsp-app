@@ -23,18 +23,19 @@ import {
   RegionGeometry,
   UpdateFileValue,
   UpdateResource,
-  UpdateValue,
   WriteValueResponse,
 } from '@dasch-swiss/dsp-js';
 import { ReadStillImageExternalFileValue } from '@dasch-swiss/dsp-js/src/models/v2/resources/values/read/read-file-value';
 import { ResourceUtil } from '@dasch-swiss/vre/shared/app-common';
 import { DialogComponent } from '@dasch-swiss/vre/shared/app-common-to-move';
-import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
+import { DspApiConnectionToken, DspDialogConfig } from '@dasch-swiss/vre/shared/app-config';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
 import * as OpenSeadragon from 'openseadragon';
 import { combineLatest, Subject } from 'rxjs';
-import { distinctUntilChanged, filter, map, mergeMap, switchMap, take, takeUntil } from 'rxjs/operators';
+import { distinctUntilChanged, filter, map, mergeMap, switchMap, take, takeUntil, tap } from 'rxjs/operators';
+import { EditThirdPartyIiifFormComponent } from '../edit-third-party-iiif-form/edit-third-party-iiif-form.component';
+import { ThirdPartyIiifProps } from '../edit-third-party-iiif-form/edit-third-party-iiif-types';
 import { RegionService } from '../region.service';
 import { RepresentationService } from '../representation.service';
 import { ResourceFetcherService } from '../resource-fetcher.service';
@@ -183,27 +184,38 @@ export class StillImageComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  openReplaceFileDialog() {
-    const propId = this.resource.properties[Constants.HasStillImageFileValue][0].id;
-    const projectUuid = ProjectService.IriToUuid(this.resource.attachedToProject);
+  replaceImage() {
+    let dialogRef;
+    if (this.isReadStillImageExternalFileValue) {
+      dialogRef = this._dialog.open<EditThirdPartyIiifFormComponent, ThirdPartyIiifProps>(
+        EditThirdPartyIiifFormComponent,
+        DspDialogConfig.dialogDrawerConfig({
+          resourceId: this.resource.id,
+          fileValue: this.imageFileValue as ReadStillImageExternalFileValue,
+        })
+      );
+    } else {
+      const propId = this.resource.properties[Constants.HasStillImageFileValue][0].id;
+      const projectUuid = ProjectService.IriToUuid(this.resource.attachedToProject);
 
-    const dialogConfig: MatDialogConfig = {
-      width: '800px',
-      maxHeight: '80vh',
-      position: {
-        top: '112px',
-      },
-      data: {
-        mode: 'replaceFile',
-        projectUuid,
-        title: '2D Image (Still Image)',
-        subtitle: 'Update image of the resource',
-        representation: 'stillImage',
-        id: propId,
-      },
-      disableClose: true,
-    };
-    const dialogRef = this._dialog.open(DialogComponent, dialogConfig);
+      const dialogConfig: MatDialogConfig = {
+        width: '800px',
+        maxHeight: '80vh',
+        position: {
+          top: '112px',
+        },
+        data: {
+          mode: 'replaceFile',
+          projectUuid,
+          title: '2D Image (Still Image)',
+          subtitle: 'Update image of the resource',
+          representation: 'stillImage',
+          id: propId,
+        },
+        disableClose: true,
+      };
+      dialogRef = this._dialog.open(DialogComponent, dialogConfig);
+    }
 
     dialogRef.afterClosed().subscribe(data => {
       if (data) {
@@ -220,13 +232,12 @@ export class StillImageComponent implements OnInit, OnChanges, OnDestroy {
     const updateRes = new UpdateResource();
     updateRes.id = this.resource.id;
     updateRes.type = this.resource.type;
-    updateRes.property = this.isReadStillImageExternalFileValue
-      ? Constants.StillImageFileValueHasExternalUrl
-      : Constants.HasStillImageFileValue;
+    updateRes.property = Constants.HasStillImageFileValue;
     updateRes.value = file;
     this._dspApiConnection.v2.values
-      .updateValue(updateRes as UpdateResource<UpdateValue>)
+      .updateValue(updateRes as UpdateResource<UpdateFileValue>)
       .pipe(
+        tap(res => {}),
         mergeMap(res => this._dspApiConnection.v2.values.getValue(this.resource.id, (res as WriteValueResponse).uuid))
       )
       .subscribe(res2 => {
@@ -491,7 +502,6 @@ export class StillImageComponent implements OnInit, OnChanges, OnDestroy {
 
   private _loadInternalImages() {
     if (this.imageFileValue instanceof ReadStillImageFileValue) {
-      console.log('loading internal image');
       this._rs
         .getFileInfo(this.imageFileValue?.fileUrl || '', this.imageFileValue?.filename)
         .pipe(take(1))

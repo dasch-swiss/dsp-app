@@ -26,3 +26,5 @@ export * from './lib/audio/audio-toolbar.component';
 export * from './lib/audio/audio-more-button.component';
 export * from './lib/audio/media-slider.component';
 export * from './lib/third-party-iiif/third-party-iiif.component';
+export * from './lib/edit-third-party-iiif-form/edit-third-party-iiif-form.component';
+export * from './lib/edit-third-party-iiif-form/edit-third-party-iiif-types';
