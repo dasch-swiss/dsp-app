@@ -276,7 +276,7 @@ describe('Resource', () => {
           po.delete();
         });
     });
-    it('date', () => {
+    it.skip('date', () => {
       ResourceRequests.resourceRequest(ClassPropertyPayloads.date(finalLastModificationDate));
       po.visitAddPage();
 

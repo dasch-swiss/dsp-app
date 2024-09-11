@@ -1,0 +1,10 @@
+@use "responsive" as *;
+
+// phone devices
+@media (max-width: map-get($grid-breakpoints, phone)) {
+  .navigation {
+    margin-top: 0;
+    margin-bottom: 24px;
+  }
+}
+

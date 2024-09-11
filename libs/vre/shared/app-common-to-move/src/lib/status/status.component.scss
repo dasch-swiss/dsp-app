@@ -1,0 +1,68 @@
+@use "responsive" as *;
+@use "config" as *;
+
+.status-page {
+  background: $white;
+  height: 100%;
+  width: 100%;
+  z-index: 999;
+
+  .container {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+    align-items: stretch;
+    align-content: space-evenly;
+    padding-top: 16px;
+    max-width: 480px;
+    margin: 0 auto;
+
+    .image,
+    .text {
+      justify-self: stretch;
+      align-self: stretch;
+      box-sizing: border-box;
+      min-height: 280px;
+      max-width: 360px;
+
+      &.status-message {
+        line-height: 1.5;
+        margin: 0 auto;
+      }
+
+      img {
+        display: block;
+        margin: 0 auto;
+        max-width: 360px;
+      }
+    }
+  }
+
+  &.representation-error {
+    background: none;
+
+    .image {
+      display: none !important;
+    }
+  }
+}
+
+.action {
+  width: 360px;
+
+  p {
+    width: 100%;
+    word-wrap: break-word;
+    word-break: break-word;
+  }
+}
+
+// mobile device: phone
+@media (max-width: map-get($grid-breakpoints, phone)) {
+  .image {
+    display: none;
+  }
+  .status-page .container {
+    padding-top: 30px;
+  }
+}

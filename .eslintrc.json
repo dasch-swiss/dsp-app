@@ -53,7 +53,14 @@
         "grouped-accessor-pairs": "off",
         "import/prefer-default-export": "off",
         "import/no-cycle": "off",
-        "import/order": ["error", { "alphabetize": { "order": "asc" } }],
+        "import/order": [
+          "error",
+          {
+            "alphabetize": {
+              "order": "asc"
+            }
+          }
+        ],
         "max-classes-per-file": "off",
         "no-case-declarations": "off",
         "no-console": "off",
@@ -127,7 +134,14 @@
         "jasmine": true
       },
       "rules": {
-        "import/order": ["error", { "alphabetize": { "order": "asc" } }],
+        "import/order": [
+          "error",
+          {
+            "alphabetize": {
+              "order": "asc"
+            }
+          }
+        ],
         "ban/ban": [
           2,
           {

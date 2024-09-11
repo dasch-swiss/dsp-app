@@ -1,10 +1,10 @@
-import { Directive, ElementRef, HostListener, Input, Renderer2, ViewContainerRef } from '@angular/core';
+import { Directive, ElementRef, HostListener, Input, OnChanges, Renderer2, ViewContainerRef } from '@angular/core';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
 @Directive({
   selector: '[appLoadingButton]',
 })
-export class LoadingButtonDirective {
+export class LoadingButtonDirective implements OnChanges {
   @Input() isLoading: boolean = false;
 
   private spinnerElement: HTMLElement;

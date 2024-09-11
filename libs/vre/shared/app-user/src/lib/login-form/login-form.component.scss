@@ -1,0 +1,37 @@
+@use "../../../../../../../apps/dsp-app/src/styles/config" as *;
+
+$width: 280px;
+
+.full-width {
+  width: 100%;
+}
+
+.login-form-title {
+  text-align: center;
+}
+
+.login-error {
+  color: $red;
+  text-align: center;
+}
+
+.login-progress {
+  display: inline-block;
+  margin-right: 6px;
+}
+
+.login-container,
+.logout-container {
+  margin: 16px auto;
+  position: relative;
+  width: $width;
+}
+
+.submit-button,
+.logout-button {
+  height: 48px;
+}
+
+.center {
+  text-align: center;
+}

@@ -42,6 +42,9 @@
         "styles": [
           "apps/dsp-app/src/styles.scss"
         ],
+        "stylePreprocessorOptions": {
+          "includePaths": ["apps/dsp-app/src/styles"]
+        },
         "scripts": [
           "node_modules/openseadragon/build/openseadragon/openseadragon.min.js"
         ]

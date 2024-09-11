@@ -1,0 +1,83 @@
+@use "config" as *;
+
+.class-item-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  padding: 10px 0px;
+
+  .content {
+    height: 70px;
+    width: 90%;
+    border-radius: 7px;
+    display: flex;
+    box-shadow: 0 1px 3px rgb(0 0 0 / 10%), 0 1px 2px rgb(0 0 0 / 6%);
+
+    &.is-active {
+      background-color: $primary_100;
+    }
+
+    .box {
+      padding: 6px 10px;
+      border-radius: 7px 0 0 7px;
+      flex-grow: 1;
+
+      .label {
+        width: 200px;
+        color: $secondary;
+        padding-left: 4px;
+        height: 36px;
+        overflow: hidden;
+        display: -webkit-box;
+        line-height: 17px;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+      }
+
+      .entry-container {
+        color: $primary;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+
+        ngx-skeleton-loader {
+          width: 100%;
+          margin-right: 5%;
+        }
+
+        .entry {
+          font-size: 14px;
+        }
+
+        mat-icon {
+          height: 23px;
+          width: 23px;
+          font-size: 23px;
+        }
+      }
+    }
+
+    .box:hover {
+      background-color: $primary_100;
+    }
+
+    .icon {
+      background-color: $primary;
+      border-radius: 0 7px 7px 0;
+      flex-basis: 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+
+      mat-icon {
+        color: white;
+      }
+    }
+
+    .icon:hover {
+      background-color: $primary_100;
+    }
+  }
+}

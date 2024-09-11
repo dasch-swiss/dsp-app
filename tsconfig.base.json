@@ -59,6 +59,9 @@
       "@dasch-swiss/vre/shared/app-error-handler": [
         "libs/vre/shared/app-error-handler/src/index.ts"
       ],
+      "@dasch-swiss/vre/shared/app-help-page": [
+        "libs/vre/shared/app-help-page/src/index.ts"
+      ],
       "@dasch-swiss/vre/shared/app-helper-services": [
         "libs/vre/shared/app-helper-services/src/index.ts"
       ],
@@ -74,8 +77,17 @@
       "@dasch-swiss/vre/shared/app-notification": [
         "libs/vre/shared/app-notification/src/index.ts"
       ],
+      "@dasch-swiss/vre/shared/app-ontology": [
+        "libs/vre/shared/app-ontology/src/index.ts"
+      ],
+      "@dasch-swiss/vre/shared/app-ontology-classes": [
+        "libs/vre/shared/app-ontology-classes/src/index.ts"
+      ],
       "@dasch-swiss/vre/shared/app-progress-indicator": [
         "libs/vre/shared/app-progress-indicator/src/index.ts"
+      ],
+      "@dasch-swiss/vre/shared/app-project": [
+        "libs/vre/shared/app-project/src/index.ts"
       ],
       "@dasch-swiss/vre/shared/app-property-form": [
         "libs/vre/shared/app-property-form/src/index.ts"
@@ -89,11 +101,17 @@
       "@dasch-swiss/vre/shared/app-resource-properties": [
         "libs/vre/shared/app-resource-properties/src/index.ts"
       ],
+      "@dasch-swiss/vre/shared/app-search": [
+        "libs/vre/shared/app-search/src/index.ts"
+      ],
       "@dasch-swiss/vre/shared/app-segment-support": [
         "libs/vre/shared/app-segment-support/src/index.ts"
       ],
       "@dasch-swiss/vre/shared/app-session": [
         "libs/vre/shared/app-session/src/index.ts"
+      ],
+      "@dasch-swiss/vre/shared/app-settings-page": [
+        "libs/vre/shared/app-settings-page/src/index.ts"
       ],
       "@dasch-swiss/vre/shared/app-state": [
         "libs/vre/shared/app-state/src/index.ts"
@@ -104,8 +122,14 @@
       "@dasch-swiss/vre/shared/app-string-literal": [
         "libs/vre/shared/app-string-literal/src/index.ts"
       ],
+      "@dasch-swiss/vre/shared/app-system": [
+        "libs/vre/shared/app-system/src/index.ts"
+      ],
       "@dasch-swiss/vre/shared/app-ui": [
         "libs/vre/shared/app-ui/src/index.ts"
+      ],
+      "@dasch-swiss/vre/shared/app-user": [
+        "libs/vre/shared/app-user/src/index.ts"
       ],
       "@dasch-swiss/vre/shared/assets/status-msg": [
         "libs/vre/shared/assets/status-msg/src/index.ts"

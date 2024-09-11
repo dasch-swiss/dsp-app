@@ -3,7 +3,9 @@
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/vre/shared/app-ui/src",
   "prefix": "dasch-swiss",
-  "tags": [],
+  "tags": [
+    "type:ui"
+  ],
   "projectType": "library",
   "targets": {
     "test": {

@@ -1,8 +1,0 @@
-@use "../../../styles/responsive" as *;
-
-// phone devices
-@media (max-width: map-get($grid-breakpoints, phone)) {
-    .app-danger-zone {
-        margin: 24px 0 24px 0 !important;
-    }
-}

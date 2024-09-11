@@ -1,0 +1,8 @@
+@use "../../../../../../../apps/dsp-app/src/styles/responsive" as *;
+
+// mobile device: tablet and smaller than a tablet
+@media (max-width: map-get($grid-breakpoints, tablet)) {
+  .users-list {
+    margin: 0 16px 0 16px;
+  }
+}

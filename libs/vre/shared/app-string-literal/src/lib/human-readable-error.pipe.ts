@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { ValidatorError } from './validator-error.interface';
+import { ValidatorError } from '@dasch-swiss/vre/shared/app-ui';
 
 @Pipe({
   name: 'humanReadableError',

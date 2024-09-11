@@ -1,0 +1,38 @@
+@use "config" as *;
+@use "responsive";
+
+section {
+  background-color: #fff;
+  min-height: 38vh;
+  text-align: center;
+  padding: 24px 0;
+
+  &.info {
+    min-height: auto;
+  }
+
+  .content {
+    img.logo {
+      max-width: 400px;
+      height: 80px;
+      object-fit: contain;
+      margin: 24px;
+    }
+  }
+
+  &.darken-bg {
+    background-color: $cool_gray_50;
+  }
+}
+
+a.middle {
+  margin: 0 auto;
+  display: block;
+  max-width: 200px;
+}
+
+.centered {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}

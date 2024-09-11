@@ -1,0 +1,81 @@
+@use "config" as *;
+@use "responsive" as *;
+
+.app-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-auto-rows: 1fr;
+  gap: 24px 12px;
+  justify-items: stretch;
+  align-items: stretch;
+  align-content: space-evenly;
+  margin: 48px -15px 0 0;
+  padding: 0;
+  list-style: none;
+
+  .app-grid-item {
+    margin: 0 0 24px 0;
+    box-sizing: border-box;
+    border: 1px solid $primary_100;
+    border-radius: $border-radius;
+    padding: 0 30px 25px 30px;
+    text-align: center;
+    min-height: 200px;
+    position: relative;
+
+    .mat-icon.topic {
+      background: white;
+      margin: -28px auto 0;
+      padding: 10px;
+      border-radius: 50px;
+      height: 36px;
+      width: 60px;
+      font-size: 36px;
+      color: $primary_900;
+    }
+
+    p {
+      // white-space: pre;
+      word-spacing: normal;
+      word-break: normal;
+      word-wrap: normal;
+      hyphens: auto;
+    }
+
+    .action {
+      margin-top: 24px;
+      bottom: 16px;
+      position: absolute;
+      height: 24px;
+      width: calc(100% - 60px);
+
+      button,
+      a {
+        margin: 0 auto;
+
+        .mat-icon.suffix {
+          margin-left: 16px;
+        }
+      }
+    }
+
+    .description {
+      &.short {
+        height: 86px;
+        overflow: hidden;
+      }
+    }
+  }
+}
+
+// phone devices
+@media (max-width: map-get($grid-breakpoints, phone)) {
+  .app-grid {
+    margin: 50px -15px 0 0;
+    width: 100%;
+
+    .app-grid-item {
+      margin: 12px 0;
+    }
+  }
+}

@@ -1,0 +1,58 @@
+@use "responsive" as *;
+@use "theme";
+
+.sys-admin-chip {
+  width: 116px;
+}
+
+// tablet devices
+@media (max-width: map-get($grid-breakpoints, tablet)) and (min-width: map-get($grid-breakpoints, phone)) {
+  .info-names, .info-email {
+    display: none;
+  }
+}
+
+// phone devices
+@media (max-width: map-get($grid-breakpoints, phone)) {
+  .table {
+    .table-entry {
+      .avatar-cell {
+        padding: 3px 3px;
+      }
+
+      .table-info {
+        padding: 3px 3px;
+      }
+
+      .table-select-group {
+        display: none;
+      }
+
+      .table-action {
+        padding: 3px 3px;
+        min-width: 36px;
+      }
+
+      .table-admin-chip {
+        padding: 0;
+        min-width: 60px;
+
+        .admin-chip {
+          width: 64px;
+          font-size: 0.7em;
+          text-align: center;
+        }
+
+        .sys-admin-chip {
+          width: 64px;
+          font-size: 0.7em;
+          text-align: center;
+        }
+      }
+    }
+  }
+
+  .info-names, .info-email {
+    display: none;
+  }
+}

@@ -3,6 +3,7 @@ import { CompoundArrowNavigationComponent } from './lib/compound/compound-arrow-
 import { CompoundNavigationComponent } from './lib/compound/compound-navigation.component';
 import { CompoundSliderComponent } from './lib/compound/compound-slider.component';
 import { CompoundViewerComponent } from './lib/compound/compound-viewer.component';
+import { PermissionInfoComponent } from './lib/permission-info/permission-info.component';
 import { ResourceFetcherComponent } from './lib/resource-fetcher.component';
 import { ResourceHeaderComponent } from './lib/resource-header.component';
 import { ResourcePage2Component } from './lib/resource-page-2.component';
@@ -31,4 +32,5 @@ export const ResourcePageComponents = [
   ResourceToolbarComponent,
   AnnotationTabComponent,
   SegmentTabComponent,
+  PermissionInfoComponent,
 ];

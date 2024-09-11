@@ -1,31 +1,31 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { StatusComponent } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { RouteConstants } from '@dasch-swiss/vre/shared/app-config';
-import { CreateListInfoPageComponent, ListComponent } from '@dasch-swiss/vre/shared/app-list';
+import { HelpPageComponent } from '@dasch-swiss/vre/shared/app-help-page';
+import { CreateListInfoPageComponent, ListPageComponent } from '@dasch-swiss/vre/shared/app-list';
+import { DataModelsComponent, OntologyComponent, OntologyFormComponent } from '@dasch-swiss/vre/shared/app-ontology';
+import { OntologyClassInstanceComponent } from '@dasch-swiss/vre/shared/app-ontology-classes';
+import {
+  CollaborationComponent,
+  CreateProjectFormPageComponent,
+  DescriptionComponent,
+  EditProjectFormPageComponent,
+  ProjectComponent,
+} from '@dasch-swiss/vre/shared/app-project';
 import { ResourcePage2Component, ResourcePageComponent } from '@dasch-swiss/vre/shared/app-resource-page';
 import { CreateResourcePageComponent } from '@dasch-swiss/vre/shared/app-resource-properties';
-import { CookiePolicyComponent } from './main/cookie-policy/cookie-policy.component';
+import { AdvancedSearchContainerComponent, ResultsComponent } from '@dasch-swiss/vre/shared/app-search';
+import { ImageSettingsComponent, SettingsPageComponent } from '@dasch-swiss/vre/shared/app-settings-page';
+import {
+  CookiePolicyComponent,
+  ProjectsComponent,
+  SystemComponent,
+  UsersComponent,
+} from '@dasch-swiss/vre/shared/app-system';
+import { OverviewComponent, UserComponent } from '@dasch-swiss/vre/shared/app-user';
 import { AuthGuard } from './main/guard/auth.guard';
 import { OntologyClassInstanceGuard } from './main/guard/ontology-class-instance.guard';
-import { HelpComponent } from './main/help/help.component';
-import { StatusComponent } from './main/status/status.component';
-import { CollaborationComponent } from './project/collaboration/collaboration.component';
-import { CreateProjectFormPageComponent } from './project/create-project-form-page/create-project-form-page.component';
-import { DataModelsComponent } from './project/data-models/data-models.component';
-import { DescriptionComponent } from './project/description/description.component';
-import { EditProjectFormPageComponent } from './project/edit-project-form-page/edit-project-form-page.component';
-import { ImageSettingsComponent } from './project/image-settings/image-settings.component';
-import { OntologyComponent } from './project/ontology/ontology.component';
-import { OntologyClassInstanceComponent } from './project/ontology-classes/ontology-class-instance/ontology-class-instance.component';
-import { ProjectComponent } from './project/project.component';
-import { SettingsComponent } from './project/settings/settings.component';
-import { ProjectsComponent } from './system/projects/projects.component';
-import { SystemComponent } from './system/system.component';
-import { UsersComponent } from './system/users/users.component';
-import { OverviewComponent } from './user/overview/overview.component';
-import { UserComponent } from './user/user.component';
-import { ResultsComponent } from './workspace/results/results.component';
-import { AdvancedSearchContainerComponent } from './workspace/search/advanced-search/advanced-search-container.component';
 
 const routes: Routes = [
   {
@@ -34,7 +34,7 @@ const routes: Routes = [
   },
   {
     path: RouteConstants.help,
-    component: HelpComponent,
+    component: HelpPageComponent,
   },
   {
     path: `${RouteConstants.createNewProjectRelative}`,
@@ -84,12 +84,12 @@ const routes: Routes = [
       },
       {
         path: `${RouteConstants.list}/:${RouteConstants.listParameter}`,
-        component: ListComponent,
+        component: ListPageComponent,
         canActivate: [AuthGuard],
       },
       {
         path: RouteConstants.settings,
-        component: SettingsComponent,
+        component: SettingsPageComponent,
         canActivate: [AuthGuard],
         children: [
           {

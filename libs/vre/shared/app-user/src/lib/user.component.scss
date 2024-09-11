@@ -1,0 +1,38 @@
+@use "../../../../../../apps/dsp-app/src/styles/responsive" as *;
+
+// phone devices
+@media (max-width: map-get($grid-breakpoints, phone)) {
+  .content {
+
+    .full-width {
+      width: 100%;
+    }
+
+    .content-container {
+      width: 100%;
+
+    }
+  }
+}
+
+// tablet and desktop devices: greater than phone
+@media (min-width: map-get($grid-breakpoints, phone)) {
+  .content {
+    display: flex;
+    flex-direction: row;
+
+    .full-width {
+      width: 100%;
+    }
+
+    .content-sidebar {
+      width: 25%;
+      padding-right: 48px;
+    }
+
+    .content-container {
+      width: 75%;
+
+    }
+  }
+}

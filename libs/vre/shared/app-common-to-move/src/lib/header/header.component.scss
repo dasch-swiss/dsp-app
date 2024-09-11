@@ -1,0 +1,57 @@
+@use "config" as *;
+@use "responsive";
+
+.toolbar-header {
+  height: $header-height;
+  background-color: $white;
+  box-shadow: 0 4px 4px $cool_gray_300;
+}
+
+.logo {
+  display: flex;
+  padding-right: 12px;
+  height: 100%;
+  column-gap: 10px;
+  cursor: pointer;
+
+  .mat-icon {
+    height: 72px;
+    width: 72px;
+  }
+
+  .title-container {
+    padding-top: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+}
+
+.logo:hover {
+  background-color: $cool_gray_100;;
+}
+
+.login-button {
+  margin: 0 16px;
+}
+
+@media (min-width: 1025px) {
+  .desktop-only {
+    display: contents;
+  }
+  .phone-tablet-only {
+    display: none;
+  }
+}
+
+@media (max-width: 1024px) {
+  .development.badge {
+    font-weight: normal;
+  }
+  .desktop-only {
+    display: none;
+  }
+  .phone-tablet-only {
+    display: contents;
+  }
+}

@@ -3,12 +3,16 @@
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/vre/shared/app-string-literal/src",
   "prefix": "dasch-swiss",
-  "tags": [],
+  "tags": [
+    "type:ui"
+  ],
   "projectType": "library",
   "targets": {
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "outputs": [
+        "{workspaceRoot}/coverage/{projectRoot}"
+      ],
       "options": {
         "jestConfig": "libs/vre/shared/app-string-literal/jest.config.ts",
         "passWithNoTests": true
@@ -22,7 +26,9 @@
     },
     "lint": {
       "executor": "@nx/linter:eslint",
-      "outputs": ["{options.outputFile}"],
+      "outputs": [
+        "{options.outputFile}"
+      ],
       "options": {
         "lintFilePatterns": [
           "libs/vre/shared/app-string-literal/**/*.ts",

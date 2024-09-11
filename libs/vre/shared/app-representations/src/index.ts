@@ -28,3 +28,4 @@ export * from './lib/audio/media-slider.component';
 export * from './lib/third-party-iiif/third-party-iiif.component';
 export * from './lib/edit-third-party-iiif-form/edit-third-party-iiif-form.component';
 export * from './lib/edit-third-party-iiif-form/edit-third-party-iiif-types';
+export * from './lib/video/disable-context-menu.directive';
