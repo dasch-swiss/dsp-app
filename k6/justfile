@@ -1,5 +1,7 @@
 appUrl := "https://app.dev.dasch.swiss"
 testToRun := "first-page-load"
+#k6_browser_headless := "false"
+k6_browser_headless := "true"
 
 # List all the available targets
 default:
@@ -14,14 +16,16 @@ list:
     @echo "Run the test using 'just run <testName>'"
 
 # Run the test locally
-run testToRun=testToRun:
-    APP_URL={{appUrl}} k6 run tests/{{testToRun}}.js
+run testToRun=testToRun k6_browser_headless=k6_browser_headless:
+    K6_BROWSER_HEADLESS={{k6_browser_headless}} APP_URL={{appUrl}} k6 run tests/{{testToRun}}.js
 
 # Run all tests locally
 run-all:
     APP_URL={{appUrl}} k6 run tests/first-page-load.js
+    APP_URL={{appUrl}} k6 run tests/load-project-overview.js
     APP_URL={{appUrl}} k6 run tests/load-resource.js
     APP_URL={{appUrl}} k6 run tests/load-single-resource.js
+    APP_URL={{appUrl}} k6 run tests/workflow-login-success.js
 
 # Run the test in k6 cloud
 run-cloud testToRun=testToRun:

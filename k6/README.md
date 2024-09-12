@@ -19,6 +19,25 @@ You can run the tests using the following command:
 k6 run tests/<test_script.js>
 ```
 
+### Tests Which Require Authentication
+
+Tests that require authentication need to be run with the correct environment variables set.
+
+For example locally you can store the credentials in a `.env` file:
+
+```sh
+export DSP_APP_USERNAME='admin'
+export DSP_APP_PASSWORD='password'
+```
+
+Before running the tests you can source the file:
+
+```sh
+source .env
+```
+
+Then you can run the test as described above.
+
 ### Using `just`
 
 We provide a `justfile` to make it easier to run the tests.

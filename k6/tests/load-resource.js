@@ -11,7 +11,9 @@ export default async function () {
 
   try {
     await homepage.goto();
-    expect(await homepage.resourceLabel()).to.equal('1723-02-06_Scheuchzer_Johann_Jakob-Bernoulli_Johann_I');
+    expect(await homepage.resourceLabel(), 'resource label').to.equal(
+      '1723-02-06_Scheuchzer_Johann_Jakob-Bernoulli_Johann_I'
+    );
     await page.screenshot({ path: 'screenshots/resource-page.png' });
   } finally {
     await page.close();
