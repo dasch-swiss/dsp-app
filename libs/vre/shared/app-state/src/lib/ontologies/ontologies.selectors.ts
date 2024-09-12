@@ -79,7 +79,7 @@ export class OntologiesSelectors {
     params: Params
   ): ReadOntology | undefined {
     const projectIri = ProjectService.getProjectIri(params, dspApiConfig, resource);
-    if (!projectIri) return undefined;
+    if (!projectIri || Object.values(state.projectOntologies).length === 0) return undefined;
 
     const projectReadOntologies = state.projectOntologies[projectIri].readOntologies;
     const projectReadOntologiesIndex = projectReadOntologies.findIndex(

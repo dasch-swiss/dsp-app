@@ -7,7 +7,7 @@ import { OntologiesSelectors, SetCurrentResourceAction } from '@dasch-swiss/vre/
 import { TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngxs/store';
 import { BehaviorSubject, Subscription } from 'rxjs';
-import { filter, map, switchMap, take } from 'rxjs/operators';
+import { map, switchMap, take } from 'rxjs/operators';
 
 @Injectable()
 export class ResourceFetcherService {
@@ -39,10 +39,11 @@ export class ResourceFetcherService {
     this._translateService.onLangChange
       .pipe(
         switchMap(() => this._store.select(OntologiesSelectors.projectOntology)),
-        filter(currentOntology => currentOntology !== undefined && !!currentOntology.id),
-        switchMap(currentOntology =>
-          this._dspApiConnection.v2.ontologyCache.reloadCachedItem(currentOntology!.id).pipe(take(1))
-        )
+        map(currentOntology => {
+          if (currentOntology !== undefined && !!currentOntology.id) {
+            this._dspApiConnection.v2.ontologyCache.reloadCachedItem(currentOntology!.id).pipe(take(1));
+          }
+        })
       )
       .subscribe(() => {
         this._componentCommsService.emit(new EmitEvent(Events.resourceLanguageChanged));
