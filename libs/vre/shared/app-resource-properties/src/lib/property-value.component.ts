@@ -12,7 +12,6 @@ import { MatDialog } from '@angular/material/dialog';
 import {
   ApiResponseError,
   Cardinality,
-  Constants,
   CreateValue,
   KnoraApiConnection,
   ReadResource,
@@ -24,7 +23,7 @@ import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
 import { ResourceFetcherService } from '@dasch-swiss/vre/shared/app-representations';
 import { Subscription } from 'rxjs';
-import { finalize, startWith, take, takeWhile, tap } from 'rxjs/operators';
+import { finalize, startWith, take, tap } from 'rxjs/operators';
 import { DeleteValueDialogComponent, DeleteValueDialogProps } from './delete-value-dialog.component';
 import { PropertyValueService } from './property-value.service';
 import { propertiesTypeMapping } from './resource-payloads-mapping';
@@ -47,46 +46,28 @@ import { propertiesTypeMapping } from './resource-payloads-mapping';
     <div style="display: flex">
       <div class="item" [ngClass]="{ hover: displayMode }">
         <ng-container
-          *ngTemplateOutlet="itemTpl; context: { item: group?.controls.item, displayMode: displayMode }"></ng-container>
+          *ngTemplateOutlet="itemTpl; context: { item: group.controls.item, displayMode: displayMode }"></ng-container>
 
         <app-property-value-comment
           [displayMode]="displayMode"
-          [control]="group?.controls.comment"></app-property-value-comment>
+          [control]="group.controls.comment"></app-property-value-comment>
       </div>
       <button
         (click)="onSave()"
         mat-icon-button
         data-cy="save-button"
         *ngIf="!displayMode && !propertyValueService.keepEditMode && !loading"
-        [disabled]="
-          group.value.item === null ||
-          group.value.item === '' ||
-          (!isBoolean && valueIsUnchanged) ||
-          (isBoolean && isRequired && valueIsUnchanged)
-        ">
+        [disabled]="group.value.item === null || group.value.item === ''">
         <mat-icon>save</mat-icon>
       </button>
       <dasch-swiss-app-progress-indicator *ngIf="loading" />
     </div>
   </div>`,
-  styles: [
-    `
-      @use '../../../../../../apps/dsp-app/src/styles/config' as *;
-      .item {
-        flex: 1;
-        &.hover:hover {
-          background: $primary_100;
-        }
-      }
-      :host ::ng-deep .app-progress-indicator {
-        margin: 0 auto !important;
-      }
-    `,
-  ],
+  styleUrls: ['./property-value.component.scss'],
 })
 export class PropertyValueComponent implements OnInit {
-  @Input() itemTpl!: TemplateRef<any>;
-  @Input() index!: number;
+  @Input({ required: true }) itemTpl!: TemplateRef<any>;
+  @Input({ required: true }) index!: number;
 
   initialFormValue!: { item: any; comment: string | null };
 
@@ -100,22 +81,6 @@ export class PropertyValueComponent implements OnInit {
 
   get group() {
     return this.propertyValueService.formArray.at(this.index);
-  }
-
-  get isRequired() {
-    return [Cardinality._1, Cardinality._1_n].includes(this.propertyValueService.cardinality);
-  }
-
-  get isBoolean() {
-    return this.propertyValueService.propertyDefinition.objectType === Constants.BooleanValue;
-  }
-
-  get valueIsUnchanged(): boolean {
-    return (
-      (this.initialFormValue.item === this.group?.controls.item.value &&
-        this.initialFormValue.comment === this.group.value.comment) ||
-      (this.initialFormValue.comment === null && this.group.value.comment === '')
-    );
   }
 
   constructor(
@@ -135,10 +100,6 @@ export class PropertyValueComponent implements OnInit {
     this._watchAndSetupCommentStatus();
   }
 
-  private _setInitialValue() {
-    this.initialFormValue = this.group.getRawValue();
-  }
-
   onSave() {
     if (this.propertyValueService.currentlyAdding && this.index === this.propertyValueService.formArray.length - 1) {
       this._addItem();
@@ -155,18 +116,17 @@ export class PropertyValueComponent implements OnInit {
   }
 
   private _watchAndSetupCommentStatus() {
-    this.subscription = this.group.controls.item.statusChanges
-      .pipe(
-        startWith(null),
-        takeWhile(() => this.group !== undefined)
-      )
-      .subscribe(status => {
-        if (status === 'INVALID' || this.group.controls.item.value === null) {
-          this.group.controls.comment.disable();
-        } else if (status === 'VALID') {
-          this.group.controls.comment.enable();
-        }
-      });
+    this.subscription = this.group.controls.item.statusChanges.pipe(startWith(null)).subscribe(status => {
+      if (status === 'INVALID' || this.group.controls.item.value === null) {
+        this.group.controls.comment.disable();
+      } else if (status === 'VALID') {
+        this.group.controls.comment.enable();
+      }
+    });
+  }
+
+  private _setInitialValue() {
+    this.initialFormValue = this.group.getRawValue();
   }
 
   private _addItem() {
@@ -227,15 +187,13 @@ export class PropertyValueComponent implements OnInit {
         return;
       }
 
-      if (value === null && this.propertyValueService.formArray.length > 0) {
-        this.propertyValueService.formArray.at(this.index).patchValue(this.initialFormValue);
-      }
+      this.propertyValueService.formArray.at(this.index).patchValue(this.initialFormValue);
 
       this.displayMode = this.index !== value;
     });
   }
 
-  _update() {
+  private _update() {
     if (this.group.invalid) return;
 
     this.loading = true;
