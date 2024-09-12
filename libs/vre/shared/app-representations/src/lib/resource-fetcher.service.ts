@@ -18,7 +18,6 @@ export class ResourceFetcherService {
   resource$ = this._resourceSubject.asObservable();
 
   private _subscription: Subscription | undefined;
-  private _onLangChangeSubscription: Subscription | undefined;
 
   settings = { imageFormatIsPng: new BehaviorSubject(false) };
 
@@ -37,12 +36,12 @@ export class ResourceFetcherService {
       .pipe(switchMap(() => this._getResource()))
       .subscribe(res => this._resourceSubject.next(res));
 
-    this._onLangChangeSubscription = this._translateService.onLangChange
+    this._translateService.onLangChange
       .pipe(
-        switchMap(() => this._store.select(OntologiesSelectors.currentOntologyIri)),
-        filter(currentOntologyIri => !!currentOntologyIri),
-        switchMap(currentOntologyIri =>
-          this._dspApiConnection.v2.ontologyCache.reloadCachedItem(currentOntologyIri!).pipe(take(1))
+        switchMap(() => this._store.select(OntologiesSelectors.projectOntology)),
+        filter(currentOntology => currentOntology !== undefined && !!currentOntology.id),
+        switchMap(currentOntology =>
+          this._dspApiConnection.v2.ontologyCache.reloadCachedItem(currentOntology!.id).pipe(take(1))
         )
       )
       .subscribe(() => {
@@ -52,7 +51,6 @@ export class ResourceFetcherService {
 
   onDestroy() {
     this._subscription?.unsubscribe();
-    this._onLangChangeSubscription?.unsubscribe();
   }
 
   reload() {
