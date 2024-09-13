@@ -253,7 +253,17 @@ export class GravsearchService {
             Constants.HashDelimiter
           }Date>) .`;
         case Constants.ListValue:
-          return `${identifier}${index} <${Constants.ListValueAsListNode}> <${property.searchValue}> .\n`;
+          switch (property.selectedOperator) {
+            case Operators.NotEquals: {
+              const listValueAsListNode = Constants.ListValueAsListNode.split('#').pop();
+              return (
+                `${identifier}${index} knora-api:${listValueAsListNode} ${identifier}${index}List .\n` +
+                `FILTER NOT EXISTS { ${identifier}${index} knora-api:${listValueAsListNode} <${property.searchValue}> . }`
+              );
+            }
+            default:
+              return `${identifier}${index} <${Constants.ListValueAsListNode}> <${property.searchValue}> .\n`;
+          }
         case Constants.UriValue:
           return (
             `${identifier}${index} <${Constants.UriValueAsUri}> ${identifier}${index}Literal .\n` +
