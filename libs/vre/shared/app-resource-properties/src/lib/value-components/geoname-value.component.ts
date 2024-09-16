@@ -52,6 +52,7 @@ export class GeonameValueComponent implements OnInit {
   }
 
   displayPlaceInSearch(placeId: string) {
-    return this.places.find(place => place.id === placeId)!.displayName;
+    const geoPlace = this.places.find(place => place.id === placeId);
+    return geoPlace ? geoPlace.displayName : '';
   }
 }
