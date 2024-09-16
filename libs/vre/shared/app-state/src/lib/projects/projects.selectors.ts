@@ -127,6 +127,7 @@ export class ProjectsSelectors {
     dspApiConfig: DspAppConfig,
     params: Params
   ): boolean | undefined {
+    if (!user || !user.permissions) return false;
     const isMemberOfSystemAdminGroup = user.permissions.groupsPerProject
       ? ProjectService.IsMemberOfSystemAdminGroup(user.permissions.groupsPerProject)
       : false;
