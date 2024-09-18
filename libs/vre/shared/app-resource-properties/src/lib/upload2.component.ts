@@ -28,9 +28,7 @@ import { FileRepresentationType } from './file-representation.type';
         (click)="fileInput.click()"
         (fileDropped)="_addFile($event.item(0))"
         style="cursor: pointer">
-        <div
-          style="text-align: center;
-    padding: 16px; border: 1px solid black">
+        <div style="text-align: center; padding: 16px; border: 1px solid black">
           <input hidden type="file" (change)="addFileFromClick($event)" #fileInput />
           <mat-icon style="transform: scale(1.6); margin: 8px 0;">cloud_upload</mat-icon>
           <div>Upload file</div>

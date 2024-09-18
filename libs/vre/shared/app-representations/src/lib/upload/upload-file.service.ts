@@ -34,8 +34,11 @@ export class UploadFileService {
       observe: 'body' as const,
       headers,
     };
-    const url = `${this._acs.dspIngestConfig.url}/projects/${shortcode}/assets/ingest/${file.name}`;
-    return this._http.post<UploadedFileResponse>(encodeURI(url), file, options).pipe(
+
+    const encodedFilename = encodeURIComponent(file.name);
+    const url = `${this._acs.dspIngestConfig.url}/projects/${shortcode}/assets/ingest/${encodedFilename}`;
+
+    return this._http.post<UploadedFileResponse>(url, file, options).pipe(
       map(res => {
         const baseUrl = `${this._acs.dspIiifConfig.iiifUrl}/${shortcode}/${res.internalFilename}`;
         return {
