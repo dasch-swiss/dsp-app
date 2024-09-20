@@ -70,6 +70,8 @@ export class AppErrorHandler implements ErrorHandler {
       (error as AjaxError).response['knora-api:error'].match(this.badRequestRegexMatch).length > 0
     ) {
       message = (error as AjaxError).response['knora-api:error'].match(this.badRequestRegexMatch)[1];
+    } else if (error.status === 403) {
+      message = 'You do not have permission to see one or more resources.';
     } else if (error.status === 404) {
       message = 'The requested resource was not found.';
     } else if (error.status === 504) {

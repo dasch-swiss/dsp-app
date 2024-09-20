@@ -37,7 +37,7 @@
         data-cy="still-image-download-button"
         mat-icon-button
         matTooltip="Download"
-        [disabled]="isReadStillImageExternalFileValue"
+        [disabled]="isReadStillImageExternalFileValue || failedToLoad"
         (click)="download(imageFileValue?.fileUrl)">
         <mat-icon>download</mat-icon>
       </button>

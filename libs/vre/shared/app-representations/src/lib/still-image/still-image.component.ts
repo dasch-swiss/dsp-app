@@ -1,5 +1,6 @@
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   ElementRef,
   Inject,
@@ -96,7 +97,8 @@ export class StillImageComponent implements OnInit, OnChanges, OnDestroy {
     private _renderer: Renderer2,
     private _rs: RepresentationService,
     private _regionService: RegionService,
-    private _resourceFetcherService: ResourceFetcherService
+    private _resourceFetcherService: ResourceFetcherService,
+    private _cd: ChangeDetectorRef
   ) {
     OpenSeadragon.setString('Tooltips.Home', '');
     OpenSeadragon.setString('Tooltips.ZoomIn', '');
@@ -540,6 +542,7 @@ export class StillImageComponent implements OnInit, OnChanges, OnDestroy {
     this._viewer.navigator.element.style.display = 'none';
     this.regionDrawMode = false;
     this._viewer?.removeAllHandlers('open');
+    this._cd.markForCheck();
   }
 
   private _onSuccessAfterFailedImageLoad() {
