@@ -21,6 +21,7 @@
           [matMenuTriggerFor]="resClassMenu"
           class="res-class-menu"
           [disabled]="!ontology.lastModificationDate"
+          data-cy="more-button"
           (click)="canBeDeleted()">
           <mat-icon>more_horiz</mat-icon>
         </button>
@@ -91,6 +92,7 @@
       mat-menu-item
       [disabled]="!classCanBeDeleted || !userCanEdit"
       class="res-class-delete"
+      data-cy="delete-button"
       (click)="deleteResourceClass.emit({ iri: resourceClass.id, label: resourceClass.label })">
       Delete resource class
     </button>

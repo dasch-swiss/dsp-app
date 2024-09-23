@@ -82,6 +82,17 @@ describe('Data Model Class', () => {
     cy.get('.mat-mdc-dialog-container').should('not.exist');
   });
 
+  it('should delete a data model class', () => {
+    cy.createDataModelClass(projectPage);
+    const classCard = cy.get('[data-cy=class-card]');
+
+    classCard.should('be.visible');
+    cy.get('[data-cy=more-button]').click();
+    cy.get('[data-cy=delete-button]').click();
+    cy.get('[data-cy=confirmation-button]').click();
+    classCard.should('not.exist');
+  });
+
   it('should add property to a data model class', () => {
     const textProperty = <DataModelClassProperty>{
       name: faker.lorem.word(),
