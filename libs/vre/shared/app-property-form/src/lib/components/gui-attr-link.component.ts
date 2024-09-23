@@ -24,13 +24,15 @@ export interface ClassToSelect {
           <mat-option *ngFor="let oClass of onto.classes" [value]="oClass.id"> {{ oClass.label }}</mat-option>
         </mat-optgroup>
       </mat-select>
-      <mat-error *ngIf="control.invalid && control.touched"> {{ control.errors[0] | humanReadableError }} </mat-error>
+      <mat-error *ngIf="control.invalid && control.touched && control.errors![0] as error">
+        {{ error | humanReadableError }}
+      </mat-error>
     </mat-form-field>
   `,
   styles: ['mat-form-field {width: 100%}'],
 })
 export class GuiAttrLinkComponent {
-  @Input() control: PropertyForm['controls']['guiAttr'];
+  @Input({ required: true }) control!: PropertyForm['controls']['guiAttr'];
 
   ontologyClasses$ = this._store.select(OntologiesSelectors.currentProjectOntologies).pipe(
     map((response: ReadOntology[]) => {
