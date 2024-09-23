@@ -65,11 +65,10 @@ import { sortByKeys } from './sortByKeys';
     <!-- standoff link -->
     <ng-container>
       <app-property-row
-        *ngIf="incomingLinks$ | async as incomingLinks"
         tooltip=" Represent a link in standoff markup from one resource to another"
         label="has Standoff link"
         [borderBottom]="true"
-        [class]="getRowClass(showAllProperties$ | async, (incomingLinks$ | async).length)">
+        [class]="getRowClass(showAllProperties$ | async, standoffLinks.length)">
         <app-incoming-standoff-link-value [links]="standoffLinks"></app-incoming-standoff-link-value>
       </app-property-row>
     </ng-container>
