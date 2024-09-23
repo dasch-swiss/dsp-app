@@ -124,8 +124,6 @@ export class OntologyComponent extends ProjectBase implements OnInit, OnDestroy 
 
   updatePropertyAssignment$ = new Subject<void>();
 
-  // the lastModificationDate is the most important key
-  // when updating something inside the ontology
   lastModificationDate$ = this._store.select(OntologiesSelectors.currentOntology).pipe(
     takeUntil(this.ngUnsubscribe),
     map(x => x?.lastModificationDate)
