@@ -1,5 +1,19 @@
 # Changelog
 
+## [11.20.1](https://github.com/dasch-swiss/dsp-das/compare/v11.20.0...v11.20.1) (2024-09-23)
+
+
+### Bug Fixes
+
+* advanced search order by not list properties only (DEV-4096) ([#1800](https://github.com/dasch-swiss/dsp-das/issues/1800)) ([4b650cf](https://github.com/dasch-swiss/dsp-das/commit/4b650cfd9bb1bad9eb0173858dfc0b5ae2115fe0))
+* can create a property with a link to another class ([#1810](https://github.com/dasch-swiss/dsp-das/issues/1810)) ([6baafd9](https://github.com/dasch-swiss/dsp-das/commit/6baafd9e56910a93b5e53baadd8e01a527e1e12f))
+* disables download button, if resource is not loaded (DEV-4020) ([#1811](https://github.com/dasch-swiss/dsp-das/issues/1811)) ([e13a364](https://github.com/dasch-swiss/dsp-das/commit/e13a3649bc753579ea8d3421c8a7f79ec0fb0b9a))
+* display condition of outgoing standoff links  (DEV-4032) ([#1813](https://github.com/dasch-swiss/dsp-das/issues/1813)) ([68267d4](https://github.com/dasch-swiss/dsp-das/commit/68267d46248c7072c2d31832d2cc9bc453ca6f91))
+* encode filename properly during the file upload (DEV-4099) ([#1801](https://github.com/dasch-swiss/dsp-das/issues/1801)) ([7cc2c42](https://github.com/dasch-swiss/dsp-das/commit/7cc2c4259cb312ce4524786bd2ea2a6f468065b4))
+* prevents from throwing viewer exceptions (DEV-4083) ([#1809](https://github.com/dasch-swiss/dsp-das/issues/1809)) ([c920bd3](https://github.com/dasch-swiss/dsp-das/commit/c920bd3c186b6e6bc20c3944671606adb9eaf1c3))
+* resets link value control if linked value is not saved using dia… ([#1802](https://github.com/dasch-swiss/dsp-das/issues/1802)) ([780d9d4](https://github.com/dasch-swiss/dsp-das/commit/780d9d4a7cba4235783ee2076b5bf0ca60d61ee9))
+* type error in link property ([#1799](https://github.com/dasch-swiss/dsp-das/issues/1799)) ([d351f44](https://github.com/dasch-swiss/dsp-das/commit/d351f447b43f2d7f8df33ed8a3473a6ed92232f1))
+
 ## [11.20.0](https://github.com/dasch-swiss/dsp-das/compare/v11.19.0...v11.20.0) (2024-09-16)
 
 
