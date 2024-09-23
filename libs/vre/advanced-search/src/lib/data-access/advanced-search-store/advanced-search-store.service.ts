@@ -293,10 +293,6 @@ export class AdvancedSearchStoreService extends ComponentStore<AdvancedSearchSta
   updateSelectedProperty(property: PropertyFormItem): void {
     const currentPropertyFormList = this.get(state => state.propertyFormList);
     const indexInPropertyFormList = currentPropertyFormList.indexOf(property);
-
-    const currentOrderByList = this.get(state => state.propertiesOrderByList);
-    const indexInCurrentOrderByList = currentOrderByList.findIndex(item => item.id === property.id);
-
     if (indexInPropertyFormList > -1) {
       // only update if the property is found
       const objectType = property.selectedProperty?.objectType;
@@ -330,31 +326,9 @@ export class AdvancedSearchStoreService extends ComponentStore<AdvancedSearchSta
       }
     }
 
-    let updatedOrderByList = [];
-    if (indexInCurrentOrderByList > -1) {
-      updatedOrderByList = [
-        ...currentOrderByList.slice(0, indexInCurrentOrderByList),
-        {
-          id: property.id,
-          label: property.selectedProperty?.label || '',
-          orderBy: false,
-          disabled: this._isOrderByItemDisabled(property.selectedProperty),
-        },
-        ...currentOrderByList.slice(indexInCurrentOrderByList + 1),
-      ];
-    } else {
-      updatedOrderByList = [
-        ...currentOrderByList,
-        {
-          id: property.id,
-          label: property.selectedProperty?.label || '',
-          orderBy: false,
-          disabled: this._isOrderByItemDisabled(property.selectedProperty),
-        },
-      ];
-    }
-
-    this.patchState({ propertiesOrderByList: updatedOrderByList });
+    this.patchState({
+      propertiesOrderByList: this.getPropertiesOrderByList(property),
+    });
   }
 
   updateChildSelectedProperty(property: ParentChildPropertyPair): void {
@@ -896,5 +870,31 @@ export class AdvancedSearchStoreService extends ComponentStore<AdvancedSearchSta
     };
 
     localStorage.setItem('advanced-search-previous-search', JSON.stringify(snapshot));
+  }
+
+  private getPropertiesOrderByList(property: PropertyFormItem): OrderByItem[] {
+    const currentOrderByList = this.get(state => state.propertiesOrderByList);
+    const indexInCurrentOrderByList = currentOrderByList.findIndex(item => item.id === property.id);
+
+    const newOrderByItem = {
+      id: property.id,
+      label: property.selectedProperty?.label || '',
+      orderBy: false,
+      disabled: this._isOrderByItemDisabled(property.selectedProperty),
+    };
+
+    const updatedOrderByList = [...currentOrderByList];
+
+    if (property.selectedProperty?.objectType !== Constants.ListValue) {
+      if (indexInCurrentOrderByList > -1) {
+        updatedOrderByList[indexInCurrentOrderByList] = newOrderByItem;
+      } else {
+        updatedOrderByList.push(newOrderByItem);
+      }
+    } else if (indexInCurrentOrderByList > -1) {
+      updatedOrderByList.splice(indexInCurrentOrderByList, 1);
+    }
+
+    return updatedOrderByList;
   }
 }
