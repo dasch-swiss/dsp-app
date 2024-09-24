@@ -19,6 +19,7 @@ import {
   KnoraApiConnection,
   Point2D,
   ReadColorValue,
+  ReadProject,
   ReadResource,
   ReadStillImageFileValue,
   RegionGeometry,
@@ -56,6 +57,7 @@ export interface PolygonsForRegion {
 })
 export class StillImageComponent implements OnInit, OnChanges, OnDestroy {
   @Input({ required: true }) resource!: ReadResource;
+  @Input() attachedProject: ReadProject | undefined;
 
   destroyed: Subject<void> = new Subject<void>();
 
@@ -150,7 +152,7 @@ export class StillImageComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['resource'].isFirstChange() || !changes['resource']) {
+    if (!changes['resource'] || changes['resource'].isFirstChange()) {
       return;
     }
     this._loadImages();
@@ -213,6 +215,7 @@ export class StillImageComponent implements OnInit, OnChanges, OnDestroy {
           title: '2D Image (Still Image)',
           subtitle: 'Update image of the resource',
           representation: 'stillImage',
+          attachedProject: this.attachedProject,
           id: propId,
         },
         disableClose: true,

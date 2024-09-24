@@ -13,7 +13,7 @@
 <app-upload
   #upload
   [representation]="representation"
-  [projectUuid]="projectUuid"
+  [attachedProject]="attachedProject"
   (fileInfo)="setFileValue($event)"
   (forceReload)="closeDialog.emit(undefined);"></app-upload>
 

@@ -63,6 +63,7 @@ export class AudioMoreButtonComponent {
         title: 'Audio',
         subtitle: 'Update the audio file of this resource',
         representation: 'audio',
+        attachedProject: this._rs.getAttachedProject(this.parentResource),
         id: propId,
       },
       disableClose: true,

@@ -4,6 +4,7 @@ import {
   Constants,
   KnoraApiConnection,
   ReadArchiveFileValue,
+  ReadProject,
   ReadResource,
   UpdateFileValue,
   UpdateResource,
@@ -24,7 +25,7 @@ import { RepresentationService } from '../representation.service';
 })
 export class ArchiveComponent implements OnInit, AfterViewInit {
   @Input() src: FileRepresentation;
-
+  @Input() attachedProject: ReadProject | undefined;
   @Input() parentResource: ReadResource;
 
   @Output() loaded = new EventEmitter<boolean>();
@@ -77,6 +78,7 @@ export class ArchiveComponent implements OnInit, AfterViewInit {
         title: 'Archive',
         subtitle: 'Update the archive file of this resource',
         representation: 'archive',
+        attachedProject: this.attachedProject,
         id: propId,
       },
       disableClose: true,

@@ -33,7 +33,7 @@ import { MediaPlayerService } from './media-player.service';
     <div>{{ mediaPlayer.currentTime() | appTime }} / {{ mediaPlayer.duration() | appTime }}</div>
 
     <div>
-      <app-video-more-button [resource]="parentResource" [src]="src" [fileInfo]="fileInfo" />
+      <app-video-more-button [parentResource]="parentResource" [src]="src" [fileInfo]="fileInfo" />
 
       <button mat-icon-button (click)="createVideoSegment()" [matTooltip]="'Create a segment'" *ngIf="isAdmin">
         <mat-icon>view_timeline</mat-icon>

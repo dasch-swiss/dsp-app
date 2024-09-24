@@ -54,9 +54,10 @@ export class ResourceState {
     return this._userApiService.get(identifier, idType).pipe(
       take(1),
       map(response => {
-        state.attachedUsers[resourceIri].value.push(response.user);
+        const currentState = ctx.getState();
+        currentState.attachedUsers[resourceIri].value.push(response.user);
         ctx.patchState({
-          ...state,
+          ...currentState,
           isLoading: false,
         });
 
@@ -97,10 +98,11 @@ export class ResourceState {
     return this._projectApiService.get(projectIri).pipe(
       take(1),
       map(response => {
+        const currentState = ctx.getState();
         ctx.setState({
-          ...state,
+          ...currentState,
           attachedProjects: {
-            ...state.attachedProjects,
+            ...currentState.attachedProjects,
             [resourceIri]: { value: [...state.attachedProjects[resourceIri].value, response.project] },
           },
           isLoading: false,

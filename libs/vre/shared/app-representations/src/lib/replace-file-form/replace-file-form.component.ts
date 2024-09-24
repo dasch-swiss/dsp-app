@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { UpdateFileValue } from '@dasch-swiss/dsp-js';
+import { ReadProject, UpdateFileValue } from '@dasch-swiss/dsp-js';
 import { UploadComponent } from '../upload/upload.component';
 
 @Component({
@@ -10,7 +10,7 @@ import { UploadComponent } from '../upload/upload.component';
 export class ReplaceFileFormComponent implements OnInit {
   @Input() representation: 'stillImage' | 'movingImage' | 'audio' | 'document' | 'text' | 'archive';
   @Input() propId: string;
-  @Input() projectUuid: string;
+  @Input() attachedProject: ReadProject;
 
   @Output() closeDialog: EventEmitter<UpdateFileValue> = new EventEmitter<UpdateFileValue>();
 

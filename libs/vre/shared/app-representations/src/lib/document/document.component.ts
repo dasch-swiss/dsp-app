@@ -1,10 +1,21 @@
 import { DOCUMENT } from '@angular/common';
-import { AfterViewInit, Component, EventEmitter, Inject, Input, OnInit, Output, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  Inject,
+  Input,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import {
   Constants,
   KnoraApiConnection,
   ReadDocumentFileValue,
+  ReadProject,
   ReadResource,
   UpdateFileValue,
   UpdateResource,
@@ -14,6 +25,7 @@ import {
 import { ResourceUtil } from '@dasch-swiss/vre/shared/app-common';
 import { DialogComponent } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
+import { Store } from '@ngxs/store';
 import { PdfViewerComponent } from 'ng2-pdf-viewer';
 import { mergeMap } from 'rxjs/operators';
 import { FileRepresentation } from '../file-representation';
@@ -26,8 +38,8 @@ import { RepresentationService } from '../representation.service';
 })
 export class DocumentComponent implements OnInit, AfterViewInit {
   @Input() src: FileRepresentation;
-
   @Input() parentResource: ReadResource;
+  @Input() attachedProject: ReadProject | undefined;
 
   @Output() loaded = new EventEmitter<boolean>();
 
@@ -54,7 +66,9 @@ export class DocumentComponent implements OnInit, AfterViewInit {
     @Inject(DspApiConnectionToken)
     private _dspApiConnection: KnoraApiConnection,
     private _dialog: MatDialog,
-    private _rs: RepresentationService
+    private _rs: RepresentationService,
+    private _cd: ChangeDetectorRef,
+    private _store: Store
   ) {}
 
   ngOnInit(): void {
@@ -99,7 +113,6 @@ export class DocumentComponent implements OnInit, AfterViewInit {
 
   openReplaceFileDialog() {
     const propId = this.parentResource.properties[Constants.HasDocumentFileValue][0].id;
-
     const dialogConfig: MatDialogConfig = {
       width: '800px',
       maxHeight: '80vh',
@@ -111,6 +124,7 @@ export class DocumentComponent implements OnInit, AfterViewInit {
         title: 'Document',
         subtitle: 'Update the document file of this resource',
         representation: 'document',
+        attachedProject: this.attachedProject,
         id: propId,
       },
       disableClose: true,
@@ -203,6 +217,7 @@ export class DocumentComponent implements OnInit, AfterViewInit {
 
         this.zoomFactor = 1.0;
         this.pdfQuery = '';
+        this._cd.markForCheck();
       });
   }
 }

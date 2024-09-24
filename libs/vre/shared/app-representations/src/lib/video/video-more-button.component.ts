@@ -18,6 +18,7 @@ import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
 import { mergeMap } from 'rxjs/operators';
 import { FileRepresentation } from '../file-representation';
 import { MovingImageSidecar } from '../moving-image-sidecar';
+import { RepresentationService } from '../representation.service';
 
 @Component({
   selector: 'app-video-more-button',
@@ -45,11 +46,11 @@ import { MovingImageSidecar } from '../moving-image-sidecar';
 })
 export class VideoMoreButtonComponent {
   @Input({ required: true }) src!: FileRepresentation;
-  @Input({ required: true }) resource!: ReadResource;
+  @Input({ required: true }) parentResource!: ReadResource;
   @Input({ required: true }) fileInfo!: MovingImageSidecar;
 
   get userCanEdit() {
-    return ResourceUtil.userCanEdit(this.resource);
+    return ResourceUtil.userCanEdit(this.parentResource);
   }
 
   constructor(
@@ -57,6 +58,7 @@ export class VideoMoreButtonComponent {
     private _dialog: MatDialog,
     @Inject(DspApiConnectionToken)
     private _dspApiConnection: KnoraApiConnection,
+    private _rs: RepresentationService,
     private readonly _http: HttpClient
   ) {}
 
@@ -74,7 +76,7 @@ export class VideoMoreButtonComponent {
   }
 
   openReplaceFileDialog() {
-    const propId = this.resource.properties[Constants.HasMovingImageFileValue][0].id;
+    const propId = this.parentResource.properties[Constants.HasMovingImageFileValue][0].id;
 
     const dialogConfig: MatDialogConfig = {
       width: '800px',
@@ -87,6 +89,7 @@ export class VideoMoreButtonComponent {
         title: 'Video (mp4)',
         subtitle: 'Update the video file of this resource',
         representation: 'movingImage',
+        attachedProject: this._rs.getAttachedProject(this.parentResource),
         id: propId,
       },
       disableClose: true,
@@ -102,15 +105,17 @@ export class VideoMoreButtonComponent {
 
   private _replaceFile(file: UpdateFileValue) {
     const updateRes = new UpdateResource();
-    updateRes.id = this.resource.id;
-    updateRes.type = this.resource.type;
+    updateRes.id = this.parentResource.id;
+    updateRes.type = this.parentResource.type;
     updateRes.property = Constants.HasMovingImageFileValue;
     updateRes.value = file;
 
     this._dspApiConnection.v2.values
       .updateValue(updateRes as UpdateResource<UpdateValue>)
       .pipe(
-        mergeMap(res => this._dspApiConnection.v2.values.getValue(this.resource.id, (res as WriteValueResponse).uuid))
+        mergeMap(res =>
+          this._dspApiConnection.v2.values.getValue(this.parentResource.id, (res as WriteValueResponse).uuid)
+        )
       )
       .subscribe(res3 => {
         const res2 = res3 as ReadResource;

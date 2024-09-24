@@ -1,6 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Cardinality, ReadResource, ReadUser } from '@dasch-swiss/dsp-js';
+import { Cardinality, ReadProject, ReadResource, ReadUser } from '@dasch-swiss/dsp-js';
 import { PropertyInfoObject } from '@dasch-swiss/vre/shared/app-helper-services';
 import { PropToDisplay } from '@dasch-swiss/vre/shared/app-state';
 import { FilteredResources } from '../filtered-resources.interface';
@@ -29,6 +29,7 @@ export interface DialogData {
   fullSize?: boolean;
   ontoIri?: string;
   representation?: string; // respresentation type (stillImage, audio, etc.)
+  attachedProject?: ReadProject;
 }
 
 export interface ConfirmationWithComment {

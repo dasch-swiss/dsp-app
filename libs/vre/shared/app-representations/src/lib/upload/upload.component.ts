@@ -1,6 +1,7 @@
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { ActivatedRoute } from '@angular/router';
 import {
   CreateArchiveFileValue,
   CreateAudioFileValue,
@@ -9,6 +10,7 @@ import {
   CreateMovingImageFileValue,
   CreateStillImageFileValue,
   CreateTextFileValue,
+  ReadProject,
   UpdateArchiveFileValue,
   UpdateAudioFileValue,
   UpdateDocumentFileValue,
@@ -18,6 +20,9 @@ import {
   UpdateTextFileValue,
 } from '@dasch-swiss/dsp-js';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
+import { ProjectsSelectors } from '@dasch-swiss/vre/shared/app-state';
+import { Store } from '@ngxs/store';
+import { map, mergeMap, take } from 'rxjs/operators';
 import { UploadFileService } from './upload-file.service';
 
 // https://stackoverflow.com/questions/45661010/dynamic-nested-reactive-form-expressionchangedafterithasbeencheckederror
@@ -30,16 +35,14 @@ const resolvedPromise = Promise.resolve(null);
 })
 export class UploadComponent implements OnInit {
   @Input() parentForm?: UntypedFormGroup;
-
   @Input() representation: 'stillImage' | 'movingImage' | 'audio' | 'document' | 'text' | 'archive';
-
-  @Input() projectUuid: string;
+  @Input() attachedProject: ReadProject;
 
   @Output() fileInfo = new EventEmitter<CreateFileValue>();
-
   @Output() forceReload = new EventEmitter<void>();
 
   @ViewChild('fileInput') fileInput: ElementRef;
+
   file: File;
   form: UntypedFormGroup;
   fileControl: UntypedFormControl;
@@ -59,7 +62,9 @@ export class UploadComponent implements OnInit {
     private _fb: UntypedFormBuilder,
     private _notification: NotificationService,
     private _sanitizer: DomSanitizer,
-    private _upload: UploadFileService
+    private _upload: UploadFileService,
+    private _store: Store,
+    protected _route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
@@ -91,44 +96,55 @@ export class UploadComponent implements OnInit {
         // show loading indicator only for files > 1MB
         this.isLoading = this.file.size > 1048576;
 
-        this._upload.upload(this.file, this.projectUuid).subscribe(
-          res => {
-            // prepare thumbnail url to display something after upload
-            switch (this.representation) {
-              case 'stillImage':
-                this.thumbnailUrl = this._sanitizer.bypassSecurityTrustUrl(res.thumbnailUrl);
-                break;
+        this._store
+          .select(ProjectsSelectors.contextProject)
+          .pipe(
+            take(1),
+            map(contextProject => {
+              return this.attachedProject ? this.attachedProject.shortcode : contextProject!.shortcode;
+            }),
+            mergeMap(shortcode => {
+              return this._upload.upload(this.file, shortcode);
+            })
+          )
+          .subscribe(
+            res => {
+              // prepare thumbnail url to display something after upload
+              switch (this.representation) {
+                case 'stillImage':
+                  this.thumbnailUrl = this._sanitizer.bypassSecurityTrustUrl(res.thumbnailUrl);
+                  break;
 
-              case 'document':
-                this.thumbnailUrl = res.baseUrl;
-                break;
+                case 'document':
+                  this.thumbnailUrl = res.baseUrl;
+                  break;
 
-              default:
-                this.thumbnailUrl = undefined;
-                break;
+                default:
+                  this.thumbnailUrl = undefined;
+                  break;
+              }
+
+              this.fileControl.setValue(res);
+              const fileValue = this.getNewValue();
+
+              if (fileValue) {
+                this.fileInfo.emit(fileValue);
+              }
+              this.isLoading = false;
+            },
+            (e: Error) => {
+              // as we do not get a proper error message from the server
+              if (e.message.startsWith('Http failure response for ')) {
+                e.message =
+                  'ERROR: File upload failed. The iiif server is not reachable at the moment. Please try again later.';
+              }
+              this._notification.openSnackBar(e.message);
+              this.isLoading = false;
+              this.file = null;
+              this.thumbnailUrl = null;
+              this.forceReload.emit();
             }
-
-            this.fileControl.setValue(res);
-            const fileValue = this.getNewValue();
-
-            if (fileValue) {
-              this.fileInfo.emit(fileValue);
-            }
-            this.isLoading = false;
-          },
-          (e: Error) => {
-            // as we do not get a proper error message from the server
-            if (e.message.startsWith('Http failure response for ')) {
-              e.message =
-                'ERROR: File upload failed. The iiif server is not reachable at the moment. Please try again later.';
-            }
-            this._notification.openSnackBar(e.message);
-            this.isLoading = false;
-            this.file = null;
-            this.thumbnailUrl = null;
-            this.forceReload.emit();
-          }
-        );
+          );
       }
     }
     this.fileInput.nativeElement.value = null; // set the html input value to null so in case of an error the user can upload the same file again.

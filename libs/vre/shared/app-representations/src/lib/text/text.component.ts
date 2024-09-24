@@ -3,6 +3,7 @@ import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import {
   Constants,
   KnoraApiConnection,
+  ReadProject,
   ReadResource,
   ReadTextFileValue,
   UpdateFileValue,
@@ -24,7 +25,7 @@ import { RepresentationService } from '../representation.service';
 })
 export class TextComponent implements OnInit, AfterViewInit {
   @Input() src: FileRepresentation;
-
+  @Input() attachedProject: ReadProject | undefined;
   @Input() parentResource: ReadResource;
 
   @Output() loaded = new EventEmitter<boolean>();
@@ -77,6 +78,7 @@ export class TextComponent implements OnInit, AfterViewInit {
         title: 'Text (csv, txt, xml)',
         subtitle: 'Update the text file of this resource',
         representation: 'text',
+        attachedProject: this.attachedProject,
         id: propId,
       },
       disableClose: true,
