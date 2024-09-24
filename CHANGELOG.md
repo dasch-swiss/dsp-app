@@ -1,5 +1,13 @@
 # Changelog
 
+## [11.20.2](https://github.com/dasch-swiss/dsp-das/compare/v11.20.1...v11.20.2) (2024-09-24)
+
+
+### Bug Fixes
+
+* can replace a file in representations (DEV-4118) ([#1804](https://github.com/dasch-swiss/dsp-das/issues/1804)) ([c5a1d85](https://github.com/dasch-swiss/dsp-das/commit/c5a1d850db37170166f49c42467c58fde5ae782b))
+* deletes current resource data from the state when resource fetch… ([#1818](https://github.com/dasch-swiss/dsp-das/issues/1818)) ([a2e64b1](https://github.com/dasch-swiss/dsp-das/commit/a2e64b1287d6c11610e29b9f534002fe8ae008e5))
+
 ## [11.20.1](https://github.com/dasch-swiss/dsp-das/compare/v11.20.0...v11.20.1) (2024-09-23)
 
 
