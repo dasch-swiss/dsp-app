@@ -51,6 +51,7 @@ export class ResourceFetcherService {
   }
 
   onDestroy() {
+    this._store.dispatch(new SetCurrentResourceAction(null));
     this._subscription?.unsubscribe();
   }
 

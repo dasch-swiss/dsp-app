@@ -22,5 +22,5 @@ export class GetAttachedProjectAction {
 export class SetCurrentResourceAction {
   static readonly type = '[Resource] Set Current Resource';
 
-  constructor(public resource: DspResource) {}
+  constructor(public resource: DspResource | null) {}
 }
