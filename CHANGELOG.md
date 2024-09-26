@@ -1,5 +1,14 @@
 # Changelog
 
+## [11.20.3](https://github.com/dasch-swiss/dsp-das/compare/v11.20.2...v11.20.3) (2024-09-26)
+
+
+### Bug Fixes
+
+* annotations are reset on resource change ([#1825](https://github.com/dasch-swiss/dsp-das/issues/1825)) ([08bb85f](https://github.com/dasch-swiss/dsp-das/commit/08bb85f702ad408a85b95678d610a62bb4660bcb))
+* restored image format change (DEV-4143) ([#1822](https://github.com/dasch-swiss/dsp-das/issues/1822)) ([4d2f37c](https://github.com/dasch-swiss/dsp-das/commit/4d2f37cfa18fa9fb87f0527da088c3a5e6afea7b))
+* updates parent resource after replacing resource file (DEV-4172) ([#1824](https://github.com/dasch-swiss/dsp-das/issues/1824)) ([da81631](https://github.com/dasch-swiss/dsp-das/commit/da81631349e3242e96714bbe014e28b31ac5e255))
+
 ## [11.20.2](https://github.com/dasch-swiss/dsp-das/compare/v11.20.1...v11.20.2) (2024-09-24)
 
 
