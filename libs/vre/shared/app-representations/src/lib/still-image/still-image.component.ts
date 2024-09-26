@@ -147,7 +147,7 @@ export class StillImageComponent implements OnInit, OnChanges, OnDestroy {
       .pipe(takeUntil(this.destroyed))
       .subscribe((isPng: boolean) => {
         this.isPng = isPng;
-        // this._loadImages();
+        this._loadImages();
       });
   }
 
