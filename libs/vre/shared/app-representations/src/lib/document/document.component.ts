@@ -193,6 +193,7 @@ export class DocumentComponent implements OnInit, AfterViewInit {
         )
       )
       .subscribe((res2: ReadResource) => {
+        this.parentResource = res2;
         this.src.fileValue.fileUrl = (
           res2.properties[Constants.HasDocumentFileValue][0] as ReadDocumentFileValue
         ).fileUrl;
