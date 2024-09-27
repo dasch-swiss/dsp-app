@@ -127,10 +127,10 @@ export class Upload2Component implements ControlValueAccessor {
 
   _addFile(file: File) {
     const regex = /\.([^.\\/:*?"<>|\r\n]+)$/;
-    const match = file.name.match(regex);
-    const fileExtension = match![1];
-    if (!match || !this.allowedFileTypes.some(allowedFileExtension => fileExtension === allowedFileExtension)) {
-      this._notification.openSnackBar(`The extension ${fileExtension} is not supported`);
+    const supportedExtensions = file.name.match(regex);
+    const fileExtension = supportedExtensions![1].toLowerCase();
+    if (!supportedExtensions || !this.allowedFileTypes.some(extensions => fileExtension === extensions)) {
+      this._notification.openSnackBar(`The extension ${fileExtension} is not supported.`);
       return;
     }
 
