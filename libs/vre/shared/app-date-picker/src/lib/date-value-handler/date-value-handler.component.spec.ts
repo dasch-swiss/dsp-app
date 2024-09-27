@@ -2,17 +2,16 @@ import { Component, forwardRef, Input, OnInit, ViewChild } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import {
   ControlValueAccessor,
+  NG_VALUE_ACCESSOR,
+  NgControl,
+  ReactiveFormsModule,
   UntypedFormBuilder,
   UntypedFormControl,
   UntypedFormGroup,
-  NgControl,
-  NG_VALUE_ACCESSOR,
-  ReactiveFormsModule,
 } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { ErrorStateMatcher } from '@angular/material/core';
-import { MatOptionModule } from '@angular/material/core';
+import { ErrorStateMatcher, MatOptionModule } from '@angular/material/core';
 import { MatFormFieldControl, MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -29,7 +28,7 @@ import { DateValueHandlerComponent } from './date-value-handler.component';
  */
 @Component({
   template: ` <div [formGroup]="form">
-    <app-date-value-handler #dateValueHandler [formControlName]="'date'"></app-date-value-handler>
+    <dasch-swiss-date-value-handler #dateValueHandler [formControlName]="'date'"></dasch-swiss-date-value-handler>
   </div>`,
 })
 class TestHostComponent implements OnInit {
@@ -52,8 +51,8 @@ class TestHostComponent implements OnInit {
  */
 @Component({
   template: ` <div [formGroup]="form">
-    <app-date-value-handler #dateValueHandler [formControlName]="'date'" [valueRequiredValidator]="false">
-    </app-date-value-handler>
+    <dasch-swiss-date-value-handler #dateValueHandler [formControlName]="'date'" [valueRequiredValidator]="false">
+    </dasch-swiss-date-value-handler>
   </div>`,
 })
 class NoValueRequiredTestHostComponent implements OnInit {

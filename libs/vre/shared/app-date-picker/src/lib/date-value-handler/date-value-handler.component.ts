@@ -17,10 +17,10 @@ import {
   Validators,
 } from '@angular/forms';
 import {
-  _AbstractConstructor,
-  _Constructor,
   CanUpdateErrorState,
   ErrorStateMatcher,
+  _AbstractConstructor,
+  _Constructor,
   mixinErrorState,
 } from '@angular/material/core';
 import { MatFormFieldControl } from '@angular/material/form-field';
@@ -100,7 +100,7 @@ export class DateValueHandlerComponent
   pickerClosed = false;
   readonly focused = false;
 
-  readonly controlType = 'app-date-value-handler';
+  readonly controlType = 'dasch-swiss-date-value-handler';
 
   calendars = JDNConvertibleCalendar.supportedCalendars.map(cal => cal.toUpperCase());
 
@@ -189,7 +189,7 @@ export class DateValueHandlerComponent
   }
 
   @HostBinding()
-  id = `app-date-value-handler-${DateValueHandlerComponent.nextId++}`;
+  id = `dasch-swiss-date-value-handler-${DateValueHandlerComponent.nextId++}`;
 
   constructor(
     fb: UntypedFormBuilder,
