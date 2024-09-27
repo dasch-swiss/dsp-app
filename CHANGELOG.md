@@ -1,5 +1,14 @@
 # Changelog
 
+## [11.20.4](https://github.com/dasch-swiss/dsp-das/compare/v11.20.3...v11.20.4) (2024-09-27)
+
+
+### Bug Fixes
+
+* add support for uppercase file extensions (DEV-4148) ([#1827](https://github.com/dasch-swiss/dsp-das/issues/1827)) ([0fe1b1b](https://github.com/dasch-swiss/dsp-das/commit/0fe1b1b5d029060d96ac47471addfcafcb588a45))
+* compound resource is refreshed on change ([#1831](https://github.com/dasch-swiss/dsp-das/issues/1831)) ([4d6ed80](https://github.com/dasch-swiss/dsp-das/commit/4d6ed80cee80d2dafc786410dcbdbd842870a48f))
+* renamed usages of app-date-value-handler to dasch-swiss-date-val… ([#1830](https://github.com/dasch-swiss/dsp-das/issues/1830)) ([6d03420](https://github.com/dasch-swiss/dsp-das/commit/6d03420b3f9e82ff53b9ca42460e0b237b3f2ff2))
+
 ## [11.20.3](https://github.com/dasch-swiss/dsp-das/compare/v11.20.2...v11.20.3) (2024-09-26)
 
 
