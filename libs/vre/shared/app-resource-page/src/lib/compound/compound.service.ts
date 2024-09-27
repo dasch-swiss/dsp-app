@@ -8,12 +8,17 @@ import { RegionService } from '@dasch-swiss/vre/shared/app-representations';
 
 @Injectable()
 export class CompoundService {
-  compoundPosition!: DspCompoundPosition;
+  compoundPosition?: DspCompoundPosition;
   incomingResource: DspResource | undefined;
   private _resource!: DspResource;
 
   get exists() {
     return this.compoundPosition !== undefined;
+  }
+
+  reset() {
+    this.compoundPosition = undefined;
+    this.incomingResource = undefined;
   }
 
   constructor(
@@ -32,6 +37,10 @@ export class CompoundService {
   }
 
   openPage(page: number) {
+    if (!this.compoundPosition) {
+      return;
+    }
+
     const offset = Math.ceil(page / 25) - 1;
     const position = Math.floor(page - offset * 25 - 1);
 
