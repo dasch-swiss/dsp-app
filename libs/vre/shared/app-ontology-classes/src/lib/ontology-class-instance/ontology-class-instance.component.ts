@@ -118,6 +118,8 @@ export class OntologyClassInstanceComponent implements OnDestroy {
   private _setGravsearch(iri: string): string {
     return `
         PREFIX knora-api: <http://api.knora.org/ontology/knora-api/v2#>
+        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
         CONSTRUCT {
 
         ?mainRes knora-api:isMainResource true .
@@ -125,10 +127,13 @@ export class OntologyClassInstanceComponent implements OnDestroy {
         } WHERE {
 
         ?mainRes a knora-api:Resource .
+        ?mainRes rdfs:label ?label .
+
 
         ?mainRes a <${iri}> .
 
         }
+        ORDER BY ASC(?label)
 
         OFFSET 0`;
   }
