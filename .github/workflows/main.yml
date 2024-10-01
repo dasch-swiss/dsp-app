@@ -186,13 +186,13 @@ jobs:
           release-type: node
           package-name: DSP-APP
           changelog-types: '[
-            {"type": "feat", "section": "Enhancements", "hidden": false },
-            {"type": "fix", "section": "Bug Fixes", "hidden": false },
-            {"type": "chore", "section": "Maintenance", "hidden": false },
-            {"type": "refactor", "section": "Maintenance", "hidden": false },
-            {"type": "style", "section": "Maintenance", "hidden": false },
-            {"type": "docs", "section": "Documentation", "hidden": false }
-            ]'
+            {"type": "feat", "section": "Enhancements"},
+            {"type": "fix", "section": "Bug Fixes"},
+            {"type": "chore", "section": "Maintenances"},
+            {"type": "refactor", "section": "Maintenances"},
+            {"type": "style", "section": "Maintenances"},
+            {"type": "docs", "section": "Documentation"}
+          ]'
 
   # build documentation
   docs-build-test:
