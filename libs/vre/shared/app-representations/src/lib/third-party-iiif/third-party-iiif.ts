@@ -83,4 +83,8 @@ export class IIIFUrl {
   get previewImageUrl() {
     return `${this.iiifImageInstanceUrl}/${this._regionSegment}/${this._sizeSegment}/${this._rotationSegment}/${this._quality}.jpg`;
   }
+
+  get isExternalHost(): boolean {
+    return !this._url.host.endsWith('dasch.swiss');
+  }
 }

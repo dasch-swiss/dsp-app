@@ -12,6 +12,16 @@ export function iiifUrlValidator(): ValidatorFn {
   };
 }
 
+export function isExternalHostValidator(): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const url = IIIFUrl.createUrl(control.value);
+    if (url && !url.isExternalHost) {
+      return { invalidHost: true };
+    }
+    return null;
+  };
+}
+
 async function fetchUrl(url: string): Promise<void> {
   const response = await fetch(url, { method: 'HEAD' });
   if (!response.ok) {
