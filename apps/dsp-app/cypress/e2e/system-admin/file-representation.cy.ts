@@ -24,8 +24,8 @@ describe('File representation', () => {
     const classPayload = ClassDefinitionPayloads.stillImageRepresentation();
     const invalidIifImageUrl = 'https://example.com/wrong.jpg';
     const validIifImageUrl = 'https://ids.lib.harvard.edu/ids/iiif/24209711/full/105,/0/default.jpg';
-    const otherValidIifImageUrl =
-      'https://api.digitale-sammlungen.de/iiif/image/v2/bsb00108480_00009/0,0,1500,2048/750,/0/default.jpg';
+    const encodedValidIifImageUrl =
+      'https://iiif.wellcomecollection.org/image/b20432033_B0008608.JP2/full/880%2C/0/default.jpg';
 
     cy.request('POST', `${Cypress.env('apiUrl')}/v2/ontologies/classes`, classPayload)
       .then(response => {
@@ -59,10 +59,7 @@ describe('File representation', () => {
           cy.get('[data-cy=external-iiif-input]').should('have.value', validIifImageUrl);
         });
 
-        cy.get('img[alt="IIIF Preview"]')
-          .should('have.attr', 'src', 'https://ids.lib.harvard.edu/ids/iiif/24209711/full/105,/0/default.jpg')
-          .should('be.visible');
-
+        cy.get('img[alt="IIIF Preview"]').should('have.attr', 'src', validIifImageUrl).should('be.visible');
         po.clickOnSubmit();
 
         cy.intercept('GET', '**/iiif/24209711/info.json').as('iiifInfoRequest');
@@ -82,18 +79,14 @@ describe('File representation', () => {
         cy.get('app-third-part-iiif').should('be.visible');
         cy.get('[data-cy=external-iiif-input]').should('have.value', validIifImageUrl);
 
-        cy.get('[data-cy=external-iiif-input]').clear().type(otherValidIifImageUrl);
-        cy.get('[data-cy=external-iiif-input]').should('have.value', otherValidIifImageUrl);
-        cy.get('img[alt="IIIF Preview"]').should(
-          'have.attr',
-          'src',
-          'https://api.digitale-sammlungen.de/iiif/image/v2/bsb00108480_00009/0,0,1500,2048/750,/0/default.jpg'
-        );
+        cy.get('[data-cy=external-iiif-input]').clear().type(encodedValidIifImageUrl);
+        cy.get('[data-cy=external-iiif-input]').should('have.value', encodedValidIifImageUrl);
+        cy.get('img[alt="IIIF Preview"]').should('have.attr', 'src', encodedValidIifImageUrl);
         po.clickOnSubmit();
         cy.get('[data-cy=resource-header-label]').should('contain.text', 'label');
         cy.get('app-still-image').should('be.visible');
 
-        cy.intercept('GET', '**/iiif/image/v2/bsb00108480_00009/info.json').as('iiifInfoRequest');
+        cy.intercept('GET', '**/info.json').as('iiifInfoRequest');
         cy.wait('@iiifInfoRequest').its('response.statusCode').should('eq', 200);
       });
   });
