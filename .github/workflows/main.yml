@@ -191,7 +191,8 @@ jobs:
             {"type": "chore", "section": "Maintenances"},
             {"type": "refactor", "section": "Maintenances"},
             {"type": "style", "section": "Maintenances"},
-            {"type": "docs", "section": "Documentation"}
+            {"type": "docs", "section": "Documentation"},
+            {"type": "test", "section": "Tests"}
           ]'
 
   # build documentation
