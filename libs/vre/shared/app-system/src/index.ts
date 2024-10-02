@@ -7,3 +7,4 @@ export * from './lib/users/users.component';
 export * from './lib/users/users-list/users-list.component';
 export * from './lib/sort-button/sort-button.component';
 export * from './lib/cookie-policy/cookie-policy.component';
+export * from './lib/users/edit-password-dialog.component';

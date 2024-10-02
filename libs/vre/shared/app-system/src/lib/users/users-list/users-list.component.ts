@@ -21,6 +21,7 @@ import { CreateUserDialogComponent, EditUserPageComponent } from '@dasch-swiss/v
 import { Actions, ofActionSuccessful, Select, Store } from '@ngxs/store';
 import { combineLatest, from, merge, Observable } from 'rxjs';
 import { filter, map, mergeMap, switchMap, take, takeLast } from 'rxjs/operators';
+import { EditPasswordDialogComponent } from '../edit-password-dialog.component';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -317,6 +318,25 @@ export class UsersListComponent {
     dialogRef.afterClosed().subscribe(() => {
       this.refreshParent.emit();
     });
+  }
+
+  openEditPasswordDialog(user: ReadUser) {
+    this._matDialog
+      .open(
+        EditPasswordDialogComponent,
+        DspDialogConfig.dialogDrawerConfig(
+          {
+            user,
+          },
+          true
+        )
+      )
+      .afterClosed()
+      .subscribe(response => {
+        if (response === true) {
+          this.refreshParent.emit();
+        }
+      });
   }
 
   openDialog(mode: string, user?: ReadUser): void {

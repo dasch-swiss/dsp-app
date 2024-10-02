@@ -118,7 +118,7 @@
           <button mat-menu-item *ngIf="(isSysAdmin$ | async) && user.status" (click)="editUser(user)">
             {{ projectUuid ? 'Edit member' : 'Edit user' }}
           </button>
-          <button mat-menu-item *ngIf="(isSysAdmin$ | async) && user.status" (click)="openDialog('editPassword', user)">
+          <button mat-menu-item *ngIf="(isSysAdmin$ | async) && user.status" (click)="openEditPasswordDialog(user)">
             {{ projectUuid ? "Change member's password" : "Change user's password" }}
           </button>
           <!-- remove user from project; only in project view -->

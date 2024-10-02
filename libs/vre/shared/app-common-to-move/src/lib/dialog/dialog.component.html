@@ -1,11 +1,5 @@
 <div [ngSwitch]="data.mode">
   <!-- Update password -->
-  <div *ngSwitchCase="'editPassword'">
-    <app-dialog-header [title]="data.user.username" [subtitle]="'form.user.title.password' | translate">
-    </app-dialog-header>
-    <app-password-form [user]="data.user" (closeDialog)="dialogRef.close()"></app-password-form>
-  </div>
-
   <!-- Manage user project membership -->
   <div *ngSwitchCase="'manageProjectMembership'">
     <app-dialog-header [title]="data.user.username" [subtitle]="'Manage project membership'"></app-dialog-header>
