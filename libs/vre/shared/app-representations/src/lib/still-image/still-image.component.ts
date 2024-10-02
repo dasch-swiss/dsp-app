@@ -60,6 +60,7 @@ export class StillImageComponent implements OnInit, OnChanges, OnDestroy {
   @Input() attachedProject: ReadProject | undefined;
 
   destroyed: Subject<void> = new Subject<void>();
+  defaultFailureStatus: number = 404;
 
   get imageFileValue(): ReadStillImageFileValue | ReadStillImageExternalFileValue | undefined {
     if (this.resource.properties[Constants.HasStillImageFileValue][0].type === Constants.StillImageFileValue) {
@@ -167,6 +168,10 @@ export class StillImageComponent implements OnInit, OnChanges, OnDestroy {
     this.destroyed.complete();
   }
 
+  resetStatus() {
+    this.defaultFailureStatus = 404;
+  }
+
   /**
    * when the draw region button is clicked, this method is called from the html. It sets the draw mode to true and
    * prevents navigation by mouse (so that the region can be accurately drawn).
@@ -232,6 +237,11 @@ export class StillImageComponent implements OnInit, OnChanges, OnDestroy {
 
   openImageInNewTab(url: string) {
     window.open(url, '_blank');
+  }
+
+  setForbiddenStatus() {
+    this.defaultFailureStatus = 403;
+    this._onFailedImageLoad();
   }
 
   private _replaceFile(file: UpdateFileValue) {
@@ -496,6 +506,7 @@ export class StillImageComponent implements OnInit, OnChanges, OnDestroy {
 
   private _loadImages() {
     this._viewer?.close();
+    this.resetStatus();
 
     if (this.resource.properties[Constants.HasStillImageFileValue][0].type === Constants.StillImageFileValue) {
       this._loadInternalImages();

@@ -20,7 +20,14 @@ export interface StatusMsg {
   styleUrls: ['./status.component.scss'],
 })
 export class StatusComponent implements OnInit {
-  @Input() status: number;
+  _status: number = 404;
+  get status(): number {
+    return this._status;
+  }
+  @Input() set status(value: number) {
+    this._status = value;
+    this.message = this.getMsgByStatus(this.status);
+  }
 
   @Input() comment?: string;
   @Input() url?: string;
@@ -52,10 +59,9 @@ export class StatusComponent implements OnInit {
     {
       status: 403,
       message: 'Forbidden',
-      description: `Invalid Permissions.<br>
-            Your request was valid but you do not have the
-            necessary permissions to access it.`,
-      action: 'goback',
+      description: `It seems like you don’t have the necessary permissions.<br />
+      Check with a project admin if you have the necessary permission or if you are logged in.`,
+      action: undefined,
       image: 'dsp-error-403.svg',
     },
     {
@@ -90,7 +96,7 @@ export class StatusComponent implements OnInit {
     private _dspApiConnection: KnoraApiConnection,
     private _titleService: Title,
     private _route: ActivatedRoute,
-    private _status: HttpStatusMsg
+    private _httpStatus: HttpStatusMsg
   ) {}
 
   ngOnInit() {
@@ -120,7 +126,7 @@ export class StatusComponent implements OnInit {
     let msg = this.errorMessages.filter(x => x.status === status)[0];
 
     if (!msg) {
-      msg = this._status.default[status];
+      msg = this._httpStatus.default[status];
       msg.status = status;
       msg.image = 'dsp-error.svg';
       msg.action = this.url ? 'goto' : undefined;

@@ -31,6 +31,10 @@ export class DspCompoundPosition {
   page = 1; // current and real page number in compound object
   totalPages: number; // total pages (part of) in compound object
 
+  get isLastPage() {
+    return this.page >= this.totalPages;
+  }
+
   constructor(totalPages: number) {
     this.totalPages = totalPages;
     this.maxOffsets = Math.ceil(totalPages / 25) - 1;

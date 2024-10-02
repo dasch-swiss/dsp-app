@@ -1,5 +1,7 @@
-import { Component } from '@angular/core';
-import { FileRepresentation, getFileValue } from '@dasch-swiss/vre/shared/app-representations';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { FileRepresentation, StillImageComponent, getFileValue } from '@dasch-swiss/vre/shared/app-representations';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { CompoundService } from './compound.service';
 
 @Component({
@@ -8,6 +10,7 @@ import { CompoundService } from './compound.service';
     <ng-container *ngIf="compoundService.compoundPosition">
       <ng-container *ngIf="compoundService.incomingResource as incomingResource">
         <app-still-image
+          #stillImageComponent
           class="dsp-representation stillimage"
           *ngIf="imageIsAccessible"
           [resource]="incomingResource.res">
@@ -39,7 +42,11 @@ import { CompoundService } from './compound.service';
     `,
   ],
 })
-export class CompoundViewerComponent {
+export class CompoundViewerComponent implements OnInit, OnDestroy {
+  destroyed$: Subject<void> = new Subject<void>();
+
+  @ViewChild('stillImageComponent') stillImageComponent: StillImageComponent | undefined;
+
   get fileRepresentation() {
     return new FileRepresentation(getFileValue(this.compoundService.incomingResource!)!);
   }
@@ -49,4 +56,15 @@ export class CompoundViewerComponent {
   }
 
   constructor(public compoundService: CompoundService) {}
+
+  ngOnInit() {
+    this.compoundService.onOpenNotLoadedIncomingResourcePage$.pipe(takeUntil(this.destroyed$)).subscribe(() => {
+      this.stillImageComponent?.setForbiddenStatus();
+    });
+  }
+
+  ngOnDestroy() {
+    this.destroyed$.next();
+    this.destroyed$.complete();
+  }
 }

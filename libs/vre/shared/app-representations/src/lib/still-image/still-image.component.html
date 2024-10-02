@@ -3,7 +3,7 @@
   <!-- in case of an error -->
   <ng-content select="[navigationArrows]"></ng-content>
   <app-status
-    [status]="404"
+    [status]="defaultFailureStatus"
     [url]="imageFileValue?.fileUrl"
     [representation]="'still-image'"
     *ngIf="failedToLoad"></app-status>

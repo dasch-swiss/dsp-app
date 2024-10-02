@@ -17,7 +17,7 @@ import { CompoundService } from './compound.service';
     <span class="range">{{ compoundNavigation.page }} of {{ compoundNavigation.totalPages }}</span>
     <button
       mat-icon-button
-      [disabled]="compoundNavigation.page >= compoundNavigation.totalPages"
+      [disabled]="isForwardButtonDisabled"
       matTooltip="Next page"
       (click)="openPage(compoundNavigation.page + 1)">
       <mat-icon>navigate_next</mat-icon>
@@ -34,6 +34,10 @@ import { CompoundService } from './compound.service';
 export class CompoundNavigationComponent {
   get compoundNavigation() {
     return this.compoundService.compoundPosition;
+  }
+
+  get isForwardButtonDisabled() {
+    return !this.compoundNavigation || this.compoundNavigation.isLastPage;
   }
 
   openPage(page: number) {
