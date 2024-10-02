@@ -2,7 +2,12 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Constants } from '@dasch-swiss/dsp-js';
 import { StringLiteralV2 } from '@dasch-swiss/vre/open-api';
-import { DefaultProperties, PropertyCategory, PropertyInfoObject } from '@dasch-swiss/vre/shared/app-helper-services';
+import {
+  DefaultProperties,
+  LocalizationService,
+  PropertyCategory,
+  PropertyInfoObject,
+} from '@dasch-swiss/vre/shared/app-helper-services';
 import { DEFAULT_MULTILANGUAGE_FORM } from '@dasch-swiss/vre/shared/app-string-literal';
 import { PropertyForm } from '../property-form.type';
 
@@ -82,13 +87,22 @@ export class PropertyFormComponent implements OnInit {
     return selected;
   }
 
-  constructor(private _fb: FormBuilder) {}
+  constructor(
+    private _fb: FormBuilder,
+    private _localizationService: LocalizationService
+  ) {}
 
   ngOnInit() {
     this.filteredProperties = this.defaultProperties.filter(
       property => property.group === this.formData.property.propType.group
     );
 
+    const defaultData = [
+      {
+        language: this._localizationService.getCurrentLanguage(),
+        value: '',
+      },
+    ];
     this.form = this._fb.group({
       propType: this._fb.control(
         {
@@ -101,24 +115,8 @@ export class PropertyFormComponent implements OnInit {
         nonNullable: true,
         validators: [Validators.required],
       }),
-      labels: DEFAULT_MULTILANGUAGE_FORM(
-        this.formData.labels ?? [
-          {
-            language: 'de',
-            value: '',
-          },
-        ],
-        [Validators.required]
-      ),
-      comments: DEFAULT_MULTILANGUAGE_FORM(
-        this.formData.comments ?? [
-          {
-            language: 'de',
-            value: '',
-          },
-        ],
-        [Validators.required]
-      ),
+      labels: DEFAULT_MULTILANGUAGE_FORM(this.formData.labels ?? defaultData, [Validators.required]),
+      comments: DEFAULT_MULTILANGUAGE_FORM(this.formData.comments ?? defaultData, [Validators.required]),
       guiAttr: this._fb.control<string>(
         {
           value: this.formData.guiAttribute!,
