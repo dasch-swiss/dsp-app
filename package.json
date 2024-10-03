@@ -139,7 +139,7 @@
     "nx": "16.5.3",
     "nx-cloud": "^19.0.0",
     "openapi-typescript": "^6.7.4",
-    "postcss": "^8.4.22",
+    "postcss": "^8.4.47",
     "postcss-import": "~14.1.0",
     "postcss-preset-env": "~8.3.2",
     "postcss-url": "~10.1.3",
