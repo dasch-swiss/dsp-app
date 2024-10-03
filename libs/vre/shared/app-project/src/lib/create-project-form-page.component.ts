@@ -19,7 +19,7 @@ import { ProjectForm } from './reusable-project-form/project-form.type';
           shortname: '',
           longname: '',
           description: [],
-          keywords: []
+          keywords: [],
         }"
         (afterFormInit)="form = $event"></app-reusable-project-form>
 

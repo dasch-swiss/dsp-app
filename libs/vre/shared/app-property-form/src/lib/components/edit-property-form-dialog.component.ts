@@ -40,7 +40,7 @@ export interface EditPropertyFormDialogProps {
         name: data.propertyInfo.propDef.label,
         labels: data.propertyInfo.propDef.labels,
         comments: data.propertyInfo.propDef.comments,
-        guiAttribute: data.propertyInfo.propDef.guiAttributes[0]
+        guiAttribute: data.propertyInfo.propDef.guiAttributes[0],
       }"></app-property-form>
     <div mat-dialog-actions align="end">
       <button mat-button mat-dialog-close>Cancel</button>

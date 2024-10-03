@@ -21,7 +21,7 @@ import { CompoundService } from './compound.service';
           {
             source: ngSliderThumb,
             parent: ngSlider,
-            value: ngSliderThumb.value
+            value: ngSliderThumb.value,
           }.value
         )
       "

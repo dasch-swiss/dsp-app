@@ -15,7 +15,7 @@ import { ListInfoForm } from './list-info-form.type';
       <app-reusable-list-info-form
         [formData]="{
           labels: [],
-          comments: []
+          comments: [],
         }"
         (afterFormInit)="form = $event"></app-reusable-list-info-form>
 
