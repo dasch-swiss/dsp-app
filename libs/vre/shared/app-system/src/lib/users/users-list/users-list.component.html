@@ -134,9 +134,7 @@
           <button
             mat-menu-item
             *ngIf="user.status && (isSysAdmin$ | async) && !projectUuid"
-            (click)="
-                            openDialog('manageProjectMembership', user)
-                        ">
+            (click)="openManageProjectMembershipDialog(user)">
             Manage project membership
           </button>
           <!-- delete / reactivate user -->

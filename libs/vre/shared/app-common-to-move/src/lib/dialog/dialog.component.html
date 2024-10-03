@@ -1,15 +1,4 @@
 <div [ngSwitch]="data.mode">
-  <!-- Update password -->
-  <!-- Manage user project membership -->
-  <div *ngSwitchCase="'manageProjectMembership'">
-    <app-dialog-header [title]="data.user.username" [subtitle]="'Manage project membership'"></app-dialog-header>
-    <app-membership [user]="data.user" (closeDialog)="dialogRef.close()"></app-membership>
-    <mat-dialog-actions>
-      <span class="fill-remaining-space"></span>
-      <button mat-button color="primary" class="cancel-button center" [mat-dialog-close]="false">Close</button>
-    </mat-dialog-actions>
-  </div>
-
   <div *ngSwitchCase="'replaceFile'">
     <app-dialog-header [title]="data.title" [subtitle]="data.subtitle"></app-dialog-header>
     <mat-dialog-content class="form-content">
