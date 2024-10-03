@@ -1,5 +1,5 @@
 export * from './representations.components';
-export * from './lib/add-region-form/add-region-form.component';
+export * from './lib/add-region-form-dialog.component';
 export * from './lib/archive/archive.component';
 export * from './lib/audio/audio.component';
 export * from './lib/av-timeline/av-timeline.component';

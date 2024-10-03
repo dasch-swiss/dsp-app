@@ -1,4 +1,4 @@
-import { AddRegionFormComponent } from './lib/add-region-form/add-region-form.component';
+import { AddRegionFormDialogComponent } from './lib/add-region-form-dialog.component';
 import { ArchiveComponent } from './lib/archive/archive.component';
 import { AudioMoreButtonComponent } from './lib/audio/audio-more-button.component';
 import { AudioToolbarComponent } from './lib/audio/audio-toolbar.component';
@@ -20,7 +20,7 @@ import { VideoComponent } from './lib/video/video.component';
 import { VideoPreviewComponent } from './lib/video-preview/video-preview.component';
 
 export const RepresentationsComponents = [
-  AddRegionFormComponent,
+  AddRegionFormDialogComponent,
   ArchiveComponent,
   AudioComponent,
   AudioToolbarComponent,
