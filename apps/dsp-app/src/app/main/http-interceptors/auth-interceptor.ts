@@ -11,7 +11,10 @@ export class AuthInterceptor implements HttpInterceptor {
   ) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler) {
-    if (!req.url.startsWith(this._appConfigService.dspApiConfig.apiUrl)) {
+    if (
+      !req.url.startsWith(this._appConfigService.dspApiConfig.apiUrl) &&
+      !req.url.startsWith(this._appConfigService.dspIngestConfig.url)
+    ) {
       return next.handle(req);
     }
 

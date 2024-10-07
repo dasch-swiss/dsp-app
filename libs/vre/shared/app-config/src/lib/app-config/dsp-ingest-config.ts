@@ -5,11 +5,11 @@
  */
 export class DspIngestConfig {
   /**
-   * @param ingestUrl the url to the ingest service
+   * @param _ingestUrl the url to the ingest service
    */
-  constructor(public ingestUrl: string) {}
+  constructor(private _ingestUrl: string) {}
 
   get url(): string {
-    return this.ingestUrl;
+    return this._ingestUrl;
   }
 }
