@@ -1,5 +1,5 @@
 import { Component, Inject, Input } from '@angular/core';
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import {
   Constants,
   KnoraApiConnection,
@@ -10,11 +10,14 @@ import {
   WriteValueResponse,
 } from '@dasch-swiss/dsp-js';
 import { DspResource, ResourceUtil } from '@dasch-swiss/vre/shared/app-common';
-import { DialogComponent } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { mergeMap } from 'rxjs/operators';
 import { FileRepresentation } from '../file-representation';
 import { getFileValue } from '../get-file-value';
+import {
+  ReplaceFileDialogComponent,
+  ReplaceFileDialogProps,
+} from '../replace-file-dialog/replace-file-dialog.component';
 import { RepresentationService } from '../representation.service';
 import { ResourceFetcherService } from '../resource-fetcher.service';
 
@@ -50,31 +53,22 @@ export class AudioMoreButtonComponent {
   ) {}
 
   openReplaceFileDialog() {
-    const propId = this.parentResource.properties[Constants.HasAudioFileValue][0].id;
-
-    const dialogConfig: MatDialogConfig = {
-      width: '800px',
-      maxHeight: '80vh',
-      position: {
-        top: '112px',
-      },
-      data: {
-        mode: 'replaceFile',
-        title: 'Audio',
-        subtitle: 'Update the audio file of this resource',
-        representation: 'audio',
-        attachedProject: this._rs.getAttachedProject(this.parentResource),
-        id: propId,
-      },
-      disableClose: true,
-    };
-    const dialogRef = this._dialog.open(DialogComponent, dialogConfig);
-
-    dialogRef.afterClosed().subscribe(data => {
-      if (data) {
-        this._replaceFile(data);
-      }
-    });
+    this._dialog
+      .open<ReplaceFileDialogComponent, ReplaceFileDialogProps>(ReplaceFileDialogComponent, {
+        data: {
+          title: 'Audio',
+          subtitle: 'Update the audio file of this resource',
+          representation: Constants.HasAudioFileValue,
+          projectUuid: this._rs.getAttachedProject(this.parentResource)!.id,
+          propId: this.parentResource.properties[Constants.HasAudioFileValue][0].id,
+        },
+      })
+      .afterClosed()
+      .subscribe(data => {
+        if (data) {
+          this._replaceFile(data);
+        }
+      });
   }
 
   openIIIFnewTab() {

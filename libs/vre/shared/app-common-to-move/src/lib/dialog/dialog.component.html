@@ -1,14 +1,4 @@
 <div [ngSwitch]="data.mode">
-  <div *ngSwitchCase="'replaceFile'">
-    <app-dialog-header [title]="data.title" [subtitle]="data.subtitle"></app-dialog-header>
-    <mat-dialog-content class="form-content">
-      <app-replace-file-form
-        [representation]="data.representation"
-        [propId]="data.id"
-        [attachedProject]="data.attachedProject"
-        (closeDialog)="dialogRef.close($event)"></app-replace-file-form>
-    </mat-dialog-content>
-  </div>
   <div *ngSwitchCase="'linkResources'">
     <app-dialog-header [title]="data.title" [subtitle]="'Link resources'"></app-dialog-header>
     <mat-dialog-content>

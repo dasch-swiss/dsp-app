@@ -10,7 +10,7 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import {
   Constants,
   KnoraApiConnection,
@@ -23,12 +23,15 @@ import {
   WriteValueResponse,
 } from '@dasch-swiss/dsp-js';
 import { ResourceUtil } from '@dasch-swiss/vre/shared/app-common';
-import { DialogComponent } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { Store } from '@ngxs/store';
 import { PdfViewerComponent } from 'ng2-pdf-viewer';
 import { mergeMap } from 'rxjs/operators';
 import { FileRepresentation } from '../file-representation';
+import {
+  ReplaceFileDialogComponent,
+  ReplaceFileDialogProps,
+} from '../replace-file-dialog/replace-file-dialog.component';
 import { RepresentationService } from '../representation.service';
 
 @Component({
@@ -112,30 +115,22 @@ export class DocumentComponent implements OnInit, AfterViewInit {
   }
 
   openReplaceFileDialog() {
-    const propId = this.parentResource.properties[Constants.HasDocumentFileValue][0].id;
-    const dialogConfig: MatDialogConfig = {
-      width: '800px',
-      maxHeight: '80vh',
-      position: {
-        top: '112px',
-      },
-      data: {
-        mode: 'replaceFile',
-        title: 'Document',
-        subtitle: 'Update the document file of this resource',
-        representation: 'document',
-        attachedProject: this.attachedProject,
-        id: propId,
-      },
-      disableClose: true,
-    };
-    const dialogRef = this._dialog.open(DialogComponent, dialogConfig);
-
-    dialogRef.afterClosed().subscribe(data => {
-      if (data) {
-        this._replaceFile(data);
-      }
-    });
+    this._dialog
+      .open<ReplaceFileDialogComponent, ReplaceFileDialogProps>(ReplaceFileDialogComponent, {
+        data: {
+          title: 'Document',
+          subtitle: 'Update the document file of this resource',
+          representation: Constants.HasDocumentFileValue,
+          projectUuid: this.attachedProject!.id,
+          propId: this.parentResource.properties[Constants.HasDocumentFileValue][0].id,
+        },
+      })
+      .afterClosed()
+      .subscribe(data => {
+        if (data) {
+          this._replaceFile(data);
+        }
+      });
   }
 
   openFullscreen() {

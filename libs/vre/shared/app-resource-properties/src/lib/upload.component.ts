@@ -1,29 +1,18 @@
-import { ChangeDetectorRef, Component, ElementRef, Input, Self, ViewChild } from '@angular/core';
-import { ControlValueAccessor, NgControl } from '@angular/forms';
+import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-import {
-  Constants,
-  CreateArchiveFileValue,
-  CreateAudioFileValue,
-  CreateDocumentFileValue,
-  CreateFileValue,
-  CreateMovingImageFileValue,
-  CreateStillImageFileValue,
-  CreateTextFileValue,
-} from '@dasch-swiss/dsp-js';
+import { Constants } from '@dasch-swiss/dsp-js';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
-import { UploadFileService } from '@dasch-swiss/vre/shared/app-representations';
+import { FileRepresentationType, UploadedFile, UploadFileService } from '@dasch-swiss/vre/shared/app-representations';
 import { LoadProjectAction, ProjectsSelectors, ResourceSelectors } from '@dasch-swiss/vre/shared/app-state';
-import { Actions, Store, ofActionSuccessful } from '@ngxs/store';
+import { Actions, ofActionSuccessful, Store } from '@ngxs/store';
 import { filter, finalize, map, mergeMap, take } from 'rxjs/operators';
-import { FileRepresentationType } from './file-representation.type';
 
 @Component({
-  selector: 'app-upload-2',
+  selector: 'app-upload',
   template: `
     <ng-container *ngIf="!loading; else loadingTpl">
       <div
-        *ngIf="ngControl.value === null; else showFileTemplate"
+        *ngIf="!fileToUpload; else showFileTemplate"
         appDragDrop
         (click)="fileInput.click()"
         (fileDropped)="_addFile($event.item(0))"
@@ -40,7 +29,6 @@ import { FileRepresentationType } from './file-representation.type';
           Drag and drop or click to upload
         </div>
       </div>
-      <mat-error *ngIf="ngControl.touched && ngControl.errors">{{ ngControl.errors | humanReadableError }} </mat-error>
     </ng-container>
 
     <ng-template #loadingTpl>
@@ -73,8 +61,10 @@ import { FileRepresentationType } from './file-representation.type';
   `,
   styles: ['td {padding: 8px; text-align: center}'],
 })
-export class Upload2Component implements ControlValueAccessor {
+export class UploadComponent {
   @Input({ required: true }) representation!: FileRepresentationType;
+  @Output() afterFileRemoved = new EventEmitter<void>();
+  @Output() afterFileUploaded = new EventEmitter<UploadedFile>();
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
   readonly Math = Math;
@@ -82,9 +72,6 @@ export class Upload2Component implements ControlValueAccessor {
   previewUrl: SafeUrl | null = null;
   fileToUpload: File | undefined;
   loading = false;
-
-  onChange!: (value: any) => void;
-  onTouched!: () => void;
 
   private readonly _fileTypesMapping = {
     [Constants.HasMovingImageFileValue]: ['mp4'],
@@ -101,25 +88,12 @@ export class Upload2Component implements ControlValueAccessor {
 
   constructor(
     private _notification: NotificationService,
-    private _upload: UploadFileService,
-    private _sanitizer: DomSanitizer,
-    private _cdr: ChangeDetectorRef,
     private _store: Store,
-    private _actions$: Actions,
-    @Self() public ngControl: NgControl
-  ) {
-    ngControl.valueAccessor = this;
-  }
-
-  writeValue(value: null): void {}
-
-  registerOnChange(fn: any): void {
-    this.onChange = fn;
-  }
-
-  registerOnTouched(fn: any): void {
-    this.onTouched = fn;
-  }
+    private _upload: UploadFileService,
+    private _cdr: ChangeDetectorRef,
+    private _sanitizer: DomSanitizer,
+    private _actions$: Actions
+  ) {}
 
   addFileFromClick(event: any) {
     this._addFile(event.target.files[0]);
@@ -138,11 +112,6 @@ export class Upload2Component implements ControlValueAccessor {
     this._uploadFile(file);
   }
 
-  removeFile() {
-    this.ngControl.control!.setValue(null);
-    this.ngControl.control!.markAsUntouched();
-  }
-
   private _uploadFile(file: File): void {
     this.loading = true;
     const resource = this._store.selectSnapshot(ResourceSelectors.resource);
@@ -152,10 +121,9 @@ export class Upload2Component implements ControlValueAccessor {
         .pipe(ofActionSuccessful(LoadProjectAction))
         .pipe(take(1))
         .subscribe(() => {
-          const contextProject = this._store.selectSnapshot(ProjectsSelectors.contextProject);
           this._uploadProjectFile(file);
         });
-      this._store.dispatch([new LoadProjectAction(resource.res.attachedToProject, false)]);
+      this._store.dispatch(new LoadProjectAction(resource.res.attachedToProject, false));
     } else {
       this._uploadProjectFile(file);
     }
@@ -189,33 +157,14 @@ export class Upload2Component implements ControlValueAccessor {
             break;
         }
 
-        const createFile = this._createFileValue;
-        createFile.filename = res.internalFilename;
-        this.onChange(createFile);
-        this.onTouched();
-
-        this._cdr.detectChanges();
+        this.afterFileUploaded.emit(res);
       });
 
     this.fileInput.nativeElement.value = '';
   }
 
-  private get _createFileValue(): CreateFileValue {
-    switch (this.representation) {
-      case Constants.HasStillImageFileValue:
-        return new CreateStillImageFileValue();
-      case Constants.HasMovingImageFileValue:
-        return new CreateMovingImageFileValue();
-      case Constants.HasAudioFileValue:
-        return new CreateAudioFileValue();
-      case Constants.HasDocumentFileValue:
-        return new CreateDocumentFileValue();
-      case Constants.HasTextFileValue:
-        return new CreateTextFileValue();
-      case Constants.HasArchiveFileValue:
-        return new CreateArchiveFileValue();
-      default:
-        throw new Error(`File type ${this.representation} not supported`);
-    }
+  removeFile() {
+    this.fileToUpload = undefined;
+    this.afterFileRemoved.emit();
   }
 }

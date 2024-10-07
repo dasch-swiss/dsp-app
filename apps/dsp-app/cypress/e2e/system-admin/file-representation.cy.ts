@@ -33,7 +33,7 @@ describe('File representation', () => {
       })
       .then(() => {
         po.visitAddPage();
-        cy.get('app-upload-2').should('be.visible');
+        cy.get('[data-cy=upload-control]').should('be.visible');
 
         cy.get('[data-cy=stillimage-tab-group]').within(() => {
           cy.contains('.mdc-tab__text-label', 'External IIIF URL').click();
