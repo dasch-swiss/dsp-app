@@ -4,7 +4,6 @@ import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Constants, ReadProject, ReadUser } from '@dasch-swiss/dsp-js';
 import { PermissionsData } from '@dasch-swiss/dsp-js/src/models/admin/permissions-data';
 import { UserApiService } from '@dasch-swiss/vre/shared/app-api';
-import { DialogComponent } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { DspDialogConfig, RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { ProjectService, SortingService } from '@dasch-swiss/vre/shared/app-helper-services';
 import {
@@ -338,42 +337,6 @@ export class UsersListComponent {
           this.refreshParent.emit();
         }
       });
-  }
-
-  openDialog(mode: string, user?: ReadUser): void {
-    const dialogRef = this._matDialog.open(
-      DialogComponent,
-      DspDialogConfig.dialogDrawerConfig(
-        {
-          user,
-          mode,
-        },
-        true
-      )
-    );
-
-    dialogRef.afterClosed().subscribe(response => {
-      if (response === true) {
-        switch (mode) {
-          case 'removeFromProject':
-            this._store.dispatch(new RemoveUserFromProjectAction(user.id, this.project.id));
-            this._actions$
-              .pipe(ofActionSuccessful(LoadProjectMembersAction))
-              .pipe(take(1))
-              .subscribe(() => {
-                this.refreshParent.emit();
-              });
-            break;
-          case 'deleteUser':
-            this.deleteUser(user.id);
-            break;
-          case 'activateUser':
-            this.activateUser(user.id);
-            break;
-        }
-      }
-      this._cd.markForCheck();
-    });
   }
 
   openManageProjectMembershipDialog(user: ReadUser): void {
