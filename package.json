@@ -57,7 +57,7 @@
     "@ngxs/router-plugin": "^3.8.1",
     "@ngxs/store": "^3.8.1",
     "@nx/angular": "16.5.3",
-    "@sentry/angular-ivy": "^7.105.0",
+    "@sentry/angular-ivy": "^7.119.1",
     "@sentry/cli": "^2.29.1",
     "angular-imask": "^7.5.0",
     "angular-split": "^14.0.0",
