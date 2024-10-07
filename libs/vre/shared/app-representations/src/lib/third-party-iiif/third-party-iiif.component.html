@@ -1,6 +1,6 @@
 <div class="third-party-iiif-preview">
   <div
-    *ngIf="(!previewImageUrl || !iiifUrlControl.valid) && formStatus === 'IDLE'"
+    *ngIf="(!previewImageUrl || !iiifUrlControl.valid) && previewStatus === 'IDLE'"
     class="third-party-iiif-preview-placeholder">
     <mat-icon class="iiif-preview-icon">preview</mat-icon>
     <div>[ preview ]</div>
@@ -8,13 +8,11 @@
       The URL must point to a valid IIIF image (jpg, tif, jp2, png). <br />Example: {{exampleString}}
     </div>
   </div>
-  <dasch-swiss-app-progress-indicator *ngIf="formStatus !=='IDLE'"></dasch-swiss-app-progress-indicator>
+  <dasch-swiss-app-progress-indicator *ngIf="previewStatus === 'LOADING'"></dasch-swiss-app-progress-indicator>
   <img
-    *ngIf="previewImageUrl && iiifUrlControl.valid"
+    *ngIf="iiifUrlControl?.valid"
     [src]="previewImageUrl"
-    (loadstart)="formStatus='LOADING'"
-    (loadeddata)="formStatus='IDLE'"
-    (error)="formStatus='IDLE'"
+    (load)="previewStatus = 'IDLE'"
     alt="IIIF Preview"
     height="240" />
 </div>

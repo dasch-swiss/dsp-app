@@ -29,8 +29,8 @@ import { IIIFUrl } from './third-party-iiif';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ThirdPartyIiifComponent implements ControlValueAccessor, OnInit, OnDestroy {
-  onChange!: (value: any) => void;
-  onTouched!: () => void;
+  onChange: (value: any) => void = () => {};
+  onTouched: () => void = () => {};
 
   writeValue(value: ReadStillImageExternalFileValue | null): void {
     if (value) {
@@ -53,7 +53,7 @@ export class ThirdPartyIiifComponent implements ControlValueAccessor, OnInit, On
   iiifUrlControl: FormControl<string | null>;
 
   previewImageUrl: string | undefined;
-  formStatus: 'VALIDATING' | 'LOADING' | 'IDLE' = 'IDLE';
+  previewStatus: 'LOADING' | 'IDLE' = 'IDLE';
 
   private _destroy$ = new Subject<void>();
 
@@ -83,11 +83,13 @@ export class ThirdPartyIiifComponent implements ControlValueAccessor, OnInit, On
     });
 
     this.iiifUrlControl.statusChanges.pipe(takeUntil(this._destroy$)).subscribe(state => {
-      this.formStatus = state === 'PENDING' ? 'VALIDATING' : 'IDLE';
-      if (this.formStatus === 'IDLE' && this.iiifUrlControl.value && this.iiifUrlControl.valid) {
+      this.previewStatus = state === 'PENDING' ? 'LOADING' : 'IDLE';
+      if (state !== 'PENDING' && this.iiifUrlControl.value && this.iiifUrlControl.valid) {
         const fileValue = this._getValue();
         fileValue.externalUrl = this.iiifUrlControl.value;
         this.onChange(fileValue);
+      } else {
+        this.onChange(null);
       }
       this._cdr.detectChanges();
     });
