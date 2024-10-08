@@ -1,5 +1,49 @@
 # Changelog
 
+## [11.21.0](https://github.com/dasch-swiss/dsp-das/compare/v11.20.4...v11.21.0) (2024-10-07)
+
+
+### Enhancements
+
+* accept encoded segments for region, size and rotation (DEV-4140) ([#1835](https://github.com/dasch-swiss/dsp-das/issues/1835)) ([0f25d13](https://github.com/dasch-swiss/dsp-das/commit/0f25d13df55a3b7e1e9cbc7eab89d36e9b97b729))
+* implement download original functionality (DEV-4102) ([#1803](https://github.com/dasch-swiss/dsp-das/issues/1803)) ([807fd70](https://github.com/dasch-swiss/dsp-das/commit/807fd704eeb9645eba2c224884bd80073466b410))
+* order resource list by label (DEV-4164) ([#1821](https://github.com/dasch-swiss/dsp-das/issues/1821)) ([f79eca8](https://github.com/dasch-swiss/dsp-das/commit/f79eca869bec6113b5ffae5300c99e488a668fd5))
+* prohibit use of internal images (DEV-4092) ([#1774](https://github.com/dasch-swiss/dsp-das/issues/1774)) ([0202485](https://github.com/dasch-swiss/dsp-das/commit/02024850129a9c01ae17600911262efef8338246))
+
+
+### Bug Fixes
+
+* initialise with empty function, call onChange also if invalid ([#1848](https://github.com/dasch-swiss/dsp-das/issues/1848)) ([041d1d2](https://github.com/dasch-swiss/dsp-das/commit/041d1d230413e37ebd9712ed2149c42127fd482c))
+* sets property form default language  (DEV-4182) ([#1837](https://github.com/dasch-swiss/dsp-das/issues/1837)) ([bd8f5f0](https://github.com/dasch-swiss/dsp-das/commit/bd8f5f028b6cbd9036613de11cce260d1e43e8be))
+* shows 403 status error when incoming resource representation cannot be loaded due to lack of permissions (DEV-4146) ([#1832](https://github.com/dasch-swiss/dsp-das/issues/1832)) ([8275019](https://github.com/dasch-swiss/dsp-das/commit/8275019ff7b78bef9c0b51abf189902f1c3074ad))
+
+
+### Maintenances
+
+* add a isolated manage project membership dialog ([#1840](https://github.com/dasch-swiss/dsp-das/issues/1840)) ([e33c99e](https://github.com/dasch-swiss/dsp-das/commit/e33c99e80458ac4d59e422ecf66b601eadca334f))
+* add a isolated replace file dialog ([#1844](https://github.com/dasch-swiss/dsp-das/issues/1844)) ([08157cd](https://github.com/dasch-swiss/dsp-das/commit/08157cd6934e63d38a4eef52c9f654911cbd5475))
+* add an isolated "edit password" dialog ([#1817](https://github.com/dasch-swiss/dsp-das/issues/1817)) ([de77096](https://github.com/dasch-swiss/dsp-das/commit/de7709681a0d79b9d7ace279d49f7686eb2f2474))
+* add an isolated add a region dialog ([#1838](https://github.com/dasch-swiss/dsp-das/issues/1838)) ([9c225ba](https://github.com/dasch-swiss/dsp-das/commit/9c225ba806cd38fb5003beeb69ea68dc67cba4c4))
+* add an isolated link resource component ([#1849](https://github.com/dasch-swiss/dsp-das/issues/1849)) ([d12133a](https://github.com/dasch-swiss/dsp-das/commit/d12133ad0fffdad70e30bf8088ed82a5b3faef6a))
+* add Google space notifications ([#1829](https://github.com/dasch-swiss/dsp-das/issues/1829)) ([38724bd](https://github.com/dasch-swiss/dsp-das/commit/38724bd8da314db712a0b0d8d8570117a0503ad4))
+* add test section to changelog ([#1836](https://github.com/dasch-swiss/dsp-das/issues/1836)) ([f1fe6e0](https://github.com/dasch-swiss/dsp-das/commit/f1fe6e033bb867bbd81ed3ce71674be1ad173353))
+* **deps-dev:** bump postcss from 8.4.32 to 8.4.47 ([#1798](https://github.com/dasch-swiss/dsp-das/issues/1798)) ([a6d968b](https://github.com/dasch-swiss/dsp-das/commit/a6d968b50fd71677ceb503b1f4bdaa495df91542))
+* **deps:** bump @sentry/browser and @sentry/angular-ivy ([#1846](https://github.com/dasch-swiss/dsp-das/issues/1846)) ([d95ef43](https://github.com/dasch-swiss/dsp-das/commit/d95ef4342b46ef677c28221fa17f37bf96b2e13c))
+* **deps:** bump axios and @openapitools/openapi-generator-cli ([#1841](https://github.com/dasch-swiss/dsp-das/issues/1841)) ([a6425c3](https://github.com/dasch-swiss/dsp-das/commit/a6425c38fbb0b5db9cdcff82f07cc9e5a90ec9e9))
+* **deps:** bump ejs from 3.1.9 to 3.1.10 ([#1842](https://github.com/dasch-swiss/dsp-das/issues/1842)) ([02b20b6](https://github.com/dasch-swiss/dsp-das/commit/02b20b6b799f4d2d01d2ed1df0ac1142bd71ca91))
+* **deps:** bump micromatch from 4.0.5 to 4.0.8 ([#1780](https://github.com/dasch-swiss/dsp-das/issues/1780)) ([860ade6](https://github.com/dasch-swiss/dsp-das/commit/860ade6d54ce41237a7c39c71078e3d0d0433d8d))
+* **deps:** bump rollup from 3.29.4 to 3.29.5 ([#1820](https://github.com/dasch-swiss/dsp-das/issues/1820)) ([8fd37a7](https://github.com/dasch-swiss/dsp-das/commit/8fd37a749fef9a9e0e14db0bf5ce81b585ebe41b))
+* **deps:** bump serve-static and express ([#1781](https://github.com/dasch-swiss/dsp-das/issues/1781)) ([6912139](https://github.com/dasch-swiss/dsp-das/commit/69121399c9b955c6db89bc9428da70dc1309b7ca))
+* **deps:** bump webpack and @angular-devkit/build-angular ([#1815](https://github.com/dasch-swiss/dsp-das/issues/1815)) ([d371092](https://github.com/dasch-swiss/dsp-das/commit/d3710925761ba4d02eef527d9add6908c3b3d035))
+* **deps:** install updated deps & reduce security issues ([#1843](https://github.com/dasch-swiss/dsp-das/issues/1843)) ([414bf4b](https://github.com/dasch-swiss/dsp-das/commit/414bf4bb125582f42a15396fab7194c39f1a9325))
+* update Dependabot rules ([#1806](https://github.com/dasch-swiss/dsp-das/issues/1806)) ([306aa45](https://github.com/dasch-swiss/dsp-das/commit/306aa4588c5ba6ac70f302a374f3e75c1239137e))
+
+
+### Tests
+
+* a logged out user cannot add a resource ([#1839](https://github.com/dasch-swiss/dsp-das/issues/1839)) ([460226a](https://github.com/dasch-swiss/dsp-das/commit/460226af8479a5dd49a3e04796778c0460ba62a4))
+* a non authorized user cannot access the data model class ([#1834](https://github.com/dasch-swiss/dsp-das/issues/1834)) ([d26786e](https://github.com/dasch-swiss/dsp-das/commit/d26786ec15da0175b8766777151f815cc4ef061f))
+
 ## [11.20.4](https://github.com/dasch-swiss/dsp-das/compare/v11.20.3...v11.20.4) (2024-09-27)
 
 
