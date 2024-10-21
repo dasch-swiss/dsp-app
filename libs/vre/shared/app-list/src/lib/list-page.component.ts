@@ -82,10 +82,13 @@ export class ListPageComponent implements OnInit, OnDestroy {
   editList(list: ListNodeInfo) {
     this._matDialog.open<EditListInfoDialogComponent, EditListInfoDialogProps, boolean>(
       EditListInfoDialogComponent,
-      DspDialogConfig.dialogDrawerConfig({
-        projectIri: this._projectService.uuidToIri(this.projectBaseService.projectUuid),
-        list,
-      })
+      DspDialogConfig.dialogDrawerConfig(
+        {
+          projectIri: this._projectService.uuidToIri(this.projectBaseService.projectUuid),
+          list,
+        },
+        true
+      )
     );
   }
 
