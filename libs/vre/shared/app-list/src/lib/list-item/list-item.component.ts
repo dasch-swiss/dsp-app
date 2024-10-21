@@ -14,7 +14,7 @@ import { ListItemService } from './list-item.service';
       [length]="children.length"
       [node]="child"
       [isAdmin]="isAdmin"></app-list-item-element>
-    <app-list-item-form style="display: block; margin-left: 46px"></app-list-item-form>
+    <app-list-item-form *ngIf="isAdmin" style="display: block; margin-left: 46px"></app-list-item-form>
   `,
   styles: [':host { display: block; }'],
   providers: [ListItemService],
