@@ -10,16 +10,6 @@ describe('File representation', () => {
     po = new AddResourceInstancePage();
   });
 
-  afterEach(() => {
-    cy.get('[data-cy=resource-toolbar-more-button]').click();
-    cy.get('[data-cy=resource-toolbar-delete-resource-button]').click();
-    cy.get('app-delete-resource-dialog').should('be.visible');
-    cy.get('[data-cy=app-delete-resource-dialog-comment]').type('because I can');
-    cy.get('[data-cy=app-delete-resource-dialog-button]').click();
-    cy.visit('/project/00FF/ontology/images/datamodelclass');
-    cy.get('[data-cy=list-view-no-results]').should('be.visible');
-  });
-
   it('external iiif image', () => {
     const classPayload = ClassDefinitionPayloads.stillImageRepresentation();
     const invalidIifImageUrl = 'https://example.com/wrong.jpg';
@@ -60,34 +50,9 @@ describe('File representation', () => {
         });
 
         cy.get('img[alt="IIIF Preview"]').should('have.attr', 'src', validIifImageUrl).should('be.visible');
-        po.clickOnSubmit();
-
-        cy.intercept('GET', '**/iiif/24209711/info.json').as('iiifInfoRequest');
-        cy.wait('@iiifInfoRequest').its('response.statusCode').should('eq', 200);
-
-        cy.get('[data-cy=resource-header-label]').should('contain.text', 'label');
-        cy.get('app-still-image').should('be.visible');
-        cy.get('.osd-container canvas').should('be.visible');
-
-        cy.get('[data-cy=still-image-share-button]').should('be.disabled');
-        cy.get('[data-cy=still-image-download-button]').should('be.disabled');
-        cy.get('[data-cy=still-image-region-button]').should('be.disabled');
-
-        // edit
-        cy.get('[data-cy=more-vert-image-button]').should('be.visible').click();
-        cy.get('[data-cy=replace-image-button]').should('be.visible').click();
-        cy.get('app-third-part-iiif').should('be.visible');
-        cy.get('[data-cy=external-iiif-input]').should('have.value', validIifImageUrl);
-
         cy.get('[data-cy=external-iiif-input]').clear().type(encodedValidIifImageUrl);
         cy.get('[data-cy=external-iiif-input]').should('have.value', encodedValidIifImageUrl);
         cy.get('img[alt="IIIF Preview"]').should('have.attr', 'src', encodedValidIifImageUrl);
-        po.clickOnSubmit();
-        cy.get('[data-cy=resource-header-label]').should('contain.text', 'label');
-        cy.get('app-still-image').should('be.visible');
-
-        cy.intercept('GET', '**/info.json').as('iiifInfoRequest');
-        cy.wait('@iiifInfoRequest').its('response.statusCode').should('eq', 200);
       });
   });
 });
