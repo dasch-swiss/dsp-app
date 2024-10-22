@@ -421,7 +421,7 @@ export class OntologyComponent extends ProjectBase implements OnInit, OnDestroy 
           title: resClassInfo.label,
           ontologyId: currentOntology.id,
           lastModificationDate: currentOntology.lastModificationDate,
-          name: resClass.label,
+          name: this._ontologyService.getNameFromIri(resClassInfo.iri),
           comments: resClass.comments as MultiLanguages,
           labels: resClass.labels as MultiLanguages,
         })
