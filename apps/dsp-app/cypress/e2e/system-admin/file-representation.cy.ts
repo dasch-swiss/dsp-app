@@ -49,10 +49,17 @@ describe('File representation', () => {
           cy.get('[data-cy=external-iiif-input]').should('have.value', validIifImageUrl);
         });
 
-        cy.get('img[alt="IIIF Preview"]').should('have.attr', 'src', validIifImageUrl).should('be.visible');
+        cy.intercept('HEAD', '**/default.jpg', {
+          statusCode: 200,
+        }).as('fetchPreviewImage');
+
         cy.get('[data-cy=external-iiif-input]').clear().type(encodedValidIifImageUrl);
-        cy.get('[data-cy=external-iiif-input]').should('have.value', encodedValidIifImageUrl);
-        cy.get('img[alt="IIIF Preview"]').should('have.attr', 'src', encodedValidIifImageUrl);
+
+        cy.wait('@fetchPreviewImage');
+
+        cy.get('[data-cy=external-iiif-input]').should('have.class', 'ng-valid');
+
+        cy.get('img[alt="IIIF Preview"]').should('have.attr', 'src', encodedValidIifImageUrl).and('be.visible');
       });
   });
 });

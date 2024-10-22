@@ -1,10 +1,11 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { AfterContentInit, Component, EventEmitter, Inject, Input, OnChanges, Output } from '@angular/core';
+import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
 import {
+  ApiResponseError,
   CanDoResponse,
   Constants,
   KnoraApiConnection,
-  ReadProject,
+  ReadOntology,
   ResourcePropertyDefinitionWithAllLanguages,
 } from '@dasch-swiss/dsp-js';
 import { getAllEntityDefinitionsAsArray } from '@dasch-swiss/vre/shared/app-api';
@@ -53,44 +54,37 @@ export interface ShortInfo {
     ]),
   ],
 })
-export class PropertyInfoComponent implements OnChanges, AfterContentInit {
-  @Input() propDef: ResourcePropertyDefinitionWithAllLanguages;
+export class PropertyInfoComponent implements OnInit {
+  @Input({ required: true }) propDef!: ResourcePropertyDefinitionWithAllLanguages;
 
-  @Input() projectUuid: string;
+  @Input() projectUuid!: string;
 
-  @Input() projectStatus: boolean;
+  @Input() projectStatus!: boolean;
 
-  @Input() lastModificationDate?: string;
-
-  @Input() userCanEdit: boolean; // is user a project admin or sys admin?
-
-  // event emitter when the lastModificationDate changed; bidirectional binding with lastModificationDate parameter
-  @Output() lastModificationDateChange: EventEmitter<string> = new EventEmitter<string>();
+  @Input() userCanEdit = false;
 
   @Output() editResourceProperty: EventEmitter<PropertyInfoObject> = new EventEmitter<PropertyInfoObject>();
+
   @Output() deleteResourceProperty: EventEmitter<DefaultClass> = new EventEmitter<DefaultClass>();
 
-  // submit res class iri to open res class (not yet implemented)
-  @Output() clickedOnClass: EventEmitter<ShortInfo> = new EventEmitter<ShortInfo>();
+  private _projectOntologies: ReadOntology[] = [];
 
-  propType: DefaultProperty;
+  propAttribute: string | undefined;
+  propAttributeComment: string | undefined;
 
-  propAttribute: string;
-  propAttributeComment: string;
-
-  propCanBeDeleted: boolean;
-
-  project: ReadProject;
-
-  // list of resource classes where the property is used
-  resClasses: ShortInfo[] = [];
+  usedByClasses: ShortInfo[] = [];
 
   showActionBubble = false;
+  propCanBeDeleted = false;
 
   isLockHovered = false;
 
-  get linkPropertyIsBoundToClass(): boolean {
-    return this.propDef.isLinkProperty && !!this.propDef.subjectType && this.propDef.id.split('#')[1] !== 'partOf';
+  get propType(): DefaultProperty {
+    return this._ontoService.getDefaultPropertyType(this.propDef);
+  }
+
+  get propertiesBaseOntology(): string | undefined {
+    return this.propDef.objectType?.split('#')[0];
   }
 
   constructor(
@@ -98,103 +92,82 @@ export class PropertyInfoComponent implements OnChanges, AfterContentInit {
     private _dspApiConnection: KnoraApiConnection,
     private _ontoService: OntologyService,
     private _store: Store
-  ) {}
-
-  ngOnChanges(): void {
-    const currentProjectOntologies = this._store.selectSnapshot(OntologiesSelectors.currentProjectOntologies);
-    // get info about subproperties, if they are not a subproperty of knora base ontology
-    // in this case add it to the list of subproperty iris
-    const superProp = this._ontoService.getSuperProperty(this.propDef, currentProjectOntologies);
-    if (superProp) {
-      if (this.propDef.subPropertyOf.indexOf(superProp) === -1) {
-        this.propDef.subPropertyOf.push(superProp);
-      }
-    }
-
-    // get the default property type for this property
-    this._ontoService.getDefaultPropType(this.propDef).subscribe((prop: DefaultProperty) => {
-      this.propType = prop;
-    });
+  ) {
+    this._projectOntologies = this._store.selectSnapshot(OntologiesSelectors.currentProjectOntologies);
   }
 
-  ngAfterContentInit() {
-    const currentProjectOntologies = this._store.selectSnapshot(OntologiesSelectors.currentProjectOntologies);
-    if (this.propDef.isLinkProperty) {
-      const ontology = this._store.selectSnapshot(OntologiesSelectors.currentOntology);
-      // this property is a link property to another resource class
-      // get current ontology to get linked res class information
+  ngOnInit() {
+    this._collectUsedByClasses();
 
-      // get the base ontology of object type
-      const baseOnto = this.propDef.objectType.split('#')[0];
-      if (baseOnto !== ontology.id) {
-        // get class info from another ontology
-        const onto = currentProjectOntologies.find(i => i.id === baseOnto);
-        if (!onto && this.propDef.objectType === Constants.Region) {
-          this.propAttribute = 'Region';
-        } else {
-          this.propAttribute = onto.classes[this.propDef.objectType].label;
-          this.propAttributeComment = onto.classes[this.propDef.objectType].comment;
+    if (this.propDef.isLinkProperty || this.propDef.objectType === Constants.ListValue) {
+      this._setAdditionalAttributes();
+    }
+  }
+
+  private _collectUsedByClasses() {
+    this._projectOntologies.forEach(onto => {
+      getAllEntityDefinitionsAsArray(onto.classes).forEach(resClass => {
+        const usedByClass = resClass.propertiesList.some(prop => prop.propertyIndex === this.propDef.id);
+        const isAlreadyAdded = this.usedByClasses.some(c => c.id === resClass.id);
+
+        if (usedByClass && !isAlreadyAdded) {
+          this.usedByClasses.push({
+            id: resClass.id,
+            label: resClass.label!,
+            comment: `${onto.label}: ${resClass.comment}`,
+            restrictedToClass: this.propDef.isLinkProperty ? this.propDef.subjectType : undefined,
+          });
         }
-      } else {
-        this.propAttribute = ontology.classes[this.propDef.objectType].label;
-        this.propAttributeComment = ontology.classes[this.propDef.objectType].comment;
-      }
-    }
+      });
+    });
+    this.usedByClasses.sort((a, b) => (a.label > b.label ? 1 : -1));
+  }
 
-    if (this.propDef.objectType === Constants.ListValue) {
-      const currentOntologyLists = this._store.selectSnapshot(ListsSelectors.listsInProject);
-      // this property is a list property
-      // get current ontology lists to get linked list information
-      const re = /\<([^)]+)\>/;
-      const listIri = this.propDef.guiAttributes[0].match(re)[1];
-      const listUrl = `/project/${this.projectUuid}/lists/${encodeURIComponent(listIri)}`;
-      const list = currentOntologyLists.find(i => i.id === listIri);
-      this.propAttribute = `<a href="${listUrl}">${list.labels[0].value}</a>`;
-      this.propAttributeComment = list.comments.length ? list.comments[0].value : null;
-    }
-
-    // get all classes where the property is used
-    this.resClasses = [];
-    if (!currentProjectOntologies) {
+  private _setAdditionalAttributes() {
+    if (this.propDef.objectType && this.propDef.objectType === Constants.Region) {
+      this.propAttribute = 'Region';
       return;
     }
 
-    currentProjectOntologies.forEach(onto => {
-      getAllEntityDefinitionsAsArray(onto.classes).forEach(resClass => {
-        if (!resClass.propertiesList.some(prop => prop.propertyIndex === this.propDef.id)) return;
+    if (this.propDef.isLinkProperty && this.propDef.objectType && this.propDef.objectType !== Constants.Region) {
+      const currentOntology = this._store.selectSnapshot(OntologiesSelectors.currentOntology);
+      const onto =
+        this.propertiesBaseOntology === currentOntology?.id
+          ? currentOntology
+          : this._projectOntologies.find(i => i.id === this.propertiesBaseOntology);
 
-        this.resClasses.push({
-          id: resClass.id,
-          label: resClass.label!,
-          comment: onto.label + (resClass.comment ? `: ${resClass.comment}` : ''),
-          restrictedToClass: this.propDef.isLinkProperty ? this.propDef.subjectType : undefined,
-        });
-      });
-    });
+      this.propAttribute = onto?.classes[this.propDef.objectType]?.label ?? '';
+      this.propAttributeComment = onto?.classes[this.propDef.objectType]?.comment ?? '';
+      return;
+    }
+
+    if (this.propDef.objectType === Constants.ListValue) {
+      const currentProjectsLists = this._store.selectSnapshot(ListsSelectors.listsInProject);
+      const listIri = this.propDef.guiAttributes[0].split('<')[1].replace(/>/g, '');
+      const listUrl = `/project/${this.projectUuid}/lists/${encodeURIComponent(listIri)}`;
+      const list = currentProjectsLists.find(i => i.id === listIri);
+      this.propAttribute = `<a href="${listUrl}">${list?.labels[0].value}</a>`;
+      this.propAttributeComment = list?.comments.length ? list.comments[0].value : '';
+    }
   }
 
   trackByFn = (index: number, item: ShortInfo) => item.id;
-  /**
-   * determines whether a property can be deleted or not
-   */
+
   canBeDeleted(): void {
-    // check if the property can be deleted
-    this._dspApiConnection.v2.onto.canDeleteResourceProperty(this.propDef.id).subscribe((canDoRes: CanDoResponse) => {
-      this.propCanBeDeleted = canDoRes.canDo;
-    });
+    this._dspApiConnection.v2.onto
+      .canDeleteResourceProperty(this.propDef.id)
+      .subscribe((canDoRes: CanDoResponse | ApiResponseError) => {
+        if (canDoRes instanceof CanDoResponse) {
+          this.propCanBeDeleted = canDoRes.canDo;
+        }
+      });
   }
 
-  /**
-   * show action bubble with various CRUD buttons when hovered over.
-   */
   mouseEnter() {
     this.canBeDeleted();
     this.showActionBubble = true;
   }
 
-  /**
-   * hide action bubble with various CRUD buttons when not hovered over.
-   */
   mouseLeave() {
     this.showActionBubble = false;
   }

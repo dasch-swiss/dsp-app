@@ -142,7 +142,6 @@
                 [propDef]="(currentOntology$ | async)?.properties[prop.id]"
                 [projectUuid]="projectUuid"
                 [projectStatus]="(project$ | async)?.status"
-                [lastModificationDate]="lastModificationDate$ | async"
                 (lastModificationDate)="onLastModificationDateChange()"
                 [userCanEdit]="isAdmin$ | async"
                 (editResourceProperty)="editProperty($event)"

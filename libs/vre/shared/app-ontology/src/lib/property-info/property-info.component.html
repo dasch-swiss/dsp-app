@@ -44,14 +44,10 @@
     <span class="fill-remaining-space center"></span>
     <!-- in case of ontology property: display corresponding resource classes -->
     <span class="white-space">
-      <span *ngIf="resClasses.length; else notUsed">
+      <span *ngIf="usedByClasses.length; else notUsed">
         <span class="mat-caption">&gt; Property is used in:</span>
-        <span *ngFor="let c of resClasses; trackBy: trackByFn; let last = last">
-          <span
-            [matTooltip]="c.comment"
-            matTooltipPosition="above"
-            [matTooltipDisabled]="isLockHovered"
-            (click)="clickedOnClass.emit(c)"
+        <span *ngFor="let c of usedByClasses; trackBy: trackByFn; let last = last">
+          <span [matTooltip]="c.comment" matTooltipPosition="above" [matTooltipDisabled]="isLockHovered"
             >{{c.label}}
             <span
               *ngIf="c.id && c.id === c.restrictedToClass"
@@ -71,10 +67,7 @@
       </ng-template>
     </span>
   </div>
-  <div
-    class="action-bubble"
-    *ngIf="userCanEdit && lastModificationDate && projectStatus && showActionBubble"
-    [@simpleFadeAnimation]="'in'">
+  <div class="action-bubble" *ngIf="userCanEdit && projectStatus && showActionBubble" [@simpleFadeAnimation]="'in'">
     <div class="button-container">
       <span
         matTooltipPosition="above"
