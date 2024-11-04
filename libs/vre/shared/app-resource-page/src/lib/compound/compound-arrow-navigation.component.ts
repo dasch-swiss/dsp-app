@@ -1,4 +1,5 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { AppError } from '@dasch-swiss/vre/shared/app-error-handler';
 import { CompoundService } from './compound.service';
 
 @Component({
@@ -7,8 +8,8 @@ import { CompoundService } from './compound.service';
     <div style="height: 100%; display:flex; align-items: center; cursor: pointer">
       <button
         mat-button
-        [disabled]="forwardNavigation ? isForwardButtonDisabled : compoundNavigation.page <= 1"
-        (click)="openPage(compoundNavigation.page + (forwardNavigation ? 1 : -1))"
+        [disabled]="forwardNavigation ? compoundNavigation?.isLastPage : compoundNavigation.page <= 1"
+        (click)="compoundService.openPage(compoundNavigation.page + (forwardNavigation ? 1 : -1))"
         style="height: 100%; color: white">
         <mat-icon>keyboard_arrow_{{ forwardNavigation ? 'right' : 'left' }}</mat-icon>
       </button>
@@ -16,19 +17,17 @@ import { CompoundService } from './compound.service';
   `,
   styles: ['button[disabled] {color: #b8b8b8!important}'],
 })
-export class CompoundArrowNavigationComponent {
+export class CompoundArrowNavigationComponent implements OnInit {
   @Input() forwardNavigation!: boolean;
 
   get compoundNavigation() {
-    return this.compoundService.compoundPosition;
+    return this.compoundService.compoundPosition!;
   }
 
-  get isForwardButtonDisabled() {
-    return !this.compoundNavigation || this.compoundNavigation.isLastPage;
-  }
-
-  openPage(page: number) {
-    this.compoundService.openPage(page);
+  ngOnInit() {
+    if (!this.compoundService.compoundPosition) {
+      throw new AppError('Compound position is not set');
+    }
   }
 
   constructor(public compoundService: CompoundService) {}

@@ -7,9 +7,10 @@ import { Subscription } from 'rxjs';
 @Component({
   selector: 'app-annotation-tab',
   template: ` <div
-    *ngFor="let annotation of regionService.regions; trackBy: trackAnnotationByFn"
+    *ngFor="let annotation of regionService.regions$ | async; trackBy: trackAnnotationByFn"
     [id]="annotation.res.id"
-    [class.active]="annotation.res.id === selectedRegion">
+    [class.active]="annotation.res.id === selectedRegion"
+    data-cy="annotation-border">
     <app-properties-display
       [resource]="annotation"
       [properties]="annotation.resProps"

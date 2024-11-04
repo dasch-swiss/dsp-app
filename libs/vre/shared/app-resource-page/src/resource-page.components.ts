@@ -9,6 +9,7 @@ import { ResourceHeaderComponent } from './lib/resource-header.component';
 import { ResourcePage2Component } from './lib/resource-page-2.component';
 import { ResourcePageComponent } from './lib/resource-page.component';
 import { ResourceRepresentationComponent } from './lib/resource-representation.component';
+import { ResourceRestrictionComponent } from './lib/resource-restriction.component';
 import { ResourceTabsComponent } from './lib/resource-tabs.component';
 import { ResourceToolbarComponent } from './lib/resource-toolbar.component';
 import { ResourceComponent } from './lib/resource.component';
@@ -33,4 +34,5 @@ export const ResourcePageComponents = [
   AnnotationTabComponent,
   SegmentTabComponent,
   PermissionInfoComponent,
+  ResourceRestrictionComponent,
 ];

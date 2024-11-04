@@ -71,9 +71,15 @@ export class ResourceTabsComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this._highlightAnnotationFromUri();
 
-    this.segmentsService.highlightSegment$.subscribe(segment => {
+    this.segmentsService.highlightSegment$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(segment => {
       if (segment) {
         this.selectedTab = 1;
+      }
+    });
+
+    this.regionService.highlightRegion$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(region => {
+      if (region) {
+        this.selectedTab = 2;
       }
     });
   }

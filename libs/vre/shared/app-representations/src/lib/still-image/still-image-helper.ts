@@ -12,7 +12,7 @@ import {
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { Region } from '../region';
 import { GeometryForRegion } from './geometry-for-region';
-import { PolygonsForRegion } from './still-image.component';
+import { PolygonsForRegion } from './polygons-for-region.interface';
 
 export class StillImageHelper {
   static getPayloadUploadRegion(

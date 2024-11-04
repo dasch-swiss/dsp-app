@@ -11,10 +11,13 @@ export class AuthInterceptor implements HttpInterceptor {
   ) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler) {
-    if (
-      !req.url.startsWith(this._appConfigService.dspApiConfig.apiUrl) &&
-      !req.url.startsWith(this._appConfigService.dspIngestConfig.url)
-    ) {
+    const ALLOW_LIST = [
+      this._appConfigService.dspApiConfig.apiUrl,
+      this._appConfigService.dspIngestConfig.url,
+      this._appConfigService.dspIiifConfig.iiifUrl,
+    ];
+
+    if (ALLOW_LIST.every(url => !req.url.startsWith(url))) {
       return next.handle(req);
     }
 

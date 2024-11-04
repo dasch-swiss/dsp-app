@@ -8,6 +8,7 @@ import { AvTimelineComponent } from './lib/av-timeline/av-timeline.component';
 import { DocumentComponent } from './lib/document/document.component';
 import { EditThirdPartyIiifFormComponent } from './lib/edit-third-party-iiif-form/edit-third-party-iiif-form.component';
 import { ReplaceFileDialogComponent } from './lib/replace-file-dialog/replace-file-dialog.component';
+import { StillImageToolbarComponent } from './lib/still-image/still-image-toolbar.component';
 import { StillImageComponent } from './lib/still-image/still-image.component';
 import { TextComponent } from './lib/text/text.component';
 import { ThirdPartyIiifComponent } from './lib/third-party-iiif/third-party-iiif.component';
@@ -30,6 +31,7 @@ export const RepresentationsComponents = [
   ReplaceFileDialogComponent,
   EditThirdPartyIiifFormComponent,
   StillImageComponent,
+  StillImageToolbarComponent,
   TextComponent,
   VideoComponent,
   VideoPreviewComponent,

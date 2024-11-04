@@ -1,18 +1,18 @@
 import { ChangeDetectorRef, Component, Input, OnChanges, OnDestroy } from '@angular/core';
-import { Constants, ReadLinkValue } from '@dasch-swiss/dsp-js';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { ResourceFetcherService } from '@dasch-swiss/vre/shared/app-representations';
 import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-resource-fetcher',
-  template: ' <app-resource *ngIf="resource" [resource]="resource"></app-resource>',
+  template: ' <app-resource *ngIf="resource" [resource]="resource" [isDifferentResource]="isDifferentResource" />',
   providers: [ResourceFetcherService],
 })
 export class ResourceFetcherComponent implements OnChanges, OnDestroy {
   @Input({ required: true }) resourceIri!: string;
 
-  resource: DspResource | undefined;
+  resource?: DspResource;
+  isDifferentResource = true;
 
   private _subscription?: Subscription;
 
@@ -24,7 +24,6 @@ export class ResourceFetcherComponent implements OnChanges, OnDestroy {
   ngOnChanges() {
     this._resourceFetcherService.onDestroy();
     this._resourceFetcherService.onInit(this.resourceIri);
-    this._resourceFetcherService.settings.imageFormatIsPng.next(false);
 
     if (this._subscription) {
       this._subscription.unsubscribe();
@@ -39,28 +38,26 @@ export class ResourceFetcherComponent implements OnChanges, OnDestroy {
         return;
       }
 
-      if (resource.isRegion) {
-        this._renderAsRegion(resource);
-        return;
-      }
+      this.isDifferentResource = resource.res.id !== this.resource?.res.id;
 
-      this.resource = resource;
-      this._cdr.detectChanges();
+      this._reloadEditor(resource);
     });
+  }
+
+  /**
+   * Reload the editor with the new resource.
+   * Note: The double detection is necessary to reload the entire editor.
+   * @param resource
+   * @private
+   */
+  private _reloadEditor(resource: DspResource) {
+    this.resource = undefined;
+    this._cdr.detectChanges();
+    this.resource = resource;
+    this._cdr.detectChanges();
   }
 
   ngOnDestroy() {
     this._resourceFetcherService.onDestroy();
-  }
-
-  private _renderAsRegion(region: DspResource) {
-    const annotatedRepresentationIri = (region.res.properties[Constants.IsRegionOfValue] as ReadLinkValue[])[0]
-      .linkedResourceIri;
-
-    /* TODO
-                                    this._getResource(annotatedRepresentationIri).subscribe(dspResource => {
-                                      this.resource = dspResource;
-                                    });
-                                    */
   }
 }

@@ -1,0 +1,120 @@
+<div style="display: flex; justify-content: space-between">
+  <span>
+    <button
+      mat-icon-button
+      data-cy="more-vert-image-button"
+      [matMenuTriggerFor]="more"
+      matTooltip="More"
+      matTooltipPosition="above">
+      <mat-icon>more_vert</mat-icon>
+    </button>
+
+    <button
+      data-cy="still-image-share-button"
+      mat-icon-button
+      [matMenuTriggerFor]="share"
+      [disabled]="isReadStillImageExternalFileValue"
+      matTooltip="Share"
+      matTooltipPosition="above">
+      <mat-icon>share</mat-icon>
+    </button>
+
+    <button
+      data-cy="still-image-download-button"
+      mat-icon-button
+      matTooltip="Download"
+      [disabled]="isReadStillImageExternalFileValue || !userCanView"
+      (click)="download()">
+      <mat-icon>download</mat-icon>
+    </button>
+    <button
+      data-cy="still-image-region-button"
+      mat-icon-button
+      matTooltip="Draw Region"
+      [disabled]="!userCanEdit || isReadStillImageExternalFileValue"
+      (click)="toggleDrawMode()"
+      [class.active]="osd.viewer.isMouseNavEnabled()">
+      <mat-icon svgIcon="draw_region_icon"></mat-icon>
+    </button>
+  </span>
+
+  <app-compound-navigation *ngIf="compoundMode" />
+
+  <span>
+    <button
+      data-cy="still-image-settings-button"
+      mat-icon-button
+      matTooltip="Settings"
+      [matMenuTriggerFor]="settings"
+      [disabled]="this.isReadStillImageExternalFileValue">
+      <mat-icon>settings</mat-icon>
+    </button>
+    <button
+      mat-icon-button
+      data-cy="zoom-out"
+      matTooltip="Zoom out"
+      (click)="osd.viewer.viewport.zoomBy(1 - osd.ZOOM_FACTOR)">
+      <mat-icon>zoom_out</mat-icon>
+    </button>
+    <button
+      mat-icon-button
+      data-cy="zoom-in"
+      matTooltip="Zoom in"
+      (click)="osd.viewer.viewport.zoomBy(1 + osd.ZOOM_FACTOR)">
+      <mat-icon>zoom_in</mat-icon>
+    </button>
+    <button mat-icon-button data-ci="zoom-reset" matTooltip="Reset zoom" (click)="osd.viewer.viewport.zoomTo(1)">
+      <mat-icon>other_houses</mat-icon>
+    </button>
+    <button
+      mat-icon-button
+      data-ci="fullscreen"
+      matTooltip="Open in fullscreen"
+      (click)="osd.viewer.setFullScreen(true)">
+      <mat-icon>fullscreen</mat-icon>
+    </button>
+  </span>
+</div>
+
+<mat-menu #more="matMenu" class="representation-menu">
+  <a class="menu-content" mat-menu-item [href]="imageFileValue.fileUrl" target="_blank" data-cy="open-iiif-new-tab">
+    Open IIIF URL in new tab
+  </a>
+  <button
+    class="menu-content"
+    data-cy="replace-image-button"
+    mat-menu-item
+    [disabled]="!userCanEdit"
+    (click)="replaceImage()">
+    {{ isReadStillImageExternalFileValue ? 'Replace external file url' : 'Replace file' }}
+  </button>
+</mat-menu>
+
+<mat-menu #share="matMenu" class="res-share-menu">
+  <button
+    mat-menu-item
+    (click)="notification.openSnackBar('IIIF URL copied to clipboard!')"
+    [cdkCopyToClipboard]="imageFileValue.fileUrl"
+    data-cy="copy-iiif-url">
+    <mat-icon>content_copy</mat-icon>
+    Copy IIIF URL to clipboard
+  </button>
+  <button
+    mat-menu-item
+    [cdkCopyToClipboard]="imageFileValue.arkUrl"
+    (click)="notification.openSnackBar('ARK URL copied to clipboard!')"
+    data-cy="copy-ark-url">
+    <mat-icon>content_copy</mat-icon>
+    Copy ARK url to clipboard
+  </button>
+</mat-menu>
+<mat-menu #settings="matMenu" class="settings-menu">
+  <button class="menu-content" mat-menu-item (click)="imageIsPng.emit(false)">
+    <mat-icon *ngIf="!isPng">check</mat-icon>
+    JPG
+  </button>
+  <button mat-menu-item (click)="imageIsPng.emit(true)">
+    <mat-icon *ngIf="isPng">check</mat-icon>
+    PNG
+  </button>
+</mat-menu>

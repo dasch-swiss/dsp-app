@@ -1,11 +1,11 @@
 import { Inject, Injectable } from '@angular/core';
-import { ApiResponseData, ApiResponseError, KnoraApiConnection, LoginResponse, ReadUser } from '@dasch-swiss/dsp-js';
+import { ApiResponseData, ApiResponseError, KnoraApiConnection, LoginResponse } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
-import { AppError } from '@dasch-swiss/vre/shared/app-error-handler';
+import { UserFeedbackError } from '@dasch-swiss/vre/shared/app-error-handler';
 import {
-  Events as CommsEvents,
   ComponentCommunicationEventService,
   EmitEvent,
+  Events as CommsEvents,
   LocalizationService,
 } from '@dasch-swiss/vre/shared/app-helper-services';
 import {
@@ -16,7 +16,7 @@ import {
   LoadUserAction,
   LogUserOutAction,
 } from '@dasch-swiss/vre/shared/app-state';
-import { Actions, Store, ofActionSuccessful } from '@ngxs/store';
+import { Actions, ofActionSuccessful, Store } from '@ngxs/store';
 import { of, throwError } from 'rxjs';
 import { catchError, map, switchMap, take, tap } from 'rxjs/operators';
 import { AccessTokenService } from './access-token.service';
@@ -64,7 +64,7 @@ export class AuthService {
       }),
       catchError(error => {
         if ((error instanceof ApiResponseError && error.status === 400) || error.status === 401) {
-          return throwError(new AppError('The username and / or password do not match.'));
+          return throwError(new UserFeedbackError('The username and / or password do not match.'));
         }
         return throwError(error);
       }),

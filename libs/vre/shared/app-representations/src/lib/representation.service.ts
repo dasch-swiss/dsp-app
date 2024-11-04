@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ReadProject, ReadResource } from '@dasch-swiss/dsp-js';
 import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
+import { AccessTokenService } from '@dasch-swiss/vre/shared/app-session';
 import { IKeyValuePairs, ResourceSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
@@ -15,7 +16,8 @@ export class RepresentationService {
   constructor(
     private _appConfigService: AppConfigService,
     private readonly _http: HttpClient,
-    private _store: Store
+    private _store: Store,
+    private _accessTokenService: AccessTokenService
   ) {}
 
   getFileInfo(url: string) {
@@ -40,8 +42,14 @@ export class RepresentationService {
   }
 
   downloadFile(url: string, fileName?: string) {
+    const authToken = this._accessTokenService.getAccessToken();
+
     this._http
-      .get(url, { responseType: 'blob', withCredentials: true })
+      .get(url, {
+        responseType: 'blob',
+        withCredentials: true,
+        headers: { Authorization: `Bearer ${authToken}` },
+      })
       .pipe(take(1))
       .subscribe(res => {
         const a = document.createElement('a');

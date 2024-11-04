@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, Input, Self } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
-import { FileRepresentationType, UploadedFile } from '@dasch-swiss/vre/shared/app-representations';
+import { FileRepresentationType, UploadedFileResponse } from '@dasch-swiss/vre/shared/app-representations';
 import { fileValueMapping } from './file-value-mapping';
 
 @Component({
@@ -45,7 +45,7 @@ export class UploadControlComponent implements ControlValueAccessor {
     this.onTouched = fn;
   }
 
-  afterFileUploaded(res: UploadedFile) {
+  afterFileUploaded(res: UploadedFileResponse) {
     if (this.resourceId) {
       const uploadedFile = fileValueMapping.get(this.representation)!.update();
       uploadedFile.id = this.resourceId;

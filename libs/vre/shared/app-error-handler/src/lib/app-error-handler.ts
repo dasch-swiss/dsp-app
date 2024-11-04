@@ -5,7 +5,7 @@ import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
 import * as Sentry from '@sentry/angular-ivy';
 import { AjaxError } from 'rxjs/ajax';
-import { AppError } from './app-error';
+import { UserFeedbackError } from './user-feedback-error';
 
 @Injectable({
   providedIn: 'root',
@@ -26,7 +26,7 @@ export class AppErrorHandler implements ErrorHandler {
     } else if (error instanceof HttpErrorResponse) {
       // ApiServices
       this.handleHttpErrorResponse(error);
-    } else if (error instanceof AppError) {
+    } else if (error instanceof UserFeedbackError) {
       this.displayNotification(error.message);
     } else {
       if (this._appConfig.dspInstrumentationConfig.environment !== 'prod') {
