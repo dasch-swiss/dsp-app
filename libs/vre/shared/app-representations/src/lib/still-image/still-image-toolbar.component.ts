@@ -18,7 +18,6 @@ import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
 import { ProjectsSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { Store } from '@ngxs/store';
-import * as OpenSeadragon from 'openseadragon';
 import { filter, switchMap } from 'rxjs/operators';
 import { EditThirdPartyIiifFormComponent } from '../edit-third-party-iiif-form/edit-third-party-iiif-form.component';
 import { ThirdPartyIiifProps } from '../edit-third-party-iiif-form/edit-third-party-iiif-types';
@@ -28,7 +27,7 @@ import {
 } from '../replace-file-dialog/replace-file-dialog.component';
 import { RepresentationService } from '../representation.service';
 import { ResourceFetcherService } from '../resource-fetcher.service';
-import { OsdDrawerService } from './osd-drawer.service';
+import { OpenSeaDragonService } from './open-sea-dragon.service';
 
 @Component({
   selector: 'app-still-image-toolbar',
@@ -37,7 +36,6 @@ import { OsdDrawerService } from './osd-drawer.service';
 export class StillImageToolbarComponent {
   @Input({ required: true }) resource!: ReadResource;
   @Input({ required: true }) compoundMode!: boolean;
-  @Input({ required: true }) viewer!: OpenSeadragon.Viewer;
   @Input({ required: true }) isPng!: boolean;
   @Output() imageIsPng = new EventEmitter<boolean>();
 
@@ -75,13 +73,13 @@ export class StillImageToolbarComponent {
     private _dialog: MatDialog,
     private _domSanitizer: DomSanitizer,
     private _matIconRegistry: MatIconRegistry,
-    public osd: OsdDrawerService
+    public osd: OpenSeaDragonService
   ) {
     this._setupCssMaterialIcon();
   }
 
   toggleDrawMode(): void {
-    this.viewer.setMouseNavEnabled(!this.viewer.isMouseNavEnabled());
+    this.osd.viewer.setMouseNavEnabled(!this.osd.viewer.isMouseNavEnabled());
   }
 
   download() {

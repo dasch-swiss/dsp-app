@@ -1,16 +1,9 @@
-import { ChangeDetectorRef, Component, Input, OnInit, ViewContainerRef } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, ViewContainerRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { DeleteResourceResponse, ReadProject } from '@dasch-swiss/dsp-js';
 import { AdminProjectsApiService } from '@dasch-swiss/vre/open-api';
 import { DspResource, ResourceService, ResourceUtil } from '@dasch-swiss/vre/shared/app-common';
-import {
-  Events as CommsEvents,
-  ComponentCommunicationEventService,
-  EmitEvent,
-  OntologyService,
-} from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
-import { RegionService, ResourceFetcherService } from '@dasch-swiss/vre/shared/app-representations';
+import { ResourceFetcherService } from '@dasch-swiss/vre/shared/app-representations';
 import {
   DeleteResourceDialogComponent,
   DeleteResourceDialogProps,
@@ -19,8 +12,6 @@ import {
   EraseResourceDialogComponent,
   EraseResourceDialogProps,
 } from '@dasch-swiss/vre/shared/app-resource-properties';
-import { LoadClassItemsCountAction } from '@dasch-swiss/vre/shared/app-state';
-import { Store } from '@ngxs/store';
 import { filter } from 'rxjs/operators';
 
 @Component({
@@ -62,7 +53,7 @@ import { filter } from 'rxjs/operators';
       <button
         data-cy="resource-toolbar-more-button"
         color="primary"
-        *ngIf="attachedProject?.status && ((userCanEdit && showEditLabel) || userCanDelete || adminPermissions)"
+        *ngIf="(userCanEdit && showEditLabel) || userCanDelete || adminPermissions"
         mat-icon-button
         class="more-menu"
         matTooltip="More"
@@ -146,21 +137,12 @@ import { filter } from 'rxjs/operators';
 export class ResourceToolbarComponent implements OnInit {
   @Input({ required: true }) resource!: DspResource;
   @Input() adminPermissions = false;
-  /**
-   * in case properties belongs to an annotation (e.g. region in still images)
-   * in this case we don't have to display the isRegionOf property
-   */
-  @Input() isAnnotation = false;
-
-  @Input() showToggleProperties = false;
   @Input() showEditLabel = true;
-
-  @Input() attachedProject!: ReadProject;
 
   @Input() lastModificationDate!: string;
   @Input() linkToNewTab?: string;
 
-  canReadComments!: boolean;
+  @Output() afterResourceDeleted = new EventEmitter();
 
   get userCanEdit() {
     return ResourceUtil.userCanEdit(this.resource.res);
@@ -174,20 +156,15 @@ export class ResourceToolbarComponent implements OnInit {
     private _notification: NotificationService,
     private _resourceService: ResourceService,
     private _cd: ChangeDetectorRef,
-    private _componentCommsService: ComponentCommunicationEventService,
-    private _ontologyService: OntologyService,
     private _dialog: MatDialog,
     private _adminProjectsApi: AdminProjectsApiService,
-    private _store: Store,
     private _viewContainerRef: ViewContainerRef,
-    private _regionService: RegionService,
     private _resourceFetcher: ResourceFetcherService
   ) {}
 
   ngOnInit(): void {
-    if (!this.attachedProject && this.resource.res.attachedToProject) {
+    if (this.resource.res.attachedToProject) {
       this._adminProjectsApi.getAdminProjectsIriProjectiri(this.resource.res.attachedToProject).subscribe(res => {
-        this.attachedProject = res.project as ReadProject;
         this._cd.detectChanges();
       });
     }
@@ -230,8 +207,8 @@ export class ResourceToolbarComponent implements OnInit {
       })
       .afterClosed()
       .pipe(filter(response => !!response))
-      .subscribe(response => {
-        this._onResourceDeleted(response);
+      .subscribe(() => {
+        this.afterResourceDeleted.emit();
       });
   }
 
@@ -245,26 +222,12 @@ export class ResourceToolbarComponent implements OnInit {
       })
       .afterClosed()
       .pipe(filter(response => !!response))
-      .subscribe(response => {
-        this._onResourceDeleted(response);
+      .subscribe(() => {
+        this.afterResourceDeleted.emit();
       });
   }
 
   openSnackBar(message: string) {
     this._notification.openSnackBar(message);
-  }
-
-  private _onResourceDeleted(response: DeleteResourceResponse) {
-    this._notification.openSnackBar(`${response.result}: ${this.resource.res.label}`);
-    if (this.resource.isRegion) {
-      this._regionService.updateRegions();
-      this._cd.markForCheck();
-      return;
-    }
-
-    const ontologyIri = this._ontologyService.getOntologyIriFromRoute(this.attachedProject.shortcode);
-    const classId = this.resource.res.entityInfo.classes[this.resource.res.type]?.id;
-    this._store.dispatch(new LoadClassItemsCountAction(ontologyIri, classId));
-    this._componentCommsService.emit(new EmitEvent(CommsEvents.resourceDeleted));
   }
 }

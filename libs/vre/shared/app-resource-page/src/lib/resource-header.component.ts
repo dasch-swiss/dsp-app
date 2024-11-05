@@ -1,14 +1,20 @@
 import { Component, Input, ViewContainerRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { PermissionUtil, ResourceClassDefinitionWithPropertyDefinition } from '@dasch-swiss/dsp-js';
+import { ResourceClassDefinitionWithPropertyDefinition } from '@dasch-swiss/dsp-js';
 import { DspResource, ResourceUtil } from '@dasch-swiss/vre/shared/app-common';
 import { DspDialogConfig } from '@dasch-swiss/vre/shared/app-config';
-import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
+import {
+  ComponentCommunicationEventService,
+  EmitEvent,
+  Events as CommsEvents,
+  OntologyService,
+  ProjectService,
+} from '@dasch-swiss/vre/shared/app-helper-services';
 import {
   EditResourceLabelDialogComponent,
   EditResourceLabelDialogProps,
 } from '@dasch-swiss/vre/shared/app-resource-properties';
-import { UserSelectors } from '@dasch-swiss/vre/shared/app-state';
+import { LoadClassItemsCountAction, ProjectsSelectors, UserSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { Store } from '@ngxs/store';
 import { combineLatest, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -28,7 +34,8 @@ import { map } from 'rxjs/operators';
         [resource]="resource"
         [lastModificationDate]="resource.res.lastModificationDate"
         [adminPermissions]="isAdmin$ | async"
-        [showEditLabel]="false"></app-resource-toolbar>
+        [showEditLabel]="false"
+        (afterResourceDeleted)="afterResourceDeleted()" />
     </div>
     <div class="resource-label" style="display: flex; justify-content: space-between">
       <h4 data-cy="resource-header-label">{{ resource.res.label }}</h4>
@@ -121,7 +128,9 @@ export class ResourceHeaderComponent {
   constructor(
     private _dialog: MatDialog,
     private _store: Store,
-    private _viewContainerRef: ViewContainerRef
+    private _viewContainerRef: ViewContainerRef,
+    private _componentCommsService: ComponentCommunicationEventService,
+    private _ontologyService: OntologyService
   ) {}
 
   openEditLabelDialog() {
@@ -132,5 +141,14 @@ export class ResourceHeaderComponent {
         viewContainerRef: this._viewContainerRef,
       }
     );
+  }
+
+  afterResourceDeleted() {
+    const ontologyIri = this._ontologyService.getOntologyIriFromRoute(
+      this._store.selectSnapshot(ProjectsSelectors.currentProject)!.shortcode
+    );
+    const classId = this.resource.res.entityInfo.classes[this.resource.res.type]?.id;
+    this._store.dispatch(new LoadClassItemsCountAction(ontologyIri, classId));
+    this._componentCommsService.emit(new EmitEvent(CommsEvents.resourceDeleted));
   }
 }

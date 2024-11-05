@@ -1,18 +1,20 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
 import { Constants } from '@dasch-swiss/dsp-js';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
-import { RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { RegionService } from '@dasch-swiss/vre/shared/app-representations';
 import { SegmentsService } from '@dasch-swiss/vre/shared/app-segment-support';
 import { Subject } from 'rxjs';
-import { filter, takeUntil } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 import { CompoundService } from './compound/compound.service';
 
 @Component({
   selector: 'app-resource-tabs',
   template: `
-    <mat-tab-group *ngIf="!resource.res.isDeleted" animationDuration="0ms" [(selectedIndex)]="selectedTab">
+    <mat-tab-group
+      *ngIf="!resource.res.isDeleted"
+      animationDuration="0ms"
+      [(selectedIndex)]="selectedTab"
+      (selectedTabChange)="onTabChange($event)">
       <mat-tab #matTabProperties [label]="'resource.properties' | translate">
         <app-properties-display *ngIf="resource" [resource]="resource" [properties]="resource.resProps" />
       </mat-tab>
@@ -62,22 +64,19 @@ export class ResourceTabsComponent implements OnInit, OnDestroy {
   constructor(
     public regionService: RegionService,
     public compoundService: CompoundService,
-    public segmentsService: SegmentsService,
-    private _route: ActivatedRoute
+    public segmentsService: SegmentsService
   ) {}
 
   resourceClassLabel = (resource: DspResource) => resource.res.entityInfo?.classes[resource.res.type].label;
 
   ngOnInit() {
-    this._highlightAnnotationFromUri();
-
     this.segmentsService.highlightSegment$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(segment => {
       if (segment) {
         this.selectedTab = 1;
       }
     });
 
-    this.regionService.highlightRegion$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(region => {
+    this.regionService.selectedRegion$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(region => {
       if (region) {
         this.selectedTab = 2;
       }
@@ -88,24 +87,19 @@ export class ResourceTabsComponent implements OnInit, OnDestroy {
     this.ngUnsubscribe.unsubscribe();
   }
 
-  private _highlightAnnotationFromUri() {
-    const annotation = this._route.snapshot.queryParamMap.get(RouteConstants.annotationQueryParam);
-    if (!annotation) {
-      return;
+  onTabChange(event: any) {
+    if (
+      (this.compoundService.incomingResource && event.index === 2) ||
+      (!this.compoundService.incomingResource && event.index === 1)
+    ) {
+      this._openAnnotationTab();
+    } else {
+      this.regionService.showRegions(false);
     }
-
-    this.regionService.imageIsLoaded$
-      .pipe(
-        filter(loaded => loaded),
-        takeUntil(this.ngUnsubscribe)
-      )
-      .subscribe(() => {
-        this._openAnnotationTab();
-        this.regionService.highlightRegion(annotation);
-      });
   }
 
   private _openAnnotationTab() {
     this.selectedTab = 2;
+    this.regionService.showRegions(true);
   }
 }

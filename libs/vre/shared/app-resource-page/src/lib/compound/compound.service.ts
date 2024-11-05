@@ -83,7 +83,7 @@ export class CompoundService {
         incomingResource.res.entityInfo.getPropertyDefinitionsByType(SystemPropertyDefinition);
 
       this._reloadViewer(incomingResource);
-      this._regionService.onInit(incomingResource);
+      this._regionService.initialize(incomingResource.res.id);
     });
   }
 

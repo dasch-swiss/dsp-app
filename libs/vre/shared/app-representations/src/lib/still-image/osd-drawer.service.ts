@@ -1,41 +1,33 @@
-import { ChangeDetectorRef, Inject, Injectable, Renderer2 } from '@angular/core';
+import { ChangeDetectorRef, Inject, Injectable, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import {
   Constants,
   KnoraApiConnection,
-  Point2D,
   ReadColorValue,
   ReadResource,
   ReadStillImageFileValue,
   RegionGeometry,
 } from '@dasch-swiss/dsp-js';
+import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
-import { AppError } from '@dasch-swiss/vre/shared/app-error-handler';
 import * as OpenSeadragon from 'openseadragon';
-import { filter, switchMap } from 'rxjs/operators';
+import { combineLatest, of, Subject } from 'rxjs';
+import { filter, map, switchMap, takeUntil } from 'rxjs/operators';
 import { AddRegionFormDialogComponent, AddRegionFormDialogProps } from '../add-region-form-dialog.component';
 import { RegionService } from '../region.service';
+import { OpenSeaDragonService } from './open-sea-dragon.service';
 import { PolygonsForRegion } from './polygons-for-region.interface';
 import { StillImageHelper } from './still-image-helper';
 
 @Injectable()
-export class OsdDrawerService {
+export class OsdDrawerService implements OnDestroy {
   resource!: ReadResource;
 
-  private _regionDragInfo: {
-    overlayElement: HTMLElement;
-    startPos: OpenSeadragon.Point;
-    endPos?: OpenSeadragon.Point;
-  } | null = null; // stores the information of the first click for drawing a region
-  private _regions: PolygonsForRegion = {};
-
-  public viewer!: OpenSeadragon.Viewer;
-
-  public readonly ZOOM_FACTOR = 0.2;
-  private readonly _REGION_COLOR = 'rgba(255,0,0,0.3)';
+  private _paintedPolygons: PolygonsForRegion = {};
+  private _ngUnsubscribe = new Subject<void>();
 
   constructor(
-    private _renderer: Renderer2,
+    private _osd: OpenSeaDragonService,
     private _regionService: RegionService,
     @Inject(DspApiConnectionToken)
     private _dspApiConnection: KnoraApiConnection,
@@ -43,89 +35,111 @@ export class OsdDrawerService {
     private _cdr: ChangeDetectorRef
   ) {}
 
-  onInit(viewer: OpenSeadragon.Viewer, resource: ReadResource): void {
+  onInit(resource: ReadResource): void {
     this.resource = resource;
-    this.viewer = viewer;
 
-    this._regionService.imageIsLoaded$
-      .pipe(
-        filter(loaded => loaded),
-        switchMap(() => this._regionService.regions$),
-        switchMap(() => this._regionService.showRegions$)
-      )
-      .subscribe(showRegion => {
-        this._regions = {};
+    this._subscribeToRegions();
+    this._subscribeToSelectedRegion();
+    this._subscribeToCreatedRectangle();
+  }
 
-        if (showRegion) {
-          this._renderRegions();
-        }
-      });
-
-    this._regionService.highlightRegion$.subscribe(region => {
+  private _subscribeToSelectedRegion() {
+    this._regionService.selectedRegion$.pipe(takeUntil(this._ngUnsubscribe)).subscribe(region => {
+      this._unhighlightAllRegions();
       if (region === null) {
-        this._unhighlightAllRegions();
         return;
       }
       this._highlightRegion(region);
     });
   }
 
-  public trackClickEvents() {
-    const viewer = this.viewer;
-    return new OpenSeadragon.MouseTracker({
-      element: viewer.canvas,
-      pressHandler: event => {
-        if (viewer.isMouseNavEnabled()) {
-          return;
+  private _subscribeToRegions() {
+    combineLatest([this._regionService.showRegions$, this._regionService.regions$])
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe(([showRegions, regions]) => {
+        if (!showRegions) {
+          this._removeOverlays();
         }
 
-        const overlayElement: HTMLElement = this._renderer.createElement('div');
-        overlayElement.style.background = this._REGION_COLOR;
-        const viewportPos = viewer.viewport.pointFromPixel((event as OpenSeadragon.ViewerEvent).position!);
-        viewer.addOverlay(overlayElement, new OpenSeadragon.Rect(viewportPos.x, viewportPos.y, 0, 0));
-        this._regionDragInfo = {
-          overlayElement,
-          startPos: viewportPos,
-        };
-      },
-      dragHandler: event => {
-        if (viewer.isMouseNavEnabled()) {
-          return;
+        if (showRegions) {
+          this._removeOverlays(regions);
+          this._renderRegions();
         }
+      });
+  }
 
-        if (!this._regionDragInfo) {
-          throw new AppError('Region drag info is not set');
-        }
+  private _subscribeToCreatedRectangle() {
+    this._osd.createdRectangle$
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .pipe(
+        switchMap(overlay =>
+          this._dialog
+            .open<AddRegionFormDialogComponent, AddRegionFormDialogProps>(AddRegionFormDialogComponent, {
+              data: {
+                resourceIri: this.resource.id,
+              },
+            })
+            .afterClosed()
+            .pipe(map(data => ({ data, overlay })))
+        )
+      )
+      .pipe(
+        switchMap(({ data, overlay }) => {
+          this._osd.viewer.setMouseNavEnabled(true);
+          this._osd.viewer.removeOverlay(overlay.overlay);
+          this._cdr.detectChanges();
 
-        const viewPortPos = viewer.viewport.pointFromPixel((event as OpenSeadragon.ViewerEvent).position!);
-        const diffX = viewPortPos.x - this._regionDragInfo.startPos.x;
-        const diffY = viewPortPos.y - this._regionDragInfo.startPos.y;
-        const location = new OpenSeadragon.Rect(
-          Math.min(this._regionDragInfo.startPos.x, this._regionDragInfo.startPos.x + diffX),
-          Math.min(this._regionDragInfo.startPos.y, this._regionDragInfo.startPos.y + diffY),
-          Math.abs(diffX),
-          Math.abs(diffY)
-        );
+          if (!data) {
+            // User pressed on cancel
+            return of(null);
+          }
 
-        viewer.updateOverlay(this._regionDragInfo.overlayElement, location);
-        this._regionDragInfo.endPos = viewPortPos;
-      },
-      releaseHandler: () => {
-        if (viewer.isMouseNavEnabled()) {
-          return;
-        }
+          return this._dspApiConnection.v2.res.createResource(
+            StillImageHelper.getPayloadUploadRegion(
+              this.resource.id,
+              this.resource.attachedToProject,
+              overlay.startPoint,
+              overlay.endPoint,
+              overlay.imageSize,
+              data.color,
+              data.comment,
+              data.label
+            )
+          );
+        }),
+        filter(data => !!data),
+        takeUntil(this._ngUnsubscribe),
+        switchMap(res =>
+          this._regionService.updateRegions$().pipe(
+            map(() => {
+              return res;
+            })
+          )
+        )
+      )
+      .subscribe(res => {
+        const regionId = (res as ReadResource).id;
+        this._regionService.selectRegion(regionId);
+      });
+  }
 
-        if (!this._regionDragInfo) {
-          throw new AppError('Region drag info and draw mode are not set');
-        }
-        const imageSize = viewer.world.getItemAt(0).getContentSize();
-        const startPoint = viewer.viewport.viewportToImageCoordinates(this._regionDragInfo.startPos);
-        const endPoint = viewer.viewport.viewportToImageCoordinates(this._regionDragInfo.endPos!);
-        this._openRegionDialog(startPoint, endPoint, imageSize, this._regionDragInfo.overlayElement);
-        this._regionDragInfo = null;
-        viewer.setMouseNavEnabled(false);
-      },
+  private _removeOverlays(keep: DspResource[] = []): void {
+    const elementsToRemove = this._getPolygonsToRemove(keep.map(r => r.res.id));
+    elementsToRemove.forEach(r => {
+      const e = this._osd.viewer.getOverlayById(r);
+      if (e) {
+        delete this._paintedPolygons[r];
+        this._osd.viewer.clearOverlays();
+        this._cdr.detectChanges();
+      }
     });
+  }
+
+  private _getPolygonsToRemove(keep: string[] = []): string[] {
+    if (!keep.length) {
+      return Object.keys(this._paintedPolygons);
+    }
+    return Object.keys(this._paintedPolygons).filter(el => !keep.includes(el));
   }
 
   private _renderRegions() {
@@ -134,7 +148,7 @@ export class OsdDrawerService {
     const stillImage = this.resource.properties[Constants.HasStillImageFileValue][0] as ReadStillImageFileValue;
     const aspectRatio = stillImage.dimY / stillImage.dimX;
 
-    const geometries = StillImageHelper.collectAndSortGeometries(this._regionService.regions, this._regions);
+    const geometries = StillImageHelper.collectAndSortGeometries(this._regionService.regions, this._paintedPolygons);
 
     // render all geometries for this page
     for (const geom of geometries) {
@@ -164,71 +178,23 @@ export class OsdDrawerService {
     regionLabel: string,
     regionComment: string
   ): void {
-    const viewer = this.viewer;
-
-    const { regEle, loc } = this._createRectangle(geometry, aspectRatio);
-    viewer
+    const { regEle, loc } = this._createRectangle(regionIri, geometry, aspectRatio);
+    this._osd.viewer
       .addOverlay({
+        id: regionIri,
         element: regEle,
         location: loc,
       })
       .addHandler('canvas-click', event => {
-        this._regionService.highlightRegion((<any>event).originalTarget.dataset.regionIri);
+        this._regionService.selectRegion((<any>event).originalTarget.dataset.regionIri);
       });
 
-    this._regions[regionIri].push(regEle);
+    this._paintedPolygons[regionIri].push(regEle);
     this._createTooltip(regionLabel, regionComment, regEle, regionIri);
   }
 
-  private _openRegionDialog(startPoint: Point2D, endPoint: Point2D, imageSize: Point2D, overlay: Element): void {
-    this._dialog
-      .open<AddRegionFormDialogComponent, AddRegionFormDialogProps>(AddRegionFormDialogComponent, {
-        data: {
-          resourceIri: this.resource.id,
-        },
-      })
-      .afterClosed()
-      .subscribe(data => {
-        this.viewer.setMouseNavEnabled(true);
-        this._cdr.detectChanges();
-        this.viewer.removeOverlay(overlay);
-        if (data) {
-          this._uploadRegion(startPoint, endPoint, imageSize, data.color, data.comment, data.label);
-        }
-      });
-  }
-
-  private _uploadRegion(
-    startPoint: Point2D,
-    endPoint: Point2D,
-    imageSize: Point2D,
-    color: string,
-    comment: string,
-    label: string
-  ) {
-    this._dspApiConnection.v2.res
-      .createResource(
-        StillImageHelper.getPayloadUploadRegion(
-          this.resource.id,
-          this.resource.attachedToProject,
-          startPoint,
-          endPoint,
-          imageSize,
-          color,
-          comment,
-          label
-        )
-      )
-      .subscribe(res => {
-        const regionId = (res as ReadResource).id;
-        this._regionService.showRegions(true);
-        this._regionService.updateRegions();
-        this._regionService.highlightRegion(regionId);
-      });
-  }
-
   private _highlightRegion(regionIri: string) {
-    const activeRegions: HTMLElement[] = this._regions[regionIri];
+    const activeRegions: HTMLElement[] = this._paintedPolygons[regionIri];
 
     if (activeRegions !== undefined) {
       for (const pol of activeRegions) {
@@ -238,9 +204,9 @@ export class OsdDrawerService {
   }
 
   private _unhighlightAllRegions() {
-    for (const reg in this._regions) {
-      if (reg in this._regions) {
-        for (const pol of this._regions[reg]) {
+    for (const reg in this._paintedPolygons) {
+      if (reg in this._paintedPolygons) {
+        for (const pol of this._paintedPolygons[reg]) {
           pol.setAttribute('class', 'region');
         }
       }
@@ -248,6 +214,7 @@ export class OsdDrawerService {
   }
 
   private _createRectangle(
+    regionIri: string,
     geometry: RegionGeometry,
     aspectRatio: number
   ): {
@@ -257,8 +224,8 @@ export class OsdDrawerService {
     const lineColor = geometry.lineColor;
     const lineWidth = geometry.lineWidth;
 
-    const regEle: HTMLElement = this._renderer.createElement('div');
-    regEle.id = `region-overlay-${Math.random() * 10000}`;
+    const regEle: HTMLElement = document.createElement('div');
+    regEle.id = regionIri;
     regEle.className = 'region';
     regEle.setAttribute('style', `outline: solid ${lineColor} ${lineWidth}px;`);
     regEle.setAttribute('data-cy', 'annotation-rectangle');
@@ -278,7 +245,7 @@ export class OsdDrawerService {
   }
 
   private _createTooltip(regionLabel: string, regionComment: string, regEle: HTMLElement, regionIri: string): void {
-    const comEle: HTMLElement = this._renderer.createElement('div');
+    const comEle: HTMLElement = document.createElement('div');
     comEle.className = 'annotation-tooltip';
     comEle.innerHTML = `<strong>${regionLabel}</strong><br>${regionComment}`;
     regEle.append(comEle);
@@ -290,5 +257,9 @@ export class OsdDrawerService {
       comEle.setAttribute('style', 'display: none');
     });
     regEle.dataset['regionIri'] = regionIri;
+  }
+
+  ngOnDestroy() {
+    this._ngUnsubscribe.complete();
   }
 }

@@ -3,6 +3,7 @@ import { DspResource, ResourceService } from '@dasch-swiss/vre/shared/app-common
 import { RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { RegionService } from '@dasch-swiss/vre/shared/app-representations';
 import { Subscription } from 'rxjs';
+import { take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-annotation-tab',
@@ -21,7 +22,8 @@ import { Subscription } from 'rxjs';
         RouteConstants.annotationQueryParam +
         '=' +
         annotation.res.id
-      " />
+      "
+      (afterResourceDeleted)="afterResourceDeleted()" />
   </div>`,
   styles: ['.active {border: 1px solid}'],
 })
@@ -37,14 +39,16 @@ export class AnnotationTabComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.regionService.showRegions(true);
-
-    this._subscription = this.regionService.highlightRegion$.subscribe(region => {
+    this._subscription = this.regionService.selectedRegion$.subscribe(region => {
       this.selectedRegion = region;
       if (region !== null) {
-        this._openRegion(region);
+        this._scrollToRegion(region);
       }
     });
+  }
+
+  afterResourceDeleted() {
+    this.regionService.updateRegions$().pipe(take(1)).subscribe();
   }
 
   ngOnDestroy() {
@@ -52,7 +56,7 @@ export class AnnotationTabComponent implements OnInit, OnDestroy {
     this.regionService.showRegions(false);
   }
 
-  private _openRegion(iri: string) {
+  private _scrollToRegion(iri: string) {
     const region = document.getElementById(iri);
     if (region) {
       region.scrollIntoView({

@@ -11,7 +11,6 @@ import {
 import { Constants, ReadResource, ReadStillImageFileValue } from '@dasch-swiss/dsp-js';
 import { ReadStillImageExternalFileValue } from '@dasch-swiss/dsp-js/src/models/v2/resources/values/read/read-file-value';
 import { AppError } from '@dasch-swiss/vre/shared/app-error-handler';
-import { RegionService } from '../region.service';
 import { IIIFUrl } from '../third-party-iiif/third-party-iiif';
 import { OpenSeaDragonService } from './open-sea-dragon.service';
 import { OsdDrawerService } from './osd-drawer.service';
@@ -21,7 +20,7 @@ import { StillImageHelper } from './still-image-helper';
   selector: 'app-still-image',
   template: ` <div
       class="osd-container"
-      [class.drawing]="isViewInitialized && !osdDrawerService.viewer.isMouseNavEnabled()"
+      [class.drawing]="isViewInitialized && !osd.viewer.isMouseNavEnabled()"
       #osdViewer>
       <div *ngIf="compoundMode">
         <app-compound-arrow-navigation [forwardNavigation]="false" class="arrow" />
@@ -35,7 +34,6 @@ import { StillImageHelper } from './still-image-helper';
         *ngIf="isViewInitialized"
         [resource]="resource"
         [compoundMode]="compoundMode"
-        [viewer]="osd.viewer"
         [isPng]="isPng"
         (imageIsPng)="afterFormatChange($event)" />
     </div>`,
@@ -52,24 +50,17 @@ export class StillImageComponent implements AfterViewInit, OnDestroy {
   isPng = false;
 
   constructor(
-    public osdDrawerService: OsdDrawerService,
-    public osd: OpenSeaDragonService,
-    private _region: RegionService,
+    protected osd: OpenSeaDragonService,
+    private _osdDrawerService: OsdDrawerService,
     private _cdr: ChangeDetectorRef
   ) {}
 
   ngAfterViewInit() {
-    this.osd.viewer = this.osdViewerElement.nativeElement;
+    this.osd.onInit(this.osdViewerElement.nativeElement);
+    this._osdDrawerService.onInit(this.resource);
     this.isViewInitialized = true;
-    this.osdDrawerService.onInit(this.osd.viewer, this.resource);
-    this.osdDrawerService.trackClickEvents();
     this._cdr.detectChanges();
-
-    this.osd.viewer.addHandler('open', () => {
-      this._region.imageIsLoaded();
-    });
-
-    this.afterFormatChange(false);
+    this._loadImages();
   }
 
   afterFormatChange(value: boolean) {

@@ -1,7 +1,9 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { Constants, CountQueryResponse, ReadFileValue } from '@dasch-swiss/dsp-js';
 import { DspCompoundPosition, DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { IncomingService } from '@dasch-swiss/vre/shared/app-common-to-move';
+import { RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { getFileValue, RegionService } from '@dasch-swiss/vre/shared/app-representations';
 import { SegmentsService } from '@dasch-swiss/vre/shared/app-segment-support';
 import { take } from 'rxjs/operators';
@@ -43,7 +45,8 @@ export class ResourceComponent implements OnInit {
   constructor(
     private _incomingService: IncomingService,
     private _compoundService: CompoundService,
-    private _regionService: RegionService
+    private _regionService: RegionService,
+    private _route: ActivatedRoute
   ) {}
 
   ngOnInit() {
@@ -68,7 +71,8 @@ export class ResourceComponent implements OnInit {
     this.representationsToDisplay = getFileValue(resource)!;
 
     if (this._isStillImage(resource)) {
-      this._regionService.onInit(resource);
+      this._regionService.initialize(resource.res.id);
+      this._checkForAnnotationUri();
     }
   }
 
@@ -78,6 +82,16 @@ export class ResourceComponent implements OnInit {
 
   private _isObjectWithoutRepresentation(resource: DspResource) {
     return getFileValue(resource) === null;
+  }
+
+  private _checkForAnnotationUri() {
+    const annotation = this._route.snapshot.queryParamMap.get(RouteConstants.annotationQueryParam);
+    if (!annotation) {
+      return;
+    }
+
+    this._regionService.showRegions(true);
+    this._regionService.selectRegion(annotation);
   }
 
   private _checkForCompoundNavigation(resource: DspResource, isDifferentResource: boolean) {

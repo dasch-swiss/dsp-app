@@ -1,4 +1,13 @@
-import { ChangeDetectorRef, Component, Input, OnChanges, OnDestroy, ViewChild } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnDestroy,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { Cardinality, Constants, ReadLinkValue, ResourcePropertyDefinition } from '@dasch-swiss/dsp-js';
 import { DspResource, PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
 import { ResourceSelectors } from '@dasch-swiss/vre/shared/app-state';
@@ -25,7 +34,8 @@ import { sortByKeys } from './sortByKeys';
           *ngIf="displayLabel"
           [adminPermissions]="adminPermissions"
           [resource]="resource"
-          [linkToNewTab]="linkToNewTab"></app-resource-toolbar>
+          [linkToNewTab]="linkToNewTab"
+          (afterResourceDeleted)="afterResourceDeleted.emit()" />
       </div>
     </div>
 
@@ -133,6 +143,7 @@ export class PropertiesDisplayComponent implements OnChanges, OnDestroy {
   @Input() displayLabel = false;
   @Input() adminPermissions = false;
   @Input() linkToNewTab?: string;
+  @Output() afterResourceDeleted = new EventEmitter();
 
   @ViewChild('pager', { static: false })
   pagerComponent: PagerComponent | undefined;
