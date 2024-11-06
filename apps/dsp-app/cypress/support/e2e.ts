@@ -1,4 +1,5 @@
 import { UserProfiles } from '../models/user-profiles';
+import './commands/api-commands';
 import './commands/data-model-class-command';
 import './commands/login';
 import './commands/ontology-command';
@@ -14,6 +15,10 @@ Cypress.on('uncaught:exception', err => {
 // do things here before each test if needed
 // All active session data (cookies, localStorage and sessionStorage) across all domains are cleared.
 beforeEach(() => {
+  if (Cypress.env('skipDatabaseCleanup')) {
+    return; // Skip cleanup
+  }
+
   let users: UserProfiles;
 
   // clear database
@@ -30,13 +35,6 @@ beforeEach(() => {
       cy.login({
         username: users.systemAdmin_username_root,
         password: users.systemAdmin_password_root,
-      });
-    }
-
-    if (Cypress.spec.relative.startsWith('cypress/e2e/project-member')) {
-      cy.login({
-        username: users.projectMember_username,
-        password: users.projectMember_password,
       });
     }
   });

@@ -30,8 +30,16 @@ export interface ReplaceFileDialogProps {
     </mat-dialog-content>
 
     <mat-dialog-actions align="end">
-      <button mat-button type="button" (click)="dialogRef.close()">{{ 'form.action.cancel' | translate }}</button>
-      <button mat-raised-button type="submit" [disabled]="form.invalid" [color]="'primary'" (click)="saveFile()">
+      <button mat-button type="button" data-cy="replace-file-cancel-button" (click)="dialogRef.close()">
+        {{ 'form.action.cancel' | translate }}
+      </button>
+      <button
+        mat-raised-button
+        type="submit"
+        data-cy="replace-file-submit-button"
+        [disabled]="form.invalid"
+        [color]="'primary'"
+        (click)="saveFile()">
         {{ 'form.action.submit' | translate }}
       </button>
     </mat-dialog-actions>

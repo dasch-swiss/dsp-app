@@ -14,6 +14,7 @@ import { MediaPlayerService } from './media-player.service';
     <div>
       <button
         mat-icon-button
+        data-cy="play-pause-button"
         (click)="mediaPlayer.togglePlay()"
         [matTooltip]="play ? 'Pause' : 'Play'"
         [matTooltipPosition]="matTooltipPos">
@@ -22,6 +23,7 @@ import { MediaPlayerService } from './media-player.service';
 
       <button
         mat-icon-button
+        data-cy="go-to-start-button"
         (click)="goToStart()"
         matTooltip="Stop and go to start"
         [matTooltipPosition]="matTooltipPos">
@@ -30,17 +32,23 @@ import { MediaPlayerService } from './media-player.service';
       <!-- TODO reached the end button "replay" -->
     </div>
 
-    <div>{{ mediaPlayer.currentTime() | appTime }} / {{ mediaPlayer.duration() | appTime }}</div>
+    <div data-cy="player-time">{{ mediaPlayer.currentTime() | appTime }} / {{ mediaPlayer.duration() | appTime }}</div>
 
     <div>
       <app-video-more-button [parentResource]="parentResource" [src]="src" [fileInfo]="fileInfo" />
 
-      <button mat-icon-button (click)="createVideoSegment()" [matTooltip]="'Create a segment'" *ngIf="isAdmin">
+      <button
+        mat-icon-button
+        data-cy="timeline-button"
+        (click)="createVideoSegment()"
+        [matTooltip]="'Create a segment'"
+        *ngIf="isAdmin">
         <mat-icon>view_timeline</mat-icon>
       </button>
 
       <button
         mat-icon-button
+        data-cy="cinema-mode-button"
         (click)="toggleCinemaMode()"
         [matTooltip]="cinemaMode ? 'Default view' : 'Cinema mode'"
         [matTooltipPosition]="matTooltipPos">

@@ -16,7 +16,7 @@ import {
 } from '@dasch-swiss/vre/shared/app-resource-properties';
 import { LoadClassItemsCountAction, ProjectsSelectors, UserSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { Store } from '@ngxs/store';
-import { combineLatest, Observable } from 'rxjs';
+import { Observable, combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 @Component({
@@ -41,6 +41,7 @@ import { map } from 'rxjs/operators';
       <h4 data-cy="resource-header-label">{{ resource.res.label }}</h4>
       <button
         mat-icon-button
+        data-cy="edit-label-button"
         color="primary"
         matTooltip="Edit label"
         (click)="openEditLabelDialog()"

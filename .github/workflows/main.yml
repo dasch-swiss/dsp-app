@@ -55,31 +55,41 @@ jobs:
         with:
           node-version: 18
       - run: npm install
+      - name: Install Cypress dependencies
+        run: |
+          cd ../dsp-das/apps/dsp-app/cypress
+          npm install
       - name: Checkout DSP-API repo
         uses: actions/checkout@v3
         with:
           repository: dasch-swiss/dsp-api
           ref: main
           path: dsp-api
-      - name: start API
+      - name: Start API
         run: |
           cd dsp-api
           make init-db-test
           docker compose -f docker-compose.yml up -d sipi ingest api
           ./webapi/scripts/wait-for-api.sh
-      - name: run e2e tests in ci
+      - name: Run e2e tests in CI
         if: github.event_name == 'push'
         run: |
           cd ../dsp-das
           npm run e2e-ci
-      - name: run e2e tests on cypress cloud on push
-        if: github.event_name == 'pull_request'  && startsWith(github.event.pull_request.head.ref, 'release-please') && github.event.pull_request.merged == true
+      - name: Run e2e tests on Cypress Cloud on push
+        if: github.event_name == 'pull_request' && startsWith(github.event.pull_request.head.ref, 'release-please') && github.event.pull_request.merged == true
         run: |
           cd ../dsp-das
           export CYPRESS_RECORD_KEY=$CYPRESS_RECORD_KEY_SECRET
           npm run e2e-cloud
         env:
           CYPRESS_RECORD_KEY_SECRET: ${{ secrets.CYPRESS_RECORD_KEY }}
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: cypress-snapshots
+          path: apps/dsp-app/cypress/fixtures/screenshots
 
   jdnconvertiblecalendar-tests:
     name: JDNConvertibleCalendar

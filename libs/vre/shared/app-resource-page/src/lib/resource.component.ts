@@ -4,7 +4,7 @@ import { Constants, CountQueryResponse, ReadFileValue } from '@dasch-swiss/dsp-j
 import { DspCompoundPosition, DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { IncomingService } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { RouteConstants } from '@dasch-swiss/vre/shared/app-config';
-import { getFileValue, RegionService } from '@dasch-swiss/vre/shared/app-representations';
+import { RegionService, getFileValue } from '@dasch-swiss/vre/shared/app-representations';
 import { SegmentsService } from '@dasch-swiss/vre/shared/app-segment-support';
 import { take } from 'rxjs/operators';
 import { CompoundService } from './compound/compound.service';

@@ -26,6 +26,7 @@ export interface EditResourceLabelDialogProps {
         color="primary"
         [disabled]="control.invalid"
         appLoadingButton
+        data-cy="edit-resource-label-submit"
         [isLoading]="loading"
         (click)="submit()">
         Submit

@@ -9,8 +9,8 @@ function assessToolbarVisibility(buttons: Cypress.Chainable<JQuery<HTMLElement>>
   cy.get('[data-cy="zoom-in"]').should('be.visible');
   cy.get('[data-cy="still-image-download-button"]').should('be.visible');
   cy.get('[data-cy="still-image-region-button"]').should('be.visible');
-  cy.get('[data-ci="zoom-reset"]').should('be.visible');
-  cy.get('[data-ci="fullscreen"]').should('be.visible');
+  cy.get('[data-cy="zoom-reset"]').should('be.visible');
+  cy.get('[data-cy="fullscreen"]').should('be.visible');
 }
 
 function clickOutsideMenu() {

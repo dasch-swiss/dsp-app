@@ -6,7 +6,7 @@ import { IsSwitchComponent } from './is-switch-component.interface';
   selector: 'app-uri-switch',
   template: `
     <ng-container *ngIf="displayMode; else editMode"
-      ><a [href]="control.value" target="_blank" style="font-weight: bold">{{ control.value }}</a>
+      ><a [href]="control.value" data-cy="uri-switch" target="_blank" style="font-weight: bold">{{ control.value }}</a>
     </ng-container>
     <ng-template #editMode>
       <app-common-input [control]="control" label="External link" [validatorErrors]="[emailError]" />

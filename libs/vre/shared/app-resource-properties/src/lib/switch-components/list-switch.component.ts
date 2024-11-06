@@ -11,6 +11,7 @@ import { IsSwitchComponent } from './is-switch-component.interface';
   template: `
     <ng-container *ngIf="displayMode; else editMode">
       <span
+        data-cy="list-switch"
         style="display: flex;
     align-items: center;">
         <ng-container *ngFor="let label of labels$ | async; let last = last; let index = index"

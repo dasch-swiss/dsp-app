@@ -10,7 +10,7 @@
           <mat-icon> description </mat-icon>
         </div>
         <div class="file">
-          <p>{{ originalFilename }}</p>
+          <p data-cy="original-file-name">{{ originalFilename }}</p>
         </div>
       </div>
     </div>
@@ -18,12 +18,23 @@
       <!-- toolbar -->
       <div class="action horizontal bottom">
         <!-- three dot menu to download and replace file -->
-        <button mat-icon-button [matMenuTriggerFor]="more">
+        <button mat-icon-button [matMenuTriggerFor]="more" data-cy="more-button">
           <mat-icon>more_vert</mat-icon>
         </button>
         <mat-menu #more="matMenu" class="representation-menu">
-          <button class="menu-content" mat-menu-item (click)="download(src.fileValue.fileUrl)">Download file</button>
-          <button [disabled]="!usercanEdit" class="menu-content" mat-menu-item (click)="openReplaceFileDialog()">
+          <button
+            class="menu-content"
+            mat-menu-item
+            (click)="download(src.fileValue.fileUrl)"
+            data-cy="download-file-button">
+            Download file
+          </button>
+          <button
+            [disabled]="!usercanEdit"
+            class="menu-content"
+            mat-menu-item
+            (click)="openReplaceFileDialog()"
+            data-cy="replace-file-button">
             Replace file
           </button>
         </mat-menu>

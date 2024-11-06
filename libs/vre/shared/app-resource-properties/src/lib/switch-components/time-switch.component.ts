@@ -7,8 +7,8 @@ import { IsSwitchComponent } from './is-switch-component.interface';
 @Component({
   selector: 'app-time-switch',
   template: ` <ng-container *ngIf="displayMode; else editMode">
-      <div>Date: {{ test | date }}</div>
-      <div>Time: {{ test | date: 'HH:mm' }}</div>
+      <div data-cy="time-switch-date">Date: {{ test | date }}</div>
+      <div data-cy="time-switch-time">Time: {{ test | date: 'HH:mm' }}</div>
     </ng-container>
     <ng-template #editMode>
       <app-time-value [control]="control"></app-time-value>

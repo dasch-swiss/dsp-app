@@ -5,10 +5,21 @@ import { FormControl } from '@angular/forms';
   selector: 'app-common-input',
   template: `
     <mat-form-field style="width: 100%">
-      <mat-label>{{ label }}</mat-label>
+      <mat-label data-cy="common-input-label">{{ label }}</mat-label>
       <mat-icon matIconPrefix *ngIf="prefixIcon">{{ prefixIcon }}</mat-icon>
-      <input matInput [placeholder]="label" [formControl]="control" *ngIf="type === 'text'" />
-      <input matInput [placeholder]="label" [formControl]="control" *ngIf="type === 'number'" type="number" />
+      <input
+        matInput
+        data-cy="common-input-text"
+        [placeholder]="label"
+        [formControl]="control"
+        *ngIf="type === 'text'" />
+      <input
+        matInput
+        data-cy="common-input-number"
+        [placeholder]="label"
+        [formControl]="control"
+        *ngIf="type === 'number'"
+        type="number" />
       <mat-error *ngIf="control.errors as errors">
         {{ errors | humanReadableError: validatorErrors }}
       </mat-error>

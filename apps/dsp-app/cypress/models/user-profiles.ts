@@ -7,8 +7,10 @@ export interface UserProfiles {
   admin_username: string;
   admin_password: string;
   change_admin_password: string;
-  projectMember_username: string;
-  projectMember_password: string;
+  anythingProjectMember_username: string;
+  anythingProjectMember_password: string;
+  anythingProjectAdmin_username: string;
+  anythingProjectAdmin_password: string;
   change_projectMember_password: string;
   systemAdmin_username: string;
   systemAdmin_password: string;

@@ -24,6 +24,7 @@ export interface DeleteValueDialogProps {
         <mat-label>Textarea</mat-label>
         <textarea
           matInput
+          data-cy="delete-comment"
           rows="5"
           placeholder="Please explain the reason for your deletion."
           [(ngModel)]="comment"></textarea>

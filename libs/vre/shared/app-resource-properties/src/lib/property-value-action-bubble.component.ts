@@ -10,13 +10,14 @@ import { PropertyValueService } from './property-value.service';
 @Component({
   selector: 'app-property-value-action-bubble',
   template: `
-    <div class="action-bubble">
+    <div class="action-bubble" data-cy="action-bubble">
       <div class="button-container d-flex">
         <ng-container *ngIf="!editMode; else editTemplate">
           <button
             *ngIf="userHasPermissionToModify"
             mat-button
-            class="edit"
+            class="edit edit-button"
+            data-cy="action-bubble-edit"
             matTooltip="edit"
             (click)="$event.stopPropagation(); editAction.emit()"
             data-cy="edit-button">
@@ -48,7 +49,12 @@ import { PropertyValueService } from './property-value.service';
     </div>
 
     <ng-template #editTemplate>
-      <button mat-button class="edit" matTooltip="undo" (click)="$event.stopPropagation(); editAction.emit()">
+      <button
+        mat-button
+        class="edit"
+        matTooltip="undo"
+        data-cy="action-bubble-undo"
+        (click)="$event.stopPropagation(); editAction.emit()">
         <mat-icon>undo</mat-icon>
       </button>
     </ng-template>

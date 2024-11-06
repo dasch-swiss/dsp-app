@@ -4,7 +4,9 @@ import { IsSwitchComponent } from './is-switch-component.interface';
 
 @Component({
   selector: 'app-base-switch',
-  template: ` <ng-container *ngIf="displayMode; else editMode">{{ control.value }}</ng-container>
+  template: ` <ng-container *ngIf="displayMode; else editMode" data-cy="property-value">{{
+      control.value
+    }}</ng-container>
     <ng-template #editMode>
       <ng-content></ng-content>
     </ng-template>`,

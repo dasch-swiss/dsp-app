@@ -1,17 +1,18 @@
-import { ClassDefinitionPayloads } from '../../fixtures/class-definition-payloads';
+import { Project00FFPayloads } from '../../fixtures/project00FF-resource-payloads';
 import { ResponseUtil } from '../../fixtures/requests';
 import { AddResourceInstancePage } from '../../support/pages/add-resource-instance-page';
 
 describe('File representation', () => {
   let lastModDate: string;
   let po: AddResourceInstancePage;
+  const projectPayloads = new Project00FFPayloads();
 
   beforeEach(() => {
     po = new AddResourceInstancePage();
   });
 
   it('external iiif image', () => {
-    const classPayload = ClassDefinitionPayloads.stillImageRepresentation();
+    const classPayload = projectPayloads.stillImageRepresentation('datamodelclass');
     const invalidIifImageUrl = 'https://example.com/wrong.jpg';
     const validIifImageUrl = 'https://ids.lib.harvard.edu/ids/iiif/24209711/full/105,/0/default.jpg';
     const encodedValidIifImageUrl =

@@ -26,7 +26,9 @@ import { IsSwitchComponent } from './is-switch-component.interface';
     </ng-template>
 
     <ng-template #calendarType let-date="date">
-      <div class="mat-body-2" style="font-size: 12px">{{ date | knoraDate: 'dd.MM.YYYY' : 'calendarOnly' }}</div>
+      <div class="mat-body-2" data-cy="date-switch" style="font-size: 12px">
+        {{ date | knoraDate: 'dd.MM.YYYY' : 'calendarOnly' }}
+      </div>
     </ng-template>
   `,
 })

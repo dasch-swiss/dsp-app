@@ -9,6 +9,7 @@ import { PropertiesDisplayService } from './properties-display.service';
       *ngIf="!showOnlyIcons; else commentsIconTpl"
       color="primary"
       class="toggle-props"
+      data-cy="show-all-comments"
       [matTooltip]="((showAllComments$ | async) ? 'Hide' : 'Show all') + ' comments'"
       matTooltipPosition="above"
       (click)="toggleShowAllComments()">
@@ -21,6 +22,7 @@ import { PropertiesDisplayService } from './properties-display.service';
         mat-button
         color="primary"
         class="toggle-props"
+        data-cy="show-all-properties"
         *ngIf="!showOnlyIcons; else showPropsIconTpl"
         [matTooltip]="
           ((propertiesDisplayService.showAllProperties$ | async) ? 'Hide empty' : 'Show all') + ' properties'

@@ -7,6 +7,7 @@ import { IsSwitchComponent } from './is-switch-component.interface';
   template: `
     <ng-container *ngIf="displayMode; else editMode">
       <div
+        data-cy="color-switch"
         style="width: 100px;
     border-radius: 4px;
     height: 15px;

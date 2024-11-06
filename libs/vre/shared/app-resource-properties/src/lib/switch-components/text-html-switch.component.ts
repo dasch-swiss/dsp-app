@@ -8,6 +8,7 @@ import { IsSwitchComponent } from './is-switch-component.interface';
   selector: 'app-text-html-switch',
   template: ` <div
       *ngIf="displayMode; else editMode"
+      data-cy="text-html-switch"
       [innerHTML]="control.value"
       appHtmlLink
       appMathjax

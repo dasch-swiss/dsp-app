@@ -55,12 +55,12 @@
     <button mat-icon-button data-cy="zoom-in" matTooltip="Zoom in" (click)="osd.zoom(1)">
       <mat-icon>zoom_in</mat-icon>
     </button>
-    <button mat-icon-button data-ci="zoom-reset" matTooltip="Reset zoom" (click)="osd.viewer.viewport.zoomTo(1)">
+    <button mat-icon-button data-cy="zoom-reset" matTooltip="Reset zoom" (click)="osd.viewer.viewport.zoomTo(1)">
       <mat-icon>other_houses</mat-icon>
     </button>
     <button
       mat-icon-button
-      data-ci="fullscreen"
+      data-cy="fullscreen"
       matTooltip="Open in fullscreen"
       (click)="osd.viewer.setFullScreen(true)">
       <mat-icon>fullscreen</mat-icon>
@@ -101,11 +101,11 @@
   </button>
 </mat-menu>
 <mat-menu #settings="matMenu" class="settings-menu">
-  <button class="menu-content" mat-menu-item (click)="imageIsPng.emit(false)">
+  <button class="menu-content" data-cy="jpg-button" mat-menu-item (click)="imageIsPng.emit(false)">
     <mat-icon *ngIf="!isPng">check</mat-icon>
     JPG
   </button>
-  <button mat-menu-item (click)="imageIsPng.emit(true)">
+  <button mat-menu-item data-cy="png-button" (click)="imageIsPng.emit(true)">
     <mat-icon *ngIf="isPng">check</mat-icon>
     PNG
   </button>

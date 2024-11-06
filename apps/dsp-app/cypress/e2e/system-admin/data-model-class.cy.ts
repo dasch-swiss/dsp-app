@@ -1,7 +1,7 @@
 import { ResourceClassDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
 import { faker } from '@faker-js/faker';
+import { DataModelClassProperty } from '../../models/data-model-class';
 import { ClassType, PropertyType } from '../../support/helpers/constants';
-import { DataModelClassProperty } from '../../support/helpers/interfaces';
 import ProjectPage from '../../support/pages/project-page';
 
 describe('Data Model Class', () => {

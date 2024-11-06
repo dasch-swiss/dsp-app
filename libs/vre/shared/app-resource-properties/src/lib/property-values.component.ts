@@ -31,6 +31,7 @@ import { propertiesTypeMapping } from './resource-payloads-mapping';
     <button
       mat-icon-button
       (click)="addItem()"
+      data-cy="add-property-value-button"
       *ngIf="
         (isCurrentProjectAdminSysAdminOrMember$ | async) &&
         (!propertyValueService.currentlyAdding || propertyValueService.keepEditMode) &&

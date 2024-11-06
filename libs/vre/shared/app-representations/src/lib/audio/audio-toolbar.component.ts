@@ -10,20 +10,20 @@ import { MediaPlayerService } from '../video/media-player.service';
   template: `
     <mat-toolbar-row style="background: black; color: white; justify-content: space-between">
       <div>
-        <button mat-icon-button (click)="mediaPlayer.togglePlay()">
+        <button data-cy="play-pause-button" mat-icon-button (click)="mediaPlayer.togglePlay()">
           <mat-icon>{{ mediaPlayer.isPaused() ? 'play_arrow' : 'pause' }}</mat-icon>
         </button>
-        <button mat-icon-button (click)="mediaPlayer.playFromBeginning()">
+        <button data-cy="go-to-start-button" mat-icon-button (click)="mediaPlayer.playFromBeginning()">
           <mat-icon>skip_previous</mat-icon>
         </button>
-        <button mat-icon-button (click)="mediaPlayer.toggleMute()">
+        <button data-cy="volume-button" mat-icon-button (click)="mediaPlayer.toggleMute()">
           <mat-icon>{{ mediaPlayer.isMuted() ? 'volume_off' : 'volume_up' }}</mat-icon>
         </button>
       </div>
-      <div>{{ parseTime(mediaPlayer.currentTime()) }} / {{ durationString }}</div>
+      <div data-cy="player-time">{{ parseTime(mediaPlayer.currentTime()) }} / {{ durationString }}</div>
 
       <div>
-        <button mat-icon-button (click)="createAudioSegment()" *ngIf="isAdmin">
+        <button data-cy="timeline-button" mat-icon-button (click)="createAudioSegment()" *ngIf="isAdmin">
           <mat-icon>view_timeline</mat-icon>
         </button>
         <app-audio-more-button [parentResource]="parentResource" />

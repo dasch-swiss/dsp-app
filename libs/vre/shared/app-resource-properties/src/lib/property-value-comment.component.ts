@@ -9,6 +9,7 @@ import { PropertiesDisplayService } from './properties-display.service';
     <div *ngIf="displayMode; else editMode">
       <div
         *ngIf="(showAllComments$ | async) && control.value !== null"
+        data-cy="property-value-comment"
         style="border-top: 1px solid #ebebeb; margin-top: 8px; margin-bottom: 16px; padding-top: 4px; font-size: small">
         {{ control.value }}
       </div>
@@ -18,7 +19,7 @@ import { PropertiesDisplayService } from './properties-display.service';
       <mat-form-field style="flex: 1; width: 100%; margin: 10px 0" subscriptSizing="dynamic" *ngIf="!displayMode">
         <mat-label>{{ 'resource.comment' | translate }}</mat-label>
         <mat-icon matPrefix style="color: #808080" *ngIf="control.disabled">lock</mat-icon>
-        <textarea matInput rows="1" [formControl]="control"></textarea>
+        <textarea matInput rows="1" data-cy="comment-textarea" [formControl]="control"></textarea>
       </mat-form-field>
     </ng-template>
   `,

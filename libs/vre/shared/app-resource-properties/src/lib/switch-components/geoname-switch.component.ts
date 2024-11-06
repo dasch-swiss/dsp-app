@@ -7,9 +7,14 @@ import { IsSwitchComponent } from './is-switch-component.interface';
 @Component({
   selector: 'app-geoname-switch',
   template: ` <ng-container *ngIf="displayMode; else editMode">
-      <a class="link" target="_blank" rel="noopener" [href]="'https://www.geonames.org/' + control.value">{{
-        (geonameLabel$ | async)?.displayName
-      }}</a></ng-container
+      <a
+        class="link"
+        target="_blank"
+        rel="noopener"
+        data-cy="geoname-switch-link"
+        [href]="'https://www.geonames.org/' + control.value"
+        >{{ (geonameLabel$ | async)?.displayName }}</a
+      ></ng-container
     >
     <ng-template #editMode>
       <app-geoname-value [control]="control"></app-geoname-value>
