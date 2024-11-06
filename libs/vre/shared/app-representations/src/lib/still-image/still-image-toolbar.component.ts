@@ -32,6 +32,19 @@ import { OpenSeaDragonService } from './open-sea-dragon.service';
 @Component({
   selector: 'app-still-image-toolbar',
   templateUrl: './still-image-toolbar.component.html',
+  styles: [
+    `
+      button {
+        width: 32px !important;
+      }
+
+      .toolbar {
+        display: flex;
+        justify-content: space-between;
+        padding-right: 16px;
+      }
+    `,
+  ],
 })
 export class StillImageToolbarComponent {
   @Input({ required: true }) resource!: ReadResource;
