@@ -1,5 +1,35 @@
 # Changelog
 
+## [11.22.0](https://github.com/dasch-swiss/dsp-das/compare/v11.21.0...v11.22.0) (2024-11-06)
+
+
+### Enhancements
+
+* Allow JSON files as text files (DEV-4222) ([#1854](https://github.com/dasch-swiss/dsp-das/issues/1854)) ([b6f698f](https://github.com/dasch-swiss/dsp-das/commit/b6f698f4ebf23f72bcf7cb46587bd587a0d49f30))
+
+
+### Bug Fixes
+
+* collect classes of all ontologies using a property (DEV-4240) ([#1860](https://github.com/dasch-swiss/dsp-das/issues/1860)) ([1bd0145](https://github.com/dasch-swiss/dsp-das/commit/1bd01458173b08c51b0f4c09aadc3fd01f5e581a))
+* display class name (DEV-4214) ([#1864](https://github.com/dasch-swiss/dsp-das/issues/1864)) ([042a18a](https://github.com/dasch-swiss/dsp-das/commit/042a18afd1b50aec8da32a6c28eb013cdf841fde))
+* display form only for admins (DEV-4185) ([#1863](https://github.com/dasch-swiss/dsp-das/issues/1863)) ([c2d04c6](https://github.com/dasch-swiss/dsp-das/commit/c2d04c6fa4e0a4684352aff0eb21141cdc901fba))
+* open as side dialog (DEV-4226) ([#1861](https://github.com/dasch-swiss/dsp-das/issues/1861)) ([bef3342](https://github.com/dasch-swiss/dsp-das/commit/bef33420a4fa779b2ee49448e1682ae2d4c44b03))
+* toolbar icons paddings are smaller ([#1878](https://github.com/dasch-swiss/dsp-das/issues/1878)) ([883f6eb](https://github.com/dasch-swiss/dsp-das/commit/883f6eb8476723f4ddc34b4fe356036689399e99))
+
+
+### Maintenances
+
+* bump js lib version (4269) ([#1862](https://github.com/dasch-swiss/dsp-das/issues/1862)) ([c23d39c](https://github.com/dasch-swiss/dsp-das/commit/c23d39c2083920ff47c3c8aa5e1c5956d26b8861))
+* property info component (DEV-4240) ([#1869](https://github.com/dasch-swiss/dsp-das/issues/1869)) ([830504f](https://github.com/dasch-swiss/dsp-das/commit/830504f0ff984cf26abfea66abebcb27ff16e773))
+* regions service ([#1875](https://github.com/dasch-swiss/dsp-das/issues/1875)) ([a2afd80](https://github.com/dasch-swiss/dsp-das/commit/a2afd805582d2e786bfa62ddb25b26e5d6740a33))
+* resource editor and still image ([#1872](https://github.com/dasch-swiss/dsp-das/issues/1872)) ([6346a08](https://github.com/dasch-swiss/dsp-das/commit/6346a08ad5edd2f9de9d735c5c5d2aa9b37fffe1))
+
+
+### Tests
+
+* remove unreliable parts (DEV-4272) ([#1866](https://github.com/dasch-swiss/dsp-das/issues/1866)) ([dfaf236](https://github.com/dasch-swiss/dsp-das/commit/dfaf236f48e09788bd6b3b53b84b0bb6cd9704d4))
+* View an existing resource e2e tests (DEV-2380) ([#1845](https://github.com/dasch-swiss/dsp-das/issues/1845)) ([a232efc](https://github.com/dasch-swiss/dsp-das/commit/a232efc5cc3967cc931827f7640d388bf97eba65))
+
 ## [11.21.0](https://github.com/dasch-swiss/dsp-das/compare/v11.20.4...v11.21.0) (2024-10-07)
 
 
