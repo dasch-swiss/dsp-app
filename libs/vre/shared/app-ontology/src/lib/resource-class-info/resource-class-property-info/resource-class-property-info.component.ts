@@ -16,36 +16,21 @@ import {
   Constants,
   IHasProperty,
   KnoraApiConnection,
-  ResourceClassDefinitionWithAllLanguages,
   ResourcePropertyDefinitionWithAllLanguages,
   UpdateOntology,
   UpdateResourceClassCardinality,
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { DefaultClass, DefaultProperty, OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
-import { ListsSelectors, OntologiesSelectors, PropToDisplay } from '@dasch-swiss/vre/shared/app-state';
-import { Store } from '@ngxs/store';
+import {
+  ListsSelectors,
+  LoadOntologyAction,
+  OntologiesSelectors,
+  PropToDisplay,
+} from '@dasch-swiss/vre/shared/app-state';
+import { Actions, Store } from '@ngxs/store';
 import { Subject } from 'rxjs';
 import { take, takeUntil, tap } from 'rxjs/operators';
-
-// property data structure
-export class Property {
-  iri: string;
-  label: string;
-  type: DefaultProperty;
-  multiple: boolean;
-  required: boolean;
-  guiAttr: string;
-
-  constructor(iri?: string, label?: string, type?: any, multiple?: boolean, required?: boolean, guiAttr?: string) {
-    this.iri = iri;
-    this.label = label;
-    this.type = type;
-    this.multiple = multiple;
-    this.required = required;
-    this.guiAttr = guiAttr;
-  }
-}
 
 @Component({
   selector: 'app-resource-class-property-info',
@@ -209,12 +194,11 @@ export class ResourceClassPropertyInfoComponent implements OnChanges, AfterConte
     changedClass.cardinalities[idx].cardinality = newValue;
 
     classUpdate.entity = changedClass;
-
-    return this._dspApiConnection.v2.onto
+    this._dspApiConnection.v2.onto
       .replaceCardinalityOfResourceClass(classUpdate)
       .pipe(
-        tap((res: ResourceClassDefinitionWithAllLanguages) => {
-          this.lastModificationDate = res.lastModificationDate;
+        tap(() => {
+          this._store.dispatch(new LoadOntologyAction(ontology?.id || '', this.projectUuid, true));
         }),
         take(1)
       )

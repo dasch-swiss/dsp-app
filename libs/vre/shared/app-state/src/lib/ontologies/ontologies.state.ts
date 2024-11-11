@@ -198,6 +198,10 @@ export class OntologiesState {
           // this._sortingService.keySortByAlphabetical(projectReadOntologies, 'label');
           projectOntologiesState[projectIri].readOntologies = projectReadOntologies;
 
+          if (ontology.id === ctx.getState().currentOntology?.id) {
+            ctx.dispatch(new SetCurrentOntologyAction(ontology));
+          }
+
           ctx.setState({
             ...ctx.getState(),
             isLoading: !stopLoadingWhenCompleted,
