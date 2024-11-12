@@ -22,7 +22,11 @@ export interface EraseResourceDialogProps {
       <div style="margin-bottom: 8px">WARNING: This action cannot be undone, so use it with care.</div>
       <mat-form-field style="width: 100%">
         <mat-label>Reason</mat-label>
-        <textarea matInput rows="4" [formControl]="eraseForm.controls.comment"></textarea>
+        <textarea
+          matInput
+          rows="4"
+          data-cy="app-erase-resource-dialog-comment"
+          [formControl]="eraseForm.controls.comment"></textarea>
         <mat-error *ngIf="eraseForm.controls.comment.errors as errors"> {{ errors | humanReadableError }} </mat-error>
       </mat-form-field>
     </mat-dialog-content>
@@ -33,6 +37,7 @@ export interface EraseResourceDialogProps {
       <button
         [disabled]="eraseForm.invalid"
         mat-button
+        data-cy="app-erase-resource-dialog-button"
         mat-raised-button
         appLoadingButton
         [isLoading]="loading"

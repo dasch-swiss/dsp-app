@@ -7,8 +7,8 @@ declare namespace Cypress {
     logout(): void;
     // logs system admin in
     loginAdmin(): Chainable<Subject>;
-    //creates resource request
-    createResource(payload: any): Chainable<Subject>;
+    //creates resource request by project admin or authenticated user
+    createResource(payload: any, isAuthenticated?: boolean): Chainable<Subject>;
     //creates POST request with Auth token
     postAuthenticated(params: IRequestAuthenticatedParameters): Chainable<Subject>;
     //creates GET request with Auth token

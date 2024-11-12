@@ -37,10 +37,11 @@ Cypress.Commands.add('postAuthenticated', (params: Cypress.IRequestAuthenticated
   });
 });
 
-Cypress.Commands.add('createResource', (payload: any) => {
+Cypress.Commands.add('createResource', (payload: any, isAuthenticated: boolean = false) => {
   const cypressRequestOptions: Cypress.RequestOptions = getRequestOptions({
     url: `${Cypress.env('apiUrl')}/v2/resources`,
     body: payload,
+    isAuthenticated: isAuthenticated,
   });
 
   return cy.request(cypressRequestOptions).then(response => {

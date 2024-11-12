@@ -24,6 +24,7 @@ import { filter } from 'rxjs/operators';
         mat-icon-button
         matTooltip="Open resource in new tab"
         color="primary"
+        data-cy="open-in-new-window-button"
         matTooltipPosition="above"
         [disabled]="resource.res.isDeleted"
         (click)="openResource()">
@@ -34,6 +35,7 @@ import { filter } from 'rxjs/operators';
         color="primary"
         mat-icon-button
         class="share-res"
+        data-cy="share-button"
         matTooltip="Share resource: {{ resource.res.versionArkUrl }}"
         matTooltipPosition="above"
         [disabled]="resource.res.isDeleted"
@@ -69,6 +71,7 @@ import { filter } from 'rxjs/operators';
         mat-menu-item
         matTooltip="Copy ARK url"
         matTooltipPosition="above"
+        data-cy="copy-ark-url-button"
         [cdkCopyToClipboard]="resource.res.versionArkUrl"
         (click)="openSnackBar('ARK URL copied to clipboard!')">
         <mat-icon>content_copy</mat-icon>
@@ -77,6 +80,7 @@ import { filter } from 'rxjs/operators';
       <button
         mat-menu-item
         matTooltip="Copy internal link"
+        data-cy="copy-internal-link-button"
         matTooltipPosition="above"
         [cdkCopyToClipboard]="resource.res.id"
         (click)="openSnackBar('Internal link copied to clipboard!')">
@@ -89,6 +93,7 @@ import { filter } from 'rxjs/operators';
       <button
         *ngIf="showEditLabel"
         [disabled]="!adminPermissions && !userCanEdit"
+        data-cy="resource-toolbar-edit-resource-button"
         mat-menu-item
         matTooltip="Edit the label of this resource"
         matTooltipPosition="above"
@@ -108,6 +113,7 @@ import { filter } from 'rxjs/operators';
       </button>
       <button
         *ngIf="adminPermissions"
+        data-cy="resource-toolbar-erase-resource-button"
         mat-menu-item
         matTooltip="Erase resource forever. This cannot be undone."
         matTooltipPosition="above"

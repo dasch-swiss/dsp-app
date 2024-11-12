@@ -13,6 +13,18 @@ describe('Check project admin existing resource functionality', () => {
     titles: [{ text: faker.lorem.sentence(), comment: faker.lorem.sentence() }],
   };
 
+  const resourceToDelete: ThingPictureClass = {
+    label: faker.lorem.word(),
+    file: '',
+    titles: [{ text: faker.lorem.sentence(), comment: faker.lorem.sentence() }],
+  };
+
+  const resourceToErase: ThingPictureClass = {
+    label: faker.lorem.word(),
+    file: '',
+    titles: [{ text: faker.lorem.sentence(), comment: faker.lorem.sentence() }],
+  };
+
   const uploadedImageFilePath = '/uploads/Fingerprint_Logo_coloured.png';
 
   before(() => {
@@ -26,6 +38,24 @@ describe('Check project admin existing resource functionality', () => {
     }).then(response => {
       thingPictureData.file = (response as UploadedFileResponse).internalFilename;
       cy.createResource(project0001Page.payloads.picture(thingPictureData));
+    });
+
+    cy.uploadFile(<Cypress.IUploadFileParameters>{
+      filePath: `../${uploadedImageFilePath}`,
+      projectShortCode: Project0001Page.projectShortCode,
+      mimeType: 'image/png',
+    }).then(response => {
+      resourceToDelete.file = (response as UploadedFileResponse).internalFilename;
+      cy.createResource(project0001Page.payloads.picture(resourceToDelete));
+    });
+
+    cy.uploadFile(<Cypress.IUploadFileParameters>{
+      filePath: `../${uploadedImageFilePath}`,
+      projectShortCode: Project0001Page.projectShortCode,
+      mimeType: 'image/png',
+    }).then(response => {
+      resourceToErase.file = (response as UploadedFileResponse).internalFilename;
+      cy.createResource(project0001Page.payloads.picture(resourceToErase));
     });
   });
 
@@ -53,7 +83,7 @@ describe('Check project admin existing resource functionality', () => {
   });
 
   it.skip('ThingPicture resource should be visible', () => {
-    cy.intercept('GET', '**/default.jpg').as('stillImageRequest');
+    cy.intercept('GET', `**/${thingPictureData.file}/**/default.jpg`).as('stillImageRequest');
     project0001Page.visitClass('ThingPicture');
     cy.get('[data-cy=resource-list-item] h3.res-class-value').contains(thingPictureData.label).click();
     cy.should('not.contain', '[data-cy=close-restricted-button]');
@@ -90,7 +120,7 @@ describe('Check project admin existing resource functionality', () => {
     cy.get('[data-cy=property-value]').scrollIntoView();
     cy.get('[data-cy=property-value]').first().trigger('mouseenter');
     cy.get('[data-cy="action-bubble"]', { timeout: 500 }).should('be.visible');
-    cy.get('[data-cy="action-bubble"] .edit-button').should('be.visible').click();
+    cy.get('[data-cy="action-bubble"] .edit-button').should('be.visible').click({ force: true });
     const newTitle = faker.lorem.sentence();
     const newComment = faker.lorem.sentence();
     cy.get('[data-cy="common-input-text"]', { timeout: 2000 }).should('be.visible').clear().type(newTitle);
@@ -120,13 +150,30 @@ describe('Check project admin existing resource functionality', () => {
     cy.get('[data-cy=show-all-comments]').scrollIntoView().click();
     cy.get('[data-cy=property-value-comment]').should('have.length', 1);
     cy.log('new property value with comment has been removed');
+  });
 
+  it('ThingPicture resource should be deleted', () => {
+    cy.intercept('POST', '**/resources/delete').as('resourceDeleteRequest');
+    project0001Page.visitClass('ThingPicture');
+    cy.get('[data-cy=resource-list-item] h3.res-class-value').contains(resourceToDelete.label).click();
     cy.get('[data-cy=resource-toolbar-more-button]').click();
     cy.get('[data-cy=resource-toolbar-delete-resource-button]').click();
     cy.get('[data-cy=app-delete-resource-dialog-comment]').should('be.visible').type(faker.lorem.sentence());
     cy.get('[data-cy=app-delete-resource-dialog-button]').click();
-    cy.get('[data-cy=resource-header-label]').should('not.exist');
-    cy.log('Resource has been deleted');
+    cy.wait('@resourceDeleteRequest').its('response.statusCode').should('eq', 200);
+    cy.get('[data-cy=resource-list-item] h3.res-class-value').contains(resourceToDelete.label).should('not.exist');
+  });
+
+  it('ThingPicture resource should be erased', () => {
+    cy.intercept('POST', '**/resources/erase').as('resourceEraseRequest');
+    project0001Page.visitClass('ThingPicture');
+    cy.get('[data-cy=resource-list-item] h3.res-class-value').contains(resourceToErase.label).click();
+    cy.get('[data-cy=resource-toolbar-more-button]').click();
+    cy.get('[data-cy=resource-toolbar-erase-resource-button]').click();
+    cy.get('[data-cy=app-erase-resource-dialog-comment]').should('be.visible').type(faker.lorem.sentence());
+    cy.get('[data-cy=app-erase-resource-dialog-button]').click();
+    cy.wait('@resourceEraseRequest').its('response.statusCode').should('eq', 200);
+    cy.get('[data-cy=resource-list-item] h3.res-class-value').contains(resourceToErase.label).should('not.exist');
   });
 
   after(() => {

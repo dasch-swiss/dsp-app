@@ -1,7 +1,7 @@
 import { UserProfiles } from '../models/user-profiles';
 import './commands/api-commands';
+import './commands/auth-commands';
 import './commands/data-model-class-command';
-import './commands/login';
 import './commands/ontology-command';
 
 const resizeObserverLoopErrRe = /^[^(ResizeObserver loop limit exceeded)]/;
