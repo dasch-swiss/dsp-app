@@ -1,7 +1,7 @@
 import { uploadProjectFile } from '../helpers/file-uploader';
 
 function getJwt(isAuthenticated?: boolean) {
-  return isAuthenticated === true ? localStorage.getItem('ACCESS_TOKEN') : Cypress.env('authToken');
+  return isAuthenticated === true ? Cypress.env('authToken') : localStorage.getItem('ACCESS_TOKEN');
 }
 
 function getRequestOptions(params: Cypress.IRequestAuthenticatedParameters): Cypress.RequestOptions {

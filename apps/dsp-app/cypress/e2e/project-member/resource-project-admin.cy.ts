@@ -30,6 +30,7 @@ describe('Check project admin existing resource functionality', () => {
   before(() => {
     cy.resetDatabase();
     Cypress.env('skipDatabaseCleanup', true);
+    cy.loginAdmin();
     project0001Page = new Project0001Page();
     cy.uploadFile(<Cypress.IUploadFileParameters>{
       filePath: `../${uploadedImageFilePath}`,
@@ -57,6 +58,7 @@ describe('Check project admin existing resource functionality', () => {
       resourceToErase.file = (response as UploadedFileResponse).internalFilename;
       cy.createResource(project0001Page.payloads.picture(resourceToErase));
     });
+    cy.logout();
   });
 
   beforeEach(() => {

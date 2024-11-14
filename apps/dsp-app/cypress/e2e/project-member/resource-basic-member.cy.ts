@@ -24,6 +24,7 @@ describe('Check project admin existing resource functionality', () => {
   before(() => {
     cy.resetDatabase();
     Cypress.env('skipDatabaseCleanup', true);
+    cy.loginAdmin();
     project0001Page = new Project0001Page();
     cy.uploadFile(<Cypress.IUploadFileParameters>{
       filePath: `../${uploadedImageFilePath}`,
@@ -33,6 +34,7 @@ describe('Check project admin existing resource functionality', () => {
       thingPictureData.file = (response as UploadedFileResponse).internalFilename;
       cy.createResource(project0001Page.payloads.picture(thingPictureData));
     });
+    cy.logout();
 
     cy.readFile('cypress/fixtures/user_profiles.json').then((json: UserProfiles) => {
       const users: UserProfiles = json;
@@ -46,10 +48,11 @@ describe('Check project admin existing resource functionality', () => {
           mimeType: 'image/png',
         }).then(response => {
           resourceToDelete.file = (response as UploadedFileResponse).internalFilename;
-          cy.createResource(project0001Page.payloads.picture(resourceToDelete), true);
+          cy.createResource(project0001Page.payloads.picture(resourceToDelete));
         });
       });
     });
+    cy.logout();
   });
 
   beforeEach(() => {

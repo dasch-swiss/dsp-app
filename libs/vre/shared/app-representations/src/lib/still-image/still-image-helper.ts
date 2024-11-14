@@ -58,7 +58,11 @@ export class StillImageHelper {
     return createResource;
   }
 
-  static prepareTileSourcesFromFileValues(images: ReadStillImageFileValue[], pngFormat = false): object[] {
+  static prepareTileSourcesFromFileValues(
+    images: ReadStillImageFileValue[],
+    ajaxHeaders: any,
+    pngFormat = false
+  ): object[] {
     let imageXOffset = 0;
     const imageYOffset = 0;
     const tileSources = [];
@@ -94,6 +98,7 @@ export class StillImageHelper {
         x: imageXOffset,
         y: imageYOffset,
         preload: true,
+        ajaxHeaders,
       });
 
       imageXOffset++;
