@@ -1,4 +1,3 @@
-export * from './lib/current-page/current-page.selectors';
 export * from './lib/lists/lists.selectors';
 export * from './lib/ontologies/ontologies.selectors';
 export * from './lib/ontology-class/ontology-class.selectors';

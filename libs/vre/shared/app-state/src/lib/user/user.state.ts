@@ -18,14 +18,18 @@ import {
 import { UserStateModel } from './user.state-model';
 
 const defaults = <UserStateModel>{
-  isLoading: false,
-  user: null,
-  userProjectAdminGroups: [],
-  isMemberOfSystemAdminGroup: false,
-  allUsers: [],
-  usersLoading: false,
+  isLoading: false, // loading state
+  user: null, // the currently logged in user
+  userProjectAdminGroups: [], // users permission groups
+  isMemberOfSystemAdminGroup: false, // current user is system admin
+  allUsers: [], // other user data in the system
+  usersLoading: false, // loading state for all users
 };
 
+/* 
+  Provides data about the currently logged-in user, other users, and user permission groups. 
+  It also offers methods to load, create, update, and delete users in storage.
+*/
 @State<UserStateModel>({
   defaults,
   name: 'user',

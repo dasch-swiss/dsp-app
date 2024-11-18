@@ -17,8 +17,8 @@ import { getAllEntityDefinitionsAsArray } from '@dasch-swiss/vre/shared/app-api'
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { OntologyClassService, ProjectService, SortingService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
-import { Action, Actions, ofActionSuccessful, State, StateContext } from '@ngxs/store';
-import { BehaviorSubject, of } from 'rxjs';
+import { Action, Actions, State, StateContext, ofActionSuccessful } from '@ngxs/store';
+import { of } from 'rxjs';
 import { map, switchMap, take, tap } from 'rxjs/operators';
 import { LoadListsInProjectAction } from '../lists/lists.actions';
 import { IProjectOntologiesKeyValuePairs, OntologyProperties } from '../model-interfaces';
@@ -43,14 +43,17 @@ import { OntologiesStateModel } from './ontologies.state-model';
 
 const defaults: OntologiesStateModel = <OntologiesStateModel>{
   isLoading: false,
-  projectOntologies: {},
-  hasLoadingErrors: false,
-  currentOntology: null,
+  projectOntologies: {}, // project ontologies grouped by project IRI
+  hasLoadingErrors: false, // loading error state
+  currentOntology: null, // the currently selected ontology
   currentOntologyCanBeDeleted: false,
-  currentProjectOntologyProperties: [],
-  isOntologiesLoading: false,
+  currentProjectOntologyProperties: [], // reflects current ontology properties in data model grouped by ontology IRI
+  isOntologiesLoading: false, // loading state for project ontologies
 };
 
+/*
+  Provides data about the ontologies in a project, resource viewer, ontology editor.
+*/
 @State<OntologiesStateModel>({
   defaults,
   name: 'ontologies',

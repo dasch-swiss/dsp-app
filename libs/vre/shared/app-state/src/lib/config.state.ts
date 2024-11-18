@@ -1,13 +1,16 @@
 // state/config.state.ts
 import { Injectable } from '@angular/core';
 import { DspAppConfig } from '@dasch-swiss/vre/shared/app-config';
-import { State, Action, StateContext, Selector } from '@ngxs/store';
+import { Action, Selector, State, StateContext } from '@ngxs/store';
 
 export class SetConfigAction {
   static readonly type = '[Config] Set';
   constructor(public configStateModel: ConfigStateModel) {}
 }
 
+/*
+  Provides the configuration of the application for other selectors.
+*/
 export interface ConfigStateModel {
   dspAppConfig: DspAppConfig;
 }

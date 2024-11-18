@@ -8,9 +8,13 @@ import { ListsStateModel } from './lists.state-model';
 
 const defaults: ListsStateModel = {
   isLoading: false,
-  listsInProject: [],
+  listsInProject: [], // lists in a project
 };
 
+/*
+  Provides data for the lists (Controlled Vocabularies) in a project. 
+  It also offers methods for CRUD operations on the lists state.
+*/
 @State<ListsStateModel>({
   defaults,
   name: 'lists',
