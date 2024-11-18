@@ -1,5 +1,5 @@
+import { UploadedFileResponse } from '@dasch-swiss/vre/shared/app-representations';
 import { faker } from '@faker-js/faker';
-import { UploadedFileResponse } from '../../../../../libs/vre/shared/app-representations/src';
 import { ThingPictureClass } from '../../models/existing-data-models';
 import { UserProfiles } from '../../models/user-profiles';
 import { Project0001Page, Project0803Page } from '../../support/pages/existing-ontology-class-page';
@@ -149,7 +149,6 @@ describe('Check project admin existing resource functionality', () => {
     cy.get('[data-cy="confirm-button"]').click();
     cy.get('[data-cy="delete-comment"]', { timeout: 2000 }).should('not.exist');
     cy.get('[data-cy=property-value]').should('have.length', 1);
-    cy.get('[data-cy=show-all-comments]').scrollIntoView().click();
     cy.get('[data-cy=property-value-comment]').should('have.length', 1);
     cy.log('new property value with comment has been removed');
   });

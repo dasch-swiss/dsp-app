@@ -5,6 +5,7 @@ import { IncomingService } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { AppError } from '@dasch-swiss/vre/shared/app-error-handler';
 import { RegionService } from '@dasch-swiss/vre/shared/app-representations';
+import { BehaviorSubject } from 'rxjs';
 
 /**
  * Service to handle compound resources, which are resources that are composed of multiple resources.
@@ -12,13 +13,11 @@ import { RegionService } from '@dasch-swiss/vre/shared/app-representations';
 @Injectable()
 export class CompoundService {
   compoundPosition?: DspCompoundPosition;
-  incomingResource?: DspResource;
+
+  private _incomingResource = new BehaviorSubject<DspResource | undefined>(undefined);
+  incomingResource$ = this._incomingResource.asObservable();
 
   private _resource!: DspResource;
-
-  get exists() {
-    return this.compoundPosition !== undefined;
-  }
 
   constructor(
     @Inject(DspApiConnectionToken)
@@ -88,9 +87,7 @@ export class CompoundService {
   }
 
   private _reloadViewer(resource: DspResource) {
-    this.incomingResource = undefined;
-    this._cd.detectChanges();
-    this.incomingResource = resource;
+    this._incomingResource.next(resource);
     this._cd.detectChanges();
   }
 }

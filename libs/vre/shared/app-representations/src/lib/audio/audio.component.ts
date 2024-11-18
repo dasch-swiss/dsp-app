@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnDestroy, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnChanges, OnDestroy } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { ReadResource } from '@dasch-swiss/dsp-js';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
@@ -19,8 +19,6 @@ export class AudioComponent implements OnChanges, OnDestroy {
   @Input({ required: true }) src!: FileRepresentation;
   @Input({ required: true }) isAdmin!: boolean;
   @Input({ required: true }) parentResource!: ReadResource;
-
-  @Output() loaded = new EventEmitter<boolean>();
 
   originalFilename?: string;
   failedToLoad = false;

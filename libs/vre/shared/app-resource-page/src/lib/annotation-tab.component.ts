@@ -53,7 +53,6 @@ export class AnnotationTabComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this._subscription.unsubscribe();
-    this.regionService.showRegions(false);
   }
 
   private _scrollToRegion(iri: string) {

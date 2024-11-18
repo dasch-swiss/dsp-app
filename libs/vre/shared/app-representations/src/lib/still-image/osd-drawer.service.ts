@@ -43,6 +43,10 @@ export class OsdDrawerService implements OnDestroy {
     this._subscribeToCreatedRectangle();
   }
 
+  update(resource: ReadResource): void {
+    this.resource = resource;
+  }
+
   private _subscribeToSelectedRegion() {
     this._regionService.selectedRegion$.pipe(takeUntil(this._ngUnsubscribe)).subscribe(region => {
       this._unhighlightAllRegions();

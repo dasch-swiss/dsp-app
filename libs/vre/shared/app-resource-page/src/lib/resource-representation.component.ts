@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnInit } from '@angular/core';
 import { ReadProject } from '@dasch-swiss/dsp-js';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
@@ -36,8 +36,7 @@ import { filter, map } from 'rxjs/operators';
       *ngSwitchCase="representationConstants.document"
       [src]="representationToDisplay"
       [parentResource]="resource.res"
-      [attachedProject]="attachedProject$ | async"
-      (loaded)="representationLoaded($event)">
+      [attachedProject]="attachedProject$ | async">
     </app-document>
 
     <app-audio
@@ -46,8 +45,7 @@ import { filter, map } from 'rxjs/operators';
       *ngSwitchCase="representationConstants.audio"
       [src]="representationToDisplay"
       [parentResource]="resource.res"
-      [isAdmin]="isAdmin$ | async"
-      (loaded)="representationLoaded($event)">
+      [isAdmin]="isAdmin$ | async">
     </app-audio>
 
     <app-video
@@ -56,8 +54,7 @@ import { filter, map } from 'rxjs/operators';
       *ngSwitchCase="representationConstants.movingImage"
       [src]="representationToDisplay"
       [parentResource]="resource.res"
-      [isAdmin]="isAdmin$ | async"
-      (loaded)="representationLoaded($event)">
+      [isAdmin]="isAdmin$ | async">
     </app-video>
 
     <app-archive
@@ -66,8 +63,7 @@ import { filter, map } from 'rxjs/operators';
       *ngSwitchCase="representationConstants.archive"
       [src]="representationToDisplay"
       [parentResource]="resource.res"
-      [attachedProject]="attachedProject$ | async"
-      (loaded)="representationLoaded($event)">
+      [attachedProject]="attachedProject$ | async">
     </app-archive>
 
     <app-text
@@ -76,12 +72,11 @@ import { filter, map } from 'rxjs/operators';
       *ngSwitchCase="representationConstants.text"
       [src]="representationToDisplay"
       [parentResource]="resource.res"
-      [attachedProject]="attachedProject$ | async"
-      (loaded)="representationLoaded($event)">
+      [attachedProject]="attachedProject$ | async">
     </app-text>
   </div>`,
 })
-export class ResourceRepresentationComponent implements OnInit {
+export class ResourceRepresentationComponent implements OnChanges {
   @Input({ required: true }) resource!: DspResource;
   representationToDisplay!: FileRepresentation;
 
@@ -113,11 +108,7 @@ export class ResourceRepresentationComponent implements OnInit {
     private _rs: RepresentationService
   ) {}
 
-  ngOnInit() {
+  ngOnChanges() {
     this.representationToDisplay = new FileRepresentation(getFileValue(this.resource)!);
-  }
-
-  representationLoaded(e: boolean) {
-    this.loading = !e;
   }
 }

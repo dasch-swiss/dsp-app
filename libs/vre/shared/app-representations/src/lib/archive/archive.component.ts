@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
+import { Component, Inject, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import {
   Constants,
@@ -26,13 +26,10 @@ import { RepresentationService } from '../representation.service';
   templateUrl: './archive.component.html',
   styleUrls: ['./archive.component.scss'],
 })
-export class ArchiveComponent implements OnInit, AfterViewInit {
+export class ArchiveComponent implements OnChanges {
   @Input() src: FileRepresentation;
   @Input() attachedProject: ReadProject | undefined;
   @Input() parentResource: ReadResource;
-
-  @Output() loaded = new EventEmitter<boolean>();
-
   originalFilename: string;
 
   failedToLoad = false;
@@ -48,19 +45,17 @@ export class ArchiveComponent implements OnInit, AfterViewInit {
     private _rs: RepresentationService
   ) {}
 
-  ngOnInit(): void {
-    this._rs.getFileInfo(this.src.fileValue.fileUrl).subscribe(
-      res => {
-        this.originalFilename = res['originalFilename'];
-      },
-      () => {
-        this.failedToLoad = true;
-      }
-    );
-  }
-
-  ngAfterViewInit() {
-    this.loaded.emit(true);
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['src']) {
+      this._rs.getFileInfo(this.src.fileValue.fileUrl).subscribe(
+        res => {
+          this.originalFilename = res['originalFilename'];
+        },
+        () => {
+          this.failedToLoad = true;
+        }
+      );
+    }
   }
 
   download(url: string) {

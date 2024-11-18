@@ -1,15 +1,5 @@
 import { DOCUMENT } from '@angular/common';
-import {
-  AfterViewInit,
-  ChangeDetectorRef,
-  Component,
-  EventEmitter,
-  Inject,
-  Input,
-  OnInit,
-  Output,
-  ViewChild,
-} from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, Input, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import {
   Constants,
@@ -24,7 +14,6 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { ResourceUtil } from '@dasch-swiss/vre/shared/app-common';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
-import { Store } from '@ngxs/store';
 import { PdfViewerComponent } from 'ng2-pdf-viewer';
 import { mergeMap } from 'rxjs/operators';
 import { FileRepresentation } from '../file-representation';
@@ -39,12 +28,10 @@ import { RepresentationService } from '../representation.service';
   templateUrl: './document.component.html',
   styleUrls: ['./document.component.scss'],
 })
-export class DocumentComponent implements OnInit, AfterViewInit {
+export class DocumentComponent implements OnChanges {
   @Input() src: FileRepresentation;
   @Input() parentResource: ReadResource;
   @Input() attachedProject: ReadProject | undefined;
-
-  @Output() loaded = new EventEmitter<boolean>();
 
   @ViewChild(PdfViewerComponent) private _pdfComponent: PdfViewerComponent;
 
@@ -70,29 +57,25 @@ export class DocumentComponent implements OnInit, AfterViewInit {
     private _dspApiConnection: KnoraApiConnection,
     private _dialog: MatDialog,
     private _rs: RepresentationService,
-    private _cd: ChangeDetectorRef,
-    private _store: Store
+    private _cd: ChangeDetectorRef
   ) {}
 
-  ngOnInit(): void {
-    this.fileType = this._getFileType(this.src.fileValue.filename);
-
-    this._rs.getFileInfo(this.src.fileValue.fileUrl).subscribe(
-      res => {
-        this.originalFilename = res['originalFilename'];
-      },
-      () => {
-        // error already handled by getFileInfo
-        this.failedToLoad = true;
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['src'] && changes['src'].currentValue) {
+      this._rs.getFileInfo(this.src.fileValue.fileUrl).subscribe(
+        res => {
+          this.originalFilename = res['originalFilename'];
+        },
+        () => {
+          // error already handled by getFileInfo
+          this.failedToLoad = true;
+        }
+      );
+      this.fileType = this._getFileType(this.src.fileValue.filename);
+      if (this.fileType === 'pdf') {
+        this.elem = document.getElementsByClassName('pdf-viewer')[0];
       }
-    );
-  }
-
-  ngAfterViewInit() {
-    if (this.fileType === 'pdf') {
-      this.elem = document.getElementsByClassName('pdf-viewer')[0];
     }
-    this.loaded.emit(true);
   }
 
   searchQueryChanged(newQuery: string) {

@@ -84,7 +84,6 @@ import { sortByKeys } from './sortByKeys';
     </ng-container>
 
     <!-- incoming link -->
-    <dasch-swiss-app-progress-indicator *ngIf="isIncomingLinksLoading"></dasch-swiss-app-progress-indicator>
     <app-property-row
       tooltip="Indicates that this resource is referred to by another resource"
       label="has incoming link"
@@ -147,7 +146,6 @@ export class PropertiesDisplayComponent implements OnChanges, OnDestroy {
 
   @ViewChild('pager', { static: false })
   pagerComponent: PagerComponent | undefined;
-  isIncomingLinksLoading = false;
 
   protected readonly cardinality = Cardinality;
 
@@ -200,14 +198,12 @@ export class PropertiesDisplayComponent implements OnChanges, OnDestroy {
   }
 
   doIncomingLinkSearch(offset = 0) {
-    this.isIncomingLinksLoading = true;
     this._propertiesDisplayIncomingLink
       .getIncomingLinksRecursively$(this.resource.res.id, offset)
       .pipe(take(1))
       .subscribe(incomingLinks => {
         this.incomingLinks = incomingLinks;
         this.incomingLinks$.next(incomingLinks.slice(0, PagerComponent.pageSize));
-        this.isIncomingLinksLoading = false;
         this._cd.detectChanges();
         if (incomingLinks.length > 0) {
           this.pagerComponent!.calculateNumberOfAllResults(incomingLinks.length);

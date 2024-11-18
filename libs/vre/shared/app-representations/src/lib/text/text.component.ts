@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
+import { Component, Inject, Input, OnChanges } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import {
   Constants,
@@ -26,12 +26,10 @@ import { RepresentationService } from '../representation.service';
   templateUrl: './text.component.html',
   styleUrls: ['./text.component.scss'],
 })
-export class TextComponent implements OnInit, AfterViewInit {
+export class TextComponent implements OnChanges {
   @Input() src: FileRepresentation;
   @Input() attachedProject: ReadProject | undefined;
   @Input() parentResource: ReadResource;
-
-  @Output() loaded = new EventEmitter<boolean>();
 
   originalFilename: string;
 
@@ -48,7 +46,7 @@ export class TextComponent implements OnInit, AfterViewInit {
     private _rs: RepresentationService
   ) {}
 
-  ngOnInit(): void {
+  ngOnChanges(): void {
     this._rs.getFileInfo(this.src.fileValue.fileUrl).subscribe(
       res => {
         this.originalFilename = res['originalFilename'];
@@ -57,10 +55,6 @@ export class TextComponent implements OnInit, AfterViewInit {
         this.failedToLoad = true;
       }
     );
-  }
-
-  ngAfterViewInit() {
-    this.loaded.emit(true);
   }
 
   download(url: string) {

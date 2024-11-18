@@ -1,11 +1,12 @@
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
   ElementRef,
   Input,
+  OnChanges,
   OnDestroy,
+  SimpleChanges,
   ViewChild,
 } from '@angular/core';
 import { Constants, ReadResource, ReadStillImageFileValue } from '@dasch-swiss/dsp-js';
@@ -41,7 +42,7 @@ import { StillImageHelper } from './still-image-helper';
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [OsdDrawerService, OpenSeaDragonService],
 })
-export class StillImageComponent implements AfterViewInit, OnDestroy {
+export class StillImageComponent implements OnChanges, AfterViewInit, OnDestroy {
   @Input({ required: true }) compoundMode!: boolean;
   @Input({ required: true }) resource!: ReadResource;
   @ViewChild('osdViewer') osdViewerElement!: ElementRef;
@@ -51,28 +52,33 @@ export class StillImageComponent implements AfterViewInit, OnDestroy {
 
   constructor(
     protected osdService: OpenSeaDragonService,
-    private _osdDrawerService: OsdDrawerService,
-    private _cdr: ChangeDetectorRef
+    private _osdDrawerService: OsdDrawerService
   ) {}
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (this.isViewInitialized && changes['resource']) {
+      this._osdDrawerService.update(this.resource);
+      this._loadImage();
+    }
+  }
 
   ngAfterViewInit() {
     this.osdService.onInit(this.osdViewerElement.nativeElement);
     this._osdDrawerService.onInit(this.resource);
     this.isViewInitialized = true;
-    this._cdr.detectChanges();
-    this._loadImages();
+    this._loadImage();
   }
 
   afterFormatChange(value: boolean) {
     this.isPng = value;
-    this._loadImages();
+    this._loadImage();
   }
 
   ngOnDestroy() {
     this.osdService.viewer.destroy();
   }
 
-  private _loadImages() {
+  private _loadImage() {
     const image = this.resource.properties[Constants.HasStillImageFileValue][0];
 
     switch (image.type) {
