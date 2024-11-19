@@ -5,6 +5,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import {
   Constants,
   KnoraApiConnection,
+  ReadProject,
   ReadResource,
   ReadStillImageExternalFileValue,
   ReadStillImageFileValue,
@@ -16,7 +17,7 @@ import { DspApiConnectionToken, DspDialogConfig } from '@dasch-swiss/vre/shared/
 import { AppError } from '@dasch-swiss/vre/shared/app-error-handler';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
-import { ProjectsSelectors } from '@dasch-swiss/vre/shared/app-state';
+import { UserSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { Store } from '@ngxs/store';
 import { filter, switchMap } from 'rxjs/operators';
 import { EditThirdPartyIiifFormComponent } from '../edit-third-party-iiif-form/edit-third-party-iiif-form.component';
@@ -50,6 +51,7 @@ export class StillImageToolbarComponent {
   @Input({ required: true }) resource!: ReadResource;
   @Input({ required: true }) compoundMode!: boolean;
   @Input({ required: true }) isPng!: boolean;
+  @Input() attachedProject: ReadProject | undefined;
   @Output() imageIsPng = new EventEmitter<boolean>();
 
   get imageFileValue() {
@@ -96,15 +98,21 @@ export class StillImageToolbarComponent {
   }
 
   download() {
-    const projectShort = this._store.selectSnapshot(ProjectsSelectors.currentProject)!.shortcode;
+    const projectShort = this.attachedProject?.shortcode;
     const assetId = this.imageFileValue.filename.split('.')[0] || '';
 
     if (!projectShort) {
       throw new AppError('Error with project shortcode');
     }
-    this._rs.getIngestFileInfo(projectShort, assetId).subscribe(response => {
-      this._rs.downloadFile(this.imageFileValue.fileUrl, response.originalFilename);
-    });
+
+    const isLoggedIn = this._store.selectSnapshot(UserSelectors.isLoggedIn);
+    if (isLoggedIn && this.userCanView) {
+      this._rs.getIngestFileInfo(projectShort, assetId).subscribe(response => {
+        this._rs.downloadFile(this.imageFileValue.fileUrl, response.originalFilename);
+      });
+    } else {
+      this._rs.downloadFile(this.imageFileValue.fileUrl, this.imageFileValue.filename, false);
+    }
   }
 
   replaceImage() {

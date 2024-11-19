@@ -6,9 +6,9 @@ import { map, take } from 'rxjs/operators';
 import { ProjectsSelectors } from '../projects/projects.selectors';
 import { UserSelectors } from '../user/user.selectors';
 import { GetAttachedProjectAction, GetAttachedUserAction, SetCurrentResourceAction } from './resource.actions';
-import { ReourceStateModel } from './resource.state-model';
+import { ResourceStateModel } from './resource.state-model';
 
-const defaults = <ReourceStateModel>{
+const defaults = <ResourceStateModel>{
   isLoading: false,
   attachedProjects: {}, // projects attached to a resource
   attachedUsers: {}, // users attached to a resource
@@ -18,7 +18,7 @@ const defaults = <ReourceStateModel>{
 /*
   Provides data about the current resource. Also attached data like users or projects to a resource.
 */
-@State<ReourceStateModel>({
+@State<ResourceStateModel>({
   defaults,
   name: 'resource',
 })
@@ -31,7 +31,7 @@ export class ResourceState {
   ) {}
 
   @Action(GetAttachedUserAction)
-  getAttachedUser(ctx: StateContext<ReourceStateModel>, { resourceIri, identifier, idType }: GetAttachedUserAction) {
+  getAttachedUser(ctx: StateContext<ResourceStateModel>, { resourceIri, identifier, idType }: GetAttachedUserAction) {
     const state = ctx.getState();
     if (state.attachedUsers[resourceIri]) {
       const attachedUserIndex = state.attachedUsers[resourceIri].value.findIndex(e => e.id === identifier);
@@ -70,7 +70,7 @@ export class ResourceState {
   }
 
   @Action(GetAttachedProjectAction)
-  getAttachedProject(ctx: StateContext<ReourceStateModel>, { resourceIri, projectIri }: GetAttachedProjectAction) {
+  getAttachedProject(ctx: StateContext<ResourceStateModel>, { resourceIri, projectIri }: GetAttachedProjectAction) {
     const state = ctx.getState();
     if (state.attachedProjects[resourceIri]) {
       const attachedProjectIndex = state.attachedProjects[resourceIri].value.findIndex(e => e.id === projectIri);
@@ -117,7 +117,7 @@ export class ResourceState {
   }
 
   @Action(SetCurrentResourceAction)
-  setCurrentOntologyAction(ctx: StateContext<ReourceStateModel>, { resource }: SetCurrentResourceAction) {
+  setCurrentOntologyAction(ctx: StateContext<ResourceStateModel>, { resource }: SetCurrentResourceAction) {
     ctx.patchState({ resource });
   }
 }

@@ -5,6 +5,8 @@ import { IncomingService } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { AppError } from '@dasch-swiss/vre/shared/app-error-handler';
 import { RegionService } from '@dasch-swiss/vre/shared/app-representations';
+import { GetAttachedProjectAction, GetAttachedUserAction } from '@dasch-swiss/vre/shared/app-state';
+import { Store } from '@ngxs/store';
 import { BehaviorSubject } from 'rxjs';
 
 /**
@@ -24,7 +26,8 @@ export class CompoundService {
     private _dspApiConnection: KnoraApiConnection,
     private _incomingService: IncomingService,
     private _regionService: RegionService,
-    private _cd: ChangeDetectorRef
+    private _cd: ChangeDetectorRef,
+    private _store: Store
   ) {}
 
   onInit(_compound: DspCompoundPosition, resource: DspResource) {
@@ -81,6 +84,10 @@ export class CompoundService {
       incomingResource.systemProps =
         incomingResource.res.entityInfo.getPropertyDefinitionsByType(SystemPropertyDefinition);
 
+      this._store.dispatch([
+        new GetAttachedUserAction(incomingResource.res.id, incomingResource.res.attachedToUser),
+        new GetAttachedProjectAction(incomingResource.res.id, incomingResource.res.attachedToProject),
+      ]);
       this._reloadViewer(incomingResource);
       this._regionService.initialize(incomingResource.res.id);
     });

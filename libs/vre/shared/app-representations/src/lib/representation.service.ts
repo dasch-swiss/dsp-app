@@ -41,14 +41,18 @@ export class RepresentationService {
       : undefined;
   }
 
-  downloadFile(url: string, fileName?: string) {
-    const authToken = this._accessTokenService.getAccessToken();
+  downloadFile(url: string, fileName?: string, withCredentials = true) {
+    let headers = {};
+    if (withCredentials) {
+      const authToken = this._accessTokenService.getAccessToken();
+      headers = { Authorization: `Bearer ${authToken}` };
+    }
 
     this._http
       .get(url, {
         responseType: 'blob',
-        withCredentials: true,
-        headers: { Authorization: `Bearer ${authToken}` },
+        withCredentials,
+        headers,
       })
       .pipe(take(1))
       .subscribe(res => {

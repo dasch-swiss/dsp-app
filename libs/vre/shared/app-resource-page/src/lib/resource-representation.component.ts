@@ -4,14 +4,14 @@ import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import {
   FileRepresentation,
-  getFileValue,
   RepresentationConstants,
   RepresentationService,
+  getFileValue,
 } from '@dasch-swiss/vre/shared/app-representations';
 import { ResourceSelectors, UserSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { Store } from '@ngxs/store';
-import { combineLatest, Observable } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
+import { Observable, combineLatest } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-resource-representation',
@@ -87,10 +87,9 @@ export class ResourceRepresentationComponent implements OnChanges {
     return this.resource.res.attachedToProject;
   }
 
-  attachedProject$: Observable<ReadProject | undefined> = this._store.select(ResourceSelectors.attachedProjects).pipe(
-    filter(attachedProjects => !!attachedProjects && Object.values(attachedProjects).length > 0),
-    map(attachedProjects => this._rs.getParentResourceAttachedProject(attachedProjects, this.resource.res))
-  );
+  attachedProject$: Observable<ReadProject | undefined> = this._store
+    .select(ResourceSelectors.attachedProjects)
+    .pipe(map(attachedProjects => this._rs.getParentResourceAttachedProject(attachedProjects, this.resource.res)));
 
   isAdmin$: Observable<boolean> = combineLatest([
     this._store.select(UserSelectors.user),
