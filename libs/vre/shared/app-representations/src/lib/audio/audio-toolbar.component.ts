@@ -13,7 +13,7 @@ import { MediaPlayerService } from '../video/media-player.service';
         <button data-cy="play-pause-button" mat-icon-button (click)="mediaPlayer.togglePlay()">
           <mat-icon>{{ mediaPlayer.isPaused() ? 'play_arrow' : 'pause' }}</mat-icon>
         </button>
-        <button data-cy="go-to-start-button" mat-icon-button (click)="mediaPlayer.playFromBeginning()">
+        <button data-cy="go-to-start-button" mat-icon-button (click)="mediaPlayer.navigateToStart()">
           <mat-icon>skip_previous</mat-icon>
         </button>
         <button data-cy="volume-button" mat-icon-button (click)="mediaPlayer.toggleMute()">

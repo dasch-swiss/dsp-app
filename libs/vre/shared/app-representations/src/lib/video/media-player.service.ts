@@ -39,7 +39,7 @@ export class MediaPlayerService {
     return Math.floor(this._mediaPlayer.duration);
   }
 
-  playFromBeginning() {
+  navigateToStart() {
     this.navigate(0);
   }
 

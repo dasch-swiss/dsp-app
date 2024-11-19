@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, Input, OnChanges, OnDestroy } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { ReadResource } from '@dasch-swiss/dsp-js';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
@@ -15,7 +15,7 @@ import { MediaPlayerService } from '../video/media-player.service';
   styleUrls: ['./audio.component.scss'],
   providers: [MediaControlService, MediaPlayerService],
 })
-export class AudioComponent implements OnChanges, OnDestroy {
+export class AudioComponent implements OnInit, OnChanges, OnDestroy {
   @Input({ required: true }) src!: FileRepresentation;
   @Input({ required: true }) isAdmin!: boolean;
   @Input({ required: true }) parentResource!: ReadResource;
@@ -42,21 +42,32 @@ export class AudioComponent implements OnChanges, OnDestroy {
     private _cd: ChangeDetectorRef
   ) {}
 
-  ngOnChanges(): void {
-    this._ngUnsubscribe.next();
-
+  ngOnInit() {
     this._watchForMediaEvents();
-    this.audioFileUrl = this._sanitizer.bypassSecurityTrustUrl(this.src.fileValue.fileUrl);
-    this.segmentsService.onInit(this.parentResource.id, 'AudioSegment');
+  }
 
-    this._rs.getFileInfo(this.src.fileValue.fileUrl).subscribe(
-      res => {
-        this.originalFilename = res.originalFilename;
-      },
-      () => {
-        this.failedToLoad = true;
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['src']) {
+      if (this.isPlayerReady) {
+        this._resetPlayer();
       }
-    );
+
+      this.audioFileUrl = this._sanitizer.bypassSecurityTrustUrl(this.src.fileValue.fileUrl);
+
+      this._rs.getFileInfo(this.src.fileValue.fileUrl).subscribe(
+        res => {
+          this.originalFilename = res.originalFilename;
+        },
+        () => {
+          this.failedToLoad = true;
+        }
+      );
+      this._cd.detectChanges();
+    }
+
+    if (changes['parentResource']) {
+      this.segmentsService.onInit(this.parentResource.id, 'AudioSegment');
+    }
   }
 
   ngOnDestroy() {
@@ -64,14 +75,11 @@ export class AudioComponent implements OnChanges, OnDestroy {
   }
 
   onAudioPlayerReady() {
-    if (this.isPlayerReady) {
-      return;
-    }
-
     const player = document.getElementById('audio') as HTMLAudioElement;
     this.mediaPlayer.onInit(player);
     this.isPlayerReady = true;
     this.duration = this.mediaPlayer.duration();
+    this._cd.detectChanges();
 
     this.mediaPlayer.onTimeUpdate$.subscribe(v => {
       this.currentTime = v;
@@ -97,5 +105,12 @@ export class AudioComponent implements OnChanges, OnDestroy {
     this._mediaControl.watchForPause$.pipe(takeUntil(this._ngUnsubscribe)).subscribe(seconds => {
       this.watchForPause = seconds;
     });
+  }
+
+  private _resetPlayer() {
+    this.mediaPlayer.navigateToStart();
+    this.audioFileUrl = '';
+    this.isPlayerReady = false;
+    this._cd.detectChanges();
   }
 }

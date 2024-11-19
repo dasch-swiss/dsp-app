@@ -2,7 +2,7 @@
   <mat-icon style="color: white; transform: scale(4)"> audio_file</mat-icon>
   <div *ngIf="failedToLoad">Your browser does not support the audio element.</div>
   <div *ngIf="audioFileUrl" class="audio-player">
-    <audio id="audio" preload="auto" (canplay)="onAudioPlayerReady()">
+    <audio id="audio" preload="auto" (loadedmetadata)="onAudioPlayerReady()">
       <source [src]="audioFileUrl" type="audio/mpeg" />
     </audio>
   </div>
@@ -14,7 +14,7 @@
     [currentTime]="currentTime"
     (afterNavigation)="mediaPlayer.navigate($event)" />
   <app-segments-display
-    *ngIf="segmentsService.segments.length > 0 && duration > 0"
+    *ngIf="segmentsService.segments.length > 0 && duration > 0 && isPlayerReady"
     [segments]="segmentsService.segments"
     [videoLengthSecs]="duration" />
   <app-audio-toolbar [parentResource]="parentResource" [isAdmin]="isAdmin" />
