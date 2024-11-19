@@ -105,14 +105,17 @@ export class ActionBubbleComponent {
     this._matDialog
       .open<EditListItemDialogComponent, EditListItemDialogProps, boolean>(
         EditListItemDialogComponent,
-        DspDialogConfig.dialogDrawerConfig({
-          nodeIri: this.node.id,
-          projectIri: this._listItemService.projectInfos.projectIri,
-          formData: {
-            labels: this.node.labels as MultiLanguages,
-            comments: this.node.comments as MultiLanguages,
+        DspDialogConfig.dialogDrawerConfig(
+          {
+            nodeIri: this.node.id,
+            projectIri: this._listItemService.projectInfos.projectIri,
+            formData: {
+              labels: this.node.labels as MultiLanguages,
+              comments: this.node.comments as MultiLanguages,
+            },
           },
-        })
+          true
+        )
       )
       .afterClosed()
       .pipe(filter(response => response === true))
