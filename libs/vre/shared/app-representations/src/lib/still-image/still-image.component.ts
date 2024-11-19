@@ -1,6 +1,7 @@
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   ElementRef,
   Input,
@@ -51,6 +52,7 @@ export class StillImageComponent implements OnChanges, AfterViewInit, OnDestroy 
   isPng = false;
 
   constructor(
+    private _cdr: ChangeDetectorRef,
     protected osdService: OpenSeaDragonService,
     private _osdDrawerService: OsdDrawerService
   ) {}
@@ -66,6 +68,7 @@ export class StillImageComponent implements OnChanges, AfterViewInit, OnDestroy 
     this.osdService.onInit(this.osdViewerElement.nativeElement);
     this._osdDrawerService.onInit(this.resource);
     this.isViewInitialized = true;
+    this._cdr.detectChanges();
     this._loadImage();
   }
 
