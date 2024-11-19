@@ -1,5 +1,30 @@
 # Changelog
 
+## [11.22.1](https://github.com/dasch-swiss/dsp-das/compare/v11.22.0...v11.22.1) (2024-11-19)
+
+
+### Bug Fixes
+
+* detect changes after initial load ([#1897](https://github.com/dasch-swiss/dsp-das/issues/1897)) ([963c070](https://github.com/dasch-swiss/dsp-das/commit/963c07030278af8d1027628c486d5a9680160d56))
+* image download (DEV-4321) (DEV-4318) ([#1885](https://github.com/dasch-swiss/dsp-das/issues/1885)) ([4752285](https://github.com/dasch-swiss/dsp-das/commit/475228529a8e0db453f93cba6fe4f09db525b308))
+* open as side dialog (DEV-4226) ([#1889](https://github.com/dasch-swiss/dsp-das/issues/1889)) ([6778ced](https://github.com/dasch-swiss/dsp-das/commit/6778ced67a3ee9712f4b58055546f609f4aa79b1))
+* osd navigator 401 issue (DEV-4317) ([#1886](https://github.com/dasch-swiss/dsp-das/issues/1886)) ([380a494](https://github.com/dasch-swiss/dsp-das/commit/380a49433f40a86a6e8896afb461d593e3d53538))
+* react on input changes (DEV-4370) ([#1896](https://github.com/dasch-swiss/dsp-das/issues/1896)) ([6a0bac8](https://github.com/dasch-swiss/dsp-das/commit/6a0bac8d466542d474a7188e568a0df38cb09869))
+* remove button width ([#1881](https://github.com/dasch-swiss/dsp-das/issues/1881)) ([1c84022](https://github.com/dasch-swiss/dsp-das/commit/1c84022a2da2640c8db83e4e4a2b26439b6d6810))
+* updating multiple cardinalities in a row (DEV-4213) ([#1859](https://github.com/dasch-swiss/dsp-das/issues/1859)) ([2e5a1e8](https://github.com/dasch-swiss/dsp-das/commit/2e5a1e83966451ad80442ac4f42e9b0f869ceb59))
+
+
+### Maintenances
+
+* add cypress dependencies to project package.json ([#1893](https://github.com/dasch-swiss/dsp-das/issues/1893)) ([3baff81](https://github.com/dasch-swiss/dsp-das/commit/3baff8165d0959b022bedd159c306f84500950df))
+* ngxs comments, removed current page state ([#1888](https://github.com/dasch-swiss/dsp-das/issues/1888)) ([e6f58c7](https://github.com/dasch-swiss/dsp-das/commit/e6f58c7732a024457e3a2b874e96b9d8914b0baf))
+* resource editor (DEV-4339) ([#1890](https://github.com/dasch-swiss/dsp-das/issues/1890)) ([39d176c](https://github.com/dasch-swiss/dsp-das/commit/39d176c4f0c812f502c4f431a959b2c67703e1d3))
+
+
+### Tests
+
+* Added resource basic member tests, updated project admin tests (… ([#1880](https://github.com/dasch-swiss/dsp-das/issues/1880)) ([4d6a3b0](https://github.com/dasch-swiss/dsp-das/commit/4d6a3b002c15e169b07e98ba3e7854bffb607e36))
+
 ## [11.22.0](https://github.com/dasch-swiss/dsp-das/compare/v11.21.0...v11.22.0) (2024-11-06)
 
 
