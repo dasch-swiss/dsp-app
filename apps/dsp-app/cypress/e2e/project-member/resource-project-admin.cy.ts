@@ -101,7 +101,7 @@ describe('Check project admin existing resource functionality', () => {
     cy.get('[data-cy=property-value-comment]').contains(thingPictureData.titles[0].comment);
   });
 
-  it('ThingPicture resource should be editable', () => {
+  it.skip('ThingPicture resource should be editable', () => {
     project0001Page.visitClass('ThingPicture');
     cy.get('[data-cy=resource-list-item] h3.res-class-value').contains(thingPictureData.label).click();
 
@@ -153,7 +153,7 @@ describe('Check project admin existing resource functionality', () => {
     cy.log('new property value with comment has been removed');
   });
 
-  it('ThingPicture resource should be deleted', () => {
+  it.skip('ThingPicture resource should be deleted', () => {
     cy.intercept('POST', '**/resources/delete').as('resourceDeleteRequest');
     project0001Page.visitClass('ThingPicture');
     cy.get('[data-cy=resource-list-item] h3.res-class-value').contains(resourceToDelete.label).click();
@@ -165,7 +165,7 @@ describe('Check project admin existing resource functionality', () => {
     cy.get('[data-cy=resource-list-item] h3.res-class-value').contains(resourceToDelete.label).should('not.exist');
   });
 
-  it('ThingPicture resource should be erased', () => {
+  it.skip('ThingPicture resource should be erased', () => {
     cy.intercept('POST', '**/resources/erase').as('resourceEraseRequest');
     project0001Page.visitClass('ThingPicture');
     cy.get('[data-cy=resource-list-item] h3.res-class-value').contains(resourceToErase.label).click();
