@@ -11,15 +11,15 @@ import {
 } from '@angular/core';
 import {
   CanDoResponse,
-  ClassDefinition,
   Constants,
   KnoraApiConnection,
   PropertyDefinition,
   ReadOntology,
+  ResourceClassDefinitionWithAllLanguages,
   ResourcePropertyDefinitionWithAllLanguages,
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken, RouteConstants } from '@dasch-swiss/vre/shared/app-config';
-import { DefaultClass, DefaultResourceClasses } from '@dasch-swiss/vre/shared/app-helper-services';
+import { DefaultClass, DefaultResourceClasses, LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
 import {
   OntologiesSelectors,
@@ -44,7 +44,7 @@ export class ResourceClassInfoComponent implements OnInit, OnDestroy {
   // open / close res class card
   @Input() expanded = false;
 
-  @Input() resourceClass: ClassDefinition;
+  @Input() resourceClass: ResourceClassDefinitionWithAllLanguages;
 
   @Input() projectUuid: string;
 
@@ -73,6 +73,8 @@ export class ResourceClassInfoComponent implements OnInit, OnDestroy {
 
   classCanBeDeleted: boolean;
 
+  classLabel: string;
+
   subClassOfLabel = '';
 
   readonly defaultClasses: DefaultClass[] = DefaultResourceClasses.data;
@@ -88,6 +90,7 @@ export class ResourceClassInfoComponent implements OnInit, OnDestroy {
   constructor(
     @Inject(DspApiConnectionToken)
     private _dspApiConnection: KnoraApiConnection,
+    private _localizationService: LocalizationService,
     private _notification: NotificationService,
     private _store: Store,
     private _actions$: Actions
@@ -99,6 +102,7 @@ export class ResourceClassInfoComponent implements OnInit, OnDestroy {
     this.translateSubClassOfIri(this.resourceClass.subClassOf);
     // check if the class can be deleted
     this.canBeDeleted();
+    this.getOntologiesLabelsInPreferredLanguage();
   }
 
   ngOnDestroy() {
@@ -147,6 +151,12 @@ export class ResourceClassInfoComponent implements OnInit, OnDestroy {
     });
 
     return propsToDisplay;
+  }
+
+  getOntologiesLabelsInPreferredLanguage(): void {
+    const preferredLanguage = this._localizationService.getCurrentLanguage();
+    const preferedLabelLiteral = this.resourceClass.labels.find(l => l.language === preferredLanguage);
+    this.classLabel = preferedLabelLiteral ? preferedLabelLiteral.value : this.resourceClass.label || '';
   }
 
   /**

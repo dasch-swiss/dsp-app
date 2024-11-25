@@ -2,7 +2,7 @@
   <!-- class card header -->
   <mat-card-header class="resource-class-header" cdkDragHandle>
     <mat-card-title [matTooltip]="resourceClass.comment" matTooltipPosition="above">
-      {{ resourceClass.label | appTruncate: 24 }}
+      {{ classLabel | appTruncate: 24 }}
     </mat-card-title>
     <mat-card-subtitle>
       <span [matTooltip]="'id: ' + resourceClass.id" matTooltipPosition="above" matTooltipClass="wide-tooltip">

@@ -86,7 +86,7 @@ export class OntologyComponent extends ProjectBase implements OnInit, OnDestroy 
   private ngUnsubscribe = new Subject<void>();
 
   // all resource classes in the current ontology
-  ontoClasses: ClassDefinition[];
+  ontoClasses: ResourceClassDefinitionWithAllLanguages[];
   // expand the resource class cards
   expandClasses = true;
 
@@ -278,7 +278,7 @@ export class OntologyComponent extends ProjectBase implements OnInit, OnDestroy 
     }
   }
 
-  private initOntoClasses(allOntoClasses: ClassDefinition[]) {
+  private initOntoClasses(allOntoClasses: ResourceClassDefinitionWithAllLanguages[]) {
     // reset the ontology classes
     this.ontoClasses = [];
 
@@ -358,7 +358,11 @@ export class OntologyComponent extends ProjectBase implements OnInit, OnDestroy 
     this.initView(ontology);
     this._dspApiConnection.v2.ontologyCache.reloadCachedItem(ontology.id);
     // grab the onto class information to display
-    this.initOntoClasses(getAllEntityDefinitionsAsArray(ontology.classes));
+    this.initOntoClasses(
+      ontology.getClassDefinitionsByType<ResourceClassDefinitionWithAllLanguages>(
+        ResourceClassDefinitionWithAllLanguages
+      )
+    );
     // grab the onto properties information to display
     this.initOntoProperties(ontology, getAllEntityDefinitionsAsArray(ontology.properties));
 
