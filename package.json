@@ -135,7 +135,7 @@
     "karma-coverage-istanbul-reporter": "~3.0.3",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "^1.7.0",
-    "ng-mocks": "14.11.0",
+    "ng-mocks": "14.13.1",
     "ng-packagr": "~16.1.0",
     "nx": "16.5.3",
     "nx-cloud": "^19.0.0",
