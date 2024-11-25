@@ -71,8 +71,8 @@
       "@dasch-swiss/vre/shared/app-logging": [
         "libs/vre/shared/app-logging/src/index.ts"
       ],
-      "@dasch-swiss/vre/shared/app-mathjax": [
-        "libs/vre/shared/app-mathjax/src/index.ts"
+      "@dasch-swiss/vre/resource-editor/mathjax": [
+        "libs/vre/resource-editor/mathjax/src/index.ts"
       ],
       "@dasch-swiss/vre/shared/app-notification": [
         "libs/vre/shared/app-notification/src/index.ts"
@@ -92,20 +92,20 @@
       "@dasch-swiss/vre/shared/app-property-form": [
         "libs/vre/shared/app-property-form/src/index.ts"
       ],
-      "@dasch-swiss/vre/shared/app-representations": [
-        "libs/vre/shared/app-representations/src/index.ts"
+      "@dasch-swiss/vre/resource-editor/representations": [
+        "libs/vre/resource-editor/representations/src/index.ts"
       ],
-      "@dasch-swiss/vre/shared/app-resource-page": [
-        "libs/vre/shared/app-resource-page/src/index.ts"
+      "@dasch-swiss/vre/resource-editor/resource-editor": [
+        "libs/vre/resource-editor/resource-editor/src/index.ts"
       ],
-      "@dasch-swiss/vre/shared/app-resource-properties": [
-        "libs/vre/shared/app-resource-properties/src/index.ts"
+      "@dasch-swiss/vre/resource-editor/resource-properties": [
+        "libs/vre/resource-editor/resource-properties/src/index.ts"
       ],
       "@dasch-swiss/vre/shared/app-search": [
         "libs/vre/shared/app-search/src/index.ts"
       ],
-      "@dasch-swiss/vre/shared/app-segment-support": [
-        "libs/vre/shared/app-segment-support/src/index.ts"
+      "@dasch-swiss/vre/resource-editor/segment-support": [
+        "libs/vre/resource-editor/segment-support/src/index.ts"
       ],
       "@dasch-swiss/vre/shared/app-session": [
         "libs/vre/shared/app-session/src/index.ts"

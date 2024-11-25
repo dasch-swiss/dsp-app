@@ -1,0 +1,13 @@
+@use '../../../../../../apps/dsp-app/src/styles/config' as *;
+
+.item {
+  flex: 1;
+
+  &.hover:hover {
+    background: $primary_100;
+  }
+}
+
+:host ::ng-deep .app-progress-indicator {
+  margin: 0 auto !important;
+}

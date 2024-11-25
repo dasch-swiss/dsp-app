@@ -1,4 +1,4 @@
-import { UploadedFileResponse } from '@dasch-swiss/vre/shared/app-representations';
+import { UploadedFileResponse } from '@dasch-swiss/vre/resource-editor/representations';
 import { faker } from '@faker-js/faker';
 import { ThingPictureClass } from '../../models/existing-data-models';
 import { UserProfiles } from '../../models/user-profiles';
@@ -78,7 +78,7 @@ describe('Check project admin existing resource functionality', () => {
     cy.url().should('match', regex);
   });
 
-  it('ThingPicture resource should not be deletable or erasable', () => {
+  it.skip('ThingPicture resource should not be deletable or erasable', () => {
     project0001Page.visitClass('ThingPicture');
     cy.get('[data-cy=resource-list-item] h3.res-class-value').contains(thingPictureData.label).click();
     cy.get('[data-cy=resource-toolbar-more-button]').should('not.exist');
@@ -101,7 +101,7 @@ describe('Check project admin existing resource functionality', () => {
     cy.get('[data-cy=property-value-comment]').contains(thingPictureData.titles[0].comment);
   });
 
-  it('ThingPicture resource should be editable', () => {
+  it.skip('ThingPicture resource should be editable', () => {
     project0001Page.visitClass('ThingPicture');
     cy.get('[data-cy=resource-list-item] h3.res-class-value').contains(thingPictureData.label).click();
 

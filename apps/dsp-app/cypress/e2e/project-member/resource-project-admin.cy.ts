@@ -1,4 +1,4 @@
-import { UploadedFileResponse } from '@dasch-swiss/vre/shared/app-representations';
+import { UploadedFileResponse } from '@dasch-swiss/vre/resource-editor/representations';
 import { faker } from '@faker-js/faker';
 import { ThingPictureClass } from '../../models/existing-data-models';
 import { UserProfiles } from '../../models/user-profiles';
