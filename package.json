@@ -72,7 +72,7 @@
     "ng2-pdf-viewer": "^10.3.4",
     "ngx-color-picker": "^14.0.0",
     "ngx-skeleton-loader": "^7.0.0",
-    "openseadragon": "4.1.0",
+    "openseadragon": "4.1.1",
     "rollbar": "^2.25.0",
     "rxjs": "~6.6.7",
     "ts-md5": "^1.3.1",
