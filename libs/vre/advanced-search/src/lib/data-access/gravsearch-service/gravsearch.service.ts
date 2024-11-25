@@ -8,17 +8,23 @@ import { Operators, OrderByItem, PropertyFormItem } from '../advanced-search-sto
 })
 export class GravsearchService {
   generateGravSearchQuery(
+    ontoIri: string,
+    resourceClasses: string[],
     resourceClassIri: string | undefined,
     properties: PropertyFormItem[],
     orderByList: OrderByItem[]
   ): string {
     // class restriction for the resource searched for
     let restrictToResourceClass = '';
+    const ontoShortCode = ontoIri.match(/\/([^/]+)\/v2$/)![1];
 
     // if given, create the class restriction for the main resource
-    if (resourceClassIri !== undefined) {
-      restrictToResourceClass = `?mainRes a <${resourceClassIri}> .`;
-    }
+    restrictToResourceClass =
+      resourceClassIri !== undefined
+        ? `?mainRes a <${resourceClassIri}> .`
+        : resourceClasses
+            .map(resourceClass => `{ ?mainRes a ${ontoShortCode}:${resourceClass.split('#').pop()} . }`)
+            .join(' UNION ');
 
     const propertyStrings: GravsearchPropertyString[] = properties.map((prop, index) =>
       this._propertyStringHelper(prop, index)
@@ -48,6 +54,7 @@ export class GravsearchService {
 
     const gravSearch =
       'PREFIX knora-api: <http://api.knora.org/ontology/knora-api/v2#>\n' +
+      `PREFIX ${ontoShortCode}: <${ontoIri}#>\n` +
       'CONSTRUCT {\n' +
       '?mainRes knora-api:isMainResource true .\n' +
       `${propertyStrings.map(prop => prop.constructString).join('\n')}\n` +

@@ -657,13 +657,21 @@ export class AdvancedSearchStoreService extends ComponentStore<AdvancedSearchSta
   }
 
   onSearch(): string {
+    const ontoIri = this.get(state => state.ontologies)[0].iri;
     const selectedResourceClass = this.get(state => state.selectedResourceClass);
     const propertyFormList = this.get(state => state.propertyFormList);
     const orderByList = this.get(state => state.propertiesOrderByList);
+    const resourceClasses = this.get(state => state.resourceClasses).map(resClass => resClass.iri);
 
     this._storeSnapshotInLocalStorage();
 
-    return this._gravsearchService.generateGravSearchQuery(selectedResourceClass?.iri, propertyFormList, orderByList);
+    return this._gravsearchService.generateGravSearchQuery(
+      ontoIri,
+      resourceClasses,
+      selectedResourceClass?.iri,
+      propertyFormList,
+      orderByList
+    );
   }
 
   onReset() {
