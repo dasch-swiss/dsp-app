@@ -1,5 +1,27 @@
 # Changelog
 
+## [11.22.2](https://github.com/dasch-swiss/dsp-das/compare/v11.22.1...v11.22.2) (2024-11-25)
+
+
+### Maintenances
+
+* **dependabot:** temporarily change updates interval and remove grouping ([#1906](https://github.com/dasch-swiss/dsp-das/issues/1906)) ([748672b](https://github.com/dasch-swiss/dsp-das/commit/748672bedde0ed0ee07f4090868c843f581c6d91))
+* **deps-dev:** bump @nx/linter from 16.5.3 to 16.10.0 ([#1910](https://github.com/dasch-swiss/dsp-das/issues/1910)) ([9f010e6](https://github.com/dasch-swiss/dsp-das/commit/9f010e606fb3338e328985f718d5552cbe1d5dfd))
+* **deps:** bump @nx/nx-linux-x64-gnu from 16.5.3 to 16.10.0 ([#1913](https://github.com/dasch-swiss/dsp-das/issues/1913)) ([63a48ff](https://github.com/dasch-swiss/dsp-das/commit/63a48ff6f684c1f99cb98c3eb1bdf1b4f2cf6be8))
+* **deps:** bump cookie, engine.io and express ([#1867](https://github.com/dasch-swiss/dsp-das/issues/1867)) ([3ce4f35](https://github.com/dasch-swiss/dsp-das/commit/3ce4f35bc8a659f4b853382f771f32369654a270))
+* **deps:** bump cross-spawn from 7.0.3 to 7.0.6 ([#1895](https://github.com/dasch-swiss/dsp-das/issues/1895)) ([9dc43ce](https://github.com/dasch-swiss/dsp-das/commit/9dc43cec01eba3cef294f83f69116540c3ad4567))
+* **deps:** bump http-proxy-middleware from 2.0.6 to 2.0.7 ([#1870](https://github.com/dasch-swiss/dsp-das/issues/1870)) ([53a0faf](https://github.com/dasch-swiss/dsp-das/commit/53a0faf919e3940a15d64d49ed48b898e1eb7022))
+* **deps:** bump openseadragon from 4.1.0 to 4.1.1 ([#1911](https://github.com/dasch-swiss/dsp-das/issues/1911)) ([3e89b69](https://github.com/dasch-swiss/dsp-das/commit/3e89b6951bacb2a255770c8fc7e1d407ceab023f))
+* **deps:** bump pdfjs-dist and ng2-pdf-viewer ([#1877](https://github.com/dasch-swiss/dsp-das/issues/1877)) ([2c2192d](https://github.com/dasch-swiss/dsp-das/commit/2c2192d712cb95a87a9b4c2bf74339e690370b84))
+* **deps:** bump tslib from 2.7.0 to 2.8.1 ([#1909](https://github.com/dasch-swiss/dsp-das/issues/1909)) ([613e750](https://github.com/dasch-swiss/dsp-das/commit/613e750815e2394c6c4dc0d929a99a886ba245e2))
+* **deps:** bump uuid from 9.0.0 to 9.0.1 ([#1912](https://github.com/dasch-swiss/dsp-das/issues/1912)) ([d0dcc93](https://github.com/dasch-swiss/dsp-das/commit/d0dcc938e06f66edb53e021ee3ba64f898c56d3f))
+* install updated deps ([52e40c0](https://github.com/dasch-swiss/dsp-das/commit/52e40c0bab2ac4f78d31cff3b8af8041588724fe))
+
+
+### Tests
+
+* **e2e:** disable failing admin project resource tests (DEV-2380) ([#1900](https://github.com/dasch-swiss/dsp-das/issues/1900)) ([75554ff](https://github.com/dasch-swiss/dsp-das/commit/75554ff8a13ddade0587c5c905b79c0106699bcc))
+
 ## [11.22.1](https://github.com/dasch-swiss/dsp-das/compare/v11.22.0...v11.22.1) (2024-11-19)
 
 
