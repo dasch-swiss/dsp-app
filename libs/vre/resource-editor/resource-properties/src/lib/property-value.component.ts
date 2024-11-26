@@ -39,7 +39,7 @@ import { propertiesTypeMapping } from './resource-payloads-mapping';
     <app-property-value-action-bubble
       [editMode]="!displayMode"
       *ngIf="!propertyValueService.keepEditMode && showBubble"
-      [date]="propertyValueService._editModeData?.values[index]?.valueCreationDate"
+      [date]="propertyValueService.editModeData?.values[index]?.valueCreationDate"
       [showDelete]="index > 0 || [Cardinality._0_1, Cardinality._0_n].includes(propertyValueService.cardinality)"
       (editAction)="propertyValueService.toggleOpenedValue(index)"
       (deleteAction)="askToDelete()"></app-property-value-action-bubble>
@@ -168,7 +168,7 @@ export class PropertyValueComponent implements OnInit {
       createVal.valueHasComment = this.group.controls.comment.value;
     }
 
-    const resource = this.propertyValueService._editModeData?.resource as ReadResource;
+    const resource = this.propertyValueService.editModeData?.resource as ReadResource;
     const updateRes = new UpdateResource();
     updateRes.id = resource.id;
     updateRes.type = resource.type;
@@ -244,7 +244,7 @@ export class PropertyValueComponent implements OnInit {
 
   private _getUpdatedValue(index: number) {
     const group = this.propertyValueService.formArray.at(index);
-    const values = this.propertyValueService._editModeData?.values as ReadValue[];
+    const values = this.propertyValueService.editModeData?.values as ReadValue[];
     const id = values[index].id;
     const entity = propertiesTypeMapping
       .get(this.propertyValueService.propertyDefinition.objectType!)!
@@ -257,7 +257,7 @@ export class PropertyValueComponent implements OnInit {
 
   private _getPayload(index: number) {
     const updateResource = new UpdateResource<UpdateValue>();
-    const { resource, values } = this.propertyValueService._editModeData as {
+    const { resource, values } = this.propertyValueService.editModeData as {
       resource: ReadResource;
       values: ReadValue[];
     };

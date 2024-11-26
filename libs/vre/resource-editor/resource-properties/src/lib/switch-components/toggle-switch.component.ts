@@ -53,7 +53,7 @@ export class ToggleSwitchComponent implements IsSwitchComponent, OnInit, OnDestr
 
   isCreatingBoolean = false;
   currentlyAdding = this._propertyValueService.currentlyAdding;
-  editModeData = this._propertyValueService._editModeData;
+  editModeData = this._propertyValueService.editModeData;
 
   get formControl() {
     return this.control as FormControl<boolean>;

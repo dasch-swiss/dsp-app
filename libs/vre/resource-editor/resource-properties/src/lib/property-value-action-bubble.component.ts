@@ -78,9 +78,9 @@ export class PropertyValueActionBubbleComponent implements OnInit {
   infoTooltip$!: Observable<string>;
 
   get userHasPermissionToModify() {
-    return !this._propertyValueService._editModeData || this._propertyValueService._editModeData.values.length === 0
+    return !this._propertyValueService.editModeData || this._propertyValueService.editModeData.values.length === 0
       ? false
-      : ResourceUtil.userCanEdit(this._propertyValueService._editModeData.values[0]);
+      : ResourceUtil.userCanEdit(this._propertyValueService.editModeData.values[0]);
   }
 
   constructor(

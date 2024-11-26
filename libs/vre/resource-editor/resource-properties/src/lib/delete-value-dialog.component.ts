@@ -64,9 +64,9 @@ export class DeleteValueDialogComponent implements OnInit {
   }
 
   deleteValue() {
-    const resource = this.propertyValueService._editModeData?.resource as ReadResource;
+    const resource = this.propertyValueService.editModeData?.resource as ReadResource;
 
-    const value = this.propertyValueService._editModeData?.values[this.data.index] as unknown as ReadResource;
+    const value = this.propertyValueService.editModeData?.values[this.data.index] as unknown as ReadResource;
     const deleteVal = new DeleteValue();
     deleteVal.id = value.id;
     deleteVal.type = value.type;
