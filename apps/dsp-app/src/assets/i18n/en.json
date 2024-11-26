@@ -207,7 +207,10 @@
   },
   "resource": {
     "properties": "Properties",
-    "comment": "Comment"
+    "comment": "Comment",
+    "propertyLabels": {
+      "linkedProperty": "Linked resource"
+    }
   },
   "searchPanel": {
     "howToSearch": "How to search",
