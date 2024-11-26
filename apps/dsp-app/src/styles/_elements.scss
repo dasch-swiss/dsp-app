@@ -749,10 +749,48 @@ nav.mat-mdc-tab-nav-bar,
 }
 
 .annotation-tooltip {
+  display: none;
+  position: fixed;
+  background-color: $black-60-opacity;
+  color: $bright;
+  padding: 8px;
+  border-radius: $border-radius;
+  min-height: 24px;
+  max-height: 258px;
+  max-width: 256px;
+  box-sizing: border-box;
+  transition: 0.1s;
+  transform: translate(16px, 16px);
+  font-size: small;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  z-index: 1000;
+
   p {
     white-space: normal;
     text-overflow: ellipsis;
   }
+}
+
+.region {
+  filter: alpha(opacity=40);
+  opacity: 0.4;
+  fill: transparent;
+  stroke: #00695c;
+  stroke-width: 2px;
+}
+
+.region:hover,
+.region:focus {
+  filter: alpha(opacity=100);
+  opacity: 1;
+  cursor: pointer;
+}
+
+.region.active {
+  filter: alpha(opacity=100);
+  opacity: 1;
 }
 
 // --------------------------------------
