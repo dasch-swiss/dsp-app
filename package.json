@@ -99,7 +99,7 @@
     "@nx/jest": "16.5.3",
     "@nx/js": "16.10.0",
     "@nx/linter": "16.10.0",
-    "@nx/workspace": "16.5.3",
+    "@nx/workspace": "16.10.0",
     "@openapitools/openapi-generator-cli": "^2.13.13",
     "@schematics/angular": "^15.2.4",
     "@types/jasmine": "~4.3.1",
