@@ -20,7 +20,6 @@ export interface DeleteResourceDialogProps {
         <textarea
           data-cy="app-delete-resource-dialog-comment"
           matInput
-          class="deletion-comment"
           type="text"
           [(ngModel)]="comment"
           [placeholder]="'Ex. Resource was created by mistake...'"></textarea>

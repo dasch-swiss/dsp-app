@@ -11,13 +11,9 @@
 @use "styles/viewer";
 @use "styles/ontology";
 
-/* TODO(mdc-migration): Remove legacy-core once all legacy components are migrated*/
-@include mat.legacy-core();
 @include mat.core();
 
 // Include all typography configurations for the components (now separate from mat.core())
-/* TODO(mdc-migration): Remove all-legacy-component-typographies once all legacy components are migrated*/
-@include mat.all-legacy-component-typographies();
 @include mat.all-component-typographies(t.$dsp-typography-config);
 
 // Define the color palettes for the theme.
@@ -34,8 +30,6 @@ $theme: mat.define-light-theme((
 ));
 
 // Include all theme styles for the components.
-/* TODO(mdc-migration): Remove all-legacy-component-themes once all legacy components are migrated*/
-@include mat.all-legacy-component-themes($theme);
 @include mat.all-component-themes($theme);
 
 
