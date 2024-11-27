@@ -83,11 +83,10 @@ export class ResourceComponent implements OnChanges {
       .pipe(take(1))
       .subscribe(countQuery => {
         const countQuery_ = countQuery as CountQueryResponse;
-
-        if (countQuery_.numberOfResults > 0) {
-          this.isCompoundNavigation = true;
-          this._cdr.detectChanges();
+        this.isCompoundNavigation = countQuery_.numberOfResults > 0;
+        if (this.isCompoundNavigation) {
           this._compoundService.onInit(new DspCompoundPosition(countQuery_.numberOfResults), this.resource);
+          this._cdr.detectChanges();
         }
       });
   }

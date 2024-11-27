@@ -67,7 +67,7 @@ export class OsdDrawerService implements OnDestroy {
 
         if (showRegions) {
           this._removeOverlays(regions);
-          this._renderRegions();
+          this._renderRegions(regions);
         }
       });
   }
@@ -146,13 +146,13 @@ export class OsdDrawerService implements OnDestroy {
     return Object.keys(this._paintedPolygons).filter(el => !keep.includes(el));
   }
 
-  private _renderRegions() {
+  private _renderRegions(regions: DspResource[]): void {
     let imageXOffset = 0; // see documentation in this.openImages() for the usage of imageXOffset
 
     const stillImage = this.resource.properties[Constants.HasStillImageFileValue][0] as ReadStillImageFileValue;
     const aspectRatio = stillImage.dimY / stillImage.dimX;
 
-    const geometries = StillImageHelper.collectAndSortGeometries(this._regionService.regions, this._paintedPolygons);
+    const geometries = StillImageHelper.collectAndSortGeometries(regions, this._paintedPolygons);
 
     // render all geometries for this page
     for (const geom of geometries) {

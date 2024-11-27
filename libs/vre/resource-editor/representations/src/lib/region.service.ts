@@ -16,10 +16,6 @@ export class RegionService {
   private _regionsSubject = new BehaviorSubject<DspResource[]>([]);
   regions$ = this._regionsSubject.asObservable();
 
-  get regions() {
-    return this._regionsSubject.value;
-  }
-
   private _showRegions = new BehaviorSubject(false);
   showRegions$ = this._showRegions.asObservable();
 

@@ -30,11 +30,11 @@ import { CompoundService } from './compound/compound.service';
       <!-- annotations -->
       <mat-tab label="Annotations" *ngIf="displayAnnotations">
         <ng-template matTabLabel>
-          <span [matBadge]="regionService.regions.length" matBadgeColor="primary" matBadgeOverlap="false">
-            Annotations
+          Annotations
+          <span *ngIf="regionsCount > 0" [matBadge]="regionsCount" matBadgeColor="primary" matBadgeOverlap="false">
           </span>
         </ng-template>
-        <app-annotation-tab *ngIf="regionService.regions$ | async" [resource]="resource" />
+        <app-annotation-tab *ngIf="regionsCount > 0" [resource]="resource" />
       </mat-tab>
 
       <mat-tab label="Segments" *ngIf="segmentsService.segments && segmentsService.segments.length > 0">
@@ -56,6 +56,8 @@ export class ResourceTabsComponent implements OnInit, OnDestroy {
 
   private ngUnsubscribe = new Subject<void>();
 
+  regionsCount = 0;
+
   get displayAnnotations() {
     return this.resource.res.properties[Constants.HasStillImageFileValue] !== undefined || this.incomingResource;
   }
@@ -67,7 +69,8 @@ export class ResourceTabsComponent implements OnInit, OnDestroy {
     public segmentsService: SegmentsService
   ) {}
 
-  resourceClassLabel = (resource: DspResource) => resource.res.entityInfo?.classes[resource.res.type].label;
+  resourceClassLabel = (resource: DspResource | undefined) =>
+    resource?.res.entityInfo?.classes[resource.res.type].label || '';
 
   ngOnInit() {
     this.segmentsService.highlightSegment$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(segment => {
@@ -87,6 +90,11 @@ export class ResourceTabsComponent implements OnInit, OnDestroy {
         this.selectedTab = 2;
         this._cdr.detectChanges();
       }
+    });
+
+    this.regionService.regions$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(regions => {
+      this.regionsCount = regions.length;
+      this._cdr.detectChanges();
     });
   }
 

@@ -24,7 +24,7 @@ import { ResourceFetcherService } from '@dasch-swiss/vre/resource-editor/represe
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
 import { Subscription } from 'rxjs';
-import { finalize, startWith, take, takeWhile, tap } from 'rxjs/operators';
+import { distinctUntilChanged, finalize, startWith, take, takeWhile, tap } from 'rxjs/operators';
 import { DeleteValueDialogComponent, DeleteValueDialogProps } from './delete-value-dialog.component';
 import { PropertyValueService } from './property-value.service';
 import { propertiesTypeMapping } from './resource-payloads-mapping';
@@ -206,7 +206,7 @@ export class PropertyValueComponent implements OnInit {
       this.displayMode = false;
       return;
     }
-    this.propertyValueService.lastOpenedItem$.subscribe(value => {
+    this.propertyValueService.lastOpenedItem$.pipe(distinctUntilChanged()).subscribe(value => {
       if (this.propertyValueService.currentlyAdding && !this.displayMode) {
         this.propertyValueService.formArray.removeAt(this.propertyValueService.formArray.length - 1);
         this.propertyValueService.currentlyAdding = false;
