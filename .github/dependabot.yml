@@ -18,7 +18,7 @@ updates:
     ignore:
       - dependency-name: "*"
         update-types: ["version-update:semver-major"]
-      - dependancy-name: "ckeditor5-custom-build"
+      - dependency-name: "ckeditor5-custom-build"
       # we use  github:dasch-swiss/ckeditor_custom_build#v2.0.0 and v2.0.1 seems to be broken
 
   - package-ecosystem: "docker"
