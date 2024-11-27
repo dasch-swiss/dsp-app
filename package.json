@@ -104,7 +104,7 @@
     "@schematics/angular": "^15.2.4",
     "@types/jasmine": "~4.3.1",
     "@types/jasminewd2": "~2.0.3",
-    "@types/jest": "^29.4.0",
+    "@types/jest": "^29.5.14",
     "@types/jwt-decode": "^3.1.0",
     "@types/node": "^20.17.8",
     "@types/openseadragon": "3.0.0",
