@@ -58,8 +58,8 @@ export class ArchiveComponent implements OnChanges {
     }
   }
 
-  download(url: string) {
-    this._rs.downloadFile(url);
+  download() {
+    this._rs.downloadProjectFile(this.src.fileValue, this.parentResource);
   }
 
   openReplaceFileDialog() {

@@ -76,7 +76,7 @@ export class AudioMoreButtonComponent {
   }
 
   download(url: string) {
-    this._rs.downloadFile(url);
+    this._rs.downloadProjectFile(this.src.fileValue, this.parentResource);
   }
 
   private _replaceFile(file: UpdateFileValue) {

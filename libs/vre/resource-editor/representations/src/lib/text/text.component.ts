@@ -3,7 +3,6 @@ import { MatDialog } from '@angular/material/dialog';
 import {
   Constants,
   KnoraApiConnection,
-  ReadProject,
   ReadResource,
   ReadTextFileValue,
   UpdateFileValue,
@@ -13,6 +12,8 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { ResourceUtil } from '@dasch-swiss/vre/shared/app-common';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
+import { ResourceSelectors } from '@dasch-swiss/vre/shared/app-state';
+import { Store } from '@ngxs/store';
 import { mergeMap } from 'rxjs/operators';
 import { FileRepresentation } from '../file-representation';
 import {
@@ -28,7 +29,6 @@ import { RepresentationService } from '../representation.service';
 })
 export class TextComponent implements OnChanges {
   @Input() src: FileRepresentation;
-  @Input() attachedProject: ReadProject | undefined;
   @Input() parentResource: ReadResource;
 
   originalFilename: string;
@@ -43,7 +43,8 @@ export class TextComponent implements OnChanges {
     @Inject(DspApiConnectionToken)
     private _dspApiConnection: KnoraApiConnection,
     private _dialog: MatDialog,
-    private _rs: RepresentationService
+    private _rs: RepresentationService,
+    private _store: Store
   ) {}
 
   ngOnChanges(): void {
@@ -58,17 +59,21 @@ export class TextComponent implements OnChanges {
   }
 
   download(url: string) {
-    this._rs.downloadFile(url);
+    this._rs.downloadProjectFile(this.src.fileValue, this.parentResource);
   }
 
   openReplaceFileDialog() {
+    const attachedProject = this._rs.getParentResourceAttachedProject(
+      this._store.selectSnapshot(ResourceSelectors.attachedProjects),
+      this.parentResource
+    )!;
     this._dialog
       .open<ReplaceFileDialogComponent, ReplaceFileDialogProps>(ReplaceFileDialogComponent, {
         data: {
           title: 'Text (csv, txt, xml)',
           subtitle: 'Update the text file of this resource',
           representation: Constants.HasTextFileValue,
-          projectUuid: this.attachedProject!.id,
+          projectUuid: attachedProject!.id,
           propId: this.parentResource.properties[Constants.HasTextFileValue][0].id,
         },
       })

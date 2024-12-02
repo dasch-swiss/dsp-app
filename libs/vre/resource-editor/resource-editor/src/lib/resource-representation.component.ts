@@ -2,15 +2,15 @@ import { Component, Input, OnChanges } from '@angular/core';
 import { ReadProject } from '@dasch-swiss/dsp-js';
 import {
   FileRepresentation,
-  getFileValue,
   RepresentationConstants,
   RepresentationService,
+  getFileValue,
 } from '@dasch-swiss/vre/resource-editor/representations';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { ResourceSelectors, UserSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { Store } from '@ngxs/store';
-import { combineLatest, Observable } from 'rxjs';
+import { Observable, combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 @Component({
@@ -62,8 +62,7 @@ import { map } from 'rxjs/operators';
       class="dsp-representation archive"
       *ngSwitchCase="representationConstants.archive"
       [src]="representationToDisplay"
-      [parentResource]="resource.res"
-      [attachedProject]="attachedProject$ | async">
+      [parentResource]="resource.res">
     </app-archive>
 
     <app-text
@@ -71,8 +70,7 @@ import { map } from 'rxjs/operators';
       class="dsp-representation text"
       *ngSwitchCase="representationConstants.text"
       [src]="representationToDisplay"
-      [parentResource]="resource.res"
-      [attachedProject]="attachedProject$ | async">
+      [parentResource]="resource.res">
     </app-text>
   </div>`,
 })

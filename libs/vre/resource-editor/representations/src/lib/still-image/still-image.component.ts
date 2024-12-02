@@ -40,7 +40,6 @@ import { StillImageHelper } from './still-image-helper';
       <app-still-image-toolbar
         *ngIf="isViewInitialized"
         [resource]="resource"
-        [attachedProject]="attachedProject$ | async"
         [compoundMode]="compoundMode"
         [isPng]="isPng"
         (imageIsPng)="afterFormatChange($event)" />

@@ -22,11 +22,7 @@
           <mat-icon>more_vert</mat-icon>
         </button>
         <mat-menu #more="matMenu" class="representation-menu">
-          <button
-            class="menu-content"
-            mat-menu-item
-            (click)="download(src.fileValue.fileUrl)"
-            data-cy="download-file-button">
+          <button class="menu-content" mat-menu-item (click)="download()" data-cy="download-file-button">
             Download file
           </button>
           <button

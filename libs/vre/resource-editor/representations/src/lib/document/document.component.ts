@@ -93,8 +93,8 @@ export class DocumentComponent implements OnChanges {
     }
   }
 
-  download(url: string) {
-    this._rs.downloadFile(url);
+  download(fileValue: ReadDocumentFileValue) {
+    this._rs.downloadProjectFile(fileValue, this.parentResource);
   }
 
   openReplaceFileDialog() {
