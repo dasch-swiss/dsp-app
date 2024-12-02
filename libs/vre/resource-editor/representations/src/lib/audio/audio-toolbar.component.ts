@@ -52,11 +52,14 @@ export class AudioToolbarComponent implements OnInit {
 
   createAudioSegment() {
     this._dialog.open<CreateSegmentDialogComponent, CreateSegmentDialogProps>(CreateSegmentDialogComponent, {
-      ...DspDialogConfig.dialogDrawerConfig({
-        type: 'AudioSegment',
-        resource: this.parentResource,
-        videoDurationSecs: this.mediaPlayer.duration(),
-      }),
+      ...DspDialogConfig.dialogDrawerConfig(
+        {
+          type: 'AudioSegment',
+          resource: this.parentResource,
+          videoDurationSecs: this.mediaPlayer.duration(),
+        },
+        true
+      ),
       viewContainerRef: this._viewContainerRef,
     });
   }
