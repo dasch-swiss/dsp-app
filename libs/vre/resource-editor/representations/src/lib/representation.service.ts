@@ -1,4 +1,4 @@
-import { HttpClient, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import {
   ReadArchiveFileValue,
@@ -95,15 +95,14 @@ export class RepresentationService {
     const withCredentials = isLoggedIn && userCanView;
     if (withCredentials) {
       const authToken = this._accessTokenService.getAccessToken();
-      headers = {
+      headers = new HttpHeaders({
         Authorization: `Bearer ${authToken}`,
-      };
+      });
     }
 
     this._http
       .get(userCanView ? `${url}/original` : url, {
         responseType: 'blob',
-        withCredentials,
         headers,
         observe: 'response',
       })
