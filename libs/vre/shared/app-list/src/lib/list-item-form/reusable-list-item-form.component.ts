@@ -16,7 +16,7 @@ import { ListItemForm } from './list-item-form.type';
       placeholder="Child node description"
       [formArray]="form.controls.comments"
       [validators]="commentsValidators"
-      [isRequired]="true" />
+      [isRequired]="false" />
   `,
 })
 export class ReusableListItemFormComponent implements OnInit {
