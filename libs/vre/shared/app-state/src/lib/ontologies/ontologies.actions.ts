@@ -17,7 +17,7 @@ export class LoadOntologyAction {
   constructor(
     public ontologyIri: string,
     public projectUuid: string,
-    public stopLoadingWhenCompleted: boolean = true
+    public stopLoadingWhenCompleted = true
   ) {}
 }
 

@@ -1,19 +1,9 @@
 {
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
-  "npmScope": "dasch-swiss",
-  "affected": {
-    "defaultBase": "main"
-  },
   "tasksRunnerOptions": {
     "default": {
       "runner": "@nx/workspace/tasks-runners/default",
       "options": {
-        "cacheableOperations": [
-          "build",
-          "lint",
-          "test",
-          "e2e"
-        ],
         "accessToken": "OWE1MmEyMGYtNWZlNC00OTllLWI3NGItZjhiYmMyMTExMWVlfHJlYWQtb25seQ=="
       }
     }
@@ -43,7 +33,8 @@
       "inputs": [
         "production",
         "^production"
-      ]
+      ],
+      "cache": true
     },
     "test": {
       "inputs": [
@@ -51,20 +42,41 @@
         "^production",
         "{workspaceRoot}/karma.conf.js",
         "{workspaceRoot}/jest.preset.js"
-      ]
+      ],
+      "cache": true
     },
     "e2e": {
       "inputs": [
         "default",
         "^production"
-      ]
+      ],
+      "cache": true
     },
-    "lint": {
+    "@nx/jest:jest": {
+      "inputs": [
+        "default",
+        "^production",
+        "{workspaceRoot}/karma.conf.js",
+        "{workspaceRoot}/jest.preset.js"
+      ],
+      "cache": true,
+      "options": {
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
+      }
+    },
+    "@nx/eslint:lint": {
       "inputs": [
         "default",
         "{workspaceRoot}/.eslintrc.json",
         "{workspaceRoot}/.eslintignore"
-      ]
+      ],
+      "cache": true
     }
   },
   "generators": {
@@ -81,5 +93,7 @@
     "@nx/angular:component": {
       "style": "scss"
     }
-  }
+  },
+  "defaultBase": "main",
+  "useInferencePlugins": false
 }

@@ -40,7 +40,7 @@ export class VideoComponent implements OnChanges, OnDestroy {
   video?: SafeUrl;
   videoError?: string;
   timelineDimension?: DOMRect;
-  myCurrentTime: number = 0;
+  myCurrentTime = 0;
   previewTime = 0;
   duration = 0;
   cinemaMode = false;

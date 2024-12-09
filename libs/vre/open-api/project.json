@@ -3,6 +3,6 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/vre/open-api/src",
   "prefix": "dasch-swiss",
-  "tags": [],
-  "projectType": "library"
+  "projectType": "library",
+  "tags": []
 }

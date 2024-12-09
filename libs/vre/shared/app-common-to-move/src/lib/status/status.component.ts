@@ -20,7 +20,7 @@ export interface StatusMsg {
   styleUrls: ['./status.component.scss'],
 })
 export class StatusComponent implements OnInit {
-  _status: number = 404;
+  _status = 404;
   get status(): number {
     return this._status;
   }

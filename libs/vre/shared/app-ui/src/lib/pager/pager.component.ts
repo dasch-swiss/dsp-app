@@ -26,7 +26,7 @@ export class PagerComponent {
 
   static readonly pageSize = 25;
 
-  private _numberOfAllResults: number = 0;
+  private _numberOfAllResults = 0;
 
   PagerComponent = PagerComponent;
 

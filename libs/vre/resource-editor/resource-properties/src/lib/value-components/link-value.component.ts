@@ -91,8 +91,8 @@ export class LinkValueComponent implements OnInit, AfterViewInit, OnDestroy {
   resources: ReadResource[] = [];
   readResource: ReadResource | undefined;
 
-  searchResultCount: number = 0;
-  nextPageNumber: number = 0;
+  searchResultCount = 0;
+  nextPageNumber = 0;
 
   constructor(
     @Inject(DspApiConnectionToken)

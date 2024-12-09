@@ -80,7 +80,7 @@ export class ListViewComponent implements OnChanges, OnInit, OnDestroy {
   resetCheckBoxes = false;
 
   // number of all results including the ones not included as resources in the response bc. the user does not have the permissions to see them
-  numberOfAllResults: number = 0;
+  numberOfAllResults = 0;
 
   // progress status
   loading = true;

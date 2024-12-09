@@ -9,5 +9,5 @@ export class OntologiesStateModel {
   currentOntology: ReadOntology | null = null;
   currentOntologyCanBeDeleted = false;
   currentProjectOntologyProperties: OntologyProperties[] = [];
-  isOntologiesLoading: boolean = false;
+  isOntologiesLoading = false;
 }

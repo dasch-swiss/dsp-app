@@ -12,9 +12,7 @@
   "targets": {
     "build": {
       "executor": "@angular-devkit/build-angular:browser",
-      "outputs": [
-        "{options.outputPath}"
-      ],
+      "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/apps/dsp-app",
         "index": "apps/dsp-app/src/index.html",
@@ -39,15 +37,11 @@
             "output": "/assets/"
           }
         ],
-        "styles": [
-          "apps/dsp-app/src/styles.scss"
-        ],
+        "styles": ["apps/dsp-app/src/styles.scss"],
         "stylePreprocessorOptions": {
           "includePaths": ["apps/dsp-app/src/styles"]
         },
-        "scripts": [
-          "node_modules/openseadragon/build/openseadragon/openseadragon.min.js"
-        ]
+        "scripts": ["node_modules/openseadragon/build/openseadragon/openseadragon.min.js"]
       },
       "configurations": {
         "production": {
@@ -161,48 +155,41 @@
     "serve": {
       "executor": "@angular-devkit/build-angular:dev-server",
       "options": {
-        "browserTarget": "dsp-app:build"
+        "buildTarget": "dsp-app:build"
       },
       "configurations": {
         "development": {
-          "browserTarget": "dsp-app:build:development"
+          "buildTarget": "dsp-app:build:development"
         },
         "production": {
-          "browserTarget": "dsp-app:build:production"
+          "buildTarget": "dsp-app:build:production"
         },
         "dev-server": {
-          "browserTarget": "dsp-app:build:dev-server"
+          "buildTarget": "dsp-app:build:dev-server"
         },
         "test-server": {
-          "browserTarget": "dsp-app:build:test-server"
+          "buildTarget": "dsp-app:build:test-server"
         },
         "ls-test-server": {
-          "browserTarget": "dsp-app:build:ls-test-server"
+          "buildTarget": "dsp-app:build:ls-test-server"
         },
         "0845-test-server": {
-          "browserTarget": "dsp-app:build:ls-test-server"
+          "buildTarget": "dsp-app:build:ls-test-server"
         },
         "stage-server": {
-          "browserTarget": "dsp-app:build:stage-server"
+          "buildTarget": "dsp-app:build:stage-server"
         }
       }
     },
     "extract-i18n": {
       "executor": "@angular-devkit/build-angular:extract-i18n",
       "options": {
-        "browserTarget": "dsp-app:build"
+        "buildTarget": "dsp-app:build"
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "outputs": [
-        "{options.outputFile}"
-      ],
-      "options": {
-        "lintFilePatterns": [
-          "apps/dsp-app/**/*.{ts,html}"
-        ]
-      }
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"]
     },
     "test": {
       "executor": "@angular-devkit/build-angular:karma",
@@ -212,12 +199,8 @@
         "tsConfig": "apps/dsp-app/tsconfig.spec.json",
         "inlineStyleLanguage": "scss",
         "karmaConfig": "apps/dsp-app/karma.conf.js",
-        "styles": [
-          "apps/dsp-app/src/styles.scss"
-        ],
-        "scripts": [
-          "node_modules/openseadragon/build/openseadragon/openseadragon.min.js"
-        ],
+        "styles": ["apps/dsp-app/src/styles.scss"],
+        "scripts": ["node_modules/openseadragon/build/openseadragon/openseadragon.min.js"],
         "assets": [
           "apps/dsp-app/src/favicon.ico",
           "apps/dsp-app/src/config",

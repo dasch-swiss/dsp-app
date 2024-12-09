@@ -1,7 +1,7 @@
 import { MatDialogConfig } from '@angular/material/dialog';
 
 export class DspDialogConfig {
-  static dialogDrawerConfig<T = any>(dialogData?: T, isSideDialog: boolean = false): MatDialogConfig<T> {
+  static dialogDrawerConfig<T = any>(dialogData?: T, isSideDialog = false): MatDialogConfig<T> {
     const dialogConfig = {
       height: 'calc(100vh)',
       minWidth: 600,

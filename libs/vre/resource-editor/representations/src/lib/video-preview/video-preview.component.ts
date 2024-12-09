@@ -216,7 +216,7 @@ export class VideoPreviewComponent implements OnChanges {
       // calculate current line and column number in the matrix and get current frame / preview image position
       const curLineNr: number = Math.floor(curFrameNr / 6);
       const curColNr: number = Math.floor(curFrameNr - curLineNr * 6);
-      const cssParams: string = `-${curColNr * this.frameWidth}px -${curLineNr * this.frameHeight}px`;
+      const cssParams = `-${curColNr * this.frameWidth}px -${curLineNr * this.frameHeight}px`;
 
       this.frame.nativeElement.style['background-image'] = `url(${this.matrix})`;
       this.frame.nativeElement.style['background-position'] = cssParams;

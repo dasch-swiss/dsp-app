@@ -4,6 +4,7 @@
   "projectType": "library",
   "sourceRoot": "libs/jdnconvertiblecalendardateadapter/src",
   "prefix": "dasch-swiss",
+  "tags": [],
   "targets": {
     "build": {
       "executor": "@nx/angular:package",
@@ -37,15 +38,8 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": [
-          "libs/jdnconvertiblecalendardateadapter/**/*.ts",
-          "libs/jdnconvertiblecalendardateadapter/**/*.html"
-        ]
-      }
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"]
     }
-  },
-  "tags": []
+  }
 }

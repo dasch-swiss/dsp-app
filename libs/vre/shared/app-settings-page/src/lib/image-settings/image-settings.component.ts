@@ -37,7 +37,7 @@ export class ImageSettingsComponent implements OnInit {
   currentSettings: ProjectRestrictedViewSettings | RestrictedViewResponse;
   imageSettings: ImageSettingsEnum = ImageSettingsEnum.Off;
   projectUuid = this.route.parent.parent.snapshot.paramMap.get(RouteConstants.uuidParameter);
-  percentage: string = '99';
+  percentage = '99';
   fixedWidth: string;
 
   minMaxInputMask(min: number, max: number) {

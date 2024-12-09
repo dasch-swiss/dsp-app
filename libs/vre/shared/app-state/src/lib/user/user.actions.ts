@@ -44,7 +44,7 @@ export class CreateUserAction {
 
   constructor(
     public userData: User,
-    public enrollToProject: string = ''
+    public enrollToProject = ''
   ) {}
 }
 

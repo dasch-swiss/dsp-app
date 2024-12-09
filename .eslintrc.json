@@ -24,7 +24,8 @@
       ],
       "excludedFiles": [
         "*.spec.ts",
-        "**/test-setup.ts"
+        "**/test-setup.ts",
+        "**/environment*.ts"
       ],
       "extends": [
         "airbnb-base",

@@ -13,7 +13,7 @@ export class PropertiesDisplayIncomingLinkService {
   searchIncomingLinks$ = (resourceId: string, offset: number) =>
     this._incomingService.getIncomingLinksForResource(resourceId, offset);
 
-  getIncomingLinksRecursively$(resourceId: string, offset: number = 0): Observable<IncomingOrStandoffLink[]> {
+  getIncomingLinksRecursively$(resourceId: string, offset = 0): Observable<IncomingOrStandoffLink[]> {
     return this._incomingService.getIncomingLinksForResource(resourceId, offset).pipe(
       expand(sequence => {
         if ((sequence as ReadResourceSequence).mayHaveMoreResults === false) {

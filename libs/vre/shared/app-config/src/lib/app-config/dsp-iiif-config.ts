@@ -19,7 +19,7 @@ export class DspIiifConfig {
     public iiifProtocol: 'http' | 'https',
     public iiifHost: string,
     public iiifPort: number | null = null,
-    public iiifPath: string = ''
+    public iiifPath = ''
   ) {
     // remove port in case it's the default one
     if (iiifProtocol === DspIiifConfig.PROTOCOL_HTTP && iiifPort === DspIiifConfig.DEFAULT_PORT_HTTP) {

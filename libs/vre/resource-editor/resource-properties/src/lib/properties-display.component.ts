@@ -179,7 +179,7 @@ export class PropertiesDisplayComponent implements OnChanges, OnDestroy {
     this.ngUnsubscribe.complete();
   }
 
-  private _setupProperties(offset: number = 0) {
+  private _setupProperties(offset = 0) {
     this.editableProperties = this.properties.filter(prop => (prop.propDef as ResourcePropertyDefinition).isEditable);
 
     this.incomingLinks$.next([]);

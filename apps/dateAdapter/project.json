@@ -15,10 +15,7 @@
         "main": "apps/dateAdapter/src/main.ts",
         "polyfills": "apps/dateAdapter/src/polyfills.ts",
         "tsConfig": "apps/dateAdapter/tsconfig.app.json",
-        "assets": [
-          "apps/dateAdapter/src/favicon.ico",
-          "apps/dateAdapter/src/assets"
-        ],
+        "assets": ["apps/dateAdapter/src/favicon.ico", "apps/dateAdapter/src/assets"],
         "styles": ["apps/dateAdapter/src/styles.scss"],
         "scripts": []
       },
@@ -53,32 +50,26 @@
     "serve": {
       "executor": "@angular-devkit/build-angular:dev-server",
       "options": {
-        "browserTarget": "dateAdapter:build"
+        "buildTarget": "dateAdapter:build"
       },
       "configurations": {
         "development": {
-          "browserTarget": "dateAdapter:build:development"
+          "buildTarget": "dateAdapter:build:development"
         },
         "production": {
-          "browserTarget": "dateAdapter:build:production",
+          "buildTarget": "dateAdapter:build:production"
         }
       }
     },
     "extract-i18n": {
       "executor": "@angular-devkit/build-angular:extract-i18n",
       "options": {
-        "browserTarget": "dateAdapter:build"
+        "buildTarget": "dateAdapter:build"
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": [
-          "apps/dateAdapter/**/*.ts",
-          "apps/dateAdapter/**/*.html"
-        ]
-      }
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"]
     },
     "test": {
       "executor": "@angular-devkit/build-angular:karma",
@@ -89,10 +80,7 @@
         "karmaConfig": "apps/dateAdapter/karma.conf.js",
         "styles": ["apps/dateAdapter/src/styles.scss"],
         "scripts": [],
-        "assets": [
-          "apps/dateAdapter/src/favicon.ico",
-          "apps/dateAdapter/src/assets"
-        ]
+        "assets": ["apps/dateAdapter/src/favicon.ico", "apps/dateAdapter/src/assets"]
       },
       "configurations": {
         "ci": {
