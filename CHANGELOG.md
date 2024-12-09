@@ -1,5 +1,63 @@
 # Changelog
 
+## [11.22.3](https://github.com/dasch-swiss/dsp-das/compare/v11.22.2...v11.22.3) (2024-12-09)
+
+
+### Bug Fixes
+
+* advanced search results for specific project (DEV-4326) ([#1902](https://github.com/dasch-swiss/dsp-das/issues/1902)) ([77365b9](https://github.com/dasch-swiss/dsp-das/commit/77365b9cedaf26eb77975042d33d64c4b8928045))
+* allows to download original asset (DEV-4402) ([#1953](https://github.com/dasch-swiss/dsp-das/issues/1953)) ([517bceb](https://github.com/dasch-swiss/dsp-das/commit/517bcebd1f1dbc45e41218585bdebf02b59d38a2))
+* close edit state of values on save and after resource changes (DEV-4372) ([#1899](https://github.com/dasch-swiss/dsp-das/issues/1899)) ([d16ab47](https://github.com/dasch-swiss/dsp-das/commit/d16ab47cf5f11c9b35f35ccfaa3b47fff7d0e4ee))
+* create resource class default data (DEV-4377) ([#1917](https://github.com/dasch-swiss/dsp-das/issues/1917)) ([a9e092f](https://github.com/dasch-swiss/dsp-das/commit/a9e092ff61f077ea8bf493592730d56cf22d1b73))
+* display compound without incoming resources, i.e. a book without pages (DEV-4171) ([#1928](https://github.com/dasch-swiss/dsp-das/issues/1928)) ([f5dc69a](https://github.com/dasch-swiss/dsp-das/commit/f5dc69a4378eb87bb918edda2bfddd4d883b0840))
+* get the template on changes (DEV-4228) ([#1963](https://github.com/dasch-swiss/dsp-das/issues/1963)) ([8267306](https://github.com/dasch-swiss/dsp-das/commit/82673060f6b9c82c9456ad02e2445b06508aa2ad))
+* linked property label (#DEV-4379) ([#1904](https://github.com/dasch-swiss/dsp-das/issues/1904)) ([6533df3](https://github.com/dasch-swiss/dsp-das/commit/6533df375e2794657b4473b0bcc5f0871f971071))
+* prevents still image component from crashing when image is not p… ([#1971](https://github.com/dasch-swiss/dsp-das/issues/1971)) ([6e4e035](https://github.com/dasch-swiss/dsp-das/commit/6e4e0357c72195d7974412431d8c959a115be3f1))
+* removed withCredentials in representation service ([#1965](https://github.com/dasch-swiss/dsp-das/issues/1965)) ([3b0feab](https://github.com/dasch-swiss/dsp-das/commit/3b0feabd63ea0ec193afcbc4a7981737e209f2ef))
+* reset zoom (DEV-4376) ([#1914](https://github.com/dasch-swiss/dsp-das/issues/1914)) ([6ef3507](https://github.com/dasch-swiss/dsp-das/commit/6ef3507c980cbb231782d88632acfdb7df7a5d20))
+* reusable list item form validation (DEV-4374) ([#1969](https://github.com/dasch-swiss/dsp-das/issues/1969)) ([70dfdc3](https://github.com/dasch-swiss/dsp-das/commit/70dfdc30972e6cb5606446b758d0217336c0cb9f))
+* segment creation dialog is a side dialog ([#1903](https://github.com/dasch-swiss/dsp-das/issues/1903)) ([9c1ebab](https://github.com/dasch-swiss/dsp-das/commit/9c1ebab884613bca5678890f625da019bc75a28d))
+* use correct class and translate the label (DEV-4373) ([#1922](https://github.com/dasch-swiss/dsp-das/issues/1922)) ([b1ae8b0](https://github.com/dasch-swiss/dsp-das/commit/b1ae8b06aff5305e86f1b261a9c73e699e7a7749))
+
+
+### Maintenances
+
+* add 409 error handling ([#1923](https://github.com/dasch-swiss/dsp-das/issues/1923)) ([378ec69](https://github.com/dasch-swiss/dsp-das/commit/378ec6942e709515bc8b76e6f39715417c35d0ee))
+* add ckeditor5-custom-build to dependabot ignored list ([#1930](https://github.com/dasch-swiss/dsp-das/issues/1930)) ([a554717](https://github.com/dasch-swiss/dsp-das/commit/a554717a29ff943241f242f40698a17c12396f99))
+* cleanup legacy and unused (DEV-4368) ([#1891](https://github.com/dasch-swiss/dsp-das/issues/1891)) ([4da6a85](https://github.com/dasch-swiss/dsp-das/commit/4da6a85d5cbb9e5e97dead4411f9c1e12109a5c7))
+* **deps-dev:** bump @angular-eslint/eslint-plugin from 17.2.1 to 17.5.3 ([#1939](https://github.com/dasch-swiss/dsp-das/issues/1939)) ([6f19a6e](https://github.com/dasch-swiss/dsp-das/commit/6f19a6edc52fdcb81ab216c0e1c4e81e45356e94))
+* **deps-dev:** bump @angular-eslint/eslint-plugin-template from 16.0.2 to 16.3.1 ([#1937](https://github.com/dasch-swiss/dsp-das/issues/1937)) ([dd4417c](https://github.com/dasch-swiss/dsp-das/commit/dd4417cd2b3ae4ff95a5afd82869dfe7cf9f3951))
+* **deps-dev:** bump @angular-eslint/template-parser from 16.0.2 to 16.3.1 ([#1933](https://github.com/dasch-swiss/dsp-das/issues/1933)) ([8ef7604](https://github.com/dasch-swiss/dsp-das/commit/8ef760463541f2b6c94b4e4a1e9c6838f5e0fa00))
+* **deps-dev:** bump @angular/cli from 16.1.4 to 16.2.16 ([#1936](https://github.com/dasch-swiss/dsp-das/issues/1936)) ([51e4617](https://github.com/dasch-swiss/dsp-das/commit/51e461706af44bd03067761714642446bd4ca7ed))
+* **deps-dev:** bump @nx/js from 16.5.3 to 16.10.0 ([#1927](https://github.com/dasch-swiss/dsp-das/issues/1927)) ([d52786c](https://github.com/dasch-swiss/dsp-das/commit/d52786cd6c7bc915aac4463ff1460939bac38f08))
+* **deps-dev:** bump @nx/workspace from 16.5.3 to 16.10.0 ([#1934](https://github.com/dasch-swiss/dsp-das/issues/1934)) ([b0900ec](https://github.com/dasch-swiss/dsp-das/commit/b0900ec2787934df29b1e15e8eb26987e16127a7))
+* **deps-dev:** bump @openapitools/openapi-generator-cli from 2.13.13 to 2.15.3 ([#1957](https://github.com/dasch-swiss/dsp-das/issues/1957)) ([7c04fd7](https://github.com/dasch-swiss/dsp-das/commit/7c04fd77104fc46507a6436630db41ac564051fa))
+* **deps-dev:** bump @types/jasmine from 4.3.6 to 4.6.4 ([#1943](https://github.com/dasch-swiss/dsp-das/issues/1943)) ([9600970](https://github.com/dasch-swiss/dsp-das/commit/96009702c723205c28616c87dbf2ca25907c5153))
+* **deps-dev:** bump @types/jest from 29.5.13 to 29.5.14 ([#1938](https://github.com/dasch-swiss/dsp-das/issues/1938)) ([300d75a](https://github.com/dasch-swiss/dsp-das/commit/300d75a0d6f835572335b1e222c4894bf0b248ee))
+* **deps-dev:** bump @types/node from 20.16.10 to 20.17.8 ([#1924](https://github.com/dasch-swiss/dsp-das/issues/1924)) ([414c492](https://github.com/dasch-swiss/dsp-das/commit/414c492d74a0267bf6c477da3468352fd2c7e553))
+* **deps-dev:** bump @types/node from 20.17.8 to 20.17.9 ([#1955](https://github.com/dasch-swiss/dsp-das/issues/1955)) ([f6cf8d6](https://github.com/dasch-swiss/dsp-das/commit/f6cf8d644ae41c71fccfcb6e815562c549c66570))
+* **deps-dev:** bump jest-preset-angular from 13.1.1 to 13.1.6 ([#1949](https://github.com/dasch-swiss/dsp-das/issues/1949)) ([c2b4459](https://github.com/dasch-swiss/dsp-das/commit/c2b4459e46626c2cf6d2aaa3b55d734ca3ba647d))
+* **deps-dev:** bump ng-mocks from 14.11.0 to 14.13.1 ([#1920](https://github.com/dasch-swiss/dsp-das/issues/1920)) ([d3369da](https://github.com/dasch-swiss/dsp-das/commit/d3369da2b37ac2293973e99721579b921f7e528e))
+* **deps-dev:** bump ng-packagr from 16.1.0 to 16.2.3 ([#1946](https://github.com/dasch-swiss/dsp-das/issues/1946)) ([49c851a](https://github.com/dasch-swiss/dsp-das/commit/49c851a807f13e5bc8ff12f87a8294970c5827d3))
+* **deps-dev:** bump postcss from 8.4.47 to 8.4.49 ([#1944](https://github.com/dasch-swiss/dsp-das/issues/1944)) ([23cc6f0](https://github.com/dasch-swiss/dsp-das/commit/23cc6f0095aec69d9a86465ce097678f44776b61))
+* **deps-dev:** bump postcss-preset-env from 8.3.3 to 8.5.1 ([#1921](https://github.com/dasch-swiss/dsp-das/issues/1921)) ([37f3565](https://github.com/dasch-swiss/dsp-das/commit/37f3565e07df6635724c92992bd1fac95e7176af))
+* **deps-dev:** bump prettier from 3.3.3 to 3.4.1 ([#1932](https://github.com/dasch-swiss/dsp-das/issues/1932)) ([e0b462e](https://github.com/dasch-swiss/dsp-das/commit/e0b462ebf39fe0a910c173873a8353c887733d80))
+* **deps-dev:** bump prettier from 3.4.1 to 3.4.2 ([#1966](https://github.com/dasch-swiss/dsp-das/issues/1966)) ([df878be](https://github.com/dasch-swiss/dsp-das/commit/df878be848684c5d54c97fb5062b152d135af613))
+* **deps-dev:** bump ts-jest from 29.1.0 to 29.2.5 ([#1918](https://github.com/dasch-swiss/dsp-das/issues/1918)) ([401d2d8](https://github.com/dasch-swiss/dsp-das/commit/401d2d84c03ad878ac3a49bc7a703659f0ef0ff5))
+* **deps:** bump @grafana/faro-web-sdk from 1.10.2 to 1.12.2 ([#1945](https://github.com/dasch-swiss/dsp-das/issues/1945)) ([c9bc08b](https://github.com/dasch-swiss/dsp-das/commit/c9bc08bdd1e50f80df1f85d9fdf4988ab247ea0a))
+* **deps:** bump @grafana/faro-web-tracing from 1.10.2 to 1.12.2 ([#1947](https://github.com/dasch-swiss/dsp-das/issues/1947)) ([8ad589e](https://github.com/dasch-swiss/dsp-das/commit/8ad589eb96b8e5bed011811d8474eefa00c3b122))
+* **deps:** bump @nx/angular from 16.5.3 to 16.10.0 ([#1941](https://github.com/dasch-swiss/dsp-das/issues/1941)) ([09c7019](https://github.com/dasch-swiss/dsp-das/commit/09c70198d242e5a08f4b50d7c34c84151a97d7e4))
+* **deps:** bump @nx/nx-darwin-arm64 from 16.5.3 to 16.10.0 ([#1940](https://github.com/dasch-swiss/dsp-das/issues/1940)) ([b09e8c9](https://github.com/dasch-swiss/dsp-das/commit/b09e8c95ac2fa82c41f778bb169b969f591d40e3))
+* **deps:** bump @nx/nx-darwin-x64 from 16.5.3 to 16.10.0 ([#1935](https://github.com/dasch-swiss/dsp-das/issues/1935)) ([ac7060a](https://github.com/dasch-swiss/dsp-das/commit/ac7060a71cf8e2cdb9395f01d9224b51c8d73e65))
+* **deps:** bump @nx/nx-win32-x64-msvc from 16.5.3 to 16.10.0 ([#1926](https://github.com/dasch-swiss/dsp-das/issues/1926)) ([e1ce838](https://github.com/dasch-swiss/dsp-das/commit/e1ce838c09b1cc75b95e6b95a4b11279e39dab62))
+* **deps:** bump @sentry/angular-ivy from 7.119.1 to 7.120.0 ([#1948](https://github.com/dasch-swiss/dsp-das/issues/1948)) ([3985c4a](https://github.com/dasch-swiss/dsp-das/commit/3985c4a104b87231f6570c1223fc5e1fe4ae11f7))
+* **deps:** bump @sentry/cli from 2.36.6 to 2.39.1 ([#1931](https://github.com/dasch-swiss/dsp-das/issues/1931)) ([b0b8e6b](https://github.com/dasch-swiss/dsp-das/commit/b0b8e6b750d2ba120501c36d93e07b58bf59a073))
+* **deps:** bump core-js from 3.38.1 to 3.39.0 ([#1919](https://github.com/dasch-swiss/dsp-das/issues/1919)) ([a6bcc8f](https://github.com/dasch-swiss/dsp-das/commit/a6bcc8fadf9eba53225ac7b27c86e40c94e1d2ee))
+* move styles to elements, remove usage of ngdeep (DEV-4378) ([#1907](https://github.com/dasch-swiss/dsp-das/issues/1907)) ([6150bbd](https://github.com/dasch-swiss/dsp-das/commit/6150bbd5d041f95ed2e292caf6be02aaf3ba5b3b))
+* regroup resource editor nx libs ([#1916](https://github.com/dasch-swiss/dsp-das/issues/1916)) ([243da18](https://github.com/dasch-swiss/dsp-das/commit/243da18d605d92df8621bb4ef25a1c1c29484162))
+* update eslint to v18.4.2 ([#1950](https://github.com/dasch-swiss/dsp-das/issues/1950)) ([a1bddb0](https://github.com/dasch-swiss/dsp-das/commit/a1bddb01163e394eb6bc429fb73e873a5ad04a5b))
+* update nx to v18.2.0 and angular to v17.3.0 (DEV-4406) ([#1952](https://github.com/dasch-swiss/dsp-das/issues/1952)) ([1718fb0](https://github.com/dasch-swiss/dsp-das/commit/1718fb0a767adf53d39661c690d1606c6ea0a970))
+
 ## [11.22.2](https://github.com/dasch-swiss/dsp-das/compare/v11.22.1...v11.22.2) (2024-11-25)
 
 
