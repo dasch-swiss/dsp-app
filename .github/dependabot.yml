@@ -11,6 +11,12 @@ updates:
     commit-message:
       prefix: "chore"
       include: "scope"
+    groups:
+      nx-deps:
+        applies-to: version-updates
+        patterns:
+          - "@nx/*"
+          - "@nrwl/*"
 #    groups:
 #       frontend-dependencies:
 #          applies-to: version-updates
