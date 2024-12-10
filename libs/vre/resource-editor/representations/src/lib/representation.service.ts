@@ -88,12 +88,10 @@ export class RepresentationService {
     const ingestFileUrl = this.getIngestFileUrl(attachedProject.shortcode, assetId);
     this.downloadFile(ingestFileUrl, this.userCanView(fileValue));
   }
-
   private downloadFile(url: string, userCanView = true) {
     let headers = {};
     const isLoggedIn = this._store.selectSnapshot(UserSelectors.isLoggedIn);
-    const withCredentials = isLoggedIn && userCanView;
-    if (withCredentials) {
+    if (isLoggedIn && userCanView) {
       const authToken = this._accessTokenService.getAccessToken();
       headers = new HttpHeaders({
         Authorization: `Bearer ${authToken}`,
@@ -109,10 +107,23 @@ export class RepresentationService {
       .pipe(take(1))
       .subscribe((res: HttpResponse<Blob>) => {
         const contentDisposition = res.headers.get('content-disposition');
-        const fileNameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
-        const matches = fileNameRegex.exec(contentDisposition || '');
-        const fileName =
-          contentDisposition && matches != null && matches[1] ? matches[1].replace(/['"]/g, '') : url.split('/').pop()!;
+        let fileName: string | null = null;
+        if (contentDisposition) {
+          const fileNameRegex = /filename\*=(?:([a-zA-Z0-9-]+)''([^;'\n]*))|filename=([^;'\n]*)/;
+          const matches = fileNameRegex.exec(contentDisposition);
+          fileName =
+            matches && matches[2]
+              ? decodeURIComponent(matches[2].replace(/\+/g, ' '))
+              : matches && matches[3]
+                ? matches[3].replace(/['"]/g, '').replace(/\+/g, ' ')
+                : null;
+        }
+
+        // Fallback to extracting filename from URL if not found
+        if (!fileName) {
+          fileName = url.split('/').pop()!;
+        }
+
         const a = document.createElement('a');
         a.href = window.URL.createObjectURL(res.body!);
         a.download = fileName;
