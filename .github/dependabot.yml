@@ -12,11 +12,22 @@ updates:
       prefix: "chore"
       include: "scope"
     groups:
+      angular-deps:
+        applies-to: version-updates
+        patterns:
+          - "@angular*"
+        update-types:
+          - "minor"
+          - "patch"
       nx-deps:
         applies-to: version-updates
         patterns:
-          - "@nx/*"
-          - "@nrwl/*"
+          - "nx*"
+          - "@nx*"
+          - "@nrwl*"
+        update-types:
+          - "minor"
+          - "patch"
 #    groups:
 #       frontend-dependencies:
 #          applies-to: version-updates
@@ -25,8 +36,11 @@ updates:
     ignore:
       - dependency-name: "*"
         update-types: ["version-update:semver-major"]
+      # we use github:dasch-swiss/ckeditor_custom_build#v2.0.0 and v2.0.1 seems to be broken
       - dependency-name: "ckeditor5-custom-build"
-      # we use  github:dasch-swiss/ckeditor_custom_build#v2.0.0 and v2.0.1 seems to be broken
+      # all nx and angular dependencies are for now handled manually, so for now are ignored
+      - dependency-name: "@angular/*"
+      - dependency-name: "nx*"
 
   - package-ecosystem: "docker"
     directory: "/"
