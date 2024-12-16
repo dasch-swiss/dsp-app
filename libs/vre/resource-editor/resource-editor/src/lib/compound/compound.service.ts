@@ -16,8 +16,8 @@ import { BehaviorSubject } from 'rxjs';
 export class CompoundService {
   compoundPosition!: DspCompoundPosition;
 
-  private _incomingResource = new BehaviorSubject<DspResource | undefined>(undefined);
-  incomingResource$ = this._incomingResource.asObservable();
+  incomingResource = new BehaviorSubject<DspResource | undefined>(undefined);
+  incomingResource$ = this.incomingResource.asObservable();
 
   private _resource!: DspResource;
 
@@ -48,7 +48,7 @@ export class CompoundService {
         const incomingImageRepresentations = res as ReadResourceSequence;
 
         if (incomingImageRepresentations.resources.length === 0) {
-          this._incomingResource.next(undefined);
+          this.incomingResource.next(undefined);
           return;
         }
         this._resource.incomingRepresentations = incomingImageRepresentations.resources;
@@ -75,7 +75,7 @@ export class CompoundService {
   }
 
   private _reloadViewer(resource: DspResource) {
-    this._incomingResource.next(resource);
+    this.incomingResource.next(resource);
     this._cd.detectChanges();
   }
 }

@@ -87,6 +87,8 @@ export class ResourceComponent implements OnChanges {
         if (this.isCompoundNavigation) {
           this._compoundService.onInit(new DspCompoundPosition(countQuery_.numberOfResults), this.resource);
           this._cdr.detectChanges();
+        } else {
+          this._compoundService.incomingResource.next(undefined);
         }
       });
   }
