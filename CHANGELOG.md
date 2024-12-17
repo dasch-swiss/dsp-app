@@ -1,5 +1,22 @@
 # Changelog
 
+## [11.22.4](https://github.com/dasch-swiss/dsp-das/compare/v11.22.3...v11.22.4) (2024-12-17)
+
+
+### Bug Fixes
+
+* file name decoding from response headers (DEV-4401) ([#1996](https://github.com/dasch-swiss/dsp-das/issues/1996)) ([07b003f](https://github.com/dasch-swiss/dsp-das/commit/07b003f7e6f6c29253bf6bb340b67e3b07354af3))
+* project linting (DEV-4446) ([#1973](https://github.com/dasch-swiss/dsp-das/issues/1973)) ([9b2cbb5](https://github.com/dasch-swiss/dsp-das/commit/9b2cbb56402429ab09e9b84d89e9f88b6e24a5e8))
+* save and replace external IIIF image (DEV-4227) ([#2013](https://github.com/dasch-swiss/dsp-das/issues/2013)) ([e844083](https://github.com/dasch-swiss/dsp-das/commit/e8440838d8ebb28480ecb24cd1f540fccf2ab264))
+* update annotations tab when switching to a compound without page (DEV-4171) ([#1997](https://github.com/dasch-swiss/dsp-das/issues/1997)) ([1f1b80a](https://github.com/dasch-swiss/dsp-das/commit/1f1b80a93e4e113f3a75b11c0586b93be4a08b98))
+
+
+### Maintenances
+
+* improve Dependabot rules and grouping ([#2003](https://github.com/dasch-swiss/dsp-das/issues/2003)) ([790f74b](https://github.com/dasch-swiss/dsp-das/commit/790f74b8a519b3329c18feade58428f7f033d66d))
+* update DaSCH address (DEV-4440) ([#2008](https://github.com/dasch-swiss/dsp-das/issues/2008)) ([8428d77](https://github.com/dasch-swiss/dsp-das/commit/8428d77177408d6138bf85637dd0b61b18f511e0))
+* update nx to v19.0.8 ([#1983](https://github.com/dasch-swiss/dsp-das/issues/1983)) ([ffecefd](https://github.com/dasch-swiss/dsp-das/commit/ffecefd24036d6057183d2e69c29b8caa380b74e))
+
 ## [11.22.3](https://github.com/dasch-swiss/dsp-das/compare/v11.22.2...v11.22.3) (2024-12-09)
 
 
