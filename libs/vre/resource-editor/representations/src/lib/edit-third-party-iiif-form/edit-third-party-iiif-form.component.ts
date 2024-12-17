@@ -1,7 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { ThirdPartyIiifProps, ThirdPartyIiiifForm } from './edit-third-party-iiif-types';
 
 @Component({
@@ -23,6 +22,7 @@ export class EditThirdPartyIiifFormComponent {
 
   submitData() {
     this.loading = true;
+    delete (this.thirdPartyIiifForm.value.fileValue as any)?.filename;
     this.dialogRef.close(this.thirdPartyIiifForm.value.fileValue);
   }
 }

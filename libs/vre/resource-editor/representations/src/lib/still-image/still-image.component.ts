@@ -121,7 +121,7 @@ export class StillImageComponent implements OnChanges, AfterViewInit, OnDestroy 
   private _openExternal3iFImage(image: ReadStillImageExternalFileValue) {
     const i3f = IIIFUrl.createUrl(image.externalUrl);
     if (!i3f) {
-      throw new AppError('Error with IIIF URL');
+      throw new AppError("Can't open external IIIF URL");
     }
 
     this.osdService.viewer.open(i3f.infoJsonUrl);

@@ -101,7 +101,9 @@ export class ThirdPartyIiifComponent implements ControlValueAccessor, OnInit, On
       updateValue.id = this._initialFileValue.id;
       return updateValue;
     } else {
-      return new CreateStillImageExternalFileValue();
+      const fileValue = new CreateStillImageExternalFileValue();
+      delete (fileValue as any).filename;
+      return fileValue;
     }
   }
 
