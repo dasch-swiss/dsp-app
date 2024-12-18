@@ -16,6 +16,48 @@ updates:
         applies-to: version-updates
         patterns:
           - "@angular*"
+          - "@ngrx/component-store"
+        update-types:
+          - "minor"
+          - "patch"
+      # eslint-deps: TODO: configure once the eslint issue is sorted out
+      grafana-deps:
+        applies-to: version-updates
+        patterns:
+          - "@grafana/*"
+        update-types:
+          - "minor"
+          - "patch"
+      jasmine-karma-deps:
+        applies-to: version-updates
+        patterns:
+          - "karma*"
+          - "jasmine*"
+          - "@types/jasmine*"
+        update-types:
+          - "minor"
+          - "patch"
+      jest-deps:
+        applies-to: version-updates
+        patterns:
+          - "jest*"
+          - "ts-jest"
+          - "@types/jest"
+        update-types:
+          - "minor"
+          - "patch"
+      jwt-decoder-deps:
+        applies-to: version-updates
+        patterns:
+          - "jwt-decode"
+          - "@types/jwt-decode"
+        update-types:
+          - "minor"
+          - "patch"
+      ngxs-deps:
+        applies-to: version-updates
+        patterns:
+          - "@ngxs/*"
         update-types:
           - "minor"
           - "patch"
@@ -28,19 +70,44 @@ updates:
         update-types:
           - "minor"
           - "patch"
-#    groups:
-#       frontend-dependencies:
-#          applies-to: version-updates
-#          patterns:
-#            - "*"
+      postcss-deps:
+        applies-to: version-updates
+        patterns:
+          - "postcss*"
+        update-types:
+          - "minor"
+          - "patch"
+      sentry-deps:
+        applies-to: version-updates
+        patterns:
+          - "@sentry/*"
+        update-types:
+          - "minor"
+          - "patch"
+      types-deps:
+        applies-to: version-updates
+        patterns:
+          - "@types/*"
+        update-types:
+          - "minor"
+          - "patch"
+        exclude-patterns:
+          - "@types/jest"
+          - "@types/jasmine*"
+          - "@types/jwt-decode"
     ignore:
       - dependency-name: "*"
         update-types: ["version-update:semver-major"]
       # we use github:dasch-swiss/ckeditor_custom_build#v2.0.0 and v2.0.1 seems to be broken
       - dependency-name: "ckeditor5-custom-build"
-      # all nx and angular dependencies are for now handled manually, so for now are ignored
+      # all nx and angular dependencies are for now handled manually
       - dependency-name: "@angular/*"
+      - dependency-name: "@angular*" # TODO: for eslint - to remove once eslint issue is sorted out
+      - dependency-name: "typescript"
+      - dependency-name: "@ngrx/component-store"
       - dependency-name: "nx*"
+      - dependency-name: "@nx*"
+      - dependency-name: "@nrwl/*"
 
   - package-ecosystem: "docker"
     directory: "/"
