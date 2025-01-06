@@ -17,4 +17,5 @@ export const osdViewerConfig: OpenSeadragon.Options = {
     flickEnabled: true, // perform a flick gesture to drag image
   },
   visibilityRatio: 1.0, // viewers focus limited to the image borders; no more cutting the image on zooming out
+  crossOriginPolicy: 'Anonymous',
 };
