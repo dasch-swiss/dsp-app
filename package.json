@@ -87,7 +87,7 @@
     "@angular-devkit/schematics": "^17.3.0",
     "@angular-eslint/eslint-plugin": "^19.0.1",
     "@angular-eslint/eslint-plugin-template": "^19.0.1",
-    "@typescript-eslint/utils": "^8.19.0",
+    "@typescript-eslint/utils": "^8.19.1",
     "@angular-eslint/template-parser": "^19.0.1",
     "@angular/cli": "~17.3.0",
     "@angular/compiler-cli": "17.3.0",
