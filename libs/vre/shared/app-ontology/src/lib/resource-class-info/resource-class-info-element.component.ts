@@ -79,6 +79,7 @@ import { map, takeUntil } from 'rxjs/operators';
 
       .hide-on-hover {
         color: black;
+        font-size: 14pt;
       }
     `,
   ],
