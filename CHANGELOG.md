@@ -1,5 +1,31 @@
 # Changelog
 
+## [11.22.5](https://github.com/dasch-swiss/dsp-das/compare/v11.22.4...v11.22.5) (2025-01-10)
+
+
+### Bug Fixes
+
+* CORS for external resources in OSD viewer (dev-4482) ([#2022](https://github.com/dasch-swiss/dsp-das/issues/2022)) ([1ec12e1](https://github.com/dasch-swiss/dsp-das/commit/1ec12e1d3b9decf7a84bd8c529d60375582b268a))
+* make ontology class list numbers smaller (DEV -4444) ([#2031](https://github.com/dasch-swiss/dsp-das/issues/2031)) ([1df4483](https://github.com/dasch-swiss/dsp-das/commit/1df448399d679d6d48d4ae2cf046df538058fb9f))
+* update Google Maps pin to properly show new location (DEV-4483) ([#2029](https://github.com/dasch-swiss/dsp-das/issues/2029)) ([081ec22](https://github.com/dasch-swiss/dsp-das/commit/081ec22751fcc14ba28ad737948b3935fe81ce38))
+
+
+### Maintenances
+
+* decrease Dependabot PRs number and interval ([#2030](https://github.com/dasch-swiss/dsp-das/issues/2030)) ([8126503](https://github.com/dasch-swiss/dsp-das/commit/81265031d6c9e06db6904901572f69fa006b153e))
+* **deps-dev:** bump @types/node from 20.17.10 to 20.17.11 in the types-deps group ([#2020](https://github.com/dasch-swiss/dsp-das/issues/2020)) ([672beca](https://github.com/dasch-swiss/dsp-das/commit/672becae58455c3c58d29e8bfa1bf92cd94ad438))
+* **deps-dev:** bump @types/node from 20.17.11 to 20.17.12 in the types-deps group ([#2023](https://github.com/dasch-swiss/dsp-das/issues/2023)) ([ced7ead](https://github.com/dasch-swiss/dsp-das/commit/ced7eadce1637e242692985ae22b8cef0933b36d))
+* **deps-dev:** bump @types/node from 20.17.9 to 20.17.10 ([#2005](https://github.com/dasch-swiss/dsp-das/issues/2005)) ([2688f85](https://github.com/dasch-swiss/dsp-das/commit/2688f85742d53d39e9a930fe31fde9f82a9993c9))
+* **deps-dev:** bump @typescript-eslint/utils from 8.17.0 to 8.19.0 ([#2019](https://github.com/dasch-swiss/dsp-das/issues/2019)) ([3443738](https://github.com/dasch-swiss/dsp-das/commit/34437386ab16625f9876068281b55387ace1ba21))
+* **deps-dev:** bump @typescript-eslint/utils from 8.19.0 to 8.19.1 ([#2026](https://github.com/dasch-swiss/dsp-das/issues/2026)) ([3090641](https://github.com/dasch-swiss/dsp-das/commit/30906414c349b4a6541fe2057eff3ee060ffe266))
+* **deps-dev:** bump cypress from 13.16.1 to 13.17.0 ([#2017](https://github.com/dasch-swiss/dsp-das/issues/2017)) ([3b6a31e](https://github.com/dasch-swiss/dsp-das/commit/3b6a31ecf7b74fc86f6202ad369fa96f84bcf1f3))
+* **deps-dev:** bump karma-chrome-launcher from 3.1.1 to 3.2.0 in the jasmine-karma-deps group ([#2016](https://github.com/dasch-swiss/dsp-das/issues/2016)) ([a7aed40](https://github.com/dasch-swiss/dsp-das/commit/a7aed4007df9998f252c8e11760c09c8f9139a4b))
+* **deps:** bump @sentry/angular-ivy from 7.120.1 to 7.120.2 ([#2009](https://github.com/dasch-swiss/dsp-das/issues/2009)) ([d5bade4](https://github.com/dasch-swiss/dsp-das/commit/d5bade476e8a2fe2b2c5867b82a77a99256a38ed))
+* **deps:** bump @sentry/cli from 2.39.1 to 2.40.0 in the sentry-deps group ([#2021](https://github.com/dasch-swiss/dsp-das/issues/2021)) ([c375c21](https://github.com/dasch-swiss/dsp-das/commit/c375c21d7017d9721be4cf0c9f6f232427a5d2f5))
+* **deps:** bump core-js from 3.39.0 to 3.40.0 ([#2028](https://github.com/dasch-swiss/dsp-das/issues/2028)) ([0c5e980](https://github.com/dasch-swiss/dsp-das/commit/0c5e98019aa6fc820893a401118d0e13c331e960))
+* **deps:** bump zod from 3.23.8 to 3.24.1 ([#2002](https://github.com/dasch-swiss/dsp-das/issues/2002)) ([6743623](https://github.com/dasch-swiss/dsp-das/commit/6743623187821e90cd350dfb50b96930107da731))
+* divide packages into Dependabot groups ([#2007](https://github.com/dasch-swiss/dsp-das/issues/2007)) ([3d75fab](https://github.com/dasch-swiss/dsp-das/commit/3d75faba2d7a50ca824d1628953b6a6c75bf1182))
+
 ## [11.22.4](https://github.com/dasch-swiss/dsp-das/compare/v11.22.3...v11.22.4) (2024-12-17)
 
 
