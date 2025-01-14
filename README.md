@@ -4,11 +4,14 @@
 [![Docker](https://img.shields.io/docker/v/daschswiss/dsp-app?label=Docker%20image)](https://hub.docker.com/r/daschswiss/dsp-app)
 [![CI](https://github.com/dasch-swiss/dsp-das/workflows/CI/badge.svg)](https://github.com/dasch-swiss/dsp-das/actions?query=workflow%3ACI)
 
-This monorepo hosts various applications and libraries of the DaSCH Service Platform.
+This monorepo hosts various libraries of the DaSCH Service Platform and it is built on:
+- Nx `v19.0.8`,
+- Angular `v17.3.0`,
+- Node.js `v20.9.0`.
 
 # Install libraries
 
-To install libraries just run ```npm install```.
+To install all libraries and external dependencies just run `npm install`.
 
 ## @dasch-swiss librairies
 
@@ -50,6 +53,8 @@ $ npx nx run dsp-app:serve
 ```
 
 ## Developer Quickstart
+
+It is recommended to use `Node.js` version which [is supported by installed Angular version](https://angular.dev/reference/versions).
 
 The monorepo is implemented using [NX](https://nx.dev).
 

@@ -20,7 +20,17 @@ updates:
         update-types:
           - "minor"
           - "patch"
-      # eslint-deps: TODO: configure once the eslint issue is sorted out
+      eslint-deps:
+        applies-to: version-updates
+        patterns:
+          - "eslint"
+        exclude-patterns:
+          - "@angular-eslint/*"
+          - "@nx/eslint/*"
+          - "@nrwl/eslint*"
+        update-types:
+          - "minor"
+          - "patch"
       grafana-deps:
         applies-to: version-updates
         patterns:
@@ -102,7 +112,7 @@ updates:
       - dependency-name: "ckeditor5-custom-build"
       # all nx and angular dependencies are for now handled manually
       - dependency-name: "@angular/*"
-      - dependency-name: "@angular*" # TODO: for eslint - to remove once eslint issue is sorted out
+      - dependency-name: "@angular-eslint/*" #angular-eslint should match the angular version, also handled manually
       - dependency-name: "typescript"
       - dependency-name: "@ngrx/component-store"
       - dependency-name: "nx*"
