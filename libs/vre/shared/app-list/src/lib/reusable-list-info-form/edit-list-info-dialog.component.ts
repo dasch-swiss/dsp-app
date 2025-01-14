@@ -1,9 +1,9 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ListNodeInfo, StringLiteral, UpdateListInfoRequest } from '@dasch-swiss/dsp-js';
-import { ListApiService } from '@dasch-swiss/vre/shared/app-api';
+import { ListApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { LoadListsInProjectAction } from '@dasch-swiss/vre/shared/app-state';
-import { MultiLanguages } from '@dasch-swiss/vre/shared/app-string-literal';
+import { MultiLanguages } from '@dasch-swiss/vre/ui/string-literal';
 import { Store } from '@ngxs/store';
 import { ListInfoForm } from './list-info-form.type';
 

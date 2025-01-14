@@ -2,7 +2,7 @@ import { Component, Inject } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { KnoraApiConnection, ProjectResponse, ReadProject } from '@dasch-swiss/dsp-js';
-import { ProjectApiService } from '@dasch-swiss/vre/shared/app-api';
+import { ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { Store } from '@ngxs/store';
 import { of } from 'rxjs';

@@ -1,5 +1,5 @@
 import { FormControl, FormGroup } from '@angular/forms';
-import { MultiLanguageForm } from '@dasch-swiss/vre/shared/app-string-literal';
+import { MultiLanguageForm } from '@dasch-swiss/vre/ui/string-literal';
 
 export type PropertyForm = FormGroup<{
   propType: FormControl<string>;

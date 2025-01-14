@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { StringLiteral } from '@dasch-swiss/dsp-js';
-import { ListApiService } from '@dasch-swiss/vre/shared/app-api';
+import { ListApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
-import { MultiLanguages } from '@dasch-swiss/vre/shared/app-string-literal';
+import { MultiLanguages } from '@dasch-swiss/vre/ui/string-literal';
 import { ListItemForm } from '../list-item-form.type';
 
 export interface CreateListItemDialogProps {

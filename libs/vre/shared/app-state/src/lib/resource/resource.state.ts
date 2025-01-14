@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ReadProject } from '@dasch-swiss/dsp-js';
-import { ProjectApiService, UserApiService } from '@dasch-swiss/vre/shared/app-api';
+import { ProjectApiService, UserApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { Action, State, StateContext, Store } from '@ngxs/store';
 import { map, take } from 'rxjs/operators';
 import { ProjectsSelectors } from '../projects/projects.selectors';

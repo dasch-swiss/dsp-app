@@ -1,5 +1,5 @@
 import { ProjectRestrictedViewSettings, ReadGroup, ReadProject, ReadUser } from '@dasch-swiss/dsp-js';
-import { RestrictedViewResponse } from '@dasch-swiss/vre/open-api';
+import { RestrictedViewResponse } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { IKeyValuePair, IKeyValuePairs } from '../model-interfaces';
 
 export class ProjectsStateModel {

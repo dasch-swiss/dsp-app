@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ClassDefinition, Constants } from '@dasch-swiss/dsp-js';
-import { getAllEntityDefinitionsAsArray } from '@dasch-swiss/vre/shared/app-api';
+import { getAllEntityDefinitionsAsArray } from '@dasch-swiss/vre/3rd-party-services/api';
 
 /**
  * helper methods for the ontology editor

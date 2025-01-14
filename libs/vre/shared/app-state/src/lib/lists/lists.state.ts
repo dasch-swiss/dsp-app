@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ListApiService } from '@dasch-swiss/vre/shared/app-api';
+import { ListApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { Action, State, StateContext } from '@ngxs/store';
 import { of } from 'rxjs';
 import { finalize, map, take, tap } from 'rxjs/operators';
@@ -12,7 +12,7 @@ const defaults: ListsStateModel = {
 };
 
 /*
-  Provides data for the lists (Controlled Vocabularies) in a project. 
+  Provides data for the lists (Controlled Vocabularies) in a project.
   It also offers methods for CRUD operations on the lists state.
 */
 @State<ListsStateModel>({

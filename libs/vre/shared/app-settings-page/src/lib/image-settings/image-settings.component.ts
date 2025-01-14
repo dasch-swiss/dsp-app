@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ProjectRestrictedViewSettings } from '@dasch-swiss/dsp-js';
-import { RestrictedViewResponse } from '@dasch-swiss/vre/open-api';
+import { RestrictedViewResponse } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { ReplaceAnimation } from '@dasch-swiss/vre/shared/app-common';
 import { RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';

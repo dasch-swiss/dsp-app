@@ -1,21 +1,25 @@
 {
-  "name": "vre-shared-app-analytics",
+  "name": "vre-shared-app-api",
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/vre/shared/app-analytics/src",
+  "sourceRoot": "libs/vre/3rd-party-services/api/src",
   "prefix": "dasch-swiss",
   "projectType": "library",
   "tags": [],
   "targets": {
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "outputs": [
+        "{workspaceRoot}/coverage/{projectRoot}"
+      ],
       "options": {
-        "jestConfig": "libs/vre/shared/app-analytics/jest.config.ts"
+        "jestConfig": "libs/vre/3rd-party-services/api/jest.config.ts"
       }
     },
     "lint": {
       "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"]
+      "outputs": [
+        "{options.outputFile}"
+      ]
     }
   }
 }

@@ -10,7 +10,7 @@ import {
   UpdateResourceClassLabel,
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
-import { MultiLanguages } from '@dasch-swiss/vre/shared/app-string-literal';
+import { MultiLanguages } from '@dasch-swiss/vre/ui/string-literal';
 import { switchMap, tap } from 'rxjs/operators';
 import { ResourceClassForm } from '../resource-class-form/resource-class-form.type';
 

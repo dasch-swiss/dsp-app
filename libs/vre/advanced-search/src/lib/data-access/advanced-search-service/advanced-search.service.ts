@@ -13,7 +13,7 @@ import {
   ResourceClassDefinition,
   ResourcePropertyDefinition,
 } from '@dasch-swiss/dsp-js';
-import { OntologyV2ApiService } from '@dasch-swiss/vre/shared/app-api';
+import { OntologyV2ApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { Observable, of, Subject } from 'rxjs';
 import { catchError, map, switchMap, takeUntil } from 'rxjs/operators';
@@ -79,7 +79,10 @@ export class AdvancedSearchService {
           // eslint-disable-next-line @typescript-eslint/no-throw-literal
           throw response; // caught by catchError operator
         }
-        return response.ontologies.map((onto: { id: string; label: string }) => ({ iri: onto.id, label: onto.label }));
+        return response.ontologies.map((onto: { id: string; label: string }) => ({
+          iri: onto.id,
+          label: onto.label,
+        }));
       }),
       catchError(err => {
         this._handleError(err);

@@ -8,14 +8,14 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { Router } from '@angular/router';
 import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
 import { MatJDNConvertibleCalendarDateAdapterModule } from '@dasch-swiss/jdnconvertiblecalendardateadapter';
+import { PendoAnalyticsService } from '@dasch-swiss/vre/3rd-party-services/analytics';
+import { BASE_PATH } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { AdvancedSearchComponent } from '@dasch-swiss/vre/advanced-search';
-import { BASE_PATH } from '@dasch-swiss/vre/open-api';
 import { MathJaxComponents } from '@dasch-swiss/vre/resource-editor/mathjax';
 import { RepresentationsComponents } from '@dasch-swiss/vre/resource-editor/representations';
 import { ResourcePageComponents } from '@dasch-swiss/vre/resource-editor/resource-editor';
 import { ResourcePropertiesComponents } from '@dasch-swiss/vre/resource-editor/resource-properties';
 import { SegmentSupportComponents } from '@dasch-swiss/vre/resource-editor/segment-support';
-import { PendoAnalyticsService } from '@dasch-swiss/vre/shared/app-analytics';
 import { CommonToMoveComponents } from '@dasch-swiss/vre/shared/app-common-to-move';
 import {
   AppConfigService,
@@ -42,15 +42,15 @@ import { PropertyFormComponents } from '@dasch-swiss/vre/shared/app-property-for
 import { SearchComponents } from '@dasch-swiss/vre/shared/app-search';
 import { SettingsPageComponents } from '@dasch-swiss/vre/shared/app-settings-page';
 import { NgxsStoreModule } from '@dasch-swiss/vre/shared/app-state';
+import { SystemComponents } from '@dasch-swiss/vre/shared/app-system';
+import { UiComponents, UiStandaloneComponents } from '@dasch-swiss/vre/shared/app-ui';
+import { apiConnectionTokenProvider, UserComponents } from '@dasch-swiss/vre/shared/app-user';
 import {
   HumanReadableErrorPipe,
   MultiLanguageTextareaComponent,
   MutiLanguageInputComponent,
   StringLiteralComponents,
-} from '@dasch-swiss/vre/shared/app-string-literal';
-import { SystemComponents } from '@dasch-swiss/vre/shared/app-system';
-import { UiComponents, UiStandaloneComponents } from '@dasch-swiss/vre/shared/app-ui';
-import { apiConnectionTokenProvider, UserComponents } from '@dasch-swiss/vre/shared/app-user';
+} from '@dasch-swiss/vre/ui/string-literal';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import * as Sentry from '@sentry/angular-ivy';

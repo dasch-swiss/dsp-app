@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Constants, ReadUser } from '@dasch-swiss/dsp-js';
-import { UserApiService } from '@dasch-swiss/vre/shared/app-api';
+import { UserApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { Action, State, StateContext } from '@ngxs/store';
 import { map, take, tap } from 'rxjs/operators';
 import { AddUserToProjectMembershipAction, SetProjectMemberAction } from '../projects/projects.actions';
@@ -26,8 +26,8 @@ const defaults = <UserStateModel>{
   usersLoading: false, // loading state for all users
 };
 
-/* 
-  Provides data about the currently logged-in user, other users, and user permission groups. 
+/*
+  Provides data about the currently logged-in user, other users, and user permission groups.
   It also offers methods to load, create, update, and delete users in storage.
 */
 @State<UserStateModel>({

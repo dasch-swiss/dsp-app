@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { StringLiteral } from '@dasch-swiss/dsp-js';
-import { ListApiService } from '@dasch-swiss/vre/shared/app-api';
+import { ListApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { LoadListsInProjectAction } from '@dasch-swiss/vre/shared/app-state';

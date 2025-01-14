@@ -15,7 +15,7 @@ import {
 } from '@angular/core';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { ApiResponseError, Constants, ReadProject } from '@dasch-swiss/dsp-js';
-import { ProjectApiService } from '@dasch-swiss/vre/shared/app-api';
+import { ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { SearchParams } from '@dasch-swiss/vre/shared/app-common-to-move';
 import {
   ComponentCommunicationEventService,

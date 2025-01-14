@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UpdateProjectRequest } from '@dasch-swiss/dsp-js';
-import { ProjectApiService } from '@dasch-swiss/vre/shared/app-api';
+import { ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
 import { LoadProjectsAction, UpdateProjectAction } from '@dasch-swiss/vre/shared/app-state';
-import { MultiLanguages } from '@dasch-swiss/vre/shared/app-string-literal';
+import { MultiLanguages } from '@dasch-swiss/vre/ui/string-literal';
 import { Actions, ofActionSuccessful, Store } from '@ngxs/store';
 import { map, switchMap, take } from 'rxjs/operators';
 import { ProjectForm } from './reusable-project-form/project-form.type';

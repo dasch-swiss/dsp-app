@@ -20,7 +20,7 @@ import {
   ReadUser,
   ResourceClassDefinitionWithAllLanguages,
 } from '@dasch-swiss/dsp-js';
-import { getAllEntityDefinitionsAsArray } from '@dasch-swiss/vre/shared/app-api';
+import { getAllEntityDefinitionsAsArray } from '@dasch-swiss/vre/3rd-party-services/api';
 import { DspApiConnectionToken, DspDialogConfig, RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import {
   DefaultClass,
@@ -51,8 +51,8 @@ import {
   SetCurrentProjectOntologyPropertiesAction,
   UserSelectors,
 } from '@dasch-swiss/vre/shared/app-state';
-import { MultiLanguages } from '@dasch-swiss/vre/shared/app-string-literal';
 import { DialogService } from '@dasch-swiss/vre/shared/app-ui';
+import { MultiLanguages } from '@dasch-swiss/vre/ui/string-literal';
 import { Actions, ofActionSuccessful, Select, Store } from '@ngxs/store';
 import { combineLatest, Observable, Subject } from 'rxjs';
 import { filter, map, switchMap, take, takeUntil } from 'rxjs/operators';
