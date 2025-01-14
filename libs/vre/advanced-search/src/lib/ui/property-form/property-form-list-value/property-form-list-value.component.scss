@@ -1,31 +1,10 @@
-.header {
-  font-size: 14px;
-}
-
 .dropdown {
   width: 44.2%;
   cursor: pointer;
   color: #737373;
+}
 
-  .container {
-    display: inline-flex;
-    align-items: center;
-    box-sizing: border-box;
-    width: 100%;
-    padding: 16px 16px;
-
-    .label {
-      width: 100%;
-      color: rgba(32, 32, 32, 0.87);
-    }
-
-    .icon {
-      display: inline-flex;
-      width: 17px;
-    }
-  }
-
-  .line {
-    border-bottom: 1px solid;
-  }
+::ng-deep div.custom-select-panel.mat-mdc-select-panel {
+  max-height: 600px;
+  overflow-y: auto;
 }

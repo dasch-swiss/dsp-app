@@ -1,5 +1,6 @@
 .parent-property-container {
   width: 100%;
+  margin-top: 20px;
 
   &.child-property-list {
     padding-left: 5%;
@@ -49,7 +50,8 @@
       mat-form-field {
         width: 90%;
         &.operator {
-          width: 40%
+          width: 40%;
+          min-width: 260px;
         }
       }
     }
@@ -74,15 +76,15 @@
   }
 
   button:disabled {
-    border: 1px solid #BDBFC1;
+    border: 1px solid #bdbfc1;
 
     &.reset-button {
-      color:#BDBFC1;
+      color: #bdbfc1;
     }
 
     &.search-button,
     &.previous-search-button {
-      background-color: #BDBFC1;
+      background-color: #bdbfc1;
       color: white;
     }
   }
@@ -91,7 +93,7 @@
     border: 1px solid #336790;
 
     &.reset-button {
-      color:#336790;
+      color: #336790;
     }
 
     &.search-button,
@@ -110,8 +112,8 @@
   }
 
   button:disabled {
-    border: 1px solid #BDBFC1;
-    background-color: #BDBFC1;
+    border: 1px solid #bdbfc1;
+    background-color: #bdbfc1;
     color: white;
   }
 
@@ -126,12 +128,11 @@
   height: 44px;
   width: 44px;
   padding: 0px;
-  color: #E11D48;
+  color: #e11d48;
 
   mat-icon {
     height: 44px;
     width: 44px;
     font-size: 44px;
-
   }
 }

@@ -2,12 +2,12 @@
   <div class="form-fields-container">
     <div class="dropdown-container">
       <div class="content">
-        <p class="label">Select a property</p>
         <mat-form-field>
+          <mat-label>Property</mat-label>
           <mat-select
             #propertiesList
             (selectionChange)="onSelectedPropertyChanged($event)"
-            placeholder="Select a value"
+            appearance="fill"
             name="properties"
             data-cy="property-select"
             [compareWith]="compareObjects">
@@ -26,12 +26,12 @@
     </div>
     <div class="dropdown-container">
       <div class="content">
-        <p class="label">Comparison Operator</p>
         <mat-form-field class="operator">
+          <mat-label>Comparison Operator</mat-label>
           <mat-select
             #operatorsList
             (selectionChange)="onSelectedOperatorChanged($event)"
-            placeholder="Select a value"
+            appearance="fill"
             data-cy="comparison-operator-select"
             name="operators">
             <mat-option
@@ -52,14 +52,14 @@
             "
       class="dropdown-container match-resource-class">
       <div class="content">
-        <p class="label">Resource Class</p>
         <mat-form-field class="resource-class">
+          <mat-label>Resource Class</mat-label>
           <mat-select
             #resourceClassList
             (selectionChange)="
                             onSelectedMatchPropertyResourceClassChanged($event)
                         "
-            placeholder="Select a value"
+            appearance="fill"
             name="resource-classes"
             data-cy="resource-class-select"
             [compareWith]="compareObjects">
