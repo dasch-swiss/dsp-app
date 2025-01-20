@@ -1,5 +1,23 @@
 # Changelog
 
+## [11.22.6](https://github.com/dasch-swiss/dsp-das/compare/v11.22.5...v11.22.6) (2025-01-15)
+
+
+### Bug Fixes
+
+* advanced search mat select controls (DEV-4498) ([#2035](https://github.com/dasch-swiss/dsp-das/issues/2035)) ([9702e36](https://github.com/dasch-swiss/dsp-das/commit/9702e3689a02d8476049694f9e083209986c6d27))
+* each haslinktoclass property is displayed as linked resource ([#2038](https://github.com/dasch-swiss/dsp-das/issues/2038)) ([bb9d254](https://github.com/dasch-swiss/dsp-das/commit/bb9d2549e8f834da1e3cadc18cd551c98bec3e7d))
+
+
+### Maintenances
+
+* **deps-dev:** bump @typescript-eslint/utils from 8.19.1 to 8.20.0 ([#2040](https://github.com/dasch-swiss/dsp-das/issues/2040)) ([87f3f6f](https://github.com/dasch-swiss/dsp-das/commit/87f3f6ff9736490b960b1b27256be6d2655277ea))
+* **deps-dev:** bump ng-mocks from 14.13.1 to 14.13.2 ([#2034](https://github.com/dasch-swiss/dsp-das/issues/2034)) ([c83af92](https://github.com/dasch-swiss/dsp-das/commit/c83af92b3ba640328f6cf51229d04ac25e927f15))
+* **deps-dev:** bump postcss from 8.4.49 to 8.5.1 in the postcss-deps group ([#2039](https://github.com/dasch-swiss/dsp-das/issues/2039)) ([01681c4](https://github.com/dasch-swiss/dsp-das/commit/01681c4189c94384e81a4b401aa3549269c6a89b))
+* **deps:** bump @sentry/angular-ivy from 7.120.2 to 7.120.3 in the sentry-deps group ([#2033](https://github.com/dasch-swiss/dsp-das/issues/2033)) ([4b477ca](https://github.com/dasch-swiss/dsp-das/commit/4b477cad8a8947d43b5c8d2eb8dfbb525ae8e3d5))
+* fix angular-eslint versions and bump node.js on the CLI to v20.9.0 ([#2037](https://github.com/dasch-swiss/dsp-das/issues/2037)) ([8dcdb52](https://github.com/dasch-swiss/dsp-das/commit/8dcdb52ceea86449aeed77795728782b7e0cfe88))
+* move api, open-api, analytics, string literal nx libs ([#2025](https://github.com/dasch-swiss/dsp-das/issues/2025)) ([5600339](https://github.com/dasch-swiss/dsp-das/commit/5600339e570589b48e82407f5c87e2d0a40781f2))
+
 ## [11.22.5](https://github.com/dasch-swiss/dsp-das/compare/v11.22.4...v11.22.5) (2025-01-10)
 
 
