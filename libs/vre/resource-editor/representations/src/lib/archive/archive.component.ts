@@ -4,7 +4,6 @@ import {
   Constants,
   KnoraApiConnection,
   ReadArchiveFileValue,
-  ReadProject,
   ReadResource,
   UpdateFileValue,
   UpdateResource,
@@ -28,7 +27,6 @@ import { RepresentationService } from '../representation.service';
 })
 export class ArchiveComponent implements OnChanges {
   @Input() src: FileRepresentation;
-  @Input() attachedProject: ReadProject | undefined;
   @Input() parentResource: ReadResource;
   originalFilename: string;
 
@@ -69,7 +67,6 @@ export class ArchiveComponent implements OnChanges {
           title: 'Archive',
           subtitle: 'Update the archive file of this resource',
           representation: Constants.HasArchiveFileValue,
-          projectUuid: this.attachedProject!.id,
           propId: this.parentResource.properties[Constants.HasArchiveFileValue][0].id,
         },
       })

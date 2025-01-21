@@ -14,7 +14,6 @@ import {
 import { DspApiConnectionToken, DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import { AppError } from '@dasch-swiss/vre/core/error-handler';
 import { ResourceUtil } from '@dasch-swiss/vre/shared/app-common';
-import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { filter, switchMap } from 'rxjs/operators';
 import { EditThirdPartyIiifFormComponent } from '../edit-third-party-iiif-form/edit-third-party-iiif-form.component';
@@ -109,7 +108,6 @@ export class StillImageToolbarComponent {
     } else {
       dialogRef = this._dialog.open<ReplaceFileDialogComponent, ReplaceFileDialogProps>(ReplaceFileDialogComponent, {
         data: {
-          projectUuid: ProjectService.IriToUuid(this.resource.attachedToProject),
           title: 'Image',
           subtitle: 'Update image of the resource',
           representation: Constants.HasStillImageFileValue,

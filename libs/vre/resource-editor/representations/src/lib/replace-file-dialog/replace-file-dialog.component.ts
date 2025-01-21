@@ -7,7 +7,6 @@ import { FileRepresentationType } from '../file-representation.type';
 export interface ReplaceFileDialogProps {
   representation: FileRepresentationType;
   propId: string;
-  projectUuid: string;
   title: string;
   subtitle: string;
 }

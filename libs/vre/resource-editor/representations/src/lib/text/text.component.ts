@@ -11,7 +11,6 @@ import {
   WriteValueResponse,
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
-import { ResourceSelectors } from '@dasch-swiss/vre/core/state';
 import { ResourceUtil } from '@dasch-swiss/vre/shared/app-common';
 import { Store } from '@ngxs/store';
 import { mergeMap } from 'rxjs/operators';
@@ -63,17 +62,12 @@ export class TextComponent implements OnChanges {
   }
 
   openReplaceFileDialog() {
-    const attachedProject = this._rs.getParentResourceAttachedProject(
-      this._store.selectSnapshot(ResourceSelectors.attachedProjects),
-      this.parentResource
-    )!;
     this._dialog
       .open<ReplaceFileDialogComponent, ReplaceFileDialogProps>(ReplaceFileDialogComponent, {
         data: {
           title: 'Text (csv, txt, xml)',
           subtitle: 'Update the text file of this resource',
           representation: Constants.HasTextFileValue,
-          projectUuid: attachedProject!.id,
           propId: this.parentResource.properties[Constants.HasTextFileValue][0].id,
         },
       })

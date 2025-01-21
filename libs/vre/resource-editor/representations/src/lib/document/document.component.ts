@@ -5,7 +5,6 @@ import {
   Constants,
   KnoraApiConnection,
   ReadDocumentFileValue,
-  ReadProject,
   ReadResource,
   UpdateFileValue,
   UpdateResource,
@@ -31,7 +30,6 @@ import { RepresentationService } from '../representation.service';
 export class DocumentComponent implements OnChanges {
   @Input() src: FileRepresentation;
   @Input() parentResource: ReadResource;
-  @Input() attachedProject: ReadProject | undefined;
 
   @ViewChild(PdfViewerComponent) private _pdfComponent: PdfViewerComponent;
 
@@ -104,7 +102,6 @@ export class DocumentComponent implements OnChanges {
           title: 'Document',
           subtitle: 'Update the document file of this resource',
           representation: Constants.HasDocumentFileValue,
-          projectUuid: this.attachedProject!.id,
           propId: this.parentResource.properties[Constants.HasDocumentFileValue][0].id,
         },
       })
