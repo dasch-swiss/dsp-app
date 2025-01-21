@@ -152,6 +152,23 @@ For the label you could write *Book*, and you should add a preferably meaningful
 Now you have created your first class *Book*, as seen below:
 ![Layout after the creation of the resource class.](../assets/images/Fig10.png)
 
+#### Display of CLASSES and SUBCLASSES
+
+In the data model, *Student* and *Teacher* are subclasses of the class *Person*, meaning they inherit its general properties and they can have their own specific properties as well.
+
+##### Viewing Resource Entries of CLASSES and SUBCLASSES
+
+For example on the left, under resource entries, you might see:
+
+- 4 entries for *Person*
+- 2 entries for *Student*
+- 2 entries for *Teacher*
+
+*Student* and *Teacher* are grouped under *Person*, so they are shown together. While this makes the hierarchy clear, individual subclasses like *Student* and *Teacher* may appear less distinct on the left.
+
+![Display of Classes and Subclasses.](../assets/images/ClassSubClass.png)
+
+
 ---
 
 ### Add PROPERTIES to a resource class
