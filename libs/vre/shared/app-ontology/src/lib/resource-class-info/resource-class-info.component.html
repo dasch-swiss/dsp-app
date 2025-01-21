@@ -46,6 +46,7 @@
       <app-resource-class-info-element
         *ngFor="let prop of currentOntologyPropertiesToDisplay; let i = index; trackBy: trackByPropToDisplayFn"
         [prop]="prop"
+        [projectUuid]="projectUuid"
         [props]="currentOntologyPropertiesToDisplay"
         [resourceClass]="resourceClass"
         [userCanEdit]="userCanEdit"

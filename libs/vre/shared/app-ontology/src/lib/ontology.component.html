@@ -119,7 +119,7 @@
           <app-resource-class-info
             *ngFor="let resClass of ontoClasses; trackBy: trackByClassDefinitionFn"
             [resourceClass]="resClass"
-            [projectUuid]="projectUuid"
+            [projectUuid]="projectUuid$ | async"
             [projectStatus]="(project$ | async)?.status"
             [expanded]="expandClasses"
             [userCanEdit]="isAdmin$ | async"
