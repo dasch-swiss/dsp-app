@@ -1,5 +1,6 @@
 import { Project0001ResourcePayloads } from '../../fixtures/project0001-resource-payloads';
 import { Project0803ResourcePayloads } from '../../fixtures/project0803-resource-payloads';
+import { OntologyClass } from '../../models/existing-data-models';
 
 export class ProjectAssertionPageBase {
   projectShortCode: string;
@@ -27,6 +28,17 @@ export class Project0803Page extends ProjectAssertionPageBase {
 export class Project0001Page extends ProjectAssertionPageBase {
   static readonly projectShortCode = '0001';
   static readonly defaultOntology = 'anything';
+
+  static readonly thingArchiveClass: OntologyClass = {
+    id: 'ThingArchive',
+    label: 'Archive',
+  };
+
+  static readonly thingPictureClass: OntologyClass = {
+    id: 'ThingPicture',
+    label: 'Dingbild',
+  };
+
   payloads = new Project0001ResourcePayloads();
 
   constructor() {

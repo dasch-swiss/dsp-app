@@ -90,6 +90,11 @@ jobs:
         with:
           name: cypress-snapshots
           path: apps/dsp-app/cypress/fixtures/screenshots
+      - name: Check Docker Container Logs
+        run: |
+          docker ps
+          docker ps -q | xargs -I {} docker logs {}
+
 
   jdnconvertiblecalendar-tests:
     name: JDNConvertibleCalendar

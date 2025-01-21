@@ -7,6 +7,8 @@ export interface UserProfiles {
   admin_username: string;
   admin_password: string;
   change_admin_password: string;
+  incunabulaProjectAdmin_username: string;
+  incunabulaProjectAdmin_password: string;
   anythingProjectMember_username: string; // Thing searcher
   anythingProjectMember_password: string;
   anythingProjectAdmin_username: string; // Anything admin

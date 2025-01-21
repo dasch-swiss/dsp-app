@@ -47,6 +47,7 @@ import { propertiesTypeMapping } from './resource-payloads-mapping';
       <div class="my-grid">
         <div style="display: flex">
           <h3
+            data-cy="resource-label"
             class="mat-subtitle-2 my-h3"
             matTooltip="Each resource needs a (preferably unique) label. It will be a kind of resource identifier."
             matTooltipPosition="above">
@@ -64,7 +65,7 @@ import { propertiesTypeMapping } from './resource-payloads-mapping';
               prop.guiDef.cardinality === cardinality._1 || prop.guiDef.cardinality === cardinality._1_n ? '*' : ''
             }}
           </h3>
-          <div style="flex: 1">
+          <div style="flex: 1" [attr.data-cy]="prop.propDef.label">
             <app-property-value-switcher
               [myProperty]="prop"
               [formArray]="form.controls.properties.controls[prop.propDef.id]"

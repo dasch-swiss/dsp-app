@@ -1,6 +1,6 @@
 <div class="class-item-container">
   <div class="content" [routerLinkActive]="['is-active']" (click)="selectItem()">
-    <div class="box link" [routerLink]="classLink">
+    <div data-cy="class-item" class="box link" [routerLink]="classLink">
       <div
         #resClassLabel
         class="label"
@@ -26,7 +26,7 @@
         </div>
       </div>
     </div>
-    <a class="icon link" *ngIf="projectMember" (click)="goToAddClassInstance()">
+    <a class="icon link" data-cy="add-class-instance" *ngIf="projectMember" (click)="goToAddClassInstance()">
       <mat-icon>add_circle_outline</mat-icon>
     </a>
   </div>

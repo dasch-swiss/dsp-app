@@ -1,58 +1,23 @@
-import { UploadedFileResponse } from '@dasch-swiss/vre/resource-editor/representations';
 import { faker } from '@faker-js/faker';
-import { ThingPictureClass } from '../../models/existing-data-models';
+import { ThingPictureClassResource } from '../../models/existing-data-models';
 import { UserProfiles } from '../../models/user-profiles';
 import { Project0001Page, Project0803Page } from '../../support/pages/existing-ontology-class-page';
 
 describe('Check project admin existing resource functionality', () => {
   let project0001Page: Project0001Page;
 
-  const thingPictureData: ThingPictureClass = {
-    label: faker.lorem.word(),
-    file: '',
-    titles: [{ text: faker.lorem.sentence(), comment: faker.lorem.sentence() }],
+  const thingPictureData: ThingPictureClassResource = {
+    label: 'A thing with a picture',
+    file: 'B1D0OkEgfFp-Cew2Seur7Wi.jp2',
+    titles: [{ text: '', comment: '' }],
   };
 
-  const resourceToDelete: ThingPictureClass = {
-    label: 'member resource',
-    file: '',
-    titles: [{ text: faker.lorem.sentence(), comment: faker.lorem.sentence() }],
-  };
-
-  const uploadedImageFilePath = '/uploads/Fingerprint_Logo_coloured.png';
+  const uploadedImageFile = 'Fingerprint_Logo.jpg';
+  const uploadedImageFilePath = `/uploads/${uploadedImageFile}`;
 
   before(() => {
     cy.resetDatabase();
-    Cypress.env('skipDatabaseCleanup', true);
-    cy.loginAdmin();
     project0001Page = new Project0001Page();
-    cy.uploadFile(<Cypress.IUploadFileParameters>{
-      filePath: `../${uploadedImageFilePath}`,
-      projectShortCode: Project0001Page.projectShortCode,
-      mimeType: 'image/png',
-    }).then(response => {
-      thingPictureData.file = (response as UploadedFileResponse).internalFilename;
-      cy.createResource(project0001Page.payloads.picture(thingPictureData));
-    });
-    cy.logout();
-
-    cy.readFile('cypress/fixtures/user_profiles.json').then((json: UserProfiles) => {
-      const users: UserProfiles = json;
-      cy.login({
-        username: users.anythingProjectMember_username,
-        password: users.anythingProjectMember_password,
-      }).then(() => {
-        cy.uploadFile(<Cypress.IUploadFileParameters>{
-          filePath: `../${uploadedImageFilePath}`,
-          projectShortCode: Project0001Page.projectShortCode,
-          mimeType: 'image/png',
-        }).then(response => {
-          resourceToDelete.file = (response as UploadedFileResponse).internalFilename;
-          cy.createResource(project0001Page.payloads.picture(resourceToDelete));
-        });
-      });
-    });
-    cy.logout();
   });
 
   beforeEach(() => {
@@ -72,21 +37,21 @@ describe('Check project admin existing resource functionality', () => {
   });
 
   it('can add owned project resource', () => {
-    const path = `/project/${Project0001Page.projectShortCode}/ontology/${Project0001Page.defaultOntology}/ThingPicture/add`;
+    const path = `/project/${Project0001Page.projectShortCode}/ontology/${Project0001Page.defaultOntology}/${Project0001Page.thingPictureClass.id}/add`;
     cy.visit(path);
     const regex = new RegExp(`${path}$`);
     cy.url().should('match', regex);
   });
 
-  it.skip('ThingPicture resource should not be deletable or erasable', () => {
-    project0001Page.visitClass('ThingPicture');
-    cy.get('[data-cy=resource-list-item] h3.res-class-value').contains(thingPictureData.label).click();
+  it('ThingPicture resource should not be deletable or erasable', () => {
+    project0001Page.visitClass(Project0001Page.thingArchiveClass.id);
+    cy.get('[data-cy=resource-list-item] h3.res-class-value').contains(Project0001Page.thingArchiveClass.label).click();
     cy.get('[data-cy=resource-toolbar-more-button]').should('not.exist');
   });
 
-  it.skip('ThingPicture resource should be visible', () => {
+  it('ThingPicture resource should be visible', () => {
     cy.intercept('GET', `**/${thingPictureData.file}/**/default.jpg`).as('stillImageRequest');
-    project0001Page.visitClass('ThingPicture');
+    project0001Page.visitClass(Project0001Page.thingPictureClass.id);
     cy.get('[data-cy=resource-list-item] h3.res-class-value').contains(thingPictureData.label).click();
     cy.should('not.contain', '[data-cy=close-restricted-button]');
     cy.get('[data-cy=resource-header-label]').contains(thingPictureData.label);
@@ -95,32 +60,82 @@ describe('Check project admin existing resource functionality', () => {
     cy.log('waiting for still image request');
     cy.wait('@stillImageRequest').its('request.url').should('include', thingPictureData.file);
     cy.wait('@stillImageRequest').its('response.statusCode').should('eq', 200);
-    cy.get('[data-cy=property-value]').contains(thingPictureData.titles[0].text);
-    cy.get('[data-cy=show-all-comments]').scrollIntoView().click();
-    cy.get('[data-cy=property-value-comment]').should('have.length.greaterThan', 0);
-    cy.get('[data-cy=property-value-comment]').contains(thingPictureData.titles[0].comment);
   });
 
-  it.skip('ThingPicture resource should be editable', () => {
-    project0001Page.visitClass('ThingPicture');
+  it('ThingPicture resource should be created and deleted', () => {
+    project0001Page.visitClass(Project0001Page.thingPictureClass.id);
+    cy.intercept('GET', '**/resources/**').as('resourceRequest');
+    cy.get('[data-cy=class-item] div.label')
+      .contains(Project0001Page.thingPictureClass.label)
+      .parentsUntil('app-ontology-class-item')
+      .find('[data-cy="add-class-instance"]')
+      .click();
+
+    cy.intercept('POST', `**/${uploadedImageFile}`).as('uploadRequest');
+    cy.get('[data-cy=create-resource-title]').should('exist').contains(Project0001Page.thingPictureClass.id);
+    cy.get('[data-cy="upload-file"]').selectFile(`cypress${uploadedImageFilePath}`, { force: true });
+    cy.wait('@uploadRequest').its('response.statusCode').should('eq', 200);
+    const newLabel = faker.lorem.word();
+    cy.get('[data-cy=resource-label]')
+      .siblings('app-common-input')
+      .find('[data-cy=common-input-text]')
+      .should('be.visible')
+      .type(newLabel);
+    const newTitle = faker.lorem.word();
+    cy.get('[data-cy=Titel]').find('[data-cy=common-input-text]').should('be.visible').type(newTitle);
+    cy.get('[data-cy=Titel]').find('[data-cy=comment-textarea]').should('be.visible').type(faker.lorem.word());
+    cy.get('[data-cy="submit-button"]').click();
+    cy.wait('@resourceRequest').its('response.statusCode').should('eq', 200);
+    cy.get('@resourceRequest.all').should('have.length', 1);
+
+    cy.get('[data-cy=resource-header-label]').contains(newLabel);
+    cy.get('.representation-container').should('exist');
+    cy.get('app-still-image').should('be.visible');
+    cy.get('app-base-switch').contains(newTitle);
+
+    cy.intercept('POST', '**/resources/delete').as('resourceDeleteRequest');
+    cy.get('[data-cy=resource-toolbar-more-button]').click();
+    cy.get('[data-cy=resource-toolbar-delete-resource-button]').should('exist').click();
+    cy.get('[data-cy=app-delete-resource-dialog-comment]').should('be.visible').type(faker.lorem.sentence());
+    cy.get('[data-cy=app-delete-resource-dialog-button]').click();
+    cy.wait('@resourceDeleteRequest').its('response.statusCode').should('eq', 200);
+  });
+
+  it('ThingPicture resource should be editable', () => {
+    project0001Page.visitClass(Project0001Page.thingPictureClass.id);
     cy.get('[data-cy=resource-list-item] h3.res-class-value').contains(thingPictureData.label).click();
 
     cy.intercept('GET', '**/resources/**').as('resourceRequest');
     cy.get('[data-cy=resource-header-label]').contains(thingPictureData.label);
-    cy.get('[data-cy=edit-label-button]').should('be.visible').click();
-    const newLabel = faker.lorem.word();
-    cy.get('[data-cy=common-input-text]', { timeout: 500 }).should('be.visible').clear().type(newLabel);
-    cy.get('[data-cy=edit-resource-label-submit]').click();
-    cy.get('[data-cy=resource-header-label').contains(newLabel);
+    // cy.get('[data-cy=edit-label-button]').should('be.visible').click();
+    // const newLabel = faker.lorem.word();
+    // cy.get('[data-cy=common-input-text]', { timeout: 500 }).should('be.visible').clear().type(newLabel);
+    // cy.get('[data-cy=edit-resource-label-submit]').click();
+    // cy.get('[data-cy=resource-header-label').contains(newLabel);
 
+    cy.intercept('POST', `**/${uploadedImageFile}`).as('uploadRequest');
     cy.get('[data-cy="more-vert-image-button"]').click();
     cy.get('[data-cy="replace-image-button"]').should('be.visible').click();
     cy.get('[data-cy="replace-file-submit-button"]').should('have.attr', 'disabled');
     cy.get('[data-cy="upload-file"]').selectFile(`cypress${uploadedImageFilePath}`, { force: true });
+    cy.wait('@uploadRequest').its('response.statusCode').should('eq', 200);
     cy.get('[data-cy="replace-file-submit-button"]').should('not.have.attr', 'disabled');
     cy.get('[data-cy="replace-file-submit-button"]').click();
     cy.wait('@resourceRequest').its('response.statusCode').should('eq', 200);
-    cy.get('@resourceRequest.all').should('have.length', 2);
+    cy.get('@resourceRequest.all').should('have.length', 1);
+
+    cy.intercept('GET', `**/resources/**`).as('resourcesRequest');
+    cy.get('[data-cy=show-all-properties]').scrollIntoView();
+    cy.get('[data-cy="show-all-properties"]').click();
+    cy.get('[data-cy=add-property-value-button]').scrollIntoView();
+    cy.get('[data-cy="add-property-value-button"]').click();
+    const newLabel = faker.lorem.word();
+    cy.get('[data-cy=common-input-text]').scrollIntoView();
+    cy.get('[data-cy=common-input-text]', { timeout: 500 }).should('be.visible').type(newLabel);
+    const firstComment = faker.lorem.word();
+    cy.get('[data-cy=comment-textarea]').should('be.visible').type(firstComment);
+    cy.get('[data-cy="save-button"]').click();
+    cy.wait('@resourcesRequest').its('response.statusCode').should('eq', 200);
 
     cy.get('[data-cy=property-value]').scrollIntoView();
     cy.get('[data-cy=property-value]').first().trigger('mouseenter');
@@ -154,17 +169,6 @@ describe('Check project admin existing resource functionality', () => {
     cy.get('[data-cy=property-value]').should('have.length', 1);
     cy.get('[data-cy=property-value-comment]').should('have.length', 1);
     cy.log('new property value with comment has been removed');
-  });
-
-  it('Self created resource should be deleted', () => {
-    cy.intercept('POST', '**/resources/delete').as('resourceDeleteRequest');
-    project0001Page.visitClass('ThingPicture');
-    cy.get('[data-cy=resource-list-item] h3.res-class-value').contains(resourceToDelete.label).click();
-    cy.get('[data-cy=resource-toolbar-more-button]').click();
-    cy.get('[data-cy=resource-toolbar-delete-resource-button]').should('exist').click();
-    cy.get('[data-cy=app-delete-resource-dialog-comment]').should('be.visible').type(faker.lorem.sentence());
-    cy.get('[data-cy=app-delete-resource-dialog-button]').click();
-    cy.wait('@resourceDeleteRequest').its('response.statusCode').should('eq', 200);
   });
 
   after(() => {

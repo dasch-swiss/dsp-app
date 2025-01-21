@@ -1,4 +1,4 @@
-import { ArchiveClass, MiscClass, SidebandClass } from '../models/existing-data-models';
+import { ArchiveClassResource, MiscClassResource, SidebandClassResource } from '../models/existing-data-models';
 import { ProjectAssertionPageBase } from './project-assertion-payloads';
 
 export class Project0803ResourcePayloads extends ProjectAssertionPageBase {
@@ -34,7 +34,7 @@ export class Project0803ResourcePayloads extends ProjectAssertionPageBase {
     };
   }
 
-  archive(data: ArchiveClass) {
+  archive(data: ArchiveClassResource) {
     const request = {
       ...this.label(data.className, data.label),
       ...this.archiveSegment(data.file),
@@ -42,7 +42,7 @@ export class Project0803ResourcePayloads extends ProjectAssertionPageBase {
     return request;
   }
 
-  misc(data: MiscClass) {
+  misc(data: MiscClassResource) {
     const className = 'misc';
     const request = {
       ...this.label(className, data.label),
@@ -51,7 +51,7 @@ export class Project0803ResourcePayloads extends ProjectAssertionPageBase {
     return request;
   }
 
-  sideband(data: SidebandClass) {
+  sideband(data: SidebandClassResource) {
     const className = 'Sideband';
     const request = {
       ...this.label(className, data.label),

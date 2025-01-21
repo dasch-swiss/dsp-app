@@ -1,9 +1,9 @@
 import {
-  AudioThingClass,
+  AudioThingClassResource,
   Comment,
-  DocumentClass,
-  ThingPictureClass,
-  VideoThingClass,
+  DocumentClassResource,
+  ThingPictureClassResource,
+  VideoThingClassResource,
 } from '../models/existing-data-models';
 import { ProjectAssertionPageBase } from './project-assertion-payloads';
 
@@ -25,7 +25,7 @@ export class Project0001ResourcePayloads extends ProjectAssertionPageBase {
     };
   }
 
-  picture(data: ThingPictureClass) {
+  picture(data: ThingPictureClassResource) {
     const className = 'ThingPicture';
     const request = {
       ...this.label(className, data.label),
@@ -35,7 +35,7 @@ export class Project0001ResourcePayloads extends ProjectAssertionPageBase {
     return request;
   }
 
-  videoThing(data: VideoThingClass) {
+  videoThing(data: VideoThingClassResource) {
     const className = 'VideoThing';
     const request = {
       ...this.label(className, data.label),
@@ -45,7 +45,7 @@ export class Project0001ResourcePayloads extends ProjectAssertionPageBase {
     return request;
   }
 
-  audioThing(data: AudioThingClass) {
+  audioThing(data: AudioThingClassResource) {
     const className = 'AudioThing';
     const request = {
       ...this.label(className, data.label),
@@ -55,7 +55,7 @@ export class Project0001ResourcePayloads extends ProjectAssertionPageBase {
     return request;
   }
 
-  document(data: DocumentClass) {
+  document(data: DocumentClassResource) {
     const className = 'ThingDocument';
     const request = {
       ...this.label(className, data.label),

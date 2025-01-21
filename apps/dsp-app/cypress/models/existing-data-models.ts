@@ -1,4 +1,4 @@
-export interface MiscClass {
+export interface MiscClassResource {
   label: string;
   color: string;
   colorComment: string;
@@ -6,7 +6,7 @@ export interface MiscClass {
   bookComment: string;
 }
 
-export interface SidebandClass {
+export interface SidebandClassResource {
   label: string;
   file: string;
   title: string;
@@ -21,34 +21,38 @@ export interface Comment {
   comment: string;
 }
 
-export interface ThingPictureClass {
+export interface ThingPictureClassResource {
   label: string;
   file: string;
   titles: [Comment];
 }
 
-export interface VideoThingClass {
+export interface VideoThingClassResource {
   label: string;
   file: string;
   title: string;
   titleComment: string;
 }
 
-export interface AudioThingClass {
+export interface AudioThingClassResource {
   label: string;
   file: string;
   title: string;
   titleComment: string;
 }
 
-export interface DocumentClass {
+export interface DocumentClassResource {
   label: string;
   file: string;
   titleComments: Comment[];
 }
 
-export interface ArchiveClass {
+export interface ArchiveClassResource {
   className: string;
   label: string;
   file: string;
+}
+export interface OntologyClass {
+  id: string;
+  label: string;
 }

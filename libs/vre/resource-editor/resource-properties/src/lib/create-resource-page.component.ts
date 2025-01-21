@@ -11,7 +11,7 @@ import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-create-resource-page',
-  template: ` <h3>Create new resource of type: {{ classLabel }}</h3>
+  template: ` <h3 data-cy="create-resource-title">Create new resource of type: {{ classLabel }}</h3>
     <app-create-resource-form
       *ngIf="resourceClassIri"
       [resourceClassIri]="resourceClassIri"

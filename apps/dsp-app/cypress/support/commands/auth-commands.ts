@@ -4,6 +4,12 @@ Cypress.Commands.add('resetDatabase', () =>
   cy.request({
     method: 'POST',
     url: `${Cypress.env('apiUrl')}/admin/store/ResetTriplestoreContent`,
+    body: [
+      {
+        path: 'test_data/project_data/anything-data.ttl',
+        name: 'http://www.knora.org/ontology/0001/anything',
+      },
+    ],
   })
 );
 

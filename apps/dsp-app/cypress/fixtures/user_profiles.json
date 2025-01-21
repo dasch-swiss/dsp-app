@@ -2,6 +2,8 @@
   "admin_username": "daschAdmin",
   "admin_password": "DaSCHianer1",
   "change_admin_password": "DaSCHianer2",
+  "incunabulaProjectAdmin_username": "user.test",
+  "incunabulaProjectAdmin_password": "test",
   "anythingProjectMember_username": "anything.user01",
   "anythingProjectMember_password": "test",
   "anythingProjectAdmin_username": "anything.admin",

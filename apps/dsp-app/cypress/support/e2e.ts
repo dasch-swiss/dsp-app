@@ -25,6 +25,40 @@ beforeEach(() => {
   cy.request({
     method: 'POST',
     url: `${Cypress.env('apiUrl')}/admin/store/ResetTriplestoreContent`,
+    body: [
+      {
+        path: 'test_data/project_data/anything-data.ttl',
+        name: 'http://www.knora.org/ontology/0001/anything',
+      },
+      // {
+      //   path: 'test_data/project_data/images-demo-data.ttl',
+      //   name: 'http://www.knora.org/data/00FF/images',
+      // },
+      // {
+      //   path: 'test_data/project_data/beol-data.ttl',
+      //   name: 'http://www.knora.org/data/0801/beol',
+      // },
+      // {
+      //   path: 'test_data/project_ontologies/books-onto.ttl',
+      //   name: 'http://www.knora.org/ontology/0001/books',
+      // },
+      // {
+      //   path: 'test_data/project_data/incunabula-data.ttl',
+      //   name: 'http://www.knora.org/data/0803/incunabula',
+      // },
+      // {
+      //   path: 'test_data/project_data/biblio-data.ttl',
+      //   name: 'http://www.knora.org/data/0801/biblio',
+      // },
+      // {
+      //   path: 'test_data/project_data/webern-data.ttl',
+      //   name: 'http://www.knora.org/data/0806/webern',
+      // },
+      // {
+      //   path: 'test_data/project_ontologies/dokubib-onto.ttl',
+      //   name: 'http://www.knora.org/ontology/0804/dokubib',
+      // },
+    ],
   });
 
   cy.readFile('cypress/fixtures/user_profiles.json').then((json: UserProfiles) => {

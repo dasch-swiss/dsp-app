@@ -3,11 +3,11 @@ import pixelmatch from 'pixelmatch';
 import { PNG } from 'pngjs';
 import { UploadedFileResponse } from '../../../../../libs/vre/shared/app-representations/src';
 import {
-  AudioThingClass,
-  DocumentClass,
-  MiscClass,
-  SidebandClass,
-  VideoThingClass,
+  AudioThingClassResource,
+  DocumentClassResource,
+  MiscClassResource,
+  SidebandClassResource,
+  VideoThingClassResource,
 } from '../../models/existing-data-models';
 import { Project0001Page, Project0803Page } from '../../support/pages/existing-ontology-class-page';
 
@@ -17,7 +17,7 @@ describe.skip('View Existing Resource', () => {
   let project0803Page: Project0803Page;
   let project0001Page: Project0001Page;
 
-  const miscData: MiscClass = {
+  const miscData: MiscClassResource = {
     label: faker.lorem.word(),
     color: faker.color.rgb(),
     colorComment: faker.lorem.sentence(),
@@ -25,7 +25,7 @@ describe.skip('View Existing Resource', () => {
     bookComment: faker.lorem.sentence(),
   };
 
-  const sidebandData: SidebandClass = {
+  const sidebandData: SidebandClassResource = {
     label: faker.lorem.word(),
     file: '',
     title: faker.lorem.sentence(),
@@ -35,9 +35,9 @@ describe.skip('View Existing Resource', () => {
     comments: [{ text: faker.lorem.sentence(), comment: faker.lorem.sentence() }],
   };
 
-  const videoThingData: VideoThingClass = createVideoThingClass('zzLabel');
+  const videoThingData: VideoThingClassResource = createVideoThingClass('zzLabel');
 
-  function createVideoThingClass(label: string): VideoThingClass {
+  function createVideoThingClass(label: string): VideoThingClassResource {
     return {
       label: label,
       file: '',
@@ -46,14 +46,14 @@ describe.skip('View Existing Resource', () => {
     };
   }
 
-  const audioThingData: AudioThingClass = {
+  const audioThingData: AudioThingClassResource = {
     label: faker.lorem.word(),
     file: '',
     title: faker.lorem.sentence(),
     titleComment: faker.lorem.sentence(),
   };
 
-  const documentData: DocumentClass = {
+  const documentData: DocumentClassResource = {
     label: faker.lorem.word(),
     file: '',
     titleComments: [
