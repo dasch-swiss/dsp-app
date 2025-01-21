@@ -1,5 +1,6 @@
 import { Component, Input, OnChanges } from '@angular/core';
 import { ReadProject } from '@dasch-swiss/dsp-js';
+import { ResourceSelectors, UserSelectors } from '@dasch-swiss/vre/core/state';
 import {
   FileRepresentation,
   RepresentationConstants,
@@ -8,7 +9,6 @@ import {
 } from '@dasch-swiss/vre/resource-editor/representations';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
-import { ResourceSelectors, UserSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { Store } from '@ngxs/store';
 import { Observable, combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';

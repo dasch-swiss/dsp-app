@@ -2,11 +2,11 @@ import { Component, EventEmitter, Input, Output, ViewContainerRef } from '@angul
 import { MatDialog } from '@angular/material/dialog';
 import { TooltipPosition } from '@angular/material/tooltip';
 import { ReadResource } from '@dasch-swiss/dsp-js';
+import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import {
   CreateSegmentDialogComponent,
   CreateSegmentDialogProps,
 } from '@dasch-swiss/vre/resource-editor/segment-support';
-import { DspDialogConfig } from '@dasch-swiss/vre/shared/app-config';
 import { FileRepresentation } from '../file-representation';
 import { MovingImageSidecar } from '../moving-image-sidecar';
 import { MediaPlayerService } from './media-player.service';

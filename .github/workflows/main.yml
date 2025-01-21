@@ -125,7 +125,7 @@ jobs:
       - run: npx nx run jdnconvertiblecalendardateadapter:test:ci
 
   vre-shared-app-config-tests:
-    name: vre-shared-app-config
+    name: vre-core-config
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -135,8 +135,8 @@ jobs:
         with:
           node-version: 20.9.0
       - run: npm install
-      - run: npx nx run vre-shared-app-config:lint
-      - run: npx nx run vre-shared-app-config:test:ci
+      - run: npx nx run vre-core-config:lint
+      - run: npx nx run vre-core-config:test:ci
 
   # publish on commit to main or tag
   publish:
@@ -188,7 +188,7 @@ jobs:
 
   send-chat-notification:
     name: Send google chat notification
-    needs: [publish]
+    needs: [ publish ]
     runs-on: ubuntu-latest
     if: github.event_name == 'release' && startsWith(github.ref, 'refs/tags')
     steps:

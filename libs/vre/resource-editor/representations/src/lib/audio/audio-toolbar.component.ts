@@ -1,11 +1,11 @@
 import { Component, Input, OnInit, ViewContainerRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ReadResource } from '@dasch-swiss/dsp-js';
+import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import {
   CreateSegmentDialogComponent,
   CreateSegmentDialogProps,
 } from '@dasch-swiss/vre/resource-editor/segment-support';
-import { DspDialogConfig } from '@dasch-swiss/vre/shared/app-config';
 import { MediaPlayerService } from '../video/media-player.service';
 
 @Component({

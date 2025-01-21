@@ -1,12 +1,12 @@
 import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { Constants } from '@dasch-swiss/dsp-js';
+import { LoadProjectAction, ProjectsSelectors, ResourceSelectors } from '@dasch-swiss/vre/core/state';
 import {
   FileRepresentationType,
   UploadedFileResponse,
   UploadFileService,
 } from '@dasch-swiss/vre/resource-editor/representations';
-import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
-import { LoadProjectAction, ProjectsSelectors, ResourceSelectors } from '@dasch-swiss/vre/shared/app-state';
+import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { Actions, ofActionSuccessful, Store } from '@ngxs/store';
 import { filter, finalize, map, mergeMap, take } from 'rxjs/operators';
 

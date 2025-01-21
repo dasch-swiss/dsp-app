@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
+import { AppConfigService } from '@dasch-swiss/vre/core/config';
 import { Graph } from '../../../interfaces/graph.interface';
 import { BaseApi } from '../../base-api';
 import { CanDoResponse } from './can-do-response.interface';

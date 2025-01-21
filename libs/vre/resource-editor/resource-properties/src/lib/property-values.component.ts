@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, TemplateRef } from '@angular/core';
 import { AbstractControl, FormBuilder } from '@angular/forms';
 import { Cardinality } from '@dasch-swiss/dsp-js';
-import { ProjectsSelectors } from '@dasch-swiss/vre/shared/app-state';
+import { ProjectsSelectors } from '@dasch-swiss/vre/core/state';
 import { Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { PropertyValueService } from './property-value.service';

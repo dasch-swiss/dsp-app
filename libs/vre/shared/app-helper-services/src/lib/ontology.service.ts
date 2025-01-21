@@ -7,7 +7,7 @@ import {
   ReadOntology,
   ResourcePropertyDefinitionWithAllLanguages,
 } from '@dasch-swiss/dsp-js';
-import { DspApiConfigToken, RouteConstants } from '@dasch-swiss/vre/shared/app-config';
+import { DspApiConfigToken, RouteConstants } from '@dasch-swiss/vre/core/config';
 import { Observable, of } from 'rxjs';
 import { DefaultProperties, DefaultProperty, PropertyCategory } from './default-data/default-properties';
 

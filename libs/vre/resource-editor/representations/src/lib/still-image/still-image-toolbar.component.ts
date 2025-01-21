@@ -11,11 +11,11 @@ import {
   UpdateFileValue,
   UpdateResource,
 } from '@dasch-swiss/dsp-js';
+import { DspApiConnectionToken, DspDialogConfig } from '@dasch-swiss/vre/core/config';
+import { AppError } from '@dasch-swiss/vre/core/error-handler';
 import { ResourceUtil } from '@dasch-swiss/vre/shared/app-common';
-import { DspApiConnectionToken, DspDialogConfig } from '@dasch-swiss/vre/shared/app-config';
-import { AppError } from '@dasch-swiss/vre/shared/app-error-handler';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
-import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
+import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { filter, switchMap } from 'rxjs/operators';
 import { EditThirdPartyIiifFormComponent } from '../edit-third-party-iiif-form/edit-third-party-iiif-form.component';
 import { ThirdPartyIiifProps } from '../edit-third-party-iiif-form/edit-third-party-iiif-types';

@@ -7,7 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { By } from '@angular/platform-browser';
-import { AppConfigService, DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
+import { AppConfigService, DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
 import { MockProvider } from 'ng-mocks';
 import { PdfViewerModule } from 'ng2-pdf-viewer';

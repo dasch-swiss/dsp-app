@@ -7,7 +7,7 @@ import {
   ResourceClassDefinition,
   ResourcePropertyDefinition,
 } from '@dasch-swiss/dsp-js';
-import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 
 /**
  * This service gather methods that needs to be refactored (mainly State management) in order to get property "resourceClasses" in LinkValue2Component.

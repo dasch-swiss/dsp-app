@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
+import { AppConfigService } from '@dasch-swiss/vre/core/config';
 
 @Injectable({
   providedIn: 'root',

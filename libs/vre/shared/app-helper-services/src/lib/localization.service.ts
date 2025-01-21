@@ -4,7 +4,7 @@ import en_GB from '@angular/common/locales/en-GB';
 import fr_CH from '@angular/common/locales/fr-CH';
 import it_CH from '@angular/common/locales/it-CH';
 import { Injectable } from '@angular/core';
-import { AvailableLanguages } from '@dasch-swiss/vre/shared/app-config';
+import { AvailableLanguages } from '@dasch-swiss/vre/core/config';
 import { TranslateService } from '@ngx-translate/core';
 import { BaseService } from './base.service';
 

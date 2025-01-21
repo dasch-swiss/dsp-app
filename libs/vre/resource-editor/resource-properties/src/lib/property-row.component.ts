@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, ElementRef, Input, OnDestroy, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
-import { RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { of, Subject } from 'rxjs';
 import { takeUntil, takeWhile } from 'rxjs/operators';
 

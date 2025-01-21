@@ -11,7 +11,7 @@ import {
   EraseResourceDialogProps,
 } from '@dasch-swiss/vre/resource-editor/resource-properties';
 import { DspResource, ResourceService, ResourceUtil } from '@dasch-swiss/vre/shared/app-common';
-import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
+import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { filter } from 'rxjs/operators';
 
 @Component({

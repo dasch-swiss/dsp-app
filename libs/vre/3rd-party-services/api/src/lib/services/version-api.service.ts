@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { VersionResponse } from '@dasch-swiss/dsp-js';
-import { AppConfig, AppConfigService } from '@dasch-swiss/vre/shared/app-config';
+import { AppConfig, AppConfigService } from '@dasch-swiss/vre/core/config';
 import { BaseApi } from './base-api';
 
 @Injectable({

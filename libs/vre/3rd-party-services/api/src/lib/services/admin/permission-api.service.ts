@@ -12,7 +12,7 @@ import {
   UpdateDefaultObjectAccessPermissionProperty,
   UpdateDefaultObjectAccessPermissionResourceClass,
 } from '@dasch-swiss/dsp-js';
-import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
+import { AppConfigService } from '@dasch-swiss/vre/core/config';
 import { BaseApi } from '../base-api';
 
 @Injectable({ providedIn: 'root' })
@@ -62,9 +62,9 @@ export class PermissionApiService extends BaseApi {
     }
 
     /*
-            A default object access permission can only reference either a group, a resource class, a property,
-            or a combination of resource class and property.
-         */
+                A default object access permission can only reference either a group, a resource class, a property,
+                or a combination of resource class and property.
+             */
     if (
       ((defaultObject.forGroup &&
         !defaultObject.forResourceClass &&

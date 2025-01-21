@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@angular/core';
 import { ApiResponseError, CountQueryResponse, KnoraApiConnection, ReadResourceSequence } from '@dasch-swiss/dsp-js';
-import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -51,8 +51,8 @@ knora-api:hasGeometry knora-api:objectType knora-api:Geom .
 ?geom a knora-api:Geom .
 
 OPTIONAL {
-  ?region knora-api:hasComment ?comment . 
-  knora-api:hasComment knora-api:objectType xsd:string . 
+  ?region knora-api:hasComment ?comment .
+  knora-api:hasComment knora-api:objectType xsd:string .
   ?comment a xsd:string .
 }
 

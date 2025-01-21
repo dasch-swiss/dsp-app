@@ -12,10 +12,10 @@ import {
   ResourceClassDefinitionWithPropertyDefinition,
   ResourcePropertyDefinition,
 } from '@dasch-swiss/dsp-js';
+import { ApiConstants, DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
+import { LoadClassItemsCountAction, ResourceSelectors } from '@dasch-swiss/vre/core/state';
 import { FileRepresentationType } from '@dasch-swiss/vre/resource-editor/representations';
 import { PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
-import { ApiConstants, DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
-import { LoadClassItemsCountAction, ResourceSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { Store } from '@ngxs/store';
 import { finalize, switchMap, take } from 'rxjs/operators';
 import { FormValueArray, FormValueGroup } from './form-value-array.type';

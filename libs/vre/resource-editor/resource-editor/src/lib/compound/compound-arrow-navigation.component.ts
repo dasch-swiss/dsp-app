@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { AppError } from '@dasch-swiss/vre/shared/app-error-handler';
+import { AppError } from '@dasch-swiss/vre/core/error-handler';
 import { CompoundService } from './compound.service';
 
 @Component({

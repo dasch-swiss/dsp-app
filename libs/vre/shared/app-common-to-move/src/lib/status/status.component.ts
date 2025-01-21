@@ -2,7 +2,7 @@ import { Component, Inject, Input, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { ApiResponseData, HealthResponse, KnoraApiConnection } from '@dasch-swiss/dsp-js';
-import { DspApiConnectionToken, RouteConstants } from '@dasch-swiss/vre/shared/app-config';
+import { DspApiConnectionToken, RouteConstants } from '@dasch-swiss/vre/core/config';
 import { HttpStatusMsg } from '@dasch-swiss/vre/shared/assets/status-msg';
 
 export interface StatusMsg {
@@ -24,6 +24,7 @@ export class StatusComponent implements OnInit {
   get status(): number {
     return this._status;
   }
+
   @Input() set status(value: number) {
     this._status = value;
     this.message = this.getMsgByStatus(this.status);

@@ -1,7 +1,7 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { RegionService } from '@dasch-swiss/vre/resource-editor/representations';
 import { DspResource, ResourceService } from '@dasch-swiss/vre/shared/app-common';
-import { RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { Subscription } from 'rxjs';
 import { take } from 'rxjs/operators';
 

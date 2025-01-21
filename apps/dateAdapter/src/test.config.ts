@@ -1,5 +1,5 @@
 import { KnoraApiConfig } from '@dasch-swiss/dsp-js';
-import { Session } from '@dasch-swiss/vre/shared/app-session';
+import { Session } from '@dasch-swiss/vre/core/session';
 
 export class TestConfig {
   public static ApiConfig = new KnoraApiConfig('http', '0.0.0.0', 3333);

@@ -1,5 +1,5 @@
 import { Component, EventEmitter, HostListener, Output } from '@angular/core';
-import { secondsToTimeString } from '@dasch-swiss/vre/shared/app-ui';
+import { secondsToTimeString } from '@dasch-swiss/vre/ui/ui';
 import { Segment } from './segment';
 import { SegmentsService } from './segments.service';
 

@@ -1,11 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import {
-  AppConfigService,
-  DspInstrumentationConfig,
-  DspInstrumentationToken,
-} from '@dasch-swiss/vre/shared/app-config';
-import { AccessTokenService, AuthService } from '@dasch-swiss/vre/shared/app-session';
+import { AppConfigService, DspInstrumentationConfig, DspInstrumentationToken } from '@dasch-swiss/vre/core/config';
+import { AccessTokenService, AuthService } from '@dasch-swiss/vre/core/session';
 
 @Injectable({
   providedIn: 'root',

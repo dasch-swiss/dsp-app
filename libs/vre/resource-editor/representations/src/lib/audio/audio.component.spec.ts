@@ -7,7 +7,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { BrowserModule } from '@angular/platform-browser';
-import { AppConfigService, DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
+import { AppConfigService, DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
 import { MockProvider } from 'ng-mocks';
 import { of } from 'rxjs';

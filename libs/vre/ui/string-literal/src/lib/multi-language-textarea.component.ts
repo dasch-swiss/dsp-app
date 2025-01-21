@@ -6,7 +6,7 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
-import { NgxsStoreModule } from '@dasch-swiss/vre/shared/app-state';
+import { NgxsStoreModule } from '@dasch-swiss/vre/core/state';
 import { HumanReadableErrorPipe } from './human-readable-error.pipe';
 import { MultiLanguageFormArray } from './multi-language-form-array.type';
 import { MultiLanguageFormService } from './multi-language-form.service';

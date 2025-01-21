@@ -1,7 +1,7 @@
 import { HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
-import { AccessTokenService } from '@dasch-swiss/vre/shared/app-session';
+import { AppConfigService } from '@dasch-swiss/vre/core/config';
+import { AccessTokenService } from '@dasch-swiss/vre/core/session';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {

@@ -8,7 +8,7 @@ import {
   UserResponse,
   UsersResponse,
 } from '@dasch-swiss/dsp-js';
-import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
+import { AppConfigService } from '@dasch-swiss/vre/core/config';
 import { BaseApi } from '../base-api';
 
 export type UserIdentifier = 'iri' | 'email' | 'username';

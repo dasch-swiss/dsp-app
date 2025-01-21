@@ -1,29 +1,29 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { ResourcePage2Component, ResourcePageComponent } from '@dasch-swiss/vre/resource-editor/resource-editor';
-import { CreateResourcePageComponent } from '@dasch-swiss/vre/resource-editor/resource-properties';
-import { StatusComponent } from '@dasch-swiss/vre/shared/app-common-to-move';
-import { RouteConstants } from '@dasch-swiss/vre/shared/app-config';
-import { HelpPageComponent } from '@dasch-swiss/vre/shared/app-help-page';
-import { CreateListInfoPageComponent, ListPageComponent } from '@dasch-swiss/vre/shared/app-list';
-import { DataModelsComponent, OntologyComponent } from '@dasch-swiss/vre/shared/app-ontology';
-import { OntologyClassInstanceComponent } from '@dasch-swiss/vre/shared/app-ontology-classes';
+import { RouteConstants } from '@dasch-swiss/vre/core/config';
+import { CreateListInfoPageComponent, ListPageComponent } from '@dasch-swiss/vre/pages/ontology/list';
+import { DataModelsComponent, OntologyComponent } from '@dasch-swiss/vre/pages/ontology/ontology';
+import { OntologyClassInstanceComponent } from '@dasch-swiss/vre/pages/ontology/ontology-classes';
 import {
   CollaborationComponent,
   CreateProjectFormPageComponent,
   DescriptionComponent,
   EditProjectFormPageComponent,
   ProjectComponent,
-} from '@dasch-swiss/vre/shared/app-project';
-import { AdvancedSearchContainerComponent, ResultsComponent } from '@dasch-swiss/vre/shared/app-search';
-import { ImageSettingsComponent, SettingsPageComponent } from '@dasch-swiss/vre/shared/app-settings-page';
+} from '@dasch-swiss/vre/pages/project/project';
+import { AdvancedSearchContainerComponent, ResultsComponent } from '@dasch-swiss/vre/pages/search/search';
 import {
   CookiePolicyComponent,
   ProjectsComponent,
   SystemComponent,
   UsersComponent,
-} from '@dasch-swiss/vre/shared/app-system';
-import { OverviewComponent, UserComponent } from '@dasch-swiss/vre/shared/app-user';
+} from '@dasch-swiss/vre/pages/system/system';
+import { ImageSettingsComponent, SettingsPageComponent } from '@dasch-swiss/vre/pages/user-settings/settings';
+import { OverviewComponent, UserComponent } from '@dasch-swiss/vre/pages/user-settings/user';
+import { ResourcePage2Component, ResourcePageComponent } from '@dasch-swiss/vre/resource-editor/resource-editor';
+import { CreateResourcePageComponent } from '@dasch-swiss/vre/resource-editor/resource-properties';
+import { StatusComponent } from '@dasch-swiss/vre/shared/app-common-to-move';
+import { HelpPageComponent } from '@dasch-swiss/vre/shared/app-help-page';
 import { AuthGuard } from './main/guard/auth.guard';
 import { OntologyClassInstanceGuard } from './main/guard/ontology-class-instance.guard';
 

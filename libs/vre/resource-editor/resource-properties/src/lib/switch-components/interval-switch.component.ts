@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { secondsToTimeString } from '@dasch-swiss/vre/shared/app-ui';
+import { secondsToTimeString } from '@dasch-swiss/vre/ui/ui';
 import { IsSwitchComponent } from './is-switch-component.interface';
 
 @Component({

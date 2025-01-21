@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
-import { AppConfigService, DspConfig, RouteConstants } from '@dasch-swiss/vre/shared/app-config';
+import { AppConfigService, DspConfig, RouteConstants } from '@dasch-swiss/vre/core/config';
 import { SearchParams } from '../search-params.interface';
 
 @Component({

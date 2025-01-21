@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { ApiResponseData, HealthResponse, KnoraApiConnection, VersionResponse } from '@dasch-swiss/dsp-js';
-import { AppConfigService, DspApiConnectionToken, DspConfig } from '@dasch-swiss/vre/shared/app-config';
+import { AppConfigService, DspApiConnectionToken, DspConfig } from '@dasch-swiss/vre/core/config';
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import packageJson from '../../../../../../../package.json';
 import { GridItem } from '../grid/grid.component';

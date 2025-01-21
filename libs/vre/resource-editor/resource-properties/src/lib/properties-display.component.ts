@@ -9,9 +9,9 @@ import {
   ViewChild,
 } from '@angular/core';
 import { Cardinality, Constants, ReadLinkValue, ResourcePropertyDefinition } from '@dasch-swiss/dsp-js';
+import { ResourceSelectors } from '@dasch-swiss/vre/core/state';
 import { DspResource, PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
-import { ResourceSelectors } from '@dasch-swiss/vre/shared/app-state';
-import { PagerComponent } from '@dasch-swiss/vre/shared/app-ui';
+import { PagerComponent } from '@dasch-swiss/vre/ui/ui';
 import { Store } from '@ngxs/store';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { map, take, takeUntil } from 'rxjs/operators';
@@ -218,10 +218,12 @@ export class PropertiesDisplayComponent implements OnChanges, OnDestroy {
       (this.properties.find(prop => prop.propDef.id === Constants.HasStandoffLinkToValue)?.values as ReadLinkValue[]) ??
       []
     ).map(link => {
-      const resourceIdPathOnly = link.linkedResourceIri.match(/[^\/]*\/[^\/]*$/);
-      if (!resourceIdPathOnly) {
+      const parts = link.linkedResourceIri.split('/');
+      if (parts.length < 2) {
         throw new Error('Linked resource IRI is not in the expected format');
       }
+
+      const resourceIdPathOnly = parts.slice(-2).join('/');
 
       return {
         label: link.strval ?? '',
