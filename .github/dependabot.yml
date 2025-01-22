@@ -112,6 +112,7 @@ updates:
       - dependency-name: "ckeditor5-custom-build"
       # all nx and angular dependencies are for now handled manually
       - dependency-name: "@angular/*"
+      - dependency-name: "@angular-devkit/*"
       - dependency-name: "@angular-eslint/*" #angular-eslint should match the angular version, also handled manually
       - dependency-name: "typescript"
       - dependency-name: "@ngrx/component-store"
