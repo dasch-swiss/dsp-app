@@ -1,4 +1,4 @@
-<div *ngIf="fileType === 'pdf'" class="pdf-container">
+<div *ngIf="isPdf" class="pdf-container">
   <!-- in case of an error -->
   <app-status [status]="404" [url]="src.fileValue.fileUrl" [representation]="'document'" *ngIf="failedToLoad">
   </app-status>
@@ -50,7 +50,7 @@
           mat-icon-button
           id="DSP_PDF_ZOOM_OUT"
           matTooltip="Zoom out"
-          (click)="zoom('out')"
+          (click)="zoom(-1)"
           [disabled]="failedToLoad">
           <mat-icon>remove_circle_outline</mat-icon>
         </button>
@@ -62,12 +62,7 @@
           [disabled]="failedToLoad">
           <mat-icon>adjust</mat-icon>
         </button>
-        <button
-          mat-icon-button
-          id="DSP_PDF_ZOOM_IN"
-          matTooltip="Zoom in"
-          (click)="zoom('in')"
-          [disabled]="failedToLoad">
+        <button mat-icon-button id="DSP_PDF_ZOOM_IN" matTooltip="Zoom in" (click)="zoom(+1)" [disabled]="failedToLoad">
           <mat-icon>add_circle_outline</mat-icon>
         </button>
       </span>
@@ -90,7 +85,7 @@
   </div>
 </div>
 <!-- default document viewer -->
-<div *ngIf="fileType !== 'pdf'">
+<div *ngIf="!isPdf">
   <div class="file-representation">
     <div class="container">
       <div class="contents">

@@ -1,4 +1,3 @@
-import { DOCUMENT } from '@angular/common';
 import { ChangeDetectorRef, Component, Inject, Input, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import {
@@ -14,7 +13,7 @@ import {
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { ResourceUtil } from '@dasch-swiss/vre/shared/app-common';
 import { PdfViewerComponent } from 'ng2-pdf-viewer';
-import { mergeMap } from 'rxjs/operators';
+import { mergeMap, take } from 'rxjs/operators';
 import { FileRepresentation } from '../file-representation';
 import {
   ReplaceFileDialogComponent,
@@ -28,12 +27,12 @@ import { RepresentationService } from '../representation.service';
   styleUrls: ['./document.component.scss'],
 })
 export class DocumentComponent implements OnChanges {
-  @Input() src: FileRepresentation;
-  @Input() parentResource: ReadResource;
+  @Input({ required: true }) src!: FileRepresentation;
+  @Input({ required: true }) parentResource!: ReadResource;
 
-  @ViewChild(PdfViewerComponent) private _pdfComponent: PdfViewerComponent;
+  @ViewChild(PdfViewerComponent) private _pdfComponent!: PdfViewerComponent;
 
-  originalFilename: string;
+  originalFilename = '';
 
   zoomFactor = 1.0;
 
@@ -41,16 +40,15 @@ export class DocumentComponent implements OnChanges {
 
   failedToLoad = false;
 
-  elem: any;
-
-  fileType: string;
+  get isPdf(): boolean {
+    return this.src.fileValue.filename.split('.').pop() === 'pdf';
+  }
 
   get usercanEdit() {
     return ResourceUtil.userCanEdit(this.parentResource);
   }
 
   constructor(
-    @Inject(DOCUMENT) private document: any,
     @Inject(DspApiConnectionToken)
     private _dspApiConnection: KnoraApiConnection,
     private _dialog: MatDialog,
@@ -60,35 +58,16 @@ export class DocumentComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['src'] && changes['src'].currentValue) {
-      this._rs.getFileInfo(this.src.fileValue.fileUrl).subscribe(
-        res => {
-          this.originalFilename = res['originalFilename'];
-        },
-        () => {
-          // error already handled by getFileInfo
-          this.failedToLoad = true;
-        }
-      );
-      this.fileType = this._getFileType(this.src.fileValue.filename);
-      if (this.fileType === 'pdf') {
-        this.elem = document.getElementsByClassName('pdf-viewer')[0];
-      }
+      this._setOriginalFilename();
     }
   }
 
   searchQueryChanged(newQuery: string) {
-    if (newQuery !== this.pdfQuery) {
-      this.pdfQuery = newQuery;
-      this._pdfComponent.eventBus.dispatch('find', {
-        query: this.pdfQuery,
-        highlightAll: true,
-      });
-    } else {
-      this._pdfComponent.eventBus.dispatch('findagain', {
-        query: this.pdfQuery,
-        highlightAll: true,
-      });
-    }
+    const eventName = newQuery !== this.pdfQuery ? 'find' : 'findagain';
+    this._pdfComponent.eventBus.dispatch(eventName, {
+      query: this.pdfQuery,
+      highlightAll: true,
+    });
   }
 
   download(fileValue: ReadDocumentFileValue) {
@@ -114,43 +93,13 @@ export class DocumentComponent implements OnChanges {
   }
 
   openFullscreen() {
-    if (!this.elem) {
-      return; // guard
-    }
-    if (this.elem.requestFullscreen) {
-      this.elem.requestFullscreen();
-    } else if (this.elem.mozRequestFullScreen) {
-      // firefox
-      this.elem.mozRequestFullScreen();
-    } else if (this.elem.webkitRequestFullscreen) {
-      // chrome, safari and opera
-      this.elem.webkitRequestFullscreen();
-    } else if (this.elem.msRequestFullscreen) {
-      // edge, ie
-      this.elem.msRequestFullscreen();
-    }
+    const elem = document.getElementsByClassName('pdf-viewer')[0];
+    elem?.requestFullscreen?.();
   }
 
-  // help the computer add and subtract floating point numbers
-  zoom(direction: 'in' | 'out') {
-    switch (direction) {
-      case 'in':
-        this.zoomFactor = Math.round((this.zoomFactor + 0.2) * 100) / 100;
-        break;
-      case 'out':
-        // will the zoomFactor be less than or equal to zero?
-        if (Math.round((this.zoomFactor - 0.2) * 100) / 100 <= 0) {
-          // cap zoomFactor at 0.2
-          this.zoomFactor = 0.2;
-        } else {
-          this.zoomFactor = Math.round((this.zoomFactor - 0.2) * 100) / 100;
-          break;
-        }
-    }
-  }
-
-  private _getFileType(filename: string): string {
-    return filename.split('.').pop();
+  zoom(mod: -1 | 1) {
+    const newZoom = Math.round((this.zoomFactor + mod * 0.2) * 100) / 100;
+    this.zoomFactor = newZoom <= 0 ? 0.2 : newZoom;
   }
 
   private _replaceFile(file: UpdateFileValue) {
@@ -165,35 +114,41 @@ export class DocumentComponent implements OnChanges {
       .pipe(
         mergeMap((res: WriteValueResponse) =>
           this._dspApiConnection.v2.values.getValue(this.parentResource.id, res.uuid)
-        )
+        ),
+        take(1)
       )
-      .subscribe((res2: ReadResource) => {
-        this.parentResource = res2;
+      .subscribe((fileValue: ReadResource) => {
+        this.parentResource = fileValue;
         this.src.fileValue.fileUrl = (
-          res2.properties[Constants.HasDocumentFileValue][0] as ReadDocumentFileValue
+          fileValue.properties[Constants.HasDocumentFileValue][0] as ReadDocumentFileValue
         ).fileUrl;
         this.src.fileValue.filename = (
-          res2.properties[Constants.HasDocumentFileValue][0] as ReadDocumentFileValue
+          fileValue.properties[Constants.HasDocumentFileValue][0] as ReadDocumentFileValue
         ).filename;
         this.src.fileValue.strval = (
-          res2.properties[Constants.HasDocumentFileValue][0] as ReadDocumentFileValue
+          fileValue.properties[Constants.HasDocumentFileValue][0] as ReadDocumentFileValue
         ).strval;
         this.src.fileValue.valueCreationDate = (
-          res2.properties[Constants.HasDocumentFileValue][0] as ReadDocumentFileValue
+          fileValue.properties[Constants.HasDocumentFileValue][0] as ReadDocumentFileValue
         ).valueCreationDate;
-
-        this.fileType = this._getFileType(this.src.fileValue.filename);
-        if (this.fileType === 'pdf') {
-          this.elem = document.getElementsByClassName('pdf-viewer')[0];
-        }
-
-        this._rs.getFileInfo(this.src.fileValue.fileUrl).subscribe(res => {
-          this.originalFilename = res['originalFilename'];
-        });
 
         this.zoomFactor = 1.0;
         this.pdfQuery = '';
-        this._cd.markForCheck();
+        this._setOriginalFilename();
       });
+  }
+
+  private _setOriginalFilename() {
+    this.originalFilename = '';
+    this._rs.getFileInfo(this.src.fileValue.fileUrl).subscribe(
+      res => {
+        this.originalFilename = res['originalFilename'] || '';
+        this._cd.detectChanges();
+      },
+      () => {
+        // error already handled by getFileInfo
+        this.failedToLoad = true;
+      }
+    );
   }
 }
