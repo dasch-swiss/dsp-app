@@ -25,10 +25,7 @@ import { StillImageHelper } from './still-image-helper';
 
 @Component({
   selector: 'app-still-image',
-  template: ` <div
-      class="osd-container"
-      [class.drawing]="isViewInitialized && !osdService.viewer.isMouseNavEnabled()"
-      #osdViewer>
+  template: ` <div class="osd-container" [class.drawing]="isViewInitialized && osdService.drawing" #osdViewer>
       <div *ngIf="compoundMode">
         <app-compound-arrow-navigation [forwardNavigation]="false" class="arrow" />
         <app-compound-arrow-navigation [forwardNavigation]="true" class="arrow" />

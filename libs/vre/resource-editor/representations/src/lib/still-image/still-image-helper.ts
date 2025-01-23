@@ -10,6 +10,7 @@ import {
   RegionGeometry,
 } from '@dasch-swiss/dsp-js';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
+import OpenSeadragon from 'openseadragon';
 import { Region } from '../region';
 import { GeometryForRegion } from './geometry-for-region';
 import { PolygonsForRegion } from './polygons-for-region.interface';
@@ -154,5 +155,9 @@ export class StillImageHelper {
     const h = Math.max(geom.points[0].y, geom.points[1].y) - Math.min(geom.points[0].y, geom.points[1].y);
 
     return w * h;
+  }
+
+  static preventDefault(event: OpenSeadragon.ViewerEvent): void {
+    event.preventDefaultAction = true;
   }
 }

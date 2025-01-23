@@ -33,7 +33,7 @@
       matTooltip="Draw Region"
       [disabled]="!userCanEdit || isReadStillImageExternalFileValue"
       (click)="toggleDrawMode()"
-      [class.active]="osd.viewer.isMouseNavEnabled()">
+      [class.active]="osd.drawing">
       <mat-icon svgIcon="draw_region_icon"></mat-icon>
     </button>
   </span>

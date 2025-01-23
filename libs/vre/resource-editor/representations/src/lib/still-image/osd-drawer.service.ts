@@ -89,7 +89,6 @@ export class OsdDrawerService implements OnDestroy {
       )
       .pipe(
         switchMap(({ data, overlay }) => {
-          this._osd.viewer.setMouseNavEnabled(true);
           this._osd.viewer.removeOverlay(overlay.overlay);
           this._cdr.detectChanges();
 
