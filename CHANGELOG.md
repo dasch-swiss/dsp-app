@@ -1,5 +1,44 @@
 # Changelog
 
+## [11.23.0](https://github.com/dasch-swiss/dsp-das/compare/v11.22.6...v11.23.0) (2025-01-27)
+
+
+### Enhancements
+
+* improve paging of search results (DEV-2468) ([#1995](https://github.com/dasch-swiss/dsp-das/issues/1995)) ([8c9d77c](https://github.com/dasch-swiss/dsp-das/commit/8c9d77cfee2004687d76480d3d5b068d4e9346d2))
+
+
+### Bug Fixes
+
+* cardinalities change in resource class info component (DEV-4514) ([#2052](https://github.com/dasch-swiss/dsp-das/issues/2052)) ([bca5922](https://github.com/dasch-swiss/dsp-das/commit/bca5922ccb1663cd3e0e3216e8f156426ca6b258))
+* remove problematic and unused property (DEV-4513) ([#2044](https://github.com/dasch-swiss/dsp-das/issues/2044)) ([b35f9fe](https://github.com/dasch-swiss/dsp-das/commit/b35f9fe3b6af78b8ea4e62d66f6475af23937f05))
+* **still image:** drawing a region does not break mouse nav on canvas (DEV-4445) ([#2024](https://github.com/dasch-swiss/dsp-das/issues/2024)) ([c7fb551](https://github.com/dasch-swiss/dsp-das/commit/c7fb55115ed5df07b2a19d39aeac0e4d421030c4))
+* use getters (DEV-4507) ([#2050](https://github.com/dasch-swiss/dsp-das/issues/2050)) ([44fbbe4](https://github.com/dasch-swiss/dsp-das/commit/44fbbe42e39b6a4f4e0ddbfc26318e9cea18b0b3))
+
+
+### Maintenances
+
+* add more specific rule for [@angular-devkit](https://github.com/angular-devkit) ([#2055](https://github.com/dasch-swiss/dsp-das/issues/2055)) ([ab7b6d9](https://github.com/dasch-swiss/dsp-das/commit/ab7b6d9b881415c5ea582f21143489e8337e8b2c))
+* **deps-dev:** bump @types/node from 20.17.12 to 20.17.14 in the types-deps group ([#2048](https://github.com/dasch-swiss/dsp-das/issues/2048)) ([ac7d616](https://github.com/dasch-swiss/dsp-das/commit/ac7d6165503f0f9dd1312b6e14dda8a21f4ea1fd))
+* **deps-dev:** bump @typescript-eslint/utils from 8.20.0 to 8.21.0 ([#2057](https://github.com/dasch-swiss/dsp-das/issues/2057)) ([df2f899](https://github.com/dasch-swiss/dsp-das/commit/df2f89905f7c7ef36845be2fb019722caf645109))
+* **deps-dev:** bump eslint-plugin-prettier from 5.2.1 to 5.2.3 ([#2058](https://github.com/dasch-swiss/dsp-das/issues/2058)) ([8d961bf](https://github.com/dasch-swiss/dsp-das/commit/8d961bf2b7532d8bb2c7bf61ff6f16565aeb4e05))
+* **deps-dev:** bump undici from 5.28.4 to 5.28.5 ([#2053](https://github.com/dasch-swiss/dsp-das/issues/2053)) ([29d440e](https://github.com/dasch-swiss/dsp-das/commit/29d440e5a69ad950a22eabb016f283fda53c28d2))
+* **deps:** bump @sentry/cli from 2.40.0 to 2.41.0 in the sentry-deps group ([#2047](https://github.com/dasch-swiss/dsp-das/issues/2047)) ([7a3e55d](https://github.com/dasch-swiss/dsp-das/commit/7a3e55daea096bd5b6e219da02af5e3f095d307f))
+* **deps:** bump @sentry/cli from 2.41.0 to 2.41.1 in the sentry-deps group ([#2056](https://github.com/dasch-swiss/dsp-das/issues/2056)) ([6a34e40](https://github.com/dasch-swiss/dsp-das/commit/6a34e40781abfc5cb4768bcc82c756cde7bb4878))
+* **deps:** bump the grafana-deps group with 2 updates ([#2046](https://github.com/dasch-swiss/dsp-das/issues/2046)) ([85bf73a](https://github.com/dasch-swiss/dsp-das/commit/85bf73abc17ce7d0e7ec8dffd8c95280723960ed))
+* group nx libs ([#2041](https://github.com/dasch-swiss/dsp-das/issues/2041)) ([1cbcd39](https://github.com/dasch-swiss/dsp-das/commit/1cbcd39843282c9c0b851f977b90d12caf9a6c65))
+
+
+### Documentation
+
+* add all class types to user guide ([#2042](https://github.com/dasch-swiss/dsp-das/issues/2042)) ([81b19db](https://github.com/dasch-swiss/dsp-das/commit/81b19dba9e4c3acba9e3fde1bab181f51e33050c))
+* add explanation for classes and subclasses ([#2043](https://github.com/dasch-swiss/dsp-das/issues/2043)) ([b310318](https://github.com/dasch-swiss/dsp-das/commit/b310318bd24f8e47f28c2bbbd93151a301b846e7))
+
+
+### Tests
+
+* resource project admin e2e tests with populated data (DEV-4438) ([#2027](https://github.com/dasch-swiss/dsp-das/issues/2027)) ([a192978](https://github.com/dasch-swiss/dsp-das/commit/a192978fb55eee40e8b9dcf0ccaa2a484bf7bf6d))
+
 ## [11.22.6](https://github.com/dasch-swiss/dsp-das/compare/v11.22.5...v11.22.6) (2025-01-15)
 
 
