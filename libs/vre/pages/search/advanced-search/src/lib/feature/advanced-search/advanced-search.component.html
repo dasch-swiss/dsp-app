@@ -30,12 +30,12 @@
             resourcesSearchNoResults: resourcesSearchNoResults$ | async,
             orderByButtonDisabled: orderByButtonDisabled$ | async,
         } as asyncData">
-    <dasch-swiss-order-by
+    <app-order-by
       [orderByList]="asyncData.propertiesOrderByList"
       [orderByDisabled]="asyncData.orderByButtonDisabled"
       (emitPropertyOrderByChanged)="handlePropertyOrderByChanged($event)">
-    </dasch-swiss-order-by>
-    <dasch-swiss-ontology-resource-form
+    </app-order-by>
+    <app-ontology-resource-form
       [ontologies]="asyncData.ontologies"
       [ontologiesLoading]="asyncData.ontologiesLoading"
       [resourceClasses]="asyncData.resourceClasses"
@@ -43,8 +43,8 @@
       [selectedOntology]="asyncData.selectedOntology"
       [selectedResourceClass]="asyncData.selectedResourceClass"
       (emitSelectedOntology)="handleSelectedOntology($event)"
-      (emitSelectedResourceClass)="handleSelectedResourceClass($event)"></dasch-swiss-ontology-resource-form>
-    <dasch-swiss-property-form
+      (emitSelectedResourceClass)="handleSelectedResourceClass($event)"></app-ontology-resource-form>
+    <app-property-form
       *ngFor="let propertyForm of asyncData.propertyFormList"
       [matchResourceClassesLoading]="asyncData.matchResourceClassesLoading"
       [resourcesSearchResultsLoading]="asyncData.resourcesSearchResultsLoading"
@@ -67,14 +67,14 @@
       (emitRemoveChildPropertyForm)="handleRemoveChildPropertyForm($event)"
       (emitChildSelectedPropertyChanged)="handleChildSelectedPropertyChanged($event)"
       (emitChildSelectedOperatorChanged)="handleChildSelectedOperatorChanged($event)"
-      (emitChildValueChanged)="handleChildValueChanged($event)"></dasch-swiss-property-form>
-    <dasch-swiss-form-actions
+      (emitChildValueChanged)="handleChildValueChanged($event)"></app-property-form>
+    <app-form-actions
       [addButtonDisabled]="asyncData.addButtonDisabled"
       [resetButtonDisabled]="asyncData.resetButtonDisabled"
       [searchButtonDisabled]="asyncData.searchButtonDisabled"
       (emitAddPropertyForm)="handleAddPropertyForm()"
       (emitResetButtonClicked)="handleResetButtonClicked()"
       (emitSearchButtonClicked)="handleSearchButtonClicked()">
-    </dasch-swiss-form-actions>
+    </app-form-actions>
   </div>
 </div>

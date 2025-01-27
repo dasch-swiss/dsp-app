@@ -15,15 +15,15 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelect, MatSelectChange, MatSelectModule } from '@angular/material/select';
 import { Constants } from '@dasch-swiss/dsp-js';
 import {
-  PropertyData,
   ApiData,
+  PropertyData,
   ResourceLabelObject,
 } from '../../data-access/advanced-search-service/advanced-search.service';
 import {
+  Operators,
   ParentChildPropertyPair,
   PropertyFormItem,
   SearchItem,
-  Operators,
 } from '../../data-access/advanced-search-store/advanced-search-store.service';
 import { PropertyFormLinkMatchPropertyComponent } from './property-form-link-match-property/property-form-link-match-property.component';
 import { PropertyFormLinkValueComponent } from './property-form-link-value/property-form-link-value.component';
@@ -31,7 +31,7 @@ import { PropertyFormListValueComponent } from './property-form-list-value/prope
 import { PropertyFormValueComponent } from './property-form-value/property-form-value.component';
 
 @Component({
-  selector: 'dasch-swiss-property-form',
+  selector: 'app-property-form',
   standalone: true,
   imports: [
     CommonModule,

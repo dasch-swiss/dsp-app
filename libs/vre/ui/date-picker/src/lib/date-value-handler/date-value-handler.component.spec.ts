@@ -28,7 +28,7 @@ import { DateValueHandlerComponent } from './date-value-handler.component';
  */
 @Component({
   template: ` <div [formGroup]="form">
-    <dasch-swiss-date-value-handler #dateValueHandler [formControlName]="'date'"></dasch-swiss-date-value-handler>
+    <app-date-value-handler #dateValueHandler [formControlName]="'date'"></app-date-value-handler>
   </div>`,
 })
 class TestHostComponent implements OnInit {
@@ -51,8 +51,8 @@ class TestHostComponent implements OnInit {
  */
 @Component({
   template: ` <div [formGroup]="form">
-    <dasch-swiss-date-value-handler #dateValueHandler [formControlName]="'date'" [valueRequiredValidator]="false">
-    </dasch-swiss-date-value-handler>
+    <app-date-value-handler #dateValueHandler [formControlName]="'date'" [valueRequiredValidator]="false">
+    </app-date-value-handler>
   </div>`,
 })
 class NoValueRequiredTestHostComponent implements OnInit {
@@ -72,7 +72,7 @@ class NoValueRequiredTestHostComponent implements OnInit {
 
 @Component({
   // eslint-disable-next-line @angular-eslint/component-selector
-  selector: 'dasch-swiss-app-date-picker',
+  selector: 'app-date-picker',
   template: '',
   providers: [
     {
@@ -118,6 +118,7 @@ class TestDatePickerComponent implements ControlValueAccessor, MatFormFieldContr
   onContainerClick(event: MouseEvent): void {}
 
   setDescribedByIds(ids: string[]): void {}
+
   /* eslint-enable @typescript-eslint/no-unused-vars */
 
   _handleInput(): void {

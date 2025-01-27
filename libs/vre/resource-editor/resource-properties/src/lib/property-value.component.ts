@@ -65,7 +65,7 @@ import { propertiesTypeMapping } from './resource-payloads-mapping';
         ">
         <mat-icon>save</mat-icon>
       </button>
-      <dasch-swiss-app-progress-indicator *ngIf="loading" />
+      <app-progress-indicator *ngIf="loading" />
     </div>
   </div>`,
   styleUrls: ['./property-value.component.scss'],

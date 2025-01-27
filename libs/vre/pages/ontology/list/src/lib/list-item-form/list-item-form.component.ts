@@ -12,7 +12,7 @@ import { ListItemService } from '../list-item/list-item.service';
   selector: 'app-list-item-form',
   template: `
     <form [formGroup]="form" style="display: flex" (ngSubmit)="createChildNode()">
-      <dasch-swiss-multi-language-input
+      <app-multi-language-input
         style="flex: 1"
         [formArray]="form.controls.labels"
         [placeholder]="placeholder"

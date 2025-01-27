@@ -5,10 +5,10 @@
     <mat-icon class="iiif-preview-icon">preview</mat-icon>
     <div>[ preview ]</div>
     <div class="mat-subtitle-2 iiif-url-explanation">
-      The URL must point to a valid IIIF image (jpg, tif, jp2, png). <br />Example: {{exampleString}}
+      The URL must point to a valid IIIF image (jpg, tif, jp2, png). <br />Example: {{ exampleString }}
     </div>
   </div>
-  <dasch-swiss-app-progress-indicator *ngIf="previewStatus === 'LOADING'"></dasch-swiss-app-progress-indicator>
+  <app-progress-indicator *ngIf="previewStatus === 'LOADING'"></app-progress-indicator>
   <img
     *ngIf="iiifUrlControl?.valid"
     [src]="previewImageUrl"
@@ -21,7 +21,7 @@
 <mat-form-field class="third-party-iiif-field">
   <mat-label>IIIF Image URL</mat-label>
   <input matInput [formControl]="iiifUrlControl" placeholder="Enter IIIF image URL" data-cy="external-iiif-input" />
-  <mat-error *ngIf="iiifUrlControl.errors as errors"> {{ errors | humanReadableError: validatorErrors }} </mat-error>
+  <mat-error *ngIf="iiifUrlControl.errors as errors"> {{ errors | humanReadableError: validatorErrors }}</mat-error>
   <button
     *ngIf="iiifUrlControl.value"
     [disabled]="iiifUrlControl.valid"
@@ -31,7 +31,7 @@
     type="button"
     color="primary"
     data-cy="external-iiif-reset">
-    <mat-icon>{{ iiifUrlControl.valid ? 'check' : 'close'}}</mat-icon>
+    <mat-icon>{{ iiifUrlControl.valid ? 'check' : 'close' }}</mat-icon>
   </button>
   <button
     type="button"

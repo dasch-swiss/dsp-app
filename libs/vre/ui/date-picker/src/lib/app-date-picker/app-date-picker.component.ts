@@ -87,7 +87,7 @@ const _MatInputMixinBase: CanUpdateErrorStateCtor & typeof MatInputBase = mixinE
 
 @Component({
   standalone: true,
-  selector: 'dasch-swiss-app-date-picker',
+  selector: 'app-date-picker',
   templateUrl: './app-date-picker.component.html',
   styleUrls: ['./app-date-picker.component.scss'],
   imports: [
@@ -123,13 +123,13 @@ export class AppDatePickerComponent
   @Input() calendar = 'GREGORIAN';
 
   @HostBinding()
-  id = `dasch-swiss-app-date-picker-${AppDatePickerComponent.nextId++}`;
+  id = `app-date-picker-${AppDatePickerComponent.nextId++}`;
 
   @HostBinding('attr.aria-describedby') describedBy = '';
   dateForm: UntypedFormGroup;
   focused = false;
   override errorState = false;
-  controlType = 'dasch-swiss-app-date-picker';
+  controlType = 'app-date-picker';
   matcher = new DatePickerErrorStateMatcher();
 
   // own date picker variables

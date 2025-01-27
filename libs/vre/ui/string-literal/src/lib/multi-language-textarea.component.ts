@@ -12,7 +12,7 @@ import { MultiLanguageFormArray } from './multi-language-form-array.type';
 import { MultiLanguageFormService } from './multi-language-form.service';
 
 @Component({
-  selector: 'dasch-swiss-multi-language-textarea',
+  selector: 'app-multi-language-textarea',
   standalone: true,
   providers: [MultiLanguageFormService],
   imports: [

@@ -7,12 +7,12 @@ import { ListItemForm } from './list-item-form.type';
 @Component({
   selector: 'app-reusable-list-item-form',
   template: `
-    <dasch-swiss-multi-language-input
+    <app-multi-language-input
       placeholder="Child node label"
       [formArray]="form.controls.labels"
       [validators]="labelsValidators"
       [isRequired]="true" />
-    <dasch-swiss-multi-language-textarea
+    <app-multi-language-textarea
       placeholder="Child node description"
       [formArray]="form.controls.comments"
       [validators]="commentsValidators"

@@ -1,4 +1,4 @@
-<dasch-swiss-app-progress-indicator *ngIf="(isLoading$ | async)"></dasch-swiss-app-progress-indicator>
+<app-progress-indicator *ngIf="(isLoading$ | async)"></app-progress-indicator>
 <app-users-list
   *ngIf="(isLoading$ | async) === false"
   [list]="active$ | async"

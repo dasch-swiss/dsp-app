@@ -27,7 +27,7 @@ import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { ProjectsSelectors } from '@dasch-swiss/vre/core/state';
 import { MatAutocompleteOptionsScrollDirective } from '@dasch-swiss/vre/shared/app-common';
 import { Store } from '@ngxs/store';
-import { Observable, Subject, of } from 'rxjs';
+import { Observable, of, Subject } from 'rxjs';
 import { debounceTime, filter, finalize, map, switchMap, take, takeUntil } from 'rxjs/operators';
 import { CreateResourceDialogComponent, CreateResourceDialogProps } from '../create-resource-dialog.component';
 import { LinkValueDataService } from './link-value-data.service';
@@ -51,7 +51,7 @@ import { LinkValueDataService } from './link-value-data.service';
         requireSelection
         [displayWith]="displayResource.bind(this)"
         (closed)="handleNonSelectedValues()">
-        <mat-option *ngIf="searchResultCount === 0" [disabled]="true"> No results were found. </mat-option>
+        <mat-option *ngIf="searchResultCount === 0" [disabled]="true"> No results were found.</mat-option>
         <mat-option
           *ngFor="let rc of _linkValueDataService.resourceClasses; trackBy: trackByResourceClassFn"
           (click)="openCreateResourceDialog($event, rc.id, rc.label)">
@@ -62,7 +62,7 @@ import { LinkValueDataService } from './link-value-data.service';
           {{ res.label }}
         </mat-option>
         <mat-option *ngIf="loading" [disabled]="true" class="loader">
-          <dasch-swiss-app-progress-indicator></dasch-swiss-app-progress-indicator>
+          <app-progress-indicator></app-progress-indicator>
         </mat-option>
       </mat-autocomplete>
       <mat-hint>{{ 'form.action.searchHelp' | translate }}</mat-hint>

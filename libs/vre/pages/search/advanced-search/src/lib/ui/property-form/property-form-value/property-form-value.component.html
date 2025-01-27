@@ -15,8 +15,8 @@
   <mat-form-field *ngSwitchCase="constants.BooleanValue">
     <mat-label>Value</mat-label>
     <mat-select [formControl]="inputControl" data-cy="value-select">
-      <mat-option value="true"> True </mat-option>
-      <mat-option value="false"> False </mat-option>
+      <mat-option value="true"> True</mat-option>
+      <mat-option value="false"> False</mat-option>
     </mat-select>
   </mat-form-field>
 
@@ -49,8 +49,6 @@
 
   <!-- date value -->
   <div *ngSwitchCase="constants.DateValue" [formGroup]="dateFormGroup">
-    <dasch-swiss-app-date-picker
-      [formControlName]="'date'"
-      (emitDateChanged)="onDateSelected($event)"></dasch-swiss-app-date-picker>
+    <app-date-picker [formControlName]="'date'" (emitDateChanged)="onDateSelected($event)"></app-date-picker>
   </div>
 </div>

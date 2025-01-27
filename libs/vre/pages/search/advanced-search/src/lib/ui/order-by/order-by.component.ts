@@ -1,4 +1,4 @@
-import { CdkDragDrop, CdkDrag, CdkDragHandle, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
+import { CdkDrag, CdkDragDrop, CdkDragHandle, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
@@ -9,7 +9,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { OrderByItem } from '../../data-access/advanced-search-store/advanced-search-store.service';
 
 @Component({
-  selector: 'dasch-swiss-order-by',
+  selector: 'app-order-by',
   standalone: true,
   imports: [
     CommonModule,

@@ -1,5 +1,5 @@
-<dasch-swiss-centered-layout>
-  <dasch-swiss-app-progress-indicator *ngIf="isProjectsLoading$ | async"></dasch-swiss-app-progress-indicator>
+<app-centered-layout>
+  <app-progress-indicator *ngIf="isProjectsLoading$ | async"></app-progress-indicator>
   <div class="content large middle" *ngIf="(isProjectsLoading$ | async) === false">
     <div>
       <p>{{ 'form.project.imageSettings.restrictions' | translate }}</p>
@@ -65,4 +65,4 @@
       </button>
     </div>
   </div>
-</dasch-swiss-centered-layout>
+</app-centered-layout>

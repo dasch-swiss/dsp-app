@@ -1,4 +1,4 @@
-<dasch-swiss-app-progress-indicator *ngIf="isLoading$ | async"></dasch-swiss-app-progress-indicator>
+<app-progress-indicator *ngIf="isLoading$ | async"></app-progress-indicator>
 <div *ngIf="(readProject$ | async) as project" class="content large middle">
   <div>
     <p>Project Description</p>
@@ -34,7 +34,7 @@
   <!-- description -->
   <div class="description-rm">
     <div>
-      <p class="project-longname">{{project.longname}}</p>
+      <p class="project-longname">{{ project.longname }}</p>
     </div>
     <section class="project description" *ngFor="let desc of sortedDescriptions$ | async">
       <div [innerHtml]="desc.value"></div>
@@ -45,7 +45,7 @@
     <!-- keywords -->
     <section class="project keywords">
       <mat-chip-listbox>
-        <mat-chip *ngFor="let k of project.keywords">{{k}}</mat-chip>
+        <mat-chip *ngFor="let k of project.keywords">{{ k }}</mat-chip>
       </mat-chip-listbox>
     </section>
   </div>

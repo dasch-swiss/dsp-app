@@ -7,10 +7,10 @@ import { Constants, ListNodeV2 } from '@dasch-swiss/dsp-js';
 import { PropertyFormItem } from '../../../data-access/advanced-search-store/advanced-search-store.service';
 
 @Component({
-  selector: 'dasch-swiss-property-form-list-value',
+  selector: 'app-property-form-list-value',
   standalone: true,
   imports: [CommonModule, MatFormFieldModule, MatSelectModule, MatOptionModule],
-  template: `<mat-form-field appearance="fill" class="dropdown">
+  template: ` <mat-form-field appearance="fill" class="dropdown">
     <mat-label>Select a value</mat-label>
     <mat-select [(value)]="selectedItem" (selectionChange)="onSelectionChange($event)" panelClass="custom-select-panel">
       <mat-option *ngFor="let child of sortedLabelList; trackBy: trackByFn" [value]="child">

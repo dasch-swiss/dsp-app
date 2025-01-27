@@ -1,4 +1,4 @@
-<dasch-swiss-app-progress-indicator *ngIf="(isProjectsLoading$ | async) === true"></dasch-swiss-app-progress-indicator>
+<app-progress-indicator *ngIf="(isProjectsLoading$ | async) === true"></app-progress-indicator>
 <div *ngIf="(isProjectsLoading$ | async) === false" class="app-projects">
   <!-- <mat-divider></mat-divider> -->
   <app-projects-list

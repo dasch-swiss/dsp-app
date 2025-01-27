@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'dasch-swiss-centered-layout',
+  selector: 'app-centered-layout',
   template: '<div class="child"><ng-content></ng-content></div>',
   styles: [
     `

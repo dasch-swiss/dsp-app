@@ -11,8 +11,7 @@
 </div>
 <!-- container with search results -->
 <div class="list-view-container">
-  <dasch-swiss-app-pager (pageIndexChanged)="doSearch($event)" [numberOfAllResults]="numberOfAllResults">
-  </dasch-swiss-app-pager>
+  <app-pager (pageIndexChanged)="doSearch($event)" [numberOfAllResults]="numberOfAllResults"> </app-pager>
   <div *ngIf="numberOfAllResults > 0 && resources">
     <app-resource-list
       [withMultipleSelection]="true"
@@ -28,7 +27,7 @@
     *ngIf="!loading && (!(resources?.resources) || resources?.resources?.length === 0)">
     <!-- Case A: user did a fulltext search -->
     <div *ngIf="search.mode === 'fulltext'">
-      <p>Your search - <strong> {{search.query}}</strong> - did not match any documents.</p>
+      <p>Your search - <strong> {{ search.query }}</strong> - did not match any documents.</p>
       <p>Suggestions:</p>
       <ul>
         <li *ngIf="numberOfAllResults > 0">

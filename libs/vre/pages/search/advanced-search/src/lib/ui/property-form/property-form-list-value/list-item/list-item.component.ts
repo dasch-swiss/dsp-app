@@ -4,7 +4,7 @@ import { MatMenu, MatMenuModule } from '@angular/material/menu';
 import { ListNodeV2 } from '@dasch-swiss/dsp-js';
 
 @Component({
-  selector: 'dasch-swiss-list-item',
+  selector: 'app-list-item',
   standalone: true,
   imports: [CommonModule, MatMenuModule],
   templateUrl: './list-item.component.html',

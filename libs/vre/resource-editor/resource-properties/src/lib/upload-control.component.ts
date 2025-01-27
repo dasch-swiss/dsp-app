@@ -14,7 +14,7 @@ import { fileValueMapping } from './file-value-mapping';
     <mat-error *ngIf="ngControl.touched && ngControl.errors">{{ ngControl.errors | humanReadableError }}</mat-error>
 
     <ng-template #loadingTpl>
-      <dasch-swiss-app-progress-indicator />
+      <app-progress-indicator />
     </ng-template>
   `,
 })

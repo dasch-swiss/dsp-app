@@ -21,7 +21,7 @@ import { IsSwitchComponent } from './is-switch-component.interface';
     </ng-template>
 
     <ng-template #editMode>
-      <dasch-swiss-date-value-handler [formControl]="control"></dasch-swiss-date-value-handler>
+      <app-date-value-handler [formControl]="control"></app-date-value-handler>
       <mat-error *ngIf="control.touched && control.errors as errors">{{ errors | humanReadableError }}</mat-error>
     </ng-template>
 

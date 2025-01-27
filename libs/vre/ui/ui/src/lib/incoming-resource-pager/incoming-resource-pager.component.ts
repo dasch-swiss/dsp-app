@@ -6,7 +6,7 @@ import { TranslateModule } from '@ngx-translate/core';
 @Component({
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  selector: 'dasch-swiss-app-incoming-resource-pager',
+  selector: 'app-incoming-resource-pager',
   imports: [MatIconModule, MatButtonModule, TranslateModule],
   templateUrl: './incoming-resource-pager.component.html',
   styleUrls: ['./incoming-resource-pager.component.scss'],

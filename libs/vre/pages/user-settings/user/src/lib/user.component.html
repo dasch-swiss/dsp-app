@@ -1,4 +1,4 @@
-<dasch-swiss-app-progress-indicator *ngIf="(username$ | async) === null"></dasch-swiss-app-progress-indicator>
+<app-progress-indicator *ngIf="(username$ | async) === null"></app-progress-indicator>
 <app-status *ngIf="error"></app-status>
 
 <div class="content large middle" *ngIf="username$ | async">
@@ -16,8 +16,8 @@
           routerLinkActive="active-tab"
           #rla="routerLinkActive"
           [active]="rla.isActive">
-          <mat-icon class="tab-icon">{{link.icon}}</mat-icon>
-          {{link.label}}
+          <mat-icon class="tab-icon">{{ link.icon }}</mat-icon>
+          {{ link.label }}
         </a>
         <!-- mobile version -->
         <a
@@ -27,7 +27,7 @@
           routerLinkActive="active-tab"
           #rla="routerLinkActive"
           [active]="rla.isActive">
-          {{link.shortLabel}}
+          {{ link.shortLabel }}
         </a>
       </span>
     </nav>

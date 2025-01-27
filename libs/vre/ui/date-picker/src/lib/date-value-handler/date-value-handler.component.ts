@@ -17,10 +17,10 @@ import {
   Validators,
 } from '@angular/forms';
 import {
-  CanUpdateErrorState,
-  ErrorStateMatcher,
   _AbstractConstructor,
   _Constructor,
+  CanUpdateErrorState,
+  ErrorStateMatcher,
   mixinErrorState,
 } from '@angular/material/core';
 import { MatFormFieldControl } from '@angular/material/form-field';
@@ -65,7 +65,7 @@ class MatInputBase {
 const _MatInputMixinBase: CanUpdateErrorStateCtor & typeof MatInputBase = mixinErrorState(MatInputBase);
 
 @Component({
-  selector: 'dasch-swiss-date-value-handler',
+  selector: 'app-date-value-handler',
   templateUrl: './date-value-handler.component.html',
   styleUrls: ['./date-value-handler.component.scss'],
   providers: [
@@ -100,7 +100,7 @@ export class DateValueHandlerComponent
   pickerClosed = false;
   readonly focused = false;
 
-  readonly controlType = 'dasch-swiss-date-value-handler';
+  readonly controlType = 'app-date-value-handler';
 
   calendars = JDNConvertibleCalendar.supportedCalendars.map(cal => cal.toUpperCase());
 
@@ -189,7 +189,7 @@ export class DateValueHandlerComponent
   }
 
   @HostBinding()
-  id = `dasch-swiss-date-value-handler-${DateValueHandlerComponent.nextId++}`;
+  id = `app-date-value-handler-${DateValueHandlerComponent.nextId++}`;
 
   constructor(
     fb: UntypedFormBuilder,

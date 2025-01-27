@@ -29,7 +29,7 @@ export interface QueryObject {
 }
 
 @Component({
-  selector: 'dasch-swiss-advanced-search',
+  selector: 'app-advanced-search',
   standalone: true,
   imports: [
     CommonModule,

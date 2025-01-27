@@ -1,13 +1,5 @@
 {
-  "extends": ["../../../../../.eslintrc-angular.json"],
-  "rules": {
-    "@angular-eslint/component-selector": [
-      "error",
-      {
-        "type": "element",
-        "prefix": "dasch-swiss",
-        "style": "kebab-case"
-      }
-    ]
-  }
+  "extends": [
+    "../../../../../.eslintrc-angular.json"
+  ]
 }

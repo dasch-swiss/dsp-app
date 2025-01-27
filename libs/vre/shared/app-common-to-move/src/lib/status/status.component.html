@@ -12,7 +12,8 @@
       </p>
       <div [ngSwitch]="message?.action" class="action">
         <button *ngSwitchCase="'goback'" mat-button routerLink="{{homeLink}}">
-          <mat-icon>keyboard_backspace</mat-icon> Please go back to the start page.
+          <mat-icon>keyboard_backspace</mat-icon>
+          Please go back to the start page.
         </button>
         <p *ngSwitchCase="'reload'">
           Please come back in a few minutes and try to
@@ -23,6 +24,6 @@
     </div>
   </div>
   <ng-template #isLoading>
-    <dasch-swiss-app-progress-indicator></dasch-swiss-app-progress-indicator>
+    <app-progress-indicator></app-progress-indicator>
   </ng-template>
 </div>

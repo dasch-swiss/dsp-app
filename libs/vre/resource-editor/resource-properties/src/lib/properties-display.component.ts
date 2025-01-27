@@ -93,10 +93,10 @@ import { sortByKeys } from './sortByKeys';
       <app-incoming-standoff-link-value
         *ngIf="(incomingLinks$ | async)?.length > 0"
         [links]="incomingLinks$ | async"></app-incoming-standoff-link-value>
-      <dasch-swiss-app-incoming-resource-pager
+      <app-incoming-resource-pager
         #pager
         [lastItemOfPage]="incomingLinks.length"
-        (pageChanged)="pageChanged()"></dasch-swiss-app-incoming-resource-pager>
+        (pageChanged)="pageChanged()"></app-incoming-resource-pager>
     </app-property-row>
 
     <ng-template #noProperties>

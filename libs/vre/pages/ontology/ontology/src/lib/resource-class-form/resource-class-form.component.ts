@@ -22,14 +22,14 @@ import { ResourceClassForm } from './resource-class-form.type';
         [validatorErrors]="[{ errorKey: 'pattern', message: 'This pattern is not supported' }]"
         prefixIcon="fingerprint" />
 
-      <dasch-swiss-multi-language-input
+      <app-multi-language-input
         data-cy="label-input"
         placeholder="Label"
         [formArray]="form.controls.labels"
         [validators]="labelsValidators"
         [isRequired]="true" />
 
-      <dasch-swiss-multi-language-textarea
+      <app-multi-language-textarea
         data-cy="comment-textarea"
         placeholder="Comment"
         [formArray]="form.controls.comments"

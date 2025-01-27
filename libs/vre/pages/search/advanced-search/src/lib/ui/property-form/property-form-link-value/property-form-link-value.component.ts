@@ -10,7 +10,7 @@ import { ApiData } from '../../../data-access/advanced-search-service/advanced-s
 import { PropertyFormItem } from '../../../data-access/advanced-search-store/advanced-search-store.service';
 
 @Component({
-  selector: 'dasch-swiss-property-form-link-value',
+  selector: 'app-property-form-link-value',
   standalone: true,
   imports: [
     CommonModule,

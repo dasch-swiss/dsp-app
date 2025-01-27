@@ -12,7 +12,7 @@ import { MultiLanguageFormArray } from './multi-language-form-array.type';
 import { MultiLanguageFormService } from './multi-language-form.service';
 
 @Component({
-  selector: 'dasch-swiss-multi-language-input',
+  selector: 'app-multi-language-input',
   standalone: true,
   providers: [MultiLanguageFormService],
   imports: [

@@ -14,8 +14,8 @@
             <mat-option *ngIf="propertiesLoading" disabled="true">Loading...</mat-option>
             <ng-container *ngIf="!propertiesLoading">
               <mat-option [value]="resourceLabelObj" [attr.data-cy]="resourceLabelObj.label"
-                >{{ resourceLabelObj.label }}</mat-option
-              >
+                >{{ resourceLabelObj.label }}
+              </mat-option>
               <mat-option *ngFor="let prop of properties" [value]="prop" [attr.data-cy]="prop.label">
                 {{ prop.label }}
               </mat-option>
@@ -83,7 +83,7 @@
                 propertyFormItem.selectedOperator !== operators.NotExists
             "
       class="value-container">
-      <dasch-swiss-property-form-value
+      <app-property-form-value
         #propertyFormValue
         *ngIf="
                     (propertyFormItem.selectedProperty?.objectType?.includes(
@@ -97,7 +97,7 @@
         [objectType]="propertyFormItem.selectedProperty?.objectType"
         [value]="propertyFormItem.searchValue"
         (emitValueChanged)="onValueChanged($event)" />
-      <dasch-swiss-property-form-list-value
+      <app-property-form-list-value
         *ngIf="
                     propertyFormItem.selectedProperty?.objectType ===
                     constants.ListValue
@@ -105,9 +105,9 @@
         [list]="propertyFormItem.list"
         [value]="propertyFormItem.searchValue"
         (emitValueChanged)="onValueChanged($event)">
-      </dasch-swiss-property-form-list-value>
+      </app-property-form-list-value>
 
-      <dasch-swiss-property-form-link-value
+      <app-property-form-link-value
         *ngIf="
                     !propertyFormItem.selectedProperty?.objectType?.includes(
                         constants.KnoraApiV2
@@ -126,8 +126,8 @@
                     onResourceSearchValueChanged($event)
                 "
         (emitLoadMoreSearchResults)="onLoadMoreSearchResults($event)"
-        (emitResourceSelected)="onValueChanged($event)"></dasch-swiss-property-form-link-value>
-      <dasch-swiss-property-form-link-match-property
+        (emitResourceSelected)="onValueChanged($event)"></app-property-form-link-value>
+      <app-property-form-link-match-property
         *ngIf="
                     !propertyFormItem.selectedProperty?.objectType?.includes(
                         constants.KnoraApiV2
@@ -162,7 +162,7 @@
         (emitLoadMoreSearchResults)="
                     onChildLoadMoreSearchResults($event)
                 ">
-      </dasch-swiss-property-form-link-match-property>
+      </app-property-form-link-match-property>
     </div>
   </div>
 

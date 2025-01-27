@@ -4,7 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
 @Component({
-  selector: 'dasch-swiss-form-actions',
+  selector: 'app-form-actions',
   standalone: true,
   imports: [CommonModule, MatButtonModule, MatIconModule],
   templateUrl: './form-actions.component.html',

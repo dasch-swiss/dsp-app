@@ -11,7 +11,7 @@
             name="properties"
             [compareWith]="compareObjects">
             <mat-option [value]="resourceLabelObj">{{ resourceLabelObj.label }}</mat-option>
-            <mat-option *ngFor="let prop of properties" [value]="prop"> {{ prop.label }} </mat-option>
+            <mat-option *ngFor="let prop of properties" [value]="prop"> {{ prop.label }}</mat-option>
           </mat-select>
         </mat-form-field>
       </div>
@@ -38,7 +38,7 @@
             "
       class="value-container">
       <!-- choose correct component based on objectType -->
-      <dasch-swiss-property-form-value
+      <app-property-form-value
         #propertyFormValue
         *ngIf="
                     !item.selectedProperty?.isLinkedResourceProperty &&
@@ -47,15 +47,15 @@
         [objectType]="item.selectedProperty?.objectType"
         [value]="item.searchValue"
         (emitValueChanged)="onValueChanged($event, i)" />
-      <dasch-swiss-property-form-list-value
+      <app-property-form-list-value
         *ngIf="
                     item.selectedProperty?.objectType === constants.ListValue
                 "
         [list]="item.list"
         [value]="item.searchValue"
         (emitValueChanged)="onValueChanged($event, i)">
-      </dasch-swiss-property-form-list-value>
-      <dasch-swiss-property-form-link-value
+      </app-property-form-list-value>
+      <app-property-form-link-value
         *ngIf="item.selectedProperty?.isLinkedResourceProperty"
         [value]="item.searchValue"
         [label]="item.searchValueLabel"
@@ -67,7 +67,7 @@
                     onResourceSearchValueChanged($event, i)
                 "
         (emitLoadMoreSearchResults)="onLoadMoreSearchResults($event, i)"
-        (emitResourceSelected)="onValueChanged($event, i)"></dasch-swiss-property-form-link-value>
+        (emitResourceSelected)="onValueChanged($event, i)"></app-property-form-link-value>
     </div>
   </div>
   <div class="side-container">

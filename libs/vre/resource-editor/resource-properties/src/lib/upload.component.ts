@@ -35,7 +35,7 @@ import { filter, finalize, map, mergeMap, take } from 'rxjs/operators';
     </ng-container>
 
     <ng-template #loadingTpl>
-      <dasch-swiss-app-progress-indicator />
+      <app-progress-indicator />
     </ng-template>
 
     <ng-template #showFileTemplate>

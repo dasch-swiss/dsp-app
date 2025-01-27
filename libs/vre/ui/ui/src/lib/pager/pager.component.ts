@@ -19,7 +19,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 @Component({
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  selector: 'dasch-swiss-app-pager',
+  selector: 'app-pager',
   imports: [MatIconModule, MatButtonModule, TranslateModule, MatInputModule, MatTooltipModule, NgIf, AsyncPipe],
   templateUrl: './pager.component.html',
   styleUrls: ['./pager.component.scss'],

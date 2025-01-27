@@ -12,7 +12,7 @@ import { ProjectForm } from './reusable-project-form/project-form.type';
 @Component({
   selector: 'app-create-project-form-page',
   template: `
-    <dasch-swiss-centered-layout>
+    <app-centered-layout>
       <app-reusable-project-form
         [formData]="{
           shortcode: '',
@@ -40,7 +40,7 @@ import { ProjectForm } from './reusable-project-form/project-form.type';
           {{ 'form.action.submit' | translate }}
         </button>
       </div>
-    </dasch-swiss-centered-layout>
+    </app-centered-layout>
   `,
 })
 export class CreateProjectFormPageComponent {

@@ -31,7 +31,7 @@ class ValueErrorStateMatcher implements ErrorStateMatcher {
 }
 
 @Component({
-  selector: 'dasch-swiss-property-form-value',
+  selector: 'app-property-form-value',
   standalone: true,
   imports: [
     AppDatePickerComponent,
