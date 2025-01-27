@@ -1,88 +1,95 @@
-import { NgIf } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
+import { AsyncPipe, NgIf } from '@angular/common';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnChanges,
+  Output,
+  SimpleChanges,
+  ViewChild,
+} from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { TranslateModule } from '@ngx-translate/core';
+import { MatInputModule } from '@angular/material/input';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'dasch-swiss-app-pager',
-  imports: [NgIf, MatIconModule, MatButtonModule, TranslateModule],
+  imports: [MatIconModule, MatButtonModule, TranslateModule, MatInputModule, MatTooltipModule, NgIf, AsyncPipe],
   templateUrl: './pager.component.html',
   styleUrls: ['./pager.component.scss'],
 })
-export class PagerComponent {
-  @Output() pageChanged: EventEmitter<number> = new EventEmitter<number>();
-  @Input() showNumberOfAllResults = true;
-  @Input() nextPageIsAvailable: null | boolean = null;
-  @Input() set numberOfAllResults(value: number) {
-    this._numberOfAllResults = value;
-    this._calculateRange(this.currentIndex);
-  }
-  get numberOfAllResults(): number {
-    return this._numberOfAllResults;
-  }
+export class PagerComponent implements OnChanges {
+  @Input() numberOfAllResults = 0;
+  @Input() pageSize = 25;
 
-  static readonly pageSize = 25;
+  @Output() pageIndexChanged: EventEmitter<number> = new EventEmitter<number>();
 
-  private _numberOfAllResults = 0;
+  @ViewChild('pageInput') private _pageInput!: ElementRef<HTMLInputElement>;
 
-  PagerComponent = PagerComponent;
+  private _pageIndex = 0;
 
-  currentIndex = 0;
-  currentRangeStart = 1;
-  currentRangeEnd = 0;
-
-  previousDisabled = false;
-  nextDisabled = false;
-
-  constructor(private _cd: ChangeDetectorRef) {}
-
-  initPager(): void {
-    this.currentIndex = 0;
-    this.currentRangeStart = 1;
-    this.currentRangeEnd = 0;
-    this.nextDisabled = false;
+  get pageIndex(): number {
+    return this._pageIndex;
   }
 
-  goToPage(direction: 'previous' | 'next') {
-    if (direction === 'previous' && this.currentIndex > 0) {
-      this.nextDisabled = false;
-      this.currentIndex -= 1;
+  set pageIndex(val: number) {
+    this._pageIndex = val;
+    this.pageIndexChanged.emit(val);
+  }
+
+  get lastPageIndex(): number {
+    return this.numberOfAllResults ? Math.ceil(this.numberOfAllResults / this.pageSize) - 1 : 0;
+  }
+
+  get inputPage(): number | undefined {
+    return this._pageInput.nativeElement.value ? parseInt(this._pageInput.nativeElement.value, 10) : undefined;
+  }
+
+  get pageUnChanged(): boolean {
+    return this.inputPage === this._pageIndex + 1;
+  }
+
+  get itemRange(): string {
+    const itemRangeStart = this.numberOfAllResults ? this._pageIndex * this.pageSize + 1 : 0;
+    const itemRangeEnd = Math.min((this._pageIndex + 1) * this.pageSize, this.numberOfAllResults);
+    return `${itemRangeStart} - ${itemRangeEnd} ${this._translate.instant('paginator.rangeLabelOf')} ${this.numberOfAllResults}`;
+  }
+
+  constructor(private _translate: TranslateService) {}
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['numberOfAllResults']) {
+      this._pageIndex = 0;
     }
+  }
 
-    if (direction === 'next') {
-      this.currentIndex += 1;
-
-      const isEndRange = PagerComponent.pageSize * (this.currentIndex + 1) >= this.numberOfAllResults;
-      // if end range for the next page of results is greater than the total number of results
-      if ((isEndRange && !this.nextPageIsAvailable) || (isEndRange && this.nextPageIsAvailable === true)) {
-        this.nextDisabled = true;
-      }
+  goToPage() {
+    if (!this.inputPage || this.pageUnChanged) {
+      this._pageInput.nativeElement.blur();
+      return;
     }
-
-    this._calculateRange(this.currentIndex);
-    this.pageChanged.emit(this.currentIndex);
+    // if the user inputs a far off number set it to the closest available page
+    const clampedPage = Math.max(1, Math.min(this.inputPage, this.lastPageIndex + 1));
+    if (clampedPage !== this.inputPage) {
+      this._pageInput.nativeElement.value = clampedPage.toString();
+    }
+    this.pageIndex = clampedPage - 1;
+    this._pageInput.nativeElement.blur();
+    this._pageInput.nativeElement.value = (this._pageIndex + 1).toString();
   }
 
-  /** calculates number of all results when total amount of records is unknown
-   * @param newBatchCount
-   */
-  calculateNumberOfAllResults(newBatchCount: number) {
-    this.numberOfAllResults = this.currentIndex * PagerComponent.pageSize + newBatchCount;
+  selectText(event: FocusEvent) {
+    const input = event.target as HTMLInputElement;
+    input.select();
   }
 
-  /**
-   * @param page offset
-   */
-  private _calculateRange(page: number) {
-    this.currentRangeStart = PagerComponent.pageSize * page;
-    this.currentRangeEnd =
-      PagerComponent.pageSize * (page + 1) > this.numberOfAllResults
-        ? this.numberOfAllResults
-        : PagerComponent.pageSize * (page + 1);
-
-    this._cd.markForCheck();
+  resetToCurrentPage() {
+    this._pageInput.nativeElement.value = (this._pageIndex + 1).toString();
   }
 }

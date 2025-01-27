@@ -1,0 +1,18 @@
+<div class="paging-container">
+  <div class="navigation">
+    <button mat-button class="pagination-button previous" [disabled]="pageIndex === 0" (click)="changePage( - 1)">
+      <mat-icon>west</mat-icon>
+      <span>{{'uiControls.pager.previous' | translate}}</span>
+    </button>
+    <span class="fill-remaining-space"></span>
+    <div class="range">
+      <span>{{itemRangeStart}} - </span>
+      <span>{{itemRangeEnd }}</span>
+    </div>
+    <span class="fill-remaining-space"></span>
+    <button mat-button class="pagination-button next" [disabled]="isLastOnPage" (click)="changePage(1)">
+      <span>{{'uiControls.pager.next' | translate}}</span>
+      <mat-icon>east</mat-icon>
+    </button>
+  </div>
+</div>

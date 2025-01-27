@@ -9,7 +9,6 @@ import {
   OnDestroy,
   OnInit,
   Output,
-  ViewChild,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApiResponseError, CountQueryResponse, KnoraApiConnection, ReadResourceSequence } from '@dasch-swiss/dsp-js';
@@ -18,7 +17,6 @@ import { OntologiesSelectors } from '@dasch-swiss/vre/core/state';
 import { FilteredResources, SearchParams } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { ComponentCommunicationEventService, EmitEvent, Events } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
-import { PagerComponent } from '@dasch-swiss/vre/ui/ui';
 import { Store } from '@ngxs/store';
 import { combineLatest, of, Subject, Subscription } from 'rxjs';
 import { map, take, takeUntil, tap } from 'rxjs/operators';
@@ -69,15 +67,11 @@ export class ListViewComponent implements OnChanges, OnInit, OnDestroy {
    */
   @Output() selectedResources: EventEmitter<FilteredResources> = new EventEmitter<FilteredResources>();
 
-  @ViewChild('pager', { static: false }) pagerComponent: PagerComponent;
-
   resources: ReadResourceSequence;
 
   selectedResourceIdx: number[] = [];
 
   componentCommsSubscriptions: Subscription[] = [];
-
-  resetCheckBoxes = false;
 
   // number of all results including the ones not included as resources in the response bc. the user does not have the permissions to see them
   numberOfAllResults = 0;
@@ -119,7 +113,6 @@ export class ListViewComponent implements OnChanges, OnInit, OnDestroy {
     if (this.isCurrentSearch()) {
       this.currentSearch = this.search;
       this.initSearch();
-      this.pagerComponent.initPager();
     }
   }
 

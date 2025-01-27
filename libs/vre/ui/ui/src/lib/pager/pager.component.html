@@ -1,22 +1,50 @@
-<div *ngIf="numberOfAllResults > 0" class="paging-container">
-  <div class="navigation">
-    <button mat-button class="pagination-button previous" [disabled]="0 >= currentIndex" (click)="goToPage('previous')">
-      <mat-icon>west</mat-icon>
-      <span>{{'uiControls.pager.previous' | translate}}</span>
-    </button>
-    <span class="fill-remaining-space"></span>
-    <div class="range">
-      {{(currentRangeStart || 1 )}} - {{(currentRangeEnd < currentRangeStart) ? '...' : currentRangeEnd}}
-      <span *ngIf="showNumberOfAllResults">{{'uiControls.pager.of' | translate}} {{numberOfAllResults}}</span>
-    </div>
-    <span class="fill-remaining-space"></span>
+<div class="paginator-container">
+  <div class="paginator-nav">
     <button
-      mat-button
-      class="pagination-button next"
-      [disabled]="(PagerComponent.pageSize > numberOfAllResults) || nextDisabled"
-      (click)="goToPage('next')">
-      <span>{{'uiControls.pager.next' | translate}}</span>
-      <mat-icon>east</mat-icon>
+      mat-icon-button
+      [matTooltip]="'paginator.firstPage' | translate"
+      (click)="pageIndex = 0"
+      [disabled]="pageIndex === 0">
+      <mat-icon>first_page</mat-icon>
+    </button>
+    <button
+      mat-icon-button
+      [matTooltip]="'paginator.previousPage' | translate"
+      (click)="pageIndex = pageIndex - 1"
+      [disabled]="pageIndex === 0">
+      <mat-icon>chevron_left</mat-icon>
     </button>
   </div>
+  <div class="paginator-page-info">
+    <span class="page-label">{{ 'paginator.pageLabel' | translate }}</span>
+    <div class="page-input-container">
+      <input
+        #pageInput
+        type="number"
+        [value]="pageIndex + 1"
+        (focus)="selectText($event)"
+        (blur)="resetToCurrentPage()"
+        (keyup.enter)="goToPage()"
+        [matTooltip]="'paginator.inputTooltip' | translate"
+        class="page-input" />
+    </div>
+    <span class="page-label">{{ 'paginator.rangeLabelOf' | translate }} {{ lastPageIndex + 1 }}</span>
+  </div>
+  <div class="paginator-nav">
+    <button
+      mat-icon-button
+      [matTooltip]="'paginator.nextPage' | translate"
+      (click)="pageIndex = pageIndex + 1"
+      [disabled]="pageIndex === lastPageIndex">
+      <mat-icon>chevron_right</mat-icon>
+    </button>
+    <button
+      mat-icon-button
+      [matTooltip]="'paginator.lastPage' | translate"
+      (click)="pageIndex = lastPageIndex"
+      [disabled]="pageIndex === lastPageIndex">
+      <mat-icon>last_page</mat-icon>
+    </button>
+  </div>
+  <div class="paginator-item-range">{{ itemRange }}</div>
 </div>

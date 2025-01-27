@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChildren } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChildren } from '@angular/core';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { Constants, ReadLinkValue, ReadResource, ReadResourceSequence } from '@dasch-swiss/dsp-js';
 import { ResourceService } from '@dasch-swiss/vre/shared/app-common';
@@ -11,7 +11,7 @@ import { ListViewService } from '../list-view.service';
   templateUrl: './resource-list.component.html',
   styleUrls: ['./resource-list.component.scss'],
 })
-export class ResourceListComponent implements OnInit {
+export class ResourceListComponent implements OnChanges {
   /**
    * list of all resource checkboxes. This list is used to
    * unselect all checkboxes when single selection to view
@@ -48,9 +48,9 @@ export class ResourceListComponent implements OnInit {
     private _resourceService: ResourceService
   ) {}
 
-  ngOnInit() {
+  ngOnChanges(changes: SimpleChanges) {
     // select the first item in the list
-    if (this.resources.resources.length) {
+    if (changes['resources'] && this.resources.resources.length) {
       this.selectResource({
         checked: true,
         resIndex: 0,

@@ -243,5 +243,15 @@
       "home": "DSP-App Home Page",
       "myAccount": "My Account"
     }
+  },
+  "paginator": {
+    "firstPage": "First page",
+    "lastPage": "Last page",
+    "nextPage": "Next page",
+    "inputTooltip": "Enter the page number and apply with the Enter key.",
+    "pageLabel": "Page",
+    "previousPage": "Previous page",
+    "rangeLabelOf": "of",
+    "rangeLabelZero": "Page 1 of 1"
   }
 }

@@ -92,7 +92,6 @@ export function httpLoaderFactory(httpClient: HttpClient) {
     ...StringLiteralComponents,
   ],
   imports: [
-    ...UiStandaloneComponents,
     AngularSplitModule,
     AppDatePickerComponent,
     AppProgressIndicatorComponent,
@@ -123,6 +122,7 @@ export function httpLoaderFactory(httpClient: HttpClient) {
     MultiLanguageTextareaComponent,
     MutiLanguageInputComponent,
     NgxsStoreModule,
+    ...UiStandaloneComponents,
   ],
   providers: [
     AppConfigService,
