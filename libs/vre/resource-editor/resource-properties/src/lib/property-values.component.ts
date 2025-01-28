@@ -17,6 +17,7 @@ import { propertiesTypeMapping } from './resource-payloads-mapping';
         width: 18px;
         height: 18px;
       }
+
       div.property-value {
         display: flex;
         padding: 5px 0;
@@ -26,7 +27,7 @@ import { propertiesTypeMapping } from './resource-payloads-mapping';
   template: ` <div
       *ngFor="let group of propertyValueService.formArray.controls; let index = index"
       class="property-value">
-      <app-property-value style="width: 100%" [itemTpl]="itemTpl" [index]="index"></app-property-value>
+      <app-property-value style="width: 100%" [itemTpl]="itemTpl" [index]="index" />
     </div>
     <button
       mat-icon-button

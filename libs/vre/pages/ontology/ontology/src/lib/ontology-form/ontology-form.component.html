@@ -1,7 +1,6 @@
 <app-dialog-header
   [title]="ontologyName ? ontologyName : ('form.ontology.title.create' | translate)"
-  [subtitle]="ontologyName ? ('form.ontology.title.edit' | translate) : ''">
-</app-dialog-header>
+  [subtitle]="ontologyName ? ('form.ontology.title.edit' | translate) : ''" />
 <form [formGroup]="ontologyForm" class="form-content">
   <app-common-input
     [control]="ontologyForm.controls.name"

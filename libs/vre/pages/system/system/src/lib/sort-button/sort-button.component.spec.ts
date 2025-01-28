@@ -1,5 +1,5 @@
 import { Component, DebugElement, OnInit, ViewChild } from '@angular/core';
-import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
@@ -13,8 +13,7 @@ import { SortButtonComponent } from './sort-button.component';
  */
 @Component({
   template: `
-    <app-sort-button #sortButton [sortProps]="sortProps" [position]="position" (sortKeyChange)="sortList($event)">
-    </app-sort-button>
+    <app-sort-button #sortButton [sortProps]="sortProps" [position]="position" (sortKeyChange)="sortList($event)" />
     <ul class="list">
       <li *ngFor="let item of list" class="item">
         <span>{{ item.firstname }} </span>

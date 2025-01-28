@@ -17,8 +17,7 @@
           [icon]="'sort_by_alpha'"
           [sortProps]="sortProps"
           [activeKey]="sortBy"
-          (sortKeyChange)="sortList($event)">
-        </app-sort-button>
+          (sortKeyChange)="sortList($event)" />
       </span>
       <h2 class="mat-headline-6">{{ list.length | i18nPlural : itemPluralMapping['project'] }}</h2>
       <span class="fill-remaining-space"></span>

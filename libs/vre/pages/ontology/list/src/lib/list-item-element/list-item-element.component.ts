@@ -20,19 +20,14 @@ import { ListItemService } from '../list-item/list-item.service';
             [validators]="[]"
             [isRequired]="true" />
 
-          <app-action-bubble
-            *ngIf="showActionBubble"
-            [position]="position"
-            [length]="length"
-            [node]="node"></app-action-bubble>
+          <app-action-bubble *ngIf="showActionBubble" [position]="position" [length]="length" [node]="node" />
         </div>
 
         <app-list-item
           *ngIf="showChildren"
           [projectUuid]="listItemService.projectInfos.projectIri"
           [rootNodeIri]="node.id"
-          [isAdmin]="isAdmin">
-        </app-list-item>
+          [isAdmin]="isAdmin" />
       </div>
     </div>
   `,

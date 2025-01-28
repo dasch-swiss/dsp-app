@@ -21,7 +21,7 @@ import { IsSwitchComponent } from './is-switch-component.interface';
       </span>
     </ng-container>
     <ng-template #editMode>
-      <app-list-value [control]="control" [propertyDef]="propertyDef"></app-list-value>
+      <app-list-value [control]="control" [propertyDef]="propertyDef" />
     </ng-template>
   `,
 })

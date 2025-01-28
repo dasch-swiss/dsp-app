@@ -1,7 +1,3 @@
-<app-progress-indicator *ngIf="(isLoading$ | async)"></app-progress-indicator>
-<app-users-list
-  *ngIf="(isLoading$ | async) === false"
-  [list]="active$ | async"
-  [status]="true"
-  [createNew]="true"></app-users-list>
-<app-users-list *ngIf="(isLoading$ | async) === false" [list]="inactive$ | async" [status]="false"></app-users-list>
+<app-progress-indicator *ngIf="(isLoading$ | async)" />
+<app-users-list *ngIf="(isLoading$ | async) === false" [list]="active$ | async" [status]="true" [createNew]="true" />
+<app-users-list *ngIf="(isLoading$ | async) === false" [list]="inactive$ | async" [status]="false" />

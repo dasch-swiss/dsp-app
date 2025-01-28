@@ -17,8 +17,7 @@
           [icon]="'sort_by_alpha'"
           [sortProps]="sortProps"
           [activeKey]="sortBy"
-          (sortKeyChange)="sortList($event)">
-        </app-sort-button>
+          (sortKeyChange)="sortList($event)" />
       </span>
       <h2 class="mat-headline-6">
         <span *ngIf="projectUuid">{{ list.length | i18nPlural : itemPluralMapping['member'] }}</span>
@@ -72,8 +71,7 @@
                         user.permissions.groupsPerProject[(project$ | async)?.id]
                     "
           [disabled]="!status"
-          (groupChange)="updateGroupsMembership(user.id, $event)">
-        </app-select-group>
+          (groupChange)="updateGroupsMembership(user.id, $event)" />
       </td>
 
       <!-- action: menu with edit, remove, etc. -->

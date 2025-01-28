@@ -17,7 +17,7 @@ import { IsSwitchComponent } from './is-switch-component.interface';
       ></ng-container
     >
     <ng-template #editMode>
-      <app-geoname-value [control]="control"></app-geoname-value>
+      <app-geoname-value [control]="control" />
     </ng-template>`,
 })
 export class GeonameSwitchComponent implements IsSwitchComponent, OnChanges {

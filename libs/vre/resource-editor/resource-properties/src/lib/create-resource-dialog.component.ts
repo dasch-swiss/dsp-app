@@ -10,12 +10,12 @@ export interface CreateResourceDialogProps {
 @Component({
   selector: 'app-create-resource-dialog',
   template: `
-    <app-dialog-header [title]="'Create new resource of type: ' + data.resourceType"></app-dialog-header>
+    <app-dialog-header [title]="'Create new resource of type: ' + data.resourceType" />
     <div mat-dialog-content>
       <app-create-resource-form
         [resourceClassIri]="data.resourceClassIri"
         [projectIri]="data.projectIri"
-        (createdResourceIri)="onCreatedResource($event)"></app-create-resource-form>
+        (createdResourceIri)="onCreatedResource($event)" />
     </div>
   `,
 })

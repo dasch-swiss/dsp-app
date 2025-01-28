@@ -19,10 +19,10 @@ export interface CardinalityInfo {
       title="Update cardinality"
       [subtitle]="
         'Set the cardinality for property ' + data.propertyInfo.propType.group + ': ' + data.propertyInfo.propType.label
-      "></app-dialog-header>
+      " />
     <mat-dialog-content>
       <div class="cando-headline">
-        <app-progress-indicator *ngIf="canSetCardinality === undefined" [status]="0"></app-progress-indicator>
+        <app-progress-indicator *ngIf="canSetCardinality === undefined" [status]="0" />
         <div *ngIf="canSetCardinality === false" class="mat-headline-6">Changing the cardinality is not possible.</div>
       </div>
       <div *ngIf="canSetCardinality === false">
@@ -55,6 +55,7 @@ export interface CardinalityInfo {
         display: flex;
         align-items: center;
       }
+
       .cando-headline mat-icon {
         vertical-align: middle;
         margin-right: 8px;

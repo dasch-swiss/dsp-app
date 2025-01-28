@@ -52,7 +52,7 @@ const appInitSpy = {
 };
 
 @Component({
-  template: ` <app-archive [src]="archiveFileRepresentation"></app-archive>`,
+  template: ` <app-archive [src]="archiveFileRepresentation" />`,
 })
 class TestHostComponent implements OnInit {
   @ViewChild(ArchiveComponent) archiveComp: ArchiveComponent;

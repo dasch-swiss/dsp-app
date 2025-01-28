@@ -55,7 +55,7 @@ const appInitSpy = {
 };
 
 @Component({
-  template: ` <app-audio [src]="audioFileRepresentation"></app-audio>`,
+  template: ` <app-audio [src]="audioFileRepresentation" />`,
 })
 class TestHostComponent implements OnInit {
   @ViewChild(AudioComponent) audioPlayerComp: AudioComponent;

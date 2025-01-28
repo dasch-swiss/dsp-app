@@ -1,10 +1,7 @@
 <div [formGroup]="form">
   <div class="date-form-grid">
     <div class="date-form-field">
-      <app-date-picker
-        class="start-date"
-        [formControlName]="'startDate'"
-        (closed)="handlePickerClose()"></app-date-picker>
+      <app-date-picker class="start-date" [formControlName]="'startDate'" (closed)="handlePickerClose()" />
     </div>
 
     <button
@@ -25,8 +22,7 @@
         class="end-date"
         [formControlName]="'endDate'"
         [disableCalendarSelector]="true"
-        [calendar]="startDate.value.calendar">
-      </app-date-picker>
+        [calendar]="startDate.value.calendar" />
     </div>
   </div>
 

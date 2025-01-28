@@ -51,9 +51,7 @@
         [resourceClass]="resourceClass"
         [userCanEdit]="userCanEdit"
         [i]="i"
-        (removePropertyFromClass)="removeProperty($event, currentOntologyPropertiesToDisplay)">
-        >
-      </app-resource-class-info-element>
+        (removePropertyFromClass)="removeProperty($event, currentOntologyPropertiesToDisplay)" />
     </mat-list>
 
     <app-add-property-menu
@@ -61,7 +59,7 @@
       [currentOntologyPropertiesToDisplay]="currentOntologyPropertiesToDisplay$ | async"
       [userCanEdit]="userCanEdit"
       [projectStatus]="projectStatus"
-      (updatePropertyAssignment)="updatePropertyAssignment.emit($event)"></app-add-property-menu>
+      (updatePropertyAssignment)="updatePropertyAssignment.emit($event)" />
   </mat-card-content>
 </mat-card>
 

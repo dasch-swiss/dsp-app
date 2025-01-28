@@ -13,7 +13,7 @@ export interface EditResourceLabelDialogProps {
 
 @Component({
   selector: 'app-edit-resource-label-dialog',
-  template: ` <app-dialog-header [title]="initialValue" subtitle="Edit resource's label"></app-dialog-header>
+  template: ` <app-dialog-header [title]="initialValue" subtitle="Edit resource's label" />
 
     <div mat-dialog-content>
       <app-common-input [control]="control" [label]="'Label'" />

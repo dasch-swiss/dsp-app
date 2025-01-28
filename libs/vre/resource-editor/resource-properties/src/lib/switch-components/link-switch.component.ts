@@ -14,7 +14,7 @@ import { IsSwitchComponent } from './is-switch-component.interface';
         [control]="control"
         [propIri]="propIri"
         [resourceClassIri]="resourceClassIri"
-        [defaultValue]="value"></app-link-value>
+        [defaultValue]="value" />
     </ng-template>`,
 })
 export class LinkSwitchComponent implements IsSwitchComponent {

@@ -21,7 +21,7 @@ import { ProjectForm } from './reusable-project-form/project-form.type';
           description: [],
           keywords: [],
         }"
-        (afterFormInit)="form = $event"></app-reusable-project-form>
+        (afterFormInit)="form = $event" />
 
       <div style="display: flex; justify-content: space-between">
         <button color="primary" mat-button type="reset" (click)="goBack()">

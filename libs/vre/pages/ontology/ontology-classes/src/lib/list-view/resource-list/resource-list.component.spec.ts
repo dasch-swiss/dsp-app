@@ -1,5 +1,5 @@
 import { Component, OnInit, Pipe, PipeTransform, ViewChild } from '@angular/core';
-import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatLineModule } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
@@ -28,7 +28,7 @@ class MockPipe implements PipeTransform {
     #resList
     [resources]="resources"
     [selectedResourceIdx]="selectedResourceIdx"
-    (resourcesSelected)="emitSelectedResources($event)"></app-resource-list>`,
+    (resourcesSelected)="emitSelectedResources($event)" />`,
 })
 class TestParentComponent implements OnInit {
   @ViewChild('resList') resourceListComponent: ResourceListComponent;

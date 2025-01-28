@@ -42,15 +42,14 @@ import { propertiesTypeMapping } from './resource-payloads-mapping';
       [date]="propertyValueService.editModeData?.values[index]?.valueCreationDate"
       [showDelete]="index > 0 || [Cardinality._0_1, Cardinality._0_n].includes(propertyValueService.cardinality)"
       (editAction)="propertyValueService.toggleOpenedValue(index)"
-      (deleteAction)="askToDelete()"></app-property-value-action-bubble>
+      (deleteAction)="askToDelete()" />
 
     <div style="display: flex">
       <div class="item" [ngClass]="{ hover: displayMode }">
         <ng-container
           *ngTemplateOutlet="itemTpl; context: { item: group?.controls.item, displayMode: displayMode }"></ng-container>
 
-        <app-property-value-comment [displayMode]="displayMode" [control]="group?.controls.comment">
-        </app-property-value-comment>
+        <app-property-value-comment [displayMode]="displayMode" [control]="group?.controls.comment" />
       </div>
       <button
         (click)="onSave()"

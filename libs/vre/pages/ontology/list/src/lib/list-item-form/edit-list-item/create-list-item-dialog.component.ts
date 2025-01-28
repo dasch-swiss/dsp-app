@@ -17,12 +17,10 @@ export interface CreateListItemDialogProps {
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-create-list-item-dialog',
   template: `
-    <app-dialog-header title="Insert new child node"></app-dialog-header>
+    <app-dialog-header title="Insert new child node" />
 
     <div mat-dialog-content>
-      <app-reusable-list-item-form
-        [formData]="initialFormValue"
-        (afterFormInit)="form = $event"></app-reusable-list-item-form>
+      <app-reusable-list-item-form [formData]="initialFormValue" (afterFormInit)="form = $event" />
     </div>
 
     <div mat-dialog-actions align="end">

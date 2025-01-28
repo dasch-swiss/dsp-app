@@ -8,8 +8,7 @@ import { map } from 'rxjs/operators';
  */
 @Component({
   selector: 'app-resource-page-2',
-  template:
-    '<app-resource-fetcher *ngIf="resourceIri$ | async as resourceIri" [resourceIri]="resourceIri"></app-resource-fetcher>',
+  template: '<app-resource-fetcher *ngIf="resourceIri$ | async as resourceIri" [resourceIri]="resourceIri" />',
 })
 export class ResourcePage2Component {
   resourceIri$ = this._route.params.pipe(

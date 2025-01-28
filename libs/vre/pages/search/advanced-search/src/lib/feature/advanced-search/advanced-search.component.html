@@ -33,8 +33,7 @@
     <app-order-by
       [orderByList]="asyncData.propertiesOrderByList"
       [orderByDisabled]="asyncData.orderByButtonDisabled"
-      (emitPropertyOrderByChanged)="handlePropertyOrderByChanged($event)">
-    </app-order-by>
+      (emitPropertyOrderByChanged)="handlePropertyOrderByChanged($event)" />
     <app-ontology-resource-form
       [ontologies]="asyncData.ontologies"
       [ontologiesLoading]="asyncData.ontologiesLoading"
@@ -43,7 +42,7 @@
       [selectedOntology]="asyncData.selectedOntology"
       [selectedResourceClass]="asyncData.selectedResourceClass"
       (emitSelectedOntology)="handleSelectedOntology($event)"
-      (emitSelectedResourceClass)="handleSelectedResourceClass($event)"></app-ontology-resource-form>
+      (emitSelectedResourceClass)="handleSelectedResourceClass($event)" />
     <app-property-form
       *ngFor="let propertyForm of asyncData.propertyFormList"
       [matchResourceClassesLoading]="asyncData.matchResourceClassesLoading"
@@ -67,14 +66,13 @@
       (emitRemoveChildPropertyForm)="handleRemoveChildPropertyForm($event)"
       (emitChildSelectedPropertyChanged)="handleChildSelectedPropertyChanged($event)"
       (emitChildSelectedOperatorChanged)="handleChildSelectedOperatorChanged($event)"
-      (emitChildValueChanged)="handleChildValueChanged($event)"></app-property-form>
+      (emitChildValueChanged)="handleChildValueChanged($event)" />
     <app-form-actions
       [addButtonDisabled]="asyncData.addButtonDisabled"
       [resetButtonDisabled]="asyncData.resetButtonDisabled"
       [searchButtonDisabled]="asyncData.searchButtonDisabled"
       (emitAddPropertyForm)="handleAddPropertyForm()"
       (emitResetButtonClicked)="handleResetButtonClicked()"
-      (emitSearchButtonClicked)="handleSearchButtonClicked()">
-    </app-form-actions>
+      (emitSearchButtonClicked)="handleSearchButtonClicked()" />
   </div>
 </div>

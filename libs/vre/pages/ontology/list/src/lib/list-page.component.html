@@ -1,5 +1,5 @@
 <div *ngIf="!disableContent">
-  <app-progress-indicator *ngIf="isListsLoading$ | async"></app-progress-indicator>
+  <app-progress-indicator *ngIf="isListsLoading$ | async" />
 
   <!-- display only when loading is finished and project member has value -->
   <div *ngIf="(isListsLoading$ | async) === false">
@@ -57,12 +57,11 @@
             *ngIf="((isListsLoading$ | async) === false) && (projectBaseService.project$ | async) as project"
             [rootNodeIri]="list.id"
             [projectUuid]="project.id"
-            [isAdmin]="projectBaseService.isAdmin$ | async">
-          </app-list-item>
+            [isAdmin]="projectBaseService.isAdmin$ | async" />
         </div>
       </ng-container>
     </div>
   </div>
 </div>
 
-<app-status *ngIf="disableContent" [status]="204"></app-status>
+<app-status *ngIf="disableContent" [status]="204" />

@@ -53,8 +53,7 @@
                 "
         [list]="item.list"
         [value]="item.searchValue"
-        (emitValueChanged)="onValueChanged($event, i)">
-      </app-property-form-list-value>
+        (emitValueChanged)="onValueChanged($event, i)" />
       <app-property-form-link-value
         *ngIf="item.selectedProperty?.isLinkedResourceProperty"
         [value]="item.searchValue"
@@ -67,7 +66,7 @@
                     onResourceSearchValueChanged($event, i)
                 "
         (emitLoadMoreSearchResults)="onLoadMoreSearchResults($event, i)"
-        (emitResourceSelected)="onValueChanged($event, i)"></app-property-form-link-value>
+        (emitResourceSelected)="onValueChanged($event, i)" />
     </div>
   </div>
   <div class="side-container">

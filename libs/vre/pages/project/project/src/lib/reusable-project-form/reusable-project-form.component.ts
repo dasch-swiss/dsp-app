@@ -41,8 +41,7 @@ import { shortcodeExistsValidator } from './shortcode-exists.validator';
       <app-chip-list-input
         [formArray]="form.controls.keywords"
         data-cy="keywords-input"
-        [validators]="keywordsValidators">
-      </app-chip-list-input>
+        [validators]="keywordsValidators" />
     </form>
   `,
 })

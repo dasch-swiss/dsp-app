@@ -16,7 +16,7 @@ export interface DeleteValueDialogProps {
     <app-dialog-header
       [title]="
         'Are you sure you want to delete this value from ' + propertyValueService.propertyDefinition.label + '?'
-      "></app-dialog-header>
+      " />
     <div mat-dialog-content>
       You can leave a comment to explain your choice.
 

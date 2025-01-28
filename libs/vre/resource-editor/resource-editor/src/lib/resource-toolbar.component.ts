@@ -47,10 +47,8 @@ import { filter } from 'rxjs/operators';
       <app-permission-info
         *ngIf="adminPermissions"
         [hasPermissions]="resource.res.hasPermissions"
-        [userHasPermission]="resource.res.userHasPermission"></app-permission-info>
-      <app-permission-info
-        *ngIf="!adminPermissions"
-        [userHasPermission]="resource.res.userHasPermission"></app-permission-info>
+        [userHasPermission]="resource.res.userHasPermission" />
+      <app-permission-info *ngIf="!adminPermissions" [userHasPermission]="resource.res.userHasPermission" />
       <!-- more menu with: delete, erase resource -->
       <button
         data-cy="resource-toolbar-more-button"

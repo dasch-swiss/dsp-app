@@ -29,8 +29,7 @@ import { FulltextSearchComponent } from './fulltext-search.component';
       #fulltextSearch
       [projectfilter]="projectfilter"
       [limitToProject]="limitToProject"
-      (search)="emitSearch($event)">
-    </app-fulltext-search>
+      (search)="emitSearch($event)" />
   `,
 })
 class TestHostFulltextSearchComponent implements OnInit {

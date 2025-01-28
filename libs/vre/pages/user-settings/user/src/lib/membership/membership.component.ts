@@ -25,7 +25,7 @@ import { AutocompleteItem } from '../autocomplete-item.interface';
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-membership',
   template: `
-    <app-progress-indicator *ngIf="isMembershipLoading$ | async"></app-progress-indicator>
+    <app-progress-indicator *ngIf="isMembershipLoading$ | async" />
 
     <div *ngIf="(isMembershipLoading$ | async) === false">
       <div class="mat-headline-6 mb-2">

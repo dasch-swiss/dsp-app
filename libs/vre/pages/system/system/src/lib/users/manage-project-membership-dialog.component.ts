@@ -8,10 +8,8 @@ export interface ManageProjectMembershipDialogProps {
 
 @Component({
   selector: 'app-manage-project-membership-dialog',
-  template: ` <app-dialog-header
-      [title]="data.user.username"
-      [subtitle]="'Manage project membership'"></app-dialog-header>
-    <app-membership [user]="data.user" (closeDialog)="dialogRef.close()"></app-membership>
+  template: ` <app-dialog-header [title]="data.user.username" [subtitle]="'Manage project membership'" />
+    <app-membership [user]="data.user" (closeDialog)="dialogRef.close()" />
     <mat-dialog-actions>
       <button mat-button color="primary" matDialogClose>Close</button>
     </mat-dialog-actions>`,

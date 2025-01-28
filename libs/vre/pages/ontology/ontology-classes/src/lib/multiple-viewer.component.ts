@@ -11,8 +11,7 @@ import { SplitSize } from './split-size.interface';
           <app-list-view
             [search]="searchParams"
             [withMultipleSelection]="true"
-            (selectedResources)="openSelectedResources($event)">
-          </app-list-view>
+            (selectedResources)="openSelectedResources($event)" />
         </as-split-area>
         <as-split-area [size]="60" *ngIf="selectedResources?.count > 0" cdkScrollable>
           <div [ngSwitch]="viewMode">
@@ -23,7 +22,7 @@ import { SplitSize } from './split-size.interface';
             <app-intermediate
               *ngSwitchCase="'intermediate'"
               [resources]="selectedResources"
-              (action)="viewMode = $event"></app-intermediate>
+              (action)="viewMode = $event" />
 
             <!-- multiple resources view / comparison viewer -->
             <app-comparison

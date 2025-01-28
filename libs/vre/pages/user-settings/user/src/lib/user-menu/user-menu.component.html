@@ -7,8 +7,8 @@
   <mat-menu #userMenu="matMenu" xPosition="before" class="user-menu">
     <!-- first line: user name and close button -->
     <div class="menu-header">
-      <div class="menu-title">{{'user.userMenu.signedInAs' | translate }}</div>
-      <div class="menu-title">{{(user$ | async)?.givenName}} {{(user$ | async)?.familyName}}</div>
+      <div class="menu-title">{{ 'user.userMenu.signedInAs' | translate }}</div>
+      <div class="menu-title">{{ (user$ | async)?.givenName }} {{ (user$ | async)?.familyName }}</div>
     </div>
     <!-- menu items -->
     <div class="menu-content">
@@ -20,7 +20,7 @@
             [routerLinkActiveOptions]="{ exact: true }"
             routerLinkActive="active-link"
             class="nav-item button">
-            <span class="label">{{item.label}}</span>
+            <span class="label">{{ item.label }}</span>
           </button>
         </mat-list-item>
 
@@ -28,13 +28,13 @@
 
         <mat-list-item *ngIf="isSysAdmin$ | async" class="nav-item">
           <button mat-button [routerLink]="systemLink" routerLinkActive="active-link" class="nav-item button">
-            <span class="label">{{'user.userMenu.systemAdministration' | translate }}</span>
+            <span class="label">{{ 'user.userMenu.systemAdministration' | translate }}</span>
           </button>
         </mat-list-item>
         <mat-divider></mat-divider>
         <mat-list-item class="nav-item">
           <button mat-button (click)="logout()" class="nav-item button">
-            <span class="label">{{'user.userMenu.logout' | translate }}</span>
+            <span class="label">{{ 'user.userMenu.logout' | translate }}</span>
           </button>
         </mat-list-item>
       </mat-list>
@@ -44,9 +44,9 @@
 
 <ng-template #loginFormTemplate>
   <button mat-raised-button color="primary" [matMenuTriggerFor]="loginForm" class="login-button" data-cy="login-button">
-    {{'user.userMenu.login' | translate }}
+    {{ 'user.userMenu.login' | translate }}
   </button>
   <mat-menu #loginForm xPosition="before" class="form-menu">
-    <app-login-form (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()"></app-login-form>
+    <app-login-form (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()" />
   </mat-menu>
 </ng-template>

@@ -104,8 +104,7 @@
                 "
         [list]="propertyFormItem.list"
         [value]="propertyFormItem.searchValue"
-        (emitValueChanged)="onValueChanged($event)">
-      </app-property-form-list-value>
+        (emitValueChanged)="onValueChanged($event)" />
 
       <app-property-form-link-value
         *ngIf="
@@ -126,7 +125,7 @@
                     onResourceSearchValueChanged($event)
                 "
         (emitLoadMoreSearchResults)="onLoadMoreSearchResults($event)"
-        (emitResourceSelected)="onValueChanged($event)"></app-property-form-link-value>
+        (emitResourceSelected)="onValueChanged($event)" />
       <app-property-form-link-match-property
         *ngIf="
                     !propertyFormItem.selectedProperty?.objectType?.includes(
@@ -161,8 +160,7 @@
                 "
         (emitLoadMoreSearchResults)="
                     onChildLoadMoreSearchResults($event)
-                ">
-      </app-property-form-link-match-property>
+                " />
     </div>
   </div>
 

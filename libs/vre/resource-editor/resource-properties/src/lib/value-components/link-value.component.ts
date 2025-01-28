@@ -62,7 +62,7 @@ import { LinkValueDataService } from './link-value-data.service';
           {{ res.label }}
         </mat-option>
         <mat-option *ngIf="loading" [disabled]="true" class="loader">
-          <app-progress-indicator></app-progress-indicator>
+          <app-progress-indicator />
         </mat-option>
       </mat-autocomplete>
       <mat-hint>{{ 'form.action.searchHelp' | translate }}</mat-hint>

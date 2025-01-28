@@ -11,9 +11,7 @@ export interface DeleteResourceDialogProps {
 
 @Component({
   selector: 'app-delete-resource-dialog',
-  template: ` <app-dialog-header
-      title="Do you want to delete this resource ?"
-      [subtitle]="data.resource.res.label"></app-dialog-header>
+  template: ` <app-dialog-header title="Do you want to delete this resource ?" [subtitle]="data.resource.res.label" />
     <mat-dialog-content class="form-content">
       <mat-form-field class="large-field">
         <mat-label>Comment why resource is being deleted</mat-label>

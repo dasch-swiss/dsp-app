@@ -27,7 +27,7 @@ class MockPipe implements PipeTransform {
  * dsp specific http status message
  */
 @Component({
-  template: ` <app-status #warning [status]="204"></app-status>`,
+  template: ` <app-status #warning [status]="204" />`,
 })
 class NoContentTestHostComponent implements OnInit {
   @ViewChild('warning', { static: false }) StatusComponent: StatusComponent;
@@ -42,7 +42,7 @@ class NoContentTestHostComponent implements OnInit {
  * default http status message
  */
 @Component({
-  template: ` <app-status #error [status]="418"></app-status>`,
+  template: ` <app-status #error [status]="418" />`,
 })
 class TeapotTestHostComponent implements OnInit {
   @ViewChild('error', { static: false }) StatusComponent: StatusComponent;

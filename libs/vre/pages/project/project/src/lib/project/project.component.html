@@ -23,7 +23,7 @@
             matTooltipShowDelay="500"
             [matTooltipDisabled]="compareElementHeights(projectTitle)"
             matTooltipPosition="right">
-            {{(currentProject$ | async)?.longname}}
+            {{ (currentProject$ | async)?.longname }}
           </p>
         </div>
         <mat-list class="main-list">
@@ -89,7 +89,7 @@
                       matTooltipShowDelay="500"
                       matTooltipPosition="right"
                       [matTooltipDisabled]="compareElementHeights(ontoTitle)">
-                      {{onto.label}}
+                      {{ onto.label }}
                     </p>
                   </mat-panel-title>
                 </div>
@@ -97,8 +97,7 @@
               <!-- list of ontology classes -->
               <app-ontology-classes
                 [resClasses]="getAllEntityDefinitionsAsArray(onto.classes)"
-                [projectMember]="(isAdmin$ | async) || (isMember$ | async)">
-              </app-ontology-classes>
+                [projectMember]="(isAdmin$ | async) || (isMember$ | async)" />
             </mat-expansion-panel>
             <mat-divider></mat-divider>
           </mat-accordion>
@@ -127,6 +126,6 @@
 
 <ng-template #StatusMsg>
   <div class="content large middle">
-    <app-status *ngIf="hasLoadingErrors$ | async" [status]="404"></app-status>
+    <app-status *ngIf="hasLoadingErrors$ | async" [status]="404" />
   </div>
 </ng-template>

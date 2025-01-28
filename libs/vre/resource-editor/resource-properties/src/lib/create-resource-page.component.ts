@@ -16,7 +16,7 @@ import { takeUntil } from 'rxjs/operators';
       *ngIf="resourceClassIri"
       [resourceClassIri]="resourceClassIri"
       [projectIri]="projectIri"
-      (createdResourceIri)="afterCreation($event)"></app-create-resource-form>`,
+      (createdResourceIri)="afterCreation($event)" />`,
 })
 export class CreateResourcePageComponent implements OnDestroy {
   private _destroy = new Subject<void>();

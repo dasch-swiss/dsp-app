@@ -21,7 +21,7 @@ import { ListNodeV2 } from '@dasch-swiss/dsp-js';
     <mat-menu #menu="matMenu">
       <ng-container *ngFor="let node of data.children; let i = index">
         <button mat-menu-item style="padding: 0" *ngIf="node.children.length > 0; else menuItem">
-          <app-nested-menu [data]="node" (selectedNode)="selectedNode.emit($event)"></app-nested-menu>
+          <app-nested-menu [data]="node" (selectedNode)="selectedNode.emit($event)" />
         </button>
         <ng-template #menuItem>
           <button

@@ -3,12 +3,12 @@
     <div *ngIf="isProjectsLoading$ | async" [@replaceAnimation]>
       <div class="title-bar admin">
         <div class="title">
-          <p>{{'overview.title' | translate }}</p>
+          <p>{{ 'overview.title' | translate }}</p>
         </div>
       </div>
       <div class="project-tiles">
         <div *ngFor="let item of loadingTiles" class="project-tile-container">
-          <app-project-tile isLoading="true"></app-project-tile>
+          <app-project-tile isLoading="true" />
         </div>
       </div>
     </div>
@@ -18,12 +18,12 @@
       <!-- list all projects -->
       <div class="title-bar admin">
         <div class="title">
-          <p>{{'overview.title' | translate }}</p>
+          <p>{{ 'overview.title' | translate }}</p>
         </div>
       </div>
       <div class="project-tiles">
         <div *ngFor="let proj of allProjects$ | async; trackBy: trackByFn" class="project-tile-container">
-          <app-project-tile [project]="proj" [sysAdmin]="true"></app-project-tile>
+          <app-project-tile [project]="proj" [sysAdmin]="true" />
         </div>
       </div>
     </div>
@@ -37,7 +37,7 @@
         </div>
         <div class="project-tiles">
           <div *ngFor="let userProj of userActiveProjects$ | async; trackBy: trackByFn" class="project-tile-container">
-            <app-project-tile [project]="userProj" [sysAdmin]="false"></app-project-tile>
+            <app-project-tile [project]="userProj" [sysAdmin]="false" />
           </div>
         </div>
       </ng-container>
@@ -51,7 +51,7 @@
           <div
             *ngFor="let otherProj of userOtherActiveProjects$ | async; trackBy: trackByFn"
             class="project-tile-container">
-            <app-project-tile [project]="otherProj" [sysAdmin]="false"></app-project-tile>
+            <app-project-tile [project]="otherProj" [sysAdmin]="false" />
           </div>
         </div>
       </ng-container>
@@ -63,12 +63,12 @@
       <!-- list all projects -->
       <div class="title-bar admin">
         <div class="title">
-          <p>{{'overview.title' | translate }}</p>
+          <p>{{ 'overview.title' | translate }}</p>
         </div>
       </div>
       <div class="project-tiles">
         <div *ngFor="let proj of allActiveProjects$ | async; trackBy: trackByFn" class="project-tile-container">
-          <app-project-tile [project]="proj" [sysAdmin]="false"></app-project-tile>
+          <app-project-tile [project]="proj" [sysAdmin]="false" />
         </div>
       </div>
     </div>

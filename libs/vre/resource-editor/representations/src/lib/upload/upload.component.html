@@ -8,7 +8,7 @@
       class="dd-container">
       <input hidden type="file" (change)="addFile($event)" #fileInput />
       <mat-icon *ngIf="!isLoading" class="upload-icon"> cloud_upload</mat-icon>
-      <app-progress-indicator *ngIf="isLoading"></app-progress-indicator>
+      <app-progress-indicator *ngIf="isLoading" />
       <p class="title">
         Upload file<br />
         <span class="mat-subtitle-2"

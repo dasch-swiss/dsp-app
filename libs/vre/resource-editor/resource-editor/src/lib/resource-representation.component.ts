@@ -1,15 +1,14 @@
 import { Component, Input, OnChanges } from '@angular/core';
-import { ReadProject } from '@dasch-swiss/dsp-js';
-import { ResourceSelectors, UserSelectors } from '@dasch-swiss/vre/core/state';
+import { UserSelectors } from '@dasch-swiss/vre/core/state';
 import {
   FileRepresentation,
-  RepresentationConstants,
   getFileValue,
+  RepresentationConstants,
 } from '@dasch-swiss/vre/resource-editor/representations';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { Store } from '@ngxs/store';
-import { Observable, combineLatest } from 'rxjs';
+import { combineLatest, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 @Component({
@@ -34,8 +33,7 @@ import { map } from 'rxjs/operators';
       [class.pdf]="representationToDisplay.fileValue.filename.split('.').pop() === 'pdf'"
       *ngSwitchCase="representationConstants.document"
       [src]="representationToDisplay"
-      [parentResource]="resource.res">
-    </app-document>
+      [parentResource]="resource.res" />
 
     <app-audio
       #audio
@@ -43,8 +41,7 @@ import { map } from 'rxjs/operators';
       *ngSwitchCase="representationConstants.audio"
       [src]="representationToDisplay"
       [parentResource]="resource.res"
-      [isAdmin]="isAdmin$ | async">
-    </app-audio>
+      [isAdmin]="isAdmin$ | async" />
 
     <app-video
       #video
@@ -52,24 +49,21 @@ import { map } from 'rxjs/operators';
       *ngSwitchCase="representationConstants.movingImage"
       [src]="representationToDisplay"
       [parentResource]="resource.res"
-      [isAdmin]="isAdmin$ | async">
-    </app-video>
+      [isAdmin]="isAdmin$ | async" />
 
     <app-archive
       #archive
       class="dsp-representation archive"
       *ngSwitchCase="representationConstants.archive"
       [src]="representationToDisplay"
-      [parentResource]="resource.res">
-    </app-archive>
+      [parentResource]="resource.res" />
 
     <app-text
       #text
       class="dsp-representation text"
       *ngSwitchCase="representationConstants.text"
       [src]="representationToDisplay"
-      [parentResource]="resource.res">
-    </app-text>
+      [parentResource]="resource.res" />
   </div>`,
 })
 export class ResourceRepresentationComponent implements OnChanges {

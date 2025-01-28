@@ -6,12 +6,11 @@ export interface ConfirmDialogProps {
   title: string | null;
   subtitle: string | null;
 }
+
 @Component({
   selector: 'app-confirm-dialog',
   template: `
-    <app-dialog-header
-      [title]="data.title ?? 'Confirmation needed'"
-      [subtitle]="data.subtitle ?? ''"></app-dialog-header>
+    <app-dialog-header [title]="data.title ?? 'Confirmation needed'" [subtitle]="data.subtitle ?? ''" />
     <div mat-dialog-content>
       <p>{{ data.message }}</p>
     </div>

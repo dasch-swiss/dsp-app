@@ -31,7 +31,7 @@ export interface EditPropertyFormDialogProps {
   selector: 'app-edit-property-form-dialog',
   template: ` <app-dialog-header
       title="Edit a property"
-      [subtitle]="data.propertyInfo.propType.group + ': ' + data.propertyInfo.propType.label"></app-dialog-header>
+      [subtitle]="data.propertyInfo.propType.group + ': ' + data.propertyInfo.propType.label" />
     <app-property-form
       mat-dialog-content
       (afterFormInit)="form = $event"
@@ -41,7 +41,7 @@ export interface EditPropertyFormDialogProps {
         labels: data.propertyInfo.propDef.labels,
         comments: data.propertyInfo.propDef.comments,
         guiAttribute: data.propertyInfo.propDef.guiAttributes[0],
-      }"></app-property-form>
+      }" />
     <div mat-dialog-actions align="end">
       <button mat-button mat-dialog-close>Cancel</button>
       <button

@@ -1,9 +1,9 @@
-<app-progress-indicator *ngIf="(username$ | async) === null"></app-progress-indicator>
-<app-status *ngIf="error"></app-status>
+<app-progress-indicator *ngIf="(username$ | async) === null" />
+<app-status *ngIf="error" />
 
 <div class="content large middle" *ngIf="username$ | async">
   <div class="content-sidebar user-data">
-    <app-profile [loggedInUser]="true"></app-profile>
+    <app-profile [loggedInUser]="true" />
   </div>
 
   <div class="content-container">
@@ -37,17 +37,17 @@
       <div class="content middle" [ngSwitch]="route" *ngIf="route">
         <!-- user profile -->
         <div *ngSwitchCase="'profile'" class="full-width">
-          <app-projects [isUsersProjects]="true"></app-projects>
+          <app-projects [isUsersProjects]="true" />
         </div>
 
         <!-- edit user data -->
         <div *ngSwitchCase="routeConstants.userAccount" class="full-width">
-          <app-account [username]="username$ | async"></app-account>
+          <app-account [username]="username$ | async" />
         </div>
 
         <!-- user's projects -->
         <div *ngSwitchCase="routeConstants.projects" class="full-width">
-          <app-projects [isUsersProjects]="true"></app-projects>
+          <app-projects [isUsersProjects]="true" />
         </div>
       </div>
     </mat-tab-nav-panel>

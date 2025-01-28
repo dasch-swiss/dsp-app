@@ -16,12 +16,10 @@ export interface EditListItemDialogProps {
 @Component({
   selector: 'app-edit-list-item-dialog',
   template: `
-    <app-dialog-header [title]="data.formData.labels[0].value" subtitle="Edit child node"></app-dialog-header>
+    <app-dialog-header [title]="data.formData.labels[0].value" subtitle="Edit child node" />
 
     <div mat-dialog-content>
-      <app-reusable-list-item-form
-        [formData]="data.formData"
-        (afterFormInit)="form = $event"></app-reusable-list-item-form>
+      <app-reusable-list-item-form [formData]="data.formData" (afterFormInit)="form = $event" />
     </div>
 
     <div mat-dialog-actions align="end">

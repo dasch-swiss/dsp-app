@@ -1,7 +1,6 @@
 <div *ngIf="isPdf" class="pdf-container">
   <!-- in case of an error -->
-  <app-status [status]="404" [url]="src.fileValue.fileUrl" [representation]="'document'" *ngIf="failedToLoad">
-  </app-status>
+  <app-status [status]="404" [url]="src.fileValue.fileUrl" [representation]="'document'" *ngIf="failedToLoad" />
 
   <pdf-viewer
     class="pdf-viewer"
@@ -90,7 +89,7 @@
     <div class="container">
       <div class="contents">
         <div class="icon">
-          <mat-icon> text_snippet </mat-icon>
+          <mat-icon> text_snippet</mat-icon>
         </div>
         <div class="file">
           <p>{{ originalFilename }}</p>

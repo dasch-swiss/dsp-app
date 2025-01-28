@@ -13,8 +13,8 @@ import { ListItemService } from './list-item.service';
       [position]="index"
       [length]="children.length"
       [node]="child"
-      [isAdmin]="isAdmin"></app-list-item-element>
-    <app-list-item-form *ngIf="isAdmin" style="display: block; margin-left: 46px"></app-list-item-form>
+      [isAdmin]="isAdmin" />
+    <app-list-item-form *ngIf="isAdmin" style="display: block; margin-left: 46px" />
   `,
   styles: [':host { display: block; }'],
   providers: [ListItemService],

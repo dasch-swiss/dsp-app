@@ -11,7 +11,7 @@ import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
       *ngIf="listRootNode"
       [data]="listRootNode"
       [selection]="mySelectedNode?.label"
-      (selectedNode)="selectedNode($event)"></app-nested-menu>
+      (selectedNode)="selectedNode($event)" />
     <mat-error *ngIf="control.touched && control.errors">{{ control.errors | humanReadableError }}</mat-error>
   `,
 })

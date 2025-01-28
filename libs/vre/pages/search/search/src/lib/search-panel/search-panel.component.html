@@ -2,8 +2,7 @@
   <app-fulltext-search
     [projectfilter]="projectfilter"
     [(limitToProject)]="limitToProject"
-    (search)="emitSearch($event)">
-  </app-fulltext-search>
+    (search)="emitSearch($event)" />
 
   <!-- Do not display advanced and expert search on mobile devices smaller than tablet -->
   <div class="advanced-expert-buttons" [class.with-project-filter]="projectfilter">
@@ -40,8 +39,8 @@
       </span>
     </div>
     <div class="app-menu-content" [ngSwitch]="true">
-      <app-expert-search *ngSwitchCase="showExpert" (search)="emitSearch($event)"></app-expert-search>
-      <app-hint *ngSwitchCase="showHint" [topic]="'search'"></app-hint>
+      <app-expert-search *ngSwitchCase="showExpert" (search)="emitSearch($event)" />
+      <app-hint *ngSwitchCase="showHint" [topic]="'search'" />
     </div>
   </div>
 </ng-template>

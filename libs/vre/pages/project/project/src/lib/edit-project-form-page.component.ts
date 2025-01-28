@@ -17,7 +17,7 @@ import { ProjectForm } from './reusable-project-form/project-form.type';
     <app-reusable-project-form
       *ngIf="formData$ | async as formData"
       [formData]="formData"
-      (afterFormInit)="form = $event"></app-reusable-project-form>
+      (afterFormInit)="form = $event" />
 
     <div style="display: flex; justify-content: space-between">
       <button

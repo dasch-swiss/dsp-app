@@ -14,9 +14,7 @@ export interface EraseResourceDialogProps {
 @Component({
   selector: 'app-erase-resource-dialog',
   template: `
-    <app-dialog-header
-      title="Do you want to erase this resource forever?"
-      [subtitle]="'Erase resource instance'"></app-dialog-header>
+    <app-dialog-header title="Do you want to erase this resource forever?" [subtitle]="'Erase resource instance'" />
 
     <mat-dialog-content>
       <div style="margin-bottom: 8px">WARNING: This action cannot be undone, so use it with care.</div>

@@ -46,11 +46,11 @@ import { PropertyForm } from '../property-form.type';
 
     <app-gui-attr-list
       *ngIf="formData.property.propType.objectType === Constants.ListValue"
-      [control]="form.controls.guiAttr"></app-gui-attr-list>
+      [control]="form.controls.guiAttr" />
 
     <app-gui-attr-link
       *ngIf="formData.property.propType.objectType === Constants.LinkValue"
-      [control]="form.controls.guiAttr"></app-gui-attr-link>
+      [control]="form.controls.guiAttr" />
 
     <app-multi-language-textarea
       [formArray]="form.controls.comments"

@@ -18,7 +18,7 @@ export interface AddRegionFormDialogProps {
 
         <mat-form-field class="large-field without-border color-field">
           <mat-label class="color-label">Color *</mat-label>
-          <app-color-picker #colorInput [formControl]="regionForm.controls.color" class="value"></app-color-picker>
+          <app-color-picker #colorInput [formControl]="regionForm.controls.color" class="value" />
         </mat-form-field>
       </form>
     </mat-dialog-content>

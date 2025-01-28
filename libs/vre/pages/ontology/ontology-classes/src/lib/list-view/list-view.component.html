@@ -11,14 +11,13 @@
 </div>
 <!-- container with search results -->
 <div class="list-view-container">
-  <app-pager (pageIndexChanged)="doSearch($event)" [numberOfAllResults]="numberOfAllResults"> </app-pager>
+  <app-pager (pageIndexChanged)="doSearch($event)" [numberOfAllResults]="numberOfAllResults" />
   <div *ngIf="numberOfAllResults > 0 && resources">
     <app-resource-list
       [withMultipleSelection]="true"
       [resources]="resources"
       [selectedResourceIdx]="selectedResourceIdx"
-      (resourcesSelected)="emitSelectedResources($event)">
-    </app-resource-list>
+      (resourcesSelected)="emitSelectedResources($event)" />
   </div>
   <!-- In case of 0 result -->
   <div
@@ -39,7 +38,7 @@
         <li>Try fewer keywords.</li>
       </ul>
       <mat-divider></mat-divider>
-      <app-hint [topic]="'search'"></app-hint>
+      <app-hint [topic]="'search'" />
     </div>
     <!-- Case B: user clicked on the class item -->
     <div *ngIf="search.mode !== 'fulltext'">

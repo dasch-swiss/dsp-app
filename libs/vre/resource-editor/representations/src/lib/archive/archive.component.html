@@ -1,13 +1,12 @@
 <div *ngIf="src && src.fileValue.fileUrl">
   <!-- in case of an error -->
-  <app-status [status]="404" [url]="src.fileValue.fileUrl" [representation]="'archive'" *ngIf="failedToLoad">
-  </app-status>
+  <app-status [status]="404" [url]="src.fileValue.fileUrl" [representation]="'archive'" *ngIf="failedToLoad" />
 
   <div class="file-representation">
     <div class="container">
       <div class="contents">
         <div class="icon">
-          <mat-icon> description </mat-icon>
+          <mat-icon> description</mat-icon>
         </div>
         <div class="file">
           <p data-cy="original-file-name">{{ originalFilename }}</p>

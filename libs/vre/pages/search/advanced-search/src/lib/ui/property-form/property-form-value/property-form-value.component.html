@@ -49,6 +49,6 @@
 
   <!-- date value -->
   <div *ngSwitchCase="constants.DateValue" [formGroup]="dateFormGroup">
-    <app-date-picker [formControlName]="'date'" (emitDateChanged)="onDateSelected($event)"></app-date-picker>
+    <app-date-picker [formControlName]="'date'" (emitDateChanged)="onDateSelected($event)" />
   </div>
 </div>

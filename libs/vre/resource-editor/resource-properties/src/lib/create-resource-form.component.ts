@@ -40,7 +40,7 @@ import { propertiesTypeMapping } from './resource-payloads-mapping';
               data-cy="upload-control" />
           </mat-tab>
           <mat-tab label="External IIIF URL">
-            <app-third-part-iiif [formControl]="form.controls.file"></app-third-part-iiif>
+            <app-third-part-iiif [formControl]="form.controls.file" />
           </mat-tab>
         </mat-tab-group>
       </div>
@@ -69,7 +69,7 @@ import { propertiesTypeMapping } from './resource-payloads-mapping';
             <app-property-value-switcher
               [myProperty]="prop"
               [formArray]="form.controls.properties.controls[prop.propDef.id]"
-              [resourceClassIri]="resourceClassIri"></app-property-value-switcher>
+              [resourceClassIri]="resourceClassIri" />
           </div>
         </div>
       </div>
@@ -88,7 +88,7 @@ import { propertiesTypeMapping } from './resource-payloads-mapping';
     </form>
 
     <ng-template #loadingTemplate>
-      <app-progress-indicator></app-progress-indicator>
+      <app-progress-indicator />
     </ng-template>
   `,
   styles: [

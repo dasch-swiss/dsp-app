@@ -43,14 +43,8 @@ class TestProgressIndicatorComponent {}
  * test parent component to simulate integration of list-view component.
  */
 @Component({
-  template: ` <app-list-view
-      #listViewFulltext
-      [search]="fulltext"
-      (selectedResources)="openResource($event)"></app-list-view>
-    <app-list-view
-      #listViewGravsearch
-      [search]="gravsearch"
-      (selectedResources)="openResource($event)"></app-list-view>`,
+  template: ` <app-list-view #listViewFulltext [search]="fulltext" (selectedResources)="openResource($event)" />
+    <app-list-view #listViewGravsearch [search]="gravsearch" (selectedResources)="openResource($event)" />`,
 })
 class TestParentComponent implements OnInit {
   @ViewChild('listViewFulltext') listViewFulltext: ListViewComponent;

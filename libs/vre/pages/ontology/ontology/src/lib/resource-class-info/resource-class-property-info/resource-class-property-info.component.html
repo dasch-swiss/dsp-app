@@ -31,8 +31,8 @@
           class="menu-icon-button"
           (click)="canBeRemovedFromClass()"
           *ngIf="userCanEdit"
-          >more_vert</mat-icon
-        >
+          >more_vert
+        </mat-icon>
       </div>
     </div>
   </div>
@@ -50,7 +50,7 @@
         [cardinality]="propCard.cardinality"
         [classIri]="resourceClass.id"
         [propertyInfo]="{ propDef: this.propDef, propType: this.propType }"
-        (cardinalityChange)="submitCardinalitiesChange($event)"></app-cardinality>
+        (cardinalityChange)="submitCardinalitiesChange($event)" />
     </span>
   </div>
 </div>

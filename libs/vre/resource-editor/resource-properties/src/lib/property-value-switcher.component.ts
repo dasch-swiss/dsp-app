@@ -27,7 +27,7 @@ import { PropertyValueService } from './property-value.service';
   selector: 'app-property-value-switcher',
   providers: [PropertyValueService],
   template: `
-    <app-property-values [itemTpl]="itemTpl"></app-property-values>
+    <app-property-values [itemTpl]="itemTpl" />
 
     <ng-template #intTpl let-item="item" let-displayMode="displayMode">
       <app-base-switch [control]="item" [displayMode]="displayMode">
@@ -49,30 +49,27 @@ import { PropertyValueService } from './property-value.service';
     </ng-template>
 
     <ng-template #booleanTpl let-item="item" let-displayMode="displayMode">
-      <app-toggle-switch [control]="item" [displayMode]="displayMode"></app-toggle-switch>
+      <app-toggle-switch [control]="item" [displayMode]="displayMode" />
     </ng-template>
 
     <ng-template #listTpl let-item="item" let-displayMode="displayMode">
-      <app-list-switch
-        [control]="item"
-        [displayMode]="displayMode"
-        [propertyDef]="propertyDefinition"></app-list-switch>
+      <app-list-switch [control]="item" [displayMode]="displayMode" [propertyDef]="propertyDefinition" />
     </ng-template>
 
     <ng-template #colorTpl let-item="item" let-displayMode="displayMode">
-      <app-color-switch [control]="item" style="flex: 1" [displayMode]="displayMode"></app-color-switch>
+      <app-color-switch [control]="item" style="flex: 1" [displayMode]="displayMode" />
     </ng-template>
 
     <ng-template #richTextTpl let-item="item" let-displayMode="displayMode">
-      <app-rich-text-switch [control]="item" [displayMode]="displayMode"></app-rich-text-switch>
+      <app-rich-text-switch [control]="item" [displayMode]="displayMode" />
     </ng-template>
 
     <ng-template #textTpl let-item="item" let-displayMode="displayMode">
-      <app-text-switch [control]="item" [displayMode]="displayMode"></app-text-switch>
+      <app-text-switch [control]="item" [displayMode]="displayMode" />
     </ng-template>
 
     <ng-template #textHtmlTpl let-item="item" let-displayMode="displayMode">
-      <app-text-html-switch [control]="item" [displayMode]="displayMode"></app-text-html-switch>
+      <app-text-html-switch [control]="item" [displayMode]="displayMode" />
     </ng-template>
 
     <ng-template #paragraphTpl let-item="item" let-displayMode="displayMode">
@@ -84,19 +81,19 @@ import { PropertyValueService } from './property-value.service';
     </ng-template>
 
     <ng-template #dateTpl let-item="item" let-displayMode="displayMode">
-      <app-date-switch [control]="item" [displayMode]="displayMode"></app-date-switch>
+      <app-date-switch [control]="item" [displayMode]="displayMode" />
     </ng-template>
 
     <ng-template #timeTpl let-item="item" let-displayMode="displayMode">
-      <app-time-switch [control]="item" [displayMode]="displayMode"></app-time-switch>
+      <app-time-switch [control]="item" [displayMode]="displayMode" />
     </ng-template>
 
     <ng-template #intervalTpl let-item="item" let-displayMode="displayMode">
-      <app-interval-switch [control]="item" [displayMode]="displayMode"></app-interval-switch>
+      <app-interval-switch [control]="item" [displayMode]="displayMode" />
     </ng-template>
 
     <ng-template #geoNameTpl let-item="item" let-displayMode="displayMode">
-      <app-geoname-switch [control]="item" [displayMode]="displayMode"></app-geoname-switch>
+      <app-geoname-switch [control]="item" [displayMode]="displayMode" />
     </ng-template>
 
     <ng-template #linkTpl let-item="item" let-displayMode="displayMode">
@@ -105,11 +102,11 @@ import { PropertyValueService } from './property-value.service';
         [displayMode]="displayMode"
         [propIri]="propertyDefinition.id"
         [values]="editModeData?.values"
-        [resourceClassIri]="resourceClassIri"></app-link-switch>
+        [resourceClassIri]="resourceClassIri" />
     </ng-template>
 
     <ng-template #uriTpl let-item="item" let-displayMode="displayMode">
-      <app-uri-switch [control]="item" [displayMode]="displayMode" style="width: 100%"></app-uri-switch>
+      <app-uri-switch [control]="item" [displayMode]="displayMode" style="width: 100%" />
     </ng-template>
 
     <ng-template #defaultTpl><span style="width: 100%">Nothing to show</span></ng-template>

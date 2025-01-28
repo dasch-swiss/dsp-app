@@ -49,7 +49,7 @@ import { map } from 'rxjs/operators';
         <mat-icon>edit</mat-icon>
       </button>
     </div>
-    <app-resource-info-bar [resource]="resource"></app-resource-info-bar>
+    <app-resource-info-bar [resource]="resource" />
   </div>`,
   styles: [
     `

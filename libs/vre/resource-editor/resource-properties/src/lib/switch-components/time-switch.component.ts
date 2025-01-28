@@ -11,7 +11,7 @@ import { IsSwitchComponent } from './is-switch-component.interface';
       <div data-cy="time-switch-time">Time: {{ test | date: 'HH:mm' }}</div>
     </ng-container>
     <ng-template #editMode>
-      <app-time-value [control]="control"></app-time-value>
+      <app-time-value [control]="control" />
     </ng-template>`,
 })
 export class TimeSwitchComponent implements IsSwitchComponent {
