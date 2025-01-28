@@ -1,4 +1,4 @@
-import { Component, Inject, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import {
   Constants,
@@ -40,7 +40,8 @@ export class ArchiveComponent implements OnChanges {
     @Inject(DspApiConnectionToken)
     private _dspApiConnection: KnoraApiConnection,
     private _dialog: MatDialog,
-    private _rs: RepresentationService
+    private _rs: RepresentationService,
+    private _cd: ChangeDetectorRef
   ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -103,6 +104,7 @@ export class ArchiveComponent implements OnChanges {
 
         this._rs.getFileInfo(this.src.fileValue.fileUrl).subscribe(res => {
           this.originalFilename = res['originalFilename'];
+          this._cd.detectChanges();
         });
       });
   }
