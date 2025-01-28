@@ -101,7 +101,7 @@
     "@nx/jest": "19.0.8",
     "@nx/js": "19.0.8",
     "@nx/workspace": "19.0.8",
-    "@openapitools/openapi-generator-cli": "^2.15.3",
+    "@openapitools/openapi-generator-cli": "^2.16.3",
     "@schematics/angular": "^15.2.4",
     "@types/jasmine": "~4.6.4",
     "@types/jasminewd2": "~2.0.3",
