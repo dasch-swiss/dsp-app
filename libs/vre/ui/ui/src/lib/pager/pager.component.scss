@@ -40,7 +40,10 @@
 }
 
 .paginator-item-range {
-  min-width: 8em;
+  display: flex;
+  flex-direction: row-reverse;
+  padding-right: 16px;
+  font-size: 0.7em;
 }
 
 /* Remove number up/down buttons For Chrome, Edge, and Safari */
