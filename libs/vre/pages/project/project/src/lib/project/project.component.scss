@@ -136,13 +136,9 @@ mat-sidenav {
 }
 
 mat-sidenav-content {
-  .sidenav-expand-btn,
   .main-content {
-    display: inline-block;
-  }
-
-  .main-content {
-    width: 95%;
+    display: block;
+    width: 100%;
   }
 
   .sidenav-expand-btn {
