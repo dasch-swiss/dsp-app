@@ -210,7 +210,8 @@
     "comment": "Comment",
     "propertyLabels": {
       "linkedProperty": "Risorse collegate"
-    }
+    },
+    "footnotes": "Footnotes"
   },
   "searchPanel": {
     "howToSearch": "How to search",

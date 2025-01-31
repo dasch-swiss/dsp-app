@@ -210,7 +210,8 @@
     "comment": "Comment",
     "propertyLabels": {
       "linkedProperty": "Ressource liée"
-    }
+    },
+    "footnotes": "Notes"
   },
   "searchPanel": {
     "howToSearch": "How to search",
@@ -254,5 +255,4 @@
     "rangeLabelOf": "sur",
     "rangeLabelZero": "Page 1 sur 1"
   }
-
 }

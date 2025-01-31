@@ -161,7 +161,6 @@ export class PropertyValueSwitcherComponent implements OnInit, OnChanges, AfterV
 
   ngOnInit() {
     this._setupData();
-    this._cd.detectChanges();
   }
 
   _setupData() {

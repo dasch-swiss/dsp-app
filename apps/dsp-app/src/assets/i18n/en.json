@@ -210,7 +210,8 @@
     "comment": "Comment",
     "propertyLabels": {
       "linkedProperty": "Linked resource"
-    }
+    },
+    "footnotes": "Footnotes"
   },
   "searchPanel": {
     "howToSearch": "How to search",

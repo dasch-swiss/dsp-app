@@ -66,6 +66,24 @@ export class ClassPropertyPayloads {
     };
   }
 
+  static richText(lastModificationDate: string) {
+    return {
+      ...this.baseData(lastModificationDate),
+      '@graph': [
+        {
+          ...this.baseGraph,
+          ...this.hasValue,
+          'http://api.knora.org/ontology/knora-api/v2#objectType': {
+            '@id': 'http://api.knora.org/ontology/knora-api/v2#TextValue',
+          },
+          'http://api.knora.org/ontology/salsah-gui/v2#guiElement': {
+            '@id': 'http://api.knora.org/ontology/salsah-gui/v2#Richtext',
+          },
+        },
+      ],
+    };
+  }
+
   static number(lastModificationDate: string) {
     return {
       ...this.baseData(lastModificationDate),

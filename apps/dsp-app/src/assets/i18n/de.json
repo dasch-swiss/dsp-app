@@ -183,7 +183,8 @@
     "comment": "Kommentar",
     "propertyLabels": {
       "linkedProperty": "Verlinkte Ressource"
-    }
+    },
+    "footnotes": "Fussnoten"
   },
   "searchPanel": {
     "howToSearch": "Wie suchen?",

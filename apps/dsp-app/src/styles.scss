@@ -25,8 +25,8 @@ $warn: mat.define-palette(config.$velvet_red_palette, 700, 500, 900);
 
 // Define a theme.
 $theme: mat.define-light-theme((
-        color: (primary: $primary, accent: $accent, warn: $warn),
-        density: 0
+  color: (primary: $primary, accent: $accent, warn: $warn),
+  density: 0
 ));
 
 // Include all theme styles for the components.
@@ -67,7 +67,7 @@ body {
 // The following styles will override material design!
 
 // mat-form-field overrides
-.mdc-text-field--filled:not(.mdc-text-field--disabled){
+.mdc-text-field--filled:not(.mdc-text-field--disabled) {
   background-color: transparent;
 }
 
@@ -111,9 +111,11 @@ body {
     .mat-mdc-text-field-wrapper {
       width: 100%;
       padding-left: 0px;
+
       .mat-mdc-form-field-flex {
         border-left: 1px solid rgba(0, 0, 0, 0.12);
         min-height: calc(4 * 36px + 2px);
+
         .mat-mdc-form-field-infix {
           // negative values are not the best choice,
           // but with this margin-top the placeholder is at the
