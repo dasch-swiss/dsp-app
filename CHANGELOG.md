@@ -1,5 +1,35 @@
 # Changelog
 
+## [11.24.0](https://github.com/dasch-swiss/dsp-das/compare/v11.23.0...v11.24.0) (2025-02-03)
+
+
+### Enhancements
+
+* add footnotes functionnality to richtext ([#2071](https://github.com/dasch-swiss/dsp-das/issues/2071)) ([d8b71d7](https://github.com/dasch-swiss/dsp-das/commit/d8b71d76976c6795b38c487b26ebac36806fac05))
+
+
+### Bug Fixes
+
+* detect changes in Archive Component ([#2066](https://github.com/dasch-swiss/dsp-das/issues/2066)) ([82b3045](https://github.com/dasch-swiss/dsp-das/commit/82b304514fbb2be6eb1a1338c2739f001bcb50fd))
+* jumps to selected annotation region (DEV-4542) ([#2074](https://github.com/dasch-swiss/dsp-das/issues/2074)) ([d7f48a6](https://github.com/dasch-swiss/dsp-das/commit/d7f48a67cb0d248dce46544cfabe11cb7a5079fb))
+* remove side gap from main content (DEV-3756) ([#2068](https://github.com/dasch-swiss/dsp-das/issues/2068)) ([acdcbc9](https://github.com/dasch-swiss/dsp-das/commit/acdcbc9a99acfd0d9123c9417b7dff7ec0d270dd))
+* rollback ckeditor version to not include footnotes plugin ([#2073](https://github.com/dasch-swiss/dsp-das/issues/2073)) ([e0f721b](https://github.com/dasch-swiss/dsp-das/commit/e0f721b735aeb351e11871dd434bfdcd8a11483c))
+* standoff links work again ([#2072](https://github.com/dasch-swiss/dsp-das/issues/2072)) ([1ce0477](https://github.com/dasch-swiss/dsp-das/commit/1ce0477c86516fd2ab36fd120db096c3775ab3a6))
+* update paginator style ([#2069](https://github.com/dasch-swiss/dsp-das/issues/2069)) ([057f16c](https://github.com/dasch-swiss/dsp-das/commit/057f16c6806f29120ad04c847d3f3b2a496e3f5d))
+
+
+### Maintenances
+
+* **deps-dev:** bump @openapitools/openapi-generator-cli from 2.15.3 to 2.16.3 ([#2064](https://github.com/dasch-swiss/dsp-das/issues/2064)) ([8039d66](https://github.com/dasch-swiss/dsp-das/commit/8039d661524163d06c9744cd96f02fe4d831f493))
+* **deps-dev:** bump @types/node from 20.17.14 to 20.17.16 in the types-deps group ([#2063](https://github.com/dasch-swiss/dsp-das/issues/2063)) ([8fb321c](https://github.com/dasch-swiss/dsp-das/commit/8fb321cf032dffbecf5d8950cc3c50f67d774f5f))
+* selectors all start with app- instead of dasch-swiss ([#2060](https://github.com/dasch-swiss/dsp-das/issues/2060)) ([3dc5364](https://github.com/dasch-swiss/dsp-das/commit/3dc5364c643d89a0fea349764492a3d63d4d4124))
+* selectors are one liner when possible ([#2062](https://github.com/dasch-swiss/dsp-das/issues/2062)) ([7ebac68](https://github.com/dasch-swiss/dsp-das/commit/7ebac68a472ffdb856601b0b9d0520cfedccbda7))
+
+
+### Tests
+
+* remove user from a project (DEV-2328) ([#2067](https://github.com/dasch-swiss/dsp-das/issues/2067)) ([07a8dc4](https://github.com/dasch-swiss/dsp-das/commit/07a8dc43c438c5c94ed28ad80a090b5d479ec271))
+
 ## [11.23.0](https://github.com/dasch-swiss/dsp-das/compare/v11.22.6...v11.23.0) (2025-01-27)
 
 
