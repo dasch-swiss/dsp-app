@@ -12,7 +12,6 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { ResourceUtil } from '@dasch-swiss/vre/shared/app-common';
-import { Store } from '@ngxs/store';
 import { mergeMap } from 'rxjs/operators';
 import { FileRepresentation } from '../file-representation';
 import {
@@ -42,8 +41,7 @@ export class TextComponent implements OnChanges {
     @Inject(DspApiConnectionToken)
     private _dspApiConnection: KnoraApiConnection,
     private _dialog: MatDialog,
-    private _rs: RepresentationService,
-    private _store: Store
+    private _rs: RepresentationService
   ) {}
 
   ngOnChanges(): void {

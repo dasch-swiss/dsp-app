@@ -62,8 +62,13 @@ export class DocumentComponent implements OnChanges {
     }
   }
 
+  onInputChange(event: Event) {
+    this.searchQueryChanged((event.target as HTMLInputElement).value);
+  }
+
   searchQueryChanged(newQuery: string) {
     const eventName = newQuery !== this.pdfQuery ? 'find' : 'findagain';
+    this.pdfQuery = newQuery;
     this._pdfComponent.eventBus.dispatch(eventName, {
       query: this.pdfQuery,
       highlightAll: true,

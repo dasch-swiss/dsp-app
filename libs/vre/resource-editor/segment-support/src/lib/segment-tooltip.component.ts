@@ -1,5 +1,4 @@
 import { Component, EventEmitter, HostListener, Output } from '@angular/core';
-import { secondsToTimeString } from '@dasch-swiss/vre/ui/ui';
 import { Segment } from './segment';
 import { SegmentsService } from './segments.service';
 
@@ -49,6 +48,4 @@ export class SegmentTooltipComponent {
     this.segmentsService.highlightSegment(this.segment);
     this.mouseLeave.emit();
   }
-
-  protected readonly secondsToTimeString = secondsToTimeString;
 }

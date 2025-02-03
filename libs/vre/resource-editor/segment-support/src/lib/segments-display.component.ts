@@ -17,7 +17,6 @@ export class SegmentsDisplayComponent implements OnChanges {
 
   segmentInRow!: Segment[][];
   height!: number;
-  readonly rowHeight = 8;
 
   ngOnChanges() {
     this.segmentInRow = this.segments.reduce(

@@ -8,13 +8,7 @@ import {
   EditResourceLabelDialogProps,
 } from '@dasch-swiss/vre/resource-editor/resource-properties';
 import { DspResource, ResourceUtil } from '@dasch-swiss/vre/shared/app-common';
-import {
-  ComponentCommunicationEventService,
-  EmitEvent,
-  Events as CommsEvents,
-  OntologyService,
-  ProjectService,
-} from '@dasch-swiss/vre/shared/app-helper-services';
+import { OntologyService, ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { Store } from '@ngxs/store';
 import { combineLatest, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -130,7 +124,6 @@ export class ResourceHeaderComponent {
     private _dialog: MatDialog,
     private _store: Store,
     private _viewContainerRef: ViewContainerRef,
-    private _componentCommsService: ComponentCommunicationEventService,
     private _ontologyService: OntologyService
   ) {}
 
@@ -150,6 +143,5 @@ export class ResourceHeaderComponent {
     );
     const classId = this.resource.res.entityInfo.classes[this.resource.res.type]?.id;
     this._store.dispatch(new LoadClassItemsCountAction(ontologyIri, classId));
-    this._componentCommsService.emit(new EmitEvent(CommsEvents.resourceDeleted));
   }
 }

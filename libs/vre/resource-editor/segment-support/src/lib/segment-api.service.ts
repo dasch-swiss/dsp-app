@@ -166,10 +166,13 @@ OFFSET ${page}
             hasTitle: resource.properties[`${endpoint}hasTitle`] as ReadTextValueAsString[] | undefined,
           };
 
-          const mappedObject = Object.entries(data).reduce((acc, [key, value_]) => {
-            acc[key] = value_ !== undefined ? value_![0] : undefined;
-            return acc;
-          }, {});
+          const mappedObject = Object.entries(data).reduce(
+            (acc, [key, value_]) => {
+              acc[key] = value_ === undefined ? undefined : value_[0];
+              return acc;
+            },
+            {} as Record<string, any>
+          );
 
           const dspResource = new DspResource(resource);
           dspResource.resProps = GenerateProperty.segmentProperty(resource, type);

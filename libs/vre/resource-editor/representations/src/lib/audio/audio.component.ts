@@ -12,7 +12,6 @@ import { MediaPlayerService } from '../video/media-player.service';
 @Component({
   selector: 'app-audio',
   templateUrl: './audio.component.html',
-  styleUrls: ['./audio.component.scss'],
   providers: [MediaControlService, MediaPlayerService],
 })
 export class AudioComponent implements OnInit, OnChanges, OnDestroy {

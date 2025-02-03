@@ -96,7 +96,7 @@ import { propertiesTypeMapping } from './resource-payloads-mapping';
     '.my-row:last-child { border-bottom: 0}',
     '.my-grid { width: 600px}',
     '.my-grid h3 {width: 140px; margin-right: 10px; text-align: right; margin-top: 16px}',
-    '.label {color: rgb(107, 114, 128); align-self: start; cursor: help; margin-top: 0px; text-align: right;flex-shrink: 0}',
+    '.label {color: rgb(107, 114, 128); align-self: start; cursor: help; margin-top: 0; text-align: right;flex-shrink: 0}',
   ],
 })
 export class CreateResourceFormComponent implements OnInit {

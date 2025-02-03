@@ -37,9 +37,8 @@
         name="searchbox"
         class="pdf-searchbox fill-remaining-space"
         placeholder="Search in pdf..."
-        [value]="pdfQuery"
         [disabled]="failedToLoad"
-        (input)="searchQueryChanged($event.target.value)"
+        (input)="onInputChange($event)"
         (keyup.enter)="searchQueryChanged(queryInp.value)" />
 
       <!-- image action tools e.g. zoom, rotate and flip -->
