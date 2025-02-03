@@ -20,8 +20,12 @@
           (sortKeyChange)="sortList($event)" />
       </span>
       <h2 class="mat-headline-6">
-        <span *ngIf="projectUuid">{{ list.length | i18nPlural : itemPluralMapping['member'] }}</span>
-        <span *ngIf="!projectUuid">{{ list.length | i18nPlural : itemPluralMapping['user'] }}</span>
+        <span *ngIf="projectUuid" data-cy="member-count"
+          >{{ list.length | i18nPlural : itemPluralMapping['member'] }}</span
+        >
+        <span *ngIf="!projectUuid" data-cy="user-count"
+          >{{ list.length | i18nPlural : itemPluralMapping['user'] }}</span
+        >
       </h2>
       <span class="fill-remaining-space"></span>
       <span class="app-toolbar-action button right" *ngIf="status && createNew && (isSysAdmin$ | async)">
@@ -76,7 +80,11 @@
 
       <!-- action: menu with edit, remove, etc. -->
       <td class="table-action">
-        <button mat-icon-button [matMenuTriggerFor]="projectUserMenu" [disabled]="disableMenu$ | async">
+        <button
+          mat-icon-button
+          [matMenuTriggerFor]="projectUserMenu"
+          data-cy="user-menu"
+          [disabled]="disableMenu$ | async">
           <mat-icon>more_horiz</mat-icon>
         </button>
         <mat-menu #projectUserMenu="matMenu" xPosition="before" class="menu">
@@ -122,6 +130,7 @@
           <!-- remove user from project; only in project view -->
           <button
             mat-menu-item
+            data-cy="remove-member-button"
             *ngIf="projectUuid"
             (click)="
                             askToRemoveFromProject(user)
