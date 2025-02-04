@@ -5,7 +5,7 @@
     [class.selected-resource]="selectedResourceIdx.indexOf(i) > -1"
     [class.border-bottom]="!last"
     *ngFor="
-            let resource of resources.resources;
+            let resource of resources;
             let i = index;
             let last = last
         ">

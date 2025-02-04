@@ -1,5 +1,15 @@
 @use "config" as *;
 
+.loader-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 12px;
+  max-height: 12px;
+  padding-inline: 16px;
+  padding-top: 4px;
+}
+
 .list-view-header {
   border-bottom: 1px solid rgba(0, 0, 0, 0.12);
   position: sticky !important;

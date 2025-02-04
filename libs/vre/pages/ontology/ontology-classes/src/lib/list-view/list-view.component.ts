@@ -11,7 +11,13 @@ import {
   Output,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ApiResponseError, CountQueryResponse, KnoraApiConnection, ReadResourceSequence } from '@dasch-swiss/dsp-js';
+import {
+  ApiResponseError,
+  CountQueryResponse,
+  KnoraApiConnection,
+  ReadResource,
+  ReadResourceSequence,
+} from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken, RouteConstants } from '@dasch-swiss/vre/core/config';
 import { OntologiesSelectors } from '@dasch-swiss/vre/core/state';
 import { FilteredResources, SearchParams } from '@dasch-swiss/vre/shared/app-common-to-move';
@@ -54,20 +60,20 @@ export interface CheckboxUpdate {
 export class ListViewComponent implements OnChanges, OnInit, OnDestroy {
   private ngUnsubscribe: Subject<void> = new Subject<void>();
 
-  @Input() search: SearchParams;
-  currentSearch: SearchParams;
+  @Input() search: SearchParams | undefined = undefined;
+  currentSearch: SearchParams | undefined = undefined;
 
   /**
    * set to true if multiple resources can be selected for comparison
    */
-  @Input() withMultipleSelection?: boolean = false;
+  @Input() withMultipleSelection = false;
 
   /**
    * emits the selected resources 1-n
    */
   @Output() selectedResources: EventEmitter<FilteredResources> = new EventEmitter<FilteredResources>();
 
-  resources: ReadResourceSequence;
+  resources: ReadResource[] = [];
 
   selectedResourceIdx: number[] = [];
 
@@ -117,11 +123,11 @@ export class ListViewComponent implements OnChanges, OnInit, OnDestroy {
   }
 
   isCurrentSearch = (): boolean =>
-    this.search.query !== this.currentSearch?.query || this.currentSearch.query === undefined;
+    this.search?.query !== this.currentSearch?.query || this.currentSearch?.query === undefined;
 
   initSearch(): void {
     // reset
-    this.resources = undefined;
+    this.resources = [];
     this.emitSelectedResources();
     this.doSearch();
   }
@@ -150,7 +156,7 @@ export class ListViewComponent implements OnChanges, OnInit, OnDestroy {
   }
 
   handleBackButtonClicked() {
-    const projectUuid = this._route.parent.snapshot.paramMap.get('uuid');
+    const projectUuid = this._route.parent?.snapshot.paramMap.get('uuid');
     if (projectUuid) {
       this._router.navigate([RouteConstants.project, projectUuid, RouteConstants.advancedSearch]);
     }
@@ -163,12 +169,9 @@ export class ListViewComponent implements OnChanges, OnInit, OnDestroy {
    */
   doSearch(index = 0) {
     this.loading = true;
-    this._cd.markForCheck();
 
-    if (this.search.mode === 'fulltext') {
-      // search mode: fulltext
-
-      if (index === 0) {
+    if (this.search?.mode === 'fulltext') {
+      if (index === 0 && !this.isCurrentSearch()) {
         // perform count query
         this._dspApiConnection.v2.search
           .doFulltextSearchCountQuery(this.search.query, index, this.search.filter)
@@ -178,7 +181,7 @@ export class ListViewComponent implements OnChanges, OnInit, OnDestroy {
               this.numberOfAllResults = count.numberOfResults;
               if (this.numberOfAllResults === 0) {
                 this.emitSelectedResources();
-                this.resources = undefined;
+                this.resources = [];
                 this.loading = false;
                 this._cd.markForCheck();
               }
@@ -204,16 +207,16 @@ export class ListViewComponent implements OnChanges, OnInit, OnDestroy {
             if (response.resources.length === 0) {
               this.emitSelectedResources();
             }
-            this.resources = response;
+            this.resources = response.resources;
             this.loading = false;
             this._cd.markForCheck();
           },
           (error: ApiResponseError) => {
             this.loading = false;
-            this.resources = undefined;
+            this.resources = [];
           }
         );
-    } else if (this.search.mode === 'gravsearch') {
+    } else if (this.search?.mode === 'gravsearch') {
       this.performGravSearch(index);
     }
   }
@@ -222,9 +225,9 @@ export class ListViewComponent implements OnChanges, OnInit, OnDestroy {
     // emit 'gravSearchExecuted' event to the fulltext-search component in order to clear the input field
     this._componentCommsService.emit(new EmitEvent(Events.gravSearchExecuted, true));
 
-    if (this.search.query === undefined) {
+    if (this.search?.query === undefined) {
       this._notification.openSnackBar('The gravsearch query is not set correctly');
-      this.resources = undefined;
+      this.resources = [];
       this.loading = false;
       this._cd.markForCheck();
       return;
@@ -243,7 +246,7 @@ export class ListViewComponent implements OnChanges, OnInit, OnDestroy {
                 if (this.numberOfAllResults === 0) {
                   this._notification.openSnackBar('No resources to display.');
                   this.emitSelectedResources();
-                  this.resources = undefined;
+                  this.resources = [];
                   this.loading = false;
                   this._cd.markForCheck();
                 }
@@ -265,7 +268,7 @@ export class ListViewComponent implements OnChanges, OnInit, OnDestroy {
         tap({
           error: () => {
             this.loading = false;
-            this.resources = undefined;
+            this.resources = [];
           },
         })
       )
@@ -282,7 +285,7 @@ export class ListViewComponent implements OnChanges, OnInit, OnDestroy {
           this.emitSelectedResources();
         }
 
-        this.resources = response;
+        this.resources = response.resources;
 
         this.loading = false;
         this._cd.markForCheck();

@@ -20,11 +20,11 @@ export class ResourceListComponent implements OnChanges {
   @ViewChildren('ckbox') resChecks: MatCheckbox[];
 
   /**
-   * list of resources of type ReadResourceSequence
+   * list of resources of type ReadResource
    *
-   * @param  {ReadResourceSequence} resources
+   * @param  {ReadResource[]} resources
    */
-  @Input() resources: ReadResourceSequence;
+  @Input() resources: ReadResource[] = [];
 
   /**
    * list of all selected resources indices
@@ -50,12 +50,12 @@ export class ResourceListComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     // select the first item in the list
-    if (changes['resources'] && this.resources.resources.length) {
+    if (changes['resources'] && this.resources.length) {
       this.selectResource({
         checked: true,
         resIndex: 0,
-        resId: this.resources.resources[0].id,
-        resLabel: this.resources.resources[0].label,
+        resId: this.resources[0].id,
+        resLabel: this.resources[0].label,
         isCheckbox: false,
       });
     }
