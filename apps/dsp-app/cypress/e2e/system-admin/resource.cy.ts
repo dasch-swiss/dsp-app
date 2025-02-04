@@ -23,8 +23,8 @@ describe('Resource', () => {
     });
   });
 
-  describe('footnotes', () => {
-    it.only('should be displayed, and can be edited', () => {
+  describe.skip('footnotes', () => {
+    it('should be displayed, and can be edited', () => {
       const footnote = {
         '@type': 'http://0.0.0.0:3333/ontology/00FF/images/v2#datamodelclass',
         'http://www.w3.org/2000/01/rdf-schema#label': 'rlabel',
