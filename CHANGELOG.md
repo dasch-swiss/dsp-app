@@ -1,5 +1,27 @@
 # Changelog
 
+## [11.25.0](https://github.com/dasch-swiss/dsp-das/compare/v11.24.0...v11.25.0) (2025-02-04)
+
+
+### Enhancements
+
+* reimplement a progress indicator (DEV-4544) ([#2076](https://github.com/dasch-swiss/dsp-das/issues/2076)) ([2d27657](https://github.com/dasch-swiss/dsp-das/commit/2d27657d058c4cb3cf37ade37b16771904db91d2))
+
+
+### Bug Fixes
+
+* rollback ckeditor5 version to 2.0.0 ([#2079](https://github.com/dasch-swiss/dsp-das/issues/2079)) ([e3d582a](https://github.com/dasch-swiss/dsp-das/commit/e3d582aa5afdf84ebe433a3577482202958e552f))
+
+
+### Maintenances
+
+* remove useless errors ([#2075](https://github.com/dasch-swiss/dsp-das/issues/2075)) ([bc69443](https://github.com/dasch-swiss/dsp-das/commit/bc69443ef2e505bb39d9dd2e238f66aa5caa3e70))
+
+
+### Tests
+
+* skip footnote test ([#2081](https://github.com/dasch-swiss/dsp-das/issues/2081)) ([dea09c0](https://github.com/dasch-swiss/dsp-das/commit/dea09c0cd35162bd26b7e4350f49e583439b89f0))
+
 ## [11.24.0](https://github.com/dasch-swiss/dsp-das/compare/v11.23.0...v11.24.0) (2025-02-03)
 
 
