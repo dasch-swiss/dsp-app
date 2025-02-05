@@ -7,12 +7,12 @@ import { ColorPickerComponent } from './lib/color-picker/color-picker.component'
 import { CommonInputComponent } from './lib/common-input.component';
 import { ConfirmDialogComponent } from './lib/dialog/confirm-dialog.component';
 import { DragDropDirective } from './lib/directives/drag-drop.directive';
-import { TextValueHtmlLinkDirective } from './lib/directives/text-value-html-link.directive';
 import { HintComponent } from './lib/hint/hint.component';
 import { IncomingResourcePagerComponent } from './lib/incoming-resource-pager/incoming-resource-pager.component';
 import { InvalidControlScrollDirective } from './lib/invalid-control-scroll.directive';
 import { PagerComponent } from './lib/pager/pager.component';
 import { KnoraDatePipe } from './lib/pipes/formatting/knoradate.pipe';
+import { InternalLinkReplacerPipe } from './lib/pipes/internal-link-replacer.pipe';
 import { IsFalsyPipe } from './lib/pipes/isFalsy.piipe';
 import { LinkifyPipe } from './lib/pipes/string-transformation/linkify.pipe';
 import { TitleFromCamelCasePipe } from './lib/pipes/string-transformation/title-from-camel-case.pipe';
@@ -35,7 +35,6 @@ export const UiComponents = [
   ColorPickerComponent,
   AdminImageDirective,
   CenteredLayoutComponent,
-  TextValueHtmlLinkDirective,
   DragDropDirective,
   KnoraDatePipe,
   IsFalsyPipe,
@@ -43,7 +42,7 @@ export const UiComponents = [
   TitleFromCamelCasePipe,
   LinkifyPipe,
   TruncatePipe,
-  TextValueHtmlLinkDirective,
   HintComponent,
+  InternalLinkReplacerPipe,
 ];
 export const UiStandaloneComponents = [PagerComponent, IncomingResourcePagerComponent];

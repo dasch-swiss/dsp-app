@@ -1,7 +1,6 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChildren } from '@angular/core';
 import { MatCheckbox } from '@angular/material/checkbox';
-import { Constants, ReadLinkValue, ReadResource, ReadResourceSequence } from '@dasch-swiss/dsp-js';
-import { ResourceService } from '@dasch-swiss/vre/shared/app-common';
+import { Constants, ReadResource } from '@dasch-swiss/dsp-js';
 import { FilteredResources } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { CheckboxUpdate } from '../list-view.component';
 import { ListViewService } from '../list-view.service';
@@ -43,10 +42,7 @@ export class ResourceListComponent implements OnChanges {
    */
   @Output() resourcesSelected?: EventEmitter<FilteredResources> = new EventEmitter<FilteredResources>();
 
-  constructor(
-    private _listView: ListViewService,
-    private _resourceService: ResourceService
-  ) {}
+  constructor(private _listView: ListViewService) {}
 
   ngOnChanges(changes: SimpleChanges) {
     // select the first item in the list
@@ -59,16 +55,6 @@ export class ResourceListComponent implements OnChanges {
         isCheckbox: false,
       });
     }
-  }
-
-  /**
-   * opens a clicked internal link
-   * @param linkValue
-   */
-  openResource(linkValue: ReadLinkValue | string) {
-    const iri = typeof linkValue == 'string' ? linkValue : linkValue.linkedResourceIri;
-    const path = this._resourceService.getResourcePath(iri);
-    window.open(`/resource${path}`, '_blank');
   }
 
   selectResource(status: CheckboxUpdate) {
