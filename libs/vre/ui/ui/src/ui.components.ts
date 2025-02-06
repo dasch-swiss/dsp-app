@@ -11,6 +11,7 @@ import { HintComponent } from './lib/hint/hint.component';
 import { IncomingResourcePagerComponent } from './lib/incoming-resource-pager/incoming-resource-pager.component';
 import { InvalidControlScrollDirective } from './lib/invalid-control-scroll.directive';
 import { PagerComponent } from './lib/pager/pager.component';
+import { AddTargetBlankPipe } from './lib/pipes/add-target-blank.pipe';
 import { KnoraDatePipe } from './lib/pipes/formatting/knoradate.pipe';
 import { InternalLinkReplacerPipe } from './lib/pipes/internal-link-replacer.pipe';
 import { IsFalsyPipe } from './lib/pipes/isFalsy.piipe';
@@ -44,5 +45,6 @@ export const UiComponents = [
   TruncatePipe,
   HintComponent,
   InternalLinkReplacerPipe,
+  AddTargetBlankPipe,
 ];
 export const UiStandaloneComponents = [PagerComponent, IncomingResourcePagerComponent];

@@ -12,7 +12,7 @@ import { FootnoteService } from './footnote.service';
       [attr.data-uuid]="footnote.uuid"
       data-cy="footnote">
       <a style="padding-top: 1em" (click)="goToFootnote(footnote.uuid)">{{ index + 1 }}.</a>
-      <span [innerHTML]="footnote.content"></span>
+      <span [innerHTML]="footnote.content | internalLinkReplacer | addTargetBlank"></span>
     </div>`,
   styles: [
     `

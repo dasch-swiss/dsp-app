@@ -5,7 +5,7 @@ import { SafeHtml } from '@angular/platform-browser';
 @Component({
   selector: 'app-footnote-tooltip',
   template: ` <div class="content" [@fadeIn]="'in'">
-    <div [innerHTML]="content"></div>
+    <div [innerHTML]="content | internalLinkReplacer | addTargetBlank"></div>
   </div>`,
   animations: [
     trigger('fadeIn', [

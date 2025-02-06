@@ -7,7 +7,7 @@ import { IsSwitchComponent } from './is-switch-component.interface';
   template: ` <div
       *ngIf="displayMode; else editMode"
       data-cy="text-html-switch"
-      [innerHTML]="control.value | internalLinkReplacer"
+      [innerHTML]="control.value | internalLinkReplacer | addTargetBlank"
       appMathjax></div>
     <ng-template #editMode> This value cannot be edited.</ng-template>`,
 })

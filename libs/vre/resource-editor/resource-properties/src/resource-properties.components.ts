@@ -6,6 +6,7 @@ import { DeleteValueDialogComponent } from './lib/delete-value-dialog.component'
 import { EditResourceLabelDialogComponent } from './lib/edit-resource-label-dialog.component';
 import { EraseResourceDialogComponent } from './lib/erase-resource-dialog.component';
 import { ExistingPropertyValueComponent } from './lib/existing-property-value.component';
+import { FootnoteParserPipe } from './lib/footnote-parser.pipe';
 import { FootnoteTooltipComponent } from './lib/footnote-tooltip.component';
 import { FootnoteDirective } from './lib/footnote.directive';
 import { FootnotesComponent } from './lib/footnotes.component';
@@ -92,4 +93,5 @@ export const ResourcePropertiesComponents = [
   FootnotesComponent,
   FootnoteTooltipComponent,
   FootnoteDirective,
+  FootnoteParserPipe,
 ];

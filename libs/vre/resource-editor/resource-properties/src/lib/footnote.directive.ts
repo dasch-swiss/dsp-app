@@ -49,7 +49,6 @@ export class FootnoteDirective {
         const targetFootnote = document.querySelector(`.footnote[data-uuid="${uuid}"]`);
 
         if (targetFootnote) {
-          console.log('d', event);
           // Scroll to the target footnote element
           targetFootnote.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }

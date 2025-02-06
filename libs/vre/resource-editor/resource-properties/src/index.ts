@@ -50,3 +50,4 @@ export * from './lib/footnote.service';
 export * from './lib/footnotes.component';
 export * from './lib/footnote-tooltip.component';
 export * from './lib/footnote.directive';
+export * from './lib/footnote-parser.pipe';

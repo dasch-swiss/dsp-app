@@ -1,5 +1,3 @@
-import { Constants } from '@dasch-swiss/dsp-js';
-
 export class ckEditor {
   static config = {
     entities: false,
@@ -59,21 +57,6 @@ export class ckEditor {
       languages: [{ language: 'plaintext', label: 'Plain text', class: '' }],
     },
     language: 'en',
-    link: {
-      addTargetToExternalLinks: false,
-      decorators: {
-        isInternal: {
-          // label: 'internal link to a Knora resource',
-          mode: 'automatic', // automatic requires callback -> but the callback is async and the user could save the text before the check ...
-          callback: (
-            url: string // console.log(url, url.startsWith( 'http://rdfh.ch/' ));
-          ) => !!url && url.startsWith('http://rdfh.ch/'), // --> TODO: get this from config via AppInitService
-          attributes: {
-            class: Constants.SalsahLink,
-          },
-        },
-      },
-    },
     table: {
       contentToolbar: ['tableColumn', 'tableRow'], // mergeTableCells is not supported by the backend due to colspan html tag mapping.
     },
