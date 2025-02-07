@@ -11,7 +11,6 @@ import {
   WriteValueResponse,
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
-import { ResourceUtil } from '@dasch-swiss/vre/shared/app-common';
 import { PdfViewerComponent } from 'ng2-pdf-viewer';
 import { mergeMap, take } from 'rxjs/operators';
 import { FileRepresentation } from '../file-representation';
@@ -20,6 +19,7 @@ import {
   ReplaceFileDialogProps,
 } from '../replace-file-dialog/replace-file-dialog.component';
 import { RepresentationService } from '../representation.service';
+import { ResourceUtil } from '../resource.util';
 
 @Component({
   selector: 'app-document',

@@ -6,20 +6,15 @@ import it_CH from '@angular/common/locales/it-CH';
 import { Injectable } from '@angular/core';
 import { AvailableLanguages } from '@dasch-swiss/vre/core/config';
 import { TranslateService } from '@ngx-translate/core';
-import { BaseService } from './base.service';
 
 @Injectable({
   providedIn: 'root',
 })
-export class LocalizationService extends BaseService {
+export class LocalizationService {
   private readonly defaultLanguage = 'en';
   private readonly localStorageLanguageKey = 'dsp_language';
 
   private _locale: any;
-  get locale() {
-    return window.navigator.language ? window.navigator.language : this._locale;
-  }
-
   set locale(value: string) {
     this._locale = value;
     this.setLocale(this._locale);
@@ -32,9 +27,7 @@ export class LocalizationService extends BaseService {
     { locale: 'it-CH', localeData: it_CH },
   ];
 
-  constructor(private translateService: TranslateService) {
-    super();
-  }
+  constructor(private translateService: TranslateService) {}
 
   init() {
     this.setDefaultLanguage();

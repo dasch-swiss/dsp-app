@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { ClassDefinition } from '@dasch-swiss/dsp-js';
-import { OntologyClassService, SortingService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { OntologyClassHelper, SortingService } from '@dasch-swiss/vre/shared/app-helper-services';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -16,7 +16,7 @@ export class OntologyClassesComponent {
   @Input({ required: true }) projectMember!: boolean;
 
   get classesToDisplay(): ClassDefinition[] {
-    const classesToDisplay = OntologyClassService.GetClassesToDisplay(this.resClasses);
+    const classesToDisplay = OntologyClassHelper.GetClassesToDisplay(this.resClasses);
     return this._sortingService.keySortByAlphabetical(classesToDisplay, 'label');
   }
 

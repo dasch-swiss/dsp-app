@@ -5,13 +5,6 @@ import { Injectable } from '@angular/core';
 })
 export class SortingService {
   /**
-   * reverses an array
-   */
-  reverseArray(value: Array<any>): Array<any> {
-    return value.slice().reverse();
-  }
-
-  /**
    * compares value by value and sorts in alphabetical order using the provided first key, in case the comparison
    * of the values results in zero the second key is used if provided.
    */

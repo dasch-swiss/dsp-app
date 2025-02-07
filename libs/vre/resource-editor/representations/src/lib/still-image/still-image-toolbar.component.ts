@@ -13,7 +13,6 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken, DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import { AppError } from '@dasch-swiss/vre/core/error-handler';
-import { ResourceUtil } from '@dasch-swiss/vre/shared/app-common';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { filter, switchMap } from 'rxjs/operators';
 import { EditThirdPartyIiifFormComponent } from '../edit-third-party-iiif-form/edit-third-party-iiif-form.component';
@@ -24,6 +23,7 @@ import {
 } from '../replace-file-dialog/replace-file-dialog.component';
 import { RepresentationService } from '../representation.service';
 import { ResourceFetcherService } from '../resource-fetcher.service';
+import { ResourceUtil } from '../resource.util';
 import { OpenSeaDragonService } from './open-sea-dragon.service';
 
 @Component({

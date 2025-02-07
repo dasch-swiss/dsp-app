@@ -10,7 +10,7 @@ import {
   WriteValueResponse,
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
-import { DspResource, ResourceUtil } from '@dasch-swiss/vre/shared/app-common';
+import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { mergeMap } from 'rxjs/operators';
 import { FileRepresentation } from '../file-representation';
 import { getFileValue } from '../get-file-value';
@@ -20,6 +20,7 @@ import {
 } from '../replace-file-dialog/replace-file-dialog.component';
 import { RepresentationService } from '../representation.service';
 import { ResourceFetcherService } from '../resource-fetcher.service';
+import { ResourceUtil } from '../resource.util';
 
 @Component({
   selector: 'app-audio-more-button',

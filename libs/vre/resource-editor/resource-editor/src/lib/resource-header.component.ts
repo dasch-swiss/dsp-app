@@ -3,11 +3,12 @@ import { MatDialog } from '@angular/material/dialog';
 import { ResourceClassDefinitionWithPropertyDefinition } from '@dasch-swiss/dsp-js';
 import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import { LoadClassItemsCountAction, ProjectsSelectors, UserSelectors } from '@dasch-swiss/vre/core/state';
+import { ResourceUtil } from '@dasch-swiss/vre/resource-editor/representations';
 import {
   EditResourceLabelDialogComponent,
   EditResourceLabelDialogProps,
 } from '@dasch-swiss/vre/resource-editor/resource-properties';
-import { DspResource, ResourceUtil } from '@dasch-swiss/vre/shared/app-common';
+import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { OntologyService, ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { Store } from '@ngxs/store';
 import { combineLatest, Observable } from 'rxjs';

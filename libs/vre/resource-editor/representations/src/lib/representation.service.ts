@@ -14,11 +14,11 @@ import { AppConfigService } from '@dasch-swiss/vre/core/config';
 import { AppError } from '@dasch-swiss/vre/core/error-handler';
 import { AccessTokenService } from '@dasch-swiss/vre/core/session';
 import { IKeyValuePairs, ResourceSelectors, UserSelectors } from '@dasch-swiss/vre/core/state';
-import { ResourceUtil } from '@dasch-swiss/vre/shared/app-common';
 import { Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { FileInfo } from './representation.types';
+import { ResourceUtil } from './resource.util';
 
 @Injectable({
   providedIn: 'root',

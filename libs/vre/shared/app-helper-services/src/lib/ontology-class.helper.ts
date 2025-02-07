@@ -1,14 +1,7 @@
-import { Injectable } from '@angular/core';
 import { ClassDefinition, Constants } from '@dasch-swiss/dsp-js';
 import { getAllEntityDefinitionsAsArray } from '@dasch-swiss/vre/3rd-party-services/api';
 
-/**
- * helper methods for the ontology editor
- */
-@Injectable({
-  providedIn: 'root',
-})
-export class OntologyClassService {
+export class OntologyClassHelper {
   static GetClassesToDisplay(resClasses: ClassDefinition[]): ClassDefinition[] {
     const classesToDisplay: ClassDefinition[] = [];
     resClasses.forEach(resClass => {
@@ -24,6 +17,6 @@ export class OntologyClassService {
   }
 
   static GetReadOntologyClassesToDisplay(readOntologyClasses: { [index: string]: ClassDefinition }): ClassDefinition[] {
-    return OntologyClassService.GetClassesToDisplay(getAllEntityDefinitionsAsArray(readOntologyClasses));
+    return OntologyClassHelper.GetClassesToDisplay(getAllEntityDefinitionsAsArray(readOntologyClasses));
   }
 }
