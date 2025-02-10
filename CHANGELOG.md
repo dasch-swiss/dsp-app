@@ -1,5 +1,22 @@
 # Changelog
 
+## [11.25.1](https://github.com/dasch-swiss/dsp-das/compare/v11.25.0...v11.25.1) (2025-02-10)
+
+
+### Bug Fixes
+
+* footnotes escape html only once ([#2088](https://github.com/dasch-swiss/dsp-das/issues/2088)) ([cc85f14](https://github.com/dasch-swiss/dsp-das/commit/cc85f148233f416cd21ade77672d939e09866b8e))
+* internal links and external work with ckeditor footnotes  ([#2084](https://github.com/dasch-swiss/dsp-das/issues/2084)) ([58676b9](https://github.com/dasch-swiss/dsp-das/commit/58676b96e4f8dca1083c94284fee7ec15287cb39))
+* selected region click only fires when a region iri is found ([#2089](https://github.com/dasch-swiss/dsp-das/issues/2089)) ([5bdb9fc](https://github.com/dasch-swiss/dsp-das/commit/5bdb9fcf548324856df7636014610fce037f5927))
+
+
+### Maintenances
+
+* **deps:** bump the grafana-deps group across 1 directory with 2 updates ([#2080](https://github.com/dasch-swiss/dsp-das/issues/2080)) ([27165aa](https://github.com/dasch-swiss/dsp-das/commit/27165aa05ad4629583045a00a5aeb2abfaf01c9d))
+* remove unused variables ([#2086](https://github.com/dasch-swiss/dsp-das/issues/2086)) ([8c72abc](https://github.com/dasch-swiss/dsp-das/commit/8c72abc74043d533ab769e62d0aa64eaa7dced6d))
+* replace internal links with pipe rather than directive  ([#2082](https://github.com/dasch-swiss/dsp-das/issues/2082)) ([80d5c0b](https://github.com/dasch-swiss/dsp-das/commit/80d5c0bcf45d3acbcc6466cf75d3812846539f18))
+* update github/codeql-action to v3 ([#2087](https://github.com/dasch-swiss/dsp-das/issues/2087)) ([4af3800](https://github.com/dasch-swiss/dsp-das/commit/4af38005dafb292cc56a881d980da5dbc8e36d94))
+
 ## [11.25.0](https://github.com/dasch-swiss/dsp-das/compare/v11.24.0...v11.25.0) (2025-02-04)
 
 
