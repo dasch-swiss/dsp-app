@@ -43,7 +43,10 @@ export class OsdDrawerService implements OnDestroy {
     this._subscribeToCreatedRectangle();
 
     this._osd.viewer.addHandler('canvas-click', event => {
-      this._regionService.selectRegion((<any>event).originalTarget.dataset.regionIri);
+      const regionIri = (<any>event).originalTarget.dataset.regionIri;
+      if (regionIri) {
+        this._regionService.selectRegion(regionIri);
+      }
     });
   }
 

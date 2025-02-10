@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, OnDestroy, OnInit, QueryList, ViewChildren } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, OnDestroy, QueryList, ViewChildren } from '@angular/core';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { AppError } from '@dasch-swiss/vre/core/error-handler';
 import { RegionService } from '@dasch-swiss/vre/resource-editor/representations';
@@ -29,7 +29,7 @@ import { take } from 'rxjs/operators';
   </div>`,
   styles: ['.active {border: 1px solid}'],
 })
-export class AnnotationTabComponent implements OnInit, OnDestroy {
+export class AnnotationTabComponent implements AfterViewInit, OnDestroy {
   @Input({ required: true }) resource!: DspResource;
   @ViewChildren('annotationElement') annotationElements!: QueryList<ElementRef>;
   selectedRegion: string | null = null;
@@ -41,7 +41,7 @@ export class AnnotationTabComponent implements OnInit, OnDestroy {
     public resourceService: ResourceService
   ) {}
 
-  ngOnInit() {
+  ngAfterViewInit() {
     this._subscription = this.regionService.selectedRegion$.subscribe(region => {
       this.selectedRegion = region;
       if (region !== null) {
