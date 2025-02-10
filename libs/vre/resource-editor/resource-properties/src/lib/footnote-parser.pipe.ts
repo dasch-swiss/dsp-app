@@ -1,23 +1,25 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { unescapeHtml } from '@dasch-swiss/vre/ui/ui';
 import { FootnoteService } from './footnote.service';
 
 @Pipe({
   name: 'footnoteParser',
 })
 export class FootnoteParserPipe implements PipeTransform {
-  private readonly _footnoteRegExp = /<footnote content="([^>]+)">([^<]*)<\/footnote>/g;
+  private readonly _footnoteRegExp = /<footnote content="([^>]+)"\/>/g;
 
   constructor(
     private _sanitizer: DomSanitizer,
     private _footnoteService: FootnoteService
   ) {}
 
-  transform(value: null | string): SafeHtml | null {
-    if (value === null) {
-      return value; // Return as is if value is empty or null
+  transform(value_: null | string | SafeHtml): SafeHtml | null {
+    if (value_ === null) {
+      return value_; // Return as is if value is empty or null
     } // does nothing if only displayMode changes
 
+    const value = typeof value_ === 'string' ? value_ : value_['changingThisBreaksApplicationSecurity'];
     if (!this._containsFootnote(value)) {
       return this._sanitizer.bypassSecurityTrustHtml(value);
     }
@@ -37,23 +39,10 @@ export class FootnoteParserPipe implements PipeTransform {
         const uuid = window.crypto.getRandomValues(new Uint32Array(1))[0].toString();
         const parsedFootnote = `<footnote content="${matchArray[1]}" id="${uuid}">${this._footnoteService.footnotes.length + 1}</footnote>`;
         newValue = newValue.replace(matchArray[0], parsedFootnote);
-        this._footnoteService.addFootnote(
-          uuid,
-          this._sanitizer.bypassSecurityTrustHtml(this._unescapeHtml(this._unescapeHtml(matchArray[1])))
-        );
+        this._footnoteService.addFootnote(uuid, this._sanitizer.bypassSecurityTrustHtml(unescapeHtml(matchArray[1])));
       });
     }
-    return this._sanitizer.bypassSecurityTrustHtml(this._unescapeHtml(newValue));
-  }
 
-  private _unescapeHtml(str: string) {
-    const unescapeMap = {
-      '&amp;': '&',
-      '&lt;': '<',
-      '&gt;': '>',
-      '&quot;': '"',
-      '&#039;': "'",
-    };
-    return str.replace(/&(amp|lt|gt|quot|#039);/g, match => unescapeMap[match]);
+    return this._sanitizer.bypassSecurityTrustHtml(newValue);
   }
 }

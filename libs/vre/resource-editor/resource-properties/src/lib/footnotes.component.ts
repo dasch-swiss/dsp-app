@@ -7,7 +7,6 @@ import { FootnoteService } from './footnote.service';
   template: `<h5>{{ 'resource.footnotes' | translate }}</h5>
     <div
       *ngFor="let footnote of footnoteService.footnotes; let index = index; trackBy: trackByIndex"
-      (click)="goToFootnote(footnote.uuid)"
       class="footnote"
       [attr.data-uuid]="footnote.uuid"
       data-cy="footnote">
