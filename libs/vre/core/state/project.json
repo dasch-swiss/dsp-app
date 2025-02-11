@@ -20,6 +20,12 @@
       "outputs": [
         "{options.outputFile}"
       ]
+    },
+    "tsc-errors": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsc --noEmit --project {projectRoot}/tsconfig.lib.json"
+      }
     }
   }
 }
