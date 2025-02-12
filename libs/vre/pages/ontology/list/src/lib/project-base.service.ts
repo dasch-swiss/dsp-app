@@ -12,8 +12,8 @@ import {
   UserSelectors,
 } from '@dasch-swiss/vre/core/state';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
-import { Actions, ofActionSuccessful, Select, Store } from '@ngxs/store';
-import { combineLatest, Observable, Subject } from 'rxjs';
+import { Actions, Select, Store, ofActionSuccessful } from '@ngxs/store';
+import { Observable, Subject, combineLatest } from 'rxjs';
 import { filter, map, take, takeUntil, takeWhile } from 'rxjs/operators';
 
 @Injectable()
@@ -45,7 +45,7 @@ export class ProjectBaseService {
   @Select(UserSelectors.userProjectAdminGroups) userProjectAdminGroups$!: Observable<string[]>;
   @Select(ProjectsSelectors.isCurrentProjectAdminOrSysAdmin) isCurrentProjectAdminOrSysAdmin!: Observable<boolean>;
   @Select(ProjectsSelectors.isCurrentProjectMember) isProjectMember$!: Observable<boolean>;
-  @Select(ProjectsSelectors.currentProject) project$!: Observable<ReadProject>;
+  @Select(ProjectsSelectors.currentProject) currentProject$!: Observable<ReadProject>;
   @Select(ProjectsSelectors.isProjectsLoading) isProjectsLoading$!: Observable<boolean>;
   @Select(ProjectsSelectors.isMembershipLoading) isMembershipLoading$!: Observable<boolean>;
   @Select(ProjectsSelectors.projectMembers) projectMembers$!: Observable<IKeyValuePairs<ReadUser>>;

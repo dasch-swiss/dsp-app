@@ -28,7 +28,7 @@
 
               <span
                 class="project-actions"
-                *ngIf="(projectBaseService.project$ | async)?.status && (projectBaseService.isAdmin$ | async)">
+                *ngIf="(projectBaseService.currentProject$ | async)?.status && (projectBaseService.isAdmin$ | async)">
                 <p class="mat-caption space-reducer">Controlled vocabulary configuration</p>
                 <button
                   color="primary"
@@ -54,7 +54,7 @@
           </mat-toolbar>
 
           <app-list-item
-            *ngIf="((isListsLoading$ | async) === false) && (projectBaseService.project$ | async) as project"
+            *ngIf="((isListsLoading$ | async) === false) && (projectBaseService.currentProject$ | async) as project"
             [rootNodeIri]="list.id"
             [projectUuid]="project.id"
             [isAdmin]="projectBaseService.isAdmin$ | async" />

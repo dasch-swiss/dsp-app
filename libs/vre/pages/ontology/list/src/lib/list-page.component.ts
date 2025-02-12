@@ -12,8 +12,8 @@ import {
 } from '@dasch-swiss/vre/core/state';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { DialogService } from '@dasch-swiss/vre/ui/ui';
-import { Actions, ofActionSuccessful, Select, Store } from '@ngxs/store';
-import { combineLatest, Observable, Subject } from 'rxjs';
+import { Actions, Select, Store, ofActionSuccessful } from '@ngxs/store';
+import { Observable, Subject, combineLatest } from 'rxjs';
 import { map, switchMap, take } from 'rxjs/operators';
 import { ProjectBaseService } from './project-base.service';
 import {
@@ -39,7 +39,7 @@ export class ListPageComponent implements OnInit, OnDestroy {
     map(([lists, listIri]) => lists.find(i => i.id.includes(listIri!)))
   );
 
-  listIri$: Observable<string> = combineLatest([this._route.params, this.projectBaseService.project$]).pipe(
+  listIri$: Observable<string> = combineLatest([this._route.params, this.projectBaseService.currentProject$]).pipe(
     map(([params, project]) => `${this._acs.dspAppConfig.iriBase}/lists/${project.shortcode}/${params['list']}`)
   );
 
