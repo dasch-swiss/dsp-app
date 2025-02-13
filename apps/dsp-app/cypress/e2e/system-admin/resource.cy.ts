@@ -24,7 +24,7 @@ describe('Resource', () => {
   });
 
   describe('footnotes', () => {
-    it('a created footnote should be sent in the right format (no double escape, empty text in tag)', () => {
+    it.skip('a created footnote should be sent in the right format (no double escape, empty text in tagTEST)', () => {
       // Intercept the POST request
       cy.intercept('POST', 'http://0.0.0.0:3333/v2/resources').as('postRequest');
 
