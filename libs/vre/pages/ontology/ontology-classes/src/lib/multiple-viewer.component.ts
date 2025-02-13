@@ -13,24 +13,22 @@ import { SplitSize } from './split-size.interface';
             [withMultipleSelection]="true"
             (selectedResources)="openSelectedResources($event)" />
         </as-split-area>
-        <as-split-area [size]="60" cdkScrollable>
-          <div *ngIf="selectedResources?.count > 0">
-            <div [ngSwitch]="viewMode">
-              <!-- single resource view -->
-              <app-resource-fetcher *ngSwitchCase="'single'" [resourceIri]="selectedResources.resInfo[0].id" />
+        <as-split-area [size]="60" *ngIf="selectedResources?.count > 0" cdkScrollable>
+          <div [ngSwitch]="viewMode">
+            <!-- single resource view -->
+            <app-resource-fetcher *ngSwitchCase="'single'" [resourceIri]="selectedResources.resInfo[0].id" />
 
-              <!-- intermediate view -->
-              <app-intermediate
-                *ngSwitchCase="'intermediate'"
-                [resources]="selectedResources"
-                (action)="viewMode = $event" />
+            <!-- intermediate view -->
+            <app-intermediate
+              *ngSwitchCase="'intermediate'"
+              [resources]="selectedResources"
+              (action)="viewMode = $event" />
 
-              <!-- multiple resources view / comparison viewer -->
-              <app-comparison
-                *ngSwitchCase="'compare'"
-                [resources]="selectedResources?.resInfo"
-                [splitSizeChanged]="splitSizeChanged" />
-            </div>
+            <!-- multiple resources view / comparison viewer -->
+            <app-comparison
+              *ngSwitchCase="'compare'"
+              [resources]="selectedResources?.resInfo"
+              [splitSizeChanged]="splitSizeChanged" />
           </div>
         </as-split-area>
       </as-split>
