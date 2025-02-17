@@ -22,7 +22,7 @@ import { PropertiesDisplayService } from './properties-display.service';
     [class.border-bottom]="borderBottom"
     #rowElement
     style="display: flex; padding: 8px 0;"
-    [ngClass]="{ hidden: (showAllProperties | async) === false || isEmptyRow }">
+    [ngClass]="{ hidden: (showAllProperties | async) === false && isEmptyRow }">
     <h3 class="label mat-subtitle-2" [matTooltip]="tooltip ?? ''" matTooltipPosition="above">{{ label }}</h3>
     <div style="flex: 1">
       <ng-content />

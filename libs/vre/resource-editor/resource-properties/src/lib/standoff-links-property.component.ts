@@ -10,7 +10,7 @@ import { sortByKeys } from './sortByKeys';
   template: ` <app-property-row
     [tooltip]="'resource.standoffLink.tooltip' | translate"
     [label]="'resource.standoffLink.label' | translate"
-    [isEmptyRow]="standoffLinks.length > 0"
+    [isEmptyRow]="standoffLinks.length === 0"
     [borderBottom]="true">
     <app-incoming-standoff-link-value [links]="standoffLinks" />
   </app-property-row>`,
