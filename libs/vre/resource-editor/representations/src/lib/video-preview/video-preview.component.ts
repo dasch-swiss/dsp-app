@@ -1,4 +1,3 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, ElementRef, EventEmitter, HostListener, Input, OnChanges, Output, ViewChild } from '@angular/core';
 import { fromEvent, merge, Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
@@ -50,10 +49,7 @@ export class VideoPreviewComponent implements OnChanges {
   // to calculate matrix background size
   proportion: number;
 
-  constructor(
-    private _host: ElementRef,
-    private _http: HttpClient
-  ) {}
+  constructor(private _host: ElementRef) {}
 
   @HostListener('mousemove', ['$event']) onMove(e: MouseEvent) {
     this.updatePreviewByPosition(e);

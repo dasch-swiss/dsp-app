@@ -147,12 +147,4 @@ export class OntologyV2ApiService extends BaseApi {
   replaceGuiOrderOfCardinalities(payload: any) {
     return this._http.put<ResourcePropertyDefinitionWithAllLanguages>(`${this.baseUri}/guiorder`, payload);
   }
-
-  private _updateMetadata(ontologyMetadata: OntologyMetadata) {
-    return this._http.put<OntologyMetadata>(`${this.baseUri} / metadata`, ontologyMetadata);
-  }
-
-  private _update(iri: string, ontologyMetaData: OntologyMetadata) {
-    return this._http.put<OntologyMetadata>(`${this.baseUri} /${encodeURIComponent(iri)}`, ontologyMetaData);
-  }
 }

@@ -3,7 +3,6 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '@dasch-swiss/vre/core/session';
-import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { Subscription } from 'rxjs';
 import { finalize, takeLast, tap } from 'rxjs/operators';
 
@@ -64,8 +63,7 @@ export class LoginFormComponent implements OnInit, OnDestroy {
     private router: Router,
     private _authService: AuthService,
     private route: ActivatedRoute,
-    private location: Location,
-    private _notification: NotificationService
+    private location: Location
   ) {}
 
   ngOnInit() {

@@ -67,8 +67,6 @@ export class SelectGroupComponent implements OnDestroy, AfterViewInit {
 
   @Select(ProjectsSelectors.projectGroups) allProjectGroups$: Observable<IKeyValuePairs<ReadGroup>[]>;
 
-  constructor(private _cd: ChangeDetectorRef) {}
-
   ngAfterViewInit() {
     setTimeout(() => {
       this.groupCtrl.setValue(this.permissions);

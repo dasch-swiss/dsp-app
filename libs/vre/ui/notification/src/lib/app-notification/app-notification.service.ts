@@ -1,9 +1,5 @@
-import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
-import { ApiResponseError } from '@dasch-swiss/dsp-js';
-import { HttpStatusMsg } from '@dasch-swiss/vre/shared/assets/status-msg';
-import { AjaxError } from 'rxjs/ajax';
 
 @Injectable({
   providedIn: 'root',

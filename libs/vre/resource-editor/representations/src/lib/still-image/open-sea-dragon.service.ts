@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Point2D } from '@dasch-swiss/dsp-js';
-import { AppError } from '@dasch-swiss/vre/core/error-handler';
 import { AccessTokenService } from '@dasch-swiss/vre/core/session';
 import OpenSeadragon from 'openseadragon';
 import { Subject } from 'rxjs';

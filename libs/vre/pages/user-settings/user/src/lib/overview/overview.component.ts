@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { Router } from '@angular/router';
 import { ReadProject, ReadUser, StoredProject } from '@dasch-swiss/dsp-js';
 import { LoadProjectsAction, ProjectsSelectors, UserSelectors } from '@dasch-swiss/vre/core/state';
 import { ReplaceAnimation } from '@dasch-swiss/vre/shared/app-common';
@@ -29,7 +28,6 @@ export class OverviewComponent implements OnInit {
 
   constructor(
     private _titleService: Title,
-    private _router: Router,
     private _store: Store
   ) {
     this._titleService.setTitle('Projects Overview');

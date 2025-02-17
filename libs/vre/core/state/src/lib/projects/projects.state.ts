@@ -12,7 +12,7 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { AdminProjectsApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
-import { AppConfigService, DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { Action, Actions, ofActionSuccessful, State, StateContext, Store } from '@ngxs/store';
 import { produce } from 'immer';
@@ -61,7 +61,6 @@ export class ProjectsState {
     @Inject(DspApiConnectionToken)
     private _dspApiConnection: KnoraApiConnection,
     private store: Store,
-    private appConfig: AppConfigService,
     private projectService: ProjectService,
     private projectApiService: ProjectApiService,
     private actions: Actions,

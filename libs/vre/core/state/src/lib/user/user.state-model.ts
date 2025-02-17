@@ -1,4 +1,4 @@
-import { ReadUser, User } from '@dasch-swiss/dsp-js';
+import { ReadUser } from '@dasch-swiss/dsp-js';
 
 export class UserStateModel {
   isLoading = false;

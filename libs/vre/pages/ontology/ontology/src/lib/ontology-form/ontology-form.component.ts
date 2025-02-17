@@ -152,7 +152,7 @@ export class OntologyFormComponent implements OnInit, OnDestroy {
           },
         })
       )
-      .subscribe((response: OntologyMetadata) => {
+      .subscribe(() => {
         this.dialogRef.close(true);
       });
   }

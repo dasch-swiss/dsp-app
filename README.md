@@ -5,9 +5,9 @@
 [![CI](https://github.com/dasch-swiss/dsp-das/workflows/CI/badge.svg)](https://github.com/dasch-swiss/dsp-das/actions?query=workflow%3ACI)
 
 This monorepo hosts various libraries of the DaSCH Service Platform and it is built on:
-- Nx `v19.0.8`,
-- Angular `v17.3.0`,
-- Node.js `v20.9.0`.
+- Nx `v19.0.8`
+- Angular `v17.3.0`
+- Node.js `v20.9.0`
 
 # Install libraries
 

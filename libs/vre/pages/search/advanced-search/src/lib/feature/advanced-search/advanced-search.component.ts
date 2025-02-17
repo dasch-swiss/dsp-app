@@ -82,10 +82,7 @@ export class AdvancedSearchComponent implements OnInit {
   constants = Constants;
   previousSearchObject: string | null = null;
 
-  constructor(
-    private _dialog: MatDialog,
-    private _dialogService: DialogService
-  ) {}
+  constructor(private _dialogService: DialogService) {}
 
   ngOnInit(): void {
     this.store.setState({

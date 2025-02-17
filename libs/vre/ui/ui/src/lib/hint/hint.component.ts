@@ -1,5 +1,4 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
 
 export type HintTopic = 'search';
 
@@ -14,8 +13,6 @@ export class HintComponent implements OnInit {
   content: string;
 
   documentation: string;
-
-  constructor(private _route: ActivatedRoute) {}
 
   ngOnInit(): void {
     this.content = this._getHint(this.topic);

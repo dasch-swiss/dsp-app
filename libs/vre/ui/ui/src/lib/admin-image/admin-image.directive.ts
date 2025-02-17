@@ -1,4 +1,3 @@
-import { Location } from '@angular/common';
 import { Directive, OnChanges, Input, Renderer2, ElementRef } from '@angular/core';
 import { Md5 } from 'ts-md5';
 import { AdminImageConfig } from './admin-image.config';

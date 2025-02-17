@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Constants, ReadProject, ReadUser } from '@dasch-swiss/dsp-js';
@@ -121,8 +121,7 @@ export class UsersListComponent {
     private _router: Router,
     private _sortingService: SortingService,
     private _store: Store,
-    private _actions$: Actions,
-    private _cd: ChangeDetectorRef
+    private _actions$: Actions
   ) {
     // get the uuid of the current project
     this._route.parent?.parent?.paramMap.subscribe((params: Params) => {
@@ -377,16 +376,5 @@ export class UsersListComponent {
     this.sortBy = key;
     this.list = this._sortingService.keySortByAlphabetical(this.list, this.sortBy as any);
     localStorage.setItem('sortUsersBy', key);
-  }
-
-  private addUserToGroupMembership(id: string, newGroup: string): void {
-    this._userApiService
-      .addToGroupMembership(id, newGroup)
-      .pipe(take(1))
-      .subscribe(() => {
-        if (this.projectUuid) {
-          this._store.dispatch(new LoadProjectMembershipAction(this.projectUuid));
-        }
-      });
   }
 }

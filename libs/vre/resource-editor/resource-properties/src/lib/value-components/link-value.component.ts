@@ -72,7 +72,6 @@ import { LinkValueDataService } from './link-value-data.service';
   providers: [LinkValueDataService, MatAutocompleteOptionsScrollDirective],
 })
 export class LinkValueComponent implements OnInit, AfterViewInit, OnDestroy {
-  private readonly pageResultsLimit: number = 25;
   private cancelPreviousCountRequest$ = new Subject<void>();
   private cancelPreviousSearchRequest$ = new Subject<void>();
 

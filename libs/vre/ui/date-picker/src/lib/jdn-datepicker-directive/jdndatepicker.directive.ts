@@ -23,10 +23,7 @@ export function makeCalendarToken() {
 export class JDNDatepickerDirective implements OnChanges, OnDestroy {
   private _activeCalendar: 'Gregorian' | 'Julian' | 'Islamic';
 
-  constructor(
-    @Inject(ACTIVE_CALENDAR) private _activeCalendarToken,
-    private _adapter: DateAdapter<JDNConvertibleCalendar>
-  ) {}
+  constructor(@Inject(ACTIVE_CALENDAR) private _activeCalendarToken) {}
 
   get activeCalendar() {
     return this._activeCalendar;
