@@ -8,3 +8,8 @@ export * from './lib/collaboration/collaboration.component';
 export * from './lib/collaboration/add-user/add-user.component';
 export * from './lib/collaboration/select-group/select-group.component';
 export * from './lib/description/description.component';
+
+export * from './lib/image-settings/settings-page.component';
+export * from './lib/image-settings/image-display-absolute.component';
+export * from './lib/image-settings/image-display-ratio.component';
+export * from './lib/image-settings/image-settings.component';

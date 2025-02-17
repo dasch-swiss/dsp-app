@@ -71,9 +71,6 @@
       "@dasch-swiss/vre/pages/system/system": [
         "libs/vre/pages/system/system/src/index.ts"
       ],
-      "@dasch-swiss/vre/pages/user-settings/settings": [
-        "libs/vre/pages/user-settings/settings/src/index.ts"
-      ],
       "@dasch-swiss/vre/pages/user-settings/user": [
         "libs/vre/pages/user-settings/user/src/index.ts"
       ],

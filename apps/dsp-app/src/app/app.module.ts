@@ -27,7 +27,6 @@ import { ProjectComponents } from '@dasch-swiss/vre/pages/project/project';
 import { AdvancedSearchComponent } from '@dasch-swiss/vre/pages/search/advanced-search';
 import { SearchComponents } from '@dasch-swiss/vre/pages/search/search';
 import { SystemComponents } from '@dasch-swiss/vre/pages/system/system';
-import { SettingsPageComponents } from '@dasch-swiss/vre/pages/user-settings/settings';
 import { apiConnectionTokenProvider, UserComponents } from '@dasch-swiss/vre/pages/user-settings/user';
 import { MathJaxComponents } from '@dasch-swiss/vre/resource-editor/mathjax';
 import { PropertyFormComponents } from '@dasch-swiss/vre/resource-editor/property-form';
@@ -83,7 +82,6 @@ export function httpLoaderFactory(httpClient: HttpClient) {
     ...ProjectComponents,
     ...UserComponents,
     ...SearchComponents,
-    ...SettingsPageComponents,
     ...OntologyClassesComponents,
     ...OntologyComponents,
     ...SystemComponents,
