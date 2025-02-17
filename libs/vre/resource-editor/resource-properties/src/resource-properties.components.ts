@@ -10,6 +10,8 @@ import { FootnoteParserPipe } from './lib/footnote-parser.pipe';
 import { FootnoteTooltipComponent } from './lib/footnote-tooltip.component';
 import { FootnoteDirective } from './lib/footnote.directive';
 import { FootnotesComponent } from './lib/footnotes.component';
+import { IncomingLinksPropertyComponent } from './lib/incoming-links-property.component';
+import { IncomingResourcePagerComponent } from './lib/incoming-resource-pager/incoming-resource-pager.component';
 import { IncomingStandoffLinkValueComponent } from './lib/incoming-standoff-link-value.component';
 import { PropertiesDisplayComponent } from './lib/properties-display.component';
 import { PropertiesToolbarComponent } from './lib/properties-toolbar.component';
@@ -20,6 +22,7 @@ import { PropertyValueSwitcherComponent } from './lib/property-value-switcher.co
 import { PropertyValueComponent } from './lib/property-value.component';
 import { PropertyValuesComponent } from './lib/property-values.component';
 import { ResourceInfoBarComponent } from './lib/resource-info-bar.component';
+import { StandoffLinksPropertyComponent } from './lib/standoff-links-property.component';
 import { BaseSwitchComponent } from './lib/switch-components/base-switch.component';
 import { ColorSwitchComponent } from './lib/switch-components/color-switch.component';
 import { DateSwitchComponent } from './lib/switch-components/date-switch.component';
@@ -94,4 +97,7 @@ export const ResourcePropertiesComponents = [
   FootnoteTooltipComponent,
   FootnoteDirective,
   FootnoteParserPipe,
+  IncomingLinksPropertyComponent,
+  StandoffLinksPropertyComponent,
+  IncomingResourcePagerComponent,
 ];

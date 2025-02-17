@@ -10,10 +10,7 @@ import { delay } from 'rxjs/operators';
     *ngFor="let segment of segmentsService.segments"
     [id]="segment.resource.res.id"
     [class.active]="segment === selectedSegment">
-    <app-properties-display
-      [resource]="segment.resource"
-      [properties]="segment.resource.resProps"
-      [displayLabel]="true" />
+    <app-properties-display [resource]="segment.resource" [displayLabel]="true" />
   </div>`,
   styles: ['.active {border: 1px solid}'],
 })

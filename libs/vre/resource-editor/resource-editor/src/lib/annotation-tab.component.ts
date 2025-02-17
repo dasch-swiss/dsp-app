@@ -16,7 +16,6 @@ import { take } from 'rxjs/operators';
     data-cy="annotation-border">
     <app-properties-display
       [resource]="annotation"
-      [properties]="annotation.resProps"
       [displayLabel]="true"
       [linkToNewTab]="
         resourceService.getResourcePath(resource.res.id) +

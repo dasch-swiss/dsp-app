@@ -16,15 +16,11 @@ import { CompoundService } from './compound/compound.service';
       [selectedIndex]="selectedTab"
       (selectedTabChange)="onTabChange($event)">
       <mat-tab #matTabProperties [label]="'resource.properties' | translate">
-        <app-properties-display *ngIf="resource" [resource]="resource" [properties]="resource.resProps" />
+        <app-properties-display *ngIf="resource" [resource]="resource" />
       </mat-tab>
 
       <mat-tab *ngIf="incomingResource" #matTabIncoming [label]="resourceClassLabel(incomingResource)">
-        <app-properties-display
-          *ngIf="incomingResource"
-          [resource]="incomingResource"
-          [properties]="incomingResource.resProps"
-          [displayLabel]="true" />
+        <app-properties-display *ngIf="incomingResource" [resource]="incomingResource" [displayLabel]="true" />
       </mat-tab>
 
       <!-- annotations -->

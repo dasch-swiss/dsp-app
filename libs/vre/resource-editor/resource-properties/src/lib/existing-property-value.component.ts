@@ -18,8 +18,8 @@ import { propertiesTypeMapping } from './resource-payloads-mapping';
   styles: [':host { display: block; position: relative; width: 100%}'],
 })
 export class ExistingPropertyValueComponent implements OnChanges {
-  @Input() prop!: PropertyInfoValues;
-  @Input() resource!: ReadResource;
+  @Input({ required: true }) prop!: PropertyInfoValues;
+  @Input({ required: true }) resource!: ReadResource;
 
   formArray!: FormValueArray;
 

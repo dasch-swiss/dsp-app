@@ -1,24 +1,10 @@
-import {
-  ChangeDetectorRef,
-  Component,
-  EventEmitter,
-  Input,
-  OnChanges,
-  OnDestroy,
-  Output,
-  ViewChild,
-} from '@angular/core';
-import { Cardinality, Constants, ReadLinkValue, ResourcePropertyDefinition } from '@dasch-swiss/dsp-js';
+import { Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
+import { Cardinality, ResourcePropertyDefinition } from '@dasch-swiss/dsp-js';
 import { ResourceSelectors } from '@dasch-swiss/vre/core/state';
 import { DspResource, PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
-import { IncomingResourcePagerComponent } from '@dasch-swiss/vre/ui/ui';
 import { Store } from '@ngxs/store';
-import { BehaviorSubject, Subject } from 'rxjs';
-import { map, take, takeUntil } from 'rxjs/operators';
-import { IncomingOrStandoffLink } from './incoming-link.interface';
-import { PropertiesDisplayIncomingLinkService } from './properties-display-incoming-link.service';
+import { map } from 'rxjs/operators';
 import { PropertiesDisplayService } from './properties-display.service';
-import { sortByKeys } from './sortByKeys';
 
 @Component({
   selector: 'app-properties-display',
@@ -29,7 +15,7 @@ import { sortByKeys } from './sortByKeys';
         <app-properties-toolbar [showToggleProperties]="true" [showOnlyIcons]="displayLabel" style="flex-shrink: 0" />
         <app-resource-toolbar
           *ngIf="displayLabel"
-          [adminPermissions]="adminPermissions"
+          [adminPermissions]="false"
           [resource]="resource"
           [linkToNewTab]="linkToNewTab"
           (afterResourceDeleted)="afterResourceDeleted.emit()" />
@@ -52,54 +38,33 @@ import { sortByKeys } from './sortByKeys';
     </div>
 
     <!-- list of properties -->
-    <ng-container>
-      <ng-container *ngIf="editableProperties && editableProperties.length > 0; else noProperties">
-        <app-property-row
-          [class]="getRowClass(showAllProperties$ | async, prop.values.length)"
-          *ngFor="let prop of editableProperties; let last = last; trackBy: trackByPropertyInfoFn"
-          [borderBottom]="true"
-          [tooltip]="prop.propDef.comment"
-          [prop]="prop"
-          [label]="
-            prop.propDef.label +
-            (prop.guiDef.cardinality === cardinality._1 || prop.guiDef.cardinality === cardinality._1_n ? '*' : '')
-          ">
-          <app-existing-property-value [prop]="prop" [resource]="resource.res" />
-        </app-property-row>
-      </ng-container>
-    </ng-container>
-
-    <!-- standoff link -->
-    <ng-container>
+    <ng-container *ngIf="editableProperties && editableProperties.length > 0; else noProperties">
       <app-property-row
-        tooltip=" Represent a link in standoff markup from one resource to another"
-        label="has Standoff link"
+        [isEmptyRow]="prop.values.length === 0"
+        *ngFor="let prop of editableProperties; let last = last; trackBy: trackByPropertyInfoFn"
         [borderBottom]="true"
-        [class]="getRowClass(showAllProperties$ | async, standoffLinks.length)">
-        <app-incoming-standoff-link-value [links]="standoffLinks" />
+        [tooltip]="prop.propDef.comment"
+        [prop]="prop"
+        [label]="
+          prop.propDef.label +
+          (prop.guiDef.cardinality === cardinality._1 || prop.guiDef.cardinality === cardinality._1_n ? '*' : '')
+        ">
+        <app-existing-property-value [prop]="prop" [resource]="resource.res" />
       </app-property-row>
     </ng-container>
 
-    <!-- incoming link -->
-    <app-property-row
-      tooltip="Indicates that this resource is referred to by another resource"
-      label="has incoming link"
-      [borderBottom]="true"
-      class="incoming-link"
-      [class]="getRowClass(showAllProperties$ | async, (incomingLinks$ | async).length)">
-      <app-incoming-standoff-link-value *ngIf="(incomingLinks$ | async)?.length > 0" [links]="incomingLinks$ | async" />
-      <app-incoming-resource-pager #pager [lastItemOfPage]="incomingLinks.length" (pageChanged)="pageChanged()" />
-    </app-property-row>
+    <app-standoff-links-property [resource]="resource" />
+    <app-incoming-links-property [resource]="resource" />
 
     <ng-template #noProperties>
-      <app-property-row label="info" [borderBottom]="false">
+      <app-property-row label="info" [borderBottom]="false" [isEmptyRow]="false">
         This resource has no defined properties.
       </app-property-row>
       <div *ngIf="resource.res.isDeleted">
-        <app-property-row label="Deleted on" [borderBottom]="true">
+        <app-property-row label="Deleted on" [borderBottom]="true" [isEmptyRow]="false">
           {{ resource.res.deleteDate | date }}
         </app-property-row>
-        <app-property-row label="Comment" [borderBottom]="false">
+        <app-property-row label="Comment" [borderBottom]="false" [isEmptyRow]="false">
           {{ resource.res.deleteComment }}
         </app-property-row>
       </div>
@@ -111,119 +76,35 @@ import { sortByKeys } from './sortByKeys';
         text-align: right;
         padding-right: 6px;
       }
-
-      ::ng-deep {
-        .incoming-link .paging-container {
-          border-bottom: none;
-        }
-      }
-
-      .show-property-row {
-        display: block;
-      }
-
-      .hide-property-row {
-        display: none;
-      }
     `,
   ],
-  providers: [PropertiesDisplayService, PropertiesDisplayIncomingLinkService],
+  providers: [PropertiesDisplayService],
 })
-export class PropertiesDisplayComponent implements OnChanges, OnDestroy {
-  private ngUnsubscribe: Subject<void> = new Subject<void>();
-
+export class PropertiesDisplayComponent implements OnChanges {
   @Input({ required: true }) resource!: DspResource;
-  @Input({ required: true }) properties!: PropertyInfoValues[];
   @Input() displayLabel = false;
-  @Input() adminPermissions = false;
   @Input() linkToNewTab?: string;
   @Output() afterResourceDeleted = new EventEmitter();
 
-  @ViewChild('pager', { static: false })
-  pagerComponent: IncomingResourcePagerComponent | undefined;
-
   protected readonly cardinality = Cardinality;
 
-  resourceAttachedUser$ = this._store.select(ResourceSelectors.attachedUsers).pipe(
-    takeUntil(this.ngUnsubscribe),
-    map(attachedUsers =>
-      attachedUsers[this.resource.res.id]?.value.find(u => u.id === this.resource.res.attachedToUser)
-    )
-  );
+  resourceAttachedUser$ = this._store
+    .select(ResourceSelectors.attachedUsers)
+    .pipe(
+      map(attachedUsers =>
+        attachedUsers[this.resource.res.id]?.value.find(u => u.id === this.resource.res.attachedToUser)
+      )
+    );
 
   editableProperties: PropertyInfoValues[] = [];
-  incomingLinks$ = new BehaviorSubject<IncomingOrStandoffLink[]>([]);
-  incomingLinks: IncomingOrStandoffLink[] = [];
-  showAllProperties$ = this._propertiesDisplayService.showAllProperties$;
 
-  standoffLinks: IncomingOrStandoffLink[] = [];
-
-  constructor(
-    private _cd: ChangeDetectorRef,
-    private _propertiesDisplayService: PropertiesDisplayService,
-    private _store: Store,
-    private _propertiesDisplayIncomingLink: PropertiesDisplayIncomingLinkService
-  ) {}
+  constructor(private _store: Store) {}
 
   ngOnChanges() {
-    this._setupProperties();
-  }
-
-  ngOnDestroy() {
-    this.ngUnsubscribe.next();
-    this.ngUnsubscribe.complete();
-  }
-
-  private _setupProperties(offset = 0) {
-    this.editableProperties = this.properties.filter(prop => (prop.propDef as ResourcePropertyDefinition).isEditable);
-
-    this.incomingLinks$.next([]);
-
-    this.doIncomingLinkSearch(offset);
-    this.setStandOffLinks();
-  }
-
-  pageChanged() {
-    this.incomingLinks$.next(
-      this.incomingLinks.slice(this.pagerComponent?.itemRangeStart, this.pagerComponent?.itemRangeEnd)
+    this.editableProperties = this.resource.resProps.filter(
+      prop => (prop.propDef as ResourcePropertyDefinition).isEditable
     );
   }
 
-  doIncomingLinkSearch(offset = 0) {
-    this._propertiesDisplayIncomingLink
-      .getIncomingLinksRecursively$(this.resource.res.id, offset)
-      .pipe(take(1))
-      .subscribe(incomingLinks => {
-        this.incomingLinks = incomingLinks;
-        this.incomingLinks$.next(incomingLinks.slice(0, this.pagerComponent!.pageSize - 1));
-        this._cd.detectChanges();
-      });
-  }
-
   trackByPropertyInfoFn = (index: number, item: PropertyInfoValues) => `${index}-${item.propDef.id}`;
-
-  private setStandOffLinks() {
-    this.standoffLinks = (
-      (this.properties.find(prop => prop.propDef.id === Constants.HasStandoffLinkToValue)?.values as ReadLinkValue[]) ??
-      []
-    ).map(link => {
-      const parts = link.linkedResourceIri.split('/');
-      if (parts.length < 2) {
-        throw new Error('Linked resource IRI is not in the expected format');
-      }
-
-      const resourceIdPathOnly = parts.slice(-2).join('/');
-
-      return {
-        label: link.strval ?? '',
-        uri: `/resource/${resourceIdPathOnly}`,
-        project: link.linkedResource?.resourceClassLabel ?? '',
-      };
-    });
-    this.standoffLinks = sortByKeys(this.standoffLinks, ['project', 'label']);
-  }
-
-  getRowClass(showAllProperties: boolean, valuesLength: number): string {
-    return showAllProperties || valuesLength > 0 ? 'show-property-row' : 'hide-property-row';
-  }
 }
