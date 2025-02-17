@@ -22,7 +22,6 @@ import { PropertyFormItem } from '../../../data-access/advanced-search-store/adv
     AppProgressIndicatorComponent,
   ],
   templateUrl: './property-form-link-value.component.html',
-  styleUrls: ['./property-form-link-value.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PropertyFormLinkValueComponent implements OnInit, AfterViewInit {

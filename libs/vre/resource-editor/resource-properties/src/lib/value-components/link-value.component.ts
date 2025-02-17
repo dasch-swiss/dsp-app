@@ -34,7 +34,6 @@ import { LinkValueDataService } from './link-value-data.service';
 
 @Component({
   selector: 'app-link-value',
-  styleUrls: ['./link-value.component.scss'],
   template: `
     <mat-form-field style="width: 100%">
       <input
