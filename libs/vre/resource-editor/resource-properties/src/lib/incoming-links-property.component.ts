@@ -25,8 +25,8 @@ import { sortByKeys } from './sortByKeys';
           [itemsNumber]="allIncomingLinks.length"
           (pageChanged)="pageChanged($event)" />
       </ng-container>
+      <app-progress-indicator *ngIf="loading" />
     </app-property-row>
-    <app-progress-indicator *ngIf="loading" />
   `,
 })
 export class IncomingLinksPropertyComponent implements OnChanges {
