@@ -96,10 +96,7 @@ export class PropertyFormListValueComponent implements AfterViewInit, OnDestroy 
   private initAutocompleteControl() {
     this.filteredList$.next([...(this.sortedLabelList || [])]);
     this.valueFilterCtrl.valueChanges
-      .pipe(
-        takeUntil(this.destroyed),
-        takeWhile(item => !!item)
-      )
+      .pipe(takeUntil(this.destroyed))
       .subscribe(value =>
         this.filteredList$.next(
           (this.sortedLabelList || []).filter(item => item.label.toLowerCase().includes(value!.toLowerCase()))
