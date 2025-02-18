@@ -1,5 +1,43 @@
 # Changelog
 
+## [11.26.0](https://github.com/dasch-swiss/dsp-das/compare/v11.25.1...v11.26.0) (2025-02-17)
+
+
+### Enhancements
+
+* adds mat autocomplete control to the advanced search (DEV-4498) ([#2101](https://github.com/dasch-swiss/dsp-das/issues/2101)) ([81f7f78](https://github.com/dasch-swiss/dsp-das/commit/81f7f78c4244fa8efa0d69a1fb7d6c0a4e5f4d6e))
+
+
+### Bug Fixes
+
+* does not display empty rows ([#2122](https://github.com/dasch-swiss/dsp-das/issues/2122)) ([f042d0f](https://github.com/dasch-swiss/dsp-das/commit/f042d0f8a631918a198921115be842db823a934a))
+* json parsing issue in en.json ([#2117](https://github.com/dasch-swiss/dsp-das/issues/2117)) ([5e5d22a](https://github.com/dasch-swiss/dsp-das/commit/5e5d22a3f8dc28fa8d77ae8a203c499044ac3d3f))
+* link value style is consistent with the other select areas ([#2113](https://github.com/dasch-swiss/dsp-das/issues/2113)) ([3e654b6](https://github.com/dasch-swiss/dsp-das/commit/3e654b697db3e31a9fa49a1a6381962d0e2e454a))
+* paging of incoming links works again ([#2108](https://github.com/dasch-swiss/dsp-das/issues/2108)) ([3e26477](https://github.com/dasch-swiss/dsp-das/commit/3e26477cc1d06f5fb5326138030a64d954e3392f))
+* show delete resource value bubble icon permissions (DEV-4564) ([#2090](https://github.com/dasch-swiss/dsp-das/issues/2090)) ([6ca8378](https://github.com/dasch-swiss/dsp-das/commit/6ca83783fd438c45faab075287d559e509c87510))
+* split area container (DEV-4577) ([#2107](https://github.com/dasch-swiss/dsp-das/issues/2107)) ([2247444](https://github.com/dasch-swiss/dsp-das/commit/224744438eb25f790472f4515a78a21e12399138))
+* update footnote plugin (ckeditor5) to 2.1.5 ([#2096](https://github.com/dasch-swiss/dsp-das/issues/2096)) ([28e249f](https://github.com/dasch-swiss/dsp-das/commit/28e249f5bf83479f35ca49d7a614cba929b4482e))
+
+
+### Maintenances
+
+* add CODEOWNERS file ([#2095](https://github.com/dasch-swiss/dsp-das/issues/2095)) ([03a4747](https://github.com/dasch-swiss/dsp-das/commit/03a4747e25efca76c5194a7339d189d2b244f4c1))
+* add environments list excluded from tracking by Sentry ([#2102](https://github.com/dasch-swiss/dsp-das/issues/2102)) ([8632ff3](https://github.com/dasch-swiss/dsp-das/commit/8632ff3dd0949593b7f0b4bab4e39a128490627e))
+* add tsc command to nx projects ([#2097](https://github.com/dasch-swiss/dsp-das/issues/2097)) ([672009d](https://github.com/dasch-swiss/dsp-das/commit/672009d6b352b9ec8f11a11f87ba67aba4e02b8d))
+* **deps-dev:** bump @types/node from 20.17.16 to 20.17.17 in the types-deps group ([#2092](https://github.com/dasch-swiss/dsp-das/issues/2092)) ([bebc116](https://github.com/dasch-swiss/dsp-das/commit/bebc116cb18db6252ea672d350d873daf8c7eb68))
+* **deps-dev:** bump @typescript-eslint/utils from 8.22.0 to 8.24.0 ([#2099](https://github.com/dasch-swiss/dsp-das/issues/2099)) ([cae2ffa](https://github.com/dasch-swiss/dsp-das/commit/cae2ffa752a302de02861b195ed1a5509afcc2b5))
+* **deps-dev:** bump prettier from 3.4.2 to 3.5.0 ([#2094](https://github.com/dasch-swiss/dsp-das/issues/2094)) ([8e44e92](https://github.com/dasch-swiss/dsp-das/commit/8e44e924f209e522e01658d3bc28f540d645dadc))
+* **deps:** bump the grafana-deps group across 1 directory with 2 updates ([#2100](https://github.com/dasch-swiss/dsp-das/issues/2100)) ([6a8d407](https://github.com/dasch-swiss/dsp-das/commit/6a8d407a5f1547df9692e64032a35e8502ff7d4e))
+* path to generate openapi was broken ([#2114](https://github.com/dasch-swiss/dsp-das/issues/2114)) ([9ebf9ec](https://github.com/dasch-swiss/dsp-das/commit/9ebf9ec4fdaa843615368f7298d929e47d33c67c))
+* remove settings nx library and move files to project library ([#2106](https://github.com/dasch-swiss/dsp-das/issues/2106)) ([204eb32](https://github.com/dasch-swiss/dsp-das/commit/204eb32f38147f065f5e753782d259fdefa1ac1e))
+* remove unused code ([#2112](https://github.com/dasch-swiss/dsp-das/issues/2112)) ([79a3812](https://github.com/dasch-swiss/dsp-das/commit/79a38124622570c144319c6b34c4bfa47c4a9a86))
+* update openApi generated code to 2.1.15 ([#2115](https://github.com/dasch-swiss/dsp-das/issues/2115)) ([5670459](https://github.com/dasch-swiss/dsp-das/commit/56704593d9980930ef6a7cb6bf7a3c69f25a9378))
+
+
+### Tests
+
+* remove not reliable footnote test ([#2109](https://github.com/dasch-swiss/dsp-das/issues/2109)) ([c12b8ea](https://github.com/dasch-swiss/dsp-das/commit/c12b8ea419cb759a6fb493ba4364a9ff32b3d90b))
+
 ## [11.25.1](https://github.com/dasch-swiss/dsp-das/compare/v11.25.0...v11.25.1) (2025-02-10)
 
 
