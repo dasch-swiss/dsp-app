@@ -18,9 +18,16 @@ export class AddTargetBlankPipe implements PipeTransform {
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = htmlString;
 
-    // Find all <a> tags and add `target="_blank"` if it doesn't exist
     const links = tempDiv.querySelectorAll('a');
     links.forEach((link: HTMLAnchorElement) => {
+      const hrefValue = link.getAttribute('href');
+
+      if (hrefValue && hrefValue.startsWith('#')) {
+        // Skip internal links
+        link.href = window.location.pathname + hrefValue;
+        return;
+      }
+
       if (!link.hasAttribute('target')) {
         link.setAttribute('target', '_blank');
       }
