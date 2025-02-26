@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-dialog-header',
@@ -18,6 +18,4 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 export class DialogHeaderComponent {
   @Input({ required: true }) title!: string;
   @Input() subtitle?: string;
-
-  @Output() closed = new EventEmitter<any>();
 }

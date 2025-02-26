@@ -30,7 +30,7 @@ import { ResourceUtil } from '../resource.util';
     <mat-menu #more="matMenu" class="representation-menu">
       <button mat-menu-item (click)="openIIIFnewTab()">Open audio in new tab</button>
       <button mat-menu-item [cdkCopyToClipboard]="src.fileValue.fileUrl">Copy audio URL to clipboard</button>
-      <button mat-menu-item (click)="download(src.fileValue.fileUrl)">Download audio</button>
+      <button mat-menu-item (click)="download()">Download audio</button>
       <button mat-menu-item [disabled]="!userCanEdit" (click)="openReplaceFileDialog()">Replace file</button>
     </mat-menu>`,
 })
@@ -75,7 +75,7 @@ export class AudioMoreButtonComponent {
     window.open(this.src.fileValue.fileUrl, '_blank');
   }
 
-  download(url: string) {
+  download() {
     this._rs.downloadProjectFile(this.src.fileValue, this.parentResource);
   }
 

@@ -41,7 +41,5 @@ export enum Events {
   resourceLanguageChanged,
   loginSuccess,
   gravSearchExecuted,
-  resourceDeleted,
-  resourceChanged,
   unselectedListItem,
 }

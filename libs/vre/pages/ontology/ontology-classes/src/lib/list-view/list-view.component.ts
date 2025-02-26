@@ -110,8 +110,7 @@ export class ListViewComponent implements OnChanges, OnInit, OnDestroy {
               this.initSearch();
             });
         }
-      }),
-      this._componentCommsService.on([Events.resourceDeleted], () => this.doSearch())
+      })
     );
   }
 

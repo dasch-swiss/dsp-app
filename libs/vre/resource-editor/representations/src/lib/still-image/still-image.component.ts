@@ -10,14 +10,9 @@ import {
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
-import { Constants, ReadProject, ReadResource, ReadStillImageFileValue } from '@dasch-swiss/dsp-js';
+import { Constants, ReadResource, ReadStillImageFileValue } from '@dasch-swiss/dsp-js';
 import { ReadStillImageExternalFileValue } from '@dasch-swiss/dsp-js/src/models/v2/resources/values/read/read-file-value';
 import { AppError } from '@dasch-swiss/vre/core/error-handler';
-import { ResourceSelectors } from '@dasch-swiss/vre/core/state';
-import { Store } from '@ngxs/store';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { RepresentationService } from '../representation.service';
 import { IIIFUrl } from '../third-party-iiif/third-party-iiif';
 import { OpenSeaDragonService } from './open-sea-dragon.service';
 import { OsdDrawerService } from './osd-drawer.service';
@@ -53,18 +48,10 @@ export class StillImageComponent implements OnChanges, AfterViewInit, OnDestroy 
   isViewInitialized = false;
   isPng = false;
 
-  attachedProject$: Observable<ReadProject | undefined> = this._store.select(ResourceSelectors.attachedProjects).pipe(
-    map(attachedProjects => {
-      return this._rs.getParentResourceAttachedProject(attachedProjects, this.resource);
-    })
-  );
-
   constructor(
     private _cdr: ChangeDetectorRef,
     protected osdService: OpenSeaDragonService,
-    private _osdDrawerService: OsdDrawerService,
-    private _store: Store,
-    private _rs: RepresentationService
+    private _osdDrawerService: OsdDrawerService
   ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
