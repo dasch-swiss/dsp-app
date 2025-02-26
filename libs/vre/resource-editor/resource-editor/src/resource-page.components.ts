@@ -7,7 +7,6 @@ import { CompoundViewerComponent } from './lib/compound/compound-viewer.componen
 import { PermissionInfoComponent } from './lib/permission-info/permission-info.component';
 import { ResourceFetcherComponent } from './lib/resource-fetcher.component';
 import { ResourceHeaderComponent } from './lib/resource-header.component';
-import { ResourcePage2Component } from './lib/resource-page-2.component';
 import { ResourcePageComponent } from './lib/resource-page.component';
 import { ResourceRepresentationComponent } from './lib/resource-representation.component';
 import { ResourceRestrictionComponent } from './lib/resource-restriction.component';
@@ -15,6 +14,7 @@ import { ResourceTabsComponent } from './lib/resource-tabs.component';
 import { ResourceToolbarComponent } from './lib/resource-toolbar.component';
 import { ResourceComponent } from './lib/resource.component';
 import { SegmentTabComponent } from './lib/segment-tab.component';
+import { SingleResourcePageComponent } from './lib/single-resource-page.component';
 
 const CompoundComponents = [
   CompoundArrowNavigationComponent,
@@ -27,7 +27,7 @@ export const ResourcePageComponents = [
   ResourceComponent,
   ResourceHeaderComponent,
   ResourcePageComponent,
-  ResourcePage2Component,
+  SingleResourcePageComponent,
   ResourceFetcherComponent,
   ResourceRepresentationComponent,
   ResourceTabsComponent,

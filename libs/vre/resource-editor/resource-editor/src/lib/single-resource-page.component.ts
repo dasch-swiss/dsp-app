@@ -7,10 +7,10 @@ import { map } from 'rxjs/operators';
  * This routing issue should be addressed and refactor in order to remove those duplicated components.
  */
 @Component({
-  selector: 'app-resource-page-2',
+  selector: 'app-single-resource-page',
   template: '<app-resource-fetcher *ngIf="resourceIri$ | async as resourceIri" [resourceIri]="resourceIri" />',
 })
-export class ResourcePage2Component {
+export class SingleResourcePageComponent {
   resourceIri$ = this._route.params.pipe(
     map(params => {
       const projectCode = params['project'];
