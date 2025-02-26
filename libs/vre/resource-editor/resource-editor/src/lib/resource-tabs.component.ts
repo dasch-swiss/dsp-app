@@ -33,7 +33,7 @@ import { CompoundService } from './compound/compound.service';
         <app-annotation-tab *ngIf="regionsCount > 0" [resource]="resource" />
       </mat-tab>
 
-      <mat-tab label="Segments" *ngIf="segmentsService.segments && segmentsService.segments.length > 0">
+      <mat-tab label="Segments" *ngIf="segmentsService.segments.length > 0">
         <ng-template matTabLabel>
           <span [matBadge]="segmentsService.segments.length" matBadgeColor="primary" matBadgeOverlap="false">
             Segments

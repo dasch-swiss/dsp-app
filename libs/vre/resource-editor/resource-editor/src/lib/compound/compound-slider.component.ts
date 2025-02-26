@@ -30,12 +30,12 @@ import { CompoundService } from './compound.service';
 })
 export class CompoundSliderComponent {
   get compoundNavigation() {
-    return this.compoungService.compoundPosition;
+    return this.compoundService.compoundPosition!;
   }
 
   openPage(page: number) {
-    this.compoungService.openPage(page);
+    this.compoundService.openPage(page);
   }
 
-  constructor(public compoungService: CompoundService) {}
+  constructor(public compoundService: CompoundService) {}
 }

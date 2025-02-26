@@ -41,12 +41,6 @@ export class ResourceFetcherComponent implements OnChanges, OnDestroy {
     });
   }
 
-  /**
-   * Reload the editor with the new resource.
-   * Note: The double detection is necessary to reload the entire editor.
-   * @param resource
-   * @private
-   */
   private _reloadEditor(resource: DspResource) {
     this.resource = resource;
     this._cdr.detectChanges();

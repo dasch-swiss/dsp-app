@@ -1,6 +1,7 @@
 import { ChangeDetectorRef, Inject, Injectable } from '@angular/core';
 import { KnoraApiConnection, ReadResource, ReadResourceSequence, SystemPropertyDefinition } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
+import { AppError } from '@dasch-swiss/vre/core/error-handler';
 import { GetAttachedProjectAction, GetAttachedUserAction } from '@dasch-swiss/vre/core/state';
 import { RegionService } from '@dasch-swiss/vre/resource-editor/representations';
 import { DspCompoundPosition, DspResource, GenerateProperty } from '@dasch-swiss/vre/shared/app-common';
@@ -13,12 +14,12 @@ import { BehaviorSubject } from 'rxjs';
  */
 @Injectable()
 export class CompoundService {
-  compoundPosition!: DspCompoundPosition;
+  compoundPosition?: DspCompoundPosition;
 
   incomingResource = new BehaviorSubject<DspResource | undefined>(undefined);
   incomingResource$ = this.incomingResource.asObservable();
 
-  private _resource!: DspResource;
+  private _resource?: DspResource;
 
   constructor(
     @Inject(DspApiConnectionToken)
@@ -35,14 +36,24 @@ export class CompoundService {
     this.openPage(_compound.page);
   }
 
-  openPage(page: number) {
-    this.compoundPosition.page = page;
-    this._loadIncomingResourcesPage();
+  reset() {
+    this.compoundPosition = undefined;
+    this._resource = undefined;
+    this.incomingResource.next(undefined);
   }
 
-  private _loadIncomingResourcesPage(): void {
+  openPage(page: number) {
+    if (!this.compoundPosition) {
+      throw new AppError('Compound position is not set');
+    }
+
+    this.compoundPosition.page = page;
+    this._loadIncomingResourcesPage(this.compoundPosition);
+  }
+
+  private _loadIncomingResourcesPage(compoundPosition: DspCompoundPosition): void {
     this._incomingService
-      .getStillImageRepresentationsForCompoundResource(this._resource.res.id, this.compoundPosition.offset)
+      .getStillImageRepresentationsForCompoundResource(this._resource!.res.id, compoundPosition.offset)
       .subscribe(res => {
         const incomingImageRepresentations = res as ReadResourceSequence;
 
@@ -50,8 +61,8 @@ export class CompoundService {
           this.incomingResource.next(undefined);
           return;
         }
-        this._resource.incomingRepresentations = incomingImageRepresentations.resources;
-        this._loadIncomingResource(this._resource.incomingRepresentations[this.compoundPosition.position].id);
+        this._resource!.incomingRepresentations = incomingImageRepresentations.resources;
+        this._loadIncomingResource(this._resource!.incomingRepresentations[compoundPosition.position].id);
       });
   }
 
