@@ -20,7 +20,6 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken, RouteConstants } from '@dasch-swiss/vre/core/config';
 import { OntologiesSelectors } from '@dasch-swiss/vre/core/state';
-import { ResourceService } from '@dasch-swiss/vre/shared/app-common';
 import { FilteredResources, SearchParams } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { ComponentCommunicationEventService, EmitEvent, Events } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
@@ -91,7 +90,6 @@ export class ListViewComponent implements OnChanges, OnInit, OnDestroy {
     private _dspApiConnection: KnoraApiConnection,
     private _componentCommsService: ComponentCommunicationEventService,
     private _notification: NotificationService,
-    private _resourceService: ResourceService,
     private _route: ActivatedRoute,
     private _router: Router,
     private _cd: ChangeDetectorRef,
@@ -115,12 +113,6 @@ export class ListViewComponent implements OnChanges, OnInit, OnDestroy {
       }),
       this._componentCommsService.on([Events.resourceDeleted], () => this.doSearch())
     );
-
-    this._resourceService.resourceDeleted$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((resourceIri: string) => {
-      if (resourceIri) {
-        this.doSearch();
-      }
-    });
   }
 
   ngOnChanges(): void {

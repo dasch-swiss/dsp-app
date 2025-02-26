@@ -6,7 +6,7 @@ import { DspResource, GenerateProperty } from '@dasch-swiss/vre/shared/app-commo
 import { ComponentCommunicationEventService, EmitEvent, Events } from '@dasch-swiss/vre/shared/app-helper-services';
 import { TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngxs/store';
-import { BehaviorSubject, Subscription } from 'rxjs';
+import { BehaviorSubject, Subject, Subscription } from 'rxjs';
 import { map, switchMap, take } from 'rxjs/operators';
 
 @Injectable()
@@ -16,6 +16,9 @@ export class ResourceFetcherService {
 
   private _resourceSubject = new BehaviorSubject<DspResource | null>(null);
   resource$ = this._resourceSubject.asObservable();
+
+  private _resourceIsDeletedSubject = new Subject<void>();
+  resourceIsDeleted$ = this._resourceIsDeletedSubject.asObservable();
 
   private _subscription: Subscription | undefined;
 
@@ -55,6 +58,10 @@ export class ResourceFetcherService {
 
   reload() {
     this._loadResourceSubject.next(null);
+  }
+
+  resourceIsDeleted() {
+    this._resourceIsDeletedSubject.next();
   }
 
   private _getResource() {

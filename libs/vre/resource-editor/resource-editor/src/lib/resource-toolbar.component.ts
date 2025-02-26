@@ -2,7 +2,7 @@ import { Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ReadResource } from '@dasch-swiss/dsp-js';
 import { ProjectsSelectors } from '@dasch-swiss/vre/core/state';
-import { ResourceUtil } from '@dasch-swiss/vre/resource-editor/representations';
+import { ResourceFetcherService, ResourceUtil } from '@dasch-swiss/vre/resource-editor/representations';
 import {
   DeleteResourceDialogComponent,
   EraseResourceDialogComponent,
@@ -126,6 +126,7 @@ export class ResourceToolbarComponent {
   constructor(
     protected notification: NotificationService,
     private _resourceService: ResourceService,
+    private _resourceFetcherService: ResourceFetcherService,
     private _dialog: MatDialog,
     private _store: Store
   ) {}
@@ -140,7 +141,7 @@ export class ResourceToolbarComponent {
       .afterClosed()
       .pipe(filter(response => !!response))
       .subscribe(() => {
-        this._resourceService.resourceDeleted.next(this.resource.res.id);
+        this._resourceFetcherService.resourceIsDeleted();
       });
   }
 
@@ -150,7 +151,7 @@ export class ResourceToolbarComponent {
       .afterClosed()
       .pipe(filter(response => !!response))
       .subscribe(() => {
-        this._resourceService.resourceDeleted.next(this.resource.res.id);
+        this._resourceFetcherService.resourceIsDeleted();
       });
   }
 }

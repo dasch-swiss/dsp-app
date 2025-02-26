@@ -1,15 +1,11 @@
 import { Injectable } from '@angular/core';
 import { AppConfigService } from '@dasch-swiss/vre/core/config';
-import { Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ResourceService {
   iriBase: string;
-
-  resourceDeleted = new Subject<string>();
-  resourceDeleted$ = this.resourceDeleted.asObservable();
 
   constructor(private _acs: AppConfigService) {
     this.iriBase = this._getIriBaseWithoutTrailingSlash(this._acs.dspAppConfig.iriBase);
