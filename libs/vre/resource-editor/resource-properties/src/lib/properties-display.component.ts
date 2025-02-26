@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
+import { Component, Input, OnChanges } from '@angular/core';
 import { Cardinality, ResourcePropertyDefinition } from '@dasch-swiss/dsp-js';
 import { ResourceSelectors } from '@dasch-swiss/vre/core/state';
 import { DspResource, PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
@@ -13,12 +13,7 @@ import { PropertiesDisplayService } from './properties-display.service';
       <h3 style="margin: 0 16px" *ngIf="displayLabel" data-cy="property-header">{{ resource.res.label }}</h3>
       <div style="display: flex; justify-content: end; flex: 1">
         <app-properties-toolbar [showToggleProperties]="true" [showOnlyIcons]="displayLabel" style="flex-shrink: 0" />
-        <app-resource-toolbar
-          *ngIf="displayLabel"
-          [adminPermissions]="false"
-          [resource]="resource"
-          [linkToNewTab]="linkToNewTab"
-          (afterResourceDeleted)="afterResourceDeleted.emit()" />
+        <app-annotation-toolbar *ngIf="displayLabel" [resource]="resource.res" [parentResourceId]="parentResourceId" />
       </div>
     </div>
 
@@ -84,7 +79,7 @@ export class PropertiesDisplayComponent implements OnChanges {
   @Input({ required: true }) resource!: DspResource;
   @Input() displayLabel = false;
   @Input() linkToNewTab?: string;
-  @Output() afterResourceDeleted = new EventEmitter();
+  @Input() parentResourceId = '';
 
   protected readonly cardinality = Cardinality;
 

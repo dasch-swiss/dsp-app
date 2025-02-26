@@ -1,15 +1,9 @@
 import { Component, Inject } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { DeleteResource, DeleteResourceResponse, KnoraApiConnection } from '@dasch-swiss/dsp-js';
+import { DeleteResource, DeleteResourceResponse, KnoraApiConnection, ReadResource } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
-import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { finalize } from 'rxjs/operators';
-
-export interface EraseResourceDialogProps {
-  resource: DspResource;
-  lastModificationDate: string;
-}
 
 @Component({
   selector: 'app-erase-resource-dialog',
@@ -57,7 +51,7 @@ export class EraseResourceDialogComponent {
     @Inject(DspApiConnectionToken)
     private _dspApiConnection: KnoraApiConnection,
     @Inject(MAT_DIALOG_DATA)
-    public data: EraseResourceDialogProps,
+    public data: ReadResource,
     private _dialogRef: MatDialogRef<EraseResourceDialogComponent>
   ) {}
 
@@ -66,8 +60,8 @@ export class EraseResourceDialogComponent {
 
     this.loading = true;
     const payload = new DeleteResource();
-    payload.id = this.data.resource.res.id;
-    payload.type = this.data.resource.res.type;
+    payload.id = this.data.id;
+    payload.type = this.data.type;
     payload.deleteComment = this.eraseForm.controls.comment.value ?? '';
     payload.lastModificationDate = this.data.lastModificationDate;
 

@@ -6,10 +6,6 @@ import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { ResourceFetcherService } from '@dasch-swiss/vre/resource-editor/representations';
 import { finalize, switchMap } from 'rxjs/operators';
 
-export interface EditResourceLabelDialogProps {
-  resource: ReadResource;
-}
-
 @Component({
   selector: 'app-edit-resource-label-dialog',
   template: ` <app-dialog-header [title]="initialValue" subtitle="Edit resource's label" />
@@ -33,14 +29,14 @@ export interface EditResourceLabelDialogProps {
     </div>`,
 })
 export class EditResourceLabelDialogComponent {
-  control = new FormControl(this.data.resource.label, { validators: [Validators.required], nonNullable: true });
-  initialValue = this.data.resource.label;
+  control = new FormControl(this.data.label, { validators: [Validators.required], nonNullable: true });
+  initialValue = this.data.label;
   loading = false;
 
   constructor(
     @Inject(DspApiConnectionToken)
     private _dspApiConnection: KnoraApiConnection,
-    @Inject(MAT_DIALOG_DATA) public data: EditResourceLabelDialogProps,
+    @Inject(MAT_DIALOG_DATA) public data: ReadResource,
     private _dialogRef: MatDialogRef<EditResourceLabelDialogComponent>,
     private _resourceFetcherService: ResourceFetcherService
   ) {}
@@ -56,11 +52,11 @@ export class EditResourceLabelDialogComponent {
     this.loading = true;
 
     const payload = new UpdateResourceMetadata();
-    payload.id = this.data.resource.id;
-    payload.type = this.data.resource.type;
+    payload.id = this.data.id;
+    payload.type = this.data.type;
     payload.label = this.control.value;
     this._dspApiConnection.v2.res
-      .getResource(this.data.resource.id)
+      .getResource(this.data.id)
       .pipe(
         switchMap(res => {
           payload.lastModificationDate = (res as ReadResource).lastModificationDate;

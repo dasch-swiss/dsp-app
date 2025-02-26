@@ -20,7 +20,10 @@ import { CompoundService } from './compound/compound.service';
       </mat-tab>
 
       <mat-tab *ngIf="incomingResource" #matTabIncoming [label]="resourceClassLabel(incomingResource)">
-        <app-properties-display *ngIf="incomingResource" [resource]="incomingResource" [displayLabel]="true" />
+        <app-properties-display
+          [resource]="incomingResource"
+          [displayLabel]="true"
+          [parentResourceId]="resource.res.id" />
       </mat-tab>
 
       <!-- annotations -->

@@ -192,7 +192,24 @@
       "tooltip": "Represent a link in standoff markup from one resource to another",
       "label": "has Standoff link"
     },
-    "footnotes": "Fussnoten"
+    "footnotes": "Fussnoten",
+    "permissions": {
+      "groups": {
+        "projectAdmin": "Project Admin",
+        "creator": "Creator",
+        "projectMember": "Project Member",
+        "knownUser": "Known User",
+        "unknownUser": "Unknown User",
+        "usersPermissions": "Your permissions"
+      },
+      "interactions": {
+        "restrictedView": "Restricted view permission (RV)",
+        "view": "View permission (V)",
+        "modify": "Modify permission (M)",
+        "delete": "Delete permission (D)",
+        "changeRights": "Change rights permission (CR)"
+      }
+    }
   },
   "searchPanel": {
     "howToSearch": "Wie suchen?",

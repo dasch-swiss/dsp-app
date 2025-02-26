@@ -1,23 +1,16 @@
+import { ConnectionPositionPair, ScrollStrategyOptions } from '@angular/cdk/overlay';
+import { Component, Inject, Input, OnInit } from '@angular/core';
+import { ApiResponseData, GroupResponse, KnoraApiConnection, ReadResource } from '@dasch-swiss/dsp-js';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
+import { Interaction, ResourceUtil } from '@dasch-swiss/vre/resource-editor/representations';
+import { filter, map, take } from 'rxjs/operators';
 import {
-  ConnectionPositionPair,
-  OriginConnectionPosition,
-  OverlayConnectionPosition,
-  ScrollStrategy,
-  ScrollStrategyOptions,
-} from '@angular/cdk/overlay';
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
-import { PermissionUtil } from '@dasch-swiss/dsp-js';
-
-export interface PermissionObj {
-  name: string;
-  label: string;
-  icon: string;
-}
-
-export interface PermissionGroup {
-  group: string; // e.g knora-admin:ProjectAdmin
-  restriction: PermissionUtil.Permissions[];
-}
+  GroupPermissionsUtil,
+  PermissionGroup,
+  USER_GROUP_LEVELS,
+  Permission,
+  PermissionHeaderItem,
+} from './resource-permission';
 
 @Component({
   selector: 'app-permission-info',
@@ -25,180 +18,115 @@ export interface PermissionGroup {
   styleUrls: ['./permission-info.component.scss'],
 })
 export class PermissionInfoComponent implements OnInit {
-  // the permission info can display the `hasPermission` of a resource and `userHasPermission`together
-  // or only user's permission in case of restricted view
-  @Input() hasPermissions: string;
+  @Input({ required: true }) resource!: ReadResource;
 
-  @Input() userHasPermission: string;
-
-  @ViewChild('infoButton', { static: false }) infoButton: ElementRef;
-
-  // info menu is open or not
   isOpen = false;
 
-  // default premission values based on DSP-API permissions concept:
-  // https://docs.dasch.swiss/latest/DSP-API/02-knora-ontologies/knora-base/?h=unknown#permissions
-  defaultPermissions: PermissionObj[] = [
+  permissionGroups: PermissionGroup[] = [];
+
+  private _gpu!: GroupPermissionsUtil;
+
+  get scrollStrategy() {
+    return this._scrollStrategyOptions.reposition();
+  }
+
+  get userPermissions(): Permission[] {
+    return this.PERMISSION_HEADERS.map(permission => ({
+      interaction: permission.interaction,
+      label: permission.label,
+      granted: ResourceUtil.isInteractionGranted(this.resource, permission.interaction as Interaction),
+    }));
+  }
+
+  readonly PERMISSION_HEADERS: PermissionHeaderItem[] = [
     {
-      name: 'RV',
-      label: 'Restricted view permission (RV)',
-      icon: 'visibility_off', // or disabled_visible or block
+      interaction: 'RV',
+      label: 'resource.permissions.interactions.restrictedView',
+      icon: 'visibility_off',
     },
     {
-      name: 'V',
-      label: 'View permission (V)',
+      interaction: 'V',
+      label: 'resource.permissions.interactions.view',
       icon: 'visibility',
     },
     {
-      name: 'M',
-      label: 'Modify permission (M)',
+      interaction: 'M',
+      label: 'resource.permissions.interactions.modify',
       icon: 'mode_edit',
     },
     {
-      name: 'D',
-      label: 'Delete permission (D)',
+      interaction: 'D',
+      label: 'resource.permissions.interactions.delete',
       icon: 'delete',
     },
     {
-      name: 'CR',
-      label: 'Change rights permission (CR)',
-      icon: 'admin_panel_settings', // or key
+      interaction: 'CR',
+      label: 'resource.permissions.interactions.changeRights',
+      icon: 'admin_panel_settings',
     },
+  ] as const;
+
+  readonly INFOBOX_POSITIONS: ConnectionPositionPair[] = [
+    new ConnectionPositionPair({ originX: 'end', originY: 'bottom' }, { overlayX: 'end', overlayY: 'top' }, 0, 0),
   ];
 
-  // default user groups based on DSP-API users and groups concept:
-  // https://docs.dasch.swiss/latest/DSP-API/02-knora-ontologies/knora-base/?h=unknown#users-and-groups
-  defaultGroups: string[] = [
-    'knora-admin:SystemAdmin',
-    'knora-admin:ProjectAdmin',
-    'knora-admin:Creator',
-    'knora-admin:ProjectMember',
-    'knora-admin:KnownUser',
-    'knora-admin:UnknownUser',
-  ];
+  constructor(
+    private _scrollStrategyOptions: ScrollStrategyOptions,
+    @Inject(DspApiConnectionToken)
+    private _dspApiConnection: KnoraApiConnection
+  ) {}
 
-  listOfPermissions: PermissionGroup[] = [];
-
-  userRestrictions: PermissionUtil.Permissions[];
-
-  scrollStrategy: ScrollStrategy;
-
-  infoBoxPositions: ConnectionPositionPair[];
-  private _originPos: OriginConnectionPosition = {
-    originX: 'end',
-    originY: 'bottom',
-  };
-
-  private _overlayPos: OverlayConnectionPosition = {
-    overlayX: 'end',
-    overlayY: 'top',
-  };
-
-  constructor(private _sso: ScrollStrategyOptions) {
-    // close the info box on scrolling
-    this.scrollStrategy = this._sso.close();
+  ngOnInit() {
+    this._gpu = new GroupPermissionsUtil(this.resource);
+    this._setGroupPermissions();
+    this._setUsersPermissions();
+    this._setCustomGroupsPermissions();
   }
 
-  ngOnInit(): void {
-    if (this.hasPermissions) {
-      // split by | to get each permission section
-      const sections = this.hasPermissions.split('|');
-
-      sections.forEach(section => {
-        // split by space
-        const unit = section.split(' ');
-
-        const allPermissions = PermissionUtil.allUserPermissions(unit[0] as 'RV' | 'V' | 'M' | 'D' | 'CR');
-
-        // a section could look like CR knora-admin:Creator
-        // but also like CR knora-admin:Creator,knora-admin:ProjectAdmin --> in this case we have to split the section again
-        if (unit[1].indexOf(',') > -1) {
-          unit[1].split(',').forEach(group => {
-            // add to list of permissions
-            this.pushToListOfPermissions(group, allPermissions);
-          });
-        } else {
-          // add to list of permissions
-          this.pushToListOfPermissions(unit[1], allPermissions);
-        }
+  private _setGroupPermissions() {
+    USER_GROUP_LEVELS.forEach((_level, group) => {
+      const label = `resource.permissions.groups.${group.charAt(0).toLowerCase() + group.slice(1)}`;
+      const permissions = this.PERMISSION_HEADERS.map(permission => {
+        return {
+          interaction: permission.interaction,
+          granted: this._gpu.isInteractionGrantedForGroup(permission.interaction, group),
+        };
       });
 
-      // bring the list of group permissions into correct order: from high to low user group
-      this.defaultGroups.forEach((group, i) => {
-        // current index
-        const currentIndex = this.listOfPermissions.findIndex(e => e.group === group);
-
-        if (currentIndex !== -1) {
-          // new index = i
-          this.arrayMove(this.listOfPermissions, currentIndex, i);
-        }
-      });
-    }
-
-    // display current user's permission
-    if (this.userHasPermission) {
-      this.userRestrictions = PermissionUtil.allUserPermissions(
-        this.userHasPermission as 'RV' | 'V' | 'M' | 'D' | 'CR'
-      );
-    }
+      this.permissionGroups.push({ group, label, permissions });
+    });
   }
 
-  /**
-   * open or close permission info box
-   */
-  toggleMenu() {
-    this.isOpen = !this.isOpen;
-
-    const pos: ConnectionPositionPair = new ConnectionPositionPair(this._originPos, this._overlayPos, 0, 0);
-
-    this.infoBoxPositions = [pos];
+  private _setUsersPermissions() {
+    this.permissionGroups.push({
+      group: 'UsersPermissions',
+      label: `resource.permissions.groups.usersPermissions`,
+      permissions: this.userPermissions,
+    });
   }
 
-  /**
-   * returns status of a permission value if it's set or not
-   * @param restriction
-   * @param listOfRestrictions
-   * @returns true if permission value is set
-   */
-  getStatus(restriction: string, listOfRestrictions: number[]): boolean {
-    return listOfRestrictions.indexOf(PermissionUtil.Permissions[restriction]) !== -1;
-  }
-
-  /**
-   * sorts the array
-   * @param arr
-   * @param fromIndex
-   * @param toIndex
-   */
-  arrayMove(arr: PermissionGroup[], fromIndex: number, toIndex: number) {
-    const element = arr[fromIndex];
-    arr.splice(fromIndex, 1);
-    arr.splice(toIndex, 0, element);
-  }
-
-  /**
-   * pushs user group's permission to list of permissions, if this group does not exist
-   * otherwise it compares the permission level and replaces it, if it's higher
-   * @param group
-   * @param restriction
-   */
-  pushToListOfPermissions(group: string, restriction: PermissionUtil.Permissions[]) {
-    // in API v17.5.1 (and all prev versions) the default string could look like:
-    // "CR knora-admin:ProjectAdmin|D knora-admin:ProjectAdmin|M knora-admin:ProjectAdmin|V knora-admin:ProjectAdmin|RV knora-admin:ProjectAdmin"
-    // in this case we should display this user group only once but with the highest permission only
-
-    const index = this.listOfPermissions.findIndex((object: PermissionGroup) => object.group === group);
-    const permission: PermissionGroup = {
-      group,
-      restriction,
-    };
-
-    // add to list of Permissions if it does not exist yet
-    if (index === -1) {
-      this.listOfPermissions.push(permission);
-    } else if (this.listOfPermissions[index].restriction.length < restriction.length) {
-      // if it exists, compare the permission level and replace if it's higher
-      this.listOfPermissions[index] = permission;
-    }
+  private _setCustomGroupsPermissions() {
+    this._gpu.customGroups.forEach((_permission, group) => {
+      this._dspApiConnection.admin.groupsEndpoint
+        .getGroupByIri(group)
+        .pipe(
+          take(1),
+          filter((r): r is ApiResponseData<GroupResponse> => !!r.status && r.status === 200),
+          map(groupData => groupData.body.group)
+        )
+        .subscribe(groupData => {
+          const permissionGroup: PermissionGroup = {
+            group: 'CustomGroup',
+            label: groupData.name,
+            permissions: this.PERMISSION_HEADERS.map(p => {
+              return {
+                interaction: p.interaction,
+                granted: this._gpu.isInteractionGrantedForCustomGroup(p.interaction, group),
+              };
+            }),
+          };
+          this.permissionGroups.splice(this.permissionGroups.length - 1, 0, permissionGroup);
+        });
+    });
   }
 }

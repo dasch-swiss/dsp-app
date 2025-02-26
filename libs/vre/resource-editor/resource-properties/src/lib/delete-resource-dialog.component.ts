@@ -1,17 +1,11 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { DeleteResource, DeleteResourceResponse, KnoraApiConnection } from '@dasch-swiss/dsp-js';
+import { DeleteResource, DeleteResourceResponse, KnoraApiConnection, ReadResource } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
-import { DspResource } from '@dasch-swiss/vre/shared/app-common';
-
-export interface DeleteResourceDialogProps {
-  resource: DspResource;
-  lastModificationDate: string;
-}
 
 @Component({
   selector: 'app-delete-resource-dialog',
-  template: ` <app-dialog-header title="Do you want to delete this resource ?" [subtitle]="data.resource.res.label" />
+  template: ` <app-dialog-header title="Do you want to delete this resource ?" [subtitle]="data.label" />
     <mat-dialog-content class="form-content">
       <mat-form-field class="large-field">
         <mat-label>Comment why resource is being deleted</mat-label>
@@ -44,14 +38,14 @@ export class DeleteResourceDialogComponent {
     @Inject(DspApiConnectionToken)
     private _dspApiConnection: KnoraApiConnection,
     @Inject(MAT_DIALOG_DATA)
-    public data: DeleteResourceDialogProps,
+    public data: ReadResource,
     private _dialogRef: MatDialogRef<DeleteResourceDialogComponent>
   ) {}
 
   submit() {
     const payload = new DeleteResource();
-    payload.id = this.data.resource.res.id;
-    payload.type = this.data.resource.res.type;
+    payload.id = this.data.id;
+    payload.type = this.data.type;
     payload.deleteComment = this.comment ?? undefined;
     payload.lastModificationDate = this.data.lastModificationDate;
     this._dspApiConnection.v2.res.deleteResource(payload).subscribe(response => {

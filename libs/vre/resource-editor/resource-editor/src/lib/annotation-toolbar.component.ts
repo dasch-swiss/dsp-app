@@ -1,30 +1,32 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ReadResource } from '@dasch-swiss/dsp-js';
+import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { ProjectsSelectors } from '@dasch-swiss/vre/core/state';
-import { ResourceUtil } from '@dasch-swiss/vre/resource-editor/representations';
+import { RegionService, ResourceFetcherService, ResourceUtil } from '@dasch-swiss/vre/resource-editor/representations';
 import {
   DeleteResourceDialogComponent,
+  EditResourceLabelDialogComponent,
   EraseResourceDialogComponent,
 } from '@dasch-swiss/vre/resource-editor/resource-properties';
-import { DspResource, ResourceService } from '@dasch-swiss/vre/shared/app-common';
+import { ResourceService } from '@dasch-swiss/vre/shared/app-common';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { filter, take } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-resource-toolbar',
+  selector: 'app-annotation-toolbar',
   template: `
-    <span class="action" [class.deleted]="resource.res.isDeleted">
+    <span class="action" [class.deleted]="resource.isDeleted">
       <button
         mat-icon-button
         matTooltip="Open resource in new tab"
         color="primary"
         data-cy="open-in-new-window-button"
         matTooltipPosition="above"
-        [disabled]="resource.res.isDeleted"
-        (click)="openResource()">
+        [disabled]="resource.isDeleted"
+        (click)="openRegionInNewTab()">
         <mat-icon>open_in_new</mat-icon>
       </button>
       <!-- Share resource: copy ark url, add to favorites or open in new tab -->
@@ -33,25 +35,24 @@ import { filter } from 'rxjs/operators';
         mat-icon-button
         class="share-res"
         data-cy="share-button"
-        matTooltip="Share resource: {{ resource.res.versionArkUrl }}"
+        matTooltip="Share resource: {{ resource.versionArkUrl }}"
         matTooltipPosition="above"
-        [disabled]="resource.res.isDeleted"
+        [disabled]="resource.isDeleted"
         [matMenuTriggerFor]="share">
         <mat-icon>share</mat-icon>
       </button>
 
-      <app-permission-info [resource]="resource.res" />
-      <!-- more menu with: delete, erase resource -->
+      <app-permission-info [resource]="resource" />
       <button
         data-cy="resource-toolbar-more-button"
         color="primary"
-        *ngIf="userCanDelete || (isAdmin$ | async)"
+        *ngIf="userCanEdit || userCanDelete"
         mat-icon-button
         class="more-menu"
         matTooltip="More"
         matTooltipPosition="above"
         [matMenuTriggerFor]="more"
-        [disabled]="resource.res.isDeleted">
+        [disabled]="resource.isDeleted">
         <mat-icon>more_vert</mat-icon>
       </button>
     </span>
@@ -62,8 +63,8 @@ import { filter } from 'rxjs/operators';
         matTooltip="Copy ARK url"
         matTooltipPosition="above"
         data-cy="copy-ark-url-button"
-        [cdkCopyToClipboard]="resource.res.versionArkUrl"
-        (click)="notification.openSnackBar('ARK URL copied to clipboard!')">
+        [cdkCopyToClipboard]="resource.versionArkUrl"
+        (click)="this.notification.openSnackBar('ARK URL copied to clipboard!')">
         <mat-icon>content_copy</mat-icon>
         Copy ARK url to clipboard
       </button>
@@ -72,14 +73,24 @@ import { filter } from 'rxjs/operators';
         matTooltip="Copy internal link"
         data-cy="copy-internal-link-button"
         matTooltipPosition="above"
-        [cdkCopyToClipboard]="resource.res.id"
-        (click)="notification.openSnackBar('Internal link copied to clipboard!')">
+        [cdkCopyToClipboard]="resource.id"
+        (click)="this.notification.openSnackBar('Internal link copied to clipboard!')">
         <mat-icon>content_copy</mat-icon>
         Copy internal link to clipboard
       </button>
     </mat-menu>
 
     <mat-menu #more="matMenu" class="res-more-menu">
+      <button
+        [disabled]="!userCanEdit"
+        data-cy="resource-toolbar-edit-resource-button"
+        mat-menu-item
+        matTooltip="Edit the label of this resource"
+        matTooltipPosition="above"
+        (click)="editResourceLabel()">
+        <mat-icon>edit</mat-icon>
+        Edit label
+      </button>
       <button
         data-cy="resource-toolbar-delete-resource-button"
         [disabled]="!userCanDelete"
@@ -114,43 +125,71 @@ import { filter } from 'rxjs/operators';
     `,
   ],
 })
-export class ResourceToolbarComponent {
-  @Input({ required: true }) resource!: DspResource;
+export class AnnotationToolbarComponent {
+  @Input({ required: true }) resource!: ReadResource;
+  @Input({ required: true }) parentResourceId!: string;
 
   isAdmin$: Observable<boolean | undefined> = this._store.select(ProjectsSelectors.isCurrentProjectAdminOrSysAdmin);
 
+  get userCanEdit() {
+    return ResourceUtil.userCanEdit(this.resource);
+  }
+
   get userCanDelete() {
-    return ResourceUtil.userCanDelete(this.resource.res);
+    return ResourceUtil.userCanDelete(this.resource);
   }
 
   constructor(
     protected notification: NotificationService,
-    private _resourceService: ResourceService,
+    private _regionService: RegionService,
     private _dialog: MatDialog,
+    private _resourceService: ResourceService,
+    private _resourceFetcher: ResourceFetcherService,
     private _store: Store
   ) {}
 
-  openResource() {
-    window.open(`/resource${this._resourceService.getResourcePath(this.resource.res.id)}`, '_blank');
+  editResourceLabel() {
+    this._dialog
+      .open<EditResourceLabelDialogComponent, ReadResource, boolean>(EditResourceLabelDialogComponent, {
+        data: this.resource,
+      })
+      .afterClosed()
+      .pipe(filter(answer => !!answer))
+      .subscribe(answer => {
+        this._resourceFetcher.reload();
+      });
   }
 
   deleteResource() {
     this._dialog
-      .open<DeleteResourceDialogComponent, ReadResource>(DeleteResourceDialogComponent, { data: this.resource.res })
+      .open<DeleteResourceDialogComponent, ReadResource>(DeleteResourceDialogComponent, { data: this.resource })
       .afterClosed()
       .pipe(filter(response => !!response))
       .subscribe(() => {
-        this._resourceService.resourceDeleted.next(this.resource.res.id);
+        this._afterResourceDeleted();
       });
   }
 
   eraseResource() {
     this._dialog
-      .open<EraseResourceDialogComponent, ReadResource>(EraseResourceDialogComponent, { data: this.resource.res })
+      .open<EraseResourceDialogComponent, ReadResource>(EraseResourceDialogComponent, { data: this.resource })
       .afterClosed()
       .pipe(filter(response => !!response))
       .subscribe(() => {
-        this._resourceService.resourceDeleted.next(this.resource.res.id);
+        this._afterResourceDeleted();
       });
+  }
+
+  private _afterResourceDeleted() {
+    this._regionService.updateRegions$().pipe(take(1)).subscribe();
+  }
+
+  openRegionInNewTab() {
+    const annotationId = encodeURIComponent(this.resource.id);
+    const resPath = this._resourceService.getResourcePath(this.parentResourceId);
+    window.open(
+      `/${RouteConstants.resource}${resPath}?${RouteConstants.annotationQueryParam}=${annotationId}`,
+      '_blank'
+    );
   }
 }

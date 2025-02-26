@@ -1,18 +1,22 @@
 import { PermissionUtil, ReadResource, ReadValue } from '@dasch-swiss/dsp-js';
 
+export type Interaction = keyof typeof PermissionUtil.Permissions; // "RV" | "V" | "M" | "D" | "CR"
+
 export class ResourceUtil {
   public static userCanView(instance: ReadResource | ReadValue) {
-    const permissions = PermissionUtil.allUserPermissions(instance.userHasPermission as 'RV' | 'V' | 'M' | 'D' | 'CR');
-    return permissions.includes(PermissionUtil.Permissions.V);
+    return ResourceUtil.isInteractionGranted(instance, 'V');
   }
 
   public static userCanEdit(instance: ReadResource | ReadValue) {
-    const permissions = PermissionUtil.allUserPermissions(instance.userHasPermission as 'RV' | 'V' | 'M' | 'D' | 'CR');
-    return permissions.includes(PermissionUtil.Permissions.M);
+    return ResourceUtil.isInteractionGranted(instance, 'M');
   }
 
   public static userCanDelete(instance: ReadResource | ReadValue) {
-    const permissions = PermissionUtil.allUserPermissions(instance.userHasPermission as 'RV' | 'V' | 'M' | 'D' | 'CR');
-    return permissions.includes(PermissionUtil.Permissions.D);
+    return ResourceUtil.isInteractionGranted(instance, 'D');
+  }
+
+  public static isInteractionGranted(resource: ReadResource | ReadValue, interaction: Interaction): boolean {
+    const permissions = PermissionUtil.allUserPermissions(resource.userHasPermission as Interaction);
+    return permissions.includes(PermissionUtil.Permissions[interaction]);
   }
 }
