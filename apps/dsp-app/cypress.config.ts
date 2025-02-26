@@ -1,9 +1,11 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
+import { nxE2EPreset } from '@nx/cypress/plugins/cypress-preset';
 import { defineConfig } from 'cypress';
 
 export default defineConfig({
   projectId: 'n5b5id',
   e2e: {
+    ...nxE2EPreset(__dirname),
     specPattern: 'cypress/**/**/**/*.cy.ts',
     excludeSpecPattern: ['*.spec.js', '*.spec.ts'],
     viewportHeight: 768,
@@ -22,6 +24,8 @@ export default defineConfig({
     screenshotsFolder: 'cypress/fixtures/screenshots',
 
     setupNodeEvents(on, config) {
+      // eslint-disable-next-line
+      require('@cypress/code-coverage/task')(on, config);
       on('before:browser:launch', (browser, launchOptions) => {
         if (browser.name === 'chrome' && browser.isHeadless) {
           // fullPage screenshot size is 1600x1400 on non-retina screens
@@ -48,6 +52,7 @@ export default defineConfig({
 
         return launchOptions;
       });
+      return config;
     },
   },
 });

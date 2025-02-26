@@ -12,7 +12,9 @@
   "targets": {
     "build": {
       "executor": "@angular-devkit/build-angular:browser",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "options": {
         "outputPath": "dist/apps/dsp-app",
         "index": "apps/dsp-app/src/index.html",
@@ -37,11 +39,17 @@
             "output": "/assets/"
           }
         ],
-        "styles": ["apps/dsp-app/src/styles.scss"],
+        "styles": [
+          "apps/dsp-app/src/styles.scss"
+        ],
         "stylePreprocessorOptions": {
-          "includePaths": ["apps/dsp-app/src/styles"]
+          "includePaths": [
+            "apps/dsp-app/src/styles"
+          ]
         },
-        "scripts": ["node_modules/openseadragon/build/openseadragon/openseadragon.min.js"]
+        "scripts": [
+          "node_modules/openseadragon/build/openseadragon/openseadragon.min.js"
+        ]
       },
       "configurations": {
         "production": {
@@ -189,7 +197,9 @@
     },
     "lint": {
       "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"]
+      "outputs": [
+        "{options.outputFile}"
+      ]
     },
     "test": {
       "executor": "@angular-devkit/build-angular:karma",
@@ -199,8 +209,12 @@
         "tsConfig": "apps/dsp-app/tsconfig.spec.json",
         "inlineStyleLanguage": "scss",
         "karmaConfig": "apps/dsp-app/karma.conf.js",
-        "styles": ["apps/dsp-app/src/styles.scss"],
-        "scripts": ["node_modules/openseadragon/build/openseadragon/openseadragon.min.js"],
+        "styles": [
+          "apps/dsp-app/src/styles.scss"
+        ],
+        "scripts": [
+          "node_modules/openseadragon/build/openseadragon/openseadragon.min.js"
+        ],
         "assets": [
           "apps/dsp-app/src/favicon.ico",
           "apps/dsp-app/src/config",
@@ -242,7 +256,19 @@
           "env": {
             "API_URL": "http://0.0.0.0:3333/api"
           }
+        },
+        "coverage": {
+          "devServerTarget": "dsp-app:serve-app-e2e"
         }
+      }
+    },
+    "serve-app-e2e": {
+      "executor": "ngx-build-plus:dev-server",
+      "defaultConfiguration": "",
+      "options": {
+        "browserTarget": "dsp-app:build:development",
+        "extraWebpackConfig": "./webpack.coverage.js",
+        "port": 3000
       }
     }
   }

@@ -3,6 +3,7 @@ import './commands/api-commands';
 import './commands/auth-commands';
 import './commands/data-model-class-command';
 import './commands/ontology-command';
+import '@cypress/code-coverage/support';
 
 const resizeObserverLoopErrRe = /^[^(ResizeObserver loop limit exceeded)]/;
 Cypress.on('uncaught:exception', err => {

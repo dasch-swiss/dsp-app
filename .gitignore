@@ -56,6 +56,8 @@ Thumbs.db
 
 .angular
 /libs/jdnconvertiblecalendar/coverage/
+apps/dsp-app/coverage/
+apps/dsp-app/.nyc_output/
 
 #E2E
 /.nx
