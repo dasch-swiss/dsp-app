@@ -1,5 +1,22 @@
 # Changelog
 
+## [11.26.2](https://github.com/dasch-swiss/dsp-das/compare/v11.26.1...v11.26.2) (2025-03-03)
+
+
+### Bug Fixes
+
+* compoundService reset on change of resource ([#2135](https://github.com/dasch-swiss/dsp-das/issues/2135)) ([768f687](https://github.com/dasch-swiss/dsp-das/commit/768f6872db350bdfcdab2be6a067248354f5bfdf))
+* highlights value from route and redesign the properties in the resource editor ([#2134](https://github.com/dasch-swiss/dsp-das/issues/2134)) ([ac6186d](https://github.com/dasch-swiss/dsp-das/commit/ac6186d31509830ba5fef52b19852ae6a814fcb4))
+* navigate after deletion ([#2125](https://github.com/dasch-swiss/dsp-das/issues/2125)) ([08ca25b](https://github.com/dasch-swiss/dsp-das/commit/08ca25b097426d1d7680490c3b0c5ae75fd3f881))
+* resource editor manages its own resource deletion ([#2138](https://github.com/dasch-swiss/dsp-das/issues/2138)) ([097b620](https://github.com/dasch-swiss/dsp-das/commit/097b6207386d2aeeb676cb72d466480bd402393d))
+
+
+### Maintenances
+
+* e2e tests can have code coverage option ([#2127](https://github.com/dasch-swiss/dsp-das/issues/2127)) ([9930f7a](https://github.com/dasch-swiss/dsp-das/commit/9930f7a74b018de6f671b7979e3b18f1a470d5be))
+* remove unused code ([#2137](https://github.com/dasch-swiss/dsp-das/issues/2137)) ([6c9d1b0](https://github.com/dasch-swiss/dsp-das/commit/6c9d1b01cd59e55c77087299f8490ffe43db73a7))
+* remove unused route ([#2139](https://github.com/dasch-swiss/dsp-das/issues/2139)) ([593c19d](https://github.com/dasch-swiss/dsp-das/commit/593c19d9aef5ea58076b40b5d07928f0f527a024))
+
 ## [11.26.1](https://github.com/dasch-swiss/dsp-das/compare/v11.26.0...v11.26.1) (2025-02-24)
 
 
