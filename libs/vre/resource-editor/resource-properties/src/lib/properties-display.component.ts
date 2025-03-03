@@ -9,7 +9,7 @@ import { PropertiesDisplayService } from './properties-display.service';
 @Component({
   selector: 'app-properties-display',
   template: `
-    <div style="display: flex; align-items: center; background: #EAEFF3; margin-bottom: 8px">
+    <div style="display: flex; align-items: center; background: #EAEFF3">
       <h3 style="margin: 0 16px" *ngIf="displayLabel" data-cy="property-header">{{ resource.res.label }}</h3>
       <div style="display: flex; justify-content: end; flex: 1">
         <app-properties-toolbar [showToggleProperties]="true" [showOnlyIcons]="displayLabel" style="flex-shrink: 0" />

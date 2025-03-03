@@ -9,6 +9,7 @@ import {
   ViewContainerRef,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { ActivatedRoute } from '@angular/router';
 import {
   ApiResponseError,
   Cardinality,
@@ -33,45 +34,58 @@ import { propertiesTypeMapping } from './resource-payloads-mapping';
   selector: 'app-property-value',
   template: ` <div
     data-cy="property-value"
-    style="position: relative; min-height: 40px; width: 100%"
+    class="pos-relative"
     (mouseenter)="showBubble = true"
     (mouseleave)="showBubble = false">
     <app-property-value-action-bubble
-      [editMode]="!displayMode"
-      *ngIf="!propertyValueService.keepEditMode && showBubble"
+      *ngIf="
+        !propertyValueService.keepEditMode && showBubble && (propertyValueService.lastOpenedItem$ | async) !== index
+      "
       [date]="propertyValueService.editModeData?.values[index]?.valueCreationDate"
       [showDelete]="index > 0 || [Cardinality._0_1, Cardinality._0_n].includes(propertyValueService.cardinality)"
       (editAction)="propertyValueService.toggleOpenedValue(index)"
       (deleteAction)="askToDelete()" />
 
     <div style="display: flex">
-      <div class="item" [ngClass]="{ hover: displayMode }">
+      <div class="resource-editor-value" [ngClass]="{ edit: !displayMode, highlighted: isHighlighted && displayMode }">
         <ng-container
           *ngTemplateOutlet="itemTpl; context: { item: group?.controls.item, displayMode: displayMode }"></ng-container>
 
         <app-property-value-comment [displayMode]="displayMode" [control]="group?.controls.comment" />
       </div>
-      <button
-        (click)="onSave()"
-        mat-icon-button
-        data-cy="save-button"
+      <div
         *ngIf="!displayMode && !propertyValueService.keepEditMode && !loading"
-        [disabled]="
-          group.value.item === null ||
-          group.value.item === '' ||
-          (!isBoolean && valueIsUnchanged) ||
-          (isBoolean && isRequired && valueIsUnchanged)
-        ">
-        <mat-icon>save</mat-icon>
-      </button>
-      <app-progress-indicator *ngIf="loading" />
+        style="display: flex; flex-direction: column; padding-top: 16px">
+        <button
+          (click)="goToDisplayMode()"
+          mat-icon-button
+          color="primary"
+          *ngIf="!displayMode && !propertyValueService.keepEditMode && !loading">
+          <mat-icon>undo</mat-icon>
+        </button>
+        <button
+          (click)="onSave()"
+          mat-icon-button
+          data-cy="save-button"
+          color="primary"
+          [disabled]="
+            group.value.item === null ||
+            group.value.item === '' ||
+            (!isBoolean && valueIsUnchanged) ||
+            (isBoolean && isRequired && valueIsUnchanged)
+          ">
+          <mat-icon>save</mat-icon>
+        </button>
+      </div>
+
+      <app-progress-indicator *ngIf="loading" [size]="'xsmall'" style="margin-top: 8px" />
     </div>
   </div>`,
   styleUrls: ['./property-value.component.scss'],
 })
 export class PropertyValueComponent implements OnInit {
-  @Input() itemTpl!: TemplateRef<any>;
-  @Input() index!: number;
+  @Input({ required: true }) itemTpl!: TemplateRef<any>;
+  @Input({ required: true }) index!: number;
 
   initialFormValue!: { item: any; comment: string | null };
 
@@ -80,6 +94,7 @@ export class PropertyValueComponent implements OnInit {
   loading = false;
 
   subscription!: Subscription;
+  isHighlighted!: boolean;
 
   protected readonly Cardinality = Cardinality;
 
@@ -111,13 +126,16 @@ export class PropertyValueComponent implements OnInit {
     private _notification: NotificationService,
     private _dialog: MatDialog,
     private _viewContainerRef: ViewContainerRef,
-    @Optional() private _resourceFetcherService: ResourceFetcherService
+    @Optional() private _resourceFetcherService: ResourceFetcherService,
+    private _route: ActivatedRoute
   ) {}
 
   ngOnInit() {
     this._setInitialValue();
     this._setupDisplayMode();
     this._watchAndSetupCommentStatus();
+
+    this._highlightArkValue();
   }
 
   private _setInitialValue() {
@@ -241,6 +259,10 @@ export class PropertyValueComponent implements OnInit {
       });
   }
 
+  goToDisplayMode() {
+    this.propertyValueService.toggleOpenedValue(this.index);
+  }
+
   private _getUpdatedValue(index: number) {
     const group = this.propertyValueService.formArray.at(index);
     const values = this.propertyValueService.editModeData?.values as ReadValue[];
@@ -265,5 +287,11 @@ export class PropertyValueComponent implements OnInit {
     updateResource.type = resource.type;
     updateResource.value = this._getUpdatedValue(index);
     return updateResource;
+  }
+
+  private _highlightArkValue() {
+    this.isHighlighted =
+      this._route.snapshot.queryParams['highlightValue'] ===
+      this.propertyValueService.editModeData?.values[this.index].uuid;
   }
 }

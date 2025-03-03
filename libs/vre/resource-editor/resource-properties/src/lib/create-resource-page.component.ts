@@ -11,12 +11,16 @@ import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-create-resource-page',
-  template: ` <h3 data-cy="create-resource-title">Create new resource of type: {{ classLabel }}</h3>
-    <app-create-resource-form
-      *ngIf="resourceClassIri"
-      [resourceClassIri]="resourceClassIri"
-      [projectIri]="projectIri"
-      (createdResourceIri)="afterCreation($event)" />`,
+  template: `
+    <app-centered-layout>
+      <h3 data-cy="create-resource-title">Create new resource of type: {{ classLabel }}</h3>
+      <app-create-resource-form
+        *ngIf="resourceClassIri"
+        [resourceClassIri]="resourceClassIri"
+        [projectIri]="projectIri"
+        (createdResourceIri)="afterCreation($event)" />
+    </app-centered-layout>
+  `,
 })
 export class CreateResourcePageComponent implements OnDestroy {
   private _destroy = new Subject<void>();

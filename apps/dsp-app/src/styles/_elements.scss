@@ -10,9 +10,11 @@
      Every toolbar row uses a flexbox row layout. */
   flex: 1 1 auto;
 }
+
 .space-reducer {
   max-height: 14px;
 }
+
 .empty-space {
   display: block;
   width: 48px;
@@ -124,6 +126,7 @@ a,
     border-radius: 0;
     margin-top: 4px;
   }
+
   .app-fulltext-search-mobile-panel .app-fulltext-search-button {
     height: auto !important;
     border-radius: $border-radius !important;
@@ -138,6 +141,7 @@ a,
 .more-space-top {
   margin-top: 32px !important;
 }
+
 .more-space-bottom {
   margin-bottom: 24px !important;
 
@@ -303,6 +307,7 @@ a,
     height: 40px;
     padding: 8px 0;
     align-items: center;
+
     a {
       color: $primary_50 !important;
     }
@@ -349,6 +354,7 @@ a,
 // file representation menu styling
 .representation-menu {
   --mat-menu-item-label-text-color: $white;
+
   &.mdc-menu-surface {
     @include menu-surface.fill-color($dark);
     @include menu-surface.ink-color($white);
@@ -668,6 +674,13 @@ nav.mat-mdc-tab-nav-bar,
 }
 
 // --------------------------------------
+.resource-editor-value {
+  padding: 16px 8px;
+
+  &:hover {
+    background: $primary_100;
+  }
+}
 
 //
 // action bubble
@@ -813,10 +826,12 @@ nav.mat-mdc-tab-nav-bar,
     }
   }
 }
+
 .switch-nested-sub-menu {
   width: 180px;
   margin-left: -360px !important;
 }
+
 .switch-nested-sub-menu,
 .default-nested-sub-menu {
   &.mat-mdc-menu-panel {

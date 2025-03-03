@@ -1,13 +1,25 @@
 @use '../../../../../../apps/dsp-app/src/styles/config' as *;
 
-.item {
+:host ::ng-deep .app-progress-indicator {
+  margin: 0 auto !important;
+}
+
+.pos-relative {
+  position: relative;
+}
+
+.resource-editor-value {
   flex: 1;
 
-  &.hover:hover {
-    background: $primary_100;
+  &.highlighted {
+    background: $yellow_100;
+  }
+
+  &.edit {
+    background: inherit;
   }
 }
 
-:host ::ng-deep .app-progress-indicator {
-  margin: 0 auto !important;
+.icon {
+  color: $secondary;
 }

@@ -1,7 +1,7 @@
 @use '../../../../../../apps/dsp-app/src/styles/config' as *;
 
-.currentValue {
-  background-color: $yellow_100;
+.property-row {
+  display: flex;
 }
 
 .label {
@@ -9,10 +9,12 @@
   align-self: start;
   cursor: help;
   width: 150px;
-  margin-top: 0px;
+  margin-top: 16px;
   text-align: right;
-  padding-right: 24px;
+  padding-right: 16px;
   flex-shrink: 0;
+  margin-bottom: 0;
+  line-height: normal;
 }
 
 .hidden {

@@ -73,7 +73,7 @@ import { PropertyValueService } from './property-value.service';
     </ng-template>
 
     <ng-template #paragraphTpl let-item="item" let-displayMode="displayMode">
-      <app-base-switch [control]="item" [displayMode]="displayMode" style="white-space: pre-line">
+      <app-base-switch [control]="item" [displayMode]="displayMode">
         <mat-form-field style="width: 100%">
           <textarea matInput [formControl]="item" rows="9" placeholder="Text value"></textarea>
         </mat-form-field>

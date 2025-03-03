@@ -34,11 +34,20 @@ export class AppProgressIndicatorComponent implements OnInit {
    */
   @Input() color = '#5849a7';
 
-  @Input() size: 'small' | 'large' = 'small';
+  @Input() size: 'xsmall' | 'small' = 'small';
 
   widthAndHeight!: string;
 
   ngOnInit() {
-    this.widthAndHeight = this.size === 'small' ? '48px' : '128px';
+    this.widthAndHeight = `${this.getSize()}px`;
+  }
+
+  getSize() {
+    switch (this.size) {
+      case 'xsmall':
+        return 24;
+      case 'small':
+        return 48;
+    }
   }
 }
