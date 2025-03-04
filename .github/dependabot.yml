@@ -17,6 +17,7 @@ updates:
         patterns:
           - "@angular*"
           - "@ngrx/component-store"
+          - "zone.js"
         update-types:
           - "minor"
           - "patch"
@@ -105,12 +106,24 @@ updates:
           - "@types/jest"
           - "@types/jasmine*"
           - "@types/jwt-decode"
+      test-coverage-deps:
+        applies-to: version-updates
+        patterns:
+          - "@cypress/code-coverage"
+          - "@istanbuljs/nyc-config-typescript"
+          - "@jsdevtools/coverage-istanbul-loader"
+          - "istanbul-lib-coverage"
+          - "ngx-build-plus"
+          - "nyc"
+        update-types:
+          - "minor"
+          - "patch"
     ignore:
       - dependency-name: "*"
         update-types: ["version-update:semver-major"]
       # we use github:dasch-swiss/ckeditor_custom_build#v2.0.0 and v2.0.1 seems to be broken
       - dependency-name: "ckeditor5-custom-build"
-      # all nx and angular dependencies are for now handled manually
+      # all nx and angular dependencies are for now handled manually (also zone.js)
       - dependency-name: "@angular/*"
       - dependency-name: "@angular-devkit/*"
       - dependency-name: "@angular-eslint/*" #angular-eslint should match the angular version, also handled manually
@@ -119,6 +132,7 @@ updates:
       - dependency-name: "nx*"
       - dependency-name: "@nx*"
       - dependency-name: "@nrwl/*"
+      - dependency-name: "zone.js"
 
   - package-ecosystem: "docker"
     directory: "/"
