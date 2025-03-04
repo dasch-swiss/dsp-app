@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, Input, ViewContainerRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ReadResource } from '@dasch-swiss/dsp-js';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
@@ -145,13 +145,15 @@ export class AnnotationToolbarComponent {
     private _dialog: MatDialog,
     private _resourceService: ResourceService,
     private _resourceFetcher: ResourceFetcherService,
-    private _store: Store
+    private _store: Store,
+    private _viewContainerRef: ViewContainerRef
   ) {}
 
   editResourceLabel() {
     this._dialog
       .open<EditResourceLabelDialogComponent, ReadResource, boolean>(EditResourceLabelDialogComponent, {
         data: this.resource,
+        viewContainerRef: this._viewContainerRef,
       })
       .afterClosed()
       .pipe(filter(answer => !!answer))
