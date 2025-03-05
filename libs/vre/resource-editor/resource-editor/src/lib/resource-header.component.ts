@@ -55,7 +55,7 @@ import { filter } from 'rxjs/operators';
         display: flex;
         box-sizing: border-box;
         flex-direction: row;
-        align-items: start;
+        align-items: flex-start;
         justify-content: space-between;
 
         h3.label-info {
