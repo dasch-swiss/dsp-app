@@ -5,12 +5,12 @@ import { UpdateUserAction } from '@dasch-swiss/vre/core/state';
 import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { TranslateService } from '@ngx-translate/core';
-import { Actions, Store, ofActionSuccessful } from '@ngxs/store';
+import { Actions, ofActionSuccessful, Store } from '@ngxs/store';
 import { take } from 'rxjs/operators';
 import { UserForm } from '../user-form/user-form.type';
 
 @Component({
-  selector: 'app-edit-user-page',
+  selector: 'app-edit-user-dialog',
   template: `
     <app-user-form *ngIf="user" [user]="user" (afterFormInit)="form = $event" />
 
@@ -26,12 +26,12 @@ import { UserForm } from '../user-form/user-form.type';
     </div>
   `,
 })
-export class EditUserPageComponent {
-  form: UserForm;
+export class EditUserDialogComponent {
+  form!: UserForm;
 
   constructor(
     private _actions$: Actions,
-    private _dialogRef: MatDialogRef<EditUserPageComponent>,
+    private _dialogRef: MatDialogRef<EditUserDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public user: ReadUser,
     private _notification: NotificationService,
     private _store: Store,

@@ -7,7 +7,7 @@ import { UserSelectors } from '@dasch-swiss/vre/core/state';
 import { Select } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil, takeWhile } from 'rxjs/operators';
-import { EditUserPageComponent } from '../edit-user-page/edit-user-page.component';
+import { EditUserDialogComponent } from '../edit-user-page/edit-user-dialog.component';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -45,6 +45,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   editProfile(user: ReadUser) {
     const dialogConfig = DspDialogConfig.dialogDrawerConfig<ReadUser>(user, true);
-    this._dialog.open(EditUserPageComponent, dialogConfig);
+    this._dialog.open(EditUserDialogComponent, dialogConfig);
   }
 }

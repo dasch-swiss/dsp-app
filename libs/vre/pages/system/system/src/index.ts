@@ -9,3 +9,5 @@ export * from './lib/sort-button/sort-button.component';
 export * from './lib/cookie-policy/cookie-policy.component';
 export * from './lib/users/edit-password-dialog.component';
 export * from './lib/users/manage-project-membership-dialog.component';
+export * from './lib/users/create-user-dialog.component';
+export * from './lib/membership/membership.component';

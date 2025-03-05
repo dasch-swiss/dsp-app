@@ -2,12 +2,12 @@ import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ReadUser, User } from '@dasch-swiss/dsp-js';
 import { CreateUserAction } from '@dasch-swiss/vre/core/state';
+import { UserForm } from '@dasch-swiss/vre/pages/user-settings/user';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { Actions, ofActionSuccessful, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { take } from 'rxjs/operators';
-import { UserForm } from '../user-form/user-form.type';
 
 @Component({
   selector: 'app-create-user-dialog',
@@ -30,7 +30,7 @@ import { UserForm } from '../user-form/user-form.type';
 })
 export class CreateUserDialogComponent {
   user = new ReadUser();
-  form: UserForm;
+  form!: UserForm;
 
   isLoading$: Observable<boolean>;
 

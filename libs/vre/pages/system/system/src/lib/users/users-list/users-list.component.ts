@@ -14,12 +14,13 @@ import {
   SetUserAction,
   UserSelectors,
 } from '@dasch-swiss/vre/core/state';
-import { CreateUserDialogComponent, EditUserPageComponent } from '@dasch-swiss/vre/pages/user-settings/user';
+import { EditUserDialogComponent } from '@dasch-swiss/vre/pages/user-settings/user';
 import { ProjectService, SortingService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { DialogService } from '@dasch-swiss/vre/ui/ui';
 import { Actions, ofActionSuccessful, Select, Store } from '@ngxs/store';
 import { combineLatest, from, merge, Observable } from 'rxjs';
 import { filter, map, mergeMap, switchMap, take, takeLast } from 'rxjs/operators';
+import { CreateUserDialogComponent } from '../create-user-dialog.component';
 import { EditPasswordDialogComponent } from '../edit-password-dialog.component';
 import { ManageProjectMembershipDialogComponent } from '../manage-project-membership-dialog.component';
 
@@ -313,7 +314,7 @@ export class UsersListComponent {
 
   editUser(user: ReadUser) {
     const dialogConfig = DspDialogConfig.dialogDrawerConfig<ReadUser>(user, true);
-    const dialogRef = this._matDialog.open(EditUserPageComponent, dialogConfig);
+    const dialogRef = this._matDialog.open(EditUserDialogComponent, dialogConfig);
     dialogRef.afterClosed().subscribe(() => {
       this.refreshParent.emit();
     });

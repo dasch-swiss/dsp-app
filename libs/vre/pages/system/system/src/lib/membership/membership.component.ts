@@ -16,10 +16,10 @@ import {
   RemoveUserFromProjectAction,
   UserSelectors,
 } from '@dasch-swiss/vre/core/state';
+import { AutocompleteItem } from '@dasch-swiss/vre/pages/user-settings/user';
 import { Select, Store } from '@ngxs/store';
 import { combineLatest, Observable, Subject } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
-import { AutocompleteItem } from '../autocomplete-item.interface';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
