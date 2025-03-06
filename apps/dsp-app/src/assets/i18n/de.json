@@ -4,6 +4,12 @@
     "myProjects": "Meine Projekte",
     "browseOtherResearchProjects": "Andere Forschungsprojekte durchsuchen"
   },
+  "list": {
+    "title": {
+      "active": "Active",
+      "inactive": "Deactivated"
+    }
+  },
   "addProjectMember": {
     "title": "Projektmitglied hinzufügen",
     "description": "Projektteam erweitern",
@@ -87,7 +93,7 @@
         "requesterPassword": "Dein Passwort",
         "language": "Sprache",
         "sysAdmin": "Systemadministratorregeln",
-        "updateSuccess": "Das Profil wurde erfolgreich aktualisiert"
+        "updateSuccess": "Das Profil wurde erfolgreich aktualisiert."
       },
       "title": {
         "new": "Neuen Benutzer erstellen",
@@ -106,7 +112,8 @@
         "shortcode": "Kurzcode",
         "shortname": "Abkürzung",
         "longname": "Projekttitel",
-        "keywords": "Stichworte"
+        "keywords": "Stichworte",
+        "editSuccess": "You have successfully updated the project information."
       },
       "imageSettings": {
         "off": "Aus",
@@ -152,6 +159,12 @@
     "footnotes": "Fussnoten",
     "permissions": {
       "groups": {
+        "label": "Berechtigungen",
+        "projectAdmin": "Project Admin",
+        "creator": "Creator",
+        "projectMember": "Project Member",
+        "knownUser": "Known User",
+        "unknownUser": "Unknown User",
         "usersPermissions": "Your permissions"
       },
       "interactions": {

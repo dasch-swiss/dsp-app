@@ -4,6 +4,12 @@
     "myProjects": "My Projects",
     "browseOtherResearchProjects": "Browse Other Research Projects"
   },
+  "list": {
+    "title": {
+      "active": "Active",
+      "inactive": "Deactivated"
+    }
+  },
   "addProjectMember": {
     "title": "Add project member",
     "description": "Increase your team",
@@ -87,7 +93,7 @@
         "requesterPassword": "Your password",
         "language": "Default language",
         "sysAdmin": "System administrator rules",
-        "updateSuccess": "You successfully updated the user's profile"
+        "updateSuccess": "You successfully updated the user's profile."
       },
       "title": {
         "new": "Create new",
@@ -106,7 +112,8 @@
         "shortcode": "Short code",
         "shortname": "Short name",
         "longname": "Project name",
-        "keywords": "Keywords"
+        "keywords": "Keywords",
+        "editSuccess": "You have successfully updated the project information."
       },
       "imageSettings": {
         "off": "Off",
@@ -152,6 +159,12 @@
     "footnotes": "Notes",
     "permissions": {
       "groups": {
+        "label": "Permissions",
+        "projectAdmin": "Project Admin",
+        "creator": "Creator",
+        "projectMember": "Project Member",
+        "knownUser": "Known User",
+        "unknownUser": "Unknown User",
         "usersPermissions": "Your permissions"
       },
       "interactions": {

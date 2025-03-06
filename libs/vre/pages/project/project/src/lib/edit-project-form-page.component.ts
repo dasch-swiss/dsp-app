@@ -7,6 +7,7 @@ import { LoadProjectsAction, UpdateProjectAction } from '@dasch-swiss/vre/core/s
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { MultiLanguages } from '@dasch-swiss/vre/ui/string-literal';
+import { TranslateService } from '@ngx-translate/core';
 import { Actions, ofActionSuccessful, Store } from '@ngxs/store';
 import { map, switchMap, take } from 'rxjs/operators';
 import { ProjectForm } from './reusable-project-form/project-form.type';
@@ -37,7 +38,7 @@ import { ProjectForm } from './reusable-project-form/project-form.type';
 export class EditProjectFormPageComponent {
   form: ProjectForm;
   loading = false;
-  formData$ = this.route.parent.parent.paramMap.pipe(
+  formData$ = this._route.parent.parent.paramMap.pipe(
     map(params => params.get(RouteConstants.uuidParameter)),
     map(uuid => this._projectService.uuidToIri(uuid)),
     switchMap(iri => this._projectApiService.get(iri)),
@@ -54,17 +55,18 @@ export class EditProjectFormPageComponent {
   );
 
   constructor(
+    private _actions: Actions,
+    private _notification: NotificationService,
     private _projectApiService: ProjectApiService,
     private _projectService: ProjectService,
-    private route: ActivatedRoute,
-    private _store: Store,
+    private _route: ActivatedRoute,
     private _router: Router,
-    private _notification: NotificationService,
-    private _actions: Actions
+    private _store: Store,
+    private _ts: TranslateService
   ) {}
 
   onSubmit() {
-    const projectUuid = this.route.parent.parent.snapshot.paramMap.get(RouteConstants.uuidParameter);
+    const projectUuid = this._route.parent.parent.snapshot.paramMap.get(RouteConstants.uuidParameter);
 
     const projectData: UpdateProjectRequest = {
       longname: this.form.value.longname,
@@ -74,7 +76,7 @@ export class EditProjectFormPageComponent {
 
     this._store.dispatch(new UpdateProjectAction(projectUuid, projectData));
     this._actions.pipe(ofActionSuccessful(LoadProjectsAction), take(1)).subscribe(() => {
-      this._notification.openSnackBar('You have successfully updated the project information.');
+      this._notification.openSnackBar(this._ts.instant('form.project.general.editSuccess'));
       this._router.navigate([`${RouteConstants.projectRelative}/${projectUuid}`]);
     });
   }
