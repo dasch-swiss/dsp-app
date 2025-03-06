@@ -5,6 +5,7 @@ import { AvailableLanguages } from '@dasch-swiss/vre/core/config';
 import { UserSelectors } from '@dasch-swiss/vre/core/state';
 import { CustomRegex } from '@dasch-swiss/vre/shared/app-common';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { TranslateService } from '@ngx-translate/core';
 import { Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -32,19 +33,22 @@ export class UserFormComponent implements OnInit {
 
   readonly emailPatternErrorMsg = {
     errorKey: 'pattern',
-    message: "This doesn't appear to be a valid email address.",
+    message: this._ts.instant('form.user.general.emailValidation'),
   };
 
   readonly usernamePatternErrorMsg = {
     errorKey: 'pattern',
-    message: 'Spaces and special characters are not allowed in the username',
+    message: this._ts.instant('form.user.general.usernameHint'),
   };
 
   editExistingUser: boolean;
 
   userForm: UserForm;
 
-  constructor(private _fb: FormBuilder) {}
+  constructor(
+    private _fb: FormBuilder,
+    private _ts: TranslateService
+  ) {}
 
   ngOnInit() {
     this._existingUserNames$ = this.allUsers$.pipe(

@@ -19,7 +19,9 @@
     </button>
     <mat-menu #selectProject="matMenu">
       <div class="app-project-filter-menu">
-        <button mat-menu-item class="center" (click)="setProject(); changeFocus()">{{ defaultProjectLabel }}</button>
+        <button mat-menu-item class="center" (click)="setProject(); changeFocus()">
+          {{ 'fullTextSearch.allProjects' | translate }}
+        </button>
         <mat-divider></mat-divider>
         <span *ngFor="let project of projects">
           <button

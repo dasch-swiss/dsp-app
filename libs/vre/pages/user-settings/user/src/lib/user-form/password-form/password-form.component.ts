@@ -6,6 +6,7 @@ import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { UserSelectors } from '@dasch-swiss/vre/core/state';
 import { CustomRegex } from '@dasch-swiss/vre/shared/app-common';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
+import { TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngxs/store';
 
 @Component({
@@ -55,8 +56,8 @@ export class PasswordFormComponent implements OnInit {
     },
     password: {
       required: 'Password is required.',
-      minlength: 'Use at least 8 characters.',
-      pattern: 'The password should have at least one uppercase letter and one number.',
+      minlength: this._ts.instant('form.user.general.passwordLengthHint'),
+      pattern: this._ts.instant('form.user.general.passwordPatternHint'),
     },
     confirmPassword: {
       required: 'You have to confirm your password.',
@@ -72,9 +73,10 @@ export class PasswordFormComponent implements OnInit {
   constructor(
     @Inject(DspApiConnectionToken)
     private _dspApiConnection: KnoraApiConnection,
-    private _userApiService: UserApiService,
     private _fb: UntypedFormBuilder,
     private _notification: NotificationService,
+    private _ts: TranslateService,
+    private _userApiService: UserApiService,
     private store: Store
   ) {}
 
@@ -235,7 +237,9 @@ export class PasswordFormComponent implements OnInit {
 
     this._userApiService.updatePassword(this.user.id, requesterPassword, this.form.controls.password.value).subscribe(
       () => {
-        const successResponse = `You have successfully updated ${this.updateOwn ? 'your' : "user's"} password.`;
+        const successResponse = this._ts.instant(
+          this.updateOwn ? 'form.user.title.ownPasswordSuccess' : 'form.user.title.userPasswordSuccess'
+        );
         this._notification.openSnackBar(successResponse);
         this.closeDialog.emit();
         this.form.reset();

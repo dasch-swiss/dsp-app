@@ -45,7 +45,9 @@ export interface CardinalityInfo {
           data-cy="confirmation-button">
           Yes
         </button>
-        <button mat-button (click)="dialogRef.close(false)" *ngIf="canSetCardinality === false">Close</button>
+        <button mat-button (click)="dialogRef.close(false)" *ngIf="canSetCardinality === false">
+          {{ 'form.action.close' | translate }}
+        </button>
       </div>
     </mat-dialog-content>
   `,

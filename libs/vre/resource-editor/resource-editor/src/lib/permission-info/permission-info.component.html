@@ -22,7 +22,7 @@
   <div class="overlay-info-box">
     <table>
       <tr>
-        <th class="first-col">Permissions</th>
+        <th class="first-col">{{ 'form.member.title.group' | translate }}</th>
         <th *ngFor="let icon of PERMISSION_HEADERS">
           <mat-icon [matTooltip]="icon.label | translate" matTooltipPosition="above"> {{icon.icon}} </mat-icon>
         </th>

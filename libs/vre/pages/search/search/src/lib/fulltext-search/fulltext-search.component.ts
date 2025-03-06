@@ -92,6 +92,7 @@ export class FulltextSearchComponent implements OnInit, OnChanges, OnDestroy {
   // selected project, in case of limitToProject and/or projectfilter is true
   project: ReadProject;
 
+  // although is defined here use 'fullTextSearch.allProjects' in the template for proper translation handling
   defaultProjectLabel = 'All projects';
 
   projectLabel: string = this.defaultProjectLabel;

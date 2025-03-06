@@ -17,6 +17,7 @@ import {
 import { EditUserDialogComponent } from '@dasch-swiss/vre/pages/user-settings/user';
 import { ProjectService, SortingService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { DialogService } from '@dasch-swiss/vre/ui/ui';
+import { TranslateService } from '@ngx-translate/core';
 import { Actions, ofActionSuccessful, Select, Store } from '@ngxs/store';
 import { combineLatest, from, merge, Observable } from 'rxjs';
 import { filter, map, mergeMap, switchMap, take, takeLast } from 'rxjs/operators';
@@ -75,11 +76,11 @@ export class UsersListComponent {
   sortProps: any = [
     {
       key: 'familyName',
-      label: 'Last name',
+      label: this._ts.instant('usersList.sortProps.familyName'),
     },
     {
       key: 'givenName',
-      label: 'First name',
+      label: this._ts.instant('usersList.sortProps.givenName'),
     },
     {
       key: 'email',
@@ -115,14 +116,15 @@ export class UsersListComponent {
   @Select(UserSelectors.isLoading) isUsersLoading$: Observable<boolean>;
 
   constructor(
-    private _userApiService: UserApiService,
-    private _matDialog: MatDialog,
+    private _actions$: Actions,
     private _dialog: DialogService,
+    private _matDialog: MatDialog,
     private _route: ActivatedRoute,
     private _router: Router,
     private _sortingService: SortingService,
     private _store: Store,
-    private _actions$: Actions
+    private _ts: TranslateService,
+    private _userApiService: UserApiService
   ) {
     // get the uuid of the current project
     this._route.parent?.parent?.paramMap.subscribe((params: Params) => {

@@ -12,7 +12,9 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from 
         </button>
         <span class="fill-remaining-space"></span>
         <div class="range">
-          <span>{{ itemRangeStart }} - {{ itemRangeEnd }} of {{ itemsNumber }}</span>
+          <span
+            >{{ itemRangeStart }} - {{ itemRangeEnd }} {{ 'uiControls.pager.of' | translate }} {{ itemsNumber }}</span
+          >
         </div>
         <span class="fill-remaining-space"></span>
         <button

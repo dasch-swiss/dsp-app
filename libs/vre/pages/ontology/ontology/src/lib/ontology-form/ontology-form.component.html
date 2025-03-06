@@ -5,7 +5,7 @@
   <app-common-input
     [control]="ontologyForm.controls.name"
     [validatorErrors]="[ontoNamePatternErrorMsg, ontoNameExistsErrorMsg]"
-    [label]="'Set a unique name'"
+    [label]="'form.ontology.label.name' | translate"
     data-cy="name-input" />
   <app-common-input [control]="ontologyForm.controls.label" [label]="'Label'" data-cy="label-input" />
   <mat-form-field class="large-field">

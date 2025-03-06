@@ -6,7 +6,7 @@ import { Component, Input } from '@angular/core';
     <div [ngStyle]="{ width: ratio * 300 + 'px', height: ratio * 200 + 'px' }" class="back-rectangle">
       <div class="arrow left-arrow"></div>
       <div class="arrow right-arrow"></div>
-      <div class="helper">Ratio: {{ Math.ceil(ratio * 100) }}%</div>
+      <div class="helper">{{ 'form.project.imageSettings.ratio' | translate }}: {{ Math.ceil(ratio * 100) }}%</div>
     </div>
   </div>`,
   styles: [
