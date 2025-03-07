@@ -72,8 +72,6 @@ export class VideoToolbarComponent {
   matTooltipPos: TooltipPosition = 'below';
   play = false;
 
-  currentTime = 0;
-
   constructor(
     private _viewContainerRef: ViewContainerRef,
     private _dialog: MatDialog,

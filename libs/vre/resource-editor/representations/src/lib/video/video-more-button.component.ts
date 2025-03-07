@@ -38,9 +38,7 @@ import { ResourceUtil } from '../resource.util';
         (click)="openSnackBar('URL copied to clipboard!')">
         Copy video URL to clipboard
       </button>
-      <button mat-menu-item class="menu-content" (click)="downloadVideo(this.src.fileValue.fileUrl)">
-        Download video
-      </button>
+      <button mat-menu-item class="menu-content" (click)="downloadVideo()">Download video</button>
       <button [disabled]="!userCanEdit" mat-menu-item class="menu-content" (click)="openReplaceFileDialog()">
         Replace file
       </button>
@@ -71,7 +69,7 @@ export class VideoMoreButtonComponent {
     this._notification.openSnackBar(message);
   }
 
-  async downloadVideo(url: string) {
+  downloadVideo() {
     this._rs.downloadProjectFile(this.src.fileValue, this.parentResource);
   }
 

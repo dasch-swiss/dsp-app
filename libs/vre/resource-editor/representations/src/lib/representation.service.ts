@@ -15,9 +15,7 @@ import { AppError } from '@dasch-swiss/vre/core/error-handler';
 import { AccessTokenService } from '@dasch-swiss/vre/core/session';
 import { IKeyValuePairs, ResourceSelectors, UserSelectors } from '@dasch-swiss/vre/core/state';
 import { Store } from '@ngxs/store';
-import { Observable } from 'rxjs';
 import { take } from 'rxjs/operators';
-import { FileInfo } from './representation.types';
 import { ResourceUtil } from './resource.util';
 
 @Injectable({
@@ -36,24 +34,9 @@ export class RepresentationService {
     return this._http.get<{ originalFilename?: string }>(pathToJson, { withCredentials: true });
   }
 
-  getIngestFileInfo(projectShort: string, assetId: string): Observable<FileInfo> {
-    const url = `${this._appConfigService.dspIngestConfig.url}/projects/${projectShort}/assets/${assetId}`;
-    return this._http.get<FileInfo>(url);
-  }
-
-  getIiifFileInfo(fileName: string, projectShort: string): Observable<FileInfo> {
-    const url = `${this._appConfigService.dspIiifConfig.iiifUrl}/${projectShort}/${fileName}/knora.json`;
-    return this._http.get<FileInfo>(url);
-  }
-
   getIngestFileUrl(projectShort: string, assetId: string): string {
     const url = `${this._appConfigService.dspIngestConfig.url}/projects/${projectShort}/assets/${assetId}`;
     return url;
-  }
-
-  getAttachedProject(parentResource: ReadResource): ReadProject | undefined {
-    const attachedProjects = this._store.selectSnapshot(ResourceSelectors.attachedProjects);
-    return this.getParentResourceAttachedProject(attachedProjects, parentResource);
   }
 
   getParentResourceAttachedProject(attachedProjects: IKeyValuePairs<ReadProject>, parentResource: ReadResource) {
