@@ -126,7 +126,9 @@ export class ListViewComponent implements OnChanges, OnInit, OnDestroy {
 
   initSearch(): void {
     // reset
+    this.loading = true;
     this.resources = [];
+    this._cd.detectChanges();
     this.emitSelectedResources();
     this.doSearch();
   }
