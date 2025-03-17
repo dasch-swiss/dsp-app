@@ -32,9 +32,9 @@ export interface DefaultProperty {
   icon: string;
   label: string;
   description: string;
-  subPropOf: string | undefined;
-  objectType?: string;
-  guiEle: string | undefined;
+  subPropOf: string;
+  objectType: string;
+  guiEle: string;
   group: string;
 }
 
@@ -43,9 +43,9 @@ export class DefaultProperties {
     icon: 'warning_amber',
     label: 'Unsupported property type',
     description: 'This property type is not supported in the ontology editor',
-    subPropOf: undefined,
-    objectType: undefined,
-    guiEle: undefined,
+    subPropOf: '',
+    objectType: '',
+    guiEle: '',
     group: 'Warning',
   };
 

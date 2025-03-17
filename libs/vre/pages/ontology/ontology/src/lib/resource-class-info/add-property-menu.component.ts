@@ -11,10 +11,6 @@ import {
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { OntologiesSelectors, OntologyProperties, PropToAdd, PropToDisplay } from '@dasch-swiss/vre/core/state';
 import {
-  CreatePropertyFormDialogComponent,
-  CreatePropertyFormDialogProps,
-} from '@dasch-swiss/vre/resource-editor/property-form';
-import {
   DefaultProperties,
   DefaultProperty,
   OntologyService,
@@ -24,6 +20,10 @@ import {
 import { Store } from '@ngxs/store';
 import { Subject } from 'rxjs';
 import { filter, map, take, takeUntil } from 'rxjs/operators';
+import {
+  CreatePropertyFormDialogComponent,
+  CreatePropertyFormDialogProps,
+} from './create-property-form-dialog.component';
 
 @Component({
   selector: 'app-add-property-menu',

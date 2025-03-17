@@ -10,10 +10,9 @@ import {
   UpdateResourceClassCardinality,
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
-import { AppError } from '@dasch-swiss/vre/core/error-handler';
-import { DefaultProperties, PropertyInfoObject } from '@dasch-swiss/vre/shared/app-helper-services';
+import { PropertyForm } from '@dasch-swiss/vre/resource-editor/property-form';
+import { PropertyInfoObject } from '@dasch-swiss/vre/shared/app-helper-services';
 import { finalize, switchMap } from 'rxjs/operators';
-import { PropertyForm } from '../property-form.type';
 
 export interface CreatePropertyFormDialogProps {
   ontologyId: string;
@@ -121,25 +120,15 @@ export class CreatePropertyFormDialogComponent implements OnInit {
     if (guiAttr) {
       newResProp.guiAttributes = this.setGuiAttribute(guiAttr);
     }
-    const selectedProperty = DefaultProperties.data
-      .flatMap(el => el.elements)
-      .find(
-        e =>
-          e.guiEle === this.form.controls.propType.value && e.objectType === this.data.propertyInfo.propType.objectType
-      );
 
-    if (!selectedProperty) {
-      throw new AppError('Selected property not found');
-    }
+    newResProp.guiElement = this.data.propertyInfo.propType.guiEle;
+    newResProp.subPropertyOf = [this.data.propertyInfo.propType.subPropOf];
 
-    newResProp.guiElement = selectedProperty.guiEle;
-    newResProp.subPropertyOf = [selectedProperty.subPropOf];
-
-    if ([Constants.HasLinkTo, Constants.IsPartOf].includes(selectedProperty.subPropOf)) {
+    if ([Constants.HasLinkTo, Constants.IsPartOf].includes(this.data.propertyInfo.propType.subPropOf)) {
       newResProp.objectType = guiAttr;
       newResProp.subjectType = this.data.resClassIri;
     } else {
-      newResProp.objectType = selectedProperty.objectType;
+      newResProp.objectType = this.data.propertyInfo.propType.objectType;
     }
 
     onto.entity = newResProp;
