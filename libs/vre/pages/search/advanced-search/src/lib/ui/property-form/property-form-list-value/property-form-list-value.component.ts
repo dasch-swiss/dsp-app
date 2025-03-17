@@ -7,7 +7,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { Constants, ListNodeV2 } from '@dasch-swiss/dsp-js';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { ReplaySubject, Subject } from 'rxjs';
-import { takeUntil, takeWhile } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 import { PropertyFormItem } from '../../../data-access/advanced-search-store/advanced-search-store.service';
 
 @Component({
@@ -30,9 +30,16 @@ import { PropertyFormItem } from '../../../data-access/advanced-search-store/adv
       <mat-option>
         <ngx-mat-select-search [formControl]="valueFilterCtrl"></ngx-mat-select-search>
       </mat-option>
-      <mat-option *ngFor="let child of filteredList$ | async; trackBy: trackByFn" [value]="child">
-        {{ child.label }}
-      </mat-option>
+      <ng-container *ngFor="let child of filteredList$ | async; trackBy: trackByFn">
+        <mat-option [value]="child">
+          <span [class.parent-item]="child.children.length > 0">{{ child.label }}</span>
+        </mat-option>
+        <ng-container *ngIf="child.children.length > 0">
+          <mat-option *ngFor="let subchild of child.children; trackBy: trackByFn" [value]="subchild" class="subchild">
+            {{ subchild.label }}
+          </mat-option>
+        </ng-container>
+      </ng-container>
     </mat-select>
   </mat-form-field>`,
   styleUrls: ['./property-form-list-value.component.scss'],
@@ -54,7 +61,9 @@ export class PropertyFormListValueComponent implements AfterViewInit, OnDestroy 
   filteredList$: ReplaySubject<ListNodeV2[]> = new ReplaySubject<ListNodeV2[]>(1);
 
   get sortedLabelList(): ListNodeV2[] | undefined {
-    return this.list?.children.sort((a, b) => a.label.localeCompare(b.label));
+    return this.list?.children
+      .flatMap(parent => [parent, ...(parent.children ?? [])])
+      .sort((a, b) => a.label.localeCompare(b.label));
   }
 
   ngAfterViewInit(): void {
