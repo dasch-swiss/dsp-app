@@ -37,6 +37,8 @@ Supported file types: **jpeg**, **jp2**, **jpg**, **tiff**, **tif**, **png**
 
 In a resource of type "still image", you're able to draw regions on the image and annotate this region. Usually, a still image resource is used for book pages, photographs, postcards, letters, etc.
 
+Images can be uploaded directly from your local computer folder or via an external IIIF URL.
+
 When you open a resource that contains an image, it is displayed in a viewer. Several functionalities are accessible from the image viewer, e.g. zoom in/out, copy the IIIF link, replace the image or draw a region on the image.
 
 ![Image viewer](../../assets/images/image-file.png)
@@ -162,6 +164,13 @@ You edit your value by changing the text content, searching for another resource
 ![Add a new linked resource value.](../../assets/images/edit-value-steps.png)
 
 It is the same process to add, edit or delete a comment to the value.
+
+### Edit an image file
+
+To replace an image file, open the menu on the left side of the image viewer toolbar. Click on the `Replace File` button (if the image was uploaded from a local computer folder) or `Replace External File URL` (if the image was sourced from an external IIIF URL). Then, replace the file or URL and save your changes.
+
+![Replace an image file.](../../assets/images/edit-uploaded-image.png)
+
 
 ---
 

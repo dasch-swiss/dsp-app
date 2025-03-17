@@ -20,3 +20,20 @@ Fill in the form and upload the file if requested (depending on the type of reso
 ![Create a new resource instance e.g. a new book](../../assets/images/new-resource-form.png)*Create a new resource instance e.g. a book*
 
 > Please, note that the image, video, and audio files must be in one of the required file types supported by the database. The supported types are listed in the upload section of the form.
+
+#### Create an image resource
+
+When creating a new resource of type Still-Image, you have two options to proceed:
+
+OPTION 1 (tab 1): Upload Image
+
+You can either select an image from your local computer folder or drag and drop it directly into the upload section. After that, fill in the required properties below and save to create the image resource.
+
+![Upload an image](../../assets/images/create-new-upload-image.png)*Upload an image from your local computer folder*
+
+OPTION 2 (tab 2): External IIIF URL
+
+You copy and paste a valid external IIIF URL in the field, then, fill in the required properties and save to create the image resource.
+
+![External IIIF URL](../../assets/images/create-new-external-iiif-url.png)*Specify an external IIIF URL*
+
