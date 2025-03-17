@@ -12,7 +12,7 @@ import { SearchParams } from '../search-params.interface';
 })
 export class HeaderComponent {
   session = false;
-  searchParams: SearchParams;
+  searchParams?: SearchParams;
   helpLink = RouteConstants.help;
 
   dsp: DspConfig;

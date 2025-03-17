@@ -26,9 +26,9 @@ import { ResourceUtil } from '../resource.util';
   styleUrls: ['./archive.component.scss'],
 })
 export class ArchiveComponent implements OnChanges {
-  @Input() src: FileRepresentation;
-  @Input() parentResource: ReadResource;
-  originalFilename: string;
+  @Input({ required: true }) src!: FileRepresentation;
+  @Input({ required: true }) parentResource!: ReadResource;
+  originalFilename?: string;
 
   failedToLoad = false;
 

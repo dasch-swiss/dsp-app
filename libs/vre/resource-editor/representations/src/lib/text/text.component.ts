@@ -26,10 +26,10 @@ import { ResourceUtil } from '../resource.util';
   styleUrls: ['./text.component.scss'],
 })
 export class TextComponent implements OnChanges {
-  @Input() src: FileRepresentation;
-  @Input() parentResource: ReadResource;
+  @Input({ required: true }) src!: FileRepresentation;
+  @Input({ required: true }) parentResource!: ReadResource;
 
-  originalFilename: string;
+  originalFilename?: string;
 
   failedToLoad = false;
 

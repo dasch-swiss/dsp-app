@@ -20,7 +20,7 @@ export class CkEditorComponent implements OnInit {
     this.footnoteControl.setValue(this.control.value ? this._parseToFootnote(this.control.value) : null);
 
     this.footnoteControl.valueChanges.subscribe(value => {
-      this.control.setValue(this._parseFromFootnote(value));
+      this.control.setValue(value ? this._parseFromFootnote(value) : '');
     });
   }
 

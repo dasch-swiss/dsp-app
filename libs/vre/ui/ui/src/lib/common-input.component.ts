@@ -28,8 +28,8 @@ import { FormControl } from '@angular/forms';
   styles: [':host { display: block;}'],
 })
 export class CommonInputComponent {
-  @Input({ required: true }) control: FormControl<string | number>;
-  @Input({ required: true }) label: string;
+  @Input({ required: true }) control!: FormControl<string | number>;
+  @Input({ required: true }) label!: string;
   @Input() prefixIcon: string | null = null;
   @Input() validatorErrors: { errorKey: string; message: string }[] | null = null;
   @Input() type: 'number' | 'text' = 'text';

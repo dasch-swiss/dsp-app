@@ -22,7 +22,7 @@ import { PropertyForm } from '../property-form.type';
   styles: ['.large-field {width: 100%}'],
 })
 export class GuiAttrListComponent {
-  @Input() control!: PropertyForm['controls']['guiAttr'];
+  @Input({ required: true }) control!: PropertyForm['controls']['guiAttr'];
   lists$ = this._store.select(ListsSelectors.listsInProject);
 
   constructor(private _store: Store) {}

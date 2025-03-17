@@ -28,8 +28,8 @@ import { MatChipInputEvent } from '@angular/material/chips';
   `,
 })
 export class ChipListInputComponent {
-  @Input() formArray: FormArray<FormControl<string>>;
-  @Input() validators: ValidatorFn[];
+  @Input({ required: true }) formArray!: FormArray<FormControl<string>>;
+  @Input({ required: true }) validators!: ValidatorFn[];
 
   separatorKeyCodes = [ENTER, COMMA];
   addChipFormError: ValidationErrors | null = null;

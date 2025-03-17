@@ -1,11 +1,11 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {
+  ApiResponseError,
   Constants,
   DeleteResourcePropertyComment,
   KnoraApiConnection,
   ReadOntology,
-  ResourcePropertyDefinitionWithAllLanguages,
   UpdateOntology,
   UpdateResourcePropertyComment,
   UpdateResourcePropertyGuiElement,
@@ -13,11 +13,12 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { StringLiteralV2 } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
+import { JsLibParsedError } from '@dasch-swiss/vre/core/error-handler';
 import { SetCurrentOntologyAction } from '@dasch-swiss/vre/core/state';
 import { DefaultProperties, PropertyInfoObject } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { Store } from '@ngxs/store';
-import { switchMap, tap } from 'rxjs/operators';
+import { switchMap } from 'rxjs/operators';
 import { PropertyForm } from '../property-form.type';
 
 export interface EditPropertyFormDialogProps {
@@ -57,7 +58,7 @@ export interface EditPropertyFormDialogProps {
 })
 export class EditPropertyFormDialogComponent implements OnInit {
   loading = false;
-  form: PropertyForm;
+  form!: PropertyForm;
 
   ontology = this.data.ontology;
   lastModificationDate = this.data.lastModificationDate;
@@ -88,7 +89,10 @@ export class EditPropertyFormDialogComponent implements OnInit {
     this._dspApiConnection.v2.onto
       .updateResourceProperty(onto4Label)
       .pipe(
-        switchMap((propertyLabelResponse: ResourcePropertyDefinitionWithAllLanguages) => {
+        switchMap(propertyLabelResponse => {
+          if (propertyLabelResponse instanceof ApiResponseError) {
+            throw new JsLibParsedError();
+          }
           const onto4Comment = this.getUpdateOntologyForPropertyComment();
 
           this.lastModificationDate = propertyLabelResponse.lastModificationDate;
@@ -96,29 +100,25 @@ export class EditPropertyFormDialogComponent implements OnInit {
 
           if (onto4Comment.entity.comments.length) {
             // if the comments array is not empty, send a request to update the comments
-            return this._dspApiConnection.v2.onto.updateResourceProperty(onto4Comment).pipe(
-              tap((propertyCommentResponse: ResourcePropertyDefinitionWithAllLanguages) => {
-                this.lastModificationDate = propertyCommentResponse.lastModificationDate;
-
-                this.final();
-              })
-            );
+            return this._dspApiConnection.v2.onto.updateResourceProperty(onto4Comment);
           } else {
             // if the comments array is empty, send a request to remove the comments
             const deleteResourcePropertyComment = new DeleteResourcePropertyComment();
             deleteResourcePropertyComment.id = this.propertyInfo.propDef.id;
             deleteResourcePropertyComment.lastModificationDate = this.lastModificationDate;
 
-            return this._dspApiConnection.v2.onto.deleteResourcePropertyComment(deleteResourcePropertyComment).pipe(
-              tap((deleteCommentResponse: ResourcePropertyDefinitionWithAllLanguages) => {
-                this.lastModificationDate = deleteCommentResponse.lastModificationDate;
-                this.final();
-              })
-            );
+            return this._dspApiConnection.v2.onto.deleteResourcePropertyComment(deleteResourcePropertyComment);
           }
         })
       )
-      .subscribe(() => {
+      .subscribe(propertyCommentResponse => {
+        if (propertyCommentResponse instanceof ApiResponseError) {
+          throw new JsLibParsedError();
+        }
+
+        this.lastModificationDate = propertyCommentResponse.lastModificationDate;
+        this.final();
+
         this.ontology.lastModificationDate = this.lastModificationDate;
         this._store.dispatch(new SetCurrentOntologyAction(this.ontology));
       });
@@ -170,12 +170,14 @@ export class EditPropertyFormDialogComponent implements OnInit {
 
     onto4guiEle.entity = updateGuiEle;
 
-    this._dspApiConnection.v2.onto
-      .replaceGuiElementOfProperty(onto4guiEle)
-      .subscribe((guiEleResponse: ResourcePropertyDefinitionWithAllLanguages) => {
-        this.lastModificationDate = guiEleResponse.lastModificationDate;
-        this.onSuccess();
-      });
+    this._dspApiConnection.v2.onto.replaceGuiElementOfProperty(onto4guiEle).subscribe(guiEleResponse => {
+      if (guiEleResponse instanceof ApiResponseError) {
+        throw new JsLibParsedError();
+      }
+
+      this.lastModificationDate = guiEleResponse.lastModificationDate;
+      this.onSuccess();
+    });
   }
 
   private setGuiAttribute(guiAttr: string): string[] {
