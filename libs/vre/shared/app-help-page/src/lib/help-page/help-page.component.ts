@@ -69,7 +69,7 @@ export class HelpPageComponent implements OnInit {
     {
       title: 'Need more help?',
       text: 'Have you had some issues by using our software? Let us know and get in contact with the developers:',
-      url: 'mailto:support@dasch.swiss?subject=DSP-APP request | ',
+      url: encodeURI('mailto:support@dasch.swiss?subject=DSP-APP request | '),
       urlText: 'Contact us',
     },
     {
