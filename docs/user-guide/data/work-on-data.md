@@ -126,7 +126,9 @@ If your property is linked to another resource, you can search for an existing v
 
 ![Add a new linked resource value.](../../assets/images/add-new-resource-value.png)
 
-### Add an image region
+### Add an annotation
+
+#### Image
 
 To create a new region on an image, you click on the icon `Draw a region` in the toolbar, then draw the desired square region you want on the image.
 
@@ -140,6 +142,41 @@ Enter the information about the region and an informative label. You may also ad
 The new region information is displayed after the image viewer. You can edit or delete if you have the granted permissions. A region has also an AKR URL you can copy and share.
 
 ![Region created.](../../assets/images/region_new_annotation.png)*A new region has been created.*
+
+#### Video segment
+
+To create a video segment, you click on the icon `Create a segment` in the video player toolbar.
+
+![Create a video segment.](../../assets/images/video-create-a-segment.png)*Create a new video segment.*
+
+Fill in the form `Create a segment` by indicating at least the required fields: label, start (time), end (time), and submit to create your new video segment.
+
+![Form Create a segment.](../../assets/images/video-form-new-segment.png)*Form to create a video segment.*
+
+New segments are displayed within the `Segments` tab, where you can view all the details for each segment.
+
+Below the video scrubber in the player toolbar, all segments are also shown and are clickable, allowing you to jump to and play each segment. The corresponding data for each segment will be highlighted below the video player by clicking on the down arrow button.
+
+![Display segments.](../../assets/images/video-display-segment.png)*Video segments display in DSP-APP.*
+
+You can edit or delete a segment or a property of a segment if you have the granted permissions. A segment has also an AKR URL you can copy and share.
+
+#### Audio segment
+
+To create an audio segment, you click on the icon `Create a segment` in the audio player toolbar.
+
+![Create an audio segment.](../../assets/images/audio-create-a-segment.png)*Create a new audio segment.*
+
+Fill in the form `Create a segment` by indicating at least the required fields: label, start (time), end (time), and submit to create your new audio segment.
+
+New segments are displayed within the `Segments` tab, where you can view all the details for each segment.
+
+Below the audio scrubber in the player toolbar, all segments are also shown and are clickable, allowing you to jump to and play each segment. The corresponding data for each segment will be highlighted below the audio player by clicking on the down arrow button.
+
+![Display segments.](../../assets/images/audio-display-segment.png)*Audio segments display in DSP-APP.*
+
+You can edit or delete a segment or a property of a segment if you have the granted permissions. A segment has also an AKR URL you can copy and share.
+
 
 ---
 
@@ -164,6 +201,12 @@ You edit your value by changing the text content, searching for another resource
 ![Add a new linked resource value.](../../assets/images/edit-value-steps.png)
 
 It is the same process to add, edit or delete a comment to the value.
+
+### Edit an annotation
+
+For any type of annotation (image, video segment, audio segment), you can edit the annotation label and the property values.
+
+![Edit an annotation label](../../assets/images/edit-annotation.png)*Edit an annotation label, here it is an audio segment label.*
 
 ### Edit an image file
 
