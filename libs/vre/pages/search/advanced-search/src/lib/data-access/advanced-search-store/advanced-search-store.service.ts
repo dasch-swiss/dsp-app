@@ -657,7 +657,11 @@ export class AdvancedSearchStoreService extends ComponentStore<AdvancedSearchSta
   }
 
   onSearch(): string {
-    const ontoIri = this.get(state => state.ontologies)[0].iri;
+    if (!this.get(state => state.selectedOntology)) {
+      throw new Error('Ontology is not selected');
+    }
+
+    const ontoIri = this.get(state => state.selectedOntology)!.iri;
     const selectedResourceClass = this.get(state => state.selectedResourceClass);
     const propertyFormList = this.get(state => state.propertyFormList);
     const orderByList = this.get(state => state.propertiesOrderByList);
