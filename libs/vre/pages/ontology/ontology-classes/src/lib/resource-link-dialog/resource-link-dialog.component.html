@@ -3,7 +3,7 @@
 <mat-dialog-content>
   <form
     [formGroup]="form"
-    *ngIf="((isSysAdmin$ | async) === true) || ((usersProjects$ | async)?.length && (isCurrentProjectAdminOrSysAdmin$ | async) === true); else notProjectMember">
+    *ngIf="((isSysAdmin$ | async) === true) || ((usersProjects$ | async)?.length && ((isCurrentProjectAdminOrSysAdmin$ | async) === true || (isCurrentProjectMember$ | async) === true)); else notProjectMember">
     <app-common-input [control]="form.controls.label" label="Collection label" />
 
     <app-ck-editor-control [control]="form.controls.comment" [label]="'Comment'" />
