@@ -1,3 +1,5 @@
+import { Constants } from '@dasch-swiss/dsp-js';
+
 export class ckEditor {
   static config = {
     entities: false,
@@ -57,6 +59,19 @@ export class ckEditor {
       languages: [{ language: 'plaintext', label: 'Plain text', class: '' }],
     },
     language: 'en',
+    link: {
+      addTargetToExternalLinks: false,
+      decorators: {
+        isInternal: {
+          // DO NOT REMOVE THIS.. ADDING THIS CLASS MAKES THE BACKEND KNOW IT'S AN INTERNAL LINK.
+          mode: 'automatic', // automatic requires callback
+          callback: (url: string) => !!url && url.startsWith('http://rdfh.ch/'),
+          attributes: {
+            class: Constants.SalsahLink,
+          },
+        },
+      },
+    },
     table: {
       contentToolbar: ['tableColumn', 'tableRow'], // mergeTableCells is not supported by the backend due to colspan html tag mapping.
     },
