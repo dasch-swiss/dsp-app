@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@angular/core';
-import { ApiResponseError, CountQueryResponse, KnoraApiConnection } from '@dasch-swiss/dsp-js';
+import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { Action, State, StateContext } from '@ngxs/store';
-import { finalize, map, take, tap } from 'rxjs/operators';
+import { finalize, take, tap } from 'rxjs/operators';
 import { ClearOntologyClassAction, LoadClassItemsCountAction } from './ontology-class.actions';
 import { OntologyClassStateModel } from './ontology-class.state-model';
 
@@ -35,9 +35,8 @@ export class OntologyClassState {
 
     return this._dspApiConnection.v2.search.doExtendedSearchCountQuery(gravsearch).pipe(
       take(1),
-      map((response: CountQueryResponse | ApiResponseError) => response as CountQueryResponse),
       tap({
-        next: (countQueryResponse: CountQueryResponse) => {
+        next: countQueryResponse => {
           const classItems = ctx.getState().classItems;
           if (!classItems || !classItems[resClassId]) {
             classItems[resClassId] = { ontologyIri, classItemsCount: countQueryResponse.numberOfResults };

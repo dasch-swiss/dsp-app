@@ -10,7 +10,7 @@ import {
   ViewChild,
   ViewContainerRef,
 } from '@angular/core';
-import { ActivatedRoute, Params, Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { SearchParams } from '@dasch-swiss/vre/shared/app-common-to-move';
 
 @Component({
@@ -71,7 +71,7 @@ export class SearchPanelComponent {
   ) {}
 
   routeToAdvancedSearch() {
-    this._route.firstChild.paramMap.subscribe((params: Params) => {
+    this._route.firstChild.paramMap.subscribe(params => {
       const uuid = params.get('uuid');
 
       const navigationExtras = {

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { ApiResponseError, CanDoResponse, Cardinality, Constants, KnoraApiConnection } from '@dasch-swiss/dsp-js';
+import { Cardinality, Constants, KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { PropertyInfoObject } from '@dasch-swiss/vre/shared/app-helper-services';
 import { take } from 'rxjs/operators';
@@ -123,14 +123,12 @@ export class CardinalityChangeDialogComponent implements OnInit {
         this.data.targetCardinality
       )
       .pipe(take(1))
-      .subscribe((response: CanDoResponse | ApiResponseError) => {
-        if (response instanceof CanDoResponse) {
-          this.canSetCardinality = response.canDo;
-          if (!this.canSetCardinality) {
-            this.canNotSetCardinalityUiReason = this.getCanNotSetCardinalityReason(response.cannotDoReason);
-          }
-          this._cdr.markForCheck();
+      .subscribe(response => {
+        this.canSetCardinality = response.canDo;
+        if (!this.canSetCardinality) {
+          this.canNotSetCardinalityUiReason = this.getCanNotSetCardinalityReason(response.cannotDoReason);
         }
+        this._cdr.markForCheck();
       });
   }
 

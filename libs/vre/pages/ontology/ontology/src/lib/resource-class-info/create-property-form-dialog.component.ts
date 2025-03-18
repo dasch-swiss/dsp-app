@@ -71,7 +71,7 @@ export class CreatePropertyFormDialogComponent implements OnInit {
     this._dspApiConnection.v2.onto
       .createResourceProperty(this.getOntologyForNewProperty())
       .pipe(
-        switchMap((response: ResourcePropertyDefinitionWithAllLanguages) => this.assignProperty(response)),
+        switchMap(response => this.assignProperty(response)),
         finalize(() => {
           this.loading = false;
         })

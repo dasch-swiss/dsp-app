@@ -207,8 +207,8 @@ export class PropertyValueComponent implements OnInit {
           this.propertyValueService.toggleOpenedValue(this.index);
           this._cdr.detectChanges();
         },
-        (e: ApiResponseError) => {
-          if (e.status === 400) {
+        e => {
+          if (e instanceof ApiResponseError && e.status === 400) {
             this._notification.openSnackBar('The value entered already exists.');
             return;
           }

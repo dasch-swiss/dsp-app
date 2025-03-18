@@ -64,8 +64,8 @@ export class IncomingLinksPropertyComponent implements OnChanges {
 
     return this._incomingService.getIncomingLinksForResource(resourceId, offset).pipe(
       expand(sequence => {
-        if (!(sequence as ReadResourceSequence).mayHaveMoreResults) {
-          return of(sequence as ReadResourceSequence);
+        if (!sequence.mayHaveMoreResults) {
+          return of(sequence);
         }
 
         offset += 1;

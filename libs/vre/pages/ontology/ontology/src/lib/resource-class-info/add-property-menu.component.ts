@@ -220,7 +220,7 @@ export class AddPropertyMenuComponent {
 
         let propType: DefaultProperty;
         // find corresponding default property to have more prop info
-        this._ontoService.getDefaultPropType(availableProp).subscribe((prop: DefaultProperty) => {
+        this._ontoService.getDefaultPropType(availableProp).subscribe(prop => {
           propType = prop;
         });
 

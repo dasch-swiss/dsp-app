@@ -10,7 +10,6 @@ import {
   Output,
 } from '@angular/core';
 import {
-  CanDoResponse,
   Constants,
   KnoraApiConnection,
   PropertyDefinition,
@@ -213,11 +212,9 @@ export class ResourceClassInfoComponent implements OnInit, OnDestroy {
 
   canBeDeleted() {
     // check if the class can be deleted
-    this._dspApiConnection.v2.onto
-      .canDeleteResourceClass(this.resourceClass.id)
-      .subscribe((response: CanDoResponse) => {
-        this.classCanBeDeleted = response.canDo;
-      });
+    this._dspApiConnection.v2.onto.canDeleteResourceClass(this.resourceClass.id).subscribe(response => {
+      this.classCanBeDeleted = response.canDo;
+    });
   }
 
   /**

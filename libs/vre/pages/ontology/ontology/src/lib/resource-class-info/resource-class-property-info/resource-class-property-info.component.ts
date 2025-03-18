@@ -10,7 +10,6 @@ import {
   Output,
 } from '@angular/core';
 import {
-  CanDoResponse,
   Cardinality,
   ClassDefinition,
   Constants,
@@ -81,7 +80,7 @@ export class ResourceClassPropertyInfoComponent implements OnChanges, AfterConte
     }
 
     // get the default property type for this property
-    this._ontoService.getDefaultPropType(this.propDef).subscribe((prop: DefaultProperty) => {
+    this._ontoService.getDefaultPropType(this.propDef).subscribe(prop => {
       this.propType = prop;
     });
   }
@@ -162,7 +161,7 @@ export class ResourceClassPropertyInfoComponent implements OnChanges, AfterConte
     delCard.cardinalities = [this.propCard];
     onto.entity = delCard;
 
-    this._dspApiConnection.v2.onto.canDeleteCardinalityFromResourceClass(onto).subscribe((canDoRes: CanDoResponse) => {
+    this._dspApiConnection.v2.onto.canDeleteCardinalityFromResourceClass(onto).subscribe(canDoRes => {
       this.propCanBeRemovedFromClass = canDoRes.canDo;
       this._cd.markForCheck();
     });

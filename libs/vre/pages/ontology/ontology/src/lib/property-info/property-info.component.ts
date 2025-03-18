@@ -1,8 +1,6 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
 import {
-  ApiResponseError,
-  CanDoResponse,
   Constants,
   KnoraApiConnection,
   ReadOntology,
@@ -154,13 +152,9 @@ export class PropertyInfoComponent implements OnInit {
   trackByFn = (index: number, item: ShortInfo) => item.id;
 
   canBeDeleted(): void {
-    this._dspApiConnection.v2.onto
-      .canDeleteResourceProperty(this.propDef.id)
-      .subscribe((canDoRes: CanDoResponse | ApiResponseError) => {
-        if (canDoRes instanceof CanDoResponse) {
-          this.propCanBeDeleted = canDoRes.canDo;
-        }
-      });
+    this._dspApiConnection.v2.onto.canDeleteResourceProperty(this.propDef.id).subscribe(canDoRes => {
+      this.propCanBeDeleted = canDoRes.canDo;
+    });
   }
 
   mouseEnter() {

@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { ReadResourceSequence } from '@dasch-swiss/dsp-js';
 import { DspResource, GenerateProperty } from '@dasch-swiss/vre/shared/app-common';
 import { IncomingService } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { BehaviorSubject, Subject } from 'rxjs';
@@ -52,7 +51,7 @@ export class RegionService {
     const offset = 0;
     return this._incomingService.getIncomingRegions(resourceId, offset).pipe(
       map(regions =>
-        (regions as ReadResourceSequence).resources.map(_resource => {
+        regions.resources.map(_resource => {
           const z = new DspResource(_resource);
           z.resProps = GenerateProperty.regionProperty(_resource);
           return z;

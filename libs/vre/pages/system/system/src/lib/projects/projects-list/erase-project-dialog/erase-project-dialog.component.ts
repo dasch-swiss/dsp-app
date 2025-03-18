@@ -1,12 +1,12 @@
 import { Component, Inject } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { KnoraApiConnection, ProjectResponse, ReadProject } from '@dasch-swiss/dsp-js';
+import { KnoraApiConnection, ReadProject } from '@dasch-swiss/dsp-js';
 import { ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { Store } from '@ngxs/store';
 import { of } from 'rxjs';
-import { catchError, filter, finalize, switchMap } from 'rxjs/operators';
+import { catchError, finalize, switchMap } from 'rxjs/operators';
 
 export interface IEraseProjectDialogProps {
   project: ReadProject;
@@ -72,10 +72,10 @@ export class EraseProjectDialogComponent {
       .pipe(
         finalize(() => {
           this.isLoading = false;
-        }),
-        filter(result => !!result)
+        })
       )
-      .subscribe((response: ProjectResponse) => {
+      .subscribe(response => {
+        if (!response) return;
         this._dialogRef.close(response.project);
       });
   }

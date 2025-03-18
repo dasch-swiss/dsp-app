@@ -1,10 +1,4 @@
-import {
-  Constants,
-  IHasPropertyWithPropertyDefinition,
-  ReadLinkValue,
-  ReadResource,
-  ReadStillImageFileValue,
-} from '@dasch-swiss/dsp-js';
+import { Constants, ReadLinkValue, ReadResource, ReadStillImageFileValue } from '@dasch-swiss/dsp-js';
 import { ApiConstants } from '@dasch-swiss/vre/core/config';
 import { PropertyInfoValues } from './property-info-values.interface';
 
@@ -39,30 +33,28 @@ export class GenerateProperty {
   }
 
   private static _initProps(resource: ReadResource): PropertyInfoValues[] {
-    let props = resource.entityInfo.classes[resource.type]
-      .getResourcePropertiesList()
-      .map((prop: IHasPropertyWithPropertyDefinition) => {
-        let propInfoAndValues: PropertyInfoValues;
+    let props = resource.entityInfo.classes[resource.type].getResourcePropertiesList().map(prop => {
+      let propInfoAndValues: PropertyInfoValues;
 
-        switch (prop.propertyDefinition.objectType) {
-          case Constants.StillImageFileValue:
-            propInfoAndValues = {
-              propDef: prop.propertyDefinition,
-              guiDef: prop,
-              values: resource.getValuesAs(prop.propertyIndex, ReadStillImageFileValue),
-            };
-            break;
+      switch (prop.propertyDefinition.objectType) {
+        case Constants.StillImageFileValue:
+          propInfoAndValues = {
+            propDef: prop.propertyDefinition,
+            guiDef: prop,
+            values: resource.getValuesAs(prop.propertyIndex, ReadStillImageFileValue),
+          };
+          break;
 
-          default:
-            // the object type is none from above
-            propInfoAndValues = {
-              propDef: prop.propertyDefinition,
-              guiDef: prop,
-              values: resource.getValues(prop.propertyIndex),
-            };
-        }
-        return propInfoAndValues;
-      });
+        default:
+          // the object type is none from above
+          propInfoAndValues = {
+            propDef: prop.propertyDefinition,
+            guiDef: prop,
+            values: resource.getValues(prop.propertyIndex),
+          };
+      }
+      return propInfoAndValues;
+    });
 
     // sort properties by guiOrder
     props = props

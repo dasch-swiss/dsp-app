@@ -245,8 +245,8 @@ export class PasswordFormComponent implements OnInit {
         this.form.reset();
         this.loading = false;
       },
-      (error: ApiResponseError) => {
-        if (error.status === 403) {
+      error => {
+        if (error instanceof ApiResponseError && error.status === 403) {
           // incorrect old password
           this.form.controls.requesterPassword.setErrors({
             incorrectPassword: true,

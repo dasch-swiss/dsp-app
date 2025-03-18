@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { ActivatedRoute, Params, Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Constants, ReadProject, ReadUser } from '@dasch-swiss/dsp-js';
 import { PermissionsData } from '@dasch-swiss/dsp-js/src/models/admin/permissions-data';
 import { UserApiService } from '@dasch-swiss/vre/3rd-party-services/api';
@@ -127,7 +127,7 @@ export class UsersListComponent {
     private _userApiService: UserApiService
   ) {
     // get the uuid of the current project
-    this._route.parent?.parent?.paramMap.subscribe((params: Params) => {
+    this._route.parent?.parent?.paramMap.subscribe(params => {
       this.projectUuid = params.get(RouteConstants.uuidParameter);
     });
   }

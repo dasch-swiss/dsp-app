@@ -8,7 +8,6 @@ import {
   CreateResource,
   CreateTextValueAsString,
   KnoraApiConnection,
-  ReadResource,
   StoredProject,
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
@@ -90,7 +89,7 @@ export class ResourceLinkDialogComponent implements OnInit, OnDestroy {
   submitData() {
     const linkObj = this._createPayload();
 
-    this._dspApiConnection.v2.res.createResource(linkObj).subscribe((res: ReadResource) => {
+    this._dspApiConnection.v2.res.createResource(linkObj).subscribe(res => {
       const path = this._resourceService.getResourcePath(res.id);
       const goto = `/resource${path}`;
       this._router.navigate([]).then(() => window.open(goto, '_blank'));

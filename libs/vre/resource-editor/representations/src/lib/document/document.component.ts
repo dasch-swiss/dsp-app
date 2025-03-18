@@ -122,7 +122,7 @@ export class DocumentComponent implements OnChanges {
         ),
         take(1)
       )
-      .subscribe((fileValue: ReadResource) => {
+      .subscribe(fileValue => {
         this.parentResource = fileValue;
         this.src.fileValue.fileUrl = (
           fileValue.properties[Constants.HasDocumentFileValue][0] as ReadDocumentFileValue

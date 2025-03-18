@@ -90,9 +90,6 @@ export class EditPropertyFormDialogComponent implements OnInit {
       .updateResourceProperty(onto4Label)
       .pipe(
         switchMap(propertyLabelResponse => {
-          if (propertyLabelResponse instanceof ApiResponseError) {
-            throw new JsLibParsedError();
-          }
           const onto4Comment = this.getUpdateOntologyForPropertyComment();
 
           this.lastModificationDate = propertyLabelResponse.lastModificationDate;
@@ -171,10 +168,6 @@ export class EditPropertyFormDialogComponent implements OnInit {
     onto4guiEle.entity = updateGuiEle;
 
     this._dspApiConnection.v2.onto.replaceGuiElementOfProperty(onto4guiEle).subscribe(guiEleResponse => {
-      if (guiEleResponse instanceof ApiResponseError) {
-        throw new JsLibParsedError();
-      }
-
       this.lastModificationDate = guiEleResponse.lastModificationDate;
       this.onSuccess();
     });

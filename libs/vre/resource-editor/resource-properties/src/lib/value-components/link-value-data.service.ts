@@ -2,7 +2,6 @@ import { Inject, Injectable } from '@angular/core';
 import {
   Constants,
   KnoraApiConnection,
-  ReadOntology,
   ReadResource,
   ResourceClassDefinition,
   ResourcePropertyDefinition,
@@ -33,35 +32,31 @@ export class LinkValueDataService {
 
     this.currentOntoIri = currentOntoIri;
 
-    this._dspApiConnection.v2.ontologyCache
-      .getOntology(this.currentOntoIri)
-      .subscribe((ontoMap: Map<string, ReadOntology>) => {
-        // filter out knorabase ontology
-        const filteredOntoMap = new Map(Array.from(ontoMap).filter(([key]) => key !== Constants.KnoraApiV2));
+    this._dspApiConnection.v2.ontologyCache.getOntology(this.currentOntoIri).subscribe(ontoMap => {
+      // filter out knorabase ontology
+      const filteredOntoMap = new Map(Array.from(ontoMap).filter(([key]) => key !== Constants.KnoraApiV2));
 
-        let resClasses: ResourceClassDefinition[] = [];
+      let resClasses: ResourceClassDefinition[] = [];
 
-        // loop through each ontology in the project and create an array of ResourceClassDefinitions
-        filteredOntoMap.forEach(onto => {
-          resClasses = resClasses.concat(
-            filteredOntoMap.get(onto.id)?.getClassDefinitionsByType(ResourceClassDefinition) ?? []
-          );
-        });
-
-        // add the superclass to the list of resource classes
-        this.resourceClasses = resClasses.filter(
-          (resClassDef: ResourceClassDefinition) => resClassDef.id === this.restrictToResourceClass
+      // loop through each ontology in the project and create an array of ResourceClassDefinitions
+      filteredOntoMap.forEach(onto => {
+        resClasses = resClasses.concat(
+          filteredOntoMap.get(onto.id)?.getClassDefinitionsByType(ResourceClassDefinition) ?? []
         );
-
-        // recursively loop through all of the superclass's subclasses, including nested subclasses
-        // and add them to the list of resource classes
-        this.resourceClasses = this.resourceClasses.concat(
-          this._getSubclasses(resClasses, this.restrictToResourceClass)
-        );
-
-        this.properties =
-          filteredOntoMap.get(this.currentOntoIri)?.getPropertyDefinitionsByType(ResourcePropertyDefinition) ?? [];
       });
+
+      // add the superclass to the list of resource classes
+      this.resourceClasses = resClasses.filter(
+        (resClassDef: ResourceClassDefinition) => resClassDef.id === this.restrictToResourceClass
+      );
+
+      // recursively loop through all of the superclass's subclasses, including nested subclasses
+      // and add them to the list of resource classes
+      this.resourceClasses = this.resourceClasses.concat(this._getSubclasses(resClasses, this.restrictToResourceClass));
+
+      this.properties =
+        filteredOntoMap.get(this.currentOntoIri)?.getPropertyDefinitionsByType(ResourcePropertyDefinition) ?? [];
+    });
   }
 
   /**

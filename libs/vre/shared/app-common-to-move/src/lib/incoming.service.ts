@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@angular/core';
-import { ApiResponseError, CountQueryResponse, KnoraApiConnection, ReadResourceSequence } from '@dasch-swiss/dsp-js';
+import { CountQueryResponse, KnoraApiConnection, ReadResourceSequence } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { Observable } from 'rxjs';
 
@@ -22,9 +22,8 @@ export class IncomingService {
    *
    * @param {string} resourceIRI the Iri of the resource whose Incoming regions should be returned.
    * @param {number} offset the offset to be used for paging. 0 is the default and is used to get the first page of results.
-   * @returns {Observable<any>}
    */
-  getIncomingRegions(resourceIRI: string, offset: number): Observable<ReadResourceSequence | ApiResponseError> {
+  getIncomingRegions(resourceIRI: string, offset: number) {
     const sparqlQueryStr = `
 PREFIX knora-api: <http://api.knora.org/ontology/knora-api/simple/v2#>
 
@@ -79,13 +78,12 @@ knora-api:hasColor knora-api:objectType knora-api:Color .
    * @param {string} resourceIri the Iri of the resource whose StillImageRepresentations should be returned.
    * @param {number} offset the offset to be used for paging. 0 is the default and is used to get the first page of results.
    * @param {boolean} countQuery if set to true, the request returns only the CountQueryResponse; default value is `false`
-   * @returns {Observable<any>}
    */
   getStillImageRepresentationsForCompoundResource(
     resourceIri: string,
     offset: number,
     countQuery = false
-  ): Observable<ReadResourceSequence | CountQueryResponse | ApiResponseError> {
+  ): Observable<CountQueryResponse | ReadResourceSequence> {
     const sparqlQueryStr = `
 PREFIX knora-api: <http://api.knora.org/ontology/knora-api/simple/v2#>
 
@@ -135,12 +133,8 @@ OFFSET ${offset}
    *
    * @param {string} resourceIri the Iri of the resource whose incoming links should be returned.
    * @param {number} offset the offset to be used for paging. 0 is the default and is used to get the first page of results.
-   * @returns {Observable<any>}
    */
-  getIncomingLinksForResource(
-    resourceIri: string,
-    offset: number
-  ): Observable<ReadResourceSequence | ApiResponseError> {
+  getIncomingLinksForResource(resourceIri: string, offset: number) {
     const sparqlQueryStr = `
 PREFIX knora-api: <http://api.knora.org/ontology/knora-api/simple/v2#>
 
@@ -184,13 +178,8 @@ FILTER NOT EXISTS {
    * @param {string} resourceIri the Iri of the resource whose incoming links should be returned.
    * @param {number} offset the offset to be used for paging. 0 is the default and is used to get the first page of results.
    * @param {boolean} countQuery if set to true, the request returns only the CountQueryResponse; default value is `false`
-   * @returns {Observable<any>}
    */
-  getIncomingLinks(
-    resourceIri: string,
-    offset: number,
-    countQuery = false
-  ): Observable<ReadResourceSequence | CountQueryResponse | ApiResponseError> {
+  getIncomingLinks(resourceIri: string, offset: number, countQuery = false) {
     const sparqlQueryStr = `
 PREFIX knora-api: <http://api.knora.org/ontology/knora-api/simple/v2#>
 

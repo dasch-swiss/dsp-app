@@ -1,15 +1,11 @@
 import { Inject, Injectable } from '@angular/core';
 import {
   ApiResponseError,
-  CanDoResponse,
   Constants,
   IHasProperty,
   KnoraApiConnection,
-  OntologiesMetadata,
-  OntologyMetadata,
   PropertyDefinition,
   ReadOntology,
-  ResourceClassDefinitionWithAllLanguages,
   UpdateOntology,
   UpdateResourceClassCardinality,
 } from '@dasch-swiss/dsp-js';
@@ -113,9 +109,8 @@ export class OntologiesState {
     // get all project ontologies
     return this._dspApiConnection.v2.onto.getOntologiesByProjectIri(projectIri).pipe(
       take(1),
-      map((response: OntologiesMetadata | ApiResponseError) => response as OntologiesMetadata),
       tap({
-        next: (ontoMeta: OntologiesMetadata) => {
+        next: ontoMeta => {
           if (!ontoMeta.ontologies.length) {
             ctx.dispatch(new LoadListsInProjectAction(projectIri));
             ctx.patchState({ isLoading: false });
@@ -178,9 +173,8 @@ export class OntologiesState {
     ctx.patchState({ isLoading: true });
     return this._dspApiConnection.v2.onto.getOntology(ontologyIri, true).pipe(
       take(1),
-      map((response: ReadOntology | ApiResponseError) => response as ReadOntology),
       tap({
-        next: (ontology: ReadOntology) => {
+        next: ontology => {
           const projectIri = this._projectService.uuidToIri(projectUuid);
           let projectOntologiesState = ctx.getState().projectOntologies;
           if (!projectOntologiesState[projectIri]) {
@@ -226,7 +220,6 @@ export class OntologiesState {
     ctx.patchState({ isLoading: true });
     return this._dspApiConnection.v2.onto.updateOntology(ontologyMetadata).pipe(
       take(1),
-      map((response: OntologyMetadata | ApiResponseError) => response as OntologyMetadata),
       tap({
         next: () => {
           const projectIri = this._projectService.uuidToIri(projectUuid);
@@ -322,10 +315,6 @@ export class OntologiesState {
 
     return this._dspApiConnection.v2.onto.deleteCardinalityFromResourceClass(onto).pipe(
       take(1),
-      map(
-        (response: ResourceClassDefinitionWithAllLanguages | ApiResponseError) =>
-          response as ResourceClassDefinitionWithAllLanguages
-      ),
       tap({
         next: () => {
           // ctx.dispatch(new SetCurrentOntologyPropertiesToDisplayAction(currentOntologyPropertiesToDisplay));
@@ -369,10 +358,6 @@ export class OntologiesState {
 
     return this._dspApiConnection.v2.onto.replaceGuiOrderOfCardinalities(onto).pipe(
       take(1),
-      map(
-        (response: ResourceClassDefinitionWithAllLanguages | ApiResponseError) =>
-          response as ResourceClassDefinitionWithAllLanguages
-      ),
       tap({
         // eslint-disable-next-line @typescript-eslint/no-empty-function
         next: () => {},
@@ -393,9 +378,8 @@ export class OntologiesState {
 
     return this._dspApiConnection.v2.onto.canDeleteOntology(state.currentOntology.id).pipe(
       take(1),
-      map((response: CanDoResponse | ApiResponseError) => response as CanDoResponse),
       tap({
-        next: (response: CanDoResponse) => {
+        next: response => {
           ctx.setState({
             ...ctx.getState(),
             isLoading: false,

@@ -1,14 +1,9 @@
 import { Inject, Injectable } from '@angular/core';
 import {
-  ApiResponseError,
   Constants,
-  CountQueryResponse,
   KnoraApiConnection,
   ListNodeV2,
-  OntologiesMetadata,
   ReadOntology,
-  ReadResource,
-  ReadResourceSequence,
   ResourceClassAndPropertyDefinitions,
   ResourceClassDefinition,
   ResourcePropertyDefinition,
@@ -16,7 +11,7 @@ import {
 import { OntologyV2ApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { Observable, of, Subject } from 'rxjs';
-import { catchError, map, switchMap, takeUntil } from 'rxjs/operators';
+import { catchError, map, takeUntil } from 'rxjs/operators';
 
 export interface ApiData {
   iri: string;
@@ -74,18 +69,13 @@ export class AdvancedSearchService {
   // API call to get the list of ontologies within the specified project iri
   ontologiesInProjectList = (projectIri: string): Observable<ApiData[]> =>
     this._dspApiConnection.v2.onto.getOntologiesByProjectIri(projectIri).pipe(
-      map((response: OntologiesMetadata | ApiResponseError) => {
-        if (response instanceof ApiResponseError) {
-          // eslint-disable-next-line @typescript-eslint/no-throw-literal
-          throw response; // caught by catchError operator
-        }
+      map(response => {
         return response.ontologies.map((onto: { id: string; label: string }) => ({
           iri: onto.id,
           label: onto.label,
         }));
       }),
       catchError(err => {
-        this._handleError(err);
         return []; // return an empty array on error
       })
     );
@@ -93,12 +83,7 @@ export class AdvancedSearchService {
   // API call to get the list of resource classes
   resourceClassesList = (ontologyIri: string, restrictToClass?: string): Observable<ApiData[]> =>
     this._dspApiConnection.v2.onto.getOntology(ontologyIri).pipe(
-      map((response: ApiResponseError | ReadOntology) => {
-        if (response instanceof ApiResponseError) {
-          // eslint-disable-next-line @typescript-eslint/no-throw-literal
-          throw response; // caught by catchError operator
-        }
-
+      map(response => {
         let resClasses = response.getClassDefinitionsByType(ResourceClassDefinition);
 
         let resClassesFiltered: ResourceClassDefinition[] = [];
@@ -130,7 +115,6 @@ export class AdvancedSearchService {
           });
       }),
       catchError(err => {
-        this._handleError(err);
         return []; // return an empty array on error
       })
     );
@@ -188,7 +172,6 @@ export class AdvancedSearchService {
           });
       }),
       catchError(err => {
-        this._handleError(err);
         return []; // return an empty array on error
       })
     );
@@ -196,7 +179,7 @@ export class AdvancedSearchService {
   // API call to get the list of properties filtered by resource class
   filteredPropertiesList = (resourceClassIri: string): Observable<PropertyData[]> =>
     this._dspApiConnection.v2.ontologyCache.getResourceClassDefinition(resourceClassIri).pipe(
-      map((onto: ResourceClassAndPropertyDefinitions) => {
+      map(onto => {
         // filter out properties that shouldn't be able to be selected
         // this is a bit different than how the propertiesList method does it
         // because the getResourceClassDefintion method return more props
@@ -207,7 +190,7 @@ export class AdvancedSearchService {
           .sort((a: ResourcePropertyDefinition, b: ResourcePropertyDefinition) =>
             (a.label || '').localeCompare(b.label || '')
           )
-          .map((propDef: ResourcePropertyDefinition) => {
+          .map(propDef => {
             // label can be undefined
             const label = propDef.label || '';
 
@@ -243,7 +226,6 @@ export class AdvancedSearchService {
           });
       }),
       catchError(err => {
-        this._handleError(err);
         return []; // return an empty array on error
       })
     );
@@ -260,15 +242,8 @@ export class AdvancedSearchService {
       })
       .pipe(
         takeUntil(this.cancelPreviousCountRequest$), // Cancel previous request
-        switchMap((response: CountQueryResponse | ApiResponseError) => {
-          if (response instanceof ApiResponseError) {
-            // eslint-disable-next-line @typescript-eslint/no-throw-literal
-            throw response; // caught by catchError operator
-          }
-          return of(response.numberOfResults);
-        }),
+        map(response => response.numberOfResults),
         catchError(err => {
-          this._handleError(err);
           return of(0); // return 0 on error
         })
       );
@@ -286,20 +261,13 @@ export class AdvancedSearchService {
       })
       .pipe(
         takeUntil(this.cancelPreviousSearchRequest$), // Cancel previous request
-        switchMap((response: ReadResourceSequence | ApiResponseError) => {
-          if (response instanceof ApiResponseError) {
-            // eslint-disable-next-line @typescript-eslint/no-throw-literal
-            throw response; // caught by catchError operator
-          }
-          return of(
-            response.resources.map((res: ReadResource) => ({
-              iri: res.id,
-              label: res.label,
-            }))
-          );
-        }),
+        map(response =>
+          response.resources.map(res => ({
+            iri: res.id,
+            label: res.label,
+          }))
+        ),
         catchError(err => {
-          this._handleError(err);
           return of([]); // return an empty array on error wrapped in an observable
         })
       );
@@ -307,16 +275,8 @@ export class AdvancedSearchService {
 
   getList(rootNodeIri: string): Observable<ListNodeV2 | undefined> {
     return this._dspApiConnection.v2.list.getList(rootNodeIri).pipe(
-      map((response: ListNodeV2 | ApiResponseError) => {
-        if (response instanceof ApiResponseError) {
-          // eslint-disable-next-line @typescript-eslint/no-throw-literal
-          throw response; // caught by catchError operator
-        }
-        return response;
-      }),
       catchError(err => {
-        this._handleError(err);
-        return of(undefined); // return undefined on error
+        return of(undefined);
       })
     );
   }
@@ -335,13 +295,5 @@ export class AdvancedSearchService {
           propDef.objectType !== Constants.StillImageFileValue &&
           propDef.objectType !== Constants.TextFileValue
       );
-  }
-
-  private _handleError(error: unknown) {
-    if (error instanceof ApiResponseError) {
-      console.error('API error: ', error);
-    } else {
-      console.error('An error occurred: ', error);
-    }
   }
 }

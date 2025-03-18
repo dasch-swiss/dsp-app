@@ -187,8 +187,8 @@ export class ListViewComponent implements OnChanges, OnInit, OnDestroy {
                 this._cd.markForCheck();
               }
             },
-            (countError: ApiResponseError) => {
-              if (countError.status === 400) {
+            error => {
+              if (error instanceof ApiResponseError && error.status === 400) {
                 this.numberOfAllResults = 0;
               }
               this.loading = false;
@@ -202,7 +202,7 @@ export class ListViewComponent implements OnChanges, OnInit, OnDestroy {
         .doFulltextSearch(this.search.query, index, this.search.filter)
         .pipe(takeUntil(this.ngUnsubscribe))
         .subscribe(
-          (response: ReadResourceSequence) => {
+          response => {
             // if the response does not contain any resources even though the search count is greater than 0,
             // it means that the user does not have the permissions to see anything: emit an empty result
             if (response.resources.length === 0) {
@@ -212,7 +212,7 @@ export class ListViewComponent implements OnChanges, OnInit, OnDestroy {
             this.loading = false;
             this._cd.markForCheck();
           },
-          (error: ApiResponseError) => {
+          error => {
             this.loading = false;
             this.resources = [];
           }
@@ -242,7 +242,7 @@ export class ListViewComponent implements OnChanges, OnInit, OnDestroy {
             .doExtendedSearchCountQuery(this.search.query)
             .pipe(takeUntil(this.ngUnsubscribe))
             .pipe(
-              map((count: CountQueryResponse) => {
+              map(count => {
                 this.numberOfAllResults = count.numberOfResults;
                 if (this.numberOfAllResults === 0) {
                   this._notification.openSnackBar('No resources to display.');

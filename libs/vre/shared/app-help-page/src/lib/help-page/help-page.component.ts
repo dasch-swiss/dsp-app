@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { ApiResponseData, HealthResponse, KnoraApiConnection, VersionResponse } from '@dasch-swiss/dsp-js';
+import { HealthResponse, KnoraApiConnection, VersionResponse } from '@dasch-swiss/dsp-js';
 import { AppConfigService, DspApiConnectionToken, DspConfig } from '@dasch-swiss/vre/core/config';
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import packageJson from '../../../../../../../package.json';
@@ -99,22 +99,20 @@ export class HelpPageComponent implements OnInit {
 
     this.releaseNotesUrl = `https://github.com/dasch-swiss/dsp-das/releases/tag/v${this.appVersion}`;
 
-    this._dspApiConnection.system.versionEndpoint
-      .getVersion()
-      .subscribe((response: ApiResponseData<VersionResponse>) => {
-        this.apiVersion = response.body;
+    this._dspApiConnection.system.versionEndpoint.getVersion().subscribe(response => {
+      this.apiVersion = response.body;
 
-        // set dsp-app version
-        this.tools[0].title += this.appVersion;
-        this.tools[0].url += this.appVersion;
+      // set dsp-app version
+      this.tools[0].title += this.appVersion;
+      this.tools[0].url += this.appVersion;
 
-        // set dsp-api version
-        this.tools[1].title += this.apiVersion.webapi;
-        this.tools[1].url += this.apiVersion.webapi.split('-')[0];
+      // set dsp-api version
+      this.tools[1].title += this.apiVersion.webapi;
+      this.tools[1].url += this.apiVersion.webapi.split('-')[0];
 
-        // set dsp-sipi version
-        this.tools[2].title += this.apiVersion.sipi;
-        this.tools[2].url += this.apiVersion.sipi;
-      });
+      // set dsp-sipi version
+      this.tools[2].title += this.apiVersion.sipi;
+      this.tools[2].url += this.apiVersion.sipi;
+    });
   }
 }

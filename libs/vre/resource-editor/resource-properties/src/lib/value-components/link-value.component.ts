@@ -14,13 +14,10 @@ import { FormControl } from '@angular/forms';
 import { MatAutocomplete, MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { MatDialog } from '@angular/material/dialog';
 import {
-  ApiResponseError,
-  CountQueryResponse,
   KnoraApiConnection,
   ReadProject,
   ReadResource,
   ReadResourceSequence,
-  ResourceClassAndPropertyDefinitions,
   ResourceClassDefinition,
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
@@ -198,10 +195,7 @@ export class LinkValueComponent implements OnInit, AfterViewInit, OnDestroy {
       })
       .pipe(
         takeUntil(this.cancelPreviousCountRequest$),
-        switchMap((response: CountQueryResponse | ApiResponseError) => {
-          const countQuery = response as CountQueryResponse;
-          return of(countQuery.numberOfResults);
-        })
+        map(response => response.numberOfResults)
       );
   }
 
@@ -254,7 +248,7 @@ export class LinkValueComponent implements OnInit, AfterViewInit, OnDestroy {
     this._dspApiConnection.v2.ontologyCache
       .reloadCachedItem(ontologyIri)
       .pipe(switchMap(() => this._dspApiConnection.v2.ontologyCache.getResourceClassDefinition(this.resourceClassIri)))
-      .subscribe((onto: ResourceClassAndPropertyDefinitions) => {
+      .subscribe(onto => {
         const readResource = new ReadResource();
         readResource.entityInfo = onto;
 

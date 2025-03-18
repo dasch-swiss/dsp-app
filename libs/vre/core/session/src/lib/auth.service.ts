@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@angular/core';
-import { ApiResponseData, ApiResponseError, KnoraApiConnection, LoginResponse } from '@dasch-swiss/dsp-js';
+import { ApiResponseError, KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { UserFeedbackError } from '@dasch-swiss/vre/core/error-handler';
 import {
@@ -36,12 +36,7 @@ export class AuthService {
   isCredentialsValid$() {
     return this._dspApiConnection.v2.auth.checkCredentials().pipe(
       take(1),
-      map(response => {
-        if (response instanceof ApiResponseError) {
-          throwError(response);
-        }
-        return true;
-      }),
+      map(() => true),
       catchError(() => {
         return of(false);
       })
@@ -57,7 +52,7 @@ export class AuthService {
     const identifierType = identifier.indexOf('@') > -1 ? 'email' : 'username';
     return this._dspApiConnection.v2.auth.login(identifierType, identifier, password).pipe(
       tap(response => {
-        const encodedJWT = (response as ApiResponseData<LoginResponse>).body.token;
+        const encodedJWT = response.body.token;
         this._accessTokenService.storeToken(encodedJWT);
         this._dspApiConnection.v2.jsonWebToken = encodedJWT;
         this._componentCommsService.emit(new EmitEvent(CommsEvents.loginSuccess));

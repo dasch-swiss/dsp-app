@@ -1,15 +1,5 @@
 import { Inject, Injectable } from '@angular/core';
-import {
-  ApiResponseData,
-  ApiResponseError,
-  GroupsResponse,
-  KnoraApiConnection,
-  MembersResponse,
-  ProjectResponse,
-  ReadGroup,
-  ReadUser,
-  UserResponse,
-} from '@dasch-swiss/dsp-js';
+import { ApiResponseError, KnoraApiConnection, ReadGroup, ReadUser } from '@dasch-swiss/dsp-js';
 import { ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { AdminProjectsApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
@@ -98,12 +88,8 @@ export class ProjectsState {
     // and set the project state here
     return this._dspApiConnection.admin.projectsEndpoint.getProjectByIri(projectIri).pipe(
       take(1),
-      map(
-        (projectsResponse: ApiResponseData<ProjectResponse> | ApiResponseError) =>
-          projectsResponse as ApiResponseData<ProjectResponse>
-      ),
       tap({
-        next: (response: ApiResponseData<ProjectResponse>) => {
+        next: response => {
           const project = response.body.project;
 
           let state = ctx.getState();
@@ -174,9 +160,8 @@ export class ProjectsState {
     ctx.patchState({ isMembershipLoading: true });
     return this._dspApiConnection.admin.usersEndpoint.removeUserFromProjectMembership(userId, projectIri).pipe(
       take(1),
-      map((response: ApiResponseData<UserResponse> | ApiResponseError) => response as ApiResponseData<UserResponse>),
       tap({
-        next: (response: ApiResponseData<UserResponse>) => {
+        next: response => {
           ctx.dispatch([new SetUserAction(response.body.user), new LoadProjectMembersAction(projectIri)]);
           ctx.patchState({ isMembershipLoading: false });
         },
@@ -192,9 +177,8 @@ export class ProjectsState {
     ctx.patchState({ isMembershipLoading: true, hasLoadingErrors: false });
     return this._dspApiConnection.admin.usersEndpoint.addUserToProjectMembership(userId, projectIri).pipe(
       take(1),
-      map((response: ApiResponseData<UserResponse> | ApiResponseError) => response as ApiResponseData<UserResponse>),
       tap({
-        next: (response: ApiResponseData<UserResponse>) => {
+        next: response => {
           ctx.dispatch([new SetUserAction(response.body.user), new LoadProjectMembersAction(projectIri)]);
           ctx.patchState({ isMembershipLoading: false });
         },
@@ -215,12 +199,8 @@ export class ProjectsState {
     const projectIri = this.projectService.uuidToIri(projectUuid);
     return this._dspApiConnection.admin.projectsEndpoint.getProjectMembersByIri(projectIri).pipe(
       take(1),
-      map(
-        (membersResponse: ApiResponseData<MembersResponse> | ApiResponseError) =>
-          membersResponse as ApiResponseData<MembersResponse>
-      ),
       tap({
-        next: (response: ApiResponseData<MembersResponse>) => {
+        next: response => {
           ctx.setState({
             ...ctx.getState(),
             isMembershipLoading: false,
@@ -241,12 +221,8 @@ export class ProjectsState {
     ctx.patchState({ isMembershipLoading: true });
     return this._dspApiConnection.admin.groupsEndpoint.getGroups().pipe(
       take(1),
-      map(
-        (groupsResponse: ApiResponseData<GroupsResponse> | ApiResponseError) =>
-          groupsResponse as ApiResponseData<GroupsResponse>
-      ),
       tap({
-        next: (response: ApiResponseData<GroupsResponse>) => {
+        next: response => {
           const groups: IKeyValuePairs<ReadGroup> = {};
           response.body.groups.forEach(group => {
             const projectId = group.project?.id as string;

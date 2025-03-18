@@ -5,7 +5,6 @@ import { Router } from '@angular/router';
 import {
   CreateOntology,
   KnoraApiConnection,
-  OntologyMetadata,
   ReadOntology,
   ReadProject,
   UpdateOntologyMetadata,
@@ -87,7 +86,7 @@ export class OntologyFormComponent implements OnInit, OnDestroy {
     this.project = this._store.selectSnapshot(ProjectsSelectors.currentProject);
 
     if (this.data.ontologyIri) {
-      this._currentOntology$.pipe(take(1)).subscribe((response: ReadOntology) => {
+      this._currentOntology$.pipe(take(1)).subscribe(response => {
         this._buildForm(response);
         this._lastModificationDate = response.lastModificationDate;
       });
@@ -169,7 +168,7 @@ export class OntologyFormComponent implements OnInit, OnDestroy {
     this._dspApiConnection.v2.onto
       .createOntology(ontologyData)
       .pipe(take(1))
-      .subscribe((response: OntologyMetadata) => {
+      .subscribe(response => {
         this._store.dispatch([new ClearProjectOntologiesAction(this.project.shortcode)]);
         // go to the new ontology page
         this._router.navigate([

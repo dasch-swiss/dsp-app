@@ -93,7 +93,7 @@ export class ArchiveComponent implements OnChanges {
           this._dspApiConnection.v2.values.getValue(this.parentResource.id, res.uuid)
         )
       )
-      .subscribe((res2: ReadResource) => {
+      .subscribe(res2 => {
         this.src.fileValue.fileUrl = (
           res2.properties[Constants.HasArchiveFileValue][0] as ReadArchiveFileValue
         ).fileUrl;
