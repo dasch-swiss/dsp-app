@@ -6,16 +6,16 @@
   },
   "list": {
     "title": {
-      "active": "Active",
-      "inactive": "Deactivated"
+      "active": "Aktiv",
+      "inactive": "Deaktiviert"
     }
   },
   "addProjectMember": {
     "title": "Projektmitglied hinzufügen",
     "description": "Projektteam erweitern",
     "select": "Aus der Liste wählen ...",
-    "usersLoading": "Lade Benutzer ...",
-    "newUser": "Neuer Benutzer"
+    "usersLoading": "Konten werden geladen ...",
+    "newUser": "Neues Konto"
   },
   "usersList": {
     "sortProps": {
@@ -27,29 +27,29 @@
     "list": {
       "project": "Projekt",
       "projects": "Projekte",
-      "sortShortCode": "Kurzcode",
-      "sortShortName": "Abkürzung",
-      "sortProjectName": "Projekttitel",
+      "sortShortCode": "Shortcode",
+      "sortShortName": "Kurzname",
+      "sortProjectName": "Projektname",
       "statusActive": "Aktiv",
       "statusDeactivated": "Deaktiviert",
       "createNew": "Neues Projekt erstellen",
-      "projectAdmin": "Projekt Administrator",
+      "projectAdmin": "Projekt-Admin",
       "edit": "Projektinformationen bearbeiten",
       "reactivate": "Projekt reaktivieren",
       "deactivate": "Projekt deaktivieren",
-      "erase": "Löschen",
+      "erase": "Projekt löschen",
       "eraseConfirmation": "Möchten Sie Projekt “{{0}}” löschen?",
       "deactivateConfirmation": "Möchten Sie Projekt “{{0}}” deaktivieren?",
       "reactivateConfirmation": "Möchten Sie Projekt “{{0}}” reaktivieren?",
       "eraseConfirmationDialog": {
         "title": "Bitte geben Sie die erforderlichen Informationen ein, um das Projekt zu löschen.",
         "subtitle": "Projekt löschen",
-        "warning": "ACHTUNG: Diese Aktion kann nicht rückgängig gemacht werden, gehen Sie also vorsichtig damit um.",
-        "shortCode": "Projektkurzcode",
-        "systemAdminPassword": "Systemadministrator-Passwort",
+        "warning": "ACHTUNG: Diese Aktion kann nicht rückgängig gemacht werden.",
+        "shortCode": "Projekt-Shortcode",
+        "systemAdminPassword": "System-Admin-Passwort",
         "cancel": "Abbrechen",
         "confirm": "Bestätigen",
-        "shortCodeValidation": "Der Kurzcode stimmt nicht überein",
+        "shortCodeValidation": "Der Shortcode stimmt nicht überein",
         "passwordValidation": "Falsches Passwort"
       }
     }
@@ -59,12 +59,12 @@
       "cancel": "Abbrechen",
       "close": "Schliessen",
       "submit": "Speichern",
-      "retry": "Wiederholen",
+      "retry": "Erneut versuchen",
       "update": "Aktualisieren",
       "next": "Weiter",
       "reset": "Zurücksetzen",
       "danger": "Gefahrenzone",
-      "searchHelp": "Gebe 3 Zeichen ein um nach einer existierender Resource zu suchen.",
+      "searchHelp": "Geben Sie 3 Zeichen ein, um nach einer existierenden Resource zu suchen.",
       "login": "Anmelden"
     },
     "ontology": {
@@ -73,7 +73,7 @@
         "edit": "Datenmodell bearbeiten"
       },
       "label": {
-        "name": "Eindeutiger Name"
+        "name": "Einen eindeutigen Namen festlegen"
       }
     },
     "user": {
@@ -82,59 +82,59 @@
         "familyName": "Nachname",
         "email": "Email Adresse",
         "emailValidation": "Das ist keine gültige Email Adresse",
-        "username": "Benutzername",
-        "usernameHint": "Benutzername darf keine Sonder- oder Leerzeichen beinhalten.",
+        "username": "Anzeigename",
+        "usernameHint": "Der Anzeigename darf keine Sonder- oder Leerzeichen beinhalten.",
         "password": "Passwort",
-        "passwordLengthHint": "Use at least 8 characters.",
-        "passwordPatternHint": "The password should have at least one uppercase letter and one number.",
+        "passwordLengthHint": "Verwenden Sie mindestens 8 Zeichen.",
+        "passwordPatternHint": "Das Passwort muss mindestens einen Grossbuchstaben und eine Zahl enthalten.",
         "oldPassword": "Altes Passwort",
         "newPassword": "Neues Passwort",
         "confirmPassword": "Passwort bestätigen",
         "requesterPassword": "Dein Passwort",
         "language": "Sprache",
-        "sysAdmin": "Systemadministratorregeln",
+        "sysAdmin": "System-Admin-Rechte",
         "updateSuccess": "Das Profil wurde erfolgreich aktualisiert."
       },
       "title": {
-        "new": "Neuen Benutzer erstellen",
-        "edit": "Benutzer anpassen",
+        "new": "Neues Konto anlegen",
+        "edit": "Profil anpassen",
         "profile": "Profil",
-        "delete": "Benutzer löschen",
-        "deleteButton": "Benutzerkonto jetzt sperren",
-        "password": "Passwort ändern",
-        "ownPasswordSuccess": "You have successfully updated your password.",
-        "userPasswordSuccess": "You have successfully updated user's password."
+        "delete": "Konto löschen",
+        "deleteButton": "Konto sperren",
+        "password": "Passwort aktualisieren",
+        "ownPasswordSuccess": "Sie haben Ihr Passwort erfolgreich aktualisiert.",
+        "userPasswordSuccess": "Sie haben das Passwort erfolgreich aktualisiert."
       }
     },
     "project": {
       "general": {
-        "description": "Projektbeschrieb",
-        "shortcode": "Kurzcode",
-        "shortname": "Abkürzung",
+        "description": "Projektbeschreibung",
+        "shortcode": "Shortcode",
+        "shortname": "Kurzname",
         "longname": "Projekttitel",
-        "keywords": "Stichworte",
-        "editSuccess": "You have successfully updated the project information."
+        "keywords": "Schlagworte",
+        "editSuccess": "Sie haben die Projektinformationen erfolgreich aktualisiert."
       },
       "imageSettings": {
         "off": "Aus",
         "isWatermark": "Wasserzeichen anwenden",
         "ratio": "Verhältnis",
-        "restrictImageSize": "Bildgröße einschränken",
+        "restrictImageSize": "Bildgrösse einschränken",
         "absoluteWidth": "Absolute Breite in Pixel von: {{min}} bis: {{max}}",
         "percentage": "Prozentsatz",
-        "updateConfirmation": "Sie haben die Projektbildeinstellungen erfolgreich aktualisiert.",
-        "info": "Um die Größe Ihres Bildes zu begrenzen, geben Sie entweder einen Prozentsatz oder eine absolute Pixelbreite ein. Sie können nicht für beide Optionen Werte angeben.",
-        "restrictions": "Bildeinstellungen können nur auf die Ressourcen angewendet werden, für die eingeschränkte Ansichtsberechtigungen festgelegt sind."
+        "updateConfirmation": "Sie haben die Bildeinstellungen des Projekts erfolgreich aktualisiert.",
+        "info": "Um die Grösse Ihres Bildes zu begrenzen, geben Sie entweder einen Prozentsatz oder eine absolute Pixelbreite ein. Sie können nicht beide Optionen gleichzeitig angeben.",
+        "restrictions": "Bildeinstellungen können nur auf die Ressourcen angewendet werden, für die eingeschränkte Ansichtsrechte festgelegt sind."
       }
     },
     "lists": {
       "title": {
-        "deleteList": "Delete controlled vocabulary"
+        "deleteList": "Kontrolliertes Vokabular löschen"
       }
     },
     "resource": {
       "title": {
-        "delete": "Delete this resource"
+        "delete": "Diese Ressource löschen"
       }
     }
   },
@@ -149,30 +149,30 @@
     "properties": "Eigenschaften",
     "comment": "Kommentar",
     "incomingLink": {
-      "tooltip": "Indicates that this resource is referred to by another resource",
-      "label": "has incoming link"
+      "tooltip": "Zeigt an, dass auf diese Ressource von einer anderen Ressource verwiesen wird",
+      "label": "hat eingehenden Link"
     },
     "standoffLink": {
-      "tooltip": "Represent a link in standoff markup from one resource to another",
-      "label": "has Standoff link"
+      "tooltip": "Stellt einen Link in Standoff-Markup von einer Ressource zu einer anderen dar",
+      "label": "hat Standoff-Link"
     },
     "footnotes": "Fussnoten",
     "permissions": {
       "groups": {
         "label": "Berechtigungen",
-        "projectAdmin": "Project Admin",
-        "creator": "Creator",
-        "projectMember": "Project Member",
-        "knownUser": "Known User",
-        "unknownUser": "Unknown User",
-        "usersPermissions": "Your permissions"
+        "projectAdmin": "Projektadministrator:in",
+        "creator": "Ersteller:in",
+        "projectMember": "Projektmitglied",
+        "knownUser": "Angemeldet",
+        "unknownUser": "Nicht angemeldet",
+        "usersPermissions": "Ihre Berechtigungen"
       },
       "interactions": {
-        "restrictedView": "Restricted view permission (RV)",
-        "view": "View permission (V)",
-        "modify": "Modify permission (M)",
-        "delete": "Delete permission (D)",
-        "changeRights": "Change rights permission (CR)"
+        "restrictedView": "Leseberechtigung mit Restriktion (RV)",
+        "view": "Leseberechtigung (V)",
+        "modify": "Schreibberechtigung (M)",
+        "delete": "Löschberechtigung (D)",
+        "changeRights": "Administrationsberechtigung (CR)"
       }
     }
   },
@@ -180,12 +180,12 @@
     "howToSearch": "Wie suchen?",
     "expert": "Experte",
     "advancedSearch": "Erweiterte Suche",
-    "expertSearch": "Experte suchen"
+    "expertSearch": "Expertensuchen"
   },
   "fullTextSearch": {
     "filterByProject": "Nach Projekt filtern",
     "search": "Suche",
-    "allProjects": "All projects"
+    "allProjects": "Alle Projekte"
   },
   "header": {
     "help": "Hilfe"
@@ -196,7 +196,7 @@
       "myAccount": "Mein Konto"
     },
     "profile": {
-      "systemAdmin": "Systemadministrator",
+      "systemAdmin": "System-Admin",
       "editMyProfile": "Mein Profil bearbeiten"
     },
     "userMenu": {
@@ -204,7 +204,7 @@
       "systemAdministration": "Systemadministration",
       "logout": "Abmelden",
       "login": "ANMELDEN",
-      "home": "DSP-App Startseite",
+      "home": "DSP-APP Startseite",
       "myAccount": "Mein Konto"
     }
   },

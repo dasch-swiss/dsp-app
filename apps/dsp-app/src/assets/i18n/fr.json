@@ -1,219 +1,219 @@
 {
   "overview": {
-    "title": "Browse Research Projects",
-    "myProjects": "My Projects",
-    "browseOtherResearchProjects": "Browse Other Research Projects"
+    "title": "Parcourir les projets de recherche",
+    "myProjects": "Mes projets",
+    "browseOtherResearchProjects": "Parcourir d'autres projets de recherche"
   },
   "list": {
     "title": {
-      "active": "Active",
-      "inactive": "Deactivated"
+      "active": "Actif",
+      "inactive": "Désactivé"
     }
   },
   "addProjectMember": {
-    "title": "Add project member",
-    "description": "Increase your team",
-    "select": "Select from list ...",
-    "usersLoading": "Loading users ...",
-    "newUser": "New user"
+    "title": "Ajouter un·e membre au projet",
+    "description": "Accroître l'équipe",
+    "select": "Sélectionner dans la liste ...",
+    "usersLoading": "Chargement des utilisateur·rice·s ...",
+    "newUser": "Nouvel·le utilisateur·rice"
   },
   "usersList": {
     "sortProps": {
-      "familyName": "Last name",
-      "givenName": "First name"
+      "familyName": "Nom",
+      "givenName": "Prénom"
     }
   },
   "projects": {
     "list": {
-      "project": "Project",
-      "projects": "Projects",
-      "sortShortCode": "Short code",
-      "sortShortName": "Short name",
-      "sortProjectName": "Project name",
-      "statusActive": "Active",
-      "statusDeactivated": "Deactivated",
-      "createNew": "Create new project",
-      "projectAdmin": "Project Administrator",
-      "edit": "Edit project information",
-      "reactivate": "Reactivate project",
-      "deactivate": "Deactivate project",
-      "erase": "Erase project",
-      "eraseConfirmation": "Project “{{0}}” has been erased.",
-      "deactivateConfirmation": "Do you want to deactivate project “{{0}}” ?",
-      "reactivateConfirmation": "Do you want to reactivate project “{{0}}” ?",
+      "project": "Projet",
+      "projects": "Projets",
+      "sortShortCode": "Shortcode",
+      "sortShortName": "Acronyme",
+      "sortProjectName": "Nom du projet",
+      "statusActive": "Actif",
+      "statusDeactivated": "Désactivé",
+      "createNew": "Créer un nouveau projet",
+      "projectAdmin": "Administrateur·ice du projet",
+      "edit": "Modifier les informations du projet",
+      "reactivate": "Réactiver le projet",
+      "deactivate": "Désactiver le projet",
+      "erase": "Supprimer le projet",
+      "eraseConfirmation": "Le projet « {{0}} » a été supprimé.",
+      "deactivateConfirmation": "Voulez-vous désactiver le projet « {{0}} » ?",
+      "reactivateConfirmation": "Voulez-vous réactiver le projet « {{0}} » ?",
       "eraseConfirmationDialog": {
-        "title": "Please enter required information to erase the project.",
-        "subtitle": "Erase project",
-        "warning": "WARNING: This action cannot be undone, so use it with care.",
-        "shortCode": "Project short code",
-        "systemAdminPassword": "System administrator password",
-        "cancel": "Cancel",
-        "confirm": "Confirm",
-        "shortCodeValidation": "Short code does not match",
-        "passwordValidation": "Password incorrect"
+        "title": "Veuillez entrer les informations requises pour supprimer le projet.",
+        "subtitle": "Supprimer le projet",
+        "warning": "ATTENTION : Cette action est irréversible, utilisez-la avec précaution.",
+        "shortCode": "Shortcode du projet",
+        "systemAdminPassword": "Mot de passe de l'administrateur·rice système",
+        "cancel": "Annuler",
+        "confirm": "Confirmer",
+        "shortCodeValidation": "Le Shortcode ne correspond pas",
+        "passwordValidation": "Mot de passe incorrect"
       }
     }
   },
   "form": {
     "action": {
-      "cancel": "Cancel",
-      "close": "Close",
-      "submit": "Save",
-      "retry": "Retry",
-      "update": "Update",
-      "next": "Next",
-      "reset": "Reset",
-      "danger": "Danger zone",
-      "searchHelp": "Type 3 letters to search for an existing resource.",
-      "login": "Login"
+      "cancel": "Annuler",
+      "close": "Fermer",
+      "submit": "Enregistrer",
+      "retry": "Réessayer",
+      "update": "Mettre à jour",
+      "next": "Suivant",
+      "reset": "Réinitialiser",
+      "danger": "Zone de danger",
+      "searchHelp": "Tapez 3 lettres pour chercher une ressource existante.",
+      "login": "Connexion"
     },
     "ontology": {
       "title": {
-        "create": "Create new data model",
-        "edit": "Customize data model"
+        "create": "Créer un nouveau modèle de données",
+        "edit": "Personnaliser le modèle de données"
       },
       "label": {
-        "name": "Set a unique name"
+        "name": "Définir un nom unique"
       }
     },
     "user": {
       "general": {
-        "givenName": "First name",
-        "familyName": "Last name",
-        "email": "Email address",
-        "emailValidation": "This does not appear to be a valid email address.",
-        "username": "Username",
-        "usernameHint": "Spaces and special characters are not allowed in username.",
-        "password": "Password",
-        "passwordLengthHint": "Use at least 8 characters.",
-        "passwordPatternHint": "The password should have at least one uppercase letter and one number.",
-        "oldPassword": "Old password",
-        "newPassword": "New password",
-        "confirmPassword": "Confirm password",
-        "requesterPassword": "Your password",
-        "language": "Default language",
-        "sysAdmin": "System administrator rules",
-        "updateSuccess": "You successfully updated the user's profile."
+        "givenName": "Prénom",
+        "familyName": "Nom",
+        "email": "Adresse e-mail",
+        "emailValidation": "Cette adresse e-mail semble invalide.",
+        "username": "Nom d'utilisateur·rice",
+        "usernameHint": "Les espaces et caractères spéciaux ne sont pas autorisés dans le nom d'utilisateur·rice.",
+        "password": "Mot de passe",
+        "passwordLengthHint": "Utilisez au moins 8 caractères.",
+        "passwordPatternHint": "Le mot de passe doit contenir au moins une lettre majuscule et un chiffre.",
+        "oldPassword": "Ancien mot de passe",
+        "newPassword": "Nouveau mot de passe",
+        "confirmPassword": "Confirmer le mot de passe",
+        "requesterPassword": "Votre mot de passe",
+        "language": "Langue par défaut",
+        "sysAdmin": "Droits d'administration système",
+        "updateSuccess": "Vous avez mis à jour le profil d'utilisateur·rice avec succès."
       },
       "title": {
-        "new": "Create new",
-        "edit": "Edit profile",
-        "profile": "User profile",
-        "delete": "Suspend user account",
-        "deleteButton": "Suspend user account now",
-        "password": "Update password",
-        "ownPasswordSuccess": "You have successfully updated your password.",
-        "userPasswordSuccess": "You have successfully updated user's password."
+        "new": "Créer un nouveau",
+        "edit": "Modifier le profil",
+        "profile": "Profil utilisateur·rice",
+        "delete": "Suspendre le compte utilisateur",
+        "deleteButton": "Suspendre le compte utilisateur·rice maintenant",
+        "password": "Mettre à jour le mot de passe",
+        "ownPasswordSuccess": "Vous avez mis à jour votre mot de passe avec succès.",
+        "userPasswordSuccess": "Vous avez mis à jour le mot de passe d'utilisateur·rice avec succès."
       }
     },
     "project": {
       "general": {
         "description": "Description",
-        "shortcode": "Short code",
-        "shortname": "Short name",
-        "longname": "Project name",
-        "keywords": "Keywords",
-        "editSuccess": "You have successfully updated the project information."
+        "shortcode": "Shortcode",
+        "shortname": "Acronyme",
+        "longname": "Nom du projet",
+        "keywords": "Mots-clés",
+        "editSuccess": "Vous avez mis à jour les informations du projet avec succès."
       },
       "imageSettings": {
-        "off": "Off",
-        "isWatermark": "Apply watermark",
+        "off": "Désactivé",
+        "isWatermark": "Appliquer un filigrane",
         "ratio": "Ratio",
-        "restrictImageSize": "Restrict image size",
-        "absoluteWidth": "Absolute width in pixels from: {{min}} to: {{max}}",
-        "percentage": "Percentage",
-        "updateConfirmation": "You have successfully updated the project image settings.",
-        "info": "To limit the size of your image, input either a percentage or an absolute pixel width. You cannot provide values for both options.",
-        "restrictions": "Image settings can only be applied for the resources which have the restricted view permissions set."
+        "restrictImageSize": "Restreindre la taille de l'image",
+        "absoluteWidth": "Largeur absolue en pixels de : {{min}} à : {{max}}",
+        "percentage": "Pourcentage",
+        "updateConfirmation": "Vous avez mis à jour les paramètres d'image du projet avec succès.",
+        "info": "Pour limiter la taille de votre image, entrez soit un pourcentage, soit une largeur absolue en pixels. Vous ne pouvez pas fournir de valeurs pour les deux options simultanénement.",
+        "restrictions": "Les paramètres d'image ne peuvent être appliqués qu'aux ressources ayant des permissions de vue restreintes."
       }
     },
     "lists": {
       "title": {
-        "deleteList": "Delete controlled vocabulary"
+        "deleteList": "Supprimer le vocabulaire contrôlé"
       }
     },
     "resource": {
       "title": {
-        "delete": "Delete this resource"
+        "delete": "Supprimer cette ressource"
       }
     }
   },
   "uiControls": {
     "pager": {
-      "of": "of",
-      "previous": "Previous",
-      "next": "Next"
+      "of": "de",
+      "previous": "Précédent",
+      "next": "Suivant"
     }
   },
   "resource": {
-    "properties": "Properties",
-    "comment": "Comment",
+    "properties": "Propriétés",
+    "comment": "Commentaire",
     "incomingLink": {
-      "tooltip": "Indicates that this resource is referred to by another resource",
-      "label": "has incoming link"
+      "tooltip": "Indique que cette ressource est référencée par une autre ressource",
+      "label": "a un lien entrant"
     },
     "standoffLink": {
-      "tooltip": "Represent a link in standoff markup from one resource to another",
-      "label": "has Standoff link"
+      "tooltip": "Représente un lien dans un balisage standoff d'une ressource à une autre",
+      "label": "a un lien standoff"
     },
-    "footnotes": "Notes",
+    "footnotes": "Notes de bas de page",
     "permissions": {
       "groups": {
         "label": "Permissions",
-        "projectAdmin": "Project Admin",
-        "creator": "Creator",
-        "projectMember": "Project Member",
-        "knownUser": "Known User",
-        "unknownUser": "Unknown User",
-        "usersPermissions": "Your permissions"
+        "projectAdmin": "Administrateur·rice du projet",
+        "creator": "Créateur·rice",
+        "projectMember": "Membre du projet",
+        "knownUser": "Utilisateur·rice connu·e",
+        "unknownUser": "Utilisateur·rice inconnu·e",
+        "usersPermissions": "Vos permissions"
       },
       "interactions": {
-        "restrictedView": "Restricted view permission (RV)",
-        "view": "View permission (V)",
-        "modify": "Modify permission (M)",
-        "delete": "Delete permission (D)",
-        "changeRights": "Change rights permission (CR)"
+        "restrictedView": "Permission de vue restreinte (RV)",
+        "view": "Permission de vue (V)",
+        "modify": "Permission de modification (M)",
+        "delete": "Permission de suppression (D)",
+        "changeRights": "Permission de changement des droits (CR)"
       }
     }
   },
   "searchPanel": {
-    "howToSearch": "How to search",
+    "howToSearch": "Comment faire une recherche",
     "expert": "Expert",
-    "advancedSearch": "Advanced search",
-    "expertSearch": "Expert search"
+    "advancedSearch": "Recherche avancée",
+    "expertSearch": "Recherche experte"
   },
   "fullTextSearch": {
-    "filterByProject": "Filter by project",
-    "search": "Search",
-    "allProjects": "All projects"
+    "filterByProject": "Filtrer par projet",
+    "search": "Rechercher",
+    "allProjects": "Tous les projets"
   },
   "header": {
-    "help": "Help"
+    "help": "Aide"
   },
   "user": {
     "navigation": {
-      "myProjects": "My Projects",
-      "myAccount": "My Account"
+      "myProjects": "Mes projets",
+      "myAccount": "Mon compte"
     },
     "profile": {
-      "systemAdmin": "System admin",
-      "editMyProfile": "Edit my profile"
+      "systemAdmin": "Administrateur·rice système",
+      "editMyProfile": "Modifier mon profil"
     },
     "userMenu": {
-      "signedInAs": "Signed in as",
-      "systemAdministration": "System Administration",
-      "logout": "Logout",
-      "login": "LOGIN",
-      "home": "DSP-App Home Page",
-      "myAccount": "My Account"
+      "signedInAs": "Connecté·e en tant que",
+      "systemAdministration": "Administration système",
+      "logout": "Déconnexion",
+      "login": "CONNEXION",
+      "home": "Page d'accueil de DSP-APP",
+      "myAccount": "Mon compte"
     }
   },
   "paginator": {
     "firstPage": "Première page",
     "lastPage": "Dernière page",
     "nextPage": "Page suivante",
-    "inputTooltip": "Saisir le numéro de page et appuyer sur Entrée pour aller à la page.",
+    "inputTooltip": "Entrez le numéro de la page et validez avec la touche Entrée.",
     "previousPage": "Page précédente",
-    "rangeLabelOf": "sur"
+    "rangeLabelOf": "de"
   }
 }
