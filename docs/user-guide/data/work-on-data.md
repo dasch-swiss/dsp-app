@@ -177,6 +177,19 @@ Below the audio scrubber in the player toolbar, all segments are also shown and 
 
 You can edit or delete a segment or a property of a segment if you have the granted permissions. A segment has also an AKR URL you can copy and share.
 
+### Add a footnote
+
+Footnotes can be added to RichText content. Superscript numbers, which are clickable, will appear in the text, with the corresponding footnotes displayed below. When you hover over a superscript number, the footnote content will appear in a tooltip. If there are multiple text entries, all footnotes will be combined and ordered at the bottom of the last text entry.
+
+![Footnote](../../assets/images/footnote-display.png)
+
+To create a footnote, enter edit mode by clicking the pencil icon. Then, position your cursor at the end of the word or sentence where you want to add the footnote, and click the Footnote button in the toolbar. Enter your footnote text in the edit pad. To save, click the green checkmark at the bottom right corner of the footnote edit pad, then save again at the property value level by clicking the floppy disk icon.
+
+![Add a new footnote](../../assets/images/footnote-add.png)*Create a footnote.*
+
+Simple formatting and links can also be added to the footnote.
+
+![Formate footnote and add links](../../assets/images/footnote-with-link.png)*Add formatting and links to your footnote.*
 
 ---
 
@@ -214,6 +227,11 @@ To replace an image file, open the menu on the left side of the image viewer too
 
 ![Replace an image file.](../../assets/images/edit-uploaded-image.png)
 
+### Edit a footnote
+
+Footnotes can be edited in edit mode. Simply click the pencil icon, then click on the footnote link you wish to edit. Make your changes, and be sure to save them once you're done.
+
+![Edit a footnote.](../../assets/images/footnote-edit.png)
 
 ---
 
