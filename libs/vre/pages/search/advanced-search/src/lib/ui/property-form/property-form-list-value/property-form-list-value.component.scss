@@ -3,16 +3,3 @@
   cursor: pointer;
   color: #737373;
 }
-
-.parent-item {
-  font-weight: bold;
-}
-
-.subchild {
-  padding-left: 30px;
-}
-
-::ng-deep div.custom-select-panel.mat-mdc-select-panel {
-  max-height: 400px;
-  overflow-y: auto;
-}

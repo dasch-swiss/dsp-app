@@ -107,6 +107,9 @@
       }
     },
     "project": {
+      "advancedSearch": {
+        "propertyListValue": "Select an item"
+      },
       "general": {
         "description": "Description",
         "shortcode": "Short code",
