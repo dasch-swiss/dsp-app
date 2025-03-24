@@ -1,5 +1,8 @@
 import { ChangeDetectorRef, Component, Input } from '@angular/core';
+import { ReadResource } from '@dasch-swiss/dsp-js';
+import { LoadResourceClassItemsCountAction } from '@dasch-swiss/vre/core/state';
 import { FilteredResources, SearchParams } from '@dasch-swiss/vre/shared/app-common-to-move';
+import { Store } from '@ngxs/store';
 import { SplitSize } from './split-size.interface';
 
 @Component({
@@ -16,7 +19,10 @@ import { SplitSize } from './split-size.interface';
         <as-split-area [size]="60" *ngIf="selectedResources?.count > 0" cdkScrollable>
           <div [ngSwitch]="viewMode">
             <!-- single resource view -->
-            <app-resource-fetcher *ngSwitchCase="'single'" [resourceIri]="selectedResources.resInfo[0].id" />
+            <app-resource-fetcher
+              *ngSwitchCase="'single'"
+              [resourceIri]="selectedResources.resInfo[0].id"
+              (afterResourceDeleted)="updateResourceCount($event)" />
 
             <!-- intermediate view -->
             <app-intermediate
@@ -42,7 +48,10 @@ export class MultipleViewerComponent {
   selectedResources: FilteredResources | undefined = undefined;
   splitSizeChanged: SplitSize | undefined = undefined;
 
-  constructor(private _cdr: ChangeDetectorRef) {}
+  constructor(
+    private _cdr: ChangeDetectorRef,
+    private _store: Store
+  ) {}
 
   openSelectedResources(res: FilteredResources) {
     this.selectedResources = { ...res, resInfo: [...res.resInfo] };
@@ -53,5 +62,9 @@ export class MultipleViewerComponent {
       this.viewMode = res.count > 0 ? 'intermediate' : 'single';
     }
     this._cdr.detectChanges();
+  }
+
+  updateResourceCount(resource: ReadResource) {
+    this._store.dispatch(new LoadResourceClassItemsCountAction(resource));
   }
 }
