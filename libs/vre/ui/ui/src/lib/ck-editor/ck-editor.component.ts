@@ -32,7 +32,7 @@ export class CkEditorComponent implements OnInit {
   }
 
   private _parseFromFootnote(rawHtml: string) {
-    const _footnoteRegExp = /<footnote content="([^>]+)">([^<]*)<\/footnote>/g;
+    const _footnoteRegExp = /<footnote content="([^>]+)">((?:(?!<\/footnote>).)*)<\/footnote>/g;
     return rawHtml.replace(_footnoteRegExp, (match, content) => {
       const escapedContent = unescapeHtml(content);
       return `<footnote content="${escapedContent}"></footnote>`;
