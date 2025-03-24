@@ -59,6 +59,83 @@ Simply make your changes and click "Save."
 
 ![Collaboration page](../assets/images/image-settings-restrict-image-size.png)*<https://app.dasch.swiss/project/3ABR_2i8QYGSIDvmP9mlEw/settings/image-settings> - When you choose the Restrict Image Size option, you can limit the image dimensions by either percentage or absolute value.*
 
+---
+
+### Legal Settings (Coming Soon) 🚧
+
+> ⚠️ **Legal information, including copyright holders, licenses, and authorship, is currently under development.**  
+> This section will be updated once the details are finalized.  
+> For immediate inquiries, please contact **<info@dasch.swiss>**.
+
+
+### Legal Settings for Media Assets
+
+Each media asset will require the following legal information:
+
+
+- **One copyright holder**
+- **One license**
+- **One or more authorship entries**
+
+
+These fields will help ensure that legal attribution is clear and consistent for every asset.
+
+The legal settings will apply to **media files, documents, and other digital assets**, such as **images, audio, video, PDFs, and text-based files** etc. These settings will consist of three key sections, **all of which will be mandatory**:
+
+1. **Copyright Holders** – Defines who holds the copyright for a given media asset.
+2. **Licenses** – Specifies the available licensing options.
+3. **Authorship** – Identifies the creator of the media asset.
+
+Users will be required to provide values for all three fields when creating or managing media assets.
+
+
+#### Copyright Holders
+
+In addition to the project name as a copyright holder, the following predefined copyright holders are available.  
+
+- **AI-Generated Content** – Not Protected by Copyright  
+- **Public Domain** – Not Protected by Copyright  
+
+Project administrators will have the ability to add more copyright holders as needed.
+
+#### Licenses
+
+The following licenses will be available, with additional options to be added in the future.
+
+##### **Available Licenses**
+
+- **Creative Commons Licenses**  
+    - **Attribution 4.0 International (CC BY 4.0)**  
+    [🔗 License URI](https://creativecommons.org/licenses/by/4.0/)  
+    - **Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)**  
+    [🔗 License URI](https://creativecommons.org/licenses/by-sa/4.0/)  
+    - **Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)**  
+    [🔗 License URI](https://creativecommons.org/licenses/by-nc/4.0/)  
+    - **Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)**  
+    [🔗 License URI](https://creativecommons.org/licenses/by-nc-sa/4.0/)  
+    - **Attribution-NoDerivatives 4.0 International (CC BY-ND 4.0)**  
+    [🔗 License URI](https://creativecommons.org/licenses/by-nd/4.0/)  
+    - **Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)**  
+    [🔗 License URI](https://creativecommons.org/licenses/by-nc-nd/4.0/)  
+
+- **Other License Options**  
+    - **AI-Generated Content** – Not Protected by Copyright  
+    - **Unknown License** – Contact Copyright Holder for Permission  
+    - **Public Domain** – Not Protected by Copyright  
+
+
+#### Authorship
+
+The following predefined authorship options will be available:
+
+- **Author Unknown**  
+- **AI-Generated Content**  
+
+For any additional authorship, users will be able to specify them directly when creating a resource with a media asset.
+
+This section will be regularly updated as new legal policies are implemented. 🚧
+
+---
 
 ### Project Members
 
