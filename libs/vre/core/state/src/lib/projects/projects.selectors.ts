@@ -66,12 +66,16 @@ export class ProjectsSelectors {
 
   @Selector([ProjectsState])
   static allActiveProjects(state: ProjectsStateModel): ReadProject[] {
-    return state.allProjects.filter(project => project.status === true);
+    return state.allProjects
+      .filter(project => project.status === true)
+      .sort((a, b) => (a.longname || '').localeCompare(b.longname || ''));
   }
 
   @Selector([ProjectsState])
   static allInactiveProjects(state: ProjectsStateModel): ReadProject[] {
-    return state.allProjects.filter(project => project.status === false);
+    return state.allProjects
+      .filter(project => project.status === false)
+      .sort((a, b) => (a.longname || '').localeCompare(b.longname || ''));
   }
 
   @Selector([ProjectsState])
