@@ -63,7 +63,7 @@ import { map, takeUntil } from 'rxjs/operators';
         margin-right: 8px !important;
       }
 
-      .hide-on-hover {
+      span.list-icon > span {
         color: black;
         font-size: 14pt;
       }
