@@ -47,7 +47,12 @@ export class EditUserDialogComponent {
     };
     this._store.dispatch(new UpdateUserAction(this.user.id, userUpdate));
     this._actions$.pipe(ofActionSuccessful(UpdateUserAction), take(1)).subscribe((userAction: UpdateUserAction) => {
-      this._localizationsService.setLanguage(userAction.userData.lang);
+      if (
+        userAction.userData.lang !== undefined &&
+        this.user.username === this._store.selectSnapshot(state => state.user.user.username)
+      ) {
+        this._localizationsService.setLanguage(userAction.userData.lang);
+      }
       this._dialogRef.close();
       this._notification.openSnackBar(this._translateService.instant('form.user.general.updateSuccess'));
     });
