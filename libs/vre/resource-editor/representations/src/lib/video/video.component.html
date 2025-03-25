@@ -1,9 +1,10 @@
-<div appDisableContextMenu [class.cinema]="cinemaMode">
+<div appDisableContextMenu>
   <app-status [comment]="videoError" [url]="src.fileValue.fileUrl" [representation]="'video'" *ngIf="videoError" />
 
-  <div style="margin-bottom: -4px" class="video-container">
+  <div style="margin-bottom: -4px">
     <video
       style="width: 100%"
+      #videoElement
       id="video"
       *ngIf="video; else loading"
       [src]="video"
@@ -16,7 +17,7 @@
     <app-video-overlay *ngIf="false" />
   </div>
 
-  <div class="preview" #preview>
+  <div #preview>
     <app-video-preview
       *ngIf="false"
       [src]="src"
@@ -31,7 +32,7 @@
         [value]="0"
         [min]="0"
         [max]="duration"
-        [resized]="cinemaMode"
+        [resized]="isFullscreen"
         (move)="updatePreview($event)"
         (mouseenter)="displayPreview(true)"
         (dimension)="timelineDimension = $event"
@@ -55,7 +56,7 @@
     [parentResource]="parentResource"
     [fileInfo]="fileInfo"
     [isAdmin]="isAdmin"
-    [(cinemaMode)]="cinemaMode" />
+    (toggleCinemaMode)="toggleCinemaMode()" />
 </div>
 
 <ng-template #loading>

@@ -52,10 +52,10 @@ import { MediaPlayerService } from './media-player.service';
       <button
         mat-icon-button
         data-cy="cinema-mode-button"
-        (click)="toggleCinemaMode()"
-        [matTooltip]="cinemaMode ? 'Default view' : 'Cinema mode'"
+        (click)="toggleCinemaMode.emit()"
+        [matTooltip]="isFullscreen ? 'Default view' : 'Cinema mode'"
         [matTooltipPosition]="matTooltipPos">
-        <mat-icon>{{ cinemaMode ? 'fullscreen_exit' : 'fullscreen' }}</mat-icon>
+        <mat-icon>{{ isFullscreen ? 'fullscreen_exit' : 'fullscreen' }}</mat-icon>
       </button>
     </div>
   </mat-toolbar-row>`,
@@ -64,10 +64,13 @@ export class VideoToolbarComponent {
   @Input({ required: true }) src!: FileRepresentation;
   @Input({ required: true }) parentResource!: ReadResource;
   @Input({ required: true }) fileInfo!: MovingImageSidecar;
-  @Input({ required: true }) cinemaMode!: boolean;
   @Input({ required: true }) isAdmin!: boolean;
 
-  @Output() cinemaModeChange = new EventEmitter<boolean>();
+  @Output() toggleCinemaMode = new EventEmitter<void>();
+
+  get isFullscreen() {
+    return document.fullscreenElement;
+  }
 
   matTooltipPos: TooltipPosition = 'below';
   play = false;
@@ -87,10 +90,6 @@ export class VideoToolbarComponent {
       }),
       viewContainerRef: this._viewContainerRef,
     });
-  }
-
-  toggleCinemaMode() {
-    this.cinemaModeChange.emit(!this.cinemaMode);
   }
 
   goToStart() {
