@@ -7,7 +7,6 @@ import { LoadUserAction, UserSelectors } from '@dasch-swiss/vre/core/state';
 import { DialogService } from '@dasch-swiss/vre/ui/ui';
 import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
 import { apiConnectionTokenProvider } from './api-connection-token.provider';
 
 @Component({
@@ -25,8 +24,6 @@ export class AccountComponent implements OnInit {
   @Select(UserSelectors.user) user$: Observable<ReadUser>;
   @Select(UserSelectors.isLoading) isLoading$: Observable<boolean>;
 
-  userId = null;
-
   constructor(
     private _userApiService: UserApiService,
     private _dialog: DialogService,
@@ -38,22 +35,20 @@ export class AccountComponent implements OnInit {
   }
 
   ngOnInit() {
-    this._store.dispatch(new LoadUserAction(this.username)).pipe(
-      tap((user: ReadUser) => {
-        this.userId = user.id;
-      })
-    );
+    this._store.dispatch(new LoadUserAction(this.username));
   }
 
-  askToActivateUser(username: string, id: string) {
-    this._dialog.afterConfirmation(`Do you want to reactivate user ${username}?`).subscribe(() => {
-      this.activateUser(id);
+  askToActivateUser() {
+    const user = this._store.selectSnapshot(UserSelectors.user);
+    this._dialog.afterConfirmation(`Do you want to reactivate user ${user!.username}?`).subscribe(() => {
+      this.activateUser(user!.id);
     });
   }
 
-  askToDeleteUser(username: string, id: string) {
-    this._dialog.afterConfirmation(`Do you want to suspend user ${username}?`).subscribe(() => {
-      this.deleteUser(id);
+  askToDeleteUser() {
+    const user = this._store.selectSnapshot(UserSelectors.user);
+    this._dialog.afterConfirmation(`Do you want to suspend user ${user!.username}?`).subscribe(() => {
+      this.deleteUser(user!.id);
     });
   }
 

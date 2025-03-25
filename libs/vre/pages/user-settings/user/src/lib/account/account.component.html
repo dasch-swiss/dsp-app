@@ -17,7 +17,7 @@
   <app-password-form [user]="user$ | async" />
 
   <!-- danger zone: delete account -->
-  <div class="app-danger-zone more-space-top">
+  <div class="app-danger-zone more-space-top" *ngIf="(user$ | async) !== undefined">
     <!-- delete account: header -->
     <div class="app-toolbar more-space-bottom">
       <div class="app-toolbar-row">
@@ -36,15 +36,11 @@
     </div>
     <!-- delete account: button -->
     <div class="center more-space-top more-space-bottom">
-      <button *ngIf="(user$ | async)?.status" mat-button [color]="'warn'" (click)="askToDeleteUser(username, userId)">
+      <button *ngIf="(user$ | async)?.status" mat-button [color]="'warn'" (click)="askToDeleteUser()">
         {{ 'form.user.title.deleteButton' | translate | uppercase }}
       </button>
 
-      <button
-        *ngIf="!((user$ | async)?.status)"
-        mat-button
-        [color]="'primary'"
-        (click)="askToActivateUser(username, userId)">
+      <button *ngIf="!((user$ | async)?.status)" mat-button [color]="'primary'" (click)="askToActivateUser()">
         ACTIVATE ACCOUNT
       </button>
     </div>
