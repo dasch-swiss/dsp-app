@@ -1,9 +1,9 @@
 import { Component, Input, OnChanges } from '@angular/core';
 import { Constants, ReadLinkValue } from '@dasch-swiss/dsp-js';
 import { AppError } from '@dasch-swiss/vre/core/error-handler';
+import { sortByKeys } from '@dasch-swiss/vre/resource-editor/resource-properties';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { IncomingOrStandoffLink } from './incoming-link.interface';
-import { sortByKeys } from './sortByKeys';
 
 @Component({
   selector: 'app-standoff-links-property',

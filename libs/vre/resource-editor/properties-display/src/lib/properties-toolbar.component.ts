@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { PropertiesDisplayService } from './properties-display.service';
+import { PropertiesDisplayService } from '@dasch-swiss/vre/resource-editor/resource-properties';
 
 @Component({
   selector: 'app-properties-toolbar',
@@ -54,8 +54,8 @@ import { PropertiesDisplayService } from './properties-display.service';
         matTooltipPosition="above"
         (click)="toggleShowAllProps()">
         <mat-icon>{{ (propertiesDisplayService.showAllProperties$ | async) ? 'unfold_less' : 'unfold_more' }}</mat-icon>
-      </button></ng-template
-    >
+      </button>
+    </ng-template>
   `,
   styles: ['button { padding-top: 24px; padding-bottom: 24px}'],
 })

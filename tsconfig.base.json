@@ -80,6 +80,9 @@
       "@dasch-swiss/vre/resource-editor/property-form": [
         "libs/vre/resource-editor/property-form/src/index.ts"
       ],
+      "@dasch-swiss/vre/resource-editor/properties-display": [
+        "libs/vre/resource-editor/properties-display/src/index.ts"
+      ],
       "@dasch-swiss/vre/resource-editor/representations": [
         "libs/vre/resource-editor/representations/src/index.ts"
       ],

@@ -1,12 +1,12 @@
 import { Component, Input, OnChanges } from '@angular/core';
 import { ReadResource, ReadResourceSequence } from '@dasch-swiss/dsp-js';
 import { AppError } from '@dasch-swiss/vre/core/error-handler';
+import { sortByKeys } from '@dasch-swiss/vre/resource-editor/resource-properties';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { IncomingService } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { Observable, of } from 'rxjs';
 import { expand, map, reduce, take, takeWhile } from 'rxjs/operators';
 import { IncomingOrStandoffLink } from './incoming-link.interface';
-import { sortByKeys } from './sortByKeys';
 
 @Component({
   selector: 'app-incoming-links-property',

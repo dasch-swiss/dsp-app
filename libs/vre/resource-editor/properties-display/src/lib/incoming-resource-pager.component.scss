@@ -1,4 +1,4 @@
-@use '../../../../../../../apps/dsp-app/src/styles/config' as *;
+@use '../../../../../../apps/dsp-app/src/styles/config' as *;
 
 .paging-container {
   border-bottom: 1px solid rgba(0, 0, 0, 0.12);
@@ -19,32 +19,32 @@
 
     .pagination-button:disabled {
       span,
-      mat-icon{
+      mat-icon {
         color: $cool_gray_300;
       }
     }
 
     .pagination-button {
       &.previous {
-        span{
+        span {
           padding-left: 14px;
         }
       }
 
       &.next {
-        span{
+        span {
           padding-right: 14px;
         }
       }
 
       span,
-      mat-icon{
+      mat-icon {
         color: $primary;
         font-weight: 400;
       }
     }
 
-    .range{
+    .range {
       color: $cool_gray_500;
       font-weight: 300;
     }

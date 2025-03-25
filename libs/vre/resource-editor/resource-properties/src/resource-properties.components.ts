@@ -1,7 +1,6 @@
 import { CreateResourceDialogComponent } from './lib/create-resource-dialog.component';
 import { CreateResourceFormComponent } from './lib/create-resource-form.component';
 import { CreateResourcePageComponent } from './lib/create-resource-page.component';
-import { DeleteResourceDialogComponent } from './lib/delete-resource-dialog.component';
 import { DeleteValueDialogComponent } from './lib/delete-value-dialog.component';
 import { EditResourceLabelDialogComponent } from './lib/edit-resource-label-dialog.component';
 import { EraseResourceDialogComponent } from './lib/erase-resource-dialog.component';
@@ -10,19 +9,12 @@ import { FootnoteParserPipe } from './lib/footnote-parser.pipe';
 import { FootnoteTooltipComponent } from './lib/footnote-tooltip.component';
 import { FootnoteDirective } from './lib/footnote.directive';
 import { FootnotesComponent } from './lib/footnotes.component';
-import { IncomingLinksPropertyComponent } from './lib/incoming-links-property.component';
-import { IncomingResourcePagerComponent } from './lib/incoming-resource-pager/incoming-resource-pager.component';
-import { IncomingStandoffLinkValueComponent } from './lib/incoming-standoff-link-value.component';
-import { PropertiesDisplayComponent } from './lib/properties-display.component';
-import { PropertiesToolbarComponent } from './lib/properties-toolbar.component';
 import { PropertyRowComponent } from './lib/property-row.component';
 import { PropertyValueActionBubbleComponent } from './lib/property-value-action-bubble.component';
 import { PropertyValueCommentComponent } from './lib/property-value-comment.component';
 import { PropertyValueSwitcherComponent } from './lib/property-value-switcher.component';
 import { PropertyValueComponent } from './lib/property-value.component';
 import { PropertyValuesComponent } from './lib/property-values.component';
-import { ResourceInfoBarComponent } from './lib/resource-info-bar.component';
-import { StandoffLinksPropertyComponent } from './lib/standoff-links-property.component';
 import { BaseSwitchComponent } from './lib/switch-components/base-switch.component';
 import { ColorSwitchComponent } from './lib/switch-components/color-switch.component';
 import { DateSwitchComponent } from './lib/switch-components/date-switch.component';
@@ -83,21 +75,13 @@ export const ResourcePropertiesComponents = [
   CreateResourcePageComponent,
   CreateResourceFormComponent,
   UploadControlComponent,
-  PropertiesToolbarComponent,
   PropertyValueCommentComponent,
   EditResourceLabelDialogComponent,
-  DeleteResourceDialogComponent,
   EraseResourceDialogComponent,
-  IncomingStandoffLinkValueComponent,
   PropertyRowComponent,
-  ResourceInfoBarComponent,
-  PropertiesDisplayComponent,
   UploadComponent,
   FootnotesComponent,
   FootnoteTooltipComponent,
   FootnoteDirective,
   FootnoteParserPipe,
-  IncomingLinksPropertyComponent,
-  StandoffLinksPropertyComponent,
-  IncomingResourcePagerComponent,
 ];
