@@ -27,7 +27,7 @@ import { MediaPlayerService } from '../video/media-player.service';
 
       <div>
         <button data-cy="timeline-button" mat-icon-button (click)="createAudioSegment()" *ngIf="isAdmin">
-          <mat-icon>view_timeline</mat-icon>
+          <mat-icon svgIcon="draw_region_icon"></mat-icon>
         </button>
         <app-audio-more-button [parentResource]="parentResource" />
       </div>

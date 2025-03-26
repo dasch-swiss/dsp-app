@@ -218,5 +218,9 @@
     "inputTooltip": "Seitennummer eingeben und über Enter zur gewählten Seite springen.",
     "previousPage": "Vorherige Seite",
     "rangeLabelOf": "von"
+  },
+  "annotations": {
+    "create": "Annotation hinzufügen",
+    "label": "Annotationen"
   }
 }

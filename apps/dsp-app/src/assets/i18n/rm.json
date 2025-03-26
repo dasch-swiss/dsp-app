@@ -218,5 +218,9 @@
     "inputTooltip": "Enter the page number and apply with the Enter key.",
     "previousPage": "Previous page",
     "rangeLabelOf": "of"
+  },
+  "annotations": {
+    "create": "Create Annotation",
+    "label": "Annotations"
   }
 }

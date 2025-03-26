@@ -218,5 +218,9 @@
     "inputTooltip": "Entrez le numéro de la page et validez avec la touche Entrée.",
     "previousPage": "Page précédente",
     "rangeLabelOf": "de"
+  },
+  "annotations": {
+    "create": "Créer annotation",
+    "label": "Annotations"
   }
 }

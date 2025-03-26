@@ -218,5 +218,9 @@
     "inputTooltip": "Inserisci il numero della pagina e premi Invio per andare alla pagina.",
     "previousPage": "Pagina precedente",
     "rangeLabelOf": "di"
+  },
+  "annotations": {
+    "create": "Creare annotazione",
+    "label": "Annotazioni"
   }
 }

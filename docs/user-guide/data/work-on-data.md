@@ -39,7 +39,7 @@ In a resource of type "still image", you're able to draw regions on the image an
 
 Images can be uploaded directly from your local computer folder or via an external IIIF URL.
 
-When you open a resource that contains an image, it is displayed in a viewer. Several functionalities are accessible from the image viewer, e.g. zoom in/out, copy the IIIF link, replace the image or draw a region on the image.
+When you open a resource that contains an image, it is displayed in a viewer. Several functionalities are accessible from the image viewer, e.g. zoom in/out, copy the IIIF link, replace the image or create annotation through drawing a region on the image.
 
 ![Image viewer](../../assets/images/image-file.png)
 
@@ -128,9 +128,11 @@ If your property is linked to another resource, you can search for an existing v
 
 ### Add an annotation
 
-#### Image
+Depending on the type of resource, an annotation can be created by drawing a region on the images or by selecting a segment for audio and video resources.
 
-To create a new region on an image, you click on the icon `Draw a region` in the toolbar, then draw the desired square region you want on the image.
+#### Image annotation
+
+To create a new region on an image, you click on the icon `Create Annotation` in the toolbar, then draw the desired square region you want on the image.
 
 ![Select a region.](../../assets/images/region_draw.png)*Select a region on the image with the drawing tool.*
 
@@ -139,21 +141,21 @@ Enter the information about the region and an informative label. You may also ad
 
 ![Fill in the form.](../../assets/images/region_fillin_form.png)*Fill in the form about the selected region.*
 
-The new region information is displayed after the image viewer. You can edit or delete if you have the granted permissions. A region has also an AKR URL you can copy and share.
+The new region information is displayed after the image viewer. You can edit or delete it if you have the granted permissions. A region has also an AKR URL you can copy and share.
 
 ![Region created.](../../assets/images/region_new_annotation.png)*A new region has been created.*
 
-#### Video segment
+#### Video annotation
 
-To create a video segment, you click on the icon `Create a segment` in the video player toolbar.
+To create a video segment, you click on the icon `Create Annotation` in the video player toolbar.
 
 ![Create a video segment.](../../assets/images/video-create-a-segment.png)*Create a new video segment.*
 
-Fill in the form `Create a segment` by indicating at least the required fields: label, start (time), end (time), and submit to create your new video segment.
+Fill in the form `Create Annotation` by indicating at least the required fields: label, start (time), end (time), and submit to create your new video segment.
 
-![Form Create a segment.](../../assets/images/video-form-new-segment.png)*Form to create a video segment.*
+![Form Create Annotation.](../../assets/images/video-form-new-segment.png)*Form to create a video segment.*
 
-New segments are displayed within the `Segments` tab, where you can view all the details for each segment.
+New segments are displayed within the `Annotations` tab, where you can view all the details for each segment.
 
 Below the video scrubber in the player toolbar, all segments are also shown and are clickable, allowing you to jump to and play each segment. The corresponding data for each segment will be highlighted below the video player by clicking on the down arrow button.
 
@@ -161,15 +163,15 @@ Below the video scrubber in the player toolbar, all segments are also shown and 
 
 You can edit or delete a segment or a property of a segment if you have the granted permissions. A segment has also an AKR URL you can copy and share.
 
-#### Audio segment
+#### Audio annotation
 
-To create an audio segment, you click on the icon `Create a segment` in the audio player toolbar.
+To create an audio segment, you click on the icon `Create Annotation` in the audio player toolbar.
 
-![Create an audio segment.](../../assets/images/audio-create-a-segment.png)*Create a new audio segment.*
+![Create Annotation.](../../assets/images/audio-create-a-segment.png)*Create a new audio segment.*
 
-Fill in the form `Create a segment` by indicating at least the required fields: label, start (time), end (time), and submit to create your new audio segment.
+Fill in the form `Create Annotation` by indicating at least the required fields: label, start (time), end (time), and submit to create your new audio segment.
 
-New segments are displayed within the `Segments` tab, where you can view all the details for each segment.
+New segments are displayed within the `Annotations` tab, where you can view all the details for each segment.
 
 Below the audio scrubber in the player toolbar, all segments are also shown and are clickable, allowing you to jump to and play each segment. The corresponding data for each segment will be highlighted below the audio player by clicking on the down arrow button.
 

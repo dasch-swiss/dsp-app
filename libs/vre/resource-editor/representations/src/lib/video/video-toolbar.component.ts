@@ -44,9 +44,9 @@ import { MediaPlayerService } from './media-player.service';
         mat-icon-button
         data-cy="timeline-button"
         (click)="createVideoSegment()"
-        [matTooltip]="'Create a segment'"
+        [matTooltip]="'annotations.create' | translate"
         *ngIf="isAdmin">
-        <mat-icon>view_timeline</mat-icon>
+        <mat-icon svgIcon="draw_region_icon"></mat-icon>
       </button>
 
       <button

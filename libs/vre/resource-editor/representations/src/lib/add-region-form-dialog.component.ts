@@ -9,7 +9,7 @@ export interface AddRegionFormDialogProps {
 @Component({
   selector: 'app-add-region-form',
   template: `
-    <app-dialog-header [title]="'Create a region'" [subtitle]="'Add further properties'" />
+    <app-dialog-header [title]="'annotations.create' | translate" [subtitle]="'Add further properties'" />
     <mat-dialog-content>
       <form [formGroup]="regionForm" class="form-content">
         <app-common-input [label]="'Label'" [control]="regionForm.controls.label" />

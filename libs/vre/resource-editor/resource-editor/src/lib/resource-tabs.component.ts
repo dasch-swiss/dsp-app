@@ -26,20 +26,21 @@ import { CompoundService } from './compound/compound.service';
           [parentResourceId]="resource.res.id" />
       </mat-tab>
 
-      <!-- annotations -->
+      <!-- image annotations -->
       <mat-tab label="Annotations" *ngIf="displayAnnotations">
         <ng-template matTabLabel>
-          Annotations
+          {{ 'annotations.label' | translate }}
           <span *ngIf="regionsCount > 0" [matBadge]="regionsCount" matBadgeColor="primary" matBadgeOverlap="false">
           </span>
         </ng-template>
         <app-annotation-tab *ngIf="regionsCount > 0" [resource]="resource" />
       </mat-tab>
 
+      <!-- audio & video annotations -->
       <mat-tab label="Segments" *ngIf="segmentsService.segments.length > 0">
         <ng-template matTabLabel>
           <span [matBadge]="segmentsService.segments.length" matBadgeColor="primary" matBadgeOverlap="false">
-            Segments
+            {{ 'annotations.label' | translate }}
           </span>
         </ng-template>
         <app-segment-tab [resource]="resource.res" />
