@@ -4,11 +4,7 @@ import { IsSwitchComponent } from './is-switch-component.interface';
 
 @Component({
   selector: 'app-rich-text-switch',
-  template: ` <div
-      *ngIf="displayMode; else editMode"
-      data-cy="rich-text-switch"
-      [innerHTML]="control.value | footnoteParser | internalLinkReplacer | addTargetBlank"
-      appFootnote></div>
+  template: ` <app-rich-text-viewer *ngIf="displayMode; else editMode" [control]="control" />
     <ng-template #editMode>
       <app-ck-editor [control]="myControl" />
     </ng-template>`,

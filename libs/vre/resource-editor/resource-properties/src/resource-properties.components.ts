@@ -36,6 +36,7 @@ import { LinkValueComponent } from './lib/value-components/link-value.component'
 import { ListValueComponent } from './lib/value-components/list-value.component';
 import { NestedMenuComponent } from './lib/value-components/nested-menu.component';
 import { TimeValueComponent } from './lib/value-components/time-value.component';
+import { RichTextViewerComponent } from './lib/viewer-components/rich-text-viewer.component';
 
 const valueComponents = [
   GeonameValueComponent,
@@ -44,6 +45,8 @@ const valueComponents = [
   NestedMenuComponent,
   TimeValueComponent,
 ];
+
+const viewerComponents = [RichTextViewerComponent];
 
 const switchComponents = [
   TimeSwitchComponent,
@@ -64,6 +67,7 @@ const switchComponents = [
 export const ResourcePropertiesComponents = [
   ...switchComponents,
   ...valueComponents,
+  ...viewerComponents,
   TextTypesSelectorComponent,
   DeleteValueDialogComponent,
   PropertyValuesComponent,

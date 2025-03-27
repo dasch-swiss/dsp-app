@@ -8,15 +8,16 @@
   position: relative;
 }
 
-.resource-editor-value {
+.value {
   flex: 1;
+  padding: 16px;
 
   &.highlighted {
     background: $yellow_100;
   }
 
-  &.edit {
-    background: inherit;
+  &.display:hover {
+    background: $primary_100;
   }
 }
 
