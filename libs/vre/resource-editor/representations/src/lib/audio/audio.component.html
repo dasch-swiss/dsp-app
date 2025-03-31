@@ -17,5 +17,5 @@
     *ngIf="segmentsService.segments.length > 0 && duration > 0 && isPlayerReady"
     [segments]="segmentsService.segments"
     [videoLengthSecs]="duration" />
-  <app-audio-toolbar [parentResource]="parentResource" [isAdmin]="isAdmin" />
+  <app-audio-toolbar [parentResource]="parentResource" />
 </ng-container>

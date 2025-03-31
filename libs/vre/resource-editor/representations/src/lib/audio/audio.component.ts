@@ -16,7 +16,6 @@ import { MediaPlayerService } from '../video/media-player.service';
 })
 export class AudioComponent implements OnInit, OnChanges, OnDestroy {
   @Input({ required: true }) src!: FileRepresentation;
-  @Input({ required: true }) isAdmin!: boolean;
   @Input({ required: true }) parentResource!: ReadResource;
 
   originalFilename?: string;

@@ -40,16 +40,14 @@ import { map } from 'rxjs/operators';
       class="dsp-representation audio"
       *ngSwitchCase="representationConstants.audio"
       [src]="representationToDisplay"
-      [parentResource]="resource.res"
-      [isAdmin]="isAdmin$ | async" />
+      [parentResource]="resource.res" />
 
     <app-video
       #video
       class="dsp-representation video"
       *ngSwitchCase="representationConstants.movingImage"
       [src]="representationToDisplay"
-      [parentResource]="resource.res"
-      [isAdmin]="isAdmin$ | async" />
+      [parentResource]="resource.res" />
 
     <app-archive
       #archive
@@ -72,21 +70,6 @@ export class ResourceRepresentationComponent implements OnChanges {
 
   loading = false;
   protected readonly representationConstants = RepresentationConstants;
-
-  get attachedToProjectResource(): string {
-    return this.resource.res.attachedToProject;
-  }
-
-  isAdmin$: Observable<boolean> = combineLatest([
-    this._store.select(UserSelectors.user),
-    this._store.select(UserSelectors.userProjectAdminGroups),
-  ]).pipe(
-    map(([user, userProjectGroups]) => {
-      return this.attachedToProjectResource
-        ? ProjectService.IsProjectAdminOrSysAdmin(user!, userProjectGroups, this.attachedToProjectResource)
-        : false;
-    })
-  );
 
   constructor(private _store: Store) {}
 

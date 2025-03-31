@@ -9,6 +9,7 @@ import {
 } from '@dasch-swiss/vre/resource-editor/segment-support';
 import { FileRepresentation } from '../file-representation';
 import { MovingImageSidecar } from '../moving-image-sidecar';
+import { ResourceUtil } from '../resource.util';
 import { MediaPlayerService } from './media-player.service';
 
 @Component({
@@ -45,7 +46,7 @@ import { MediaPlayerService } from './media-player.service';
         data-cy="timeline-button"
         (click)="createVideoSegment()"
         [matTooltip]="'annotations.create' | translate"
-        *ngIf="isAdmin">
+        *ngIf="usercanEdit">
         <mat-icon svgIcon="draw_region_icon"></mat-icon>
       </button>
 
@@ -64,7 +65,6 @@ export class VideoToolbarComponent {
   @Input({ required: true }) src!: FileRepresentation;
   @Input({ required: true }) parentResource!: ReadResource;
   @Input({ required: true }) fileInfo!: MovingImageSidecar;
-  @Input({ required: true }) isAdmin!: boolean;
 
   @Output() toggleCinemaMode = new EventEmitter<void>();
 
@@ -74,6 +74,10 @@ export class VideoToolbarComponent {
 
   matTooltipPos: TooltipPosition = 'below';
   play = false;
+
+  get usercanEdit() {
+    return ResourceUtil.userCanEdit(this.parentResource);
+  }
 
   constructor(
     private _viewContainerRef: ViewContainerRef,
