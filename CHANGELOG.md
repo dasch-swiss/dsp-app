@@ -1,5 +1,33 @@
 # Changelog
 
+## [11.28.0](https://github.com/dasch-swiss/dsp-das/compare/v11.27.0...v11.28.0) (2025-03-31)
+
+
+### Enhancements
+
+* Unify resource annotations wording (DEV-4393) ([#2188](https://github.com/dasch-swiss/dsp-das/issues/2188)) ([bc05517](https://github.com/dasch-swiss/dsp-das/commit/bc05517866593e3e7599cb6d2f21c4756e81f6f1))
+
+
+### Bug Fixes
+
+* adds sorting to project selectors (DEV-4626) ([#2170](https://github.com/dasch-swiss/dsp-das/issues/2170)) ([6a71b66](https://github.com/dasch-swiss/dsp-das/commit/6a71b667bb358998663dd50659c6e7dacf46a157))
+* align buttons and icons (DEV-4384) ([#1929](https://github.com/dasch-swiss/dsp-das/issues/1929)) ([909d01a](https://github.com/dasch-swiss/dsp-das/commit/909d01a509542b52f998220364cbf7f713912897))
+* change not system admin language (DEV-4707) ([#2197](https://github.com/dasch-swiss/dsp-das/issues/2197)) ([c3a01d3](https://github.com/dasch-swiss/dsp-das/commit/c3a01d34fe557f387a607672409d831d8f479e5b))
+* class list item style (DEV-4629) ([#2164](https://github.com/dasch-swiss/dsp-das/issues/2164)) ([f5c887b](https://github.com/dasch-swiss/dsp-das/commit/f5c887b8603e454103698f6698b98609e706aaf7))
+* hide/show button depending on the parent resources editing right… ([#2196](https://github.com/dasch-swiss/dsp-das/issues/2196)) ([875ba94](https://github.com/dasch-swiss/dsp-das/commit/875ba94f3773d2f176c48e50f72915fb01d6ebe5))
+* open segment form as side dialog ([#2198](https://github.com/dasch-swiss/dsp-das/issues/2198)) ([b8f3c60](https://github.com/dasch-swiss/dsp-das/commit/b8f3c609d736fdd6f4dd5e3fe7a72c0634228885))
+* prevents from creating linked resource with multiple attached projects (DEV-4557) ([#2126](https://github.com/dasch-swiss/dsp-das/issues/2126)) ([de16d6c](https://github.com/dasch-swiss/dsp-das/commit/de16d6ce03f9fedea19771a6045f386d644991f5))
+* register custom icon ([#2205](https://github.com/dasch-swiss/dsp-das/issues/2205)) ([eae4abe](https://github.com/dasch-swiss/dsp-das/commit/eae4abe9b29e4b1d713f7647b3d837f0e87779a9))
+* suspend user action (DEV-4603) ([#2171](https://github.com/dasch-swiss/dsp-das/issues/2171)) ([d4b6e44](https://github.com/dasch-swiss/dsp-das/commit/d4b6e44cc54f7b32da8644bfa407faa1136aa10c))
+* translations (DEV-4726) ([#2203](https://github.com/dasch-swiss/dsp-das/issues/2203)) ([1b44368](https://github.com/dasch-swiss/dsp-das/commit/1b44368672ba1fd918bb205716373de10f76a907))
+* video cinema mode (DEV-4668) ([#2199](https://github.com/dasch-swiss/dsp-das/issues/2199)) ([af5dd1e](https://github.com/dasch-swiss/dsp-das/commit/af5dd1e43eaa7ad8df6d28851fa130712a054cee))
+
+
+### Maintenances
+
+* create new resource-editor/properties-display lib ([#2200](https://github.com/dasch-swiss/dsp-das/issues/2200)) ([110bd15](https://github.com/dasch-swiss/dsp-das/commit/110bd15c6a5b77a25abbaae12801ce6a4c6de211))
+* improve row styling of resource editor ([#2201](https://github.com/dasch-swiss/dsp-das/issues/2201)) ([d63c108](https://github.com/dasch-swiss/dsp-das/commit/d63c108e4135f4882a9218658714e6bab1749622))
+
 ## [11.27.0](https://github.com/dasch-swiss/dsp-das/compare/v11.26.3...v11.27.0) (2025-03-24)
 
 
