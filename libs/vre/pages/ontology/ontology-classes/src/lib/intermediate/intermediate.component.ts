@@ -1,6 +1,12 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { ActivatedRoute } from '@angular/router';
+import { RouteConstants } from '@dasch-swiss/vre/core/config';
+import { AppError } from '@dasch-swiss/vre/core/error-handler';
 import { FilteredResources } from '@dasch-swiss/vre/shared/app-common-to-move';
+import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import {
   ResourceLinkDialogComponent,
   ResourceLinkDialogProps,
@@ -26,6 +32,7 @@ import {
               mat-mini-fab
               color="primary"
               class="link"
+              *ngIf="(mayHaveMultipleProjects$ | async) === false"
               matTooltip="Create a link object from this selection"
               [matTooltipPosition]="'above'"
               [disabled]="resources.count < 2"
@@ -67,11 +74,31 @@ export class IntermediateComponent {
     },
   };
 
-  constructor(private _dialog: MatDialog) {}
+  get mayHaveMultipleProjects$(): Observable<boolean> {
+    return this._route.paramMap.pipe(
+      map(params => {
+        const uuid = this._route.parent?.snapshot.params[RouteConstants.uuidParameter];
+        return !params.get(RouteConstants.project) && !uuid;
+      })
+    );
+  }
 
-  openDialog() {
+  constructor(
+    private _dialog: MatDialog,
+    private _route: ActivatedRoute,
+    private _projectService: ProjectService
+  ) {}
+
+  openDialog(): void {
+    const projectUuid =
+      this._route.parent?.snapshot.params[RouteConstants.uuidParameter] ??
+      this._route.snapshot.params[RouteConstants.project];
+    if (!projectUuid) {
+      throw new AppError('Project UUID is missing.');
+    }
+
     this._dialog.open<ResourceLinkDialogComponent, ResourceLinkDialogProps>(ResourceLinkDialogComponent, {
-      data: { resources: this.resources },
+      data: { resources: this.resources, projectUuid: this._projectService.uuidToIri(projectUuid) },
     });
   }
 }

@@ -25,7 +25,10 @@ export class ProjectService {
   }
 
   uuidToIri(uuid: string): string {
-    return ProjectService.uuidToIri(uuid, this._acs.dspAppConfig);
+    const matches = uuid.match(/https?%3A%2F%2F[\w.%\-~]+%2F[\w/%\-]+/g);
+    return matches && matches.length > 0
+      ? decodeURIComponent(uuid)
+      : ProjectService.uuidToIri(uuid, this._acs.dspAppConfig);
   }
 
   static uuidToIri(uuid: string, dspAppConfig: DspAppConfig): string {

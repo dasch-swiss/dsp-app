@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject, OnDestroy } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -14,12 +14,14 @@ import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { ProjectsSelectors, UserSelectors } from '@dasch-swiss/vre/core/state';
 import { ResourceService } from '@dasch-swiss/vre/shared/app-common';
 import { FilteredResources, ShortResInfo } from '@dasch-swiss/vre/shared/app-common-to-move';
+import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { Store } from '@ngxs/store';
-import { combineLatest, Observable, Subject } from 'rxjs';
+import { Observable, Subject, combineLatest } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
 
 export interface ResourceLinkDialogProps {
   resources: FilteredResources;
+  projectUuid: string;
 }
 
 @Component({
@@ -28,7 +30,7 @@ export interface ResourceLinkDialogProps {
   templateUrl: './resource-link-dialog.component.html',
   styleUrls: ['./resource-link-dialog.component.scss'],
 })
-export class ResourceLinkDialogComponent implements OnInit, OnDestroy {
+export class ResourceLinkDialogComponent implements OnDestroy {
   private _ngUnsubscribe = new Subject<void>();
 
   readonly title = `Create a collection of ${this.data.resources.count} resources`;
@@ -60,6 +62,17 @@ export class ResourceLinkDialogComponent implements OnInit, OnDestroy {
   isCurrentProjectMember$ = this._store.select(ProjectsSelectors.isCurrentProjectMember);
   isLoading$ = this._store.select(ProjectsSelectors.isProjectsLoading);
 
+  get isProjectMember(): boolean {
+    const userProjectGroups = this._store.selectSnapshot(UserSelectors.userProjectGroups);
+    const user = this._store.selectSnapshot(UserSelectors.user)!;
+    const isProjectMember = ProjectService.IsProjectMemberOrAdminOrSysAdmin(
+      user,
+      userProjectGroups,
+      this.data.projectUuid!
+    );
+    return isProjectMember;
+  }
+
   constructor(
     @Inject(DspApiConnectionToken)
     private _dspApiConnection: KnoraApiConnection,
@@ -70,14 +83,6 @@ export class ResourceLinkDialogComponent implements OnInit, OnDestroy {
     public dialogRef: MatDialogRef<ResourceLinkDialogComponent, void>,
     @Inject(MAT_DIALOG_DATA) public data: ResourceLinkDialogProps
   ) {}
-
-  ngOnInit() {
-    this.usersProjects$.pipe(takeUntil(this._ngUnsubscribe)).subscribe(projects => {
-      if (projects.length > 0) {
-        this.selectedProject = projects[0].id;
-      }
-    });
-  }
 
   ngOnDestroy() {
     this._ngUnsubscribe.next();
@@ -102,7 +107,7 @@ export class ResourceLinkDialogComponent implements OnInit, OnDestroy {
 
     linkObj.label = this.form.controls.label.value!;
     linkObj.type = Constants.LinkObj;
-    linkObj.attachedToProject = this.selectedProject!;
+    linkObj.attachedToProject = this.data.projectUuid;
 
     linkObj.properties[Constants.HasLinkToValue] = this.data.resources.resInfo.map(res => {
       const linkVal = new CreateLinkValue();
