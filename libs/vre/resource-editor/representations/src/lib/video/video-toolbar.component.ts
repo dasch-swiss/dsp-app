@@ -1,6 +1,8 @@
 import { Component, EventEmitter, Input, Output, ViewContainerRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatIconRegistry } from '@angular/material/icon';
 import { TooltipPosition } from '@angular/material/tooltip';
+import { DomSanitizer } from '@angular/platform-browser';
 import { ReadResource } from '@dasch-swiss/dsp-js';
 import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import {
@@ -80,10 +82,14 @@ export class VideoToolbarComponent {
   }
 
   constructor(
-    private _viewContainerRef: ViewContainerRef,
     private _dialog: MatDialog,
-    public mediaPlayer: MediaPlayerService
-  ) {}
+    private _domSanitizer: DomSanitizer,
+    public mediaPlayer: MediaPlayerService,
+    private _matIconRegistry: MatIconRegistry,
+    private _viewContainerRef: ViewContainerRef
+  ) {
+    this._setupCssMaterialIcon();
+  }
 
   createVideoSegment() {
     this._dialog.open<CreateSegmentDialogComponent, CreateSegmentDialogProps>(CreateSegmentDialogComponent, {
@@ -101,5 +107,12 @@ export class VideoToolbarComponent {
 
   goToStart() {
     this.mediaPlayer.navigate(0);
+  }
+
+  private _setupCssMaterialIcon() {
+    this._matIconRegistry.addSvgIcon(
+      'draw_region_icon',
+      this._domSanitizer.bypassSecurityTrustResourceUrl('/assets/images/draw-region-icon.svg')
+    );
   }
 }

@@ -1,5 +1,7 @@
 import { Component, Input, OnInit, ViewContainerRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatIconRegistry } from '@angular/material/icon';
+import { DomSanitizer } from '@angular/platform-browser';
 import { ReadResource } from '@dasch-swiss/dsp-js';
 import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import {
@@ -45,11 +47,14 @@ export class AudioToolbarComponent implements OnInit {
 
   constructor(
     private _dialog: MatDialog,
-    private _viewContainerRef: ViewContainerRef,
-    public mediaPlayer: MediaPlayerService
+    private _domSanitizer: DomSanitizer,
+    private _matIconRegistry: MatIconRegistry,
+    public mediaPlayer: MediaPlayerService,
+    private _viewContainerRef: ViewContainerRef
   ) {}
 
   ngOnInit() {
+    this._setupCssMaterialIcon();
     this.durationString = this.parseTime(this.mediaPlayer.duration());
   }
 
@@ -82,5 +87,12 @@ export class AudioToolbarComponent implements OnInit {
       secondsString = `0${secondsString}`;
     }
     return `${minutesString}:${secondsString}`;
+  }
+
+  private _setupCssMaterialIcon() {
+    this._matIconRegistry.addSvgIcon(
+      'draw_region_icon',
+      this._domSanitizer.bypassSecurityTrustResourceUrl('/assets/images/draw-region-icon.svg')
+    );
   }
 }
