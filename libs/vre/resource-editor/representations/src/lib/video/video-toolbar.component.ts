@@ -83,11 +83,14 @@ export class VideoToolbarComponent {
 
   createVideoSegment() {
     this._dialog.open<CreateSegmentDialogComponent, CreateSegmentDialogProps>(CreateSegmentDialogComponent, {
-      ...DspDialogConfig.dialogDrawerConfig({
-        type: 'VideoSegment',
-        resource: this.parentResource,
-        videoDurationSecs: this.mediaPlayer.duration(),
-      }),
+      ...DspDialogConfig.dialogDrawerConfig(
+        {
+          type: 'VideoSegment',
+          resource: this.parentResource,
+          videoDurationSecs: this.mediaPlayer.duration(),
+        },
+        true
+      ),
       viewContainerRef: this._viewContainerRef,
     });
   }
