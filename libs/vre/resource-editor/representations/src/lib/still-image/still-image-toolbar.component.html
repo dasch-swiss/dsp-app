@@ -1,71 +1,76 @@
 <div class="toolbar">
-  <span>
-    <button
-      mat-icon-button
+  <div>
+    <div
+      class="clickable-icon"
       data-cy="more-vert-image-button"
       [matMenuTriggerFor]="more"
       matTooltip="More"
       matTooltipPosition="above">
       <mat-icon>more_vert</mat-icon>
-    </button>
+    </div>
 
-    <button
+    <div
+      class="clickable-icon"
       data-cy="still-image-share-button"
-      mat-icon-button
       [matMenuTriggerFor]="share"
-      [disabled]="isReadStillImageExternalFileValue"
+      [class.disabled]="isReadStillImageExternalFileValue"
       matTooltip="Share"
       matTooltipPosition="above">
       <mat-icon>share</mat-icon>
-    </button>
+    </div>
 
-    <button
+    <div
+      class="clickable-icon"
       data-cy="still-image-download-button"
-      mat-icon-button
       matTooltip="Download"
-      [disabled]="isReadStillImageExternalFileValue || !userCanView"
+      [class.disabled]="isReadStillImageExternalFileValue || !userCanView"
       (click)="download()">
       <mat-icon>download</mat-icon>
-    </button>
-    <button
+    </div>
+
+    <div
+      class="clickable-icon"
       data-cy="still-image-region-button"
-      mat-icon-button
       matTooltip="{{ 'annotations.create' | translate }}"
-      [disabled]="!userCanEdit || isReadStillImageExternalFileValue"
+      [class.disabled]="!userCanEdit || isReadStillImageExternalFileValue"
       (click)="toggleDrawMode()"
       [class.active]="osd.drawing">
       <mat-icon svgIcon="draw_region_icon"></mat-icon>
-    </button>
-  </span>
+    </div>
+  </div>
 
   <app-compound-navigation *ngIf="compoundMode" />
 
-  <span>
-    <button
+  <div>
+    <div
+      class="clickable-icon"
       data-cy="still-image-settings-button"
-      mat-icon-button
       matTooltip="Settings"
       [matMenuTriggerFor]="settings"
-      [disabled]="this.isReadStillImageExternalFileValue">
+      [class.disabled]="this.isReadStillImageExternalFileValue">
       <mat-icon>settings</mat-icon>
-    </button>
-    <button mat-icon-button data-cy="zoom-out" matTooltip="Zoom out" (click)="osd.zoom(-1)">
+    </div>
+
+    <div class="clickable-icon" data-cy="zoom-out" matTooltip="Zoom out" (click)="osd.zoom(-1)">
       <mat-icon>zoom_out</mat-icon>
-    </button>
-    <button mat-icon-button data-cy="zoom-in" matTooltip="Zoom in" (click)="osd.zoom(1)">
+    </div>
+
+    <div class="clickable-icon" data-cy="zoom-in" matTooltip="Zoom in" (click)="osd.zoom(1)">
       <mat-icon>zoom_in</mat-icon>
-    </button>
-    <button mat-icon-button data-cy="zoom-reset" matTooltip="Reset zoom" (click)="osd.viewer.viewport.goHome()">
+    </div>
+
+    <div class="clickable-icon" data-cy="zoom-reset" matTooltip="Reset zoom" (click)="osd.viewer.viewport.goHome()">
       <mat-icon>other_houses</mat-icon>
-    </button>
-    <button
-      mat-icon-button
+    </div>
+
+    <div
+      class="clickable-icon"
       data-cy="fullscreen"
       matTooltip="Open in fullscreen"
       (click)="osd.viewer.setFullScreen(true)">
       <mat-icon>fullscreen</mat-icon>
-    </button>
-  </span>
+    </div>
+  </div>
 </div>
 
 <mat-menu #more="matMenu" class="representation-menu">
