@@ -33,7 +33,7 @@ import { CompoundService } from './compound/compound.service';
           <span *ngIf="regionsCount > 0" [matBadge]="regionsCount" matBadgeColor="primary" matBadgeOverlap="false">
           </span>
         </ng-template>
-        <app-annotation-tab *ngIf="regionsCount > 0" [resource]="resource" />
+        <app-annotation-tab [resource]="resource" />
       </mat-tab>
 
       <!-- audio & video annotations -->
@@ -59,7 +59,10 @@ export class ResourceTabsComponent implements OnInit, OnDestroy {
   regionsCount = 0;
 
   get displayAnnotations() {
-    return this.resource.res.properties[Constants.HasStillImageFileValue] !== undefined || this.incomingResource;
+    return (
+      (this.resource.res.properties[Constants.HasStillImageFileValue] !== undefined || this.incomingResource) &&
+      this.regionsCount > 0
+    );
   }
 
   constructor(
