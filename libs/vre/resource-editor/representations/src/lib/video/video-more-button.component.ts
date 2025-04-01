@@ -1,18 +1,7 @@
-import { Component, Inject, Input } from '@angular/core';
+import { Component, Input, ViewContainerRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import {
-  Constants,
-  KnoraApiConnection,
-  ReadMovingImageFileValue,
-  ReadResource,
-  UpdateFileValue,
-  UpdateResource,
-  UpdateValue,
-  WriteValueResponse,
-} from '@dasch-swiss/dsp-js';
-import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
+import { Constants, ReadResource } from '@dasch-swiss/dsp-js';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
-import { mergeMap } from 'rxjs/operators';
 import { FileRepresentation } from '../file-representation';
 import { MovingImageSidecar } from '../moving-image-sidecar';
 import {
@@ -56,9 +45,8 @@ export class VideoMoreButtonComponent {
   constructor(
     private _notification: NotificationService,
     private _dialog: MatDialog,
-    @Inject(DspApiConnectionToken)
-    private _dspApiConnection: KnoraApiConnection,
-    private _rs: RepresentationService
+    private _rs: RepresentationService,
+    private _viewContainerRef: ViewContainerRef
   ) {}
 
   openVideoInNewTab(url: string) {
@@ -74,51 +62,14 @@ export class VideoMoreButtonComponent {
   }
 
   openReplaceFileDialog() {
-    this._dialog
-      .open<ReplaceFileDialogComponent, ReplaceFileDialogProps>(ReplaceFileDialogComponent, {
-        data: {
-          title: 'Video',
-          subtitle: 'Update the video file of this resource',
-          representation: Constants.HasMovingImageFileValue,
-          propId: this.parentResource.properties[Constants.HasMovingImageFileValue][0].id,
-        },
-        disableClose: true,
-      })
-      .afterClosed()
-      .subscribe(data => {
-        if (data) {
-          this._replaceFile(data);
-        }
-      });
-  }
-
-  private _replaceFile(file: UpdateFileValue) {
-    const updateRes = new UpdateResource();
-    updateRes.id = this.parentResource.id;
-    updateRes.type = this.parentResource.type;
-    updateRes.property = Constants.HasMovingImageFileValue;
-    updateRes.value = file;
-
-    this._dspApiConnection.v2.values
-      .updateValue(updateRes as UpdateResource<UpdateValue>)
-      .pipe(
-        mergeMap(res =>
-          this._dspApiConnection.v2.values.getValue(this.parentResource.id, (res as WriteValueResponse).uuid)
-        )
-      )
-      .subscribe(res3 => {
-        const res2 = res3 as ReadResource;
-        this.src.fileValue.fileUrl = (
-          res2.properties[Constants.HasMovingImageFileValue][0] as ReadMovingImageFileValue
-        ).fileUrl;
-        this.src.fileValue.filename = (
-          res2.properties[Constants.HasMovingImageFileValue][0] as ReadMovingImageFileValue
-        ).filename;
-        this.src.fileValue.strval = (
-          res2.properties[Constants.HasMovingImageFileValue][0] as ReadMovingImageFileValue
-        ).strval;
-
-        window.location.reload();
-      });
+    this._dialog.open<ReplaceFileDialogComponent, ReplaceFileDialogProps>(ReplaceFileDialogComponent, {
+      data: {
+        title: 'Video',
+        subtitle: 'Update the video file of this resource',
+        representation: Constants.HasMovingImageFileValue,
+        resource: this.parentResource,
+      },
+      viewContainerRef: this._viewContainerRef,
+    });
   }
 }

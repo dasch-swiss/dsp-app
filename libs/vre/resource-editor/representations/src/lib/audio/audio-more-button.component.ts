@@ -1,17 +1,7 @@
-import { Component, Inject, Input } from '@angular/core';
+import { Component, Input, ViewContainerRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import {
-  Constants,
-  KnoraApiConnection,
-  ReadResource,
-  UpdateFileValue,
-  UpdateResource,
-  UpdateValue,
-  WriteValueResponse,
-} from '@dasch-swiss/dsp-js';
-import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
+import { Constants, ReadResource } from '@dasch-swiss/dsp-js';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
-import { mergeMap } from 'rxjs/operators';
 import { FileRepresentation } from '../file-representation';
 import { getFileValue } from '../get-file-value';
 import {
@@ -19,7 +9,6 @@ import {
   ReplaceFileDialogProps,
 } from '../replace-file-dialog/replace-file-dialog.component';
 import { RepresentationService } from '../representation.service';
-import { ResourceFetcherService } from '../resource-fetcher.service';
 import { ResourceUtil } from '../resource.util';
 
 @Component({
@@ -47,28 +36,20 @@ export class AudioMoreButtonComponent {
 
   constructor(
     private _dialog: MatDialog,
-    @Inject(DspApiConnectionToken)
-    private _dspApiConnection: KnoraApiConnection,
     private _rs: RepresentationService,
-    private _resourceFetcher: ResourceFetcherService
+    private _viewContainerRef: ViewContainerRef
   ) {}
 
   openReplaceFileDialog() {
-    this._dialog
-      .open<ReplaceFileDialogComponent, ReplaceFileDialogProps>(ReplaceFileDialogComponent, {
-        data: {
-          title: 'Audio',
-          subtitle: 'Update the audio file of this resource',
-          representation: Constants.HasAudioFileValue,
-          propId: this.parentResource.properties[Constants.HasAudioFileValue][0].id,
-        },
-      })
-      .afterClosed()
-      .subscribe(data => {
-        if (data) {
-          this._replaceFile(data);
-        }
-      });
+    this._dialog.open<ReplaceFileDialogComponent, ReplaceFileDialogProps>(ReplaceFileDialogComponent, {
+      data: {
+        title: 'Audio',
+        subtitle: 'Update the audio file of this resource',
+        representation: Constants.HasAudioFileValue,
+        resource: this.parentResource,
+      },
+      viewContainerRef: this._viewContainerRef,
+    });
   }
 
   openIIIFnewTab() {
@@ -77,24 +58,5 @@ export class AudioMoreButtonComponent {
 
   download() {
     this._rs.downloadProjectFile(this.src.fileValue, this.parentResource);
-  }
-
-  private _replaceFile(file: UpdateFileValue) {
-    const updateRes = new UpdateResource();
-    updateRes.id = this.parentResource.id;
-    updateRes.type = this.parentResource.type;
-    updateRes.property = Constants.HasAudioFileValue;
-    updateRes.value = file;
-
-    this._dspApiConnection.v2.values
-      .updateValue(updateRes as UpdateResource<UpdateValue>)
-      .pipe(
-        mergeMap(res =>
-          this._dspApiConnection.v2.values.getValue(this.parentResource.id, (res as WriteValueResponse).uuid)
-        )
-      )
-      .subscribe(() => {
-        this._resourceFetcher.reload();
-      });
   }
 }

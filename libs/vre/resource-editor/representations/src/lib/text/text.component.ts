@@ -1,16 +1,6 @@
-import { Component, Inject, Input, OnChanges } from '@angular/core';
+import { Component, Input, OnChanges, ViewContainerRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import {
-  Constants,
-  KnoraApiConnection,
-  ReadResource,
-  ReadTextFileValue,
-  UpdateFileValue,
-  UpdateResource,
-  UpdateValue,
-} from '@dasch-swiss/dsp-js';
-import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
-import { mergeMap } from 'rxjs/operators';
+import { Constants, ReadResource } from '@dasch-swiss/dsp-js';
 import { FileRepresentation } from '../file-representation';
 import {
   ReplaceFileDialogComponent,
@@ -37,10 +27,9 @@ export class TextComponent implements OnChanges {
   }
 
   constructor(
-    @Inject(DspApiConnectionToken)
-    private _dspApiConnection: KnoraApiConnection,
     private _dialog: MatDialog,
-    private _rs: RepresentationService
+    private _rs: RepresentationService,
+    private _viewContainerRef: ViewContainerRef
   ) {}
 
   ngOnChanges(): void {
@@ -59,41 +48,14 @@ export class TextComponent implements OnChanges {
   }
 
   openReplaceFileDialog() {
-    this._dialog
-      .open<ReplaceFileDialogComponent, ReplaceFileDialogProps>(ReplaceFileDialogComponent, {
-        data: {
-          title: 'Text (csv, txt, xml)',
-          subtitle: 'Update the text file of this resource',
-          representation: Constants.HasTextFileValue,
-          propId: this.parentResource.properties[Constants.HasTextFileValue][0].id,
-        },
-      })
-      .afterClosed()
-      .subscribe(data => {
-        if (data) {
-          this._replaceFile(data);
-        }
-      });
-  }
-
-  private _replaceFile(file: UpdateFileValue) {
-    const updateRes = new UpdateResource();
-    updateRes.id = this.parentResource.id;
-    updateRes.type = this.parentResource.type;
-    updateRes.property = Constants.HasTextFileValue;
-    updateRes.value = file;
-
-    this._dspApiConnection.v2.values
-      .updateValue(updateRes as UpdateResource<UpdateValue>)
-      .pipe(mergeMap(res => this._dspApiConnection.v2.values.getValue(this.parentResource.id, res.uuid)))
-      .subscribe(res2 => {
-        this.src.fileValue.fileUrl = (res2.properties[Constants.HasTextFileValue][0] as ReadTextFileValue).fileUrl;
-        this.src.fileValue.filename = (res2.properties[Constants.HasTextFileValue][0] as ReadTextFileValue).filename;
-        this.src.fileValue.strval = (res2.properties[Constants.HasTextFileValue][0] as ReadTextFileValue).strval;
-
-        this._rs.getFileInfo(this.src.fileValue.fileUrl).subscribe(res => {
-          this.originalFilename = res['originalFilename'];
-        });
-      });
+    this._dialog.open<ReplaceFileDialogComponent, ReplaceFileDialogProps>(ReplaceFileDialogComponent, {
+      data: {
+        title: 'Text (csv, txt, xml)',
+        subtitle: 'Update the text file of this resource',
+        representation: Constants.HasTextFileValue,
+        resource: this.parentResource,
+      },
+      viewContainerRef: this._viewContainerRef,
+    });
   }
 }

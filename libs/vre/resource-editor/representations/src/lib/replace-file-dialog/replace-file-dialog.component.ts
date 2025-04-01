@@ -1,12 +1,16 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { KnoraApiConnection, ReadResource, UpdateResource, UpdateValue } from '@dasch-swiss/dsp-js';
 import { UpdateFileValue } from '@dasch-swiss/dsp-js/src/models/v2/resources/values/update/update-file-value';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
+import { finalize } from 'rxjs/operators';
 import { FileRepresentationType } from '../file-representation.type';
+import { ResourceFetcherService } from '../resource-fetcher.service';
 
 export interface ReplaceFileDialogProps {
   representation: FileRepresentationType;
-  propId: string;
+  resource: ReadResource;
   title: string;
   subtitle: string;
 }
@@ -25,7 +29,7 @@ export interface ReplaceFileDialogProps {
         </div>
       </div>
 
-      <app-upload-control [representation]="data.representation" [formControl]="form" [resourceId]="data.propId" />
+      <app-upload-control [representation]="data.representation" [formControl]="form" [resourceId]="propId" />
     </mat-dialog-content>
 
     <mat-dialog-actions align="end">
@@ -38,24 +42,46 @@ export interface ReplaceFileDialogProps {
         data-cy="replace-file-submit-button"
         [disabled]="form.invalid"
         [color]="'primary'"
-        (click)="saveFile()">
+        (click)="replaceFile()">
         {{ 'form.action.submit' | translate }}
       </button>
     </mat-dialog-actions>
   `,
   styleUrls: ['./replace-file-dialog.component.scss'],
 })
-export class ReplaceFileDialogComponent {
+export class ReplaceFileDialogComponent implements OnInit {
+  propId!: string;
   form = this._fb.control<UpdateFileValue | null>(null, [Validators.required]);
 
   constructor(
     @Inject(MAT_DIALOG_DATA)
     public data: ReplaceFileDialogProps,
     public dialogRef: MatDialogRef<ReplaceFileDialogComponent>,
+    @Inject(DspApiConnectionToken)
+    private _dspApiConnection: KnoraApiConnection,
+    private _resourceFetcher: ResourceFetcherService,
     private _fb: FormBuilder
   ) {}
 
-  saveFile() {
-    this.dialogRef.close(this.form.getRawValue());
+  ngOnInit() {
+    this.propId = this.data.resource.properties[this.data.representation][0].id;
+  }
+
+  replaceFile() {
+    const updateRes = new UpdateResource<UpdateValue>();
+    updateRes.id = this.data.resource.id;
+    updateRes.type = this.data.resource.type;
+    updateRes.property = this.data.representation;
+    updateRes.value = this.form.getRawValue()!;
+
+    this._dspApiConnection.v2.values
+      .updateValue(updateRes)
+      .pipe(
+        finalize(() => {
+          this._resourceFetcher.reload();
+          this.dialogRef.close();
+        })
+      )
+      .subscribe();
   }
 }

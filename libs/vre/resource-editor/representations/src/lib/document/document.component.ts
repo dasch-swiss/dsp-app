@@ -1,18 +1,15 @@
-import { ChangeDetectorRef, Component, Inject, Input, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import {
-  Constants,
-  KnoraApiConnection,
-  ReadDocumentFileValue,
-  ReadResource,
-  UpdateFileValue,
-  UpdateResource,
-  UpdateValue,
-  WriteValueResponse,
-} from '@dasch-swiss/dsp-js';
-import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
+  ChangeDetectorRef,
+  Component,
+  Input,
+  OnChanges,
+  SimpleChanges,
+  ViewChild,
+  ViewContainerRef,
+} from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { Constants, ReadDocumentFileValue, ReadResource } from '@dasch-swiss/dsp-js';
 import { PdfViewerComponent } from 'ng2-pdf-viewer';
-import { mergeMap, take } from 'rxjs/operators';
 import { FileRepresentation } from '../file-representation';
 import {
   ReplaceFileDialogComponent,
@@ -49,11 +46,10 @@ export class DocumentComponent implements OnChanges {
   }
 
   constructor(
-    @Inject(DspApiConnectionToken)
-    private _dspApiConnection: KnoraApiConnection,
     private _dialog: MatDialog,
     private _rs: RepresentationService,
-    private _cd: ChangeDetectorRef
+    private _cd: ChangeDetectorRef,
+    private _viewContainerRef: ViewContainerRef
   ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -80,21 +76,15 @@ export class DocumentComponent implements OnChanges {
   }
 
   openReplaceFileDialog() {
-    this._dialog
-      .open<ReplaceFileDialogComponent, ReplaceFileDialogProps>(ReplaceFileDialogComponent, {
-        data: {
-          title: 'Document',
-          subtitle: 'Update the document file of this resource',
-          representation: Constants.HasDocumentFileValue,
-          propId: this.parentResource.properties[Constants.HasDocumentFileValue][0].id,
-        },
-      })
-      .afterClosed()
-      .subscribe(data => {
-        if (data) {
-          this._replaceFile(data);
-        }
-      });
+    this._dialog.open<ReplaceFileDialogComponent, ReplaceFileDialogProps>(ReplaceFileDialogComponent, {
+      data: {
+        title: 'Document',
+        subtitle: 'Update the document file of this resource',
+        representation: Constants.HasDocumentFileValue,
+        resource: this.parentResource,
+      },
+      viewContainerRef: this._viewContainerRef,
+    });
   }
 
   openFullscreen() {
@@ -105,42 +95,6 @@ export class DocumentComponent implements OnChanges {
   zoom(mod: -1 | 1) {
     const newZoom = Math.round((this.zoomFactor + mod * 0.2) * 100) / 100;
     this.zoomFactor = newZoom <= 0 ? 0.2 : newZoom;
-  }
-
-  private _replaceFile(file: UpdateFileValue) {
-    const updateRes = new UpdateResource();
-    updateRes.id = this.parentResource.id;
-    updateRes.type = this.parentResource.type;
-    updateRes.property = Constants.HasDocumentFileValue;
-    updateRes.value = file;
-
-    this._dspApiConnection.v2.values
-      .updateValue(updateRes as UpdateResource<UpdateValue>)
-      .pipe(
-        mergeMap((res: WriteValueResponse) =>
-          this._dspApiConnection.v2.values.getValue(this.parentResource.id, res.uuid)
-        ),
-        take(1)
-      )
-      .subscribe(fileValue => {
-        this.parentResource = fileValue;
-        this.src.fileValue.fileUrl = (
-          fileValue.properties[Constants.HasDocumentFileValue][0] as ReadDocumentFileValue
-        ).fileUrl;
-        this.src.fileValue.filename = (
-          fileValue.properties[Constants.HasDocumentFileValue][0] as ReadDocumentFileValue
-        ).filename;
-        this.src.fileValue.strval = (
-          fileValue.properties[Constants.HasDocumentFileValue][0] as ReadDocumentFileValue
-        ).strval;
-        this.src.fileValue.valueCreationDate = (
-          fileValue.properties[Constants.HasDocumentFileValue][0] as ReadDocumentFileValue
-        ).valueCreationDate;
-
-        this.zoomFactor = 1.0;
-        this.pdfQuery = '';
-        this._setOriginalFilename();
-      });
   }
 
   private _setOriginalFilename() {
