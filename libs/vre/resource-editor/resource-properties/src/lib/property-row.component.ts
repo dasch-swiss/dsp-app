@@ -1,6 +1,5 @@
 import { Component, Input } from '@angular/core';
 import { PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
-import { FootnoteService } from './footnote.service';
 import { PropertiesDisplayService } from './properties-display.service';
 
 @Component({
@@ -14,7 +13,6 @@ import { PropertiesDisplayService } from './properties-display.service';
       <ng-content />
     </div>
   </div>`,
-  providers: [FootnoteService],
   styleUrls: ['./property-row.component.scss'],
 })
 export class PropertyRowComponent {

@@ -1,15 +1,15 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { FootnoteService } from '../footnote.service';
 
 @Component({
   selector: 'app-rich-text-viewer',
-  template: ` <div
+  template: `
+    <div
       data-cy="rich-text-switch"
       class="rich-text-viewer"
       [innerHTML]="control.value | footnoteParser | internalLinkReplacer | addTargetBlank"
       appFootnote></div>
-    <app-footnotes *ngIf="footnoteService.footnotes.length > 0" />`,
+  `,
   styles: [
     `
       .rich-text-viewer ::ng-deep * {
@@ -24,14 +24,6 @@ import { FootnoteService } from '../footnote.service';
     `,
   ],
 })
-export class RichTextViewerComponent implements OnInit {
+export class RichTextViewerComponent {
   @Input({ required: true }) control!: FormControl<string | null>;
-
-  constructor(public footnoteService: FootnoteService) {}
-
-  ngOnInit() {
-    this.control.valueChanges.subscribe(() => {
-      this.footnoteService.reset();
-    });
-  }
 }
