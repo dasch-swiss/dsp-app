@@ -1,9 +1,9 @@
-import { Component, Input, OnChanges } from '@angular/core';
-import { ReadResource, ReadResourceSequence } from '@dasch-swiss/dsp-js';
+import { Component, Inject, Input, OnChanges } from '@angular/core';
+import { KnoraApiConnection, ReadResource, ReadResourceSequence } from '@dasch-swiss/dsp-js';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { AppError } from '@dasch-swiss/vre/core/error-handler';
 import { sortByKeys } from '@dasch-swiss/vre/resource-editor/resource-properties';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
-import { IncomingService } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { Observable, of } from 'rxjs';
 import { expand, map, reduce, take, takeWhile } from 'rxjs/operators';
 import { IncomingOrStandoffLink } from './incoming-link.interface';
@@ -41,7 +41,10 @@ export class IncomingLinksPropertyComponent implements OnChanges {
   allIncomingLinks: IncomingOrStandoffLink[] = [];
   pageIndex = 0;
 
-  constructor(private _incomingService: IncomingService) {}
+  constructor(
+    @Inject(DspApiConnectionToken)
+    private _dspApi: KnoraApiConnection
+  ) {}
 
   ngOnChanges() {
     this.allIncomingLinks = [];
@@ -62,7 +65,7 @@ export class IncomingLinksPropertyComponent implements OnChanges {
   private _getIncomingLinksRecursively$(resourceId: string) {
     let offset = 0;
 
-    return this._incomingService.getIncomingLinksForResource(resourceId, offset).pipe(
+    return this._dspApi.v2.search.doSearchIncomingLinks(resourceId, offset).pipe(
       expand(sequence => {
         if (!sequence.mayHaveMoreResults) {
           return of(sequence);
@@ -70,10 +73,7 @@ export class IncomingLinksPropertyComponent implements OnChanges {
 
         offset += 1;
 
-        return this._incomingService.getIncomingLinksForResource(
-          resourceId,
-          offset
-        ) as Observable<ReadResourceSequence>;
+        return this._dspApi.v2.search.doSearchIncomingLinks(resourceId, offset) as Observable<ReadResourceSequence>;
       }),
       takeWhile(response => response.resources.length > 0 && response.mayHaveMoreResults, true),
       reduce((all: ReadResource[], data) => all.concat(data.resources), []),
