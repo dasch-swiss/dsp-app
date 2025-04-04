@@ -10,14 +10,26 @@ import { FootnoteService } from './footnote.service';
       class="footnote"
       [attr.data-uuid]="footnote.uuid"
       data-cy="footnote">
-      <a style="padding-top: 1em" (click)="goToFootnote(footnote.uuid)">{{ index + 1 }}.</a>
-      <span [innerHTML]="footnote.content | internalLinkReplacer | addTargetBlank"></span>
+      <a (click)="goToFootnote(footnote.uuid)">{{ index + 1 }}.</a>
+      <span class="footnote-value" [innerHTML]="footnote.content | internalLinkReplacer | addTargetBlank"></span>
     </div>`,
   styles: [
     `
       .footnote {
         display: flex;
+        align-items: flex-start;
         gap: 5px;
+        padding: 8px 0;
+      }
+
+      .footnote-value::ng-deep {
+        & > p:first-of-type {
+          margin-top: 0;
+        }
+
+        & > p:last-of-type {
+          margin-bottom: 0;
+        }
       }
     `,
   ],
