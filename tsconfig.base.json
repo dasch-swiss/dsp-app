@@ -74,9 +74,6 @@
       "@dasch-swiss/vre/pages/user-settings/user": [
         "libs/vre/pages/user-settings/user/src/index.ts"
       ],
-      "@dasch-swiss/vre/resource-editor/mathjax": [
-        "libs/vre/resource-editor/mathjax/src/index.ts"
-      ],
       "@dasch-swiss/vre/resource-editor/property-form": [
         "libs/vre/resource-editor/property-form/src/index.ts"
       ],
