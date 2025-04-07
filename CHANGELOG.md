@@ -1,5 +1,30 @@
 # Changelog
 
+## [11.29.0](https://github.com/dasch-swiss/dsp-das/compare/v11.28.0...v11.29.0) (2025-04-04)
+
+
+### Enhancements
+
+* only display active project tiles ([#2209](https://github.com/dasch-swiss/dsp-das/issues/2209)) ([5fae9b9](https://github.com/dasch-swiss/dsp-das/commit/5fae9b99571d1eb888b58a254ddfe2ce7762532a))
+* only show annotations tab when there is an annotation to show ([#2208](https://github.com/dasch-swiss/dsp-das/issues/2208)) ([36337a4](https://github.com/dasch-swiss/dsp-das/commit/36337a4dade5eb01c63a14ae1f46f17734d27c9d))
+* use dedicated  endpoint for querying incoming links instead of Gravsearch (DEV-4729) ([#2204](https://github.com/dasch-swiss/dsp-das/issues/2204)) ([13c514f](https://github.com/dasch-swiss/dsp-das/commit/13c514fd2b76f6ab8c796dcf49ce870fc0e67882))
+
+
+### Bug Fixes
+
+* align footnotes ([#2217](https://github.com/dasch-swiss/dsp-das/issues/2217)) ([d1b97e1](https://github.com/dasch-swiss/dsp-das/commit/d1b97e1ea9d1d325fe741f0f1653f1f92a892e37))
+* footnotes display works again ([#2215](https://github.com/dasch-swiss/dsp-das/issues/2215)) ([f1e2488](https://github.com/dasch-swiss/dsp-das/commit/f1e2488b94ed340780d7bd98efa321554a85c5be))
+
+
+### Maintenances
+
+* **deps-dev:** bump @types/node from 20.17.24 to 20.17.28 in the types-deps group ([#2213](https://github.com/dasch-swiss/dsp-das/issues/2213)) ([0f660c9](https://github.com/dasch-swiss/dsp-das/commit/0f660c91b495da93228cc6eabddcaa2d3f2e3372))
+* **deps-dev:** bump ts-jest from 29.2.6 to 29.3.0 in the jest-deps group ([#2211](https://github.com/dasch-swiss/dsp-das/issues/2211)) ([7dadd23](https://github.com/dasch-swiss/dsp-das/commit/7dadd2397a03a07536055632a676483c19c001d6))
+* **deps:** bump @sentry/cli from 2.42.3 to 2.43.0 in the sentry-deps group ([#2212](https://github.com/dasch-swiss/dsp-das/issues/2212)) ([4bf48d1](https://github.com/dasch-swiss/dsp-das/commit/4bf48d1252e0e3960fe17b1d8c9c171dda26bfee))
+* **deps:** bump axios and @openapitools/openapi-generator-cli ([#2206](https://github.com/dasch-swiss/dsp-das/issues/2206)) ([8e8b863](https://github.com/dasch-swiss/dsp-das/commit/8e8b86369c8590e3a30b5a606f993230779a4a46))
+* move mathjax lib files ([#2219](https://github.com/dasch-swiss/dsp-das/issues/2219)) ([2470fd0](https://github.com/dasch-swiss/dsp-das/commit/2470fd0e8322f47997593c3118b1549546ebcd17))
+* updating the file is done in replace-file-dialog. ([#2210](https://github.com/dasch-swiss/dsp-das/issues/2210)) ([6287663](https://github.com/dasch-swiss/dsp-das/commit/6287663488b4340a8c41bb75f43dac01254e2ea8))
+
 ## [11.28.0](https://github.com/dasch-swiss/dsp-das/compare/v11.27.0...v11.28.0) (2025-03-31)
 
 
