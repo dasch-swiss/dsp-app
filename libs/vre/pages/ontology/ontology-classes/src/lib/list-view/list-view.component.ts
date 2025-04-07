@@ -23,9 +23,10 @@ import { OntologiesSelectors } from '@dasch-swiss/vre/core/state';
 import { FilteredResources, SearchParams } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { ComponentCommunicationEventService, EmitEvent, Events } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
+import { TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngxs/store';
 import { combineLatest, of, Subject, Subscription } from 'rxjs';
-import { map, take, takeUntil, tap } from 'rxjs/operators';
+import { map, switchMap, take, takeUntil, tap } from 'rxjs/operators';
 
 export interface ShortResInfo {
   id: string;
@@ -85,6 +86,15 @@ export class ListViewComponent implements OnChanges, OnInit, OnDestroy {
   // progress status
   loading = true;
 
+  translation$ = this._translateService.onLangChange.pipe(
+    switchMap(() => this._store.select(OntologiesSelectors.projectOntology)),
+    map(currentOntology => {
+      if (currentOntology !== undefined && !!currentOntology.id) {
+        this._dspApiConnection.v2.ontologyCache.reloadCachedItem(currentOntology!.id).pipe(take(1));
+      }
+    })
+  );
+
   constructor(
     @Inject(DspApiConnectionToken)
     private _dspApiConnection: KnoraApiConnection,
@@ -93,12 +103,13 @@ export class ListViewComponent implements OnChanges, OnInit, OnDestroy {
     private _route: ActivatedRoute,
     private _router: Router,
     private _cd: ChangeDetectorRef,
-    private _store: Store
+    private _store: Store,
+    private _translateService: TranslateService
   ) {}
 
   ngOnInit(): void {
     this.componentCommsSubscriptions.push(
-      this._componentCommsService.on([Events.resourceLanguageChanged], () => this.doSearch()),
+      this.translation$.subscribe(() => this.doSearch()),
       this._componentCommsService.on([Events.loginSuccess], () => {
         const currentOntologyClass = this._store.selectSnapshot(OntologiesSelectors.currentOntologyClass);
         if (currentOntologyClass) {

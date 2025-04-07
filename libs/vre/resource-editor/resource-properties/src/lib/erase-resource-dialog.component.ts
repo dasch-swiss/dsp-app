@@ -1,8 +1,9 @@
 import { Component, Inject } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { DeleteResource, DeleteResourceResponse, KnoraApiConnection, ReadResource } from '@dasch-swiss/dsp-js';
+import { DeleteResource, KnoraApiConnection, ReadResource } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
+import { ResourceFetcherService } from '@dasch-swiss/vre/resource-editor/representations';
 import { finalize } from 'rxjs/operators';
 
 @Component({
@@ -52,7 +53,8 @@ export class EraseResourceDialogComponent {
     private _dspApiConnection: KnoraApiConnection,
     @Inject(MAT_DIALOG_DATA)
     public data: ReadResource,
-    private _dialogRef: MatDialogRef<EraseResourceDialogComponent>
+    private _dialogRef: MatDialogRef<EraseResourceDialogComponent>,
+    private _resourceFetcherService: ResourceFetcherService
   ) {}
 
   submit() {
@@ -72,8 +74,9 @@ export class EraseResourceDialogComponent {
           this.loading = false;
         })
       )
-      .subscribe(response => {
-        this._dialogRef.close(response as DeleteResourceResponse);
+      .subscribe(() => {
+        this._resourceFetcherService.reload();
+        this._dialogRef.close();
       });
   }
 }

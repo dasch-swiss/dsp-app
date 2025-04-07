@@ -56,14 +56,6 @@ import { map } from 'rxjs/operators';
       <app-property-row label="info" [borderBottom]="false" [isEmptyRow]="false">
         <div>This resource has no defined properties.</div>
       </app-property-row>
-      <div *ngIf="resource.res.isDeleted">
-        <app-property-row label="Deleted on" [borderBottom]="true" [isEmptyRow]="false">
-          <div>{{ resource.res.deleteDate | date }}</div>
-        </app-property-row>
-        <app-property-row label="Comment" [borderBottom]="false" [isEmptyRow]="false">
-          <div>{{ resource.res.deleteComment }}</div>
-        </app-property-row>
-      </div>
     </ng-template>
   `,
   styles: [

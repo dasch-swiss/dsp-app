@@ -1,7 +1,8 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { DeleteResource, DeleteResourceResponse, KnoraApiConnection, ReadResource } from '@dasch-swiss/dsp-js';
+import { DeleteResource, KnoraApiConnection, ReadResource } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
+import { ResourceFetcherService } from '@dasch-swiss/vre/resource-editor/representations';
 
 @Component({
   selector: 'app-delete-resource-dialog',
@@ -39,7 +40,8 @@ export class DeleteResourceDialogComponent {
     private _dspApiConnection: KnoraApiConnection,
     @Inject(MAT_DIALOG_DATA)
     public data: ReadResource,
-    private _dialogRef: MatDialogRef<DeleteResourceDialogComponent>
+    private _dialogRef: MatDialogRef<DeleteResourceDialogComponent>,
+    private _resourceFetcherService: ResourceFetcherService
   ) {}
 
   submit() {
@@ -48,8 +50,9 @@ export class DeleteResourceDialogComponent {
     payload.type = this.data.type;
     payload.deleteComment = this.comment ?? undefined;
     payload.lastModificationDate = this.data.lastModificationDate;
-    this._dspApiConnection.v2.res.deleteResource(payload).subscribe(response => {
-      this._dialogRef.close(response as DeleteResourceResponse);
+    this._dspApiConnection.v2.res.deleteResource(payload).subscribe(() => {
+      this._resourceFetcherService.reload();
+      this._dialogRef.close();
     });
   }
 }

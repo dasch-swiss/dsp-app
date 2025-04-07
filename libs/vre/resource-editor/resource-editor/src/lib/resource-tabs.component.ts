@@ -10,11 +10,7 @@ import { CompoundService } from './compound/compound.service';
 @Component({
   selector: 'app-resource-tabs',
   template: `
-    <mat-tab-group
-      *ngIf="!resource.res.isDeleted"
-      animationDuration="0ms"
-      [selectedIndex]="selectedTab"
-      (selectedTabChange)="onTabChange($event)">
+    <mat-tab-group animationDuration="0ms" [selectedIndex]="selectedTab" (selectedTabChange)="onTabChange($event)">
       <mat-tab #matTabProperties [label]="'resource.properties' | translate">
         <app-properties-display *ngIf="resource" [resource]="resource" />
       </mat-tab>
