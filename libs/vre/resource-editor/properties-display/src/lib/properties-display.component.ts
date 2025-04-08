@@ -50,7 +50,7 @@ import { map } from 'rxjs/operators';
     </ng-container>
 
     <app-standoff-links-property [resource]="resource" />
-    <app-incoming-links-property [resource]="resource" />
+    <app-incoming-links-property [resource]="resource.res" />
 
     <ng-template #noProperties>
       <app-property-row label="info" [borderBottom]="false" [isEmptyRow]="false">

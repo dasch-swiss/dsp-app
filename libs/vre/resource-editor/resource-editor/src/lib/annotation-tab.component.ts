@@ -1,4 +1,5 @@
 import { AfterViewInit, Component, ElementRef, Input, OnDestroy, QueryList, ViewChildren } from '@angular/core';
+import { ReadResource } from '@dasch-swiss/dsp-js';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { AppError } from '@dasch-swiss/vre/core/error-handler';
 import { RegionService } from '@dasch-swiss/vre/resource-editor/representations';
@@ -15,10 +16,10 @@ import { Subscription } from 'rxjs';
     data-cy="annotation-border">
     <app-properties-display
       [resource]="annotation"
-      [parentResourceId]="resource.res.id"
+      [parentResourceId]="resource.id"
       [displayLabel]="true"
       [linkToNewTab]="
-        resourceService.getResourcePath(resource.res.id) +
+        resourceService.getResourcePath(resource.id) +
         '?' +
         RouteConstants.annotationQueryParam +
         '=' +
@@ -28,7 +29,7 @@ import { Subscription } from 'rxjs';
   styles: ['.active {border: 1px solid}'],
 })
 export class AnnotationTabComponent implements AfterViewInit, OnDestroy {
-  @Input({ required: true }) resource!: DspResource;
+  @Input({ required: true }) resource!: ReadResource;
   @ViewChildren('annotationElement') annotationElements!: QueryList<ElementRef>;
   selectedRegion: string | null = null;
 

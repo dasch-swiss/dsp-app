@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, Input, OnChanges } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Constants, CountQueryResponse, ReadFileValue } from '@dasch-swiss/dsp-js';
+import { Constants, CountQueryResponse, ReadFileValue, ReadResource } from '@dasch-swiss/dsp-js';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { getFileValue, RegionService } from '@dasch-swiss/vre/resource-editor/representations';
 import { SegmentsService } from '@dasch-swiss/vre/resource-editor/segment-support';
@@ -43,11 +43,11 @@ export class ResourceComponent implements OnChanges {
     this._compoundService.reset();
     this.isCompoundNavigation = false;
 
-    this.resourceIsObjectWithoutRepresentation = this._isObjectWithoutRepresentation(this.resource);
-    this._onInit(this.resource);
+    this.resourceIsObjectWithoutRepresentation = this._isObjectWithoutRepresentation(this.resource.res);
+    this._onInit(this.resource.res);
   }
 
-  private _onInit(resource: DspResource) {
+  private _onInit(resource: ReadResource) {
     if (this._isObjectWithoutRepresentation(resource)) {
       this._checkForCompoundNavigation(resource);
       return;
@@ -56,16 +56,16 @@ export class ResourceComponent implements OnChanges {
     this.representationsToDisplay = getFileValue(resource)!;
 
     if (this._isStillImage(resource)) {
-      this._regionService.initialize(resource.res.id);
+      this._regionService.initialize(resource.id);
       this._checkForAnnotationUri();
     }
   }
 
-  private _isStillImage(resource: DspResource) {
-    return resource.res.properties[Constants.HasStillImageFileValue] !== undefined;
+  private _isStillImage(resource: ReadResource) {
+    return resource.properties[Constants.HasStillImageFileValue] !== undefined;
   }
 
-  private _isObjectWithoutRepresentation(resource: DspResource) {
+  private _isObjectWithoutRepresentation(resource: ReadResource) {
     return getFileValue(resource) === null;
   }
 
@@ -79,9 +79,9 @@ export class ResourceComponent implements OnChanges {
     this._regionService.selectRegion(annotation);
   }
 
-  private _checkForCompoundNavigation(resource: DspResource) {
+  private _checkForCompoundNavigation(resource: ReadResource) {
     this._incomingService
-      .getStillImageRepresentationsForCompoundResource(resource.res.id, 0, true)
+      .getStillImageRepresentationsForCompoundResource(resource.id, 0, true)
       .pipe(take(1))
       .subscribe(countQuery => {
         const countQuery_ = countQuery as CountQueryResponse;

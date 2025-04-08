@@ -1,15 +1,11 @@
 import { Component, Input, OnChanges } from '@angular/core';
-import { UserSelectors } from '@dasch-swiss/vre/core/state';
 import {
   FileRepresentation,
   getFileValue,
   RepresentationConstants,
 } from '@dasch-swiss/vre/resource-editor/representations';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
-import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { Store } from '@ngxs/store';
-import { combineLatest, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-resource-representation',
@@ -74,6 +70,6 @@ export class ResourceRepresentationComponent implements OnChanges {
   constructor(private _store: Store) {}
 
   ngOnChanges() {
-    this.representationToDisplay = new FileRepresentation(getFileValue(this.resource)!);
+    this.representationToDisplay = new FileRepresentation(getFileValue(this.resource.res)!);
   }
 }

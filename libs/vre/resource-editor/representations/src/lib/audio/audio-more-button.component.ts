@@ -1,7 +1,6 @@
 import { Component, Input, ViewContainerRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Constants, ReadResource } from '@dasch-swiss/dsp-js';
-import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { FileRepresentation } from '../file-representation';
 import { getFileValue } from '../get-file-value';
 import {
@@ -27,7 +26,7 @@ export class AudioMoreButtonComponent {
   @Input({ required: true }) parentResource!: ReadResource;
 
   get src() {
-    return new FileRepresentation(getFileValue(new DspResource(this.parentResource))!);
+    return new FileRepresentation(getFileValue(this.parentResource)!);
   }
 
   get userCanEdit() {

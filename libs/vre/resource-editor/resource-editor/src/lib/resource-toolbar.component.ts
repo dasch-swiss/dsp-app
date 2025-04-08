@@ -5,7 +5,7 @@ import { ProjectsSelectors } from '@dasch-swiss/vre/core/state';
 import { DeleteResourceDialogComponent } from '@dasch-swiss/vre/resource-editor/properties-display';
 import { ResourceFetcherService, ResourceUtil } from '@dasch-swiss/vre/resource-editor/representations';
 import { EraseResourceDialogComponent } from '@dasch-swiss/vre/resource-editor/resource-properties';
-import { DspResource, ResourceService } from '@dasch-swiss/vre/shared/app-common';
+import { ResourceService } from '@dasch-swiss/vre/shared/app-common';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
@@ -29,13 +29,13 @@ import { Observable } from 'rxjs';
         mat-icon-button
         class="share-res"
         data-cy="share-button"
-        matTooltip="Share resource: {{ resource.res.versionArkUrl }}"
+        matTooltip="Share resource: {{ resource.versionArkUrl }}"
         matTooltipPosition="above"
         [matMenuTriggerFor]="share">
         <mat-icon>share</mat-icon>
       </button>
 
-      <app-permission-info [resource]="resource.res" />
+      <app-permission-info [resource]="resource" />
       <!-- more menu with: delete, erase resource -->
       <button
         data-cy="resource-toolbar-more-button"
@@ -56,7 +56,7 @@ import { Observable } from 'rxjs';
         matTooltip="Copy ARK url"
         matTooltipPosition="above"
         data-cy="copy-ark-url-button"
-        [cdkCopyToClipboard]="resource.res.versionArkUrl"
+        [cdkCopyToClipboard]="resource.versionArkUrl"
         (click)="notification.openSnackBar('ARK URL copied to clipboard!')">
         <mat-icon>content_copy</mat-icon>
         Copy ARK url to clipboard
@@ -66,7 +66,7 @@ import { Observable } from 'rxjs';
         matTooltip="Copy internal link"
         data-cy="copy-internal-link-button"
         matTooltipPosition="above"
-        [cdkCopyToClipboard]="resource.res.id"
+        [cdkCopyToClipboard]="resource.id"
         (click)="notification.openSnackBar('Internal link copied to clipboard!')">
         <mat-icon>content_copy</mat-icon>
         Copy internal link to clipboard
@@ -109,12 +109,12 @@ import { Observable } from 'rxjs';
   ],
 })
 export class ResourceToolbarComponent {
-  @Input({ required: true }) resource!: DspResource;
+  @Input({ required: true }) resource!: ReadResource;
 
   isAdmin$: Observable<boolean | undefined> = this._store.select(ProjectsSelectors.isCurrentProjectAdminOrSysAdmin);
 
   get userCanDelete() {
-    return ResourceUtil.userCanDelete(this.resource.res);
+    return ResourceUtil.userCanDelete(this.resource);
   }
 
   constructor(
@@ -127,19 +127,19 @@ export class ResourceToolbarComponent {
   ) {}
 
   openResource() {
-    window.open(`/resource${this._resourceService.getResourcePath(this.resource.res.id)}`, '_blank');
+    window.open(`/resource${this._resourceService.getResourcePath(this.resource.id)}`, '_blank');
   }
 
   deleteResource() {
     this._dialog.open<DeleteResourceDialogComponent, ReadResource>(DeleteResourceDialogComponent, {
-      data: this.resource.res,
+      data: this.resource,
       viewContainerRef: this._viewContainerRef,
     });
   }
 
   eraseResource() {
     this._dialog.open<EraseResourceDialogComponent, ReadResource>(EraseResourceDialogComponent, {
-      data: this.resource.res,
+      data: this.resource,
       viewContainerRef: this._viewContainerRef,
     });
   }

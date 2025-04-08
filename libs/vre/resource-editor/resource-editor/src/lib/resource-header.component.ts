@@ -17,7 +17,7 @@ import { DspResource } from '@dasch-swiss/vre/shared/app-common';
         matTooltipPosition="above">
         {{ resourceClassType?.label }}
       </h3>
-      <app-resource-toolbar [resource]="resource" />
+      <app-resource-toolbar [resource]="resource.res" />
     </div>
     <div class="resource-label" style="display: flex; justify-content: space-between">
       <h4 data-cy="resource-header-label">{{ resource.res.label }}</h4>
@@ -31,7 +31,7 @@ import { DspResource } from '@dasch-swiss/vre/shared/app-common';
         <mat-icon>edit</mat-icon>
       </button>
     </div>
-    <app-resource-info-bar [resource]="resource" />
+    <app-resource-info-bar [resource]="resource.res" />
   </div>`,
   styles: [
     `

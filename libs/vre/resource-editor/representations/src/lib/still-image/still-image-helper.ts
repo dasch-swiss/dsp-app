@@ -6,10 +6,10 @@ import {
   CreateResource,
   CreateTextValueAsString,
   Point2D,
+  ReadResource,
   ReadStillImageFileValue,
   RegionGeometry,
 } from '@dasch-swiss/dsp-js';
-import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import OpenSeadragon from 'openseadragon';
 import { Region } from '../region';
 import { GeometryForRegion } from './geometry-for-region';
@@ -125,11 +125,11 @@ export class StillImageHelper {
     }
   };
 
-  static collectAndSortGeometries(regions: DspResource[], regionsMap: PolygonsForRegion): GeometryForRegion[] {
+  static collectAndSortGeometries(regions: ReadResource[], regionsMap: PolygonsForRegion): GeometryForRegion[] {
     const geometries: GeometryForRegion[] = [];
 
     regions
-      .map(_resource => new Region(_resource.res))
+      .map(_resource => new Region(_resource))
       .forEach(reg => {
         regionsMap[reg.regionResource.id] = [];
         const geoms = reg.getGeometries();

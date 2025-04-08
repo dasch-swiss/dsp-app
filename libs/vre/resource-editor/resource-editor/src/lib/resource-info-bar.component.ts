@@ -1,9 +1,8 @@
 import { Component, Input, OnChanges } from '@angular/core';
 import { Router } from '@angular/router';
-import { ReadProject, ReadUser } from '@dasch-swiss/dsp-js';
+import { ReadProject, ReadResource, ReadUser } from '@dasch-swiss/dsp-js';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { GetAttachedProjectAction, GetAttachedUserAction, ResourceSelectors } from '@dasch-swiss/vre/core/state';
-import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { Actions, ofActionSuccessful, Store } from '@ngxs/store';
 import { filter, map, take } from 'rxjs/operators';
@@ -15,7 +14,7 @@ import { filter, map, take } from 'rxjs/operators';
       Resource of the project
       <a (click)="openProject(project)" class="link" [title]="project.longname">
         <strong>{{ project?.shortname }}</strong></a
-      ><span *ngIf="resourceAttachedUser || resource.res.creationDate"
+      ><span *ngIf="resourceAttachedUser || resource.creationDate"
         >, created
         <span *ngIf="resourceAttachedUser"
           >by
@@ -25,7 +24,7 @@ import { filter, map, take } from 'rxjs/operators';
               : resourceAttachedUser.givenName + ' ' + resourceAttachedUser.familyName
           }}</span
         >
-        <span *ngIf="resource.res.creationDate"> on {{ resource.res.creationDate | date }}</span>
+        <span *ngIf="resource.creationDate"> on {{ resource.creationDate | date }}</span>
       </span>
     </div>
   `,
@@ -40,14 +39,14 @@ import { filter, map, take } from 'rxjs/operators';
   ],
 })
 export class ResourceInfoBarComponent implements OnChanges {
-  @Input({ required: true }) resource!: DspResource;
+  @Input({ required: true }) resource!: ReadResource;
 
   resourceAttachedUser: ReadUser | undefined;
 
   project$ = this._store.select(ResourceSelectors.attachedProjects).pipe(
-    filter(attachedProjects => attachedProjects[this.resource.res.id]?.value?.length > 0),
+    filter(attachedProjects => attachedProjects[this.resource.id]?.value?.length > 0),
     map(attachedProjects =>
-      attachedProjects[this.resource.res.id].value.find(u => u.id === this.resource.res.attachedToProject)
+      attachedProjects[this.resource.id].value.find(u => u.id === this.resource.attachedToProject)
     )
   );
 
@@ -65,19 +64,17 @@ export class ResourceInfoBarComponent implements OnChanges {
     this.router.navigate([RouteConstants.projectRelative, ProjectService.IriToUuid(project.id)]);
   }
 
-  private _getResourceAttachedData(resource: DspResource): void {
+  private _getResourceAttachedData(resource: ReadResource): void {
     this._actions$
       .pipe(ofActionSuccessful(GetAttachedUserAction))
       .pipe(take(1))
       .subscribe(() => {
         const attachedUsers = this._store.selectSnapshot(ResourceSelectors.attachedUsers);
-        this.resourceAttachedUser = attachedUsers[resource.res.id].value.find(
-          u => u.id === resource.res.attachedToUser
-        );
+        this.resourceAttachedUser = attachedUsers[resource.id].value.find(u => u.id === resource.attachedToUser);
       });
     this._store.dispatch([
-      new GetAttachedUserAction(resource.res.id, resource.res.attachedToUser),
-      new GetAttachedProjectAction(resource.res.id, resource.res.attachedToProject),
+      new GetAttachedUserAction(resource.id, resource.attachedToUser),
+      new GetAttachedProjectAction(resource.id, resource.attachedToProject),
     ]);
   }
 }

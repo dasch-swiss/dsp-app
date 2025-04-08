@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { Constants } from '@dasch-swiss/dsp-js';
+import { Constants, ReadResource } from '@dasch-swiss/dsp-js';
 import { RegionService } from '@dasch-swiss/vre/resource-editor/representations';
 import { SegmentsService } from '@dasch-swiss/vre/resource-editor/segment-support';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
@@ -15,7 +15,7 @@ import { CompoundService } from './compound/compound.service';
         <app-properties-display *ngIf="resource" [resource]="resource" />
       </mat-tab>
 
-      <mat-tab *ngIf="incomingResource" #matTabIncoming [label]="resourceClassLabel(incomingResource)">
+      <mat-tab *ngIf="incomingResource" #matTabIncoming [label]="resourceClassLabel(incomingResource.res)">
         <app-properties-display
           [resource]="incomingResource"
           [displayLabel]="true"
@@ -29,7 +29,7 @@ import { CompoundService } from './compound/compound.service';
           <span *ngIf="regionsCount > 0" [matBadge]="regionsCount" matBadgeColor="primary" matBadgeOverlap="false">
           </span>
         </ng-template>
-        <app-annotation-tab [resource]="resource" />
+        <app-annotation-tab [resource]="resource.res" />
       </mat-tab>
 
       <!-- audio & video annotations -->
@@ -68,8 +68,7 @@ export class ResourceTabsComponent implements OnInit, OnDestroy {
     public segmentsService: SegmentsService
   ) {}
 
-  resourceClassLabel = (resource: DspResource | undefined) =>
-    resource?.res.entityInfo?.classes[resource.res.type].label || '';
+  resourceClassLabel = (resource: ReadResource | undefined) => resource?.entityInfo?.classes[resource.type].label || '';
 
   ngOnInit() {
     this.segmentsService.highlightSegment$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(segment => {
