@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.29.2](https://github.com/dasch-swiss/dsp-das/compare/v11.29.1...v11.29.2) (2025-04-14)
+
+
+### Maintenances
+
+* update the rule when PRs should be triggered ([#2232](https://github.com/dasch-swiss/dsp-das/issues/2232)) ([a780476](https://github.com/dasch-swiss/dsp-das/commit/a780476c703f419215bae153732ec2a7f5dc7e10))
+
 ## [11.29.1](https://github.com/dasch-swiss/dsp-das/compare/v11.29.0...v11.29.1) (2025-04-08)
 
 
