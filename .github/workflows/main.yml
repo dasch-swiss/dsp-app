@@ -1,7 +1,6 @@
 name: CI
 
-on:
-  pull_request:
+on: [push, fork]
 
 env:
   # use the read-write access token so that build cache in nx-cloud can be updated
