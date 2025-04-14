@@ -1,5 +1,22 @@
 # Changelog
 
+## [11.29.1](https://github.com/dasch-swiss/dsp-das/compare/v11.29.0...v11.29.1) (2025-04-08)
+
+
+### Bug Fixes
+
+* side nav css (DEV-4725) ([#2220](https://github.com/dasch-swiss/dsp-das/issues/2220)) ([c12bb8f](https://github.com/dasch-swiss/dsp-das/commit/c12bb8fd3d40a038afc7ff6f32d5696ff3b9b4b6))
+
+
+### Maintenances
+
+* **deps-dev:** bump chai from 5.1.2 to 5.2.0 ([#2227](https://github.com/dasch-swiss/dsp-das/issues/2227)) ([4324382](https://github.com/dasch-swiss/dsp-das/commit/43243820dc3d4dadfcb0687922d2840dd9cfe6b3))
+* **deps-dev:** bump prettier from 3.5.1 to 3.5.3 ([#2224](https://github.com/dasch-swiss/dsp-das/issues/2224)) ([ddc4e47](https://github.com/dasch-swiss/dsp-das/commit/ddc4e477ab45d081f79d4c6fc17da23cf1237bf6))
+* **deps:** bump json2typescript from 1.5.1 to 1.6.1 ([#2226](https://github.com/dasch-swiss/dsp-das/issues/2226)) ([3be4f8b](https://github.com/dasch-swiss/dsp-das/commit/3be4f8bec7a79cb198df90d407651a9aa4c9cd39))
+* **deps:** bump the grafana-deps group with 2 updates ([#2223](https://github.com/dasch-swiss/dsp-das/issues/2223)) ([973c7c4](https://github.com/dasch-swiss/dsp-das/commit/973c7c4a31ae6763a041421985828b87b6c1dc53))
+* improve resource fetcher logic ([#2202](https://github.com/dasch-swiss/dsp-das/issues/2202)) ([dfedd05](https://github.com/dasch-swiss/dsp-das/commit/dfedd052ca3d8ab82ac7c12a5422988058d74b2b))
+* use ReadResource when it's possible rather than DspResource. ([#2222](https://github.com/dasch-swiss/dsp-das/issues/2222)) ([2109943](https://github.com/dasch-swiss/dsp-das/commit/2109943068d2945c8f4893cd47a8deb94963e8d8))
+
 ## [11.29.0](https://github.com/dasch-swiss/dsp-das/compare/v11.28.0...v11.29.0) (2025-04-04)
 
 
