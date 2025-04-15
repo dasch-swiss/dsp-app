@@ -5,7 +5,7 @@ import { SetCurrentResourceAction } from '@dasch-swiss/vre/core/state';
 import { DspResource, GenerateProperty } from '@dasch-swiss/vre/shared/app-common';
 import { Store } from '@ngxs/store';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { map, shareReplay, switchMap } from 'rxjs/operators';
 
 @Injectable()
 export class ResourceFetcherService {
@@ -19,7 +19,10 @@ export class ResourceFetcherService {
   ) {}
 
   onInit(resourceIri: string) {
-    this.resource$ = this._reloadSubject.asObservable().pipe(switchMap(() => this._getResource(resourceIri)));
+    this.resource$ = this._reloadSubject.asObservable().pipe(
+      switchMap(() => this._getResource(resourceIri)),
+      shareReplay({ bufferSize: 1, refCount: true })
+    );
   }
 
   reload() {
