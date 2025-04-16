@@ -7,14 +7,17 @@ api/admin-lists-api.service.ts
 api/admin-maintenance-api.service.ts
 api/admin-permissions-api.service.ts
 api/admin-projects-api.service.ts
+api/admin-projects-legal-info-api.service.ts
 api/admin-store-api.service.ts
 api/admin-users-api.service.ts
 api/api.ts
-api/default-api.service.ts
 api/shacl-api.service.ts
-api/v2-api.service.ts
+api/v2-authentication-api.service.ts
+api/v2-lists-api.service.ts
+api/v2-ontologies-api.service.ts
 api/v2-resources-api.service.ts
 api/v2-search-api.service.ts
+api/v2-values-api.service.ts
 configuration.ts
 encoder.ts
 git_push.sh
@@ -36,6 +39,8 @@ model/check-response.ts
 model/child-node-delete-response-adm.ts
 model/child-node-info-get-response-adm.ts
 model/comments.ts
+model/copyright-holder-add-request.ts
+model/copyright-holder-replace-request.ts
 model/create-administrative-permission-api-request-adm.ts
 model/create-default-object-access-permission-api-request-adm.ts
 model/default-object-access-permission-adm.ts
@@ -48,7 +53,7 @@ model/email-password.ts
 model/email.ts
 model/family-name.ts
 model/forbidden-exception.ts
-model/get-v2-lists-listiri400-response.ts
+model/get-v2-authentication400-response.ts
 model/given-name.ts
 model/gravsearch-exception.ts
 model/group-create-request.ts
@@ -67,6 +72,7 @@ model/iri-password.ts
 model/keyword.ts
 model/labels.ts
 model/language-code.ts
+model/license-dto.ts
 model/list-adm.ts
 model/list-change-comments-request.ts
 model/list-change-labels-request.ts
@@ -99,6 +105,11 @@ model/node-adm.ts
 model/node-info-get-response-adm.ts
 model/node-position-change-response-adm.ts
 model/not-found-exception.ts
+model/ontology-constraint-exception.ts
+model/paged-response-authorship.ts
+model/paged-response-copyright-holder.ts
+model/paged-response-license-dto.ts
+model/pagination.ts
 model/password-change-request.ts
 model/password.ts
 model/permission-adm.ts
