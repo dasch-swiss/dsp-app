@@ -16,8 +16,7 @@ export class OntologyClassesComponent {
   @Input({ required: true }) projectMember!: boolean;
 
   get classesToDisplay(): ClassDefinition[] {
-    const classesToDisplay = OntologyClassHelper.GetClassesToDisplay(this.resClasses);
-    return this._sortingService.keySortByAlphabetical(classesToDisplay, 'label');
+    return OntologyClassHelper.GetClassesToDisplay(this.resClasses);
   }
 
   constructor(private _sortingService: SortingService) {}
