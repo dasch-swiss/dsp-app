@@ -2,16 +2,13 @@ import { Component, Input, ViewContainerRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ReadResource } from '@dasch-swiss/dsp-js';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
-import { ProjectsSelectors } from '@dasch-swiss/vre/core/state';
-import { RegionService, ResourceFetcherService, ResourceUtil } from '@dasch-swiss/vre/resource-editor/representations';
+import { RegionService, ResourceFetcherService } from '@dasch-swiss/vre/resource-editor/representations';
 import {
   EditResourceLabelDialogComponent,
   EraseResourceDialogComponent,
 } from '@dasch-swiss/vre/resource-editor/resource-properties';
 import { ResourceService } from '@dasch-swiss/vre/shared/app-common';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
-import { Store } from '@ngxs/store';
-import { Observable } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { DeleteResourceDialogComponent } from './delete-resource-dialog.component';
 
@@ -44,7 +41,7 @@ import { DeleteResourceDialogComponent } from './delete-resource-dialog.componen
       <button
         data-cy="resource-toolbar-more-button"
         color="primary"
-        *ngIf="userCanEdit || userCanDelete"
+        *ngIf="(resourceFetcher.userCanEdit$ | async) || (resourceFetcher.userCanDelete$ | async)"
         mat-icon-button
         class="more-menu"
         matTooltip="More"
@@ -79,7 +76,7 @@ import { DeleteResourceDialogComponent } from './delete-resource-dialog.componen
 
     <mat-menu #more="matMenu" class="res-more-menu">
       <button
-        [disabled]="!userCanEdit"
+        *ngIf="resourceFetcher.userCanEdit$ | async"
         data-cy="resource-toolbar-edit-resource-button"
         mat-menu-item
         matTooltip="Edit the label of this resource"
@@ -90,7 +87,7 @@ import { DeleteResourceDialogComponent } from './delete-resource-dialog.componen
       </button>
       <button
         data-cy="resource-toolbar-delete-resource-button"
-        [disabled]="!userCanDelete"
+        *ngIf="resourceFetcher.userCanDelete$ | async"
         mat-menu-item
         matTooltip="Move resource to trash bin."
         matTooltipPosition="above"
@@ -99,7 +96,7 @@ import { DeleteResourceDialogComponent } from './delete-resource-dialog.componen
         {{ 'resourceEditor.propertiesDisplay.annotationToolbar.delete' | translate }}
       </button>
       <button
-        *ngIf="isAdmin$ | async"
+        *ngIf="resourceFetcher.userCanDelete$ | async"
         data-cy="resource-toolbar-erase-resource-button"
         mat-menu-item
         matTooltip="Erase resource forever. This cannot be undone."
@@ -126,23 +123,12 @@ export class AnnotationToolbarComponent {
   @Input({ required: true }) resource!: ReadResource;
   @Input({ required: true }) parentResourceId!: string;
 
-  isAdmin$: Observable<boolean | undefined> = this._store.select(ProjectsSelectors.isCurrentProjectAdminOrSysAdmin);
-
-  get userCanEdit() {
-    return ResourceUtil.userCanEdit(this.resource);
-  }
-
-  get userCanDelete() {
-    return ResourceUtil.userCanDelete(this.resource);
-  }
-
   constructor(
     protected notification: NotificationService,
     private _regionService: RegionService,
     private _dialog: MatDialog,
     private _resourceService: ResourceService,
-    private _resourceFetcher: ResourceFetcherService,
-    private _store: Store,
+    public resourceFetcher: ResourceFetcherService,
     private _viewContainerRef: ViewContainerRef
   ) {}
 
@@ -155,7 +141,7 @@ export class AnnotationToolbarComponent {
       .afterClosed()
       .subscribe(answer => {
         if (answer) {
-          this._resourceFetcher.reload();
+          this.resourceFetcher.reload();
         }
       });
   }

@@ -79,10 +79,6 @@ export class StillImageToolbarComponent {
     return this.imageFileValue && ResourceUtil.userCanView(this.imageFileValue);
   }
 
-  get userCanEdit() {
-    return ResourceUtil.userCanEdit(this.resource);
-  }
-
   constructor(
     public notification: NotificationService,
     @Inject(DspApiConnectionToken)

@@ -11,15 +11,6 @@ import { PropertyValueService } from './property-value.service';
   template: `
     <div class="action-bubble" data-cy="action-bubble">
       <div class="button-container d-flex">
-        <button
-          *ngIf="userHasPermission('edit')"
-          mat-button
-          class="edit edit-button"
-          matTooltip="edit"
-          (click)="$event.stopPropagation(); editAction.emit()"
-          data-cy="edit-button">
-          <mat-icon>edit</mat-icon>
-        </button>
         <ng-container *ngIf="date">
           <button
             mat-button
@@ -30,13 +21,24 @@ import { PropertyValueService } from './property-value.service';
             <mat-icon>info</mat-icon>
           </button>
         </ng-container>
+
+        <span matTooltip="edit">
+          <button
+            *ngIf="userHasPermission('edit')"
+            mat-button
+            class="edit edit-button"
+            (click)="$event.stopPropagation(); editAction.emit()"
+            data-cy="edit-button">
+            <mat-icon>edit</mat-icon>
+          </button>
+        </span>
+
         <span [matTooltip]="showDelete ? 'delete' : 'This value cannot be deleted because it is required'">
           <button
             *ngIf="userHasPermission('delete')"
             mat-button
             class="delete"
             data-cy="delete-button"
-            [disabled]="!showDelete"
             (click)="$event.stopPropagation(); deleteAction.emit()">
             <mat-icon>delete</mat-icon>
           </button>
@@ -80,6 +82,10 @@ export class PropertyValueActionBubbleComponent implements OnInit {
   }
 
   userHasPermission(permissionType: 'edit' | 'delete'): boolean {
+    if (this._resourceFetcherService.resourceVersion) {
+      return false;
+    }
+
     if (!this._propertyValueService.editModeData || this._propertyValueService.editModeData.values.length === 0) {
       return false;
     }

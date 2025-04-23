@@ -3,12 +3,12 @@ import { ActivatedRoute } from '@angular/router';
 import { ResourceService } from '@dasch-swiss/vre/shared/app-common';
 import { map } from 'rxjs/operators';
 
-/** TODO: This component resourcePage2 is the same as resourcePage, but with different routing parameters.
- * This routing issue should be addressed and refactor in order to remove those duplicated components.
- */
 @Component({
   selector: 'app-single-resource-page',
-  template: '<app-resource-fetcher *ngIf="resourceIri$ | async as resourceIri" [resourceIri]="resourceIri" />',
+  template: ` <app-resource-fetcher
+    *ngIf="resourceIri$ | async as resourceIri"
+    [resourceIri]="resourceIri"
+    [resourceVersion]="resourceVersion$ | async" />`,
 })
 export class SingleResourcePageComponent {
   resourceIri$ = this._route.params.pipe(
@@ -21,6 +21,8 @@ export class SingleResourcePageComponent {
       return undefined;
     })
   );
+
+  resourceVersion$ = this._route.queryParams.pipe(map(params => params['version']));
 
   constructor(
     private _route: ActivatedRoute,

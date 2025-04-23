@@ -16,7 +16,7 @@ import {
   ReplaceFileDialogProps,
 } from '../replace-file-dialog/replace-file-dialog.component';
 import { RepresentationService } from '../representation.service';
-import { ResourceUtil } from '../resource.util';
+import { ResourceFetcherService } from '../resource-fetcher.service';
 
 @Component({
   selector: 'app-document',
@@ -41,15 +41,12 @@ export class DocumentComponent implements OnChanges {
     return this.src.fileValue.filename.split('.').pop() === 'pdf';
   }
 
-  get usercanEdit() {
-    return ResourceUtil.userCanEdit(this.parentResource);
-  }
-
   constructor(
     private _dialog: MatDialog,
     private _rs: RepresentationService,
     private _cd: ChangeDetectorRef,
-    private _viewContainerRef: ViewContainerRef
+    private _viewContainerRef: ViewContainerRef,
+    public resourceFetcherService: ResourceFetcherService
   ) {}
 
   ngOnChanges(changes: SimpleChanges): void {

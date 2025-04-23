@@ -32,7 +32,7 @@
       class="clickable-icon"
       data-cy="still-image-region-button"
       matTooltip="{{ 'resourceEditor.representations.stillImage.createAnnotation' | translate }}"
-      [class.disabled]="!userCanEdit || isReadStillImageExternalFileValue"
+      *ngIf="(resourceFetcherService.userCanEdit$ | async) && isReadStillImageExternalFileValue"
       (click)="toggleDrawMode()"
       [class.active]="osd.drawing">
       <mat-icon svgIcon="draw_region_icon"></mat-icon>
@@ -47,7 +47,7 @@
       data-cy="still-image-settings-button"
       matTooltip="Settings"
       [matMenuTriggerFor]="settings"
-      [class.disabled]="this.isReadStillImageExternalFileValue">
+      [class.disabled]="isReadStillImageExternalFileValue">
       <mat-icon>settings</mat-icon>
     </div>
 
@@ -81,7 +81,7 @@
     class="menu-content"
     data-cy="replace-image-button"
     mat-menu-item
-    [disabled]="!userCanEdit"
+    *ngIf="resourceFetcherService.userCanEdit$ | async"
     (click)="replaceImage()">
     {{ isReadStillImageExternalFileValue ? 'Replace external file url' : 'Replace file' }}
   </button>

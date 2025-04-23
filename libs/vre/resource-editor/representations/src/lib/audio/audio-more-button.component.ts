@@ -8,7 +8,7 @@ import {
   ReplaceFileDialogProps,
 } from '../replace-file-dialog/replace-file-dialog.component';
 import { RepresentationService } from '../representation.service';
-import { ResourceUtil } from '../resource.util';
+import { ResourceFetcherService } from '../resource-fetcher.service';
 
 @Component({
   selector: 'app-audio-more-button',
@@ -19,7 +19,9 @@ import { ResourceUtil } from '../resource.util';
       <button mat-menu-item (click)="openIIIFnewTab()">Open audio in new tab</button>
       <button mat-menu-item [cdkCopyToClipboard]="src.fileValue.fileUrl">Copy audio URL to clipboard</button>
       <button mat-menu-item (click)="download()">Download audio</button>
-      <button mat-menu-item [disabled]="!userCanEdit" (click)="openReplaceFileDialog()">Replace file</button>
+      <button mat-menu-item *ngIf="resourceFetcherService.userCanEdit$ | async" (click)="openReplaceFileDialog()">
+        Replace file
+      </button>
     </mat-menu>`,
 })
 export class AudioMoreButtonComponent {
@@ -29,14 +31,11 @@ export class AudioMoreButtonComponent {
     return new FileRepresentation(getFileValue(this.parentResource)!);
   }
 
-  get userCanEdit() {
-    return ResourceUtil.userCanEdit(this.parentResource);
-  }
-
   constructor(
     private _dialog: MatDialog,
     private _rs: RepresentationService,
-    private _viewContainerRef: ViewContainerRef
+    private _viewContainerRef: ViewContainerRef,
+    public resourceFetcherService: ResourceFetcherService
   ) {}
 
   openReplaceFileDialog() {

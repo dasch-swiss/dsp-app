@@ -8,7 +8,7 @@ import {
   CreateSegmentDialogComponent,
   CreateSegmentDialogProps,
 } from '@dasch-swiss/vre/resource-editor/segment-support';
-import { ResourceUtil } from '../resource.util';
+import { ResourceFetcherService } from '../resource-fetcher.service';
 import { MediaPlayerService } from '../video/media-player.service';
 
 @Component({
@@ -28,7 +28,11 @@ import { MediaPlayerService } from '../video/media-player.service';
       </div>
       <div data-cy="player-time">{{ parseTime(mediaPlayer.currentTime()) }} / {{ durationString }}</div>
       <div>
-        <button data-cy="timeline-button" mat-icon-button (click)="createAudioSegment()" *ngIf="usercanEdit">
+        <button
+          data-cy="timeline-button"
+          mat-icon-button
+          (click)="createAudioSegment()"
+          *ngIf="resourceFetcherService.userCanEdit$ | async">
           <mat-icon svgIcon="draw_region_icon"></mat-icon>
         </button>
         <app-audio-more-button [parentResource]="parentResource" />
@@ -41,16 +45,13 @@ export class AudioToolbarComponent implements OnInit {
 
   durationString!: string;
 
-  get usercanEdit() {
-    return ResourceUtil.userCanEdit(this.parentResource);
-  }
-
   constructor(
     private _dialog: MatDialog,
     private _domSanitizer: DomSanitizer,
     private _matIconRegistry: MatIconRegistry,
     public mediaPlayer: MediaPlayerService,
-    private _viewContainerRef: ViewContainerRef
+    private _viewContainerRef: ViewContainerRef,
+    public resourceFetcherService: ResourceFetcherService
   ) {}
 
   ngOnInit() {

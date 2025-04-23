@@ -24,7 +24,11 @@
           <button class="menu-content" mat-menu-item (click)="download()" [disabled]="failedToLoad">
             Download file
           </button>
-          <button [disabled]="!usercanEdit" class="menu-content" mat-menu-item (click)="openReplaceFileDialog()">
+          <button
+            *ngIf="resourceFetcherService.userCanEdit$ | async"
+            class="menu-content"
+            mat-menu-item
+            (click)="openReplaceFileDialog()">
             Replace file
           </button>
         </mat-menu>

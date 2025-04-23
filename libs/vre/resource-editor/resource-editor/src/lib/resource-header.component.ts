@@ -2,7 +2,7 @@ import { Component, Input, ViewContainerRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ReadResource, ResourceClassDefinitionWithPropertyDefinition } from '@dasch-swiss/dsp-js';
 import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
-import { ResourceUtil } from '@dasch-swiss/vre/resource-editor/representations';
+import { ResourceFetcherService } from '@dasch-swiss/vre/resource-editor/representations';
 import { EditResourceLabelDialogComponent } from '@dasch-swiss/vre/resource-editor/resource-properties';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 
@@ -27,7 +27,7 @@ import { DspResource } from '@dasch-swiss/vre/shared/app-common';
         color="primary"
         matTooltip="Edit label"
         (click)="openEditLabelDialog()"
-        *ngIf="userCanEdit">
+        *ngIf="resourceFetcherService.userCanEdit$ | async">
         <mat-icon>edit</mat-icon>
       </button>
     </div>
@@ -89,13 +89,10 @@ export class ResourceHeaderComponent {
     return this.resource.res.entityInfo.classes[this.resource.res.type];
   }
 
-  get userCanEdit(): boolean {
-    return ResourceUtil.userCanEdit(this.resource.res);
-  }
-
   constructor(
     private _dialog: MatDialog,
-    private _viewContainerRef: ViewContainerRef
+    private _viewContainerRef: ViewContainerRef,
+    public resourceFetcherService: ResourceFetcherService
   ) {}
 
   openEditLabelDialog() {

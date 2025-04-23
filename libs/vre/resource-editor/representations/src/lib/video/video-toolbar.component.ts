@@ -11,7 +11,7 @@ import {
 } from '@dasch-swiss/vre/resource-editor/segment-support';
 import { FileRepresentation } from '../file-representation';
 import { MovingImageSidecar } from '../moving-image-sidecar';
-import { ResourceUtil } from '../resource.util';
+import { ResourceFetcherService } from '../resource-fetcher.service';
 import { MediaPlayerService } from './media-player.service';
 
 @Component({
@@ -48,7 +48,7 @@ import { MediaPlayerService } from './media-player.service';
         data-cy="timeline-button"
         (click)="createVideoSegment()"
         [matTooltip]="'resourceEditor.representations.video.createAnnotation' | translate"
-        *ngIf="usercanEdit">
+        *ngIf="resourceFetcherService.userCanEdit$ | async">
         <mat-icon svgIcon="draw_region_icon"></mat-icon>
       </button>
 
@@ -77,16 +77,13 @@ export class VideoToolbarComponent {
   matTooltipPos: TooltipPosition = 'below';
   play = false;
 
-  get usercanEdit() {
-    return ResourceUtil.userCanEdit(this.parentResource);
-  }
-
   constructor(
     private _dialog: MatDialog,
     private _domSanitizer: DomSanitizer,
     public mediaPlayer: MediaPlayerService,
     private _matIconRegistry: MatIconRegistry,
-    private _viewContainerRef: ViewContainerRef
+    private _viewContainerRef: ViewContainerRef,
+    public resourceFetcherService: ResourceFetcherService
   ) {
     this._setupCssMaterialIcon();
   }

@@ -1,14 +1,11 @@
 import { Component, Input, ViewContainerRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ReadResource } from '@dasch-swiss/dsp-js';
-import { ProjectsSelectors } from '@dasch-swiss/vre/core/state';
 import { DeleteResourceDialogComponent } from '@dasch-swiss/vre/resource-editor/properties-display';
 import { ResourceFetcherService, ResourceUtil } from '@dasch-swiss/vre/resource-editor/representations';
 import { EraseResourceDialogComponent } from '@dasch-swiss/vre/resource-editor/resource-properties';
 import { ResourceService } from '@dasch-swiss/vre/shared/app-common';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
-import { Store } from '@ngxs/store';
-import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-resource-toolbar',
@@ -40,7 +37,7 @@ import { Observable } from 'rxjs';
       <button
         data-cy="resource-toolbar-more-button"
         color="primary"
-        *ngIf="userCanDelete || (isAdmin$ | async)"
+        *ngIf="userCanDelete"
         mat-icon-button
         class="more-menu"
         matTooltip="More"
@@ -76,7 +73,6 @@ import { Observable } from 'rxjs';
     <mat-menu #more="matMenu" class="res-more-menu">
       <button
         data-cy="resource-toolbar-delete-resource-button"
-        [disabled]="!userCanDelete"
         mat-menu-item
         matTooltip="Move resource to trash bin."
         matTooltipPosition="above"
@@ -85,7 +81,6 @@ import { Observable } from 'rxjs';
         {{ 'resourceEditor.resourceProperties.delete' | translate }}
       </button>
       <button
-        *ngIf="isAdmin$ | async"
         data-cy="resource-toolbar-erase-resource-button"
         mat-menu-item
         matTooltip="Erase resource forever. This cannot be undone."
@@ -111,10 +106,8 @@ import { Observable } from 'rxjs';
 export class ResourceToolbarComponent {
   @Input({ required: true }) resource!: ReadResource;
 
-  isAdmin$: Observable<boolean | undefined> = this._store.select(ProjectsSelectors.isCurrentProjectAdminOrSysAdmin);
-
   get userCanDelete() {
-    return ResourceUtil.userCanDelete(this.resource);
+    return !this._resourceFetcherService.resourceVersion && ResourceUtil.userCanDelete(this.resource);
   }
 
   constructor(
@@ -122,8 +115,7 @@ export class ResourceToolbarComponent {
     private _resourceService: ResourceService,
     private _resourceFetcherService: ResourceFetcherService,
     private _dialog: MatDialog,
-    private _viewContainerRef: ViewContainerRef,
-    private _store: Store
+    private _viewContainerRef: ViewContainerRef
   ) {}
 
   openResource() {

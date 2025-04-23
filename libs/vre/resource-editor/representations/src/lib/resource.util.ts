@@ -19,4 +19,13 @@ export class ResourceUtil {
     const permissions = PermissionUtil.allUserPermissions(resource.userHasPermission as Interaction);
     return permissions.includes(PermissionUtil.Permissions[interaction]);
   }
+
+  public static versionIsValid(version: string) {
+    const isValidUtcDate = (dateStr: string): boolean => {
+      const date = new Date(dateStr);
+      return !Number.isNaN(date.getTime()) && dateStr.endsWith('Z');
+    };
+
+    return isValidUtcDate(version);
+  }
 }

@@ -11,12 +11,13 @@
   gap: 10px;
   margin: 2%;
 
-  mat-icon {
-    color: $yellow_500;
-    min-width: 25px;
-  }
 
-  p {
+  ::ng-deep {
+    mat-icon {
+      color: $yellow_500;
+      min-width: 25px;
+    }
+
     color: $yellow_700;
   }
 }

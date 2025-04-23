@@ -9,7 +9,7 @@ import {
   ReplaceFileDialogProps,
 } from '../replace-file-dialog/replace-file-dialog.component';
 import { RepresentationService } from '../representation.service';
-import { ResourceUtil } from '../resource.util';
+import { ResourceFetcherService } from '../resource-fetcher.service';
 
 @Component({
   selector: 'app-video-more-button',
@@ -28,7 +28,11 @@ import { ResourceUtil } from '../resource.util';
         Copy video URL to clipboard
       </button>
       <button mat-menu-item class="menu-content" (click)="downloadVideo()">Download video</button>
-      <button [disabled]="!userCanEdit" mat-menu-item class="menu-content" (click)="openReplaceFileDialog()">
+      <button
+        *ngIf="resourceFetcherService.userCanEdit$ | async"
+        mat-menu-item
+        class="menu-content"
+        (click)="openReplaceFileDialog()">
         Replace file
       </button>
     </mat-menu>`,
@@ -38,15 +42,12 @@ export class VideoMoreButtonComponent {
   @Input({ required: true }) parentResource!: ReadResource;
   @Input({ required: true }) fileInfo!: MovingImageSidecar;
 
-  get userCanEdit() {
-    return ResourceUtil.userCanEdit(this.parentResource);
-  }
-
   constructor(
     private _notification: NotificationService,
     private _dialog: MatDialog,
     private _rs: RepresentationService,
-    private _viewContainerRef: ViewContainerRef
+    private _viewContainerRef: ViewContainerRef,
+    public resourceFetcherService: ResourceFetcherService
   ) {}
 
   openVideoInNewTab(url: string) {
