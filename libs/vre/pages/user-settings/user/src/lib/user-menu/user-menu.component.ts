@@ -56,14 +56,14 @@ export class UserMenuComponent implements OnInit, OnDestroy {
     this._translateService.onLangChange.pipe(takeUntil(this.destroyed)).subscribe(() => {
       this.navigation = [
         {
-          label: this._translateService.instant('user.userMenu.home'),
-          shortLabel: this._translateService.instant('user.userMenu.home'),
+          label: this._translateService.instant('pages.userSettings.userMenu.home'),
+          shortLabel: this._translateService.instant('pages.userSettings.userMenu.home'),
           route: RouteConstants.homeRelative,
           icon: '',
         },
         {
-          label: this._translateService.instant('user.userMenu.myAccount'),
-          shortLabel: this._translateService.instant('user.userMenu.myAccount'),
+          label: this._translateService.instant('pages.userSettings.userMenu.myAccount'),
+          shortLabel: this._translateService.instant('pages.userSettings.userMenu.myAccount'),
           route: RouteConstants.userAccountRelative,
           icon: '',
         },

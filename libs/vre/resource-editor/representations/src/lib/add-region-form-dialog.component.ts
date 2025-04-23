@@ -9,7 +9,9 @@ export interface AddRegionFormDialogProps {
 @Component({
   selector: 'app-add-region-form',
   template: `
-    <app-dialog-header [title]="'annotations.create' | translate" [subtitle]="'Add further properties'" />
+    <app-dialog-header
+      [title]="'resourceEditor.representations.addRegionFormDialog.createAnnotation' | translate"
+      [subtitle]="'Add further properties'" />
     <mat-dialog-content>
       <form [formGroup]="regionForm" class="form-content">
         <app-common-input [label]="'Label'" [control]="regionForm.controls.label" />
@@ -24,7 +26,7 @@ export interface AddRegionFormDialogProps {
     </mat-dialog-content>
 
     <mat-dialog-actions align="end">
-      <button mat-button type="button" mat-dialog-close>{{ 'form.action.cancel' | translate }}</button>
+      <button mat-button type="button" mat-dialog-close>{{ 'ui.form.action.cancel' | translate }}</button>
       <button
         mat-raised-button
         [mat-dialog-close]="regionForm.value"

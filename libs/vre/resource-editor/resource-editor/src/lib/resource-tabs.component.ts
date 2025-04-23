@@ -11,7 +11,7 @@ import { CompoundService } from './compound/compound.service';
   selector: 'app-resource-tabs',
   template: `
     <mat-tab-group animationDuration="0ms" [selectedIndex]="selectedTab" (selectedTabChange)="onTabChange($event)">
-      <mat-tab #matTabProperties [label]="'resource.properties' | translate">
+      <mat-tab #matTabProperties [label]="'resourceEditor.properties' | translate">
         <app-properties-display *ngIf="resource" [resource]="resource" />
       </mat-tab>
 
@@ -25,7 +25,7 @@ import { CompoundService } from './compound/compound.service';
       <!-- image annotations -->
       <mat-tab label="Annotations" *ngIf="displayAnnotations">
         <ng-template matTabLabel>
-          {{ 'annotations.label' | translate }}
+          {{ 'resourceEditor.labelAnnotations' | translate }}
           <span *ngIf="regionsCount > 0" [matBadge]="regionsCount" matBadgeColor="primary" matBadgeOverlap="false">
           </span>
         </ng-template>
@@ -36,7 +36,7 @@ import { CompoundService } from './compound/compound.service';
       <mat-tab label="Segments" *ngIf="segmentsService.segments.length > 0">
         <ng-template matTabLabel>
           <span [matBadge]="segmentsService.segments.length" matBadgeColor="primary" matBadgeOverlap="false">
-            {{ 'annotations.label' | translate }}
+            {{ 'resourceEditor.labelAnnotations' | translate }}
           </span>
         </ng-template>
         <app-segment-tab [resource]="resource.res" />

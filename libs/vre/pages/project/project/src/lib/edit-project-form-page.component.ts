@@ -30,7 +30,7 @@ import { ProjectForm } from './reusable-project-form/project-form.type';
         appLoadingButton
         [isLoading]="loading"
         data-cy="submit-button">
-        {{ 'form.action.submit' | translate }}
+        {{ 'ui.form.action.submit' | translate }}
       </button>
     </div>
   </app-centered-layout>`,
@@ -76,7 +76,7 @@ export class EditProjectFormPageComponent {
 
     this._store.dispatch(new UpdateProjectAction(projectUuid, projectData));
     this._actions.pipe(ofActionSuccessful(LoadProjectsAction), take(1)).subscribe(() => {
-      this._notification.openSnackBar(this._ts.instant('form.project.general.editSuccess'));
+      this._notification.openSnackBar(this._ts.instant('pages.project.editProjectFormPage.editSuccess'));
       this._router.navigate([`${RouteConstants.projectRelative}/${projectUuid}`]);
     });
   }

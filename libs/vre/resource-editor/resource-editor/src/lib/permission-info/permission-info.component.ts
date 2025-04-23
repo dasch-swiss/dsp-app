@@ -41,27 +41,27 @@ export class PermissionInfoComponent implements OnInit {
   readonly PERMISSION_HEADERS: PermissionHeaderItem[] = [
     {
       interaction: 'RV',
-      label: 'resource.permissions.interactions.restrictedView',
+      label: 'resourceEditor.permissionInfo.interactions.restrictedView',
       icon: 'visibility_off',
     },
     {
       interaction: 'V',
-      label: 'resource.permissions.interactions.view',
+      label: 'resourceEditor.permissionInfo.interactions.view',
       icon: 'visibility',
     },
     {
       interaction: 'M',
-      label: 'resource.permissions.interactions.modify',
+      label: 'resourceEditor.permissionInfo.interactions.modify',
       icon: 'mode_edit',
     },
     {
       interaction: 'D',
-      label: 'resource.permissions.interactions.delete',
+      label: 'resourceEditor.permissionInfo.interactions.delete',
       icon: 'delete',
     },
     {
       interaction: 'CR',
-      label: 'resource.permissions.interactions.changeRights',
+      label: 'resourceEditor.permissionInfo.interactions.changeRights',
       icon: 'admin_panel_settings',
     },
   ] as const;
@@ -85,7 +85,7 @@ export class PermissionInfoComponent implements OnInit {
 
   private _setGroupPermissions() {
     USER_GROUP_LEVELS.forEach((_level, group) => {
-      const label = `resource.permissions.groups.${group.charAt(0).toLowerCase() + group.slice(1)}`;
+      const label = `resourceEditor.permissionInfo.${group.charAt(0).toLowerCase() + group.slice(1)}`;
       const permissions = this.PERMISSION_HEADERS.map(permission => {
         return {
           interaction: permission.interaction,
@@ -100,7 +100,7 @@ export class PermissionInfoComponent implements OnInit {
   private _setUsersPermissions() {
     this.permissionGroups.push({
       group: 'UsersPermissions',
-      label: `resource.permissions.groups.usersPermissions`,
+      label: `resourceEditor.permissionInfo.usersPermissions`,
       permissions: this.userPermissions,
     });
   }

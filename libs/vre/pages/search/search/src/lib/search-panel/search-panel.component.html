@@ -8,7 +8,7 @@
   <div class="advanced-expert-buttons" [class.with-project-filter]="projectfilter">
     <button mat-flat-button class="hint" [class.active]="showHint" (click)="openPanelWithBackdrop('hint')">
       <mat-icon matPrefix>lightbulb</mat-icon>
-      <span class="desktop-only">{{ 'searchPanel.howToSearch' | translate }}</span>
+      <span class="desktop-only">{{ 'pages.search.searchPanel.howToSearch' | translate }}</span>
     </button>
     <span class="fill-remaining-space"></span>
 
@@ -26,9 +26,9 @@
     <div class="app-menu-header">
       <span class="app-menu-title">
         <h4 [ngSwitch]="true">
-          <span *ngSwitchCase="showAdvanced">{{ 'searchPanel.advancedSearch' | translate }}</span>
-          <span *ngSwitchCase="showExpert">{{ 'searchPanel.expertSearch' | translate }}</span>
-          <span *ngSwitchCase="showHint">{{ 'searchPanel.howToSearch' | translate }}</span>
+          <span *ngSwitchCase="showAdvanced">{{ 'pages.search.searchPanel.advancedSearch' | translate }}</span>
+          <span *ngSwitchCase="showExpert">{{ 'pages.search.searchPanel.expertSearch' | translate }}</span>
+          <span *ngSwitchCase="showHint">{{ 'pages.search.searchPanel.howToSearch' | translate }}</span>
         </h4>
       </span>
       <span class="fill-remaining-space"></span>

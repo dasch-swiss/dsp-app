@@ -8,8 +8,8 @@ import { IncomingOrStandoffLink } from './incoming-link.interface';
 @Component({
   selector: 'app-standoff-links-property',
   template: ` <app-property-row
-    [tooltip]="'resource.standoffLink.tooltip' | translate"
-    [label]="'resource.standoffLink.label' | translate"
+    [tooltip]="'resourceEditor.propertiesDisplay.standoffLinkTooltip' | translate"
+    [label]="'resourceEditor.propertiesDisplay.standoffLinkLabel' | translate"
     [isEmptyRow]="standoffLinks.length === 0"
     [borderBottom]="true">
     <app-incoming-standoff-link-value [links]="standoffLinks" />

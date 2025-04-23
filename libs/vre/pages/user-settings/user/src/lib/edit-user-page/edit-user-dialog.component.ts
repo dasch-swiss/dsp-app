@@ -5,7 +5,7 @@ import { UpdateUserAction } from '@dasch-swiss/vre/core/state';
 import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { TranslateService } from '@ngx-translate/core';
-import { Actions, ofActionSuccessful, Store } from '@ngxs/store';
+import { Actions, Store, ofActionSuccessful } from '@ngxs/store';
 import { take } from 'rxjs/operators';
 import { UserForm } from '../user-form/user-form.type';
 
@@ -15,13 +15,13 @@ import { UserForm } from '../user-form/user-form.type';
     <app-user-form *ngIf="user" [user]="user" (afterFormInit)="form = $event" />
 
     <div mat-dialog-actions align="end">
-      <button color="primary" mat-button mat-dialog-close>{{ 'form.action.cancel' | translate }}</button>
+      <button color="primary" mat-button mat-dialog-close>{{ 'ui.form.action.cancel' | translate }}</button>
       <button
         mat-raised-button
         color="primary"
         [disabled]="!form?.valid || (form && form.pristine)"
         (click)="updateUser()">
-        {{ 'form.action.update' | translate }}
+        {{ 'ui.form.action.update' | translate }}
       </button>
     </div>
   `,
@@ -54,7 +54,7 @@ export class EditUserDialogComponent {
         this._localizationsService.setLanguage(userAction.userData.lang);
       }
       this._dialogRef.close();
-      this._notification.openSnackBar(this._translateService.instant('form.user.general.updateSuccess'));
+      this._notification.openSnackBar(this._translateService.instant('pages.userSettings.userForm.updateSuccess'));
     });
   }
 }

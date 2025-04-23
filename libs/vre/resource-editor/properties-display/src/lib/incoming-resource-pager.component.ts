@@ -8,12 +8,12 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from 
       <div class="navigation">
         <button mat-button class="pagination-button previous" [disabled]="pageIndex === 0" (click)="changePage(-1)">
           <mat-icon>west</mat-icon>
-          <span>{{ 'uiControls.pager.previous' | translate }}</span>
+          <span>{{ 'ui.controls.pager.previous' | translate }}</span>
         </button>
         <span class="fill-remaining-space"></span>
         <div class="range">
           <span
-            >{{ itemRangeStart }} - {{ itemRangeEnd }} {{ 'uiControls.pager.of' | translate }} {{ itemsNumber }}</span
+            >{{ itemRangeStart }} - {{ itemRangeEnd }} {{ 'ui.controls.pager.of' | translate }} {{ itemsNumber }}</span
           >
         </div>
         <span class="fill-remaining-space"></span>
@@ -22,7 +22,7 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from 
           class="pagination-button next"
           [disabled]="itemRangeEnd === itemsNumber"
           (click)="changePage(1)">
-          <span>{{ 'uiControls.pager.next' | translate }}</span>
+          <span>{{ 'ui.controls.pager.next' | translate }}</span>
           <mat-icon>east</mat-icon>
         </button>
       </div>

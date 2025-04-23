@@ -27,7 +27,9 @@
   <!-- action tools: info menu, select language, login button, user menu -->
   <span class="action">
     <!-- navigation: help -->
-    <button mat-button [routerLink]="helpLink" class="main-toolbar-button help">{{ 'header.help' | translate }}</button>
+    <button mat-button [routerLink]="helpLink" class="main-toolbar-button help">
+      {{ 'ui.header.help' | translate }}
+    </button>
     <!-- user menu or login form -->
     <app-user-menu />
   </span>

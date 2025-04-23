@@ -58,7 +58,7 @@ export class PagerComponent implements OnChanges {
   get itemRange(): string {
     const itemRangeStart = this.numberOfAllResults ? this._pageIndex * this.pageSize + 1 : 0;
     const itemRangeEnd = Math.min((this._pageIndex + 1) * this.pageSize, this.numberOfAllResults);
-    return `${itemRangeStart} - ${itemRangeEnd} ${this._translate.instant('paginator.rangeLabelOf')} ${this.numberOfAllResults}`;
+    return `${itemRangeStart} - ${itemRangeEnd} ${this._translate.instant('ui.pager.rangeLabelOf')} ${this.numberOfAllResults}`;
   }
 
   constructor(private _translate: TranslateService) {}

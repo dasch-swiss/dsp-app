@@ -33,7 +33,7 @@ import { finalize, takeLast, tap } from 'rxjs/operators';
         [isLoading]="loading"
         type="submit"
         data-cy="submit-button">
-        {{ isLoginError ? ('form.action.retry' | translate) : ('form.action.login' | translate) }}
+        {{ isLoginError ? ('ui.form.action.retry' | translate) : ('pages.userSettings.loginForm.login' | translate) }}
       </button>
     </form>
   `,

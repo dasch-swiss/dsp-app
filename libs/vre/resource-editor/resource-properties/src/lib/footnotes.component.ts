@@ -4,7 +4,7 @@ import { FootnoteService } from './footnote.service';
 
 @Component({
   selector: 'app-footnotes',
-  template: `<h5>{{ 'resource.footnotes' | translate }}</h5>
+  template: `<h5>{{ 'resourceEditor.resourceProperties.footnotes' | translate }}</h5>
     <div
       *ngFor="let footnote of footnoteService.footnotes; let index = index; trackBy: trackByIndex"
       class="footnote"

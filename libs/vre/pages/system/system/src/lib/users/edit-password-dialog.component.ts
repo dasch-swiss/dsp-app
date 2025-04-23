@@ -8,7 +8,9 @@ export interface EditPasswordDialogProps {
 
 @Component({
   selector: 'app-edit-password-dialog',
-  template: ` <app-dialog-header [title]="data.user.username" [subtitle]="'form.user.title.password' | translate" />
+  template: ` <app-dialog-header
+      [title]="data.user.username"
+      [subtitle]="'pages.system.users.changePassword' | translate" />
     <app-password-form [user]="data.user" (closeDialog)="dialogRef.close()" />`,
 })
 export class EditPasswordDialogComponent {

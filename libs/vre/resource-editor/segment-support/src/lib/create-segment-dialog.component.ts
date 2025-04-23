@@ -14,7 +14,8 @@ export interface CreateSegmentDialogProps {
 
 @Component({
   selector: 'app-create-segment-dialog',
-  template: ` <app-dialog-header title="{{ 'annotations.create' | translate }}" />
+  template: ` <app-dialog-header
+      title="{{ 'resourceEditor.segmentSupport.createSegmentDialog.createAnnotation' | translate }}" />
     <div mat-dialog-content>
       <app-common-input [control]="form.controls.label" label="Label" />
       <app-time-input label="Start" [control]="form.controls.start" data-cy="start-input" />

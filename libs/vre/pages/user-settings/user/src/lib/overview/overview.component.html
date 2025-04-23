@@ -3,7 +3,7 @@
     <div *ngIf="isProjectsLoading$ | async" [@replaceAnimation]>
       <div class="title-bar admin">
         <div class="title">
-          <p>{{ 'overview.title' | translate }}</p>
+          <p>{{ 'pages.userSettings.overview.title' | translate }}</p>
         </div>
       </div>
       <div class="project-tiles">
@@ -18,7 +18,7 @@
       <!-- list all projects -->
       <div class="title-bar admin">
         <div class="title">
-          <p>{{ 'overview.title' | translate }}</p>
+          <p>{{ 'pages.userSettings.overview.title' | translate }}</p>
         </div>
       </div>
       <div class="project-tiles">
@@ -32,7 +32,7 @@
       <ng-container *ngIf="(userActiveProjects$ | async).length > 0">
         <div class="title-bar">
           <div class="title">
-            <p>{{ 'overview.myProjects' | translate }}</p>
+            <p>{{ 'pages.userSettings.overview.myProjects' | translate }}</p>
           </div>
         </div>
         <div class="project-tiles">
@@ -44,7 +44,7 @@
       <ng-container *ngIf="(userOtherActiveProjects$ | async).length > 0">
         <div class="title-bar other-projects">
           <div class="title">
-            <p>{{ 'overview.browseOtherResearchProjects' | translate }}</p>
+            <p>{{ 'pages.userSettings.overview.browseOtherResearchProjects' | translate }}</p>
           </div>
         </div>
         <div class="project-tiles">
@@ -63,7 +63,7 @@
       <!-- list all projects -->
       <div class="title-bar admin">
         <div class="title">
-          <p>{{ 'overview.title' | translate }}</p>
+          <p>{{ 'pages.userSettings.overview.title' | translate }}</p>
         </div>
       </div>
       <div class="project-tiles">

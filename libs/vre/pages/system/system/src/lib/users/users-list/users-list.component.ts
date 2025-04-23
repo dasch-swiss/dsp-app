@@ -76,11 +76,11 @@ export class UsersListComponent {
   sortProps: any = [
     {
       key: 'familyName',
-      label: this._ts.instant('usersList.sortProps.familyName'),
+      label: this._ts.instant('pages.system.usersList.sortFamilyName'),
     },
     {
       key: 'givenName',
-      label: this._ts.instant('usersList.sortProps.givenName'),
+      label: this._ts.instant('pages.system.usersList.sortGivenName'),
     },
     {
       key: 'email',

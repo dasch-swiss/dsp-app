@@ -1,11 +1,11 @@
 <app-dialog-header
-  [title]="ontologyName ? ontologyName : ('form.ontology.title.create' | translate)"
-  [subtitle]="ontologyName ? ('form.ontology.title.edit' | translate) : ''" />
+  [title]="ontologyName ? ontologyName : ('pages.ontology.ontologyForm.create' | translate)"
+  [subtitle]="ontologyName ? ('pages.ontology.ontologyForm.edit' | translate) : ''" />
 <form [formGroup]="ontologyForm" class="form-content">
   <app-common-input
     [control]="ontologyForm.controls.name"
     [validatorErrors]="[ontoNamePatternErrorMsg, ontoNameExistsErrorMsg]"
-    [label]="'form.ontology.label.name' | translate"
+    [label]="'pages.ontology.ontologyForm.name' | translate"
     data-cy="name-input" />
   <app-common-input [control]="ontologyForm.controls.label" [label]="'Label'" data-cy="label-input" />
   <mat-form-field class="large-field">
@@ -22,7 +22,7 @@
 </form>
 
 <div mat-dialog-actions align="end">
-  <button color="primary" mat-button mat-dialog-close>{{ 'form.action.cancel' | translate }}</button>
+  <button color="primary" mat-button mat-dialog-close>{{ 'ui.form.action.cancel' | translate }}</button>
   <button
     mat-raised-button
     color="primary"
@@ -31,6 +31,6 @@
     [disabled]="!ontologyForm?.valid || loading"
     (click)="submitData()"
     data-cy="submit-button">
-    {{ 'form.action.submit' | translate }}
+    {{ 'ui.form.action.submit' | translate }}
   </button>
 </div>

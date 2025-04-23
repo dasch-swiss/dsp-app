@@ -33,12 +33,12 @@ export class UserFormComponent implements OnInit {
 
   readonly emailPatternErrorMsg = {
     errorKey: 'pattern',
-    message: this._ts.instant('form.user.general.emailValidation'),
+    message: this._ts.instant('pages.userSettings.userForm.emailValidation'),
   };
 
   readonly usernamePatternErrorMsg = {
     errorKey: 'pattern',
-    message: this._ts.instant('form.user.general.usernameHint'),
+    message: this._ts.instant('pages.userSettings.userForm.usernameHint'),
   };
 
   editExistingUser: boolean;

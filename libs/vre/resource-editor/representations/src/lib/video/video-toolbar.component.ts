@@ -47,7 +47,7 @@ import { MediaPlayerService } from './media-player.service';
         mat-icon-button
         data-cy="timeline-button"
         (click)="createVideoSegment()"
-        [matTooltip]="'annotations.create' | translate"
+        [matTooltip]="'resourceEditor.representations.video.createAnnotation' | translate"
         *ngIf="usercanEdit">
         <mat-icon svgIcon="draw_region_icon"></mat-icon>
       </button>

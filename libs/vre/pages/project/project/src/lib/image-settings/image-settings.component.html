@@ -2,24 +2,24 @@
   <app-progress-indicator *ngIf="isProjectsLoading$ | async" />
   <div class="content large middle" *ngIf="(isProjectsLoading$ | async) === false">
     <div>
-      <p>{{ 'form.project.imageSettings.restrictions' | translate }}</p>
+      <p>{{ 'pages.project.imageSettings.restrictions' | translate }}</p>
       <div>
         <div class="mb-2">
           <mat-radio-group class="radio-group" [(ngModel)]="imageSettings" [ngModelOptions]="{standalone: true}">
             <mat-radio-button [value]="imageSettingsEnum.Off">
-              {{ 'form.project.imageSettings.off' | translate }}
+              {{ 'pages.project.imageSettings.off' | translate }}
             </mat-radio-button>
             <mat-radio-button [value]="imageSettingsEnum.Watermark">
-              {{ 'form.project.imageSettings.isWatermark' | translate }}
+              {{ 'pages.project.imageSettings.isWatermark' | translate }}
             </mat-radio-button>
             <mat-radio-button [value]="imageSettingsEnum.RestrictImageSize">
-              {{ 'form.project.imageSettings.restrictImageSize' | translate }}
+              {{ 'pages.project.imageSettings.restrictImageSize' | translate }}
             </mat-radio-button>
           </mat-radio-group>
         </div>
       </div>
       <div *ngIf="imageSettings === imageSettingsEnum.RestrictImageSize" class="mb-6">
-        <mat-label>{{ 'form.project.imageSettings.info' | translate }}</mat-label>
+        <mat-label>{{ 'pages.project.imageSettings.info' | translate }}</mat-label>
         <div class="mb-2 mt-2">
           <mat-form-field>
             <input
@@ -27,7 +27,7 @@
               (ngModelChange)="onPercentageInputChange()"
               matInput
               [(ngModel)]="percentage" />
-            <mat-label>{{ 'form.project.imageSettings.percentage' | translate }}</mat-label>
+            <mat-label>{{ 'pages.project.imageSettings.percentage' | translate }}</mat-label>
           </mat-form-field>
           <mat-label> %</mat-label>
         </div>
@@ -39,7 +39,7 @@
               matInput
               [(ngModel)]="fixedWidth" />
             <mat-label>
-              {{ 'form.project.imageSettings.absoluteWidth' | translate: { min: minWidth, max: maxWidth } }}
+              {{ 'pages.project.imageSettings.absoluteWidth' | translate: { min: minWidth, max: maxWidth } }}
             </mat-label>
           </mat-form-field>
           <mat-label class="nowrap"> x {{ fixedWidth }} Px</mat-label>
@@ -59,7 +59,7 @@
         (click)="onSubmit()"
         appLoadingButton
         [isLoading]="isProjectsLoading$ | async">
-        {{ 'form.action.submit' | translate }}
+        {{ 'ui.form.action.submit' | translate }}
       </button>
     </div>
   </div>

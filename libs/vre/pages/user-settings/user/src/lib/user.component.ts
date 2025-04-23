@@ -27,14 +27,14 @@ export class UserComponent implements OnDestroy {
 
   navigation: MenuItem[] = [
     {
-      label: this._translateService.instant('user.navigation.myProjects'),
-      shortLabel: this._translateService.instant('user.navigation.myProjects'),
+      label: this._translateService.instant('pages.userSettings.navigation.myProjects'),
+      shortLabel: this._translateService.instant('pages.userSettings.navigation.myProjects'),
       route: RouteConstants.projectsRelative,
       icon: 'assignment',
     },
     {
-      label: this._translateService.instant('user.navigation.myAccount'),
-      shortLabel: this._translateService.instant('user.navigation.myAccount'),
+      label: this._translateService.instant('pages.userSettings.navigation.myAccount'),
+      shortLabel: this._translateService.instant('pages.userSettings.navigation.myAccount'),
       route: RouteConstants.userAccountRelative,
       icon: 'settings',
     },

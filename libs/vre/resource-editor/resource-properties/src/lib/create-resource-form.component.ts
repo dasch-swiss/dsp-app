@@ -84,7 +84,7 @@ import { propertiesTypeMapping } from './resource-payloads-mapping';
           data-cy="submit-button"
           [isLoading]="loading"
           (click)="submitData()">
-          {{ 'form.action.submit' | translate }}
+          {{ 'ui.form.action.submit' | translate }}
         </button>
       </div>
     </form>

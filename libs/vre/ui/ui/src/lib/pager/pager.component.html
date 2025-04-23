@@ -2,14 +2,14 @@
   <div class="paginator-nav">
     <button
       mat-icon-button
-      [matTooltip]="'paginator.firstPage' | translate"
+      [matTooltip]="'ui.pager.firstPage' | translate"
       (click)="pageIndex = 0"
       [disabled]="pageIndex === 0">
       <mat-icon>first_page</mat-icon>
     </button>
     <button
       mat-icon-button
-      [matTooltip]="'paginator.previousPage' | translate"
+      [matTooltip]="'ui.pager.previousPage' | translate"
       (click)="pageIndex = pageIndex - 1"
       [disabled]="pageIndex === 0">
       <mat-icon>chevron_left</mat-icon>
@@ -24,22 +24,22 @@
         (focus)="selectText($event)"
         (blur)="resetToCurrentPage()"
         (keyup.enter)="goToPage()"
-        [matTooltip]="'paginator.inputTooltip' | translate"
+        [matTooltip]="'ui.pager.inputTooltip' | translate"
         class="page-input" />
     </div>
-    <span class="page-label">{{ 'paginator.rangeLabelOf' | translate }} {{ lastPageIndex + 1 }}</span>
+    <span class="page-label">{{ 'ui.pager.rangeLabelOf' | translate }} {{ lastPageIndex + 1 }}</span>
   </div>
   <div class="paginator-nav">
     <button
       mat-icon-button
-      [matTooltip]="'paginator.nextPage' | translate"
+      [matTooltip]="'ui.pager.nextPage' | translate"
       (click)="pageIndex = pageIndex + 1"
       [disabled]="pageIndex === lastPageIndex">
       <mat-icon>chevron_right</mat-icon>
     </button>
     <button
       mat-icon-button
-      [matTooltip]="'paginator.lastPage' | translate"
+      [matTooltip]="'ui.pager.lastPage' | translate"
       (click)="pageIndex = lastPageIndex"
       [disabled]="pageIndex === lastPageIndex">
       <mat-icon>last_page</mat-icon>

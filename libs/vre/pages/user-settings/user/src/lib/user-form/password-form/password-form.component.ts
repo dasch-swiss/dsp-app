@@ -56,8 +56,8 @@ export class PasswordFormComponent implements OnInit {
     },
     password: {
       required: 'Password is required.',
-      minlength: this._ts.instant('form.user.general.passwordLengthHint'),
-      pattern: this._ts.instant('form.user.general.passwordPatternHint'),
+      minlength: this._ts.instant('pages.userSettings.passwordForm.passwordLengthHint'),
+      pattern: this._ts.instant('pages.userSettings.passwordForm.passwordPatternHint'),
     },
     confirmPassword: {
       required: 'You have to confirm your password.',
@@ -238,7 +238,9 @@ export class PasswordFormComponent implements OnInit {
     this._userApiService.updatePassword(this.user.id, requesterPassword, this.form.controls.password.value).subscribe(
       () => {
         const successResponse = this._ts.instant(
-          this.updateOwn ? 'form.user.title.ownPasswordSuccess' : 'form.user.title.userPasswordSuccess'
+          this.updateOwn
+            ? 'pages.userSettings.passwordForm.ownPasswordSuccess'
+            : 'pages.userSettings.passwordForm.userPasswordSuccess'
         );
         this._notification.openSnackBar(successResponse);
         this.closeDialog.emit();

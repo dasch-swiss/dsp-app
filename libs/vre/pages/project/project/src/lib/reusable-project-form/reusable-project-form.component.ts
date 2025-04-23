@@ -14,25 +14,25 @@ import { shortcodeExistsValidator } from './shortcode-exists.validator';
       <div style="display: flex">
         <app-common-input
           [control]="form.controls.shortcode"
-          [label]="'form.project.general.shortcode' | translate"
+          [label]="'pages.project.reusableProjectForm.shortcode' | translate"
           [validatorErrors]="[shortcodePatternError, shortCodeExistsError]"
           data-cy="shortcode-input"
           style="flex: 1; margin-right: 16px" />
 
         <app-common-input
           [control]="form.controls.shortname"
-          [label]="'form.project.general.shortname' | translate"
+          [label]="'pages.project.reusableProjectForm.shortname' | translate"
           data-cy="shortname-input"
           style="flex: 1" />
       </div>
 
       <app-common-input
-        [label]="'form.project.general.longname' | translate"
+        [label]="'pages.project.reusableProjectForm.longname' | translate"
         [control]="form.controls.longname"
         data-cy="longname-input" />
 
       <app-multi-language-textarea
-        [placeholder]="'form.project.general.description' | translate"
+        [placeholder]="'pages.project.reusableProjectForm.description' | translate"
         [formArray]="form.controls.description"
         [validators]="descriptionValidators"
         [isRequired]="true"

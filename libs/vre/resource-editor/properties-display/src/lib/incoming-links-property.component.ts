@@ -11,8 +11,8 @@ import { IncomingOrStandoffLink } from './incoming-link.interface';
   selector: 'app-incoming-links-property',
   template: `
     <app-property-row
-      [tooltip]="'resource.incomingLink.tooltip' | translate"
-      [label]="'resource.incomingLink.label' | translate"
+      [tooltip]="'resourceEditor.propertiesDisplay.incomingLinkTooltip' | translate"
+      [label]="'resourceEditor.propertiesDisplay.incomingLinkLabel' | translate"
       [borderBottom]="true"
       [isEmptyRow]="!loading && allIncomingLinks.length === 0">
       <ng-container *ngIf="allIncomingLinks.length > 0">

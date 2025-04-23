@@ -13,14 +13,14 @@
       [matMenuTriggerFor]="selectProject"
       #btnToSelectProject="matMenuTrigger"
       isIconButton>
-      <p class="mat-caption placeholder">{{ 'fullTextSearch.filterByProject' | translate }}</p>
+      <p class="mat-caption placeholder">{{ 'pages.search.fullTextSearch.filterByProject' | translate }}</p>
       <p class="label">{{ projectLabel }}</p>
       <mat-icon class="icon" matSuffix>keyboard_arrow_down</mat-icon>
     </button>
     <mat-menu #selectProject="matMenu">
       <div class="app-project-filter-menu">
         <button mat-menu-item class="center" (click)="setProject(); changeFocus()">
-          {{ 'fullTextSearch.allProjects' | translate }}
+          {{ 'pages.search.fullTextSearch.allProjects' | translate }}
         </button>
         <mat-divider></mat-divider>
         <span *ngFor="let project of projects">
@@ -45,7 +45,7 @@
       name="fulltext-search"
       minlength="3"
       autocomplete="off"
-      [placeholder]="'fullTextSearch.search' | translate"
+      [placeholder]="'pages.search.fullTextSearch.search' | translate"
       (keyup.esc)="resetSearch()"
       (keyup.enter)="doSearch()"
       (click)="setFocus()" />
@@ -112,7 +112,7 @@
         [matMenuTriggerFor]="selectProject"
         #btnToSelectProject="matMenuTrigger"
         isIconButton>
-        <p class="mat-caption placeholder">{{ 'fullTextSearch.filterByProject' | translate }}</p>
+        <p class="mat-caption placeholder">{{ 'pages.search.fullTextSearch.filterByProject' | translate }}</p>
         <p class="label">{{ projectLabel }}</p>
         <mat-icon class="icon" matSuffix>keyboard_arrow_down</mat-icon>
       </button>
@@ -136,12 +136,12 @@
         name="fulltext-search"
         minlength="3"
         autocomplete="off"
-        [placeholder]="'fullTextSearch.search' | translate"
+        [placeholder]="'pages.search.fullTextSearch.search' | translate"
         (click)="setFocus()"
         (keyup.esc)="resetSearch()"
         (keyup.enter)="doSearch()" />
       <button mat-button color="primary" class="app-fulltext-search-button" (click)="doSearch()" type="submit">
-        {{ 'fullTextSearch.search' | translate }}
+        {{ 'pages.search.fullTextSearch.search' | translate }}
       </button>
     </div>
 

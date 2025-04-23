@@ -27,7 +27,7 @@ import { PropertyFormItem } from '../../../data-access/advanced-search-store/adv
   ],
   template: `
     <mat-form-field appearance="fill" class="dropdown">
-      <mat-label>{{ 'form.project.advancedSearch.propertyListValue' | translate }}</mat-label>
+      <mat-label>{{ 'pages.search.propertyFormListValue' | translate }}</mat-label>
       <input
         matInput
         [formControl]="valueFilterCtrl"

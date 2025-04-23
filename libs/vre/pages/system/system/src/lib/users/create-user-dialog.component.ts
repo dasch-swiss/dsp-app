@@ -15,7 +15,7 @@ import { take } from 'rxjs/operators';
     <app-user-form [user]="user" (afterFormInit)="form = $event" />
 
     <div mat-dialog-actions align="end">
-      <button color="primary" mat-button mat-dialog-close>{{ 'form.action.cancel' | translate }}</button>
+      <button color="primary" mat-button mat-dialog-close>{{ 'ui.form.action.cancel' | translate }}</button>
       <button
         mat-raised-button
         color="primary"
@@ -23,7 +23,7 @@ import { take } from 'rxjs/operators';
         [isLoading]="isLoading$ | async"
         [disabled]="!form?.valid || (isLoading$ | async)"
         (click)="createUser()">
-        {{ 'form.action.submit' | translate }}
+        {{ 'ui.form.action.submit' | translate }}
       </button>
     </div>
   `,

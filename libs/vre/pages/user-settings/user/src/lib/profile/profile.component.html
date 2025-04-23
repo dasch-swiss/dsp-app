@@ -27,7 +27,7 @@
                                 </li> -->
           <li class="status warning text-only" *ngIf="isSysAdmin$ | async">
             <mat-icon>verified_user</mat-icon>
-            <span>{{ 'user.profile.systemAdmin' | translate }}</span>
+            <span>{{ 'pages.userSettings.profile.systemAdmin' | translate }}</span>
           </li>
         </ul>
       </div>
@@ -36,7 +36,7 @@
       <br />
       <!-- edit button -->
       <button mat-button [color]="'primary'" (click)="editProfile(user)" style="width: 100%">
-        {{ 'user.profile.editMyProfile' | translate }}
+        {{ 'pages.userSettings.profile.editMyProfile' | translate }}
       </button>
     </div>
 

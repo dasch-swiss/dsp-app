@@ -28,7 +28,7 @@
   </form>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
-  <button mat-button type="button" (click)="dialogRef.close()">{{ 'form.action.cancel' | translate }}</button>
+  <button mat-button type="button" (click)="dialogRef.close()">{{ 'ui.form.action.cancel' | translate }}</button>
 
   <button
     mat-raised-button
@@ -37,7 +37,7 @@
     [isLoading]="isLoading$ | async"
     [disabled]="form.invalid"
     (click)="submitData()">
-    {{ 'form.action.submit' | translate }}
+    {{ 'ui.form.action.submit' | translate }}
   </button>
 </mat-dialog-actions>
 

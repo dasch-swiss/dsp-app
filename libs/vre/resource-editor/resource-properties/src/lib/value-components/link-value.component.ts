@@ -61,7 +61,7 @@ import { LinkValueDataService } from './link-value-data.service';
           <app-progress-indicator />
         </mat-option>
       </mat-autocomplete>
-      <mat-hint>{{ 'form.action.searchHelp' | translate }}</mat-hint>
+      <mat-hint>{{ 'resourceEditor.resourceProperties.valueComponents.searchHelp' | translate }}</mat-hint>
       <mat-error *ngIf="control.errors as errors">{{ errors | humanReadableError }}</mat-error>
     </mat-form-field>
   `,
