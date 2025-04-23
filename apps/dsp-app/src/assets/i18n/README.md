@@ -1,4 +1,9 @@
-# Translation label structure
+# Adding translations
+
+Translation values are added by default to all the locale files in English and
+once a while are translated in bulk.
+
+# Translation labels structure
 
 1. Root library name segment. I.e.: 3rdPartyServices, core, etc. (Required)
 2. Secondary identifier from top segment. I.e.: userSettings, propertiesDisplay, etc. (Optional)
