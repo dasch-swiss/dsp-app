@@ -32,7 +32,7 @@
       class="clickable-icon"
       data-cy="still-image-region-button"
       matTooltip="{{ 'resourceEditor.representations.stillImage.createAnnotation' | translate }}"
-      *ngIf="(resourceFetcherService.userCanEdit$ | async) && isReadStillImageExternalFileValue"
+      *ngIf="(resourceFetcherService.userCanEdit$ | async) && !isReadStillImageExternalFileValue"
       (click)="toggleDrawMode()"
       [class.active]="osd.drawing">
       <mat-icon svgIcon="draw_region_icon"></mat-icon>
