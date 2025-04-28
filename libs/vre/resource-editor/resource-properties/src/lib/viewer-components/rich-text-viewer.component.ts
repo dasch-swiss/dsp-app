@@ -12,13 +12,18 @@ import { FormControl } from '@angular/forms';
   `,
   styles: [
     `
-      .rich-text-viewer ::ng-deep * {
-        &:first-child {
-          margin-top: 0;
-        }
+      .rich-text-viewer {
+        overflow-wrap: break-word;
+        word-break: break-word;
 
-        &:last-child {
-          margin-bottom: 0;
+        ::ng-deep * {
+          &:first-child {
+            margin-top: 0;
+          }
+
+          &:last-child {
+            margin-bottom: 0;
+          }
         }
       }
     `,
