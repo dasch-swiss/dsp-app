@@ -13,6 +13,7 @@ export * from './lib/switch-components/date-switch.component';
 export * from './lib/switch-components/geoname-switch.component';
 export * from './lib/switch-components/link-switch.component';
 export * from './lib/switch-components/list-switch.component';
+export * from './lib/viewer-components/list-viewer.component';
 export * from './lib/switch-components/rich-text-switch.component';
 export * from './lib/switch-components/text-html-switch.component';
 export * from './lib/switch-components/text-switch.component';
