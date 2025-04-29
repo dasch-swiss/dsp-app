@@ -1,6 +1,7 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
+import { KnoraApiConnection } from '@dasch-swiss/dsp-js/src/knora-api-connection';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { DspResource, GenerateProperty } from '@dasch-swiss/vre/shared/app-common';
-import { IncomingService } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { map, takeUntil, tap } from 'rxjs/operators';
 
@@ -23,7 +24,10 @@ export class RegionService {
 
   private _ngUnsubscribe = new Subject<void>();
 
-  constructor(private _incomingService: IncomingService) {}
+  constructor(
+    @Inject(DspApiConnectionToken)
+    private _dspApi: KnoraApiConnection
+  ) {}
 
   /** This method acts as a constructor. */
   initialize(resourceId: string) {
@@ -47,9 +51,8 @@ export class RegionService {
     this._selectedRegion.next(regionIri);
   }
 
-  private _getIncomingRegions(resourceId: string) {
-    const offset = 0;
-    return this._incomingService.getIncomingRegions(resourceId, offset).pipe(
+  private _getIncomingRegions(resourceId: string, offset = 0) {
+    return this._dspApi.v2.search.doSearchIncomingRegions(resourceId, offset).pipe(
       map(regions =>
         regions.resources.map(_resource => {
           const z = new DspResource(_resource);
