@@ -29,4 +29,44 @@ export class SortingService {
     });
     return sortedArray;
   }
+
+  sortLabelsAlphabetically<T extends object>(value: Array<T>, sortKey: keyof T, language?: string): Array<T> {
+    const sortedArray = value.slice();
+    sortedArray.sort((a: T, b: T) => {
+      let rawLabelA = String(a[sortKey] ?? '');
+      let rawLabelB = String(b[sortKey] ?? '');
+      if (language !== undefined) {
+        rawLabelA = this.getLabelValue(a, sortKey, language);
+        rawLabelB = this.getLabelValue(b, sortKey, language);
+      }
+
+      const comparison = rawLabelA.localeCompare(rawLabelB, language, {
+        numeric: true,
+        sensitivity: 'variant',
+        ignorePunctuation: false,
+      });
+
+      if (comparison !== 0) return comparison;
+
+      return 0;
+    });
+
+    return sortedArray;
+  }
+
+  private getLabelValue<T>(item: T, sortKey: keyof T, language: string): string {
+    type Label = { language: string; value: string };
+    type TWithLabels = T & { labels: Label[] };
+
+    const labels = (item as TWithLabels).labels;
+    if (Array.isArray(labels)) {
+      const primary = labels.find(l => l.language === language)?.value;
+      if (primary) return primary;
+
+      const fallback = labels.find(l => l.value.trim() !== '')?.value;
+      if (fallback) return fallback;
+    }
+
+    return String(item[sortKey]) || '';
+  }
 }
