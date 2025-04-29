@@ -51,7 +51,7 @@ export class HeaderComponent {
         doSearchRoute += `/${encodeURIComponent(this.searchParams.filter.limitToProject)}`;
       }
 
-      this._router.navigate([doSearchRoute]);
+      this._router.navigateByUrl('/').then(() => this._router.navigate([doSearchRoute]));
     }
   }
 }
