@@ -1,3 +1,6 @@
 {
-  "extends": "../../.eslintrc-angular.json"
+  "extends": "../../.eslintrc-angular.json",
+  "ignorePatterns": [
+    "coverage/"
+  ]
 }

@@ -5,7 +5,6 @@ import {
   RepresentationConstants,
 } from '@dasch-swiss/vre/resource-editor/representations';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
-import { Store } from '@ngxs/store';
 
 @Component({
   selector: 'app-resource-representation',
@@ -62,12 +61,10 @@ import { Store } from '@ngxs/store';
 })
 export class ResourceRepresentationComponent implements OnChanges {
   @Input({ required: true }) resource!: DspResource;
-  representationToDisplay!: FileRepresentation;
 
+  representationToDisplay!: FileRepresentation;
   loading = false;
   protected readonly representationConstants = RepresentationConstants;
-
-  constructor(private _store: Store) {}
 
   ngOnChanges() {
     this.representationToDisplay = new FileRepresentation(getFileValue(this.resource.res)!);

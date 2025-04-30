@@ -122,12 +122,12 @@ export class StillImageToolbarComponent {
         });
     } else {
       this._dialog.open<ReplaceFileDialogComponent, ReplaceFileDialogProps>(ReplaceFileDialogComponent, {
-        data: {
+        ...DspDialogConfig.mediumDialog({
           title: 'Image',
           subtitle: 'Update image of the resource',
           representation: Constants.HasStillImageFileValue,
           resource: this.resource,
-        },
+        }),
         viewContainerRef: this._viewContainerRef,
       });
     }

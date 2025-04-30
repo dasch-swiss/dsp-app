@@ -1,6 +1,7 @@
 import { Component, Input, OnChanges, SimpleChanges, ViewContainerRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Constants, ReadResource } from '@dasch-swiss/dsp-js';
+import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import { FileRepresentation } from '../file-representation';
 import {
   ReplaceFileDialogComponent,
@@ -47,12 +48,12 @@ export class ArchiveComponent implements OnChanges {
 
   openReplaceFileDialog() {
     this._dialog.open<ReplaceFileDialogComponent, ReplaceFileDialogProps>(ReplaceFileDialogComponent, {
-      data: {
+      ...DspDialogConfig.mediumDialog({
         title: 'Archive',
         subtitle: 'Update the archive file of this resource',
         representation: Constants.HasArchiveFileValue,
         resource: this.parentResource,
-      },
+      }),
       viewContainerRef: this._viewContainerRef,
     });
   }

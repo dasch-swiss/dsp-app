@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Constants, ReadDocumentFileValue, ReadResource } from '@dasch-swiss/dsp-js';
+import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import { PdfViewerComponent } from 'ng2-pdf-viewer';
 import { FileRepresentation } from '../file-representation';
 import {
@@ -74,12 +75,12 @@ export class DocumentComponent implements OnChanges {
 
   openReplaceFileDialog() {
     this._dialog.open<ReplaceFileDialogComponent, ReplaceFileDialogProps>(ReplaceFileDialogComponent, {
-      data: {
+      ...DspDialogConfig.mediumDialog({
         title: 'Document',
         subtitle: 'Update the document file of this resource',
         representation: Constants.HasDocumentFileValue,
         resource: this.parentResource,
-      },
+      }),
       viewContainerRef: this._viewContainerRef,
     });
   }

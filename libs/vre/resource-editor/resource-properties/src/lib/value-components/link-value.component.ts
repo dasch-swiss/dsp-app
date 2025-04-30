@@ -13,17 +13,9 @@ import {
 import { FormControl } from '@angular/forms';
 import { MatAutocomplete, MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { MatDialog } from '@angular/material/dialog';
-import {
-  KnoraApiConnection,
-  ReadProject,
-  ReadResource,
-  ReadResourceSequence,
-  ResourceClassDefinition,
-} from '@dasch-swiss/dsp-js';
-import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
-import { ProjectsSelectors } from '@dasch-swiss/vre/core/state';
+import { KnoraApiConnection, ReadResource, ReadResourceSequence, ResourceClassDefinition } from '@dasch-swiss/dsp-js';
+import { DspApiConnectionToken, DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import { MatAutocompleteOptionsScrollDirective } from '@dasch-swiss/vre/shared/app-common';
-import { Store } from '@ngxs/store';
 import { Observable, of, Subject } from 'rxjs';
 import { debounceTime, filter, finalize, map, switchMap, take, takeUntil } from 'rxjs/operators';
 import { CreateResourceDialogComponent, CreateResourceDialogProps } from '../create-resource-dialog.component';
@@ -94,8 +86,7 @@ export class LinkValueComponent implements OnInit, AfterViewInit, OnDestroy {
     private _dspApiConnection: KnoraApiConnection,
     private _dialog: MatDialog,
     private _cd: ChangeDetectorRef,
-    public _linkValueDataService: LinkValueDataService,
-    private _store: Store
+    public _linkValueDataService: LinkValueDataService
   ) {}
 
   ngOnInit() {
@@ -137,14 +128,12 @@ export class LinkValueComponent implements OnInit, AfterViewInit, OnDestroy {
   openCreateResourceDialog(event: any, resourceClassIri: string, resourceType: string) {
     let myResourceId: string;
     event.stopPropagation();
-    const projectIri = (this._store.selectSnapshot(ProjectsSelectors.currentProject) as ReadProject)?.id;
     this._dialog
       .open<CreateResourceDialogComponent, CreateResourceDialogProps, string>(CreateResourceDialogComponent, {
-        data: {
+        ...DspDialogConfig.mediumDialog({
           resourceType,
           resourceClassIri,
-          projectIri,
-        },
+        }),
       })
       .afterClosed()
       .pipe(

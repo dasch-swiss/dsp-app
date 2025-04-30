@@ -1,24 +1,16 @@
 import { ChangeDetectorRef, Component, Input, Self } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
-import {
-  FileRepresentationType,
-  UploadedFileResponse,
-  fileValueMapping,
-} from '@dasch-swiss/vre/resource-editor/representations';
+import { FileRepresentationType, UploadedFileResponse } from '@dasch-swiss/vre/resource-editor/representations';
 
 @Component({
   selector: 'app-upload-control',
   template: `
     <app-upload
+      style="margin-bottom: 16px;display: block;"
       [representation]="representation"
       (afterFileRemoved)="removeFile()"
-      (afterFileUploaded)="afterFileUploaded($event)"
-      *ngIf="!loading; else loadingTpl" />
+      (afterFileUploaded)="afterFileUploaded($event)" />
     <mat-error *ngIf="ngControl.touched && ngControl.errors">{{ ngControl.errors | humanReadableError }}</mat-error>
-
-    <ng-template #loadingTpl>
-      <app-progress-indicator />
-    </ng-template>
   `,
 })
 export class UploadControlComponent implements ControlValueAccessor {
@@ -29,7 +21,6 @@ export class UploadControlComponent implements ControlValueAccessor {
   onTouched!: () => void;
 
   loading = false;
-  file: File | null = null;
 
   constructor(
     private _cdr: ChangeDetectorRef,
@@ -49,16 +40,7 @@ export class UploadControlComponent implements ControlValueAccessor {
   }
 
   afterFileUploaded(res: UploadedFileResponse) {
-    if (this.resourceId) {
-      const uploadedFile = fileValueMapping.get(this.representation)!.update();
-      uploadedFile.id = this.resourceId;
-      uploadedFile.filename = res.internalFilename;
-      this.onChange(uploadedFile);
-    } else {
-      const createFile = fileValueMapping.get(this.representation)!.create();
-      createFile.filename = res.internalFilename;
-      this.onChange(createFile);
-    }
+    this.onChange(res.internalFilename);
     this.onTouched();
 
     this._cdr.detectChanges();

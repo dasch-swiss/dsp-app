@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@angular/core';
 import { KnoraApiConnection, SystemPropertyDefinition } from '@dasch-swiss/dsp-js';
+import { AdminProjectsApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { SetCurrentResourceAction } from '@dasch-swiss/vre/core/state';
 import { DspResource, GenerateProperty } from '@dasch-swiss/vre/shared/app-common';
@@ -11,7 +12,10 @@ import { ResourceUtil } from './resource.util';
 @Injectable()
 export class ResourceFetcherService {
   private _reloadSubject = new BehaviorSubject(null);
+
   resource$!: Observable<DspResource>;
+  projectShortcode$!: Observable<string>;
+
   userCanEdit$!: Observable<boolean>;
   userCanDelete$!: Observable<boolean>;
   resourceVersion?: string;
@@ -19,12 +23,21 @@ export class ResourceFetcherService {
   constructor(
     @Inject(DspApiConnectionToken)
     private _dspApiConnection: KnoraApiConnection,
+    private _adminProjectsApiService: AdminProjectsApiService,
     private _store: Store
   ) {}
 
   onInit(resourceIri: string, resourceVersion?: string) {
     this.resource$ = this._reloadSubject.asObservable().pipe(
       switchMap(() => this._getResource(resourceIri, resourceVersion)),
+      shareReplay({ bufferSize: 1, refCount: true })
+    );
+
+    this.projectShortcode$ = this.resource$.pipe(
+      switchMap(resource =>
+        this._adminProjectsApiService.getAdminProjectsIriProjectiri(resource.res.attachedToProject)
+      ),
+      map(v => v.project.shortcode as unknown as string),
       shareReplay({ bufferSize: 1, refCount: true })
     );
 

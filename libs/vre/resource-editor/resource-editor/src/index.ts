@@ -2,6 +2,7 @@ export * from './resource-page.components';
 export * from './lib/resource.component';
 export * from './lib/resource-header.component';
 export * from './lib/resource-page.component';
+export * from './lib/resource-legal.component';
 export * from './lib/single-resource-page.component';
 export * from './lib/resource-representation.component';
 export * from './lib/resource-tabs.component';

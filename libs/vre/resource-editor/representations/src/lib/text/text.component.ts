@@ -1,6 +1,7 @@
 import { Component, Input, OnChanges, ViewContainerRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Constants, ReadResource } from '@dasch-swiss/dsp-js';
+import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import { FileRepresentation } from '../file-representation';
 import {
   ReplaceFileDialogComponent,
@@ -46,12 +47,12 @@ export class TextComponent implements OnChanges {
 
   openReplaceFileDialog() {
     this._dialog.open<ReplaceFileDialogComponent, ReplaceFileDialogProps>(ReplaceFileDialogComponent, {
-      data: {
+      ...DspDialogConfig.mediumDialog({
         title: 'Text (csv, txt, xml)',
         subtitle: 'Update the text file of this resource',
         representation: Constants.HasTextFileValue,
         resource: this.parentResource,
-      },
+      }),
       viewContainerRef: this._viewContainerRef,
     });
   }

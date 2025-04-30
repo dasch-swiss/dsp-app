@@ -13,11 +13,12 @@ import { takeUntil } from 'rxjs/operators';
   selector: 'app-create-resource-page',
   template: `
     <app-centered-layout>
-      <h3 data-cy="create-resource-title">Create new resource of type: {{ classLabel }}</h3>
+      <h2 data-cy="create-resource-title">Create new resource of type: {{ classLabel }}</h2>
       <app-create-resource-form
-        *ngIf="resourceClassIri"
+        *ngIf="resourceClassIri && projectShortcode"
         [resourceClassIri]="resourceClassIri"
         [projectIri]="projectIri"
+        [projectShortcode]="projectShortcode"
         (createdResourceIri)="afterCreation($event)" />
     </app-centered-layout>
   `,
@@ -31,6 +32,7 @@ export class CreateResourcePageComponent implements OnDestroy {
 
   ontologyId = '';
   resourceClassIri = '';
+  projectShortcode?: string;
 
   get classLabel() {
     return this.resourceClassIri ? this.resourceClassIri.split('#')[1] : '';
@@ -51,6 +53,8 @@ export class CreateResourcePageComponent implements OnDestroy {
       if (!project) {
         return;
       }
+
+      this.projectShortcode = project.shortcode;
       this.ontologyId = this._ontologyService.getOntologyIriFromRoute(project.shortcode) || '';
       this.resourceClassIri = `${this.ontologyId}#${this._route.snapshot.params[RouteConstants.classParameter]}`;
     });

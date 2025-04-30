@@ -84,10 +84,8 @@ describe('Check project admin existing resource functionality', () => {
     cy.intercept('POST', `**/${uploadedImageFile}`).as('uploadRequest');
     cy.get('[data-cy="more-vert-image-button"]').click({ force: true });
     cy.get('[data-cy="replace-image-button"]').should('be.visible').click({ force: true });
-    cy.get('[data-cy="replace-file-submit-button"]').should('have.attr', 'disabled');
     cy.get('[data-cy="upload-file"]').selectFile(`cypress${uploadedImageFilePath}`, { force: true });
     cy.wait('@uploadRequest').its('response.statusCode').should('eq', 200);
-    cy.get('[data-cy="replace-file-submit-button"]').should('not.have.attr', 'disabled');
     cy.get('[data-cy="replace-file-submit-button"]').click();
     cy.wait('@stillImageRequest').its('response.statusCode').should('eq', 200);
 

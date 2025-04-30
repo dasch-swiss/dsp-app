@@ -1,6 +1,7 @@
 import { Component, Input, ViewContainerRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Constants, ReadResource } from '@dasch-swiss/dsp-js';
+import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import { FileRepresentation } from '../file-representation';
 import { getFileValue } from '../get-file-value';
 import {
@@ -40,12 +41,12 @@ export class AudioMoreButtonComponent {
 
   openReplaceFileDialog() {
     this._dialog.open<ReplaceFileDialogComponent, ReplaceFileDialogProps>(ReplaceFileDialogComponent, {
-      data: {
+      ...DspDialogConfig.mediumDialog({
         title: 'Audio',
         subtitle: 'Update the audio file of this resource',
         representation: Constants.HasAudioFileValue,
         resource: this.parentResource,
-      },
+      }),
       viewContainerRef: this._viewContainerRef,
     });
   }

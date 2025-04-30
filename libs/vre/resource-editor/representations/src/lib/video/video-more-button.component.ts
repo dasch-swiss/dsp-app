@@ -1,6 +1,7 @@
 import { Component, Input, ViewContainerRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Constants, ReadResource } from '@dasch-swiss/dsp-js';
+import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { FileRepresentation } from '../file-representation';
 import { MovingImageSidecar } from '../moving-image-sidecar';
@@ -64,12 +65,12 @@ export class VideoMoreButtonComponent {
 
   openReplaceFileDialog() {
     this._dialog.open<ReplaceFileDialogComponent, ReplaceFileDialogProps>(ReplaceFileDialogComponent, {
-      data: {
+      ...DspDialogConfig.mediumDialog({
         title: 'Video',
         subtitle: 'Update the video file of this resource',
         representation: Constants.HasMovingImageFileValue,
         resource: this.parentResource,
-      },
+      }),
       viewContainerRef: this._viewContainerRef,
     });
   }

@@ -21,7 +21,7 @@ describe('Project members', () => {
         expect(memberCount).to.be.greaterThan(0);
       });
 
-    cy.get('[data-cy=user-menu]').should('exist').first().click();
+    cy.get('[data-cy=user-menu]').eq(2).click();
     cy.get('[data-cy=remove-member-button]').should('be.visible').click();
     cy.get('[data-cy=confirmation-button]').should('be.visible').click();
     cy.wait('@deleteRequest').its('response.statusCode').should('eq', 200);

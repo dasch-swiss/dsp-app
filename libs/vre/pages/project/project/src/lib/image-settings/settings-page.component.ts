@@ -4,7 +4,7 @@ import { MenuItem } from '@dasch-swiss/vre/pages/user-settings/user';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
-  selector: 'app-settings',
+  selector: 'app-settings-page',
   template: `
     <nav
       mat-tab-nav-bar
@@ -44,6 +44,7 @@ export class SettingsPageComponent {
       route: RouteConstants.imageSettings,
       icon: 'branding_watermark',
     },
+    { label: 'Legal Settings', shortLabel: 'Legal Settings', route: RouteConstants.legalSettings, icon: 'gavel' },
     {
       label: 'Project Members',
       shortLabel: 'Members',

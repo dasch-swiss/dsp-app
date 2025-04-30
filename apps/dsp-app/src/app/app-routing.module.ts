@@ -10,6 +10,7 @@ import {
   DescriptionComponent,
   EditProjectFormPageComponent,
   ImageSettingsComponent,
+  LegalSettingsComponent,
   ProjectComponent,
   SettingsPageComponent,
 } from '@dasch-swiss/vre/pages/project/project';
@@ -105,6 +106,10 @@ const routes: Routes = [
           {
             path: RouteConstants.imageSettings,
             component: ImageSettingsComponent,
+          },
+          {
+            path: RouteConstants.legalSettings,
+            component: LegalSettingsComponent,
           },
           {
             path: RouteConstants.collaboration,

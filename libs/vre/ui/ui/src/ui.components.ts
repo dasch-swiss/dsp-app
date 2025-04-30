@@ -1,4 +1,5 @@
 import { AdminImageDirective } from './lib/admin-image/admin-image.directive';
+import { AlternatedListComponent } from './lib/alternated-list.component';
 import { CenteredLayoutComponent } from './lib/centered-layout.component';
 import { ChipListInputComponent } from './lib/chip-list-input.component';
 import { CkEditorControlComponent } from './lib/ck-editor/ck-editor-control.component';
@@ -8,6 +9,7 @@ import { CommonInputComponent } from './lib/common-input.component';
 import { ConfirmDialogComponent } from './lib/dialog/confirm-dialog.component';
 import { DragDropDirective } from './lib/directives/drag-drop.directive';
 import { HintComponent } from './lib/hint/hint.component';
+import { HumanReadableDatePipe } from './lib/human-readable-date.pipe';
 import { InvalidControlScrollDirective } from './lib/invalid-control-scroll.directive';
 import { PagerComponent } from './lib/pager/pager.component';
 import { AddTargetBlankPipe } from './lib/pipes/add-target-blank.pipe';
@@ -45,5 +47,7 @@ export const UiComponents = [
   HintComponent,
   InternalLinkReplacerPipe,
   AddTargetBlankPipe,
+  AlternatedListComponent,
+  HumanReadableDatePipe,
 ];
 export const UiStandaloneComponents = [PagerComponent];
