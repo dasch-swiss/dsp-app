@@ -126,7 +126,10 @@ export class CreatePropertyFormDialogComponent implements OnInit {
 
     if ([Constants.HasLinkTo, Constants.IsPartOf].includes(this.data.propertyInfo.propType.subPropOf)) {
       newResProp.objectType = guiAttr;
-      newResProp.subjectType = this.data.resClassIri;
+      if (Constants.IsPartOf === this.data.propertyInfo.propType.subPropOf) {
+        // only restrict the property to a class when it is an IsPartOf
+        newResProp.subjectType = this.data.resClassIri;
+      }
     } else {
       newResProp.objectType = this.data.propertyInfo.propType.objectType;
     }
