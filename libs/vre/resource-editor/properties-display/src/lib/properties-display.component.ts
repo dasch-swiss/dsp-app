@@ -9,12 +9,18 @@ import { map } from 'rxjs/operators';
 @Component({
   selector: 'app-properties-display',
   template: `
-    <div style="display: flex; align-items: center; background: #EAEFF3">
-      <h3 style="margin: 0 16px" *ngIf="displayLabel" data-cy="property-header">{{ resource.res.label }}</h3>
-      <div style="display: flex; justify-content: end; flex: 1">
+    <div style="display: flex; flex-direction: row-reverse; align-items: center; background: #EAEFF3">
+      <div style="display: flex; flex: 0 0 auto">
         <app-properties-toolbar [showToggleProperties]="true" [showOnlyIcons]="displayLabel" style="flex-shrink: 0" />
         <app-annotation-toolbar *ngIf="displayLabel" [resource]="resource.res" [parentResourceId]="parentResourceId" />
       </div>
+
+      <h3
+        style="margin: 0 16px; flex: 1 1 auto; overflow: hidden; text-overflow: ellipsis; white-space: nowrap"
+        *ngIf="displayLabel"
+        data-cy="property-header">
+        {{ resource.res.label }}
+      </h3>
     </div>
 
     <div
