@@ -1,9 +1,8 @@
 import { Component, Input, ViewContainerRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Constants, ReadResource } from '@dasch-swiss/dsp-js';
+import { Constants, ReadMovingImageFileValue, ReadResource } from '@dasch-swiss/dsp-js';
 import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
-import { FileRepresentation } from '../file-representation';
 import { MovingImageSidecar } from '../moving-image-sidecar';
 import {
   ReplaceFileDialogComponent,
@@ -18,13 +17,13 @@ import { ResourceFetcherService } from '../resource-fetcher.service';
       <mat-icon>more_vert</mat-icon>
     </button>
     <mat-menu #more="matMenu" class="representation-menu">
-      <button mat-menu-item class="menu-content" (click)="openVideoInNewTab(this.src.fileValue.fileUrl)">
+      <button mat-menu-item class="menu-content" (click)="openVideoInNewTab(this.src.fileUrl)">
         Open video in new tab
       </button>
       <button
         mat-menu-item
         class="menu-content"
-        [cdkCopyToClipboard]="this.src.fileValue.fileUrl"
+        [cdkCopyToClipboard]="this.src.fileUrl"
         (click)="openSnackBar('URL copied to clipboard!')">
         Copy video URL to clipboard
       </button>
@@ -39,7 +38,7 @@ import { ResourceFetcherService } from '../resource-fetcher.service';
     </mat-menu>`,
 })
 export class VideoMoreButtonComponent {
-  @Input({ required: true }) src!: FileRepresentation;
+  @Input({ required: true }) src!: ReadMovingImageFileValue;
   @Input({ required: true }) parentResource!: ReadResource;
   @Input({ required: true }) fileInfo!: MovingImageSidecar;
 
@@ -60,7 +59,7 @@ export class VideoMoreButtonComponent {
   }
 
   downloadVideo() {
-    this._rs.downloadProjectFile(this.src.fileValue, this.parentResource);
+    this._rs.downloadProjectFile(this.src, this.parentResource);
   }
 
   openReplaceFileDialog() {

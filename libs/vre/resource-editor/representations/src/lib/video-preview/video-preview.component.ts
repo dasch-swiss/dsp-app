@@ -1,7 +1,7 @@
 import { Component, ElementRef, EventEmitter, HostListener, Input, OnChanges, Output, ViewChild } from '@angular/core';
+import { ReadMovingImageFileValue } from '@dasch-swiss/dsp-js';
 import { fromEvent, merge, Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
-import { FileRepresentation } from '../file-representation';
 import { MovingImageSidecar } from '../moving-image-sidecar';
 
 export interface Dimension {
@@ -15,7 +15,8 @@ export interface Dimension {
   styleUrls: ['./video-preview.component.scss'],
 })
 export class VideoPreviewComponent implements OnChanges {
-  @Input({ required: true }) src!: FileRepresentation;
+  @Input({ required: true }) src!: ReadMovingImageFileValue;
+
   @Input({ required: true }) time!: number;
   @Input() fileInfo?: MovingImageSidecar;
   @Output() loaded = new EventEmitter<boolean>();
@@ -227,9 +228,7 @@ export class VideoPreviewComponent implements OnChanges {
     // get matrix url from video url
     // get base path from http://0.0.0.0:1024/1111/5AiQkeJNbQn-ClrXWkJVFvB.mp4/file
     // => http://0.0.0.0:1024/1111/5AiQkeJNbQn-ClrXWkJVFvB
-    const basePath = this.src.fileValue.fileUrl
-      .substring(0, this.src.fileValue.fileUrl.lastIndexOf('/'))
-      .replace(/\.[^/.]+$/, '');
+    const basePath = this.src.fileUrl.substring(0, this.src.fileUrl.lastIndexOf('/')).replace(/\.[^/.]+$/, '');
     // and file name
     // => 5AiQkeJNbQn-ClrXWkJVFvB
     const fileName = basePath.substring(basePath.lastIndexOf('/') + 1);

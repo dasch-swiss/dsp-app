@@ -1,8 +1,7 @@
 import { Component, Input, ViewContainerRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Constants, ReadResource } from '@dasch-swiss/dsp-js';
+import { Constants, ReadAudioFileValue, ReadResource } from '@dasch-swiss/dsp-js';
 import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
-import { FileRepresentation } from '../file-representation';
 import { getFileValue } from '../get-file-value';
 import {
   ReplaceFileDialogComponent,
@@ -18,7 +17,7 @@ import { ResourceFetcherService } from '../resource-fetcher.service';
     </button>
     <mat-menu #more="matMenu" class="representation-menu">
       <button mat-menu-item (click)="openIIIFnewTab()">Open audio in new tab</button>
-      <button mat-menu-item [cdkCopyToClipboard]="src.fileValue.fileUrl">Copy audio URL to clipboard</button>
+      <button mat-menu-item [cdkCopyToClipboard]="fileValue.fileUrl">Copy audio URL to clipboard</button>
       <button mat-menu-item (click)="download()">Download audio</button>
       <button mat-menu-item *ngIf="resourceFetcherService.userCanEdit$ | async" (click)="openReplaceFileDialog()">
         Replace file
@@ -28,8 +27,8 @@ import { ResourceFetcherService } from '../resource-fetcher.service';
 export class AudioMoreButtonComponent {
   @Input({ required: true }) parentResource!: ReadResource;
 
-  get src() {
-    return new FileRepresentation(getFileValue(this.parentResource)!);
+  get fileValue() {
+    return getFileValue(this.parentResource) as ReadAudioFileValue;
   }
 
   constructor(
@@ -52,10 +51,10 @@ export class AudioMoreButtonComponent {
   }
 
   openIIIFnewTab() {
-    window.open(this.src.fileValue.fileUrl, '_blank');
+    window.open(this.fileValue.fileUrl, '_blank');
   }
 
   download() {
-    this._rs.downloadProjectFile(this.src.fileValue, this.parentResource);
+    this._rs.downloadProjectFile(this.fileValue, this.parentResource);
   }
 }

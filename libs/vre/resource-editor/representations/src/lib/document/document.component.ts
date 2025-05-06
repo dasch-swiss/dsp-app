@@ -11,7 +11,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { Constants, ReadDocumentFileValue, ReadResource } from '@dasch-swiss/dsp-js';
 import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import { PdfViewerComponent } from 'ng2-pdf-viewer';
-import { FileRepresentation } from '../file-representation';
 import {
   ReplaceFileDialogComponent,
   ReplaceFileDialogProps,
@@ -25,7 +24,7 @@ import { ResourceFetcherService } from '../resource-fetcher.service';
   styleUrls: ['./document.component.scss'],
 })
 export class DocumentComponent implements OnChanges {
-  @Input({ required: true }) src!: FileRepresentation;
+  @Input({ required: true }) src!: ReadDocumentFileValue;
   @Input({ required: true }) parentResource!: ReadResource;
 
   @ViewChild(PdfViewerComponent) private _pdfComponent!: PdfViewerComponent;
@@ -39,7 +38,7 @@ export class DocumentComponent implements OnChanges {
   failedToLoad = false;
 
   get isPdf(): boolean {
-    return this.src.fileValue.filename.split('.').pop() === 'pdf';
+    return this.src.filename.split('.').pop() === 'pdf';
   }
 
   constructor(
@@ -69,8 +68,8 @@ export class DocumentComponent implements OnChanges {
     });
   }
 
-  download(fileValue: ReadDocumentFileValue) {
-    this._rs.downloadProjectFile(fileValue, this.parentResource);
+  download() {
+    this._rs.downloadProjectFile(this.src, this.parentResource);
   }
 
   openReplaceFileDialog() {
@@ -97,7 +96,7 @@ export class DocumentComponent implements OnChanges {
 
   private _setOriginalFilename() {
     this.originalFilename = '';
-    this._rs.getFileInfo(this.src.fileValue.fileUrl).subscribe(
+    this._rs.getFileInfo(this.src.fileUrl).subscribe(
       res => {
         this.originalFilename = res['originalFilename'] || '';
         this._cd.detectChanges();

@@ -1,11 +1,10 @@
 import { ChangeDetectorRef, Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-import { ReadResource } from '@dasch-swiss/dsp-js';
+import { ReadAudioFileValue, ReadResource } from '@dasch-swiss/dsp-js';
 import { MediaControlService, SegmentsService } from '@dasch-swiss/vre/resource-editor/segment-support';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { FileRepresentation } from '../file-representation';
 import { RepresentationService } from '../representation.service';
 import { MediaPlayerService } from '../video/media-player.service';
 
@@ -15,7 +14,7 @@ import { MediaPlayerService } from '../video/media-player.service';
   providers: [MediaControlService, MediaPlayerService],
 })
 export class AudioComponent implements OnInit, OnChanges, OnDestroy {
-  @Input({ required: true }) src!: FileRepresentation;
+  @Input({ required: true }) src!: ReadAudioFileValue;
   @Input({ required: true }) parentResource!: ReadResource;
 
   originalFilename?: string;
@@ -50,9 +49,9 @@ export class AudioComponent implements OnInit, OnChanges, OnDestroy {
         this._resetPlayer();
       }
 
-      this.audioFileUrl = this._sanitizer.bypassSecurityTrustUrl(this.src.fileValue.fileUrl);
+      this.audioFileUrl = this._sanitizer.bypassSecurityTrustUrl(this.src.fileUrl);
 
-      this._rs.getFileInfo(this.src.fileValue.fileUrl).subscribe(
+      this._rs.getFileInfo(this.src.fileUrl).subscribe(
         res => {
           this.originalFilename = res.originalFilename;
         },

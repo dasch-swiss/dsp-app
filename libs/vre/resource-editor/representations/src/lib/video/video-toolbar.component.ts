@@ -3,13 +3,12 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatIconRegistry } from '@angular/material/icon';
 import { TooltipPosition } from '@angular/material/tooltip';
 import { DomSanitizer } from '@angular/platform-browser';
-import { ReadResource } from '@dasch-swiss/dsp-js';
+import { ReadMovingImageFileValue, ReadResource } from '@dasch-swiss/dsp-js';
 import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import {
   CreateSegmentDialogComponent,
   CreateSegmentDialogProps,
 } from '@dasch-swiss/vre/resource-editor/segment-support';
-import { FileRepresentation } from '../file-representation';
 import { MovingImageSidecar } from '../moving-image-sidecar';
 import { ResourceFetcherService } from '../resource-fetcher.service';
 import { MediaPlayerService } from './media-player.service';
@@ -38,7 +37,7 @@ import { MediaPlayerService } from './media-player.service';
       <!-- TODO reached the end button "replay" -->
     </div>
 
-    <div data-cy="player-time">{{ mediaPlayer.currentTime() | appTime }} / {{ mediaPlayer.duration() | appTime }}</div>
+    <div data-cy="player-time">{{ mediaPlayer.currentTime() | appTime }}/ {{ mediaPlayer.duration() | appTime }}</div>
 
     <div>
       <app-video-more-button [parentResource]="parentResource" [src]="src" [fileInfo]="fileInfo" />
@@ -64,7 +63,7 @@ import { MediaPlayerService } from './media-player.service';
   </mat-toolbar-row>`,
 })
 export class VideoToolbarComponent {
-  @Input({ required: true }) src!: FileRepresentation;
+  @Input({ required: true }) src!: ReadMovingImageFileValue;
   @Input({ required: true }) parentResource!: ReadResource;
   @Input({ required: true }) fileInfo!: MovingImageSidecar;
 

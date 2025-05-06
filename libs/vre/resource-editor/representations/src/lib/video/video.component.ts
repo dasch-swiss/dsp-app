@@ -3,7 +3,6 @@ import {
   Component,
   ElementRef,
   EventEmitter,
-  HostListener,
   Input,
   OnChanges,
   OnDestroy,
@@ -11,13 +10,12 @@ import {
   ViewChild,
 } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-import { ReadResource } from '@dasch-swiss/dsp-js';
+import { ReadMovingImageFileValue, ReadResource } from '@dasch-swiss/dsp-js';
 import { MediaControlService, SegmentsService } from '@dasch-swiss/vre/resource-editor/segment-support';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { PointerValue } from '../av-timeline/av-timeline.component';
-import { FileRepresentation } from '../file-representation';
 import { MovingImageSidecar } from '../moving-image-sidecar';
 import { RepresentationService } from '../representation.service';
 import { MediaPlayerService } from './media-player.service';
@@ -28,7 +26,7 @@ import { MediaPlayerService } from './media-player.service';
   providers: [MediaControlService, MediaPlayerService],
 })
 export class VideoComponent implements OnChanges, OnDestroy {
-  @Input({ required: true }) src!: FileRepresentation;
+  @Input({ required: true }) src!: ReadMovingImageFileValue;
   @Input({ required: true }) parentResource!: ReadResource;
   @Output() loaded = new EventEmitter<boolean>();
 
@@ -71,8 +69,8 @@ export class VideoComponent implements OnChanges, OnDestroy {
     this._watchForMediaEvents();
     this.segmentsService.onInit(this.parentResource.id, 'VideoSegment');
     this.videoError = '';
-    this.video = this._sanitizer.bypassSecurityTrustUrl(this.src.fileValue.fileUrl);
-    this._rs.getFileInfo(this.src.fileValue.fileUrl).subscribe(file => {
+    this.video = this._sanitizer.bypassSecurityTrustUrl(this.src.fileUrl);
+    this._rs.getFileInfo(this.src.fileUrl).subscribe(file => {
       this.fileInfo = file as MovingImageSidecar;
     });
   }
