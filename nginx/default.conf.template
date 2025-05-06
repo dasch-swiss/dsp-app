@@ -6,6 +6,14 @@ server {
 
     server_tokens off;
 
+    location ~ ^/internal/health$ {
+      allow 127.0.0.1;
+      deny all;
+      access_log off;
+      add_header 'Content-Type' 'text/plain';
+      return 200 'healthy';
+    }
+
     location ~ /index.html|.*\.json$ {
       expires -1;
       add_header Cache-Control 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0';
