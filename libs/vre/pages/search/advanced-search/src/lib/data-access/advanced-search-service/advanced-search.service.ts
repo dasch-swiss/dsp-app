@@ -293,6 +293,9 @@ export class AdvancedSearchService {
           propDef.objectType !== Constants.DocumentFileValue &&
           propDef.objectType !== Constants.MovingImageFileValue &&
           propDef.objectType !== Constants.StillImageFileValue &&
+          propDef.objectType !== Constants.StillImageExternalFileValue &&
+          propDef.objectType !== Constants.StillImageAbstractFileValue &&
+          propDef.objectType !== Constants.ArchiveFileValue &&
           propDef.objectType !== Constants.TextFileValue
       );
   }
