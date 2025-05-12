@@ -140,7 +140,7 @@ describe('Check project admin existing resource functionality', () => {
     cy.get('[data-cy=license-select]').click();
     cy.get('mat-option').eq(0).click();
 
-    cy.get('[data-cy=authorship-chips]').type('my Author{enter}');
+    cy.get('[data-cy=authorship-chips]').type('my Author{enter}{esc}');
 
     cy.get('[data-cy="replace-file-submit-button"]').should('not.have.attr', 'disabled');
     cy.get('[data-cy="replace-file-submit-button"]').click();

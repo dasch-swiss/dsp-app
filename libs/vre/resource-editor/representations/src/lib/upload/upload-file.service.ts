@@ -30,4 +30,10 @@ export class UploadFileService {
       }
     );
   }
+
+  getFileInfo(assetId: string, shortcode: string) {
+    return this._http.get<UploadedFileResponse>(
+      `${this._acs.dspIngestConfig.url}/projects/${shortcode}/assets/${encodeURIComponent(assetId)}`
+    );
+  }
 }

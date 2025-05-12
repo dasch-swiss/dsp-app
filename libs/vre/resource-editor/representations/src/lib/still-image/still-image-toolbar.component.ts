@@ -14,9 +14,6 @@ import {
 import { DspApiConnectionToken, DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import { AppError } from '@dasch-swiss/vre/core/error-handler';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
-import { filter, switchMap } from 'rxjs/operators';
-import { EditThirdPartyIiifFormComponent } from '../edit-third-party-iiif-form/edit-third-party-iiif-form.component';
-import { ThirdPartyIiifProps } from '../edit-third-party-iiif-form/edit-third-party-iiif-types';
 import {
   ReplaceFileDialogComponent,
   ReplaceFileDialogProps,
@@ -103,34 +100,15 @@ export class StillImageToolbarComponent {
   }
 
   replaceImage() {
-    if (this.isReadStillImageExternalFileValue) {
-      this._dialog
-        .open<EditThirdPartyIiifFormComponent, ThirdPartyIiifProps>(
-          EditThirdPartyIiifFormComponent,
-          DspDialogConfig.dialogDrawerConfig({
-            resourceId: this.resource.id,
-            fileValue: this.imageFileValue as ReadStillImageExternalFileValue,
-          })
-        )
-        .afterClosed()
-        .pipe(
-          filter(data => !!data),
-          switchMap((data: UpdateFileValue) => this._replaceFile(data))
-        )
-        .subscribe(() => {
-          this.resourceFetcherService.reload();
-        });
-    } else {
-      this._dialog.open<ReplaceFileDialogComponent, ReplaceFileDialogProps>(ReplaceFileDialogComponent, {
-        ...DspDialogConfig.mediumDialog({
-          title: 'Image',
-          subtitle: 'Update image of the resource',
-          representation: Constants.HasStillImageFileValue,
-          resource: this.resource,
-        }),
-        viewContainerRef: this._viewContainerRef,
-      });
-    }
+    this._dialog.open<ReplaceFileDialogComponent, ReplaceFileDialogProps>(ReplaceFileDialogComponent, {
+      ...DspDialogConfig.mediumDialog({
+        title: 'Image',
+        subtitle: 'Update image of the resource',
+        representation: Constants.HasStillImageFileValue,
+        resource: this.resource,
+      }),
+      viewContainerRef: this._viewContainerRef,
+    });
   }
 
   private _replaceFile(file: UpdateFileValue) {

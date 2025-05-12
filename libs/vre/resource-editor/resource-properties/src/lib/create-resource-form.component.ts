@@ -4,16 +4,17 @@ import {
   Cardinality,
   Constants,
   CreateResource,
+  CreateStillImageExternalFileValue,
+  CreateStillImageFileValue,
   CreateValue,
   KnoraApiConnection,
   ResourceClassAndPropertyDefinitions,
   ResourceClassDefinitionWithPropertyDefinition,
   ResourcePropertyDefinition,
 } from '@dasch-swiss/dsp-js';
-import { LicenseDto } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { ApiConstants, DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { LoadClassItemsCountAction } from '@dasch-swiss/vre/core/state';
-import { FileRepresentationType, fileValueMapping } from '@dasch-swiss/vre/resource-editor/representations';
+import { FileForm, FileRepresentationType, fileValueMapping } from '@dasch-swiss/vre/resource-editor/representations';
 import { PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
 import { Store } from '@ngxs/store';
 import { finalize, switchMap, take } from 'rxjs/operators';
@@ -25,16 +26,13 @@ import { propertiesTypeMapping } from './resource-payloads-mapping';
   selector: 'app-create-resource-form',
   template: `
     <form *ngIf="!loading; else loadingTemplate" [formGroup]="form" appInvalidControlScroll>
-      <ng-container *ngIf="form.controls.file && fileRepresentation">
+      <ng-container *ngIf="fileRepresentation">
         <h3>File</h3>
+        <app-create-resource-form-file
+          [projectShortcode]="projectShortcode"
+          [fileRepresentation]="fileRepresentation"
+          (afterFormCreated)="afterFileFormCreated($event)" />
 
-        <app-create-resource-form-representation
-          [control]="form.controls.file.controls.link"
-          [fileRepresentation]="fileRepresentation" />
-
-        <app-resource-form-legal
-          [formGroup]="form.controls.file.controls.legal"
-          [projectShortcode]="projectShortcode" />
         <h3>Properties</h3>
       </ng-container>
 
@@ -122,6 +120,10 @@ export class CreateResourceFormComponent implements OnInit {
     this._getResourceProperties();
   }
 
+  afterFileFormCreated(fileForm: FileForm) {
+    this.form.addControl('file', fileForm);
+  }
+
   submitData() {
     this.form.markAllAsTouched();
     if (this.form.invalid) {
@@ -164,18 +166,6 @@ export class CreateResourceFormComponent implements OnInit {
   }
 
   private _buildForm() {
-    if (this.fileRepresentation) {
-      const fileFormGroup = this._fb.group({
-        link: this._fb.control(null as string | null, [Validators.required]),
-        legal: this._fb.group({
-          copyrightHolder: [null as string | null],
-          license: [null as LicenseDto | null],
-          authorship: [null as string[] | null],
-        }),
-      });
-      this.form.addControl('file', fileFormGroup);
-    }
-
     this.properties
       .filter(prop => propertiesTypeMapping.has(prop.propDef.objectType!))
       .forEach(prop => {
@@ -244,11 +234,18 @@ export class CreateResourceFormComponent implements OnInit {
 
   private _getCreateFileValue() {
     const formFileValue = this.form.controls.file!.getRawValue();
-    const createFile = fileValueMapping.get(this.fileRepresentation!)!.create();
+    let createFile = fileValueMapping.get(this.fileRepresentation!)!.create();
+
+    if (createFile instanceof CreateStillImageFileValue && formFileValue.link!.startsWith('http')) {
+      createFile = new CreateStillImageExternalFileValue();
+      (createFile as CreateStillImageExternalFileValue).externalUrl = formFileValue.link!;
+    } else {
+      createFile.filename = formFileValue.link!;
+    }
+
     createFile.copyrightHolder = formFileValue.legal.copyrightHolder!;
     createFile.license = formFileValue.legal.license!;
     createFile.authorship = formFileValue.legal.authorship!;
-    createFile.filename = formFileValue.link!;
 
     return createFile;
   }

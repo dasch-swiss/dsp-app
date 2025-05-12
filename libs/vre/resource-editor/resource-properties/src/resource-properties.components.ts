@@ -1,5 +1,7 @@
 import { AuthorshipFormFieldComponent } from './lib/authorship-form-field.component';
 import { CreateResourceDialogComponent } from './lib/create-resource-dialog.component';
+import { CreateResourceFormFileComponent } from './lib/create-resource-form-file.component';
+import { CreateResourceFormImageComponent } from './lib/create-resource-form-image.component';
 import { CreateResourceFormPropertiesComponent } from './lib/create-resource-form-properties.component';
 import { CreateResourceFormRepresentationComponent } from './lib/create-resource-form-representation.component';
 import { CreateResourceFormRowComponent } from './lib/create-resource-form-row.component';
@@ -37,6 +39,7 @@ import { ToggleSwitchComponent } from './lib/switch-components/toggle-switch.com
 import { UriSwitchComponent } from './lib/switch-components/uri-switch.component';
 import { UploadControlComponent } from './lib/upload-control.component';
 import { UploadComponent } from './lib/upload.component';
+import { UploadedFileComponent } from './lib/uploaded-file.component';
 import { GeonameValueComponent } from './lib/value-components/geoname-value.component';
 import { LinkValueComponent } from './lib/value-components/link-value.component';
 import { ListValueComponent } from './lib/value-components/list-value.component';
@@ -89,12 +92,15 @@ export const ResourcePropertiesComponents = [
   CreateResourceFormRepresentationComponent,
   CreateResourceFormPropertiesComponent,
   CreateResourceFormRowComponent,
+  CreateResourceFormImageComponent,
+  CreateResourceFormFileComponent,
   UploadControlComponent,
   PropertyValueCommentComponent,
   EditResourceLabelDialogComponent,
   EraseResourceDialogComponent,
   PropertyRowComponent,
   UploadComponent,
+  UploadedFileComponent,
   FootnotesComponent,
   FootnoteTooltipComponent,
   FootnoteDirective,

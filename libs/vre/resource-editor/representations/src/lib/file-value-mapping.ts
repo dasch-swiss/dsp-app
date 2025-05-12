@@ -10,6 +10,7 @@ import {
   UpdateArchiveFileValue,
   UpdateAudioFileValue,
   UpdateDocumentFileValue,
+  UpdateFileValue,
   UpdateMovingImageFileValue,
   UpdateStillImageFileValue,
   UpdateTextFileValue,
@@ -17,7 +18,7 @@ import {
 
 interface FileValueParameters {
   create: () => CreateFileValue;
-  update: () => UpdateStillImageFileValue;
+  update: () => UpdateFileValue;
 }
 
 export const fileValueMapping = new Map<string, FileValueParameters>([

@@ -10,14 +10,18 @@
 
 .value {
   flex: 1;
-  padding: 16px;
+  padding: 16px 0;
 
   &.highlighted {
     background: $yellow_100;
   }
 
-  &.display:hover {
-    background: $primary_100;
+  &.display {
+    padding: 16px;
+
+    &:hover {
+      background: $primary_100;
+    }
   }
 }
 
