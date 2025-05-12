@@ -43,6 +43,20 @@ import { CompoundService } from './compound/compound.service';
       </mat-tab>
     </mat-tab-group>
   `,
+  styles: [
+    `
+      :host ::ng-deep {
+        .mat-mdc-tab-body {
+          width: 100%;
+        }
+        .mat-mdc-tab-body.mat-mdc-tab-body-active,
+        .mat-mdc-tab-body-content,
+        .mat-mdc-tab-body-wrapper {
+          overflow: visible;
+        }
+      }
+    `,
+  ],
 })
 export class ResourceTabsComponent implements OnInit, OnDestroy {
   @Input({ required: true }) resource!: DspResource;
