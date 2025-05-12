@@ -41,13 +41,7 @@ import { LicensesLogoMapping } from './licenses-logo-mapping';
     </div>
     <ng-template #licenseWithLinkTpl>
       <span style="display: flex; align-items: center" *ngIf="license$ && license$ | async as license">
-        <a
-          [href]="license.uri"
-          style="color: white; text-decoration: underline; display: flex; align-items: center"
-          target="_blank"
-          >{{ license.labelEn }}
-          <mat-icon style="font-size: 15px; height: 15px; width: 15px;">open_in_new</mat-icon>
-        </a>
+        <span style="color: white">{{ license.labelEn }} </span>
       </span></ng-template
     >
   `,
@@ -69,7 +63,6 @@ export class ResourceLegalComponent implements OnChanges {
   ) {}
 
   ngOnChanges() {
-    console.log(this.resource);
     this.fileValue = getFileValue(this.resource);
     if (this.fileValue.license) {
       if (LicensesLogoMapping.has(this.fileValue.license.id)) {
