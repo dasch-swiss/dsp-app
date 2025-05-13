@@ -1,5 +1,20 @@
 # Changelog
 
+## [11.31.1](https://github.com/dasch-swiss/dsp-das/compare/v11.31.0...v11.31.1) (2025-05-13)
+
+
+### Bug Fixes
+
+* edit resource warning validator ([#2290](https://github.com/dasch-swiss/dsp-das/issues/2290)) ([361abbc](https://github.com/dasch-swiss/dsp-das/commit/361abbc11e60b7be999b0ee6a64b636432392cb9))
+* use project shortcode instead of iri in link value links ([#2289](https://github.com/dasch-swiss/dsp-das/issues/2289)) ([a0517b5](https://github.com/dasch-swiss/dsp-das/commit/a0517b5b4a7ead4548f0e8c98775efdbb0dac632))
+
+
+### Maintenances
+
+* **deps-dev:** bump @cypress/code-coverage from 3.14.0 to 3.14.1 in the test-coverage-deps group ([#2283](https://github.com/dasch-swiss/dsp-das/issues/2283)) ([ae84e70](https://github.com/dasch-swiss/dsp-das/commit/ae84e706e52edc38260680b14a451f4aaf32f188))
+* **deps-dev:** bump @types/node from 20.17.32 to 20.17.46 in the types-deps group ([#2282](https://github.com/dasch-swiss/dsp-das/issues/2282)) ([050e626](https://github.com/dasch-swiss/dsp-das/commit/050e6260d1fda13eb1ed2f3dd3af6524cd5026a6))
+* **deps:** bump the grafana-deps group with 2 updates ([#2284](https://github.com/dasch-swiss/dsp-das/issues/2284)) ([4bfcf82](https://github.com/dasch-swiss/dsp-das/commit/4bfcf82d18a5fba783698100ab213a9c88fd700f))
+
 ## [11.31.0](https://github.com/dasch-swiss/dsp-das/compare/v11.30.0...v11.31.0) (2025-05-12)
 
 
