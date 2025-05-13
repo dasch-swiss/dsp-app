@@ -21,11 +21,6 @@ export class ResourceUtil {
   }
 
   public static versionIsValid(version: string) {
-    const isValidUtcDate = (dateStr: string): boolean => {
-      const date = new Date(dateStr);
-      return !Number.isNaN(date.getTime()) && dateStr.endsWith('Z');
-    };
-
-    return isValidUtcDate(version);
+    return version.match(/^[0-9]{8}T[0-9]{6,15}Z$/) !== null;
   }
 }

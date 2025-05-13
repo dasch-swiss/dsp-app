@@ -65,7 +65,9 @@ export class ResourceFetcherComponent implements OnChanges, OnDestroy {
         !ResourceUtil.versionIsValid(changes['resourceVersion'].currentValue)
       ) {
         this.resourceVersion = undefined;
-        this._notification.openSnackBar(this._translateService.instant('resourceEditor.versionNotValid'));
+        this._translateService.get('resourceEditor.versionNotValid').subscribe(v => {
+          this._notification.openSnackBar(v);
+        });
       }
 
       this._resourceFetcherService.onInit(this.resourceIri, this.resourceVersion);
