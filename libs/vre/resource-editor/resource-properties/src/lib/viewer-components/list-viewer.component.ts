@@ -56,9 +56,12 @@ export class ListViewerComponent implements OnInit {
   }
 
   private _fetchSearchLink() {
-    combineLatest([this._resourceFetcher.resource$, this._nodeIdSubject.asObservable()]).subscribe(
-      ([resource, nodeId]) => {
-        const searchClassesQuery = `
+    combineLatest([
+      this._resourceFetcher.resource$,
+      this._resourceFetcher.projectShortcode$,
+      this._nodeIdSubject.asObservable(),
+    ]).subscribe(([resource, projectShortcode, nodeId]) => {
+      const searchClassesQuery = `
    PREFIX knora-api: <http://api.knora.org/ontology/knora-api/v2#>
 CONSTRUCT {
 ?mainRes knora-api:isMainResource true .
@@ -71,9 +74,8 @@ CONSTRUCT {
 }
 OFFSET 0`;
 
-        this.linkToSearchList = `/project/${resource.res.attachedToProject}/advanced-search/gravsearch/${encodeURIComponent(searchClassesQuery)}`;
-      }
-    );
+      this.linkToSearchList = `/project/${projectShortcode}/advanced-search/gravsearch/${encodeURIComponent(searchClassesQuery)}`;
+    });
   }
 
   static lookFor(tree: ListNodeV2[], id: string): ListNodeV2[] | null {
