@@ -112,7 +112,7 @@
     "@types/jasmine": "~4.6.5",
     "@types/jasminewd2": "~2.0.3",
     "@types/jest": "^29.5.14",
-    "@types/node": "^20.17.32",
+    "@types/node": "^20.17.46",
     "@types/openseadragon": "3.0.0",
     "@types/uuid": "^9.0.2",
     "@typescript-eslint/eslint-plugin": "^7.8.0",
