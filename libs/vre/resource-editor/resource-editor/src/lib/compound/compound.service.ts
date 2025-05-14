@@ -5,7 +5,6 @@ import { AppError } from '@dasch-swiss/vre/core/error-handler';
 import { GetAttachedProjectAction, GetAttachedUserAction } from '@dasch-swiss/vre/core/state';
 import { RegionService } from '@dasch-swiss/vre/resource-editor/representations';
 import { DspCompoundPosition, DspResource, GenerateProperty } from '@dasch-swiss/vre/shared/app-common';
-import { IncomingService } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { Store } from '@ngxs/store';
 import { BehaviorSubject } from 'rxjs';
 
@@ -22,11 +21,9 @@ export class CompoundService {
   private _resource?: DspResource;
 
   constructor(
-    @Inject(DspApiConnectionToken)
-    private _dspApiConnection: KnoraApiConnection,
-    private _incomingService: IncomingService,
-    private _regionService: RegionService,
     private _cd: ChangeDetectorRef,
+    @Inject(DspApiConnectionToken) private _dspApi: KnoraApiConnection,
+    private _regionService: RegionService,
     private _store: Store
   ) {}
 
@@ -52,8 +49,8 @@ export class CompoundService {
   }
 
   private _loadIncomingResourcesPage(compoundPosition: DspCompoundPosition): void {
-    this._incomingService
-      .getStillImageRepresentationsForCompoundResource(this._resource!.res.id, compoundPosition.offset)
+    this._dspApi.v2.search
+      .doSearchStillImageRepresentations(this._resource!.res.id, compoundPosition.offset)
       .subscribe(res => {
         const incomingImageRepresentations = res as ReadResourceSequence;
 
@@ -61,13 +58,14 @@ export class CompoundService {
           this.incomingResource.next(undefined);
           return;
         }
+
         this._resource!.incomingRepresentations = incomingImageRepresentations.resources;
         this._loadIncomingResource(this._resource!.incomingRepresentations[compoundPosition.position].id);
       });
   }
 
   private _loadIncomingResource(iri: string) {
-    this._dspApiConnection.v2.res.getResource(iri).subscribe(res => {
+    this._dspApi.v2.res.getResource(iri).subscribe(res => {
       const response = res as ReadResource;
 
       const incomingResource = new DspResource(response);

@@ -1,11 +1,10 @@
-import { ChangeDetectorRef, Component, Input, OnChanges } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, Input, OnChanges } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Constants, CountQueryResponse, ReadFileValue, ReadResource } from '@dasch-swiss/dsp-js';
-import { RouteConstants } from '@dasch-swiss/vre/core/config';
+import { Constants, CountQueryResponse, KnoraApiConnection, ReadFileValue, ReadResource } from '@dasch-swiss/dsp-js';
+import { DspApiConnectionToken, RouteConstants } from '@dasch-swiss/vre/core/config';
 import { getFileValue, RegionService } from '@dasch-swiss/vre/resource-editor/representations';
 import { SegmentsService } from '@dasch-swiss/vre/resource-editor/segment-support';
 import { DspCompoundPosition, DspResource } from '@dasch-swiss/vre/shared/app-common';
-import { IncomingService } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { take } from 'rxjs/operators';
 import { CompoundService } from './compound/compound.service';
 
@@ -31,8 +30,8 @@ export class ResourceComponent implements OnChanges {
 
   constructor(
     private _cdr: ChangeDetectorRef,
-    private _incomingService: IncomingService,
     private _compoundService: CompoundService,
+    @Inject(DspApiConnectionToken) private _dspApi: KnoraApiConnection,
     private _regionService: RegionService,
     private _route: ActivatedRoute
   ) {}
@@ -78,8 +77,8 @@ export class ResourceComponent implements OnChanges {
   }
 
   private _checkForCompoundNavigation(resource: ReadResource) {
-    this._incomingService
-      .getStillImageRepresentationsForCompoundResource(resource.id, 0, true)
+    this._dspApi.v2.search
+      .doSearchStillImageRepresentationsCount(resource.id)
       .pipe(take(1))
       .subscribe(countQuery => {
         const countQuery_ = countQuery as CountQueryResponse;
