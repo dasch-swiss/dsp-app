@@ -16,7 +16,6 @@
             searchButtonDisabled: searchButtonDisabled$ | async,
             propertyFormList: propertyFormList$ | async,
             propertiesOrderByList: propertiesOrderByList$ | async,
-            properties: properties$ | async,
             propertiesLoading: propertiesLoading$ | async,
             filteredProperties: filteredProperties$ | async,
             addButtonDisabled: addButtonDisabled$ | async,
@@ -51,7 +50,7 @@
       [resourcesSearchResults]="asyncData.resourcesSearchResults"
       [resourcesSearchNoResults]="asyncData.resourcesSearchNoResults"
       [propertyFormItem]="propertyForm"
-      [properties]="asyncData.filteredProperties?.length ? asyncData.filteredProperties : asyncData.properties"
+      [properties]="asyncData.filteredProperties"
       [propertiesLoading]="asyncData.propertiesLoading"
       [selectedProperty]="propertyForm.selectedProperty"
       [selectedOperator]="propertyForm.selectedOperator"

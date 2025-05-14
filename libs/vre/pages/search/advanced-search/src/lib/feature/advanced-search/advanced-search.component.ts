@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute } from '@angular/router';
 import { Constants } from '@dasch-swiss/dsp-js';
@@ -65,7 +64,6 @@ export class AdvancedSearchComponent implements OnInit {
   selectedResourceClass$ = this.store.selectedResourceClass$;
   propertyFormList$ = this.store.propertyFormList$;
   propertiesOrderByList$ = this.store.propertiesOrderByList$;
-  properties$ = this.store.properties$;
   propertiesLoading$ = this.store.propertiesLoading$;
   filteredProperties$ = this.store.filteredProperties$;
   searchButtonDisabled$ = this.store.searchButtonDisabled$;
