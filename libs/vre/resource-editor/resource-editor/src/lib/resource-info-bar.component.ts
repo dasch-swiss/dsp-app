@@ -19,9 +19,9 @@ import { filter, map, take } from 'rxjs/operators';
         <span *ngIf="resourceAttachedUser"
           >by
           {{
-            resourceAttachedUser.username
-              ? resourceAttachedUser.username
-              : resourceAttachedUser.givenName + ' ' + resourceAttachedUser.familyName
+            resourceAttachedUser?.givenName || resourceAttachedUser?.familyName
+              ? resourceAttachedUser?.givenName + ' ' + resourceAttachedUser?.familyName
+              : resourceAttachedUser?.username
           }}</span
         >
         <span *ngIf="resource.creationDate"> on {{ resource.creationDate | date }}</span>
