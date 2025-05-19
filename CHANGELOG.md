@@ -1,5 +1,20 @@
 # Changelog
 
+## [11.31.2](https://github.com/dasch-swiss/dsp-das/compare/v11.31.1...v11.31.2) (2025-05-14)
+
+
+### Bug Fixes
+
+* advanced search property dropdown list (DEV-4776) ([#2288](https://github.com/dasch-swiss/dsp-das/issues/2288)) ([fbd67e5](https://github.com/dasch-swiss/dsp-das/commit/fbd67e5e4eb9d707a3a24d4834fc61c6ef002ae7))
+* name and family name of the resource author is displayed as a priority (DEV-4837) ([#2277](https://github.com/dasch-swiss/dsp-das/issues/2277)) ([5aa5aed](https://github.com/dasch-swiss/dsp-das/commit/5aa5aedca6270603b017dba89f063a6dadc8e146))
+
+
+### Maintenances
+
+* **deps-dev:** bump eslint-plugin-prettier from 5.2.6 to 5.4.0 ([#2285](https://github.com/dasch-swiss/dsp-das/issues/2285)) ([353a0f5](https://github.com/dasch-swiss/dsp-das/commit/353a0f5d0686e03eee54e1d4b90a812263f80773))
+* **deps:** bump @sentry/cli from 2.44.0 to 2.45.0 in the sentry-deps group ([#2286](https://github.com/dasch-swiss/dsp-das/issues/2286)) ([6a645e0](https://github.com/dasch-swiss/dsp-das/commit/6a645e0f96b7e47f94a440a3ccd91580d2784c8c))
+* replace getStillImageRepresentationsForCompoundResource with dedicated endpoints (DEV-4836)  ([#2292](https://github.com/dasch-swiss/dsp-das/issues/2292)) ([8585f31](https://github.com/dasch-swiss/dsp-das/commit/8585f315e9b11c78a37348b968acdd71812d9280))
+
 ## [11.31.1](https://github.com/dasch-swiss/dsp-das/compare/v11.31.0...v11.31.1) (2025-05-13)
 
 
