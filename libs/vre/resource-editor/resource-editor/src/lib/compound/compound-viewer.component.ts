@@ -6,6 +6,8 @@ import { CompoundService } from './compound.service';
   selector: 'app-compound-viewer',
   template: `
     <ng-container *ngIf="compoundService.incomingResource$ | async as incomingResource">
+      <app-resource-legal [resource]="incomingResource.res" />
+
       <app-still-image
         *ngIf="incomingResource.res.properties[HasStillImageFileValue]"
         class="dsp-representation"
