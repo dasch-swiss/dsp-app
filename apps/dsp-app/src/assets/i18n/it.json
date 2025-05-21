@@ -160,6 +160,7 @@
     "versionNotValid": "The version you requested is not valid. The latest version is displayed.",
     "notFound": "This resource is not found.",
     "deleted": "This resource has been deleted.",
+    "unauthorized": "You do not have access to this resource.",
     "segmentSupport": {
       "createSegmentDialog": {
         "createAnnotation": "Crea annotazione"
