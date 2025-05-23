@@ -5,22 +5,10 @@ import { KnoraApiConnection, ReadProject } from '@dasch-swiss/dsp-js';
 import { ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { Store } from '@ngxs/store';
-import { of } from 'rxjs';
-import { catchError, finalize, switchMap } from 'rxjs/operators';
+import { finalize, switchMap } from 'rxjs/operators';
 
 export interface IEraseProjectDialogProps {
   project: ReadProject;
-}
-
-/**
- * validation of existing project short code
- *
- * @param {string} shortCode Project short code
- * @returns ValidatorFn
- */
-function projectShortCodeValidator(shortCode: string): ValidatorFn {
-  return (control: AbstractControl): { [key: string]: any } =>
-    shortCode.toLowerCase() !== control.value.toLowerCase() ? { shortCode: [control.value] } : null;
 }
 
 @Component({
@@ -36,17 +24,16 @@ function projectShortCodeValidator(shortCode: string): ValidatorFn {
 })
 export class EraseProjectDialogComponent {
   eraseForm = new FormGroup({
-    shortCode: new FormControl('', [Validators.required, projectShortCodeValidator(this.data.project.shortcode)]),
+    shortCode: new FormControl('', [Validators.required, this.projectShortCodeValidator(this.data.project.shortcode)]),
     password: new FormControl('', [Validators.required]),
   });
+
   isLoading = false;
 
   constructor(
-    @Inject(DspApiConnectionToken)
-    private _dspApiConnection: KnoraApiConnection,
-    @Inject(MAT_DIALOG_DATA)
-    public data: IEraseProjectDialogProps,
+    @Inject(MAT_DIALOG_DATA) public data: IEraseProjectDialogProps,
     private _dialogRef: MatDialogRef<EraseProjectDialogComponent>,
+    @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
     private _projectApiService: ProjectApiService,
     private _store: Store
   ) {}
@@ -56,27 +43,26 @@ export class EraseProjectDialogComponent {
     this.isLoading = true;
 
     const currentUser = this._store.selectSnapshot(state => state.user).user;
-    return this._dspApiConnection.v2.auth
-      .login('username', currentUser.username, this.eraseForm.controls.password.value) // TODO [BE] should be dedicated endpoint
-      .pipe(catchError(() => of(false)))
-      .pipe(
-        switchMap((result: boolean) => {
-          if (!result) {
-            this.eraseForm.controls.password.setErrors({ password: [] });
-            return of(null);
-          }
+    const password = this.eraseForm.controls.password.value;
+    const shortCode = this.eraseForm.controls.shortCode.value;
 
-          return this._projectApiService.erase(this.eraseForm.controls.shortCode.value);
-        })
-      )
+    this._dspApiConnection.v2.auth
+      .login('username', currentUser.username, password!)
       .pipe(
+        switchMap(() => {
+          return this._projectApiService.erase(shortCode!);
+        }),
         finalize(() => {
           this.isLoading = false;
         })
       )
       .subscribe(response => {
-        if (!response) return;
         this._dialogRef.close(response.project);
       });
+  }
+
+  private projectShortCodeValidator(shortCode: string): ValidatorFn {
+    return (control: AbstractControl): { [key: string]: any } | null =>
+      shortCode.toLowerCase() !== control.value.toLowerCase() ? { shortCode: [control.value] } : null;
   }
 }

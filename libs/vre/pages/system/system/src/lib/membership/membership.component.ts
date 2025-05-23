@@ -17,27 +17,28 @@ import {
   UserSelectors,
 } from '@dasch-swiss/vre/core/state';
 import { AutocompleteItem } from '@dasch-swiss/vre/pages/user-settings/user';
-import { Select, Store } from '@ngxs/store';
-import { combineLatest, Observable, Subject } from 'rxjs';
+import { Store } from '@ngxs/store';
+import { combineLatest, Subject } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-membership',
   template: `
-    <app-progress-indicator *ngIf="isMembershipLoading$ | async" />
-
-    <div *ngIf="(isMembershipLoading$ | async) === false">
+    @if (isMembershipLoading$ | async) {
+      <app-progress-indicator />
+    } @else {
       <div class="mat-headline-6 mb-2">
         This user is member of {{ (user$ | async)?.projects.length | i18nPlural: itemPluralMapping['project'] }}
       </div>
 
-      <!-- list of projects where the user is member of -->
       <div *ngFor="let project of (user$ | async)?.projects; trackBy: trackByFn" class="align-center">
         <div class="flex-1">
           <div>{{ project.longname }} ({{ project.shortname }})</div>
-          <div *ngIf="userIsProjectAdmin((user$ | async)?.permissions, project.id)">
-            User is <strong>Project admin</strong>
+          <div>
+            @if (isUserProjectAdmin((user$ | async)?.permissions, project.id)) {
+              User is <strong>Project admin</strong>
+            }
           </div>
         </div>
 
@@ -73,26 +74,26 @@ import { map, takeUntil } from 'rxjs/operators';
           <mat-icon>add</mat-icon>
         </button>
       </div>
-    </div>
+    }
   `,
   styleUrls: ['./membership.component.scss'],
 })
 export class MembershipComponent implements AfterViewInit, OnDestroy {
-  private ngUnsubscribe = new Subject<void>();
+  private _ngUnsubscribe = new Subject<void>();
 
   selectedValue: string | null = null;
 
-  @Input() user: ReadUser;
+  @Input({ required: true }) user!: ReadUser;
   @Output() closeDialog = new EventEmitter<any>();
 
   user$ = this._store.select(UserSelectors.allUsers).pipe(
-    takeUntil(this.ngUnsubscribe),
+    takeUntil(this._ngUnsubscribe),
     map(users => users.find(u => u.id === this.user.id))
   );
 
   projects$ = combineLatest([this._store.select(ProjectsSelectors.allProjects), this.user$]).pipe(
-    takeUntil(this.ngUnsubscribe),
-    map(([projects, user]) => this.getProjects(projects, user))
+    takeUntil(this._ngUnsubscribe),
+    map(([projects, user]) => this._getProjects(projects, user))
   );
 
   readonly itemPluralMapping = {
@@ -102,7 +103,7 @@ export class MembershipComponent implements AfterViewInit, OnDestroy {
     },
   };
 
-  @Select(ProjectsSelectors.isMembershipLoading) isMembershipLoading$: Observable<boolean>;
+  isMembershipLoading$ = this._store.select(ProjectsSelectors.isMembershipLoading);
 
   constructor(private _store: Store) {}
 
@@ -111,8 +112,8 @@ export class MembershipComponent implements AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.ngUnsubscribe.next();
-    this.ngUnsubscribe.complete();
+    this._ngUnsubscribe.next();
+    this._ngUnsubscribe.complete();
   }
 
   removeFromProject(iri: string) {
@@ -126,34 +127,25 @@ export class MembershipComponent implements AfterViewInit, OnDestroy {
 
   trackByFn = (index: number, item: StoredProject) => `${index}-${item?.id}`;
 
-  userIsProjectAdmin(permissions: PermissionsData, iri: string): boolean {
-    return permissions.groupsPerProject[iri].indexOf(Constants.ProjectAdminGroupIRI) > -1;
+  isUserProjectAdmin(permissions: PermissionsData, projectIri: string): boolean {
+    if (!permissions.groupsPerProject) return false;
+
+    return permissions.groupsPerProject[projectIri].includes(Constants.ProjectAdminGroupIRI);
   }
 
-  private getProjects(projects: StoredProject[], user: ReadUser): AutocompleteItem[] {
+  private _getProjects(projects: StoredProject[], user: ReadUser): AutocompleteItem[] {
     return projects
       .filter(
         p =>
+          p.status &&
           p.id !== Constants.SystemProjectIRI &&
           p.id !== Constants.DefaultSharedOntologyIRI &&
-          p.status === true &&
-          user.projects.findIndex(i => i.id === p.id) === -1
+          user.projects.every(userProject => userProject.id !== p.id)
       )
-      .map(
-        p =>
-          <AutocompleteItem>{
-            iri: p.id,
-            name: `${p.longname} (${p.shortname})`,
-          }
-      )
-      .sort((u1: AutocompleteItem, u2: AutocompleteItem) => {
-        if (u1.name < u2.name) {
-          return -1;
-        } else if (u1.name > u2.name) {
-          return 1;
-        } else {
-          return 0;
-        }
-      });
+      .map(p => ({
+        iri: p.id,
+        name: `${p.longname} (${p.shortname})`,
+      }))
+      .sort((a: AutocompleteItem, b: AutocompleteItem) => a.name.localeCompare(b.name));
   }
 }

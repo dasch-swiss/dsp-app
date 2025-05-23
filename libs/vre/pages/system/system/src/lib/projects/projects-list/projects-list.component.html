@@ -1,10 +1,10 @@
-<div *ngIf="list && !loading" class="app-projects-list">
+<div *ngIf="projectsList && !isLoading" class="app-projects-list">
   <!-- header toolbar -->
   <div class="app-toolbar">
     <div class="app-toolbar-row">
       <h3 class="mat-body subtitle">
-        <span *ngIf="status">{{ 'pages.system.projectsList.statusActive' | translate }}</span>
-        <span *ngIf="!status">{{ 'pages.system.projectsList.statusDeactivated' | translate }}</span>
+        <span *ngIf="isUserActive">{{ 'pages.system.projectsList.statusActive' | translate }}</span>
+        <span *ngIf="!isUserActive">{{ 'pages.system.projectsList.statusDeactivated' | translate }}</span>
       </h3>
       <span class="fill-remaining-space"></span>
       <span class="app-toolbar-action"> </span>
@@ -13,15 +13,17 @@
       <span class="app-toolbar-action button left">
         <!-- sort button if more than one item in the list -->
         <app-sort-button
-          *ngIf="list.length"
+          *ngIf="projectsList.length"
           [icon]="'sort_by_alpha'"
           [sortProps]="sortProps"
           [activeKey]="sortBy"
           (sortKeyChange)="sortList($event)" />
       </span>
-      <h2 class="mat-headline-6">{{ list.length | i18nPlural : itemPluralMapping['project'] }}</h2>
+      <h2 class="mat-headline-6">{{ projectsList.length | i18nPlural : itemPluralMapping['project'] }}</h2>
       <span class="fill-remaining-space"></span>
-      <span class="app-toolbar-action button right" *ngIf="status && createNew && (isSysAdmin$ | async) === true">
+      <span
+        class="app-toolbar-action button right"
+        *ngIf="isUserActive && createNewButtonEnabled && (isSysAdmin$ | async) === true">
         <button mat-flat-button [color]="'primary'" (click)="createNewProject()">
           {{ 'pages.system.projectsList.createNew' | translate }}
         </button>
@@ -29,18 +31,18 @@
     </div>
   </div>
 
-  <!-- content: list -->
-  <table class="table more-space-bottom" [class.deactivated]="!status">
+  <!-- content: projectsList -->
+  <table class="table more-space-bottom" [class.deactivated]="!isUserActive">
     <tr
       class="table-entry"
-      *ngFor="let project of list; let last = last; trackBy: trackByFn"
+      *ngFor="let project of projectsList; let last = last; trackBy: trackByFn"
       [class.no-border]="last"
       data-cy="project-row">
       <!-- logo -->
       <td class="avatar-cell">
         <mat-icon mat-list-icon>
-          <span *ngIf="status">assignment</span>
-          <span *ngIf="!status">lock</span>
+          <span *ngIf="isUserActive">assignment</span>
+          <span *ngIf="!isUserActive">lock</span>
         </mat-icon>
       </td>
       <td class="table-info">
@@ -60,18 +62,18 @@
         <button
           mat-icon-button
           [matMenuTriggerFor]="projectMenu"
-          [disabled]="(userHasPermission$(project.id) | async) === false || doNotDelete.includes(project.id)"
+          [disabled]="(userHasPermission$(project.id) | async) === false || systemProjects.includes(project.id)"
           data-cy="more-button">
           <mat-icon>more_horiz</mat-icon>
         </button>
         <mat-menu #projectMenu="matMenu" xPosition="before" class="menu">
-          <button mat-menu-item *ngIf="status" (click)="editProject(project.id)" data-cy="edit-button">
+          <button mat-menu-item *ngIf="isUserActive" (click)="editProject(project.id)" data-cy="edit-button">
             {{ 'pages.system.projectsList.edit' | translate }}
           </button>
           <button
             mat-menu-item
-            *ngIf="status"
-            (click)="askToDeactivateProject(project.shortname,project.id)"
+            *ngIf="isUserActive"
+            (click)="askToDeactivateProject(project.shortname, project.id)"
             data-cy="deactivate-button">
             {{ 'pages.system.projectsList.deactivate' | translate }}
           </button>
@@ -85,8 +87,8 @@
           </button>
           <button
             mat-menu-item
-            *ngIf="!status"
-            (click)="askToActivateProject(project.shortname,project.id)"
+            *ngIf="!isUserActive"
+            (click)="askToActivateProject(project.shortname, project.id)"
             data-cy="reactivate-button">
             {{ 'pages.system.projectsList.reactivate' | translate }}
           </button>
