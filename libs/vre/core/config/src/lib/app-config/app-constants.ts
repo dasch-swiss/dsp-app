@@ -17,11 +17,10 @@ export const AvailableLanguages: StringLiteral[] = [
     language: 'it',
     value: 'Italian (Italiano)',
   },
-  /* Not supported */
-  // {
-  //   language: 'rm',
-  //   value: 'Romanic (Rumantsch)',
-  // },
+  {
+    language: 'rm',
+    value: 'Romanic (Rumantsch)',
+  },
 ];
 
 export class RouteConstants {
