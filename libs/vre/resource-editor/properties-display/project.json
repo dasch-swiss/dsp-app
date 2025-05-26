@@ -8,13 +8,21 @@
   "targets": {
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "outputs": [
+        "{workspaceRoot}/coverage/{projectRoot}"
+      ],
       "options": {
         "jestConfig": "libs/vre/resource-editor/properties-display/jest.config.ts"
       }
     },
     "lint": {
       "executor": "@nx/eslint:lint"
+    },
+    "tsc-errors": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsc --noEmit --project {projectRoot}/tsconfig.lib.json"
+      }
     }
   }
 }
