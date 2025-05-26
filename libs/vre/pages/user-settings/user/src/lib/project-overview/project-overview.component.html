@@ -1,0 +1,46 @@
+<div class="content extra-large middle">
+  <div>
+    <h2>{{ 'pages.landingPage.title' | translate }}</h2>
+  </div>
+  <div class="search-input-wrapper extra-large">
+    <span class="search-icon">
+      <mat-icon>filter_list</mat-icon>
+    </span>
+    <input
+      #filterInput
+      type="text"
+      placeholder="{{'pages.landingPage.filterProjects' | translate}}"
+      (input)="filterProjects(filterInput.value)" />
+  </div>
+  <div *ngIf="(userHasProjects$ | async) === true">
+    <div class="project-overview-subtitle">
+      <h3>{{ 'pages.landingPage.usersProjects' | translate }}</h3>
+    </div>
+    <div class="project-grid">
+      <app-project-card
+        *ngFor="let project of usersActiveProjects$ | async;  let index = index; trackBy: trackByFn"
+        [project]="project"
+        [index]="index" />
+    </div>
+    <div class="project-overview-subtitle">
+      <h3>{{ 'pages.landingPage.notUsersProjects' | translate }}</h3>
+    </div>
+    <div class="project-grid">
+      <app-project-card
+        *ngFor="let project of notUsersActiveProjects$ | async; let index = index; trackBy: trackByFn"
+        [project]="project"
+        [index]="index" />
+    </div>
+  </div>
+  <div *ngIf="(userHasProjects$ | async) === false && (activeProjects$| async)?.length">
+    <div class="project-grid">
+      <app-project-card
+        *ngFor="let project of activeProjects$ | async; let index = index; trackBy: trackByFn"
+        [project]="project"
+        [index]="index" />
+    </div>
+  </div>
+  <div *ngIf="(loading$ | async)">
+    <app-progress-indicator />
+  </div>
+</div>

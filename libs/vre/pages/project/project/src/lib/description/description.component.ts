@@ -8,6 +8,7 @@ import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { Select, Store } from '@ngxs/store';
 import { combineLatest, Observable, Subject } from 'rxjs';
 import { map, takeUntil, takeWhile } from 'rxjs/operators';
+import { LicenseCaptionsMapping } from './license-captions-mapping';
 
 @Component({
   selector: 'app-description',
@@ -16,12 +17,18 @@ import { map, takeUntil, takeWhile } from 'rxjs/operators';
 })
 export class DescriptionComponent implements OnDestroy {
   destroyed$: Subject<void> = new Subject<void>();
+  hasManualLicense?: string;
 
   readProject$ = combineLatest([this._route.paramMap, this._store.select(ProjectsSelectors.allProjects)]).pipe(
     takeUntil(this.destroyed$),
     map(([params, allProjects]) => {
-      const projects = allProjects.find(x => x.id.split('/').pop() === params.get(RouteConstants.uuidParameter));
-      return projects;
+      const project = allProjects.find(x => x.id.split('/').pop() === params.get(RouteConstants.uuidParameter));
+      if (!project) {
+        return null;
+      }
+
+      this.hasManualLicense = LicenseCaptionsMapping.get(project.shortcode);
+      return project;
     })
   );
 

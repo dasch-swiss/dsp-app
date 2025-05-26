@@ -1,41 +1,28 @@
 <app-progress-indicator *ngIf="isLoading$ | async" />
 <div *ngIf="(readProject$ | async) as project" class="content large middle">
-  <div>
-    <p>Project Description</p>
-  </div>
-  <!--  mobile version: status and edit icon displayed before the title -->
-  <div class="app-toolbar-mobile">
-    <span class="app-toolbar-action-edit" *ngIf="userHasPermission$ | async">
-      <button mat-icon-button *ngIf="project.status" class="right" color="primary">
-        <mat-icon>edit_square</mat-icon>
-        Edit project description
-      </button>
-    </span>
+  <div style="display: flex; justify-content: end">
+    <button
+      mat-button
+      *ngIf="(userHasPermission$ | async) && project.status"
+      class="right"
+      [routerLink]="RouteConstants.projectEditRelative"
+      color="primary">
+      <mat-icon>edit_square</mat-icon>
+      Edit project description
+    </button>
   </div>
 
-  <!-- desktop and tablet version -->
-  <div class="app-toolbar transparent more-space-bottom">
-    <div class="app-toolbar-row">
-      <h3 class="mat-body subtitle">Project {{ project.shortcode }} | {{ project.shortname | uppercase }}</h3>
-      <span class="fill-remaining-space"></span>
-      <span class="app-toolbar-action">
-        <button
-          mat-button
-          *ngIf="(userHasPermission$ | async) && project.status"
-          class="right"
-          [routerLink]="RouteConstants.projectEditRelative"
-          color="primary">
-          <mat-icon>edit_square</mat-icon>
-          Edit project description
-        </button>
-      </span>
-    </div>
+  <div>
+    <app-project-image-cover [project]="project" />
+    <div *ngIf="hasManualLicense" class="mat-caption">{{ hasManualLicense }}</div>
   </div>
-  <!-- description -->
+
+  <h2>{{ project.longname }}</h2>
+  <h3 class="mat-body subtitle" style="margin-bottom: 48px">
+    Project {{ project.shortcode }} | {{ project.shortname | uppercase }}
+  </h3>
+
   <div class="description-rm">
-    <div>
-      <p class="project-longname">{{ project.longname }}</p>
-    </div>
     <section class="project description" *ngFor="let desc of sortedDescriptions$ | async">
       <div [innerHtml]="desc.value"></div>
     </section>

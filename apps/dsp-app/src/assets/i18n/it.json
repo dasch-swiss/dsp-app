@@ -1,5 +1,11 @@
 {
   "pages": {
+    "landingPage": {
+      "title": "Progetti di ricerca",
+      "usersProjects": "I miei progetti",
+      "notUsersProjects": "Altri progetti di ricerca",
+      "filterProjects": "Filter projects"
+    },
     "userSettings": {
       "loginForm": {
         "login": "Accedi"
@@ -10,11 +16,6 @@
         "delete": "Sospendi account utente",
         "password": "Aggiorna password",
         "edit": "Modifica profilo"
-      },
-      "overview": {
-        "title": "Sfoglia i progetti di ricerca",
-        "myProjects": "I miei progetti",
-        "browseOtherResearchProjects": "Sfoglia altri progetti di ricerca"
       },
       "userForm": {
         "emailValidation": "Questo indirizzo email sembra non essere valido.",
@@ -146,7 +147,7 @@
       },
       "fullTextSearch": {
         "filterByProject": "Filtra per progetto",
-        "search": "Cerca",
+        "search": "Search all data",
         "allProjects": "Tutti i progetti"
       }
     }

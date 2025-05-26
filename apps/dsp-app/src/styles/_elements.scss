@@ -827,3 +827,10 @@ nav.mat-mdc-tab-nav-bar,
     min-height: 48px !important;
   }
 }
+
+:root {
+  --primary: #{$primary_700};
+  --element-active-hover: #{$primary_100};
+  --gray-500: #{$cool_gray_500};
+}
+

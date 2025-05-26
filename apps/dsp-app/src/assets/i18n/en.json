@@ -1,5 +1,11 @@
 {
   "pages": {
+    "landingPage": {
+      "title": "Research Projects",
+      "usersProjects": "My Projects",
+      "notUsersProjects": "Other Research Projects",
+      "filterProjects": "Filter projects"
+    },
     "userSettings": {
       "loginForm": {
         "login": "Login"
@@ -10,11 +16,6 @@
         "delete": "Suspend user account",
         "password": "Update password",
         "edit": "Edit profile"
-      },
-      "overview": {
-        "title": "Browse Research Projects",
-        "myProjects": "My Projects",
-        "browseOtherResearchProjects": "Browse Other Research Projects"
       },
       "userForm": {
         "emailValidation": "This email address appears to be invalid.",
@@ -146,7 +147,7 @@
       },
       "fullTextSearch": {
         "filterByProject": "Filter by project",
-        "search": "Search",
+        "search": "Search all data",
         "allProjects": "All projects"
       }
     }

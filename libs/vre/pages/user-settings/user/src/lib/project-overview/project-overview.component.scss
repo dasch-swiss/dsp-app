@@ -1,0 +1,41 @@
+.project-overview-subtitle {
+  margin-top: 2rem;
+}
+
+.search-input-wrapper {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 2rem;
+  padding: 0.5rem 1rem;
+  margin-bottom: 1rem;;
+
+  .search-icon {
+    margin-right: 0.5rem;
+    color: var(--gray-500);
+    display: flex;
+    align-items: center;
+  }
+
+  input {
+    border: none;
+    outline: none;
+    flex: 1;
+    font-size: 1rem;
+    background: transparent;
+  }
+}
+
+.project-grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: 1fr;
+
+  @media (min-width: 768px) and (pointer: fine) and (hover: hover) {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  @media (min-width: 1200px) and (pointer: fine) and (hover: hover) {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
