@@ -30,6 +30,7 @@
   display: grid;
   gap: 1.5rem;
   grid-template-columns: 1fr;
+  min-height: 280px;
 
   @media (min-width: 768px) and (pointer: fine) and (hover: hover) {
     grid-template-columns: 1fr 1fr;
