@@ -1,22 +1,32 @@
 import { FocusMonitor } from '@angular/cdk/a11y';
 import { coerceBooleanProperty } from '@angular/cdk/coercion';
-import { Component, DoCheck, ElementRef, HostBinding, Input, OnDestroy, Optional, Self } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DoCheck,
+  ElementRef,
+  HostBinding,
+  Input,
+  OnDestroy,
+  Optional,
+  Self,
+} from '@angular/core';
 import {
   ControlValueAccessor,
-  UntypedFormBuilder,
-  UntypedFormControl,
-  UntypedFormGroup,
   FormGroupDirective,
   NgControl,
   NgForm,
+  UntypedFormBuilder,
+  UntypedFormControl,
+  UntypedFormGroup,
   Validators,
 } from '@angular/forms';
 import {
+  _AbstractConstructor,
+  _Constructor,
   CanUpdateErrorState,
   ErrorStateMatcher,
   mixinErrorState,
-  _AbstractConstructor,
-  _Constructor,
 } from '@angular/material/core';
 import { MatFormFieldControl } from '@angular/material/form-field';
 import { Subject } from 'rxjs';
@@ -46,6 +56,7 @@ const _MatInputMixinBase: CanUpdateErrorStateCtor & typeof MatInputBase = mixinE
   templateUrl: './color-picker.component.html',
   styleUrls: ['./color-picker.component.scss'],
   providers: [{ provide: MatFormFieldControl, useExisting: ColorPickerComponent }, { provide: Subject }],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ColorPickerComponent
   extends _MatInputMixinBase

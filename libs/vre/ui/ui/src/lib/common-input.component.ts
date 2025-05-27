@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { FormControl } from '@angular/forms';
 
 @Component({
@@ -26,6 +26,7 @@ import { FormControl } from '@angular/forms';
     </mat-form-field>
   `,
   styles: [':host { display: block;}'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CommonInputComponent {
   @Input({ required: true }) control!: FormControl<string | number>;

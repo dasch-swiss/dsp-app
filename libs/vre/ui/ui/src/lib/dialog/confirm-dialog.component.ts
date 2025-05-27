@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 export interface ConfirmDialogProps {
@@ -19,6 +19,7 @@ export interface ConfirmDialogProps {
       <button mat-raised-button color="warn" (click)="dialogRef.close(true)" data-cy="confirmation-button">Yes</button>
     </div>
   `,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ConfirmDialogComponent {
   constructor(

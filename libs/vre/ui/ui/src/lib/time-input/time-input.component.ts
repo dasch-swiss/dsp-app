@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ValidatorError } from '../validator-error.interface';
 import { TimeInputErrorStateMatcher } from './time-input-error-state-matcher';
@@ -19,6 +19,7 @@ import { TimeInputErrorStateMatcher } from './time-input-error-state-matcher';
       </mat-error>
     </mat-form-field>
   `,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TimeInputComponent implements OnInit {
   @Input({ required: true }) control!: FormControl;
