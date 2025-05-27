@@ -1,6 +1,7 @@
 import { ConnectionPositionPair, Overlay, OverlayConfig, OverlayRef, PositionStrategy } from '@angular/cdk/overlay';
 import { TemplatePortal } from '@angular/cdk/portal';
 import {
+  ChangeDetectionStrategy,
   Component,
   ElementRef,
   EventEmitter,
@@ -38,6 +39,7 @@ const resolvedPromise = Promise.resolve(null);
   selector: 'app-fulltext-search',
   templateUrl: './fulltext-search.component.html',
   styleUrls: ['./fulltext-search.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FulltextSearchComponent implements OnInit, OnChanges, OnDestroy {
   /**

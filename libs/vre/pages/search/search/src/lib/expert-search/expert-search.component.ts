@@ -1,5 +1,6 @@
 import {
   AfterViewInit,
+  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   ElementRef,
@@ -36,6 +37,7 @@ export function forbiddenTermValidator(termRe: RegExp): ValidatorFn {
   selector: 'app-expert-search',
   templateUrl: './expert-search.component.html',
   styleUrls: ['./expert-search.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ExpertSearchComponent implements OnInit, AfterViewInit {
   /**

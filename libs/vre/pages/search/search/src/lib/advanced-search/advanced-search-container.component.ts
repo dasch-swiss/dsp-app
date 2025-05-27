@@ -1,5 +1,5 @@
 import { Location } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { PropertyFormItem, QueryObject } from '@dasch-swiss/vre/pages/search/advanced-search';
@@ -8,6 +8,7 @@ import { PropertyFormItem, QueryObject } from '@dasch-swiss/vre/pages/search/adv
   selector: 'app-advanced-search-container',
   templateUrl: './advanced-search-container.component.html',
   styleUrls: ['./advanced-search-container.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AdvancedSearchContainerComponent implements OnInit {
   uuid: string;
