@@ -149,6 +149,10 @@
         "filterByProject": "Filtrer par projet",
         "search": "Search all data",
         "allProjects": "Tous les projets"
+      },
+      "advancedSearch": {
+        "title": "Advanced Search",
+        "usePreviousSearch": "Use Previous Search"
       }
     }
   },

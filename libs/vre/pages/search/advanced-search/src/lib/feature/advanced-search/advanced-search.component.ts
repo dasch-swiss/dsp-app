@@ -5,6 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute } from '@angular/router';
 import { Constants } from '@dasch-swiss/dsp-js';
 import { DialogService } from '@dasch-swiss/vre/ui/ui';
+import { TranslateModule } from '@ngx-translate/core';
 import { take } from 'rxjs/operators';
 import { v4 as uuidv4 } from 'uuid';
 import { ApiData } from '../../data-access/advanced-search-service/advanced-search.service';
@@ -38,6 +39,7 @@ export interface QueryObject {
     FormActionsComponent,
     MatButtonModule,
     MatIconModule,
+    TranslateModule,
   ],
   providers: [AdvancedSearchStoreService],
   templateUrl: './advanced-search.component.html',
@@ -78,17 +80,18 @@ export class AdvancedSearchComponent implements OnInit {
   orderByButtonDisabled$ = this.store.orderByButtonDisabled$;
 
   constants = Constants;
-  previousSearchObject: string | null = null;
+  previousSearchObject: AdvancedSearchStateSnapshot | null = null;
 
   constructor(private _dialogService: DialogService) {}
 
   ngOnInit(): void {
+    const projectIri = `http://rdfh.ch/projects/${this.uuid}`;
     this.store.setState({
       ontologies: [],
       ontologiesLoading: false,
       resourceClasses: [],
       resourceClassesLoading: false,
-      selectedProject: this.uuid ? `http://rdfh.ch/projects/${this.uuid}` : undefined,
+      selectedProject: this.uuid ? projectIri : undefined,
       selectedOntology: undefined,
       selectedResourceClass: undefined,
       propertyFormList: [],
@@ -112,7 +115,10 @@ export class AdvancedSearchComponent implements OnInit {
 
     this.store.filteredPropertiesList(this.selectedResourceClass$);
 
-    this.previousSearchObject = localStorage.getItem('advanced-search-previous-search');
+    const searchStored = localStorage.getItem('advanced-search-previous-search');
+    if (searchStored) {
+      this.previousSearchObject = JSON.parse(searchStored)[projectIri];
+    }
   }
 
   // pass-through method to notify the store to update the state of the selected ontology
@@ -221,21 +227,19 @@ export class AdvancedSearchComponent implements OnInit {
   loadPreviousSearch(): void {
     if (!this.previousSearchObject) return;
 
-    const prevSearchObject: AdvancedSearchStateSnapshot = JSON.parse(this.previousSearchObject);
-
     this.store.setState({
-      ontologies: prevSearchObject.ontologies,
+      ontologies: this.previousSearchObject.ontologies,
       ontologiesLoading: false,
-      resourceClasses: prevSearchObject.resourceClasses,
+      resourceClasses: this.previousSearchObject.resourceClasses,
       resourceClassesLoading: false,
-      selectedProject: prevSearchObject.selectedProject,
-      selectedOntology: prevSearchObject.selectedOntology,
-      selectedResourceClass: prevSearchObject.selectedResourceClass,
-      propertyFormList: prevSearchObject.propertyFormList,
-      properties: prevSearchObject.properties,
+      selectedProject: this.previousSearchObject.selectedProject,
+      selectedOntology: this.previousSearchObject.selectedOntology,
+      selectedResourceClass: this.previousSearchObject.selectedResourceClass,
+      propertyFormList: this.previousSearchObject.propertyFormList,
+      properties: this.previousSearchObject.properties,
       propertiesLoading: false,
-      propertiesOrderByList: prevSearchObject.propertiesOrderByList,
-      filteredProperties: prevSearchObject.filteredProperties,
+      propertiesOrderByList: this.previousSearchObject.propertiesOrderByList,
+      filteredProperties: this.previousSearchObject.filteredProperties,
       matchResourceClassesLoading: false,
       resourcesSearchResultsLoading: false,
       resourcesSearchResultsCount: 0,

@@ -1,10 +1,16 @@
 <div class="advanced-search-container">
   <div class="header">
     <div class="title">
-      <p>Advanced Search</p>
+      <p>{{ 'pages.search.advancedSearch.title' | translate }}</p>
     </div>
-    <div *ngIf="previousSearchObject" class="action-buttons right-margin">
-      <button class="previous-search-button" mat-button (click)="loadPreviousSearch()">Use Previous Search</button>
+    <div class="action-buttons right-margin">
+      <button
+        class="previous-search-button"
+        [disabled]="!previousSearchObject"
+        mat-button
+        (click)="loadPreviousSearch()">
+        {{ 'pages.search.advancedSearch.usePreviousSearch' | translate }}
+      </button>
     </div>
   </div>
   <div

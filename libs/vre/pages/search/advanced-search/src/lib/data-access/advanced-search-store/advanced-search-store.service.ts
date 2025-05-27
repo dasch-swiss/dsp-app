@@ -880,7 +880,13 @@ export class AdvancedSearchStoreService extends ComponentStore<AdvancedSearchSta
       filteredProperties,
     };
 
-    localStorage.setItem('advanced-search-previous-search', JSON.stringify(snapshot));
+    const searchStored = localStorage.getItem('advanced-search-previous-search');
+    const projectPreviousSearch: Record<string, typeof snapshot> = searchStored ? JSON.parse(searchStored) : {};
+    if (snapshot.selectedProject) {
+      projectPreviousSearch[snapshot.selectedProject] = snapshot;
+    }
+
+    localStorage.setItem('advanced-search-previous-search', JSON.stringify(projectPreviousSearch));
   }
 
   private getPropertiesOrderByList(property: PropertyFormItem): OrderByItem[] {
