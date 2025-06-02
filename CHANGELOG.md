@@ -1,5 +1,41 @@
 # Changelog
 
+## [11.32.0](https://github.com/dasch-swiss/dsp-das/compare/v11.31.2...v11.32.0) (2025-05-28)
+
+
+### Enhancements
+
+* add new licenses logo for CC0 and CC PDM 1.0 ([#2305](https://github.com/dasch-swiss/dsp-das/issues/2305)) ([703e7bb](https://github.com/dasch-swiss/dsp-das/commit/703e7bbc366693632680cf19828348ab9fe874d3))
+* redesign landing page (DEV-4854) ([#2279](https://github.com/dasch-swiss/dsp-das/issues/2279)) ([8d385ed](https://github.com/dasch-swiss/dsp-das/commit/8d385edaf46791e0e4f125d17fcd9ef9e4181fbe))
+
+
+### Bug Fixes
+
+* add copyright legals to compound viewer ([#2302](https://github.com/dasch-swiss/dsp-das/issues/2302)) ([498601c](https://github.com/dasch-swiss/dsp-das/commit/498601cfd784e1f3c4ba38cd7ee7b17b21b3a556))
+* advanced search, use previous search functionality (DEV-4923) ([#2310](https://github.com/dasch-swiss/dsp-das/issues/2310)) ([2f4de98](https://github.com/dasch-swiss/dsp-das/commit/2f4de9826de7a5e1973b01f2aeb0c99e2b3434c3))
+* image cover background styling ([#2313](https://github.com/dasch-swiss/dsp-das/issues/2313)) ([6b25769](https://github.com/dasch-swiss/dsp-das/commit/6b257693940ae65597adbec4aeda23e8c5c8309d))
+* resource editor displays a message when resource access is unauthorized ([#2306](https://github.com/dasch-swiss/dsp-das/issues/2306)) ([0b122cd](https://github.com/dasch-swiss/dsp-das/commit/0b122cdf9874441d609d8ddece7e8fda1c9e55f3))
+* restored rm language (DEV-4883) ([#2311](https://github.com/dasch-swiss/dsp-das/issues/2311)) ([7800794](https://github.com/dasch-swiss/dsp-das/commit/78007942f33a590e7d641d8c320fd02468aad2cb))
+* the grid does not overlap on card hover ([#2316](https://github.com/dasch-swiss/dsp-das/issues/2316)) ([b4101e0](https://github.com/dasch-swiss/dsp-das/commit/b4101e0a36e5b660fab6eafe027e7c74654513b0))
+
+
+### Maintenances
+
+* add tsc errors script in missing libs ([#2308](https://github.com/dasch-swiss/dsp-das/issues/2308)) ([245bde0](https://github.com/dasch-swiss/dsp-das/commit/245bde06e259e69101a7cf4c8ed29415fac15ac8))
+* **deps-dev:** bump @cypress/code-coverage from 3.14.2 to 3.14.3 in the test-coverage-deps group ([#2318](https://github.com/dasch-swiss/dsp-das/issues/2318)) ([661bf07](https://github.com/dasch-swiss/dsp-das/commit/661bf0784fcb0f3e080bad78e6fd10bb3807debd))
+* **deps-dev:** bump @openapitools/openapi-generator-cli from 2.20.0 to 2.20.2 ([#2300](https://github.com/dasch-swiss/dsp-das/issues/2300)) ([25920d9](https://github.com/dasch-swiss/dsp-das/commit/25920d9a8f577da3cb18b5270013281ba7f9fed5))
+* **deps-dev:** bump @swc/core from 1.11.24 to 1.11.29 ([#2319](https://github.com/dasch-swiss/dsp-das/issues/2319)) ([b8eb4ff](https://github.com/dasch-swiss/dsp-das/commit/b8eb4ffcac621b18d2bdf7ac0442ecc8cbdd9cf4))
+* **deps-dev:** bump @types/node from 20.17.46 to 20.17.48 in the types-deps group ([#2298](https://github.com/dasch-swiss/dsp-das/issues/2298)) ([cb00688](https://github.com/dasch-swiss/dsp-das/commit/cb00688cc77978b6a462187a2c9877e66bae8b72))
+* **deps-dev:** bump @types/node from 20.17.48 to 20.17.50 in the types-deps group ([#2314](https://github.com/dasch-swiss/dsp-das/issues/2314)) ([a49b48a](https://github.com/dasch-swiss/dsp-das/commit/a49b48a07e94308cda3b738c2da406b2556171a3))
+* **deps-dev:** bump @typescript-eslint/utils from 8.32.0 to 8.32.1 ([#2299](https://github.com/dasch-swiss/dsp-das/issues/2299)) ([5d7d0c9](https://github.com/dasch-swiss/dsp-das/commit/5d7d0c974e86619ef376db1f83734c9255bee369))
+* **deps-dev:** bump ng-mocks from 14.13.4 to 14.13.5 ([#2315](https://github.com/dasch-swiss/dsp-das/issues/2315)) ([f6ed51f](https://github.com/dasch-swiss/dsp-das/commit/f6ed51f194a3ce8bafe8940383224bf30fd9bd66))
+* **deps-dev:** bump ts-jest from 29.3.2 to 29.3.4 in the jest-deps group ([#2297](https://github.com/dasch-swiss/dsp-das/issues/2297)) ([56e52e7](https://github.com/dasch-swiss/dsp-das/commit/56e52e7f489939100532ee2b566bae451812839b))
+* **deps:** bump the grafana-deps group with 2 updates ([#2317](https://github.com/dasch-swiss/dsp-das/issues/2317)) ([daf08eb](https://github.com/dasch-swiss/dsp-das/commit/daf08ebd132529780766dbdafeefe8081cdcd20e))
+* **deps:** bump zod from 3.24.3 to 3.25.1 ([#2301](https://github.com/dasch-swiss/dsp-das/issues/2301)) ([03ec278](https://github.com/dasch-swiss/dsp-das/commit/03ec2785cb87dd717ee0e36e08302656f8b24856))
+* OnPush cd strategy for UI components (DEV-4955) ([#2322](https://github.com/dasch-swiss/dsp-das/issues/2322)) ([8e7d66f](https://github.com/dasch-swiss/dsp-das/commit/8e7d66f40adce890b47cc91a56b75bd32b24ec80))
+* OnPush for search components (DEV-4914) ([#2307](https://github.com/dasch-swiss/dsp-das/issues/2307)) ([d2397aa](https://github.com/dasch-swiss/dsp-das/commit/d2397aa8c3543b81df843d0f987c9d105000bd6d))
+* refactor Membership, Projects, EraseProjectDialog, SortButton Components (DEV-4931) ([#2304](https://github.com/dasch-swiss/dsp-das/issues/2304)) ([e76d3be](https://github.com/dasch-swiss/dsp-das/commit/e76d3be723f9d867c70f8c74579519a2c4a60d15))
+
 ## [11.31.2](https://github.com/dasch-swiss/dsp-das/compare/v11.31.1...v11.31.2) (2025-05-14)
 
 
