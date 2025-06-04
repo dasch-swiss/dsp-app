@@ -14,9 +14,11 @@ api/api.ts
 api/shacl-api.service.ts
 api/v2-authentication-api.service.ts
 api/v2-lists-api.service.ts
+api/v2-metadata-api.service.ts
 api/v2-ontologies-api.service.ts
 api/v2-resources-api.service.ts
 api/v2-search-api.service.ts
+api/v2-standoff-api.service.ts
 api/v2-values-api.service.ts
 configuration.ts
 encoder.ts
@@ -49,8 +51,10 @@ model/default-object-access-permission-get-response-adm.ts
 model/default-object-access-permissions-for-project-get-response-adm.ts
 model/description.ts
 model/duplicate-value-exception.ts
+model/edit-conflict-exception.ts
 model/email-password.ts
 model/email.ts
+model/export-format.ts
 model/family-name.ts
 model/forbidden-exception.ts
 model/get-v2-authentication400-response.ts
@@ -72,7 +76,6 @@ model/iri-password.ts
 model/keyword.ts
 model/labels.ts
 model/language-code.ts
-model/license-dto.ts
 model/list-adm.ts
 model/list-change-comments-request.ts
 model/list-change-labels-request.ts
@@ -81,6 +84,7 @@ model/list-change-position-request.ts
 model/list-change-request.ts
 model/list-child-node-adm.ts
 model/list-child-node-info-adm.ts
+model/list-create-child-node-request.ts
 model/list-create-root-node-request.ts
 model/list-delete-response-adm.ts
 model/list-get-response-adm.ts
@@ -108,7 +112,7 @@ model/not-found-exception.ts
 model/ontology-constraint-exception.ts
 model/paged-response-authorship.ts
 model/paged-response-copyright-holder.ts
-model/paged-response-license-dto.ts
+model/paged-response-project-license-dto.ts
 model/pagination.ts
 model/password-change-request.ts
 model/password.ts
@@ -127,6 +131,7 @@ model/project-get-response.ts
 model/project-import-response.ts
 model/project-iri.ts
 model/project-keywords-get-response.ts
+model/project-license-dto.ts
 model/project-members-get-response-adm.ts
 model/project-operation-response-adm.ts
 model/project-restricted-view-settings-adm.ts
@@ -152,16 +157,16 @@ model/system-admin-change-request.ts
 model/system-admin.ts
 model/token-response.ts
 model/user-create-request.ts
+model/user-dto.ts
 model/user-group-memberships-get-response-adm.ts
 model/user-iri.ts
 model/user-project-admin-memberships-get-response-adm.ts
 model/user-project-memberships-get-response-adm.ts
-model/user-response-adm.ts
+model/user-response.ts
 model/user-status.ts
-model/user.ts
 model/username-password.ts
 model/username.ts
-model/users-get-response-adm.ts
+model/users-response.ts
 model/validation-exception.ts
 model/watermark.ts
 param.ts

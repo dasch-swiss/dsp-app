@@ -1,9 +1,9 @@
 import { FormControl, FormGroup } from '@angular/forms';
-import { LicenseDto } from '@dasch-swiss/vre/3rd-party-services/open-api';
+import { ProjectLicenseDto } from '@dasch-swiss/vre/3rd-party-services/open-api';
 
 export type CreateResourceFormLegal = FormGroup<{
   copyrightHolder: FormControl<string | null>;
-  license: FormControl<LicenseDto | null>;
+  license: FormControl<ProjectLicenseDto | null>;
   authorship: FormControl<string[] | null>;
 }>;
 
