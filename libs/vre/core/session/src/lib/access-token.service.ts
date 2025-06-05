@@ -4,16 +4,16 @@ import jwt_decode, { JwtPayload } from 'jwt-decode';
 
 @Injectable({ providedIn: 'root' })
 export class AccessTokenService {
-  getAccessToken() {
+  getAccessToken(): string | null {
     return localStorage.getItem(Auth.AccessToken);
   }
 
-  storeToken(token: string) {
+  storeToken(token: string): void {
     localStorage.setItem(Auth.AccessToken, token);
     this.startTokenRefresh();
   }
 
-  removeTokens() {
+  removeTokens(): void {
     localStorage.removeItem(Auth.AccessToken);
     localStorage.removeItem(Auth.Refresh_token);
   }
@@ -61,10 +61,20 @@ export class AccessTokenService {
   }
 
   getTokenUser(): string | null {
-    return this.getAccessToken();
+    const token = this.getAccessToken();
+    if (!token) {
+      return null;
+    }
+
+    const decodedToken = this.decodedAccessToken(token);
+    if (!decodedToken || !decodedToken.sub) {
+      return null;
+    }
+
+    return decodedToken.sub;
   }
 
-  decodedAccessToken(token: string) {
+  decodedAccessToken(token: string): JwtPayload | null {
     try {
       return jwt_decode<JwtPayload>(token);
     } catch (e) {

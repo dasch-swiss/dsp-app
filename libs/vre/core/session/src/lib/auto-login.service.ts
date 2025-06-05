@@ -23,10 +23,10 @@ export class AutoLoginService {
     private _localizationsService: LocalizationService
   ) {}
 
-  setup() {
+  setup(): void {
     this._dspApiConnection.v2.jsonWebToken = ''; // needed for JS-LIB to run
 
-    const encodedJWT = this._accessTokenService.getTokenUser();
+    const encodedJWT = this._accessTokenService.getAccessToken();
     if (!encodedJWT) {
       this.hasCheckedCredentials$.next(true);
       return;

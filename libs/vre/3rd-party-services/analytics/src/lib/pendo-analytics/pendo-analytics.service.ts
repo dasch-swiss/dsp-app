@@ -2,6 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DspInstrumentationConfig, DspInstrumentationToken } from '@dasch-swiss/vre/core/config';
 import { AccessTokenService, AuthService } from '@dasch-swiss/vre/core/session';
+import { v5 as uuidv5 } from 'uuid';
 
 @Injectable({
   providedIn: 'root',
@@ -12,7 +13,7 @@ export class PendoAnalyticsService {
   private _accessTokenService: AccessTokenService = inject(AccessTokenService);
   private environment: string = this.config.environment;
 
-  setup() {
+  setup(): void {
     if (this.config.environment !== 'prod') {
       return;
     }
@@ -20,16 +21,25 @@ export class PendoAnalyticsService {
     this.authService
       .isCredentialsValid$()
       .pipe(takeUntilDestroyed())
-      .subscribe(isSessionValid => {
+      .subscribe((isSessionValid: boolean) => {
         if (!isSessionValid) {
           this.removeActiveUser();
           return;
         }
-        const token = this._accessTokenService.getTokenUser();
-        if (!token) return;
+        const userIri = this._accessTokenService.getTokenUser();
+        if (!userIri) return;
 
-        this._setActiveUser(token);
+        const hashedUserId = this.hashUserIri(userIri);
+        this._setActiveUser(hashedUserId);
       });
+  }
+
+  /**
+   * Generate UUID v5 from user IRI to create anonymous identifier for Pendo analytics
+   */
+  private hashUserIri(userIri: string): string {
+    const id: string = uuidv5(userIri, uuidv5.URL);
+    return id;
   }
 
   /**
