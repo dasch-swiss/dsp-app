@@ -87,6 +87,27 @@
         "updateConfirmation": "Vous avez mis à jour avec succès les paramètres de l'image du projet.",
         "info": "Pour limiter la taille de votre image, entrez un pourcentage ou une largeur en pixels absolue. Vous ne pouvez pas fournir de valeurs pour les deux options.",
         "restrictions": "Les paramètres de l'image peuvent être appliqués uniquement aux ressources ayant des autorisations de visualisation limitées."
+      },
+      "resourceMetadata": {
+        "tab": "Métadonnées de ressource",
+        "title": "Exporter les métadonnées",
+        "text": {
+          "description": "Exporter les métadonnées descriptives de chaque ressource de ce projet au format CSV.",
+          "note": "Remarque : ce fichier ne contient que les métadonnées, et non les données du projet.",
+          "listTitle": "Ces métadonnées comprennent:",
+          "listContent": {
+            "label": "LLabel (étiquette)abel",
+            "class": "Classe de ressource",
+            "ark": "URL ARK  (lien permanent)",
+            "timestampArk": "ARK avec horodatage",
+            "iri": "IRI de la ressource",
+            "createdBy": "Créé par",
+            "creationDate": "Date de création",
+            "modified": "Date de dernière modification (si disponible)",
+            "deleted": "Datte de suppression (si disponible)"
+          }
+        },
+        "button": "Exporter au format CSV"
       }
     },
     "system": {

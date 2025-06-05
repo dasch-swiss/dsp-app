@@ -87,6 +87,27 @@
         "updateConfirmation": "Sie haben die Bildeinstellungen des Projekts erfolgreich aktualisiert.",
         "info": "Um die Grösse Ihres Bildes zu begrenzen, geben Sie entweder einen Prozentsatz oder eine absolute Pixelbreite ein. Sie können nicht beide Optionen gleichzeitig angeben.",
         "restrictions": "Bildeinstellungen können nur auf die Ressourcen angewendet werden, für die eingeschränkte Ansichtsrechte festgelegt sind."
+      },
+      "resourceMetadata": {
+        "tab": "Ressourcen-Metadaten",
+        "title": "Metadaten exportieren",
+        "text": {
+          "description": "Exportieren Sie beschreibende Metadaten für sämtliche Ressourcen dieses Projekts als CSV.",
+          "note": "Hinweis: Diese Datei enthält ausschliesslich Metadaten – nicht die Daten des Projekts.",
+          "listTitle": "Die Metadaten umfassen:",
+          "listContent": {
+            "label": "Label",
+            "class": "Ressourcen-Klasse",
+            "ark": "ARK-URL (Permalink)",
+            "timestampArk": "ARK mit Zeitstempel",
+            "iri": "Ressourcen-IRI",
+            "createdBy": "Erstellt von",
+            "creationDate": "Erstellungsdatum",
+            "modified": "Letztes Änderungsdatum (falls vorhanden)",
+            "deleted": "Löschdatum (falls vorhanden)"
+          }
+        },
+        "button": "Exportieren als CSV"
       }
     },
     "system": {

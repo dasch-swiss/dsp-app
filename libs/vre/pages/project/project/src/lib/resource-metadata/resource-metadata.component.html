@@ -1,0 +1,24 @@
+<app-centered-layout>
+  <div class="content large middle">
+    <div class="header">
+      <div class="title">{{ 'pages.project.resourceMetadata.title' | translate }}</div>
+    </div>
+    <p>{{ 'pages.project.resourceMetadata.text.description' | translate }}</p>
+    <p>{{ 'pages.project.resourceMetadata.text.note' | translate }}</p>
+    <div>{{ 'pages.project.resourceMetadata.text.listTitle' | translate }}</div>
+    <ul>
+      <li>{{ 'pages.project.resourceMetadata.text.listContent.label' | translate }}</li>
+      <li>{{ 'pages.project.resourceMetadata.text.listContent.class' | translate }}</li>
+      <li>{{ 'pages.project.resourceMetadata.text.listContent.ark' | translate }}</li>
+      <li>{{ 'pages.project.resourceMetadata.text.listContent.timestampArk' | translate }}</li>
+      <li>{{ 'pages.project.resourceMetadata.text.listContent.iri' | translate }}</li>
+      <li>{{ 'pages.project.resourceMetadata.text.listContent.createdBy' | translate }}</li>
+      <li>{{ 'pages.project.resourceMetadata.text.listContent.creationDate' | translate }}</li>
+      <li>{{ 'pages.project.resourceMetadata.text.listContent.modified' | translate }}</li>
+      <li>{{ 'pages.project.resourceMetadata.text.listContent.deleted' | translate }}</li>
+    </ul>
+    <button mat-raised-button color="primary" (click)="download()">
+      {{ 'pages.project.resourceMetadata.button' | translate }}
+    </button>
+  </div>
+</app-centered-layout>

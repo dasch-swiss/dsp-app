@@ -13,6 +13,7 @@ import {
   LegalSettingsComponent,
   ProjectComponent,
   SettingsPageComponent,
+  ResourceMetadataComponent,
 } from '@dasch-swiss/vre/pages/project/project';
 import { AdvancedSearchContainerComponent, ResultsComponent } from '@dasch-swiss/vre/pages/search/search';
 import {
@@ -102,6 +103,10 @@ const routes: Routes = [
           {
             path: RouteConstants.edit,
             component: EditProjectFormPageComponent,
+          },
+          {
+            path: RouteConstants.resourceMetadata,
+            component: ResourceMetadataComponent,
           },
           {
             path: RouteConstants.imageSettings,

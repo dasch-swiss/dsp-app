@@ -11,21 +11,23 @@ import { ImageSettingsComponent } from './lib/image-settings/image-settings.comp
 import { SettingsPageComponent } from './lib/image-settings/settings-page.component';
 import { LegalSettingsComponent } from './lib/legal-settings.component';
 import { ProjectComponent } from './lib/project/project.component';
+import { ResourceMetadataComponent } from './lib/resource-metadata/resource-metadata.component';
 import { ReusableProjectFormComponent } from './lib/reusable-project-form/reusable-project-form.component';
 
 export const ProjectComponents = [
-  CreateProjectFormPageComponent,
-  EditProjectFormPageComponent,
-  ReusableProjectFormComponent,
-  ProjectComponent,
-  CollaborationComponent,
   AddUserComponent,
-  SelectGroupComponent,
+  CollaborationComponent,
+  CreateCopyrightHolderDialogComponent,
+  CreateProjectFormPageComponent,
   DescriptionComponent,
-  SettingsPageComponent,
+  EditProjectFormPageComponent,
   ImageDisplayAbsoluteComponent,
   ImageDisplayRatioComponent,
   ImageSettingsComponent,
   LegalSettingsComponent,
-  CreateCopyrightHolderDialogComponent,
+  ProjectComponent,
+  ResourceMetadataComponent,
+  ReusableProjectFormComponent,
+  SelectGroupComponent,
+  SettingsPageComponent,
 ];

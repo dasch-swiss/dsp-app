@@ -87,6 +87,27 @@
         "updateConfirmation": "Hai aggiornato con successo le impostazioni dell'immagine del progetto.",
         "info": "Per limitare le dimensioni della tua immagine, inserisci una percentuale o una larghezza in pixel assoluta. Non puoi fornire valori per entrambe le opzioni.",
         "restrictions": "Le impostazioni dell'immagine possono essere applicate solo alle risorse che hanno impostato i permessi di visualizzazione limitati."
+      },
+      "resourceMetadata": {
+        "tab": "Resource Metadata",
+        "title": "Export Resource Metadata",
+        "text": {
+          "description": "Export descriptive metadata for every resource in this project as CSV.",
+          "note": "Note: This file includes only metadata - not the project’s data.",
+          "listTitle": "These metadata consist of:",
+          "listContent": {
+            "label": "Label",
+            "class": "Resource Class",
+            "ark": "ARK URL (Permalink)",
+            "timestampArk": "ARK with timestamp",
+            "iri": "Resource IRI",
+            "createdBy": "Created by",
+            "creationDate": "Creation Date",
+            "modified": "Last Modification Date (if available)",
+            "deleted": "Deletion Date (if available)"
+          }
+        },
+        "button": "Export as CSV"
       }
     },
     "system": {

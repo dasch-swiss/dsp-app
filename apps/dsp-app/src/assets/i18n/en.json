@@ -87,6 +87,27 @@
         "updateConfirmation": "You have successfully updated the project image settings.",
         "info": "To limit the size of your image, input either a percentage or an absolute pixel width. You cannot provide values for both options.",
         "restrictions": "Image settings can only be applied for the resources which have the restricted view permissions set."
+      },
+      "resourceMetadata": {
+        "tab": "Resource Metadata",
+        "title": "Export Resource Metadata",
+        "text": {
+          "description": "Export descriptive metadata for every resource in this project as CSV.",
+          "note": "Note: This file includes only metadata - not the project’s data.",
+          "listTitle": "These metadata consist of:",
+          "listContent": {
+            "label": "Label",
+            "class": "Resource Class",
+            "ark": "ARK URL (Permalink)",
+            "timestampArk": "ARK with timestamp",
+            "iri": "Resource IRI",
+            "createdBy": "Created by",
+            "creationDate": "Creation Date",
+            "modified": "Last Modification Date (if available)",
+            "deleted": "Deletion Date (if available)"
+          }
+        },
+        "button": "Export as CSV"
       }
     },
     "system": {
