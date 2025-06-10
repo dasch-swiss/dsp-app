@@ -28,6 +28,7 @@ export class ProjectOverviewComponent implements OnInit, AfterViewInit {
   );
 
   userHasProjects$ = this.usersActiveProjects$.pipe(map(projects => projects.length > 0));
+  isSysAdmin$ = this._store.select(UserSelectors.isSysAdmin);
 
   loading$ = this._store.select(ProjectsSelectors.isProjectsLoading);
 

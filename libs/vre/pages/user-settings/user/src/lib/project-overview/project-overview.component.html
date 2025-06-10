@@ -1,7 +1,4 @@
 <div class="content extra-large middle">
-  <div>
-    <h2>{{ 'pages.landingPage.title' | translate }}</h2>
-  </div>
   <div class="search-input-wrapper extra-large">
     <span class="search-icon">
       <mat-icon>filter_list</mat-icon>
@@ -12,7 +9,8 @@
       placeholder="{{'pages.landingPage.filterProjects' | translate}}"
       (input)="filterProjects(filterInput.value)" />
   </div>
-  <div *ngIf="(userHasProjects$ | async) === true">
+
+  <div *ngIf="((userHasProjects$ | async) === true && (isSysAdmin$ | async) === false); else allProjectsTpl">
     <div class="project-overview-subtitle">
       <h3>{{ 'pages.landingPage.usersProjects' | translate }}</h3>
     </div>
@@ -32,15 +30,17 @@
         [index]="index" />
     </div>
   </div>
-  <div *ngIf="(userHasProjects$ | async) === false && (activeProjects$| async)?.length">
-    <div class="project-grid">
-      <app-project-card
-        *ngFor="let project of activeProjects$ | async; let index = index; trackBy: trackByFn"
-        [project]="project"
-        [index]="index" />
-    </div>
-  </div>
+
   <div *ngIf="(loading$ | async)">
     <app-progress-indicator />
   </div>
 </div>
+
+<ng-template #allProjectsTpl>
+  <div class="project-grid">
+    <app-project-card
+      *ngFor="let project of activeProjects$ | async; let index = index; trackBy: trackByFn"
+      [project]="project"
+      [index]="index" />
+  </div>
+</ng-template>
