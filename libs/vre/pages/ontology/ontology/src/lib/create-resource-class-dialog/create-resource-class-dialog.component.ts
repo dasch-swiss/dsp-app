@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { CreateResourceClass, KnoraApiConnection, StringLiteral, UpdateOntology } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
@@ -34,7 +34,7 @@ export interface CreateResourceClassDialogProps {
     </div>
   `,
 })
-export class CreateResourceClassDialogComponent implements OnInit {
+export class CreateResourceClassDialogComponent {
   loading = false;
   form: ResourceClassForm;
 
@@ -45,10 +45,6 @@ export class CreateResourceClassDialogComponent implements OnInit {
     public data: CreateResourceClassDialogProps,
     public dialogRef: MatDialogRef<CreateResourceClassDialogComponent, boolean>
   ) {}
-
-  ngOnInit() {
-    this.dialogRef.updateSize('800px', '');
-  }
 
   onCancel() {
     this.dialogRef.close(false);

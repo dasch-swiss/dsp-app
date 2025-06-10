@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {
   ApiResponseError,
@@ -56,7 +56,7 @@ export interface EditPropertyFormDialogProps {
       </button>
     </div>`,
 })
-export class EditPropertyFormDialogComponent implements OnInit {
+export class EditPropertyFormDialogComponent {
   loading = false;
   form!: PropertyForm;
 
@@ -77,10 +77,6 @@ export class EditPropertyFormDialogComponent implements OnInit {
     private _store: Store,
     private _notification: NotificationService
   ) {}
-
-  ngOnInit() {
-    this.dialogRef.updateSize('800px', '');
-  }
 
   onSubmit() {
     // label

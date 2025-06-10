@@ -399,7 +399,7 @@ export class OntologyComponent extends ProjectBase implements OnInit, OnDestroy 
     this._dialog
       .open<CreateResourceClassDialogComponent, CreateResourceClassDialogProps, null>(
         CreateResourceClassDialogComponent,
-        DspDialogConfig.dialogDrawerConfig({
+        DspDialogConfig.mediumDialog({
           id: resClassInfo.iri,
           title: resClassInfo.label,
           ontologyId: currentOntology.id,
@@ -420,7 +420,7 @@ export class OntologyComponent extends ProjectBase implements OnInit, OnDestroy 
     this._dialog
       .open<EditResourceClassDialogComponent, EditResourceClassDialogProps, boolean>(
         EditResourceClassDialogComponent,
-        DspDialogConfig.dialogDrawerConfig({
+        DspDialogConfig.mediumDialog({
           id: resClassInfo.iri,
           title: resClassInfo.label,
           ontologyId: currentOntology.id,
@@ -443,7 +443,7 @@ export class OntologyComponent extends ProjectBase implements OnInit, OnDestroy 
     this._dialog
       .open<EditPropertyFormDialogComponent, EditPropertyFormDialogProps>(
         EditPropertyFormDialogComponent,
-        DspDialogConfig.dialogDrawerConfig({
+        DspDialogConfig.mediumDialog({
           ontology,
           lastModificationDate: ontology.lastModificationDate,
           propertyInfo: data,

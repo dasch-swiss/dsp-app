@@ -21,7 +21,7 @@ import {
   UpdateResource,
   UpdateValue,
 } from '@dasch-swiss/dsp-js';
-import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
+import { DspApiConnectionToken, DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import { ResourceFetcherService } from '@dasch-swiss/vre/resource-editor/representations';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { Subscription } from 'rxjs';
@@ -152,7 +152,9 @@ export class PropertyValueComponent implements OnInit {
 
   askToDelete() {
     this._dialog.open<DeleteValueDialogComponent, DeleteValueDialogProps>(DeleteValueDialogComponent, {
-      data: { index: this.index },
+      ...DspDialogConfig.mediumDialog({
+        index: this.index,
+      }),
       viewContainerRef: this._viewContainerRef,
     });
   }

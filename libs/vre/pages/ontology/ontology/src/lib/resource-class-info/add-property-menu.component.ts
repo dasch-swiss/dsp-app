@@ -8,7 +8,7 @@ import {
   UpdateOntology,
   UpdateResourceClassCardinality,
 } from '@dasch-swiss/dsp-js';
-import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
+import { DspApiConnectionToken, DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import { OntologiesSelectors, OntologyProperties, PropToAdd, PropToDisplay } from '@dasch-swiss/vre/core/state';
 import {
   DefaultProperties,
@@ -175,18 +175,18 @@ export class AddPropertyMenuComponent {
       0
     );
 
-    const ontology = this._store.selectSnapshot(OntologiesSelectors.currentOntology);
+    const ontology = this._store.selectSnapshot(OntologiesSelectors.currentOntology)!;
     this._dialog
       .open<CreatePropertyFormDialogComponent, CreatePropertyFormDialogProps, boolean>(
         CreatePropertyFormDialogComponent,
         {
-          data: {
+          ...DspDialogConfig.mediumDialog({
             ontologyId: ontology.id,
-            lastModificationDate: ontology.lastModificationDate,
+            lastModificationDate: ontology.lastModificationDate!,
             propertyInfo: { propType },
             resClassIri: this.resourceClass.id,
             maxGuiOrderProperty,
-          },
+          }),
         }
       )
       .afterClosed()

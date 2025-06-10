@@ -61,7 +61,6 @@ export class EditResourceClassDialogComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.dialogRef.updateSize('800px', ''); // Set your desired width
     this.lastModificationDate = this.data.lastModificationDate;
   }
 

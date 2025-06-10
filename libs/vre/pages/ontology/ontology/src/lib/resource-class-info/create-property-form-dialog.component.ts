@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {
   Constants,
@@ -45,7 +45,7 @@ export interface CreatePropertyFormDialogProps {
       </button>
     </div>`,
 })
-export class CreatePropertyFormDialogComponent implements OnInit {
+export class CreatePropertyFormDialogComponent {
   loading = false;
   form!: PropertyForm;
 
@@ -55,10 +55,6 @@ export class CreatePropertyFormDialogComponent implements OnInit {
     private dialogRef: MatDialogRef<CreatePropertyFormDialogComponent, boolean>,
     @Inject(MAT_DIALOG_DATA) public data: CreatePropertyFormDialogProps
   ) {}
-
-  ngOnInit() {
-    this.dialogRef.updateSize('800px', '');
-  }
 
   onFormInit(form: PropertyForm) {
     form.controls.propType.disable();
