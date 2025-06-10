@@ -32,6 +32,10 @@ import { finalize } from 'rxjs/operators';
         <mat-option *ngFor="let option of availableAuthorship" [value]="option">
           {{ option }}
         </mat-option>
+
+        <mat-option>AI-Generated Content – Not Protected by Copyright</mat-option>
+
+        <mat-option>Public Domain – Not Protected by Copyright</mat-option>
       </mat-autocomplete>
       <mat-hint>Press Enter or Tab to add an item.</mat-hint>
 

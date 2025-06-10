@@ -71,6 +71,7 @@ export class ResourceFormLegalComponent implements OnInit {
       .getAdminProjectsShortcodeProjectshortcodeLegalInfoLicenses(this.projectShortcode)
       .pipe(
         map(data => data.data),
+        map(data => data.filter(license => license.isEnabled)),
         finalize(() => {
           this.licensesLoading = false;
         })

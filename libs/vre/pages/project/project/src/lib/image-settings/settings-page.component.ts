@@ -6,28 +6,30 @@ import { MenuItem } from '@dasch-swiss/vre/pages/user-settings/user';
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-settings-page',
   template: `
-    <nav
-      mat-tab-nav-bar
-      mat-align-tabs="center"
-      class="settings navigation"
-      style="background: none"
-      animationDuration="0ms"
-      [tabPanel]="tabPanel">
-      <a
-        mat-tab-link
-        *ngFor="let link of navigation; trackBy: trackByFn; let first = first"
-        id="{{ link.route }}"
-        [routerLink]="link.route"
-        routerLinkActive="active-tab"
-        #rla="routerLinkActive"
-        [active]="rla.isActive">
-        <mat-icon class="tab-icon">{{ link.icon }}</mat-icon>
-        {{ link.label }}
-      </a>
-    </nav>
-    <mat-tab-nav-panel #tabPanel>
-      <router-outlet></router-outlet>
-    </mat-tab-nav-panel>
+    <app-centered-layout>
+      <nav
+        mat-tab-nav-bar
+        mat-align-tabs="center"
+        class="settings navigation"
+        style="background: none"
+        animationDuration="0ms"
+        [tabPanel]="tabPanel">
+        <a
+          mat-tab-link
+          *ngFor="let link of navigation; trackBy: trackByFn; let first = first"
+          id="{{ link.route }}"
+          [routerLink]="link.route"
+          routerLinkActive="active-tab"
+          #rla="routerLinkActive"
+          [active]="rla.isActive">
+          <mat-icon class="tab-icon">{{ link.icon }}</mat-icon>
+          {{ link.label }}
+        </a>
+      </nav>
+      <mat-tab-nav-panel #tabPanel>
+        <router-outlet></router-outlet>
+      </mat-tab-nav-panel>
+    </app-centered-layout>
   `,
 })
 export class SettingsPageComponent {

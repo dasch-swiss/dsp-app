@@ -17,43 +17,49 @@ import {
   template: `
     <app-centered-layout>
       <div style="display: flex;justify-content: center; margin: 32px;">
-        <div style="border: 1px solid; padding: 16px">Attention: any action you do here is permanent.</div>
+        <div style="border: 1px solid; padding: 16px">{{ 'pages.project.legalSettings.warning' | translate }}</div>
       </div>
-      <div style="display: flex; justify-content: space-between; gap: 16px">
-        <section>
-          <h2>
-            Copyright holders
-            <button color="primary" mat-raised-button (click)="addCopyrightHolder()">Add</button>
-          </h2>
+      <section class="section">
+        <h2>
+          {{ 'pages.project.legalSettings.copyrightHolders' | translate }}
+          <button color="primary" mat-raised-button (click)="addCopyrightHolder()">Add</button>
+        </h2>
+        <app-alternated-list>
+          <div *ngFor="let item of copyrightHolders$ | async">{{ item }}</div>
+        </app-alternated-list>
+      </section>
+
+      <section class="section">
+        <h2>{{ 'pages.project.legalSettings.licenses' | translate }}</h2>
+        <app-legal-settings-licenses />
+      </section>
+      <section class="section">
+        <h2 style="display: flex; align-items: center; gap: 8px">
+          {{ 'pages.project.legalSettings.authorship' | translate }}
+          <mat-icon color="primary" [matTooltip]="'pages.project.legalSettings.authorshipTooltip' | translate">
+            info
+          </mat-icon>
+        </h2>
+
+        <ng-container *ngIf="authorships$ | async as authorship">
           <app-alternated-list>
-            <div *ngFor="let item of copyrightHolders$ | async">{{ item }}</div>
+            <div *ngFor="let item of authorship">{{ item }}</div>
           </app-alternated-list>
-        </section>
-        <section>
-          <h2>Licenses</h2>
-          <app-alternated-list>
-            <div *ngFor="let item of licenses$ | async" style="display: flex; align-items: center; gap: 8px">
-              {{ item.labelEn }}
-              <a [href]="item.uri" target="_blank">
-                <mat-icon>launch</mat-icon>
-              </a>
-            </div>
-          </app-alternated-list>
-        </section>
-      </div>
-      <h2 style="display: flex; align-items: center; gap: 8px">
-        Authorships - Overview
-        <mat-icon
-          color="primary"
-          matTooltip="The authorship overview is read-only. To add a new authorship, please update them directly in the resource.">
-          info
-        </mat-icon>
-      </h2>
-      <app-alternated-list>
-        <div *ngFor="let item of authorships$ | async">{{ item }}</div>
-      </app-alternated-list>
+
+          <div *ngIf="authorship.length === 0">
+            {{ 'pages.project.legalSettings.noAuthorship' | translate }}
+          </div>
+        </ng-container>
+      </section>
     </app-centered-layout>
   `,
+  styles: [
+    `
+      .section {
+        margin-bottom: 48px;
+      }
+    `,
+  ],
 })
 export class LegalSettingsComponent {
   private readonly _reloadSubject = new BehaviorSubject<void>(undefined);
@@ -67,13 +73,6 @@ export class LegalSettingsComponent {
   copyrightHolders$ = this.project$.pipe(
     switchMap(project =>
       this._copyrightApi.getAdminProjectsShortcodeProjectshortcodeLegalInfoCopyrightHolders(project.shortcode)
-    ),
-    map(data => data.data)
-  );
-
-  licenses$ = this.project$.pipe(
-    switchMap(project =>
-      this._copyrightApi.getAdminProjectsShortcodeProjectshortcodeLegalInfoLicenses(project.shortcode)
     ),
     map(data => data.data)
   );
