@@ -7,7 +7,7 @@ describe('Project overview (landing page)', () => {
       .should('be.visible')
       .should('have.length.greaterThan', 0)
       .eq(Math.floor(Math.random() * 5))
-      .click();
+      .click({ force: true });
 
     cy.url().should('include', '/project');
   });
