@@ -17,7 +17,8 @@ import { map, switchMap } from 'rxjs/operators';
         ><span [ngStyle]="{ 'font-weight': last && index > 0 ? 'bold' : 'normal' }">{{ label }}</span>
         <mat-icon *ngIf="!last">chevron_right</mat-icon>
       </ng-container>
-      <a *ngIf="linkToSearchList" [href]="linkToSearchList" target="_blank">
+      <a *ngIf="false && linkToSearchList" [href]="linkToSearchList" target="_blank">
+        <!-- TODO : enable this feature when the State Management is removed -->
         <mat-icon style="font-size: 16px; height: 14px; margin-left: 4px">open_in_new</mat-icon>
       </a>
     </div>
