@@ -61,81 +61,128 @@ Simply make your changes and click "Save."
 
 ---
 
-### Legal Settings (Coming Soon) 🚧
-
-> ⚠️ **Legal information, including copyright holders, licenses, and authorship, is currently under development.**  
-> This section will be updated once the details are finalized.  
-> For immediate inquiries, please contact **<info@dasch.swiss>**.
-
-
 ### Legal Settings for Media Assets
 
-Each media asset will require the following legal information:
+To ensure consistent and accurate legal attribution, **all media assets** - including images, audio, video, PDFs, documents, and other digital files - must include specific legal metadata. The following **three fields are mandatory** for each asset:
 
+1. **Copyright Holder** – Identifies the individual or entity that holds the copyright.
+2. **License** – Specifies the license under which the asset is made available.
+3. **Authorship** – Lists the creator(s) of the asset.
 
-- **One copyright holder**
-- **One license**
-- **One or more authorship entries**
+These requirements apply to all types of media and support compliance with legal standards and conditions for reuse.
 
-
-These fields will help ensure that legal attribution is clear and consistent for every asset.
-
-The legal settings will apply to **media files, documents, and other digital assets**, such as **images, audio, video, PDFs, and text-based files** etc. These settings will consist of three key sections, **all of which will be mandatory**:
-
-1. **Copyright Holders** – Defines who holds the copyright for a given media asset.
-2. **Licenses** – Specifies the available licensing options.
-3. **Authorship** – Identifies the creator of the media asset.
-
-Users will be required to provide values for all three fields when creating or managing media assets.
-
-
-#### Copyright Holders
-
-In addition to the project name as a copyright holder, the following predefined copyright holders are available.  
-
-- **AI-Generated Content** – Not Protected by Copyright  
-- **Public Domain** – Not Protected by Copyright  
-
-Project administrators will have the ability to add more copyright holders as needed.
-
-#### Licenses
-
-The following licenses will be available, with additional options to be added in the future.
-
-##### **Available Licenses**
-
-- **Creative Commons Licenses**  
-    - **Attribution 4.0 International (CC BY 4.0)**  
-    [🔗 License URI](https://creativecommons.org/licenses/by/4.0/)  
-    - **Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)**  
-    [🔗 License URI](https://creativecommons.org/licenses/by-sa/4.0/)  
-    - **Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)**  
-    [🔗 License URI](https://creativecommons.org/licenses/by-nc/4.0/)  
-    - **Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)**  
-    [🔗 License URI](https://creativecommons.org/licenses/by-nc-sa/4.0/)  
-    - **Attribution-NoDerivatives 4.0 International (CC BY-ND 4.0)**  
-    [🔗 License URI](https://creativecommons.org/licenses/by-nd/4.0/)  
-    - **Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)**  
-    [🔗 License URI](https://creativecommons.org/licenses/by-nc-nd/4.0/)  
-
-- **Other License Options**  
-    - **AI-Generated Content** – Not Protected by Copyright  
-    - **Unknown License** – Contact Copyright Holder for Permission  
-    - **Public Domain** – Not Protected by Copyright  
-
-
-#### Authorship
-
-The following predefined authorship options will be available:
-
-- **Author Unknown**  
-- **AI-Generated Content**  
-
-For any additional authorship, users will be able to specify them directly when creating a resource with a media asset.
-
-This section will be regularly updated as new legal policies are implemented. 🚧
 
 ---
+
+#### 1. Copyright Holders
+
+Each media asset must include exactly **one copyright holder**. Users can choose from predefined options or add custom entries where necessary. The following default copyright holders are available:
+
+- **AI-Generated Content – Not Protected by Copyright**: Default option, always visible for AI-created, non-copyrightable content.
+
+- **Public Domain – Not Protected by Copyright**: Default option, always visible for assets that are in the public domain.
+
+- **Legal Name of Project**: Custom option added by system admins for a specific project.
+
+Additional copyright holders can be defined by project admins.
+
+---
+
+#### 2. Licenses
+
+Each media asset must be associated with exactly **one license**. A range of standard licenses is available, with more to be added in future releases.
+
+#### License Enable/Disable and Recommendation
+
+- Project admins can **enable** or **disable** license options, so that only the licenses relevant to the project are available for resource creation.
+
+- Licenses are marked as **recommended** (highlighted for users, preferred by DaSCH) or **not recommended**.
+
+- Disabled licenses are not displayed during resource creation.
+
+##### Available License Options
+
+###### Recommended Licenses (Creative Commons and Special Licenses)
+
+- [CC BY 4.0 – Attribution 4.0 International](https://creativecommons.org/licenses/by/4.0/)
+- [CC BY-SA 4.0 – Attribution-ShareAlike 4.0 International](https://creativecommons.org/licenses/by-sa/4.0/)
+- [CC BY-NC 4.0 – Attribution-NonCommercial 4.0 International](https://creativecommons.org/licenses/by-nc/4.0/)
+- [CC BY-NC-SA 4.0 – Attribution-NonCommercial-ShareAlike 4.0 International](https://creativecommons.org/licenses/by-nc-sa/4.0/)
+- [CC BY-ND 4.0 – Attribution-NoDerivatives 4.0 International](https://creativecommons.org/licenses/by-nd/4.0/)
+- [CC BY-NC-ND 4.0 – Attribution-NonCommercial-NoDerivatives 4.0 International](https://creativecommons.org/licenses/by-nc-nd/4.0/)
+- [AI-Generated Content – Not Protected by Copyright](https://www.dasch.swiss/licenses/ai-generated)
+- [Unknown License – Contact Copyright Holder for Permission](https://www.dasch.swiss/licenses/unknown)
+- [Public Domain – Not Protected by Copyright](https://www.dasch.swiss/licenses/public-domain)
+
+###### Not Recommended Licenses
+
+- [BORIS Standard License](https://www.ub.unibe.ch/services/open_science/boris_publications/index_eng.html#collapse_pane631832)
+- [CC PDM 1.0](https://creativecommons.org/publicdomain/mark/1.0/)
+- [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/)
+- [LICENCE OUVERTE 2.0](https://www.etalab.gouv.fr/wp-content/uploads/2018/11/open-licence.pdf)
+
+
+---
+
+#### 3. Authorship
+
+Each asset must include **at least one authorship entry**. Project members or project admins may select from predefined options or specify authors manually when creating or editing assets.
+
+##### Predefined Authorship Options
+
+- Author Unknown
+- AI-Generated Content
+
+Custom authorship entries can be entered directly during resource creation.
+
+##### Accessing Legal Settings
+
+1. Navigate to your project.
+2. Open the **Project Settings** menu (usually accessible via the gear or settings icon).
+3. Click on the **Legal Settings** tab.
+
+![Legal Settings](../assets/images/legal-settings-view.png) Only project admins can access this view within the Legal Settings section.
+
+#### Managing Copyright Holders
+
+Under the **Copyright Holders** section:
+
+- View existing entries, including system defaults like *AI-Generated Content* and *Public Domain*.
+- Click **Add New** to define a custom copyright holder.
+- Save changes to make the new entry available for selection when creating or editing media assets.
+
+#### Viewing Available Licenses
+
+The **Licenses** section lists all predefined license types available for media assets.
+
+Each license includes:
+
+- A human-readable name.
+
+- A link to the full legal text (where applicable).
+
+These licenses are not editable but are periodically updated by the system administrators to reflect best practices.
+
+#### Reviewing Authorship Entries
+
+Under the **Authorship** section:
+
+- View predefined entries such as *Author Unknown* and *AI-Generated Content*.
+- While authorship entries are typically added during resource creation, this section provides an overview of those that have already been added through that process.
+
+> ✅ Changes made in the Legal Settings apply immediately and will be available to all project contributors during resource creation and editing.
+
+---
+
+### Notes
+
+- All three legal fields (copyright holder, license and authorship) are **required**.
+
+- These settings support compliance with legal, ethical and reusability standards.
+
+- The list of available options may be extended over time to reflect changes in policy or usage needs.
+
+**This section will be updated as legal guidelines evolve.** 🛠️
 
 ### Project Members
 
