@@ -40,6 +40,34 @@ On the Project Settings page, you can monitor and customize important aspects of
 In this section, you can personalize key details of your project. You can change the project's name, update the description in multiple languages (de, fr, it, en, rm), and add or modify keywords. Just make the necessary changes and click "Save".
 ![Collaboration page](../assets/images/project-description.png)*<https://app.dasch.swiss/project/3ABR_2i8QYGSIDvmP9mlEw/settings/edit> - Project Description page where project admin and system admin can change the project description of the project.*
 
+### Resource Metadata
+
+In this section you can download metadata on all resources of your project. This enables you to gain quick access to high-level information on your data, such as the ARK URLs (permalinks) of all resources for citation or sharing with other researchers.
+
+![Resource Metadata View](../assets/images/resource-metadata-view.png) *Resource Metadata view where project admin and system admin can export resource metadata.*
+
+The exported metadata comes in form of a CSV file, which you can view and modify in applications such as Excel, and which can be easily loaded and manipulated programmatically e.g. in Python or R scripts.
+
+The metadata consists of the following columns:
+
+- **Label:** This is the descriptive string that needs to be provided when creating a resource. It should help you identify each resource.
+
+- **Resource Class:** The IRI of the class of the present resource, as defined in your data model. You can see the class name at the end of the IRI, after the # sign. E.g. #Author in [http://api.dasch.swiss/ontology/0810/dasch/v2#Author](http://api.dasch.swiss/ontology/0810/dasch/v2#Author).
+
+- **ARK URL (Permalink):** The permalink to this resource. Please use this link, if you plan to reference, cite or to share a link to this resource with others. This ARK does not have a timestamp attached, and will therefore always point to the most recent version of the resource.
+
+- **ARK with timestamp:** The permalink to the resource with the current timestamp attached. Due to the timestamp, it will always reference to the resource as it was at the time of retrieving this link, even if the resource changes subsequently. Use this link if you want to ensure that people will see the resource in the exact state as it is currently.
+
+- **Resource IRI:** The internal identifier of this resource. It can be used for linking to the resource.
+
+- **Created by:** The identifier of the user who created the resource.
+
+- **Creation Date:* The date, at which the resource was created.
+
+- **Last Modification Date (if available):** The date, when the resource was last modified. If the resource never was modified, this field will be empty.
+
+- **Deletion Date (if available):** The date, when the resource was deleted. If the resource has not been marked as deleted, this field will be empty.
+
 ### Image Settings
 
 There are three statuses for image settings: Off, Apply Watermark, and Restrict Image Size. For projects without the permission set to restricted view on resources, the status is Off by default.
