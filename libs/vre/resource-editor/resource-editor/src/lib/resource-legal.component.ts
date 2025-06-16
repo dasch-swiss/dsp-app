@@ -4,7 +4,7 @@ import { AdminProjectsLegalInfoApiService, ProjectLicenseDto } from '@dasch-swis
 import { ResourceFetcherService } from '@dasch-swiss/vre/resource-editor/representations';
 import { Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
-import { LicensesLogoMapping } from './licenses-logo-mapping';
+import { LicenseLogoMappingValue, LicensesLogoMapping } from './licenses-logo-mapping';
 
 @Component({
   selector: 'app-resource-legal',
@@ -32,7 +32,9 @@ import { LicensesLogoMapping } from './licenses-logo-mapping';
         </div>
         <div>
           <div style="display: flex; justify-content: flex-end">
-            <img *ngIf="licenseLogo; else licenseWithLinkTpl" [src]="licenseLogo" alt="license" style="width: 110px" />
+            <a *ngIf="licenseLogo; else licenseWithLinkTpl" [href]="licenseLogo.link" target="_blank"
+              ><img [src]="licenseLogo.imageLink" alt="license" style="width: 110px"
+            /></a>
           </div>
 
           <div>Licensed on {{ fileValue.valueCreationDate | humanReadableDate }}</div>
@@ -41,9 +43,14 @@ import { LicensesLogoMapping } from './licenses-logo-mapping';
     </div>
 
     <ng-template #licenseWithLinkTpl>
-      <span style="display: flex; align-items: center" *ngIf="license$ && license$ | async as license">
+      <a
+        style="display: flex; align-items: center; color: white"
+        *ngIf="license$ && license$ | async as license"
+        [href]="license.id"
+        target="_blank">
         <span style="color: white">{{ license.labelEn }} </span>
-      </span></ng-template
+        <mat-icon style="font-size: 18px">open_in_new</mat-icon>
+      </a></ng-template
     >
   `,
   styles: ['.label { display: inline-block; width: 120px; font-weight: bold}'],
@@ -51,7 +58,7 @@ import { LicensesLogoMapping } from './licenses-logo-mapping';
 export class ResourceLegalComponent implements OnChanges {
   @Input({ required: true }) fileValue!: ReadFileValue;
 
-  licenseLogo?: string;
+  licenseLogo?: LicenseLogoMappingValue;
   license$?: Observable<ProjectLicenseDto | undefined>;
 
   constructor(
@@ -60,6 +67,8 @@ export class ResourceLegalComponent implements OnChanges {
   ) {}
 
   ngOnChanges() {
+    this.licenseLogo = undefined;
+
     if (this.fileValue.license) {
       if (LicensesLogoMapping.has(this.fileValue.license.id)) {
         this.licenseLogo = LicensesLogoMapping.get(this.fileValue.license.id);
