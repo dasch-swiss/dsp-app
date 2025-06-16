@@ -1,8 +1,8 @@
 import { Component, Input, OnChanges } from '@angular/core';
-import { ReadFileValue, ReadResource } from '@dasch-swiss/dsp-js';
+import { ReadFileValue } from '@dasch-swiss/dsp-js';
 import { AdminProjectsLegalInfoApiService, ProjectLicenseDto } from '@dasch-swiss/vre/3rd-party-services/open-api';
-import { getFileValue, ResourceFetcherService } from '@dasch-swiss/vre/resource-editor/representations';
-import { Observable, Subscription } from 'rxjs';
+import { ResourceFetcherService } from '@dasch-swiss/vre/resource-editor/representations';
+import { Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { LicensesLogoMapping } from './licenses-logo-mapping';
 
@@ -39,6 +39,7 @@ import { LicensesLogoMapping } from './licenses-logo-mapping';
         </div>
       </div>
     </div>
+
     <ng-template #licenseWithLinkTpl>
       <span style="display: flex; align-items: center" *ngIf="license$ && license$ | async as license">
         <span style="color: white">{{ license.labelEn }} </span>
@@ -48,13 +49,9 @@ import { LicensesLogoMapping } from './licenses-logo-mapping';
   styles: ['.label { display: inline-block; width: 120px; font-weight: bold}'],
 })
 export class ResourceLegalComponent implements OnChanges {
-  @Input({ required: true }) resource!: ReadResource;
-
-  fileValue!: ReadFileValue;
+  @Input({ required: true }) fileValue!: ReadFileValue;
 
   licenseLogo?: string;
-
-  subscription?: Subscription;
   license$?: Observable<ProjectLicenseDto | undefined>;
 
   constructor(
@@ -63,7 +60,6 @@ export class ResourceLegalComponent implements OnChanges {
   ) {}
 
   ngOnChanges() {
-    this.fileValue = getFileValue(this.resource);
     if (this.fileValue.license) {
       if (LicensesLogoMapping.has(this.fileValue.license.id)) {
         this.licenseLogo = LicensesLogoMapping.get(this.fileValue.license.id);
