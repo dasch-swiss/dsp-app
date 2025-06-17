@@ -8,6 +8,7 @@ import { PermissionInfoComponent } from './lib/permission-info/permission-info.c
 import { ResourceFetcherComponent } from './lib/resource-fetcher.component';
 import { ResourceHeaderComponent } from './lib/resource-header.component';
 import { ResourceInfoBarComponent } from './lib/resource-info-bar.component';
+import { ResourceLegalLicenseComponent } from './lib/resource-legal-license.component';
 import { ResourceLegalComponent } from './lib/resource-legal.component';
 import { ResourcePageComponent } from './lib/resource-page.component';
 import { ResourceRepresentationComponent } from './lib/resource-representation.component';
@@ -43,4 +44,5 @@ export const ResourcePageComponents = [
   ResourceVersionWarningComponent,
   ResourceInfoBarComponent,
   AlertInfoComponent,
+  ResourceLegalLicenseComponent,
 ];
