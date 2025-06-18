@@ -1,6 +1,6 @@
 name: CI
 
-on: [push, fork]
+on: [ push, fork ]
 
 env:
   # use the read-write access token so that build cache in nx-cloud can be updated
@@ -9,7 +9,7 @@ env:
 jobs:
 
   test:
-    name: test
+    name: DSP-APP Unit tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -18,28 +18,11 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 20.9.0
-      - name: "Run npm install"
+      - name: "Run unit tests"
         run: |
           npm install
           npx nx run-many --all --target=lint --skip-nx-cache
-        # npx nx run-many --all --target=test --configuration=ci
-        env:
-          TZ: Europe/Zurich
-
-  dsp-app-tests:
-    name: DSP-APP
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0 # gets additionally all tags which we need
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 20.9.0
-      - uses: browser-actions/setup-chrome@v1
-      - run: npm install
-      - run: npx nx run dsp-app:lint
-        # - run: npx nx run dsp-app:test:ci
+          npx nx run-many --all --target=test --configuration=ci --skip-nx-cache
         env:
           TZ: Europe/Zurich
 

@@ -169,7 +169,7 @@ export class DateValueHandlerComponent
     this.stateChanges.next();
   }
 
-  private _placeholder: string;
+  private _placeholder!: string;
 
   @Input()
   get required() {
@@ -193,7 +193,7 @@ export class DateValueHandlerComponent
 
   constructor(
     fb: UntypedFormBuilder,
-    @Optional() @Self() public ngControl: NgControl,
+    @Optional() @Self() public override ngControl: NgControl,
     private _stateChanges: Subject<void>,
     private _fm: FocusMonitor,
     private _elRef: ElementRef<HTMLElement>,

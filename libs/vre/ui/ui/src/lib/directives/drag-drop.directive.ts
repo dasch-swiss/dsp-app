@@ -24,7 +24,7 @@ export class DragDropDirective {
     event.preventDefault();
     event.stopPropagation();
     this.background = '#f2f2f2';
-    const files = event.dataTransfer.files;
+    const files = event.dataTransfer!.files;
     if (files.length > 0) {
       this.fileDropped.emit(files);
     }

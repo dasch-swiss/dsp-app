@@ -66,13 +66,13 @@ export class ValueService {
 
     if (date.precision === Precision.dayPrecision) {
       calPeriod = new CalendarPeriod(
-        new CalendarDate(yearAstro, date.month, date.day),
-        new CalendarDate(yearAstro, date.month, date.day)
+        new CalendarDate(yearAstro, date.month!, date.day!),
+        new CalendarDate(yearAstro, date.month!, date.day!)
       );
     } else if (date.precision === Precision.monthPrecision) {
       calPeriod = new CalendarPeriod(
-        new CalendarDate(yearAstro, date.month, 1),
-        new CalendarDate(yearAstro, date.month, this.calculateDaysInMonth(date.calendar, date.year, date.month))
+        new CalendarDate(yearAstro, date.month!, 1),
+        new CalendarDate(yearAstro, date.month!, this.calculateDaysInMonth(date.calendar, date.year, date.month!))
       );
     } else if (date.precision === Precision.yearPrecision) {
       calPeriod = new CalendarPeriod(

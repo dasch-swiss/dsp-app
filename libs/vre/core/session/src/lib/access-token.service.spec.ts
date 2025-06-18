@@ -5,7 +5,9 @@ describe('AccessTokenService', () => {
   let service: AccessTokenService;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    TestBed.configureTestingModule({
+      providers: [AccessTokenService],
+    });
     service = TestBed.inject(AccessTokenService);
     localStorage.clear();
   });
@@ -15,8 +17,8 @@ describe('AccessTokenService', () => {
       const mockToken = 'valid-token';
       const mockDecodedToken = { sub: 'http://rdf.dasch.swiss/users/testuser' };
 
-      spyOn(service, 'getAccessToken').and.returnValue(mockToken);
-      spyOn(service, 'decodedAccessToken').and.returnValue(mockDecodedToken);
+      jest.spyOn(service, 'getAccessToken').mockReturnValue(mockToken);
+      jest.spyOn(service, 'decodedAccessToken').mockReturnValue(mockDecodedToken);
 
       const result = service.getTokenUser();
 
@@ -24,7 +26,7 @@ describe('AccessTokenService', () => {
     });
 
     it('should return null when no token exists', () => {
-      spyOn(service, 'getAccessToken').and.returnValue(null);
+      jest.spyOn(service, 'getAccessToken').mockReturnValue(null);
 
       const result = service.getTokenUser();
 
@@ -32,8 +34,8 @@ describe('AccessTokenService', () => {
     });
 
     it('should return null when token is invalid', () => {
-      spyOn(service, 'getAccessToken').and.returnValue('invalid-token');
-      spyOn(service, 'decodedAccessToken').and.returnValue(null);
+      jest.spyOn(service, 'getAccessToken').mockReturnValue('invalid-token');
+      jest.spyOn(service, 'decodedAccessToken').mockReturnValue(null);
 
       const result = service.getTokenUser();
 
@@ -44,8 +46,8 @@ describe('AccessTokenService', () => {
       const mockToken = 'valid-token';
       const mockDecodedToken = { iat: 1616239022 };
 
-      spyOn(service, 'getAccessToken').and.returnValue(mockToken);
-      spyOn(service, 'decodedAccessToken').and.returnValue(mockDecodedToken);
+      jest.spyOn(service, 'getAccessToken').mockReturnValue(mockToken);
+      jest.spyOn(service, 'decodedAccessToken').mockReturnValue(mockDecodedToken);
 
       const result = service.getTokenUser();
 
@@ -56,8 +58,8 @@ describe('AccessTokenService', () => {
       const mockToken = 'valid-token';
       const mockDecodedToken = { sub: '' };
 
-      spyOn(service, 'getAccessToken').and.returnValue(mockToken);
-      spyOn(service, 'decodedAccessToken').and.returnValue(mockDecodedToken);
+      jest.spyOn(service, 'getAccessToken').mockReturnValue(mockToken);
+      jest.spyOn(service, 'decodedAccessToken').mockReturnValue(mockDecodedToken);
 
       const result = service.getTokenUser();
 

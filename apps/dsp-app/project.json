@@ -201,37 +201,6 @@
         "{options.outputFile}"
       ]
     },
-    "test": {
-      "executor": "@angular-devkit/build-angular:karma",
-      "options": {
-        "main": "apps/dsp-app/src/test.ts",
-        "polyfills": "apps/dsp-app/src/polyfills.ts",
-        "tsConfig": "apps/dsp-app/tsconfig.spec.json",
-        "inlineStyleLanguage": "scss",
-        "karmaConfig": "apps/dsp-app/karma.conf.js",
-        "styles": [
-          "apps/dsp-app/src/styles.scss"
-        ],
-        "scripts": [
-          "node_modules/openseadragon/build/openseadragon/openseadragon.min.js"
-        ],
-        "assets": [
-          "apps/dsp-app/src/favicon.ico",
-          "apps/dsp-app/src/config",
-          {
-            "glob": "**/*",
-            "input": "apps/dsp-app/src/assets/",
-            "output": "/assets/"
-          }
-        ]
-      },
-      "configurations": {
-        "ci": {
-          "watch": false,
-          "browsers": "ChromeHeadless"
-        }
-      }
-    },
     "e2e": {
       "executor": "@nx/cypress:cypress",
       "options": {

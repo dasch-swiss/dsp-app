@@ -7,8 +7,8 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
 export class LoadingButtonDirective implements OnChanges {
   @Input() isLoading = false;
 
-  private spinnerElement: HTMLElement;
-  spinnerComponentRef;
+  private spinnerElement!: HTMLElement;
+  spinnerComponentRef!: any;
 
   constructor(
     private el: ElementRef,

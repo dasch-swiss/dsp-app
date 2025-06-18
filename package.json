@@ -22,7 +22,6 @@
     "e2e-cloud": "nx run dsp-app:e2e:cypress-cloud",
     "build": "nx run dsp-app:build",
     "build-prod": "nx run dsp-app:build:production",
-    "test-ci": "nx run dsp-app:test:ci",
     "test-ci-all": "nx run-many --all --target=test --configuration=ci",
     "test-local": "nx run dsp-app:test",
     "lint-ci": "nx run dsp-app:lint",

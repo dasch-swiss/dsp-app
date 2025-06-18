@@ -5,6 +5,7 @@
 [![CI](https://github.com/dasch-swiss/dsp-das/workflows/CI/badge.svg)](https://github.com/dasch-swiss/dsp-das/actions?query=workflow%3ACI)
 
 This monorepo hosts various libraries of the DaSCH Service Platform and it is built on:
+
 - Nx `v19.0.8`
 - Angular `v17.3.0`
 - Node.js `v20.9.0`
@@ -33,7 +34,6 @@ linkage of resources in arts and humanities.
 DSP-APP implements [DSP-JS](https://www.npmjs.com/package/@dasch-swiss/dsp-js)
 to connect with [DSP-API](https://docs.dasch.swiss/latest/DSP-API/03-endpoints/api-v2/introduction/).
 
-
 DSP-APP is [free software](http://www.gnu.org/philosophy/free-sw.en.html), released
 under [GNU Affero General Public](http://www.gnu.org/licenses/agpl-3.0.en.html) license.
 
@@ -42,11 +42,14 @@ under [GNU Affero General Public](http://www.gnu.org/licenses/agpl-3.0.en.html) 
 To try DSP-APP out the [DSP-API](https://github.com/dasch-swiss/dsp-api) backend should be started first:
 
 In terminal fo to DSP-API repository and start the API by running following commands:
+
 ```shell
 $ make init-db-test
 $ make stack-without-app
 ```
+
 Once backend is up and running, in the second terminal instance start DSP-APP by running:
+
 ```shell
 # come back to this repository and start the DSP-APP
 $ npx nx run dsp-app:serve
@@ -63,9 +66,8 @@ The most common commands are defined in `package.json`.
 > **_NOTE:_** You can install `nx` globally with `npm install -g nx`. If not, then all `nx` commands below need to be prefixed with `npx`.
 
 | nx                                                   | npm                       |
-| ---------------------------------------------------- | ------------------------- |
+|------------------------------------------------------|---------------------------|
 | `nx run dsp-app:test`                                | `npm run test-local`      |
-| `nx run dsp-app:test:ci`                             | `npm run test-ci`         |
 | `nx run-many --all --target=test --configuration=ci` | `npm run test-ci-all`     |
 | `nx run dsp-app:serve`                               | `npm run start-local`     |
 | `nx run dsp-app:serve:test-server`                   | `npm run start-test`      |
@@ -81,7 +83,7 @@ The most common commands are defined in `package.json`.
 | `nx run dsp-app:build:production`                    | `build-prod`              |
 
 | npx                                       | npm                 |
-| ----------------------------------------- | ------------------- |
+|-------------------------------------------|---------------------|
 | `cd apps/dsp-app-e2e && npx cypress open` | `npm run e2e-local` |
 
 ### IDE plugins
