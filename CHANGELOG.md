@@ -1,5 +1,23 @@
 # Changelog
 
+## [11.34.0](https://github.com/dasch-swiss/dsp-das/compare/v11.33.0...v11.34.0) (2025-06-23)
+
+
+### Enhancements
+
+* add EPUB, HTM abd HTML filetypes support (DEV-5081) ([#2355](https://github.com/dasch-swiss/dsp-das/issues/2355)) ([d38d320](https://github.com/dasch-swiss/dsp-das/commit/d38d320f18608252c1d320910e3e054e080b45c6))
+
+
+### Bug Fixes
+
+* does not display default authorhships if they are already used  ([#2350](https://github.com/dasch-swiss/dsp-das/issues/2350)) ([a1fd798](https://github.com/dasch-swiss/dsp-das/commit/a1fd798b2de183ca1957bcc85443337a38c83ea7))
+* link to licenses is correct ([#2349](https://github.com/dasch-swiss/dsp-das/issues/2349)) ([8478a09](https://github.com/dasch-swiss/dsp-das/commit/8478a09b16449ed9dd8cd79278e57e2bc03bfa58))
+
+
+### Maintenances
+
+* unit tests are working again in the CI ([#2352](https://github.com/dasch-swiss/dsp-das/issues/2352)) ([235e6f2](https://github.com/dasch-swiss/dsp-das/commit/235e6f21afe4e7ccef02713dd5df712bd83e2d22))
+
 ## [11.33.0](https://github.com/dasch-swiss/dsp-das/compare/v11.32.0...v11.33.0) (2025-06-16)
 
 
