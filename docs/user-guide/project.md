@@ -291,8 +291,8 @@ Which type you choose depends on the data type which you need to describe. You c
 - Still Image (jp2, jpg, jpeg, png, tif, tiff)
 - Moving Image (mp4)
 - Audio (mp3, wav)
-- Text (csv, json, odd, rng, txt, xml, xsd, xsl)
-- Document (doc, docx, pdf, ppt, pptx, xls, xlsx)
+- Text (csv, htm, html, json, odd, rng, txt, xml, xsd, xsl)
+- Document (doc, docx, epub, pdf, ppt, pptx, xls, xlsx)
 - Archive (7z, gz, gzip, tar, tgz, z, zip)
 
 Let's assume you have pdf-documents of books and they have a number of pages. To describe this in an ontology, you create a class as `Document` by clicking on `Document`. A dialog box pops up which looks like this:
