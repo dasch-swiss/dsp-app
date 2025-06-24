@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { GregorianCalendarDate } from '@dasch-swiss/jdnconvertiblecalendar';
 import { DateTime } from '../date-time';
@@ -12,7 +12,7 @@ import { DateTime } from '../date-time';
           <input
             matInput
             [matDatepicker]="picker"
-            [ngModel]="control.value.date"
+            [ngModel]="control.value?.date"
             (dateChange)="editDate($event)"
             aria-label="Date"
             placeholder="Date"
@@ -25,7 +25,8 @@ import { DateTime } from '../date-time';
       <mat-form-field>
         <input
           matInput
-          [ngModel]="control.value.time"
+          [disabled]="!control.value?.date"
+          [ngModel]="control.value?.time"
           (ngModelChange)="editTime($event)"
           type="time"
           aria-label="Time"
@@ -39,11 +40,15 @@ export class TimeValueComponent {
   @Input({ required: true }) control!: FormControl<DateTime>;
 
   editTime(newValue: string) {
-    const newDate = new DateTime(this.control.value.date, newValue);
+    const newDate = new DateTime(this.control.value?.date, newValue);
     this.control.patchValue(newDate);
   }
 
   editDate(event: { value: GregorianCalendarDate }) {
+    if (!this.control.value?.time) {
+      this.control.patchValue(new DateTime(event.value, '00:00'));
+      return;
+    }
     const newValue = new DateTime(event.value, this.control.value.time);
     this.control.patchValue(newValue);
   }

@@ -7,8 +7,8 @@ import { IsSwitchComponent } from './is-switch-component.interface';
 @Component({
   selector: 'app-time-switch',
   template: ` <ng-container *ngIf="displayMode; else editMode">
-      <div data-cy="time-switch-date">Date: {{ test | date }}</div>
-      <div data-cy="time-switch-time">Time: {{ test | date: 'HH:mm' }}</div>
+      <div data-cy="time-switch-date">Date: {{ dateAndTimestamp | date }}</div>
+      <div data-cy="time-switch-time">Time: {{ dateAndTimestamp | date: 'HH:mm' }}</div>
     </ng-container>
     <ng-template #editMode>
       <app-time-value [control]="control" />
@@ -18,7 +18,10 @@ export class TimeSwitchComponent implements IsSwitchComponent {
   @Input() control!: FormControl<DateTime>;
   @Input() displayMode = true;
 
-  get test() {
+  get dateAndTimestamp() {
+    if (!this.control.value || !this.control.value?.date || !this.control.value?.time) {
+      return null;
+    }
     return dateTimeTimestamp(this.control.value.date, this.control.value.time);
   }
 }

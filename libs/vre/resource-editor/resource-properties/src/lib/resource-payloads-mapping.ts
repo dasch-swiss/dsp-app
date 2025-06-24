@@ -205,11 +205,7 @@ export const propertiesTypeMapping = new Map<string, MappingParameters<any>>([
           const z = convertTimestampToDateTime(value.time, new DatePipe('en-US'));
           return new FormControl(z);
         }
-
-        const today = new Date();
-        const calendarDate = new CalendarDate(today.getFullYear(), (today.getMonth() + 1) % 12, today.getDate());
-        const gcd = new GregorianCalendarDate(new CalendarPeriod(calendarDate, calendarDate));
-        return new FormControl(new DateTime(gcd, '00:00'));
+        return new FormControl<DateTime | undefined>(undefined);
       },
 
       createValue: (value: DateTime) => {
