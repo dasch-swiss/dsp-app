@@ -1,11 +1,13 @@
 import { Component, Input, ViewContainerRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ReadResource } from '@dasch-swiss/dsp-js';
+import { ProjectsSelectors } from '@dasch-swiss/vre/core/state';
 import { DeleteResourceDialogComponent } from '@dasch-swiss/vre/resource-editor/properties-display';
 import { ResourceFetcherService, ResourceUtil } from '@dasch-swiss/vre/resource-editor/representations';
 import { EraseResourceDialogComponent } from '@dasch-swiss/vre/resource-editor/resource-properties';
 import { ResourceService } from '@dasch-swiss/vre/shared/app-common';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
+import { Store } from '@ngxs/store';
 
 @Component({
   selector: 'app-resource-toolbar',
@@ -81,6 +83,7 @@ import { NotificationService } from '@dasch-swiss/vre/ui/notification';
         {{ 'resourceEditor.resourceProperties.delete' | translate }}
       </button>
       <button
+        *ngIf="isAdmin$ | async"
         data-cy="resource-toolbar-erase-resource-button"
         mat-menu-item
         matTooltip="Erase resource forever. This cannot be undone."
@@ -106,6 +109,8 @@ import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 export class ResourceToolbarComponent {
   @Input({ required: true }) resource!: ReadResource;
 
+  isAdmin$ = this._store.select(ProjectsSelectors.isCurrentProjectAdminOrSysAdmin);
+
   get userCanDelete() {
     return !this._resourceFetcherService.resourceVersion && ResourceUtil.userCanDelete(this.resource);
   }
@@ -115,6 +120,7 @@ export class ResourceToolbarComponent {
     private _resourceService: ResourceService,
     private _resourceFetcherService: ResourceFetcherService,
     private _dialog: MatDialog,
+    private _store: Store,
     private _viewContainerRef: ViewContainerRef
   ) {}
 
