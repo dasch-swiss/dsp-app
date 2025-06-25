@@ -107,22 +107,30 @@ export class PropertyFormComponent implements OnInit {
       propType: this._fb.control(
         {
           value: this.formData.property.propType.guiEle!,
-          disabled: this.filteredProperties[0].elements.length === 1,
+          disabled: this.filteredProperties[0].elements.length === 1 || !!this.formData.name,
         },
         { nonNullable: true }
       ),
-      name: this._fb.control<string>(this.formData.name ?? '', {
-        nonNullable: true,
-        validators: [Validators.required],
-      }),
+      name: this._fb.control<string>(
+        { value: this.formData.name ?? '', disabled: !!this.formData.name },
+        {
+          nonNullable: true,
+          validators: [Validators.required],
+        }
+      ),
       labels: DEFAULT_MULTILANGUAGE_FORM(this.formData.labels ?? defaultData, [Validators.required]),
       comments: DEFAULT_MULTILANGUAGE_FORM(this.formData.comments ?? defaultData, [Validators.required]),
       guiAttr: this._fb.control<string>(
         {
           value: this.formData.guiAttribute!,
-          disabled: ![Constants.LinkValue, Constants.ListValue].includes(this.formData.property.propType.objectType!),
+          disabled:
+            !!this.formData.name ||
+            ![Constants.LinkValue, Constants.ListValue].includes(this.formData.property.propType.objectType!),
         },
-        { nonNullable: true, validators: [Validators.required] }
+        {
+          nonNullable: true,
+          validators: [Validators.required],
+        }
       ),
     });
 
