@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges } from '@angular/core';
+import { Router } from '@angular/router';
 import { ApiResponseError, ReadResource } from '@dasch-swiss/dsp-js';
 import { SetCurrentResourceAction } from '@dasch-swiss/vre/core/state';
 import { ResourceFetcherService, ResourceUtil } from '@dasch-swiss/vre/resource-editor/representations';
@@ -14,7 +15,10 @@ type HideReason = 'NotFound' | 'Deleted' | 'Unauthorized' | null;
   selector: 'app-resource-fetcher',
   template: `
     <div class="content large middle">
-      <app-resource-version-warning *ngIf="resourceVersion" [resourceVersion]="resourceVersion" />
+      <app-resource-version-warning
+        *ngIf="resourceVersion"
+        [resourceVersion]="resourceVersion"
+        (navigateToCurrentVersion)="navigateToCurrentVersion()" />
 
       <ng-container *ngIf="!hideStatus; else hideTpl">
         <app-resource *ngIf="resource; else loadingTpl" [resource]="resource" />
@@ -53,6 +57,7 @@ export class ResourceFetcherComponent implements OnChanges, OnDestroy {
   constructor(
     private _resourceFetcherService: ResourceFetcherService,
     private _notification: NotificationService,
+    private _router: Router,
     private _translateService: TranslateService,
     private _store: Store
   ) {}
@@ -86,6 +91,10 @@ export class ResourceFetcherComponent implements OnChanges, OnDestroy {
 
           this.hideStatus = null;
           this.resource = resource;
+
+          if (this.resourceVersion !== undefined) {
+            this._reloadIfCurrentVersion(this.resourceVersion, resource.res.lastModificationDate);
+          }
         },
         err => {
           if (err instanceof ApiResponseError && err.status === 404) {
@@ -104,7 +113,24 @@ export class ResourceFetcherComponent implements OnChanges, OnDestroy {
     }
   }
 
+  navigateToCurrentVersion() {
+    this._router
+      .navigate([], {
+        queryParams: { version: null }, // Set parameter to null to remove it
+        queryParamsHandling: 'merge',
+      })
+      .then(() => {
+        this._resourceFetcherService.reload();
+      });
+  }
+
   ngOnDestroy() {
     this._store.dispatch(new SetCurrentResourceAction(null));
+  }
+
+  private _reloadIfCurrentVersion(resourceVersion: string, lastModificationDate?: string) {
+    if (lastModificationDate === undefined || resourceVersion === lastModificationDate) {
+      this.navigateToCurrentVersion();
+    }
   }
 }
