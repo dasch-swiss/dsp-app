@@ -10,6 +10,11 @@ export class ListsSelectors {
   }
 
   @Selector([ListsState])
+  static isListsLoaded(state: ListsStateModel): boolean {
+    return state.isLoaded;
+  }
+
+  @Selector([ListsState])
   static listsInProject(state: ListsStateModel): ListNodeInfo[] {
     return state.listsInProject;
   }

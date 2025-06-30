@@ -8,7 +8,7 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { getAllEntityDefinitionsAsArray } from '@dasch-swiss/vre/3rd-party-services/api';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
-import { ListsSelectors, OntologiesSelectors } from '@dasch-swiss/vre/core/state';
+import { OntologiesSelectors, ListsFacade } from '@dasch-swiss/vre/core/state';
 import {
   DefaultClass,
   DefaultProperty,
@@ -16,6 +16,7 @@ import {
   PropertyInfoObject,
 } from '@dasch-swiss/vre/shared/app-helper-services';
 import { Store } from '@ngxs/store';
+import { filter, first } from 'rxjs/operators';
 
 export interface ShortInfo {
   id: string;
@@ -89,6 +90,7 @@ export class PropertyInfoComponent implements OnInit {
     @Inject(DspApiConnectionToken)
     private _dspApiConnection: KnoraApiConnection,
     private _ontoService: OntologyService,
+    private _lists: ListsFacade,
     private _store: Store
   ) {
     this._projectOntologies = this._store.selectSnapshot(OntologiesSelectors.currentProjectOntologies);
@@ -140,12 +142,19 @@ export class PropertyInfoComponent implements OnInit {
     }
 
     if (this.propDef.objectType === Constants.ListValue) {
-      const currentProjectsLists = this._store.selectSnapshot(ListsSelectors.listsInProject);
-      const listIri = this.propDef.guiAttributes[0].split('<')[1].replace(/>/g, '');
-      const listUrl = `/project/${this.projectUuid}/lists/${encodeURIComponent(listIri)}`;
-      const list = currentProjectsLists.find(i => i.id === listIri);
-      this.propAttribute = `<a href="${listUrl}">${list?.labels[0].value}</a>`;
-      this.propAttributeComment = list?.comments.length ? list.comments[0].value : '';
+      this._lists
+        .getListsInProject$()
+        .pipe(
+          filter(lists => !!lists.length),
+          first()
+        )
+        .subscribe(currentProjectsLists => {
+          const listIri = this.propDef.guiAttributes[0].split('<')[1].replace(/>/g, '');
+          const listUrl = `/project/${this.projectUuid}/lists/${encodeURIComponent(listIri)}`;
+          const list = currentProjectsLists.find(i => i.id === listIri);
+          this.propAttribute = `<a href="${listUrl}">${list?.labels[0].value}</a>`;
+          this.propAttributeComment = list?.comments.length ? list.comments[0].value : '';
+        });
     }
   }
 

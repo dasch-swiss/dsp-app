@@ -1,4 +1,4 @@
-export * from './lib/lists/lists.selectors';
+export * from './lib/lists/lists.selectors'; // THIS WON'T BE EXPOSED, INSTEAD THE FACADE SERVICE WILL BE USED
 export * from './lib/ontologies/ontologies.selectors';
 export * from './lib/ontology-class/ontology-class.selectors';
 export * from './lib/projects/projects.selectors';
@@ -25,6 +25,8 @@ export * from './lib/ontology-class/ontology-class.state';
 export * from './lib/projects/projects.state';
 export * from './lib/resource/resource.state';
 export * from './lib/user/user.state';
+
+export * from './lib/lists/lists-facade.service';
 
 export * from './lib/config.state';
 

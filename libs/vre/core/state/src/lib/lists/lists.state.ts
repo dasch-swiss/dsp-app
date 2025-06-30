@@ -8,6 +8,7 @@ import { ListsStateModel } from './lists.state-model';
 
 const defaults: ListsStateModel = {
   isLoading: false,
+  isLoaded: false, // indicates if the lists in a project have been loaded
   listsInProject: [], // lists in a project
 };
 
@@ -31,7 +32,7 @@ export class ListsState {
       tap(response => {
         ctx.patchState({ listsInProject: response.lists });
       }),
-      finalize(() => ctx.patchState({ isLoading: false }))
+      finalize(() => ctx.patchState({ isLoading: false, isLoaded: true }))
     );
   }
 
