@@ -2,8 +2,7 @@ import { Component } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { UserSelectors } from '@dasch-swiss/vre/core/state';
-import { Select } from '@ngxs/store';
-import { Observable } from 'rxjs';
+import { Store } from '@ngxs/store';
 
 @Component({
   selector: 'app-system',
@@ -11,15 +10,19 @@ import { Observable } from 'rxjs';
   styleUrls: ['./system.component.scss'],
 })
 export class SystemComponent {
-  @Select(UserSelectors.isSysAdmin) isSysAdmin$: Observable<boolean>;
+  isSysAdmin$ = this._store.select(UserSelectors.isSysAdmin);
 
   links = [
     { name: 'All Projects', url: RouteConstants.systemProjects, icon: 'assignment' },
     { name: 'All Users', url: RouteConstants.systemUsers, icon: 'group' },
   ];
-  activeLink: string;
 
-  constructor(private _titleService: Title) {
+  activeLink = '';
+
+  constructor(
+    private readonly _store: Store,
+    private readonly _titleService: Title
+  ) {
     this._titleService.setTitle('System administration');
   }
 }

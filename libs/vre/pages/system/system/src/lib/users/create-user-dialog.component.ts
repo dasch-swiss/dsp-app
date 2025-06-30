@@ -35,11 +35,11 @@ export class CreateUserDialogComponent {
   isLoading$: Observable<boolean>;
 
   constructor(
-    private _actions$: Actions,
-    private _notification: NotificationService,
-    private _projectService: ProjectService,
-    private _store: Store,
-    private _dialogRef: MatDialogRef<CreateUserDialogComponent>,
+    private readonly _actions$: Actions,
+    private readonly _dialogRef: MatDialogRef<CreateUserDialogComponent>,
+    private readonly _notification: NotificationService,
+    private readonly _projectService: ProjectService,
+    private readonly _store: Store,
     @Inject(MAT_DIALOG_DATA) public projectUuId: string
   ) {
     this.isLoading$ = this._store.select(state => state.user.isLoading);

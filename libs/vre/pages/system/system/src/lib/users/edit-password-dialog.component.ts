@@ -15,7 +15,7 @@ export interface EditPasswordDialogProps {
 })
 export class EditPasswordDialogComponent {
   constructor(
-    public dialogRef: MatDialogRef<EditPasswordDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: EditPasswordDialogProps
+    @Inject(MAT_DIALOG_DATA) public data: EditPasswordDialogProps,
+    public dialogRef: MatDialogRef<EditPasswordDialogComponent>
   ) {}
 }

@@ -16,8 +16,7 @@ export interface ManageProjectMembershipDialogProps {
 })
 export class ManageProjectMembershipDialogComponent {
   constructor(
-    @Inject(MAT_DIALOG_DATA)
-    public data: ManageProjectMembershipDialogProps,
+    @Inject(MAT_DIALOG_DATA) public data: ManageProjectMembershipDialogProps,
     public dialogRef: MatDialogRef<ManageProjectMembershipDialogComponent, boolean>
   ) {}
 }

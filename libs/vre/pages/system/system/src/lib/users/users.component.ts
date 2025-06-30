@@ -1,24 +1,22 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { ReadUser } from '@dasch-swiss/dsp-js';
-import { LoadUsersAction, UserSelectors } from '@dasch-swiss/vre/core/state';
-import { Select, Store } from '@ngxs/store';
-import { Observable } from 'rxjs';
+import { LoadUsersAction, ProjectsSelectors, UserSelectors } from '@dasch-swiss/vre/core/state';
+import { Store } from '@ngxs/store';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-users',
   templateUrl: './users.component.html',
-  styleUrls: ['./users.component.scss'],
 })
 export class UsersComponent implements OnInit {
-  @Select(UserSelectors.usersLoading) isLoading$: Observable<boolean>;
-  @Select(UserSelectors.activeUsers) active$: Observable<ReadUser[]>;
-  @Select(UserSelectors.inactiveUsers) inactive$: Observable<ReadUser[]>;
+  activeUsers$ = this._store.select(UserSelectors.activeUsers);
+  inactiveUsers$ = this._store.select(UserSelectors.inactiveUsers);
+  isLoading$ = this._store.select(UserSelectors.usersLoading);
+  project$ = this._store.select(ProjectsSelectors.currentProject);
 
   constructor(
-    private _titleService: Title,
-    private _store: Store
+    private readonly _store: Store,
+    private readonly _titleService: Title
   ) {
     this._titleService.setTitle('All users in DSP');
   }
