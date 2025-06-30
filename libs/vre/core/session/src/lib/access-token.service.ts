@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Auth } from '@dasch-swiss/vre/core/config';
+import { Auth, LocalStorageLanguageKey } from '@dasch-swiss/vre/core/config';
 import jwt_decode, { JwtPayload } from 'jwt-decode';
 
 @Injectable({ providedIn: 'root' })
@@ -16,6 +16,7 @@ export class AccessTokenService {
   removeTokens(): void {
     localStorage.removeItem(Auth.AccessToken);
     localStorage.removeItem(Auth.Refresh_token);
+    localStorage.removeItem(LocalStorageLanguageKey);
   }
 
   private isTokenExpired(token: JwtPayload): boolean {

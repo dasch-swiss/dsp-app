@@ -23,6 +23,8 @@ export const AvailableLanguages: StringLiteral[] = [
   },
 ];
 
+export const LocalStorageLanguageKey = 'dsp_language';
+
 export class RouteConstants {
   static readonly home = '';
   static readonly help = 'help';
