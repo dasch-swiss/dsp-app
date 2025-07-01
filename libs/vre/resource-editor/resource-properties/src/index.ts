@@ -55,6 +55,6 @@ export * from './lib/footnote-tooltip.component';
 export * from './lib/footnote.directive';
 export * from './lib/footnote-parser.pipe';
 export * from './lib/authorship-form-field.component';
-
+export * from './lib/paginated-api.service';
 export * from './lib/mathjax/math-jax.directive';
 export * from './lib/mathjax/math-jax.service';

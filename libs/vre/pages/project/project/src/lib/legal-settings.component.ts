@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ReadProject } from '@dasch-swiss/dsp-js';
-import { AdminProjectsLegalInfoApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { AppError } from '@dasch-swiss/vre/core/error-handler';
 import { ProjectsSelectors } from '@dasch-swiss/vre/core/state';
+import { PaginatedApiService } from '@dasch-swiss/vre/resource-editor/resource-properties';
 import { Store } from '@ngxs/store';
 import { BehaviorSubject } from 'rxjs';
 import { filter, map, switchMap } from 'rxjs/operators';
@@ -71,22 +71,14 @@ export class LegalSettingsComponent {
   );
 
   copyrightHolders$ = this.project$.pipe(
-    switchMap(project =>
-      this._copyrightApi.getAdminProjectsShortcodeProjectshortcodeLegalInfoCopyrightHolders(project.shortcode)
-    ),
-    map(data => data.data)
+    switchMap(project => this._paginatedApi.getCopyrightHolders(project.shortcode))
   );
 
-  authorships$ = this.project$.pipe(
-    switchMap(project =>
-      this._copyrightApi.getAdminProjectsShortcodeProjectshortcodeLegalInfoAuthorships(project.shortcode)
-    ),
-    map(data => data.data)
-  );
+  authorships$ = this.project$.pipe(switchMap(project => this._paginatedApi.getAuthorships(project.shortcode)));
 
   constructor(
     private _dialog: MatDialog,
-    private _copyrightApi: AdminProjectsLegalInfoApiService,
+    private _paginatedApi: PaginatedApiService,
     private _store: Store
   ) {}
 

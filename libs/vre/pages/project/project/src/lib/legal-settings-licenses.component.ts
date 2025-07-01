@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ReadProject } from '@dasch-swiss/dsp-js';
-import { AdminProjectsLegalInfoApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { ProjectsSelectors } from '@dasch-swiss/vre/core/state';
+import { PaginatedApiService } from '@dasch-swiss/vre/resource-editor/resource-properties';
 import { Store } from '@ngxs/store';
 import { BehaviorSubject } from 'rxjs';
 import { filter, map, shareReplay, switchMap } from 'rxjs/operators';
@@ -39,10 +39,7 @@ export class LegalSettingsLicensesComponent {
   );
 
   licenses$ = this.project$.pipe(
-    switchMap(project =>
-      this._copyrightApi.getAdminProjectsShortcodeProjectshortcodeLegalInfoLicenses(project.shortcode)
-    ),
-    map(data => data.data),
+    switchMap(project => this._paginatedApi.getLicenses(project.shortcode)),
     shareReplay({ bufferSize: 1, refCount: true })
   );
 
@@ -50,7 +47,7 @@ export class LegalSettingsLicensesComponent {
   nonRecommendedLicenses$ = this.licenses$.pipe(map(licenses => licenses.filter(license => !license.isRecommended)));
 
   constructor(
-    private _copyrightApi: AdminProjectsLegalInfoApiService,
+    private _paginatedApi: PaginatedApiService,
     private _store: Store
   ) {}
 

@@ -1,10 +1,11 @@
 import { ENTER, TAB } from '@angular/cdk/keycodes';
-import { ChangeDetectorRef, Component, Input, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatChipInput, MatChipInputEvent } from '@angular/material/chips';
-import { AdminProjectsLegalInfoApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
+import { Subscription } from 'rxjs';
 import { finalize } from 'rxjs/operators';
+import { PaginatedApiService } from './paginated-api.service';
 
 @Component({
   selector: 'app-authorship-form-field',
@@ -23,21 +24,24 @@ import { finalize } from 'rxjs/operators';
       <input
         placeholder="New authorship..."
         data-cy="authorship-chips"
-        #test
         [matChipInputFor]="chipGrid"
         [matAutocomplete]="auto"
+        [matAutocompleteDisabled]="filteredAuthorship.length === 0"
+        [formControl]="autocompleteFormControl"
         [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
         (matChipInputTokenEnd)="addItemFromMaterial($event)" />
       <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectItem($event)">
-        <mat-option *ngFor="let option of availableAuthorship" [value]="option">
+        <mat-option *ngFor="let option of filteredAuthorship" [value]="option">
           {{ option }}
         </mat-option>
 
-        <mat-option *ngIf="AIContentMissing">{{ AIAuthorship }}</mat-option>
-
-        <mat-option *ngIf="publicDomainMissing">{{ publicDomainAuthorship }}</mat-option>
+        <mat-option
+          *ngIf="
+            filteredAuthorship.length === 0 && autocompleteFormControl.value && autocompleteFormControl.value.length > 0
+          "
+          >Press Enter or Tab to add an item.
+        </mat-option>
       </mat-autocomplete>
-      <mat-hint>Press Enter or Tab to add an item.</mat-hint>
 
       <mat-error *ngIf="control.invalid && control.touched && control.errors![0] as error">
         {{ error | humanReadableError }}
@@ -45,7 +49,7 @@ import { finalize } from 'rxjs/operators';
     </mat-form-field>
   `,
 })
-export class AuthorshipFormFieldComponent implements OnInit {
+export class AuthorshipFormFieldComponent implements OnInit, OnDestroy {
   @Input() control!: FormControl<string[] | null>;
   @Input({ required: true }) projectShortcode!: string;
   @ViewChild(MatChipInput, { static: true }) chipInput!: MatChipInput;
@@ -53,35 +57,45 @@ export class AuthorshipFormFieldComponent implements OnInit {
   readonly separatorKeysCodes: number[] = [ENTER, TAB];
   selectedItems: string[] = [];
   availableAuthorship: string[] = [];
+  filteredAuthorship: string[] = [];
   loading = true;
+  subscription!: Subscription;
+  autocompleteFormControl = new FormControl('');
 
   readonly AIAuthorship = 'AI-Generated Content – Not Protected by Copyright';
   readonly publicDomainAuthorship = 'Public Domain – Not Protected by Copyright';
 
-  get AIContentMissing() {
-    return !this.availableAuthorship.includes(this.AIAuthorship);
-  }
-
-  get publicDomainMissing() {
-    return !this.availableAuthorship.includes(this.publicDomainAuthorship);
-  }
-
   constructor(
-    private _adminApi: AdminProjectsLegalInfoApiService,
+    private _paginatedApi: PaginatedApiService,
     private _cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
-    this._adminApi
-      .getAdminProjectsShortcodeProjectshortcodeLegalInfoAuthorships(this.projectShortcode)
+    this._paginatedApi
+      .getAuthorships(this.projectShortcode)
       .pipe(
         finalize(() => {
           this.loading = false;
         })
       )
       .subscribe(response => {
-        this.availableAuthorship = response.data;
+        this.availableAuthorship = this._addMissingDefaultValues(response);
+        this.filteredAuthorship = this.availableAuthorship;
       });
+
+    this.subscription = this.autocompleteFormControl.valueChanges.subscribe(value => {
+      if (value) {
+        this.filteredAuthorship = this.availableAuthorship.filter(authorship =>
+          authorship.toLowerCase().includes(value.toLowerCase())
+        );
+      } else {
+        this.filteredAuthorship = this.availableAuthorship;
+      }
+    });
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
 
   addItemFromMaterial(event: MatChipInputEvent) {
@@ -103,6 +117,7 @@ export class AuthorshipFormFieldComponent implements OnInit {
   }
 
   private _addItem(authorship: string) {
+    this.autocompleteFormControl.setValue(null);
     this.chipInput.clear();
 
     if (authorship === '' || this.selectedItems.includes(authorship)) {
@@ -114,11 +129,22 @@ export class AuthorshipFormFieldComponent implements OnInit {
     }
 
     this.selectedItems.push(authorship);
+
     this._updateFormControl();
     this._cdr.detectChanges();
   }
 
   private _updateFormControl() {
     this.control.setValue(this.selectedItems);
+  }
+
+  private _addMissingDefaultValues(authorship: string[]) {
+    if (!authorship.includes(this.AIAuthorship)) {
+      authorship.push(this.AIAuthorship);
+    }
+    if (!authorship.includes(this.publicDomainAuthorship)) {
+      authorship.push(this.publicDomainAuthorship);
+    }
+    return authorship;
   }
 }

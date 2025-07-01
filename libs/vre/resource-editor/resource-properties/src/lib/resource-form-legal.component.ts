@@ -1,8 +1,9 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { AdminProjectsLegalInfoApiService, ProjectLicenseDto } from '@dasch-swiss/vre/3rd-party-services/open-api';
+import { ProjectLicenseDto } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { CreateResourceFormLegal } from '@dasch-swiss/vre/resource-editor/representations';
 import { Observable } from 'rxjs';
 import { finalize, map } from 'rxjs/operators';
+import { PaginatedApiService } from './paginated-api.service';
 
 @Component({
   selector: 'app-resource-form-legal',
@@ -55,30 +56,22 @@ export class ResourceFormLegalComponent implements OnInit {
   licenses$!: Observable<ProjectLicenseDto[]>;
   authorship$!: Observable<string[]>;
 
-  constructor(private _copyrightApi: AdminProjectsLegalInfoApiService) {}
+  constructor(private _paginatedApi: PaginatedApiService) {}
 
   ngOnInit() {
-    this.copyrightHolders$ = this._copyrightApi
-      .getAdminProjectsShortcodeProjectshortcodeLegalInfoCopyrightHolders(this.projectShortcode)
-      .pipe(
-        map(data => data.data),
-        finalize(() => {
-          this.copyrightHoldersLoading = false;
-        })
-      );
+    this.copyrightHolders$ = this._paginatedApi.getCopyrightHolders(this.projectShortcode).pipe(
+      finalize(() => {
+        this.copyrightHoldersLoading = false;
+      })
+    );
 
-    this.licenses$ = this._copyrightApi
-      .getAdminProjectsShortcodeProjectshortcodeLegalInfoLicenses(this.projectShortcode)
-      .pipe(
-        map(data => data.data),
-        map(data => data.filter(license => license.isEnabled)),
-        finalize(() => {
-          this.licensesLoading = false;
-        })
-      );
+    this.licenses$ = this._paginatedApi.getLicenses(this.projectShortcode).pipe(
+      map(data => data.filter(license => license.isEnabled)),
+      finalize(() => {
+        this.licensesLoading = false;
+      })
+    );
 
-    this.authorship$ = this._copyrightApi
-      .getAdminProjectsShortcodeProjectshortcodeLegalInfoAuthorships(this.projectShortcode)
-      .pipe(map(data => data.data));
+    this.authorship$ = this._paginatedApi.getAuthorships(this.projectShortcode);
   }
 }
