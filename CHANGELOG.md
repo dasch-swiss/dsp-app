@@ -1,5 +1,23 @@
 # Changelog
 
+## [11.35.1](https://github.com/dasch-swiss/dsp-das/compare/v11.35.0...v11.35.1) (2025-07-07)
+
+
+### Bug Fixes
+
+* legal routes with pagination are expanded till all data is fetched ([#2373](https://github.com/dasch-swiss/dsp-das/issues/2373)) ([a93bad8](https://github.com/dasch-swiss/dsp-das/commit/a93bad864d2f28f1e63709ac7e40569054763552))
+
+
+### Maintenances
+
+* **deps-dev:** bump @cypress/code-coverage from 3.14.4 to 3.14.5 in the test-coverage-deps group ([#2371](https://github.com/dasch-swiss/dsp-das/issues/2371)) ([090da40](https://github.com/dasch-swiss/dsp-das/commit/090da400ee8ad9388ce87aae5d4ca02358771f49))
+* **deps-dev:** bump @openapitools/openapi-generator-cli from 2.20.2 to 2.21.0 ([#2375](https://github.com/dasch-swiss/dsp-das/issues/2375)) ([92b52b2](https://github.com/dasch-swiss/dsp-das/commit/92b52b28275f6d3e6a5063f267f27c2a685e1202))
+* **deps-dev:** bump @types/node from 20.19.1 to 20.19.2 in the types-deps group ([#2368](https://github.com/dasch-swiss/dsp-das/issues/2368)) ([cef2f73](https://github.com/dasch-swiss/dsp-das/commit/cef2f73ecef516ce9b14777955353748bbcbf8fa))
+* **deps-dev:** bump the eslint-deps group with 2 updates ([#2374](https://github.com/dasch-swiss/dsp-das/issues/2374)) ([8c63e53](https://github.com/dasch-swiss/dsp-das/commit/8c63e5319b5a0987eb49b1af302b55dae241758f))
+* fix eslint deps grouping ([#2372](https://github.com/dasch-swiss/dsp-das/issues/2372)) ([c5a747e](https://github.com/dasch-swiss/dsp-das/commit/c5a747e9626976d60a47a8f3a662216649d75182))
+* migrate Angular to self-closing tags (DEV-5119) ([#2377](https://github.com/dasch-swiss/dsp-das/issues/2377)) ([5856634](https://github.com/dasch-swiss/dsp-das/commit/585663418ab7baa0d462ed914afe86903d847589))
+* refactor SystemComponent, UsersComponents and UsersListComponents (DEV-4931) ([#2354](https://github.com/dasch-swiss/dsp-das/issues/2354)) ([9e369dc](https://github.com/dasch-swiss/dsp-das/commit/9e369dc54ac067cc5785643e063156ed13110a7b))
+
 ## [11.35.0](https://github.com/dasch-swiss/dsp-das/compare/v11.34.0...v11.35.0) (2025-06-30)
 
 
