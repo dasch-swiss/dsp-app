@@ -48,7 +48,7 @@ import { MediaPlayerService } from './media-player.service';
         (click)="createVideoSegment()"
         [matTooltip]="'resourceEditor.representations.video.createAnnotation' | translate"
         *ngIf="resourceFetcherService.userCanEdit$ | async">
-        <mat-icon svgIcon="draw_region_icon"></mat-icon>
+        <mat-icon svgIcon="draw_region_icon" />
       </button>
 
       <button

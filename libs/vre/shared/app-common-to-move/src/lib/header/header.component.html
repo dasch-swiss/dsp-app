@@ -1,6 +1,6 @@
 <mat-toolbar class="toolbar-header">
   <span class="logo" routerLink="{{homeLink}}">
-    <mat-icon matPrefix svgIcon="dasch_mosaic_icon_color"></mat-icon>
+    <mat-icon matPrefix svgIcon="dasch_mosaic_icon_color" />
     <div class="title-container">
       <div class="title desktop-only">DaSCH Service Platform</div>
       <div class="title phone-tablet-only">DSP</div>
@@ -34,4 +34,4 @@
     <app-user-menu />
   </span>
 </mat-toolbar>
-<mat-progress-bar *ngIf="!dsp.production" [color]="dsp.color" mode="determinate" value="100"></mat-progress-bar>
+<mat-progress-bar *ngIf="!dsp.production" [color]="dsp.color" mode="determinate" value="100" />

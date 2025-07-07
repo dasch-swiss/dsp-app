@@ -8,7 +8,7 @@ import { IsSwitchComponent } from './is-switch-component.interface';
       control.value
     }}</ng-container>
     <ng-template #editMode>
-      <ng-content></ng-content>
+      <ng-content />
     </ng-template>`,
 })
 export class BaseSwitchComponent implements IsSwitchComponent {

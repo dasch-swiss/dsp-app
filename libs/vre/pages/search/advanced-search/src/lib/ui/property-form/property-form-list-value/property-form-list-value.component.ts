@@ -39,7 +39,7 @@ import { PropertyFormItem } from '../../../data-access/advanced-search-store/adv
         [displayWith]="displayNode"
         (optionSelected)="onSelectionChange($event.option.value)">
         <ng-container *ngFor="let node of filteredList$ | async; trackBy: trackByFn">
-          <ng-container *ngTemplateOutlet="renderNode; context: { node: node, depth: 0 }"></ng-container>
+          <ng-container *ngTemplateOutlet="renderNode; context: { node: node, depth: 0 }" />
         </ng-container>
 
         <ng-template #renderNode let-node="node" let-depth="depth">
@@ -48,8 +48,7 @@ import { PropertyFormItem } from '../../../data-access/advanced-search-store/adv
           </mat-option>
           <ng-container *ngIf="node.children?.length > 0">
             <ng-container *ngFor="let subchild of node.children; trackBy: trackByFn">
-              <ng-container
-                *ngTemplateOutlet="renderNode; context: { node: subchild, depth: depth + 1 }"></ng-container>
+              <ng-container *ngTemplateOutlet="renderNode; context: { node: subchild, depth: depth + 1 }" />
             </ng-container>
           </ng-container>
         </ng-template>

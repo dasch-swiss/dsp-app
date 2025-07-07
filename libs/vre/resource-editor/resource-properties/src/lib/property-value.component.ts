@@ -48,8 +48,7 @@ import { propertiesTypeMapping } from './resource-payloads-mapping';
 
     <div style="display: flex">
       <div class="value" [ngClass]="{ display: displayMode, highlighted: isHighlighted && displayMode }">
-        <ng-container
-          *ngTemplateOutlet="itemTpl; context: { item: group?.controls.item, displayMode: displayMode }"></ng-container>
+        <ng-container *ngTemplateOutlet="itemTpl; context: { item: group?.controls.item, displayMode: displayMode }" />
 
         <app-property-value-comment [displayMode]="displayMode" [control]="group?.controls.comment" />
       </div>

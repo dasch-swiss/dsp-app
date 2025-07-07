@@ -53,7 +53,7 @@ import { map, takeUntil } from 'rxjs/operators';
         </button>
       </div>
 
-      <mat-divider class="my-2"></mat-divider>
+      <mat-divider class="my-2" />
 
       <div class="d-flex">
         <mat-form-field class="flex-1 mr-2">

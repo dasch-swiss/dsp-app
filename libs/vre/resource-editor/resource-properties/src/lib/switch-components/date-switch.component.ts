@@ -8,7 +8,7 @@ import { IsSwitchComponent } from './is-switch-component.interface';
   template: `
     <ng-container *ngIf="displayMode; else editMode">
       <ng-container *ngIf="isKnoraPeriod; else knoraDateTpl">
-        <ng-container *ngTemplateOutlet="calendarType; context: { date: start }"></ng-container>
+        <ng-container *ngTemplateOutlet="calendarType; context: { date: start }" />
         <span>{{ start | knoraDate: 'dd.MM.YYYY' : 'era' }}</span>
         -
         <span>{{ end | knoraDate: 'dd.MM.YYYY' : 'era' }}</span>
@@ -16,7 +16,7 @@ import { IsSwitchComponent } from './is-switch-component.interface';
     </ng-container>
 
     <ng-template #knoraDateTpl>
-      <ng-container *ngTemplateOutlet="calendarType; context: { date: knoraDate }"></ng-container>
+      <ng-container *ngTemplateOutlet="calendarType; context: { date: knoraDate }" />
       <span>{{ knoraDate | knoraDate: 'dd.MM.YYYY' : 'era' }}</span>
     </ng-template>
 

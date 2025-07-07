@@ -101,7 +101,7 @@
               </mat-menu>
             </span>
           </span>
-          <mat-divider></mat-divider>
+          <mat-divider />
           <a
             mat-list-item
             routerLinkActive="active"
@@ -152,8 +152,7 @@
     </mat-sidenav-container>
 
     <app-progress-indicator
-      *ngIf="(isOntologiesLoading$ | async) === true && (isProjectsLoading$ | async) === false && view !== 'graph'">
-    </app-progress-indicator>
+      *ngIf="(isOntologiesLoading$ | async) === true && (isProjectsLoading$ | async) === false && view !== 'graph'" />
   </div>
 </div>
 

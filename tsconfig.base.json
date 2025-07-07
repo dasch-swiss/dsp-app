@@ -56,7 +56,8 @@
       "@dasch-swiss/vre/ui/string-literal": ["libs/vre/ui/string-literal/src/index.ts"],
       "@dasch-swiss/vre/ui/ui": ["libs/vre/ui/ui/src/index.ts"],
       "@dsp-app/*": ["apps/dsp-app/*"]
-    }
+    },
+    "skipLibCheck": true
   },
   "angularCompilerOptions": {
     "fullTemplateTypeCheck": true,

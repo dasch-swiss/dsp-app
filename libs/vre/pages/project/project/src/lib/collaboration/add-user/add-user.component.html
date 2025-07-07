@@ -26,7 +26,7 @@
             <mat-autocomplete #user="matAutocomplete" (optionSelected)="addUser($event.option.value)">
               <mat-option *ngIf="!users?.length" class="loading-option">
                 <div class="loading-container">
-                  <mat-spinner diameter="20"></mat-spinner>
+                  <mat-spinner diameter="20" />
                   <span>{{ 'pages.project.addUser.usersLoading' | translate }}</span>
                 </div>
               </mat-option>

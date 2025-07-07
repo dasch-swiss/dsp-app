@@ -27,7 +27,7 @@ import { MenuItem } from '@dasch-swiss/vre/pages/user-settings/user';
         </a>
       </nav>
       <mat-tab-nav-panel #tabPanel>
-        <router-outlet></router-outlet>
+        <router-outlet />
       </mat-tab-nav-panel>
     </app-centered-layout>
   `,

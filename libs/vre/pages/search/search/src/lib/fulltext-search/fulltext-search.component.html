@@ -22,7 +22,7 @@
         <button mat-menu-item class="center" (click)="setProject(); changeFocus()">
           {{ 'pages.search.fullTextSearch.allProjects' | translate }}
         </button>
-        <mat-divider></mat-divider>
+        <mat-divider />
         <span *ngFor="let project of projects">
           <button
             mat-menu-item
@@ -85,7 +85,7 @@
       </mat-list>
 
       <div class="app-menu-action" *ngIf="prevSearch">
-        <mat-divider></mat-divider>
+        <mat-divider />
         <button mat-button color="primary" class="center clear-list-btn" (click)="resetPrevSearch()">Clear list</button>
       </div>
     </div>
@@ -119,7 +119,7 @@
       <mat-menu #selectProject="matMenu">
         <div class="app-project-filter-menu">
           <button mat-menu-item class="center" (click)="setProject(); changeFocus()">{{ defaultProjectLabel }}</button>
-          <mat-divider></mat-divider>
+          <mat-divider />
           <span *ngFor="let project of projects">
             <button mat-menu-item (click)="setProject(project); changeFocus()">{{ project.shortname }}</button>
           </span>
@@ -145,7 +145,7 @@
       </button>
     </div>
 
-    <mat-divider></mat-divider>
+    <mat-divider />
 
     <div class="app-search-menu" [class.with-project-filter]="projectfilter">
       <div class="app-menu-content">
@@ -173,7 +173,7 @@
         </mat-list>
       </div>
       <div class="app-menu-action">
-        <mat-divider></mat-divider>
+        <mat-divider />
         <button mat-button color="primary" class="center clear-list-btn" (click)="togglePhonePanel()">Cancel</button>
       </div>
     </div>

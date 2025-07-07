@@ -17,8 +17,8 @@ import { DateTime } from '../date-time';
             aria-label="Date"
             placeholder="Date"
             readonly />
-          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-          <mat-datepicker #picker></mat-datepicker>
+          <mat-datepicker-toggle matSuffix [for]="picker" />
+          <mat-datepicker #picker />
         </mat-form-field>
       </app-jdn-datepicker>
 

@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 @Component({
   selector: 'app-centered-layout',
-  template: '<div class="child"><ng-content></ng-content></div>',
+  template: '<div class="child"><ng-content  /></div>',
   styles: [
     `
       :host {

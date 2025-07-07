@@ -22,7 +22,7 @@ import { AdminProjectsLegalInfoApiService, ProjectLicenseDto } from '@dasch-swis
           <td>
             <mat-checkbox
               [checked]="license.isEnabled"
-              (change)="$event.checked ? enable(license.id) : disable(license.id)"></mat-checkbox>
+              (change)="$event.checked ? enable(license.id) : disable(license.id)" />
           </td>
         </tr>
       }

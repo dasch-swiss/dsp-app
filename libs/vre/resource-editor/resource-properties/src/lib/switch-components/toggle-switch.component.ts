@@ -36,7 +36,7 @@ import { IsSwitchComponent } from './is-switch-component.interface';
         [formControl]="formControl"
         [disabled]="displayMode"
         data-cy="bool-toggle"
-        *ngIf="isVisible"></mat-slide-toggle>
+        *ngIf="isVisible" />
       <button mat-icon-button (click)="cancel()" title="Cancel" *ngIf="isCreatingBoolean">
         <mat-icon>cancel</mat-icon>
       </button>

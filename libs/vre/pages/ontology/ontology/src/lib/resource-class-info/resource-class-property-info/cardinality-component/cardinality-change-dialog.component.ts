@@ -31,7 +31,7 @@ export interface CardinalityInfo {
       </div>
       <div *ngIf="canSetCardinality">
         <div class="cando-headline">
-          <mat-icon aria-label="warn icon" fontIcon="warning_amber" color="accent"></mat-icon>
+          <mat-icon aria-label="warn icon" fontIcon="warning_amber" color="accent" />
           <div class="mat-headline-6">Attention</div>
         </div>
         <div>Please note that this change may not be reversible. Do you want to change the cardinality?</div>

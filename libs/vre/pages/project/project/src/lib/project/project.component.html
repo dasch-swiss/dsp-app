@@ -27,7 +27,7 @@
           </p>
         </div>
         <mat-list class="main-list">
-          <mat-divider></mat-divider>
+          <mat-divider />
           <mat-list-item
             [ngClass]="{ 'active': listItemSelected === routeConstants.advancedSearch}"
             class="section-title"
@@ -38,7 +38,7 @@
             </span>
           </mat-list-item>
 
-          <mat-divider></mat-divider>
+          <mat-divider />
           <mat-list-item
             [ngClass]="{ 'active': listItemSelected === routeConstants.project }"
             class="section-title"
@@ -50,7 +50,7 @@
           </mat-list-item>
 
           <ng-container *ngIf="isAdmin$ | async">
-            <mat-divider></mat-divider>
+            <mat-divider />
             <mat-list-item
               [ngClass]="{ 'active': listItemSelected === settingsRoute}"
               class="section-title footer"
@@ -62,7 +62,7 @@
             </mat-list-item>
           </ng-container>
 
-          <mat-divider></mat-divider>
+          <mat-divider />
           <mat-list-item
             [ngClass]="{ 'active': listItemSelected === dataModelsRoute}"
             class="section-title"
@@ -72,7 +72,7 @@
               <p>Data Model</p>
             </span>
           </mat-list-item>
-          <mat-divider></mat-divider>
+          <mat-divider />
 
           <!-- Project Ontologies -->
           <mat-accordion
@@ -99,7 +99,7 @@
                 [resClasses]="getAllEntityDefinitionsAsArray(onto.classes)"
                 [projectMember]="(isAdmin$ | async) || (isMember$ | async)" />
             </mat-expansion-panel>
-            <mat-divider></mat-divider>
+            <mat-divider />
           </mat-accordion>
         </mat-list>
       </div>
@@ -118,7 +118,7 @@
         </button>
       </div>
       <div class="main-content">
-        <router-outlet></router-outlet>
+        <router-outlet />
       </div>
     </mat-sidenav-content>
   </mat-sidenav-container>

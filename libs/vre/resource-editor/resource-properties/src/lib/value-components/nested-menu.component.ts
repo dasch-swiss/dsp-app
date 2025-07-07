@@ -7,7 +7,7 @@ import { ListNodeV2 } from '@dasch-swiss/dsp-js';
   template: `
     <mat-form-field *ngIf="data.isRootNode" [matMenuTriggerFor]="menu" data-cy="select-list-button" style="width: 100%">
       <mat-label>{{ selection ?? data.label }}</mat-label>
-      <mat-select></mat-select>
+      <mat-select />
     </mat-form-field>
     <div
       *ngIf="!data.isRootNode"

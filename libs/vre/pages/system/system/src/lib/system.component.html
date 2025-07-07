@@ -1,6 +1,6 @@
 <div *ngIf="isSysAdmin$ | async; else notAllowed">
   <nav mat-tab-nav-bar [tabPanel]="tabPanel" class="navigation tab-bar margin-from-top">
-    <mat-tab-nav-panel #tabPanel></mat-tab-nav-panel>
+    <mat-tab-nav-panel #tabPanel />
     <a
       mat-tab-link
       *ngFor="let link of links"
@@ -13,7 +13,7 @@
       {{ link.name }}
     </a>
   </nav>
-  <router-outlet></router-outlet>
+  <router-outlet />
 </div>
 
 <ng-template #notAllowed>

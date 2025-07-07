@@ -80,7 +80,7 @@ export class AppComponent {
     <mat-select placeholder="Calendar" [formControl]="calendar">
       <mat-option *ngFor="let cal of supportedCalendars" [value]="cal">{{ cal }}</mat-option>
     </mat-select>
-    <mat-calendar-header></mat-calendar-header>
+    <mat-calendar-header />
   `,
   styleUrls: [],
 })
