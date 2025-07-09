@@ -3,21 +3,21 @@ import {
   ApiResponseError,
   CanDoResponse,
   ClassDefinition,
+  Constants,
   IHasProperty,
   KnoraApiConnection,
+  ListNodeInfo,
+  OntologyMetadata,
   ReadOntology,
   ResourceClassDefinitionWithAllLanguages,
   ResourcePropertyDefinitionWithAllLanguages,
+  StringLiteral,
   UpdateOntology,
-  UpdateResourcePropertyLabel,
+  UpdateResourceClassComment,
+  UpdateResourceClassLabel,
   UpdateResourcePropertyComment,
   UpdateResourcePropertyGuiElement,
-  Constants,
-  OntologyMetadata,
-  StringLiteral,
-  UpdateResourceClassLabel,
-  UpdateResourceClassComment,
-  ListNodeInfo,
+  UpdateResourcePropertyLabel,
 } from '@dasch-swiss/dsp-js';
 import { getAllEntityDefinitionsAsArray } from '@dasch-swiss/vre/3rd-party-services/api';
 import { StringLiteralV2 } from '@dasch-swiss/vre/3rd-party-services/open-api';
@@ -33,11 +33,11 @@ import { OntologyService, SortingService } from '@dasch-swiss/vre/shared/app-hel
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { Store } from '@ngxs/store';
 import { BehaviorSubject, combineLatest, concat, defer, Observable, of } from 'rxjs';
-import { filter, map, switchMap, take, tap, last, distinctUntilChanged } from 'rxjs/operators';
+import { distinctUntilChanged, filter, last, map, switchMap, take, tap } from 'rxjs/operators';
 import { CreateOntologyData, UpdateOntologyData } from '../forms/ontology-form/ontology-form.type';
 import { CreatePropertyData, UpdatePropertyData } from '../forms/property-form/property-form.type';
 import { ResourceClassFormData, UpdateResourceClassData } from '../forms/resource-class-form/resource-class-form.type';
-import { ClassPropertyInfo, ResourceClassInfo, PropertyInfo, ClassShortInfo } from '../ontology.types';
+import { ClassPropertyInfo, ClassShortInfo, PropertyInfo, ResourceClassInfo } from '../ontology.types';
 import { MakeOntologyFor, OntologyContext, ProjectContext } from './make-ontology-for';
 
 @Injectable({ providedIn: 'root' })
@@ -357,8 +357,8 @@ export class OntologyEditService {
       );
   }
 
-  createResourceClass$(classData: ResourceClassFormData) {
-    const createOntology = MakeOntologyFor.createResourceClass(this.ctx, classData);
+  createResourceClass$(classData: ResourceClassFormData, subClassOf: string) {
+    const createOntology = MakeOntologyFor.createResourceClass(this.ctx, classData, subClassOf);
     this._isTransacting.next(true);
 
     return this._dspApiConnection.v2.onto.createResourceClass(createOntology).pipe(

@@ -4,6 +4,7 @@ export * from './lib/properties/ontology-properties.component';
 export * from './lib/ontology-editor-header/ontology-editor-header.component';
 export * from './lib/resource-classes/ontology-editor-classes.component';
 export * from './lib/data-models/data-models.component';
+export * from './lib/forms/resource-class-form/create-resource-class-dialog.component';
 export * from './lib/forms/resource-class-form/edit-resource-class-dialog.component';
 export * from './lib/forms/ontology-form/ontology-form.component';
 export * from './lib/properties/property-info/property-info.component';

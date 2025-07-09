@@ -11,8 +11,10 @@ import { DialogService } from '@dasch-swiss/vre/ui/ui';
 import { Store } from '@ngxs/store';
 import { Subscription } from 'rxjs';
 import { switchMap, take } from 'rxjs/operators';
-import { EditResourceClassDialogComponent } from '../../forms/resource-class-form/edit-resource-class-dialog.component';
-import { UpdateResourceClassData } from '../../forms/resource-class-form/resource-class-form.type';
+import {
+  EditResourceClassDialogComponent,
+  EditResourceClassDialogProps,
+} from '../../forms/resource-class-form/edit-resource-class-dialog.component';
 import { OntologyPageService } from '../../ontology-page.service';
 import { ClassPropertyInfo, ResourceClassInfo } from '../../ontology.types';
 import { OntologyEditService } from '../../services/ontology-edit.service';
@@ -87,9 +89,9 @@ export class ResourceClassInfoComponent implements OnInit, OnDestroy {
   }
 
   editResourceClassInfo() {
-    this._dialog.open<EditResourceClassDialogComponent, UpdateResourceClassData>(
+    this._dialog.open<EditResourceClassDialogComponent, EditResourceClassDialogProps>(
       EditResourceClassDialogComponent,
-      DspDialogConfig.dialogDrawerConfig(this.resourceClass.updateResourceClassData)
+      DspDialogConfig.mediumDialog({ title: this.classLabel, data: this.resourceClass.updateResourceClassData })
     );
   }
 

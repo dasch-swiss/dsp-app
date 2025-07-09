@@ -12,7 +12,7 @@ import {
 import { Store } from '@ngxs/store';
 import { EditPropertyFormDialogComponent } from './forms/property-form/edit-property-form-dialog.component';
 import { CreatePropertyDialogData } from './forms/property-form/property-form.type';
-import { EditResourceClassDialogComponent } from './forms/resource-class-form/edit-resource-class-dialog.component';
+import { CreateResourceClassDialogComponent } from './forms/resource-class-form/create-resource-class-dialog.component';
 import { OntologyPageService } from './ontology-page.service';
 
 @Component({
@@ -105,9 +105,9 @@ export class OntologySidenavComponent {
   ) {}
 
   openCreateResourceClass(defaultClass: DefaultClass) {
-    this._dialog.open<EditResourceClassDialogComponent, DefaultClass>(
-      EditResourceClassDialogComponent,
-      DspDialogConfig.dialogDrawerConfig(defaultClass)
+    this._dialog.open<CreateResourceClassDialogComponent, DefaultClass>(
+      CreateResourceClassDialogComponent,
+      DspDialogConfig.mediumDialog(defaultClass)
     );
   }
 
