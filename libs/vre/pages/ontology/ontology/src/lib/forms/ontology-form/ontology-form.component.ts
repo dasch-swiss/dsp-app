@@ -7,10 +7,9 @@ import { existingNamesValidator } from '@dasch-swiss/vre/pages/user-settings/use
 import { CustomRegex } from '@dasch-swiss/vre/shared/app-common';
 import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { Store } from '@ngxs/store';
-import { Subject } from 'rxjs';
-import { take, takeUntil } from 'rxjs/operators';
+import { Subject, take, takeUntil } from 'rxjs';
 import { OntologyEditService } from '../../services/ontology-edit.service';
-import { OntologyForm, UpdateOntologyData, CreateOntologyData } from './ontology-form.type';
+import { OntologyForm, UpdateOntologyData } from './ontology-form.type';
 
 @Component({
   selector: 'app-ontology-form',

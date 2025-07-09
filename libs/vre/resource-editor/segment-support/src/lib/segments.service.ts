@@ -1,6 +1,5 @@
 import { ChangeDetectorRef, Injectable } from '@angular/core';
-import { BehaviorSubject, EMPTY } from 'rxjs';
-import { expand, reduce } from 'rxjs/operators';
+import { BehaviorSubject, EMPTY, expand, reduce } from 'rxjs';
 import { Segment } from './segment';
 import { SegmentApiService } from './segment-api.service';
 

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Constants, ReadStillImageFileValue } from '@dasch-swiss/dsp-js';
 import { filterUndefined } from '@dasch-swiss/vre/shared/app-common';
-import { map } from 'rxjs/operators';
+import { map } from 'rxjs';
 import { CompoundService } from './compound.service';
 
 @Component({

@@ -25,8 +25,7 @@ import { ComponentCommunicationEventService, EmitEvent, Events } from '@dasch-sw
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngxs/store';
-import { combineLatest, of, Subject, Subscription } from 'rxjs';
-import { map, switchMap, take, takeUntil, tap } from 'rxjs/operators';
+import { combineLatest, map, of, Subject, Subscription, switchMap, take, takeUntil, tap } from 'rxjs';
 
 export interface ShortResInfo {
   id: string;

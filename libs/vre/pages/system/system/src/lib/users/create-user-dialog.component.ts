@@ -6,8 +6,7 @@ import { UserForm } from '@dasch-swiss/vre/pages/user-settings/user';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { Actions, ofActionSuccessful, Store } from '@ngxs/store';
-import { Observable } from 'rxjs';
-import { take } from 'rxjs/operators';
+import { Observable, take } from 'rxjs';
 
 @Component({
   selector: 'app-create-user-dialog',

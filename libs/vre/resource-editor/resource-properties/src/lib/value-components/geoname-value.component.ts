@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { filter, switchMap } from 'rxjs/operators';
+import { filter, switchMap } from 'rxjs';
 import { GeonameService, SearchPlace } from '../geoname.service';
 
 @Component({

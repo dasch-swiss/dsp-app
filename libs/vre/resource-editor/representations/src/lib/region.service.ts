@@ -2,8 +2,7 @@ import { Inject, Injectable } from '@angular/core';
 import { KnoraApiConnection } from '@dasch-swiss/dsp-js/src/knora-api-connection';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { DspResource, GenerateProperty } from '@dasch-swiss/vre/shared/app-common';
-import { BehaviorSubject, Subject } from 'rxjs';
-import { map, takeUntil, tap } from 'rxjs/operators';
+import { BehaviorSubject, map, Subject, takeUntil, tap } from 'rxjs';
 
 /**
  * Regions, also called annotations, are used to mark specific areas on an image.

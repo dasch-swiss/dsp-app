@@ -6,8 +6,7 @@ import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { Action, Actions, ofActionSuccessful, State, StateContext, Store } from '@ngxs/store';
 import { produce } from 'immer';
-import { EMPTY, of } from 'rxjs';
-import { concatMap, finalize, map, take, tap } from 'rxjs/operators';
+import { concatMap, EMPTY, finalize, map, of, take, tap } from 'rxjs';
 import { IKeyValuePairs } from '../model-interfaces';
 import { SetUserAction } from '../user/user.actions';
 import { UserSelectors } from '../user/user.selectors';
@@ -224,7 +223,7 @@ export class ProjectsState {
       tap({
         next: response => {
           const groups: IKeyValuePairs<ReadGroup> = {};
-          response.body.groups.forEach(group => {
+          response.body.groups.forEach((group: ReadGroup) => {
             const projectId = group.project?.id as string;
             if (!groups[projectId]) {
               groups[projectId] = { value: [] };

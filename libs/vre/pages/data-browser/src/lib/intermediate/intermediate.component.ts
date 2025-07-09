@@ -8,8 +8,7 @@ import { UserSelectors } from '@dasch-swiss/vre/core/state';
 import { FilteredResources } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { Store } from '@ngxs/store';
-import { BehaviorSubject, combineLatest, forkJoin, Observable } from 'rxjs';
-import { map, shareReplay, switchMap } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, forkJoin, map, Observable, shareReplay, switchMap } from 'rxjs';
 import {
   ResourceLinkDialogComponent,
   ResourceLinkDialogProps,

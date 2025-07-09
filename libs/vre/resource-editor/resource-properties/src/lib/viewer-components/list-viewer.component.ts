@@ -3,8 +3,7 @@ import { FormControl } from '@angular/forms';
 import { KnoraApiConnection, ListNodeV2, ResourcePropertyDefinition } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { ResourceFetcherService } from '@dasch-swiss/vre/resource-editor/representations';
-import { combineLatest, Observable, Subject } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { combineLatest, map, Observable, Subject, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-list-viewer',

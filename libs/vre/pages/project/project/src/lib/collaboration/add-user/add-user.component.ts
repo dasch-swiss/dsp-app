@@ -8,8 +8,7 @@ import { CreateUserDialogComponent } from '@dasch-swiss/vre/pages/system/system'
 import { AutocompleteItem } from '@dasch-swiss/vre/pages/user-settings/user';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { Store } from '@ngxs/store';
-import { combineLatest, Observable, Subject } from 'rxjs';
-import { map, startWith, take, takeUntil } from 'rxjs/operators';
+import { combineLatest, map, Observable, startWith, Subject, take, takeUntil } from 'rxjs';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,

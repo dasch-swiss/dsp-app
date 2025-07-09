@@ -1,8 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AppConfigService } from '@dasch-swiss/vre/core/config';
-import { Observable, throwError } from 'rxjs';
-import { catchError, map, shareReplay } from 'rxjs/operators';
+import { catchError, map, Observable, shareReplay } from 'rxjs';
 
 export interface GIS {
   longitude: number;
@@ -91,10 +90,9 @@ export class GeonameService {
           };
         }),
         shareReplay({ refCount: false, bufferSize: 1 }), // several subscribers may use the same source Observable (one HTTP request to geonames)
-        catchError(error =>
-          // an error occurred
-          throwError(error)
-        )
+        catchError(error => {
+          throw error;
+        })
       );
   }
 
@@ -123,7 +121,9 @@ export class GeonameService {
             locationType: geo.fclName,
           }))
       ),
-      catchError(error => throwError(error))
+      catchError(error => {
+        throw error;
+      })
     );
   }
 }

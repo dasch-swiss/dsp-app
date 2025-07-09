@@ -6,8 +6,7 @@ import { AuthService } from '@dasch-swiss/vre/core/session';
 import { UserSelectors } from '@dasch-swiss/vre/core/state';
 import { TranslateService } from '@ngx-translate/core';
 import { Select, Store } from '@ngxs/store';
-import { Observable, Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { Observable, Subject, takeUntil } from 'rxjs';
 import { MenuItem } from '../menu-item';
 
 @Component({

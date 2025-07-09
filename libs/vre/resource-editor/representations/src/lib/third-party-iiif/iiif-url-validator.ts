@@ -1,6 +1,5 @@
 import { AbstractControl, AsyncValidatorFn, ValidationErrors, ValidatorFn } from '@angular/forms';
-import { from, Observable, of } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { catchError, from, map, Observable, of } from 'rxjs';
 import { IIIFUrl } from './third-party-iiif';
 
 export function iiifUrlValidator(): ValidatorFn {

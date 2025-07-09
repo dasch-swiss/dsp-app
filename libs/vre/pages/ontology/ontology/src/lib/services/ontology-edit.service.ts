@@ -32,8 +32,21 @@ import {
 import { OntologyService, SortingService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { Store } from '@ngxs/store';
-import { BehaviorSubject, combineLatest, concat, defer, Observable, of } from 'rxjs';
-import { distinctUntilChanged, filter, last, map, switchMap, take, tap } from 'rxjs/operators';
+import {
+  BehaviorSubject,
+  combineLatest,
+  concat,
+  defer,
+  Observable,
+  of,
+  filter,
+  map,
+  switchMap,
+  take,
+  tap,
+  last,
+  distinctUntilChanged,
+} from 'rxjs';
 import { CreateOntologyData, UpdateOntologyData } from '../forms/ontology-form/ontology-form.type';
 import { CreatePropertyData, UpdatePropertyData } from '../forms/property-form/property-form.type';
 import { ResourceClassFormData, UpdateResourceClassData } from '../forms/resource-class-form/resource-class-form.type';

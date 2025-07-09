@@ -3,7 +3,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { StringLiteralV2 } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { MultiLanguages } from '@dasch-swiss/vre/ui/string-literal';
-import { take } from 'rxjs/operators';
+import { take } from 'rxjs';
 import { OntologyEditService } from '../../services/ontology-edit.service';
 import { ResourceClassForm, ResourceClassFormData, UpdateResourceClassData } from './resource-class-form.type';
 

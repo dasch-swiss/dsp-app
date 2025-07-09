@@ -17,7 +17,7 @@ import { LoadClassItemsCountAction } from '@dasch-swiss/vre/core/state';
 import { FileForm, FileRepresentationType, fileValueMapping } from '@dasch-swiss/vre/resource-editor/representations';
 import { PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
 import { Store } from '@ngxs/store';
-import { finalize, switchMap, take } from 'rxjs/operators';
+import { finalize, switchMap, take } from 'rxjs';
 import { CreateResourceFormInterface } from './create-resource-form.interface';
 import { FormValueGroup } from './form-value-array.type';
 import { propertiesTypeMapping } from './resource-payloads-mapping';

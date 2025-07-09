@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ResourceService } from '@dasch-swiss/vre/shared/app-common';
-import { map } from 'rxjs/operators';
+import { map } from 'rxjs';
 
 @Component({
   selector: 'app-single-resource-page',

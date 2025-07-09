@@ -4,7 +4,7 @@ import { ResourceSelectors } from '@dasch-swiss/vre/core/state';
 import { PropertiesDisplayService } from '@dasch-swiss/vre/resource-editor/resource-properties';
 import { DspResource, PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
 import { Store } from '@ngxs/store';
-import { map } from 'rxjs/operators';
+import { map } from 'rxjs';
 
 @Component({
   selector: 'app-properties-display',

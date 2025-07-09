@@ -198,9 +198,9 @@ DSP-JS `Constants` are extensively used throughout the codebase:
 .pipe(
   catchError(error => {
     if (error instanceof ApiResponseError && error.status === 400) {
-      return throwError(new UserFeedbackError('Custom message'));
+      throw new UserFeedbackError('Custom message');
     }
-    return throwError(error);
+    throw error;
   })
 )
 ```

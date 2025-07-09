@@ -12,8 +12,7 @@ import {
 } from '@dasch-swiss/vre/core/state';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { Actions, ofActionSuccessful, Store } from '@ngxs/store';
-import { Observable, Subject } from 'rxjs';
-import { distinctUntilChanged, filter, map, startWith, take, takeUntil, takeWhile } from 'rxjs/operators';
+import { Observable, Subject, distinctUntilChanged, filter, map, startWith, take, takeUntil, takeWhile } from 'rxjs';
 
 @Component({
   selector: 'app-project',

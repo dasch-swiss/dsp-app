@@ -5,7 +5,7 @@ import { DspApiConnectionToken, RouteConstants } from '@dasch-swiss/vre/core/con
 import { getFileValue, RegionService } from '@dasch-swiss/vre/resource-editor/representations';
 import { SegmentsService } from '@dasch-swiss/vre/resource-editor/segment-support';
 import { DspCompoundPosition, DspResource } from '@dasch-swiss/vre/shared/app-common';
-import { take } from 'rxjs/operators';
+import { take } from 'rxjs';
 import { CompoundService } from './compound/compound.service';
 
 @Component({

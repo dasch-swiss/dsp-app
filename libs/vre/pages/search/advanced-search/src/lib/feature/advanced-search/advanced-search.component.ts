@@ -6,7 +6,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Constants } from '@dasch-swiss/dsp-js';
 import { DialogService } from '@dasch-swiss/vre/ui/ui';
 import { TranslateModule } from '@ngx-translate/core';
-import { take } from 'rxjs/operators';
+import { take } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 import { ApiData } from '../../data-access/advanced-search-service/advanced-search.service';
 import {

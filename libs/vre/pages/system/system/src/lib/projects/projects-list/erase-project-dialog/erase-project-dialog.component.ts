@@ -5,7 +5,7 @@ import { KnoraApiConnection, ReadProject } from '@dasch-swiss/dsp-js';
 import { ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { Store } from '@ngxs/store';
-import { finalize, switchMap } from 'rxjs/operators';
+import { finalize, switchMap } from 'rxjs';
 
 export interface IEraseProjectDialogProps {
   project: ReadProject;

@@ -4,8 +4,7 @@ import { ReadUser } from '@dasch-swiss/dsp-js';
 import { LoadProjectMembersAction, ProjectsSelectors } from '@dasch-swiss/vre/core/state';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { Store } from '@ngxs/store';
-import { combineLatest, Observable } from 'rxjs';
-import { filter, first, map, tap } from 'rxjs/operators';
+import { combineLatest, filter, first, map, Observable, tap } from 'rxjs';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,

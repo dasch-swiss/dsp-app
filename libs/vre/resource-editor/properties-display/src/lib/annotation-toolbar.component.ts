@@ -11,7 +11,7 @@ import {
 import { ResourceService } from '@dasch-swiss/vre/shared/app-common';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { Store } from '@ngxs/store';
-import { take } from 'rxjs/operators';
+import { take } from 'rxjs';
 import { DeleteResourceDialogComponent } from './delete-resource-dialog.component';
 
 @Component({

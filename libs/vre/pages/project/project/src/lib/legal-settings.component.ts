@@ -5,8 +5,7 @@ import { AppError } from '@dasch-swiss/vre/core/error-handler';
 import { ProjectsSelectors } from '@dasch-swiss/vre/core/state';
 import { PaginatedApiService } from '@dasch-swiss/vre/resource-editor/resource-properties';
 import { Store } from '@ngxs/store';
-import { BehaviorSubject } from 'rxjs';
-import { filter, map, switchMap } from 'rxjs/operators';
+import { BehaviorSubject, filter, map, switchMap } from 'rxjs';
 import {
   CreateCopyrightHolderDialogComponent,
   CreateCopyrightHolderDialogProps,

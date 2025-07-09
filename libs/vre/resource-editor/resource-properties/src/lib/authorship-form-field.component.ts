@@ -3,8 +3,7 @@ import { ChangeDetectorRef, Component, Input, OnDestroy, OnInit, ViewChild } fro
 import { FormControl } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatChipInput, MatChipInputEvent } from '@angular/material/chips';
-import { Subscription } from 'rxjs';
-import { finalize } from 'rxjs/operators';
+import { finalize, Subscription } from 'rxjs';
 import { PaginatedApiService } from './paginated-api.service';
 
 @Component({

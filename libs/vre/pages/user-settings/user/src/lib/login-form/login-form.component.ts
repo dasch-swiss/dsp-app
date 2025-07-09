@@ -3,8 +3,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '@dasch-swiss/vre/core/session';
-import { Subscription } from 'rxjs';
-import { finalize, takeLast, tap } from 'rxjs/operators';
+import { finalize, Subscription, takeLast, tap } from 'rxjs';
 
 @Component({
   selector: 'app-login-form',

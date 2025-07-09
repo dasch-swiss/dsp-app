@@ -11,14 +11,13 @@ import {
   LogUserOutAction,
 } from '@dasch-swiss/vre/core/state';
 import {
+  Events as CommsEvents,
   ComponentCommunicationEventService,
   EmitEvent,
-  Events as CommsEvents,
   LocalizationService,
 } from '@dasch-swiss/vre/shared/app-helper-services';
 import { Actions, ofActionSuccessful, Store } from '@ngxs/store';
-import { of, throwError } from 'rxjs';
-import { catchError, map, switchMap, take, tap } from 'rxjs/operators';
+import { catchError, map, of, switchMap, take, tap } from 'rxjs';
 import { AccessTokenService } from './access-token.service';
 
 @Injectable({ providedIn: 'root' })
@@ -59,9 +58,9 @@ export class AuthService {
       }),
       catchError(error => {
         if ((error instanceof ApiResponseError && error.status === 400) || error.status === 401) {
-          return throwError(new UserFeedbackError('The username and / or password do not match.'));
+          throw new UserFeedbackError('The username and / or password do not match.');
         }
-        return throwError(error);
+        throw error;
       }),
       switchMap(() => {
         this._actions$.pipe(ofActionSuccessful(LoadUserAction), take(1)).subscribe(() => {

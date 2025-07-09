@@ -4,8 +4,7 @@ import { getAllEntityDefinitionsAsArray } from '@dasch-swiss/vre/3rd-party-servi
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { OntologyService, ProjectService, SortingService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { Action, Actions, ofActionSuccessful, State, StateContext } from '@ngxs/store';
-import { of } from 'rxjs';
-import { map, switchMap, take, tap } from 'rxjs/operators';
+import { map, of, switchMap, take, tap } from 'rxjs';
 import { LoadListsInProjectAction } from '../lists/lists.actions';
 import { IProjectOntologiesKeyValuePairs, OntologyProperties } from '../model-interfaces';
 import {

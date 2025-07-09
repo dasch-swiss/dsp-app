@@ -9,12 +9,12 @@ import { LocalizationService, OntologyService } from '@dasch-swiss/vre/shared/ap
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { DialogService } from '@dasch-swiss/vre/ui/ui';
 import { Store } from '@ngxs/store';
-import { Subscription } from 'rxjs';
-import { switchMap, take } from 'rxjs/operators';
+import { Subscription, switchMap, take } from 'rxjs';
 import {
   EditResourceClassDialogComponent,
   EditResourceClassDialogProps,
 } from '../../forms/resource-class-form/edit-resource-class-dialog.component';
+import { UpdateResourceClassData } from '../../forms/resource-class-form/resource-class-form.type';
 import { OntologyPageService } from '../../ontology-page.service';
 import { ClassPropertyInfo, ResourceClassInfo } from '../../ontology.types';
 import { OntologyEditService } from '../../services/ontology-edit.service';

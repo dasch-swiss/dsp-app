@@ -5,8 +5,7 @@ import { ReadUser } from '@dasch-swiss/dsp-js';
 import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import { UserSelectors } from '@dasch-swiss/vre/core/state';
 import { Select } from '@ngxs/store';
-import { Observable, Subject } from 'rxjs';
-import { takeUntil, takeWhile } from 'rxjs/operators';
+import { Observable, Subject, takeUntil, takeWhile } from 'rxjs';
 import { EditUserDialogComponent } from '../edit-user-page/edit-user-dialog.component';
 
 @Component({

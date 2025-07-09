@@ -6,7 +6,7 @@ import { existingNamesValidator } from '@dasch-swiss/vre/pages/user-settings/use
 import { atLeastOneStringRequired, CustomRegex } from '@dasch-swiss/vre/shared/app-common';
 import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { DEFAULT_MULTILANGUAGE_FORM, MultiLanguages } from '@dasch-swiss/vre/ui/string-literal';
-import { take } from 'rxjs/operators';
+import { take } from 'rxjs';
 import { OntologyEditService } from '../../services/ontology-edit.service';
 import { ResourceClassForm } from './resource-class-form.type';
 

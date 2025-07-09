@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { StringLiteralV2 } from '@dasch-swiss/vre/3rd-party-services/open-api';
-import { take } from 'rxjs/operators';
+import { take } from 'rxjs';
 import { OntologyEditService } from '../../services/ontology-edit.service';
 import {
   PropertyForm,

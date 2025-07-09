@@ -12,8 +12,7 @@ import { SearchParams } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { OntologyService, ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { Actions, Select, Store } from '@ngxs/store';
 import { search } from 'effect/String';
-import { combineLatest, Observable, Subject } from 'rxjs';
-import { map, takeUntil, takeWhile } from 'rxjs/operators';
+import { combineLatest, map, Observable, Subject, takeUntil, takeWhile } from 'rxjs';
 
 @Component({
   selector: 'app-resource-class-browser',

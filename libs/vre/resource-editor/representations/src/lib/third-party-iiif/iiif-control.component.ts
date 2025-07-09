@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { Subscription } from 'rxjs';
-import { startWith } from 'rxjs/operators';
+import { startWith, Subscription } from 'rxjs';
 import { IIIFUrl } from './third-party-iiif';
 
 @Component({

@@ -3,8 +3,7 @@ import { ReadProject } from '@dasch-swiss/dsp-js';
 import { ProjectsSelectors } from '@dasch-swiss/vre/core/state';
 import { PaginatedApiService } from '@dasch-swiss/vre/resource-editor/resource-properties';
 import { Store } from '@ngxs/store';
-import { BehaviorSubject } from 'rxjs';
-import { filter, map, shareReplay, switchMap } from 'rxjs/operators';
+import { BehaviorSubject, filter, map, shareReplay, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-legal-settings-licenses',

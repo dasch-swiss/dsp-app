@@ -8,8 +8,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { Constants, ListNodeV2 } from '@dasch-swiss/dsp-js';
 import { TranslateModule } from '@ngx-translate/core';
-import { ReplaySubject, Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { ReplaySubject, Subject, takeUntil } from 'rxjs';
 import { PropertyFormItem } from '../../../data-access/advanced-search-store/advanced-search-store.service';
 
 @Component({

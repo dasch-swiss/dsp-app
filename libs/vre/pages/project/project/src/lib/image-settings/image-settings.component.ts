@@ -14,8 +14,7 @@ import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { TranslateService } from '@ngx-translate/core';
 import { Select, Store } from '@ngxs/store';
 import { IMask } from 'angular-imask';
-import { Observable } from 'rxjs';
-import { switchMap, take, takeWhile } from 'rxjs/operators';
+import { Observable, switchMap, take, takeWhile } from 'rxjs';
 
 enum ImageSettingsEnum {
   Off = 'Off',

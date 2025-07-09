@@ -6,7 +6,7 @@ import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { TranslateService } from '@ngx-translate/core';
 import { Actions, Store, ofActionSuccessful } from '@ngxs/store';
-import { take } from 'rxjs/operators';
+import { take } from 'rxjs';
 import { UserForm } from '../user-form/user-form.type';
 
 @Component({

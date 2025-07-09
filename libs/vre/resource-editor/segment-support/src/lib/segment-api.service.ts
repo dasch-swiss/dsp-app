@@ -9,7 +9,7 @@ import {
 import { AppConfigService, DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { AccessTokenService } from '@dasch-swiss/vre/core/session';
 import { DspResource, GenerateProperty } from '@dasch-swiss/vre/shared/app-common';
-import { map } from 'rxjs/operators';
+import { map } from 'rxjs';
 import { Segment } from './segment';
 import { SegmentOrdering } from './segment-ordering';
 

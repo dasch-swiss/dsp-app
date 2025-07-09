@@ -2,7 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { ReadFileValue } from '@dasch-swiss/dsp-js';
 import { AdminProjectsLegalInfoApiService, ProjectLicenseDto } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { ResourceFetcherService } from '@dasch-swiss/vre/resource-editor/representations';
-import { switchMap, take } from 'rxjs/operators';
+import { switchMap, take } from 'rxjs';
 
 @Component({
   selector: 'app-resource-legal',

@@ -67,7 +67,7 @@ describe('app-config schema tests', () => {
 
     expect(() => {
       AppConfig.parse(invalidConfig);
-    }).toThrowError(ZodError);
+    }).toThrow(ZodError);
   });
 
   it('should throw error for invalid Rollbar config (2)', () => {
@@ -77,7 +77,7 @@ describe('app-config schema tests', () => {
         accessToken: '',
       };
       Rollbar.parse(data);
-    }).toThrowError(ZodError);
+    }).toThrow(ZodError);
   });
 
   it('should not throw error for valid Rollbar config (1)', () => {

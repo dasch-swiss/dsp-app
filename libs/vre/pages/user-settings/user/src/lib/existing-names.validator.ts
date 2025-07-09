@@ -1,6 +1,5 @@
 import { AbstractControl, AsyncValidatorFn, ValidationErrors, ValidatorFn } from '@angular/forms';
-import { Observable, of } from 'rxjs';
-import { first, map } from 'rxjs/operators';
+import { first, map, Observable, of } from 'rxjs';
 
 /**
  * validation of existing name values. Array method (list of values)

@@ -6,7 +6,7 @@ import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { AddUserToProjectMembershipAction, LoadProjectsAction, UserSelectors } from '@dasch-swiss/vre/core/state';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { Store } from '@ngxs/store';
-import { finalize } from 'rxjs/operators';
+import { finalize } from 'rxjs';
 import { ProjectForm } from './reusable-project-form/project-form.type';
 
 @Component({

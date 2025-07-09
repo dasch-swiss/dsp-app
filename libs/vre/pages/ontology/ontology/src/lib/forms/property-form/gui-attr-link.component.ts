@@ -4,7 +4,7 @@ import { getAllEntityDefinitionsAsArray } from '@dasch-swiss/vre/3rd-party-servi
 import { OntologiesSelectors } from '@dasch-swiss/vre/core/state';
 import { LocalizationService, SortingService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { Store } from '@ngxs/store';
-import { map } from 'rxjs/operators';
+import { map } from 'rxjs';
 import { PropertyForm } from './property-form.type';
 
 export interface ClassToSelect {

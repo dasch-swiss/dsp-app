@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, HostListener, OnInit, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ListNodeInfo } from '@dasch-swiss/dsp-js';
@@ -10,9 +10,8 @@ import {
   ProjectsSelectors,
 } from '@dasch-swiss/vre/core/state';
 import { DialogService } from '@dasch-swiss/vre/ui/ui';
-import { Actions, Store, ofActionSuccessful } from '@ngxs/store';
-import { combineLatest, Subject } from 'rxjs';
-import { map, switchMap, take, takeUntil, tap } from 'rxjs/operators';
+import { Actions, ofActionSuccessful, Store } from '@ngxs/store';
+import { combineLatest, map, Subject, switchMap, take, takeUntil } from 'rxjs';
 import { ListInfoFormComponent } from './list-info-form/list-info-form.component';
 import { ListItemService } from './list-item/list-item.service';
 

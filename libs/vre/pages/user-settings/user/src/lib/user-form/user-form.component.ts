@@ -7,8 +7,7 @@ import { CustomRegex } from '@dasch-swiss/vre/shared/app-common';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { TranslateService } from '@ngx-translate/core';
 import { Select } from '@ngxs/store';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, Observable } from 'rxjs';
 import { existingNamesAsyncValidator } from '../existing-names.validator';
 import { UserForm } from './user-form.type';
 

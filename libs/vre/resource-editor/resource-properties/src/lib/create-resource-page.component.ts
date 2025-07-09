@@ -6,8 +6,7 @@ import { ProjectsSelectors } from '@dasch-swiss/vre/core/state';
 import { ResourceService } from '@dasch-swiss/vre/shared/app-common';
 import { OntologyService, ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { Select } from '@ngxs/store';
-import { Observable, Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { Observable, Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-create-resource-page',

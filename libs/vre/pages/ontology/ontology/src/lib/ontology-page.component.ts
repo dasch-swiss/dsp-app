@@ -4,8 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { ProjectsSelectors } from '@dasch-swiss/vre/core/state';
 import { Store } from '@ngxs/store';
-import { combineLatest, Subject } from 'rxjs';
-import { take, takeUntil } from 'rxjs/operators';
+import { combineLatest, Subject, take, takeUntil } from 'rxjs';
 import { OntologyPageService } from './ontology-page.service';
 import { OntologyEditService } from './services/ontology-edit.service';
 

@@ -1,7 +1,6 @@
 import { Component, ElementRef, EventEmitter, HostListener, Input, OnChanges, Output, ViewChild } from '@angular/core';
 import { ReadMovingImageFileValue } from '@dasch-swiss/dsp-js';
-import { fromEvent, merge, Observable } from 'rxjs';
-import { map, take, tap } from 'rxjs/operators';
+import { fromEvent, map, merge, Observable, take, tap } from 'rxjs';
 import { MovingImageSidecar } from '../moving-image-sidecar';
 
 export interface Dimension {

@@ -3,7 +3,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { AdminProjectsLegalInfoApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { AppError } from '@dasch-swiss/vre/core/error-handler';
-import { finalize } from 'rxjs/operators';
+import { finalize } from 'rxjs';
 
 export interface CreateCopyrightHolderDialogProps {
   projectShortcode: string;

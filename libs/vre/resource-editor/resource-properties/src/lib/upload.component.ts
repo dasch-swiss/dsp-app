@@ -6,7 +6,7 @@ import {
   UploadFileService,
 } from '@dasch-swiss/vre/resource-editor/representations';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
-import { finalize } from 'rxjs/operators';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-upload',

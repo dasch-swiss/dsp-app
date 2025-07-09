@@ -3,7 +3,7 @@ import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { Action, State, StateContext, Store } from '@ngxs/store';
-import { finalize, take, tap } from 'rxjs/operators';
+import { finalize, take, tap } from 'rxjs';
 import { ProjectsSelectors } from '../projects/projects.selectors';
 import {
   ClearOntologyClassAction,

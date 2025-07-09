@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AdminProjectsLegalInfoApiService, ProjectLicenseDto } from '@dasch-swiss/vre/3rd-party-services/open-api';
-import { EMPTY } from 'rxjs';
-import { expand, map, reduce } from 'rxjs/operators';
+import { EMPTY, expand, map, reduce } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class PaginatedApiService {

@@ -19,8 +19,7 @@ import { ProjectService, SortingService } from '@dasch-swiss/vre/shared/app-help
 import { DialogService } from '@dasch-swiss/vre/ui/ui';
 import { TranslateService } from '@ngx-translate/core';
 import { Actions, ofActionSuccessful, Store } from '@ngxs/store';
-import { combineLatest, from, merge, Subject } from 'rxjs';
-import { filter, map, mergeMap, switchMap, take, takeLast, takeUntil } from 'rxjs/operators';
+import { combineLatest, filter, from, map, merge, mergeMap, Subject, switchMap, take, takeLast, takeUntil } from 'rxjs';
 import { CreateUserDialogComponent } from '../create-user-dialog.component';
 import { EditPasswordDialogComponent } from '../edit-password-dialog.component';
 import { ManageProjectMembershipDialogComponent } from '../manage-project-membership-dialog.component';

@@ -9,7 +9,7 @@ import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { MultiLanguages } from '@dasch-swiss/vre/ui/string-literal';
 import { TranslateService } from '@ngx-translate/core';
 import { Actions, ofActionSuccessful, Store } from '@ngxs/store';
-import { map, switchMap, take } from 'rxjs/operators';
+import { map, switchMap, take } from 'rxjs';
 import { ProjectForm } from './reusable-project-form/project-form.type';
 
 @Component({

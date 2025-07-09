@@ -1,14 +1,13 @@
 import { Inject, Injectable, InjectionToken } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Constants, KnoraApiConnection, ListNodeV2 } from '@dasch-swiss/dsp-js';
-import { Observable, of } from 'rxjs';
-import { take } from 'rxjs/operators';
+import { Observable, of, take } from 'rxjs';
 import { AdvancedSearchService, ApiData, PropertyData } from '../advanced-search-service/advanced-search.service';
 import { GravsearchService } from '../gravsearch-service/gravsearch.service';
 import {
   AdvancedSearchStoreService,
-  ParentChildPropertyPair,
   Operators,
+  ParentChildPropertyPair,
   PropertyFormItem,
   PropertyFormListOperations,
 } from './advanced-search-store.service';

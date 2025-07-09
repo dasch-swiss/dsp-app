@@ -5,7 +5,7 @@ import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { GetAttachedProjectAction, GetAttachedUserAction, ResourceSelectors } from '@dasch-swiss/vre/core/state';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { Actions, ofActionSuccessful, Store } from '@ngxs/store';
-import { filter, map, take } from 'rxjs/operators';
+import { filter, map, take } from 'rxjs';
 
 @Component({
   selector: 'app-resource-info-bar',

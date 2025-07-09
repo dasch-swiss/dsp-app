@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ListApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { Action, State, StateContext } from '@ngxs/store';
-import { of } from 'rxjs';
-import { finalize, map, take, tap } from 'rxjs/operators';
+import { finalize, map, of, take, tap } from 'rxjs';
 import { ClearListsAction, DeleteListNodeAction, LoadListsInProjectAction } from './lists.actions';
 import { ListsStateModel } from './lists.state-model';
 

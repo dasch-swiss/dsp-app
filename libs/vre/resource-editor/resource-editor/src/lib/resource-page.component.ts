@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { AppConfigService, RouteConstants } from '@dasch-swiss/vre/core/config';
 import { ProjectsSelectors } from '@dasch-swiss/vre/core/state';
 import { Store } from '@ngxs/store';
-import { filter, map } from 'rxjs/operators';
+import { filter, map } from 'rxjs';
 
 @Component({
   selector: 'app-resource-page',

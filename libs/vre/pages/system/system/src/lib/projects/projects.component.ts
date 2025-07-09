@@ -4,8 +4,7 @@ import { StoredProject } from '@dasch-swiss/dsp-js';
 import { AppError } from '@dasch-swiss/vre/core/error-handler';
 import { LoadProjectsAction, LoadUserAction, ProjectsSelectors, UserSelectors } from '@dasch-swiss/vre/core/state';
 import { Store } from '@ngxs/store';
-import { Observable, Subject, combineLatest } from 'rxjs';
-import { map, takeUntil } from 'rxjs/operators';
+import { Observable, Subject, combineLatest, map, takeUntil } from 'rxjs';
 
 /**
  * ProjectsComponent handles the list of projects.
