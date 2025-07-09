@@ -1,9 +1,9 @@
 /libs/vre/3rd-party-services @mpro7
 
-/libs/vre/core @irmastnt @domsteinbach
+/libs/vre/core @domsteinbach # @irmastnt
 
-/libs/vre/pages/project @irmastnt
-/libs/vre/pages/search @irmastnt
+/libs/vre/pages/project # @irmastnt
+/libs/vre/pages/search # @irmastnt
 /libs/vre/pages/user-settings @domsteinbach
 /libs/vre/pages/system @mpro7
 /libs/vre/pages/ontology @derschnee68 @domsteinbach
@@ -13,4 +13,4 @@
 
 # /libs/vre/shared not assigned yet
 
-/libs/vre/ui @derschnee68 @irmastnt
+/libs/vre/ui @derschnee68 # @irmastnt
