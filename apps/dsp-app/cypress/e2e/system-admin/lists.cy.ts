@@ -18,8 +18,9 @@ describe('Lists', () => {
   it('user can create a list', () => {
     cy.intercept('POST', '/admin/lists').as('submitRequest');
 
-    cy.visit('/project/00FF/add-list');
-    cy.get('[data-cy=labels-input]').type(faker.lorem.words(2));
+    cy.visit('/project/00FF/data-models');
+    cy.get('[data-cy=create-list-button]').click();
+    cy.get('[data-cy=label-input]').type(faker.lorem.words(2));
     cy.get('[data-cy=comments-input]').type(faker.lorem.sentence());
     cy.get('[data-cy=submit-button]').click();
 
@@ -37,7 +38,7 @@ describe('Lists', () => {
     cy.visit(listUrl);
 
     cy.get('[data-cy=edit-button]').click();
-    cy.get('[data-cy=labels-input] input').clear().type(data.label, { force: true });
+    cy.get('[data-cy=label-input] input').clear().type(data.label, { force: true });
     cy.get('[data-cy=comments-input]').clear().type(data.comment);
     cy.get('[data-cy=submit-button]').click();
 

@@ -1,19 +1,11 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { ActivatedRoute, Router } from '@angular/router';
-import { ReadProject, ReadUser } from '@dasch-swiss/dsp-js';
-import {
-  IKeyValuePairs,
-  LoadProjectMembersAction,
-  ProjectsSelectors,
-  UserSelectors,
-} from '@dasch-swiss/vre/core/state';
+import { ReadUser } from '@dasch-swiss/dsp-js';
+import { LoadProjectMembersAction, ProjectsSelectors } from '@dasch-swiss/vre/core/state';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
-import { Actions, Select, Store } from '@ngxs/store';
-import { Observable, Subject } from 'rxjs';
-import { map, takeUntil } from 'rxjs/operators';
-import { ProjectBase } from '../project-base';
-import { AddUserComponent } from './add-user/add-user.component';
+import { Store } from '@ngxs/store';
+import { combineLatest, Observable } from 'rxjs';
+import { filter, first, map, tap } from 'rxjs/operators';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -21,71 +13,54 @@ import { AddUserComponent } from './add-user/add-user.component';
   templateUrl: './collaboration.component.html',
   styleUrls: ['./collaboration.component.scss'],
 })
-export class CollaborationComponent extends ProjectBase implements OnInit, OnDestroy {
-  private ngUnsubscribe: Subject<void> = new Subject<void>();
+export class CollaborationComponent implements OnInit {
+  project$ = this._store.select(ProjectsSelectors.currentProject);
+  projectMembers$ = this._store.select(ProjectsSelectors.projectMembers);
+  isAdmin$ = this._store.select(ProjectsSelectors.isCurrentProjectAdminOrSysAdmin);
 
-  @ViewChild('addUserComponent') addUser: AddUserComponent;
+  projectUuid$ = this.project$.pipe(
+    tap(p => {
+      this._titleService.setTitle(`Project ${p?.shortname} | Collaboration`);
+    }),
+    map(p => {
+      return ProjectService.IriToUuid(p?.id || '');
+    }),
+    filter(uuid => !!uuid),
+    first()
+  );
 
   get activeProjectMembers$(): Observable<ReadUser[]> {
-    return this.projectMembers$.pipe(
-      takeUntil(this.ngUnsubscribe),
-      map(projectMembers => {
-        if (!projectMembers[this.projectIri]) {
+    return combineLatest([this.project$, this.projectMembers$]).pipe(
+      map(([currentProject, projectMembers]) => {
+        if (!currentProject || !projectMembers[currentProject.id]) {
           return [];
         }
-
-        return projectMembers[this.projectIri].value.filter(member => member.status === true);
+        return projectMembers[currentProject.id]?.value.filter(member => member?.status === true) || [];
       })
     );
   }
 
   get inactiveProjectMembers$(): Observable<ReadUser[]> {
-    return this.projectMembers$.pipe(
-      takeUntil(this.ngUnsubscribe),
-      map(projectMembers => {
-        if (!projectMembers[this.projectIri]) {
+    return combineLatest([this.project$, this.projectMembers$]).pipe(
+      map(([currentProject, projectMembers]) => {
+        if (!currentProject || !projectMembers[currentProject.id]) {
           return [];
         }
-
-        return projectMembers[this.projectIri].value.filter(member => !member.status);
+        return projectMembers[currentProject?.id].value.filter(member => member?.status === false) || [];
       })
     );
   }
 
-  @Select(ProjectsSelectors.projectMembers) projectMembers$: Observable<IKeyValuePairs<ReadUser>>;
-  @Select(ProjectsSelectors.isProjectsLoading) isProjectsLoading$: Observable<boolean>;
-  @Select(ProjectsSelectors.isCurrentProjectAdminOrSysAdmin) isCurrentProjectAdminOrSysAdmin$: Observable<boolean>;
-  @Select(UserSelectors.isSysAdmin) isSysAdmin$: Observable<boolean>;
-  @Select(UserSelectors.user) user$: Observable<ReadUser>;
-  @Select(ProjectsSelectors.currentProject) project$: Observable<ReadProject>;
-
   constructor(
-    protected _route: ActivatedRoute,
-    protected _projectService: ProjectService,
-    protected _titleService: Title,
-    protected _store: Store,
-    protected _cd: ChangeDetectorRef,
-    protected _actions$: Actions,
-    protected _router: Router
-  ) {
-    super(_store, _route, _projectService, _titleService, _router, _cd, _actions$);
-  }
+    private _store: Store,
+    protected _titleService: Title
+  ) {}
 
   ngOnInit() {
-    super.ngOnInit();
-    const project = this._store.selectSnapshot(ProjectsSelectors.currentProject) as ReadProject;
-    this._titleService.setTitle(`Project ${project?.shortname} | Collaboration`);
-  }
-
-  ngOnDestroy() {
-    this.ngUnsubscribe.next();
-    this.ngUnsubscribe.complete();
-  }
-
-  /**
-   * refresh list of members after adding a new user to the team
-   */
-  refresh(): void {
-    this._store.dispatch(new LoadProjectMembersAction(this.projectUuid));
+    this.projectUuid$.subscribe(projectUuid => {
+      if (projectUuid) {
+        this._store.dispatch(new LoadProjectMembersAction(projectUuid));
+      }
+    });
   }
 }

@@ -9,7 +9,7 @@
       info
     </mat-icon>
   </div>
-  <div *ngIf="isAdmin$ | async" class="action-buttons">
+  <div *ngIf="isAdmin$ | async" class="data-models-admin-panel action-buttons">
     <button color="primary" data-cy="create-button" mat-raised-button class="create" (click)="createNewOntology()">
       <mat-icon class="v-align-middle">add_circle</mat-icon>
       <span class="v-align-middle">Create New</span>
@@ -24,21 +24,16 @@
       <mat-icon>chevron_right</mat-icon>
     </a>
   </div>
-  <div *ngIf="ontologiesMetadata$ | async" class="projectOntos">
-    <div class="list" [class.top-padding]="isAdmin$ | async">
-      <div
-        class="list-item ontos"
-        *ngFor="let onto of ontologiesMetadata$ | async; trackBy: trackByOntologyMetaFn"
-        data-cy="ontology-button"
-        matTooltip="You must be logged in to view data models"
-        matTooltipPositionAtOrigin="true"
-        [matTooltipDisabled]="(isLoggedIn$ | async)"
-        (click)="navigateToOntology(onto.id)">
-        <mat-icon class="icon-prefix">bubble_chart</mat-icon>
-        <p class="label">{{onto.label}}</p>
-        <span class="fill-remaining-space"></span>
-        <mat-icon class="icon-suffix">chevron_right</mat-icon>
-      </div>
+  <div class="list" *ngIf="ontologiesMetadata$ | async">
+    <div
+      class="list-item ontos"
+      *ngFor="let onto of ontologiesMetadata$ | async; trackBy: trackByOntologyMetaFn"
+      data-cy="ontology-button"
+      (click)="navigateToOntology(onto.id)">
+      <mat-icon class="icon-prefix">bubble_chart</mat-icon>
+      <p class="label">{{onto.label}}</p>
+      <span class="fill-remaining-space"></span>
+      <mat-icon class="icon-suffix">chevron_right</mat-icon>
     </div>
   </div>
   <div class="header">
@@ -51,26 +46,21 @@
       info
     </mat-icon>
   </div>
-  <div *ngIf="isAdmin$ | async" class="action-buttons">
-    <a color="primary" mat-raised-button class="create" [routerLink]="['..', RouteConstants.addList]">
+  <div *ngIf="isAdmin$ | async" class="data-models-admin-panel action-buttons">
+    <a color="primary" data-cy="create-list-button" mat-raised-button class="create" (click)="createNewList()">
       <mat-icon class="v-align-middle">add_circle</mat-icon>
       <span class="v-align-middle">Create New</span>
     </a>
   </div>
-  <div *ngIf="(listsInProject$ | async)?.length > 0" class="projectLists">
-    <div class="list" [class.top-padding]="isAdmin$ | async">
-      <div
-        class="list-item"
-        *ngFor="let list of (listsInProject$ | async); trackBy: trackByFn"
-        matTooltip="You must be logged in to view data models"
-        matTooltipPositionAtOrigin="true"
-        [matTooltipDisabled]="(isLoggedIn$ | async)"
-        (click)="navigateToList(list.id)">
-        <mat-icon class="icon-prefix">list</mat-icon>
-        <p class="label">{{list.labels | appStringifyStringLiteral}}</p>
-        <span class="fill-remaining-space"></span>
-        <mat-icon class="icon-suffix">chevron_right</mat-icon>
-      </div>
+  <div class="list" *ngIf="(listsInProject$ | async)?.length > 0">
+    <div
+      class="list-item"
+      *ngFor="let list of (listsInProject$ | async); trackBy: trackByFn"
+      (click)="navigateToList(list.id)">
+      <mat-icon class="icon-prefix">list</mat-icon>
+      <p class="label">{{list.labels | appStringifyStringLiteral}}</p>
+      <span class="fill-remaining-space"></span>
+      <mat-icon class="icon-suffix">chevron_right</mat-icon>
     </div>
   </div>
 </div>

@@ -1,24 +1,13 @@
 import { Inject, Injectable } from '@angular/core';
-import {
-  ApiResponseError,
-  Constants,
-  IHasProperty,
-  KnoraApiConnection,
-  PropertyDefinition,
-  ReadOntology,
-  UpdateOntology,
-  UpdateResourceClassCardinality,
-} from '@dasch-swiss/dsp-js';
+import { ApiResponseError, Constants, KnoraApiConnection, PropertyDefinition, ReadOntology } from '@dasch-swiss/dsp-js';
 import { getAllEntityDefinitionsAsArray } from '@dasch-swiss/vre/3rd-party-services/api';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
-import { OntologyClassHelper, ProjectService, SortingService } from '@dasch-swiss/vre/shared/app-helper-services';
-import { NotificationService } from '@dasch-swiss/vre/ui/notification';
+import { OntologyService, ProjectService, SortingService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { Action, Actions, ofActionSuccessful, State, StateContext } from '@ngxs/store';
 import { of } from 'rxjs';
 import { map, switchMap, take, tap } from 'rxjs/operators';
 import { LoadListsInProjectAction } from '../lists/lists.actions';
 import { IProjectOntologiesKeyValuePairs, OntologyProperties } from '../model-interfaces';
-import { LoadClassItemsCountAction } from '../ontology-class/ontology-class.actions';
 import {
   ClearCurrentOntologyAction,
   ClearOntologiesAction,
@@ -27,11 +16,11 @@ import {
   LoadOntologyAction,
   LoadProjectOntologiesAction,
   RemoveProjectOntologyAction,
-  RemovePropertyAction,
-  ReplacePropertyAction,
+  ResetCurrentOntologyAction,
   SetCurrentOntologyAction,
   SetCurrentProjectOntologyPropertiesAction,
   SetOntologiesLoadingAction,
+  SetOntologyAction,
   UpdateOntologyAction,
   UpdateProjectOntologyAction,
 } from './ontologies.actions';
@@ -61,8 +50,7 @@ export class OntologiesState {
     private _dspApiConnection: KnoraApiConnection,
     private _sortingService: SortingService,
     private _projectService: ProjectService,
-    private _actions$: Actions,
-    private _notification: NotificationService
+    private _actions$: Actions
   ) {}
 
   // TODO Remove this action when all actions containing this usage is implemented
@@ -74,6 +62,15 @@ export class OntologiesState {
   @Action(SetCurrentOntologyAction)
   setCurrentOntologyAction(ctx: StateContext<OntologiesStateModel>, { readOntology }: SetCurrentOntologyAction) {
     ctx.patchState({ currentOntology: readOntology });
+  }
+
+  @Action(ResetCurrentOntologyAction)
+  resetCurrentOntologyAction(
+    ctx: StateContext<OntologiesStateModel>,
+    { ontology, projectIri }: ResetCurrentOntologyAction
+  ) {
+    ctx.dispatch(new SetOntologyAction(ontology, projectIri));
+    ctx.dispatch(new SetCurrentOntologyAction(ontology));
   }
 
   @Action(UpdateProjectOntologyAction)
@@ -101,8 +98,33 @@ export class OntologiesState {
     ctx.patchState(state);
   }
 
+  @Action(SetOntologyAction)
+  setOntologyAction(ctx: StateContext<OntologiesStateModel>, { ontology, projectIri }: SetOntologyAction) {
+    const state = ctx.getState();
+    const existing = state.projectOntologies[projectIri]?.readOntologies || [];
+
+    const updatedOntologies = existing.map(o => (o.id === ontology.id ? ontology : o));
+    const isNew = !existing.some(o => o.id === ontology.id);
+
+    const newReadOntologies = isNew ? [...existing, ontology] : updatedOntologies;
+
+    ctx.setState({
+      ...state,
+      projectOntologies: {
+        ...state.projectOntologies,
+        [projectIri]: {
+          ...state.projectOntologies[projectIri],
+          readOntologies: newReadOntologies,
+        },
+      },
+    });
+  }
+
   @Action(LoadProjectOntologiesAction)
-  loadProjectOntologiesAction(ctx: StateContext<OntologiesStateModel>, { projectIri }: LoadProjectOntologiesAction) {
+  loadProjectOntologiesAction(
+    ctx: StateContext<OntologiesStateModel>,
+    { projectIri, ontologyName }: LoadProjectOntologiesAction
+  ) {
     ctx.patchState({ isOntologiesLoading: true, isLoading: true });
     projectIri = this._projectService.uuidToIri(projectIri);
 
@@ -142,19 +164,18 @@ export class OntologiesState {
             )
             .pipe(switchMap(() => this._actions$.pipe(ofActionSuccessful(LoadOntologyAction), take(1)))) // last action dispatched
             .subscribe(() => {
-              ctx.dispatch(new LoadListsInProjectAction(projectIri));
-              ontoMeta.ontologies.forEach(onto => {
+              if (ontologyName) {
                 const readOntology = ctx
                   .getState()
-                  .projectOntologies[projectIri].readOntologies.find(o => o.id === onto.id);
+                  .projectOntologies[
+                    projectIri
+                  ].readOntologies.find(o => o.id === OntologyService.getOntologyName(ontologyName));
                 if (readOntology) {
-                  ctx.dispatch(
-                    OntologyClassHelper.GetReadOntologyClassesToDisplay(readOntology.classes).map(
-                      resClass => new LoadClassItemsCountAction(onto.id, resClass.id)
-                    )
-                  );
+                  ctx.dispatch(new SetCurrentOntologyAction(readOntology));
                 }
-              });
+              }
+
+              ctx.dispatch(new LoadListsInProjectAction(projectIri));
               ctx.patchState({ isOntologiesLoading: false });
             });
         },
@@ -192,7 +213,7 @@ export class OntologiesState {
           }
 
           projectReadOntologies = projectReadOntologies.sort((o1, o2) => this._compareOntologies(o1, o2));
-          // this._sortingService.keySortByAlphabetical(projectReadOntologies, 'label');
+          // this._sortingService.keySortByAlphabetical(projectReadOntologies, 'labels');
           projectOntologiesState[projectIri].readOntologies = projectReadOntologies;
 
           if (ontology.id === ctx.getState().currentOntology?.id) {
@@ -202,7 +223,7 @@ export class OntologiesState {
           ctx.setState({
             ...ctx.getState(),
             isLoading: !stopLoadingWhenCompleted,
-            projectOntologies: projectOntologiesState,
+            projectOntologies: { ...projectOntologiesState }, // batch update with a new reference!
           });
         },
         error: (error: ApiResponseError) => {
@@ -292,82 +313,6 @@ export class OntologiesState {
     });
   }
 
-  /**
-   * removes property from resource class
-   * @param property
-   */
-  @Action(RemovePropertyAction)
-  removePropertyAction(
-    ctx: StateContext<OntologiesStateModel>,
-    { property, resourceClass, currentOntologyPropertiesToDisplay }: RemovePropertyAction
-  ) {
-    ctx.patchState({ isLoading: true });
-    const state = ctx.getState();
-
-    const onto = new UpdateOntology<UpdateResourceClassCardinality>();
-    onto.lastModificationDate = <string>state.currentOntology?.lastModificationDate;
-    onto.id = <string>state.currentOntology?.id;
-    const delCard = new UpdateResourceClassCardinality();
-    delCard.id = resourceClass.id;
-    delCard.cardinalities = [];
-    delCard.cardinalities = currentOntologyPropertiesToDisplay.filter(prop => prop.propertyIndex === property.iri);
-    onto.entity = delCard;
-
-    return this._dspApiConnection.v2.onto.deleteCardinalityFromResourceClass(onto).pipe(
-      take(1),
-      tap({
-        next: () => {
-          // ctx.dispatch(new SetCurrentOntologyPropertiesToDisplayAction(currentOntologyPropertiesToDisplay));
-          ctx.setState({ ...state, isLoading: false });
-          this._notification.openSnackBar(
-            `You have successfully removed "${property.label}" from "${resourceClass.label}".`
-          );
-        },
-        error: (error: ApiResponseError) => {
-          ctx.patchState({ hasLoadingErrors: true, isLoading: false });
-        },
-      })
-    );
-  }
-
-  @Action(ReplacePropertyAction)
-  replacePropertyAction(
-    ctx: StateContext<OntologiesStateModel>,
-    { resourceClass, currentOntologyPropertiesToDisplay }: ReplacePropertyAction
-  ) {
-    ctx.patchState({ isLoading: true });
-    const state = ctx.getState();
-
-    const onto = new UpdateOntology<UpdateResourceClassCardinality>();
-    onto.lastModificationDate = <string>state.currentOntology?.lastModificationDate;
-    onto.id = <string>state.currentOntology?.id;
-    const addCard = new UpdateResourceClassCardinality();
-    addCard.id = resourceClass.id;
-    addCard.cardinalities = [];
-    currentOntologyPropertiesToDisplay.forEach((prop, index) => {
-      const propCard: IHasProperty = {
-        propertyIndex: prop.propertyIndex,
-        cardinality: prop.cardinality,
-        guiOrder: index + 1,
-      };
-
-      addCard.cardinalities.push(propCard);
-    });
-
-    onto.entity = addCard;
-
-    return this._dspApiConnection.v2.onto.replaceGuiOrderOfCardinalities(onto).pipe(
-      take(1),
-      tap({
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        next: () => {},
-        error: (error: ApiResponseError) => {
-          ctx.patchState({ hasLoadingErrors: true, isLoading: false });
-        },
-      })
-    );
-  }
-
   @Action(CurrentOntologyCanBeDeletedAction)
   currentOntologyCanBeDeletedAction(ctx: StateContext<OntologiesStateModel>) {
     ctx.patchState({ isLoading: true });
@@ -424,7 +369,7 @@ export class OntologiesState {
       }
     });
 
-    // sort properties by label
+    // sort properties by labels
     // --> TODO: add sort functionallity to the gui
     return this._sortingService.keySortByAlphabetical(listOfProperties, 'label');
   }

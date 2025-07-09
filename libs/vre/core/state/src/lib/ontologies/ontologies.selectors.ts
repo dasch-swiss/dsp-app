@@ -41,8 +41,11 @@ export class OntologiesSelectors {
   }
 
   @Selector([OntologiesState, ProjectsSelectors.currentProject])
-  static currentProjectOntologies(state: OntologiesStateModel, project: ReadProject): ReadOntology[] {
-    return state.projectOntologies[project.id] ? state.projectOntologies[project.id].readOntologies : [];
+  static currentProjectOntologies(state: OntologiesStateModel, project?: ReadProject): ReadOntology[] {
+    if (!project || !state.projectOntologies[project.id]) {
+      return [];
+    }
+    return state.projectOntologies[project.id].readOntologies;
   }
 
   // ontology name has to be unique

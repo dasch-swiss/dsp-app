@@ -74,11 +74,7 @@ describe('Check project admin existing resource functionality', () => {
   it('ThingPicture resource should be created and deleted', () => {
     project0001Page.visitClass(Project0001Page.thingPictureClass.id);
     cy.intercept('GET', '**/resources/**').as('resourceRequest');
-    cy.get('[data-cy=class-item] div.label')
-      .contains(Project0001Page.thingPictureClass.label)
-      .parentsUntil('app-ontology-class-item')
-      .find('[data-cy="add-class-instance"]')
-      .click();
+    cy.get('[data-cy=class-item]').eq(5).find('[data-cy=add-class-instance]').click();
 
     cy.intercept('POST', `**/${uploadedImageFile}`).as('uploadRequest');
     cy.get('[data-cy=create-resource-title]').should('exist').contains(Project0001Page.thingPictureClass.id);

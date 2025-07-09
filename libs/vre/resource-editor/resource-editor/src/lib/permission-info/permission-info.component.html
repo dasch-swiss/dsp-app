@@ -24,20 +24,20 @@
       <tr>
         <th class="first-col">{{ 'resourceEditor.permissionInfo.label' | translate }}</th>
         <th *ngFor="let icon of PERMISSION_HEADERS">
-          <mat-icon [matTooltip]="icon.label | translate" matTooltipPosition="above"> {{icon.icon}} </mat-icon>
+          <mat-icon [matTooltip]="icon.label | translate" matTooltipPosition="above"> {{ icon.icon }} </mat-icon>
         </th>
       </tr>
       <tr
         *ngFor="let group of permissionGroups"
         [class.border-top]="group.group === 'UsersPermissions' || group.group === 'CustomGroup'">
-        <td class="first-col">{{group.label | translate}}</td>
+        <td class="first-col">{{ group.label | translate }}</td>
         <td *ngFor="let permission of group.permissions; let i = index">
           <mat-icon
             class="status"
             [class.checked]="permission.granted"
             [matTooltip]="PERMISSION_HEADERS[i]?.label || '' | translate"
             matTooltipPosition="above">
-            {{ permission.granted ? 'radio_button_checked' : 'radio_button_unchecked'}}
+            {{ permission.granted ? 'radio_button_checked' : 'radio_button_unchecked' }}
           </mat-icon>
         </td>
       </tr>

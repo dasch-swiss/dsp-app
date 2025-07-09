@@ -1,0 +1,90 @@
+<div data-cy="property-info" class="property-info" (mouseenter)="mouseEnter()" (mouseleave)="mouseLeave()">
+  <div class="prop-container">
+    <div mat-line class="title" [class.with-line-break]="true">
+      <span
+        class="icon"
+        *ngIf="property.propType"
+        [matTooltip]="property.propType?.group + ': ' + property.propType?.label + ' (' + property.propDef!.id.split('#')[1] + ')'"
+        matTooltipPosition="above">
+        <mat-icon class="type">{{ property.propType?.icon }}</mat-icon>
+      </span>
+      <span
+        class="label"
+        [matTooltip]="property.propDef.comment || ''"
+        matTooltipPosition="above"
+        matTooltipClass="multi-line-tooltip"
+        data-cy="property-labels">
+        {{ !property.propDef!.labels.length ? property.propDef?.label : property.propDef!.labels |
+        appStringifyStringLiteral:'all' }}
+      </span>
+      <!-- property is linked to a class or to a list: display connected class or list -->
+      <span
+        class="attribute additional-info"
+        *ngIf="property.objectLabel"
+        [matTooltip]="property.objectComment || ''"
+        matTooltipPosition="above"
+        [innerHTML]="'&rarr;&nbsp;' + property.objectLabel">
+      </span>
+    </div>
+  </div>
+
+  <div mat-line class="info additional-info" [class.with-line-break]="true">
+    <span
+      [matTooltip]="'id: ' + property.propDef!.id"
+      matTooltipPosition="above"
+      matTooltipClass="wide-tooltip"
+      class="mat-caption"
+      [matTooltipDisabled]="isLockHovered">
+      {{ property.propDef!.id | split: '#':1 }}
+    </span>
+    <span class="fill-remaining-space center"></span>
+    <!-- in case of ontology property: display corresponding resource classes -->
+    <span class="white-space">
+      <span *ngIf="property.usedByClasses.length; else notUsed">
+        <span class="mat-caption">&gt; Property is used in:</span>
+        <span *ngFor="let c of property.usedByClasses; trackBy: trackByFn; let last = last">
+          <span [matTooltip]="c.comment" matTooltipPosition="above" [matTooltipDisabled]="isLockHovered"
+            >{{ c.label }}
+            <span
+              *ngIf="c.id && c.id === c.restrictedToClass"
+              [matTooltip]="'This property can only be used by the class ' + c.label"
+              (mouseenter)="isLockHovered = true"
+              (mouseleave)="isLockHovered = false">
+              <mat-icon class="type">lock</mat-icon>
+            </span></span
+          ><span *ngIf="!last">&nbsp;&middot;</span>
+        </span>
+      </span>
+      <ng-template #notUsed>
+        <span class="mat-caption"
+          >&gt;
+          <span class="not-used">This property is not used in a class.</span>
+        </span>
+      </ng-template>
+    </span>
+  </div>
+  <div class="action-bubble" *ngIf="(isAdmin$ | async) && project?.status && showActionBubble">
+    <div class="button-container">
+      <button
+        [disabled]="!property.propDef!.isEditable"
+        [matTooltip]="property.propDef!.isEditable ? 'Edit property' : 'The property can\'t be edited; No further information available'"
+        matTooltipPosition="above"
+        mat-button
+        class="edit"
+        (click)="openEditProperty(property.propDef!, property.propType)">
+        <mat-icon>edit</mat-icon>
+      </button>
+      <span
+        [matTooltip]="((canBeDeleted$ | async) === false ? 'The property can\'t be deleted because it is used in a class' : 'Delete property')"
+        matTooltipPosition="above">
+        <button
+          mat-button
+          [disabled]="(canBeDeleted$ | async) !== true"
+          class="delete"
+          (click)="openDeleteProperty(property.propDef!.id)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </span>
+    </div>
+  </div>
+</div>

@@ -1,9 +1,14 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
-import { CreateListInfoPageComponent, ListPageComponent } from '@dasch-swiss/vre/pages/ontology/list';
-import { DataModelsComponent, OntologyComponent } from '@dasch-swiss/vre/pages/ontology/ontology';
-import { OntologyClassInstanceComponent } from '@dasch-swiss/vre/pages/ontology/ontology-classes';
+import { ResourceClassBrowserComponent } from '@dasch-swiss/vre/pages/data-browser';
+import { ListPageComponent } from '@dasch-swiss/vre/pages/ontology/list';
+import {
+  DataModelsComponent,
+  OntologyEditorClassesComponent,
+  OntologyPageComponent,
+  OntologyPropertiesComponent,
+} from '@dasch-swiss/vre/pages/ontology/ontology';
 import {
   CollaborationComponent,
   CreateProjectFormPageComponent,
@@ -12,8 +17,8 @@ import {
   ImageSettingsComponent,
   LegalSettingsComponent,
   ProjectComponent,
-  SettingsPageComponent,
   ResourceMetadataComponent,
+  SettingsPageComponent,
 } from '@dasch-swiss/vre/pages/project/project';
 import { AdvancedSearchContainerComponent, ResultsComponent } from '@dasch-swiss/vre/pages/search/search';
 import {
@@ -50,6 +55,11 @@ const routes: Routes = [
     children: [
       {
         path: RouteConstants.home,
+        pathMatch: 'full',
+        redirectTo: RouteConstants.projectDescription,
+      },
+      {
+        path: RouteConstants.projectDescription,
         component: DescriptionComponent,
       },
       {
@@ -58,18 +68,32 @@ const routes: Routes = [
       },
       {
         path: RouteConstants.ontologyRelative,
-        component: OntologyComponent,
-        canActivate: [AuthGuard],
+        redirectTo: RouteConstants.ontologyEditorRelative,
+        pathMatch: 'full',
       },
       {
-        path: RouteConstants.OntologyEditorViewRelative,
-        component: OntologyComponent,
-        canActivate: [AuthGuard],
+        path: RouteConstants.ontologyEditorRelative,
+        component: OntologyPageComponent,
+        children: [
+          {
+            path: '',
+            pathMatch: 'full',
+            redirectTo: RouteConstants.classes,
+          },
+          {
+            path: RouteConstants.classes,
+            component: OntologyEditorClassesComponent,
+          },
+          {
+            path: RouteConstants.properties,
+            component: OntologyPropertiesComponent,
+          },
+        ],
       },
       {
         canActivate: [OntologyClassInstanceGuard],
         path: RouteConstants.OntologyClassRelative,
-        component: OntologyClassInstanceComponent,
+        component: ResourceClassBrowserComponent,
       },
       {
         canActivate: [OntologyClassInstanceGuard],
@@ -81,14 +105,8 @@ const routes: Routes = [
         component: ResourcePageComponent,
       },
       {
-        path: RouteConstants.addList,
-        component: CreateListInfoPageComponent,
-        canActivate: [AuthGuard],
-      },
-      {
         path: `${RouteConstants.list}/:${RouteConstants.listParameter}`,
         component: ListPageComponent,
-        canActivate: [AuthGuard],
       },
       {
         path: RouteConstants.settings,

@@ -1,0 +1,43 @@
+@use "config" as *;
+
+.ontology-editor {
+  width: auto;
+  min-height: calc(100vh - #{$header-height} - #{$tab-bar-margin} - 100px);
+  height: calc(100vh - #{$header-height} - 2px);
+  position: relative;
+  margin: 0;
+  z-index: 0;
+}
+
+.ontology-editor-container {
+  height: 100%;
+
+  .ontology-editor-sidenav {
+    width: 200px;
+    border: none;
+
+
+  }
+
+  .ontology-editor-canvas {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid rgba(0, 0, 0, 0.12);
+
+  }
+
+  .sticky-header {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
+
+  .scroll {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    min-height: 0;
+  }
+}
+
+

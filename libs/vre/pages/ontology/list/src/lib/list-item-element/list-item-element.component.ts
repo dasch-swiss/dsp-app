@@ -1,7 +1,6 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core';
+import { Component, Input, OnChanges } from '@angular/core';
 import { ListNode } from '@dasch-swiss/dsp-js';
 import { DEFAULT_MULTILANGUAGE_FORM, MultiLanguageFormArray } from '@dasch-swiss/vre/ui/string-literal';
-import { ListItemService } from '../list-item/list-item.service';
 
 @Component({
   selector: 'app-list-item-element',
@@ -23,35 +22,22 @@ import { ListItemService } from '../list-item/list-item.service';
           <app-action-bubble *ngIf="showActionBubble" [position]="position" [length]="length" [node]="node" />
         </div>
 
-        <app-list-item
-          *ngIf="showChildren"
-          [projectUuid]="listItemService.projectInfos.projectIri"
-          [rootNodeIri]="node.id"
-          [isAdmin]="isAdmin" />
+        <app-list-item *ngIf="showChildren" [node]="node" [isAdmin]="isAdmin" />
       </div>
     </div>
   `,
   styles: [':host ::ng-deep app-multi-language-input .mat-mdc-form-field-bottom-align { display: none;}'],
 })
-export class ListItemElementComponent implements OnInit, OnChanges {
-  @Input() node: ListNode;
-  @Input() position: number;
-  @Input() length: number;
-
-  @Output() refreshChildren = new EventEmitter<ListNode[]>();
-  @Output() updateView = new EventEmitter<unknown>();
+export class ListItemElementComponent implements OnChanges {
+  @Input({ required: true }) node!: ListNode;
+  @Input({ required: true }) position!: number;
+  @Input({ required: true }) length!: number;
 
   @Input() isAdmin = false;
   showChildren = false;
   showActionBubble = false;
 
-  readOnlyFormArray: MultiLanguageFormArray;
-
-  constructor(public listItemService: ListItemService) {}
-
-  ngOnInit() {
-    this.buildForm();
-  }
+  readOnlyFormArray: MultiLanguageFormArray = DEFAULT_MULTILANGUAGE_FORM([]);
 
   ngOnChanges() {
     this.buildForm();

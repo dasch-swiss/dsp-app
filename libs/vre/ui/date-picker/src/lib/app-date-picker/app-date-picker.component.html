@@ -16,8 +16,8 @@
       readonly />
     <mat-icon color="primary" matSuffix class="link">event</mat-icon>
     <!-- <mat-error *ngIf="dateForm.controls.date.hasError('required')">
-            Date is <strong>required</strong>
-        </mat-error> -->
+                Date is <strong>required</strong>
+            </mat-error> -->
   </mat-form-field>
 </div>
 
@@ -65,11 +65,11 @@
       <mat-form-field class="year" [class.withButtonToggle]="calendar !== 'ISLAMIC'">
         <mat-label>Year</mat-label>
         <input matInput type="number" formControlName="year" min="1" class="center" />
-        <mat-error *ngIf="formErrors.year"> {{ formErrors.year }} </mat-error>
+        <mat-error *ngIf="formErrors.year"> {{ formErrors.year }}</mat-error>
         <!-- <button mat-flat-button matSuffix (click)="switchEra()" [attr.aria-label]="'Switch era'"
-                [attr.aria-pressed]="ce">
-                {{ce ? 'CE' : 'BCE'}}
-            </button> -->
+                                [attr.aria-pressed]="ce">
+                                {{ce ? 'CE' : 'BCE'}}
+                            </button> -->
         <mat-button-toggle-group
           *ngIf="calendar !== 'ISLAMIC'"
           class="era suffix-toggle-group"
@@ -123,7 +123,7 @@
         </span>
       </div>
       <!-- add not interested button at the end, if you want precision on year and month only;
-                if the month ends on a Sunday, we have to add an additional line to get the not-interested option -->
+                            if the month ends on a Sunday, we have to add an additional line to get the not-interested option -->
       <div class="week" *ngIf="weeks[weeks.length - 1].length === 7">
         <span class="day">
           <span

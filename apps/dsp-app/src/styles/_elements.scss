@@ -551,6 +551,22 @@ $gc-small: $form-width - $gc-large - 4;
 //
 // progress-indicator without default color
 
+.overlay-blocker {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  pointer-events: all; // catch all events, no interaction possible
+}
+
+// overlay the progress indicator and block all user interaction
+.floating-center {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+}
+
 .app-progress-indicator {
   g {
     stroke: $primary !important;
@@ -685,7 +701,6 @@ nav.mat-mdc-tab-nav-bar,
 
   .button-container {
     button {
-      // cursor: pointer;
       border: none;
       padding: 4px;
       outline: none;
@@ -712,15 +727,15 @@ nav.mat-mdc-tab-nav-bar,
       }
 
       .mat-icon {
-        margin-right: 0px;
+        margin-right: 0;
         width: 18px;
         height: 18px;
         vertical-align: middle;
       }
 
       .mat-mdc-button-touch-target {
-        height: 0px !important;
-        width: 0px !important;
+        height: 0 !important;
+        width: 0 !important;
       }
     }
 
@@ -833,4 +848,3 @@ nav.mat-mdc-tab-nav-bar,
   --element-active-hover: #{$primary_100};
   --gray-500: #{$cool_gray_500};
 }
-

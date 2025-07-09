@@ -1,13 +1,10 @@
-import { Component, OnDestroy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { ReadUser } from '@dasch-swiss/dsp-js';
+import { Component } from '@angular/core';
+import { ReadProject } from '@dasch-swiss/dsp-js';
 import { StringLiteral } from '@dasch-swiss/dsp-js/src/models/admin/string-literal';
 import { AvailableLanguages, RouteConstants } from '@dasch-swiss/vre/core/config';
-import { ProjectsSelectors, UserSelectors } from '@dasch-swiss/vre/core/state';
-import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
-import { Select, Store } from '@ngxs/store';
-import { combineLatest, Observable, Subject } from 'rxjs';
-import { map, takeUntil, takeWhile } from 'rxjs/operators';
+import { ProjectsSelectors } from '@dasch-swiss/vre/core/state';
+import { Store } from '@ngxs/store';
+import { filter, map, tap } from 'rxjs/operators';
 import { LicenseCaptionsMapping } from './license-captions-mapping';
 
 @Component({
@@ -15,56 +12,28 @@ import { LicenseCaptionsMapping } from './license-captions-mapping';
   templateUrl: './description.component.html',
   styleUrls: ['./description.component.scss'],
 })
-export class DescriptionComponent implements OnDestroy {
-  destroyed$: Subject<void> = new Subject<void>();
-  hasManualLicense?: string;
+export class DescriptionComponent {
+  readonly routeConstants = RouteConstants;
 
-  readProject$ = combineLatest([this._route.paramMap, this._store.select(ProjectsSelectors.allProjects)]).pipe(
-    takeUntil(this.destroyed$),
-    map(([params, allProjects]) => {
-      const project = allProjects.find(x => x.id.split('/').pop() === params.get(RouteConstants.uuidParameter));
-      if (!project) {
-        return null;
-      }
-
+  readProject$ = this._store.select(ProjectsSelectors.currentProject).pipe(
+    filter((readProject): readProject is ReadProject => !!readProject),
+    tap(project => {
       this.hasManualLicense = LicenseCaptionsMapping.get(project.shortcode);
-      return project;
     })
   );
 
   sortedDescriptions$ = this.readProject$.pipe(
-    takeUntil(this.destroyed$),
-    takeWhile(readProject => readProject !== undefined),
+    filter((readProject): readProject is ReadProject => !!readProject),
     map(({ description }) => this._sortDescriptionsByLanguage(description))
   );
 
-  userHasPermission$ = combineLatest([
-    this._store.select(UserSelectors.user),
-    this.readProject$,
-    this._store.select(UserSelectors.userProjectAdminGroups),
-  ]).pipe(
-    map(([user, readProject, userProjectGroups]) => {
-      if (readProject == null) {
-        return false;
-      }
+  isAdmin$ = this._store.select(ProjectsSelectors.isCurrentProjectAdminOrSysAdmin);
 
-      return ProjectService.IsProjectAdminOrSysAdmin(user as ReadUser, userProjectGroups, readProject.id);
-    })
-  );
+  isLoading$ = this._store.select(ProjectsSelectors.isProjectsLoading);
 
-  RouteConstants = RouteConstants;
+  hasManualLicense?: string;
 
-  @Select(ProjectsSelectors.isProjectsLoading) isLoading$: Observable<boolean>;
-
-  constructor(
-    private _route: ActivatedRoute,
-    private _store: Store
-  ) {}
-
-  ngOnDestroy(): void {
-    this.destroyed$.next();
-    this.destroyed$.complete();
-  }
+  constructor(private _store: Store) {}
 
   private _sortDescriptionsByLanguage(descriptions: StringLiteral[]): StringLiteral[] {
     const languageOrder = AvailableLanguages.map(l => l.language);

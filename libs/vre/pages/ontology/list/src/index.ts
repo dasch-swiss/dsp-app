@@ -8,6 +8,4 @@ export * from './lib/list-item-form/list-item-form.component';
 export * from './lib/list-item-form/reusable-list-item-form.component';
 export * from './lib/list-item-form/edit-list-item/create-list-item-dialog.component';
 export * from './lib/list-item-form/edit-list-item/edit-list-item-dialog.component';
-export * from './lib/reusable-list-info-form/create-list-info-page.component';
-export * from './lib/reusable-list-info-form/edit-list-info-dialog.component';
-export * from './lib/reusable-list-info-form/reusable-list-info-form.component';
+export * from './lib/list-info-form/list-info-form.component';

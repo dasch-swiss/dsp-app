@@ -1,0 +1,96 @@
+<mat-card
+  (mouseenter)="classHovered = true"
+  (mouseleave)="classHovered = false"
+  data-cy="class-card"
+  appearance="outlined"
+  class="resource-class"
+  cdkDrag
+  cdkDragBoundary=".drag-drop-stop">
+  <mat-card-header class="resource-class-header" cdkDragHandle>
+    <mat-card-title [matTooltip]="classComment || ''" matTooltipPosition="above">
+      {{ classLabel | appTruncate: 24 }}
+    </mat-card-title>
+    <mat-card-subtitle>
+      <span class="mat-caption class-name"> {{ resourceClass.name }} </span>
+      <span class="mat-caption">&nbsp;&middot;&nbsp;</span>
+      <span class="mat-caption"
+        ><mat-icon>{{ resourceClass.defaultClassIcon }}</mat-icon>
+        {{ resourceClass.defaultClassLabel }}
+      </span>
+    </mat-card-subtitle>
+    <span class="resource-class-header-action">
+      <span class="resource-class-more" *ngIf="(project$ | async)?.status">
+        <button
+          *ngIf="classHovered || menuOpen"
+          mat-icon-button
+          [matMenuTriggerFor]="resClassMenu"
+          class="res-class-menu"
+          data-cy="more-button"
+          (menuOpened)="menuOpen = true"
+          (menuClosed)="menuOpen = false"
+          (click)="setCanBeDeleted()">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+      </span>
+      <span class="resource-class-size" [matTooltip]="(expandClasses ? 'Collapse class' : 'Expand class')">
+        <button mat-icon-button (click)="expandClasses = !expandClasses">
+          <mat-icon>{{ expandClasses ? "expand_less" : "expand_more" }}</mat-icon>
+        </button>
+      </span>
+    </span>
+  </mat-card-header>
+  <!-- resource class card content with list of properties -->
+  <mat-card-content *ngIf="expandClasses" class="resource-class-content">
+    <mat-list
+      cdkDropList
+      class="resource-class-properties"
+      (cdkDropListDropped)="onPropertyDropped($event)"
+      *ngIf="resourceClass.properties?.length; else noProperties">
+      <app-property-item
+        *ngFor="let prop of resourceClass.properties; let i = index; trackBy: trackByPropToDisplayFn"
+        [classProp]="prop"
+        (cardinalityChange)="onCardinalityChange($event)" />
+    </mat-list>
+    <app-add-property-menu *ngIf="(isAdmin$ | async)" [resourceClass]="resourceClass" />
+  </mat-card-content>
+</mat-card>
+
+<ng-template #noProperties>
+  <p>There are no properties assigned to this class yet.</p>
+</ng-template>
+
+<mat-menu #resClassMenu="matMenu" xPosition="before">
+  <button
+    mat-menu-item
+    *ngIf="(isAdmin$ | async) === true && (project$ | async)?.status === true"
+    class="res-class-edit"
+    data-cy="edit-button"
+    (click)="editResourceClassInfo()">
+    <mat-icon>edit</mat-icon>
+    Edit resource class info
+  </button>
+  <button
+    mat-menu-item
+    (click)="openInDatabrowser()"
+    [disabled]="classCanBeDeleted"
+    data-cy="open-in-databrowser-button">
+    <mat-icon>open_in_new</mat-icon>
+    Open resource instances
+  </button>
+  <button mat-menu-item (click)="copyResourceClassId()" data-cy="copy-id-button">
+    <mat-icon>content_copy</mat-icon>
+    Copy resource class id
+  </button>
+  <button
+    *ngIf="(isAdmin$ | async) === true && (project$ | async)?.status === true"
+    [matTooltip]="classCanBeDeleted ? '' : 'This class can\'t be deleted because it is in use'"
+    matTooltipPosition="before"
+    [disabled]="!classCanBeDeleted"
+    (click)="deleteResourceClass()"
+    mat-menu-item
+    class="res-class-delete"
+    data-cy="delete-button">
+    <mat-icon>delete</mat-icon>
+    Delete resource class
+  </button>
+</mat-menu>

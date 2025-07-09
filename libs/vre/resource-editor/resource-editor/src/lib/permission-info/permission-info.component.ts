@@ -6,10 +6,10 @@ import { Interaction, ResourceUtil } from '@dasch-swiss/vre/resource-editor/repr
 import { filter, map, take } from 'rxjs/operators';
 import {
   GroupPermissionsUtil,
-  PermissionGroup,
-  USER_GROUP_LEVELS,
   Permission,
+  PermissionGroup,
   PermissionHeaderItem,
+  USER_GROUP_LEVELS,
 } from './resource-permission';
 
 @Component({

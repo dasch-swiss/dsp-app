@@ -147,24 +147,6 @@ body {
   }
 }
 
-.mat-caption.space-reducer {
-  margin-top: 0;
-  margin-bottom: 6px;
-}
-
-.project-actions {
-  border-left: 1px solid $primary_200;
-  padding: 0 12px;
-
-  .mat-caption.space-reducer {
-    margin-top: -6px;
-    margin-bottom: 6px;
-  }
-}
-
-button.space-reducer {
-  margin: 0;
-}
 
 // ckEditor
 .ck-editor__editable_inline {
@@ -193,12 +175,6 @@ button.space-reducer {
   }
 }
 
-.ontology-editor {
-  .mat-drawer-inner-container {
-    width: 200px;
-    position: fixed;
-  }
-}
 
 .mat-drawer-inner-container::-webkit-scrollbar {
   display: none;

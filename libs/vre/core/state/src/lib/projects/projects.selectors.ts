@@ -93,6 +93,11 @@ export class ProjectsSelectors {
     return project;
   }
 
+  @Selector([ProjectsState, RouterSelectors.params])
+  static currentProjectsUuid(state: ProjectsStateModel, params: Params): ReadProject | undefined {
+    return params[`${RouteConstants.uuidParameter}`];
+  }
+
   @Selector([
     ProjectsState,
     ResourceSelectors.resource,

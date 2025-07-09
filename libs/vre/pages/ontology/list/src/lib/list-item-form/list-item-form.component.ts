@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { ListInfoResponse, ListNodeInfoResponse } from '@dasch-swiss/dsp-js';
+import { ListNodeInfo } from '@dasch-swiss/dsp-js';
 import { ListApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { atLeastOneStringRequired } from '@dasch-swiss/vre/shared/app-common';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
@@ -31,39 +31,27 @@ import { ListItemService } from '../list-item/list-item.service';
     `,
   ],
 })
-export class ListItemFormComponent implements OnInit {
+export class ListItemFormComponent {
+  @Input({ required: true }) parentNode!: ListNodeInfo;
   loading = false;
-  placeholder: string;
   form = this._fb.group({ labels: DEFAULT_MULTILANGUAGE_FORM([], [], [atLeastOneStringRequired('value')]) });
 
   readonly labelsValidators = [Validators.maxLength(2000)];
 
+  get placeholder() {
+    return `Append item to ${this.parentNode.labels[0].value}`;
+  }
+
   constructor(
     private _listApiService: ListApiService,
-    private _cd: ChangeDetectorRef,
     private _listItemService: ListItemService,
     private _fb: FormBuilder
   ) {}
 
-  ngOnInit() {
-    this._listApiService.getNodeInfo(this._listItemService.projectInfos.rootNodeIri).subscribe(response => {
-      if (response['listinfo']) {
-        // root node
-        this.placeholder = `Append item to ${(response as ListInfoResponse).listinfo.labels[0].value}`;
-      } else {
-        // child node
-        this.placeholder = `Append item to ${(response as ListNodeInfoResponse).nodeinfo.labels[0].value}`;
-      }
-
-      this._cd.markForCheck();
-    });
-  }
-
   createChildNode() {
     this.loading = true;
-
     const data = {
-      parentNodeIri: this._listItemService.projectInfos.rootNodeIri,
+      parentNodeIri: this.parentNode.id,
       projectIri: this._listItemService.projectInfos.projectIri,
       labels: this.form.controls.labels.getRawValue(),
       name: `${ProjectService.IriToUuid(this._listItemService.projectInfos.projectIri)}-${Math.random()

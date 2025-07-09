@@ -1,10 +1,19 @@
-import { ClassDefinition, ReadOntology, UpdateOntologyMetadata } from '@dasch-swiss/dsp-js';
-import { DefaultClass } from '@dasch-swiss/vre/shared/app-helper-services';
-import { PropToDisplay } from '../model-interfaces';
+import { ReadOntology, UpdateOntologyMetadata } from '@dasch-swiss/dsp-js';
 
 export class LoadProjectOntologiesAction {
   static readonly type = '[Ontologies] Load Project Ontologies';
-  constructor(public projectIri: string) {}
+  constructor(
+    public projectIri: string,
+    public ontologyName?: string
+  ) {}
+}
+
+export class SetOntologyAction {
+  static readonly type = '[Ontologies] Set Ontology';
+  constructor(
+    public ontology: ReadOntology,
+    public projectIri: string
+  ) {}
 }
 
 export class SetOntologiesLoadingAction {
@@ -18,6 +27,14 @@ export class LoadOntologyAction {
     public ontologyIri: string,
     public projectUuid: string,
     public stopLoadingWhenCompleted = true
+  ) {}
+}
+
+export class ResetCurrentOntologyAction {
+  static readonly type = '[Ontologies] Update current ontology if needed';
+  constructor(
+    public ontology: ReadOntology,
+    public projectIri: string
   ) {}
 }
 
@@ -66,23 +83,6 @@ export class RemoveProjectOntologyAction {
 export class SetCurrentProjectOntologyPropertiesAction {
   static readonly type = '[Ontologies] Set Current Project Ontology Properties';
   constructor(public projectUuid: string) {}
-}
-
-export class RemovePropertyAction {
-  static readonly type = '[Ontologies] Remove Property';
-  constructor(
-    public property: DefaultClass,
-    public resourceClass: ClassDefinition,
-    public currentOntologyPropertiesToDisplay: PropToDisplay[]
-  ) {}
-}
-
-export class ReplacePropertyAction {
-  static readonly type = '[Ontologies] Replace Property';
-  constructor(
-    public resourceClass: ClassDefinition,
-    public currentOntologyPropertiesToDisplay: PropToDisplay[]
-  ) {}
 }
 
 export class CurrentOntologyCanBeDeletedAction {

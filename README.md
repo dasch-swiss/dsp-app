@@ -70,7 +70,6 @@ The most common commands are defined in `package.json`.
 | `nx run dsp-app:test`                                | `npm run test-local`      |
 | `nx run-many --all --target=test --configuration=ci` | `npm run test-ci-all`     |
 | `nx run dsp-app:serve`                               | `npm run start-local`     |
-| `nx run dsp-app:serve:test-server`                   | `npm run start-test`      |
 | `nx run dsp-app:serve:dev-server`                    | `npm run start-dev`       |
 | `nx run dsp-app:serve:ls-test-server`                | `npm run start-ls-test`   |
 | `nx run dsp-app:serve:stage-server`                  | `npm run start-stage`     |

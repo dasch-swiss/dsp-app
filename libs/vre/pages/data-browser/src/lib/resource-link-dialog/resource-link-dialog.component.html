@@ -1,0 +1,47 @@
+<app-dialog-header [title]="title" [subtitle]="'Link resources'" />
+
+<mat-dialog-content>
+  <form
+    [formGroup]="form"
+    *ngIf="
+      ((isSysAdmin$ | async) === true) ||
+      (
+        (usersProjects$ | async)?.length &&
+        (
+          ((isCurrentProjectAdminOrSysAdmin$ | async) === true) ||
+          ((isCurrentProjectMember$ | async) === true) ||
+          (isProjectMember === true)
+        )
+      );
+      else notProjectMember
+    ">
+    <app-common-input [control]="form.controls.label" label="Collection labels" />
+
+    <app-ck-editor-control [control]="form.controls.comment" [label]="'Comment'" />
+
+    <div class="resource-container">
+      <p>The following resources will be connected:</p>
+      <ul>
+        <li *ngFor="let res of data.resources.resInfo; trackBy: trackByFn">{{ res.label }}</li>
+      </ul>
+    </div>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button type="button" (click)="dialogRef.close()">{{ 'ui.form.action.cancel' | translate }}</button>
+
+  <button
+    mat-raised-button
+    color="primary"
+    appLoadingButton
+    data-cy="submit-button"
+    [isLoading]="isLoading$ | async"
+    [disabled]="form.invalid"
+    (click)="submitData()">
+    {{ 'ui.form.action.submit' | translate }}
+  </button>
+</mat-dialog-actions>
+
+<ng-template #notProjectMember>
+  You have to be a member in at least one project to link the selected resources.
+</ng-template>
