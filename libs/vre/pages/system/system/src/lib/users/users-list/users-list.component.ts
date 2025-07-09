@@ -52,7 +52,7 @@ export class UsersListComponent implements OnInit, OnDestroy {
   }
 
   @Input() isButtonEnabledToCreateNewUser = false;
-  @Input({ required: true }) project!: ReadProject;
+  @Input() project?: ReadProject;
   @Output() refreshParent = new EventEmitter<void>();
 
   // i18n plural mapping
@@ -99,8 +99,7 @@ export class UsersListComponent implements OnInit, OnDestroy {
 
   disableMenu$ = combineLatest([this.isProjectOrSystemAdmin$, this.isSysAdmin$]).pipe(
     map(
-      ([isProjectAdmin, isSysAdmin]) =>
-        this.project.status === false || (!isProjectAdmin && !isSysAdmin && !!this.projectUuid)
+      ([isProjectAdmin, isSysAdmin]) => !this.project?.status || (!isProjectAdmin && !isSysAdmin && !!this.projectUuid)
     )
   );
 
@@ -116,7 +115,9 @@ export class UsersListComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.projectUuid = ProjectService.IriToUuid(this.project.id);
+    if (this.project) {
+      this.projectUuid = ProjectService.IriToUuid(this.project.id);
+    }
   }
 
   ngOnDestroy(): void {
@@ -135,7 +136,7 @@ export class UsersListComponent implements OnInit, OnDestroy {
       return false;
     }
 
-    return ProjectService.IsMemberOfProjectAdminGroup(permissions.groupsPerProject, this.project.id);
+    return ProjectService.IsMemberOfProjectAdminGroup(permissions.groupsPerProject, this.project?.id || '');
   }
 
   /**
