@@ -16,7 +16,7 @@ import { switchMap, take } from 'rxjs';
       <div style="display: flex; justify-content: space-between">
         <div>
           <div *ngIf="fileValue.copyrightHolder">
-            <span class="label">Copyright holder</span> {{ fileValue.copyrightHolder }}
+            <span class="label">Copyright holder</span>{{ fileValue.copyrightHolder }}
           </div>
 
           <div *ngIf="fileValue.authorship.length > 0" style="display: flex">
