@@ -21,5 +21,7 @@ export const LicenseCaptionsMapping = new Map<string, string>([
     '0847',
     'Tombe du Plongeur, fresque décorative du mur nord, Paestum, 480-470 av. J.-C., Paestum, Museo Archeologico Nazionale. Wikimedia Commons, photo by Velvet. CC BY-SA 3.0.',
   ],
-  ['0862', 'Author: Cristian von Zimmermann.'],
+  ['0854', 'Authorship: AI-Generated.'],
+  ['0857', 'Authorship: Eva Spinazzè; Licence: CC BY NC 4.0'],
+  ['0862', 'Author: Christian von Zimmermann.'],
 ]);
