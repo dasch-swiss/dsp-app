@@ -1,5 +1,35 @@
 # Changelog
 
+## [11.36.0](https://github.com/dasch-swiss/dsp-das/compare/v11.35.1...v11.36.0) (2025-07-14)
+
+
+### Enhancements
+
+* add new cover images for projects ([#2398](https://github.com/dasch-swiss/dsp-das/issues/2398)) ([96c1338](https://github.com/dasch-swiss/dsp-das/commit/96c133841af0dee1c88608af3524f07ce5799e78))
+
+
+### Bug Fixes
+
+* can add a resource class of different types ([#2392](https://github.com/dasch-swiss/dsp-das/issues/2392)) ([7ba952c](https://github.com/dasch-swiss/dsp-das/commit/7ba952c3a7570601c0906a2f4aa5c2e0d35f947f))
+* make first of the ontologies lists expanded by default (DEV-5147) ([#2397](https://github.com/dasch-swiss/dsp-das/issues/2397)) ([1abadb0](https://github.com/dasch-swiss/dsp-das/commit/1abadb0c3370de9fe765fc51fae0e798cfd53fa1))
+* update condition on displaying that a resource is deleted ([#2365](https://github.com/dasch-swiss/dsp-das/issues/2365)) ([d7bce87](https://github.com/dasch-swiss/dsp-das/commit/d7bce870576bdf1ee32af63879c801e6d9de59c3))
+* users list ([#2391](https://github.com/dasch-swiss/dsp-das/issues/2391)) ([aaae800](https://github.com/dasch-swiss/dsp-das/commit/aaae8001aa0536e0e9c0e25440c7088196bacda8))
+
+
+### Maintenances
+
+* alignment in copyright holder ([#2396](https://github.com/dasch-swiss/dsp-das/issues/2396)) ([827ae80](https://github.com/dasch-swiss/dsp-das/commit/827ae801f606b6d31bd2235f780757a2d37696b8))
+* **deps-dev:** bump @swc/core from 1.11.31 to 1.12.11 ([#2389](https://github.com/dasch-swiss/dsp-das/issues/2389)) ([7e0015d](https://github.com/dasch-swiss/dsp-das/commit/7e0015dc1026b2d67842245e73a42b598e1b8bf5))
+* **deps-dev:** bump @types/node from 20.19.2 to 20.19.4 in the types-deps group ([#2381](https://github.com/dasch-swiss/dsp-das/issues/2381)) ([9ec7972](https://github.com/dasch-swiss/dsp-das/commit/9ec797226a7a35c19cb644dab0aee555b6561b8c))
+* **deps-dev:** bump @typescript-eslint/utils from 8.34.0 to 8.36.0 ([#2390](https://github.com/dasch-swiss/dsp-das/issues/2390)) ([78a5907](https://github.com/dasch-swiss/dsp-das/commit/78a5907919c3b629e0ee1f48084c03ddab0cd2e5))
+* **deps:** bump @sentry/cli from 2.46.0 to 2.47.0 in the sentry-deps group ([#2388](https://github.com/dasch-swiss/dsp-das/issues/2388)) ([6a17e7e](https://github.com/dasch-swiss/dsp-das/commit/6a17e7e8d8457dddc44a61636386d018cf9a3c7a))
+* **deps:** bump core-js from 3.43.0 to 3.44.0 ([#2382](https://github.com/dasch-swiss/dsp-das/issues/2382)) ([c4f1e41](https://github.com/dasch-swiss/dsp-das/commit/c4f1e41074d2919c40aed6be3566240cbf91328b))
+* **deps:** bump zod from 3.25.67 to 3.25.75 ([#2384](https://github.com/dasch-swiss/dsp-das/issues/2384)) ([bb9d269](https://github.com/dasch-swiss/dsp-das/commit/bb9d2699114ea6dd41c960164a81cba3975c513b))
+* refactor ontology (DEV-4581) ([#2105](https://github.com/dasch-swiss/dsp-das/issues/2105)) ([50b8c19](https://github.com/dasch-swiss/dsp-das/commit/50b8c1915d5ebbd3368d925f8a2752141581a661))
+* split project members and system admin users list ([#2399](https://github.com/dasch-swiss/dsp-das/issues/2399)) ([75a9872](https://github.com/dasch-swiss/dsp-das/commit/75a98725e807cdad05bfbdefcdcb35a7b75bbe54))
+* update CODEOWNERS ([#2393](https://github.com/dasch-swiss/dsp-das/issues/2393)) ([6bc3695](https://github.com/dasch-swiss/dsp-das/commit/6bc36952ab5bff9f1834a72e51f7a4d344f13ee2))
+* upgrade RxJS to v7.8.0 & dsp-js to v10.8.1 (DEV-5113) ([#2387](https://github.com/dasch-swiss/dsp-das/issues/2387)) ([40ffd6a](https://github.com/dasch-swiss/dsp-das/commit/40ffd6a209b39cfc24ac1368a7b0a3f95b87698f))
+
 ## [11.35.1](https://github.com/dasch-swiss/dsp-das/compare/v11.35.0...v11.35.1) (2025-07-07)
 
 
