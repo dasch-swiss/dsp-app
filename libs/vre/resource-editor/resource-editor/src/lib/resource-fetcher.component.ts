@@ -82,7 +82,7 @@ export class ResourceFetcherComponent implements OnChanges, OnDestroy {
       this.subscription?.unsubscribe();
       this.subscription = this._resourceFetcherService.resource$.subscribe(
         resource => {
-          if (resource.res.isDeleted) {
+          if (resource.res.type === 'http://api.knora.org/ontology/knora-api/v2#DeletedResource') {
             this.hideStatus = 'Deleted';
             this.resource = resource;
             this.afterResourceDeleted.emit(resource.res);
