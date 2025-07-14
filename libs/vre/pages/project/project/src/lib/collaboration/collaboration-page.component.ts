@@ -8,11 +8,37 @@ import { combineLatest, filter, first, map, Observable, tap } from 'rxjs';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
-  selector: 'app-collaboration',
-  templateUrl: './collaboration.component.html',
-  styleUrls: ['./collaboration.component.scss'],
+  selector: 'app-collaboration-page',
+  template: `
+    <div *ngIf="isAdmin$ | async" class="content large middle">
+      <app-add-user
+        *ngIf="(project$ | async)?.status && (isAdmin$ | async) === true"
+        [projectUuid]="projectUuid$ | async" />
+
+      <ng-container *ngIf="activeProjectMembers$ | async as activeProjectMembers">
+        <ng-container *ngIf="inactiveProjectMembers$ | async as inactiveProjectMembers">
+          <div style="display: flex; justify-content: center; margin: 16px 0">
+            <app-double-chip-selector
+              [options]="[
+                'Active users (' + activeProjectMembers.length + ')',
+                'Inactive users (' + inactiveProjectMembers.length + ')',
+              ]"
+              [(value)]="showActiveUsers" />
+          </div>
+
+          <app-project-members *ngIf="showActiveUsers" [users]="activeProjectMembers" />
+          <app-project-members *ngIf="!showActiveUsers" [users]="inactiveProjectMembers" />
+        </ng-container>
+      </ng-container>
+    </div>
+
+    <div *ngIf="(isAdmin$ | async) === false" class="content large middle">
+      <app-status [status]="403" />
+    </div>
+  `,
+  styleUrls: ['./collaboration-page.component.scss'],
 })
-export class CollaborationComponent implements OnInit {
+export class CollaborationPageComponent implements OnInit {
   project$ = this._store.select(ProjectsSelectors.currentProject);
   projectMembers$ = this._store.select(ProjectsSelectors.projectMembers);
   isAdmin$ = this._store.select(ProjectsSelectors.isCurrentProjectAdminOrSysAdmin);
@@ -27,6 +53,8 @@ export class CollaborationComponent implements OnInit {
     filter(uuid => !!uuid),
     first()
   );
+
+  showActiveUsers = true;
 
   get activeProjectMembers$(): Observable<ReadUser[]> {
     return combineLatest([this.project$, this.projectMembers$]).pipe(

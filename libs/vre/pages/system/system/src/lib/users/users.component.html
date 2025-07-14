@@ -1,7 +1,0 @@
-<app-progress-indicator *ngIf="(isLoading$ | async)" />
-<app-users-list
-  *ngIf="(isLoading$ | async) === false"
-  [list]="activeUsers$ | async"
-  [status]="true"
-  [isButtonEnabledToCreateNewUser]="true" />
-<app-users-list *ngIf="(isLoading$ | async) === false" [list]="inactiveUsers$ | async" [status]="false" />

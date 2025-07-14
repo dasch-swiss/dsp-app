@@ -10,7 +10,7 @@ import {
   OntologyPropertiesComponent,
 } from '@dasch-swiss/vre/pages/ontology/ontology';
 import {
-  CollaborationComponent,
+  CollaborationPageComponent,
   CreateProjectFormPageComponent,
   DescriptionComponent,
   EditProjectFormPageComponent,
@@ -24,8 +24,8 @@ import { AdvancedSearchContainerComponent, ResultsComponent } from '@dasch-swiss
 import {
   CookiePolicyComponent,
   ProjectsComponent,
-  SystemComponent,
-  UsersComponent,
+  SystemPageComponent,
+  UsersTabComponent,
 } from '@dasch-swiss/vre/pages/system/system';
 import { ProjectOverviewComponent, UserComponent } from '@dasch-swiss/vre/pages/user-settings/user';
 import { ResourcePageComponent, SingleResourcePageComponent } from '@dasch-swiss/vre/resource-editor/resource-editor';
@@ -136,7 +136,7 @@ const routes: Routes = [
           },
           {
             path: RouteConstants.collaboration,
-            component: CollaborationComponent,
+            component: CollaborationPageComponent,
           },
         ],
       },
@@ -167,7 +167,7 @@ const routes: Routes = [
   },
   {
     path: RouteConstants.system,
-    component: SystemComponent,
+    component: SystemPageComponent,
     canActivate: [AuthGuard],
     children: [
       {
@@ -181,7 +181,7 @@ const routes: Routes = [
       },
       {
         path: RouteConstants.systemUsers,
-        component: UsersComponent,
+        component: UsersTabComponent,
       },
     ],
   },

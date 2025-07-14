@@ -8,6 +8,7 @@ import { ColorPickerComponent } from './lib/color-picker/color-picker.component'
 import { CommonInputComponent } from './lib/common-input.component';
 import { ConfirmDialogComponent } from './lib/dialog/confirm-dialog.component';
 import { DragDropDirective } from './lib/directives/drag-drop.directive';
+import { DoubleChipSelectorComponent } from './lib/double-chip-selector.component';
 import { HintComponent } from './lib/hint/hint.component';
 import { HumanReadableDatePipe } from './lib/human-readable-date.pipe';
 import { InvalidControlScrollDirective } from './lib/invalid-control-scroll.directive';
@@ -49,5 +50,6 @@ export const UiComponents = [
   AddTargetBlankPipe,
   AlternatedListComponent,
   HumanReadableDatePipe,
+  DoubleChipSelectorComponent,
 ];
 export const UiStandaloneComponents = [PagerComponent];

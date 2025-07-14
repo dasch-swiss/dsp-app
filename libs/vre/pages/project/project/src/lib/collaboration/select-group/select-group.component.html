@@ -4,8 +4,8 @@
       *ngFor="let group of (projectGroups$ | async); trackBy: trackByFn"
       [value]="group.iri"
       [disabled]="disabled">
-      {{ group.name }}</mat-option
-    >
+      {{ group.name }}
+    </mat-option>
   </mat-select>
 </mat-form-field>
 

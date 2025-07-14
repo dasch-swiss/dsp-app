@@ -1,5 +1,8 @@
 import { AddUserComponent } from './lib/collaboration/add-user/add-user.component';
-import { CollaborationComponent } from './lib/collaboration/collaboration.component';
+import { CollaborationPageComponent } from './lib/collaboration/collaboration-page.component';
+import { ProjectMembersRowMenuComponent } from './lib/collaboration/project-members-row-menu.component';
+import { ProjectMembersRowComponent } from './lib/collaboration/project-members-row.component';
+import { ProjectMembersComponent } from './lib/collaboration/project-members.component';
 import { SelectGroupComponent } from './lib/collaboration/select-group/select-group.component';
 import { CreateCopyrightHolderDialogComponent } from './lib/create-copyright-holder-dialog.component';
 import { CreateProjectFormPageComponent } from './lib/create-project-form-page.component';
@@ -18,7 +21,7 @@ import { ReusableProjectFormComponent } from './lib/reusable-project-form/reusab
 
 export const ProjectComponents = [
   AddUserComponent,
-  CollaborationComponent,
+  CollaborationPageComponent,
   CreateCopyrightHolderDialogComponent,
   CreateProjectFormPageComponent,
   DescriptionComponent,
@@ -34,4 +37,7 @@ export const ProjectComponents = [
   SettingsPageComponent,
   LegalSettingsLicensesComponent,
   LicensesEnabledTableComponent,
+  ProjectMembersComponent,
+  ProjectMembersRowComponent,
+  ProjectMembersRowMenuComponent,
 ];
