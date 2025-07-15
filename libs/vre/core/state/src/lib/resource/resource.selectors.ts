@@ -31,8 +31,9 @@ export class ResourceSelectors {
   static resourceAttachedProject(
     state: ResourceStateModel,
     dspApiConfig: DspAppConfig,
-    params: Params
+    params: Params | undefined
   ): ReadProject | undefined {
+    if (!params) return undefined;
     const resourceId = `${dspApiConfig.iriBase}/${params[`${RouteConstants.project}`]}/${params[`${RouteConstants.resource}`]}`;
     if (!state.attachedProjects[resourceId] || state.attachedProjects[resourceId]?.value?.length === 0) {
       return undefined;

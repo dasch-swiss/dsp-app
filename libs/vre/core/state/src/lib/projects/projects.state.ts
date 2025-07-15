@@ -123,7 +123,7 @@ export class ProjectsState {
   }
 
   @Action(LoadProjectMembershipAction, { cancelUncompleted: true })
-  loadProjectMembershipAction(ctx: StateContext<ProjectsStateModel>, { projectUuid }: LoadProjectAction) {
+  loadProjectMembershipAction(ctx: StateContext<ProjectsStateModel>, { projectUuid }: LoadProjectMembershipAction) {
     const projectIri = this.projectService.uuidToIri(projectUuid);
     const user = this.store.selectSnapshot(UserSelectors.user) as ReadUser;
     const userProjectAdminGroups = this.store.selectSnapshot(UserSelectors.userProjectAdminGroups);

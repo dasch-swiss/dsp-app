@@ -36,12 +36,18 @@ export class OntologiesSelectors {
   }
 
   @Selector([OntologiesState, ProjectsSelectors.currentProject])
-  static currentProjectOntologyMetadata(state: OntologiesStateModel, project: ReadProject): OntologyMetadata[] {
-    return state.projectOntologies[project.id] ? state.projectOntologies[project.id].ontologiesMetadata : [];
+  static currentProjectOntologyMetadata(
+    state: OntologiesStateModel,
+    project: ReadProject | undefined
+  ): OntologyMetadata[] {
+    if (!project || !state.projectOntologies[project.id]) {
+      return [];
+    }
+    return state.projectOntologies[project.id].ontologiesMetadata;
   }
 
   @Selector([OntologiesState, ProjectsSelectors.currentProject])
-  static currentProjectOntologies(state: OntologiesStateModel, project?: ReadProject): ReadOntology[] {
+  static currentProjectOntologies(state: OntologiesStateModel, project: ReadProject | undefined): ReadOntology[] {
     if (!project || !state.projectOntologies[project.id]) {
       return [];
     }
@@ -50,7 +56,10 @@ export class OntologiesSelectors {
 
   // ontology name has to be unique
   @Selector([OntologiesState, ProjectsSelectors.currentProject])
-  static currentProjectExistingOntologyNames(state: OntologiesStateModel, project: ReadProject): string[] {
+  static currentProjectExistingOntologyNames(state: OntologiesStateModel, project: ReadProject | undefined): string[] {
+    if (!project || !state.projectOntologies[project.id]) {
+      return [];
+    }
     return state.projectOntologies[project.id].ontologiesMetadata.map(meta => OntologyService.getOntologyName(meta.id));
   }
 
@@ -77,10 +86,12 @@ export class OntologiesSelectors {
   @Selector([OntologiesState, ResourceSelectors.resource, ConfigState.getConfig, RouterSelectors.params])
   static projectOntology(
     state: OntologiesStateModel,
-    resource: DspResource,
+    resource: DspResource | null,
     dspApiConfig: DspAppConfig,
-    params: Params
+    params: Params | undefined
   ): ReadOntology | undefined {
+    if (!resource || !params) return undefined;
+
     const projectIri = ProjectService.getProjectIri(params, dspApiConfig, resource);
     if (!projectIri || Object.values(state.projectOntologies).length === 0) return undefined;
 
@@ -92,11 +103,26 @@ export class OntologiesSelectors {
     return projectReadOntologiesIndex === -1 ? undefined : projectReadOntologies[projectReadOntologiesIndex];
   }
 
-  @Selector([RouterSelectors.params, OntologiesSelectors.projectOntology])
+  @Selector([OntologiesState, ResourceSelectors.resource, ConfigState.getConfig, RouterSelectors.params])
   static currentOntologyClass(
-    params: Params,
-    projectOntology: ReadOntology | undefined
+    state: OntologiesStateModel,
+    resource: DspResource | null,
+    dspApiConfig: DspAppConfig,
+    params: Params | undefined
   ): ClassDefinition | ResourceClassDefinition | ResourceClassDefinitionWithAllLanguages | undefined {
+    if (!resource || !params) return undefined;
+
+    const projectIri = ProjectService.getProjectIri(params, dspApiConfig, resource);
+    if (!projectIri || Object.values(state.projectOntologies).length === 0) return undefined;
+
+    const projectReadOntologies = state.projectOntologies[projectIri].readOntologies;
+    const projectReadOntologiesIndex = projectReadOntologies.findIndex(
+      o => o.id.indexOf(`/${params[RouteConstants.ontoParameter]}/`) !== -1
+    );
+
+    const projectOntology =
+      projectReadOntologiesIndex === -1 ? undefined : projectReadOntologies[projectReadOntologiesIndex];
+
     if (!projectOntology) {
       return undefined;
     } else {

@@ -117,7 +117,7 @@ export class ProjectService {
     return hasProjectMemberRights === true;
   }
 
-  static getProjectIri(params: Params, dspApiConfig: DspAppConfig, resource: DspResource) {
+  static getProjectIri(params: Params, dspApiConfig: DspAppConfig, resource: DspResource | null | undefined) {
     const projectIri = params[`${RouteConstants.uuidParameter}`]
       ? params[`${RouteConstants.uuidParameter}`]
       : resource?.res.attachedToProject;
