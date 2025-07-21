@@ -16,7 +16,12 @@ import { OntologyEditService } from '../services/ontology-edit.service';
   template: `
     <mat-toolbar class="ontology-editor-header" *ngIf="ontology$ | async as ontology">
       <mat-toolbar-row>
-        <button class="back-button" mat-button (click)="navigateToDataModels()" matTooltip="Back to data models">
+        <button
+          class="back-button"
+          data-cy="back-to-data-models"
+          mat-button
+          (click)="navigateToDataModels()"
+          matTooltip="Back to data models">
           <mat-icon class="centered-icon">chevron_left</mat-icon>
         </button>
         <div class="ontology-info">

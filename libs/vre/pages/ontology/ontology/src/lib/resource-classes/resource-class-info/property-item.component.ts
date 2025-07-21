@@ -56,6 +56,7 @@ import { OntologyEditService } from '../../services/ontology-edit.service';
             <div class="upper-prop-container">
               <span class="label" data-cy="property-label">{{ classProp.propDef.label }} </span>
               <span
+                data-cy="property-object-label"
                 class="additional-info"
                 *ngIf="classProp.objectLabel"
                 [innerHTML]="'&rarr;&nbsp;' + classProp.objectLabel"></span>

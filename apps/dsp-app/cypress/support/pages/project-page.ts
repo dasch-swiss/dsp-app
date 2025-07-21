@@ -9,6 +9,10 @@ class ProjectPage {
     cy.visit(`/project/${this.projectIri.match(/\/([^\/]+)$/)[1]}`);
   }
 
+  visitDataModels() {
+    cy.visit(`/project/${this.projectIri.match(/\/([^\/]+)$/)[1]}/data-models`);
+  }
+
   requestProject() {
     const payload = {
       shortname: 'shortname',

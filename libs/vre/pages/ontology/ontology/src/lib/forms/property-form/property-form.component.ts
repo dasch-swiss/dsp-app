@@ -39,10 +39,12 @@ import { PropertyForm, EditPropertyDialogData } from './property-form.type';
       placeholder="Property label" />
 
     <app-gui-attr-list
+      data-cy="object-attribute-list"
       *ngIf="propertyData.propType.objectType === Constants.ListValue"
       [control]="form.controls.guiAttr" />
 
     <app-gui-attr-link
+      data-cy="object-attribute-link"
       *ngIf="propertyData.propType.objectType === Constants.LinkValue"
       [control]="form.controls.objectType" />
 

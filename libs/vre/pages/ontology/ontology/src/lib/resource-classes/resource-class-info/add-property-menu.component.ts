@@ -51,13 +51,18 @@ import { OntologyEditService } from '../../services/ontology-edit.service';
 
     <mat-menu #newFromPropType="matMenu">
       <ng-container *ngFor="let type of defaultProperties; trackBy: trackByPropCategoryFn">
-        <button mat-menu-item [matMenuTriggerFor]="sub_menu" [attr.data-cy]="type.group">{{ type.group }}</button>
+        <button
+          mat-menu-item
+          [matMenuTriggerFor]="sub_menu"
+          [attr.data-cy]="type.group.replaceAll(' ', '').replace('/', '-')">
+          {{ type.group }}
+        </button>
         <mat-menu #sub_menu="matMenu" class="default-nested-sub-menu">
           <button
             mat-menu-item
             *ngFor="let ele of type.elements; trackBy: trackByDefaultPropertyFn"
             [value]="ele"
-            [attr.data-cy]="ele.label"
+            [attr.data-cy]="ele.label.replaceAll(' ', '').replace('/', '-')"
             [matTooltip]="ele.description"
             matTooltipPosition="after"
             (click)="addNewProperty(ele)">
