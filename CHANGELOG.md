@@ -1,5 +1,29 @@
 # Changelog
 
+## [11.36.1](https://github.com/dasch-swiss/dsp-das/compare/v11.36.0...v11.36.1) (2025-07-21)
+
+
+### Bug Fixes
+
+* routing to "edit description" page works again ([#2409](https://github.com/dasch-swiss/dsp-das/issues/2409)) ([12adbf7](https://github.com/dasch-swiss/dsp-das/commit/12adbf7fc7c4c57a1f9892abc554e1f9ff1ecdfc))
+
+
+### Maintenances
+
+* **deps-dev:** bump @swc/core from 1.12.11 to 1.12.14 ([#2404](https://github.com/dasch-swiss/dsp-das/issues/2404)) ([09544ae](https://github.com/dasch-swiss/dsp-das/commit/09544ae47040480379ee9b6d7bf623cd66b3e186))
+* **deps-dev:** bump @types/node from 20.19.6 to 20.19.7 in the types-deps group ([#2403](https://github.com/dasch-swiss/dsp-das/issues/2403)) ([50a3f09](https://github.com/dasch-swiss/dsp-das/commit/50a3f09ad8fcac4438f1e944d6562152defe74cc))
+* **deps-dev:** bump chai from 5.2.0 to 5.2.1 ([#2401](https://github.com/dasch-swiss/dsp-das/issues/2401)) ([64d3ad7](https://github.com/dasch-swiss/dsp-das/commit/64d3ad79ddd5af5270c64c97855befd1c7f13dfb))
+* **deps:** bump on-headers and compression ([#2412](https://github.com/dasch-swiss/dsp-das/issues/2412)) ([e7d977e](https://github.com/dasch-swiss/dsp-das/commit/e7d977ec2948eeb1759995b36c0dd16cc283dc08))
+* **deps:** bump the grafana-deps group with 2 updates ([#2402](https://github.com/dasch-swiss/dsp-das/issues/2402)) ([e0f802d](https://github.com/dasch-swiss/dsp-das/commit/e0f802d7576def2e8b4c7266e2166ef0ac354fe1))
+* **deps:** bump zod from 3.25.75 to 3.25.76 ([#2400](https://github.com/dasch-swiss/dsp-das/issues/2400)) ([1702af1](https://github.com/dasch-swiss/dsp-das/commit/1702af1d10015df616686390e020ba66e42bdc9b))
+* update CODEOWNERS ([#2407](https://github.com/dasch-swiss/dsp-das/issues/2407)) ([2daf005](https://github.com/dasch-swiss/dsp-das/commit/2daf005faaede254d603c0a653004bba51242e76))
+* upgrade NGXS to 18.1.0 (DEV-5114) ([#2395](https://github.com/dasch-swiss/dsp-das/issues/2395)) ([37ed820](https://github.com/dasch-swiss/dsp-das/commit/37ed82026a81ccfea6589a16f82ec260f0102b2e))
+
+
+### Tests
+
+* add testing of the class type created (DEV-5149) ([#2394](https://github.com/dasch-swiss/dsp-das/issues/2394)) ([1a67cbf](https://github.com/dasch-swiss/dsp-das/commit/1a67cbfd38f387b0df42ed9cf86dcca85a31e3fa))
+
 ## [11.36.0](https://github.com/dasch-swiss/dsp-das/compare/v11.35.1...v11.36.0) (2025-07-14)
 
 
