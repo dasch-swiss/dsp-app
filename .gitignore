@@ -65,3 +65,5 @@ apps/dsp-app/cypress/screenshots
 
 # Sentry Config File
 .sentryclirc
+
+.envrc
