@@ -24,9 +24,9 @@ describe('File representation', () => {
       })
       .then(() => {
         po.visitAddPage();
-        cy.get('[data-cy=upload-control]').should('be.visible');
+        cy.get('[data-cy=image-source-selector]').should('be.visible');
 
-        cy.get('[data-cy=external-image-chip]').click();
+        cy.get('[data-cy=image-source-selector]').find('mat-chip-option').eq(1).click();
 
         // create
         po.addInitialLabel();
