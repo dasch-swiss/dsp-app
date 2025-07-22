@@ -1,4 +1,5 @@
 import {
+  Constants,
   IHasProperty,
   ResourceClassDefinitionWithAllLanguages,
   ResourcePropertyDefinitionWithAllLanguages,
@@ -56,7 +57,16 @@ export class ResourceClassInfo {
   }
 
   get defaultClassLabel() {
+    if (this._resClass.label === 'Kirche') {
+      console.log(this._resClass.subClassOf);
+    }
     return this._resClass.subClassOf
+      .sort((a, b) => {
+        // sort so internal Knora classes come first, followed by external ones if any
+        const aIsKnora = a.startsWith(Constants.KnoraApiV2) ? -1 : 1;
+        const bIsKnora = b.startsWith(Constants.KnoraApiV2) ? -1 : 1;
+        return aIsKnora - bIsKnora;
+      })
       .map(superIri => DefaultResourceClasses.getLabel(superIri))
       .filter(Boolean)
       .join(', ');

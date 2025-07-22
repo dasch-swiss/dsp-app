@@ -40,11 +40,12 @@ export class DefaultResourceClasses {
     },
   ] as const;
 
-  public static getLabel(iri: string): string {
-    return this.data.find(rc => rc.iri === iri)?.label || this.data[0].label;
+  public static getLabel(iri: string): string | undefined {
+    const label = this.data.find(rc => rc.iri === iri)?.label;
+    return label || iri.split(/[#/]/).pop();
   }
 
   public static getIcon(iri: string): string | undefined {
-    return this.data.find(rc => rc.iri === iri)?.icon || this.data[0].icon;
+    return this.data.find(rc => rc.iri === iri)?.icon || undefined;
   }
 }

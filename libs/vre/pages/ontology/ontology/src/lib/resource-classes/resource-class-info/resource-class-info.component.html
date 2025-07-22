@@ -14,7 +14,7 @@
       <span class="mat-caption class-name"> {{ resourceClass.name }} </span>
       <span class="mat-caption">&nbsp;&middot;&nbsp;</span>
       <span class="mat-caption" data-cy="class-type-label"
-        ><mat-icon>{{ resourceClass.defaultClassIcon }}</mat-icon>
+        ><mat-icon *ngIf="resourceClass.defaultClassIcon">{{ resourceClass.defaultClassIcon }}</mat-icon>
         {{ resourceClass.defaultClassLabel }}
       </span>
     </mat-card-subtitle>
