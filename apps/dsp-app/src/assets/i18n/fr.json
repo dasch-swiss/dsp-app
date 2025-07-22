@@ -96,7 +96,7 @@
           "note": "Remarque : ce fichier ne contient que les métadonnées, et non les données du projet.",
           "listTitle": "Ces métadonnées comprennent:",
           "listContent": {
-            "label": "LLabel (étiquette)abel",
+            "label": "Label (étiquette)",
             "class": "Classe de ressource",
             "ark": "URL ARK  (lien permanent)",
             "timestampArk": "ARK avec horodatage",

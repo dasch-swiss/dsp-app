@@ -89,25 +89,25 @@
         "restrictions": "Le impostazioni dell'immagine possono essere applicate solo alle risorse che hanno impostato i permessi di visualizzazione limitati."
       },
       "resourceMetadata": {
-        "tab": "Resource Metadata",
-        "title": "Export Resource Metadata",
+        "tab": "Metadati delle risorse",
+        "title": "Esporta metadati delle risorse",
         "text": {
-          "description": "Export descriptive metadata for every resource in this project as CSV.",
-          "note": "Note: This file includes only metadata - not the project’s data.",
-          "listTitle": "These metadata consist of:",
+          "description": "Esporta i metadati descrittivi di ogni risorsa di questo progetto in formato CSV.",
+          "note": "Nota: questo file include solo i metadati, non i dati del progetto.",
+          "listTitle": "I metadati includono:",
           "listContent": {
-            "label": "Label",
-            "class": "Resource Class",
-            "ark": "ARK URL (Permalink)",
-            "timestampArk": "ARK with timestamp",
-            "iri": "Resource IRI",
-            "createdBy": "Created by",
-            "creationDate": "Creation Date",
-            "modified": "Last Modification Date (if available)",
-            "deleted": "Deletion Date (if available)"
+            "label": "Label (Etichetta)",
+            "class": "Classe della risorsa",
+            "ark": "URL ARK (link permanente)",
+            "timestampArk": "ARK con data e ora",
+            "iri": "IRI della risorsa",
+            "createdBy": "Creato da",
+            "creationDate": "Data di creazione",
+            "modified": "Data dell'ultima modifica (se disponibile)",
+            "deleted": "Data di eliminazione (se disponibile)"
           }
         },
-        "button": "Export as CSV"
+        "button": "Esporta in formato CSV"
       },
       "legalSettings": {
         "warning": "Attention: any action you do here is permanent",

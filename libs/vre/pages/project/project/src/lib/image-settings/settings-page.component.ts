@@ -1,6 +1,7 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { MenuItem } from '@dasch-swiss/vre/pages/user-settings/user';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -33,6 +34,8 @@ import { MenuItem } from '@dasch-swiss/vre/pages/user-settings/user';
   `,
 })
 export class SettingsPageComponent {
+  private _translateService = inject(TranslateService);
+
   navigation: MenuItem[] = [
     {
       label: 'Project Description',
@@ -41,8 +44,8 @@ export class SettingsPageComponent {
       icon: 'edit_square',
     },
     {
-      label: 'Resource Metadata',
-      shortLabel: 'Resource Metadata',
+      label: this._translateService.instant('pages.project.resourceMetadata.tab'),
+      shortLabel: this._translateService.instant('pages.project.resourceMetadata.tab'),
       route: RouteConstants.resourceMetadata,
       icon: 'code_blocks',
     },
