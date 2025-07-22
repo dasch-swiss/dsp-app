@@ -26,7 +26,7 @@ export class DataModelsComponent {
   protected readonly RouteConstants = RouteConstants;
 
   ontologiesMetadata$ = this._store.select(OntologiesSelectors.currentProjectOntologyMetadata);
-  isAdmin$ = this._store.select(UserSelectors.isMemberOfSystemAdminGroup);
+  isAdmin$ = this._store.select(ProjectsSelectors.isCurrentProjectAdminOrSysAdmin);
   isLoading$ = this._store.select(OntologiesSelectors.isLoading);
   listsInProject$ = this._store.select(ListsSelectors.listsInProject);
 
