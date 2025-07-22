@@ -1,19 +1,19 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { ReadUser } from '@dasch-swiss/dsp-js';
-import { LoadProjectMembersAction, ProjectsSelectors } from '@dasch-swiss/vre/core/state';
+import { ProjectsSelectors } from '@dasch-swiss/vre/core/state';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { Store } from '@ngxs/store';
-import { combineLatest, filter, first, map, Observable, tap } from 'rxjs';
+import { filter, first, map, tap } from 'rxjs';
+import { CollaborationPageService } from './collaboration-page.service';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-collaboration-page',
   template: `
     <div *ngIf="isAdmin$ | async" class="content large middle">
-      <app-add-user
-        *ngIf="(project$ | async)?.status && (isAdmin$ | async) === true"
-        [projectUuid]="projectUuid$ | async" />
+      <ng-container *ngIf="project$ | async as project">
+        <app-add-user *ngIf="project.status && (isAdmin$ | async) === true" [projectUuid]="projectUuid$ | async" />
+      </ng-container>
 
       <ng-container *ngIf="activeProjectMembers$ | async as activeProjectMembers">
         <ng-container *ngIf="inactiveProjectMembers$ | async as inactiveProjectMembers">
@@ -37,10 +37,10 @@ import { combineLatest, filter, first, map, Observable, tap } from 'rxjs';
     </div>
   `,
   styleUrls: ['./collaboration-page.component.scss'],
+  providers: [CollaborationPageService],
 })
-export class CollaborationPageComponent implements OnInit {
+export class CollaborationPageComponent {
   project$ = this._store.select(ProjectsSelectors.currentProject);
-  projectMembers$ = this._store.select(ProjectsSelectors.projectMembers);
   isAdmin$ = this._store.select(ProjectsSelectors.isCurrentProjectAdminOrSysAdmin);
 
   projectUuid$ = this.project$.pipe(
@@ -56,38 +56,16 @@ export class CollaborationPageComponent implements OnInit {
 
   showActiveUsers = true;
 
-  get activeProjectMembers$(): Observable<ReadUser[]> {
-    return combineLatest([this.project$, this.projectMembers$]).pipe(
-      map(([currentProject, projectMembers]) => {
-        if (!currentProject || !projectMembers[currentProject.id]) {
-          return [];
-        }
-        return projectMembers[currentProject.id]?.value.filter(member => member?.status === true) || [];
-      })
-    );
-  }
-
-  get inactiveProjectMembers$(): Observable<ReadUser[]> {
-    return combineLatest([this.project$, this.projectMembers$]).pipe(
-      map(([currentProject, projectMembers]) => {
-        if (!currentProject || !projectMembers[currentProject.id]) {
-          return [];
-        }
-        return projectMembers[currentProject?.id].value.filter(member => member?.status === false) || [];
-      })
-    );
-  }
+  activeProjectMembers$ = this.collaborationPageService.projectMembers$.pipe(
+    map(members => (members ?? []).filter(v => v.status === true))
+  );
+  inactiveProjectMembers$ = this.collaborationPageService.projectMembers$.pipe(
+    map(members => (members ?? []).filter(v => v.status === false))
+  );
 
   constructor(
     private _store: Store,
-    protected _titleService: Title
+    protected _titleService: Title,
+    public collaborationPageService: CollaborationPageService
   ) {}
-
-  ngOnInit() {
-    this.projectUuid$.subscribe(projectUuid => {
-      if (projectUuid) {
-        this._store.dispatch(new LoadProjectMembersAction(projectUuid));
-      }
-    });
-  }
 }

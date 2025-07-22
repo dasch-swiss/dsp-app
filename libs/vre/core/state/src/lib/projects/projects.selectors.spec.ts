@@ -125,10 +125,6 @@ describe('ProjectsSelectors', () => {
     mockState = {
       allProjects: mockProjects,
       isLoading: false,
-      isMembershipLoading: false,
-      hasLoadingErrors: false,
-      projectMembers: mockProjectMembers,
-      projectGroups: mockProjectGroups,
       projectRestrictedViewSettings: {
         'project1-uuid': {
           value: mockProjectRestrictedViewSettings,
@@ -193,52 +189,6 @@ describe('ProjectsSelectors', () => {
     });
   });
 
-  describe('isMembershipLoading', () => {
-    it('should return membership loading state', () => {
-      const result = ProjectsSelectors.isMembershipLoading(mockState);
-
-      expect(result).toBe(false);
-    });
-
-    it('should return true when membership loading', () => {
-      mockState.isMembershipLoading = true;
-      const result = ProjectsSelectors.isMembershipLoading(mockState);
-
-      expect(result).toBe(true);
-    });
-  });
-
-  describe('hasLoadingErrors', () => {
-    it('should return loading errors state', () => {
-      const result = ProjectsSelectors.hasLoadingErrors(mockState);
-
-      expect(result).toBe(false);
-    });
-
-    it('should return true when has loading errors', () => {
-      mockState.hasLoadingErrors = true;
-      const result = ProjectsSelectors.hasLoadingErrors(mockState);
-
-      expect(result).toBe(true);
-    });
-  });
-
-  describe('projectMembers', () => {
-    it('should return project members', () => {
-      const result = ProjectsSelectors.projectMembers(mockState);
-
-      expect(result).toEqual(mockProjectMembers);
-    });
-  });
-
-  describe('projectGroups', () => {
-    it('should return project groups', () => {
-      const result = ProjectsSelectors.projectGroups(mockState);
-
-      expect(result).toEqual(mockProjectGroups);
-    });
-  });
-
   describe('allActiveProjects', () => {
     it('should return only active projects sorted by longname', () => {
       const result = ProjectsSelectors.allActiveProjects(mockState);
@@ -275,41 +225,6 @@ describe('ProjectsSelectors', () => {
 
       expect(result).toHaveLength(1);
       expect(result[0]).toEqual(mockProjects[1]);
-    });
-  });
-
-  describe('allNotSystemProjects', () => {
-    it('should return active projects excluding system projects', () => {
-      const result = ProjectsSelectors.allNotSystemProjects(mockState);
-
-      expect(result).toHaveLength(2);
-      expect(result).toContain(mockProjects[0]); // project1
-      expect(result).toContain(mockProjects[3]); // project3
-      expect(result).not.toContain(mockProjects[1]); // project2 (inactive)
-      expect(result).not.toContain(mockProjects[2]); // system project
-    });
-
-    it('should exclude default shared ontology projects', () => {
-      const sharedOntologyProject = {
-        id: Constants.DefaultSharedOntologyIRI,
-        shortcode: 'DSO',
-        shortname: 'shared',
-        longname: 'Shared Ontology',
-        description: [{ value: 'Shared ontology', language: 'en' }] as StringLiteral[],
-        keywords: [],
-        logo: '',
-        status: true,
-        selfjoin: false,
-        ontologies: ['http://rdfh.ch/ontologies/shared'],
-      };
-
-      mockProjects.push(sharedOntologyProject);
-      mockState.allProjects = mockProjects;
-
-      const result = ProjectsSelectors.allNotSystemProjects(mockState);
-
-      expect(result).toHaveLength(2);
-      expect(result.every(p => p.id !== Constants.DefaultSharedOntologyIRI)).toBe(true);
     });
   });
 

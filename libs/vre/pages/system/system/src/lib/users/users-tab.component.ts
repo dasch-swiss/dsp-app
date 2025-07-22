@@ -1,45 +1,42 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { LoadUsersAction, UserSelectors } from '@dasch-swiss/vre/core/state';
-import { Store } from '@ngxs/store';
+import { combineLatest, map } from 'rxjs';
+import { UsersTabService } from './users-tab.service';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-users-tab',
   template: `
-    <ng-container *ngIf="(isLoading$ | async) === false; else loadingTpl">
+    <app-progress-indicator-overlay *ngIf="usersTabService.isLoading" />
+
+    <ng-container *ngIf="users$ | async as users">
       <div style="display: flex; justify-content: center; margin: 16px 0">
-        <app-double-chip-selector [options]="['Active users', 'Inactive users']" [(value)]="showActiveUsers" />
+        <app-double-chip-selector
+          [options]="['Active users (' + users[0].length + ')', 'Inactive users (' + users[1].length + ')']"
+          [(value)]="showActiveUsers" />
       </div>
 
       <app-users-list
-        *ngIf="showActiveUsers && (activeUsers$ | async) as activeUsers"
+        *ngIf="showActiveUsers && users[0] as activeUsers"
         [list]="activeUsers"
         [isButtonEnabledToCreateNewUser]="true" />
 
-      <app-users-list *ngIf="!showActiveUsers && (inactiveUsers$ | async) as inactiveUsers" [list]="inactiveUsers" />
+      <app-users-list *ngIf="!showActiveUsers && users[1] as inactiveUsers" [list]="inactiveUsers" />
     </ng-container>
-
-    <ng-template #loadingTpl>
-      <app-progress-indicator />
-    </ng-template>
   `,
+  providers: [UsersTabService],
 })
-export class UsersTabComponent implements OnInit {
-  activeUsers$ = this._store.select(UserSelectors.activeUsers);
-  inactiveUsers$ = this._store.select(UserSelectors.inactiveUsers);
-  isLoading$ = this._store.select(UserSelectors.usersLoading);
+export class UsersTabComponent {
+  private _activeUsers$ = this.usersTabService.allUsers$.pipe(map(users => users.filter(user => user.status)));
+  private _inactiveUsers$ = this.usersTabService.allUsers$.pipe(map(users => users.filter(user => !user.status)));
 
+  users$ = combineLatest([this._activeUsers$, this._inactiveUsers$]);
   showActiveUsers = true;
 
   constructor(
-    private readonly _store: Store,
-    private readonly _titleService: Title
+    private readonly _titleService: Title,
+    public usersTabService: UsersTabService
   ) {
     this._titleService.setTitle('All users in DSP');
-  }
-
-  ngOnInit() {
-    this._store.dispatch(new LoadUsersAction());
   }
 }

@@ -11,7 +11,7 @@ export interface EditPasswordDialogProps {
   template: ` <app-dialog-header
       [title]="data.user.username"
       [subtitle]="'pages.system.users.changePassword' | translate" />
-    <app-password-form [user]="data.user" (closeDialog)="dialogRef.close()" />`,
+    <app-password-form [user]="data.user" (closeDialog)="dialogRef.close(true)" />`,
 })
 export class EditPasswordDialogComponent {
   constructor(

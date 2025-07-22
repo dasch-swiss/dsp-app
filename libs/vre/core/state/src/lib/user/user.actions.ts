@@ -1,4 +1,4 @@
-import { ReadUser, UpdateUserRequest, User } from '@dasch-swiss/dsp-js';
+import { ReadUser } from '@dasch-swiss/dsp-js';
 
 export class LoadUserAction {
   static readonly type = '[User] Load User';
@@ -15,12 +15,6 @@ export class SetUserAction {
   constructor(public user: ReadUser) {}
 }
 
-export class RemoveUserAction {
-  static readonly type = '[User] Remove User';
-
-  constructor(public user: ReadUser) {}
-}
-
 export class LogUserOutAction {
   static readonly type = '[User] Log user out';
 }
@@ -29,30 +23,4 @@ export class SetUserProjectGroupsAction {
   static readonly type = '[User] Set User Project Groups';
 
   constructor(public user: ReadUser) {}
-}
-
-export class LoadUsersAction {
-  static readonly type = '[User] Load All Users';
-}
-
-export class ResetUsersAction {
-  static readonly type = '[User] Reset All Users';
-}
-
-export class CreateUserAction {
-  static readonly type = '[User] Create User';
-
-  constructor(
-    public userData: User,
-    public enrollToProject = ''
-  ) {}
-}
-
-export class UpdateUserAction {
-  static readonly type = '[User] Update User';
-
-  constructor(
-    public id: string,
-    public userData: UpdateUserRequest
-  ) {}
 }

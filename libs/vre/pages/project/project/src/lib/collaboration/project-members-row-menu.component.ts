@@ -4,13 +4,16 @@ import { Router } from '@angular/router';
 import { ReadProject, ReadUser } from '@dasch-swiss/dsp-js';
 import { PermissionsData } from '@dasch-swiss/dsp-js/src/models/admin/permissions-data';
 import { UserApiService } from '@dasch-swiss/vre/3rd-party-services/api';
+import { AdminUsersApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { DspDialogConfig, RouteConstants } from '@dasch-swiss/vre/core/config';
-import { LoadUserAction, RemoveUserFromProjectAction, SetUserAction, UserSelectors } from '@dasch-swiss/vre/core/state';
+import { LoadUserAction, SetUserAction, UserSelectors } from '@dasch-swiss/vre/core/state';
 import { EditPasswordDialogComponent } from '@dasch-swiss/vre/pages/system/system';
-import { EditUserDialogComponent } from '@dasch-swiss/vre/pages/user-settings/user';
+import { EditUserDialogComponent, EditUserDialogProps } from '@dasch-swiss/vre/pages/user-settings/user';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { DialogService } from '@dasch-swiss/vre/ui/ui';
 import { Store } from '@ngxs/store';
+import { switchMap } from 'rxjs';
+import { CollaborationPageService } from './collaboration-page.service';
 
 @Component({
   selector: 'app-project-members-row-menu',
@@ -44,7 +47,9 @@ export class ProjectMembersRowMenuComponent {
     private _userApiService: UserApiService,
     private _router: Router,
     private _matDialog: MatDialog,
-    private _dialog: DialogService
+    private _dialog: DialogService,
+    private _adminUsersApi: AdminUsersApiService,
+    private _collaborationPageService: CollaborationPageService
   ) {}
 
   isProjectAdmin(permissions: PermissionsData): boolean {
@@ -63,12 +68,12 @@ export class ProjectMembersRowMenuComponent {
     this._userApiService.removeFromProjectMembership(id, this.project.id, true).subscribe(response => {
       if (currentUser.username !== response.user.username) {
         this._store.dispatch(new SetUserAction(response.user));
-        this.refresh();
+        this._refresh();
       } else {
         this._store.dispatch(new LoadUserAction(currentUser.username)).subscribe(() => {
           const isSysAdmin = ProjectService.IsMemberOfSystemAdminGroup(currentUser.permissions?.groupsPerProject || {});
           if (isSysAdmin) {
-            this.refresh();
+            this._refresh();
           } else {
             this._router
               .navigateByUrl(RouteConstants.refreshRelative, {
@@ -90,12 +95,12 @@ export class ProjectMembersRowMenuComponent {
     this._userApiService.addToProjectMembership(id, this.project.id, true).subscribe(response => {
       if (currentUser.username !== response.user.username) {
         this._store.dispatch(new SetUserAction(response.user));
-        this.refresh();
+        this._refresh();
       } else {
         // the logged-in user (system admin) added himself as project admin
         // update the application state of logged-in user and the session
         this._store.dispatch(new LoadUserAction(currentUser.username)).subscribe(() => {
-          this.refresh();
+          this._refresh();
         });
       }
     });
@@ -103,31 +108,36 @@ export class ProjectMembersRowMenuComponent {
 
   editUser(user: ReadUser) {
     this._matDialog
-      .open(EditUserDialogComponent, DspDialogConfig.dialogDrawerConfig<ReadUser>(user, true))
+      .open<EditUserDialogComponent, EditUserDialogProps, boolean>(
+        EditUserDialogComponent,
+        DspDialogConfig.dialogDrawerConfig<EditUserDialogProps>({ user }, true)
+      )
       .afterClosed()
-      .subscribe(() => {
-        this.refresh();
-      });
-  }
-
-  openEditPasswordDialog(user: ReadUser) {
-    this._matDialog
-      .open(EditPasswordDialogComponent, DspDialogConfig.dialogDrawerConfig({ user }, true))
-      .afterClosed()
-      .subscribe(response => {
-        if (response === true) {
-          this.refresh();
+      .subscribe(success => {
+        if (success) {
+          this._refresh();
         }
       });
   }
 
-  askToRemoveFromProject(user: ReadUser) {
-    this._dialog.afterConfirmation('Do you want to remove this user from the project?').subscribe(() => {
-      this._store.dispatch(new RemoveUserFromProjectAction(user.id, this.project.id));
-    });
+  openEditPasswordDialog(user: ReadUser) {
+    this._matDialog.open(EditPasswordDialogComponent, DspDialogConfig.dialogDrawerConfig({ user }, true));
   }
 
-  refresh() {
-    (window as any).location.reload(); // TODO change later on with a service reloading users.
+  askToRemoveFromProject(user: ReadUser) {
+    this._dialog
+      .afterConfirmation('Do you want to remove this user from the project?')
+      .pipe(
+        switchMap(() =>
+          this._adminUsersApi.deleteAdminUsersIriUseririProjectMembershipsProjectiri(user.id, this.project.id)
+        )
+      )
+      .subscribe(() => {
+        this._refresh();
+      });
+  }
+
+  private _refresh() {
+    this._collaborationPageService.reloadProjectMembers();
   }
 }

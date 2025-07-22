@@ -1,16 +1,17 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Constants, ReadUser } from '@dasch-swiss/dsp-js';
 import { PermissionsData } from '@dasch-swiss/dsp-js/src/models/admin/permissions-data';
 import { UserApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import { SetUserAction, UserSelectors } from '@dasch-swiss/vre/core/state';
-import { EditUserDialogComponent } from '@dasch-swiss/vre/pages/user-settings/user';
+import { EditUserDialogComponent, EditUserDialogProps } from '@dasch-swiss/vre/pages/user-settings/user';
 import { DialogService } from '@dasch-swiss/vre/ui/ui';
 import { Store } from '@ngxs/store';
 import { take } from 'rxjs/operators';
-import { EditPasswordDialogComponent } from '../edit-password-dialog.component';
+import { EditPasswordDialogComponent, EditPasswordDialogProps } from '../edit-password-dialog.component';
 import { ManageProjectMembershipDialogComponent } from '../manage-project-membership-dialog.component';
+import { UsersTabService } from '../users-tab.service';
 
 @Component({
   selector: 'app-users-list-row-menu',
@@ -42,7 +43,6 @@ import { ManageProjectMembershipDialogComponent } from '../manage-project-member
 })
 export class UsersListRowMenuComponent {
   @Input({ required: true }) user!: ReadUser;
-  @Output() refreshParent = new EventEmitter<void>();
 
   isSysAdmin$ = this._store.select(UserSelectors.isSysAdmin);
   username$ = this._store.select(UserSelectors.username);
@@ -51,7 +51,8 @@ export class UsersListRowMenuComponent {
     private _matDialog: MatDialog,
     private _store: Store,
     private _dialog: DialogService,
-    private readonly _userApiService: UserApiService
+    private readonly _userApiService: UserApiService,
+    private _usersTabService: UsersTabService
   ) {}
 
   isSystemAdmin(permissions: PermissionsData): boolean {
@@ -76,7 +77,7 @@ export class UsersListRowMenuComponent {
       .subscribe(response => {
         this._store.dispatch(new SetUserAction(response.user));
         if (this._store.selectSnapshot(UserSelectors.username) !== user.username) {
-          this.refreshParent.emit();
+          this._reloadUserList();
         }
       });
   }
@@ -94,20 +95,29 @@ export class UsersListRowMenuComponent {
   }
 
   editUser(user: ReadUser) {
-    const dialogConfig = DspDialogConfig.dialogDrawerConfig<ReadUser>(user, true);
-    const dialogRef = this._matDialog.open(EditUserDialogComponent, dialogConfig);
-    dialogRef.afterClosed().subscribe(() => {
-      this.refreshParent.emit();
-    });
+    this._matDialog
+      .open<EditUserDialogComponent, EditUserDialogProps, boolean>(
+        EditUserDialogComponent,
+        DspDialogConfig.dialogDrawerConfig({ user }, true)
+      )
+      .afterClosed()
+      .subscribe(success => {
+        if (success) {
+          this._reloadUserList();
+        }
+      });
   }
 
   openEditPasswordDialog(user: ReadUser) {
     this._matDialog
-      .open(EditPasswordDialogComponent, DspDialogConfig.dialogDrawerConfig({ user }, true))
+      .open<EditPasswordDialogComponent, EditPasswordDialogProps, boolean>(
+        EditPasswordDialogComponent,
+        DspDialogConfig.dialogDrawerConfig({ user }, true)
+      )
       .afterClosed()
-      .subscribe(response => {
-        if (response === true) {
-          this.refreshParent.emit();
+      .subscribe(success => {
+        if (success) {
+          this._reloadUserList();
         }
       });
   }
@@ -119,14 +129,18 @@ export class UsersListRowMenuComponent {
   private deactivateUser(userIri: string) {
     this._userApiService.delete(userIri).subscribe(response => {
       this._store.dispatch(new SetUserAction(response.user));
-      this.refreshParent.emit();
+      this._reloadUserList();
     });
   }
 
   private activateUser(userIri: string) {
     this._userApiService.updateStatus(userIri, true).subscribe(response => {
       this._store.dispatch(new SetUserAction(response.user));
-      this.refreshParent.emit();
+      this._reloadUserList();
     });
+  }
+
+  private _reloadUserList() {
+    this._usersTabService.reloadUsers();
   }
 }

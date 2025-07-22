@@ -4,7 +4,6 @@ import { ProjectApiService, UserApiService } from '@dasch-swiss/vre/3rd-party-se
 import { Action, State, StateContext, Store } from '@ngxs/store';
 import { map, take } from 'rxjs';
 import { ProjectsSelectors } from '../projects/projects.selectors';
-import { UserSelectors } from '../user/user.selectors';
 import { GetAttachedProjectAction, GetAttachedUserAction, SetCurrentResourceAction } from './resource.actions';
 import { ResourceStateModel } from './resource.state-model';
 
@@ -43,16 +42,6 @@ export class ResourceState {
     }
 
     ctx.patchState({ isLoading: true });
-    const user = this.store.selectSnapshot(UserSelectors.allUsers).find(u => u.id === identifier);
-    if (user) {
-      state.attachedUsers[resourceIri].value.push(user);
-      ctx.setState({
-        ...state,
-        isLoading: false,
-      });
-
-      return user;
-    }
 
     return this._userApiService.get(identifier, idType).pipe(
       take(1),

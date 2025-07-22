@@ -1,13 +1,14 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ReadUser, StringLiteral } from '@dasch-swiss/dsp-js';
+import { UserApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { AvailableLanguages } from '@dasch-swiss/vre/core/config';
 import { UserSelectors } from '@dasch-swiss/vre/core/state';
 import { CustomRegex } from '@dasch-swiss/vre/shared/app-common';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { TranslateService } from '@ngx-translate/core';
 import { Select } from '@ngxs/store';
-import { map, Observable } from 'rxjs';
+import { map, Observable, shareReplay } from 'rxjs';
 import { existingNamesAsyncValidator } from '../existing-names.validator';
 import { UserForm } from './user-form.type';
 
@@ -23,7 +24,13 @@ export class UserFormComponent implements OnInit {
 
   @Select(UserSelectors.isSysAdmin) readonly loggedInUserIsSysAdmin$: Observable<boolean>;
 
-  @Select(UserSelectors.allUsers) readonly allUsers$: Observable<ReadUser[]>;
+  allUsers$ = this._userApiService.list().pipe(
+    map(response => response.users),
+    shareReplay({
+      bufferSize: 1,
+      refCount: true,
+    })
+  );
 
   private _existingUserNames$: Observable<RegExp[]>;
   private _existingUserEmails$: Observable<RegExp[]>;
@@ -46,7 +53,8 @@ export class UserFormComponent implements OnInit {
 
   constructor(
     private _fb: FormBuilder,
-    private _ts: TranslateService
+    private _ts: TranslateService,
+    private _userApiService: UserApiService
   ) {}
 
   ngOnInit() {

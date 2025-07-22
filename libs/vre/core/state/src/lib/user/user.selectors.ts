@@ -11,26 +11,6 @@ export class UserSelectors {
   }
 
   @Selector([UserState])
-  static usersLoading(state: UserStateModel): boolean {
-    return state.usersLoading;
-  }
-
-  @Selector([UserState])
-  static allUsers(state: UserStateModel): ReadUser[] {
-    return state.allUsers;
-  }
-
-  @Selector([UserState])
-  static activeUsers(state: UserStateModel): ReadUser[] {
-    return state.allUsers.filter((user: ReadUser) => user.status);
-  }
-
-  @Selector([UserState])
-  static inactiveUsers(state: UserStateModel): ReadUser[] {
-    return state.allUsers.filter((user: ReadUser) => !user.status);
-  }
-
-  @Selector([UserState])
   static isLoggedIn(state: UserStateModel) {
     return !state.isLoading && state.user !== null;
   }

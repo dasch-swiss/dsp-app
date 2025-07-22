@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { Constants, ReadUser } from '@dasch-swiss/dsp-js';
 import { PermissionsData } from '@dasch-swiss/dsp-js/src/models/admin/permissions-data';
 
@@ -10,7 +10,7 @@ import { PermissionsData } from '@dasch-swiss/dsp-js/src/models/admin/permission
       <mat-chip class="sys-admin-chip">System Admin</mat-chip>
     </mat-chip-listbox>
 
-    <app-users-list-row-menu [user]="user" (refreshParent)="refreshParent.emit()" />
+    <app-users-list-row-menu [user]="user" />
   </span>`,
   styles: [
     `
@@ -27,7 +27,6 @@ import { PermissionsData } from '@dasch-swiss/dsp-js/src/models/admin/permission
 })
 export class UsersListRowComponent {
   @Input({ required: true }) user!: ReadUser;
-  @Output() refreshParent = new EventEmitter<void>();
 
   isSystemAdmin(permissions: PermissionsData): boolean {
     if (!permissions.groupsPerProject) {

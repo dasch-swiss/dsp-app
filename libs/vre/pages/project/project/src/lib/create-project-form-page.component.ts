@@ -2,8 +2,9 @@ import { Location } from '@angular/common';
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
+import { AdminUsersApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
-import { AddUserToProjectMembershipAction, LoadProjectsAction, UserSelectors } from '@dasch-swiss/vre/core/state';
+import { LoadProjectsAction, UserSelectors } from '@dasch-swiss/vre/core/state';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { Store } from '@ngxs/store';
 import { finalize } from 'rxjs';
@@ -52,6 +53,7 @@ export class CreateProjectFormPageComponent {
     private _store: Store,
     private _router: Router,
     private _location: Location,
+    private _adminUsersApi: AdminUsersApiService,
     private _route: ActivatedRoute
   ) {}
 
@@ -74,8 +76,11 @@ export class CreateProjectFormPageComponent {
       )
       .subscribe(projectResponse => {
         if (this._route.snapshot.queryParams[RouteConstants.assignCurrentUser]) {
-          const currentUser = this._store.selectSnapshot(UserSelectors.user);
-          this._store.dispatch(new AddUserToProjectMembershipAction(currentUser.id, projectResponse.project.id));
+          const currentUser = this._store.selectSnapshot(UserSelectors.user)!;
+
+          this._adminUsersApi
+            .postAdminUsersIriUseririProjectMembershipsProjectiri(currentUser.id, projectResponse.project.id)
+            .subscribe();
         }
 
         const uuid = ProjectService.IriToUuid(projectResponse.project.id);

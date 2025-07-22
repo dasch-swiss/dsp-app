@@ -1,19 +1,11 @@
 import { Params } from '@angular/router';
-import {
-  Constants,
-  ProjectRestrictedViewSettings,
-  ReadGroup,
-  ReadProject,
-  ReadUser,
-  StoredProject,
-} from '@dasch-swiss/dsp-js';
+import { ProjectRestrictedViewSettings, ReadProject, ReadUser, StoredProject } from '@dasch-swiss/dsp-js';
 import { RestrictedViewResponse } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { DspAppConfig, RouteConstants } from '@dasch-swiss/vre/core/config';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { Selector } from '@ngxs/store';
 import { ConfigState } from '../config.state';
-import { IKeyValuePairs } from '../model-interfaces';
 import { ResourceSelectors } from '../resource/resource.selectors';
 import { RouterSelectors } from '../router/router.selector';
 import { UserSelectors } from '../user/user.selectors';
@@ -45,26 +37,6 @@ export class ProjectsSelectors {
   }
 
   @Selector([ProjectsState])
-  static isMembershipLoading(state: ProjectsStateModel): boolean {
-    return state.isMembershipLoading;
-  }
-
-  @Selector([ProjectsState])
-  static hasLoadingErrors(state: ProjectsStateModel): boolean {
-    return state.hasLoadingErrors;
-  }
-
-  @Selector([ProjectsState])
-  static projectMembers(state: ProjectsStateModel): IKeyValuePairs<ReadUser> {
-    return state.projectMembers;
-  }
-
-  @Selector([ProjectsState])
-  static projectGroups(state: ProjectsStateModel): IKeyValuePairs<ReadGroup> {
-    return state.projectGroups;
-  }
-
-  @Selector([ProjectsState])
   static allActiveProjects(state: ProjectsStateModel): ReadProject[] {
     return state.allProjects
       .filter(project => project.status === true)
@@ -76,14 +48,6 @@ export class ProjectsSelectors {
     return state.allProjects
       .filter(project => project.status === false)
       .sort((a, b) => (a.longname || '').localeCompare(b.longname || ''));
-  }
-
-  @Selector([ProjectsState])
-  static allNotSystemProjects(state: ProjectsStateModel): StoredProject[] {
-    return state.allProjects.filter(
-      project =>
-        project.status && project.id !== Constants.SystemProjectIRI && project.id !== Constants.DefaultSharedOntologyIRI
-    );
   }
 
   @Selector([ProjectsState, RouterSelectors.params])
@@ -185,18 +149,5 @@ export class ProjectsSelectors {
     return !projectUuid || !state.projectRestrictedViewSettings[projectUuid]
       ? undefined
       : state.projectRestrictedViewSettings[projectUuid].value;
-  }
-
-  @Selector([ProjectsState, ResourceSelectors.resource, ConfigState.getConfig, RouterSelectors.params])
-  static contextProject(
-    state: ProjectsStateModel,
-    resource: DspResource | null,
-    dspApiConfig: DspAppConfig,
-    params: Params | undefined
-  ): ReadProject | undefined {
-    if (!params) return undefined;
-    const projectIri = ProjectService.getProjectIri(params, dspApiConfig, resource);
-    if (!projectIri) return undefined;
-    return state.allProjects.find(p => p.id === projectIri);
   }
 }

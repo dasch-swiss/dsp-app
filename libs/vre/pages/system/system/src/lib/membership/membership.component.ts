@@ -4,38 +4,36 @@ import {
   Component,
   EventEmitter,
   Input,
+  OnChanges,
   OnDestroy,
   Output,
 } from '@angular/core';
-import { Constants, ReadUser, StoredProject } from '@dasch-swiss/dsp-js';
-import { PermissionsData } from '@dasch-swiss/dsp-js/src/models/admin/permissions-data';
+import { Constants, StoredProject } from '@dasch-swiss/dsp-js';
 import {
-  AddUserToProjectMembershipAction,
-  LoadProjectsAction,
-  ProjectsSelectors,
-  RemoveUserFromProjectAction,
-  UserSelectors,
-} from '@dasch-swiss/vre/core/state';
+  AdminUsersApiService,
+  PermissionsDataADM,
+  Project,
+  UserDto,
+} from '@dasch-swiss/vre/3rd-party-services/open-api';
+import { LoadProjectsAction, ProjectsSelectors } from '@dasch-swiss/vre/core/state';
 import { AutocompleteItem } from '@dasch-swiss/vre/pages/user-settings/user';
 import { Store } from '@ngxs/store';
-import { combineLatest, map, Subject, takeUntil } from 'rxjs';
+import { BehaviorSubject, combineLatest, map, Observable, Subject, switchMap, takeUntil } from 'rxjs';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-membership',
   template: `
-    @if (isMembershipLoading$ | async) {
-      <app-progress-indicator />
-    } @else {
+    <ng-container *ngIf="user$ | async as user">
       <div class="mat-headline-6 mb-2">
-        This user is member of {{ (user$ | async)?.projects.length | i18nPlural: itemPluralMapping['project'] }}
+        This user is member of {{ ((userProjects$ | async) || []).length | i18nPlural: itemPluralMapping['project'] }}
       </div>
 
-      <div *ngFor="let project of (user$ | async)?.projects; trackBy: trackByFn" class="align-center">
+      <div *ngFor="let project of user.projects || []" class="align-center">
         <div class="flex-1">
-          <div>{{ project.longname }} ({{ project.shortname }})</div>
+          <div style="max-width: 500px">{{ project.longname }} ({{ project.shortname }})</div>
           <div>
-            @if (isUserProjectAdmin((user$ | async)?.permissions, project.id)) {
+            @if (isUserProjectAdmin(user.permissions, project)) {
               User is <strong>Project admin</strong>
             }
           </div>
@@ -44,7 +42,7 @@ import { combineLatest, map, Subject, takeUntil } from 'rxjs';
         <button
           mat-icon-button
           color="warn"
-          (click)="removeFromProject(project.id)"
+          (click)="removeFromProject(project)"
           aria-label="Button to remove user from project"
           matTooltip="Remove user from project"
           matTooltipPosition="above">
@@ -57,7 +55,7 @@ import { combineLatest, map, Subject, takeUntil } from 'rxjs';
       <div class="d-flex">
         <mat-form-field class="flex-1 mr-2">
           <mat-select placeholder="Add user to project" [(value)]="selectedValue">
-            <mat-option *ngFor="let project of projects$ | async; trackBy: trackByFn" [value]="project?.iri">
+            <mat-option *ngFor="let project of projects$ | async" [value]="project?.iri">
               {{ project?.name }}
             </mat-option>
           </mat-select>
@@ -65,7 +63,7 @@ import { combineLatest, map, Subject, takeUntil } from 'rxjs';
         <button
           mat-icon-button
           color="primary"
-          (click)="addToProject(selectedValue)"
+          (click)="addToProject(selectedValue!)"
           [disabled]="selectedValue === null"
           aria-label="Button to add user to project"
           matTooltip="Add user to selected project"
@@ -73,27 +71,22 @@ import { combineLatest, map, Subject, takeUntil } from 'rxjs';
           <mat-icon>add</mat-icon>
         </button>
       </div>
-    }
+    </ng-container>
   `,
   styleUrls: ['./membership.component.scss'],
 })
-export class MembershipComponent implements AfterViewInit, OnDestroy {
-  private _ngUnsubscribe = new Subject<void>();
+export class MembershipComponent implements AfterViewInit, OnDestroy, OnChanges {
+  @Input({ required: true }) userId!: string;
+  @Output() closeDialog = new EventEmitter<void>();
 
+  private _ngUnsubscribe = new Subject<void>();
   selectedValue: string | null = null;
 
-  @Input({ required: true }) user!: ReadUser;
-  @Output() closeDialog = new EventEmitter<any>();
+  user$!: Observable<UserDto>;
+  userProjects$!: Observable<Project[]>;
+  private _refreshSubject = new BehaviorSubject<null>(null);
 
-  user$ = this._store.select(UserSelectors.allUsers).pipe(
-    takeUntil(this._ngUnsubscribe),
-    map(users => users.find(u => u.id === this.user.id))
-  );
-
-  projects$ = combineLatest([this._store.select(ProjectsSelectors.allProjects), this.user$]).pipe(
-    takeUntil(this._ngUnsubscribe),
-    map(([projects, user]) => this._getProjects(projects, user))
-  );
+  projects$!: Observable<AutocompleteItem[]>;
 
   readonly itemPluralMapping = {
     project: {
@@ -102,12 +95,24 @@ export class MembershipComponent implements AfterViewInit, OnDestroy {
     },
   };
 
-  isMembershipLoading$ = this._store.select(ProjectsSelectors.isMembershipLoading);
-
-  constructor(private _store: Store) {}
+  constructor(
+    private _store: Store,
+    private _adminUsersApi: AdminUsersApiService
+  ) {}
 
   ngAfterViewInit() {
     this._store.dispatch(new LoadProjectsAction());
+  }
+
+  ngOnChanges() {
+    this.user$ = this._refreshSubject.pipe(
+      switchMap(() => this._adminUsersApi.getAdminUsersIriUseriri(this.userId)),
+      map(response => response.user)
+    );
+    this.projects$ = combineLatest([this._store.select(ProjectsSelectors.allProjects), this.user$]).pipe(
+      map(([projects, user]) => this._getProjects(projects, user)),
+      takeUntil(this._ngUnsubscribe)
+    );
   }
 
   ngOnDestroy() {
@@ -115,31 +120,40 @@ export class MembershipComponent implements AfterViewInit, OnDestroy {
     this._ngUnsubscribe.complete();
   }
 
-  removeFromProject(iri: string) {
-    this._store.dispatch(new RemoveUserFromProjectAction(this.user.id, iri));
-    this.selectedValue = null;
+  removeFromProject(project: Project) {
+    this._adminUsersApi
+      .deleteAdminUsersIriUseririProjectMembershipsProjectiri(this.userId, project.id as unknown as string)
+      .subscribe(() => {
+        this._refreshUserProjects();
+      });
   }
 
-  addToProject(iri: string) {
-    this._store.dispatch(new AddUserToProjectMembershipAction(this.user.id, iri));
+  addToProject(projectIri: string) {
+    this._adminUsersApi.postAdminUsersIriUseririProjectMembershipsProjectiri(this.userId, projectIri).subscribe(() => {
+      this._refreshUserProjects();
+    });
   }
 
-  trackByFn = (index: number, item: StoredProject) => `${index}-${item?.id}`;
+  isUserProjectAdmin(permissions: PermissionsDataADM, project: Project): boolean {
+    const projectIri = project.id as unknown as string;
 
-  isUserProjectAdmin(permissions: PermissionsData, projectIri: string): boolean {
     if (!permissions.groupsPerProject) return false;
 
     return permissions.groupsPerProject[projectIri].includes(Constants.ProjectAdminGroupIRI);
   }
 
-  private _getProjects(projects: StoredProject[], user: ReadUser): AutocompleteItem[] {
+  private _refreshUserProjects() {
+    this._refreshSubject.next(null);
+  }
+
+  private _getProjects(projects: StoredProject[], user: UserDto): AutocompleteItem[] {
     return projects
       .filter(
         p =>
           p.status &&
           p.id !== Constants.SystemProjectIRI &&
           p.id !== Constants.DefaultSharedOntologyIRI &&
-          user.projects.every(userProject => userProject.id !== p.id)
+          user.projects!.every(userProject => (userProject.id as unknown as string) !== p.id)
       )
       .map(p => ({
         iri: p.id,

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ReadUser } from '@dasch-swiss/dsp-js';
 import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
@@ -7,6 +7,7 @@ import { SortingService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngxs/store';
 import { CreateUserDialogComponent } from '../create-user-dialog.component';
+import { UsersTabService } from '../users-tab.service';
 
 interface SortProperty {
   key: keyof ReadUser;
@@ -47,16 +48,15 @@ type UserSortKey = 'familyName' | 'givenName' | 'email' | 'username';
 })
 export class UsersListComponent {
   _list!: ReadUser[];
-  get list(): ReadUser[] {
-    return this._list;
-  }
-
   @Input() set list(value: ReadUser[]) {
     this._list = this._sortingService.keySortByAlphabetical(value, this.sortBy as keyof ReadUser);
   }
 
+  get list(): ReadUser[] {
+    return this._list;
+  }
+
   @Input() isButtonEnabledToCreateNewUser = false;
-  @Output() refreshParent = new EventEmitter<void>();
 
   itemPluralMapping = {
     user: {
@@ -98,17 +98,23 @@ export class UsersListComponent {
     private readonly _matDialog: MatDialog,
     private readonly _sortingService: SortingService,
     private readonly _store: Store,
-    private readonly _ts: TranslateService
+    private readonly _ts: TranslateService,
+    private _usersTabService: UsersTabService
   ) {}
 
   trackByFn = (index: number, item: ReadUser) => `${index}-${item.id}`;
 
   createUser() {
     this._matDialog
-      .open(CreateUserDialogComponent, DspDialogConfig.dialogDrawerConfig({}, true))
+      .open<CreateUserDialogComponent, undefined, boolean>(
+        CreateUserDialogComponent,
+        DspDialogConfig.dialogDrawerConfig(undefined, true)
+      )
       .afterClosed()
-      .subscribe(() => {
-        this.refreshParent.emit();
+      .subscribe(isCreated => {
+        if (isCreated) {
+          this._usersTabService.reloadUsers();
+        }
       });
   }
 

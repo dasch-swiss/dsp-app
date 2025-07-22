@@ -1,128 +1,87 @@
-import {
-  AfterViewInit,
-  ChangeDetectionStrategy,
-  Component,
-  EventEmitter,
-  Input,
-  OnDestroy,
-  Output,
-} from '@angular/core';
-import { UntypedFormControl } from '@angular/forms';
-import { ReadGroup } from '@dasch-swiss/dsp-js';
-import { IKeyValuePairs, ProjectsSelectors } from '@dasch-swiss/vre/core/state';
-import { AutocompleteItem } from '@dasch-swiss/vre/pages/user-settings/user';
-import { Select } from '@ngxs/store';
-import { map, Observable, Subject, takeUntil } from 'rxjs';
+import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import { FormControl } from '@angular/forms';
+import { ReadUser } from '@dasch-swiss/dsp-js';
+import { AdminUsersApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
+import { AppError } from '@dasch-swiss/vre/core/error-handler';
+import { CollaborationPageService } from '../collaboration-page.service';
 
 @Component({
-  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-select-group',
-  templateUrl: './select-group.component.html',
-  styleUrls: ['./select-group.component.scss'],
+  template: `
+    <ng-container *ngIf="groups$ | async as groups">
+      <mat-form-field *ngIf="groups.length > 0">
+        <mat-select
+          placeholder="Permission group"
+          [formControl]="groupCtrl"
+          multiple
+          (selectionChange)="updateGroupsMembership($event.value)">
+          <mat-option *ngFor="let group of groups" [value]="group.id" [disabled]="!user.status">
+            {{ group.name }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <div *ngIf="groups.length === 0" class="center">No group defined yet.</div>
+    </ng-container>
+  `,
+  styles: [
+    `
+      :host ::ng-deep .mat-mdc-form-field-subscript-wrapper {
+        display: none !important;
+      }
+    `,
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SelectGroupComponent implements OnDestroy, AfterViewInit {
-  private ngUnsubscribe: Subject<void> = new Subject<void>();
+export class SelectGroupComponent implements OnInit {
+  @Input({ required: true }) projectId!: string;
+  @Input({ required: true }) user!: ReadUser;
 
-  // project short code
-  @Input() projectCode: string;
+  groups$ = this._collaborationPageService.groups$;
+  groupCtrl!: FormControl<string[] | null>;
 
-  // project iri
-  @Input() projectid: string;
+  constructor(
+    private _adminUsersApiService: AdminUsersApiService,
+    private _collaborationPageService: CollaborationPageService
+  ) {}
 
-  // users permissions from user data
-  @Input() permissions: any;
-
-  // disable the selection; in case a user doesn't have the rights to change the permission
-  @Input() disabled?: boolean = false;
-
-  // send the changes to the parent
-  @Output() groupChange: EventEmitter<any> = new EventEmitter<any>();
-
-  // default system groups and project specific groups
-  get projectGroups$(): Observable<AutocompleteItem[]> {
-    return this.allProjectGroups$.pipe(
-      takeUntil(this.ngUnsubscribe),
-      map(projectGroups => {
-        if (!projectGroups[this.projectid]) {
-          return [];
-        }
-
-        return projectGroups[this.projectid].value.map(
-          group =>
-            <AutocompleteItem>{
-              iri: group.id,
-              name: group.name,
-            }
-        );
-      })
-    );
+  ngOnInit() {
+    this.groupCtrl = new FormControl<string[]>(this._getPermissions());
   }
 
-  groupCtrl = new UntypedFormControl();
+  updateGroupsMembership(newGroups: string[]): void {
+    const userGroups = this.user.groups || [];
+    if (newGroups.length > userGroups.length) {
+      const groupIdAdded = newGroups.find(groupId =>
+        userGroups.map(group => group.id).every(_groupId => _groupId !== groupId)
+      );
+      if (!groupIdAdded) {
+        throw new AppError('Group should exist');
+      }
+      this._adminUsersApiService
+        .postAdminUsersIriUseririGroupMembershipsGroupiri(this.user.id, groupIdAdded)
+        .subscribe(() => {
+          this._collaborationPageService.reloadProjectMembers();
+        });
+    } else if (newGroups.length < userGroups.length) {
+      const groupIdRemoved = userGroups.find(group => newGroups.indexOf(group.id) === -1);
 
-  // send data only, when the selection has changed
-  sendData = false;
-
-  @Select(ProjectsSelectors.projectGroups) allProjectGroups$: Observable<IKeyValuePairs<ReadGroup>[]>;
-
-  ngAfterViewInit() {
-    setTimeout(() => {
-      this.groupCtrl.setValue(this.permissions);
-    });
-  }
-
-  ngOnDestroy() {
-    this.ngUnsubscribe.next();
-    this.ngUnsubscribe.complete();
-  }
-
-  trackByFn = (index: number, item: AutocompleteItem) => `${index}-${item.label}`;
-
-  onGroupChange() {
-    if (!this.groupCtrl.value) {
-      return;
-    }
-    // get the selected values onOpen and onClose
-    // and compare them with the current values from user profile
-    // compare the selected data with the permissions data
-    this.sendData = this.compare(this.permissions, this.groupCtrl.value);
-
-    if (this.sendData) {
-      this.permissions = this.groupCtrl.value;
-      this.groupChange.emit(this.groupCtrl.value);
+      if (!groupIdRemoved) {
+        throw new AppError('Group should exist');
+      }
+      this._adminUsersApiService
+        .deleteAdminUsersIriUseririGroupMembershipsGroupiri(this.user.id, groupIdRemoved.id)
+        .subscribe(() => {
+          this._collaborationPageService.reloadProjectMembers();
+        });
     }
   }
 
-  /**
-   * compare two arrays and return true, if they are different
-   * @param arrOne string array
-   * @param arrTwo string array
-   */
-  compare(arrOne: string[], arrTwo: string[]): boolean {
-    arrOne = arrOne.sort((n1, n2) => {
-      if (n1 > n2) {
-        return 1;
-      }
-
-      if (n1 < n2) {
-        return -1;
-      }
-
-      return 0;
-    });
-
-    arrTwo = arrTwo.sort((n1, n2) => {
-      if (n1 > n2) {
-        return 1;
-      }
-
-      if (n1 < n2) {
-        return -1;
-      }
-
-      return 0;
-    });
-
-    return JSON.stringify(arrOne) !== JSON.stringify(arrTwo);
+  private _getPermissions() {
+    if (this.user.permissions?.groupsPerProject) {
+      return this.user.permissions?.groupsPerProject[this.projectId];
+    } else {
+      return [];
+    }
   }
 }

@@ -1,12 +1,8 @@
-import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { Component } from '@angular/core';
+import { MatDialogRef } from '@angular/material/dialog';
 import { ReadUser, User } from '@dasch-swiss/dsp-js';
-import { CreateUserAction } from '@dasch-swiss/vre/core/state';
+import { UserApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { UserForm } from '@dasch-swiss/vre/pages/user-settings/user';
-import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
-import { NotificationService } from '@dasch-swiss/vre/ui/notification';
-import { Actions, ofActionSuccessful, Store } from '@ngxs/store';
-import { Observable, take } from 'rxjs';
 
 @Component({
   selector: 'app-create-user-dialog',
@@ -19,8 +15,8 @@ import { Observable, take } from 'rxjs';
         mat-raised-button
         color="primary"
         appLoadingButton
-        [isLoading]="isLoading$ | async"
-        [disabled]="!form?.valid || (isLoading$ | async)"
+        [isLoading]="isLoading"
+        [disabled]="!form?.valid || isLoading"
         (click)="createUser()">
         {{ 'ui.form.action.submit' | translate }}
       </button>
@@ -30,21 +26,16 @@ import { Observable, take } from 'rxjs';
 export class CreateUserDialogComponent {
   user = new ReadUser();
   form!: UserForm;
-
-  isLoading$: Observable<boolean>;
+  isLoading = false;
 
   constructor(
-    private readonly _actions$: Actions,
     private readonly _dialogRef: MatDialogRef<CreateUserDialogComponent>,
-    private readonly _notification: NotificationService,
-    private readonly _projectService: ProjectService,
-    private readonly _store: Store,
-    @Inject(MAT_DIALOG_DATA) public projectUuId: string
-  ) {
-    this.isLoading$ = this._store.select(state => state.user.isLoading);
-  }
+    private readonly _userApiService: UserApiService
+  ) {}
 
   createUser(): void {
+    this.isLoading = true;
+
     const user = new User();
     user.familyName = this.form.controls.familyName.value;
     user.givenName = this.form.controls.givenName.value;
@@ -55,15 +46,9 @@ export class CreateUserDialogComponent {
     user.systemAdmin = this.form.controls.systemAdmin.value;
     user.status = true;
 
-    const projectIri =
-      typeof this.projectUuId === 'string' && this.projectUuId.length > 0
-        ? this._projectService.uuidToIri(this.projectUuId)
-        : undefined;
-    this._store.dispatch(new CreateUserAction(user, projectIri));
-    this._actions$.pipe(ofActionSuccessful(CreateUserAction), take(1)).subscribe(() => {
-      this._dialogRef.close();
-      const enrolled = this.projectUuId ? ' and added the user to the project' : '';
-      this._notification.openSnackBar(`You have successfully created a user's profile${enrolled}.`);
+    this._userApiService.create(user).subscribe(response => {
+      this.isLoading = false;
+      this._dialogRef.close(response.user.id);
     });
   }
 }
