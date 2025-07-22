@@ -1,13 +1,15 @@
-import { Component, Input, ViewContainerRef } from '@angular/core';
+import { Component, Inject, Input, ViewContainerRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { ReadResource } from '@dasch-swiss/dsp-js';
+import { Constants, KnoraApiConnection, ReadResource } from '@dasch-swiss/dsp-js';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { ProjectsSelectors } from '@dasch-swiss/vre/core/state';
 import { DeleteResourceDialogComponent } from '@dasch-swiss/vre/resource-editor/properties-display';
-import { ResourceFetcherService, ResourceUtil } from '@dasch-swiss/vre/resource-editor/representations';
+import { ResourceFetcherService } from '@dasch-swiss/vre/resource-editor/representations';
 import { EraseResourceDialogComponent } from '@dasch-swiss/vre/resource-editor/resource-properties';
 import { ResourceService } from '@dasch-swiss/vre/shared/app-common';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { Store } from '@ngxs/store';
+import { combineLatest, map, of, take } from 'rxjs';
 
 @Component({
   selector: 'app-resource-toolbar',
@@ -39,12 +41,13 @@ import { Store } from '@ngxs/store';
       <button
         data-cy="resource-toolbar-more-button"
         color="primary"
-        *ngIf="userCanDelete"
+        *ngIf="userCanDelete$ | async"
         mat-icon-button
         class="more-menu"
         matTooltip="More"
         matTooltipPosition="above"
-        [matMenuTriggerFor]="more">
+        [matMenuTriggerFor]="more"
+        (menuOpened)="checkResourceCanBeDeleted()">
         <mat-icon>more_vert</mat-icon>
       </button>
     </span>
@@ -78,9 +81,11 @@ import { Store } from '@ngxs/store';
         mat-menu-item
         matTooltip="Move resource to trash bin."
         matTooltipPosition="above"
+        [disabled]="!resourceCanBeDeleted"
         (click)="deleteResource()">
         <mat-icon>delete</mat-icon>
         {{ 'resourceEditor.resourceProperties.delete' | translate }}
+        <span appLoadingButton [isLoading]="resourceCanBeDeleted === undefined"></span>
       </button>
       <button
         *ngIf="isAdmin$ | async"
@@ -88,9 +93,10 @@ import { Store } from '@ngxs/store';
         mat-menu-item
         matTooltip="Erase resource forever. This cannot be undone."
         matTooltipPosition="above"
+        [disabled]="!resourceCanBeDeleted"
         (click)="eraseResource()">
         <mat-icon>delete_forever</mat-icon>
-        Erase resource
+        Erase resource <span appLoadingButton [isLoading]="resourceCanBeDeleted === undefined"></span>
       </button>
     </mat-menu>
   `,
@@ -111,11 +117,13 @@ export class ResourceToolbarComponent {
 
   isAdmin$ = this._store.select(ProjectsSelectors.isCurrentProjectAdminOrSysAdmin);
 
-  get userCanDelete() {
-    return !this._resourceFetcherService.resourceVersion && ResourceUtil.userCanDelete(this.resource);
-  }
+  userCanDelete$ = this._resourceFetcherService.userCanDelete$;
+
+  resourceCanBeDeleted?: boolean;
 
   constructor(
+    @Inject(DspApiConnectionToken)
+    private _dspApi: KnoraApiConnection,
     protected notification: NotificationService,
     private _resourceService: ResourceService,
     private _resourceFetcherService: ResourceFetcherService,
@@ -123,6 +131,29 @@ export class ResourceToolbarComponent {
     private _store: Store,
     private _viewContainerRef: ViewContainerRef
   ) {}
+
+  checkResourceCanBeDeleted() {
+    if (this.resource.incomingReferences.length > 0) {
+      this.resourceCanBeDeleted = false;
+      return;
+    }
+
+    const noIncomingLinks$ = this._dspApi.v2.search
+      .doSearchIncomingLinks(this.resource.id)
+      .pipe(map(res => res.resources.length === 0));
+
+    const noStillImageLinks$ = this._dspApi.v2.search
+      .doSearchStillImageRepresentationsCount(this.resource.id)
+      .pipe(map(res => res.numberOfResults === 0));
+
+    const noRegions$ = this.resource.properties[Constants.HasStillImageFileValue]
+      ? this._dspApi.v2.search.doSearchIncomingRegions(this.resource.id).pipe(map(seq => seq.resources.length === 0))
+      : of(true);
+
+    combineLatest([noIncomingLinks$, noStillImageLinks$, noRegions$]).subscribe(([noLinks, noStills, noRegions]) => {
+      this.resourceCanBeDeleted = noLinks && noStills && noRegions;
+    });
+  }
 
   openResource() {
     window.open(`/resource${this._resourceService.getResourcePath(this.resource.id)}`, '_blank');
