@@ -1,5 +1,30 @@
 # Changelog
 
+## [11.37.0](https://github.com/dasch-swiss/dsp-das/compare/v11.36.1...v11.37.0) (2025-07-22)
+
+
+### Enhancements
+
+* add teaser image 0861 ([#2418](https://github.com/dasch-swiss/dsp-das/issues/2418)) ([3bfbc3d](https://github.com/dasch-swiss/dsp-das/commit/3bfbc3dad1de81525a392dbbf281de2f18851562))
+
+
+### Bug Fixes
+
+* change selector ([#2427](https://github.com/dasch-swiss/dsp-das/issues/2427)) ([3cad677](https://github.com/dasch-swiss/dsp-das/commit/3cad677d15a57467e0ed2056e9823c1a08091abb))
+* reduce project 0861 image size ([#2428](https://github.com/dasch-swiss/dsp-das/issues/2428)) ([77a6d1d](https://github.com/dasch-swiss/dsp-das/commit/77a6d1dcfeaa27cfb9108590923a0d1e5fe8825b))
+
+
+### Maintenances
+
+* Add .nvmrc file for Node.js version specification ([#2415](https://github.com/dasch-swiss/dsp-das/issues/2415)) ([7e2158a](https://github.com/dasch-swiss/dsp-das/commit/7e2158a55a0e61f45b252a5a7cebc956b6078369))
+* rewrite user project management and user management ([#2413](https://github.com/dasch-swiss/dsp-das/issues/2413)) ([5989d62](https://github.com/dasch-swiss/dsp-das/commit/5989d6208adf9eec44a9b8c19ee64c21f9a01a4b))
+* use new double-chip component where it's possible ([#2405](https://github.com/dasch-swiss/dsp-das/issues/2405)) ([1aa5195](https://github.com/dasch-swiss/dsp-das/commit/1aa5195677c11c44361dd01a82a68880497012cc))
+
+
+### Tests
+
+* avoid faker for label (5185) ([#2417](https://github.com/dasch-swiss/dsp-das/issues/2417)) ([20a622e](https://github.com/dasch-swiss/dsp-das/commit/20a622ed1d97edab7f5b8174b51237099827aaf7))
+
 ## [11.36.1](https://github.com/dasch-swiss/dsp-das/compare/v11.36.0...v11.36.1) (2025-07-21)
 
 
