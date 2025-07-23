@@ -6,6 +6,7 @@ import it_CH from '@angular/common/locales/it-CH';
 import { Injectable } from '@angular/core';
 import { AvailableLanguages, LocalStorageLanguageKey } from '@dasch-swiss/vre/core/config';
 import { TranslateService } from '@ngx-translate/core';
+import { map, startWith } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -36,6 +37,11 @@ export class LocalizationService {
   getCurrentLanguage(): string {
     return this.translateService.currentLang ? this.translateService.currentLang : this.getLanguage();
   }
+
+  currentLanguage$ = this.translateService.onLangChange.pipe(
+    map(event => event.lang),
+    startWith(this.getCurrentLanguage())
+  );
 
   setLanguage(language: string) {
     this.translateService.use(language);
