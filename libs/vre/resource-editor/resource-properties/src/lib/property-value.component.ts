@@ -292,6 +292,6 @@ export class PropertyValueComponent implements OnInit {
   private _highlightArkValue() {
     this.isHighlighted =
       this._route.snapshot.queryParams['highlightValue'] ===
-      this.propertyValueService.editModeData?.values[this.index].uuid;
+      this.propertyValueService.editModeData?.values[this.index]?.uuid;
   }
 }
