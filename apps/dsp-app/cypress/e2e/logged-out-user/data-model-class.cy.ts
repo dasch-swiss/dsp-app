@@ -17,7 +17,7 @@ describe('Data models page', () => {
     const classCard = cy.get('[data-cy=class-card] mat-card-header').first();
     classCard.should('be.visible');
     classCard.trigger('mouseenter').wait(100);
-    cy.get('[data-cy=more-button]').should('be.visible').click();
+    cy.get('[data-cy=more-button]').scrollIntoView().should('be.visible').click();
     cy.get('[data-cy=delete-button]').should('not.exist');
     cy.get('[data-cy=edit-button]').should('not.exist');
     cy.get('[data-cy=copy-id-button]').should('be.enabled');

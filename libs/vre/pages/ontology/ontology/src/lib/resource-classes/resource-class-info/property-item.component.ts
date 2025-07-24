@@ -63,6 +63,13 @@ import { OntologyEditService } from '../../services/ontology-edit.service';
             </div>
             <div mat-line class="lower-prop-container">
               <span class="mat-caption"> {{ classProp.propDef.id | split: '#' : 1 }} </span>
+              <mat-icon
+                *ngIf="isHovered && classProp.propDef.comment"
+                matTooltip="{{ classProp.propDef.comment }}"
+                matTooltipPosition="above"
+                class="info-icon">
+                info
+              </mat-icon>
             </div>
           </div>
           <app-cardinality
@@ -146,8 +153,17 @@ import { OntologyEditService } from '../../services/ontology-edit.service';
       .lower-prop-container {
         color: $primary_700;
         display: flex;
-        flex-direction: row;
-        justify-content: space-between;
+        align-items: center;
+        gap: 0.25rem;
+      }
+
+      .info-icon {
+        font-size: 16px;
+        height: 16px;
+        width: 16px;
+        line-height: 1;
+        vertical-align: middle;
+        cursor: help;
       }
 
       .drag-n-drop-placeholder {
@@ -170,6 +186,8 @@ import { OntologyEditService } from '../../services/ontology-edit.service';
       .menu-icon-button {
         font-size: medium;
         cursor: pointer;
+        margin-right: 0.1rem;
+        margin-top: 0.1rem;
       }
     `,
   ],
