@@ -22,7 +22,7 @@ import { PaginatedApiService } from './paginated-api.service';
       </mat-form-field>
     </app-create-resource-form-row>
 
-    <app-create-resource-form-row [label]="'License'">
+    <app-create-resource-form-row [label]="'License/Statement'">
       <mat-form-field>
         <mat-select placeholder="Choose" [formControl]="formGroup.controls.license" data-cy="license-select">
           <mat-option *ngIf="licensesLoading">Loading...</mat-option>

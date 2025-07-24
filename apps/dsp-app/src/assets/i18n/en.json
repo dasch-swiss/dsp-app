@@ -112,7 +112,7 @@
       "legalSettings": {
         "warning": "Attention: any action you do here is permanent",
         "copyrightHolders": "Copyright holders",
-        "licenses": "Licenses",
+        "licenses": "Licenses/Statements",
         "authorship": "Authorship",
         "authorshipTooltip": "The authorship overview is read-only. To add a new authorship, please update them directly in the resource.",
         "noAuthorship": "There are no authorship yet. To add a new authorship, please update them directly in the resource.",
