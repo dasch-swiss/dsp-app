@@ -110,14 +110,24 @@
         "button": "Export as CSV"
       },
       "legalSettings": {
+        "tab": "Legal Settings",
         "warning": "Attention: any action you do here is permanent",
         "copyrightHolders": "Copyright holders",
         "licenses": "Licenses/Statements",
         "authorship": "Authorship",
         "authorshipTooltip": "The authorship overview is read-only. To add a new authorship, please update them directly in the resource.",
-        "noAuthorship": "There are no authorship yet. To add a new authorship, please update them directly in the resource.",
-        "recommended": "Recommended",
-        "notRecommended": "Not recommended"
+        "noAuthorship": "No authorship attributions yet.",
+        "recommended": "Recommended licenses",
+        "notRecommended": "Other licenses",
+        "add": "Add",
+        "copyrightHolder": "Copyright holder",
+        "enabled": "Enabled",
+        "authorshipOverview": "Authorship - Overview",
+        "authorshipReadOnly": "This authorship overview is read-only. To add a new authorship, please update them directly in the resource.",
+        "dialog": {
+          "addCopyrightHolder": "Add copyright holder",
+          "text": "Text"
+        }
       }
     },
     "system": {

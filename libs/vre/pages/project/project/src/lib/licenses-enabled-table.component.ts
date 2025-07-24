@@ -8,7 +8,7 @@ import { AdminProjectsLegalInfoApiService, ProjectLicenseDto } from '@dasch-swis
     <table style="width: 100%">
       <tr>
         <th>{{ label }}</th>
-        <th>Enabled ({{ enabledLicensesNumber }})</th>
+        <th>{{ 'pages.project.legalSettings.enabled' | translate }} ({{ enabledLicensesNumber }})</th>
       </tr>
 
       @for (license of licenses; track license) {

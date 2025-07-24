@@ -110,14 +110,24 @@
         "button": "Exportieren als CSV"
       },
       "legalSettings": {
-        "warning": "Attention: any action you do here is permanent",
-        "copyrightHolders": "Copyright holders",
-        "licenses": "Licenses/Statements",
-        "authorship": "Authorship",
-        "authorshipTooltip": "The authorship overview is read-only. To add a new authorship, please update them directly in the resource.",
-        "noAuthorship": "There are no authorship yet. To add a new authorship, please update them directly in the resource.",
-        "recommended": "Recommended",
-        "notRecommended": "Not recommended"
+        "tab": "Rechtliches",
+        "warning": "Achtung: Jede Aktion, die Sie hier durchführen, ist irreversibel.",
+        "copyrightHolders": "Rechteinhaber:innen",
+        "licenses": "Lizenzen/Statements",
+        "authorship": "Urheber:innen",
+        "authorshipTooltip": "Diese Übersicht der Urheber:innen ist lediglich zur Ansicht. Neue Urheber:innen fügen sie bitte direkt über die Ressourcen hinzu.",
+        "noAuthorship": "Noch keine Urheber:innen.",
+        "recommended": "Empfohlene Lizenzen",
+        "notRecommended": "Andere Lizenzen",
+        "add": "Hinzufügen",
+        "copyrightHolder": "Rechteinhaber:in",
+        "enabled": "Aktiviert",
+        "authorshipOverview": "Urheber:innen - Übersicht",
+        "authorshipReadOnly": "Diese Übersicht der Urheber:innen ist lediglich zur Ansicht. Neue Urheber:innen fügen sie bitte direkt über die Ressourcen hinzu.",
+        "dialog": {
+          "addCopyrightHolder": "Rechteinhaber:in hinzufügen",
+          "text": "Text"
+        }
       }
     },
     "system": {

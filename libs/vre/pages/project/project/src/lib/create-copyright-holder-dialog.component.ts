@@ -11,9 +11,11 @@ export interface CreateCopyrightHolderDialogProps {
 
 @Component({
   selector: 'app-add-copyright-holder-dialog',
-  template: ` <app-dialog-header title="Add a copyright holder" />
+  template: ` <app-dialog-header [title]="'pages.project.legalSettings.dialog.addCopyrightHolder' | translate" />
 
-    <app-common-input label="Copyright holder" [control]="form.controls.copyrightHolder" />
+    <app-common-input
+      [label]="'pages.project.legalSettings.dialog.text' | translate"
+      [control]="form.controls.copyrightHolder" />
     <div mat-dialog-actions align="end">
       <button mat-button mat-dialog-close>{{ 'ui.form.action.cancel' | translate }}</button>
       <button

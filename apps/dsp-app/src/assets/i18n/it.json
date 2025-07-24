@@ -110,14 +110,24 @@
         "button": "Esporta in formato CSV"
       },
       "legalSettings": {
-        "warning": "Attention: any action you do here is permanent",
-        "copyrightHolders": "Copyright holders",
-        "licenses": "Licenses/Statements",
-        "authorship": "Authorship",
-        "authorshipTooltip": "The authorship overview is read-only. To add a new authorship, please update them directly in the resource.",
-        "noAuthorship": "There are no authorship yet. To add a new authorship, please update them directly in the resource.",
-        "recommended": "Recommended",
-        "notRecommended": "Not recommended"
+        "tab": "Parametri Legali",
+        "warning": "Attenzione: Qualsiasi azione compiuta qui è permanente.",
+        "copyrightHolders": "Titolare de diritti",
+        "licenses": "Licenze/Dichiarazioni",
+        "authorship": "Autore",
+        "authorshipTooltip": "Questa panoramica di autori/autrici è in modalità sola lettura. Per aggiungere un nuovo autore, aggiungerlo direttamente nella risorsa.",
+        "noAuthorship": "Nessuna attribuzione di autori/autrici per ora.",
+        "recommended": "Licenze consigliate",
+        "notRecommended": "Altre licenze",
+        "add": "Aggiungere",
+        "copyrightHolder": "Titulare de dritti",
+        "enabled": "Attivato",
+        "authorshipOverview": "Panoramica di autori/autrici",
+        "authorshipReadOnly": "Questa panoramica di autori/autrici è in modalità sola lettura. Per aggiungere un nuovo autore, aggiungerlo direttamente nella risorsa.",
+        "dialog": {
+          "addCopyrightHolder": "Aggiungere titolare dei diritti",
+          "text": "Testo"
+        }
       }
     },
     "system": {

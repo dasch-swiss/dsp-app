@@ -55,7 +55,12 @@ export class SettingsPageComponent {
       route: RouteConstants.imageSettings,
       icon: 'branding_watermark',
     },
-    { label: 'Legal Settings', shortLabel: 'Legal Settings', route: RouteConstants.legalSettings, icon: 'gavel' },
+    {
+      label: this._translateService.instant('pages.project.legalSettings.tab'),
+      shortLabel: this._translateService.instant('pages.project.legalSettings.tab'),
+      route: RouteConstants.legalSettings,
+      icon: 'gavel',
+    },
     {
       label: 'Project Members',
       shortLabel: 'Members',

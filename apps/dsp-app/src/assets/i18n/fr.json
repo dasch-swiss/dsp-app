@@ -110,14 +110,24 @@
         "button": "Exporter au format CSV"
       },
       "legalSettings": {
-        "warning": "Attention: any action you do here is permanent",
-        "copyrightHolders": "Copyright holders",
-        "licenses": "Licenses/Statements",
-        "authorship": "Authorship",
-        "authorshipTooltip": "The authorship overview is read-only. To add a new authorship, please update them directly in the resource.",
-        "noAuthorship": "There are no authorship yet. To add a new authorship, please update them directly in the resource.",
-        "recommended": "Recommended",
-        "notRecommended": "Not recommended"
+        "tab": "Paramètres légaux",
+        "warning": "Attention: Toute action effectuée ici est permanente.",
+        "copyrightHolders": "Titulaires des droits",
+        "licenses": "Licences/Déclarations",
+        "authorship": "Auteur·ice",
+        "authorshipTooltip": "Cette vue d'ensemble est en lecture seule. Pour ajouter un·e nouvelle·au auteur·ice, veuillez l'ajouter directement dans la ressource.",
+        "noAuthorship": "Aucune attribution d'auteur·ice pour le moment.",
+        "recommended": "Licences recommandées",
+        "notRecommended": "Autres licences",
+        "add": "Ajouter",
+        "copyrightHolder": "Titulaire des droits",
+        "enabled": "Activé",
+        "authorshipOverview": "Auteur·ice - Vue d'ensemble",
+        "authorshipReadOnly": "Cette vue d'ensemble est en lecture seule. Pour ajouter un·e nouvelle·au auteur·ice, veuillez l'ajouter directement dans la ressource.",
+        "dialog": {
+          "addCopyrightHolder": "Ajouter titulaire des droits",
+          "text": "Texte"
+        }
       }
     },
     "system": {

@@ -21,7 +21,9 @@ import {
       <section class="section">
         <h2>
           {{ 'pages.project.legalSettings.copyrightHolders' | translate }}
-          <button color="primary" mat-raised-button (click)="addCopyrightHolder()">Add</button>
+          <button color="primary" mat-raised-button (click)="addCopyrightHolder()">
+            {{ 'pages.project.legalSettings.add' | translate }}
+          </button>
         </h2>
         <app-alternated-list>
           <div *ngFor="let item of copyrightHolders$ | async">{{ item }}</div>
