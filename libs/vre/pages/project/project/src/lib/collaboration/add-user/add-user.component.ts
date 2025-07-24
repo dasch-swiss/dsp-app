@@ -94,7 +94,7 @@ export class AddUserComponent {
       .pipe(
         filter(result => result !== undefined),
         switchMap(userId =>
-          this._adminUsersApi.postAdminUsersIriUseririProjectMembershipsProjectiri(userId!, this.projectUuid)
+          this._adminUsersApi.postAdminUsersIriUseririProjectMembershipsProjectiri(userId!, this.projectIri)
         )
       )
       .subscribe(() => {
