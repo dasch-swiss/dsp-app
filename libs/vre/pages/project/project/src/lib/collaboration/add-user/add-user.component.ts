@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Inject, Input } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, Input } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { KnoraApiConnection, ReadUser } from '@dasch-swiss/dsp-js';
@@ -7,7 +7,7 @@ import { AdminUsersApiService } from '@dasch-swiss/vre/3rd-party-services/open-a
 import { DspApiConnectionToken, DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import { CreateUserDialogComponent } from '@dasch-swiss/vre/pages/system/system';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
-import { BehaviorSubject, combineLatest, filter, map, startWith, switchMap } from 'rxjs';
+import { BehaviorSubject, combineLatest, filter, map, shareReplay, startWith, switchMap, tap } from 'rxjs';
 import { CollaborationPageService } from '../collaboration-page.service';
 
 @Component({
@@ -21,9 +21,16 @@ import { CollaborationPageService } from '../collaboration-page.service';
         <input matInput [matAutocomplete]="user" [formControl]="usernameControl" />
 
         <mat-autocomplete #user="matAutocomplete" (optionSelected)="addUser($event.option.value)">
-          <mat-option *ngFor="let user of filteredUsers$ | async" [value]="user.id" [disabled]="isMember(user)">
-            {{ getLabel(user) }}
+          <mat-option *ngIf="loading" [disabled]="true">
+            <app-progress-indicator />
           </mat-option>
+          <ng-container *ngIf="!loading && (filteredUsers$ | async) as filteredUsers">
+            <mat-option *ngFor="let user of filteredUsers" [value]="user.id" [disabled]="isMember(user)">
+              {{ getLabel(user) }}
+            </mat-option>
+
+            <mat-option *ngIf="filteredUsers.length === 0" [disabled]="true">No results</mat-option>
+          </ng-container>
         </mat-autocomplete>
       </mat-form-field>
 
@@ -44,13 +51,23 @@ export class AddUserComponent {
   usernameControl = new FormControl<string | null>(null);
   users: ReadUser[] = [];
 
+  loading = false;
   reloadListSubject = new BehaviorSubject(null);
 
   filteredUsers$ = combineLatest([
     this.usernameControl.valueChanges.pipe(startWith(null)),
     this.reloadListSubject.pipe(
+      switchMap(() => this.collaborationPageService.reloadProjectMembers$),
+      tap(() => {
+        this.loading = true;
+      }),
       switchMap(() => this._userApiService.list()),
-      map(response => response.users)
+      tap(() => {
+        this.loading = false;
+        this._cdr.detectChanges();
+      }),
+      map(response => response.users),
+      shareReplay(1)
     ),
   ]).pipe(map(([filterVal, users_]) => (filterVal ? this._filter(users_, filterVal) : users_)));
 
@@ -61,7 +78,8 @@ export class AddUserComponent {
     private _userApiService: UserApiService,
     private _projectService: ProjectService,
     private readonly _adminUsersApi: AdminUsersApiService,
-    public collaborationPageService: CollaborationPageService
+    public collaborationPageService: CollaborationPageService,
+    private _cdr: ChangeDetectorRef
   ) {}
 
   getLabel(user: ReadUser): string {
