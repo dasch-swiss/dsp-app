@@ -50,7 +50,7 @@ docker-image-tag: ## prints the docker image tag
 
 .PHONY: docker-publish-app
 docker-publish-app: app-build-prod ## publish DSP-APP Docker image to Docker-Hub for AMD64 and ARM64
-	docker buildx build --platform linux/amd64,linux/arm64/v8 --build-arg build_tag=$(BUILD_TAG) -t $(DSP_APP_IMAGE) --push .
+	docker buildx build --platform linux/amd64,linux/arm64/v8 --build-arg build_tag=$(BUILD_TAG) -t $(DSP_APP_IMAGE) -t $(DSP_APP_REPO):latest --push .
 
 
 .PHONY: docker-publish
