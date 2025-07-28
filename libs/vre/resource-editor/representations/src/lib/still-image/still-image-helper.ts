@@ -4,12 +4,13 @@ import {
   CreateGeomValue,
   CreateLinkValue,
   CreateResource,
-  CreateTextValueAsString,
+  CreateTextValueAsXml,
   Point2D,
   ReadResource,
   ReadStillImageFileValue,
   RegionGeometry,
 } from '@dasch-swiss/dsp-js';
+import { handleXML } from '@dasch-swiss/vre/shared/app-common';
 import OpenSeadragon from 'openseadragon';
 import { Region } from '../region';
 import { GeometryForRegion } from './geometry-for-region';
@@ -51,9 +52,10 @@ export class StillImageHelper {
 
     createResource.attachedToProject = attachedProject;
     if (comment) {
-      const commentVal = new CreateTextValueAsString();
+      const commentVal = new CreateTextValueAsXml();
       commentVal.type = Constants.TextValue;
-      commentVal.text = comment;
+      commentVal.xml = handleXML(comment, false);
+      commentVal.mapping = Constants.StandardMapping;
       createResource.properties[Constants.HasComment] = [commentVal];
     }
     return createResource;

@@ -6,7 +6,6 @@ export * from './lib/value-components/link-value.component';
 export * from './lib/value-components/list-value.component';
 export * from './lib/value-components/nested-menu.component';
 export * from './lib/value-components/time-value.component';
-
 export * from './lib/viewer-components/rich-text-viewer.component';
 export * from './lib/switch-components/base-switch.component';
 export * from './lib/switch-components/date-switch.component';
@@ -21,7 +20,6 @@ export * from './lib/switch-components/text-types-selector.component';
 export * from './lib/switch-components/time-switch.component';
 export * from './lib/switch-components/toggle-switch.component';
 export * from './lib/switch-components/uri-switch.component';
-
 export * from './lib/create-resource-dialog.component';
 export * from './lib/create-resource-form.component';
 export * from './lib/create-resource-form-row.component';
