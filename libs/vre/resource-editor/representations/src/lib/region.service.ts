@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@angular/core';
 import { KnoraApiConnection } from '@dasch-swiss/dsp-js/src/knora-api-connection';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { DspResource, GenerateProperty } from '@dasch-swiss/vre/shared/app-common';
-import { BehaviorSubject, map, Subject, takeUntil, tap } from 'rxjs';
+import { BehaviorSubject, concatMap, EMPTY, expand, map, Subject, takeUntil, tap, toArray } from 'rxjs';
 
 /**
  * Regions, also called annotations, are used to mark specific areas on an image.
@@ -50,12 +50,24 @@ export class RegionService {
     this._selectedRegion.next(regionIri);
   }
 
-  private _getIncomingRegions(resourceId: string, offset = 0) {
+  private _getIncomingRegions(resourceId: string) {
+    let offset = 0;
+
     return this._dspApi.v2.search.doSearchIncomingRegions(resourceId, offset).pipe(
-      map(regions =>
-        regions.resources.map(_resource => {
-          const z = new DspResource(_resource);
-          z.resProps = GenerateProperty.regionProperty(_resource);
+      expand(response => {
+        if (response.mayHaveMoreResults) {
+          offset++;
+          return this._dspApi.v2.search.doSearchIncomingRegions(resourceId, offset);
+        } else {
+          return EMPTY;
+        }
+      }),
+      concatMap(page => page.resources),
+      toArray(),
+      map(res =>
+        res.map(resource => {
+          const z = new DspResource(resource);
+          z.resProps = GenerateProperty.regionProperty(resource);
           return z;
         })
       )
