@@ -8,7 +8,7 @@ import {
   Output,
 } from '@angular/core';
 import { MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
-import { Cardinality } from '@dasch-swiss/dsp-js';
+import { Cardinality, Constants } from '@dasch-swiss/dsp-js';
 import { ClassPropertyInfo } from '../../../ontology.types';
 import { CardinalityChangeDialogComponent, CardinalityInfo } from './cardinality-change-dialog.component';
 
@@ -41,8 +41,8 @@ import { CardinalityChangeDialogComponent, CardinalityInfo } from './cardinality
     <div class="cardinality-checkbox">
       <input
         type="checkbox"
-        [disabled]="disabled"
-        [ngClass]="disabled ? 'card-disabled' : 'card-enabled'"
+        [disabled]="disabled || disabledForBooleanType"
+        [ngClass]="disabled || disabledForBooleanType ? 'card-disabled' : 'card-enabled'"
         [(ngModel)]="multipleCheckboxState"
         (change)="onCheckboxChange()" />
       <label>Multiple values</label>
@@ -68,6 +68,10 @@ export class CardinalityComponent implements OnInit {
   requiredCheckboxState = false;
 
   private _dialogRef: MatDialogRef<CardinalityChangeDialogComponent> | undefined;
+
+  get disabledForBooleanType() {
+    return this.classProp.propDef.objectType === Constants.BooleanValue;
+  }
 
   constructor(
     private _cdr: ChangeDetectorRef,
