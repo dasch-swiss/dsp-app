@@ -60,7 +60,9 @@ export class OntologiesSelectors {
     if (!project || !state.projectOntologies[project.id]) {
       return [];
     }
-    return state.projectOntologies[project.id].ontologiesMetadata.map(meta => OntologyService.getOntologyName(meta.id));
+    return state.projectOntologies[project.id].ontologiesMetadata.map(meta =>
+      OntologyService.getOntologyNameFromIri(meta.id)
+    );
   }
 
   @Selector([OntologiesState])

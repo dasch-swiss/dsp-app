@@ -56,7 +56,7 @@ export class HumanReadableErrorPipe implements PipeTransform {
     }
 
     if (error.hasOwnProperty('existingName')) {
-      return 'This is already taken by another entity';
+      return 'This name is already taken by another entity';
     }
 
     if (error.hasOwnProperty('whitespace')) {

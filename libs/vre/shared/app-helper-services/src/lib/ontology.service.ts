@@ -22,13 +22,7 @@ export class OntologyService {
     private _localizationService: LocalizationService
   ) {}
 
-  /**
-   * get the ontolgoy name from ontology iri
-   *
-   * @param  {string} ontologyIri
-   * @returns string
-   */
-  static getOntologyName(ontologyIri: string): string {
+  static getOntologyNameFromIri(ontologyIri: string): string {
     const array = ontologyIri.split('/');
 
     const pos = array.length - 2;
@@ -36,12 +30,7 @@ export class OntologyService {
     return array[pos];
   }
 
-  /**
-   * get the name from the iri
-   * @param iri
-   * @returns name from iri
-   */
-  getNameFromIri(iri: string): string {
+  static getNameFromIri(iri: string): string {
     const array = iri.split(Constants.HashDelimiter);
     return array[1];
   }

@@ -36,19 +36,17 @@ export class OntologyFormComponent implements OnInit, OnDestroy {
   };
 
   get ontologyName(): string {
-    return this.data?.id ? OntologyService.getOntologyName(this.data.id) : '';
+    return this.data?.id ? OntologyService.getOntologyNameFromIri(this.data.id) : '';
   }
 
   get existingOntologyNames(): string[] {
     return this._store
       .selectSnapshot(OntologiesSelectors.currentProjectOntologies)
-      .map(onto => OntologyService.getOntologyName(onto.id));
+      .map(onto => OntologyService.getOntologyNameFromIri(onto.id));
   }
 
-  get blackListedNames(): RegExp[] {
-    const forbiddenRegex = this.forbiddenNames.map(name => new RegExp(name));
-    const existingOntologyRegex = this.existingOntologyNames.map(name => new RegExp(`(?:^|\\W)${name}(?:$|\\W)`));
-    return [...forbiddenRegex, ...existingOntologyRegex];
+  get blackListedNames() {
+    return [...this.forbiddenNames, ...this.existingOntologyNames];
   }
 
   constructor(

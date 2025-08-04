@@ -48,7 +48,7 @@ export class DataModelsComponent {
   }
 
   navigateToOntology(id: string) {
-    const ontoName = OntologyService.getOntologyName(id);
+    const ontoName = OntologyService.getOntologyNameFromIri(id);
     this._router.navigate(
       [RouteConstants.ontology, encodeURIComponent(ontoName), RouteConstants.editor, RouteConstants.classes],
       {

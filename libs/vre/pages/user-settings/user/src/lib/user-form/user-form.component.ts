@@ -32,8 +32,8 @@ export class UserFormComponent implements OnInit {
     })
   );
 
-  private _existingUserNames$: Observable<RegExp[]>;
-  private _existingUserEmails$: Observable<RegExp[]>;
+  _existingUserNames$ = this.allUsers$.pipe(map(allUsers => allUsers.map(user => user.username.toLowerCase())));
+  _existingUserEmails$ = this.allUsers$.pipe(map(allUsers => allUsers.map(user => user.email.toLowerCase())));
 
   readonly languagesList: StringLiteral[] = AvailableLanguages;
 
@@ -59,14 +59,6 @@ export class UserFormComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this._existingUserNames$ = this.allUsers$.pipe(
-      map(allUsers => allUsers.map(user => new RegExp(`(?:^|\\W)${user.username.toLowerCase()}(?:$|\\W)`)))
-    );
-
-    this._existingUserEmails$ = this.allUsers$.pipe(
-      map(allUsers => allUsers.map(user => new RegExp(`(?:^|\\W)${user.email.toLowerCase()}(?:$|\\W)`)))
-    );
-
     this.editExistingUser = !!this.user?.id;
     this._buildForm();
     this.afterFormInit.emit(this.userForm);
@@ -76,16 +68,20 @@ export class UserFormComponent implements OnInit {
     this.userForm = this._fb.group({
       givenName: [this.user.givenName || '', Validators.required],
       familyName: [this.user.familyName || '', Validators.required],
-      email: [
+      email: this._fb.control(
         { value: this.user.email || '', disabled: this.editExistingUser },
-        [Validators.required, Validators.pattern(CustomRegex.EMAIL_REGEX)],
-        existingNamesAsyncValidator(this._existingUserEmails$),
-      ],
-      username: [
+        {
+          validators: [Validators.required, Validators.pattern(CustomRegex.EMAIL_REGEX)],
+          asyncValidators: [existingNamesAsyncValidator(this._existingUserEmails$)],
+        }
+      ),
+      username: this._fb.control(
         { value: this.user.username || '', disabled: this.editExistingUser },
-        [Validators.required, Validators.minLength(4), Validators.pattern(CustomRegex.USERNAME_REGEX)],
-        existingNamesAsyncValidator(this._existingUserNames$),
-      ],
+        {
+          validators: [Validators.required, Validators.minLength(4), Validators.pattern(CustomRegex.USERNAME_REGEX)],
+          asyncValidators: [existingNamesAsyncValidator(this._existingUserNames$)],
+        }
+      ),
       password: [{ value: '', disabled: this.editExistingUser }, Validators.required],
       lang: [this.user.lang || 'en'],
       systemAdmin: [ProjectService.IsMemberOfSystemAdminGroup(this.user.permissions.groupsPerProject)],

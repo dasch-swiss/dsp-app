@@ -62,7 +62,15 @@ export class OntologyEditService {
 
   latestChangedItem = new BehaviorSubject<string | undefined>(undefined);
 
-  // Todo: Belongs to the store or to a facade
+  currentOntologyEntityNames$ = this.currentOntology$.pipe(
+    filter((ontology): ontology is ReadOntology => ontology !== null),
+    map(ontology => {
+      return [...ontology.getAllClassDefinitions(), ...ontology.getAllPropertyDefinitions()].map(def =>
+        OntologyService.getNameFromIri(def.id).toLowerCase()
+      );
+    })
+  );
+
   currentOntologyProperties$: Observable<PropertyInfo[]> = combineLatest([
     this.currentOntology$,
     this._store.select(OntologiesSelectors.currentProjectOntologies),
@@ -70,25 +78,23 @@ export class OntologyEditService {
   ]).pipe(
     map(([currentOntology, allOntologies, allLists]) => {
       if (!currentOntology) return [];
-      const props = currentOntology.getAllPropertyDefinitions() as ResourcePropertyDefinitionWithAllLanguages[];
+      const props = currentOntology.getPropertyDefinitionsByType(ResourcePropertyDefinitionWithAllLanguages);
       return this._buildPropertyInfoList(allOntologies, allLists, props);
     })
   );
 
-  // Todo: Belongs to the store or to a facade
   currentProjectsProperties$: Observable<PropertyInfo[]> = combineLatest([
     this._store.select(OntologiesSelectors.currentProjectOntologies),
     this._lists.getListsInProject$(),
   ]).pipe(
     map(([ontologies, allLists]) => {
-      const allProps = ontologies.flatMap(
-        o => o.getAllPropertyDefinitions() as ResourcePropertyDefinitionWithAllLanguages[]
+      const allProps = ontologies.flatMap(o =>
+        o.getPropertyDefinitionsByType(ResourcePropertyDefinitionWithAllLanguages)
       );
       return this._buildPropertyInfoList(ontologies, allLists, allProps);
     })
   );
 
-  // Todo: Belongs to the store or to a facade
   currentOntologyClasses$: Observable<ResourceClassInfo[]> = combineLatest([
     this.currentOntology$,
     this.currentProjectsProperties$,
@@ -194,7 +200,7 @@ export class OntologyEditService {
     this._isTransacting.next(true);
     this._canDeletePropertyMap.clear();
     const ontologies = this._store.selectSnapshot(OntologiesSelectors.currentProjectOntologies);
-    const ontologyFromStore = ontologies.find(onto => OntologyService.getOntologyName(onto.id) == label);
+    const ontologyFromStore = ontologies.find(onto => OntologyService.getOntologyNameFromIri(onto.id) == label);
 
     if (ontologyFromStore) {
       this._currentOntology.next(ontologyFromStore);

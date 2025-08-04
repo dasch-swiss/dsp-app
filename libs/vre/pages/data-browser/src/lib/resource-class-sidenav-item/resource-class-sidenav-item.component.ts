@@ -74,7 +74,7 @@ export class ResourceClassSidenavItemComponent implements OnInit, AfterViewInit,
   ngOnInit(): void {
     const projectUuid = this._route.snapshot.paramMap.get(RouteConstants.uuidParameter);
     const [ontologyIri, className] = this.resClass.id.split('#');
-    const ontologyName = OntologyService.getOntologyName(ontologyIri);
+    const ontologyName = OntologyService.getOntologyNameFromIri(ontologyIri);
     this._store.dispatch(new LoadClassItemsCountAction(ontologyIri, this.resClass.id));
     this.classLink = `${RouteConstants.projectRelative}/${projectUuid}/${RouteConstants.ontology}/${ontologyName}/${className}`;
     this.icon = this._getIcon();

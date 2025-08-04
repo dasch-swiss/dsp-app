@@ -1,50 +1,29 @@
 import { AbstractControl, AsyncValidatorFn, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { first, map, Observable, of } from 'rxjs';
 
-/**
- * validation of existing name values. Array method (list of values)
- * Use it in a "formbuilder" group as a validator property
- *
- * @param {RegExp} valArrayRegexp List of regular expression values
- * @returns ValidatorFn
- */
-export function existingNamesValidator(valArrayRegexp: RegExp[], isCaseSensitive = false): ValidatorFn {
-  return (control: AbstractControl): { [key: string]: any } => {
-    let name: string;
+export function existingNamesValidator(existingNames: string[], isCaseSensitive = false): ValidatorFn {
+  return (control: AbstractControl): { [key: string]: any } | null => {
+    if (!control.value) return null;
 
-    if (control.value) {
-      name = isCaseSensitive ? control.value : control.value.toLowerCase();
-    }
+    const name = isCaseSensitive ? control.value : control.value.toLowerCase();
+    const normalized = isCaseSensitive ? existingNames : existingNames.map(n => n.toLowerCase());
 
-    let no: boolean;
-    for (const existing of valArrayRegexp) {
-      no = existing.test(name);
-      if (no) {
-        return no ? { existingName: { name } } : null;
-      }
-    }
-    return no ? { existingName: { name } } : null;
+    return normalized.includes(name) ? { existingName: { name } } : null;
   };
 }
 
 export function existingNamesAsyncValidator(
-  regexObservable: Observable<RegExp[]>,
+  existingNames$: Observable<string[]>,
   isCaseSensitive = false
 ): AsyncValidatorFn {
   return (control: AbstractControl): Observable<ValidationErrors | null> => {
-    if (!control.value) {
-      return of(null); // consider valid
-    }
+    if (!control.value) return of(null);
 
     const name = isCaseSensitive ? control.value : control.value.toLowerCase();
 
-    return regexObservable.pipe(
-      first(), // Take the first emission of the observable and complete
-      map(regexArray => {
-        // Check if the control value matches any of the regex patterns
-        const isInvalid = regexArray.some(regex => regex.test(name));
-        return isInvalid ? { existingName: { name } } : null;
-      })
+    return existingNames$.pipe(
+      first(),
+      map(names => (names.includes(name) ? { existingName: { name } } : null))
     );
   };
 }

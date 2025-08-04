@@ -1,8 +1,10 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Constants } from '@dasch-swiss/dsp-js';
+import { existingNamesAsyncValidator } from '@dasch-swiss/vre/pages/user-settings/user';
 import { DefaultProperties, LocalizationService, PropertyCategory } from '@dasch-swiss/vre/shared/app-helper-services';
 import { DEFAULT_MULTILANGUAGE_FORM } from '@dasch-swiss/vre/ui/string-literal';
+import { OntologyEditService } from '../../services/ontology-edit.service';
 import { PropertyForm, EditPropertyDialogData } from './property-form.type';
 
 @Component({
@@ -77,7 +79,8 @@ export class PropertyFormComponent implements OnInit {
 
   constructor(
     private _fb: FormBuilder,
-    private _localizationService: LocalizationService
+    private _localizationService: LocalizationService,
+    private _oes: OntologyEditService
   ) {}
 
   ngOnInit() {
@@ -107,6 +110,7 @@ export class PropertyFormComponent implements OnInit {
         {
           nonNullable: true,
           validators: [Validators.required],
+          asyncValidators: [existingNamesAsyncValidator(this._oes.currentOntologyEntityNames$)],
         }
       ),
       labels: DEFAULT_MULTILANGUAGE_FORM(this.propertyData.label ?? defaultData, [Validators.required]),

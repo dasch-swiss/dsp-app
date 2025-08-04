@@ -145,7 +145,7 @@ describe('OntologiesSelectors', () => {
     };
 
     // Mock service methods using spies
-    jest.spyOn(OntologyService, 'getOntologyName').mockImplementation((id: string) => {
+    jest.spyOn(OntologyService, 'getOntologyNameFromIri').mockImplementation((id: string) => {
       if (id.includes('project1')) return 'project1';
       return 'unknown';
     });

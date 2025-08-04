@@ -45,13 +45,12 @@ export class EditResourceClassDialogComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA)
     public data: EditResourceClassDialogProps,
     public dialogRef: MatDialogRef<EditResourceClassDialogComponent, UpdateResourceClassData>,
-    private _ontologyService: OntologyService,
     private _oes: OntologyEditService
   ) {}
 
   ngOnInit() {
     this.formData = {
-      name: this._ontologyService.getNameFromIri(this.data.data.id),
+      name: OntologyService.getNameFromIri(this.data.data.id),
       labels: this.data.data.labels as MultiLanguages,
       comments: this.data.data.comments as MultiLanguages,
     };
