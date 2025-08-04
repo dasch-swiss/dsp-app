@@ -1,4 +1,5 @@
-import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import { HttpEventType } from '@angular/common/http';
+import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { Constants } from '@dasch-swiss/dsp-js';
 import {
   FileRepresentationType,
@@ -21,7 +22,17 @@ import { finalize } from 'rxjs';
     </ng-container>
 
     <ng-template #loadingTpl>
-      <app-progress-indicator />
+      <div class="upload-progress">
+        <ng-container *ngIf="!processing; else processingTpl">
+          <mat-progress-bar mode="determinate" [value]="uploadProgress"></mat-progress-bar>
+          <div class="progress-text">{{ uploadProgress }}% uploaded</div>
+        </ng-container>
+
+        <ng-template #processingTpl>
+          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+          <div class="progress-text">Processing file on server...</div>
+        </ng-template>
+      </div>
     </ng-template>
   `,
   styles: [
@@ -36,6 +47,21 @@ import { finalize } from 'rxjs';
           background: #ececec !important;
         }
       }
+
+      .upload-progress {
+        padding: 16px;
+        text-align: center;
+      }
+
+      .progress-text {
+        margin-top: 8px;
+        font-size: 14px;
+        color: #666;
+      }
+
+      mat-progress-bar {
+        margin-bottom: 8px;
+      }
     `,
   ],
 })
@@ -46,6 +72,8 @@ export class UploadComponent {
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
   loading = false;
+  uploadProgress = 0;
+  processing = false;
 
   private readonly _fileTypesMapping = {
     [Constants.HasMovingImageFileValue]: ['mp4'],
@@ -62,7 +90,8 @@ export class UploadComponent {
 
   constructor(
     private _notification: NotificationService,
-    private _upload: UploadFileService
+    private _upload: UploadFileService,
+    private _cdr: ChangeDetectorRef
   ) {}
 
   addFileFromClick(event: any) {
@@ -83,15 +112,36 @@ export class UploadComponent {
 
   private _uploadProjectFile(file: File): void {
     this.loading = true;
+    this.uploadProgress = 0;
     this._upload
       .upload(file, this.projectShortcode)
       .pipe(
         finalize(() => {
           this.loading = false;
+          this.uploadProgress = 0;
+          this.processing = false;
+          this._cdr.markForCheck();
         })
       )
-      .subscribe(res => {
-        this.afterFileUploaded.emit(res);
+      .subscribe({
+        next: event => {
+          if (event.type === HttpEventType.UploadProgress) {
+            if (event.total) {
+              this.uploadProgress = Math.round((100 * event.loaded) / event.total);
+
+              if (event.loaded === event.total) {
+                this.processing = true;
+              }
+
+              this._cdr.markForCheck();
+            }
+          } else if (event.type === HttpEventType.Response) {
+            this.afterFileUploaded.emit(event.body as UploadedFileResponse);
+          }
+        },
+        error: () => {
+          this._notification.openSnackBar('Upload failed. Please try again.');
+        },
       });
 
     this.fileInput.nativeElement.value = '';

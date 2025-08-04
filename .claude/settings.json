@@ -1,6 +1,8 @@
 {
   "permissions": {
-    "allow": [],
+    "allow": [
+      "mcp__linear__list_teams"
+    ],
     "deny": []
   }
 }

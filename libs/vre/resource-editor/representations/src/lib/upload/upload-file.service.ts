@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpEvent, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AppConfigService } from '@dasch-swiss/vre/core/config';
 import { UploadedFileResponse } from './upload-file-response.interface';
@@ -22,8 +22,8 @@ export class UploadFileService {
       `${this._acs.dspIngestConfig.url}/projects/${shortcode}/assets/ingest/${encodeURIComponent(file.name)}`,
       file,
       {
-        reportProgress: false,
-        observe: 'body' as const,
+        reportProgress: true,
+        observe: 'events' as const,
         headers: new HttpHeaders({
           'Content-Type': 'application/octet-stream',
         }),
