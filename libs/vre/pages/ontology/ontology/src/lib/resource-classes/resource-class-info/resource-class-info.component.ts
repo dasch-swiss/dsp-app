@@ -14,7 +14,6 @@ import {
   EditResourceClassDialogComponent,
   EditResourceClassDialogProps,
 } from '../../forms/resource-class-form/edit-resource-class-dialog.component';
-import { UpdateResourceClassData } from '../../forms/resource-class-form/resource-class-form.type';
 import { OntologyPageService } from '../../ontology-page.service';
 import { ClassPropertyInfo, ResourceClassInfo } from '../../ontology.types';
 import { OntologyEditService } from '../../services/ontology-edit.service';

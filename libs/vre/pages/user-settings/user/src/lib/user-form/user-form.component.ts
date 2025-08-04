@@ -7,7 +7,7 @@ import { UserSelectors } from '@dasch-swiss/vre/core/state';
 import { CustomRegex } from '@dasch-swiss/vre/shared/app-common';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { TranslateService } from '@ngx-translate/core';
-import { Select } from '@ngxs/store';
+import { Select, Store } from '@ngxs/store';
 import { map, Observable, shareReplay } from 'rxjs';
 import { existingNamesAsyncValidator } from '../existing-names.validator';
 import { UserForm } from './user-form.type';
@@ -22,7 +22,7 @@ export class UserFormComponent implements OnInit {
 
   @Output() afterFormInit = new EventEmitter<UserForm>();
 
-  @Select(UserSelectors.isSysAdmin) readonly loggedInUserIsSysAdmin$: Observable<boolean>;
+  loggedInUserIsSysAdmin$ = this._store.select(UserSelectors.isSysAdmin);
 
   allUsers$ = this._userApiService.list().pipe(
     map(response => response.users),
@@ -54,6 +54,7 @@ export class UserFormComponent implements OnInit {
   constructor(
     private _fb: FormBuilder,
     private _ts: TranslateService,
+    private _store: Store,
     private _userApiService: UserApiService
   ) {}
 

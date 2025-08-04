@@ -1,9 +1,6 @@
-<app-progress-indicator *ngIf="(username$ | async) === null" />
-<app-status *ngIf="error" />
-
-<div class="content large middle" *ngIf="username$ | async">
+<div class="content large middle">
   <div class="content-sidebar user-data">
-    <app-profile [loggedInUser]="true" />
+    <app-profile />
   </div>
 
   <div class="content-container">
@@ -42,7 +39,7 @@
 
         <!-- edit user data -->
         <div *ngSwitchCase="routeConstants.userAccount" class="full-width">
-          <app-account [username]="username$ | async" />
+          <app-account />
         </div>
 
         <!-- user's projects -->

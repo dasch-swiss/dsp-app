@@ -14,11 +14,7 @@ import { MenuItem } from './menu-item';
   styleUrls: ['./user.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UserComponent implements OnDestroy {
-  isDestroyed = new Subject<void>();
-
-  error: boolean;
-
+export class UserComponent {
   route: string;
 
   // for the sidenav
@@ -39,26 +35,13 @@ export class UserComponent implements OnDestroy {
     },
   ];
 
-  @Select(UserSelectors.username) username$: Observable<string>;
-
   routeConstants = RouteConstants;
 
   constructor(
     private _route: ActivatedRoute,
-    private _titleService: Title,
     private _translateService: TranslateService
   ) {
     // get the activated route; we need it for the viewer switch
     this.route = this._route.pathFromRoot[1].snapshot.url[0].path;
-
-    // set the page title
-    this.username$
-      .pipe(takeUntil(this.isDestroyed))
-      .subscribe((username: string) => this._titleService.setTitle(username));
-  }
-
-  ngOnDestroy() {
-    this.isDestroyed.next();
-    this.isDestroyed.complete();
   }
 }

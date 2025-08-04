@@ -1,6 +1,5 @@
 <app-progress-indicator *ngIf="isLoading$ | async" />
-<div *ngIf="(isLoading$ | async) === false">
-  <!-- password update: header -->
+<div *ngIf="(isLoading$ | async) === false && (user$ | async) as user">
   <div class="app-toolbar more-space-bottom">
     <div class="app-toolbar-row">
       <h3 class="mat-body subtitle">{{ 'pages.userSettings.account.edit' | translate }}</h3>
@@ -13,12 +12,9 @@
       <span class="app-toolbar-action"> </span>
     </div>
   </div>
-  <!-- password update: form -->
-  <app-password-form [user]="user$ | async" />
+  <app-password-form [user]="user" />
 
-  <!-- danger zone: delete account -->
-  <div class="app-danger-zone more-space-top" *ngIf="(user$ | async) !== undefined">
-    <!-- delete account: header -->
+  <div class="app-danger-zone more-space-top">
     <div class="app-toolbar more-space-bottom">
       <div class="app-toolbar-row">
         <h3 class="mat-body subtitle">{{ 'pages.userSettings.account.danger' | translate }}</h3>
@@ -27,21 +23,15 @@
       </div>
       <div class="app-toolbar-row">
         <h2 class="mat-headline-6">
-          <span *ngIf="(user$ | async)?.status">{{ 'pages.userSettings.account.delete' | translate }}</span>
-          <span *ngIf="!((user$ | async)?.status)">Reactivate user</span>
+          <span>{{ 'pages.userSettings.account.delete' | translate }}</span>
         </h2>
         <span class="fill-remaining-space"></span>
         <span class="app-toolbar-action"> </span>
       </div>
     </div>
-    <!-- delete account: button -->
     <div class="center more-space-top more-space-bottom">
-      <button *ngIf="(user$ | async)?.status" mat-button [color]="'warn'" (click)="askToDeleteUser()">
+      <button mat-button [color]="'warn'" (click)="onDeleteOwnAccount(user)">
         {{ 'pages.userSettings.account.deleteButton' | translate | uppercase }}
-      </button>
-
-      <button *ngIf="!((user$ | async)?.status)" mat-button [color]="'primary'" (click)="askToActivateUser()">
-        ACTIVATE ACCOUNT
       </button>
     </div>
   </div>

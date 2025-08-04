@@ -5,7 +5,7 @@ import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { ProjectsSelectors } from '@dasch-swiss/vre/core/state';
 import { ResourceService } from '@dasch-swiss/vre/shared/app-common';
 import { OntologyService, ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
-import { Select } from '@ngxs/store';
+import { Select, Store } from '@ngxs/store';
 import { Observable, Subject, takeUntil } from 'rxjs';
 
 @Component({
@@ -27,7 +27,7 @@ export class CreateResourcePageComponent implements OnDestroy {
 
   private _projectUuid = this._route.snapshot.params['uuid'] ?? this._route.parent!.snapshot.params['uuid'];
 
-  @Select(ProjectsSelectors.currentProject) project$!: Observable<Project>;
+  project$ = this._store.select(ProjectsSelectors.currentProject);
 
   ontologyId = '';
   resourceClassIri = '';
@@ -42,11 +42,12 @@ export class CreateResourcePageComponent implements OnDestroy {
   }
 
   constructor(
-    private _route: ActivatedRoute,
     private _ontologyService: OntologyService,
     protected _projectService: ProjectService,
+    private _resourceService: ResourceService,
+    private _route: ActivatedRoute,
     private _router: Router,
-    private _resourceService: ResourceService
+    private _store: Store
   ) {
     this.project$.pipe(takeUntil(this._destroy)).subscribe(project => {
       if (!project) {

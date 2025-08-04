@@ -2,7 +2,7 @@ import { Component, Input, OnInit, TemplateRef } from '@angular/core';
 import { AbstractControl, FormBuilder } from '@angular/forms';
 import { Cardinality } from '@dasch-swiss/dsp-js';
 import { ProjectsSelectors } from '@dasch-swiss/vre/core/state';
-import { Select } from '@ngxs/store';
+import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { PropertyValueService } from './property-value.service';
 import { propertiesTypeMapping } from './resource-payloads-mapping';
@@ -42,14 +42,14 @@ import { propertiesTypeMapping } from './resource-payloads-mapping';
 export class PropertyValuesComponent implements OnInit {
   @Input() itemTpl!: TemplateRef<any>;
 
-  @Select(ProjectsSelectors.isCurrentProjectAdminSysAdminOrMember)
-  isCurrentProjectAdminSysAdminOrMember$!: Observable<boolean>;
+  isCurrentProjectAdminSysAdminOrMember$ = this._store.select(ProjectsSelectors.isCurrentProjectAdminSysAdminOrMember);
 
   protected readonly Cardinality = Cardinality;
 
   constructor(
+    private _fb: FormBuilder,
     public propertyValueService: PropertyValueService,
-    private _fb: FormBuilder
+    private _store: Store
   ) {}
 
   ngOnInit() {

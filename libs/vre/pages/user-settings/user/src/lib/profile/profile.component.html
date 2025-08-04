@@ -1,6 +1,6 @@
 <app-progress-indicator *ngIf="(isLoading$ | async) === true && (user$ | async | isFalsy)" />
 
-<ng-container *ngIf="(isLoading$ | async) === false && loggedInUser">
+<ng-container *ngIf="(isLoading$ | async) === false">
   <ng-container *ngIf="(user$ | async) as user">
     <!-- own user profile (logged-in user) -->
     <div class="user-profile">
@@ -19,12 +19,6 @@
             <mat-icon>language</mat-icon>
             {{ user.lang }}
           </li>
-          <!-- Show user's status (active / supsended): Not necessary anymore because we use profile componen for own user profile only. Probably we can open it for public uswer profile information
-                                    <li class="status text-only" [class.active]="user.status">
-                                    <mat-icon>info</mat-icon>
-                                    <span *ngIf="user.status">Active</span>
-                                    <span *ngIf="!user.status">Suspended</span>
-                                </li> -->
           <li class="status warning text-only" *ngIf="isSysAdmin$ | async">
             <mat-icon>verified_user</mat-icon>
             <span>{{ 'pages.userSettings.profile.systemAdmin' | translate }}</span>
