@@ -1,5 +1,29 @@
 # Changelog
 
+## [11.39.0](https://github.com/dasch-swiss/dsp-das/compare/v11.38.0...v11.39.0) (2025-08-04)
+
+
+### Enhancements
+
+* add cover image for project 0860 ([#2452](https://github.com/dasch-swiss/dsp-das/issues/2452)) ([ed8276b](https://github.com/dasch-swiss/dsp-das/commit/ed8276b76b690a1b2c50d58a7567380a1da018e4))
+* disable multiple checkbox for boolean object type (DEV-5221) ([#2450](https://github.com/dasch-swiss/dsp-das/issues/2450)) ([6200fb3](https://github.com/dasch-swiss/dsp-das/commit/6200fb3dfbc5d6dd94f051f8011d296cf81323a2))
+* ontology editor: dont highlight properties in view mode (DEV-5215) ([#2446](https://github.com/dasch-swiss/dsp-das/issues/2446)) ([39cd218](https://github.com/dasch-swiss/dsp-das/commit/39cd21807b88425241130affd42e92f7d0e3bf4b))
+* Replace file upload spinner with progress bar ([#2442](https://github.com/dasch-swiss/dsp-das/issues/2442)) ([a798cd4](https://github.com/dasch-swiss/dsp-das/commit/a798cd45ea1bfb15a5f266accd246fd078614962))
+* translate ontology editor (DEV-5202) ([#2441](https://github.com/dasch-swiss/dsp-das/issues/2441)) ([db90f2e](https://github.com/dasch-swiss/dsp-das/commit/db90f2e5ad4c2885f1c2c25a84375871991415cb))
+
+
+### Bug Fixes
+
+* include all paginated annotations in result ([#2451](https://github.com/dasch-swiss/dsp-das/issues/2451)) ([52fd8f2](https://github.com/dasch-swiss/dsp-das/commit/52fd8f20eb926108b2e39a0a7c4c4341353d5699))
+* set empty list node to not required (DEV-5104) ([#2445](https://github.com/dasch-swiss/dsp-das/issues/2445)) ([02843eb](https://github.com/dasch-swiss/dsp-das/commit/02843ebba7f83c8d0ff897314f49e102a7c4a924))
+
+
+### Maintenances
+
+* cleanup, remove unused, remove unnecessary (DEV-5191) ([#2443](https://github.com/dasch-swiss/dsp-das/issues/2443)) ([4dd906f](https://github.com/dasch-swiss/dsp-das/commit/4dd906f061d917d245a8c5918dea094085b772ae))
+* split resource creator and editor business logic ([#2378](https://github.com/dasch-swiss/dsp-das/issues/2378)) ([293ca65](https://github.com/dasch-swiss/dsp-das/commit/293ca65912c7676a7a2d6125b1b610afd257eb69))
+* truncate acc. to min width ([#2449](https://github.com/dasch-swiss/dsp-das/issues/2449)) ([8cbbc3b](https://github.com/dasch-swiss/dsp-das/commit/8cbbc3bbf221672d7ce699c94c90cb33631d5271))
+
 ## [11.38.0](https://github.com/dasch-swiss/dsp-das/compare/v11.37.0...v11.38.0) (2025-07-28)
 
 
