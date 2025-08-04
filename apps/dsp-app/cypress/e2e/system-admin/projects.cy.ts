@@ -59,7 +59,7 @@ describe('Projects', () => {
     cy.get('[data-cy=keywords-input] input')
       .type('{backspace}'.repeat(5))
       .type(`${data.keywords.join('{enter}')}{enter}`);
-    cy.get('[data-cy=submit-button]').click();
+    cy.get('[data-cy=submit-button]').scrollIntoView().click();
 
     cy.wait('@submitRequest');
     cy.url().should('match', /\/project\/(.+)/);

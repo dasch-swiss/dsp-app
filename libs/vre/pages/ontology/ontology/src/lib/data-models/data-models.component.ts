@@ -8,7 +8,6 @@ import {
   LoadListsInProjectAction,
   OntologiesSelectors,
   ProjectsSelectors,
-  UserSelectors,
 } from '@dasch-swiss/vre/core/state';
 import { ListInfoFormComponent } from '@dasch-swiss/vre/pages/ontology/list';
 import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';

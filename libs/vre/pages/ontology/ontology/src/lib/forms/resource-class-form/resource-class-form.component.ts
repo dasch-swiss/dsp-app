@@ -1,7 +1,11 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { ClassDefinition, PropertyDefinition } from '@dasch-swiss/dsp-js';
-import { getAllEntityDefinitionsAsArray } from '@dasch-swiss/vre/3rd-party-services/api';
+import {
+  ClassDefinition,
+  PropertyDefinition,
+  ResourceClassDefinitionWithAllLanguages,
+  ResourcePropertyDefinitionWithAllLanguages,
+} from '@dasch-swiss/dsp-js';
 import { existingNamesValidator } from '@dasch-swiss/vre/pages/user-settings/user';
 import { atLeastOneStringRequired, CustomRegex } from '@dasch-swiss/vre/shared/app-common';
 import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
@@ -67,8 +71,8 @@ export class ResourceClassFormComponent implements OnInit {
         return;
       }
 
-      const resourceClasses = getAllEntityDefinitionsAsArray(ontology.classes);
-      const resourceProperties = getAllEntityDefinitionsAsArray(ontology.properties);
+      const resourceClasses = ontology.getClassDefinitionsByType(ResourceClassDefinitionWithAllLanguages);
+      const resourceProperties = ontology.getPropertyDefinitionsByType(ResourcePropertyDefinitionWithAllLanguages);
 
       // set list of all existing resource class names to avoid same name twice
       resourceClasses.forEach((resClass: ClassDefinition) => {

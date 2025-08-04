@@ -50,14 +50,15 @@ export class EditUserDialogComponent {
     };
 
     this._userApiService.updateBasicInformation(this.data.user.id, userUpdate).subscribe(() => {
+      this._dialogRef.close(true);
+      this._notification.openSnackBar(this._translateService.instant('pages.userSettings.userForm.updateSuccess'));
       if (
         userUpdate.lang !== undefined &&
         this.data.user.username === this._store.selectSnapshot(state => state.user.user.username)
       ) {
         this._localizationsService.setLanguage(userUpdate.lang);
+        document.location.reload();
       }
-      this._dialogRef.close(true);
-      this._notification.openSnackBar(this._translateService.instant('pages.userSettings.userForm.updateSuccess'));
     });
   }
 }

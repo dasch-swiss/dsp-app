@@ -42,13 +42,13 @@ export class ListPageComponent implements OnInit, OnDestroy {
   private _destroy = new Subject<void>();
 
   constructor(
+    private _actions$: Actions,
     private _dialog: DialogService,
+    private _listItemService: ListItemService,
     private _matDialog: MatDialog,
     private _route: ActivatedRoute,
     private _router: Router,
-    private _store: Store,
-    private _actions$: Actions,
-    private _listItemService: ListItemService
+    private _store: Store
   ) {}
 
   @HostListener('window:resize', ['$event']) onWindowResize() {

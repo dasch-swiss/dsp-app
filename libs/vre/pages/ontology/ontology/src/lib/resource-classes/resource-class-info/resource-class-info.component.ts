@@ -5,7 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ApiResponseError, IHasProperty } from '@dasch-swiss/dsp-js';
 import { DspDialogConfig, RouteConstants } from '@dasch-swiss/vre/core/config';
 import { ProjectsSelectors } from '@dasch-swiss/vre/core/state';
-import { LocalizationService, OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { DialogService } from '@dasch-swiss/vre/ui/ui';
 import { Store } from '@ngxs/store';
@@ -38,30 +38,17 @@ export class ResourceClassInfoComponent implements OnInit, OnDestroy {
   subscription!: Subscription;
   expandClasses = true;
 
-  get classLabel() {
-    const lang = this._localizationService.getCurrentLanguage();
-    const preferedLangLabel = this.resourceClass.labels.find(l => l.language === lang);
-    return preferedLangLabel?.value || this.resourceClass.label || '';
-  }
-
-  get classComment() {
-    const lang = this._localizationService.getCurrentLanguage();
-    const preferedLangComment = this.resourceClass.comments.find(c => c.language === lang);
-    return preferedLangComment?.value || this.resourceClass.comment || '';
-  }
-
   trackByPropToDisplayFn = (index: number, item: ClassPropertyInfo) => `${index}-${item.propDef.id}`;
 
   constructor(
     public ops: OntologyPageService,
+    private _cd: ChangeDetectorRef,
     private _clipboard: Clipboard,
     private _dialog: MatDialog,
-    private _localizationService: LocalizationService,
     private _dialogService: DialogService,
-    private _oes: OntologyEditService,
-    private _store: Store,
     private _notification: NotificationService,
-    private _cd: ChangeDetectorRef
+    private _oes: OntologyEditService,
+    private _store: Store
   ) {}
 
   ngOnInit() {
@@ -90,7 +77,10 @@ export class ResourceClassInfoComponent implements OnInit, OnDestroy {
   editResourceClassInfo() {
     this._dialog.open<EditResourceClassDialogComponent, EditResourceClassDialogProps>(
       EditResourceClassDialogComponent,
-      DspDialogConfig.mediumDialog({ title: this.classLabel, data: this.resourceClass.updateResourceClassData })
+      DspDialogConfig.mediumDialog({
+        labels: this.resourceClass.labels,
+        data: this.resourceClass.updateResourceClassData,
+      })
     );
   }
 

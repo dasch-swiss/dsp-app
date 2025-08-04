@@ -13,7 +13,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Constants, ResourceClassDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { LoadClassItemsCountAction, OntologyClassSelectors, ProjectsSelectors } from '@dasch-swiss/vre/core/state';
-import { LocalizationService, OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { TranslateService } from '@ngx-translate/core';
 import { Actions, ofActionSuccessful, Store } from '@ngxs/store';
 import { combineLatest, map, Observable, Subject, takeUntil } from 'rxjs';
@@ -48,7 +48,7 @@ export class ResourceClassSidenavItemComponent implements OnInit, AfterViewInit,
     },
   };
 
-  ontologiesLabel: string;
+  ontologiesLabel!: string;
 
   get results$(): Observable<number> {
     return combineLatest([
@@ -60,7 +60,7 @@ export class ResourceClassSidenavItemComponent implements OnInit, AfterViewInit,
   constructor(
     private _actions$: Actions,
     private _cd: ChangeDetectorRef,
-    private _localizationService: LocalizationService,
+    private _ontologyService: OntologyService,
     private _route: ActivatedRoute,
     private _router: Router,
     private _store: Store,
@@ -79,9 +79,9 @@ export class ResourceClassSidenavItemComponent implements OnInit, AfterViewInit,
     this.classLink = `${RouteConstants.projectRelative}/${projectUuid}/${RouteConstants.ontology}/${ontologyName}/${className}`;
     this.icon = this._getIcon();
     this._translateService.onLangChange.pipe(takeUntil(this.destroyed)).subscribe(() => {
-      this.getOntologiesLabelsInPreferredLanguage();
+      this.getOntologiesLabelInPreferredLanguage();
     });
-    this.getOntologiesLabelsInPreferredLanguage();
+    this.getOntologiesLabelInPreferredLanguage();
   }
 
   ngAfterViewInit(): void {
@@ -98,13 +98,10 @@ export class ResourceClassSidenavItemComponent implements OnInit, AfterViewInit,
     return element.scrollHeight > element.clientHeight;
   }
 
-  private getOntologiesLabelsInPreferredLanguage(): void {
-    const prefferedLanguage = this._localizationService.getCurrentLanguage();
-    if (this.resClass.labels) {
-      const label = this.resClass.labels.find(l => l.language === prefferedLanguage);
-      this.ontologiesLabel = label ? label.value : this.resClass.labels[0].value;
-      this._cd.markForCheck();
-    }
+  private getOntologiesLabelInPreferredLanguage(): void {
+    this.ontologiesLabel =
+      this._ontologyService.getInPreferedLanguage(this.resClass.labels) || this.resClass.label || '';
+    this._cd.markForCheck();
   }
 
   private _getIcon(): string {

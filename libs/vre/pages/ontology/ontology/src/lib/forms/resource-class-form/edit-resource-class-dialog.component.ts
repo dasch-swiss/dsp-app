@@ -8,14 +8,14 @@ import { OntologyEditService } from '../../services/ontology-edit.service';
 import { ResourceClassForm, ResourceClassFormData, UpdateResourceClassData } from './resource-class-form.type';
 
 export interface EditResourceClassDialogProps {
-  title: string;
+  labels: StringLiteralV2[];
   data: UpdateResourceClassData;
 }
 
 @Component({
   selector: 'app-edit-resource-class-dialog',
   template: `
-    <app-dialog-header [title]="data.title" subtitle="Customize resource class" />
+    <app-dialog-header [title]="data.labels | appStringifyStringLiteral" subtitle="Customize resource class" />
     <div mat-dialog-content>
       <app-resource-class-form [formData]="formData" (afterFormInit)="afterFormInit($event)" />
     </div>

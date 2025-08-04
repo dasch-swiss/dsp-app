@@ -11,10 +11,10 @@
         <div class="list-info">
           <h3
             class="mat-headline-6"
-            [matTooltip]="list.labels |appStringifyStringLiteral:'all'"
+            [matTooltip]="list.labels | appStringifyStringLiteral:true"
             matTooltipPosition="above"
             data-cy="label-title">
-            {{ list.labels | appStringifyStringLiteral }}
+            {{ list.labels | appStringifyStringLiteral}}
           </h3>
           <p
             class="mat-body"

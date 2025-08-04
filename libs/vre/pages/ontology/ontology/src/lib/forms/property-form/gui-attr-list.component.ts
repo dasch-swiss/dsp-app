@@ -13,8 +13,8 @@ import { PropertyForm } from './property-form.type';
       <span matPrefix> <mat-icon>tune</mat-icon>&nbsp; </span>
       <mat-label>Select a list</mat-label>
       <mat-select [formControl]="control">
-        <mat-option *ngFor="let item of localizedLists$ | async" [value]="item.id">
-          {{ item.localizedLabel }}
+        <mat-option *ngFor="let list of lists$ | async" [value]="list.id">
+          {{ list.labels | appStringifyStringLiteral }}
         </mat-option>
       </mat-select>
       <mat-error *ngIf="control.invalid && control.touched && control.errors as errors">
@@ -28,17 +28,5 @@ export class GuiAttrListComponent {
   @Input({ required: true }) control!: PropertyForm['controls']['guiAttr'];
   lists$ = this._store.select(ListsSelectors.listsInProject);
 
-  localizedLists$ = combineLatest([this.lists$, this._localizationService.currentLanguage$]).pipe(
-    map(([lists, lang]) =>
-      lists.map((item: ListNodeInfo) => ({
-        ...item,
-        localizedLabel: item.labels.find((label: any) => label.language === lang)?.value || item.labels[0]?.value || '',
-      }))
-    )
-  );
-
-  constructor(
-    private _store: Store,
-    private _localizationService: LocalizationService
-  ) {}
+  constructor(private _store: Store) {}
 }

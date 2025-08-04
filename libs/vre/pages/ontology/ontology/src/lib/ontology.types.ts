@@ -4,6 +4,7 @@ import {
   ResourceClassDefinitionWithAllLanguages,
   ResourcePropertyDefinitionWithAllLanguages,
 } from '@dasch-swiss/dsp-js';
+import { StringLiteralV2 } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { DefaultProperty, DefaultResourceClasses } from '@dasch-swiss/vre/shared/app-helper-services';
 import { UpdateResourceClassData } from './forms/resource-class-form/resource-class-form.type';
 
@@ -12,9 +13,9 @@ export interface PropertyInfo {
   propType: DefaultProperty;
   baseOntologyId: string;
   baseOntologyLabel: string;
-  usedByClasses: ClassShortInfo[]; // populate this
-  objectLabel?: string;
-  objectComment?: string;
+  usedByClasses: ClassShortInfo[];
+  objectLabels: StringLiteralV2[];
+  objectComments: StringLiteralV2[];
 }
 
 export interface ClassPropertyInfo extends PropertyInfo {
@@ -57,9 +58,6 @@ export class ResourceClassInfo {
   }
 
   get defaultClassLabel() {
-    if (this._resClass.label === 'Kirche') {
-      console.log(this._resClass.subClassOf);
-    }
     return this._resClass.subClassOf
       .sort((a, b) => {
         // sort so internal Knora classes come first, followed by external ones if any
@@ -93,7 +91,7 @@ export interface PropToAdd {
 
 export interface ClassShortInfo {
   id: string;
-  label: string;
-  comment: string;
+  labels: StringLiteralV2[];
+  comments: StringLiteralV2[];
   restrictedToClass?: string;
 }

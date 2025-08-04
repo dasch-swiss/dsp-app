@@ -8,13 +8,17 @@
         matTooltipPosition="above">
         <mat-icon class="type">{{ property.propType?.icon }}</mat-icon>
       </span>
-      <span class="label" matTooltipPosition="above" matTooltipClass="multi-line-tooltip" data-cy="property-labels">
-        {{ !property.propDef!.labels.length ? property.propDef?.label : property.propDef!.labels |
-        appStringifyStringLiteral:'all' }}
+      <span
+        class="label"
+        [matTooltip]="property.propDef.comments | appStringifyStringLiteral"
+        matTooltipPosition="above"
+        matTooltipClass="multi-line-tooltip"
+        data-cy="property-labels">
+        {{ property.propDef!.labels.length ? (property.propDef!.labels | appStringifyStringLiteral ) :
+        property.propDef?.label }}
       </span>
       <mat-icon
-        *ngIf="property.propDef.comment"
-        [matTooltip]="property.propDef.comment"
+        [matTooltip]="property.propDef.comments | appStringifyStringLiteral"
         matTooltipPosition="above"
         class="icon property-info-icon">
         info
@@ -22,10 +26,10 @@
       <!-- property is linked to a class or to a list: display connected class or list -->
       <span
         class="attribute additional-info"
-        *ngIf="property.objectLabel"
-        [matTooltip]="property.objectComment || ''"
+        *ngIf="property.objectLabels && property.objectLabels.length"
+        [matTooltip]="property.objectComments | appStringifyStringLiteral"
         matTooltipPosition="above"
-        [innerHTML]="'&rarr;&nbsp;' + property.objectLabel">
+        [innerHTML]="'&rarr;&nbsp;' + (property.objectLabels | appStringifyStringLiteral)">
       </span>
     </div>
   </div>
@@ -45,11 +49,14 @@
       <span *ngIf="property.usedByClasses.length; else notUsed">
         <span class="mat-caption">&gt; Property is used in:</span>
         <span *ngFor="let c of property.usedByClasses; trackBy: trackByFn; let last = last">
-          <span [matTooltip]="c.comment" matTooltipPosition="above" [matTooltipDisabled]="isLockHovered"
-            >{{ c.label }}
+          <span
+            [matTooltip]="(c.labels | appStringifyStringLiteral ) + ': ' +(c.comments | appStringifyStringLiteral )"
+            matTooltipPosition="above"
+            [matTooltipDisabled]="isLockHovered"
+            >{{ c.labels | appStringifyStringLiteral}}
             <span
               *ngIf="c.id && c.id === c.restrictedToClass"
-              [matTooltip]="'This property can only be used by the class ' + c.label"
+              [matTooltip]="'This property can only be used by the class ' + (c.labels | appStringifyStringLiteral)"
               (mouseenter)="isLockHovered = true"
               (mouseleave)="isLockHovered = false">
               <mat-icon class="type">lock</mat-icon>

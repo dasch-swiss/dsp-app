@@ -1,10 +1,9 @@
 import { Component, Input } from '@angular/core';
-import { ReadOntology, ResourceClassDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
-import { getAllEntityDefinitionsAsArray } from '@dasch-swiss/vre/3rd-party-services/api';
+import { ResourceClassDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
 import { OntologiesSelectors } from '@dasch-swiss/vre/core/state';
 import { LocalizationService, SortingService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { Store } from '@ngxs/store';
-import { map } from 'rxjs';
+import { combineLatest, map } from 'rxjs';
 import { PropertyForm } from './property-form.type';
 
 export interface ClassToSelect {
@@ -21,7 +20,9 @@ export interface ClassToSelect {
       <mat-label>Select resource class</mat-label>
       <mat-select [formControl]="control">
         <mat-optgroup *ngFor="let onto of ontologyClasses$ | async" [label]="onto.ontologyLabel">
-          <mat-option *ngFor="let oClass of onto.classes" [value]="oClass.id"> {{ getClassLabel(oClass) }}</mat-option>
+          <mat-option *ngFor="let oClass of onto.classes" [value]="oClass.id">
+            {{ oClass.labels | appStringifyStringLiteral }}</mat-option
+          >
         </mat-optgroup>
       </mat-select>
       <mat-error *ngIf="control.invalid && control.touched && control.errors![0] as error">
@@ -34,42 +35,30 @@ export interface ClassToSelect {
 export class GuiAttrLinkComponent {
   @Input({ required: true }) control!: PropertyForm['controls']['guiAttr'];
 
-  ontologyClasses$ = this._store.select(OntologiesSelectors.currentProjectOntologies).pipe(
-    map((response: ReadOntology[]) => {
-      // reset list of ontology classes
-      const lang = this._localizationService.getCurrentLanguage();
+  ontologyClasses$ = combineLatest([
+    this._store.select(OntologiesSelectors.currentProjectOntologies),
+    this._localizationService.currentLanguage$,
+  ]).pipe(
+    map(([response, lang]) => {
       const ontologyClasses = [] as ClassToSelect[];
       response.forEach(onto => {
-        const classDef = this._sortingService.sortLabelsAlphabetically(
-          getAllEntityDefinitionsAsArray(onto.classes),
-          'label',
-          lang
-        ) as ResourceClassDefinitionWithAllLanguages[];
-        if (classDef.length) {
-          const ontoClasses: ClassToSelect = {
+        const classes = onto.getClassDefinitionsByType(ResourceClassDefinitionWithAllLanguages);
+        const classDefs = this._sortingService.sortByLabelsAlphabetically(classes, 'label', lang);
+        if (classDefs.length) {
+          ontologyClasses.push({
             ontologyId: onto.id,
             ontologyLabel: onto.label,
-            classes: classDef,
-          };
-          ontologyClasses.push(ontoClasses);
+            classes: classDefs,
+          } as ClassToSelect);
         }
       });
       return ontologyClasses;
     })
   );
 
-  getClassLabel(classDef: ResourceClassDefinitionWithAllLanguages) {
-    return this._getClassLabelByLanguage(classDef, this._localizationService.getCurrentLanguage());
-  }
-
   constructor(
     private _store: Store,
     private _sortingService: SortingService,
     private _localizationService: LocalizationService
   ) {}
-
-  private _getClassLabelByLanguage(resourceClass: ResourceClassDefinitionWithAllLanguages, language: string) {
-    const preferedLangLabel = resourceClass.labels.find(l => l.language === language);
-    return preferedLangLabel?.value || resourceClass.label || '';
-  }
 }

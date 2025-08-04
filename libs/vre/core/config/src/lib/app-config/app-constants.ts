@@ -21,7 +21,9 @@ export const AvailableLanguages: StringLiteral[] = [
     language: 'rm',
     value: 'Romanic (Rumantsch)',
   },
-];
+] as const;
+
+export type LanguageShort = 'en' | 'de' | 'fr' | 'it' | 'rm';
 
 export const LocalStorageLanguageKey = 'dsp_language';
 

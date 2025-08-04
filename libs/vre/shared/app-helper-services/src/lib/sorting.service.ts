@@ -30,7 +30,7 @@ export class SortingService {
     return sortedArray;
   }
 
-  sortLabelsAlphabetically<T extends object>(value: Array<T>, sortKey: keyof T, language?: string): Array<T> {
+  sortByLabelsAlphabetically<T extends object>(value: Array<T>, sortKey: keyof T, language?: string): Array<T> {
     const sortedArray = value.slice();
     sortedArray.sort((a: T, b: T) => {
       let rawLabelA = String(a[sortKey] ?? '');

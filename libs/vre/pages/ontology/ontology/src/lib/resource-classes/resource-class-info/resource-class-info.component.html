@@ -7,8 +7,8 @@
   cdkDrag
   cdkDragBoundary=".drag-drop-stop">
   <mat-card-header class="resource-class-header" cdkDragHandle>
-    <mat-card-title [matTooltip]="classComment || ''" matTooltipPosition="above">
-      {{ classLabel | appTruncate: 24 }}
+    <mat-card-title [matTooltip]="this.resourceClass.comments | appStringifyStringLiteral" matTooltipPosition="above">
+      {{ this.resourceClass.labels | appStringifyStringLiteral | appTruncate: 24 }}
     </mat-card-title>
     <mat-card-subtitle>
       <span class="mat-caption class-name"> {{ resourceClass.name }} </span>

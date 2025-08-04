@@ -1,8 +1,19 @@
 import { Inject, Injectable } from '@angular/core';
-import { ApiResponseError, Constants, KnoraApiConnection, PropertyDefinition, ReadOntology } from '@dasch-swiss/dsp-js';
-import { getAllEntityDefinitionsAsArray } from '@dasch-swiss/vre/3rd-party-services/api';
+import {
+  ApiResponseError,
+  Constants,
+  KnoraApiConnection,
+  PropertyDefinition,
+  ReadOntology,
+  ResourcePropertyDefinitionWithAllLanguages,
+} from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
-import { OntologyService, ProjectService, SortingService } from '@dasch-swiss/vre/shared/app-helper-services';
+import {
+  LocalizationService,
+  OntologyService,
+  ProjectService,
+  SortingService,
+} from '@dasch-swiss/vre/shared/app-helper-services';
 import { Action, Actions, ofActionSuccessful, State, StateContext } from '@ngxs/store';
 import { map, of, switchMap, take, tap } from 'rxjs';
 import { LoadListsInProjectAction } from '../lists/lists.actions';
@@ -47,6 +58,7 @@ export class OntologiesState {
   constructor(
     @Inject(DspApiConnectionToken)
     private _dspApiConnection: KnoraApiConnection,
+    private _localizationService: LocalizationService,
     private _sortingService: SortingService,
     private _projectService: ProjectService,
     private _actions$: Actions
@@ -302,7 +314,9 @@ export class OntologiesState {
       onto =>
         <OntologyProperties>{
           ontology: onto.id,
-          properties: this.initOntoProperties(getAllEntityDefinitionsAsArray(onto.properties)),
+          properties: this.initOntoProperties(
+            onto.getPropertyDefinitionsByType(ResourcePropertyDefinitionWithAllLanguages)
+          ),
         }
     );
 
@@ -367,9 +381,7 @@ export class OntologiesState {
         listOfProperties.push(resProp);
       }
     });
-
-    // sort properties by labels
-    // --> TODO: add sort functionallity to the gui
-    return this._sortingService.keySortByAlphabetical(listOfProperties, 'label');
+    const lang = this._localizationService.getCurrentLanguage();
+    return this._sortingService.sortByLabelsAlphabetically(listOfProperties, 'label', lang);
   }
 }
