@@ -17,7 +17,7 @@ import { ListItemService } from '../list-item/list-item.service';
         [formArray]="form.controls.labels"
         [placeholder]="placeholder"
         [validators]="labelsValidators"
-        [isRequired]="true" />
+        [isRequired]="false" />
       <button color="primary" mat-icon-button matSuffix [disabled]="form.invalid" type="submit">
         <mat-icon> add</mat-icon>
       </button>
