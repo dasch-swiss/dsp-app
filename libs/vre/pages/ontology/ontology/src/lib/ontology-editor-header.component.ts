@@ -7,9 +7,9 @@ import { ProjectsSelectors } from '@dasch-swiss/vre/core/state';
 import { DialogService } from '@dasch-swiss/vre/ui/ui';
 import { Store } from '@ngxs/store';
 import { switchMap, take } from 'rxjs';
-import { OntologyFormComponent } from '../forms/ontology-form/ontology-form.component';
-import { UpdateOntologyData } from '../forms/ontology-form/ontology-form.type';
-import { OntologyEditService } from '../services/ontology-edit.service';
+import { OntologyFormComponent } from './forms/ontology-form/ontology-form.component';
+import { UpdateOntologyData } from './forms/ontology-form/ontology-form.type';
+import { OntologyEditService } from './services/ontology-edit.service';
 
 @Component({
   selector: 'app-ontology-editor-header',

@@ -1,5 +1,7 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { PropertyDefinition } from '@dasch-swiss/dsp-js';
+import { ProjectsSelectors } from '@dasch-swiss/vre/core/state';
+import { Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { PropertyInfo } from '../ontology.types';
 import { OntologyEditService } from '../services/ontology-edit.service';
@@ -7,39 +9,28 @@ import { OntologyEditService } from '../services/ontology-edit.service';
 @Component({
   selector: 'app-ontology-properties',
   template: `
-    <div class="ontology-editor-list properties">
-      <mat-list class="without-padding">
-        <mat-list-item
-          class="property"
-          *ngFor="let prop of properties$ | async; trackBy: trackByPropertyDefinitionFn; let odd = odd"
-          [class.odd]="odd">
-          <app-property-info [property]="prop" />
-        </mat-list-item>
-      </mat-list>
-    </div>
+    <mat-list class="properties">
+      <mat-list-item
+        class="property"
+        [class.admin]="(isAdmin$ | async) === true"
+        *ngFor="let prop of properties$ | async; trackBy: trackByPropertyDefinitionFn">
+        <app-property-info [property]="prop" />
+      </mat-list-item>
+    </mat-list>
   `,
   styles: `
-    @use 'config' as *;
-    .ontology-editor-list {
-      margin: 16px;
+    .properties {
+      max-width: 100em;
 
-      &.properties {
-        width: 80%;
-        margin: 16px 10%;
+      .property {
+        background: white;
+        border-radius: 8px;
+        height: auto;
+        margin: 8px 0;
 
-        .property {
-          height: auto;
-          min-height: 56px !important;
-          margin: 4px 0;
-          padding: 16px 0;
-
-          &.odd {
-            background-color: $primary_50;
-          }
-
-          &:hover {
-            background-color: $black-14-opacity;
-          }
+        &.admin:hover {
+          background: var(--element-active-hover);
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
       }
     }
@@ -48,8 +39,12 @@ import { OntologyEditService } from '../services/ontology-edit.service';
 })
 export class OntologyPropertiesComponent {
   properties$: Observable<PropertyInfo[]> = this._oes.currentOntologyProperties$;
+  isAdmin$ = this._store.select(ProjectsSelectors.isCurrentProjectAdminOrSysAdmin);
 
   trackByPropertyDefinitionFn = (index: number, item: PropertyDefinition) => `${index}-${item.id}`;
 
-  constructor(private _oes: OntologyEditService) {}
+  constructor(
+    private _oes: OntologyEditService,
+    private _store: Store
+  ) {}
 }

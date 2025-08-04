@@ -32,7 +32,11 @@ import { OntologyEditService } from '../../services/ontology-edit.service';
       (mouseenter)="isHovered = true"
       (mouseleave)="isHovered = false">
       <mat-list-item class="drag-n-drop-placeholder" *cdkDragPlaceholder></mat-list-item>
-      <mat-list-item class="property-item" matRipple #propertyCardRipple="matRipple">
+      <mat-list-item
+        class="property-item"
+        [class.admin]="(isAdmin$ | async) === true"
+        matRipple
+        #propertyCardRipple="matRipple">
         <div cdkDragHandle matListItemIcon class="list-icon">
           <mat-icon *ngIf="(isAdmin$ | async) === true && isHovered" class="drag-n-drop-handle"
             >drag_indicator
@@ -121,7 +125,7 @@ import { OntologyEditService } from '../../services/ontology-edit.service';
         margin: 0;
       }
 
-      .property-item:hover {
+      .property-item.admin:hover {
         background: var(--element-active-hover);
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
       }

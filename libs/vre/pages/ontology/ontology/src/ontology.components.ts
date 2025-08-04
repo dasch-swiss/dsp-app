@@ -7,7 +7,7 @@ import { PropertyFormComponent } from './lib/forms/property-form/property-form.c
 import { CreateResourceClassDialogComponent } from './lib/forms/resource-class-form/create-resource-class-dialog.component';
 import { EditResourceClassDialogComponent } from './lib/forms/resource-class-form/edit-resource-class-dialog.component';
 import { ResourceClassFormComponent } from './lib/forms/resource-class-form/resource-class-form.component';
-import { OntologyEditorHeaderComponent } from './lib/ontology-editor-header/ontology-editor-header.component';
+import { OntologyEditorHeaderComponent } from './lib/ontology-editor-header.component';
 import { OntologyPageComponent } from './lib/ontology-page.component';
 import { OntologySidenavComponent } from './lib/ontology-sidenav.component';
 import { OntologyPropertiesComponent } from './lib/properties/ontology-properties.component';

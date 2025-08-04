@@ -11,8 +11,8 @@ describe('Data models page', () => {
     cy.url().should('include', '/project/0803/ontology/incunabula/editor/classes');
 
     cy.get('[data-cy=add-property-button]').should('not.exist');
-    cy.get('[data-cy=create-class-button]').should('be.disabled');
-    cy.get('[data-cy=create-property-button]').should('be.disabled');
+    cy.get('[data-cy=create-class-button]').should('not.exist');
+    cy.get('[data-cy=create-property-button]').should('not.exist');
 
     const classCard = cy.get('[data-cy=class-card] mat-card-header').first();
     classCard.should('be.visible');
