@@ -28,8 +28,8 @@ import {
   UsersTabComponent,
 } from '@dasch-swiss/vre/pages/system/system';
 import { ProjectOverviewComponent, UserComponent } from '@dasch-swiss/vre/pages/user-settings/user';
+import { CreateResourcePageComponent } from '@dasch-swiss/vre/resource-editor/resource-creator';
 import { ResourcePageComponent, SingleResourcePageComponent } from '@dasch-swiss/vre/resource-editor/resource-editor';
-import { CreateResourcePageComponent } from '@dasch-swiss/vre/resource-editor/resource-properties';
 import { StatusComponent } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { HelpPageComponent } from '@dasch-swiss/vre/shared/app-help-page';
 import { AuthGuard } from './main/guard/auth.guard';

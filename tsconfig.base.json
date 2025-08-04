@@ -79,6 +79,7 @@
         "libs/vre/resource-editor/properties-display/src/index.ts"
       ],
       "@dasch-swiss/vre/resource-editor/representations": ["libs/vre/resource-editor/representations/src/index.ts"],
+      "@dasch-swiss/vre/resource-editor/resource-creator": ["libs/vre/resource-editor/resource-creator/src/index.ts"],
       "@dasch-swiss/vre/resource-editor/resource-editor": ["libs/vre/resource-editor/resource-editor/src/index.ts"],
       "@dasch-swiss/vre/resource-editor/resource-properties": [
         "libs/vre/resource-editor/resource-properties/src/index.ts"
@@ -94,7 +95,8 @@
       "@dasch-swiss/vre/ui/progress-indicator": ["libs/vre/ui/progress-indicator/src/index.ts"],
       "@dasch-swiss/vre/ui/string-literal": ["libs/vre/ui/string-literal/src/index.ts"],
       "@dasch-swiss/vre/ui/ui": ["libs/vre/ui/ui/src/index.ts"],
-      "@dsp-app/*": ["apps/dsp-app/*"]
+      "@dsp-app/*": ["apps/dsp-app/*"],
+      "template-switcher": ["libs/vre/resource-editor/template-switcher/src/index.ts"]
     },
     "skipLibCheck": true
   },

@@ -55,8 +55,8 @@ import { PropertyValueService } from './property-value.service';
   styleUrls: ['./property-value-action-bubble.component.scss'],
 })
 export class PropertyValueActionBubbleComponent implements OnInit {
-  @Input() showDelete!: boolean;
-  @Input() date!: string;
+  @Input({ required: true }) showDelete!: boolean;
+  @Input({ required: true }) date!: string;
   @Output() editAction = new EventEmitter();
   @Output() deleteAction = new EventEmitter();
 
@@ -71,6 +71,15 @@ export class PropertyValueActionBubbleComponent implements OnInit {
     this.infoTooltip$ = this._getInfoToolTip();
   }
 
+  userHasPermission(permissionType: 'edit' | 'delete'): boolean {
+    if (this._resourceFetcherService.resourceVersion) {
+      return false;
+    }
+
+    const value = this._propertyValueService.editModeData.values[0];
+    return permissionType === 'edit' ? ResourceUtil.userCanEdit(value) : ResourceUtil.userCanDelete(value);
+  }
+
   private _getInfoToolTip() {
     return this._resourceFetcherService.resource$.pipe(
       map(resource => {
@@ -78,18 +87,5 @@ export class PropertyValueActionBubbleComponent implements OnInit {
         return `Creation date: ${this.date}. Value creator: ${creator}`;
       })
     );
-  }
-
-  userHasPermission(permissionType: 'edit' | 'delete'): boolean {
-    if (this._resourceFetcherService.resourceVersion) {
-      return false;
-    }
-
-    if (!this._propertyValueService.editModeData || this._propertyValueService.editModeData.values.length === 0) {
-      return false;
-    }
-
-    const value = this._propertyValueService.editModeData.values[0];
-    return permissionType === 'edit' ? ResourceUtil.userCanEdit(value) : ResourceUtil.userCanDelete(value);
   }
 }

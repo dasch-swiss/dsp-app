@@ -93,8 +93,7 @@ describe('Check project admin existing resource functionality', () => {
     cy.get('[data-cy=resource-label]').find('[data-cy=common-input-text]').should('be.visible').type(newLabel);
 
     const newTitle = faker.lorem.word();
-    cy.get('[data-cy=Titel]').find('[data-cy=common-input-text]').type(newTitle);
-    cy.get('[data-cy=Titel]').find('[data-cy=comment-textarea]').type(faker.lorem.word());
+    cy.get('[data-cy=creator-row-Titel]').find('[data-cy=common-input-text]').type(newTitle);
     cy.get('[data-cy="submit-button"]').click();
     cy.wait('@resourceRequest').its('response.statusCode').should('eq', 200);
     cy.get('@resourceRequest.all').should('have.length', 1);
@@ -102,7 +101,7 @@ describe('Check project admin existing resource functionality', () => {
     cy.get('[data-cy=resource-header-label]').contains(newLabel);
     cy.get('.representation-container').should('exist');
     cy.get('app-still-image').should('be.visible');
-    cy.get('app-base-switch').contains(newTitle);
+    cy.get('[data-cy=row-Titel]').contains(newTitle);
 
     cy.intercept('POST', '**/resources/delete').as('resourceDeleteRequest');
     cy.get('[data-cy=resource-toolbar-more-button]').click();

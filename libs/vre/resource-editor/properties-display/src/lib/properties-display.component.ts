@@ -11,7 +11,11 @@ import { map } from 'rxjs';
   template: `
     <div style="display: flex; flex-direction: row-reverse; align-items: center; background: #EAEFF3">
       <div style="display: flex; flex: 0 0 auto">
-        <app-properties-toolbar [showToggleProperties]="true" [showOnlyIcons]="displayLabel" style="flex-shrink: 0" />
+        <app-properties-toolbar
+          [showToggleProperties]="true"
+          [showOnlyIcons]="displayLabel"
+          [numberOfComments]="numberOfComments"
+          style="flex-shrink: 0" />
         <app-annotation-toolbar *ngIf="displayLabel" [resource]="resource.res" [parentResourceId]="parentResourceId" />
       </div>
 
@@ -47,11 +51,12 @@ import { map } from 'rxjs';
         [tooltip]="prop.propDef.comment"
         [prop]="prop"
         [singleRow]="false"
+        [attr.data-cy]="'row-' + prop.propDef.label"
         [label]="
           prop.propDef.label +
           (prop.guiDef.cardinality === cardinality._1 || prop.guiDef.cardinality === cardinality._1_n ? '*' : '')
         ">
-        <app-existing-property-value [prop]="prop" [resource]="resource.res" />
+        <app-property-values-with-footnotes [prop]="prop" [resource]="resource.res" />
       </app-property-row>
     </ng-container>
 
@@ -92,12 +97,22 @@ export class PropertiesDisplayComponent implements OnChanges {
 
   editableProperties: PropertyInfoValues[] = [];
 
+  numberOfComments!: number;
+
   constructor(private _store: Store) {}
 
   ngOnChanges() {
     this.editableProperties = this.resource.resProps.filter(
       prop => (prop.propDef as ResourcePropertyDefinition).isEditable
     );
+
+    this.numberOfComments = this.resource.resProps.reduce((acc, prop) => {
+      const valuesWithComments = prop.values.reduce(
+        (_acc, value) => _acc + (value.valueHasComment === undefined ? 0 : 1),
+        0
+      );
+      return acc + valuesWithComments;
+    }, 0);
   }
 
   trackByPropertyInfoFn = (index: number, item: PropertyInfoValues) => `${index}-${item.propDef.id}`;

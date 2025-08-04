@@ -1,73 +1,58 @@
-import { Component, Input, OnInit, TemplateRef } from '@angular/core';
-import { AbstractControl, FormBuilder } from '@angular/forms';
-import { Cardinality } from '@dasch-swiss/dsp-js';
-import { ProjectsSelectors } from '@dasch-swiss/vre/core/state';
-import { Select, Store } from '@ngxs/store';
-import { Observable } from 'rxjs';
+import { ChangeDetectionStrategy, Component, Input, OnChanges } from '@angular/core';
+import { Cardinality, ReadResource, ReadValue } from '@dasch-swiss/dsp-js';
+import { ResourceUtil } from '@dasch-swiss/vre/resource-editor/representations';
+import { PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
+import { JsLibPotentialError } from './JsLibPotentialError';
 import { PropertyValueService } from './property-value.service';
-import { propertiesTypeMapping } from './resource-payloads-mapping';
 
 @Component({
   selector: 'app-property-values',
-  styles: [
-    `
-      @use '../../../../../../apps/dsp-app/src/styles/config' as *;
-      .add-icon {
-        font-size: 18px;
-        width: 18px;
-        height: 18px;
-      }
-    `,
-  ],
-  template: ` <app-property-value
-      *ngFor="let group of propertyValueService.formArray.controls; let index = index"
-      [itemTpl]="itemTpl"
+  template: `
+    <app-property-value
+      *ngFor="let group of propertyValueService.editModeData.values; let index = index"
       [index]="index"
       style="width: 100%" />
 
     <button
       mat-icon-button
-      (click)="addItem()"
+      (click)="currentlyAdding = true"
       data-cy="add-property-value-button"
-      *ngIf="
-        (isCurrentProjectAdminSysAdminOrMember$ | async) &&
-        (!propertyValueService.currentlyAdding || propertyValueService.keepEditMode) &&
-        (propertyValueService.formArray.controls.length === 0 ||
-          [Cardinality._0_n, Cardinality._1_n].includes(propertyValueService.cardinality)) &&
-        propertyValueService.propertyDefinition.isEditable
-      ">
+      *ngIf="userCanAdd && !currentlyAdding && (editModeData.values.length === 0 || matchesCardinality)">
       <mat-icon class="add-icon">add_box</mat-icon>
-    </button>`,
+    </button>
+
+    <app-property-value-add *ngIf="currentlyAdding" (stopAdding)="currentlyAdding = false" />
+  `,
+  providers: [PropertyValueService],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PropertyValuesComponent implements OnInit {
-  @Input() itemTpl!: TemplateRef<any>;
+export class PropertyValuesComponent implements OnChanges {
+  @Input({ required: true }) editModeData!: { resource: ReadResource; values: ReadValue[] };
+  @Input({ required: true }) myProperty!: PropertyInfoValues;
 
-  isCurrentProjectAdminSysAdminOrMember$ = this._store.select(ProjectsSelectors.isCurrentProjectAdminSysAdminOrMember);
-
-  protected readonly Cardinality = Cardinality;
-
-  constructor(
-    private _fb: FormBuilder,
-    public propertyValueService: PropertyValueService,
-    private _store: Store
-  ) {}
-
-  ngOnInit() {
-    if (!this.propertyValueService.formArray) {
-      throw new Error('The form array should not be empty.');
-    }
+  get userCanAdd() {
+    return ResourceUtil.userCanEdit(this.editModeData.resource);
   }
 
-  addItem() {
-    this.propertyValueService.formArray.push(
-      this._fb.group({
-        item: propertiesTypeMapping
-          .get(this.propertyValueService.propertyDefinition.objectType!)!
-          .control() as AbstractControl,
-        comment: this._fb.control(''),
-      })
-    );
-    this.propertyValueService.toggleOpenedValue(this.propertyValueService.formArray.length - 1);
-    this.propertyValueService.currentlyAdding = true;
+  get matchesCardinality() {
+    return [Cardinality._0_n, Cardinality._1_n].includes(this.propertyValueService.cardinality);
+  }
+
+  get propertyDefinition() {
+    return JsLibPotentialError.setAs(this.myProperty.propDef);
+  }
+
+  currentlyAdding = false;
+
+  constructor(public propertyValueService: PropertyValueService) {}
+
+  ngOnChanges() {
+    this._setupData();
+  }
+
+  private _setupData() {
+    this.propertyValueService.editModeData = this.editModeData;
+    this.propertyValueService.propertyDefinition = this.propertyDefinition;
+    this.propertyValueService.cardinality = this.myProperty.guiDef.cardinality;
   }
 }

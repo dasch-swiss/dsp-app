@@ -14,15 +14,15 @@ import { timeStringToSeconds } from './time-string-to-seconds';
   ],
 })
 export class TimeFormatDirective implements ControlValueAccessor {
-  private onChange: (value: number) => void;
-  private onTouched: () => void;
+  private onChange!: (value: number | null) => void;
+  private onTouched!: () => void;
 
   constructor(private el: ElementRef) {}
 
   @HostListener('input', ['$event.target.value'])
   onInput(value: string): void {
     if (this.onChange) {
-      this.onChange(timeStringToSeconds(value));
+      this.onChange(value === '' ? null : timeStringToSeconds(value));
     }
   }
 
@@ -33,12 +33,12 @@ export class TimeFormatDirective implements ControlValueAccessor {
     }
   }
 
-  writeValue(value: number): void {
-    const formattedValue = secondsToTimeString(value);
+  writeValue(value: number | null): void {
+    const formattedValue = value ? secondsToTimeString(value) : '';
     this.el.nativeElement.value = formattedValue;
   }
 
-  registerOnChange(fn: (value: number) => void): void {
+  registerOnChange(fn: (value: number | null) => void): void {
     this.onChange = fn;
   }
 

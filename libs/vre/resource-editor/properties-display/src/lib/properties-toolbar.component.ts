@@ -4,18 +4,20 @@ import { PropertiesDisplayService } from '@dasch-swiss/vre/resource-editor/resou
 @Component({
   selector: 'app-properties-toolbar',
   template: `
-    <button
-      mat-button
-      *ngIf="!showOnlyIcons; else commentsIconTpl"
-      color="primary"
-      class="toggle-props"
-      data-cy="show-all-comments"
-      [matTooltip]="((showAllComments$ | async) ? 'Hide' : 'Show all') + ' comments'"
-      matTooltipPosition="above"
-      (click)="toggleShowAllComments()">
-      <mat-icon>{{ (showAllComments$ | async) ? 'comments_disabled' : 'comment' }}</mat-icon>
-      {{ (showAllComments$ | async) ? 'Hide' : 'Show all' }} comments
-    </button>
+    <ng-container *ngIf="!showOnlyIcons; else commentsIconTpl">
+      <button
+        *ngIf="numberOfComments > 0"
+        mat-button
+        color="primary"
+        class="toggle-props"
+        data-cy="show-all-comments"
+        [matTooltip]="((showAllComments$ | async) ? 'Hide' : 'Show all') + ' comments'"
+        matTooltipPosition="above"
+        (click)="toggleShowAllComments()">
+        <mat-icon>{{ (showAllComments$ | async) ? 'comments_disabled' : 'comment' }}</mat-icon>
+        {{ (showAllComments$ | async) ? 'Hide' : 'Show all' }} comments
+      </button>
+    </ng-container>
 
     <ng-container *ngIf="showToggleProperties">
       <button
@@ -38,6 +40,7 @@ import { PropertiesDisplayService } from '@dasch-swiss/vre/resource-editor/resou
       <button
         style="color: rgb(51, 103, 144)"
         mat-icon-button
+        *ngIf="numberOfComments > 0"
         [matTooltip]="((showAllComments$ | async) ? 'Hide' : 'Show all') + ' comments'"
         matTooltipPosition="above"
         (click)="toggleShowAllComments()">
@@ -61,6 +64,7 @@ import { PropertiesDisplayService } from '@dasch-swiss/vre/resource-editor/resou
 })
 export class PropertiesToolbarComponent {
   @Input({ required: true }) showToggleProperties!: boolean;
+  @Input({ required: true }) numberOfComments!: number;
   @Input() showOnlyIcons = false;
   showAllComments$ = this.propertiesDisplayService.showComments$;
 

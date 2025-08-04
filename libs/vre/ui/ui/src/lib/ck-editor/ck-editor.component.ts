@@ -1,27 +1,45 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import * as Editor from 'ckeditor5-custom-build';
+import { startWith } from 'rxjs/operators';
 import { ckEditor } from './ck-editor';
 import { unescapeHtml } from './unescape-html';
 
 @Component({
-  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-ck-editor',
-  template: ` <ckeditor [formControl]="footnoteControl" [config]="ckEditor.config" [editor]="editor" />
+  template: ` <ckeditor
+      [formControl]="footnoteControl"
+      [config]="ckEditor.config"
+      [editor]="editor"
+      style="margin-bottom: 22px; display: block;" />
     <mat-error *ngIf="control.touched && control.errors as errors">{{ errors | humanReadableError }}</mat-error>`,
 })
 export class CkEditorComponent implements OnInit {
-  @Input({ required: true }) control!: FormControl<string>;
-  footnoteControl = new FormControl<string>('');
+  @Input({ required: true }) control!: FormControl<string | null>;
+  footnoteControl = new FormControl('');
 
   readonly editor = Editor;
   protected readonly ckEditor = ckEditor;
 
   ngOnInit() {
-    this.footnoteControl.setValue(this.control.value ? this._parseToFootnote(this.control.value) : null);
+    let updating = false;
+
+    this.control.valueChanges.pipe(startWith(this.control.value)).subscribe(change => {
+      if (updating) {
+        return;
+      }
+      updating = true;
+      this.footnoteControl.patchValue(change === null ? null : this._parseToFootnote(change));
+      updating = false;
+    });
 
     this.footnoteControl.valueChanges.subscribe(value => {
-      this.control.setValue(value ? this._parseFromFootnote(value) : '');
+      if (updating) {
+        return;
+      }
+      updating = true;
+      this.control.patchValue(value ? this._parseFromFootnote(value) : '');
+      updating = false;
     });
   }
 

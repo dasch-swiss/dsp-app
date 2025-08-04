@@ -3,6 +3,7 @@ import { FormControl } from '@angular/forms';
 import { ValidatorError } from '../validator-error.interface';
 import { TimeInputErrorStateMatcher } from './time-input-error-state-matcher';
 
+// TODO this changes segment-dialog
 @Component({
   selector: 'app-time-input',
   template: `
@@ -22,9 +23,8 @@ import { TimeInputErrorStateMatcher } from './time-input-error-state-matcher';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TimeInputComponent implements OnInit {
-  @Input({ required: true }) control!: FormControl;
+  @Input({ required: true }) control!: FormControl<number | null>;
   @Input({ required: true }) label!: string;
-  @Input() validatorErrors: ValidatorError[] | null = null;
 
   possibleErrors!: ValidatorError[];
   readonly errorStateMatcher = new TimeInputErrorStateMatcher();
@@ -35,7 +35,6 @@ export class TimeInputComponent implements OnInit {
         errorKey: 'pattern',
         message: 'Please enter a valid time in format hh:mm:ss',
       },
-      ...(this.validatorErrors ?? []),
     ];
   }
 }

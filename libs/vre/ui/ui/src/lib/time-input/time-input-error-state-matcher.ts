@@ -3,7 +3,7 @@ import { ErrorStateMatcher } from '@angular/material/core';
 
 export class TimeInputErrorStateMatcher implements ErrorStateMatcher {
   isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
-    if (control && Number.isNaN(control.value)) {
+    if (control && control.dirty && control.value === null) {
       control?.setErrors({ pattern: true });
       return true;
     }
