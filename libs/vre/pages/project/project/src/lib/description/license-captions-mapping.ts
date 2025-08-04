@@ -23,5 +23,10 @@ export const LicenseCaptionsMapping = new Map<string, string>([
   ],
   ['0854', 'Authorship: AI-Generated.'],
   ['0857', 'Authorship: Eva Spinazzè; Licence: CC BY NC 4.0'],
+  [
+    '0860',
+    `
+  Staatsbibliothek Bamberg, Msc.Bibl.95, fol. 9r, Detail. Public Domain Mark 1.0 Universal Deed (https://creativecommons.org/publicdomain/mark/1.0/)`,
+  ],
   ['0862', 'Author: Christian von Zimmermann.'],
 ]);
