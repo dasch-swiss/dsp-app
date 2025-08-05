@@ -13,7 +13,7 @@ import { OntologyEditService } from './services/ontology-edit.service';
   template: `
     <div class="ontology-editor" *ngIf="!disableContent">
       <div class="overlay-blocker" *ngIf="isTransacting$ | async">
-        <app-progress-indicator class="floating-center" />
+        <app-progress-indicator [size]="'large'" class="floating-center" />
       </div>
 
       <mat-sidenav-container class="ontology-editor-container">

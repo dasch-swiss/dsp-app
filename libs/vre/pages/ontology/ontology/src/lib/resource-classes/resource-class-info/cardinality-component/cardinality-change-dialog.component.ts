@@ -22,7 +22,7 @@ export interface CardinalityInfo {
       " />
     <mat-dialog-content>
       <div class="cando-headline">
-        <app-progress-indicator class="floating-center" *ngIf="canSetCardinality === undefined" [status]="0" />
+        <app-progress-indicator class="floating-center" *ngIf="canSetCardinality === undefined" />
         <div *ngIf="canSetCardinality === false" class="mat-headline-6">Changing the cardinality is not possible.</div>
       </div>
       <div *ngIf="canSetCardinality === false">

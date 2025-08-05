@@ -1,6 +1,6 @@
 <div *ngIf="!disableContent">
   <div class="overlay-blocker" *ngIf="(isListsLoading$ | async)">
-    <app-progress-indicator class="floating-center" />
+    <app-progress-indicator [size]='"large"' class="floating-center" />
   </div>
   <ng-container *ngIf="(isListsLoading$ | async) === false && (rootListNodeInfo$ | async) as list">
     <mat-toolbar class="sticky-header">
