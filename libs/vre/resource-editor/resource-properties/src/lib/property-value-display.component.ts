@@ -36,7 +36,7 @@ import { PropertyValueService } from './property-value.service';
           <ng-container
             *ngTemplateOutlet="
               template;
-              context: { item: propertyValueService.editModeData.values[index] }
+              context: { item: propertyValueService.editModeData.values[index], index: index }
             "></ng-container>
         </ng-container>
       </div>

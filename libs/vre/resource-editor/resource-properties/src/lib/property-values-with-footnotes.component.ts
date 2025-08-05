@@ -1,7 +1,7 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { ReadResource } from '@dasch-swiss/dsp-js';
 import { PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
-import { FootnoteService } from './footnote.service';
+import { FootnoteService } from './footnotes/footnote.service';
 
 @Component({
   selector: 'app-property-values-with-footnotes',

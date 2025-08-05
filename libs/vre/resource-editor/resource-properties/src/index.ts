@@ -16,11 +16,11 @@ export * from './lib/property-values.component';
 export * from './lib/resource-payloads-mapping';
 export * from './lib/sortByKeys';
 export * from './resource-properties.components';
-export * from './lib/footnote.service';
-export * from './lib/footnotes.component';
-export * from './lib/footnote-tooltip.component';
-export * from './lib/footnote.directive';
-export * from './lib/footnote-parser.pipe';
+export * from './lib/footnotes/footnote.service';
+export * from './lib/footnotes/footnotes.component';
+export * from './lib/footnotes/footnote-tooltip.component';
+export * from './lib/footnotes/footnote.directive';
+export * from './lib/footnotes/footnote-parser.pipe';
 export * from './lib/property-value-display-comment.component';
 
 export * from './lib/property-value-basic-comment.component';

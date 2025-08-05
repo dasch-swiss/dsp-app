@@ -6,11 +6,13 @@ import { FootnoteService } from './footnote.service';
   selector: 'app-footnotes',
   template: `<h5>{{ 'resourceEditor.resourceProperties.footnotes' | translate }}</h5>
     <div
-      *ngFor="let footnote of footnoteService.footnotes; let index = index; trackBy: trackByIndex"
+      *ngFor="let footnote of footnoteService.footnotes; let index = index"
       class="footnote"
-      [attr.data-uuid]="footnote.uuid"
+      [attr.data-uuid]="footnoteService.uuid + '-' + footnote.indexValue + '-' + footnote.indexFootnote"
       data-cy="footnote">
-      <a (click)="goToFootnote(footnote.uuid)">{{ index + 1 }}.</a>
+      <a (click)="goToFootnote(footnoteService.uuid + '-' + footnote.indexValue + '-' + footnote.indexFootnote)"
+        >{{ index + 1 }}.</a
+      >
       <span class="footnote-value" [innerHTML]="footnote.content | internalLinkReplacer | addTargetBlank"></span>
     </div>`,
   styles: [
@@ -38,18 +40,11 @@ export class FootnotesComponent {
   constructor(public readonly footnoteService: FootnoteService) {}
 
   goToFootnote(uuid: string) {
-    const element = document.getElementById(uuid);
-    if (!element) {
+    const targetFootnote = document.querySelector(`footnote[data-origin-uuid="${uuid}"]`);
+
+    if (!targetFootnote) {
       throw new AppError(`Element with uid ${uuid} is not found on page.`);
     }
-
-    const yOffset = -80;
-    const y = element.getBoundingClientRect().top + window.scrollY + yOffset;
-
-    window.scrollTo({ top: y, behavior: 'smooth' });
-  }
-
-  trackByIndex(index: number) {
-    return index;
+    targetFootnote.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 }

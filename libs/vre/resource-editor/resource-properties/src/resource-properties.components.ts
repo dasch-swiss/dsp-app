@@ -1,10 +1,10 @@
 import { DeleteValueDialogComponent } from './lib/delete-value-dialog.component';
 import { EditResourceLabelDialogComponent } from './lib/edit-resource-label-dialog.component';
 import { EraseResourceDialogComponent } from './lib/erase-resource-dialog.component';
-import { FootnoteParserPipe } from './lib/footnote-parser.pipe';
-import { FootnoteTooltipComponent } from './lib/footnote-tooltip.component';
-import { FootnoteDirective } from './lib/footnote.directive';
-import { FootnotesComponent } from './lib/footnotes.component';
+import { FootnoteParserPipe } from './lib/footnotes/footnote-parser.pipe';
+import { FootnoteTooltipComponent } from './lib/footnotes/footnote-tooltip.component';
+import { FootnoteDirective } from './lib/footnotes/footnote.directive';
+import { FootnotesComponent } from './lib/footnotes/footnotes.component';
 import { PropertyRowComponent } from './lib/property-row.component';
 import { PropertyValueActionBubbleComponent } from './lib/property-value-action-bubble.component';
 import { PropertyValueAddComponent } from './lib/property-value-add.component';

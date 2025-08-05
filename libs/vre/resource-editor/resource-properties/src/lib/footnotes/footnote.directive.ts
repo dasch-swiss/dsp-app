@@ -42,16 +42,17 @@ export class FootnoteDirective {
     const targetElement = event.target as HTMLElement;
 
     if (targetElement.nodeName.toLowerCase() === 'footnote') {
-      const uuid = targetElement.getAttribute('id');
+      const uuid = targetElement.getAttribute('data-origin-uuid');
 
       if (uuid) {
         // Find the footnote with the same UUID and scroll to it
         const targetFootnote = document.querySelector(`.footnote[data-uuid="${uuid}"]`);
 
-        if (targetFootnote) {
-          // Scroll to the target footnote element
-          targetFootnote.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        if (!targetFootnote) {
+          throw new AppError('Footnote target not found');
         }
+
+        targetFootnote.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
     }
   }
