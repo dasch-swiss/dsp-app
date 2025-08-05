@@ -14,7 +14,7 @@ import { PropertiesDisplayService } from '@dasch-swiss/vre/resource-editor/resou
         [matTooltip]="((showAllComments$ | async) ? 'Hide' : 'Show all') + ' comments'"
         matTooltipPosition="above"
         (click)="toggleShowAllComments()">
-        <mat-icon>{{ (showAllComments$ | async) ? 'comments_disabled' : 'comment' }}</mat-icon>
+        <mat-icon>comment</mat-icon>
         {{ (showAllComments$ | async) ? 'Hide' : 'Show all' }} comments
       </button>
     </ng-container>
@@ -31,7 +31,7 @@ import { PropertiesDisplayService } from '@dasch-swiss/vre/resource-editor/resou
         "
         matTooltipPosition="above"
         (click)="toggleShowAllProps()">
-        <mat-icon>{{ (propertiesDisplayService.showAllProperties$ | async) ? 'unfold_less' : 'unfold_more' }}</mat-icon>
+        <mat-icon>unfold_more</mat-icon>
         {{ (propertiesDisplayService.showAllProperties$ | async) ? 'Hide empty' : 'Show all' }} properties
       </button>
     </ng-container>

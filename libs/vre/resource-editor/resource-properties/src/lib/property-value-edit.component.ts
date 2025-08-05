@@ -31,17 +31,30 @@ import { propertiesTypeMapping } from './resource-payloads-mapping';
           <ng-container *ngTemplateOutlet="template; context: { item: group.controls.item }"></ng-container>
         </ng-container>
 
-        <app-property-value-basic-comment [control]="group.controls.comment" />
+        <app-property-value-basic-comment
+          *ngIf="group.controls.comment.value !== null"
+          [control]="group.controls.comment" />
       </div>
 
       <div style="display: flex">
-        <button (click)="afterUndo.emit()" mat-icon-button color="primary">
+        <button (click)="afterUndo.emit()" mat-icon-button color="primary" [matTooltip]="'undo'">
           <mat-icon>undo</mat-icon>
+        </button>
+
+        <button
+          mat-icon-button
+          type="button"
+          color="primary"
+          (click)="toggleCommentValue()"
+          data-cy="toggle-comment-button"
+          [matTooltip]="commentIsNotNull ? 'remove comment' : 'add comment'">
+          <mat-icon>{{ commentIsNotNull ? 'speaker_notes_off' : 'add_comment' }}</mat-icon>
         </button>
 
         <button
           *ngIf="group.controls.item.value !== null"
           (click)="onSave()"
+          [matTooltip]="'save'"
           mat-icon-button
           data-cy="save-button"
           color="primary">
@@ -66,6 +79,10 @@ export class PropertyValueEditComponent implements OnInit, OnDestroy {
   private _subscription!: Subscription;
 
   group!: FormValueGroup;
+
+  get commentIsNotNull() {
+    return this.group.controls.comment.value !== null;
+  }
 
   constructor(
     public propertyValueService: PropertyValueService,
@@ -96,6 +113,10 @@ export class PropertyValueEditComponent implements OnInit, OnDestroy {
   onSave() {
     if (this.group.invalid) return;
     this.afterEdit.emit(this.group);
+  }
+
+  toggleCommentValue() {
+    this.group.controls.comment.setValue(this.commentIsNotNull ? null : '');
   }
 
   private _watchAndSetupCommentStatus() {

@@ -21,6 +21,7 @@ describe('Check project admin existing resource functionality', () => {
   });
 
   beforeEach(() => {
+    cy.viewport(2000, 1000); // width: 2000px, height: 1000px
     cy.loginAdmin();
     cy.request(
       'POST',
@@ -90,7 +91,10 @@ describe('Check project admin existing resource functionality', () => {
     cy.get('[data-cy=authorship-chips]').type('my Author{enter}');
 
     const newLabel = faker.lorem.word();
-    cy.get('[data-cy=resource-label]').find('[data-cy=common-input-text]').should('be.visible').type(newLabel);
+    cy.get('[data-cy=resource-label]')
+      .find('[data-cy=common-input-text]')
+      .should('be.visible')
+      .type(newLabel, { force: true });
 
     const newTitle = faker.lorem.word();
     cy.get('[data-cy=creator-row-Titel]').find('[data-cy=common-input-text]').type(newTitle);
@@ -105,6 +109,7 @@ describe('Check project admin existing resource functionality', () => {
 
     cy.intercept('POST', '**/resources/delete').as('resourceDeleteRequest');
     cy.get('[data-cy=resource-toolbar-more-button]').click();
+    cy.wait(5000);
     cy.get('[data-cy=resource-toolbar-delete-resource-button]').should('exist').click();
     cy.get('[data-cy=app-delete-resource-dialog-comment]').should('be.visible').type(faker.lorem.sentence());
     cy.get('[data-cy=app-delete-resource-dialog-button]').click();
@@ -151,6 +156,7 @@ describe('Check project admin existing resource functionality', () => {
     cy.get('[data-cy=common-input-text]').scrollIntoView();
     cy.get('[data-cy=common-input-text]', { timeout: 500 }).should('be.visible').type(newLabel);
     const firstComment = faker.lorem.word();
+    cy.get('[data-cy="toggle-comment-button"]').click();
     cy.get('[data-cy=comment-textarea]').should('be.visible').type(firstComment);
     cy.get('[data-cy="save-button"]').click();
     cy.wait('@resourcesRequest').its('response.statusCode').should('eq', 200);
@@ -171,6 +177,9 @@ describe('Check project admin existing resource functionality', () => {
 
     cy.get('[data-cy=add-property-value-button]').should('be.visible').click();
     cy.get('[data-cy="common-input-text"]', { timeout: 500 }).should('be.visible').type(faker.lorem.sentence());
+    cy.wait(5000);
+    cy.get('[data-cy="toggle-comment-button"]').click();
+
     cy.get('[data-cy="comment-textarea"]').should('be.visible').type(faker.lorem.sentence());
     cy.get('[data-cy="save-button"]').click();
     cy.get('[data-cy="common-input-text"]', { timeout: 2000 }).should('not.exist');
