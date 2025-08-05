@@ -14,7 +14,7 @@ import { JsLibPotentialError } from '@dasch-swiss/vre/resource-editor/resource-p
   template: `
     <ng-template #intEditorTpl let-item="item">
       <mat-form-field style="width: 100%">
-        <input matInput [formControl]="item" type="number" data-cy="int-input" />
+        <input matInput [formControl]="item" type="number" data-cy="int-input" [placeholder]="'e.g. 42'" />
         <mat-error *ngIf="item.errors as errors">
           {{ errors | humanReadableError }}
         </mat-error>
@@ -23,7 +23,7 @@ import { JsLibPotentialError } from '@dasch-swiss/vre/resource-editor/resource-p
 
     <ng-template #decimalEditorTpl let-item="item">
       <mat-form-field style="width: 100%">
-        <input matInput [formControl]="item" type="number" step="0.05" placeholder="e.g. 8.05" />
+        <input matInput [formControl]="item" type="number" step="0.05" placeholder="e.g. 3.14" />
       </mat-form-field>
       <mat-error *ngIf="item.touched && item.errors as errors">
         {{ errors | humanReadableError }}
@@ -52,14 +52,14 @@ import { JsLibPotentialError } from '@dasch-swiss/vre/resource-editor/resource-p
         [withLabel]="false"
         style="width: 100%"
         data-cy="text-input"
-        label="Text value" />
+        [label]="'e.g. Lorem ipsum ...'" />
     </ng-template>
 
     <ng-template #textHtmlEditorTpl>This value cannot be edited.</ng-template>
 
     <ng-template #paragraphEditorTpl let-item="item">
       <mat-form-field style="width: 100%">
-        <textarea matInput [formControl]="item" rows="9" placeholder="Text value"></textarea>
+        <textarea matInput [formControl]="item" rows="9" [placeholder]="'e.g. Lorem ipsum ...'"></textarea>
       </mat-form-field>
       <mat-error *ngIf="item.touched && item.errors as errors">
         {{ errors | humanReadableError }}
@@ -95,7 +95,7 @@ import { JsLibPotentialError } from '@dasch-swiss/vre/resource-editor/resource-p
       <app-common-input
         [control]="item"
         [withLabel]="false"
-        label="External link"
+        [label]="'e.g. https://en.wikipedia.org'"
         [validatorErrors]="[{ errorKey: 'pattern', message: 'This is not a valid link.' }]" />
     </ng-template>
   `,

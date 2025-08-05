@@ -43,7 +43,7 @@ import { CreateResourceFormInterface } from './create-resource-form.interface';
           [control]="form.controls.label"
           [withLabel]="false"
           data-cy="label-input"
-          label="Text value" />
+          [label]="'e.g. Lorem ipsum ...'" />
       </app-create-resource-form-row>
       <app-create-resource-form-properties
         *ngIf="properties"

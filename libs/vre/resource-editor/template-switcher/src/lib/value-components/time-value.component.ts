@@ -15,7 +15,7 @@ import { DateTime } from '@dasch-swiss/vre/resource-editor/resource-properties';
             [ngModel]="control.value?.date"
             (dateChange)="editDate($event)"
             aria-label="Date"
-            placeholder="Date"
+            placeholder="Click to select a date"
             readonly />
           <mat-datepicker-toggle matSuffix [for]="picker" />
           <mat-datepicker #picker />
