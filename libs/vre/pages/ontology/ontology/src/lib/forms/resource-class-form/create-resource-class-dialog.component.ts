@@ -3,7 +3,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { StringLiteralV2 } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { DefaultClass } from '@dasch-swiss/vre/shared/app-helper-services';
 import { OntologyEditService } from '../../services/ontology-edit.service';
-import { ResourceClassForm } from './resource-class-form.type';
+import { ResourceClassForm, ResourceClassFormData } from './resource-class-form.type';
 
 @Component({
   selector: 'app-create-resource-class-dialog',
@@ -31,7 +31,7 @@ import { ResourceClassForm } from './resource-class-form.type';
 export class CreateResourceClassDialogComponent {
   loading = false;
   form!: ResourceClassForm;
-  formData = {
+  formData: ResourceClassFormData = {
     name: '',
     labels: [],
     comments: [],

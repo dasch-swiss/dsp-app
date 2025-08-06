@@ -75,18 +75,27 @@ export class OntologyFormComponent implements OnInit, OnDestroy {
 
   private _buildForm(): void {
     this.ontologyForm = this._fb.group({
-      name: [
+      name: this._fb.control(
         { value: this.ontologyName, disabled: !!this.data?.id },
-        [
-          Validators.required,
-          Validators.minLength(3),
-          Validators.maxLength(16),
-          Validators.pattern(CustomRegex.ID_NAME_REGEX),
-          existingNamesValidator(this.blackListedNames),
-        ],
-      ],
-      label: [this.data?.label || '', [Validators.required, Validators.minLength(3)]],
-      comment: [this.data?.comment || '', Validators.required],
+        {
+          nonNullable: true,
+          validators: [
+            Validators.required,
+            Validators.minLength(3),
+            Validators.maxLength(16),
+            Validators.pattern(CustomRegex.ID_NAME_REGEX),
+            existingNamesValidator(this.blackListedNames),
+          ],
+        }
+      ),
+      label: this._fb.control(this.data?.label || '', {
+        nonNullable: true,
+        validators: [Validators.required, Validators.minLength(3)],
+      }),
+      comment: this._fb.control(this.data?.comment || '', {
+        nonNullable: true,
+        validators: [Validators.required],
+      }),
     });
   }
 

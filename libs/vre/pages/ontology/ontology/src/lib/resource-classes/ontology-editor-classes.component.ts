@@ -1,12 +1,12 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { ClassDefinition } from '@dasch-swiss/dsp-js';
+import { ResourceClassInfo } from '../ontology.types';
 import { OntologyEditService } from '../services/ontology-edit.service';
 
 @Component({
   selector: 'app-ontology-editor-classes',
   template: `<div class="ontology-editor-grid classes drag-drop-stop">
     <app-resource-class-info
-      *ngFor="let resClass of ontoClasses$ | async; trackBy: trackByClassDefinitionFn"
+      *ngFor="let resClass of oes.currentOntologyClasses$ | async; trackBy: trackByClassDefinitionFn"
       [resourceClass]="resClass" />
   </div>`,
   styles: `
@@ -20,9 +20,7 @@ import { OntologyEditService } from '../services/ontology-edit.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OntologyEditorClassesComponent {
-  ontoClasses$ = this._oes.currentOntologyClasses$;
+  trackByClassDefinitionFn = (index: number, item: ResourceClassInfo) => `${index}-${item.id}`;
 
-  trackByClassDefinitionFn = (index: number, item: ClassDefinition) => `${index}-${item.id}`;
-
-  constructor(private _oes: OntologyEditService) {}
+  constructor(public oes: OntologyEditService) {}
 }

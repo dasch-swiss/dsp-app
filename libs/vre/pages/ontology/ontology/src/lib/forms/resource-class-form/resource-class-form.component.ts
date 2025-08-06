@@ -2,9 +2,9 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output
 import { FormBuilder, Validators } from '@angular/forms';
 import { existingNamesAsyncValidator } from '@dasch-swiss/vre/pages/user-settings/user';
 import { atLeastOneStringRequired, CustomRegex } from '@dasch-swiss/vre/shared/app-common';
-import { DEFAULT_MULTILANGUAGE_FORM, MultiLanguages } from '@dasch-swiss/vre/ui/string-literal';
+import { DEFAULT_MULTILANGUAGE_FORM } from '@dasch-swiss/vre/ui/string-literal';
 import { OntologyEditService } from '../../services/ontology-edit.service';
-import { ResourceClassForm } from './resource-class-form.type';
+import { ResourceClassForm, ResourceClassFormData } from './resource-class-form.type';
 
 @Component({
   selector: 'app-resource-class-form',
@@ -38,14 +38,10 @@ import { ResourceClassForm } from './resource-class-form.type';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResourceClassFormComponent implements OnInit {
-  @Input() formData: {
-    name: string;
-    labels: MultiLanguages;
-    comments: MultiLanguages;
-  };
+  @Input({ required: true }) formData!: ResourceClassFormData;
   @Output() afterFormInit = new EventEmitter<ResourceClassForm>();
 
-  form: ResourceClassForm;
+  form!: ResourceClassForm;
 
   readonly labelsValidators = [Validators.maxLength(2000)];
   readonly commentsValidators = [Validators.maxLength(2000)];
@@ -56,15 +52,11 @@ export class ResourceClassFormComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.buildForm();
-    this.afterFormInit.emit(this.form);
-  }
-
-  buildForm() {
     this.form = this._fb.group({
       name: this._fb.control(this.formData.name, {
         validators: [Validators.required, Validators.pattern(CustomRegex.ID_NAME_REGEX)],
         asyncValidators: [existingNamesAsyncValidator(this._oes.currentOntologyEntityNames$, true)],
+        nonNullable: true,
       }),
       labels: DEFAULT_MULTILANGUAGE_FORM(this.formData.labels, this.labelsValidators, [
         atLeastOneStringRequired('value'),
@@ -73,5 +65,7 @@ export class ResourceClassFormComponent implements OnInit {
         atLeastOneStringRequired('value'),
       ]),
     });
+
+    this.afterFormInit.emit(this.form);
   }
 }

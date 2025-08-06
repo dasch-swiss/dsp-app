@@ -1,8 +1,6 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { PropertyDefinition } from '@dasch-swiss/dsp-js';
 import { ProjectsSelectors } from '@dasch-swiss/vre/core/state';
 import { Store } from '@ngxs/store';
-import { Observable } from 'rxjs';
 import { PropertyInfo } from '../ontology.types';
 import { OntologyEditService } from '../services/ontology-edit.service';
 
@@ -13,7 +11,7 @@ import { OntologyEditService } from '../services/ontology-edit.service';
       <mat-list-item
         class="property"
         [class.admin]="(isAdmin$ | async) === true"
-        *ngFor="let prop of properties$ | async; trackBy: trackByPropertyDefinitionFn">
+        *ngFor="let prop of oes.currentOntologyProperties$ | async; trackBy: trackByPropertyDefinitionFn">
         <app-property-info [property]="prop" />
       </mat-list-item>
     </mat-list>
@@ -38,13 +36,12 @@ import { OntologyEditService } from '../services/ontology-edit.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OntologyPropertiesComponent {
-  properties$: Observable<PropertyInfo[]> = this._oes.currentOntologyProperties$;
   isAdmin$ = this._store.select(ProjectsSelectors.isCurrentProjectAdminOrSysAdmin);
 
-  trackByPropertyDefinitionFn = (index: number, item: PropertyDefinition) => `${index}-${item.id}`;
+  trackByPropertyDefinitionFn = (index: number, item: PropertyInfo) => `${index}-${item.propDef.id}`;
 
   constructor(
-    private _oes: OntologyEditService,
+    public oes: OntologyEditService,
     private _store: Store
   ) {}
 }
