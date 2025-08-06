@@ -21,3 +21,4 @@ export * from './lib/compound/compound-viewer.component';
 export * from './lib/resource-info-bar.component';
 export * from './lib/resource-version-warning.component';
 export * from './lib/alert-info.component';
+export * from './lib/resource-edit-more-menu/resource-edit-more-menu.component';

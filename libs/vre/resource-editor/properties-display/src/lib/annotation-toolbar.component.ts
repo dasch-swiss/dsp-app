@@ -1,18 +1,10 @@
-import { Component, Input, ViewContainerRef } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { Component, Input } from '@angular/core';
 import { ReadResource } from '@dasch-swiss/dsp-js';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
-import { ProjectsSelectors } from '@dasch-swiss/vre/core/state';
 import { RegionService, ResourceFetcherService } from '@dasch-swiss/vre/resource-editor/representations';
-import {
-  EditResourceLabelDialogComponent,
-  EraseResourceDialogComponent,
-} from '@dasch-swiss/vre/resource-editor/resource-properties';
 import { ResourceService } from '@dasch-swiss/vre/shared/app-common';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
-import { Store } from '@ngxs/store';
 import { take } from 'rxjs';
-import { DeleteResourceDialogComponent } from './delete-resource-dialog.component';
 
 @Component({
   selector: 'app-annotation-toolbar',
@@ -27,7 +19,6 @@ import { DeleteResourceDialogComponent } from './delete-resource-dialog.componen
         (click)="openRegionInNewTab()">
         <mat-icon>open_in_new</mat-icon>
       </button>
-      <!-- Share resource: copy ark url, add to favorites or open in new tab -->
       <button
         color="primary"
         mat-icon-button
@@ -38,19 +29,14 @@ import { DeleteResourceDialogComponent } from './delete-resource-dialog.componen
         [matMenuTriggerFor]="share">
         <mat-icon>share</mat-icon>
       </button>
-
       <app-permission-info [resource]="resource" />
-      <button
-        data-cy="resource-toolbar-more-button"
-        color="primary"
-        *ngIf="(resourceFetcher.userCanEdit$ | async) || (resourceFetcher.userCanDelete$ | async)"
-        mat-icon-button
-        class="more-menu"
-        matTooltip="More"
-        matTooltipPosition="above"
-        [matMenuTriggerFor]="more">
-        <mat-icon>more_vert</mat-icon>
-      </button>
+      <app-resource-edit-more-menu
+        *ngIf="!!(resourceFetcher.userCanEdit$ | async) || !!(resourceFetcher.userCanDelete$ | async)"
+        [resource]="resource"
+        [showEditLabel]="true"
+        (resourceDeleted)="onResourceDeleted()"
+        (resourceErased)="onResourceDeleted()"
+        (resourceUpdated)="onResourceUpdated()" />
     </span>
 
     <mat-menu #share="matMenu" class="res-share-menu">
@@ -75,39 +61,6 @@ import { DeleteResourceDialogComponent } from './delete-resource-dialog.componen
         Copy internal link to clipboard
       </button>
     </mat-menu>
-
-    <mat-menu #more="matMenu" class="res-more-menu">
-      <button
-        *ngIf="resourceFetcher.userCanEdit$ | async"
-        data-cy="resource-toolbar-edit-resource-button"
-        mat-menu-item
-        matTooltip="Edit the label of this resource"
-        matTooltipPosition="above"
-        (click)="editResourceLabel()">
-        <mat-icon>edit</mat-icon>
-        Edit label
-      </button>
-      <button
-        data-cy="resource-toolbar-delete-resource-button"
-        *ngIf="resourceFetcher.userCanDelete$ | async"
-        mat-menu-item
-        matTooltip="Move resource to trash bin."
-        matTooltipPosition="above"
-        (click)="deleteResource()">
-        <mat-icon>delete</mat-icon>
-        {{ 'resourceEditor.propertiesDisplay.annotationToolbar.delete' | translate }}
-      </button>
-      <button
-        *ngIf="isAdmin$ | async"
-        data-cy="resource-toolbar-erase-resource-button"
-        mat-menu-item
-        matTooltip="Erase resource forever. This cannot be undone."
-        matTooltipPosition="above"
-        (click)="eraseResource()">
-        <mat-icon>delete_forever</mat-icon>
-        Erase resource
-      </button>
-    </mat-menu>
   `,
   styles: [
     `
@@ -125,57 +78,18 @@ export class AnnotationToolbarComponent {
   @Input({ required: true }) resource!: ReadResource;
   @Input({ required: true }) parentResourceId!: string;
 
-  isAdmin$ = this._store.select(ProjectsSelectors.isCurrentProjectAdminOrSysAdmin);
-
   constructor(
     protected notification: NotificationService,
     private _regionService: RegionService,
-    private _dialog: MatDialog,
     private _resourceService: ResourceService,
-    public resourceFetcher: ResourceFetcherService,
-    private _store: Store,
-    private _viewContainerRef: ViewContainerRef
+    public resourceFetcher: ResourceFetcherService
   ) {}
 
-  editResourceLabel() {
-    this._dialog
-      .open<EditResourceLabelDialogComponent, ReadResource, boolean>(EditResourceLabelDialogComponent, {
-        data: this.resource,
-        viewContainerRef: this._viewContainerRef,
-      })
-      .afterClosed()
-      .subscribe(answer => {
-        if (answer) {
-          this.resourceFetcher.reload();
-        }
-      });
+  onResourceUpdated() {
+    this.resourceFetcher.reload();
   }
 
-  deleteResource() {
-    this._dialog
-      .open<DeleteResourceDialogComponent, ReadResource, boolean>(DeleteResourceDialogComponent, {
-        data: this.resource,
-      })
-      .afterClosed()
-      .subscribe(response => {
-        if (response) {
-          this._afterResourceDeleted();
-        }
-      });
-  }
-
-  eraseResource() {
-    this._dialog
-      .open<EraseResourceDialogComponent, ReadResource, boolean>(EraseResourceDialogComponent, { data: this.resource })
-      .afterClosed()
-      .subscribe(response => {
-        if (response) {
-          this._afterResourceDeleted();
-        }
-      });
-  }
-
-  private _afterResourceDeleted() {
+  onResourceDeleted() {
     this._regionService.updateRegions$().pipe(take(1)).subscribe();
   }
 
