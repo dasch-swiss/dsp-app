@@ -13,10 +13,15 @@ import { PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
       (templateFound)="templateFound($event)" />
 
     <app-property-value-creator
-      *ngFor="let control of formArray.controls"
+      *ngFor="let control of formArray.controls; let index = index"
       [myProperty]="myProperty"
-      [formArray]="control"
-      [template]="template" />
+      [formGroup]="control"
+      [template]="template"
+      [canRemoveValue]="
+        (myProperty.guiDef.cardinality === Cardinality._0_n || myProperty.guiDef.cardinality === Cardinality._1_n) &&
+        formArray.length > 1
+      "
+      (removeValue)="removeValue(index)" />
 
     <button
       mat-icon-button
@@ -59,5 +64,9 @@ export class PropertyValuesCreatorComponent {
     });
 
     this.formArray.push(formGroup);
+  }
+
+  removeValue(index: number) {
+    this.formArray.removeAt(index);
   }
 }
