@@ -28,7 +28,7 @@ import { ReadTextValueAsXml } from '@dasch-swiss/dsp-js';
           footnote {
             color: #336790;
             vertical-align: super;
-            font-size: small;
+            font-size: x-small;
             cursor: pointer;
           }
         }
