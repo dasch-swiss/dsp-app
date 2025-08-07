@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { debounceTime, switchMap } from 'rxjs';
+import { debounceTime, switchMap, tap } from 'rxjs';
 import { GeonameService, SearchPlace } from '../geoname.service';
 
 @Component({
@@ -14,6 +14,7 @@ import { GeonameService, SearchPlace } from '../geoname.service';
       aria-label="geoname"
       data-cy="geoname-autocomplete"
       [matAutocomplete]="auto" />
+    <mat-progress-spinner *ngIf="loading" matSuffix mode="indeterminate" diameter="20" style="margin-right: 16px;" />
     <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayPlaceInSearch.bind(this)">
       <mat-option *ngFor="let place of places" [value]="place.id"> {{ place?.displayName }}</mat-option>
     </mat-autocomplete>
@@ -26,6 +27,7 @@ export class GeonameValueComponent implements OnInit {
   @Input({ required: true }) control!: FormControl<string>;
   places: SearchPlace[] = [];
 
+  loading = false;
   constructor(
     private _geonameService: GeonameService,
     private _cdr: ChangeDetectorRef
@@ -47,9 +49,13 @@ export class GeonameValueComponent implements OnInit {
     this.control.valueChanges
       .pipe(
         debounceTime(300),
+        tap(() => {
+          this.loading = true;
+        }),
         switchMap((searchTerm: string) => this._geonameService.searchPlace(searchTerm))
       )
       .subscribe(places => {
+        this.loading = false;
         this.places = places;
         this._cdr.detectChanges();
       });
