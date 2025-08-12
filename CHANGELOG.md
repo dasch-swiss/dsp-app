@@ -1,5 +1,30 @@
 # Changelog
 
+## [11.40.0](https://github.com/dasch-swiss/dsp-das/compare/v11.39.0...v11.40.0) (2025-08-07)
+
+
+### Enhancements
+
+* add cover image for project 085E ([#2467](https://github.com/dasch-swiss/dsp-das/issues/2467)) ([94ca0c8](https://github.com/dasch-swiss/dsp-das/commit/94ca0c8d204109704e77decba7d99f7446983f64))
+* add delete icon to delete a value if cardinality is n ([#2464](https://github.com/dasch-swiss/dsp-das/issues/2464)) ([cbeb2b8](https://github.com/dasch-swiss/dsp-das/commit/cbeb2b8ea9f15f38fbb7cf7fd72aa3ec6fae5e35))
+* add new property placeholders ([#2460](https://github.com/dasch-swiss/dsp-das/issues/2460)) ([5e7af21](https://github.com/dasch-swiss/dsp-das/commit/5e7af21e1b8abd43eaf8b2f5b1bb112168e15e55))
+* add spinner when loading geoname values ([#2465](https://github.com/dasch-swiss/dsp-das/issues/2465)) ([0c707ac](https://github.com/dasch-swiss/dsp-das/commit/0c707ac38b3f21a750cc9c8a10b1c111f6192cab))
+* adjust tooltips according to canResourceBeDeleted (DEV-5236,  DEV-5240) ([#2461](https://github.com/dasch-swiss/dsp-das/issues/2461)) ([54f7da5](https://github.com/dasch-swiss/dsp-das/commit/54f7da5f314617f02e4cb4abb389706146f0cd86))
+* footnotes are a bit smaller ([#2466](https://github.com/dasch-swiss/dsp-das/issues/2466)) ([2f228be](https://github.com/dasch-swiss/dsp-das/commit/2f228be7f78cbb63a09859b8de0d6fff2b00912f))
+* ontology editor add backdrop to progress indicator (DEV-5223) ([#2458](https://github.com/dasch-swiss/dsp-das/issues/2458)) ([764111b](https://github.com/dasch-swiss/dsp-das/commit/764111b42bc709ed3663be1d42d0f377efee9ff1))
+* ontology editor: introduce validation (DEV-5222) ([#2453](https://github.com/dasch-swiss/dsp-das/issues/2453)) ([7c862a1](https://github.com/dasch-swiss/dsp-das/commit/7c862a17e38c878456810798052c8c8b75a179d6))
+
+
+### Bug Fixes
+
+* footnote numbering is correct again ([#2462](https://github.com/dasch-swiss/dsp-das/issues/2462)) ([c87aaef](https://github.com/dasch-swiss/dsp-das/commit/c87aaefe8af9b411ad07d3adf8de599a2e9ee02c))
+* make comment behaviour in resource editor consistent with resource creator ([#2463](https://github.com/dasch-swiss/dsp-das/issues/2463)) ([9720430](https://github.com/dasch-swiss/dsp-das/commit/972043060b04ba116c2bf27e5408bd579614cd75))
+
+
+### Maintenances
+
+* type strictly (DEV-5232) ([#2459](https://github.com/dasch-swiss/dsp-das/issues/2459)) ([fff941c](https://github.com/dasch-swiss/dsp-das/commit/fff941c8624f8d0b137ef842b6ff75aa01b607a6))
+
 ## [11.39.0](https://github.com/dasch-swiss/dsp-das/compare/v11.38.0...v11.39.0) (2025-08-04)
 
 
