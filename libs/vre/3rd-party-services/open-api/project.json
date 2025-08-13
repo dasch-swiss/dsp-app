@@ -4,5 +4,28 @@
   "sourceRoot": "libs/vre/3rd-party-services/open-api/src",
   "prefix": "dasch-swiss",
   "projectType": "library",
-  "tags": []
+  "tags": [],
+  "targets": {
+    "generate": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "libs/vre/3rd-party-services/open-api",
+        "command": "rm -rf src/generated && npx openapi-generator-cli generate"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": [
+        "{options.outputFile}"
+      ],
+      "dependsOn": ["generate"]
+    },
+    "tsc-errors": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsc --noEmit --project {projectRoot}/tsconfig.lib.json"
+      },
+      "dependsOn": ["generate"]
+    }
+  }
 }

@@ -15,6 +15,7 @@
       "outputs": [
         "{options.outputPath}"
       ],
+      "dependsOn": ["vre-open-api:generate"],
       "options": {
         "outputPath": "dist/apps/dsp-app",
         "index": "apps/dsp-app/src/index.html",

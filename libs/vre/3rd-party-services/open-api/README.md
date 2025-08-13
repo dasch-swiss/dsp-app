@@ -6,15 +6,20 @@ This library was generated with [Nx](https://nx.dev).
 
 This library contains auto-generated TypeScript client code for the DSP-API based on OpenAPI specifications.
 
+⚠️ **Generated files are not committed to the repository** - they are created automatically during build and install.
+
 ### How it works
 
 1. **Local spec file**: `dsp-api_spec.yaml` contains the DSP-API OpenAPI specification
-2. **Generation**: `npm run generate-openapi-module` creates TypeScript client code
+2. **Auto-generation**: Files are generated automatically:
+   - During `npm install` (via postinstall hook)
+   - Before build/test/lint operations (via NX dependencies)
+   - Manually via `npm run generate-openapi-module`
 3. **CI checks**: GitHub Actions automatically detects when the API spec is outdated
 
 ### Updating the API client
 
-When the DSP-API changes, the spec file and client files need to be updated in a SEPARATE BRANCH:
+Once the DSP-API has meaningful changes, which should be communicated by the `CI / Check OpenAPI Spec is Up-to-Date` job failure, run the OpenAPI update which generate new version on your machine:
 
 ```bash
 # Quick check if update is needed
@@ -27,12 +32,12 @@ npm run update-openapi
 # 1. Update the spec file
 curl -o libs/vre/3rd-party-services/open-api/dsp-api_spec.yaml https://api.dev.dasch.swiss/api/docs/docs.yaml
 
-# 2. Generate new client code
+# 2. Generate new client code (if needed for local testing)
 npm run generate-openapi-module
 
-# 3. Commit both changes
-git add libs/vre/3rd-party-services/open-api/
-git commit -m "update OpenAPI client for DSP-API changes"
+# 3. Commit only the spec file change
+git add libs/vre/3rd-party-services/open-api/dsp-api_spec.yaml
+git commit -m "update OpenAPI spec for DSP-API changes"
 ```
 
 ### Available Scripts
@@ -57,3 +62,10 @@ Both local and CI use the same `scripts/check-openapi-sync.sh` script that:
 - Provides consistent behavior between development and CI environments
 
 This ensures the generated client code stays in sync with actual API changes while avoiding false positives from documentation updates.
+
+### Development Notes
+
+- **First time setup**: Run `npm install` to generate the client files
+- **Generated files location**: `src/generated/` (ignored by git)
+- **Build integration**: Generation happens automatically before builds via NX dependencies
+- **Manual generation**: Use `nx run vre-open-api:generate` or `npm run generate-openapi-module`

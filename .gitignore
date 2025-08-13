@@ -69,3 +69,6 @@ apps/dsp-app/cypress/screenshots
 
 .envrc
 
+# OpenAPI generated files
+libs/vre/3rd-party-services/open-api/src/generated/
+
