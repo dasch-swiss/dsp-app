@@ -6,7 +6,7 @@
     "generators":{
       "api": {
         "generatorName": "typescript-angular",
-        "inputSpec": "https://api.dev.dasch.swiss/api/docs/docs.yaml",
+        "inputSpec": "./dsp-api_spec.yaml",
         "output": "./src/generated",
         "additionalProperties": {
           "fileNaming": "kebab-case",

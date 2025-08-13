@@ -85,6 +85,11 @@ The most common commands are defined in `package.json`.
 |-------------------------------------------|---------------------|
 | `cd apps/dsp-app-e2e && npx cypress open` | `npm run e2e-local` |
 
+### OpenAPI Client Generation
+
+For API client generation and maintenance:
+- [OpenAPI Client Generation](https://github.com/dasch-swiss/dsp-app/blob/main/libs/vre/3rd-party-services/open-api/README.md) - Auto-generated TypeScript client for DSP-API
+
 ### IDE plugins
 
 - https://plugins.jetbrains.com/plugin/15101-nx-console-idea

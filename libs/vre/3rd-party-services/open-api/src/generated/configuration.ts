@@ -53,7 +53,7 @@ export class Configuration {
     encoder?: HttpParameterCodec;
     /**
      * Encoding of various path parameter
-     * <a href="https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#style-values">styles</a>.
+     * <a href="https://github.com/OAI/Opendsp-api_specification/blob/main/versions/3.1.0.md#style-values">styles</a>.
      * <p>
      * See {@link README.md} for more details
      * </p>

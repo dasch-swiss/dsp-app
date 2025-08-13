@@ -15,6 +15,8 @@
     "start-0845-test": "nx run dsp-app:serve:0845-test-server",
     "start-stage": "nx run dsp-app:serve:stage-server",
     "generate-openapi-module": "cd libs/vre/3rd-party-services/open-api && rm -rf src/lib/generated && npx openapi-generator-cli generate",
+    "check-openapi-sync": "./scripts/check-openapi-sync.sh",
+    "update-openapi": "curl -o libs/vre/3rd-party-services/open-api/dsp-api_spec.yaml https://api.dev.dasch.swiss/api/docs/docs.yaml && npm run generate-openapi-module",
     "e2e-local": "cd apps/dsp-app && npx cypress open --browser chrome --e2e",
     "e2e-coverage": "nx run dsp-app:e2e:coverage && node tools/lcov-parser.js",
     "e2e-ci-dev": "nx run dsp-app:e2e:development",

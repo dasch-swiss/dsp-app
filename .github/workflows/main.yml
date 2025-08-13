@@ -120,6 +120,18 @@ jobs:
       - run: npx nx run vre-core-config:lint
       - run: npx nx run vre-core-config:test:ci
 
+  check-openapi-sync:
+    name: Check OpenAPI Spec is Up-to-Date
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install yq for smart diff
+        run: |
+          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+      - name: Run OpenAPI sync check
+        run: ./scripts/check-openapi-sync.sh --verbose
+
   # publish on commit to main or tag
   publish:
     name: Publish to Dockerhub only on main or tag (release) commits
@@ -128,7 +140,8 @@ jobs:
       # dsp-app-tests,
       jdnconvertiblecalendar-tests,
       jdnconvertiblecalendardateadapter-tests,
-      vre-shared-app-config-tests
+      vre-shared-app-config-tests,
+      check-openapi-sync
     ]
     runs-on: ubuntu-latest
     if: github.ref_name == 'main' || startsWith(github.ref, 'refs/tags')
