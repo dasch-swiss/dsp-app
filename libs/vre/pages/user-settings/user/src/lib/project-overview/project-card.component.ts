@@ -39,6 +39,7 @@ import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
       .project-card-wrapper {
         position: relative;
         height: 100%;
+        min-height: 280px;
       }
 
       .project-card {
