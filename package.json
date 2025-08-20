@@ -111,7 +111,7 @@
     "@openapitools/openapi-generator-cli": "^2.21.0",
     "@schematics/angular": "18.2.9",
     "@swc-node/register": "1.9.2",
-    "@swc/core": "1.5.7",
+    "@swc/core": "1.13.3",
     "@swc/helpers": "0.5.17",
     "@types/jasmine": "~4.6.5",
     "@types/jasminewd2": "~2.0.3",
