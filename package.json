@@ -61,7 +61,7 @@
     "@ngxs/store": "^18.1.0",
     "@nx/angular": "19.8.9",
     "@sentry/angular": "^8.0.0",
-    "@sentry/cli": "^2.47.0",
+    "@sentry/cli": "^2.52.0",
     "angular-imask": "^7.5.0",
     "angular-split": "^14.0.0",
     "ckeditor5-custom-build": "github:dasch-swiss/ckeditor_custom_build#v2.1.5",
