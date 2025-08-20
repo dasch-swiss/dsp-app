@@ -108,7 +108,7 @@
     "@nx/jest": "19.8.9",
     "@nx/js": "19.8.9",
     "@nx/workspace": "19.8.9",
-    "@openapitools/openapi-generator-cli": "^2.21.0",
+    "@openapitools/openapi-generator-cli": "^2.22.0",
     "@schematics/angular": "18.2.9",
     "@swc-node/register": "1.9.2",
     "@swc/core": "1.13.3",
