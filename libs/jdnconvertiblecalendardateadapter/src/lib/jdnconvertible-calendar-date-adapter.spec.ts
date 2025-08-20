@@ -3,7 +3,7 @@
  *  SPDX-License-Identifier: Apache-2.0
  */
 
-import { async, inject, TestBed } from '@angular/core/testing';
+import { inject, TestBed } from '@angular/core/testing';
 import { DateAdapter } from '@angular/material/core';
 import {
   CalendarDate,
@@ -20,8 +20,8 @@ describe('JDNConvertibleCalendarDateAdapter', () => {
   let adapter: JDNConvertibleCalendarDateAdapter;
   let assertValidDate: (d: JDNConvertibleCalendar | null, valid: boolean) => void;
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
       imports: [JDNConvertibleCalendarDateAdapterModule],
       providers: [
         {
@@ -30,7 +30,7 @@ describe('JDNConvertibleCalendarDateAdapter', () => {
         },
       ],
     }).compileComponents();
-  }));
+  });
 
   beforeEach(inject([DateAdapter], (dateAdapter: JDNConvertibleCalendarDateAdapter) => {
     adapter = dateAdapter;

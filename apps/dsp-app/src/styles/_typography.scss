@@ -1,12 +1,9 @@
-/*!
- * Copyright © 2021 - 2023 Swiss National Data and Service Center for the Humanities and/or DaSCH Service Platform contributors.
- *  SPDX-License-Identifier: Apache-2.0
- */
-
 @use '@angular/material' as mat;
 
+// Angular Material 18 compatible typography - using M2 default config to match staging appearance
+
 // define the primary button typography level
-$dsp-primary-button-typography-level: mat.define-typography-level(
+$dsp-primary-button-typography-level: mat.m2-define-typography-level(
         $font-size: 16px,
         $line-height: 36px,
         $font-weight: 400,
@@ -14,5 +11,7 @@ $dsp-primary-button-typography-level: mat.define-typography-level(
         $letter-spacing: normal
 );
 
-// combine everything in a typography config
-$dsp-typography-config: mat.define-typography-config($button: $dsp-primary-button-typography-level);
+// This produces the same visual result as the pre-upgrade version
+$dsp-typography-config: mat.m2-define-typography-config(
+  $button: $dsp-primary-button-typography-level
+);

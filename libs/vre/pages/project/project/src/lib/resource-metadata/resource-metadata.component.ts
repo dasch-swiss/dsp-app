@@ -108,7 +108,7 @@ export class ResourceMetadataComponent implements OnDestroy {
   }
 
   private _showSuccess(message: string): void {
-    this._snackBar.open(message, 'Close', {
+    this._snackBar.open(message, 'x', {
       duration: 3000,
       horizontalPosition: 'center',
       verticalPosition: 'top',
@@ -116,7 +116,7 @@ export class ResourceMetadataComponent implements OnDestroy {
   }
 
   private _showError(message: string): void {
-    this._snackBar.open(message, 'Close', {
+    this._snackBar.open(message, 'x', {
       duration: 5000,
       horizontalPosition: 'center',
       verticalPosition: 'top',

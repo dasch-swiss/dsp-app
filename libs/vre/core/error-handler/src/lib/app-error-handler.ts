@@ -3,7 +3,7 @@ import { ErrorHandler, Injectable, NgZone } from '@angular/core';
 import { ApiResponseError } from '@dasch-swiss/dsp-js';
 import { AppConfigService } from '@dasch-swiss/vre/core/config';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
-import * as Sentry from '@sentry/angular-ivy';
+import * as Sentry from '@sentry/angular';
 import { AjaxError } from 'rxjs/ajax';
 import { UserFeedbackError } from './user-feedback-error';
 

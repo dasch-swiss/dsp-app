@@ -13,25 +13,32 @@
 
 @include mat.core();
 
-// Include all typography configurations for the components (now separate from mat.core())
+// Include all typography configurations for the components (Angular Material 18 compatible)
 @include mat.all-component-typographies(t.$dsp-typography-config);
 
-// Define the color palettes for the theme.
-$primary: mat.define-palette(config.$blue_palette, 700, 500, 900);
-$accent: mat.define-palette(config.$light_blue_palette, 900, 600, 900);
+// Define the color palettes for the theme (Material 18 compatible)
+$primary: mat.m2-define-palette(config.$blue_palette, 700, 500, 900);
+$accent: mat.m2-define-palette(config.$light_blue_palette, 900, 600, 900);
 
 // The warn palette is optional (defaults to red).
-$warn: mat.define-palette(config.$velvet_red_palette, 700, 500, 900);
+$warn: mat.m2-define-palette(config.$velvet_red_palette, 700, 500, 900);
 
-// Define a theme.
-$theme: mat.define-light-theme((
+// Define a theme with typography.
+$theme: mat.m2-define-light-theme((
   color: (primary: $primary, accent: $accent, warn: $warn),
+  typography: t.$dsp-typography-config,
   density: 0
 ));
 
 // Include all theme styles for the components.
 @include mat.all-component-themes($theme);
 
+// Global snack-bar theme override for Angular Material v18
+:root {
+  --mat-snack-bar-button-color: rgba(51, 103, 144, 1);
+  --mdc-snackbar-container-color: rgba(51, 103, 144, 0.9);
+  --mdc-snackbar-supporting-text-color: rgb(255, 255, 255);
+}
 
 body {
   font-family: Roboto, 'Helvetica Neue', sans-serif;

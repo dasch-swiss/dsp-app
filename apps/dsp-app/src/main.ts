@@ -1,7 +1,7 @@
 import { enableProdMode } from '@angular/core';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { AppConfigToken } from '@dasch-swiss/vre/core/config';
-import * as Sentry from '@sentry/angular-ivy';
+import * as Sentry from '@sentry/angular';
 import { AppModule } from './app/app.module';
 import { environment } from './environments/environment';
 

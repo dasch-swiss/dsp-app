@@ -50,7 +50,7 @@ import {
 import { UiComponents, UiStandaloneComponents } from '@dasch-swiss/vre/ui/ui';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
-import * as Sentry from '@sentry/angular-ivy';
+import * as Sentry from '@sentry/angular';
 import { IMaskModule } from 'angular-imask';
 import { AngularSplitModule } from 'angular-split';
 import { PdfViewerModule } from 'ng2-pdf-viewer';

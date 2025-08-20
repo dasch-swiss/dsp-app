@@ -1,9 +1,7 @@
 @use 'config' as *;
 @use 'mixins' as *;
 @use 'sass:math';
-@use '@material/snackbar' as snackbar;
-@use '@material/button' as button;
-@use '@material/menu-surface' as menu-surface;
+@use '@angular/material' as mat;
 
 .fill-remaining-space {
   /* This fills the remaining space, by using flexbox.
@@ -355,8 +353,8 @@ a,
   --mat-menu-item-label-text-color: $white;
 
   &.mdc-menu-surface {
-    @include menu-surface.fill-color($dark);
-    @include menu-surface.ink-color($white);
+    background-color: $dark;
+    color: $white;
   }
 }
 
@@ -555,7 +553,6 @@ $gc-small: $form-width - $gc-large - 4;
   position: fixed;
   inset: 0;
   z-index: 999;
-  background-color: rgba(0, 0, 0, 0.1);
   pointer-events: all; // catch all events, no interaction possible
 }
 
@@ -621,34 +618,27 @@ nav.mat-mdc-tab-nav-bar,
   }
 }
 
-.mat-mdc-snack-bar-container {
-  &.success {
-    @include snackbar.fill-color(rgba($primary, 0.9));
-    @include snackbar.label-ink-color($primary_contrast);
+// Angular Material v18 snack-bar styles - Using correct CSS custom properties
+.mat-mdc-snack-bar-container.success {
+  --mdc-snackbar-container-color: rgba(51, 103, 144, 0.9) !important;
+  --mdc-snackbar-supporting-text-color: rgb(255, 255, 255) !important;
+  --mat-snack-bar-button-color: rgb(255, 255, 255) !important;
+}
 
-    .mat-mdc-button.mat-mdc-snack-bar-action:not(:disabled) {
-      @include button.ink-color($primary_contrast);
-    }
-  }
+.mat-mdc-snack-bar-container.error {
+  --mdc-snackbar-container-color: rgba(225, 29, 72, 0.9) !important;
+  --mdc-snackbar-supporting-text-color: rgb(255, 255, 255) !important;
+  --mat-snack-bar-button-color: rgb(255, 255, 255) !important;
+}
 
-  &.failed,
-  &.error {
-    @include snackbar.fill-color(rgba($red, 0.9));
-    @include snackbar.label-ink-color($red_contrast);
+.mat-mdc-snack-bar-container.note {
+  --mdc-snackbar-container-color: rgba(251, 191, 36, 0.9) !important;
+  --mdc-snackbar-supporting-text-color: rgb(255, 255, 255) !important;
+  --mat-snack-bar-button-color: rgb(255, 255, 255) !important;
+}
 
-    .mat-mdc-button.mat-mdc-snack-bar-action:not(:disabled) {
-      @include button.ink-color($red_contrast);
-    }
-  }
-
-  &.note {
-    @include snackbar.fill-color(rgba($yellow, 0.9));
-    @include snackbar.label-ink-color($yellow_contrast);
-
-    .mat-mdc-button.mat-mdc-snack-bar-action:not(:disabled) {
-      @include button.ink-color($yellow_contrast);
-    }
-  }
+.mdc-button__label {
+  color: rgb(255, 255, 255);
 }
 
 // --------------------------------------
@@ -691,7 +681,7 @@ nav.mat-mdc-tab-nav-bar,
 // action bubble
 .action-bubble {
   position: absolute;
-  right: 8px;
+  right: 56px;
   top: 3px;
   border: 1px solid #e4e4e4;
   border-radius: 14px;
