@@ -16,7 +16,7 @@ Only proceed with changes after receiving clear approval from the user.
 
 ## Project Overview
 
-This is DaSCH Service Platform (DSP) monorepo - a digital humanities platform for storing, sharing, and working with primary research resources and data. Built with Angular 19.8.9, NX 19.8.9, and Node.js 20.9.0.
+This is DaSCH Service Platform (DSP) monorepo - a digital humanities platform for storing, sharing, and working with primary research resources and data. Built with Angular 18.2.9, NX 19.8.9, and Node.js 20.11.1.
 
 The main application is **DSP-APP** - a user interface for the Swiss National Data and Service Center for the Humanities (DaSCH) research data repository, connecting to DSP-API backend and implementing DSP-JS client library.
 

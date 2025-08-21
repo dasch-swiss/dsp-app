@@ -5,6 +5,10 @@
     "type": "git",
     "url": "https://github.com/dasch-swiss/dsp-app.git"
   },
+  "engines": {
+    "node": "^20.11.1",
+    "npm": "^10.0.0"
+  },
   "scripts": {
     "ng": "ng",
     "start": "nx run dsp-app:serve",
