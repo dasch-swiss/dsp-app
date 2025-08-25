@@ -7,6 +7,7 @@ import { unescapeHtml } from './unescape-html';
 
 @Component({
   selector: 'app-ck-editor',
+  styleUrl: './ck-editor.component.scss',
   template: ` <ckeditor
       [formControl]="footnoteControl"
       [config]="ckEditor.config"

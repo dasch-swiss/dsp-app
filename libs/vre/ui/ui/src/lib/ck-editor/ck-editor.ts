@@ -38,6 +38,11 @@ export class ckEditor {
       ],
       shouldNotGroupWhenFull: true,
     },
+    ui: {
+      viewportOffset: {
+        top: 0,
+      },
+    },
     heading: {
       options: [
         {

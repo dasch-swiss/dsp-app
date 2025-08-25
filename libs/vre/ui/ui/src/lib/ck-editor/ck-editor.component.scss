@@ -1,0 +1,13 @@
+:host ::ng-deep {
+  // Fix sticky panel positioning issue - disable sticky behavior
+  .ck.ck-sticky-panel__content {
+    position: static !important;
+    top: auto !important;
+    z-index: auto !important;
+  }
+
+  .ck.ck-sticky-panel__content_sticky {
+    position: static !important;
+    top: auto !important;
+  }
+}
