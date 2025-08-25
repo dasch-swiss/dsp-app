@@ -12,6 +12,7 @@ export const LicenseCaptionsMapping = new Map<string, string>([
     '0121',
     `Préambule d'un compte de la trésorerie générale de Savoie, Archivio di Stato di Tornino, Sezioni riunite, Camera bei Conti di Savoia, Inventario 16, n° 87 (1441), fol. 1r. @ Eva Pibiri, 2023.`,
   ],
+  ['0810', 'Subtitle image: © DaSCH. Design: Rebecca Sigloch (2022), CC BY 4.0'],
   ['0813', 'Foto: Alberto Venzago.'],
   [
     '0846',
