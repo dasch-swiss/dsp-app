@@ -13,7 +13,7 @@ import { map, startWith } from 'rxjs/operators';
         <ng-container *ngTemplateOutlet="template; context: { item: formGroup.controls.item }" />
         <app-property-value-basic-comment *ngIf="commentIsNotNull" [control]="formGroup.controls.comment" />
       </div>
-      <div style="width: 140px; position: absolute; right: -160px">
+      <div class="action-buttons">
         <button
           mat-icon-button
           type="button"
@@ -35,7 +35,15 @@ import { map, startWith } from 'rxjs/operators';
       </div>
     </div>
   `,
-  styles: [``],
+  styles: [
+    `
+      .action-buttons {
+        width: 140px;
+        position: absolute;
+        right: -140px;
+      }
+    `,
+  ],
 })
 export class PropertyValueCreatorComponent implements OnInit {
   @Input({ required: true }) myProperty!: PropertyInfoValues;

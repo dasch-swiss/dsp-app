@@ -24,7 +24,7 @@ import { CreateResourceFormInterface } from './create-resource-form.interface';
 @Component({
   selector: 'app-create-resource-form',
   template: `
-    <form *ngIf="!loading; else loadingTemplate" [formGroup]="form" appInvalidControlScroll>
+    <form *ngIf="!loading; else loadingTemplate" [formGroup]="form" appInvalidControlScroll class="form">
       <ng-container *ngIf="fileRepresentation">
         <h3>File</h3>
         <app-create-resource-form-file
@@ -72,6 +72,7 @@ import { CreateResourceFormInterface } from './create-resource-form.interface';
   styles: [
     '.row { display: flex; padding: 16px 0;}',
     '.grid-h3 {width: 140px; margin-right: 10px; text-align: right; margin-top: 16px; color: rgb(107, 114, 128); cursor: help}',
+    '.form { display: block; margin-right: 100px;}',
   ],
 })
 export class CreateResourceFormComponent implements OnInit {
