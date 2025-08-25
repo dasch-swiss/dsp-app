@@ -20,13 +20,6 @@
   display: none !important;
 }
 
-.value {
-  &.with-styling {
-    padding: 16px;
-
-    &:hover {
-      background: $primary_100;
-    }
-  }
-
+.value.with-styling {
+  padding: 16px;
 }
