@@ -36,7 +36,7 @@
     "sentry:sourcemaps": "sentry-cli sourcemaps inject --org dasch --project javascript-angular ./dist/apps/dsp-app && sentry-cli sourcemaps upload --org dasch --project javascript-angular ./dist/apps/dsp-app",
     "webdriver-update": "webdriver-manager update --standalone false --gecko",
     "yalc-add-lib": "rm -rf .yalc/@dasch-swiss && yalc add @dasch-swiss/dsp-js && npm install",
-    "postinstall": "npm run generate-openapi-module"
+    "postinstall": "npm run generate-openapi-module && nx reset"
   },
   "private": true,
   "dependencies": {
