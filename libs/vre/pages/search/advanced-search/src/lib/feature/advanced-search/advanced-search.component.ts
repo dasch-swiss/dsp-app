@@ -113,7 +113,7 @@ export class AdvancedSearchComponent implements OnInit {
 
     this.store.propertiesList(this.selectedOntology$);
 
-    this.store.filteredPropertiesList(this.selectedResourceClass$);
+    this.store.filteredPropertiesList();
 
     const searchStored = localStorage.getItem('advanced-search-previous-search');
     if (searchStored) {
