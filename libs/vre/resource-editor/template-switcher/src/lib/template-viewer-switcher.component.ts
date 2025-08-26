@@ -25,6 +25,10 @@ import { JsLibPotentialError } from '@dasch-swiss/vre/resource-editor/resource-p
       <span>{{ item.text }}</span>
     </ng-template>
 
+    <ng-template #paragraphDisplayTpl let-item="item">
+      <app-paragraph-viewer [value]="item" />
+    </ng-template>
+
     <ng-template #intDisplayTpl let-item="item">
       <span>{{ item.strval }}</span>
     </ng-template>
@@ -95,6 +99,7 @@ export class TemplateViewerSwitcherComponent implements AfterViewInit {
   @ViewChild('linkDisplayTpl') linkDisplayTpl!: TemplateRef<any>;
   @ViewChild('uriDisplayTpl') uriDisplayTpl!: TemplateRef<any>;
   @ViewChild('textDisplayTpl') textDisplayTpl!: TemplateRef<any>;
+  @ViewChild('paragraphDisplayTpl') paragraphDisplayTpl!: TemplateRef<any>;
 
   @ViewChild('defaultDisplayTpl') defaultDisplayTpl!: TemplateRef<any>;
 
@@ -164,6 +169,7 @@ export class TemplateViewerSwitcherComponent implements AfterViewInit {
       case Constants.GuiRichText:
         return this.richTextDisplayTpl;
       case Constants.GuiTextarea:
+        return this.paragraphDisplayTpl;
       default:
         return this.textDisplayTpl;
     }

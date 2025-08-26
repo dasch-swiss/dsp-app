@@ -17,6 +17,7 @@ import { GeonameViewerComponent } from './lib/viewer-components/geoname-viewer.c
 import { IntervalViewerComponent } from './lib/viewer-components/interval-viewer.component';
 import { LinkViewerComponent } from './lib/viewer-components/link-viewer.component';
 import { ListViewerComponent } from './lib/viewer-components/list-viewer.component';
+import { ParagraphViewerComponent } from './lib/viewer-components/paragraph-viewer.component';
 import { RichTextViewerComponent } from './lib/viewer-components/rich-text-viewer.component';
 import { TextHtmlViewerComponent } from './lib/viewer-components/text-html-viewer.component';
 import { TimeViewerComponent } from './lib/viewer-components/time-viewer.component';
@@ -40,6 +41,7 @@ export const TemplateSwitcherComponents = [
   ListViewerComponent,
   RichTextViewerComponent,
   TextHtmlViewerComponent,
+  ParagraphViewerComponent,
   TimeViewerComponent,
   ColorViewerComponent,
   UriViewerComponent,

@@ -16,6 +16,7 @@ import { PropertyValueUpdateComponent } from './lib/property-value-update.compon
 import { PropertyValueComponent } from './lib/property-value.component';
 import { PropertyValuesWithFootnotesComponent } from './lib/property-values-with-footnotes.component';
 import { PropertyValuesComponent } from './lib/property-values.component';
+import { WithBreaksPipe } from './lib/with-breaks.pipe';
 
 export const ResourcePropertiesComponents = [
   DeleteValueDialogComponent,
@@ -37,4 +38,5 @@ export const ResourcePropertiesComponents = [
   FootnoteParserPipe,
 
   PropertyValueBasicCommentComponent,
+  WithBreaksPipe,
 ];
