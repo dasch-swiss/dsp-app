@@ -4,7 +4,7 @@ import { ReadTextValueAsHtml } from '@dasch-swiss/dsp-js';
 @Component({
   selector: 'app-text-html-viewer',
   template: `
-    <div data-cy="text-html-switch" [innerHTML]="value | internalLinkReplacer | addTargetBlank" appMathjax></div>
+    <div data-cy="text-html-switch" [innerHTML]="value.html | internalLinkReplacer | addTargetBlank" appMathjax></div>
   `,
 })
 export class TextHtmlViewerComponent {
