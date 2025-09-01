@@ -59,6 +59,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { TemplateSwitcherComponents } from 'template-switcher';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { CookieBannerComponent } from './cookie-banner.component';
 import { AuthInterceptor } from './main/http-interceptors/auth-interceptor';
 import { IiifWithCredentialsInterceptor } from './main/http-interceptors/iiif-with-credentials.interceptor';
 import { MaterialModule } from './material-module';
@@ -71,6 +72,7 @@ export function httpLoaderFactory(httpClient: HttpClient) {
 @NgModule({
   declarations: [
     AppComponent,
+    CookieBannerComponent,
     ...TemplateSwitcherComponents,
     ...ResourcePropertiesComponents,
     ...ResourceCreatorComponents,

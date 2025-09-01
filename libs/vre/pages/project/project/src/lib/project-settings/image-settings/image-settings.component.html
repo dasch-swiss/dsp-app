@@ -1,0 +1,59 @@
+<div>
+  <p>{{ 'pages.project.imageSettings.restrictions' | translate }}</p>
+  <div>
+    <div class="mb-2">
+      <mat-radio-group class="radio-group" [(ngModel)]="imageSettings" [ngModelOptions]="{standalone: true}">
+        <mat-radio-button [value]="imageSettingsEnum.Off">
+          {{ 'pages.project.imageSettings.off' | translate }}
+        </mat-radio-button>
+        <mat-radio-button [value]="imageSettingsEnum.Watermark">
+          {{ 'pages.project.imageSettings.isWatermark' | translate }}
+        </mat-radio-button>
+        <mat-radio-button [value]="imageSettingsEnum.RestrictImageSize">
+          {{ 'pages.project.imageSettings.restrictImageSize' | translate }}
+        </mat-radio-button>
+      </mat-radio-group>
+    </div>
+  </div>
+  <div *ngIf="imageSettings === imageSettingsEnum.RestrictImageSize" class="mb-6">
+    <mat-label>{{ 'pages.project.imageSettings.info' | translate }}</mat-label>
+    <div class="mb-2 mt-2">
+      <mat-form-field>
+        <input
+          [imask]="minMaxInputMask(1, 99)"
+          (ngModelChange)="onPercentageInputChange()"
+          matInput
+          [(ngModel)]="percentage" />
+        <mat-label>{{ 'pages.project.imageSettings.percentage' | translate }}</mat-label>
+      </mat-form-field>
+      <mat-label> %</mat-label>
+    </div>
+    <div class="mb-2">
+      <mat-form-field [floatLabel]="'always'" class="large-field">
+        <input
+          [imask]="minMaxInputMask(minWidth, maxWidth)"
+          (ngModelChange)="onFixedWidthInputChange()"
+          matInput
+          [(ngModel)]="fixedWidth" />
+        <mat-label>
+          {{ 'pages.project.imageSettings.absoluteWidth' | translate: { min: minWidth, max: maxWidth } }}
+        </mat-label>
+      </mat-form-field>
+      <mat-label class="nowrap"> x {{ fixedWidth }} Px</mat-label>
+    </div>
+    <app-image-display-ratio [@replaceAnimation] *ngIf="isPercentageSize" [ratio]="ratio" class="child" />
+    <app-image-display-absolute [@replaceAnimation] *ngIf="!isPercentageSize" [widthPx]="fixedWidth" />
+  </div>
+</div>
+<div class="action-buttons mt-2">
+  <button
+    mat-raised-button
+    type="submit"
+    color="primary"
+    [disabled]="!hasChanges
+          || (imageSettings === imageSettingsEnum.RestrictImageSize
+            && ((isPercentageSize && ratio <= 0) || (!isPercentageSize && !fixedWidth)))"
+    (click)="onSubmit()">
+    {{ 'ui.form.action.submit' | translate }}
+  </button>
+</div>

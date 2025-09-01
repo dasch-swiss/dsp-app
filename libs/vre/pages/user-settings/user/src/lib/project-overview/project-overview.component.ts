@@ -1,8 +1,9 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, ViewChild } from '@angular/core';
 import { StoredProject } from '@dasch-swiss/dsp-js';
-import { LoadProjectsAction, ProjectsSelectors, UserSelectors } from '@dasch-swiss/vre/core/state';
+import { UserSelectors } from '@dasch-swiss/vre/core/state';
 import { Store } from '@ngxs/store';
-import { BehaviorSubject, combineLatest, map } from 'rxjs';
+import { BehaviorSubject, combineLatest, map, tap } from 'rxjs';
+import { AllProjectsService } from './all-projects.service';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -10,32 +11,37 @@ import { BehaviorSubject, combineLatest, map } from 'rxjs';
   templateUrl: './project-overview.component.html',
   styleUrls: ['./project-overview.component.scss'],
 })
-export class ProjectOverviewComponent implements OnInit, AfterViewInit {
+export class ProjectOverviewComponent implements AfterViewInit {
   @ViewChild('filterInput') filterInput!: ElementRef;
+
+  loading = true;
   private _filter$ = new BehaviorSubject<string>('');
 
-  activeProjects$ = combineLatest([this._store.select(ProjectsSelectors.allActiveProjects), this._filter$]).pipe(
-    map(([projects, searchTerm]) => projects.filter(p => this.matchesSearchTerm(p, searchTerm)))
+  activeProjects$ = combineLatest([this._allProjectsService.allActiveProjects$, this._filter$]).pipe(
+    map(([projects, searchTerm]) => projects.filter(p => this.matchesSearchTerm(p, searchTerm))),
+    tap(() => {
+      this.loading = false;
+    })
   );
 
   usersActiveProjects$ = combineLatest([this._store.select(UserSelectors.userActiveProjects), this._filter$]).pipe(
     map(([projects, searchTerm]) => projects.filter(p => this.matchesSearchTerm(p, searchTerm)))
   );
 
-  notUsersActiveProjects$ = combineLatest([this._store.select(ProjectsSelectors.otherProjects), this._filter$]).pipe(
-    map(([projects, searchTerm]) => projects.filter(p => this.matchesSearchTerm(p, searchTerm)))
+  notUsersActiveProjects$ = combineLatest([this._allProjectsService.otherProjects$, this._filter$]).pipe(
+    map(([projects, searchTerm]) => projects.filter(p => this.matchesSearchTerm(p, searchTerm))),
+    tap(() => {
+      this.loading = false;
+    })
   );
 
   userHasProjects$ = this.usersActiveProjects$.pipe(map(projects => projects.length > 0));
   isSysAdmin$ = this._store.select(UserSelectors.isSysAdmin);
 
-  loading$ = this._store.select(ProjectsSelectors.isProjectsLoading);
-
-  constructor(private _store: Store) {}
-
-  ngOnInit() {
-    this._store.dispatch(new LoadProjectsAction());
-  }
+  constructor(
+    private _store: Store,
+    private _allProjectsService: AllProjectsService
+  ) {}
 
   ngAfterViewInit(): void {
     this.filterInput.nativeElement.focus();

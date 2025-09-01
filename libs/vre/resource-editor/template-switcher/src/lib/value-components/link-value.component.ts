@@ -1,4 +1,13 @@
-import { ChangeDetectorRef, Component, ElementRef, Inject, Input, OnInit, ViewChild } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  Inject,
+  Input,
+  OnInit,
+  ViewChild,
+  ViewContainerRef,
+} from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatAutocomplete, MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { MatDialog } from '@angular/material/dialog';
@@ -72,7 +81,8 @@ export class LinkValueComponent implements OnInit {
     private _dspApiConnection: KnoraApiConnection,
     private _dialog: MatDialog,
     private _cd: ChangeDetectorRef,
-    public _linkValueDataService: LinkValueDataService
+    public _linkValueDataService: LinkValueDataService,
+    private _viewContainerRef: ViewContainerRef
   ) {}
 
   ngOnInit() {
@@ -105,6 +115,7 @@ export class LinkValueComponent implements OnInit {
           resourceType,
           resourceClassIri,
         }),
+        viewContainerRef: this._viewContainerRef,
       })
       .afterClosed()
       .pipe(

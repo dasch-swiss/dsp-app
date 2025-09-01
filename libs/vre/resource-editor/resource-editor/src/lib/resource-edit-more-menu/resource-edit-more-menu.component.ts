@@ -2,9 +2,8 @@ import { Component, EventEmitter, Inject, Input, Output, ViewContainerRef } from
 import { MatDialog } from '@angular/material/dialog';
 import { Constants, KnoraApiConnection, ReadResource } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
-import { ProjectsSelectors } from '@dasch-swiss/vre/core/state';
 import { DeleteResourceDialogComponent } from '@dasch-swiss/vre/resource-editor/properties-display';
-import { ResourceFetcherService } from '@dasch-swiss/vre/resource-editor/representations';
+import { ResourceFetcherService, ResourceUtil } from '@dasch-swiss/vre/resource-editor/representations';
 import {
   EditResourceLabelDialogComponent,
   EraseResourceDialogComponent,
@@ -65,7 +64,7 @@ import { CanDeleteResource } from './can-delete-resource.interface';
       </button>
 
       <button
-        *ngIf="isAdmin$ | async"
+        *ngIf="userCanDelete"
         data-cy="resource-more-menu-erase-button"
         mat-menu-item
         [matTooltip]="
@@ -106,7 +105,10 @@ export class ResourceEditMoreMenuComponent {
   @Output() resourceErased = new EventEmitter<void>();
   @Output() resourceUpdated = new EventEmitter<void>();
 
-  isAdmin$ = this._store.select(ProjectsSelectors.isCurrentProjectAdminOrSysAdmin);
+  userCanDelete() {
+    return ResourceUtil.userCanDelete(this.resource);
+  }
+
   resourceCanBeDeleted?: CanDeleteResource;
 
   constructor(

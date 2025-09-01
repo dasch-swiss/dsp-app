@@ -110,7 +110,7 @@
         "button": "Exporter au format CSV"
       },
       "legalSettings": {
-        "tab": "Paramètres légaux",
+        "tab": "Légal",
         "warning": "Attention: Toute action effectuée ici est permanente.",
         "copyrightHolders": "Titulaires des droits",
         "licenses": "Licences/Déclarations",

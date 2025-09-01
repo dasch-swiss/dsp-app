@@ -1,10 +1,9 @@
 import { Component, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
-import { ProjectsSelectors } from '@dasch-swiss/vre/core/state';
+import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
 import { ResourceService } from '@dasch-swiss/vre/shared/app-common';
 import { OntologyService, ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
-import { Store } from '@ngxs/store';
 import { Subject, takeUntil } from 'rxjs';
 
 @Component({
@@ -26,7 +25,7 @@ export class CreateResourcePageComponent implements OnDestroy {
 
   private _projectUuid = this._route.snapshot.params['uuid'] ?? this._route.parent!.snapshot.params['uuid'];
 
-  project$ = this._store.select(ProjectsSelectors.currentProject);
+  project$ = this._projectPageService.currentProject$;
 
   ontologyId = '';
   resourceClassIri = '';
@@ -43,10 +42,10 @@ export class CreateResourcePageComponent implements OnDestroy {
   constructor(
     private _ontologyService: OntologyService,
     protected _projectService: ProjectService,
+    private _projectPageService: ProjectPageService,
     private _resourceService: ResourceService,
     private _route: ActivatedRoute,
-    private _router: Router,
-    private _store: Store
+    private _router: Router
   ) {
     this.project$.pipe(takeUntil(this._destroy)).subscribe(project => {
       if (!project) {
@@ -61,6 +60,7 @@ export class CreateResourcePageComponent implements OnDestroy {
 
   afterCreation(resourceIri: string) {
     const uuid = this._resourceService.getResourceUuid(resourceIri);
+    this._projectPageService.reloadProject();
     this._router.navigate(['..', uuid], { relativeTo: this._route });
   }
 

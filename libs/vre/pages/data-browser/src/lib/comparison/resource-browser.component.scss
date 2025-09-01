@@ -1,0 +1,5 @@
+@use '../../../../../../../apps/dsp-app/src/styles/config' as *;
+
+.whole-height {
+  height: calc(100vh - #{$header-height});
+}

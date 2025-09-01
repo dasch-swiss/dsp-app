@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, ViewContainerRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { DspDialogConfig, RouteConstants } from '@dasch-swiss/vre/core/config';
-import { ProjectsSelectors } from '@dasch-swiss/vre/core/state';
+import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
 import {
   DefaultClass,
   DefaultProperties,
@@ -9,7 +9,6 @@ import {
   DefaultResourceClasses,
   PropertyCategory,
 } from '@dasch-swiss/vre/shared/app-helper-services';
-import { Store } from '@ngxs/store';
 import { EditPropertyFormDialogComponent } from './forms/property-form/edit-property-form-dialog.component';
 import { CreatePropertyDialogData } from './forms/property-form/property-form.type';
 import { CreateResourceClassDialogComponent } from './forms/resource-class-form/create-resource-class-dialog.component';
@@ -45,7 +44,7 @@ import { OntologyPageService } from './ontology-page.service';
           {{ (ops.expandClasses$ | async) ? 'Collapse all' : 'Expand all' }}
         </button>
         <button
-          *ngIf="isAdmin$ | async"
+          *ngIf="hasProjectAdminRights$ | async"
           [disabled]="!(project$ | async)?.status"
           mat-button
           data-cy="create-class-button"
@@ -69,7 +68,7 @@ import { OntologyPageService } from './ontology-page.service';
       <div *ngIf="rla2.isActive">
         <!-- Properties tab content -->
         <button
-          *ngIf="isAdmin$ | async"
+          *ngIf="hasProjectAdminRights$ | async"
           mat-button
           data-cy="create-property-button"
           [disabled]="!(project$ | async)?.status"
@@ -115,28 +114,30 @@ import { OntologyPageService } from './ontology-page.service';
   ],
 })
 export class OntologySidenavComponent {
-  project$ = this._store.select(ProjectsSelectors.currentProject);
-  isAdmin$ = this._store.select(ProjectsSelectors.isCurrentProjectAdminOrSysAdmin);
+  project$ = this._projectPageService.currentProject$;
+  hasProjectAdminRights$ = this._projectPageService.hasProjectAdminRights$;
 
   readonly defaultClasses: DefaultClass[] = DefaultResourceClasses.data;
   readonly defaultProperties: PropertyCategory[] = DefaultProperties.data;
 
   constructor(
     public ops: OntologyPageService,
+    private _projectPageService: ProjectPageService,
     private _dialog: MatDialog,
-    private _store: Store
+    private _viewContainerRef: ViewContainerRef
   ) {}
 
   openCreateResourceClass(defaultClass: DefaultClass) {
-    this._dialog.open<CreateResourceClassDialogComponent, DefaultClass>(
-      CreateResourceClassDialogComponent,
-      DspDialogConfig.mediumDialog(defaultClass)
-    );
+    this._dialog.open<CreateResourceClassDialogComponent, DefaultClass>(CreateResourceClassDialogComponent, {
+      ...DspDialogConfig.mediumDialog(defaultClass),
+      viewContainerRef: this._viewContainerRef,
+    });
   }
 
   openCreateNewProperty(propType: DefaultProperty) {
     this._dialog.open<EditPropertyFormDialogComponent, CreatePropertyDialogData>(EditPropertyFormDialogComponent, {
       data: { propType },
+      viewContainerRef: this._viewContainerRef,
     });
   }
 

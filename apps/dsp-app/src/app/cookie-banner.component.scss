@@ -1,0 +1,27 @@
+@use "../styles/config" as *;
+
+.cookie-banner {
+  position: fixed;
+  bottom: 0;
+  height: 128px;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.75);
+  color: #fff;
+  z-index: 100;
+  // display: inline-flex;
+  padding: 24px 0;
+
+  .note {
+    text-align: center;
+
+    .link {
+      color: $secondary;
+      text-decoration: underline;
+    }
+  }
+
+  .action button {
+    margin: 0 auto 24px auto;
+    display: block;
+  }
+}

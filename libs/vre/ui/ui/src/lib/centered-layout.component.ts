@@ -2,18 +2,12 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 @Component({
   selector: 'app-centered-layout',
-  template: '<div class="child"><ng-content  /></div>',
+  template: '<div class="content large middle"><ng-content  /></div>',
   styles: [
     `
       :host {
         display: flex;
         justify-content: center;
-      }
-
-      .child {
-        margin: 16px 0;
-        width: 100%;
-        max-width: 800px;
       }
     `,
   ],

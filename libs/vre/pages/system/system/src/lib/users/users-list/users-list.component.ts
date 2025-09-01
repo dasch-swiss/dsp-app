@@ -2,8 +2,8 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ReadUser } from '@dasch-swiss/dsp-js';
 import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
-import { ProjectsSelectors, UserSelectors } from '@dasch-swiss/vre/core/state';
-import { SortingService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { UserSelectors } from '@dasch-swiss/vre/core/state';
+import { SortingHelper } from '@dasch-swiss/vre/shared/app-helper-services';
 import { TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngxs/store';
 import { CreateUserDialogComponent } from '../create-user-dialog.component';
@@ -49,7 +49,7 @@ type UserSortKey = 'familyName' | 'givenName' | 'email' | 'username';
 export class UsersListComponent {
   _list!: ReadUser[];
   @Input() set list(value: ReadUser[]) {
-    this._list = this._sortingService.keySortByAlphabetical(value, this.sortBy as keyof ReadUser);
+    this._list = SortingHelper.keySortByAlphabetical(value, this.sortBy as keyof ReadUser);
   }
 
   get list(): ReadUser[] {
@@ -92,11 +92,9 @@ export class UsersListComponent {
 
   sortBy: UserSortKey = (localStorage.getItem('sortUsersBy') as UserSortKey) || 'username';
   isSysAdmin$ = this._store.select(UserSelectors.isSysAdmin);
-  project$ = this._store.select(ProjectsSelectors.currentProject);
 
   constructor(
     private readonly _matDialog: MatDialog,
-    private readonly _sortingService: SortingService,
     private readonly _store: Store,
     private readonly _ts: TranslateService,
     private _usersTabService: UsersTabService
@@ -120,7 +118,7 @@ export class UsersListComponent {
 
   sortList(key: UserSortKey) {
     this.sortBy = key;
-    this.list = this._sortingService.keySortByAlphabetical(this.list, this.sortBy);
+    this.list = SortingHelper.keySortByAlphabetical(this.list, this.sortBy);
     localStorage.setItem('sortUsersBy', key);
   }
 }

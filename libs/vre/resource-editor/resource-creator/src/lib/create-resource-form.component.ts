@@ -13,11 +13,9 @@ import {
   ResourcePropertyDefinition,
 } from '@dasch-swiss/dsp-js';
 import { ApiConstants, DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
-import { LoadClassItemsCountAction } from '@dasch-swiss/vre/core/state';
 import { FileForm, FileRepresentationType, fileValueMapping } from '@dasch-swiss/vre/resource-editor/representations';
 import { FormValueGroup, propertiesTypeMapping } from '@dasch-swiss/vre/resource-editor/resource-properties';
 import { PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
-import { Store } from '@ngxs/store';
 import { finalize, switchMap, take } from 'rxjs';
 import { CreateResourceFormInterface } from './create-resource-form.interface';
 
@@ -115,7 +113,6 @@ export class CreateResourceFormComponent implements OnInit {
     @Inject(DspApiConnectionToken)
     private _dspApiConnection: KnoraApiConnection,
     private _fb: FormBuilder,
-    private _store: Store,
     private _cd: ChangeDetectorRef
   ) {}
 
@@ -139,7 +136,6 @@ export class CreateResourceFormComponent implements OnInit {
       .createResource(this._getPayload())
       .pipe(take(1))
       .subscribe(res => {
-        this._store.dispatch(new LoadClassItemsCountAction(this.ontologyIri, this.resourceClass.id));
         this.createdResourceIri.emit(res.id);
       });
   }

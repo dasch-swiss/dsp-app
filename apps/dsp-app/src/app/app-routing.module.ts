@@ -1,26 +1,31 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
-import { ResourceClassBrowserComponent } from '@dasch-swiss/vre/pages/data-browser';
+import { ResourceClassBrowserPageComponent } from '@dasch-swiss/vre/pages/data-browser';
 import { ListPageComponent } from '@dasch-swiss/vre/pages/ontology/list';
 import {
-  DataModelsComponent,
-  OntologyEditorClassesComponent,
+  DataModelsPageComponent,
+  OntologyEditorPageComponent,
   OntologyPageComponent,
   OntologyPropertiesComponent,
 } from '@dasch-swiss/vre/pages/ontology/ontology';
 import {
   CollaborationPageComponent,
   CreateProjectFormPageComponent,
-  DescriptionComponent,
   EditProjectFormPageComponent,
   ImageSettingsComponent,
   LegalSettingsComponent,
-  ProjectComponent,
+  ProjectDescriptionPageComponent,
+  ProjectPageComponent,
   ResourceMetadataComponent,
   SettingsPageComponent,
 } from '@dasch-swiss/vre/pages/project/project';
-import { AdvancedSearchContainerComponent, ResultsComponent } from '@dasch-swiss/vre/pages/search/search';
+import {
+  AdvancedSearchPageComponent,
+  AdvancedSearchResultsPageComponent,
+  FulltextSearchResultPageComponent,
+  SearchProjectResultsPageComponent,
+} from '@dasch-swiss/vre/pages/search/search';
 import {
   CookiePolicyComponent,
   ProjectsComponent,
@@ -51,7 +56,7 @@ const routes: Routes = [
   },
   {
     path: RouteConstants.projectUuidRelative,
-    component: ProjectComponent,
+    component: ProjectPageComponent,
     children: [
       {
         path: RouteConstants.home,
@@ -60,11 +65,11 @@ const routes: Routes = [
       },
       {
         path: RouteConstants.projectDescription,
-        component: DescriptionComponent,
+        component: ProjectDescriptionPageComponent,
       },
       {
         path: RouteConstants.dataModels,
-        component: DataModelsComponent,
+        component: DataModelsPageComponent,
       },
       {
         path: RouteConstants.ontologyRelative,
@@ -82,7 +87,7 @@ const routes: Routes = [
           },
           {
             path: RouteConstants.classes,
-            component: OntologyEditorClassesComponent,
+            component: OntologyEditorPageComponent,
           },
           {
             path: RouteConstants.properties,
@@ -91,9 +96,8 @@ const routes: Routes = [
         ],
       },
       {
-        canActivate: [OntologyClassInstanceGuard],
         path: RouteConstants.OntologyClassRelative,
-        component: ResourceClassBrowserComponent,
+        component: ResourceClassBrowserPageComponent,
       },
       {
         canActivate: [OntologyClassInstanceGuard],
@@ -142,11 +146,11 @@ const routes: Routes = [
       },
       {
         path: RouteConstants.advancedSearch,
-        component: AdvancedSearchContainerComponent,
+        component: AdvancedSearchPageComponent,
       },
       {
         path: RouteConstants.advancedSearchResultsRelative,
-        component: ResultsComponent,
+        component: AdvancedSearchResultsPageComponent,
       },
       {
         path: RouteConstants.notFoundWildcard,
@@ -190,11 +194,11 @@ const routes: Routes = [
     children: [
       {
         path: RouteConstants.searchProjectRelative,
-        component: ResultsComponent,
+        component: SearchProjectResultsPageComponent,
       },
       {
         path: RouteConstants.searchRelative,
-        component: ResultsComponent,
+        component: FulltextSearchResultPageComponent,
       },
     ],
   },

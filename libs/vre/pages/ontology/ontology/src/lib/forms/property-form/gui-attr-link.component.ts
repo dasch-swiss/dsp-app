@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { ResourceClassDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
-import { OntologiesSelectors } from '@dasch-swiss/vre/core/state';
-import { LocalizationService, SortingService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
+import { LocalizationService, SortingHelper } from '@dasch-swiss/vre/shared/app-helper-services';
 import { Store } from '@ngxs/store';
 import { combineLatest, map } from 'rxjs';
 import { PropertyForm } from './property-form.type';
@@ -36,14 +36,14 @@ export class GuiAttrLinkComponent {
   @Input({ required: true }) control!: PropertyForm['controls']['guiAttr'];
 
   ontologyClasses$ = combineLatest([
-    this._store.select(OntologiesSelectors.currentProjectOntologies),
+    this._projectPageService.ontologies$,
     this._localizationService.currentLanguage$,
   ]).pipe(
     map(([response, lang]) => {
       const ontologyClasses = [] as ClassToSelect[];
       response.forEach(onto => {
         const classes = onto.getClassDefinitionsByType(ResourceClassDefinitionWithAllLanguages);
-        const classDefs = this._sortingService.sortByLabelsAlphabetically(classes, 'label', lang);
+        const classDefs = SortingHelper.sortByLabelsAlphabetically(classes, 'label', lang);
         if (classDefs.length) {
           ontologyClasses.push({
             ontologyId: onto.id,
@@ -58,7 +58,7 @@ export class GuiAttrLinkComponent {
 
   constructor(
     private _store: Store,
-    private _sortingService: SortingService,
+    private _projectPageService: ProjectPageService,
     private _localizationService: LocalizationService
   ) {}
 }

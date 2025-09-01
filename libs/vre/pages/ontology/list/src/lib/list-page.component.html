@@ -1,62 +1,58 @@
-<div *ngIf="!disableContent">
-  <div class="overlay-blocker" *ngIf="(isListsLoading$ | async)">
-    <app-progress-indicator [size]='"large"' class="floating-center" />
-  </div>
-  <ng-container *ngIf="(isListsLoading$ | async) === false && (rootListNodeInfo$ | async) as list">
-    <mat-toolbar class="sticky-header">
-      <mat-toolbar-row class="list-editor-header">
-        <button class="back-button" mat-button (click)="navigateToDataModels()" matTooltip="Back to data models">
-          <mat-icon class="centered-icon">chevron_left</mat-icon>
-        </button>
-        <div class="list-info">
-          <h3
-            class="mat-headline-6"
-            [matTooltip]="list.labels | appStringifyStringLiteral:true"
-            matTooltipPosition="above"
-            data-cy="label-title">
-            {{ list.labels | appStringifyStringLiteral}}
-          </h3>
-          <p
-            class="mat-body"
-            [matTooltip]="list.comments | appStringifyStringLiteral"
-            matTooltipPosition="above"
-            data-cy="comment-title">
-            {{ list.comments | appStringifyStringLiteral | appTruncate:64 }}
-          </p>
-        </div>
-        <span class="fill-remaining-space"></span>
-        <div *ngIf="(isAdmin$ | async) === true">
-          <button
-            color="primary"
-            mat-button
-            [disabled]="(project$ | async)?.status !== true"
-            (click)="editList(list!)"
-            matTooltip="Edit controlled vocabulary info"
-            data-cy="edit-button">
-            <mat-icon>edit</mat-icon>
-            Edit
-          </button>
-          <button
-            color="warn"
-            mat-button
-            [disabled]="(project$ | async)?.status !== true"
-            (click)="askToDeleteList(list)"
-            matTooltip="Delete controlled vocabulary"
-            data-cy="delete-button">
-            <mat-icon>delete</mat-icon>
-            Delete
-          </button>
-        </div>
-      </mat-toolbar-row>
-    </mat-toolbar>
-
-    <div class="content large middle scroll">
-      <app-list-item
-        *ngIf="((isListsLoading$ | async) === false)"
-        [node]="list"
-        [isAdmin]="(isAdmin$ | async) === true" />
-    </div>
-  </ng-container>
+<div class="overlay-blocker" *ngIf="(isListsLoading$ | async)">
+  <app-progress-indicator [size]='"large"' class="floating-center" />
 </div>
+<ng-container *ngIf="(isListsLoading$ | async) === false && (rootListNodeInfo$ | async) as list">
+  <mat-toolbar class="sticky-header">
+    <mat-toolbar-row class="list-editor-header">
+      <a class="back-button" mat-button (click)="navigateToDataModels()" matTooltip="Back to data models">
+        <mat-icon class="centered-icon">chevron_left</mat-icon>
+      </a>
+      <div class="list-info">
+        <h3
+          class="mat-headline-6"
+          [matTooltip]="list.labels | appStringifyStringLiteral:true"
+          matTooltipPosition="above"
+          data-cy="label-title">
+          {{ list.labels | appStringifyStringLiteral }}
+        </h3>
+        <p
+          class="mat-body"
+          [matTooltip]="list.comments | appStringifyStringLiteral"
+          matTooltipPosition="above"
+          data-cy="comment-title">
+          {{ list.comments | appStringifyStringLiteral | appTruncate:64 }}
+        </p>
+      </div>
+      <span class="fill-remaining-space"></span>
+      <div *ngIf="(hasProjectAdminRights$ | async) === true">
+        <button
+          color="primary"
+          mat-button
+          [disabled]="(project$ | async)?.status !== true"
+          (click)="editList(list!)"
+          matTooltip="Edit controlled vocabulary info"
+          data-cy="edit-button">
+          <mat-icon>edit</mat-icon>
+          Edit
+        </button>
+        <button
+          color="warn"
+          mat-button
+          [disabled]="(project$ | async)?.status !== true"
+          (click)="askToDeleteList(list)"
+          matTooltip="Delete controlled vocabulary"
+          data-cy="delete-button">
+          <mat-icon>delete</mat-icon>
+          Delete
+        </button>
+      </div>
+    </mat-toolbar-row>
+  </mat-toolbar>
 
-<app-status *ngIf="disableContent" [status]="204" />
+  <div class="content large middle scroll">
+    <app-list-item
+      *ngIf="((isListsLoading$ | async) === false)"
+      [node]="list"
+      [isAdmin]="(hasProjectAdminRights$ | async) === true" />
+  </div>
+</ng-container>

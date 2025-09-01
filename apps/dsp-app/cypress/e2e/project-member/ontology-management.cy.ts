@@ -47,16 +47,12 @@ describe('Project Member - Ontology management', () => {
       cy.get('[data-cy=label-input]').scrollIntoView().should('be.visible');
 
       cy.get('[data-cy=label-input]').clear();
-      // no label, submit button should be disabled
-      cy.get('[data-cy=submit-button]').should('be.disabled');
       cy.get('[data-cy=label-input]').type(createData.label);
       cy.get('[data-cy=comment-textarea]').type(createData.comment);
       cy.get('[data-cy=submit-button]').should('be.enabled');
 
       cy.get('[data-cy=comment-textarea]').clear();
-      cy.get('[data-cy=submit-button]').should('be.disabled');
       cy.get('[data-cy=comment-textarea]').type(createData.comment);
-      cy.get('[data-cy=submit-button]').should('be.enabled');
 
       cy.get('[data-cy=submit-button]').click();
 

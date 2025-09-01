@@ -1,15 +1,15 @@
 import { Clipboard } from '@angular/cdk/clipboard';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, Input, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { ApiResponseError, IHasProperty } from '@dasch-swiss/dsp-js';
-import { DspDialogConfig, RouteConstants } from '@dasch-swiss/vre/core/config';
-import { ProjectsSelectors } from '@dasch-swiss/vre/core/state';
+import { ActivatedRoute } from '@angular/router';
+import { ApiResponseError, CanDoResponse, IHasProperty, KnoraApiConnection } from '@dasch-swiss/dsp-js';
+import { DspApiConnectionToken, DspDialogConfig, RouteConstants } from '@dasch-swiss/vre/core/config';
+import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
 import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { DialogService } from '@dasch-swiss/vre/ui/ui';
-import { Store } from '@ngxs/store';
-import { Subscription, switchMap, take } from 'rxjs';
+import { Observable, Subscription, switchMap, take } from 'rxjs';
 import {
   EditResourceClassDialogComponent,
   EditResourceClassDialogProps,
@@ -27,9 +27,9 @@ import { OntologyEditService } from '../../services/ontology-edit.service';
 export class ResourceClassInfoComponent implements OnInit, OnDestroy {
   @Input({ required: true }) resourceClass!: ResourceClassInfo;
 
-  project$ = this._store.select(ProjectsSelectors.currentProject);
+  project$ = this._projectPageService.currentProject$;
 
-  isAdmin$ = this._store.select(ProjectsSelectors.isCurrentProjectAdminOrSysAdmin);
+  hasProjectAdminRights$ = this._projectPageService.hasProjectAdminRights$;
 
   classHovered = false;
   menuOpen = false;
@@ -48,7 +48,10 @@ export class ResourceClassInfoComponent implements OnInit, OnDestroy {
     private _dialogService: DialogService,
     private _notification: NotificationService,
     private _oes: OntologyEditService,
-    private _store: Store
+    private _projectPageService: ProjectPageService,
+    @Inject(DspApiConnectionToken)
+    private _dspApiConnection: KnoraApiConnection,
+    private _route: ActivatedRoute
   ) {}
 
   ngOnInit() {
@@ -63,8 +66,7 @@ export class ResourceClassInfoComponent implements OnInit, OnDestroy {
   }
 
   setCanBeDeleted() {
-    this._oes
-      .canDeleteResourceClass$(this.resourceClass.id)
+    this._canDeleteResourceClass$(this.resourceClass.id)
       .pipe(take(1))
       .subscribe(response => {
         if (response instanceof ApiResponseError) {
@@ -110,7 +112,8 @@ export class ResourceClassInfoComponent implements OnInit, OnDestroy {
   }
 
   openInDatabrowser() {
-    const projectUuid = this._store.selectSnapshot(ProjectsSelectors.currentProjectsUuid);
+    const projectUuid = this._route.snapshot.params[RouteConstants.uuidParameter];
+
     const ontologyName = OntologyService.getOntologyNameFromIri(this._oes.ontologyId || '');
     const dataBrowserRoute = `/${RouteConstants.project}/${projectUuid}/${RouteConstants.ontology}/${ontologyName}/${this.resourceClass.name}`;
     window.open(dataBrowserRoute, '_blank');
@@ -119,5 +122,9 @@ export class ResourceClassInfoComponent implements OnInit, OnDestroy {
   copyResourceClassId() {
     this._clipboard.copy(this.resourceClass.id);
     this._notification.openSnackBar('Resource class ID copied to clipboard.');
+  }
+
+  private _canDeleteResourceClass$(classId: string): Observable<CanDoResponse | ApiResponseError> {
+    return this._dspApiConnection.v2.onto.canDeleteResourceClass(classId);
   }
 }

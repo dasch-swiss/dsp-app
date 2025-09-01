@@ -1,10 +1,9 @@
 import { Inject, Injectable } from '@angular/core';
-import { KnoraApiConnection, SystemPropertyDefinition } from '@dasch-swiss/dsp-js';
+import { KnoraApiConnection, ReadUser, SystemPropertyDefinition } from '@dasch-swiss/dsp-js';
+import { UserApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { AdminProjectsApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
-import { SetCurrentResourceAction } from '@dasch-swiss/vre/core/state';
 import { DspResource, GenerateProperty } from '@dasch-swiss/vre/shared/app-common';
-import { Store } from '@ngxs/store';
 import { BehaviorSubject, map, Observable, shareReplay, switchMap } from 'rxjs';
 import { ResourceUtil } from './resource.util';
 
@@ -19,17 +18,23 @@ export class ResourceFetcherService {
   userCanDelete$!: Observable<boolean>;
   resourceVersion?: string;
 
+  attachedUser$!: Observable<ReadUser>;
+
   constructor(
     @Inject(DspApiConnectionToken)
     private _dspApiConnection: KnoraApiConnection,
     private _adminProjectsApiService: AdminProjectsApiService,
-    private _store: Store
+    private _userApiService: UserApiService
   ) {}
 
   onInit(resourceIri: string, resourceVersion?: string) {
     this.resource$ = this._reloadSubject.asObservable().pipe(
       switchMap(() => this._getResource(resourceIri, resourceVersion)),
       shareReplay({ bufferSize: 1, refCount: true })
+    );
+
+    this.attachedUser$ = this.resource$.pipe(
+      switchMap(resource => this._userApiService.get(resource.res.attachedToUser).pipe(map(response => response.user)))
     );
 
     this.projectShortcode$ = this.resource$.pipe(
@@ -61,8 +66,6 @@ export class ResourceFetcherService {
         const res = new DspResource(response);
         res.resProps = GenerateProperty.commonProperty(res.res);
         res.systemProps = res.res.entityInfo.getPropertyDefinitionsByType(SystemPropertyDefinition);
-
-        this._store.dispatch(new SetCurrentResourceAction(res));
         return res;
       })
     );

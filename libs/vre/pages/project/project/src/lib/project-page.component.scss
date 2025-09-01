@@ -1,0 +1,7 @@
+@use '../../../../../../../apps/dsp-app/src/styles/config' as *;
+@use '../../../../../../../apps/dsp-app/src/styles/responsive' as *;
+
+:host {
+  display: flex;
+  height: calc(100vh - #{$header-height});
+}

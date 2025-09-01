@@ -39,7 +39,7 @@ describe.skip('View Existing Resource', () => {
 
   function createVideoThingClass(label: string): VideoThingClassResource {
     return {
-      label: label,
+      label,
       file: '',
       title: faker.lorem.sentence(),
       titleComment: faker.lorem.sentence(),
@@ -149,7 +149,7 @@ describe.skip('View Existing Resource', () => {
   it('object without representation with label, color, comment properties should be present', () => {
     project0803Page.visitClass('misc');
     cy.get('[data-cy=resource-list-item]').should('have.length.greaterThan', 0);
-    cy.get('[data-cy=resource-list-item] h3.res-class-value').contains(miscData.label).click();
+    cy.get('[data-cy=resource-list-item]').contains(miscData.label).click();
     cy.get('[data-cy=resource-header-label]').contains(miscData.label);
     cy.get('[data-cy=representation-container]').should('not.exist');
     cy.get('[data-cy=color-box]')
@@ -164,7 +164,7 @@ describe.skip('View Existing Resource', () => {
     project0803Page.visitClass('Sideband');
     cy.get('[data-cy=accept-cookies]').click();
     cy.get('rn-banner').shadow().find('.rn-close-btn').click();
-    cy.get('[data-cy=resource-list-item] h3.res-class-value').contains(sidebandData.label).click();
+    cy.get('[data-cy=resource-list-item]').contains(sidebandData.label).click();
     cy.get('[data-cy=close-restricted-button]').click();
     cy.get('[data-cy=resource-header-label]').contains(sidebandData.label);
     cy.get('.representation-container').should('exist');
@@ -226,7 +226,7 @@ describe.skip('View Existing Resource', () => {
     cy.get('[data-cy=accept-cookies]').click();
     cy.get('rn-banner').shadow().find('.rn-close-btn').click();
 
-    cy.get('[data-cy=resource-list-item] h3.res-class-value').contains(videoThingData.label).click();
+    cy.get('[data-cy=resource-list-item]').contains(videoThingData.label).click();
     cy.get('[data-cy=resource-header-label]').contains(videoThingData.label);
     cy.get('.representation-container').should('exist');
     cy.get('app-video').should('be.visible');
@@ -241,7 +241,7 @@ describe.skip('View Existing Resource', () => {
     cy.get('[data-cy=play-pause-button]').contains('play_arrow');
     cy.get('[data-cy=play-pause-button]').click();
     cy.get('[data-cy=play-pause-button]').contains('pause');
-    cy.wait(1000); //allow to play for 1 second
+    cy.wait(1000); // allow to play for 1 second
     cy.get('[data-cy=play-pause-button]').click();
     cy.get('[data-cy=player-time]')
       .invoke('text')
@@ -270,7 +270,7 @@ describe.skip('View Existing Resource', () => {
     cy.get('[data-cy=accept-cookies]').click();
     cy.get('rn-banner').shadow().find('.rn-close-btn').click();
 
-    cy.get('[data-cy=resource-list-item] h3.res-class-value').contains(audioThingData.label).click();
+    cy.get('[data-cy=resource-list-item]').contains(audioThingData.label).click();
     cy.get('[data-cy=resource-header-label]').contains(audioThingData.label);
     cy.get('.representation-container').should('exist');
     cy.get('app-audio').should('be.visible');
@@ -285,7 +285,7 @@ describe.skip('View Existing Resource', () => {
       expect(xhr.response.statusCode).to.eq(206);
     });
     cy.get('[data-cy=play-pause-button]').contains('pause');
-    cy.wait(1000); //allow to play for 1 second
+    cy.wait(1000); // allow to play for 1 second
     cy.get('[data-cy=play-pause-button]').click();
     cy.get('[data-cy=player-time]')
       .invoke('text')

@@ -19,11 +19,11 @@ describe('Create archive model, add new data and view it', () => {
   it('archive representation should be present', () => {
     projectAssertionPage.visitClass(archiveData.className);
     cy.get('[data-cy=accept-cookies]').click();
-    cy.get('[data-cy=resource-list-item] h3.res-class-value').contains(archiveData.label).click();
+    cy.get('[data-cy=resource-list-item]').contains(archiveData.label).click();
     cy.get('[data-cy=resource-header-label]').contains(archiveData.label);
     cy.get('.representation-container').should('exist');
     cy.get('app-archive').should('be.visible');
-    //cy.get('[data-cy=original-file-name]').contains(archiveFile);
+    // cy.get('[data-cy=original-file-name]').contains(archiveFile);
     cy.get('[data-cy=more-button]').click();
     // cy.get('[data-cy=download-file-button]').click(); //merge #4227 bugfix
     // cy.readFile(path.join(Cypress.config('downloadsFolder'), 'file.zip')).should('exist');

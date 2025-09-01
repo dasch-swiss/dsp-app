@@ -51,7 +51,7 @@
         [classProp]="prop"
         (cardinalityChange)="onCardinalityChange($event)" />
     </mat-list>
-    <app-add-property-menu *ngIf="(isAdmin$ | async)" [resourceClass]="resourceClass" />
+    <app-add-property-menu *ngIf="(hasProjectAdminRights$ | async)" [resourceClass]="resourceClass" />
   </mat-card-content>
 </mat-card>
 
@@ -62,7 +62,7 @@
 <mat-menu #resClassMenu="matMenu" xPosition="before">
   <button
     mat-menu-item
-    *ngIf="(isAdmin$ | async) === true && (project$ | async)?.status === true"
+    *ngIf="(hasProjectAdminRights$ | async) === true && (project$ | async)?.status === true"
     class="res-class-edit"
     data-cy="edit-button"
     (click)="editResourceClassInfo()">
@@ -82,7 +82,7 @@
     Copy resource class id
   </button>
   <button
-    *ngIf="(isAdmin$ | async) === true && (project$ | async)?.status === true"
+    *ngIf="(hasProjectAdminRights$ | async) === true && (project$ | async)?.status === true"
     [matTooltip]="classCanBeDeleted ? '' : 'This class can\'t be deleted because it is in use'"
     matTooltipPosition="before"
     [disabled]="!classCanBeDeleted"

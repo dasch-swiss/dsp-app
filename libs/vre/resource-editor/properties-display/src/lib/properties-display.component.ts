@@ -1,10 +1,8 @@
 import { Component, Input, OnChanges } from '@angular/core';
 import { Cardinality, ResourcePropertyDefinition } from '@dasch-swiss/dsp-js';
-import { ResourceSelectors } from '@dasch-swiss/vre/core/state';
+import { ResourceFetcherService } from '@dasch-swiss/vre/resource-editor/representations';
 import { PropertiesDisplayService } from '@dasch-swiss/vre/resource-editor/resource-properties';
 import { DspResource, PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
-import { Store } from '@ngxs/store';
-import { map } from 'rxjs';
 
 @Component({
   selector: 'app-properties-display',
@@ -87,19 +85,12 @@ export class PropertiesDisplayComponent implements OnChanges {
 
   protected readonly cardinality = Cardinality;
 
-  resourceAttachedUser$ = this._store
-    .select(ResourceSelectors.attachedUsers)
-    .pipe(
-      map(attachedUsers =>
-        attachedUsers[this.resource.res.id]?.value.find(u => u.id === this.resource.res.attachedToUser)
-      )
-    );
-
   editableProperties: PropertyInfoValues[] = [];
 
   numberOfComments!: number;
+  resourceAttachedUser$ = this._resourceFetcherService.attachedUser$;
 
-  constructor(private _store: Store) {}
+  constructor(private _resourceFetcherService: ResourceFetcherService) {}
 
   ngOnChanges() {
     this.editableProperties = this.resource.resProps.filter(

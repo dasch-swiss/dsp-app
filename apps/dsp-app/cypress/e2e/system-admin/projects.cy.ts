@@ -45,7 +45,8 @@ describe('Projects', () => {
     };
     cy.intercept('PUT', '/admin/projects/iri/*').as('submitRequest');
 
-    cy.visit(`/project/${projectPage.projectIri.match(/\/([^\/]+)$/)[1]}/settings/edit`);
+    const projectUuid = projectPage.projectIri.match(/\/([^\/]+)$/)[1];
+    cy.visit(`/project/${projectUuid}/settings/edit`);
     cy.get('[data-cy=shortcode-input] input').should('have.value', projectPage.project.shortcode);
     cy.get('[data-cy=shortname-input] input').should('have.value', projectPage.project.shortname);
     cy.get('[data-cy=longname-input] input')
@@ -62,7 +63,7 @@ describe('Projects', () => {
     cy.get('[data-cy=submit-button]').scrollIntoView().click();
 
     cy.wait('@submitRequest');
-    cy.url().should('match', /\/project\/(.+)/);
+    cy.visit(`/project/${projectUuid}/description`);
     cy.contains(projectPage.project.shortcode).should('be.visible');
     cy.contains(data.description).should('be.visible');
     data.keywords.forEach(keyword => cy.contains(keyword).should('be.visible'));

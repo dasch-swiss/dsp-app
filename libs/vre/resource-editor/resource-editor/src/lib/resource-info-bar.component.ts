@@ -1,11 +1,11 @@
 import { Component, Input, OnChanges } from '@angular/core';
 import { Router } from '@angular/router';
-import { ReadProject, ReadResource, ReadUser } from '@dasch-swiss/dsp-js';
+import { ReadProject, ReadResource } from '@dasch-swiss/dsp-js';
+import { ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
-import { GetAttachedProjectAction, GetAttachedUserAction, ResourceSelectors } from '@dasch-swiss/vre/core/state';
+import { ResourceFetcherService } from '@dasch-swiss/vre/resource-editor/representations';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
-import { Actions, ofActionSuccessful, Store } from '@ngxs/store';
-import { filter, map, take } from 'rxjs';
+import { map, Observable } from 'rxjs';
 
 @Component({
   selector: 'app-resource-info-bar',
@@ -14,8 +14,8 @@ import { filter, map, take } from 'rxjs';
       Resource of the project
       <a (click)="openProject(project)" class="link" [title]="project.longname">
         <strong>{{ project?.shortname }}</strong></a
-      ><span *ngIf="resourceAttachedUser || resource.creationDate"
-        >, created
+      >,<span *ngIf="resourceAttachedUser$ | async as resourceAttachedUser">
+        created
         <span *ngIf="resourceAttachedUser"
           >by
           {{
@@ -41,40 +41,23 @@ import { filter, map, take } from 'rxjs';
 export class ResourceInfoBarComponent implements OnChanges {
   @Input({ required: true }) resource!: ReadResource;
 
-  resourceAttachedUser: ReadUser | undefined;
+  resourceAttachedUser$ = this._resourceFetcherService.attachedUser$;
 
-  project$ = this._store.select(ResourceSelectors.attachedProjects).pipe(
-    filter(attachedProjects => attachedProjects[this.resource.id]?.value?.length > 0),
-    map(attachedProjects =>
-      attachedProjects[this.resource.id].value.find(u => u.id === this.resource.attachedToProject)
-    )
-  );
+  project$!: Observable<ReadProject>;
 
   constructor(
-    private _store: Store,
-    private _actions$: Actions,
-    private router: Router
+    private router: Router,
+    private _resourceFetcherService: ResourceFetcherService,
+    private _projectApiService: ProjectApiService
   ) {}
 
   ngOnChanges() {
-    this._getResourceAttachedData(this.resource);
+    this.project$ = this._projectApiService
+      .get(this.resource.attachedToProject)
+      .pipe(map(response => response.project));
   }
 
   openProject(project: ReadProject) {
     this.router.navigate([RouteConstants.projectRelative, ProjectService.IriToUuid(project.id)]);
-  }
-
-  private _getResourceAttachedData(resource: ReadResource): void {
-    this._actions$
-      .pipe(ofActionSuccessful(GetAttachedUserAction))
-      .pipe(take(1))
-      .subscribe(() => {
-        const attachedUsers = this._store.selectSnapshot(ResourceSelectors.attachedUsers);
-        this.resourceAttachedUser = attachedUsers[resource.id].value.find(u => u.id === resource.attachedToUser);
-      });
-    this._store.dispatch([
-      new GetAttachedUserAction(resource.id, resource.attachedToUser),
-      new GetAttachedProjectAction(resource.id, resource.attachedToProject),
-    ]);
   }
 }

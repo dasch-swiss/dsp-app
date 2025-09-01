@@ -15,3 +15,4 @@ export * from './lib/autocomplete-item.interface';
 export * from './lib/login-form/login-form.component';
 export * from './lib/user-form/user-form.type';
 export * from './lib/project-image-cover.component';
+export * from './lib/project-overview/all-projects.service';

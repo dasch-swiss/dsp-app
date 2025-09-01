@@ -1,35 +1,12 @@
-import { APP_INITIALIZER, NgModule } from '@angular/core';
-import { AppConfigService } from '@dasch-swiss/vre/core/config';
+import { NgModule } from '@angular/core';
 import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
 import { NgxsLoggerPluginModule } from '@ngxs/logger-plugin';
-import { NgxsRouterPluginModule, RouterStateSerializer } from '@ngxs/router-plugin';
-import { NgxsModule, Store } from '@ngxs/store';
-import { CustomRouterStateSerializer } from './lib/router/router-state.serializer';
+import { NgxsRouterPluginModule } from '@ngxs/router-plugin';
+import { NgxsModule } from '@ngxs/store';
 import { DEVTOOLS_REDUX_CONFIG, LOGGER_CONFIG, OPTIONS_CONFIG } from './store.config';
-import {
-  ConfigState,
-  ListsState,
-  OntologiesState,
-  OntologyClassState,
-  ProjectsState,
-  ResourceState,
-  SetConfigAction,
-  UserState,
-} from './index';
+import { UserState } from './index';
 
-export function initializeConfigState(configService: AppConfigService, store: Store) {
-  return () => store.dispatch(new SetConfigAction(configService));
-}
-
-const STATE_MODULES = [
-  UserState,
-  ProjectsState,
-  OntologiesState,
-  ListsState,
-  OntologyClassState,
-  ResourceState,
-  ConfigState,
-];
+const STATE_MODULES = [UserState];
 
 @NgModule({
   exports: [NgxsModule],
@@ -38,15 +15,6 @@ const STATE_MODULES = [
     NgxsReduxDevtoolsPluginModule.forRoot(DEVTOOLS_REDUX_CONFIG),
     NgxsLoggerPluginModule.forRoot(LOGGER_CONFIG),
     NgxsRouterPluginModule.forRoot(),
-  ],
-  providers: [
-    { provide: RouterStateSerializer, useClass: CustomRouterStateSerializer },
-    {
-      provide: APP_INITIALIZER,
-      useFactory: initializeConfigState,
-      deps: [AppConfigService, Store],
-      multi: true,
-    },
   ],
 })
 export class NgxsStoreModule {}

@@ -1,0 +1,53 @@
+@use '../../../../../../../../apps/dsp-app/src/styles/config' as *;
+
+
+.section-title {
+  height: 60px !important;
+
+  &.footer {
+    padding-top: 4px;
+  }
+
+  .section-label {
+    width: 100%;
+    color: $primary;
+    display: inline-grid;
+    grid-template-columns: 18% 75% 7%;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    font-weight: 300;
+  }
+
+  .section-icon {
+    color: $primary;
+
+    mat-icon {
+      vertical-align: middle;
+    }
+  }
+
+  .hover-only {
+    display: none;
+  }
+
+  &:hover {
+    .hover-only {
+      display: block;
+    }
+  }
+}
+
+.section-title:hover {
+  background-color: $primary_100 !important;
+}
+
+.sidenav-prefix-icon {
+  font-size: 32px;
+  width: 32px;
+  height: 32px;
+}
+
+.active {
+  background-color: #d6e0e8 !important;
+}

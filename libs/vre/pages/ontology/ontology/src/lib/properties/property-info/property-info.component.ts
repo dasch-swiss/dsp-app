@@ -1,11 +1,10 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, ViewContainerRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { ReadProject, ResourcePropertyDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
+import { ResourcePropertyDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
 import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
-import { ProjectsSelectors } from '@dasch-swiss/vre/core/state';
+import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
 import { DefaultProperty } from '@dasch-swiss/vre/shared/app-helper-services';
 import { DialogService } from '@dasch-swiss/vre/ui/ui';
-import { Store } from '@ngxs/store';
 import { BehaviorSubject, map, startWith, switchMap } from 'rxjs';
 import { EditPropertyFormDialogComponent } from '../../forms/property-form/edit-property-form-dialog.component';
 import { EditPropertyDialogData } from '../../forms/property-form/property-form.type';
@@ -21,9 +20,7 @@ import { OntologyEditService } from '../../services/ontology-edit.service';
 export class PropertyInfoComponent {
   @Input({ required: true }) property!: PropertyInfo;
 
-  isAdmin$ = this._store.select(ProjectsSelectors.isCurrentProjectAdminOrSysAdmin);
-
-  project!: ReadProject | undefined;
+  hasProjectAdminRights$ = this._projectPageService.hasProjectAdminRights$;
 
   showActionBubble = false;
 
@@ -36,15 +33,14 @@ export class PropertyInfoComponent {
   );
 
   isLockHovered = false;
-
+  project$ = this._projectPageService.currentProject$;
   constructor(
     private _dialog: MatDialog,
     private _oes: OntologyEditService,
     private _dialogService: DialogService,
-    private _store: Store
-  ) {
-    this.project = this._store.selectSnapshot(ProjectsSelectors.currentProject);
-  }
+    private _projectPageService: ProjectPageService,
+    private _viewContainerRef: ViewContainerRef
+  ) {}
 
   openEditProperty(propDef: ResourcePropertyDefinitionWithAllLanguages, propType: DefaultProperty) {
     const propertyData: EditPropertyDialogData = {
@@ -57,10 +53,10 @@ export class PropertyInfoComponent {
       guiAttribute: propDef.guiAttributes[0],
       objectType: propDef.objectType,
     };
-    this._dialog.open<EditPropertyFormDialogComponent, EditPropertyDialogData>(
-      EditPropertyFormDialogComponent,
-      DspDialogConfig.dialogDrawerConfig(propertyData)
-    );
+    this._dialog.open<EditPropertyFormDialogComponent, EditPropertyDialogData>(EditPropertyFormDialogComponent, {
+      viewContainerRef: this._viewContainerRef,
+      ...DspDialogConfig.dialogDrawerConfig(propertyData),
+    });
   }
 
   openDeleteProperty(id: string) {

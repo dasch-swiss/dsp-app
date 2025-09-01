@@ -31,18 +31,8 @@ export class UserSelectors {
   }
 
   @Selector([UserState])
-  static isMemberOfSystemAdminGroup(state: UserStateModel): boolean {
-    return state.isMemberOfSystemAdminGroup;
-  }
-
-  @Selector([UserState])
   static userProjectAdminGroups(state: UserStateModel): string[] {
     return state.userProjectAdminGroups;
-  }
-
-  @Selector([UserState])
-  static userProjectGroups(state: UserStateModel): string[] {
-    return state.userProjectGroups;
   }
 
   @Selector([UserState])
@@ -52,11 +42,6 @@ export class UserSelectors {
       : state.user && state.user.systemAdmin
         ? state.user.systemAdmin
         : false;
-  }
-
-  @Selector([UserState])
-  static displayName(state: UserStateModel): string | null {
-    return state.user?.familyName && state.user?.givenName ? `${state.user.familyName} ${state.user.givenName}` : null;
   }
 
   @Selector([UserState])

@@ -1,4 +1,6 @@
-import { DataModelsComponent } from './lib/data-models/data-models.component';
+import { DataModelsPageComponent } from './lib/data-models/data-models-page.component';
+import { CreateOntologyFormDialogComponent } from './lib/forms/ontology-form/create-ontology-form-dialog.component';
+import { EditOntologyFormDialogComponent } from './lib/forms/ontology-form/edit-ontology-form-dialog.component';
 import { OntologyFormComponent } from './lib/forms/ontology-form/ontology-form.component';
 import { EditPropertyFormDialogComponent } from './lib/forms/property-form/edit-property-form-dialog.component';
 import { GuiAttrLinkComponent } from './lib/forms/property-form/gui-attr-link.component';
@@ -12,7 +14,7 @@ import { OntologyPageComponent } from './lib/ontology-page.component';
 import { OntologySidenavComponent } from './lib/ontology-sidenav.component';
 import { OntologyPropertiesComponent } from './lib/properties/ontology-properties.component';
 import { PropertyInfoComponent } from './lib/properties/property-info/property-info.component';
-import { OntologyEditorClassesComponent } from './lib/resource-classes/ontology-editor-classes.component';
+import { OntologyEditorPageComponent } from './lib/resource-classes/ontology-editor-page.component';
 import { AddPropertyMenuComponent } from './lib/resource-classes/resource-class-info/add-property-menu.component';
 import { CardinalityChangeDialogComponent } from './lib/resource-classes/resource-class-info/cardinality-component/cardinality-change-dialog.component';
 import { CardinalityComponent } from './lib/resource-classes/resource-class-info/cardinality-component/cardinality.component';
@@ -20,13 +22,15 @@ import { PropertyItemComponent } from './lib/resource-classes/resource-class-inf
 import { ResourceClassInfoComponent } from './lib/resource-classes/resource-class-info/resource-class-info.component';
 
 export const OntologyComponents = [
-  DataModelsComponent,
+  DataModelsPageComponent,
   CreateResourceClassDialogComponent,
   EditResourceClassDialogComponent,
+  CreateOntologyFormDialogComponent,
+  EditOntologyFormDialogComponent,
   OntologyFormComponent,
   OntologyPageComponent,
   OntologyEditorHeaderComponent,
-  OntologyEditorClassesComponent,
+  OntologyEditorPageComponent,
   OntologyPropertiesComponent,
   PropertyInfoComponent,
   ResourceClassFormComponent,

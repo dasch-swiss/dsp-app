@@ -5,15 +5,14 @@ import {
   ReadAudioFileValue,
   ReadDocumentFileValue,
   ReadMovingImageFileValue,
-  ReadProject,
   ReadResource,
   ReadStillImageExternalFileValue,
   ReadStillImageFileValue,
 } from '@dasch-swiss/dsp-js';
+import { ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { AppConfigService } from '@dasch-swiss/vre/core/config';
-import { AppError } from '@dasch-swiss/vre/core/error-handler';
 import { AccessTokenService } from '@dasch-swiss/vre/core/session';
-import { IKeyValuePairs, ResourceSelectors, UserSelectors } from '@dasch-swiss/vre/core/state';
+import { UserSelectors } from '@dasch-swiss/vre/core/state';
 import { Store } from '@ngxs/store';
 import { take } from 'rxjs';
 import { ResourceUtil } from './resource.util';
@@ -26,7 +25,8 @@ export class RepresentationService {
     private _appConfigService: AppConfigService,
     private readonly _http: HttpClient,
     private _store: Store,
-    private _accessTokenService: AccessTokenService
+    private _accessTokenService: AccessTokenService,
+    private _projectApiService: ProjectApiService
   ) {}
 
   getFileInfo(url: string) {
@@ -37,12 +37,6 @@ export class RepresentationService {
   getIngestFileUrl(projectShort: string, assetId: string): string {
     const url = `${this._appConfigService.dspIngestConfig.url}/projects/${projectShort}/assets/${assetId}`;
     return url;
-  }
-
-  getParentResourceAttachedProject(attachedProjects: IKeyValuePairs<ReadProject>, parentResource: ReadResource) {
-    return attachedProjects[parentResource.id] && attachedProjects[parentResource.id].value.length > 0
-      ? attachedProjects[parentResource.id].value.find(u => u.id === parentResource.attachedToProject)
-      : undefined;
   }
 
   userCanView(fileValue: ReadDocumentFileValue) {
@@ -59,17 +53,11 @@ export class RepresentationService {
       | ReadArchiveFileValue,
     resource: ReadResource
   ) {
-    const attachedProject = this.getParentResourceAttachedProject(
-      this._store.selectSnapshot(ResourceSelectors.attachedProjects),
-      resource
-    )!;
-    if (!attachedProject) {
-      throw new AppError('Project is not present');
-    }
-
-    const assetId = fileValue.filename.split('.')[0] || '';
-    const ingestFileUrl = this.getIngestFileUrl(attachedProject.shortcode, assetId);
-    this.downloadFile(ingestFileUrl, this.userCanView(fileValue));
+    this._projectApiService.get(resource.attachedToProject).subscribe(response => {
+      const assetId = fileValue.filename.split('.')[0] || '';
+      const ingestFileUrl = this.getIngestFileUrl(response.project.shortcode, assetId);
+      this.downloadFile(ingestFileUrl, this.userCanView(fileValue));
+    });
   }
 
   private downloadFile(url: string, userCanView = true) {

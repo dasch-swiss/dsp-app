@@ -18,11 +18,7 @@ import { MatMenuTrigger } from '@angular/material/menu';
 import { ApiResponseError, Constants, ReadProject } from '@dasch-swiss/dsp-js';
 import { ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { SearchParams } from '@dasch-swiss/vre/shared/app-common-to-move';
-import {
-  ComponentCommunicationEventService,
-  Events,
-  SortingService,
-} from '@dasch-swiss/vre/shared/app-helper-services';
+import { ComponentCommunicationEventService, Events, SortingHelper } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { Subscription, tap } from 'rxjs';
 
@@ -121,7 +117,6 @@ export class FulltextSearchComponent implements OnInit, OnChanges, OnDestroy {
     private _projectsApiService: ProjectApiService,
     private _componentCommsService: ComponentCommunicationEventService,
     private _overlay: Overlay,
-    private _sortingService: SortingService,
     private _viewContainerRef: ViewContainerRef,
     private _notification: NotificationService
   ) {}
@@ -196,7 +191,7 @@ export class FulltextSearchComponent implements OnInit, OnChanges, OnDestroy {
         if (localStorage.getItem('currentProject') !== null) {
           this.project = JSON.parse(localStorage.getItem('currentProject'));
         }
-        this.projects = this._sortingService.keySortByAlphabetical(this.projects, 'shortname');
+        this.projects = SortingHelper.keySortByAlphabetical(this.projects, 'shortname');
       });
   }
 

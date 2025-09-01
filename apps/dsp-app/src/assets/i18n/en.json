@@ -110,7 +110,7 @@
         "button": "Export as CSV"
       },
       "legalSettings": {
-        "tab": "Legal Settings",
+        "tab": "Legal",
         "warning": "Attention: any action you do here is permanent",
         "copyrightHolders": "Copyright holders",
         "licenses": "Licenses/Statements",

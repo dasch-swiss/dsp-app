@@ -1,13 +1,4 @@
-import {
-  AfterViewInit,
-  ChangeDetectionStrategy,
-  Component,
-  EventEmitter,
-  Input,
-  OnChanges,
-  OnDestroy,
-  Output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, OnDestroy, Output } from '@angular/core';
 import { Constants, StoredProject } from '@dasch-swiss/dsp-js';
 import {
   AdminUsersApiService,
@@ -15,9 +6,7 @@ import {
   Project,
   UserDto,
 } from '@dasch-swiss/vre/3rd-party-services/open-api';
-import { LoadProjectsAction, ProjectsSelectors } from '@dasch-swiss/vre/core/state';
-import { AutocompleteItem } from '@dasch-swiss/vre/pages/user-settings/user';
-import { Store } from '@ngxs/store';
+import { AllProjectsService, AutocompleteItem } from '@dasch-swiss/vre/pages/user-settings/user';
 import { BehaviorSubject, combineLatest, map, Observable, Subject, switchMap, takeUntil } from 'rxjs';
 
 @Component({
@@ -75,7 +64,7 @@ import { BehaviorSubject, combineLatest, map, Observable, Subject, switchMap, ta
   `,
   styleUrls: ['./membership.component.scss'],
 })
-export class MembershipComponent implements AfterViewInit, OnDestroy, OnChanges {
+export class MembershipComponent implements OnDestroy, OnChanges {
   @Input({ required: true }) userId!: string;
   @Output() closeDialog = new EventEmitter<void>();
 
@@ -96,20 +85,16 @@ export class MembershipComponent implements AfterViewInit, OnDestroy, OnChanges 
   };
 
   constructor(
-    private _store: Store,
+    private _allProjectsService: AllProjectsService,
     private _adminUsersApi: AdminUsersApiService
   ) {}
-
-  ngAfterViewInit() {
-    this._store.dispatch(new LoadProjectsAction());
-  }
 
   ngOnChanges() {
     this.user$ = this._refreshSubject.pipe(
       switchMap(() => this._adminUsersApi.getAdminUsersIriUseriri(this.userId)),
       map(response => response.user)
     );
-    this.projects$ = combineLatest([this._store.select(ProjectsSelectors.allProjects), this.user$]).pipe(
+    this.projects$ = combineLatest([this._allProjectsService.allProjects$, this.user$]).pipe(
       map(([projects, user]) => this._getProjects(projects, user)),
       takeUntil(this._ngUnsubscribe)
     );

@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { StringLiteralV2 } from '@dasch-swiss/vre/3rd-party-services/open-api';
+import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
 import { DefaultClass } from '@dasch-swiss/vre/shared/app-helper-services';
 import { OntologyEditService } from '../../services/ontology-edit.service';
 import { ResourceClassForm, ResourceClassFormData } from './resource-class-form.type';
@@ -42,6 +43,7 @@ export class CreateResourceClassDialogComponent {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DefaultClass,
     public dialogRef: MatDialogRef<CreateResourceClassDialogComponent>,
+    private _projectPageService: ProjectPageService,
     private _oes: OntologyEditService
   ) {}
 
@@ -63,6 +65,7 @@ export class CreateResourceClassDialogComponent {
       )
       .subscribe(() => {
         this.loading = false;
+        this._projectPageService.reloadProject();
         this.dialogRef.close();
       });
   }

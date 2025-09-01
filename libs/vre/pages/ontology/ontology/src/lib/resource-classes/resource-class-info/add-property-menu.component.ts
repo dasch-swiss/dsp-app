@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, OnChanges } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnChanges, ViewContainerRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { DefaultProperties, DefaultProperty, PropertyCategory } from '@dasch-swiss/vre/shared/app-helper-services';
 import { Observable, Subject, BehaviorSubject, combineLatest, map, takeUntil } from 'rxjs';
@@ -120,7 +120,8 @@ export class AddPropertyMenuComponent implements OnChanges {
 
   constructor(
     private _dialog: MatDialog,
-    private _oes: OntologyEditService
+    private _oes: OntologyEditService,
+    private _viewContainerRef: ViewContainerRef
   ) {}
 
   ngOnChanges() {
@@ -146,6 +147,7 @@ export class AddPropertyMenuComponent implements OnChanges {
     };
     this._dialog.open<EditPropertyFormDialogComponent, CreatePropertyDialogData>(EditPropertyFormDialogComponent, {
       data: createData,
+      viewContainerRef: this._viewContainerRef,
     });
   }
 }

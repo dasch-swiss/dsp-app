@@ -5,8 +5,8 @@ import { Constants, StoredProject } from '@dasch-swiss/dsp-js';
 import { ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { AppConfigService, RouteConstants } from '@dasch-swiss/vre/core/config';
 import { AppError } from '@dasch-swiss/vre/core/error-handler';
-import { ProjectsSelectors, UserSelectors } from '@dasch-swiss/vre/core/state';
-import { ProjectService, SortingService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { UserSelectors } from '@dasch-swiss/vre/core/state';
+import { ProjectService, SortingHelper } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { DialogService } from '@dasch-swiss/vre/ui/ui';
 import { TranslateService } from '@ngx-translate/core';
@@ -65,8 +65,6 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
   user$ = this._store.select(UserSelectors.user);
   userProjectAdminGroups$ = this._store.select(UserSelectors.userProjectAdminGroups);
   isSysAdmin$ = this._store.select(UserSelectors.isSysAdmin);
-  allProjects$ = this._store.select(ProjectsSelectors.allProjects);
-  isProjectsLoading$ = this._store.select(ProjectsSelectors.isProjectsLoading);
 
   constructor(
     private _appConfigService: AppConfigService,
@@ -75,7 +73,6 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
     private _notification: NotificationService,
     private _projectApiService: ProjectApiService,
     private _router: Router,
-    private _sortingService: SortingService,
     private _store: Store,
     private _translateService: TranslateService
   ) {}
@@ -177,7 +174,7 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
     if (!this.projectsList) {
       throw new AppError('List is not defined.');
     }
-    this.projectsList = this._sortingService.keySortByAlphabetical(this.projectsList, key);
+    this.projectsList = SortingHelper.keySortByAlphabetical(this.projectsList, key);
     localStorage.setItem('sortProjectsBy', key);
   }
 }

@@ -1,27 +1,25 @@
 @use "../styles/config" as *;
 
-.cookie-banner {
-  position: fixed;
-  bottom: 0;
-  height: 128px;
-  width: 100%;
-  background: rgba(0, 0, 0, 0.75);
-  color: #fff;
-  z-index: 100;
-  // display: inline-flex;
-  padding: 24px 0;
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 
-  .note {
-    text-align: center;
-
-    .link {
-      color: $secondary;
-      text-decoration: underline;
-    }
+  .app-header {
+    height: $header-height;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 2;
   }
 
-  .action button {
-    margin: 0 auto 24px auto;
-    display: block;
+  .app-content {
+    flex: 1;
+    height: calc(100vh - #{$header-height});
+    margin-top: $header-height;
+    display: flex;
+    flex-direction: column;
   }
 }
+

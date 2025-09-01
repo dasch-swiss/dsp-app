@@ -1,0 +1,53 @@
+@use '../../../../../../../../apps/dsp-app/src/styles/config' as *;
+
+mat-panel-title {
+  margin: 0;
+}
+
+.mat-expansion-panel {
+  box-shadow: none !important;
+
+  .mat-expansion-panel-header {
+    padding: 0 16px !important; // override default value
+    height: auto !important; // override default value
+
+    .mat-expansion-panel-header-title,
+    .mat-expansion-indicator {
+      color: $primary;
+    }
+
+    .mat-expansion-indicator::after {
+      color: $primary !important;
+    }
+  }
+
+  .mat-expansion-panel-header.mat-expanded {
+    background: $primary_100;
+  }
+
+  .mat-expansion-panel-header:hover {
+    background-color: $primary_100;
+  }
+
+  .sidenav-panel-header {
+    width: 100%;
+
+    mat-panel-title {
+      overflow: unset;
+      white-space: inherit;
+      text-overflow: unset;
+      display: flex;
+
+      p {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+    }
+  }
+}
+
+:host ::ng-deep .mat-expansion-panel-body {
+  padding: 0 !important;
+}

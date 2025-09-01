@@ -1,13 +1,12 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ViewContainerRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { OntologyMetadata, ReadOntology } from '@dasch-swiss/dsp-js';
 import { DspDialogConfig, RouteConstants } from '@dasch-swiss/vre/core/config';
-import { ProjectsSelectors } from '@dasch-swiss/vre/core/state';
+import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
 import { DialogService } from '@dasch-swiss/vre/ui/ui';
-import { Store } from '@ngxs/store';
 import { switchMap, take } from 'rxjs';
-import { OntologyFormComponent } from './forms/ontology-form/ontology-form.component';
+import { EditOntologyFormDialogComponent } from './forms/ontology-form/edit-ontology-form-dialog.component';
 import { UpdateOntologyData } from './forms/ontology-form/ontology-form.type';
 import { OntologyEditService } from './services/ontology-edit.service';
 
@@ -37,12 +36,12 @@ import { OntologyEditService } from './services/ontology-edit.service';
           </p>
         </div>
         <span class="fill-remaining-space"></span>
-        <div *ngIf="(isAdmin$ | async) === true">
+        <div *ngIf="(hasProjectAdminRights$ | async) === true">
           <button
             color="primary"
             data-cy="edit-ontology-button"
             mat-button
-            [matTooltip]="(isAdmin$ | async) ? 'Edit data model info' : ''"
+            [matTooltip]="(hasProjectAdminRights$ | async) ? 'Edit data model info' : ''"
             [disabled]="(project$ | async)?.status !== true"
             (click)="$event.stopPropagation(); editOntology(ontology)">
             <mat-icon>edit</mat-icon>
@@ -104,15 +103,17 @@ import { OntologyEditService } from './services/ontology-edit.service';
 export class OntologyEditorHeaderComponent {
   ontology$ = this._oes.currentOntologyInfo$;
   currentOntologyCanBeDeleted$ = this._oes.currentOntologyCanBeDeleted$;
-  project$ = this._store.select(ProjectsSelectors.currentProject);
-  isAdmin$ = this._store.select(ProjectsSelectors.isCurrentProjectAdminOrSysAdmin);
+  project$ = this._projectPageService.currentProject$;
+  hasProjectAdminRights$ = this._projectPageService.hasProjectAdminRights$;
 
   constructor(
     private _dialog: MatDialog,
     private _dialogService: DialogService,
+    private _projectPageService: ProjectPageService,
     private _oes: OntologyEditService,
     private _router: Router,
-    private _store: Store
+    private _route: ActivatedRoute,
+    private _viewContainerRef: ViewContainerRef
   ) {}
 
   editOntology(ontology: ReadOntology | OntologyMetadata) {
@@ -121,10 +122,10 @@ export class OntologyEditorHeaderComponent {
       label: ontology.label,
       comment: ontology.comment || '',
     };
-    this._dialog.open<OntologyFormComponent, UpdateOntologyData>(
-      OntologyFormComponent,
-      DspDialogConfig.dialogDrawerConfig(data, true)
-    );
+    this._dialog.open<EditOntologyFormDialogComponent, UpdateOntologyData>(EditOntologyFormDialogComponent, {
+      ...DspDialogConfig.dialogDrawerConfig(data, true),
+      viewContainerRef: this._viewContainerRef,
+    });
   }
 
   deleteOntology(ontologyId: string) {
@@ -140,7 +141,8 @@ export class OntologyEditorHeaderComponent {
   }
 
   navigateToDataModels() {
-    const projectUuid = this._store.selectSnapshot(ProjectsSelectors.currentProjectsUuid);
-    this._router.navigate([RouteConstants.project, projectUuid, RouteConstants.dataModels]);
+    this._projectPageService.currentProjectUuid$.subscribe(projectUuid => {
+      this._router.navigate([RouteConstants.project, projectUuid, RouteConstants.dataModels]);
+    });
   }
 }

@@ -1,32 +1,11 @@
 @use "config" as *;
 
-// general app layout
-.app {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  width: 100%;
-
-  .app-header {
-    height: $header-height;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 2;
-  }
-
-  .app-content {
-    flex: 1;
-    //    height: calc(100vh - #{$header-height});
-    margin-top: $header-height;
-    // overflow: auto;
-  }
-}
 
 //
 // content wrapper
 .content {
+  width: 100%;
+
   &.small,
   &.medium,
   &.large,
@@ -48,116 +27,6 @@
 
   &.extra-large {
     max-width: 1440px;
-  }
-}
-
-// --------------------------------------
-
-//
-// sidenav in project view
-.project-view {
-  height: calc(100vh - #{$header-height});
-
-  .project-nav {
-    width: 315px;
-    background-color: #fafafa;
-
-    .project-title {
-      padding: 20px 16px 20px 16px;
-
-      p {
-        font-size: 24px;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        margin: 0px;
-      }
-    }
-
-    .mat-mdc-list-base {
-      padding-top: 0px;
-    }
-
-    .mat-mdc-list.main-list {
-      margin-bottom: calc(#{$header-height} - 8px);
-    }
-
-    .mat-headline-6,
-    .mat-subtitle-1,
-    .mat-subtitle-2 {
-      margin: 0;
-    }
-
-    .mat-mdc-list-item {
-      height: 48px;
-
-      &:hover {
-        background: rgba(0, 0, 0, 0.04);
-      }
-
-      &.list {
-        height: auto;
-
-        p {
-          display: -webkit-box;
-          -webkit-line-clamp: 2;
-          -webkit-box-orient: vertical;
-          overflow: hidden;
-        }
-      }
-
-      .mdc-list-item__content {
-        cursor: pointer;
-      }
-    }
-
-    .mat-expansion-panel {
-      box-shadow: none !important;
-
-      .mat-expansion-panel-header {
-        padding: 0 16px !important; // override default value
-        height: auto !important; // override default value
-
-        .mat-expansion-panel-header-title,
-        .mat-expansion-indicator {
-          color: $primary;
-        }
-
-        .mat-expansion-indicator::after {
-          color: $primary !important;
-        }
-      }
-
-      .mat-expansion-panel-header.mat-expanded {
-        background: $primary_100;
-      }
-
-      .mat-expansion-panel-header:hover {
-        background-color: $primary_100;
-      }
-
-      .sidenav-panel-header {
-        width: 100%;
-        mat-panel-title {
-          overflow: unset;
-          white-space: inherit;
-          text-overflow: unset;
-          display: flex;
-
-          p {
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-          }
-        }
-      }
-
-      .mat-expansion-panel-body {
-        padding: 0 !important;
-      }
-    }
   }
 }
 
