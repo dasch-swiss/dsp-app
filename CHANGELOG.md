@@ -1,5 +1,17 @@
 # Changelog
 
+## [11.42.0](https://github.com/dasch-swiss/dsp-das/compare/v11.41.1...v11.42.0) (2025-09-01)
+
+
+### Enhancements
+
+* improve the project view with better selection ([#2479](https://github.com/dasch-swiss/dsp-das/issues/2479)) ([d18f525](https://github.com/dasch-swiss/dsp-das/commit/d18f525622831b50692c8bf0539c32205bf5de80))
+
+
+### Bug Fixes
+
+* advanced search select property without resource class (DEV-5259) ([#2489](https://github.com/dasch-swiss/dsp-das/issues/2489)) ([b4eba90](https://github.com/dasch-swiss/dsp-das/commit/b4eba90d9cd97ff60d2fd33110c28828aa879582))
+
 ## [11.41.1](https://github.com/dasch-swiss/dsp-das/compare/v11.41.0...v11.41.1) (2025-08-26)
 
 
