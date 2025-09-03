@@ -118,7 +118,7 @@ export class ImageSettingsComponent implements OnInit {
         if (settings.watermark) {
           this.imageSettings = ImageSettingsEnum.Watermark;
         } else {
-          this.setRestrictedSize(settings.size);
+          this.setRestrictedSize(settings.size!);
         }
 
         this._cd.detectChanges();

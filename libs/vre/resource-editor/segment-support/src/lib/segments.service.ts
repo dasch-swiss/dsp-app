@@ -32,7 +32,7 @@ export class SegmentsService {
             return EMPTY;
           }
         }),
-        reduce((acc, value) => [...acc, ...value], [])
+        reduce((acc, value) => [...acc, ...value], [] as Segment[])
       )
       .subscribe(v => {
         this.segments = v;

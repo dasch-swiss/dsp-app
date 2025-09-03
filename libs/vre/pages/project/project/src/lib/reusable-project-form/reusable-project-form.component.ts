@@ -55,7 +55,7 @@ export class ReusableProjectFormComponent implements OnInit {
   };
   @Output() afterFormInit = new EventEmitter<ProjectForm>();
 
-  form: ProjectForm;
+  form?: ProjectForm;
   readonly shortcodePatternError = {
     errorKey: 'pattern',
     message: 'This field must contain letters from A to F and 0 to 9',
@@ -114,6 +114,6 @@ export class ReusableProjectFormComponent implements OnInit {
         }),
         Validators.required
       ),
-    });
+    }) as unknown as ProjectForm;
   }
 }

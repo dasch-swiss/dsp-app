@@ -32,5 +32,5 @@ export function convertTimestampToDateTime(timestamp: string, datePipe: DatePipe
   const date = new GregorianCalendarDate(new CalendarPeriod(calendarDate, calendarDate));
   const time = datePipe.transform(timestamp, 'HH:mm');
 
-  return new DateTime(date, time);
+  return new DateTime(date, time!);
 }

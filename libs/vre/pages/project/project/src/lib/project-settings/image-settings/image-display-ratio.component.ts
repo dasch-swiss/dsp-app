@@ -69,6 +69,6 @@ import { Component, Input } from '@angular/core';
   ],
 })
 export class ImageDisplayRatioComponent {
-  @Input() ratio: number;
+  @Input({ required: true }) ratio!: number;
   protected readonly Math = Math;
 }

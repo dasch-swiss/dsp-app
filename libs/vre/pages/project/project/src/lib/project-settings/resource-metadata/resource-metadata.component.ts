@@ -81,7 +81,7 @@ export class ResourceMetadataComponent implements OnDestroy {
   }
 
   private _handleDownload(response: HttpResponse<string>, shortcode: string, mimeType: string): void {
-    const blob = new Blob([response.body], { type: mimeType });
+    const blob = new Blob([response.body!], { type: mimeType });
     const filename = `project_${shortcode}_metadata`;
 
     const link = document.createElement('a');

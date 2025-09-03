@@ -52,7 +52,7 @@ export class ChipListInputComponent {
       return;
     }
 
-    const newFormControl = this._fb.control(value, this.validators);
+    const newFormControl = this._fb.control(value, { nonNullable: true, validators: this.validators });
 
     if (newFormControl.valid) {
       this.formArray.push(newFormControl);

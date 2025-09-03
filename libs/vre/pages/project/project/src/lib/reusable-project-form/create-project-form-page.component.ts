@@ -45,7 +45,7 @@ import { ProjectForm } from './project-form.type';
   `,
 })
 export class CreateProjectFormPageComponent {
-  form: ProjectForm;
+  form!: ProjectForm;
   loading = false;
 
   constructor(

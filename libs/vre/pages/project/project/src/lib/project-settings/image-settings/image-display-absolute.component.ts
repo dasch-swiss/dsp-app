@@ -80,6 +80,6 @@ import { Component, Input } from '@angular/core';
   ],
 })
 export class ImageDisplayAbsoluteComponent {
-  @Input() widthPx: number;
+  @Input({ required: true }) widthPx!: number;
   readonly bigWidth = 2048;
 }
