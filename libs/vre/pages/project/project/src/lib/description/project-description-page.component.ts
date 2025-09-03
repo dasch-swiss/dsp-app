@@ -28,11 +28,11 @@ export class ProjectDescriptionPageComponent {
   constructor(private _projectPageService: ProjectPageService) {}
 
   private _sortDescriptionsByLanguage(descriptions: StringLiteral[]): StringLiteral[] {
-    const languageOrder = AvailableLanguages.map(l => l.language);
+    const languageOrder = AvailableLanguages.map(l => l.language) as string[];
 
     return descriptions.sort((a, b) => {
-      const indexA = languageOrder.indexOf(a.language);
-      const indexB = languageOrder.indexOf(b.language);
+      const indexA = languageOrder.indexOf(a.language!);
+      const indexB = languageOrder.indexOf(b.language!);
 
       return indexA - indexB;
     });

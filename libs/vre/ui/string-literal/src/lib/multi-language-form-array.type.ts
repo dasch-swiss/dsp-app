@@ -1,7 +1,7 @@
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
-import { DaschLanguage } from './dash-language.type';
+import { DaschLanguage } from '@dasch-swiss/vre/core/config';
 
-type MultiLanguageFormControl = FormGroup<{
+export type MultiLanguageFormControl = FormGroup<{
   language: FormControl<DaschLanguage>;
   value: FormControl<string>;
 }>;

@@ -1,6 +1,6 @@
 import { FormArray, FormControl, FormGroup, ValidatorFn } from '@angular/forms';
 import { StringLiteralV2 } from '@dasch-swiss/vre/3rd-party-services/open-api';
-import { DaschLanguage } from './dash-language.type';
+import { DaschLanguage } from '@dasch-swiss/vre/core/config';
 import { MultiLanguageForm } from './multilanguage-form.type';
 
 export const DEFAULT_MULTILANGUAGE_FORM = (

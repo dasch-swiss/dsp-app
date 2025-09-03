@@ -1,6 +1,6 @@
-import { StringLiteral } from '@dasch-swiss/dsp-js';
+export type DaschLanguage = 'en' | 'de' | 'fr' | 'it' | 'rm';
 
-export const AvailableLanguages: StringLiteral[] = [
+export const AvailableLanguages: { language: DaschLanguage; value: string }[] = [
   {
     language: 'en',
     value: 'English',
@@ -22,8 +22,6 @@ export const AvailableLanguages: StringLiteral[] = [
     value: 'Romanic (Rumantsch)',
   },
 ] as const;
-
-export type LanguageShort = 'en' | 'de' | 'fr' | 'it' | 'rm';
 
 export const LocalStorageLanguageKey = 'dsp_language';
 
