@@ -4,11 +4,9 @@ import { Constants, ReadUser } from '@dasch-swiss/dsp-js';
 import { PermissionsData } from '@dasch-swiss/dsp-js/src/models/admin/permissions-data';
 import { UserApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
-import { SetUserAction, UserSelectors } from '@dasch-swiss/vre/core/state';
+import { UserService } from '@dasch-swiss/vre/core/session';
 import { EditUserDialogComponent, EditUserDialogProps } from '@dasch-swiss/vre/pages/user-settings/user';
 import { DialogService } from '@dasch-swiss/vre/ui/ui';
-import { Store } from '@ngxs/store';
-import { take } from 'rxjs/operators';
 import { EditPasswordDialogComponent, EditPasswordDialogProps } from '../edit-password-dialog.component';
 import { ManageProjectMembershipDialogComponent } from '../manage-project-membership-dialog.component';
 import { UsersTabService } from '../users-tab.service';
@@ -23,7 +21,7 @@ import { UsersTabService } from '../users-tab.service';
     <mat-menu #projectUserMenu="matMenu" xPosition="before">
       <button
         mat-menu-item
-        *ngIf="user.username !== (username$ | async)"
+        *ngIf="user.username !== (user$ | async)?.username"
         (click)="updateSystemAdminMembership(user, !isSystemAdmin(user.permissions))">
         {{ isSystemAdmin(user.permissions) ? 'Remove' : 'Add' }} as system admin
       </button>
@@ -44,12 +42,12 @@ import { UsersTabService } from '../users-tab.service';
 export class UsersListRowMenuComponent {
   @Input({ required: true }) user!: ReadUser;
 
-  isSysAdmin$ = this._store.select(UserSelectors.isSysAdmin);
-  username$ = this._store.select(UserSelectors.username);
+  isSysAdmin$ = this._userService.isSysAdmin$;
+  user$ = this._userService.user$;
 
   constructor(
     private _matDialog: MatDialog,
-    private _store: Store,
+    private _userService: UserService,
     private _dialog: DialogService,
     private readonly _userApiService: UserApiService,
     private _usersTabService: UsersTabService
@@ -71,15 +69,12 @@ export class UsersListRowMenuComponent {
   }
 
   updateSystemAdminMembership(user: ReadUser, systemAdmin: boolean): void {
-    this._userApiService
-      .updateSystemAdminMembership(user.id, systemAdmin)
-      .pipe(take(1))
-      .subscribe(response => {
-        this._store.dispatch(new SetUserAction(response.user));
-        if (this._store.selectSnapshot(UserSelectors.username) !== user.username) {
-          this._reloadUserList();
-        }
-      });
+    this._userApiService.updateSystemAdminMembership(user.id, systemAdmin).subscribe(() => {
+      const currentUser = this._userService.currentUser;
+      if (currentUser?.username !== user.username) {
+        this._reloadUserList();
+      }
+    });
   }
 
   askToActivateUser(username: string, id: string) {
@@ -128,14 +123,12 @@ export class UsersListRowMenuComponent {
 
   private deactivateUser(userIri: string) {
     this._userApiService.delete(userIri).subscribe(response => {
-      this._store.dispatch(new SetUserAction(response.user));
       this._reloadUserList();
     });
   }
 
   private activateUser(userIri: string) {
     this._userApiService.updateStatus(userIri, true).subscribe(response => {
-      this._store.dispatch(new SetUserAction(response.user));
       this._reloadUserList();
     });
   }

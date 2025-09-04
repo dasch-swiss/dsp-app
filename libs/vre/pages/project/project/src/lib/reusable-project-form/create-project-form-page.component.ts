@@ -4,9 +4,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { AdminUsersApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
-import { UserSelectors } from '@dasch-swiss/vre/core/state';
+import { UserService } from '@dasch-swiss/vre/core/session';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
-import { Store } from '@ngxs/store';
 import { finalize } from 'rxjs';
 import { ProjectForm } from './project-form.type';
 
@@ -50,7 +49,7 @@ export class CreateProjectFormPageComponent {
 
   constructor(
     private _projectApiService: ProjectApiService,
-    private _store: Store,
+    private _userService: UserService,
     private _router: Router,
     private _location: Location,
     private _adminUsersApi: AdminUsersApiService,
@@ -76,7 +75,7 @@ export class CreateProjectFormPageComponent {
       )
       .subscribe(projectResponse => {
         if (this._route.snapshot.queryParams[RouteConstants.assignCurrentUser]) {
-          const currentUser = this._store.selectSnapshot(UserSelectors.user)!;
+          const currentUser = this._userService.currentUser!;
 
           this._adminUsersApi
             .postAdminUsersIriUseririProjectMembershipsProjectiri(currentUser.id, projectResponse.project.id)

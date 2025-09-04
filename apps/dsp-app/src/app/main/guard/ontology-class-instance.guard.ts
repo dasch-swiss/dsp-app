@@ -1,22 +1,16 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, Router } from '@angular/router';
-import { StoredProject } from '@dasch-swiss/dsp-js';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
-import { AutoLoginService } from '@dasch-swiss/vre/core/session';
-import { UserSelectors } from '@dasch-swiss/vre/core/state';
+import { AutoLoginService, UserService } from '@dasch-swiss/vre/core/session';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
-import { Select, Store } from '@ngxs/store';
-import { combineLatest, Observable, filter, map, switchMap } from 'rxjs';
+import { combineLatest, filter, map, Observable, switchMap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class OntologyClassInstanceGuard implements CanActivate {
-  @Select(UserSelectors.isSysAdmin) isSysAdmin$: Observable<boolean>;
-  @Select(UserSelectors.userProjects) userProjects$: Observable<StoredProject[]>;
-
   constructor(
-    private _store: Store,
+    private _userService: UserService,
     private projectService: ProjectService,
     private router: Router,
     private _autoLoginService: AutoLoginService
@@ -27,12 +21,12 @@ export class OntologyClassInstanceGuard implements CanActivate {
     return combineLatest([
       this._autoLoginService.hasCheckedCredentials$.pipe(
         filter(hasChecked => hasChecked === true),
-        switchMap(() => this._store.select(UserSelectors.isLoggedIn))
+        switchMap(() => this._userService.isLoggedIn$)
       ),
-      this.isSysAdmin$,
-      this.userProjects$,
+      this._userService.isSysAdmin$,
+      this._userService.user$,
     ]).pipe(
-      map(([isLoggedIn, isSysAdmin, userProjects]) => {
+      map(([isLoggedIn, isSysAdmin, user]) => {
         const projectUuid = activatedRoute.parent.params[RouteConstants.uuidParameter];
 
         if (!isLoggedIn && isAddInstance) {
@@ -40,6 +34,7 @@ export class OntologyClassInstanceGuard implements CanActivate {
           return false;
         }
 
+        const userProjects = user ? user.projects : [];
         const isProjectMember = userProjects?.some(p => p.id === this.projectService.uuidToIri(projectUuid));
         return !isAddInstance || isProjectMember || isSysAdmin;
       })

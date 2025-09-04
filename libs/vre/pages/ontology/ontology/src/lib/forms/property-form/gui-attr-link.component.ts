@@ -2,7 +2,6 @@ import { Component, Input } from '@angular/core';
 import { ResourceClassDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
 import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
 import { LocalizationService, SortingHelper } from '@dasch-swiss/vre/shared/app-helper-services';
-import { Store } from '@ngxs/store';
 import { combineLatest, map } from 'rxjs';
 import { PropertyForm } from './property-form.type';
 
@@ -57,7 +56,6 @@ export class GuiAttrLinkComponent {
   );
 
   constructor(
-    private _store: Store,
     private _projectPageService: ProjectPageService,
     private _localizationService: LocalizationService
   ) {}

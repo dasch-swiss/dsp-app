@@ -9,3 +9,4 @@ export * from './lib/animations/replace-animation';
 export * from './lib/rxjs-operators/filter-undefined-operator';
 export * from './lib/rxjs-operators/filter-null-operator';
 export * from './lib/handle-xml';
+export * from './lib/user-permissions';

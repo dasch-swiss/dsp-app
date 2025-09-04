@@ -13,7 +13,7 @@ export default {
       },
     ],
   },
-  transformIgnorePatterns: ['node_modules/(?!@angular|@dasch-swiss)'],
+  transformIgnorePatterns: ['node_modules/(?!@angular|@dasch-swiss|@sentry)'],
   snapshotSerializers: [
     'jest-preset-angular/build/serializers/no-ng-attributes',
     'jest-preset-angular/build/serializers/ng-snapshot',

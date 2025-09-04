@@ -1,9 +1,7 @@
 import { ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { AppError } from '@dasch-swiss/vre/core/error-handler';
-import { LoadUserAction, UserSelectors } from '@dasch-swiss/vre/core/state';
+import { UserService } from '@dasch-swiss/vre/core/session';
 import { AllProjectsService } from '@dasch-swiss/vre/pages/user-settings/user';
-import { Store } from '@ngxs/store';
 import { BehaviorSubject, combineLatest, map, Subject, switchMap, takeUntil, tap } from 'rxjs';
 
 /**
@@ -52,26 +50,20 @@ export class ProjectsComponent implements OnInit, OnDestroy {
     switchMap(() => this._allProjectsService.allInactiveProjects$)
   );
 
-  inactiveProjects$ = combineLatest([
-    this._store.select(UserSelectors.userInactiveProjects),
-    this._allInactiveProjects$,
-  ]).pipe(
+  inactiveProjects$ = combineLatest([this._userService.userInactiveProjects$, this._allInactiveProjects$]).pipe(
     takeUntil(this._ngUnsubscribe),
     map(([userInactiveProjects, allInactiveProjects]) =>
       this.isUsersProjects ? userInactiveProjects : allInactiveProjects
     )
   );
 
-  activeProjects$ = combineLatest([
-    this._store.select(UserSelectors.userActiveProjects),
-    this._allActiveProjects$,
-  ]).pipe(
+  activeProjects$ = combineLatest([this._userService.userActiveProjects$, this._allActiveProjects$]).pipe(
     takeUntil(this._ngUnsubscribe),
     map(([userActiveProjects, allActiveProjects]) => (this.isUsersProjects ? userActiveProjects : allActiveProjects))
   );
 
   constructor(
-    private _store: Store,
+    private _userService: UserService,
     private _allProjectsService: AllProjectsService,
     private _titleService: Title
   ) {}
@@ -86,10 +78,8 @@ export class ProjectsComponent implements OnInit, OnDestroy {
   }
 
   updateAndRefresh() {
-    const currentUser = this._store.selectSnapshot(UserSelectors.user);
-    if (!currentUser) throw new AppError('Current user not found.');
     this._reloadProjects();
-    this._store.dispatch(new LoadUserAction(currentUser.username));
+    this._userService.reloadUser().subscribe();
   }
 
   private _reloadProjects() {

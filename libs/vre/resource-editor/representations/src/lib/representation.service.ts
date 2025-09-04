@@ -11,9 +11,7 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { AppConfigService } from '@dasch-swiss/vre/core/config';
-import { AccessTokenService } from '@dasch-swiss/vre/core/session';
-import { UserSelectors } from '@dasch-swiss/vre/core/state';
-import { Store } from '@ngxs/store';
+import { AccessTokenService, UserService } from '@dasch-swiss/vre/core/session';
 import { take } from 'rxjs';
 import { ResourceUtil } from './resource.util';
 
@@ -24,7 +22,7 @@ export class RepresentationService {
   constructor(
     private _appConfigService: AppConfigService,
     private readonly _http: HttpClient,
-    private _store: Store,
+    private _userService: UserService,
     private _accessTokenService: AccessTokenService,
     private _projectApiService: ProjectApiService
   ) {}
@@ -62,7 +60,7 @@ export class RepresentationService {
 
   private downloadFile(url: string, userCanView = true) {
     let headers = {};
-    const isLoggedIn = this._store.selectSnapshot(UserSelectors.isLoggedIn);
+    const isLoggedIn = !!this._userService.currentUser;
     if (isLoggedIn && userCanView) {
       const authToken = this._accessTokenService.getAccessToken();
       headers = new HttpHeaders({

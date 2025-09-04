@@ -3,8 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Title } from '@angular/platform-browser';
 import { ReadUser } from '@dasch-swiss/dsp-js';
 import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
-import { UserSelectors } from '@dasch-swiss/vre/core/state';
-import { Store } from '@ngxs/store';
+import { UserService } from '@dasch-swiss/vre/core/session';
 import { Subject, takeUntil, takeWhile } from 'rxjs';
 import { EditUserDialogComponent, EditUserDialogProps } from '../edit-user-page/edit-user-dialog.component';
 
@@ -17,13 +16,12 @@ import { EditUserDialogComponent, EditUserDialogProps } from '../edit-user-page/
 export class ProfileComponent implements OnInit, OnDestroy {
   private ngUnsubscribe: Subject<void> = new Subject<void>();
 
-  isSysAdmin$ = this._store.select(UserSelectors.isSysAdmin);
-  user$ = this._store.select(UserSelectors.user);
-  isLoading$ = this._store.select(UserSelectors.isLoading);
+  isSysAdmin$ = this._userService.isSysAdmin$;
+  user$ = this._userService.user$;
 
   constructor(
     private _dialog: MatDialog,
-    private _store: Store,
+    private _userService: UserService,
     private _titleService: Title
   ) {}
 

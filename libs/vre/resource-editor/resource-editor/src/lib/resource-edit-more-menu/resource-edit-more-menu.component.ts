@@ -8,7 +8,6 @@ import {
   EditResourceLabelDialogComponent,
   EraseResourceDialogComponent,
 } from '@dasch-swiss/vre/resource-editor/resource-properties';
-import { Store } from '@ngxs/store';
 import { combineLatest, map, of, take } from 'rxjs';
 import { CanDeleteResource } from './can-delete-resource.interface';
 
@@ -113,7 +112,6 @@ export class ResourceEditMoreMenuComponent {
 
   constructor(
     public resourceFetcher: ResourceFetcherService,
-    private _store: Store,
     @Inject(DspApiConnectionToken)
     private _dspApiConnection: KnoraApiConnection,
     private _dialog: MatDialog,

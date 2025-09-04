@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { AdminGroupsApiService, AdminProjectsApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
-import { Store } from '@ngxs/store';
 import { BehaviorSubject, EMPTY, filter, map, shareReplay, switchMap } from 'rxjs';
 import { ProjectPageService } from '../../project-page.service';
 
@@ -35,7 +34,6 @@ export class CollaborationPageService {
 
   constructor(
     private _adminGroupsApi: AdminGroupsApiService,
-    private _store: Store,
     private _projectPageService: ProjectPageService,
     private _adminProjectsApi: AdminProjectsApiService
   ) {}

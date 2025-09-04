@@ -1,8 +1,7 @@
 import { Component } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
-import { UserSelectors } from '@dasch-swiss/vre/core/state';
-import { Store } from '@ngxs/store';
+import { UserService } from '@dasch-swiss/vre/core/session';
 
 @Component({
   selector: 'app-system-page',
@@ -36,7 +35,7 @@ import { Store } from '@ngxs/store';
   styleUrls: ['./system-page.component.scss'],
 })
 export class SystemPageComponent {
-  isSysAdmin$ = this._store.select(UserSelectors.isSysAdmin);
+  isSysAdmin$ = this._userService.isSysAdmin$;
 
   links = [
     { name: 'All Projects', url: RouteConstants.systemProjects, icon: 'assignment' },
@@ -46,7 +45,7 @@ export class SystemPageComponent {
   activeLink = '';
 
   constructor(
-    private readonly _store: Store,
+    private readonly _userService: UserService,
     private readonly _titleService: Title
   ) {
     this._titleService.setTitle('System administration');

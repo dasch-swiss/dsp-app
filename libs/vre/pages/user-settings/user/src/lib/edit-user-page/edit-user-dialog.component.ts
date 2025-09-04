@@ -2,10 +2,10 @@ import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ReadUser, UpdateUserRequest } from '@dasch-swiss/dsp-js';
 import { UserApiService } from '@dasch-swiss/vre/3rd-party-services/api';
+import { UserService } from '@dasch-swiss/vre/core/session';
 import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { TranslateService } from '@ngx-translate/core';
-import { Store } from '@ngxs/store';
 import { UserForm } from '../user-form/user-form.type';
 
 export interface EditUserDialogProps {
@@ -36,7 +36,7 @@ export class EditUserDialogComponent {
     private _dialogRef: MatDialogRef<EditUserDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: EditUserDialogProps,
     private _notification: NotificationService,
-    private _store: Store,
+    private _userService: UserService,
     private _localizationsService: LocalizationService,
     private _translateService: TranslateService,
     private _userApiService: UserApiService
@@ -52,10 +52,7 @@ export class EditUserDialogComponent {
     this._userApiService.updateBasicInformation(this.data.user.id, userUpdate).subscribe(() => {
       this._dialogRef.close(true);
       this._notification.openSnackBar(this._translateService.instant('pages.userSettings.userForm.updateSuccess'));
-      if (
-        userUpdate.lang !== undefined &&
-        this.data.user.username === this._store.selectSnapshot(state => state.user.user.username)
-      ) {
+      if (userUpdate.lang !== undefined && this.data.user.username === this._userService.currentUser?.username) {
         this._localizationsService.setLanguage(userUpdate.lang);
         document.location.reload();
       }

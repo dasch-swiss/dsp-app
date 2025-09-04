@@ -2,10 +2,9 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ReadUser } from '@dasch-swiss/dsp-js';
 import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
-import { UserSelectors } from '@dasch-swiss/vre/core/state';
+import { UserService } from '@dasch-swiss/vre/core/session';
 import { SortingHelper } from '@dasch-swiss/vre/shared/app-helper-services';
 import { TranslateService } from '@ngx-translate/core';
-import { Store } from '@ngxs/store';
 import { CreateUserDialogComponent } from '../create-user-dialog.component';
 import { UsersTabService } from '../users-tab.service';
 
@@ -91,11 +90,11 @@ export class UsersListComponent {
   ];
 
   sortBy: UserSortKey = (localStorage.getItem('sortUsersBy') as UserSortKey) || 'username';
-  isSysAdmin$ = this._store.select(UserSelectors.isSysAdmin);
+  isSysAdmin$ = this._userService.isSysAdmin$;
 
   constructor(
     private readonly _matDialog: MatDialog,
-    private readonly _store: Store,
+    private readonly _userService: UserService,
     private readonly _ts: TranslateService,
     private _usersTabService: UsersTabService
   ) {}

@@ -3,11 +3,10 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { ReadUser, StringLiteral } from '@dasch-swiss/dsp-js';
 import { UserApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { AvailableLanguages } from '@dasch-swiss/vre/core/config';
-import { UserSelectors } from '@dasch-swiss/vre/core/state';
+import { UserService } from '@dasch-swiss/vre/core/session';
 import { CustomRegex } from '@dasch-swiss/vre/shared/app-common';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { TranslateService } from '@ngx-translate/core';
-import { Select, Store } from '@ngxs/store';
 import { map, Observable, shareReplay } from 'rxjs';
 import { existingNamesAsyncValidator } from '../existing-names.validator';
 import { UserForm } from './user-form.type';
@@ -22,7 +21,7 @@ export class UserFormComponent implements OnInit {
 
   @Output() afterFormInit = new EventEmitter<UserForm>();
 
-  loggedInUserIsSysAdmin$ = this._store.select(UserSelectors.isSysAdmin);
+  loggedInUserIsSysAdmin$ = this._userService.isSysAdmin$;
 
   allUsers$ = this._userApiService.list().pipe(
     map(response => response.users),
@@ -54,7 +53,7 @@ export class UserFormComponent implements OnInit {
   constructor(
     private _fb: FormBuilder,
     private _ts: TranslateService,
-    private _store: Store,
+    private _userService: UserService,
     private _userApiService: UserApiService
   ) {}
 

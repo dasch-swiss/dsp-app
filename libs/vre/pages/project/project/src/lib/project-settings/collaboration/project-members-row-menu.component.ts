@@ -6,12 +6,11 @@ import { PermissionsData } from '@dasch-swiss/dsp-js/src/models/admin/permission
 import { UserApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { AdminUsersApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { DspDialogConfig, RouteConstants } from '@dasch-swiss/vre/core/config';
-import { LoadUserAction, SetUserAction, UserSelectors } from '@dasch-swiss/vre/core/state';
+import { UserService } from '@dasch-swiss/vre/core/session';
 import { EditPasswordDialogComponent } from '@dasch-swiss/vre/pages/system/system';
 import { EditUserDialogComponent, EditUserDialogProps } from '@dasch-swiss/vre/pages/user-settings/user';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { DialogService } from '@dasch-swiss/vre/ui/ui';
-import { Store } from '@ngxs/store';
 import { switchMap } from 'rxjs';
 import { CollaborationPageService } from './collaboration-page.service';
 
@@ -43,7 +42,7 @@ export class ProjectMembersRowMenuComponent {
   @Output() refreshParent = new EventEmitter<void>();
 
   constructor(
-    private _store: Store,
+    private _userService: UserService,
     private _userApiService: UserApiService,
     private _router: Router,
     private _matDialog: MatDialog,
@@ -62,15 +61,14 @@ export class ProjectMembersRowMenuComponent {
 
   removeProjectAdminMembership(): void {
     const id = this.user.id;
-    const currentUser = this._store.selectSnapshot(UserSelectors.user);
+    const currentUser = this._userService.currentUser;
     if (!currentUser) return;
 
     this._userApiService.removeFromProjectMembership(id, this.project.id, true).subscribe(response => {
-      if (currentUser.username !== response.user.username) {
-        this._store.dispatch(new SetUserAction(response.user));
+      if (currentUser.id !== response.user.id) {
         this._refresh();
       } else {
-        this._store.dispatch(new LoadUserAction(currentUser.username)).subscribe(() => {
+        this._userService.reloadUser().subscribe(() => {
           const isSysAdmin = ProjectService.IsMemberOfSystemAdminGroup(currentUser.permissions?.groupsPerProject || {});
           if (isSysAdmin) {
             this._refresh();
@@ -88,18 +86,15 @@ export class ProjectMembersRowMenuComponent {
 
   addProjectAdminMembership(): void {
     const id = this.user.id;
-    const currentUser = this._store.selectSnapshot(UserSelectors.user);
+    const currentUser = this._userService.currentUser;
     if (!currentUser) return;
 
     // false: user isn't project admin yet --> add admin rights
     this._userApiService.addToProjectMembership(id, this.project.id, true).subscribe(response => {
       if (currentUser.username !== response.user.username) {
-        this._store.dispatch(new SetUserAction(response.user));
         this._refresh();
       } else {
-        // the logged-in user (system admin) added himself as project admin
-        // update the application state of logged-in user and the session
-        this._store.dispatch(new LoadUserAction(currentUser.username)).subscribe(() => {
+        this._userService.reloadUser().subscribe(() => {
           this._refresh();
         });
       }

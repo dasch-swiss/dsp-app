@@ -2,7 +2,6 @@ import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
-import { Store } from '@ngxs/store';
 import { filter, startWith, Subject, takeUntil } from 'rxjs';
 import { ProjectPageService } from './project-page.service';
 
@@ -43,7 +42,6 @@ export class ProjectPageComponent implements OnInit, OnDestroy {
 
   constructor(
     private _router: Router,
-    protected _store: Store,
     protected _route: ActivatedRoute,
     private _titleService: Title,
     private _projectPageService: ProjectPageService

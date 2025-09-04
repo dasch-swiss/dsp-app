@@ -2,9 +2,8 @@ import { Component, Inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken, RouteConstants } from '@dasch-swiss/vre/core/config';
-import { UserSelectors } from '@dasch-swiss/vre/core/state';
+import { UserService } from '@dasch-swiss/vre/core/session';
 import { ResourceResultService } from '@dasch-swiss/vre/pages/data-browser';
-import { Store } from '@ngxs/store';
 import { combineLatest, map, switchMap, tap } from 'rxjs';
 
 @Component({
@@ -23,7 +22,7 @@ import { combineLatest, map, switchMap, tap } from 'rxjs';
 export class SearchProjectResultsPageComponent {
   query?: string;
   loading = true;
-  userIsSysAdmin$ = this._store.select(UserSelectors.isSysAdmin);
+  userIsSysAdmin$ = this._userService.isSysAdmin$;
 
   readonly resources$ = this._route.params.pipe(
     map(params => ({
@@ -59,6 +58,6 @@ export class SearchProjectResultsPageComponent {
     @Inject(DspApiConnectionToken)
     private _dspApiConnection: KnoraApiConnection,
     private _resourceResultService: ResourceResultService,
-    private _store: Store
+    private _userService: UserService
   ) {}
 }

@@ -4,7 +4,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { KnoraApiConnection, ReadProject } from '@dasch-swiss/dsp-js';
 import { ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
-import { Store } from '@ngxs/store';
+import { UserService } from '@dasch-swiss/vre/core/session';
 import { finalize, switchMap } from 'rxjs';
 
 export interface IEraseProjectDialogProps {
@@ -35,14 +35,14 @@ export class EraseProjectDialogComponent {
     private _dialogRef: MatDialogRef<EraseProjectDialogComponent>,
     @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
     private _projectApiService: ProjectApiService,
-    private _store: Store
+    private _userService: UserService
   ) {}
 
   submit() {
     if (this.eraseForm.invalid) return;
     this.isLoading = true;
 
-    const currentUser = this._store.selectSnapshot(state => state.user).user;
+    const currentUser = this._userService.currentUser;
     const password = this.eraseForm.controls.password.value;
     const shortCode = this.eraseForm.controls.shortCode.value;
 

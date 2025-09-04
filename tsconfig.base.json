@@ -42,9 +42,6 @@
       "@dasch-swiss/vre/core/session": [
         "libs/vre/core/session/src/index.ts"
       ],
-      "@dasch-swiss/vre/core/state": [
-        "libs/vre/core/state/src/index.ts"
-      ],
       "@dasch-swiss/vre/pages/ontology/list": [
         "libs/vre/pages/ontology/list/src/index.ts"
       ],
