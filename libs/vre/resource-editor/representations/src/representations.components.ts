@@ -4,7 +4,6 @@ import { AudioMoreButtonComponent } from './lib/audio/audio-more-button.componen
 import { AudioToolbarComponent } from './lib/audio/audio-toolbar.component';
 import { AudioComponent } from './lib/audio/audio.component';
 import { MediaSliderComponent } from './lib/audio/media-slider.component';
-import { AvTimelineComponent } from './lib/av-timeline/av-timeline.component';
 import { DocumentComponent } from './lib/document/document.component';
 import { ReplaceFileDialogComponent } from './lib/replace-file-dialog/replace-file-dialog.component';
 import { StillImageToolbarComponent } from './lib/still-image/still-image-toolbar.component';
@@ -16,7 +15,6 @@ import { VideoMoreButtonComponent } from './lib/video/video-more-button.componen
 import { VideoOverlayComponent } from './lib/video/video-overlay.component';
 import { VideoToolbarComponent } from './lib/video/video-toolbar.component';
 import { VideoComponent } from './lib/video/video.component';
-import { VideoPreviewComponent } from './lib/video-preview/video-preview.component';
 
 export const RepresentationsComponents = [
   AddRegionFormDialogComponent,
@@ -24,7 +22,6 @@ export const RepresentationsComponents = [
   AudioComponent,
   AudioToolbarComponent,
   AudioMoreButtonComponent,
-  AvTimelineComponent,
   DocumentComponent,
   MediaSliderComponent,
   ReplaceFileDialogComponent,
@@ -32,7 +29,6 @@ export const RepresentationsComponents = [
   StillImageToolbarComponent,
   TextComponent,
   VideoComponent,
-  VideoPreviewComponent,
   VideoMoreButtonComponent,
   VideoToolbarComponent,
   VideoOverlayComponent,

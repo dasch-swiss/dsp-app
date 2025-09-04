@@ -14,7 +14,6 @@ import { ReadMovingImageFileValue, ReadResource } from '@dasch-swiss/dsp-js';
 import { MediaControlService, SegmentsService } from '@dasch-swiss/vre/resource-editor/segment-support';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { Subject, takeUntil } from 'rxjs';
-import { PointerValue } from '../av-timeline/av-timeline.component';
 import { MovingImageSidecar } from '../moving-image-sidecar';
 import { RepresentationService } from '../representation.service';
 import { MediaPlayerService } from './media-player.service';
@@ -29,7 +28,6 @@ export class VideoComponent implements OnChanges, OnDestroy {
   @Input({ required: true }) parentResource!: ReadResource;
   @Output() loaded = new EventEmitter<boolean>();
 
-  @ViewChild('preview') preview!: ElementRef;
   @ViewChild('videoElement', { static: false }) videoElement!: ElementRef<HTMLVideoElement>;
 
   start = 0;
@@ -39,7 +37,6 @@ export class VideoComponent implements OnChanges, OnDestroy {
   myCurrentTime = 0;
   previewTime = 0;
   duration = 0;
-  cinemaMode = false;
   watchForPause: number | null = null;
   isPlayerReady = false;
   fileInfo?: MovingImageSidecar;
@@ -83,7 +80,6 @@ export class VideoComponent implements OnChanges, OnDestroy {
     this.isPlayerReady = true;
     this.loaded.emit(true);
     this._mediaControl.mediaDurationSecs = this.videoPlayer.duration();
-    this.displayPreview(true);
     this.videoPlayer.onTimeUpdate$.subscribe(seconds => {
       this.myCurrentTime = seconds;
       this._cdr.detectChanges();
@@ -97,35 +93,6 @@ export class VideoComponent implements OnChanges, OnDestroy {
 
   ngOnDestroy() {
     this._ngUnsubscribe.next();
-  }
-
-  updatePreview(ev: PointerValue) {
-    if (!this.timelineDimension) {
-      return;
-    }
-    this.displayPreview(true);
-
-    this.previewTime = Math.round(ev.time);
-
-    // position from left:
-    let leftPosition: number = ev.position - this.timelineDimension.x - this.halfFrameWidth;
-
-    // prevent overflow of preview image on the left
-    if (leftPosition <= 8) {
-      leftPosition = 8;
-    }
-
-    // prevent overflow of preview image on the right
-    if (leftPosition >= this.timelineDimension.width - this.frameWidth + 8) {
-      leftPosition = this.timelineDimension.width - this.frameWidth + 8;
-    }
-
-    // set preview positon on x axis
-    this.preview.nativeElement.style.left = `${leftPosition}px`;
-  }
-
-  displayPreview(status: boolean) {
-    this.preview.nativeElement.style.display = status ? 'block' : 'none';
   }
 
   handleVideoError(event: ErrorEvent) {

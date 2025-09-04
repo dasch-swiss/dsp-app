@@ -17,30 +17,6 @@
     <app-video-overlay *ngIf="false" />
   </div>
 
-  <div #preview>
-    <app-video-preview
-      *ngIf="false"
-      [src]="src"
-      [time]="previewTime"
-      [fileInfo]="fileInfo"
-      (loaded)="displayPreview(!$event)" />
-  </div>
-
-  <mat-toolbar *ngIf="false">
-    <mat-toolbar-row>
-      <app-av-timeline
-        [value]="0"
-        [min]="0"
-        [max]="duration"
-        [resized]="isFullscreen"
-        (move)="updatePreview($event)"
-        (mouseenter)="displayPreview(true)"
-        (dimension)="timelineDimension = $event"
-        (mouseleave)="displayPreview(false)"
-        (changed)="videoPlayer.navigate($event)"
-        [disabled]="!isPlayerReady" />
-    </mat-toolbar-row>
-  </mat-toolbar>
   <app-media-slider
     *ngIf="isPlayerReady"
     [max]="videoPlayer.duration()"
