@@ -1,12 +1,14 @@
 <div appDisableContextMenu>
-  <app-status [comment]="videoError" [url]="src.fileUrl" [representation]="'video'" *ngIf="videoError" />
+  @if (videoError) {
+  <app-status [comment]="videoError" [url]="src.fileUrl" [representation]="'video'" />
+  }
 
   <div style="margin-bottom: -4px">
+    @if (video) {
     <video
       style="width: 100%"
       #videoElement
       id="video"
-      *ngIf="video; else loading"
       [src]="video"
       type="video/mp4"
       preload="auto"
@@ -14,26 +16,25 @@
       (canplay)="onVideoPlayerReady()"
       (click)="videoPlayer.togglePlay()"
       (error)="handleVideoError($event)"></video>
-    <app-video-overlay *ngIf="false" />
+    } @else {
+    <app-progress-indicator />
+    } @if (false) {
+    <app-video-overlay />
+    }
   </div>
 
+  @if (isPlayerReady) {
   <app-media-slider
-    *ngIf="isPlayerReady"
     [max]="videoPlayer.duration()"
     [currentTime]="myCurrentTime"
     (afterNavigation)="videoPlayer.navigate($event)" />
-  <app-segments-display
-    *ngIf="segmentsService.segments.length > 0 && duration > 0"
-    [segments]="segmentsService.segments"
-    [videoLengthSecs]="duration" />
+  } @if (segmentsService.segments.length > 0 && duration > 0) {
+  <app-segments-display [segments]="segmentsService.segments" [videoLengthSecs]="duration" />
+  } @if (fileInfo && isPlayerReady) {
   <app-video-toolbar
-    *ngIf="fileInfo && isPlayerReady"
     [src]="src"
     [parentResource]="parentResource"
     [fileInfo]="fileInfo"
     (toggleCinemaMode)="toggleCinemaMode()" />
+  }
 </div>
-
-<ng-template #loading>
-  <app-progress-indicator />
-</ng-template>

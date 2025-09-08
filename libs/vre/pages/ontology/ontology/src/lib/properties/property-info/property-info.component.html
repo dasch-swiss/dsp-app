@@ -1,13 +1,14 @@
 <div data-cy="property-info" class="property-info" (mouseenter)="mouseEnter()" (mouseleave)="mouseLeave()">
   <div class="prop-container">
     <div mat-line class="title property-info-title" [class.with-line-break]="true">
+      @if (property.propType) {
       <span
         class="icon"
-        *ngIf="property.propType"
         [matTooltip]="property.propType?.group + ': ' + property.propType?.label + ' (' + property.propDef!.id.split('#')[1] + ')'"
         matTooltipPosition="above">
         <mat-icon class="type">{{ property.propType?.icon }}</mat-icon>
       </span>
+      }
       <span
         class="label"
         [matTooltip]="property.propDef.comments | appStringifyStringLiteral"
@@ -24,13 +25,14 @@
         info
       </mat-icon>
       <!-- property is linked to a class or to a list: display connected class or list -->
+      @if (property.objectLabels && property.objectLabels.length) {
       <span
         class="attribute additional-info"
-        *ngIf="property.objectLabels && property.objectLabels.length"
         [matTooltip]="property.objectComments | appStringifyStringLiteral"
         matTooltipPosition="above"
         [innerHTML]="'&rarr;&nbsp;' + (property.objectLabels | appStringifyStringLiteral)">
       </span>
+      }
     </div>
   </div>
 
@@ -46,33 +48,39 @@
     <span class="fill-remaining-space center"></span>
     <!-- in case of ontology property: display corresponding resource classes -->
     <span class="white-space">
-      <span *ngIf="property.usedByClasses.length; else notUsed">
+      @if (property.usedByClasses.length) {
+      <span>
         <span class="mat-caption">&gt; Property is used in:</span>
-        <span *ngFor="let c of property.usedByClasses; trackBy: trackByFn; let last = last">
+        @for (c of property.usedByClasses; track trackByFn($index, c); let last = $last) {
+        <span>
           <span
             [matTooltip]="(c.labels | appStringifyStringLiteral ) + ': ' +(c.comments | appStringifyStringLiteral )"
             matTooltipPosition="above"
             [matTooltipDisabled]="isLockHovered"
-            >{{ c.labels | appStringifyStringLiteral }}
+            >{{ c.labels | appStringifyStringLiteral }} @if (c.id && c.id === c.restrictedToClass) {
             <span
-              *ngIf="c.id && c.id === c.restrictedToClass"
               [matTooltip]="'This property can only be used by the class ' + (c.labels | appStringifyStringLiteral)"
               (mouseenter)="isLockHovered = true"
               (mouseleave)="isLockHovered = false">
               <mat-icon class="type">lock</mat-icon>
-            </span></span
-          ><span *ngIf="!last">&nbsp;&middot;</span>
+            </span>
+            }</span
+          >@if (!last) {
+          <span>&nbsp;&middot;</span>
+          }
         </span>
+        }
       </span>
-      <ng-template #notUsed>
-        <span class="mat-caption"
-          >&gt;
-          <span class="not-used">This property is not used in a class.</span>
-        </span>
-      </ng-template>
+      } @else {
+      <span class="mat-caption"
+        >&gt;
+        <span class="not-used">This property is not used in a class.</span>
+      </span>
+      }
     </span>
   </div>
-  <div class="action-bubble" *ngIf="(hasProjectAdminRights$ | async) && (project$ | async)?.status && showActionBubble">
+  @if ((hasProjectAdminRights$ | async) && (project$ | async)?.status && showActionBubble) {
+  <div class="action-bubble">
     <div class="button-container">
       <button
         [disabled]="!property.propDef!.isEditable"
@@ -96,4 +104,5 @@
       </span>
     </div>
   </div>
+  }
 </div>

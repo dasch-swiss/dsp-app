@@ -1,4 +1,5 @@
-<div *ngIf="(user$ | async) as user">
+@if ((user$ | async); as user) {
+<div>
   <div class="app-toolbar more-space-bottom">
     <div class="app-toolbar-row">
       <h3 class="mat-body subtitle">{{ 'pages.userSettings.account.edit' | translate }}</h3>
@@ -12,7 +13,6 @@
     </div>
   </div>
   <app-password-form [user]="user" />
-
   <div class="app-danger-zone more-space-top">
     <div class="app-toolbar more-space-bottom">
       <div class="app-toolbar-row">
@@ -35,3 +35,4 @@
     </div>
   </div>
 </div>
+}

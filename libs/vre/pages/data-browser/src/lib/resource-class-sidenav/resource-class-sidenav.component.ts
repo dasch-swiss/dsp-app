@@ -6,9 +6,11 @@ import { LocalizationService, SortingHelper } from '@dasch-swiss/vre/shared/app-
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-resource-class-sidenav',
   template: `
-    <div *ngFor="let classToDisplay of classesToDisplay; trackBy: trackByFn">
-      <app-resource-class-sidenav-item [resClass]="classToDisplay" />
-    </div>
+    @for (classToDisplay of classesToDisplay; track trackByFn($index, classToDisplay)) {
+      <div>
+        <app-resource-class-sidenav-item [resClass]="classToDisplay" />
+      </div>
+    }
   `,
 })
 export class ResourceClassSidenavComponent implements OnChanges {

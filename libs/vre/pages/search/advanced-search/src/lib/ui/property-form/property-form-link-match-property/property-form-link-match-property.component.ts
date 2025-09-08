@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
@@ -33,7 +32,6 @@ import { PropertyFormValueComponent } from '../property-form-value/property-form
   selector: 'app-property-form-link-match-property',
   standalone: true,
   imports: [
-    CommonModule,
     FormsModule,
     ReactiveFormsModule,
     MatButtonModule,

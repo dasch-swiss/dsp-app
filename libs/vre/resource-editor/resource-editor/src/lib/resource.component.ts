@@ -11,13 +11,17 @@ import { CompoundService } from './compound/compound.service';
 @Component({
   selector: 'app-resource',
   template: `
-    <app-resource-restriction *ngIf="resource.res.userHasPermission === 'RV'" />
+    @if (resource.res.userHasPermission === 'RV') {
+      <app-resource-restriction />
+    }
     <app-resource-header [resource]="resource" />
-    <ng-container *ngIf="!resourceIsObjectWithoutRepresentation">
+    @if (!resourceIsObjectWithoutRepresentation) {
       <app-resource-legal [fileValue]="representationsToDisplay" />
       <app-resource-representation [resource]="resource" />
-    </ng-container>
-    <app-compound-viewer *ngIf="isCompoundNavigation" />
+    }
+    @if (isCompoundNavigation) {
+      <app-compound-viewer />
+    }
     <app-resource-tabs [resource]="resource" />
   `,
   providers: [CompoundService, RegionService, SegmentsService],

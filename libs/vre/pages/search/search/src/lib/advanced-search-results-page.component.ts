@@ -10,11 +10,12 @@ import { combineLatest, map, switchMap } from 'rxjs';
 @Component({
   selector: 'app-advanced-search-results-page',
   template: `
-    <app-resource-browser
-      *ngIf="resources$ | async as resources"
-      [data]="{ resources: resources, selectFirstResource: true }"
-      [showBackToFormButton]="true"
-      [hasRightsToShowCreateLinkObject$]="projectPageService.hasProjectMemberRights$" />
+    @if (resources$ | async; as resources) {
+      <app-resource-browser
+        [data]="{ resources: resources, selectFirstResource: true }"
+        [showBackToFormButton]="true"
+        [hasRightsToShowCreateLinkObject$]="projectPageService.hasProjectMemberRights$" />
+    }
   `,
   providers: [ResourceResultService],
 })

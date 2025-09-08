@@ -4,19 +4,19 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 @Component({
   selector: 'app-nullable-editor',
   template: `
-    <div *ngIf="value !== null; else addTpl" style="display: flex; align-items: center">
-      <ng-content />
-
-      <button
-        mat-icon-button
-        (click)="setValue(null)"
-        title="Remove"
-        data-cy="add-value-button"
-        matTooltip="Remove that value">
-        <mat-icon>cancel</mat-icon>
-      </button>
-    </div>
-    <ng-template #addTpl>
+    @if (value !== null) {
+      <div style="display: flex; align-items: center">
+        <ng-content />
+        <button
+          mat-icon-button
+          (click)="setValue(null)"
+          title="Remove"
+          data-cy="add-value-button"
+          matTooltip="Remove that value">
+          <mat-icon>cancel</mat-icon>
+        </button>
+      </div>
+    } @else {
       <button
         mat-icon-button
         (click)="setValue(defaultValue)"
@@ -25,7 +25,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
         matTooltip="Set a value">
         <mat-icon>add_box</mat-icon>
       </button>
-    </ng-template>
+    }
   `,
   providers: [
     {

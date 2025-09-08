@@ -5,16 +5,17 @@ import { FootnoteService } from './footnote.service';
 @Component({
   selector: 'app-footnotes',
   template: `<h5>{{ 'resourceEditor.resourceProperties.footnotes' | translate }}</h5>
-    <div
-      *ngFor="let footnote of footnoteService.footnotes; let index = index"
-      class="footnote"
-      [attr.data-uuid]="footnoteService.uuid + '-' + footnote.indexValue + '-' + footnote.indexFootnote"
-      data-cy="footnote">
-      <a (click)="goToFootnote(footnoteService.uuid + '-' + footnote.indexValue + '-' + footnote.indexFootnote)"
-        >{{ index + 1 }}.</a
-      >
-      <span class="footnote-value" [innerHTML]="footnote.content | internalLinkReplacer | addTargetBlank"></span>
-    </div>`,
+    @for (footnote of footnoteService.footnotes; track footnote; let index = $index) {
+      <div
+        class="footnote"
+        [attr.data-uuid]="footnoteService.uuid + '-' + footnote.indexValue + '-' + footnote.indexFootnote"
+        data-cy="footnote">
+        <a (click)="goToFootnote(footnoteService.uuid + '-' + footnote.indexValue + '-' + footnote.indexFootnote)"
+          >{{ index + 1 }}.</a
+        >
+        <span class="footnote-value" [innerHTML]="footnote.content | internalLinkReplacer | addTargetBlank"></span>
+      </div>
+    }`,
   styles: [
     `
       .footnote {

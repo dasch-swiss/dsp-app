@@ -15,17 +15,18 @@ import { TranslateService } from '@ngx-translate/core';
         style="background: none"
         animationDuration="0ms"
         [tabPanel]="tabPanel">
-        <a
-          mat-tab-link
-          *ngFor="let link of navigation; trackBy: trackByFn; let first = first"
-          id="{{ link.route }}"
-          [routerLink]="link.route"
-          routerLinkActive="active-tab"
-          #rla="routerLinkActive"
-          [active]="rla.isActive">
-          <mat-icon class="tab-icon">{{ link.icon }}</mat-icon>
-          {{ link.label }}
-        </a>
+        @for (link of navigation; track trackByFn($index, link); let first = $first) {
+          <a
+            mat-tab-link
+            id="{{ link.route }}"
+            [routerLink]="link.route"
+            routerLinkActive="active-tab"
+            #rla="routerLinkActive"
+            [active]="rla.isActive">
+            <mat-icon class="tab-icon">{{ link.icon }}</mat-icon>
+            {{ link.label }}
+          </a>
+        }
       </nav>
       <mat-tab-nav-panel #tabPanel style="display: block; margin-top: 16px">
         <router-outlet />

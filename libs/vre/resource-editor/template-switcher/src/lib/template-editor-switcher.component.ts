@@ -15,9 +15,11 @@ import { JsLibPotentialError } from '@dasch-swiss/vre/resource-editor/resource-p
     <ng-template #intEditorTpl let-item="item">
       <mat-form-field style="width: 100%">
         <input matInput [formControl]="item" type="number" data-cy="int-input" [placeholder]="'e.g. 42'" />
-        <mat-error *ngIf="item.errors as errors">
-          {{ errors | humanReadableError }}
-        </mat-error>
+        @if (item.errors; as errors) {
+          <mat-error>
+            {{ errors | humanReadableError }}
+          </mat-error>
+        }
       </mat-form-field>
     </ng-template>
 
@@ -25,9 +27,11 @@ import { JsLibPotentialError } from '@dasch-swiss/vre/resource-editor/resource-p
       <mat-form-field style="width: 100%">
         <input matInput [formControl]="item" type="number" step="0.05" placeholder="e.g. 3.14" />
       </mat-form-field>
-      <mat-error *ngIf="item.touched && item.errors as errors">
-        {{ errors | humanReadableError }}
-      </mat-error>
+      @if (item.touched && item.errors; as errors) {
+        <mat-error>
+          {{ errors | humanReadableError }}
+        </mat-error>
+      }
     </ng-template>
 
     <ng-template #booleanEditorTpl let-item="item">
@@ -61,14 +65,18 @@ import { JsLibPotentialError } from '@dasch-swiss/vre/resource-editor/resource-p
       <mat-form-field style="width: 100%">
         <textarea matInput [formControl]="item" rows="9" [placeholder]="'e.g. Lorem ipsum ...'"></textarea>
       </mat-form-field>
-      <mat-error *ngIf="item.touched && item.errors as errors">
-        {{ errors | humanReadableError }}
-      </mat-error>
+      @if (item.touched && item.errors; as errors) {
+        <mat-error>
+          {{ errors | humanReadableError }}
+        </mat-error>
+      }
     </ng-template>
 
     <ng-template #dateEditorTpl let-control="item">
       <app-date-value-handler [formControl]="control" />
-      <mat-error *ngIf="control.touched && control.errors as errors">{{ errors | humanReadableError }}</mat-error>
+      @if (control.touched && control.errors; as errors) {
+        <mat-error>{{ errors | humanReadableError }}</mat-error>
+      }
     </ng-template>
 
     <ng-template #timeEditorTpl let-item="item">

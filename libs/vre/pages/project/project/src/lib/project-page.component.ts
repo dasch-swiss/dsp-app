@@ -10,19 +10,21 @@ import { ProjectPageService } from './project-page.service';
   template: `
     <mat-sidenav-container style="flex: 1" autosize>
       <mat-sidenav mode="side" [(opened)]="sideNavOpened" [disableClose]="true" style="overflow: visible">
-        <app-project-sidenav-collapse-button
-          *ngIf="sideNavOpened"
-          [expand]="false"
-          (toggleSidenav)="toggleSidenav()"
-          style="position: absolute; right: -11px; top: 21px" />
+        @if (sideNavOpened) {
+          <app-project-sidenav-collapse-button
+            [expand]="false"
+            (toggleSidenav)="toggleSidenav()"
+            style="position: absolute; right: -11px; top: 21px" />
+        }
         <app-project-sidenav />
       </mat-sidenav>
       <mat-sidenav-content>
-        <app-project-sidenav-collapse-button
-          *ngIf="!sideNavOpened"
-          [expand]="true"
-          (toggleSidenav)="toggleSidenav()"
-          style="position: absolute; top: 21px; left: 8px" />
+        @if (!sideNavOpened) {
+          <app-project-sidenav-collapse-button
+            [expand]="true"
+            (toggleSidenav)="toggleSidenav()"
+            style="position: absolute; top: 21px; left: 8px" />
+        }
 
         <router-outlet />
       </mat-sidenav-content>

@@ -13,40 +13,40 @@ import { BehaviorSubject, combineLatest, map, Observable, Subject, switchMap, ta
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-membership',
   template: `
-    <ng-container *ngIf="user$ | async as user">
+    @if (user$ | async; as user) {
       <div class="mat-headline-6 mb-2">
         This user is member of {{ ((userProjects$ | async) || []).length | i18nPlural: itemPluralMapping['project'] }}
       </div>
-
-      <div *ngFor="let project of user.projects || []" class="align-center">
-        <div class="flex-1">
-          <div style="max-width: 500px">{{ project.longname }} ({{ project.shortname }})</div>
-          <div>
-            @if (isUserProjectAdmin(user.permissions, project)) {
-              User is <strong>Project admin</strong>
-            }
+      @for (project of user.projects || []; track project) {
+        <div class="align-center">
+          <div class="flex-1">
+            <div style="max-width: 500px">{{ project.longname }} ({{ project.shortname }})</div>
+            <div>
+              @if (isUserProjectAdmin(user.permissions, project)) {
+                User is <strong>Project admin</strong>
+              }
+            </div>
           </div>
+          <button
+            mat-icon-button
+            color="warn"
+            (click)="removeFromProject(project)"
+            aria-label="Button to remove user from project"
+            matTooltip="Remove user from project"
+            matTooltipPosition="above">
+            <mat-icon>delete_outline</mat-icon>
+          </button>
         </div>
-
-        <button
-          mat-icon-button
-          color="warn"
-          (click)="removeFromProject(project)"
-          aria-label="Button to remove user from project"
-          matTooltip="Remove user from project"
-          matTooltipPosition="above">
-          <mat-icon>delete_outline</mat-icon>
-        </button>
-      </div>
-
+      }
       <mat-divider class="my-2" />
-
       <div class="d-flex">
         <mat-form-field class="flex-1 mr-2">
           <mat-select placeholder="Add user to project" [(value)]="selectedValue">
-            <mat-option *ngFor="let project of projects$ | async" [value]="project?.iri">
-              {{ project?.name }}
-            </mat-option>
+            @for (project of projects$ | async; track project) {
+              <mat-option [value]="project?.iri">
+                {{ project?.name }}
+              </mat-option>
+            }
           </mat-select>
         </mat-form-field>
         <button
@@ -60,7 +60,7 @@ import { BehaviorSubject, combineLatest, map, Observable, Subject, switchMap, ta
           <mat-icon>add</mat-icon>
         </button>
       </div>
-    </ng-container>
+    }
   `,
   styleUrls: ['./membership.component.scss'],
 })

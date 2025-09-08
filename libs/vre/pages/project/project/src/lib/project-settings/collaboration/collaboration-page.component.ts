@@ -8,31 +8,37 @@ import { CollaborationPageService } from './collaboration-page.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-collaboration-page',
   template: `
-    <div *ngIf="hasProjectAdminRights$ | async">
-      <ng-container *ngIf="project$ | async as project">
-        <app-add-user
-          *ngIf="project.status && (hasProjectAdminRights$ | async) && (projectUuid$ | async) as projectUuid"
-          [projectUuid]="projectUuid" />
-      </ng-container>
+    @if (hasProjectAdminRights$ | async) {
+      <div>
+        @if (project$ | async; as project) {
+          @if (project.status && (hasProjectAdminRights$ | async) && (projectUuid$ | async); as projectUuid) {
+            <app-add-user [projectUuid]="projectUuid" />
+          }
+        }
+        @if (activeProjectMembers$ | async; as activeProjectMembers) {
+          @if (inactiveProjectMembers$ | async; as inactiveProjectMembers) {
+            <div style="display: flex; justify-content: center; margin: 16px 0">
+              <app-double-chip-selector
+                [options]="[
+                  'Active users (' + activeProjectMembers.length + ')',
+                  'Inactive users (' + inactiveProjectMembers.length + ')',
+                ]"
+                [(value)]="showActiveUsers" />
+            </div>
+            @if (showActiveUsers) {
+              <app-project-members [users]="activeProjectMembers" />
+            }
+            @if (!showActiveUsers) {
+              <app-project-members [users]="inactiveProjectMembers" />
+            }
+          }
+        }
+      </div>
+    }
 
-      <ng-container *ngIf="activeProjectMembers$ | async as activeProjectMembers">
-        <ng-container *ngIf="inactiveProjectMembers$ | async as inactiveProjectMembers">
-          <div style="display: flex; justify-content: center; margin: 16px 0">
-            <app-double-chip-selector
-              [options]="[
-                'Active users (' + activeProjectMembers.length + ')',
-                'Inactive users (' + inactiveProjectMembers.length + ')',
-              ]"
-              [(value)]="showActiveUsers" />
-          </div>
-
-          <app-project-members *ngIf="showActiveUsers" [users]="activeProjectMembers" />
-          <app-project-members *ngIf="!showActiveUsers" [users]="inactiveProjectMembers" />
-        </ng-container>
-      </ng-container>
-    </div>
-
-    <app-status [status]="403" *ngIf="(hasProjectAdminRights$ | async) === false" />
+    @if ((hasProjectAdminRights$ | async) === false) {
+      <app-status [status]="403" />
+    }
   `,
   styleUrls: ['./collaboration-page.component.scss'],
   providers: [CollaborationPageService],

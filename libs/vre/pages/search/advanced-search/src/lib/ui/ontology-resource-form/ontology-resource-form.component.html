@@ -10,10 +10,11 @@
             name="ontologies"
             appearance="fill"
             [compareWith]="compareApiDataObjects">
-            <mat-option *ngIf="ontologiesLoading" disabled="true">Loading...</mat-option>
-            <ng-container *ngIf="!ontologiesLoading">
-              <mat-option *ngFor="let onto of ontologies" [value]="onto"> {{ onto.label }} </mat-option>
-            </ng-container>
+            @if (ontologiesLoading) {
+            <mat-option disabled="true">Loading...</mat-option>
+            } @if (!ontologiesLoading) { @for (onto of ontologies; track onto) {
+            <mat-option [value]="onto"> {{ onto.label }} </mat-option>
+            } }
           </mat-select>
         </mat-form-field>
       </div>
@@ -28,11 +29,13 @@
             name="resourceClass"
             appearance="fill"
             [compareWith]="compareApiDataObjects">
-            <mat-option *ngIf="resourceClassesLoading" disabled="true">Loading...</mat-option>
-            <ng-container *ngIf="!resourceClassesLoading">
-              <mat-option>None</mat-option>
-              <mat-option *ngFor="let class of resourceClasses" [value]="class"> {{ class.label }} </mat-option>
-            </ng-container>
+            @if (resourceClassesLoading) {
+            <mat-option disabled="true">Loading...</mat-option>
+            } @if (!resourceClassesLoading) {
+            <mat-option>None</mat-option>
+            @for (class of resourceClasses; track class) {
+            <mat-option [value]="class"> {{ class.label }} </mat-option>
+            } }
           </mat-select>
         </mat-form-field>
       </div>

@@ -5,9 +5,13 @@ import { Segment } from './segment';
   selector: 'app-segments-display',
   template: ` <div style="background: black; padding: 0 24px" [ngStyle]="{ height: height + 'px' }">
     <div style="position: relative">
-      <div *ngFor="let row of segmentInRow" style="height: 10px">
-        <app-segment *ngFor="let segment of row" [segment]="segment" [videoLengthSecs]="videoLengthSecs" />
-      </div>
+      @for (row of segmentInRow; track row) {
+        <div style="height: 10px">
+          @for (segment of row; track segment) {
+            <app-segment [segment]="segment" [videoLengthSecs]="videoLengthSecs" />
+          }
+        </div>
+      }
     </div>
   </div>`,
 })

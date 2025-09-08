@@ -35,7 +35,9 @@ export interface ResourceLinkDialogProps {
         <div class="resource-container">
           <p>The following resources will be connected:</p>
           <ul>
-            <li *ngFor="let res of data.resources">{{ res.label }}</li>
+            @for (res of data.resources; track res) {
+              <li>{{ res.label }}</li>
+            }
           </ul>
         </div>
       </form>

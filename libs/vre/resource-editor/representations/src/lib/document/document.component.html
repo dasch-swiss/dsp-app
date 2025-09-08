@@ -1,7 +1,9 @@
-<div *ngIf="isPdf" class="pdf-container">
+@if (isPdf) {
+<div class="pdf-container">
   <!-- in case of an error -->
-  <app-status [status]="404" [url]="src.fileUrl" [representation]="'document'" *ngIf="failedToLoad" />
-
+  @if (failedToLoad) {
+  <app-status [status]="404" [url]="src.fileUrl" [representation]="'document'" />
+  }
   <pdf-viewer
     class="pdf-viewer"
     [src]="{ url: src.fileUrl,  withCredentials: true }"
@@ -11,7 +13,6 @@
     [show-borders]="true"
     [zoom]="zoomFactor"
     [zoom-scale]="'page-width'" />
-
   <div>
     <div class="action horizontal bottom">
       <!-- caption -->
@@ -21,16 +22,11 @@
         </button>
         <mat-menu #more="matMenu" class="representation-menu">
           <button class="menu-content" mat-menu-item (click)="download()">Download file</button>
-          <button
-            *ngIf="resourceFetcherService.userCanEdit$ | async"
-            class="menu-content"
-            mat-menu-item
-            (click)="openReplaceFileDialog()">
-            Replace file
-          </button>
+          @if (resourceFetcherService.userCanEdit$ | async) {
+          <button class="menu-content" mat-menu-item (click)="openReplaceFileDialog()">Replace file</button>
+          }
         </mat-menu>
       </span>
-
       <!-- input field for searching through document -->
       <input
         matInput
@@ -43,7 +39,6 @@
         [disabled]="failedToLoad"
         (input)="onInputChange($event)"
         (keyup.enter)="searchQueryChanged(queryInp.value)" />
-
       <!-- image action tools e.g. zoom, rotate and flip -->
       <span>
         <!-- zoom buttons -->
@@ -67,10 +62,8 @@
           <mat-icon>add_circle_outline</mat-icon>
         </button>
       </span>
-
       <!-- empty placeholders to center the zoom buttons -->
       <span class="fill-remaining-space"></span>
-
       <!-- full screen button -->
       <span>
         <button
@@ -85,8 +78,10 @@
     </div>
   </div>
 </div>
+}
 <!-- default document viewer -->
-<div *ngIf="!isPdf">
+@if (!isPdf) {
+<div>
   <div class="file-representation">
     <div class="container">
       <div class="contents">
@@ -108,14 +103,11 @@
       </button>
       <mat-menu #more="matMenu" class="mat-menu-custom-black">
         <button class="menu-content" mat-menu-item (click)="download()" [disabled]="failedToLoad">Download file</button>
-        <button
-          *ngIf="resourceFetcherService.userCanEdit$ | async"
-          class="menu-content"
-          mat-menu-item
-          (click)="openReplaceFileDialog()">
-          Replace file
-        </button>
+        @if (resourceFetcherService.userCanEdit$ | async) {
+        <button class="menu-content" mat-menu-item (click)="openReplaceFileDialog()">Replace file</button>
+        }
       </mat-menu>
     </div>
   </div>
 </div>
+}

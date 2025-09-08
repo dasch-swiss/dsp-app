@@ -10,26 +10,30 @@ import { OntologyEditService } from './services/ontology-edit.service';
 @Component({
   selector: 'app-ontology',
   template: `
-    <div class="ontology-editor" *ngIf="!disableContent">
-      <div class="overlay-blocker" *ngIf="isTransacting$ | async">
-        <app-progress-indicator [size]="'large'" class="floating-center" />
-      </div>
-
-      <mat-sidenav-container class="ontology-editor-container">
-        <mat-sidenav class="ontology-editor-sidenav" mode="side" position="end" opened>
-          <app-ontology-sidenav />
-        </mat-sidenav>
-
-        <mat-sidenav-content class="ontology-editor-canvas drag-drop-stop">
-          <app-ontology-editor-header class="sticky-header" />
-          <div class="scroll">
-            <router-outlet />
+    @if (!disableContent) {
+      <div class="ontology-editor">
+        @if (isTransacting$ | async) {
+          <div class="overlay-blocker">
+            <app-progress-indicator [size]="'large'" class="floating-center" />
           </div>
-        </mat-sidenav-content>
-      </mat-sidenav-container>
-    </div>
+        }
+        <mat-sidenav-container class="ontology-editor-container">
+          <mat-sidenav class="ontology-editor-sidenav" mode="side" position="end" opened>
+            <app-ontology-sidenav />
+          </mat-sidenav>
+          <mat-sidenav-content class="ontology-editor-canvas drag-drop-stop">
+            <app-ontology-editor-header class="sticky-header" />
+            <div class="scroll">
+              <router-outlet />
+            </div>
+          </mat-sidenav-content>
+        </mat-sidenav-container>
+      </div>
+    }
 
-    <app-status *ngIf="disableContent" [status]="204" />
+    @if (disableContent) {
+      <app-status [status]="204" />
+    }
   `,
   styleUrls: ['./ontology-page.component.scss'],
   providers: [OntologyPageService, OntologyEditService],

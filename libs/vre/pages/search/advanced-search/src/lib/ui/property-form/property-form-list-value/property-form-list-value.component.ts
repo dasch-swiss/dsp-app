@@ -37,19 +37,19 @@ import { PropertyFormItem } from '../../../data-access/advanced-search-store/adv
         #auto="matAutocomplete"
         [displayWith]="displayNode"
         (optionSelected)="onSelectionChange($event.option.value)">
-        <ng-container *ngFor="let node of filteredList$ | async; trackBy: trackByFn">
+        @for (node of filteredList$ | async; track trackByFn($index, node)) {
           <ng-container *ngTemplateOutlet="renderNode; context: { node: node, depth: 0 }" />
-        </ng-container>
+        }
 
         <ng-template #renderNode let-node="node" let-depth="depth">
           <mat-option [value]="node">
             <span [style.padding-left.px]="depth * 15">{{ node.label }}</span>
           </mat-option>
-          <ng-container *ngIf="node.children?.length > 0">
-            <ng-container *ngFor="let subchild of node.children; trackBy: trackByFn">
+          @if (node.children?.length > 0) {
+            @for (subchild of node.children; track trackByFn($index, subchild)) {
               <ng-container *ngTemplateOutlet="renderNode; context: { node: subchild, depth: depth + 1 }" />
-            </ng-container>
-          </ng-container>
+            }
+          }
         </ng-template>
       </mat-autocomplete>
     </mat-form-field>

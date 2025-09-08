@@ -5,9 +5,9 @@ import { OntologyEditService } from '../services/ontology-edit.service';
 @Component({
   selector: 'app-ontology-editor-page',
   template: `<div class="ontology-editor-grid classes drag-drop-stop">
-    <app-resource-class-info
-      *ngFor="let resClass of oes.currentOntologyClasses$ | async; trackBy: trackByClassDefinitionFn"
-      [resourceClass]="resClass" />
+    @for (resClass of oes.currentOntologyClasses$ | async; track trackByClassDefinitionFn($index, resClass)) {
+      <app-resource-class-info [resourceClass]="resClass" />
+    }
   </div>`,
   styles: `
     .ontology-editor-grid {

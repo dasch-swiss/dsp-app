@@ -15,7 +15,8 @@
       </mat-radio-group>
     </div>
   </div>
-  <div *ngIf="imageSettings === imageSettingsEnum.RestrictImageSize" class="mb-6">
+  @if (imageSettings === imageSettingsEnum.RestrictImageSize) {
+  <div class="mb-6">
     <mat-label>{{ 'pages.project.imageSettings.info' | translate }}</mat-label>
     <div class="mb-2 mt-2">
       <mat-form-field>
@@ -41,9 +42,13 @@
       </mat-form-field>
       <mat-label class="nowrap"> x {{ fixedWidth }} Px</mat-label>
     </div>
-    <app-image-display-ratio [@replaceAnimation] *ngIf="isPercentageSize" [ratio]="ratio" class="child" />
-    <app-image-display-absolute [@replaceAnimation] *ngIf="!isPercentageSize" [widthPx]="fixedWidth" />
+    @if (isPercentageSize) {
+    <app-image-display-ratio [@replaceAnimation] [ratio]="ratio" class="child" />
+    } @if (!isPercentageSize) {
+    <app-image-display-absolute [@replaceAnimation] [widthPx]="fixedWidth" />
+    }
   </div>
+  }
 </div>
 <div class="action-buttons mt-2">
   <button

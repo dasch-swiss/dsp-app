@@ -20,7 +20,9 @@ import { finalize } from 'rxjs';
           rows="4"
           data-cy="app-erase-resource-dialog-comment"
           [formControl]="eraseForm.controls.comment"></textarea>
-        <mat-error *ngIf="eraseForm.controls.comment.errors as errors"> {{ errors | humanReadableError }} </mat-error>
+        @if (eraseForm.controls.comment.errors; as errors) {
+          <mat-error> {{ errors | humanReadableError }} </mat-error>
+        }
       </mat-form-field>
     </mat-dialog-content>
 

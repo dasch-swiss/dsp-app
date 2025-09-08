@@ -16,26 +16,25 @@ import { finalize, map, Observable, startWith, Subject, takeUntil } from 'rxjs';
           <div class="label">{{ ontologiesLabel }}</div>
           <div class="entry-container">
             <mat-icon>{{ icon }}</mat-icon>
-            <ngx-skeleton-loader
-              *ngIf="loading"
-              count="1"
-              appearance="line"
-              [theme]="{
-                'margin-bottom': 0,
-                'vertical-align': 'middle',
-              }" />
+            @if (loading) {
+              <ngx-skeleton-loader
+                count="1"
+                appearance="line"
+                [theme]="{
+                  'margin-bottom': 0,
+                  'vertical-align': 'middle',
+                }" />
+            }
             <div class="entry">
               {{ count$ | async | i18nPlural: itemPluralMapping['entry'] }}
             </div>
           </div>
         </div>
-        <a
-          class="icon link"
-          data-cy="add-class-instance"
-          *ngIf="hasProjectMemberRights$ | async"
-          (click)="goToAddClassInstance()">
-          <mat-icon>add_circle_outline</mat-icon>
-        </a>
+        @if (hasProjectMemberRights$ | async) {
+          <a class="icon link" data-cy="add-class-instance" (click)="goToAddClassInstance()">
+            <mat-icon>add_circle_outline</mat-icon>
+          </a>
+        }
       </div>
     </div>
   `,

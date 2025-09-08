@@ -9,15 +9,20 @@ import { combineLatest, map, switchMap, tap } from 'rxjs';
 @Component({
   selector: 'app-fulltext-search-result-page',
   template: `
-    <app-progress-indicator *ngIf="loading" />
-    <ng-container *ngIf="resources$ | async as resources">
-      <h2 *ngIf="resources.length === 0" style="text-align: center;margin-top: 50px;">There is no result.</h2>
-      <app-resource-browser
-        *ngIf="resources.length > 0"
-        [data]="{ resources: resources, selectFirstResource: true }"
-        [hasRightsToShowCreateLinkObject$]="userIsSysAdmin$"
-        [searchKeyword]="query" />
-    </ng-container>
+    @if (loading) {
+      <app-progress-indicator />
+    }
+    @if (resources$ | async; as resources) {
+      @if (resources.length === 0) {
+        <h2 style="text-align: center;margin-top: 50px;">There is no result.</h2>
+      }
+      @if (resources.length > 0) {
+        <app-resource-browser
+          [data]="{ resources: resources, selectFirstResource: true }"
+          [hasRightsToShowCreateLinkObject$]="userIsSysAdmin$"
+          [searchKeyword]="query" />
+      }
+    }
   `,
   providers: [ResourceResultService],
   changeDetection: ChangeDetectionStrategy.OnPush,

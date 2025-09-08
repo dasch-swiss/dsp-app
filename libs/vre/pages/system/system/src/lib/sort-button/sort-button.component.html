@@ -3,12 +3,8 @@
     <mat-icon>{{ icon }}</mat-icon>
   </button>
   <mat-menu #sortSelection="matMenu" [xPosition]="menuXPos">
-    <button
-      mat-menu-item
-      *ngFor="let item of sortProps"
-      (click)="sortBy(item.key)"
-      [class.active]="activeKey === item.key">
-      {{ item.label }}
-    </button>
+    @for (item of sortProps; track item) {
+    <button mat-menu-item (click)="sortBy(item.key)" [class.active]="activeKey === item.key">{{ item.label }}</button>
+    }
   </mat-menu>
 </span>

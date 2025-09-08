@@ -5,7 +5,8 @@
 
   <div class="content-container">
     <nav mat-tab-nav-bar mat-align-tabs="left" class="tab-bar" animationDuration="0ms" [tabPanel]="tabPanel">
-      <span *ngFor="let link of navigation; let i = index">
+      @for (link of navigation; track link; let i = $index) {
+      <span>
         <a
           mat-tab-link
           class="nav-link"
@@ -27,26 +28,34 @@
           {{ link.shortLabel }}
         </a>
       </span>
+      }
     </nav>
 
     <mat-tab-nav-panel #tabPanel>
       <!-- main content: router outlet -->
-      <div class="content middle" [ngSwitch]="route" *ngIf="route">
+      @if (route) {
+      <div class="content middle">
+        @switch (route) {
         <!-- user profile -->
-        <div *ngSwitchCase="'profile'" class="full-width">
+        @case ('profile') {
+        <div class="full-width">
           <app-projects [isUsersProjects]="true" />
         </div>
-
+        }
         <!-- edit user data -->
-        <div *ngSwitchCase="routeConstants.userAccount" class="full-width">
+        @case (routeConstants.userAccount) {
+        <div class="full-width">
           <app-account />
         </div>
-
+        }
         <!-- user's projects -->
-        <div *ngSwitchCase="routeConstants.projects" class="full-width">
+        @case (routeConstants.projects) {
+        <div class="full-width">
           <app-projects [isUsersProjects]="true" />
         </div>
+        } }
       </div>
+      }
     </mat-tab-nav-panel>
   </div>
 </div>

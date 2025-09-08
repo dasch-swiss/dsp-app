@@ -4,7 +4,9 @@ import { ProjectPageService } from '../project-page.service';
 @Component({
   selector: 'app-project-sidenav',
   template: `
-    <div *ngIf="currentProject$ | async as currentProject" class="project-title">{{ currentProject.longname }}</div>
+    @if (currentProject$ | async; as currentProject) {
+      <div class="project-title">{{ currentProject.longname }}</div>
+    }
     <mat-divider />
     <app-projects-sidenav-links />
     <mat-divider />

@@ -7,13 +7,16 @@ import { startWith } from 'rxjs/operators';
 @Component({
   selector: 'app-list-value',
   template: `
-    <app-nested-menu
-      style="flex: 1"
-      *ngIf="listRootNode"
-      [data]="listRootNode"
-      [selection]="mySelectedNode?.label"
-      (selectedNode)="selectedNode($event)" />
-    <mat-error *ngIf="control.touched && control.errors">{{ control.errors | humanReadableError }}</mat-error>
+    @if (listRootNode) {
+      <app-nested-menu
+        style="flex: 1"
+        [data]="listRootNode"
+        [selection]="mySelectedNode?.label"
+        (selectedNode)="selectedNode($event)" />
+    }
+    @if (control.touched && control.errors) {
+      <mat-error>{{ control.errors | humanReadableError }}</mat-error>
+    }
   `,
 })
 export class ListValueComponent implements OnInit {

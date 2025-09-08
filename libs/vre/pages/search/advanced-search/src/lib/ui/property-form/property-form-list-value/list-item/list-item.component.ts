@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { MatMenu, MatMenuModule } from '@angular/material/menu';
 import { ListNodeV2 } from '@dasch-swiss/dsp-js';
@@ -6,7 +5,7 @@ import { ListNodeV2 } from '@dasch-swiss/dsp-js';
 @Component({
   selector: 'app-list-item',
   standalone: true,
-  imports: [CommonModule, MatMenuModule],
+  imports: [MatMenuModule],
   templateUrl: './list-item.component.html',
   styleUrls: ['./list-item.component.scss'],
 })

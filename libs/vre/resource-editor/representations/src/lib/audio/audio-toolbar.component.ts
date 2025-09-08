@@ -28,13 +28,11 @@ import { MediaPlayerService } from '../video/media-player.service';
       </div>
       <div data-cy="player-time">{{ parseTime(mediaPlayer.currentTime()) }} / {{ durationString }}</div>
       <div>
-        <button
-          data-cy="timeline-button"
-          mat-icon-button
-          (click)="createAudioSegment()"
-          *ngIf="resourceFetcherService.userCanEdit$ | async">
-          <mat-icon svgIcon="draw_region_icon" />
-        </button>
+        @if (resourceFetcherService.userCanEdit$ | async) {
+          <button data-cy="timeline-button" mat-icon-button (click)="createAudioSegment()">
+            <mat-icon svgIcon="draw_region_icon" />
+          </button>
+        }
         <app-audio-more-button [parentResource]="parentResource" />
       </div>
     </mat-toolbar-row>

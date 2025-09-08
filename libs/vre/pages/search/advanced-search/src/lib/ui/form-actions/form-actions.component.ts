@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -6,7 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 @Component({
   selector: 'app-form-actions',
   standalone: true,
-  imports: [CommonModule, MatButtonModule, MatIconModule],
+  imports: [MatButtonModule, MatIconModule],
   templateUrl: './form-actions.component.html',
   styleUrls: ['./form-actions.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

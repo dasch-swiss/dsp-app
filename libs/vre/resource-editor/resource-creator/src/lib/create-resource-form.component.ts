@@ -22,50 +22,48 @@ import { CreateResourceFormInterface } from './create-resource-form.interface';
 @Component({
   selector: 'app-create-resource-form',
   template: `
-    <form *ngIf="!loading; else loadingTemplate" [formGroup]="form" appInvalidControlScroll class="form">
-      <ng-container *ngIf="fileRepresentation">
-        <h3>File</h3>
-        <app-create-resource-form-file
-          [projectShortcode]="projectShortcode"
-          [fileRepresentation]="fileRepresentation"
-          (afterFormCreated)="afterFileFormCreated($event)" />
-
-        <h3>Properties</h3>
-      </ng-container>
-
-      <app-create-resource-form-row
-        label="Resource label *"
-        tooltip="Each resource needs a (preferably unique) label. It will be a kind of resource identifier."
-        data-cy="resource-label">
-        <app-common-input
-          [control]="form.controls.label"
-          [withLabel]="false"
-          data-cy="label-input"
-          [label]="'e.g. Lorem ipsum ...'" />
-      </app-create-resource-form-row>
-      <app-create-resource-form-properties
-        *ngIf="properties"
-        [resourceClassIri]="resourceClassIri"
-        [properties]="properties"
-        [formGroup]="form.controls.properties" />
-
-      <div style="display: flex; justify-content: end">
-        <button
-          mat-raised-button
-          type="submit"
-          color="primary"
-          appLoadingButton
-          data-cy="submit-button"
-          [isLoading]="loading"
-          (click)="submitData()">
-          {{ 'ui.form.action.submit' | translate }}
-        </button>
-      </div>
-    </form>
-
-    <ng-template #loadingTemplate>
+    @if (!loading) {
+      <form [formGroup]="form" appInvalidControlScroll class="form">
+        @if (fileRepresentation) {
+          <h3>File</h3>
+          <app-create-resource-form-file
+            [projectShortcode]="projectShortcode"
+            [fileRepresentation]="fileRepresentation"
+            (afterFormCreated)="afterFileFormCreated($event)" />
+          <h3>Properties</h3>
+        }
+        <app-create-resource-form-row
+          label="Resource label *"
+          tooltip="Each resource needs a (preferably unique) label. It will be a kind of resource identifier."
+          data-cy="resource-label">
+          <app-common-input
+            [control]="form.controls.label"
+            [withLabel]="false"
+            data-cy="label-input"
+            [label]="'e.g. Lorem ipsum ...'" />
+        </app-create-resource-form-row>
+        @if (properties) {
+          <app-create-resource-form-properties
+            [resourceClassIri]="resourceClassIri"
+            [properties]="properties"
+            [formGroup]="form.controls.properties" />
+        }
+        <div style="display: flex; justify-content: end">
+          <button
+            mat-raised-button
+            type="submit"
+            color="primary"
+            appLoadingButton
+            data-cy="submit-button"
+            [isLoading]="loading"
+            (click)="submitData()">
+            {{ 'ui.form.action.submit' | translate }}
+          </button>
+        </div>
+      </form>
+    } @else {
       <app-progress-indicator />
-    </ng-template>
+    }
   `,
   styles: [
     '.row { display: flex; padding: 16px 0;}',

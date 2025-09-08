@@ -25,47 +25,39 @@ import { propertiesTypeMapping } from './resource-payloads-mapping';
       [value]="readValue"
       (templateFound)="foundTemplate($event)" />
 
-    <div *ngIf="!loading; else loadingTpl" style="display: flex; padding: 16px 0">
-      <div style="flex: 1">
-        <ng-container *ngIf="template">
-          <ng-container *ngTemplateOutlet="template; context: { item: group.controls.item }"></ng-container>
-        </ng-container>
-
-        <app-property-value-basic-comment
-          *ngIf="group.controls.comment.value !== null"
-          [control]="group.controls.comment" />
+    @if (!loading) {
+      <div style="display: flex; padding: 16px 0">
+        <div style="flex: 1">
+          @if (template) {
+            <ng-container *ngTemplateOutlet="template; context: { item: group.controls.item }"></ng-container>
+          }
+          @if (group.controls.comment.value !== null) {
+            <app-property-value-basic-comment [control]="group.controls.comment" />
+          }
+        </div>
+        <div style="display: flex">
+          <button (click)="afterUndo.emit()" mat-icon-button color="primary" [matTooltip]="'undo'">
+            <mat-icon>undo</mat-icon>
+          </button>
+          <button
+            mat-icon-button
+            type="button"
+            color="primary"
+            (click)="toggleCommentValue()"
+            data-cy="toggle-comment-button"
+            [matTooltip]="commentIsNotNull ? 'remove comment' : 'add comment'">
+            <mat-icon>{{ commentIsNotNull ? 'speaker_notes_off' : 'add_comment' }}</mat-icon>
+          </button>
+          @if (group.controls.item.value !== null) {
+            <button (click)="onSave()" [matTooltip]="'save'" mat-icon-button data-cy="save-button" color="primary">
+              <mat-icon>save</mat-icon>
+            </button>
+          }
+        </div>
       </div>
-
-      <div style="display: flex">
-        <button (click)="afterUndo.emit()" mat-icon-button color="primary" [matTooltip]="'undo'">
-          <mat-icon>undo</mat-icon>
-        </button>
-
-        <button
-          mat-icon-button
-          type="button"
-          color="primary"
-          (click)="toggleCommentValue()"
-          data-cy="toggle-comment-button"
-          [matTooltip]="commentIsNotNull ? 'remove comment' : 'add comment'">
-          <mat-icon>{{ commentIsNotNull ? 'speaker_notes_off' : 'add_comment' }}</mat-icon>
-        </button>
-
-        <button
-          *ngIf="group.controls.item.value !== null"
-          (click)="onSave()"
-          [matTooltip]="'save'"
-          mat-icon-button
-          data-cy="save-button"
-          color="primary">
-          <mat-icon>save</mat-icon>
-        </button>
-      </div>
-    </div>
-
-    <ng-template #loadingTpl>
+    } @else {
       <app-progress-indicator [size]="'xsmall'" />
-    </ng-template>
+    }
   `,
 })
 export class PropertyValueEditComponent implements OnInit, OnDestroy {

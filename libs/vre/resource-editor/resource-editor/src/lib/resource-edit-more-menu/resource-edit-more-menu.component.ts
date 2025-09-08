@@ -27,16 +27,17 @@ import { CanDeleteResource } from './can-delete-resource.interface';
     </button>
 
     <mat-menu #more="matMenu" class="res-more-menu">
-      <button
-        *ngIf="showEditLabel"
-        data-cy="resource-more-menu-edit-label-button"
-        mat-menu-item
-        matTooltip="Edit the label of this resource"
-        matTooltipPosition="above"
-        (click)="editResourceLabel()">
-        <mat-icon>edit</mat-icon>
-        Edit label
-      </button>
+      @if (showEditLabel) {
+        <button
+          data-cy="resource-more-menu-edit-label-button"
+          mat-menu-item
+          matTooltip="Edit the label of this resource"
+          matTooltipPosition="above"
+          (click)="editResourceLabel()">
+          <mat-icon>edit</mat-icon>
+          Edit label
+        </button>
+      }
 
       <button
         data-cy="resource-more-menu-delete-button"
@@ -51,41 +52,40 @@ import { CanDeleteResource } from './can-delete-resource.interface';
         (click)="deleteResource()">
         <div style="display: inline-flex; align-items: center; gap: 8px;">
           <span style="display: inline-block; width: 32px; height: 24px;">
-            <ng-container *ngIf="resourceCanBeDeleted === undefined; else deleteIcon">
+            @if (resourceCanBeDeleted === undefined) {
               <app-progress-spinner />
-            </ng-container>
-            <ng-template #deleteIcon>
+            } @else {
               <mat-icon>delete</mat-icon>
-            </ng-template>
+            }
           </span>
           Delete
         </div>
       </button>
 
-      <button
-        *ngIf="userCanDelete"
-        data-cy="resource-more-menu-erase-button"
-        mat-menu-item
-        [matTooltip]="
-          resourceCanBeDeleted?.canDo
-            ? 'Erase resource forever. This cannot be undone.'
-            : resourceCanBeDeleted?.reason || 'Checking if resource can be deleted...'
-        "
-        matTooltipPosition="above"
-        [disabled]="!resourceCanBeDeleted?.canDo"
-        (click)="eraseResource()">
-        <span style="display: inline-flex; align-items: center; gap: 8px;">
-          <span style="display: inline-block; width: 32px; height: 24px;">
-            <ng-container *ngIf="resourceCanBeDeleted === undefined; else eraseIcon">
-              <app-progress-spinner />
-            </ng-container>
-            <ng-template #eraseIcon>
-              <mat-icon>delete_forever</mat-icon>
-            </ng-template>
+      @if (userCanDelete) {
+        <button
+          data-cy="resource-more-menu-erase-button"
+          mat-menu-item
+          [matTooltip]="
+            resourceCanBeDeleted?.canDo
+              ? 'Erase resource forever. This cannot be undone.'
+              : resourceCanBeDeleted?.reason || 'Checking if resource can be deleted...'
+          "
+          matTooltipPosition="above"
+          [disabled]="!resourceCanBeDeleted?.canDo"
+          (click)="eraseResource()">
+          <span style="display: inline-flex; align-items: center; gap: 8px;">
+            <span style="display: inline-block; width: 32px; height: 24px;">
+              @if (resourceCanBeDeleted === undefined) {
+                <app-progress-spinner />
+              } @else {
+                <mat-icon>delete_forever</mat-icon>
+              }
+            </span>
+            Erase resource
           </span>
-          Erase resource
-        </span>
-      </button>
+        </button>
+      }
     </mat-menu>
   `,
   styles: [

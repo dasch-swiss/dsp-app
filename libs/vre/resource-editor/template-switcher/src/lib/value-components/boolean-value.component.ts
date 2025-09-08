@@ -5,15 +5,15 @@ import { FormControl } from '@angular/forms';
   selector: 'app-boolean-value',
   template: `
     <app-nullable-editor [formControl]="control" [defaultValue]="false">
-      <mat-slide-toggle
-        [formControl]="control"
-        data-cy="bool-toggle"
-        *ngIf="control.value !== null"
-        style="padding: 16px" />
+      @if (control.value !== null) {
+        <mat-slide-toggle [formControl]="control" data-cy="bool-toggle" style="padding: 16px" />
+      }
     </app-nullable-editor>
-    <mat-error *ngIf="control.touched && control.errors as errors">
-      {{ errors | humanReadableError }}
-    </mat-error>
+    @if (control.touched && control.errors; as errors) {
+      <mat-error>
+        {{ errors | humanReadableError }}
+      </mat-error>
+    }
   `,
 })
 export class BooleanValueComponent {

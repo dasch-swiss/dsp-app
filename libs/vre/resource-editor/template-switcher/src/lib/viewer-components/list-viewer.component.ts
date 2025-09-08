@@ -11,14 +11,18 @@ import { combineLatest, map, Observable, Subject, switchMap } from 'rxjs';
       data-cy="list-switch"
       style="display: flex;
     align-items: center;">
-      <ng-container *ngFor="let label of labels$ | async; let last = last; let index = index"
-        ><span [ngStyle]="{ 'font-weight': last && index > 0 ? 'bold' : 'normal' }">{{ label }}</span>
-        <mat-icon *ngIf="!last">chevron_right</mat-icon>
-      </ng-container>
-      <a *ngIf="false && linkToSearchList" [href]="linkToSearchList" target="_blank">
-        <!-- TODO : enable this feature when the State Management is removed -->
-        <mat-icon style="font-size: 16px; height: 14px; margin-left: 4px">open_in_new</mat-icon>
-      </a>
+      @for (label of labels$ | async; track label; let last = $last; let index = $index) {
+        <span [ngStyle]="{ 'font-weight': last && index > 0 ? 'bold' : 'normal' }">{{ label }}</span>
+        @if (!last) {
+          <mat-icon>chevron_right</mat-icon>
+        }
+      }
+      @if (false && linkToSearchList) {
+        <a [href]="linkToSearchList" target="_blank">
+          <!-- TODO : enable this feature when the State Management is removed -->
+          <mat-icon style="font-size: 16px; height: 14px; margin-left: 4px">open_in_new</mat-icon>
+        </a>
+      }
     </div>
   `,
 })

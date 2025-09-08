@@ -10,23 +10,32 @@ import { map, Observable } from 'rxjs';
 @Component({
   selector: 'app-resource-info-bar',
   template: `
-    <div class="infobar mat-caption" *ngIf="project$ | async as project">
-      Resource of the project
-      <a (click)="openProject(project)" class="link" [title]="project.longname">
-        <strong>{{ project?.shortname }}</strong></a
-      >,<span *ngIf="resourceAttachedUser$ | async as resourceAttachedUser">
-        created
-        <span *ngIf="resourceAttachedUser"
-          >by
-          {{
-            resourceAttachedUser?.givenName || resourceAttachedUser?.familyName
-              ? resourceAttachedUser?.givenName + ' ' + resourceAttachedUser?.familyName
-              : resourceAttachedUser?.username
-          }}</span
-        >
-        <span *ngIf="resource.creationDate"> on {{ resource.creationDate | date }}</span>
-      </span>
-    </div>
+    @if (project$ | async; as project) {
+      <div class="infobar mat-caption">
+        Resource of the project
+        <a (click)="openProject(project)" class="link" [title]="project.longname">
+          <strong>{{ project?.shortname }}</strong></a
+        >,
+        @if (resourceAttachedUser$ | async; as resourceAttachedUser) {
+          <span>
+            created
+            @if (resourceAttachedUser) {
+              <span
+                >by
+                {{
+                  resourceAttachedUser?.givenName || resourceAttachedUser?.familyName
+                    ? resourceAttachedUser?.givenName + ' ' + resourceAttachedUser?.familyName
+                    : resourceAttachedUser?.username
+                }}</span
+              >
+            }
+            @if (resource.creationDate) {
+              <span> on {{ resource.creationDate | date }}</span>
+            }
+          </span>
+        }
+      </div>
+    }
   `,
   styles: [
     `

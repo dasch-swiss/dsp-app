@@ -19,10 +19,14 @@ import { DEFAULT_MULTILANGUAGE_FORM, MultiLanguageFormArray } from '@dasch-swiss
             [validators]="[]"
             [isRequired]="true" />
 
-          <app-action-bubble *ngIf="showActionBubble" [position]="position" [length]="length" [node]="node" />
+          @if (showActionBubble) {
+            <app-action-bubble [position]="position" [length]="length" [node]="node" />
+          }
         </div>
 
-        <app-list-item *ngIf="showChildren" [node]="node" [isAdmin]="isAdmin" />
+        @if (showChildren) {
+          <app-list-item [node]="node" [isAdmin]="isAdmin" />
+        }
       </div>
     </div>
   `,

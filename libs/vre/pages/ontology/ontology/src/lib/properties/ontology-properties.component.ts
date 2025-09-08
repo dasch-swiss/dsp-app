@@ -7,12 +7,11 @@ import { OntologyEditService } from '../services/ontology-edit.service';
   selector: 'app-ontology-properties',
   template: `
     <mat-list class="properties">
-      <mat-list-item
-        class="property"
-        [class.admin]="(hasProjectAdminRights$ | async) === true"
-        *ngFor="let prop of oes.currentOntologyProperties$ | async; trackBy: trackByPropertyDefinitionFn">
-        <app-property-info [property]="prop" />
-      </mat-list-item>
+      @for (prop of oes.currentOntologyProperties$ | async; track trackByPropertyDefinitionFn($index, prop)) {
+        <mat-list-item class="property" [class.admin]="(hasProjectAdminRights$ | async) === true">
+          <app-property-info [property]="prop" />
+        </mat-list-item>
+      }
     </mat-list>
   `,
   styles: `

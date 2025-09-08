@@ -42,14 +42,15 @@ import { MediaPlayerService } from './media-player.service';
     <div>
       <app-video-more-button [parentResource]="parentResource" [src]="src" [fileInfo]="fileInfo" />
 
-      <button
-        mat-icon-button
-        data-cy="timeline-button"
-        (click)="createVideoSegment()"
-        [matTooltip]="'resourceEditor.representations.video.createAnnotation' | translate"
-        *ngIf="resourceFetcherService.userCanEdit$ | async">
-        <mat-icon svgIcon="draw_region_icon" />
-      </button>
+      @if (resourceFetcherService.userCanEdit$ | async) {
+        <button
+          mat-icon-button
+          data-cy="timeline-button"
+          (click)="createVideoSegment()"
+          [matTooltip]="'resourceEditor.representations.video.createAnnotation' | translate">
+          <mat-icon svgIcon="draw_region_icon" />
+        </button>
+      }
 
       <button
         mat-icon-button

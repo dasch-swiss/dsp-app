@@ -13,56 +13,60 @@ import { OntologyEditService } from './services/ontology-edit.service';
 @Component({
   selector: 'app-ontology-editor-header',
   template: `
-    <mat-toolbar class="ontology-editor-header" *ngIf="ontology$ | async as ontology">
-      <mat-toolbar-row>
-        <button
-          class="back-button"
-          data-cy="back-to-data-models"
-          mat-button
-          (click)="navigateToDataModels()"
-          matTooltip="Back to data models">
-          <mat-icon class="centered-icon">chevron_left</mat-icon>
-        </button>
-        <div class="ontology-info">
-          <h3
-            data-cy="ontology-label"
-            class="mat-headline-6"
-            [matTooltip]="ontology?.comment ? ontology.label + ' &mdash; ' + ontology?.comment : ''"
-            matTooltipPosition="above">
-            {{ ontology.label }}
-          </h3>
-          <p class="mat-caption">
-            <span> Updated on: {{ ontology.lastModificationDate | date: 'medium' }} </span>
-          </p>
-        </div>
-        <span class="fill-remaining-space"></span>
-        <div *ngIf="(hasProjectAdminRights$ | async) === true">
+    @if (ontology$ | async; as ontology) {
+      <mat-toolbar class="ontology-editor-header">
+        <mat-toolbar-row>
           <button
-            color="primary"
-            data-cy="edit-ontology-button"
+            class="back-button"
+            data-cy="back-to-data-models"
             mat-button
-            [matTooltip]="(hasProjectAdminRights$ | async) ? 'Edit data model info' : ''"
-            [disabled]="(project$ | async)?.status !== true"
-            (click)="$event.stopPropagation(); editOntology(ontology)">
-            <mat-icon>edit</mat-icon>
-            Edit
+            (click)="navigateToDataModels()"
+            matTooltip="Back to data models">
+            <mat-icon class="centered-icon">chevron_left</mat-icon>
           </button>
-          <button
-            color="warn"
-            mat-button
-            [matTooltip]="
-              (currentOntologyCanBeDeleted$ | async)
-                ? 'Delete data model'
-                : 'This data model cant be deleted because it is in use!'
-            "
-            [disabled]="(currentOntologyCanBeDeleted$ | async) !== true"
-            (click)="deleteOntology(ontology.id)">
-            <mat-icon>delete</mat-icon>
-            Delete
-          </button>
-        </div>
-      </mat-toolbar-row>
-    </mat-toolbar>
+          <div class="ontology-info">
+            <h3
+              data-cy="ontology-label"
+              class="mat-headline-6"
+              [matTooltip]="ontology?.comment ? ontology.label + ' &mdash; ' + ontology?.comment : ''"
+              matTooltipPosition="above">
+              {{ ontology.label }}
+            </h3>
+            <p class="mat-caption">
+              <span> Updated on: {{ ontology.lastModificationDate | date: 'medium' }} </span>
+            </p>
+          </div>
+          <span class="fill-remaining-space"></span>
+          @if ((hasProjectAdminRights$ | async) === true) {
+            <div>
+              <button
+                color="primary"
+                data-cy="edit-ontology-button"
+                mat-button
+                [matTooltip]="(hasProjectAdminRights$ | async) ? 'Edit data model info' : ''"
+                [disabled]="(project$ | async)?.status !== true"
+                (click)="$event.stopPropagation(); editOntology(ontology)">
+                <mat-icon>edit</mat-icon>
+                Edit
+              </button>
+              <button
+                color="warn"
+                mat-button
+                [matTooltip]="
+                  (currentOntologyCanBeDeleted$ | async)
+                    ? 'Delete data model'
+                    : 'This data model cant be deleted because it is in use!'
+                "
+                [disabled]="(currentOntologyCanBeDeleted$ | async) !== true"
+                (click)="deleteOntology(ontology.id)">
+                <mat-icon>delete</mat-icon>
+                Delete
+              </button>
+            </div>
+          }
+        </mat-toolbar-row>
+      </mat-toolbar>
+    }
   `,
   styles: `
     .ontology-editor-header {

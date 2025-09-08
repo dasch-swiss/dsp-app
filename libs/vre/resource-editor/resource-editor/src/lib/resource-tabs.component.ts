@@ -11,35 +11,44 @@ import { CompoundService } from './compound/compound.service';
   template: `
     <mat-tab-group animationDuration="0ms" [selectedIndex]="selectedTab" (selectedTabChange)="onTabChange($event)">
       <mat-tab #matTabProperties [label]="'resourceEditor.properties' | translate">
-        <app-properties-display *ngIf="resource" [resource]="resource" />
+        @if (resource) {
+          <app-properties-display [resource]="resource" />
+        }
       </mat-tab>
 
-      <mat-tab *ngIf="incomingResource" #matTabIncoming [label]="resourceClassLabel(incomingResource.res)">
-        <app-properties-display
-          [resource]="incomingResource"
-          [displayLabel]="true"
-          [parentResourceId]="resource.res.id" />
-      </mat-tab>
+      @if (incomingResource) {
+        <mat-tab #matTabIncoming [label]="resourceClassLabel(incomingResource.res)">
+          <app-properties-display
+            [resource]="incomingResource"
+            [displayLabel]="true"
+            [parentResourceId]="resource.res.id" />
+        </mat-tab>
+      }
 
       <!-- image annotations -->
-      <mat-tab label="Annotations" *ngIf="displayAnnotations">
-        <ng-template matTabLabel>
-          {{ 'resourceEditor.labelAnnotations' | translate }}
-          <span *ngIf="regionsCount > 0" [matBadge]="regionsCount" matBadgeColor="primary" matBadgeOverlap="false">
-          </span>
-        </ng-template>
-        <app-annotation-tab [resource]="resource.res" />
-      </mat-tab>
+      @if (displayAnnotations) {
+        <mat-tab label="Annotations">
+          <ng-template matTabLabel>
+            {{ 'resourceEditor.labelAnnotations' | translate }}
+            @if (regionsCount > 0) {
+              <span [matBadge]="regionsCount" matBadgeColor="primary" matBadgeOverlap="false"> </span>
+            }
+          </ng-template>
+          <app-annotation-tab [resource]="resource.res" />
+        </mat-tab>
+      }
 
       <!-- audio & video annotations -->
-      <mat-tab label="Segments" *ngIf="segmentsService.segments.length > 0">
-        <ng-template matTabLabel>
-          <span [matBadge]="segmentsService.segments.length" matBadgeColor="primary" matBadgeOverlap="false">
-            {{ 'resourceEditor.labelAnnotations' | translate }}
-          </span>
-        </ng-template>
-        <app-segment-tab [resource]="resource.res" />
-      </mat-tab>
+      @if (segmentsService.segments.length > 0) {
+        <mat-tab label="Segments">
+          <ng-template matTabLabel>
+            <span [matBadge]="segmentsService.segments.length" matBadgeColor="primary" matBadgeOverlap="false">
+              {{ 'resourceEditor.labelAnnotations' | translate }}
+            </span>
+          </ng-template>
+          <app-segment-tab [resource]="resource.res" />
+        </mat-tab>
+      }
     </mat-tab-group>
   `,
   styles: [

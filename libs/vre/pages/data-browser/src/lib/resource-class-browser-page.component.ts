@@ -10,20 +10,18 @@ import { ResourceResultService } from './resource-result.service';
 @Component({
   selector: 'app-resource-class-browser-page',
   template: `
-    <ng-container *ngIf="data$ | async as data">
-      <ng-container *ngIf="userCanViewResources; else noAccessTpl">
+    @if (data$ | async; as data) {
+      @if (userCanViewResources) {
         <app-resource-browser
           [data]="data"
           [hasRightsToShowCreateLinkObject$]="projectPageService.hasProjectMemberRights$" />
-      </ng-container>
-    </ng-container>
-
-    <ng-template #noAccessTpl>
-      <div style="margin-top: 80px; align-items: center; text-align: center">
-        <h3>It seems like you don’t have the necessary permissions.</h3>
-        <p>Check with a project admin if you have the necessary permission or if you are logged in.</p>
-      </div>
-    </ng-template>
+      } @else {
+        <div style="margin-top: 80px; align-items: center; text-align: center">
+          <h3>It seems like you don’t have the necessary permissions.</h3>
+          <p>Check with a project admin if you have the necessary permission or if you are logged in.</p>
+        </div>
+      }
+    }
   `,
   providers: [ResourceResultService],
 })

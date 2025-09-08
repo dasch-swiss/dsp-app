@@ -1,21 +1,23 @@
 <div style="background: black; height: 200px; display: flex; justify-content: center; align-items: center">
   <mat-icon style="color: white; transform: scale(4)"> audio_file</mat-icon>
-  <div *ngIf="failedToLoad">Your browser does not support the audio element.</div>
-  <div *ngIf="audioFileUrl" class="audio-player">
+  @if (failedToLoad) {
+  <div>Your browser does not support the audio element.</div>
+  } @if (audioFileUrl) {
+  <div class="audio-player">
     <audio id="audio" preload="auto" (loadedmetadata)="onAudioPlayerReady()">
       <source [src]="audioFileUrl" type="audio/mpeg" />
     </audio>
   </div>
+  }
 </div>
 
-<ng-container *ngIf="isPlayerReady">
-  <app-media-slider
-    [max]="mediaPlayer.duration()"
-    [currentTime]="currentTime"
-    (afterNavigation)="mediaPlayer.navigate($event)" />
-  <app-segments-display
-    *ngIf="segmentsService.segments.length > 0 && duration > 0 && isPlayerReady"
-    [segments]="segmentsService.segments"
-    [videoLengthSecs]="duration" />
-  <app-audio-toolbar [parentResource]="parentResource" />
-</ng-container>
+@if (isPlayerReady) {
+<app-media-slider
+  [max]="mediaPlayer.duration()"
+  [currentTime]="currentTime"
+  (afterNavigation)="mediaPlayer.navigate($event)" />
+@if (segmentsService.segments.length > 0 && duration > 0 && isPlayerReady) {
+<app-segments-display [segments]="segmentsService.segments" [videoLengthSecs]="duration" />
+}
+<app-audio-toolbar [parentResource]="parentResource" />
+}

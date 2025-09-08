@@ -1,4 +1,4 @@
-import { AsyncPipe, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -20,7 +20,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-pager',
-  imports: [MatIconModule, MatButtonModule, TranslateModule, MatInputModule, MatTooltipModule, NgIf, AsyncPipe],
+  imports: [MatIconModule, MatButtonModule, TranslateModule, MatInputModule, MatTooltipModule, AsyncPipe],
   templateUrl: './pager.component.html',
   styleUrls: ['./pager.component.scss'],
 })

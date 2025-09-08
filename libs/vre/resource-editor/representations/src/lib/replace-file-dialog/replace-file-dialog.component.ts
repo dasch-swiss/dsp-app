@@ -35,11 +35,12 @@ export interface ReplaceFileDialogProps {
         </div>
       </div>
 
-      <app-create-resource-form-file
-        *ngIf="resourceFetcher.projectShortcode$ | async as projectShortcode"
-        [fileRepresentation]="data.representation"
-        (afterFormCreated)="form = $event"
-        [projectShortcode]="projectShortcode" />
+      @if (resourceFetcher.projectShortcode$ | async; as projectShortcode) {
+        <app-create-resource-form-file
+          [fileRepresentation]="data.representation"
+          (afterFormCreated)="form = $event"
+          [projectShortcode]="projectShortcode" />
+      }
     </mat-dialog-content>
 
     <mat-dialog-actions align="end">

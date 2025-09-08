@@ -14,16 +14,19 @@ import { IncomingOrStandoffLink } from './incoming-link.interface';
       [label]="'resourceEditor.propertiesDisplay.incomingLinkLabel' | translate"
       [borderBottom]="true"
       [isEmptyRow]="!loading && allIncomingLinks.length === 0">
-      <ng-container *ngIf="allIncomingLinks.length > 0">
+      @if (allIncomingLinks.length > 0) {
         <app-incoming-standoff-link-value [links]="slidedLinks" />
-        <app-incoming-resource-pager
-          *ngIf="allIncomingLinks.length > pageSize"
-          [pageIndex]="pageIndex"
-          [pageSize]="pageSize"
-          [itemsNumber]="allIncomingLinks.length"
-          (pageChanged)="pageChanged($event)" />
-      </ng-container>
-      <app-progress-indicator *ngIf="loading" />
+        @if (allIncomingLinks.length > pageSize) {
+          <app-incoming-resource-pager
+            [pageIndex]="pageIndex"
+            [pageSize]="pageSize"
+            [itemsNumber]="allIncomingLinks.length"
+            (pageChanged)="pageChanged($event)" />
+        }
+      }
+      @if (loading) {
+        <app-progress-indicator />
+      }
     </app-property-row>
   `,
 })

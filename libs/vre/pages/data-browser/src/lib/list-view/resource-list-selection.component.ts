@@ -10,12 +10,9 @@ import { ResourceLinkDialogComponent, ResourceLinkDialogProps } from './resource
   template: `
     <div style="background: #336790; color: white; padding: 16px; display: flex; gap: 8px; align-items: center">
       <div style="flex: 1">{{ count$ | async }} resources selected</div>
-      <button
-        mat-flat-button
-        *ngIf="(showCreateLink$ | async) && (multipleViewerService.selectedResources$ | async) as selectedResources"
-        (click)="openCreateLinkDialog(selectedResources)">
-        Create a link object
-      </button>
+      @if ((showCreateLink$ | async) && (multipleViewerService.selectedResources$ | async); as selectedResources) {
+        <button mat-flat-button (click)="openCreateLinkDialog(selectedResources)">Create a link object</button>
+      }
       <button mat-flat-button (click)="selectAll()">Select all</button>
       <button mat-icon-button (click)="reset()"><mat-icon>close</mat-icon></button>
     </div>

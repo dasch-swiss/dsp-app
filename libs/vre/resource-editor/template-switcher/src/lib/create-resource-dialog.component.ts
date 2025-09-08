@@ -12,12 +12,13 @@ export interface CreateResourceDialogProps {
   template: `
     <app-dialog-header [title]="'Create new resource of type: ' + data.resourceType" />
     <div mat-dialog-content>
-      <app-create-resource-form
-        *ngIf="project$ | async as project"
-        [resourceClassIri]="data.resourceClassIri"
-        [projectIri]="project.id"
-        [projectShortcode]="project.shortcode"
-        (createdResourceIri)="onCreatedResource($event)" />
+      @if (project$ | async; as project) {
+        <app-create-resource-form
+          [resourceClassIri]="data.resourceClassIri"
+          [projectIri]="project.id"
+          [projectShortcode]="project.shortcode"
+          (createdResourceIri)="onCreatedResource($event)" />
+      }
     </div>
   `,
 })

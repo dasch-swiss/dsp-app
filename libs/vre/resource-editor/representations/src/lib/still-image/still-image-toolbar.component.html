@@ -28,18 +28,21 @@
       <mat-icon>download</mat-icon>
     </div>
 
+    @if ((resourceFetcherService.userCanEdit$ | async) && !isReadStillImageExternalFileValue) {
     <div
       class="clickable-icon"
       data-cy="still-image-region-button"
       matTooltip="{{ 'resourceEditor.representations.stillImage.createAnnotation' | translate }}"
-      *ngIf="(resourceFetcherService.userCanEdit$ | async) && !isReadStillImageExternalFileValue"
       (click)="toggleDrawMode()"
       [class.active]="osd.drawing">
       <mat-icon svgIcon="draw_region_icon" />
     </div>
+    }
   </div>
 
-  <app-compound-navigation *ngIf="compoundMode" />
+  @if (compoundMode) {
+  <app-compound-navigation />
+  }
 
   <div class="icon-container">
     <div
@@ -77,14 +80,11 @@
   <a class="menu-content" mat-menu-item [href]="imageFileValue.fileUrl" target="_blank" data-cy="open-iiif-new-tab">
     Open IIIF URL in new tab
   </a>
-  <button
-    class="menu-content"
-    data-cy="replace-image-button"
-    mat-menu-item
-    *ngIf="resourceFetcherService.userCanEdit$ | async"
-    (click)="replaceImage()">
+  @if (resourceFetcherService.userCanEdit$ | async) {
+  <button class="menu-content" data-cy="replace-image-button" mat-menu-item (click)="replaceImage()">
     Replace file
   </button>
+  }
 </mat-menu>
 
 <mat-menu #share="matMenu" class="res-share-menu">
@@ -107,11 +107,13 @@
 </mat-menu>
 <mat-menu #settings="matMenu" class="settings-menu">
   <button class="menu-content" data-cy="jpg-button" mat-menu-item (click)="imageIsPng.emit(false)">
-    <mat-icon *ngIf="!isPng">check</mat-icon>
-    JPG
+    @if (!isPng) {
+    <mat-icon>check</mat-icon>
+    } JPG
   </button>
   <button mat-menu-item data-cy="png-button" (click)="imageIsPng.emit(true)">
-    <mat-icon *ngIf="isPng">check</mat-icon>
-    PNG
+    @if (isPng) {
+    <mat-icon>check</mat-icon>
+    } PNG
   </button>
 </mat-menu>

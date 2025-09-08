@@ -19,14 +19,17 @@ import {
         (valueChange)="onChange($event)" />
     </div>
 
-    <app-upload-control
-      *ngIf="isUploadFileTab"
-      [formControl]="control"
-      [projectShortcode]="projectShortcode"
-      [representation]="fileRepresentation"
-      data-cy="upload-control" />
+    @if (isUploadFileTab) {
+      <app-upload-control
+        [formControl]="control"
+        [projectShortcode]="projectShortcode"
+        [representation]="fileRepresentation"
+        data-cy="upload-control" />
+    }
 
-    <app-iiif-control [control]="control" *ngIf="!isUploadFileTab" />
+    @if (!isUploadFileTab) {
+      <app-iiif-control [control]="control" />
+    }
   </app-create-resource-form-row>`,
 })
 export class CreateResourceFormImageComponent {

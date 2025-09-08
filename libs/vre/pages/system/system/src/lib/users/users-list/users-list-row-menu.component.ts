@@ -14,28 +14,29 @@ import { UsersTabService } from '../users-tab.service';
 @Component({
   selector: 'app-users-list-row-menu',
   template: `
-    <button mat-icon-button *ngIf="isSysAdmin$ | async" [matMenuTriggerFor]="projectUserMenu" data-cy="user-menu">
-      <mat-icon>more_horiz</mat-icon>
-    </button>
+    @if (isSysAdmin$ | async) {
+      <button mat-icon-button [matMenuTriggerFor]="projectUserMenu" data-cy="user-menu">
+        <mat-icon>more_horiz</mat-icon>
+      </button>
+    }
 
     <mat-menu #projectUserMenu="matMenu" xPosition="before">
-      <button
-        mat-menu-item
-        *ngIf="user.username !== (user$ | async)?.username"
-        (click)="updateSystemAdminMembership(user, !isSystemAdmin(user.permissions))">
-        {{ isSystemAdmin(user.permissions) ? 'Remove' : 'Add' }} as system admin
-      </button>
+      @if (user.username !== (user$ | async)?.username) {
+        <button mat-menu-item (click)="updateSystemAdminMembership(user, !isSystemAdmin(user.permissions))">
+          {{ isSystemAdmin(user.permissions) ? 'Remove' : 'Add' }} as system admin
+        </button>
+      }
 
-      <ng-container *ngIf="user.status">
+      @if (user.status) {
         <button mat-menu-item (click)="editUser(user)">Edit user</button>
         <button mat-menu-item (click)="openEditPasswordDialog(user)">Change user's password</button>
         <button mat-menu-item (click)="openManageProjectMembershipDialog(user)">Manage project membership</button>
         <button mat-menu-item (click)="askToDeactivateUser(user.username, user.id)">Suspend user</button>
-      </ng-container>
+      }
 
-      <button mat-menu-item *ngIf="!user.status" (click)="askToActivateUser(user.username, user.id)">
-        Reactivate user
-      </button>
+      @if (!user.status) {
+        <button mat-menu-item (click)="askToActivateUser(user.username, user.id)">Reactivate user</button>
+      }
     </mat-menu>
   `,
 })

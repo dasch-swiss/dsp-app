@@ -14,13 +14,19 @@ import { GeonameService, SearchPlace } from '../geoname.service';
       aria-label="geoname"
       data-cy="geoname-autocomplete"
       [matAutocomplete]="auto" />
-    <mat-progress-spinner *ngIf="loading" matSuffix mode="indeterminate" diameter="20" style="margin-right: 16px;" />
+    @if (loading) {
+      <mat-progress-spinner matSuffix mode="indeterminate" diameter="20" style="margin-right: 16px;" />
+    }
     <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayPlaceInSearch.bind(this)">
-      <mat-option *ngFor="let place of places" [value]="place.id"> {{ place?.displayName }}</mat-option>
+      @for (place of places; track place) {
+        <mat-option [value]="place.id"> {{ place?.displayName }}</mat-option>
+      }
     </mat-autocomplete>
-    <mat-error *ngIf="control.errors as errors">
-      {{ errors | humanReadableError }}
-    </mat-error>
+    @if (control.errors; as errors) {
+      <mat-error>
+        {{ errors | humanReadableError }}
+      </mat-error>
+    }
   </mat-form-field>`,
 })
 export class GeonameValueComponent implements OnInit {

@@ -21,36 +21,35 @@ import { OntologyEditService } from '../../services/ontology-edit.service';
       <button data-cy="create-new-from-type-button" mat-menu-item [matMenuTriggerFor]="newFromPropType">
         Create new from type
       </button>
-      <button
-        data-cy="add-existing-property-button"
-        mat-menu-item
-        [matMenuTriggerFor]="addExistingProp"
-        *ngIf="resourceClass">
-        Add existing property
-      </button>
+      @if (resourceClass) {
+        <button data-cy="add-existing-property-button" mat-menu-item [matMenuTriggerFor]="addExistingProp">
+          Add existing property
+        </button>
+      }
     </mat-menu>
 
     <mat-menu #addExistingProp="matMenu" class="default-nested-sub-menu">
-      <ng-container *ngFor="let onto of availableProperties$ | async; trackBy: trackByPropToAddFn">
+      @for (onto of availableProperties$ | async; track trackByPropToAddFn($index, onto)) {
         <button mat-menu-item [disabled]="!onto.properties.length" [matMenuTriggerFor]="sub_menu">
           {{ onto.ontologyLabel }}
         </button>
         <mat-menu #sub_menu="matMenu" class="default-nested-sub-menu">
-          <button
-            mat-menu-item
-            *ngFor="let prop of onto.properties; trackBy: trackByPropFn"
-            [matTooltip]="prop.propDef!.comments | appStringifyStringLiteral"
-            matTooltipPosition="after"
-            (click)="assignExistingProperty(prop.propDef!.id)">
-            <mat-icon>{{ prop.propType?.icon }}</mat-icon>
-            {{ prop.propDef!.labels | appStringifyStringLiteral }}
-          </button>
+          @for (prop of onto.properties; track trackByPropFn($index, prop)) {
+            <button
+              mat-menu-item
+              [matTooltip]="prop.propDef!.comments | appStringifyStringLiteral"
+              matTooltipPosition="after"
+              (click)="assignExistingProperty(prop.propDef!.id)">
+              <mat-icon>{{ prop.propType?.icon }}</mat-icon>
+              {{ prop.propDef!.labels | appStringifyStringLiteral }}
+            </button>
+          }
         </mat-menu>
-      </ng-container>
+      }
     </mat-menu>
 
     <mat-menu #newFromPropType="matMenu">
-      <ng-container *ngFor="let type of defaultProperties; trackBy: trackByPropCategoryFn">
+      @for (type of defaultProperties; track trackByPropCategoryFn($index, type)) {
         <button
           mat-menu-item
           [matMenuTriggerFor]="sub_menu"
@@ -58,19 +57,20 @@ import { OntologyEditService } from '../../services/ontology-edit.service';
           {{ type.group }}
         </button>
         <mat-menu #sub_menu="matMenu" class="default-nested-sub-menu">
-          <button
-            mat-menu-item
-            *ngFor="let ele of type.elements; trackBy: trackByDefaultPropertyFn"
-            [value]="ele"
-            [attr.data-cy]="ele.label.replaceAll(' ', '').replace('/', '-')"
-            [matTooltip]="ele.description"
-            matTooltipPosition="after"
-            (click)="addNewProperty(ele)">
-            <mat-icon>{{ ele.icon }}</mat-icon>
-            {{ ele.label }}
-          </button>
+          @for (ele of type.elements; track trackByDefaultPropertyFn($index, ele)) {
+            <button
+              mat-menu-item
+              [value]="ele"
+              [attr.data-cy]="ele.label.replaceAll(' ', '').replace('/', '-')"
+              [matTooltip]="ele.description"
+              matTooltipPosition="after"
+              (click)="addNewProperty(ele)">
+              <mat-icon>{{ ele.icon }}</mat-icon>
+              {{ ele.label }}
+            </button>
+          }
         </mat-menu>
-      </ng-container>
+      }
     </mat-menu>
   `,
   styles: [

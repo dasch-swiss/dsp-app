@@ -7,15 +7,14 @@ import { CompoundService } from './compound.service';
 @Component({
   selector: 'app-compound-viewer',
   template: `
-    <ng-container *ngIf="compoundService.incomingResource$ | async as incomingResource">
-      <app-resource-legal *ngIf="fileValue$ | async as fileValue" [fileValue]="fileValue" />
-
-      <app-still-image
-        *ngIf="incomingResource.res.properties[HasStillImageFileValue]"
-        class="dsp-representation"
-        [resource]="incomingResource.res"
-        [compoundMode]="true" />
-    </ng-container>
+    @if (compoundService.incomingResource$ | async; as incomingResource) {
+      @if (fileValue$ | async; as fileValue) {
+        <app-resource-legal [fileValue]="fileValue" />
+      }
+      @if (incomingResource.res.properties[HasStillImageFileValue]) {
+        <app-still-image class="dsp-representation" [resource]="incomingResource.res" [compoundMode]="true" />
+      }
+    }
   `,
 })
 export class CompoundViewerComponent {

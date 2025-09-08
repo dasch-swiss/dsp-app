@@ -7,22 +7,23 @@ import { UsersTabService } from './users-tab.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-users-tab',
   template: `
-    <app-progress-indicator-overlay *ngIf="usersTabService.isLoading" />
+    @if (usersTabService.isLoading) {
+      <app-progress-indicator-overlay />
+    }
 
-    <ng-container *ngIf="users$ | async as users">
+    @if (users$ | async; as users) {
       <div style="display: flex; justify-content: center; margin: 16px 0">
         <app-double-chip-selector
           [options]="['Active users (' + users[0].length + ')', 'Inactive users (' + users[1].length + ')']"
           [(value)]="showActiveUsers" />
       </div>
-
-      <app-users-list
-        *ngIf="showActiveUsers && users[0] as activeUsers"
-        [list]="activeUsers"
-        [isButtonEnabledToCreateNewUser]="true" />
-
-      <app-users-list *ngIf="!showActiveUsers && users[1] as inactiveUsers" [list]="inactiveUsers" />
-    </ng-container>
+      @if (showActiveUsers && users[0]; as activeUsers) {
+        <app-users-list [list]="activeUsers" [isButtonEnabledToCreateNewUser]="true" />
+      }
+      @if (!showActiveUsers && users[1]; as inactiveUsers) {
+        <app-users-list [list]="inactiveUsers" />
+      }
+    }
   `,
   providers: [UsersTabService],
 })

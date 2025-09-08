@@ -4,11 +4,12 @@ import { PropertyValueService } from './property-value.service';
 
 @Component({
   selector: 'app-property-value-display-comment',
-  template: ` <div
-    *ngIf="(propertiesDisplayService.showComments$ | async) && comment"
-    data-cy="property-value-comment"
-    style=" font-size: small; margin-bottom: 16px"
-    [innerHTML]="comment | withBreaks"></div>`,
+  template: ` @if ((propertiesDisplayService.showComments$ | async) && comment) {
+    <div
+      data-cy="property-value-comment"
+      style=" font-size: small; margin-bottom: 16px"
+      [innerHTML]="comment | withBreaks"></div>
+  }`,
   styleUrls: [`./property-value-display-comment.component.scss`],
 })
 export class PropertyValueDisplayCommentComponent {

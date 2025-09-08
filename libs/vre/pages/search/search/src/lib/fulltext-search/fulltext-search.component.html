@@ -6,7 +6,8 @@
   [class.with-project-filter]="projectfilter"
   #fulltextSearchPanel
   cdkOverlayOrigin>
-  <div class="app-project-filter" *ngIf="projectfilter">
+  @if (projectfilter) {
+  <div class="app-project-filter">
     <button
       mat-button
       class="app-project-filter-button"
@@ -23,7 +24,8 @@
           {{ 'pages.search.fullTextSearch.allProjects' | translate }}
         </button>
         <mat-divider />
-        <span *ngFor="let project of projects">
+        @for (project of projects; track project) {
+        <span>
           <button
             mat-menu-item
             class="project-item"
@@ -33,9 +35,11 @@
             {{ project.shortname }}
           </button>
         </span>
+        }
       </div>
     </mat-menu>
   </div>
+  }
   <div class="app-fulltext-search-field" [class.with-project-filter]="projectfilter">
     <input
       #fulltextSearchInput
@@ -60,19 +64,18 @@
   <div class="app-search-menu" [class.with-project-filter]="projectfilter">
     <div class="app-menu-content">
       <mat-list class="app-previous-search-list">
-        <div *ngFor="let item of prevSearch; let i = index">
-          <mat-list-item *ngIf="i < 10">
+        @for (item of prevSearch; track item; let i = $index) {
+        <div>
+          @if (i < 10) {
+          <mat-list-item>
             <span (click)="doPrevSearch(item)" class="app-previous-search-item" matListItemTitle>
-              <div
-                class="app-project-filter-label"
-                [class.not-empty]="item.projectIri"
-                *ngIf="
-                                    projectfilter &&
-                                    !error &&
-                                    projects?.length > 0
-                                ">
-                <span *ngIf="item.projectIri">[{{ item.projectLabel }}]</span>
+              @if ( projectfilter && !error && projects?.length > 0 ) {
+              <div class="app-project-filter-label" [class.not-empty]="item.projectIri">
+                @if (item.projectIri) {
+                <span>[{{ item.projectLabel }}]</span>
+                }
               </div>
+              }
               <div class="app-previous-search-query" [class.fix-width]="projectfilter">{{ item.query }}</div>
               <div>
                 <button mat-icon-button (click)="resetPrevSearch(item)">
@@ -81,13 +84,17 @@
               </div>
             </span>
           </mat-list-item>
+          }
         </div>
+        }
       </mat-list>
 
-      <div class="app-menu-action" *ngIf="prevSearch">
+      @if (prevSearch) {
+      <div class="app-menu-action">
         <mat-divider />
         <button mat-button color="primary" class="center clear-list-btn" (click)="resetPrevSearch()">Clear list</button>
       </div>
+      }
     </div>
   </div>
 </ng-template>
@@ -104,8 +111,10 @@
     <mat-icon>{{ displayPhonePanel ? 'close' : 'search' }}</mat-icon>
   </button>
 
-  <div class="app-fulltext-search-mobile-panel" *ngIf="displayPhonePanel">
-    <div class="app-project-filter" *ngIf="projectfilter">
+  @if (displayPhonePanel) {
+  <div class="app-fulltext-search-mobile-panel">
+    @if (projectfilter) {
+    <div class="app-project-filter">
       <button
         mat-stroked-button
         class="app-project-filter-button"
@@ -120,13 +129,15 @@
         <div class="app-project-filter-menu">
           <button mat-menu-item class="center" (click)="setProject(); changeFocus()">{{ defaultProjectLabel }}</button>
           <mat-divider />
-          <span *ngFor="let project of projects">
+          @for (project of projects; track project) {
+          <span>
             <button mat-menu-item (click)="setProject(project); changeFocus()">{{ project.shortname }}</button>
           </span>
+          }
         </div>
       </mat-menu>
     </div>
-
+    }
     <div class="app-fulltext-search-field" [class.with-project-filter]="projectfilter">
       <input
         #fulltextSearchInputMobile
@@ -144,32 +155,31 @@
         {{ 'pages.search.fullTextSearch.search' | translate }}
       </button>
     </div>
-
     <mat-divider />
-
     <div class="app-search-menu" [class.with-project-filter]="projectfilter">
       <div class="app-menu-content">
         <mat-list class="app-previous-search-list">
-          <div *ngFor="let item of prevSearch; let i = index">
-            <mat-list-item *ngIf="i < 10">
+          @for (item of prevSearch; track item; let i = $index) {
+          <div>
+            @if (i < 10) {
+            <mat-list-item>
               <h4 mat-line (click)="doPrevSearch(item)" class="app-previous-search-item">
-                <div
-                  class="app-project-filter-label"
-                  [class.not-empty]="item.projectIri"
-                  *ngIf="
-                                        projectfilter &&
-                                        !error &&
-                                        projects?.length > 0
-                                    ">
-                  <span *ngIf="item.projectIri">{{ item.projectLabel }}</span>
+                @if ( projectfilter && !error && projects?.length > 0 ) {
+                <div class="app-project-filter-label" [class.not-empty]="item.projectIri">
+                  @if (item.projectIri) {
+                  <span>{{ item.projectLabel }}</span>
+                  }
                 </div>
+                }
                 <div class="app-previous-search-query" [class.fix-width]="projectfilter">{{ item.query }}</div>
               </h4>
               <button mat-icon-button (click)="resetPrevSearch(item)">
                 <mat-icon class="mat-list-close-icon" aria-label="close">close</mat-icon>
               </button>
             </mat-list-item>
+            }
           </div>
+          }
         </mat-list>
       </div>
       <div class="app-menu-action">
@@ -178,4 +188,5 @@
       </div>
     </div>
   </div>
+  }
 </div>

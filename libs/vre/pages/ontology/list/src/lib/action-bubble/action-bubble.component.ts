@@ -21,22 +21,24 @@ import {
   selector: 'app-action-bubble',
   template: ` <div class="action-bubble" [@simpleFadeAnimation]="'in'">
     <div class="button-container d-flex">
-      <button
-        mat-button
-        *ngIf="position > 0"
-        matTooltip="move up"
-        (click)="$event.stopPropagation(); repositionNode('up')"
-        class="reposition up">
-        <mat-icon>arrow_upward</mat-icon>
-      </button>
-      <button
-        mat-button
-        *ngIf="position < length - 1"
-        matTooltip="move down"
-        (click)="$event.stopPropagation(); repositionNode('down')"
-        class="reposition down">
-        <mat-icon>arrow_downward</mat-icon>
-      </button>
+      @if (position > 0) {
+        <button
+          mat-button
+          matTooltip="move up"
+          (click)="$event.stopPropagation(); repositionNode('up')"
+          class="reposition up">
+          <mat-icon>arrow_upward</mat-icon>
+        </button>
+      }
+      @if (position < length - 1) {
+        <button
+          mat-button
+          matTooltip="move down"
+          (click)="$event.stopPropagation(); repositionNode('down')"
+          class="reposition down">
+          <mat-icon>arrow_downward</mat-icon>
+        </button>
+      }
       <button
         mat-button
         matTooltip="insert new child above"

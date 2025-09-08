@@ -13,7 +13,9 @@ import { unescapeHtml } from './unescape-html';
       [config]="ckEditor.config"
       [editor]="editor"
       style="margin-bottom: 22px; display: block;" />
-    <mat-error *ngIf="control.touched && control.errors as errors">{{ errors | humanReadableError }}</mat-error>`,
+    @if (control.touched && control.errors; as errors) {
+      <mat-error>{{ errors | humanReadableError }}</mat-error>
+    }`,
 })
 export class CkEditorComponent implements OnInit {
   @Input({ required: true }) control!: FormControl<string | null>;

@@ -33,7 +33,9 @@ import { DateTime } from '@dasch-swiss/vre/resource-editor/resource-properties';
           data-cy="time-input" />
       </mat-form-field>
     </div>
-    <mat-error *ngIf="control.touched && control.errors as errors">{{ errors | humanReadableError }}</mat-error>
+    @if (control.touched && control.errors; as errors) {
+      <mat-error>{{ errors | humanReadableError }}</mat-error>
+    }
   `,
 })
 export class TimeValueComponent {

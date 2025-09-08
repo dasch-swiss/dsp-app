@@ -41,21 +41,29 @@ import { LinkValueDataService } from './link-value-data.service';
         requireSelection
         [displayWith]="displayResource.bind(this)"
         (closed)="handleNonSelectedValues()">
-        <mat-option *ngIf="resources.length === 0 && !loading" [disabled]="true"> No results were found.</mat-option>
-        <mat-option
-          *ngFor="let rc of _linkValueDataService.resourceClasses; trackBy: trackByResourceClassFn"
-          (click)="openCreateResourceDialog($event, rc.id, rc.label)">
-          Create New: {{ rc?.label }}
-        </mat-option>
-        <mat-option *ngFor="let res of resources; trackBy: trackByResourcesFn" [value]="res.id">
-          {{ res.label }}
-        </mat-option>
-        <mat-option *ngIf="loading" [disabled]="true" class="loader">
-          <app-progress-indicator />
-        </mat-option>
+        @if (resources.length === 0 && !loading) {
+          <mat-option [disabled]="true"> No results were found.</mat-option>
+        }
+        @for (rc of _linkValueDataService.resourceClasses; track trackByResourceClassFn($index, rc)) {
+          <mat-option (click)="openCreateResourceDialog($event, rc.id, rc.label)">
+            Create New: {{ rc?.label }}
+          </mat-option>
+        }
+        @for (res of resources; track trackByResourcesFn($index, res)) {
+          <mat-option [value]="res.id">
+            {{ res.label }}
+          </mat-option>
+        }
+        @if (loading) {
+          <mat-option [disabled]="true" class="loader">
+            <app-progress-indicator />
+          </mat-option>
+        }
       </mat-autocomplete>
       <mat-hint>{{ 'resourceEditor.resourceProperties.valueComponents.searchHelp' | translate }}</mat-hint>
-      <mat-error *ngIf="control.errors as errors">{{ errors | humanReadableError }}</mat-error>
+      @if (control.errors; as errors) {
+        <mat-error>{{ errors | humanReadableError }}</mat-error>
+      }
     </mat-form-field>
   `,
   providers: [LinkValueDataService],

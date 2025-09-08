@@ -21,12 +21,16 @@ import { PropertyForm, EditPropertyDialogData } from './property-form.type';
           :&nbsp; {{ propertyData.propType.label }}
         </mat-select-trigger>
 
-        <mat-optgroup *ngFor="let type of filteredProperties" [label]="type.group">
-          <mat-option *ngFor="let ele of type.elements" [value]="ele.guiElement">
-            <mat-icon>{{ ele.icon }}</mat-icon>
-            {{ ele.label }}
-          </mat-option>
-        </mat-optgroup>
+        @for (type of filteredProperties; track type) {
+          <mat-optgroup [label]="type.group">
+            @for (ele of type.elements; track ele) {
+              <mat-option [value]="ele.guiElement">
+                <mat-icon>{{ ele.icon }}</mat-icon>
+                {{ ele.label }}
+              </mat-option>
+            }
+          </mat-optgroup>
+        }
       </mat-select>
     </mat-form-field>
     <app-common-input
@@ -40,15 +44,13 @@ import { PropertyForm, EditPropertyDialogData } from './property-form.type';
       data-cy="label-input"
       placeholder="Property label" />
 
-    <app-gui-attr-list
-      data-cy="object-attribute-list"
-      *ngIf="propertyData.propType.objectType === Constants.ListValue"
-      [control]="form.controls.guiAttr" />
+    @if (propertyData.propType.objectType === Constants.ListValue) {
+      <app-gui-attr-list data-cy="object-attribute-list" [control]="form.controls.guiAttr" />
+    }
 
-    <app-gui-attr-link
-      data-cy="object-attribute-link"
-      *ngIf="propertyData.propType.objectType === Constants.LinkValue"
-      [control]="form.controls.objectType" />
+    @if (propertyData.propType.objectType === Constants.LinkValue) {
+      <app-gui-attr-link data-cy="object-attribute-link" [control]="form.controls.objectType" />
+    }
 
     <app-multi-language-textarea
       [formArray]="form.controls.comments"

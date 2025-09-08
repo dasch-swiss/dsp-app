@@ -8,14 +8,16 @@ import { ResourceResultService } from '../resource-result.service';
 @Component({
   selector: 'app-resources-list',
   template: `<div style="padding: 16px; display: flex; flex-direction: row-reverse">
-      <a mat-stroked-button *ngIf="showBackToFormButton" (click)="navigate()"
-        ><mat-icon>chevron_left</mat-icon>Back to search form</a
-      >
+      @if (showBackToFormButton) {
+        <a mat-stroked-button (click)="navigate()"><mat-icon>chevron_left</mat-icon>Back to search form</a>
+      }
     </div>
     <app-pager
       (pageIndexChanged)="updatePageIndex($event)"
       [numberOfAllResults]="resourceResultService.numberOfResults" />
-    <app-resource-list-selection *ngIf="multipleViewerService.selectMode" [resources]="resources" />
+    @if (multipleViewerService.selectMode) {
+      <app-resource-list-selection [resources]="resources" />
+    }
     <app-resource-list [resources]="resources" />`,
 })
 export class ResourcesListComponent {

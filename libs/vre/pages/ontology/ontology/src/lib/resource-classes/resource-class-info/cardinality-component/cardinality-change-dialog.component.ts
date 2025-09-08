@@ -22,32 +22,40 @@ export interface CardinalityInfo {
       " />
     <mat-dialog-content>
       <div class="cando-headline">
-        <app-progress-indicator class="floating-center" *ngIf="canSetCardinality === undefined" />
-        <div *ngIf="canSetCardinality === false" class="mat-headline-6">Changing the cardinality is not possible.</div>
+        @if (canSetCardinality === undefined) {
+          <app-progress-indicator class="floating-center" />
+        }
+        @if (canSetCardinality === false) {
+          <div class="mat-headline-6">Changing the cardinality is not possible.</div>
+        }
       </div>
-      <div *ngIf="canSetCardinality === false">
-        <p>{{ canNotSetCardinalityUiReason.detail }}</p>
-        <p>{{ canNotSetCardinalityUiReason.hint }}</p>
-      </div>
-      <div *ngIf="canSetCardinality">
-        <div class="cando-headline">
-          <mat-icon aria-label="warn icon" fontIcon="warning_amber" color="accent" />
-          <div class="mat-headline-6">Attention</div>
+      @if (canSetCardinality === false) {
+        <div>
+          <p>{{ canNotSetCardinalityUiReason.detail }}</p>
+          <p>{{ canNotSetCardinalityUiReason.hint }}</p>
         </div>
-        <div>Please note that this change may not be reversible. Do you want to change the cardinality?</div>
-      </div>
+      }
+      @if (canSetCardinality) {
+        <div>
+          <div class="cando-headline">
+            <mat-icon aria-label="warn icon" fontIcon="warning_amber" color="accent" />
+            <div class="mat-headline-6">Attention</div>
+          </div>
+          <div>Please note that this change may not be reversible. Do you want to change the cardinality?</div>
+        </div>
+      }
       <div mat-dialog-actions align="end">
-        <button mat-button (click)="dialogRef.close(false)" *ngIf="canSetCardinality">No</button>
-        <button
-          *ngIf="canSetCardinality"
-          mat-raised-button
-          (click)="dialogRef.close(true)"
-          data-cy="confirmation-button">
-          Yes
-        </button>
-        <button mat-button (click)="dialogRef.close(false)" *ngIf="canSetCardinality === false">
-          {{ 'ui.form.action.close' | translate }}
-        </button>
+        @if (canSetCardinality) {
+          <button mat-button (click)="dialogRef.close(false)">No</button>
+        }
+        @if (canSetCardinality) {
+          <button mat-raised-button (click)="dialogRef.close(true)" data-cy="confirmation-button">Yes</button>
+        }
+        @if (canSetCardinality === false) {
+          <button mat-button (click)="dialogRef.close(false)">
+            {{ 'ui.form.action.close' | translate }}
+          </button>
+        }
       </div>
     </mat-dialog-content>
   `,

@@ -14,9 +14,9 @@
       [placeholder]="'pages.system.projectsList.eraseConfirmationDialog.shortCode' | translate"
       [formControl]="eraseForm.controls.shortCode"
       [value]="eraseForm.controls.shortCode" />
-    <mat-error *ngIf="eraseForm.controls.shortCode.hasError('shortCode') as errors">
-      {{ 'pages.system.projectsList.eraseConfirmationDialog.shortCodeValidation' | translate }}
-    </mat-error>
+    @if (eraseForm.controls.shortCode.hasError('shortCode'); as errors) {
+    <mat-error> {{ 'pages.system.projectsList.eraseConfirmationDialog.shortCodeValidation' | translate }} </mat-error>
+    }
   </mat-form-field>
   <mat-form-field class="large-field">
     <mat-label>{{ 'pages.system.projectsList.eraseConfirmationDialog.systemAdminPassword' | translate }}</mat-label>
@@ -27,9 +27,9 @@
       [formControl]="eraseForm.controls.password"
       matInput
       type="password" />
-    <mat-error *ngIf="eraseForm.controls.password.hasError('password') as errors">
-      {{ 'pages.system.projectsList.eraseConfirmationDialog.passwordValidation' | translate }}
-    </mat-error>
+    @if (eraseForm.controls.password.hasError('password'); as errors) {
+    <mat-error> {{ 'pages.system.projectsList.eraseConfirmationDialog.passwordValidation' | translate }} </mat-error>
+    }
   </mat-form-field>
 </mat-dialog-content>
 

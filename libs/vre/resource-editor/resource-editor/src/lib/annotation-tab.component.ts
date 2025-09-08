@@ -8,24 +8,25 @@ import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-annotation-tab',
-  template: ` <div
-    *ngFor="let annotation of regionService.regions$ | async; trackBy: trackAnnotationByFn"
-    [attr.data-annotation-resource]="annotation.res.id"
-    [class.active]="annotation.res.id === selectedRegion"
-    #annotationElement
-    data-cy="annotation-border">
-    <app-properties-display
-      [resource]="annotation"
-      [parentResourceId]="resource.id"
-      [displayLabel]="true"
-      [linkToNewTab]="
-        resourceService.getResourcePath(resource.id) +
-        '?' +
-        RouteConstants.annotationQueryParam +
-        '=' +
-        annotation.res.id
-      " />
-  </div>`,
+  template: ` @for (annotation of regionService.regions$ | async; track trackAnnotationByFn($index, annotation)) {
+    <div
+      [attr.data-annotation-resource]="annotation.res.id"
+      [class.active]="annotation.res.id === selectedRegion"
+      #annotationElement
+      data-cy="annotation-border">
+      <app-properties-display
+        [resource]="annotation"
+        [parentResourceId]="resource.id"
+        [displayLabel]="true"
+        [linkToNewTab]="
+          resourceService.getResourcePath(resource.id) +
+          '?' +
+          RouteConstants.annotationQueryParam +
+          '=' +
+          annotation.res.id
+        " />
+    </div>
+  }`,
   styles: ['.active {border: 1px solid}'],
 })
 export class AnnotationTabComponent implements AfterViewInit, OnDestroy {

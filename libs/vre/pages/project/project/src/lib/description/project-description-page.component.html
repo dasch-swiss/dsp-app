@@ -1,38 +1,43 @@
-<div *ngIf="(readProject$ | async) as project" class="content large middle">
+@if ((readProject$ | async); as project) {
+<div class="content large middle">
   <div style="display: flex; justify-content: end">
+    @if ((hasProjectAdminRights$ | async) && project.status) {
     <button
       mat-button
-      *ngIf="(hasProjectAdminRights$ | async) && project.status"
       class="right"
       [routerLink]="['..', routeConstants.settings, routeConstants.edit]"
       color="primary">
       <mat-icon>edit_square</mat-icon>
       Edit project description
     </button>
+    }
   </div>
-
   <div>
     <app-project-image-cover [project]="project" />
-    <div *ngIf="hasManualLicense" class="mat-caption">{{ hasManualLicense }}</div>
+    @if (hasManualLicense) {
+    <div class="mat-caption">{{ hasManualLicense }}</div>
+    }
   </div>
-
   <h2>{{ project.longname }}</h2>
   <h3 class="mat-body subtitle" style="margin-bottom: 48px">
     Project {{ project.shortcode }} | {{ project.shortname | uppercase }}
   </h3>
-
   <div class="description-rm">
-    <section class="project description" *ngFor="let desc of sortedDescriptions$ | async">
+    @for (desc of sortedDescriptions$ | async; track desc) {
+    <section class="project description">
       <div [innerHtml]="desc.value"></div>
     </section>
-
-    <mat-divider *ngIf="project.keywords.length > 0" />
-
+    } @if (project.keywords.length > 0) {
+    <mat-divider />
+    }
     <!-- keywords -->
     <section class="project keywords">
       <mat-chip-listbox>
-        <mat-chip *ngFor="let k of project.keywords">{{ k }}</mat-chip>
+        @for (k of project.keywords; track k) {
+        <mat-chip>{{ k }}</mat-chip>
+        }
       </mat-chip-listbox>
     </section>
   </div>
 </div>
+}

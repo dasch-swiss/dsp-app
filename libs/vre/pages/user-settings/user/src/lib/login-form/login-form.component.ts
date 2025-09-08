@@ -19,9 +19,11 @@ import { finalize, Subscription, takeLast, tap } from 'rxjs';
           [formControl]="form.controls.password"
           matInput
           type="password" />
-        <mat-error *ngIf="form.controls.password.errors as errors">
-          {{ errors | humanReadableError }}
-        </mat-error>
+        @if (form.controls.password.errors; as errors) {
+          <mat-error>
+            {{ errors | humanReadableError }}
+          </mat-error>
+        }
       </mat-form-field>
 
       <button

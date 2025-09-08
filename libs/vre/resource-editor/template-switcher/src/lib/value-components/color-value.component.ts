@@ -25,9 +25,11 @@ import { FormControl } from '@angular/forms';
           readonly />
       </mat-form-field>
     </app-nullable-editor>
-    <mat-error *ngIf="control.touched && control.errors as errors">
-      {{ errors | humanReadableError }}
-    </mat-error>
+    @if (control.touched && control.errors; as errors) {
+      <mat-error>
+        {{ errors | humanReadableError }}
+      </mat-error>
+    }
   `,
   styles: [
     `

@@ -19,9 +19,9 @@ import { ResourceFetcherService } from '../resource-fetcher.service';
       <button mat-menu-item (click)="openIIIFnewTab()">Open audio in new tab</button>
       <button mat-menu-item [cdkCopyToClipboard]="fileValue.fileUrl">Copy audio URL to clipboard</button>
       <button mat-menu-item (click)="download()">Download audio</button>
-      <button mat-menu-item *ngIf="resourceFetcherService.userCanEdit$ | async" (click)="openReplaceFileDialog()">
-        Replace file
-      </button>
+      @if (resourceFetcherService.userCanEdit$ | async) {
+        <button mat-menu-item (click)="openReplaceFileDialog()">Replace file</button>
+      }
     </mat-menu>`,
 })
 export class AudioMoreButtonComponent {

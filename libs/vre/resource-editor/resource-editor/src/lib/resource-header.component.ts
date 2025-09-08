@@ -21,15 +21,16 @@ import { DspResource } from '@dasch-swiss/vre/shared/app-common';
     </div>
     <div class="resource-label" style="display: flex; justify-content: space-between">
       <h4 data-cy="resource-header-label">{{ resource.res.label }}</h4>
-      <button
-        mat-icon-button
-        data-cy="edit-label-button"
-        color="primary"
-        matTooltip="Edit label"
-        (click)="openEditLabelDialog()"
-        *ngIf="resourceFetcherService.userCanEdit$ | async">
-        <mat-icon>edit</mat-icon>
-      </button>
+      @if (resourceFetcherService.userCanEdit$ | async) {
+        <button
+          mat-icon-button
+          data-cy="edit-label-button"
+          color="primary"
+          matTooltip="Edit label"
+          (click)="openEditLabelDialog()">
+          <mat-icon>edit</mat-icon>
+        </button>
+      }
     </div>
     <app-resource-info-bar [resource]="resource.res" />
   </div>`,

@@ -6,22 +6,20 @@ import { FileRepresentationType } from '@dasch-swiss/vre/resource-editor/represe
 @Component({
   selector: 'app-create-resource-form-representation',
   template: `
-    <app-create-resource-form-row
-      [label]="'File'"
-      *ngIf="fileRepresentation !== Constants.HasStillImageFileValue; else stillImageTpl">
-      <app-upload-control
-        [formControl]="control"
-        [projectShortcode]="projectShortcode"
-        [representation]="fileRepresentation"
-        style="display: block; margin-bottom: 16px" />
-    </app-create-resource-form-row>
-
-    <ng-template #stillImageTpl>
+    @if (fileRepresentation !== Constants.HasStillImageFileValue) {
+      <app-create-resource-form-row [label]="'File'">
+        <app-upload-control
+          [formControl]="control"
+          [projectShortcode]="projectShortcode"
+          [representation]="fileRepresentation"
+          style="display: block; margin-bottom: 16px" />
+      </app-create-resource-form-row>
+    } @else {
       <app-create-resource-form-image
         [control]="control"
         [fileRepresentation]="fileRepresentation"
         [projectShortcode]="projectShortcode" />
-    </ng-template>
+    }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

@@ -14,14 +14,16 @@
       <span class="mat-caption class-name"> {{ resourceClass.name }} </span>
       <span class="mat-caption">&nbsp;&middot;&nbsp;</span>
       <span class="mat-caption" data-cy="class-type-label"
-        ><mat-icon *ngIf="resourceClass.defaultClassIcon">{{ resourceClass.defaultClassIcon }}</mat-icon>
-        {{ resourceClass.defaultClassLabel }}
+        >@if (resourceClass.defaultClassIcon) {
+        <mat-icon>{{ resourceClass.defaultClassIcon }}</mat-icon>
+        } {{ resourceClass.defaultClassLabel }}
       </span>
     </mat-card-subtitle>
     <span class="resource-class-header-action">
-      <span class="resource-class-more" *ngIf="(project$ | async)?.status">
+      @if ((project$ | async)?.status) {
+      <span class="resource-class-more">
+        @if (classHovered || menuOpen) {
         <button
-          *ngIf="classHovered || menuOpen"
           mat-icon-button
           [matMenuTriggerFor]="resClassMenu"
           class="res-class-menu"
@@ -31,7 +33,9 @@
           (click)="setCanBeDeleted()">
           <mat-icon>more_vert</mat-icon>
         </button>
+        }
       </span>
+      }
       <span class="resource-class-size" [matTooltip]="(expandClasses ? 'Collapse class' : 'Expand class')">
         <button mat-icon-button (click)="expandClasses = !expandClasses">
           <mat-icon>{{ expandClasses ? "expand_less" : "expand_more" }}</mat-icon>
@@ -40,35 +44,30 @@
     </span>
   </mat-card-header>
   <!-- resource class card content with list of properties -->
-  <mat-card-content *ngIf="expandClasses" class="resource-class-content">
-    <mat-list
-      cdkDropList
-      class="resource-class-properties"
-      (cdkDropListDropped)="onPropertyDropped($event)"
-      *ngIf="resourceClass.properties?.length; else noProperties">
-      <app-property-item
-        *ngFor="let prop of resourceClass.properties; let i = index; trackBy: trackByPropToDisplayFn"
-        [classProp]="prop"
-        (cardinalityChange)="onCardinalityChange($event)" />
+  @if (expandClasses) {
+  <mat-card-content class="resource-class-content">
+    @if (resourceClass.properties?.length) {
+    <mat-list cdkDropList class="resource-class-properties" (cdkDropListDropped)="onPropertyDropped($event)">
+      @for (prop of resourceClass.properties; track trackByPropToDisplayFn(i, prop); let i = $index) {
+      <app-property-item [classProp]="prop" (cardinalityChange)="onCardinalityChange($event)" />
+      }
     </mat-list>
-    <app-add-property-menu *ngIf="(hasProjectAdminRights$ | async)" [resourceClass]="resourceClass" />
+    } @else {
+    <p>There are no properties assigned to this class yet.</p>
+    } @if ((hasProjectAdminRights$ | async)) {
+    <app-add-property-menu [resourceClass]="resourceClass" />
+    }
   </mat-card-content>
+  }
 </mat-card>
 
-<ng-template #noProperties>
-  <p>There are no properties assigned to this class yet.</p>
-</ng-template>
-
 <mat-menu #resClassMenu="matMenu" xPosition="before">
-  <button
-    mat-menu-item
-    *ngIf="(hasProjectAdminRights$ | async) === true && (project$ | async)?.status === true"
-    class="res-class-edit"
-    data-cy="edit-button"
-    (click)="editResourceClassInfo()">
+  @if ((hasProjectAdminRights$ | async) === true && (project$ | async)?.status === true) {
+  <button mat-menu-item class="res-class-edit" data-cy="edit-button" (click)="editResourceClassInfo()">
     <mat-icon>edit</mat-icon>
     Edit resource class info
   </button>
+  }
   <button
     mat-menu-item
     (click)="openInDatabrowser()"
@@ -81,8 +80,8 @@
     <mat-icon>content_copy</mat-icon>
     Copy resource class id
   </button>
+  @if ((hasProjectAdminRights$ | async) === true && (project$ | async)?.status === true) {
   <button
-    *ngIf="(hasProjectAdminRights$ | async) === true && (project$ | async)?.status === true"
     [matTooltip]="classCanBeDeleted ? '' : 'This class can\'t be deleted because it is in use'"
     matTooltipPosition="before"
     [disabled]="!classCanBeDeleted"
@@ -93,4 +92,5 @@
     <mat-icon>delete</mat-icon>
     Delete resource class
   </button>
+  }
 </mat-menu>

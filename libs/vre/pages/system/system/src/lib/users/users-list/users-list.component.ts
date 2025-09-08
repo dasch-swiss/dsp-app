@@ -19,30 +19,30 @@ type UserSortKey = 'familyName' | 'givenName' | 'email' | 'username';
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-users-list',
   template: `
-    <div *ngIf="list.length > 0">
-      <div style="display: flex; align-items: center; padding: 16px; background-color: #f5f5f5">
-        <span class="mat-headline-6" style="margin-bottom: 0; flex: 1" data-cy="user-count">
-          {{ list.length | i18nPlural: itemPluralMapping['user'] }}
-        </span>
-        <button
-          mat-flat-button
-          [color]="'primary'"
-          (click)="createUser()"
-          *ngIf="isButtonEnabledToCreateNewUser && (isSysAdmin$ | async)"
-          style="margin-right: 16px">
-          Create new
-        </button>
-
-        <app-sort-button
-          *ngIf="list.length > 1"
-          [icon]="'sort_by_alpha'"
-          [sortProps]="sortProps"
-          [activeKey]="sortBy"
-          (sortKeyChange)="sortList($event)" />
+    @if (list.length > 0) {
+      <div>
+        <div style="display: flex; align-items: center; padding: 16px; background-color: #f5f5f5">
+          <span class="mat-headline-6" style="margin-bottom: 0; flex: 1" data-cy="user-count">
+            {{ list.length | i18nPlural: itemPluralMapping['user'] }}
+          </span>
+          @if (isButtonEnabledToCreateNewUser && (isSysAdmin$ | async)) {
+            <button mat-flat-button [color]="'primary'" (click)="createUser()" style="margin-right: 16px">
+              Create new
+            </button>
+          }
+          @if (list.length > 1) {
+            <app-sort-button
+              [icon]="'sort_by_alpha'"
+              [sortProps]="sortProps"
+              [activeKey]="sortBy"
+              (sortKeyChange)="sortList($event)" />
+          }
+        </div>
+        @for (user of list; track trackByFn($index, user)) {
+          <app-users-list-row [user]="user" />
+        }
       </div>
-
-      <app-users-list-row [user]="user" *ngFor="let user of list; trackBy: trackByFn" />
-    </div>
+    }
   `,
 })
 export class UsersListComponent {

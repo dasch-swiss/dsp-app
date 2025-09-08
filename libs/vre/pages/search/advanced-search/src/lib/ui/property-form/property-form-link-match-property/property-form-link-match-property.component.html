@@ -1,4 +1,5 @@
-<div *ngFor="let item of values; let i = index" class="parent-property-container child-property-list">
+@for (item of values; track item; let i = $index) {
+<div class="parent-property-container child-property-list">
   <div class="form-fields-container">
     <div class="dropdown-container">
       <div class="content">
@@ -11,7 +12,9 @@
             name="properties"
             [compareWith]="compareObjects">
             <mat-option [value]="resourceLabelObj">{{ resourceLabelObj.label }}</mat-option>
-            <mat-option *ngFor="let prop of properties" [value]="prop"> {{ prop.label }}</mat-option>
+            @for (prop of properties; track prop) {
+            <mat-option [value]="prop"> {{ prop.label }}</mat-option>
+            }
           </mat-select>
         </mat-form-field>
       </div>
@@ -25,37 +28,31 @@
             (selectionChange)="onSelectedOperatorChanged($event, i)"
             placeholder="Select a value"
             name="operators">
-            <mat-option *ngFor="let operator of item.operators" [value]="operator"> {{ operator }} </mat-option>
+            @for (operator of item.operators; track operator) {
+            <mat-option [value]="operator"> {{ operator }} </mat-option>
+            }
           </mat-select>
         </mat-form-field>
       </div>
     </div>
-    <div
-      *ngIf="
-                item.selectedOperator &&
-                item.selectedOperator !== operators.Exists &&
-                item.selectedOperator !== operators.NotExists
-            "
-      class="value-container">
+    @if ( item.selectedOperator && item.selectedOperator !== operators.Exists && item.selectedOperator !==
+    operators.NotExists ) {
+    <div class="value-container">
       <!-- choose correct component based on objectType -->
+      @if ( !item.selectedProperty?.isLinkedResourceProperty && item.selectedProperty?.objectType !==
+      constants.ListValue ) {
       <app-property-form-value
         #propertyFormValue
-        *ngIf="
-                    !item.selectedProperty?.isLinkedResourceProperty &&
-                    item.selectedProperty?.objectType !== constants.ListValue
-                "
         [objectType]="item.selectedProperty?.objectType"
         [value]="item.searchValue"
         (emitValueChanged)="onValueChanged($event, i)" />
+      } @if ( item.selectedProperty?.objectType === constants.ListValue ) {
       <app-property-form-list-value
-        *ngIf="
-                    item.selectedProperty?.objectType === constants.ListValue
-                "
         [list]="item.list"
         [value]="item.searchValue"
         (emitValueChanged)="onValueChanged($event, i)" />
+      } @if (item.selectedProperty?.isLinkedResourceProperty) {
       <app-property-form-link-value
-        *ngIf="item.selectedProperty?.isLinkedResourceProperty"
         [value]="item.searchValue"
         [label]="item.searchValueLabel"
         [resourcesSearchResultsLoading]="resourcesSearchResultsLoading"
@@ -67,7 +64,9 @@
                 "
         (emitLoadMoreSearchResults)="onLoadMoreSearchResults($event, i)"
         (emitResourceSelected)="onValueChanged($event, i)" />
+      }
     </div>
+    }
   </div>
   <div class="side-container">
     <button mat-icon-button (click)="onRemovePropertyFormClicked(item)" class="remove-property-button">
@@ -75,6 +74,7 @@
     </button>
   </div>
 </div>
+}
 
 <div class="parent-property-container child-property-list">
   <div class="add-property-button">

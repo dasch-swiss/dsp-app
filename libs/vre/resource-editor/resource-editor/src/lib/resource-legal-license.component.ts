@@ -5,16 +5,14 @@ import { LicensesLogoMapping } from './licenses-logo-mapping';
 @Component({
   selector: 'app-resource-legal-license',
   template: `
-    <a *ngIf="licenseLogo; else licenseWithLinkTpl" [href]="license.uri" target="_blank"
-      ><img [src]="licenseLogo" alt="license" style="width: 110px"
-    /></a>
-
-    <ng-template #licenseWithLinkTpl>
+    @if (licenseLogo) {
+      <a [href]="license.uri" target="_blank"><img [src]="licenseLogo" alt="license" style="width: 110px" /></a>
+    } @else {
       <a style="display: flex; align-items: center; color: white" [href]="license.uri" target="_blank">
         <span style="color: white">{{ license.labelEn }} </span>
         <mat-icon style="font-size: 18px">open_in_new</mat-icon>
-      </a></ng-template
-    >
+      </a>
+    }
   `,
 })
 export class ResourceLegalLicenseComponent implements OnChanges {

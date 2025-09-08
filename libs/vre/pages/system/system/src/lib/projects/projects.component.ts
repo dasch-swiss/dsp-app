@@ -14,21 +14,23 @@ import { BehaviorSubject, combineLatest, map, Subject, switchMap, takeUntil, tap
   selector: 'app-projects',
   template: `
     <div class="app-projects">
-      <app-projects-list
-        *ngIf="activeProjects$ | async as projectsList"
-        [projectsList]="projectsList"
-        [isUserActive]="true"
-        (refreshParent)="updateAndRefresh()"
-        [createNewButtonEnabled]="true"
-        [isUsersProjects]="isUsersProjects"
-        data-cy="active-projects-section" />
-      <app-projects-list
-        *ngIf="inactiveProjects$ | async as inactiveProjects"
-        [projectsList]="inactiveProjects"
-        [isUserActive]="false"
-        [isUsersProjects]="isUsersProjects"
-        (refreshParent)="updateAndRefresh()"
-        data-cy="inactive-projects-section" />
+      @if (activeProjects$ | async; as projectsList) {
+        <app-projects-list
+          [projectsList]="projectsList"
+          [isUserActive]="true"
+          (refreshParent)="updateAndRefresh()"
+          [createNewButtonEnabled]="true"
+          [isUsersProjects]="isUsersProjects"
+          data-cy="active-projects-section" />
+      }
+      @if (inactiveProjects$ | async; as inactiveProjects) {
+        <app-projects-list
+          [projectsList]="inactiveProjects"
+          [isUserActive]="false"
+          [isUsersProjects]="isUsersProjects"
+          (refreshParent)="updateAndRefresh()"
+          data-cy="inactive-projects-section" />
+      }
     </div>
   `,
 })

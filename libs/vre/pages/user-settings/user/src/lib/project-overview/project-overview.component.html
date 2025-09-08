@@ -10,37 +10,34 @@
       (input)="filterProjects(filterInput.value)" />
   </div>
 
-  <div *ngIf="((userHasProjects$ | async) === true && (isSysAdmin$ | async) === false); else allProjectsTpl">
+  @if (((userHasProjects$ | async) === true && (isSysAdmin$ | async) === false)) {
+  <div>
     <div class="project-overview-subtitle">
       <h3>{{ 'pages.landingPage.usersProjects' | translate }}</h3>
     </div>
     <div class="project-grid">
-      <app-project-card
-        *ngFor="let project of usersActiveProjects$ | async;  let index = index; trackBy: trackByFn"
-        [project]="project"
-        [index]="index" />
+      @for (project of usersActiveProjects$ | async; track trackByFn(index, project); let index = $index) {
+      <app-project-card [project]="project" [index]="index" />
+      }
     </div>
     <div class="project-overview-subtitle">
       <h3>{{ 'pages.landingPage.notUsersProjects' | translate }}</h3>
     </div>
     <div class="project-grid">
-      <app-project-card
-        *ngFor="let project of notUsersActiveProjects$ | async; let index = index; trackBy: trackByFn"
-        [project]="project"
-        [index]="index" />
+      @for (project of notUsersActiveProjects$ | async; track trackByFn(index, project); let index = $index) {
+      <app-project-card [project]="project" [index]="index" />
+      }
     </div>
   </div>
-
-  <div *ngIf="loading">
+  } @else {
+  <div class="project-grid">
+    @for (project of activeProjects$ | async; track trackByFn(index, project); let index = $index) {
+    <app-project-card [project]="project" [index]="index" />
+    }
+  </div>
+  } @if (loading) {
+  <div>
     <app-progress-indicator />
   </div>
+  }
 </div>
-
-<ng-template #allProjectsTpl>
-  <div class="project-grid">
-    <app-project-card
-      *ngFor="let project of activeProjects$ | async; let index = index; trackBy: trackByFn"
-      [project]="project"
-      [index]="index" />
-  </div>
-</ng-template>

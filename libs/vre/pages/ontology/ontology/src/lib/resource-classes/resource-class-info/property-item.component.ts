@@ -38,22 +38,23 @@ import { OntologyEditService } from '../../services/ontology-edit.service';
         matRipple
         #propertyCardRipple="matRipple">
         <div cdkDragHandle matListItemIcon class="list-icon">
-          <mat-icon *ngIf="(isAdmin$ | async) === true && isHovered" class="drag-n-drop-handle"
-            >drag_indicator
-          </mat-icon>
-          <mat-icon
-            *ngIf="!isHovered || (isAdmin$ | async) !== true"
-            [matTooltip]="
-              classProp.propType?.group +
-              ': ' +
-              classProp.propType?.label +
-              ' (' +
-              classProp.propDef?.id?.split('#')[1] +
-              ')'
-            "
-            matTooltipPosition="above"
-            >{{ classProp.propType?.icon }}
-          </mat-icon>
+          @if ((isAdmin$ | async) === true && isHovered) {
+            <mat-icon class="drag-n-drop-handle">drag_indicator </mat-icon>
+          }
+          @if (!isHovered || (isAdmin$ | async) !== true) {
+            <mat-icon
+              [matTooltip]="
+                classProp.propType?.group +
+                ': ' +
+                classProp.propType?.label +
+                ' (' +
+                classProp.propDef?.id?.split('#')[1] +
+                ')'
+              "
+              matTooltipPosition="above"
+              >{{ classProp.propType?.icon }}
+            </mat-icon>
+          }
         </div>
         <div class="property-item-content-container">
           <div>
@@ -61,21 +62,23 @@ import { OntologyEditService } from '../../services/ontology-edit.service';
               <span class="label" data-cy="property-label"
                 >{{ classProp.propDef.labels | appStringifyStringLiteral }}
               </span>
-              <span
-                data-cy="property-object-label"
-                class="additional-info"
-                *ngIf="classProp.objectLabels && classProp.objectLabels.length > 0"
-                [innerHTML]="'&rarr;&nbsp;' + (classProp.objectLabels | appStringifyStringLiteral)"></span>
+              @if (classProp.objectLabels && classProp.objectLabels.length > 0) {
+                <span
+                  data-cy="property-object-label"
+                  class="additional-info"
+                  [innerHTML]="'&rarr;&nbsp;' + (classProp.objectLabels | appStringifyStringLiteral)"></span>
+              }
             </div>
             <div mat-line class="lower-prop-container">
               <span class="mat-caption"> {{ classProp.propDef.id | split: '#' : 1 }} </span>
-              <mat-icon
-                *ngIf="isHovered && classProp.propDef.comments?.length"
-                [matTooltip]="classProp.propDef.comments | appStringifyStringLiteral"
-                matTooltipPosition="above"
-                class="info-icon">
-                info
-              </mat-icon>
+              @if (isHovered && classProp.propDef.comments?.length) {
+                <mat-icon
+                  [matTooltip]="classProp.propDef.comments | appStringifyStringLiteral"
+                  matTooltipPosition="above"
+                  class="info-icon">
+                  info
+                </mat-icon>
+              }
             </div>
           </div>
           <app-cardinality
@@ -84,15 +87,16 @@ import { OntologyEditService } from '../../services/ontology-edit.service';
             (cardinalityChange)="updateCardinality($event)" />
         </div>
         <div class="edit-menu">
-          <mat-icon
-            *ngIf="(isHovered || menuOpen) && (isAdmin$ | async) === true"
-            (menuOpened)="menuOpen = true"
-            (menuClosed)="menuOpen = false"
-            [matMenuTriggerFor]="classInfoMenu"
-            class="menu-icon-button"
-            (click)="canBeRemovedFromClass()"
-            >more_vert</mat-icon
-          >
+          @if ((isHovered || menuOpen) && (isAdmin$ | async) === true) {
+            <mat-icon
+              (menuOpened)="menuOpen = true"
+              (menuClosed)="menuOpen = false"
+              [matMenuTriggerFor]="classInfoMenu"
+              class="menu-icon-button"
+              (click)="canBeRemovedFromClass()"
+              >more_vert</mat-icon
+            >
+          }
         </div>
       </mat-list-item>
     </div>

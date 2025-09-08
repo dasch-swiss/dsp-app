@@ -7,10 +7,9 @@ import { map } from 'rxjs';
   selector: 'app-single-resource-page',
   template: `
     <app-centered-layout>
-      <app-resource-fetcher
-        *ngIf="resourceIri$ | async as resourceIri"
-        [resourceIri]="resourceIri"
-        [resourceVersion]="resourceVersion$ | async" />
+      @if (resourceIri$ | async; as resourceIri) {
+        <app-resource-fetcher [resourceIri]="resourceIri" [resourceVersion]="resourceVersion$ | async" />
+      }
     </app-centered-layout>
   `,
 })

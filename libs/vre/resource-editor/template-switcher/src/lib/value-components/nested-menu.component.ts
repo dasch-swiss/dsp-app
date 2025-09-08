@@ -5,30 +5,34 @@ import { ListNodeV2 } from '@dasch-swiss/dsp-js';
 @Component({
   selector: 'app-nested-menu',
   template: `
-    <mat-form-field *ngIf="data.isRootNode" [matMenuTriggerFor]="menu" data-cy="select-list-button" style="width: 100%">
-      <mat-label>{{ selection ?? data.label }}</mat-label>
-      <mat-select />
-    </mat-form-field>
-    <div
-      *ngIf="!data.isRootNode"
-      mat-menu-item
-      [matMenuTriggerFor]="menu"
-      style="width: 100%"
-      (click)="selectMenuWithChildren(data)"
-      (mouseenter)="openSubMenu()">
-      {{ data.label }}
-    </div>
+    @if (data.isRootNode) {
+      <mat-form-field [matMenuTriggerFor]="menu" data-cy="select-list-button" style="width: 100%">
+        <mat-label>{{ selection ?? data.label }}</mat-label>
+        <mat-select />
+      </mat-form-field>
+    }
+    @if (!data.isRootNode) {
+      <div
+        mat-menu-item
+        [matMenuTriggerFor]="menu"
+        style="width: 100%"
+        (click)="selectMenuWithChildren(data)"
+        (mouseenter)="openSubMenu()">
+        {{ data.label }}
+      </div>
+    }
     <mat-menu #menu="matMenu">
-      <ng-container *ngFor="let node of data.children; let i = index">
-        <button mat-menu-item style="padding: 0" *ngIf="node.children.length > 0; else menuItem">
-          <app-nested-menu [data]="node" (selectedNode)="selectedNode.emit($event)" />
-        </button>
-        <ng-template #menuItem>
+      @for (node of data.children; track node; let i = $index) {
+        @if (node.children.length > 0) {
+          <button mat-menu-item style="padding: 0">
+            <app-nested-menu [data]="node" (selectedNode)="selectedNode.emit($event)" />
+          </button>
+        } @else {
           <button mat-menu-item (click)="selectedNode.emit(node)" class="list-item-button" data-cy="list-item-button">
             {{ node.label }}
           </button>
-        </ng-template>
-      </ng-container>
+        }
+      }
     </mat-menu>
   `,
   styles: [

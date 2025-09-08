@@ -9,12 +9,12 @@ import { MatChipInputEvent } from '@angular/material/chips';
     <mat-form-field style="width: 100%">
       <mat-label>{{ 'ui.chipListInput.keywords' | translate }}</mat-label>
       <mat-chip-grid #chipList [required]="formArray.hasValidator(Validators.required)">
-        <mat-chip-row
-          *ngFor="let tag of formArray.value; let index = index; trackBy: trackByFn"
-          (removed)="removeKeyword(index)">
-          {{ tag }}
-          <mat-icon matChipRemove>cancel</mat-icon>
-        </mat-chip-row>
+        @for (tag of formArray.value; track trackByFn(index, tag); let index = $index) {
+          <mat-chip-row (removed)="removeKeyword(index)">
+            {{ tag }}
+            <mat-icon matChipRemove>cancel</mat-icon>
+          </mat-chip-row>
+        }
 
         <input
           [matChipInputFor]="chipList"
@@ -23,8 +23,12 @@ import { MatChipInputEvent } from '@angular/material/chips';
           (matChipInputTokenEnd)="addKeyword($event)" />
       </mat-chip-grid>
     </mat-form-field>
-    <mat-error *ngIf="formArray.touched && formArray.errors as errors">{{ errors | humanReadableError }}</mat-error>
-    <mat-error *ngIf="addChipFormError">New value: {{ addChipFormError | humanReadableError }}</mat-error>
+    @if (formArray.touched && formArray.errors; as errors) {
+      <mat-error>{{ errors | humanReadableError }}</mat-error>
+    }
+    @if (addChipFormError) {
+      <mat-error>New value: {{ addChipFormError | humanReadableError }}</mat-error>
+    }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

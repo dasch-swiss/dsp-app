@@ -11,13 +11,17 @@ import { PropertyForm } from './property-form.type';
       <span matPrefix> <mat-icon>tune</mat-icon>&nbsp; </span>
       <mat-label>Select a list</mat-label>
       <mat-select [formControl]="control">
-        <mat-option *ngFor="let list of lists$ | async" [value]="list.id">
-          {{ list.labels | appStringifyStringLiteral }}
-        </mat-option>
+        @for (list of lists$ | async; track list) {
+          <mat-option [value]="list.id">
+            {{ list.labels | appStringifyStringLiteral }}
+          </mat-option>
+        }
       </mat-select>
-      <mat-error *ngIf="control.invalid && control.touched && control.errors as errors">
-        {{ errors[0] | humanReadableError }}
-      </mat-error>
+      @if (control.invalid && control.touched && control.errors; as errors) {
+        <mat-error>
+          {{ errors[0] | humanReadableError }}
+        </mat-error>
+      }
     </mat-form-field>
   `,
   styles: ['.large-field {width: 100%}'],

@@ -12,28 +12,24 @@ import { finalize } from 'rxjs';
 @Component({
   selector: 'app-upload',
   template: `
-    <ng-container *ngIf="!loading; else loadingTpl">
+    @if (!loading) {
       <div appDragDrop (click)="fileInput.click()" (fileDropped)="addFile($event.item(0))" class="zone">
         <input hidden type="file" data-cy="upload-file" (change)="addFileFromClick($event)" #fileInput />
         <mat-icon style="transform: scale(1.6); margin: 8px 0; color: gray">cloud_upload</mat-icon>
         <div class="mat-subtitle-1">Drag and drop or click to upload.</div>
         <div class="mat-subtitle-2">File types supported: {{ allowedFileTypes.join(', ') }}</div>
       </div>
-    </ng-container>
-
-    <ng-template #loadingTpl>
+    } @else {
       <div class="upload-progress">
-        <ng-container *ngIf="!processing; else processingTpl">
+        @if (!processing) {
           <mat-progress-bar mode="determinate" [value]="uploadProgress"></mat-progress-bar>
           <div class="progress-text">{{ uploadProgress }}% uploaded</div>
-        </ng-container>
-
-        <ng-template #processingTpl>
+        } @else {
           <mat-progress-bar mode="indeterminate"></mat-progress-bar>
           <div class="progress-text">Processing file on server...</div>
-        </ng-template>
+        }
       </div>
-    </ng-template>
+    }
   `,
   styles: [
     `

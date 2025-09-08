@@ -16,12 +16,13 @@ import { OntologyForm } from './ontology-form.type';
   template: ` <app-dialog-header [title]="'pages.ontology.ontologyForm.create' | translate" />
 
     <form>
-      <app-common-input
-        *ngIf="form"
-        [control]="form.controls.name"
-        [validatorErrors]="[ontoNamePatternErrorMsg, ontoNameExistsErrorMsg]"
-        [label]="'pages.ontology.ontologyForm.name' | translate"
-        data-cy="name-input" />
+      @if (form) {
+        <app-common-input
+          [control]="form.controls.name"
+          [validatorErrors]="[ontoNamePatternErrorMsg, ontoNameExistsErrorMsg]"
+          [label]="'pages.ontology.ontologyForm.name' | translate"
+          data-cy="name-input" />
+      }
 
       <app-ontology-form mode="create" (afterFormInit)="afterFormInit($event)" />
     </form>

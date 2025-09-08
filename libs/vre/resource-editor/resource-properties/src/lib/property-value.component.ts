@@ -6,8 +6,12 @@ import { PropertyValueService } from './property-value.service';
 @Component({
   selector: 'app-property-value',
   template: `
-    <app-property-value-display [index]="index" *ngIf="displayMode" />
-    <app-property-value-update [index]="index" *ngIf="!displayMode" />
+    @if (displayMode) {
+      <app-property-value-display [index]="index" />
+    }
+    @if (!displayMode) {
+      <app-property-value-update [index]="index" />
+    }
   `,
 })
 export class PropertyValueComponent implements OnInit, OnDestroy {

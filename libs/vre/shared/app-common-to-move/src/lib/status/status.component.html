@@ -1,29 +1,38 @@
 <div class="status-page" [class.representation-error]="representation">
-  <div class="container" *ngIf="!refresh; else isLoading">
+  @if (!refresh) {
+  <div class="container">
     <div class="image">
       <img class="error-image" [src]="'/assets/images/' + message?.image" alt="error image" />
     </div>
     <div class="text status-message">
       <h2 class="mat-headline-6">{{ message?.type | uppercase }} {{ status }} | {{ message?.message }}</h2>
       <p [innerHTML]="message?.description"></p>
-      <p *ngIf="comment">
-        <span *ngIf="message?.type === 'error'"> <strong>Response in detail:</strong><br />&rarr; </span>
+      @if (comment) {
+      <p>
+        @if (message?.type === 'error') {
+        <span> <strong>Response in detail:</strong><br />&rarr; </span>
+        }
         <span [innerHTML]="comment | appLinkify"></span>
       </p>
-      <div [ngSwitch]="message?.action" class="action">
-        <button *ngSwitchCase="'goback'" mat-button routerLink="{{homeLink}}">
+      }
+      <div class="action">
+        @switch (message?.action) { @case ('goback') {
+        <button mat-button routerLink="{{homeLink}}">
           <mat-icon>keyboard_backspace</mat-icon>
           Please go back to the start page.
         </button>
-        <p *ngSwitchCase="'reload'">
+        } @case ('reload') {
+        <p>
           Please come back in a few minutes and try to
           <a (click)="reload()">reload the page</a>.
         </p>
-        <p *ngSwitchCase="'goto'" class="goto" [innerHtml]="url | appLinkify"></p>
+        } @case ('goto') {
+        <p class="goto" [innerHtml]="url | appLinkify"></p>
+        } }
       </div>
     </div>
   </div>
-  <ng-template #isLoading>
-    <app-progress-indicator />
-  </ng-template>
+  } @else {
+  <app-progress-indicator />
+  }
 </div>

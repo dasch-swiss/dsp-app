@@ -16,6 +16,8 @@
       [cpDisabled]="false"
       [errorStateMatcher]="matcher"
       readonly />
-    <mat-error *ngIf="colorForm.controls.color.hasError('required')"> Color is <strong>required</strong> </mat-error>
+    @if (colorForm.controls.color.hasError('required')) {
+    <mat-error> Color is <strong>required</strong> </mat-error>
+    }
   </mat-form-field>
 </div>

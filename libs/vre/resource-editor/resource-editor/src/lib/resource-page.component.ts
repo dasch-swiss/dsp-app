@@ -7,11 +7,10 @@ import { map } from 'rxjs';
 @Component({
   selector: 'app-resource-page',
   template: `<app-centered-layout>
-    <app-resource-fetcher
-      *ngIf="resourceIri$ | async as resourceIri"
-      [resourceIri]="resourceIri"
-      (afterResourceDeleted)="updateResourceCount()" />
-  </app-centered-layout> `,
+    @if (resourceIri$ | async; as resourceIri) {
+      <app-resource-fetcher [resourceIri]="resourceIri" (afterResourceDeleted)="updateResourceCount()" />
+    }
+  </app-centered-layout>`,
 })
 export class ResourcePageComponent {
   constructor(

@@ -10,37 +10,36 @@ import { PropertyValueService } from './property-value.service';
   template: `
     <div class="action-bubble" data-cy="action-bubble">
       <div class="button-container d-flex">
-        <ng-container *ngIf="date">
-          <button
-            mat-button
-            class="edit"
-            *ngIf="infoTooltip$ | async as infoTooltip"
-            [matTooltip]="infoTooltip"
-            (click)="$event.stopPropagation()">
-            <mat-icon>info</mat-icon>
-          </button>
-        </ng-container>
+        @if (date) {
+          @if (infoTooltip$ | async; as infoTooltip) {
+            <button mat-button class="edit" [matTooltip]="infoTooltip" (click)="$event.stopPropagation()">
+              <mat-icon>info</mat-icon>
+            </button>
+          }
+        }
 
         <span matTooltip="edit">
-          <button
-            *ngIf="userHasPermission('edit')"
-            mat-button
-            class="edit edit-button"
-            (click)="$event.stopPropagation(); editAction.emit()"
-            data-cy="edit-button">
-            <mat-icon>edit</mat-icon>
-          </button>
+          @if (userHasPermission('edit')) {
+            <button
+              mat-button
+              class="edit edit-button"
+              (click)="$event.stopPropagation(); editAction.emit()"
+              data-cy="edit-button">
+              <mat-icon>edit</mat-icon>
+            </button>
+          }
         </span>
 
         <span [matTooltip]="showDelete ? 'delete' : 'This value cannot be deleted because it is required'">
-          <button
-            *ngIf="userHasPermission('delete')"
-            mat-button
-            class="delete"
-            data-cy="delete-button"
-            (click)="$event.stopPropagation(); deleteAction.emit()">
-            <mat-icon>delete</mat-icon>
-          </button>
+          @if (userHasPermission('delete')) {
+            <button
+              mat-button
+              class="delete"
+              data-cy="delete-button"
+              (click)="$event.stopPropagation(); deleteAction.emit()">
+              <mat-icon>delete</mat-icon>
+            </button>
+          }
         </span>
       </div>
     </div>

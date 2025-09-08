@@ -1,5 +1,6 @@
 <div class="help-page">
-  <section *ngIf="!dsp.production" class="info">
+  @if (!dsp.production) {
+  <section class="info">
     <div class="content medium middle development hint {{ dsp.color }}">
       <p class="mat-subtitle-1 content medium middle">
         This is a development version of DSP (release
@@ -9,6 +10,7 @@
       </p>
     </div>
   </section>
+  }
 
   <section class="documentation">
     <div class="content large middle">
