@@ -1,4 +1,4 @@
-import { LOGIN_DATA } from '../options/constants.js';
+import { LOGIN_DATA, ENVIRONMENTS } from '../options/constants.js';
 
 export class HomePage {
   constructor(page) {
@@ -12,7 +12,9 @@ export class HomePage {
   }
 
   async goto() {
-    await this.page.goto(__ENV.APP_URL);
+    // Use environment from constants, fallback to ENV var, then DEV
+    const url = __ENV.APP_URL || ENVIRONMENTS.DEV;
+    await this.page.goto(url);
   }
 
   async title() {

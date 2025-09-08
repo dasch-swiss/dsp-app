@@ -1,4 +1,4 @@
-import { BEOL } from '../options/constants.js';
+import { BEOL, ENVIRONMENTS } from '../options/constants.js';
 
 export class ResourcePage {
   constructor(page) {
@@ -6,11 +6,8 @@ export class ResourcePage {
   }
 
   async goto() {
-    await this.page.goto(__ENV.APP_URL + '/project/' + BEOL.id + '/ontology/beol/basicLetter');
-  }
-
-  async resourceLabel() {
-    return await this.page.locator('.resource-header > .resource-label > h4').textContent();
+    const url = __ENV.APP_URL || ENVIRONMENTS.DEV;
+    await this.page.goto(url + '/project/' + BEOL.id + '/ontology/beol/basicLetter');
   }
 
   async resourceLabel() {

@@ -59,6 +59,41 @@ You can run the tests _locally_ using the following command:
 just run <test_name>
 ```
 
+### Flexible Environment Testing
+
+Run tests against any environment using the `env` parameter:
+
+```sh
+# Run against specific environments
+just run <test_name> dev      # DEV environment (default)
+just run <test_name> dev02    # DEV-02 environment  
+just run <test_name> stage    # STAGE environment
+just run <test_name> prod     # PRODUCTION environment
+
+# Use custom URLs
+just run <test_name> "https://my-custom-url.com"
+
+# List available environments
+just environments
+```
+
+### Environment Comparison
+
+Compare performance between any two environments:
+
+```sh
+# Flexible comparison (default: stage vs dev02)
+just compare <test_name>                    # STAGE vs DEV-02
+just compare <test_name> dev stage          # DEV vs STAGE
+just compare <test_name> prod dev02         # PROD vs DEV-02
+
+# Convenience aliases
+just compare-stage-dev02 <test_name>        # Quick STAGE vs DEV-02
+just compare-dev-stage <test_name>          # Quick DEV vs STAGE
+```
+
+Environment URLs are defined in the `justfile` and fallback to constants in `options/constants.js`.
+
 You can run the tests _in the [k6 cloud](https://k6.io/docs/cloud/)_ using the following command:
 
 ```sh
@@ -110,7 +145,78 @@ We have a `just` command that sets this variable for you:
 just run-grafana <test_name>
 ```
 
-## Documentation
+## State Performance Tests
+
+### Test Types
+
+| Test | Duration | Purpose | Command |
+|------|----------|---------|---------|
+| `state-quick` | 2-4 min | Fast state validation (CI/CD) | `just state-quick` |
+| `state-performance` | 5-10 min | Deep state analysis (pre-deploy) | `just state-performance` |
+| `ui-performance` | 30s | UI interaction benchmarks | `just ui-performance` |
+| `state-stats` | 8-12 min | Statistical validation | `just state-stats` |
+
+### Environment-Aware Thresholds
+
+| Environment | Bootstrap | Memory Growth | State Updates | Success Rate |
+|-------------|-----------|---------------|---------------|--------------|
+| **DEV** | < 20s | < 60MB | < 800ms | > 50% |
+| **STAGE** | < 15s | < 50MB | < 600ms | > 60% |
+| **PROD** | < 12s | < 40MB | < 500ms | > 70% |
+
+### Usage
+
+**Compare environments:**
+```bash
+just state-compare stage dev02    # STAGE vs DEV-02
+just state-quick dev02            # Auto-detects environment thresholds
+```
+
+**CI/CD integration:**
+```bash
+just state-quick && echo "✅ Performance OK" || echo "❌ Performance issues detected"
+```
+
+## User Service Performance Tests
+
+Compare NGXS → UserService performance impact with K6 browser tests + Cypress frontend tests.
+
+### K6 Tests
+
+| Test | Purpose | Command |
+|------|---------|---------|
+| `login-performance` | Auth flow timing + API requests | `just login-performance stage` |
+| `login-propagation` | Cross-page state updates + API analysis | `just login-propagation dev` |
+
+**Compare environments:**
+```bash
+just login-compare stage dev    # Compare login performance
+# Results include: login_duration, auth_flow_success, api_auth_requests, api_total_requests
+```
+
+**API Request Metrics:** Tests now track authentication, project, ontology, and resource API calls to detect request pattern changes.
+
+### Cypress Tests
+
+| Test | Purpose |
+|------|---------|
+| `change-detection-cycles.cy.ts` | Angular change detection + memory |
+| `memory-leak-detection.cy.ts` | Subscription cleanup + leaks |
+
+**Usage:**
+```bash
+# Local
+npm run e2e-ci -- --spec="cypress/e2e/performance/**/*.cy.ts" --env VERSION=ngxs
+
+# Remote (DEV/STAGE)
+export DSP_APP_USERNAME='username' DSP_APP_PASSWORD='password'
+cd apps/dsp-app && npx cypress run \
+  --spec "cypress/e2e/performance/**/*.cy.ts" \
+  --config baseUrl=https://app.dev.dasch.swiss \
+  --env VERSION=dev,skipDatabaseCleanup=true,apiUrl=https://api.dev.dasch.swiss,DSP_APP_USERNAME=$DSP_APP_USERNAME,DSP_APP_PASSWORD=$DSP_APP_PASSWORD
+```
+
+## More to read
 
 - [k6: Types of Load Testing](https://grafana.com/load-testing/types-of-load-testing/)
 - [k6: Official Tutorial](https://k6.io/docs/examples/tutorials/get-started-with-k6/)

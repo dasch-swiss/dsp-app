@@ -1,4 +1,4 @@
-import { BEOL } from '../options/constants.js';
+import { BEOL, ENVIRONMENTS } from '../options/constants.js';
 
 export class ProjectOverviewPage {
   constructor(page) {
@@ -6,7 +6,8 @@ export class ProjectOverviewPage {
   }
 
   async goto() {
-    await this.page.goto(__ENV.APP_URL + '/project/' + BEOL.id);
+    const url = __ENV.APP_URL || ENVIRONMENTS.DEV;
+    await this.page.goto(url + '/project/' + BEOL.id);
   }
 
   async projectLongname() {

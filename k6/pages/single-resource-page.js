@@ -1,4 +1,4 @@
-import { BEOL } from '../options/constants.js';
+import { BEOL, ENVIRONMENTS } from '../options/constants.js';
 
 export class SingleResourcePage {
   constructor(page) {
@@ -6,7 +6,8 @@ export class SingleResourcePage {
   }
 
   async goto() {
-    await this.page.goto(__ENV.APP_URL + '/resource/' + BEOL.shortcode + '/-01DyZMkRZO4_YdKtj_Brw');
+    const url = __ENV.APP_URL || ENVIRONMENTS.DEV;
+    await this.page.goto(url + '/resource/' + BEOL.shortcode + '/-01DyZMkRZO4_YdKtj_Brw');
   }
 
   async resourceLabel() {

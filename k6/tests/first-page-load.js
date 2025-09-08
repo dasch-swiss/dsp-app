@@ -11,7 +11,7 @@ export default async function () {
 
   try {
     await homepage.goto();
-    expect(await homepage.title(), 'page title').to.equal('Projects Overview');
+    expect(await homepage.title(), 'page title').to.equal('DaSCH Service Platform');
     await page.screenshot({ path: 'screenshots/homepage.png' });
   } finally {
     await page.close();

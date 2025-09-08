@@ -16,13 +16,17 @@ Cypress.on('uncaught:exception', err => {
 // do things here before each test if needed
 // All active session data (cookies, localStorage and sessionStorage) across all domains are cleared.
 beforeEach(() => {
-  if (Cypress.env('skipDatabaseCleanup')) {
+  // Skip database cleanup for remote environments or when explicitly disabled
+  const baseUrl = Cypress.config('baseUrl');
+  const isRemote = baseUrl && (baseUrl.includes('dasch.swiss') || baseUrl.includes('stage') || baseUrl.includes('dev-'));
+
+  if (Cypress.env('skipDatabaseCleanup') || isRemote) {
     return; // Skip cleanup
   }
 
   let users: UserProfiles;
 
-  // clear database
+  // clear database (only for local testing)
   cy.request({
     method: 'POST',
     url: `${Cypress.env('apiUrl')}/admin/store/ResetTriplestoreContent`,

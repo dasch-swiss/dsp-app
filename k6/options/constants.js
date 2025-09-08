@@ -10,3 +10,10 @@ export const LOGIN_DATA = {
   password: __ENV.DSP_APP_PASSWORD,
   fullname: __ENV.DSP_APP_FULLNAME,
 };
+
+export const ENVIRONMENTS = {
+  DEV: 'https://app.dev.dasch.swiss',
+  DEV02: 'https://app.dev-02.dasch.swiss',
+  STAGE: 'https://app.stage.dasch.swiss',
+  PROD: 'https://app.dasch.swiss'
+};
