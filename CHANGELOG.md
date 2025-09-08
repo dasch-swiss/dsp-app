@@ -1,5 +1,19 @@
 # Changelog
 
+## [11.42.1](https://github.com/dasch-swiss/dsp-das/compare/v11.42.0...v11.42.1) (2025-09-04)
+
+
+### Bug Fixes
+
+* easy typing issues ([#2498](https://github.com/dasch-swiss/dsp-das/issues/2498)) ([deb4341](https://github.com/dasch-swiss/dsp-das/commit/deb43417793a337b093089ac2d7aa82c22800888))
+
+
+### Maintenances
+
+* remove typing issues and move DaschLanguage type to config ([#2499](https://github.com/dasch-swiss/dsp-das/issues/2499)) ([1e478fc](https://github.com/dasch-swiss/dsp-das/commit/1e478fcd25d25584397e9caa1e2e3a57f82b5706))
+* remove unused video preview and av timeline component ([#2502](https://github.com/dasch-swiss/dsp-das/issues/2502)) ([9c47904](https://github.com/dasch-swiss/dsp-das/commit/9c479040965d314df6def8bea39780227fa059f5))
+* replace userState by userService and remove ngxs ([#2497](https://github.com/dasch-swiss/dsp-das/issues/2497)) ([630f3f6](https://github.com/dasch-swiss/dsp-das/commit/630f3f6c8fbf77bf8eaf86330d945cd644d76aa8))
+
 ## [11.42.0](https://github.com/dasch-swiss/dsp-das/compare/v11.41.1...v11.42.0) (2025-09-01)
 
 
