@@ -5,7 +5,5 @@ export type UserForm = FormGroup<{
   familyName: FormControl<string>;
   email: FormControl<string>;
   username: FormControl<string>;
-  password: FormControl<string>;
   lang: FormControl<string>;
-  systemAdmin: FormControl<boolean>;
 }>;

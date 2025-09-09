@@ -6,7 +6,6 @@ import { ProjectsComponent } from './lib/projects/projects.component';
 import { SortButtonComponent } from './lib/sort-button/sort-button.component';
 import { SystemPageComponent } from './lib/system-page.component';
 import { CreateUserDialogComponent } from './lib/users/create-user-dialog.component';
-import { EditPasswordDialogComponent } from './lib/users/edit-password-dialog.component';
 import { ManageProjectMembershipDialogComponent } from './lib/users/manage-project-membership-dialog.component';
 import { UserDescriptionComponent } from './lib/users/users-list/user-description.component';
 import { UsersListRowMenuComponent } from './lib/users/users-list/users-list-row-menu.component';
@@ -24,7 +23,6 @@ export const SystemComponents = [
   SortButtonComponent,
   CookiePolicyComponent,
   ManageProjectMembershipDialogComponent,
-  EditPasswordDialogComponent,
   CreateUserDialogComponent,
   MembershipComponent,
   UsersListRowComponent,

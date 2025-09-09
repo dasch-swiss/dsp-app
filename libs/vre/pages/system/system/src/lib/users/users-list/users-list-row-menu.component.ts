@@ -5,9 +5,14 @@ import { PermissionsData } from '@dasch-swiss/dsp-js/src/models/admin/permission
 import { UserApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import { UserService } from '@dasch-swiss/vre/core/session';
-import { EditUserDialogComponent, EditUserDialogProps } from '@dasch-swiss/vre/pages/user-settings/user';
+import {
+  EditPasswordDialogComponent,
+  EditPasswordDialogProps,
+  EditUserDialogComponent,
+  EditUserDialogProps,
+} from '@dasch-swiss/vre/pages/user-settings/user';
 import { DialogService } from '@dasch-swiss/vre/ui/ui';
-import { EditPasswordDialogComponent, EditPasswordDialogProps } from '../edit-password-dialog.component';
+import { switchMap } from 'rxjs';
 import { ManageProjectMembershipDialogComponent } from '../manage-project-membership-dialog.component';
 import { UsersTabService } from '../users-tab.service';
 
@@ -21,17 +26,18 @@ import { UsersTabService } from '../users-tab.service';
     }
 
     <mat-menu #projectUserMenu="matMenu" xPosition="before">
-      @if (user.username !== (user$ | async)?.username) {
-        <button mat-menu-item (click)="updateSystemAdminMembership(user, !isSystemAdmin(user.permissions))">
-          {{ isSystemAdmin(user.permissions) ? 'Remove' : 'Add' }} as system admin
-        </button>
-      }
-
       @if (user.status) {
         <button mat-menu-item (click)="editUser(user)">Edit user</button>
         <button mat-menu-item (click)="openEditPasswordDialog(user)">Change user's password</button>
         <button mat-menu-item (click)="openManageProjectMembershipDialog(user)">Manage project membership</button>
-        <button mat-menu-item (click)="askToDeactivateUser(user.username, user.id)">Suspend user</button>
+        <button mat-menu-item (click)="askToUpdateSystemAdminMembership(user, !isSystemAdmin(user.permissions))">
+          <mat-icon>verified_user</mat-icon>
+          {{ isSystemAdmin(user.permissions) ? 'Remove' : 'Add' }} as system admin
+        </button>
+        <button mat-menu-item (click)="askToDeactivateUser(user.username, user.id)">
+          <mat-icon>warning</mat-icon>
+          Suspend user
+        </button>
       }
 
       @if (!user.status) {
@@ -69,13 +75,18 @@ export class UsersListRowMenuComponent {
     });
   }
 
-  updateSystemAdminMembership(user: ReadUser, systemAdmin: boolean): void {
-    this._userApiService.updateSystemAdminMembership(user.id, systemAdmin).subscribe(() => {
-      const currentUser = this._userService.currentUser;
-      if (currentUser?.username !== user.username) {
-        this._reloadUserList();
-      }
-    });
+  askToUpdateSystemAdminMembership(user: ReadUser, systemAdmin: boolean): void {
+    this._dialog
+      .afterConfirmation(
+        `Do you want to have user ${user.username} ${systemAdmin ? 'added' : 'removed'} as system admin?`
+      )
+      .pipe(switchMap(() => this._userApiService.updateSystemAdminMembership(user.id, systemAdmin)))
+      .subscribe(() => {
+        const currentUser = this._userService.currentUser;
+        if (currentUser?.username !== user.username) {
+          this._reloadUserList();
+        }
+      });
   }
 
   askToActivateUser(username: string, id: string) {
@@ -94,7 +105,7 @@ export class UsersListRowMenuComponent {
     this._matDialog
       .open<EditUserDialogComponent, EditUserDialogProps, boolean>(
         EditUserDialogComponent,
-        DspDialogConfig.dialogDrawerConfig({ user }, true)
+        DspDialogConfig.dialogDrawerConfig({ user, isOwnAccount: false }, true)
       )
       .afterClosed()
       .subscribe(success => {

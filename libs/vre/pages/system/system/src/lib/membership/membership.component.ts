@@ -6,8 +6,9 @@ import {
   Project,
   UserDto,
 } from '@dasch-swiss/vre/3rd-party-services/open-api';
-import { AllProjectsService, AutocompleteItem } from '@dasch-swiss/vre/pages/user-settings/user';
+import { AllProjectsService } from '@dasch-swiss/vre/pages/user-settings/user';
 import { BehaviorSubject, combineLatest, map, Observable, Subject, switchMap, takeUntil } from 'rxjs';
+import { AutocompleteItem } from '../autocomplete-item.interface';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,

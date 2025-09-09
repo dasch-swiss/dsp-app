@@ -10,22 +10,20 @@ import { UserForm } from '../user-form/user-form.type';
 
 export interface EditUserDialogProps {
   user: ReadUser;
+  isOwnAccount: boolean;
 }
 
 @Component({
   selector: 'app-edit-user-dialog',
   template: `
-    @if (data.user) {
-      <app-user-form [user]="data.user" (afterFormInit)="form = $event" />
+    <app-dialog-header [title]="data.isOwnAccount ? 'Edit my profile' : 'Edit user'" />
+    @if (data.user; as user) {
+      <app-user-form [data]="user" (afterFormInit)="afterFormInit($event)" />
     }
 
     <div mat-dialog-actions align="end">
       <button color="primary" mat-button mat-dialog-close>{{ 'ui.form.action.cancel' | translate }}</button>
-      <button
-        mat-raised-button
-        color="primary"
-        [disabled]="!form?.valid || (form && form.pristine)"
-        (click)="updateUser()">
+      <button mat-raised-button color="primary" (click)="updateUser()">
         {{ 'ui.form.action.update' | translate }}
       </button>
     </div>
@@ -43,6 +41,12 @@ export class EditUserDialogComponent {
     private _translateService: TranslateService,
     private _userApiService: UserApiService
   ) {}
+
+  afterFormInit(form: UserForm) {
+    this.form = form;
+    this.form.controls.username.disable();
+    this.form.controls.email.disable();
+  }
 
   protected updateUser(): void {
     const userUpdate: UpdateUserRequest = {

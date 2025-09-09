@@ -4,6 +4,7 @@ import { HTTP_INTERCEPTORS, HttpClient, HttpClientModule } from '@angular/common
 import { APP_INITIALIZER, ErrorHandler, NgModule, NgZone } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatRippleModule } from '@angular/material/core';
+import { MatStepperModule } from '@angular/material/stepper';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { Router } from '@angular/router';
@@ -115,6 +116,7 @@ export function httpLoaderFactory(httpClient: HttpClient) {
     PdfViewerModule,
     ReactiveFormsModule,
     AdvancedSearchComponent,
+    MatStepperModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,

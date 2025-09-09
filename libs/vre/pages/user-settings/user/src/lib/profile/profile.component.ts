@@ -1,17 +1,45 @@
-import { ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { ReadUser } from '@dasch-swiss/dsp-js';
-import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import { UserService } from '@dasch-swiss/vre/core/session';
 import { Subject, takeUntil, takeWhile } from 'rxjs';
-import { EditUserDialogComponent, EditUserDialogProps } from '../edit-user-page/edit-user-dialog.component';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-profile',
-  templateUrl: './profile.component.html',
-  styleUrls: ['./profile.component.scss'],
+  template: `
+    @if (user$ | async; as user) {
+      <div style="display: flex; flex-direction: row; gap: 24px; padding: 24px; max-width: 600px;">
+        <div style="display: flex; align-items: center; gap: 20px;">
+          <img
+            appAdminImage
+            [image]="user.email"
+            [type]="'user'"
+            alt="user profile"
+            style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; box-shadow: 0 4px 8px rgba(0,0,0,0.1);" />
+
+          <div style="display: flex; flex-direction: column; gap: 4px;">
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <h1 style="margin: 0; font-size: 1.5rem; font-weight: 600; color: #1a1a1a;">
+                {{ user.givenName }} {{ user.familyName }}
+              </h1>
+              <p style="margin: 0; color: #666">({{ user.username }})</p>
+            </div>
+
+            <mat-chip-set>
+              <mat-chip [disableRipple]="true">
+                <mat-icon matChipAvatar>language</mat-icon>
+                {{ user.lang }}
+              </mat-chip>
+              <mat-chip [disableRipple]="true">
+                <mat-icon matChipAvatar style="color: #856404">verified_user</mat-icon>
+                {{ 'pages.userSettings.profile.systemAdmin' | translate }}
+              </mat-chip>
+            </mat-chip-set>
+          </div>
+        </div>
+      </div>
+    }
+  `,
 })
 export class ProfileComponent implements OnInit, OnDestroy {
   private ngUnsubscribe: Subject<void> = new Subject<void>();
@@ -20,7 +48,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
   user$ = this._userService.user$;
 
   constructor(
-    private _dialog: MatDialog,
     private _userService: UserService,
     private _titleService: Title
   ) {}
@@ -37,12 +64,5 @@ export class ProfileComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.ngUnsubscribe.next();
     this.ngUnsubscribe.complete();
-  }
-
-  editProfile(user: ReadUser) {
-    this._dialog.open<EditUserDialogComponent, EditUserDialogProps>(
-      EditUserDialogComponent,
-      DspDialogConfig.dialogDrawerConfig({ user }, true)
-    );
   }
 }

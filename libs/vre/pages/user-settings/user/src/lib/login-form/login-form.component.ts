@@ -11,20 +11,7 @@ import { finalize, Subscription, takeLast, tap } from 'rxjs';
     <form [formGroup]="form" (ngSubmit)="login()" class="login-form">
       <app-common-input [control]="form.controls.username" label="Username" data-cy="username-input" />
 
-      <mat-form-field data-cy="password-input">
-        <mat-label>Password</mat-label>
-        <input
-          placeholder="Password"
-          autocomplete="current-password"
-          [formControl]="form.controls.password"
-          matInput
-          type="password" />
-        @if (form.controls.password.errors; as errors) {
-          <mat-error>
-            {{ errors | humanReadableError }}
-          </mat-error>
-        }
-      </mat-form-field>
+      <app-password-form-field [control]="form.controls.password" [placeholder]="'Password'" data-cy="password-input" />
 
       <button
         [class.mat-primary]="!isLoginError"

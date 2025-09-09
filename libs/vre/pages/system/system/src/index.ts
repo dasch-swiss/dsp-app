@@ -7,7 +7,6 @@ export * from './lib/users/users-tab.component';
 export * from './lib/users/users-list/users-list.component';
 export * from './lib/sort-button/sort-button.component';
 export * from './lib/cookie-policy/cookie-policy.component';
-export * from './lib/users/edit-password-dialog.component';
 export * from './lib/users/manage-project-membership-dialog.component';
 export * from './lib/users/create-user-dialog.component';
 export * from './lib/membership/membership.component';
