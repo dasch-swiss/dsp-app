@@ -97,7 +97,7 @@ export class ResourceListItemComponent implements OnInit {
       values.forEach(value => {
         if (
           value.strval &&
-          value.strval.toLowerCase().includes(keyword) &&
+          value.strval.toLowerCase().includes(keyword.toLowerCase()) &&
           !this.foundIn.includes(value.propertyLabel!)
         ) {
           this.foundIn.push(value.propertyLabel!);
