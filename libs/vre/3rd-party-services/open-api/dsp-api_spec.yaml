@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: DSP-API
-  version: 2.1.19
+  version: 2.1.20
   summary: DSP-API is part of the the DaSCH Service Platform, a repository for the
     long-term preservation and reuse of data in the humanities.
   contact:
@@ -383,7 +383,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/lists/0001/vMrJkBUoTzGziQV94LUI5w
+        example: http://rdfh.ch/lists/0001/NzRKSAdsR0SN4ZJXl9RHXA
       - name: x-knora-accept-schema
         in: header
         description: |-
@@ -529,7 +529,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/lists/0001/vMrJkBUoTzGziQV94LUI5w
+        example: http://rdfh.ch/lists/0001/NzRKSAdsR0SN4ZJXl9RHXA
       - name: x-knora-accept-schema
         in: header
         description: |-
@@ -4251,6 +4251,104 @@ paths:
         required: false
         schema:
           type: string
+      responses:
+        '200':
+          description: ''
+          headers:
+            Content-Type:
+              required: true
+              schema:
+                type: string
+          content:
+            text/plain:
+              schema:
+                type: string
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                anyOf:
+                - $ref: '#/components/schemas/OntologyConstraintException'
+                - $ref: '#/components/schemas/DuplicateValueException'
+                - $ref: '#/components/schemas/ValidationException'
+                - $ref: '#/components/schemas/BadRequestException'
+                - $ref: '#/components/schemas/GravsearchException'
+                - $ref: '#/components/schemas/EditConflictException'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadCredentialsException'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenException'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundException'
+      security:
+      - httpAuth: []
+      - httpAuth1: []
+  /v2/resources/candelete:
+    post:
+      tags:
+      - V2 Resources
+      operationId: postV2ResourcesCandelete
+      parameters:
+      - name: KnoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999
+        in: cookie
+        required: false
+        schema:
+          type: string
+      - name: x-knora-accept-schema
+        in: header
+        description: |-
+          The ontology schema to be used for the request.
+          If not specified, the default schema ApiV2Complex will be used.
+        required: false
+        schema:
+          type: string
+      - name: schema
+        in: query
+        description: |-
+          The ontology schema to be used for the request.
+          If not specified, the default schema ApiV2Complex will be used.
+        required: false
+        schema:
+          type: string
+      - name: x-knora-json-ld-rendering
+        in: header
+        description: |-
+          The JSON-LD rendering to be used for the request (flat or hierarchical).
+          If not specified, hierarchical JSON-LD will be used.
+        required: false
+        schema:
+          type: string
+      - name: markup
+        in: query
+        description: The markup rendering to be used for the request (XML or standoff).
+        required: false
+        schema:
+          type: string
+      - name: x-knora-accept-markup
+        in: header
+        description: The markup rendering to be used for the request (XML or standoff).
+        required: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        required: true
       responses:
         '200':
           description: ''
@@ -10986,7 +11084,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/l8hBTjncTYaOGwrtElISww
+        example: http://rdfh.ch/users/j7Giv_5eRmm5qXOKXNxA5g
       responses:
         '200':
           description: ''
@@ -11038,7 +11136,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/l8hBTjncTYaOGwrtElISww
+        example: http://rdfh.ch/users/j7Giv_5eRmm5qXOKXNxA5g
       responses:
         '200':
           description: ''
@@ -11090,7 +11188,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/l8hBTjncTYaOGwrtElISww
+        example: http://rdfh.ch/users/j7Giv_5eRmm5qXOKXNxA5g
       responses:
         '200':
           description: ''
@@ -11255,7 +11353,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/l8hBTjncTYaOGwrtElISww
+        example: http://rdfh.ch/users/j7Giv_5eRmm5qXOKXNxA5g
       responses:
         '200':
           description: ''
@@ -11313,7 +11411,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/l8hBTjncTYaOGwrtElISww
+        example: http://rdfh.ch/users/j7Giv_5eRmm5qXOKXNxA5g
       responses:
         '200':
           description: ''
@@ -11490,7 +11588,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/l8hBTjncTYaOGwrtElISww
+        example: http://rdfh.ch/users/j7Giv_5eRmm5qXOKXNxA5g
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -11555,7 +11653,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/l8hBTjncTYaOGwrtElISww
+        example: http://rdfh.ch/users/j7Giv_5eRmm5qXOKXNxA5g
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -11621,7 +11719,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/l8hBTjncTYaOGwrtElISww
+        example: http://rdfh.ch/users/j7Giv_5eRmm5qXOKXNxA5g
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -11686,7 +11784,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/l8hBTjncTYaOGwrtElISww
+        example: http://rdfh.ch/users/j7Giv_5eRmm5qXOKXNxA5g
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -11752,7 +11850,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/l8hBTjncTYaOGwrtElISww
+        example: http://rdfh.ch/users/j7Giv_5eRmm5qXOKXNxA5g
       - name: groupIri
         in: path
         description: The IRI of a group. Must be URL-encoded.
@@ -11817,7 +11915,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/l8hBTjncTYaOGwrtElISww
+        example: http://rdfh.ch/users/j7Giv_5eRmm5qXOKXNxA5g
       - name: groupIri
         in: path
         description: The IRI of a group. Must be URL-encoded.
@@ -11883,7 +11981,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/l8hBTjncTYaOGwrtElISww
+        example: http://rdfh.ch/users/j7Giv_5eRmm5qXOKXNxA5g
       requestBody:
         content:
           application/json:
@@ -11948,7 +12046,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/l8hBTjncTYaOGwrtElISww
+        example: http://rdfh.ch/users/j7Giv_5eRmm5qXOKXNxA5g
       requestBody:
         content:
           application/json:
@@ -12013,7 +12111,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/l8hBTjncTYaOGwrtElISww
+        example: http://rdfh.ch/users/j7Giv_5eRmm5qXOKXNxA5g
       requestBody:
         content:
           application/json:
@@ -12078,7 +12176,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/l8hBTjncTYaOGwrtElISww
+        example: http://rdfh.ch/users/j7Giv_5eRmm5qXOKXNxA5g
       requestBody:
         content:
           application/json:
