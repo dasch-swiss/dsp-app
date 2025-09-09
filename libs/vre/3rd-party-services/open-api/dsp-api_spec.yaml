@@ -383,7 +383,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/lists/0001/NzRKSAdsR0SN4ZJXl9RHXA
+        example: http://rdfh.ch/lists/0001/w5qi_p1sQLusjL8hLn5Huw
       - name: x-knora-accept-schema
         in: header
         description: |-
@@ -529,7 +529,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/lists/0001/NzRKSAdsR0SN4ZJXl9RHXA
+        example: http://rdfh.ch/lists/0001/w5qi_p1sQLusjL8hLn5Huw
       - name: x-knora-accept-schema
         in: header
         description: |-
@@ -4297,10 +4297,10 @@ paths:
       - httpAuth: []
       - httpAuth1: []
   /v2/resources/candelete:
-    post:
+    get:
       tags:
       - V2 Resources
-      operationId: postV2ResourcesCandelete
+      operationId: getV2ResourcesCandelete
       parameters:
       - name: KnoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999
         in: cookie
@@ -4343,12 +4343,11 @@ paths:
         required: false
         schema:
           type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: string
+      - name: jsonLd
+        in: query
         required: true
+        schema:
+          type: string
       responses:
         '200':
           description: ''
@@ -11084,7 +11083,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/j7Giv_5eRmm5qXOKXNxA5g
+        example: http://rdfh.ch/users/TGS87VpxSviweLDceyIPaA
       responses:
         '200':
           description: ''
@@ -11136,7 +11135,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/j7Giv_5eRmm5qXOKXNxA5g
+        example: http://rdfh.ch/users/TGS87VpxSviweLDceyIPaA
       responses:
         '200':
           description: ''
@@ -11188,7 +11187,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/j7Giv_5eRmm5qXOKXNxA5g
+        example: http://rdfh.ch/users/TGS87VpxSviweLDceyIPaA
       responses:
         '200':
           description: ''
@@ -11353,7 +11352,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/j7Giv_5eRmm5qXOKXNxA5g
+        example: http://rdfh.ch/users/TGS87VpxSviweLDceyIPaA
       responses:
         '200':
           description: ''
@@ -11411,7 +11410,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/j7Giv_5eRmm5qXOKXNxA5g
+        example: http://rdfh.ch/users/TGS87VpxSviweLDceyIPaA
       responses:
         '200':
           description: ''
@@ -11588,7 +11587,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/j7Giv_5eRmm5qXOKXNxA5g
+        example: http://rdfh.ch/users/TGS87VpxSviweLDceyIPaA
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -11653,7 +11652,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/j7Giv_5eRmm5qXOKXNxA5g
+        example: http://rdfh.ch/users/TGS87VpxSviweLDceyIPaA
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -11719,7 +11718,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/j7Giv_5eRmm5qXOKXNxA5g
+        example: http://rdfh.ch/users/TGS87VpxSviweLDceyIPaA
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -11784,7 +11783,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/j7Giv_5eRmm5qXOKXNxA5g
+        example: http://rdfh.ch/users/TGS87VpxSviweLDceyIPaA
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -11850,7 +11849,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/j7Giv_5eRmm5qXOKXNxA5g
+        example: http://rdfh.ch/users/TGS87VpxSviweLDceyIPaA
       - name: groupIri
         in: path
         description: The IRI of a group. Must be URL-encoded.
@@ -11915,7 +11914,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/j7Giv_5eRmm5qXOKXNxA5g
+        example: http://rdfh.ch/users/TGS87VpxSviweLDceyIPaA
       - name: groupIri
         in: path
         description: The IRI of a group. Must be URL-encoded.
@@ -11981,7 +11980,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/j7Giv_5eRmm5qXOKXNxA5g
+        example: http://rdfh.ch/users/TGS87VpxSviweLDceyIPaA
       requestBody:
         content:
           application/json:
@@ -12046,7 +12045,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/j7Giv_5eRmm5qXOKXNxA5g
+        example: http://rdfh.ch/users/TGS87VpxSviweLDceyIPaA
       requestBody:
         content:
           application/json:
@@ -12111,7 +12110,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/j7Giv_5eRmm5qXOKXNxA5g
+        example: http://rdfh.ch/users/TGS87VpxSviweLDceyIPaA
       requestBody:
         content:
           application/json:
@@ -12176,7 +12175,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/j7Giv_5eRmm5qXOKXNxA5g
+        example: http://rdfh.ch/users/TGS87VpxSviweLDceyIPaA
       requestBody:
         content:
           application/json:
