@@ -7,11 +7,11 @@ import { ResourceResultService } from '../resource-result.service';
 
 @Component({
   selector: 'app-resources-list',
-  template: `<div style="padding: 16px; display: flex; flex-direction: row-reverse">
-      @if (showBackToFormButton) {
+  template: ` @if (showBackToFormButton) {
+      <div style="padding: 16px; display: flex; flex-direction: row-reverse">
         <a mat-stroked-button (click)="navigate()"><mat-icon>chevron_left</mat-icon>Back to search form</a>
-      }
-    </div>
+      </div>
+    }
     <app-pager
       (pageIndexChanged)="updatePageIndex($event)"
       [numberOfAllResults]="resourceResultService.numberOfResults" />
