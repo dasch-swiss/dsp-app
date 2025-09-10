@@ -43,9 +43,7 @@ export class HeaderComponent {
     this.searchParams = search;
 
     if (this.searchParams.mode && this.searchParams.query) {
-      let doSearchRoute = `/${RouteConstants.search}/${this.searchParams.mode}/${encodeURIComponent(
-        this.searchParams.query
-      )}`;
+      let doSearchRoute = `/${RouteConstants.search}/${this.searchParams.mode}/${this.searchParams.query}`;
 
       if (this.searchParams.filter && this.searchParams.filter.limitToProject) {
         doSearchRoute += `/${encodeURIComponent(this.searchParams.filter.limitToProject)}`;
