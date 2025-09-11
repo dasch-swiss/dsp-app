@@ -7,7 +7,6 @@ import { ValidatorError } from '@dasch-swiss/vre/ui/ui';
 })
 export class HumanReadableErrorPipe implements PipeTransform {
   transform(error: object, params: ValidatorError[] | null = null): string {
-    console.log('aaa', error);
     if (error.hasOwnProperty('required')) {
       return 'This field is required';
     }
