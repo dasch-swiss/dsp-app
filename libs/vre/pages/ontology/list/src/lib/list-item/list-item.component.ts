@@ -7,8 +7,13 @@ import { ListItemService } from './list-item.service';
 @Component({
   selector: 'app-list-item',
   template: `
-    @for (child of children; track trackByFn(index, child); let index = $index; let first = $first; let last = $last) {
-      <app-list-item-element [position]="index" [length]="children.length" [node]="child" [isAdmin]="isAdmin" />
+    @for (child of children; track trackByFn($index, child); let index = $index) {
+      <app-list-item-element
+        [position]="index"
+        [length]="children.length"
+        [node]="child"
+        [parentNodeIri]="node.id"
+        [isAdmin]="isAdmin" />
     }
     @if (isAdmin) {
       <app-list-item-form [parentNode]="node" style="display: block; margin-left: 46px" />
@@ -18,6 +23,7 @@ import { ListItemService } from './list-item.service';
 })
 export class ListItemComponent implements OnInit, OnDestroy {
   @Input({ required: true }) node!: ListNodeInfo;
+  @Input() parentNodeIri?: string;
   @Input() isAdmin = false;
 
   children: ListNode[] = [];
@@ -49,7 +55,7 @@ export class ListItemComponent implements OnInit, OnDestroy {
     this.subscription.unsubscribe();
   }
 
-  trackByFn(index: number, item: any): string {
+  trackByFn(_index: number, item: any): string {
     return item.id;
   }
 }

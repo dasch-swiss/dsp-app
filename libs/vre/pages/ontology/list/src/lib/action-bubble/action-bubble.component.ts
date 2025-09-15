@@ -65,9 +65,10 @@ import {
   styleUrls: ['./action-bubble.component.scss'],
 })
 export class ActionBubbleComponent {
-  @Input() position: number;
-  @Input() length: number;
-  @Input() node: ListNode;
+  @Input({ required: true }) position!: number;
+  @Input({ required: true }) length!: number;
+  @Input({ required: true }) node!: ListNode;
+  @Input({ required: true }) parentNodeIri!: string;
 
   constructor(
     private _dialog: DialogService,
@@ -92,7 +93,7 @@ export class ActionBubbleComponent {
         data: {
           nodeIri: this.node.id,
           projectIri: this._listItemService.projectInfos.projectIri,
-          parentIri: this._listItemService.projectInfos.rootNodeIri,
+          parentIri: this.parentNodeIri,
           position: this.position,
         },
       })
@@ -129,7 +130,7 @@ export class ActionBubbleComponent {
   repositionNode(direction: 'up' | 'down') {
     this._listApiService
       .repositionChildNode(this.node.id, {
-        parentNodeIri: this._listItemService.projectInfos.rootNodeIri,
+        parentNodeIri: this.parentNodeIri,
         position: direction === 'up' ? this.position - 1 : this.position + 1,
       })
       .subscribe(() => {

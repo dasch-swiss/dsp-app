@@ -20,12 +20,12 @@ import { DEFAULT_MULTILANGUAGE_FORM, MultiLanguageFormArray } from '@dasch-swiss
             [isRequired]="true" />
 
           @if (showActionBubble) {
-            <app-action-bubble [position]="position" [length]="length" [node]="node" />
+            <app-action-bubble [position]="position" [length]="length" [node]="node" [parentNodeIri]="parentNodeIri" />
           }
         </div>
 
         @if (showChildren) {
-          <app-list-item [node]="node" [isAdmin]="isAdmin" />
+          <app-list-item [node]="node" [parentNodeIri]="node.id" [isAdmin]="isAdmin" />
         }
       </div>
     </div>
@@ -36,6 +36,7 @@ export class ListItemElementComponent implements OnChanges {
   @Input({ required: true }) node!: ListNode;
   @Input({ required: true }) position!: number;
   @Input({ required: true }) length!: number;
+  @Input({ required: true }) parentNodeIri!: string;
 
   @Input() isAdmin = false;
   showChildren = false;
