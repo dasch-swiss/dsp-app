@@ -1,5 +1,35 @@
 # Changelog
 
+## [11.43.0](https://github.com/dasch-swiss/dsp-das/compare/v11.42.1...v11.43.0) (2025-09-15)
+
+
+### Enhancements
+
+* improve account page design, update user password dialog ([#2503](https://github.com/dasch-swiss/dsp-das/issues/2503)) ([6f15aa7](https://github.com/dasch-swiss/dsp-das/commit/6f15aa7286491441a29f8fc84335d3d04519def0))
+
+
+### Bug Fixes
+
+* correct template structure in resources-list component ([#2507](https://github.com/dasch-swiss/dsp-das/issues/2507)) ([a59756e](https://github.com/dasch-swiss/dsp-das/commit/a59756efa88b4f519aae2a0516759842bd1bc742))
+* ensure keyword search is case-insensitive in resource list item component ([#2509](https://github.com/dasch-swiss/dsp-das/issues/2509)) ([6abbe56](https://github.com/dasch-swiss/dsp-das/commit/6abbe56fcd04f30e58e95bd06bc95d2a82349e9e))
+* insert and move child list node is relative to parent and not ro… ([#2512](https://github.com/dasch-swiss/dsp-das/issues/2512)) ([32741c3](https://github.com/dasch-swiss/dsp-das/commit/32741c31dd5ec239de7c2d3ce256e5997773c765))
+* remove unnecessary URL encoding in header component ([#2511](https://github.com/dasch-swiss/dsp-das/issues/2511)) ([e00a686](https://github.com/dasch-swiss/dsp-das/commit/e00a686a7c3f4f69ee34c1fab146c86bb2346367))
+* **resource editor:** load resource logic(DEV-4895) ([#2468](https://github.com/dasch-swiss/dsp-das/issues/2468)) ([294f7e4](https://github.com/dasch-swiss/dsp-das/commit/294f7e4f248bd82d8c1533f99720582ff0e00f8d))
+
+
+### Maintenances
+
+* **Angular:** Control Flow syntax migration ([#2505](https://github.com/dasch-swiss/dsp-das/issues/2505)) ([609b3fe](https://github.com/dasch-swiss/dsp-das/commit/609b3febe6d8572b1598c38db9b8d4b848780614))
+* **NGXS:** proper dependency removal ([44c2b6b](https://github.com/dasch-swiss/dsp-das/commit/44c2b6b5a65f5ac82dbae14ade7f352cd3dbbf26))
+* **OpenAPI:** update DSP-API specification to version 2.1.20 ([#2508](https://github.com/dasch-swiss/dsp-das/issues/2508)) ([1eef65d](https://github.com/dasch-swiss/dsp-das/commit/1eef65d038dd6dae25fe16ae52114ba9a52a7a6e))
+* set preserveWhitespace to default (false) ([#2506](https://github.com/dasch-swiss/dsp-das/issues/2506)) ([ac69514](https://github.com/dasch-swiss/dsp-das/commit/ac695144599f4940531b57e8b0d063f75439160f))
+* update open api spec yaml ([#2510](https://github.com/dasch-swiss/dsp-das/issues/2510)) ([d8bf2b5](https://github.com/dasch-swiss/dsp-das/commit/d8bf2b5bdf7e2a07517213039a47d41580002a60))
+
+
+### Tests
+
+* **k6:** add store regression tests (DEV-5378) ([#2496](https://github.com/dasch-swiss/dsp-das/issues/2496)) ([d92ca79](https://github.com/dasch-swiss/dsp-das/commit/d92ca7946189f24339e361c0c3b25d2852269a99))
+
 ## [11.42.1](https://github.com/dasch-swiss/dsp-das/compare/v11.42.0...v11.42.1) (2025-09-04)
 
 
