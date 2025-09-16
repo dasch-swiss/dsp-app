@@ -54,8 +54,8 @@ export class ResourceFetcherComponent implements OnInit, OnChanges, OnDestroy {
 
   private _destroy$ = new Subject<void>();
 
-  get resourceVersion(): string | null {
-    return this._route.snapshot.queryParamMap.get('version');
+  get resourceVersion() {
+    return this._route.snapshot.queryParamMap.get('version') || undefined;
   }
 
   constructor(
@@ -90,8 +90,13 @@ export class ResourceFetcherComponent implements OnInit, OnChanges, OnDestroy {
           this.hideStatus = null;
           this.resource = resource;
 
+          const normalizeToCompactFormat = (isoDate: string): string => {
+            return isoDate.replace(/[-:.]/g, '');
+          };
+
           const hasResourceVersionOfLatestVersion =
-            (!!this.resourceVersion && this.resourceVersion === resource?.res.lastModificationDate) ||
+            (!!this.resourceVersion &&
+              this.resourceVersion === normalizeToCompactFormat(resource?.res.lastModificationDate || '')) ||
             (!!this.resourceVersion && !resource?.res.lastModificationDate);
 
           if (hasResourceVersionOfLatestVersion) {
