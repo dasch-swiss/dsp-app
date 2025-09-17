@@ -34,7 +34,7 @@
       <mat-form-field class="calendar">
         <mat-label>Calendar</mat-label>
         <mat-select formControlName="calendar" class="center">
-          @for (cal of calendars; track cal; let i = $index) {
+          @for (cal of calendars; track cal) {
           <mat-option [value]="cal"> {{ titleCase(cal) }} </mat-option>
           }
         </mat-select>
@@ -57,7 +57,7 @@
         <mat-label>Month</mat-label>
         <mat-select formControlName="month" class="center">
           <mat-option>None</mat-option>
-          @for (month of months; track month; let i = $index) {
+          @for (month of months; track month[0]; let i = $index) {
           <mat-option [value]="i + 1">
             @if (calendar !== 'ISLAMIC') {
             <span>{{ month[0] }}</span>
@@ -100,7 +100,7 @@
       <div>
         @if (era === 'CE') {
         <p class="week-days">
-          @for (d of weekDays; track d) {
+          @for (d of weekDays; track (d + '-' + $index)) {
           <span class="day">{{ d }}</span>
           }
         </p>

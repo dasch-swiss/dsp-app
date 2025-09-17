@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: DSP-API
-  version: 2.1.20
+  version: 2.1.21
   summary: DSP-API is part of the the DaSCH Service Platform, a repository for the
     long-term preservation and reuse of data in the humanities.
   contact:
@@ -383,7 +383,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/lists/0001/w5qi_p1sQLusjL8hLn5Huw
+        example: http://rdfh.ch/lists/0001/96E-YwvxQ26k_I5QG0aI0A
       - name: x-knora-accept-schema
         in: header
         description: |-
@@ -529,7 +529,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/lists/0001/w5qi_p1sQLusjL8hLn5Huw
+        example: http://rdfh.ch/lists/0001/96E-YwvxQ26k_I5QG0aI0A
       - name: x-knora-accept-schema
         in: header
         description: |-
@@ -11083,7 +11083,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/TGS87VpxSviweLDceyIPaA
+        example: http://rdfh.ch/users/YaUUVhr3SQKq_LWSSriIAw
       responses:
         '200':
           description: ''
@@ -11135,7 +11135,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/TGS87VpxSviweLDceyIPaA
+        example: http://rdfh.ch/users/YaUUVhr3SQKq_LWSSriIAw
       responses:
         '200':
           description: ''
@@ -11187,7 +11187,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/TGS87VpxSviweLDceyIPaA
+        example: http://rdfh.ch/users/YaUUVhr3SQKq_LWSSriIAw
       responses:
         '200':
           description: ''
@@ -11352,7 +11352,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/TGS87VpxSviweLDceyIPaA
+        example: http://rdfh.ch/users/YaUUVhr3SQKq_LWSSriIAw
       responses:
         '200':
           description: ''
@@ -11410,7 +11410,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/TGS87VpxSviweLDceyIPaA
+        example: http://rdfh.ch/users/YaUUVhr3SQKq_LWSSriIAw
       responses:
         '200':
           description: ''
@@ -11587,7 +11587,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/TGS87VpxSviweLDceyIPaA
+        example: http://rdfh.ch/users/YaUUVhr3SQKq_LWSSriIAw
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -11652,7 +11652,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/TGS87VpxSviweLDceyIPaA
+        example: http://rdfh.ch/users/YaUUVhr3SQKq_LWSSriIAw
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -11718,7 +11718,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/TGS87VpxSviweLDceyIPaA
+        example: http://rdfh.ch/users/YaUUVhr3SQKq_LWSSriIAw
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -11783,7 +11783,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/TGS87VpxSviweLDceyIPaA
+        example: http://rdfh.ch/users/YaUUVhr3SQKq_LWSSriIAw
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -11849,7 +11849,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/TGS87VpxSviweLDceyIPaA
+        example: http://rdfh.ch/users/YaUUVhr3SQKq_LWSSriIAw
       - name: groupIri
         in: path
         description: The IRI of a group. Must be URL-encoded.
@@ -11914,7 +11914,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/TGS87VpxSviweLDceyIPaA
+        example: http://rdfh.ch/users/YaUUVhr3SQKq_LWSSriIAw
       - name: groupIri
         in: path
         description: The IRI of a group. Must be URL-encoded.
@@ -11980,7 +11980,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/TGS87VpxSviweLDceyIPaA
+        example: http://rdfh.ch/users/YaUUVhr3SQKq_LWSSriIAw
       requestBody:
         content:
           application/json:
@@ -12045,7 +12045,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/TGS87VpxSviweLDceyIPaA
+        example: http://rdfh.ch/users/YaUUVhr3SQKq_LWSSriIAw
       requestBody:
         content:
           application/json:
@@ -12110,7 +12110,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/TGS87VpxSviweLDceyIPaA
+        example: http://rdfh.ch/users/YaUUVhr3SQKq_LWSSriIAw
       requestBody:
         content:
           application/json:
@@ -12175,7 +12175,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/TGS87VpxSviweLDceyIPaA
+        example: http://rdfh.ch/users/YaUUVhr3SQKq_LWSSriIAw
       requestBody:
         content:
           application/json:
@@ -12592,6 +12592,9 @@ components:
           type: string
         xml:
           type: string
+    DE:
+      title: DE
+      type: object
     DefaultObjectAccessPermissionADM:
       title: DefaultObjectAccessPermissionADM
       type: object
@@ -12654,6 +12657,9 @@ components:
       properties:
         message:
           type: string
+    EN:
+      title: EN
+      type: object
     EditConflictException:
       title: EditConflictException
       type: object
@@ -12689,6 +12695,9 @@ components:
       - CSV
       - JSON
       - TSV
+    FR:
+      title: FR
+      type: object
     FamilyName:
       title: FamilyName
       type: object
@@ -12850,6 +12859,9 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Group'
+    IT:
+      title: IT
+      type: object
     Inactive:
       title: Inactive
       type: object
@@ -12882,12 +12894,12 @@ components:
             $ref: '#/components/schemas/StringLiteralV2'
     LanguageCode:
       title: LanguageCode
-      type: object
-      required:
-      - value
-      properties:
-        value:
-          type: string
+      oneOf:
+      - $ref: '#/components/schemas/DE'
+      - $ref: '#/components/schemas/EN'
+      - $ref: '#/components/schemas/FR'
+      - $ref: '#/components/schemas/IT'
+      - $ref: '#/components/schemas/RM'
     ListADM:
       title: ListADM
       type: object
@@ -13680,6 +13692,9 @@ components:
           type: array
           items:
             type: string
+    RM:
+      title: RM
+      type: object
     RdfDataObject:
       title: RdfDataObject
       type: object
