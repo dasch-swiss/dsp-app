@@ -1,5 +1,26 @@
 # Changelog
 
+## [11.44.0](https://github.com/dasch-swiss/dsp-das/compare/v11.43.0...v11.44.0) (2025-09-22)
+
+
+### Enhancements
+
+* enhance performance of region loading (DEV-5278) ([#2472](https://github.com/dasch-swiss/dsp-das/issues/2472)) ([e3a8d48](https://github.com/dasch-swiss/dsp-das/commit/e3a8d4895581a82f07ce12ac32eae040fa3b06e0))
+* warning unsupported property in ontology editor (DEV-5264) ([#2517](https://github.com/dasch-swiss/dsp-das/issues/2517)) ([c15fa98](https://github.com/dasch-swiss/dsp-das/commit/c15fa986d1bb00e9504250c9eedf890a765f5340))
+
+
+### Bug Fixes
+
+* add no results page to advanced search page ([#2521](https://github.com/dasch-swiss/dsp-das/issues/2521)) ([b2c97c1](https://github.com/dasch-swiss/dsp-das/commit/b2c97c105f0083eb5cb80a5a60da7787ba2d50ac))
+* boolean value is correctly displayed ([#2520](https://github.com/dasch-swiss/dsp-das/issues/2520)) ([45a92b2](https://github.com/dasch-swiss/dsp-das/commit/45a92b212ff8210aad548f3591666f2b373ca84b))
+* compare normalised ([#2513](https://github.com/dasch-swiss/dsp-das/issues/2513)) ([6fb011d](https://github.com/dasch-swiss/dsp-das/commit/6fb011d1381fe013e0cb099cdbff4faf5508deca))
+* track by unique (DEV-5420) ([#2518](https://github.com/dasch-swiss/dsp-das/issues/2518)) ([f81d38e](https://github.com/dasch-swiss/dsp-das/commit/f81d38e9fe885894da73fc3d01154531a2caebcb))
+
+
+### Maintenances
+
+* NGXS leftovers cleanup ([#2522](https://github.com/dasch-swiss/dsp-das/issues/2522)) ([f99dcd3](https://github.com/dasch-swiss/dsp-das/commit/f99dcd3df5c9a99dc76d77915e3323a55a625181))
+
 ## [11.43.0](https://github.com/dasch-swiss/dsp-das/compare/v11.42.1...v11.43.0) (2025-09-15)
 
 
