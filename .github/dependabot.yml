@@ -65,13 +65,6 @@ updates:
         update-types:
           - "minor"
           - "patch"
-      ngxs-deps:
-        applies-to: version-updates
-        patterns:
-          - "@ngxs/*"
-        update-types:
-          - "minor"
-          - "patch"
       nx-deps:
         applies-to: version-updates
         patterns:
