@@ -5,7 +5,7 @@ import { AdminProjectsApiService } from '@dasch-swiss/vre/3rd-party-services/ope
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { AppError } from '@dasch-swiss/vre/core/error-handler';
 import { DspResource, filterUndefined, GenerateProperty } from '@dasch-swiss/vre/shared/app-common';
-import { BehaviorSubject, filter, map, switchMap, take, Observable, shareReplay } from 'rxjs';
+import { BehaviorSubject, filter, map, switchMap, take, Observable, shareReplay, Subject } from 'rxjs';
 import { ResourceUtil } from './resource.util';
 
 @Injectable()
@@ -35,6 +35,9 @@ export class ResourceFetcherService {
     shareReplay({ bufferSize: 1, refCount: true })
   );
 
+  _scrollToTop = new Subject<void>();
+  scrollToTop$ = this._scrollToTop.asObservable();
+
   constructor(
     @Inject(DspApiConnectionToken)
     private _dspApiConnection: KnoraApiConnection,
@@ -55,6 +58,10 @@ export class ResourceFetcherService {
       throw new AppError('Resource IRI is not found');
     }
     this.loadResource(resourceIri);
+  }
+
+  scrollToTop() {
+    this._scrollToTop.next();
   }
 
   private _getResource(resourceIri: string, resourceVersion?: string) {

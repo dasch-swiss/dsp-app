@@ -1,4 +1,14 @@
-import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApiResponseError, Constants, ReadResource } from '@dasch-swiss/dsp-js';
 import { ResourceFetcherService, ResourceUtil } from '@dasch-swiss/vre/resource-editor/representations';
@@ -12,42 +22,45 @@ type HideReason = 'NotFound' | 'Deleted' | 'Unauthorized' | null;
 @Component({
   selector: 'app-resource-fetcher',
   template: `
-    @if (resourceVersion) {
-      <app-resource-version-warning
-        [resourceVersion]="resourceVersion"
-        (navigateToCurrentVersion)="navigateToCurrentVersion()" />
-    }
-
-    @if (!hideStatus) {
-      @if (resource) {
-        <app-resource [resource]="resource" />
-      } @else {
-        <app-progress-indicator />
+    <div #scrollTarget>
+      @if (resourceVersion) {
+        <app-resource-version-warning
+          [resourceVersion]="resourceVersion"
+          (navigateToCurrentVersion)="navigateToCurrentVersion()" />
       }
-    } @else {
-      <div style="display: flex; justify-content: center; padding: 16px">
-        @if (hideStatus === 'NotFound') {
-          <h3>{{ 'resourceEditor.notFound' | translate }}</h3>
+
+      @if (!hideStatus) {
+        @if (resource) {
+          <app-resource [resource]="resource" />
+        } @else {
+          <app-progress-indicator />
         }
-        @if (hideStatus === 'Unauthorized') {
-          <h3>{{ 'resourceEditor.unauthorized' | translate }}</h3>
-        }
-        @if (hideStatus === 'Deleted') {
-          <div style="text-align: center">
-            <h3>{{ 'resourceEditor.deleted' | translate }}</h3>
-            @if (resource?.res.deleteComment; as comment) {
-              <h4>"{{ comment }}"</h4>
-            }
-          </div>
-        }
-      </div>
-    }
+      } @else {
+        <div style="display: flex; justify-content: center; padding: 16px">
+          @if (hideStatus === 'NotFound') {
+            <h3>{{ 'resourceEditor.notFound' | translate }}</h3>
+          }
+          @if (hideStatus === 'Unauthorized') {
+            <h3>{{ 'resourceEditor.unauthorized' | translate }}</h3>
+          }
+          @if (hideStatus === 'Deleted') {
+            <div style="text-align: center">
+              <h3>{{ 'resourceEditor.deleted' | translate }}</h3>
+              @if (resource?.res.deleteComment; as comment) {
+                <h4>"{{ comment }}"</h4>
+              }
+            </div>
+          }
+        </div>
+      }
+    </div>
   `,
   providers: [ResourceFetcherService],
 })
 export class ResourceFetcherComponent implements OnInit, OnChanges, OnDestroy {
   @Input({ required: true }) resourceIri!: string;
   @Output() afterResourceDeleted = new EventEmitter<ReadResource>();
+  @ViewChild('scrollTarget') scrollTarget!: ElementRef;
 
   resource?: DspResource;
   hideStatus: HideReason = null;
@@ -117,6 +130,13 @@ export class ResourceFetcherComponent implements OnInit, OnChanges, OnDestroy {
           throw err;
         },
       });
+
+    this._resourceFetcherService.scrollToTop$.pipe(takeUntil(this._destroy$)).subscribe(() => {
+      this.scrollTarget?.nativeElement.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+    });
   }
 
   ngOnChanges() {

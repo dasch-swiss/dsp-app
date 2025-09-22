@@ -18,6 +18,7 @@
     "start-ls-test": "nx run dsp-app:serve:ls-test-server",
     "start-0845-test": "nx run dsp-app:serve:0845-test-server",
     "start-stage": "nx run dsp-app:serve:stage-server",
+    "start-rdu-19": "nx run dsp-app:serve:rdu-19-server",
     "generate-openapi-module": "cd libs/vre/3rd-party-services/open-api && rm -rf src/lib/generated && npx openapi-generator-cli generate",
     "check-openapi-sync": "./scripts/check-openapi-sync.sh",
     "update-openapi": "curl -o libs/vre/3rd-party-services/open-api/dsp-api_spec.yaml https://api.dev.dasch.swiss/api/docs/docs.yaml && npm run generate-openapi-module",

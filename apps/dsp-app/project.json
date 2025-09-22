@@ -157,6 +157,21 @@
           "extractLicenses": false,
           "vendorChunk": false,
           "buildOptimizer": false
+        },
+        "rdu-19-server": {
+          "fileReplacements": [
+            {
+              "replace": "apps/dsp-app/src/environments/environment.ts",
+              "with": "apps/dsp-app/src/environments/environment.rdu-19-server.ts"
+            }
+          ],
+          "optimization": false,
+          "sourceMap": true,
+          "namedChunks": true,
+          "aot": true,
+          "extractLicenses": false,
+          "vendorChunk": false,
+          "buildOptimizer": false
         }
       },
       "defaultConfiguration": "production"
@@ -187,6 +202,9 @@
         },
         "stage-server": {
           "buildTarget": "dsp-app:build:stage-server"
+        },
+        "rdu-19-server": {
+          "buildTarget": "dsp-app:build:rdu-19-server"
         }
       }
     },

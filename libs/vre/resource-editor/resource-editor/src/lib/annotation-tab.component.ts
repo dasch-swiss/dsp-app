@@ -1,74 +1,99 @@
-import { AfterViewInit, Component, ElementRef, Input, OnDestroy, QueryList, ViewChildren } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy } from '@angular/core';
 import { ReadResource } from '@dasch-swiss/dsp-js';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
-import { AppError } from '@dasch-swiss/vre/core/error-handler';
 import { RegionService } from '@dasch-swiss/vre/resource-editor/representations';
-import { DspResource, ResourceService } from '@dasch-swiss/vre/shared/app-common';
-import { Subscription } from 'rxjs';
+import { DspResource } from '@dasch-swiss/vre/shared/app-common';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-annotation-tab',
-  template: ` @for (annotation of regionService.regions$ | async; track trackAnnotationByFn($index, annotation)) {
-    <div
-      [attr.data-annotation-resource]="annotation.res.id"
-      [class.active]="annotation.res.id === selectedRegion"
-      #annotationElement
-      data-cy="annotation-border">
-      <app-properties-display
-        [resource]="annotation"
-        [parentResourceId]="resource.id"
-        [displayLabel]="true"
-        [linkToNewTab]="
-          resourceService.getResourcePath(resource.id) +
-          '?' +
-          RouteConstants.annotationQueryParam +
-          '=' +
-          annotation.res.id
-        " />
-    </div>
-  }`,
+  template: `
+    <mat-accordion>
+      @for (annotation of regionService.regions$ | async; track $index) {
+        <mat-expansion-panel
+          #panel
+          [attr.data-annotation-resource]="annotation.res.id"
+          [class.active]="annotation.res.id === selectedRegion"
+          [expanded]="annotation.res.id === expandedRegion"
+          (closed)="onPanelClosed(annotation.res.id)"
+          (opened)="onPanelOpened(annotation.res.id)"
+          data-cy="annotation-border">
+          <mat-expansion-panel-header>
+            <div style="width: 100%; display: flex; align-items: center; justify-content: space-between">
+              <div>
+                <h3 class="label" data-cy="property-header">
+                  {{ annotation.res.label }}
+                </h3>
+              </div>
+              <div style="display: flex; align-items: center;">
+                <app-annotation-toolbar
+                  style="width: 100%"
+                  [resource]="annotation.res"
+                  [parentResourceId]="resource.id"
+                  [toolBarActive]="annotation.res.id === selectedRegion"
+                  (click)="$event.stopPropagation()" />
+              </div>
+            </div>
+          </mat-expansion-panel-header>
+
+          @if (panel.expanded) {
+            <app-properties-display [resource]="annotation" [hideToolbar]="true"></app-properties-display>
+          }
+        </mat-expansion-panel>
+      }
+    </mat-accordion>
+  `,
   styles: ['.active {border: 1px solid}'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AnnotationTabComponent implements AfterViewInit, OnDestroy {
   @Input({ required: true }) resource!: ReadResource;
-  @ViewChildren('annotationElement') annotationElements!: QueryList<ElementRef>;
   selectedRegion: string | null = null;
+  expandedRegion: string | null = null;
 
-  private _subscription!: Subscription;
+  private _destroy$ = new Subject<void>();
 
   constructor(
-    public regionService: RegionService,
-    public resourceService: ResourceService
+    private _cdr: ChangeDetectorRef,
+    public regionService: RegionService
   ) {}
 
   ngAfterViewInit() {
-    this._subscription = this.regionService.selectedRegion$.subscribe(region => {
+    this.regionService.selectedRegion$.pipe(takeUntil(this._destroy$)).subscribe(region => {
       this.selectedRegion = region;
-      if (region !== null) {
-        this._scrollToRegion(region);
+      if (this.selectedRegion !== this.expandedRegion) {
+        this.expandedRegion = null;
       }
+      this._cdr.detectChanges();
+    });
+
+    this.regionService.highlightedRegionClicked$.pipe(takeUntil(this._destroy$)).subscribe(iri => {
+      this.expandedRegion = iri;
+      this._cdr.detectChanges();
+      this._scrollToRegion(iri);
+    });
+  }
+
+  onPanelOpened(iri: string) {
+    this.regionService.selectRegion(iri);
+  }
+
+  onPanelClosed(iri: string) {
+    if (this.selectedRegion === iri) {
+      this.regionService.selectRegion(null);
+    }
+  }
+
+  private _scrollToRegion(iri: string | null) {
+    const element = iri ? (document.querySelector(`[data-annotation-resource="${iri}"]`) as HTMLElement) : null;
+    element?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'center',
     });
   }
 
   ngOnDestroy() {
-    this._subscription.unsubscribe();
-  }
-
-  trackAnnotationByFn = (index: number, item: DspResource) => `${index}-${item.res.id}`;
-  protected readonly RouteConstants = RouteConstants;
-
-  private _scrollToRegion(iri: string) {
-    const region = this.annotationElements.find(
-      element => element.nativeElement.getAttribute('data-annotation-resource') === iri
-    );
-
-    if (!region) {
-      throw new AppError('An overlay does not have corresponding resource');
-    }
-
-    region.nativeElement.scrollIntoView({
-      behavior: 'smooth',
-      block: 'center',
-    });
+    this._destroy$.next();
+    this._destroy$.complete();
   }
 }

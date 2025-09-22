@@ -15,11 +15,17 @@ export class RegionService {
   private _regionsSubject = new BehaviorSubject<DspResource[]>([]);
   regions$ = this._regionsSubject.asObservable();
 
+  private _regionsLoading = new BehaviorSubject(false);
+  regionsLoading$ = this._regionsLoading.asObservable();
+
   private _showRegions = new BehaviorSubject(false);
   showRegions$ = this._showRegions.asObservable();
 
   private _selectedRegion = new BehaviorSubject<string | null>(null);
   selectedRegion$ = this._selectedRegion.asObservable();
+
+  private _highlightedRegionClicked = new BehaviorSubject<string | null>(null);
+  highlightedRegionClicked$ = this._highlightedRegionClicked.asObservable();
 
   private _ngUnsubscribe = new Subject<void>();
 
@@ -46,31 +52,38 @@ export class RegionService {
     this._showRegions.next(value);
   }
 
-  selectRegion(regionIri: string) {
+  selectRegion(regionIri: string | null) {
     this._selectedRegion.next(regionIri);
+  }
+
+  setHighlightedRegionClicked(regionIri: string | null) {
+    this._highlightedRegionClicked.next(regionIri);
   }
 
   private _getIncomingRegions(resourceId: string) {
     let offset = 0;
-
+    let accumulated: DspResource[] = [];
+    this._regionsLoading.next(true);
     return this._dspApi.v2.search.doSearchIncomingRegions(resourceId, offset).pipe(
       expand(response => {
+        const currentPageResources = response.resources.map(resource => {
+          const z = new DspResource(resource);
+          z.resProps = GenerateProperty.regionProperty(resource);
+          return z;
+        });
+
+        accumulated = [...accumulated, ...currentPageResources];
+        this._regionsSubject.next(accumulated);
+
         if (response.mayHaveMoreResults) {
           offset++;
           return this._dspApi.v2.search.doSearchIncomingRegions(resourceId, offset);
         } else {
+          this._regionsLoading.next(false);
           return EMPTY;
         }
       }),
-      concatMap(page => page.resources),
-      toArray(),
-      map(res =>
-        res.map(resource => {
-          const z = new DspResource(resource);
-          z.resProps = GenerateProperty.regionProperty(resource);
-          return z;
-        })
-      )
+      map(() => accumulated)
     );
   }
 }

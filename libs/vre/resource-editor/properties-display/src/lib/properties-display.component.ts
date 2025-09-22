@@ -7,39 +7,33 @@ import { DspResource, PropertyInfoValues } from '@dasch-swiss/vre/shared/app-com
 @Component({
   selector: 'app-properties-display',
   template: `
-    <div style="display: flex; flex-direction: row-reverse; align-items: center; background: #EAEFF3">
-      <div style="display: flex; flex: 0 0 auto">
-        <app-properties-toolbar
-          [showToggleProperties]="true"
-          [showOnlyIcons]="displayLabel"
-          [numberOfComments]="numberOfComments"
-          style="flex-shrink: 0" />
-        @if (displayLabel) {
-          <app-annotation-toolbar [resource]="resource.res" [parentResourceId]="parentResourceId" />
-        }
-      </div>
+    @if (!hideToolbar) {
+      <div style="display: flex; flex-direction: row-reverse; align-items: center; background: #EAEFF3">
+        <div style="display: flex; flex: 0 0 auto">
+          <app-properties-toolbar [numberOfComments]="numberOfComments" style="flex-shrink: 0" />
+        </div>
 
-      @if (displayLabel) {
         <h3
           style="margin: 0 16px; flex: 1 1 auto; overflow: hidden; text-overflow: ellipsis; white-space: nowrap"
           data-cy="property-header">
           {{ resource.res.label }}
         </h3>
-      }
-    </div>
+      </div>
+    }
 
-    @if (displayLabel && ((resourceAttachedUser$ | async) !== undefined || resource.res.creationDate)) {
+    @if (
+      ((resourceAttachedUser$ | async) !== undefined && (resourceAttachedUser$ | async) !== null) ||
+      resource.res.creationDate
+    ) {
       <div class="infobar mat-caption">
         Created
         @if (resourceAttachedUser$ | async; as resourceAttachedUser) {
-          <span>
-            by
-            {{
-              resourceAttachedUser.username
-                ? resourceAttachedUser.username
-                : resourceAttachedUser.givenName + ' ' + resourceAttachedUser.familyName
-            }}
-          </span>
+          by
+          {{
+            resourceAttachedUser.username
+              ? resourceAttachedUser.username
+              : resourceAttachedUser.givenName + ' ' + resourceAttachedUser.familyName
+          }}
         }
         @if (resource.res.creationDate) {
           <span> on {{ resource.res.creationDate | date }}</span>
@@ -47,9 +41,8 @@ import { DspResource, PropertyInfoValues } from '@dasch-swiss/vre/shared/app-com
       </div>
     }
 
-    <!-- list of properties -->
     @if (editableProperties && editableProperties.length > 0) {
-      @for (prop of editableProperties; track trackByPropertyInfoFn($index, prop); let last = $last) {
+      @for (prop of editableProperties; track $index; let last = $last) {
         <app-property-row
           [isEmptyRow]="prop.values.length === 0"
           [borderBottom]="true"
@@ -85,9 +78,9 @@ import { DspResource, PropertyInfoValues } from '@dasch-swiss/vre/shared/app-com
 })
 export class PropertiesDisplayComponent implements OnChanges {
   @Input({ required: true }) resource!: DspResource;
-  @Input() displayLabel = false;
   @Input() linkToNewTab?: string;
   @Input() parentResourceId = '';
+  @Input() hideToolbar = false;
 
   protected readonly cardinality = Cardinality;
 
@@ -96,7 +89,10 @@ export class PropertiesDisplayComponent implements OnChanges {
   numberOfComments!: number;
   resourceAttachedUser$ = this._resourceFetcherService.attachedUser$;
 
-  constructor(private _resourceFetcherService: ResourceFetcherService) {}
+  constructor(
+    public propertiesDisplayService: PropertiesDisplayService,
+    private _resourceFetcherService: ResourceFetcherService
+  ) {}
 
   ngOnChanges() {
     this.editableProperties = this.resource.resProps.filter(
@@ -110,7 +106,9 @@ export class PropertiesDisplayComponent implements OnChanges {
       );
       return acc + valuesWithComments;
     }, 0);
-  }
 
-  trackByPropertyInfoFn = (index: number, item: PropertyInfoValues) => `${index}-${item.propDef.id}`;
+    if (this.hideToolbar) {
+      this.propertiesDisplayService.toggleShowProperties();
+    }
+  }
 }

@@ -1,0 +1,26 @@
+{
+  "dspRelease": "2023.05.03",
+  "apiProtocol": "https",
+  "apiHost": "api.rdu-19.dasch.swiss",
+  "apiPort": 443,
+  "apiPath": "",
+  "iiifProtocol": "https",
+  "iiifHost": "iiif.rdu-19.dasch.swiss",
+  "iiifPort": 443,
+  "iiifPath": "",
+  "ingestUrl": "https://ingest.rdu-19.dasch.swiss",
+  "geonameToken": "knora",
+  "jsonWebToken": "",
+  "logErrors": true,
+  "iriBase": "http://rdfh.ch",
+  "instrumentation": {
+    "environment": "rdu-19-server",
+    "rollbar": {
+      "enabled": false,
+      "accessToken": ""
+    }
+  },
+  "featureFlags": {
+    "allowEraseProjects": true
+  }
+}

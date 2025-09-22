@@ -73,6 +73,7 @@ The most common commands are defined in `package.json`.
 | `nx run dsp-app:serve:dev-server`                    | `npm run start-dev`       |
 | `nx run dsp-app:serve:ls-test-server`                | `npm run start-ls-test`   |
 | `nx run dsp-app:serve:stage-server`                  | `npm run start-stage`     |
+| `nx run dsp-app:serve:rdu-19-server`                 | `npm run start-rdu-19`    |
 | `nx run dsp-app:serve:0845-test-server`              | `npm run start-0845-test` |
 | `nx run dsp-app:lint`                                | `npm run lint-ci`         |
 | `nx run dsp-app:lint --fix`                          | `npm run lint-local`      |

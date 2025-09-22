@@ -1,3 +1,3 @@
 export interface PolygonsForRegion {
-  [key: string]: HTMLElement[];
+  [key: string]: SVGElement[];
 }

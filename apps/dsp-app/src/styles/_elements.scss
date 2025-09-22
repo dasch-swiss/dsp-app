@@ -780,26 +780,6 @@ simple-snack-bar .mdc-button__label {
   }
 }
 
-.region {
-  filter: alpha(opacity=40);
-  opacity: 0.4;
-  fill: transparent;
-  stroke: #00695c;
-  stroke-width: 2px;
-}
-
-.region:hover,
-.region:focus {
-  filter: alpha(opacity=100);
-  opacity: 1;
-  cursor: pointer;
-}
-
-.region.active {
-  filter: alpha(opacity=100);
-  opacity: 1;
-}
-
 // --------------------------------------
 
 //
