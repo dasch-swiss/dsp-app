@@ -7,3 +7,4 @@ export * from './lib/services/search-params.service';
 export * from './lib/advanced-search-results-page.component';
 export * from './lib/fulltext-search-result-page.component';
 export * from './lib/search-project-results-page.component';
+export * from './lib/no-results-found.component';

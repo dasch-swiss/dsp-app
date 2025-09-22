@@ -12,9 +12,15 @@ import { ResourceResultService } from './resource-result.service';
   template: `
     @if (data$ | async; as data) {
       @if (userCanViewResources) {
-        <app-resource-browser
-          [data]="data"
-          [hasRightsToShowCreateLinkObject$]="projectPageService.hasProjectMemberRights$" />
+        @if (data.resources.length === 0) {
+          <app-centered-box>
+            <app-no-results-found [message]="'There are no data in this resource class yet.'" />
+          </app-centered-box>
+        } @else {
+          <app-resource-browser
+            [data]="data"
+            [hasRightsToShowCreateLinkObject$]="projectPageService.hasProjectMemberRights$" />
+        }
       } @else {
         <div style="margin-top: 80px; align-items: center; text-align: center">
           <h3>It seems like you don’t have the necessary permissions.</h3>

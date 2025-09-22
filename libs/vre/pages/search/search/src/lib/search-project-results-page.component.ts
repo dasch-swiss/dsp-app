@@ -13,7 +13,9 @@ import { combineLatest, map, switchMap, tap } from 'rxjs';
     }
     @if (resources$ | async; as resources) {
       @if (resources.length === 0) {
-        <h2 style="text-align: center;margin-top: 50px;">There is no result.</h2>
+        <app-centered-box>
+          <app-no-results-found [message]="noResultMessage" />
+        </app-centered-box>
       }
       @if (resources.length > 0) {
         <app-resource-browser
@@ -28,6 +30,8 @@ export class SearchProjectResultsPageComponent {
   query?: string;
   loading = true;
   userIsSysAdmin$ = this._userService.isSysAdmin$;
+
+  readonly noResultMessage = 'There are no resources to display.';
 
   readonly resources$ = this._route.params.pipe(
     map(params => ({
