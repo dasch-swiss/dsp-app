@@ -1,5 +1,24 @@
 # Changelog
 
+## [11.45.0](https://github.com/dasch-swiss/dsp-das/compare/v11.44.0...v11.45.0) (2025-09-23)
+
+
+### Enhancements
+
+* remove licenced info (DEV-5304) ([#2525](https://github.com/dasch-swiss/dsp-das/issues/2525)) ([6a896ac](https://github.com/dasch-swiss/dsp-das/commit/6a896accc60327b85c9a2c7d9e88ee75bb0dfab4))
+
+
+### Bug Fixes
+
+* can edit a resource class info in data model editor ([#2526](https://github.com/dasch-swiss/dsp-das/issues/2526)) ([5acfcbf](https://github.com/dasch-swiss/dsp-das/commit/5acfcbffb1a8d611168e4f32066a6d4e04a35a3b))
+* dont resend create request in subscription (DEV-5433) ([#2529](https://github.com/dasch-swiss/dsp-das/issues/2529)) ([667dbc9](https://github.com/dasch-swiss/dsp-das/commit/667dbc91a3c52b1fa760606568e6f18f1b5b0af8))
+* use open api (DEV-5435) ([#2528](https://github.com/dasch-swiss/dsp-das/issues/2528)) ([bfec3fe](https://github.com/dasch-swiss/dsp-das/commit/bfec3fec7badcb568939b747cce36e491b15e630))
+
+
+### Maintenances
+
+* **ESLint:** Enable prefer-control-flow rule ([#2523](https://github.com/dasch-swiss/dsp-das/issues/2523)) ([cf68766](https://github.com/dasch-swiss/dsp-das/commit/cf68766f524f7266e126125360d1d4c13f916889))
+
 ## [11.44.0](https://github.com/dasch-swiss/dsp-das/compare/v11.43.0...v11.44.0) (2025-09-22)
 
 
