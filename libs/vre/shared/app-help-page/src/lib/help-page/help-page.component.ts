@@ -1,9 +1,19 @@
-import { Component, Inject, OnInit } from '@angular/core';
-import { HealthResponse, KnoraApiConnection, VersionResponse } from '@dasch-swiss/dsp-js';
-import { AppConfigService, DspApiConnectionToken, DspConfig } from '@dasch-swiss/vre/core/config';
+import { HttpClient } from '@angular/common/http';
+import { Component, OnInit } from '@angular/core';
+import { AppConfigService, DspConfig } from '@dasch-swiss/vre/core/config';
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import packageJson from '../../../../../../../package.json';
 import { GridItem } from '../grid/grid.component';
+
+interface VersionResponse {
+  webapi: string;
+  buildCommit: string;
+  buildTime: string;
+  fuseki: string;
+  scala: string;
+  sipi: string;
+  name: string;
+}
 
 @Component({
   selector: 'app-help',
@@ -13,12 +23,11 @@ import { GridItem } from '../grid/grid.component';
 export class HelpPageComponent implements OnInit {
   loading = true;
 
-  dsp: DspConfig;
-  releaseNotesUrl: string;
+  dsp!: DspConfig;
+  releaseNotesUrl!: string;
 
   appVersion: string = packageJson.version;
-  apiStatus: HealthResponse;
-  apiVersion: VersionResponse;
+  apiVersion?: VersionResponse;
 
   docs: GridItem[] = [
     {
@@ -87,8 +96,7 @@ export class HelpPageComponent implements OnInit {
   ];
 
   constructor(
-    @Inject(DspApiConnectionToken)
-    private _dspApiConnection: KnoraApiConnection,
+    private _http: HttpClient,
     private _appConfigService: AppConfigService
   ) {}
 
@@ -99,20 +107,22 @@ export class HelpPageComponent implements OnInit {
 
     this.releaseNotesUrl = `https://github.com/dasch-swiss/dsp-das/releases/tag/v${this.appVersion}`;
 
-    this._dspApiConnection.system.versionEndpoint.getVersion().subscribe(response => {
-      this.apiVersion = response.body;
+    const apiConfig = this._appConfigService.dspApiConfig;
+    const versionUrl = `${apiConfig.apiProtocol}://${apiConfig.apiHost}:${apiConfig.apiPort}/version`;
+    this._http.get<VersionResponse>(versionUrl).subscribe(apiVersion => {
+      this.apiVersion = apiVersion;
 
       // set dsp-app version
       this.tools[0].title += this.appVersion;
       this.tools[0].url += this.appVersion;
 
       // set dsp-api version
-      this.tools[1].title += this.apiVersion.webapi;
-      this.tools[1].url += this.apiVersion.webapi.split('-')[0];
+      this.tools[1].title += apiVersion.webapi;
+      this.tools[1].url += apiVersion.webapi.split('-')[0];
 
       // set dsp-sipi version
-      this.tools[2].title += this.apiVersion.sipi;
-      this.tools[2].url += this.apiVersion.sipi;
+      this.tools[2].title += apiVersion.sipi;
+      this.tools[2].url += apiVersion.sipi;
     });
   }
 }
