@@ -31,7 +31,9 @@ import { UserForm } from './user-form.type';
       <mat-form-field style="width: 100%">
         <mat-label>{{ 'pages.userSettings.userForm.language' | translate }}</mat-label>
         <mat-select [formControl]="userForm.controls.lang">
-          <mat-option *ngFor="let lang of languagesList" [value]="lang.language"> {{ lang.value }}</mat-option>
+          @for (lang of languagesList; track lang) {
+            <mat-option [value]="lang.language"> {{ lang.value }}</mat-option>
+          }
         </mat-select>
       </mat-form-field>
     </form>
