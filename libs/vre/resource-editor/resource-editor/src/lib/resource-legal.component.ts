@@ -29,13 +29,10 @@ import { switchMap, take } from 'rxjs';
               </div>
             }
           </div>
-          <div>
-            <div style="display: flex; justify-content: flex-end">
-              @if (license) {
-                <app-resource-legal-license [license]="license" />
-              }
-            </div>
-            <div>Licensed on {{ fileValue.valueCreationDate | humanReadableDate }}</div>
+          <div style="display: flex; justify-content: flex-end">
+            @if (license) {
+              <app-resource-legal-license [license]="license" />
+            }
           </div>
         </div>
       </div>
