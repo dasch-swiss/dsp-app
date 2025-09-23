@@ -1,6 +1,15 @@
 import { Clipboard } from '@angular/cdk/clipboard';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, Input, OnDestroy, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  Inject,
+  Input,
+  OnDestroy,
+  OnInit,
+  ViewContainerRef,
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { ApiResponseError, CanDoResponse, IHasProperty, KnoraApiConnection } from '@dasch-swiss/dsp-js';
@@ -51,6 +60,7 @@ export class ResourceClassInfoComponent implements OnInit, OnDestroy {
     private _projectPageService: ProjectPageService,
     @Inject(DspApiConnectionToken)
     private _dspApiConnection: KnoraApiConnection,
+    private _viewContainerRef: ViewContainerRef,
     private _route: ActivatedRoute
   ) {}
 
@@ -79,10 +89,13 @@ export class ResourceClassInfoComponent implements OnInit, OnDestroy {
   editResourceClassInfo() {
     this._dialog.open<EditResourceClassDialogComponent, EditResourceClassDialogProps>(
       EditResourceClassDialogComponent,
-      DspDialogConfig.mediumDialog({
-        labels: this.resourceClass.labels,
-        data: this.resourceClass.updateResourceClassData,
-      })
+      {
+        ...DspDialogConfig.mediumDialog({
+          labels: this.resourceClass.labels,
+          data: this.resourceClass.updateResourceClassData,
+        }),
+        viewContainerRef: this._viewContainerRef,
+      }
     );
   }
 
