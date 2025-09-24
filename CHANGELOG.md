@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.45.1](https://github.com/dasch-swiss/dsp-das/compare/v11.45.0...v11.45.1) (2025-09-24)
+
+
+### Bug Fixes
+
+* improve project data handling in CreateResourceDialogComponent ([#2534](https://github.com/dasch-swiss/dsp-das/issues/2534)) ([64956ce](https://github.com/dasch-swiss/dsp-das/commit/64956ce49f4b2652da9c812d585c79c3b39d7207))
+
 ## [11.45.0](https://github.com/dasch-swiss/dsp-das/compare/v11.44.0...v11.45.0) (2025-09-23)
 
 
