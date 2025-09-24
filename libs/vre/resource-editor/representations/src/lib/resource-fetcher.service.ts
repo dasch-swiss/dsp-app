@@ -1,11 +1,11 @@
 import { Inject, Injectable } from '@angular/core';
-import { KnoraApiConnection, ReadUser, SystemPropertyDefinition } from '@dasch-swiss/dsp-js';
+import { KnoraApiConnection, SystemPropertyDefinition } from '@dasch-swiss/dsp-js';
 import { UserApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { AdminProjectsApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { AppError } from '@dasch-swiss/vre/core/error-handler';
 import { DspResource, filterUndefined, GenerateProperty } from '@dasch-swiss/vre/shared/app-common';
-import { BehaviorSubject, filter, map, switchMap, take, Observable, shareReplay, Subject } from 'rxjs';
+import { BehaviorSubject, map, shareReplay, Subject, switchMap } from 'rxjs';
 import { ResourceUtil } from './resource.util';
 
 @Injectable()
@@ -28,12 +28,15 @@ export class ResourceFetcherService {
     switchMap(resource => this._userApiService.get(resource.res.attachedToUser).pipe(map(response => response.user)))
   );
 
-  projectShortcode$ = this.resource$.pipe(
+  project$ = this.resource$.pipe(
     filterUndefined(),
     switchMap(resource => this._adminProjectsApiService.getAdminProjectsIriProjectiri(resource.res.attachedToProject)),
-    map(v => v.project.shortcode as unknown as string),
+    map(v => v.project),
     shareReplay({ bufferSize: 1, refCount: true })
   );
+
+  projectIri$ = this.project$.pipe(map(project => project.id as unknown as string));
+  projectShortcode$ = this.project$.pipe(map(project => project.shortcode as unknown as string));
 
   _scrollToTop = new Subject<void>();
   scrollToTop$ = this._scrollToTop.asObservable();
