@@ -13,6 +13,7 @@ export interface ManageProjectMembershipDialogProps {
     <mat-dialog-actions>
       <button mat-button color="primary" matDialogClose>{{ 'ui.form.action.close' | translate }}</button>
     </mat-dialog-actions>`,
+  standalone: false,
 })
 export class ManageProjectMembershipDialogComponent {
   constructor(

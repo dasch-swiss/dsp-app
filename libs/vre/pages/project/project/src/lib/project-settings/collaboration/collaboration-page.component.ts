@@ -42,6 +42,7 @@ import { CollaborationPageService } from './collaboration-page.service';
   `,
   styleUrls: ['./collaboration-page.component.scss'],
   providers: [CollaborationPageService],
+  standalone: false,
 })
 export class CollaborationPageComponent {
   project$ = this._projectPageService.currentProject$.pipe(

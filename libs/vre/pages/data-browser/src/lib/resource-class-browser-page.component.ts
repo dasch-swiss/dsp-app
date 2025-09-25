@@ -30,6 +30,7 @@ import { ResourceResultService } from './resource-result.service';
     }
   `,
   providers: [ResourceResultService],
+  standalone: false,
 })
 export class ResourceClassBrowserPageComponent implements OnInit {
   userCanViewResources = true;

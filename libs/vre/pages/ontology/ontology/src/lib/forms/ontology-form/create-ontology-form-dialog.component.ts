@@ -38,6 +38,7 @@ import { OntologyForm } from './ontology-form.type';
         {{ 'ui.form.action.submit' | translate }}
       </button>
     </div>`,
+  standalone: false,
 })
 export class CreateOntologyFormDialogComponent implements OnDestroy {
   private _destroy$ = new Subject<void>();

@@ -37,6 +37,7 @@ import { MediaPlayerService } from '../video/media-player.service';
       </div>
     </mat-toolbar-row>
   `,
+  standalone: false,
 })
 export class AudioToolbarComponent implements OnInit {
   @Input({ required: true }) parentResource!: ReadResource;

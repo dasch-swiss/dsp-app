@@ -27,6 +27,7 @@ import { ProjectForm } from './project-form.type';
       </button>
     </div>
   `,
+  standalone: false,
 })
 export class EditProjectFormPageComponent {
   form!: ProjectForm;

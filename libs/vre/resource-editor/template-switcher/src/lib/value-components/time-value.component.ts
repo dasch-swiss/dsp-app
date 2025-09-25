@@ -37,6 +37,7 @@ import { DateTime } from '@dasch-swiss/vre/resource-editor/resource-properties';
       <mat-error>{{ errors | humanReadableError }}</mat-error>
     }
   `,
+  standalone: false,
 })
 export class TimeValueComponent {
   @Input({ required: true }) control!: FormControl<DateTime>;

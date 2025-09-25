@@ -7,5 +7,6 @@ import { Component } from '@angular/core';
     <ng-content />
   </div>`,
   styleUrls: ['./alert-info.component.scss'],
+  standalone: false,
 })
 export class AlertInfoComponent {}

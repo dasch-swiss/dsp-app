@@ -43,6 +43,7 @@ import { finalize } from 'rxjs';
       </button>
     </mat-dialog-actions>
   `,
+  standalone: false,
 })
 export class EraseResourceDialogComponent {
   eraseForm = new FormGroup({

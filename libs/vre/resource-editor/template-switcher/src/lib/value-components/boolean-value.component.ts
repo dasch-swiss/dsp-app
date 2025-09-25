@@ -15,6 +15,7 @@ import { FormControl } from '@angular/forms';
       </mat-error>
     }
   `,
+  standalone: false,
 })
 export class BooleanValueComponent {
   @Input({ required: true }) control!: FormControl<boolean | null>;

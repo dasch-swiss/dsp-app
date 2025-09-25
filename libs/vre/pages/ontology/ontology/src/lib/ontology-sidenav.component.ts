@@ -120,6 +120,7 @@ import { OntologyPageService } from './ontology-page.service';
       }
     `,
   ],
+  standalone: false,
 })
 export class OntologySidenavComponent {
   project$ = this._projectPageService.currentProject$;

@@ -16,6 +16,7 @@ import { CompoundService } from './compound.service';
     </div>
   `,
   styles: ['button[disabled] {color: #b8b8b8!important}'],
+  standalone: false,
 })
 export class CompoundArrowNavigationComponent implements OnInit {
   @Input() forwardNavigation!: boolean;

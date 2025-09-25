@@ -28,6 +28,7 @@ export interface CreateCopyrightHolderDialogProps {
         {{ 'ui.form.action.submit' | translate }}
       </button>
     </div>`,
+  standalone: false,
 })
 export class CreateCopyrightHolderDialogComponent {
   form = this._fb.group({

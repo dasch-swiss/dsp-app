@@ -12,6 +12,7 @@ import { map } from 'rxjs';
       }
     </app-centered-layout>
   `,
+  standalone: false,
 })
 export class SingleResourcePageComponent {
   resourceIri$ = this._route.params.pipe(

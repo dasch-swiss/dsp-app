@@ -31,6 +31,7 @@ import { ResourceFetcherService } from '@dasch-swiss/vre/resource-editor/represe
         Yes, delete
       </button>
     </mat-dialog-actions>`,
+  standalone: false,
 })
 export class DeleteResourceDialogComponent {
   comment: string | undefined;

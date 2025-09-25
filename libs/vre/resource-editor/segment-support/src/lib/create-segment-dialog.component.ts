@@ -41,6 +41,7 @@ export interface CreateSegmentDialogProps {
         Submit
       </button>
     </div>`,
+  standalone: false,
 })
 export class CreateSegmentDialogComponent {
   loading = false;

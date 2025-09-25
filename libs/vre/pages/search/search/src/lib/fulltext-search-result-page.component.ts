@@ -28,6 +28,7 @@ import { combineLatest, map, switchMap, tap } from 'rxjs';
   `,
   providers: [ResourceResultService],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class FulltextSearchResultPageComponent {
   loading = true;

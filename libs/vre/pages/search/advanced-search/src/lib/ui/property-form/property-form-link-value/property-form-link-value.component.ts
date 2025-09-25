@@ -9,8 +9,8 @@ import { ApiData } from '../../../data-access/advanced-search-service/advanced-s
 import { PropertyFormItem } from '../../../data-access/advanced-search-store/advanced-search-store.service';
 
 @Component({
-  selector: 'app-property-form-link-value',
   standalone: true,
+  selector: 'app-property-form-link-value',
   imports: [
     FormsModule,
     ReactiveFormsModule,

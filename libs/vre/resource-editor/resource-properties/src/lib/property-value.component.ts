@@ -13,6 +13,7 @@ import { PropertyValueService } from './property-value.service';
       <app-property-value-update [index]="index" />
     }
   `,
+  standalone: false,
 })
 export class PropertyValueComponent implements OnInit, OnDestroy {
   @Input({ required: true }) index!: number;

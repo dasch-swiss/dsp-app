@@ -11,6 +11,7 @@ import { map } from 'rxjs';
       <app-resource-fetcher [resourceIri]="resourceIri" (afterResourceDeleted)="updateResourceCount()" />
     }
   </app-centered-layout>`,
+  standalone: false,
 })
 export class ResourcePageComponent {
   constructor(

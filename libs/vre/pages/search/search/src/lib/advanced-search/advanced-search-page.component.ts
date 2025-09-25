@@ -13,6 +13,7 @@ import { PropertyFormItem, QueryObject } from '@dasch-swiss/vre/pages/search/adv
       (emitBackButtonClicked)="onBackClicked()" />
   </app-centered-layout>`,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class AdvancedSearchPageComponent implements OnInit {
   uuid: string;

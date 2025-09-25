@@ -21,6 +21,7 @@ import { OntologyForm, UpdateOntologyData } from './ontology-form.type';
       </mat-form-field>
     </form>
   `,
+  standalone: false,
 })
 export class OntologyFormComponent implements OnInit {
   @Input({ required: true }) mode!: 'create' | 'edit';

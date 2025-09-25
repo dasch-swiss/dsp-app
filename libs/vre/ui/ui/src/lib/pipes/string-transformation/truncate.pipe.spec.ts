@@ -33,6 +33,7 @@ describe('TruncatePipe', () => {
   it('should support the limit argument in the template', () => {
     @Component({
       template: '{{ text | appTruncate:4 }}',
+      standalone: false,
     })
     class AppComponent {
       text = 'This is my string';
@@ -50,6 +51,7 @@ describe('TruncatePipe', () => {
   it('should support the trail argument in the template', () => {
     @Component({
       template: "{{ text | appTruncate:7:'!!' }}",
+      standalone: false,
     })
     class AppComponent {
       text = 'This is my string';

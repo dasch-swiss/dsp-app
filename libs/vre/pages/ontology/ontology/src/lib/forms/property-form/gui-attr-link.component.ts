@@ -34,6 +34,7 @@ export interface ClassToSelect {
     </mat-form-field>
   `,
   styles: ['mat-form-field {width: 100%}'],
+  standalone: false,
 })
 export class GuiAttrLinkComponent {
   @Input({ required: true }) control!: PropertyForm['controls']['guiAttr'];

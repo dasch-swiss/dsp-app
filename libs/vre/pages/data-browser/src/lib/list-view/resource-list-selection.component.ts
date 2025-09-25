@@ -17,6 +17,7 @@ import { ResourceLinkDialogComponent, ResourceLinkDialogProps } from './resource
       <button mat-icon-button (click)="reset()"><mat-icon>close</mat-icon></button>
     </div>
   `,
+  standalone: false,
 })
 export class ResourceListSelectionComponent {
   @Input({ required: true }) resources!: ReadResource[];

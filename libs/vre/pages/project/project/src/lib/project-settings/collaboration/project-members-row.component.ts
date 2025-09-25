@@ -25,6 +25,7 @@ import { ProjectPageService } from '../../project-page.service';
       }
     </div>
   `,
+  standalone: false,
 })
 export class ProjectMembersRowComponent implements OnInit {
   @Input({ required: true }) user!: ReadUser;

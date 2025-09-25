@@ -202,6 +202,7 @@ import { OntologyEditService } from '../../services/ontology-edit.service';
     `,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class PropertyItemComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input({ required: true }) classProp!: ClassPropertyInfo;

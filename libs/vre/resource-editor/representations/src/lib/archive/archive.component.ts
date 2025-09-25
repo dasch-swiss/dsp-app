@@ -13,6 +13,7 @@ import { ResourceFetcherService } from '../resource-fetcher.service';
   selector: 'app-archive',
   templateUrl: './archive.component.html',
   styleUrls: ['./archive.component.scss'],
+  standalone: false,
 })
 export class ArchiveComponent implements OnChanges {
   @Input({ required: true }) src!: ReadArchiveFileValue;

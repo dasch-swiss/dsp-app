@@ -14,6 +14,7 @@ import { LicensesLogoMapping } from './licenses-logo-mapping';
       </a>
     }
   `,
+  standalone: false,
 })
 export class ResourceLegalLicenseComponent implements OnChanges {
   @Input({ required: true }) license!: ProjectLicenseDto;

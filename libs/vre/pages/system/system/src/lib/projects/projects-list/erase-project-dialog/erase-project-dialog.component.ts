@@ -21,6 +21,7 @@ export interface IEraseProjectDialogProps {
     `,
   ],
   templateUrl: './erase-project-dialog.component.html',
+  standalone: false,
 })
 export class EraseProjectDialogComponent {
   eraseForm = new FormGroup({

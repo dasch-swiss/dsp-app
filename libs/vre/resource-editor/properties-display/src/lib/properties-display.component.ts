@@ -75,6 +75,7 @@ import { DspResource, PropertyInfoValues } from '@dasch-swiss/vre/shared/app-com
     `,
   ],
   providers: [PropertiesDisplayService],
+  standalone: false,
 })
 export class PropertiesDisplayComponent implements OnChanges {
   @Input({ required: true }) resource!: DspResource;

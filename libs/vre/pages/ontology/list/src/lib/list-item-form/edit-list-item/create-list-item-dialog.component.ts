@@ -37,6 +37,7 @@ export interface CreateListItemDialogProps {
       </button>
     </div>
   `,
+  standalone: false,
 })
 export class CreateListItemDialogComponent {
   form: ListItemForm;

@@ -14,6 +14,7 @@ import { propertiesTypeMapping } from './resource-payloads-mapping';
     [readValue]="undefined"
     (afterEdit)="addItem($event)"
     (afterUndo)="stopAdding.emit()" />`,
+  standalone: false,
 })
 export class PropertyValueAddComponent {
   @Output() stopAdding = new EventEmitter<void>();

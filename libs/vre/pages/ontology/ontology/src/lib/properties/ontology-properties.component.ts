@@ -32,6 +32,7 @@ import { OntologyEditService } from '../services/ontology-edit.service';
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class OntologyPropertiesComponent {
   hasProjectAdminRights$ = this._projectPageService.hasProjectAdminRights$;

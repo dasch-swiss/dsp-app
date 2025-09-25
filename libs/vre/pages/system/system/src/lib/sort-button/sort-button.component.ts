@@ -13,6 +13,7 @@ export interface SortProp {
   selector: 'app-sort-button',
   templateUrl: './sort-button.component.html',
   styleUrls: ['./sort-button.component.scss'],
+  standalone: false,
 })
 export class SortButtonComponent implements OnInit {
   @Input({ required: true }) sortProps!: SortProp[];

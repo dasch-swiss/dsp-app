@@ -95,6 +95,7 @@ import { CanDeleteResource } from './can-delete-resource.interface';
       }
     `,
   ],
+  standalone: false,
 })
 export class ResourceEditMoreMenuComponent {
   @Input({ required: true }) resource!: ReadResource;

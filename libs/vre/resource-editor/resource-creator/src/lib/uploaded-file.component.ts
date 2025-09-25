@@ -15,6 +15,7 @@ import { Observable } from 'rxjs';
       </mat-card-content>
     </mat-card>
   }`,
+  standalone: false,
 })
 export class UploadedFileComponent implements OnInit {
   @Input({ required: true }) internalFilename!: string;

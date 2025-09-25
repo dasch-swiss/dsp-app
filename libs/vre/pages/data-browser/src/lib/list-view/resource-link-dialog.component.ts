@@ -57,6 +57,7 @@ export interface ResourceLinkDialogProps {
       </button>
     </mat-dialog-actions>
   `,
+  standalone: false,
 })
 export class ResourceLinkDialogComponent implements OnDestroy {
   private _ngUnsubscribe = new Subject<void>();

@@ -31,6 +31,7 @@ import {
       <app-iiif-control [control]="control" />
     }
   </app-create-resource-form-row>`,
+  standalone: false,
 })
 export class CreateResourceFormImageComponent {
   @Input({ required: true }) control!: FormControl<string | null>;

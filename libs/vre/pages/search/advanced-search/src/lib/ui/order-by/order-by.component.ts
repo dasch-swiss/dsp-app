@@ -10,7 +10,6 @@ import { OrderByItem } from '../../data-access/advanced-search-store/advanced-se
 
 @Component({
   selector: 'app-order-by',
-  standalone: true,
   imports: [
     CdkDrag,
     CdkDragHandle,
@@ -24,6 +23,7 @@ import { OrderByItem } from '../../data-access/advanced-search-store/advanced-se
   templateUrl: './order-by.component.html',
   styleUrls: ['./order-by.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
 })
 export class OrderByComponent {
   @Input() orderByList: OrderByItem[] | null = [];

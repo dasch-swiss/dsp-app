@@ -33,6 +33,7 @@ import { TranslateService } from '@ngx-translate/core';
       </mat-tab-nav-panel>
     </app-centered-layout>
   `,
+  standalone: false,
 })
 export class SettingsPageComponent {
   private _translateService = inject(TranslateService);

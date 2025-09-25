@@ -39,6 +39,7 @@ import { switchMap, take } from 'rxjs';
     }
   `,
   styles: ['.label { display: inline-block; width: 120px; font-weight: bold}'],
+  standalone: false,
 })
 export class ResourceLegalComponent implements OnInit {
   @Input({ required: true }) fileValue!: ReadFileValue;

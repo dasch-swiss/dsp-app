@@ -27,6 +27,7 @@ import { finalize, switchMap } from 'rxjs';
         Submit
       </button>
     </div>`,
+  standalone: false,
 })
 export class EditResourceLabelDialogComponent {
   control = new FormControl(this.data.label, { validators: [Validators.required], nonNullable: true });

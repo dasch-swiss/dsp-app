@@ -29,6 +29,7 @@ import {
         Submit
       </button>
     </div>`,
+  standalone: false,
 })
 export class EditPropertyFormDialogComponent implements OnInit {
   loading = false;

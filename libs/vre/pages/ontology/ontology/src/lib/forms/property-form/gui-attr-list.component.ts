@@ -25,6 +25,7 @@ import { PropertyForm } from './property-form.type';
     </mat-form-field>
   `,
   styles: ['.large-field {width: 100%}'],
+  standalone: false,
 })
 export class GuiAttrListComponent {
   @Input({ required: true }) control!: PropertyForm['controls']['guiAttr'];

@@ -42,6 +42,7 @@ import { ProjectForm } from './project-form.type';
       </div>
     </app-centered-layout>
   `,
+  standalone: false,
 })
 export class CreateProjectFormPageComponent {
   form!: ProjectForm;

@@ -47,6 +47,7 @@ type UserSortKey = 'familyName' | 'givenName' | 'email' | 'username';
       </div>
     }
   `,
+  standalone: false,
 })
 export class UsersListComponent {
   _list!: ReadUser[];

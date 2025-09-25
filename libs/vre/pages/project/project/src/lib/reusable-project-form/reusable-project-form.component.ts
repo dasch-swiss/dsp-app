@@ -42,6 +42,7 @@ import { shortcodeExistsValidator } from './shortcode-exists.validator';
       </form>
     }
   `,
+  standalone: false,
 })
 export class ReusableProjectFormComponent implements OnInit {
   @Input({ required: true }) formData!: {

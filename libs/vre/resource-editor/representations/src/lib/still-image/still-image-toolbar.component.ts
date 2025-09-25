@@ -55,6 +55,7 @@ import { OpenSeaDragonService } from './open-sea-dragon.service';
       }
     `,
   ],
+  standalone: false,
 })
 export class StillImageToolbarComponent {
   @Input({ required: true }) resource!: ReadResource;

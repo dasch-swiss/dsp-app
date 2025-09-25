@@ -21,6 +21,7 @@ import { Pipe, PipeTransform } from '@angular/core';
  */
 @Pipe({
   name: 'appTruncate',
+  standalone: false,
 })
 export class TruncatePipe implements PipeTransform {
   defaultLimit = 20;

@@ -35,6 +35,7 @@ export interface EditListItemDialogProps {
       </button>
     </div>
   `,
+  standalone: false,
 })
 export class EditListItemDialogComponent {
   form: ListItemForm;

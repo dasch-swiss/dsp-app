@@ -45,6 +45,7 @@ import { UsersTabService } from '../users-tab.service';
       }
     </mat-menu>
   `,
+  standalone: false,
 })
 export class UsersListRowMenuComponent {
   @Input({ required: true }) user!: ReadUser;

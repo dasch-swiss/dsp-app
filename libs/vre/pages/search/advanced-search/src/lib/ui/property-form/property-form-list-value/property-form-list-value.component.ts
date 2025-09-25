@@ -12,8 +12,8 @@ import { ReplaySubject, Subject, takeUntil } from 'rxjs';
 import { PropertyFormItem } from '../../../data-access/advanced-search-store/advanced-search-store.service';
 
 @Component({
-  selector: 'app-property-form-list-value',
   standalone: true,
+  selector: 'app-property-form-list-value',
   imports: [
     CommonModule,
     MatFormFieldModule,

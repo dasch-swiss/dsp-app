@@ -18,6 +18,7 @@ import { OntologyEditService } from '../services/ontology-edit.service';
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class OntologyEditorPageComponent {
   trackByClassDefinitionFn = (index: number, item: ResourceClassInfo) => `${index}-${item.id}`;

@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable @typescript-eslint/member-ordering */
 /* eslint-disable @typescript-eslint/no-unused-expressions */
-import { FocusMonitor } from '@angular/cdk/a11y';
 import { coerceBooleanProperty } from '@angular/cdk/coercion';
-import { Component, DoCheck, ElementRef, HostBinding, Input, OnDestroy, OnInit, Optional, Self } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, DoCheck, HostBinding, Input, OnDestroy, OnInit, Optional, Self } from '@angular/core';
 import {
+  ReactiveFormsModule,
   AbstractControl,
   ControlValueAccessor,
   FormGroupDirective,
@@ -16,17 +17,15 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
-import {
-  _AbstractConstructor,
-  _Constructor,
-  CanUpdateErrorState,
-  ErrorStateMatcher,
-  mixinErrorState,
-} from '@angular/material/core';
-import { MatFormFieldControl } from '@angular/material/form-field';
+import { MatButtonModule } from '@angular/material/button';
+import { ErrorStateMatcher } from '@angular/material/core';
+import { MatFormFieldControl, MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { KnoraDate, KnoraPeriod } from '@dasch-swiss/dsp-js';
 import { JDNConvertibleCalendar } from '@dasch-swiss/jdnconvertiblecalendar';
 import { Subject, Subscription } from 'rxjs';
+import { AppDatePickerComponent } from '../app-date-picker/app-date-picker.component';
 import { ValueService } from './value.service';
 
 /** if a period is defined, start date must be before end date */
@@ -50,22 +49,17 @@ export function periodStartEndValidator(
   };
 }
 
-type CanUpdateErrorStateCtor = _Constructor<CanUpdateErrorState> & _AbstractConstructor<CanUpdateErrorState>;
-
-class MatInputBase {
-  constructor(
-    public _defaultErrorStateMatcher: ErrorStateMatcher,
-    public _parentForm: NgForm,
-    public _parentFormGroup: FormGroupDirective,
-    public ngControl: NgControl,
-    public stateChanges: Subject<void>
-  ) {}
-}
-
-const _MatInputMixinBase: CanUpdateErrorStateCtor & typeof MatInputBase = mixinErrorState(MatInputBase);
-
 @Component({
   selector: 'app-date-value-handler',
+  imports: [
+    AppDatePickerComponent,
+    CommonModule,
+    MatButtonModule,
+    MatFormFieldModule,
+    MatIconModule,
+    MatTooltipModule,
+    ReactiveFormsModule,
+  ],
   templateUrl: './date-value-handler.component.html',
   styleUrls: ['./date-value-handler.component.scss'],
   providers: [
@@ -75,20 +69,18 @@ const _MatInputMixinBase: CanUpdateErrorStateCtor & typeof MatInputBase = mixinE
     },
     { provide: Subject },
   ],
+  standalone: true,
 })
 export class DateValueHandlerComponent
-  extends _MatInputMixinBase
-  implements
-    ControlValueAccessor,
-    MatFormFieldControl<KnoraDate | KnoraPeriod>,
-    DoCheck,
-    CanUpdateErrorState,
-    OnInit,
-    OnDestroy
+  implements ControlValueAccessor, MatFormFieldControl<KnoraDate | KnoraPeriod>, DoCheck, OnInit, OnDestroy
 {
   static nextId = 0;
 
   @Input() valueRequiredValidator = true;
+
+  // Required for CanUpdateErrorState interface
+  errorState = false;
+  stateChanges = new Subject<void>();
 
   form: UntypedFormGroup;
 
@@ -193,17 +185,12 @@ export class DateValueHandlerComponent
 
   constructor(
     fb: UntypedFormBuilder,
-    @Optional() @Self() public override ngControl: NgControl,
-    private _stateChanges: Subject<void>,
-    private _fm: FocusMonitor,
-    private _elRef: ElementRef<HTMLElement>,
-    @Optional() _parentForm: NgForm,
-    @Optional() _parentFormGroup: FormGroupDirective,
-    _defaultErrorStateMatcher: ErrorStateMatcher,
+    @Optional() @Self() public ngControl: NgControl,
+    @Optional() public _parentForm: NgForm,
+    @Optional() public _parentFormGroup: FormGroupDirective,
+    public _defaultErrorStateMatcher: ErrorStateMatcher,
     private _valueService: ValueService
   ) {
-    super(_defaultErrorStateMatcher, _parentForm, _parentFormGroup, ngControl, _stateChanges);
-
     if (this.ngControl != null) {
       // setting the value accessor directly (instead of using
       // the providers) to avoid running into a circular import.
@@ -285,6 +272,19 @@ export class DateValueHandlerComponent
   ngDoCheck() {
     if (this.ngControl) {
       this.updateErrorState();
+    }
+  }
+
+  updateErrorState() {
+    const oldState = this.errorState;
+    const parent = this._parentFormGroup || this._parentForm;
+    const matcher = this._defaultErrorStateMatcher;
+    const control = this.ngControl ? (this.ngControl.control as UntypedFormControl) : null;
+    const newState = matcher.isErrorState(control, parent);
+
+    if (newState !== oldState) {
+      this.errorState = newState;
+      this.stateChanges.next();
     }
   }
 

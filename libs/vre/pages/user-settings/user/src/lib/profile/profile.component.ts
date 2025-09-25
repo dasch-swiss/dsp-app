@@ -40,6 +40,7 @@ import { Subject, takeUntil, takeWhile } from 'rxjs';
       </div>
     }
   `,
+  standalone: false,
 })
 export class ProfileComponent implements OnInit, OnDestroy {
   private ngUnsubscribe: Subject<void> = new Subject<void>();

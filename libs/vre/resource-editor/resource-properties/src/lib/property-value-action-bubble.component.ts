@@ -52,6 +52,7 @@ import { PropertyValueService } from './property-value.service';
     ]),
   ],
   styleUrls: ['./property-value-action-bubble.component.scss'],
+  standalone: false,
 })
 export class PropertyValueActionBubbleComponent implements OnInit {
   @Input({ required: true }) showDelete!: boolean;

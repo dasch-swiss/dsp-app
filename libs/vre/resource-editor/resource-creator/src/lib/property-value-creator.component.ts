@@ -44,6 +44,7 @@ import { map, startWith } from 'rxjs/operators';
       }
     `,
   ],
+  standalone: false,
 })
 export class PropertyValueCreatorComponent implements OnInit {
   @Input({ required: true }) myProperty!: PropertyInfoValues;

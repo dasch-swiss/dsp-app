@@ -11,6 +11,7 @@ import { MenuItem } from '../menu-item';
   selector: 'app-user-menu',
   templateUrl: './user-menu.component.html',
   styleUrls: ['./user-menu.component.scss'],
+  standalone: false,
 })
 export class UserMenuComponent implements OnInit, OnDestroy {
   @ViewChild(MatMenuTrigger) menuTrigger: MatMenuTrigger;

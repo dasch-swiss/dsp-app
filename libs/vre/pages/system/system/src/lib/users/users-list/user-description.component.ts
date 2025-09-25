@@ -13,6 +13,7 @@ import { ReadUser } from '@dasch-swiss/dsp-js';
       <span class="mat-subtitle-2">{{ user.username }} | {{ user.email }}</span>
     </span>
   </span>`,
+  standalone: false,
 })
 export class UserDescriptionComponent {
   @Input({ required: true }) user!: ReadUser;

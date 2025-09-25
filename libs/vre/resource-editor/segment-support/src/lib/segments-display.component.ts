@@ -14,6 +14,7 @@ import { Segment } from './segment';
       }
     </div>
   </div>`,
+  standalone: false,
 })
 export class SegmentsDisplayComponent implements OnChanges {
   @Input({ required: true }) segments!: Segment[];

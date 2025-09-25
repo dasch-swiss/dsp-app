@@ -30,6 +30,7 @@ import { ListItemService } from '../list-item/list-item.service';
       }
     `,
   ],
+  standalone: false,
 })
 export class ListItemFormComponent {
   @Input({ required: true }) parentNode!: ListNodeInfo;

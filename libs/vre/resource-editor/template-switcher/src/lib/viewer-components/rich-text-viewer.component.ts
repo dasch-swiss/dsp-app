@@ -35,6 +35,7 @@ import { ReadTextValueAsXml } from '@dasch-swiss/dsp-js';
       }
     `,
   ],
+  standalone: false,
 })
 export class RichTextViewerComponent {
   @Input({ required: true }) value!: ReadTextValueAsXml;

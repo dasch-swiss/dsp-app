@@ -39,6 +39,7 @@ import { finalize, map, Observable, startWith, Subject, takeUntil } from 'rxjs';
     </div>
   `,
   styleUrls: ['./resource-class-sidenav-item.component.scss'],
+  standalone: false,
 })
 export class ResourceClassSidenavItemComponent implements OnInit, OnDestroy {
   @Input({ required: true }) resClass!: ResourceClassDefinitionWithAllLanguages;

@@ -1,4 +1,3 @@
-import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -17,12 +16,12 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-pager',
-  imports: [MatIconModule, MatButtonModule, TranslateModule, MatInputModule, MatTooltipModule, AsyncPipe],
+  imports: [MatIconModule, MatButtonModule, TranslateModule, MatInputModule, MatTooltipModule],
   templateUrl: './pager.component.html',
   styleUrls: ['./pager.component.scss'],
+  standalone: true,
 })
 export class PagerComponent implements OnChanges {
   @Input() numberOfAllResults = 0;

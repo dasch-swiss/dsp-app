@@ -11,6 +11,7 @@ import { delay, Subscription } from 'rxjs';
     </div>
   }`,
   styles: ['.active {border: 1px solid}'],
+  standalone: false,
 })
 export class SegmentTabComponent implements OnInit, OnDestroy {
   @Input({ required: true }) resource!: ReadResource;

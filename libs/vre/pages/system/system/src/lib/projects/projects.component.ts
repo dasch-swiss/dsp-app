@@ -33,6 +33,7 @@ import { BehaviorSubject, combineLatest, map, Subject, switchMap, takeUntil, tap
       }
     </div>
   `,
+  standalone: false,
 })
 export class ProjectsComponent implements OnInit, OnDestroy {
   @Input() isUsersProjects = false;

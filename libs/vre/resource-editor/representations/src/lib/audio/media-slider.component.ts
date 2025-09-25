@@ -16,6 +16,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
       }
     `,
   ],
+  standalone: false,
 })
 export class MediaSliderComponent {
   @Input({ required: true }) max!: number;

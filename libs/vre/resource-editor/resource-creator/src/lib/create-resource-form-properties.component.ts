@@ -32,6 +32,7 @@ import { PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
       }
     `,
   ],
+  standalone: false,
 })
 export class CreateResourceFormPropertiesComponent {
   @Input({ required: true }) resourceClassIri!: string;

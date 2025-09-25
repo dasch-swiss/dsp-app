@@ -22,6 +22,7 @@ import { MediaPlayerService } from './media-player.service';
   selector: 'app-video',
   templateUrl: './video.component.html',
   providers: [MediaControlService, MediaPlayerService],
+  standalone: false,
 })
 export class VideoComponent implements OnChanges, OnDestroy {
   @Input({ required: true }) src!: ReadMovingImageFileValue;

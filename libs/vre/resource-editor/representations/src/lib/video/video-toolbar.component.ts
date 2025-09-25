@@ -62,6 +62,7 @@ import { MediaPlayerService } from './media-player.service';
       </button>
     </div>
   </mat-toolbar-row>`,
+  standalone: false,
 })
 export class VideoToolbarComponent {
   @Input({ required: true }) src!: ReadMovingImageFileValue;

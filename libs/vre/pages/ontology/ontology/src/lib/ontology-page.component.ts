@@ -38,6 +38,7 @@ import { OntologyEditService } from './services/ontology-edit.service';
   styleUrls: ['./ontology-page.component.scss'],
   providers: [OntologyPageService, OntologyEditService],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class OntologyPageComponent implements OnInit {
   project$ = this._projectPageService.currentProject$;

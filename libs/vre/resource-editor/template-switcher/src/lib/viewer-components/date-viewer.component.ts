@@ -20,6 +20,7 @@ import { KnoraDate, KnoraPeriod, ReadDateValue } from '@dasch-swiss/dsp-js';
       </span>
     </ng-template>
   `,
+  standalone: false,
 })
 export class DateViewerComponent implements OnInit {
   @Input({ required: true }) value!: ReadDateValue;

@@ -16,6 +16,7 @@ import { OntologyEditService } from '../../services/ontology-edit.service';
   templateUrl: './property-info.component.html',
   styleUrls: ['./property-info.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class PropertyInfoComponent {
   @Input({ required: true }) property!: PropertyInfo;

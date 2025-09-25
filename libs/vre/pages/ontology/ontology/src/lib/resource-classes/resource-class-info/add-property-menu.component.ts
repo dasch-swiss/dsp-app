@@ -82,6 +82,7 @@ import { OntologyEditService } from '../../services/ontology-edit.service';
     `,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class AddPropertyMenuComponent implements OnChanges {
   @Input({ required: true }) resourceClass!: ResourceClassInfo;

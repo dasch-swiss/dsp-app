@@ -14,6 +14,7 @@ import { Component } from '@angular/core';
       </app-alert-info>
     </div>
   }`,
+  standalone: false,
 })
 export class ResourceRestrictionComponent {
   showRestrictedMessage = true;

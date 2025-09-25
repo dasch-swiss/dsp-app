@@ -42,7 +42,8 @@ import { FormControl } from '@angular/forms';
         }
       }
     `,
-  ], // for color picker popup z-index
+  ],
+  standalone: false,
 })
 export class ColorValueComponent {
   @Input({ required: true }) control!: FormControl<string | null>;

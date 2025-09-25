@@ -28,6 +28,7 @@ import { ProjectPageService } from '../../project-page.service';
     }
   }`,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class LegalSettingsLicensesComponent {
   private readonly _reloadSubject = new BehaviorSubject<void>(undefined);

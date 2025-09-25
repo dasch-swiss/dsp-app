@@ -63,6 +63,7 @@ import {
     ]),
   ],
   styleUrls: ['./action-bubble.component.scss'],
+  standalone: false,
 })
 export class ActionBubbleComponent {
   @Input({ required: true }) position!: number;

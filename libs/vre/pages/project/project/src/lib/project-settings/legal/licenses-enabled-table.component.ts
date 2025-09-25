@@ -57,6 +57,7 @@ import { AdminProjectsLegalInfoApiService, ProjectLicenseDto } from '@dasch-swis
     `,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class LicensesEnabledTableComponent {
   @Input({ required: true }) licenses!: ProjectLicenseDto[];

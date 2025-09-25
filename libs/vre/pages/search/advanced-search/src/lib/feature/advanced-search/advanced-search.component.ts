@@ -30,7 +30,6 @@ export interface QueryObject {
 
 @Component({
   selector: 'app-advanced-search',
-  standalone: true,
   imports: [
     CommonModule,
     OrderByComponent,
@@ -45,6 +44,7 @@ export interface QueryObject {
   templateUrl: './advanced-search.component.html',
   styleUrls: ['./advanced-search.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
 })
 export class AdvancedSearchComponent implements OnInit {
   // either the uuid of the project or the shortcode

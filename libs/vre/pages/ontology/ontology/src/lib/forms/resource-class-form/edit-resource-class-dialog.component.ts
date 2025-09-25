@@ -34,6 +34,7 @@ export interface EditResourceClassDialogProps {
     </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class EditResourceClassDialogComponent implements OnInit {
   loading = false;

@@ -31,6 +31,7 @@ import { DEFAULT_MULTILANGUAGE_FORM, MultiLanguageFormArray } from '@dasch-swiss
     </div>
   `,
   styles: [':host ::ng-deep app-multi-language-input .mat-mdc-form-field-bottom-align { display: none;}'],
+  standalone: false,
 })
 export class ListItemElementComponent implements OnChanges {
   @Input({ required: true }) node!: ListNode;

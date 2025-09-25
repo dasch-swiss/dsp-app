@@ -11,6 +11,7 @@ import { PropertyValueService } from './property-value.service';
       [innerHTML]="comment | withBreaks"></div>
   }`,
   styleUrls: [`./property-value-display-comment.component.scss`],
+  standalone: false,
 })
 export class PropertyValueDisplayCommentComponent {
   @Input({ required: true }) index!: number;

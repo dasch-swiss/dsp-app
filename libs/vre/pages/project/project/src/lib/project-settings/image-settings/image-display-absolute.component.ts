@@ -78,6 +78,7 @@ import { Component, Input } from '@angular/core';
       }
     `,
   ],
+  standalone: false,
 })
 export class ImageDisplayAbsoluteComponent {
   @Input({ required: true }) widthPx!: number;

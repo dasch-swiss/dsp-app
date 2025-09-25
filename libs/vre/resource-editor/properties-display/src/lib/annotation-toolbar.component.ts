@@ -93,6 +93,7 @@ import { take } from 'rxjs';
       }
     `,
   ],
+  standalone: false,
 })
 export class AnnotationToolbarComponent {
   @Input({ required: true }) resource!: ReadResource;

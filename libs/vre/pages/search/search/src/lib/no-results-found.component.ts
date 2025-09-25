@@ -7,6 +7,7 @@ import { Component, Input } from '@angular/core';
     <h2 style="font-weight: 400">No results found</h2>
     <p style="margin: 16px 0 24px; color: #757575; max-width: 400px">{{ message }}</p>
   `,
+  standalone: false,
 })
 export class NoResultsFoundComponent {
   @Input({ required: true }) message!: string;

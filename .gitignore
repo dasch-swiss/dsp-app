@@ -4,6 +4,7 @@
 /dist
 /tmp
 /out-tsc
+migrations.json
 
 # dependencies
 /node_modules

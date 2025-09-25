@@ -31,6 +31,7 @@ import { SafeHtml } from '@angular/platform-browser';
       }
     `,
   ],
+  standalone: false,
 })
 export class FootnoteTooltipComponent {
   @Input({ required: true }) content!: SafeHtml;

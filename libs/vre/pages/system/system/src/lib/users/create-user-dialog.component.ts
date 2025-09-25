@@ -20,6 +20,7 @@ import { UserForm } from '@dasch-swiss/vre/pages/user-settings/user';
       </button>
     </div>
   `,
+  standalone: false,
 })
 export class CreateUserDialogComponent implements OnInit {
   form = this._fb.group(

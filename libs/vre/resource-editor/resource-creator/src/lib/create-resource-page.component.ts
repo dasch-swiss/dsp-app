@@ -20,6 +20,7 @@ import { Subject, takeUntil } from 'rxjs';
       }
     </app-centered-layout>
   `,
+  standalone: false,
 })
 export class CreateResourcePageComponent implements OnDestroy {
   private _destroy = new Subject<void>();

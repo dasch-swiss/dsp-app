@@ -32,6 +32,7 @@ import { Component, Input } from '@angular/core';
       }
     `,
   ],
+  standalone: false,
 })
 export class CreateResourceFormRowComponent {
   @Input({ required: true }) label!: string;

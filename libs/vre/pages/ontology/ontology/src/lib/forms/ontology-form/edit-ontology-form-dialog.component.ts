@@ -24,6 +24,7 @@ import { OntologyForm, UpdateOntologyData } from './ontology-form.type';
       </button>
     </div>`,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class EditOntologyFormDialogComponent {
   loading = false;

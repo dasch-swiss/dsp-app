@@ -23,6 +23,7 @@ import { ResourceFetcherService } from '../resource-fetcher.service';
         <button mat-menu-item (click)="openReplaceFileDialog()">Replace file</button>
       }
     </mat-menu>`,
+  standalone: false,
 })
 export class AudioMoreButtonComponent {
   @Input({ required: true }) parentResource!: ReadResource;

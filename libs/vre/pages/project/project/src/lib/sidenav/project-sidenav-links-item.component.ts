@@ -11,6 +11,7 @@ import { Component, Input } from '@angular/core';
     </a>
   `,
   styleUrls: ['./project-sidenav-links-item.component.scss'],
+  standalone: false,
 })
 export class ProjectSidenavLinksItemComponent {
   @Input({ required: true }) link!: string[];

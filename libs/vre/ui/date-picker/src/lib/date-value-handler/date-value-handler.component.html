@@ -8,9 +8,7 @@
       mat-button
       class="toggle-period-control"
       [disabled]="!startDate.value"
-      [matTooltip]="
-                isPeriodControl.value ? 'Delete end date' : 'Add end date'
-            "
+      [matTooltip]="isPeriodControl.value ? 'Delete end date' : 'Add end date'"
       matTooltipPosition="above"
       (click)="togglePeriodControl($event)">
       @if (!isPeriodControl.value) {

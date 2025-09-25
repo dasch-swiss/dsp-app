@@ -14,6 +14,7 @@ import { IncomingOrStandoffLink } from './incoming-link.interface';
     [borderBottom]="true">
     <app-incoming-standoff-link-value [links]="standoffLinks" />
   </app-property-row>`,
+  standalone: false,
 })
 export class StandoffLinksPropertyComponent implements OnChanges {
   @Input({ required: true }) resource!: DspResource;

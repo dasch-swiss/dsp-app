@@ -45,6 +45,7 @@ import { Subject, takeUntil } from 'rxjs';
   `,
   styles: ['.active {border: 1px solid}'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class AnnotationTabComponent implements AfterViewInit, OnDestroy {
   @Input({ required: true }) resource!: ReadResource;

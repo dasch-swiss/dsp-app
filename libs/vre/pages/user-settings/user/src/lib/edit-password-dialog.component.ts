@@ -55,6 +55,7 @@ export interface EditPasswordDialogProps {
       }
     `,
   ],
+  standalone: false,
 })
 export class EditPasswordDialogComponent {
   @ViewChild('stepper') stepper!: MatStepper;

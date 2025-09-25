@@ -16,6 +16,7 @@ import { unescapeHtml } from './unescape-html';
     @if (control.touched && control.errors; as errors) {
       <mat-error>{{ errors | humanReadableError }}</mat-error>
     }`,
+  standalone: false,
 })
 export class CkEditorComponent implements OnInit {
   @Input({ required: true }) control!: FormControl<string | null>;

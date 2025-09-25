@@ -27,7 +27,7 @@
 <mat-icon matSuffix class="link">event</mat-icon>
 </mat-form-field> -->
 <!-- <button mat-button [matMenuTriggerFor]="menu">Menu</button> -->
-<mat-menu #datePicker="matMenu" [formGroup]="form" class="date-picker" (closed)="closed.emit()">
+<mat-menu #datePicker="matMenu" [formGroup]="form" class="date-picker" (closed)="datePickerClosed.emit()">
   <div class="date-picker-content" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()">
     <!-- select calendar and button to close date picker -->
     <div class="calendar-selector panel">

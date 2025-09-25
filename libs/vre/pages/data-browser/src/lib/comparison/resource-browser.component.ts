@@ -17,6 +17,7 @@ import { MultipleViewerService } from './multiple-viewer.service';
   </div>`,
   styleUrls: ['./resource-browser.component.scss'],
   providers: [MultipleViewerService],
+  standalone: false,
 })
 export class ResourceBrowserComponent implements OnInit, OnChanges {
   @Input({ required: true }) data!: { resources: ReadResource[]; selectFirstResource: boolean };

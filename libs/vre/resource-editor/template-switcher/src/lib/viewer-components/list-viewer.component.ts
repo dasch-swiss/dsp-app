@@ -25,6 +25,7 @@ import { combineLatest, map, Observable, Subject, switchMap } from 'rxjs';
       }
     </div>
   `,
+  standalone: false,
 })
 export class ListViewerComponent implements OnInit {
   @Input() value!: ReadListValue;

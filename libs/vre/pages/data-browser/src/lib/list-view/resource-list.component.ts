@@ -8,6 +8,7 @@ import { ReadResource } from '@dasch-swiss/dsp-js';
       <app-resource-list-item [resource]="resource" />
     }
   `,
+  standalone: false,
 })
 export class ResourceListComponent {
   @Input({ required: true }) resources: ReadResource[] = [];

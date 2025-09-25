@@ -22,6 +22,7 @@ import { FileRepresentationType } from '@dasch-swiss/vre/resource-editor/represe
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class CreateResourceFormRepresentationComponent {
   @Input({ required: true }) control!: FormControl<string | null>;

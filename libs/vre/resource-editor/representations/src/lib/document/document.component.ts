@@ -22,6 +22,7 @@ import { ResourceFetcherService } from '../resource-fetcher.service';
   selector: 'app-document',
   templateUrl: './document.component.html',
   styleUrls: ['./document.component.scss'],
+  standalone: false,
 })
 export class DocumentComponent implements OnChanges {
   @Input({ required: true }) src!: ReadDocumentFileValue;

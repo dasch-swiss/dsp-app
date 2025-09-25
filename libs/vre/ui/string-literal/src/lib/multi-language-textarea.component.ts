@@ -11,7 +11,6 @@ import { MultiLanguageFormService } from './multi-language-form.service';
 
 @Component({
   selector: 'app-multi-language-textarea',
-  standalone: true,
   providers: [MultiLanguageFormService],
   imports: [
     MatButtonModule,
@@ -23,6 +22,7 @@ import { MultiLanguageFormService } from './multi-language-form.service';
     ReactiveFormsModule,
     HumanReadableErrorPipe,
   ],
+  standalone: true,
   template: `
     <div style="display: flex; flex-direction: row-reverse">
       <mat-form-field style="flex: 1" subscriptSizing="dynamic" class="formfield">

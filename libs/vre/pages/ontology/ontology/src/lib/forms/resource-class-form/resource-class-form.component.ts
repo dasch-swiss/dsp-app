@@ -36,6 +36,7 @@ import { ResourceClassForm, ResourceClassFormData } from './resource-class-form.
   `,
   styles: [':host ::ng-deep .name-input .mat-icon { padding-right: 24px; }'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class ResourceClassFormComponent implements OnInit {
   @Input({ required: true }) formData!: ResourceClassFormData;

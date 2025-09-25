@@ -68,6 +68,7 @@ import { NotificationService } from '@dasch-swiss/vre/ui/notification';
       }
     `,
   ],
+  standalone: false,
 })
 export class ResourceToolbarComponent {
   @Input({ required: true }) resource!: ReadResource;

@@ -3,9 +3,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { ProgressSize, SIZE_TO_PXL } from './progress-indicator.type';
 
 @Component({
-  standalone: true,
   selector: 'app-progress-indicator',
   imports: [MatIconModule],
+  standalone: true,
   template: `
     <div class="app-progress-indicator default" data-cy="loader">
       <svg

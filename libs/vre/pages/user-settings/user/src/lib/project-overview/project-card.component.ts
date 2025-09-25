@@ -93,6 +93,7 @@ import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
       }
     `,
   ],
+  standalone: false,
 })
 export class ProjectCardComponent {
   @Input({ required: true }) project!: StoredProject;

@@ -14,6 +14,7 @@ import { Component, Input } from '@angular/core';
       </div>
     </div>
   `,
+  standalone: false,
 })
 export class DialogHeaderComponent {
   @Input({ required: true }) title!: string;

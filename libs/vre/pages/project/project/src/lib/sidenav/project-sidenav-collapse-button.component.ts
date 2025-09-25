@@ -35,6 +35,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
       }
     `,
   ],
+  standalone: false,
 })
 export class ProjectSidenavCollapseButtonComponent {
   @Input({ required: true }) expand!: boolean;

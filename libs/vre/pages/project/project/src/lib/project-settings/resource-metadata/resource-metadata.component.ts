@@ -11,6 +11,7 @@ import { ProjectPageService } from '../../project-page.service';
   selector: 'app-resource-metadata',
   templateUrl: './resource-metadata.component.html',
   styleUrl: './resource-metadata.component.scss',
+  standalone: false,
 })
 export class ResourceMetadataComponent implements OnDestroy {
   private readonly _reloadSubject = new BehaviorSubject<void>(undefined);

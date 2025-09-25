@@ -31,6 +31,7 @@ import { MatChipInputEvent } from '@angular/material/chips';
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class ChipListInputComponent {
   @Input({ required: true }) formArray!: FormArray<FormControl<string>>;

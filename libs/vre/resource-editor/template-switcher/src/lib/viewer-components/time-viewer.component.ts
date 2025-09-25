@@ -14,6 +14,7 @@ import {
     <span data-cy="time-switch-time">{{ dateTime | date: 'HH:mm' }}</span>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class TimeViewerComponent implements OnChanges {
   @Input({ required: true }) value!: ReadTimeValue;

@@ -82,6 +82,7 @@ import { DspResource } from '@dasch-swiss/vre/shared/app-common';
       }
     `,
   ],
+  standalone: false,
 })
 export class ResourceHeaderComponent {
   @Input({ required: true }) resource!: DspResource;

@@ -15,6 +15,7 @@ import { CreateOntologyFormDialogComponent } from '../forms/ontology-form/create
   templateUrl: './data-models-page.component.html',
   styleUrls: ['./data-models-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class DataModelsPageComponent {
   protected readonly RouteConstants = RouteConstants;

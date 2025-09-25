@@ -23,6 +23,7 @@ import { TimeInputErrorStateMatcher } from './time-input-error-state-matcher';
     </mat-form-field>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class TimeInputComponent implements OnInit {
   @Input({ required: true }) control!: FormControl<number | null>;

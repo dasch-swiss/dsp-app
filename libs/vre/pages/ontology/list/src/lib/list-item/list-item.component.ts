@@ -20,6 +20,7 @@ import { ListItemService } from './list-item.service';
     }
   `,
   styles: [':host { display: block; }'],
+  standalone: false,
 })
 export class ListItemComponent implements OnInit, OnDestroy {
   @Input({ required: true }) node!: ListNodeInfo;

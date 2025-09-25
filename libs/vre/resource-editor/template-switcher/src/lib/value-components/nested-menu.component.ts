@@ -47,6 +47,7 @@ import { ListNodeV2 } from '@dasch-swiss/dsp-js';
       }
     `,
   ],
+  standalone: false,
 })
 export class NestedMenuComponent {
   @Input() data!: ListNodeV2;

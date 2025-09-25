@@ -26,6 +26,7 @@ import { ProjectPageService } from '../project-page.service';
       }
     `,
   ],
+  standalone: false,
 })
 export class ProjectSidenavComponent {
   currentProject$ = this._projectPageService.currentProject$;

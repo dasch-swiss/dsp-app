@@ -29,6 +29,7 @@ import { IncomingOrStandoffLink } from './incoming-link.interface';
       }
     </app-property-row>
   `,
+  standalone: false,
 })
 export class IncomingLinksPropertyComponent implements OnChanges {
   @Input({ required: true }) resource!: ReadResource;

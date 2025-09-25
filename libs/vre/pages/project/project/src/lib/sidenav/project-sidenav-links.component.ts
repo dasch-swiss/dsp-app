@@ -41,6 +41,7 @@ import { ProjectPageService } from '../project-page.service';
       }
     `,
   ],
+  standalone: false,
 })
 export class ProjectSidenavLinksComponent {
   protected readonly routeConstants = RouteConstants;

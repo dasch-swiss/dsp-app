@@ -26,6 +26,7 @@ import { UsersTabService } from './users-tab.service';
     }
   `,
   providers: [UsersTabService],
+  standalone: false,
 })
 export class UsersTabComponent {
   private _activeUsers$ = this.usersTabService.allUsers$.pipe(map(users => users.filter(user => user.status)));

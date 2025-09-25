@@ -58,6 +58,7 @@ import { Component, Input } from '@angular/core';
       }
     `,
   ],
+  standalone: false,
 })
 export class ProjectImageCoverComponent {
   @Input({ required: true }) project!: { shortcode: string; shortname: string };

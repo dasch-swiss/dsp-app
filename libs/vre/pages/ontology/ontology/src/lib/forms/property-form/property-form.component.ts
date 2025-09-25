@@ -58,6 +58,7 @@ import { PropertyForm, EditPropertyDialogData } from './property-form.type';
       placeholder="Comment"
       [isRequired]="true" />
   </form>`,
+  standalone: false,
 })
 export class PropertyFormComponent implements OnInit {
   @Input() propertyData!: EditPropertyDialogData;

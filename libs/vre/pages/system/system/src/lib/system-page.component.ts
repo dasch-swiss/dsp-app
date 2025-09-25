@@ -34,6 +34,7 @@ import { UserService } from '@dasch-swiss/vre/core/session';
     </div>
   `,
   styleUrls: ['./system-page.component.scss'],
+  standalone: false,
 })
 export class SystemPageComponent {
   isSysAdmin$ = this._userService.isSysAdmin$;

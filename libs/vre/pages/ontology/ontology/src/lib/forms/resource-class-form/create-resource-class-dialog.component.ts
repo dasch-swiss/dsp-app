@@ -28,6 +28,7 @@ import { ResourceClassForm, ResourceClassFormData } from './resource-class-form.
     </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class CreateResourceClassDialogComponent {
   loading = false;

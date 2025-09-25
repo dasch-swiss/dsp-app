@@ -11,7 +11,6 @@ import { MultiLanguageFormService } from './multi-language-form.service';
 
 @Component({
   selector: 'app-multi-language-input',
-  standalone: true,
   providers: [MultiLanguageFormService],
   imports: [
     MatButtonModule,
@@ -23,6 +22,7 @@ import { MultiLanguageFormService } from './multi-language-form.service';
     ReactiveFormsModule,
     HumanReadableErrorPipe,
   ],
+  standalone: true,
   template: `
     <mat-form-field style="width: 100%">
       <mat-label>{{ placeholder }}</mat-label>
@@ -87,7 +87,7 @@ import { MultiLanguageFormService } from './multi-language-form.service';
     `,
   ],
 })
-export class MutiLanguageInputComponent implements OnInit, OnChanges {
+export class MultiLanguageInputComponent implements OnInit, OnChanges {
   @Input({ required: true }) formArray!: MultiLanguageFormArray;
   @Input({ required: true }) placeholder!: string;
   @Input() editable = true;

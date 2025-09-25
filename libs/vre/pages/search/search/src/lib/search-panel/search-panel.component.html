@@ -2,7 +2,7 @@
   <app-fulltext-search
     [projectfilter]="projectfilter"
     [(limitToProject)]="limitToProject"
-    (search)="emitSearch($event)" />
+    (searchParam)="emitSearch($event)" />
 
   <!-- Do not display advanced and expert search on mobile devices smaller than tablet -->
   <div class="advanced-expert-buttons" [class.with-project-filter]="projectfilter">
@@ -46,7 +46,7 @@
     </div>
     <div class="app-menu-content">
       @switch (true) { @case (showExpert) {
-      <app-expert-search (search)="emitSearch($event)" />
+      <app-expert-search (searchParam)="emitSearch($event)" />
       } @case (showHint) {
       <app-hint />
       } }

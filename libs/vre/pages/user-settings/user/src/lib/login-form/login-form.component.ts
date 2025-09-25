@@ -34,6 +34,7 @@ import { finalize, Subscription, takeLast, tap } from 'rxjs';
       }
     `,
   ],
+  standalone: false,
 })
 export class LoginFormComponent implements OnInit, OnDestroy {
   loading = false;

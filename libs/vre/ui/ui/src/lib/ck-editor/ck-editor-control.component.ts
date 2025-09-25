@@ -25,6 +25,7 @@ import { FormControl } from '@angular/forms';
     `,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class CkEditorControlComponent {
   @Input({ required: true }) label!: string;

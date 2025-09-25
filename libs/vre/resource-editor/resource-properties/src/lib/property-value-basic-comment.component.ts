@@ -10,6 +10,7 @@ import { FormControl } from '@angular/forms';
     }
     <textarea cdkTextareaAutosize matInput data-cy="comment-textarea" [formControl]="control"></textarea>
   </mat-form-field>`,
+  standalone: false,
 })
 export class PropertyValueBasicCommentComponent {
   @Input({ required: true }) control!: FormControl<string | null>;

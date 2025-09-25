@@ -18,6 +18,7 @@ import { Subscription } from 'rxjs';
       [validatorErrors]="passwordConfirmValidatorErrors"
       [showToggleVisibility]="true" />
   `,
+  standalone: false,
 })
 export class PasswordConfirmFormComponent implements OnInit, OnDestroy {
   @Output() afterFormInit = new EventEmitter<FormControl<string>>();

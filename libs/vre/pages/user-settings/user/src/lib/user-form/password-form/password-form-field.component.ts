@@ -21,6 +21,7 @@ import { FormControl } from '@angular/forms';
       <mat-error>{{ errors | humanReadableError: validatorErrors }}</mat-error>
     }
   </mat-form-field>`,
+  standalone: false,
 })
 export class PasswordFormFieldComponent {
   @Input({ required: true }) control!: FormControl<string | null>;

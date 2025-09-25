@@ -19,6 +19,7 @@ import { SearchParams } from '@dasch-swiss/vre/shared/app-common-to-move';
   templateUrl: './search-panel.component.html',
   styleUrls: ['./search-panel.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class SearchPanelComponent {
   /**
@@ -46,12 +47,7 @@ export class SearchPanelComponent {
    */
   @Input() expert?: boolean = false;
 
-  /**
-   * the data event emitter of type SearchParams
-   *
-   * @param  search
-   */
-  @Output() search = new EventEmitter<SearchParams>();
+  @Output() searchParam = new EventEmitter<SearchParams>();
 
   @ViewChild('fullSearchPanel', { static: false }) searchPanel: ElementRef;
 
@@ -126,13 +122,8 @@ export class SearchPanelComponent {
     this.limitToProject = id;
   }
 
-  /**
-   * emit the search parameters
-   *
-   * @param data
-   */
   emitSearch(data: any) {
-    this.search.emit(data);
+    this.searchParam.emit(data);
     this.closeMenu();
   }
 

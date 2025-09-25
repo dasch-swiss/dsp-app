@@ -3,6 +3,7 @@ import { KnoraDate } from '@dasch-swiss/dsp-js';
 
 @Pipe({
   name: 'knoraDate',
+  standalone: false,
 })
 export class KnoraDatePipe implements PipeTransform {
   transform(date: KnoraDate, format?: string, displayOptions?: 'era' | 'calendar' | 'calendarOnly' | 'all'): string {
@@ -21,7 +22,7 @@ export class KnoraDatePipe implements PipeTransform {
   }
 
   // ensures that day and month are always two digits
-  leftPadding(value: number): string {
+  leftPadding(value: number): string | null {
     if (value !== undefined) {
       return `0${value}`.slice(-2);
     } else {

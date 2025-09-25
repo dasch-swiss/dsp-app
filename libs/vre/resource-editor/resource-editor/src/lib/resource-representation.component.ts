@@ -43,6 +43,7 @@ import { DspResource } from '@dasch-swiss/vre/shared/app-common';
       }
     }
   </div>`,
+  standalone: false,
 })
 export class ResourceRepresentationComponent implements OnChanges {
   @Input({ required: true }) resource!: DspResource;

@@ -31,6 +31,7 @@ import { PropertiesDisplayService } from '@dasch-swiss/vre/resource-editor/resou
     </button>
   `,
   styles: ['button { padding-top: 24px; padding-bottom: 24px}'],
+  standalone: false,
 })
 export class PropertiesToolbarComponent {
   @Input({ required: true }) numberOfComments!: number;

@@ -25,6 +25,7 @@ import { combineLatest, map, switchMap, tap } from 'rxjs';
       }
     }`,
   providers: [ResourceResultService],
+  standalone: false,
 })
 export class SearchProjectResultsPageComponent {
   query?: string;

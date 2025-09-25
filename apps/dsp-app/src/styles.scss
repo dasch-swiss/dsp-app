@@ -11,7 +11,8 @@
 @use "styles/viewer";
 @use "styles/ontology";
 
-@include mat.core();
+@include mat.elevation-classes();
+@include mat.app-background();
 
 // Include all typography configurations for the components (Angular Material 18 compatible)
 @include mat.all-component-typographies(t.$dsp-typography-config);

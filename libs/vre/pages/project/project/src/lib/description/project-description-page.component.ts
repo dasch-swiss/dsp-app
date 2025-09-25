@@ -9,6 +9,7 @@ import { LicenseCaptionsMapping } from './license-captions-mapping';
   selector: 'app-project-description-page',
   templateUrl: './project-description-page.component.html',
   styleUrls: ['./project-description-page.component.scss'],
+  standalone: false,
 })
 export class ProjectDescriptionPageComponent {
   readonly routeConstants = RouteConstants;

@@ -14,6 +14,7 @@ import { IncomingOrStandoffLink } from './incoming-link.interface';
       </div>
     }
   `,
+  standalone: false,
 })
 export class IncomingStandoffLinkValueComponent {
   @Input({ required: true }) links!: IncomingOrStandoffLink[];

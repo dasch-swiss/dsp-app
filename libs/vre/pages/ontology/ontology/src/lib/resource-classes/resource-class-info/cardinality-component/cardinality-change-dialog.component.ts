@@ -77,6 +77,7 @@ export interface CardinalityInfo {
     `,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class CardinalityChangeDialogComponent implements OnInit {
   canSetCardinality: boolean | undefined = undefined;

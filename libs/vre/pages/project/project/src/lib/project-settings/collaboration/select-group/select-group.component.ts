@@ -37,6 +37,7 @@ import { CollaborationPageService } from '../collaboration-page.service';
     `,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class SelectGroupComponent implements OnInit {
   @Input({ required: true }) projectId!: string;

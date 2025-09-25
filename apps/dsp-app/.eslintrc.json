@@ -1,6 +1,12 @@
 {
   "extends": "../../.eslintrc-angular.json",
-  "ignorePatterns": [
-    "coverage/"
+  "ignorePatterns": ["coverage/"],
+  "overrides": [
+    {
+      "files": ["*.ts"],
+      "rules": {
+        "@angular-eslint/prefer-standalone": "off"
+      }
+    }
   ]
 }

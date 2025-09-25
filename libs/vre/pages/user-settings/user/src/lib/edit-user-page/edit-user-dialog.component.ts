@@ -28,6 +28,7 @@ export interface EditUserDialogProps {
       </button>
     </div>
   `,
+  standalone: false,
 })
 export class EditUserDialogComponent {
   form!: UserForm;

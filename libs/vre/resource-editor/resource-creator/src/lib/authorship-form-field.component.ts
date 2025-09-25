@@ -53,6 +53,7 @@ import { finalize } from 'rxjs/operators';
       }
     </mat-form-field>
   `,
+  standalone: false,
 })
 export class AuthorshipFormFieldComponent implements OnInit, OnDestroy {
   @Input() control!: FormControl<string[] | null>;

@@ -17,6 +17,7 @@ import { RouteConstants } from '@dasch-swiss/vre/core/config';
     </div>
   }`,
   styleUrls: [`./cookie-banner.component.scss`],
+  standalone: false,
 })
 export class CookieBannerComponent implements OnInit {
   showCookieBanner = true;

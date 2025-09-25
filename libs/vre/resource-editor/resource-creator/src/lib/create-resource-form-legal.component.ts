@@ -54,6 +54,7 @@ import { finalize, map } from 'rxjs/operators';
       }
     `,
   ],
+  standalone: false,
 })
 export class CreateResourceFormLegalComponent implements OnInit {
   @Input({ required: true }) formGroup!: CreateResourceFormLegal;

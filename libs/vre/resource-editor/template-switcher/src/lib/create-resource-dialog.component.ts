@@ -26,6 +26,7 @@ export interface CreateResourceDialogProps {
       }
     </div>
   `,
+  standalone: false,
 })
 export class CreateResourceDialogComponent implements OnInit {
   projectShortcode$!: Observable<string>;

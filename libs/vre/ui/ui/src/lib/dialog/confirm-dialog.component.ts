@@ -20,6 +20,7 @@ export interface ConfirmDialogProps {
     </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class ConfirmDialogComponent {
   constructor(

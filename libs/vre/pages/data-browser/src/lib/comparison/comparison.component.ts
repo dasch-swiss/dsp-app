@@ -33,6 +33,7 @@ import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
         <app-resource-fetcher [resourceIri]="res" (afterResourceDeleted)="updateResourceCount()" />
       </div>
     </ng-template>`,
+  standalone: false,
 })
 export class ComparisonComponent implements OnChanges {
   @Input({ required: true }) resourceIds!: string[];

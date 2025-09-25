@@ -34,6 +34,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
       multi: true,
     },
   ],
+  standalone: false,
 })
 export class NullableEditorComponent implements ControlValueAccessor {
   @Input({ required: true }) defaultValue!: unknown;

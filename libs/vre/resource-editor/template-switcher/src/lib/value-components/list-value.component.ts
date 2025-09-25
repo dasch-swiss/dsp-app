@@ -18,6 +18,7 @@ import { startWith } from 'rxjs/operators';
       <mat-error>{{ control.errors | humanReadableError }}</mat-error>
     }
   `,
+  standalone: false,
 })
 export class ListValueComponent implements OnInit {
   @Input({ required: true }) propertyDef!: ResourcePropertyDefinition;

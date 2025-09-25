@@ -43,6 +43,7 @@ export interface DeleteValueDialogProps {
       </button>
     </div>
   `,
+  standalone: false,
 })
 export class DeleteValueDialogComponent {
   loading = false;

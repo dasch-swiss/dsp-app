@@ -18,6 +18,7 @@ import { ListItemForm } from './list-item-form.type';
       [validators]="commentsValidators"
       [isRequired]="false" />
   `,
+  standalone: false,
 })
 export class ReusableListItemFormComponent implements OnInit {
   @Input() formData: {

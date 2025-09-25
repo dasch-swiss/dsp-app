@@ -54,7 +54,6 @@ import { CompoundService } from './compound/compound.service';
       }
     </mat-tab-group>
   `,
-
   styles: [
     `
       .dots-container {
@@ -83,6 +82,7 @@ import { CompoundService } from './compound/compound.service';
       }
     `,
   ],
+  standalone: false,
 })
 export class ResourceTabsComponent implements OnInit, OnDestroy {
   @Input({ required: true }) resource!: DspResource;

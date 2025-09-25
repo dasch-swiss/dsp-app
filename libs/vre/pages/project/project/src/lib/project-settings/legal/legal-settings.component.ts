@@ -61,6 +61,7 @@ import {
       }
     `,
   ],
+  standalone: false,
 })
 export class LegalSettingsComponent {
   private readonly _reloadSubject = new BehaviorSubject<void>(undefined);

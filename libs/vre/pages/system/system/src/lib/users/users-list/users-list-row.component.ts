@@ -30,6 +30,7 @@ import { PermissionsData } from '@dasch-swiss/dsp-js/src/models/admin/permission
       }
     `,
   ],
+  standalone: false,
 })
 export class UsersListRowComponent {
   @Input({ required: true }) user!: ReadUser;

@@ -25,6 +25,7 @@ import { combineLatest, map, switchMap } from 'rxjs';
     }
   `,
   providers: [ResourceResultService],
+  standalone: false,
 })
 export class AdvancedSearchResultsPageComponent {
   readonly resources$ = this._route.params.pipe(

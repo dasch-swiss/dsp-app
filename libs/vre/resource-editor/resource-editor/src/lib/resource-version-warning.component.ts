@@ -14,6 +14,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
       </div>
     </app-alert-info>
   `,
+  standalone: false,
 })
 export class ResourceVersionWarningComponent {
   @Input({ required: true }) resourceVersion!: string;

@@ -60,6 +60,7 @@ import { finalize } from 'rxjs';
       }
     `,
   ],
+  standalone: false,
 })
 export class UploadComponent {
   @Input({ required: true }) representation!: FileRepresentationType;

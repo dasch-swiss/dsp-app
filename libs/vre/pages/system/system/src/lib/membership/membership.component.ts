@@ -64,6 +64,7 @@ import { AutocompleteItem } from '../autocomplete-item.interface';
     }
   `,
   styleUrls: ['./membership.component.scss'],
+  standalone: false,
 })
 export class MembershipComponent implements OnDestroy, OnChanges {
   @Input({ required: true }) userId!: string;

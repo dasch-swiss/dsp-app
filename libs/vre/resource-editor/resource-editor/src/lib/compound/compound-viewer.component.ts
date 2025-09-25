@@ -16,6 +16,7 @@ import { CompoundService } from './compound.service';
       }
     }
   `,
+  standalone: false,
 })
 export class CompoundViewerComponent {
   HasStillImageFileValue = Constants.HasStillImageFileValue;

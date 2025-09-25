@@ -107,6 +107,7 @@ import { JsLibPotentialError } from '@dasch-swiss/vre/resource-editor/resource-p
         [validatorErrors]="[{ errorKey: 'pattern', message: 'This is not a valid link.' }]" />
     </ng-template>
   `,
+  standalone: false,
 })
 export class TemplateEditorSwitcherComponent implements AfterViewInit {
   @Input({ required: true }) myPropertyDefinition!: PropertyDefinition;

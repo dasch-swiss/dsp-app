@@ -35,6 +35,7 @@ const resolvedPromise = Promise.resolve(null);
   templateUrl: './fulltext-search.component.html',
   styleUrls: ['./fulltext-search.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class FulltextSearchComponent implements OnInit, OnChanges, OnDestroy {
   /**
@@ -56,12 +57,7 @@ export class FulltextSearchComponent implements OnInit, OnChanges, OnDestroy {
    */
   @Output() limitToProjectChange = new EventEmitter<string>();
 
-  /**
-   * the data event emitter of type SearchParams
-   *
-   * @param  search
-   */
-  @Output() search = new EventEmitter<SearchParams>();
+  @Output() searchParam = new EventEmitter<SearchParams>();
 
   @ViewChild('fulltextSearchPanel', { static: false })
   searchPanel: ElementRef;
@@ -423,7 +419,7 @@ export class FulltextSearchComponent implements OnInit, OnChanges, OnDestroy {
       };
     }
 
-    this.search.emit(searchParams);
+    this.searchParam.emit(searchParams);
   }
 
   togglePhonePanel() {

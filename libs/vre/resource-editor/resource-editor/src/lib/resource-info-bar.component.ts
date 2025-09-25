@@ -46,6 +46,7 @@ import { map, Observable } from 'rxjs';
       }
     `,
   ],
+  standalone: false,
 })
 export class ResourceInfoBarComponent implements OnChanges {
   @Input({ required: true }) resource!: ReadResource;

@@ -30,5 +30,6 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   `,
   styleUrls: ['./hint.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class HintComponent {}

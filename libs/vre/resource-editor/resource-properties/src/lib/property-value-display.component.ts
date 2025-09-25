@@ -46,6 +46,7 @@ import { PropertyValueService } from './property-value.service';
     </div>`,
   styleUrls: ['./property-value-display.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class PropertyValueDisplayComponent implements OnInit {
   @Input({ required: true }) index!: number;

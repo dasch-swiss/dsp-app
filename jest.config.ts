@@ -1,6 +1,6 @@
 /* eslint-disable */
-import { getJestProjects } from '@nx/jest';
+import { getJestProjectsAsync } from '@nx/jest';
 
-export default {
-    projects: getJestProjects(),
-};
+export default async () => ({
+    projects: await getJestProjectsAsync(),
+});

@@ -58,6 +58,7 @@ export interface ReplaceFileDialogProps {
     </mat-dialog-actions>
   `,
   styleUrls: ['./replace-file-dialog.component.scss'],
+  standalone: false,
 })
 export class ReplaceFileDialogComponent {
   form!: FileForm;

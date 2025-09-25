@@ -32,6 +32,7 @@ import { ResourceFetcherService } from '../resource-fetcher.service';
         <button mat-menu-item class="menu-content" (click)="openReplaceFileDialog()">Replace file</button>
       }
     </mat-menu>`,
+  standalone: false,
 })
 export class VideoMoreButtonComponent {
   @Input({ required: true }) src!: ReadMovingImageFileValue;

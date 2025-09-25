@@ -44,6 +44,7 @@ import { StillImageHelper } from './still-image-helper';
   styleUrls: ['./still-image.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [OsdDrawerService, OpenSeaDragonService],
+  standalone: false,
 })
 export class StillImageComponent implements OnChanges, AfterViewInit, OnDestroy {
   @Input({ required: true }) compoundMode!: boolean;

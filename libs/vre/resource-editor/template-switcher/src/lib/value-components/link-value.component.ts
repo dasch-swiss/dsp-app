@@ -67,6 +67,7 @@ import { LinkValueDataService } from './link-value-data.service';
     </mat-form-field>
   `,
   providers: [LinkValueDataService],
+  standalone: false,
 })
 export class LinkValueComponent implements OnInit {
   private cancelPreviousSearchRequest$ = new Subject<void>();

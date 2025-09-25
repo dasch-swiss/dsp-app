@@ -58,6 +58,7 @@ import { CardinalityChangeDialogComponent, CardinalityInfo } from './cardinality
     </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class CardinalityComponent implements OnInit {
   @Input({ required: true }) classProp!: ClassPropertyInfo;

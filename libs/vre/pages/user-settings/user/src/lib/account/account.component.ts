@@ -53,6 +53,7 @@ import { EditUserDialogComponent, EditUserDialogProps } from '../edit-user-page/
       }
     `,
   ],
+  standalone: false,
 })
 export class AccountComponent {
   user$ = this._userService.user$;

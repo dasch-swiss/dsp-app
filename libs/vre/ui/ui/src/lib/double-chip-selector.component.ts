@@ -12,6 +12,7 @@ import { MatChipListbox, MatChipListboxChange } from '@angular/material/chips';
     <mat-chip-option [value]="true">{{ options[0] }}</mat-chip-option>
     <mat-chip-option [value]="false">{{ options[1] }}</mat-chip-option>
   </mat-chip-listbox>`,
+  standalone: false,
 })
 export class DoubleChipSelectorComponent {
   @Input({ required: true }) value!: boolean;

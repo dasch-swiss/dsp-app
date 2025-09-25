@@ -6,6 +6,7 @@ import { ReadTextValueAsHtml } from '@dasch-swiss/dsp-js';
   template: `
     <div data-cy="text-html-switch" [innerHTML]="value.html | internalLinkReplacer | addTargetBlank" appMathjax></div>
   `,
+  standalone: false,
 })
 export class TextHtmlViewerComponent {
   @Input({ required: true }) value!: ReadTextValueAsHtml;

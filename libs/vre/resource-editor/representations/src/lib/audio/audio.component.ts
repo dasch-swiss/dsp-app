@@ -11,6 +11,7 @@ import { MediaPlayerService } from '../video/media-player.service';
   selector: 'app-audio',
   templateUrl: './audio.component.html',
   providers: [MediaControlService, MediaPlayerService],
+  standalone: false,
 })
 export class AudioComponent implements OnInit, OnChanges, OnDestroy {
   @Input({ required: true }) src!: ReadAudioFileValue;

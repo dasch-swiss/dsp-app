@@ -27,6 +27,7 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from 
     </div>
   `,
   styleUrls: ['./incoming-resource-pager.component.scss'],
+  standalone: false,
 })
 export class IncomingResourcePagerComponent {
   @Input({ required: true }) pageIndex!: number;

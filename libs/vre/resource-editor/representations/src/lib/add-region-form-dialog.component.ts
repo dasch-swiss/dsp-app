@@ -74,6 +74,7 @@ export interface AddRegionFormDialogProps {
       }
     `,
   ],
+  standalone: false,
 })
 export class AddRegionFormDialogComponent {
   readonly regionForm = this._fb.group({

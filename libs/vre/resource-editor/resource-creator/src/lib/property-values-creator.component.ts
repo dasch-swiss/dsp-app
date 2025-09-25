@@ -33,7 +33,7 @@ import { PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
       </button>
     }
   `,
-  // TODO do not change detection strategy until ng18 is on with formControls touchedChanged to manage common-inputs change event
+  standalone: false,
 })
 export class PropertyValuesCreatorComponent {
   @Input({ required: true }) myProperty!: PropertyInfoValues;

@@ -45,6 +45,7 @@ import { CollaborationPageService } from '../collaboration-page.service';
     </div>
   `,
   styleUrls: ['./add-user.component.scss'],
+  standalone: false,
 })
 export class AddUserComponent {
   @Input({ required: true }) projectUuid!: string;
