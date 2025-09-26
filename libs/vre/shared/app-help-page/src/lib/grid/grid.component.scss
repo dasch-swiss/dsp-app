@@ -1,5 +1,6 @@
-@use "config" as *;
-@use "responsive" as *;
+@use "sass:map";
+@use "../../../../../../../apps/dsp-app/src/styles/config" as *;
+@use "../../../../../../../apps/dsp-app/src/styles/responsive" as *;
 
 .app-grid {
   display: grid;
@@ -69,7 +70,7 @@
 }
 
 // phone devices
-@media (max-width: map-get($grid-breakpoints, phone)) {
+@media (max-width: map.get($grid-breakpoints, phone)) {
   .app-grid {
     margin: 50px -15px 0 0;
     width: 100%;

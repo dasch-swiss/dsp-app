@@ -1,7 +1,8 @@
-@use "responsive" as *;
+@use "sass:map";
+@use "../../../../../../../apps/dsp-app/src/styles/responsive" as *;
 
 // phone devices
-@media (max-width: map-get($grid-breakpoints, phone)) {
+@media (max-width: map.get($grid-breakpoints, phone)) {
   .navigation {
     margin-top: 0;
     margin-bottom: 24px;

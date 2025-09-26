@@ -1,3 +1,4 @@
+@use "sass:map";
 @use "../../../../../../../../apps/dsp-app/src/styles/responsive" as *;
 
 $gray_100: rgba(243, 244, 246, 1);
@@ -35,7 +36,7 @@ $gray_700: rgba(55, 65, 81, 1);
 }
 
 // mobile device: phone
-@media (max-width: map-get($grid-breakpoints, phone)) {
+@media (max-width: map.get($grid-breakpoints, phone)) {
   .user-menu {
     padding: 0;
   }

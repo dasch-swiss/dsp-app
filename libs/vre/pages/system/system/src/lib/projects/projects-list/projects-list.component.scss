@@ -1,8 +1,9 @@
+@use "sass:map";
 @use '../../../../../../../../../apps/dsp-app/src/styles/responsive' as *;
 @use '../../../../../../../../../apps/dsp-app/src/styles/config' as *;
 
 // phone devices
-@media (max-width: map-get($grid-breakpoints, phone)) {
+@media (max-width: map.get($grid-breakpoints, phone)) {
   .table {
     .table-entry {
       .avatar-cell {

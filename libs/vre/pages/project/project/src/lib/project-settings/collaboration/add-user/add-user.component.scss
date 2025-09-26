@@ -1,3 +1,4 @@
+@use "sass:map";
 @use "../../../../../../../../../../apps/dsp-app/src/styles/responsive" as *;
 
 .app-toolbar-action {
@@ -20,14 +21,14 @@
 }
 
 // phone devices
-@media (min-width: map-get($grid-breakpoints, phone)) {
+@media (min-width: map.get($grid-breakpoints, phone)) {
   .add-new-mobile {
     display: none;
   }
 }
 
 // mobile device: tablet and smaller than a tablet
-@media (max-width: map-get($grid-breakpoints, tablet)) and (min-width: map-get($grid-breakpoints, phone)) {
+@media (max-width: map.get($grid-breakpoints, tablet)) and (min-width: map.get($grid-breakpoints, phone)) {
   .form-content {
     display: contents;
 
@@ -42,7 +43,7 @@
 }
 
 // phone devices
-@media (max-width: map-get($grid-breakpoints, phone)) {
+@media (max-width: map.get($grid-breakpoints, phone)) {
   .fill-remaining-space {
     display: none;
   }

@@ -1,3 +1,4 @@
+@use "sass:map";
 @use "../../../../../../../../apps/dsp-app/src/styles/config" as *;
 @use "../../../../../../../../apps/dsp-app/src/styles/responsive" as *;
 
@@ -40,7 +41,7 @@
   }
 
   // responsive style: do not display expert and advanced search on phones
-  @media (max-width: map-get($grid-breakpoints, phone)) {
+  @media (max-width: map.get($grid-breakpoints, phone)) {
     .advanced-expert-buttons {
       display: none;
     }

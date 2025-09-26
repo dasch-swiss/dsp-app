@@ -1,3 +1,4 @@
+@use 'sass:map';
 @use 'sass:math';
 
 @use "config" as *;
@@ -119,7 +120,7 @@ app-search-date-value {
 }
 
 // responsive style: desktop
-@media (min-width: map-get($grid-breakpoints, desktop)) {
+@media (min-width: map.get($grid-breakpoints, desktop)) {
   .app-fulltext-search {
     width: $search-width;
 
@@ -155,7 +156,7 @@ app-search-date-value {
 }
 
 // responsive style: tablet
-@media (max-width: map-get($grid-breakpoints, desktop)) and (min-width: map-get($grid-breakpoints, tablet)) {
+@media (max-width: map.get($grid-breakpoints, desktop)) and (min-width: map.get($grid-breakpoints, tablet)) {
   .app-fulltext-search {
     width: $search-width-small-device;
 
@@ -196,7 +197,7 @@ app-search-date-value {
 }
 
 // responsive style: phone
-@media (max-width: map-get($grid-breakpoints, tablet)) and (min-width: map-get($grid-breakpoints, watch)) {
+@media (max-width: map.get($grid-breakpoints, tablet)) and (min-width: map.get($grid-breakpoints, watch)) {
   .app-search-menu {
     width: calc(#{$search-width-small-device} - 32px);
 

@@ -1,3 +1,4 @@
+@use "sass:map";
 @use "../../../../../../../../apps/dsp-app/src/styles/config" as *;
 @use "../../../../../../../../apps/dsp-app/src/styles/responsive" as *;
 @use "../../../../../../../../apps/dsp-app/src/styles/theme";
@@ -28,7 +29,7 @@ mat-form-field.large-field {
 }
 
 // phone devices
-@media (max-width: map-get($grid-breakpoints, phone)) {
+@media (max-width: map.get($grid-breakpoints, phone)) {
 
   .fill-remaining-space {
     display: none;
@@ -64,7 +65,7 @@ mat-form-field.large-field {
 }
 
 // desktop and tablet devices
-@media (min-width: map-get($grid-breakpoints, phone)) {
+@media (min-width: map.get($grid-breakpoints, phone)) {
 
   .more-space-bottom {
     margin-bottom: 15px !important;
