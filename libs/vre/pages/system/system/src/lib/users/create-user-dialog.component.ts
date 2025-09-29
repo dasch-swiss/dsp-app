@@ -4,6 +4,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { User } from '@dasch-swiss/dsp-js';
 import { UserApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { UserForm } from '@dasch-swiss/vre/pages/user-settings/user';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-create-user-dialog',
@@ -71,9 +72,15 @@ export class CreateUserDialogComponent implements OnInit {
     user.systemAdmin = this.form.controls.isSystemAdmin.value;
     user.status = true;
 
-    this._userApiService.create(user).subscribe(response => {
-      this.isLoading = false;
-      this._dialogRef.close(response.user.id);
-    });
+    this._userApiService
+      .create(user)
+      .pipe(
+        finalize(() => {
+          this.isLoading = false;
+        })
+      )
+      .subscribe(response => {
+        this._dialogRef.close(response.user.id);
+      });
   }
 }

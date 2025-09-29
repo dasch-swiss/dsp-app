@@ -1,12 +1,9 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { StringLiteral } from '@dasch-swiss/dsp-js';
-import { UserApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { AvailableLanguages } from '@dasch-swiss/vre/core/config';
 import { CustomRegex } from '@dasch-swiss/vre/shared/app-common';
 import { TranslateService } from '@ngx-translate/core';
-import { map, shareReplay } from 'rxjs';
-import { existingNamesAsyncValidator } from '../existing-names.validator';
 import { UserForm } from './user-form.type';
 
 @Component({
@@ -52,19 +49,6 @@ export class UserFormComponent implements OnInit {
 
   userForm!: UserForm;
 
-  readonly allUsers$ = this._userApiService.list().pipe(
-    map(response => response.users),
-    shareReplay({
-      bufferSize: 1,
-      refCount: true,
-    })
-  );
-
-  readonly _existingUserNames$ = this.allUsers$.pipe(
-    map(allUsers => allUsers.map(user => user.username.toLowerCase()))
-  );
-  readonly _existingUserEmails$ = this.allUsers$.pipe(map(allUsers => allUsers.map(user => user.email.toLowerCase())));
-
   readonly languagesList: StringLiteral[] = AvailableLanguages;
 
   readonly emailPatternErrorMsg = {
@@ -79,8 +63,7 @@ export class UserFormComponent implements OnInit {
 
   constructor(
     private _fb: FormBuilder,
-    private _ts: TranslateService,
-    private _userApiService: UserApiService
+    private _ts: TranslateService
   ) {}
 
   ngOnInit() {
@@ -96,14 +79,12 @@ export class UserFormComponent implements OnInit {
         this.data.email,
         {
           validators: [Validators.required, Validators.pattern(CustomRegex.EMAIL_REGEX)],
-          asyncValidators: [existingNamesAsyncValidator(this._existingUserEmails$)],
         },
       ],
       username: [
         this.data.username,
         {
           validators: [Validators.required, Validators.minLength(4), Validators.pattern(CustomRegex.USERNAME_REGEX)],
-          asyncValidators: [existingNamesAsyncValidator(this._existingUserNames$)],
         },
       ],
       lang: [this.data.lang],

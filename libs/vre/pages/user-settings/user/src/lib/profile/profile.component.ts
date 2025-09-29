@@ -30,10 +30,12 @@ import { Subject, takeUntil, takeWhile } from 'rxjs';
                 <mat-icon matChipAvatar>language</mat-icon>
                 {{ user.lang }}
               </mat-chip>
-              <mat-chip [disableRipple]="true">
-                <mat-icon matChipAvatar style="color: #856404">verified_user</mat-icon>
-                {{ 'pages.userSettings.profile.systemAdmin' | translate }}
-              </mat-chip>
+              @if (isSysAdmin$ | async) {
+                <mat-chip [disableRipple]="true">
+                  <mat-icon matChipAvatar style="color: #856404">verified_user</mat-icon>
+                  {{ 'pages.userSettings.profile.systemAdmin' | translate }}
+                </mat-chip>
+              }
             </mat-chip-set>
           </div>
         </div>
