@@ -1,5 +1,25 @@
 # Changelog
 
+## [11.46.0](https://github.com/dasch-swiss/dsp-das/compare/v11.45.1...v11.46.0) (2025-09-29)
+
+
+### Enhancements
+
+* reintroduce backdrop color (DEV-5431) ([#2531](https://github.com/dasch-swiss/dsp-das/issues/2531)) ([90f0709](https://github.com/dasch-swiss/dsp-das/commit/90f0709f70e1f721148564723255cec137d7a624))
+* switch to v2-resources-candelete route (DEV-5410) ([#2532](https://github.com/dasch-swiss/dsp-das/issues/2532)) ([0cba603](https://github.com/dasch-swiss/dsp-das/commit/0cba603b26cbc5a1a26459389785cfe593b2fa5a))
+
+
+### Bug Fixes
+
+* remove async validation for username and email in user form ([#2537](https://github.com/dasch-swiss/dsp-das/issues/2537)) ([5273685](https://github.com/dasch-swiss/dsp-das/commit/52736850551a62d836bf3da6a79345490e378a79))
+* set whole sub toolbar conditionally (DEV-5430) ([#2530](https://github.com/dasch-swiss/dsp-das/issues/2530)) ([3a7771e](https://github.com/dasch-swiss/dsp-das/commit/3a7771e329a6d28b45b8d10f626706042e74285c))
+
+
+### Maintenances
+
+* **Angular:** Upgrade NX to v20.5.0 and Angular to v19.2.9 (DEV-5439) ([#2533](https://github.com/dasch-swiss/dsp-das/issues/2533)) ([2f4f8dd](https://github.com/dasch-swiss/dsp-das/commit/2f4f8dd101e91bfcd54de5484e3c67d43c016123))
+* **Saas Dart:** Migrate imports and global built-in functions (DEV-5445) ([#2539](https://github.com/dasch-swiss/dsp-das/issues/2539)) ([23a1e53](https://github.com/dasch-swiss/dsp-das/commit/23a1e53dabbc95f7ea48a5f14645c42835c40d67))
+
 ## [11.45.1](https://github.com/dasch-swiss/dsp-das/compare/v11.45.0...v11.45.1) (2025-09-24)
 
 
