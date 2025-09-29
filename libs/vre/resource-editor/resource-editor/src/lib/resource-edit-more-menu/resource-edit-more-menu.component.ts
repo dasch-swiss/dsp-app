@@ -1,6 +1,6 @@
-import { Component, EventEmitter, Inject, Input, Output, ViewContainerRef } from '@angular/core';
+import { Component, EventEmitter, Inject, Input, Output, ViewContainerRef, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Constants, KnoraApiConnection, ReadResource } from '@dasch-swiss/dsp-js';
+import { DeleteResource, KnoraApiConnection, ReadResource, CanDoResponse } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { DeleteResourceDialogComponent } from '@dasch-swiss/vre/resource-editor/properties-display';
 import { ResourceFetcherService, ResourceUtil } from '@dasch-swiss/vre/resource-editor/representations';
@@ -8,8 +8,7 @@ import {
   EditResourceLabelDialogComponent,
   EraseResourceDialogComponent,
 } from '@dasch-swiss/vre/resource-editor/resource-properties';
-import { combineLatest, map, of, take } from 'rxjs';
-import { CanDeleteResource } from './can-delete-resource.interface';
+import { combineLatest, filter, map, Observable, BehaviorSubject, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-resource-edit-more-menu',
@@ -21,8 +20,7 @@ import { CanDeleteResource } from './can-delete-resource.interface';
       class="more-menu"
       matTooltip="More"
       matTooltipPosition="above"
-      [matMenuTriggerFor]="more"
-      (menuOpened)="checkResourceCanBeDeleted()">
+      [matMenuTriggerFor]="more">
       <mat-icon>more_vert</mat-icon>
     </button>
 
@@ -39,52 +37,76 @@ import { CanDeleteResource } from './can-delete-resource.interface';
         </button>
       }
 
-      <button
-        data-cy="resource-more-menu-delete-button"
-        mat-menu-item
-        [matTooltip]="
-          resourceCanBeDeleted?.canDo
-            ? 'Move resource to trash bin.'
-            : resourceCanBeDeleted?.reason || 'Checking if the resource can be deleted...'
-        "
-        matTooltipPosition="above"
-        [disabled]="!resourceCanBeDeleted?.canDo"
-        (click)="deleteResource()">
-        <div style="display: inline-flex; align-items: center; gap: 8px;">
-          <span style="display: inline-block; width: 32px; height: 24px;">
-            @if (resourceCanBeDeleted === undefined) {
-              <app-progress-spinner />
-            } @else {
-              <mat-icon>delete</mat-icon>
-            }
-          </span>
-          Delete
-        </div>
-      </button>
-
-      @if (userCanDelete) {
+      @if (resourceCanBeDeleted$ | async; as resourceCanBeDeleted) {
         <button
-          data-cy="resource-more-menu-erase-button"
+          data-cy="resource-more-menu-delete-button"
           mat-menu-item
           [matTooltip]="
-            resourceCanBeDeleted?.canDo
-              ? 'Erase resource forever. This cannot be undone.'
-              : resourceCanBeDeleted?.reason || 'Checking if resource can be deleted...'
+            resourceCanBeDeleted.canDo
+              ? 'Move resource to trash bin.'
+              : resourceCanBeDeleted.cannotDoReason || 'Checking if the resource can be deleted...'
           "
           matTooltipPosition="above"
-          [disabled]="!resourceCanBeDeleted?.canDo"
-          (click)="eraseResource()">
-          <span style="display: inline-flex; align-items: center; gap: 8px;">
+          [disabled]="!resourceCanBeDeleted.canDo"
+          (click)="deleteResource()">
+          <div style="display: inline-flex; align-items: center; gap: 8px;">
             <span style="display: inline-block; width: 32px; height: 24px;">
-              @if (resourceCanBeDeleted === undefined) {
-                <app-progress-spinner />
-              } @else {
-                <mat-icon>delete_forever</mat-icon>
-              }
+              <mat-icon>delete</mat-icon>
             </span>
-            Erase resource
-          </span>
+            Delete
+          </div>
         </button>
+
+        @if (userCanDelete()) {
+          <button
+            data-cy="resource-more-menu-erase-button"
+            mat-menu-item
+            [matTooltip]="
+              resourceCanBeDeleted.canDo
+                ? 'Erase resource forever. This cannot be undone.'
+                : resourceCanBeDeleted.cannotDoReason || 'Checking if resource can be deleted...'
+            "
+            matTooltipPosition="above"
+            [disabled]="!resourceCanBeDeleted.canDo"
+            (click)="eraseResource()">
+            <span style="display: inline-flex; align-items: center; gap: 8px;">
+              <span style="display: inline-block; width: 32px; height: 24px;">
+                <mat-icon>delete_forever</mat-icon>
+              </span>
+              Erase resource
+            </span>
+          </button>
+        }
+      } @else {
+        <button
+          data-cy="resource-more-menu-delete-button"
+          mat-menu-item
+          matTooltip="Checking if the resource can be deleted..."
+          matTooltipPosition="above"
+          disabled>
+          <div style="display: inline-flex; align-items: center; gap: 8px;">
+            <span style="display: inline-block; width: 32px; height: 24px;">
+              <app-progress-spinner />
+            </span>
+            Delete
+          </div>
+        </button>
+
+        @if (userCanDelete()) {
+          <button
+            data-cy="resource-more-menu-erase-button"
+            mat-menu-item
+            matTooltip="Checking if resource can be deleted..."
+            matTooltipPosition="above"
+            disabled>
+            <span style="display: inline-flex; align-items: center; gap: 8px;">
+              <span style="display: inline-block; width: 32px; height: 24px;">
+                <app-progress-spinner />
+              </span>
+              Erase resource
+            </span>
+          </button>
+        }
       }
     </mat-menu>
   `,
@@ -97,7 +119,7 @@ import { CanDeleteResource } from './can-delete-resource.interface';
   ],
   standalone: false,
 })
-export class ResourceEditMoreMenuComponent {
+export class ResourceEditMoreMenuComponent implements OnInit {
   @Input({ required: true }) resource!: ReadResource;
   @Input() showEditLabel = false;
 
@@ -109,7 +131,7 @@ export class ResourceEditMoreMenuComponent {
     return ResourceUtil.userCanDelete(this.resource);
   }
 
-  resourceCanBeDeleted?: CanDeleteResource;
+  resourceCanBeDeleted$!: Observable<CanDoResponse>;
 
   constructor(
     @Inject(DspApiConnectionToken)
@@ -119,73 +141,42 @@ export class ResourceEditMoreMenuComponent {
     private _viewContainerRef: ViewContainerRef
   ) {}
 
-  checkResourceCanBeDeleted() {
-    combineLatest([this.resourceFetcher.userCanDelete$, this._resourceCanBeDeletedTechnically$(this.resource)])
-      .pipe(
-        take(1),
-        map(([userCanDelete, technicalCheck]) => {
-          if (!userCanDelete) {
-            return {
-              canDo: false,
-              reason: 'You do not have permission to delete this resource.',
-            };
-          }
-
-          if (!technicalCheck.canDo) {
-            return technicalCheck;
-          }
-
+  ngOnInit() {
+    this.resourceCanBeDeleted$ = combineLatest([
+      this.resourceFetcher.userCanDelete$,
+      this._canDeleteResource$(this.resource),
+    ]).pipe(
+      map(([userCanDelete, resourceCanBeDeleted]) => {
+        if (!userCanDelete) {
           return {
-            canDo: true,
-            reason: 'Resource can be deleted.',
-          };
-        })
-      )
-      .subscribe((canDelete: CanDeleteResource) => {
-        this.resourceCanBeDeleted = canDelete;
-      });
-  }
-
-  private _resourceCanBeDeletedTechnically$(resource: ReadResource) {
-    if (resource.incomingReferences.length > 0) {
-      return of({
-        canDo: false,
-        reason: 'This resource cannot be deleted as it has incoming references.',
-      });
-    }
-
-    const noIncomingLinks$ = this._dspApiConnection.v2.search
-      .doSearchIncomingLinks(resource.id)
-      .pipe(map(res => res.resources.length === 0));
-
-    const noStillImageLinks$ = this._dspApiConnection.v2.search
-      .doSearchStillImageRepresentationsCount(resource.id)
-      .pipe(map(res => res.numberOfResults === 0));
-
-    const noRegions$ = resource.properties[Constants.HasStillImageFileValue]
-      ? this._dspApiConnection.v2.search
-          .doSearchIncomingRegions(resource.id)
-          .pipe(map(seq => seq.resources.length === 0))
-      : of(true);
-
-    return combineLatest([noIncomingLinks$, noStillImageLinks$, noRegions$]).pipe(
-      map(([noLinks, noStills, noRegions]) => {
-        const canDelete = noLinks && noStills && noRegions;
-        if (canDelete) {
-          return { canDo: true };
+            canDo: false,
+            cannotDoReason: 'You do not have permission to delete this resource.',
+          } as CanDoResponse;
         }
 
-        const reasons: string[] = [];
-        if (!noLinks) reasons.push('incoming links');
-        if (!noStills) reasons.push('still image representations (pages) linked to it');
-        if (!noRegions) reasons.push('regions annotating the still image representation');
+        if (resourceCanBeDeleted instanceof CanDoResponse) {
+          return resourceCanBeDeleted.canDo
+            ? {
+                canDo: resourceCanBeDeleted?.canDo,
+              }
+            : resourceCanBeDeleted;
+        }
 
         return {
-          canDo: false,
-          reason: `This resource cannot be deleted as it has ${reasons.join(' and ')}.`,
+          canDo: true,
         };
       })
     );
+  }
+
+  private _canDeleteResource$(resource: ReadResource): Observable<CanDoResponse> {
+    const resourceToCheck = new DeleteResource();
+    resourceToCheck.id = resource.id;
+    resourceToCheck.type = resource.type;
+    resourceToCheck.lastModificationDate = resource.lastModificationDate;
+    return this._dspApiConnection.v2.res
+      .canDeleteResource(resourceToCheck)
+      .pipe(filter(res => res instanceof CanDoResponse));
   }
 
   deleteResource() {
