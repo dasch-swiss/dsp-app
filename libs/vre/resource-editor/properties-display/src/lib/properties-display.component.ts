@@ -19,26 +19,26 @@ import { DspResource, PropertyInfoValues } from '@dasch-swiss/vre/shared/app-com
           {{ resource.res.label }}
         </h3>
       </div>
-    }
 
-    @if (
-      ((resourceAttachedUser$ | async) !== undefined && (resourceAttachedUser$ | async) !== null) ||
-      resource.res.creationDate
-    ) {
-      <div class="infobar mat-caption">
-        Created
-        @if (resourceAttachedUser$ | async; as resourceAttachedUser) {
-          by
-          {{
-            resourceAttachedUser.username
-              ? resourceAttachedUser.username
-              : resourceAttachedUser.givenName + ' ' + resourceAttachedUser.familyName
-          }}
-        }
-        @if (resource.res.creationDate) {
-          <span> on {{ resource.res.creationDate | date }}</span>
-        }
-      </div>
+      @if (
+        ((resourceAttachedUser$ | async) !== undefined && (resourceAttachedUser$ | async) !== null) ||
+        resource.res.creationDate
+      ) {
+        <div class="infobar mat-caption">
+          Created
+          @if (resourceAttachedUser$ | async; as resourceAttachedUser) {
+            by
+            {{
+              resourceAttachedUser.username
+                ? resourceAttachedUser.username
+                : resourceAttachedUser.givenName + ' ' + resourceAttachedUser.familyName
+            }}
+          }
+          @if (resource.res.creationDate) {
+            <span> on {{ resource.res.creationDate | date }}</span>
+          }
+        </div>
+      }
     }
 
     @if (editableProperties && editableProperties.length > 0) {
