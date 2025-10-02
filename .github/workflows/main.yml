@@ -3,8 +3,11 @@ name: CI
 on: [ push, fork ]
 
 env:
+  # Temporarily disabling due to:
+  # Nx Cloud: Workspace is unable to be authorized. Exiting run. This Nx Cloud organization has been disabled due to exceeding the FREE plan.
+  NX_CLOUD_DISABLED: true
   # use the read-write access token so that build cache in nx-cloud can be updated
-  NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+  # NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
 
 jobs:
 
