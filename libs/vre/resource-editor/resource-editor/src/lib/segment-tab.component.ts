@@ -7,6 +7,7 @@ import { delay, Subscription } from 'rxjs';
   selector: 'app-segment-tab',
   template: `@for (segment of segmentsService.segments; track segment) {
     <div [id]="segment.resource.res.id" [class.active]="segment === selectedSegment">
+      <app-incoming-resource-header [resource]="resource" />
       <app-properties-display [resource]="segment.resource" [parentResourceId]="resource.id" />
     </div>
   }`,

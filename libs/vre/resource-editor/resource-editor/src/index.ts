@@ -8,6 +8,7 @@ export * from './lib/single-resource-page.component';
 export * from './lib/resource-representation.component';
 export * from './lib/resource-tabs.component';
 export * from './lib/resource-toolbar.component';
+export * from './lib/incoming-resource-header.component';
 export * from './lib/resource-restriction.component';
 export * from './lib/annotation-tab.component';
 export * from './lib/resource-fetcher.component';

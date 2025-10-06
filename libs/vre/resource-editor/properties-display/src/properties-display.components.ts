@@ -4,12 +4,12 @@ import { IncomingLinksPropertyComponent } from './lib/incoming-links-property.co
 import { IncomingResourcePagerComponent } from './lib/incoming-resource-pager.component';
 import { IncomingStandoffLinkValueComponent } from './lib/incoming-standoff-link-value.component';
 import { PropertiesDisplayComponent } from './lib/properties-display.component';
-import { PropertiesToolbarComponent } from './lib/properties-toolbar.component';
+import { PropertiesToggleComponent } from './lib/properties-toggle.component';
 import { StandoffLinksPropertyComponent } from './lib/standoff-links-property.component';
 
 export const PropertiesDisplayComponents = [
   PropertiesDisplayComponent,
-  PropertiesToolbarComponent,
+  PropertiesToggleComponent,
   AnnotationToolbarComponent,
   StandoffLinksPropertyComponent,
   IncomingLinksPropertyComponent,

@@ -37,13 +37,14 @@ import { Subject, takeUntil } from 'rxjs';
           </mat-expansion-panel-header>
 
           @if (panel.expanded) {
-            <app-properties-display [resource]="annotation" [hideToolbar]="true"></app-properties-display>
+            <app-resource-info-bar [resource]="annotation.res" />
+            <app-properties-display [resource]="annotation"></app-properties-display>
           }
         </mat-expansion-panel>
       }
     </mat-accordion>
   `,
-  styles: ['.active {border: 1px solid}'],
+  styles: ['.active {border: 1px solid} app-resource-info-bar {display: flex; flex-direction: row-reverse}'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: false,
 })

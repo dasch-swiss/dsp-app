@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Constants, CountQueryResponse, KnoraApiConnection, ReadFileValue, ReadResource } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken, RouteConstants } from '@dasch-swiss/vre/core/config';
 import { getFileValue, RegionService } from '@dasch-swiss/vre/resource-editor/representations';
+import { PropertiesDisplayService } from '@dasch-swiss/vre/resource-editor/resource-properties';
 import { SegmentsService } from '@dasch-swiss/vre/resource-editor/segment-support';
 import { DspCompoundPosition, DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { take } from 'rxjs';
@@ -24,7 +25,7 @@ import { CompoundService } from './compound/compound.service';
     }
     <app-resource-tabs [resource]="resource" />
   `,
-  providers: [CompoundService, RegionService, SegmentsService],
+  providers: [CompoundService, PropertiesDisplayService, RegionService, SegmentsService],
   standalone: false,
 })
 export class ResourceComponent implements OnChanges {

@@ -12,12 +12,14 @@ import { CompoundService } from './compound/compound.service';
     <mat-tab-group animationDuration="0ms" [selectedIndex]="selectedTab" (selectedTabChange)="onTabChange($event)">
       <mat-tab #matTabProperties [label]="'resourceEditor.properties' | translate">
         @if (resource) {
+          <app-properties-toggle [properties]="resource.resProps" />
           <app-properties-display [resource]="resource" />
         }
       </mat-tab>
 
       @if (incomingResource) {
         <mat-tab #matTabIncoming [label]="resourceClassLabel(incomingResource.res)">
+          <app-incoming-resource-header [resource]="incomingResource.res" />
           <app-properties-display [resource]="incomingResource" [parentResourceId]="resource.res.id" />
         </mat-tab>
       }

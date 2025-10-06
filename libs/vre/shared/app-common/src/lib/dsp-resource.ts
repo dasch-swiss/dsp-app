@@ -8,9 +8,6 @@ export class DspResource {
 
   systemProps: SystemPropertyDefinition[] = []; // array of system properties
 
-  // regions or sequences
-  incomingAnnotations: ReadResource[] = [];
-
   // incoming stillImages, movingImages, audio etc.
   incomingRepresentations: ReadResource[] = [];
 
