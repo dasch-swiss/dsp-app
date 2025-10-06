@@ -1,5 +1,24 @@
 # Changelog
 
+## [11.47.0](https://github.com/dasch-swiss/dsp-das/compare/v11.46.0...v11.47.0) (2025-10-06)
+
+
+### Enhancements
+
+* persist user preference for showing all comments ([#2546](https://github.com/dasch-swiss/dsp-das/issues/2546)) ([e26a77b](https://github.com/dasch-swiss/dsp-das/commit/e26a77bb6f5a7bf52773a175900932a033b1833e))
+* show all properties it should remember the choice of user ([#2544](https://github.com/dasch-swiss/dsp-das/issues/2544)) ([6136e47](https://github.com/dasch-swiss/dsp-das/commit/6136e47545f003e4b276d12302434a83f881d3b9))
+
+
+### Bug Fixes
+
+* reintroduce edit toolbar and remove duplicated header (DEV-5453) ([#2545](https://github.com/dasch-swiss/dsp-das/issues/2545)) ([9f69542](https://github.com/dasch-swiss/dsp-das/commit/9f69542deed414c214ff32c546fd717ad8d30bc9))
+
+
+### Maintenances
+
+* **Angular:** Upgrade NX to v21.5.1 and Angular to v20.2.4 ([#2541](https://github.com/dasch-swiss/dsp-das/issues/2541)) ([b976abd](https://github.com/dasch-swiss/dsp-das/commit/b976abd94ca8c8657108e3dad8da3b30be769d35))
+* disable Nx Cloud ([#2542](https://github.com/dasch-swiss/dsp-das/issues/2542)) ([e52775b](https://github.com/dasch-swiss/dsp-das/commit/e52775bc6206c6352c221413eb311dd15bae1449))
+
 ## [11.46.0](https://github.com/dasch-swiss/dsp-das/compare/v11.45.1...v11.46.0) (2025-09-29)
 
 
