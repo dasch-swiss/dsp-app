@@ -10,15 +10,14 @@
       "executor": "@nx/angular:package",
       "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
       "options": {
-        "project": "libs/jdnconvertiblecalendardateadapter/ng-package.json"
+        "project": "libs/jdnconvertiblecalendardateadapter/ng-package.json",
+        "tsConfig": "libs/jdnconvertiblecalendardateadapter/tsconfig.lib.json"
       },
       "configurations": {
         "production": {
           "tsConfig": "libs/jdnconvertiblecalendardateadapter/tsconfig.lib.prod.json"
         },
-        "development": {
-          "tsConfig": "libs/jdnconvertiblecalendardateadapter/tsconfig.lib.json"
-        }
+        "development": {}
       },
       "defaultConfiguration": "production"
     },

@@ -621,20 +621,20 @@ nav.mat-mdc-tab-nav-bar,
 
 // Angular Material v18 snack-bar styles - Using correct CSS custom properties
 .mat-mdc-snack-bar-container.success {
-  --mdc-snackbar-container-color: rgba(51, 103, 144, 0.9) !important;
-  --mdc-snackbar-supporting-text-color: rgb(255, 255, 255) !important;
+  --mat-snackbar-container-color: rgba(51, 103, 144, 0.9) !important;
+  --mat-snackbar-supporting-text-color: rgb(255, 255, 255) !important;
   --mat-snack-bar-button-color: rgb(255, 255, 255) !important;
 }
 
 .mat-mdc-snack-bar-container.error {
-  --mdc-snackbar-container-color: rgba(225, 29, 72, 0.9) !important;
-  --mdc-snackbar-supporting-text-color: rgb(255, 255, 255) !important;
+  --mat-snackbar-container-color: rgba(225, 29, 72, 0.9) !important;
+  --mat-snackbar-supporting-text-color: rgb(255, 255, 255) !important;
   --mat-snack-bar-button-color: rgb(255, 255, 255) !important;
 }
 
 .mat-mdc-snack-bar-container.note {
-  --mdc-snackbar-container-color: rgba(251, 191, 36, 0.9) !important;
-  --mdc-snackbar-supporting-text-color: rgb(255, 255, 255) !important;
+  --mat-snackbar-container-color: rgba(251, 191, 36, 0.9) !important;
+  --mat-snackbar-supporting-text-color: rgb(255, 255, 255) !important;
   --mat-snack-bar-button-color: rgb(255, 255, 255) !important;
 }
 

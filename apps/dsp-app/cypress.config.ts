@@ -22,7 +22,6 @@ export default defineConfig({
     },
     trashAssetsBeforeRuns: true,
     screenshotsFolder: 'cypress/fixtures/screenshots',
-
     setupNodeEvents(on, config) {
       // eslint-disable-next-line
       require('@cypress/code-coverage/task')(on, config);
@@ -36,23 +35,23 @@ export default defineConfig({
           // force screen to be retina (2800x2400 size)
           // launchOptions.args.push('--force-device-scale-factor=2')
         }
-
         if (browser.name === 'electron' && browser.isHeadless) {
           // fullPage screenshot size is 1400x1200
           launchOptions.preferences.width = 1400;
           launchOptions.preferences.height = 1200;
         }
-
         if (browser.name === 'firefox' && browser.isHeadless) {
           // menubars take up height on the screen
           // so fullPage screenshot size is 1400x1126
           launchOptions.args.push('--width=1400');
           launchOptions.args.push('--height=1200');
         }
-
         return launchOptions;
       });
       return config;
     },
+    // Please ensure you use `cy.origin()` when navigating between domains and remove this option.
+    // See https://docs.cypress.io/app/references/migration-guide#Changes-to-cyorigin
+    injectDocumentDomain: true,
   },
 });

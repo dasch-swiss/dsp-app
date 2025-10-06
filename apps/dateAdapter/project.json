@@ -8,22 +8,15 @@
   "targets": {
     "build": {
       "executor": "@angular-devkit/build-angular:browser",
-      "outputs": [
-        "{options.outputPath}"
-      ],
+      "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/apps/dateAdapter",
         "index": "apps/dateAdapter/src/index.html",
         "main": "apps/dateAdapter/src/main.ts",
         "polyfills": "apps/dateAdapter/src/polyfills.ts",
         "tsConfig": "apps/dateAdapter/tsconfig.app.json",
-        "assets": [
-          "apps/dateAdapter/src/favicon.ico",
-          "apps/dateAdapter/src/assets"
-        ],
-        "styles": [
-          "apps/dateAdapter/src/styles.scss"
-        ],
+        "assets": ["apps/dateAdapter/src/favicon.ico", "apps/dateAdapter/src/assets"],
+        "styles": ["apps/dateAdapter/src/styles.scss"],
         "scripts": []
       },
       "configurations": {
@@ -66,7 +59,8 @@
         "production": {
           "buildTarget": "dateAdapter:build:production"
         }
-      }
+      },
+      "continuous": true
     },
     "extract-i18n": {
       "executor": "@angular-devkit/build-angular:extract-i18n",
@@ -76,9 +70,7 @@
     },
     "lint": {
       "executor": "@nx/eslint:lint",
-      "outputs": [
-        "{options.outputFile}"
-      ]
+      "outputs": ["{options.outputFile}"]
     }
   }
 }

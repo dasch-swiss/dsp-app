@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/member-ordering */
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 import { coerceBooleanProperty } from '@angular/cdk/coercion';
-import { CommonModule } from '@angular/common';
+
 import { Component, DoCheck, HostBinding, Input, OnDestroy, OnInit, Optional, Self } from '@angular/core';
 import {
   ReactiveFormsModule,
@@ -53,7 +53,6 @@ export function periodStartEndValidator(
   selector: 'app-date-value-handler',
   imports: [
     AppDatePickerComponent,
-    CommonModule,
     MatButtonModule,
     MatFormFieldModule,
     MatIconModule,

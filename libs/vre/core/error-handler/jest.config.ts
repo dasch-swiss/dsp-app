@@ -13,8 +13,6 @@ export default {
       },
     ],
   },
-  // fix: SyntaxError: Unexpected token 'export' of js-lib
-  transformIgnorePatterns: ['node_modules/(?!@angular|@dasch-swiss)'],
   snapshotSerializers: [
     'jest-preset-angular/build/serializers/no-ng-attributes',
     'jest-preset-angular/build/serializers/ng-snapshot',

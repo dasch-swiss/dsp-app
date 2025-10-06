@@ -1,7 +1,7 @@
 {
   "extends": "./tsconfig.app.json",
   "compilerOptions": {
-    "paths": {
-    }
+    "paths": {},
+    "moduleResolution": "bundler"
   }
 }

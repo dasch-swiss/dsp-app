@@ -1,5 +1,4 @@
-import { DOCUMENT } from '@angular/common';
-import { Inject, Injectable } from '@angular/core';
+import { Inject, Injectable, DOCUMENT } from '@angular/core';
 import { CanActivate } from '@angular/router';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { AutoLoginService, UserService } from '@dasch-swiss/vre/core/session';

@@ -36,8 +36,8 @@ $theme: mat.m2-define-light-theme((
 // Global snack-bar theme override for Angular Material v18
 :root {
   --mat-snack-bar-button-color: rgba(51, 103, 144, 1);
-  --mdc-snackbar-container-color: rgba(51, 103, 144, 0.9);
-  --mdc-snackbar-supporting-text-color: rgb(255, 255, 255);
+  --mat-snackbar-container-color: rgba(51, 103, 144, 0.9);
+  --mat-snackbar-supporting-text-color: rgb(255, 255, 255);
 }
 
 body {

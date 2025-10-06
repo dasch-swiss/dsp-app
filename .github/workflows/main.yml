@@ -20,7 +20,7 @@ jobs:
           fetch-depth: 0 # gets additionally all tags which we need
       - uses: actions/setup-node@v3
         with:
-          node-version: 20.11.1
+          node-version: 22.12.0
       - name: "Run unit tests"
         run: |
           npm install
@@ -38,7 +38,7 @@ jobs:
           fetch-depth: 0 # gets additionally all tags which we need
       - uses: actions/setup-node@v3
         with:
-          node-version: 20.11.1
+          node-version: 22.12.0
       - run: npm install
       - name: Install Cypress dependencies
         run: |
@@ -90,7 +90,7 @@ jobs:
           fetch-depth: 0 # gets additionally all tags which we need
       - uses: actions/setup-node@v3
         with:
-          node-version: 20.11.1
+          node-version: 22.12.0
       - run: npm install
       - run: npx nx run jdnconvertiblecalendar:lint
       - run: npx nx run jdnconvertiblecalendar:test:ci
@@ -104,7 +104,7 @@ jobs:
           fetch-depth: 0 # gets additionally all tags which we need
       - uses: actions/setup-node@v3
         with:
-          node-version: 20.11.1
+          node-version: 22.12.0
       - run: npm install
       - run: npx nx run jdnconvertiblecalendardateadapter:lint
       - run: npx nx run jdnconvertiblecalendardateadapter:test:ci
@@ -118,7 +118,7 @@ jobs:
           fetch-depth: 0 # gets additionally all tags which we need
       - uses: actions/setup-node@v3
         with:
-          node-version: 20.11.1
+          node-version: 22.12.0
       - run: npm install
       - run: npx nx run vre-core-config:lint
       - run: npx nx run vre-core-config:test:ci
@@ -160,7 +160,7 @@ jobs:
         shell: bash # Explicit for fail-fast behaviour
       - uses: actions/setup-node@v3
         with:
-          node-version: 20.11.1
+          node-version: 22.12.0
       - uses: docker/setup-buildx-action@v2
       - uses: docker/login-action@v2
         with:

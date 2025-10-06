@@ -8,11 +8,10 @@
   "targets": {
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": [
-        "{workspaceRoot}/coverage/{projectRoot}"
-      ],
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "libs/vre/resource-editor/properties-display/jest.config.ts"
+        "jestConfig": "libs/vre/resource-editor/properties-display/jest.config.ts",
+        "tsConfig": "libs/vre/resource-editor/properties-display/tsconfig.spec.json"
       }
     },
     "lint": {

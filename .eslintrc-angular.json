@@ -13,6 +13,7 @@
         "plugin:@angular-eslint/template/process-inline-templates"
       ],
       "rules": {
+        "@angular-eslint/prefer-inject": "off",
         "@angular-eslint/template/no-negated-async": "off",
         "import/no-extraneous-dependencies": "off",
         "@typescript-eslint/adjacent-overload-signatures": "warn",
