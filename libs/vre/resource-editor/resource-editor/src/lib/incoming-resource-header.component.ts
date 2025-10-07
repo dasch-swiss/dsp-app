@@ -9,7 +9,7 @@ import { GenerateProperty } from '@dasch-swiss/vre/shared/app-common';
       <h4 data-cy="resource-header-label">{{ resource.label }}</h4>
       <div class="incoming-resource-actions">
         <app-properties-toggle [properties]="resourceProperties" [displayIconsOnly]="true" />
-        <app-resource-toolbar [resource]="resource" />
+        <app-resource-toolbar [resource]="resource" [showEditLabel]="true" />
       </div>
     </div>
     <app-resource-info-bar [resource]="resource" />

@@ -8,7 +8,7 @@ import {
   EditResourceLabelDialogComponent,
   EraseResourceDialogComponent,
 } from '@dasch-swiss/vre/resource-editor/resource-properties';
-import { combineLatest, filter, map, Observable, BehaviorSubject, switchMap } from 'rxjs';
+import { combineLatest, filter, map, Observable } from 'rxjs';
 
 @Component({
   selector: 'app-resource-edit-more-menu',
