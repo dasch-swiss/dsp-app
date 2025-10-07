@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.47.2](https://github.com/dasch-swiss/dsp-das/compare/v11.47.1...v11.47.2) (2025-10-07)
+
+
+### Bug Fixes
+
+* display menu when user can edit (DEV-5468) ([#2552](https://github.com/dasch-swiss/dsp-das/issues/2552)) ([488768a](https://github.com/dasch-swiss/dsp-das/commit/488768aacdbe1a71268b0dbd159f6ef20d7d0543))
+
 ## [11.47.1](https://github.com/dasch-swiss/dsp-das/compare/v11.47.0...v11.47.1) (2025-10-07)
 
 
