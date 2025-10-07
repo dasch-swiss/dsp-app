@@ -1,5 +1,13 @@
 # Changelog
 
+## [11.47.1](https://github.com/dasch-swiss/dsp-das/compare/v11.47.0...v11.47.1) (2025-10-07)
+
+
+### Bug Fixes
+
+* do not subscribe to currentproject$ (DEV-5432) ([#2548](https://github.com/dasch-swiss/dsp-das/issues/2548)) ([78fde00](https://github.com/dasch-swiss/dsp-das/commit/78fde0076c2c9a28daf386cd084019c107d8efbc))
+* reintroduce edit label for pages (DEV-5468) ([#2550](https://github.com/dasch-swiss/dsp-das/issues/2550)) ([d2fc4d2](https://github.com/dasch-swiss/dsp-das/commit/d2fc4d23b6da56d3d40e4d3708aa864ab901126b))
+
 ## [11.47.0](https://github.com/dasch-swiss/dsp-das/compare/v11.46.0...v11.47.0) (2025-10-06)
 
 
