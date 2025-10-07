@@ -104,25 +104,17 @@ export class CreateOntologyFormDialogComponent implements OnDestroy {
     }
     this.loading = true;
 
-    this._projectPageService.currentProject$
-      .pipe(
-        switchMap(project => {
-          const createOntology = MakeOntologyFor.createOntology(
-            { projectId: project.id, projectShort: '' },
-            this.form.controls.name.value,
-            this.form.controls.label.value,
-            this.form.controls.comment.value
-          );
+    const createOntology = MakeOntologyFor.createOntology(
+      this._projectPageService.currentProjectId,
+      this.form.controls.name.value,
+      this.form.controls.label.value,
+      this.form.controls.comment.value
+    );
 
-          return this._dspApiConnection.v2.onto.createOntology(createOntology);
-        }),
-        finalize(() => {
-          this.loading = false;
-        })
-      )
-      .subscribe(ontology => {
-        this.dialogRef.close(ontology);
-      });
+    this._dspApiConnection.v2.onto.createOntology(createOntology).subscribe(ontology => {
+      this.loading = false;
+      this.dialogRef.close(ontology);
+    });
   }
 
   ngOnDestroy() {

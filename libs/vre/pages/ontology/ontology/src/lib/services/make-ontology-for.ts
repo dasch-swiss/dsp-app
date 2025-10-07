@@ -31,11 +31,6 @@ export interface OntologyContext {
   lastModificationDate: string;
 }
 
-export interface ProjectContext {
-  projectId: string;
-  projectShort: string;
-}
-
 export class MakeOntologyFor {
   private static wrapInUpdateOntology<T extends UpdateOntologyT>(ctx: OntologyContext, entity: T): UpdateOntology<T> {
     const upd = new UpdateOntology<T>();
@@ -146,12 +141,12 @@ export class MakeOntologyFor {
     return this.wrapInUpdateOntology(ctx, upd);
   }
 
-  static createOntology(ctx: ProjectContext, name: string, label: string, comment: string): CreateOntology {
+  static createOntology(projectId: string, name: string, label: string, comment: string): CreateOntology {
     const create = new CreateOntology();
     create.name = name;
     create.label = label;
     create.comment = comment;
-    create.attachedToProject = ctx.projectId;
+    create.attachedToProject = projectId;
     return create;
   }
 
