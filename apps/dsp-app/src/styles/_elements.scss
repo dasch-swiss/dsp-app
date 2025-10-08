@@ -660,25 +660,6 @@ simple-snack-bar .mdc-button__label {
 }
 
 
-// --------------------------------------
-
-//
-// dialog box / material overlay
-
-.cdk-overlay-pane {
-  -webkit-backdrop-filter: blur(4px);
-  backdrop-filter: blur(4px);
-
-  .mat-mdc-dialog-container {
-    overflow-y: auto;
-
-    .mat-mdc-dialog-surface {
-      padding: 24px;
-      background-color: rgba(white, 0.8);
-    }
-  }
-}
-
 // action bubble
 .action-bubble {
   position: absolute;

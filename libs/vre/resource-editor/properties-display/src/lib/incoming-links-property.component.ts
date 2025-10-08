@@ -97,6 +97,7 @@ export class IncomingLinksPropertyComponent implements OnChanges {
     return {
       label: resource.label,
       uri: `/resource/${resourceIdPathOnly[0]}`,
+      iri: resource.id,
       project: resource.resourceClassLabel ? resource.resourceClassLabel : '',
     };
   }

@@ -5,12 +5,13 @@ import { IncomingOrStandoffLink } from './incoming-link.interface';
   selector: 'app-incoming-standoff-link-value',
   template: `
     @for (link of links; track link) {
-      <div>
+      <div style="display: flex; align-items: flex-start">
         <a style="display: block" [routerLink]="link.uri" target="_blank">
           <span>{{ link.project }}</span
           >:
           <strong>{{ link.label }}</strong>
         </a>
+        <app-resource-explorer-button [resourceIri]="link!.iri" />
       </div>
     }
   `,
