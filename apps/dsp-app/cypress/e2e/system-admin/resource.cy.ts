@@ -174,7 +174,6 @@ describe('Resource', () => {
       const addValueButton = () => cy.get('[data-cy=add-value-button]');
 
       const enterNewValue = (value: string) => {
-        cy.get('[data-cy=color-picker-input]').click({ force: true });
         cy.get('.color-picker .hex-text .box input').clear().type(value);
       };
 

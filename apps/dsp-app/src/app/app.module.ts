@@ -54,7 +54,7 @@ import * as Sentry from '@sentry/angular';
 import { IMaskModule } from 'angular-imask';
 import { AngularSplitModule } from 'angular-split';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
-import { ColorPickerModule } from 'ngx-color-picker';
+import { ColorPickerDirective } from 'ngx-color-picker';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { TemplateSwitcherComponents } from 'template-switcher';
 import { AppRoutingModule } from './app-routing.module';
@@ -103,7 +103,7 @@ export function httpLoaderFactory(httpClient: HttpClient) {
     BrowserModule,
     CKEditorModule,
     ClipboardModule,
-    ColorPickerModule,
+    ColorPickerDirective,
     CommonModule,
     DateValueHandlerComponent,
     FormsModule,
