@@ -28,9 +28,9 @@ The following tests (unit, e2e and lint) are part of the Github Actions (CI) wor
 
 ### Running unit tests
 
-Run `npm run test-local` to execute the unit tests via [Karma](https://karma-runner.github.io) on your local computer.
+Run `npm run test-local` to execute the unit tests via [Jest](https://jestjs.io) on your local computer.
 
-Run `npm run test-ci` to execute the unit tests via [Karma](https://karma-runner.github.io) without a browser. It is used in the Github Actions (CI) workflow.
+Run `npm run test-ci-all` to execute all unit tests via [Jest](https://jestjs.io). It is used in the Github Actions (CI) workflow.
 
 ### Running end-to-end tests
 

@@ -36,10 +36,8 @@ describe('JDNConvertibleCalendarDateAdapter', () => {
     adapter = dateAdapter;
 
     assertValidDate = (d: JDNConvertibleCalendar | null, valid: boolean) => {
-      expect(adapter.isDateInstance(d)).withContext(`Expected ${d} to be a date instance`).not.toBeNull();
-      expect(adapter.isValid())
-        .withContext(`Expected ${d} to be ${valid ? 'valid' : 'invalid'},` + ` but was ${valid ? 'invalid' : 'valid'}`)
-        .toBe(valid);
+      expect(adapter.isDateInstance(d)).not.toBeNull();
+      expect(adapter.isValid()).toBe(valid);
     };
   }));
 
@@ -364,10 +362,13 @@ describe('JDNConvertibleCalendarDateAdapter', () => {
     const todayExpected = new Date(2017, 5, 11);
 
     // date above will be returned for new Date()
-    // https://jasmine.github.io/tutorials/your_first_suite
-    jasmine.clock().mockDate(todayExpected);
+    // Mock the date using Jest
+    jest.useFakeTimers();
+    jest.setSystemTime(todayExpected);
 
     const today: JDNConvertibleCalendar = adapter.today();
+
+    jest.useRealTimers();
 
     // create the expected Gregorian date
     const year = todayExpected.getFullYear();
