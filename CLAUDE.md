@@ -21,7 +21,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is DaSCH Service Platform (DSP) monorepo - a digital humanities platform for storing, sharing, and working with primary research resources and data. Built with Angular 18.2.9, NX 19.8.9, and Node.js 22.12.0.
+This is DaSCH Service Platform (DSP) monorepo - a digital humanities platform for storing, sharing, and working with primary research resources and data. Built with Angular 20.2.4, NX 21.5.1, and Node.js 22.12.0.
 
 The main application is **DSP-APP** - a user interface for the Swiss National Data and Service Center for the Humanities (DaSCH) research data repository, connecting to DSP-API backend and implementing DSP-JS client library.
 
@@ -29,7 +29,6 @@ The main application is **DSP-APP** - a user interface for the Swiss National Da
 
 ### Local Development
 - `npm run start-local` or `nx run dsp-app:serve` - Start local development server
-- `npm run start-test` - Start with test server configuration
 - `npm run start-dev` - Start with dev server configuration
 
 ### Testing
@@ -88,10 +87,8 @@ The `libs/vre/` directory follows domain-driven design with clear separation:
 
 Multiple environment configurations available:
 - `development` - Local development
-- `test-server` - Test server environment
 - `dev-server` - Development server environment
 - `ls-test-server` - LS test server environment
-- `0845-test-server` - Specific test server environment
 - `stage-server` - Staging environment
 - `production` - Production environment
 
@@ -104,11 +101,11 @@ Multiple environment configurations available:
 - Focus tests (fit, fdescribe) are banned in CI
 - Self-closing tags for component selectors in templates
 - no usage of ::ng-deep
+- Control Flow syntax
 
 ### Testing Framework
 - **Jest** for unit tests with Angular-specific preset
 - **Cypress** for E2E tests with multiple configurations
-- **Karma** as fallback test runner for some configurations
 - Code coverage reporting available
 
 ### NX Integration  
@@ -130,7 +127,7 @@ Application handles various file types and representations:
 
 ## DSP-JS Client Library (Most Crucial Dependency)
 
-**@dasch-swiss/dsp-js v10.8.0** is the primary API client library for communicating with DSP-API backend. It's deeply integrated throughout the application and essential for all data operations.
+**@dasch-swiss/dsp-js v10.9.0** is the primary API client library for communicating with DSP-API backend. It's deeply integrated throughout the application and essential for all data operations.
 
 ### Configuration and Setup
 
@@ -249,7 +246,7 @@ DSP-JS is integrated with NGXS state management:
 ### Development Commands for DSP-JS
 
 - `npm run yalc-add-lib` - Add local DSP-JS development version
-- Check `package.json` for current version: `@dasch-swiss/dsp-js: 10.8.0`
+- Check `package.json` for current version: `@dasch-swiss/dsp-js: 10.9.0`
 
 ## Working with APIs
 

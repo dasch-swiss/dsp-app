@@ -103,11 +103,9 @@ updates:
         applies-to: version-updates
         patterns:
           - "@cypress/code-coverage"
-          - "@istanbuljs/nyc-config-typescript"
           - "@jsdevtools/coverage-istanbul-loader"
           - "istanbul-lib-coverage"
           - "ngx-build-plus"
-          - "nyc"
         update-types:
           - "minor"
           - "patch"

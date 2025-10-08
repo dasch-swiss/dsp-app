@@ -120,41 +120,11 @@
           "vendorChunk": false,
           "buildOptimizer": false
         },
-        "0845-test-server": {
-          "fileReplacements": [
-            {
-              "replace": "apps/dsp-app/src/environments/environment.ts",
-              "with": "apps/dsp-app/src/environments/environment.0845-test-server.ts"
-            }
-          ],
-          "optimization": false,
-          "sourceMap": true,
-          "namedChunks": true,
-          "aot": true,
-          "extractLicenses": false,
-          "vendorChunk": false,
-          "buildOptimizer": false
-        },
         "stage-server": {
           "fileReplacements": [
             {
               "replace": "apps/dsp-app/src/environments/environment.ts",
               "with": "apps/dsp-app/src/environments/environment.stage-server.ts"
-            }
-          ],
-          "optimization": false,
-          "sourceMap": true,
-          "namedChunks": true,
-          "aot": true,
-          "extractLicenses": false,
-          "vendorChunk": false,
-          "buildOptimizer": false
-        },
-        "rdu-19-server": {
-          "fileReplacements": [
-            {
-              "replace": "apps/dsp-app/src/environments/environment.ts",
-              "with": "apps/dsp-app/src/environments/environment.rdu-19-server.ts"
             }
           ],
           "optimization": false,
@@ -183,20 +153,11 @@
         "dev-server": {
           "buildTarget": "dsp-app:build:dev-server"
         },
-        "test-server": {
-          "buildTarget": "dsp-app:build:test-server"
-        },
         "ls-test-server": {
-          "buildTarget": "dsp-app:build:ls-test-server"
-        },
-        "0845-test-server": {
           "buildTarget": "dsp-app:build:ls-test-server"
         },
         "stage-server": {
           "buildTarget": "dsp-app:build:stage-server"
-        },
-        "rdu-19-server": {
-          "buildTarget": "dsp-app:build:rdu-19-server"
         }
       },
       "continuous": true
