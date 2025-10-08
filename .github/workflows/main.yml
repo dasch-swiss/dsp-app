@@ -2,13 +2,6 @@ name: CI
 
 on: [ push, fork ]
 
-env:
-  # Temporarily disabling due to:
-  # Nx Cloud: Workspace is unable to be authorized. Exiting run. This Nx Cloud organization has been disabled due to exceeding the FREE plan.
-  NX_CLOUD_DISABLED: true
-  # use the read-write access token so that build cache in nx-cloud can be updated
-  # NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
-
 jobs:
 
   test:
@@ -61,14 +54,6 @@ jobs:
         run: |
           cd ../dsp-das
           npm run e2e-ci
-      - name: Run e2e tests on Cypress Cloud on push
-        if: github.event_name == 'pull_request' && startsWith(github.event.pull_request.head.ref, 'release-please') && github.event.pull_request.merged == true
-        run: |
-          cd ../dsp-das
-          export CYPRESS_RECORD_KEY=$CYPRESS_RECORD_KEY_SECRET
-          npm run e2e-cloud
-        env:
-          CYPRESS_RECORD_KEY_SECRET: ${{ secrets.CYPRESS_RECORD_KEY }}
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         if: failure()
