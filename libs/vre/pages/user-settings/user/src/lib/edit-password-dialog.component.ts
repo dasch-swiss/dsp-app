@@ -17,34 +17,36 @@ export interface EditPasswordDialogProps {
   template: `
     <app-dialog-header [title]="data.user.username" [subtitle]="'pages.system.users.changePassword' | translate" />
 
-    <mat-stepper orientation="vertical" linear #stepper>
-      <mat-step
-        [label]="'For security reasons, please enter your current password'"
-        [stepControl]="adminPasswordControl"
-        [editable]="false">
-        <app-password-form-field
-          [control]="adminPasswordControl"
-          [placeholder]="'Your current password'"
-          [showToggleVisibility]="true"
-          [validatorErrors]="[{ errorKey: 'incorrect', message: 'The password entered is incorrect' }]" />
+    <div mat-dialog-content>
+      <mat-stepper orientation="vertical" linear #stepper>
+        <mat-step
+          [label]="'For security reasons, please enter your current password'"
+          [stepControl]="adminPasswordControl"
+          [editable]="false">
+          <app-password-form-field
+            [control]="adminPasswordControl"
+            [placeholder]="'Your current password'"
+            [showToggleVisibility]="true"
+            [validatorErrors]="[{ errorKey: 'incorrect', message: 'The password entered is incorrect' }]" />
 
-        <button mat-raised-button color="primary" (click)="checkAdminPassword()">Next</button>
-      </mat-step>
+          <button mat-raised-button color="primary" (click)="checkAdminPassword()">Next</button>
+        </mat-step>
 
-      <mat-step [label]="'Enter the new password'">
-        <app-password-confirm-form (afterFormInit)="newPasswordControl = $event" />
+        <mat-step [label]="'Enter the new password'">
+          <app-password-confirm-form (afterFormInit)="newPasswordControl = $event" />
 
-        <button
-          mat-raised-button
-          color="primary"
-          appLoadingButton
-          [isLoading]="updateLoading"
-          (click)="updateNewPassword()"
-          style="margin-top: 16px">
-          Update
-        </button>
-      </mat-step>
-    </mat-stepper>
+          <button
+            mat-raised-button
+            color="primary"
+            appLoadingButton
+            [isLoading]="updateLoading"
+            (click)="updateNewPassword()"
+            style="margin-top: 16px">
+            Update
+          </button>
+        </mat-step>
+      </mat-stepper>
+    </div>
 
     <div mat-dialog-actions align="end"><button mat-button color="primary" matDialogClose>Cancel</button></div>
   `,

@@ -7,7 +7,7 @@ import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
 import { existingNamesAsyncValidator } from '@dasch-swiss/vre/pages/user-settings/user';
 import { CustomRegex } from '@dasch-swiss/vre/shared/app-common';
 import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
-import { finalize, map, Subject, switchMap, takeUntil } from 'rxjs';
+import { map, Subject, takeUntil } from 'rxjs';
 import { MakeOntologyFor } from '../../services/make-ontology-for';
 import { OntologyForm } from './ontology-form.type';
 
@@ -15,17 +15,20 @@ import { OntologyForm } from './ontology-form.type';
   selector: 'app-create-ontology-form-dialog',
   template: ` <app-dialog-header [title]="'pages.ontology.ontologyForm.create' | translate" />
 
-    <form>
-      @if (form) {
-        <app-common-input
-          [control]="form.controls.name"
-          [validatorErrors]="[ontoNamePatternErrorMsg, ontoNameExistsErrorMsg]"
-          [label]="'pages.ontology.ontologyForm.name' | translate"
-          data-cy="name-input" />
-      }
+    <div mat-dialog-content>
+      <form>
+        @if (form) {
+          <app-common-input
+            [control]="form.controls.name"
+            [validatorErrors]="[ontoNamePatternErrorMsg, ontoNameExistsErrorMsg]"
+            [label]="'pages.ontology.ontologyForm.name' | translate"
+            data-cy="name-input" />
+        }
 
-      <app-ontology-form mode="create" (afterFormInit)="afterFormInit($event)" />
-    </form>
+        <app-ontology-form mode="create" (afterFormInit)="afterFormInit($event)" />
+      </form>
+    </div>
+
     <div mat-dialog-actions align="end">
       <button color="primary" mat-button mat-dialog-close>{{ 'ui.form.action.cancel' | translate }}</button>
       <button

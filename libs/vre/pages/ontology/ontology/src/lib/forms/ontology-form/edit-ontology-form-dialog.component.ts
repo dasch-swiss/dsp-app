@@ -9,7 +9,9 @@ import { OntologyForm, UpdateOntologyData } from './ontology-form.type';
   selector: 'app-edit-ontology-form-dialog',
   template: ` <app-dialog-header [title]="data.id" [subtitle]="'pages.ontology.ontologyForm.edit' | translate" />
 
-    <app-ontology-form [data]="data" [mode]="'edit'" (afterFormInit)="afterFormInit($event)" />
+    <div mat-dialog-content>
+      <app-ontology-form [data]="data" [mode]="'edit'" (afterFormInit)="afterFormInit($event)" />
+    </div>
 
     <div mat-dialog-actions align="end">
       <button color="primary" mat-button mat-dialog-close>{{ 'ui.form.action.cancel' | translate }}</button>

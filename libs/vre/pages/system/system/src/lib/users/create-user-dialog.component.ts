@@ -10,9 +10,11 @@ import { finalize } from 'rxjs';
   selector: 'app-create-user-dialog',
   template: `
     <app-dialog-header [title]="'Create a new user'" />
-    <app-user-form [data]="data" (afterFormInit)="afterUserFormInit($event)" />
-    <app-password-confirm-form (afterFormInit)="afterPasswordFormInit($event)" />
-    <mat-slide-toggle [formControl]="form.controls.isSystemAdmin">Is a system admin user</mat-slide-toggle>
+    <div mat-dialog-content>
+      <app-user-form [data]="data" (afterFormInit)="afterUserFormInit($event)" />
+      <app-password-confirm-form (afterFormInit)="afterPasswordFormInit($event)" />
+      <mat-slide-toggle [formControl]="form.controls.isSystemAdmin">Is a system admin user</mat-slide-toggle>
+    </div>
 
     <div mat-dialog-actions align="end">
       <button color="primary" mat-button mat-dialog-close>{{ 'ui.form.action.cancel' | translate }}</button>

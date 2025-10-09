@@ -18,7 +18,9 @@ export interface EditUserDialogProps {
   template: `
     <app-dialog-header [title]="data.isOwnAccount ? 'Edit my profile' : 'Edit user'" />
     @if (data.user; as user) {
-      <app-user-form [data]="user" (afterFormInit)="afterFormInit($event)" />
+      <div mat-dialog-content>
+        <app-user-form [data]="user" (afterFormInit)="afterFormInit($event)" />
+      </div>
     }
 
     <div mat-dialog-actions align="end">
