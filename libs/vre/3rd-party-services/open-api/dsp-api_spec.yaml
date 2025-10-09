@@ -383,7 +383,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/lists/0001/VlmyzVyEQwmqaTetdQO0rg
+        example: http://rdfh.ch/lists/0001/nP5rfq8vS8SopaG9Tlwk5Q
       - name: x-knora-accept-schema
         in: header
         description: |-
@@ -529,7 +529,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/lists/0001/VlmyzVyEQwmqaTetdQO0rg
+        example: http://rdfh.ch/lists/0001/nP5rfq8vS8SopaG9Tlwk5Q
       - name: x-knora-accept-schema
         in: header
         description: |-
@@ -11087,7 +11087,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/2x3wlV5jT9O4mTsfMQT41g
+        example: http://rdfh.ch/users/uoPFH30mQQCta_e1qLrTLw
       responses:
         '200':
           description: ''
@@ -11139,7 +11139,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/2x3wlV5jT9O4mTsfMQT41g
+        example: http://rdfh.ch/users/uoPFH30mQQCta_e1qLrTLw
       responses:
         '200':
           description: ''
@@ -11191,7 +11191,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/2x3wlV5jT9O4mTsfMQT41g
+        example: http://rdfh.ch/users/uoPFH30mQQCta_e1qLrTLw
       responses:
         '200':
           description: ''
@@ -11356,7 +11356,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/2x3wlV5jT9O4mTsfMQT41g
+        example: http://rdfh.ch/users/uoPFH30mQQCta_e1qLrTLw
       responses:
         '200':
           description: ''
@@ -11414,7 +11414,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/2x3wlV5jT9O4mTsfMQT41g
+        example: http://rdfh.ch/users/uoPFH30mQQCta_e1qLrTLw
       responses:
         '200':
           description: ''
@@ -11473,6 +11473,7 @@ paths:
         required: true
         schema:
           type: string
+          pattern: ^.+@.+$
         example: jane@example.com
       responses:
         '200':
@@ -11591,7 +11592,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/2x3wlV5jT9O4mTsfMQT41g
+        example: http://rdfh.ch/users/uoPFH30mQQCta_e1qLrTLw
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -11656,7 +11657,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/2x3wlV5jT9O4mTsfMQT41g
+        example: http://rdfh.ch/users/uoPFH30mQQCta_e1qLrTLw
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -11722,7 +11723,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/2x3wlV5jT9O4mTsfMQT41g
+        example: http://rdfh.ch/users/uoPFH30mQQCta_e1qLrTLw
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -11787,7 +11788,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/2x3wlV5jT9O4mTsfMQT41g
+        example: http://rdfh.ch/users/uoPFH30mQQCta_e1qLrTLw
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -11853,7 +11854,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/2x3wlV5jT9O4mTsfMQT41g
+        example: http://rdfh.ch/users/uoPFH30mQQCta_e1qLrTLw
       - name: groupIri
         in: path
         description: The IRI of a group. Must be URL-encoded.
@@ -11918,7 +11919,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/2x3wlV5jT9O4mTsfMQT41g
+        example: http://rdfh.ch/users/uoPFH30mQQCta_e1qLrTLw
       - name: groupIri
         in: path
         description: The IRI of a group. Must be URL-encoded.
@@ -11984,7 +11985,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/2x3wlV5jT9O4mTsfMQT41g
+        example: http://rdfh.ch/users/uoPFH30mQQCta_e1qLrTLw
       requestBody:
         content:
           application/json:
@@ -12049,7 +12050,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/2x3wlV5jT9O4mTsfMQT41g
+        example: http://rdfh.ch/users/uoPFH30mQQCta_e1qLrTLw
       requestBody:
         content:
           application/json:
@@ -12114,7 +12115,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/2x3wlV5jT9O4mTsfMQT41g
+        example: http://rdfh.ch/users/uoPFH30mQQCta_e1qLrTLw
       requestBody:
         content:
           application/json:
@@ -12179,7 +12180,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/2x3wlV5jT9O4mTsfMQT41g
+        example: http://rdfh.ch/users/uoPFH30mQQCta_e1qLrTLw
       requestBody:
         content:
           application/json:
@@ -12422,7 +12423,8 @@ components:
         username:
           $ref: '#/components/schemas/Username'
         email:
-          $ref: '#/components/schemas/Email'
+          type: string
+          pattern: ^.+@.+$
         givenName:
           $ref: '#/components/schemas/GivenName'
         familyName:
@@ -12672,14 +12674,6 @@ components:
       properties:
         message:
           type: string
-    Email:
-      title: Email
-      type: object
-      required:
-      - value
-      properties:
-        value:
-          type: string
     EmailPassword:
       title: EmailPassword
       type: object
@@ -12688,7 +12682,8 @@ components:
       - password
       properties:
         email:
-          $ref: '#/components/schemas/Email'
+          type: string
+          pattern: ^.+@.+$
         password:
           type: string
     ExportFormat:
@@ -13858,7 +13853,8 @@ components:
         username:
           $ref: '#/components/schemas/Username'
         email:
-          $ref: '#/components/schemas/Email'
+          type: string
+          pattern: ^.+@.+$
         givenName:
           $ref: '#/components/schemas/GivenName'
         familyName:
