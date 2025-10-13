@@ -1,6 +1,9 @@
 import { PerformanceTestBase, USER_SERVICE_TEST_PAGES } from '../../support/utils/performance-test-base';
 
-describe('Memory Leak Detection', () => {
+/** This e2e test is designed to detect memory leaks in user-related services and components.
+ * It is skipped by default and should be run manually when needed, as it may take considerable time to complete.
+ */
+describe.skip('Memory Leak Detection', () => {
   const perfTest = new PerformanceTestBase();
 
   beforeEach(() => {

@@ -1,6 +1,10 @@
 import { PerformanceTestBase } from '../../support/utils/performance-test-base';
 
-describe('Change Detection Performance', () => {
+/**
+ * This e2e test suite focuses on measuring change detection performance.
+ * It is skipped by default and should be run manually when needed,
+ */
+describe.skip('Change Detection Performance', () => {
   const perfTest = new PerformanceTestBase();
 
   beforeEach(() => {
@@ -11,7 +15,7 @@ describe('Change Detection Performance', () => {
   });
 
   it('should measure change detection cycles during user operations', () => {
-    cy.window().then((win) => {
+    cy.window().then(win => {
       // Access Angular profiler if available
       const ng = (win as any).ng;
       if (!ng?.profiler) {
@@ -90,7 +94,7 @@ describe('Change Detection Performance', () => {
 
         perfTest.recordMeasurement('user_navigation_memory_usage', memoryIncrease, {
           initialMemory,
-          finalMemory
+          finalMemory,
         });
       });
     });
