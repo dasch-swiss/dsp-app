@@ -30,7 +30,7 @@ export class OntologyFormComponent implements OnInit {
 
   ontologyForm!: OntologyForm;
 
-  constructor(private _fb: FormBuilder) {}
+  constructor(private readonly _fb: FormBuilder) {}
 
   ngOnInit() {
     this._buildForm();

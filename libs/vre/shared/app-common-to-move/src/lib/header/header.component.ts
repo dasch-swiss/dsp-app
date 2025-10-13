@@ -36,7 +36,7 @@ import { Router } from '@angular/router';
   standalone: false,
 })
 export class HeaderComponent {
-  constructor(private _router: Router) {}
+  constructor(private readonly _router: Router) {}
 
   goToHomePage() {
     this._router.navigate(['/']);

@@ -12,9 +12,9 @@ export class LoadingButtonDirective implements OnChanges {
   spinnerComponentRef!: any;
 
   constructor(
-    private el: ElementRef,
-    private renderer: Renderer2,
-    private viewContainerRef: ViewContainerRef
+    private readonly _el: ElementRef,
+    private readonly _renderer: Renderer2,
+    private readonly _viewContainerRef: ViewContainerRef
   ) {
     this.attachSpinnerElement();
   }
@@ -41,27 +41,27 @@ export class LoadingButtonDirective implements OnChanges {
   }
 
   private attachSpinnerElement(): void {
-    this.spinnerComponentRef = this.viewContainerRef.createComponent(MatProgressSpinner);
+    this.spinnerComponentRef = this._viewContainerRef.createComponent(MatProgressSpinner);
     this.spinnerComponentRef.instance.mode = 'indeterminate';
     this.spinnerComponentRef.instance.diameter = 20;
     this.spinnerElement = this.spinnerComponentRef.location.nativeElement;
-    this.renderer.setStyle(this.spinnerElement, 'margin-right', '8px');
-    this.renderer.appendChild(this.el.nativeElement, this.spinnerElement);
+    this._renderer.setStyle(this.spinnerElement, 'margin-right', '8px');
+    this._renderer.appendChild(this._el.nativeElement, this.spinnerElement);
   }
 
   private disableButton(): void {
-    this.renderer.setProperty(this.el.nativeElement, 'disabled', true);
+    this._renderer.setProperty(this._el.nativeElement, 'disabled', true);
   }
 
   private enableButton(): void {
-    this.renderer.setProperty(this.el.nativeElement, 'disabled', false);
+    this._renderer.setProperty(this._el.nativeElement, 'disabled', false);
   }
 
   private showSpinner(): void {
-    this.renderer.setStyle(this.spinnerElement, 'display', 'inline-block');
+    this._renderer.setStyle(this.spinnerElement, 'display', 'inline-block');
   }
 
   private hideSpinner(): void {
-    this.renderer.setStyle(this.spinnerElement, 'display', 'none');
+    this._renderer.setStyle(this.spinnerElement, 'display', 'none');
   }
 }

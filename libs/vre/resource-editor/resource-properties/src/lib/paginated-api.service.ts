@@ -4,7 +4,7 @@ import { EMPTY, expand, map, reduce } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class PaginatedApiService {
-  constructor(private _copyrightApi: AdminProjectsLegalInfoApiService) {}
+  constructor(private readonly _copyrightApi: AdminProjectsLegalInfoApiService) {}
 
   getLicenses(projectShortcode: string, pageSize = 100) {
     return this._copyrightApi.getAdminProjectsShortcodeProjectshortcodeLegalInfoLicenses(projectShortcode).pipe(

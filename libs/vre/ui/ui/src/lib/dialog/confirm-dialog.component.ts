@@ -24,7 +24,7 @@ export interface ConfirmDialogProps {
 })
 export class ConfirmDialogComponent {
   constructor(
-    public dialogRef: MatDialogRef<ConfirmDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: ConfirmDialogProps
+    public readonly dialogRef: MatDialogRef<ConfirmDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public readonly data: ConfirmDialogProps
   ) {}
 }

@@ -13,7 +13,7 @@ import { DspResource } from '@dasch-swiss/vre/shared/app-common';
  * @class ProjectService
  */
 export class ProjectService {
-  constructor(private _acs: AppConfigService) {}
+  constructor(private readonly _acs: AppConfigService) {}
 
   static IriToUuid(iri: string): string {
     if (iri) {

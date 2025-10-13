@@ -12,5 +12,5 @@ import { MatDialogRef } from '@angular/material/dialog';
   standalone: false,
 })
 export class ClosingDialogComponent {
-  constructor(public dialogRef: MatDialogRef<unknown>) {}
+  constructor(public readonly dialogRef: MatDialogRef<unknown>) {}
 }

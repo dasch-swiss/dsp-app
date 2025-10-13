@@ -23,8 +23,8 @@ export enum ProjectIdentifier {
 })
 export class ProjectApiService extends BaseApi {
   constructor(
-    private _http: HttpClient,
-    private _appConfig: AppConfigService
+    private readonly _http: HttpClient,
+    private readonly _appConfig: AppConfigService
   ) {
     super('admin/projects', _appConfig.dspApiConfig);
   }

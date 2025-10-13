@@ -26,7 +26,7 @@ export class ProjectDescriptionPageComponent {
 
   hasManualLicense?: string;
 
-  constructor(private _projectPageService: ProjectPageService) {}
+  constructor(private readonly _projectPageService: ProjectPageService) {}
 
   private _sortDescriptionsByLanguage(descriptions: StringLiteral[]): StringLiteral[] {
     const languageOrder = AvailableLanguages.map(l => l.language) as string[];

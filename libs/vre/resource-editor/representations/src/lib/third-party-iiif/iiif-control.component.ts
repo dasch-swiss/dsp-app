@@ -57,7 +57,7 @@ export class IiifControlComponent implements OnInit, OnDestroy {
     { errorKey: 'invalidHost', message: 'The provided URL is not from an external source.' },
   ];
 
-  constructor(private _cdr: ChangeDetectorRef) {}
+  constructor(private readonly _cdr: ChangeDetectorRef) {}
 
   ngOnInit() {
     this.subscription = this.control.valueChanges.pipe(startWith(this.control.value)).subscribe(urlStr => {

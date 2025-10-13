@@ -30,7 +30,7 @@ export class AppConfigService {
    * Watch out for AppConfig. The config.json is simply pressed into
    * this type without type checking!!!
    */
-  constructor(@Inject(AppConfigToken) private _configJson: unknown) {
+  constructor(@Inject(AppConfigToken) private readonly _configJson: unknown) {
     // parses the config and
     // throws an error if config is not valid
     const c = AppConfig.parse(_configJson);

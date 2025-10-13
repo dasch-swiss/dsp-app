@@ -67,15 +67,15 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
   isSysAdmin$ = this._userService.isSysAdmin$;
 
   constructor(
-    private _appConfigService: AppConfigService,
-    private _dialog: MatDialog,
-    private _dialogService: DialogService,
-    private _notification: NotificationService,
-    private _projectApiService: ProjectApiService,
-    private _router: Router,
-    private _userService: UserService,
-    private _translateService: TranslateService,
-    private _projectService: ProjectService
+    private readonly _appConfigService: AppConfigService,
+    private readonly _dialog: MatDialog,
+    private readonly _dialogService: DialogService,
+    private readonly _notification: NotificationService,
+    private readonly _projectApiService: ProjectApiService,
+    private readonly _router: Router,
+    private readonly _userService: UserService,
+    private readonly _translateService: TranslateService,
+    private readonly _projectService: ProjectService
   ) {}
 
   ngOnInit() {

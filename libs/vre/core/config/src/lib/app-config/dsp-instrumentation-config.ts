@@ -7,14 +7,14 @@ import { InstrumentationType } from './app-config';
 
 export class DspRollbarConfig {
   constructor(
-    public enabled: boolean,
-    public accessToken: string | undefined
+    public readonly enabled: boolean,
+    public readonly accessToken: string | undefined
   ) {}
 }
 
 export class DspInstrumentationConfig {
   constructor(
-    public environment: InstrumentationType['environment'],
-    public rollbar: DspRollbarConfig
+    public readonly environment: InstrumentationType['environment'],
+    public readonly rollbar: DspRollbarConfig
   ) {}
 }

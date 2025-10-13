@@ -20,12 +20,12 @@ import { ListItemService } from './list-item/list-item.service';
 })
 export class ListPageComponent implements OnInit, OnDestroy {
   private _reloadMainListSubject = new BehaviorSubject<null>(null);
-  private readonly routeListIri$ = this._reloadMainListSubject.pipe(
+  private readonly _routeListIri$ = this._reloadMainListSubject.pipe(
     switchMap(() => this._route.paramMap),
     map(params => params.get(RouteConstants.listParameter))
   );
 
-  rootListNodeInfo$ = combineLatest([this.routeListIri$, this._projectPageService.currentProject$]).pipe(
+  rootListNodeInfo$ = combineLatest([this._routeListIri$, this._projectPageService.currentProject$]).pipe(
     switchMap(([listIri, project]) =>
       this._listApiService.get(`http://rdfh.ch/lists/${project.shortcode}/${listIri!}`)
     ),

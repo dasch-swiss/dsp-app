@@ -60,7 +60,7 @@ export class PagerComponent implements OnChanges {
     return `${itemRangeStart} - ${itemRangeEnd} ${this._translate.instant('ui.pager.rangeLabelOf')} ${this.numberOfAllResults}`;
   }
 
-  constructor(private _translate: TranslateService) {}
+  constructor(private readonly _translate: TranslateService) {}
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['numberOfAllResults']) {

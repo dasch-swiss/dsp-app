@@ -13,12 +13,12 @@ export class AutoLoginService {
   hasCheckedCredentials$ = new BehaviorSubject(false);
 
   constructor(
-    private _accessTokenService: AccessTokenService,
+    private readonly _accessTokenService: AccessTokenService,
     @Inject(DspApiConnectionToken)
-    private _dspApiConnection: KnoraApiConnection,
-    private _userService: UserService,
-    private _authService: AuthService,
-    private _localizationsService: LocalizationService
+    private readonly _dspApiConnection: KnoraApiConnection,
+    private readonly _userService: UserService,
+    private readonly _authService: AuthService,
+    private readonly _localizationsService: LocalizationService
   ) {}
 
   setup(): void {

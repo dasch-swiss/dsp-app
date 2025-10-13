@@ -95,10 +95,10 @@ export class StatusComponent implements OnInit {
 
   constructor(
     @Inject(DspApiConnectionToken)
-    private _dspApiConnection: KnoraApiConnection,
-    private _titleService: Title,
-    private _route: ActivatedRoute,
-    private _httpStatus: HttpStatusMsg
+    private readonly _dspApiConnection: KnoraApiConnection,
+    private readonly _titleService: Title,
+    private readonly _route: ActivatedRoute,
+    private readonly _httpStatus: HttpStatusMsg
   ) {}
 
   ngOnInit() {

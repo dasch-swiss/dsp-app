@@ -21,7 +21,7 @@ export class PropertyValueComponent implements OnInit, OnDestroy {
   displayMode = false;
   private _subscription!: Subscription;
 
-  constructor(public propertyValueService: PropertyValueService) {}
+  constructor(public readonly propertyValueService: PropertyValueService) {}
 
   ngOnInit() {
     this._subscription = this.propertyValueService.lastOpenedItem$.pipe(distinctUntilChanged()).subscribe(value => {

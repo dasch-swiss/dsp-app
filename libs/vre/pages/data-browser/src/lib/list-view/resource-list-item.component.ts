@@ -84,7 +84,7 @@ export class ResourceListItemComponent implements OnInit {
     map(resources => resources.map(r => r.id).includes(this.resource.id) && this.multipleViewerService.selectMode)
   );
 
-  constructor(public multipleViewerService: MultipleViewerService) {}
+  constructor(public readonly multipleViewerService: MultipleViewerService) {}
 
   ngOnInit() {
     if (this.multipleViewerService.searchKeyword) {

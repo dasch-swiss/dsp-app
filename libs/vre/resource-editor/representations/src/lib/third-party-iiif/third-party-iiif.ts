@@ -1,11 +1,11 @@
 export class IIIFUrl {
   private _url: URL;
 
-  private readonly qualform_ex = /^(color|gray|grey|bitonal|default|native)\.(jpg|tif|png|jp2|jpeg)$/;
-  private readonly rotation_ex = /^[-+]?[0-9]*\.?[0-9]+$|^![-+]?[0-9]*\.?[0-9]+$/;
-  private readonly size_ex =
+  private readonly _qualform_ex = /^(color|gray|grey|bitonal|default|native)\.(jpg|tif|png|jp2|jpeg)$/;
+  private readonly _rotation_ex = /^[-+]?[0-9]*\.?[0-9]+$|^![-+]?[0-9]*\.?[0-9]+$/;
+  private readonly _size_ex =
     /^(full|(\^?max)|(\^?pct:[0-9]*\.?[0-9]*)|(\^?[0-9]*,)|(\^?,[0-9]*)|(\^?!?[0-9]*,[0-9]*))$/;
-  private readonly region_ex =
+  private readonly _region_ex =
     /^(full)|(square)|([0-9]+,[0-9]+,[0-9]+,[0-9]+)|(pct:[0-9]*\.?[0-9]*,[0-9]*\.?[0-9]*,[0-9]*\.?[0-9]*,[0-9]*\.?[0-9]*)$/;
 
   private constructor(url: string) {
@@ -53,22 +53,22 @@ export class IIIFUrl {
       return false;
     }
 
-    if (!this.qualform_ex.test(this._qualitySegment)) {
+    if (!this._qualform_ex.test(this._qualitySegment)) {
       return false;
     }
 
     if (
-      !this.rotation_ex.test(this._rotationSegment) &&
-      !this.rotation_ex.test(decodeURIComponent(this._rotationSegment))
+      !this._rotation_ex.test(this._rotationSegment) &&
+      !this._rotation_ex.test(decodeURIComponent(this._rotationSegment))
     ) {
       return false;
     }
 
-    if (!this.size_ex.test(this._sizeSegment) && !this.size_ex.test(decodeURIComponent(this._sizeSegment))) {
+    if (!this._size_ex.test(this._sizeSegment) && !this._size_ex.test(decodeURIComponent(this._sizeSegment))) {
       return false;
     }
 
-    if (!this.region_ex.test(this._regionSegment) && !this.region_ex.test(decodeURIComponent(this._regionSegment))) {
+    if (!this._region_ex.test(this._regionSegment) && !this._region_ex.test(decodeURIComponent(this._regionSegment))) {
       return false;
     }
 

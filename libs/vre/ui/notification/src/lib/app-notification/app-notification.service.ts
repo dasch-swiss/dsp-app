@@ -5,7 +5,7 @@ import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
   providedIn: 'root',
 })
 export class NotificationService {
-  constructor(private _snackBar: MatSnackBar) {}
+  constructor(private readonly _snackBar: MatSnackBar) {}
 
   openSnackBar(notification: string, type: 'success' | 'error' = 'success'): void {
     const conf: MatSnackBarConfig = {

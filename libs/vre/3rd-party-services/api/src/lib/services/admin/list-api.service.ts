@@ -29,8 +29,8 @@ import { BaseApi } from '../base-api';
 })
 export class ListApiService extends BaseApi {
   constructor(
-    private _http: HttpClient,
-    private _appConfig: AppConfigService
+    private readonly _http: HttpClient,
+    private readonly _appConfig: AppConfigService
   ) {
     super('admin/lists', _appConfig.dspApiConfig);
   }

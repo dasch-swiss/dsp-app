@@ -23,7 +23,7 @@ export class GeonameViewerComponent implements OnChanges {
 
   geonameLabel$!: Observable<DisplayPlace>;
 
-  constructor(private _geonameService: GeonameService) {}
+  constructor(private readonly _geonameService: GeonameService) {}
 
   ngOnChanges() {
     this.geonameLabel$ = this._geonameService.resolveGeonameID(this.value.geoname);

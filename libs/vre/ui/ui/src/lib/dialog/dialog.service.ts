@@ -5,7 +5,7 @@ import { ConfirmDialogComponent, ConfirmDialogProps } from './confirm-dialog.com
 
 @Injectable({ providedIn: 'root' })
 export class DialogService {
-  constructor(private _dialog: MatDialog) {}
+  constructor(private readonly _dialog: MatDialog) {}
 
   afterConfirmation(message: string, title: string | null = null, subtitle: string | null = null) {
     return this._dialog

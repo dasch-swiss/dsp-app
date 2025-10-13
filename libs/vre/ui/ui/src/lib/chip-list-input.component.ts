@@ -41,7 +41,7 @@ export class ChipListInputComponent {
   addChipFormError: ValidationErrors | null = null;
   protected readonly Validators = Validators;
 
-  constructor(private _fb: FormBuilder) {}
+  constructor(private readonly _fb: FormBuilder) {}
 
   addKeyword(event: MatChipInputEvent): void {
     this.addChipFormError = null;

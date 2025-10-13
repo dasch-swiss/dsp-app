@@ -31,5 +31,5 @@ export class CompoundArrowNavigationComponent implements OnInit {
     }
   }
 
-  constructor(public compoundService: CompoundService) {}
+  constructor(public readonly compoundService: CompoundService) {}
 }

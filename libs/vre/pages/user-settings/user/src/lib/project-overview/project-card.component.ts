@@ -105,7 +105,7 @@ export class ProjectCardComponent {
     return ProjectService.IriToUuid(this.project.id);
   }
 
-  constructor(private _router: Router) {}
+  constructor(private readonly _router: Router) {}
 
   navigate() {
     this._router.navigate([RouteConstants.project, this.projectUuid]);

@@ -25,7 +25,7 @@ import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
         <mat-icon class="tab-icon">lan</mat-icon>
         Data models
       </a>
-      @if (_projectPageService.hasProjectAdminRights$ | async) {
+      @if (projectPageService.hasProjectAdminRights$ | async) {
         <a mat-tab-link [routerLink]="[SETTINGS]" routerLinkActive="active-link">
           <mat-icon class="tab-icon">settings</mat-icon>
           Settings
@@ -63,9 +63,9 @@ export class ProjectNavigationTabsComponent {
     return this._route.snapshot.children[0].url[0].path;
   }
   constructor(
-    private _route: ActivatedRoute,
-    private _router: Router,
-    public _projectPageService: ProjectPageService
+    private readonly _route: ActivatedRoute,
+    private readonly _router: Router,
+    public readonly projectPageService: ProjectPageService
   ) {}
 
   reloadPage(event: MouseEvent) {

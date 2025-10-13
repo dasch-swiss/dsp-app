@@ -37,5 +37,5 @@ export class MultipleViewerComponent {
 
   selectedResourceIds$ = this.multipleViewerService.selectedResources$.pipe(map(resources => resources.map(r => r.id)));
 
-  constructor(public multipleViewerService: MultipleViewerService) {}
+  constructor(public readonly multipleViewerService: MultipleViewerService) {}
 }

@@ -25,7 +25,7 @@ export class SegmentComponent implements OnInit {
 
   play = false;
 
-  constructor(public mediaControl: MediaControlService) {}
+  constructor(public readonly mediaControl: MediaControlService) {}
 
   ngOnInit() {
     this.width =

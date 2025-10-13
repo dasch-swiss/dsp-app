@@ -34,9 +34,9 @@ export class EditOntologyFormDialogComponent {
   form!: OntologyForm;
 
   constructor(
-    private _oes: OntologyEditService,
-    @Inject(MAT_DIALOG_DATA) public data: UpdateOntologyData,
-    public dialogRef: MatDialogRef<EditOntologyFormDialogComponent, OntologyMetadata>
+    private readonly _oes: OntologyEditService,
+    @Inject(MAT_DIALOG_DATA) public readonly data: UpdateOntologyData,
+    public readonly dialogRef: MatDialogRef<EditOntologyFormDialogComponent, OntologyMetadata>
   ) {}
 
   afterFormInit(form: OntologyForm) {

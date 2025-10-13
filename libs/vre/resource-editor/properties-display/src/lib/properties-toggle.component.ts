@@ -71,7 +71,7 @@ export class PropertiesToggleComponent implements OnChanges {
   numberOfComments!: number;
   showAllComments$ = this.propertiesDisplayService.showComments$;
 
-  constructor(public propertiesDisplayService: PropertiesDisplayService) {}
+  constructor(public readonly propertiesDisplayService: PropertiesDisplayService) {}
 
   ngOnChanges() {
     this.numberOfComments = this.properties.reduce((acc, prop) => {

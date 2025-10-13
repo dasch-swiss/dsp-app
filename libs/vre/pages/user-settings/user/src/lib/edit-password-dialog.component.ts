@@ -67,13 +67,13 @@ export class EditPasswordDialogComponent {
 
   updateLoading = false;
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: EditPasswordDialogProps,
-    public dialogRef: MatDialogRef<EditPasswordDialogComponent>,
-    private _userApiService: UserApiService,
+    @Inject(MAT_DIALOG_DATA) public readonly data: EditPasswordDialogProps,
+    public readonly dialogRef: MatDialogRef<EditPasswordDialogComponent>,
+    private readonly _userApiService: UserApiService,
     @Inject(DspApiConnectionToken)
-    private _dspApiConnection: KnoraApiConnection,
-    private _fb: FormBuilder,
-    private _userService: UserService
+    private readonly _dspApiConnection: KnoraApiConnection,
+    private readonly _fb: FormBuilder,
+    private readonly _userService: UserService
   ) {}
 
   checkAdminPassword() {

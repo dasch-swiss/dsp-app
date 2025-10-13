@@ -14,5 +14,5 @@ import { AppConfigService } from '@dasch-swiss/vre/core/config';
 })
 export class VersionBadgeComponent {
   dsp = this._appConfigService.dspConfig;
-  constructor(private _appConfigService: AppConfigService) {}
+  constructor(private readonly _appConfigService: AppConfigService) {}
 }

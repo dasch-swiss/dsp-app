@@ -18,8 +18,8 @@ export type UserIdentifier = 'iri' | 'email' | 'username';
 })
 export class UserApiService extends BaseApi {
   constructor(
-    private _http: HttpClient,
-    private _appConfig: AppConfigService
+    private readonly _http: HttpClient,
+    private readonly _appConfig: AppConfigService
   ) {
     super('admin/users', _appConfig.dspApiConfig);
   }

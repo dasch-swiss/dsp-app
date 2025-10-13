@@ -12,5 +12,5 @@ import { map } from 'rxjs';
 })
 export class FulltextSearchResultsPageComponent {
   query$ = this._route.params.pipe(map(v => v[RouteConstants.qParameter]));
-  constructor(private _route: ActivatedRoute) {}
+  constructor(private readonly _route: ActivatedRoute) {}
 }

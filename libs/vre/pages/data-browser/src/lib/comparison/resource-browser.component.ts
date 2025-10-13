@@ -25,7 +25,7 @@ export class ResourceBrowserComponent implements OnInit, OnChanges {
   @Input() showBackToFormButton = false;
   @Input() searchKeyword?: string;
 
-  constructor(private _multipleViewerService: MultipleViewerService) {}
+  constructor(private readonly _multipleViewerService: MultipleViewerService) {}
 
   ngOnInit() {
     this._multipleViewerService.searchKeyword = this.searchKeyword;

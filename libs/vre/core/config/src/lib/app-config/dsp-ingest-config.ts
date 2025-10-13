@@ -7,7 +7,7 @@ export class DspIngestConfig {
   /**
    * @param _ingestUrl the url to the ingest service
    */
-  constructor(private _ingestUrl: string) {}
+  constructor(private readonly _ingestUrl: string) {}
 
   get url(): string {
     return this._ingestUrl;

@@ -16,7 +16,7 @@ export class ResourceClassSidenavComponent implements OnChanges {
 
   classesToDisplay: ResourceClassDefinitionWithAllLanguages[] = [];
 
-  constructor(private _localizationService: LocalizationService) {}
+  constructor(private readonly _localizationService: LocalizationService) {}
 
   ngOnChanges() {
     const classes = this.ontology.getClassDefinitionsByType(ResourceClassDefinitionWithAllLanguages);

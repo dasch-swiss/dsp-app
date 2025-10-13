@@ -13,7 +13,7 @@ export class GravsearchSearchParams {
    * as a parameter and returns a Gravsearch query string.
    * Returns false if not set correctly (init state).
    */
-  constructor(public generateGravsearch: (offset: number) => string | boolean) {}
+  constructor(public readonly generateGravsearch: (offset: number) => string | boolean) {}
 }
 
 @Injectable({

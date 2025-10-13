@@ -1,6 +1,6 @@
 export class DspAppConfig {
   constructor(
-    public geonameToken: string,
-    public iriBase: string
+    public readonly geonameToken: string,
+    public readonly iriBase: string
   ) {}
 }

@@ -36,13 +36,13 @@ export class EditUserDialogComponent {
   form!: UserForm;
 
   constructor(
-    private _dialogRef: MatDialogRef<EditUserDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: EditUserDialogProps,
-    private _notification: NotificationService,
-    private _userService: UserService,
-    private _localizationsService: LocalizationService,
-    private _translateService: TranslateService,
-    private _userApiService: UserApiService
+    private readonly _dialogRef: MatDialogRef<EditUserDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public readonly data: EditUserDialogProps,
+    private readonly _notification: NotificationService,
+    private readonly _userService: UserService,
+    private readonly _localizationsService: LocalizationService,
+    private readonly _translateService: TranslateService,
+    private readonly _userApiService: UserApiService
   ) {}
 
   afterFormInit(form: UserForm) {

@@ -18,8 +18,8 @@ export class UserMenuComponent {
   isSysAdmin$ = this._userService.isSysAdmin$;
 
   constructor(
-    private _authService: AuthService,
-    private _userService: UserService
+    private readonly _authService: AuthService,
+    private readonly _userService: UserService
   ) {}
 
   logout() {

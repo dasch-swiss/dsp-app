@@ -83,7 +83,7 @@ export class AdvancedSearchComponent implements OnInit {
   constants = Constants;
   previousSearchObject: AdvancedSearchStateSnapshot | null = null;
 
-  constructor(private _dialogService: DialogService) {}
+  constructor(private readonly _dialogService: DialogService) {}
 
   ngOnInit(): void {
     const projectIri = `http://rdfh.ch/projects/${this.uuid}`;

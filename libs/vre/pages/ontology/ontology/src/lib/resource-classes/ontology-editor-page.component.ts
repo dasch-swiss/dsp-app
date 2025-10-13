@@ -23,5 +23,5 @@ import { OntologyEditService } from '../services/ontology-edit.service';
 export class OntologyEditorPageComponent {
   trackByClassDefinitionFn = (index: number, item: ResourceClassInfo) => `${index}-${item.id}`;
 
-  constructor(public oes: OntologyEditService) {}
+  constructor(public readonly oes: OntologyEditService) {}
 }

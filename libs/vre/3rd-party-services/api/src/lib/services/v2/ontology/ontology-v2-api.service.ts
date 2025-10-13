@@ -22,8 +22,8 @@ import { UpdateResourceProperty } from './update-resource-property.interface';
 })
 export class OntologyV2ApiService extends BaseApi {
   constructor(
-    private _http: HttpClient,
-    private _appConfig: AppConfigService
+    private readonly _http: HttpClient,
+    private readonly _appConfig: AppConfigService
   ) {
     super('v2/ontologies', _appConfig.dspApiConfig);
   }

@@ -29,7 +29,7 @@ export class CreateResourceFormFileComponent implements OnInit {
     }),
   }) as unknown as FileForm;
 
-  constructor(private _fb: FormBuilder) {}
+  constructor(private readonly _fb: FormBuilder) {}
 
   ngOnInit() {
     this.afterFormCreated.emit(this.form);

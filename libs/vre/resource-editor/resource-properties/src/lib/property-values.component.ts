@@ -44,7 +44,7 @@ export class PropertyValuesComponent implements OnChanges {
 
   currentlyAdding = false;
 
-  constructor(public propertyValueService: PropertyValueService) {}
+  constructor(public readonly propertyValueService: PropertyValueService) {}
 
   ngOnChanges() {
     this._setupData();

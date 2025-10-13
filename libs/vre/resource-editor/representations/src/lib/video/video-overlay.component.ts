@@ -16,7 +16,7 @@ export class VideoOverlayComponent {
   duration = 0;
   play = true;
 
-  constructor(public videoPlayer: MediaPlayerService) {}
+  constructor(public readonly videoPlayer: MediaPlayerService) {}
 
   updateTimeFromButton(range: number) {
     if (range > 0 && this.currentTime > this.duration - 10) {

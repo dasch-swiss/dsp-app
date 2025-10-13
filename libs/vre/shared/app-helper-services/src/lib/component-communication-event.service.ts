@@ -30,8 +30,8 @@ export class ComponentCommunicationEventService {
 
 export class EmitEvent {
   constructor(
-    public name: any,
-    public value?: any
+    public readonly name: any,
+    public readonly value?: any
   ) {}
 }
 

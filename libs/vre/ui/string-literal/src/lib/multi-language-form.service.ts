@@ -42,9 +42,9 @@ export class MultiLanguageFormService {
   }
 
   constructor(
-    private _userService: UserService,
-    private _fb: FormBuilder,
-    private _cd: ChangeDetectorRef
+    private readonly _userService: UserService,
+    private readonly _fb: FormBuilder,
+    private readonly _cd: ChangeDetectorRef
   ) {}
 
   onInit(formArray: MultiLanguageFormArray, validators: ValidatorFn[]) {

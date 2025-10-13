@@ -28,5 +28,5 @@ export class CompoundViewerComponent {
     })
   );
 
-  constructor(public compoundService: CompoundService) {}
+  constructor(public readonly compoundService: CompoundService) {}
 }

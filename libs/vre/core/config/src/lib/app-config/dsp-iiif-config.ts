@@ -16,10 +16,10 @@ export class DspIiifConfig {
    * @param iiifPath the base path following host and port, if any.
    */
   constructor(
-    public iiifProtocol: 'http' | 'https',
-    public iiifHost: string,
+    public readonly iiifProtocol: 'http' | 'https',
+    public readonly iiifHost: string,
     public iiifPort: number | null = null,
-    public iiifPath = ''
+    public readonly iiifPath = ''
   ) {
     // remove port in case it's the default one
     if (iiifProtocol === DspIiifConfig.PROTOCOL_HTTP && iiifPort === DspIiifConfig.DEFAULT_PORT_HTTP) {

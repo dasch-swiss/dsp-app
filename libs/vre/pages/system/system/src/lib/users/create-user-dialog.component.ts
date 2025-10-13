@@ -40,7 +40,7 @@ export class CreateUserDialogComponent implements OnInit {
   constructor(
     private readonly _dialogRef: MatDialogRef<CreateUserDialogComponent>,
     private readonly _userApiService: UserApiService,
-    private _fb: FormBuilder
+    private readonly _fb: FormBuilder
   ) {}
 
   ngOnInit() {

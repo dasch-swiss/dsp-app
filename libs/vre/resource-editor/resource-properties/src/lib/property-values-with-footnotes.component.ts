@@ -22,7 +22,7 @@ export class PropertyValuesWithFootnotesComponent implements OnChanges {
   @Input({ required: true }) prop!: PropertyInfoValues;
   @Input({ required: true }) resource!: ReadResource;
 
-  constructor(public footnoteService: FootnoteService) {}
+  constructor(public readonly footnoteService: FootnoteService) {}
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['prop']) {

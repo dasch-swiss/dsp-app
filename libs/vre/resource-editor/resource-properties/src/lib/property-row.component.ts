@@ -26,5 +26,5 @@ export class PropertyRowComponent {
 
   showAllProperties = this._propertiesDisplayService.showAllProperties$;
 
-  constructor(private _propertiesDisplayService: PropertiesDisplayService) {}
+  constructor(private readonly _propertiesDisplayService: PropertiesDisplayService) {}
 }

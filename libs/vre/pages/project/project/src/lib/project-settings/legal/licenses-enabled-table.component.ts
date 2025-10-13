@@ -69,7 +69,7 @@ export class LicensesEnabledTableComponent {
     return this.licenses.filter(license => license.isEnabled).length;
   }
 
-  constructor(private _copyrightApi: AdminProjectsLegalInfoApiService) {}
+  constructor(private readonly _copyrightApi: AdminProjectsLegalInfoApiService) {}
 
   enable(licenseIri: string) {
     this._copyrightApi

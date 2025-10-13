@@ -12,7 +12,7 @@ import { map, startWith } from 'rxjs';
   providedIn: 'root',
 })
 export class LocalizationService {
-  private readonly defaultLanguage = 'en';
+  private readonly _defaultLanguage = 'en';
 
   private _locale: any;
   set locale(value: string) {
@@ -20,14 +20,14 @@ export class LocalizationService {
     this.setLocale(this._locale);
   }
 
-  private readonly AVAILABLE_LOCALES = [
+  private readonly _AVAILABLE_LOCALES = [
     { locale: 'en-GB', localeData: en_GB },
     { locale: 'fr-CH', localeData: fr_CH },
     { locale: 'de-CH', localeData: de_CH },
     { locale: 'it-CH', localeData: it_CH },
   ] as const;
 
-  constructor(private translateService: TranslateService) {}
+  constructor(private readonly _translateService: TranslateService) {}
 
   init() {
     this.setDefaultLanguage();
@@ -35,23 +35,23 @@ export class LocalizationService {
   }
 
   getCurrentLanguage(): string {
-    return this.translateService.currentLang ? this.translateService.currentLang : this.getLanguage();
+    return this._translateService.currentLang ? this._translateService.currentLang : this.getLanguage();
   }
 
-  currentLanguage$ = this.translateService.onLangChange.pipe(
+  currentLanguage$ = this._translateService.onLangChange.pipe(
     map(event => event.lang),
     startWith(this.getCurrentLanguage())
   );
 
   setLanguage(language: string) {
-    this.translateService.use(language);
+    this._translateService.use(language);
     this.saveLanguageToLocalStorage(language);
   }
 
   getLanguageFromBrowser(): string {
-    const browserLang = this.translateService.getBrowserLang();
+    const browserLang = this._translateService.getBrowserLang();
     const availableLanguageExp = AvailableLanguages.map(lang => lang.language).join('|');
-    return browserLang?.match(`/${availableLanguageExp}/`) ? browserLang : this.defaultLanguage;
+    return browserLang?.match(`/${availableLanguageExp}/`) ? browserLang : this._defaultLanguage;
   }
 
   private saveLanguageToLocalStorage(language: string) {
@@ -68,7 +68,7 @@ export class LocalizationService {
   }
 
   private setLocale(locale: string) {
-    let localeItem = this.AVAILABLE_LOCALES.find(item => item.locale === locale);
+    let localeItem = this._AVAILABLE_LOCALES.find(item => item.locale === locale);
 
     if (!localeItem) {
       localeItem = { locale: 'en-GB', localeData: en_GB };

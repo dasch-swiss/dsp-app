@@ -67,7 +67,7 @@ export class CreateResourceFormLegalComponent implements OnInit {
   licenses$!: Observable<ProjectLicenseDto[]>;
   authorship$!: Observable<string[]>;
 
-  constructor(private _paginatedApi: PaginatedApiService) {}
+  constructor(private readonly _paginatedApi: PaginatedApiService) {}
 
   ngOnInit() {
     this.copyrightHolders$ = this._paginatedApi.getCopyrightHolders(this.projectShortcode).pipe(

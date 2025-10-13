@@ -38,5 +38,5 @@ export class CompoundSliderComponent {
     this.compoundService.openPage(page);
   }
 
-  constructor(public compoundService: CompoundService) {}
+  constructor(public readonly compoundService: CompoundService) {}
 }

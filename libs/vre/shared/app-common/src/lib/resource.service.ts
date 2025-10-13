@@ -7,7 +7,7 @@ import { AppConfigService } from '@dasch-swiss/vre/core/config';
 export class ResourceService {
   iriBase: string;
 
-  constructor(private _acs: AppConfigService) {
+  constructor(private readonly _acs: AppConfigService) {
     this.iriBase = this._getIriBaseWithoutTrailingSlash(this._acs.dspAppConfig.iriBase);
   }
 

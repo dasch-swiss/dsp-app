@@ -23,5 +23,5 @@ export class LinkViewerComponent {
     return `/resource${this._resourceService.getResourcePath(this.value.linkedResourceIri)}`;
   }
 
-  constructor(private _resourceService: ResourceService) {}
+  constructor(private readonly _resourceService: ResourceService) {}
 }

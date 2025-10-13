@@ -45,5 +45,5 @@ export class CompoundNavigationComponent {
     this.compoundService.openPage(page);
   }
 
-  constructor(public compoundService: CompoundService) {}
+  constructor(public readonly compoundService: CompoundService) {}
 }

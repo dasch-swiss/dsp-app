@@ -18,7 +18,7 @@ export class UserService {
   userActiveProjects$ = this._user$.pipe(map(user => (user ? user.projects.filter(project => project.status) : [])));
   userInactiveProjects$ = this._user$.pipe(map(user => (user ? user.projects.filter(project => !project.status) : [])));
 
-  constructor(private _userApiService: UserApiService) {}
+  constructor(private readonly _userApiService: UserApiService) {}
 
   get currentUser(): ReadUser | null {
     return this._user$.value;

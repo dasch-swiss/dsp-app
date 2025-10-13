@@ -3,9 +3,9 @@
  */
 export class DspConfig {
   constructor(
-    public release: string,
-    public environment: string,
-    public production: boolean,
-    public color: string
+    public readonly release: string,
+    public readonly environment: string,
+    public readonly production: boolean,
+    public readonly color: string
   ) {}
 }

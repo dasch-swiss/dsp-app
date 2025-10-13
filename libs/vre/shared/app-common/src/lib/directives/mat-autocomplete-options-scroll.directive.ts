@@ -19,7 +19,7 @@ export class MatAutocompleteOptionsScrollDirective implements OnDestroy {
   // eslint-disable-next-line @angular-eslint/no-output-rename
   @Output('optionsScroll') scrollEvent = new EventEmitter<IAutoCompleteScrollEvent>();
   _onDestroy = new Subject<void>();
-  constructor(public autoComplete: MatAutocomplete) {
+  constructor(public readonly autoComplete: MatAutocomplete) {
     this.autoComplete.opened
       .pipe(
         tap(() => {

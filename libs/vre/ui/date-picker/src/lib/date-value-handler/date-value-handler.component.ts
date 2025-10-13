@@ -5,12 +5,12 @@ import { coerceBooleanProperty } from '@angular/cdk/coercion';
 
 import { Component, DoCheck, HostBinding, Input, OnDestroy, OnInit, Optional, Self } from '@angular/core';
 import {
-  ReactiveFormsModule,
   AbstractControl,
   ControlValueAccessor,
   FormGroupDirective,
   NgControl,
   NgForm,
+  ReactiveFormsModule,
   UntypedFormBuilder,
   UntypedFormControl,
   UntypedFormGroup,
@@ -184,11 +184,11 @@ export class DateValueHandlerComponent
 
   constructor(
     fb: UntypedFormBuilder,
-    @Optional() @Self() public ngControl: NgControl,
-    @Optional() public _parentForm: NgForm,
-    @Optional() public _parentFormGroup: FormGroupDirective,
-    public _defaultErrorStateMatcher: ErrorStateMatcher,
-    private _valueService: ValueService
+    @Optional() @Self() public readonly ngControl: NgControl,
+    @Optional() public readonly parentForm: NgForm,
+    @Optional() public readonly parentFormGroup: FormGroupDirective,
+    public readonly defaultErrorStateMatcher: ErrorStateMatcher,
+    private readonly _valueService: ValueService
   ) {
     if (this.ngControl != null) {
       // setting the value accessor directly (instead of using
@@ -276,8 +276,8 @@ export class DateValueHandlerComponent
 
   updateErrorState() {
     const oldState = this.errorState;
-    const parent = this._parentFormGroup || this._parentForm;
-    const matcher = this._defaultErrorStateMatcher;
+    const parent = this.parentFormGroup || this.parentForm;
+    const matcher = this.defaultErrorStateMatcher;
     const control = this.ngControl ? (this.ngControl.control as UntypedFormControl) : null;
     const newState = matcher.isErrorState(control, parent);
 

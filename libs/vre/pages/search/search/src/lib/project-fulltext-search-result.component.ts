@@ -40,9 +40,9 @@ export class ProjectFulltextSearchResultComponent implements OnChanges {
 
   constructor(
     @Inject(DspApiConnectionToken)
-    private _dspApiConnection: KnoraApiConnection,
-    private _resourceResultService: ResourceResultService,
-    private _userService: UserService
+    private readonly _dspApiConnection: KnoraApiConnection,
+    private readonly _resourceResultService: ResourceResultService,
+    private readonly _userService: UserService
   ) {}
 
   ngOnChanges() {

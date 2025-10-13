@@ -39,7 +39,7 @@ export class PasswordConfirmFormComponent implements OnInit, OnDestroy {
   passwordConfirmValidatorErrors = [{ errorKey: 'passwordMismatch', message: 'Passwords do not match.' }];
   subscription!: Subscription;
 
-  constructor(private _fb: FormBuilder) {}
+  constructor(private readonly _fb: FormBuilder) {}
 
   ngOnInit(): void {
     this.afterFormInit.emit(this.passwordControl);

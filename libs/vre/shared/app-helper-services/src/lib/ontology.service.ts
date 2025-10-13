@@ -17,9 +17,9 @@ export class OntologyService {
   defaultProperties: PropertyCategory[] = DefaultProperties.data;
 
   constructor(
-    @Inject(DspApiConfigToken) private _dspApiConfig: KnoraApiConfig,
-    private _route: ActivatedRoute,
-    private _localizationService: LocalizationService
+    @Inject(DspApiConfigToken) private readonly _dspApiConfig: KnoraApiConfig,
+    private readonly _route: ActivatedRoute,
+    private readonly _localizationService: LocalizationService
   ) {}
 
   static getOntologyNameFromIri(ontologyIri: string): string {

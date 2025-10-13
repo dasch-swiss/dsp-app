@@ -1,6 +1,6 @@
 import { Overlay, OverlayRef } from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
-import { Component, ElementRef, ViewChild, OnDestroy } from '@angular/core';
+import { Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
@@ -42,9 +42,9 @@ export class GlobalSearchComponent implements OnDestroy {
   @ViewChild('searchInput') searchInput!: ElementRef<HTMLInputElement>;
 
   constructor(
-    private _router: Router,
-    private _fb: FormBuilder,
-    private overlay: Overlay
+    private readonly _router: Router,
+    private readonly _fb: FormBuilder,
+    private readonly _overlay: Overlay
   ) {}
 
   showSearchTips() {
@@ -52,7 +52,7 @@ export class GlobalSearchComponent implements OnDestroy {
       return;
     }
 
-    const positionStrategy = this.overlay
+    const positionStrategy = this._overlay
       .position()
       .flexibleConnectedTo(this.searchInput)
       .withPositions([
@@ -66,10 +66,10 @@ export class GlobalSearchComponent implements OnDestroy {
         },
       ]);
 
-    this.overlayRef = this.overlay.create({
+    this.overlayRef = this._overlay.create({
       positionStrategy,
       hasBackdrop: false,
-      scrollStrategy: this.overlay.scrollStrategies.reposition(),
+      scrollStrategy: this._overlay.scrollStrategies.reposition(),
       width: '570px',
     });
 

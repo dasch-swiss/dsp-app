@@ -94,7 +94,7 @@ export class MultiLanguageInputComponent implements OnInit, OnChanges {
   @Input() validators: ValidatorFn[] = [];
   @Input({ required: true }) isRequired!: boolean;
 
-  constructor(public formService: MultiLanguageFormService) {}
+  constructor(public readonly formService: MultiLanguageFormService) {}
 
   ngOnInit() {
     this.initialize();

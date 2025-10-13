@@ -32,7 +32,7 @@ export class ProjectMembersRowComponent implements OnInit {
 
   project?: ReadProject;
 
-  constructor(private _projectPageService: ProjectPageService) {}
+  constructor(private readonly _projectPageService: ProjectPageService) {}
 
   ngOnInit() {
     this._projectPageService.currentProject$.subscribe(project => {

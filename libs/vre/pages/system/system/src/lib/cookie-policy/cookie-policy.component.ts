@@ -8,7 +8,7 @@ import { Component } from '@angular/core';
   standalone: false,
 })
 export class CookiePolicyComponent {
-  constructor(private _location: Location) {}
+  constructor(private readonly _location: Location) {}
 
   goBack() {
     this._location.back();

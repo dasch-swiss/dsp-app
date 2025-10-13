@@ -9,8 +9,8 @@ import { BaseApi } from '../base-api';
 })
 export class AuthenticationApiService extends BaseApi {
   constructor(
-    private _http: HttpClient,
-    private _appConfig: AppConfigService
+    private readonly _http: HttpClient,
+    private readonly _appConfig: AppConfigService
   ) {
     super('v2/authentication', _appConfig.dspApiConfig);
   }

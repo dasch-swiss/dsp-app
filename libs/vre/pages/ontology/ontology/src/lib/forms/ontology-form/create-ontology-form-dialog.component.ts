@@ -72,10 +72,10 @@ export class CreateOntologyFormDialogComponent implements OnDestroy {
 
   constructor(
     @Inject(DspApiConnectionToken)
-    private _dspApiConnection: KnoraApiConnection,
-    public dialogRef: MatDialogRef<CreateOntologyFormDialogComponent, OntologyMetadata>,
-    private _projectPageService: ProjectPageService,
-    private _fb: FormBuilder
+    private readonly _dspApiConnection: KnoraApiConnection,
+    public readonly dialogRef: MatDialogRef<CreateOntologyFormDialogComponent, OntologyMetadata>,
+    private readonly _projectPageService: ProjectPageService,
+    private readonly _fb: FormBuilder
   ) {}
 
   afterFormInit(form: OntologyForm) {

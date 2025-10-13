@@ -27,7 +27,7 @@ import { ResourceFetcherDialogComponent } from './resource-fetcher-dialog.compon
 })
 export class ResourceExplorerButtonComponent {
   @Input({ required: true }) resourceIri!: string;
-  constructor(private _dialog: MatDialog) {}
+  constructor(private readonly _dialog: MatDialog) {}
   tryDialog() {
     this._dialog.open(ResourceFetcherDialogComponent, {
       ...DspDialogConfig.dialogDrawerConfig({ resourceIri: this.resourceIri }, true),

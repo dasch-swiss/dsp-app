@@ -15,12 +15,12 @@ import { UserService } from './user.service';
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   constructor(
-    private _userService: UserService,
-    private _accessTokenService: AccessTokenService,
+    private readonly _userService: UserService,
+    private readonly _accessTokenService: AccessTokenService,
     @Inject(DspApiConnectionToken)
-    private _dspApiConnection: KnoraApiConnection,
-    private _componentCommsService: ComponentCommunicationEventService,
-    private _localizationsService: LocalizationService
+    private readonly _dspApiConnection: KnoraApiConnection,
+    private readonly _componentCommsService: ComponentCommunicationEventService,
+    private readonly _localizationsService: LocalizationService
   ) {}
 
   isCredentialsValid$() {

@@ -63,8 +63,8 @@ export class DataClassViewComponent {
     })
   );
   constructor(
-    private _projectPageService: ProjectPageService,
-    private _route: ActivatedRoute,
-    private _ontologyService: OntologyService
+    private readonly _projectPageService: ProjectPageService,
+    private readonly _route: ActivatedRoute,
+    private readonly _ontologyService: OntologyService
   ) {}
 }

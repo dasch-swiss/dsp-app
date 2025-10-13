@@ -239,13 +239,13 @@ export class AppDatePickerComponent
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
   constructor(
-    public _defaultErrorStateMatcher: ErrorStateMatcher,
-    @Optional() public _parentForm: NgForm,
-    @Optional() public _parentFormGroup: FormGroupDirective,
-    @Optional() @Self() public ngControl: NgControl,
+    public readonly defaultErrorStateMatcher: ErrorStateMatcher,
+    @Optional() public readonly parentForm: NgForm,
+    @Optional() public readonly parentFormGroup: FormGroupDirective,
+    @Optional() @Self() public readonly ngControl: NgControl,
     fb: UntypedFormBuilder,
-    private _elRef: ElementRef<HTMLElement>,
-    private _fm: FocusMonitor
+    private readonly _elRef: ElementRef<HTMLElement>,
+    private readonly _fm: FocusMonitor
   ) {
     this.dateForm = fb.group({
       date: [null, Validators.required],
@@ -291,8 +291,8 @@ export class AppDatePickerComponent
 
   updateErrorState() {
     const oldState = this.errorState;
-    const parent = this._parentFormGroup || this._parentForm;
-    const matcher = this._defaultErrorStateMatcher;
+    const parent = this.parentFormGroup || this.parentForm;
+    const matcher = this.defaultErrorStateMatcher;
     const control = this.ngControl ? this.ngControl.control : null;
     const newState = matcher.isErrorState(control, parent);
 

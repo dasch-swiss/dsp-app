@@ -41,10 +41,10 @@ export class CreateCopyrightHolderDialogComponent {
   loading = false;
 
   constructor(
-    private _fb: FormBuilder,
-    @Inject(MAT_DIALOG_DATA) public data: CreateCopyrightHolderDialogProps,
-    private _adminApi: AdminProjectsLegalInfoApiService,
-    private _dialogRef: MatDialogRef<CreateCopyrightHolderDialogComponent>
+    private readonly _fb: FormBuilder,
+    @Inject(MAT_DIALOG_DATA) public readonly data: CreateCopyrightHolderDialogProps,
+    private readonly _adminApi: AdminProjectsLegalInfoApiService,
+    private readonly _dialogRef: MatDialogRef<CreateCopyrightHolderDialogComponent>
   ) {}
 
   onSubmit() {

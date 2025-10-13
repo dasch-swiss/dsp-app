@@ -12,9 +12,9 @@ import { UserFeedbackError } from './user-feedback-error';
 })
 export class AppErrorHandler implements ErrorHandler {
   constructor(
-    private _notification: NotificationService,
+    private readonly _notification: NotificationService,
     private readonly _appConfig: AppConfigService,
-    private _ngZone: NgZone
+    private readonly _ngZone: NgZone
   ) {}
 
   badRequestRegexMatch = /dsp\.errors\.BadRequestException:(.*)$/;

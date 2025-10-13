@@ -25,7 +25,7 @@ export class UploadedFileComponent implements OnInit {
 
   fileToUpload$!: Observable<UploadedFileResponse>;
 
-  constructor(private _uploadFileService: UploadFileService) {}
+  constructor(private readonly _uploadFileService: UploadFileService) {}
 
   ngOnInit() {
     const assetId = this.internalFilename.split('.')[0];
