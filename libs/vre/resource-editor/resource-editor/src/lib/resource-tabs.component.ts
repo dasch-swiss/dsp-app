@@ -58,6 +58,13 @@ import { CompoundService } from './compound/compound.service';
   `,
   styles: [
     `
+      :host ::ng-deep {
+        .mat-mdc-tab-body,
+        .mat-mdc-tab-body-content {
+          height: auto !important;
+          overflow: visible !important;
+        }
+      }
       .dots-container {
         margin-left: 1.5em;
         min-width: 3ch;
