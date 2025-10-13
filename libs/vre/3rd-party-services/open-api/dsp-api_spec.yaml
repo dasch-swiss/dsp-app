@@ -383,7 +383,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/lists/0001/nP5rfq8vS8SopaG9Tlwk5Q
+        example: http://rdfh.ch/lists/0001/_jMkOnzkSEG9ud4gX-Dh0A
       - name: x-knora-accept-schema
         in: header
         description: |-
@@ -429,55 +429,21 @@ paths:
               schema:
                 type: string
           content:
-            text/plain:
+            application/ld+json:
               schema:
                 type: string
-              example:
-                rdfs:label: Listenwurzel
-                knora-api:attachedToProject:
-                  '@id': http://rdfh.ch/projects/0001
-                knora-api:hasSubListNode:
-                - rdfs:label: Tree list node 01
-                  knora-api:hasRootNode:
-                    '@id': http://rdfh.ch/lists/0001/treeList
-                  knora-api:listNodePosition: 0
-                  '@type': knora-api:ListNode
-                  '@id': http://rdfh.ch/lists/0001/treeList01
-                - rdfs:label: Baumlistenknoten 02
-                  knora-api:hasRootNode:
-                    '@id': http://rdfh.ch/lists/0001/treeList
-                  knora-api:listNodePosition: 1
-                  '@type': knora-api:ListNode
-                  '@id': http://rdfh.ch/lists/0001/treeList02
-                - rdfs:label: Tree list node 03
-                  knora-api:hasRootNode:
-                    '@id': http://rdfh.ch/lists/0001/treeList
-                  knora-api:hasSubListNode:
-                  - rdfs:label: Tree list node 10
-                    knora-api:hasRootNode:
-                      '@id': http://rdfh.ch/lists/0001/treeList
-                    knora-api:listNodePosition: 0
-                    '@type': knora-api:ListNode
-                    '@id': http://rdfh.ch/lists/0001/treeList10
-                  - rdfs:label: Tree list node 11
-                    knora-api:hasRootNode:
-                      '@id': http://rdfh.ch/lists/0001/treeList
-                    knora-api:listNodePosition: 1
-                    '@type': knora-api:ListNode
-                    '@id': http://rdfh.ch/lists/0001/treeList11
-                  knora-api:listNodePosition: 2
-                  '@type': knora-api:ListNode
-                  '@id': http://rdfh.ch/lists/0001/treeList03
-                knora-api:isRootNode: true
-                rdfs:comment: Anything Tree List
-                '@type': knora-api:ListNode
-                '@id': http://rdfh.ch/lists/0001/treeList
-                '@context':
-                  rdf: http://www.w3.org/1999/02/22-rdf-syntax-ns#
-                  knora-api: http://api.knora.org/ontology/knora-api/v2#
-                  owl: http://www.w3.org/2002/07/owl#
-                  rdfs: http://www.w3.org/2000/01/rdf-schema#
-                  xsd: http://www.w3.org/2001/XMLSchema#
+            text/turtle:
+              schema:
+                type: string
+            application/trig:
+              schema:
+                type: string
+            application/rdf+xml:
+              schema:
+                type: string
+            application/n-quads:
+              schema:
+                type: string
         '400':
           description: ''
           content:
@@ -529,7 +495,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/lists/0001/nP5rfq8vS8SopaG9Tlwk5Q
+        example: http://rdfh.ch/lists/0001/_jMkOnzkSEG9ud4gX-Dh0A
       - name: x-knora-accept-schema
         in: header
         description: |-
@@ -575,22 +541,21 @@ paths:
               schema:
                 type: string
           content:
-            text/plain:
+            application/ld+json:
               schema:
                 type: string
-              example:
-                rdfs:label: Tree list node 11
-                knora-api:hasRootNode:
-                  '@id': http://rdfh.ch/lists/0001/treeList
-                knora-api:listNodePosition: 1
-                '@type': knora-api:ListNode
-                '@id': http://rdfh.ch/lists/0001/treeList11
-                '@context':
-                  rdf: http://www.w3.org/1999/02/22-rdf-syntax-ns#
-                  knora-api: http://api.knora.org/ontology/knora-api/v2#
-                  owl: http://www.w3.org/2002/07/owl#
-                  rdfs: http://www.w3.org/2000/01/rdf-schema#
-                  xsd: http://www.w3.org/2001/XMLSchema#
+            text/turtle:
+              schema:
+                type: string
+            application/trig:
+              schema:
+                type: string
+            application/rdf+xml:
+              schema:
+                type: string
+            application/n-quads:
+              schema:
+                type: string
         '400':
           description: ''
           content:
@@ -681,7 +646,19 @@ paths:
               schema:
                 type: string
           content:
-            text/plain:
+            application/ld+json:
+              schema:
+                type: string
+            text/turtle:
+              schema:
+                type: string
+            application/trig:
+              schema:
+                type: string
+            application/rdf+xml:
+              schema:
+                type: string
+            application/n-quads:
               schema:
                 type: string
         '400':
@@ -776,7 +753,19 @@ paths:
               schema:
                 type: string
           content:
-            text/plain:
+            application/ld+json:
+              schema:
+                type: string
+            text/turtle:
+              schema:
+                type: string
+            application/trig:
+              schema:
+                type: string
+            application/rdf+xml:
+              schema:
+                type: string
+            application/n-quads:
               schema:
                 type: string
         '400':
@@ -880,7 +869,19 @@ paths:
               schema:
                 type: string
           content:
-            text/plain:
+            application/ld+json:
+              schema:
+                type: string
+            text/turtle:
+              schema:
+                type: string
+            application/trig:
+              schema:
+                type: string
+            application/rdf+xml:
+              schema:
+                type: string
+            application/n-quads:
               schema:
                 type: string
         '400':
@@ -984,7 +985,19 @@ paths:
               schema:
                 type: string
           content:
-            text/plain:
+            application/ld+json:
+              schema:
+                type: string
+            text/turtle:
+              schema:
+                type: string
+            application/trig:
+              schema:
+                type: string
+            application/rdf+xml:
+              schema:
+                type: string
+            application/n-quads:
               schema:
                 type: string
         '400':
@@ -1021,103 +1034,6 @@ paths:
       - httpAuth: []
       - httpAuth1: []
   /v2/ontologies/classes:
-    get:
-      tags:
-      - V2 Ontologies
-      operationId: getV2OntologiesClasses
-      parameters:
-      - name: KnoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999
-        in: cookie
-        required: false
-        schema:
-          type: string
-      - name: allLanguages
-        in: query
-        required: false
-        schema:
-          default: false
-          type: boolean
-      - name: x-knora-accept-schema
-        in: header
-        description: |-
-          The ontology schema to be used for the request.
-          If not specified, the default schema ApiV2Complex will be used.
-        required: false
-        schema:
-          type: string
-      - name: schema
-        in: query
-        description: |-
-          The ontology schema to be used for the request.
-          If not specified, the default schema ApiV2Complex will be used.
-        required: false
-        schema:
-          type: string
-      - name: x-knora-json-ld-rendering
-        in: header
-        description: |-
-          The JSON-LD rendering to be used for the request (flat or hierarchical).
-          If not specified, hierarchical JSON-LD will be used.
-        required: false
-        schema:
-          type: string
-      - name: markup
-        in: query
-        description: The markup rendering to be used for the request (XML or standoff).
-        required: false
-        schema:
-          type: string
-      - name: x-knora-accept-markup
-        in: header
-        description: The markup rendering to be used for the request (XML or standoff).
-        required: false
-        schema:
-          type: string
-      responses:
-        '200':
-          description: ''
-          headers:
-            Content-Type:
-              required: true
-              schema:
-                type: string
-          content:
-            text/plain:
-              schema:
-                type: string
-        '400':
-          description: ''
-          content:
-            application/json:
-              schema:
-                anyOf:
-                - $ref: '#/components/schemas/OntologyConstraintException'
-                - $ref: '#/components/schemas/DuplicateValueException'
-                - $ref: '#/components/schemas/ValidationException'
-                - $ref: '#/components/schemas/BadRequestException'
-                - $ref: '#/components/schemas/GravsearchException'
-                - $ref: '#/components/schemas/EditConflictException'
-        '401':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BadCredentialsException'
-        '403':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ForbiddenException'
-        '404':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/NotFoundException'
-      security:
-      - httpAuth: []
-      - httpAuth1: []
     put:
       tags:
       - V2 Ontologies
@@ -1180,7 +1096,19 @@ paths:
               schema:
                 type: string
           content:
-            text/plain:
+            application/ld+json:
+              schema:
+                type: string
+            text/turtle:
+              schema:
+                type: string
+            application/trig:
+              schema:
+                type: string
+            application/rdf+xml:
+              schema:
+                type: string
+            application/n-quads:
               schema:
                 type: string
         '400':
@@ -1278,7 +1206,19 @@ paths:
               schema:
                 type: string
           content:
-            text/plain:
+            application/ld+json:
+              schema:
+                type: string
+            text/turtle:
+              schema:
+                type: string
+            application/trig:
+              schema:
+                type: string
+            application/rdf+xml:
+              schema:
+                type: string
+            application/n-quads:
               schema:
                 type: string
         '400':
@@ -1381,7 +1321,19 @@ paths:
               schema:
                 type: string
           content:
-            text/plain:
+            application/ld+json:
+              schema:
+                type: string
+            text/turtle:
+              schema:
+                type: string
+            application/trig:
+              schema:
+                type: string
+            application/rdf+xml:
+              schema:
+                type: string
+            application/n-quads:
               schema:
                 type: string
         '400':
@@ -1479,7 +1431,19 @@ paths:
               schema:
                 type: string
           content:
-            text/plain:
+            application/ld+json:
+              schema:
+                type: string
+            text/turtle:
+              schema:
+                type: string
+            application/trig:
+              schema:
+                type: string
+            application/rdf+xml:
+              schema:
+                type: string
+            application/n-quads:
               schema:
                 type: string
         '400':
@@ -1577,28 +1541,21 @@ paths:
               schema:
                 type: string
           content:
-            text/plain:
+            application/ld+json:
               schema:
                 type: string
-              example:
-                '@id': ONTOLOGY_IRI
-                '@type': owl:Ontology
-                knora-api:lastModificationDate:
-                  '@type': xsd:dateTimeStamp
-                  '@value': ONTOLOGY_LAST_MODIFICATION_DATE
-                '@graph':
-                - '@id': CLASS_IRI
-                  '@type': owl:Class
-                  rdfs:subClassOf:
-                    '@type': owl:Restriction
-                    OWL_CARDINALITY_PREDICATE: OWL_CARDINALITY_VALUE
-                    owl:onProperty:
-                      '@id': PROPERTY_IRI
-                '@context':
-                  knora-api: http://api.knora.org/ontology/knora-api/v2#
-                  owl: http://www.w3.org/2002/07/owl#
-                  rdfs: http://www.w3.org/2000/01/rdf-schema#
-                  xsd: http://www.w3.org/2001/XMLSchema#
+            text/turtle:
+              schema:
+                type: string
+            application/trig:
+              schema:
+                type: string
+            application/rdf+xml:
+              schema:
+                type: string
+            application/n-quads:
+              schema:
+                type: string
         '400':
           description: ''
           content:
@@ -1693,7 +1650,19 @@ paths:
               schema:
                 type: string
           content:
-            text/plain:
+            application/ld+json:
+              schema:
+                type: string
+            text/turtle:
+              schema:
+                type: string
+            application/trig:
+              schema:
+                type: string
+            application/rdf+xml:
+              schema:
+                type: string
+            application/n-quads:
               schema:
                 type: string
         '400':
@@ -1809,15 +1778,21 @@ paths:
               schema:
                 type: string
           content:
-            text/plain:
+            application/ld+json:
               schema:
                 type: string
-              example: |2
-
-                {
-                  "http://api.knora.org/ontology/knora-api/v2#canDo": false,
-                  "http://api.knora.org/ontology/knora-api/v2#cannotDoReason": "The new cardinality is not included in the cardinality of a super-class.",
-                }
+            text/turtle:
+              schema:
+                type: string
+            application/trig:
+              schema:
+                type: string
+            application/rdf+xml:
+              schema:
+                type: string
+            application/n-quads:
+              schema:
+                type: string
         '400':
           description: ''
           content:
@@ -1913,7 +1888,19 @@ paths:
               schema:
                 type: string
           content:
-            text/plain:
+            application/ld+json:
+              schema:
+                type: string
+            text/turtle:
+              schema:
+                type: string
+            application/trig:
+              schema:
+                type: string
+            application/rdf+xml:
+              schema:
+                type: string
+            application/n-quads:
               schema:
                 type: string
         '400':
@@ -2011,7 +1998,134 @@ paths:
               schema:
                 type: string
           content:
-            text/plain:
+            application/ld+json:
+              schema:
+                type: string
+            text/turtle:
+              schema:
+                type: string
+            application/trig:
+              schema:
+                type: string
+            application/rdf+xml:
+              schema:
+                type: string
+            application/n-quads:
+              schema:
+                type: string
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                anyOf:
+                - $ref: '#/components/schemas/OntologyConstraintException'
+                - $ref: '#/components/schemas/DuplicateValueException'
+                - $ref: '#/components/schemas/ValidationException'
+                - $ref: '#/components/schemas/BadRequestException'
+                - $ref: '#/components/schemas/GravsearchException'
+                - $ref: '#/components/schemas/EditConflictException'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadCredentialsException'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenException'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundException'
+      security:
+      - httpAuth: []
+      - httpAuth1: []
+  /v2/ontologies/classes/{classIri}:
+    get:
+      tags:
+      - V2 Ontologies
+      operationId: getV2OntologiesClassesClassiri
+      parameters:
+      - name: KnoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999
+        in: cookie
+        required: false
+        schema:
+          type: string
+      - name: classIri
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: allLanguages
+        in: query
+        required: false
+        schema:
+          default: false
+          type: boolean
+      - name: x-knora-accept-schema
+        in: header
+        description: |-
+          The ontology schema to be used for the request.
+          If not specified, the default schema ApiV2Complex will be used.
+        required: false
+        schema:
+          type: string
+      - name: schema
+        in: query
+        description: |-
+          The ontology schema to be used for the request.
+          If not specified, the default schema ApiV2Complex will be used.
+        required: false
+        schema:
+          type: string
+      - name: x-knora-json-ld-rendering
+        in: header
+        description: |-
+          The JSON-LD rendering to be used for the request (flat or hierarchical).
+          If not specified, hierarchical JSON-LD will be used.
+        required: false
+        schema:
+          type: string
+      - name: markup
+        in: query
+        description: The markup rendering to be used for the request (XML or standoff).
+        required: false
+        schema:
+          type: string
+      - name: x-knora-accept-markup
+        in: header
+        description: The markup rendering to be used for the request (XML or standoff).
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          headers:
+            Content-Type:
+              required: true
+              schema:
+                type: string
+          content:
+            application/ld+json:
+              schema:
+                type: string
+            text/turtle:
+              schema:
+                type: string
+            application/trig:
+              schema:
+                type: string
+            application/rdf+xml:
+              schema:
+                type: string
+            application/n-quads:
               schema:
                 type: string
         '400':
@@ -2108,7 +2222,19 @@ paths:
               schema:
                 type: string
           content:
-            text/plain:
+            application/ld+json:
+              schema:
+                type: string
+            text/turtle:
+              schema:
+                type: string
+            application/trig:
+              schema:
+                type: string
+            application/rdf+xml:
+              schema:
+                type: string
+            application/n-quads:
               schema:
                 type: string
         '400':
@@ -2210,7 +2336,19 @@ paths:
               schema:
                 type: string
           content:
-            text/plain:
+            application/ld+json:
+              schema:
+                type: string
+            text/turtle:
+              schema:
+                type: string
+            application/trig:
+              schema:
+                type: string
+            application/rdf+xml:
+              schema:
+                type: string
+            application/n-quads:
               schema:
                 type: string
         '400':
@@ -2312,7 +2450,19 @@ paths:
               schema:
                 type: string
           content:
-            text/plain:
+            application/ld+json:
+              schema:
+                type: string
+            text/turtle:
+              schema:
+                type: string
+            application/trig:
+              schema:
+                type: string
+            application/rdf+xml:
+              schema:
+                type: string
+            application/n-quads:
               schema:
                 type: string
         '400':
@@ -2349,103 +2499,6 @@ paths:
       - httpAuth: []
       - httpAuth1: []
   /v2/ontologies/properties:
-    get:
-      tags:
-      - V2 Ontologies
-      operationId: getV2OntologiesProperties
-      parameters:
-      - name: KnoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999
-        in: cookie
-        required: false
-        schema:
-          type: string
-      - name: allLanguages
-        in: query
-        required: false
-        schema:
-          default: false
-          type: boolean
-      - name: x-knora-accept-schema
-        in: header
-        description: |-
-          The ontology schema to be used for the request.
-          If not specified, the default schema ApiV2Complex will be used.
-        required: false
-        schema:
-          type: string
-      - name: schema
-        in: query
-        description: |-
-          The ontology schema to be used for the request.
-          If not specified, the default schema ApiV2Complex will be used.
-        required: false
-        schema:
-          type: string
-      - name: x-knora-json-ld-rendering
-        in: header
-        description: |-
-          The JSON-LD rendering to be used for the request (flat or hierarchical).
-          If not specified, hierarchical JSON-LD will be used.
-        required: false
-        schema:
-          type: string
-      - name: markup
-        in: query
-        description: The markup rendering to be used for the request (XML or standoff).
-        required: false
-        schema:
-          type: string
-      - name: x-knora-accept-markup
-        in: header
-        description: The markup rendering to be used for the request (XML or standoff).
-        required: false
-        schema:
-          type: string
-      responses:
-        '200':
-          description: ''
-          headers:
-            Content-Type:
-              required: true
-              schema:
-                type: string
-          content:
-            text/plain:
-              schema:
-                type: string
-        '400':
-          description: ''
-          content:
-            application/json:
-              schema:
-                anyOf:
-                - $ref: '#/components/schemas/OntologyConstraintException'
-                - $ref: '#/components/schemas/DuplicateValueException'
-                - $ref: '#/components/schemas/ValidationException'
-                - $ref: '#/components/schemas/BadRequestException'
-                - $ref: '#/components/schemas/GravsearchException'
-                - $ref: '#/components/schemas/EditConflictException'
-        '401':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BadCredentialsException'
-        '403':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ForbiddenException'
-        '404':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/NotFoundException'
-      security:
-      - httpAuth: []
-      - httpAuth1: []
     put:
       tags:
       - V2 Ontologies
@@ -2507,7 +2560,19 @@ paths:
               schema:
                 type: string
           content:
-            text/plain:
+            application/ld+json:
+              schema:
+                type: string
+            text/turtle:
+              schema:
+                type: string
+            application/trig:
+              schema:
+                type: string
+            application/rdf+xml:
+              schema:
+                type: string
+            application/n-quads:
               schema:
                 type: string
         '400':
@@ -2604,7 +2669,19 @@ paths:
               schema:
                 type: string
           content:
-            text/plain:
+            application/ld+json:
+              schema:
+                type: string
+            text/turtle:
+              schema:
+                type: string
+            application/trig:
+              schema:
+                type: string
+            application/rdf+xml:
+              schema:
+                type: string
+            application/n-quads:
               schema:
                 type: string
         '400':
@@ -2706,7 +2783,19 @@ paths:
               schema:
                 type: string
           content:
-            text/plain:
+            application/ld+json:
+              schema:
+                type: string
+            text/turtle:
+              schema:
+                type: string
+            application/trig:
+              schema:
+                type: string
+            application/rdf+xml:
+              schema:
+                type: string
+            application/n-quads:
               schema:
                 type: string
         '400':
@@ -2804,7 +2893,19 @@ paths:
               schema:
                 type: string
           content:
-            text/plain:
+            application/ld+json:
+              schema:
+                type: string
+            text/turtle:
+              schema:
+                type: string
+            application/trig:
+              schema:
+                type: string
+            application/rdf+xml:
+              schema:
+                type: string
+            application/n-quads:
               schema:
                 type: string
         '400':
@@ -2841,6 +2942,120 @@ paths:
       - httpAuth: []
       - httpAuth1: []
   /v2/ontologies/properties/{propertyIri}:
+    get:
+      tags:
+      - V2 Ontologies
+      operationId: getV2OntologiesPropertiesPropertyiri
+      parameters:
+      - name: KnoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999
+        in: cookie
+        required: false
+        schema:
+          type: string
+      - name: propertyIri
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: allLanguages
+        in: query
+        required: false
+        schema:
+          default: false
+          type: boolean
+      - name: x-knora-accept-schema
+        in: header
+        description: |-
+          The ontology schema to be used for the request.
+          If not specified, the default schema ApiV2Complex will be used.
+        required: false
+        schema:
+          type: string
+      - name: schema
+        in: query
+        description: |-
+          The ontology schema to be used for the request.
+          If not specified, the default schema ApiV2Complex will be used.
+        required: false
+        schema:
+          type: string
+      - name: x-knora-json-ld-rendering
+        in: header
+        description: |-
+          The JSON-LD rendering to be used for the request (flat or hierarchical).
+          If not specified, hierarchical JSON-LD will be used.
+        required: false
+        schema:
+          type: string
+      - name: markup
+        in: query
+        description: The markup rendering to be used for the request (XML or standoff).
+        required: false
+        schema:
+          type: string
+      - name: x-knora-accept-markup
+        in: header
+        description: The markup rendering to be used for the request (XML or standoff).
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          headers:
+            Content-Type:
+              required: true
+              schema:
+                type: string
+          content:
+            application/ld+json:
+              schema:
+                type: string
+            text/turtle:
+              schema:
+                type: string
+            application/trig:
+              schema:
+                type: string
+            application/rdf+xml:
+              schema:
+                type: string
+            application/n-quads:
+              schema:
+                type: string
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                anyOf:
+                - $ref: '#/components/schemas/OntologyConstraintException'
+                - $ref: '#/components/schemas/DuplicateValueException'
+                - $ref: '#/components/schemas/ValidationException'
+                - $ref: '#/components/schemas/BadRequestException'
+                - $ref: '#/components/schemas/GravsearchException'
+                - $ref: '#/components/schemas/EditConflictException'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadCredentialsException'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenException'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundException'
+      security:
+      - httpAuth: []
+      - httpAuth1: []
     delete:
       tags:
       - V2 Ontologies
@@ -2906,7 +3121,19 @@ paths:
               schema:
                 type: string
           content:
-            text/plain:
+            application/ld+json:
+              schema:
+                type: string
+            text/turtle:
+              schema:
+                type: string
+            application/trig:
+              schema:
+                type: string
+            application/rdf+xml:
+              schema:
+                type: string
+            application/n-quads:
               schema:
                 type: string
         '400':
@@ -3004,7 +3231,19 @@ paths:
               schema:
                 type: string
           content:
-            text/plain:
+            application/ld+json:
+              schema:
+                type: string
+            text/turtle:
+              schema:
+                type: string
+            application/trig:
+              schema:
+                type: string
+            application/rdf+xml:
+              schema:
+                type: string
+            application/n-quads:
               schema:
                 type: string
         '400':
@@ -3101,7 +3340,19 @@ paths:
               schema:
                 type: string
           content:
-            text/plain:
+            application/ld+json:
+              schema:
+                type: string
+            text/turtle:
+              schema:
+                type: string
+            application/trig:
+              schema:
+                type: string
+            application/rdf+xml:
+              schema:
+                type: string
+            application/n-quads:
               schema:
                 type: string
         '400':
@@ -3203,7 +3454,19 @@ paths:
               schema:
                 type: string
           content:
-            text/plain:
+            application/ld+json:
+              schema:
+                type: string
+            text/turtle:
+              schema:
+                type: string
+            application/trig:
+              schema:
+                type: string
+            application/rdf+xml:
+              schema:
+                type: string
+            application/n-quads:
               schema:
                 type: string
         '400':
@@ -3367,7 +3630,19 @@ paths:
               schema:
                 type: string
           content:
-            text/plain:
+            application/ld+json:
+              schema:
+                type: string
+            text/turtle:
+              schema:
+                type: string
+            application/trig:
+              schema:
+                type: string
+            application/rdf+xml:
+              schema:
+                type: string
+            application/n-quads:
               schema:
                 type: string
         '400':
@@ -3459,7 +3734,19 @@ paths:
               schema:
                 type: string
           content:
-            text/plain:
+            application/ld+json:
+              schema:
+                type: string
+            text/turtle:
+              schema:
+                type: string
+            application/trig:
+              schema:
+                type: string
+            application/rdf+xml:
+              schema:
+                type: string
+            application/n-quads:
               schema:
                 type: string
         '400':
@@ -3556,7 +3843,19 @@ paths:
               schema:
                 type: string
           content:
-            text/plain:
+            application/ld+json:
+              schema:
+                type: string
+            text/turtle:
+              schema:
+                type: string
+            application/trig:
+              schema:
+                type: string
+            application/rdf+xml:
+              schema:
+                type: string
+            application/n-quads:
               schema:
                 type: string
         '400':
@@ -3653,7 +3952,19 @@ paths:
               schema:
                 type: string
           content:
-            text/plain:
+            application/ld+json:
+              schema:
+                type: string
+            text/turtle:
+              schema:
+                type: string
+            application/trig:
+              schema:
+                type: string
+            application/rdf+xml:
+              schema:
+                type: string
+            application/n-quads:
               schema:
                 type: string
         '400':
@@ -3770,7 +4081,19 @@ paths:
               schema:
                 type: string
           content:
-            text/plain:
+            application/ld+json:
+              schema:
+                type: string
+            text/turtle:
+              schema:
+                type: string
+            application/trig:
+              schema:
+                type: string
+            application/rdf+xml:
+              schema:
+                type: string
+            application/n-quads:
               schema:
                 type: string
         '400':
@@ -3872,7 +4195,19 @@ paths:
               schema:
                 type: string
           content:
-            text/plain:
+            application/ld+json:
+              schema:
+                type: string
+            text/turtle:
+              schema:
+                type: string
+            application/trig:
+              schema:
+                type: string
+            application/rdf+xml:
+              schema:
+                type: string
+            application/n-quads:
               schema:
                 type: string
         '400':
@@ -3969,7 +4304,19 @@ paths:
               schema:
                 type: string
           content:
-            text/plain:
+            application/ld+json:
+              schema:
+                type: string
+            text/turtle:
+              schema:
+                type: string
+            application/trig:
+              schema:
+                type: string
+            application/rdf+xml:
+              schema:
+                type: string
+            application/n-quads:
               schema:
                 type: string
         '400':
@@ -4066,7 +4413,19 @@ paths:
               schema:
                 type: string
           content:
-            text/plain:
+            application/ld+json:
+              schema:
+                type: string
+            text/turtle:
+              schema:
+                type: string
+            application/trig:
+              schema:
+                type: string
+            application/rdf+xml:
+              schema:
+                type: string
+            application/n-quads:
               schema:
                 type: string
         '400':
@@ -4183,7 +4542,19 @@ paths:
               schema:
                 type: string
           content:
-            text/plain:
+            application/ld+json:
+              schema:
+                type: string
+            text/turtle:
+              schema:
+                type: string
+            application/trig:
+              schema:
+                type: string
+            application/rdf+xml:
+              schema:
+                type: string
+            application/n-quads:
               schema:
                 type: string
         '400':
@@ -4264,7 +4635,19 @@ paths:
               schema:
                 type: string
           content:
-            text/plain:
+            application/ld+json:
+              schema:
+                type: string
+            text/turtle:
+              schema:
+                type: string
+            application/trig:
+              schema:
+                type: string
+            application/rdf+xml:
+              schema:
+                type: string
+            application/n-quads:
               schema:
                 type: string
         '400':
@@ -4361,7 +4744,19 @@ paths:
               schema:
                 type: string
           content:
-            text/plain:
+            application/ld+json:
+              schema:
+                type: string
+            text/turtle:
+              schema:
+                type: string
+            application/trig:
+              schema:
+                type: string
+            application/rdf+xml:
+              schema:
+                type: string
+            application/n-quads:
               schema:
                 type: string
         '400':
@@ -4459,7 +4854,19 @@ paths:
               schema:
                 type: string
           content:
-            text/plain:
+            application/ld+json:
+              schema:
+                type: string
+            text/turtle:
+              schema:
+                type: string
+            application/trig:
+              schema:
+                type: string
+            application/rdf+xml:
+              schema:
+                type: string
+            application/n-quads:
               schema:
                 type: string
         '400':
@@ -4557,7 +4964,19 @@ paths:
               schema:
                 type: string
           content:
-            text/plain:
+            application/ld+json:
+              schema:
+                type: string
+            text/turtle:
+              schema:
+                type: string
+            application/trig:
+              schema:
+                type: string
+            application/rdf+xml:
+              schema:
+                type: string
+            application/n-quads:
               schema:
                 type: string
         '400':
@@ -4663,7 +5082,19 @@ paths:
               schema:
                 type: string
           content:
-            text/plain:
+            application/ld+json:
+              schema:
+                type: string
+            text/turtle:
+              schema:
+                type: string
+            application/trig:
+              schema:
+                type: string
+            application/rdf+xml:
+              schema:
+                type: string
+            application/n-quads:
               schema:
                 type: string
         '400':
@@ -4768,7 +5199,19 @@ paths:
               schema:
                 type: string
           content:
-            text/plain:
+            application/ld+json:
+              schema:
+                type: string
+            text/turtle:
+              schema:
+                type: string
+            application/trig:
+              schema:
+                type: string
+            application/rdf+xml:
+              schema:
+                type: string
+            application/n-quads:
               schema:
                 type: string
         '400':
@@ -4874,7 +5317,19 @@ paths:
               schema:
                 type: string
           content:
-            text/plain:
+            application/ld+json:
+              schema:
+                type: string
+            text/turtle:
+              schema:
+                type: string
+            application/trig:
+              schema:
+                type: string
+            application/rdf+xml:
+              schema:
+                type: string
+            application/n-quads:
               schema:
                 type: string
         '400':
@@ -4979,7 +5434,19 @@ paths:
               schema:
                 type: string
           content:
-            text/plain:
+            application/ld+json:
+              schema:
+                type: string
+            text/turtle:
+              schema:
+                type: string
+            application/trig:
+              schema:
+                type: string
+            application/rdf+xml:
+              schema:
+                type: string
+            application/n-quads:
               schema:
                 type: string
         '400':
@@ -5093,7 +5560,19 @@ paths:
               schema:
                 type: string
           content:
-            text/plain:
+            application/ld+json:
+              schema:
+                type: string
+            text/turtle:
+              schema:
+                type: string
+            application/trig:
+              schema:
+                type: string
+            application/rdf+xml:
+              schema:
+                type: string
+            application/n-quads:
               schema:
                 type: string
         '400':
@@ -5208,7 +5687,19 @@ paths:
               schema:
                 type: string
           content:
-            text/plain:
+            application/ld+json:
+              schema:
+                type: string
+            text/turtle:
+              schema:
+                type: string
+            application/trig:
+              schema:
+                type: string
+            application/rdf+xml:
+              schema:
+                type: string
+            application/n-quads:
               schema:
                 type: string
         '400':
@@ -5313,7 +5804,19 @@ paths:
               schema:
                 type: string
           content:
-            text/plain:
+            application/ld+json:
+              schema:
+                type: string
+            text/turtle:
+              schema:
+                type: string
+            application/trig:
+              schema:
+                type: string
+            application/rdf+xml:
+              schema:
+                type: string
+            application/n-quads:
               schema:
                 type: string
         '400':
@@ -5427,7 +5930,19 @@ paths:
               schema:
                 type: string
           content:
-            text/plain:
+            application/ld+json:
+              schema:
+                type: string
+            text/turtle:
+              schema:
+                type: string
+            application/trig:
+              schema:
+                type: string
+            application/rdf+xml:
+              schema:
+                type: string
+            application/n-quads:
               schema:
                 type: string
         '400':
@@ -5546,7 +6061,19 @@ paths:
               schema:
                 type: string
           content:
-            text/plain:
+            application/ld+json:
+              schema:
+                type: string
+            text/turtle:
+              schema:
+                type: string
+            application/trig:
+              schema:
+                type: string
+            application/rdf+xml:
+              schema:
+                type: string
+            application/n-quads:
               schema:
                 type: string
         '400':
@@ -5656,7 +6183,19 @@ paths:
               schema:
                 type: string
           content:
-            text/plain:
+            application/ld+json:
+              schema:
+                type: string
+            text/turtle:
+              schema:
+                type: string
+            application/trig:
+              schema:
+                type: string
+            application/rdf+xml:
+              schema:
+                type: string
+            application/n-quads:
               schema:
                 type: string
         '400':
@@ -5788,7 +6327,19 @@ paths:
               schema:
                 type: string
           content:
-            text/plain:
+            application/ld+json:
+              schema:
+                type: string
+            text/turtle:
+              schema:
+                type: string
+            application/trig:
+              schema:
+                type: string
+            application/rdf+xml:
+              schema:
+                type: string
+            application/n-quads:
               schema:
                 type: string
         '400':
@@ -5904,7 +6455,19 @@ paths:
               schema:
                 type: string
           content:
-            text/plain:
+            application/ld+json:
+              schema:
+                type: string
+            text/turtle:
+              schema:
+                type: string
+            application/trig:
+              schema:
+                type: string
+            application/rdf+xml:
+              schema:
+                type: string
+            application/n-quads:
               schema:
                 type: string
         '400':
@@ -11087,7 +11650,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/uoPFH30mQQCta_e1qLrTLw
+        example: http://rdfh.ch/users/XpbCpm22QPqgjvv-ii6T0g
       responses:
         '200':
           description: ''
@@ -11139,7 +11702,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/uoPFH30mQQCta_e1qLrTLw
+        example: http://rdfh.ch/users/XpbCpm22QPqgjvv-ii6T0g
       responses:
         '200':
           description: ''
@@ -11191,7 +11754,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/uoPFH30mQQCta_e1qLrTLw
+        example: http://rdfh.ch/users/XpbCpm22QPqgjvv-ii6T0g
       responses:
         '200':
           description: ''
@@ -11356,7 +11919,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/uoPFH30mQQCta_e1qLrTLw
+        example: http://rdfh.ch/users/XpbCpm22QPqgjvv-ii6T0g
       responses:
         '200':
           description: ''
@@ -11414,7 +11977,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/uoPFH30mQQCta_e1qLrTLw
+        example: http://rdfh.ch/users/XpbCpm22QPqgjvv-ii6T0g
       responses:
         '200':
           description: ''
@@ -11592,7 +12155,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/uoPFH30mQQCta_e1qLrTLw
+        example: http://rdfh.ch/users/XpbCpm22QPqgjvv-ii6T0g
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -11657,7 +12220,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/uoPFH30mQQCta_e1qLrTLw
+        example: http://rdfh.ch/users/XpbCpm22QPqgjvv-ii6T0g
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -11723,7 +12286,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/uoPFH30mQQCta_e1qLrTLw
+        example: http://rdfh.ch/users/XpbCpm22QPqgjvv-ii6T0g
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -11788,7 +12351,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/uoPFH30mQQCta_e1qLrTLw
+        example: http://rdfh.ch/users/XpbCpm22QPqgjvv-ii6T0g
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -11854,7 +12417,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/uoPFH30mQQCta_e1qLrTLw
+        example: http://rdfh.ch/users/XpbCpm22QPqgjvv-ii6T0g
       - name: groupIri
         in: path
         description: The IRI of a group. Must be URL-encoded.
@@ -11919,7 +12482,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/uoPFH30mQQCta_e1qLrTLw
+        example: http://rdfh.ch/users/XpbCpm22QPqgjvv-ii6T0g
       - name: groupIri
         in: path
         description: The IRI of a group. Must be URL-encoded.
@@ -11985,7 +12548,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/uoPFH30mQQCta_e1qLrTLw
+        example: http://rdfh.ch/users/XpbCpm22QPqgjvv-ii6T0g
       requestBody:
         content:
           application/json:
@@ -12050,7 +12613,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/uoPFH30mQQCta_e1qLrTLw
+        example: http://rdfh.ch/users/XpbCpm22QPqgjvv-ii6T0g
       requestBody:
         content:
           application/json:
@@ -12115,7 +12678,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/uoPFH30mQQCta_e1qLrTLw
+        example: http://rdfh.ch/users/XpbCpm22QPqgjvv-ii6T0g
       requestBody:
         content:
           application/json:
@@ -12180,7 +12743,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/uoPFH30mQQCta_e1qLrTLw
+        example: http://rdfh.ch/users/XpbCpm22QPqgjvv-ii6T0g
       requestBody:
         content:
           application/json:
