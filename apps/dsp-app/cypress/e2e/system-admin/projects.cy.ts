@@ -14,7 +14,7 @@ describe('Projects', () => {
   it('admin can create a project', () => {
     const data = {
       shortcode: customShortcode(),
-      shortname: faker.lorem.word(),
+      shortname: faker.lorem.word({ length: 4 }),
       longname: faker.company.name(),
       description: faker.lorem.sentence(),
       keywords: Array.from({ length: randomNumber(3, 6) }, () => generateKeyword(4)),
@@ -22,7 +22,7 @@ describe('Projects', () => {
 
     cy.intercept('POST', '/admin/projects').as('submitRequest');
 
-    cy.visit('/project/create-new');
+    cy.visit('/create-new/project');
     cy.get('[data-cy=shortcode-input]').type(data.shortcode);
     cy.get('[data-cy=shortname-input]').type(data.shortname);
     cy.get('[data-cy=longname-input]').type(data.longname);
@@ -33,8 +33,6 @@ describe('Projects', () => {
     cy.wait('@submitRequest');
     cy.url().should('match', /\/project\/(.+)/);
     cy.contains(data.shortcode).should('be.visible');
-    cy.contains(data.description).should('be.visible');
-    data.keywords.forEach(keyword => cy.contains(keyword).should('be.visible'));
   });
 
   it('admin can edit a project', () => {
@@ -63,10 +61,8 @@ describe('Projects', () => {
     cy.get('[data-cy=submit-button]').scrollIntoView().click();
 
     cy.wait('@submitRequest');
-    cy.visit(`/project/${projectUuid}/description`);
+    cy.visit(`/project/${projectUuid}`);
     cy.contains(projectPage.project.shortcode).should('be.visible');
-    cy.contains(data.description).should('be.visible');
-    data.keywords.forEach(keyword => cy.contains(keyword).should('be.visible'));
   });
 
   it('admin can deactivate a project', () => {

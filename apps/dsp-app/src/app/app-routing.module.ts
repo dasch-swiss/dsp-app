@@ -1,7 +1,11 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
-import { ResourceClassBrowserPageComponent } from '@dasch-swiss/vre/pages/data-browser';
+import {
+  DataBrowserPageComponent,
+  DataClassViewComponent,
+  DataOverviewComponent,
+} from '@dasch-swiss/vre/pages/data-browser';
 import { ListPageComponent } from '@dasch-swiss/vre/pages/ontology/list';
 import {
   DataModelsPageComponent,
@@ -15,7 +19,6 @@ import {
   EditProjectFormPageComponent,
   ImageSettingsComponent,
   LegalSettingsComponent,
-  ProjectDescriptionPageComponent,
   ProjectPageComponent,
   ResourceMetadataComponent,
   SettingsPageComponent,
@@ -23,8 +26,9 @@ import {
 import {
   AdvancedSearchPageComponent,
   AdvancedSearchResultsPageComponent,
-  FulltextSearchResultPageComponent,
-  SearchProjectResultsPageComponent,
+  FulltextSearchResultsPageComponent,
+  GlobalPageComponent,
+  ProjectFulltextSearchPageComponent,
 } from '@dasch-swiss/vre/pages/search/search';
 import {
   CookiePolicyComponent,
@@ -32,28 +36,13 @@ import {
   SystemPageComponent,
   UsersTabComponent,
 } from '@dasch-swiss/vre/pages/system/system';
-import { ProjectOverviewComponent, UserComponent } from '@dasch-swiss/vre/pages/user-settings/user';
-import { CreateResourcePageComponent } from '@dasch-swiss/vre/resource-editor/resource-creator';
-import { ResourcePageComponent, SingleResourcePageComponent } from '@dasch-swiss/vre/resource-editor/resource-editor';
+import { AccountComponent, ProjectOverviewComponent, UserComponent } from '@dasch-swiss/vre/pages/user-settings/user';
+import { SingleResourcePageComponent } from '@dasch-swiss/vre/resource-editor/resource-editor';
 import { StatusComponent } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { HelpPageComponent } from '@dasch-swiss/vre/shared/app-help-page';
 import { AuthGuard } from './main/guard/auth.guard';
-import { OntologyClassInstanceGuard } from './main/guard/ontology-class-instance.guard';
 
 const routes: Routes = [
-  {
-    path: RouteConstants.home,
-    component: ProjectOverviewComponent,
-  },
-  {
-    path: RouteConstants.help,
-    component: HelpPageComponent,
-  },
-  {
-    path: `${RouteConstants.createNewProjectRelative}`,
-    canActivate: [AuthGuard],
-    component: CreateProjectFormPageComponent,
-  },
   {
     path: RouteConstants.projectUuidRelative,
     component: ProjectPageComponent,
@@ -61,20 +50,22 @@ const routes: Routes = [
       {
         path: RouteConstants.home,
         pathMatch: 'full',
-        redirectTo: RouteConstants.projectDescription,
+        redirectTo: RouteConstants.data,
       },
       {
-        path: RouteConstants.projectDescription,
-        component: ProjectDescriptionPageComponent,
+        path: RouteConstants.data,
+        component: DataBrowserPageComponent,
+        children: [
+          { path: '', component: DataOverviewComponent },
+          {
+            path: `:${RouteConstants.ontologyParameter}/:${RouteConstants.classParameter}`,
+            component: DataClassViewComponent,
+          },
+        ],
       },
       {
         path: RouteConstants.dataModels,
         component: DataModelsPageComponent,
-      },
-      {
-        path: RouteConstants.ontologyRelative,
-        redirectTo: RouteConstants.ontologyEditorRelative,
-        pathMatch: 'full',
       },
       {
         path: RouteConstants.ontologyEditorRelative,
@@ -94,19 +85,6 @@ const routes: Routes = [
             component: OntologyPropertiesComponent,
           },
         ],
-      },
-      {
-        path: RouteConstants.OntologyClassRelative,
-        component: ResourceClassBrowserPageComponent,
-      },
-      {
-        canActivate: [OntologyClassInstanceGuard],
-        path: RouteConstants.OntologyClassAddRelative,
-        component: CreateResourcePageComponent,
-      },
-      {
-        path: RouteConstants.JulienOntologyClassRelative,
-        component: ResourcePageComponent,
       },
       {
         path: `${RouteConstants.list}/:${RouteConstants.listParameter}`,
@@ -145,13 +123,14 @@ const routes: Routes = [
         ],
       },
       {
-        path: RouteConstants.advancedSearch,
-        component: AdvancedSearchPageComponent,
+        path: RouteConstants.search,
+        component: ProjectFulltextSearchPageComponent,
       },
       {
         path: RouteConstants.advancedSearchResultsRelative,
         component: AdvancedSearchResultsPageComponent,
       },
+      { path: RouteConstants.advancedSearch, component: AdvancedSearchPageComponent },
       {
         path: RouteConstants.notFoundWildcard,
         component: StatusComponent,
@@ -160,60 +139,72 @@ const routes: Routes = [
     ],
   },
   {
-    path: RouteConstants.userAccount,
-    component: UserComponent,
-    canActivate: [AuthGuard],
-  },
-  {
-    path: RouteConstants.projects,
-    component: UserComponent,
-    canActivate: [AuthGuard],
-  },
-  {
-    path: RouteConstants.system,
-    component: SystemPageComponent,
-    canActivate: [AuthGuard],
+    path: '',
+    component: GlobalPageComponent,
     children: [
       {
-        path: '',
-        redirectTo: RouteConstants.systemProjects,
-        pathMatch: 'full',
+        path: RouteConstants.home,
+        component: ProjectOverviewComponent,
+      },
+      { path: RouteConstants.searchRelative, component: FulltextSearchResultsPageComponent },
+      {
+        path: RouteConstants.help,
+        component: HelpPageComponent,
       },
       {
-        path: RouteConstants.systemProjects,
-        component: ProjectsComponent,
+        path: `${RouteConstants.createNewProjectRelative}`,
+        canActivate: [AuthGuard],
+        component: CreateProjectFormPageComponent,
+      },
+
+      {
+        path: RouteConstants.myProfile,
+        component: UserComponent,
+        children: [
+          { path: RouteConstants.userAccount, component: AccountComponent },
+          { path: RouteConstants.projects, component: ProjectsComponent },
+        ],
+        canActivate: [AuthGuard],
       },
       {
-        path: RouteConstants.systemUsers,
-        component: UsersTabComponent,
+        path: RouteConstants.projects,
+        component: UserComponent,
+        canActivate: [AuthGuard],
+      },
+      {
+        path: RouteConstants.system,
+        component: SystemPageComponent,
+        canActivate: [AuthGuard],
+        children: [
+          {
+            path: '',
+            redirectTo: RouteConstants.systemProjects,
+            pathMatch: 'full',
+          },
+          {
+            path: RouteConstants.systemProjects,
+            component: ProjectsComponent,
+          },
+          {
+            path: RouteConstants.systemUsers,
+            component: UsersTabComponent,
+          },
+        ],
+      },
+      {
+        path: RouteConstants.projectResourceRelative,
+        component: SingleResourcePageComponent,
+      },
+      {
+        path: RouteConstants.cookiePolicy,
+        component: CookiePolicyComponent,
+      },
+      {
+        path: RouteConstants.notFoundWildcard,
+        component: StatusComponent,
+        data: { status: RouteConstants.notFound },
       },
     ],
-  },
-  {
-    path: RouteConstants.search,
-    children: [
-      {
-        path: RouteConstants.searchProjectRelative,
-        component: SearchProjectResultsPageComponent,
-      },
-      {
-        path: RouteConstants.searchRelative,
-        component: FulltextSearchResultPageComponent,
-      },
-    ],
-  },
-  {
-    path: RouteConstants.projectResourceRelative,
-    component: SingleResourcePageComponent,
-  },
-  {
-    path: RouteConstants.cookiePolicy,
-    component: CookiePolicyComponent,
-  },
-  {
-    path: RouteConstants.notFoundWildcard,
-    component: StatusComponent,
-    data: { status: RouteConstants.notFound },
   },
 ];
 

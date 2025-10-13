@@ -383,7 +383,7 @@ $black-60-opacity: rgba($black, 0.6);
 // --------------------------------------
 // other variables
 $border-radius: 4px;
-$header-height: 72px;
+$header-height: calc(72px + 48px);
 $sub-header-height: 64px;
 $panel-height: 40px;
 $tab-bar-margin: 36px;

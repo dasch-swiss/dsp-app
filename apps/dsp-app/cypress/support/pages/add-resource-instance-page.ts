@@ -1,6 +1,7 @@
 export class AddResourceInstancePage {
   visitAddPage = () => {
-    cy.visit('/project/00FF/ontology/images/datamodelclass/add');
+    cy.visit('/project/00FF/data/images/datamodelclass');
+    cy.get('[data-cy=create-resource-btn]').click();
   };
 
   getSubmitButton = () => cy.get('[data-cy=submit-button]');
@@ -23,7 +24,6 @@ export class AddResourceInstancePage {
   }
 
   delete() {
-    cy.reload(); // TODO shouldnt reload
     this.mouseHover();
     cy.get('[data-cy=delete-button]').click();
     cy.get('[data-cy=confirm-button]').click();

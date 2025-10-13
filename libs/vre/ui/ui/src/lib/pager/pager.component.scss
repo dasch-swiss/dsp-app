@@ -1,21 +1,37 @@
 @use 'config' as *;
+@use '@angular/material' as mat;
 
-.paginator-container {
+:host {
+  display: block;
+  border: 1px solid #ebebeb;
+  padding: 0 8px;
+  border-radius: 10px;
+}
+
+.main-row {
   display: flex;
-  flex-direction: row;
   align-items: center;
   justify-content: space-between;
 }
 
+.paginator-container {
+  display: flex;
+  align-items: center;
+
+  // TODO replace when mat.density works (Angular Material 3)
+  transform: scale(0.8);
+  position: relative;
+  left: 28px;
+  top: -2px;
+}
+
 .paginator-nav {
   display: flex;
-  flex-direction: row;
   align-items: center;
 }
 
 .paginator-page-info {
   display: flex;
-  flex-direction: row;
   align-items: center;
   justify-content: center;
 }
@@ -40,10 +56,7 @@
 }
 
 .paginator-item-range {
-  display: flex;
-  flex-direction: row-reverse;
-  padding-right: 16px;
-  font-size: 0.7em;
+  font-size: 0.8em;
 }
 
 /* Remove number up/down buttons For Chrome, Edge, and Safari */

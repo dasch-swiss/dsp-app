@@ -1,11 +1,11 @@
 import { Inject, Injectable } from '@angular/core';
-import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
+import { KnoraApiConnection, ReadOntology } from '@dasch-swiss/dsp-js';
 import { ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { UserService } from '@dasch-swiss/vre/core/session';
 import { filterNull, UserPermissions } from '@dasch-swiss/vre/shared/app-common';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
-import { BehaviorSubject, combineLatest, map, ReplaySubject, shareReplay, switchMap, take, tap } from 'rxjs';
+import { BehaviorSubject, combineLatest, map, of, ReplaySubject, shareReplay, switchMap, take, tap } from 'rxjs';
 
 @Injectable()
 export class ProjectPageService {
@@ -47,9 +47,13 @@ export class ProjectPageService {
   );
 
   ontologies$ = this.ontologiesMetadata$.pipe(
-    switchMap(ontologies =>
-      combineLatest(ontologies.map(onto => this._dspApiConnection.v2.onto.getOntology(onto.id, true)))
-    )
+    switchMap(ontologies => {
+      if (ontologies.length > 0) {
+        return combineLatest(ontologies.map(onto => this._dspApiConnection.v2.onto.getOntology(onto.id, true)));
+      } else {
+        return of([] as ReadOntology[]);
+      }
+    })
   );
   constructor(
     private projectApiService: ProjectApiService,

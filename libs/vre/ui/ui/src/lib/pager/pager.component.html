@@ -1,5 +1,7 @@
-<div class="paginator-container">
-  <div class="paginator-nav">
+<div class="main-row">
+  <div class="paginator-item-range">Showing {{ itemRange }}</div>
+
+  <div class="paginator-container">
     <button
       mat-icon-button
       [matTooltip]="'ui.pager.firstPage' | translate"
@@ -11,25 +13,24 @@
       mat-icon-button
       [matTooltip]="'ui.pager.previousPage' | translate"
       (click)="pageIndex = pageIndex - 1"
+      [attr.mat-density]="-2"
       [disabled]="pageIndex === 0">
       <mat-icon>chevron_left</mat-icon>
     </button>
-  </div>
-  <div class="paginator-page-info">
-    <div class="page-input-container">
-      <input
-        #pageInput
-        type="number"
-        [value]="pageIndex + 1"
-        (focus)="selectText($event)"
-        (blur)="resetToCurrentPage()"
-        (keyup.enter)="goToPage()"
-        [matTooltip]="'ui.pager.inputTooltip' | translate"
-        class="page-input" />
+    <div class="paginator-page-info">
+      <div class="page-input-container">
+        <input
+          #pageInput
+          type="number"
+          [value]="pageIndex + 1"
+          (focus)="selectText($event)"
+          (blur)="resetToCurrentPage()"
+          (keyup.enter)="goToPage()"
+          [matTooltip]="'ui.pager.inputTooltip' | translate"
+          class="page-input" />
+      </div>
+      <span class="page-label">{{ 'ui.pager.rangeLabelOf' | translate }} {{ lastPageIndex + 1 }}</span>
     </div>
-    <span class="page-label">{{ 'ui.pager.rangeLabelOf' | translate }} {{ lastPageIndex + 1 }}</span>
-  </div>
-  <div class="paginator-nav">
     <button
       mat-icon-button
       [matTooltip]="'ui.pager.nextPage' | translate"
@@ -46,4 +47,3 @@
     </button>
   </div>
 </div>
-<div class="paginator-item-range">{{ itemRange }}</div>

@@ -49,6 +49,7 @@
 
       mat-form-field {
         width: 90%;
+
         &.operator {
           width: 40%;
           min-width: 260px;
@@ -66,9 +67,7 @@
   }
 
   button {
-    border-radius: 6px;
-    min-width: 132px;
-    height: 50px;
+    min-width: 100px;
 
     &:first-child {
       margin-right: 20px;

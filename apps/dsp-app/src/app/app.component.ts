@@ -6,8 +6,10 @@ import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services
 
 @Component({
   selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss'],
+  template: `
+    <router-outlet />
+    <app-cookie-banner />
+  `,
   standalone: false,
 })
 export class AppComponent implements OnInit {

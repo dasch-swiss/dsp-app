@@ -6,27 +6,30 @@ import { MultipleViewerService } from './multiple-viewer.service';
   selector: 'app-multiple-viewer',
   template: `
     @if (selectedResourceIds$ | async; as selectedResourceIds) {
-      @if (selectedResourceIds.length <= MAX_RESOURCES) {
-        <app-comparison [resourceIds]="selectedResourceIds" />
-      }
-      @if (selectedResourceIds.length > MAX_RESOURCES) {
-        <div class="centered">Too many resources are selected to be displayed.</div>
-      }
       @if (selectedResourceIds.length === 0) {
-        <div class="centered">Select a resource on the left panel to display.</div>
+        <app-centered-box>
+          <app-centered-message
+            [icon]="'arrow_circle_left'"
+            [title]="'Select a resource on the left panel'"
+            [message]="'Choose one or more resources from the left panel to display and compare them here.'" />
+        </app-centered-box>
+      } @else {
+        @if (multipleViewerService.selectMode) {
+          <app-resource-list-selection />
+        }
+        @if (selectedResourceIds.length <= MAX_RESOURCES) {
+          <app-comparison [resourceIds]="selectedResourceIds" />
+        } @else {
+          <app-centered-box>
+            <app-centered-message
+              [icon]="'warning'"
+              [title]="'Too many resources selected.'"
+              [message]="'Maximum ' + MAX_RESOURCES + ' resources can be compared at the same time.'" />
+          </app-centered-box>
+        }
       }
     }
   `,
-  styles: [
-    `
-      .centered {
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-    `,
-  ],
   standalone: false,
 })
 export class MultipleViewerComponent {

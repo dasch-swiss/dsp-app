@@ -120,10 +120,14 @@ export class LinkValueComponent implements OnInit {
     event.stopPropagation();
     this._dialog
       .open<CreateResourceDialogComponent, CreateResourceDialogProps, string>(CreateResourceDialogComponent, {
-        ...DspDialogConfig.mediumDialog({
-          resourceType,
-          resourceClassIri,
-        }),
+        ...DspDialogConfig.dialogDrawerConfig(
+          {
+            resourceType,
+            resourceClassIri,
+          },
+          true
+        ),
+        minWidth: 800,
         viewContainerRef: this._viewContainerRef,
       })
       .afterClosed()

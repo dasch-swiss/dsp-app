@@ -15,7 +15,7 @@ import {
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { DialogService } from '@dasch-swiss/vre/ui/ui';
 import { switchMap } from 'rxjs';
-import { CollaborationPageService } from './collaboration-page.service';
+import { CollaborationPageService } from './collaboration/collaboration-page.service';
 
 @Component({
   selector: 'app-project-members-row-menu',

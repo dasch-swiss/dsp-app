@@ -6,7 +6,7 @@ import { ProjectPageService } from '../../project-page.service';
 import {
   CreateCopyrightHolderDialogComponent,
   CreateCopyrightHolderDialogProps,
-} from './create-copyright-holder-dialog.component';
+} from '../create-copyright-holder-dialog.component';
 
 @Component({
   selector: 'app-legal-settings',

@@ -1,25 +1,23 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, Input, OnChanges } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { KnoraApiConnection, ReadProject, ReadResource } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken, RouteConstants } from '@dasch-swiss/vre/core/config';
 import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
 import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
-import { combineLatest, map, pairwise, startWith, switchMap, withLatestFrom } from 'rxjs';
-import { ResourceResultService } from './resource-result.service';
+import { combineLatest, first, map, Observable, pairwise, startWith, switchMap, withLatestFrom } from 'rxjs';
+import { MultipleViewerService } from '../comparison/multiple-viewer.service';
+import { DataBrowserPageService } from '../data-browser-page.service';
+import { ResourceResultService } from '../resource-result.service';
 
 @Component({
-  selector: 'app-resource-class-browser-page',
+  selector: 'app-resources-list-fetcher',
   template: `
     @if (data$ | async; as data) {
       @if (userCanViewResources) {
-        @if (data.resources.length === 0) {
-          <app-centered-box>
-            <app-no-results-found [message]="'There are no data in this resource class yet.'" />
-          </app-centered-box>
+        @if (data.resources.length > 0) {
+          <app-resources-list [resources]="data.resources" [showBackToFormButton]="false" />
         } @else {
-          <app-resource-browser
-            [data]="data"
-            [hasRightsToShowCreateLinkObject$]="projectPageService.hasProjectMemberRights$" />
+          <app-centered-message [message]="'No resources found for this class.'" />
         }
       } @else {
         <div style="margin-top: 80px; align-items: center; text-align: center">
@@ -27,49 +25,25 @@ import { ResourceResultService } from './resource-result.service';
           <p>Check with a project admin if you have the necessary permission or if you are logged in.</p>
         </div>
       }
+    } @else {
+      <app-progress-indicator />
     }
   `,
   providers: [ResourceResultService],
   standalone: false,
 })
-export class ResourceClassBrowserPageComponent implements OnInit {
+export class ResourcesListFetcherComponent implements OnChanges {
+  @Input({ required: true }) ontologyLabel!: string;
+  @Input({ required: true }) classLabel!: string;
   userCanViewResources = true;
 
-  private readonly _resources$ = combineLatest([this.projectPageService.currentProject$, this._route.params]).pipe(
-    switchMap(([project, params]) => {
-      const ontologyLabel = params[RouteConstants.ontoParameter];
-      const classLabel = params[RouteConstants.classParameter];
-
-      return combineLatest([
-        this._request$(project, ontologyLabel, classLabel),
-        this.countQuery$(project, ontologyLabel, classLabel),
-      ]);
-    }),
-    map(([{ resources, pageIndex }, numberOfResults]) => {
-      if (pageIndex === 0 && resources.length === 0 && numberOfResults > 0) {
-        this.userCanViewResources = false;
-      } else {
-        this.userCanViewResources = true;
-      }
-
-      this._resourceResult.numberOfResults = numberOfResults;
-      return resources;
-    })
-  );
+  private _resources$!: Observable<ReadResource[]>;
 
   private readonly _classParam$ = this._route.params.pipe(
     map(params => params[RouteConstants.classParameter] as string)
   );
 
-  data$ = this._resources$.pipe(
-    withLatestFrom(this._classParam$),
-    startWith([null, [] as ReadResource[]]),
-    pairwise(),
-    map(([[prevResources, prevClass], [currResources, currClass]]) => {
-      const classParamChanged = prevClass !== currClass;
-      return { resources: currResources!, selectFirstResource: classParamChanged };
-    })
-  );
+  data$!: Observable<{ resources: ReadResource[]; selectFirstResource: boolean }>;
 
   countQuery$ = (project: ReadProject, ontologyLabel: string, classLabel: string) =>
     this._dspApiConnection.v2.search
@@ -85,15 +59,49 @@ export class ResourceClassBrowserPageComponent implements OnInit {
     protected _router: Router,
     @Inject(DspApiConnectionToken)
     private _dspApiConnection: KnoraApiConnection,
-    public projectPageService: ProjectPageService
+    public projectPageService: ProjectPageService,
+    private _multipleViewerService: MultipleViewerService,
+    private _dataBrowserPageService: DataBrowserPageService
   ) {}
 
-  ngOnInit() {
-    this._classParam$.pipe(startWith(null), pairwise()).subscribe(([prev, current]) => {
-      if (prev && prev !== current) {
-        this._resourceResult.updatePageIndex(0);
-      }
-    });
+  ngOnChanges() {
+    this._resourceResult.updatePageIndex(0);
+
+    this._resources$ = this._dataBrowserPageService.onNavigationReload$.pipe(
+      switchMap(() => this.projectPageService.currentProject$.pipe(first())),
+      switchMap(project => {
+        const ontologyLabel = this.ontologyLabel;
+        const classLabel = this.classLabel;
+
+        return combineLatest([
+          this._request$(project, ontologyLabel, classLabel),
+          this.countQuery$(project, ontologyLabel, classLabel),
+        ]);
+      }),
+      map(([{ resources, pageIndex }, numberOfResults]) => {
+        if (pageIndex === 0 && resources.length === 0 && numberOfResults > 0) {
+          this.userCanViewResources = false;
+        } else {
+          this.userCanViewResources = true;
+        }
+
+        this._resourceResult.numberOfResults = numberOfResults;
+        return resources;
+      })
+    );
+
+    this.data$ = this._resources$.pipe(
+      withLatestFrom(this._classParam$),
+      startWith([[] as ReadResource[], null]),
+      pairwise(),
+      map(([[prevResources, prevClass], [currResources, currClass]]) => {
+        const selectFirstResource = prevClass !== currClass;
+        if (selectFirstResource && !this._multipleViewerService.selectMode && currResources.length >= 1) {
+          this._multipleViewerService.selectOneResource(currResources![0]);
+        }
+        return { resources: currResources!, selectFirstResource };
+      })
+    );
   }
 
   private _request$ = (project: ReadProject, ontologyLabel: string, classLabel: string) =>

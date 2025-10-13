@@ -15,7 +15,6 @@ import { ResourceHeaderComponent } from './lib/resource-header.component';
 import { ResourceInfoBarComponent } from './lib/resource-info-bar.component';
 import { ResourceLegalLicenseComponent } from './lib/resource-legal-license.component';
 import { ResourceLegalComponent } from './lib/resource-legal.component';
-import { ResourcePageComponent } from './lib/resource-page.component';
 import { ResourceRepresentationComponent } from './lib/resource-representation.component';
 import { ResourceRestrictionComponent } from './lib/resource-restriction.component';
 import { ResourceTabsComponent } from './lib/resource-tabs.component';
@@ -36,7 +35,6 @@ export const ResourcePageComponents = [
   ResourceComponent,
   ResourceHeaderComponent,
   ResourceLegalComponent,
-  ResourcePageComponent,
   SingleResourcePageComponent,
   ResourceFetcherComponent,
   ResourceRepresentationComponent,

@@ -1,5 +1,5 @@
 @if ((readProject$ | async); as project) {
-<div class="content large middle">
+<app-closing-dialog>
   <div style="display: flex; justify-content: end">
     @if ((hasProjectAdminRights$ | async) && project.status) {
     <button
@@ -39,5 +39,6 @@
       </mat-chip-listbox>
     </section>
   </div>
-</div>
+</app-closing-dialog>
+
 }

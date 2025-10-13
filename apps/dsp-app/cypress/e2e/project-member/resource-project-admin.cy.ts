@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker';
 import { ThingPictureClassResource } from '../../models/existing-data-models';
 import { UserProfiles } from '../../models/user-profiles';
-import { Project0001Page, Project0803Page } from '../../support/pages/existing-ontology-class-page';
+import { Project0001Page } from '../../support/pages/existing-ontology-class-page';
 
 describe('Check project admin existing resource functionality', () => {
   let project0001Page: Project0001Page;
@@ -41,19 +41,6 @@ describe('Check project admin existing resource functionality', () => {
         password: users.anythingProjectAdmin_password,
       });
     });
-  });
-
-  it('cant add other project resource', () => {
-    const path = `/project/${Project0803Page.projectShortCode}/ontology/${Project0803Page.ontologyName}/book/add`;
-    cy.visit(path);
-    cy.url().should('not.contain', Project0803Page.projectShortCode);
-  });
-
-  it('can add owned project resource', () => {
-    const path = `/project/${Project0001Page.projectShortCode}/ontology/${Project0001Page.defaultOntology}/ThingPicture/add`;
-    cy.visit(path);
-    const regex = new RegExp(`${path}$`);
-    cy.url().should('match', regex);
   });
 
   it('ThingPicture resource should be visible', () => {

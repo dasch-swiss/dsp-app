@@ -204,22 +204,6 @@ a,
 // --------------------------------------
 
 //
-// status badge
-.badge {
-  padding: 4px 6px;
-  font-weight: bolder;
-  border-radius: 4px;
-
-  &.status {
-    color: white;
-    background: $red;
-
-    &.active {
-      background: $green;
-    }
-  }
-}
-
 // status class alone is only for colorized text
 .status.text-only {
   color: $red;

@@ -7,6 +7,7 @@ export class ResourceResultService {
   pageIndex$ = this._pageIndexSubject.asObservable();
 
   numberOfResults = 0;
+  readonly MAX_RESULTS_PER_PAGE = 25;
 
   updatePageIndex(newIndex: number): void {
     this._pageIndexSubject.next(newIndex);

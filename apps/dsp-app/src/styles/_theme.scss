@@ -18,38 +18,4 @@
     }
   }
 
-  &.badge {
-    padding: 0;
-    margin: 0 0 6px 0;
-    display: block;
-
-    .environment,
-    .release {
-      padding: 4px;
-      color: $bright;
-    }
-
-    .environment {
-      border-radius: 4px 0 0 4px;
-      background-color: rgba(0, 0, 0, 0.75);
-    }
-
-    .release {
-      border-radius: 0 4px 4px 0;
-      margin-left: -3px;
-
-      &.accent {
-        background-color: $yellow !important;
-        color: $yellow_contrast;
-      }
-
-      &.warn {
-        background-color: $red !important;
-        color: $red_contrast;
-      }
-      &.default {
-        background-color: $primary_800 !important;
-      }
-    }
-  }
 }

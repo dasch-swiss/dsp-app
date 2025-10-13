@@ -7,10 +7,10 @@ import { MultipleViewerService } from './multiple-viewer.service';
   selector: 'app-resource-browser',
   template: ` <div class="whole-height">
     <as-split direction="horizontal">
-      <as-split-area [size]="40">
+      <as-split-area [size]="30">
         <app-resources-list [resources]="data.resources" [showBackToFormButton]="showBackToFormButton" />
       </as-split-area>
-      <as-split-area [size]="60" cdkScrollable>
+      <as-split-area [size]="70" cdkScrollable>
         <app-multiple-viewer />
       </as-split-area>
     </as-split>

@@ -49,6 +49,8 @@ export class RouteConstants {
   static readonly imageSettings = 'image-settings';
   static readonly legalSettings = 'legal-settings';
 
+  static readonly myProfile = 'my-profile';
+  static readonly data = 'data';
   static readonly resource = 'resource';
 
   static readonly projectDescription = 'description';
@@ -74,6 +76,7 @@ export class RouteConstants {
   static readonly resourceParameter = 'resource';
   static readonly modeParameter = 'mode';
   static readonly qParameter = 'q';
+  static readonly ontologyParameter = 'ontology';
   static readonly classParameter = 'class';
   static readonly instanceParameter = 'instance';
   static readonly listParameter = 'list';
@@ -91,16 +94,15 @@ export class RouteConstants {
   static readonly ontologyRelative = `${RouteConstants.ontology}/:${RouteConstants.ontoParameter}`;
   static readonly ontologyEditorRelative = `${RouteConstants.ontologyRelative}/${RouteConstants.editor}`;
   static readonly projectUuidRelative = `${RouteConstants.project}/:${RouteConstants.uuidParameter}`;
-  static readonly createNewProjectRelative = `${RouteConstants.project}/${RouteConstants.createNew}`;
+  static readonly createNewProjectRelative = `${RouteConstants.createNew}/${RouteConstants.project}`;
   static readonly projectResourceRelative = `${RouteConstants.resource}/:${RouteConstants.projectParameter}/:${RouteConstants.resourceParameter}`;
 
   static readonly OntologyClassAddRelative = `${RouteConstants.ontology}/:${RouteConstants.ontoParameter}/:${RouteConstants.classParameter}/${RouteConstants.addClassInstance}`;
   static readonly OntologyClassRelative = `${RouteConstants.ontology}/:${RouteConstants.ontoParameter}/:${RouteConstants.classParameter}`;
-  static readonly JulienOntologyClassRelative = `${RouteConstants.ontology}/:${RouteConstants.ontoParameter}/:${RouteConstants.classParameter}/:${RouteConstants.instanceParameter}`;
 
   static readonly advancedSearchResultsRelative = `${RouteConstants.advancedSearch}/:${RouteConstants.modeParameter}/:${RouteConstants.qParameter}`;
   static readonly searchProjectRelative = `:${RouteConstants.modeParameter}/:${RouteConstants.qParameter}/:${RouteConstants.projectParameter}`;
-  static readonly searchRelative = `:${RouteConstants.modeParameter}/:${RouteConstants.qParameter}`;
+  static readonly searchRelative = `${RouteConstants.search}/:${RouteConstants.qParameter}`;
 
   static readonly notFoundWildcardRelative = `/${RouteConstants.notFound}`;
 

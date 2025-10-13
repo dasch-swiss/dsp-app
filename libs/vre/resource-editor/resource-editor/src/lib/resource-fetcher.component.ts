@@ -1,4 +1,5 @@
 import {
+  ChangeDetectorRef,
   Component,
   ElementRef,
   EventEmitter,
@@ -77,7 +78,8 @@ export class ResourceFetcherComponent implements OnInit, OnChanges, OnDestroy {
     private _notification: NotificationService,
     private _route: ActivatedRoute,
     private _router: Router,
-    private _translateService: TranslateService
+    private _translateService: TranslateService,
+    private _cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -103,6 +105,8 @@ export class ResourceFetcherComponent implements OnInit, OnChanges, OnDestroy {
 
           this.hideStatus = null;
           this.resource = resource;
+
+          this._cdr.detectChanges();
 
           const normalizeToCompactFormat = (isoDate: string): string => {
             return isoDate.replace(/[-:.]/g, '');

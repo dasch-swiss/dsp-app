@@ -31,10 +31,7 @@ export class AdvancedSearchPageComponent implements OnInit {
   onSearch(queryObject: QueryObject): void {
     this.logProperties(queryObject.properties);
 
-    const route = `./${RouteConstants.advancedSearch}/${RouteConstants.gravSearch}/${encodeURIComponent(
-      queryObject.query
-    )}`;
-
+    const route = `./${RouteConstants.advancedSearch}/${RouteConstants.gravSearch}/${encodeURIComponent(queryObject.query)}`;
     this._router.navigate([route], { relativeTo: this._route.parent });
   }
 

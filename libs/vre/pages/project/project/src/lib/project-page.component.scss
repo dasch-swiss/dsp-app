@@ -1,7 +1,6 @@
 @use '../../../../../../../apps/dsp-app/src/styles/config' as *;
 @use '../../../../../../../apps/dsp-app/src/styles/responsive' as *;
 
-:host {
-  display: flex;
-  height: calc(100vh - #{$header-height});
+.content {
+  height: calc(100vh - 106px); // TODO normally 94px, but with 106px there is no vertical scroll bar
 }

@@ -18,7 +18,7 @@ describe('Authentication', () => {
       cy.get(po.password).type(users.systemAdmin_password_root);
       cy.get(po.submitButton).click();
 
-      cy.get(po.loginButton).should('not.be.visible');
+      cy.get(po.loginButton).should('not.exist');
       cy.get('[data-cy=user-button]').should('be.visible');
     });
   });

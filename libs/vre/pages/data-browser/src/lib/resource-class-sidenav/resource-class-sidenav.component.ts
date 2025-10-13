@@ -1,15 +1,12 @@
-import { ChangeDetectionStrategy, Component, Input, OnChanges } from '@angular/core';
+import { Component, Input, OnChanges } from '@angular/core';
 import { Constants, ReadOntology, ResourceClassDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
 import { LocalizationService, SortingHelper } from '@dasch-swiss/vre/shared/app-helper-services';
 
 @Component({
-  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-resource-class-sidenav',
   template: `
     @for (classToDisplay of classesToDisplay; track trackByFn($index, classToDisplay)) {
-      <div>
-        <app-resource-class-sidenav-item [resClass]="classToDisplay" />
-      </div>
+      <app-resource-class-sidenav-item [resClass]="classToDisplay" />
     }
   `,
   standalone: false,

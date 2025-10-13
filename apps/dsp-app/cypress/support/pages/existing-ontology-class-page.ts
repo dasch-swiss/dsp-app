@@ -12,7 +12,7 @@ export class ProjectAssertionPageBase {
   }
 
   visitClass = (ontoClassName: string) => {
-    cy.visit(`/project/${this.projectShortCode}/ontology/${this.ontologyName}/${ontoClassName}`);
+    cy.visit(`/project/${this.projectShortCode}/data/${this.ontologyName}/${ontoClassName}`);
   };
 }
 export class Project0803Page extends ProjectAssertionPageBase {

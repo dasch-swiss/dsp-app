@@ -3,49 +3,33 @@
 <button mat-button [matMenuTriggerFor]="userMenu" class="main-toolbar-button user-menu" data-cy="user-button">
   <img appAdminImage [image]="(user$ | async)?.email" [type]="'user'" class="avatar" alt="avatar" />
 </button>
-<mat-menu #userMenu="matMenu" xPosition="before" class="user-menu">
-  <!-- first line: user name and close button -->
-  <div class="menu-header">
-    <div class="menu-title">{{ 'pages.userSettings.userMenu.signedInAs' | translate }}</div>
-    <div class="menu-title">{{ (user$ | async)?.givenName }} {{ (user$ | async)?.familyName }}</div>
-  </div>
-  <!-- menu items -->
-  <div class="menu-content">
-    <mat-list class="navigation">
-      @for (item of navigation; track item) {
-      <mat-list-item class="nav-item">
-        <button
-          mat-button
-          [routerLink]="item.route"
-          [routerLinkActiveOptions]="{ exact: true }"
-          routerLinkActive="active-link"
-          class="nav-item button">
-          <span class="label">{{ item.label }}</span>
-        </button>
-      </mat-list-item>
-      }
-      <!-- system for system admin only -->
-      @if (isSysAdmin$ | async) {
-      <mat-list-item class="nav-item">
-        <button mat-button [routerLink]="systemLink" routerLinkActive="active-link" class="nav-item button">
-          <span class="label">{{ 'pages.userSettings.userMenu.systemAdministration' | translate }}</span>
-        </button>
-      </mat-list-item>
-      }
-      <mat-divider />
-      <mat-list-item class="nav-item">
-        <button mat-button (click)="logout()" class="nav-item button">
-          <span class="label">{{ 'pages.userSettings.userMenu.logout' | translate }}</span>
-        </button>
-      </mat-list-item>
-    </mat-list>
-  </div>
-</mat-menu>
+
 } @else {
 <button mat-raised-button color="primary" [matMenuTriggerFor]="loginForm" class="login-button" data-cy="login-button">
   {{ 'pages.userSettings.userMenu.login' | translate }}
 </button>
+}
 <mat-menu #loginForm xPosition="before" class="form-menu">
   <app-login-form (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()" />
 </mat-menu>
-}
+
+<mat-menu #userMenu="matMenu" xPosition="before" class="user-menu">
+  <div class="menu-header">
+    <div class="menu-title">{{ 'pages.userSettings.userMenu.signedInAs' | translate }}</div>
+    <div class="menu-title">{{ (user$ | async)?.givenName }} {{ (user$ | async)?.familyName }}</div>
+  </div>
+
+  <a mat-menu-item [routerLink]="['/', MY_PROFILE, 'account']">
+    {{ 'pages.userSettings.userMenu.myAccount' | translate }}
+  </a>
+
+  @if (isSysAdmin$ | async) {
+  <a mat-menu-item [routerLink]="['/', systemLink]">
+    {{ 'pages.userSettings.userMenu.systemAdministration' | translate }}
+  </a>
+  }
+
+  <mat-divider />
+
+  <button mat-menu-item (click)="logout()">{{ 'pages.userSettings.userMenu.logout' | translate }}</button>
+</mat-menu>

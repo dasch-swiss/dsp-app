@@ -14,7 +14,7 @@ export interface CreateResourceDialogProps {
   selector: 'app-create-resource-dialog',
   template: `
     <app-dialog-header [title]="'Create new resource of type: ' + data.resourceType" />
-    <div mat-dialog-content>
+    <div mat-dialog-content style="max-height: 100%" data-cy="create-resource-dialog">
       @if (projectShortcode$ | async; as projectShortcode) {
         @if (projectIri$ | async; as projectIri) {
           <app-create-resource-form

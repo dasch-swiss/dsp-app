@@ -107,13 +107,12 @@ export class OntologyService {
     }${this._dspApiConfig.apiPath}`;
   }
 
-  getOntologyIriFromRoute(projectShortcode: string): string | null {
+  getOntologyIriFromRoute(projectShortcode: string, ontologyName: string) {
     const iriBase = this.getIriBaseUrl();
-    let ontologyName = this._route.snapshot?.paramMap.get(RouteConstants.ontoParameter);
-    if (!ontologyName && this._route.snapshot?.root.children[0].children.length) {
-      ontologyName = this._route.snapshot?.root.children[0].children[0].paramMap.get(RouteConstants.ontoParameter);
-    }
+    return `${iriBase}/${RouteConstants.ontology}/${projectShortcode}/${ontologyName}/v2`;
+  }
 
-    return ontologyName ? `${iriBase}/${RouteConstants.ontology}/${projectShortcode}/${ontologyName}/v2` : null;
+  getClassIdFromParams(projectShortcode: string, ontologyLabel: string, classLabel: string) {
+    return `${this.getOntologyIriFromRoute(projectShortcode, ontologyLabel)}#${classLabel}`;
   }
 }

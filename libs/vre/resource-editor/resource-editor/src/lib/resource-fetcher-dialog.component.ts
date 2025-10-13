@@ -9,7 +9,7 @@ export interface ResourceFetcherDialogProps {
 @Component({
   selector: 'app-resource-fetcher-dialog',
   template: `
-    <app-closing-dialog>
+    <app-closing-dialog data-cy="resource-dialog">
       <app-resource-fetcher [resourceIri]="data.resourceIri" />
     </app-closing-dialog>
   `,
