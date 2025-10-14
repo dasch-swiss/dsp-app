@@ -3,28 +3,6 @@
 This is the DSP-APP documentation, based on [MkDocs](https://www.mkdocs.org) and published
 under [https://docs.dasch.swiss/latest/DSP-APP/](https://docs.dasch.swiss/latest/DSP-APP/).
 
-## Contribute
-
-If you would like to add your own contributions to the docs, please read the following information regarding the file structure to ensure you follow the same structure.
-
-### File structure
-
-The documentation consists of three main topics with subordinate themes:
-
-1. **index** contains all information about the DSP-APP
-1. **user-guide** contains the DSP-APP user guide
-
-- Index = Introduction: All about login, registration and DSP APP information in general.
-- Project = All about project administration; part of DSP-ADMIN
-- User = All about user administration; part of DSP-ADMIN
-- System = All about system administration; part of DSP-ADMIN
-- Data = All about data management; part of VRE. In the current DSP-APP ADMIN version it's commented out
-
-1. **contribution** contains all information for people who wants to contribute to DSP-APP
-
-- Index = How to contribute incl. link to the [general DSP contribution guidelines](https://docs.dasch.swiss/latest/developers/contribution/)
-- Release Notes = Contains the CHANGELOG file of DSP-APP
-
 Images like screenshots and so on have to be stored in `assets/images`.
 
 The `mkdocs.yml` file is present in the top-level directory of the repo and the source files are in the `docs/` folder.

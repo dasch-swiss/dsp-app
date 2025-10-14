@@ -89,10 +89,10 @@ export class HelpPageComponent implements OnInit {
       urlText: 'dasch.swiss',
     },
     {
-      title: 'Contribute',
-      text: 'All our software code is open source and accessible on Github. If you want to improve the tools, feel free to contact us on:',
-      url: 'https://github.com/dasch-swiss',
-      urlText: 'Github',
+      title: 'Source Code',
+      text: 'Our software is open source and available on Github under Apache 2.0 license. For support or questions:',
+      url: 'mailto:support@dasch.swiss',
+      urlText: 'Contact Support',
     },
   ];
 

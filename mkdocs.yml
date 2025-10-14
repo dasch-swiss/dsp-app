@@ -17,8 +17,8 @@ nav:
       - Search results: user-guide/data/search-results.md
       - Work on your data: user-guide/data/work-on-data.md
     - User Profile: user-guide/user.md
-  - Contribution:
-    - How to contribute: contribution/index.md
+  - Development:
+    - Developer Documentation: contribution/index.md
     - Docs Documentation: contribution/docs-documentation.md
     - Release Notes: contribution/release-notes.md
 
