@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ReadFileValue } from '@dasch-swiss/dsp-js';
-import { AdminProjectsLegalInfoApiService, ProjectLicenseDto } from '@dasch-swiss/vre/3rd-party-services/open-api';
+import { AdminAPIApiService, ProjectLicenseDto } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { ResourceFetcherService } from '@dasch-swiss/vre/resource-editor/representations';
 import { switchMap, take } from 'rxjs';
 
@@ -51,8 +51,8 @@ export class ResourceLegalComponent implements OnInit {
   }
 
   constructor(
-    private _resourceFetcher: ResourceFetcherService,
-    private _copyrightApi: AdminProjectsLegalInfoApiService
+    private readonly _adminApiService: AdminAPIApiService,
+    private readonly _resourceFetcher: ResourceFetcherService
   ) {}
 
   ngOnInit() {
@@ -63,7 +63,7 @@ export class ResourceLegalComponent implements OnInit {
     this._resourceFetcher.projectShortcode$
       .pipe(
         switchMap(projectShortcode =>
-          this._copyrightApi.getAdminProjectsShortcodeProjectshortcodeLegalInfoLicenses(projectShortcode)
+          this._adminApiService.getAdminProjectsShortcodeProjectshortcodeLegalInfoLicenses(projectShortcode)
         ),
         take(1)
       )

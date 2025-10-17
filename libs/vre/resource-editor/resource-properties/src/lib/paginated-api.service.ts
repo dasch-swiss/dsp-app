@@ -1,16 +1,16 @@
 import { Injectable } from '@angular/core';
-import { AdminProjectsLegalInfoApiService, ProjectLicenseDto } from '@dasch-swiss/vre/3rd-party-services/open-api';
+import { AdminAPIApiService, ProjectLicenseDto } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { EMPTY, expand, map, reduce } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class PaginatedApiService {
-  constructor(private readonly _copyrightApi: AdminProjectsLegalInfoApiService) {}
+  constructor(private readonly _adminApiService: AdminAPIApiService) {}
 
   getLicenses(projectShortcode: string, pageSize = 100) {
-    return this._copyrightApi.getAdminProjectsShortcodeProjectshortcodeLegalInfoLicenses(projectShortcode).pipe(
+    return this._adminApiService.getAdminProjectsShortcodeProjectshortcodeLegalInfoLicenses(projectShortcode).pipe(
       expand(response => {
         if (response.pagination.currentPage < response.pagination.totalPages) {
-          return this._copyrightApi.getAdminProjectsShortcodeProjectshortcodeLegalInfoLicenses(
+          return this._adminApiService.getAdminProjectsShortcodeProjectshortcodeLegalInfoLicenses(
             projectShortcode,
             response.pagination.currentPage + 1,
             pageSize
@@ -25,12 +25,12 @@ export class PaginatedApiService {
   }
 
   getCopyrightHolders(projectShortcode: string, pageSize = 100) {
-    return this._copyrightApi
+    return this._adminApiService
       .getAdminProjectsShortcodeProjectshortcodeLegalInfoCopyrightHolders(projectShortcode, undefined, 1, pageSize)
       .pipe(
         expand(response => {
           if (response.pagination.currentPage < response.pagination.totalPages) {
-            return this._copyrightApi.getAdminProjectsShortcodeProjectshortcodeLegalInfoCopyrightHolders(
+            return this._adminApiService.getAdminProjectsShortcodeProjectshortcodeLegalInfoCopyrightHolders(
               projectShortcode,
               undefined,
               response.pagination.currentPage + 1,
@@ -46,12 +46,12 @@ export class PaginatedApiService {
   }
 
   getAuthorships(projectShortcode: string, pageSize = 100) {
-    return this._copyrightApi
+    return this._adminApiService
       .getAdminProjectsShortcodeProjectshortcodeLegalInfoAuthorships(projectShortcode, undefined, 1, pageSize)
       .pipe(
         expand(response => {
           if (response.pagination.currentPage < response.pagination.totalPages) {
-            return this._copyrightApi.getAdminProjectsShortcodeProjectshortcodeLegalInfoAuthorships(
+            return this._adminApiService.getAdminProjectsShortcodeProjectshortcodeLegalInfoAuthorships(
               projectShortcode,
               undefined,
               response.pagination.currentPage + 1,

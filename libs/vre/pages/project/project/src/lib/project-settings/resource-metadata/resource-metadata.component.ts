@@ -1,7 +1,7 @@
 import { HttpResponse } from '@angular/common/http';
 import { ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { ExportFormat, V2MetadataApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
+import { ExportFormat, APIV2ApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { AppError } from '@dasch-swiss/vre/core/error-handler';
 import { AccessTokenService } from '@dasch-swiss/vre/core/session';
 import { BehaviorSubject, finalize, Subject, switchMap, takeUntil } from 'rxjs';
@@ -25,11 +25,11 @@ export class ResourceMetadataComponent implements OnDestroy {
   isDownloadingFile = false;
 
   constructor(
-    private _ats: AccessTokenService,
-    private _cdr: ChangeDetectorRef,
-    private _ms: V2MetadataApiService,
-    private _snackBar: MatSnackBar,
-    private _projectPageService: ProjectPageService
+    private readonly _ats: AccessTokenService,
+    private readonly _cdr: ChangeDetectorRef,
+    private readonly _projectPageService: ProjectPageService,
+    private readonly _snackBar: MatSnackBar,
+    private readonly _v2ApiService: APIV2ApiService
   ) {}
 
   ngOnDestroy() {
@@ -53,7 +53,7 @@ export class ResourceMetadataComponent implements OnDestroy {
     const classIris: string[] | undefined = undefined;
     const authToken = this._ats.getAccessToken() ?? undefined;
 
-    this._ms
+    this._v2ApiService
       .getV2MetadataProjectsProjectshortcodeResources(shortcode, authToken, format, classIris, 'response', false, {
         httpHeaderAccept: 'text/plain',
       })

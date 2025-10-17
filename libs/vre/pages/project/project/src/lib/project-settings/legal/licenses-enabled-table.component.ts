@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { ReadProject } from '@dasch-swiss/dsp-js';
-import { AdminProjectsLegalInfoApiService, ProjectLicenseDto } from '@dasch-swiss/vre/3rd-party-services/open-api';
+import { AdminAPIApiService, ProjectLicenseDto } from '@dasch-swiss/vre/3rd-party-services/open-api';
 
 @Component({
   selector: 'app-licenses-enabled-table',
@@ -69,10 +69,10 @@ export class LicensesEnabledTableComponent {
     return this.licenses.filter(license => license.isEnabled).length;
   }
 
-  constructor(private readonly _copyrightApi: AdminProjectsLegalInfoApiService) {}
+  constructor(private readonly _adminApiService: AdminAPIApiService) {}
 
   enable(licenseIri: string) {
-    this._copyrightApi
+    this._adminApiService
       .putAdminProjectsShortcodeProjectshortcodeLegalInfoLicensesLicenseiriEnable(this.project.shortcode, licenseIri)
       .subscribe(() => {
         this.refresh.emit();
@@ -80,7 +80,7 @@ export class LicensesEnabledTableComponent {
   }
 
   disable(licenseIri: string) {
-    this._copyrightApi
+    this._adminApiService
       .putAdminProjectsShortcodeProjectshortcodeLegalInfoLicensesLicenseiriDisable(this.project.shortcode, licenseIri)
       .subscribe(() => {
         this.refresh.emit();

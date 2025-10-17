@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@angular/core';
 import { KnoraApiConnection, SystemPropertyDefinition } from '@dasch-swiss/dsp-js';
 import { UserApiService } from '@dasch-swiss/vre/3rd-party-services/api';
-import { AdminProjectsApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
+import { AdminAPIApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { AppError } from '@dasch-swiss/vre/core/error-handler';
 import { DspResource, filterUndefined, GenerateProperty } from '@dasch-swiss/vre/shared/app-common';
@@ -30,7 +30,7 @@ export class ResourceFetcherService {
 
   project$ = this.resource$.pipe(
     filterUndefined(),
-    switchMap(resource => this._adminProjectsApiService.getAdminProjectsIriProjectiri(resource.res.attachedToProject)),
+    switchMap(resource => this._adminApiService.getAdminProjectsIriProjectiri(resource.res.attachedToProject)),
     map(v => v.project),
     shareReplay({ bufferSize: 1, refCount: true })
   );
@@ -42,10 +42,9 @@ export class ResourceFetcherService {
   scrollToTop$ = this._scrollToTop.asObservable();
 
   constructor(
-    @Inject(DspApiConnectionToken)
-    private _dspApiConnection: KnoraApiConnection,
-    private _adminProjectsApiService: AdminProjectsApiService,
-    private _userApiService: UserApiService
+    @Inject(DspApiConnectionToken) private readonly _dspApiConnection: KnoraApiConnection,
+    private readonly _adminApiService: AdminAPIApiService,
+    private readonly _userApiService: UserApiService
   ) {}
 
   loadResource(resourceIri: string, resourceVersion?: string) {

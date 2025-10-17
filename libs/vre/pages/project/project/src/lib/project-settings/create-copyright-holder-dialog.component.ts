@@ -1,7 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { AdminProjectsLegalInfoApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
+import { AdminAPIApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { AppError } from '@dasch-swiss/vre/core/error-handler';
 import { finalize } from 'rxjs';
 
@@ -41,10 +41,10 @@ export class CreateCopyrightHolderDialogComponent {
   loading = false;
 
   constructor(
+    private readonly _adminApiService: AdminAPIApiService,
+    private readonly _dialogRef: MatDialogRef<CreateCopyrightHolderDialogComponent>,
     private readonly _fb: FormBuilder,
-    @Inject(MAT_DIALOG_DATA) public readonly data: CreateCopyrightHolderDialogProps,
-    private readonly _adminApi: AdminProjectsLegalInfoApiService,
-    private readonly _dialogRef: MatDialogRef<CreateCopyrightHolderDialogComponent>
+    @Inject(MAT_DIALOG_DATA) public readonly data: CreateCopyrightHolderDialogProps
   ) {}
 
   onSubmit() {
@@ -53,7 +53,7 @@ export class CreateCopyrightHolderDialogComponent {
     }
     this.loading = true;
 
-    this._adminApi
+    this._adminApiService
       .postAdminProjectsShortcodeProjectshortcodeLegalInfoCopyrightHolders(this.data.projectShortcode, {
         data: [this.form.controls.copyrightHolder.value],
       })

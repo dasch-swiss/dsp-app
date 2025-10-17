@@ -1,11 +1,6 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, OnDestroy, Output } from '@angular/core';
 import { Constants, StoredProject } from '@dasch-swiss/dsp-js';
-import {
-  AdminUsersApiService,
-  PermissionsDataADM,
-  Project,
-  UserDto,
-} from '@dasch-swiss/vre/3rd-party-services/open-api';
+import { AdminAPIApiService, PermissionsDataADM, Project, UserDto } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { AllProjectsService } from '@dasch-swiss/vre/pages/user-settings/user';
 import { BehaviorSubject, combineLatest, map, Observable, Subject, switchMap, takeUntil } from 'rxjs';
 import { AutocompleteItem } from '../autocomplete-item.interface';
@@ -87,13 +82,13 @@ export class MembershipComponent implements OnDestroy, OnChanges {
   };
 
   constructor(
-    private _allProjectsService: AllProjectsService,
-    private _adminUsersApi: AdminUsersApiService
+    private readonly _adminApiService: AdminAPIApiService,
+    private readonly _allProjectsService: AllProjectsService
   ) {}
 
   ngOnChanges() {
     this.user$ = this._refreshSubject.pipe(
-      switchMap(() => this._adminUsersApi.getAdminUsersIriUseriri(this.userId)),
+      switchMap(() => this._adminApiService.getAdminUsersIriUseriri(this.userId)),
       map(response => response.user)
     );
     this.projects$ = combineLatest([this._allProjectsService.allProjects$, this.user$]).pipe(
@@ -108,7 +103,7 @@ export class MembershipComponent implements OnDestroy, OnChanges {
   }
 
   removeFromProject(project: Project) {
-    this._adminUsersApi
+    this._adminApiService
       .deleteAdminUsersIriUseririProjectMembershipsProjectiri(this.userId, project.id as unknown as string)
       .subscribe(() => {
         this._refreshUserProjects();
@@ -116,9 +111,11 @@ export class MembershipComponent implements OnDestroy, OnChanges {
   }
 
   addToProject(projectIri: string) {
-    this._adminUsersApi.postAdminUsersIriUseririProjectMembershipsProjectiri(this.userId, projectIri).subscribe(() => {
-      this._refreshUserProjects();
-    });
+    this._adminApiService
+      .postAdminUsersIriUseririProjectMembershipsProjectiri(this.userId, projectIri)
+      .subscribe(() => {
+        this._refreshUserProjects();
+      });
   }
 
   isUserProjectAdmin(permissions: PermissionsDataADM, project: Project): boolean {

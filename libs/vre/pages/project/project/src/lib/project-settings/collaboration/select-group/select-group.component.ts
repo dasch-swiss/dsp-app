@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ReadUser } from '@dasch-swiss/dsp-js';
-import { AdminUsersApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
+import { AdminAPIApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { AppError } from '@dasch-swiss/vre/core/error-handler';
 import { CollaborationPageService } from '../collaboration-page.service';
 
@@ -47,8 +47,8 @@ export class SelectGroupComponent implements OnInit {
   groupCtrl!: FormControl<string[] | null>;
 
   constructor(
-    private _adminUsersApiService: AdminUsersApiService,
-    private _collaborationPageService: CollaborationPageService
+    private readonly _adminApiService: AdminAPIApiService,
+    private readonly _collaborationPageService: CollaborationPageService
   ) {}
 
   ngOnInit() {
@@ -64,7 +64,7 @@ export class SelectGroupComponent implements OnInit {
       if (!groupIdAdded) {
         throw new AppError('Group should exist');
       }
-      this._adminUsersApiService
+      this._adminApiService
         .postAdminUsersIriUseririGroupMembershipsGroupiri(this.user.id, groupIdAdded)
         .subscribe(() => {
           this._collaborationPageService.reloadProjectMembers();
@@ -75,7 +75,7 @@ export class SelectGroupComponent implements OnInit {
       if (!groupIdRemoved) {
         throw new AppError('Group should exist');
       }
-      this._adminUsersApiService
+      this._adminApiService
         .deleteAdminUsersIriUseririGroupMembershipsGroupiri(this.user.id, groupIdRemoved.id)
         .subscribe(() => {
           this._collaborationPageService.reloadProjectMembers();

@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { ReadProject, ReadUser } from '@dasch-swiss/dsp-js';
 import { PermissionsData } from '@dasch-swiss/dsp-js/src/models/admin/permissions-data';
 import { UserApiService } from '@dasch-swiss/vre/3rd-party-services/api';
-import { AdminUsersApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
+import { AdminAPIApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { DspDialogConfig, RouteConstants } from '@dasch-swiss/vre/core/config';
 import { UserService } from '@dasch-swiss/vre/core/session';
 import {
@@ -46,13 +46,13 @@ export class ProjectMembersRowMenuComponent {
   @Output() refreshParent = new EventEmitter<void>();
 
   constructor(
-    private _userService: UserService,
-    private _userApiService: UserApiService,
-    private _router: Router,
-    private _matDialog: MatDialog,
-    private _dialog: DialogService,
-    private _adminUsersApi: AdminUsersApiService,
-    private _collaborationPageService: CollaborationPageService
+    private readonly _adminApiService: AdminAPIApiService,
+    private readonly _collaborationPageService: CollaborationPageService,
+    private readonly _dialog: DialogService,
+    private readonly _matDialog: MatDialog,
+    private readonly _router: Router,
+    private readonly _userApiService: UserApiService,
+    private readonly _userService: UserService
   ) {}
 
   isProjectAdmin(permissions: PermissionsData): boolean {
@@ -128,7 +128,7 @@ export class ProjectMembersRowMenuComponent {
       .afterConfirmation('Do you want to remove this user from the project?')
       .pipe(
         switchMap(() =>
-          this._adminUsersApi.deleteAdminUsersIriUseririProjectMembershipsProjectiri(user.id, this.project.id)
+          this._adminApiService.deleteAdminUsersIriUseririProjectMembershipsProjectiri(user.id, this.project.id)
         )
       )
       .subscribe(() => {
