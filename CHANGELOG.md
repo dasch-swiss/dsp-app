@@ -1,5 +1,23 @@
 # Changelog
 
+## [12.0.1](https://github.com/dasch-swiss/dsp-das/compare/v12.0.0...v12.0.1) (2025-10-20)
+
+
+### Bug Fixes
+
+* **Advanced Search:** fix search after navigating through the header (DEV-5519) ([#2583](https://github.com/dasch-swiss/dsp-das/issues/2583)) ([aea6d91](https://github.com/dasch-swiss/dsp-das/commit/aea6d91e1b22e7a1fb290e6a0ef8126f8f94518c))
+
+
+### Maintenances
+
+* bump mkdocs to v1.6.1 and mkdocs-include-markdown-plugin to v7… ([#2578](https://github.com/dasch-swiss/dsp-das/issues/2578)) ([d88600b](https://github.com/dasch-swiss/dsp-das/commit/d88600b5ffa1b8d4b28aeeafaa9a47cc8170a81d))
+* update OpenApi specification to v32.4.0-9-g0217ee4 ([#2582](https://github.com/dasch-swiss/dsp-das/issues/2582)) ([8115908](https://github.com/dasch-swiss/dsp-das/commit/8115908a4032d6c1b257011665c04636d3365227))
+
+
+### Documentation
+
+* remove contribution ([#2579](https://github.com/dasch-swiss/dsp-das/issues/2579)) ([84d5e2a](https://github.com/dasch-swiss/dsp-das/commit/84d5e2ab02d684efd6e5749f42e760599dff8b61))
+
 ## [12.0.0](https://github.com/dasch-swiss/dsp-das/compare/v11.47.2...v12.0.0) (2025-10-13)
 
 
