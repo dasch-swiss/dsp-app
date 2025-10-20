@@ -36,12 +36,13 @@ import { ProjectPageService } from './project-page.service';
 })
 export class ProjectPageHeaderComponent {
   currentProjectName$ = this._projectService.currentProject$.pipe(map(project => project.longname));
+
   constructor(
-    private _projectService: ProjectPageService,
-    private _router: Router
+    private readonly _projectService: ProjectPageService,
+    private readonly _router: Router
   ) {}
 
   goToProjectPage() {
-    this._router.navigate(['/project', this._projectService.currentProjectId]);
+    this._router.navigate(['/project', this._projectService.currentProjectUuid]);
   }
 }

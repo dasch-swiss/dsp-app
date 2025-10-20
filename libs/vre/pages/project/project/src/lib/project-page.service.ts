@@ -18,6 +18,10 @@ export class ProjectPageService {
     return this._currentProjectId;
   }
 
+  get currentProjectUuid() {
+    return ProjectService.IriToUuid(this._currentProjectId);
+  }
+
   currentProjectUuid$ = this._currentProjectUuidSubject.pipe(take(1));
 
   currentProject$ = this._reloadProjectSubject.pipe(
