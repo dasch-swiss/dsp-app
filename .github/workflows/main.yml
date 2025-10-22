@@ -8,19 +8,30 @@ jobs:
     name: DSP-APP Unit tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # gets additionally all tags which we need
-      - uses: actions/setup-node@v3
+          fetch-depth: 2
+      - name: Set up Node
+        uses: actions/setup-node@v4
         with:
           node-version: 22.12.0
-      - name: "Run unit tests"
-        run: |
-          npm install
-          npx nx run-many --all --target=lint --skip-nx-cache
-          npx nx run-many --all --target=test --configuration=ci --skip-nx-cache
+      - name: Install dependencies
+        run: npm install
+      - name: Run linting
+        run: npx nx run-many --all --target=lint --skip-nx-cache
+      - name: Run tests with coverage
+        run: npm run unit-test-coverage-ci
         env:
           TZ: Europe/Zurich
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage/lcov.info
+          flags: unittests
+          name: unit-test-coverage
+          fail_ci_if_error: false
 
   dsp-app-e2e-tests:
     name: DSP-APP E2E

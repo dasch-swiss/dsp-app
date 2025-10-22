@@ -1,0 +1,40 @@
+codecov:
+  require_ci_to_pass: yes
+  notify:
+    wait_for_ci: no
+
+# Coverage status checks - informational only, won't block PRs
+coverage:
+  status:
+    project:
+      default:
+        informational: true
+        target: auto
+        threshold: 0%
+    patch:
+      default:
+        informational: true
+        target: auto
+        threshold: 0%
+
+comment:
+  layout: "header, diff, files, footer"
+  behavior: default
+  require_changes: false
+  require_base: false
+  require_head: true
+
+ignore:
+  - "**/*.spec.ts"
+  - "**/*.cy.ts"
+  - "**/test-setup.ts"
+  - "**/jest.config.ts"
+  - "**/cypress.config.ts"
+  - "**/*.d.ts"
+  - "**/node_modules/**"
+  - "dist/**"
+  - "coverage/**"
+  - "tools/**"
+  - "scripts/**"
+  - "docs/**"
+  - "libs/vre/3rd-party-services/open-api/**"  # Auto-generated OpenAPI client
