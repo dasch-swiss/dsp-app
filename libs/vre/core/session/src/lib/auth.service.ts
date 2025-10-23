@@ -2,12 +2,7 @@ import { Inject, Injectable } from '@angular/core';
 import { ApiResponseError, KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { UserFeedbackError } from '@dasch-swiss/vre/core/error-handler';
-import {
-  ComponentCommunicationEventService,
-  EmitEvent,
-  Events as CommsEvents,
-  LocalizationService,
-} from '@dasch-swiss/vre/shared/app-helper-services';
+import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { catchError, map, of, switchMap, tap } from 'rxjs';
 import { AccessTokenService } from './access-token.service';
 import { UserService } from './user.service';
@@ -19,7 +14,6 @@ export class AuthService {
     private readonly _accessTokenService: AccessTokenService,
     @Inject(DspApiConnectionToken)
     private readonly _dspApiConnection: KnoraApiConnection,
-    private readonly _componentCommsService: ComponentCommunicationEventService,
     private readonly _localizationsService: LocalizationService
   ) {}
 
@@ -44,7 +38,6 @@ export class AuthService {
         const encodedJWT = response.body.token;
         this._accessTokenService.storeToken(encodedJWT);
         this._dspApiConnection.v2.jsonWebToken = encodedJWT;
-        this._componentCommsService.emit(new EmitEvent(CommsEvents.loginSuccess));
       }),
       catchError(error => {
         if ((error instanceof ApiResponseError && error.status === 400) || error.status === 401) {
