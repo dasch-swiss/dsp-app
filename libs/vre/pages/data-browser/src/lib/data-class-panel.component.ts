@@ -20,7 +20,7 @@ import { DataBrowserPageService } from './data-browser-page.service';
           </button>
         }
       </div>
-      <p style="font-style: italic">{{ classSelected.resClass.comment }}</p>
+      <p style="font-style: italic">{{ classSelected.resClass.comments | appStringifyStringLiteral }}</p>
     </div>
     <app-resources-list-fetcher [ontologyLabel]="classSelected.ontologyLabel" [classLabel]="classSelected.classLabel" />
   `,
