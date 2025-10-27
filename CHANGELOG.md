@@ -1,5 +1,30 @@
 # Changelog
 
+## [12.1.0](https://github.com/dasch-swiss/dsp-das/compare/v12.0.1...v12.1.0) (2025-10-27)
+
+
+### Enhancements
+
+* translate the whole website ([#2590](https://github.com/dasch-swiss/dsp-das/issues/2590)) ([fd0696a](https://github.com/dasch-swiss/dsp-das/commit/fd0696a2243fda3cd9ba62a51a0fa207bef52862))
+
+
+### Bug Fixes
+
+* a project member can create link objects ([#2591](https://github.com/dasch-swiss/dsp-das/issues/2591)) ([1ae59a7](https://github.com/dasch-swiss/dsp-das/commit/1ae59a75365d729b2499fc4298126cd8dcbba800))
+* remove unused communication service ([#2589](https://github.com/dasch-swiss/dsp-das/issues/2589)) ([90fa9cb](https://github.com/dasch-swiss/dsp-das/commit/90fa9cb6b34f387cce0270f5b5f1f45a8122411c))
+* resource class description is translated ([#2592](https://github.com/dasch-swiss/dsp-das/issues/2592)) ([30e9eb8](https://github.com/dasch-swiss/dsp-das/commit/30e9eb8b25dafac45d331ea21ce461984c42ebe3))
+
+
+### Maintenances
+
+* **deps-dev:** bump @cypress/code-coverage from 3.14.6 to 3.14.7 in the test-coverage-deps group ([#2574](https://github.com/dasch-swiss/dsp-das/issues/2574)) ([342ef3c](https://github.com/dasch-swiss/dsp-das/commit/342ef3ca193b37d63f5f0cdc5cac6649e13fb482))
+* **deps-dev:** bump @openapitools/openapi-generator-cli from 2.24.0 to 2.25.0 ([#2586](https://github.com/dasch-swiss/dsp-das/issues/2586)) ([a1d7d5b](https://github.com/dasch-swiss/dsp-das/commit/a1d7d5bef1abc1167b48d41b22ae98beb45e3c35))
+* **deps-dev:** bump @types/node from 22.18.8 to 22.18.10 in the types-deps group ([#2573](https://github.com/dasch-swiss/dsp-das/issues/2573)) ([afaa60d](https://github.com/dasch-swiss/dsp-das/commit/afaa60db0a723659f4258bcb284476531695ecc3))
+* **deps-dev:** bump the jest-jasmine-deps group across 1 directory with 2 updates ([#2585](https://github.com/dasch-swiss/dsp-das/issues/2585)) ([eb1dce7](https://github.com/dasch-swiss/dsp-das/commit/eb1dce72e23df5912a37cd0af3763ef48835329a))
+* **deps:** bump core-js from 3.45.1 to 3.46.0 ([#2576](https://github.com/dasch-swiss/dsp-das/issues/2576)) ([2c4f25e](https://github.com/dasch-swiss/dsp-das/commit/2c4f25e968638ee4aa45767895807e5df9e120a5))
+* **deps:** bump the sentry-deps group with 2 updates ([#2572](https://github.com/dasch-swiss/dsp-das/issues/2572)) ([8f4b330](https://github.com/dasch-swiss/dsp-das/commit/8f4b330ca75554d9d4d194ee74905ead20295cae))
+* enable unit test coverage ([#2587](https://github.com/dasch-swiss/dsp-das/issues/2587)) ([84448da](https://github.com/dasch-swiss/dsp-das/commit/84448da396a6535e7bed3fbb667faebeb2544734))
+
 ## [12.0.1](https://github.com/dasch-swiss/dsp-das/compare/v12.0.0...v12.0.1) (2025-10-20)
 
 
