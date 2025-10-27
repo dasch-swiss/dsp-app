@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { UserService } from '@dasch-swiss/vre/core/session';
+import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
 import { MultipleViewerService } from './comparison/multiple-viewer.service';
 import { DataBrowserPageService } from './data-browser-page.service';
 import { ResourceResultService } from './resource-result.service';
@@ -22,9 +22,9 @@ import { ResourceResultService } from './resource-result.service';
 export class DataBrowserPageComponent implements OnInit {
   constructor(
     public multipleViewerService: MultipleViewerService,
-    private _userService: UserService
+    private _projectPageService: ProjectPageService
   ) {}
   ngOnInit() {
-    this.multipleViewerService.onInit(this._userService.isSysAdmin$);
+    this.multipleViewerService.onInit(this._projectPageService.hasProjectMemberRights$);
   }
 }
