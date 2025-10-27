@@ -5,8 +5,14 @@ import { startWith } from 'rxjs/operators';
 @Component({
   selector: 'app-interval-value',
   template: `
-    <app-time-input label="Start" [control]="startControl" data-cy="start-input" />
-    <app-time-input label="End" [control]="endControl" data-cy="end-input" />
+    <app-time-input
+      [label]="'resourceEditor.templateSwitcher.intervalValue.start' | translate"
+      [control]="startControl"
+      data-cy="start-input" />
+    <app-time-input
+      [label]="'resourceEditor.templateSwitcher.intervalValue.end' | translate"
+      [control]="endControl"
+      data-cy="end-input" />
     @if (control.touched && control.errors; as errors) {
       <mat-error>
         {{ errors | humanReadableError }}

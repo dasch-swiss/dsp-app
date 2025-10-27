@@ -14,7 +14,7 @@ import { SearchTipsComponent } from './search-tips.component';
       [ngClass]="{ big: (isNotQuerying$ | async) }">
       <a mat-stroked-button [routerLink]="['..', 'advanced-search']">
         <mat-icon>swap_horiz</mat-icon>
-        Switch to advanced search
+        {{ 'pages.search.fullTextSearch.switchToAdvancedSearch' | translate }}
       </a>
       <form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
         <mat-form-field appearance="outline" style="width: 600px">
@@ -23,7 +23,7 @@ import { SearchTipsComponent } from './search-tips.component';
             matInput
             [formControl]="formGroup.controls.query"
             type="text"
-            placeholder="Enter search term..."
+            [placeholder]="'pages.search.fullTextSearch.placeholder' | translate"
             (focus)="showSearchTips()"
             (blur)="hideSearchTips()" />
           <mat-icon matSuffix>search</mat-icon>

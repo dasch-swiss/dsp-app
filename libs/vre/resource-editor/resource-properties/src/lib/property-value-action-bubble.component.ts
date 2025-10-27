@@ -1,6 +1,7 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
 import { ResourceFetcherService, ResourceUtil } from '@dasch-swiss/vre/resource-editor/representations';
+import { TranslateService } from '@ngx-translate/core';
 import { map, Observable } from 'rxjs';
 import { PropertyValueService } from './property-value.service';
 
@@ -18,7 +19,7 @@ import { PropertyValueService } from './property-value.service';
           }
         }
 
-        <span matTooltip="edit">
+        <span [matTooltip]="'resourceEditor.resourceProperties.actions.edit' | translate">
           @if (userHasPermission('edit')) {
             <button
               mat-button
@@ -30,7 +31,12 @@ import { PropertyValueService } from './property-value.service';
           }
         </span>
 
-        <span [matTooltip]="showDelete ? 'delete' : 'This value cannot be deleted because it is required'">
+        <span
+          [matTooltip]="
+            showDelete
+              ? ('resourceEditor.resourceProperties.actions.delete' | translate)
+              : ('resourceEditor.resourceProperties.actions.cannotDeleteRequired' | translate)
+          ">
           @if (userHasPermission('delete')) {
             <button
               mat-button
@@ -62,6 +68,8 @@ export class PropertyValueActionBubbleComponent implements OnInit {
 
   infoTooltip$!: Observable<string>;
 
+  private readonly _translateService = inject(TranslateService);
+
   constructor(
     private _resourceFetcherService: ResourceFetcherService,
     private _propertyValueService: PropertyValueService
@@ -84,7 +92,10 @@ export class PropertyValueActionBubbleComponent implements OnInit {
     return this._resourceFetcherService.resource$.pipe(
       map(resource => {
         const creator = resource!.res!.attachedToUser;
-        return `Creation date: ${this.date}. Value creator: ${creator}`;
+        return this._translateService.instant('resourceEditor.resourceProperties.actions.creationInfo', {
+          date: this.date,
+          creator,
+        });
       })
     );
   }

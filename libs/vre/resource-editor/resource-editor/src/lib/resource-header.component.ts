@@ -26,7 +26,7 @@ import { DspResource } from '@dasch-swiss/vre/shared/app-common';
           mat-icon-button
           data-cy="edit-label-button"
           color="primary"
-          matTooltip="Edit label"
+          [matTooltip]="'resourceEditor.moreMenu.editLabel' | translate"
           (click)="openEditLabelDialog()">
           <mat-icon>edit</mat-icon>
         </button>

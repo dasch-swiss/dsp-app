@@ -21,7 +21,9 @@ import { finalize, Subscription, takeLast, tap } from 'rxjs';
         [isLoading]="loading"
         type="submit"
         data-cy="submit-button">
-        {{ isLoginError ? ('ui.form.action.retry' | translate) : ('pages.userSettings.loginForm.login' | translate) }}
+        {{
+          isLoginError ? ('ui.common.actions.retry' | translate) : ('pages.userSettings.loginForm.login' | translate)
+        }}
       </button>
     </form>
   `,

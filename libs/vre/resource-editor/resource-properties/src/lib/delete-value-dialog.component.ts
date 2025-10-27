@@ -1,8 +1,9 @@
-import { ChangeDetectorRef, Component, Inject } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DeleteValue, KnoraApiConnection, ReadResource, UpdateResource } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { ResourceFetcherService } from '@dasch-swiss/vre/resource-editor/representations';
+import { TranslateService } from '@ngx-translate/core';
 import { tap } from 'rxjs';
 import { PropertyValueService } from './property-value.service';
 
@@ -15,23 +16,27 @@ export interface DeleteValueDialogProps {
   template: `
     <app-dialog-header
       [title]="
-        'Are you sure you want to delete this value from ' + propertyValueService.propertyDefinition.label + '?'
+        _translateService.instant('resourceEditor.resourceProperties.deleteValue.title', {
+          label: propertyValueService.propertyDefinition.label,
+        })
       " />
     <div mat-dialog-content>
-      You can leave a comment to explain your choice.
+      {{ 'resourceEditor.resourceProperties.deleteValue.explanation' | translate }}
 
       <mat-form-field style="display: block; width: 100%; margin-top: 16px">
-        <mat-label>Reason</mat-label>
+        <mat-label>{{ 'resourceEditor.resourceProperties.deleteValue.reason' | translate }}</mat-label>
         <textarea
           matInput
           data-cy="delete-comment"
           rows="5"
-          placeholder="Please explain the reason for your deletion."
+          [placeholder]="'resourceEditor.resourceProperties.deleteValue.reasonPlaceholder' | translate"
           [(ngModel)]="comment"></textarea>
       </mat-form-field>
     </div>
     <div mat-dialog-actions align="end">
-      <button mat-button mat-dialog-close (click)="dialogRef.close()">No, keep the value</button>
+      <button mat-button mat-dialog-close (click)="dialogRef.close()">
+        {{ 'resourceEditor.resourceProperties.deleteValue.noKeep' | translate }}
+      </button>
       <button
         mat-raised-button
         color="primary"
@@ -39,7 +44,7 @@ export interface DeleteValueDialogProps {
         [isLoading]="loading"
         (click)="deleteValue()"
         data-cy="confirm-button">
-        Yes, delete the value
+        {{ 'resourceEditor.resourceProperties.deleteValue.yesDelete' | translate }}
       </button>
     </div>
   `,
@@ -48,6 +53,8 @@ export interface DeleteValueDialogProps {
 export class DeleteValueDialogComponent {
   loading = false;
   comment: string | undefined;
+
+  readonly _translateService = inject(TranslateService);
 
   constructor(
     @Inject(DspApiConnectionToken)

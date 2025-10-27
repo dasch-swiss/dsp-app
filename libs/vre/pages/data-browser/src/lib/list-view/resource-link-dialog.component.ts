@@ -13,6 +13,7 @@ import {
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { UserService } from '@dasch-swiss/vre/core/session';
 import { ResourceService } from '@dasch-swiss/vre/shared/app-common';
+import { TranslateService } from '@ngx-translate/core';
 import { finalize, Subject } from 'rxjs';
 
 export interface ResourceLinkDialogProps {
@@ -24,16 +25,20 @@ export interface ResourceLinkDialogProps {
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-resource-link-dialog',
   template: `
-    <app-dialog-header [title]="title" [subtitle]="'Link resources'" />
+    <app-dialog-header [title]="title" [subtitle]="'pages.dataBrowser.resourceLinkDialog.linkResources' | translate" />
 
     <mat-dialog-content>
       <form [formGroup]="form">
-        <app-common-input [control]="form.controls.label" label="Collection labels" />
+        <app-common-input
+          [control]="form.controls.label"
+          [label]="'pages.dataBrowser.resourceLinkDialog.collectionLabel' | translate" />
 
-        <app-ck-editor-control [control]="form.controls.comment" [label]="'Comment'" />
+        <app-ck-editor-control
+          [control]="form.controls.comment"
+          [label]="'pages.dataBrowser.resourceLinkDialog.comment' | translate" />
 
         <div class="resource-container">
-          <p>The following resources will be connected:</p>
+          <p>{{ 'pages.dataBrowser.resourceLinkDialog.resourcesWillBeConnected' | translate }}</p>
           <ul>
             @for (res of data.resources; track res) {
               <li>{{ res.label }}</li>
@@ -43,7 +48,7 @@ export interface ResourceLinkDialogProps {
       </form>
     </mat-dialog-content>
     <mat-dialog-actions align="end">
-      <button mat-button type="button" (click)="dialogRef.close()">{{ 'ui.form.action.cancel' | translate }}</button>
+      <button mat-button type="button" (click)="dialogRef.close()">{{ 'ui.common.actions.cancel' | translate }}</button>
 
       <button
         mat-raised-button
@@ -53,7 +58,7 @@ export interface ResourceLinkDialogProps {
         [isLoading]="isLoading"
         [disabled]="form.invalid"
         (click)="submitData()">
-        {{ 'ui.form.action.submit' | translate }}
+        {{ 'ui.common.actions.submit' | translate }}
       </button>
     </mat-dialog-actions>
   `,
@@ -62,7 +67,9 @@ export interface ResourceLinkDialogProps {
 export class ResourceLinkDialogComponent implements OnDestroy {
   private _ngUnsubscribe = new Subject<void>();
 
-  readonly title = `Create a collection of ${this.data.resources.length} resources`;
+  readonly title = this._translateService.instant('pages.dataBrowser.resourceLinkDialog.createCollection', {
+    count: this.data.resources.length,
+  });
   form = this._fb.group({
     label: ['', [Validators.required]],
     comment: [''],
@@ -77,6 +84,7 @@ export class ResourceLinkDialogComponent implements OnDestroy {
     private _fb: FormBuilder,
     private _resourceService: ResourceService,
     private _router: Router,
+    private _translateService: TranslateService,
     private _userService: UserService,
     public dialogRef: MatDialogRef<ResourceLinkDialogComponent, void>,
     @Inject(MAT_DIALOG_DATA) public data: ResourceLinkDialogProps

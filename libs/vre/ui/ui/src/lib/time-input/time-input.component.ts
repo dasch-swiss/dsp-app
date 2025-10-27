@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit, inject } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { TranslateService } from '@ngx-translate/core';
 import { ValidatorError } from '../validator-error.interface';
 import { TimeInputErrorStateMatcher } from './time-input-error-state-matcher';
 
@@ -14,7 +15,7 @@ import { TimeInputErrorStateMatcher } from './time-input-error-state-matcher';
         [errorStateMatcher]="errorStateMatcher"
         [formControl]="control"
         appTimeFormat
-        placeholder="hh:mm:ss" />
+        [placeholder]="'ui.timeInput.placeholder' | translate" />
       @if (control.errors; as errors) {
         <mat-error>
           {{ errors | humanReadableError: possibleErrors }}
@@ -26,6 +27,8 @@ import { TimeInputErrorStateMatcher } from './time-input-error-state-matcher';
   standalone: false,
 })
 export class TimeInputComponent implements OnInit {
+  private readonly _translateService = inject(TranslateService);
+
   @Input({ required: true }) control!: FormControl<number | null>;
   @Input({ required: true }) label!: string;
 
@@ -36,7 +39,7 @@ export class TimeInputComponent implements OnInit {
     this.possibleErrors = [
       {
         errorKey: 'pattern',
-        message: 'Please enter a valid time in format hh:mm:ss',
+        message: this._translateService.instant('ui.timeInput.invalidFormat'),
       },
     ];
   }

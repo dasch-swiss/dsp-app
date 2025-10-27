@@ -6,7 +6,7 @@ export class SegmentOrdering {
       return [];
     }
 
-    return this.createSegmentRecursive(segmentsToOrder, 0, 0)!;
+    return this.createSegmentRecursive(segmentsToOrder, 0, 0) ?? [];
   }
 
   static createSegmentRecursive(segmentsToOrder: Segment[], fromStart: number, row: number): Segment[] | null {

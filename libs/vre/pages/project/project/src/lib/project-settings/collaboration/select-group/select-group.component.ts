@@ -12,7 +12,7 @@ import { CollaborationPageService } from '../collaboration-page.service';
       @if (groups.length > 0) {
         <mat-form-field>
           <mat-select
-            placeholder="Permission group"
+            [placeholder]="'pages.project.collaboration.permissionGroup' | translate"
             [formControl]="groupCtrl"
             multiple
             (selectionChange)="updateGroupsMembership($event.value)">
@@ -25,7 +25,7 @@ import { CollaborationPageService } from '../collaboration-page.service';
         </mat-form-field>
       }
       @if (groups.length === 0) {
-        <div class="center">No group defined yet.</div>
+        <div class="center">{{ 'pages.project.collaboration.noGroupDefined' | translate }}</div>
       }
     }
   `,

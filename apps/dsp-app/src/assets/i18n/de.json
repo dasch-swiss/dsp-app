@@ -1,81 +1,81 @@
 {
   "pages": {
     "landingPage": {
-      "title": "Forschungsprojekte",
       "usersProjects": "Meine Projekte",
       "notUsersProjects": "Andere Forschungsprojekte",
-      "filterProjects": "Filter projects"
+      "filterProjects": "Projekte filtern"
     },
     "userSettings": {
       "loginForm": {
         "login": "Anmelden"
       },
       "account": {
-        "danger": "Gefahrenzone",
+        "danger": "Achtung",
         "deleteButton": "Konto sperren",
+        "deleteConfirmation": "Möchten Sie Ihr eigenes Konto sperren?",
         "delete": "Konto löschen",
-        "password": "Passwort aktualisieren",
-        "edit": "Profil anpassen"
+        "editMyProfile": "Mein Profil bearbeiten",
+        "editMyPassword": "Mein Passwort bearbeiten"
       },
       "userForm": {
         "emailValidation": "Das ist keine gültige Email Adresse",
         "usernameHint": "Der Anzeigename darf keine Sonder- oder Leerzeichen beinhalten.",
         "language": "Sprache",
-        "sysAdmin": "System-Admin-Rechte",
         "updateSuccess": "Das Profil wurde erfolgreich aktualisiert.",
-        "new": "Neues Konto anlegen",
-        "profile": "Profil",
-        "edit": "Profil anpassen",
-        "givenName": "Vorname",
-        "familyName": "Nachname",
-        "email": "Email Adresse",
-        "username": "Anzeigename"
+        "email": "Email Adresse"
       },
       "passwordForm": {
-        "username": "Anzeigename",
-        "password": "Passwort",
-        "passwordLengthHint": "Verwenden Sie mindestens 8 Zeichen.",
-        "passwordPatternHint": "Das Passwort muss mindestens einen Grossbuchstaben und eine Zahl enthalten.",
-        "oldPassword": "Altes Passwort",
         "newPassword": "Neues Passwort",
         "confirmPassword": "Passwort bestätigen",
-        "requesterPassword": "Dein Passwort",
-        "ownPasswordSuccess": "Sie haben Ihr Passwort erfolgreich aktualisiert.",
-        "userPasswordSuccess": "Sie haben das Passwort erfolgreich aktualisiert."
+        "currentPasswordStep": "Aus Sicherheitsgründen geben Sie bitte Ihr aktuelles Passwort ein",
+        "currentPasswordPlaceholder": "Ihr aktuelles Passwort",
+        "incorrectPassword": "Das eingegebene Passwort ist falsch",
+        "newPasswordStep": "Neues Passwort eingeben"
       },
       "navigation": {
         "myProjects": "Meine Projekte",
         "myAccount": "Mein Konto"
       },
       "profile": {
-        "systemAdmin": "System-Admin",
-        "editMyProfile": "Mein Profil bearbeiten"
+        "systemAdmin": "System-Admin"
       },
       "userMenu": {
         "signedInAs": "Angemeldet als",
         "systemAdministration": "Systemadministration",
         "logout": "Abmelden",
-        "login": "ANMELDEN",
-        "home": "DSP-APP Startseite",
+        "login": "Anmelden",
         "myAccount": "Mein Konto"
+      },
+      "editUserDialog": {
+        "editMyProfile": "Mein Profil bearbeiten",
+        "editUser": "Benutzer bearbeiten"
       }
     },
     "project": {
       "addUser": {
         "title": "Projektmitglied hinzufügen",
-        "description": "Projektteam erweitern",
         "select": "Aus der Liste wählen ...",
-        "usersLoading": "Konten werden geladen ...",
-        "newUser": "Neues Konto"
+        "newUser": "Neues Konto",
+        "noResults": "Keine Ergebnisse"
       },
       "reusableProjectForm": {
-        "description": "Projektbeschreibung",
         "shortcode": "Shortcode",
         "shortname": "Kurzname",
-        "longname": "Projekttitel"
+        "longname": "Projekttitel",
+        "errors": {
+          "shortcodePattern": "Dieses Feld darf nur Buchstaben von A bis F und Zahlen von 0 bis 9 enthalten",
+          "shortcodeExists": "Dieser Shortcode existiert bereits",
+          "whitespace": "Leerzeichen sind nicht erlaubt."
+        }
       },
       "editProjectFormPage": {
-        "editSuccess": "Sie haben die Projektinformationen erfolgreich aktualisiert."
+        "projectUpdated": "Projekt aktualisiert"
+      },
+      "projectDescriptionPage": {
+        "editProjectDescription": "Projektbeschreibung bearbeiten"
+      },
+      "settingsPage": {
+        "image": "Bild"
       },
       "imageSettings": {
         "off": "Aus",
@@ -107,7 +107,10 @@
             "deleted": "Löschdatum (falls vorhanden)"
           }
         },
-        "button": "Exportieren als CSV"
+        "button": "Exportieren als CSV",
+        "downloadSuccess": "Metadaten für Projekt {{shortcode}} erfolgreich heruntergeladen.",
+        "downloadError": "Fehler beim Herunterladen der Metadaten für Projekt {{shortcode}}.",
+        "downloadErrorWithMessage": "Fehler beim Herunterladen der Metadaten für Projekt {{shortcode}}: {{errorMessage}}"
       },
       "legalSettings": {
         "tab": "Rechtliches",
@@ -122,29 +125,54 @@
         "add": "Hinzufügen",
         "copyrightHolder": "Rechteinhaber:in",
         "enabled": "Aktiviert",
-        "authorshipOverview": "Urheber:innen - Übersicht",
-        "authorshipReadOnly": "Diese Übersicht der Urheber:innen ist lediglich zur Ansicht. Neue Urheber:innen fügen sie bitte direkt über die Ressourcen hinzu.",
         "dialog": {
           "addCopyrightHolder": "Rechteinhaber:in hinzufügen",
           "text": "Text"
         }
+      },
+      "sidenav": {
+        "advancedSearch": "Erweiterte Suche",
+        "projectDescription": "Projektbeschreibung",
+        "projectSettings": "Projekteinstellungen",
+        "dataModel": "Datenmodell"
+      },
+      "collaboration": {
+        "permissionGroup": "Berechtigungsgruppe",
+        "noGroupDefined": "Noch keine Gruppe definiert.",
+        "admin": "Admin",
+        "addAsProjectAdmin": "Als Projekt-Admin hinzufügen",
+        "removeAsProjectAdmin": "Als Projekt-Admin entfernen",
+        "editMember": "Mitglied bearbeiten",
+        "changeMemberPassword": "Passwort des Mitglieds ändern",
+        "removeMemberFromProject": "Mitglied aus Projekt entfernen",
+        "confirmRemoveMember": "Möchten Sie diesen Benutzer aus dem Projekt entfernen?",
+        "activeUsers": "Aktive Benutzer",
+        "inactiveUsers": "Inaktive Benutzer"
+      },
+      "projectShortDescription": {
+        "readMore": "Mehr lesen"
       }
     },
     "system": {
+      "allProjects": "Alle Projekte",
+      "allUsers": "Alle Benutzer",
+      "activeUsersCount": "Aktive Benutzer ({{count}})",
+      "inactiveUsersCount": "Inaktive Benutzer ({{count}})",
       "usersList": {
-        "sortFamilyName": "Nachname",
-        "sortGivenName": "Vorname"
+        "sortEmail": "E-Mail",
+        "createNewUser": "Neuen Benutzer erstellen"
       },
       "users": {
         "changePassword": "Passwort ändern"
       },
+      "createUserDialog": {
+        "title": "Neuen Benutzer erstellen",
+        "isSystemAdmin": "Ist ein Systemadministrator"
+      },
       "projectsList": {
-        "project": "Projekt",
-        "projects": "Projekte",
         "sortShortCode": "Shortcode",
         "sortShortName": "Kurzname",
         "sortProjectName": "Projektname",
-        "statusActive": "Aktiv",
         "statusDeactivated": "Deaktiviert",
         "createNew": "Neues Projekt erstellen",
         "projectAdmin": "Projekt-Admin",
@@ -152,77 +180,286 @@
         "reactivate": "Projekt reaktivieren",
         "deactivate": "Projekt deaktivieren",
         "erase": "Projekt löschen",
-        "eraseConfirmation": "Möchten Sie Projekt “{{0}}” löschen?",
-        "deactivateConfirmation": "Möchten Sie Projekt “{{0}}” deaktivieren?",
-        "reactivateConfirmation": "Möchten Sie Projekt “{{0}}” reaktivieren?",
+        "eraseConfirmation": "Projekt \"{{0}}\" wurde gelöscht.",
+        "deactivateConfirmation": "Möchten Sie Projekt \"{{0}}\" deaktivieren?",
+        "reactivateConfirmation": "Möchten Sie Projekt \"{{0}}\" reaktivieren?",
         "eraseConfirmationDialog": {
           "title": "Bitte geben Sie die erforderlichen Informationen ein, um das Projekt zu löschen.",
           "subtitle": "Projekt löschen",
           "warning": "ACHTUNG: Diese Aktion kann nicht rückgängig gemacht werden.",
           "shortCode": "Projekt-Shortcode",
           "systemAdminPassword": "System-Admin-Passwort",
-          "cancel": "Abbrechen",
-          "confirm": "Bestätigen",
           "shortCodeValidation": "Der Shortcode stimmt nicht überein",
           "passwordValidation": "Falsches Passwort"
         }
+      },
+      "cookiePolicy": {
+        "title": "Cookie-Richtlinie für DSP-API-Webanwendung",
+        "whatAreCookies": "Was sind Cookies",
+        "howWeUseCookies": "Wie wir Cookies verwenden",
+        "disablingCookies": "Cookies deaktivieren",
+        "cookiesWeSet": "Die von uns gesetzten Cookies",
+        "thirdPartyCookies": "Cookies von Drittanbietern",
+        "moreInformation": "Weitere Informationen"
       }
     },
     "ontology": {
       "ontologyForm": {
         "create": "Neues Datenmodell erstellen",
         "edit": "Datenmodell anpassen",
-        "name": "Eindeutigen Namen festlegen"
+        "name": "Eindeutigen Namen festlegen",
+        "label": "Bezeichnung",
+        "comment": "Kommentar",
+        "nameExists": "Dieser Name ist nicht erlaubt oder existiert bereits."
       },
       "list": {
-        "deleteList": "Kontrolliertes Vokabular löschen"
+        "deleteList": "Kontrolliertes Vokabular löschen",
+        "backToDataModels": "Zurück zu Datenmodellen",
+        "editInfo": "Info zu kontrolliertem Vokabular bearbeiten",
+        "deleteConfirmation": "Möchten Sie dieses kontrollierte Vokabular löschen?",
+        "actionBubble": {
+          "moveUp": "nach oben verschieben",
+          "moveDown": "nach unten verschieben",
+          "insertChild": "neuen untergeordneten Knoten einfügen",
+          "edit": "bearbeiten",
+          "delete": "löschen",
+          "deleteNode": "Möchten Sie diesen Knoten löschen?"
+        },
+        "listItemForm": {
+          "appendItem": "Element anhängen an {{parent}}"
+        },
+        "listInfoForm": {
+          "labelPlaceholder": "Bezeichnung des kontrollierten Vokabulars",
+          "commentPlaceholder": "Beschreibung des kontrollierten Vokabulars",
+          "editTitle": "Info zu kontrolliertem Vokabular bearbeiten",
+          "createTitle": "Neues kontrolliertes Vokabular erstellen"
+        },
+        "createDialog": {
+          "title": "Neuen untergeordneten Knoten einfügen"
+        },
+        "editDialog": {
+          "subtitle": "Untergeordneten Knoten bearbeiten"
+        },
+        "reusableForm": {
+          "labelPlaceholder": "Bezeichnung des untergeordneten Knotens",
+          "commentPlaceholder": "Beschreibung des untergeordneten Knotens"
+        }
+      },
+      "dataModels": {
+        "title": "Alle Datenmodelle",
+        "info": "Ein Datenmodell organisiert Datenelemente und spezifiziert, wie sie miteinander in Beziehung stehen und durch welche Eigenschaften sie beschrieben werden.",
+        "createNew": "Neu erstellen",
+        "documentation": "Dokumentation zum Erstellen von Datenmodellen lesen",
+        "vocabularies": {
+          "title": "Kontrollierte Vokabulare",
+          "info": "Kontrollierte Vokabulare sind hierarchische oder nicht-hierarchische Lexika von Referenzbegriffen. Aufgrund ihrer normativen oder standardisierten Natur verbessern kontrollierte Vokabulare die Datenqualität und machen die Datenbanksuche effizienter als Freitextfelder.",
+          "createNew": "Neu erstellen"
+        }
+      },
+      "editor": {
+        "backToDataModels": "Zurück zu Datenmodellen",
+        "updatedOn": "Aktualisiert am:",
+        "editInfo": "Datenmodell-Info bearbeiten",
+        "deleteTooltip": "Datenmodell löschen",
+        "cannotDelete": "Dieses Datenmodell kann nicht gelöscht werden, da es verwendet wird!",
+        "deleteConfirmation": "Möchten Sie dieses Datenmodell löschen?"
+      },
+      "sidenav": {
+        "classes": "Klassen",
+        "properties": "Eigenschaften",
+        "collapseAll": "Alle einklappen",
+        "expandAll": "Alle ausklappen",
+        "createNewClass": "Neue Klasse erstellen",
+        "addProperty": "Eigenschaft hinzufügen"
+      },
+      "cardinality": {
+        "multipleValues": "Mehrere Werte",
+        "required": "Erforderlich"
+      },
+      "propertyItem": {
+        "edit": "Bearbeiten",
+        "removeFromClass": "Aus Klasse entfernen",
+        "copyId": "Eigenschafts-ID kopieren"
+      },
+      "propertyInfo": {
+        "usedIn": "Verwendet in",
+        "notUsed": "Nicht verwendet"
+      },
+      "resourceClassInfo": {
+        "collapse": "Einklappen",
+        "expand": "Ausklappen",
+        "noProperties": "Noch keine Eigenschaften definiert.",
+        "edit": "Bearbeiten",
+        "openInstances": "Instanzen öffnen",
+        "copyId": "Klassen-ID kopieren",
+        "cannotDelete": "Diese Klasse kann nicht gelöscht werden, da sie verwendet wird!",
+        "delete": "Löschen"
+      },
+      "propertyForm": {
+        "editTitle": "Eigenschaft bearbeiten",
+        "createTitle": "Eigenschaft erstellen",
+        "type": "Eigenschaftstyp",
+        "name": "Eigenschaftsname",
+        "labelPlaceholder": "Eigenschaftsbezeichnung",
+        "commentPlaceholder": "Kommentar",
+        "selectResourceClass": "Ressourcen-Klasse auswählen",
+        "selectList": "Liste auswählen"
+      },
+      "addPropertyMenu": {
+        "addProperty": "Eigenschaft hinzufügen",
+        "createNewFromType": "Neue von Typ erstellen",
+        "addExistingProperty": "Bestehende Eigenschaft hinzufügen"
+      },
+      "resourceClassForm": {
+        "createSubtitle": "Ressourcenklasse erstellen",
+        "editSubtitle": "Ressourcenklasse anpassen",
+        "name": "Klassenname",
+        "patternError": "Dieses Muster wird nicht unterstützt",
+        "labelPlaceholder": "Bezeichnung",
+        "commentPlaceholder": "Kommentar"
       }
     },
     "search": {
       "propertyFormListValue": "Wählen Sie eine Option",
-      "searchPanel": {
-        "howToSearch": "Wie suchen?",
-        "expert": "Experte",
-        "advancedSearch": "Erweiterte Suche",
-        "expertSearch": "Expertensuche"
-      },
       "fullTextSearch": {
-        "filterByProject": "Nach Projekt filtern",
-        "search": "Search all data",
-        "allProjects": "Alle Projekte"
+        "switchToAdvancedSearch": "Zur erweiterten Suche wechseln",
+        "placeholder": "Suchbegriff eingeben..."
       },
-      "advancedSearch": {
-        "title": "Advanced Search",
-        "usePreviousSearch": "Use Previous Search"
+      "noResultsFound": "Keine Ergebnisse gefunden",
+      "searchTips": {
+        "title": "Suchtipps",
+        "exactPhrases": "Verwenden Sie Anführungszeichen für exakte Phrasen: \"down the rabbit hole\"",
+        "booleanSearch": "Verwenden Sie AND, OR, NOT für boolesche Suchen: Alice AND Wonderland",
+        "wildcards": "Verwenden Sie Platzhalter: Alice* findet Alice, Alices, etc."
+      }
+    },
+    "dataBrowser": {
+      "resourceLinkDialog": {
+        "linkResources": "Ressourcen verknüpfen",
+        "collectionLabel": "Sammlungsbezeichnungen",
+        "comment": "Kommentar",
+        "resourcesWillBeConnected": "Die folgenden Ressourcen werden verbunden:",
+        "createCollection": "Eine Sammlung von {{count}} Ressourcen erstellen"
+      },
+      "dataClassPanel": {
+        "createResource": "Eine Ressource erstellen"
+      },
+      "resourceListSelection": {
+        "resourcesSelected": "{{count}} Ressourcen ausgewählt",
+        "createLinkObject": "Ein Link-Objekt erstellen"
+      },
+      "resourcesList": {
+        "backToSearchForm": "Zurück zum Suchformular"
+      },
+      "resourcesListFetcher": {
+        "noResourcesFound": "Keine Ressourcen für diese Klasse gefunden.",
+        "noPermissions": "Es scheint, dass Sie nicht über die erforderlichen Berechtigungen verfügen.",
+        "checkPermissions": "Überprüfen Sie bei einem Projektadministrator, ob Sie über die erforderliche Berechtigung verfügen oder ob Sie angemeldet sind."
+      },
+      "multipleViewer": {
+        "selectResource": "Wählen Sie eine Ressource im linken Bereich aus",
+        "chooseResources": "Wählen Sie eine oder mehrere Ressourcen aus dem linken Bereich aus, um sie hier anzuzeigen und zu vergleichen.",
+        "tooManyResources": "Zu viele Ressourcen ausgewählt.",
+        "maxResources": "Maximal {{count}} Ressourcen können gleichzeitig verglichen werden."
+      },
+      "dataClassView": {
+        "noData": "Es gibt keine Daten, die Ihrer Anfrage entsprechen."
+      },
+      "resourceListItem": {
+        "foundIn": "Gefunden in: "
       }
     }
   },
   "resourceEditor": {
     "properties": "Eigenschaften",
     "labelAnnotations": "Annotationen",
-    "restricted": "This resource is restricted, file representations may be of lower quality and some properties may be hidden.",
-    "versioned": "You are watching a resource dating from",
-    "seeCurrentVersion": "See current version",
-    "versionNotValid": "The version you requested is not valid. The latest version is displayed.",
-    "notFound": "This resource is not found.",
-    "deleted": "This resource has been deleted.",
+    "restricted": "Nur eingeschränkte Anzeige verfügbar. Bilder werden möglicherweise nicht in voller Qualität angezeigt und gewisse Werte sind eventuell ausgeblendet.",
+    "versioned": "Dies ist eine ältere Version der Ressource.",
+    "seeCurrentVersion": "Zur aktuellen Version",
+    "versionNotValid": "Die angeforderte Version ist ungültig. Die aktuelle Version wird angezeigt.",
+    "notFound": "Ressource nicht gefunden. Eventuell wurde sie vom Projekt gelöscht.",
+    "deleted": "Diese Ressource wurde als gelöscht markiert.",
     "unauthorized": "You do not have access to this resource.",
     "segmentSupport": {
       "createSegmentDialog": {
-        "createAnnotation": "Annotation hinzufügen"
+        "createAnnotation": "Annotation erstellen",
+        "label": "Bezeichnung",
+        "start": "Start",
+        "end": "Ende",
+        "title": "Titel"
       }
     },
     "representations": {
       "addRegionFormDialog": {
-        "createAnnotation": "Annotation hinzufügen"
+        "createAnnotation": "Annotation erstellen",
+        "subtitle": "Weitere Eigenschaften hinzufügen",
+        "label": "Bezeichnung"
       },
-      "labelAnnotations": "Annotationen",
       "video": {
-        "createAnnotation": "Annotation hinzufügen"
+        "createAnnotation": "Annotation erstellen",
+        "cannotPlay": "Das Video kann derzeit nicht abgespielt werden.",
+        "openInNewTab": "Video in neuem Tab öffnen",
+        "urlCopied": "URL in Zwischenablage kopiert!",
+        "copyUrl": "Video-URL in Zwischenablage kopieren",
+        "download": "Video herunterladen",
+        "title": "Video",
+        "pause": "Pausieren",
+        "play": "Abspielen",
+        "stop": "Stoppen und zum Anfang gehen",
+        "defaultView": "Standardansicht",
+        "cinemaMode": "Kinomodus"
       },
       "stillImage": {
-        "createAnnotation": "Annotation hinzufügen",
-        "labelAnnotations": "Annotationen"
+        "createAnnotation": "Annotation erstellen",
+        "more": "Mehr",
+        "share": "Teilen",
+        "download": "Herunterladen",
+        "settings": "Einstellungen",
+        "iiifUrlCopied": "IIIF-URL in Zwischenablage kopiert!",
+        "copyIiifUrl": "IIIF-URL in Zwischenablage kopieren",
+        "openIiifInNewTab": "IIIF in neuem Tab öffnen",
+        "copyArkUrl": "ARK-URL kopieren",
+        "arkUrlCopied": "ARK-URL in Zwischenablage kopiert!",
+        "zoomOut": "Herauszoomen",
+        "zoomIn": "Hineinzoomen",
+        "resetZoom": "Zoom zurücksetzen",
+        "openInFullscreen": "Im Vollbildmodus öffnen"
+      },
+      "downloadFile": "Datei herunterladen",
+      "replaceFile": "Datei ersetzen",
+      "archive": {
+        "title": "Archiv"
+      },
+      "audio": {
+        "cannotPlay": "Das Video kann derzeit nicht abgespielt werden.",
+        "openInNewTab": "Audio in neuem Tab öffnen",
+        "copyUrl": "Audio-URL in Zwischenablage kopieren",
+        "download": "Audio herunterladen",
+        "title": "Audio"
+      },
+      "document": {
+        "searchPlaceholder": "In PDF suchen...",
+        "zoomOut": "Herauszoomen",
+        "resetZoom": "Zoom zurücksetzen",
+        "zoomIn": "Hineinzoomen",
+        "fullscreen": "Vollbild",
+        "title": "Dokument"
+      },
+      "text": {
+        "title": "Text (csv, txt, xml)"
+      },
+      "replaceFileDialog": {
+        "willBeReplaced": " wird ersetzt."
+      },
+      "iiifControl": {
+        "label": "IIIF-URL",
+        "placeholder": "IIIF-URL eingeben (z.B. https://example.com/iiif/2/image.jp2/info.json)",
+        "errors": {
+          "invalidUrl": "Ungültiges IIIF-URL-Format",
+          "previewImageError": "Vorschaubild kann nicht geladen werden",
+          "infoJsonError": "info.json kann nicht geladen werden",
+          "invalidHost": "Externer Host ist nicht erlaubt"
+        }
       }
     },
     "propertiesDisplay": {
@@ -231,16 +468,31 @@
       "standoffLinkTooltip": "Stellt einen Link in Standoff-Markup von einer Ressource zu einer anderen dar",
       "standoffLinkLabel": "hat Standoff-Link",
       "annotationToolbar": {
-        "delete": "Diese Ressource löschen"
-      }
+        "highlightRegion": "Region hervorheben",
+        "openInNewTab": "Annotation in neuem Tab öffnen",
+        "shareResource": "Annotation teilen: {{arkUrl}}",
+        "copyArkUrl": "ARK-URL kopieren",
+        "copyArkUrlToClipboard": "ARK-URL in Zwischenablage kopieren",
+        "arkUrlCopied": "ARK-URL in Zwischenablage kopiert!",
+        "copyInternalLink": "Internen Link kopieren",
+        "copyInternalLinkToClipboard": "Internen Link in Zwischenablage kopieren",
+        "internalLinkCopied": "Interner Link in Zwischenablage kopiert!"
+      },
+      "comments": "Kommentare",
+      "properties": "Eigenschaften",
+      "hide": "Verbergen",
+      "hideComments": "Kommentare verbergen",
+      "hideEmptyProperties": "Leere Eigenschaften verbergen",
+      "showAllComments": "Alle Kommentare anzeigen",
+      "showAllProperties": "Alle Eigenschaften anzeigen"
     },
     "permissionInfo": {
       "label": "Berechtigungen",
-      "projectAdmin": "Projektadministrator:in",
-      "creator": "Ersteller:in",
+      "tooltip": "Ressourcenberechtigungen",
+      "projectAdmin": "Projekt-Admin",
       "projectMember": "Projektmitglied",
-      "knownUser": "Angemeldet",
-      "unknownUser": "Nicht angemeldet",
+      "knownUser": "Bekannte:r Nutzer:in",
+      "unknownUser": "Unbekannte:r Nutzer:in",
       "usersPermissions": "Ihre Berechtigungen",
       "interactions": {
         "restrictedView": "Leseberechtigung mit Restriktion (RV)",
@@ -252,41 +504,238 @@
     },
     "resourceProperties": {
       "comment": "Kommentar",
-      "delete": "Diese Ressource löschen",
-      "footnotes": "Fußnoten",
+      "delete": "Als gelöscht markieren",
+      "footnotes": "Fussnoten",
+      "actions": {
+        "creationInfo": "Erstellt am {{date}} von {{creator}}",
+        "edit": "Bearbeiten",
+        "delete": "Löschen",
+        "cannotDeleteRequired": "Erforderliche Eigenschaft kann nicht gelöscht werden",
+        "undo": "Rückgängig",
+        "addComment": "Kommentar hinzufügen",
+        "removeComment": "Kommentar entfernen",
+        "save": "Speichern"
+      },
+      "deleteValue": {
+        "title": "{{label}} löschen",
+        "explanation": "Dadurch wird der Wert dauerhaft gelöscht. Bitte geben Sie einen Grund für die Löschung an.",
+        "reason": "Grund",
+        "reasonPlaceholder": "Grund für die Löschung eingeben...",
+        "noKeep": "Nein, behalten",
+        "yesDelete": "Ja, löschen"
+      },
+      "editLabel": {
+        "subtitle": "Ressourcen-Label bearbeiten",
+        "label": "Label"
+      },
       "valueComponents": {
         "searchHelp": "Geben Sie 3 Buchstaben ein, um nach einer vorhandenen Ressource zu suchen."
+      },
+      "valueAlreadyExists": "Der eingegebene Wert existiert bereits."
+    },
+    "toolbar": {
+      "openInNewTab": "Ressource in neuem Tab öffnen",
+      "shareResource": "Ressource teilen: {{arkUrl}}",
+      "copyArkUrl": "ARK-URL kopieren",
+      "copyArkUrlToClipboard": "ARK-URL in Zwischenablage kopieren",
+      "arkUrlCopied": "ARK-URL in Zwischenablage kopiert!",
+      "copyInternalLink": "Internen Link kopieren",
+      "copyInternalLinkToClipboard": "Internen Link in Zwischenablage kopieren",
+      "internalLinkCopied": "Interner Link in Zwischenablage kopiert!"
+    },
+    "moreMenu": {
+      "more": "Mehr",
+      "editLabel": "Bezeichnung bearbeiten",
+      "editLabelTooltip": "Die Bezeichnung dieser Ressource bearbeiten",
+      "moveToTrash": "Ressource in Papierkorb verschieben.",
+      "checkingPermission": "Prüfen, ob die Ressource gelöscht werden kann...",
+      "checkingPermissionErase": "Prüfen, ob die Ressource gelöscht werden kann...",
+      "eraseResource": "Endgültig löschen",
+      "eraseResourceTooltip": "Ressource endgültig löschen. Dies kann nicht rückgängig gemacht werden.",
+      "noPermission": "Sie haben keine Berechtigung, diese Ressource zu löschen."
+    },
+    "infoBar": {
+      "resourceOfProject": "Ressource des Projekts",
+      "created": "erstellt",
+      "by": "von",
+      "on": "am"
+    },
+    "legal": {
+      "copyrightHolder": "Urheberrechtsinhaber",
+      "authorship": "Autorenschaft"
+    },
+    "navigation": {
+      "firstPage": "Erste Seite",
+      "previousPage": "Vorherige Seite",
+      "of": " von ",
+      "nextPage": "Nächste Seite",
+      "lastPage": "Letzte Seite"
+    },
+    "resourceCreator": {
+      "form": {
+        "file": "Datei",
+        "properties": "Eigenschaften",
+        "resourceLabel": "Ressourcen-Label",
+        "resourceLabelTooltip": "Jede Ressource benötigt ein (vorzugsweise eindeutiges) Label. Es dient als eine Art Ressourcen-Identifikator.",
+        "resourceLabelPlaceholder": "z.B. Lorem ipsum ..."
+      },
+      "legal": {
+        "copyrightHolder": "Urheberrechtsinhaber",
+        "choose": "Auswählen",
+        "none": "Keine",
+        "license": "Lizenz/Erklärung",
+        "licenseStatement": "Lizenz/Erklärung",
+        "authorship": "Autorenschaft"
+      },
+      "authorship": {
+        "label": "Autorenschaft",
+        "placeholder": "Neue Autorenschaft..."
+      },
+      "image": {
+        "label": "Bild",
+        "uploadFile": "Datei hochladen",
+        "linkExternalIIIF": "Externes IIIF verlinken"
+      },
+      "upload": {
+        "dragAndDrop": "Datei hier ablegen oder klicken zum Durchsuchen",
+        "fileTypesSupported": "Unterstützte Dateitypen: {{types}}",
+        "processing": "Datei wird auf dem Server verarbeitet...",
+        "extensionNotSupported": "Die Erweiterung {{extension}} wird nicht unterstützt."
       }
+    },
+    "templateSwitcher": {
+      "createResourceDialog": {
+        "title": "Neue Ressource vom Typ erstellen: {{type}}"
+      },
+      "linkValue": {
+        "label": "Link zur Ressource",
+        "placeholder": "Ressource zum Verknüpfen suchen...",
+        "noResults": "Keine Ergebnisse gefunden",
+        "createNew": "Neu erstellen"
+      },
+      "intervalValue": {
+        "start": "Start",
+        "end": "Ende"
+      },
+      "example": "z.B."
     }
   },
   "ui": {
-    "form": {
-      "action": {
+    "common": {
+      "actions": {
         "cancel": "Abbrechen",
-        "close": "Schliessen",
-        "submit": "Speichern",
-        "retry": "Erneut versuchen",
         "update": "Aktualisieren",
+        "delete": "Löschen",
+        "edit": "Bearbeiten",
+        "create": "Erstellen",
+        "reset": "Zurücksetzen",
+        "close": "Schliessen",
         "next": "Weiter",
-        "reset": "Zurücksetzen"
+        "back": "Zurück",
+        "submit": "Absenden",
+        "confirm": "Bestätigen",
+        "search": "Suchen",
+        "retry": "Erneut versuchen"
+      },
+      "fields": {
+        "username": "Benutzername",
+        "firstName": "Vorname",
+        "lastName": "Nachname",
+        "language": "Sprache",
+        "description": "Beschreibung"
+      },
+      "status": {
+        "active": "Aktiv",
+        "loading": "Laden..."
+      },
+      "entities": {
+        "user": "Benutzer",
+        "users": "Benutzer",
+        "project": "Projekt",
+        "projects": "Projekte",
+        "member": "Mitglied",
+        "members": "Mitglieder"
       }
     },
     "pager": {
       "of": "von",
       "previous": "Zurück",
-      "next": "Weiter",
       "firstPage": "Erste Seite",
       "lastPage": "Letzte Seite",
-      "nextPage": "Nächste Seite",
       "inputTooltip": "Seitennummer eingeben und über Enter zur gewählten Seite springen.",
       "previousPage": "Vorherige Seite",
-      "rangeLabelOf": "von"
+      "rangeLabelOf": "von",
+      "showing": "Anzeigen"
     },
     "header": {
       "help": "Hilfe"
     },
     "chipListInput": {
       "keywords": "Schlagworte"
+    },
+    "dialog": {
+      "confirmationNeeded": "Bestätigung erforderlich",
+      "yes": "Ja",
+      "no": "Nein"
+    },
+    "hint": {
+      "useSpecialSyntax": "Verwenden Sie spezielle Syntax:",
+      "questionMark": "Fragezeichen<strong>?</strong> kann als Platzhalter für ein einzelnes Zeichen verwendet werden.<br /><code>Beispiel: <i>Be?r</i> findet <i>Bier</i> aber auch <i>Bär</i></code>",
+      "asterisk": "Sternchen<strong>*</strong> kann als Platzhalter für null, ein oder mehrere Zeichen verwendet werden.<br /><code>Beispiel: <i>B*r</i> findet <i>Bier</i> aber auch <i>Bär</i></code>",
+      "quotationMarks": "<strong>\"</strong>Anführungszeichen<strong>\"</strong> suchen nach dem gesamten Muster.<br /><code class=\"\">Beispiel: <i>\"Lorem ipsum\"</i> findet Texte mit exaktem Inhalt <i>Lorem ipsum</i></code>",
+      "readMore": "Mehr dazu in der Benutzeranleitung"
+    },
+    "timeInput": {
+      "placeholder": "hh:mm:ss",
+      "invalidFormat": "Bitte geben Sie eine gültige Zeit im Format hh:mm:ss ein"
+    },
+    "datePicker": {
+      "clickToSelect": "Klicken Sie, um ein Datum auszuwählen",
+      "calendar": "Kalender",
+      "today": "Heute",
+      "month": "Monat",
+      "none": "Keine",
+      "year": "Jahr",
+      "bceWarning": "Achtung: Datum <strong>vor der Zeitrechnung</strong>."
+    }
+  },
+  "shared": {
+    "status": {
+      "representationError": "Beim Laden der {{type}}-Dateidarstellung ist ein Fehler aufgetreten. Versuchen Sie, sie direkt über die unten stehende Datei-URL zu öffnen:",
+      "responseInDetail": "Antwort im Detail",
+      "goBackToStartPage": "Bitte kehren Sie zur Startseite zurück.",
+      "reloadPrompt": "Bitte kommen Sie in ein paar Minuten zurück und versuchen Sie, <a (click)=\"reload()\">die Seite neu zu laden</a>."
+    },
+    "header": {
+      "searchEverywhere": "Überall suchen",
+      "projectTabs": {
+        "data": "Daten",
+        "dataModels": "Datenmodelle",
+        "settings": "Einstellungen"
+      }
+    },
+    "grid": {
+      "readMore": "Mehr erfahren"
+    }
+  },
+  "core": {
+    "errorHandler": {
+      "noInternet": "Es scheint, dass Sie nicht mit dem Internet verbunden sind.",
+      "iiifServerError": "IIIF-Serverfehler: Das Bild konnte nicht geladen werden. Bitte versuchen Sie es später erneut.",
+      "noPermission": "Sie haben keine Berechtigung, eine oder mehrere Ressourcen zu sehen.",
+      "notFound": "Die angeforderte Ressource wurde nicht gefunden.",
+      "timeout": "Es gab ein Timeout-Problem mit einer oder mehreren Anfragen. Die Ressource(n) oder ein Teil davon können nicht korrekt angezeigt werden. Fehlgeschlagen bei {{url}}",
+      "contactSupport": "Es gibt einen Fehler auf unserer Seite. Bitte kontaktieren Sie support@dasch.swiss"
+    },
+    "auth": {
+      "invalidCredentials": "Der Benutzername und / oder das Passwort stimmen nicht überein."
+    }
+  },
+  "app": {
+    "cookieBanner": {
+      "message": "Diese Webanwendung verwendet Cookies, um Ihnen ein besseres Benutzererlebnis zu bieten. Durch die Nutzung der Anwendung akzeptieren Sie unsere",
+      "useOfCookies": "Verwendung von Cookies",
+      "accept": "AKZEPTIEREN"
     }
   }
 }

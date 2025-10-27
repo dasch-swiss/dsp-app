@@ -1,6 +1,7 @@
-import { Component, Input, OnChanges } from '@angular/core';
+import { Component, inject, Input, OnChanges } from '@angular/core';
 import { PropertiesDisplayService } from '@dasch-swiss/vre/resource-editor/resource-properties';
 import { PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-properties-toggle',
@@ -12,11 +13,21 @@ import { PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
           color="primary"
           class="toggle-props"
           data-cy="show-all-comments"
-          [matTooltip]="((showAllComments$ | async) ? 'Hide' : 'Show all') + ' comments'"
+          [matTooltip]="
+            _translateService.instant(
+              (showAllComments$ | async)
+                ? 'resourceEditor.propertiesDisplay.hideComments'
+                : 'resourceEditor.propertiesDisplay.showAllComments'
+            )
+          "
           matTooltipPosition="above"
           (click)="toggleShowAllComments()">
           <mat-icon>comment</mat-icon>
-          {{ (showAllComments$ | async) ? 'Hide' : 'Show all' }} comments
+          {{
+            (showAllComments$ | async)
+              ? ('resourceEditor.propertiesDisplay.hideComments' | translate)
+              : ('resourceEditor.propertiesDisplay.showAllComments' | translate)
+          }}
         </button>
       } @else {
         <button
@@ -24,7 +35,13 @@ import { PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
           color="primary"
           class="toggle-props"
           data-cy="show-all-comments"
-          [matTooltip]="((showAllComments$ | async) ? 'Hide' : 'Show all') + ' comments'"
+          [matTooltip]="
+            _translateService.instant(
+              (showAllComments$ | async)
+                ? 'resourceEditor.propertiesDisplay.hideComments'
+                : 'resourceEditor.propertiesDisplay.showAllComments'
+            )
+          "
           matTooltipPosition="above"
           (click)="toggleShowAllComments()">
           <mat-icon>comment</mat-icon>
@@ -38,12 +55,20 @@ import { PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
         class="toggle-props"
         data-cy="show-all-properties"
         [matTooltip]="
-          ((propertiesDisplayService.showAllProperties$ | async) ? 'Hide empty' : 'Show all') + ' properties'
+          _translateService.instant(
+            (propertiesDisplayService.showAllProperties$ | async)
+              ? 'resourceEditor.propertiesDisplay.hideEmptyProperties'
+              : 'resourceEditor.propertiesDisplay.showAllProperties'
+          )
         "
         matTooltipPosition="above"
         (click)="toggleShowAllProps()">
         <mat-icon>unfold_more</mat-icon>
-        {{ (propertiesDisplayService.showAllProperties$ | async) ? 'Hide empty' : 'Show all' }} properties
+        {{
+          (propertiesDisplayService.showAllProperties$ | async)
+            ? ('resourceEditor.propertiesDisplay.hideEmptyProperties' | translate)
+            : ('resourceEditor.propertiesDisplay.showAllProperties' | translate)
+        }}
       </button>
     } @else {
       <button
@@ -52,7 +77,11 @@ import { PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
         class="toggle-props"
         data-cy="show-all-properties"
         [matTooltip]="
-          ((propertiesDisplayService.showAllProperties$ | async) ? 'Hide empty' : 'Show all') + ' properties'
+          _translateService.instant(
+            (propertiesDisplayService.showAllProperties$ | async)
+              ? 'resourceEditor.propertiesDisplay.hideEmptyProperties'
+              : 'resourceEditor.propertiesDisplay.showAllProperties'
+          )
         "
         matTooltipPosition="above"
         (click)="toggleShowAllProps()">
@@ -70,6 +99,8 @@ export class PropertiesToggleComponent implements OnChanges {
   @Input() displayIconsOnly = false;
   numberOfComments!: number;
   showAllComments$ = this.propertiesDisplayService.showComments$;
+
+  readonly _translateService = inject(TranslateService);
 
   constructor(public readonly propertiesDisplayService: PropertiesDisplayService) {}
 

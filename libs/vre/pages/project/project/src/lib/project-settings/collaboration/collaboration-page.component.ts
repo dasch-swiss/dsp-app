@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { Title } from '@angular/platform-browser';
+import { TranslateService } from '@ngx-translate/core';
 import { map, tap } from 'rxjs';
 import { ProjectPageService } from '../../project-page.service';
 import { CollaborationPageService } from './collaboration-page.service';
@@ -20,8 +21,11 @@ import { CollaborationPageService } from './collaboration-page.service';
             <div style="display: flex; justify-content: center; margin: 16px 0">
               <app-double-chip-selector
                 [options]="[
-                  'Active users (' + activeProjectMembers.length + ')',
-                  'Inactive users (' + inactiveProjectMembers.length + ')',
+                  ('pages.project.collaboration.activeUsers' | translate) + ' (' + activeProjectMembers.length + ')',
+                  ('pages.project.collaboration.inactiveUsers' | translate) +
+                    ' (' +
+                    inactiveProjectMembers.length +
+                    ')',
                 ]"
                 [(value)]="showActiveUsers" />
             </div>
@@ -45,6 +49,8 @@ import { CollaborationPageService } from './collaboration-page.service';
   standalone: false,
 })
 export class CollaborationPageComponent {
+  private _translateService = inject(TranslateService);
+
   project$ = this._projectPageService.currentProject$.pipe(
     tap(project => {
       this._titleService.setTitle(`Project ${project.shortname} | Collaboration`);

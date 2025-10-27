@@ -400,7 +400,7 @@ describe('Resource', () => {
     it('time sequence', () => {
       ResourceRequests.resourceRequest(ClassPropertyPayloads.timesequence(finalLastModificationDate));
       po.visitAddPage();
-      const start = () => cy.get('[data-cy=start-input] input');
+      const start = () => cy.get('[data-cy=start-input] input', { force: true });
       const end = () => cy.get('[data-cy=end-input] input');
 
       const randomTime = () => {

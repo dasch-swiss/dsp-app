@@ -14,8 +14,8 @@ import { DateTime } from '@dasch-swiss/vre/resource-editor/resource-properties';
             [matDatepicker]="picker"
             [ngModel]="control.value?.date"
             (dateChange)="editDate($event)"
-            aria-label="Date"
-            placeholder="Click to select a date"
+            [attr.aria-label]="'resourceEditor.templateSwitcher.timeValue.date' | translate"
+            [placeholder]="'resourceEditor.templateSwitcher.timeValue.datePlaceholder' | translate"
             readonly />
           <mat-datepicker-toggle matSuffix [for]="picker" />
           <mat-datepicker #picker />
@@ -29,7 +29,7 @@ import { DateTime } from '@dasch-swiss/vre/resource-editor/resource-properties';
           [ngModel]="control.value?.time"
           (ngModelChange)="editTime($event)"
           type="time"
-          aria-label="Time"
+          [attr.aria-label]="'resourceEditor.templateSwitcher.timeValue.time' | translate"
           data-cy="time-input" />
       </mat-form-field>
     </div>

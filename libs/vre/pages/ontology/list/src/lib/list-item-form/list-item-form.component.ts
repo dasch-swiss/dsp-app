@@ -1,10 +1,11 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, Input } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ListNodeInfo } from '@dasch-swiss/dsp-js';
 import { ListApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { atLeastOneStringRequired } from '@dasch-swiss/vre/shared/app-common';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { DEFAULT_MULTILANGUAGE_FORM } from '@dasch-swiss/vre/ui/string-literal';
+import { TranslateService } from '@ngx-translate/core';
 import { ListItemService } from '../list-item/list-item.service';
 
 @Component({
@@ -37,10 +38,13 @@ export class ListItemFormComponent {
   loading = false;
   form = this._fb.group({ labels: DEFAULT_MULTILANGUAGE_FORM([], [], [atLeastOneStringRequired('value')]) });
 
+  private readonly _translate = inject(TranslateService);
   readonly labelsValidators = [Validators.maxLength(2000)];
 
   get placeholder() {
-    return `Append item to ${this.parentNode.labels[0].value}`;
+    return this._translate.instant('pages.ontology.list.listItemForm.appendItem', {
+      parent: this.parentNode.labels[0].value,
+    });
   }
 
   constructor(

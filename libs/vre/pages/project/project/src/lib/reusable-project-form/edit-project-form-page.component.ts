@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { UpdateProjectRequest } from '@dasch-swiss/dsp-js';
 import { ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { MultiLanguages } from '@dasch-swiss/vre/ui/string-literal';
+import { TranslateService } from '@ngx-translate/core';
 import { map, switchMap, take } from 'rxjs';
 import { ProjectPageService } from '../project-page.service';
 import { ProjectForm } from './project-form.type';
@@ -23,7 +24,7 @@ import { ProjectForm } from './project-form.type';
         appLoadingButton
         [isLoading]="loading"
         data-cy="submit-button">
-        {{ 'ui.form.action.submit' | translate }}
+        {{ 'ui.common.actions.submit' | translate }}
       </button>
     </div>
   `,
@@ -32,6 +33,9 @@ import { ProjectForm } from './project-form.type';
 export class EditProjectFormPageComponent {
   form!: ProjectForm;
   loading = false;
+
+  private _translateService = inject(TranslateService);
+
   formData$ = this._projectPageService.currentProject$.pipe(
     map(project => {
       return {
@@ -64,7 +68,9 @@ export class EditProjectFormPageComponent {
       )
       .subscribe(() => {
         this._projectPageService.reloadProject();
-        this._notification.openSnackBar('Project updated');
+        this._notification.openSnackBar(
+          this._translateService.instant('pages.project.editProjectFormPage.projectUpdated')
+        );
       });
   }
 }

@@ -12,7 +12,7 @@ import { ProjectPageService } from '../../project-page.service';
 
       <mat-chip-listbox>
         @if (isProjectAdmin(user.permissions)) {
-          <mat-chip class="admin-chip">Admin</mat-chip>
+          <mat-chip class="admin-chip">{{ 'pages.project.collaboration.admin' | translate }}</mat-chip>
         }
       </mat-chip-listbox>
 

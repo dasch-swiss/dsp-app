@@ -37,61 +37,7 @@ Every key that exists in English must exist in all other language files.
 
 ## Key Parity Verification
 
-Use this Python script to verify that all translation files have matching keys:
-
-```python
-#!/usr/bin/env python3
-import json
-from pathlib import Path
-
-def extract_keys(obj, prefix=""):
-    keys = set()
-    for key, value in obj.items():
-        full_key = f"{prefix}.{key}" if prefix else key
-        keys.add(full_key)
-        if isinstance(value, dict):
-            keys.update(extract_keys(value, full_key))
-    return keys
-
-def check_parity():
-    languages = ['en', 'de', 'fr', 'it', 'rm']
-    all_keys = {}
-    
-    for lang in languages:
-        with open(f"{lang}.json", encoding='utf-8') as f:
-            all_keys[lang] = extract_keys(json.load(f))
-    
-    reference_keys = all_keys['en']
-    print(f"English: {len(reference_keys)} keys")
-    
-    errors = []
-    for lang in ['de', 'fr', 'it', 'rm']:
-        lang_keys = all_keys[lang]
-        missing = reference_keys - lang_keys
-        extra = lang_keys - reference_keys
-        
-        print(f"{lang.upper()}: {len(lang_keys)} keys")
-        if missing: errors.append(f"Missing in {lang}: {sorted(missing)}")
-        if extra: errors.append(f"Extra in {lang}: {sorted(extra)}")
-    
-    if errors:
-        print("❌ Issues found:")
-        for error in errors: print(f"  {error}")
-    else:
-        print("✅ All files have matching keys!")
-
-if __name__ == "__main__":
-    check_parity()
-```
-
-### Usage
-```bash
-# Save the script as check_parity.py in the i18n directory, then run:
-python3 check_parity.py
-
-# For Claude Code: Copy the script above and run with single quotes to avoid escape issues:
-cd <i18n_directory_path> && python3 -c '<paste_script_here_with_single_quotes>'
-```
+Verify key parity between translation files after any changes made.
 
 ## Workflow for Translation Changes
 
@@ -129,8 +75,119 @@ After making translation changes:
 3. Switch between languages in the UI to verify functionality
 4. Check that no translation keys show as raw keys (e.g., `"pages.project.legalSettings.tab"`)
 
-## File Structure Notes
+## Translation Structure
 
-check @dasch-swiss/dsp-app/apps/dsp-app/src/assets/i18n/en.json for the English reference file structure.
+### Overview
 
-When referencing keys in the application code, they use dot notation: `pages.project.legalSettings.tab`
+The translation files follow a hierarchical structure with two main top-level sections:
+
+1. **`pages.*`** - Feature-specific translations organized by page/module
+2. **`ui.*`** - Reusable UI component translations
+
+### New `ui.common` Structure (Refactored)
+
+A centralized `ui.common` structure has been introduced to eliminate duplication and improve maintainability:
+
+```
+ui.common/
+├── actions/          # Common action button labels (cancel, save, update, delete, etc.)
+├── fields/           # Common form field labels (username, email, password, etc.)
+├── status/           # Status indicators (active, inactive, loading, etc.)
+├── states/           # UI states (loading, empty, noResults, etc.)
+├── entities/         # Common entity names (user/users, project/projects, etc.)
+├── confirmations/    # Reusable confirmation message templates with interpolation
+└── sort/             # Sort option labels (byName, byDate, ascending, descending)
+```
+
+### Decision Tree: `ui.common` vs `pages.*`
+
+**Use `ui.common` when:**
+- The text is used in 3+ different feature areas
+- It's a standard action/field/status label
+- The text is generic and context-independent
+- It's a reusable confirmation message template
+
+**Use `pages.*` when:**
+- The text has business domain-specific context
+- The text is unique to one feature
+- The text includes feature-specific terminology
+
+**Examples:**
+
+✅ **Good:**
+```typescript
+'ui.common.actions.cancel'              // Generic action button
+'ui.common.fields.username'             // Generic field label
+'ui.common.status.active'               // Generic status
+'pages.search.advancedSearch.title'     // Feature-specific title
+```
+
+❌ **Bad:**
+```typescript
+'pages.search.cancel'                   // Don't duplicate common actions!
+'pages.system.loading'                  // Don't duplicate common states!
+```
+
+### Key Referencing in Code
+
+Keys use dot notation in the application code:
+
+**Template usage (HTML):**
+```html
+<button mat-button>{{ 'ui.common.actions.cancel' | translate }}</button>
+<mat-label>{{ 'ui.common.fields.username' | translate }}</mat-label>
+```
+
+**TypeScript usage:**
+```typescript
+const message = this._translateService.instant('ui.common.confirmations.deleteItem', { item: 'user' });
+```
+
+### Validation Scripts
+
+Automated validation scripts are available in the `scripts/` directory:
+
+```bash
+# Validate JSON syntax
+./scripts/validate-translations.sh
+
+# Check key parity across all languages
+./scripts/compare-translation-keys.sh
+
+# Migrate legacy ui.form.action keys
+./scripts/migrate-ui-actions.sh
+```
+
+### Further Reading
+
+For detailed information about the refactored structure, see:
+- `docs/TRANSLATION_REFACTORING.md` - Complete refactoring guide and usage patterns
+- Migration guide and decision trees
+- Benefits and impact analysis
+
+### File Structure Notes
+
+Check `apps/dsp-app/src/assets/i18n/en.json` for the English reference file structure
+
+
+## Translation Guidelines
+
+Any translation created should follow these guidelines:
+
+- Use a balanced tone that is professional yet approachable
+- Keep translations concise while retaining meaning
+- Follow domain terminology consistently, and prefer it over technical terminology
+- Use inclusive language (e.g., "they" instead of "he/she")
+- Use inclusive language in a discrete manner, avoiding awkward phrasing
+
+For the different languages, follow these specific guidelines:
+
+### English (en.json)
+
+- Use British English spelling and grammar conventions
+
+### German (de.json)
+
+- Use Swiss High German conventions (Schweizer Hochdeutsch) over standard German where applicable (e.g., "Fussnoten" instead of "Fußnoten")
+- Prefer gender-neutral terms where possible (e.g., "Admin" instead of "Administrator" or "Administratorin")
+- Use combined gender forms where no neutral term exists (e.g., "Nutzer:innen" instead of "Nutzer" or "Nutzerinnen")

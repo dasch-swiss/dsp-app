@@ -18,7 +18,12 @@ import { map, startWith } from 'rxjs/operators';
         </div>
         <div class="action-buttons">
           @if (canRemoveValue) {
-            <button mat-icon-button type="button" color="primary" [matTooltip]="'remove'" (click)="removeValue.emit()">
+            <button
+              mat-icon-button
+              type="button"
+              color="primary"
+              [matTooltip]="'resourceEditor.resourceCreator.propertyValueCreator.remove' | translate"
+              (click)="removeValue.emit()">
               <mat-icon>delete</mat-icon>
             </button>
           }
@@ -28,7 +33,11 @@ import { map, startWith } from 'rxjs/operators';
             color="primary"
             [hidden]="isHidden$ | async"
             (click)="toggleCommentValue()"
-            [matTooltip]="commentIsNotNull ? 'remove comment' : 'add comment'">
+            [matTooltip]="
+              commentIsNotNull
+                ? ('resourceEditor.resourceCreator.propertyValueCreator.removeComment' | translate)
+                : ('resourceEditor.resourceCreator.propertyValueCreator.addComment' | translate)
+            ">
             <mat-icon>{{ commentIsNotNull ? 'speaker_notes_off' : 'add_comment' }}</mat-icon>
           </button>
         </div>

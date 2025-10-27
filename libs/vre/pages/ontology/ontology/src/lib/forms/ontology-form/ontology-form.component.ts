@@ -6,10 +6,13 @@ import { OntologyForm, UpdateOntologyData } from './ontology-form.type';
   selector: 'app-ontology-form',
   template: `
     <form [formGroup]="ontologyForm">
-      <app-common-input [control]="ontologyForm.controls.label" [label]="'Label'" data-cy="label-input" />
+      <app-common-input
+        [control]="ontologyForm.controls.label"
+        [label]="'pages.ontology.ontologyForm.label' | translate"
+        data-cy="label-input" />
 
       <mat-form-field style="width: 100%">
-        <mat-label>Comment</mat-label>
+        <mat-label>{{ 'pages.ontology.ontologyForm.comment' | translate }}</mat-label>
         <textarea
           matInput
           data-cy="comment-textarea"

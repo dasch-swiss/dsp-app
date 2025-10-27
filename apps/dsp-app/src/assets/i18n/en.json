@@ -1,7 +1,6 @@
 {
   "pages": {
     "landingPage": {
-      "title": "Research Projects",
       "usersProjects": "My Projects",
       "notUsersProjects": "Other Research Projects",
       "filterProjects": "Filter projects"
@@ -13,69 +12,70 @@
       "account": {
         "danger": "Danger zone",
         "deleteButton": "Suspend user account now",
+        "deleteConfirmation": "Do you want to suspend your own account?",
         "delete": "Suspend user account",
-        "password": "Update password",
-        "edit": "Edit profile"
+        "editMyProfile": "Edit my profile",
+        "editMyPassword": "Edit my password"
       },
       "userForm": {
         "emailValidation": "This email address appears to be invalid.",
         "usernameHint": "Spaces and special characters are not allowed in username.",
         "language": "Default language",
-        "sysAdmin": "System administrator rights",
         "updateSuccess": "You have successfully updated the user's profile.",
-        "new": "Create new",
-        "profile": "User profile",
-        "edit": "Edit profile",
-        "givenName": "First name",
-        "familyName": "Last name",
-        "email": "Email address",
-        "username": "Username"
+        "email": "Email address"
       },
       "passwordForm": {
-        "username": "Username",
-        "password": "Password",
-        "passwordLengthHint": "Use at least 8 characters.",
-        "passwordPatternHint": "The password should have at least one uppercase letter and one number.",
-        "oldPassword": "Old password",
         "newPassword": "New password",
         "confirmPassword": "Confirm password",
-        "requesterPassword": "Your password",
-        "ownPasswordSuccess": "You have successfully updated your password.",
-        "userPasswordSuccess": "You have successfully updated the user's password."
+        "currentPasswordStep": "For security reasons, please enter your current password",
+        "currentPasswordPlaceholder": "Your current password",
+        "incorrectPassword": "The password entered is incorrect",
+        "newPasswordStep": "Enter the new password"
       },
       "navigation": {
         "myProjects": "My Projects",
         "myAccount": "My Account"
       },
       "profile": {
-        "systemAdmin": "System admin",
-        "editMyProfile": "Edit my profile"
+        "systemAdmin": "System admin"
       },
       "userMenu": {
         "signedInAs": "Signed in as",
         "systemAdministration": "System Administration",
         "logout": "Logout",
-        "login": "LOGIN",
-        "home": "DSP-APP Home Page",
+        "login": "Login",
         "myAccount": "My Account"
+      },
+      "editUserDialog": {
+        "editMyProfile": "Edit my profile",
+        "editUser": "Edit user"
       }
     },
     "project": {
       "addUser": {
         "title": "Add project member",
-        "description": "Increase your team",
         "select": "Select from list ...",
-        "usersLoading": "Loading users ...",
-        "newUser": "New user"
+        "newUser": "New user",
+        "noResults": "No results"
       },
       "reusableProjectForm": {
-        "description": "Description",
-        "shortcode": "Short code",
+        "shortcode": "Shortcode",
         "shortname": "Short name",
-        "longname": "Project name"
+        "longname": "Project name",
+        "errors": {
+          "shortcodePattern": "This field must contain letters from A to F and 0 to 9",
+          "shortcodeExists": "This shortcode already exists",
+          "whitespace": "No whitespace is allowed."
+        }
       },
       "editProjectFormPage": {
-        "editSuccess": "You have successfully updated the project information."
+        "projectUpdated": "Project updated"
+      },
+      "projectDescriptionPage": {
+        "editProjectDescription": "Edit project description"
+      },
+      "settingsPage": {
+        "image": "Image"
       },
       "imageSettings": {
         "off": "Off",
@@ -93,7 +93,7 @@
         "title": "Export Resource Metadata",
         "text": {
           "description": "Export descriptive metadata for every resource in this project as CSV.",
-          "note": "Note: This file includes only metadata - not the project’s data.",
+          "note": "Note: This file includes only metadata - not the project's data.",
           "listTitle": "These metadata consist of:",
           "listContent": {
             "label": "Label",
@@ -107,10 +107,13 @@
             "deleted": "Deletion Date (if available)"
           }
         },
-        "button": "Export as CSV"
+        "button": "Export as CSV",
+        "downloadSuccess": "Metadata for project {{shortcode}} downloaded successfully.",
+        "downloadError": "Failed to download metadata for project {{shortcode}}.",
+        "downloadErrorWithMessage": "Error downloading metadata for project {{shortcode}}: {{errorMessage}}"
       },
       "legalSettings": {
-        "tab": "Legal",
+        "tab": "Legal Settings",
         "warning": "Attention: any action you do here is permanent",
         "copyrightHolders": "Copyright holders",
         "licenses": "Licenses/Statements",
@@ -122,29 +125,54 @@
         "add": "Add",
         "copyrightHolder": "Copyright holder",
         "enabled": "Enabled",
-        "authorshipOverview": "Authorship - Overview",
-        "authorshipReadOnly": "This authorship overview is read-only. To add a new authorship, please update them directly in the resource.",
         "dialog": {
           "addCopyrightHolder": "Add copyright holder",
           "text": "Text"
         }
+      },
+      "sidenav": {
+        "advancedSearch": "Advanced Search",
+        "projectDescription": "Project Description",
+        "projectSettings": "Project Settings",
+        "dataModel": "Data Model"
+      },
+      "collaboration": {
+        "permissionGroup": "Permission group",
+        "noGroupDefined": "No group defined yet.",
+        "admin": "Admin",
+        "addAsProjectAdmin": "Add as project admin",
+        "removeAsProjectAdmin": "Remove as project admin",
+        "editMember": "Edit member",
+        "changeMemberPassword": "Change member's password",
+        "removeMemberFromProject": "Remove member from project",
+        "confirmRemoveMember": "Do you want to remove this user from the project?",
+        "activeUsers": "Active users",
+        "inactiveUsers": "Inactive users"
+      },
+      "projectShortDescription": {
+        "readMore": "Read more"
       }
     },
     "system": {
+      "allProjects": "All Projects",
+      "allUsers": "All Users",
+      "activeUsersCount": "Active users ({{count}})",
+      "inactiveUsersCount": "Inactive users ({{count}})",
       "usersList": {
-        "sortFamilyName": "Last name",
-        "sortGivenName": "First name"
+        "sortEmail": "E-mail",
+        "createNewUser": "Create a new user"
       },
       "users": {
         "changePassword": "Change password"
       },
+      "createUserDialog": {
+        "title": "Create a new user",
+        "isSystemAdmin": "Is a system admin user"
+      },
       "projectsList": {
-        "project": "Project",
-        "projects": "Projects",
         "sortShortCode": "Short code",
         "sortShortName": "Short name",
         "sortProjectName": "Project name",
-        "statusActive": "Active",
         "statusDeactivated": "Deactivated",
         "createNew": "Create new project",
         "projectAdmin": "Project Administrator",
@@ -152,77 +180,324 @@
         "reactivate": "Reactivate project",
         "deactivate": "Deactivate project",
         "erase": "Erase project",
-        "eraseConfirmation": "Project “{{0}}” has been erased.",
-        "deactivateConfirmation": "Do you want to deactivate project “{{0}}” ?",
-        "reactivateConfirmation": "Do you want to reactivate project “{{0}}” ?",
+        "eraseConfirmation": "Project \"{{0}}\" has been erased.",
+        "deactivateConfirmation": "Do you want to deactivate project \"{{0}}\" ?",
+        "reactivateConfirmation": "Do you want to reactivate project \"{{0}}\" ?",
         "eraseConfirmationDialog": {
           "title": "Please enter required information to erase the project.",
           "subtitle": "Erase project",
           "warning": "WARNING: This action cannot be undone, so use it with care.",
           "shortCode": "Project short code",
           "systemAdminPassword": "System administrator password",
-          "cancel": "Cancel",
-          "confirm": "Confirm",
           "shortCodeValidation": "Short code does not match",
           "passwordValidation": "Password incorrect"
         }
+      },
+      "cookiePolicy": {
+        "title": "Cookie Policy for DSP-API web application",
+        "whatAreCookies": "What Are Cookies",
+        "howWeUseCookies": "How We Use Cookies",
+        "disablingCookies": "Disabling Cookies",
+        "cookiesWeSet": "The Cookies We Set",
+        "thirdPartyCookies": "Third Party Cookies",
+        "moreInformation": "More Information"
       }
     },
     "ontology": {
       "ontologyForm": {
         "create": "Create new data model",
         "edit": "Customize data model",
-        "name": "Set a unique name"
+        "name": "Set a unique name",
+        "label": "Label",
+        "comment": "Comment",
+        "nameExists": "This name is not allowed or exists already."
       },
       "list": {
-        "deleteList": "Delete controlled vocabulary"
+        "deleteList": "Delete controlled vocabulary",
+        "backToDataModels": "Back to data models",
+        "editInfo": "Edit controlled vocabulary info",
+        "deleteConfirmation": "Do you want to delete this controlled vocabulary?",
+        "actionBubble": {
+          "moveUp": "move up",
+          "moveDown": "move down",
+          "insertChild": "insert new child above",
+          "edit": "edit",
+          "delete": "delete",
+          "deleteNode": "Do you want to delete this node?"
+        },
+        "listItemForm": {
+          "appendItem": "Append item to {{parent}}"
+        },
+        "listInfoForm": {
+          "labelPlaceholder": "Controlled vocabulary label",
+          "commentPlaceholder": "Controlled vocabulary description",
+          "editTitle": "Edit controlled vocabulary info",
+          "createTitle": "Create new controlled vocabulary"
+        },
+        "createDialog": {
+          "title": "Insert new child node"
+        },
+        "editDialog": {
+          "subtitle": "Edit child node"
+        },
+        "reusableForm": {
+          "labelPlaceholder": "Child node label",
+          "commentPlaceholder": "Child node description"
+        }
+      },
+      "dataModels": {
+        "title": "All Data Models",
+        "info": "A data model organizes data elements and specifies how they relate to one another and by which properties they are described.",
+        "createNew": "Create New",
+        "documentation": "Read Documentation About How To Create Data Models",
+        "vocabularies": {
+          "title": "Controlled Vocabularies",
+          "info": "Controlled vocabularies are hierarchical or non-hierarchical lexica of reference terms. Due to their normative or standardized nature, controlled vocabularies improve data quality and make database searching more efficient than free-text fields.",
+          "createNew": "Create New"
+        }
+      },
+      "editor": {
+        "backToDataModels": "Back to data models",
+        "updatedOn": "Updated on:",
+        "editInfo": "Edit data model info",
+        "deleteTooltip": "Delete data model",
+        "cannotDelete": "This data model cant be deleted because it is in use!",
+        "deleteConfirmation": "Do you want to delete this data model ?"
+      },
+      "sidenav": {
+        "classes": "Classes",
+        "properties": "Properties",
+        "collapseAll": "Collapse all",
+        "expandAll": "Expand all",
+        "createNewClass": "Create new class",
+        "addProperty": "Add Property"
+      },
+      "cardinality": {
+        "multipleValues": "Multiple values",
+        "required": "Required"
+      },
+      "propertyItem": {
+        "edit": "Edit",
+        "removeFromClass": "Remove from class",
+        "copyId": "Copy property ID"
+      },
+      "propertyInfo": {
+        "usedIn": "Used in",
+        "notUsed": "Not used"
+      },
+      "resourceClassInfo": {
+        "collapse": "Collapse",
+        "expand": "Expand",
+        "noProperties": "No properties defined yet.",
+        "edit": "Edit",
+        "openInstances": "Open instances",
+        "copyId": "Copy class ID",
+        "cannotDelete": "This class cannot be deleted because it is in use!",
+        "delete": "Delete"
+      },
+      "propertyForm": {
+        "editTitle": "Edit property",
+        "createTitle": "Create property",
+        "type": "Property type",
+        "name": "Property name",
+        "labelPlaceholder": "Property label",
+        "commentPlaceholder": "Comment",
+        "selectResourceClass": "Select resource class",
+        "selectList": "Select list"
+      },
+      "addPropertyMenu": {
+        "addProperty": "Add property",
+        "createNewFromType": "Create new from type",
+        "addExistingProperty": "Add existing property"
+      },
+      "resourceClassForm": {
+        "createSubtitle": "Create resource class",
+        "editSubtitle": "Customize resource class",
+        "name": "Class name",
+        "patternError": "This pattern is not supported",
+        "labelPlaceholder": "Label",
+        "commentPlaceholder": "Comment"
       }
     },
     "search": {
       "propertyFormListValue": "Select an item",
-      "searchPanel": {
-        "howToSearch": "How to search",
-        "expert": "Expert",
-        "advancedSearch": "Advanced search",
-        "expertSearch": "Expert search"
-      },
       "fullTextSearch": {
-        "filterByProject": "Filter by project",
-        "search": "Search all data",
-        "allProjects": "All projects"
+        "switchToAdvancedSearch": "Switch to advanced search",
+        "placeholder": "Enter search term..."
       },
-      "advancedSearch": {
-        "title": "Advanced Search",
-        "usePreviousSearch": "Use Previous Search"
+      "noResultsFound": "No results found",
+      "searchTips": {
+        "title": "Search tips",
+        "exactPhrases": "Use quotation marks for exact phrases: \"down the rabbit hole\"",
+        "booleanSearch": "Use AND, OR, NOT for boolean searches: Alice AND Wonderland",
+        "wildcards": "Use wildcards: Alice* will match Alice, Alices, etc."
+      }
+    },
+    "dataBrowser": {
+      "resourceLinkDialog": {
+        "linkResources": "Link resources",
+        "collectionLabel": "Collection labels",
+        "comment": "Comment",
+        "resourcesWillBeConnected": "The following resources will be connected:",
+        "createCollection": "Create a collection of {{count}} resources"
+      },
+      "dataClassPanel": {
+        "createResource": "Create a resource"
+      },
+      "resourceListSelection": {
+        "resourcesSelected": "{{count}} resources selected",
+        "createLinkObject": "Create a link object"
+      },
+      "resourcesList": {
+        "backToSearchForm": "Back to search form"
+      },
+      "resourcesListFetcher": {
+        "noResourcesFound": "No resources found for this class.",
+        "noPermissions": "It seems like you don't have the necessary permissions.",
+        "checkPermissions": "Check with a project admin if you have the necessary permission or if you are logged in."
+      },
+      "multipleViewer": {
+        "selectResource": "Select a resource on the left panel",
+        "chooseResources": "Choose one or more resources from the left panel to display and compare them here.",
+        "tooManyResources": "Too many resources selected.",
+        "maxResources": "Maximum {{count}} resources can be compared at the same time."
+      },
+      "dataClassView": {
+        "noData": "There are no data corresponding to your request."
+      },
+      "resourceListItem": {
+        "foundIn": "Found in: "
       }
     }
   },
   "resourceEditor": {
     "properties": "Properties",
     "labelAnnotations": "Annotations",
-    "restricted": "This resource is restricted, file representations may be of lower quality and some properties may be hidden.",
-    "versioned": "You are watching a resource dating from",
-    "seeCurrentVersion": "See current version",
+    "restricted": "Access restricted: Images may be of lower quality and some values may be hidden.",
+    "versioned": "This is an outdated version of the resource.",
+    "seeCurrentVersion": "Go to current version",
     "versionNotValid": "The version you requested is not valid. The latest version is displayed.",
-    "notFound": "This resource is not found.",
-    "deleted": "This resource has been deleted.",
-    "unauthorized": "You do not have access to this resource.",
+    "notFound": "Resource not found. The resource may have been deleted by the project.",
+    "deleted": "This resource has been marked as deleted.",
+    "unauthorized": "You do not have permission to access this resource.",
+    "toolbar": {
+      "openInNewTab": "Open resource in new tab",
+      "shareResource": "Share resource: {{arkUrl}}",
+      "copyArkUrl": "Copy ARK url",
+      "copyArkUrlToClipboard": "Copy ARK url to clipboard",
+      "arkUrlCopied": "ARK URL copied to clipboard!",
+      "copyInternalLink": "Copy internal link",
+      "copyInternalLinkToClipboard": "Copy internal link to clipboard",
+      "internalLinkCopied": "Internal link copied to clipboard!"
+    },
+    "moreMenu": {
+      "more": "More",
+      "editLabel": "Edit label",
+      "editLabelTooltip": "Edit the label of this resource",
+      "moveToTrash": "Move resource to trash bin.",
+      "checkingPermission": "Checking if the resource can be deleted...",
+      "checkingPermissionErase": "Checking if resource can be deleted...",
+      "eraseResource": "Erase permanently",
+      "eraseResourceTooltip": "Erase resource permanently. This cannot be undone.",
+      "noPermission": "You do not have permission to delete this resource."
+    },
+    "infoBar": {
+      "resourceOfProject": "Resource of the project",
+      "created": "created",
+      "by": "by",
+      "on": "on"
+    },
+    "legal": {
+      "copyrightHolder": "Copyright holder",
+      "authorship": "Authorship"
+    },
+    "navigation": {
+      "firstPage": "First page",
+      "previousPage": "Previous page",
+      "of": " of ",
+      "nextPage": "Next page",
+      "lastPage": "Last page"
+    },
     "segmentSupport": {
       "createSegmentDialog": {
-        "createAnnotation": "Create Annotation"
+        "createAnnotation": "Create Annotation",
+        "label": "Label",
+        "start": "Start",
+        "end": "End",
+        "title": "Title"
       }
     },
     "representations": {
       "addRegionFormDialog": {
-        "createAnnotation": "Create Annotation"
+        "createAnnotation": "Create Annotation",
+        "subtitle": "Add further properties",
+        "label": "Label"
       },
-      "labelAnnotations": "Annotations",
+      "downloadFile": "Download file",
+      "replaceFile": "Replace file",
+      "archive": {
+        "title": "Archive"
+      },
+      "audio": {
+        "cannotPlay": "The video cannot be played at this time.",
+        "openInNewTab": "Open audio in new tab",
+        "copyUrl": "Copy audio URL to clipboard",
+        "download": "Download audio",
+        "title": "Audio"
+      },
       "video": {
-        "createAnnotation": "Create Annotation"
+        "createAnnotation": "Create Annotation",
+        "cannotPlay": "The video cannot be played at this time.",
+        "openInNewTab": "Open video in new tab",
+        "urlCopied": "URL copied to clipboard!",
+        "copyUrl": "Copy video URL to clipboard",
+        "download": "Download video",
+        "title": "Video",
+        "pause": "Pause",
+        "play": "Play",
+        "stop": "Stop and go to start",
+        "defaultView": "Default view",
+        "cinemaMode": "Cinema mode"
+      },
+      "document": {
+        "searchPlaceholder": "Search in pdf...",
+        "zoomOut": "Zoom out",
+        "resetZoom": "Reset zoom",
+        "zoomIn": "Zoom in",
+        "fullscreen": "Fullscreen",
+        "title": "Document"
+      },
+      "text": {
+        "title": "Text (csv, txt, xml)"
       },
       "stillImage": {
         "createAnnotation": "Create Annotation",
-        "labelAnnotations": "Annotations"
+        "more": "More",
+        "share": "Share",
+        "download": "Download",
+        "settings": "Settings",
+        "iiifUrlCopied": "IIIF URL copied to clipboard!",
+        "copyIiifUrl": "Copy IIIF URL to clipboard",
+        "openIiifInNewTab": "Open IIIF in new tab",
+        "copyArkUrl": "Copy ARK URL",
+        "arkUrlCopied": "ARK URL copied to clipboard!",
+        "zoomOut": "Zoom out",
+        "zoomIn": "Zoom in",
+        "resetZoom": "Reset zoom",
+        "openInFullscreen": "Open in fullscreen"
+      },
+      "replaceFileDialog": {
+        "willBeReplaced": " will be replaced."
+      },
+      "iiifControl": {
+        "label": "IIIF URL",
+        "placeholder": "Enter IIIF URL (e.g. https://example.com/iiif/2/image.jp2/info.json)",
+        "errors": {
+          "invalidUrl": "Invalid IIIF URL format",
+          "previewImageError": "Unable to load preview image",
+          "infoJsonError": "Unable to load info.json",
+          "invalidHost": "External host is not allowed"
+        }
       }
     },
     "propertiesDisplay": {
@@ -231,13 +506,28 @@
       "standoffLinkTooltip": "Represent a link in standoff markup from one resource to another",
       "standoffLinkLabel": "has Standoff link",
       "annotationToolbar": {
-        "delete": "Delete this resource"
-      }
+        "highlightRegion": "Highlight Region",
+        "openInNewTab": "Open annotation in new tab",
+        "shareResource": "Share annotation: {{arkUrl}}",
+        "copyArkUrl": "Copy ARK url",
+        "copyArkUrlToClipboard": "Copy ARK url to clipboard",
+        "arkUrlCopied": "ARK URL copied to clipboard!",
+        "copyInternalLink": "Copy internal link",
+        "copyInternalLinkToClipboard": "Copy internal link to clipboard",
+        "internalLinkCopied": "Internal link copied to clipboard!"
+      },
+      "comments": "Comments",
+      "properties": "Properties",
+      "hide": "Hide",
+      "hideComments": "Hide comments",
+      "hideEmptyProperties": "Hide empty properties",
+      "showAllComments": "Show all comments",
+      "showAllProperties": "Show all properties"
     },
     "permissionInfo": {
       "label": "Permissions",
+      "tooltip": "Resource permissions",
       "projectAdmin": "Project Admin",
-      "creator": "Creator",
       "projectMember": "Project Member",
       "knownUser": "Known User",
       "unknownUser": "Unknown User",
@@ -252,41 +542,200 @@
     },
     "resourceProperties": {
       "comment": "Comment",
-      "delete": "Delete this resource",
+      "delete": "Mark as deleted",
       "footnotes": "Footnotes",
+      "actions": {
+        "creationInfo": "Created on {{date}} by {{creator}}",
+        "edit": "Edit",
+        "delete": "Delete",
+        "cannotDeleteRequired": "Cannot delete required property",
+        "undo": "Undo",
+        "addComment": "Add comment",
+        "removeComment": "Remove comment",
+        "save": "Save"
+      },
+      "deleteValue": {
+        "title": "Delete {{label}}",
+        "explanation": "This will permanently delete the value. Please provide a reason for deletion.",
+        "reason": "Reason",
+        "reasonPlaceholder": "Enter reason for deletion...",
+        "noKeep": "No, keep it",
+        "yesDelete": "Yes, delete"
+      },
+      "editLabel": {
+        "subtitle": "Edit resource label",
+        "label": "Label"
+      },
       "valueComponents": {
         "searchHelp": "Type 3 letters to search for an existing resource."
+      },
+      "valueAlreadyExists": "The value entered already exists."
+    },
+    "resourceCreator": {
+      "form": {
+        "file": "File",
+        "properties": "Properties",
+        "resourceLabel": "Resource label",
+        "resourceLabelTooltip": "Each resource needs a (preferably unique) label. It will be a kind of resource identifier.",
+        "resourceLabelPlaceholder": "e.g. Lorem ipsum ..."
+      },
+      "legal": {
+        "copyrightHolder": "Copyright holder",
+        "choose": "Choose",
+        "none": "None",
+        "license": "License/Statement",
+        "licenseStatement": "License/Statement",
+        "authorship": "Authorship"
+      },
+      "authorship": {
+        "label": "Authorship",
+        "placeholder": "New authorship..."
+      },
+      "image": {
+        "label": "Image",
+        "uploadFile": "Upload file",
+        "linkExternalIIIF": "Link external IIIF"
+      },
+      "upload": {
+        "dragAndDrop": "Drag and drop file here or click to browse",
+        "fileTypesSupported": "File types supported: {{types}}",
+        "processing": "Processing file on server...",
+        "extensionNotSupported": "The extension {{extension}} is not supported."
       }
+    },
+    "templateSwitcher": {
+      "createResourceDialog": {
+        "title": "Create new resource of type: {{type}}"
+      },
+      "linkValue": {
+        "label": "Link to resource",
+        "placeholder": "Search for resource to link...",
+        "noResults": "No results found",
+        "createNew": "Create new"
+      },
+      "intervalValue": {
+        "start": "Start",
+        "end": "End"
+      },
+      "example": "e.g."
     }
   },
   "ui": {
-    "form": {
-      "action": {
+    "common": {
+      "actions": {
         "cancel": "Cancel",
-        "close": "Close",
-        "submit": "Save",
-        "retry": "Retry",
         "update": "Update",
+        "delete": "Delete",
+        "edit": "Edit",
+        "create": "Create",
+        "reset": "Reset",
+        "close": "Close",
         "next": "Next",
-        "reset": "Reset"
+        "back": "Back",
+        "submit": "Submit",
+        "confirm": "Confirm",
+        "search": "Search",
+        "retry": "Retry"
+      },
+      "fields": {
+        "username": "Username",
+        "firstName": "First name",
+        "lastName": "Last name",
+        "language": "Language",
+        "description": "Description"
+      },
+      "status": {
+        "active": "Active",
+        "loading": "Loading..."
+      },
+      "entities": {
+        "user": "User",
+        "users": "Users",
+        "project": "Project",
+        "projects": "Projects",
+        "member": "Member",
+        "members": "Members"
       }
     },
     "pager": {
       "of": "of",
       "previous": "Previous",
-      "next": "Next",
       "firstPage": "First page",
       "lastPage": "Last page",
-      "nextPage": "Next page",
       "inputTooltip": "Enter the page number and apply with the Enter key.",
       "previousPage": "Previous page",
-      "rangeLabelOf": "of"
+      "rangeLabelOf": "of",
+      "showing": "Showing"
     },
     "header": {
       "help": "Help"
     },
     "chipListInput": {
       "keywords": "Keywords"
+    },
+    "dialog": {
+      "confirmationNeeded": "Confirmation needed",
+      "yes": "Yes",
+      "no": "No"
+    },
+    "hint": {
+      "useSpecialSyntax": "Use special syntax:",
+      "questionMark": "question mark<strong>?</strong> can be used as wildcard symbol for a single character.<br /><code>Example: <i>be?r</i> will find <i>beer</i> but also <i>bear</i></code>",
+      "asterisk": "asterisk<strong>*</strong> can be used as a wildcard symbol for zero, one or multiple characters.<br /><code>Example: <i>b*r</i> will find <i>beer</i> but also <i>bear</i></code>",
+      "quotationMarks": "<strong>\"</strong>quotation marks<strong>\"</strong> searches for the whole pattern.<br /><code class=\"\">Example: <i>\"Lorem ipsum\"</i> will find texts with exact content <i>Lorem ipsum</i></code>",
+      "readMore": "Read more in the user guide"
+    },
+    "timeInput": {
+      "placeholder": "hh:mm:ss",
+      "invalidFormat": "Please enter a valid time in format hh:mm:ss"
+    },
+    "datePicker": {
+      "clickToSelect": "Click to select a date",
+      "calendar": "Calendar",
+      "today": "Today",
+      "month": "Month",
+      "none": "None",
+      "year": "Year",
+      "bceWarning": "Attention: Date <strong>before common era</strong>."
+    }
+  },
+  "shared": {
+    "status": {
+      "representationError": "There was an error loading the {{type}} file representation. Try to open it directly by clicking on the file url below:",
+      "responseInDetail": "Response in detail",
+      "goBackToStartPage": "Please go back to the start page.",
+      "reloadPrompt": "Please come back in a few minutes and try to <a (click)=\"reload()\">reload the page</a>."
+    },
+    "header": {
+      "searchEverywhere": "Search everywhere",
+      "projectTabs": {
+        "data": "Data",
+        "dataModels": "Data models",
+        "settings": "Settings"
+      }
+    },
+    "grid": {
+      "readMore": "Read more"
+    }
+  },
+  "core": {
+    "errorHandler": {
+      "noInternet": "It seems that you are not connected to internet.",
+      "iiifServerError": "IIIF server error: The image could not be loaded. Please try again later.",
+      "noPermission": "You do not have permission to see one or more resources.",
+      "notFound": "The requested resource was not found.",
+      "timeout": "There was a timeout issue with one or several requests. The resource(s) or a part of it cannot be displayed correctly. Failed on {{url}}",
+      "contactSupport": "There is an error on our side. Please contact support@dasch.swiss"
+    },
+    "auth": {
+      "invalidCredentials": "The username and / or password do not match."
+    }
+  },
+  "app": {
+    "cookieBanner": {
+      "message": "This web-application uses cookies to provide you with a greater user experience. By using the application you accept our",
+      "useOfCookies": "use of cookies",
+      "accept": "ACCEPT"
     }
   }
 }

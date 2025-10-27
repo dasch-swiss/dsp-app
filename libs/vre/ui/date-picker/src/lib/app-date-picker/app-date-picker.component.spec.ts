@@ -8,6 +8,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { TranslateModule } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import { AppDatePickerComponent } from './app-date-picker.component';
 
@@ -28,6 +29,7 @@ describe('DatePickerComponent', () => {
         MatMenuModule,
         MatSelectModule,
         ReactiveFormsModule,
+        TranslateModule.forRoot(),
       ],
       providers: [Subject],
     }).compileComponents();

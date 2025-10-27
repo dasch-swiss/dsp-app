@@ -14,7 +14,12 @@ import { JsLibPotentialError } from '@dasch-swiss/vre/resource-editor/resource-p
   template: `
     <ng-template #intEditorTpl let-item="item">
       <mat-form-field style="width: 100%">
-        <input matInput [formControl]="item" type="number" data-cy="int-input" [placeholder]="'e.g. 42'" />
+        <input
+          matInput
+          [formControl]="item"
+          type="number"
+          data-cy="int-input"
+          [placeholder]="('resourceEditor.templateSwitcher.example' | translate) + ' 42'" />
         @if (item.errors; as errors) {
           <mat-error>
             {{ errors | humanReadableError }}
@@ -25,7 +30,12 @@ import { JsLibPotentialError } from '@dasch-swiss/vre/resource-editor/resource-p
 
     <ng-template #decimalEditorTpl let-item="item">
       <mat-form-field style="width: 100%">
-        <input matInput [formControl]="item" type="number" step="0.05" placeholder="e.g. 3.14" />
+        <input
+          matInput
+          [formControl]="item"
+          type="number"
+          step="0.05"
+          [placeholder]="('resourceEditor.templateSwitcher.example' | translate) + ' 3.14'" />
       </mat-form-field>
       @if (item.touched && item.errors; as errors) {
         <mat-error>
@@ -56,14 +66,18 @@ import { JsLibPotentialError } from '@dasch-swiss/vre/resource-editor/resource-p
         [withLabel]="false"
         style="width: 100%"
         data-cy="text-input"
-        [label]="'e.g. Lorem ipsum ...'" />
+        [label]="('resourceEditor.templateSwitcher.example' | translate) + ' Lorem ipsum ...'" />
     </ng-template>
 
     <ng-template #textHtmlEditorTpl>This value cannot be edited.</ng-template>
 
     <ng-template #paragraphEditorTpl let-item="item">
       <mat-form-field style="width: 100%">
-        <textarea matInput [formControl]="item" rows="9" [placeholder]="'e.g. Lorem ipsum ...'"></textarea>
+        <textarea
+          matInput
+          [formControl]="item"
+          rows="9"
+          [placeholder]="('resourceEditor.templateSwitcher.example' | translate) + ' Lorem ipsum ...'"></textarea>
       </mat-form-field>
       @if (item.touched && item.errors; as errors) {
         <mat-error>
@@ -103,7 +117,7 @@ import { JsLibPotentialError } from '@dasch-swiss/vre/resource-editor/resource-p
       <app-common-input
         [control]="item"
         [withLabel]="false"
-        [label]="'e.g. https://en.wikipedia.org'"
+        [label]="('resourceEditor.templateSwitcher.example' | translate) + ' https://en.wikipedia.org'"
         [validatorErrors]="[{ errorKey: 'pattern', message: 'This is not a valid link.' }]" />
     </ng-template>
   `,

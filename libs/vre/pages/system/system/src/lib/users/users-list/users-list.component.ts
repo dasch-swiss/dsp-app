@@ -28,7 +28,7 @@ type UserSortKey = 'familyName' | 'givenName' | 'email' | 'username';
 
           @if (isButtonEnabledToCreateNewUser && (isSysAdmin$ | async)) {
             <button mat-flat-button [color]="'primary'" (click)="createUser()" style="margin-right: 16px">
-              Create a new user
+              {{ 'pages.system.usersList.createNewUser' | translate }}
             </button>
           }
 
@@ -64,32 +64,32 @@ export class UsersListComponent {
   itemPluralMapping = {
     user: {
       // eslint-disable-next-line @typescript-eslint/naming-convention
-      '=1': '1 User',
-      other: '# Users',
+      '=1': `1 ${this._ts.instant('ui.common.entities.user')}`,
+      other: `# ${this._ts.instant('ui.common.entities.users')}`,
     },
     member: {
       // eslint-disable-next-line @typescript-eslint/naming-convention
-      '=1': '1 Member',
-      other: '# Members',
+      '=1': `1 ${this._ts.instant('ui.common.entities.member')}`,
+      other: `# ${this._ts.instant('ui.common.entities.members')}`,
     },
   };
 
   readonly sortProps: SortProperty[] = [
     {
       key: 'familyName',
-      label: this._ts.instant('pages.system.usersList.sortFamilyName'),
+      label: this._ts.instant('ui.common.fields.lastName'),
     },
     {
       key: 'givenName',
-      label: this._ts.instant('pages.system.usersList.sortGivenName'),
+      label: this._ts.instant('ui.common.fields.firstName'),
     },
     {
       key: 'email',
-      label: 'E-mail',
+      label: this._ts.instant('pages.system.usersList.sortEmail'),
     },
     {
       key: 'username',
-      label: 'Username',
+      label: this._ts.instant('ui.common.fields.username'),
     },
   ];
 

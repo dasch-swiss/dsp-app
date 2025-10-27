@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { ResourceFetcherService } from '@dasch-swiss/vre/resource-editor/representations';
+import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, firstValueFrom, of } from 'rxjs';
 import { ResourceEditMoreMenuComponent } from './resource-edit-more-menu.component';
 
@@ -84,6 +85,7 @@ describe('ResourceEditMoreMenuComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [ResourceEditMoreMenuComponent],
+      imports: [TranslateModule.forRoot()],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       providers: [
         { provide: MatDialog, useValue: mockDialog },
@@ -150,7 +152,7 @@ describe('ResourceEditMoreMenuComponent', () => {
       const response = await firstValueFrom(component.resourceCanBeDeleted$);
       expect(response).toBeDefined();
       expect(response.canDo).toBe(false);
-      expect(response.cannotDoReason).toBe('You do not have permission to delete this resource.');
+      expect(response.cannotDoReason).toBe('resourceEditor.moreMenu.noPermission');
     });
 
     it('should return canDo true when user has permission and resource can be deleted', async () => {

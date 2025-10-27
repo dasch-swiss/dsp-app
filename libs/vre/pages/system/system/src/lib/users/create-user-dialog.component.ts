@@ -9,17 +9,19 @@ import { finalize } from 'rxjs';
 @Component({
   selector: 'app-create-user-dialog',
   template: `
-    <app-dialog-header [title]="'Create a new user'" />
+    <app-dialog-header [title]="'pages.system.createUserDialog.title' | translate" />
     <div mat-dialog-content>
       <app-user-form [data]="data" (afterFormInit)="afterUserFormInit($event)" />
       <app-password-confirm-form (afterFormInit)="afterPasswordFormInit($event)" />
-      <mat-slide-toggle [formControl]="form.controls.isSystemAdmin">Is a system admin user</mat-slide-toggle>
+      <mat-slide-toggle [formControl]="form.controls.isSystemAdmin">{{
+        'pages.system.createUserDialog.isSystemAdmin' | translate
+      }}</mat-slide-toggle>
     </div>
 
     <div mat-dialog-actions align="end">
-      <button color="primary" mat-button mat-dialog-close>{{ 'ui.form.action.cancel' | translate }}</button>
+      <button color="primary" mat-button mat-dialog-close>{{ 'ui.common.actions.cancel' | translate }}</button>
       <button mat-raised-button color="primary" appLoadingButton [isLoading]="isLoading" (click)="createUser()">
-        {{ 'ui.form.action.submit' | translate }}
+        {{ 'ui.common.actions.submit' | translate }}
       </button>
     </div>
   `,

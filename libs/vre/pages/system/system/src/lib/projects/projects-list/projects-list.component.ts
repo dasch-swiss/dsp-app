@@ -41,8 +41,8 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
   itemPluralMapping = {
     project: {
       // eslint-disable-next-line @typescript-eslint/naming-convention
-      '=1': `1 ${this._translateService.instant('pages.system.projectsList.project')}`,
-      other: `# ${this._translateService.instant('pages.system.projectsList.projects')}`,
+      '=1': `1 ${this._translateService.instant('ui.common.entities.project')}`,
+      other: `# ${this._translateService.instant('ui.common.entities.projects')}`,
     },
   };
 

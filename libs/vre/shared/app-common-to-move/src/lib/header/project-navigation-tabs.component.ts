@@ -15,20 +15,20 @@ import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
       style="background-color: inherit; padding-left: 16px">
       <a mat-tab-link [routerLink]="[DATA]" (click)="reloadPage($event)" [class.active-link]="isDataRouteActive()">
         <mat-icon class="tab-icon">list</mat-icon>
-        Data
+        {{ 'shared.header.projectTabs.data' | translate }}
       </a>
       <a mat-tab-link [routerLink]="[SEARCH]" [class.active-link]="isSearchRouteActive()">
         <mat-icon class="tab-icon">search</mat-icon>
-        Search
+        {{ 'ui.common.actions.search' | translate }}
       </a>
       <a mat-tab-link [routerLink]="[DATA_MODELS]" [class.active-link]="isDataModelsRouteActive()">
         <mat-icon class="tab-icon">lan</mat-icon>
-        Data models
+        {{ 'shared.header.projectTabs.dataModels' | translate }}
       </a>
       @if (projectPageService.hasProjectAdminRights$ | async) {
         <a mat-tab-link [routerLink]="[SETTINGS]" routerLinkActive="active-link">
           <mat-icon class="tab-icon">settings</mat-icon>
-          Settings
+          {{ 'shared.header.projectTabs.settings' | translate }}
         </a>
       }
     </nav>

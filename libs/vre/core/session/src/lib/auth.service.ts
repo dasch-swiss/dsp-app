@@ -1,8 +1,9 @@
-import { Inject, Injectable } from '@angular/core';
+import { Inject, Injectable, inject } from '@angular/core';
 import { ApiResponseError, KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { UserFeedbackError } from '@dasch-swiss/vre/core/error-handler';
 import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { TranslateService } from '@ngx-translate/core';
 import { catchError, map, of, switchMap, tap } from 'rxjs';
 import { AccessTokenService } from './access-token.service';
 import { UserService } from './user.service';
@@ -11,6 +12,7 @@ import { UserService } from './user.service';
 export class AuthService {
   constructor(
     private readonly _userService: UserService,
+    private _translateService: TranslateService,
     private readonly _accessTokenService: AccessTokenService,
     @Inject(DspApiConnectionToken)
     private readonly _dspApiConnection: KnoraApiConnection,
@@ -41,7 +43,7 @@ export class AuthService {
       }),
       catchError(error => {
         if ((error instanceof ApiResponseError && error.status === 400) || error.status === 401) {
-          throw new UserFeedbackError('The username and / or password do not match.');
+          throw new UserFeedbackError(this._translateService.instant('core.auth.invalidCredentials'));
         }
         throw error;
       }),

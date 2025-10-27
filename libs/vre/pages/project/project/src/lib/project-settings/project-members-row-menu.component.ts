@@ -26,15 +26,21 @@ import { CollaborationPageService } from './collaboration/collaboration-page.ser
 
     <mat-menu #projectUserMenu="matMenu" xPosition="before" class="menu">
       @if (!isProjectAdmin(user.permissions)) {
-        <button mat-menu-item (click)="addProjectAdminMembership()">Add as project admin</button>
+        <button mat-menu-item (click)="addProjectAdminMembership()">
+          {{ 'pages.project.collaboration.addAsProjectAdmin' | translate }}
+        </button>
       }
       @if (isProjectAdmin(user.permissions)) {
-        <button mat-menu-item (click)="removeProjectAdminMembership()">Remove as project admin</button>
+        <button mat-menu-item (click)="removeProjectAdminMembership()">
+          {{ 'pages.project.collaboration.removeAsProjectAdmin' | translate }}
+        </button>
       }
-      <button mat-menu-item (click)="editUser(user)">Edit member</button>
-      <button mat-menu-item (click)="openEditPasswordDialog(user)">Change member's password</button>
+      <button mat-menu-item (click)="editUser(user)">{{ 'pages.project.collaboration.editMember' | translate }}</button>
+      <button mat-menu-item (click)="openEditPasswordDialog(user)">
+        {{ 'pages.project.collaboration.changeMemberPassword' | translate }}
+      </button>
       <button mat-menu-item (click)="askToRemoveFromProject(user)" data-cy="remove-member-button">
-        Remove member from project
+        {{ 'pages.project.collaboration.removeMemberFromProject' | translate }}
       </button>
     </mat-menu>
   `,
@@ -125,7 +131,7 @@ export class ProjectMembersRowMenuComponent {
 
   askToRemoveFromProject(user: ReadUser) {
     this._dialog
-      .afterConfirmation('Do you want to remove this user from the project?')
+      .afterConfirmation('pages.project.collaboration.confirmRemoveMember')
       .pipe(
         switchMap(() =>
           this._adminApiService.deleteAdminUsersIriUseririProjectMembershipsProjectiri(user.id, this.project.id)

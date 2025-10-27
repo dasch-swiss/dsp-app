@@ -4,27 +4,18 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   selector: 'app-hint',
   template: `
     <div class="hint">
-      <p>Use special syntax:</p>
+      <p>{{ 'ui.hint.useSpecialSyntax' | translate }}</p>
       <ul>
-        <li>
-          question mark<strong>?</strong> can be used as wildcard symbol for a single character.<br />
-          <code>Example: <i>be?r</i> will find <i>beer</i> but also <i>bear</i></code>
-        </li>
+        <li [innerHTML]="'ui.hint.questionMark' | translate"></li>
         <br />
-        <li>
-          asterisk<strong>*</strong> can be used as a wildcard symbol for zero, one or multiple characters.<br />
-          <code>Example: <i>b*r</i> will find <i>beer</i> but also <i>bear</i></code>
-        </li>
+        <li [innerHTML]="'ui.hint.asterisk' | translate"></li>
         <br />
-        <li>
-          <strong>"</strong>quotation marks<strong>"</strong> searches for the whole pattern.<br />
-          <code class="">Example: <i>"Lorem ipsum"</i> will find texts with exact content <i>Lorem ipsum</i></code>
-        </li>
+        <li [innerHTML]="'ui.hint.quotationMarks' | translate"></li>
       </ul>
     </div>
 
     <a mat-button href="https://docs.dasch.swiss/latest/DSP-APP/user-guide/data/search" target="_blank" color="primary">
-      Read more in the user guide
+      {{ 'ui.hint.readMore' | translate }}
       <mat-icon class="suffix">launch</mat-icon>
     </a>
   `,

@@ -1,10 +1,11 @@
-import { ChangeDetectionStrategy, Component, ViewContainerRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, ViewContainerRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { OntologyMetadata, ReadOntology } from '@dasch-swiss/dsp-js';
 import { DspDialogConfig, RouteConstants } from '@dasch-swiss/vre/core/config';
 import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
 import { DialogService } from '@dasch-swiss/vre/ui/ui';
+import { TranslateService } from '@ngx-translate/core';
 import { switchMap, take } from 'rxjs';
 import { EditOntologyFormDialogComponent } from './forms/ontology-form/edit-ontology-form-dialog.component';
 import { UpdateOntologyData } from './forms/ontology-form/ontology-form.type';
@@ -21,7 +22,7 @@ import { OntologyEditService } from './services/ontology-edit.service';
             data-cy="back-to-data-models"
             mat-button
             (click)="navigateToDataModels()"
-            matTooltip="Back to data models">
+            [matTooltip]="_translate.instant('pages.ontology.editor.backToDataModels')">
             <mat-icon class="centered-icon">chevron_left</mat-icon>
           </button>
           <div class="ontology-info">
@@ -33,7 +34,10 @@ import { OntologyEditService } from './services/ontology-edit.service';
               {{ ontology.label }}
             </h3>
             <p class="mat-caption">
-              <span> Updated on: {{ ontology.lastModificationDate | date: 'medium' }} </span>
+              <span>
+                {{ _translate.instant('pages.ontology.editor.updatedOn') }}
+                {{ ontology.lastModificationDate | date: 'medium' }}
+              </span>
             </p>
           </div>
           <span class="fill-remaining-space"></span>
@@ -43,24 +47,26 @@ import { OntologyEditService } from './services/ontology-edit.service';
                 color="primary"
                 data-cy="edit-ontology-button"
                 mat-button
-                [matTooltip]="(hasProjectAdminRights$ | async) ? 'Edit data model info' : ''"
+                [matTooltip]="
+                  (hasProjectAdminRights$ | async) ? _translate.instant('pages.ontology.editor.editInfo') : ''
+                "
                 [disabled]="(project$ | async)?.status !== true"
                 (click)="$event.stopPropagation(); editOntology(ontology)">
                 <mat-icon>edit</mat-icon>
-                Edit
+                {{ _translate.instant('ui.common.actions.edit') }}
               </button>
               <button
                 color="warn"
                 mat-button
                 [matTooltip]="
                   (currentOntologyCanBeDeleted$ | async)
-                    ? 'Delete data model'
-                    : 'This data model cant be deleted because it is in use!'
+                    ? _translate.instant('pages.ontology.editor.deleteTooltip')
+                    : _translate.instant('pages.ontology.editor.cannotDelete')
                 "
                 [disabled]="(currentOntologyCanBeDeleted$ | async) !== true"
                 (click)="deleteOntology(ontology.id)">
                 <mat-icon>delete</mat-icon>
-                Delete
+                {{ _translate.instant('ui.common.actions.delete') }}
               </button>
             </div>
           }
@@ -111,6 +117,8 @@ export class OntologyEditorHeaderComponent {
   project$ = this._projectPageService.currentProject$;
   hasProjectAdminRights$ = this._projectPageService.hasProjectAdminRights$;
 
+  protected readonly _translate = inject(TranslateService);
+
   constructor(
     private _dialog: MatDialog,
     private _dialogService: DialogService,
@@ -135,7 +143,7 @@ export class OntologyEditorHeaderComponent {
 
   deleteOntology(ontologyId: string) {
     this._dialogService
-      .afterConfirmation('Do you want to delete this data model ?')
+      .afterConfirmation(this._translate.instant('pages.ontology.editor.deleteConfirmation'))
       .pipe(
         switchMap(_del => this._oes.deleteOntology$(ontologyId)),
         take(1)

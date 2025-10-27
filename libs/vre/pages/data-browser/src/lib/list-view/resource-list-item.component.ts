@@ -20,7 +20,9 @@ import { MultipleViewerService } from '../comparison/multiple-viewer.service';
             {{ resource.label }}
           </div>
           @if (foundIn.length > 0) {
-            <div class="found-in">Found in: {{ foundIn.join(', ') }}</div>
+            <div class="found-in">
+              {{ 'pages.dataBrowser.resourceListItem.foundIn' | translate }}{{ foundIn.join(', ') }}
+            </div>
           }
         </div>
 

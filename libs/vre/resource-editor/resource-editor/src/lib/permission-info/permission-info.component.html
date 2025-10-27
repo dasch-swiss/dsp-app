@@ -1,7 +1,7 @@
 <button
   color="primary"
   mat-icon-button
-  matTooltip="Resource permissions"
+  [matTooltip]="'resourceEditor.permissionInfo.tooltip' | translate"
   matTooltipPosition="above"
   cdkOverlayOrigin
   #infoButton="cdkOverlayOrigin"

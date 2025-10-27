@@ -1,7 +1,7 @@
 <div style="background: black; height: 200px; display: flex; justify-content: center; align-items: center">
   <mat-icon style="color: white; transform: scale(4)"> audio_file</mat-icon>
   @if (failedToLoad) {
-  <div>Your browser does not support the audio element.</div>
+  <div>{{ 'resourceEditor.representations.audio.browserNotSupported' | translate }}</div>
   } @if (audioFileUrl) {
   <div class="audio-player">
     <audio id="audio" preload="auto" (loadedmetadata)="onAudioPlayerReady()">

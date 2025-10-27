@@ -1,9 +1,10 @@
-import { Component, Input } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { Constants, ReadLinkValue, ReadResource } from '@dasch-swiss/dsp-js';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { ResourceFetcherService } from '@dasch-swiss/vre/resource-editor/representations';
 import { ResourceService } from '@dasch-swiss/vre/shared/app-common';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-resource-toolbar',
@@ -11,7 +12,7 @@ import { NotificationService } from '@dasch-swiss/vre/ui/notification';
     <span class="action">
       <button
         mat-icon-button
-        matTooltip="Open resource in new tab"
+        [matTooltip]="'resourceEditor.toolbar.openInNewTab' | translate"
         color="primary"
         data-cy="open-in-new-window-button"
         matTooltipPosition="above"
@@ -22,7 +23,9 @@ import { NotificationService } from '@dasch-swiss/vre/ui/notification';
         color="primary"
         mat-icon-button
         data-cy="share-button"
-        matTooltip="Share resource: {{ resource.versionArkUrl }}"
+        [matTooltip]="
+          _translateService.instant('resourceEditor.toolbar.shareResource', { arkUrl: resource.versionArkUrl })
+        "
         matTooltipPosition="above"
         [matMenuTriggerFor]="share">
         <mat-icon>share</mat-icon>
@@ -37,23 +40,23 @@ import { NotificationService } from '@dasch-swiss/vre/ui/notification';
     <mat-menu #share="matMenu" class="res-share-menu">
       <button
         mat-menu-item
-        matTooltip="Copy ARK url"
+        [matTooltip]="'resourceEditor.toolbar.copyArkUrl' | translate"
         matTooltipPosition="above"
         data-cy="copy-ark-url-button"
         [cdkCopyToClipboard]="resource.versionArkUrl"
-        (click)="notification.openSnackBar('ARK URL copied to clipboard!')">
+        (click)="notification.openSnackBar(_translateService.instant('resourceEditor.toolbar.arkUrlCopied'))">
         <mat-icon>content_copy</mat-icon>
-        Copy ARK url to clipboard
+        {{ 'resourceEditor.toolbar.copyArkUrlToClipboard' | translate }}
       </button>
       <button
         mat-menu-item
-        matTooltip="Copy internal link"
+        [matTooltip]="'resourceEditor.toolbar.copyInternalLink' | translate"
         data-cy="copy-internal-link-button"
         matTooltipPosition="above"
         [cdkCopyToClipboard]="resource.id"
-        (click)="notification.openSnackBar('Internal link copied to clipboard!')">
+        (click)="notification.openSnackBar(_translateService.instant('resourceEditor.toolbar.internalLinkCopied'))">
         <mat-icon>content_copy</mat-icon>
-        Copy internal link to clipboard
+        {{ 'resourceEditor.toolbar.copyInternalLinkToClipboard' | translate }}
       </button>
     </mat-menu>
   `,
@@ -76,6 +79,8 @@ export class ResourceToolbarComponent {
 
   userCanEdit$ = this._resourceFetcherService.userCanEdit$;
   userCanDelete$ = this._resourceFetcherService.userCanDelete$;
+
+  protected readonly _translateService = inject(TranslateService);
 
   constructor(
     protected notification: NotificationService,

@@ -10,8 +10,8 @@ import { MultipleViewerService } from './multiple-viewer.service';
         <app-centered-box>
           <app-centered-message
             [icon]="'arrow_circle_left'"
-            [title]="'Select a resource on the left panel'"
-            [message]="'Choose one or more resources from the left panel to display and compare them here.'" />
+            [title]="'pages.dataBrowser.multipleViewer.selectResource' | translate"
+            [message]="'pages.dataBrowser.multipleViewer.chooseResources' | translate" />
         </app-centered-box>
       } @else {
         @if (multipleViewerService.selectMode) {
@@ -23,8 +23,8 @@ import { MultipleViewerService } from './multiple-viewer.service';
           <app-centered-box>
             <app-centered-message
               [icon]="'warning'"
-              [title]="'Too many resources selected.'"
-              [message]="'Maximum ' + MAX_RESOURCES + ' resources can be compared at the same time.'" />
+              [title]="'pages.dataBrowser.multipleViewer.tooManyResources' | translate"
+              [message]="'pages.dataBrowser.multipleViewer.maxResources' | translate: { count: MAX_RESOURCES }" />
           </app-centered-box>
         }
       }

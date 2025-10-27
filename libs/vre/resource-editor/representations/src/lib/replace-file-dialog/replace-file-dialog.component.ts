@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {
   KnoraApiConnection,
@@ -9,6 +9,7 @@ import {
   UpdateStillImageFileValue,
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
+import { TranslateService } from '@ngx-translate/core';
 import { FileForm } from '../file-form.type';
 import { FileRepresentationType } from '../file-representation.type';
 import { fileValueMapping } from '../file-value-mapping';
@@ -31,7 +32,13 @@ export interface ReplaceFileDialogProps {
           <div class="icon">
             <mat-icon>warning</mat-icon>
           </div>
-          <div class="message">{{ data.title }} will be replaced.</div>
+          <div class="message">
+            {{
+              _translateService.instant('resourceEditor.representations.replaceFileDialog.willBeReplaced', {
+                title: data.title,
+              })
+            }}
+          </div>
         </div>
       </div>
 
@@ -45,7 +52,7 @@ export interface ReplaceFileDialogProps {
 
     <mat-dialog-actions align="end">
       <button mat-button type="button" data-cy="replace-file-cancel-button" (click)="dialogRef.close()">
-        {{ 'ui.form.action.cancel' | translate }}
+        {{ 'ui.common.actions.cancel' | translate }}
       </button>
       <button
         mat-raised-button
@@ -53,7 +60,7 @@ export interface ReplaceFileDialogProps {
         data-cy="replace-file-submit-button"
         [color]="'primary'"
         (click)="replaceFile()">
-        {{ 'ui.form.action.submit' | translate }}
+        {{ 'ui.common.actions.submit' | translate }}
       </button>
     </mat-dialog-actions>
   `,
@@ -62,6 +69,8 @@ export interface ReplaceFileDialogProps {
 })
 export class ReplaceFileDialogComponent {
   form!: FileForm;
+
+  readonly _translateService = inject(TranslateService);
 
   constructor(
     @Inject(MAT_DIALOG_DATA)

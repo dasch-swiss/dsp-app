@@ -12,16 +12,16 @@ import { map, Observable } from 'rxjs';
   template: `
     @if (project$ | async; as project) {
       <div class="infobar mat-caption">
-        Resource of the project
+        {{ 'resourceEditor.infoBar.resourceOfProject' | translate }}
         <a (click)="openProject(project)" class="link" [title]="project.longname">
           <strong>{{ project?.shortname }}</strong></a
         >,
         @if (resourceAttachedUser$ | async; as resourceAttachedUser) {
           <span>
-            created
+            {{ 'resourceEditor.infoBar.created' | translate }}
             @if (resourceAttachedUser) {
               <span
-                >by
+                >{{ 'resourceEditor.infoBar.by' | translate }}
                 {{
                   resourceAttachedUser?.givenName || resourceAttachedUser?.familyName
                     ? resourceAttachedUser?.givenName + ' ' + resourceAttachedUser?.familyName
@@ -30,7 +30,7 @@ import { map, Observable } from 'rxjs';
               >
             }
             @if (resource.creationDate) {
-              <span> on {{ resource.creationDate | date }}</span>
+              <span> {{ 'resourceEditor.infoBar.on' | translate }} {{ resource.creationDate | date }}</span>
             }
           </span>
         }

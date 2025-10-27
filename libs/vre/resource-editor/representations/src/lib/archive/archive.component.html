@@ -24,11 +24,11 @@
         </button>
         <mat-menu #more="matMenu" class="representation-menu">
           <button class="menu-content" mat-menu-item (click)="download()" data-cy="download-file-button">
-            Download file
+            {{ 'resourceEditor.representations.downloadFile' | translate }}
           </button>
           @if (resourceFetcherService.userCanEdit$ | async) {
           <button class="menu-content" mat-menu-item (click)="openReplaceFileDialog()" data-cy="replace-file-button">
-            Replace file
+            {{ 'resourceEditor.representations.replaceFile' | translate }}
           </button>
           }
         </mat-menu>
@@ -37,5 +37,5 @@
   </div>
 </div>
 } @if (!src || !src.fileUrl) {
-<div>No valid file url found for this resource.</div>
+<div>{{ 'resourceEditor.representations.archive.noValidFileUrl' | translate }}</div>
 }

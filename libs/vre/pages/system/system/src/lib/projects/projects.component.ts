@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit } from '@a
 import { Title } from '@angular/platform-browser';
 import { UserService } from '@dasch-swiss/vre/core/session';
 import { AllProjectsService } from '@dasch-swiss/vre/pages/user-settings/user';
+import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, combineLatest, map, Subject, switchMap, takeUntil, tap } from 'rxjs';
 
 /**
@@ -68,7 +69,8 @@ export class ProjectsComponent implements OnInit, OnDestroy {
   constructor(
     private _userService: UserService,
     private _allProjectsService: AllProjectsService,
-    private _titleService: Title
+    private _titleService: Title,
+    private _translateService: TranslateService
   ) {}
 
   ngOnInit() {

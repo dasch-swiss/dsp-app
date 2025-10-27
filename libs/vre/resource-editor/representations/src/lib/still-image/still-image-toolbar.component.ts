@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Inject, Input, Output, ViewContainerRef } from '@angular/core';
+import { Component, EventEmitter, Inject, inject, Input, Output, ViewContainerRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -14,6 +14,7 @@ import {
 import { DspApiConnectionToken, DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import { AppError } from '@dasch-swiss/vre/core/error-handler';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
+import { TranslateService } from '@ngx-translate/core';
 import {
   ReplaceFileDialogComponent,
   ReplaceFileDialogProps,
@@ -82,6 +83,8 @@ export class StillImageToolbarComponent {
   get userCanView() {
     return this.imageFileValue && ResourceUtil.userCanView(this.imageFileValue);
   }
+
+  readonly _translateService = inject(TranslateService);
 
   constructor(
     public notification: NotificationService,

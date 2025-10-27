@@ -50,7 +50,7 @@
     <span class="white-space">
       @if (property.usedByClasses.length) {
       <span>
-        <span class="mat-caption">&gt; Property is used in:</span>
+        <span class="mat-caption">&gt; {{ 'pages.ontology.propertyInfo.usedIn' | translate }} </span>
         @for (c of property.usedByClasses; track trackByFn($index, c); let last = $last) {
         <span>
           <span
@@ -59,7 +59,11 @@
             [matTooltipDisabled]="isLockHovered"
             >{{ c.labels | appStringifyStringLiteral }} @if (c.id && c.id === c.restrictedToClass) {
             <span
-              [matTooltip]="'This property can only be used by the class ' + (c.labels | appStringifyStringLiteral)"
+              [matTooltip]="
+                _translate.instant('pages.ontology.propertyInfo.restrictedTo', {
+                  className: c.labels | appStringifyStringLiteral
+                })
+              "
               (mouseenter)="isLockHovered = true"
               (mouseleave)="isLockHovered = false">
               <mat-icon class="type">lock</mat-icon>
@@ -74,7 +78,7 @@
       } @else {
       <span class="mat-caption"
         >&gt;
-        <span class="not-used">This property is not used in a class.</span>
+        <span class="not-used">{{ 'pages.ontology.propertyInfo.notUsed' | translate }}</span>
       </span>
       }
     </span>
@@ -84,7 +88,11 @@
     <div class="button-container">
       <button
         [disabled]="!property.propDef!.isEditable"
-        [matTooltip]="property.propDef!.isEditable ? 'Edit property' : 'The property can\'t be edited; No further information available'"
+        [matTooltip]="
+          property.propDef!.isEditable
+            ? _translate.instant('pages.ontology.propertyInfo.edit')
+            : _translate.instant('pages.ontology.propertyInfo.cannotEdit')
+        "
         matTooltipPosition="above"
         mat-button
         class="edit"
@@ -92,7 +100,11 @@
         <mat-icon>edit</mat-icon>
       </button>
       <span
-        [matTooltip]="((canBeDeleted$ | async) === false ? 'The property can\'t be deleted because it is used in a class' : 'Delete property')"
+        [matTooltip]="
+          (canBeDeleted$ | async) === false
+            ? _translate.instant('pages.ontology.propertyInfo.cannotDelete')
+            : _translate.instant('pages.ontology.propertyInfo.delete')
+        "
         matTooltipPosition="above">
         <button
           mat-button

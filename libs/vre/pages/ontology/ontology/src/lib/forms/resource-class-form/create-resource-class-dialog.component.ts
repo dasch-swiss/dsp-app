@@ -9,12 +9,14 @@ import { ResourceClassForm, ResourceClassFormData } from './resource-class-form.
 @Component({
   selector: 'app-create-resource-class-dialog',
   template: `
-    <app-dialog-header [title]="data.label" subtitle="Create resource class" />
+    <app-dialog-header
+      [title]="data.label"
+      [subtitle]="'pages.ontology.resourceClassForm.createSubtitle' | translate" />
     <div mat-dialog-content>
       <app-resource-class-form [formData]="formData" (afterFormInit)="afterFormInit($event)" />
     </div>
     <div mat-dialog-actions align="end">
-      <button data-cy="cancel-button" mat-button mat-dialog-close>Cancel</button>
+      <button data-cy="cancel-button" mat-button mat-dialog-close>{{ 'ui.common.actions.cancel' | translate }}</button>
       <button
         data-cy="submit-button"
         mat-raised-button
@@ -23,7 +25,7 @@ import { ResourceClassForm, ResourceClassFormData } from './resource-class-form.
         [isLoading]="loading"
         [disabled]="form?.invalid"
         (click)="onSubmit()">
-        Create
+        {{ 'ui.common.actions.create' | translate }}
       </button>
     </div>
   `,

@@ -30,7 +30,7 @@ import { OntologyForm } from './ontology-form.type';
     </div>
 
     <div mat-dialog-actions align="end">
-      <button color="primary" mat-button mat-dialog-close>{{ 'ui.form.action.cancel' | translate }}</button>
+      <button color="primary" mat-button mat-dialog-close>{{ 'ui.common.actions.cancel' | translate }}</button>
       <button
         mat-raised-button
         color="primary"
@@ -38,7 +38,7 @@ import { OntologyForm } from './ontology-form.type';
         [isLoading]="loading"
         data-cy="submit-button"
         (click)="onSubmit()">
-        {{ 'ui.form.action.submit' | translate }}
+        {{ 'ui.common.actions.submit' | translate }}
       </button>
     </div>`,
   standalone: false,
@@ -52,13 +52,12 @@ export class CreateOntologyFormDialogComponent implements OnDestroy {
 
   readonly ontoNamePatternErrorMsg = {
     errorKey: 'pattern',
-    message:
-      "Name shouldn't start with a number or v + number and spaces or special characters (except dash, dot and underscore) are not allowed.",
+    message: 'pages.ontology.ontologyForm.namePatternError',
   };
 
   readonly ontoNameExistsErrorMsg = {
     errorKey: 'pattern',
-    message: 'This name is not allowed or exists already.',
+    message: 'pages.ontology.ontologyForm.nameExistsError',
   };
 
   get blackListedNames() {

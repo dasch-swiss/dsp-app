@@ -1,5 +1,5 @@
 <div class="main-row">
-  <div class="paginator-item-range">Showing {{ itemRange }}</div>
+  <div class="paginator-item-range">{{ 'ui.pager.showing' | translate }} {{ itemRange }}</div>
 
   <div class="paginator-container">
     <button
@@ -33,7 +33,7 @@
     </div>
     <button
       mat-icon-button
-      [matTooltip]="'ui.pager.nextPage' | translate"
+      [matTooltip]="'ui.common.actions.next' | translate"
       (click)="pageIndex = pageIndex + 1"
       [disabled]="pageIndex === lastPageIndex">
       <mat-icon>chevron_right</mat-icon>

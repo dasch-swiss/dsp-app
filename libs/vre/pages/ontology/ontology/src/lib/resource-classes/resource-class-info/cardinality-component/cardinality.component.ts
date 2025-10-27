@@ -45,7 +45,7 @@ import { CardinalityChangeDialogComponent, CardinalityInfo } from './cardinality
         [ngClass]="disabled || disabledForBooleanType ? 'card-disabled' : 'card-enabled'"
         [(ngModel)]="multipleCheckboxState"
         (change)="onCheckboxChange()" />
-      <label>Multiple values</label>
+      <label>{{ 'pages.ontology.cardinality.multipleValues' | translate }}</label>
     </div>
     <div class="cardinality-checkbox">
       <input
@@ -54,7 +54,7 @@ import { CardinalityChangeDialogComponent, CardinalityInfo } from './cardinality
         [ngClass]="disabled ? 'card-disabled' : 'card-enabled'"
         [(ngModel)]="requiredCheckboxState"
         (change)="onCheckboxChange()" />
-      <label>Required</label>
+      <label>{{ 'pages.ontology.cardinality.required' | translate }}</label>
     </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,

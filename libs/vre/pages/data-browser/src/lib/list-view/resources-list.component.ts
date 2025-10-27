@@ -8,7 +8,9 @@ import { ResourceResultService } from '../resource-result.service';
   selector: 'app-resources-list',
   template: ` @if (showBackToFormButton) {
       <div style="padding: 16px; display: flex; flex-direction: row-reverse">
-        <a mat-stroked-button (click)="navigate()"><mat-icon>chevron_left</mat-icon>Back to search form</a>
+        <a mat-stroked-button (click)="navigate()">
+          <mat-icon>chevron_left</mat-icon>{{ 'pages.dataBrowser.resourcesList.backToSearchForm' | translate }}
+        </a>
       </div>
     }
 

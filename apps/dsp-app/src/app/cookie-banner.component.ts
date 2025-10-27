@@ -7,12 +7,14 @@ import { RouteConstants } from '@dasch-swiss/vre/core/config';
   template: ` @if (showCookieBanner) {
     <div class="cookie-banner">
       <p class="note">
-        This web-application uses cookies to provide you with a greater user experience. By using the application you
-        accept our
-        <span class="link" (click)="goToCookiePolicy()">use of cookies</span>.
+        {{ 'app.cookieBanner.message' | translate }}
+        <span class="link" (click)="goToCookiePolicy()">{{ 'app.cookieBanner.useOfCookies' | translate }}</span
+        >.
       </p>
       <div class="action">
-        <button mat-flat-button color="primary" (click)="closeCookieBanner()" data-cy="accept-cookies">ACCEPT</button>
+        <button mat-flat-button color="primary" (click)="closeCookieBanner()" data-cy="accept-cookies">
+          {{ 'app.cookieBanner.accept' | translate }}
+        </button>
       </div>
     </div>
   }`,

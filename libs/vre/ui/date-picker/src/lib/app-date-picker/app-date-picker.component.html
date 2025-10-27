@@ -11,7 +11,7 @@
       matInput
       class="date-picker-input date"
       [formControlName]="'date'"
-      placeholder="Click to select a date"
+      [placeholder]="'ui.datePicker.clickToSelect' | translate"
       autocomplete="off"
       readonly />
     <mat-icon color="primary" matSuffix class="link">event</mat-icon>
@@ -32,7 +32,7 @@
     <!-- select calendar and button to close date picker -->
     <div class="calendar-selector panel">
       <mat-form-field class="calendar">
-        <mat-label>Calendar</mat-label>
+        <mat-label>{{ 'ui.datePicker.calendar' | translate }}</mat-label>
         <mat-select formControlName="calendar" class="center">
           @for (cal of calendars; track cal) {
           <mat-option [value]="cal"> {{ titleCase(cal) }} </mat-option>
@@ -42,7 +42,7 @@
       <span class="fill-remaining-space"></span>
       <div class="action">
         <!-- go to the current date -->
-        <button mat-button (click)="setToday()">Today</button>
+        <button mat-button (click)="setToday()">{{ 'ui.datePicker.today' | translate }}</button>
         <!-- submit button (which is needed if date doesn't have precision on an exact day) -->
         <button mat-icon-button color="primary" [disabled]="!form.valid" (click)="setDate(day); closeDatePicker()">
           <mat-icon>done</mat-icon>
@@ -54,9 +54,9 @@
     <div class="month-year-selector panel">
       <!-- select month -->
       <mat-form-field class="month" [class.larger]="calendar === 'ISLAMIC'">
-        <mat-label>Month</mat-label>
+        <mat-label>{{ 'ui.datePicker.month' | translate }}</mat-label>
         <mat-select formControlName="month" class="center">
-          <mat-option>None</mat-option>
+          <mat-option>{{ 'ui.datePicker.none' | translate }}</mat-option>
           @for (month of months; track month[0]; let i = $index) {
           <mat-option [value]="i + 1">
             @if (calendar !== 'ISLAMIC') {
@@ -70,7 +70,7 @@
       </mat-form-field>
       <!-- set year incl. era -->
       <mat-form-field class="year" [class.withButtonToggle]="calendar !== 'ISLAMIC'">
-        <mat-label>Year</mat-label>
+        <mat-label>{{ 'ui.datePicker.year' | translate }}</mat-label>
         <input matInput type="number" formControlName="year" min="1" class="center" />
         @if (formErrors.year) {
         <mat-error> {{ formErrors.year }}</mat-error>
@@ -105,10 +105,7 @@
           }
         </p>
         } @if (era === 'BCE') {
-        <p class="mat-caption center">
-          <!-- <mat-icon>warn</mat-icon> -->
-          Attention: Date <strong>before common era</strong>.
-        </p>
+        <p class="mat-caption center" [innerHTML]="'ui.datePicker.bceWarning' | translate"></p>
         }
       </div>
       @for (week of weeks; track week; let last = $last) {

@@ -15,12 +15,14 @@ export interface EditResourceClassDialogProps {
 @Component({
   selector: 'app-edit-resource-class-dialog',
   template: `
-    <app-dialog-header [title]="data.labels | appStringifyStringLiteral" subtitle="Customize resource class" />
+    <app-dialog-header
+      [title]="data.labels | appStringifyStringLiteral"
+      [subtitle]="'pages.ontology.resourceClassForm.editSubtitle' | translate" />
     <div mat-dialog-content>
       <app-resource-class-form [formData]="formData" (afterFormInit)="afterFormInit($event)" />
     </div>
     <div mat-dialog-actions align="end">
-      <button data-cy="cancel-button" mat-button mat-dialog-close>Cancel</button>
+      <button data-cy="cancel-button" mat-button mat-dialog-close>{{ 'ui.common.actions.cancel' | translate }}</button>
       <button
         data-cy="submit-button"
         mat-raised-button
@@ -29,7 +31,7 @@ export interface EditResourceClassDialogProps {
         [isLoading]="loading"
         [disabled]="form?.invalid"
         (click)="onSubmit()">
-        Update
+        {{ 'ui.common.actions.update' | translate }}
       </button>
     </div>
   `,

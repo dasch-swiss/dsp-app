@@ -20,19 +20,23 @@ export interface EditPasswordDialogProps {
     <div mat-dialog-content>
       <mat-stepper orientation="vertical" linear #stepper>
         <mat-step
-          [label]="'For security reasons, please enter your current password'"
+          [label]="'pages.userSettings.passwordForm.currentPasswordStep' | translate"
           [stepControl]="adminPasswordControl"
           [editable]="false">
           <app-password-form-field
             [control]="adminPasswordControl"
-            [placeholder]="'Your current password'"
+            [placeholder]="'pages.userSettings.passwordForm.currentPasswordPlaceholder' | translate"
             [showToggleVisibility]="true"
-            [validatorErrors]="[{ errorKey: 'incorrect', message: 'The password entered is incorrect' }]" />
+            [validatorErrors]="[
+              { errorKey: 'incorrect', message: 'pages.userSettings.passwordForm.incorrectPassword' | translate },
+            ]" />
 
-          <button mat-raised-button color="primary" (click)="checkAdminPassword()">Next</button>
+          <button mat-raised-button color="primary" (click)="checkAdminPassword()">
+            {{ 'ui.common.actions.next' | translate }}
+          </button>
         </mat-step>
 
-        <mat-step [label]="'Enter the new password'">
+        <mat-step [label]="'pages.userSettings.passwordForm.newPasswordStep' | translate">
           <app-password-confirm-form (afterFormInit)="newPasswordControl = $event" />
 
           <button
@@ -42,13 +46,15 @@ export interface EditPasswordDialogProps {
             [isLoading]="updateLoading"
             (click)="updateNewPassword()"
             style="margin-top: 16px">
-            Update
+            {{ 'ui.common.actions.update' | translate }}
           </button>
         </mat-step>
       </mat-stepper>
     </div>
 
-    <div mat-dialog-actions align="end"><button mat-button color="primary" matDialogClose>Cancel</button></div>
+    <div mat-dialog-actions align="end">
+      <button mat-button color="primary" matDialogClose>{{ 'ui.common.actions.cancel' | translate }}</button>
+    </div>
   `,
   styles: [
     `

@@ -10,7 +10,8 @@ import {
 @Component({
   selector: 'app-time-viewer',
   template: `
-    <span data-cy="time-switch-date">{{ dateTime | date: 'dd.MM.YYYY' }}</span> at
+    <span data-cy="time-switch-date">{{ dateTime | date: 'dd.MM.YYYY' }}</span>
+    {{ 'resourceEditor.templateSwitcher.timeViewer.at' | translate }}
     <span data-cy="time-switch-time">{{ dateTime | date: 'HH:mm' }}</span>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,

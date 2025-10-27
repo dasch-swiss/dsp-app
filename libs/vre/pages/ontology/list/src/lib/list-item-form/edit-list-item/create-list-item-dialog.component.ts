@@ -17,14 +17,14 @@ export interface CreateListItemDialogProps {
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-create-list-item-dialog',
   template: `
-    <app-dialog-header title="Insert new child node" />
+    <app-dialog-header [title]="'pages.ontology.list.createDialog.title' | translate" />
 
     <div mat-dialog-content>
       <app-reusable-list-item-form [formData]="initialFormValue" (afterFormInit)="form = $event" />
     </div>
 
     <div mat-dialog-actions align="end">
-      <button mat-button mat-dialog-close>Cancel</button>
+      <button mat-button mat-dialog-close>{{ 'ui.common.actions.cancel' | translate }}</button>
 
       <button
         mat-raised-button
@@ -33,7 +33,7 @@ export interface CreateListItemDialogProps {
         [isLoading]="loading"
         [disabled]="form.invalid"
         (click)="createChildNode()">
-        Submit
+        {{ 'ui.common.actions.submit' | translate }}
       </button>
     </div>
   `,

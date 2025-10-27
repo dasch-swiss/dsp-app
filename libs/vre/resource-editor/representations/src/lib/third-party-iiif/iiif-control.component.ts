@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { TranslateService } from '@ngx-translate/core';
 import { startWith, Subscription } from 'rxjs';
 import { IIIFUrl } from './third-party-iiif';
 
@@ -13,12 +14,12 @@ import { IIIFUrl } from './third-party-iiif';
     }
 
     <mat-form-field style="width: 100%">
-      <mat-label>IIIF Image URL</mat-label>
+      <mat-label>{{ 'resourceEditor.representations.iiifControl.label' | translate }}</mat-label>
       <input
         matInput
         [formControl]="control"
         data-cy="external-iiif-input"
-        placeholder="https://example.org/image-service/abcd1234/full/max/0/default.jpg" />
+        [placeholder]="'resourceEditor.representations.iiifControl.placeholder' | translate" />
 
       @if (control.errors; as errors) {
         <mat-error> {{ errors | humanReadableError: validatorErrors }}</mat-error>
@@ -49,12 +50,25 @@ export class IiifControlComponent implements OnInit, OnDestroy {
   previewImageUrl?: string;
 
   private subscription!: Subscription;
+  private readonly _translateService = inject(TranslateService);
 
   readonly validatorErrors = [
-    { errorKey: 'invalidIiifUrl', message: 'The provided URL is not a valid IIIF image URL.' },
-    { errorKey: 'previewImageError', message: 'The image cannot be loaded from the third party server.' },
-    { errorKey: 'infoJsonError', message: 'The IIIF info JSON can not be loaded from the third party server.' },
-    { errorKey: 'invalidHost', message: 'The provided URL is not from an external source.' },
+    {
+      errorKey: 'invalidIiifUrl',
+      message: this._translateService.instant('resourceEditor.representations.iiifControl.errors.invalidUrl'),
+    },
+    {
+      errorKey: 'previewImageError',
+      message: this._translateService.instant('resourceEditor.representations.iiifControl.errors.previewImageError'),
+    },
+    {
+      errorKey: 'infoJsonError',
+      message: this._translateService.instant('resourceEditor.representations.iiifControl.errors.infoJsonError'),
+    },
+    {
+      errorKey: 'invalidHost',
+      message: this._translateService.instant('resourceEditor.representations.iiifControl.errors.invalidHost'),
+    },
   ];
 
   constructor(private readonly _cdr: ChangeDetectorRef) {}

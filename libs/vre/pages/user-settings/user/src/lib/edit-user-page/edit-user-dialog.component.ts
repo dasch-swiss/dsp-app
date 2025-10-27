@@ -16,7 +16,12 @@ export interface EditUserDialogProps {
 @Component({
   selector: 'app-edit-user-dialog',
   template: `
-    <app-dialog-header [title]="data.isOwnAccount ? 'Edit my profile' : 'Edit user'" />
+    <app-dialog-header
+      [title]="
+        data.isOwnAccount
+          ? ('pages.userSettings.editUserDialog.editMyProfile' | translate)
+          : ('pages.userSettings.editUserDialog.editUser' | translate)
+      " />
     @if (data.user; as user) {
       <div mat-dialog-content>
         <app-user-form [data]="user" (afterFormInit)="afterFormInit($event)" />
@@ -24,9 +29,9 @@ export interface EditUserDialogProps {
     }
 
     <div mat-dialog-actions align="end">
-      <button color="primary" mat-button mat-dialog-close>{{ 'ui.form.action.cancel' | translate }}</button>
+      <button color="primary" mat-button mat-dialog-close>{{ 'ui.common.actions.cancel' | translate }}</button>
       <button mat-raised-button color="primary" (click)="updateUser()">
-        {{ 'ui.form.action.update' | translate }}
+        {{ 'ui.common.actions.update' | translate }}
       </button>
     </div>
   `,

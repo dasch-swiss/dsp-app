@@ -16,7 +16,7 @@ export interface ClassToSelect {
   template: `
     <mat-form-field>
       <span matPrefix> <mat-icon>tune</mat-icon>&nbsp; </span>
-      <mat-label>Select resource class</mat-label>
+      <mat-label>{{ 'pages.ontology.propertyForm.selectResourceClass' | translate }}</mat-label>
       <mat-select [formControl]="control">
         @for (onto of ontologyClasses$ | async; track onto) {
           <mat-optgroup [label]="onto.ontologyLabel">

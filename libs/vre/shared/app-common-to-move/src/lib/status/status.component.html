@@ -10,7 +10,7 @@
       @if (comment) {
       <p>
         @if (message?.type === 'error') {
-        <span> <strong>Response in detail:</strong><br />&rarr; </span>
+        <span> <strong>{{ 'shared.status.responseInDetail' | translate }}:</strong><br />&rarr; </span>
         }
         <span [innerHTML]="comment | appLinkify"></span>
       </p>
@@ -19,13 +19,10 @@
         @switch (message?.action) { @case ('goback') {
         <button mat-button routerLink="{{homeLink}}">
           <mat-icon>keyboard_backspace</mat-icon>
-          Please go back to the start page.
+          {{ 'shared.status.goBackToStartPage' | translate }}
         </button>
         } @case ('reload') {
-        <p>
-          Please come back in a few minutes and try to
-          <a (click)="reload()">reload the page</a>.
-        </p>
+        <p [innerHTML]="'shared.status.reloadPrompt' | translate"></p>
         } @case ('goto') {
         <p class="goto" [innerHtml]="url | appLinkify"></p>
         } }

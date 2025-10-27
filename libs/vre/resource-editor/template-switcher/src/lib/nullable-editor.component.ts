@@ -10,9 +10,9 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
         <button
           mat-icon-button
           (click)="setValue(null)"
-          title="Remove"
+          [title]="'resourceEditor.templateSwitcher.nullableEditor.remove' | translate"
           data-cy="add-value-button"
-          matTooltip="Remove that value">
+          [matTooltip]="'resourceEditor.templateSwitcher.nullableEditor.removeTooltip' | translate">
           <mat-icon>cancel</mat-icon>
         </button>
       </div>
@@ -20,9 +20,9 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
       <button
         mat-icon-button
         (click)="setValue(defaultValue)"
-        title="Add"
+        [title]="'resourceEditor.templateSwitcher.nullableEditor.add' | translate"
         data-cy="add-value-button"
-        matTooltip="Set a value">
+        [matTooltip]="'resourceEditor.templateSwitcher.nullableEditor.addTooltip' | translate">
         <mat-icon>add_box</mat-icon>
       </button>
     }

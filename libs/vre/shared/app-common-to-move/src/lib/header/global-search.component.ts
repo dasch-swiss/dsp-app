@@ -19,7 +19,7 @@ import { SearchTipsComponent } from '@dasch-swiss/vre/pages/search/search';
         (focus)="showSearchTips()"
         (blur)="hideSearchTips()"
         style="border: none; outline: none; padding: 0 16px; font-size: 14px; min-width: 260px"
-        placeholder="Search everywhere" />
+        [placeholder]="'shared.header.searchEverywhere' | translate" />
       <button mat-icon-button class="small-icon-button">
         <mat-icon>search</mat-icon>
       </button>

@@ -12,7 +12,7 @@ import { combineLatest, EMPTY, first, map } from 'rxjs';
     @if (data$ | async; as classSelected) {
       @if (dataIsNotFound) {
         <app-centered-box>
-          <app-no-results-found [message]="'There are no data corresponding to your request.'" />
+          <app-no-results-found [message]="'pages.dataBrowser.dataClassView.noData' | translate" />
         </app-centered-box>
       } @else {
         <as-split>

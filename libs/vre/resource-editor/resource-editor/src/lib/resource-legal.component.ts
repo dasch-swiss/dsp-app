@@ -16,11 +16,14 @@ import { switchMap, take } from 'rxjs';
         <div style="display: flex; justify-content: space-between">
           <div>
             @if (fileValue.copyrightHolder) {
-              <div><span class="label">Copyright holder</span>{{ fileValue.copyrightHolder }}</div>
+              <div>
+                <span class="label">{{ 'resourceEditor.legal.copyrightHolder' | translate }}</span
+                >{{ fileValue.copyrightHolder }}
+              </div>
             }
             @if (fileValue.authorship.length > 0) {
               <div style="display: flex">
-                <span class="label">Authorship</span>
+                <span class="label">{{ 'resourceEditor.legal.authorship' | translate }}</span>
                 <div style="max-width: 400px">
                   @for (author of fileValue.authorship; track author; let last = $last) {
                     <span>{{ author }}{{ last ? '' : ', ' }}</span>

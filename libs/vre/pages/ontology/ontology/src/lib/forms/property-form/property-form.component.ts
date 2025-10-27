@@ -14,7 +14,7 @@ import { PropertyForm, EditPropertyDialogData } from './property-form.type';
       <span matPrefix>
         <mat-icon>{{ propertyData.propType.icon }}</mat-icon>
       </span>
-      <mat-label>Property type</mat-label>
+      <mat-label>{{ 'pages.ontology.propertyForm.type' | translate }}</mat-label>
       <mat-select [formControl]="form.controls.guiElement">
         <mat-select-trigger>
           {{ propertyData.propType.group }}
@@ -34,7 +34,7 @@ import { PropertyForm, EditPropertyDialogData } from './property-form.type';
       </mat-select>
     </mat-form-field>
     <app-common-input
-      label="Property name"
+      [label]="'pages.ontology.propertyForm.name' | translate"
       data-cy="name-input"
       prefixIcon="fingerprint"
       [control]="form.controls.name" />
@@ -42,7 +42,7 @@ import { PropertyForm, EditPropertyDialogData } from './property-form.type';
       [formArray]="form.controls.labels"
       [isRequired]="true"
       data-cy="label-input"
-      placeholder="Property label" />
+      [placeholder]="'pages.ontology.propertyForm.labelPlaceholder' | translate" />
 
     @if (propertyData.propType.objectType === Constants.ListValue) {
       <app-gui-attr-list data-cy="object-attribute-list" [control]="form.controls.guiAttr" />
@@ -55,7 +55,7 @@ import { PropertyForm, EditPropertyDialogData } from './property-form.type';
     <app-multi-language-textarea
       [formArray]="form.controls.comments"
       data-cy="comment-textarea"
-      placeholder="Comment"
+      [placeholder]="'pages.ontology.propertyForm.commentPlaceholder' | translate"
       [isRequired]="true" />
   </form>`,
   standalone: false,

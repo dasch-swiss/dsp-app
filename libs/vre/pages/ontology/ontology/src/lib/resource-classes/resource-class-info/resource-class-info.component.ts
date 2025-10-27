@@ -4,6 +4,7 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  inject,
   Inject,
   Input,
   OnDestroy,
@@ -18,6 +19,7 @@ import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
 import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { DialogService } from '@dasch-swiss/vre/ui/ui';
+import { TranslateService } from '@ngx-translate/core';
 import { Observable, Subscription, switchMap, take } from 'rxjs';
 import {
   EditResourceClassDialogComponent,
@@ -49,6 +51,8 @@ export class ResourceClassInfoComponent implements OnInit, OnDestroy {
   expandClasses = true;
 
   trackByPropToDisplayFn = (index: number, item: ClassPropertyInfo) => `${index}-${item.propDef.id}`;
+
+  protected readonly _translate = inject(TranslateService);
 
   constructor(
     public ops: OntologyPageService,
@@ -102,7 +106,7 @@ export class ResourceClassInfoComponent implements OnInit, OnDestroy {
 
   deleteResourceClass() {
     this._dialogService
-      .afterConfirmation('Do you want to delete this resource class ?')
+      .afterConfirmation(this._translate.instant('pages.ontology.resourceClassInfo.deleteConfirmation'))
       .pipe(switchMap(_del => this._oes.deleteResourceClass$(this.resourceClass.id)))
       .subscribe();
   }
@@ -135,7 +139,7 @@ export class ResourceClassInfoComponent implements OnInit, OnDestroy {
 
   copyResourceClassId() {
     this._clipboard.copy(this.resourceClass.id);
-    this._notification.openSnackBar('Resource class ID copied to clipboard.');
+    this._notification.openSnackBar(this._translate.instant('pages.ontology.resourceClassInfo.idCopied'));
   }
 
   private _canDeleteResourceClass$(classId: string): Observable<CanDoResponse | ApiResponseError> {

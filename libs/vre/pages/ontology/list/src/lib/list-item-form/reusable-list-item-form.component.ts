@@ -8,12 +8,12 @@ import { ListItemForm } from './list-item-form.type';
   selector: 'app-reusable-list-item-form',
   template: `
     <app-multi-language-input
-      placeholder="Child node label"
+      [placeholder]="'pages.ontology.list.reusableForm.labelPlaceholder' | translate"
       [formArray]="form.controls.labels"
       [validators]="labelsValidators"
       [isRequired]="true" />
     <app-multi-language-textarea
-      placeholder="Child node description"
+      [placeholder]="'pages.ontology.list.reusableForm.commentPlaceholder' | translate"
       [formArray]="form.controls.comments"
       [validators]="commentsValidators"
       [isRequired]="false" />

@@ -21,9 +21,13 @@
           <mat-icon>more_vert</mat-icon>
         </button>
         <mat-menu #more="matMenu" class="representation-menu">
-          <button class="menu-content" mat-menu-item (click)="download()">Download file</button>
+          <button class="menu-content" mat-menu-item (click)="download()">
+            {{ 'resourceEditor.representations.downloadFile' | translate }}
+          </button>
           @if (resourceFetcherService.userCanEdit$ | async) {
-          <button class="menu-content" mat-menu-item (click)="openReplaceFileDialog()">Replace file</button>
+          <button class="menu-content" mat-menu-item (click)="openReplaceFileDialog()">
+            {{ 'resourceEditor.representations.replaceFile' | translate }}
+          </button>
           }
         </mat-menu>
       </span>
@@ -35,7 +39,7 @@
         id="searchbox"
         name="searchbox"
         class="pdf-searchbox fill-remaining-space"
-        placeholder="Search in pdf..."
+        [placeholder]="'resourceEditor.representations.document.searchPlaceholder' | translate"
         [disabled]="failedToLoad"
         (input)="onInputChange($event)"
         (keyup.enter)="searchQueryChanged(queryInp.value)" />
@@ -45,7 +49,7 @@
         <button
           mat-icon-button
           id="DSP_PDF_ZOOM_OUT"
-          matTooltip="Zoom out"
+          [matTooltip]="'resourceEditor.representations.document.zoomOut' | translate"
           (click)="zoom(-1)"
           [disabled]="failedToLoad">
           <mat-icon>remove_circle_outline</mat-icon>
@@ -53,12 +57,17 @@
         <button
           mat-icon-button
           id="DSP_PDF_HOME"
-          matTooltip="Reset zoom"
+          [matTooltip]="'resourceEditor.representations.document.resetZoom' | translate"
           (click)="zoomFactor = 1.0"
           [disabled]="failedToLoad">
           <mat-icon>adjust</mat-icon>
         </button>
-        <button mat-icon-button id="DSP_PDF_ZOOM_IN" matTooltip="Zoom in" (click)="zoom(+1)" [disabled]="failedToLoad">
+        <button
+          mat-icon-button
+          id="DSP_PDF_ZOOM_IN"
+          [matTooltip]="'resourceEditor.representations.document.zoomIn' | translate"
+          (click)="zoom(+1)"
+          [disabled]="failedToLoad">
           <mat-icon>add_circle_outline</mat-icon>
         </button>
       </span>
@@ -69,7 +78,7 @@
         <button
           mat-icon-button
           id="DSP_PDF_FULL_SCREEN"
-          matTooltip="Fullscreen"
+          [matTooltip]="'resourceEditor.representations.document.fullscreen' | translate"
           (click)="openFullscreen()"
           [disabled]="failedToLoad">
           <mat-icon>fullscreen</mat-icon>
@@ -102,9 +111,13 @@
         <mat-icon>more_vert</mat-icon>
       </button>
       <mat-menu #more="matMenu" class="mat-menu-custom-black">
-        <button class="menu-content" mat-menu-item (click)="download()" [disabled]="failedToLoad">Download file</button>
+        <button class="menu-content" mat-menu-item (click)="download()" [disabled]="failedToLoad">
+          {{ 'resourceEditor.representations.downloadFile' | translate }}
+        </button>
         @if (resourceFetcherService.userCanEdit$ | async) {
-        <button class="menu-content" mat-menu-item (click)="openReplaceFileDialog()">Replace file</button>
+        <button class="menu-content" mat-menu-item (click)="openReplaceFileDialog()">
+          {{ 'resourceEditor.representations.replaceFile' | translate }}
+        </button>
         }
       </mat-menu>
     </div>

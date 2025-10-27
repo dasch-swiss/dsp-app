@@ -33,7 +33,7 @@ import { CollaborationPageService } from '../collaboration-page.service';
               </mat-option>
             }
             @if (filteredUsers.length === 0) {
-              <mat-option [disabled]="true">No results</mat-option>
+              <mat-option [disabled]="true">{{ 'pages.project.addUser.noResults' | translate }}</mat-option>
             }
           }
         </mat-autocomplete>

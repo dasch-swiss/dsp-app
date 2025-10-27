@@ -4,7 +4,7 @@
       class="clickable-icon"
       data-cy="more-vert-image-button"
       [matMenuTriggerFor]="more"
-      matTooltip="More"
+      [matTooltip]="'resourceEditor.representations.stillImage.more' | translate"
       matTooltipPosition="above">
       <mat-icon>more_vert</mat-icon>
     </div>
@@ -14,7 +14,7 @@
       data-cy="still-image-share-button"
       [matMenuTriggerFor]="share"
       [class.disabled]="isReadStillImageExternalFileValue"
-      matTooltip="Share"
+      [matTooltip]="'resourceEditor.representations.stillImage.share' | translate"
       matTooltipPosition="above">
       <mat-icon>share</mat-icon>
     </div>
@@ -22,7 +22,7 @@
     <div
       class="clickable-icon"
       data-cy="still-image-download-button"
-      matTooltip="Download"
+      [matTooltip]="'resourceEditor.representations.stillImage.download' | translate"
       [class.disabled]="isReadStillImageExternalFileValue || !userCanView"
       (click)="download()">
       <mat-icon>download</mat-icon>
@@ -48,28 +48,40 @@
     <div
       class="clickable-icon"
       data-cy="still-image-settings-button"
-      matTooltip="Settings"
+      [matTooltip]="'resourceEditor.representations.stillImage.settings' | translate"
       [matMenuTriggerFor]="settings"
       [class.disabled]="isReadStillImageExternalFileValue">
       <mat-icon>settings</mat-icon>
     </div>
 
-    <div class="clickable-icon" data-cy="zoom-out" matTooltip="Zoom out" (click)="osd.zoom(-1)">
+    <div
+      class="clickable-icon"
+      data-cy="zoom-out"
+      [matTooltip]="'resourceEditor.representations.stillImage.zoomOut' | translate"
+      (click)="osd.zoom(-1)">
       <mat-icon>zoom_out</mat-icon>
     </div>
 
-    <div class="clickable-icon" data-cy="zoom-in" matTooltip="Zoom in" (click)="osd.zoom(1)">
+    <div
+      class="clickable-icon"
+      data-cy="zoom-in"
+      [matTooltip]="'resourceEditor.representations.stillImage.zoomIn' | translate"
+      (click)="osd.zoom(1)">
       <mat-icon>zoom_in</mat-icon>
     </div>
 
-    <div class="clickable-icon" data-cy="zoom-reset" matTooltip="Reset zoom" (click)="osd.viewer.viewport.goHome()">
+    <div
+      class="clickable-icon"
+      data-cy="zoom-reset"
+      [matTooltip]="'resourceEditor.representations.stillImage.resetZoom' | translate"
+      (click)="osd.viewer.viewport.goHome()">
       <mat-icon>other_houses</mat-icon>
     </div>
 
     <div
       class="clickable-icon"
       data-cy="fullscreen"
-      matTooltip="Open in fullscreen"
+      [matTooltip]="'resourceEditor.representations.stillImage.openInFullscreen' | translate"
       (click)="osd.viewer.setFullScreen(true)">
       <mat-icon>fullscreen</mat-icon>
     </div>
@@ -78,11 +90,11 @@
 
 <mat-menu #more="matMenu" class="representation-menu">
   <a class="menu-content" mat-menu-item [href]="imageFileValue.fileUrl" target="_blank" data-cy="open-iiif-new-tab">
-    Open IIIF URL in new tab
+    {{ 'resourceEditor.representations.stillImage.openIiifInNewTab' | translate }}
   </a>
   @if (resourceFetcherService.userCanEdit$ | async) {
   <button class="menu-content" data-cy="replace-image-button" mat-menu-item (click)="replaceImage()">
-    Replace file
+    {{ 'resourceEditor.representations.replaceFile' | translate }}
   </button>
   }
 </mat-menu>
@@ -90,19 +102,19 @@
 <mat-menu #share="matMenu" class="res-share-menu">
   <button
     mat-menu-item
-    (click)="notification.openSnackBar('IIIF URL copied to clipboard!')"
+    (click)="notification.openSnackBar(_translateService.instant('resourceEditor.representations.stillImage.iiifUrlCopied'))"
     [cdkCopyToClipboard]="imageFileValue.fileUrl"
     data-cy="copy-iiif-url">
     <mat-icon>content_copy</mat-icon>
-    Copy IIIF URL to clipboard
+    {{ 'resourceEditor.representations.stillImage.copyIiifUrl' | translate }}
   </button>
   <button
     mat-menu-item
     [cdkCopyToClipboard]="imageFileValue.arkUrl"
-    (click)="notification.openSnackBar('ARK URL copied to clipboard!')"
+    (click)="notification.openSnackBar(_translateService.instant('resourceEditor.representations.stillImage.arkUrlCopied'))"
     data-cy="copy-ark-url">
     <mat-icon>content_copy</mat-icon>
-    Copy ARK url to clipboard
+    {{ 'resourceEditor.representations.stillImage.copyArkUrl' | translate }}
   </button>
 </mat-menu>
 <mat-menu #settings="matMenu" class="settings-menu">

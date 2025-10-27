@@ -1,9 +1,10 @@
 import { ENTER, TAB } from '@angular/cdk/keycodes';
-import { ChangeDetectorRef, Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatChipInput, MatChipInputEvent } from '@angular/material/chips';
 import { PaginatedApiService } from '@dasch-swiss/vre/resource-editor/resource-properties';
+import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 
@@ -11,12 +12,16 @@ import { finalize } from 'rxjs/operators';
   selector: 'app-authorship-form-field',
   template: `
     <mat-form-field style="width: 100%">
-      <mat-label>Authorship</mat-label>
-      <mat-chip-grid #chipGrid aria-label="Authorship">
+      <mat-label>{{ 'resourceEditor.resourceCreator.authorship.label' | translate }}</mat-label>
+      <mat-chip-grid #chipGrid [attr.aria-label]="'resourceEditor.resourceCreator.authorship.label' | translate">
         @for (authorship of selectedItems; track authorship) {
           <mat-chip-row (removed)="removeItem(authorship)">
             {{ authorship }}
-            <button matChipRemove [attr.aria-label]="'remove ' + authorship">
+            <button
+              matChipRemove
+              [attr.aria-label]="
+                _translateService.instant('resourceEditor.resourceCreator.authorship.removeItem', { name: authorship })
+              ">
               <mat-icon>cancel</mat-icon>
             </button>
           </mat-chip-row>
@@ -24,7 +29,7 @@ import { finalize } from 'rxjs/operators';
       </mat-chip-grid>
 
       <input
-        placeholder="New authorship..."
+        [placeholder]="'resourceEditor.resourceCreator.authorship.placeholder' | translate"
         data-cy="authorship-chips"
         [matChipInputFor]="chipGrid"
         [matAutocomplete]="auto"
@@ -42,7 +47,7 @@ import { finalize } from 'rxjs/operators';
         @if (
           filteredAuthorship.length === 0 && autocompleteFormControl.value && autocompleteFormControl.value.length > 0
         ) {
-          <mat-option>Press Enter or Tab to add an item. </mat-option>
+          <mat-option>{{ 'resourceEditor.resourceCreator.authorship.pressEnterOrTab' | translate }}</mat-option>
         }
       </mat-autocomplete>
 
@@ -70,6 +75,8 @@ export class AuthorshipFormFieldComponent implements OnInit, OnDestroy {
 
   readonly AIAuthorship = 'AI-Generated Content – Not Protected by Copyright';
   readonly publicDomainAuthorship = 'Public Domain – Not Protected by Copyright';
+
+  readonly _translateService = inject(TranslateService);
 
   constructor(
     private _paginatedApi: PaginatedApiService,

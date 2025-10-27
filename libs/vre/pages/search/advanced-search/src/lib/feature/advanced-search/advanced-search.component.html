@@ -1,7 +1,7 @@
 <div class="advanced-search-container">
   <div class="header">
     <div class="title">
-      <p>{{ 'pages.search.advancedSearch.title' | translate }}</p>
+      <p>Advanced Search</p>
     </div>
     <div class="action-buttons right-margin" style="display: flex; gap: 16px">
       <a mat-stroked-button [routerLink]="['..', 'search']">
@@ -14,7 +14,7 @@
         [disabled]="!previousSearchObject"
         mat-button
         (click)="loadPreviousSearch()">
-        {{ 'pages.search.advancedSearch.usePreviousSearch' | translate }}
+        Use previous search
       </button>
     </div>
   </div>

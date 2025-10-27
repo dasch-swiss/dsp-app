@@ -25,7 +25,7 @@ import { ProjectForm } from './project-form.type';
 
       <div style="display: flex; justify-content: space-between">
         <button color="primary" mat-button type="reset" (click)="goBack()">
-          {{ 'ui.form.action.cancel' | translate }}
+          {{ 'ui.common.actions.cancel' | translate }}
         </button>
 
         <button
@@ -37,7 +37,7 @@ import { ProjectForm } from './project-form.type';
           appLoadingButton
           data-cy="submit-button"
           [isLoading]="loading">
-          {{ 'ui.form.action.submit' | translate }}
+          {{ 'ui.common.actions.submit' | translate }}
         </button>
       </div>
     </app-centered-layout>

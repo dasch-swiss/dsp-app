@@ -24,7 +24,7 @@ import { OntologyPageService } from './ontology-page.service';
         routerLinkActive
         #rla1="routerLinkActive"
         [active]="rla1.isActive">
-        Classes
+        {{ 'pages.ontology.sidenav.classes' | translate }}
       </a>
       <a
         mat-tab-link
@@ -32,7 +32,7 @@ import { OntologyPageService } from './ontology-page.service';
         routerLinkActive
         #rla2="routerLinkActive"
         [active]="rla2.isActive">
-        Properties
+        {{ 'pages.ontology.sidenav.properties' | translate }}
       </a>
     </nav>
     <mat-divider />
@@ -42,7 +42,11 @@ import { OntologyPageService } from './ontology-page.service';
           <!-- Classes tab content -->
           <button mat-button (click)="ops.toggleExpandClasses()">
             <mat-icon>{{ (ops.expandClasses$ | async) ? 'compress' : 'expand' }}</mat-icon>
-            {{ (ops.expandClasses$ | async) ? 'Collapse all' : 'Expand all' }}
+            {{
+              (ops.expandClasses$ | async)
+                ? ('pages.ontology.sidenav.collapseAll' | translate)
+                : ('pages.ontology.sidenav.expandAll' | translate)
+            }}
           </button>
           @if (hasProjectAdminRights$ | async) {
             <button
@@ -51,7 +55,7 @@ import { OntologyPageService } from './ontology-page.service';
               data-cy="create-class-button"
               [matMenuTriggerFor]="addResClassMenu">
               <mat-icon>add</mat-icon>
-              Create new class
+              {{ 'pages.ontology.sidenav.createNewClass' | translate }}
             </button>
           }
           <mat-menu #addResClassMenu="matMenu" xPosition="before">
@@ -79,7 +83,7 @@ import { OntologyPageService } from './ontology-page.service';
               [disabled]="!(project$ | async)?.status"
               [matMenuTriggerFor]="newFromPropType">
               <mat-icon>add</mat-icon>
-              Add Property
+              {{ 'pages.ontology.sidenav.addProperty' | translate }}
             </button>
           }
           <mat-menu #newFromPropType="matMenu">

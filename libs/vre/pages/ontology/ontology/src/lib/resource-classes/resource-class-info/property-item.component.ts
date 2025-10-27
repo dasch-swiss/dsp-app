@@ -5,6 +5,7 @@ import {
   ChangeDetectorRef,
   Component,
   EventEmitter,
+  inject,
   Input,
   OnDestroy,
   OnInit,
@@ -18,6 +19,7 @@ import { Cardinality, IHasProperty } from '@dasch-swiss/dsp-js';
 import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
+import { TranslateService } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
 import { EditPropertyFormDialogComponent } from '../../forms/property-form/edit-property-form-dialog.component';
 import { EditPropertyDialogData } from '../../forms/property-form/property-form.type';
@@ -103,15 +105,15 @@ import { OntologyEditService } from '../../services/ontology-edit.service';
     <mat-menu #classInfoMenu="matMenu">
       <button mat-menu-item (click)="openEditProperty()">
         <mat-icon>edit</mat-icon>
-        <span>Edit property</span>
+        <span>{{ 'pages.ontology.propertyItem.edit' | translate }}</span>
       </button>
       <button mat-menu-item [disabled]="!propCanBeRemovedFromClass" (click)="removePropertyFromClass()">
         <mat-icon>link_off</mat-icon>
-        <span>remove property from class</span>
+        <span>{{ 'pages.ontology.propertyItem.removeFromClass' | translate }}</span>
       </button>
       <button mat-menu-item (click)="copyPropertyId()">
         <mat-icon>content_copy</mat-icon>
-        Copy property id
+        {{ 'pages.ontology.propertyItem.copyId' | translate }}
       </button>
     </mat-menu>`,
   styles: [
@@ -219,6 +221,8 @@ export class PropertyItemComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private _destroy = new Subject<void>();
 
+  protected readonly _translate = inject(TranslateService);
+
   constructor(
     private _cdr: ChangeDetectorRef,
     private _clipboard: Clipboard,
@@ -286,7 +290,7 @@ export class PropertyItemComponent implements OnInit, AfterViewInit, OnDestroy {
 
   copyPropertyId() {
     this._clipboard.copy(this.classProp.propDef.id);
-    this._notification.openSnackBar('Property ID copied to clipboard.');
+    this._notification.openSnackBar(this._translate.instant('pages.ontology.propertyItem.idCopied'));
   }
 
   ngOnDestroy() {

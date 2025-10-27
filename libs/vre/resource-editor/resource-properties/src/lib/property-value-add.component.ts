@@ -1,8 +1,9 @@
-import { Component, EventEmitter, Inject, Output } from '@angular/core';
+import { Component, EventEmitter, Inject, inject, Output } from '@angular/core';
 import { ApiResponseError, CreateValue, KnoraApiConnection, UpdateResource } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { ResourceFetcherService } from '@dasch-swiss/vre/resource-editor/representations';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
+import { TranslateService } from '@ngx-translate/core';
 import { finalize } from 'rxjs/operators';
 import { FormValueGroup } from './form-value-array.type';
 import { PropertyValueService } from './property-value.service';
@@ -19,6 +20,8 @@ import { propertiesTypeMapping } from './resource-payloads-mapping';
 export class PropertyValueAddComponent {
   @Output() stopAdding = new EventEmitter<void>();
   loading = false;
+
+  private readonly _translateService = inject(TranslateService);
 
   constructor(
     public propertyValueService: PropertyValueService,
@@ -60,7 +63,9 @@ export class PropertyValueAddComponent {
         },
         e => {
           if (e instanceof ApiResponseError && e.status === 400) {
-            this._notification.openSnackBar('The value entered already exists.');
+            this._notification.openSnackBar(
+              this._translateService.instant('resourceEditor.resourceProperties.valueAlreadyExists')
+            );
             return;
           }
           // eslint-disable-next-line @typescript-eslint/no-throw-literal

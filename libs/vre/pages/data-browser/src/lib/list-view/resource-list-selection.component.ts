@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ReadResource } from '@dasch-swiss/dsp-js';
+import { TranslateService } from '@ngx-translate/core';
 import { combineLatest, map, tap } from 'rxjs';
 import { MultipleViewerService } from '../comparison/multiple-viewer.service';
 import { ResourceLinkDialogComponent, ResourceLinkDialogProps } from './resource-link-dialog.component';
@@ -10,9 +11,13 @@ import { ResourceLinkDialogComponent, ResourceLinkDialogProps } from './resource
   template: `
     <div style="background: #336790; color: white; padding: 0 16px; display: flex; gap: 8px; align-items: center">
       <div style="flex: 1; display: flex; align-items: center; gap: 16px;">
-        <div>{{ count$ | async }} resources selected</div>
+        <div>
+          {{ 'pages.dataBrowser.resourceListSelection.resourcesSelected' | translate: { count: count$ | async } }}
+        </div>
         @if ((showCreateLink$ | async) && (multipleViewerService.selectedResources$ | async); as selectedResources) {
-          <button mat-flat-button (click)="openCreateLinkDialog(selectedResources)">Create a link object</button>
+          <button mat-flat-button (click)="openCreateLinkDialog(selectedResources)">
+            {{ 'pages.dataBrowser.resourceListSelection.createLinkObject' | translate }}
+          </button>
         }
       </div>
       <button mat-icon-button (click)="reset()"><mat-icon>close</mat-icon></button>
@@ -28,7 +33,8 @@ export class ResourceListSelectionComponent {
 
   constructor(
     public multipleViewerService: MultipleViewerService,
-    private _dialog: MatDialog
+    private _dialog: MatDialog,
+    private _translateService: TranslateService
   ) {}
 
   reset() {

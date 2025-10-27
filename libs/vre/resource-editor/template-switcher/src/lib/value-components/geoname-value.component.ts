@@ -10,8 +10,8 @@ import { GeonameService, SearchPlace } from '../geoname.service';
       matInput
       [formControl]="control"
       type="text"
-      [placeholder]="'e.g. Basel'"
-      aria-label="geoname"
+      [placeholder]="'resourceEditor.templateSwitcher.geonameValue.placeholder' | translate"
+      [attr.aria-label]="'resourceEditor.templateSwitcher.geonameValue.label' | translate"
       data-cy="geoname-autocomplete"
       [matAutocomplete]="auto" />
     @if (loading) {

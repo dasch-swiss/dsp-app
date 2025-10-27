@@ -20,7 +20,7 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from 
           class="pagination-button next"
           [disabled]="itemRangeEnd === itemsNumber"
           (click)="changePage(1)">
-          <span>{{ 'ui.pager.next' | translate }}</span>
+          <span>{{ 'ui.common.actions.next' | translate }}</span>
           <mat-icon>east</mat-icon>
         </button>
       </div>

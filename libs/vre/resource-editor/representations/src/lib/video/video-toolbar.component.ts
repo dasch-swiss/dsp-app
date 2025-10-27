@@ -21,7 +21,10 @@ import { MediaPlayerService } from './media-player.service';
         mat-icon-button
         data-cy="play-pause-button"
         (click)="mediaPlayer.togglePlay()"
-        [matTooltip]="play ? 'Pause' : 'Play'"
+        [matTooltip]="
+          (play ? 'resourceEditor.representations.video.pause' : 'resourceEditor.representations.video.play')
+            | translate
+        "
         [matTooltipPosition]="matTooltipPos">
         <mat-icon>{{ mediaPlayer.isPaused() ? 'play_arrow' : 'pause' }}</mat-icon>
       </button>
@@ -30,7 +33,7 @@ import { MediaPlayerService } from './media-player.service';
         mat-icon-button
         data-cy="go-to-start-button"
         (click)="goToStart()"
-        matTooltip="Stop and go to start"
+        [matTooltip]="'resourceEditor.representations.video.stopAndGoToStart' | translate"
         [matTooltipPosition]="matTooltipPos">
         <mat-icon>skip_previous</mat-icon>
       </button>
@@ -56,7 +59,12 @@ import { MediaPlayerService } from './media-player.service';
         mat-icon-button
         data-cy="cinema-mode-button"
         (click)="toggleCinemaMode.emit()"
-        [matTooltip]="isFullscreen ? 'Default view' : 'Cinema mode'"
+        [matTooltip]="
+          (isFullscreen
+            ? 'resourceEditor.representations.video.defaultView'
+            : 'resourceEditor.representations.video.cinemaMode'
+          ) | translate
+        "
         [matTooltipPosition]="matTooltipPos">
         <mat-icon>{{ isFullscreen ? 'fullscreen_exit' : 'fullscreen' }}</mat-icon>
       </button>

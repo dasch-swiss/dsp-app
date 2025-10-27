@@ -25,22 +25,22 @@ import { CreateResourceFormInterface } from './create-resource-form.interface';
     @if (!loading) {
       <form [formGroup]="form" appInvalidControlScroll class="form">
         @if (fileRepresentation) {
-          <h3>File</h3>
+          <h3>{{ 'resourceEditor.resourceCreator.form.file' | translate }}</h3>
           <app-create-resource-form-file
             [projectShortcode]="projectShortcode"
             [fileRepresentation]="fileRepresentation"
             (afterFormCreated)="afterFileFormCreated($event)" />
-          <h3>Properties</h3>
+          <h3>{{ 'resourceEditor.resourceCreator.form.properties' | translate }}</h3>
         }
         <app-create-resource-form-row
-          label="Resource label *"
-          tooltip="Each resource needs a (preferably unique) label. It will be a kind of resource identifier."
+          [label]="('resourceEditor.resourceCreator.form.resourceLabel' | translate) + ' *'"
+          [tooltip]="'resourceEditor.resourceCreator.form.resourceLabelTooltip' | translate"
           data-cy="resource-label">
           <app-common-input
             [control]="form.controls.label"
             [withLabel]="false"
             data-cy="label-input"
-            [label]="'e.g. Lorem ipsum ...'" />
+            [label]="'resourceEditor.resourceCreator.form.resourceLabelPlaceholder' | translate" />
         </app-create-resource-form-row>
         @if (properties) {
           <app-create-resource-form-properties
@@ -57,7 +57,7 @@ import { CreateResourceFormInterface } from './create-resource-form.interface';
             data-cy="submit-button"
             [isLoading]="loading"
             (click)="submitData()">
-            {{ 'ui.form.action.submit' | translate }}
+            {{ 'ui.common.actions.submit' | translate }}
           </button>
         </div>
       </form>

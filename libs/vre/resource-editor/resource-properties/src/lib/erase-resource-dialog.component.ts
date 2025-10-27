@@ -1,20 +1,23 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, inject } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DeleteResource, KnoraApiConnection, ReadResource } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { ResourceFetcherService } from '@dasch-swiss/vre/resource-editor/representations';
+import { TranslateService } from '@ngx-translate/core';
 import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-erase-resource-dialog',
   template: `
-    <app-dialog-header title="Do you want to erase this resource forever?" [subtitle]="'Erase resource instance'" />
+    <app-dialog-header
+      [title]="'resourceEditor.resourceProperties.eraseResource.title' | translate"
+      [subtitle]="'resourceEditor.resourceProperties.eraseResource.subtitle' | translate" />
 
     <mat-dialog-content>
-      <div style="margin-bottom: 8px">WARNING: This action cannot be undone, so use it with care.</div>
+      <div style="margin-bottom: 8px">{{ 'resourceEditor.resourceProperties.eraseResource.warning' | translate }}</div>
       <mat-form-field style="width: 100%">
-        <mat-label>Reason</mat-label>
+        <mat-label>{{ 'resourceEditor.resourceProperties.eraseResource.reason' | translate }}</mat-label>
         <textarea
           matInput
           rows="4"
@@ -27,7 +30,9 @@ import { finalize } from 'rxjs';
     </mat-dialog-content>
 
     <mat-dialog-actions>
-      <button mat-button color="primary" mat-dialog-close class="cancel-button center">No, keep it</button>
+      <button mat-button color="primary" mat-dialog-close class="cancel-button center">
+        {{ 'resourceEditor.resourceProperties.eraseResource.noKeep' | translate }}
+      </button>
       <span class="fill-remaining-space"></span>
       <button
         [disabled]="eraseForm.invalid"
@@ -39,7 +44,7 @@ import { finalize } from 'rxjs';
         [color]="'warn'"
         class="confirm-button center"
         (click)="submit()">
-        Yes, erase
+        {{ 'resourceEditor.resourceProperties.eraseResource.yesErase' | translate }}
       </button>
     </mat-dialog-actions>
   `,
@@ -50,6 +55,8 @@ export class EraseResourceDialogComponent {
     comment: new FormControl('', [Validators.required]),
   });
   loading = false;
+
+  private readonly _translateService = inject(TranslateService);
 
   constructor(
     @Inject(DspApiConnectionToken)

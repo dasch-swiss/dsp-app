@@ -10,11 +10,11 @@ import { Component } from '@angular/core';
     padding: 16px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     border: 1px solid #e0e0e0;">
-    Search tips
+    {{ 'pages.search.searchTips.title' | translate }}
     <ul>
-      <li>Use quotation marks for exact phrases: "down the rabbit hole"</li>
-      <li>Use AND, OR, NOT for boolean searches: Alice AND Wonderland</li>
-      <li>Use wildcards: Alice* will match Alice, Alices, etc.</li>
+      <li>{{ 'pages.search.searchTips.exactPhrases' | translate }}</li>
+      <li>{{ 'pages.search.searchTips.booleanSearch' | translate }}</li>
+      <li>{{ 'pages.search.searchTips.wildcards' | translate }}</li>
     </ul>
   </div>`,
   styles: [

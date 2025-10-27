@@ -6,6 +6,7 @@ import { UserApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import { AuthService, UserService } from '@dasch-swiss/vre/core/session';
 import { DialogService } from '@dasch-swiss/vre/ui/ui';
+import { TranslateService } from '@ngx-translate/core';
 import { EditPasswordDialogComponent, EditPasswordDialogProps } from '../edit-password-dialog.component';
 import { EditUserDialogComponent, EditUserDialogProps } from '../edit-user-page/edit-user-dialog.component';
 
@@ -18,12 +19,12 @@ import { EditUserDialogComponent, EditUserDialogProps } from '../edit-user-page/
           <mat-list style="padding: 0">
             <mat-list-item (click)="onEditProfile(user)">
               <mat-icon matListItemIcon>person</mat-icon>
-              <div matLine>Edit my profile</div>
+              <div matLine>{{ 'pages.userSettings.account.editMyProfile' | translate }}</div>
             </mat-list-item>
 
             <mat-list-item (click)="onEditPassword(user)">
               <mat-icon matListItemIcon>lock</mat-icon>
-              <div matLine>Edit my password</div>
+              <div matLine>{{ 'pages.userSettings.account.editMyPassword' | translate }}</div>
             </mat-list-item>
           </mat-list>
         </mat-card>
@@ -64,7 +65,8 @@ export class AccountComponent {
     private _matDialog: MatDialog,
     private _titleService: Title,
     private _userService: UserService,
-    private _authService: AuthService
+    private _authService: AuthService,
+    private _translateService: TranslateService
   ) {
     this._titleService.setTitle('Your account');
   }
@@ -87,10 +89,12 @@ export class AccountComponent {
       .subscribe();
   }
   onDeleteOwnAccount(user: ReadUser) {
-    this._dialog.afterConfirmation(`Do you want to suspend your own account?`).subscribe(() => {
-      this._userApiService.delete(user.id).subscribe(() => {
-        this._authService.logout();
+    this._dialog
+      .afterConfirmation(this._translateService.instant('pages.userSettings.account.deleteConfirmation'))
+      .subscribe(() => {
+        this._userApiService.delete(user.id).subscribe(() => {
+          this._authService.logout();
+        });
       });
-    });
   }
 }

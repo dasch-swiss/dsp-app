@@ -28,7 +28,11 @@ import { PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
       (myProperty.guiDef.cardinality === Cardinality._0_n || myProperty.guiDef.cardinality === Cardinality._1_n) &&
       formArray.controls[formArray.controls.length - 1].value.item !== null
     ) {
-      <button mat-icon-button type="button" (click)="addEntry()" [matTooltip]="'Add new value'">
+      <button
+        mat-icon-button
+        type="button"
+        (click)="addEntry()"
+        [matTooltip]="'resourceEditor.resourceCreator.propertyValuesCreator.addNewValue' | translate">
         <mat-icon>add_circle</mat-icon>
       </button>
     }

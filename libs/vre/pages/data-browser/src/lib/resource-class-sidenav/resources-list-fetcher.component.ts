@@ -17,12 +17,12 @@ import { ResourceResultService } from '../resource-result.service';
         @if (data.resources.length > 0) {
           <app-resources-list [resources]="data.resources" [showBackToFormButton]="false" />
         } @else {
-          <app-centered-message [message]="'No resources found for this class.'" />
+          <app-centered-message [message]="'pages.dataBrowser.resourcesListFetcher.noResourcesFound' | translate" />
         }
       } @else {
         <div style="margin-top: 80px; align-items: center; text-align: center">
-          <h3>It seems like you don’t have the necessary permissions.</h3>
-          <p>Check with a project admin if you have the necessary permission or if you are logged in.</p>
+          <h3>{{ 'pages.dataBrowser.resourcesListFetcher.noPermissions' | translate }}</h3>
+          <p>{{ 'pages.dataBrowser.resourcesListFetcher.checkPermissions' | translate }}</p>
         </div>
       }
     } @else {

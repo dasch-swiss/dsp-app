@@ -3,6 +3,7 @@ import {
   Component,
   ElementRef,
   EventEmitter,
+  inject,
   Input,
   OnChanges,
   OnDestroy,
@@ -13,6 +14,7 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { ReadMovingImageFileValue, ReadResource } from '@dasch-swiss/dsp-js';
 import { MediaControlService, SegmentsService } from '@dasch-swiss/vre/resource-editor/segment-support';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
+import { TranslateService } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
 import { MovingImageSidecar } from '../moving-image-sidecar';
 import { RepresentationService } from '../representation.service';
@@ -45,6 +47,8 @@ export class VideoComponent implements OnChanges, OnDestroy {
   readonly frameWidth = 160;
   readonly halfFrameWidth: number = Math.round(this.frameWidth / 2);
   private _ngUnsubscribe = new Subject<void>();
+
+  private readonly _translateService = inject(TranslateService);
 
   get isFullscreen(): boolean {
     return !!document.fullscreenElement;
@@ -104,23 +108,23 @@ export class VideoComponent implements OnChanges, OnDestroy {
       let vErr: string;
       switch (videoElement.error.code) {
         case MediaError.MEDIA_ERR_ABORTED:
-          vErr = 'Video playback aborted.';
+          vErr = this._translateService.instant('resourceEditor.representations.video.errors.playbackAborted');
           console.error(vErr);
           break;
         case MediaError.MEDIA_ERR_NETWORK:
-          vErr = 'Network error occurred while loading the video.';
+          vErr = this._translateService.instant('resourceEditor.representations.video.errors.networkError');
           console.error(vErr);
           break;
         case MediaError.MEDIA_ERR_DECODE:
-          vErr = 'Video decoding error.';
+          vErr = this._translateService.instant('resourceEditor.representations.video.errors.decodingError');
           console.error(vErr);
           break;
         case MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED:
-          vErr = 'The video format is not supported.';
+          vErr = this._translateService.instant('resourceEditor.representations.video.errors.formatNotSupported');
           console.error(vErr);
           break;
         default:
-          vErr = 'An unknown video error occurred.';
+          vErr = this._translateService.instant('resourceEditor.representations.video.errors.unknownError');
           console.error(vErr);
           break;
       }
@@ -140,7 +144,9 @@ export class VideoComponent implements OnChanges, OnDestroy {
   private _watchForMediaEvents() {
     this._mediaControl.play$.pipe(takeUntil(this._ngUnsubscribe)).subscribe(seconds => {
       if (seconds >= this.duration) {
-        this._notification.openSnackBar('The video cannot be played at this time.');
+        this._notification.openSnackBar(
+          this._translateService.instant('resourceEditor.representations.video.cannotPlay')
+        );
         return;
       }
       this.videoPlayer.navigate(seconds);

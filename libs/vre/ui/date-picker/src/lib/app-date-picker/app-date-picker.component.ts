@@ -44,6 +44,7 @@ import {
   IslamicCalendarDate,
   JulianCalendarDate,
 } from '@dasch-swiss/jdnconvertiblecalendar';
+import { TranslateModule } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 
 /** error when invalid control is dirty, touched, or submitted. */
@@ -79,6 +80,7 @@ interface ValidationMessages {
     MatButtonModule,
     MatButtonToggleModule,
     MatSelectModule,
+    TranslateModule,
   ],
   standalone: true,
 })

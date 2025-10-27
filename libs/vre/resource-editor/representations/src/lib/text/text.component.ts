@@ -1,7 +1,8 @@
-import { Component, Input, OnChanges, ViewContainerRef } from '@angular/core';
+import { Component, inject, Input, OnChanges, ViewContainerRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Constants, ReadResource, ReadTextFileValue } from '@dasch-swiss/dsp-js';
 import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
+import { TranslateService } from '@ngx-translate/core';
 import {
   ReplaceFileDialogComponent,
   ReplaceFileDialogProps,
@@ -22,6 +23,8 @@ export class TextComponent implements OnChanges {
   originalFilename?: string;
 
   failedToLoad = false;
+
+  private readonly _translateService = inject(TranslateService);
 
   constructor(
     private _dialog: MatDialog,
@@ -48,8 +51,8 @@ export class TextComponent implements OnChanges {
   openReplaceFileDialog() {
     this._dialog.open<ReplaceFileDialogComponent, ReplaceFileDialogProps>(ReplaceFileDialogComponent, {
       ...DspDialogConfig.mediumDialog({
-        title: 'Text (csv, txt, xml)',
-        subtitle: 'Update the text file of this resource',
+        title: this._translateService.instant('resourceEditor.representations.text.title'),
+        subtitle: this._translateService.instant('resourceEditor.representations.text.updateFile'),
         representation: Constants.HasTextFileValue,
         resource: this.parentResource,
       }),

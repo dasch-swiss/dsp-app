@@ -36,7 +36,13 @@
         }
       </span>
       }
-      <span class="resource-class-size" [matTooltip]="(expandClasses ? 'Collapse class' : 'Expand class')">
+      <span
+        class="resource-class-size"
+        [matTooltip]="
+          expandClasses
+            ? (_translate.instant('pages.ontology.resourceClassInfo.collapse'))
+            : (_translate.instant('pages.ontology.resourceClassInfo.expand'))
+        ">
         <button mat-icon-button (click)="expandClasses = !expandClasses">
           <mat-icon>{{ expandClasses ? "expand_less" : "expand_more" }}</mat-icon>
         </button>
@@ -53,7 +59,7 @@
       }
     </mat-list>
     } @else {
-    <p>There are no properties assigned to this class yet.</p>
+    <p>{{ 'pages.ontology.resourceClassInfo.noProperties' | translate }}</p>
     } @if ((hasProjectAdminRights$ | async)) {
     <app-add-property-menu [resourceClass]="resourceClass" />
     }
@@ -65,7 +71,7 @@
   @if ((hasProjectAdminRights$ | async) === true && (project$ | async)?.status === true) {
   <button mat-menu-item class="res-class-edit" data-cy="edit-button" (click)="editResourceClassInfo()">
     <mat-icon>edit</mat-icon>
-    Edit resource class info
+    {{ 'pages.ontology.resourceClassInfo.edit' | translate }}
   </button>
   }
   <button
@@ -74,15 +80,17 @@
     [disabled]="classCanBeDeleted"
     data-cy="open-in-databrowser-button">
     <mat-icon>open_in_new</mat-icon>
-    Open resource instances
+    {{ 'pages.ontology.resourceClassInfo.openInstances' | translate }}
   </button>
   <button mat-menu-item (click)="copyResourceClassId()" data-cy="copy-id-button">
     <mat-icon>content_copy</mat-icon>
-    Copy resource class id
+    {{ 'pages.ontology.resourceClassInfo.copyId' | translate }}
   </button>
   @if ((hasProjectAdminRights$ | async) === true && (project$ | async)?.status === true) {
   <button
-    [matTooltip]="classCanBeDeleted ? '' : 'This class can\'t be deleted because it is in use'"
+    [matTooltip]="
+      classCanBeDeleted ? '' : _translate.instant('pages.ontology.resourceClassInfo.cannotDelete')
+    "
     matTooltipPosition="before"
     [disabled]="!classCanBeDeleted"
     (click)="deleteResourceClass()"
@@ -90,7 +98,7 @@
     class="res-class-delete"
     data-cy="delete-button">
     <mat-icon>delete</mat-icon>
-    Delete resource class
+    {{ 'pages.ontology.resourceClassInfo.delete' | translate }}
   </button>
   }
 </mat-menu>

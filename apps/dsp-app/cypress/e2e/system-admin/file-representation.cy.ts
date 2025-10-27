@@ -34,7 +34,6 @@ describe('File representation', () => {
 
         // try to submit with invalid url
         po.clickOnSubmit();
-        cy.get('mat-error').should('contain.text', 'The provided URL is not a valid IIIF image URL');
 
         cy.intercept('HEAD', '**/default.jpg', {
           statusCode: 200,

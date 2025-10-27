@@ -1,9 +1,10 @@
-import { Component, Input } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { Constants, ReadColorValue, ReadResource } from '@dasch-swiss/dsp-js';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { RegionService, ResourceFetcherService } from '@dasch-swiss/vre/resource-editor/representations';
 import { ResourceService } from '@dasch-swiss/vre/shared/app-common';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
+import { TranslateService } from '@ngx-translate/core';
 import { take } from 'rxjs';
 
 @Component({
@@ -17,7 +18,7 @@ import { take } from 'rxjs';
       } @else {
         <button
           mat-icon-button
-          matTooltip="Highlight Region"
+          [matTooltip]="'resourceEditor.propertiesDisplay.annotationToolbar.highlightRegion' | translate"
           color="primary"
           matTooltipPosition="above"
           (click)="onPinPointClicked()">
@@ -26,7 +27,7 @@ import { take } from 'rxjs';
       }
       <button
         mat-icon-button
-        matTooltip="Open resource in new tab"
+        [matTooltip]="'resourceEditor.propertiesDisplay.annotationToolbar.openInNewTab' | translate"
         color="primary"
         data-cy="open-in-new-window-button"
         matTooltipPosition="above"
@@ -38,7 +39,11 @@ import { take } from 'rxjs';
         mat-icon-button
         class="share-res"
         data-cy="share-button"
-        matTooltip="Share resource: {{ resource.versionArkUrl }}"
+        [matTooltip]="
+          _translateService.instant('resourceEditor.propertiesDisplay.annotationToolbar.shareResource', {
+            arkUrl: resource.versionArkUrl,
+          })
+        "
         matTooltipPosition="above"
         [matMenuTriggerFor]="share">
         <mat-icon>share</mat-icon>
@@ -56,23 +61,31 @@ import { take } from 'rxjs';
     <mat-menu #share="matMenu" class="res-share-menu">
       <button
         mat-menu-item
-        matTooltip="Copy ARK url"
+        [matTooltip]="'resourceEditor.propertiesDisplay.annotationToolbar.copyArkUrl' | translate"
         matTooltipPosition="above"
         data-cy="copy-ark-url-button"
         [cdkCopyToClipboard]="resource.versionArkUrl"
-        (click)="this.notification.openSnackBar('ARK URL copied to clipboard!')">
+        (click)="
+          this.notification.openSnackBar(
+            _translateService.instant('resourceEditor.propertiesDisplay.annotationToolbar.arkUrlCopied')
+          )
+        ">
         <mat-icon>content_copy</mat-icon>
-        Copy ARK url to clipboard
+        {{ 'resourceEditor.propertiesDisplay.annotationToolbar.copyArkUrlToClipboard' | translate }}
       </button>
       <button
         mat-menu-item
-        matTooltip="Copy internal link"
+        [matTooltip]="'resourceEditor.propertiesDisplay.annotationToolbar.copyInternalLink' | translate"
         data-cy="copy-internal-link-button"
         matTooltipPosition="above"
         [cdkCopyToClipboard]="resource.id"
-        (click)="this.notification.openSnackBar('Internal link copied to clipboard!')">
+        (click)="
+          this.notification.openSnackBar(
+            _translateService.instant('resourceEditor.propertiesDisplay.annotationToolbar.internalLinkCopied')
+          )
+        ">
         <mat-icon>content_copy</mat-icon>
-        Copy internal link to clipboard
+        {{ 'resourceEditor.propertiesDisplay.annotationToolbar.copyInternalLinkToClipboard' | translate }}
       </button>
     </mat-menu>
   `,
@@ -104,6 +117,8 @@ export class AnnotationToolbarComponent {
     const colorValues: ReadColorValue[] = this.resource.properties[Constants.HasColor] as ReadColorValue[];
     return colorValues && colorValues.length ? colorValues[0] : null;
   }
+
+  readonly _translateService = inject(TranslateService);
 
   constructor(
     protected notification: NotificationService,

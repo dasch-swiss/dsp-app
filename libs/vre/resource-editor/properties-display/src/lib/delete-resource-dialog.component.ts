@@ -1,25 +1,30 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DeleteResource, KnoraApiConnection, ReadResource } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { ResourceFetcherService } from '@dasch-swiss/vre/resource-editor/representations';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-delete-resource-dialog',
-  template: ` <app-dialog-header title="Do you want to delete this resource ?" [subtitle]="data.label" />
+  template: ` <app-dialog-header
+      [title]="'resourceEditor.propertiesDisplay.deleteResource.title' | translate"
+      [subtitle]="data.label" />
     <mat-dialog-content class="form-content">
       <mat-form-field class="large-field">
-        <mat-label>Comment why resource is being deleted</mat-label>
+        <mat-label>{{ 'resourceEditor.propertiesDisplay.deleteResource.label' | translate }}</mat-label>
         <textarea
           data-cy="app-delete-resource-dialog-comment"
           matInput
           type="text"
           [(ngModel)]="comment"
-          [placeholder]="'Ex. Resource was created by mistake...'"></textarea>
+          [placeholder]="'resourceEditor.propertiesDisplay.deleteResource.placeholder' | translate"></textarea>
       </mat-form-field>
     </mat-dialog-content>
     <mat-dialog-actions>
-      <button mat-button color="primary" mat-dialog-close class="cancel-button center">No, keep it</button>
+      <button mat-button color="primary" mat-dialog-close class="cancel-button center">
+        {{ 'resourceEditor.propertiesDisplay.deleteResource.noKeep' | translate }}
+      </button>
       <span class="fill-remaining-space"></span>
       <button
         data-cy="app-delete-resource-dialog-button"
@@ -28,13 +33,15 @@ import { ResourceFetcherService } from '@dasch-swiss/vre/resource-editor/represe
         [color]="'warn'"
         class="confirm-button center"
         (click)="submit()">
-        Yes, delete
+        {{ 'resourceEditor.propertiesDisplay.deleteResource.yesDelete' | translate }}
       </button>
     </mat-dialog-actions>`,
   standalone: false,
 })
 export class DeleteResourceDialogComponent {
   comment: string | undefined;
+
+  private readonly _translateService = inject(TranslateService);
 
   constructor(
     @Inject(DspApiConnectionToken)

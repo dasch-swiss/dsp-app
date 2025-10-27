@@ -1,9 +1,10 @@
-import { Component, Inject, Input, OnInit } from '@angular/core';
+import { Component, Inject, inject, Input, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { ApiResponseData, HealthResponse, KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken, RouteConstants } from '@dasch-swiss/vre/core/config';
 import { HttpStatusMsg } from '@dasch-swiss/vre/shared/assets/status-msg';
+import { TranslateService } from '@ngx-translate/core';
 
 export interface StatusMsg {
   status: number;
@@ -93,6 +94,8 @@ export class StatusComponent implements OnInit {
 
   homeLink = RouteConstants.home;
 
+  private readonly _translateService = inject(TranslateService);
+
   constructor(
     @Inject(DspApiConnectionToken)
     private readonly _dspApiConnection: KnoraApiConnection,
@@ -116,7 +119,7 @@ export class StatusComponent implements OnInit {
     this.message = this.getMsgByStatus(this.status);
 
     if (this.representation) {
-      this.comment = `There was an error loading the ${this.representation} file representation. Try to open it directly by clicking on the file url below:`;
+      this.comment = this._translateService.instant('shared.status.representationError', { type: this.representation });
       this.message.action = 'goto';
     } else {
       // set the page title only in case of main error

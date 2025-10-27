@@ -13,17 +13,13 @@ import { UserForm } from './user-form.type';
       <app-common-input
         [control]="userForm.controls.username"
         [validatorErrors]="[usernamePatternErrorMsg]"
-        [label]="'pages.userSettings.userForm.username' | translate" />
+        [label]="'ui.common.fields.username' | translate" />
       <app-common-input
         [control]="userForm.controls.email"
         [label]="'pages.userSettings.userForm.email' | translate"
         [validatorErrors]="[emailPatternErrorMsg]" />
-      <app-common-input
-        [control]="userForm.controls.givenName"
-        [label]="'pages.userSettings.userForm.givenName' | translate" />
-      <app-common-input
-        [control]="userForm.controls.familyName"
-        [label]="'pages.userSettings.userForm.familyName' | translate" />
+      <app-common-input [control]="userForm.controls.givenName" [label]="'ui.common.fields.firstName' | translate" />
+      <app-common-input [control]="userForm.controls.familyName" [label]="'ui.common.fields.lastName' | translate" />
 
       <mat-form-field style="width: 100%">
         <mat-label>{{ 'pages.userSettings.userForm.language' | translate }}</mat-label>

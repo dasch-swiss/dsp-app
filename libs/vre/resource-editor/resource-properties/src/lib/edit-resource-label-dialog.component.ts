@@ -1,21 +1,24 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, inject } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { KnoraApiConnection, ReadResource, UpdateResourceMetadata } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { ResourceFetcherService } from '@dasch-swiss/vre/resource-editor/representations';
+import { TranslateService } from '@ngx-translate/core';
 import { finalize, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-edit-resource-label-dialog',
-  template: ` <app-dialog-header [title]="initialValue" subtitle="Edit resource's label" />
+  template: ` <app-dialog-header
+      [title]="initialValue"
+      [subtitle]="'resourceEditor.resourceProperties.editLabel.subtitle' | translate" />
 
     <div mat-dialog-content>
-      <app-common-input [control]="control" [label]="'Label'" />
+      <app-common-input [control]="control" [label]="'resourceEditor.resourceProperties.editLabel.label' | translate" />
     </div>
 
     <div mat-dialog-actions align="end">
-      <button mat-button mat-dialog-close>Cancel</button>
+      <button mat-button mat-dialog-close>{{ 'ui.common.actions.cancel' | translate }}</button>
       <button
         mat-raised-button
         color="primary"
@@ -24,7 +27,7 @@ import { finalize, switchMap } from 'rxjs';
         data-cy="edit-resource-label-submit"
         [isLoading]="loading"
         (click)="submit()">
-        Submit
+        {{ 'ui.common.actions.submit' | translate }}
       </button>
     </div>`,
   standalone: false,
@@ -33,6 +36,8 @@ export class EditResourceLabelDialogComponent {
   control = new FormControl(this.data.label, { validators: [Validators.required], nonNullable: true });
   initialValue = this.data.label;
   loading = false;
+
+  private readonly _translateService = inject(TranslateService);
 
   constructor(
     @Inject(DspApiConnectionToken)

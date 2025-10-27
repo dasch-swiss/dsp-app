@@ -14,20 +14,20 @@ import { ResourceClassForm, ResourceClassFormData } from './resource-class-form.
         class="name-input"
         data-cy="name-input"
         [control]="form.controls.name"
-        label="Class name"
-        [validatorErrors]="[{ errorKey: 'pattern', message: 'This pattern is not supported' }]"
+        [label]="'pages.ontology.resourceClassForm.name' | translate"
+        [validatorErrors]="[{ errorKey: 'pattern', message: 'pages.ontology.resourceClassForm.patternError' }]"
         prefixIcon="fingerprint" />
 
       <app-multi-language-input
         data-cy="label-input"
-        placeholder="Label"
+        [placeholder]="'pages.ontology.resourceClassForm.labelPlaceholder' | translate"
         [formArray]="form.controls.labels"
         [validators]="labelsValidators"
         [isRequired]="true" />
 
       <app-multi-language-textarea
         data-cy="comment-textarea"
-        placeholder="Comment"
+        [placeholder]="'pages.ontology.resourceClassForm.commentPlaceholder' | translate"
         [formArray]="form.controls.comments"
         [editable]="true"
         [validators]="commentsValidators"

@@ -13,17 +13,17 @@ import { OntologyEditService } from '../../services/ontology-edit.service';
     <mat-list style="border-top: 1px solid rgba(0, 0, 0, .12);">
       <mat-list-item class="property link" data-cy="add-property-button" [matMenuTriggerFor]="addPropertyMenu">
         <mat-icon matListItemIcon class="list-icon">add</mat-icon>
-        <span matListItemTitle>Add property</span>
+        <span matListItemTitle>{{ 'pages.ontology.addPropertyMenu.addProperty' | translate }}</span>
       </mat-list-item>
     </mat-list>
 
     <mat-menu #addPropertyMenu="matMenu" xPosition="after">
       <button data-cy="create-new-from-type-button" mat-menu-item [matMenuTriggerFor]="newFromPropType">
-        Create new from type
+        {{ 'pages.ontology.addPropertyMenu.createNewFromType' | translate }}
       </button>
       @if (resourceClass) {
         <button data-cy="add-existing-property-button" mat-menu-item [matMenuTriggerFor]="addExistingProp">
-          Add existing property
+          {{ 'pages.ontology.addPropertyMenu.addExistingProperty' | translate }}
         </button>
       }
     </mat-menu>

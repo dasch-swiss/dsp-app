@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Inject, Input, Output, ViewContainerRef, OnInit } from '@angular/core';
+import { Component, EventEmitter, Inject, inject, Input, Output, ViewContainerRef, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { DeleteResource, KnoraApiConnection, ReadResource, CanDoResponse } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
@@ -8,6 +8,7 @@ import {
   EditResourceLabelDialogComponent,
   EraseResourceDialogComponent,
 } from '@dasch-swiss/vre/resource-editor/resource-properties';
+import { TranslateService } from '@ngx-translate/core';
 import { combineLatest, filter, map, Observable } from 'rxjs';
 
 @Component({
@@ -18,7 +19,7 @@ import { combineLatest, filter, map, Observable } from 'rxjs';
       color="primary"
       mat-icon-button
       class="more-menu"
-      matTooltip="More"
+      [matTooltip]="'resourceEditor.moreMenu.more' | translate"
       matTooltipPosition="above"
       [matMenuTriggerFor]="more">
       <mat-icon>more_vert</mat-icon>
@@ -29,11 +30,11 @@ import { combineLatest, filter, map, Observable } from 'rxjs';
         <button
           data-cy="resource-more-menu-edit-label-button"
           mat-menu-item
-          matTooltip="Edit the label of this resource"
+          [matTooltip]="'resourceEditor.moreMenu.editLabelTooltip' | translate"
           matTooltipPosition="above"
           (click)="editResourceLabel()">
           <mat-icon>edit</mat-icon>
-          Edit label
+          {{ 'resourceEditor.moreMenu.editLabel' | translate }}
         </button>
       }
 
@@ -43,8 +44,8 @@ import { combineLatest, filter, map, Observable } from 'rxjs';
           mat-menu-item
           [matTooltip]="
             resourceCanBeDeleted.canDo
-              ? 'Move resource to trash bin.'
-              : resourceCanBeDeleted.cannotDoReason || 'Checking if the resource can be deleted...'
+              ? ('resourceEditor.moreMenu.moveToTrash' | translate)
+              : resourceCanBeDeleted.cannotDoReason || ('resourceEditor.moreMenu.checkingPermission' | translate)
           "
           matTooltipPosition="above"
           [disabled]="!resourceCanBeDeleted.canDo"
@@ -53,7 +54,7 @@ import { combineLatest, filter, map, Observable } from 'rxjs';
             <span style="display: inline-block; width: 32px; height: 24px;">
               <mat-icon>delete</mat-icon>
             </span>
-            Delete
+            {{ 'ui.common.actions.delete' | translate }}
           </div>
         </button>
 
@@ -63,8 +64,8 @@ import { combineLatest, filter, map, Observable } from 'rxjs';
             mat-menu-item
             [matTooltip]="
               resourceCanBeDeleted.canDo
-                ? 'Erase resource forever. This cannot be undone.'
-                : resourceCanBeDeleted.cannotDoReason || 'Checking if resource can be deleted...'
+                ? ('resourceEditor.moreMenu.eraseResourceTooltip' | translate)
+                : resourceCanBeDeleted.cannotDoReason || ('resourceEditor.moreMenu.checkingPermissionErase' | translate)
             "
             matTooltipPosition="above"
             [disabled]="!resourceCanBeDeleted.canDo"
@@ -73,7 +74,7 @@ import { combineLatest, filter, map, Observable } from 'rxjs';
               <span style="display: inline-block; width: 32px; height: 24px;">
                 <mat-icon>delete_forever</mat-icon>
               </span>
-              Erase resource
+              {{ 'resourceEditor.moreMenu.eraseResource' | translate }}
             </span>
           </button>
         }
@@ -81,14 +82,14 @@ import { combineLatest, filter, map, Observable } from 'rxjs';
         <button
           data-cy="resource-more-menu-delete-button"
           mat-menu-item
-          matTooltip="Checking if the resource can be deleted..."
+          [matTooltip]="'resourceEditor.moreMenu.checkingPermission' | translate"
           matTooltipPosition="above"
           disabled>
           <div style="display: inline-flex; align-items: center; gap: 8px;">
             <span style="display: inline-block; width: 32px; height: 24px;">
               <app-progress-spinner />
             </span>
-            Delete
+            {{ 'ui.common.actions.delete' | translate }}
           </div>
         </button>
 
@@ -96,14 +97,14 @@ import { combineLatest, filter, map, Observable } from 'rxjs';
           <button
             data-cy="resource-more-menu-erase-button"
             mat-menu-item
-            matTooltip="Checking if resource can be deleted..."
+            [matTooltip]="'resourceEditor.moreMenu.checkingPermissionErase' | translate"
             matTooltipPosition="above"
             disabled>
             <span style="display: inline-flex; align-items: center; gap: 8px;">
               <span style="display: inline-block; width: 32px; height: 24px;">
                 <app-progress-spinner />
               </span>
-              Erase resource
+              {{ 'resourceEditor.moreMenu.eraseResource' | translate }}
             </span>
           </button>
         }
@@ -133,6 +134,8 @@ export class ResourceEditMoreMenuComponent implements OnInit {
 
   resourceCanBeDeleted$!: Observable<CanDoResponse>;
 
+  private readonly _translateService = inject(TranslateService);
+
   constructor(
     @Inject(DspApiConnectionToken)
     private _dspApiConnection: KnoraApiConnection,
@@ -150,7 +153,7 @@ export class ResourceEditMoreMenuComponent implements OnInit {
         if (!userCanDelete) {
           return {
             canDo: false,
-            cannotDoReason: 'You do not have permission to delete this resource.',
+            cannotDoReason: this._translateService.instant('resourceEditor.moreMenu.noPermission'),
           } as CanDoResponse;
         }
 

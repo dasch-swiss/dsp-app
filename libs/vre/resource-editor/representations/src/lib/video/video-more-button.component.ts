@@ -1,8 +1,9 @@
-import { Component, Input, ViewContainerRef } from '@angular/core';
+import { Component, inject, Input, ViewContainerRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Constants, ReadMovingImageFileValue, ReadResource } from '@dasch-swiss/dsp-js';
 import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
+import { TranslateService } from '@ngx-translate/core';
 import { MovingImageSidecar } from '../moving-image-sidecar';
 import {
   ReplaceFileDialogComponent,
@@ -18,18 +19,22 @@ import { ResourceFetcherService } from '../resource-fetcher.service';
     </button>
     <mat-menu #more="matMenu" class="representation-menu">
       <button mat-menu-item class="menu-content" (click)="openVideoInNewTab(this.src.fileUrl)">
-        Open video in new tab
+        {{ 'resourceEditor.representations.video.openInNewTab' | translate }}
       </button>
       <button
         mat-menu-item
         class="menu-content"
         [cdkCopyToClipboard]="this.src.fileUrl"
-        (click)="openSnackBar('URL copied to clipboard!')">
-        Copy video URL to clipboard
+        (click)="openSnackBar(_translateService.instant('resourceEditor.representations.video.urlCopied'))">
+        {{ 'resourceEditor.representations.video.copyUrl' | translate }}
       </button>
-      <button mat-menu-item class="menu-content" (click)="downloadVideo()">Download video</button>
+      <button mat-menu-item class="menu-content" (click)="downloadVideo()">
+        {{ 'resourceEditor.representations.video.download' | translate }}
+      </button>
       @if (resourceFetcherService.userCanEdit$ | async) {
-        <button mat-menu-item class="menu-content" (click)="openReplaceFileDialog()">Replace file</button>
+        <button mat-menu-item class="menu-content" (click)="openReplaceFileDialog()">
+          {{ 'resourceEditor.representations.replaceFile' | translate }}
+        </button>
       }
     </mat-menu>`,
   standalone: false,
@@ -38,6 +43,8 @@ export class VideoMoreButtonComponent {
   @Input({ required: true }) src!: ReadMovingImageFileValue;
   @Input({ required: true }) parentResource!: ReadResource;
   @Input({ required: true }) fileInfo!: MovingImageSidecar;
+
+  readonly _translateService = inject(TranslateService);
 
   constructor(
     private _notification: NotificationService,
@@ -62,8 +69,8 @@ export class VideoMoreButtonComponent {
   openReplaceFileDialog() {
     this._dialog.open<ReplaceFileDialogComponent, ReplaceFileDialogProps>(ReplaceFileDialogComponent, {
       ...DspDialogConfig.mediumDialog({
-        title: 'Video',
-        subtitle: 'Update the video file of this resource',
+        title: this._translateService.instant('resourceEditor.representations.video.title'),
+        subtitle: this._translateService.instant('resourceEditor.representations.video.updateFile'),
         representation: Constants.HasMovingImageFileValue,
         resource: this.parentResource,
       }),

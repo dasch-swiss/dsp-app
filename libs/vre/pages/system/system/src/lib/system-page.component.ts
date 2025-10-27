@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { UserService } from '@dasch-swiss/vre/core/session';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-system-page',
@@ -20,7 +21,7 @@ import { UserService } from '@dasch-swiss/vre/core/session';
                 #rla="routerLinkActive"
                 [active]="rla.isActive">
                 <mat-icon class="tab-icon">{{ link.icon }}</mat-icon>
-                {{ link.name }}
+                {{ link.name | translate }}
               </a>
             }
           </nav>
@@ -37,19 +38,20 @@ import { UserService } from '@dasch-swiss/vre/core/session';
   standalone: false,
 })
 export class SystemPageComponent {
+  private readonly _userService = inject(UserService);
+  private readonly _titleService = inject(Title);
+  private readonly _translateService = inject(TranslateService);
+
   isSysAdmin$ = this._userService.isSysAdmin$;
 
   links = [
-    { name: 'All Projects', url: RouteConstants.systemProjects, icon: 'assignment' },
-    { name: 'All Users', url: RouteConstants.systemUsers, icon: 'group' },
+    { name: 'pages.system.allProjects', url: RouteConstants.systemProjects, icon: 'assignment' },
+    { name: 'pages.system.allUsers', url: RouteConstants.systemUsers, icon: 'group' },
   ];
 
   activeLink = '';
 
-  constructor(
-    private readonly _userService: UserService,
-    private readonly _titleService: Title
-  ) {
+  constructor() {
     this._titleService.setTitle('System administration');
   }
 }

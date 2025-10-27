@@ -13,7 +13,7 @@ export interface ManageProjectMembershipDialogProps {
       <app-membership [userId]="data.user.id" (closeDialog)="dialogRef.close()" />
     </div>
     <mat-dialog-actions>
-      <button mat-button color="primary" matDialogClose>{{ 'ui.form.action.close' | translate }}</button>
+      <button mat-button color="primary" matDialogClose>{{ 'ui.common.actions.close' | translate }}</button>
     </mat-dialog-actions>`,
   standalone: false,
 })
