@@ -7,7 +7,7 @@ import { OntologyForm, UpdateOntologyData } from './ontology-form.type';
 
 @Component({
   selector: 'app-edit-ontology-form-dialog',
-  template: ` <app-dialog-header [title]="data.id" [subtitle]="'pages.ontology.ontologyForm.edit' | translate" />
+  template: ` <app-dialog-header [title]="data.label" [subtitle]="'pages.ontology.ontologyForm.edit' | translate" />
 
     <div mat-dialog-content>
       <app-ontology-form [data]="data" [mode]="'edit'" (afterFormInit)="afterFormInit($event)" />

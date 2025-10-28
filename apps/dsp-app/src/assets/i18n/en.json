@@ -276,6 +276,17 @@
         "multipleValues": "Multiple values",
         "required": "Required"
       },
+      "cardinalityDialog": {
+        "title": "Update cardinality",
+        "subtitle": "Set the cardinality for property {{group}}: {{label}}",
+        "notPossible": "Changing the cardinality is not possible.",
+        "attention": "Attention",
+        "confirmMessage": "Please note that this change may not be reversible. Do you want to change the cardinality?",
+        "multiplePropertiesError": "At least one resource of the class \"{{className}}\" has multiple \"{{propertyLabel}}\" properties in your data.",
+        "multiplePropertiesHint": "In order to set the cardinality of \"{{propertyLabel}}\" to single, every resource \"{{className}}\" must have only one \"{{propertyLabel}}\" value prior to this change.",
+        "missingPropertyError": "At least one resource of the class \"{{className}}\" does not have a \"{{propertyLabel}}\" property in your data.",
+        "missingPropertyHint": "In order to set the cardinality of \"{{propertyLabel}}\" to required every resource \"{{className}}\" needs to have a \"{{propertyLabel}}\" value prior to this change."
+      },
       "propertyItem": {
         "edit": "Edit",
         "removeFromClass": "Remove from class",
@@ -317,6 +328,9 @@
         "patternError": "This pattern is not supported",
         "labelPlaceholder": "Label",
         "commentPlaceholder": "Comment"
+      },
+      "service": {
+        "classCreated": "Successfully created the class {{classLabel}}."
       }
     },
     "search": {
@@ -589,7 +603,8 @@
       },
       "authorship": {
         "label": "Authorship",
-        "placeholder": "New authorship..."
+        "placeholder": "New authorship...",
+        "pressEnterOrTab": "Press Enter or Tab to add an item."
       },
       "image": {
         "label": "Image",
@@ -600,7 +615,11 @@
         "dragAndDrop": "Drag and drop file here or click to browse",
         "fileTypesSupported": "File types supported: {{types}}",
         "processing": "Processing file on server...",
+        "processingFile": "Processing file on server...",
         "extensionNotSupported": "The extension {{extension}} is not supported."
+      },
+      "representation": {
+        "file": "File"
       }
     },
     "templateSwitcher": {
@@ -635,7 +654,9 @@
         "submit": "Submit",
         "confirm": "Confirm",
         "search": "Search",
-        "retry": "Retry"
+        "retry": "Retry",
+        "yes": "Yes",
+        "no": "No"
       },
       "fields": {
         "username": "Username",

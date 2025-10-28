@@ -276,6 +276,17 @@
         "multipleValues": "Mehrere Werte",
         "required": "Erforderlich"
       },
+      "cardinalityDialog": {
+        "title": "Kardinalität aktualisieren",
+        "subtitle": "Kardinalität für Eigenschaft {{group}}: {{label}} festlegen",
+        "notPossible": "Die Änderung der Kardinalität ist nicht möglich.",
+        "attention": "Achtung",
+        "confirmMessage": "Bitte beachten Sie, dass diese Änderung möglicherweise nicht rückgängig gemacht werden kann. Möchten Sie die Kardinalität ändern?",
+        "multiplePropertiesError": "Mindestens eine Ressource der Klasse \"{{className}}\" hat mehrere \"{{propertyLabel}}\"-Eigenschaften in Ihren Daten.",
+        "multiplePropertiesHint": "Um die Kardinalität von \"{{propertyLabel}}\" auf einzeln zu setzen, muss jede Ressource \"{{className}}\" vor dieser Änderung nur einen \"{{propertyLabel}}\"-Wert haben.",
+        "missingPropertyError": "Mindestens eine Ressource der Klasse \"{{className}}\" hat keine \"{{propertyLabel}}\"-Eigenschaft in Ihren Daten.",
+        "missingPropertyHint": "Um die Kardinalität von \"{{propertyLabel}}\" auf erforderlich zu setzen, muss jede Ressource \"{{className}}\" vor dieser Änderung einen \"{{propertyLabel}}\"-Wert haben."
+      },
       "propertyItem": {
         "edit": "Bearbeiten",
         "removeFromClass": "Aus Klasse entfernen",
@@ -317,6 +328,9 @@
         "patternError": "Dieses Muster wird nicht unterstützt",
         "labelPlaceholder": "Bezeichnung",
         "commentPlaceholder": "Kommentar"
+      },
+      "service": {
+        "classCreated": "Die Klasse {{classLabel}} wurde erfolgreich erstellt."
       }
     },
     "search": {
@@ -589,7 +603,8 @@
       },
       "authorship": {
         "label": "Autorenschaft",
-        "placeholder": "Neue Autorenschaft..."
+        "placeholder": "Neue Autorenschaft...",
+        "pressEnterOrTab": "Drücken Sie Enter oder Tab, um ein Element hinzuzufügen."
       },
       "image": {
         "label": "Bild",
@@ -600,7 +615,11 @@
         "dragAndDrop": "Datei hier ablegen oder klicken zum Durchsuchen",
         "fileTypesSupported": "Unterstützte Dateitypen: {{types}}",
         "processing": "Datei wird auf dem Server verarbeitet...",
+        "processingFile": "Datei wird auf dem Server verarbeitet...",
         "extensionNotSupported": "Die Erweiterung {{extension}} wird nicht unterstützt."
+      },
+      "representation": {
+        "file": "Datei"
       }
     },
     "templateSwitcher": {
@@ -635,7 +654,9 @@
         "submit": "Absenden",
         "confirm": "Bestätigen",
         "search": "Suchen",
-        "retry": "Erneut versuchen"
+        "retry": "Erneut versuchen",
+        "yes": "Ja",
+        "no": "Nein"
       },
       "fields": {
         "username": "Benutzername",

@@ -130,6 +130,7 @@ export class OntologyEditorHeaderComponent {
   ) {}
 
   editOntology(ontology: ReadOntology | OntologyMetadata) {
+    console.log('aa', ontology);
     const data: UpdateOntologyData = {
       id: ontology.id,
       label: ontology.label,

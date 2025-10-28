@@ -276,6 +276,17 @@
         "multipleValues": "Valeurs multiples",
         "required": "Requis"
       },
+      "cardinalityDialog": {
+        "title": "Mettre à jour la cardinalité",
+        "subtitle": "Définir la cardinalité pour la propriété {{group}}: {{label}}",
+        "notPossible": "La modification de la cardinalité n'est pas possible.",
+        "attention": "Attention",
+        "confirmMessage": "Veuillez noter que cette modification peut être irréversible. Voulez-vous modifier la cardinalité ?",
+        "multiplePropertiesError": "Au moins une ressource de la classe \"{{className}}\" possède plusieurs propriétés \"{{propertyLabel}}\" dans vos données.",
+        "multiplePropertiesHint": "Pour définir la cardinalité de \"{{propertyLabel}}\" sur unique, chaque ressource \"{{className}}\" doit avoir une seule valeur \"{{propertyLabel}}\" avant cette modification.",
+        "missingPropertyError": "Au moins une ressource de la classe \"{{className}}\" ne possède pas de propriété \"{{propertyLabel}}\" dans vos données.",
+        "missingPropertyHint": "Pour définir la cardinalité de \"{{propertyLabel}}\" sur obligatoire, chaque ressource \"{{className}}\" doit avoir une valeur \"{{propertyLabel}}\" avant cette modification."
+      },
       "propertyItem": {
         "edit": "Modifier",
         "removeFromClass": "Retirer de la classe",
@@ -317,6 +328,9 @@
         "patternError": "Ce modèle n'est pas pris en charge",
         "labelPlaceholder": "Label",
         "commentPlaceholder": "Commentaire"
+      },
+      "service": {
+        "classCreated": "La classe {{classLabel}} a été créée avec succès."
       }
     },
     "search": {
@@ -589,7 +603,8 @@
       },
       "authorship": {
         "label": "Auteur·ice",
-        "placeholder": "Nouvel·le auteur·ice..."
+        "placeholder": "Nouvel·le auteur·ice...",
+        "pressEnterOrTab": "Appuyez sur Entrée ou Tab pour ajouter un élément."
       },
       "image": {
         "label": "Image",
@@ -600,7 +615,11 @@
         "dragAndDrop": "Glissez-déposez le fichier ici ou cliquez pour parcourir",
         "fileTypesSupported": "Types de fichiers pris en charge : {{types}}",
         "processing": "Traitement du fichier sur le serveur...",
+        "processingFile": "Traitement du fichier sur le serveur...",
         "extensionNotSupported": "L'extension {{extension}} n'est pas prise en charge."
+      },
+      "representation": {
+        "file": "Fichier"
       }
     },
     "templateSwitcher": {
@@ -635,7 +654,9 @@
         "submit": "Soumettre",
         "confirm": "Confirmer",
         "search": "Rechercher",
-        "retry": "Réessayer"
+        "retry": "Réessayer",
+        "yes": "Oui",
+        "no": "Non"
       },
       "fields": {
         "username": "Nom d'utilisateur",

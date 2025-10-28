@@ -14,6 +14,7 @@ import {
 } from '@dasch-swiss/vre/pages/user-settings/user';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { DialogService } from '@dasch-swiss/vre/ui/ui';
+import { TranslateService } from '@ngx-translate/core';
 import { switchMap } from 'rxjs';
 import { CollaborationPageService } from './collaboration/collaboration-page.service';
 
@@ -58,7 +59,8 @@ export class ProjectMembersRowMenuComponent {
     private readonly _matDialog: MatDialog,
     private readonly _router: Router,
     private readonly _userApiService: UserApiService,
-    private readonly _userService: UserService
+    private readonly _userService: UserService,
+    private readonly _translateService: TranslateService
   ) {}
 
   isProjectAdmin(permissions: PermissionsData): boolean {
@@ -131,7 +133,7 @@ export class ProjectMembersRowMenuComponent {
 
   askToRemoveFromProject(user: ReadUser) {
     this._dialog
-      .afterConfirmation('pages.project.collaboration.confirmRemoveMember')
+      .afterConfirmation(this._translateService.instant('pages.project.collaboration.confirmRemoveMember'))
       .pipe(
         switchMap(() =>
           this._adminApiService.deleteAdminUsersIriUseririProjectMembershipsProjectiri(user.id, this.project.id)
