@@ -1,8 +1,7 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ReadResource } from '@dasch-swiss/dsp-js';
-import { TranslateService } from '@ngx-translate/core';
-import { combineLatest, map, tap } from 'rxjs';
+import { combineLatest, map } from 'rxjs';
 import { MultipleViewerService } from '../comparison/multiple-viewer.service';
 import { ResourceLinkDialogComponent, ResourceLinkDialogProps } from './resource-link-dialog.component';
 
@@ -15,7 +14,10 @@ import { ResourceLinkDialogComponent, ResourceLinkDialogProps } from './resource
           {{ 'pages.dataBrowser.resourceListSelection.resourcesSelected' | translate: { count: count$ | async } }}
         </div>
         @if ((showCreateLink$ | async) && (multipleViewerService.selectedResources$ | async); as selectedResources) {
-          <button mat-flat-button (click)="openCreateLinkDialog(selectedResources)">
+          <button
+            mat-flat-button
+            (click)="openCreateLinkDialog(selectedResources)"
+            [disabled]="isCreateLinkButtonDisabled$ | async">
             {{ 'pages.dataBrowser.resourceListSelection.createLinkObject' | translate }}
           </button>
         }
@@ -31,10 +33,17 @@ export class ResourceListSelectionComponent {
     map(([count, hasProjectMemberRights]) => count > 1 && hasProjectMemberRights)
   );
 
+  isCreateLinkButtonDisabled$ = this.multipleViewerService.selectedResources$.pipe(
+    map(resources => {
+      if (resources.length === 0) return true;
+      const projectUuid = resources[0].attachedToProject;
+      return !resources.every(resource => resource.attachedToProject === projectUuid);
+    })
+  );
+
   constructor(
     public multipleViewerService: MultipleViewerService,
-    private _dialog: MatDialog,
-    private _translateService: TranslateService
+    private readonly _dialog: MatDialog
   ) {}
 
   reset() {
