@@ -22,6 +22,7 @@ import { propertiesTypeMapping } from './resource-payloads-mapping';
     <app-template-editor-switcher
       [myPropertyDefinition]="propertyValueService.propertyDefinition"
       [resourceClassIri]="propertyValueService.editModeData.resource.type"
+      [projectIri]="propertyValueService.editModeData.resource.attachedToProject"
       [value]="readValue"
       (templateFound)="foundTemplate($event)" />
 

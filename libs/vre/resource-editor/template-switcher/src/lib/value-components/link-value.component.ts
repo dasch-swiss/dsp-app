@@ -77,6 +77,7 @@ export class LinkValueComponent implements OnInit {
   @Input({ required: true }) control!: FormControl<string | null>;
   @Input({ required: true }) propIri!: string;
   @Input({ required: true }) resourceClassIri!: string;
+  @Input({ required: true }) projectIri!: string;
   @Input() defaultValue?: ReadValue;
   @ViewChild(MatAutocompleteTrigger) autoComplete!: MatAutocompleteTrigger;
   @ViewChild(MatAutocomplete) auto!: MatAutocomplete;
@@ -190,7 +191,9 @@ export class LinkValueComponent implements OnInit {
         })
       )
       .subscribe(response => {
-        this.resources = response.resources;
+        // Filter resources to only include those from the same project
+        const filtered = response.resources.filter(res => res.attachedToProject === this.projectIri);
+        this.resources = [...this.resources, ...filtered];
         this._cd.detectChanges();
       });
   }

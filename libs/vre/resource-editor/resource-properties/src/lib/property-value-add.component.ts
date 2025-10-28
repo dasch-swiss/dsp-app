@@ -56,12 +56,12 @@ export class PropertyValueAddComponent {
           this.loading = false;
         })
       )
-      .subscribe(
-        () => {
+      .subscribe({
+        next: () => {
           this._resourceFetcherService.reload();
           this.stopAdding.emit();
         },
-        e => {
+        error: e => {
           if (e instanceof ApiResponseError && e.status === 400) {
             this._notification.openSnackBar(
               this._translateService.instant('resourceEditor.resourceProperties.valueAlreadyExists')
@@ -70,7 +70,7 @@ export class PropertyValueAddComponent {
           }
           // eslint-disable-next-line @typescript-eslint/no-throw-literal
           throw e;
-        }
-      );
+        },
+      });
   }
 }

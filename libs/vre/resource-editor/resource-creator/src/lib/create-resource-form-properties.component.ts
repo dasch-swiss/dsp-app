@@ -19,7 +19,8 @@ import { PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
             [myProperty]="prop"
             [attr.data-cy]="'creator-row-' + prop.propDef.label"
             [formArray]="formGroup.controls[prop.propDef.id]"
-            [resourceClassIri]="resourceClassIri" />
+            [resourceClassIri]="resourceClassIri"
+            [projectIri]="projectIri" />
         </app-create-resource-form-row>
       </div>
     }
@@ -36,6 +37,7 @@ import { PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
 })
 export class CreateResourceFormPropertiesComponent {
   @Input({ required: true }) resourceClassIri!: string;
+  @Input({ required: true }) projectIri!: string;
   @Input({ required: true }) formGroup!: FormGroup<{ [key: string]: FormValueArray }>;
   @Input({ required: true }) properties!: PropertyInfoValues[];
 

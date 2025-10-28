@@ -110,7 +110,8 @@ import { JsLibPotentialError } from '@dasch-swiss/vre/resource-editor/resource-p
         [control]="item"
         [defaultValue]="value"
         [propIri]="myPropertyDefinition.id"
-        [resourceClassIri]="resourceClassIri" />
+        [resourceClassIri]="resourceClassIri"
+        [projectIri]="projectIri" />
     </ng-template>
 
     <ng-template #uriEditorTpl let-item="item">
@@ -126,6 +127,7 @@ import { JsLibPotentialError } from '@dasch-swiss/vre/resource-editor/resource-p
 export class TemplateEditorSwitcherComponent implements AfterViewInit {
   @Input({ required: true }) myPropertyDefinition!: PropertyDefinition;
   @Input({ required: true }) resourceClassIri!: string;
+  @Input({ required: true }) projectIri!: string;
   @Input() value?: ReadValue;
   @Output() templateFound = new EventEmitter<TemplateRef<any>>();
 
