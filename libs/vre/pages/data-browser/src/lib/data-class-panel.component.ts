@@ -5,6 +5,7 @@ import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
 import { ResourceFetcherDialogComponent } from '@dasch-swiss/vre/resource-editor/resource-editor';
 import { filterUndefined } from '@dasch-swiss/vre/shared/app-common';
+import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
 import { CreateResourceDialogComponent, CreateResourceDialogProps } from 'template-switcher';
 import { DataBrowserPageService } from './data-browser-page.service';
 
@@ -13,7 +14,7 @@ import { DataBrowserPageService } from './data-browser-page.service';
   template: `
     <div style="padding-left: 16px; margin-bottom: 32px; padding-right: 16px">
       <div style="display: flex; align-items: center">
-        <h3 style="flex: 1">{{ classSelected.classLabel }}</h3>
+        <h3 style="flex: 1">{{ classSelected.resClass.labels | appStringifyStringLiteral }}</h3>
         @if (hasProjectMemberRights$ | async) {
           <button mat-stroked-button (click)="goToAddClassInstance()" data-cy="create-resource-btn">
             {{ 'pages.dataBrowser.dataClassPanel.createResource' | translate }}
@@ -25,6 +26,7 @@ import { DataBrowserPageService } from './data-browser-page.service';
     <app-resources-list-fetcher [ontologyLabel]="classSelected.ontologyLabel" [classLabel]="classSelected.classLabel" />
   `,
   standalone: false,
+  providers: [StringifyStringLiteralPipe],
 })
 export class DataClassPanelComponent {
   @Input() classSelected!: {
@@ -39,6 +41,7 @@ export class DataClassPanelComponent {
     private _dialog: MatDialog,
     private _viewContainerRef: ViewContainerRef,
     private _projectPageService: ProjectPageService,
+    private _stringifyStringLiteralPipe: StringifyStringLiteralPipe,
     private _dataBrowserPageService: DataBrowserPageService
   ) {}
 
@@ -47,7 +50,7 @@ export class DataClassPanelComponent {
       .open<CreateResourceDialogComponent, CreateResourceDialogProps, string>(CreateResourceDialogComponent, {
         ...DspDialogConfig.dialogDrawerConfig(
           {
-            resourceType: this.classSelected.resClass.label!,
+            resourceType: this._stringifyStringLiteralPipe.transform(this.classSelected.resClass.labels),
             resourceClassIri: this.classSelected.resClass.id,
           },
           true
