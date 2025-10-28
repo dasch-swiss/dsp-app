@@ -1,5 +1,21 @@
 # Changelog
 
+## [12.1.1](https://github.com/dasch-swiss/dsp-das/compare/v12.1.0...v12.1.1) (2025-10-28)
+
+
+### Bug Fixes
+
+* add missing translations ([#2601](https://github.com/dasch-swiss/dsp-das/issues/2601)) ([eadfc53](https://github.com/dasch-swiss/dsp-das/commit/eadfc53e117fa4399767bf6e4717bf21fbd2ca35))
+* **FulltextSearch:** disallow linking resources from different projects ([#2598](https://github.com/dasch-swiss/dsp-das/issues/2598)) ([0610242](https://github.com/dasch-swiss/dsp-das/commit/0610242815678255b474bf400279819c6f8cb4fc))
+* **LinkValue:** limit to searching for only current project resources ([#2602](https://github.com/dasch-swiss/dsp-das/issues/2602)) ([f9878f1](https://github.com/dasch-swiss/dsp-das/commit/f9878f1bbe9ca83328c6ee1a8e1cb971b3ed467a))
+* translate resource class name ([#2600](https://github.com/dasch-swiss/dsp-das/issues/2600)) ([646206e](https://github.com/dasch-swiss/dsp-das/commit/646206e0409b7539e2b7d3d4dee7837f23d79996))
+
+
+### Maintenances
+
+* add Claude Code GitHub Workflow ([#2603](https://github.com/dasch-swiss/dsp-das/issues/2603)) ([4ae40c9](https://github.com/dasch-swiss/dsp-das/commit/4ae40c99bd8170c8628699258329444574fabb19))
+* remove unused console log ([#2605](https://github.com/dasch-swiss/dsp-das/issues/2605)) ([a130e72](https://github.com/dasch-swiss/dsp-das/commit/a130e722e93a31fa8ccdd7cda9dde93e951f4b18))
+
 ## [12.1.0](https://github.com/dasch-swiss/dsp-das/compare/v12.0.1...v12.1.0) (2025-10-27)
 
 
