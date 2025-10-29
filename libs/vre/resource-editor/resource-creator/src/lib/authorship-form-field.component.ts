@@ -47,7 +47,9 @@ import { finalize } from 'rxjs/operators';
         @if (
           filteredAuthorship.length === 0 && autocompleteFormControl.value && autocompleteFormControl.value.length > 0
         ) {
-          <mat-option>{{ 'resourceEditor.resourceCreator.authorship.pressEnterOrTab' | translate }}</mat-option>
+          <mat-option [disabled]="true">{{
+            'resourceEditor.resourceCreator.authorship.pressEnterOrTab' | translate
+          }}</mat-option>
         }
       </mat-autocomplete>
 
