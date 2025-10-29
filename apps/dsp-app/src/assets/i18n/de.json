@@ -407,7 +407,8 @@
       "addRegionFormDialog": {
         "createAnnotation": "Annotation erstellen",
         "subtitle": "Weitere Eigenschaften hinzufügen",
-        "label": "Bezeichnung"
+        "label": "Bezeichnung",
+        "comment": "Kommentar"
       },
       "video": {
         "createAnnotation": "Annotation erstellen",
@@ -481,6 +482,13 @@
       "incomingLinkLabel": "hat eingehenden Link",
       "standoffLinkTooltip": "Stellt einen Link in Standoff-Markup von einer Ressource zu einer anderen dar",
       "standoffLinkLabel": "hat Standoff-Link",
+      "deleteResource": {
+        "title": "Möchten Sie diese Ressource löschen?",
+        "label": "Kommentar, warum die Ressource gelöscht wird",
+        "placeholder": "z.B. Ressource wurde versehentlich erstellt...",
+        "noKeep": "Nein, behalten",
+        "yesDelete": "Ja, löschen"
+      },
       "annotationToolbar": {
         "highlightRegion": "Region hervorheben",
         "openInNewTab": "Annotation in neuem Tab öffnen",
@@ -541,6 +549,14 @@
       "editLabel": {
         "subtitle": "Ressourcen-Label bearbeiten",
         "label": "Label"
+      },
+      "eraseResource": {
+        "title": "Möchten Sie diese Ressource endgültig löschen?",
+        "subtitle": "Ressourceninstanz löschen",
+        "warning": "ACHTUNG: Diese Aktion kann nicht rückgängig gemacht werden, verwenden Sie sie daher mit Vorsicht.",
+        "reason": "Grund",
+        "noKeep": "Nein, behalten",
+        "yesErase": "Ja, löschen"
       },
       "valueComponents": {
         "searchHelp": "Geben Sie 3 Buchstaben ein, um nach einer vorhandenen Ressource zu suchen."

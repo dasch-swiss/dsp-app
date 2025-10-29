@@ -445,7 +445,8 @@
       "addRegionFormDialog": {
         "createAnnotation": "Crea annotazione",
         "subtitle": "Aggiungi ulteriori proprietà",
-        "label": "Etichetta"
+        "label": "Etichetta",
+        "comment": "Commento"
       },
       "downloadFile": "Scarica file",
       "replaceFile": "Sostituisci file",
@@ -519,6 +520,13 @@
       "incomingLinkLabel": "ha un link in entrata",
       "standoffLinkTooltip": "Rappresenta un link in markup standoff da una risorsa a un'altra",
       "standoffLinkLabel": "ha un link standoff",
+      "deleteResource": {
+        "title": "Vuoi eliminare questa risorsa?",
+        "label": "Commento sul motivo per cui la risorsa viene eliminata",
+        "placeholder": "Es. La risorsa è stata creata per errore...",
+        "noKeep": "No, mantienila",
+        "yesDelete": "Sì, elimina"
+      },
       "annotationToolbar": {
         "highlightRegion": "Evidenzia regione",
         "openInNewTab": "Apri annotazione in nuova scheda",
@@ -579,6 +587,14 @@
       "editLabel": {
         "subtitle": "Modifica etichetta della risorsa",
         "label": "Etichetta"
+      },
+      "eraseResource": {
+        "title": "Vuoi cancellare definitivamente questa risorsa?",
+        "subtitle": "Cancella istanza della risorsa",
+        "warning": "ATTENZIONE: Questa azione non può essere annullata, quindi usala con cautela.",
+        "reason": "Ragione",
+        "noKeep": "No, mantienila",
+        "yesErase": "Sì, cancella"
       },
       "valueComponents": {
         "searchHelp": "Digita 3 lettere per cercare una risorsa esistente."

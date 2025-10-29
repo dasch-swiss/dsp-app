@@ -445,7 +445,8 @@
       "addRegionFormDialog": {
         "createAnnotation": "Créer une annotation",
         "subtitle": "Ajouter d'autres propriétés",
-        "label": "Étiquette"
+        "label": "Étiquette",
+        "comment": "Commentaire"
       },
       "downloadFile": "Télécharger le fichier",
       "replaceFile": "Remplacer le fichier",
@@ -519,6 +520,13 @@
       "incomingLinkLabel": "a un lien entrant",
       "standoffLinkTooltip": "Représente un lien en balisage standoff d'une ressource à une autre",
       "standoffLinkLabel": "a un lien standoff",
+      "deleteResource": {
+        "title": "Voulez-vous supprimer cette ressource ?",
+        "label": "Commentez pourquoi la ressource est supprimée",
+        "placeholder": "Ex. La ressource a été créée par erreur...",
+        "noKeep": "Non, la garder",
+        "yesDelete": "Oui, supprimer"
+      },
       "annotationToolbar": {
         "highlightRegion": "Surligner la région",
         "openInNewTab": "Ouvrir l'annotation dans un nouvel onglet",
@@ -579,6 +587,14 @@
       "editLabel": {
         "subtitle": "Modifier le label de la ressource",
         "label": "Label"
+      },
+      "eraseResource": {
+        "title": "Voulez-vous effacer définitivement cette ressource ?",
+        "subtitle": "Effacer l'instance de ressource",
+        "warning": "ATTENTION : Cette action ne peut pas être annulée, utilisez-la avec précaution.",
+        "reason": "Raison",
+        "noKeep": "Non, la garder",
+        "yesErase": "Oui, effacer"
       },
       "valueComponents": {
         "searchHelp": "Tapez 3 lettres pour rechercher une ressource existante."
