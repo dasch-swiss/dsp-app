@@ -1,5 +1,13 @@
 # Changelog
 
+## [12.1.2](https://github.com/dasch-swiss/dsp-das/compare/v12.1.1...v12.1.2) (2025-10-29)
+
+
+### Bug Fixes
+
+* add missing translations ([#2607](https://github.com/dasch-swiss/dsp-das/issues/2607)) ([152689f](https://github.com/dasch-swiss/dsp-das/commit/152689f8d5f53a0e41ebe7e1ad5b4f033babca02))
+* disable hint in authorship ([#2606](https://github.com/dasch-swiss/dsp-das/issues/2606)) ([2489812](https://github.com/dasch-swiss/dsp-das/commit/2489812693adc44d83a48172eb67c08a18f6cfb8))
+
 ## [12.1.1](https://github.com/dasch-swiss/dsp-das/compare/v12.1.0...v12.1.1) (2025-10-28)
 
 
