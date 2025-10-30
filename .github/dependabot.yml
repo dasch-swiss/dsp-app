@@ -12,115 +12,109 @@ updates:
       prefix: "chore"
       include: "scope"
     groups:
-      angular-deps:
-        applies-to: version-updates
-        patterns:
-          - "@angular*"
-          - "@ngrx/component-store"
-          - "zone.js"
-        update-types:
-          - "minor"
-          - "patch"
       eslint-deps:
-        applies-to: version-updates
         patterns:
-          - "eslint*"
+          - "eslint-config-*"
+          - "eslint-plugin-*"
         exclude-patterns:
-          - "@angular-eslint/*"
-          - "@nx/eslint/*"
-          - "@nrwl/eslint*"
-        update-types:
-          - "minor"
-          - "patch"
+          - "eslint-config-prettier"
+          - "eslint-plugin-prettier"
+      prettier-deps:
+        patterns:
+          - "prettier"
+          - "eslint-config-prettier"
+          - "eslint-plugin-prettier"
+      swc-deps:
+        patterns:
+          - "@swc/*"
+          - "@swc-node/*"
+      ngx-translate-deps:
+        patterns:
+          - "@ngx-translate/*"
       grafana-deps:
-        applies-to: version-updates
         patterns:
           - "@grafana/*"
-        update-types:
-          - "minor"
-          - "patch"
-      jest-jasmine-deps:
-        applies-to: version-updates
+      jest-deps:
         patterns:
           - "jest*"
           - "ts-jest"
-          - "jasmine-core"
-          - "@types/jasmine"
           - "@types/jest"
-        update-types:
-          - "minor"
-          - "patch"
+      jasmine-deps:
+        patterns:
+          - "jasmine-core"
+          - "@types/jasmine*"
       jwt-decoder-deps:
-        applies-to: version-updates
         patterns:
           - "jwt-decode"
           - "@types/jwt-decode"
-        update-types:
-          - "minor"
-          - "patch"
-      nx-deps:
-        applies-to: version-updates
+      openseadragon-deps:
         patterns:
-          - "nx*"
-          - "@nx*"
-          - "@nrwl*"
-        update-types:
-          - "minor"
-          - "patch"
+          - "openseadragon"
+          - "@types/openseadragon"
+      uuid-deps:
+        patterns:
+          - "uuid"
+          - "@types/uuid"
       postcss-deps:
-        applies-to: version-updates
         patterns:
           - "postcss*"
-        update-types:
-          - "minor"
-          - "patch"
       sentry-deps:
-        applies-to: version-updates
         patterns:
           - "@sentry/*"
-        update-types:
-          - "minor"
-          - "patch"
-      types-deps:
-        applies-to: version-updates
-        patterns:
-          - "@types/*"
-        update-types:
-          - "minor"
-          - "patch"
-        exclude-patterns:
-          - "@types/jest"
-          - "@types/jasmine*"
-          - "@types/jwt-decode"
       test-coverage-deps:
-        applies-to: version-updates
         patterns:
           - "@cypress/code-coverage"
           - "@jsdevtools/coverage-istanbul-loader"
           - "istanbul-lib-coverage"
           - "ngx-build-plus"
-        update-types:
-          - "minor"
-          - "patch"
     ignore:
       - dependency-name: "*"
         update-types: [ "version-update:semver-major" ]
       # we use github:dasch-swiss/ckeditor_custom_build#v2.0.0 and v2.0.1 seems to be broken
       - dependency-name: "ckeditor5-custom-build"
-      # all nx and angular dependencies are for now handled manually (also zone.js)
+      # Angular, NX, TypeScript and related deps are handled manually due to tight version coupling
       - dependency-name: "@angular/*"
       - dependency-name: "@angular-devkit/*"
-      - dependency-name: "@angular-eslint/*" #angular-eslint should match the angular version, also handled manually
+      # angular-eslint should match the angular version, also handled manually
+      - dependency-name: "@angular-eslint/*"
+      - dependency-name: "@schematics/angular"
       - dependency-name: "typescript"
       - dependency-name: "@ngrx/component-store"
       - dependency-name: "nx*"
       - dependency-name: "@nx*"
       - dependency-name: "@nrwl/*"
       - dependency-name: "zone.js"
+      # RxJS and ng-packagr are tightly coupled to Angular version
+      - dependency-name: "rxjs"
+      - dependency-name: "ng-packagr"
+      # @types/node should match Node.js version from Docker
+      - dependency-name: "@types/node"
+      # ESLint and TypeScript-ESLint are tightly coupled to TypeScript version
+      - dependency-name: "eslint"
+      - dependency-name: "@typescript-eslint/*"
+      - dependency-name: "eslint-plugin-angular"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "github-actions"
 
   - package-ecosystem: "docker"
     directory: "/"
     schedule:
       interval: "weekly"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "docker"
     ignore:
       - dependency-name: "node"
