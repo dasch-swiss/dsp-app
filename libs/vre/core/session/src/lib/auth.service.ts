@@ -1,10 +1,10 @@
-import { Inject, Injectable, inject } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { ApiResponseError, KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { UserFeedbackError } from '@dasch-swiss/vre/core/error-handler';
 import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { TranslateService } from '@ngx-translate/core';
-import { catchError, map, of, switchMap, tap } from 'rxjs';
+import { catchError, finalize, map, of, switchMap, tap } from 'rxjs';
 import { AccessTokenService } from './access-token.service';
 import { UserService } from './user.service';
 
@@ -12,7 +12,7 @@ import { UserService } from './user.service';
 export class AuthService {
   constructor(
     private readonly _userService: UserService,
-    private _translateService: TranslateService,
+    private readonly _translateService: TranslateService,
     private readonly _accessTokenService: AccessTokenService,
     @Inject(DspApiConnectionToken)
     private readonly _dspApiConnection: KnoraApiConnection,
@@ -24,6 +24,19 @@ export class AuthService {
       map(() => true),
       catchError(() => {
         return of(false);
+      })
+    );
+  }
+
+  /**
+   * Complete authentication by loading user and setting language preferences
+   * @param identifierOrIri can be email, username, or user IRI
+   * @param identifierType type of identifier: 'email', 'username', or 'iri'
+   */
+  afterSuccessfulLogin$(identifierOrIri: string, identifierType: 'email' | 'username' | 'iri') {
+    return this._userService.loadUser(identifierOrIri, identifierType).pipe(
+      tap(user => {
+        this._localizationsService.setLanguage(user.lang);
       })
     );
   }
@@ -47,22 +60,31 @@ export class AuthService {
         }
         throw error;
       }),
-      switchMap(() => {
-        return this._userService.loadUser(identifier, identifierType).pipe(
-          tap(user => {
-            this._localizationsService.setLanguage(user.lang);
-          })
-        );
-      })
+      switchMap(() => this.afterSuccessfulLogin$(identifier, identifierType))
     );
   }
 
+  /**
+   * Cleanup authentication state with configurable options
+   */
+  afterLogout(): void {
+    this._userService.logout();
+    this._accessTokenService.removeTokens();
+    this._dspApiConnection.v2.jsonWebToken = '';
+  }
+
+  /**
+   * Logout user - performs API logout and full cleanup
+   */
   logout() {
-    this._dspApiConnection.v2.auth.logout().subscribe(() => {
-      this._userService.logout();
-      this._accessTokenService.removeTokens();
-      this._dspApiConnection.v2.jsonWebToken = '';
-      window.location.reload();
-    });
+    this._dspApiConnection.v2.auth
+      .logout()
+      .pipe(
+        finalize(() => {
+          this.afterLogout();
+          window.location.reload();
+        })
+      )
+      .subscribe();
   }
 }

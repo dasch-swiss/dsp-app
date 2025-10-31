@@ -115,7 +115,6 @@ export class ApiConstants {
 
 export enum Auth {
   AccessToken = 'ACCESS_TOKEN',
-  Refresh_token = 'REFRESH_TOKEN',
   Bearer = 'Bearer',
 }
 

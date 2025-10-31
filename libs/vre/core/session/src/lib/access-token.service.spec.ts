@@ -18,7 +18,7 @@ describe('AccessTokenService', () => {
       const mockDecodedToken = { sub: 'http://rdf.dasch.swiss/users/testuser' };
 
       jest.spyOn(service, 'getAccessToken').mockReturnValue(mockToken);
-      jest.spyOn(service, 'decodedAccessToken').mockReturnValue(mockDecodedToken);
+      jest.spyOn(service, 'decodeAccessToken').mockReturnValue(mockDecodedToken);
 
       const result = service.getTokenUser();
 
@@ -35,7 +35,7 @@ describe('AccessTokenService', () => {
 
     it('should return null when token is invalid', () => {
       jest.spyOn(service, 'getAccessToken').mockReturnValue('invalid-token');
-      jest.spyOn(service, 'decodedAccessToken').mockReturnValue(null);
+      jest.spyOn(service, 'decodeAccessToken').mockReturnValue(null);
 
       const result = service.getTokenUser();
 
@@ -47,7 +47,7 @@ describe('AccessTokenService', () => {
       const mockDecodedToken = { iat: 1616239022 };
 
       jest.spyOn(service, 'getAccessToken').mockReturnValue(mockToken);
-      jest.spyOn(service, 'decodedAccessToken').mockReturnValue(mockDecodedToken);
+      jest.spyOn(service, 'decodeAccessToken').mockReturnValue(mockDecodedToken);
 
       const result = service.getTokenUser();
 
@@ -59,7 +59,7 @@ describe('AccessTokenService', () => {
       const mockDecodedToken = { sub: '' };
 
       jest.spyOn(service, 'getAccessToken').mockReturnValue(mockToken);
-      jest.spyOn(service, 'decodedAccessToken').mockReturnValue(mockDecodedToken);
+      jest.spyOn(service, 'decodeAccessToken').mockReturnValue(mockDecodedToken);
 
       const result = service.getTokenUser();
 

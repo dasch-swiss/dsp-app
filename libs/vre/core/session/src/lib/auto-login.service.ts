@@ -2,39 +2,45 @@ import { Inject, Injectable } from '@angular/core';
 import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { AppError } from '@dasch-swiss/vre/core/error-handler';
-import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { BehaviorSubject, finalize, switchMap } from 'rxjs';
 import { AccessTokenService } from './access-token.service';
 import { AuthService } from './auth.service';
-import { UserService } from './user.service';
 
 @Injectable({ providedIn: 'root' })
 export class AutoLoginService {
   hasCheckedCredentials$ = new BehaviorSubject(false);
+  private _isInitialized = false;
 
   constructor(
     private readonly _accessTokenService: AccessTokenService,
     @Inject(DspApiConnectionToken)
     private readonly _dspApiConnection: KnoraApiConnection,
-    private readonly _userService: UserService,
-    private readonly _authService: AuthService,
-    private readonly _localizationsService: LocalizationService
+    private readonly _authService: AuthService
   ) {}
 
   setup(): void {
-    this._dspApiConnection.v2.jsonWebToken = ''; // needed for JS-LIB to run
+    if (this._isInitialized) {
+      console.warn('AutoLoginService.setup() has already been called. Ignoring duplicate call.');
+      return;
+    }
+    this._isInitialized = true;
 
-    const encodedJWT = this._accessTokenService.getAccessToken();
-    if (!encodedJWT) {
+    if (!this._accessTokenService.tokenExists()) {
       this.hasCheckedCredentials$.next(true);
       return;
     }
 
-    const decodedToken = this._accessTokenService.decodedAccessToken(encodedJWT);
-    if (!decodedToken || this._accessTokenService.isValidToken(decodedToken)) {
-      this.hasCheckedCredentials$.next(true);
+    if (!this._accessTokenService.isValidToken()) {
       this._accessTokenService.removeTokens();
+      this.hasCheckedCredentials$.next(true);
       return;
+    }
+
+    const encodedJWT = this._accessTokenService.getAccessToken();
+    const userIri = this._accessTokenService.getTokenUser();
+
+    if (!encodedJWT || !userIri) {
+      throw new AppError('Access token should exist.');
     }
 
     this._dspApiConnection.v2.jsonWebToken = encodedJWT;
@@ -47,24 +53,13 @@ export class AutoLoginService {
             throw new AppError('Credentials not valid');
           }
 
-          const userIri = decodedToken.sub;
-          if (!userIri) {
-            throw new AppError('Decoded user in JWT token is not valid.');
-          }
-
-          return this._userService.loadUser(userIri, 'iri').pipe(
-            switchMap(user => {
-              this._localizationsService.setLanguage(user.lang);
-              return [user];
-            })
-          );
+          return this._authService.afterSuccessfulLogin$(userIri, 'iri');
         }),
         finalize(() => this.hasCheckedCredentials$.next(true))
       )
       .subscribe({
         error: () => {
-          this._accessTokenService.removeTokens();
-          this._dspApiConnection.v2.jsonWebToken = '';
+          this._authService.afterLogout();
         },
       });
   }
