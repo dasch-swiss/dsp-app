@@ -1,7 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DspInstrumentationConfig, DspInstrumentationToken } from '@dasch-swiss/vre/core/config';
-import { AccessTokenService, AuthService } from '@dasch-swiss/vre/core/session';
 import { v5 as uuidv5 } from 'uuid';
 
 @Injectable({
@@ -9,29 +7,19 @@ import { v5 as uuidv5 } from 'uuid';
 })
 export class PendoAnalyticsService {
   private config: DspInstrumentationConfig = inject(DspInstrumentationToken);
-  private authService: AuthService = inject(AuthService);
-  private _accessTokenService: AccessTokenService = inject(AccessTokenService);
   private environment: string = this.config.environment;
 
-  setup(): void {
+  /**
+   * Set active user for Pendo analytics
+   * @param userIri - The user IRI to track
+   */
+  setActiveUser(userIri: string): void {
     if (this.config.environment !== 'prod') {
       return;
     }
 
-    this.authService
-      .isCredentialsValid$()
-      .pipe(takeUntilDestroyed())
-      .subscribe((isSessionValid: boolean) => {
-        if (!isSessionValid) {
-          this.removeActiveUser();
-          return;
-        }
-        const userIri = this._accessTokenService.getTokenUser();
-        if (!userIri) return;
-
-        const hashedUserId = this.hashUserIri(userIri);
-        this._setActiveUser(hashedUserId);
-      });
+    const hashedUserId = this.hashUserIri(userIri);
+    this._setActiveUser(hashedUserId);
   }
 
   /**
@@ -80,6 +68,10 @@ export class PendoAnalyticsService {
    * remove active user
    */
   removeActiveUser(): void {
+    if (this.config.environment !== 'prod') {
+      return;
+    }
+
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     pendo.initialize({

@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@angular/core';
 import { ApiResponseError, KnoraApiConnection } from '@dasch-swiss/dsp-js';
+import { PendoAnalyticsService } from '@dasch-swiss/vre/3rd-party-services/analytics';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { UserFeedbackError } from '@dasch-swiss/vre/core/error-handler';
 import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
@@ -16,7 +17,8 @@ export class AuthService {
     private readonly _accessTokenService: AccessTokenService,
     @Inject(DspApiConnectionToken)
     private readonly _dspApiConnection: KnoraApiConnection,
-    private readonly _localizationsService: LocalizationService
+    private readonly _localizationsService: LocalizationService,
+    private readonly _pendoAnalytics: PendoAnalyticsService
   ) {}
 
   isCredentialsValid$() {
@@ -37,6 +39,7 @@ export class AuthService {
     return this._userService.loadUser(identifierOrIri, identifierType).pipe(
       tap(user => {
         this._localizationsService.setLanguage(user.lang);
+        this._pendoAnalytics.setActiveUser(user.id);
       })
     );
   }
@@ -71,6 +74,7 @@ export class AuthService {
     this._userService.logout();
     this._accessTokenService.removeTokens();
     this._dspApiConnection.v2.jsonWebToken = '';
+    this._pendoAnalytics.removeActiveUser();
   }
 
   /**

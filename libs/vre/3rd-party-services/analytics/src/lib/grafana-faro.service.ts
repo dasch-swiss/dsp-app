@@ -5,7 +5,7 @@ import { TracingInstrumentation } from '@grafana/faro-web-tracing';
 
 @Injectable({ providedIn: 'root' })
 export class GrafanaFaroService {
-  faro: Faro;
+  faro!: Faro;
 
   constructor(private readonly _appConfig: AppConfigService) {}
 

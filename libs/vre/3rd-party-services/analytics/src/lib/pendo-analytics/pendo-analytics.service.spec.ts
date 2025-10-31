@@ -1,35 +1,24 @@
 import { TestBed } from '@angular/core/testing';
 import { DspInstrumentationToken } from '@dasch-swiss/vre/core/config';
-import { AccessTokenService, AuthService } from '@dasch-swiss/vre/core/session';
-import { of } from 'rxjs';
 import { v5 as uuidv5 } from 'uuid';
 import { PendoAnalyticsService } from './pendo-analytics.service';
 
 describe('PendoAnalyticsService', () => {
   let service: PendoAnalyticsService;
-  let mockAuthService: any;
-  let mockAccessTokenService: any;
+  let mockPendo: any;
 
   beforeEach(() => {
-    const authSpy = {
-      isCredentialsValid$: jest.fn(),
+    // Mock the global pendo object
+    mockPendo = {
+      initialize: jest.fn(),
     };
-    const accessTokenSpy = {
-      getTokenUser: jest.fn(),
-    };
+    (global as any).pendo = mockPendo;
 
     TestBed.configureTestingModule({
-      providers: [
-        PendoAnalyticsService,
-        { provide: DspInstrumentationToken, useValue: { environment: 'test' } },
-        { provide: AuthService, useValue: authSpy },
-        { provide: AccessTokenService, useValue: accessTokenSpy },
-      ],
+      providers: [PendoAnalyticsService, { provide: DspInstrumentationToken, useValue: { environment: 'test' } }],
     });
 
     service = TestBed.inject(PendoAnalyticsService);
-    mockAuthService = TestBed.inject(AuthService);
-    mockAccessTokenService = TestBed.inject(AccessTokenService);
   });
 
   describe('hashUserIri', () => {
@@ -72,14 +61,67 @@ describe('PendoAnalyticsService', () => {
     });
   });
 
-  describe('setup', () => {
+  describe('setActiveUser', () => {
     it('should not initialize Pendo in non-production environment', () => {
-      const testService = TestBed.inject(PendoAnalyticsService);
-      mockAuthService.isCredentialsValid$.mockReturnValue(of(true));
+      const userIri = 'http://rdf.dasch.swiss/users/testuser';
 
-      testService.setup();
+      service.setActiveUser(userIri);
 
-      expect(mockAuthService.isCredentialsValid$).not.toHaveBeenCalled();
+      expect(mockPendo.initialize).not.toHaveBeenCalled();
+    });
+
+    it('should initialize Pendo with hashed user ID in production environment', () => {
+      // Create a new service instance with prod environment
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({
+        providers: [PendoAnalyticsService, { provide: DspInstrumentationToken, useValue: { environment: 'prod' } }],
+      });
+      const prodService = TestBed.inject(PendoAnalyticsService);
+      const userIri = 'http://rdf.dasch.swiss/users/testuser';
+      const expectedHashedId = uuidv5(userIri, uuidv5.URL);
+
+      prodService.setActiveUser(userIri);
+
+      expect(mockPendo.initialize).toHaveBeenCalledWith({
+        visitor: {
+          id: expectedHashedId,
+          environment: 'prod',
+        },
+        account: {
+          id: expectedHashedId,
+          environment: 'prod',
+        },
+      });
+    });
+  });
+
+  describe('removeActiveUser', () => {
+    it('should not call Pendo in non-production environment', () => {
+      service.removeActiveUser();
+
+      expect(mockPendo.initialize).not.toHaveBeenCalled();
+    });
+
+    it('should initialize Pendo with default visitor ID in production environment', () => {
+      // Create a new service instance with prod environment
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({
+        providers: [PendoAnalyticsService, { provide: DspInstrumentationToken, useValue: { environment: 'prod' } }],
+      });
+      const prodService = TestBed.inject(PendoAnalyticsService);
+
+      prodService.removeActiveUser();
+
+      expect(mockPendo.initialize).toHaveBeenCalledWith({
+        visitor: {
+          id: 'VISITOR-UNIQUE-ID',
+          environment: 'prod',
+        },
+        account: {
+          id: 'ACCOUNT-UNIQUE-ID',
+          environment: 'prod',
+        },
+      });
     });
   });
 });

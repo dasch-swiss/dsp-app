@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { ApiResponseError, KnoraApiConnection, ReadUser } from '@dasch-swiss/dsp-js';
+import { PendoAnalyticsService } from '@dasch-swiss/vre/3rd-party-services/analytics';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { UserFeedbackError } from '@dasch-swiss/vre/core/error-handler';
 import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
@@ -78,6 +79,7 @@ describe('AuthService', () => {
   let mockAccessTokenService: jest.Mocked<Partial<AccessTokenService>>;
   let mockDspApiConnection: jest.Mocked<Partial<KnoraApiConnection>>;
   let mockLocalizationService: jest.Mocked<Partial<LocalizationService>>;
+  let mockPendoAnalytics: jest.Mocked<Partial<PendoAnalyticsService>>;
 
   const mockUser = createMockUser();
 
@@ -113,6 +115,11 @@ describe('AuthService', () => {
       setLanguage: jest.fn(),
     };
 
+    mockPendoAnalytics = {
+      setActiveUser: jest.fn(),
+      removeActiveUser: jest.fn(),
+    };
+
     TestBed.configureTestingModule({
       providers: [
         AuthService,
@@ -121,6 +128,7 @@ describe('AuthService', () => {
         { provide: AccessTokenService, useValue: mockAccessTokenService },
         { provide: DspApiConnectionToken, useValue: mockDspApiConnection },
         { provide: LocalizationService, useValue: mockLocalizationService },
+        { provide: PendoAnalyticsService, useValue: mockPendoAnalytics },
       ],
     });
     service = TestBed.inject(AuthService);
@@ -166,6 +174,14 @@ describe('AuthService', () => {
       expect(mockUserService.loadUser).toHaveBeenCalledWith(TEST_CONSTANTS.EMAIL, 'email');
       expect(mockLocalizationService.setLanguage).toHaveBeenCalledWith(TEST_CONSTANTS.USER_LANG);
       expect(user).toEqual(mockUser);
+    });
+
+    it('should call Pendo analytics with user ID', async () => {
+      mockUserService.loadUser = jest.fn().mockReturnValue(of(mockUser));
+
+      await firstValueFrom(service.afterSuccessfulLogin$(TEST_CONSTANTS.EMAIL, 'email'));
+
+      expect(mockPendoAnalytics.setActiveUser).toHaveBeenCalledWith(TEST_CONSTANTS.USER_IRI);
     });
 
     it('should propagate user service errors', async () => {
@@ -311,6 +327,12 @@ describe('AuthService', () => {
       service.afterLogout();
 
       expect(mockDspApiConnection.v2!.jsonWebToken).toBe('');
+    });
+
+    it('should call Pendo analytics to remove active user', () => {
+      service.afterLogout();
+
+      expect(mockPendoAnalytics.removeActiveUser).toHaveBeenCalled();
     });
   });
 
