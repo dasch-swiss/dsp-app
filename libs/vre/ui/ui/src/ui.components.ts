@@ -1,3 +1,4 @@
+import { DateValueHandlerComponent } from '@dasch-swiss/vre/ui/date-picker';
 import { AdminImageDirective } from './lib/admin-image/admin-image.directive';
 import { AlternatedListComponent } from './lib/alternated-list.component';
 import { ColorPickerComponent } from './lib/app-color-picker.component';
@@ -9,10 +10,12 @@ import { CkEditorControlComponent } from './lib/ck-editor/ck-editor-control.comp
 import { CkEditorComponent } from './lib/ck-editor/ck-editor.component';
 import { CommonInputComponent } from './lib/common-input.component';
 import { ConfirmDialogComponent } from './lib/dialog/confirm-dialog.component';
+import { DialogHeaderComponent } from './lib/dialog-header.component';
 import { DragDropDirective } from './lib/directives/drag-drop.directive';
 import { DoubleChipSelectorComponent } from './lib/double-chip-selector.component';
 import { HintComponent } from './lib/hint/hint.component';
 import { HumanReadableDatePipe } from './lib/human-readable-date.pipe';
+import { HumanReadableErrorPipe } from './lib/human-readable-error.pipe';
 import { InvalidControlScrollDirective } from './lib/invalid-control-scroll.directive';
 import { PagerComponent } from './lib/pager/pager.component';
 import { AddTargetBlankPipe } from './lib/pipes/add-target-blank.pipe';
@@ -27,33 +30,36 @@ import { TimeFormatPipe } from './lib/time-format.pipe';
 import { TimeFormatDirective } from './lib/time-input/time-format.directive';
 import { TimeInputComponent } from './lib/time-input/time-input.component';
 
-export const UiComponents = [
-  ConfirmDialogComponent,
-  TimeInputComponent,
-  TimeFormatDirective,
-  TimeFormatPipe,
+export const UiStandaloneComponents = [
+  AddTargetBlankPipe,
+  AdminImageDirective,
+  AlternatedListComponent,
+  CenteredBoxComponent,
+  CenteredLayoutComponent,
+  CenteredMessageComponent,
+  ChipListInputComponent,
   CkEditorComponent,
   CkEditorControlComponent,
-  InvalidControlScrollDirective,
-  ChipListInputComponent,
+  ColorPickerComponent,
   CommonInputComponent,
-  AdminImageDirective,
-  CenteredLayoutComponent,
+  ConfirmDialogComponent,
+  DialogHeaderComponent,
+  DateValueHandlerComponent,
+  HumanReadableErrorPipe,
+  DoubleChipSelectorComponent,
   DragDropDirective,
-  KnoraDatePipe,
+  HintComponent,
+  HumanReadableDatePipe,
+  InternalLinkReplacerPipe,
+  InvalidControlScrollDirective,
   IsFalsyPipe,
+  KnoraDatePipe,
+  LinkifyPipe,
+  PagerComponent,
+  TimeFormatDirective,
+  TimeFormatPipe,
+  TimeInputComponent,
   TimePipe,
   TitleFromCamelCasePipe,
-  LinkifyPipe,
   TruncatePipe,
-  HintComponent,
-  InternalLinkReplacerPipe,
-  AddTargetBlankPipe,
-  AlternatedListComponent,
-  ColorPickerComponent,
-  HumanReadableDatePipe,
-  DoubleChipSelectorComponent,
-  CenteredBoxComponent,
-  CenteredMessageComponent,
 ];
-export const UiStandaloneComponents = [PagerComponent];

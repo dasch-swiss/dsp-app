@@ -13,7 +13,7 @@
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "typeRoots": ["node_modules/@types"],
+    "typeRoots": ["node_modules/@types", "types"],
     "useDefineForClassFields": true,
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,

@@ -1,7 +1,11 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit, inject } from '@angular/core';
-import { FormControl } from '@angular/forms';
-import { TranslateService } from '@ngx-translate/core';
+import { ChangeDetectionStrategy, Component, inject, Input, OnInit } from '@angular/core';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { HumanReadableErrorPipe } from '../human-readable-error.pipe';
 import { ValidatorError } from '../validator-error.interface';
+import { TimeFormatDirective } from './time-format.directive';
 import { TimeInputErrorStateMatcher } from './time-input-error-state-matcher';
 
 // TODO this changes segment-dialog
@@ -24,7 +28,15 @@ import { TimeInputErrorStateMatcher } from './time-input-error-state-matcher';
     </mat-form-field>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [
+    HumanReadableErrorPipe,
+    MatFormFieldModule,
+    MatInputModule,
+    ReactiveFormsModule,
+    TimeFormatDirective,
+    TranslateModule,
+  ],
+  standalone: true,
 })
 export class TimeInputComponent implements OnInit {
   private readonly _translateService = inject(TranslateService);

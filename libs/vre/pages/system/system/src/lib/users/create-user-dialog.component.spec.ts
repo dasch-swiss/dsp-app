@@ -12,7 +12,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ReadUser, User } from '@dasch-swiss/dsp-js';
 import { UserApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { UserForm } from '@dasch-swiss/vre/pages/user-settings/user';
-import { HumanReadableErrorPipe } from '@dasch-swiss/vre/ui/string-literal';
+import { HumanReadableErrorPipe } from '@dasch-swiss/vre/ui/ui';
 import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { CreateUserDialogComponent } from './create-user-dialog.component';

@@ -1,6 +1,8 @@
-import { ChangeDetectionStrategy, Component, Inject, inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { TranslateService } from '@ngx-translate/core';
+import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { TranslateModule } from '@ngx-translate/core';
+import { DialogHeaderComponent } from '../dialog-header.component';
 
 export interface ConfirmDialogProps {
   message: string;
@@ -25,11 +27,10 @@ export interface ConfirmDialogProps {
     </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [DialogHeaderComponent, MatButtonModule, MatDialogModule, TranslateModule],
+  standalone: true,
 })
 export class ConfirmDialogComponent {
-  private readonly _translateService = inject(TranslateService);
-
   constructor(
     public readonly dialogRef: MatDialogRef<ConfirmDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public readonly data: ConfirmDialogProps

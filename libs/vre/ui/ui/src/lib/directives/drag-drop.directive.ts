@@ -2,7 +2,7 @@ import { Directive, EventEmitter, HostBinding, HostListener, Output } from '@ang
 
 @Directive({
   selector: '[appDragDrop]',
-  standalone: false,
+  standalone: true,
 })
 export class DragDropDirective {
   @HostBinding('style.background-color') background = '#f2f2f2';

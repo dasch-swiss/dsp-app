@@ -1,7 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
 import * as Editor from 'ckeditor5-custom-build';
 import { startWith } from 'rxjs/operators';
+import { HumanReadableErrorPipe } from '../human-readable-error.pipe';
 import { ckEditor } from './ck-editor';
 import { unescapeHtml } from './unescape-html';
 
@@ -16,7 +19,8 @@ import { unescapeHtml } from './unescape-html';
     @if (control.touched && control.errors; as errors) {
       <mat-error>{{ errors | humanReadableError }}</mat-error>
     }`,
-  standalone: false,
+  imports: [CKEditorModule, HumanReadableErrorPipe, MatFormFieldModule, ReactiveFormsModule],
+  standalone: true,
 })
 export class CkEditorComponent implements OnInit {
   @Input({ required: true }) control!: FormControl<string | null>;

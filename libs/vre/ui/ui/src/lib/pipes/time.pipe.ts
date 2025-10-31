@@ -6,7 +6,7 @@ import { Pipe, PipeTransform } from '@angular/core';
  */
 @Pipe({
   name: 'appTime',
-  standalone: false,
+  standalone: true,
 })
 export class TimePipe implements PipeTransform {
   transform(value: number): string {

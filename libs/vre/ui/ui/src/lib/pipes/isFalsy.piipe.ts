@@ -3,7 +3,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 @Pipe({
   name: 'isFalsy',
   pure: false,
-  standalone: false,
+  standalone: true,
 })
 export class IsFalsyPipe implements PipeTransform {
   transform(value: any): any {

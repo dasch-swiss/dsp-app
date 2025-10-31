@@ -1,4 +1,3 @@
-import { ColorPickerComponent } from '@dasch-swiss/vre/ui/ui';
 import { CreateResourceDialogComponent } from './lib/create-resource-dialog.component';
 import { MathJaxDirective } from './lib/mathjax/math-jax.directive';
 import { NullableEditorComponent } from './lib/nullable-editor.component';
@@ -35,7 +34,6 @@ export const TemplateSwitcherComponents = [
   TimeValueComponent,
   BooleanValueComponent,
   // Viewer components
-  ColorPickerComponent,
   DateViewerComponent,
   GeonameViewerComponent,
   IntervalViewerComponent,

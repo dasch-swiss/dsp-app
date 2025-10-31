@@ -12,7 +12,7 @@ import { timeStringToSeconds } from './time-string-to-seconds';
       multi: true,
     },
   ],
-  standalone: false,
+  standalone: true,
 })
 export class TimeFormatDirective implements ControlValueAccessor {
   private onChange!: (value: number | null) => void;

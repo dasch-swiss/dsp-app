@@ -1,5 +1,6 @@
 export * from './ui.components';
 export * from './lib/dialog/dialog.service';
+export * from './lib/dialog-header.component';
 export * from './lib/dialog/dialog-sizes.constant';
 export * from './lib/dialog/confirm-dialog.component';
 export * from './lib/pager/pager.component';
@@ -35,3 +36,4 @@ export * from './lib/human-readable-date.pipe';
 export * from './lib/double-chip-selector.component';
 export * from './lib/centered-box.component';
 export * from './lib/centered-message.component';
+export * from './lib/human-readable-error.pipe';

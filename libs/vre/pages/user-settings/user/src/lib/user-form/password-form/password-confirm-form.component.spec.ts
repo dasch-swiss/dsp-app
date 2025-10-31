@@ -4,7 +4,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { HumanReadableErrorPipe } from '@dasch-swiss/vre/ui/string-literal';
+import { HumanReadableErrorPipe } from '@dasch-swiss/vre/ui/ui';
 import { TranslateModule } from '@ngx-translate/core';
 import { PasswordConfirmFormComponent } from './password-confirm-form.component';
 import { PasswordFormFieldComponent } from './password-form-field.component';

@@ -3,7 +3,7 @@ import { KnoraDate } from '@dasch-swiss/dsp-js';
 
 @Pipe({
   name: 'knoraDate',
-  standalone: false,
+  standalone: true,
 })
 export class KnoraDatePipe implements PipeTransform {
   transform(date: KnoraDate, format?: string, displayOptions?: 'era' | 'calendar' | 'calendarOnly' | 'all'): string {
@@ -12,7 +12,7 @@ export class KnoraDatePipe implements PipeTransform {
       return '';
     }
 
-    const formattedString = this.getFormattedString(date, format);
+    const formattedString = this.getFormattedString(date, format!);
 
     if (displayOptions) {
       return this.addDisplayOptions(date, formattedString, displayOptions);
@@ -43,6 +43,7 @@ export class KnoraDatePipe implements PipeTransform {
         // displays only the selected calendar type without any data
         return this._titleCase(date.calendar);
       case 'all':
+      default:
         // displays date with era (only as BCE) and selected calendar type
         return `${value + (date.era === 'noEra' ? '' : date.era === 'BCE' ? ` ${date.era}` : '')} ${this._titleCase(
           date.calendar
@@ -54,33 +55,33 @@ export class KnoraDatePipe implements PipeTransform {
     switch (format) {
       case 'dd.MM.YYYY':
         if (date.precision === 2) {
-          return `${this.leftPadding(date.day)}.${this.leftPadding(date.month)}.${date.year}`;
+          return `${this.leftPadding(date.day!)}.${this.leftPadding(date.month!)}.${date.year}`;
         } else if (date.precision === 1) {
-          return `${this.leftPadding(date.month)}.${date.year}`;
+          return `${this.leftPadding(date.month!)}.${date.year}`;
         } else {
           return `${date.year}`;
         }
       case 'dd-MM-YYYY':
         if (date.precision === 2) {
-          return `${this.leftPadding(date.day)}-${this.leftPadding(date.month)}-${date.year}`;
+          return `${this.leftPadding(date.day!)}-${this.leftPadding(date.month!)}-${date.year}`;
         } else if (date.precision === 1) {
-          return `${this.leftPadding(date.month)}-${date.year}`;
+          return `${this.leftPadding(date.month!)}-${date.year}`;
         } else {
           return `${date.year}`;
         }
       case 'MM/dd/YYYY':
         if (date.precision === 2) {
-          return `${this.leftPadding(date.month)}/${this.leftPadding(date.day)}/${date.year}`;
+          return `${this.leftPadding(date.month!)}/${this.leftPadding(date.day!)}/${date.year}`;
         } else if (date.precision === 1) {
-          return `${this.leftPadding(date.month)}/${date.year}`;
+          return `${this.leftPadding(date.month!)}/${date.year}`;
         } else {
           return `${date.year}`;
         }
       default:
         if (date.precision === 2) {
-          return `${this.leftPadding(date.day)}.${this.leftPadding(date.month)}.${date.year}`;
+          return `${this.leftPadding(date.day!)}.${this.leftPadding(date.month!)}.${date.year}`;
         } else if (date.precision === 1) {
-          return `${this.leftPadding(date.month)}.${date.year}`;
+          return `${this.leftPadding(date.month!)}.${date.year}`;
         } else {
           return `${date.year}`;
         }

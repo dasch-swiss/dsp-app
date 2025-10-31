@@ -1,5 +1,9 @@
 import { Component, Input } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { HumanReadableErrorPipe } from './human-readable-error.pipe';
 
 @Component({
   selector: 'app-common-input',
@@ -25,7 +29,8 @@ import { FormControl } from '@angular/forms';
     </mat-form-field>
   `,
   styles: [':host { display: block;}'],
-  standalone: false,
+  imports: [HumanReadableErrorPipe, MatFormFieldModule, MatIconModule, MatInputModule, ReactiveFormsModule],
+  standalone: true,
 })
 export class CommonInputComponent {
   @Input({ required: true }) control!: FormControl<string | number>;
