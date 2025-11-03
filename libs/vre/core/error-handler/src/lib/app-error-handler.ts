@@ -1,6 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { ErrorHandler, Injectable, NgZone, inject } from '@angular/core';
+import { ErrorHandler, inject, Injectable, NgZone } from '@angular/core';
 import { ApiResponseError } from '@dasch-swiss/dsp-js';
+import { GrafanaFaroService } from '@dasch-swiss/vre/3rd-party-services/analytics';
 import { AppConfigService } from '@dasch-swiss/vre/core/config';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { TranslateService } from '@ngx-translate/core';
@@ -17,7 +18,8 @@ export class AppErrorHandler implements ErrorHandler {
   constructor(
     private readonly _notification: NotificationService,
     private readonly _appConfig: AppConfigService,
-    private readonly _ngZone: NgZone
+    private readonly _ngZone: NgZone,
+    private readonly _faroService: GrafanaFaroService
   ) {}
 
   badRequestRegexMatch = /dsp\.errors\.BadRequestException:(.*)$/;
@@ -36,6 +38,7 @@ export class AppErrorHandler implements ErrorHandler {
         console.error(error);
       }
       this.sendErrorToSentry(error);
+      this._sendErrorToFaro(error);
     }
   }
 
@@ -105,5 +108,13 @@ export class AppErrorHandler implements ErrorHandler {
 
   private sendErrorToSentry(error: any) {
     Sentry.captureException(error);
+  }
+
+  private _sendErrorToFaro(error: any): void {
+    try {
+      this._faroService.trackError(error);
+    } catch (faroError) {
+      console.error('Failed to send error to Faro:', faroError);
+    }
   }
 }

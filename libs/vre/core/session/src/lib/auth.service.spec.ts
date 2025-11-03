@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { ApiResponseError, KnoraApiConnection, ReadUser } from '@dasch-swiss/dsp-js';
-import { PendoAnalyticsService } from '@dasch-swiss/vre/3rd-party-services/analytics';
+import { GrafanaFaroService, PendoAnalyticsService } from '@dasch-swiss/vre/3rd-party-services/analytics';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { UserFeedbackError } from '@dasch-swiss/vre/core/error-handler';
 import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
@@ -80,6 +80,7 @@ describe('AuthService', () => {
   let mockDspApiConnection: jest.Mocked<Partial<KnoraApiConnection>>;
   let mockLocalizationService: jest.Mocked<Partial<LocalizationService>>;
   let mockPendoAnalytics: jest.Mocked<Partial<PendoAnalyticsService>>;
+  let mockGrafanaFaro: jest.Mocked<Partial<GrafanaFaroService>>;
 
   const mockUser = createMockUser();
 
@@ -120,6 +121,13 @@ describe('AuthService', () => {
       removeActiveUser: jest.fn(),
     };
 
+    mockGrafanaFaro = {
+      trackEvent: jest.fn(),
+      trackError: jest.fn(),
+      setUser: jest.fn(),
+      removeUser: jest.fn(),
+    };
+
     TestBed.configureTestingModule({
       providers: [
         AuthService,
@@ -129,6 +137,7 @@ describe('AuthService', () => {
         { provide: DspApiConnectionToken, useValue: mockDspApiConnection },
         { provide: LocalizationService, useValue: mockLocalizationService },
         { provide: PendoAnalyticsService, useValue: mockPendoAnalytics },
+        { provide: GrafanaFaroService, useValue: mockGrafanaFaro },
       ],
     });
     service = TestBed.inject(AuthService);

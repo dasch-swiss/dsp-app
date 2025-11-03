@@ -29,6 +29,7 @@ The main application is **DSP-APP** - a user interface for the Swiss National Da
 
 ### Local Development
 - `npm run start-local` or `nx run dsp-app:serve` - Start local development server
+- `npm run start-local-with-observability` - Start local dev server with Grafana observability stack (Loki, Tempo, Grafana UI)
 - `npm run start-dev` - Start with dev server configuration
 
 ### Testing

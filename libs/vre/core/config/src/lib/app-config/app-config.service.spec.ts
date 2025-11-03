@@ -31,6 +31,20 @@ describe('AppConfigService with dev config', () => {
       rollbar: {
         enabled: false,
       },
+      faro: {
+        enabled: false,
+        collectorUrl: 'http://localhost:12345/collect',
+        appName: 'dsp-app',
+        sessionTracking: {
+          enabled: true,
+          persistent: true,
+          samplingRate: 1.0,
+        },
+        console: {
+          enabled: true,
+          disabledLevels: [],
+        },
+      },
     },
     featureFlags: {
       allowEraseProjects: true,
@@ -99,6 +113,20 @@ describe('AppConfigService with prod config', () => {
       rollbar: {
         enabled: true,
         accessToken: 'rollbar_token',
+      },
+      faro: {
+        enabled: true,
+        collectorUrl: 'https://faro-collector-prod-eu-west-2.grafana.net/collect/test',
+        appName: 'dsp-app',
+        sessionTracking: {
+          enabled: true,
+          persistent: true,
+          samplingRate: 0.1,
+        },
+        console: {
+          enabled: false,
+          disabledLevels: ['log', 'info'],
+        },
       },
     },
     featureFlags: {

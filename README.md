@@ -102,6 +102,18 @@ There are three NPM scripts to run the E2E tests:
 - `npm run e2e-ci` will run the E2E tests in the console in a production environment. This is the command run also on GitHub CI.
 - `npm run e2e-local` will open the Cypress UI which will enable to run individual tests easily and see every step as it runs.
 
+### Local Observability
+
+For local development, you can run a Grafana observability stack to view Faro telemetry data (logs, traces, Web Vitals):
+
+```shell
+$ npm run start-local-with-observability
+```
+
+This starts both the observability stack and the app. Access Grafana at [http://localhost:3001](http://localhost:3001) (credentials: `admin`/`admin`). The stack includes Loki for logs, Tempo for traces, and Mimir for metrics. To stop: `docker compose -f docker-compose.observability.yml down`
+
+For detailed configuration and troubleshooting, see the inline documentation in `docker-compose.observability.yml` and `apps/dsp-app/src/config/config.dev.json`.
+
 ## Further Documentation
 
 ### User guide
