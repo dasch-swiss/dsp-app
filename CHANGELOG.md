@@ -1,5 +1,28 @@
 # Changelog
 
+## [12.1.3](https://github.com/dasch-swiss/dsp-das/compare/v12.1.2...v12.1.3) (2025-11-03)
+
+
+### Bug Fixes
+
+* setup pendo again ([#2620](https://github.com/dasch-swiss/dsp-das/issues/2620)) ([1ab353b](https://github.com/dasch-swiss/dsp-das/commit/1ab353ba1c0dfa7db3aa111def95f04742522286))
+
+
+### Maintenances
+
+* **deps-dev:** bump @swc/core from 1.13.5 to 1.14.0 in the swc-deps group ([#2618](https://github.com/dasch-swiss/dsp-das/issues/2618)) ([bf6620b](https://github.com/dasch-swiss/dsp-das/commit/bf6620bccec1a01d06c3d9f162b95c47c0a685e3))
+* **deps-dev:** bump ng-mocks from 14.13.5 to 14.14.0 ([#2597](https://github.com/dasch-swiss/dsp-das/issues/2597)) ([7c1684c](https://github.com/dasch-swiss/dsp-das/commit/7c1684cde9a59af0fe7de856c588497a7b891ff7))
+* **deps:** bump actions/setup-node from 3 to 6 ([#2616](https://github.com/dasch-swiss/dsp-das/issues/2616)) ([39b06ff](https://github.com/dasch-swiss/dsp-das/commit/39b06ffdc590a74059be160b8de6a66eb3cff3cf))
+* **deps:** bump actions/setup-python from 4 to 6 ([#2615](https://github.com/dasch-swiss/dsp-das/issues/2615)) ([2bb14ec](https://github.com/dasch-swiss/dsp-das/commit/2bb14ecd3e97e85b9dd9e60dfbba1435247b3e74))
+* **deps:** bump docker/login-action from 2 to 3 ([#2614](https://github.com/dasch-swiss/dsp-das/issues/2614)) ([17c07e5](https://github.com/dasch-swiss/dsp-das/commit/17c07e5f15d4c5ea95eedf7b968590791838318d))
+* **deps:** bump docker/setup-buildx-action from 2 to 3 ([#2617](https://github.com/dasch-swiss/dsp-das/issues/2617)) ([5546a1e](https://github.com/dasch-swiss/dsp-das/commit/5546a1eb0f5a355ef52eebb55bd4064c6d7ae15a))
+* **deps:** bump the sentry-deps group with 2 updates ([#2595](https://github.com/dasch-swiss/dsp-das/issues/2595)) ([b6e307e](https://github.com/dasch-swiss/dsp-das/commit/b6e307eb5fda6688325463430153304e2a3d450b))
+* disable automatic Claude Code reviews ([#2609](https://github.com/dasch-swiss/dsp-das/issues/2609)) ([4b154da](https://github.com/dasch-swiss/dsp-das/commit/4b154da7922a066f4931302c277bb954923eb3c7))
+* improve Dependabot rules ([#2611](https://github.com/dasch-swiss/dsp-das/issues/2611)) ([82de198](https://github.com/dasch-swiss/dsp-das/commit/82de19882940a2d33c46f080c00778f7312c1652))
+* improve login and auto login process ([#2604](https://github.com/dasch-swiss/dsp-das/issues/2604)) ([b189b8a](https://github.com/dasch-swiss/dsp-das/commit/b189b8a476729b59d8f078b0d3166725c0b34a88))
+* make UI lib standalone ([#2612](https://github.com/dasch-swiss/dsp-das/issues/2612)) ([c4e2309](https://github.com/dasch-swiss/dsp-das/commit/c4e2309a14cab403204b7cf7974b98797a161529))
+* **observability:** Set up Grafana Faro ([#2588](https://github.com/dasch-swiss/dsp-das/issues/2588)) ([f614399](https://github.com/dasch-swiss/dsp-das/commit/f614399e97160dba24bdaedbbfd33e309cededc5))
+
 ## [12.1.2](https://github.com/dasch-swiss/dsp-das/compare/v12.1.1...v12.1.2) (2025-10-29)
 
 
