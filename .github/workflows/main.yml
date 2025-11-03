@@ -198,20 +198,9 @@ jobs:
     if: github.ref == 'refs/heads/main'
     steps:
       - name: Get release please action
-        uses: GoogleCloudPlatform/release-please-action@v3
+        uses: googleapis/release-please-action@v4
         with:
           token: ${{ secrets.GH_TOKEN }}
-          release-type: node
-          package-name: DSP-APP
-          changelog-types: '[
-            {"type": "feat", "section": "Enhancements"},
-            {"type": "fix", "section": "Bug Fixes"},
-            {"type": "chore", "section": "Maintenances"},
-            {"type": "refactor", "section": "Maintenances"},
-            {"type": "style", "section": "Maintenances"},
-            {"type": "docs", "section": "Documentation"},
-            {"type": "test", "section": "Tests"}
-          ]'
 
   # build documentation
   docs-build-test:

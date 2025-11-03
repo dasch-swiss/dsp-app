@@ -1,0 +1,18 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "release-type": "node",
+  "packages": {
+    ".": {
+      "package-name": "DSP-APP",
+      "changelog-sections": [
+        {"type": "feat", "section": "Enhancements"},
+        {"type": "fix", "section": "Bug Fixes"},
+        {"type": "chore", "section": "Maintenances"},
+        {"type": "refactor", "section": "Maintenances"},
+        {"type": "style", "section": "Maintenances"},
+        {"type": "docs", "section": "Documentation"},
+        {"type": "test", "section": "Tests"}
+      ]
+    }
+  }
+}
