@@ -20,8 +20,8 @@
       "accessToken": ""
     },
     "faro": {
-      "enabled": true,
-      "collectorUrl": "https://faro-collector-prod-eu-west-2.grafana.net/collect/66166d1b81448a1cca47cde470d9ec98",
+      "enabled": false,
+      "collectorUrl": "http://localhost:12345/collect",
       "appName": "dsp-app",
       "sessionTracking": {
         "enabled": true,

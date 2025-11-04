@@ -20,7 +20,7 @@
       "accessToken": ""
     },
     "faro": {
-      "enabled": true,
+      "enabled": false,
       "collectorUrl": "http://localhost:12345/collect",
       "appName": "dsp-app",
       "sessionTracking": {
