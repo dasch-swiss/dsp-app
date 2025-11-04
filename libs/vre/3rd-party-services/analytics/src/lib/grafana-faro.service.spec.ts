@@ -55,6 +55,7 @@ describe('GrafanaFaroService', () => {
           enabled: true,
           disabledLevels: [],
         },
+        tracingCorsUrls: [],
         ...faroOverrides,
       },
     },

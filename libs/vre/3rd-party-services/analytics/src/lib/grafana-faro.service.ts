@@ -43,7 +43,7 @@ export class GrafanaFaroService {
           // Optional tracing instrumentation (increases bundle size)
           new TracingInstrumentation({
             instrumentationOptions: {
-              propagateTraceHeaderCorsUrls: faroConfig.tracingCorsUrls,
+              propagateTraceHeaderCorsUrls: faroConfig.tracingCorsUrls.map(url => new RegExp(url)),
             },
           }),
         ],
