@@ -44,6 +44,7 @@ describe('AppConfigService with dev config', () => {
           enabled: true,
           disabledLevels: [],
         },
+        tracingCorsUrls: [],
       },
     },
     featureFlags: {
@@ -127,6 +128,7 @@ describe('AppConfigService with prod config', () => {
           enabled: false,
           disabledLevels: ['log', 'info'],
         },
+        tracingCorsUrls: [],
       },
     },
     featureFlags: {

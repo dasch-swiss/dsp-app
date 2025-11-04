@@ -32,6 +32,7 @@
         "enabled": true,
         "disabledLevels": []
       },
+      "tracingCorsUrls": [],
       "otlp": {
         "logsUrl": "http://localhost:4318/v1/logs",
         "tracesUrl": "http://localhost:4318/v1/traces"

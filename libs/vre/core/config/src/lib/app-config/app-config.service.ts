@@ -86,6 +86,7 @@ export class AppConfigService {
           enabled: boolean;
           disabledLevels: ('log' | 'info' | 'warn' | 'error' | 'debug')[];
         },
+        c.instrumentation.faro.tracingCorsUrls,
         c.instrumentation.faro.otlp
       )
     );

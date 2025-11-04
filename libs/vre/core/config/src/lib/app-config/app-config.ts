@@ -1,4 +1,5 @@
 import { z } from 'zod';
+
 /**
  * If enabled, then the following values are required:
  * - accessToken
@@ -26,6 +27,7 @@ export const Faro = z.object({
     enabled: z.boolean(),
     disabledLevels: z.array(z.enum(['log', 'info', 'warn', 'error', 'debug'])),
   }),
+  tracingCorsUrls: z.array(z.string()),
   otlp: z
     .object({
       logsUrl: z.string(),

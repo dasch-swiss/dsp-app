@@ -31,7 +31,8 @@
       "console": {
         "enabled": true,
         "disabledLevels": []
-      }
+      },
+      "tracingCorsUrls": []
     }
   },
   "featureFlags": {

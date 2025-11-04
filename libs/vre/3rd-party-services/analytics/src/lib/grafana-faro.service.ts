@@ -41,7 +41,11 @@ export class GrafanaFaroService {
             captureConsoleDisabledLevels: faroConfig.console.disabledLevels as any,
           }),
           // Optional tracing instrumentation (increases bundle size)
-          new TracingInstrumentation(),
+          new TracingInstrumentation({
+            instrumentationOptions: {
+              propagateTraceHeaderCorsUrls: faroConfig.tracingCorsUrls,
+            },
+          }),
         ],
         sessionTracking: faroConfig.sessionTracking,
       };

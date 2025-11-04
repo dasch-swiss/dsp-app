@@ -31,7 +31,8 @@
       "console": {
         "enabled": true,
         "disabledLevels": []
-      }
+      },
+      "tracingCorsUrls": ["https://api.dev.dasch.swiss", "https://ingest.dev.dasch.swiss"]
     }
   },
   "featureFlags": {

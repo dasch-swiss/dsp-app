@@ -26,6 +26,7 @@ export class DspFaroConfig {
       enabled: boolean;
       disabledLevels: ('log' | 'info' | 'warn' | 'error' | 'debug')[];
     },
+    public readonly tracingCorsUrls: string[],
     public readonly otlp?: {
       logsUrl?: string;
       tracesUrl?: string;
