@@ -636,6 +636,11 @@
       },
       "representation": {
         "file": "File"
+      },
+      "propertyValueCreator": {
+        "remove": "Rimuovi",
+        "addComment": "Aggiungi commento",
+        "removeComment": "Rimuovi commento"
       }
     },
     "templateSwitcher": {
@@ -651,6 +656,14 @@
       "intervalValue": {
         "start": "Inizio",
         "end": "Fine"
+      },
+      "timeViewer": {
+        "at": "alle"
+      },
+      "timeValue": {
+        "date": "Data",
+        "datePlaceholder": "Clicca per selezionare una data",
+        "time": "Ora"
       },
       "example": "es."
     }
