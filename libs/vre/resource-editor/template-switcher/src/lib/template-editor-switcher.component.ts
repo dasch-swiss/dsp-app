@@ -57,7 +57,7 @@ import { JsLibPotentialError } from '@dasch-swiss/vre/resource-editor/resource-p
     </ng-template>
 
     <ng-template #richTextEditorTpl let-item="item">
-      <app-ck-editor [control]="item" />
+      <app-ck-editor [control]="item" [projectShortcode]="projectShortcode" />
     </ng-template>
 
     <ng-template #textEditorTpl let-item="item">
@@ -128,6 +128,7 @@ export class TemplateEditorSwitcherComponent implements AfterViewInit {
   @Input({ required: true }) myPropertyDefinition!: PropertyDefinition;
   @Input({ required: true }) resourceClassIri!: string;
   @Input({ required: true }) projectIri!: string;
+  @Input() projectShortcode?: string;
   @Input() value?: ReadValue;
   @Output() templateFound = new EventEmitter<TemplateRef<any>>();
 

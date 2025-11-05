@@ -4,6 +4,7 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 export interface AddRegionFormDialogProps {
   resourceIri: string;
+  projectShortcode: string;
 }
 
 @Component({
@@ -19,6 +20,7 @@ export interface AddRegionFormDialogProps {
           [control]="regionForm.controls.label" />
         <app-ck-editor-control
           [control]="regionForm.controls.comment"
+          [projectShortcode]="projectShortcode"
           [label]="'resourceEditor.representations.addRegionFormDialog.comment' | translate" />
         <app-color-picker [formControl]="regionForm.controls.color"></app-color-picker>
       </form>
@@ -39,6 +41,8 @@ export interface AddRegionFormDialogProps {
   standalone: false,
 })
 export class AddRegionFormDialogComponent {
+  projectShortcode: string;
+
   readonly regionForm = this._fb.group({
     color: ['#ff3333', [Validators.required, Validators.pattern('^#[a-f0-9]{6}$')]],
     comment: [null],
@@ -49,5 +53,7 @@ export class AddRegionFormDialogComponent {
     private _fb: FormBuilder,
     @Inject(MAT_DIALOG_DATA)
     public data: AddRegionFormDialogProps
-  ) {}
+  ) {
+    this.projectShortcode = data.projectShortcode;
+  }
 }

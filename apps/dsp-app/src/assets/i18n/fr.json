@@ -694,6 +694,9 @@
         "language": "Langue",
         "description": "Description"
       },
+      "errors": {
+        "crossProjectLink": "Ce champ contient des liens vers des ressources d'autres projets. Seuls les liens vers des ressources du projet actuel sont autorisés."
+      },
       "status": {
         "active": "Actif",
         "loading": "Chargement..."

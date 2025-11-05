@@ -1,9 +1,8 @@
 import { DialogRef } from '@angular/cdk/dialog';
-import { Component, Inject, inject } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ReadResource } from '@dasch-swiss/dsp-js';
-import { TranslateService } from '@ngx-translate/core';
 import { SegmentApiService } from './segment-api.service';
 import { SegmentsService } from './segments.service';
 
@@ -11,6 +10,7 @@ export interface CreateSegmentDialogProps {
   resource: ReadResource;
   videoDurationSecs: number;
   type: 'VideoSegment' | 'AudioSegment';
+  projectShortcode: string;
 }
 
 @Component({
@@ -43,6 +43,7 @@ export interface CreateSegmentDialogProps {
         [validators]="keywordsValidators" />
       <app-ck-editor-control
         [control]="form.controls.comment"
+        [projectShortcode]="projectShortcode"
         [label]="'resourceEditor.resourceProperties.comment' | translate" />
     </div>
     <div mat-dialog-actions align="end">
@@ -62,8 +63,7 @@ export interface CreateSegmentDialogProps {
 })
 export class CreateSegmentDialogComponent {
   loading = false;
-
-  private readonly _translateService = inject(TranslateService);
+  projectShortcode: string;
 
   readonly keywordsValidators = [Validators.minLength(3), Validators.maxLength(64)];
   form = this._fb.group(
@@ -85,7 +85,9 @@ export class CreateSegmentDialogComponent {
     private _segmentsService: SegmentsService,
     private _dialogRef: DialogRef,
     @Inject(MAT_DIALOG_DATA) public data: CreateSegmentDialogProps
-  ) {}
+  ) {
+    this.projectShortcode = data.projectShortcode;
+  }
 
   rangeValidator(formGroup: FormGroup) {
     const start = formGroup.get('start')?.value;

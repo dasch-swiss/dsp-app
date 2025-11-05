@@ -9,6 +9,7 @@ import {
   RegionGeometry,
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
+import { ResourceService } from '@dasch-swiss/vre/shared/app-common';
 import * as OpenSeadragon from 'openseadragon';
 import { combineLatest, filter, map, of, Subject, switchMap, takeUntil } from 'rxjs';
 import { AddRegionFormDialogComponent, AddRegionFormDialogProps } from '../add-region-form-dialog.component';
@@ -36,7 +37,8 @@ export class OsdDrawerService implements OnDestroy {
     @Inject(DspApiConnectionToken)
     private _dspApiConnection: KnoraApiConnection,
     private _dialog: MatDialog,
-    private _cdr: ChangeDetectorRef
+    private _cdr: ChangeDetectorRef,
+    private _resourceService: ResourceService
   ) {}
 
   onInit(resource: ReadResource): void {
@@ -93,16 +95,19 @@ export class OsdDrawerService implements OnDestroy {
     this._osd.createdRectangle$
       .pipe(takeUntil(this._ngUnsubscribe))
       .pipe(
-        switchMap(overlay =>
-          this._dialog
+        switchMap(overlay => {
+          const projectShortcode = this._resourceService.getProjectShortcode(this.resource.id);
+
+          return this._dialog
             .open<AddRegionFormDialogComponent, AddRegionFormDialogProps>(AddRegionFormDialogComponent, {
               data: {
                 resourceIri: this.resource.id,
+                projectShortcode,
               },
             })
             .afterClosed()
-            .pipe(map(data => ({ data, overlay })))
-        )
+            .pipe(map(data => ({ data, overlay })));
+        })
       )
       .pipe(
         switchMap(({ data, overlay }) => {

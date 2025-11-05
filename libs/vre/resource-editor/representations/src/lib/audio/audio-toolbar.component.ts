@@ -8,6 +8,7 @@ import {
   CreateSegmentDialogComponent,
   CreateSegmentDialogProps,
 } from '@dasch-swiss/vre/resource-editor/segment-support';
+import { firstValueFrom } from 'rxjs';
 import { ResourceFetcherService } from '../resource-fetcher.service';
 import { MediaPlayerService } from '../video/media-player.service';
 
@@ -58,13 +59,15 @@ export class AudioToolbarComponent implements OnInit {
     this.durationString = this.parseTime(this.mediaPlayer.duration());
   }
 
-  createAudioSegment() {
+  async createAudioSegment() {
+    const projectShortcode = await firstValueFrom(this.resourceFetcherService.projectShortcode$);
     this._dialog.open<CreateSegmentDialogComponent, CreateSegmentDialogProps>(CreateSegmentDialogComponent, {
       ...DspDialogConfig.dialogDrawerConfig(
         {
           type: 'AudioSegment',
           resource: this.parentResource,
           videoDurationSecs: this.mediaPlayer.duration(),
+          projectShortcode,
         },
         true
       ),

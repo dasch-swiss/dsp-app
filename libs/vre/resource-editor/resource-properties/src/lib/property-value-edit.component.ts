@@ -2,6 +2,7 @@ import {
   ChangeDetectorRef,
   Component,
   EventEmitter,
+  inject,
   Input,
   OnDestroy,
   OnInit,
@@ -10,6 +11,7 @@ import {
 } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Cardinality, ReadValue } from '@dasch-swiss/dsp-js';
+import { ResourceService } from '@dasch-swiss/vre/shared/app-common';
 import { Subscription } from 'rxjs';
 import { startWith, takeWhile } from 'rxjs/operators';
 import { FormValueGroup } from './form-value-array.type';
@@ -23,6 +25,7 @@ import { propertiesTypeMapping } from './resource-payloads-mapping';
       [myPropertyDefinition]="propertyValueService.propertyDefinition"
       [resourceClassIri]="propertyValueService.editModeData.resource.type"
       [projectIri]="propertyValueService.editModeData.resource.attachedToProject"
+      [projectShortcode]="projectShortcode"
       [value]="readValue"
       (templateFound)="foundTemplate($event)" />
 
@@ -91,10 +94,13 @@ export class PropertyValueEditComponent implements OnInit, OnDestroy {
     return this.group.controls.comment.value !== null;
   }
 
-  constructor(
-    public propertyValueService: PropertyValueService,
-    private _cd: ChangeDetectorRef
-  ) {}
+  get projectShortcode(): string {
+    return this._resourceService.getProjectShortcode(this.propertyValueService.editModeData.resource.id);
+  }
+
+  private readonly _cd = inject(ChangeDetectorRef);
+  private readonly _resourceService = inject(ResourceService);
+  public propertyValueService = inject(PropertyValueService);
 
   protected readonly Cardinality = Cardinality;
 

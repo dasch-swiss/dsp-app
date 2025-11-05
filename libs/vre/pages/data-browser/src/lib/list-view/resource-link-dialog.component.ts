@@ -35,6 +35,7 @@ export interface ResourceLinkDialogProps {
 
         <app-ck-editor-control
           [control]="form.controls.comment"
+          [projectShortcode]="projectShortcode"
           [label]="'pages.dataBrowser.resourceLinkDialog.comment' | translate" />
 
         <div class="resource-container">
@@ -77,6 +78,7 @@ export class ResourceLinkDialogComponent implements OnDestroy {
 
   isLoading = false;
   isSysAdmin$ = this._userService.isSysAdmin$;
+  projectShortcode: string;
 
   constructor(
     @Inject(DspApiConnectionToken)
@@ -88,7 +90,9 @@ export class ResourceLinkDialogComponent implements OnDestroy {
     private _userService: UserService,
     public dialogRef: MatDialogRef<ResourceLinkDialogComponent, void>,
     @Inject(MAT_DIALOG_DATA) public data: ResourceLinkDialogProps
-  ) {}
+  ) {
+    this.projectShortcode = this._resourceService.getProjectShortcode(this.data.projectUuid);
+  }
 
   ngOnDestroy() {
     this._ngUnsubscribe.next();
