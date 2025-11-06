@@ -1,9 +1,9 @@
 openapi: 3.1.0
 info:
   title: DSP-API
-  version: v32.4.0-9-g0217ee4
-  summary: DSP-API is part of the the DaSCH Service Platform, a repository for the
-    long-term preservation and reuse of data in the humanities.
+  version: v32.6.0-7-gc68cb83
+  summary: DSP-API is part of the DaSCH Service Platform, a repository for the long-term
+    preservation and reuse of data in the humanities.
   contact:
     name: DaSCH
     url: https://www.dasch.swiss/
@@ -115,7 +115,6 @@ paths:
                     allowedCopyrightHolders: []
                     enabledLicenses:
                     - http://rdfh.ch/licenses/boris
-                    - http://rdfh.ch/licenses/cc-by-nd-4.0
                     - http://rdfh.ch/licenses/open-licence-2.0
                     - http://rdfh.ch/licenses/cc-by-nc-sa-4.0
                     - http://rdfh.ch/licenses/public-domain
@@ -123,6 +122,8 @@ paths:
                     - http://rdfh.ch/licenses/ai-generated
                     - http://rdfh.ch/licenses/cc-by-4.0
                     - http://rdfh.ch/licenses/cc-by-nc-nd-4.0
+                    - http://rdfh.ch/licenses/noc-nc-1.0
+                    - http://rdfh.ch/licenses/cc-by-nd-4.0
                     - http://rdfh.ch/licenses/cc-pdm-1.0
                     - http://rdfh.ch/licenses/cc-0-1.0
                     - http://rdfh.ch/licenses/cc-by-nc-4.0
@@ -220,7 +221,6 @@ paths:
                     allowedCopyrightHolders: []
                     enabledLicenses:
                     - http://rdfh.ch/licenses/boris
-                    - http://rdfh.ch/licenses/cc-by-nd-4.0
                     - http://rdfh.ch/licenses/open-licence-2.0
                     - http://rdfh.ch/licenses/cc-by-nc-sa-4.0
                     - http://rdfh.ch/licenses/public-domain
@@ -228,6 +228,8 @@ paths:
                     - http://rdfh.ch/licenses/ai-generated
                     - http://rdfh.ch/licenses/cc-by-4.0
                     - http://rdfh.ch/licenses/cc-by-nc-nd-4.0
+                    - http://rdfh.ch/licenses/noc-nc-1.0
+                    - http://rdfh.ch/licenses/cc-by-nd-4.0
                     - http://rdfh.ch/licenses/cc-pdm-1.0
                     - http://rdfh.ch/licenses/cc-0-1.0
                     - http://rdfh.ch/licenses/cc-by-nc-4.0
@@ -314,7 +316,6 @@ paths:
                     allowedCopyrightHolders: []
                     enabledLicenses:
                     - http://rdfh.ch/licenses/boris
-                    - http://rdfh.ch/licenses/cc-by-nd-4.0
                     - http://rdfh.ch/licenses/open-licence-2.0
                     - http://rdfh.ch/licenses/cc-by-nc-sa-4.0
                     - http://rdfh.ch/licenses/public-domain
@@ -322,6 +323,8 @@ paths:
                     - http://rdfh.ch/licenses/ai-generated
                     - http://rdfh.ch/licenses/cc-by-4.0
                     - http://rdfh.ch/licenses/cc-by-nc-nd-4.0
+                    - http://rdfh.ch/licenses/noc-nc-1.0
+                    - http://rdfh.ch/licenses/cc-by-nd-4.0
                     - http://rdfh.ch/licenses/cc-pdm-1.0
                     - http://rdfh.ch/licenses/cc-0-1.0
                     - http://rdfh.ch/licenses/cc-by-nc-4.0
@@ -424,7 +427,6 @@ paths:
                     allowedCopyrightHolders: []
                     enabledLicenses:
                     - http://rdfh.ch/licenses/boris
-                    - http://rdfh.ch/licenses/cc-by-nd-4.0
                     - http://rdfh.ch/licenses/open-licence-2.0
                     - http://rdfh.ch/licenses/cc-by-nc-sa-4.0
                     - http://rdfh.ch/licenses/public-domain
@@ -432,6 +434,8 @@ paths:
                     - http://rdfh.ch/licenses/ai-generated
                     - http://rdfh.ch/licenses/cc-by-4.0
                     - http://rdfh.ch/licenses/cc-by-nc-nd-4.0
+                    - http://rdfh.ch/licenses/noc-nc-1.0
+                    - http://rdfh.ch/licenses/cc-by-nd-4.0
                     - http://rdfh.ch/licenses/cc-pdm-1.0
                     - http://rdfh.ch/licenses/cc-0-1.0
                     - http://rdfh.ch/licenses/cc-by-nc-4.0
@@ -522,7 +526,6 @@ paths:
                     allowedCopyrightHolders: []
                     enabledLicenses:
                     - http://rdfh.ch/licenses/boris
-                    - http://rdfh.ch/licenses/cc-by-nd-4.0
                     - http://rdfh.ch/licenses/open-licence-2.0
                     - http://rdfh.ch/licenses/cc-by-nc-sa-4.0
                     - http://rdfh.ch/licenses/public-domain
@@ -530,6 +533,8 @@ paths:
                     - http://rdfh.ch/licenses/ai-generated
                     - http://rdfh.ch/licenses/cc-by-4.0
                     - http://rdfh.ch/licenses/cc-by-nc-nd-4.0
+                    - http://rdfh.ch/licenses/noc-nc-1.0
+                    - http://rdfh.ch/licenses/cc-by-nd-4.0
                     - http://rdfh.ch/licenses/cc-pdm-1.0
                     - http://rdfh.ch/licenses/cc-0-1.0
                     - http://rdfh.ch/licenses/cc-by-nc-4.0
@@ -629,7 +634,6 @@ paths:
                       allowedCopyrightHolders: []
                       enabledLicenses:
                       - http://rdfh.ch/licenses/boris
-                      - http://rdfh.ch/licenses/cc-by-nd-4.0
                       - http://rdfh.ch/licenses/open-licence-2.0
                       - http://rdfh.ch/licenses/cc-by-nc-sa-4.0
                       - http://rdfh.ch/licenses/public-domain
@@ -637,6 +641,8 @@ paths:
                       - http://rdfh.ch/licenses/ai-generated
                       - http://rdfh.ch/licenses/cc-by-4.0
                       - http://rdfh.ch/licenses/cc-by-nc-nd-4.0
+                      - http://rdfh.ch/licenses/noc-nc-1.0
+                      - http://rdfh.ch/licenses/cc-by-nd-4.0
                       - http://rdfh.ch/licenses/cc-pdm-1.0
                       - http://rdfh.ch/licenses/cc-0-1.0
                       - http://rdfh.ch/licenses/cc-by-nc-4.0
@@ -660,7 +666,6 @@ paths:
                     allowedCopyrightHolders: []
                     enabledLicenses:
                     - http://rdfh.ch/licenses/boris
-                    - http://rdfh.ch/licenses/cc-by-nd-4.0
                     - http://rdfh.ch/licenses/open-licence-2.0
                     - http://rdfh.ch/licenses/cc-by-nc-sa-4.0
                     - http://rdfh.ch/licenses/public-domain
@@ -668,6 +673,8 @@ paths:
                     - http://rdfh.ch/licenses/ai-generated
                     - http://rdfh.ch/licenses/cc-by-4.0
                     - http://rdfh.ch/licenses/cc-by-nc-nd-4.0
+                    - http://rdfh.ch/licenses/noc-nc-1.0
+                    - http://rdfh.ch/licenses/cc-by-nd-4.0
                     - http://rdfh.ch/licenses/cc-pdm-1.0
                     - http://rdfh.ch/licenses/cc-0-1.0
                     - http://rdfh.ch/licenses/cc-by-nc-4.0
@@ -766,7 +773,6 @@ paths:
                     allowedCopyrightHolders: []
                     enabledLicenses:
                     - http://rdfh.ch/licenses/boris
-                    - http://rdfh.ch/licenses/cc-by-nd-4.0
                     - http://rdfh.ch/licenses/open-licence-2.0
                     - http://rdfh.ch/licenses/cc-by-nc-sa-4.0
                     - http://rdfh.ch/licenses/public-domain
@@ -774,6 +780,8 @@ paths:
                     - http://rdfh.ch/licenses/ai-generated
                     - http://rdfh.ch/licenses/cc-by-4.0
                     - http://rdfh.ch/licenses/cc-by-nc-nd-4.0
+                    - http://rdfh.ch/licenses/noc-nc-1.0
+                    - http://rdfh.ch/licenses/cc-by-nd-4.0
                     - http://rdfh.ch/licenses/cc-pdm-1.0
                     - http://rdfh.ch/licenses/cc-0-1.0
                     - http://rdfh.ch/licenses/cc-by-nc-4.0
@@ -2627,9 +2635,14 @@ paths:
                   labelEn: LICENCE OUVERTE 2.0
                   isRecommended: false
                   isEnabled: true
+                - id: http://rdfh.ch/licenses/noc-nc-1.0
+                  uri: http://rightsstatements.org/vocab/NoC-NC/1.0/
+                  labelEn: No Copyright - Non-Commercial Use Only
+                  isRecommended: false
+                  isEnabled: true
                 pagination:
-                  pageSize: 13
-                  totalItems: 13
+                  pageSize: 14
+                  totalItems: 14
                   totalPages: 1
                   currentPage: 1
         '400':
@@ -4695,7 +4708,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/DO4MiUDbSvKfxs1GLYxLjA
+        example: http://rdfh.ch/users/ukrxtv04SkW6KeoUkbUFGw
       responses:
         '200':
           description: ''
@@ -4747,7 +4760,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/DO4MiUDbSvKfxs1GLYxLjA
+        example: http://rdfh.ch/users/ukrxtv04SkW6KeoUkbUFGw
       responses:
         '200':
           description: ''
@@ -4799,7 +4812,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/DO4MiUDbSvKfxs1GLYxLjA
+        example: http://rdfh.ch/users/ukrxtv04SkW6KeoUkbUFGw
       responses:
         '200':
           description: ''
@@ -4964,7 +4977,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/DO4MiUDbSvKfxs1GLYxLjA
+        example: http://rdfh.ch/users/ukrxtv04SkW6KeoUkbUFGw
       responses:
         '200':
           description: ''
@@ -5022,7 +5035,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/DO4MiUDbSvKfxs1GLYxLjA
+        example: http://rdfh.ch/users/ukrxtv04SkW6KeoUkbUFGw
       responses:
         '200':
           description: ''
@@ -5200,7 +5213,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/DO4MiUDbSvKfxs1GLYxLjA
+        example: http://rdfh.ch/users/ukrxtv04SkW6KeoUkbUFGw
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -5265,7 +5278,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/DO4MiUDbSvKfxs1GLYxLjA
+        example: http://rdfh.ch/users/ukrxtv04SkW6KeoUkbUFGw
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -5331,7 +5344,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/DO4MiUDbSvKfxs1GLYxLjA
+        example: http://rdfh.ch/users/ukrxtv04SkW6KeoUkbUFGw
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -5396,7 +5409,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/DO4MiUDbSvKfxs1GLYxLjA
+        example: http://rdfh.ch/users/ukrxtv04SkW6KeoUkbUFGw
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -5462,7 +5475,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/DO4MiUDbSvKfxs1GLYxLjA
+        example: http://rdfh.ch/users/ukrxtv04SkW6KeoUkbUFGw
       - name: groupIri
         in: path
         description: The IRI of a group. Must be URL-encoded.
@@ -5527,7 +5540,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/DO4MiUDbSvKfxs1GLYxLjA
+        example: http://rdfh.ch/users/ukrxtv04SkW6KeoUkbUFGw
       - name: groupIri
         in: path
         description: The IRI of a group. Must be URL-encoded.
@@ -5593,7 +5606,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/DO4MiUDbSvKfxs1GLYxLjA
+        example: http://rdfh.ch/users/ukrxtv04SkW6KeoUkbUFGw
       requestBody:
         content:
           application/json:
@@ -5658,7 +5671,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/DO4MiUDbSvKfxs1GLYxLjA
+        example: http://rdfh.ch/users/ukrxtv04SkW6KeoUkbUFGw
       requestBody:
         content:
           application/json:
@@ -5723,7 +5736,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/DO4MiUDbSvKfxs1GLYxLjA
+        example: http://rdfh.ch/users/ukrxtv04SkW6KeoUkbUFGw
       requestBody:
         content:
           application/json:
@@ -5788,7 +5801,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/DO4MiUDbSvKfxs1GLYxLjA
+        example: http://rdfh.ch/users/ukrxtv04SkW6KeoUkbUFGw
       requestBody:
         content:
           application/json:
@@ -6111,7 +6124,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/lists/0001/alNZf76JQIG2IgWBkeYR3A
+        example: http://rdfh.ch/lists/0001/DXb7Cg19SBuu7TaV_zw50Q
       - name: x-knora-accept-schema
         in: header
         description: |-
@@ -6223,7 +6236,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/lists/0001/alNZf76JQIG2IgWBkeYR3A
+        example: http://rdfh.ch/lists/0001/DXb7Cg19SBuu7TaV_zw50Q
       - name: x-knora-accept-schema
         in: header
         description: |-
@@ -13018,6 +13031,65 @@ paths:
       security:
       - httpAuth: []
       - httpAuth1: []
+  /v3/export/resources:
+    post:
+      tags:
+      - API v3
+      operationId: postV3ExportResources
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExportRequest'
+            example:
+              resourceClass: classLink
+              selectedProperties:
+              - http://www.knora.org/ontology/knora-base#hasStillImageFileValue
+              language: en
+        required: true
+      responses:
+        '200':
+          description: ''
+          headers:
+            Content-Type:
+              required: true
+              schema:
+                type: string
+            Content-Disposition:
+              required: true
+              schema:
+                type: string
+          content:
+            text/plain:
+              schema:
+                type: string
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+      security:
+      - {}
+      - httpAuth: []
   /version:
     get:
       tags:
@@ -13031,9 +13103,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/VersionResponse'
               example:
-                webapi: v32.4.0-9-g0217ee4
-                buildCommit: 0217ee4f8
-                buildTime: '2025-10-16T11:29:17.037131113Z'
+                webapi: v32.6.0-7-gc68cb83
+                buildCommit: c68cb836a
+                buildTime: '2025-11-06T11:27:41.183038758Z'
                 fuseki: 5.5.0-2
                 scala: 3.3.7
                 sipi: v3.16.3
@@ -13277,6 +13349,18 @@ components:
       properties:
         message:
           type: string
+    BadRequest:
+      title: BadRequest
+      type: object
+      required:
+      - message
+      properties:
+        message:
+          type: string
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorDetail'
     BadRequestException:
       title: BadRequestException
       type: object
@@ -13555,6 +13639,20 @@ components:
           pattern: ^.+@.+$
         password:
           type: string
+    ErrorDetail:
+      title: ErrorDetail
+      type: object
+      required:
+      - code
+      - message
+      - details
+      properties:
+        code:
+          $ref: '#/components/schemas/V3ErrorCode'
+        message:
+          type: string
+        details:
+          $ref: '#/components/schemas/Map_String'
     ExportFormat:
       title: ExportFormat
       default: CSV
@@ -13563,6 +13661,21 @@ components:
       - CSV
       - JSON
       - TSV
+    ExportRequest:
+      title: ExportRequest
+      type: object
+      required:
+      - resourceClass
+      - language
+      properties:
+        resourceClass:
+          type: string
+        selectedProperties:
+          type: array
+          items:
+            type: string
+        language:
+          type: string
     FR:
       title: FR
       type: object
@@ -13574,6 +13687,18 @@ components:
       properties:
         value:
           type: string
+    Forbidden:
+      title: Forbidden
+      type: object
+      required:
+      - message
+      properties:
+        message:
+          type: string
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorDetail'
     ForbiddenException:
       title: ForbiddenException
       type: object
@@ -14141,6 +14266,11 @@ components:
         uniqueItems: true
         items:
           $ref: '#/components/schemas/PermissionADM'
+    Map_String:
+      title: Map_String
+      type: object
+      additionalProperties:
+        type: string
     NodeADM:
       title: NodeADM
       type: object
@@ -14166,6 +14296,18 @@ components:
       properties:
         node:
           $ref: '#/components/schemas/ListNodeADM'
+    NotFound:
+      title: NotFound
+      type: object
+      required:
+      - message
+      properties:
+        message:
+          type: string
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorDetail'
     NotFoundException:
       title: NotFoundException
       type: object
@@ -14702,6 +14844,18 @@ components:
       properties:
         token:
           type: string
+    Unauthorized:
+      title: Unauthorized
+      type: object
+      required:
+      - message
+      properties:
+        message:
+          type: string
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorDetail'
     UserCreateRequest:
       title: UserCreateRequest
       type: object
@@ -14846,6 +15000,10 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/UserDto'
+    V3ErrorCode:
+      title: V3ErrorCode
+      oneOf:
+      - $ref: '#/components/schemas/resource_not_found'
     ValidationException:
       title: ValidationException
       type: object
@@ -14912,6 +15070,9 @@ components:
       properties:
         value:
           type: boolean
+    resource_not_found:
+      title: resource_not_found
+      type: object
   securitySchemes:
     httpAuth:
       type: http
