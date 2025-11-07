@@ -360,7 +360,8 @@
       },
       "resourceListSelection": {
         "resourcesSelected": "{{count}} ressources sélectionnées",
-        "createLinkObject": "Créer un objet de lien"
+        "createLinkObject": "Créer un objet de lien",
+        "createLinkObjectTooltip": "Un objet de lien ne peut être créé qu'entre des ressources appartenant au même projet."
       },
       "resourcesList": {
         "backToSearchForm": "Retour au formulaire de recherche"

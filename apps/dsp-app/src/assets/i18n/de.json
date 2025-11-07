@@ -360,7 +360,8 @@
       },
       "resourceListSelection": {
         "resourcesSelected": "{{count}} Ressourcen ausgewählt",
-        "createLinkObject": "Ein Link-Objekt erstellen"
+        "createLinkObject": "Ein Link-Objekt erstellen",
+        "createLinkObjectTooltip": "Ein Link-Objekt kann nur zwischen Ressourcen erstellt werden, die zum selben Projekt gehören."
       },
       "resourcesList": {
         "backToSearchForm": "Zurück zum Suchformular"
