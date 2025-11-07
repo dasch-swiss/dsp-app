@@ -38,7 +38,7 @@ import { SegmentSupportComponents } from '@dasch-swiss/vre/resource-editor/segme
 import { CommonToMoveComponents } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { HelpPageComponents } from '@dasch-swiss/vre/shared/app-help-page';
 import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
-import { DatePickerComponents, DateValueHandlerComponent } from '@dasch-swiss/vre/ui/date-picker';
+import { DatePickerComponents } from '@dasch-swiss/vre/ui/date-picker';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { AppProgressIndicatorComponent, ProgressIndicatorComponents } from '@dasch-swiss/vre/ui/progress-indicator';
 import {
@@ -74,7 +74,6 @@ export function httpLoaderFactory(httpClient: HttpClient) {
     CookieBannerComponent,
     ...CommonToMoveComponents,
     ...DataBrowserComponents,
-    ...DatePickerComponents,
     ...HelpPageComponents,
     ...ListComponents,
     ...OntologyComponents,
@@ -102,7 +101,6 @@ export function httpLoaderFactory(httpClient: HttpClient) {
     ClipboardModule,
     ColorPickerDirective,
     CommonModule,
-    DateValueHandlerComponent,
     FormsModule,
     HttpClientModule,
     IMaskModule,
@@ -115,6 +113,7 @@ export function httpLoaderFactory(httpClient: HttpClient) {
     NgxSkeletonLoaderModule,
     PdfViewerModule,
     ...UiStandaloneComponents,
+    ...DatePickerComponents,
     ...ProgressIndicatorComponents,
     ReactiveFormsModule,
     TranslateModule.forRoot({
