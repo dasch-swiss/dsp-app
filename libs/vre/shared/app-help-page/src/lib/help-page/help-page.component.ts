@@ -1,9 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { MatIconModule } from '@angular/material/icon';
 import { AppConfigService, DspConfig } from '@dasch-swiss/vre/core/config';
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import packageJson from '../../../../../../../package.json';
-import { GridItem } from '../grid/grid.component';
+import { FooterComponent } from '../footer/footer.component';
+import { GridComponent, GridItem } from '../grid/grid.component';
 
 interface VersionResponse {
   webapi: string;
@@ -19,7 +21,8 @@ interface VersionResponse {
   selector: 'app-help',
   templateUrl: './help-page.component.html',
   styleUrls: ['./help-page.component.scss'],
-  standalone: false,
+  standalone: true,
+  imports: [FooterComponent, GridComponent, MatIconModule],
 })
 export class HelpPageComponent implements OnInit {
   loading = true;

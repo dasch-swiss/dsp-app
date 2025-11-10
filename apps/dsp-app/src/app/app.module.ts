@@ -36,7 +36,7 @@ import { ResourcePageComponents } from '@dasch-swiss/vre/resource-editor/resourc
 import { ResourcePropertiesComponents } from '@dasch-swiss/vre/resource-editor/resource-properties';
 import { SegmentSupportComponents } from '@dasch-swiss/vre/resource-editor/segment-support';
 import { CommonToMoveComponents } from '@dasch-swiss/vre/shared/app-common-to-move';
-import { HelpPageComponents } from '@dasch-swiss/vre/shared/app-help-page';
+import { HelpPageComponent } from '@dasch-swiss/vre/shared/app-help-page';
 import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { DatePickerComponents } from '@dasch-swiss/vre/ui/date-picker';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
@@ -74,7 +74,6 @@ export function httpLoaderFactory(httpClient: HttpClient) {
     CookieBannerComponent,
     ...CommonToMoveComponents,
     ...DataBrowserComponents,
-    ...HelpPageComponents,
     ...ListComponents,
     ...OntologyComponents,
     ...ProjectComponents,
@@ -102,6 +101,7 @@ export function httpLoaderFactory(httpClient: HttpClient) {
     ColorPickerDirective,
     CommonModule,
     FormsModule,
+    HelpPageComponent,
     HttpClientModule,
     IMaskModule,
     MultiLanguageInputComponent,
