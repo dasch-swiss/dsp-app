@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: DSP-API
-  version: v32.6.0-7-gc68cb83
+  version: v32.7.0-3-g2726f23
   summary: DSP-API is part of the DaSCH Service Platform, a repository for the long-term
     preservation and reuse of data in the humanities.
   contact:
@@ -4708,7 +4708,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/ukrxtv04SkW6KeoUkbUFGw
+        example: http://rdfh.ch/users/X8u8tXkESB6-oZ9ScFVaLg
       responses:
         '200':
           description: ''
@@ -4760,7 +4760,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/ukrxtv04SkW6KeoUkbUFGw
+        example: http://rdfh.ch/users/X8u8tXkESB6-oZ9ScFVaLg
       responses:
         '200':
           description: ''
@@ -4812,7 +4812,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/ukrxtv04SkW6KeoUkbUFGw
+        example: http://rdfh.ch/users/X8u8tXkESB6-oZ9ScFVaLg
       responses:
         '200':
           description: ''
@@ -4977,7 +4977,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/ukrxtv04SkW6KeoUkbUFGw
+        example: http://rdfh.ch/users/X8u8tXkESB6-oZ9ScFVaLg
       responses:
         '200':
           description: ''
@@ -5035,7 +5035,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/ukrxtv04SkW6KeoUkbUFGw
+        example: http://rdfh.ch/users/X8u8tXkESB6-oZ9ScFVaLg
       responses:
         '200':
           description: ''
@@ -5213,7 +5213,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/ukrxtv04SkW6KeoUkbUFGw
+        example: http://rdfh.ch/users/X8u8tXkESB6-oZ9ScFVaLg
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -5278,7 +5278,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/ukrxtv04SkW6KeoUkbUFGw
+        example: http://rdfh.ch/users/X8u8tXkESB6-oZ9ScFVaLg
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -5344,7 +5344,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/ukrxtv04SkW6KeoUkbUFGw
+        example: http://rdfh.ch/users/X8u8tXkESB6-oZ9ScFVaLg
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -5409,7 +5409,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/ukrxtv04SkW6KeoUkbUFGw
+        example: http://rdfh.ch/users/X8u8tXkESB6-oZ9ScFVaLg
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -5475,7 +5475,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/ukrxtv04SkW6KeoUkbUFGw
+        example: http://rdfh.ch/users/X8u8tXkESB6-oZ9ScFVaLg
       - name: groupIri
         in: path
         description: The IRI of a group. Must be URL-encoded.
@@ -5540,7 +5540,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/ukrxtv04SkW6KeoUkbUFGw
+        example: http://rdfh.ch/users/X8u8tXkESB6-oZ9ScFVaLg
       - name: groupIri
         in: path
         description: The IRI of a group. Must be URL-encoded.
@@ -5606,7 +5606,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/ukrxtv04SkW6KeoUkbUFGw
+        example: http://rdfh.ch/users/X8u8tXkESB6-oZ9ScFVaLg
       requestBody:
         content:
           application/json:
@@ -5671,7 +5671,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/ukrxtv04SkW6KeoUkbUFGw
+        example: http://rdfh.ch/users/X8u8tXkESB6-oZ9ScFVaLg
       requestBody:
         content:
           application/json:
@@ -5736,7 +5736,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/ukrxtv04SkW6KeoUkbUFGw
+        example: http://rdfh.ch/users/X8u8tXkESB6-oZ9ScFVaLg
       requestBody:
         content:
           application/json:
@@ -5801,7 +5801,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/ukrxtv04SkW6KeoUkbUFGw
+        example: http://rdfh.ch/users/X8u8tXkESB6-oZ9ScFVaLg
       requestBody:
         content:
           application/json:
@@ -6124,7 +6124,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/lists/0001/DXb7Cg19SBuu7TaV_zw50Q
+        example: http://rdfh.ch/lists/0001/tR4DTQbPQ62fyIDLZA8I9A
       - name: x-knora-accept-schema
         in: header
         description: |-
@@ -6236,7 +6236,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/lists/0001/DXb7Cg19SBuu7TaV_zw50Q
+        example: http://rdfh.ch/lists/0001/tR4DTQbPQ62fyIDLZA8I9A
       - name: x-knora-accept-schema
         in: header
         description: |-
@@ -13031,6 +13031,40 @@ paths:
       security:
       - httpAuth: []
       - httpAuth1: []
+  /v3/projects/{projectIri}/resourcesPerOntology:
+    get:
+      tags:
+      - API v3
+      operationId: getV3ProjectsProjectiriResourcesperontology
+      parameters:
+      - name: projectIri
+        in: path
+        description: The IRI of a project. Must be URL-encoded.
+        required: true
+        schema:
+          type: string
+        example: http://rdfh.ch/projects/0001
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OntologyAndResourceClasses'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
   /v3/export/resources:
     post:
       tags:
@@ -13103,9 +13137,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/VersionResponse'
               example:
-                webapi: v32.6.0-7-gc68cb83
-                buildCommit: c68cb836a
-                buildTime: '2025-11-06T11:27:41.183038758Z'
+                webapi: v32.7.0-3-g2726f23
+                buildCommit: 2726f23ca
+                buildTime: '2025-11-10T14:27:45.078165964Z'
                 fuseki: 5.5.0-2
                 scala: 3.3.7
                 sipi: v3.16.3
@@ -13383,7 +13417,7 @@ components:
         familyName:
           $ref: '#/components/schemas/FamilyName'
         lang:
-          $ref: '#/components/schemas/LanguageCode'
+          type: string
     CanDeleteListResponseADM:
       title: CanDeleteListResponseADM
       type: object
@@ -13551,9 +13585,6 @@ components:
           type: string
         xml:
           type: string
-    DE:
-      title: DE
-      type: object
     DefaultObjectAccessPermissionADM:
       title: DefaultObjectAccessPermissionADM
       type: object
@@ -13616,9 +13647,6 @@ components:
       properties:
         message:
           type: string
-    EN:
-      title: EN
-      type: object
     EditConflictException:
       title: EditConflictException
       type: object
@@ -13676,9 +13704,6 @@ components:
             type: string
         language:
           type: string
-    FR:
-      title: FR
-      type: object
     FamilyName:
       title: FamilyName
       type: object
@@ -13869,9 +13894,6 @@ components:
           type: boolean
         message:
           type: string
-    IT:
-      title: IT
-      type: object
     Inactive:
       title: Inactive
       type: object
@@ -13902,14 +13924,17 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/StringLiteralV2'
-    LanguageCode:
-      title: LanguageCode
-      oneOf:
-      - $ref: '#/components/schemas/DE'
-      - $ref: '#/components/schemas/EN'
-      - $ref: '#/components/schemas/FR'
-      - $ref: '#/components/schemas/IT'
-      - $ref: '#/components/schemas/RM'
+    LanguageStringDto:
+      title: LanguageStringDto
+      type: object
+      required:
+      - value
+      - language
+      properties:
+        value:
+          type: string
+        language:
+          type: string
     ListADM:
       title: ListADM
       type: object
@@ -14316,6 +14341,18 @@ components:
       properties:
         message:
           type: string
+    OntologyAndResourceClasses:
+      title: OntologyAndResourceClasses
+      type: object
+      required:
+      - ontology
+      properties:
+        ontology:
+          $ref: '#/components/schemas/OntologyDto'
+        classesAndCount:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResourceClassAndCountDto'
     OntologyConstraintException:
       title: OntologyConstraintException
       type: object
@@ -14323,6 +14360,20 @@ components:
       - message
       properties:
         message:
+          type: string
+    OntologyDto:
+      title: OntologyDto
+      type: object
+      required:
+      - iri
+      - label
+      - comment
+      properties:
+        iri:
+          type: string
+        label:
+          type: string
+        comment:
           type: string
     PagedResponse_Authorship:
       title: PagedResponse_Authorship
@@ -14711,9 +14762,37 @@ components:
           type: array
           items:
             type: string
-    RM:
-      title: RM
+    ResourceClassAndCountDto:
+      title: ResourceClassAndCountDto
       type: object
+      required:
+      - resourceClass
+      - itemCount
+      properties:
+        resourceClass:
+          $ref: '#/components/schemas/ResourceClassDto'
+        itemCount:
+          type: integer
+          format: int32
+    ResourceClassDto:
+      title: ResourceClassDto
+      type: object
+      required:
+      - iri
+      - representationClassIri
+      properties:
+        iri:
+          type: string
+        representationClassIri:
+          type: string
+        label:
+          type: array
+          items:
+            $ref: '#/components/schemas/LanguageStringDto'
+        comment:
+          type: array
+          items:
+            $ref: '#/components/schemas/LanguageStringDto'
     ResourceInfoDto:
       title: ResourceInfoDto
       type: object
@@ -14885,7 +14964,7 @@ components:
         status:
           $ref: '#/components/schemas/UserStatus'
         lang:
-          $ref: '#/components/schemas/LanguageCode'
+          type: string
         systemAdmin:
           $ref: '#/components/schemas/SystemAdmin'
     UserDto:
@@ -15003,6 +15082,9 @@ components:
     V3ErrorCode:
       title: V3ErrorCode
       oneOf:
+      - $ref: '#/components/schemas/ontology_not_found'
+      - $ref: '#/components/schemas/project_not_found'
+      - $ref: '#/components/schemas/resourceClass_not_found'
       - $ref: '#/components/schemas/resource_not_found'
     ValidationException:
       title: ValidationException
@@ -15070,6 +15152,15 @@ components:
       properties:
         value:
           type: boolean
+    ontology_not_found:
+      title: ontology_not_found
+      type: object
+    project_not_found:
+      title: project_not_found
+      type: object
+    resourceClass_not_found:
+      title: resourceClass_not_found
+      type: object
     resource_not_found:
       title: resource_not_found
       type: object
