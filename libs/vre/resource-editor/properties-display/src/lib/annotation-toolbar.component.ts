@@ -49,14 +49,11 @@ import { take } from 'rxjs';
         <mat-icon>share</mat-icon>
       </button>
       <app-permission-info [resource]="resource" />
-      @if (!!(resourceFetcher.userCanEdit$ | async) || !!(resourceFetcher.userCanDelete$ | async)) {
-        <app-resource-edit-more-menu
-          [resource]="resource"
-          [showEditLabel]="true"
-          (resourceDeleted)="onResourceDeleted()"
-          (resourceErased)="onResourceDeleted()"
-          (resourceUpdated)="onResourceUpdated()" />
-      }
+      <app-incoming-resource-more-menu
+        [resource]="resource"
+        (resourceDeleted)="onResourceDeleted()"
+        (resourceErased)="onResourceDeleted()"
+        (resourceUpdated)="onResourceUpdated()" />
     </div>
     <mat-menu #share="matMenu" class="res-share-menu">
       <button

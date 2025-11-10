@@ -20,7 +20,8 @@ export class FootnoteParserPipe implements PipeTransform {
       return value_; // Return as is if value is empty or null
     } // does nothing if only displayMode changes
 
-    const value = typeof value_ === 'string' ? value_ : value_['changingThisBreaksApplicationSecurity'];
+    const value =
+      typeof value_ === 'string' ? value_ : (value_ as unknown as any)['changingThisBreaksApplicationSecurity'];
     if (!this._containsFootnote(value)) {
       return this._sanitizer.bypassSecurityTrustHtml(value);
     }

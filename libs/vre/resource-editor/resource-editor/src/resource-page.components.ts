@@ -6,8 +6,13 @@ import { CompoundNavigationComponent } from './lib/compound/compound-navigation.
 import { CompoundSliderComponent } from './lib/compound/compound-slider.component';
 import { CompoundViewerComponent } from './lib/compound/compound-viewer.component';
 import { IncomingResourceHeaderComponent } from './lib/incoming-resource-header.component';
+import { IncomingResourceToolbarComponent } from './lib/incoming-resource-toolbar.component';
 import { PermissionInfoComponent } from './lib/permission-info/permission-info.component';
-import { ResourceEditMoreMenuComponent } from './lib/resource-edit-more-menu/resource-edit-more-menu.component';
+import { ResourceActionsComponent } from './lib/resource-actions.component';
+import { DeleteMenuItemsComponent } from './lib/resource-edit-more-menu/delete-menu-items.component';
+import { EditLabelMenuItemComponent } from './lib/resource-edit-more-menu/edit-label-menu-item.component';
+import { IncomingResourceMoreMenuComponent } from './lib/resource-edit-more-menu/incoming-resource-more-menu.component';
+import { ResourceMoreMenuComponent } from './lib/resource-edit-more-menu/resource-more-menu.component';
 import { ResourceExplorerButtonComponent } from './lib/resource-explorer-button.component';
 import { ResourceFetcherDialogComponent } from './lib/resource-fetcher-dialog.component';
 import { ResourceFetcherComponent } from './lib/resource-fetcher.component';
@@ -39,8 +44,10 @@ export const ResourcePageComponents = [
   ResourceFetcherComponent,
   ResourceRepresentationComponent,
   ResourceTabsComponent,
+  ResourceActionsComponent,
   ResourceToolbarComponent,
   IncomingResourceHeaderComponent,
+  IncomingResourceToolbarComponent,
   AnnotationTabComponent,
   SegmentTabComponent,
   PermissionInfoComponent,
@@ -49,7 +56,10 @@ export const ResourcePageComponents = [
   ResourceInfoBarComponent,
   AlertInfoComponent,
   ResourceLegalLicenseComponent,
-  ResourceEditMoreMenuComponent,
+  ResourceMoreMenuComponent,
+  IncomingResourceMoreMenuComponent,
+  EditLabelMenuItemComponent,
+  DeleteMenuItemsComponent,
   ResourceFetcherDialogComponent,
   ResourceExplorerButtonComponent,
   ClosingDialogComponent,
