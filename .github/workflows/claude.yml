@@ -47,9 +47,12 @@ jobs:
             - Performance considerations
             - Security concerns
             - Test coverage
-
-            Use the repository's CLAUDE.md for guidance on style and conventions. Be constructive, helpful and as concise as possible in your feedback.
+            
+            Finish the review with a clear statement, if the PR is ready to merge or not.
+            Use the repository's CLAUDE.md for guidance on style and conventions.
+            Be constructive, helpful and as concise as possible in your feedback.
             Use `gh pr comment` to leave your review as a comment on the PR.
+            
           claude_args: '--allowed-tools "Bash(gh issue view:*),Bash(gh search:*),Bash(gh issue list:*),Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*),Bash(gh pr list:*)"'
 
   # Job 2: General Claude assistant (flexible)
