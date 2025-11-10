@@ -154,8 +154,7 @@ export class OntologyEditorHeaderComponent {
   }
 
   navigateToDataModels() {
-    this._projectPageService.currentProjectUuid$.subscribe(projectUuid => {
-      this._router.navigate([RouteConstants.project, projectUuid, RouteConstants.dataModels]);
-    });
+    const projectUuid = this._projectPageService.currentProjectUuid;
+    this._router.navigate([RouteConstants.project, projectUuid, RouteConstants.dataModels]);
   }
 }

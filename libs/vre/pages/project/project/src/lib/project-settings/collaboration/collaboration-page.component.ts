@@ -12,7 +12,7 @@ import { CollaborationPageService } from './collaboration-page.service';
     @if (hasProjectAdminRights$ | async) {
       <div>
         @if (project$ | async; as project) {
-          @if (project.status && (hasProjectAdminRights$ | async) && (projectUuid$ | async); as projectUuid) {
+          @if (project.status && (hasProjectAdminRights$ | async)) {
             <app-add-user [projectUuid]="projectUuid" />
           }
         }
@@ -58,7 +58,9 @@ export class CollaborationPageComponent {
   );
   hasProjectAdminRights$ = this._projectPageService.hasProjectAdminRights$;
 
-  projectUuid$ = this._projectPageService.currentProjectUuid$;
+  get projectUuid() {
+    return this._projectPageService.currentProjectUuid;
+  }
 
   showActiveUsers = true;
 

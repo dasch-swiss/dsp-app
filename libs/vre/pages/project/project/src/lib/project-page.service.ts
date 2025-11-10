@@ -5,32 +5,36 @@ import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { UserService } from '@dasch-swiss/vre/core/session';
 import { filterNull, UserPermissions } from '@dasch-swiss/vre/shared/app-common';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
-import { BehaviorSubject, combineLatest, map, of, ReplaySubject, shareReplay, switchMap, take, tap } from 'rxjs';
+import { BehaviorSubject, combineLatest, map, of, shareReplay, switchMap } from 'rxjs';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class ProjectPageService {
-  private _currentProjectUuidSubject = new ReplaySubject<string>(1);
   private _reloadProjectSubject = new BehaviorSubject<null>(null);
 
-  private _currentProjectId = '';
+  private _currentProjectUuid?: string;
+  private _currentProjectId?: string;
+  private _currentProjectIdSubject = new BehaviorSubject<string>('');
 
-  get currentProjectId() {
+  get currentProjectId(): string {
+    if (!this._currentProjectId) {
+      throw new Error('ProjectPageService: setup() must be called before accessing currentProjectId');
+    }
     return this._currentProjectId;
   }
 
-  get currentProjectUuid() {
-    return ProjectService.IriToUuid(this._currentProjectId);
+  get currentProjectUuid(): string {
+    if (!this._currentProjectUuid) {
+      throw new Error('ProjectPageService: setup() must be called before accessing currentProjectUuid');
+    }
+    return this._currentProjectUuid;
   }
 
-  currentProjectUuid$ = this._currentProjectUuidSubject.pipe(take(1));
-
-  currentProject$ = this._reloadProjectSubject.pipe(
-    switchMap(() => this._currentProjectUuidSubject),
-    switchMap(projectUuid => this._projectApiService.get(this._projectService.uuidToIri(projectUuid))),
+  readonly currentProject$ = combineLatest([
+    this._reloadProjectSubject,
+    this._currentProjectIdSubject.asObservable(),
+  ]).pipe(
+    switchMap(([, projectId]) => this._projectApiService.get(projectId)),
     map(response => response.project),
-    tap(project => {
-      this._currentProjectId = project.id;
-    }),
     shareReplay(1)
   );
 
@@ -67,8 +71,10 @@ export class ProjectPageService {
     private readonly _projectService: ProjectService
   ) {}
 
-  setCurrentProjectUuid(projectUuid: string): void {
-    this._currentProjectUuidSubject.next(projectUuid);
+  setup(projectUuid: string): void {
+    this._currentProjectUuid = projectUuid;
+    this._currentProjectId = this._projectService.uuidToIri(projectUuid);
+    this._currentProjectIdSubject.next(this._currentProjectId);
   }
 
   reloadProject() {

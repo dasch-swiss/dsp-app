@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
+import { first } from 'rxjs';
 import { ProjectPageService } from './project-page.service';
 
 @Component({
@@ -13,7 +14,6 @@ import { ProjectPageService } from './project-page.service';
     </div>
   `,
   styleUrls: ['./project-page.component.scss'],
-  providers: [ProjectPageService],
   standalone: false,
 })
 export class ProjectPageComponent implements OnInit {
@@ -28,11 +28,7 @@ export class ProjectPageComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this._route.params.subscribe(params => {
-      this._projectPageService.setCurrentProjectUuid(params[RouteConstants.uuidParameter]);
-    });
-
-    this._projectPageService.currentProject$.subscribe(project => {
+    this._projectPageService.currentProject$.pipe(first()).subscribe(project => {
       this._titleService.setTitle(project.shortname);
     });
   }
