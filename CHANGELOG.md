@@ -1,5 +1,43 @@
 # Changelog
 
+## [12.2.0](https://github.com/dasch-swiss/dsp-das/compare/v12.1.3...v12.2.0) (2025-11-10)
+
+
+### Enhancements
+
+* add project image for 0108 ([#2630](https://github.com/dasch-swiss/dsp-das/issues/2630)) ([750e26c](https://github.com/dasch-swiss/dsp-das/commit/750e26c91dc5ac72b5dfd8faa63e71fd62de962e))
+
+
+### Bug Fixes
+
+* add missing translations ([#2631](https://github.com/dasch-swiss/dsp-das/issues/2631)) ([a6c008b](https://github.com/dasch-swiss/dsp-das/commit/a6c008b89968fde523568e308cded86abf0db551))
+* **Cross-Linking Projects:** fix disabled button appearance ([#2639](https://github.com/dasch-swiss/dsp-das/issues/2639)) ([675ae89](https://github.com/dasch-swiss/dsp-das/commit/675ae896e0fe61f04d0373dc770b9c5868b77e7c))
+* disable Faro tracking in configuration files ([#2622](https://github.com/dasch-swiss/dsp-das/issues/2622)) ([31b7692](https://github.com/dasch-swiss/dsp-das/commit/31b7692ac3788ddb0ea9cf7871aaf21b115b03b7))
+* erase button is not shown if user is not project admin ([#2647](https://github.com/dasch-swiss/dsp-das/issues/2647)) ([ad020d8](https://github.com/dasch-swiss/dsp-das/commit/ad020d81ae2c6be5cf72d40740a972ef2dc459d1))
+* prevent cross-linking in rich text editor ([#2629](https://github.com/dasch-swiss/dsp-das/issues/2629)) ([24f9197](https://github.com/dasch-swiss/dsp-das/commit/24f919717124a3ced889ef4b7ff515f2c619abc7))
+* trace header cors urls are now regexp ([#2632](https://github.com/dasch-swiss/dsp-das/issues/2632)) ([cdcb2fc](https://github.com/dasch-swiss/dsp-das/commit/cdcb2fc1793e5b6b37c612732a7bce03b11cbc99))
+
+
+### Maintenances
+
+* add a project guard in project view ([#2637](https://github.com/dasch-swiss/dsp-das/issues/2637)) ([7b79f92](https://github.com/dasch-swiss/dsp-das/commit/7b79f92a04351b56c96d434e93639c7d93debf1b))
+* add faro tracing cors urls whitelist ([#2628](https://github.com/dasch-swiss/dsp-das/issues/2628)) ([1e900e7](https://github.com/dasch-swiss/dsp-das/commit/1e900e72d743dc7d4c0f00871b12f8b6ac8f120b))
+* **deps:** bump actions/checkout from 3 to 5 ([#2626](https://github.com/dasch-swiss/dsp-das/issues/2626)) ([8c4f147](https://github.com/dasch-swiss/dsp-das/commit/8c4f1470c2c62edbf3b35db18e8bd1feaab76ba9))
+* **deps:** bump actions/upload-artifact from 4 to 5 ([#2627](https://github.com/dasch-swiss/dsp-das/issues/2627)) ([269cbf4](https://github.com/dasch-swiss/dsp-das/commit/269cbf48dbfdb10b402ad2c874c74c59c0d7ea8f))
+* **deps:** bump github/codeql-action from 3 to 4 ([#2625](https://github.com/dasch-swiss/dsp-das/issues/2625)) ([ca1beb6](https://github.com/dasch-swiss/dsp-das/commit/ca1beb6dda0711d083df52fca7f674a04dd400f1))
+* Improve review instructions in claude.yml ([#2646](https://github.com/dasch-swiss/dsp-das/issues/2646)) ([780ae89](https://github.com/dasch-swiss/dsp-das/commit/780ae89dabaa8873011c8b7b21c926f513a3bde9))
+* migrate help page components to standalone ([#2642](https://github.com/dasch-swiss/dsp-das/issues/2642)) ([bd93cc5](https://github.com/dasch-swiss/dsp-das/commit/bd93cc5b8b20308f6014bd0e62bcc248183db85f))
+* migrate ui/date-picker components to standalone ([#2641](https://github.com/dasch-swiss/dsp-das/issues/2641)) ([d00669d](https://github.com/dasch-swiss/dsp-das/commit/d00669d7dff13d6405075007ab45a2df3a85d322))
+* migrate ui/progress-indicators to standalone ([#2621](https://github.com/dasch-swiss/dsp-das/issues/2621)) ([44a44c8](https://github.com/dasch-swiss/dsp-das/commit/44a44c8cc9f2b777854aa9cd0644089f3c660a55))
+* post-upgrade release-please fix ([#2624](https://github.com/dasch-swiss/dsp-das/issues/2624)) ([6e761f0](https://github.com/dasch-swiss/dsp-das/commit/6e761f0d296cb449fad1d794b2a14fed227707b1))
+* remove copyright header ([#2634](https://github.com/dasch-swiss/dsp-das/issues/2634)) ([8c23908](https://github.com/dasch-swiss/dsp-das/commit/8c23908c75a179ad88b658d92c6cfcbff46bf21d))
+* split resource-toolbar into multiple comprehensive components ([#2644](https://github.com/dasch-swiss/dsp-das/issues/2644)) ([bdf063e](https://github.com/dasch-swiss/dsp-das/commit/bdf063e43ff46631014baa3ab1b24b5c21c09598))
+* update Claude Code instructions ([#2635](https://github.com/dasch-swiss/dsp-das/issues/2635)) ([cfa5f10](https://github.com/dasch-swiss/dsp-das/commit/cfa5f105f552d5e8398af495a4d121086c4e1e09))
+* update dsp-api routes to v32.6.0-7-gc68cb83 ([#2638](https://github.com/dasch-swiss/dsp-das/issues/2638)) ([8477082](https://github.com/dasch-swiss/dsp-das/commit/84770821eeb5682ed919418a8946159ad9b099ee))
+* update openAPI spec ([#2648](https://github.com/dasch-swiss/dsp-das/issues/2648)) ([ad301ff](https://github.com/dasch-swiss/dsp-das/commit/ad301ffb712b13bade601472dbe14d389ab277d3))
+* update README ([#2636](https://github.com/dasch-swiss/dsp-das/issues/2636)) ([ffcffb7](https://github.com/dasch-swiss/dsp-das/commit/ffcffb7d741a58db2f628e30eb0e79b3dbfcf46a))
+* upgrade Release Please to v4 ([#2619](https://github.com/dasch-swiss/dsp-das/issues/2619)) ([af3b78c](https://github.com/dasch-swiss/dsp-das/commit/af3b78cdfc063d7de9d9d44c46269f1a8880096b))
+
 ## [12.1.3](https://github.com/dasch-swiss/dsp-das/compare/v12.1.2...v12.1.3) (2025-11-03)
 
 
