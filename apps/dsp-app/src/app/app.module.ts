@@ -41,11 +41,7 @@ import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services
 import { DatePickerComponents } from '@dasch-swiss/vre/ui/date-picker';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { AppProgressIndicatorComponent, ProgressIndicatorComponents } from '@dasch-swiss/vre/ui/progress-indicator';
-import {
-  MultiLanguageInputComponent,
-  MultiLanguageTextareaComponent,
-  StringLiteralComponents,
-} from '@dasch-swiss/vre/ui/string-literal';
+import { StringLiteralComponents } from '@dasch-swiss/vre/ui/string-literal';
 import { UiStandaloneComponents } from '@dasch-swiss/vre/ui/ui';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
@@ -84,7 +80,6 @@ export function httpLoaderFactory(httpClient: HttpClient) {
     ...ResourcePropertiesComponents,
     ...SearchComponents,
     ...SegmentSupportComponents,
-    ...StringLiteralComponents,
     ...SystemComponents,
     ...TemplateSwitcherComponents,
     ...UserComponents,
@@ -104,14 +99,13 @@ export function httpLoaderFactory(httpClient: HttpClient) {
     HelpPageComponent,
     HttpClientModule,
     IMaskModule,
-    MultiLanguageInputComponent,
-    MultiLanguageTextareaComponent,
     MaterialModule,
     MatJDNConvertibleCalendarDateAdapterModule,
     MatRippleModule,
     MatStepperModule,
     NgxSkeletonLoaderModule,
     PdfViewerModule,
+    ...StringLiteralComponents,
     ...UiStandaloneComponents,
     ...DatePickerComponents,
     ...ProgressIndicatorComponents,
