@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: DSP-API
-  version: v32.7.0-3-g2726f23
+  version: v32.7.0-5-ge0abdce
   summary: DSP-API is part of the DaSCH Service Platform, a repository for the long-term
     preservation and reuse of data in the humanities.
   contact:
@@ -4708,7 +4708,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/X8u8tXkESB6-oZ9ScFVaLg
+        example: http://rdfh.ch/users/yUkvXWKSQneTWcsQzQu4mw
       responses:
         '200':
           description: ''
@@ -4760,7 +4760,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/X8u8tXkESB6-oZ9ScFVaLg
+        example: http://rdfh.ch/users/yUkvXWKSQneTWcsQzQu4mw
       responses:
         '200':
           description: ''
@@ -4812,7 +4812,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/X8u8tXkESB6-oZ9ScFVaLg
+        example: http://rdfh.ch/users/yUkvXWKSQneTWcsQzQu4mw
       responses:
         '200':
           description: ''
@@ -4977,7 +4977,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/X8u8tXkESB6-oZ9ScFVaLg
+        example: http://rdfh.ch/users/yUkvXWKSQneTWcsQzQu4mw
       responses:
         '200':
           description: ''
@@ -5035,7 +5035,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/X8u8tXkESB6-oZ9ScFVaLg
+        example: http://rdfh.ch/users/yUkvXWKSQneTWcsQzQu4mw
       responses:
         '200':
           description: ''
@@ -5213,7 +5213,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/X8u8tXkESB6-oZ9ScFVaLg
+        example: http://rdfh.ch/users/yUkvXWKSQneTWcsQzQu4mw
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -5278,7 +5278,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/X8u8tXkESB6-oZ9ScFVaLg
+        example: http://rdfh.ch/users/yUkvXWKSQneTWcsQzQu4mw
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -5344,7 +5344,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/X8u8tXkESB6-oZ9ScFVaLg
+        example: http://rdfh.ch/users/yUkvXWKSQneTWcsQzQu4mw
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -5409,7 +5409,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/X8u8tXkESB6-oZ9ScFVaLg
+        example: http://rdfh.ch/users/yUkvXWKSQneTWcsQzQu4mw
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -5475,7 +5475,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/X8u8tXkESB6-oZ9ScFVaLg
+        example: http://rdfh.ch/users/yUkvXWKSQneTWcsQzQu4mw
       - name: groupIri
         in: path
         description: The IRI of a group. Must be URL-encoded.
@@ -5540,7 +5540,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/X8u8tXkESB6-oZ9ScFVaLg
+        example: http://rdfh.ch/users/yUkvXWKSQneTWcsQzQu4mw
       - name: groupIri
         in: path
         description: The IRI of a group. Must be URL-encoded.
@@ -5606,7 +5606,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/X8u8tXkESB6-oZ9ScFVaLg
+        example: http://rdfh.ch/users/yUkvXWKSQneTWcsQzQu4mw
       requestBody:
         content:
           application/json:
@@ -5671,7 +5671,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/X8u8tXkESB6-oZ9ScFVaLg
+        example: http://rdfh.ch/users/yUkvXWKSQneTWcsQzQu4mw
       requestBody:
         content:
           application/json:
@@ -5736,7 +5736,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/X8u8tXkESB6-oZ9ScFVaLg
+        example: http://rdfh.ch/users/yUkvXWKSQneTWcsQzQu4mw
       requestBody:
         content:
           application/json:
@@ -5801,7 +5801,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/X8u8tXkESB6-oZ9ScFVaLg
+        example: http://rdfh.ch/users/yUkvXWKSQneTWcsQzQu4mw
       requestBody:
         content:
           application/json:
@@ -6124,7 +6124,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/lists/0001/tR4DTQbPQ62fyIDLZA8I9A
+        example: http://rdfh.ch/lists/0001/W0QFpZ-wTZOQBGNxJ2D1yw
       - name: x-knora-accept-schema
         in: header
         description: |-
@@ -6236,7 +6236,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/lists/0001/tR4DTQbPQ62fyIDLZA8I9A
+        example: http://rdfh.ch/lists/0001/W0QFpZ-wTZOQBGNxJ2D1yw
       - name: x-knora-accept-schema
         in: header
         description: |-
@@ -13035,6 +13035,11 @@ paths:
     get:
       tags:
       - API v3
+      description: This endpoint returns all ontologies in a project along with their
+        resource classes and the count of resource instances for each class. Note
+        that the `itemCount` includes only non-deleted resources and it includes resources
+        even if the current user may not be permitted to see some of them, for performance
+        reasons.
       operationId: getV3ProjectsProjectiriResourcesperontology
       parameters:
       - name: projectIri
@@ -13053,6 +13058,22 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/OntologyAndResourceClasses'
+              example:
+              - ontology:
+                  iri: http://0.0.0.0:3333/ontology/0001/anything/v2
+                  label: The anything ontology
+                  comment: A sample ontology for anything
+                classesAndCount:
+                - resourceClass:
+                    iri: http://0.0.0.0:3333/ontology/0001/anything/v2#ImageThing
+                    representationClass: StillImageRepresentation
+                    label:
+                    - value: Thing with image representation
+                      language: en
+                    comment:
+                    - value: A thing which is has an image
+                      language: en
+                  itemCount: 42
         '400':
           description: ''
           content:
@@ -13137,9 +13158,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/VersionResponse'
               example:
-                webapi: v32.7.0-3-g2726f23
-                buildCommit: 2726f23ca
-                buildTime: '2025-11-10T14:27:45.078165964Z'
+                webapi: v32.7.0-5-ge0abdce
+                buildCommit: e0abdce39
+                buildTime: '2025-11-12T13:02:07.536281951Z'
                 fuseki: 5.5.0-2
                 scala: 3.3.7
                 sipi: v3.16.3
@@ -13375,6 +13396,12 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/AdministrativePermissionADM'
+    ArchiveRepresentation:
+      title: ArchiveRepresentation
+      type: object
+    AudioRepresentation:
+      title: AudioRepresentation
+      type: object
     BadCredentialsException:
       title: BadCredentialsException
       type: object
@@ -13585,6 +13612,9 @@ components:
           type: string
         xml:
           type: string
+    DDDRepresentation:
+      title: DDDRepresentation
+      type: object
     DefaultObjectAccessPermissionADM:
       title: DefaultObjectAccessPermissionADM
       type: object
@@ -13639,6 +13669,9 @@ components:
       properties:
         value:
           $ref: '#/components/schemas/StringLiteralV2'
+    DocumentRepresentation:
+      title: DocumentRepresentation
+      type: object
     DuplicateValueException:
       title: DuplicateValueException
       type: object
@@ -14296,6 +14329,9 @@ components:
       type: object
       additionalProperties:
         type: string
+    MovingImageRepresentation:
+      title: MovingImageRepresentation
+      type: object
     NodeADM:
       title: NodeADM
       type: object
@@ -14762,6 +14798,17 @@ components:
           type: array
           items:
             type: string
+    RepresentationClass:
+      title: RepresentationClass
+      oneOf:
+      - $ref: '#/components/schemas/ArchiveRepresentation'
+      - $ref: '#/components/schemas/AudioRepresentation'
+      - $ref: '#/components/schemas/DDDRepresentation'
+      - $ref: '#/components/schemas/DocumentRepresentation'
+      - $ref: '#/components/schemas/MovingImageRepresentation'
+      - $ref: '#/components/schemas/StillImageRepresentation'
+      - $ref: '#/components/schemas/TextRepresentation'
+      - $ref: '#/components/schemas/WithoutRepresentation'
     ResourceClassAndCountDto:
       title: ResourceClassAndCountDto
       type: object
@@ -14779,12 +14826,12 @@ components:
       type: object
       required:
       - iri
-      - representationClassIri
+      - representationClass
       properties:
         iri:
           type: string
-        representationClassIri:
-          type: string
+        representationClass:
+          $ref: '#/components/schemas/RepresentationClass'
         label:
           type: array
           items:
@@ -14881,6 +14928,9 @@ components:
       properties:
         status:
           $ref: '#/components/schemas/UserStatus'
+    StillImageRepresentation:
+      title: StillImageRepresentation
+      type: object
     StringLiteralSequenceV2:
       title: StringLiteralSequenceV2
       type: object
@@ -14915,6 +14965,9 @@ components:
       properties:
         systemAdmin:
           $ref: '#/components/schemas/SystemAdmin'
+    TextRepresentation:
+      title: TextRepresentation
+      type: object
     TokenResponse:
       title: TokenResponse
       type: object
@@ -15152,6 +15205,9 @@ components:
       properties:
         value:
           type: boolean
+    WithoutRepresentation:
+      title: WithoutRepresentation
+      type: object
     ontology_not_found:
       title: ontology_not_found
       type: object
