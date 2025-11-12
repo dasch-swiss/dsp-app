@@ -14,9 +14,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Only proceed with changes after receiving clear approval from the user.**
 - **Propose the best practices approach first instead of quick fixes.**
   - If there are more options to consider, mark it clearly in the solutions list which is which.
-- **While following best practices, follow conventions used in this repository and modified component too.**
-  - If not sure, ask which convention should be applied.
+- **While following best practices, for consistency reasons, keep an eye on conventions used in the repository and modified files.**
+  - If not sure, ask what to focus on more.
 - **While adding tests, make sure to not over-test functionalities.**
+  - Check for the test's redundancy.
+  - Propose the tests within the scope of the task.
+  - Avoid testing not changed components, services or functions - propose it as a follow up instead.
 - **After refactoring and/or moving the code, remind the user to perform the cleanup afterwards and propose what should be cleaned up.**
 - **Before the cleanup check if something can be still improved (in the scope of prompted task).**
 
