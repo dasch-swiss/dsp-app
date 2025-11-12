@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, Inject, Input, OnChanges } from '@angular/core';
-import { KnoraApiConnection, ReadResource } from '@dasch-swiss/dsp-js';
+import { IFulltextSearchParams, KnoraApiConnection, ReadResource } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { UserService } from '@dasch-swiss/vre/core/session';
 import { ResourceResultService } from '@dasch-swiss/vre/pages/data-browser';
@@ -38,6 +38,14 @@ export class ProjectFulltextSearchResultComponent implements OnChanges {
 
   readonly noResultMessage = 'There are no resources to display.';
 
+  get searchInProjectParam(): IFulltextSearchParams {
+    return this.projectId
+      ? {
+          limitToProject: this.projectId,
+        }
+      : {};
+  }
+
   constructor(
     @Inject(DspApiConnectionToken)
     private readonly _dspApiConnection: KnoraApiConnection,
@@ -51,15 +59,7 @@ export class ProjectFulltextSearchResultComponent implements OnChanges {
     this.resources$ = combineLatest([
       this._resourceResultService.pageIndex$.pipe(
         switchMap(pageNumber =>
-          this._dspApiConnection.v2.search.doFulltextSearch(
-            this.query,
-            pageNumber,
-            this.projectId
-              ? {
-                  limitToProject: this.projectId,
-                }
-              : {}
-          )
+          this._dspApiConnection.v2.search.doFulltextSearch(this.query, pageNumber, this.searchInProjectParam)
         )
       ),
       this._numberOfAllResults$(this.query),
@@ -73,5 +73,5 @@ export class ProjectFulltextSearchResultComponent implements OnChanges {
   }
 
   private _numberOfAllResults$ = (query: string) =>
-    this._dspApiConnection.v2.search.doFulltextSearchCountQuery(query, 0);
+    this._dspApiConnection.v2.search.doFulltextSearchCountQuery(query, 0, this.searchInProjectParam);
 }
