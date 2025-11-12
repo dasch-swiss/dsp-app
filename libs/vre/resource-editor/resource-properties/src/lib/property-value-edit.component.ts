@@ -39,7 +39,7 @@ import { propertiesTypeMapping } from './resource-payloads-mapping';
             <app-property-value-basic-comment [control]="group.controls.comment" />
           }
         </div>
-        <div style="display: flex">
+        <div style="display: flex; width: 144px">
           <button
             (click)="afterUndo.emit()"
             mat-icon-button
