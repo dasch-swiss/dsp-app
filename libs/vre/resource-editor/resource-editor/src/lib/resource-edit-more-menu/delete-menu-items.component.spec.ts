@@ -1,4 +1,4 @@
-import { CUSTOM_ELEMENTS_SCHEMA, EventEmitter } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CanDoResponse } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
@@ -7,6 +7,16 @@ import { ResourceFetcherService } from '@dasch-swiss/vre/resource-editor/represe
 import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, firstValueFrom, of } from 'rxjs';
 import { DeleteMenuItemsComponent } from './delete-menu-items.component';
+
+// Helper function to create CanDoResponse mocks
+function createCanDoResponse(canDo: boolean, reason?: string): CanDoResponse {
+  const response = new CanDoResponse();
+  response.canDo = canDo;
+  if (reason) {
+    response.cannotDoReason = reason;
+  }
+  return response;
+}
 
 describe('DeleteMenuItemsComponent', () => {
   let component: DeleteMenuItemsComponent;
@@ -43,6 +53,9 @@ describe('DeleteMenuItemsComponent', () => {
     username: 'testuser',
     email: 'test@example.com',
     projectsAdmin: ['http://test-project'],
+    permissions: {
+      groupsPerProject: {},
+    },
   });
   const mockUserService = { user$ };
 
@@ -59,6 +72,9 @@ describe('DeleteMenuItemsComponent', () => {
     })
       .overrideComponent(DeleteMenuItemsComponent, {
         set: {
+          // Template is overridden to isolate unit test from template rendering
+          // This tests only the component logic, not UI integration
+          // Child components (app-delete-button, app-erase-button) are mocked via CUSTOM_ELEMENTS_SCHEMA
           template: '<div>Mock Template</div>',
         },
       })
@@ -77,48 +93,33 @@ describe('DeleteMenuItemsComponent', () => {
       username: 'testuser',
       email: 'test@example.com',
       projectsAdmin: ['http://test-project'],
+      permissions: {
+        groupsPerProject: {},
+      },
     } as any);
-    const canDoResponse = new CanDoResponse();
-    canDoResponse.canDo = true;
-    mockCanDeleteResource.mockReturnValue(of(canDoResponse));
+    mockCanDeleteResource.mockReturnValue(of(createCanDoResponse(true)));
   });
 
-  describe('component initialization', () => {
-    it('should be created', () => {
-      expect(component).toBeTruthy();
-    });
-
-    it('should call ngOnInit and set up resourceCanBeDeleted$ observable', () => {
-      component.ngOnInit();
-
-      expect(component.resourceCanBeDeleted$).toBeDefined();
-    });
+  it('should be created', () => {
+    expect(component).toBeTruthy();
   });
 
   describe('permission checks', () => {
     it('should return canDo true when resource can be deleted', async () => {
-      const canDoResponse = new CanDoResponse();
-      canDoResponse.canDo = true;
-      mockCanDeleteResource.mockReturnValue(of(canDoResponse));
       component.ngOnInit();
 
       const response = await firstValueFrom(component.resourceCanBeDeleted$);
 
-      expect(response).toBeDefined();
       expect(response.canDo).toBe(true);
       expect(mockCanDeleteResource).toHaveBeenCalled();
     });
 
     it('should return canDo false when resource cannot be deleted', async () => {
-      const canDoResponse = new CanDoResponse();
-      canDoResponse.canDo = false;
-      canDoResponse.cannotDoReason = 'Resource has dependencies';
-      mockCanDeleteResource.mockReturnValue(of(canDoResponse));
+      mockCanDeleteResource.mockReturnValue(of(createCanDoResponse(false, 'Resource has dependencies')));
       component.ngOnInit();
 
       const response = await firstValueFrom(component.resourceCanBeDeleted$);
 
-      expect(response).toBeDefined();
       expect(response.canDo).toBe(false);
       expect(response.cannotDoReason).toBe('Resource has dependencies');
     });
@@ -138,49 +139,19 @@ describe('DeleteMenuItemsComponent', () => {
     });
   });
 
-  describe('event emission', () => {
-    it('should expose resourceDeleted output', () => {
-      expect(component.resourceDeleted).toBeDefined();
-      expect(component.resourceDeleted).toBeInstanceOf(EventEmitter);
-    });
-
-    it('should expose resourceErased output', () => {
-      expect(component.resourceErased).toBeDefined();
-      expect(component.resourceErased).toBeInstanceOf(EventEmitter);
-    });
-
-    it('should emit resourceDeleted when triggered', done => {
-      component.resourceDeleted.subscribe(() => {
-        expect(true).toBe(true);
-        done();
-      });
-
-      component.resourceDeleted.emit();
-    });
-
-    it('should emit resourceErased when triggered', done => {
-      component.resourceErased.subscribe(() => {
-        expect(true).toBe(true);
-        done();
-      });
-
-      component.resourceErased.emit();
-    });
-  });
-
-  describe('component orchestration', () => {
-    it('should have access to resourceFetcher', () => {
-      expect(component.resourceFetcher).toBeDefined();
-      expect(component.resourceFetcher.userCanDelete$).toBeDefined();
-      expect(component.resourceFetcher.projectIri$).toBeDefined();
-    });
-
+  describe('component initialization', () => {
     it('should initialize resourceCanBeDeleted$ on ngOnInit', () => {
       expect(component.resourceCanBeDeleted$).toBeUndefined();
 
       component.ngOnInit();
 
       expect(component.resourceCanBeDeleted$).toBeDefined();
+    });
+
+    it('should have access to resourceFetcher', () => {
+      expect(component.resourceFetcher).toBeDefined();
+      expect(component.resourceFetcher.userCanDelete$).toBeDefined();
+      expect(component.resourceFetcher.projectIri$).toBeDefined();
     });
   });
 });

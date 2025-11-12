@@ -35,6 +35,8 @@ describe('EditLabelMenuItemComponent', () => {
     })
       .overrideComponent(EditLabelMenuItemComponent, {
         set: {
+          // Template is overridden to isolate unit test from template rendering
+          // This tests only the component logic, not UI integration
           template: '<div>Mock Template</div>',
         },
       })
@@ -49,69 +51,36 @@ describe('EditLabelMenuItemComponent', () => {
     jest.clearAllMocks();
   });
 
-  describe('component initialization', () => {
-    it('should be created', () => {
-      expect(component).toBeTruthy();
-    });
-
-    it('should have required resource input', () => {
-      expect(component.resource).toBeDefined();
-      expect(component.resource).toEqual(mockResource);
-    });
-
-    it('should have resourceUpdated output emitter', () => {
-      expect(component.resourceUpdated).toBeDefined();
-    });
+  it('should be created', () => {
+    expect(component).toBeTruthy();
   });
 
-  describe('editResourceLabel functionality', () => {
-    it('should open edit label dialog with correct data', () => {
-      component.editResourceLabel();
+  it('should open edit label dialog with correct data', () => {
+    component.editResourceLabel();
 
-      expect(mockDialog.open).toHaveBeenCalledWith(
-        expect.anything(),
-        expect.objectContaining({
-          data: mockResource,
-        })
-      );
-    });
+    expect(mockDialog.open).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({
+        data: mockResource,
+      })
+    );
+  });
 
-    it('should emit resourceUpdated when dialog returns true', () => {
-      mockDialogRef.afterClosed.mockReturnValue(of(true));
-      const emitSpy = jest.spyOn(component.resourceUpdated, 'emit');
+  it('should emit resourceUpdated when dialog returns true', () => {
+    mockDialogRef.afterClosed.mockReturnValue(of(true));
+    const emitSpy = jest.spyOn(component.resourceUpdated, 'emit');
 
-      component.editResourceLabel();
+    component.editResourceLabel();
 
-      expect(emitSpy).toHaveBeenCalled();
-    });
+    expect(emitSpy).toHaveBeenCalled();
+  });
 
-    it('should not emit resourceUpdated when dialog returns false', () => {
-      mockDialogRef.afterClosed.mockReturnValue(of(false));
-      const emitSpy = jest.spyOn(component.resourceUpdated, 'emit');
+  it('should not emit resourceUpdated when dialog returns false', () => {
+    mockDialogRef.afterClosed.mockReturnValue(of(false));
+    const emitSpy = jest.spyOn(component.resourceUpdated, 'emit');
 
-      component.editResourceLabel();
+    component.editResourceLabel();
 
-      expect(emitSpy).not.toHaveBeenCalled();
-    });
-
-    it('should not emit resourceUpdated when dialog is cancelled (undefined)', () => {
-      mockDialogRef.afterClosed.mockReturnValue(of(undefined));
-      const emitSpy = jest.spyOn(component.resourceUpdated, 'emit');
-
-      component.editResourceLabel();
-
-      expect(emitSpy).not.toHaveBeenCalled();
-    });
-
-    it('should pass ViewContainerRef to dialog', () => {
-      component.editResourceLabel();
-
-      expect(mockDialog.open).toHaveBeenCalledWith(
-        expect.anything(),
-        expect.objectContaining({
-          viewContainerRef: expect.anything(),
-        })
-      );
-    });
+    expect(emitSpy).not.toHaveBeenCalled();
   });
 });

@@ -61,6 +61,8 @@ describe('ResourceActionsComponent', () => {
     })
       .overrideComponent(ResourceActionsComponent, {
         set: {
+          // Template is overridden to isolate unit test from template rendering
+          // This tests only the component logic, not UI integration
           template: '<div>Mock Template</div>',
         },
       })
@@ -72,78 +74,45 @@ describe('ResourceActionsComponent', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    // Mock window.open
     global.window.open = jest.fn();
   });
 
-  describe('component initialization', () => {
-    it('should be created', () => {
-      expect(component).toBeTruthy();
-    });
-
-    it('should have required resource input', () => {
-      component.resource = mockResource as any;
-      expect(component.resource).toBeDefined();
-      expect(component.resource).toEqual(mockResource);
-    });
-
-    it('should have access to translate service', () => {
-      expect((component as any)._translateService).toBeDefined();
-    });
-
-    it('should have notification service injected', () => {
-      expect((component as any).notification).toBeDefined();
-    });
+  it('should be created', () => {
+    expect(component).toBeTruthy();
   });
 
   describe('openResource - regular resource', () => {
-    beforeEach(() => {
+    it('should open regular resource in new tab with correct path', () => {
       component.resource = mockResource as any;
-    });
 
-    it('should open resource in new tab', () => {
       component.openResource();
 
       expect(mockResourceService.getResourcePath).toHaveBeenCalledWith(mockResource.id);
       expect(window.open).toHaveBeenCalledWith(`/${RouteConstants.resource}/project/123/resource/456`, '_blank');
     });
-
-    it('should call ResourceService with correct resource id', () => {
-      component.openResource();
-
-      expect(mockResourceService.getResourcePath).toHaveBeenCalledWith(mockResource.id);
-    });
   });
 
   describe('openResource - region resource', () => {
-    beforeEach(() => {
+    it('should open parent resource with annotation query param and encoded ID', () => {
       component.resource = mockRegionResource as any;
-    });
 
-    it('should open parent resource with annotation query param', () => {
       component.openResource();
 
+      // Verify it gets the linked resource from the region
+      expect(mockRegionResource.getValues).toHaveBeenCalledWith(Constants.IsRegionOfValue);
+
+      // Verify it uses the parent resource ID
       expect(mockResourceService.getResourcePath).toHaveBeenCalledWith('http://example.org/parent-resource-id');
+
+      // Verify URL includes annotation query param with encoded region ID
+      const expectedAnnotationId = encodeURIComponent(mockRegionResource.id);
       expect(window.open).toHaveBeenCalledWith(
-        expect.stringContaining(`?${RouteConstants.annotationQueryParam}=`),
+        `/${RouteConstants.resource}/project/123/resource/456?${RouteConstants.annotationQueryParam}=${expectedAnnotationId}`,
         '_blank'
       );
     });
 
-    it('should encode annotation id in query param', () => {
-      component.openResource();
-
-      const expectedAnnotationId = encodeURIComponent(mockRegionResource.id);
-      expect(window.open).toHaveBeenCalledWith(expect.stringContaining(`=${expectedAnnotationId}`), '_blank');
-    });
-
-    it('should get linked resource from IsRegionOfValue', () => {
-      component.openResource();
-
-      expect(mockRegionResource.getValues).toHaveBeenCalledWith(Constants.IsRegionOfValue);
-    });
-
-    it('should handle missing linked resource gracefully', () => {
+    it('should handle missing linked resource by falling back to region ID', () => {
       const resourceWithoutLinkedResource = {
         ...mockRegionResource,
         getValues: jest.fn().mockReturnValue([]),
@@ -154,33 +123,6 @@ describe('ResourceActionsComponent', () => {
 
       // Should fall back to the region's own id
       expect(mockResourceService.getResourcePath).toHaveBeenCalledWith(mockRegionResource.id);
-    });
-  });
-
-  describe('clipboard and notification functionality', () => {
-    beforeEach(() => {
-      component.resource = mockResource as any;
-    });
-
-    it('should have notification service for snackbar messages', () => {
-      expect((component as any).notification).toBeDefined();
-      expect((component as any).notification.openSnackBar).toBeDefined();
-    });
-
-    it('should be able to display ARK URL in template', () => {
-      expect(component.resource.versionArkUrl).toBe('http://ark.example.org/ark:/12345');
-    });
-
-    it('should be able to display resource id in template', () => {
-      expect(component.resource.id).toBe('http://example.org/resource-id');
-    });
-  });
-
-  describe('content projection', () => {
-    it('should support ng-content for menu projection', () => {
-      // This is tested by the template structure
-      // The component should have <ng-content /> in the template
-      expect(component).toBeTruthy();
     });
   });
 });
