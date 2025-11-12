@@ -642,6 +642,9 @@
         "remove": "Rimuovi",
         "addComment": "Aggiungi commento",
         "removeComment": "Rimuovi commento"
+      },
+      "propertyValuesCreator": {
+        "addNewValue": "Aggiungi nuovo valore"
       }
     },
     "templateSwitcher": {
