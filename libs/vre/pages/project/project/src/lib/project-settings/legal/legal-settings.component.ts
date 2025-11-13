@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { PaginatedApiService } from '@dasch-swiss/vre/resource-editor/resource-properties';
-import { BehaviorSubject, switchMap } from 'rxjs';
+import { BehaviorSubject, first, switchMap } from 'rxjs';
 import { ProjectPageService } from '../../project-page.service';
 import {
   CreateCopyrightHolderDialogComponent,
@@ -85,6 +85,7 @@ export class LegalSettingsComponent {
   addCopyrightHolder() {
     this._projectPageService.currentProject$
       .pipe(
+        first(),
         switchMap(currentProject =>
           this._dialog
             .open<
