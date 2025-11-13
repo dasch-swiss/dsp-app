@@ -91,6 +91,9 @@ export class MembershipComponent implements OnDestroy, OnChanges {
       switchMap(() => this._adminApiService.getAdminUsersIriUseriri(this.userId)),
       map(response => response.user)
     );
+
+    this.userProjects$ = this.user$.pipe(map(user => user.projects || []));
+
     this.projects$ = combineLatest([this._allProjectsService.allProjects$, this.user$]).pipe(
       map(([projects, user]) => this._getProjects(projects, user)),
       takeUntil(this._ngUnsubscribe)
