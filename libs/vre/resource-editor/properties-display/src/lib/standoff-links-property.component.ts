@@ -36,7 +36,7 @@ export class StandoffLinksPropertyComponent implements OnChanges {
       return {
         label: link.strval ?? '',
         uri: `/resource/${resourceIdPathOnly}`,
-        iri: this.resource.res.id,
+        iri: link.linkedResourceIri,
         project: link.linkedResource?.resourceClassLabel ?? '',
       };
     });
