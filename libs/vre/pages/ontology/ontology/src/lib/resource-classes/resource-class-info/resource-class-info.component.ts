@@ -12,7 +12,6 @@ import {
   ViewContainerRef,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { ActivatedRoute } from '@angular/router';
 import { ApiResponseError, CanDoResponse, IHasProperty, KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken, DspDialogConfig, RouteConstants } from '@dasch-swiss/vre/core/config';
 import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
@@ -65,8 +64,7 @@ export class ResourceClassInfoComponent implements OnInit, OnDestroy {
     private _projectPageService: ProjectPageService,
     @Inject(DspApiConnectionToken)
     private _dspApiConnection: KnoraApiConnection,
-    private _viewContainerRef: ViewContainerRef,
-    private _route: ActivatedRoute
+    private _viewContainerRef: ViewContainerRef
   ) {}
 
   ngOnInit() {
@@ -130,10 +128,9 @@ export class ResourceClassInfoComponent implements OnInit, OnDestroy {
   }
 
   openInDatabrowser() {
-    const projectUuid = this._route.snapshot.params[RouteConstants.uuidParameter];
-
+    const projectUuid = this._projectPageService.currentProjectUuid;
     const ontologyName = OntologyService.getOntologyNameFromIri(this._oes.ontologyId || '');
-    const dataBrowserRoute = `/${RouteConstants.project}/${projectUuid}/${RouteConstants.ontology}/${ontologyName}/${this.resourceClass.name}`;
+    const dataBrowserRoute = `/${RouteConstants.project}/${projectUuid}/${RouteConstants.data}/${ontologyName}/${this.resourceClass.name}`;
     window.open(dataBrowserRoute, '_blank');
   }
 
