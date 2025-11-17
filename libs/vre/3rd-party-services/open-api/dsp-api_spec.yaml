@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: DSP-API
-  version: v32.7.0-15-g4a89cf6
+  version: v32.7.0-16-g3f74313
   summary: DSP-API is part of the DaSCH Service Platform, a repository for the long-term
     preservation and reuse of data in the humanities.
   contact:
@@ -4708,7 +4708,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/h-JtTKjuQRqhOI7TT7Ii6g
+        example: http://rdfh.ch/users/D0gKboCuT6u26ktsY2BVsQ
       responses:
         '200':
           description: ''
@@ -4760,7 +4760,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/h-JtTKjuQRqhOI7TT7Ii6g
+        example: http://rdfh.ch/users/D0gKboCuT6u26ktsY2BVsQ
       responses:
         '200':
           description: ''
@@ -4812,7 +4812,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/h-JtTKjuQRqhOI7TT7Ii6g
+        example: http://rdfh.ch/users/D0gKboCuT6u26ktsY2BVsQ
       responses:
         '200':
           description: ''
@@ -4977,7 +4977,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/h-JtTKjuQRqhOI7TT7Ii6g
+        example: http://rdfh.ch/users/D0gKboCuT6u26ktsY2BVsQ
       responses:
         '200':
           description: ''
@@ -5035,7 +5035,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/h-JtTKjuQRqhOI7TT7Ii6g
+        example: http://rdfh.ch/users/D0gKboCuT6u26ktsY2BVsQ
       responses:
         '200':
           description: ''
@@ -5213,7 +5213,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/h-JtTKjuQRqhOI7TT7Ii6g
+        example: http://rdfh.ch/users/D0gKboCuT6u26ktsY2BVsQ
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -5278,7 +5278,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/h-JtTKjuQRqhOI7TT7Ii6g
+        example: http://rdfh.ch/users/D0gKboCuT6u26ktsY2BVsQ
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -5344,7 +5344,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/h-JtTKjuQRqhOI7TT7Ii6g
+        example: http://rdfh.ch/users/D0gKboCuT6u26ktsY2BVsQ
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -5409,7 +5409,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/h-JtTKjuQRqhOI7TT7Ii6g
+        example: http://rdfh.ch/users/D0gKboCuT6u26ktsY2BVsQ
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -5475,7 +5475,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/h-JtTKjuQRqhOI7TT7Ii6g
+        example: http://rdfh.ch/users/D0gKboCuT6u26ktsY2BVsQ
       - name: groupIri
         in: path
         description: The IRI of a group. Must be URL-encoded.
@@ -5540,7 +5540,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/h-JtTKjuQRqhOI7TT7Ii6g
+        example: http://rdfh.ch/users/D0gKboCuT6u26ktsY2BVsQ
       - name: groupIri
         in: path
         description: The IRI of a group. Must be URL-encoded.
@@ -5606,7 +5606,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/h-JtTKjuQRqhOI7TT7Ii6g
+        example: http://rdfh.ch/users/D0gKboCuT6u26ktsY2BVsQ
       requestBody:
         content:
           application/json:
@@ -5671,7 +5671,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/h-JtTKjuQRqhOI7TT7Ii6g
+        example: http://rdfh.ch/users/D0gKboCuT6u26ktsY2BVsQ
       requestBody:
         content:
           application/json:
@@ -5736,7 +5736,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/h-JtTKjuQRqhOI7TT7Ii6g
+        example: http://rdfh.ch/users/D0gKboCuT6u26ktsY2BVsQ
       requestBody:
         content:
           application/json:
@@ -5801,7 +5801,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/h-JtTKjuQRqhOI7TT7Ii6g
+        example: http://rdfh.ch/users/D0gKboCuT6u26ktsY2BVsQ
       requestBody:
         content:
           application/json:
@@ -6124,7 +6124,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/lists/0001/gpuTC3xIT4Kh7SjHBcUcKg
+        example: http://rdfh.ch/lists/0001/o3TUWhYQRUy_899UfLOiog
       - name: x-knora-accept-schema
         in: header
         description: |-
@@ -6236,7 +6236,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/lists/0001/gpuTC3xIT4Kh7SjHBcUcKg
+        example: http://rdfh.ch/lists/0001/o3TUWhYQRUy_899UfLOiog
       - name: x-knora-accept-schema
         in: header
         description: |-
@@ -13101,6 +13101,7 @@ paths:
               selectedProperties:
               - http://www.knora.org/ontology/knora-base#hasStillImageFileValue
               language: en
+              includeResourceIri: false
         required: true
       responses:
         '200':
@@ -13115,7 +13116,7 @@ paths:
               schema:
                 type: string
           content:
-            text/plain:
+            text/csv:
               schema:
                 type: string
         '400':
@@ -13158,9 +13159,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/VersionResponse'
               example:
-                webapi: v32.7.0-15-g4a89cf6
-                buildCommit: 4a89cf6c2
-                buildTime: '2025-11-17T13:09:58.879443076Z'
+                webapi: v32.7.0-16-g3f74313
+                buildCommit: 3f7431370
+                buildTime: '2025-11-17T14:22:43.208554374Z'
                 fuseki: 5.5.0-2
                 scala: 3.3.7
                 sipi: v3.16.3
@@ -13728,6 +13729,7 @@ components:
       required:
       - resourceClass
       - language
+      - includeResourceIri
       properties:
         resourceClass:
           type: string
@@ -13737,6 +13739,8 @@ components:
             type: string
         language:
           type: string
+        includeResourceIri:
+          type: boolean
     FamilyName:
       title: FamilyName
       type: object
