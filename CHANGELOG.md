@@ -1,5 +1,37 @@
 # Changelog
 
+## [12.2.1](https://github.com/dasch-swiss/dsp-das/compare/v12.2.0...v12.2.1) (2025-11-17)
+
+
+### Bug Fixes
+
+* adapt to new StringLiteralV2 typing ([#2675](https://github.com/dasch-swiss/dsp-das/issues/2675)) ([42b80de](https://github.com/dasch-swiss/dsp-das/commit/42b80deb9c21c4f01e60b17ab2a0a54612ed0308))
+* add missing translation in resource editor ([#2656](https://github.com/dasch-swiss/dsp-das/issues/2656)) ([bfeae68](https://github.com/dasch-swiss/dsp-das/commit/bfeae68d5c5d2ec25ceefd372ee164bbfd00f611))
+* change detection issues (DEV-5448) ([#2660](https://github.com/dasch-swiss/dsp-das/issues/2660)) ([ce570d9](https://github.com/dasch-swiss/dsp-das/commit/ce570d9717041ca7a54bf469240847afdcdc733d))
+* do not display create copyright holder dialog unexpectedly  ([#2661](https://github.com/dasch-swiss/dsp-das/issues/2661)) ([b93a787](https://github.com/dasch-swiss/dsp-das/commit/b93a787065f77611b6f64ab0d01d0d7f4f7dae93))
+* pass project param for limiting to project ([#2658](https://github.com/dasch-swiss/dsp-das/issues/2658)) ([a4eb488](https://github.com/dasch-swiss/dsp-das/commit/a4eb488c77a5f1f35d6e08e5ceb360a8bf3a6c04))
+* property value action buttons has a fixed value ([#2665](https://github.com/dasch-swiss/dsp-das/issues/2665)) ([8f320c0](https://github.com/dasch-swiss/dsp-das/commit/8f320c09f6a3635329161df2494c04caaa10ca10))
+* route to nav (DEV-5595) ([#2657](https://github.com/dasch-swiss/dsp-das/issues/2657)) ([e237332](https://github.com/dasch-swiss/dsp-das/commit/e237332b8ebfc96657d8697f916d8ed6d18b1a62))
+* standoff links resource viewer opens with the right resource ([#2662](https://github.com/dasch-swiss/dsp-das/issues/2662)) ([374002a](https://github.com/dasch-swiss/dsp-das/commit/374002a5989112e45ecd66f3eccfdbd588e9dd3b))
+* user project counts is fixed in system admin ([#2663](https://github.com/dasch-swiss/dsp-das/issues/2663)) ([94ee272](https://github.com/dasch-swiss/dsp-das/commit/94ee272654ee649afb3b6a93d7607dfb020249e7))
+
+
+### Maintenances
+
+* **Claude Code:** update testing instructions ([#2667](https://github.com/dasch-swiss/dsp-das/issues/2667)) ([d5dc6d1](https://github.com/dasch-swiss/dsp-das/commit/d5dc6d1001ac46be8461f9b94581d1c5cc5cec33))
+* **deps-dev:** bump @swc/core from 1.14.0 to 1.15.1 in the swc-deps group ([#2649](https://github.com/dasch-swiss/dsp-das/issues/2649)) ([2d9ca8e](https://github.com/dasch-swiss/dsp-das/commit/2d9ca8ee121cefa0c99c5f5d18cbc369a999cec2))
+* **deps:** bump the sentry-deps group with 2 updates ([#2650](https://github.com/dasch-swiss/dsp-das/issues/2650)) ([669e8f0](https://github.com/dasch-swiss/dsp-das/commit/669e8f046e8e53d17a6764f57bb6e0b5f0f32538))
+* do not comment about squash in claude reviews ([#2654](https://github.com/dasch-swiss/dsp-das/issues/2654)) ([dad4345](https://github.com/dasch-swiss/dsp-das/commit/dad434519b1c2c059a7dbf347a68356d9cc48df2))
+* make ui/string-literals lib standalone ([#2640](https://github.com/dasch-swiss/dsp-das/issues/2640)) ([3fcce8d](https://github.com/dasch-swiss/dsp-das/commit/3fcce8d9537af016b1bd0b0c00457c13fa022174))
+* remove unused blank lines ([#2655](https://github.com/dasch-swiss/dsp-das/issues/2655)) ([a406ea5](https://github.com/dasch-swiss/dsp-das/commit/a406ea51386e7526d8b68ff9e1fe860bfe45872c))
+* update dsp api spec to v32.7.0-5-ge0abdce ([#2666](https://github.com/dasch-swiss/dsp-das/issues/2666)) ([82f84f4](https://github.com/dasch-swiss/dsp-das/commit/82f84f462778c49a3351a35bc38f914ec2bd0659))
+* update openApi spec ([#2676](https://github.com/dasch-swiss/dsp-das/issues/2676)) ([1d805ea](https://github.com/dasch-swiss/dsp-das/commit/1d805ea3a245a2a50e01fa7b98f34774d7ef9d0c))
+
+
+### Tests
+
+* improve testing resource editing ([#2651](https://github.com/dasch-swiss/dsp-das/issues/2651)) ([9a5c68e](https://github.com/dasch-swiss/dsp-das/commit/9a5c68e583be0237e7301b70f0186d4fcc9bd45b))
+
 ## [12.2.0](https://github.com/dasch-swiss/dsp-das/compare/v12.1.3...v12.2.0) (2025-11-10)
 
 
