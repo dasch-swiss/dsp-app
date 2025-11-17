@@ -12,7 +12,7 @@ import {
 import { FormControl, FormGroup } from '@angular/forms';
 import { Cardinality, ReadValue } from '@dasch-swiss/dsp-js';
 import { ResourceService } from '@dasch-swiss/vre/shared/app-common';
-import { Subscription } from 'rxjs';
+import { Observable, of, Subscription, switchMap } from 'rxjs';
 import { startWith, takeWhile } from 'rxjs/operators';
 import { FormValueGroup } from './form-value-array.type';
 import { PropertyValueService } from './property-value.service';
@@ -60,16 +60,15 @@ import { propertiesTypeMapping } from './resource-payloads-mapping';
             ">
             <mat-icon>{{ commentIsNotNull ? 'speaker_notes_off' : 'add_comment' }}</mat-icon>
           </button>
-          @if (group.controls.item.value !== null) {
-            <button
-              (click)="onSave()"
-              [matTooltip]="'resourceEditor.resourceProperties.actions.save' | translate"
-              mat-icon-button
-              data-cy="save-button"
-              color="primary">
-              <mat-icon>save</mat-icon>
-            </button>
-          }
+          <button
+            [disabled]="(hasValidValue$ | async) !== true"
+            (click)="onSave()"
+            [matTooltip]="'resourceEditor.resourceProperties.actions.save' | translate"
+            mat-icon-button
+            data-cy="save-button"
+            color="primary">
+            <mat-icon>save</mat-icon>
+          </button>
         </div>
       </div>
     } @else {
@@ -89,6 +88,8 @@ export class PropertyValueEditComponent implements OnInit, OnDestroy {
   private _subscription!: Subscription;
 
   group!: FormValueGroup;
+
+  hasValidValue$?: Observable<boolean>;
 
   get commentIsNotNull() {
     return this.group.controls.comment.value !== null;
@@ -110,6 +111,9 @@ export class PropertyValueEditComponent implements OnInit, OnDestroy {
       item: propertyType.control(this.readValue ?? propertyType.newValue),
       comment: new FormControl(this.readValue?.valueHasComment || null),
     });
+    this.hasValidValue$ = this.group.controls.item.valueChanges.pipe(
+      switchMap(() => of(this.group.controls.item.valid && !!this.group.controls.item.value))
+    );
 
     this._watchAndSetupCommentStatus();
   }

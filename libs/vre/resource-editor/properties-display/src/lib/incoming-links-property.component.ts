@@ -1,46 +1,50 @@
-import { Component, Inject, Input, OnChanges } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject, Input, OnInit } from '@angular/core';
 import { KnoraApiConnection, ReadResource, ReadResourceSequence } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { AppError } from '@dasch-swiss/vre/core/error-handler';
 import { sortByKeys } from '@dasch-swiss/vre/resource-editor/resource-properties';
-import { expand, map, Observable, of, reduce, take, takeWhile } from 'rxjs';
+import { expand, map, Observable, of, reduce, takeWhile } from 'rxjs';
 import { IncomingOrStandoffLink } from './incoming-link.interface';
 
 @Component({
   selector: 'app-incoming-links-property',
   template: `
-    <app-property-row
-      [tooltip]="'resourceEditor.propertiesDisplay.incomingLinkTooltip' | translate"
-      [label]="'resourceEditor.propertiesDisplay.incomingLinkLabel' | translate"
-      [borderBottom]="true"
-      [isEmptyRow]="!loading && allIncomingLinks.length === 0">
-      @if (allIncomingLinks.length > 0) {
-        <app-incoming-standoff-link-value [links]="slidedLinks" />
-        @if (allIncomingLinks.length > pageSize) {
-          <app-incoming-resource-pager
-            [pageIndex]="pageIndex"
-            [pageSize]="pageSize"
-            [itemsNumber]="allIncomingLinks.length"
-            (pageChanged)="pageChanged($event)" />
+    @if (incomingLinks$ | async; as links) {
+      <app-property-row
+        [tooltip]="'resourceEditor.propertiesDisplay.incomingLinkTooltip' | translate"
+        [label]="'resourceEditor.propertiesDisplay.incomingLinkLabel' | translate"
+        [borderBottom]="true"
+        [isEmptyRow]="links.length === 0">
+        @if (links.length > 0) {
+          <app-incoming-standoff-link-value
+            [links]="links | slice: pageIndex * pageSize : (pageIndex + 1) * pageSize" />
+          @if (links.length > pageSize) {
+            <app-incoming-resource-pager
+              [pageIndex]="pageIndex"
+              [pageSize]="pageSize"
+              [itemsNumber]="links.length"
+              (pageChanged)="pageChanged($event)" />
+          }
         }
-      }
-      @if (loading) {
+      </app-property-row>
+    } @else {
+      <app-property-row
+        [tooltip]="'resourceEditor.propertiesDisplay.incomingLinkTooltip' | translate"
+        [label]="'resourceEditor.propertiesDisplay.incomingLinkLabel' | translate"
+        [borderBottom]="true"
+        [isEmptyRow]="true">
         <app-progress-indicator />
-      }
-    </app-property-row>
+      </app-property-row>
+    }
   `,
   standalone: false,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class IncomingLinksPropertyComponent implements OnChanges {
+export class IncomingLinksPropertyComponent implements OnInit {
   @Input({ required: true }) resource!: ReadResource;
 
-  get slidedLinks() {
-    return this.allIncomingLinks.slice(this.pageIndex * this.pageSize, (this.pageIndex + 1) * this.pageSize);
-  }
-
-  loading = true;
+  incomingLinks$!: Observable<IncomingOrStandoffLink[]>;
   pageSize = 25;
-  allIncomingLinks: IncomingOrStandoffLink[] = [];
   pageIndex = 0;
 
   constructor(
@@ -48,16 +52,8 @@ export class IncomingLinksPropertyComponent implements OnChanges {
     private _dspApi: KnoraApiConnection
   ) {}
 
-  ngOnChanges() {
-    this.allIncomingLinks = [];
-    this.loading = true;
-
-    this._getIncomingLinksRecursively$(this.resource.id)
-      .pipe(take(1))
-      .subscribe(incomingLinks => {
-        this.allIncomingLinks = incomingLinks;
-        this.loading = false;
-      });
+  ngOnInit() {
+    this.incomingLinks$ = this._getIncomingLinksRecursively$(this.resource.id);
   }
 
   pageChanged(page: number) {
@@ -72,9 +68,7 @@ export class IncomingLinksPropertyComponent implements OnChanges {
         if (!sequence.mayHaveMoreResults) {
           return of(sequence);
         }
-
         offset += 1;
-
         return this._dspApi.v2.search.doSearchIncomingLinks(resourceId, offset) as Observable<ReadResourceSequence>;
       }),
       takeWhile(response => response.resources.length > 0 && response.mayHaveMoreResults, true),
