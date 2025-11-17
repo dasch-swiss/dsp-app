@@ -50,6 +50,11 @@ export class CkEditorComponent implements OnInit, OnDestroy {
     let updating = false;
 
     this.control.valueChanges.pipe(startWith(this.control.value), takeUntil(this._destroy$)).subscribe(change => {
+      if (change === '') {
+        this.control.patchValue(null);
+        return;
+      }
+
       if (updating) {
         return;
       }
