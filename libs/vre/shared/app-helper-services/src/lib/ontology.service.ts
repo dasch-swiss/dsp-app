@@ -1,7 +1,11 @@
 import { Inject, Injectable } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Constants, KnoraApiConfig, ResourcePropertyDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
-import { StringLiteralV2 } from '@dasch-swiss/vre/3rd-party-services/open-api';
+import {
+  LanguageTaggedStringLiteralV2,
+  PlainStringLiteralV2,
+  StringLiteralV2,
+} from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { DspApiConfigToken, RouteConstants } from '@dasch-swiss/vre/core/config';
 import { DefaultProperties, DefaultProperty, PropertyCategory } from './default-data/default-properties';
 import { LocalizationService } from './localization.service';
@@ -37,7 +41,11 @@ export class OntologyService {
 
   getInPreferedLanguage(labels: StringLiteralV2[]): string | undefined {
     const language = this._localizationService.getCurrentLanguage();
-    return labels.find(l => l.language === language)?.value;
+    if ((labels as { language?: string }[])[0]['language']) {
+      return (labels as unknown as LanguageTaggedStringLiteralV2[]).find(l => l.language === language)?.value;
+    } else {
+      return (labels as unknown as PlainStringLiteralV2[])[0].value;
+    }
   }
 
   /**

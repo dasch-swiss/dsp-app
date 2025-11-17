@@ -1,5 +1,5 @@
 import { FormArray, FormControl, FormGroup, ValidatorFn } from '@angular/forms';
-import { StringLiteralV2 } from '@dasch-swiss/vre/3rd-party-services/open-api';
+import { LanguageTaggedStringLiteralV2, StringLiteralV2 } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { DaschLanguage } from '@dasch-swiss/vre/core/config';
 import { MultiLanguageForm } from './multilanguage-form.type';
 
@@ -9,7 +9,7 @@ export const DEFAULT_MULTILANGUAGE_FORM = (
   arrayValidators?: ValidatorFn[]
 ) => {
   return new FormArray(
-    data.map(
+    (data as unknown as LanguageTaggedStringLiteralV2[]).map(
       item =>
         new FormGroup({
           language: new FormControl<DaschLanguage>(item.language as DaschLanguage, { nonNullable: true }),
