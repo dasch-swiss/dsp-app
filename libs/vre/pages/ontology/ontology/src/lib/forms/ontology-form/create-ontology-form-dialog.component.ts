@@ -107,7 +107,7 @@ export class CreateOntologyFormDialogComponent implements OnDestroy {
     this.loading = true;
 
     const createOntology = MakeOntologyFor.createOntology(
-      this._projectPageService.currentProjectId,
+      this._projectPageService.currentProject.id,
       this.form.controls.name.value,
       this.form.controls.label.value,
       this.form.controls.comment.value

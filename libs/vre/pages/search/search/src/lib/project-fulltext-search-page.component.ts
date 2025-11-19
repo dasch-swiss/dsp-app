@@ -61,14 +61,14 @@ export class ProjectFulltextSearchPageComponent implements AfterViewInit, OnDest
 
   formGroup = this._fb.group({ query: [''] });
 
-  projectId = this.projectPageService.currentProjectId;
+  projectId = this._projectPageService.currentProject.id;
   @ViewChild('searchInput') searchInput!: ElementRef<HTMLInputElement>;
   private overlayRef: OverlayRef | null = null;
 
   constructor(
     private readonly _fb: FormBuilder,
     private readonly _overlay: Overlay,
-    public readonly projectPageService: ProjectPageService
+    private readonly _projectPageService: ProjectPageService
   ) {}
 
   ngAfterViewInit() {

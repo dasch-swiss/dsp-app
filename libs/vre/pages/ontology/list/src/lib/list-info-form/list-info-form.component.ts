@@ -13,7 +13,6 @@ import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
 import { atLeastOneStringRequired } from '@dasch-swiss/vre/shared/app-common';
 import { DEFAULT_MULTILANGUAGE_FORM } from '@dasch-swiss/vre/ui/string-literal';
 import { TranslateService } from '@ngx-translate/core';
-import { switchMap } from 'rxjs';
 import { ListInfoForm } from './list-info-form.type';
 
 @Component({
@@ -102,7 +101,7 @@ export class ListInfoFormComponent implements OnInit {
   submitCreateList() {
     this._listApiService
       .create({
-        projectIri: this._projectPageService.currentProjectId,
+        projectIri: this._projectPageService.currentProject.id,
         labels: this.form.value.labels as StringLiteral[],
         comments: this.form.value.comments as StringLiteral[],
       })

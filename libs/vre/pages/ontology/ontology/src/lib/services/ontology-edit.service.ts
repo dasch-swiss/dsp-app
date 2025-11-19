@@ -9,7 +9,6 @@ import {
   ListNodeInfo,
   OntologyMetadata,
   ReadOntology,
-  ReadProject,
   ResourceClassDefinitionWithAllLanguages,
   ResourcePropertyDefinitionWithAllLanguages,
   StringLiteral,
@@ -150,8 +149,6 @@ export class OntologyEditService {
 
   private _canDeletePropertyMap = new Map<string, CanDoResponse>();
 
-  project?: ReadProject;
-
   get ontologyId(): string {
     return this._currentOntology.value?.id || '';
   }
@@ -186,17 +183,13 @@ export class OntologyEditService {
     private _ontologyService: OntologyService,
     private _projectPageService: ProjectPageService,
     private _listApiService: ListApiService
-  ) {
-    this._projectPageService.currentProject$.subscribe(project => {
-      this.project = project;
-    });
-  }
+  ) {}
 
   initOntologyByLabel(label: string) {
     this._isTransacting.next(true);
     this._canDeletePropertyMap.clear();
 
-    this._projectPageService.ontologies$.subscribe(ontologies => {
+    this._projectPageService.ontologies$.pipe(take(1)).subscribe(ontologies => {
       const ontologyFromStore = ontologies.find(onto => OntologyService.getOntologyNameFromIri(onto.id) == label);
 
       if (ontologyFromStore) {
@@ -607,10 +600,9 @@ export class OntologyEditService {
   }
 
   private _loadOntologyByLabel(label: string) {
-    this._projectPageService.currentProject$.subscribe(project => {
-      const iriBase = this._ontologyService.getIriBaseUrl();
-      const iri = `${iriBase}/${RouteConstants.ontology}/${project.shortcode}/${label}/v2`;
-      this._loadOntology(iri);
-    });
+    const short = this._projectPageService.currentProject?.shortcode;
+    const iriBase = this._ontologyService.getIriBaseUrl();
+    const iri = `${iriBase}/${RouteConstants.ontology}/${short}/${label}/v2`;
+    this._loadOntology(iri);
   }
 }
