@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Constants } from '@dasch-swiss/dsp-js';
+import { ensureWithDefaultLanguage } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { existingNamesAsyncValidator } from '@dasch-swiss/vre/pages/user-settings/user';
 import { DefaultProperties, LocalizationService, PropertyCategory } from '@dasch-swiss/vre/shared/app-helper-services';
 import { DEFAULT_MULTILANGUAGE_FORM } from '@dasch-swiss/vre/ui/string-literal';
@@ -116,8 +117,18 @@ export class PropertyFormComponent implements OnInit {
           asyncValidators: [existingNamesAsyncValidator(this._oes.currentOntologyEntityNames$)],
         }
       ),
-      labels: DEFAULT_MULTILANGUAGE_FORM(this.propertyData.label ?? defaultData, [Validators.required]),
-      comments: DEFAULT_MULTILANGUAGE_FORM(this.propertyData.comment ?? defaultData, [Validators.required]),
+      labels: DEFAULT_MULTILANGUAGE_FORM(
+        this.propertyData.label
+          ? ensureWithDefaultLanguage(this.propertyData.label, this._localizationService.getCurrentLanguage())
+          : defaultData,
+        [Validators.required]
+      ),
+      comments: DEFAULT_MULTILANGUAGE_FORM(
+        this.propertyData.comment
+          ? ensureWithDefaultLanguage(this.propertyData.comment, this._localizationService.getCurrentLanguage())
+          : defaultData,
+        [Validators.required]
+      ),
       guiAttr: this._fb.control<string>(
         {
           value: this.propertyData.guiAttribute!,
