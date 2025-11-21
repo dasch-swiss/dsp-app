@@ -20,7 +20,7 @@
   </div>
   <h2>{{ project.longname }}</h2>
   <h3 class="mat-body subtitle" style="margin-bottom: 48px">
-    Project {{ project.shortcode }} | {{ project.shortname | uppercase }}
+    {{ 'ui.common.entities.project' | translate }} {{ project.shortcode }} | {{ project.shortname | uppercase }}
   </h3>
   <div class="description-rm">
     @for (desc of sortedDescriptions$ | async; track desc) {

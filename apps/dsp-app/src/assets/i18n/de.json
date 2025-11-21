@@ -514,8 +514,8 @@
       "tooltip": "Ressourcenberechtigungen",
       "projectAdmin": "Projekt-Admin",
       "projectMember": "Projektmitglied",
-      "knownUser": "Bekannte:r Nutzer:in",
-      "unknownUser": "Unbekannte:r Nutzer:in",
+      "knownUser": "Angemeldet",
+      "unknownUser": "Abgemeldet",
       "usersPermissions": "Ihre Berechtigungen",
       "interactions": {
         "restrictedView": "Leseberechtigung mit Restriktion (RV)",

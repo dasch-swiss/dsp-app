@@ -552,8 +552,8 @@
       "tooltip": "Resource permissions",
       "projectAdmin": "Project Admin",
       "projectMember": "Project Member",
-      "knownUser": "Known User",
-      "unknownUser": "Unknown User",
+      "knownUser": "Logged in",
+      "unknownUser": "Logged out",
       "usersPermissions": "Your permissions",
       "interactions": {
         "restrictedView": "Restricted view permission (RV)",

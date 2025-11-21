@@ -175,7 +175,7 @@
         "sortProjectName": "Nome del progetto",
         "statusDeactivated": "Disattivato",
         "createNew": "Crea nuovo progetto",
-        "projectAdmin": "Amministratore del progetto",
+        "projectAdmin": "Responsabile amministrativo/a del progetto",
         "edit": "Modifica informazioni del progetto",
         "reactivate": "Riattiva il progetto",
         "deactivate": "Disattiva il progetto",
@@ -550,10 +550,10 @@
     "permissionInfo": {
       "label": "Permessi",
       "tooltip": "Permessi della risorsa",
-      "projectAdmin": "Amministratore del progetto",
+      "projectAdmin": "Responsabile amministrativo/a del progetto",
       "projectMember": "Membro del progetto",
-      "knownUser": "Utente conosciuto",
-      "unknownUser": "Utente sconosciuto",
+      "knownUser": "Connesso",
+      "unknownUser": "Disconnesso",
       "usersPermissions": "I tuoi permessi",
       "interactions": {
         "restrictedView": "Permesso di visualizzazione limitata (RV)",
