@@ -1,5 +1,5 @@
 import { Component, Inject, ViewChild } from '@angular/core';
-import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatStepper } from '@angular/material/stepper';
 import { KnoraApiConnection, ReadUser } from '@dasch-swiss/dsp-js';
@@ -37,7 +37,7 @@ export interface EditPasswordDialogProps {
         </mat-step>
 
         <mat-step [label]="'pages.userSettings.passwordForm.newPasswordStep' | translate">
-          <app-password-confirm-form (afterFormInit)="newPasswordControl = $event" />
+          <app-password-confirm-form (afterFormInit)="newPasswordFormGroup = $event" />
 
           <button
             mat-raised-button
@@ -69,7 +69,7 @@ export class EditPasswordDialogComponent {
   @ViewChild('stepper') stepper!: MatStepper;
 
   adminPasswordControl = this._fb.nonNullable.control('', [Validators.required]);
-  newPasswordControl!: FormControl<string>;
+  newPasswordFormGroup!: FormGroup;
 
   updateLoading = false;
   constructor(
@@ -96,16 +96,18 @@ export class EditPasswordDialogComponent {
   }
 
   updateNewPassword() {
-    this.newPasswordControl.markAllAsTouched();
+    this.newPasswordFormGroup.markAllAsTouched();
 
-    if (!this.newPasswordControl.valid) {
+    if (!this.newPasswordFormGroup.valid) {
       return;
     }
 
     this.updateLoading = true;
 
+    const newPassword = this.newPasswordFormGroup.get('password')?.value;
+
     this._userApiService
-      .updatePassword(this.data.user.id, this.adminPasswordControl.value, this.newPasswordControl.value)
+      .updatePassword(this.data.user.id, this.adminPasswordControl.value, newPassword)
       .pipe(
         finalize(() => {
           this.updateLoading = false;

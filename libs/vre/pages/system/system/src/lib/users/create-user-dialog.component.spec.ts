@@ -1,6 +1,6 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormBuilder, FormControl, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -86,13 +86,16 @@ describe('CreateUserDialogComponent', () => {
       lang: ['en'],
     }) as UserForm;
 
-    const mockPasswordControl = new FormControl<string>('', { nonNullable: true });
+    const mockPasswordFormGroup = new FormBuilder().group({
+      password: [''],
+      confirmPassword: [''],
+    });
 
     component.afterUserFormInit(mockUserForm);
-    component.afterPasswordFormInit(mockPasswordControl);
+    component.afterPasswordFormInit(mockPasswordFormGroup);
 
     expect(component.form.controls.user).toBe(mockUserForm);
-    expect(component.form.controls.password).toBe(mockPasswordControl);
+    expect(component.form.controls.passwordForm).toBe(mockPasswordFormGroup);
   });
 
   it('should not create user when form is invalid', () => {
@@ -109,10 +112,13 @@ describe('CreateUserDialogComponent', () => {
       username: [''],
       lang: ['en'],
     }) as UserForm;
-    const mockPasswordControl = new FormControl<string>('', { nonNullable: true });
+    const mockPasswordFormGroup = new FormBuilder().group({
+      password: [''],
+      confirmPassword: [''],
+    });
 
     component.afterUserFormInit(mockUserForm);
-    component.afterPasswordFormInit(mockPasswordControl);
+    component.afterPasswordFormInit(mockPasswordFormGroup);
 
     // Manually mark form as invalid for testing
     mockUserForm.setErrors({ invalid: true });
@@ -132,12 +138,15 @@ describe('CreateUserDialogComponent', () => {
       lang: ['en'],
     }) as UserForm;
 
-    const mockPasswordControl = new FormControl<string>('validPassword123', { nonNullable: true });
+    const mockPasswordFormGroup = new FormBuilder().group({
+      password: ['validPassword123'],
+      confirmPassword: ['validPassword123'],
+    });
     const mockResponse = { user: { id: 'user123' } as ReadUser };
 
     component.ngOnInit();
     component.afterUserFormInit(mockUserForm);
-    component.afterPasswordFormInit(mockPasswordControl);
+    component.afterPasswordFormInit(mockPasswordFormGroup);
     mockUserApiService.create.mockReturnValue(of(mockResponse));
 
     component.createUser();
