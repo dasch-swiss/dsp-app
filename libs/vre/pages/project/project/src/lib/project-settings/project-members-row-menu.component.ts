@@ -36,10 +36,14 @@ import { CollaborationPageService } from './collaboration/collaboration-page.ser
           {{ 'pages.project.collaboration.removeAsProjectAdmin' | translate }}
         </button>
       }
-      <button mat-menu-item (click)="editUser(user)">{{ 'pages.project.collaboration.editMember' | translate }}</button>
-      <button mat-menu-item (click)="openEditPasswordDialog(user)">
-        {{ 'pages.project.collaboration.changeMemberPassword' | translate }}
-      </button>
+      @if (isSysAdmin$ | async) {
+        <button mat-menu-item (click)="editUser(user)">
+          {{ 'pages.project.collaboration.editMember' | translate }}
+        </button>
+        <button mat-menu-item (click)="openEditPasswordDialog(user)">
+          {{ 'pages.project.collaboration.changeMemberPassword' | translate }}
+        </button>
+      }
       <button mat-menu-item (click)="askToRemoveFromProject(user)" data-cy="remove-member-button">
         {{ 'pages.project.collaboration.removeMemberFromProject' | translate }}
       </button>
@@ -51,6 +55,8 @@ export class ProjectMembersRowMenuComponent {
   @Input({ required: true }) user!: ReadUser;
   @Input({ required: true }) project!: ReadProject;
   @Output() refreshParent = new EventEmitter<void>();
+
+  isSysAdmin$ = this._userService.isSysAdmin$;
 
   constructor(
     private readonly _adminApiService: AdminAPIApiService,
