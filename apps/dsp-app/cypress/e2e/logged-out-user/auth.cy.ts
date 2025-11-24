@@ -34,6 +34,6 @@ describe('Authentication', () => {
 
     cy.get('body').click('topLeft');
     cy.get(po.loginButton).should('be.visible');
-    cy.get('.data-cy-snackbar').should('contain', 'The username and / or password do not match.');
+    cy.get('[data-cy=login-error]').should('contain', 'The username and / or password do not match.');
   });
 });
