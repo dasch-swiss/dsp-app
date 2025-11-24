@@ -33,22 +33,12 @@ import { SearchTipsComponent } from './search-tips.component';
 
     @if (query$ | async; as query) {
       <mat-divider />
-
-      <app-project-fulltext-search-result [query]="query" [projectId]="projectId" />
+      <div class="whole-height">
+        <app-search-result [query]="query" [projectId]="projectId" />
+      </div>
     }
   `,
-  styles: [
-    `
-      :host ::ng-deep .mat-mdc-form-field-subscript-wrapper {
-        display: none !important;
-      }
-
-      .big {
-        margin-top: 70px;
-        flex-direction: column;
-      }
-    `,
-  ],
+  styleUrls: ['./project-fulltext-search-page.component.scss'],
   standalone: false,
 })
 export class ProjectFulltextSearchPageComponent implements AfterViewInit, OnDestroy {

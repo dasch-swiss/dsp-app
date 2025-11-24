@@ -240,7 +240,7 @@ $cool_gray_palette: (
 
 // --------------------------------------
 // variables for all colors from the palettes
-$primary_50:  map.get($blue_palette, 50);
+$primary_50: map.get($blue_palette, 50);
 $primary_100: map.get($blue_palette, 100);
 $primary_200: map.get($blue_palette, 200);
 $primary_300: map.get($blue_palette, 300);
@@ -255,7 +255,7 @@ $primary_A200: map.get($blue_palette, A200);
 $primary_A400: map.get($blue_palette, A400);
 $primary_A700: map.get($blue_palette, A700);
 
-$secondary_50:  map.get($light_blue_palette, 50);
+$secondary_50: map.get($light_blue_palette, 50);
 $secondary_100: map.get($light_blue_palette, 100);
 $secondary_200: map.get($light_blue_palette, 200);
 $secondary_300: map.get($light_blue_palette, 300);
@@ -383,7 +383,7 @@ $black-60-opacity: rgba($black, 0.6);
 // --------------------------------------
 // other variables
 $border-radius: 4px;
-$header-height: calc(72px + 48px);
-$sub-header-height: 64px;
+$header-height: calc(56px + 48px + 1px);
+$small-header-height: 57px;
 $panel-height: 40px;
 $tab-bar-margin: 36px;
