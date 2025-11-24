@@ -1,5 +1,9 @@
 import { ProjectADM, ProjectOperationResponseADM } from '../../../../../libs/vre/open-api/src';
 
+const getAuthHeaders = () => ({
+  Authorization: `Bearer ${localStorage.getItem('ACCESS_TOKEN')}`,
+});
+
 class ProjectPage {
   projectIri: string;
   projectUuid: string;
@@ -24,14 +28,17 @@ class ProjectPage {
       selfjoin: true,
     };
 
-    cy.request<ProjectOperationResponseADM>('POST', `${Cypress.env('apiUrl')}/admin/projects`, payload).then(
-      response => {
-        this.projectIri = response.body.project.id;
-        this.projectUuid = this.projectIri.match(/\/([^\/]+)$/)[1];
-        this.project = response.body.project;
-        this.visit();
-      }
-    );
+    cy.request<ProjectOperationResponseADM>({
+      method: 'POST',
+      url: `${Cypress.env('apiUrl')}/admin/projects`,
+      headers: getAuthHeaders(),
+      body: payload,
+    }).then(response => {
+      this.projectIri = response.body.project.id;
+      this.projectUuid = this.projectIri.match(/\/([^\/]+)$/)[1];
+      this.project = response.body.project;
+      this.visit();
+    });
   }
 }
 

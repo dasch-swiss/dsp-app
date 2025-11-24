@@ -2,6 +2,10 @@ import { Project00FFPayloads } from '../../fixtures/project00FF-resource-payload
 import { ResponseUtil } from '../../fixtures/requests';
 import { AddResourceInstancePage } from '../../support/pages/add-resource-instance-page';
 
+const getAuthHeaders = () => ({
+  Authorization: `Bearer ${localStorage.getItem('ACCESS_TOKEN')}`,
+});
+
 describe('File representation', () => {
   let lastModDate: string;
   let po: AddResourceInstancePage;
@@ -18,7 +22,12 @@ describe('File representation', () => {
     const encodedValidIifImageUrl =
       'https://iiif.wellcomecollection.org/image/b20432033_B0008608.JP2/full/880%2C/0/default.jpg';
 
-    cy.request('POST', `${Cypress.env('apiUrl')}/v2/ontologies/classes`, classPayload)
+    cy.request({
+      method: 'POST',
+      url: `${Cypress.env('apiUrl')}/v2/ontologies/classes`,
+      headers: getAuthHeaders(),
+      body: classPayload,
+    })
       .then(response => {
         lastModDate = ResponseUtil.lastModificationDate(response);
       })

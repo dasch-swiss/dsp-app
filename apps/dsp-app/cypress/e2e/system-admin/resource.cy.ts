@@ -6,6 +6,10 @@ import { ResourceRequests, ResponseUtil } from '../../fixtures/requests';
 import { AddResourceInstancePage } from '../../support/pages/add-resource-instance-page';
 import { ResourcePage } from '../../support/pages/resource-page';
 
+const getAuthHeaders = () => ({
+  Authorization: `Bearer ${localStorage.getItem('ACCESS_TOKEN')}`,
+});
+
 describe('Resource', () => {
   let finalLastModificationDate: string;
   let po: AddResourceInstancePage;
@@ -14,11 +18,12 @@ describe('Resource', () => {
   beforeEach(() => {
     po = new AddResourceInstancePage();
 
-    cy.request(
-      'POST',
-      `${Cypress.env('apiUrl')}/v2/ontologies/classes`,
-      project00FFPayloads.createClassPayload('datamodelclass')
-    ).then(response => {
+    cy.request({
+      method: 'POST',
+      url: `${Cypress.env('apiUrl')}/v2/ontologies/classes`,
+      headers: getAuthHeaders(),
+      body: project00FFPayloads.createClassPayload('datamodelclass'),
+    }).then(response => {
       finalLastModificationDate = ResponseUtil.lastModificationDate(response);
     });
   });
@@ -73,7 +78,12 @@ describe('Resource', () => {
       };
 
       ResourceRequests.resourceRequest(ClassPropertyPayloads.richText(finalLastModificationDate));
-      cy.request('POST', `${Cypress.env('apiUrl')}/v2/resources`, footnote).then(v => {
+      cy.request({
+        method: 'POST',
+        url: `${Cypress.env('apiUrl')}/v2/resources`,
+        headers: getAuthHeaders(),
+        body: footnote,
+      }).then(v => {
         const id = v.body['@id'].match(/\/([^\/]+)$/)[1];
         const page = new ResourcePage();
         page.visit(id);
@@ -267,16 +277,21 @@ describe('Resource', () => {
       const item2Name = faker.lorem.word();
 
       const sendCreateListItemRequest = (_listId: string, name: string) => {
-        return cy.request('POST', `${Cypress.env('apiUrl')}/admin/lists/${encodeURIComponent(_listId)}`, {
-          parentNodeIri: listId,
-          projectIri: 'http://rdfh.ch/projects/00FF',
-          labels: [
-            {
-              language: 'de',
-              value: name,
-            },
-          ],
-          name: `RandomName${name}`,
+        return cy.request({
+          method: 'POST',
+          url: `${Cypress.env('apiUrl')}/admin/lists/${encodeURIComponent(_listId)}`,
+          headers: getAuthHeaders(),
+          body: {
+            parentNodeIri: listId,
+            projectIri: 'http://rdfh.ch/projects/00FF',
+            labels: [
+              {
+                language: 'de',
+                value: name,
+              },
+            ],
+            name: `RandomName${name}`,
+          },
         });
       };
 
@@ -285,10 +300,15 @@ describe('Resource', () => {
         cy.get('[data-cy=list-item-button]').eq(index).click();
       };
 
-      cy.request<ListGetResponseADM>('POST', `${Cypress.env('apiUrl')}/admin/lists`, {
-        comments: [{ language: 'de', value: faker.lorem.words(2) }],
-        labels: [{ language: 'de', value: faker.lorem.words(2) }],
-        projectIri: 'http://rdfh.ch/projects/00FF',
+      cy.request<ListGetResponseADM>({
+        method: 'POST',
+        url: `${Cypress.env('apiUrl')}/admin/lists`,
+        headers: getAuthHeaders(),
+        body: {
+          comments: [{ language: 'de', value: faker.lorem.words(2) }],
+          labels: [{ language: 'de', value: faker.lorem.words(2) }],
+          projectIri: 'http://rdfh.ch/projects/00FF',
+        },
       })
         .then(response => {
           listId = response.body.list.listinfo.id;
@@ -318,19 +338,24 @@ describe('Resource', () => {
 
     it('link', () => {
       // create John Smith person
-      cy.request('POST', `${Cypress.env('apiUrl')}/v2/resources`, {
-        '@type': 'http://0.0.0.0:3333/ontology/00FF/images/v2#person',
-        'http://www.w3.org/2000/01/rdf-schema#label': 'john',
-        'http://api.knora.org/ontology/knora-api/v2#attachedToProject': {
-          '@id': 'http://rdfh.ch/projects/00FF',
-        },
-        'http://0.0.0.0:3333/ontology/00FF/images/v2#lastname': {
-          '@type': 'http://api.knora.org/ontology/knora-api/v2#TextValue',
-          'http://api.knora.org/ontology/knora-api/v2#valueAsString': 'john',
-        },
-        'http://0.0.0.0:3333/ontology/00FF/images/v2#firstname': {
-          '@type': 'http://api.knora.org/ontology/knora-api/v2#TextValue',
-          'http://api.knora.org/ontology/knora-api/v2#valueAsString': 'smith',
+      cy.request({
+        method: 'POST',
+        url: `${Cypress.env('apiUrl')}/v2/resources`,
+        headers: getAuthHeaders(),
+        body: {
+          '@type': 'http://0.0.0.0:3333/ontology/00FF/images/v2#person',
+          'http://www.w3.org/2000/01/rdf-schema#label': 'john',
+          'http://api.knora.org/ontology/knora-api/v2#attachedToProject': {
+            '@id': 'http://rdfh.ch/projects/00FF',
+          },
+          'http://0.0.0.0:3333/ontology/00FF/images/v2#lastname': {
+            '@type': 'http://api.knora.org/ontology/knora-api/v2#TextValue',
+            'http://api.knora.org/ontology/knora-api/v2#valueAsString': 'john',
+          },
+          'http://0.0.0.0:3333/ontology/00FF/images/v2#firstname': {
+            '@type': 'http://api.knora.org/ontology/knora-api/v2#TextValue',
+            'http://api.knora.org/ontology/knora-api/v2#valueAsString': 'smith',
+          },
         },
       })
         .then(response => {

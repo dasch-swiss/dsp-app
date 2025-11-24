@@ -4,6 +4,10 @@ import { generateKeyword } from '../../support/helpers/custom-word';
 import { randomNumber } from '../../support/helpers/random-number';
 import ProjectPage from '../../support/pages/project-page';
 
+const getAuthHeaders = () => ({
+  Authorization: `Bearer ${localStorage.getItem('ACCESS_TOKEN')}`,
+});
+
 describe('Projects', () => {
   const projectPage = new ProjectPage();
 
@@ -87,10 +91,11 @@ describe('Projects', () => {
   it('admin can reactivate a project', () => {
     cy.intercept('PUT', `/admin/projects/iri/${encodeURIComponent(projectPage.projectIri)}`).as('updateRequest');
 
-    cy.request(
-      'DELETE',
-      `${Cypress.env('apiUrl')}/admin/projects/iri/${encodeURIComponent(projectPage.projectIri)}`
-    ).then(() => {
+    cy.request({
+      method: 'DELETE',
+      url: `${Cypress.env('apiUrl')}/admin/projects/iri/${encodeURIComponent(projectPage.projectIri)}`,
+      headers: getAuthHeaders(),
+    }).then(() => {
       cy.visit('/system/projects');
       cy.get('[data-cy=inactive-projects-section]')
         .contains('[data-cy=project-row]', projectPage.project.shortcode)

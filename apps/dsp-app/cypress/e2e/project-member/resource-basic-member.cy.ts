@@ -3,6 +3,10 @@ import { ThingPictureClassResource } from '../../models/existing-data-models';
 import { UserProfiles } from '../../models/user-profiles';
 import { Project0001Page } from '../../support/pages/existing-ontology-class-page';
 
+const getAuthHeaders = () => ({
+  Authorization: `Bearer ${localStorage.getItem('ACCESS_TOKEN')}`,
+});
+
 describe('Check project admin existing resource functionality', () => {
   let project0001Page: Project0001Page;
 
@@ -22,20 +26,22 @@ describe('Check project admin existing resource functionality', () => {
 
   beforeEach(() => {
     cy.viewport(2000, 1000); // width: 2000px, height: 1000px
-    cy.loginAdmin();
-    cy.request(
-      'POST',
-      `${Cypress.env('apiUrl')}/admin/projects/shortcode/${Project0001Page.projectShortCode}/legal-info/copyright-holders`,
-      {
-        data: ['myHolder'],
-      }
-    ).then(response => expect(response.status).to.equal(200));
+    cy.loginAdmin().then(() => {
+      cy.request({
+        method: 'POST',
+        url: `${Cypress.env('apiUrl')}/admin/projects/shortcode/${Project0001Page.projectShortCode}/legal-info/copyright-holders`,
+        headers: getAuthHeaders(),
+        body: {
+          data: ['myHolder'],
+        },
+      }).then(response => expect(response.status).to.equal(200));
 
-    cy.readFile('cypress/fixtures/user_profiles.json').then((json: UserProfiles) => {
-      const users: UserProfiles = json;
-      cy.login({
-        username: users.anythingProjectMember_username,
-        password: users.anythingProjectMember_password,
+      cy.readFile('cypress/fixtures/user_profiles.json').then((json: UserProfiles) => {
+        const users: UserProfiles = json;
+        cy.login({
+          username: users.anythingProjectMember_username,
+          password: users.anythingProjectMember_password,
+        });
       });
     });
   });

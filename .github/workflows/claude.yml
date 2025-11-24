@@ -53,8 +53,6 @@ jobs:
             - PR description
 
             Finish the review with a clear statement, if the PR is ready to merge or not.
-            If the author of the PR is @mpro7, add "Hello boomer" at the begininng of the final review.
-
             Use the repository's CLAUDE.md for guidance on style and conventions.
             Be constructive, helpful and as concise as possible in your feedback.
             Use `gh pr comment` to leave your review as a comment on the PR.

@@ -60,9 +60,14 @@ export default class StillImagePage {
   }
 
   createAnnotation(color: { hex: string }) {
+    const token = Cypress.env('authToken');
     cy.request({
       method: 'POST',
       url: 'http://0.0.0.0:3333/v2/resources',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'X-Asset-Ingested': '1',
+      },
       body: {
         '@type': 'http://api.knora.org/ontology/knora-api/v2#Region',
         'http://www.w3.org/2000/01/rdf-schema#label': this.label,

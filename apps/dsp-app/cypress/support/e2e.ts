@@ -18,7 +18,8 @@ Cypress.on('uncaught:exception', err => {
 beforeEach(() => {
   // Skip database cleanup for remote environments or when explicitly disabled
   const baseUrl = Cypress.config('baseUrl');
-  const isRemote = baseUrl && (baseUrl.includes('dasch.swiss') || baseUrl.includes('stage') || baseUrl.includes('dev-'));
+  const isRemote =
+    baseUrl && (baseUrl.includes('dasch.swiss') || baseUrl.includes('stage') || baseUrl.includes('dev-'));
 
   if (Cypress.env('skipDatabaseCleanup') || isRemote) {
     return; // Skip cleanup

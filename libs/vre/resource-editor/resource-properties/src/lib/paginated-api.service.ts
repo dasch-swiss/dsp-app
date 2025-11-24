@@ -26,13 +26,12 @@ export class PaginatedApiService {
 
   getCopyrightHolders(projectShortcode: string, pageSize = 100) {
     return this._adminApiService
-      .getAdminProjectsShortcodeProjectshortcodeLegalInfoCopyrightHolders(projectShortcode, undefined, 1, pageSize)
+      .getAdminProjectsShortcodeProjectshortcodeLegalInfoCopyrightHolders(projectShortcode, 1, pageSize)
       .pipe(
         expand(response => {
           if (response.pagination.currentPage < response.pagination.totalPages) {
             return this._adminApiService.getAdminProjectsShortcodeProjectshortcodeLegalInfoCopyrightHolders(
               projectShortcode,
-              undefined,
               response.pagination.currentPage + 1,
               pageSize
             );
@@ -47,13 +46,12 @@ export class PaginatedApiService {
 
   getAuthorships(projectShortcode: string, pageSize = 100) {
     return this._adminApiService
-      .getAdminProjectsShortcodeProjectshortcodeLegalInfoAuthorships(projectShortcode, undefined, 1, pageSize)
+      .getAdminProjectsShortcodeProjectshortcodeLegalInfoAuthorships(projectShortcode, 1, pageSize)
       .pipe(
         expand(response => {
           if (response.pagination.currentPage < response.pagination.totalPages) {
             return this._adminApiService.getAdminProjectsShortcodeProjectshortcodeLegalInfoAuthorships(
               projectShortcode,
-              undefined,
               response.pagination.currentPage + 1,
               pageSize
             );

@@ -3,6 +3,10 @@ import { ListGetResponseADM } from '../../../../../libs/vre/open-api/src';
 import { UserProfiles } from '../../models/user-profiles';
 import { Project0001Page } from '../../support/pages/existing-ontology-class-page';
 
+const getAuthHeaders = () => ({
+  Authorization: `Bearer ${localStorage.getItem('ACCESS_TOKEN')}`,
+});
+
 describe('Project Member - List management', () => {
   const projectPage = new Project0001Page();
   let listUrl: string;
@@ -24,10 +28,15 @@ describe('Project Member - List management', () => {
 
   describe('List Management', () => {
     beforeEach(() => {
-      cy.request<ListGetResponseADM>('POST', `${Cypress.env('apiUrl')}/admin/lists`, {
-        comments: [{ language: 'de', value: faker.lorem.words(2) }],
-        labels: [{ language: 'de', value: faker.lorem.words(2) }],
-        projectIri: `http://rdfh.ch/projects/${projectPage.projectShortCode}`,
+      cy.request<ListGetResponseADM>({
+        method: 'POST',
+        url: `${Cypress.env('apiUrl')}/admin/lists`,
+        headers: getAuthHeaders(),
+        body: {
+          comments: [{ language: 'de', value: faker.lorem.words(2) }],
+          labels: [{ language: 'de', value: faker.lorem.words(2) }],
+          projectIri: `http://rdfh.ch/projects/${projectPage.projectShortCode}`,
+        },
       }).then(response => {
         listId = response.body.list.listinfo.id.match(/\/([^\/]*)$/)[1];
         listUrl = `/project/${projectPage.projectShortCode}/list/${listId}`;

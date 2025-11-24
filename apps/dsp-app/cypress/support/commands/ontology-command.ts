@@ -3,6 +3,10 @@ import { faker } from '@faker-js/faker';
 import { JsonConvert } from 'json2typescript';
 import ProjectPage from '../pages/project-page';
 
+const getAuthHeaders = () => ({
+  Authorization: `Bearer ${localStorage.getItem('ACCESS_TOKEN')}`,
+});
+
 Cypress.Commands.add(
   'createOntology',
   (
@@ -15,11 +19,12 @@ Cypress.Commands.add(
     }
   ) => {
     return cy
-      .request<OntologyMetadata>(
-        'POST',
-        `${Cypress.env('apiUrl')}/v2/ontologies`,
-        new JsonConvert().serializeObject(ontology, CreateOntology)
-      )
+      .request<OntologyMetadata>({
+        method: 'POST',
+        url: `${Cypress.env('apiUrl')}/v2/ontologies`,
+        headers: getAuthHeaders(),
+        body: new JsonConvert().serializeObject(ontology, CreateOntology),
+      })
       .then(response => {
         const ontologyMetadata = response.body;
         cy.log('Ontology created!');
