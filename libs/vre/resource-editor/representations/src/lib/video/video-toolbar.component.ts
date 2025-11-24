@@ -71,6 +71,13 @@ import { MediaPlayerService } from './media-player.service';
       </button>
     </div>
   </mat-toolbar-row>`,
+  styles: [
+    `
+      .mat-mdc-button-base .mat-icon {
+        min-height: 0;
+      }
+    `,
+  ],
   standalone: false,
 })
 export class VideoToolbarComponent {
