@@ -5,4 +5,5 @@ export default {
   coverageDirectory: '../../../../coverage/libs/vre/3rd-party-services/analytics',
   // fix: SyntaxError: Unexpected token 'export' of js-lib
   transformIgnorePatterns: ['node_modules/(?!@angular|@dasch-swiss|@ngx|@sentry)'],
+  collectCoverageFrom: ['src/**/*.ts', '!src/**/*.spec.ts', '!src/**/*.d.ts', '!src/test-setup.ts', '!src/index.ts'],
 };
