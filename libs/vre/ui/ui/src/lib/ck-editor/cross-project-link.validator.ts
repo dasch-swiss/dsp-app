@@ -75,13 +75,15 @@ export function crossProjectLinkValidator(currentProjectShortcode: string | null
     );
 
     if (crossProjectLinks.length > 0) {
+      // Deduplicate links by URL to avoid showing the same link multiple times
+      const uniqueLinks = Array.from(
+        new Map(crossProjectLinks.map(link => [link.url, { url: link.url, shortcode: link.shortcode }])).values()
+      );
+
       return {
         crossProjectLink: {
           currentProject: currentProjectShortcode,
-          invalidLinks: crossProjectLinks.map(link => ({
-            url: link.url,
-            shortcode: link.shortcode,
-          })),
+          invalidLinks: uniqueLinks,
         },
       };
     }

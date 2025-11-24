@@ -699,7 +699,8 @@
         "description": "Description"
       },
       "errors": {
-        "crossProjectLink": "Ce champ contient des liens vers des ressources d'autres projets. Seuls les liens vers des ressources du projet actuel sont autorisés."
+        "crossProjectLink": "Ce champ contient des liens vers des ressources d'autres projets. Seuls les liens vers des ressources du projet actuel sont autorisés.",
+        "badLinks": "Liens incorrects :"
       },
       "status": {
         "active": "Actif",

@@ -699,7 +699,8 @@
         "description": "Beschreibung"
       },
       "errors": {
-        "crossProjectLink": "Dieses Feld enthält Links zu Ressourcen aus anderen Projekten. Nur Links zu Ressourcen innerhalb des aktuellen Projekts sind erlaubt."
+        "crossProjectLink": "Dieses Feld enthält Links zu Ressourcen aus anderen Projekten. Nur Links zu Ressourcen innerhalb des aktuellen Projekts sind erlaubt.",
+        "badLinks": "Fehlerhafte Links:"
       },
       "status": {
         "active": "Aktiv",

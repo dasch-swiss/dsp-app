@@ -699,7 +699,8 @@
         "description": "Descrizione"
       },
       "errors": {
-        "crossProjectLink": "Questo campo contiene link a risorse di altri progetti. Sono consentiti solo link a risorse all'interno del progetto corrente."
+        "crossProjectLink": "Questo campo contiene link a risorse di altri progetti. Sono consentiti solo link a risorse all'interno del progetto corrente.",
+        "badLinks": "Link non validi:"
       },
       "status": {
         "active": "Attivo",

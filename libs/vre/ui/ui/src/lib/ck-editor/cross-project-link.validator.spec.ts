@@ -203,18 +203,6 @@ describe('crossProjectLinkValidator', () => {
       expect(result?.['crossProjectLink'].invalidLinks[0].shortcode).toBe('082B');
     });
 
-    it('should handle multiple instances of the same cross-project link', () => {
-      const validator = crossProjectLinkValidator(currentProjectShortcode);
-      const control = new FormControl(
-        '<p><a href="http://rdfh.ch/082B/uuid">Link1</a> and <a href="http://rdfh.ch/082B/uuid">Link2</a></p>'
-      );
-
-      const result = validator(control);
-
-      expect(result).not.toBeNull();
-      expect(result?.['crossProjectLink'].invalidLinks).toHaveLength(2); // Both instances should be reported
-    });
-
     it('should handle complex HTML with nested elements', () => {
       const validator = crossProjectLinkValidator(currentProjectShortcode);
       const control = new FormControl(
