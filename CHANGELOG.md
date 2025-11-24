@@ -1,5 +1,26 @@
 # Changelog
 
+## [12.2.2](https://github.com/dasch-swiss/dsp-das/compare/v12.2.1...v12.2.2) (2025-11-24)
+
+
+### Bug Fixes
+
+* add type guards for language-tagged string literals ([#2671](https://github.com/dasch-swiss/dsp-das/issues/2671)) ([b0520fa](https://github.com/dasch-swiss/dsp-das/commit/b0520faadc86f11fc96036e94c18273313a30ceb))
+* **ckEditor:** fix project cross-linking validation  ([#2668](https://github.com/dasch-swiss/dsp-das/issues/2668)) ([c113445](https://github.com/dasch-swiss/dsp-das/commit/c113445c3878c15077f9781c943c2170ea8f1f68))
+* not matching password and its confirmation make the form fail ([#2653](https://github.com/dasch-swiss/dsp-das/issues/2653)) ([ea35814](https://github.com/dasch-swiss/dsp-das/commit/ea358146a383cc403822d4aefde558dce8f5ee4d))
+* **Project Settings:** prevent project admin to edit user or change password ([#2685](https://github.com/dasch-swiss/dsp-das/issues/2685)) ([0bfff35](https://github.com/dasch-swiss/dsp-das/commit/0bfff3514079a0005afd4311c50d9d14e5e7b973))
+* search results take the full screen height ([#2659](https://github.com/dasch-swiss/dsp-das/issues/2659)) ([ae4b6db](https://github.com/dasch-swiss/dsp-das/commit/ae4b6db9c6e7d37fd372848565584a1c4f647cef))
+* the save button value updates visibility on control state change ([#2664](https://github.com/dasch-swiss/dsp-das/issues/2664)) ([9b84418](https://github.com/dasch-swiss/dsp-das/commit/9b844181c74cc21b73df61a183f596dcf712ca83))
+* unsubscribe and not request inexisting ontologies ([#2680](https://github.com/dasch-swiss/dsp-das/issues/2680)) ([7f444e1](https://github.com/dasch-swiss/dsp-das/commit/7f444e10f76219dbfae97eec472b364568b6470e))
+* **Video Viewer:** align annotation icon ([#2689](https://github.com/dasch-swiss/dsp-das/issues/2689)) ([2022ec6](https://github.com/dasch-swiss/dsp-das/commit/2022ec6a9cf3c4e743a745f2ec7f3915ca71e174))
+
+
+### Maintenances
+
+* improve login flow ([#2670](https://github.com/dasch-swiss/dsp-das/issues/2670)) ([8d48adb](https://github.com/dasch-swiss/dsp-das/commit/8d48adb3f61d84f3f3cc137c90d634d6f9c4ba6f))
+* Improve translations (DEV-4899) ([#2683](https://github.com/dasch-swiss/dsp-das/issues/2683)) ([1d11b53](https://github.com/dasch-swiss/dsp-das/commit/1d11b534075c9aadce70ba12923326a66bd7a05e))
+* update openApi spec ([#2688](https://github.com/dasch-swiss/dsp-das/issues/2688)) ([9b1cb90](https://github.com/dasch-swiss/dsp-das/commit/9b1cb90710ee4a64fb3069da1103e8e22cd885d5))
+
 ## [12.2.1](https://github.com/dasch-swiss/dsp-das/compare/v12.2.0...v12.2.1) (2025-11-17)
 
 
