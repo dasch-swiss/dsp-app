@@ -47,6 +47,10 @@ export class EraseProjectDialogComponent {
     const password = this.eraseForm.controls.password.value;
     const shortCode = this.eraseForm.controls.shortCode.value;
 
+    if (!currentUser) {
+      return;
+    }
+
     this._dspApiConnection.v2.auth
       .login('username', currentUser.username, password!)
       .pipe(

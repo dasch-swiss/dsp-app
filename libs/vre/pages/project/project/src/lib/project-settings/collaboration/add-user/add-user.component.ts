@@ -20,7 +20,10 @@ import { CollaborationPageService } from '../collaboration-page.service';
         <mat-label>{{ 'pages.project.addUser.select' | translate }}</mat-label>
         <input matInput [matAutocomplete]="user" [formControl]="usernameControl" />
 
-        <mat-autocomplete #user="matAutocomplete" (optionSelected)="addUser($event.option.value)">
+        <mat-autocomplete
+          #user="matAutocomplete"
+          [displayWith]="displayUser"
+          (optionSelected)="onUserSelected($event.option.value)">
           @if (loading) {
             <mat-option [disabled]="true">
               <app-progress-indicator />
@@ -72,7 +75,10 @@ export class AddUserComponent {
         this.loading = false;
         this._cdr.detectChanges();
       }),
-      map(response => response.users),
+      map(response => {
+        this.users = response.users;
+        return response.users;
+      }),
       shareReplay(1)
     ),
   ]).pipe(map(([filterVal, users_]) => (filterVal ? this._filter(users_, filterVal) : users_)));
@@ -93,15 +99,25 @@ export class AddUserComponent {
     return `${usernameLabel}${emailLabel}${user.givenName} ${user.familyName}`;
   }
 
+  displayUser = (userId: string): string => {
+    const user = this.users.find(u => u.id === userId);
+    return user ? this.getLabel(user) : '';
+  };
+
   isMember(user: ReadUser): boolean {
     return user.projects
       ? user.projects.map(project => project.id as unknown as string).includes(this.projectIri)
       : false;
   }
 
+  onUserSelected(userId: string) {
+    // Clear the input immediately to prevent the user ID from being displayed
+    this.usernameControl.setValue(null, { emitEvent: false });
+    this.addUser(userId);
+  }
+
   addUser(userId: string) {
     this._dspApiConnection.admin.usersEndpoint.addUserToProjectMembership(userId, this.projectIri).subscribe(() => {
-      this.usernameControl.setValue(null);
       this.collaborationPageService.reloadProjectMembers();
       this.reloadListSubject.next(null);
     });
