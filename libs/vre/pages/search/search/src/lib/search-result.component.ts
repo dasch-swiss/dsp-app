@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, Inject, Input, OnChanges } from '@angular/core';
 import { IFulltextSearchParams, KnoraApiConnection, ReadResource } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
-import { UserService } from '@dasch-swiss/vre/core/session';
 import { ResourceResultService } from '@dasch-swiss/vre/pages/data-browser';
 import { combineLatest, map, Observable, switchMap } from 'rxjs';
 
@@ -17,10 +16,7 @@ import { combineLatest, map, Observable, switchMap } from 'rxjs';
           <app-no-results-found [message]="noResultMessage" />
         </app-centered-box>
       } @else if (resources.length > 0) {
-        <app-resource-browser
-          [data]="{ resources: resources, selectFirstResource: true }"
-          [hasRightsToShowCreateLinkObject$]="userIsSysAdmin$"
-          [searchKeyword]="query" />
+        <app-resource-browser [data]="{ resources: resources, selectFirstResource: true }" [searchKeyword]="query" />
       }
     }
   `,
@@ -33,7 +29,6 @@ export class SearchResultComponent implements OnChanges {
   @Input() projectId?: string;
   loading = true;
 
-  userIsSysAdmin$ = this._userService.isSysAdmin$;
   resources$!: Observable<ReadResource[]>;
 
   readonly noResultMessage = 'There are no resources to display.';
@@ -49,8 +44,7 @@ export class SearchResultComponent implements OnChanges {
   constructor(
     @Inject(DspApiConnectionToken)
     private readonly _dspApiConnection: KnoraApiConnection,
-    private readonly _resourceResultService: ResourceResultService,
-    private readonly _userService: UserService
+    private readonly _resourceResultService: ResourceResultService
   ) {}
 
   ngOnChanges() {

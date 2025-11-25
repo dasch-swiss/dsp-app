@@ -361,7 +361,9 @@
       "resourceListSelection": {
         "resourcesSelected": "{{count}} ressources sélectionnées",
         "createLinkObject": "Créer un objet de lien",
-        "createLinkObjectTooltip": "Un objet de lien ne peut être créé qu'entre des ressources appartenant au même projet."
+        "createLinkObjectTooltip": "Un objet de lien ne peut être créé qu'entre des ressources appartenant au même projet.",
+        "noResourcesSelected": "Aucune ressource sélectionnée",
+        "resourcesMustBeSameProject": "Les ressources doivent appartenir au même projet"
       },
       "resourcesList": {
         "backToSearchForm": "Retour au formulaire de recherche"

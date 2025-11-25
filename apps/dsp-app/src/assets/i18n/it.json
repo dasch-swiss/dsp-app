@@ -361,7 +361,9 @@
       "resourceListSelection": {
         "resourcesSelected": "{{count}} risorse selezionate",
         "createLinkObject": "Crea un oggetto di collegamento",
-        "createLinkObjectTooltip": "Un oggetto di collegamento può essere creato solo tra risorse appartenenti allo stesso progetto."
+        "createLinkObjectTooltip": "Un oggetto di collegamento può essere creato solo tra risorse appartenenti allo stesso progetto.",
+        "noResourcesSelected": "Nessuna risorsa selezionata",
+        "resourcesMustBeSameProject": "Le risorse devono appartenere allo stesso progetto"
       },
       "resourcesList": {
         "backToSearchForm": "Torna al modulo di ricerca"

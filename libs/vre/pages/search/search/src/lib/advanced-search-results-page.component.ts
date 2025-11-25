@@ -4,7 +4,6 @@ import { ActivatedRoute, Params, Router } from '@angular/router';
 import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken, RouteConstants } from '@dasch-swiss/vre/core/config';
 import { ResourceResultService } from '@dasch-swiss/vre/pages/data-browser';
-import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
 import { combineLatest, map, switchMap } from 'rxjs';
 
 @Component({
@@ -19,8 +18,7 @@ import { combineLatest, map, switchMap } from 'rxjs';
       } @else {
         <app-resource-browser
           [data]="{ resources: resources, selectFirstResource: true }"
-          [showBackToFormButton]="true"
-          [hasRightsToShowCreateLinkObject$]="projectPageService.hasProjectMemberRights$" />
+          [showBackToFormButton]="true" />
       }
     }
   `,
@@ -51,8 +49,7 @@ export class AdvancedSearchResultsPageComponent {
     private _titleService: Title,
     @Inject(DspApiConnectionToken)
     private _dspApiConnection: KnoraApiConnection,
-    private _resourceResultService: ResourceResultService,
-    public projectPageService: ProjectPageService
+    private _resourceResultService: ResourceResultService
   ) {
     this._titleService.setTitle(`Advanced search results`);
   }

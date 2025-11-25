@@ -361,7 +361,9 @@
       "resourceListSelection": {
         "resourcesSelected": "{{count}} resources selected",
         "createLinkObject": "Create a link object",
-        "createLinkObjectTooltip": "A link object can be created only between resources belonging to the same project."
+        "createLinkObjectTooltip": "A link object can be created only between resources belonging to the same project.",
+        "noResourcesSelected": "No resources selected",
+        "resourcesMustBeSameProject": "Resources must be from the same project"
       },
       "resourcesList": {
         "backToSearchForm": "Back to search form"
