@@ -99,7 +99,7 @@
     "@nx/jest": "21.5.1",
     "@nx/js": "21.5.1",
     "@nx/workspace": "21.5.1",
-    "@openapitools/openapi-generator-cli": "^2.25.0",
+    "@openapitools/openapi-generator-cli": "^2.25.2",
     "@schematics/angular": "20.2.2",
     "@swc-node/register": "1.11.1",
     "@swc/core": "1.15.3",
