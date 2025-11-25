@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: 2
       - name: Set up Node
@@ -37,7 +37,7 @@ jobs:
     name: DSP-APP E2E
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0 # gets additionally all tags which we need
       - uses: actions/setup-node@v6
@@ -49,7 +49,7 @@ jobs:
           cd ../dsp-das/apps/dsp-app/cypress
           npm install
       - name: Checkout DSP-API repo
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           repository: dasch-swiss/dsp-api
           ref: main
@@ -81,7 +81,7 @@ jobs:
     name: JDNConvertibleCalendar
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0 # gets additionally all tags which we need
       - uses: actions/setup-node@v6
@@ -95,7 +95,7 @@ jobs:
     name: JDNConvertibleCalendarDateAdapter
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0 # gets additionally all tags which we need
       - uses: actions/setup-node@v6
@@ -109,7 +109,7 @@ jobs:
     name: vre-core-config
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0 # gets additionally all tags which we need
       - uses: actions/setup-node@v6
@@ -123,7 +123,7 @@ jobs:
     name: Check OpenAPI Spec is Up-to-Date
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Install yq for smart diff
         run: |
           sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
@@ -147,7 +147,7 @@ jobs:
     outputs:
       tag: ${{ steps.output_docker_image_tag.outputs.tag }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0 # gets additionally all tags which we need
       - name: Output docker image tag
@@ -207,7 +207,7 @@ jobs:
     name: Docs Build Test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - uses: actions/setup-python@v6
