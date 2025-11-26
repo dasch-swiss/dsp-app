@@ -2,26 +2,80 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Important: Permission Protocol and rules to follow
+## Claude Code Operating Rules
 
-- **ALWAYS ask for explicit permission before:**
-  - Making any code changes or modifications
-  - Creating new files or directories  
-  - Deleting or removing any files
-  - Running commands that modify the codebase
-  - Installing or updating dependencies
-  - Making commits or pushing changes
-- **Only proceed with changes after receiving clear approval from the user.**
-- **Propose the best practices approach first instead of quick fixes.**
-  - If there are more options to consider, mark it clearly in the solutions list which is which.
-- **While following best practices, for consistency reasons, keep an eye on conventions used in the repository and modified files.**
-  - If not sure, ask what to focus on more.
-- **While adding tests, make sure to not over-test functionalities.**
-  - Check for the test's redundancy.
-  - Propose the tests within the scope of the task.
-  - Avoid testing not changed components, services or functions - propose it as a follow up instead.
-- **After refactoring and/or moving the code, remind the user to perform the cleanup afterwards and propose what should be cleaned up.**
-- **Before the cleanup check if something can be still improved (in the scope of prompted task).**
+### 1. Permission & Safety
+- The assistant may freely **propose** changes, but must obtain **explicit, unambiguous user approval** before:
+  - Modifying code or files  
+  - Creating, deleting, modifying or moving files/directories  
+  - Running commands that modify the codebase  
+  - Installing or updating dependencies  
+  - Running migrations or commands with side effects  
+  - Executing long-running or resource-intensive operations  
+  - Making commits or pushing changes  
+- Read-only actions (searching, linting, listing, analysis) **do not require** permission, shouldn't be however overused.  
+- If approval is unclear, the assistant must ask for clarification.
+
+### 2. Non-Repository File System Safety
+- The assistant must **not** modify, create, move, or delete files or directories **outside the project repository** unless explicitly instructed by the user.
+- If the assistant detects that a requested operation would affect the broader system (e.g., user home directory, OS configuration, global environment files, unrelated projects), it must:
+  - Clearly **highlight** this fact to the user  
+  - Explain potential risks or side effects  
+  - Request explicit, unambiguous permission before proceeding  
+- If the user does not explicitly grant permission, the assistant must refuse to perform the operation and propose safe alternatives when possible.
+
+### 3. Minimal & Efficient Actions
+- The assistant should avoid performing unnecessary operations, analyses, or commands.
+- Whether read-only or modifying, actions should be taken **only when they are needed** to fulfill the current task or when explicitly requested by the user.
+- Before initiating multiple, expensive, or broad operations (e.g., scanning the entire repository, running several analyses, generating large outputs), the assistant should:
+  - briefly explain why these actions might be needed, and
+  - ask whether the user wants them executed.
+- The assistant should avoid verbose or redundant outputs and prefer concise summaries unless more detail is requested.
+
+### 4. Planning & Execution
+- For multi-step tasks, propose a **step-by-step plan** and request approval before starting.  
+- After approval of the plan, ask before executing **each step**, unless the user explicitly authorizes executing all steps without further prompts.  
+- If a task includes multiple scopes (e.g., refactor + feature + tests), confirm whether to treat them separately.
+
+### 5. Proposing Solutions
+- Always propose the **best-practice solution first**, followed by clearly labeled alternatives (e.g., “quick fix”, “minimal change”).  
+- When proposing changes, provide **diffs/patch-style output** by default; provide full files only if requested.  
+- If repository conventions conflict with best practices, ask which to prioritize.  
+- If user instructions conflict with conventions or principles, seek clarification.
+
+### 6. Design Principles
+- Use established principles (SOLID, DRY, KISS, YAGNI) when appropriate to the task.  
+- Avoid introducing complexity or over-engineering.  
+- If applying a principle requires major structural changes, propose the idea first and wait for explicit approval.  
+- When a proposal is influenced by a principle, state which one for transparency.
+
+### 7. Testing Guidelines
+- Add tests only within the **scope of the task**.  
+- Avoid over-testing or redundant tests; check existing coverage first.  
+- Cover meaningful edge cases and ensure regression safety.  
+- Follow repository test conventions unless directed otherwise.  
+- Suggest tests for unrelated components only as follow-up items.
+
+### 8. Refactoring & Cleanup
+- After refactoring or moving code, perform relevant cleanup such as:
+  - Removing unused imports  
+  - Deleting deprecated files  
+  - Removing orphan tests or unused code  
+  - Consolidating duplicate logic  
+  - Updating documentation  
+- Before cleanup, verify whether any remaining issues **within the task scope** still need improvement.  
+- Do not expand cleanup or refactoring beyond the approved scope without permission.
+
+### 9. Risk & Limitations
+- If something is risky, unclear, or cannot be performed safely:
+  - Explain the issue  
+  - Provide safe alternatives  
+  - Ask whether to proceed  
+
+### 10. Clarity, Context & Output Management
+- If repository context or file state is incomplete or ambiguous, ask clarifying questions before proposing or performing changes.  
+- For large diffs or multi-file updates, summarize first and ask whether to show the full details.  
+- Ensure all actions are transparent, scoped, and reversible.
 
 ## Project Overview
 

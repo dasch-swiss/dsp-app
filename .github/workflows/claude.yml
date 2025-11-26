@@ -46,15 +46,23 @@ jobs:
             - Potential bugs or issues
             - Performance considerations
             - Security concerns
-            - Test coverage
+            - Test coverage (only for modified code)
 
-            Do not include the following feedback:
-            - Commits squash
-            - PR description
+            Focus your review **only on files and lines changed in this PR**.
+            Do **not** review unrelated parts of the repository.
+            Do **not** make any code changes, run commands, or push code; only provide analysis and suggestions.
 
-            Finish the review with a clear statement, if the PR is ready to merge or not.
-            Use the repository's CLAUDE.md for guidance on style and conventions.
-            Be constructive, helpful and as concise as possible in your feedback.
+            Structure your review as follows:
+            1. Summary of PR changes
+            2. Identified issues (prioritize Critical issues, including bugs, security vulnerabilities, or regressions):
+              - Grade each issue as Critical, Major, or Minor.
+              - Only Critical issues should prevent the PR from being ready to merge.
+              - Minor or style issues should be noted but do not affect merge readiness.
+            3. Recommendations for improvement (aligned with the issue severity)
+            4. Clear statement whether the PR is ready to merge (based **only** on Critical issues)
+
+            Be constructive, precise, and concise. Avoid verbose explanations unless necessary for clarity.
+            Use the repository's CLAUDE.md for guidance on style, conventions, and repository-specific best practices.
             Use `gh pr comment` to leave your review as a comment on the PR.
 
           claude_args: '--allowed-tools "Bash(gh issue view:*),Bash(gh search:*),Bash(gh issue list:*),Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*),Bash(gh pr list:*)"'
