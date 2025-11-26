@@ -41,7 +41,7 @@ import { switchMap, take } from 'rxjs';
       </div>
     }
   `,
-  styles: ['.label { display: inline-block; width: 120px; font-weight: bold}'],
+  styles: ['.label { display: inline-block; width: 170px; font-weight: bold}'],
   standalone: false,
 })
 export class ResourceLegalComponent implements OnInit {
