@@ -1,13 +1,15 @@
 import { Component } from '@angular/core';
-import { MatIconRegistry } from '@angular/material/icon';
+import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
+import { RouterModule } from '@angular/router';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
 
 @Component({
   selector: 'app-header-logo',
+  imports: [MatIconModule, RouterModule],
   template: `
     <a class="logo" [routerLink]="homeLink">
-      <mat-icon matPrefix svgIcon="dasch_mosaic_icon_color" />
+      <mat-icon svgIcon="dasch_mosaic_icon_color" />
     </a>
   `,
   styles: [
@@ -32,7 +34,7 @@ import { RouteConstants } from '@dasch-swiss/vre/core/config';
       }
     `,
   ],
-  standalone: false,
+  standalone: true,
 })
 export class HeaderLogoComponent {
   homeLink = RouteConstants.home;

@@ -1,5 +1,11 @@
 import { Component } from '@angular/core';
+import { MatIcon } from '@angular/material/icon';
+import { MatTabLink, MatTabNav, MatTabNavPanel } from '@angular/material/tabs';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
+import { CenteredLayoutComponent } from '@dasch-swiss/vre/ui/ui';
+import { TranslateModule } from '@ngx-translate/core';
+import { ProfileComponent } from './profile/profile.component';
 
 @Component({
   selector: 'app-user',
@@ -35,7 +41,19 @@ import { RouteConstants } from '@dasch-swiss/vre/core/config';
       }
     `,
   ],
-  standalone: false,
+  standalone: true,
+  imports: [
+    CenteredLayoutComponent,
+    ProfileComponent,
+    MatTabNav,
+    MatTabLink,
+    RouterLink,
+    RouterLinkActive,
+    MatIcon,
+    TranslateModule,
+    MatTabNavPanel,
+    RouterOutlet,
+  ],
 })
 export class UserComponent {
   MY_PROFILE = RouteConstants.myProfile;

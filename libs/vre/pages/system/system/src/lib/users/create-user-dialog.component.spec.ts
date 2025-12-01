@@ -11,7 +11,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ReadUser, User } from '@dasch-swiss/dsp-js';
 import { UserApiService } from '@dasch-swiss/vre/3rd-party-services/api';
-import { UserForm } from '@dasch-swiss/vre/pages/user-settings/user';
+import { UserForm } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { HumanReadableErrorPipe } from '@dasch-swiss/vre/ui/ui';
 import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
@@ -34,9 +34,9 @@ describe('CreateUserDialogComponent', () => {
     };
 
     await TestBed.configureTestingModule({
-      declarations: [CreateUserDialogComponent],
       schemas: [NO_ERRORS_SCHEMA],
       imports: [
+        CreateUserDialogComponent,
         ReactiveFormsModule,
         MatButtonModule,
         MatDialogModule,

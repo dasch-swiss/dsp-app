@@ -1,7 +1,11 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { Title } from '@angular/platform-browser';
+import { ProgressIndicatorOverlayComponent } from '@dasch-swiss/vre/ui/progress-indicator';
+import { DoubleChipSelectorComponent } from '@dasch-swiss/vre/ui/ui';
 import { TranslateService } from '@ngx-translate/core';
 import { combineLatest, map } from 'rxjs';
+import { UsersListComponent } from './users-list/users-list.component';
 import { UsersTabService } from './users-tab.service';
 
 @Component({
@@ -30,7 +34,8 @@ import { UsersTabService } from './users-tab.service';
     }
   `,
   providers: [UsersTabService],
-  standalone: false,
+  standalone: true,
+  imports: [AsyncPipe, DoubleChipSelectorComponent, ProgressIndicatorOverlayComponent, UsersListComponent],
 })
 export class UsersTabComponent {
   private readonly _titleService = inject(Title);

@@ -1,12 +1,20 @@
 import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatButton } from '@angular/material/button';
+import {
+  MAT_DIALOG_DATA,
+  MatDialogActions,
+  MatDialogClose,
+  MatDialogContent,
+  MatDialogRef,
+} from '@angular/material/dialog';
 import { ReadUser, UpdateUserRequest } from '@dasch-swiss/dsp-js';
 import { UserApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { UserService } from '@dasch-swiss/vre/core/session';
+import { UserForm, UserFormComponent } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
-import { TranslateService } from '@ngx-translate/core';
-import { UserForm } from '../user-form/user-form.type';
+import { DialogHeaderComponent } from '@dasch-swiss/vre/ui/ui';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 export interface EditUserDialogProps {
   user: ReadUser;
@@ -35,7 +43,16 @@ export interface EditUserDialogProps {
       </button>
     </div>
   `,
-  standalone: false,
+  standalone: true,
+  imports: [
+    DialogHeaderComponent,
+    TranslateModule,
+    MatDialogContent,
+    UserFormComponent,
+    MatDialogActions,
+    MatButton,
+    MatDialogClose,
+  ],
 })
 export class EditUserDialogComponent {
   form!: UserForm;

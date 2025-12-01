@@ -1,12 +1,16 @@
+import { AsyncPipe, I18nPluralPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { ReadUser } from '@dasch-swiss/dsp-js';
 import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import { UserService } from '@dasch-swiss/vre/core/session';
 import { SortingHelper } from '@dasch-swiss/vre/shared/app-helper-services';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { SortButtonComponent } from '../../sort-button/sort-button.component';
 import { CreateUserDialogComponent } from '../create-user-dialog.component';
 import { UsersTabService } from '../users-tab.service';
+import { UsersListRowComponent } from './users-list-row.component';
 
 interface SortProperty {
   key: keyof ReadUser;
@@ -47,7 +51,8 @@ type UserSortKey = 'familyName' | 'givenName' | 'email' | 'username';
       </div>
     }
   `,
-  standalone: false,
+  standalone: true,
+  imports: [AsyncPipe, I18nPluralPipe, MatButton, SortButtonComponent, TranslateModule, UsersListRowComponent],
 })
 export class UsersListComponent {
   _list!: ReadUser[];

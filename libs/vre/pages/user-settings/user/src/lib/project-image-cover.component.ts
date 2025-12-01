@@ -1,4 +1,6 @@
+import { NgClass } from '@angular/common';
 import { Component, Input } from '@angular/core';
+import { MatCardImage } from '@angular/material/card';
 
 @Component({
   selector: 'app-project-image-cover',
@@ -58,7 +60,8 @@ import { Component, Input } from '@angular/core';
       }
     `,
   ],
-  standalone: false,
+  standalone: true,
+  imports: [MatCardImage, NgClass],
 })
 export class ProjectImageCoverComponent {
   @Input({ required: true }) project!: { shortcode: string; shortname: string };

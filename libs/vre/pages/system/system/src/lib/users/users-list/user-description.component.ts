@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { ReadUser } from '@dasch-swiss/dsp-js';
+import { AdminImageDirective } from '@dasch-swiss/vre/ui/ui';
 
 @Component({
   selector: 'app-user-description',
@@ -13,7 +14,8 @@ import { ReadUser } from '@dasch-swiss/dsp-js';
       <span class="mat-subtitle-2">{{ user.username }} | {{ user.email }}</span>
     </span>
   </span>`,
-  standalone: false,
+  standalone: true,
+  imports: [AdminImageDirective],
 })
 export class UserDescriptionComponent {
   @Input({ required: true }) user!: ReadUser;

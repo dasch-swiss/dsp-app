@@ -1,5 +1,6 @@
 import { ProjectDescriptionPageComponent } from './lib/description/project-description-page.component';
 import { ProjectShortDescriptionComponent } from './lib/description/project-short-description.component';
+import { ProjectNavigationTabsComponent } from './lib/project-navigation-tabs.component';
 import { ProjectPageHeaderComponent } from './lib/project-page-header.component';
 import { ProjectPageComponent } from './lib/project-page.component';
 import { AddUserComponent } from './lib/project-settings/collaboration/add-user/add-user.component';
@@ -54,4 +55,5 @@ export const ProjectComponents = [
   ProjectSidenavOntologiesComponent,
   ProjectPageHeaderComponent,
   ProjectShortDescriptionComponent,
+  ProjectNavigationTabsComponent,
 ];

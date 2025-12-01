@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-search-tips',
@@ -28,6 +29,7 @@ import { Component } from '@angular/core';
       }
     `,
   ],
-  standalone: false,
+  standalone: true,
+  imports: [TranslateModule],
 })
 export class SearchTipsComponent {}

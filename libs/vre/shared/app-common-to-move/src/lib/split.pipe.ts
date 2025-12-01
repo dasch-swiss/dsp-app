@@ -8,7 +8,7 @@ import { Pipe, PipeTransform } from '@angular/core';
  */
 @Pipe({
   name: 'split',
-  standalone: false,
+  standalone: true,
 })
 export class SplitPipe implements PipeTransform {
   transform(val: string, separator: string, position: number): string {

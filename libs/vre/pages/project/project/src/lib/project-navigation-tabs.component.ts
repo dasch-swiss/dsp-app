@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
-import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
+import { ProjectPageService } from './project-page.service';
 
 @Component({
   selector: 'app-project-navigation-tabs',

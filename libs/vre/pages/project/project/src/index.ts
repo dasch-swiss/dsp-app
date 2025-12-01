@@ -31,5 +31,6 @@ export * from './lib/sidenav/project-sidenav-ontologies.component';
 export * from './lib/sidenav/project-sidenav-collapse-button.component';
 
 export * from './lib/project-page-header.component';
+export * from './lib/project-navigation-tabs.component';
 export * from './lib/description/project-short-description.component';
 export * from './lib/project-page.guard';

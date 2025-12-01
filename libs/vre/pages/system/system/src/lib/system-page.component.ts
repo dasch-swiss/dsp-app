@@ -1,8 +1,13 @@
+import { AsyncPipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
+import { MatIcon } from '@angular/material/icon';
+import { MatTabLink, MatTabNav, MatTabNavPanel } from '@angular/material/tabs';
 import { Title } from '@angular/platform-browser';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { UserService } from '@dasch-swiss/vre/core/session';
-import { TranslateService } from '@ngx-translate/core';
+import { StatusComponent } from '@dasch-swiss/vre/shared/app-common-to-move';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-system-page',
@@ -35,7 +40,19 @@ import { TranslateService } from '@ngx-translate/core';
     </div>
   `,
   styleUrls: ['./system-page.component.scss'],
-  standalone: false,
+  standalone: true,
+  imports: [
+    AsyncPipe,
+    MatIcon,
+    MatTabNav,
+    MatTabNavPanel,
+    MatTabLink,
+    RouterLink,
+    RouterLinkActive,
+    RouterOutlet,
+    StatusComponent,
+    TranslateModule,
+  ],
 })
 export class SystemPageComponent {
   private readonly _userService = inject(UserService);

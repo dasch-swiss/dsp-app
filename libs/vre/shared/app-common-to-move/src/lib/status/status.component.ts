@@ -1,10 +1,15 @@
+import { CommonModule, UpperCasePipe } from '@angular/common';
 import { Component, Inject, inject, Input, OnInit } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { Title } from '@angular/platform-browser';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { ApiResponseData, HealthResponse, KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken, RouteConstants } from '@dasch-swiss/vre/core/config';
 import { HttpStatusMsg } from '@dasch-swiss/vre/shared/assets/status-msg';
-import { TranslateService } from '@ngx-translate/core';
+import { AppProgressIndicatorComponent } from '@dasch-swiss/vre/ui/progress-indicator';
+import { LinkifyPipe } from '@dasch-swiss/vre/ui/ui';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 export interface StatusMsg {
   status: number;
@@ -17,9 +22,19 @@ export interface StatusMsg {
 
 @Component({
   selector: 'app-status',
+  imports: [
+    CommonModule,
+    RouterModule,
+    TranslateModule,
+    MatButtonModule,
+    MatIconModule,
+    LinkifyPipe,
+    UpperCasePipe,
+    AppProgressIndicatorComponent,
+  ],
   templateUrl: './status.component.html',
   styleUrls: ['./status.component.scss'],
-  standalone: false,
+  standalone: true,
 })
 export class StatusComponent implements OnInit {
   _status = 404;
@@ -39,7 +54,7 @@ export class StatusComponent implements OnInit {
   refresh = false;
 
   // error message that will be shown in template
-  message: StatusMsg;
+  message!: StatusMsg;
 
   // default error messages
   errorMessages: StatusMsg[] = [
@@ -109,9 +124,9 @@ export class StatusComponent implements OnInit {
     if (!this.status) {
       // but status is defined in app.routing
       this._route.data.subscribe(data => {
-        this.status = data.status ?? 0;
-        this.comment = data.comment;
-        this.url = data.url;
+        this.status = data['status'] ?? 0;
+        this.comment = data['comment'];
+        this.url = data['url'];
       });
     }
 
@@ -148,6 +163,8 @@ export class StatusComponent implements OnInit {
       case status >= 203 && status < 400:
         return 'warning';
       case status >= 400 && status < 600:
+        return 'error';
+      default:
         return 'error';
     }
   }

@@ -1,13 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
+import { FormBuilder } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { HumanReadableErrorPipe } from '@dasch-swiss/vre/ui/ui';
 import { TranslateModule } from '@ngx-translate/core';
 import { PasswordConfirmFormComponent } from './password-confirm-form.component';
-import { PasswordFormFieldComponent } from './password-form-field.component';
 
 describe('PasswordConfirmFormComponent', () => {
   let component: PasswordConfirmFormComponent;
@@ -15,16 +10,7 @@ describe('PasswordConfirmFormComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [PasswordConfirmFormComponent, PasswordFormFieldComponent],
-      imports: [
-        ReactiveFormsModule,
-        MatFormFieldModule,
-        MatInputModule,
-        MatIconModule,
-        BrowserAnimationsModule,
-        TranslateModule.forRoot(),
-        HumanReadableErrorPipe,
-      ],
+      imports: [PasswordConfirmFormComponent, BrowserAnimationsModule, TranslateModule.forRoot()],
       providers: [FormBuilder],
     }).compileComponents();
 

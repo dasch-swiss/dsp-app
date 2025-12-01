@@ -1,8 +1,13 @@
 import { Component } from '@angular/core';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { Router } from '@angular/router';
+import { GlobalSearchComponent } from './global-search.component';
+import { HeaderLogoComponent } from './header-logo.component';
+import { HeaderUserActionsComponent } from './header-user-actions.component';
 
 @Component({
   selector: 'app-header',
+  imports: [MatToolbarModule, HeaderLogoComponent, GlobalSearchComponent, HeaderUserActionsComponent],
   template: `
     <mat-toolbar style="background: inherit; height: 56px; justify-content: space-between">
       <span style="display: flex; align-items: center">
@@ -33,7 +38,7 @@ import { Router } from '@angular/router';
       }
     `,
   ],
-  standalone: false,
+  standalone: true,
 })
 export class HeaderComponent {
   constructor(private readonly _router: Router) {}

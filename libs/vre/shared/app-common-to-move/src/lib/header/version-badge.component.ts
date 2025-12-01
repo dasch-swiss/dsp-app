@@ -1,8 +1,10 @@
+import { NgClass } from '@angular/common';
 import { Component } from '@angular/core';
 import { AppConfigService } from '@dasch-swiss/vre/core/config';
 
 @Component({
   selector: 'app-version-badge',
+  imports: [NgClass],
   template: ` @if (!dsp.production) {
     <span class="badge">
       <span class="environment">{{ dsp.environment }}</span>
@@ -10,7 +12,7 @@ import { AppConfigService } from '@dasch-swiss/vre/core/config';
     </span>
   }`,
   styleUrls: ['version-badge.component.scss'],
-  standalone: false,
+  standalone: true,
 })
 export class VersionBadgeComponent {
   dsp = this._appConfigService.dspConfig;

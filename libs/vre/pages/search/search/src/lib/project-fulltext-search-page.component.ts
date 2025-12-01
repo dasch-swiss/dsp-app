@@ -3,8 +3,8 @@ import { ComponentPortal } from '@angular/cdk/portal';
 import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
+import { SearchTipsComponent } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { map, startWith, Subject } from 'rxjs';
-import { SearchTipsComponent } from './search-tips.component';
 
 @Component({
   selector: 'app-project-fulltext-search-page',

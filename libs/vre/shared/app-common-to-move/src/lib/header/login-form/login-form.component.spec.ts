@@ -9,11 +9,11 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ApiResponseError, KnoraApiConnection, ReadUser } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { AuthService } from '@dasch-swiss/vre/core/session';
+import { PasswordFormFieldComponent } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { LoadingButtonDirective } from '@dasch-swiss/vre/ui/progress-indicator';
 import { CommonInputComponent, HumanReadableErrorPipe } from '@dasch-swiss/vre/ui/ui';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { of, throwError } from 'rxjs';
-import { PasswordFormFieldComponent } from '../user-form/password-form/password-form-field.component';
 import { LoginFormComponent } from './login-form.component';
 
 describe('LoginFormComponent', () => {
@@ -51,8 +51,9 @@ describe('LoginFormComponent', () => {
     } as unknown as jest.Mocked<KnoraApiConnection>;
 
     await TestBed.configureTestingModule({
-      declarations: [LoginFormComponent, PasswordFormFieldComponent],
       imports: [
+        PasswordFormFieldComponent,
+        LoginFormComponent,
         ReactiveFormsModule,
         MatButtonModule,
         MatFormFieldModule,

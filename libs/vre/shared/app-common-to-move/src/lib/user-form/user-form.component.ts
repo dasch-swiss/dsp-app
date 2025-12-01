@@ -1,9 +1,12 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatOption, MatSelect } from '@angular/material/select';
 import { StringLiteral } from '@dasch-swiss/dsp-js';
 import { AvailableLanguages } from '@dasch-swiss/vre/core/config';
 import { CustomRegex } from '@dasch-swiss/vre/shared/app-common';
-import { TranslateService } from '@ngx-translate/core';
+import { CommonInputComponent } from '@dasch-swiss/vre/ui/ui';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { UserForm } from './user-form.type';
 
 @Component({
@@ -31,7 +34,8 @@ import { UserForm } from './user-form.type';
       </mat-form-field>
     </form>
   `,
-  standalone: false,
+  standalone: true,
+  imports: [CommonInputComponent, TranslateModule, MatFormField, MatLabel, MatSelect, MatOption, ReactiveFormsModule],
 })
 export class UserFormComponent implements OnInit {
   @Input({ required: true }) data!: {

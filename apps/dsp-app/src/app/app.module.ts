@@ -68,7 +68,6 @@ export function httpLoaderFactory(httpClient: HttpClient) {
   declarations: [
     AppComponent,
     CookieBannerComponent,
-    ...CommonToMoveComponents,
     ...DataBrowserComponents,
     ...ListComponents,
     ...OntologyComponents,
@@ -80,9 +79,7 @@ export function httpLoaderFactory(httpClient: HttpClient) {
     ...ResourcePropertiesComponents,
     ...SearchComponents,
     ...SegmentSupportComponents,
-    ...SystemComponents,
     ...TemplateSwitcherComponents,
-    ...UserComponents,
   ],
   imports: [
     AdvancedSearchComponent,
@@ -109,6 +106,9 @@ export function httpLoaderFactory(httpClient: HttpClient) {
     ...UiStandaloneComponents,
     ...DatePickerComponents,
     ...ProgressIndicatorComponents,
+    ...CommonToMoveComponents,
+    ...SystemComponents,
+    ...UserComponents,
     ReactiveFormsModule,
     TranslateModule.forRoot({
       loader: {
