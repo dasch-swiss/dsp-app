@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: DSP-API
-  version: v33.0.0-4-gc825f29
+  version: v33.1.0-1-g3c5df3b
   summary: DSP-API is part of the DaSCH Service Platform, a repository for the long-term
     preservation and reuse of data in the humanities.
   contact:
@@ -4447,7 +4447,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/NBNUXPQeSBmNhvx9SJHtEA
+        example: http://rdfh.ch/users/se0ws00YT8Ozmism06hoFw
       responses:
         '200':
           description: ''
@@ -4499,7 +4499,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/NBNUXPQeSBmNhvx9SJHtEA
+        example: http://rdfh.ch/users/se0ws00YT8Ozmism06hoFw
       responses:
         '200':
           description: ''
@@ -4551,7 +4551,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/NBNUXPQeSBmNhvx9SJHtEA
+        example: http://rdfh.ch/users/se0ws00YT8Ozmism06hoFw
       responses:
         '200':
           description: ''
@@ -4699,7 +4699,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/NBNUXPQeSBmNhvx9SJHtEA
+        example: http://rdfh.ch/users/se0ws00YT8Ozmism06hoFw
       responses:
         '200':
           description: ''
@@ -4752,7 +4752,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/NBNUXPQeSBmNhvx9SJHtEA
+        example: http://rdfh.ch/users/se0ws00YT8Ozmism06hoFw
       responses:
         '200':
           description: ''
@@ -4915,7 +4915,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/NBNUXPQeSBmNhvx9SJHtEA
+        example: http://rdfh.ch/users/se0ws00YT8Ozmism06hoFw
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -4975,7 +4975,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/NBNUXPQeSBmNhvx9SJHtEA
+        example: http://rdfh.ch/users/se0ws00YT8Ozmism06hoFw
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -5036,7 +5036,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/NBNUXPQeSBmNhvx9SJHtEA
+        example: http://rdfh.ch/users/se0ws00YT8Ozmism06hoFw
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -5096,7 +5096,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/NBNUXPQeSBmNhvx9SJHtEA
+        example: http://rdfh.ch/users/se0ws00YT8Ozmism06hoFw
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -5157,7 +5157,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/NBNUXPQeSBmNhvx9SJHtEA
+        example: http://rdfh.ch/users/se0ws00YT8Ozmism06hoFw
       - name: groupIri
         in: path
         description: The IRI of a group. Must be URL-encoded.
@@ -5217,7 +5217,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/NBNUXPQeSBmNhvx9SJHtEA
+        example: http://rdfh.ch/users/se0ws00YT8Ozmism06hoFw
       - name: groupIri
         in: path
         description: The IRI of a group. Must be URL-encoded.
@@ -5278,7 +5278,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/NBNUXPQeSBmNhvx9SJHtEA
+        example: http://rdfh.ch/users/se0ws00YT8Ozmism06hoFw
       requestBody:
         content:
           application/json:
@@ -5338,7 +5338,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/NBNUXPQeSBmNhvx9SJHtEA
+        example: http://rdfh.ch/users/se0ws00YT8Ozmism06hoFw
       requestBody:
         content:
           application/json:
@@ -5398,7 +5398,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/NBNUXPQeSBmNhvx9SJHtEA
+        example: http://rdfh.ch/users/se0ws00YT8Ozmism06hoFw
       requestBody:
         content:
           application/json:
@@ -5458,7 +5458,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/NBNUXPQeSBmNhvx9SJHtEA
+        example: http://rdfh.ch/users/se0ws00YT8Ozmism06hoFw
       requestBody:
         content:
           application/json:
@@ -5743,7 +5743,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/lists/0001/y7ieTvVHR6mwIt9_ZBUOaA
+        example: http://rdfh.ch/lists/0001/jCp2VrudQVCuiPmUyOzLyQ
       - name: x-knora-accept-schema
         in: header
         description: |-
@@ -5850,7 +5850,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/lists/0001/y7ieTvVHR6mwIt9_ZBUOaA
+        example: http://rdfh.ch/lists/0001/jCp2VrudQVCuiPmUyOzLyQ
       - name: x-knora-accept-schema
         in: header
         description: |-
@@ -12388,18 +12388,26 @@ paths:
                     - value: A thing which is has an image
                       language: en
                   itemCount: 42
-        '400':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BadRequest'
         '404':
           description: ''
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFound'
+              examples:
+                project_not_found:
+                  description: |-
+                    Example template string for code `project_not_found`:
+                    ```
+                    The project with IRI {id} was not found.
+                    ```
+                  value:
+                    message: Not found example message
+                    errors:
+                    - code: project_not_found
+                      message: Not found example message
+                      details:
+                        id: example_id
   /v3/export/resources:
     post:
       tags:
@@ -12439,24 +12447,76 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/BadRequest'
+              example:
+                message: Bad request example message
+                errors: []
         '401':
           description: ''
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Unauthorized'
+              example:
+                message: Invalid token.
+                errors: []
         '403':
           description: ''
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Forbidden'
+              example:
+                message: User not active.
+                errors: []
         '404':
           description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/NotFound'
+                anyOf:
+                - $ref: '#/components/schemas/NotFound'
+                - $ref: '#/components/schemas/NotFound'
+                - $ref: '#/components/schemas/NotFound'
+              examples:
+                project_not_found:
+                  description: |-
+                    Example template string for code `project_not_found`:
+                    ```
+                    The project with IRI {id} was not found.
+                    ```
+                  value:
+                    message: Not found example message
+                    errors:
+                    - code: project_not_found
+                      message: Not found example message
+                      details:
+                        id: example_id
+                ontology_not_found:
+                  description: |-
+                    Example template string for code `ontology_not_found`:
+                    ```
+                    The ontology with IRI {id} was not found.
+                    ```
+                  value:
+                    message: Not found example message
+                    errors:
+                    - code: ontology_not_found
+                      message: Not found example message
+                      details:
+                        id: example_id
+                resourceClass_not_found:
+                  description: |-
+                    Example template string for code `resourceClass_not_found`:
+                    ```
+                    The resource class with IRI {id} was not found.
+                    ```
+                  value:
+                    message: Not found example message
+                    errors:
+                    - code: resourceclass_not_found
+                      message: Not found example message
+                      details:
+                        id: example_id
       security:
       - {}
       - httpAuth: []
@@ -12473,9 +12533,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/VersionResponse'
               example:
-                webapi: v33.0.0-4-gc825f29
-                buildCommit: c825f29ff
-                buildTime: '2025-11-26T16:00:27.378633123Z'
+                webapi: v33.1.0-1-g3c5df3b
+                buildCommit: 3c5df3b86
+                buildTime: '2025-12-01T11:15:26.843716136Z'
                 fuseki: 5.5.0-2
                 scala: 3.3.7
                 sipi: v3.16.3
@@ -12705,12 +12765,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/AdministrativePermissionADM'
-    ArchiveRepresentation:
-      title: ArchiveRepresentation
-      type: object
-    AudioRepresentation:
-      title: AudioRepresentation
-      type: object
     BadCredentialsException:
       title: BadCredentialsException
       type: object
@@ -12921,9 +12975,6 @@ components:
           type: string
         xml:
           type: string
-    DDDRepresentation:
-      title: DDDRepresentation
-      type: object
     DefaultObjectAccessPermissionADM:
       title: DefaultObjectAccessPermissionADM
       type: object
@@ -12978,9 +13029,6 @@ components:
       properties:
         value:
           $ref: '#/components/schemas/StringLiteralV2'
-    DocumentRepresentation:
-      title: DocumentRepresentation
-      type: object
     DuplicateValueException:
       title: DuplicateValueException
       type: object
@@ -13652,9 +13700,6 @@ components:
       type: object
       additionalProperties:
         type: string
-    MovingImageRepresentation:
-      title: MovingImageRepresentation
-      type: object
     NodeADM:
       title: NodeADM
       type: object
@@ -14131,15 +14176,16 @@ components:
             type: string
     RepresentationClass:
       title: RepresentationClass
-      oneOf:
-      - $ref: '#/components/schemas/ArchiveRepresentation'
-      - $ref: '#/components/schemas/AudioRepresentation'
-      - $ref: '#/components/schemas/DDDRepresentation'
-      - $ref: '#/components/schemas/DocumentRepresentation'
-      - $ref: '#/components/schemas/MovingImageRepresentation'
-      - $ref: '#/components/schemas/StillImageRepresentation'
-      - $ref: '#/components/schemas/TextRepresentation'
-      - $ref: '#/components/schemas/WithoutRepresentation'
+      type: string
+      enum:
+      - ArchiveRepresentation
+      - AudioRepresentation
+      - DDDRepresentation
+      - DocumentRepresentation
+      - MovingImageRepresentation
+      - StillImageRepresentation
+      - TextRepresentation
+      - WithoutRepresentation
     ResourceClassAndCountDto:
       title: ResourceClassAndCountDto
       type: object
@@ -14259,9 +14305,6 @@ components:
       properties:
         status:
           $ref: '#/components/schemas/UserStatus'
-    StillImageRepresentation:
-      title: StillImageRepresentation
-      type: object
     StringLiteralSequenceV2:
       title: StringLiteralSequenceV2
       type: object
@@ -14291,9 +14334,6 @@ components:
       properties:
         systemAdmin:
           $ref: '#/components/schemas/SystemAdmin'
-    TextRepresentation:
-      title: TextRepresentation
-      type: object
     TokenResponse:
       title: TokenResponse
       type: object
@@ -14460,11 +14500,12 @@ components:
             $ref: '#/components/schemas/UserDto'
     V3ErrorCode:
       title: V3ErrorCode
-      oneOf:
-      - $ref: '#/components/schemas/ontology_not_found'
-      - $ref: '#/components/schemas/project_not_found'
-      - $ref: '#/components/schemas/resourceClass_not_found'
-      - $ref: '#/components/schemas/resource_not_found'
+      type: string
+      enum:
+      - ontology_not_found
+      - project_not_found
+      - resourceClass_not_found
+      - resource_not_found
     ValidationException:
       title: ValidationException
       type: object
@@ -14531,21 +14572,6 @@ components:
       properties:
         value:
           type: boolean
-    WithoutRepresentation:
-      title: WithoutRepresentation
-      type: object
-    ontology_not_found:
-      title: ontology_not_found
-      type: object
-    project_not_found:
-      title: project_not_found
-      type: object
-    resourceClass_not_found:
-      title: resourceClass_not_found
-      type: object
-    resource_not_found:
-      title: resource_not_found
-      type: object
   securitySchemes:
     httpAuth:
       type: http
