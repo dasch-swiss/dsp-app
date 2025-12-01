@@ -19,7 +19,6 @@ import { unescapeHtml } from './unescape-html';
       [formControl]="footnoteControl"
       [config]="ckEditor.config"
       [editor]="editor"
-      (blur)="onBlur()"
       style="margin-bottom: 22px; display: block;" />
     @if (control.touched && control.errors?.['crossProjectLink']; as error) {
       <mat-error>
@@ -92,6 +91,10 @@ export class CkEditorComponent implements OnInit, OnDestroy {
       this.control.patchValue(value ? this._parseFromFootnote(value) : '');
       updating = false;
     });
+
+    if (!this.control.touched) {
+      this.control.markAsTouched();
+    }
   }
 
   ngOnDestroy() {
@@ -103,12 +106,6 @@ export class CkEditorComponent implements OnInit, OnDestroy {
       this.control.removeValidators(this._crossProjectValidator);
       this.control.updateValueAndValidity();
     }
-  }
-
-  onBlur() {
-    // Mark control as touched and trigger validation when editor loses focus
-    this.control.markAsTouched();
-    this.control.updateValueAndValidity();
   }
 
   private _parseToFootnote(rawHtml: string) {
