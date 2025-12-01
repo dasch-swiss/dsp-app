@@ -96,8 +96,13 @@ export class ResourcesListFetcherComponent implements OnChanges {
       pairwise(),
       map(([[prevResources, prevClass], [currResources, currClass]]) => {
         const selectFirstResource = prevClass !== currClass;
-        if (selectFirstResource && !this._multipleViewerService.selectMode && currResources.length >= 1) {
-          this._multipleViewerService.selectOneResource(currResources![0]);
+        if (selectFirstResource && !this._multipleViewerService.selectMode && currResources) {
+          if (currResources.length >= 1) {
+            this._multipleViewerService.selectOneResource(currResources[0]);
+          } else {
+            // Clear selection when navigating to a class with no resources
+            this._multipleViewerService.reset();
+          }
         }
         return { resources: currResources!, selectFirstResource };
       })

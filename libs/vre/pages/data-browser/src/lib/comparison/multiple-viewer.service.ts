@@ -32,8 +32,7 @@ export class MultipleViewerService {
 
     resources.forEach(resource => {
       const index = currentResources.indexOf(resource);
-      if (index <= -1) {
-        // does not exist
+      if (index < 0) {
         return;
       }
 
@@ -51,11 +50,6 @@ export class MultipleViewerService {
 
   reset() {
     this.selectMode = false;
-
-    if (this._selectedResourcesSubject.getValue().length >= 1) {
-      this._selectedResourcesSubject.next([this._selectedResourcesSubject.getValue()[0]]);
-    } else {
-      this._selectedResourcesSubject.next([]);
-    }
+    this._selectedResourcesSubject.next([]);
   }
 }
