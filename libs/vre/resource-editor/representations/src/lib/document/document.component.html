@@ -3,16 +3,18 @@
   <!-- in case of an error -->
   @if (failedToLoad) {
   <app-status [status]="404" [url]="src.fileUrl" [representation]="'document'" />
-  }
+  } @if (pdfSrc) {
   <pdf-viewer
     class="pdf-viewer"
-    [src]="{ url: src.fileUrl,  withCredentials: true }"
+    [src]="pdfSrc"
     [original-size]="false"
     [autoresize]="true"
     [show-all]="true"
     [show-borders]="true"
     [zoom]="zoomFactor"
-    [zoom-scale]="'page-width'" />
+    [zoom-scale]="'page-width'"
+    (error)="onPdfLoadError($event)" />
+  }
   <div>
     <div class="action horizontal bottom">
       <!-- caption -->

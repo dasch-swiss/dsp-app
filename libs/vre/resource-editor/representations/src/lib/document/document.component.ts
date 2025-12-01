@@ -11,6 +11,7 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { Constants, ReadDocumentFileValue, ReadResource } from '@dasch-swiss/dsp-js';
 import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
+import { AccessTokenService } from '@dasch-swiss/vre/core/session';
 import { TranslateService } from '@ngx-translate/core';
 import { PdfViewerComponent } from 'ng2-pdf-viewer';
 import {
@@ -40,6 +41,8 @@ export class DocumentComponent implements OnChanges {
 
   failedToLoad = false;
 
+  pdfSrc: { url: string; httpHeaders?: { Authorization: string }; withCredentials: boolean } | null = null;
+
   private readonly _translateService = inject(TranslateService);
 
   get isPdf(): boolean {
@@ -47,16 +50,18 @@ export class DocumentComponent implements OnChanges {
   }
 
   constructor(
-    private _dialog: MatDialog,
-    private _rs: RepresentationService,
-    private _cd: ChangeDetectorRef,
-    private _viewContainerRef: ViewContainerRef,
+    private readonly _accessTokenService: AccessTokenService,
+    private readonly _cd: ChangeDetectorRef,
+    private readonly _dialog: MatDialog,
+    private readonly _rs: RepresentationService,
+    private readonly _viewContainerRef: ViewContainerRef,
     public resourceFetcherService: ResourceFetcherService
   ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['src'] && changes['src'].currentValue) {
       this._setOriginalFilename();
+      this._setPdfSrc();
     }
   }
 
@@ -99,6 +104,10 @@ export class DocumentComponent implements OnChanges {
     this.zoomFactor = newZoom <= 0 ? 0.2 : newZoom;
   }
 
+  onPdfLoadError(_error: unknown) {
+    this.failedToLoad = true;
+  }
+
   private _setOriginalFilename() {
     this.originalFilename = '';
     this._rs.getFileInfo(this.src.fileUrl).subscribe(
@@ -111,5 +120,19 @@ export class DocumentComponent implements OnChanges {
         this.failedToLoad = true;
       }
     );
+  }
+
+  private _setPdfSrc() {
+    // Only set pdfSrc if it hasn't been set yet or if the URL has changed
+    if (!this.pdfSrc || this.pdfSrc.url !== this.src.fileUrl) {
+      const authToken = this._accessTokenService.getAccessToken();
+      const headers = authToken ? { Authorization: `Bearer ${authToken}` } : undefined;
+
+      this.pdfSrc = {
+        url: this.src.fileUrl,
+        ...(headers && { httpHeaders: headers }),
+        withCredentials: true,
+      };
+    }
   }
 }
