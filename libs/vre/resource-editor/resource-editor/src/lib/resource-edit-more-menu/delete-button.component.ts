@@ -14,7 +14,7 @@ import { Observable } from 'rxjs';
         [matTooltip]="
           resourceCanBeDeleted.canDo
             ? ('resourceEditor.moreMenu.moveToTrash' | translate)
-            : resourceCanBeDeleted.cannotDoReason || ('resourceEditor.moreMenu.checkingPermission' | translate)
+            : ('resourceEditor.moreMenu.cannotDeleteIncomingLinks' | translate)
         "
         matTooltipPosition="above"
         [disabled]="!resourceCanBeDeleted.canDo"

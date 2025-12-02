@@ -585,7 +585,8 @@
       "checkingPermissionErase": "Prüfen, ob die Ressource gelöscht werden kann...",
       "eraseResource": "Endgültig löschen",
       "eraseResourceTooltip": "Ressource endgültig löschen. Dies kann nicht rückgängig gemacht werden.",
-      "noPermission": "Sie haben keine Berechtigung, diese Ressource zu löschen."
+      "noPermission": "Sie haben keine Berechtigung, diese Ressource zu löschen.",
+      "cannotDeleteIncomingLinks": "Die Ressource kann nicht gelöscht werden, da sie eingehende Links hat (siehe unten)."
     },
     "infoBar": {
       "resourceOfProject": "Ressource des Projekts",

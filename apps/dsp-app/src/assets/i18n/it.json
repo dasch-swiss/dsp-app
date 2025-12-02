@@ -416,7 +416,8 @@
       "checkingPermissionErase": "Verifica se la risorsa può essere eliminata...",
       "eraseResource": "Elimina definitivamente",
       "eraseResourceTooltip": "Elimina definitivamente la risorsa. Questa azione non può essere annullata.",
-      "noPermission": "Non hai il permesso di eliminare questa risorsa."
+      "noPermission": "Non hai il permesso di eliminare questa risorsa.",
+      "cannotDeleteIncomingLinks": "La risorsa non può essere eliminata perché ha link in entrata (vedi sotto)."
     },
     "infoBar": {
       "resourceOfProject": "Risorsa del progetto",
