@@ -64,7 +64,7 @@
     "angular-imask": "^7.5.0",
     "angular-split": "^14.0.0",
     "ckeditor5-custom-build": "github:dasch-swiss/ckeditor_custom_build#v2.1.5",
-    "core-js": "^3.46.0",
+    "core-js": "^3.47.0",
     "json2typescript": "^1.6.1",
     "jwt-decode": "^3.1.2",
     "moment": "^2.29.4",
