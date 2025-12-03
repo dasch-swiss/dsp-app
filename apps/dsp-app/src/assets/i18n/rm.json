@@ -672,6 +672,10 @@
         "datePlaceholder": "Click to select a date",
         "time": "Time"
       },
+      "geonameValue": {
+        "placeholder": "Search for a location...",
+        "label": "Location"
+      },
       "example": "e.g."
     }
   },

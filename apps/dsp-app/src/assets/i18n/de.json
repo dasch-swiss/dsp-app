@@ -672,6 +672,10 @@
         "datePlaceholder": "Klicken Sie, um ein Datum auszuwählen",
         "time": "Uhrzeit"
       },
+      "geonameValue": {
+        "placeholder": "Ort suchen...",
+        "label": "Ort"
+      },
       "example": "z.B."
     }
   },
