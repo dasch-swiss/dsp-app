@@ -10,6 +10,17 @@ jest.mock('@grafana/faro-web-sdk', () => ({
   getWebInstrumentations: jest.fn(() => []),
 }));
 
+jest.mock('@grafana/faro-core', () => ({
+  LogLevel: {
+    TRACE: 'trace',
+    DEBUG: 'debug',
+    LOG: 'log',
+    INFO: 'info',
+    WARN: 'warn',
+    ERROR: 'error',
+  },
+}));
+
 jest.mock('@grafana/faro-web-tracing', () => ({
   TracingInstrumentation: jest.fn(),
 }));

@@ -1,5 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { AppConfigService } from '@dasch-swiss/vre/core/config';
+import { LogLevel } from '@grafana/faro-core';
 import { OtlpHttpTransport } from '@grafana/faro-transport-otlp-http';
 import { Faro, getWebInstrumentations, initializeFaro } from '@grafana/faro-web-sdk';
 import { TracingInstrumentation } from '@grafana/faro-web-tracing';
@@ -31,9 +32,9 @@ export class GrafanaFaroService {
           environment: this._appConfig.dspInstrumentationConfig.environment,
         },
         instrumentations: [
+          // Faro v2: getWebInstrumentations includes console instrumentation by default
           ...getWebInstrumentations({
             captureConsole: faroConfig.console.enabled,
-            captureConsoleDisabledLevels: faroConfig.console.disabledLevels as any,
           }),
           // Optional tracing instrumentation (increases bundle size)
           new TracingInstrumentation({
@@ -43,6 +44,10 @@ export class GrafanaFaroService {
           }),
         ],
         sessionTracking: faroConfig.sessionTracking,
+        // Faro v2: Console configuration at top level
+        consoleInstrumentation: {
+          disabledLevels: faroConfig.console.disabledLevels as LogLevel[],
+        },
       };
 
       // Use OTLP transport for local development with grafana/otel-lgtm
