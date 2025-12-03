@@ -74,12 +74,12 @@ export class ResourceFetcherComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   constructor(
-    private _resourceFetcherService: ResourceFetcherService,
-    private _notification: NotificationService,
-    private _route: ActivatedRoute,
-    private _router: Router,
-    private _translateService: TranslateService,
-    private _cdr: ChangeDetectorRef
+    private readonly _resourceFetcherService: ResourceFetcherService,
+    private readonly _notification: NotificationService,
+    private readonly _route: ActivatedRoute,
+    private readonly _router: Router,
+    private readonly _translateService: TranslateService,
+    private readonly _cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {

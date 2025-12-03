@@ -20,11 +20,11 @@ import { ResourceUtil } from './resource.util';
 })
 export class RepresentationService {
   constructor(
-    private _appConfigService: AppConfigService,
+    private readonly _appConfigService: AppConfigService,
     private readonly _http: HttpClient,
-    private _userService: UserService,
-    private _accessTokenService: AccessTokenService,
-    private _projectApiService: ProjectApiService
+    private readonly _userService: UserService,
+    private readonly _accessTokenService: AccessTokenService,
+    private readonly _projectApiService: ProjectApiService
   ) {}
 
   getFileInfo(url: string) {

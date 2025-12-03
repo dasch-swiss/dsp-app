@@ -15,7 +15,7 @@ class TestHostComponent implements OnInit {
 
   form: UntypedFormGroup;
 
-  constructor(private _fb: UntypedFormBuilder) {}
+  constructor(private readonly _fb: UntypedFormBuilder) {}
 
   ngOnInit(): void {
     this.form = this._fb.group({
@@ -34,7 +34,7 @@ class NoValueRequiredTestHostComponent implements OnInit {
 
   form: UntypedFormGroup;
 
-  constructor(private _fb: UntypedFormBuilder) {}
+  constructor(private readonly _fb: UntypedFormBuilder) {}
 
   ngOnInit(): void {
     this.form = this._fb.group({

@@ -61,7 +61,7 @@ export class GuiAttrLinkComponent {
   );
 
   constructor(
-    private _projectPageService: ProjectPageService,
-    private _localizationService: LocalizationService
+    private readonly _projectPageService: ProjectPageService,
+    private readonly _localizationService: LocalizationService
   ) {}
 }

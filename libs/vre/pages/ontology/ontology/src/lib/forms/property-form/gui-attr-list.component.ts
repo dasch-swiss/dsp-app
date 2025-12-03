@@ -35,7 +35,7 @@ export class GuiAttrListComponent {
   );
 
   constructor(
-    private _projectPageService: ProjectPageService,
-    private _listApiService: ListApiService
+    private readonly _projectPageService: ProjectPageService,
+    private readonly _listApiService: ListApiService
   ) {}
 }

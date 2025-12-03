@@ -111,9 +111,9 @@ export class ResourceTabsComponent implements OnInit, OnDestroy {
   }
 
   constructor(
-    private _cdr: ChangeDetectorRef,
+    private readonly _cdr: ChangeDetectorRef,
     public regionService: RegionService,
-    private _compoundService: CompoundService,
+    private readonly _compoundService: CompoundService,
     public segmentsService: SegmentsService
   ) {}
 

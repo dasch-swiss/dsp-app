@@ -31,9 +31,9 @@ export class ListItemComponent implements OnInit, OnDestroy {
   subscription!: Subscription;
 
   constructor(
-    private _listApiService: ListApiService,
-    private _listItemService: ListItemService,
-    private _cd: ChangeDetectorRef
+    private readonly _listApiService: ListApiService,
+    private readonly _listItemService: ListItemService,
+    private readonly _cd: ChangeDetectorRef
   ) {}
 
   ngOnInit() {

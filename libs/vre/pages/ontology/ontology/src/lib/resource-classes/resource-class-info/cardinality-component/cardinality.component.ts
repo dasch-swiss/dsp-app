@@ -75,8 +75,8 @@ export class CardinalityComponent implements OnInit {
   }
 
   constructor(
-    private _cdr: ChangeDetectorRef,
-    private _dialog: MatDialog
+    private readonly _cdr: ChangeDetectorRef,
+    private readonly _dialog: MatDialog
   ) {}
 
   ngOnInit() {

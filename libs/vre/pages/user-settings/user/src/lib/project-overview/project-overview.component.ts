@@ -45,8 +45,8 @@ export class ProjectOverviewComponent implements AfterViewInit {
   isSysAdmin$ = this._userService.isSysAdmin$;
 
   constructor(
-    private _userService: UserService,
-    private _allProjectsService: AllProjectsService
+    private readonly _userService: UserService,
+    private readonly _allProjectsService: AllProjectsService
   ) {}
 
   ngAfterViewInit(): void {

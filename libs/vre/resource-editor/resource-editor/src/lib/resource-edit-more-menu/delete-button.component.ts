@@ -41,8 +41,8 @@ export class DeleteButtonComponent {
   @Output() deleted = new EventEmitter<void>();
 
   constructor(
-    private _dialog: MatDialog,
-    private _viewContainerRef: ViewContainerRef
+    private readonly _dialog: MatDialog,
+    private readonly _viewContainerRef: ViewContainerRef
   ) {}
 
   deleteResource() {

@@ -55,13 +55,13 @@ export class VideoComponent implements OnChanges, OnDestroy {
   }
 
   constructor(
-    private _sanitizer: DomSanitizer,
-    public _mediaControl: MediaControlService,
-    private _notification: NotificationService,
+    private readonly _sanitizer: DomSanitizer,
+    public mediaControl: MediaControlService,
+    private readonly _notification: NotificationService,
     public segmentsService: SegmentsService,
     public videoPlayer: MediaPlayerService,
-    private _rs: RepresentationService,
-    private _cdr: ChangeDetectorRef
+    private readonly _rs: RepresentationService,
+    private readonly _cdr: ChangeDetectorRef
   ) {}
 
   ngOnChanges(): void {
@@ -84,7 +84,7 @@ export class VideoComponent implements OnChanges, OnDestroy {
     this.duration = this.videoPlayer.duration();
     this.isPlayerReady = true;
     this.loaded.emit(true);
-    this._mediaControl.mediaDurationSecs = this.videoPlayer.duration();
+    this.mediaControl.mediaDurationSecs = this.videoPlayer.duration();
     this.videoPlayer.onTimeUpdate$.subscribe(seconds => {
       this.myCurrentTime = seconds;
       this._cdr.detectChanges();
@@ -142,7 +142,7 @@ export class VideoComponent implements OnChanges, OnDestroy {
   }
 
   private _watchForMediaEvents() {
-    this._mediaControl.play$.pipe(takeUntil(this._ngUnsubscribe)).subscribe(seconds => {
+    this.mediaControl.play$.pipe(takeUntil(this._ngUnsubscribe)).subscribe(seconds => {
       if (seconds >= this.duration) {
         this._notification.openSnackBar(
           this._translateService.instant('resourceEditor.representations.video.cannotPlay')
@@ -153,7 +153,7 @@ export class VideoComponent implements OnChanges, OnDestroy {
       this.videoPlayer.play();
     });
 
-    this._mediaControl.watchForPause$.subscribe(seconds => {
+    this.mediaControl.watchForPause$.subscribe(seconds => {
       this.watchForPause = seconds;
     });
   }

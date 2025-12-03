@@ -53,7 +53,7 @@ export class CollaborationPageComponent {
 
   project$ = this._projectPageService.currentProject$.pipe(
     tap(project => {
-      this._titleService.setTitle(`Project ${project.shortname} | Collaboration`);
+      this.titleService.setTitle(`Project ${project.shortname} | Collaboration`);
     })
   );
   hasProjectAdminRights$ = this._projectPageService.hasProjectAdminRights$;
@@ -72,8 +72,8 @@ export class CollaborationPageComponent {
   );
 
   constructor(
-    protected _titleService: Title,
+    protected titleService: Title,
     public collaborationPageService: CollaborationPageService,
-    private _projectPageService: ProjectPageService
+    private readonly _projectPageService: ProjectPageService
   ) {}
 }

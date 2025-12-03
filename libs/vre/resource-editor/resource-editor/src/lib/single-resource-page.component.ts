@@ -27,7 +27,7 @@ export class SingleResourcePageComponent {
   );
 
   constructor(
-    private _route: ActivatedRoute,
-    private _resourceService: ResourceService
+    private readonly _route: ActivatedRoute,
+    private readonly _resourceService: ResourceService
   ) {}
 }

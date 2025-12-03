@@ -14,9 +14,9 @@ export class FootnoteDirective {
   private _hideTimeout?: any;
 
   constructor(
-    private _overlay: Overlay,
-    private _positionBuilder: OverlayPositionBuilder,
-    private _sanitizer: DomSanitizer
+    private readonly _overlay: Overlay,
+    private readonly _positionBuilder: OverlayPositionBuilder,
+    private readonly _sanitizer: DomSanitizer
   ) {}
 
   @HostListener('mouseover', ['$event'])

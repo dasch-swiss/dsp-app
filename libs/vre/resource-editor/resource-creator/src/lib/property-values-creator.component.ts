@@ -50,8 +50,8 @@ export class PropertyValuesCreatorComponent {
   Cardinality = Cardinality;
 
   constructor(
-    private _cd: ChangeDetectorRef,
-    private _fb: FormBuilder
+    private readonly _cd: ChangeDetectorRef,
+    private readonly _fb: FormBuilder
   ) {}
 
   templateFound(template: TemplateRef<any>) {

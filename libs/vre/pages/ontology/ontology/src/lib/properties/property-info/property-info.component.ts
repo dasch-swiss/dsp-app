@@ -40,11 +40,11 @@ export class PropertyInfoComponent {
   protected readonly _translate = inject(TranslateService);
 
   constructor(
-    private _dialog: MatDialog,
-    private _oes: OntologyEditService,
-    private _dialogService: DialogService,
-    private _projectPageService: ProjectPageService,
-    private _viewContainerRef: ViewContainerRef
+    private readonly _dialog: MatDialog,
+    private readonly _oes: OntologyEditService,
+    private readonly _dialogService: DialogService,
+    private readonly _projectPageService: ProjectPageService,
+    private readonly _viewContainerRef: ViewContainerRef
   ) {}
 
   openEditProperty(propDef: ResourcePropertyDefinitionWithAllLanguages, propType: DefaultProperty) {

@@ -120,9 +120,9 @@ export class AddPropertyMenuComponent implements OnChanges {
   );
 
   constructor(
-    private _dialog: MatDialog,
-    private _oes: OntologyEditService,
-    private _viewContainerRef: ViewContainerRef
+    private readonly _dialog: MatDialog,
+    private readonly _oes: OntologyEditService,
+    private readonly _viewContainerRef: ViewContainerRef
   ) {}
 
   ngOnChanges() {

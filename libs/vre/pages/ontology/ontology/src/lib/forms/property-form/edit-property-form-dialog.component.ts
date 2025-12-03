@@ -49,14 +49,14 @@ export class EditPropertyFormDialogComponent implements OnInit {
   }
 
   constructor(
-    private dialogRef: MatDialogRef<EditPropertyFormDialogComponent>,
+    private readonly _dialogRef: MatDialogRef<EditPropertyFormDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: CreatePropertyDialogData | EditPropertyDialogData,
     private _oes: OntologyEditService,
     private _projectPageService: ProjectPageService
   ) {}
 
   ngOnInit() {
-    this.dialogRef.updateSize('800px', '');
+    this._dialogRef.updateSize('800px', '');
   }
 
   onSubmit() {
@@ -74,7 +74,7 @@ export class EditPropertyFormDialogComponent implements OnInit {
         .updateProperty$(propertyData)
         .pipe(take(1))
         .subscribe(_ => {
-          this.dialogRef.close();
+          this._dialogRef.close();
         });
     } else {
       propertyData = {
@@ -90,7 +90,7 @@ export class EditPropertyFormDialogComponent implements OnInit {
         .pipe(take(1))
         .subscribe(_ => {
           this._projectPageService.reloadProject();
-          this.dialogRef.close();
+          this._dialogRef.close();
         });
     }
   }

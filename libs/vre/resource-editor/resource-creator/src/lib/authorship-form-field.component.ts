@@ -81,8 +81,8 @@ export class AuthorshipFormFieldComponent implements OnInit, OnDestroy {
   readonly _translateService = inject(TranslateService);
 
   constructor(
-    private _paginatedApi: PaginatedApiService,
-    private _cdr: ChangeDetectorRef
+    private readonly _paginatedApi: PaginatedApiService,
+    private readonly _cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {

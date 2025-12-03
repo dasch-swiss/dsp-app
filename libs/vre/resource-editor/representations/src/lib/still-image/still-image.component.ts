@@ -55,9 +55,9 @@ export class StillImageComponent implements OnChanges, AfterViewInit, OnDestroy 
   isPng = false;
 
   constructor(
-    private _cdr: ChangeDetectorRef,
+    private readonly _cdr: ChangeDetectorRef,
     protected osdService: OpenSeaDragonService,
-    private _osdDrawerService: OsdDrawerService
+    private readonly _osdDrawerService: OsdDrawerService
   ) {}
 
   ngOnChanges(changes: SimpleChanges): void {

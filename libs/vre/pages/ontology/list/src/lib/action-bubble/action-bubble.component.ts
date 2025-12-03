@@ -83,10 +83,10 @@ export class ActionBubbleComponent {
   protected readonly _translate = inject(TranslateService);
 
   constructor(
-    private _dialog: DialogService,
-    private _matDialog: MatDialog,
-    private _listItemService: ListItemService,
-    private _listApiService: ListApiService
+    private readonly _dialog: DialogService,
+    private readonly _matDialog: MatDialog,
+    private readonly _listItemService: ListItemService,
+    private readonly _listApiService: ListApiService
   ) {}
 
   askToDeleteListNode() {

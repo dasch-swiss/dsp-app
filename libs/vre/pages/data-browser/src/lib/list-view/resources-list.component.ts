@@ -36,8 +36,8 @@ export class ResourcesListComponent {
 
   constructor(
     public resourceResultService: ResourceResultService,
-    private _router: Router,
-    private _route: ActivatedRoute
+    private readonly _router: Router,
+    private readonly _route: ActivatedRoute
   ) {}
 
   updatePageIndex(index: number) {

@@ -50,9 +50,9 @@ export class ResourceClassFormComponent implements OnInit {
   readonly commentsValidators = [Validators.maxLength(2000)];
 
   constructor(
-    private _fb: FormBuilder,
-    private _oes: OntologyEditService,
-    private _localizationService: LocalizationService
+    private readonly _fb: FormBuilder,
+    private readonly _oes: OntologyEditService,
+    private readonly _localizationService: LocalizationService
   ) {}
 
   ngOnInit() {

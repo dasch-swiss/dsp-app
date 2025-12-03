@@ -120,13 +120,13 @@ export class OntologyEditorHeaderComponent {
   protected readonly _translate = inject(TranslateService);
 
   constructor(
-    private _dialog: MatDialog,
-    private _dialogService: DialogService,
-    private _projectPageService: ProjectPageService,
-    private _oes: OntologyEditService,
-    private _router: Router,
-    private _route: ActivatedRoute,
-    private _viewContainerRef: ViewContainerRef
+    private readonly _dialog: MatDialog,
+    private readonly _dialogService: DialogService,
+    private readonly _projectPageService: ProjectPageService,
+    private readonly _oes: OntologyEditService,
+    private readonly _router: Router,
+    private readonly _route: ActivatedRoute,
+    private readonly _viewContainerRef: ViewContainerRef
   ) {}
 
   editOntology(ontology: ReadOntology | OntologyMetadata) {

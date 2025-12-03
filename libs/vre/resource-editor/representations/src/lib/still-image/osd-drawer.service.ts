@@ -32,13 +32,12 @@ export class OsdDrawerService implements OnDestroy {
   private _ngUnsubscribe = new Subject<void>();
 
   constructor(
-    private _osd: OpenSeaDragonService,
-    private _regionService: RegionService,
-    @Inject(DspApiConnectionToken)
-    private _dspApiConnection: KnoraApiConnection,
-    private _dialog: MatDialog,
-    private _cdr: ChangeDetectorRef,
-    private _resourceService: ResourceService
+    @Inject(DspApiConnectionToken) private readonly _dspApiConnection: KnoraApiConnection,
+    private readonly _cdr: ChangeDetectorRef,
+    private readonly _dialog: MatDialog,
+    private readonly _osd: OpenSeaDragonService,
+    private readonly _regionService: RegionService,
+    private readonly _resourceService: ResourceService
   ) {}
 
   onInit(resource: ReadResource): void {

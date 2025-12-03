@@ -26,7 +26,7 @@ export class AllProjectsService {
   );
 
   constructor(
-    private _projectApiService: ProjectApiService,
-    private _userService: UserService
+    private readonly _projectApiService: ProjectApiService,
+    private readonly _userService: UserService
   ) {}
 }

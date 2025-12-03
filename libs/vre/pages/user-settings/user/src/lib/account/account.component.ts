@@ -65,13 +65,13 @@ export class AccountComponent {
   user$ = this._userService.user$;
 
   constructor(
-    private _userApiService: UserApiService,
-    private _dialog: DialogService,
-    private _matDialog: MatDialog,
-    private _titleService: Title,
-    private _userService: UserService,
-    private _authService: AuthService,
-    private _translateService: TranslateService
+    private readonly _userApiService: UserApiService,
+    private readonly _dialog: DialogService,
+    private readonly _matDialog: MatDialog,
+    private readonly _titleService: Title,
+    private readonly _userService: UserService,
+    private readonly _authService: AuthService,
+    private readonly _translateService: TranslateService
   ) {
     this._titleService.setTitle('Your account');
   }

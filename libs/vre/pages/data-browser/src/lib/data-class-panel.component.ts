@@ -38,11 +38,11 @@ export class DataClassPanelComponent {
   hasProjectMemberRights$ = this._projectPageService.hasProjectMemberRights$;
 
   constructor(
-    private _dialog: MatDialog,
-    private _viewContainerRef: ViewContainerRef,
-    private _projectPageService: ProjectPageService,
-    private _stringifyStringLiteralPipe: StringifyStringLiteralPipe,
-    private _dataBrowserPageService: DataBrowserPageService
+    private readonly _dialog: MatDialog,
+    private readonly _viewContainerRef: ViewContainerRef,
+    private readonly _projectPageService: ProjectPageService,
+    private readonly _stringifyStringLiteralPipe: StringifyStringLiteralPipe,
+    private readonly _dataBrowserPageService: DataBrowserPageService
   ) {}
 
   goToAddClassInstance() {

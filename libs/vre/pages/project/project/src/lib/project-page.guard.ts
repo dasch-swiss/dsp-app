@@ -9,8 +9,8 @@ import { ProjectPageService } from './project-page.service';
 })
 export class ProjectPageGuard implements CanActivate {
   constructor(
-    private _projectPageService: ProjectPageService,
-    private _router: Router
+    private readonly _projectPageService: ProjectPageService,
+    private readonly _router: Router
   ) {}
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean | UrlTree> {
     const projectUuid = route.params[RouteConstants.uuidParameter];

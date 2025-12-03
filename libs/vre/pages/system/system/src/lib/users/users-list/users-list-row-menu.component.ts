@@ -59,11 +59,11 @@ export class UsersListRowMenuComponent {
   user$ = this._userService.user$;
 
   constructor(
-    private _matDialog: MatDialog,
-    private _userService: UserService,
-    private _dialog: DialogService,
+    private readonly _matDialog: MatDialog,
+    private readonly _userService: UserService,
+    private readonly _dialog: DialogService,
     private readonly _userApiService: UserApiService,
-    private _usersTabService: UsersTabService
+    private readonly _usersTabService: UsersTabService
   ) {}
 
   isSystemAdmin(permissions: PermissionsData): boolean {

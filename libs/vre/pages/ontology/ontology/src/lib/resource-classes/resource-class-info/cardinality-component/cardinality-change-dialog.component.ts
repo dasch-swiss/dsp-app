@@ -114,10 +114,10 @@ export class CardinalityChangeDialogComponent implements OnInit {
   }
 
   constructor(
-    protected dialogRef: MatDialogRef<CardinalityChangeDialogComponent, boolean>,
+    @Inject(DspApiConnectionToken) private readonly _dspApiConnection: KnoraApiConnection,
     @Inject(MAT_DIALOG_DATA) public data: CardinalityInfo,
-    @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
-    private _cdr: ChangeDetectorRef
+    private readonly _cdr: ChangeDetectorRef,
+    protected dialogRef: MatDialogRef<CardinalityChangeDialogComponent, boolean>
   ) {}
 
   ngOnInit() {

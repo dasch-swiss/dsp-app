@@ -28,12 +28,12 @@ export class DataModelsPageComponent {
   );
 
   constructor(
-    private _dialog: MatDialog,
-    private _projectPageService: ProjectPageService,
-    private _listApiService: ListApiService,
-    private _viewContainerRef: ViewContainerRef,
-    public _route: ActivatedRoute,
-    private _router: Router
+    private readonly _dialog: MatDialog,
+    private readonly _projectPageService: ProjectPageService,
+    private readonly _listApiService: ListApiService,
+    private readonly _viewContainerRef: ViewContainerRef,
+    public route: ActivatedRoute,
+    private readonly _router: Router
   ) {}
 
   trackByFn = (index: number, item: ListNodeInfo) => `${index}-${item.id}`;
@@ -43,7 +43,7 @@ export class DataModelsPageComponent {
   navigateToList(id: string) {
     const listName = id.split('/').pop();
     this._router.navigate([RouteConstants.list, encodeURIComponent(listName)], {
-      relativeTo: this._route.parent,
+      relativeTo: this.route.parent,
     });
   }
 
@@ -52,7 +52,7 @@ export class DataModelsPageComponent {
     this._router.navigate(
       [RouteConstants.ontology, encodeURIComponent(ontoName), RouteConstants.editor, RouteConstants.classes],
       {
-        relativeTo: this._route.parent,
+        relativeTo: this.route.parent,
       }
     );
   }

@@ -58,11 +58,11 @@ export class EraseProjectDialogComponent {
   isLoading = false;
 
   constructor(
+    @Inject(DspApiConnectionToken) private readonly _dspApiConnection: KnoraApiConnection,
     @Inject(MAT_DIALOG_DATA) public data: IEraseProjectDialogProps,
-    private _dialogRef: MatDialogRef<EraseProjectDialogComponent>,
-    @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
-    private _projectApiService: ProjectApiService,
-    private _userService: UserService
+    private readonly _dialogRef: MatDialogRef<EraseProjectDialogComponent>,
+    private readonly _projectApiService: ProjectApiService,
+    private readonly _userService: UserService
   ) {}
 
   submit() {

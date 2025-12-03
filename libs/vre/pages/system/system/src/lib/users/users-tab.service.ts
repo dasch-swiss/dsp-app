@@ -24,8 +24,8 @@ export class UsersTabService {
   );
 
   constructor(
-    private _userApiService: UserApiService,
-    private _cdr: ChangeDetectorRef
+    private readonly _userApiService: UserApiService,
+    private readonly _cdr: ChangeDetectorRef
   ) {}
 
   reloadUsers() {

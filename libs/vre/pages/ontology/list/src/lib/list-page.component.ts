@@ -42,14 +42,14 @@ export class ListPageComponent implements OnInit, OnDestroy {
   private readonly _translate = inject(TranslateService);
 
   constructor(
-    private _dialog: DialogService,
-    private _listItemService: ListItemService,
-    private _matDialog: MatDialog,
-    private _projectPageService: ProjectPageService,
-    private _route: ActivatedRoute,
-    private _router: Router,
-    private _viewContainerRef: ViewContainerRef,
-    private _listApiService: ListApiService
+    private readonly _dialog: DialogService,
+    private readonly _listItemService: ListItemService,
+    private readonly _matDialog: MatDialog,
+    private readonly _projectPageService: ProjectPageService,
+    private readonly _route: ActivatedRoute,
+    private readonly _router: Router,
+    private readonly _viewContainerRef: ViewContainerRef,
+    private readonly _listApiService: ListApiService
   ) {}
 
   ngOnInit() {

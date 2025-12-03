@@ -11,8 +11,8 @@ export class FootnoteParserPipe implements PipeTransform {
   private readonly _footnoteRegExp = /<footnote content="([^>]+)"\/>/g;
 
   constructor(
-    private _sanitizer: DomSanitizer,
-    private _footnoteService: FootnoteService
+    private readonly _sanitizer: DomSanitizer,
+    private readonly _footnoteService: FootnoteService
   ) {}
 
   transform(value_: null | string | SafeHtml, valueIndex: number): SafeHtml | null {

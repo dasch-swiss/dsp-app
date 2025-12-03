@@ -48,9 +48,9 @@ export class ListItemFormComponent {
   }
 
   constructor(
-    private _listApiService: ListApiService,
-    private _listItemService: ListItemService,
-    private _fb: FormBuilder
+    private readonly _listApiService: ListApiService,
+    private readonly _listItemService: ListItemService,
+    private readonly _fb: FormBuilder
   ) {}
 
   createChildNode() {

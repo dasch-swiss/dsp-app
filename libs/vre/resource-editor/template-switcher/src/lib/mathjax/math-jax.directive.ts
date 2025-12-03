@@ -7,8 +7,8 @@ import { MathJaxService } from './math-jax.service';
 })
 export class MathJaxDirective implements OnInit {
   constructor(
-    private _ele: ElementRef,
-    private _mathJaxService: MathJaxService
+    private readonly _ele: ElementRef,
+    private readonly _mathJaxService: MathJaxService
   ) {}
 
   ngOnInit() {

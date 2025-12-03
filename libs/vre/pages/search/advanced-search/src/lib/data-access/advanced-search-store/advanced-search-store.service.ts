@@ -179,8 +179,8 @@ export class AdvancedSearchStoreService extends ComponentStore<AdvancedSearchSta
   defaultOntology: ApiData | undefined;
 
   constructor(
-    private _advancedSearchService: AdvancedSearchService,
-    private _gravsearchService: GravsearchService
+    private readonly _advancedSearchService: AdvancedSearchService,
+    private readonly _gravsearchService: GravsearchService
   ) {
     super();
   }

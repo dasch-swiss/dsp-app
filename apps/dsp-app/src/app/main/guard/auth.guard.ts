@@ -9,9 +9,9 @@ import { Observable, filter, switchMap, tap } from 'rxjs';
 })
 export class AuthGuard implements CanActivate {
   constructor(
-    @Inject(DOCUMENT) private document: Document,
-    private _autoLoginService: AutoLoginService,
-    private _userService: UserService
+    @Inject(DOCUMENT) private readonly _document: Document,
+    private readonly _autoLoginService: AutoLoginService,
+    private readonly _userService: UserService
   ) {}
 
   canActivate(): Observable<boolean> {
@@ -27,6 +27,6 @@ export class AuthGuard implements CanActivate {
   }
 
   private _goToHomePage() {
-    this.document.defaultView.location.href = `${RouteConstants.home}?returnLink=${this.document.defaultView.location.href}`;
+    this._document.defaultView.location.href = `${RouteConstants.home}?returnLink=${this._document.defaultView.location.href}`;
   }
 }

@@ -77,9 +77,9 @@ export class LegalSettingsComponent {
   authorships$ = this.project$.pipe(switchMap(project => this._paginatedApi.getAuthorships(project.shortcode)));
 
   constructor(
-    private _dialog: MatDialog,
-    private _paginatedApi: PaginatedApiService,
-    private _projectPageService: ProjectPageService
+    private readonly _dialog: MatDialog,
+    private readonly _paginatedApi: PaginatedApiService,
+    private readonly _projectPageService: ProjectPageService
   ) {}
 
   addCopyrightHolder() {

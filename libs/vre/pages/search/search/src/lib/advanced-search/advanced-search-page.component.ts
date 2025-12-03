@@ -19,9 +19,9 @@ export class AdvancedSearchPageComponent implements OnInit {
   uuid: string;
 
   constructor(
-    private _router: Router,
-    private _route: ActivatedRoute,
-    private _location: Location
+    private readonly _router: Router,
+    private readonly _route: ActivatedRoute,
+    private readonly _location: Location
   ) {}
 
   ngOnInit(): void {

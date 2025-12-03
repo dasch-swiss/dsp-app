@@ -54,17 +54,16 @@ export class ResourceClassInfoComponent implements OnInit, OnDestroy {
   protected readonly _translate = inject(TranslateService);
 
   constructor(
-    public ops: OntologyPageService,
-    private _cd: ChangeDetectorRef,
-    private _clipboard: Clipboard,
-    private _dialog: MatDialog,
-    private _dialogService: DialogService,
-    private _notification: NotificationService,
-    private _oes: OntologyEditService,
-    private _projectPageService: ProjectPageService,
-    @Inject(DspApiConnectionToken)
-    private _dspApiConnection: KnoraApiConnection,
-    private _viewContainerRef: ViewContainerRef
+    @Inject(DspApiConnectionToken) private readonly _dspApiConnection: KnoraApiConnection,
+    private _viewContainerRef: ViewContainerRef,
+    private readonly _cd: ChangeDetectorRef,
+    private readonly _clipboard: Clipboard,
+    private readonly _dialog: MatDialog,
+    private readonly _dialogService: DialogService,
+    private readonly _notification: NotificationService,
+    private readonly _oes: OntologyEditService,
+    private readonly _projectPageService: ProjectPageService,
+    public ops: OntologyPageService
   ) {}
 
   ngOnInit() {

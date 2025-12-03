@@ -61,9 +61,9 @@ export class PropertyValueActionBubbleComponent implements OnInit {
   infoTooltip$!: Observable<string>;
 
   constructor(
-    private _resourceFetcherService: ResourceFetcherService,
-    private _propertyValueService: PropertyValueService,
-    private _translateService: TranslateService
+    private readonly _resourceFetcherService: ResourceFetcherService,
+    private readonly _propertyValueService: PropertyValueService,
+    private readonly _translateService: TranslateService
   ) {}
 
   get disableDeleteButton(): boolean {

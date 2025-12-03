@@ -22,9 +22,9 @@ export class ProjectPageComponent implements OnInit {
   protected readonly RouteConstants = RouteConstants;
 
   constructor(
-    protected _route: ActivatedRoute,
-    private _titleService: Title,
-    private _projectPageService: ProjectPageService
+    protected route: ActivatedRoute,
+    private readonly _titleService: Title,
+    private readonly _projectPageService: ProjectPageService
   ) {}
 
   ngOnInit() {

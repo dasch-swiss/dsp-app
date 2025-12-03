@@ -6,8 +6,8 @@ import { AccessTokenService } from '@dasch-swiss/vre/core/session';
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
   constructor(
-    private _appConfigService: AppConfigService,
-    private _accessTokenService: AccessTokenService
+    private readonly _appConfigService: AppConfigService,
+    private readonly _accessTokenService: AccessTokenService
   ) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler) {

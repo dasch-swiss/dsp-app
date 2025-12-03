@@ -15,9 +15,9 @@ export class CustomTooltipDirective implements OnDestroy {
   private hideTimeout: any;
 
   constructor(
-    private overlay: Overlay,
-    private elementRef: ElementRef,
-    private _viewContainerRef: ViewContainerRef
+    private readonly _overlay: Overlay,
+    private readonly _elementRef: ElementRef,
+    private readonly _viewContainerRef: ViewContainerRef
   ) {}
 
   @HostListener('mouseenter')
@@ -27,9 +27,9 @@ export class CustomTooltipDirective implements OnDestroy {
     }
     this.clearHideTimeout();
 
-    const positionStrategy = this.overlay
+    const positionStrategy = this._overlay
       .position()
-      .flexibleConnectedTo(this.elementRef)
+      .flexibleConnectedTo(this._elementRef)
       .withPositions([
         {
           originX: 'center',
@@ -40,7 +40,7 @@ export class CustomTooltipDirective implements OnDestroy {
         },
       ]);
 
-    this.overlayRef = this.overlay.create({ positionStrategy });
+    this.overlayRef = this._overlay.create({ positionStrategy });
     const tooltipPortal = new ComponentPortal(SegmentTooltipComponent, this._viewContainerRef);
     const componentRef = this.overlayRef.attach(tooltipPortal);
     componentRef.instance.segment = this.appCustomTooltip;

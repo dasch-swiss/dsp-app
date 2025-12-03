@@ -56,7 +56,7 @@ export class AnnotationTabComponent implements AfterViewInit, OnDestroy {
   private _destroy$ = new Subject<void>();
 
   constructor(
-    private _cdr: ChangeDetectorRef,
+    private readonly _cdr: ChangeDetectorRef,
     public regionService: RegionService
   ) {}
 

@@ -47,7 +47,7 @@ export class ListItemElementComponent implements OnChanges {
 
   readOnlyFormArray: MultiLanguageFormArray = DEFAULT_MULTILANGUAGE_FORM([]);
 
-  constructor(private _translate: TranslateService) {}
+  constructor(private readonly _translate: TranslateService) {}
 
   ngOnChanges() {
     this.buildForm();

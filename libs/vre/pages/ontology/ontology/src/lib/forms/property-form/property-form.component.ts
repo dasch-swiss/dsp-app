@@ -82,9 +82,9 @@ export class PropertyFormComponent implements OnInit {
   }
 
   constructor(
-    private _fb: FormBuilder,
-    private _localizationService: LocalizationService,
-    private _oes: OntologyEditService
+    private readonly _fb: FormBuilder,
+    private readonly _localizationService: LocalizationService,
+    private readonly _oes: OntologyEditService
   ) {}
 
   ngOnInit() {

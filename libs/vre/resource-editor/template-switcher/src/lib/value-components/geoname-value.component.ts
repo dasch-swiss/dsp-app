@@ -36,8 +36,8 @@ export class GeonameValueComponent implements OnInit {
 
   loading = false;
   constructor(
-    private _geonameService: GeonameService,
-    private _cdr: ChangeDetectorRef
+    private readonly _geonameService: GeonameService,
+    private readonly _cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {

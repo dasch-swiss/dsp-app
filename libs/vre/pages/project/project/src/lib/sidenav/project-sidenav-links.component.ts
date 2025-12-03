@@ -56,8 +56,8 @@ export class ProjectSidenavLinksComponent {
   );
 
   constructor(
-    private _projectPageService: ProjectPageService,
-    private _route: ActivatedRoute,
-    private _router: Router
+    private readonly _projectPageService: ProjectPageService,
+    private readonly _route: ActivatedRoute,
+    private readonly _router: Router
   ) {}
 }

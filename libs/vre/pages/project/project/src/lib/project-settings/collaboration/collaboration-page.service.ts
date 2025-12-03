@@ -33,8 +33,8 @@ export class CollaborationPageService {
   );
 
   constructor(
-    private _adminApiService: AdminAPIApiService,
-    private _projectPageService: ProjectPageService
+    private readonly _adminApiService: AdminAPIApiService,
+    private readonly _projectPageService: ProjectPageService
   ) {}
 
   reloadProjectMembers() {

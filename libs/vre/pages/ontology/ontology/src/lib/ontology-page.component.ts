@@ -48,10 +48,10 @@ export class OntologyPageComponent implements OnInit {
   isTransacting$ = this._oes.isTransacting$;
 
   constructor(
-    private _route: ActivatedRoute,
-    private _titleService: Title,
-    private _projectPageService: ProjectPageService,
-    private _oes: OntologyEditService
+    private readonly _route: ActivatedRoute,
+    private readonly _titleService: Title,
+    private readonly _projectPageService: ProjectPageService,
+    private readonly _oes: OntologyEditService
   ) {}
 
   @HostListener('window:resize', ['$event']) onWindowResize() {

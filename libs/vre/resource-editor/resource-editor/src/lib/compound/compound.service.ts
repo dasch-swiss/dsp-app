@@ -19,7 +19,7 @@ export class CompoundService {
   private _resource?: DspResource;
 
   constructor(
-    private _cd: ChangeDetectorRef,
+    private readonly _cd: ChangeDetectorRef,
     @Inject(DspApiConnectionToken) private _dspApi: KnoraApiConnection,
     private _regionService: RegionService
   ) {}

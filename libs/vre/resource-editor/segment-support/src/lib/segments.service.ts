@@ -11,8 +11,8 @@ export class SegmentsService {
   highlightSegment$ = this._highlightSegment.asObservable();
 
   constructor(
-    private _segmentApi: SegmentApiService,
-    private _cdr: ChangeDetectorRef
+    private readonly _segmentApi: SegmentApiService,
+    private readonly _cdr: ChangeDetectorRef
   ) {}
 
   onInit(resourceIri: string, type: 'VideoSegment' | 'AudioSegment') {

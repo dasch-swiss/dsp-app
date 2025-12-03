@@ -18,10 +18,9 @@ export class PropertyValueUpdateComponent {
   @Input({ required: true }) index!: number;
 
   constructor(
-    public propertyValueService: PropertyValueService,
-    private _resourceFetcherService: ResourceFetcherService,
-    @Inject(DspApiConnectionToken)
-    private _dspApiConnection: KnoraApiConnection
+    @Inject(DspApiConnectionToken) private readonly _dspApiConnection: KnoraApiConnection,
+    private readonly _resourceFetcherService: ResourceFetcherService,
+    public propertyValueService: PropertyValueService
   ) {}
 
   goToDisplayMode() {

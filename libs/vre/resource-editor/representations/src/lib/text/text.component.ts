@@ -27,9 +27,9 @@ export class TextComponent implements OnChanges {
   private readonly _translateService = inject(TranslateService);
 
   constructor(
-    private _dialog: MatDialog,
-    private _rs: RepresentationService,
-    private _viewContainerRef: ViewContainerRef,
+    private readonly _dialog: MatDialog,
+    private readonly _rs: RepresentationService,
+    private readonly _viewContainerRef: ViewContainerRef,
     public resourceFetcherService: ResourceFetcherService
   ) {}
 

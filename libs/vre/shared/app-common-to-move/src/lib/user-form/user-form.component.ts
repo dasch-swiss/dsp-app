@@ -62,8 +62,8 @@ export class UserFormComponent implements OnInit {
   };
 
   constructor(
-    private _fb: FormBuilder,
-    private _ts: TranslateService
+    private readonly _fb: FormBuilder,
+    private readonly _ts: TranslateService
   ) {}
 
   ngOnInit() {

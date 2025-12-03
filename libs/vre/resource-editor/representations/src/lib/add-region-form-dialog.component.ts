@@ -50,9 +50,8 @@ export class AddRegionFormDialogComponent {
   });
 
   constructor(
-    private _fb: FormBuilder,
-    @Inject(MAT_DIALOG_DATA)
-    public data: AddRegionFormDialogProps
+    private readonly _fb: FormBuilder,
+    @Inject(MAT_DIALOG_DATA) public data: AddRegionFormDialogProps
   ) {
     this.projectShortcode = data.projectShortcode;
   }

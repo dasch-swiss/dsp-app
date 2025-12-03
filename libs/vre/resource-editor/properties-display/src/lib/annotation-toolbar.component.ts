@@ -119,8 +119,8 @@ export class AnnotationToolbarComponent {
 
   constructor(
     protected notification: NotificationService,
-    private _regionService: RegionService,
-    private _resourceService: ResourceService,
+    private readonly _regionService: RegionService,
+    private readonly _resourceService: ResourceService,
     public resourceFetcher: ResourceFetcherService
   ) {}
 

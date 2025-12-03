@@ -42,13 +42,13 @@ export class AudioComponent implements OnInit, OnChanges, OnDestroy {
   private readonly _translateService = inject(TranslateService);
 
   constructor(
-    private _sanitizer: DomSanitizer,
+    private readonly _sanitizer: DomSanitizer,
     public segmentsService: SegmentsService,
-    private _mediaControl: MediaControlService,
-    private _notification: NotificationService,
+    private readonly _mediaControl: MediaControlService,
+    private readonly _notification: NotificationService,
     public mediaPlayer: MediaPlayerService,
-    private _rs: RepresentationService,
-    private _cd: ChangeDetectorRef
+    private readonly _rs: RepresentationService,
+    private readonly _cd: ChangeDetectorRef
   ) {}
 
   ngOnInit() {

@@ -105,7 +105,7 @@ export class UsersListComponent {
     private readonly _matDialog: MatDialog,
     private readonly _userService: UserService,
     private readonly _ts: TranslateService,
-    private _usersTabService: UsersTabService
+    private readonly _usersTabService: UsersTabService
   ) {}
 
   trackByFn = (index: number, item: ReadUser) => `${index}-${item.id}`;

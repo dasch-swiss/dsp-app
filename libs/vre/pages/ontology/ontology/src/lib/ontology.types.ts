@@ -25,7 +25,7 @@ export interface ClassPropertyInfo extends PropertyInfo {
 
 export class ResourceClassInfo {
   constructor(
-    private _resClass: ResourceClassDefinitionWithAllLanguages,
+    private readonly _resClass: ResourceClassDefinitionWithAllLanguages,
     public properties: ClassPropertyInfo[]
   ) {}
 

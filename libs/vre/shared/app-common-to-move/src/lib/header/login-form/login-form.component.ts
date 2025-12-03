@@ -71,11 +71,10 @@ export class LoginFormComponent implements OnInit, OnDestroy {
   private formSubscription?: Subscription;
 
   constructor(
-    private _fb: FormBuilder,
-    private _authService: AuthService,
-    private _translateService: TranslateService,
-    @Inject(DspApiConnectionToken)
-    private readonly _dspApiConnection: KnoraApiConnection
+    private readonly _fb: FormBuilder,
+    private readonly _authService: AuthService,
+    private readonly _translateService: TranslateService,
+    @Inject(DspApiConnectionToken) private readonly _dspApiConnection: KnoraApiConnection
   ) {}
 
   ngOnInit(): void {

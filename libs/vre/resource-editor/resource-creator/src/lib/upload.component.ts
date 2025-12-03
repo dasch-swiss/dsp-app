@@ -110,9 +110,9 @@ export class UploadComponent {
   readonly _translateService = inject(TranslateService);
 
   constructor(
-    private _notification: NotificationService,
-    private _upload: UploadFileService,
-    private _cdr: ChangeDetectorRef
+    private readonly _notification: NotificationService,
+    private readonly _upload: UploadFileService,
+    private readonly _cdr: ChangeDetectorRef
   ) {}
 
   addFileFromClick(event: any) {

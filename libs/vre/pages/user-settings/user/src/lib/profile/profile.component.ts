@@ -57,8 +57,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
   user$ = this._userService.user$;
 
   constructor(
-    private _userService: UserService,
-    private _titleService: Title
+    private readonly _userService: UserService,
+    private readonly _titleService: Title
   ) {}
 
   ngOnInit() {

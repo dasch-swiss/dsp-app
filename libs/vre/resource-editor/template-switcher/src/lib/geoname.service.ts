@@ -46,7 +46,7 @@ export interface GeonameResponse {
 export class GeonameService {
   constructor(
     private readonly _http: HttpClient,
-    private _appConfigService: AppConfigService
+    private readonly _appConfigService: AppConfigService
   ) {}
 
   /**

@@ -22,7 +22,7 @@ export class SegmentTabComponent implements OnInit, OnDestroy {
 
   constructor(
     public segmentsService: SegmentsService,
-    private _cdr: ChangeDetectorRef
+    private readonly _cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {

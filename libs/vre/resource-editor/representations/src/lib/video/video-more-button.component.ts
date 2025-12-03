@@ -47,10 +47,10 @@ export class VideoMoreButtonComponent {
   readonly _translateService = inject(TranslateService);
 
   constructor(
-    private _notification: NotificationService,
-    private _dialog: MatDialog,
-    private _rs: RepresentationService,
-    private _viewContainerRef: ViewContainerRef,
+    private readonly _notification: NotificationService,
+    private readonly _dialog: MatDialog,
+    private readonly _rs: RepresentationService,
+    private readonly _viewContainerRef: ViewContainerRef,
     public resourceFetcherService: ResourceFetcherService
   ) {}
 

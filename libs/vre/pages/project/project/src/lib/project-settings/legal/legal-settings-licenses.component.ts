@@ -46,8 +46,8 @@ export class LegalSettingsLicensesComponent {
   nonRecommendedLicenses$ = this.licenses$.pipe(map(licenses => licenses.filter(license => !license.isRecommended)));
 
   constructor(
-    private _paginatedApi: PaginatedApiService,
-    private _projectPageService: ProjectPageService
+    private readonly _paginatedApi: PaginatedApiService,
+    private readonly _projectPageService: ProjectPageService
   ) {}
 
   refresh() {

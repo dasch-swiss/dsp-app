@@ -41,6 +41,6 @@ export class OntologyPropertiesComponent {
 
   constructor(
     public oes: OntologyEditService,
-    private _projectPageService: ProjectPageService
+    private readonly _projectPageService: ProjectPageService
   ) {}
 }

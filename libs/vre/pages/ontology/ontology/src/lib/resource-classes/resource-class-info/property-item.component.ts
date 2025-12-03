@@ -224,13 +224,13 @@ export class PropertyItemComponent implements OnInit, AfterViewInit, OnDestroy {
   protected readonly _translate = inject(TranslateService);
 
   constructor(
-    private _cdr: ChangeDetectorRef,
-    private _clipboard: Clipboard,
-    private _dialog: MatDialog,
-    private _notification: NotificationService,
-    private _oes: OntologyEditService,
-    private _projectPageService: ProjectPageService,
-    private _viewContainerRef: ViewContainerRef
+    private readonly _cdr: ChangeDetectorRef,
+    private readonly _clipboard: Clipboard,
+    private readonly _dialog: MatDialog,
+    private readonly _notification: NotificationService,
+    private readonly _oes: OntologyEditService,
+    private readonly _projectPageService: ProjectPageService,
+    private readonly _viewContainerRef: ViewContainerRef
   ) {}
 
   ngOnInit() {

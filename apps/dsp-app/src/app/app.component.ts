@@ -13,10 +13,10 @@ import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services
 })
 export class AppComponent {
   constructor(
-    private _titleService: Title,
-    private _autoLoginService: AutoLoginService,
-    private _localStorageWatcher: LocalStorageWatcherService,
-    private _localizationService: LocalizationService
+    private readonly _titleService: Title,
+    private readonly _autoLoginService: AutoLoginService,
+    private readonly _localStorageWatcher: LocalStorageWatcherService,
+    private readonly _localizationService: LocalizationService
   ) {
     this._autoLoginService.setup();
     this._localStorageWatcher.watchAccessToken();

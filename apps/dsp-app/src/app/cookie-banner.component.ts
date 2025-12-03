@@ -24,7 +24,7 @@ import { RouteConstants } from '@dasch-swiss/vre/core/config';
 export class CookieBannerComponent implements OnInit {
   showCookieBanner = true;
 
-  constructor(private _router: Router) {}
+  constructor(private readonly _router: Router) {}
 
   ngOnInit() {
     if (localStorage.getItem('cookieBanner') === null) {

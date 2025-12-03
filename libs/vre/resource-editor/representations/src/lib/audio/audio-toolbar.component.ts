@@ -46,12 +46,12 @@ export class AudioToolbarComponent implements OnInit {
   durationString!: string;
 
   constructor(
-    private _dialog: MatDialog,
-    private _domSanitizer: DomSanitizer,
-    private _matIconRegistry: MatIconRegistry,
-    public mediaPlayer: MediaPlayerService,
-    private _viewContainerRef: ViewContainerRef,
-    public resourceFetcherService: ResourceFetcherService
+    private readonly _dialog: MatDialog,
+    private readonly _domSanitizer: DomSanitizer,
+    private readonly _matIconRegistry: MatIconRegistry,
+    public readonly mediaPlayer: MediaPlayerService,
+    private readonly _viewContainerRef: ViewContainerRef,
+    public readonly resourceFetcherService: ResourceFetcherService
   ) {}
 
   ngOnInit() {

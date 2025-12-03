@@ -18,11 +18,10 @@ import { SegmentOrdering } from './segment-ordering';
 })
 export class SegmentApiService {
   constructor(
-    private _http: HttpClient,
-    private _accessTokenService: AccessTokenService,
-    @Inject(DspApiConnectionToken)
-    private _dspApiConnection: KnoraApiConnection,
-    private _appConfig: AppConfigService
+    @Inject(DspApiConnectionToken) private readonly _dspApiConnection: KnoraApiConnection,
+    private readonly _accessTokenService: AccessTokenService,
+    private readonly _appConfig: AppConfigService,
+    private readonly _http: HttpClient
   ) {}
 
   createSegment(

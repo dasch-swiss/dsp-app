@@ -55,10 +55,10 @@ export class PropertyValueDisplayComponent implements OnInit {
 
   constructor(
     public propertyValueService: PropertyValueService,
-    private _dialog: MatDialog,
-    private _viewContainerRef: ViewContainerRef,
-    private _route: ActivatedRoute,
-    private _cd: ChangeDetectorRef
+    private readonly _dialog: MatDialog,
+    private readonly _viewContainerRef: ViewContainerRef,
+    private readonly _route: ActivatedRoute,
+    private readonly _cd: ChangeDetectorRef
   ) {}
 
   ngOnInit() {

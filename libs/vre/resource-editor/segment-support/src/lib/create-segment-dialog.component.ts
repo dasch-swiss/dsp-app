@@ -80,10 +80,10 @@ export class CreateSegmentDialogComponent {
   );
 
   constructor(
-    private _fb: FormBuilder,
-    private _segmentApi: SegmentApiService,
-    private _segmentsService: SegmentsService,
-    private _dialogRef: DialogRef,
+    private readonly _fb: FormBuilder,
+    private readonly _segmentApi: SegmentApiService,
+    private readonly _segmentsService: SegmentsService,
+    private readonly _dialogRef: DialogRef,
     @Inject(MAT_DIALOG_DATA) public data: CreateSegmentDialogProps
   ) {
     this.projectShortcode = data.projectShortcode;

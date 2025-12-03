@@ -73,9 +73,9 @@ export class ReusableProjectFormComponent implements OnInit {
   readonly descriptionValidators = [Validators.minLength(3), Validators.maxLength(40960)];
 
   constructor(
-    private _fb: FormBuilder,
-    private _allProjectsService: AllProjectsService,
-    private _translateService: TranslateService
+    private readonly _fb: FormBuilder,
+    private readonly _allProjectsService: AllProjectsService,
+    private readonly _translateService: TranslateService
   ) {}
 
   ngOnInit() {

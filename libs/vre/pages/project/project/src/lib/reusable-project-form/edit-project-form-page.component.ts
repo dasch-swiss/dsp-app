@@ -49,9 +49,9 @@ export class EditProjectFormPageComponent {
   );
 
   constructor(
-    private _projectPageService: ProjectPageService,
-    private _projectApiService: ProjectApiService,
-    private _notification: NotificationService
+    private readonly _projectPageService: ProjectPageService,
+    private readonly _projectApiService: ProjectApiService,
+    private readonly _notification: NotificationService
   ) {}
 
   onSubmit() {

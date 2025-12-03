@@ -56,9 +56,9 @@ export class ResourceInfoBarComponent implements OnChanges {
   project$!: Observable<ReadProject>;
 
   constructor(
-    private router: Router,
-    private _resourceFetcherService: ResourceFetcherService,
-    private _projectApiService: ProjectApiService
+    private readonly _router: Router,
+    private readonly _resourceFetcherService: ResourceFetcherService,
+    private readonly _projectApiService: ProjectApiService
   ) {}
 
   ngOnChanges() {
@@ -68,6 +68,6 @@ export class ResourceInfoBarComponent implements OnChanges {
   }
 
   openProject(project: ReadProject) {
-    this.router.navigate([RouteConstants.projectRelative, ProjectService.IriToUuid(project.id)]);
+    this._router.navigate([RouteConstants.projectRelative, ProjectService.IriToUuid(project.id)]);
   }
 }
