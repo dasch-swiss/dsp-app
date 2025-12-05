@@ -191,9 +191,7 @@ export class LinkValueComponent implements OnInit {
         })
       )
       .subscribe(response => {
-        // Filter resources to only include those from the same project
-        const filtered = response.resources.filter(res => res.attachedToProject === this.projectIri);
-        this.resources = [...this.resources, ...filtered];
+        this.resources = response.resources;
         this._cd.detectChanges();
       });
   }
@@ -201,6 +199,7 @@ export class LinkValueComponent implements OnInit {
   private _searchApi = (searchTerm: string, offset: number, resourceClassIri: string) =>
     this._dspApiConnection.v2.search.doSearchByLabel(searchTerm, offset, {
       limitToResourceClass: resourceClassIri,
+      limitToProject: this.projectIri,
     });
 
   private _getRestrictToResourceClass(resource: ReadResource) {
