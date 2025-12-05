@@ -18,8 +18,6 @@
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
     "paths": {
-      "@dasch-swiss/jdnconvertiblecalendar": ["libs/jdnconvertiblecalendar/src/index.ts"],
-      "@dasch-swiss/jdnconvertiblecalendardateadapter": ["libs/jdnconvertiblecalendardateadapter/src/index.ts"],
       "@dasch-swiss/vre/3rd-party-services/analytics": ["libs/vre/3rd-party-services/analytics/src/index.ts"],
       "@dasch-swiss/vre/3rd-party-services/api": ["libs/vre/3rd-party-services/api/src/index.ts"],
       "@dasch-swiss/vre/3rd-party-services/open-api": ["libs/vre/3rd-party-services/open-api/src/index.ts"],
@@ -51,6 +49,7 @@
       "@dasch-swiss/vre/shared/app-help-page": ["libs/vre/shared/app-help-page/src/index.ts"],
       "@dasch-swiss/vre/shared/app-helper-services": ["libs/vre/shared/app-helper-services/src/index.ts"],
       "@dasch-swiss/vre/shared/assets/status-msg": ["libs/vre/shared/assets/status-msg/src/index.ts"],
+      "@dasch-swiss/vre/shared/calendar": ["libs/vre/shared/calendar/src/index.ts"],
       "@dasch-swiss/vre/ui/date-picker": ["libs/vre/ui/date-picker/src/index.ts"],
       "@dasch-swiss/vre/ui/notification": ["libs/vre/ui/notification/src/index.ts"],
       "@dasch-swiss/vre/ui/progress-indicator": ["libs/vre/ui/progress-indicator/src/index.ts"],

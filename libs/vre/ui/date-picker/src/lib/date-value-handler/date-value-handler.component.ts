@@ -23,7 +23,7 @@ import { MatFormFieldControl, MatFormFieldModule } from '@angular/material/form-
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { KnoraDate, KnoraPeriod } from '@dasch-swiss/dsp-js';
-import { JDNConvertibleCalendar } from '@dasch-swiss/jdnconvertiblecalendar';
+import { compareDates } from '@dasch-swiss/vre/shared/calendar';
 import { Subject, Subscription } from 'rxjs';
 import { AppDatePickerComponent } from '../app-date-picker/app-date-picker.component';
 import { ValueService } from './value.service';
@@ -37,10 +37,11 @@ export function periodStartEndValidator(
   return (control: AbstractControl): { [key: string]: any } | null => {
     if (isPeriod.value && control.value !== null && endDate.value !== null) {
       // period: check if start is before end
-      const jdnStartDate = valueService.createJDNCalendarDateFromKnoraDate(control.value);
-      const jdnEndDate = valueService.createJDNCalendarDateFromKnoraDate(endDate.value);
+      const startCalendarDate = valueService.createJDNCalendarDateFromKnoraDate(control.value);
+      const endCalendarDate = valueService.createJDNCalendarDateFromKnoraDate(endDate.value);
 
-      const invalid = jdnStartDate.toJDNPeriod().periodEnd >= jdnEndDate.toJDNPeriod().periodStart;
+      // Start date should be before or equal to end date
+      const invalid = compareDates(startCalendarDate, endCalendarDate) > 0;
 
       return invalid ? { periodStartEnd: { value: control.value } } : null;
     }
@@ -93,7 +94,7 @@ export class DateValueHandlerComponent
 
   readonly controlType = 'app-date-value-handler';
 
-  calendars = JDNConvertibleCalendar.supportedCalendars.map(cal => cal.toUpperCase());
+  calendars = ['GREGORIAN', 'JULIAN', 'ISLAMIC'];
 
   private _subscriptions: Subscription[] = [];
 

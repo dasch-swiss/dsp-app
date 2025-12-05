@@ -50,8 +50,6 @@
     "@angular/router": "20.2.4",
     "@ckeditor/ckeditor5-angular": "^5.2.0",
     "@dasch-swiss/dsp-js": "10.9.1",
-    "@dasch-swiss/jdnconvertiblecalendar": "^0.0.3",
-    "@dasch-swiss/jdnconvertiblecalendardateadapter": "^1.1.1",
     "@grafana/faro-transport-otlp-http": "^2.0.0",
     "@grafana/faro-web-sdk": "^2.0.0",
     "@grafana/faro-web-tracing": "^2.0.0",

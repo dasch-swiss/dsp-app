@@ -38,10 +38,7 @@ For all available commands, see [package.json](https://github.com/dasch-swiss/ds
 
 ## @dasch-swiss librairies
 
-For more information about specific library, please go to its readme, e.g.:
-
-- [@dasch-swiss/jdnconvertiblecalendar](https://github.com/dasch-swiss/dsp-das/blob/main/libs/jdnconvertiblecalendar/README.md)
-- [@dasch-swiss/jdnconvertiblecalendardateadapter](https://github.com/dasch-swiss/dsp-das/blob/main/libs/jdnconvertiblecalendardateadapter/README.md)
+For more information about available libraries, see the VRE libraries under `libs/vre/` and the library path aliases in [tsconfig.base.json](https://github.com/dasch-swiss/dsp-das/blob/main/tsconfig.base.json).
 
 ## DSP-APP &mdash; generic user interface of DaSCH Service Platform
 
@@ -99,14 +96,13 @@ nx run [library-name]:build
 # Lint a specific library
 nx run [library-name]:lint
 
-# Example: Test the calendar library
-nx run jdnconvertiblecalendar:test
+# Example: Test the date-picker library
+nx run vre-ui-date-picker:test
 ```
 
 **Available libraries:**
 - See [tsconfig.base.json](https://github.com/dasch-swiss/dsp-das/blob/main/tsconfig.base.json) for all library path aliases under the `paths` configuration
 - Main VRE libraries are under `@dasch-swiss/vre/*` namespace
-- Standalone libraries: `@dasch-swiss/jdnconvertiblecalendar`, `@dasch-swiss/jdnconvertiblecalendardateadapter`
 
 ### OpenAPI Client Generation
 

@@ -56,7 +56,6 @@ Thumbs.db
 /site
 
 .angular
-libs/jdnconvertiblecalendar/coverage/
 libs/vre/coverage/
 apps/dsp-app/coverage/
 apps/dsp-app/.nyc_output/
