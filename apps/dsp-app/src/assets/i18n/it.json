@@ -312,7 +312,7 @@
         "type": "Tipo di proprietà",
         "name": "Nome della proprietà",
         "labelPlaceholder": "Etichetta della proprietà",
-        "commentPlaceholder": "Commento",
+        "commentPlaceholder": "Descrizione",
         "selectResourceClass": "Seleziona classe di risorsa",
         "selectList": "Seleziona lista"
       },

@@ -312,7 +312,7 @@
         "type": "Eigenschaftstyp",
         "name": "Eigenschaftsname",
         "labelPlaceholder": "Eigenschaftsbezeichnung",
-        "commentPlaceholder": "Kommentar",
+        "commentPlaceholder": "Beschreibung",
         "selectResourceClass": "Ressourcen-Klasse auswählen",
         "selectList": "Liste auswählen"
       },

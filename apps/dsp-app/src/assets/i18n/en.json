@@ -312,7 +312,7 @@
         "type": "Property type",
         "name": "Property name",
         "labelPlaceholder": "Property label",
-        "commentPlaceholder": "Comment",
+        "commentPlaceholder": "Description",
         "selectResourceClass": "Select resource class",
         "selectList": "Select list"
       },
@@ -327,7 +327,7 @@
         "name": "Class name",
         "patternError": "This pattern is not supported",
         "labelPlaceholder": "Label",
-        "commentPlaceholder": "Comment"
+        "commentPlaceholder": "Description"
       },
       "service": {
         "classCreated": "Successfully created the class {{classLabel}}."
