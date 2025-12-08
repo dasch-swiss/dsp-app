@@ -9,15 +9,17 @@ import { TranslateService } from '@ngx-translate/core';
   selector: 'app-resource-actions',
   template: `
     <span class="action">
-      <button
+      <a
         mat-icon-button
         [matTooltip]="'resourceEditor.toolbar.openInNewTab' | translate"
         color="primary"
         data-cy="open-in-new-window-button"
         matTooltipPosition="above"
-        (click)="openResource()">
+        [routerLink]="getResourceLink()"
+        [queryParams]="getResourceQueryParams()"
+        target="_blank">
         <mat-icon>open_in_new</mat-icon>
-      </button>
+      </a>
       <button
         color="primary"
         mat-icon-button
@@ -80,16 +82,22 @@ export class ResourceActionsComponent {
     private readonly _resourceService: ResourceService
   ) {}
 
-  openResource() {
+  getResourceLink(): string[] {
     let resourceId = this.resource.id;
-    let qParam = '';
     if (this.resource.entityInfo.classes[Constants.Region]) {
       const linkedResource = this.resource.getValues(Constants.IsRegionOfValue)[0] as ReadLinkValue | undefined;
       resourceId = linkedResource?.linkedResourceIri || resourceId;
-      const annotationId = encodeURIComponent(this.resource.id);
-      qParam = `?${RouteConstants.annotationQueryParam}=${annotationId}`;
     }
     const resPath = this._resourceService.getResourcePath(resourceId);
-    window.open(`/${RouteConstants.resource}${resPath}${qParam}`, '_blank');
+    const resourcePath = resPath.split('/').filter(segment => segment);
+    return ['/', RouteConstants.resource, ...resourcePath];
+  }
+
+  getResourceQueryParams(): Record<string, string> | null {
+    if (this.resource.entityInfo.classes[Constants.Region]) {
+      const annotationId = encodeURIComponent(this.resource.id);
+      return { [RouteConstants.annotationQueryParam]: annotationId };
+    }
+    return null;
   }
 }

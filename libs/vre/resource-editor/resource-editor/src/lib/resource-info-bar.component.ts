@@ -1,5 +1,4 @@
 import { Component, Input, OnChanges } from '@angular/core';
-import { Router } from '@angular/router';
 import { ReadProject, ReadResource } from '@dasch-swiss/dsp-js';
 import { ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
@@ -13,7 +12,10 @@ import { map, Observable } from 'rxjs';
     @if (project$ | async; as project) {
       <div class="infobar mat-caption">
         {{ 'resourceEditor.infoBar.resourceOfProject' | translate }}
-        <a (click)="openProject(project)" class="link" [title]="project.longname">
+        <a
+          [routerLink]="[RouteConstants.projectRelative, getProjectUuid(project.id)]"
+          class="link"
+          [title]="project.longname">
           <strong>{{ project?.shortname }}</strong></a
         >,
         @if (resourceAttachedUser$ | async; as resourceAttachedUser) {
@@ -55,8 +57,9 @@ export class ResourceInfoBarComponent implements OnChanges {
 
   project$!: Observable<ReadProject>;
 
+  readonly RouteConstants = RouteConstants;
+
   constructor(
-    private readonly _router: Router,
     private readonly _resourceFetcherService: ResourceFetcherService,
     private readonly _projectApiService: ProjectApiService
   ) {}
@@ -67,7 +70,7 @@ export class ResourceInfoBarComponent implements OnChanges {
       .pipe(map(response => response.project));
   }
 
-  openProject(project: ReadProject) {
-    this._router.navigate([RouteConstants.projectRelative, ProjectService.IriToUuid(project.id)]);
+  getProjectUuid(projectIri: string): string {
+    return ProjectService.IriToUuid(projectIri);
   }
 }

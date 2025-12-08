@@ -74,29 +74,28 @@ describe('ResourceActionsComponent', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    global.window.open = jest.fn();
   });
 
   it('should be created', () => {
     expect(component).toBeTruthy();
   });
 
-  describe('openResource - regular resource', () => {
-    it('should open regular resource in new tab with correct path', () => {
+  describe('getResourceLink - regular resource', () => {
+    it('should return correct path array for regular resource', () => {
       component.resource = mockResource as any;
 
-      component.openResource();
+      const result = component.getResourceLink();
 
       expect(mockResourceService.getResourcePath).toHaveBeenCalledWith(mockResource.id);
-      expect(window.open).toHaveBeenCalledWith(`/${RouteConstants.resource}/project/123/resource/456`, '_blank');
+      expect(result).toEqual(['/', RouteConstants.resource, 'project', '123', 'resource', '456']);
     });
   });
 
-  describe('openResource - region resource', () => {
-    it('should open parent resource with annotation query param and encoded ID', () => {
+  describe('getResourceLink - region resource', () => {
+    it('should return parent resource path array for region', () => {
       component.resource = mockRegionResource as any;
 
-      component.openResource();
+      const result = component.getResourceLink();
 
       // Verify it gets the linked resource from the region
       expect(mockRegionResource.getValues).toHaveBeenCalledWith(Constants.IsRegionOfValue);
@@ -104,12 +103,8 @@ describe('ResourceActionsComponent', () => {
       // Verify it uses the parent resource ID
       expect(mockResourceService.getResourcePath).toHaveBeenCalledWith('http://example.org/parent-resource-id');
 
-      // Verify URL includes annotation query param with encoded region ID
-      const expectedAnnotationId = encodeURIComponent(mockRegionResource.id);
-      expect(window.open).toHaveBeenCalledWith(
-        `/${RouteConstants.resource}/project/123/resource/456?${RouteConstants.annotationQueryParam}=${expectedAnnotationId}`,
-        '_blank'
-      );
+      // Verify correct path array is returned
+      expect(result).toEqual(['/', RouteConstants.resource, 'project', '123', 'resource', '456']);
     });
 
     it('should handle missing linked resource by falling back to region ID', () => {
@@ -119,10 +114,48 @@ describe('ResourceActionsComponent', () => {
       };
       component.resource = resourceWithoutLinkedResource as any;
 
-      component.openResource();
+      component.getResourceLink();
 
       // Should fall back to the region's own id
       expect(mockResourceService.getResourcePath).toHaveBeenCalledWith(mockRegionResource.id);
+    });
+  });
+
+  describe('getResourceQueryParams - regular resource', () => {
+    it('should return null for regular resource (no query params needed)', () => {
+      component.resource = mockResource as any;
+
+      const result = component.getResourceQueryParams();
+
+      expect(result).toBeNull();
+    });
+  });
+
+  describe('getResourceQueryParams - region resource', () => {
+    it('should return annotation query param with encoded region ID', () => {
+      component.resource = mockRegionResource as any;
+
+      const result = component.getResourceQueryParams();
+
+      const expectedAnnotationId = encodeURIComponent(mockRegionResource.id);
+      expect(result).toEqual({
+        [RouteConstants.annotationQueryParam]: expectedAnnotationId,
+      });
+    });
+
+    it('should return annotation query param even without linked resource', () => {
+      const resourceWithoutLinkedResource = {
+        ...mockRegionResource,
+        getValues: jest.fn().mockReturnValue([]),
+      };
+      component.resource = resourceWithoutLinkedResource as any;
+
+      const result = component.getResourceQueryParams();
+
+      const expectedAnnotationId = encodeURIComponent(mockRegionResource.id);
+      expect(result).toEqual({
+        [RouteConstants.annotationQueryParam]: expectedAnnotationId,
+      });
     });
   });
 });
