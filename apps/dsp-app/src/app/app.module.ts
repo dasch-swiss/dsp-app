@@ -28,12 +28,15 @@ import { AdvancedSearchComponent } from '@dasch-swiss/vre/pages/search/advanced-
 import { SearchComponents } from '@dasch-swiss/vre/pages/search/search';
 import { SystemComponents } from '@dasch-swiss/vre/pages/system/system';
 import { apiConnectionTokenProvider, UserComponents } from '@dasch-swiss/vre/pages/user-settings/user';
-import { PropertiesDisplayComponents } from '@dasch-swiss/vre/resource-editor/properties-display';
-import { RepresentationsComponents } from '@dasch-swiss/vre/resource-editor/representations';
-import { ResourceCreatorComponents } from '@dasch-swiss/vre/resource-editor/resource-creator';
-import { ResourcePageComponents } from '@dasch-swiss/vre/resource-editor/resource-editor';
-import { ResourcePropertiesComponents } from '@dasch-swiss/vre/resource-editor/resource-properties';
-import { SegmentSupportComponents } from '@dasch-swiss/vre/resource-editor/segment-support';
+import {
+  PropertiesDisplayComponents,
+  RepresentationsComponents,
+  ResourceCreatorComponents,
+  ResourcePageComponents,
+  ResourcePropertiesComponents,
+  SegmentSupportComponents,
+  TemplateSwitcherComponents,
+} from '@dasch-swiss/vre/resource-editor/resource-editor';
 import { CommonToMoveComponents } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { HelpPageComponent } from '@dasch-swiss/vre/shared/app-help-page';
 import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
@@ -50,7 +53,6 @@ import { AngularSplitModule } from 'angular-split';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { ColorPickerDirective } from 'ngx-color-picker';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { TemplateSwitcherComponents } from 'template-switcher';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { CookieBannerComponent } from './cookie-banner.component';

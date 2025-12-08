@@ -2,12 +2,13 @@ import { ChangeDetectorRef, Component, Inject, Input, OnChanges } from '@angular
 import { ActivatedRoute } from '@angular/router';
 import { Constants, CountQueryResponse, KnoraApiConnection, ReadFileValue, ReadResource } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken, RouteConstants } from '@dasch-swiss/vre/core/config';
-import { getFileValue, RegionService } from '@dasch-swiss/vre/resource-editor/representations';
-import { PropertiesDisplayService } from '@dasch-swiss/vre/resource-editor/resource-properties';
-import { SegmentsService } from '@dasch-swiss/vre/resource-editor/segment-support';
 import { DspCompoundPosition, DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { take } from 'rxjs';
 import { CompoundService } from './compound/compound.service';
+import { getFileValue } from './representations/get-file-value';
+import { RegionService } from './representations/region.service';
+import { PropertiesDisplayService } from './resource-properties/properties-display.service';
+import { SegmentsService } from './segment-support/segments.service';
 
 @Component({
   selector: 'app-resource',

@@ -2,9 +2,9 @@ import { Component, Input, ViewContainerRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ReadResource, ResourceClassDefinitionWithPropertyDefinition } from '@dasch-swiss/dsp-js';
 import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
-import { ResourceFetcherService } from '@dasch-swiss/vre/resource-editor/representations';
-import { EditResourceLabelDialogComponent } from '@dasch-swiss/vre/resource-editor/resource-properties';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
+import { ResourceFetcherService } from './representations/resource-fetcher.service';
+import { EditResourceLabelDialogComponent } from './resource-properties/edit-resource-label-dialog.component';
 
 @Component({
   selector: 'app-resource-header',

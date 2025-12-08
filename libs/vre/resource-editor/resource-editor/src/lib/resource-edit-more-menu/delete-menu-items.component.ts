@@ -2,9 +2,9 @@ import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular
 import { CanDoResponse, DeleteResource, KnoraApiConnection, ReadResource } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { UserService } from '@dasch-swiss/vre/core/session';
-import { ResourceFetcherService } from '@dasch-swiss/vre/resource-editor/representations';
 import { filterNull, UserPermissions } from '@dasch-swiss/vre/shared/app-common';
 import { combineLatest, filter, map, Observable } from 'rxjs';
+import { ResourceFetcherService } from '../representations/resource-fetcher.service';
 
 @Component({
   selector: 'app-delete-menu-items',

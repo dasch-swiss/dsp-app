@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output, ViewContainerRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ReadResource } from '@dasch-swiss/dsp-js';
-import { EditResourceLabelDialogComponent } from '@dasch-swiss/vre/resource-editor/resource-properties';
+import { EditResourceLabelDialogComponent } from '../resource-properties/edit-resource-label-dialog.component';
 
 @Component({
   selector: 'app-edit-label-menu-item',

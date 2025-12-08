@@ -1,0 +1,58 @@
+import { Component, Input, Self } from '@angular/core';
+import { ControlValueAccessor, FormControl, NgControl } from '@angular/forms';
+import { FileRepresentationType } from '../representations/file-representation.type';
+import { UploadedFileResponse } from '../representations/upload/upload-file-response.interface';
+
+@Component({
+  selector: 'app-upload-control',
+  template: `
+    @if (!control.value) {
+      <app-upload
+        style="margin-bottom: 16px;display: block;"
+        [representation]="representation"
+        [projectShortcode]="projectShortcode"
+        (afterFileUploaded)="afterFileUploaded($event)" />
+      @if (ngControl.touched && ngControl.errors) {
+        <mat-error>{{ ngControl.errors | humanReadableError }}</mat-error>
+      }
+    } @else {
+      <app-uploaded-file
+        [internalFilename]="control.value"
+        [projectShortcode]="projectShortcode"
+        (removeFile)="control.setValue('')" />
+    }
+  `,
+  standalone: false,
+})
+export class UploadControlComponent implements ControlValueAccessor {
+  @Input({ required: true }) representation!: FileRepresentationType;
+  @Input({ required: true }) projectShortcode!: string;
+
+  loading = false;
+
+  get control() {
+    return this.ngControl['form'] as FormControl<string>;
+  }
+
+  onChange!: (value: any) => void;
+  onTouched!: () => void;
+
+  constructor(@Self() public ngControl: NgControl) {
+    ngControl.valueAccessor = this;
+  }
+
+  writeValue(value: null): void {}
+
+  registerOnChange(fn: any): void {
+    this.onChange = fn;
+  }
+
+  registerOnTouched(fn: any): void {
+    this.onTouched = fn;
+  }
+
+  afterFileUploaded(res: UploadedFileResponse) {
+    this.onChange(res.internalFilename);
+    this.onTouched();
+  }
+}

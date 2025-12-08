@@ -3,9 +3,9 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CanDoResponse } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { UserService } from '@dasch-swiss/vre/core/session';
-import { ResourceFetcherService } from '@dasch-swiss/vre/resource-editor/representations';
 import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, firstValueFrom, of } from 'rxjs';
+import { ResourceFetcherService } from '../representations/resource-fetcher.service';
 import { DeleteMenuItemsComponent } from './delete-menu-items.component';
 
 // Helper function to create CanDoResponse mocks

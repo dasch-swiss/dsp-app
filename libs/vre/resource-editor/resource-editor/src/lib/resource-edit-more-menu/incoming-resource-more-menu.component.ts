@@ -1,7 +1,7 @@
 import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { ReadResource } from '@dasch-swiss/dsp-js';
-import { ResourceFetcherService } from '@dasch-swiss/vre/resource-editor/representations';
 import { combineLatest, map } from 'rxjs';
+import { ResourceFetcherService } from '../representations/resource-fetcher.service';
 
 @Component({
   selector: 'app-incoming-resource-more-menu',

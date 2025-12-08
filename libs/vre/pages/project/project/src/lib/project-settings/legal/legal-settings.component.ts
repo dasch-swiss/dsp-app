@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { PaginatedApiService } from '@dasch-swiss/vre/resource-editor/resource-properties';
+import { PaginatedApiService } from '@dasch-swiss/vre/shared/app-common';
 import { BehaviorSubject, first, switchMap } from 'rxjs';
 import { ProjectPageService } from '../../project-page.service';
 import {

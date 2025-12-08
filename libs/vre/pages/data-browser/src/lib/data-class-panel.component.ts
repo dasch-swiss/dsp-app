@@ -3,10 +3,13 @@ import { MatDialog } from '@angular/material/dialog';
 import { ResourceClassDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
 import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
-import { ResourceFetcherDialogComponent } from '@dasch-swiss/vre/resource-editor/resource-editor';
+import {
+  CreateResourceDialogComponent,
+  CreateResourceDialogProps,
+  ResourceFetcherDialogComponent,
+} from '@dasch-swiss/vre/resource-editor/resource-editor';
 import { filterUndefined } from '@dasch-swiss/vre/shared/app-common';
 import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
-import { CreateResourceDialogComponent, CreateResourceDialogProps } from 'template-switcher';
 import { DataBrowserPageService } from './data-browser-page.service';
 
 @Component({

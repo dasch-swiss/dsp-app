@@ -1,8 +1,8 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ResourceFetcherService } from '@dasch-swiss/vre/resource-editor/representations';
 import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
+import { ResourceFetcherService } from '../representations/resource-fetcher.service';
 import { IncomingResourceMoreMenuComponent } from './incoming-resource-more-menu.component';
 
 describe('IncomingResourceMoreMenuComponent', () => {

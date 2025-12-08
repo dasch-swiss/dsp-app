@@ -10,3 +10,4 @@ export * from './lib/rxjs-operators/filter-undefined-operator';
 export * from './lib/rxjs-operators/filter-null-operator';
 export * from './lib/handle-xml';
 export * from './lib/user-permissions';
+export * from './lib/paginated-api.service';

@@ -1,0 +1,25 @@
+@use '../../../../../../../apps/dsp-app/src/styles/config' as *;
+
+.property-row {
+  display: flex;
+}
+
+.label {
+  color: rgb(107, 114, 128);
+  align-self: start;
+  cursor: help;
+  width: 150px;
+  text-align: right;
+  flex-shrink: 0;
+  line-height: normal;
+  padding: 16px;
+  margin-right: 16px;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.value.with-styling {
+  padding: 16px;
+}
