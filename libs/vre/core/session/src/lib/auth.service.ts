@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@angular/core';
 import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
-import { GrafanaFaroService, PendoAnalyticsService } from '@dasch-swiss/vre/3rd-party-services/analytics';
+import { GrafanaFaroService } from '@dasch-swiss/vre/3rd-party-services/analytics';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { finalize, tap } from 'rxjs';
@@ -15,8 +15,7 @@ export class AuthService {
     @Inject(DspApiConnectionToken)
     private readonly _dspApiConnection: KnoraApiConnection,
     private readonly _grafanaFaroService: GrafanaFaroService,
-    private readonly _localizationsService: LocalizationService,
-    private readonly _pendoAnalytics: PendoAnalyticsService
+    private readonly _localizationsService: LocalizationService
   ) {}
 
   /**
@@ -32,7 +31,6 @@ export class AuthService {
     return this._userService.loadUser(identifierOrIri, identifierType).pipe(
       tap(user => {
         this._localizationsService.setLanguage(user.lang);
-        this._pendoAnalytics.setActiveUser(user.id);
         this._grafanaFaroService.trackEvent('auth.login', {
           identifierType,
         });
@@ -48,7 +46,6 @@ export class AuthService {
     this._userService.logout();
     this._accessTokenService.removeTokens();
     this._dspApiConnection.v2.jsonWebToken = '';
-    this._pendoAnalytics.removeActiveUser();
     this._grafanaFaroService.trackEvent('auth.logout');
     this._grafanaFaroService.removeUser();
   }

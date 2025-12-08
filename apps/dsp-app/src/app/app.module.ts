@@ -9,7 +9,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { Router } from '@angular/router';
 import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
-import { GrafanaFaroService, PendoAnalyticsService } from '@dasch-swiss/vre/3rd-party-services/analytics';
+import { GrafanaFaroService } from '@dasch-swiss/vre/3rd-party-services/analytics';
 import { BASE_PATH } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import {
   AppConfigService,
@@ -120,7 +120,6 @@ export function httpLoaderFactory(httpClient: HttpClient) {
   ],
   providers: [
     AppConfigService,
-    PendoAnalyticsService,
     GrafanaFaroService,
     {
       provide: APP_INITIALIZER,

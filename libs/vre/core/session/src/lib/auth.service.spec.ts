@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { KnoraApiConnection, ReadUser } from '@dasch-swiss/dsp-js';
-import { GrafanaFaroService, PendoAnalyticsService } from '@dasch-swiss/vre/3rd-party-services/analytics';
+import { GrafanaFaroService } from '@dasch-swiss/vre/3rd-party-services/analytics';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { firstValueFrom, of, throwError } from 'rxjs';
@@ -68,7 +68,6 @@ describe('AuthService', () => {
   let mockAccessTokenService: jest.Mocked<Partial<AccessTokenService>>;
   let mockDspApiConnection: jest.Mocked<Partial<KnoraApiConnection>>;
   let mockLocalizationService: jest.Mocked<Partial<LocalizationService>>;
-  let mockPendoAnalytics: jest.Mocked<Partial<PendoAnalyticsService>>;
   let mockGrafanaFaro: jest.Mocked<Partial<GrafanaFaroService>>;
 
   const mockUser = createMockUser();
@@ -100,11 +99,6 @@ describe('AuthService', () => {
       setLanguage: jest.fn(),
     };
 
-    mockPendoAnalytics = {
-      setActiveUser: jest.fn(),
-      removeActiveUser: jest.fn(),
-    };
-
     mockGrafanaFaro = {
       trackEvent: jest.fn(),
       trackError: jest.fn(),
@@ -119,7 +113,6 @@ describe('AuthService', () => {
         { provide: AccessTokenService, useValue: mockAccessTokenService },
         { provide: DspApiConnectionToken, useValue: mockDspApiConnection },
         { provide: LocalizationService, useValue: mockLocalizationService },
-        { provide: PendoAnalyticsService, useValue: mockPendoAnalytics },
         { provide: GrafanaFaroService, useValue: mockGrafanaFaro },
       ],
     });
@@ -156,14 +149,6 @@ describe('AuthService', () => {
       expect(mockUserService.loadUser).toHaveBeenCalledWith(TEST_CONSTANTS.EMAIL, 'email');
       expect(mockLocalizationService.setLanguage).toHaveBeenCalledWith(TEST_CONSTANTS.USER_LANG);
       expect(user).toEqual(mockUser);
-    });
-
-    it('should call Pendo analytics with user ID', async () => {
-      mockUserService.loadUser = jest.fn().mockReturnValue(of(mockUser));
-
-      await firstValueFrom(service.afterSuccessfulLogin$(TEST_CONSTANTS.JWT_TOKEN, TEST_CONSTANTS.EMAIL, 'email'));
-
-      expect(mockPendoAnalytics.setActiveUser).toHaveBeenCalledWith(TEST_CONSTANTS.USER_IRI);
     });
 
     it('should call Grafana Faro to track login event', async () => {
@@ -221,12 +206,6 @@ describe('AuthService', () => {
       service.afterLogout();
 
       expect(mockDspApiConnection.v2!.jsonWebToken).toBe('');
-    });
-
-    it('should call Pendo analytics to remove active user', () => {
-      service.afterLogout();
-
-      expect(mockPendoAnalytics.removeActiveUser).toHaveBeenCalled();
     });
   });
 
