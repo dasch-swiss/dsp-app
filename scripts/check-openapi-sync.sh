@@ -64,6 +64,9 @@ clean_spec() {
 
     log_verbose "Cleaning spec: $input_file -> $output_file"
 
+    # Remove metadata and unused endpoints from comparison
+    # - Metadata: version, descriptions, examples, tags (changes frequently, not meaningful)
+    # - Unused endpoints: SHACL validation (backend-only tool, not used in frontend)
     yq eval '
         del(.info.version, .info.title, .info.description, .info.contact) |
         del(.servers) |
@@ -71,7 +74,9 @@ clean_spec() {
         del(.. | .summary?) |
         del(.. | .examples?) |
         del(.. | .example?) |
-        del(.. | .tags?)
+        del(.. | .tags?) |
+        del(.paths."/shacl/validate") |
+        del(.components.schemas.ValidationFormData)
     ' "$input_file" > "$output_file"
 }
 
