@@ -51,8 +51,7 @@ describe('ResourceActionsComponent', () => {
     } as any;
 
     await TestBed.configureTestingModule({
-      declarations: [ResourceActionsComponent],
-      imports: [TranslateModule.forRoot()],
+      imports: [ResourceActionsComponent, TranslateModule.forRoot()],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       providers: [
         { provide: NotificationService, useValue: mockNotificationService },

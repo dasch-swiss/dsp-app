@@ -1,4 +1,7 @@
 import { AfterViewInit, Component, EventEmitter, Input, Output, TemplateRef, ViewChild } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
+import { MatError, MatFormField } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
 import {
   Constants,
   PropertyDefinition,
@@ -7,10 +10,38 @@ import {
   ReadTextValueAsXml,
   ReadValue,
 } from '@dasch-swiss/dsp-js';
+import { DateValueHandlerComponent } from '@dasch-swiss/vre/ui/date-picker';
+import { CkEditorComponent, CommonInputComponent, HumanReadableErrorPipe } from '@dasch-swiss/vre/ui/ui';
+import { TranslateModule } from '@ngx-translate/core';
 import { JsLibPotentialError } from '../resource-properties/JsLibPotentialError';
+import { BooleanValueComponent } from './value-components/boolean-value.component';
+import { ColorValueComponent } from './value-components/color-value.component';
+import { GeonameValueComponent } from './value-components/geoname-value.component';
+import { IntervalValueComponent } from './value-components/interval-value.component';
+import { LinkValueComponent } from './value-components/link-value.component';
+import { ListValueComponent } from './value-components/list-value.component';
+import { TimeValueComponent } from './value-components/time-value.component';
 
 @Component({
   selector: 'app-template-editor-switcher',
+  imports: [
+    MatFormField,
+    MatInput,
+    ReactiveFormsModule,
+    TranslateModule,
+    MatError,
+    HumanReadableErrorPipe,
+    BooleanValueComponent,
+    ListValueComponent,
+    ColorValueComponent,
+    CkEditorComponent,
+    CommonInputComponent,
+    DateValueHandlerComponent,
+    TimeValueComponent,
+    IntervalValueComponent,
+    GeonameValueComponent,
+    LinkValueComponent,
+  ],
   template: `
     <ng-template #intEditorTpl let-item="item">
       <mat-form-field style="width: 100%">
@@ -122,7 +153,7 @@ import { JsLibPotentialError } from '../resource-properties/JsLibPotentialError'
         [validatorErrors]="[{ errorKey: 'pattern', message: 'This is not a valid link.' }]" />
     </ng-template>
   `,
-  standalone: false,
+  standalone: true,
 })
 export class TemplateEditorSwitcherComponent implements AfterViewInit {
   @Input({ required: true }) myPropertyDefinition!: PropertyDefinition;

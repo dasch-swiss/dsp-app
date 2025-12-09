@@ -1,6 +1,10 @@
 import { Component, Input, OnChanges } from '@angular/core';
 import { Cardinality, ResourcePropertyDefinition } from '@dasch-swiss/dsp-js';
 import { DspResource, PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
+import { PropertyRowComponent } from '../resource-properties/property-row.component';
+import { PropertyValuesWithFootnotesComponent } from '../resource-properties/property-values-with-footnotes.component';
+import { IncomingLinksPropertyComponent } from './incoming-links-property.component';
+import { StandoffLinksPropertyComponent } from './standoff-links-property.component';
 
 @Component({
   selector: 'app-properties-display',
@@ -30,7 +34,13 @@ import { DspResource, PropertyInfoValues } from '@dasch-swiss/vre/shared/app-com
     <app-standoff-links-property [resource]="resource" />
     <app-incoming-links-property [resource]="resource.res" />
   `,
-  standalone: false,
+  standalone: true,
+  imports: [
+    PropertyRowComponent,
+    PropertyValuesWithFootnotesComponent,
+    StandoffLinksPropertyComponent,
+    IncomingLinksPropertyComponent,
+  ],
 })
 export class PropertiesDisplayComponent implements OnChanges {
   @Input({ required: true }) resource!: DspResource;

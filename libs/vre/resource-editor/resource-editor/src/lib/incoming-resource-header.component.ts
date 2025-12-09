@@ -1,6 +1,9 @@
 import { Component, Input } from '@angular/core';
 import { ReadResource } from '@dasch-swiss/dsp-js';
 import { GenerateProperty } from '@dasch-swiss/vre/shared/app-common';
+import { IncomingResourceToolbarComponent } from './incoming-resource-toolbar.component';
+import { PropertiesToggleComponent } from './properties-display/properties-toggle.component';
+import { ResourceInfoBarComponent } from './resource-info-bar.component';
 
 @Component({
   selector: 'app-incoming-resource-header',
@@ -41,7 +44,8 @@ import { GenerateProperty } from '@dasch-swiss/vre/shared/app-common';
       }
     `,
   ],
-  standalone: false,
+  standalone: true,
+  imports: [PropertiesToggleComponent, IncomingResourceToolbarComponent, ResourceInfoBarComponent],
 })
 export class IncomingResourceHeaderComponent {
   @Input({ required: true }) resource!: ReadResource;

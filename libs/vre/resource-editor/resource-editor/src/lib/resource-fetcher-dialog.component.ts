@@ -1,5 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { ClosingDialogComponent } from './closing-dialog.component';
+import { ResourceFetcherComponent } from './resource-fetcher.component';
 
 export interface ResourceFetcherDialogProps {
   resourceIri: string;
@@ -13,7 +15,8 @@ export interface ResourceFetcherDialogProps {
       <app-resource-fetcher [resourceIri]="data.resourceIri" />
     </app-closing-dialog>
   `,
-  standalone: false,
+  standalone: true,
+  imports: [ClosingDialogComponent, ResourceFetcherComponent],
 })
 export class ResourceFetcherDialogComponent {
   constructor(

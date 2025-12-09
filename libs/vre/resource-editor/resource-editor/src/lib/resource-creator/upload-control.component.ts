@@ -1,7 +1,11 @@
 import { Component, Input, Self } from '@angular/core';
 import { ControlValueAccessor, FormControl, NgControl } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { HumanReadableErrorPipe } from '@dasch-swiss/vre/ui/ui';
 import { FileRepresentationType } from '../representations/file-representation.type';
 import { UploadedFileResponse } from '../representations/upload/upload-file-response.interface';
+import { UploadComponent } from './upload.component';
+import { UploadedFileComponent } from './uploaded-file.component';
 
 @Component({
   selector: 'app-upload-control',
@@ -22,7 +26,8 @@ import { UploadedFileResponse } from '../representations/upload/upload-file-resp
         (removeFile)="control.setValue('')" />
     }
   `,
-  standalone: false,
+  standalone: true,
+  imports: [UploadComponent, UploadedFileComponent, MatFormFieldModule, HumanReadableErrorPipe, HumanReadableErrorPipe],
 })
 export class UploadControlComponent implements ControlValueAccessor {
   @Input({ required: true }) representation!: FileRepresentationType;
@@ -31,7 +36,7 @@ export class UploadControlComponent implements ControlValueAccessor {
   loading = false;
 
   get control() {
-    return this.ngControl['form'] as FormControl<string>;
+    return this.ngControl.control as FormControl<string>;
   }
 
   onChange!: (value: any) => void;

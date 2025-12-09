@@ -9,9 +9,12 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { Constants } from '@dasch-swiss/dsp-js';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
-import { TranslateService } from '@ngx-translate/core';
+import { DragDropDirective } from '@dasch-swiss/vre/ui/ui';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { finalize } from 'rxjs';
 import { FileRepresentationType } from '../representations/file-representation.type';
 import { UploadedFileResponse } from '../representations/upload/upload-file-response.interface';
@@ -80,7 +83,8 @@ import { UploadFileService } from '../representations/upload/upload-file.service
       }
     `,
   ],
-  standalone: false,
+  standalone: true,
+  imports: [DragDropDirective, MatIconModule, MatProgressBarModule, TranslateModule],
 })
 export class UploadComponent {
   @Input({ required: true }) representation!: FileRepresentationType;

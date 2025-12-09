@@ -6,16 +6,18 @@ import { TranslateService } from '@ngx-translate/core';
 import { finalize } from 'rxjs/operators';
 import { ResourceFetcherService } from '../representations/resource-fetcher.service';
 import { FormValueGroup } from './form-value-array.type';
+import { PropertyValueEditComponent } from './property-value-edit.component';
 import { PropertyValueService } from './property-value.service';
 import { propertiesTypeMapping } from './resource-payloads-mapping';
 
 @Component({
   selector: 'app-property-value-add',
+  imports: [PropertyValueEditComponent],
   template: ` <app-property-value-edit
     [readValue]="undefined"
     (afterEdit)="addItem($event)"
     (afterUndo)="stopAdding.emit()" />`,
-  standalone: false,
+  standalone: true,
 })
 export class PropertyValueAddComponent {
   @Output() stopAdding = new EventEmitter<void>();

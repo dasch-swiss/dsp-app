@@ -1,9 +1,12 @@
+import { AsyncPipe } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { PropertiesDisplayService } from './properties-display.service';
 import { PropertyValueService } from './property-value.service';
+import { WithBreaksPipe } from './with-breaks.pipe';
 
 @Component({
   selector: 'app-property-value-display-comment',
+  imports: [AsyncPipe, WithBreaksPipe],
   template: ` @if ((propertiesDisplayService.showComments$ | async) && comment) {
     <div
       data-cy="property-value-comment"
@@ -11,7 +14,7 @@ import { PropertyValueService } from './property-value.service';
       [innerHTML]="comment | withBreaks"></div>
   }`,
   styleUrls: [`./property-value-display-comment.component.scss`],
-  standalone: false,
+  standalone: true,
 })
 export class PropertyValueDisplayCommentComponent {
   @Input({ required: true }) index!: number;

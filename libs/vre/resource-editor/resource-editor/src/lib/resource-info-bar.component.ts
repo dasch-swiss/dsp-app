@@ -1,8 +1,11 @@
+import { AsyncPipe, DatePipe } from '@angular/common';
 import { Component, Input, OnChanges } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { ReadProject, ReadResource } from '@dasch-swiss/dsp-js';
 import { ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { TranslateModule } from '@ngx-translate/core';
 import { map, Observable } from 'rxjs';
 import { ResourceFetcherService } from './representations/resource-fetcher.service';
 
@@ -48,7 +51,8 @@ import { ResourceFetcherService } from './representations/resource-fetcher.servi
       }
     `,
   ],
-  standalone: false,
+  standalone: true,
+  imports: [AsyncPipe, DatePipe, RouterLink, TranslateModule],
 })
 export class ResourceInfoBarComponent implements OnChanges {
   @Input({ required: true }) resource!: ReadResource;

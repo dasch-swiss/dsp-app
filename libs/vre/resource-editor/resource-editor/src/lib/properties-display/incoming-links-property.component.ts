@@ -1,10 +1,16 @@
+import { AsyncPipe, SlicePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Inject, Input, OnInit } from '@angular/core';
 import { KnoraApiConnection, ReadResource, ReadResourceSequence } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { AppError } from '@dasch-swiss/vre/core/error-handler';
+import { AppProgressIndicatorComponent } from '@dasch-swiss/vre/ui/progress-indicator';
+import { TranslateModule } from '@ngx-translate/core';
 import { expand, map, Observable, of, reduce, takeWhile } from 'rxjs';
+import { PropertyRowComponent } from '../resource-properties/property-row.component';
 import { sortByKeys } from '../resource-properties/sortByKeys';
 import { IncomingOrStandoffLink } from './incoming-link.interface';
+import { IncomingResourcePagerComponent } from './incoming-resource-pager.component';
+import { IncomingStandoffLinkValueComponent } from './incoming-standoff-link-value.component';
 
 @Component({
   selector: 'app-incoming-links-property',
@@ -37,8 +43,17 @@ import { IncomingOrStandoffLink } from './incoming-link.interface';
       </app-property-row>
     }
   `,
-  standalone: false,
+  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    AsyncPipe,
+    SlicePipe,
+    TranslateModule,
+    PropertyRowComponent,
+    IncomingStandoffLinkValueComponent,
+    IncomingResourcePagerComponent,
+    AppProgressIndicatorComponent,
+  ],
 })
 export class IncomingLinksPropertyComponent implements OnInit {
   @Input({ required: true }) resource!: ReadResource;

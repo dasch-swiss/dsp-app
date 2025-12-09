@@ -1,4 +1,6 @@
+import { AsyncPipe, NgStyle } from '@angular/common';
 import { Component, Inject, Input, OnInit } from '@angular/core';
+import { MatIconModule } from '@angular/material/icon';
 import { KnoraApiConnection, ListNodeV2, ReadListValue, ResourcePropertyDefinition } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { combineLatest, map, Observable, Subject, switchMap } from 'rxjs';
@@ -6,6 +8,7 @@ import { ResourceFetcherService } from '../../representations/resource-fetcher.s
 
 @Component({
   selector: 'app-list-viewer',
+  imports: [AsyncPipe, NgStyle, MatIconModule],
   template: `
     <div
       data-cy="list-switch"
@@ -25,7 +28,7 @@ import { ResourceFetcherService } from '../../representations/resource-fetcher.s
       }
     </div>
   `,
-  standalone: false,
+  standalone: true,
 })
 export class ListViewerComponent implements OnInit {
   @Input() value!: ReadListValue;

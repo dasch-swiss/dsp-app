@@ -1,4 +1,8 @@
+import { AsyncPipe } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
 import { Observable } from 'rxjs';
 import { UploadedFileResponse } from '../representations/upload/upload-file-response.interface';
 import { UploadFileService } from '../representations/upload/upload-file.service';
@@ -16,7 +20,8 @@ import { UploadFileService } from '../representations/upload/upload-file.service
       </mat-card-content>
     </mat-card>
   }`,
-  standalone: false,
+  standalone: true,
+  imports: [AsyncPipe, MatCardModule, MatIconModule, MatButtonModule],
 })
 export class UploadedFileComponent implements OnInit {
   @Input({ required: true }) internalFilename!: string;

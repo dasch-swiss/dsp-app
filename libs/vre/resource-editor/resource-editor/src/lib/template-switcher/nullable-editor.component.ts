@@ -1,8 +1,13 @@
 import { Component, forwardRef, Input } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { MatIconButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatTooltip } from '@angular/material/tooltip';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-nullable-editor',
+  imports: [MatIconButton, TranslateModule, MatTooltip, MatIcon],
   template: `
     @if (value !== null) {
       <div style="display: flex; align-items: center">
@@ -34,7 +39,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
       multi: true,
     },
   ],
-  standalone: false,
+  standalone: true,
 })
 export class NullableEditorComponent implements ControlValueAccessor {
   @Input({ required: true }) defaultValue!: unknown;

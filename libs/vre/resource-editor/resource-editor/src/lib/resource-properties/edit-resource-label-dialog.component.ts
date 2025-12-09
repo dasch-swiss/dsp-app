@@ -1,14 +1,33 @@
 import { Component, Inject, inject } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatButton } from '@angular/material/button';
+import {
+  MAT_DIALOG_DATA,
+  MatDialogActions,
+  MatDialogClose,
+  MatDialogContent,
+  MatDialogRef,
+} from '@angular/material/dialog';
 import { KnoraApiConnection, ReadResource, UpdateResourceMetadata } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
-import { TranslateService } from '@ngx-translate/core';
+import { LoadingButtonDirective } from '@dasch-swiss/vre/ui/progress-indicator';
+import { CommonInputComponent, DialogHeaderComponent } from '@dasch-swiss/vre/ui/ui';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { finalize, switchMap } from 'rxjs';
 import { ResourceFetcherService } from '../representations/resource-fetcher.service';
 
 @Component({
   selector: 'app-edit-resource-label-dialog',
+  imports: [
+    DialogHeaderComponent,
+    MatDialogContent,
+    MatDialogActions,
+    MatDialogClose,
+    CommonInputComponent,
+    MatButton,
+    LoadingButtonDirective,
+    TranslateModule,
+  ],
   template: ` <app-dialog-header
       [title]="initialValue"
       [subtitle]="'resourceEditor.resourceProperties.editLabel.subtitle' | translate" />
@@ -30,7 +49,7 @@ import { ResourceFetcherService } from '../representations/resource-fetcher.serv
         {{ 'ui.common.actions.submit' | translate }}
       </button>
     </div>`,
-  standalone: false,
+  standalone: true,
 })
 export class EditResourceLabelDialogComponent {
   control = new FormControl(this.data.label, { validators: [Validators.required], nonNullable: true });

@@ -1,8 +1,11 @@
+import { NgStyle } from '@angular/common';
 import { Component, Input, OnChanges } from '@angular/core';
 import { Segment } from './segment';
+import { SegmentComponent } from './segment.component';
 
 @Component({
   selector: 'app-segments-display',
+  imports: [NgStyle, SegmentComponent],
   template: ` <div style="background: black; padding: 0 24px" [ngStyle]="{ height: height + 'px' }">
     <div style="position: relative">
       @for (row of segmentInRow; track row) {
@@ -14,7 +17,7 @@ import { Segment } from './segment';
       }
     </div>
   </div>`,
-  standalone: false,
+  standalone: true,
 })
 export class SegmentsDisplayComponent implements OnChanges {
   @Input({ required: true }) segments!: Segment[];

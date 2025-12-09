@@ -31,8 +31,7 @@ describe('DeleteButtonComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [DeleteButtonComponent],
-      imports: [TranslateModule.forRoot()],
+      imports: [DeleteButtonComponent, TranslateModule.forRoot()],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       providers: [
         { provide: MatDialog, useValue: mockDialog },

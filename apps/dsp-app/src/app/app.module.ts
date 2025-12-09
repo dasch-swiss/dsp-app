@@ -28,15 +28,7 @@ import { AdvancedSearchComponent } from '@dasch-swiss/vre/pages/search/advanced-
 import { SearchComponents } from '@dasch-swiss/vre/pages/search/search';
 import { SystemComponents } from '@dasch-swiss/vre/pages/system/system';
 import { apiConnectionTokenProvider, UserComponents } from '@dasch-swiss/vre/pages/user-settings/user';
-import {
-  PropertiesDisplayComponents,
-  RepresentationsComponents,
-  ResourceCreatorComponents,
-  ResourcePageComponents,
-  ResourcePropertiesComponents,
-  SegmentSupportComponents,
-  TemplateSwitcherComponents,
-} from '@dasch-swiss/vre/resource-editor/resource-editor';
+import { ClosingDialogComponent, ResourceFetcherComponent } from '@dasch-swiss/vre/resource-editor/resource-editor';
 import { CommonToMoveComponents } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { HelpPageComponent } from '@dasch-swiss/vre/shared/app-help-page';
 import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
@@ -73,14 +65,7 @@ export function httpLoaderFactory(httpClient: HttpClient) {
     ...ListComponents,
     ...OntologyComponents,
     ...ProjectComponents,
-    ...PropertiesDisplayComponents,
-    ...RepresentationsComponents,
-    ...ResourceCreatorComponents,
-    ...ResourcePageComponents,
-    ...ResourcePropertiesComponents,
     ...SearchComponents,
-    ...SegmentSupportComponents,
-    ...TemplateSwitcherComponents,
   ],
   imports: [
     AdvancedSearchComponent,
@@ -117,6 +102,9 @@ export function httpLoaderFactory(httpClient: HttpClient) {
         deps: [HttpClient],
       },
     }),
+    // Resource editor standalone refactor
+    ResourceFetcherComponent,
+    ClosingDialogComponent,
   ],
   providers: [
     AppConfigService,

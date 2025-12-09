@@ -1,12 +1,17 @@
 import { Component, Input } from '@angular/core';
-import { FormControl, Validators } from '@angular/forms';
+import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
+import { DoubleChipSelectorComponent } from '@dasch-swiss/vre/ui/ui';
+import { TranslateModule } from '@ngx-translate/core';
 import { FileRepresentationType } from '../representations/file-representation.type';
+import { IiifControlComponent } from '../representations/third-party-iiif/iiif-control.component';
 import {
   iiifUrlValidator,
   infoJsonUrlValidatorAsync,
   isExternalHostValidator,
   previewImageUrlValidatorAsync,
 } from '../representations/third-party-iiif/iiif-url-validator';
+import { CreateResourceFormRowComponent } from './create-resource-form-row.component';
+import { UploadControlComponent } from './upload-control.component';
 
 @Component({
   selector: 'app-create-resource-form-image',
@@ -36,7 +41,15 @@ import {
       <app-iiif-control [control]="control" />
     }
   </app-create-resource-form-row>`,
-  standalone: false,
+  standalone: true,
+  imports: [
+    CreateResourceFormRowComponent,
+    DoubleChipSelectorComponent,
+    UploadControlComponent,
+    IiifControlComponent,
+    TranslateModule,
+    ReactiveFormsModule,
+  ],
 })
 export class CreateResourceFormImageComponent {
   @Input({ required: true }) control!: FormControl<string | null>;

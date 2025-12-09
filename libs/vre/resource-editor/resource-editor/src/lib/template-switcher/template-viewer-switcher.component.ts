@@ -8,6 +8,7 @@ import {
   TemplateRef,
   ViewChild,
 } from '@angular/core';
+import { MatSlideToggle } from '@angular/material/slide-toggle';
 import {
   Constants,
   PropertyDefinition,
@@ -17,9 +18,34 @@ import {
   ReadValue,
 } from '@dasch-swiss/dsp-js';
 import { JsLibPotentialError } from '../resource-properties/JsLibPotentialError';
+import { ColorViewerComponent } from './viewer-components/color-viewer.component';
+import { DateViewerComponent } from './viewer-components/date-viewer.component';
+import { GeonameViewerComponent } from './viewer-components/geoname-viewer.component';
+import { IntervalViewerComponent } from './viewer-components/interval-viewer.component';
+import { LinkViewerComponent } from './viewer-components/link-viewer.component';
+import { ListViewerComponent } from './viewer-components/list-viewer.component';
+import { ParagraphViewerComponent } from './viewer-components/paragraph-viewer.component';
+import { RichTextViewerComponent } from './viewer-components/rich-text-viewer.component';
+import { TextHtmlViewerComponent } from './viewer-components/text-html-viewer.component';
+import { TimeViewerComponent } from './viewer-components/time-viewer.component';
+import { UriViewerComponent } from './viewer-components/uri-viewer.component';
 
 @Component({
   selector: 'app-template-viewer-switcher',
+  imports: [
+    MatSlideToggle,
+    ParagraphViewerComponent,
+    IntervalViewerComponent,
+    TimeViewerComponent,
+    ListViewerComponent,
+    RichTextViewerComponent,
+    TextHtmlViewerComponent,
+    ColorViewerComponent,
+    DateViewerComponent,
+    GeonameViewerComponent,
+    LinkViewerComponent,
+    UriViewerComponent,
+  ],
   template: `
     <ng-template #textDisplayTpl let-item="item">
       <span>{{ item.text }}</span>
@@ -80,7 +106,7 @@ import { JsLibPotentialError } from '../resource-properties/JsLibPotentialError'
     <ng-template #defaultDisplayTpl><span style="width: 100%">Nothing to show</span></ng-template>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  standalone: true,
 })
 export class TemplateViewerSwitcherComponent implements AfterViewInit {
   @Input({ required: true }) value!: ReadValue | undefined;

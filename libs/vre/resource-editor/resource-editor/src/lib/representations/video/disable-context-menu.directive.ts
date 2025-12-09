@@ -2,7 +2,7 @@ import { Directive, HostListener } from '@angular/core';
 
 @Directive({
   selector: '[appDisableContextMenu]',
-  standalone: false,
+  standalone: true,
 })
 export class DisableContextMenuDirective {
   @HostListener('contextmenu', ['$event'])

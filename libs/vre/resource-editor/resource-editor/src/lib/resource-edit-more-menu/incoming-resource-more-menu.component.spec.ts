@@ -21,8 +21,7 @@ describe('IncomingResourceMoreMenuComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [IncomingResourceMoreMenuComponent],
-      imports: [TranslateModule.forRoot()],
+      imports: [IncomingResourceMoreMenuComponent, TranslateModule.forRoot()],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       providers: [{ provide: ResourceFetcherService, useValue: mockResourceFetcher }],
     })

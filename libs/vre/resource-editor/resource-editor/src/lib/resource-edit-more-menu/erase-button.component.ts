@@ -1,8 +1,15 @@
+import { AsyncPipe } from '@angular/common';
 import { Component, EventEmitter, Input, Output, ViewContainerRef } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { CanDoResponse, ReadResource } from '@dasch-swiss/dsp-js';
+import { TranslateModule } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { EraseResourceDialogComponent } from '../resource-properties/erase-resource-dialog.component';
+import { LoadingMenuItemComponent } from './loading-menu-item.component';
 
 @Component({
   selector: 'app-erase-button',
@@ -33,7 +40,16 @@ import { EraseResourceDialogComponent } from '../resource-properties/erase-resou
         labelKey="resourceEditor.moreMenu.eraseResource" />
     }
   `,
-  standalone: false,
+  standalone: true,
+  imports: [
+    AsyncPipe,
+    MatButtonModule,
+    MatIconModule,
+    MatMenuModule,
+    MatTooltipModule,
+    TranslateModule,
+    LoadingMenuItemComponent,
+  ],
 })
 export class EraseButtonComponent {
   @Input({ required: true }) resourceCanBeDeleted$!: Observable<CanDoResponse>;

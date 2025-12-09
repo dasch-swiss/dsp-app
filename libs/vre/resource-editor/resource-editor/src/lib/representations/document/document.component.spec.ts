@@ -47,8 +47,7 @@ describe('DocumentComponent', () => {
     } as any;
 
     await TestBed.configureTestingModule({
-      declarations: [DocumentComponent],
-      imports: [TranslateModule.forRoot()],
+      imports: [DocumentComponent, TranslateModule.forRoot()],
       providers: [
         { provide: AccessTokenService, useValue: mockAccessTokenService },
         { provide: RepresentationService, useValue: mockRepresentationService },

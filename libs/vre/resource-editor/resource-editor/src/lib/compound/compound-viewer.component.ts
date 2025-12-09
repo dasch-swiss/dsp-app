@@ -1,7 +1,10 @@
+import { AsyncPipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { Constants, ReadStillImageFileValue } from '@dasch-swiss/dsp-js';
 import { filterUndefined } from '@dasch-swiss/vre/shared/app-common';
 import { map } from 'rxjs';
+import { StillImageComponent } from '../representations/still-image/still-image.component';
+import { ResourceLegalComponent } from '../resource-legal.component';
 import { CompoundService } from './compound.service';
 
 @Component({
@@ -16,7 +19,8 @@ import { CompoundService } from './compound.service';
       }
     }
   `,
-  standalone: false,
+  standalone: true,
+  imports: [AsyncPipe, ResourceLegalComponent, StillImageComponent],
 })
 export class CompoundViewerComponent {
   HasStillImageFileValue = Constants.HasStillImageFileValue;

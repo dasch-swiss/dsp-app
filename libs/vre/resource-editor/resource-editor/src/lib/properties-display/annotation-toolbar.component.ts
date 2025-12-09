@@ -1,12 +1,20 @@
+import { ClipboardModule } from '@angular/cdk/clipboard';
 import { Component, inject, Input } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { Constants, ReadColorValue, ReadResource } from '@dasch-swiss/dsp-js';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { ResourceService } from '@dasch-swiss/vre/shared/app-common';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { take } from 'rxjs';
+import { PermissionInfoComponent } from '../permission-info/permission-info.component';
 import { RegionService } from '../representations/region.service';
 import { ResourceFetcherService } from '../representations/resource-fetcher.service';
+import { IncomingResourceMoreMenuComponent } from '../resource-edit-more-menu/incoming-resource-more-menu.component';
+import { ColorViewerComponent } from '../template-switcher/viewer-components/color-viewer.component';
 
 @Component({
   selector: 'app-annotation-toolbar',
@@ -104,7 +112,18 @@ import { ResourceFetcherService } from '../representations/resource-fetcher.serv
       }
     `,
   ],
-  standalone: false,
+  standalone: true,
+  imports: [
+    MatButtonModule,
+    MatIconModule,
+    MatTooltipModule,
+    MatMenuModule,
+    ClipboardModule,
+    TranslateModule,
+    ColorViewerComponent,
+    PermissionInfoComponent,
+    IncomingResourceMoreMenuComponent,
+  ],
 })
 export class AnnotationToolbarComponent {
   @Input({ required: true }) resource!: ReadResource;

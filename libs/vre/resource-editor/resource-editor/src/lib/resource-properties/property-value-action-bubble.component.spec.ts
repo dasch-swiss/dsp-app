@@ -41,8 +41,7 @@ describe('PropertyValueActionBubbleComponent', () => {
     };
 
     await TestBed.configureTestingModule({
-      declarations: [PropertyValueActionBubbleComponent],
-      imports: [TranslateModule.forRoot()],
+      imports: [PropertyValueActionBubbleComponent, TranslateModule.forRoot()],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       providers: [
         { provide: PropertyValueService, useValue: mockPropertyValueService },

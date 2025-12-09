@@ -1,9 +1,11 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component, Input } from '@angular/core';
 import { SafeHtml } from '@angular/platform-browser';
+import { AddTargetBlankPipe, InternalLinkReplacerPipe } from '@dasch-swiss/vre/ui/ui';
 
 @Component({
   selector: 'app-footnote-tooltip',
+  imports: [InternalLinkReplacerPipe, AddTargetBlankPipe],
   template: ` <div class="content" [@fadeIn]="'in'">
     <div [innerHTML]="content | internalLinkReplacer | addTargetBlank"></div>
   </div>`,
@@ -31,7 +33,7 @@ import { SafeHtml } from '@angular/platform-browser';
       }
     `,
   ],
-  standalone: false,
+  standalone: true,
 })
 export class FootnoteTooltipComponent {
   @Input({ required: true }) content!: SafeHtml;

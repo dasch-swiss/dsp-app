@@ -1,3 +1,4 @@
+import { Injectable } from '@angular/core';
 import { NativeDateAdapter } from '@angular/material/core';
 
 /**
@@ -12,6 +13,7 @@ import { NativeDateAdapter } from '@angular/material/core';
  * { provide: DateAdapter, useClass: CustomDateAdapter, deps: [MAT_DATE_LOCALE] }
  * ```
  */
+@Injectable()
 export class CustomDateAdapter extends NativeDateAdapter {
   /**
    * Formats a date as DD.MM.YYYY.

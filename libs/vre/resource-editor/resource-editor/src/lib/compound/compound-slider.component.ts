@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { MatSliderModule } from '@angular/material/slider';
 import { CompoundService } from './compound.service';
 
 @Component({
@@ -27,7 +29,8 @@ import { CompoundService } from './compound.service';
       "
       #ngSliderThumb="matSliderThumb" />
   </mat-slider>`,
-  standalone: false,
+  standalone: true,
+  imports: [MatSliderModule, FormsModule],
 })
 export class CompoundSliderComponent {
   get compoundNavigation() {

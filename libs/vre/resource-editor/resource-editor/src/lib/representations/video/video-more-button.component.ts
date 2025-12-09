@@ -1,9 +1,14 @@
+import { CdkCopyToClipboard } from '@angular/cdk/clipboard';
+import { AsyncPipe } from '@angular/common';
 import { Component, inject, Input, ViewContainerRef } from '@angular/core';
+import { MatIconButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
+import { MatIcon } from '@angular/material/icon';
+import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { Constants, ReadMovingImageFileValue, ReadResource } from '@dasch-swiss/dsp-js';
 import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MovingImageSidecar } from '../moving-image-sidecar';
 import {
   ReplaceFileDialogComponent,
@@ -14,6 +19,16 @@ import { ResourceFetcherService } from '../resource-fetcher.service';
 
 @Component({
   selector: 'app-video-more-button',
+  imports: [
+    AsyncPipe,
+    CdkCopyToClipboard,
+    MatIconButton,
+    MatIcon,
+    MatMenu,
+    MatMenuItem,
+    MatMenuTrigger,
+    TranslateModule,
+  ],
   template: ` <button mat-icon-button [matMenuTriggerFor]="more">
       <mat-icon>more_vert</mat-icon>
     </button>
@@ -37,7 +52,7 @@ import { ResourceFetcherService } from '../resource-fetcher.service';
         </button>
       }
     </mat-menu>`,
-  standalone: false,
+  standalone: true,
 })
 export class VideoMoreButtonComponent {
   @Input({ required: true }) src!: ReadMovingImageFileValue;

@@ -1,9 +1,15 @@
 import { ChangeDetectorRef, Component, Input, TemplateRef } from '@angular/core';
 import { AbstractControl, FormBuilder } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { Cardinality } from '@dasch-swiss/dsp-js';
 import { PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
+import { TranslateModule } from '@ngx-translate/core';
 import { FormValueArray } from '../resource-properties/form-value-array.type';
 import { propertiesTypeMapping } from '../resource-properties/resource-payloads-mapping';
+import { TemplateEditorSwitcherComponent } from '../template-switcher/template-editor-switcher.component';
+import { PropertyValueCreatorComponent } from './property-value-creator.component';
 
 @Component({
   selector: 'app-property-values-creator',
@@ -39,7 +45,15 @@ import { propertiesTypeMapping } from '../resource-properties/resource-payloads-
       </button>
     }
   `,
-  standalone: false,
+  standalone: true,
+  imports: [
+    TemplateEditorSwitcherComponent,
+    PropertyValueCreatorComponent,
+    MatButtonModule,
+    MatIconModule,
+    MatTooltipModule,
+    TranslateModule,
+  ],
 })
 export class PropertyValuesCreatorComponent {
   @Input({ required: true }) myProperty!: PropertyInfoValues;

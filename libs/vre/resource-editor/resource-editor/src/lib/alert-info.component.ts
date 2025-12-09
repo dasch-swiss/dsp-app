@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-alert-info',
@@ -7,6 +8,7 @@ import { Component } from '@angular/core';
     <ng-content />
   </div>`,
   styleUrls: ['./alert-info.component.scss'],
-  standalone: false,
+  standalone: true,
+  imports: [MatIconModule],
 })
 export class AlertInfoComponent {}

@@ -61,8 +61,7 @@ describe('DeleteMenuItemsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [DeleteMenuItemsComponent],
-      imports: [TranslateModule.forRoot()],
+      imports: [DeleteMenuItemsComponent, TranslateModule.forRoot()],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       providers: [
         { provide: DspApiConnectionToken, useValue: mockDspApiConnection },

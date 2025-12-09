@@ -1,6 +1,10 @@
+import { AsyncPipe } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatTooltip } from '@angular/material/tooltip';
 import { Cardinality } from '@dasch-swiss/dsp-js';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { map, Observable } from 'rxjs';
 import { ResourceFetcherService } from '../representations/resource-fetcher.service';
 import { ResourceUtil } from '../representations/resource.util';
@@ -8,6 +12,7 @@ import { PropertyValueService } from './property-value.service';
 
 @Component({
   selector: 'app-property-value-action-bubble',
+  imports: [AsyncPipe, MatButton, MatIcon, MatTooltip, TranslateModule],
   template: `
     <div class="action-bubble" data-cy="action-bubble">
       <div class="button-container d-flex">
@@ -52,7 +57,7 @@ import { PropertyValueService } from './property-value.service';
     </div>
   `,
   styleUrls: ['./property-value-action-bubble.component.scss'],
-  standalone: false,
+  standalone: true,
 })
 export class PropertyValueActionBubbleComponent implements OnInit {
   @Input({ required: true }) date!: string;

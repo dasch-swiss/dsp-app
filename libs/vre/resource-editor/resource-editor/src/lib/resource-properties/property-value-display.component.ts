@@ -1,3 +1,4 @@
+import { AsyncPipe, NgClass, NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -9,11 +10,22 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
+import { TemplateViewerSwitcherComponent } from '../template-switcher/template-viewer-switcher.component';
 import { DeleteValueDialogComponent, DeleteValueDialogProps } from './delete-value-dialog.component';
+import { PropertyValueActionBubbleComponent } from './property-value-action-bubble.component';
+import { PropertyValueDisplayCommentComponent } from './property-value-display-comment.component';
 import { PropertyValueService } from './property-value.service';
 
 @Component({
   selector: 'app-property-value-display',
+  imports: [
+    AsyncPipe,
+    NgClass,
+    NgTemplateOutlet,
+    TemplateViewerSwitcherComponent,
+    PropertyValueActionBubbleComponent,
+    PropertyValueDisplayCommentComponent,
+  ],
   template: ` <app-template-viewer-switcher
       [myPropertyDefinition]="propertyValueService.propertyDefinition"
       [value]="propertyValueService.editModeData.values[index]"
@@ -44,7 +56,7 @@ import { PropertyValueService } from './property-value.service';
     </div>`,
   styleUrls: ['./property-value-display.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  standalone: true,
 })
 export class PropertyValueDisplayComponent implements OnInit {
   @Input({ required: true }) index!: number;

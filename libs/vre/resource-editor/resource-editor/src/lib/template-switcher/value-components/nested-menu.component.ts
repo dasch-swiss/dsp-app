@@ -1,9 +1,12 @@
 import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
-import { MatMenu, MatMenuTrigger } from '@angular/material/menu';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
+import { MatSelect } from '@angular/material/select';
 import { ListNodeV2 } from '@dasch-swiss/dsp-js';
 
 @Component({
   selector: 'app-nested-menu',
+  imports: [MatFormField, MatMenuTrigger, MatLabel, MatSelect, MatMenuItem, MatMenu],
   template: `
     @if (data.isRootNode) {
       <mat-form-field [matMenuTriggerFor]="menu" data-cy="select-list-button" style="width: 100%">
@@ -47,7 +50,7 @@ import { ListNodeV2 } from '@dasch-swiss/dsp-js';
       }
     `,
   ],
-  standalone: false,
+  standalone: true,
 })
 export class NestedMenuComponent {
   @Input() data!: ListNodeV2;

@@ -1,3 +1,4 @@
+import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectorRef,
   Component,
@@ -10,16 +11,34 @@ import {
   TemplateRef,
 } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
+import { MatIconButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatTooltip } from '@angular/material/tooltip';
 import { Cardinality, ReadValue } from '@dasch-swiss/dsp-js';
 import { ResourceService } from '@dasch-swiss/vre/shared/app-common';
+import { AppProgressIndicatorComponent } from '@dasch-swiss/vre/ui/progress-indicator';
+import { TranslateModule } from '@ngx-translate/core';
 import { Observable, of, Subscription, switchMap } from 'rxjs';
 import { startWith, takeWhile } from 'rxjs/operators';
+import { TemplateEditorSwitcherComponent } from '../template-switcher/template-editor-switcher.component';
 import { FormValueGroup } from './form-value-array.type';
+import { PropertyValueBasicCommentComponent } from './property-value-basic-comment.component';
 import { PropertyValueService } from './property-value.service';
 import { propertiesTypeMapping } from './resource-payloads-mapping';
 
 @Component({
   selector: 'app-property-value-edit',
+  imports: [
+    AsyncPipe,
+    NgTemplateOutlet,
+    MatIconButton,
+    MatIcon,
+    MatTooltip,
+    TemplateEditorSwitcherComponent,
+    PropertyValueBasicCommentComponent,
+    TranslateModule,
+    AppProgressIndicatorComponent,
+  ],
   template: `
     <app-template-editor-switcher
       [myPropertyDefinition]="propertyValueService.propertyDefinition"
@@ -75,7 +94,7 @@ import { propertiesTypeMapping } from './resource-payloads-mapping';
       <app-progress-indicator [size]="'xsmall'" />
     }
   `,
-  standalone: false,
+  standalone: true,
 })
 export class PropertyValueEditComponent implements OnInit, OnDestroy {
   @Input({ required: true }) readValue!: ReadValue | undefined;

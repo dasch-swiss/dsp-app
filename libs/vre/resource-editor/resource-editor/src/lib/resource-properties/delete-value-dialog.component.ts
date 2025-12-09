@@ -1,8 +1,20 @@
 import { ChangeDetectorRef, Component, Inject, inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { FormsModule } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import {
+  MAT_DIALOG_DATA,
+  MatDialogActions,
+  MatDialogClose,
+  MatDialogContent,
+  MatDialogRef,
+} from '@angular/material/dialog';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
 import { DeleteValue, KnoraApiConnection, ReadResource, UpdateResource } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
-import { TranslateService } from '@ngx-translate/core';
+import { LoadingButtonDirective } from '@dasch-swiss/vre/ui/progress-indicator';
+import { DialogHeaderComponent } from '@dasch-swiss/vre/ui/ui';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { tap } from 'rxjs';
 import { ResourceFetcherService } from '../representations/resource-fetcher.service';
 import { PropertyValueService } from './property-value.service';
@@ -13,6 +25,19 @@ export interface DeleteValueDialogProps {
 
 @Component({
   selector: 'app-delete-value-dialog',
+  imports: [
+    DialogHeaderComponent,
+    MatDialogContent,
+    MatDialogActions,
+    MatDialogClose,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    MatButton,
+    FormsModule,
+    LoadingButtonDirective,
+    TranslateModule,
+  ],
   template: `
     <app-dialog-header
       [title]="
@@ -48,7 +73,7 @@ export interface DeleteValueDialogProps {
       </button>
     </div>
   `,
-  standalone: false,
+  standalone: true,
 })
 export class DeleteValueDialogComponent {
   loading = false;

@@ -1,9 +1,13 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { MatError } from '@angular/material/form-field';
+import { HumanReadableErrorPipe, TimeInputComponent } from '@dasch-swiss/vre/ui/ui';
+import { TranslateModule } from '@ngx-translate/core';
 import { startWith } from 'rxjs/operators';
 
 @Component({
   selector: 'app-interval-value',
+  imports: [TimeInputComponent, TranslateModule, MatError, HumanReadableErrorPipe],
   template: `
     <app-time-input
       [label]="'resourceEditor.templateSwitcher.intervalValue.start' | translate"
@@ -19,7 +23,7 @@ import { startWith } from 'rxjs/operators';
       </mat-error>
     }
   `,
-  standalone: false,
+  standalone: true,
 })
 export class IntervalValueComponent implements OnInit {
   @Input({ required: true }) control!: FormControl<{ start: number; end: number } | null>;

@@ -1,8 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ReadFileValue } from '@dasch-swiss/dsp-js';
 import { AdminAPIApiService, ProjectLicenseDto } from '@dasch-swiss/vre/3rd-party-services/open-api';
+import { TranslateModule } from '@ngx-translate/core';
 import { switchMap, take } from 'rxjs';
 import { ResourceFetcherService } from './representations/resource-fetcher.service';
+import { ResourceLegalLicenseComponent } from './resource-legal-license.component';
 
 @Component({
   selector: 'app-resource-legal',
@@ -42,7 +44,8 @@ import { ResourceFetcherService } from './representations/resource-fetcher.servi
     }
   `,
   styles: ['.label { display: inline-block; width: 170px; font-weight: bold}'],
-  standalone: false,
+  standalone: true,
+  imports: [TranslateModule, ResourceLegalLicenseComponent],
 })
 export class ResourceLegalComponent implements OnInit {
   @Input({ required: true }) fileValue!: ReadFileValue;

@@ -1,6 +1,9 @@
 import { Component, Inject } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MAT_DIALOG_DATA, MatDialogActions, MatDialogClose, MatDialogContent } from '@angular/material/dialog';
+import { CkEditorControlComponent, CommonInputComponent, DialogHeaderComponent } from '@dasch-swiss/vre/ui/ui';
+import { TranslateModule } from '@ngx-translate/core';
 
 export interface AddRegionFormDialogProps {
   resourceIri: string;
@@ -9,6 +12,17 @@ export interface AddRegionFormDialogProps {
 
 @Component({
   selector: 'app-add-region-form',
+  imports: [
+    DialogHeaderComponent,
+    MatDialogContent,
+    MatDialogActions,
+    MatDialogClose,
+    ReactiveFormsModule,
+    CommonInputComponent,
+    CkEditorControlComponent,
+    MatButton,
+    TranslateModule,
+  ],
   template: `
     <app-dialog-header
       [title]="'resourceEditor.representations.addRegionFormDialog.createAnnotation' | translate"
@@ -38,7 +52,7 @@ export interface AddRegionFormDialogProps {
       </button>
     </mat-dialog-actions>
   `,
-  standalone: false,
+  standalone: true,
 })
 export class AddRegionFormDialogComponent {
   projectShortcode: string;

@@ -1,9 +1,14 @@
+import { AsyncPipe } from '@angular/common';
 import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy } from '@angular/core';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { ReadResource } from '@dasch-swiss/dsp-js';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { Subject, takeUntil } from 'rxjs';
+import { AnnotationToolbarComponent } from './properties-display/annotation-toolbar.component';
+import { PropertiesDisplayComponent } from './properties-display/properties-display.component';
 import { RegionService } from './representations/region.service';
+import { ResourceInfoBarComponent } from './resource-info-bar.component';
 
 @Component({
   selector: 'app-annotation-tab',
@@ -46,7 +51,14 @@ import { RegionService } from './representations/region.service';
   `,
   styles: ['.active {border: 1px solid} app-resource-info-bar {display: flex; flex-direction: row-reverse}'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  standalone: true,
+  imports: [
+    AsyncPipe,
+    MatExpansionModule,
+    AnnotationToolbarComponent,
+    PropertiesDisplayComponent,
+    ResourceInfoBarComponent,
+  ],
 })
 export class AnnotationTabComponent implements AfterViewInit, OnDestroy {
   @Input({ required: true }) resource!: ReadResource;

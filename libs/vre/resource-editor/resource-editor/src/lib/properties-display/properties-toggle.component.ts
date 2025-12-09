@@ -1,6 +1,10 @@
+import { AsyncPipe } from '@angular/common';
 import { Component, inject, Input, OnChanges } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { PropertiesDisplayService } from '../resource-properties/properties-display.service';
 
 @Component({
@@ -92,7 +96,8 @@ import { PropertiesDisplayService } from '../resource-properties/properties-disp
   styles: [
     'button { padding-top: 24px; padding-bottom: 24px} :host { display: flex; flex-direction: row-reverse; gap: 16px; background: #eaeff3;}',
   ],
-  standalone: false,
+  standalone: true,
+  imports: [AsyncPipe, MatButtonModule, MatIconModule, MatTooltipModule, TranslateModule],
 })
 export class PropertiesToggleComponent implements OnChanges {
   @Input({ required: true }) properties!: PropertyInfoValues[];

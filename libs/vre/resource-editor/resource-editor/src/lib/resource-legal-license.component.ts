@@ -1,4 +1,5 @@
 import { Component, Input, OnChanges } from '@angular/core';
+import { MatIconModule } from '@angular/material/icon';
 import { ProjectLicenseDto } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { LicensesLogoMapping } from './licenses-logo-mapping';
 
@@ -14,7 +15,8 @@ import { LicensesLogoMapping } from './licenses-logo-mapping';
       </a>
     }
   `,
-  standalone: false,
+  standalone: true,
+  imports: [MatIconModule],
 })
 export class ResourceLegalLicenseComponent implements OnChanges {
   @Input({ required: true }) license!: ProjectLicenseDto;

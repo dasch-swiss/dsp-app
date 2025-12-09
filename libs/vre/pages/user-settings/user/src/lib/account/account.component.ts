@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 import { MatCard } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
-import { MatList, MatListItem, MatListItemIcon, MatListItemLine } from '@angular/material/list';
+import { MatList, MatListItem, MatListItemIcon } from '@angular/material/list';
 import { Title } from '@angular/platform-browser';
 import { ReadUser } from '@dasch-swiss/dsp-js';
 import { UserApiService } from '@dasch-swiss/vre/3rd-party-services/api';
@@ -59,7 +59,7 @@ import { EditUserDialogComponent, EditUserDialogProps } from '../edit-user-page/
     `,
   ],
   standalone: true,
-  imports: [AsyncPipe, MatCard, MatList, MatListItem, MatIcon, MatListItemIcon, MatListItemLine, TranslateModule],
+  imports: [AsyncPipe, MatCard, MatList, MatListItem, MatIcon, MatListItemIcon, TranslateModule],
 })
 export class AccountComponent {
   user$ = this._userService.user$;

@@ -9,8 +9,7 @@ describe('LoadingMenuItemComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [LoadingMenuItemComponent],
-      imports: [TranslateModule.forRoot()],
+      imports: [LoadingMenuItemComponent, TranslateModule.forRoot()],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     })
       .overrideComponent(LoadingMenuItemComponent, {

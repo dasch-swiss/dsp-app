@@ -1,4 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { AppError } from '@dasch-swiss/vre/core/error-handler';
 import { CompoundService } from './compound.service';
 
@@ -16,7 +18,8 @@ import { CompoundService } from './compound.service';
     </div>
   `,
   styles: ['button[disabled] {color: #b8b8b8!important}'],
-  standalone: false,
+  standalone: true,
+  imports: [MatButtonModule, MatIconModule],
 })
 export class CompoundArrowNavigationComponent implements OnInit {
   @Input() forwardNavigation!: boolean;

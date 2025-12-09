@@ -1,9 +1,12 @@
+import { AsyncPipe, NgClass } from '@angular/common';
 import { Component, Input } from '@angular/core';
+import { MatTooltip } from '@angular/material/tooltip';
 import { PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
 import { PropertiesDisplayService } from './properties-display.service';
 
 @Component({
   selector: 'app-property-row',
+  imports: [AsyncPipe, NgClass, MatTooltip],
   template: ` <div
     class="property-row"
     [class.border-bottom]="borderBottom"
@@ -14,7 +17,7 @@ import { PropertiesDisplayService } from './properties-display.service';
     </div>
   </div>`,
   styleUrls: ['./property-row.component.scss'],
-  standalone: false,
+  standalone: true,
 })
 export class PropertyRowComponent {
   @Input({ required: true }) label!: string;

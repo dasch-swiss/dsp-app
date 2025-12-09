@@ -1,10 +1,16 @@
+import { AsyncPipe } from '@angular/common';
 import { Component, inject, Input, OnInit } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
 import { ProjectLicenseDto } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { PaginatedApiService } from '@dasch-swiss/vre/shared/app-common';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { finalize, map } from 'rxjs/operators';
 import { CreateResourceFormLegal } from '../representations/file-form.type';
+import { AuthorshipFormFieldComponent } from './authorship-form-field.component';
+import { CreateResourceFormRowComponent } from './create-resource-form-row.component';
 
 @Component({
   selector: 'app-create-resource-form-legal',
@@ -58,7 +64,16 @@ import { CreateResourceFormLegal } from '../representations/file-form.type';
       }
     `,
   ],
-  standalone: false,
+  standalone: true,
+  imports: [
+    CreateResourceFormRowComponent,
+    MatFormFieldModule,
+    MatSelectModule,
+    ReactiveFormsModule,
+    AsyncPipe,
+    TranslateModule,
+    AuthorshipFormFieldComponent,
+  ],
 })
 export class CreateResourceFormLegalComponent implements OnInit {
   @Input({ required: true }) formGroup!: CreateResourceFormLegal;

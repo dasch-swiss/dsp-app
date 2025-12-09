@@ -1,14 +1,40 @@
 import { Component, Inject, inject } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import {
+  MAT_DIALOG_DATA,
+  MatDialogActions,
+  MatDialogClose,
+  MatDialogContent,
+  MatDialogRef,
+} from '@angular/material/dialog';
+import { MatError, MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
 import { DeleteResource, KnoraApiConnection, ReadResource } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
-import { TranslateService } from '@ngx-translate/core';
+import { LoadingButtonDirective } from '@dasch-swiss/vre/ui/progress-indicator';
+import { DialogHeaderComponent, HumanReadableErrorPipe } from '@dasch-swiss/vre/ui/ui';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { finalize } from 'rxjs';
 import { ResourceFetcherService } from '../representations/resource-fetcher.service';
 
 @Component({
   selector: 'app-erase-resource-dialog',
+  imports: [
+    DialogHeaderComponent,
+    MatDialogContent,
+    MatDialogActions,
+    MatDialogClose,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    MatError,
+    MatButton,
+    ReactiveFormsModule,
+    LoadingButtonDirective,
+    HumanReadableErrorPipe,
+    TranslateModule,
+  ],
   template: `
     <app-dialog-header
       [title]="'resourceEditor.resourceProperties.eraseResource.title' | translate"
@@ -48,7 +74,7 @@ import { ResourceFetcherService } from '../representations/resource-fetcher.serv
       </button>
     </mat-dialog-actions>
   `,
-  standalone: false,
+  standalone: true,
 })
 export class EraseResourceDialogComponent {
   eraseForm = new FormGroup({

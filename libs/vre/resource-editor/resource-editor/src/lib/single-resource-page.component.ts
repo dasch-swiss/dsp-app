@@ -1,7 +1,10 @@
+import { AsyncPipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ResourceService } from '@dasch-swiss/vre/shared/app-common';
+import { CenteredLayoutComponent } from '@dasch-swiss/vre/ui/ui';
 import { map } from 'rxjs';
+import { ResourceFetcherComponent } from './resource-fetcher.component';
 
 @Component({
   selector: 'app-single-resource-page',
@@ -12,7 +15,8 @@ import { map } from 'rxjs';
       }
     </app-centered-layout>
   `,
-  standalone: false,
+  standalone: true,
+  imports: [AsyncPipe, CenteredLayoutComponent, ResourceFetcherComponent],
 })
 export class SingleResourcePageComponent {
   resourceIri$ = this._route.params.pipe(

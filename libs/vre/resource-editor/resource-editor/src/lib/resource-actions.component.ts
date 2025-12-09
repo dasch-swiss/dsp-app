@@ -1,9 +1,16 @@
+import { ClipboardModule } from '@angular/cdk/clipboard';
 import { Component, inject, Input } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { RouterLink } from '@angular/router';
 import { Constants, ReadLinkValue, ReadResource } from '@dasch-swiss/dsp-js';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { ResourceService } from '@dasch-swiss/vre/shared/app-common';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { PermissionInfoComponent } from './permission-info/permission-info.component';
 
 @Component({
   selector: 'app-resource-actions',
@@ -70,7 +77,17 @@ import { TranslateService } from '@ngx-translate/core';
       }
     `,
   ],
-  standalone: false,
+  standalone: true,
+  imports: [
+    ClipboardModule,
+    MatButtonModule,
+    MatIconModule,
+    MatMenuModule,
+    MatTooltipModule,
+    RouterLink,
+    TranslateModule,
+    PermissionInfoComponent,
+  ],
 })
 export class ResourceActionsComponent {
   @Input({ required: true }) resource!: ReadResource;

@@ -1,7 +1,15 @@
+import { AsyncPipe } from '@angular/common';
 import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { ReadResource } from '@dasch-swiss/dsp-js';
+import { TranslateModule } from '@ngx-translate/core';
 import { combineLatest, map } from 'rxjs';
 import { ResourceFetcherService } from '../representations/resource-fetcher.service';
+import { DeleteMenuItemsComponent } from './delete-menu-items.component';
+import { EditLabelMenuItemComponent } from './edit-label-menu-item.component';
 
 @Component({
   selector: 'app-incoming-resource-more-menu',
@@ -37,7 +45,17 @@ import { ResourceFetcherService } from '../representations/resource-fetcher.serv
       }
     `,
   ],
-  standalone: false,
+  standalone: true,
+  imports: [
+    AsyncPipe,
+    MatButtonModule,
+    MatIconModule,
+    MatMenuModule,
+    MatTooltipModule,
+    TranslateModule,
+    DeleteMenuItemsComponent,
+    EditLabelMenuItemComponent,
+  ],
 })
 export class IncomingResourceMoreMenuComponent {
   @Input({ required: true }) resource!: ReadResource;

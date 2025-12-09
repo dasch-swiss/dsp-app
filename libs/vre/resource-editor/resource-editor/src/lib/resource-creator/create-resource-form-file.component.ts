@@ -2,6 +2,8 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ProjectLicenseDto } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { FileForm } from '../representations/file-form.type';
+import { CreateResourceFormLegalComponent } from './create-resource-form-legal.component';
+import { CreateResourceFormRepresentationComponent } from './create-resource-form-representation.component';
 
 @Component({
   selector: 'app-create-resource-form-file',
@@ -12,7 +14,8 @@ import { FileForm } from '../representations/file-form.type';
       (externalImageSelected)="externalImageSelected.emit($event)" />
 
     <app-create-resource-form-legal [formGroup]="form.controls.legal" [projectShortcode]="projectShortcode" />`,
-  standalone: false,
+  standalone: true,
+  imports: [CreateResourceFormRepresentationComponent, CreateResourceFormLegalComponent],
 })
 export class CreateResourceFormFileComponent implements OnInit {
   @Input({ required: true }) projectShortcode!: string;

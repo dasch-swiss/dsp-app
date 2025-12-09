@@ -4,6 +4,8 @@ import { Cardinality } from '@dasch-swiss/dsp-js';
 import { PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
 import { FormValueArray } from '../resource-properties/form-value-array.type';
 import { propertiesTypeMapping } from '../resource-properties/resource-payloads-mapping';
+import { CreateResourceFormRowComponent } from './create-resource-form-row.component';
+import { PropertyValuesCreatorComponent } from './property-values-creator.component';
 
 @Component({
   selector: 'app-create-resource-form-properties',
@@ -34,7 +36,8 @@ import { propertiesTypeMapping } from '../resource-properties/resource-payloads-
       }
     `,
   ],
-  standalone: false,
+  standalone: true,
+  imports: [CreateResourceFormRowComponent, PropertyValuesCreatorComponent],
 })
 export class CreateResourceFormPropertiesComponent {
   @Input({ required: true }) resourceClassIri!: string;

@@ -7,7 +7,7 @@ import { SegmentTooltipComponent } from './segment-tooltip.component';
 
 @Directive({
   selector: '[appCustomTooltip]',
-  standalone: false,
+  standalone: true,
 })
 export class CustomTooltipDirective implements OnDestroy {
   @Input({ required: true }) appCustomTooltip!: Segment;

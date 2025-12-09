@@ -4,9 +4,10 @@ import { secondsToTimeString } from '@dasch-swiss/vre/ui/ui';
 
 @Component({
   selector: 'app-interval-viewer',
+  imports: [],
   template: `{{ secondsToTimeString(value.start) }}{{ ' ' }}- {{ secondsToTimeString(value.end) }}`,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  standalone: true,
 })
 export class IntervalViewerComponent {
   @Input({ required: true }) value!: ReadIntervalValue;

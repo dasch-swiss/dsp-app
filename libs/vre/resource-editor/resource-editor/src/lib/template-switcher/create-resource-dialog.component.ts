@@ -1,10 +1,13 @@
+import { AsyncPipe } from '@angular/common';
 import { Component, Inject, inject, OnInit, Optional } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogContent, MatDialogRef } from '@angular/material/dialog';
 import { AppError } from '@dasch-swiss/vre/core/error-handler';
 import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
+import { DialogHeaderComponent } from '@dasch-swiss/vre/ui/ui';
 import { TranslateService } from '@ngx-translate/core';
 import { map, Observable } from 'rxjs';
 import { ResourceFetcherService } from '../representations/resource-fetcher.service';
+import { CreateResourceFormComponent } from '../resource-creator/create-resource-form.component';
 
 export interface CreateResourceDialogProps {
   resourceType: string;
@@ -13,6 +16,7 @@ export interface CreateResourceDialogProps {
 
 @Component({
   selector: 'app-create-resource-dialog',
+  imports: [DialogHeaderComponent, MatDialogContent, AsyncPipe, CreateResourceFormComponent],
   template: `
     <app-dialog-header
       [title]="
@@ -32,7 +36,7 @@ export interface CreateResourceDialogProps {
       }
     </div>
   `,
-  standalone: false,
+  standalone: true,
 })
 export class CreateResourceDialogComponent implements OnInit {
   projectShortcode$!: Observable<string>;

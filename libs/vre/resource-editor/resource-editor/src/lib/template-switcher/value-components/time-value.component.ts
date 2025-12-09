@@ -1,6 +1,11 @@
 import { Component, Input } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { FormControl, FormsModule } from '@angular/forms';
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE, MatDateFormats } from '@angular/material/core';
+import { MatDatepicker, MatDatepickerInput, MatDatepickerToggle } from '@angular/material/datepicker';
+import { MatError, MatFormField, MatSuffix } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { HumanReadableErrorPipe } from '@dasch-swiss/vre/ui/ui';
+import { TranslateModule } from '@ngx-translate/core';
 import { DateTime } from '../../resource-properties/date-time';
 import { CustomDateAdapter } from './custom-date-adapter';
 
@@ -18,6 +23,18 @@ const NATIVE_DATE_FORMATS: MatDateFormats = {
 
 @Component({
   selector: 'app-time-value',
+  imports: [
+    MatFormField,
+    MatInput,
+    MatDatepickerInput,
+    FormsModule,
+    TranslateModule,
+    MatSuffix,
+    MatDatepickerToggle,
+    MatDatepicker,
+    MatError,
+    HumanReadableErrorPipe,
+  ],
   providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter, deps: [MAT_DATE_LOCALE] },
     { provide: MAT_DATE_FORMATS, useValue: NATIVE_DATE_FORMATS },
@@ -53,7 +70,7 @@ const NATIVE_DATE_FORMATS: MatDateFormats = {
       <mat-error>{{ errors | humanReadableError }}</mat-error>
     }
   `,
-  standalone: false,
+  standalone: true,
 })
 export class TimeValueComponent {
   @Input({ required: true }) control!: FormControl<DateTime>;

@@ -1,5 +1,8 @@
+import { AsyncPipe } from '@angular/common';
 import { Component, Inject, inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatButton } from '@angular/material/button';
+import { MAT_DIALOG_DATA, MatDialogActions, MatDialogContent, MatDialogRef } from '@angular/material/dialog';
+import { MatIcon } from '@angular/material/icon';
 import {
   KnoraApiConnection,
   ReadResource,
@@ -9,7 +12,9 @@ import {
   UpdateStillImageFileValue,
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
-import { TranslateService } from '@ngx-translate/core';
+import { DialogHeaderComponent } from '@dasch-swiss/vre/ui/ui';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { CreateResourceFormFileComponent } from '../../resource-creator/create-resource-form-file.component';
 import { FileForm } from '../file-form.type';
 import { FileRepresentationType } from '../file-representation.type';
 import { fileValueMapping } from '../file-value-mapping';
@@ -65,7 +70,17 @@ export interface ReplaceFileDialogProps {
     </mat-dialog-actions>
   `,
   styleUrls: ['./replace-file-dialog.component.scss'],
-  standalone: false,
+  standalone: true,
+  imports: [
+    DialogHeaderComponent,
+    MatDialogContent,
+    MatIcon,
+    AsyncPipe,
+    CreateResourceFormFileComponent,
+    MatDialogActions,
+    MatButton,
+    TranslateModule,
+  ],
 })
 export class ReplaceFileDialogComponent {
   form!: FileForm;

@@ -25,8 +25,7 @@ describe('EditLabelMenuItemComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [EditLabelMenuItemComponent],
-      imports: [TranslateModule.forRoot()],
+      imports: [EditLabelMenuItemComponent, TranslateModule.forRoot()],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       providers: [
         { provide: MatDialog, useValue: mockDialog },

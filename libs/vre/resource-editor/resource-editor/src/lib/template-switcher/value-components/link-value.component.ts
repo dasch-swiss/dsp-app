@@ -8,9 +8,12 @@ import {
   ViewChild,
   ViewContainerRef,
 } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocomplete, MatAutocompleteTrigger } from '@angular/material/autocomplete';
+import { MatOption } from '@angular/material/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatError, MatFormField, MatHint } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
 import {
   KnoraApiConnection,
   ReadLinkValue,
@@ -19,12 +22,28 @@ import {
   ResourceClassDefinition,
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken, DspDialogConfig } from '@dasch-swiss/vre/core/config';
-import { EMPTY, expand, filter, finalize, Subject, switchMap, takeUntil } from 'rxjs';
-import { CreateResourceDialogComponent, CreateResourceDialogProps } from '../create-resource-dialog.component';
+import { AppProgressIndicatorComponent } from '@dasch-swiss/vre/ui/progress-indicator';
+import { HumanReadableErrorPipe } from '@dasch-swiss/vre/ui/ui';
+import { TranslateModule } from '@ngx-translate/core';
+import { EMPTY, expand, filter, finalize, from, Subject, switchMap, takeUntil } from 'rxjs';
+import type { CreateResourceDialogComponent, CreateResourceDialogProps } from '../create-resource-dialog.component';
 import { LinkValueDataService } from './link-value-data.service';
 
 @Component({
   selector: 'app-link-value',
+  imports: [
+    MatFormField,
+    MatInput,
+    ReactiveFormsModule,
+    TranslateModule,
+    MatAutocompleteTrigger,
+    MatAutocomplete,
+    MatOption,
+    MatHint,
+    MatError,
+    HumanReadableErrorPipe,
+    AppProgressIndicatorComponent,
+  ],
   template: `
     <mat-form-field style="width: 100%">
       <input
@@ -69,7 +88,7 @@ import { LinkValueDataService } from './link-value-data.service';
     </mat-form-field>
   `,
   providers: [LinkValueDataService],
-  standalone: false,
+  standalone: true,
 })
 export class LinkValueComponent implements OnInit {
   private cancelPreviousSearchRequest$ = new Subject<void>();
@@ -121,20 +140,24 @@ export class LinkValueComponent implements OnInit {
   openCreateResourceDialog(event: any, resourceClassIri: string, resourceType: string) {
     let myResourceId: string;
     event.stopPropagation();
-    this._dialog
-      .open<CreateResourceDialogComponent, CreateResourceDialogProps, string>(CreateResourceDialogComponent, {
-        ...DspDialogConfig.dialogDrawerConfig(
-          {
-            resourceType,
-            resourceClassIri,
-          },
-          true
-        ),
-        minWidth: 800,
-        viewContainerRef: this._viewContainerRef,
-      })
-      .afterClosed()
+
+    from(import('../create-resource-dialog.component').then(m => m.CreateResourceDialogComponent))
       .pipe(
+        switchMap(CreateResourceDialogComponent =>
+          this._dialog
+            .open<CreateResourceDialogComponent, CreateResourceDialogProps, string>(CreateResourceDialogComponent, {
+              ...DspDialogConfig.dialogDrawerConfig(
+                {
+                  resourceType,
+                  resourceClassIri,
+                },
+                true
+              ),
+              minWidth: 800,
+              viewContainerRef: this._viewContainerRef,
+            })
+            .afterClosed()
+        ),
         filter(resourceId => {
           if (!resourceId) {
             this.control.reset();

@@ -1,8 +1,13 @@
 import { Component, Input } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { MatError } from '@angular/material/form-field';
+import { MatSlideToggle } from '@angular/material/slide-toggle';
+import { HumanReadableErrorPipe } from '@dasch-swiss/vre/ui/ui';
+import { NullableEditorComponent } from '../nullable-editor.component';
 
 @Component({
   selector: 'app-boolean-value',
+  imports: [NullableEditorComponent, ReactiveFormsModule, MatSlideToggle, MatError, HumanReadableErrorPipe],
   template: `
     <app-nullable-editor [formControl]="control" [defaultValue]="false">
       @if (control.value !== null) {
@@ -15,7 +20,7 @@ import { FormControl } from '@angular/forms';
       </mat-error>
     }
   `,
-  standalone: false,
+  standalone: true,
 })
 export class BooleanValueComponent {
   @Input({ required: true }) control!: FormControl<boolean | null>;

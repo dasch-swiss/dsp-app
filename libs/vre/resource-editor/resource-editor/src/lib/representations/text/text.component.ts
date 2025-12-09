@@ -1,8 +1,13 @@
+import { AsyncPipe } from '@angular/common';
 import { Component, inject, Input, OnChanges, ViewContainerRef } from '@angular/core';
+import { MatIconButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
+import { MatIcon } from '@angular/material/icon';
+import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { Constants, ReadResource, ReadTextFileValue } from '@dasch-swiss/dsp-js';
 import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
-import { TranslateService } from '@ngx-translate/core';
+import { StatusComponent } from '@dasch-swiss/vre/shared/app-common-to-move';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   ReplaceFileDialogComponent,
   ReplaceFileDialogProps,
@@ -12,9 +17,10 @@ import { ResourceFetcherService } from '../resource-fetcher.service';
 
 @Component({
   selector: 'app-text',
+  imports: [AsyncPipe, MatIconButton, MatIcon, MatMenu, MatMenuItem, MatMenuTrigger, StatusComponent, TranslateModule],
   templateUrl: './text.component.html',
   styleUrls: ['./text.component.scss'],
-  standalone: false,
+  standalone: true,
 })
 export class TextComponent implements OnChanges {
   @Input({ required: true }) src!: ReadTextFileValue;
