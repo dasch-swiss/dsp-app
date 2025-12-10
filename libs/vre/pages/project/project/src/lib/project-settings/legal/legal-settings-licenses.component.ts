@@ -1,7 +1,10 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { AdminAPIApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { PaginatedApiService } from '@dasch-swiss/vre/shared/app-common';
-import { BehaviorSubject, map, shareReplay, switchMap } from 'rxjs';
+import { NotificationService } from '@dasch-swiss/vre/ui/notification';
+import { BehaviorSubject, catchError, map, shareReplay, switchMap, tap } from 'rxjs';
 import { ProjectPageService } from '../../project-page.service';
+import { LicenseToggleEvent } from './licenses-enabled-table.component';
 
 @Component({
   selector: 'app-legal-settings-licenses',
@@ -13,7 +16,7 @@ import { ProjectPageService } from '../../project-page.service';
             [licenses]="recommendedLicenses"
             [project]="project"
             [label]="'pages.project.legalSettings.recommended' | translate"
-            (refresh)="refresh()" />
+            (licenseToggle)="onLicenseToggle($event)" />
         }
       </div>
     }
@@ -23,7 +26,7 @@ import { ProjectPageService } from '../../project-page.service';
           [licenses]="nonRecommendedLicenses"
           [project]="project"
           [label]="'pages.project.legalSettings.notRecommended' | translate"
-          (refresh)="refresh()" />
+          (licenseToggle)="onLicenseToggle($event)" />
       }
     }
   }`,
@@ -47,10 +50,35 @@ export class LegalSettingsLicensesComponent {
 
   constructor(
     private readonly _paginatedApi: PaginatedApiService,
-    private readonly _projectPageService: ProjectPageService
+    private readonly _projectPageService: ProjectPageService,
+    private readonly _adminApiService: AdminAPIApiService,
+    private readonly _notification: NotificationService
   ) {}
 
-  refresh() {
-    this._reloadSubject.next();
+  onLicenseToggle(event: LicenseToggleEvent): void {
+    const project = this._projectPageService.currentProject;
+
+    const apiCall = event.enabled
+      ? this._adminApiService.putAdminProjectsShortcodeProjectshortcodeLegalInfoLicensesLicenseiriEnable(
+          project.shortcode,
+          event.licenseId
+        )
+      : this._adminApiService.putAdminProjectsShortcodeProjectshortcodeLegalInfoLicensesLicenseiriDisable(
+          project.shortcode,
+          event.licenseId
+        );
+
+    apiCall
+      .pipe(
+        tap(() => this._reloadSubject.next()),
+        catchError(error => {
+          this._notification.openSnackBar(
+            `Failed to ${event.enabled ? 'enable' : 'disable'} license. Please try again.`
+          );
+          this._reloadSubject.next();
+          throw error;
+        })
+      )
+      .subscribe();
   }
 }
