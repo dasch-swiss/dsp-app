@@ -79,7 +79,7 @@ export class PropertyValuesCreatorComponent {
 
     const formGroup = this._fb.group({
       item: propertyType.control(propertyType.newValue) as AbstractControl,
-      comment: this._fb.control(null),
+      comment: this._fb.control<string | null>(null),
     });
 
     this.formArray.push(formGroup);

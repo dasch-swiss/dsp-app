@@ -59,7 +59,10 @@ import { CreateResourceFormInterface } from './create-resource-form.interface';
             [properties]="properties"
             [formGroup]="form.controls.properties" />
         }
-        <div style="display: flex; justify-content: end">
+        <div class="form-actions">
+          <button mat-raised-button type="button" data-cy="cancel-button" (click)="onCancel()">
+            {{ 'ui.common.actions.cancel' | translate }}
+          </button>
           <button
             mat-raised-button
             type="submit"
@@ -80,6 +83,7 @@ import { CreateResourceFormInterface } from './create-resource-form.interface';
     '.row { display: flex; padding: 16px 0;}',
     '.grid-h3 {width: 140px; margin-right: 10px; text-align: right; margin-top: 16px; color: rgb(107, 114, 128); cursor: help}',
     '.form { display: block; margin-right: 100px;}',
+    '.form-actions { display: flex; justify-content: end; gap: 8px; margin-top: 16px; }',
   ],
   standalone: true,
   imports: [
@@ -101,6 +105,7 @@ export class CreateResourceFormComponent implements OnInit {
   @Input({ required: true }) projectShortcode!: string;
 
   @Output() createdResourceIri = new EventEmitter<string>();
+  @Output() cancelled = new EventEmitter<void>();
 
   form: FormGroup<CreateResourceFormInterface> = this._fb.group({
     label: this._fb.control('', { nonNullable: true, validators: [Validators.required] }),
@@ -160,6 +165,10 @@ export class CreateResourceFormComponent implements OnInit {
       .subscribe(res => {
         this.createdResourceIri.emit(res.id);
       });
+  }
+
+  onCancel() {
+    this.cancelled.emit();
   }
 
   private _getResourceProperties() {

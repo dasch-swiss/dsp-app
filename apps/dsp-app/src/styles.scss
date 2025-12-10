@@ -154,10 +154,11 @@ body {
   }
 }
 
-
 // ckEditor
 .ck-editor__editable_inline {
   min-height: 256px;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 // mat-menu with form element

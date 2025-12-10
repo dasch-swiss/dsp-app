@@ -56,7 +56,7 @@ import { VideoComponent } from './representations/video/video.component';
 export class ResourceRepresentationComponent implements OnChanges {
   @Input({ required: true }) resource!: DspResource;
 
-  fileValue!: ReadFileValue;
+  fileValue!: ReadFileValue | null;
   loading = false;
   protected readonly representationConstants = RepresentationConstants;
 

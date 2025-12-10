@@ -31,7 +31,8 @@ export interface CreateResourceDialogProps {
             [resourceClassIri]="data.resourceClassIri"
             [projectIri]="projectIri"
             [projectShortcode]="projectShortcode"
-            (createdResourceIri)="onCreatedResource($event)" />
+            (createdResourceIri)="onCreatedResource($event)"
+            (cancelled)="onCancel()" />
         }
       }
     </div>
@@ -65,5 +66,9 @@ export class CreateResourceDialogComponent implements OnInit {
 
   onCreatedResource(resourceIri: string) {
     this._dialogRef.close(resourceIri);
+  }
+
+  onCancel() {
+    this._dialogRef.close();
   }
 }
