@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: DSP-API
-  version: v33.2.0-2-g96cb6a3
+  version: v33.2.0-3-g9b7e653
   summary: DSP-API is part of the DaSCH Service Platform, a repository for the long-term
     preservation and reuse of data in the humanities.
   contact:
@@ -4497,7 +4497,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/5g_0-p0CQ6mlcGOdsBaVOg
+        example: http://rdfh.ch/users/_mmYWzk8TvyvFKJn2iTHkg
       responses:
         '200':
           description: ''
@@ -4549,7 +4549,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/5g_0-p0CQ6mlcGOdsBaVOg
+        example: http://rdfh.ch/users/_mmYWzk8TvyvFKJn2iTHkg
       responses:
         '200':
           description: ''
@@ -4601,7 +4601,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/5g_0-p0CQ6mlcGOdsBaVOg
+        example: http://rdfh.ch/users/_mmYWzk8TvyvFKJn2iTHkg
       responses:
         '200':
           description: ''
@@ -4754,7 +4754,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/5g_0-p0CQ6mlcGOdsBaVOg
+        example: http://rdfh.ch/users/_mmYWzk8TvyvFKJn2iTHkg
       responses:
         '200':
           description: ''
@@ -4808,7 +4808,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/5g_0-p0CQ6mlcGOdsBaVOg
+        example: http://rdfh.ch/users/_mmYWzk8TvyvFKJn2iTHkg
       responses:
         '200':
           description: ''
@@ -4976,7 +4976,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/5g_0-p0CQ6mlcGOdsBaVOg
+        example: http://rdfh.ch/users/_mmYWzk8TvyvFKJn2iTHkg
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -5037,7 +5037,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/5g_0-p0CQ6mlcGOdsBaVOg
+        example: http://rdfh.ch/users/_mmYWzk8TvyvFKJn2iTHkg
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -5099,7 +5099,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/5g_0-p0CQ6mlcGOdsBaVOg
+        example: http://rdfh.ch/users/_mmYWzk8TvyvFKJn2iTHkg
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -5160,7 +5160,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/5g_0-p0CQ6mlcGOdsBaVOg
+        example: http://rdfh.ch/users/_mmYWzk8TvyvFKJn2iTHkg
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -5222,7 +5222,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/5g_0-p0CQ6mlcGOdsBaVOg
+        example: http://rdfh.ch/users/_mmYWzk8TvyvFKJn2iTHkg
       - name: groupIri
         in: path
         description: The IRI of a group. Must be URL-encoded.
@@ -5283,7 +5283,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/5g_0-p0CQ6mlcGOdsBaVOg
+        example: http://rdfh.ch/users/_mmYWzk8TvyvFKJn2iTHkg
       - name: groupIri
         in: path
         description: The IRI of a group. Must be URL-encoded.
@@ -5345,7 +5345,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/5g_0-p0CQ6mlcGOdsBaVOg
+        example: http://rdfh.ch/users/_mmYWzk8TvyvFKJn2iTHkg
       requestBody:
         content:
           application/json:
@@ -5406,7 +5406,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/5g_0-p0CQ6mlcGOdsBaVOg
+        example: http://rdfh.ch/users/_mmYWzk8TvyvFKJn2iTHkg
       requestBody:
         content:
           application/json:
@@ -5467,7 +5467,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/5g_0-p0CQ6mlcGOdsBaVOg
+        example: http://rdfh.ch/users/_mmYWzk8TvyvFKJn2iTHkg
       requestBody:
         content:
           application/json:
@@ -5528,7 +5528,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/5g_0-p0CQ6mlcGOdsBaVOg
+        example: http://rdfh.ch/users/_mmYWzk8TvyvFKJn2iTHkg
       requestBody:
         content:
           application/json:
@@ -5813,7 +5813,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/lists/0001/uYLikeKTRWmgqJtByJK7YQ
+        example: http://rdfh.ch/lists/0001/ZlmPoNAfTKC3vmSMEJlJSA
       - name: x-knora-accept-schema
         in: header
         description: |-
@@ -5920,7 +5920,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/lists/0001/uYLikeKTRWmgqJtByJK7YQ
+        example: http://rdfh.ch/lists/0001/ZlmPoNAfTKC3vmSMEJlJSA
       - name: x-knora-accept-schema
         in: header
         description: |-
@@ -6493,6 +6493,97 @@ paths:
             application/json:
               schema:
                 type: string
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                anyOf:
+                - $ref: '#/components/schemas/OntologyConstraintException'
+                - $ref: '#/components/schemas/DuplicateValueException'
+                - $ref: '#/components/schemas/ValidationException'
+                - $ref: '#/components/schemas/BadRequestException'
+                - $ref: '#/components/schemas/GravsearchException'
+                - $ref: '#/components/schemas/EditConflictException'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadCredentialsException'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenException'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundException'
+      security:
+      - httpAuth: []
+      - httpAuth1: []
+  /v2/metadata/projects/{projectShortcode}/resources:
+    get:
+      tags:
+      - API v2
+      description: Get metadata of all resources in a project. The metadata is returned
+        with complex schema IRIs in the payload. This endpoint is only available for
+        system and project admins.
+      operationId: getV2MetadataProjectsProjectshortcodeResources
+      parameters:
+      - name: projectShortcode
+        in: path
+        description: The shortcode of a project. Must be a 4 digit hexadecimal String.
+        required: true
+        schema:
+          type: string
+        example: '0001'
+      - name: format
+        in: query
+        description: The format of the response.
+        required: false
+        schema:
+          $ref: '#/components/schemas/ExportFormat'
+      - name: classIris
+        in: query
+        description: List of resource class IRIs to filter the resources. If not present,
+          all resources of the project will be returned.
+        required: false
+        schema:
+          default: []
+          type: array
+          items:
+            type: string
+      responses:
+        '200':
+          description: Depending on the format the response will be rendered as CSV,TSV,JSON.
+            The example is CSV.
+          headers:
+            Content-Type:
+              description: 'The content type of the response, depends on the format:
+                CSV => text/csv, TSV => text/tab-separated-values, JSON => application/json'
+              required: true
+              schema:
+                type: string
+            Content-Disposition:
+              description: Will be set to attachment. The filename contains project
+                shortcode, export timestamp and the format.
+              required: true
+              schema:
+                type: string
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: |2-
+
+                Resource IRI,ARK URL (Permalink),Resource Class,Label,Created by,Creation Date,Last Modification Date (if available),Deletion Date (if available)
+                http://rdfh.ch/0803/00014b43f902,http://0.0.0.0:3336/ark:/72163/1/0803/00014b43f902l,http://0.0.0.0:3333/ontology/0803/incunabula/v2#page,t8r,http://rdfh.ch/users/91e19f1e01,2016-03-02T15:05:37Z,,
+                http://rdfh.ch/0803/0015627fe303,http://0.0.0.0:3336/ark:/72163/1/0803/0015627fe303e,http://0.0.0.0:3333/ontology/0803/incunabula/v2#page,m8v,http://rdfh.ch/users/91e19f1e01,2016-03-02T15:05:49Z,,
         '400':
           description: ''
           content:
@@ -7941,192 +8032,6 @@ paths:
       security:
       - httpAuth: []
       - httpAuth1: []
-  /v2/mapping:
-    post:
-      tags:
-      - API v2
-      description: Create a standoff mapping for XML to standoff conversion. Requires
-        authentication.
-      operationId: postV2Mapping
-      parameters:
-      - name: x-knora-accept-schema
-        in: header
-        description: |-
-          The ontology schema to be used for the request.
-          If not specified, the default schema ApiV2Complex will be used.
-        required: false
-        schema:
-          type: string
-      - name: schema
-        in: query
-        description: |-
-          The ontology schema to be used for the request.
-          If not specified, the default schema ApiV2Complex will be used.
-        required: false
-        schema:
-          type: string
-      - name: x-knora-json-ld-rendering
-        in: header
-        description: |-
-          The JSON-LD rendering to be used for the request (flat or hierarchical).
-          If not specified, hierarchical JSON-LD will be used.
-        required: false
-        schema:
-          type: string
-      - name: markup
-        in: query
-        description: The markup rendering to be used for the request (XML or standoff).
-        required: false
-        schema:
-          type: string
-      - name: x-knora-accept-markup
-        in: header
-        description: The markup rendering to be used for the request (XML or standoff).
-        required: false
-        schema:
-          type: string
-      requestBody:
-        content:
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/CreateStandoffMappingForm'
-        required: true
-      responses:
-        '200':
-          description: ''
-          headers:
-            Content-Type:
-              required: true
-              schema:
-                type: string
-          content:
-            application/json:
-              schema:
-                type: string
-        '400':
-          description: ''
-          content:
-            application/json:
-              schema:
-                anyOf:
-                - $ref: '#/components/schemas/OntologyConstraintException'
-                - $ref: '#/components/schemas/DuplicateValueException'
-                - $ref: '#/components/schemas/ValidationException'
-                - $ref: '#/components/schemas/BadRequestException'
-                - $ref: '#/components/schemas/GravsearchException'
-                - $ref: '#/components/schemas/EditConflictException'
-        '401':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BadCredentialsException'
-        '403':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ForbiddenException'
-        '404':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/NotFoundException'
-      security:
-      - httpAuth: []
-      - httpAuth1: []
-  /v2/metadata/projects/{projectShortcode}/resources:
-    get:
-      tags:
-      - API v2
-      description: Get metadata of all resources in a project. The metadata is returned
-        with complex schema IRIs in the payload. This endpoint is only available for
-        system and project admins.
-      operationId: getV2MetadataProjectsProjectshortcodeResources
-      parameters:
-      - name: projectShortcode
-        in: path
-        description: The shortcode of a project. Must be a 4 digit hexadecimal String.
-        required: true
-        schema:
-          type: string
-        example: '0001'
-      - name: format
-        in: query
-        description: The format of the response.
-        required: false
-        schema:
-          $ref: '#/components/schemas/ExportFormat'
-      - name: classIris
-        in: query
-        description: List of resource class IRIs to filter the resources. If not present,
-          all resources of the project will be returned.
-        required: false
-        schema:
-          default: []
-          type: array
-          items:
-            type: string
-      responses:
-        '200':
-          description: Depending on the format the response will be rendered as CSV,TSV,JSON.
-            The example is CSV.
-          headers:
-            Content-Type:
-              description: 'The content type of the response, depends on the format:
-                CSV => text/csv, TSV => text/tab-separated-values, JSON => application/json'
-              required: true
-              schema:
-                type: string
-            Content-Disposition:
-              description: Will be set to attachment. The filename contains project
-                shortcode, export timestamp and the format.
-              required: true
-              schema:
-                type: string
-          content:
-            text/plain:
-              schema:
-                type: string
-              example: |2-
-
-                Resource IRI,ARK URL (Permalink),Resource Class,Label,Created by,Creation Date,Last Modification Date (if available),Deletion Date (if available)
-                http://rdfh.ch/0803/00014b43f902,http://0.0.0.0:3336/ark:/72163/1/0803/00014b43f902l,http://0.0.0.0:3333/ontology/0803/incunabula/v2#page,t8r,http://rdfh.ch/users/91e19f1e01,2016-03-02T15:05:37Z,,
-                http://rdfh.ch/0803/0015627fe303,http://0.0.0.0:3336/ark:/72163/1/0803/0015627fe303e,http://0.0.0.0:3333/ontology/0803/incunabula/v2#page,m8v,http://rdfh.ch/users/91e19f1e01,2016-03-02T15:05:49Z,,
-        '400':
-          description: ''
-          content:
-            application/json:
-              schema:
-                anyOf:
-                - $ref: '#/components/schemas/OntologyConstraintException'
-                - $ref: '#/components/schemas/DuplicateValueException'
-                - $ref: '#/components/schemas/ValidationException'
-                - $ref: '#/components/schemas/BadRequestException'
-                - $ref: '#/components/schemas/GravsearchException'
-                - $ref: '#/components/schemas/EditConflictException'
-        '401':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BadCredentialsException'
-        '403':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ForbiddenException'
-        '404':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/NotFoundException'
-      security:
-      - httpAuth: []
-      - httpAuth1: []
   /v2/search/{searchTerm}:
     get:
       tags:
@@ -9538,6 +9443,101 @@ paths:
               schema:
                 type: string
             application/n-quads:
+              schema:
+                type: string
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                anyOf:
+                - $ref: '#/components/schemas/OntologyConstraintException'
+                - $ref: '#/components/schemas/DuplicateValueException'
+                - $ref: '#/components/schemas/ValidationException'
+                - $ref: '#/components/schemas/BadRequestException'
+                - $ref: '#/components/schemas/GravsearchException'
+                - $ref: '#/components/schemas/EditConflictException'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadCredentialsException'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenException'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundException'
+      security:
+      - httpAuth: []
+      - httpAuth1: []
+  /v2/mapping:
+    post:
+      tags:
+      - API v2
+      description: Create a standoff mapping for XML to standoff conversion. Requires
+        authentication.
+      operationId: postV2Mapping
+      parameters:
+      - name: x-knora-accept-schema
+        in: header
+        description: |-
+          The ontology schema to be used for the request.
+          If not specified, the default schema ApiV2Complex will be used.
+        required: false
+        schema:
+          type: string
+      - name: schema
+        in: query
+        description: |-
+          The ontology schema to be used for the request.
+          If not specified, the default schema ApiV2Complex will be used.
+        required: false
+        schema:
+          type: string
+      - name: x-knora-json-ld-rendering
+        in: header
+        description: |-
+          The JSON-LD rendering to be used for the request (flat or hierarchical).
+          If not specified, hierarchical JSON-LD will be used.
+        required: false
+        schema:
+          type: string
+      - name: markup
+        in: query
+        description: The markup rendering to be used for the request (XML or standoff).
+        required: false
+        schema:
+          type: string
+      - name: x-knora-accept-markup
+        in: header
+        description: The markup rendering to be used for the request (XML or standoff).
+        required: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CreateStandoffMappingForm'
+        required: true
+      responses:
+        '200':
+          description: ''
+          headers:
+            Content-Type:
+              required: true
+              schema:
+                type: string
+          content:
+            application/json:
               schema:
                 type: string
         '400':
@@ -12691,9 +12691,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/VersionResponse'
               example:
-                webapi: v33.2.0-2-g96cb6a3
-                buildCommit: 96cb6a368
-                buildTime: '2025-12-09T12:59:30.852851882Z'
+                webapi: v33.2.0-3-g9b7e653
+                buildCommit: 9b7e653a0
+                buildTime: '2025-12-10T08:07:28.200543379Z'
                 fuseki: 5.5.0-2
                 scala: 3.3.7
                 sipi: v3.16.3
