@@ -19,6 +19,7 @@ import {
   takeUntil,
 } from 'rxjs';
 import { DataBrowserPageService } from '../data-browser-page.service';
+import { ResourceClassCountApi } from '../resource-class-count.api';
 
 @Component({
   selector: 'app-resource-class-sidenav-item',
@@ -94,15 +95,15 @@ export class ResourceClassSidenavItemComponent implements OnInit, OnDestroy {
   );
 
   constructor(
-    @Inject(DspApiConnectionToken) private readonly _dspApiConnection: KnoraApiConnection,
     private readonly _cd: ChangeDetectorRef,
-    private readonly _dataBrowserPageService: DataBrowserPageService,
-    private readonly _localizationService: LocalizationService,
     private readonly _ontologyService: OntologyService,
+    private readonly _localizationService: LocalizationService,
+    private readonly _translateService: TranslateService,
     private readonly _projectPageService: ProjectPageService,
-    private readonly _route: ActivatedRoute,
     private readonly _router: Router,
-    private readonly _translateService: TranslateService
+    private readonly _route: ActivatedRoute,
+    private readonly _resClassCountApi: ResourceClassCountApi,
+    private readonly _dataBrowserPageService: DataBrowserPageService
   ) {}
 
   selectResourceClass() {
@@ -133,7 +134,7 @@ export class ResourceClassSidenavItemComponent implements OnInit, OnDestroy {
 
   private _loadData() {
     this.count$ = this._dataBrowserPageService.onNavigationReload$.pipe(
-      switchMap(() => this._getCount(this.resClass.id)),
+      switchMap(() => this._resClassCountApi.getResourceClassCount(this.resClass.id)),
       finalize(() => {
         this.loading = false;
       })
@@ -175,31 +176,5 @@ export class ResourceClassSidenavItemComponent implements OnInit, OnDestroy {
       default: // resource does not have a file representation
         return 'insert_drive_file';
     }
-  }
-
-  private _getCount(resClassId: string) {
-    const gravsearch = this._getGravsearch(resClassId);
-
-    return this._dspApiConnection.v2.search
-      .doExtendedSearchCountQuery(gravsearch)
-      .pipe(map(response => response.numberOfResults));
-  }
-
-  private _getGravsearch(iri: string): string {
-    return `
-        PREFIX knora-api: <http://api.knora.org/ontology/knora-api/v2#>
-        CONSTRUCT {
-
-        ?mainRes knora-api:isMainResource true .
-
-        } WHERE {
-
-        ?mainRes a knora-api:Resource .
-
-        ?mainRes a <${iri}> .
-
-        }
-
-        OFFSET 0`;
   }
 }

@@ -384,6 +384,20 @@
       },
       "resourceListItem": {
         "foundIn": "Trovato in: "
+      },
+      "downloadDialog": {
+        "title": "Scarica",
+        "resourcesAvailable": "{{count}} risorse disponibili",
+        "noResources": "Non ci sono risorse da scaricare.",
+        "properties": "Proprietà",
+        "selectAll": "Seleziona tutto",
+        "selectNone": "Deseleziona tutto",
+        "selectedCount": "{{count}} di {{total}} proprietà selezionate",
+        "includeIrisLabel": "Includi IRI delle risorse per le proprietà di riferimento",
+        "includeIrisExplanation": "Quando attivata, le proprietà di riferimento esportano sia valori leggibili (ad es. 'Alice') che IRI delle risorse per un corretto riferimento ai dati.",
+        "downloadCsv": "Scarica CSV",
+        "downloadSuccess": "CSV scaricato con successo.",
+        "downloadError": "Impossibile scaricare il CSV. Riprova."
       }
     }
   },

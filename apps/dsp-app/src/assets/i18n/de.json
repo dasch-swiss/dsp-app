@@ -384,6 +384,20 @@
       },
       "resourceListItem": {
         "foundIn": "Gefunden in: "
+      },
+      "downloadDialog": {
+        "title": "Herunterladen",
+        "resourcesAvailable": "{{count}} Ressourcen verfügbar",
+        "noResources": "Es gibt keine Ressourcen zum Herunterladen.",
+        "properties": "Eigenschaften",
+        "selectAll": "Alle auswählen",
+        "selectNone": "Keine auswählen",
+        "selectedCount": "{{count}} von {{total}} Eigenschaften ausgewählt",
+        "includeIrisLabel": "Ressourcen-IRIs für Referenz-Eigenschaften einschliessen",
+        "includeIrisExplanation": "Wenn aktiviert, exportieren Referenz-Eigenschaften sowohl menschenlesbare Werte (z. B. 'Alice') als auch Ressourcen-IRIs für eine korrekte Datenreferenzierung.",
+        "downloadCsv": "CSV herunterladen",
+        "downloadSuccess": "CSV erfolgreich heruntergeladen.",
+        "downloadError": "Fehler beim Herunterladen der CSV. Bitte versuchen Sie es erneut."
       }
     }
   },

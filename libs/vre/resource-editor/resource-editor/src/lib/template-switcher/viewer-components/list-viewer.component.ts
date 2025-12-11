@@ -65,6 +65,9 @@ export class ListViewerComponent implements OnInit {
       this._resourceFetcher.projectShortcode$,
       this._nodeIdSubject.asObservable(),
     ]).subscribe(([resource, projectShortcode, nodeId]) => {
+      if (!resource) {
+        return;
+      }
       const searchClassesQuery = `
    PREFIX knora-api: <http://api.knora.org/ontology/knora-api/v2#>
 CONSTRUCT {

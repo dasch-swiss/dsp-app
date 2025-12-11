@@ -1,10 +1,10 @@
 import { Inject, Injectable } from '@angular/core';
-import { KnoraApiConnection, SystemPropertyDefinition } from '@dasch-swiss/dsp-js';
+import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { UserApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { AdminAPIApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { AppError } from '@dasch-swiss/vre/core/error-handler';
-import { DspResource, filterUndefined, GenerateProperty } from '@dasch-swiss/vre/shared/app-common';
+import { DspResource, filterUndefined, generateDspResource } from '@dasch-swiss/vre/shared/app-common';
 import { BehaviorSubject, map, shareReplay, Subject, switchMap } from 'rxjs';
 import { ResourceUtil } from './resource.util';
 
@@ -67,13 +67,6 @@ export class ResourceFetcherService {
   }
 
   private _getResource(resourceIri: string, resourceVersion?: string) {
-    return this._dspApiConnection.v2.res.getResource(resourceIri, resourceVersion).pipe(
-      map(response => {
-        const res = new DspResource(response);
-        res.resProps = GenerateProperty.commonProperty(res.res);
-        res.systemProps = res.res.entityInfo.getPropertyDefinitionsByType(SystemPropertyDefinition);
-        return res;
-      })
-    );
+    return this._dspApiConnection.v2.res.getResource(resourceIri, resourceVersion).pipe(map(generateDspResource));
   }
 }
