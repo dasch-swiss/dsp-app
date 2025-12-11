@@ -1,13 +1,20 @@
+import { AsyncPipe } from '@angular/common';
 import { Component, Inject } from '@angular/core';
+import { MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken, RouteConstants } from '@dasch-swiss/vre/core/config';
-import { ResourceResultService } from '@dasch-swiss/vre/pages/data-browser';
+import { ResourceBrowserComponent } from '@dasch-swiss/vre/pages/data-browser';
+import { ResourceResultService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { CenteredBoxComponent, NoResultsFoundComponent } from '@dasch-swiss/vre/ui/ui';
 import { combineLatest, map, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-advanced-search-results-page',
+  standalone: true,
+  imports: [AsyncPipe, MatButton, MatIcon, CenteredBoxComponent, NoResultsFoundComponent, ResourceBrowserComponent],
   template: `
     @if (resources$ | async; as resources) {
       @if (resources.length === 0) {
@@ -23,7 +30,6 @@ import { combineLatest, map, switchMap } from 'rxjs';
     }
   `,
   providers: [ResourceResultService],
-  standalone: false,
 })
 export class AdvancedSearchResultsPageComponent {
   readonly resources$ = this._route.params.pipe(

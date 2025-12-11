@@ -1,5 +1,4 @@
 import { ProjectDescriptionPageComponent } from './lib/description/project-description-page.component';
-import { ProjectShortDescriptionComponent } from './lib/description/project-short-description.component';
 import { ProjectNavigationTabsComponent } from './lib/project-navigation-tabs.component';
 import { ProjectPageHeaderComponent } from './lib/project-page-header.component';
 import { ProjectPageComponent } from './lib/project-page.component';
@@ -24,8 +23,6 @@ import { ReusableProjectFormComponent } from './lib/reusable-project-form/reusab
 import { ProjectSidenavCollapseButtonComponent } from './lib/sidenav/project-sidenav-collapse-button.component';
 import { ProjectSidenavLinksItemComponent } from './lib/sidenav/project-sidenav-links-item.component';
 import { ProjectSidenavLinksComponent } from './lib/sidenav/project-sidenav-links.component';
-import { ProjectSidenavOntologiesComponent } from './lib/sidenav/project-sidenav-ontologies.component';
-import { ProjectSidenavComponent } from './lib/sidenav/project-sidenav.component';
 
 export const ProjectComponents = [
   AddUserComponent,
@@ -49,11 +46,8 @@ export const ProjectComponents = [
   ProjectMembersComponent,
   ProjectMembersRowComponent,
   ProjectMembersRowMenuComponent,
-  ProjectSidenavComponent,
   ProjectSidenavLinksComponent,
   ProjectSidenavLinksItemComponent,
-  ProjectSidenavOntologiesComponent,
   ProjectPageHeaderComponent,
-  ProjectShortDescriptionComponent,
   ProjectNavigationTabsComponent,
 ];

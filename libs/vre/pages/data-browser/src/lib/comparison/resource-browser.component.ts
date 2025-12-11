@@ -1,5 +1,8 @@
 import { Component, Input, OnChanges, OnInit } from '@angular/core';
 import { ReadResource } from '@dasch-swiss/dsp-js';
+import { AngularSplitModule } from 'angular-split';
+import { ResourcesListComponent } from '../list-view/resources-list.component';
+import { MultipleViewerComponent } from './multiple-viewer.component';
 import { MultipleViewerService } from './multiple-viewer.service';
 
 @Component({
@@ -15,7 +18,8 @@ import { MultipleViewerService } from './multiple-viewer.service';
     </as-split>
   `,
   providers: [MultipleViewerService],
-  standalone: false,
+  standalone: true,
+  imports: [AngularSplitModule, ResourcesListComponent, MultipleViewerComponent],
 })
 export class ResourceBrowserComponent implements OnInit, OnChanges {
   @Input({ required: true }) data!: { resources: ReadResource[]; selectFirstResource: boolean };

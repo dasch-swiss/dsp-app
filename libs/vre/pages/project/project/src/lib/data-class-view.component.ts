@@ -1,10 +1,17 @@
+import { AsyncPipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ResourceClassDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
-import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
+import { MultipleViewerComponent } from '@dasch-swiss/vre/pages/data-browser';
 import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { AppProgressIndicatorComponent } from '@dasch-swiss/vre/ui/progress-indicator';
+import { CenteredBoxComponent, NoResultsFoundComponent } from '@dasch-swiss/vre/ui/ui';
+import { TranslateModule } from '@ngx-translate/core';
+import { AngularSplitModule } from 'angular-split';
 import { combineLatest, EMPTY, first, map } from 'rxjs';
+import { DataClassPanelComponent } from './data-class-panel.component';
+import { ProjectPageService } from './project-page.service';
 
 @Component({
   selector: 'app-data-class-view',
@@ -20,7 +27,7 @@ import { combineLatest, EMPTY, first, map } from 'rxjs';
             <app-data-class-panel [classSelected]="classSelected" />
           </as-split-area>
           <as-split-area [size]="66">
-            <app-multiple-viewer />
+            <app-multiple-viewer (afterResourceDeleted)="onResourceDeleted()" />
           </as-split-area>
         </as-split>
       }
@@ -28,7 +35,17 @@ import { combineLatest, EMPTY, first, map } from 'rxjs';
       <app-progress-indicator />
     }
   `,
-  standalone: false,
+  standalone: true,
+  imports: [
+    AsyncPipe,
+    TranslateModule,
+    AngularSplitModule,
+    CenteredBoxComponent,
+    NoResultsFoundComponent,
+    AppProgressIndicatorComponent,
+    DataClassPanelComponent,
+    MultipleViewerComponent,
+  ],
 })
 export class DataClassViewComponent {
   dataIsNotFound = false;
@@ -67,4 +84,8 @@ export class DataClassViewComponent {
     private readonly _route: ActivatedRoute,
     private readonly _ontologyService: OntologyService
   ) {}
+
+  onResourceDeleted() {
+    this._projectPageService.reloadProject();
+  }
 }

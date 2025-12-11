@@ -1,7 +1,9 @@
+import { AsyncPipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { map } from 'rxjs';
+import { SearchResultComponent } from './search-result.component';
 
 @Component({
   selector: 'app-fulltext-search-results-page',
@@ -10,7 +12,8 @@ import { map } from 'rxjs';
       <app-search-result [query]="query" />
     </div>
   } `,
-  standalone: false,
+  standalone: true,
+  imports: [AsyncPipe, SearchResultComponent],
   styleUrls: ['./fulltext-search-results-page.component.scss'],
 })
 export class FulltextSearchResultsPageComponent {

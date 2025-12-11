@@ -1,6 +1,8 @@
+import { AsyncPipe, NgClass } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
-import { MatCheckboxChange } from '@angular/material/checkbox';
+import { MatCheckbox, MatCheckboxChange } from '@angular/material/checkbox';
 import { ReadResource } from '@dasch-swiss/dsp-js';
+import { TranslateModule } from '@ngx-translate/core';
 import { map } from 'rxjs';
 import { MultipleViewerService } from '../comparison/multiple-viewer.service';
 
@@ -64,7 +66,8 @@ import { MultipleViewerService } from '../comparison/multiple-viewer.service';
       }
     `,
   ],
-  standalone: false,
+  standalone: true,
+  imports: [AsyncPipe, NgClass, MatCheckbox, TranslateModule],
 })
 export class ResourceListItemComponent implements OnInit {
   @Input({ required: true }) resource!: ReadResource;

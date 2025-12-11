@@ -56,6 +56,7 @@ import { CreateResourceFormInterface } from './create-resource-form.interface';
           <app-create-resource-form-properties
             [resourceClassIri]="resourceClassIri"
             [projectIri]="projectIri"
+            [projectShortcode]="projectShortcode"
             [properties]="properties"
             [formGroup]="form.controls.properties" />
         }

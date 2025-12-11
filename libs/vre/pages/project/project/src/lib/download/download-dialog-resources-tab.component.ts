@@ -1,14 +1,29 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { MatDialogActions } from '@angular/material/dialog';
 import { APIV3ApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
 import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
-import { TranslateService } from '@ngx-translate/core';
+import { LoadingButtonDirective } from '@dasch-swiss/vre/ui/progress-indicator';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { finalize } from 'rxjs';
+import { DownloadPropertyListComponent } from './download-property-list.component';
 
 @Component({
   selector: 'app-download-dialog-properties-tab',
-  standalone: false,
+  standalone: true,
+  imports: [
+    DownloadPropertyListComponent,
+    MatCheckbox,
+    FormsModule,
+    TranslateModule,
+    MatDialogActions,
+    MatButton,
+    LoadingButtonDirective,
+  ],
   template: `
     <app-download-property-list [propertyDefinitions]="properties" (propertiesChange)="selectedPropertyIds = $event" />
 

@@ -26,8 +26,7 @@ describe('DownloadPropertyListComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [DownloadPropertyListComponent],
-      imports: [TranslateModule.forRoot()],
+      imports: [DownloadPropertyListComponent, TranslateModule.forRoot()],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     })
       .overrideComponent(DownloadPropertyListComponent, {

@@ -1,4 +1,6 @@
 import { Component, Input } from '@angular/core';
+import { TranslateModule } from '@ngx-translate/core';
+import { CenteredMessageComponent } from './centered-message.component';
 
 @Component({
   selector: 'app-no-results-found',
@@ -8,7 +10,8 @@ import { Component, Input } from '@angular/core';
       [title]="'pages.search.noResultsFound' | translate"
       [message]="message" />
   `,
-  standalone: false,
+  standalone: true,
+  imports: [TranslateModule, CenteredMessageComponent],
 })
 export class NoResultsFoundComponent {
   @Input({ required: true }) message!: string;

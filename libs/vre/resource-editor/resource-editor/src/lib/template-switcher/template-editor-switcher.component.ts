@@ -142,7 +142,8 @@ import { TimeValueComponent } from './value-components/time-value.component';
         [defaultValue]="value"
         [propIri]="myPropertyDefinition.id"
         [resourceClassIri]="resourceClassIri"
-        [projectIri]="projectIri" />
+        [projectIri]="projectIri"
+        [projectShortcode]="projectShortcode!" />
     </ng-template>
 
     <ng-template #uriEditorTpl let-item="item">
@@ -159,7 +160,7 @@ export class TemplateEditorSwitcherComponent implements AfterViewInit {
   @Input({ required: true }) myPropertyDefinition!: PropertyDefinition;
   @Input({ required: true }) resourceClassIri!: string;
   @Input({ required: true }) projectIri!: string;
-  @Input() projectShortcode?: string;
+  @Input({ required: true }) projectShortcode!: string;
   @Input() value?: ReadValue;
   @Output() templateFound = new EventEmitter<TemplateRef<any>>();
 

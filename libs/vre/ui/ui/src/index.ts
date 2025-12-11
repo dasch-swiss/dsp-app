@@ -36,4 +36,5 @@ export * from './lib/human-readable-date.pipe';
 export * from './lib/double-chip-selector.component';
 export * from './lib/centered-box.component';
 export * from './lib/centered-message.component';
+export * from './lib/no-results-found.component';
 export * from './lib/human-readable-error.pipe';

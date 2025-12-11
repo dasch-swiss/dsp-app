@@ -63,8 +63,8 @@ export class ResourceRepresentationComponent implements OnChanges {
 
   ngOnChanges() {
     const fileValue = getFileValue(this.resource.res);
-    if (!fileValue) {
-      throw new AppError('FileValue is null');
+    if (fileValue === null) {
+      throw new AppError('FileValue should not be null');
     }
     this.fileValue = fileValue;
   }

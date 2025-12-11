@@ -89,8 +89,7 @@ describe('ResourceListSelectionComponent', () => {
     } as any;
 
     await TestBed.configureTestingModule({
-      declarations: [ResourceListSelectionComponent],
-      imports: [TranslateModule.forRoot()],
+      imports: [ResourceListSelectionComponent, TranslateModule.forRoot()],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       providers: [
         { provide: MultipleViewerService, useValue: mockMultipleViewerService },

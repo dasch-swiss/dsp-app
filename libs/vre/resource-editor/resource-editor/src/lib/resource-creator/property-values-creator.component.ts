@@ -18,6 +18,7 @@ import { PropertyValueCreatorComponent } from './property-value-creator.componen
       [myPropertyDefinition]="myProperty.propDef"
       [resourceClassIri]="resourceClassIri"
       [projectIri]="projectIri"
+      [projectShortcode]="projectShortcode"
       (templateFound)="templateFound($event)" />
 
     @for (control of formArray.controls; track control; let index = $index) {
@@ -60,6 +61,7 @@ export class PropertyValuesCreatorComponent {
   @Input({ required: true }) formArray!: FormValueArray;
   @Input({ required: true }) resourceClassIri!: string;
   @Input({ required: true }) projectIri!: string;
+  @Input({ required: true }) projectShortcode!: string;
 
   template!: TemplateRef<any>;
   Cardinality = Cardinality;

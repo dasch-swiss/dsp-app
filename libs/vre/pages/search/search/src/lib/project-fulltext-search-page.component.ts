@@ -1,13 +1,37 @@
 import { Overlay, OverlayRef } from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
+import { AsyncPipe, NgClass } from '@angular/common';
 import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatDivider } from '@angular/material/divider';
+import { MatFormField, MatSuffix } from '@angular/material/form-field';
+import { MatIcon } from '@angular/material/icon';
+import { MatInput } from '@angular/material/input';
+import { RouterLink } from '@angular/router';
 import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
 import { SearchTipsComponent } from '@dasch-swiss/vre/shared/app-common-to-move';
+import { TranslateModule } from '@ngx-translate/core';
 import { map, startWith, Subject } from 'rxjs';
+import { SearchResultComponent } from './search-result.component';
 
 @Component({
   selector: 'app-project-fulltext-search-page',
+  standalone: true,
+  imports: [
+    AsyncPipe,
+    NgClass,
+    ReactiveFormsModule,
+    MatButton,
+    MatDivider,
+    MatFormField,
+    MatIcon,
+    MatInput,
+    MatSuffix,
+    RouterLink,
+    TranslateModule,
+    SearchResultComponent,
+  ],
   template: `
     <div
       style="display: flex; justify-content: center; align-items: center; gap: 32px; padding: 16px;"
@@ -39,7 +63,6 @@ import { map, startWith, Subject } from 'rxjs';
     }
   `,
   styleUrls: ['./project-fulltext-search-page.component.scss'],
-  standalone: false,
 })
 export class ProjectFulltextSearchPageComponent implements AfterViewInit, OnDestroy {
   querySubject = new Subject<string>();

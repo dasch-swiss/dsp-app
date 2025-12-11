@@ -29,8 +29,22 @@ export * from './lib/sidenav/project-sidenav-links.component';
 export * from './lib/sidenav/project-sidenav-links-item.component';
 export * from './lib/sidenav/project-sidenav-ontologies.component';
 export * from './lib/sidenav/project-sidenav-collapse-button.component';
+export * from './lib/sidenav/resource-class-sidenav/resource-class-sidenav.component';
+export * from './lib/sidenav/resource-class-sidenav/resource-class-sidenav-item.component';
 
 export * from './lib/project-page-header.component';
 export * from './lib/project-navigation-tabs.component';
 export * from './lib/description/project-short-description.component';
 export * from './lib/project-page.guard';
+
+// Data browser page components (moved from data-browser library)
+export * from './lib/data-browser-page.component';
+export * from './lib/data-class-view.component';
+export * from './lib/data-overview.component';
+export * from './lib/data-browser-page.service';
+export * from './lib/data-class-panel.component';
+
+// Download dialog components
+export * from './lib/download/download-dialog.component';
+export * from './lib/download/download-property-list.component';
+export * from './lib/download/download-dialog-resources-tab.component';

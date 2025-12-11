@@ -1,5 +1,8 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { MatButton } from '@angular/material/button';
+import { MatCheckbox } from '@angular/material/checkbox';
 import { PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-download-property-list',
@@ -53,7 +56,8 @@ import { PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  standalone: true,
+  imports: [MatButton, MatCheckbox, TranslateModule],
 })
 export class DownloadPropertyListComponent implements OnInit {
   @Input({ required: true }) propertyDefinitions!: PropertyInfoValues[];

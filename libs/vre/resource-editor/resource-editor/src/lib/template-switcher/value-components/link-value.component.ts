@@ -97,6 +97,7 @@ export class LinkValueComponent implements OnInit {
   @Input({ required: true }) propIri!: string;
   @Input({ required: true }) resourceClassIri!: string;
   @Input({ required: true }) projectIri!: string;
+  @Input({ required: true }) projectShortcode!: string;
   @Input() defaultValue?: ReadValue;
   @ViewChild(MatAutocompleteTrigger) autoComplete!: MatAutocompleteTrigger;
   @ViewChild(MatAutocomplete) auto!: MatAutocomplete;
@@ -150,6 +151,8 @@ export class LinkValueComponent implements OnInit {
                 {
                   resourceType,
                   resourceClassIri,
+                  projectIri: this.projectIri,
+                  projectShortcode: this.projectShortcode,
                 },
                 true
               ),

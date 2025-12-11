@@ -3,12 +3,10 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ReadProject, ReadResource } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken, RouteConstants } from '@dasch-swiss/vre/core/config';
-import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
-import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { MultipleViewerService } from '@dasch-swiss/vre/pages/data-browser';
+import { DataBrowserPageService, ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
+import { OntologyService, ResourceResultService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { BehaviorSubject, firstValueFrom, of } from 'rxjs';
-import { MultipleViewerService } from '../comparison/multiple-viewer.service';
-import { DataBrowserPageService } from '../data-browser-page.service';
-import { ResourceResultService } from '../resource-result.service';
 import { ResourcesListFetcherComponent } from './resources-list-fetcher.component';
 
 describe('ResourcesListFetcherComponent', () => {
@@ -51,7 +49,7 @@ describe('ResourcesListFetcherComponent', () => {
     };
 
     await TestBed.configureTestingModule({
-      declarations: [ResourcesListFetcherComponent],
+      imports: [ResourcesListFetcherComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       providers: [
         { provide: ActivatedRoute, useValue: { params: routeParamsSubject.asObservable() } },

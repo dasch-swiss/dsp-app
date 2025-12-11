@@ -20,7 +20,6 @@ import {
   DspInstrumentationToken,
 } from '@dasch-swiss/vre/core/config';
 import { AppErrorHandler } from '@dasch-swiss/vre/core/error-handler';
-import { DataBrowserComponents } from '@dasch-swiss/vre/pages/data-browser';
 import { ListComponents } from '@dasch-swiss/vre/pages/ontology/list';
 import { OntologyComponents } from '@dasch-swiss/vre/pages/ontology/ontology';
 import { ProjectComponents } from '@dasch-swiss/vre/pages/project/project';
@@ -52,7 +51,7 @@ import { AuthInterceptor } from './main/http-interceptors/auth-interceptor';
 import { IiifWithCredentialsInterceptor } from './main/http-interceptors/iiif-with-credentials.interceptor';
 import { MaterialModule } from './material-module';
 
-// translate: AoT requires an exported function for factories
+// AoT requires an exported function for factories
 export function httpLoaderFactory(httpClient: HttpClient) {
   return new TranslateHttpLoader(httpClient, 'assets/i18n/', '.json');
 }
@@ -61,7 +60,6 @@ export function httpLoaderFactory(httpClient: HttpClient) {
   declarations: [
     AppComponent,
     CookieBannerComponent,
-    ...DataBrowserComponents,
     ...ListComponents,
     ...OntologyComponents,
     ...ProjectComponents,

@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { ProjectSidenavOntologiesComponent } from './project-sidenav-ontologies.component';
 
 @Component({
   selector: 'app-project-sidenav',
@@ -14,6 +15,7 @@ import { Component } from '@angular/core';
       }
     `,
   ],
-  standalone: false,
+  standalone: true,
+  imports: [ProjectSidenavOntologiesComponent],
 })
 export class ProjectSidenavComponent {}

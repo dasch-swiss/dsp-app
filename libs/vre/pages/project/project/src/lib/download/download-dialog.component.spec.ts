@@ -44,8 +44,7 @@ describe('DownloadDialogComponent', () => {
     };
 
     await TestBed.configureTestingModule({
-      declarations: [DownloadDialogComponent],
-      imports: [TranslateModule.forRoot()],
+      imports: [DownloadDialogComponent, TranslateModule.forRoot()],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       providers: [
         { provide: MatDialogRef, useValue: mockDialogRef },

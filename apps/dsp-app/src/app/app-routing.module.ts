@@ -1,11 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
-import {
-  DataBrowserPageComponent,
-  DataClassViewComponent,
-  DataOverviewComponent,
-} from '@dasch-swiss/vre/pages/data-browser';
 import { ListPageComponent } from '@dasch-swiss/vre/pages/ontology/list';
 import {
   DataModelsPageComponent,
@@ -16,6 +11,9 @@ import {
 import {
   CollaborationPageComponent,
   CreateProjectFormPageComponent,
+  DataBrowserPageComponent,
+  DataClassViewComponent,
+  DataOverviewComponent,
   EditProjectFormPageComponent,
   ImageSettingsComponent,
   LegalSettingsComponent,

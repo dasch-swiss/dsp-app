@@ -23,7 +23,8 @@ import { PropertyValuesCreatorComponent } from './property-values-creator.compon
             [attr.data-cy]="'creator-row-' + prop.propDef.label"
             [formArray]="formGroup.controls[prop.propDef.id]"
             [resourceClassIri]="resourceClassIri"
-            [projectIri]="projectIri" />
+            [projectIri]="projectIri"
+            [projectShortcode]="projectShortcode" />
         </app-create-resource-form-row>
       </div>
     }
@@ -42,6 +43,7 @@ import { PropertyValuesCreatorComponent } from './property-values-creator.compon
 export class CreateResourceFormPropertiesComponent {
   @Input({ required: true }) resourceClassIri!: string;
   @Input({ required: true }) projectIri!: string;
+  @Input({ required: true }) projectShortcode!: string;
   @Input({ required: true }) formGroup!: FormGroup<{ [key: string]: FormValueArray }>;
   @Input({ required: true }) properties!: PropertyInfoValues[];
 

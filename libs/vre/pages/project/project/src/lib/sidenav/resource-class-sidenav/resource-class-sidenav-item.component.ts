@@ -1,8 +1,10 @@
-import { ChangeDetectorRef, Component, Inject, Input, OnDestroy, OnInit } from '@angular/core';
+import { AsyncPipe, NgClass } from '@angular/common';
+import { ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { MatIcon } from '@angular/material/icon';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
-import { Constants, KnoraApiConnection, ResourceClassDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
-import { DspApiConnectionToken, RouteConstants } from '@dasch-swiss/vre/core/config';
-import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
+import { Constants, ResourceClassDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
+import { RouteConstants } from '@dasch-swiss/vre/core/config';
+import { ResourceClassCountApi } from '@dasch-swiss/vre/pages/data-browser';
 import { LocalizationService, OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { TranslateService } from '@ngx-translate/core';
 import {
@@ -18,8 +20,8 @@ import {
   switchMap,
   takeUntil,
 } from 'rxjs';
-import { DataBrowserPageService } from '../data-browser-page.service';
-import { ResourceClassCountApi } from '../resource-class-count.api';
+import { DataBrowserPageService } from '../../data-browser-page.service';
+import { ProjectPageService } from '../../project-page.service';
 
 @Component({
   selector: 'app-resource-class-sidenav-item',
@@ -58,7 +60,8 @@ import { ResourceClassCountApi } from '../resource-class-count.api';
       }
     `,
   ],
-  standalone: false,
+  standalone: true,
+  imports: [AsyncPipe, NgClass, MatIcon],
 })
 export class ResourceClassSidenavItemComponent implements OnInit, OnDestroy {
   @Input({ required: true }) resClass!: ResourceClassDefinitionWithAllLanguages;

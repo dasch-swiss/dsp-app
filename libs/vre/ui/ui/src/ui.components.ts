@@ -17,6 +17,7 @@ import { HintComponent } from './lib/hint/hint.component';
 import { HumanReadableDatePipe } from './lib/human-readable-date.pipe';
 import { HumanReadableErrorPipe } from './lib/human-readable-error.pipe';
 import { InvalidControlScrollDirective } from './lib/invalid-control-scroll.directive';
+import { NoResultsFoundComponent } from './lib/no-results-found.component';
 import { PagerComponent } from './lib/pager/pager.component';
 import { AddTargetBlankPipe } from './lib/pipes/add-target-blank.pipe';
 import { KnoraDatePipe } from './lib/pipes/formatting/knoradate.pipe';
@@ -55,6 +56,7 @@ export const UiStandaloneComponents = [
   IsFalsyPipe,
   KnoraDatePipe,
   LinkifyPipe,
+  NoResultsFoundComponent,
   PagerComponent,
   TimeFormatDirective,
   TimeFormatPipe,

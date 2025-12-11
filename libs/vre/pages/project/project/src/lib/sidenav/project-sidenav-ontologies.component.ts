@@ -1,12 +1,25 @@
+import { AsyncPipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute } from '@angular/router';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { AppProgressIndicatorComponent } from '@dasch-swiss/vre/ui/progress-indicator';
 import { combineLatest, first, shareReplay } from 'rxjs';
 import { ProjectPageService } from '../project-page.service';
+import { ResourceClassSidenavComponent } from './resource-class-sidenav/resource-class-sidenav.component';
 
 @Component({
   selector: 'app-projects-sidenav-ontologies',
+  standalone: true,
+  imports: [
+    AsyncPipe,
+    MatExpansionModule,
+    MatTooltipModule,
+    ResourceClassSidenavComponent,
+    AppProgressIndicatorComponent,
+  ],
   template: `
     @if (projectOntologies$ | async; as projectOntologies) {
       @if (projectOntologies.length === 0) {
@@ -47,7 +60,6 @@ import { ProjectPageService } from '../project-page.service';
       }
     `,
   ],
-  standalone: false,
 })
 export class ProjectSidenavOntologiesComponent implements OnInit {
   projectOntologies$ = this._projectPageService.ontologies$.pipe(shareReplay({ bufferSize: 1, refCount: true }));
