@@ -1,10 +1,13 @@
 import { AsyncPipe } from '@angular/common';
 import {
+  AfterViewInit,
   ChangeDetectorRef,
   Component,
+  ElementRef,
   inject,
   Input,
   OnChanges,
+  OnDestroy,
   SimpleChanges,
   ViewChild,
   ViewContainerRef,
@@ -47,11 +50,12 @@ import { ResourceFetcherService } from '../resource-fetcher.service';
   styleUrls: ['./document.component.scss'],
   standalone: true,
 })
-export class DocumentComponent implements OnChanges {
+export class DocumentComponent implements OnChanges, AfterViewInit, OnDestroy {
   @Input({ required: true }) src!: ReadDocumentFileValue;
   @Input({ required: true }) parentResource!: ReadResource;
 
   @ViewChild(PdfViewerComponent) private _pdfComponent!: PdfViewerComponent;
+  @ViewChild('pdfContainer') private _pdfContainer?: ElementRef<HTMLDivElement>;
 
   originalFilename = '';
 
@@ -64,6 +68,7 @@ export class DocumentComponent implements OnChanges {
   pdfSrc: { url: string; httpHeaders?: { Authorization: string }; withCredentials: boolean } | null = null;
 
   private readonly _translateService = inject(TranslateService);
+  private _resizeObserver: ResizeObserver | null = null;
 
   get isPdf(): boolean {
     return this.src.filename.split('.').pop() === 'pdf';
@@ -83,6 +88,16 @@ export class DocumentComponent implements OnChanges {
       this._setOriginalFilename();
       this._setPdfSrc();
     }
+  }
+
+  ngAfterViewInit(): void {
+    if (this.isPdf) {
+      this._setupResizeObserver();
+    }
+  }
+
+  ngOnDestroy(): void {
+    this._cleanupResizeObserver();
   }
 
   onInputChange(event: Event) {
@@ -153,6 +168,29 @@ export class DocumentComponent implements OnChanges {
         ...(headers && { httpHeaders: headers }),
         withCredentials: true,
       };
+    }
+  }
+
+  private _setupResizeObserver() {
+    if (!this._pdfContainer) {
+      return;
+    }
+
+    this._resizeObserver = new ResizeObserver(() => {
+      if (this._pdfComponent && this.isPdf && !this.failedToLoad) {
+        setTimeout(() => {
+          this._pdfComponent.updateSize();
+        }, 0);
+      }
+    });
+
+    this._resizeObserver.observe(this._pdfContainer.nativeElement);
+  }
+
+  private _cleanupResizeObserver() {
+    if (this._resizeObserver) {
+      this._resizeObserver.disconnect();
+      this._resizeObserver = null;
     }
   }
 }

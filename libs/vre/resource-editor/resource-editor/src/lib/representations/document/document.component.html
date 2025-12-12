@@ -1,5 +1,5 @@
 @if (isPdf) {
-<div class="pdf-container">
+<div #pdfContainer class="pdf-container">
   <!-- in case of an error -->
   @if (failedToLoad) {
   <app-status [status]="404" [url]="src.fileUrl" [representation]="'document'" />
