@@ -33,8 +33,7 @@ describe('LicensesEnabledTableComponent - Event-Driven Architecture', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [LicensesEnabledTableComponent],
-      imports: [TranslateModule.forRoot()],
+      imports: [LicensesEnabledTableComponent, TranslateModule.forRoot()],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     }).compileComponents();
 

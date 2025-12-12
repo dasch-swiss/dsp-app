@@ -1,9 +1,11 @@
 import { ChangeDetectorRef, Component, inject, OnDestroy } from '@angular/core';
+import { MatButton } from '@angular/material/button';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { APIV2ApiService, ExportFormat } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { AppError } from '@dasch-swiss/vre/core/error-handler';
 import { AccessTokenService } from '@dasch-swiss/vre/core/session';
-import { TranslateService } from '@ngx-translate/core';
+import { AppProgressIndicatorComponent } from '@dasch-swiss/vre/ui/progress-indicator';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, finalize, Subject, switchMap, takeUntil } from 'rxjs';
 import { ProjectPageService } from '../../project-page.service';
 
@@ -11,7 +13,8 @@ import { ProjectPageService } from '../../project-page.service';
   selector: 'app-resource-metadata',
   templateUrl: './resource-metadata.component.html',
   styleUrl: './resource-metadata.component.scss',
-  standalone: false,
+  standalone: true,
+  imports: [MatButton, AppProgressIndicatorComponent, TranslateModule],
 })
 export class ResourceMetadataComponent implements OnDestroy {
   private readonly _reloadSubject = new BehaviorSubject<void>(undefined);

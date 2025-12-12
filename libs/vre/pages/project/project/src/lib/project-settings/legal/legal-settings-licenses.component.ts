@@ -1,10 +1,12 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { AdminAPIApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { PaginatedApiService } from '@dasch-swiss/vre/shared/app-common';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
+import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, catchError, map, shareReplay, switchMap, tap } from 'rxjs';
 import { ProjectPageService } from '../../project-page.service';
-import { LicenseToggleEvent } from './licenses-enabled-table.component';
+import { LicenseToggleEvent, LicensesEnabledTableComponent } from './licenses-enabled-table.component';
 
 @Component({
   selector: 'app-legal-settings-licenses',
@@ -31,7 +33,8 @@ import { LicenseToggleEvent } from './licenses-enabled-table.component';
     }
   }`,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  standalone: true,
+  imports: [AsyncPipe, LicensesEnabledTableComponent, TranslateModule],
 })
 export class LegalSettingsLicensesComponent {
   private readonly _reloadSubject = new BehaviorSubject<void>(undefined);

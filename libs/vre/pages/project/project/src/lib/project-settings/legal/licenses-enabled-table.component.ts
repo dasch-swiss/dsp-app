@@ -1,7 +1,9 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
-import { MatCheckboxChange } from '@angular/material/checkbox';
+import { MatCheckbox, MatCheckboxChange } from '@angular/material/checkbox';
+import { MatIcon } from '@angular/material/icon';
 import { ReadProject } from '@dasch-swiss/dsp-js';
 import { ProjectLicenseDto } from '@dasch-swiss/vre/3rd-party-services/open-api';
+import { TranslateModule } from '@ngx-translate/core';
 
 export interface LicenseToggleEvent {
   licenseId: string;
@@ -61,7 +63,8 @@ export interface LicenseToggleEvent {
     `,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  standalone: true,
+  imports: [MatCheckbox, MatIcon, TranslateModule],
 })
 export class LicensesEnabledTableComponent {
   @Input({ required: true }) licenses!: ProjectLicenseDto[];

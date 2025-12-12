@@ -1,6 +1,10 @@
+import { AsyncPipe } from '@angular/common';
 import { Component } from '@angular/core';
+import { MatToolbar } from '@angular/material/toolbar';
 import { Router } from '@angular/router';
+import { HeaderLogoComponent, HeaderUserActionsComponent } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { map } from 'rxjs';
+import { ProjectNavigationTabsComponent } from './project-navigation-tabs.component';
 import { ProjectPageService } from './project-page.service';
 
 @Component({
@@ -32,7 +36,8 @@ import { ProjectPageService } from './project-page.service';
       }
     `,
   ],
-  standalone: false,
+  standalone: true,
+  imports: [AsyncPipe, MatToolbar, HeaderLogoComponent, HeaderUserActionsComponent, ProjectNavigationTabsComponent],
 })
 export class ProjectPageHeaderComponent {
   currentProjectName$ = this._projectService.currentProject$.pipe(map(project => project.longname));

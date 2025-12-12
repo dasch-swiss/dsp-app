@@ -1,12 +1,19 @@
+import { AsyncPipe } from '@angular/common';
 import { Component } from '@angular/core';
+import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
+import { MatIcon } from '@angular/material/icon';
+import { MatTooltip } from '@angular/material/tooltip';
 import { PaginatedApiService } from '@dasch-swiss/vre/shared/app-common';
+import { AlternatedListComponent } from '@dasch-swiss/vre/ui/ui';
+import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, first, switchMap } from 'rxjs';
 import { ProjectPageService } from '../../project-page.service';
 import {
   CreateCopyrightHolderDialogComponent,
   CreateCopyrightHolderDialogProps,
 } from '../create-copyright-holder-dialog.component';
+import { LegalSettingsLicensesComponent } from './legal-settings-licenses.component';
 
 @Component({
   selector: 'app-legal-settings',
@@ -61,7 +68,16 @@ import {
       }
     `,
   ],
-  standalone: false,
+  standalone: true,
+  imports: [
+    AlternatedListComponent,
+    AsyncPipe,
+    LegalSettingsLicensesComponent,
+    MatButton,
+    MatIcon,
+    MatTooltip,
+    TranslateModule,
+  ],
 })
 export class LegalSettingsComponent {
   private readonly _reloadSubject = new BehaviorSubject<void>(undefined);

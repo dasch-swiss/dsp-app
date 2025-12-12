@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterOutlet } from '@angular/router';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { first } from 'rxjs';
+import { ProjectPageHeaderComponent } from './project-page-header.component';
 import { ProjectPageService } from './project-page.service';
 
 @Component({
@@ -14,7 +15,8 @@ import { ProjectPageService } from './project-page.service';
     </div>
   `,
   styleUrls: ['./project-page.component.scss'],
-  standalone: false,
+  standalone: true,
+  imports: [ProjectPageHeaderComponent, RouterOutlet],
 })
 export class ProjectPageComponent implements OnInit {
   hasProjectAdminRights$ = this._projectPageService.hasProjectAdminRights$;

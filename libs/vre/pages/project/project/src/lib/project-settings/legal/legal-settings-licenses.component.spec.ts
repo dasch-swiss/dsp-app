@@ -40,7 +40,7 @@ describe('LegalSettingsLicensesComponent - Business Logic', () => {
     } as any;
 
     await TestBed.configureTestingModule({
-      declarations: [LegalSettingsLicensesComponent],
+      imports: [LegalSettingsLicensesComponent],
       providers: [
         { provide: AdminAPIApiService, useValue: mockAdminApiService },
         { provide: PaginatedApiService, useValue: mockPaginatedApiService },

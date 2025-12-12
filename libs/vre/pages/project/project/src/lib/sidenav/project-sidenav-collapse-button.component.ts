@@ -1,4 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { MatIconButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatTooltip } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-project-sidenav-collapse-button',
@@ -35,7 +38,8 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
       }
     `,
   ],
-  standalone: false,
+  standalone: true,
+  imports: [MatIconButton, MatIcon, MatTooltip],
 })
 export class ProjectSidenavCollapseButtonComponent {
   @Input({ required: true }) expand!: boolean;

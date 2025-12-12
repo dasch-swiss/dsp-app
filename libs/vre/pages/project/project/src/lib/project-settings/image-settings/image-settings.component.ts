@@ -1,4 +1,9 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
 import { ActivatedRoute } from '@angular/router';
 import { ProjectRestrictedViewSettings } from '@dasch-swiss/dsp-js';
 import { ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
@@ -7,8 +12,10 @@ import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { ReplaceAnimation } from '@dasch-swiss/vre/shared/app-common';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
-import { TranslateService } from '@ngx-translate/core';
-import { IMask } from 'angular-imask';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { IMask, IMaskDirective } from 'angular-imask';
+import { ImageDisplayAbsoluteComponent } from './image-display-absolute.component';
+import { ImageDisplayRatioComponent } from './image-display-ratio.component';
 
 enum ImageSettingsEnum {
   Off = 'Off',
@@ -21,7 +28,20 @@ enum ImageSettingsEnum {
   styleUrls: ['./image-settings.component.scss'],
   templateUrl: './image-settings.component.html',
   animations: [ReplaceAnimation.animation],
-  standalone: false,
+  standalone: true,
+  imports: [
+    FormsModule,
+    ImageDisplayAbsoluteComponent,
+    ImageDisplayRatioComponent,
+    IMaskDirective,
+    MatButton,
+    MatFormField,
+    MatInput,
+    MatLabel,
+    MatRadioButton,
+    MatRadioGroup,
+    TranslateModule,
+  ],
 })
 export class ImageSettingsComponent implements OnInit {
   readonly minWidth = 128;

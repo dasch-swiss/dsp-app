@@ -1,12 +1,19 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, Input } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { MatAutocomplete, MatAutocompleteTrigger, MatOption } from '@angular/material/autocomplete';
+import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
 import { KnoraApiConnection, ReadUser } from '@dasch-swiss/dsp-js';
 import { UserApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { AdminAPIApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { DspApiConnectionToken, DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import { CreateUserDialogComponent } from '@dasch-swiss/vre/pages/system/system';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { AppProgressIndicatorComponent } from '@dasch-swiss/vre/ui/progress-indicator';
+import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, combineLatest, filter, map, shareReplay, startWith, switchMap, tap } from 'rxjs';
 import { CollaborationPageService } from '../collaboration-page.service';
 
@@ -48,7 +55,20 @@ import { CollaborationPageService } from '../collaboration-page.service';
     </div>
   `,
   styleUrls: ['./add-user.component.scss'],
-  standalone: false,
+  standalone: true,
+  imports: [
+    AsyncPipe,
+    ReactiveFormsModule,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    MatAutocomplete,
+    MatAutocompleteTrigger,
+    MatOption,
+    MatButton,
+    TranslateModule,
+    AppProgressIndicatorComponent,
+  ],
 })
 export class AddUserComponent {
   @Input({ required: true }) projectUuid!: string;

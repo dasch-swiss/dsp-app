@@ -1,12 +1,16 @@
+import { AsyncPipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
+import { MatButton } from '@angular/material/button';
 import { UpdateProjectRequest } from '@dasch-swiss/dsp-js';
 import { ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
+import { LoadingButtonDirective } from '@dasch-swiss/vre/ui/progress-indicator';
 import { MultiLanguages } from '@dasch-swiss/vre/ui/string-literal';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { map, switchMap, take } from 'rxjs';
 import { ProjectPageService } from '../project-page.service';
 import { ProjectForm } from './project-form.type';
+import { ReusableProjectFormComponent } from './reusable-project-form.component';
 
 @Component({
   selector: 'app-edit-project-form-page',
@@ -28,7 +32,8 @@ import { ProjectForm } from './project-form.type';
       </button>
     </div>
   `,
-  standalone: false,
+  standalone: true,
+  imports: [AsyncPipe, MatButton, TranslateModule, LoadingButtonDirective, ReusableProjectFormComponent],
 })
 export class EditProjectFormPageComponent {
   form!: ProjectForm;

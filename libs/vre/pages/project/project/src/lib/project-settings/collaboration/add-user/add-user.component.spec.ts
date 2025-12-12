@@ -81,8 +81,7 @@ describe('AddUserComponent', () => {
     } as any;
 
     await TestBed.configureTestingModule({
-      declarations: [AddUserComponent],
-      imports: [TranslateModule.forRoot()],
+      imports: [AddUserComponent, TranslateModule.forRoot()],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       providers: [
         { provide: DspApiConnectionToken, useValue: mockDspApiConnection },

@@ -1,9 +1,14 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { TranslateService } from '@ngx-translate/core';
+import { StatusComponent } from '@dasch-swiss/vre/shared/app-common-to-move';
+import { DoubleChipSelectorComponent } from '@dasch-swiss/vre/ui/ui';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { map, tap } from 'rxjs';
 import { ProjectPageService } from '../../project-page.service';
+import { AddUserComponent } from './add-user/add-user.component';
 import { CollaborationPageService } from './collaboration-page.service';
+import { ProjectMembersComponent } from './project-members.component';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -46,7 +51,15 @@ import { CollaborationPageService } from './collaboration-page.service';
   `,
   styleUrls: ['./collaboration-page.component.scss'],
   providers: [CollaborationPageService],
-  standalone: false,
+  standalone: true,
+  imports: [
+    AsyncPipe,
+    TranslateModule,
+    DoubleChipSelectorComponent,
+    StatusComponent,
+    AddUserComponent,
+    ProjectMembersComponent,
+  ],
 })
 export class CollaborationPageComponent {
   private _translateService = inject(TranslateService);

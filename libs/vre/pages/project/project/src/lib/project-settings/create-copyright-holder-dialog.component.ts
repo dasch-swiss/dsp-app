@@ -1,8 +1,18 @@
 import { Component, Inject } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatButton } from '@angular/material/button';
+import {
+  MAT_DIALOG_DATA,
+  MatDialogActions,
+  MatDialogClose,
+  MatDialogContent,
+  MatDialogRef,
+} from '@angular/material/dialog';
 import { AdminAPIApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { AppError } from '@dasch-swiss/vre/core/error-handler';
+import { LoadingButtonDirective } from '@dasch-swiss/vre/ui/progress-indicator';
+import { CommonInputComponent, DialogHeaderComponent } from '@dasch-swiss/vre/ui/ui';
+import { TranslateModule } from '@ngx-translate/core';
 import { finalize } from 'rxjs';
 
 export interface CreateCopyrightHolderDialogProps {
@@ -31,7 +41,17 @@ export interface CreateCopyrightHolderDialogProps {
         {{ 'ui.common.actions.submit' | translate }}
       </button>
     </div>`,
-  standalone: false,
+  standalone: true,
+  imports: [
+    CommonInputComponent,
+    DialogHeaderComponent,
+    LoadingButtonDirective,
+    MatButton,
+    MatDialogActions,
+    MatDialogClose,
+    MatDialogContent,
+    TranslateModule,
+  ],
 })
 export class CreateCopyrightHolderDialogComponent {
   form = this._fb.group({

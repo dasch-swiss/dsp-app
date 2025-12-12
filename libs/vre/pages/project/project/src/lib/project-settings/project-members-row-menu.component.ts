@@ -1,5 +1,9 @@
+import { AsyncPipe } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { MatIconButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
+import { MatIcon } from '@angular/material/icon';
+import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { Router } from '@angular/router';
 import { ReadProject, ReadUser } from '@dasch-swiss/dsp-js';
 import { PermissionsData } from '@dasch-swiss/dsp-js/src/models/admin/permissions-data';
@@ -14,7 +18,7 @@ import {
 } from '@dasch-swiss/vre/pages/user-settings/user';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { DialogService } from '@dasch-swiss/vre/ui/ui';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { switchMap } from 'rxjs';
 import { CollaborationPageService } from './collaboration/collaboration-page.service';
 
@@ -49,7 +53,8 @@ import { CollaborationPageService } from './collaboration/collaboration-page.ser
       </button>
     </mat-menu>
   `,
-  standalone: false,
+  standalone: true,
+  imports: [AsyncPipe, MatIcon, MatIconButton, MatMenu, MatMenuItem, MatMenuTrigger, TranslateModule],
 })
 export class ProjectMembersRowMenuComponent {
   @Input({ required: true }) user!: ReadUser;
