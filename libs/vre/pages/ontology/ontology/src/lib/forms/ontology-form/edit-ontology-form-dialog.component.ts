@@ -1,8 +1,19 @@
 import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatButton } from '@angular/material/button';
+import {
+  MAT_DIALOG_DATA,
+  MatDialogActions,
+  MatDialogClose,
+  MatDialogContent,
+  MatDialogRef,
+} from '@angular/material/dialog';
 import { OntologyMetadata } from '@dasch-swiss/dsp-js';
+import { LoadingButtonDirective } from '@dasch-swiss/vre/ui/progress-indicator';
+import { DialogHeaderComponent } from '@dasch-swiss/vre/ui/ui';
+import { TranslateModule } from '@ngx-translate/core';
 import { finalize } from 'rxjs';
 import { OntologyEditService } from '../../services/ontology-edit.service';
+import { OntologyFormComponent } from './ontology-form.component';
 import { OntologyForm, UpdateOntologyData } from './ontology-form.type';
 
 @Component({
@@ -26,7 +37,16 @@ import { OntologyForm, UpdateOntologyData } from './ontology-form.type';
       </button>
     </div>`,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [
+    DialogHeaderComponent,
+    LoadingButtonDirective,
+    MatButton,
+    MatDialogActions,
+    MatDialogClose,
+    MatDialogContent,
+    OntologyFormComponent,
+    TranslateModule,
+  ],
 })
 export class EditOntologyFormDialogComponent {
   loading = false;

@@ -1,14 +1,22 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit, ViewContainerRef } from '@angular/core';
+import { MatAnchor, MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
+import { MatIcon } from '@angular/material/icon';
+import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
+import { MatTooltip } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ListNodeInfo, ListResponse } from '@dasch-swiss/dsp-js';
 import { ListApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { DspDialogConfig, RouteConstants } from '@dasch-swiss/vre/core/config';
 import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
-import { DialogService } from '@dasch-swiss/vre/ui/ui';
-import { TranslateService } from '@ngx-translate/core';
+import { ProgressIndicatorOverlayComponent } from '@dasch-swiss/vre/ui/progress-indicator';
+import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
+import { DialogService, TruncatePipe } from '@dasch-swiss/vre/ui/ui';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, combineLatest, map, of, Subject, switchMap, takeUntil } from 'rxjs';
 import { ListInfoFormComponent } from './list-info-form/list-info-form.component';
+import { ListItemComponent } from './list-item/list-item.component';
 import { ListItemService } from './list-item/list-item.service';
 
 @Component({
@@ -17,7 +25,21 @@ import { ListItemService } from './list-item/list-item.service';
   templateUrl: './list-page.component.html',
   styleUrls: ['./list-page.component.scss'],
   providers: [ListItemService],
-  standalone: false,
+  standalone: true,
+  imports: [
+    AsyncPipe,
+    MatAnchor,
+    MatButton,
+    MatIcon,
+    MatToolbar,
+    MatToolbarRow,
+    MatTooltip,
+    TranslateModule,
+    ProgressIndicatorOverlayComponent,
+    ListItemComponent,
+    StringifyStringLiteralPipe,
+    TruncatePipe,
+  ],
 })
 export class ListPageComponent implements OnInit, OnDestroy {
   private _reloadMainListSubject = new BehaviorSubject<null>(null);

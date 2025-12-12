@@ -1,10 +1,16 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ensureWithDefaultLanguage } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { existingNamesAsyncValidator } from '@dasch-swiss/vre/pages/user-settings/user';
 import { atLeastOneStringRequired, CustomRegex } from '@dasch-swiss/vre/shared/app-common';
 import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
-import { DEFAULT_MULTILANGUAGE_FORM } from '@dasch-swiss/vre/ui/string-literal';
+import {
+  MultiLanguageInputComponent,
+  MultiLanguageTextareaComponent,
+  DEFAULT_MULTILANGUAGE_FORM,
+} from '@dasch-swiss/vre/ui/string-literal';
+import { CommonInputComponent } from '@dasch-swiss/vre/ui/ui';
+import { TranslateModule } from '@ngx-translate/core';
 import { OntologyEditService } from '../../services/ontology-edit.service';
 import { ResourceClassForm, ResourceClassFormData } from './resource-class-form.type';
 
@@ -38,7 +44,13 @@ import { ResourceClassForm, ResourceClassFormData } from './resource-class-form.
   `,
   styles: [':host ::ng-deep .name-input .mat-icon { padding-right: 24px; }'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [
+    CommonInputComponent,
+    MultiLanguageInputComponent,
+    MultiLanguageTextareaComponent,
+    ReactiveFormsModule,
+    TranslateModule,
+  ],
 })
 export class ResourceClassFormComponent implements OnInit {
   @Input({ required: true }) formData!: ResourceClassFormData;

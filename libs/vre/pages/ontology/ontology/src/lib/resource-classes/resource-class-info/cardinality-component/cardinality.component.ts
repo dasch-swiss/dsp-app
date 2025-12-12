@@ -1,3 +1,4 @@
+import { NgClass } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -7,8 +8,10 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
 import { Cardinality, Constants } from '@dasch-swiss/dsp-js';
+import { TranslateModule } from '@ngx-translate/core';
 import { ClassPropertyInfo } from '../../../ontology.types';
 import { CardinalityChangeDialogComponent, CardinalityInfo } from './cardinality-change-dialog.component';
 
@@ -58,7 +61,7 @@ import { CardinalityChangeDialogComponent, CardinalityInfo } from './cardinality
     </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [FormsModule, NgClass, TranslateModule],
 })
 export class CardinalityComponent implements OnInit {
   @Input({ required: true }) classProp!: ClassPropertyInfo;

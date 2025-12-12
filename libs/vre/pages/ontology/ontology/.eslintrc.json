@@ -1,11 +1,5 @@
 {
-  "extends": ["../../../../../.eslintrc-angular.json"],
-  "overrides": [
-    {
-      "files": ["*.ts"],
-      "rules": {
-        "@angular-eslint/prefer-standalone": "off"
-      }
-    }
+  "extends": [
+    "../../../../../.eslintrc-angular.json"
   ]
 }

@@ -1,6 +1,13 @@
 import { Component, inject, Inject, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatButton } from '@angular/material/button';
+import {
+  MAT_DIALOG_DATA,
+  MatDialogActions,
+  MatDialogClose,
+  MatDialogContent,
+  MatDialogRef,
+} from '@angular/material/dialog';
 import {
   ListInfoResponse,
   ListNodeInfo,
@@ -12,8 +19,14 @@ import { ListApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { ensureWithDefaultLanguage } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
 import { atLeastOneStringRequired } from '@dasch-swiss/vre/shared/app-common';
-import { DEFAULT_MULTILANGUAGE_FORM } from '@dasch-swiss/vre/ui/string-literal';
-import { TranslateService } from '@ngx-translate/core';
+import { LoadingButtonDirective } from '@dasch-swiss/vre/ui/progress-indicator';
+import {
+  DEFAULT_MULTILANGUAGE_FORM,
+  MultiLanguageInputComponent,
+  MultiLanguageTextareaComponent,
+} from '@dasch-swiss/vre/ui/string-literal';
+import { DialogHeaderComponent } from '@dasch-swiss/vre/ui/ui';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ListInfoForm } from './list-info-form.type';
 
 @Component({
@@ -48,7 +61,18 @@ import { ListInfoForm } from './list-info-form.type';
       </div>
     </div>
   `,
-  standalone: false,
+  standalone: true,
+  imports: [
+    MatButton,
+    MatDialogActions,
+    MatDialogClose,
+    MatDialogContent,
+    TranslateModule,
+    DialogHeaderComponent,
+    MultiLanguageInputComponent,
+    MultiLanguageTextareaComponent,
+    LoadingButtonDirective,
+  ],
 })
 export class ListInfoFormComponent implements OnInit {
   form!: ListInfoForm;

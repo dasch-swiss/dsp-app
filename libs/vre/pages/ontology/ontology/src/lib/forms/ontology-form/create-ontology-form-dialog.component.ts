@@ -1,14 +1,19 @@
 import { Component, Inject, OnDestroy } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
-import { MatDialogRef } from '@angular/material/dialog';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatDialogActions, MatDialogClose, MatDialogContent, MatDialogRef } from '@angular/material/dialog';
 import { KnoraApiConnection, OntologyMetadata } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
 import { existingNamesAsyncValidator } from '@dasch-swiss/vre/pages/user-settings/user';
 import { CustomRegex } from '@dasch-swiss/vre/shared/app-common';
 import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { LoadingButtonDirective } from '@dasch-swiss/vre/ui/progress-indicator';
+import { CommonInputComponent, DialogHeaderComponent } from '@dasch-swiss/vre/ui/ui';
+import { TranslateModule } from '@ngx-translate/core';
 import { map, Subject, takeUntil } from 'rxjs';
 import { MakeOntologyFor } from '../../services/make-ontology-for';
+import { OntologyFormComponent } from './ontology-form.component';
 import { OntologyForm } from './ontology-form.type';
 
 @Component({
@@ -41,7 +46,18 @@ import { OntologyForm } from './ontology-form.type';
         {{ 'ui.common.actions.submit' | translate }}
       </button>
     </div>`,
-  standalone: false,
+  imports: [
+    CommonInputComponent,
+    DialogHeaderComponent,
+    LoadingButtonDirective,
+    MatButton,
+    MatDialogActions,
+    MatDialogClose,
+    MatDialogContent,
+    OntologyFormComponent,
+    ReactiveFormsModule,
+    TranslateModule,
+  ],
 })
 export class CreateOntologyFormDialogComponent implements OnDestroy {
   private _destroy$ = new Subject<void>();

@@ -1,8 +1,18 @@
-import { Component, Input, OnChanges } from '@angular/core';
+import { Component, forwardRef, Input, OnChanges } from '@angular/core';
+import { MatIconButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
 import { ListNode } from '@dasch-swiss/dsp-js';
 import { ensureWithDefaultLanguage } from '@dasch-swiss/vre/3rd-party-services/open-api';
-import { DEFAULT_MULTILANGUAGE_FORM, MultiLanguageFormArray } from '@dasch-swiss/vre/ui/string-literal';
+import {
+  DEFAULT_MULTILANGUAGE_FORM,
+  MultiLanguageFormArray,
+  MultiLanguageInputComponent,
+  StringifyStringLiteralPipe,
+} from '@dasch-swiss/vre/ui/string-literal';
+import { TruncatePipe } from '@dasch-swiss/vre/ui/ui';
 import { TranslateService } from '@ngx-translate/core';
+import { ActionBubbleComponent } from '../action-bubble/action-bubble.component';
+import { ListItemComponent } from '../list-item/list-item.component';
 
 @Component({
   selector: 'app-list-item-element',
@@ -33,7 +43,16 @@ import { TranslateService } from '@ngx-translate/core';
     </div>
   `,
   styles: [':host ::ng-deep app-multi-language-input .mat-mdc-form-field-bottom-align { display: none;}'],
-  standalone: false,
+  standalone: true,
+  imports: [
+    MatIconButton,
+    MatIcon,
+    MultiLanguageInputComponent,
+    ActionBubbleComponent,
+    forwardRef(() => ListItemComponent),
+    StringifyStringLiteralPipe,
+    TruncatePipe,
+  ],
 })
 export class ListItemElementComponent implements OnChanges {
   @Input({ required: true }) node!: ListNode;

@@ -1,10 +1,21 @@
 import { ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatButton } from '@angular/material/button';
+import {
+  MAT_DIALOG_DATA,
+  MatDialogActions,
+  MatDialogClose,
+  MatDialogContent,
+  MatDialogRef,
+} from '@angular/material/dialog';
 import { StringLiteralV2 } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
-import { MultiLanguages } from '@dasch-swiss/vre/ui/string-literal';
+import { LoadingButtonDirective } from '@dasch-swiss/vre/ui/progress-indicator';
+import { MultiLanguages, StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
+import { DialogHeaderComponent } from '@dasch-swiss/vre/ui/ui';
+import { TranslateModule } from '@ngx-translate/core';
 import { take } from 'rxjs';
 import { OntologyEditService } from '../../services/ontology-edit.service';
+import { ResourceClassFormComponent } from './resource-class-form.component';
 import { ResourceClassForm, ResourceClassFormData, UpdateResourceClassData } from './resource-class-form.type';
 
 export interface EditResourceClassDialogProps {
@@ -36,7 +47,17 @@ export interface EditResourceClassDialogProps {
     </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [
+    DialogHeaderComponent,
+    LoadingButtonDirective,
+    MatButton,
+    MatDialogActions,
+    MatDialogClose,
+    MatDialogContent,
+    ResourceClassFormComponent,
+    StringifyStringLiteralPipe,
+    TranslateModule,
+  ],
 })
 export class EditResourceClassDialogComponent implements OnInit {
   loading = false;

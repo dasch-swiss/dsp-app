@@ -2,6 +2,8 @@ import { ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular
 import { ListChildNodeResponse, ListNode, ListNodeInfo, ListResponse } from '@dasch-swiss/dsp-js';
 import { ListApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { startWith, Subscription, switchMap } from 'rxjs';
+import { ListItemElementComponent } from '../list-item-element/list-item-element.component';
+import { ListItemFormComponent } from '../list-item-form/list-item-form.component';
 import { ListItemService } from './list-item.service';
 
 @Component({
@@ -20,7 +22,8 @@ import { ListItemService } from './list-item.service';
     }
   `,
   styles: [':host { display: block; }'],
-  standalone: false,
+  standalone: true,
+  imports: [ListItemElementComponent, ListItemFormComponent],
 })
 export class ListItemComponent implements OnInit, OnDestroy {
   @Input({ required: true }) node!: ListNodeInfo;

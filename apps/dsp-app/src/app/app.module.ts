@@ -20,8 +20,6 @@ import {
   DspInstrumentationToken,
 } from '@dasch-swiss/vre/core/config';
 import { AppErrorHandler } from '@dasch-swiss/vre/core/error-handler';
-import { ListComponents } from '@dasch-swiss/vre/pages/ontology/list';
-import { OntologyComponents } from '@dasch-swiss/vre/pages/ontology/ontology';
 import { AdvancedSearchComponent } from '@dasch-swiss/vre/pages/search/advanced-search';
 import { SearchComponents } from '@dasch-swiss/vre/pages/search/search';
 import { SystemComponents } from '@dasch-swiss/vre/pages/system/system';
@@ -56,7 +54,7 @@ export function httpLoaderFactory(httpClient: HttpClient) {
 }
 
 @NgModule({
-  declarations: [AppComponent, CookieBannerComponent, ...ListComponents, ...OntologyComponents, ...SearchComponents],
+  declarations: [AppComponent, CookieBannerComponent, ...SearchComponents],
   imports: [
     AdvancedSearchComponent,
     AngularSplitModule,

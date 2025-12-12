@@ -1,11 +1,16 @@
+import { AsyncPipe, DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, ViewContainerRef } from '@angular/core';
+import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
+import { MatIcon } from '@angular/material/icon';
+import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
+import { MatTooltip } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
 import { OntologyMetadata, ReadOntology } from '@dasch-swiss/dsp-js';
 import { DspDialogConfig, RouteConstants } from '@dasch-swiss/vre/core/config';
 import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
 import { DialogService } from '@dasch-swiss/vre/ui/ui';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { switchMap, take } from 'rxjs';
 import { EditOntologyFormDialogComponent } from './forms/ontology-form/edit-ontology-form-dialog.component';
 import { UpdateOntologyData } from './forms/ontology-form/ontology-form.type';
@@ -109,7 +114,7 @@ import { OntologyEditService } from './services/ontology-edit.service';
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [AsyncPipe, DatePipe, MatButton, MatIcon, MatToolbar, MatToolbarRow, MatTooltip, TranslateModule],
 })
 export class OntologyEditorHeaderComponent {
   ontology$ = this._oes.currentOntologyInfo$;

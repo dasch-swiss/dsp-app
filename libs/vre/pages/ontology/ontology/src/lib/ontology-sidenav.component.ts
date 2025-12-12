@@ -1,5 +1,13 @@
+import { AsyncPipe } from '@angular/common';
 import { Component, ViewContainerRef } from '@angular/core';
+import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
+import { MatDivider } from '@angular/material/divider';
+import { MatIcon } from '@angular/material/icon';
+import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
+import { MatTabLink, MatTabNav, MatTabNavPanel } from '@angular/material/tabs';
+import { MatTooltip } from '@angular/material/tooltip';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 import { DspDialogConfig, RouteConstants } from '@dasch-swiss/vre/core/config';
 import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
 import {
@@ -9,6 +17,7 @@ import {
   DefaultResourceClasses,
   PropertyCategory,
 } from '@dasch-swiss/vre/shared/app-helper-services';
+import { TranslateModule } from '@ngx-translate/core';
 import { EditPropertyFormDialogComponent } from './forms/property-form/edit-property-form-dialog.component';
 import { CreatePropertyDialogData } from './forms/property-form/property-form.type';
 import { CreateResourceClassDialogComponent } from './forms/resource-class-form/create-resource-class-dialog.component';
@@ -124,7 +133,22 @@ import { OntologyPageService } from './ontology-page.service';
       }
     `,
   ],
-  standalone: false,
+  imports: [
+    AsyncPipe,
+    MatButton,
+    MatDivider,
+    MatIcon,
+    MatMenu,
+    MatMenuItem,
+    MatMenuTrigger,
+    MatTabLink,
+    MatTabNav,
+    MatTabNavPanel,
+    MatTooltip,
+    RouterLink,
+    RouterLinkActive,
+    TranslateModule,
+  ],
 })
 export class OntologySidenavComponent {
   project$ = this._projectPageService.currentProject$;

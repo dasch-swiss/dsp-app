@@ -1,7 +1,10 @@
+import { AsyncPipe, NgClass } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { MatList, MatListItem } from '@angular/material/list';
 import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
 import { PropertyInfo } from '../ontology.types';
 import { OntologyEditService } from '../services/ontology-edit.service';
+import { PropertyInfoComponent } from './property-info/property-info.component';
 
 @Component({
   selector: 'app-ontology-properties',
@@ -32,7 +35,7 @@ import { OntologyEditService } from '../services/ontology-edit.service';
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [AsyncPipe, MatList, MatListItem, NgClass, PropertyInfoComponent],
 })
 export class OntologyPropertiesComponent {
   hasProjectAdminRights$ = this._projectPageService.hasProjectAdminRights$;

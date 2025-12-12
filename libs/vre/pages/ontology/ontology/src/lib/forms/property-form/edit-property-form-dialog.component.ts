@@ -1,10 +1,20 @@
 import { Component, inject, Inject, OnInit } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatButton } from '@angular/material/button';
+import {
+  MAT_DIALOG_DATA,
+  MatDialogActions,
+  MatDialogClose,
+  MatDialogContent,
+  MatDialogRef,
+} from '@angular/material/dialog';
 import { StringLiteralV2 } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
-import { TranslateService } from '@ngx-translate/core';
+import { LoadingButtonDirective } from '@dasch-swiss/vre/ui/progress-indicator';
+import { DialogHeaderComponent } from '@dasch-swiss/vre/ui/ui';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { take } from 'rxjs';
 import { OntologyEditService } from '../../services/ontology-edit.service';
+import { PropertyFormComponent } from './property-form.component';
 import {
   CreatePropertyData,
   CreatePropertyDialogData,
@@ -30,7 +40,16 @@ import {
         {{ 'ui.common.actions.submit' | translate }}
       </button>
     </div>`,
-  standalone: false,
+  imports: [
+    DialogHeaderComponent,
+    LoadingButtonDirective,
+    MatButton,
+    MatDialogActions,
+    MatDialogClose,
+    MatDialogContent,
+    PropertyFormComponent,
+    TranslateModule,
+  ],
 })
 export class EditPropertyFormDialogComponent implements OnInit {
   loading = false;

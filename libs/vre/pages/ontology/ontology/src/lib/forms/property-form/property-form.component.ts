@@ -1,11 +1,23 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatOption, MatOptgroup } from '@angular/material/core';
+import { MatFormField, MatLabel, MatPrefix } from '@angular/material/form-field';
+import { MatIcon } from '@angular/material/icon';
+import { MatSelect, MatSelectTrigger } from '@angular/material/select';
 import { Constants } from '@dasch-swiss/dsp-js';
 import { ensureWithDefaultLanguage } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { existingNamesAsyncValidator } from '@dasch-swiss/vre/pages/user-settings/user';
 import { DefaultProperties, LocalizationService, PropertyCategory } from '@dasch-swiss/vre/shared/app-helper-services';
-import { DEFAULT_MULTILANGUAGE_FORM } from '@dasch-swiss/vre/ui/string-literal';
+import {
+  MultiLanguageInputComponent,
+  MultiLanguageTextareaComponent,
+  DEFAULT_MULTILANGUAGE_FORM,
+} from '@dasch-swiss/vre/ui/string-literal';
+import { CommonInputComponent } from '@dasch-swiss/vre/ui/ui';
+import { TranslateModule } from '@ngx-translate/core';
 import { OntologyEditService } from '../../services/ontology-edit.service';
+import { GuiAttrLinkComponent } from './gui-attr-link.component';
+import { GuiAttrListComponent } from './gui-attr-list.component';
 import { PropertyForm, EditPropertyDialogData } from './property-form.type';
 
 @Component({
@@ -59,7 +71,23 @@ import { PropertyForm, EditPropertyDialogData } from './property-form.type';
       [placeholder]="'pages.ontology.propertyForm.commentPlaceholder' | translate"
       [isRequired]="true" />
   </form>`,
-  standalone: false,
+  imports: [
+    CommonInputComponent,
+    GuiAttrLinkComponent,
+    GuiAttrListComponent,
+    MatFormField,
+    MatIcon,
+    MatLabel,
+    MatOption,
+    MatOptgroup,
+    MatPrefix,
+    MatSelect,
+    MatSelectTrigger,
+    MultiLanguageInputComponent,
+    MultiLanguageTextareaComponent,
+    ReactiveFormsModule,
+    TranslateModule,
+  ],
 })
 export class PropertyFormComponent implements OnInit {
   @Input() propertyData!: EditPropertyDialogData;

@@ -1,10 +1,16 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, HostListener, OnInit } from '@angular/core';
+import { MatSidenav, MatSidenavContainer, MatSidenavContent } from '@angular/material/sidenav';
 import { Title } from '@angular/platform-browser';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterOutlet } from '@angular/router';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
+import { StatusComponent } from '@dasch-swiss/vre/shared/app-common-to-move';
+import { ProgressIndicatorOverlayComponent } from '@dasch-swiss/vre/ui/progress-indicator';
 import { combineLatest, take } from 'rxjs';
+import { OntologyEditorHeaderComponent } from './ontology-editor-header.component';
 import { OntologyPageService } from './ontology-page.service';
+import { OntologySidenavComponent } from './ontology-sidenav.component';
 import { OntologyEditService } from './services/ontology-edit.service';
 
 @Component({
@@ -14,7 +20,7 @@ import { OntologyEditService } from './services/ontology-edit.service';
       <div class="ontology-editor">
         @if (isTransacting$ | async) {
           <div class="overlay-blocker">
-            <app-progress-indicator [size]="'large'" class="floating-center" />
+            <app-progress-indicator-overlay class="floating-center" />
           </div>
         }
         <mat-sidenav-container class="ontology-editor-container">
@@ -38,7 +44,17 @@ import { OntologyEditService } from './services/ontology-edit.service';
   styleUrls: ['./ontology-page.component.scss'],
   providers: [OntologyPageService, OntologyEditService],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [
+    AsyncPipe,
+    MatSidenav,
+    MatSidenavContainer,
+    MatSidenavContent,
+    OntologyEditorHeaderComponent,
+    OntologySidenavComponent,
+    ProgressIndicatorOverlayComponent,
+    RouterOutlet,
+    StatusComponent,
+  ],
 })
 export class OntologyPageComponent implements OnInit {
   project$ = this._projectPageService.currentProject$;

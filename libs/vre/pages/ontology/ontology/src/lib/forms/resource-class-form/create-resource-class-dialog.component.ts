@@ -1,9 +1,20 @@
 import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatButton } from '@angular/material/button';
+import {
+  MAT_DIALOG_DATA,
+  MatDialogActions,
+  MatDialogClose,
+  MatDialogContent,
+  MatDialogRef,
+} from '@angular/material/dialog';
 import { StringLiteralV2 } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
 import { DefaultClass } from '@dasch-swiss/vre/shared/app-helper-services';
+import { LoadingButtonDirective } from '@dasch-swiss/vre/ui/progress-indicator';
+import { DialogHeaderComponent } from '@dasch-swiss/vre/ui/ui';
+import { TranslateModule } from '@ngx-translate/core';
 import { OntologyEditService } from '../../services/ontology-edit.service';
+import { ResourceClassFormComponent } from './resource-class-form.component';
 import { ResourceClassForm, ResourceClassFormData } from './resource-class-form.type';
 
 @Component({
@@ -30,7 +41,16 @@ import { ResourceClassForm, ResourceClassFormData } from './resource-class-form.
     </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [
+    DialogHeaderComponent,
+    LoadingButtonDirective,
+    MatButton,
+    MatDialogActions,
+    MatDialogClose,
+    MatDialogContent,
+    ResourceClassFormComponent,
+    TranslateModule,
+  ],
 })
 export class CreateResourceClassDialogComponent {
   loading = false;

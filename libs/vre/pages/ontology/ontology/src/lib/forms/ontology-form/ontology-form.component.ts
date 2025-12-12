@@ -1,5 +1,10 @@
+import { CdkTextareaAutosize } from '@angular/cdk/text-field';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { CommonInputComponent } from '@dasch-swiss/vre/ui/ui';
+import { TranslateModule } from '@ngx-translate/core';
 import { OntologyForm, UpdateOntologyData } from './ontology-form.type';
 
 @Component({
@@ -24,7 +29,15 @@ import { OntologyForm, UpdateOntologyData } from './ontology-form.type';
       </mat-form-field>
     </form>
   `,
-  standalone: false,
+  imports: [
+    CdkTextareaAutosize,
+    CommonInputComponent,
+    MatFormField,
+    MatInput,
+    MatLabel,
+    ReactiveFormsModule,
+    TranslateModule,
+  ],
 })
 export class OntologyFormComponent implements OnInit {
   @Input({ required: true }) mode!: 'create' | 'edit';

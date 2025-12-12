@@ -1,4 +1,6 @@
 import { Clipboard } from '@angular/cdk/clipboard';
+import { CdkDrag, CdkDragHandle, CdkDragPlaceholder } from '@angular/cdk/drag-drop';
+import { AsyncPipe, NgClass } from '@angular/common';
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
@@ -15,16 +17,23 @@ import {
 } from '@angular/core';
 import { MatRipple } from '@angular/material/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatIcon } from '@angular/material/icon';
+import { MatListItem, MatListItemIcon } from '@angular/material/list';
+import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
+import { MatTooltip } from '@angular/material/tooltip';
 import { Cardinality, IHasProperty } from '@dasch-swiss/dsp-js';
 import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
+import { SplitPipe } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
-import { TranslateService } from '@ngx-translate/core';
+import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
 import { EditPropertyFormDialogComponent } from '../../forms/property-form/edit-property-form-dialog.component';
 import { EditPropertyDialogData } from '../../forms/property-form/property-form.type';
 import { ClassPropertyInfo } from '../../ontology.types';
 import { OntologyEditService } from '../../services/ontology-edit.service';
+import { CardinalityComponent } from './cardinality-component/cardinality.component';
 
 @Component({
   selector: 'app-property-item',
@@ -204,7 +213,25 @@ import { OntologyEditService } from '../../services/ontology-edit.service';
     `,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [
+    AsyncPipe,
+    CardinalityComponent,
+    CdkDrag,
+    CdkDragHandle,
+    CdkDragPlaceholder,
+    MatIcon,
+    MatListItem,
+    MatListItemIcon,
+    MatMenu,
+    MatMenuItem,
+    MatMenuTrigger,
+    MatRipple,
+    MatTooltip,
+    NgClass,
+    SplitPipe,
+    StringifyStringLiteralPipe,
+    TranslateModule,
+  ],
 })
 export class PropertyItemComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input({ required: true }) classProp!: ClassPropertyInfo;

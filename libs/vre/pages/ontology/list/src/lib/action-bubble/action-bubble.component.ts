@@ -1,6 +1,9 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component, inject, Input } from '@angular/core';
+import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
+import { MatIcon } from '@angular/material/icon';
+import { MatTooltip } from '@angular/material/tooltip';
 import { ListNode } from '@dasch-swiss/dsp-js';
 import { ListApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
@@ -72,7 +75,8 @@ import {
     ]),
   ],
   styleUrls: ['./action-bubble.component.scss'],
-  standalone: false,
+  standalone: true,
+  imports: [MatButton, MatIcon, MatTooltip],
 })
 export class ActionBubbleComponent {
   @Input({ required: true }) position!: number;

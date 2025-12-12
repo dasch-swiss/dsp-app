@@ -1,6 +1,6 @@
 @if ((isListsLoading$ | async)) {
 <div class="overlay-blocker">
-  <app-progress-indicator [size]='"large"' class="floating-center" />
+  <app-progress-indicator-overlay class="floating-center" />
 </div>
 } @if ((isListsLoading$ | async) === false && (rootListNodeInfo$ | async); as list) {
 <mat-toolbar class="sticky-header">
