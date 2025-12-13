@@ -18,7 +18,6 @@ import { MultipleViewerService } from './multiple-viewer.service';
     </as-split>
   `,
   providers: [MultipleViewerService],
-  standalone: true,
   imports: [AngularSplitModule, ResourcesListComponent, MultipleViewerComponent],
 })
 export class ResourceBrowserComponent implements OnInit, OnChanges {

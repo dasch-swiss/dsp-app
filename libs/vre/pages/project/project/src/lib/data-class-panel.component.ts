@@ -10,7 +10,7 @@ import { filterUndefined, generateDspResource } from '@dasch-swiss/vre/shared/ap
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
 import { TranslateModule } from '@ngx-translate/core';
-import { from, switchMap, combineLatest, first } from 'rxjs';
+import { combineLatest, first, from, switchMap } from 'rxjs';
 import { DataBrowserPageService } from './data-browser-page.service';
 import { DownloadDialogComponent } from './download/download-dialog.component';
 import { ProjectPageService } from './project-page.service';
@@ -43,8 +43,7 @@ interface CreateResourceDialogProps {
     </div>
     <app-resources-list-fetcher [ontologyLabel]="classSelected.ontologyLabel" [classLabel]="classSelected.classLabel" />
   `,
-  standalone: true,
-  imports: [AsyncPipe, MatButton, MatIcon, TranslateModule, StringifyStringLiteralPipe, ResourcesListFetcherComponent],
+  imports: [AsyncPipe, MatButton, TranslateModule, StringifyStringLiteralPipe, ResourcesListFetcherComponent, MatIcon],
   providers: [StringifyStringLiteralPipe],
 })
 export class DataClassPanelComponent {

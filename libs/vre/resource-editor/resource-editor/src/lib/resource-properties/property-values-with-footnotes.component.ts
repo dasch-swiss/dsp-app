@@ -19,7 +19,6 @@ import { PropertyValuesComponent } from './property-values.component';
   `,
   styles: [':host { display: block; position: relative; width: 100%}'],
   providers: [FootnoteService],
-  standalone: true,
 })
 export class PropertyValuesWithFootnotesComponent implements OnChanges {
   @Input({ required: true }) prop!: PropertyInfoValues;

@@ -34,7 +34,6 @@ import { RouteConstants } from '@dasch-swiss/vre/core/config';
       }
     `,
   ],
-  standalone: true,
 })
 export class HeaderLogoComponent {
   homeLink = RouteConstants.home;

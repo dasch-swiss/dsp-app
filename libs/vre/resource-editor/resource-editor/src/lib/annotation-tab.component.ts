@@ -51,7 +51,6 @@ import { ResourceInfoBarComponent } from './resource-info-bar.component';
   `,
   styles: ['.active {border: 1px solid} app-resource-info-bar {display: flex; flex-direction: row-reverse}'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     AsyncPipe,
     MatExpansionModule,

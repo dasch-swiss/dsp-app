@@ -60,7 +60,6 @@ import { MatCardImage } from '@angular/material/card';
       }
     `,
   ],
-  standalone: true,
   imports: [MatCardImage, NgClass],
 })
 export class ProjectImageCoverComponent {

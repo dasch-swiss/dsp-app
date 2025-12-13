@@ -14,7 +14,6 @@ import { propertiesTypeMapping } from './resource-payloads-mapping';
     [readValue]="propertyValueService.editModeData.values[index]"
     (afterEdit)="update($event)"
     (afterUndo)="goToDisplayMode()" />`,
-  standalone: true,
 })
 export class PropertyValueUpdateComponent {
   @Input({ required: true }) index!: number;

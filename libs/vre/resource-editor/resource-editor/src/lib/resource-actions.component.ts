@@ -77,7 +77,6 @@ import { PermissionInfoComponent } from './permission-info/permission-info.compo
       }
     `,
   ],
-  standalone: true,
   imports: [
     ClipboardModule,
     MatButtonModule,

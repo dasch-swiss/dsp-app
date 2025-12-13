@@ -89,7 +89,6 @@ import { ResourceToolbarComponent } from './resource-toolbar.component';
       }
     `,
   ],
-  standalone: true,
   imports: [
     AsyncPipe,
     MatButtonModule,

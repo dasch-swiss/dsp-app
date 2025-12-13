@@ -61,7 +61,6 @@ import { ListInfoForm } from './list-info-form.type';
       </div>
     </div>
   `,
-  standalone: true,
   imports: [
     MatButton,
     MatDialogActions,

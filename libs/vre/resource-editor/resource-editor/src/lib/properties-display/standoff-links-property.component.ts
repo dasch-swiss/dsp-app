@@ -17,7 +17,6 @@ import { IncomingStandoffLinkValueComponent } from './incoming-standoff-link-val
     [borderBottom]="true">
     <app-incoming-standoff-link-value [links]="standoffLinks" />
   </app-property-row>`,
-  standalone: true,
   imports: [PropertyRowComponent, IncomingStandoffLinkValueComponent, TranslateModule],
 })
 export class StandoffLinksPropertyComponent implements OnChanges {

@@ -22,7 +22,6 @@ import { TranslateModule } from '@ngx-translate/core';
       </span>
     </button>
   `,
-  standalone: true,
   imports: [MatButtonModule, MatMenuModule, MatTooltipModule, TranslateModule, ProgressSpinnerComponent],
 })
 export class LoadingMenuItemComponent {

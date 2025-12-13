@@ -96,7 +96,6 @@ import { PropertiesDisplayService } from '../resource-properties/properties-disp
   styles: [
     'button { padding-top: 24px; padding-bottom: 24px} :host { display: flex; flex-direction: row-reverse; gap: 16px; background: #eaeff3;}',
   ],
-  standalone: true,
   imports: [AsyncPipe, MatButtonModule, MatIconModule, MatTooltipModule, TranslateModule],
 })
 export class PropertiesToggleComponent implements OnChanges {

@@ -26,7 +26,6 @@ import { UploadControlComponent } from './upload-control.component';
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     CreateResourceFormRowComponent,
     UploadControlComponent,

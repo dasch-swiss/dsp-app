@@ -34,7 +34,6 @@ export interface StatusMsg {
   ],
   templateUrl: './status.component.html',
   styleUrls: ['./status.component.scss'],
-  standalone: true,
 })
 export class StatusComponent implements OnInit {
   _status = 404;

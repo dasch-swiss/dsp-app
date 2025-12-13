@@ -10,7 +10,6 @@ import { combineLatest, map, Observable, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-search-result',
-  standalone: true,
   imports: [
     AsyncPipe,
     CenteredBoxComponent,

@@ -36,7 +36,6 @@ import { TimeInputErrorStateMatcher } from './time-input-error-state-matcher';
     TimeFormatDirective,
     TranslateModule,
   ],
-  standalone: true,
 })
 export class TimeInputComponent implements OnInit {
   private readonly _translateService = inject(TranslateService);

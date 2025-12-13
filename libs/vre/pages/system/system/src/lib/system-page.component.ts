@@ -40,7 +40,6 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
     </div>
   `,
   styleUrls: ['./system-page.component.scss'],
-  standalone: true,
   imports: [
     AsyncPipe,
     MatIcon,

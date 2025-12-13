@@ -30,7 +30,6 @@ import { TranslateModule } from '@ngx-translate/core';
     </div>
   `,
   styleUrls: ['./incoming-resource-pager.component.scss'],
-  standalone: true,
   imports: [MatButtonModule, MatIconModule, TranslateModule],
 })
 export class IncomingResourcePagerComponent {

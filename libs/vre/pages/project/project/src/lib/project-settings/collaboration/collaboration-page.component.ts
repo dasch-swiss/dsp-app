@@ -51,7 +51,6 @@ import { ProjectMembersComponent } from './project-members.component';
   `,
   styleUrls: ['./collaboration-page.component.scss'],
   providers: [CollaborationPageService],
-  standalone: true,
   imports: [
     AsyncPipe,
     TranslateModule,

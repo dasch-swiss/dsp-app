@@ -51,7 +51,6 @@ import { VideoComponent } from './representations/video/video.component';
       }
     }
   </div>`,
-  standalone: true,
   imports: [ArchiveComponent, AudioComponent, DocumentComponent, StillImageComponent, TextComponent, VideoComponent],
 })
 export class ResourceRepresentationComponent implements OnChanges {

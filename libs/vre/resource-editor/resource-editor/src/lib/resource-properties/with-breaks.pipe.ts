@@ -3,7 +3,6 @@ import { DomSanitizer } from '@angular/platform-browser';
 
 @Pipe({
   name: 'withBreaks',
-  standalone: true,
 })
 export class WithBreaksPipe implements PipeTransform {
   constructor(private readonly _sanitizer: DomSanitizer) {}

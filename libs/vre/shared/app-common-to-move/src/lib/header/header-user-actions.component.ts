@@ -16,7 +16,6 @@ import { VersionBadgeComponent } from './version-badge.component';
       <app-user-menu />
     </span>
   `,
-  standalone: true,
 })
 export class HeaderUserActionsComponent {
   HELP_LINK = RouteConstants.help;

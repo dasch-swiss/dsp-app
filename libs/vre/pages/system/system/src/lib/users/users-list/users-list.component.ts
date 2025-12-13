@@ -51,7 +51,6 @@ type UserSortKey = 'familyName' | 'givenName' | 'email' | 'username';
       </div>
     }
   `,
-  standalone: true,
   imports: [AsyncPipe, I18nPluralPipe, MatButton, SortButtonComponent, TranslateModule, UsersListRowComponent],
 })
 export class UsersListComponent {

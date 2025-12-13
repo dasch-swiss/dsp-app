@@ -13,7 +13,6 @@ import { ProjectPageService } from '../../project-page.service';
   selector: 'app-resource-metadata',
   templateUrl: './resource-metadata.component.html',
   styleUrl: './resource-metadata.component.scss',
-  standalone: true,
   imports: [MatButton, AppProgressIndicatorComponent, TranslateModule],
 })
 export class ResourceMetadataComponent implements OnDestroy {

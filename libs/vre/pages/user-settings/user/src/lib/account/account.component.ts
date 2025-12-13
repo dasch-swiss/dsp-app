@@ -58,7 +58,6 @@ import { EditUserDialogComponent, EditUserDialogProps } from '../edit-user-page/
       }
     `,
   ],
-  standalone: true,
   imports: [AsyncPipe, MatCard, MatList, MatListItem, MatIcon, MatListItemIcon, TranslateModule],
 })
 export class AccountComponent {

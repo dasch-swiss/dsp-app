@@ -49,7 +49,6 @@ import { UsersTabService } from '../users-tab.service';
       }
     </mat-menu>
   `,
-  standalone: true,
   imports: [AsyncPipe, MatIcon, MatIconButton, MatMenu, MatMenuItem, MatMenuTrigger],
 })
 export class UsersListRowMenuComponent {

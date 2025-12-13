@@ -29,7 +29,6 @@ import { SegmentsService } from './segments.service';
       }
     `,
   ],
-  standalone: true,
 })
 export class SegmentTooltipComponent {
   segment!: Segment;

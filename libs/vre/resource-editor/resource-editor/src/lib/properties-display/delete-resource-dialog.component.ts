@@ -41,7 +41,6 @@ import { ResourceFetcherService } from '../representations/resource-fetcher.serv
         {{ 'resourceEditor.propertiesDisplay.deleteResource.yesDelete' | translate }}
       </button>
     </mat-dialog-actions>`,
-  standalone: true,
   imports: [
     DialogHeaderComponent,
     MatDialogModule,

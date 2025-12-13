@@ -35,7 +35,6 @@ import { MultipleViewerService } from './multiple-viewer.service';
       }
     }
   `,
-  standalone: true,
   imports: [
     AsyncPipe,
     TranslateModule,

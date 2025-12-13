@@ -86,7 +86,6 @@ import { CreateResourceFormInterface } from './create-resource-form.interface';
     '.form { display: block; margin-right: 100px;}',
     '.form-actions { display: flex; justify-content: end; gap: 8px; margin-top: 16px; }',
   ],
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     InvalidControlScrollDirective,

@@ -52,7 +52,6 @@ import { ResourceFetcherService } from '../resource-fetcher.service';
         </button>
       }
     </mat-menu>`,
-  standalone: true,
 })
 export class VideoMoreButtonComponent {
   @Input({ required: true }) src!: ReadMovingImageFileValue;

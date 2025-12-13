@@ -20,7 +20,6 @@ import { UploadFileService } from '../representations/upload/upload-file.service
       </mat-card-content>
     </mat-card>
   }`,
-  standalone: true,
   imports: [AsyncPipe, MatCardModule, MatIconModule, MatButtonModule],
 })
 export class UploadedFileComponent implements OnInit {

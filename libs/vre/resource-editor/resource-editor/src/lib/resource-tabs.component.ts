@@ -100,7 +100,6 @@ import { SegmentTabComponent } from './segment-tab.component';
       }
     `,
   ],
-  standalone: true,
   imports: [
     AsyncPipe,
     NgClass,

@@ -51,7 +51,6 @@ import { HumanReadableErrorPipe } from './human-readable-error.pipe';
     ReactiveFormsModule,
     TranslateModule,
   ],
-  standalone: true,
 })
 export class ChipListInputComponent {
   @Input({ required: true }) formArray!: FormArray<FormControl<string>>;

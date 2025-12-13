@@ -48,7 +48,6 @@ export interface EditListItemDialogProps {
       </button>
     </div>
   `,
-  standalone: true,
   imports: [
     MatButton,
     MatDialogActions,

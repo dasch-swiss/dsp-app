@@ -54,7 +54,6 @@ import { ProjectPageService } from './project-page.service';
       }
     `,
   ],
-  standalone: true,
   imports: [AsyncPipe, MatTabNav, MatTabLink, MatTabNavPanel, MatIcon, RouterLink, RouterLinkActive, TranslateModule],
 })
 export class ProjectNavigationTabsComponent {

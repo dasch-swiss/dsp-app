@@ -46,7 +46,6 @@ import { ColorPickerDirective } from 'ngx-color-picker';
     `,
   ],
   imports: [ColorPickerDirective, MatTooltipModule],
-  standalone: true,
 })
 export class ColorPickerComponent implements ControlValueAccessor {
   @Input() hexColor = '#ff0000';

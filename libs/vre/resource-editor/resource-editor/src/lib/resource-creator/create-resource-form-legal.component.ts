@@ -64,7 +64,6 @@ import { CreateResourceFormRowComponent } from './create-resource-form-row.compo
       }
     `,
   ],
-  standalone: true,
   imports: [
     CreateResourceFormRowComponent,
     MatFormFieldModule,

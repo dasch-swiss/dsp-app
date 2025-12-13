@@ -82,7 +82,6 @@ export interface CreateSegmentDialogProps {
         {{ 'ui.common.actions.submit' | translate }}
       </button>
     </div>`,
-  standalone: true,
 })
 export class CreateSegmentDialogComponent {
   loading = false;

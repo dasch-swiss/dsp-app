@@ -1,8 +1,9 @@
 import { enableProdMode } from '@angular/core';
-import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
+import { bootstrapApplication } from '@angular/platform-browser';
 import { AppConfigToken } from '@dasch-swiss/vre/core/config';
 import * as Sentry from '@sentry/angular';
-import { AppModule } from './app/app.module';
+import { AppComponent } from './app/app.component';
+import { appConfig } from './app/app.config';
 import { environment } from './environments/environment';
 
 function initSentry(environmentName: string) {
@@ -51,9 +52,9 @@ function configListener() {
     // pass config to bootstrap process using an injection token
     // which will make the encapsulated value available inside
     // services that inject this token
-    platformBrowserDynamic([{ provide: AppConfigToken, useValue: configuration }])
-      .bootstrapModule(AppModule)
-      .catch(err => console.error(err));
+    bootstrapApplication(AppComponent, {
+      providers: [...appConfig.providers, { provide: AppConfigToken, useValue: configuration }],
+    }).catch(err => console.error(err));
   } catch (error) {
     console.error(error);
   }

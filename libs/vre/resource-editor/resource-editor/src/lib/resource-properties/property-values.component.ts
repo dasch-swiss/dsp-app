@@ -29,7 +29,6 @@ import { PropertyValueService } from './property-value.service';
   `,
   providers: [PropertyValueService],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
 })
 export class PropertyValuesComponent implements OnChanges {
   @Input({ required: true }) editModeData!: { resource: ReadResource; values: ReadValue[] };

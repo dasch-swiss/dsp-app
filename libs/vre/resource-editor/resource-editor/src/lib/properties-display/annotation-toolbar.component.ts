@@ -112,7 +112,6 @@ import { ColorViewerComponent } from '../template-switcher/viewer-components/col
       }
     `,
   ],
-  standalone: true,
   imports: [
     MatButtonModule,
     MatIconModule,

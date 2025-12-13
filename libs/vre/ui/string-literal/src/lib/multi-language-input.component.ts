@@ -24,7 +24,7 @@ import { MultiLanguageFormService } from './multi-language-form.service';
     HumanReadableErrorPipe,
     TranslateModule,
   ],
-  standalone: true,
+
   template: `
     <mat-form-field style="width: 100%">
       <mat-label>{{ placeholder }}</mat-label>

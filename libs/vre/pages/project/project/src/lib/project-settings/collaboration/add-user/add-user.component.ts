@@ -55,7 +55,6 @@ import { CollaborationPageService } from '../collaboration-page.service';
     </div>
   `,
   styleUrls: ['./add-user.component.scss'],
-  standalone: true,
   imports: [
     AsyncPipe,
     ReactiveFormsModule,

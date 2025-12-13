@@ -94,7 +94,6 @@ import { VideoMoreButtonComponent } from './video-more-button.component';
       }
     `,
   ],
-  standalone: true,
 })
 export class VideoToolbarComponent {
   @Input({ required: true }) src!: ReadMovingImageFileValue;

@@ -42,7 +42,6 @@ import { ResourceLinkDialogComponent, ResourceLinkDialogProps } from './resource
     </div>
   `,
   styles: ['button[disabled] { background-color: #fff; color: #b8b8b8 }'],
-  standalone: true,
   imports: [AsyncPipe, MatButton, MatIconButton, MatIcon, MatTooltip, TranslateModule],
 })
 export class ResourceListSelectionComponent {

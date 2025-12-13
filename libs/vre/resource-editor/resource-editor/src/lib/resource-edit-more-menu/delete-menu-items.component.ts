@@ -26,7 +26,6 @@ import { EraseButtonComponent } from './erase-button.component';
         (erased)="resourceErased.emit()" />
     }
   `,
-  standalone: true,
   imports: [AsyncPipe, DeleteButtonComponent, EraseButtonComponent],
 })
 export class DeleteMenuItemsComponent implements OnInit {

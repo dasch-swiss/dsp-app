@@ -63,7 +63,6 @@ export interface LicenseToggleEvent {
     `,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [MatCheckbox, MatIcon, TranslateModule],
 })
 export class LicensesEnabledTableComponent {

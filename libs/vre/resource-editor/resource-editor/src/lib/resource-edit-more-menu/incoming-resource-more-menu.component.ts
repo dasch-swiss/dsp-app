@@ -45,7 +45,6 @@ import { EditLabelMenuItemComponent } from './edit-label-menu-item.component';
       }
     `,
   ],
-  standalone: true,
   imports: [
     AsyncPipe,
     MatButtonModule,

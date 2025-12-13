@@ -25,7 +25,6 @@ import {
   selector: 'app-permission-info',
   templateUrl: './permission-info.component.html',
   styleUrls: ['./permission-info.component.scss'],
-  standalone: true,
   imports: [CdkConnectedOverlay, CdkOverlayOrigin, MatButtonModule, MatIconModule, MatTooltipModule, TranslateModule],
 })
 export class PermissionInfoComponent implements OnInit {

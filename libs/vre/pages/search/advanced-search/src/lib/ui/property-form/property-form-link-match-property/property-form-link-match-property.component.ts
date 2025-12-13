@@ -29,7 +29,6 @@ import { PropertyFormListValueComponent } from '../property-form-list-value/prop
 import { PropertyFormValueComponent } from '../property-form-value/property-form-value.component';
 
 @Component({
-  standalone: true,
   selector: 'app-property-form-link-match-property',
   imports: [
     FormsModule,

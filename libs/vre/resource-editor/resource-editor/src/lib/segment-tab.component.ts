@@ -15,7 +15,6 @@ import { SegmentsService } from './segment-support/segments.service';
     </div>
   }`,
   styles: ['.active {border: 1px solid}'],
-  standalone: true,
   imports: [IncomingResourceHeaderComponent, PropertiesDisplayComponent],
 })
 export class SegmentTabComponent implements OnInit, OnDestroy {

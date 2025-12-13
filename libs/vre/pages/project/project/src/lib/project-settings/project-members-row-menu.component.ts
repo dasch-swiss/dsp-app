@@ -53,7 +53,6 @@ import { CollaborationPageService } from './collaboration/collaboration-page.ser
       </button>
     </mat-menu>
   `,
-  standalone: true,
   imports: [AsyncPipe, MatIcon, MatIconButton, MatMenu, MatMenuItem, MatMenuTrigger, TranslateModule],
 })
 export class ProjectMembersRowMenuComponent {

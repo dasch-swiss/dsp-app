@@ -33,7 +33,6 @@ import { SegmentsService } from './segment-support/segments.service';
     <app-resource-tabs [resource]="resource" />
   `,
   providers: [CompoundService, PropertiesDisplayService, RegionService, SegmentsService],
-  standalone: true,
   imports: [
     CompoundViewerComponent,
     ResourceHeaderComponent,

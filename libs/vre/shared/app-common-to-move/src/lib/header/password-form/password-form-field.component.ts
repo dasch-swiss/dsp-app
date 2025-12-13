@@ -26,7 +26,6 @@ import { HumanReadableErrorPipe } from '@dasch-swiss/vre/ui/ui';
       <mat-error>{{ errors | humanReadableError: validatorErrors }}</mat-error>
     }
   </mat-form-field>`,
-  standalone: true,
   imports: [
     HumanReadableErrorPipe,
     MatError,

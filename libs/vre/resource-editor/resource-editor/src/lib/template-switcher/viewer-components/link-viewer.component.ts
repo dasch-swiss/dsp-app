@@ -9,7 +9,7 @@ import { ResourceExplorerButtonComponent } from '../../resource-explorer-button.
   template: `<a [href]="link" target="_blank" data-cy="link-switch">{{ value.strval }}</a>
     <app-resource-explorer-button [resourceIri]="value.linkedResourceIri" />`,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
+
   styles: [
     `
       :host {

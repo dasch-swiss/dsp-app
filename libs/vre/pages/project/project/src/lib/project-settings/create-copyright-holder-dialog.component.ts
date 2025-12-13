@@ -41,7 +41,6 @@ export interface CreateCopyrightHolderDialogProps {
         {{ 'ui.common.actions.submit' | translate }}
       </button>
     </div>`,
-  standalone: true,
   imports: [
     CommonInputComponent,
     DialogHeaderComponent,

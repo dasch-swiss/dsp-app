@@ -43,7 +43,6 @@ import { ListItemComponent } from '../list-item/list-item.component';
     </div>
   `,
   styles: [':host ::ng-deep app-multi-language-input .mat-mdc-form-field-bottom-align { display: none;}'],
-  standalone: true,
   imports: [
     MatIconButton,
     MatIcon,

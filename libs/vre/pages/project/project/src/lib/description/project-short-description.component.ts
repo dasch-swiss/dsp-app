@@ -12,7 +12,6 @@ import { ProjectDescriptionPageComponent } from './project-description-page.comp
 
 @Component({
   selector: 'app-project-short-description',
-  standalone: true,
   imports: [AsyncPipe, UpperCasePipe, TranslateModule, MatButton, ProjectImageCoverComponent],
   template: `
     @if (readProject$ | async; as project) {

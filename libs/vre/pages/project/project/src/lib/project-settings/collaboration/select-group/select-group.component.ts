@@ -41,7 +41,6 @@ import { CollaborationPageService } from '../collaboration-page.service';
     `,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [AsyncPipe, MatFormField, MatSelect, MatOption, ReactiveFormsModule, TranslateModule],
 })
 export class SelectGroupComponent implements OnInit {

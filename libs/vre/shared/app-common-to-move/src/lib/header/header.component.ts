@@ -38,7 +38,6 @@ import { HeaderUserActionsComponent } from './header-user-actions.component';
       }
     `,
   ],
-  standalone: true,
 })
 export class HeaderComponent {
   constructor(private readonly _router: Router) {}

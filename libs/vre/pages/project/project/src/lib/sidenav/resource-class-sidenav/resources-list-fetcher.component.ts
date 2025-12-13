@@ -33,7 +33,6 @@ import { ProjectPageService } from '../../project-page.service';
     }
   `,
   providers: [ResourceResultService],
-  standalone: true,
   imports: [
     AsyncPipe,
     TranslateModule,

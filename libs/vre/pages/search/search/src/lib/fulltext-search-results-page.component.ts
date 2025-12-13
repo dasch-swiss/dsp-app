@@ -12,7 +12,6 @@ import { SearchResultComponent } from './search-result.component';
       <app-search-result [query]="query" />
     </div>
   } `,
-  standalone: true,
   imports: [AsyncPipe, SearchResultComponent],
   styleUrls: ['./fulltext-search-results-page.component.scss'],
 })

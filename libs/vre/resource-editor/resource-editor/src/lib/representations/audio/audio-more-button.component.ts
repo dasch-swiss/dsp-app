@@ -47,7 +47,6 @@ import { ResourceFetcherService } from '../resource-fetcher.service';
         </button>
       }
     </mat-menu>`,
-  standalone: true,
 })
 export class AudioMoreButtonComponent {
   @Input({ required: true }) parentResource!: ReadResource;

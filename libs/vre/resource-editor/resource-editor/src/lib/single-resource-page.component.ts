@@ -15,7 +15,6 @@ import { ResourceFetcherComponent } from './resource-fetcher.component';
       }
     </app-centered-layout>
   `,
-  standalone: true,
   imports: [AsyncPipe, CenteredLayoutComponent, ResourceFetcherComponent],
 })
 export class SingleResourcePageComponent {

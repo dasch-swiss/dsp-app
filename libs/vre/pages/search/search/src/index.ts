@@ -1,4 +1,3 @@
-export * from './search.components';
 export * from './lib/advanced-search/advanced-search-page.component';
 export * from './lib/services/search-params.service';
 export * from './lib/advanced-search-results-page.component';

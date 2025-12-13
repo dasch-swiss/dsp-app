@@ -47,7 +47,6 @@ import { CalendarDateAdapter } from '../../adapters/calendar-date.adapter';
 
 @Component({
   selector: 'app-date-range-input',
-  standalone: true,
   imports: [
     CommonModule,
     ReactiveFormsModule,

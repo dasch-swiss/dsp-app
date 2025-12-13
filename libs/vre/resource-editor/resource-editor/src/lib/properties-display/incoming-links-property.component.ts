@@ -43,7 +43,7 @@ import { IncomingStandoffLinkValueComponent } from './incoming-standoff-link-val
       </app-property-row>
     }
   `,
-  standalone: true,
+
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     AsyncPipe,

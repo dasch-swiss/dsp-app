@@ -34,7 +34,6 @@ import { StandoffLinksPropertyComponent } from './standoff-links-property.compon
     <app-standoff-links-property [resource]="resource" />
     <app-incoming-links-property [resource]="resource.res" />
   `,
-  standalone: true,
   imports: [
     PropertyRowComponent,
     PropertyValuesWithFootnotesComponent,

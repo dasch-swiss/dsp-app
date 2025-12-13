@@ -95,7 +95,6 @@ import { ProjectImageCoverComponent } from '../project-image-cover.component';
       }
     `,
   ],
-  standalone: true,
   imports: [
     RouterLink,
     MatCard,

@@ -10,7 +10,6 @@ import { ResourceClassSidenavItemComponent } from './resource-class-sidenav-item
       <app-resource-class-sidenav-item [resClass]="classToDisplay" />
     }
   `,
-  standalone: true,
   imports: [ResourceClassSidenavItemComponent],
 })
 export class ResourceClassSidenavComponent implements OnChanges {

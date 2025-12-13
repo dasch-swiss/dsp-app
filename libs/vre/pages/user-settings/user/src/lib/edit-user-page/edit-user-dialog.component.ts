@@ -43,7 +43,6 @@ export interface EditUserDialogProps {
       </button>
     </div>
   `,
-  standalone: true,
   imports: [
     DialogHeaderComponent,
     TranslateModule,

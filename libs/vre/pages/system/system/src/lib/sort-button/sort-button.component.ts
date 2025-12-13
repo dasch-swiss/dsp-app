@@ -16,7 +16,6 @@ export interface SortProp {
   selector: 'app-sort-button',
   templateUrl: './sort-button.component.html',
   styleUrls: ['./sort-button.component.scss'],
-  standalone: true,
   imports: [MatIcon, MatIconButton, MatMenu, MatMenuItem, MatMenuTrigger],
 })
 export class SortButtonComponent implements OnInit {

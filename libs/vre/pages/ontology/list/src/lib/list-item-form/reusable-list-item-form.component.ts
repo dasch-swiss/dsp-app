@@ -24,7 +24,6 @@ import { ListItemForm } from './list-item-form.type';
       [validators]="commentsValidators"
       [isRequired]="false" />
   `,
-  standalone: true,
   imports: [TranslateModule, MultiLanguageInputComponent, MultiLanguageTextareaComponent],
 })
 export class ReusableListItemFormComponent implements OnInit {

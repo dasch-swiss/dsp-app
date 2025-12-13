@@ -9,7 +9,6 @@ import { MathJaxDirective } from '../mathjax/math-jax.directive';
   template: `
     <div data-cy="text-html-switch" [innerHTML]="value.html | internalLinkReplacer | addTargetBlank" appMathjax></div>
   `,
-  standalone: true,
 })
 export class TextHtmlViewerComponent {
   @Input({ required: true }) value!: ReadTextValueAsHtml;

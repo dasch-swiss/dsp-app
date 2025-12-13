@@ -16,7 +16,6 @@ export interface GridItem {
   selector: 'app-grid',
   templateUrl: './grid.component.html',
   styleUrls: ['./grid.component.scss'],
-  standalone: true,
   imports: [MatButtonModule, MatIconModule, RouterLink, RouterLinkActive, TranslateModule],
 })
 export class GridComponent {

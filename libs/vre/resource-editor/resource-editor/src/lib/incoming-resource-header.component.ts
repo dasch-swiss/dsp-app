@@ -44,7 +44,6 @@ import { ResourceInfoBarComponent } from './resource-info-bar.component';
       }
     `,
   ],
-  standalone: true,
   imports: [PropertiesToggleComponent, IncomingResourceToolbarComponent, ResourceInfoBarComponent],
 })
 export class IncomingResourceHeaderComponent {

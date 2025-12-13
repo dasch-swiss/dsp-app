@@ -10,7 +10,6 @@ import { ResourceMoreMenuComponent } from './resource-edit-more-menu/resource-mo
       <app-resource-more-menu [resource]="resource" />
     </app-resource-actions>
   `,
-  standalone: true,
   imports: [ResourceActionsComponent, ResourceMoreMenuComponent],
 })
 export class ResourceToolbarComponent {

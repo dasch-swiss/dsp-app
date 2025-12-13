@@ -39,7 +39,6 @@ import { FootnoteDirective } from '../../resource-properties/footnotes/footnote.
       }
     `,
   ],
-  standalone: true,
 })
 export class RichTextViewerComponent {
   @Input({ required: true }) value!: ReadTextValueAsXml;

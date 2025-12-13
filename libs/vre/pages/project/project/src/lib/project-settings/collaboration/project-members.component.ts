@@ -7,7 +7,6 @@ import { ProjectMembersRowComponent } from './project-members-row.component';
   template: ` @for (user of users; track user) {
     <app-project-members-row [user]="user" />
   }`,
-  standalone: true,
   imports: [ProjectMembersRowComponent],
 })
 export class ProjectMembersComponent {

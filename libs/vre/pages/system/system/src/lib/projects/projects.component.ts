@@ -36,7 +36,6 @@ import { ProjectsListComponent } from './projects-list/projects-list.component';
       }
     </div>
   `,
-  standalone: true,
   imports: [AsyncPipe, ProjectsListComponent],
 })
 export class ProjectsComponent implements OnInit, OnDestroy {

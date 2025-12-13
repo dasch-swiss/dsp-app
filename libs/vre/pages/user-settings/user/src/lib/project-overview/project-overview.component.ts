@@ -14,7 +14,6 @@ import { ProjectCardComponent } from './project-card.component';
   selector: 'app-project-overview',
   templateUrl: './project-overview.component.html',
   styleUrls: ['./project-overview.component.scss'],
-  standalone: true,
   imports: [MatIcon, TranslateModule, ProjectCardComponent, AppProgressIndicatorComponent, AsyncPipe],
 })
 export class ProjectOverviewComponent implements AfterViewInit {

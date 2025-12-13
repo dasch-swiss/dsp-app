@@ -26,7 +26,6 @@ import { MediaSliderComponent } from './media-slider.component';
   selector: 'app-audio',
   templateUrl: './audio.component.html',
   providers: [MediaControlService, MediaPlayerService],
-  standalone: true,
   imports: [MatIcon, TranslateModule, MediaSliderComponent, SegmentsDisplayComponent, AudioToolbarComponent],
 })
 export class AudioComponent implements OnInit, OnChanges, OnDestroy {

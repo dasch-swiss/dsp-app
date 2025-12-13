@@ -68,7 +68,6 @@ import { LegalSettingsLicensesComponent } from './legal-settings-licenses.compon
       }
     `,
   ],
-  standalone: true,
   imports: [
     AlternatedListComponent,
     AsyncPipe,

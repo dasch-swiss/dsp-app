@@ -36,7 +36,6 @@ import { ProjectPageService } from './project-page.service';
       }
     `,
   ],
-  standalone: true,
   imports: [AsyncPipe, MatToolbar, HeaderLogoComponent, HeaderUserActionsComponent, ProjectNavigationTabsComponent],
 })
 export class ProjectPageHeaderComponent {

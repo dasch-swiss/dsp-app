@@ -14,7 +14,6 @@ import { WithBreaksPipe } from './with-breaks.pipe';
       [innerHTML]="comment | withBreaks"></div>
   }`,
   styleUrls: [`./property-value-display-comment.component.scss`],
-  standalone: true,
 })
 export class PropertyValueDisplayCommentComponent {
   @Input({ required: true }) index!: number;

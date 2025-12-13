@@ -75,7 +75,6 @@ import {
     ]),
   ],
   styleUrls: ['./action-bubble.component.scss'],
-  standalone: true,
   imports: [MatButton, MatIcon, MatTooltip],
 })
 export class ActionBubbleComponent {

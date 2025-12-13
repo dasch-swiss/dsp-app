@@ -49,7 +49,6 @@ import { ResourceFetcherService } from '../representations/resource-fetcher.serv
         {{ 'ui.common.actions.submit' | translate }}
       </button>
     </div>`,
-  standalone: true,
 })
 export class EditResourceLabelDialogComponent {
   control = new FormControl(this.data.label, { validators: [Validators.required], nonNullable: true });

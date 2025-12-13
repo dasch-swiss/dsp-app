@@ -3,7 +3,6 @@ import { ValidatorError } from './validator-error.interface';
 
 @Pipe({
   name: 'humanReadableError',
-  standalone: true,
 })
 export class HumanReadableErrorPipe implements PipeTransform {
   transform(error: object, params: ValidatorError[] | null = null): string {

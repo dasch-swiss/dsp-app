@@ -15,7 +15,6 @@ import { LicensesLogoMapping } from './licenses-logo-mapping';
       </a>
     }
   `,
-  standalone: true,
   imports: [MatIconModule],
 })
 export class ResourceLegalLicenseComponent implements OnChanges {

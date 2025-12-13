@@ -45,7 +45,6 @@ import { ProjectSidenavLinksItemComponent } from './project-sidenav-links-item.c
       }
     `,
   ],
-  standalone: true,
   imports: [AsyncPipe, MatList, TranslateModule, ProjectSidenavLinksItemComponent],
 })
 export class ProjectSidenavLinksComponent {

@@ -70,7 +70,6 @@ export interface ReplaceFileDialogProps {
     </mat-dialog-actions>
   `,
   styleUrls: ['./replace-file-dialog.component.scss'],
-  standalone: true,
   imports: [
     DialogHeaderComponent,
     MatDialogContent,

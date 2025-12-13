@@ -47,7 +47,6 @@ import { PropertyFormValueComponent } from './property-form-value/property-form-
   templateUrl: './property-form.component.html',
   styleUrls: ['./property-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
 })
 export class PropertyFormComponent implements AfterViewInit {
   @Input() propertyFormItem: PropertyFormItem = {

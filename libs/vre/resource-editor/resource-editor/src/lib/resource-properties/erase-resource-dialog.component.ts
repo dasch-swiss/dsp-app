@@ -74,7 +74,6 @@ import { ResourceFetcherService } from '../representations/resource-fetcher.serv
       </button>
     </mat-dialog-actions>
   `,
-  standalone: true,
 })
 export class EraseResourceDialogComponent {
   eraseForm = new FormGroup({

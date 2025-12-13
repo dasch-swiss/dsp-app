@@ -60,7 +60,6 @@ import { propertiesTypeMapping } from '../resource-properties/resource-payloads-
       }
     `,
   ],
-  standalone: true,
   imports: [
     NgClass,
     NgTemplateOutlet,

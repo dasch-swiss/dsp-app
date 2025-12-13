@@ -21,7 +21,6 @@ interface VersionResponse {
   selector: 'app-help',
   templateUrl: './help-page.component.html',
   styleUrls: ['./help-page.component.scss'],
-  standalone: true,
   imports: [FooterComponent, GridComponent, MatIconModule],
 })
 export class HelpPageComponent implements OnInit {

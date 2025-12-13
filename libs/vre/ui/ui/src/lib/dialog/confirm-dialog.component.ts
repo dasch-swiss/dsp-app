@@ -28,7 +28,6 @@ export interface ConfirmDialogProps {
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [DialogHeaderComponent, MatButtonModule, MatDialogModule, TranslateModule],
-  standalone: true,
 })
 export class ConfirmDialogComponent {
   constructor(

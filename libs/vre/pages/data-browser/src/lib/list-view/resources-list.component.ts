@@ -33,7 +33,6 @@ import { ResourceListComponent } from './resource-list.component';
       }
     `,
   ],
-  standalone: true,
   imports: [MatAnchor, MatIcon, TranslateModule, PagerComponent, ResourceListComponent],
 })
 export class ResourcesListComponent {

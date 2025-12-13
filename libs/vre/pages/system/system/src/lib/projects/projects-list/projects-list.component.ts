@@ -28,7 +28,6 @@ import {
   selector: 'app-projects-list',
   templateUrl: './projects-list.component.html',
   styleUrls: ['./projects-list.component.scss'],
-  standalone: true,
   imports: [
     AsyncPipe,
     I18nPluralPipe,

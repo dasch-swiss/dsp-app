@@ -25,7 +25,6 @@ import { TranslateModule } from '@ngx-translate/core';
     }
     <textarea cdkTextareaAutosize matInput data-cy="comment-textarea" [formControl]="control"></textarea>
   </mat-form-field>`,
-  standalone: true,
 })
 export class PropertyValueBasicCommentComponent {
   @Input({ required: true }) control!: FormControl<string | null>;

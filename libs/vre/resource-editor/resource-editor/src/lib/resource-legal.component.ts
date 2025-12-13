@@ -44,7 +44,6 @@ import { ResourceLegalLicenseComponent } from './resource-legal-license.componen
     }
   `,
   styles: ['.label { display: inline-block; width: 170px; font-weight: bold}'],
-  standalone: true,
   imports: [TranslateModule, ResourceLegalLicenseComponent],
 })
 export class ResourceLegalComponent implements OnInit {

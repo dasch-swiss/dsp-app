@@ -47,7 +47,6 @@ import { ReusableProjectFormComponent } from './reusable-project-form.component'
       </div>
     </app-centered-layout>
   `,
-  standalone: true,
   imports: [MatButton, TranslateModule, LoadingButtonDirective, CenteredLayoutComponent, ReusableProjectFormComponent],
 })
 export class CreateProjectFormPageComponent {

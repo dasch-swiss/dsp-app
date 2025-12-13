@@ -4,7 +4,6 @@ import { ListNodeV2 } from '@dasch-swiss/dsp-js';
 
 @Component({
   selector: 'app-list-item',
-  standalone: true,
   imports: [MatMenuModule],
   templateUrl: './list-item.component.html',
   styleUrls: ['./list-item.component.scss'],

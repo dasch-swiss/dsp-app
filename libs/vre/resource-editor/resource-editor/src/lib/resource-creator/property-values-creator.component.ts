@@ -46,7 +46,6 @@ import { PropertyValueCreatorComponent } from './property-value-creator.componen
       </button>
     }
   `,
-  standalone: true,
   imports: [
     TemplateEditorSwitcherComponent,
     PropertyValueCreatorComponent,

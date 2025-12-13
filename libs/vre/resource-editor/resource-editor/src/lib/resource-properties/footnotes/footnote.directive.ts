@@ -7,7 +7,6 @@ import { FootnoteTooltipComponent } from './footnote-tooltip.component';
 
 @Directive({
   selector: '[appFootnote]',
-  standalone: true,
 })
 export class FootnoteDirective {
   private _overlayRef: OverlayRef | null = null;

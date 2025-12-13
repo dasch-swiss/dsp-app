@@ -15,7 +15,6 @@ import { RouterLink } from '@angular/router';
     </a>
   `,
   styleUrls: ['./project-sidenav-links-item.component.scss'],
-  standalone: true,
   imports: [NgClass, MatListItem, MatListItemTitle, MatIcon, RouterLink],
 })
 export class ProjectSidenavLinksItemComponent {

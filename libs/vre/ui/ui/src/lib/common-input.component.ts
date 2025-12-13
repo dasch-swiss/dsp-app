@@ -30,7 +30,6 @@ import { HumanReadableErrorPipe } from './human-readable-error.pipe';
   `,
   styles: [':host { display: block;}'],
   imports: [HumanReadableErrorPipe, MatFormFieldModule, MatIconModule, MatInputModule, ReactiveFormsModule],
-  standalone: true,
 })
 export class CommonInputComponent {
   @Input({ required: true }) control!: FormControl<string | number>;

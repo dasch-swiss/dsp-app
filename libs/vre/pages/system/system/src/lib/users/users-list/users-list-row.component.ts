@@ -35,7 +35,6 @@ import { UsersListRowMenuComponent } from './users-list-row-menu.component';
       }
     `,
   ],
-  standalone: true,
   imports: [
     MatChip,
     MatChipAvatar,

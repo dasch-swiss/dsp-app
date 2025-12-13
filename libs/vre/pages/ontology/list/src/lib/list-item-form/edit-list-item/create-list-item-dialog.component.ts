@@ -48,7 +48,6 @@ export interface CreateListItemDialogProps {
       </button>
     </div>
   `,
-  standalone: true,
   imports: [
     MatButton,
     MatDialogActions,

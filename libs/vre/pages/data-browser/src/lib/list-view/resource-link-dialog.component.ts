@@ -66,7 +66,6 @@ export interface ResourceLinkDialogProps {
       </button>
     </mat-dialog-actions>
   `,
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     MatButton,

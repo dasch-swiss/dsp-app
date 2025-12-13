@@ -47,7 +47,6 @@ import { StillImageToolbarComponent } from './still-image-toolbar.component';
   styleUrls: ['./still-image.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [OsdDrawerService, OpenSeaDragonService],
-  standalone: true,
   imports: [CompoundArrowNavigationComponent, CompoundSliderComponent, StillImageToolbarComponent],
 })
 export class StillImageComponent implements OnChanges, AfterViewInit, OnDestroy {

@@ -12,7 +12,6 @@ import { ProjectFulltextSearchPageComponent } from './project-fulltext-search-pa
       }
     `,
   ],
-  standalone: true,
   imports: [ProjectFulltextSearchPageComponent],
 })
 export class ProjectSearchPageComponent {}

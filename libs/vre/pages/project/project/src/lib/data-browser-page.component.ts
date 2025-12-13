@@ -24,7 +24,6 @@ import { ProjectSidenavComponent } from './sidenav/project-sidenav.component';
     </as-split>
   </div> `,
   providers: [MultipleViewerService, ResourceResultService, DataBrowserPageService],
-  standalone: true,
   imports: [RouterOutlet, AngularSplitModule, ProjectSidenavComponent],
 })
 export class DataBrowserPageComponent {}

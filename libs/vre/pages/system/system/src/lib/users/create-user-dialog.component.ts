@@ -30,7 +30,6 @@ import { finalize } from 'rxjs';
       </button>
     </div>
   `,
-  standalone: true,
   imports: [
     DialogHeaderComponent,
     LoadingButtonDirective,

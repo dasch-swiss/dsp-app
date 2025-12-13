@@ -17,7 +17,6 @@ import { IncomingOrStandoffLink } from './incoming-link.interface';
       </div>
     }
   `,
-  standalone: true,
   imports: [RouterLink, ResourceExplorerButtonComponent],
 })
 export class IncomingStandoffLinkValueComponent {

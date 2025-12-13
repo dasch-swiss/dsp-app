@@ -51,7 +51,6 @@ import { ResourceFetcherService } from './representations/resource-fetcher.servi
       }
     `,
   ],
-  standalone: true,
   imports: [AsyncPipe, DatePipe, RouterLink, TranslateModule],
 })
 export class ResourceInfoBarComponent implements OnChanges {

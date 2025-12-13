@@ -41,7 +41,6 @@ import { CompoundService } from './compound.service';
       <mat-icon>last_page</mat-icon>
     </button>
   </span>`,
-  standalone: true,
   imports: [MatButtonModule, MatIconModule, MatTooltipModule, TranslateModule],
 })
 export class CompoundNavigationComponent {

@@ -34,7 +34,6 @@ import { MatTooltipModule } from '@angular/material/tooltip';
       }
     `,
   ],
-  standalone: true,
   imports: [NgClass, MatTooltipModule],
 })
 export class CreateResourceFormRowComponent {

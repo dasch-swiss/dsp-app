@@ -33,7 +33,6 @@ import { LicenseToggleEvent, LicensesEnabledTableComponent } from './licenses-en
     }
   }`,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [AsyncPipe, LicensesEnabledTableComponent, TranslateModule],
 })
 export class LegalSettingsLicensesComponent {

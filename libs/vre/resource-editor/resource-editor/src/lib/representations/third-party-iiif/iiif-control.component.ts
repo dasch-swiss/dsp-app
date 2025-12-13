@@ -45,7 +45,6 @@ import { IIIFUrl } from './third-party-iiif';
     `,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [MatFormField, MatLabel, MatInput, ReactiveFormsModule, TranslateModule, MatError, HumanReadableErrorPipe],
 })
 export class IiifControlComponent implements OnInit, OnDestroy {

@@ -40,7 +40,6 @@ import { LoadingMenuItemComponent } from './loading-menu-item.component';
         labelKey="ui.common.actions.delete" />
     }
   `,
-  standalone: true,
   imports: [
     AsyncPipe,
     MatButtonModule,

@@ -15,7 +15,6 @@ import { ProjectSidenavOntologiesComponent } from './project-sidenav-ontologies.
       }
     `,
   ],
-  standalone: true,
   imports: [ProjectSidenavOntologiesComponent],
 })
 export class ProjectSidenavComponent {}

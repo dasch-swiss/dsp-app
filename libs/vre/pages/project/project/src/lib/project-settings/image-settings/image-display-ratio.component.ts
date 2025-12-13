@@ -69,7 +69,6 @@ import { TranslateModule } from '@ngx-translate/core';
       }
     `,
   ],
-  standalone: true,
   imports: [NgStyle, TranslateModule],
 })
 export class ImageDisplayRatioComponent {

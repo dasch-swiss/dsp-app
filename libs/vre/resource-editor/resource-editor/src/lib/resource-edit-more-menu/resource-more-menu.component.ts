@@ -39,7 +39,6 @@ import { DeleteMenuItemsComponent } from './delete-menu-items.component';
       }
     `,
   ],
-  standalone: true,
   imports: [
     AsyncPipe,
     MatButtonModule,

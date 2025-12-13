@@ -17,7 +17,6 @@ import { PropertiesDisplayService } from './properties-display.service';
     </div>
   </div>`,
   styleUrls: ['./property-row.component.scss'],
-  standalone: true,
 })
 export class PropertyRowComponent {
   @Input({ required: true }) label!: string;

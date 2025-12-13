@@ -25,7 +25,6 @@ import { MatIconModule } from '@angular/material/icon';
     `,
   ],
   imports: [MatIconModule],
-  standalone: true,
 })
 export class CenteredMessageComponent {
   @Input() icon?: string;

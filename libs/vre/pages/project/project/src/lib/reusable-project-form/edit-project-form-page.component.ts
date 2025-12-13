@@ -32,7 +32,6 @@ import { ReusableProjectFormComponent } from './reusable-project-form.component'
       </button>
     </div>
   `,
-  standalone: true,
   imports: [AsyncPipe, MatButton, TranslateModule, LoadingButtonDirective, ReusableProjectFormComponent],
 })
 export class EditProjectFormPageComponent {

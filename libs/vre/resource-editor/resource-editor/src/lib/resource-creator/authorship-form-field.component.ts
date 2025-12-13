@@ -65,7 +65,6 @@ import { finalize } from 'rxjs/operators';
       }
     </mat-form-field>
   `,
-  standalone: true,
   imports: [
     MatFormFieldModule,
     MatChipsModule,

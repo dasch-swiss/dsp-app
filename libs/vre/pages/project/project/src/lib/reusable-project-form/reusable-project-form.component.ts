@@ -48,7 +48,6 @@ import { shortcodeExistsValidator } from './shortcode-exists.validator';
       </form>
     }
   `,
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     TranslateModule,

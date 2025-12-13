@@ -33,15 +33,14 @@ describe('TruncatePipe', () => {
   it('should support the limit argument in the template', () => {
     @Component({
       template: '{{ text | appTruncate:4 }}',
-      standalone: false,
+      imports: [TruncatePipe],
     })
     class AppComponent {
       text = 'This is my string';
     }
 
     TestBed.configureTestingModule({
-      declarations: [AppComponent],
-      imports: [TruncatePipe],
+      imports: [AppComponent],
     });
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
@@ -52,15 +51,14 @@ describe('TruncatePipe', () => {
   it('should support the trail argument in the template', () => {
     @Component({
       template: "{{ text | appTruncate:7:'!!' }}",
-      standalone: false,
+      imports: [TruncatePipe],
     })
     class AppComponent {
       text = 'This is my string';
     }
 
     TestBed.configureTestingModule({
-      declarations: [AppComponent],
-      imports: [TruncatePipe],
+      imports: [AppComponent],
     });
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();

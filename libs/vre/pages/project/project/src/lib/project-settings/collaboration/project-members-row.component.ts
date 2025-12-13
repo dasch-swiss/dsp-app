@@ -30,7 +30,6 @@ import { SelectGroupComponent } from './select-group/select-group.component';
       }
     </div>
   `,
-  standalone: true,
   imports: [
     MatChip,
     MatChipListbox,

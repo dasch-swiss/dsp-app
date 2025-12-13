@@ -29,7 +29,6 @@ import { ResourceFetcherService } from '../../representations/resource-fetcher.s
       }
     </div>
   `,
-  standalone: true,
 })
 export class ListViewerComponent implements OnInit {
   @Input() value!: ReadListValue;

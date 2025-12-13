@@ -33,7 +33,6 @@ export interface IEraseProjectDialogProps {
     `,
   ],
   templateUrl: './erase-project-dialog.component.html',
-  standalone: true,
   imports: [
     DialogHeaderComponent,
     LoadingButtonDirective,

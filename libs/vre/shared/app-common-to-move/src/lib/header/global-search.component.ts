@@ -36,7 +36,6 @@ import { SearchTipsComponent } from './search-tips.component';
       }
     `,
   ],
-  standalone: true,
 })
 export class GlobalSearchComponent implements OnDestroy {
   formGroup = this._fb.group({

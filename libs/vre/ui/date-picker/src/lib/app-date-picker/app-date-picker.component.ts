@@ -76,7 +76,6 @@ interface ValidationMessages {
     MatSelectModule,
     TranslateModule,
   ],
-  standalone: true,
 })
 export class AppDatePickerComponent
   implements ControlValueAccessor, MatFormFieldControl<KnoraDate>, OnChanges, DoCheck, OnDestroy

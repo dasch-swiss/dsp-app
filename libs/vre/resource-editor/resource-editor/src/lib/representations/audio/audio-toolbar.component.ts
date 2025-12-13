@@ -43,7 +43,6 @@ import { AudioMoreButtonComponent } from './audio-more-button.component';
       </div>
     </mat-toolbar-row>
   `,
-  standalone: true,
 })
 export class AudioToolbarComponent implements OnInit {
   @Input({ required: true }) parentResource!: ReadResource;

@@ -18,7 +18,6 @@ import type { ResourceFetcherDialogComponent } from './resource-fetcher-dialog.c
     top: -15px;">
     <mat-icon>arrow_circle_right</mat-icon>
   </button>`,
-  standalone: true,
   imports: [MatButtonModule, MatIconModule],
   styles: [
     `

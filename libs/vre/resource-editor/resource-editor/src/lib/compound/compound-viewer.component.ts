@@ -19,7 +19,6 @@ import { CompoundService } from './compound.service';
       }
     }
   `,
-  standalone: true,
   imports: [AsyncPipe, ResourceLegalComponent, StillImageComponent],
 })
 export class CompoundViewerComponent {

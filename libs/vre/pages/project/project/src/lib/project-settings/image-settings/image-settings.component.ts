@@ -28,7 +28,6 @@ enum ImageSettingsEnum {
   styleUrls: ['./image-settings.component.scss'],
   templateUrl: './image-settings.component.html',
   animations: [ReplaceAnimation.animation],
-  standalone: true,
   imports: [
     FormsModule,
     ImageDisplayAbsoluteComponent,

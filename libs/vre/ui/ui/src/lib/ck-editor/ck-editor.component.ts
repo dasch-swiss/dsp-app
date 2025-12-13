@@ -39,7 +39,6 @@ import { unescapeHtml } from './unescape-html';
     }
   `,
   imports: [CKEditorModule, MatFormFieldModule, ReactiveFormsModule, TranslateModule, HumanReadableErrorPipe],
-  standalone: true,
 })
 export class CkEditorComponent implements OnInit, OnDestroy {
   @Input({ required: true }) control!: FormControl<string | null>;

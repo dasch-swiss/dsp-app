@@ -13,7 +13,6 @@ import { combineLatest, map, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-advanced-search-results-page',
-  standalone: true,
   imports: [AsyncPipe, MatButton, MatIcon, CenteredBoxComponent, NoResultsFoundComponent, ResourceBrowserComponent],
   template: `
     @if (resources$ | async; as resources) {

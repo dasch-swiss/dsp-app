@@ -17,7 +17,6 @@ import { SearchResultComponent } from './search-result.component';
 
 @Component({
   selector: 'app-project-fulltext-search-page',
-  standalone: true,
   imports: [
     AsyncPipe,
     NgClass,

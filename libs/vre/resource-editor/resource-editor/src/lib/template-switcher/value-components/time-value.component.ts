@@ -70,7 +70,6 @@ const NATIVE_DATE_FORMATS: MatDateFormats = {
       <mat-error>{{ errors | humanReadableError }}</mat-error>
     }
   `,
-  standalone: true,
 })
 export class TimeValueComponent {
   @Input({ required: true }) control!: FormControl<DateTime>;

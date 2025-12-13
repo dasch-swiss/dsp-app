@@ -3,7 +3,6 @@ import { KnoraDate } from '@dasch-swiss/dsp-js';
 
 @Pipe({
   name: 'knoraDate',
-  standalone: true,
 })
 export class KnoraDatePipe implements PipeTransform {
   transform(date: KnoraDate, format?: string, displayOptions?: 'era' | 'calendar' | 'calendarOnly' | 'all'): string {

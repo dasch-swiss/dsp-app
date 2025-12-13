@@ -14,7 +14,6 @@ import { AdminImageDirective } from '@dasch-swiss/vre/ui/ui';
       <span class="mat-subtitle-2">{{ user.username }} | {{ user.email }}</span>
     </span>
   </span>`,
-  standalone: true,
   imports: [AdminImageDirective],
 })
 export class UserDescriptionComponent {

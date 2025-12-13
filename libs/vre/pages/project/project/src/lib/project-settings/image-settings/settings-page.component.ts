@@ -37,7 +37,6 @@ import { TranslateService } from '@ngx-translate/core';
       </mat-tab-nav-panel>
     </app-centered-layout>
   `,
-  standalone: true,
   imports: [
     CenteredLayoutComponent,
     MatIcon,

@@ -8,7 +8,6 @@ export interface IAutoCompleteScrollEvent {
 }
 
 @Directive({
-  standalone: true,
   // eslint-disable-next-line @angular-eslint/directive-selector
   selector: 'mat-autocomplete[optionsScroll]',
   exportAs: 'mat-autocomplete[optionsScroll]',

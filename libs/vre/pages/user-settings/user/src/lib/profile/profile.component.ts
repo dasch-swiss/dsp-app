@@ -47,7 +47,6 @@ import { Subject, takeUntil, takeWhile } from 'rxjs';
       </div>
     }
   `,
-  standalone: true,
   imports: [AsyncPipe, AdminImageDirective, MatChipSet, MatChip, MatIcon, MatChipAvatar, TranslateModule],
 })
 export class ProfileComponent implements OnInit, OnDestroy {

@@ -8,7 +8,6 @@ import { MatIconModule } from '@angular/material/icon';
     <ng-content />
   </div>`,
   styleUrls: ['./alert-info.component.scss'],
-  standalone: true,
   imports: [MatIconModule],
 })
 export class AlertInfoComponent {}

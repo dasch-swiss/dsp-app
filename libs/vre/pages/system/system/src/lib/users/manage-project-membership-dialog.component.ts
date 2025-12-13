@@ -25,7 +25,6 @@ export interface ManageProjectMembershipDialogProps {
     <mat-dialog-actions>
       <button mat-button color="primary" matDialogClose>{{ 'ui.common.actions.close' | translate }}</button>
     </mat-dialog-actions>`,
-  standalone: true,
   imports: [
     DialogHeaderComponent,
     MatButton,

@@ -30,7 +30,6 @@ export interface CreateResourceDialogProps {
         (cancelled)="onCancel()" />
     </div>
   `,
-  standalone: true,
 })
 export class CreateResourceDialogComponent {
   protected readonly _translateService = inject(TranslateService);

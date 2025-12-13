@@ -14,7 +14,6 @@ import { LoginFormComponent } from '../login-form/login-form.component';
   selector: 'app-user-menu',
   templateUrl: './user-menu.component.html',
   styleUrls: ['./user-menu.component.scss'],
-  standalone: true,
   imports: [
     AdminImageDirective,
     AsyncPipe,

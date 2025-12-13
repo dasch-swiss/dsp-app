@@ -34,7 +34,6 @@ import { UsersTabService } from './users-tab.service';
     }
   `,
   providers: [UsersTabService],
-  standalone: true,
   imports: [AsyncPipe, DoubleChipSelectorComponent, ProgressIndicatorOverlayComponent, UsersListComponent],
 })
 export class UsersTabComponent {

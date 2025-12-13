@@ -14,7 +14,6 @@ import { CreateResourceFormRepresentationComponent } from './create-resource-for
       (externalImageSelected)="externalImageSelected.emit($event)" />
 
     <app-create-resource-form-legal [formGroup]="form.controls.legal" [projectShortcode]="projectShortcode" />`,
-  standalone: true,
   imports: [CreateResourceFormRepresentationComponent, CreateResourceFormLegalComponent],
 })
 export class CreateResourceFormFileComponent implements OnInit {

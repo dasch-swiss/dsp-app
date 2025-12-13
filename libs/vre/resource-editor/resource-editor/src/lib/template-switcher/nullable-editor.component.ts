@@ -39,7 +39,6 @@ import { TranslateModule } from '@ngx-translate/core';
       multi: true,
     },
   ],
-  standalone: true,
 })
 export class NullableEditorComponent implements ControlValueAccessor {
   @Input({ required: true }) defaultValue!: unknown;

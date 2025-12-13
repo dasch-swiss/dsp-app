@@ -23,7 +23,6 @@ import { OrderByItem } from '../../data-access/advanced-search-store/advanced-se
   templateUrl: './order-by.component.html',
   styleUrls: ['./order-by.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
 })
 export class OrderByComponent {
   @Input() orderByList: OrderByItem[] | null = [];

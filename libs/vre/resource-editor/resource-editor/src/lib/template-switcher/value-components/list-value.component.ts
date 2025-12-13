@@ -22,7 +22,6 @@ import { NestedMenuComponent } from './nested-menu.component';
       <mat-error>{{ control.errors | humanReadableError }}</mat-error>
     }
   `,
-  standalone: true,
 })
 export class ListValueComponent implements OnInit {
   @Input({ required: true }) propertyDef!: ResourcePropertyDefinition;

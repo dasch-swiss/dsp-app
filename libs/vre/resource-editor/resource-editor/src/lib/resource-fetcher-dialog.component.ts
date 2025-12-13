@@ -15,7 +15,6 @@ export interface ResourceFetcherDialogProps {
       <app-resource-fetcher [resourceIri]="data.resourceIri" />
     </app-closing-dialog>
   `,
-  standalone: true,
   imports: [ClosingDialogComponent, ResourceFetcherComponent],
 })
 export class ResourceFetcherDialogComponent {

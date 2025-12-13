@@ -25,7 +25,6 @@ import { ListItemService } from './list-item/list-item.service';
   templateUrl: './list-page.component.html',
   styleUrls: ['./list-page.component.scss'],
   providers: [ListItemService],
-  standalone: true,
   imports: [
     AsyncPipe,
     MatAnchor,

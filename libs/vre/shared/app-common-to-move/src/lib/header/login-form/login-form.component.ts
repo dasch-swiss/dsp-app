@@ -49,7 +49,6 @@ import { PasswordFormFieldComponent } from '../password-form/password-form-field
       }
     `,
   ],
-  standalone: true,
   imports: [
     CommonInputComponent,
     LoadingButtonDirective,

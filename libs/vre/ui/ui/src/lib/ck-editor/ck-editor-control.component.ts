@@ -27,7 +27,6 @@ import { CkEditorComponent } from './ck-editor.component';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CkEditorComponent],
-  standalone: true,
 })
 export class CkEditorControlComponent {
   @Input({ required: true }) label!: string;

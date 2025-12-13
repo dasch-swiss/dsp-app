@@ -38,7 +38,6 @@ import { MatTooltip } from '@angular/material/tooltip';
       }
     `,
   ],
-  standalone: true,
   imports: [MatIconButton, MatIcon, MatTooltip],
 })
 export class ProjectSidenavCollapseButtonComponent {

@@ -41,7 +41,6 @@ import { UploadControlComponent } from './upload-control.component';
       <app-iiif-control [control]="control" />
     }
   </app-create-resource-form-row>`,
-  standalone: true,
   imports: [
     CreateResourceFormRowComponent,
     DoubleChipSelectorComponent,

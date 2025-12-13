@@ -10,7 +10,6 @@ import { CenteredMessageComponent } from './centered-message.component';
       [title]="'pages.search.noResultsFound' | translate"
       [message]="message" />
   `,
-  standalone: true,
   imports: [TranslateModule, CenteredMessageComponent],
 })
 export class NoResultsFoundComponent {

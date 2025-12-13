@@ -20,7 +20,6 @@ import { ResourceFetcherService } from '../resource-fetcher.service';
   imports: [AsyncPipe, MatIconButton, MatIcon, MatMenu, MatMenuItem, MatMenuTrigger, StatusComponent, TranslateModule],
   templateUrl: './archive.component.html',
   styleUrls: ['./archive.component.scss'],
-  standalone: true,
 })
 export class ArchiveComponent implements OnChanges {
   @Input({ required: true }) src!: ReadArchiveFileValue;

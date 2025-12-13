@@ -18,7 +18,6 @@ import { NullableEditorComponent } from '../nullable-editor.component';
       </mat-error>
     }
   `,
-  standalone: true,
 })
 export class ColorValueComponent {
   @Input({ required: true }) control!: FormControl<string | null>;

@@ -21,7 +21,6 @@ import { EditResourceLabelDialogComponent } from '../resource-properties/edit-re
       {{ 'resourceEditor.moreMenu.editLabel' | translate }}
     </button>
   `,
-  standalone: true,
   imports: [MatButtonModule, MatIconModule, MatMenuModule, MatTooltipModule, TranslateModule],
 })
 export class EditLabelMenuItemComponent {

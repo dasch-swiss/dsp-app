@@ -57,7 +57,6 @@ import { PropertyValueService } from './property-value.service';
     </div>
   `,
   styleUrls: ['./property-value-action-bubble.component.scss'],
-  standalone: true,
 })
 export class PropertyValueActionBubbleComponent implements OnInit {
   @Input({ required: true }) date!: string;

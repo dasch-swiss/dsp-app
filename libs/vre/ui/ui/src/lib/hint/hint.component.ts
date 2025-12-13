@@ -25,6 +25,5 @@ import { TranslateModule } from '@ngx-translate/core';
   styleUrls: ['./hint.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [MatButtonModule, MatIconModule, TranslateModule],
-  standalone: true,
 })
 export class HintComponent {}

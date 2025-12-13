@@ -26,7 +26,6 @@ import { UploadedFileComponent } from './uploaded-file.component';
         (removeFile)="control.setValue('')" />
     }
   `,
-  standalone: true,
   imports: [UploadComponent, UploadedFileComponent, MatFormFieldModule, HumanReadableErrorPipe, HumanReadableErrorPipe],
 })
 export class UploadControlComponent implements ControlValueAccessor {

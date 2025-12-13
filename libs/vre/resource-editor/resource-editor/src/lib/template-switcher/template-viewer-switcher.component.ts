@@ -106,7 +106,6 @@ import { UriViewerComponent } from './viewer-components/uri-viewer.component';
     <ng-template #defaultDisplayTpl><span style="width: 100%">Nothing to show</span></ng-template>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
 })
 export class TemplateViewerSwitcherComponent implements AfterViewInit {
   @Input({ required: true }) value!: ReadValue | undefined;

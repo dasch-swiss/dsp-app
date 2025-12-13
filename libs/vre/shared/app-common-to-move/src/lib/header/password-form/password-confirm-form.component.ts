@@ -20,7 +20,6 @@ import { PasswordFormFieldComponent } from './password-form-field.component';
       [validatorErrors]="passwordConfirmValidatorErrors"
       [showToggleVisibility]="true" />
   `,
-  standalone: true,
   imports: [PasswordFormFieldComponent, TranslateModule],
 })
 export class PasswordConfirmFormComponent implements OnInit, OnDestroy {

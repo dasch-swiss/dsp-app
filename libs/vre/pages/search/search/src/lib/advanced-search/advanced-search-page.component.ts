@@ -14,7 +14,6 @@ import { CenteredLayoutComponent } from '@dasch-swiss/vre/ui/ui';
       (emitBackButtonClicked)="onBackClicked()" />
   </app-centered-layout>`,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [CenteredLayoutComponent, AdvancedSearchComponent],
 })
 export class AdvancedSearchPageComponent implements OnInit {

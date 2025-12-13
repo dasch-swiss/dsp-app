@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
 import { Title } from '@angular/platform-browser';
+import { RouterOutlet } from '@angular/router';
 import { AutoLoginService, LocalStorageWatcherService } from '@dasch-swiss/vre/core/session';
 import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { CookieBannerComponent } from './cookie-banner.component';
 
 @Component({
   selector: 'app-root',
@@ -9,7 +11,7 @@ import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services
     <router-outlet />
     <app-cookie-banner />
   `,
-  standalone: false,
+  imports: [RouterOutlet, CookieBannerComponent],
 })
 export class AppComponent {
   constructor(

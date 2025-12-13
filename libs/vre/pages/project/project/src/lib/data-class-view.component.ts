@@ -35,7 +35,6 @@ import { ProjectPageService } from './project-page.service';
       <app-progress-indicator />
     }
   `,
-  standalone: true,
   imports: [
     AsyncPipe,
     TranslateModule,

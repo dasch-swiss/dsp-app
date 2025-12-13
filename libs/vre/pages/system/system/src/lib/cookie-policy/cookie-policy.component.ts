@@ -9,7 +9,6 @@ import { TranslateModule } from '@ngx-translate/core';
   selector: 'app-cookie-policy',
   templateUrl: './cookie-policy.component.html',
   styleUrls: ['./cookie-policy.component.scss'],
-  standalone: true,
   imports: [TranslateModule, MatDivider, MatIcon, MatButton],
 })
 export class CookiePolicyComponent {

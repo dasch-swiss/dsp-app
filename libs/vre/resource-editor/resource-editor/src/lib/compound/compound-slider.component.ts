@@ -29,7 +29,6 @@ import { CompoundService } from './compound.service';
       "
       #ngSliderThumb="matSliderThumb" />
   </mat-slider>`,
-  standalone: true,
   imports: [MatSliderModule, FormsModule],
 })
 export class CompoundSliderComponent {

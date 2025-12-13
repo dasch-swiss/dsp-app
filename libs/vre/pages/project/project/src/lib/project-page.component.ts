@@ -15,7 +15,6 @@ import { ProjectPageService } from './project-page.service';
     </div>
   `,
   styleUrls: ['./project-page.component.scss'],
-  standalone: true,
   imports: [ProjectPageHeaderComponent, RouterOutlet],
 })
 export class ProjectPageComponent implements OnInit {

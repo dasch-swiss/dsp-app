@@ -33,7 +33,6 @@ import { ListItemService } from '../list-item/list-item.service';
       }
     `,
   ],
-  standalone: true,
   imports: [ReactiveFormsModule, MatIconButton, MatIcon, MultiLanguageInputComponent],
 })
 export class ListItemFormComponent {

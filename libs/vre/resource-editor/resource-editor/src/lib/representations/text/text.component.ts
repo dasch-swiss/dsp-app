@@ -20,7 +20,6 @@ import { ResourceFetcherService } from '../resource-fetcher.service';
   imports: [AsyncPipe, MatIconButton, MatIcon, MatMenu, MatMenuItem, MatMenuTrigger, StatusComponent, TranslateModule],
   templateUrl: './text.component.html',
   styleUrls: ['./text.component.scss'],
-  standalone: true,
 })
 export class TextComponent implements OnChanges {
   @Input({ required: true }) src!: ReadTextFileValue;

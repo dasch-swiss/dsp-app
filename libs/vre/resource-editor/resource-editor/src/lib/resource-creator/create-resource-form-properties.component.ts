@@ -37,7 +37,6 @@ import { PropertyValuesCreatorComponent } from './property-values-creator.compon
       }
     `,
   ],
-  standalone: true,
   imports: [CreateResourceFormRowComponent, PropertyValuesCreatorComponent],
 })
 export class CreateResourceFormPropertiesComponent {

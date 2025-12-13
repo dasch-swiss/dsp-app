@@ -83,7 +83,6 @@ import { UploadFileService } from '../representations/upload/upload-file.service
       }
     `,
   ],
-  standalone: true,
   imports: [DragDropDirective, MatIconModule, MatProgressBarModule, TranslateModule],
 })
 export class UploadComponent {

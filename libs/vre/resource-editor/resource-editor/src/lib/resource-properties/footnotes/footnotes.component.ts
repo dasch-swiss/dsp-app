@@ -39,7 +39,6 @@ import { FootnoteService } from './footnote.service';
       }
     `,
   ],
-  standalone: true,
 })
 export class FootnotesComponent {
   constructor(public readonly footnoteService: FootnoteService) {}

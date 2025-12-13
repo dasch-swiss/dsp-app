@@ -67,7 +67,6 @@ import { AutocompleteItem } from '../autocomplete-item.interface';
     }
   `,
   styleUrls: ['./membership.component.scss'],
-  standalone: true,
   imports: [
     AsyncPipe,
     FormsModule,

@@ -74,7 +74,6 @@ export interface EditPasswordDialogProps {
       }
     `,
   ],
-  standalone: true,
   imports: [
     DialogHeaderComponent,
     TranslateModule,

@@ -17,7 +17,6 @@ import { AlertInfoComponent } from './alert-info.component';
       </app-alert-info>
     </div>
   }`,
-  standalone: true,
   imports: [MatIconModule, TranslateModule, AlertInfoComponent],
 })
 export class ResourceRestrictionComponent {

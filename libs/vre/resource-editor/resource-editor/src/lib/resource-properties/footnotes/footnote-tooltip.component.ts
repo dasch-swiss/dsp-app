@@ -33,7 +33,6 @@ import { AddTargetBlankPipe, InternalLinkReplacerPipe } from '@dasch-swiss/vre/u
       }
     `,
   ],
-  standalone: true,
 })
 export class FootnoteTooltipComponent {
   @Input({ required: true }) content!: SafeHtml;

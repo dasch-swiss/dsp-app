@@ -66,7 +66,6 @@ import { MultipleViewerService } from '../comparison/multiple-viewer.service';
       }
     `,
   ],
-  standalone: true,
   imports: [AsyncPipe, NgClass, MatCheckbox, TranslateModule],
 })
 export class ResourceListItemComponent implements OnInit {

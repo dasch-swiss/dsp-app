@@ -22,7 +22,6 @@ import { ListItemService } from './list-item.service';
     }
   `,
   styles: [':host { display: block; }'],
-  standalone: true,
   imports: [ListItemElementComponent, ListItemFormComponent],
 })
 export class ListItemComponent implements OnInit, OnDestroy {

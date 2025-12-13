@@ -11,7 +11,6 @@ import { MatIcon } from '@angular/material/icon';
     </div>
     <ng-content />
   </div>`,
-  standalone: true,
   imports: [MatIconButton, MatIcon],
 })
 export class ClosingDialogComponent {

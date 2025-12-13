@@ -18,7 +18,6 @@ import { CompoundService } from './compound.service';
     </div>
   `,
   styles: ['button[disabled] {color: #b8b8b8!important}'],
-  standalone: true,
   imports: [MatButtonModule, MatIconModule],
 })
 export class CompoundArrowNavigationComponent implements OnInit {

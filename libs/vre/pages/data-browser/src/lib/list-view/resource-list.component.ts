@@ -9,7 +9,6 @@ import { ResourceListItemComponent } from './resource-list-item.component';
       <app-resource-list-item [resource]="resource" data-cy="resource-list-item" />
     }
   `,
-  standalone: true,
   imports: [ResourceListItemComponent],
 })
 export class ResourceListComponent {

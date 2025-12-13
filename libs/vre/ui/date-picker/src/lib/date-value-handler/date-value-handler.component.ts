@@ -69,7 +69,6 @@ export function periodStartEndValidator(
     },
     { provide: Subject },
   ],
-  standalone: true,
 })
 export class DateValueHandlerComponent
   implements ControlValueAccessor, MatFormFieldControl<KnoraDate | KnoraPeriod>, DoCheck, OnInit, OnDestroy

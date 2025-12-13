@@ -32,7 +32,6 @@ import { VideoToolbarComponent } from './video-toolbar.component';
   selector: 'app-video',
   templateUrl: './video.component.html',
   providers: [MediaControlService, MediaPlayerService],
-  standalone: true,
   imports: [
     DisableContextMenuDirective,
     StatusComponent,

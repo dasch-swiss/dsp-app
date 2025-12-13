@@ -46,7 +46,6 @@ import { MultipleViewerService } from './multiple-viewer.service';
         <app-resource-fetcher [resourceIri]="res" (afterResourceDeleted)="afterResourceDeleted.emit()" />
       </div>
     </ng-template>`,
-  standalone: true,
   imports: [NgTemplateOutlet, MatIconButton, MatIcon, AngularSplitModule, ResourceFetcherComponent],
 })
 export class ComparisonComponent implements OnChanges {

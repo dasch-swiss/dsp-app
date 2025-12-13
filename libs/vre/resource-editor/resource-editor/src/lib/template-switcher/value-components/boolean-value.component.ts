@@ -20,7 +20,6 @@ import { NullableEditorComponent } from '../nullable-editor.component';
       </mat-error>
     }
   `,
-  standalone: true,
 })
 export class BooleanValueComponent {
   @Input({ required: true }) control!: FormControl<boolean | null>;

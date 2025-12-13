@@ -48,7 +48,6 @@ import { GeonameService, SearchPlace } from '../geoname.service';
       </mat-error>
     }
   </mat-form-field>`,
-  standalone: true,
 })
 export class GeonameValueComponent implements OnInit {
   @Input({ required: true }) control!: FormControl<string>;

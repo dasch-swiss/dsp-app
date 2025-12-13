@@ -61,7 +61,6 @@ import { OpenSeaDragonService } from './open-sea-dragon.service';
       }
     `,
   ],
-  standalone: true,
   imports: [
     MatMenuTrigger,
     MatTooltip,

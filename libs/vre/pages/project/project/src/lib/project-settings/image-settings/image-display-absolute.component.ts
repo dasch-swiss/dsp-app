@@ -79,7 +79,6 @@ import { Component, Input } from '@angular/core';
       }
     `,
   ],
-  standalone: true,
   imports: [NgStyle],
 })
 export class ImageDisplayAbsoluteComponent {

@@ -12,7 +12,6 @@ import { ResourceClassSidenavComponent } from './resource-class-sidenav/resource
 
 @Component({
   selector: 'app-projects-sidenav-ontologies',
-  standalone: true,
   imports: [
     AsyncPipe,
     MatExpansionModule,

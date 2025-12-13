@@ -20,7 +20,6 @@ import { MatToolbarRow } from '@angular/material/toolbar';
       }
     `,
   ],
-  standalone: true,
 })
 export class MediaSliderComponent {
   @Input({ required: true }) max!: number;

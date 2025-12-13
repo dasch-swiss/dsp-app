@@ -17,7 +17,6 @@ import { AlertInfoComponent } from './alert-info.component';
       </div>
     </app-alert-info>
   `,
-  standalone: true,
   imports: [MatButtonModule, TranslateModule, AlertInfoComponent],
 })
 export class ResourceVersionWarningComponent {

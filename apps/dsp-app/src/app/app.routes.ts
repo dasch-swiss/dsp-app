@@ -1,5 +1,4 @@
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import { Routes } from '@angular/router';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { ListPageComponent } from '@dasch-swiss/vre/pages/ontology/list';
 import {
@@ -41,7 +40,7 @@ import { StatusComponent } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { HelpPageComponent } from '@dasch-swiss/vre/shared/app-help-page';
 import { AuthGuard } from './main/guard/auth.guard';
 
-const routes: Routes = [
+export const routes: Routes = [
   {
     path: RouteConstants.projectUuidRelative,
     component: ProjectPageComponent,
@@ -212,14 +211,3 @@ const routes: Routes = [
     ],
   },
 ];
-
-@NgModule({
-  imports: [
-    RouterModule.forRoot(routes, {
-      bindToComponentInputs: true,
-      onSameUrlNavigation: 'reload',
-    }),
-  ],
-  exports: [RouterModule],
-})
-export class AppRoutingModule {}

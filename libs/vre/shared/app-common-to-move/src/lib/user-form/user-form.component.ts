@@ -34,7 +34,6 @@ import { UserForm } from './user-form.type';
       </mat-form-field>
     </form>
   `,
-  standalone: true,
   imports: [CommonInputComponent, TranslateModule, MatFormField, MatLabel, MatSelect, MatOption, ReactiveFormsModule],
 })
 export class UserFormComponent implements OnInit {

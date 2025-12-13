@@ -40,7 +40,6 @@ import { LoadingMenuItemComponent } from './loading-menu-item.component';
         labelKey="resourceEditor.moreMenu.eraseResource" />
     }
   `,
-  standalone: true,
   imports: [
     AsyncPipe,
     MatButtonModule,

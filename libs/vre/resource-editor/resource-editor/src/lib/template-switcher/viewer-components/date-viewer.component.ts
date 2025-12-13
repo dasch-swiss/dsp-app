@@ -23,7 +23,6 @@ import { KnoraDatePipe } from '@dasch-swiss/vre/ui/ui';
       </span>
     </ng-template>
   `,
-  standalone: true,
 })
 export class DateViewerComponent implements OnInit {
   @Input({ required: true }) value!: ReadDateValue;

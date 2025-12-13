@@ -52,7 +52,6 @@ export interface AddRegionFormDialogProps {
       </button>
     </mat-dialog-actions>
   `,
-  standalone: true,
 })
 export class AddRegionFormDialogComponent {
   projectShortcode: string;

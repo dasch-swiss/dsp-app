@@ -18,7 +18,6 @@ import { DisplayPlace, GeonameService } from '../geoname.service';
     >
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
 })
 export class GeonameViewerComponent implements OnChanges {
   @Input({ required: true }) value!: ReadGeonameValue;

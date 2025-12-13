@@ -41,7 +41,6 @@ import { ProfileComponent } from './profile/profile.component';
       }
     `,
   ],
-  standalone: true,
   imports: [
     CenteredLayoutComponent,
     ProfileComponent,
