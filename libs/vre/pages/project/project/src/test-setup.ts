@@ -6,3 +6,7 @@ globalThis.ngJest = {
   },
 };
 import 'jest-preset-angular/setup-jest';
+
+// Mock HTMLAnchorElement.prototype.click to prevent JSDOM navigation errors
+// This is needed for tests that programmatically trigger downloads
+HTMLAnchorElement.prototype.click = jest.fn();

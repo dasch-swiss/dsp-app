@@ -9,7 +9,7 @@ import { MultipleViewerService, ResourceClassCountApi } from '@dasch-swiss/vre/p
 import { filterUndefined, generateDspResource } from '@dasch-swiss/vre/shared/app-common';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { combineLatest, first, from, switchMap } from 'rxjs';
 import { DataBrowserPageService } from './data-browser-page.service';
 import { DownloadDialogComponent } from './download/download-dialog.component';
@@ -63,7 +63,8 @@ export class DataClassPanelComponent {
     private readonly _resClassCountApi: ResourceClassCountApi,
     private readonly _stringifyStringLiteralPipe: StringifyStringLiteralPipe,
     private readonly _notificationService: NotificationService,
-    private readonly _dataBrowserPageService: DataBrowserPageService
+    private readonly _dataBrowserPageService: DataBrowserPageService,
+    private readonly _translateService: TranslateService
   ) {}
 
   goToAddClassInstance() {
@@ -112,7 +113,9 @@ export class DataClassPanelComponent {
       this._multipleViewerService.selectedResources$.pipe(first()),
     ]).subscribe(([resClassCount, resources]) => {
       if (resClassCount === 0 || resources.length === 0) {
-        this._notificationService.openSnackBar('pages.dataBrowser.downloadDialog.noResources');
+        this._notificationService.openSnackBar(
+          this._translateService.instant('pages.dataBrowser.downloadDialog.noResources')
+        );
         return;
       }
 
