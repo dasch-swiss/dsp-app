@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { AfterViewInit, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
@@ -14,13 +14,13 @@ import { PropertyFormItem } from '../../../data-access/advanced-search-store/adv
 @Component({
   selector: 'app-property-form-list-value',
   imports: [
-    CommonModule,
-    MatFormFieldModule,
-    MatSelectModule,
-    MatOptionModule,
-    ReactiveFormsModule,
+    AsyncPipe,
     MatAutocompleteModule,
+    MatFormFieldModule,
     MatInputModule,
+    MatOptionModule,
+    MatSelectModule,
+    ReactiveFormsModule,
     TranslateModule,
   ],
   template: `

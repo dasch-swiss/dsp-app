@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -31,13 +31,13 @@ export interface QueryObject {
 @Component({
   selector: 'app-advanced-search',
   imports: [
-    CommonModule,
-    OrderByComponent,
-    OntologyResourceFormComponent,
-    PropertyFormComponent,
+    AsyncPipe,
     FormActionsComponent,
     MatButtonModule,
     MatIconModule,
+    OntologyResourceFormComponent,
+    OrderByComponent,
+    PropertyFormComponent,
     RouterModule,
     TranslateModule,
   ],
