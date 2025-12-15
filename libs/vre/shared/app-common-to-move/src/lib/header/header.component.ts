@@ -1,18 +1,18 @@
 import { Component } from '@angular/core';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { Router } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { GlobalSearchComponent } from './global-search.component';
 import { HeaderLogoComponent } from './header-logo.component';
 import { HeaderUserActionsComponent } from './header-user-actions.component';
 
 @Component({
   selector: 'app-header',
-  imports: [MatToolbarModule, HeaderLogoComponent, GlobalSearchComponent, HeaderUserActionsComponent],
+  imports: [MatToolbarModule, RouterLink, HeaderLogoComponent, GlobalSearchComponent, HeaderUserActionsComponent],
   template: `
     <mat-toolbar style="background: inherit; height: 56px; justify-content: space-between">
       <span style="display: flex; align-items: center">
         <app-header-logo />
-        <h1 class="title" (click)="goToHomePage()">DaSCH Service Platform</h1>
+        <a class="title" routerLink="/">DaSCH Service Platform</a>
       </span>
       <app-global-search />
 
@@ -31,6 +31,9 @@ import { HeaderUserActionsComponent } from './header-user-actions.component';
         cursor: pointer;
         padding: 4px;
         border-radius: 8px;
+        text-decoration: none;
+        color: inherit;
+        display: inline-block;
 
         &:hover {
           background-color: #e8e9eb;
@@ -39,10 +42,4 @@ import { HeaderUserActionsComponent } from './header-user-actions.component';
     `,
   ],
 })
-export class HeaderComponent {
-  constructor(private readonly _router: Router) {}
-
-  goToHomePage() {
-    this._router.navigate(['/']);
-  }
-}
+export class HeaderComponent {}
