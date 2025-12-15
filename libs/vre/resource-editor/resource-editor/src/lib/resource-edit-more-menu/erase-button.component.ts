@@ -21,7 +21,7 @@ import { LoadingMenuItemComponent } from './loading-menu-item.component';
         [matTooltip]="
           resourceCanBeDeleted.canDo
             ? ('resourceEditor.moreMenu.eraseResourceTooltip' | translate)
-            : resourceCanBeDeleted.cannotDoReason || ('resourceEditor.moreMenu.checkingPermissionErase' | translate)
+            : ('resourceEditor.moreMenu.cannotEraseIncomingLinks' | translate)
         "
         matTooltipPosition="above"
         [disabled]="!resourceCanBeDeleted.canDo"

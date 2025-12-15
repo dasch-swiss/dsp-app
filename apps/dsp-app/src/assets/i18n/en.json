@@ -431,7 +431,8 @@
       "eraseResource": "Erase permanently",
       "eraseResourceTooltip": "Erase resource permanently. This cannot be undone.",
       "noPermission": "You do not have permission to delete this resource.",
-      "cannotDeleteIncomingLinks": "The resource cannot be deleted because it has incoming links (see below)."
+      "cannotDeleteIncomingLinks": "The resource cannot be deleted because it has incoming links (see below).",
+      "cannotEraseIncomingLinks": "The resource cannot be erased because it has incoming links (see below)."
     },
     "infoBar": {
       "resourceOfProject": "Resource of the project",

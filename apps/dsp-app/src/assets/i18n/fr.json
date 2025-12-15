@@ -431,7 +431,8 @@
       "eraseResource": "Supprimer définitivement",
       "eraseResourceTooltip": "Supprimer définitivement la ressource. Cette action ne peut pas être annulée.",
       "noPermission": "Vous n'avez pas l'autorisation de supprimer cette ressource.",
-      "cannotDeleteIncomingLinks": "La ressource ne peut pas être supprimée car elle possède des liens entrants (voir ci-dessous)."
+      "cannotDeleteIncomingLinks": "La ressource ne peut pas être supprimée car elle possède des liens entrants (voir ci-dessous).",
+      "cannotEraseIncomingLinks": "La ressource ne peut pas être effacée car elle possède des liens entrants (voir ci-dessous)."
     },
     "infoBar": {
       "resourceOfProject": "Ressource du projet",
