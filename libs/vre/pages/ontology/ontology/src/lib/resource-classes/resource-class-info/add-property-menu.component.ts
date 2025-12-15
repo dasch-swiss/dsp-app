@@ -7,7 +7,7 @@ import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatTooltip } from '@angular/material/tooltip';
 import { DefaultProperties, DefaultProperty, PropertyCategory } from '@dasch-swiss/vre/shared/app-helper-services';
 import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { Observable, Subject, BehaviorSubject, combineLatest, map, takeUntil } from 'rxjs';
 import { EditPropertyFormDialogComponent } from '../../forms/property-form/edit-property-form-dialog.component';
 import { CreatePropertyDialogData } from '../../forms/property-form/property-form.type';
@@ -101,7 +101,7 @@ import { OntologyEditService } from '../../services/ontology-edit.service';
     MatMenuTrigger,
     MatTooltip,
     StringifyStringLiteralPipe,
-    TranslateModule,
+    TranslatePipe,
   ],
 })
 export class AddPropertyMenuComponent implements OnChanges {

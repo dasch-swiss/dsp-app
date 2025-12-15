@@ -9,7 +9,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { ReadMovingImageFileValue, ReadResource } from '@dasch-swiss/dsp-js';
 import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import { TimePipe } from '@dasch-swiss/vre/ui/ui';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { firstValueFrom } from 'rxjs';
 import {
   CreateSegmentDialogComponent,
@@ -29,7 +29,7 @@ import { VideoMoreButtonComponent } from './video-more-button.component';
     MatToolbarRow,
     MatTooltip,
     VideoMoreButtonComponent,
-    TranslateModule,
+    TranslatePipe,
     TimePipe,
   ],
   template: ` <mat-toolbar-row style="background: black; color: white; justify-content: space-between">

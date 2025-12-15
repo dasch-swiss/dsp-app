@@ -14,7 +14,7 @@ import { UserForm, UserFormComponent } from '@dasch-swiss/vre/shared/app-common-
 import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { DialogHeaderComponent } from '@dasch-swiss/vre/ui/ui';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 export interface EditUserDialogProps {
   user: ReadUser;
@@ -45,7 +45,7 @@ export interface EditUserDialogProps {
   `,
   imports: [
     DialogHeaderComponent,
-    TranslateModule,
+    TranslatePipe,
     MatDialogContent,
     UserFormComponent,
     MatDialogActions,

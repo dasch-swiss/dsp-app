@@ -7,7 +7,7 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { UserService } from '@dasch-swiss/vre/core/session';
 import { StatusComponent } from '@dasch-swiss/vre/shared/app-common-to-move';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-system-page',
@@ -50,7 +50,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
     RouterLinkActive,
     RouterOutlet,
     StatusComponent,
-    TranslateModule,
+    TranslatePipe,
   ],
 })
 export class SystemPageComponent {

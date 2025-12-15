@@ -6,7 +6,7 @@ import { UserApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { AdminAPIApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
-import { TranslateModule } from '@ngx-translate/core';
+import { provideTranslateService, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { CollaborationPageService } from '../collaboration-page.service';
 import { AddUserComponent } from './add-user.component';
@@ -81,7 +81,7 @@ describe('AddUserComponent', () => {
     } as any;
 
     await TestBed.configureTestingModule({
-      imports: [AddUserComponent, TranslateModule.forRoot()],
+      imports: [AddUserComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       providers: [
         { provide: DspApiConnectionToken, useValue: mockDspApiConnection },
@@ -90,6 +90,8 @@ describe('AddUserComponent', () => {
         { provide: ProjectService, useValue: mockProjectService },
         { provide: UserApiService, useValue: mockUserApiService },
         { provide: CollaborationPageService, useValue: mockCollaborationPageService },
+        provideTranslateService(),
+        TranslateService,
       ],
     })
       .overrideComponent(AddUserComponent, {

@@ -1,13 +1,13 @@
 import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input, OnChanges } from '@angular/core';
 import { ReadTimeValue } from '@dasch-swiss/dsp-js';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { DateTime } from '../../resource-properties/date-time';
 import { convertTimestampToDateTime, dateTimeTimestamp } from '../../resource-properties/date-time-timestamp';
 
 @Component({
   selector: 'app-time-viewer',
-  imports: [DatePipe, TranslateModule],
+  imports: [DatePipe, TranslatePipe],
   template: `
     <span data-cy="time-switch-date">{{ dateTime | date: 'dd.MM.yyyy' }}</span>
     {{ 'resourceEditor.templateSwitcher.timeViewer.at' | translate }}

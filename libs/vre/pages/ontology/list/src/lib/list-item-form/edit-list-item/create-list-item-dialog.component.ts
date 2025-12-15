@@ -13,7 +13,7 @@ import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { LoadingButtonDirective } from '@dasch-swiss/vre/ui/progress-indicator';
 import { MultiLanguages } from '@dasch-swiss/vre/ui/string-literal';
 import { DialogHeaderComponent } from '@dasch-swiss/vre/ui/ui';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { ListItemForm } from '../list-item-form.type';
 import { ReusableListItemFormComponent } from '../reusable-list-item-form.component';
 
@@ -53,7 +53,7 @@ export interface CreateListItemDialogProps {
     MatDialogActions,
     MatDialogClose,
     MatDialogContent,
-    TranslateModule,
+    TranslatePipe,
     DialogHeaderComponent,
     LoadingButtonDirective,
     ReusableListItemFormComponent,

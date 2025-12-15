@@ -7,7 +7,7 @@ import {
   MultiLanguageTextareaComponent,
   MultiLanguages,
 } from '@dasch-swiss/vre/ui/string-literal';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { ListItemForm } from './list-item-form.type';
 
 @Component({
@@ -24,7 +24,7 @@ import { ListItemForm } from './list-item-form.type';
       [validators]="commentsValidators"
       [isRequired]="false" />
   `,
-  imports: [TranslateModule, MultiLanguageInputComponent, MultiLanguageTextareaComponent],
+  imports: [TranslatePipe, MultiLanguageInputComponent, MultiLanguageTextareaComponent],
 })
 export class ReusableListItemFormComponent implements OnInit {
   @Input() formData: {

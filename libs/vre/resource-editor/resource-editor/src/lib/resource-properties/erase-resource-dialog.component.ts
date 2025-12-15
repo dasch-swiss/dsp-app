@@ -14,7 +14,7 @@ import { DeleteResource, KnoraApiConnection, ReadResource } from '@dasch-swiss/d
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { LoadingButtonDirective } from '@dasch-swiss/vre/ui/progress-indicator';
 import { DialogHeaderComponent, HumanReadableErrorPipe } from '@dasch-swiss/vre/ui/ui';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { finalize } from 'rxjs';
 import { ResourceFetcherService } from '../representations/resource-fetcher.service';
 
@@ -33,7 +33,7 @@ import { ResourceFetcherService } from '../representations/resource-fetcher.serv
     ReactiveFormsModule,
     LoadingButtonDirective,
     HumanReadableErrorPipe,
-    TranslateModule,
+    TranslatePipe,
   ],
   template: `
     <app-dialog-header

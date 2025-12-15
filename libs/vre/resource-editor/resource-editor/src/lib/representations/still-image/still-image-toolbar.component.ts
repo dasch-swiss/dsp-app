@@ -18,7 +18,7 @@ import {
 import { DspApiConnectionToken, DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import { AppError } from '@dasch-swiss/vre/core/error-handler';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { CompoundNavigationComponent } from '../../compound/compound-navigation.component';
 import {
   ReplaceFileDialogComponent,
@@ -64,7 +64,7 @@ import { OpenSeaDragonService } from './open-sea-dragon.service';
   imports: [
     MatMenuTrigger,
     MatTooltip,
-    TranslateModule,
+    TranslatePipe,
     MatIcon,
     AsyncPipe,
     CompoundNavigationComponent,

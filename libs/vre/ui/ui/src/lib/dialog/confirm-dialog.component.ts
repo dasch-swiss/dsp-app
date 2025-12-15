@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { DialogHeaderComponent } from '../dialog-header.component';
 
 export interface ConfirmDialogProps {
@@ -27,7 +27,7 @@ export interface ConfirmDialogProps {
     </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [DialogHeaderComponent, MatButtonModule, MatDialogModule, TranslateModule],
+  imports: [DialogHeaderComponent, MatButtonModule, MatDialogModule, TranslatePipe],
 })
 export class ConfirmDialogComponent {
   constructor(

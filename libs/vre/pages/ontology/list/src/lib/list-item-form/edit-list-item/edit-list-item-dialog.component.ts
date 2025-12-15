@@ -12,7 +12,7 @@ import { ListApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { LoadingButtonDirective } from '@dasch-swiss/vre/ui/progress-indicator';
 import { MultiLanguages } from '@dasch-swiss/vre/ui/string-literal';
 import { DialogHeaderComponent } from '@dasch-swiss/vre/ui/ui';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { finalize, of, switchMap } from 'rxjs';
 import { ListItemForm } from '../list-item-form.type';
 import { ReusableListItemFormComponent } from '../reusable-list-item-form.component';
@@ -53,7 +53,7 @@ export interface EditListItemDialogProps {
     MatDialogActions,
     MatDialogClose,
     MatDialogContent,
-    TranslateModule,
+    TranslatePipe,
     DialogHeaderComponent,
     LoadingButtonDirective,
     ReusableListItemFormComponent,

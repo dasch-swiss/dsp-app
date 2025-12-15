@@ -12,7 +12,7 @@ import {
   DialogHeaderComponent,
   TimeInputComponent,
 } from '@dasch-swiss/vre/ui/ui';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { SegmentApiService } from './segment-api.service';
 import { SegmentsService } from './segments.service';
 
@@ -36,7 +36,7 @@ export interface CreateSegmentDialogProps {
     CkEditorControlComponent,
     MatButton,
     LoadingButtonDirective,
-    TranslateModule,
+    TranslatePipe,
   ],
   template: ` <app-dialog-header
       [title]="'resourceEditor.segmentSupport.createSegmentDialog.createAnnotation' | translate" />

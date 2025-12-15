@@ -6,12 +6,12 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { SearchTipsComponent } from './search-tips.component';
 
 @Component({
   selector: 'app-global-search',
-  imports: [ReactiveFormsModule, MatButtonModule, MatIconModule, TranslateModule, OverlayModule],
+  imports: [ReactiveFormsModule, MatButtonModule, MatIconModule, TranslatePipe, OverlayModule],
   template: `
     <form
       [formGroup]="formGroup"

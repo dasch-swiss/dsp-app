@@ -11,7 +11,8 @@
         "additionalProperties": {
           "fileNaming": "kebab-case",
           "serviceFileSuffix": "-api.service",
-          "serviceSuffix": "ApiService"
+          "serviceSuffix": "ApiService",
+          "ngModule": false
         }
       }
     }

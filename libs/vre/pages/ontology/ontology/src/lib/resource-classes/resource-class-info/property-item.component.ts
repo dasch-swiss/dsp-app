@@ -1,6 +1,6 @@
 import { Clipboard } from '@angular/cdk/clipboard';
 import { CdkDrag, CdkDragHandle, CdkDragPlaceholder } from '@angular/cdk/drag-drop';
-import { AsyncPipe, NgClass } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
@@ -27,7 +27,7 @@ import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
 import { SplitPipe } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
 import { EditPropertyFormDialogComponent } from '../../forms/property-form/edit-property-form-dialog.component';
 import { EditPropertyDialogData } from '../../forms/property-form/property-form.type';
@@ -227,10 +227,9 @@ import { CardinalityComponent } from './cardinality-component/cardinality.compon
     MatMenuTrigger,
     MatRipple,
     MatTooltip,
-    NgClass,
     SplitPipe,
     StringifyStringLiteralPipe,
-    TranslateModule,
+    TranslatePipe,
   ],
 })
 export class PropertyItemComponent implements OnInit, AfterViewInit, OnDestroy {

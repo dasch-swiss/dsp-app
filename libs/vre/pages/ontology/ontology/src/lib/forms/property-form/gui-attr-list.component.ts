@@ -9,7 +9,7 @@ import { ListApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
 import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
 import { HumanReadableErrorPipe } from '@dasch-swiss/vre/ui/ui';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { map, switchMap } from 'rxjs';
 import { PropertyForm } from './property-form.type';
 
@@ -46,7 +46,7 @@ import { PropertyForm } from './property-form.type';
     MatSelect,
     ReactiveFormsModule,
     StringifyStringLiteralPipe,
-    TranslateModule,
+    TranslatePipe,
   ],
 })
 export class GuiAttrListComponent {

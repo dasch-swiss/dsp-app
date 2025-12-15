@@ -7,7 +7,7 @@ import { MultipleViewerComponent } from '@dasch-swiss/vre/pages/data-browser';
 import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { AppProgressIndicatorComponent } from '@dasch-swiss/vre/ui/progress-indicator';
 import { CenteredBoxComponent, NoResultsFoundComponent } from '@dasch-swiss/vre/ui/ui';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { AngularSplitModule } from 'angular-split';
 import { combineLatest, EMPTY, first, map } from 'rxjs';
 import { DataClassPanelComponent } from './data-class-panel.component';
@@ -37,7 +37,7 @@ import { ProjectPageService } from './project-page.service';
   `,
   imports: [
     AsyncPipe,
-    TranslateModule,
+    TranslatePipe,
     AngularSplitModule,
     CenteredBoxComponent,
     NoResultsFoundComponent,

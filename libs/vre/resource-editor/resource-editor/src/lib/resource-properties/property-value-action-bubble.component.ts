@@ -4,7 +4,7 @@ import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Cardinality } from '@dasch-swiss/dsp-js';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { map, Observable } from 'rxjs';
 import { ResourceFetcherService } from '../representations/resource-fetcher.service';
 import { ResourceUtil } from '../representations/resource.util';
@@ -12,7 +12,7 @@ import { PropertyValueService } from './property-value.service';
 
 @Component({
   selector: 'app-property-value-action-bubble',
-  imports: [AsyncPipe, MatButton, MatIcon, MatTooltip, TranslateModule],
+  imports: [AsyncPipe, MatButton, MatIcon, MatTooltip, TranslatePipe],
   template: `
     <div class="action-bubble" data-cy="action-bubble">
       <div class="button-container d-flex">

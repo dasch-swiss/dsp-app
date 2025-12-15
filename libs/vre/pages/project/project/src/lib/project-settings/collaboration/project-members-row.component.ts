@@ -4,7 +4,7 @@ import { ReadProject, ReadUser } from '@dasch-swiss/dsp-js';
 import { PermissionsData } from '@dasch-swiss/dsp-js/src/models/admin/permissions-data';
 import { UserDescriptionComponent } from '@dasch-swiss/vre/pages/system/system';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { ProjectPageService } from '../../project-page.service';
 import { ProjectMembersRowMenuComponent } from '../project-members-row-menu.component';
 import { SelectGroupComponent } from './select-group/select-group.component';
@@ -35,7 +35,7 @@ import { SelectGroupComponent } from './select-group/select-group.component';
     MatChipListbox,
     ProjectMembersRowMenuComponent,
     SelectGroupComponent,
-    TranslateModule,
+    TranslatePipe,
     UserDescriptionComponent,
   ],
 })

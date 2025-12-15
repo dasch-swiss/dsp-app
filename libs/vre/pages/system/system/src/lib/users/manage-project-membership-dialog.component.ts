@@ -9,7 +9,7 @@ import {
 } from '@angular/material/dialog';
 import { ReadUser } from '@dasch-swiss/dsp-js';
 import { DialogHeaderComponent } from '@dasch-swiss/vre/ui/ui';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { MembershipComponent } from '../membership/membership.component';
 
 export interface ManageProjectMembershipDialogProps {
@@ -32,7 +32,7 @@ export interface ManageProjectMembershipDialogProps {
     MatDialogClose,
     MatDialogContent,
     MembershipComponent,
-    TranslateModule,
+    TranslatePipe,
   ],
 })
 export class ManageProjectMembershipDialogComponent {

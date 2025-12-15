@@ -4,7 +4,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatTabLink, MatTabNav, MatTabNavPanel } from '@angular/material/tabs';
 import { ActivatedRoute, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { ProjectPageService } from './project-page.service';
 
 @Component({
@@ -54,7 +54,7 @@ import { ProjectPageService } from './project-page.service';
       }
     `,
   ],
-  imports: [AsyncPipe, MatTabNav, MatTabLink, MatTabNavPanel, MatIcon, RouterLink, RouterLinkActive, TranslateModule],
+  imports: [AsyncPipe, MatTabNav, MatTabLink, MatTabNavPanel, MatIcon, RouterLink, RouterLinkActive, TranslatePipe],
 })
 export class ProjectNavigationTabsComponent {
   readonly DATA = RouteConstants.data;

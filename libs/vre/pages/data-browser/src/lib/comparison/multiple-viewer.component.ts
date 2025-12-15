@@ -1,7 +1,7 @@
 import { AsyncPipe } from '@angular/common';
 import { Component, EventEmitter, Output } from '@angular/core';
 import { CenteredBoxComponent, CenteredMessageComponent } from '@dasch-swiss/vre/ui/ui';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { map } from 'rxjs';
 import { ResourceListSelectionComponent } from '../list-view/resource-list-selection.component';
 import { ComparisonComponent } from './comparison.component';
@@ -37,7 +37,7 @@ import { MultipleViewerService } from './multiple-viewer.service';
   `,
   imports: [
     AsyncPipe,
-    TranslateModule,
+    TranslatePipe,
     CenteredBoxComponent,
     CenteredMessageComponent,
     ResourceListSelectionComponent,

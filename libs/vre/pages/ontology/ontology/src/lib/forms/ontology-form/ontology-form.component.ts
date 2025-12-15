@@ -4,7 +4,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { CommonInputComponent } from '@dasch-swiss/vre/ui/ui';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { OntologyForm, UpdateOntologyData } from './ontology-form.type';
 
 @Component({
@@ -36,7 +36,7 @@ import { OntologyForm, UpdateOntologyData } from './ontology-form.type';
     MatInput,
     MatLabel,
     ReactiveFormsModule,
-    TranslateModule,
+    TranslatePipe,
   ],
 })
 export class OntologyFormComponent implements OnInit {

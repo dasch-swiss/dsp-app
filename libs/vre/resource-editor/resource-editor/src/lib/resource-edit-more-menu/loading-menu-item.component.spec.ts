@@ -1,6 +1,6 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { TranslateModule } from '@ngx-translate/core';
+import { provideTranslateService, TranslateService } from '@ngx-translate/core';
 import { LoadingMenuItemComponent } from './loading-menu-item.component';
 
 describe('LoadingMenuItemComponent', () => {
@@ -9,8 +9,9 @@ describe('LoadingMenuItemComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [LoadingMenuItemComponent, TranslateModule.forRoot()],
+      imports: [LoadingMenuItemComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
+      providers: [provideTranslateService(), TranslateService],
     })
       .overrideComponent(LoadingMenuItemComponent, {
         set: {

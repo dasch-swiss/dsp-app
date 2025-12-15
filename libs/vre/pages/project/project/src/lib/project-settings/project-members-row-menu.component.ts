@@ -18,7 +18,7 @@ import {
 } from '@dasch-swiss/vre/pages/user-settings/user';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { DialogService } from '@dasch-swiss/vre/ui/ui';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { switchMap } from 'rxjs';
 import { CollaborationPageService } from './collaboration/collaboration-page.service';
 
@@ -53,7 +53,7 @@ import { CollaborationPageService } from './collaboration/collaboration-page.ser
       </button>
     </mat-menu>
   `,
-  imports: [AsyncPipe, MatIcon, MatIconButton, MatMenu, MatMenuItem, MatMenuTrigger, TranslateModule],
+  imports: [AsyncPipe, MatIcon, MatIconButton, MatMenu, MatMenuItem, MatMenuTrigger, TranslatePipe],
 })
 export class ProjectMembersRowMenuComponent {
   @Input({ required: true }) user!: ReadUser;

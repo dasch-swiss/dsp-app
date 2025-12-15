@@ -4,7 +4,7 @@ import { MatBadgeModule } from '@angular/material/badge';
 import { MatTabsModule } from '@angular/material/tabs';
 import { Constants, ReadResource } from '@dasch-swiss/dsp-js';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
 import { AnnotationTabComponent } from './annotation-tab.component';
 import { CompoundService } from './compound/compound.service';
@@ -105,7 +105,7 @@ import { SegmentTabComponent } from './segment-tab.component';
     NgClass,
     MatBadgeModule,
     MatTabsModule,
-    TranslateModule,
+    TranslatePipe,
     AnnotationTabComponent,
     IncomingResourceHeaderComponent,
     PropertiesDisplayComponent,

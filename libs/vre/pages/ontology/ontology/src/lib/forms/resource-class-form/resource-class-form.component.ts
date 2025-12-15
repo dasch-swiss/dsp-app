@@ -10,7 +10,7 @@ import {
   DEFAULT_MULTILANGUAGE_FORM,
 } from '@dasch-swiss/vre/ui/string-literal';
 import { CommonInputComponent } from '@dasch-swiss/vre/ui/ui';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { OntologyEditService } from '../../services/ontology-edit.service';
 import { ResourceClassForm, ResourceClassFormData } from './resource-class-form.type';
 
@@ -49,7 +49,7 @@ import { ResourceClassForm, ResourceClassFormData } from './resource-class-form.
     MultiLanguageInputComponent,
     MultiLanguageTextareaComponent,
     ReactiveFormsModule,
-    TranslateModule,
+    TranslatePipe,
   ],
 })
 export class ResourceClassFormComponent implements OnInit {

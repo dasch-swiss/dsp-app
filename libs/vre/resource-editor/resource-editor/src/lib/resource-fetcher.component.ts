@@ -15,7 +15,7 @@ import { ApiResponseError, Constants, ReadResource } from '@dasch-swiss/dsp-js';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { AppProgressIndicatorComponent } from '@dasch-swiss/vre/ui/progress-indicator';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { filter, Subject, takeUntil } from 'rxjs';
 import { ResourceFetcherService } from './representations/resource-fetcher.service';
 import { ResourceUtil } from './representations/resource.util';
@@ -61,7 +61,7 @@ type HideReason = 'NotFound' | 'Deleted' | 'Unauthorized' | null;
     </div>
   `,
   providers: [ResourceFetcherService],
-  imports: [TranslateModule, ResourceVersionWarningComponent, ResourceComponent, AppProgressIndicatorComponent],
+  imports: [TranslatePipe, ResourceVersionWarningComponent, ResourceComponent, AppProgressIndicatorComponent],
 })
 export class ResourceFetcherComponent implements OnInit, OnChanges, OnDestroy {
   @Input({ required: true }) resourceIri!: string;

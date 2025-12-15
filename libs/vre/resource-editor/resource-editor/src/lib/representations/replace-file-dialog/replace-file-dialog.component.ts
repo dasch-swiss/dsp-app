@@ -13,7 +13,7 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { DialogHeaderComponent } from '@dasch-swiss/vre/ui/ui';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { CreateResourceFormFileComponent } from '../../resource-creator/create-resource-form-file.component';
 import { FileForm } from '../file-form.type';
 import { FileRepresentationType } from '../file-representation.type';
@@ -78,7 +78,7 @@ export interface ReplaceFileDialogProps {
     CreateResourceFormFileComponent,
     MatDialogActions,
     MatButton,
-    TranslateModule,
+    TranslatePipe,
   ],
 })
 export class ReplaceFileDialogComponent {

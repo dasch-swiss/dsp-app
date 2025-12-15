@@ -16,7 +16,7 @@ import { UserService } from '@dasch-swiss/vre/core/session';
 import { ResourceService } from '@dasch-swiss/vre/shared/app-common';
 import { LoadingButtonDirective } from '@dasch-swiss/vre/ui/progress-indicator';
 import { CkEditorControlComponent, CommonInputComponent, DialogHeaderComponent } from '@dasch-swiss/vre/ui/ui';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { finalize, Subject } from 'rxjs';
 
 export interface ResourceLinkDialogProps {
@@ -71,7 +71,7 @@ export interface ResourceLinkDialogProps {
     MatButton,
     MatDialogContent,
     MatDialogActions,
-    TranslateModule,
+    TranslatePipe,
     DialogHeaderComponent,
     CommonInputComponent,
     CkEditorControlComponent,

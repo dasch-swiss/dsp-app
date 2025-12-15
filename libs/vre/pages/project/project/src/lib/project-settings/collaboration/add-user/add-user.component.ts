@@ -13,7 +13,7 @@ import { DspApiConnectionToken, DspDialogConfig } from '@dasch-swiss/vre/core/co
 import { CreateUserDialogComponent } from '@dasch-swiss/vre/pages/system/system';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { AppProgressIndicatorComponent } from '@dasch-swiss/vre/ui/progress-indicator';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { BehaviorSubject, combineLatest, filter, map, shareReplay, startWith, switchMap, tap } from 'rxjs';
 import { CollaborationPageService } from '../collaboration-page.service';
 
@@ -65,7 +65,7 @@ import { CollaborationPageService } from '../collaboration-page.service';
     MatAutocompleteTrigger,
     MatOption,
     MatButton,
-    TranslateModule,
+    TranslatePipe,
     AppProgressIndicatorComponent,
   ],
 })

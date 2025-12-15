@@ -9,7 +9,7 @@ import { Constants, ReadLinkValue, ReadResource } from '@dasch-swiss/dsp-js';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { ResourceService } from '@dasch-swiss/vre/shared/app-common';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { PermissionInfoComponent } from './permission-info/permission-info.component';
 
 @Component({
@@ -84,7 +84,7 @@ import { PermissionInfoComponent } from './permission-info/permission-info.compo
     MatMenuModule,
     MatTooltipModule,
     RouterLink,
-    TranslateModule,
+    TranslatePipe,
     PermissionInfoComponent,
   ],
 })

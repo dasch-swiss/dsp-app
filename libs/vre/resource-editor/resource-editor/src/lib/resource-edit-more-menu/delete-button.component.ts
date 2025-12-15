@@ -6,7 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { CanDoResponse, ReadResource } from '@dasch-swiss/dsp-js';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { DeleteResourceDialogComponent } from '../properties-display/delete-resource-dialog.component';
 import { LoadingMenuItemComponent } from './loading-menu-item.component';
@@ -46,7 +46,7 @@ import { LoadingMenuItemComponent } from './loading-menu-item.component';
     MatMenuModule,
     MatIconModule,
     MatTooltipModule,
-    TranslateModule,
+    TranslatePipe,
     LoadingMenuItemComponent,
   ],
 })

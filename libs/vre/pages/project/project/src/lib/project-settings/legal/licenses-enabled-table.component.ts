@@ -3,7 +3,7 @@ import { MatCheckbox, MatCheckboxChange } from '@angular/material/checkbox';
 import { MatIcon } from '@angular/material/icon';
 import { ReadProject } from '@dasch-swiss/dsp-js';
 import { ProjectLicenseDto } from '@dasch-swiss/vre/3rd-party-services/open-api';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 
 export interface LicenseToggleEvent {
   licenseId: string;
@@ -63,7 +63,7 @@ export interface LicenseToggleEvent {
     `,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatCheckbox, MatIcon, TranslateModule],
+  imports: [MatCheckbox, MatIcon, TranslatePipe],
 })
 export class LicensesEnabledTableComponent {
   @Input({ required: true }) licenses!: ProjectLicenseDto[];

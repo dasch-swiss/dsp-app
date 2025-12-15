@@ -10,7 +10,7 @@ import { UserApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import { AuthService, UserService } from '@dasch-swiss/vre/core/session';
 import { DialogService } from '@dasch-swiss/vre/ui/ui';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { EditPasswordDialogComponent, EditPasswordDialogProps } from '../edit-password-dialog.component';
 import { EditUserDialogComponent, EditUserDialogProps } from '../edit-user-page/edit-user-dialog.component';
 
@@ -58,7 +58,7 @@ import { EditUserDialogComponent, EditUserDialogProps } from '../edit-user-page/
       }
     `,
   ],
-  imports: [AsyncPipe, MatCard, MatList, MatListItem, MatIcon, MatListItemIcon, TranslateModule],
+  imports: [AsyncPipe, MatCard, MatList, MatListItem, MatIcon, MatListItemIcon, TranslatePipe],
 })
 export class AccountComponent {
   user$ = this._userService.user$;

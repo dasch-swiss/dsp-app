@@ -5,7 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ReadResource } from '@dasch-swiss/dsp-js';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { EditResourceLabelDialogComponent } from '../resource-properties/edit-resource-label-dialog.component';
 
 @Component({
@@ -21,7 +21,7 @@ import { EditResourceLabelDialogComponent } from '../resource-properties/edit-re
       {{ 'resourceEditor.moreMenu.editLabel' | translate }}
     </button>
   `,
-  imports: [MatButtonModule, MatIconModule, MatMenuModule, MatTooltipModule, TranslateModule],
+  imports: [MatButtonModule, MatIconModule, MatMenuModule, MatTooltipModule, TranslatePipe],
 })
 export class EditLabelMenuItemComponent {
   @Input({ required: true }) resource!: ReadResource;

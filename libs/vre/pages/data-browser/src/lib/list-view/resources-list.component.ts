@@ -6,7 +6,7 @@ import { ReadResource } from '@dasch-swiss/dsp-js';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { ResourceResultService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { PagerComponent } from '@dasch-swiss/vre/ui/ui';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { ResourceListComponent } from './resource-list.component';
 
 @Component({
@@ -33,7 +33,7 @@ import { ResourceListComponent } from './resource-list.component';
       }
     `,
   ],
-  imports: [MatAnchor, MatIcon, TranslateModule, PagerComponent, ResourceListComponent],
+  imports: [MatAnchor, MatIcon, TranslatePipe, PagerComponent, ResourceListComponent],
 })
 export class ResourcesListComponent {
   @Input({ required: true }) resources!: ReadResource[];

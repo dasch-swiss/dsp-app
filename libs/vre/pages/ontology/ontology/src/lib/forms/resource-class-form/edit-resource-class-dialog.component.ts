@@ -12,7 +12,7 @@ import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { LoadingButtonDirective } from '@dasch-swiss/vre/ui/progress-indicator';
 import { MultiLanguages, StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
 import { DialogHeaderComponent } from '@dasch-swiss/vre/ui/ui';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { take } from 'rxjs';
 import { OntologyEditService } from '../../services/ontology-edit.service';
 import { ResourceClassFormComponent } from './resource-class-form.component';
@@ -56,7 +56,7 @@ export interface EditResourceClassDialogProps {
     MatDialogContent,
     ResourceClassFormComponent,
     StringifyStringLiteralPipe,
-    TranslateModule,
+    TranslatePipe,
   ],
 })
 export class EditResourceClassDialogComponent implements OnInit {

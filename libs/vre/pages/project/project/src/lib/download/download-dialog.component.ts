@@ -3,7 +3,7 @@ import { MAT_DIALOG_DATA, MatDialogContent, MatDialogRef } from '@angular/materi
 import { ResourceClassDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
 import { PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
 import { DialogHeaderComponent } from '@dasch-swiss/vre/ui/ui';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { DownloadDialogResourcesTabComponent } from './download-dialog-resources-tab.component';
 
 export interface DownloadDialogData {
@@ -27,7 +27,7 @@ export interface DownloadDialogData {
     </div>
   `,
   standalone: true,
-  imports: [DialogHeaderComponent, TranslateModule, MatDialogContent, DownloadDialogResourcesTabComponent],
+  imports: [DialogHeaderComponent, TranslatePipe, MatDialogContent, DownloadDialogResourcesTabComponent],
 })
 export class DownloadDialogComponent {
   constructor(

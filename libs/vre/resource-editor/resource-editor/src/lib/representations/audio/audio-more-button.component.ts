@@ -7,7 +7,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { Constants, ReadAudioFileValue, ReadResource } from '@dasch-swiss/dsp-js';
 import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { getFileValue } from '../get-file-value';
 import {
   ReplaceFileDialogComponent,
@@ -18,16 +18,7 @@ import { ResourceFetcherService } from '../resource-fetcher.service';
 
 @Component({
   selector: 'app-audio-more-button',
-  imports: [
-    AsyncPipe,
-    CdkCopyToClipboard,
-    MatIconButton,
-    MatIcon,
-    MatMenu,
-    MatMenuItem,
-    MatMenuTrigger,
-    TranslateModule,
-  ],
+  imports: [AsyncPipe, CdkCopyToClipboard, MatIconButton, MatIcon, MatMenu, MatMenuItem, MatMenuTrigger, TranslatePipe],
   template: ` <button mat-icon-button [matMenuTriggerFor]="more">
       <mat-icon>more_vert</mat-icon>
     </button>

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { Router } from '@angular/router';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-cookie-banner',
@@ -21,7 +21,7 @@ import { TranslateModule } from '@ngx-translate/core';
     </div>
   }`,
   styleUrls: [`./cookie-banner.component.scss`],
-  imports: [MatButtonModule, TranslateModule],
+  imports: [MatButtonModule, TranslatePipe],
 })
 export class CookieBannerComponent implements OnInit {
   showCookieBanner = true;

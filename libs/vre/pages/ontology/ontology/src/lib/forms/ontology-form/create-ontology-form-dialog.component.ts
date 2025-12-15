@@ -10,7 +10,7 @@ import { CustomRegex } from '@dasch-swiss/vre/shared/app-common';
 import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { LoadingButtonDirective } from '@dasch-swiss/vre/ui/progress-indicator';
 import { CommonInputComponent, DialogHeaderComponent } from '@dasch-swiss/vre/ui/ui';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { map, Subject, takeUntil } from 'rxjs';
 import { MakeOntologyFor } from '../../services/make-ontology-for';
 import { OntologyFormComponent } from './ontology-form.component';
@@ -56,7 +56,7 @@ import { OntologyForm } from './ontology-form.type';
     MatDialogContent,
     OntologyFormComponent,
     ReactiveFormsModule,
-    TranslateModule,
+    TranslatePipe,
   ],
 })
 export class CreateOntologyFormDialogComponent implements OnDestroy {

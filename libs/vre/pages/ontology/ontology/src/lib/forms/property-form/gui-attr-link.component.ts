@@ -10,7 +10,7 @@ import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
 import { LocalizationService, SortingHelper } from '@dasch-swiss/vre/shared/app-helper-services';
 import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
 import { HumanReadableErrorPipe } from '@dasch-swiss/vre/ui/ui';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { combineLatest, map } from 'rxjs';
 import { PropertyForm } from './property-form.type';
 
@@ -54,7 +54,7 @@ export interface ClassToSelect {
     MatPrefix,
     MatIcon,
     MatError,
-    TranslateModule,
+    TranslatePipe,
     StringifyStringLiteralPipe,
     HumanReadableErrorPipe,
   ],

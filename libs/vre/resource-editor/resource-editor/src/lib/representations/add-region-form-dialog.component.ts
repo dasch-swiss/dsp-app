@@ -3,7 +3,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogActions, MatDialogClose, MatDialogContent } from '@angular/material/dialog';
 import { CkEditorControlComponent, CommonInputComponent, DialogHeaderComponent } from '@dasch-swiss/vre/ui/ui';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 
 export interface AddRegionFormDialogProps {
   resourceIri: string;
@@ -21,7 +21,7 @@ export interface AddRegionFormDialogProps {
     CommonInputComponent,
     CkEditorControlComponent,
     MatButton,
-    TranslateModule,
+    TranslatePipe,
   ],
   template: `
     <app-dialog-header

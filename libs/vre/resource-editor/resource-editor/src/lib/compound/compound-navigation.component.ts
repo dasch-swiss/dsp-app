@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { CompoundService } from './compound.service';
 
 @Component({
@@ -41,7 +41,7 @@ import { CompoundService } from './compound.service';
       <mat-icon>last_page</mat-icon>
     </button>
   </span>`,
-  imports: [MatButtonModule, MatIconModule, MatTooltipModule, TranslateModule],
+  imports: [MatButtonModule, MatIconModule, MatTooltipModule, TranslatePipe],
 })
 export class CompoundNavigationComponent {
   private readonly _translateService = inject(TranslateService);

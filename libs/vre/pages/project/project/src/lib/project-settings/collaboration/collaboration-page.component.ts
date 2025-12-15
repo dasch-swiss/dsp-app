@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { StatusComponent } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { DoubleChipSelectorComponent } from '@dasch-swiss/vre/ui/ui';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { map, tap } from 'rxjs';
 import { ProjectPageService } from '../../project-page.service';
 import { AddUserComponent } from './add-user/add-user.component';
@@ -53,7 +53,7 @@ import { ProjectMembersComponent } from './project-members.component';
   providers: [CollaborationPageService],
   imports: [
     AsyncPipe,
-    TranslateModule,
+    TranslatePipe,
     DoubleChipSelectorComponent,
     StatusComponent,
     AddUserComponent,

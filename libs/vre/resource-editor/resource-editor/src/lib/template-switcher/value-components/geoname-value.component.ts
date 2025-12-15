@@ -6,7 +6,7 @@ import { MatError, MatFormField, MatSuffix } from '@angular/material/form-field'
 import { MatInput } from '@angular/material/input';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { HumanReadableErrorPipe } from '@dasch-swiss/vre/ui/ui';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { debounceTime, switchMap, tap } from 'rxjs';
 import { GeonameService, SearchPlace } from '../geoname.service';
 
@@ -16,7 +16,7 @@ import { GeonameService, SearchPlace } from '../geoname.service';
     MatFormField,
     MatInput,
     ReactiveFormsModule,
-    TranslateModule,
+    TranslatePipe,
     MatAutocompleteTrigger,
     MatSuffix,
     MatProgressSpinner,

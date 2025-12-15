@@ -7,7 +7,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { ReadResource } from '@dasch-swiss/dsp-js';
 import { UserService } from '@dasch-swiss/vre/core/session';
 import { UserPermissions } from '@dasch-swiss/vre/shared/app-common';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { combineLatest, map } from 'rxjs';
 import { MultipleViewerService } from '../comparison/multiple-viewer.service';
 import { ResourceLinkDialogComponent, ResourceLinkDialogProps } from './resource-link-dialog.component';
@@ -42,7 +42,7 @@ import { ResourceLinkDialogComponent, ResourceLinkDialogProps } from './resource
     </div>
   `,
   styles: ['button[disabled] { background-color: #fff; color: #b8b8b8 }'],
-  imports: [AsyncPipe, MatButton, MatIconButton, MatIcon, MatTooltip, TranslateModule],
+  imports: [AsyncPipe, MatButton, MatIconButton, MatIcon, MatTooltip, TranslatePipe],
 })
 export class ResourceListSelectionComponent {
   count$ = this.multipleViewerService.selectedResources$.pipe(map(resources => resources.length));

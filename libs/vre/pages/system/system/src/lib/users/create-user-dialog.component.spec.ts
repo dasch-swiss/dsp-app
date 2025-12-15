@@ -13,7 +13,7 @@ import { ReadUser, User } from '@dasch-swiss/dsp-js';
 import { UserApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { UserForm } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { HumanReadableErrorPipe } from '@dasch-swiss/vre/ui/ui';
-import { TranslateModule } from '@ngx-translate/core';
+import { provideTranslateService, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { CreateUserDialogComponent } from './create-user-dialog.component';
 
@@ -45,13 +45,15 @@ describe('CreateUserDialogComponent', () => {
         MatSelectModule,
         MatIconModule,
         BrowserAnimationsModule,
-        TranslateModule.forRoot(),
+
         HumanReadableErrorPipe,
       ],
       providers: [
         FormBuilder,
         { provide: MatDialogRef, useValue: dialogRefSpy },
         { provide: UserApiService, useValue: userApiServiceSpy },
+        provideTranslateService(),
+        TranslateService,
       ],
     }).compileComponents();
 

@@ -7,7 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { DeleteResource, KnoraApiConnection, ReadResource } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { DialogHeaderComponent } from '@dasch-swiss/vre/ui/ui';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ResourceFetcherService } from '../representations/resource-fetcher.service';
 
 @Component({
@@ -48,7 +48,7 @@ import { ResourceFetcherService } from '../representations/resource-fetcher.serv
     MatInputModule,
     FormsModule,
     MatButtonModule,
-    TranslateModule,
+    TranslatePipe,
   ],
 })
 export class DeleteResourceDialogComponent {

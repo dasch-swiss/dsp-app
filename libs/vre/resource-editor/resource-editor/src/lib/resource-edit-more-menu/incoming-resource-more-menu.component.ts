@@ -5,7 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ReadResource } from '@dasch-swiss/dsp-js';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { combineLatest, map } from 'rxjs';
 import { ResourceFetcherService } from '../representations/resource-fetcher.service';
 import { DeleteMenuItemsComponent } from './delete-menu-items.component';
@@ -51,7 +51,7 @@ import { EditLabelMenuItemComponent } from './edit-label-menu-item.component';
     MatIconModule,
     MatMenuModule,
     MatTooltipModule,
-    TranslateModule,
+    TranslatePipe,
     DeleteMenuItemsComponent,
     EditLabelMenuItemComponent,
   ],

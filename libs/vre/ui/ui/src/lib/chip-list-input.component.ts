@@ -12,7 +12,7 @@ import {
 import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { HumanReadableErrorPipe } from './human-readable-error.pipe';
 
 @Component({
@@ -49,7 +49,7 @@ import { HumanReadableErrorPipe } from './human-readable-error.pipe';
     MatFormFieldModule,
     MatIconModule,
     ReactiveFormsModule,
-    TranslateModule,
+    TranslatePipe,
   ],
 })
 export class ChipListInputComponent {

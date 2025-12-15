@@ -9,7 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { PaginatedApiService } from '@dasch-swiss/vre/shared/app-common';
 import { HumanReadableErrorPipe } from '@dasch-swiss/vre/ui/ui';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 
@@ -73,7 +73,7 @@ import { finalize } from 'rxjs/operators';
     MatAutocompleteModule,
     MatInputModule,
     ReactiveFormsModule,
-    TranslateModule,
+    TranslatePipe,
     HumanReadableErrorPipe,
     HumanReadableErrorPipe,
   ],

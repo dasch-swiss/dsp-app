@@ -13,7 +13,7 @@ import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
 import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
 import { CenteredLayoutComponent } from '@dasch-swiss/vre/ui/ui';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { map, switchMap } from 'rxjs';
 import { CreateOntologyFormDialogComponent } from '../forms/ontology-form/create-ontology-form-dialog.component';
 
@@ -29,7 +29,7 @@ import { CreateOntologyFormDialogComponent } from '../forms/ontology-form/create
     MatIcon,
     MatTooltip,
     StringifyStringLiteralPipe,
-    TranslateModule,
+    TranslatePipe,
   ],
 })
 export class DataModelsPageComponent {

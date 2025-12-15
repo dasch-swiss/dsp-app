@@ -8,7 +8,7 @@ import { Constants, ReadColorValue, ReadResource } from '@dasch-swiss/dsp-js';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { ResourceService } from '@dasch-swiss/vre/shared/app-common';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { take } from 'rxjs';
 import { PermissionInfoComponent } from '../permission-info/permission-info.component';
 import { RegionService } from '../representations/region.service';
@@ -118,7 +118,7 @@ import { ColorViewerComponent } from '../template-switcher/viewer-components/col
     MatTooltipModule,
     MatMenuModule,
     ClipboardModule,
-    TranslateModule,
+    TranslatePipe,
     ColorViewerComponent,
     PermissionInfoComponent,
     IncomingResourceMoreMenuComponent,

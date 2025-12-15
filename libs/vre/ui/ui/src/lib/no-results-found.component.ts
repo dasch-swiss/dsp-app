@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { CenteredMessageComponent } from './centered-message.component';
 
 @Component({
@@ -10,7 +10,7 @@ import { CenteredMessageComponent } from './centered-message.component';
       [title]="'pages.search.noResultsFound' | translate"
       [message]="message" />
   `,
-  imports: [TranslateModule, CenteredMessageComponent],
+  imports: [TranslatePipe, CenteredMessageComponent],
 })
 export class NoResultsFoundComponent {
   @Input({ required: true }) message!: string;

@@ -7,7 +7,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { Constants, ListNodeV2 } from '@dasch-swiss/dsp-js';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { ReplaySubject, Subject, takeUntil } from 'rxjs';
 import { PropertyFormItem } from '../../../data-access/advanced-search-store/advanced-search-store.service';
 
@@ -21,7 +21,9 @@ import { PropertyFormItem } from '../../../data-access/advanced-search-store/adv
     MatOptionModule,
     MatSelectModule,
     ReactiveFormsModule,
-    TranslateModule,
+    MatAutocompleteModule,
+    MatInputModule,
+    TranslatePipe,
   ],
   template: `
     <mat-form-field appearance="fill" class="dropdown">

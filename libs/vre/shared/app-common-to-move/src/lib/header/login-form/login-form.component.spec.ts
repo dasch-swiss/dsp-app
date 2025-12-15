@@ -12,7 +12,7 @@ import { AuthService } from '@dasch-swiss/vre/core/session';
 import { PasswordFormFieldComponent } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { LoadingButtonDirective } from '@dasch-swiss/vre/ui/progress-indicator';
 import { CommonInputComponent, HumanReadableErrorPipe } from '@dasch-swiss/vre/ui/ui';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { provideTranslateService, TranslateService } from '@ngx-translate/core';
 import { of, throwError } from 'rxjs';
 import { LoginFormComponent } from './login-form.component';
 
@@ -61,7 +61,7 @@ describe('LoginFormComponent', () => {
         MatIconModule,
         MatProgressSpinnerModule,
         BrowserAnimationsModule,
-        TranslateModule.forRoot(),
+
         CommonInputComponent,
         HumanReadableErrorPipe,
         LoadingButtonDirective,
@@ -70,6 +70,8 @@ describe('LoginFormComponent', () => {
         FormBuilder,
         { provide: AuthService, useValue: mockAuthService },
         { provide: DspApiConnectionToken, useValue: mockDspApiConnection },
+        provideTranslateService(),
+        TranslateService,
       ],
     }).compileComponents();
 

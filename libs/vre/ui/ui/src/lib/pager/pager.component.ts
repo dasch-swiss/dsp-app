@@ -13,12 +13,12 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-pager',
-  imports: [MatIconModule, MatButtonModule, TranslateModule, MatInputModule, MatTooltipModule],
+  imports: [MatIconModule, MatButtonModule, TranslatePipe, MatInputModule, MatTooltipModule],
   templateUrl: './pager.component.html',
   styleUrls: ['./pager.component.scss'],
 })

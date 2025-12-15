@@ -12,7 +12,7 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { DateValueHandlerComponent } from '@dasch-swiss/vre/ui/date-picker';
 import { CkEditorComponent, CommonInputComponent, HumanReadableErrorPipe } from '@dasch-swiss/vre/ui/ui';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { JsLibPotentialError } from '../resource-properties/JsLibPotentialError';
 import { BooleanValueComponent } from './value-components/boolean-value.component';
 import { ColorValueComponent } from './value-components/color-value.component';
@@ -28,7 +28,7 @@ import { TimeValueComponent } from './value-components/time-value.component';
     MatFormField,
     MatInput,
     ReactiveFormsModule,
-    TranslateModule,
+    TranslatePipe,
     MatError,
     HumanReadableErrorPipe,
     BooleanValueComponent,

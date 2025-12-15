@@ -12,7 +12,7 @@ import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { ReplaceAnimation } from '@dasch-swiss/vre/shared/app-common';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { IMask, IMaskDirective } from 'angular-imask';
 import { ImageDisplayAbsoluteComponent } from './image-display-absolute.component';
 import { ImageDisplayRatioComponent } from './image-display-ratio.component';
@@ -39,7 +39,7 @@ enum ImageSettingsEnum {
     MatLabel,
     MatRadioButton,
     MatRadioGroup,
-    TranslateModule,
+    TranslatePipe,
   ],
 })
 export class ImageSettingsComponent implements OnInit {

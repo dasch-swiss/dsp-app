@@ -7,7 +7,7 @@ import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { Constants, ReadResource, ReadTextFileValue } from '@dasch-swiss/dsp-js';
 import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import { StatusComponent } from '@dasch-swiss/vre/shared/app-common-to-move';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import {
   ReplaceFileDialogComponent,
   ReplaceFileDialogProps,
@@ -17,7 +17,7 @@ import { ResourceFetcherService } from '../resource-fetcher.service';
 
 @Component({
   selector: 'app-text',
-  imports: [AsyncPipe, MatIconButton, MatIcon, MatMenu, MatMenuItem, MatMenuTrigger, StatusComponent, TranslateModule],
+  imports: [AsyncPipe, MatIconButton, MatIcon, MatMenu, MatMenuItem, MatMenuTrigger, StatusComponent, TranslatePipe],
   templateUrl: './text.component.html',
   styleUrls: ['./text.component.scss'],
 })

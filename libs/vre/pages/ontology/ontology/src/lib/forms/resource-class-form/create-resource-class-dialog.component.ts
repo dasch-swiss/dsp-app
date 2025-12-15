@@ -12,7 +12,7 @@ import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
 import { DefaultClass } from '@dasch-swiss/vre/shared/app-helper-services';
 import { LoadingButtonDirective } from '@dasch-swiss/vre/ui/progress-indicator';
 import { DialogHeaderComponent } from '@dasch-swiss/vre/ui/ui';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { OntologyEditService } from '../../services/ontology-edit.service';
 import { ResourceClassFormComponent } from './resource-class-form.component';
 import { ResourceClassForm, ResourceClassFormData } from './resource-class-form.type';
@@ -49,7 +49,7 @@ import { ResourceClassForm, ResourceClassFormData } from './resource-class-form.
     MatDialogClose,
     MatDialogContent,
     ResourceClassFormComponent,
-    TranslateModule,
+    TranslatePipe,
   ],
 })
 export class CreateResourceClassDialogComponent {

@@ -4,7 +4,7 @@ import { KnoraApiConnection, ReadResource, ReadResourceSequence } from '@dasch-s
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { AppError } from '@dasch-swiss/vre/core/error-handler';
 import { AppProgressIndicatorComponent } from '@dasch-swiss/vre/ui/progress-indicator';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { expand, map, Observable, of, reduce, takeWhile } from 'rxjs';
 import { PropertyRowComponent } from '../resource-properties/property-row.component';
 import { sortByKeys } from '../resource-properties/sortByKeys';
@@ -48,7 +48,7 @@ import { IncomingStandoffLinkValueComponent } from './incoming-standoff-link-val
   imports: [
     AsyncPipe,
     SlicePipe,
-    TranslateModule,
+    TranslatePipe,
     PropertyRowComponent,
     IncomingStandoffLinkValueComponent,
     IncomingResourcePagerComponent,

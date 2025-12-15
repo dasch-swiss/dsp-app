@@ -5,7 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { AppError } from '@dasch-swiss/vre/core/error-handler';
 import { PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { FormValueGroup } from '../resource-properties/form-value-array.type';
@@ -68,7 +68,7 @@ import { propertiesTypeMapping } from '../resource-properties/resource-payloads-
     MatButtonModule,
     MatIconModule,
     MatTooltipModule,
-    TranslateModule,
+    TranslatePipe,
   ],
 })
 export class PropertyValueCreatorComponent implements OnInit {

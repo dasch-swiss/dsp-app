@@ -12,7 +12,7 @@ import { MatIcon } from '@angular/material/icon';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { ReadAudioFileValue, ReadResource } from '@dasch-swiss/dsp-js';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
 import { MediaControlService } from '../../segment-support/media-control.service';
 import { SegmentsDisplayComponent } from '../../segment-support/segments-display.component';
@@ -26,7 +26,7 @@ import { MediaSliderComponent } from './media-slider.component';
   selector: 'app-audio',
   templateUrl: './audio.component.html',
   providers: [MediaControlService, MediaPlayerService],
-  imports: [MatIcon, TranslateModule, MediaSliderComponent, SegmentsDisplayComponent, AudioToolbarComponent],
+  imports: [MatIcon, TranslatePipe, MediaSliderComponent, SegmentsDisplayComponent, AudioToolbarComponent],
 })
 export class AudioComponent implements OnInit, OnChanges, OnDestroy {
   @Input({ required: true }) src!: ReadAudioFileValue;

@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { ReadProject } from '@dasch-swiss/dsp-js';
 import { ProjectLicenseDto } from '@dasch-swiss/vre/3rd-party-services/open-api';
-import { TranslateModule } from '@ngx-translate/core';
+import { provideTranslateService, TranslateService } from '@ngx-translate/core';
 import { LicenseToggleEvent, LicensesEnabledTableComponent } from './licenses-enabled-table.component';
 
 describe('LicensesEnabledTableComponent - Event-Driven Architecture', () => {
@@ -33,8 +33,9 @@ describe('LicensesEnabledTableComponent - Event-Driven Architecture', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [LicensesEnabledTableComponent, TranslateModule.forRoot()],
+      imports: [LicensesEnabledTableComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
+      providers: [provideTranslateService(), TranslateService],
     }).compileComponents();
 
     fixture = TestBed.createComponent(LicensesEnabledTableComponent);

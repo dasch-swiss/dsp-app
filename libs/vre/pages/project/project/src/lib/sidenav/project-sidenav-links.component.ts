@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 import { MatList } from '@angular/material/list';
 import { ActivatedRoute, EventType, Router } from '@angular/router';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { filter, map, startWith, switchMap } from 'rxjs';
 import { ProjectPageService } from '../project-page.service';
 import { ProjectSidenavLinksItemComponent } from './project-sidenav-links-item.component';
@@ -45,7 +45,7 @@ import { ProjectSidenavLinksItemComponent } from './project-sidenav-links-item.c
       }
     `,
   ],
-  imports: [AsyncPipe, MatList, TranslateModule, ProjectSidenavLinksItemComponent],
+  imports: [AsyncPipe, MatList, TranslatePipe, ProjectSidenavLinksItemComponent],
 })
 export class ProjectSidenavLinksComponent {
   protected readonly routeConstants = RouteConstants;

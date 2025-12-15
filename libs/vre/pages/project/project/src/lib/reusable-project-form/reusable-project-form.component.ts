@@ -8,7 +8,7 @@ import {
   MultiLanguageTextareaComponent,
 } from '@dasch-swiss/vre/ui/string-literal';
 import { ChipListInputComponent, CommonInputComponent } from '@dasch-swiss/vre/ui/ui';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { map } from 'rxjs';
 import { ProjectForm } from './project-form.type';
 import { shortcodeExistsValidator } from './shortcode-exists.validator';
@@ -50,7 +50,7 @@ import { shortcodeExistsValidator } from './shortcode-exists.validator';
   `,
   imports: [
     ReactiveFormsModule,
-    TranslateModule,
+    TranslatePipe,
     CommonInputComponent,
     MultiLanguageTextareaComponent,
     ChipListInputComponent,

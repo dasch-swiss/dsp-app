@@ -1,7 +1,7 @@
 import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { CustomRegex } from '@dasch-swiss/vre/shared/app-common';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { PasswordFormFieldComponent } from './password-form-field.component';
 
@@ -20,7 +20,7 @@ import { PasswordFormFieldComponent } from './password-form-field.component';
       [validatorErrors]="passwordConfirmValidatorErrors"
       [showToggleVisibility]="true" />
   `,
-  imports: [PasswordFormFieldComponent, TranslateModule],
+  imports: [PasswordFormFieldComponent, TranslatePipe],
 })
 export class PasswordConfirmFormComponent implements OnInit, OnDestroy {
   @Output() afterFormInit = new EventEmitter<FormGroup>();

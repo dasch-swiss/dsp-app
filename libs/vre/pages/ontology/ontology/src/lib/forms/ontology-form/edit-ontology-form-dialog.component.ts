@@ -10,7 +10,7 @@ import {
 import { OntologyMetadata } from '@dasch-swiss/dsp-js';
 import { LoadingButtonDirective } from '@dasch-swiss/vre/ui/progress-indicator';
 import { DialogHeaderComponent } from '@dasch-swiss/vre/ui/ui';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { finalize } from 'rxjs';
 import { OntologyEditService } from '../../services/ontology-edit.service';
 import { OntologyFormComponent } from './ontology-form.component';
@@ -45,7 +45,7 @@ import { OntologyForm, UpdateOntologyData } from './ontology-form.type';
     MatDialogClose,
     MatDialogContent,
     OntologyFormComponent,
-    TranslateModule,
+    TranslatePipe,
   ],
 })
 export class EditOntologyFormDialogComponent {

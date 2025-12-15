@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
 import { AppError } from '@dasch-swiss/vre/core/error-handler';
 import { AddTargetBlankPipe, InternalLinkReplacerPipe } from '@dasch-swiss/vre/ui/ui';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { FootnoteService } from './footnote.service';
 
 @Component({
   selector: 'app-footnotes',
-  imports: [TranslateModule, InternalLinkReplacerPipe, AddTargetBlankPipe],
+  imports: [TranslatePipe, InternalLinkReplacerPipe, AddTargetBlankPipe],
   template: `<h5>{{ 'resourceEditor.resourceProperties.footnotes' | translate }}</h5>
     @for (footnote of footnoteService.footnotes; track footnote; let index = $index) {
       <div

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { AlertInfoComponent } from './alert-info.component';
 
 @Component({
@@ -17,7 +17,7 @@ import { AlertInfoComponent } from './alert-info.component';
       </app-alert-info>
     </div>
   }`,
-  imports: [MatIconModule, TranslateModule, AlertInfoComponent],
+  imports: [MatIconModule, TranslatePipe, AlertInfoComponent],
 })
 export class ResourceRestrictionComponent {
   showRestrictedMessage = true;

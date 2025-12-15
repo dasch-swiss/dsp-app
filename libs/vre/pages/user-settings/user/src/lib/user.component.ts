@@ -4,7 +4,7 @@ import { MatTabLink, MatTabNav, MatTabNavPanel } from '@angular/material/tabs';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { CenteredLayoutComponent } from '@dasch-swiss/vre/ui/ui';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { ProfileComponent } from './profile/profile.component';
 
 @Component({
@@ -49,7 +49,7 @@ import { ProfileComponent } from './profile/profile.component';
     RouterLink,
     RouterLinkActive,
     MatIcon,
-    TranslateModule,
+    TranslatePipe,
     MatTabNavPanel,
     RouterOutlet,
   ],

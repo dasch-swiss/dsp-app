@@ -1,4 +1,4 @@
-import { AsyncPipe, NgClass } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MatList, MatListItem } from '@angular/material/list';
 import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
@@ -35,7 +35,7 @@ import { PropertyInfoComponent } from './property-info/property-info.component';
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [AsyncPipe, MatList, MatListItem, NgClass, PropertyInfoComponent],
+  imports: [AsyncPipe, MatList, MatListItem, PropertyInfoComponent],
 })
 export class OntologyPropertiesComponent {
   hasProjectAdminRights$ = this._projectPageService.hasProjectAdminRights$;

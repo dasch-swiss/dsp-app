@@ -22,7 +22,7 @@ import { Constants, ReadDocumentFileValue, ReadResource } from '@dasch-swiss/dsp
 import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import { AccessTokenService } from '@dasch-swiss/vre/core/session';
 import { StatusComponent } from '@dasch-swiss/vre/shared/app-common-to-move';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { PdfViewerComponent, PdfViewerModule } from 'ng2-pdf-viewer';
 import {
   ReplaceFileDialogComponent,
@@ -44,7 +44,7 @@ import { ResourceFetcherService } from '../resource-fetcher.service';
     MatTooltip,
     PdfViewerModule,
     StatusComponent,
-    TranslateModule,
+    TranslatePipe,
   ],
   templateUrl: './document.component.html',
   styleUrls: ['./document.component.scss'],

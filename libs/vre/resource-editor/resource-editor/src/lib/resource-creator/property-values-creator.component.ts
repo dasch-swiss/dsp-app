@@ -5,7 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Cardinality } from '@dasch-swiss/dsp-js';
 import { PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { FormValueArray } from '../resource-properties/form-value-array.type';
 import { propertiesTypeMapping } from '../resource-properties/resource-payloads-mapping';
 import { TemplateEditorSwitcherComponent } from '../template-switcher/template-editor-switcher.component';
@@ -52,7 +52,7 @@ import { PropertyValueCreatorComponent } from './property-value-creator.componen
     MatButtonModule,
     MatIconModule,
     MatTooltipModule,
-    TranslateModule,
+    TranslatePipe,
   ],
 })
 export class PropertyValuesCreatorComponent {

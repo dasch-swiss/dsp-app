@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { PropertyDefinition, ResourceClassDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
 import { PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
-import { TranslateModule } from '@ngx-translate/core';
+import { provideTranslateService, TranslateService } from '@ngx-translate/core';
 import { DownloadDialogComponent, DownloadDialogData } from './download-dialog.component';
 
 describe('DownloadDialogComponent', () => {
@@ -44,11 +44,13 @@ describe('DownloadDialogComponent', () => {
     };
 
     await TestBed.configureTestingModule({
-      imports: [DownloadDialogComponent, TranslateModule.forRoot()],
+      imports: [DownloadDialogComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       providers: [
         { provide: MatDialogRef, useValue: mockDialogRef },
         { provide: MAT_DIALOG_DATA, useValue: mockDialogData },
+        provideTranslateService(),
+        TranslateService,
       ],
     })
       .overrideComponent(DownloadDialogComponent, {

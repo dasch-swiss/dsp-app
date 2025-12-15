@@ -4,7 +4,7 @@ import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import { ProjectImageCoverComponent } from '@dasch-swiss/vre/pages/user-settings/user';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { tap } from 'rxjs';
 import { ProjectPageService } from '../project-page.service';
 import { LicenseCaptionsMapping } from './license-captions-mapping';
@@ -12,7 +12,7 @@ import { ProjectDescriptionPageComponent } from './project-description-page.comp
 
 @Component({
   selector: 'app-project-short-description',
-  imports: [AsyncPipe, UpperCasePipe, TranslateModule, MatButton, ProjectImageCoverComponent],
+  imports: [AsyncPipe, UpperCasePipe, TranslatePipe, MatButton, ProjectImageCoverComponent],
   template: `
     @if (readProject$ | async; as project) {
       @if (test) {

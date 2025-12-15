@@ -6,7 +6,7 @@ import { StringLiteral } from '@dasch-swiss/dsp-js';
 import { AvailableLanguages } from '@dasch-swiss/vre/core/config';
 import { CustomRegex } from '@dasch-swiss/vre/shared/app-common';
 import { CommonInputComponent } from '@dasch-swiss/vre/ui/ui';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { UserForm } from './user-form.type';
 
 @Component({
@@ -34,7 +34,7 @@ import { UserForm } from './user-form.type';
       </mat-form-field>
     </form>
   `,
-  imports: [CommonInputComponent, TranslateModule, MatFormField, MatLabel, MatSelect, MatOption, ReactiveFormsModule],
+  imports: [CommonInputComponent, TranslatePipe, MatFormField, MatLabel, MatSelect, MatOption, ReactiveFormsModule],
 })
 export class UserFormComponent implements OnInit {
   @Input({ required: true }) data!: {

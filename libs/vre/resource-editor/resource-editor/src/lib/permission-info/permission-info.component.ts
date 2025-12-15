@@ -10,7 +10,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ApiResponseData, GroupResponse, KnoraApiConnection, ReadResource } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { filter, map, take } from 'rxjs';
 import { Interaction, ResourceUtil } from '../representations/resource.util';
 import {
@@ -25,7 +25,7 @@ import {
   selector: 'app-permission-info',
   templateUrl: './permission-info.component.html',
   styleUrls: ['./permission-info.component.scss'],
-  imports: [CdkConnectedOverlay, CdkOverlayOrigin, MatButtonModule, MatIconModule, MatTooltipModule, TranslateModule],
+  imports: [CdkConnectedOverlay, CdkOverlayOrigin, MatButtonModule, MatIconModule, MatTooltipModule, TranslatePipe],
 })
 export class PermissionInfoComponent implements OnInit {
   @Input({ required: true }) resource!: ReadResource;

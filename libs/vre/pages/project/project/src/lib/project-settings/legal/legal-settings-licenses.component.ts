@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { AdminAPIApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { PaginatedApiService } from '@dasch-swiss/vre/shared/app-common';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { BehaviorSubject, catchError, map, shareReplay, switchMap, tap } from 'rxjs';
 import { ProjectPageService } from '../../project-page.service';
 import { LicenseToggleEvent, LicensesEnabledTableComponent } from './licenses-enabled-table.component';
@@ -33,7 +33,7 @@ import { LicenseToggleEvent, LicensesEnabledTableComponent } from './licenses-en
     }
   }`,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [AsyncPipe, LicensesEnabledTableComponent, TranslateModule],
+  imports: [AsyncPipe, LicensesEnabledTableComponent, TranslatePipe],
 })
 export class LegalSettingsLicensesComponent {
   private readonly _reloadSubject = new BehaviorSubject<void>(undefined);

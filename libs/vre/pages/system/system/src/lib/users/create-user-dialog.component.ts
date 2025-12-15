@@ -8,7 +8,7 @@ import { UserApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { PasswordConfirmFormComponent, UserForm, UserFormComponent } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { LoadingButtonDirective } from '@dasch-swiss/vre/ui/progress-indicator';
 import { DialogHeaderComponent } from '@dasch-swiss/vre/ui/ui';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { finalize } from 'rxjs';
 
 @Component({
@@ -40,7 +40,7 @@ import { finalize } from 'rxjs';
     MatSlideToggle,
     PasswordConfirmFormComponent,
     ReactiveFormsModule,
-    TranslateModule,
+    TranslatePipe,
     UserFormComponent,
   ],
 })

@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DoubleChipSelectorComponent } from '@dasch-swiss/vre/ui/ui';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { FileRepresentationType } from '../representations/file-representation.type';
 import { IiifControlComponent } from '../representations/third-party-iiif/iiif-control.component';
 import {
@@ -46,7 +46,7 @@ import { UploadControlComponent } from './upload-control.component';
     DoubleChipSelectorComponent,
     UploadControlComponent,
     IiifControlComponent,
-    TranslateModule,
+    TranslatePipe,
     ReactiveFormsModule,
   ],
 })

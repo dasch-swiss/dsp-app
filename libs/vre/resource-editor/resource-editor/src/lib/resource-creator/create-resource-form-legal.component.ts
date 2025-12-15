@@ -5,7 +5,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { ProjectLicenseDto } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { PaginatedApiService } from '@dasch-swiss/vre/shared/app-common';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { finalize, map } from 'rxjs/operators';
 import { CreateResourceFormLegal } from '../representations/file-form.type';
@@ -70,7 +70,7 @@ import { CreateResourceFormRowComponent } from './create-resource-form-row.compo
     MatSelectModule,
     ReactiveFormsModule,
     AsyncPipe,
-    TranslateModule,
+    TranslatePipe,
     AuthorshipFormFieldComponent,
   ],
 })

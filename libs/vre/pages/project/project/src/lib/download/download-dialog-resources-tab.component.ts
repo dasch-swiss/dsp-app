@@ -8,7 +8,7 @@ import { PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
 import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { LoadingButtonDirective } from '@dasch-swiss/vre/ui/progress-indicator';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { finalize } from 'rxjs';
 import { DownloadPropertyListComponent } from './download-property-list.component';
 
@@ -19,7 +19,7 @@ import { DownloadPropertyListComponent } from './download-property-list.componen
     DownloadPropertyListComponent,
     MatCheckbox,
     FormsModule,
-    TranslateModule,
+    TranslatePipe,
     MatDialogActions,
     MatButton,
     LoadingButtonDirective,

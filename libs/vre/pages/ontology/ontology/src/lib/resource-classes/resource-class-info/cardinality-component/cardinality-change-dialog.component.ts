@@ -6,7 +6,7 @@ import { Cardinality, Constants, KnoraApiConnection } from '@dasch-swiss/dsp-js'
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { ProgressIndicatorOverlayComponent } from '@dasch-swiss/vre/ui/progress-indicator';
 import { DialogHeaderComponent } from '@dasch-swiss/vre/ui/ui';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { take } from 'rxjs';
 import { PropertyInfo } from '../../../ontology.types';
 
@@ -94,7 +94,7 @@ export interface CardinalityInfo {
     MatDialogContent,
     MatIcon,
     ProgressIndicatorOverlayComponent,
-    TranslateModule,
+    TranslatePipe,
   ],
 })
 export class CardinalityChangeDialogComponent implements OnInit {

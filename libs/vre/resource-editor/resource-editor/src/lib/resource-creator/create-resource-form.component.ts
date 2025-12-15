@@ -17,7 +17,7 @@ import { ApiConstants, DspApiConnectionToken } from '@dasch-swiss/vre/core/confi
 import { PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
 import { AppProgressIndicatorComponent, LoadingButtonDirective } from '@dasch-swiss/vre/ui/progress-indicator';
 import { CommonInputComponent, InvalidControlScrollDirective } from '@dasch-swiss/vre/ui/ui';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { finalize, switchMap, take } from 'rxjs';
 import { FileForm } from '../representations/file-form.type';
 import { FileRepresentationType } from '../representations/file-representation.type';
@@ -95,7 +95,7 @@ import { CreateResourceFormInterface } from './create-resource-form.interface';
     CreateResourceFormPropertiesComponent,
     MatButtonModule,
     LoadingButtonDirective,
-    TranslateModule,
+    TranslatePipe,
     AppProgressIndicatorComponent,
   ],
 })

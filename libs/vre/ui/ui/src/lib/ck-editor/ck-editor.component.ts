@@ -2,7 +2,7 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, ReactiveFormsModule, ValidatorFn } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import * as Editor from 'ckeditor5-custom-build';
 import { Subject } from 'rxjs';
 import { startWith, takeUntil } from 'rxjs/operators';
@@ -38,7 +38,7 @@ import { unescapeHtml } from './unescape-html';
       <mat-error>{{ errors | humanReadableError | translate }}</mat-error>
     }
   `,
-  imports: [CKEditorModule, MatFormFieldModule, ReactiveFormsModule, TranslateModule, HumanReadableErrorPipe],
+  imports: [CKEditorModule, MatFormFieldModule, ReactiveFormsModule, TranslatePipe, HumanReadableErrorPipe],
 })
 export class CkEditorComponent implements OnInit, OnDestroy {
   @Input({ required: true }) control!: FormControl<string | null>;

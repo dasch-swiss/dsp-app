@@ -7,7 +7,7 @@ import { MultipleViewerService, ResourcesListComponent } from '@dasch-swiss/vre/
 import { OntologyService, ResourceResultService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { AppProgressIndicatorComponent } from '@dasch-swiss/vre/ui/progress-indicator';
 import { CenteredMessageComponent } from '@dasch-swiss/vre/ui/ui';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { combineLatest, first, map, Observable, pairwise, startWith, switchMap, withLatestFrom } from 'rxjs';
 import { DataBrowserPageService } from '../../data-browser-page.service';
 import { ProjectPageService } from '../../project-page.service';
@@ -33,13 +33,7 @@ import { ProjectPageService } from '../../project-page.service';
     }
   `,
   providers: [ResourceResultService],
-  imports: [
-    AsyncPipe,
-    TranslateModule,
-    ResourcesListComponent,
-    CenteredMessageComponent,
-    AppProgressIndicatorComponent,
-  ],
+  imports: [AsyncPipe, TranslatePipe, ResourcesListComponent, CenteredMessageComponent, AppProgressIndicatorComponent],
 })
 export class ResourcesListFetcherComponent implements OnChanges {
   @Input({ required: true }) ontologyLabel!: string;

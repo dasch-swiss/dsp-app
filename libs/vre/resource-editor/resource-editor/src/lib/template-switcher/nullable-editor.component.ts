@@ -3,11 +3,11 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-nullable-editor',
-  imports: [MatIconButton, TranslateModule, MatTooltip, MatIcon],
+  imports: [MatIconButton, TranslatePipe, MatTooltip, MatIcon],
   template: `
     @if (value !== null) {
       <div style="display: flex; align-items: center">

@@ -6,7 +6,7 @@ import { MatOption, MatSelect } from '@angular/material/select';
 import { ReadUser } from '@dasch-swiss/dsp-js';
 import { AdminAPIApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { AppError } from '@dasch-swiss/vre/core/error-handler';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { CollaborationPageService } from '../collaboration-page.service';
 
 @Component({
@@ -41,7 +41,7 @@ import { CollaborationPageService } from '../collaboration-page.service';
     `,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [AsyncPipe, MatFormField, MatSelect, MatOption, ReactiveFormsModule, TranslateModule],
+  imports: [AsyncPipe, MatFormField, MatSelect, MatOption, ReactiveFormsModule, TranslatePipe],
 })
 export class SelectGroupComponent implements OnInit {
   @Input({ required: true }) projectId!: string;

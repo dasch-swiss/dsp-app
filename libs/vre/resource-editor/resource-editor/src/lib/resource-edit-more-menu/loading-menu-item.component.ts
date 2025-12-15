@@ -3,7 +3,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ProgressSpinnerComponent } from '@dasch-swiss/vre/ui/progress-indicator';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-loading-menu-item',
@@ -22,7 +22,7 @@ import { TranslateModule } from '@ngx-translate/core';
       </span>
     </button>
   `,
-  imports: [MatButtonModule, MatMenuModule, MatTooltipModule, TranslateModule, ProgressSpinnerComponent],
+  imports: [MatButtonModule, MatMenuModule, MatTooltipModule, TranslatePipe, ProgressSpinnerComponent],
 })
 export class LoadingMenuItemComponent {
   @Input({ required: true }) dataCy!: string;

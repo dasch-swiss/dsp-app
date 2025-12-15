@@ -1,4 +1,4 @@
-import { AsyncPipe, NgClass } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, Input, ViewContainerRef } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -11,7 +11,7 @@ import { SplitPipe } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { DefaultProperty } from '@dasch-swiss/vre/shared/app-helper-services';
 import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
 import { DialogService } from '@dasch-swiss/vre/ui/ui';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, map, startWith, switchMap } from 'rxjs';
 import { EditPropertyFormDialogComponent } from '../../forms/property-form/edit-property-form-dialog.component';
 import { EditPropertyDialogData } from '../../forms/property-form/property-form.type';
@@ -23,7 +23,7 @@ import { OntologyEditService } from '../../services/ontology-edit.service';
   templateUrl: './property-info.component.html',
   styleUrls: ['./property-info.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [AsyncPipe, MatButton, MatIcon, MatTooltip, NgClass, SplitPipe, StringifyStringLiteralPipe, TranslateModule],
+  imports: [AsyncPipe, MatButton, MatIcon, MatTooltip, SplitPipe, StringifyStringLiteralPipe, TranslatePipe],
 })
 export class PropertyInfoComponent {
   @Input({ required: true }) property!: PropertyInfo;

@@ -12,7 +12,7 @@ import { AdminAPIApiService } from '@dasch-swiss/vre/3rd-party-services/open-api
 import { AppError } from '@dasch-swiss/vre/core/error-handler';
 import { LoadingButtonDirective } from '@dasch-swiss/vre/ui/progress-indicator';
 import { CommonInputComponent, DialogHeaderComponent } from '@dasch-swiss/vre/ui/ui';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { finalize } from 'rxjs';
 
 export interface CreateCopyrightHolderDialogProps {
@@ -49,7 +49,7 @@ export interface CreateCopyrightHolderDialogProps {
     MatDialogActions,
     MatDialogClose,
     MatDialogContent,
-    TranslateModule,
+    TranslatePipe,
   ],
 })
 export class CreateCopyrightHolderDialogComponent {

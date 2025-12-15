@@ -14,7 +14,7 @@ import {
   DEFAULT_MULTILANGUAGE_FORM,
 } from '@dasch-swiss/vre/ui/string-literal';
 import { CommonInputComponent } from '@dasch-swiss/vre/ui/ui';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { OntologyEditService } from '../../services/ontology-edit.service';
 import { GuiAttrLinkComponent } from './gui-attr-link.component';
 import { GuiAttrListComponent } from './gui-attr-list.component';
@@ -86,7 +86,7 @@ import { PropertyForm, EditPropertyDialogData } from './property-form.type';
     MultiLanguageInputComponent,
     MultiLanguageTextareaComponent,
     ReactiveFormsModule,
-    TranslateModule,
+    TranslatePipe,
   ],
 })
 export class PropertyFormComponent implements OnInit {

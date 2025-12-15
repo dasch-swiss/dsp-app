@@ -1,6 +1,6 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { TranslateModule } from '@ngx-translate/core';
+import { provideTranslateService, TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
 import { ResourceFetcherService } from '../representations/resource-fetcher.service';
 import { IncomingResourceMoreMenuComponent } from './incoming-resource-more-menu.component';
@@ -21,9 +21,13 @@ describe('IncomingResourceMoreMenuComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [IncomingResourceMoreMenuComponent, TranslateModule.forRoot()],
+      imports: [IncomingResourceMoreMenuComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
-      providers: [{ provide: ResourceFetcherService, useValue: mockResourceFetcher }],
+      providers: [
+        { provide: ResourceFetcherService, useValue: mockResourceFetcher },
+        provideTranslateService(),
+        TranslateService,
+      ],
     })
       .overrideComponent(IncomingResourceMoreMenuComponent, {
         set: {

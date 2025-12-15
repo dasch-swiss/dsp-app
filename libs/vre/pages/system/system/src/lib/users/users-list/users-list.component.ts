@@ -6,7 +6,7 @@ import { ReadUser } from '@dasch-swiss/dsp-js';
 import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import { UserService } from '@dasch-swiss/vre/core/session';
 import { SortingHelper } from '@dasch-swiss/vre/shared/app-helper-services';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { SortButtonComponent } from '../../sort-button/sort-button.component';
 import { CreateUserDialogComponent } from '../create-user-dialog.component';
 import { UsersTabService } from '../users-tab.service';
@@ -51,7 +51,7 @@ type UserSortKey = 'familyName' | 'givenName' | 'email' | 'username';
       </div>
     }
   `,
-  imports: [AsyncPipe, I18nPluralPipe, MatButton, SortButtonComponent, TranslateModule, UsersListRowComponent],
+  imports: [AsyncPipe, I18nPluralPipe, MatButton, SortButtonComponent, TranslatePipe, UsersListRowComponent],
 })
 export class UsersListComponent {
   _list!: ReadUser[];

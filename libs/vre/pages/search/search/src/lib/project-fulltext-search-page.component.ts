@@ -11,7 +11,7 @@ import { MatInput } from '@angular/material/input';
 import { RouterLink } from '@angular/router';
 import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
 import { SearchTipsComponent } from '@dasch-swiss/vre/shared/app-common-to-move';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { map, startWith, Subject } from 'rxjs';
 import { SearchResultComponent } from './search-result.component';
 
@@ -28,7 +28,7 @@ import { SearchResultComponent } from './search-result.component';
     MatInput,
     MatSuffix,
     RouterLink,
-    TranslateModule,
+    TranslatePipe,
     SearchResultComponent,
   ],
   template: `

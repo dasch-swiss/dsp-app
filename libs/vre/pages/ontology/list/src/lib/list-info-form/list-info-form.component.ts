@@ -26,7 +26,7 @@ import {
   MultiLanguageTextareaComponent,
 } from '@dasch-swiss/vre/ui/string-literal';
 import { DialogHeaderComponent } from '@dasch-swiss/vre/ui/ui';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ListInfoForm } from './list-info-form.type';
 
 @Component({
@@ -66,7 +66,7 @@ import { ListInfoForm } from './list-info-form.type';
     MatDialogActions,
     MatDialogClose,
     MatDialogContent,
-    TranslateModule,
+    TranslatePipe,
     DialogHeaderComponent,
     MultiLanguageInputComponent,
     MultiLanguageTextareaComponent,

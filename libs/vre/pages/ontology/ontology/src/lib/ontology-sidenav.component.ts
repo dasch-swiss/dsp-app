@@ -17,7 +17,7 @@ import {
   DefaultResourceClasses,
   PropertyCategory,
 } from '@dasch-swiss/vre/shared/app-helper-services';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { EditPropertyFormDialogComponent } from './forms/property-form/edit-property-form-dialog.component';
 import { CreatePropertyDialogData } from './forms/property-form/property-form.type';
 import { CreateResourceClassDialogComponent } from './forms/resource-class-form/create-resource-class-dialog.component';
@@ -147,7 +147,7 @@ import { OntologyPageService } from './ontology-page.service';
     MatTooltip,
     RouterLink,
     RouterLinkActive,
-    TranslateModule,
+    TranslatePipe,
   ],
 })
 export class OntologySidenavComponent {

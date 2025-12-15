@@ -4,7 +4,7 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatFormField, MatLabel, MatPrefix } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-property-value-basic-comment',
@@ -16,7 +16,7 @@ import { TranslateModule } from '@ngx-translate/core';
     CdkTextareaAutosize,
     MatInput,
     ReactiveFormsModule,
-    TranslateModule,
+    TranslatePipe,
   ],
   template: ` <mat-form-field style="flex: 1; width: 100%; margin: 10px 0" subscriptSizing="dynamic">
     <mat-label>{{ 'resourceEditor.resourceProperties.comment' | translate }}</mat-label>

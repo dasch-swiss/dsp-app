@@ -24,7 +24,7 @@ import {
 import { DspApiConnectionToken, DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import { AppProgressIndicatorComponent } from '@dasch-swiss/vre/ui/progress-indicator';
 import { HumanReadableErrorPipe } from '@dasch-swiss/vre/ui/ui';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { EMPTY, expand, filter, finalize, from, Subject, switchMap, takeUntil } from 'rxjs';
 import type { CreateResourceDialogComponent, CreateResourceDialogProps } from '../create-resource-dialog.component';
 import { LinkValueDataService } from './link-value-data.service';
@@ -35,7 +35,7 @@ import { LinkValueDataService } from './link-value-data.service';
     MatFormField,
     MatInput,
     ReactiveFormsModule,
-    TranslateModule,
+    TranslatePipe,
     MatAutocompleteTrigger,
     MatAutocomplete,
     MatOption,

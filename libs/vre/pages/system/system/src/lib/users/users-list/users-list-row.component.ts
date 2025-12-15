@@ -3,7 +3,7 @@ import { MatChip, MatChipAvatar, MatChipSet } from '@angular/material/chips';
 import { MatIcon } from '@angular/material/icon';
 import { Constants, ReadUser } from '@dasch-swiss/dsp-js';
 import { PermissionsData } from '@dasch-swiss/dsp-js/src/models/admin/permissions-data';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { UserDescriptionComponent } from './user-description.component';
 import { UsersListRowMenuComponent } from './users-list-row-menu.component';
 
@@ -40,7 +40,7 @@ import { UsersListRowMenuComponent } from './users-list-row-menu.component';
     MatChipAvatar,
     MatChipSet,
     MatIcon,
-    TranslateModule,
+    TranslatePipe,
     UserDescriptionComponent,
     UsersListRowMenuComponent,
   ],

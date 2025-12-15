@@ -7,7 +7,7 @@ import { APIV3ApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
 import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { provideTranslateService, TranslateService } from '@ngx-translate/core';
 import { Observable, Observer, of, throwError } from 'rxjs';
 import { DownloadDialogResourcesTabComponent } from './download-dialog-resources-tab.component';
 
@@ -91,19 +91,15 @@ describe('DownloadDialogResourcesTabComponent', () => {
     revokeObjectURLSpy = jest.spyOn(window.URL, 'revokeObjectURL').mockImplementation();
 
     await TestBed.configureTestingModule({
-      imports: [
-        DownloadDialogResourcesTabComponent,
-        TranslateModule.forRoot(),
-        FormsModule,
-        NoopAnimationsModule,
-        MockLoadingButtonDirective,
-      ],
+      imports: [DownloadDialogResourcesTabComponent, FormsModule, NoopAnimationsModule, MockLoadingButtonDirective],
       schemas: [NO_ERRORS_SCHEMA],
       providers: [
         { provide: APIV3ApiService, useValue: mockV3ApiService },
         { provide: NotificationService, useValue: mockNotificationService },
         { provide: LocalizationService, useValue: mockLocalizationService },
         { provide: TranslateService, useValue: mockTranslateService },
+        provideTranslateService(),
+        TranslateService,
       ],
     }).compileComponents();
 

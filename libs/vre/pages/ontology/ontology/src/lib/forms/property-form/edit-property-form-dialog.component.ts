@@ -11,7 +11,7 @@ import { StringLiteralV2 } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
 import { LoadingButtonDirective } from '@dasch-swiss/vre/ui/progress-indicator';
 import { DialogHeaderComponent } from '@dasch-swiss/vre/ui/ui';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { take } from 'rxjs';
 import { OntologyEditService } from '../../services/ontology-edit.service';
 import { PropertyFormComponent } from './property-form.component';
@@ -48,7 +48,7 @@ import {
     MatDialogClose,
     MatDialogContent,
     PropertyFormComponent,
-    TranslateModule,
+    TranslatePipe,
   ],
 })
 export class EditPropertyFormDialogComponent implements OnInit {

@@ -3,7 +3,7 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatError, MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { HumanReadableErrorPipe } from '@dasch-swiss/vre/ui/ui';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { startWith, Subscription } from 'rxjs';
 import { IIIFUrl } from './third-party-iiif';
 
@@ -45,7 +45,7 @@ import { IIIFUrl } from './third-party-iiif';
     `,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatFormField, MatLabel, MatInput, ReactiveFormsModule, TranslateModule, MatError, HumanReadableErrorPipe],
+  imports: [MatFormField, MatLabel, MatInput, ReactiveFormsModule, TranslatePipe, MatError, HumanReadableErrorPipe],
 })
 export class IiifControlComponent implements OnInit, OnDestroy {
   @Input({ required: true }) control!: FormControl<string | null>;

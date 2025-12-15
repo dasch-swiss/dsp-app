@@ -6,7 +6,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 import { PaginatedApiService } from '@dasch-swiss/vre/shared/app-common';
 import { AlternatedListComponent } from '@dasch-swiss/vre/ui/ui';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { BehaviorSubject, first, switchMap } from 'rxjs';
 import { ProjectPageService } from '../../project-page.service';
 import {
@@ -75,7 +75,7 @@ import { LegalSettingsLicensesComponent } from './legal-settings-licenses.compon
     MatButton,
     MatIcon,
     MatTooltip,
-    TranslateModule,
+    TranslatePipe,
   ],
 })
 export class LegalSettingsComponent {

@@ -6,7 +6,7 @@ import { ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { LoadingButtonDirective } from '@dasch-swiss/vre/ui/progress-indicator';
 import { MultiLanguages } from '@dasch-swiss/vre/ui/string-literal';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { map, switchMap, take } from 'rxjs';
 import { ProjectPageService } from '../project-page.service';
 import { ProjectForm } from './project-form.type';
@@ -32,7 +32,7 @@ import { ReusableProjectFormComponent } from './reusable-project-form.component'
       </button>
     </div>
   `,
-  imports: [AsyncPipe, MatButton, TranslateModule, LoadingButtonDirective, ReusableProjectFormComponent],
+  imports: [AsyncPipe, MatButton, TranslatePipe, LoadingButtonDirective, ReusableProjectFormComponent],
 })
 export class EditProjectFormPageComponent {
   form!: ProjectForm;
