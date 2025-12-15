@@ -128,10 +128,6 @@ For detailed configuration and troubleshooting, see the inline documentation in 
 
 ## Further Documentation
 
-### User guide
-
-➡ [for latest released version](https://docs.dasch.swiss/latest/DSP-APP/user-guide/)
-
 ### Developer docs
 
 ➡ [for developers](https://docs.dasch.swiss/latest/DSP-APP/contribution)
@@ -141,7 +137,7 @@ For detailed configuration and troubleshooting, see the inline documentation in 
 If you would like to contribute to the development of the DSP-APP alongside us,
 please follow the [general DSP contribution guidelines](https://docs.dasch.swiss/latest/developers/contribution/).
 
-### Documentation / User guidelines
+### Documentation
 
-We built the user guidelines and developer documentation with [MkDocs](https://www.mkdocs.org/).
+We built the developer documentation with [MkDocs](https://www.mkdocs.org/).
 More information can be found in the specific [README](https://github.com/dasch-swiss/dsp-das/blob/main/docs/contribution/docs-documentation.md).

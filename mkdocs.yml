@@ -7,37 +7,27 @@ copyright: "&copy; 2017 - 2021 <a href='https://dasch.swiss' target='_blank'>Dat
 
 nav:
   - Introduction: index.md
-  - User Guide:
-    - Introduction: user-guide/index.md
-    - Project Administration: user-guide/project.md
-    - System Administration: user-guide/system.md
-    - Data Management:
-      - Start from scratch: user-guide/data/start.md
-      - Search and browse: user-guide/data/search.md
-      - Search results: user-guide/data/search-results.md
-      - Work on your data: user-guide/data/work-on-data.md
-    - User Profile: user-guide/user.md
   - Development:
-    - Developer Documentation: contribution/index.md
-    - Docs Documentation: contribution/docs-documentation.md
-    - Release Notes: contribution/release-notes.md
+      - Developer Documentation: contribution/index.md
+      - Docs Documentation: contribution/docs-documentation.md
+      - Release Notes: contribution/release-notes.md
 
 plugins:
-    - include-markdown
-    - search
-    - git-revision-date
+  - include-markdown
+  - search
+  - git-revision-date
 
 theme:
   name: material
-  logo: 'assets/icons/dasch-icon-white.svg'
-  favicon: 'assets/icons/dasch-favicon.ico'
+  logo: "assets/icons/dasch-icon-white.svg"
+  favicon: "assets/icons/dasch-favicon.ico"
   icon:
     repo: fontawesome/brands/github
   palette:
-    primary: 'deep purple'
-    accent: 'deep purple'
+    primary: "deep purple"
+    accent: "deep purple"
   features:
     - navigation.tabs
 
 extra_css:
-  - 'assets/style/theme.css'
+  - "assets/style/theme.css"
