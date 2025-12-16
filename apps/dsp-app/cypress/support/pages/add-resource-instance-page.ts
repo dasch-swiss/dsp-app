@@ -6,13 +6,17 @@ export class AddResourceInstancePage {
 
   getSubmitButton = () => cy.get('[data-cy=submit-button]');
 
-  clickOnSubmit = () => {
+  clickOnSubmit = (waitForSuccess: boolean = true) => {
     this.getSubmitButton().click({ force: true });
+    if (waitForSuccess) {
+      cy.wait(500);
+    }
   };
 
   mouseHover = () => {
     cy.get('[data-cy=property-value]').trigger('mouseenter');
   };
+
   setupEdit = () => {
     this.mouseHover();
     cy.get('[data-cy=edit-button]').click({ force: true });
@@ -20,15 +24,15 @@ export class AddResourceInstancePage {
 
   saveEdit() {
     cy.get('[data-cy=save-button]').click({ force: true });
-    cy.reload(); // TODO shouldnt reload
+    cy.reload();
+    cy.get('[data-cy=property-value]').should('be.visible');
   }
 
   delete() {
     this.mouseHover();
     cy.get('[data-cy=delete-button]').click();
     cy.get('[data-cy=confirm-button]').click();
-    cy.reload(); // TODO shouldnt reload
-    // cy.contains('This resource has no defined properties');
+    cy.reload();
   }
 
   addInitialLabel() {
