@@ -50,7 +50,7 @@ import { VideoMoreButtonComponent } from './video-more-button.component';
         mat-icon-button
         data-cy="go-to-start-button"
         (click)="goToStart()"
-        [matTooltip]="'resourceEditor.representations.video.stopAndGoToStart' | translate"
+        [matTooltip]="'resourceEditor.representations.video.stop' | translate"
         [matTooltipPosition]="matTooltipPos">
         <mat-icon>skip_previous</mat-icon>
       </button>
