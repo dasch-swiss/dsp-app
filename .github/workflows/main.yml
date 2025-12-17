@@ -21,8 +21,9 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: 22.12.0
+          cache: 'npm'
       - name: Install dependencies
-        run: npm install
+        run: npm ci --prefer-offline --no-audit
       - name: Run linting
         run: npx nx run-many --all --target=lint --skip-nx-cache
 
@@ -43,8 +44,9 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: 22.12.0
+          cache: 'npm'
       - name: Install dependencies
-        run: npm install
+        run: npm ci --prefer-offline --no-audit
       - name: Run tests with coverage
         run: npm run unit-test-coverage-ci
         env:
@@ -73,11 +75,12 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: 22.12.0
-      - run: npm install
+          cache: 'npm'
+      - run: npm ci --prefer-offline --no-audit
       - name: Install Cypress dependencies
         run: |
           cd ../dsp-das/apps/dsp-app/cypress
-          npm install
+          npm ci --prefer-offline --no-audit
       - name: Checkout DSP-API repo
         uses: actions/checkout@v6
         with:
@@ -153,6 +156,7 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: 22.12.0
+          cache: 'npm'
       - uses: docker/setup-buildx-action@v3
       - uses: docker/login-action@v3
         with:
