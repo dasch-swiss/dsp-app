@@ -14,18 +14,6 @@ Cypress.Commands.add(
       label: [{ value: faker.lorem.word() }],
     }
   ) => {
-    // cy.createOntology(projectPage).then(ontology => {
-    //   resourceClass.id = ontology.ontologyMetadata['@id'];
-    //   const request = new JsonConvert().serializeObject(resourceClass, CreateResourceClassPayload);
-    //   cy.request<ResourceClassDefinitionWithAllLanguages>(
-    //     'POST',
-    //     `${Cypress.env('apiUrl')}/v2/ontologies/classes`,
-    //     request
-    //   ).then(response => {
-    //     cy.log('Data model class created!');
-    //   });
-    // });
-
     cy.intercept('POST', '/v2/ontologies/classes').as('createClassRequest');
 
     return cy.createOntology(projectPage).then(() => {

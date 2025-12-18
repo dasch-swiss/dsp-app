@@ -13,8 +13,4 @@ export class SplitPipe implements PipeTransform {
   transform(val: string, separator: string, position: number): string {
     return val.split(separator)[position];
   }
-
-  // transform(value: unknown, ...args: unknown[]): unknown {
-  //     return null;
-  // }
 }
