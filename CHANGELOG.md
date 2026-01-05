@@ -1,5 +1,26 @@
 # Changelog
 
+## [12.4.1](https://github.com/dasch-swiss/dsp-das/compare/v12.4.0...v12.4.1) (2025-12-18)
+
+
+### Bug Fixes
+
+* new image for alice in daschland project ([#2757](https://github.com/dasch-swiss/dsp-das/issues/2757)) ([211e201](https://github.com/dasch-swiss/dsp-das/commit/211e201175e4106c40dbf97c11e3489d2ee2332b))
+* translation issue in video player ([#2758](https://github.com/dasch-swiss/dsp-das/issues/2758)) ([625a844](https://github.com/dasch-swiss/dsp-das/commit/625a844dc19087a61618ebaef58f1b61d30da3b5))
+
+
+### Maintenances
+
+* fix npm error code 135 ([#2765](https://github.com/dasch-swiss/dsp-das/issues/2765)) ([6fd3ad2](https://github.com/dasch-swiss/dsp-das/commit/6fd3ad24dcc5cc4e2445bdda614818922ab48a62))
+* remove unused code ([#2766](https://github.com/dasch-swiss/dsp-das/issues/2766)) ([231751e](https://github.com/dasch-swiss/dsp-das/commit/231751e71ab9467fb59f01fb24a656911ce97389))
+* skip unnecessary jobs in release PRs ([#2763](https://github.com/dasch-swiss/dsp-das/issues/2763)) ([f020fed](https://github.com/dasch-swiss/dsp-das/commit/f020fede564c90015273e0834751b461660707c8))
+* update dsp-api to v34.0.0-4-gf2567e6 ([#2764](https://github.com/dasch-swiss/dsp-das/issues/2764)) ([8aa51a1](https://github.com/dasch-swiss/dsp-das/commit/8aa51a1b82fcdac64bf5357797e9fe3442186c03))
+
+
+### Tests
+
+* fix randomly failing e2e test ([#2759](https://github.com/dasch-swiss/dsp-das/issues/2759)) ([5551b44](https://github.com/dasch-swiss/dsp-das/commit/5551b44dc7aa8a819cc88253fd8595348cc0bfaa))
+
 ## [12.4.0](https://github.com/dasch-swiss/dsp-das/compare/v12.3.0...v12.4.0) (2025-12-15)
 
 
