@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: DSP-API
-  version: v34.0.0-4-gf2567e6
+  version: v34.1.0-1-g91df139
   summary: DSP-API is part of the DaSCH Service Platform, a repository for the long-term
     preservation and reuse of data in the humanities.
   contact:
@@ -4497,7 +4497,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/HmAUJ6WlT4WleRYaMJD71g
+        example: http://rdfh.ch/users/RuI5OopNRhagzVKNaIP2xw
       responses:
         '200':
           description: ''
@@ -4549,7 +4549,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/HmAUJ6WlT4WleRYaMJD71g
+        example: http://rdfh.ch/users/RuI5OopNRhagzVKNaIP2xw
       responses:
         '200':
           description: ''
@@ -4601,7 +4601,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/HmAUJ6WlT4WleRYaMJD71g
+        example: http://rdfh.ch/users/RuI5OopNRhagzVKNaIP2xw
       responses:
         '200':
           description: ''
@@ -4754,7 +4754,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/HmAUJ6WlT4WleRYaMJD71g
+        example: http://rdfh.ch/users/RuI5OopNRhagzVKNaIP2xw
       responses:
         '200':
           description: ''
@@ -4808,7 +4808,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/HmAUJ6WlT4WleRYaMJD71g
+        example: http://rdfh.ch/users/RuI5OopNRhagzVKNaIP2xw
       responses:
         '200':
           description: ''
@@ -4976,7 +4976,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/HmAUJ6WlT4WleRYaMJD71g
+        example: http://rdfh.ch/users/RuI5OopNRhagzVKNaIP2xw
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -5037,7 +5037,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/HmAUJ6WlT4WleRYaMJD71g
+        example: http://rdfh.ch/users/RuI5OopNRhagzVKNaIP2xw
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -5099,7 +5099,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/HmAUJ6WlT4WleRYaMJD71g
+        example: http://rdfh.ch/users/RuI5OopNRhagzVKNaIP2xw
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -5160,7 +5160,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/HmAUJ6WlT4WleRYaMJD71g
+        example: http://rdfh.ch/users/RuI5OopNRhagzVKNaIP2xw
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -5222,7 +5222,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/HmAUJ6WlT4WleRYaMJD71g
+        example: http://rdfh.ch/users/RuI5OopNRhagzVKNaIP2xw
       - name: groupIri
         in: path
         description: The IRI of a group. Must be URL-encoded.
@@ -5283,7 +5283,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/HmAUJ6WlT4WleRYaMJD71g
+        example: http://rdfh.ch/users/RuI5OopNRhagzVKNaIP2xw
       - name: groupIri
         in: path
         description: The IRI of a group. Must be URL-encoded.
@@ -5345,7 +5345,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/HmAUJ6WlT4WleRYaMJD71g
+        example: http://rdfh.ch/users/RuI5OopNRhagzVKNaIP2xw
       requestBody:
         content:
           application/json:
@@ -5406,7 +5406,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/HmAUJ6WlT4WleRYaMJD71g
+        example: http://rdfh.ch/users/RuI5OopNRhagzVKNaIP2xw
       requestBody:
         content:
           application/json:
@@ -5467,7 +5467,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/HmAUJ6WlT4WleRYaMJD71g
+        example: http://rdfh.ch/users/RuI5OopNRhagzVKNaIP2xw
       requestBody:
         content:
           application/json:
@@ -5528,7 +5528,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/HmAUJ6WlT4WleRYaMJD71g
+        example: http://rdfh.ch/users/RuI5OopNRhagzVKNaIP2xw
       requestBody:
         content:
           application/json:
@@ -5633,6 +5633,13 @@ paths:
       responses:
         '200':
           description: ''
+          headers:
+            Set-Cookie:
+              required: false
+              schema:
+                type: array
+                items:
+                  type: string
           content:
             application/json:
               schema:
@@ -5671,9 +5678,22 @@ paths:
       tags:
       - API v2
       operationId: deleteV2Authentication
+      parameters:
+      - name: KnoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999
+        in: cookie
+        required: false
+        schema:
+          type: string
       responses:
         '200':
           description: ''
+          headers:
+            Set-Cookie:
+              required: false
+              schema:
+                type: array
+                items:
+                  type: string
           content:
             application/json:
               schema:
@@ -5711,95 +5731,6 @@ paths:
       security:
       - {}
       - httpAuth: []
-  /v2/login:
-    get:
-      tags:
-      - API v2
-      operationId: getV2Login
-      responses:
-        '200':
-          description: ''
-          content:
-            text/html:
-              schema:
-                type: string
-        '400':
-          description: ''
-          content:
-            application/json:
-              schema:
-                anyOf:
-                - $ref: '#/components/schemas/OntologyConstraintException'
-                - $ref: '#/components/schemas/DuplicateValueException'
-                - $ref: '#/components/schemas/ValidationException'
-                - $ref: '#/components/schemas/BadRequestException'
-                - $ref: '#/components/schemas/GravsearchException'
-                - $ref: '#/components/schemas/EditConflictException'
-        '401':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BadCredentialsException'
-        '403':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ForbiddenException'
-        '404':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/NotFoundException'
-    post:
-      tags:
-      - API v2
-      operationId: postV2Login
-      requestBody:
-        content:
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/LoginForm'
-        required: true
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TokenResponse'
-        '400':
-          description: ''
-          content:
-            application/json:
-              schema:
-                anyOf:
-                - $ref: '#/components/schemas/OntologyConstraintException'
-                - $ref: '#/components/schemas/DuplicateValueException'
-                - $ref: '#/components/schemas/ValidationException'
-                - $ref: '#/components/schemas/BadRequestException'
-                - $ref: '#/components/schemas/GravsearchException'
-                - $ref: '#/components/schemas/EditConflictException'
-        '401':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BadCredentialsException'
-        '403':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ForbiddenException'
-        '404':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/NotFoundException'
   /v2/lists/{listIri}:
     get:
       tags:
@@ -5813,7 +5744,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/lists/0001/1_K2sZtdQhSj27g4DcGanA
+        example: http://rdfh.ch/lists/0001/fSMW5Ag1QMeci9BWMLBmNw
       - name: x-knora-accept-schema
         in: header
         description: |-
@@ -5920,7 +5851,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/lists/0001/1_K2sZtdQhSj27g4DcGanA
+        example: http://rdfh.ch/lists/0001/fSMW5Ag1QMeci9BWMLBmNw
       - name: x-knora-accept-schema
         in: header
         description: |-
@@ -12691,9 +12622,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/VersionResponse'
               example:
-                webapi: v34.0.0-4-gf2567e6
-                buildCommit: f2567e6d1
-                buildTime: '2025-12-17T08:19:35.663521863Z'
+                webapi: v34.1.0-1-g91df139
+                buildCommit: 91df139c2
+                buildTime: '2026-01-08T09:01:37.656167213Z'
                 fuseki: 5.5.0-2
                 scala: 3.3.7
                 sipi: v3.16.3
@@ -12831,11 +12762,11 @@ components:
       - forGroup
       properties:
         iri:
-          type: string
+          $ref: '#/components/schemas/PermissionIri'
         forProject:
-          type: string
+          $ref: '#/components/schemas/ProjectIri'
         forGroup:
-          type: string
+          $ref: '#/components/schemas/GroupIri'
         hasPermissions:
           type: array
           uniqueItems: true
@@ -12930,7 +12861,7 @@ components:
       type: object
       properties:
         forGroup:
-          type: string
+          $ref: '#/components/schemas/GroupIri'
         forResourceClass:
           type: string
         forProperty:
@@ -12947,7 +12878,7 @@ components:
       - forGroup
       properties:
         forGroup:
-          type: string
+          $ref: '#/components/schemas/GroupIri'
     ChangePermissionHasPermissionsApiRequestADM:
       title: ChangePermissionHasPermissionsApiRequestADM
       type: object
@@ -13050,11 +12981,11 @@ components:
       - forProject
       properties:
         id:
-          type: string
+          $ref: '#/components/schemas/PermissionIri'
         forProject:
-          type: string
+          $ref: '#/components/schemas/ProjectIri'
         forGroup:
-          type: string
+          $ref: '#/components/schemas/GroupIri'
         forResourceClass:
           type: string
         forProperty:
@@ -13083,11 +13014,11 @@ components:
       - forProject
       properties:
         iri:
-          type: string
+          $ref: '#/components/schemas/PermissionIri'
         forProject:
-          type: string
+          $ref: '#/components/schemas/ProjectIri'
         forGroup:
-          type: string
+          $ref: '#/components/schemas/GroupIri'
         forResourceClass:
           type: string
         forProperty:
@@ -13735,17 +13666,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ListRootNodeInfoADM'
-    LoginForm:
-      title: LoginForm
-      type: object
-      required:
-      - username
-      - password
-      properties:
-        username:
-          type: string
-        password:
-          type: string
     LoginPayload:
       title: LoginPayload
       oneOf:
@@ -13990,7 +13910,7 @@ components:
       - deleted
       properties:
         permissionIri:
-          type: string
+          $ref: '#/components/schemas/PermissionIri'
         deleted:
           type: boolean
     PermissionGetResponseADM:
@@ -14006,7 +13926,7 @@ components:
       - permissionType
       properties:
         iri:
-          type: string
+          $ref: '#/components/schemas/PermissionIri'
         permissionType:
           type: string
     PermissionIri:
