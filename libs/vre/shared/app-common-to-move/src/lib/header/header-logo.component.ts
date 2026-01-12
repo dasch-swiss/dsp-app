@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
-import { DomSanitizer } from '@angular/platform-browser';
+import { DomSanitizer, Title } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
 
@@ -39,12 +39,15 @@ export class HeaderLogoComponent {
   homeLink = RouteConstants.home;
 
   constructor(
+    private readonly _domSanitizer: DomSanitizer,
     private readonly _matIconRegistry: MatIconRegistry,
-    private readonly _domSanitizer: DomSanitizer
+    private readonly _titleService: Title
   ) {
     this._matIconRegistry.addSvgIcon(
       'dasch_mosaic_icon_color',
       this._domSanitizer.bypassSecurityTrustResourceUrl('/assets/images/dasch-mosaic-icon-color.svg')
     );
+
+    this._titleService.setTitle('DaSCH Service Platform');
   }
 }

@@ -2,6 +2,7 @@ import { AsyncPipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 import { MatTabLink, MatTabNav, MatTabNavPanel } from '@angular/material/tabs';
+import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -69,15 +70,19 @@ export class ProjectNavigationTabsComponent {
   constructor(
     private readonly _route: ActivatedRoute,
     private readonly _router: Router,
+    private readonly _titleService: Title,
     public readonly projectPageService: ProjectPageService
   ) {}
 
   reloadPage(event: MouseEvent) {
     event.preventDefault();
+    const currentTitle = this._titleService.getTitle();
     this._router.navigateByUrl('', { skipLocationChange: true }).then(() => {
+      this._titleService.setTitle(currentTitle);
       this._router.navigate([RouteConstants.data], { relativeTo: this._route });
     });
   }
+
   isDataRouteActive(): boolean {
     return this.path === 'data' || this.path.startsWith('/data/');
   }
