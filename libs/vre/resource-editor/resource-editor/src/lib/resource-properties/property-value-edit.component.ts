@@ -129,7 +129,8 @@ export class PropertyValueEditComponent implements OnInit, OnDestroy {
       item: propertyType.control(this.readValue ?? propertyType.newValue),
       comment: new FormControl(this.readValue?.valueHasComment || null),
     });
-    this.hasValidValue$ = this.group.controls.item.valueChanges.pipe(
+
+    this.hasValidValue$ = this.group.valueChanges.pipe(
       switchMap(() => of(this.group.controls.item.valid && !!this.group.controls.item.value))
     );
 
