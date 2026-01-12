@@ -24,6 +24,11 @@ jobs:
   analyze:
     name: Analyze
     runs-on: ubuntu-latest
+    if: |
+      (github.event.head_commit == null ||
+       !startsWith(github.event.head_commit.message, 'chore(main): release')) &&
+      (github.event.head_commit == null ||
+       github.event.head_commit.author.username != 'daschbot')
     permissions:
       actions: read
       contents: read

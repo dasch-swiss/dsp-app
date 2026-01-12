@@ -18,9 +18,10 @@ jobs:
     name: DSP-APP Linting
     runs-on: ubuntu-latest
     if: |
-      github.event.head_commit == null ||
-      (!startsWith(github.event.head_commit.message, 'chore(main): release') &&
-      github.event.head_commit.author.username != 'daschbot')
+      (github.event.head_commit == null ||
+       !startsWith(github.event.head_commit.message, 'chore(main): release')) &&
+      (github.event.head_commit == null ||
+       github.event.head_commit.author.username != 'daschbot')
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -42,9 +43,10 @@ jobs:
     name: DSP-APP Unit tests
     runs-on: ubuntu-latest
     if: |
-      github.event.head_commit == null ||
-      (!startsWith(github.event.head_commit.message, 'chore(main): release') &&
-      github.event.head_commit.author.username != 'daschbot')
+      (github.event.head_commit == null ||
+       !startsWith(github.event.head_commit.message, 'chore(main): release')) &&
+      (github.event.head_commit == null ||
+       github.event.head_commit.author.username != 'daschbot')
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -76,9 +78,10 @@ jobs:
     name: DSP-APP E2E tests
     runs-on: ubuntu-latest
     if: |
-      github.event.head_commit == null ||
-      (!startsWith(github.event.head_commit.message, 'chore(main): release') &&
-      github.event.head_commit.author.username != 'daschbot')
+      (github.event.head_commit == null ||
+       !startsWith(github.event.head_commit.message, 'chore(main): release')) &&
+      (github.event.head_commit == null ||
+       github.event.head_commit.author.username != 'daschbot')
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -128,9 +131,10 @@ jobs:
     name: Check OpenAPI Spec is Up-to-Date
     runs-on: ubuntu-latest
     if: |
-      github.event.head_commit == null ||
-      (!startsWith(github.event.head_commit.message, 'chore(main): release') &&
-      github.event.head_commit.author.username != 'daschbot')
+      (github.event.head_commit == null ||
+       !startsWith(github.event.head_commit.message, 'chore(main): release')) &&
+      (github.event.head_commit == null ||
+       github.event.head_commit.author.username != 'daschbot')
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -143,9 +147,10 @@ jobs:
     name: Docs Build Test
     runs-on: ubuntu-latest
     if: |
-      github.event.head_commit == null ||
-      (!startsWith(github.event.head_commit.message, 'chore(main): release') &&
-      github.event.head_commit.author.username != 'daschbot')
+      (github.event.head_commit == null ||
+       !startsWith(github.event.head_commit.message, 'chore(main): release')) &&
+      (github.event.head_commit == null ||
+       github.event.head_commit.author.username != 'daschbot')
     steps:
       - name: Checkout
         uses: actions/checkout@v6
