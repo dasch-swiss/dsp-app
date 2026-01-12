@@ -69,6 +69,9 @@ export class GeonameValueComponent implements OnInit {
             locationType: '',
           },
         ];
+        if (this.places.length > 0) {
+          this.control.setValue(this.places[0].id, { emitEvent: false });
+        }
       });
     }
 
