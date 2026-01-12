@@ -1,0 +1,79 @@
+name: Deploy
+
+on:
+  workflow_run:
+    workflows: ["CI"]
+    types:
+      - completed
+    branches:
+      - main
+  push:
+    tags:
+      - '*'
+
+jobs:
+
+  publish:
+    name: Publish to Dockerhub
+    runs-on: ubuntu-latest
+    # Only run if CI passed (or on tag push which doesn't have workflow_run)
+    if: |
+      (github.event_name == 'push' && startsWith(github.ref, 'refs/tags')) ||
+      (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main')
+    outputs:
+      tag: ${{ steps.output_docker_image_tag.outputs.tag }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0 # gets additionally all tags which we need
+      - name: Output docker image tag
+        id: output_docker_image_tag
+        run: echo "tag=$(make docker-image-tag | tr -d '\n')" >> "$GITHUB_OUTPUT"
+        shell: bash # Explicit for fail-fast behaviour
+      - name: Set up Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22.12.0
+          cache: 'npm'
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USER }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+      - name: Build and publish Docker image
+        run: make docker-publish
+
+  trigger-dev-deployment:
+    name: Trigger deployment to DEV
+    runs-on: ubuntu-latest
+    needs: publish
+    # Only trigger DEV deployment for main branch (not tags)
+    if: |
+      github.event_name == 'workflow_run' &&
+      github.event.workflow_run.head_branch == 'main'
+    steps:
+      - name: Trigger deployment to DEV
+        env:
+          IMAGE_TAG: ${{ needs.publish.outputs.tag }}
+          JENKINS_BASIC_AUTH_USER: ${{ secrets.JENKINS_BASIC_AUTH_USER }}
+          JENKINS_BASIC_AUTH_PASS: ${{ secrets.JENKINS_BASIC_AUTH_PASS }}
+          JENKINS_DEV_WEBHOOK: ${{ secrets.JENKINS_DEV_WEBHOOK }}
+        run: |
+          curl -f -u "${JENKINS_BASIC_AUTH_USER}:${JENKINS_BASIC_AUTH_PASS}" \
+               -X POST "${JENKINS_DEV_WEBHOOK}" \
+               -d "Service=app&Version=${IMAGE_TAG}"
+
+  send-chat-notification:
+    name: Send google chat notification
+    needs: [ publish ]
+    runs-on: ubuntu-latest
+    # Only send notifications for tag releases
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
+    steps:
+      - name: Send notification to google chat room "DSP releases"
+        uses: lakto/google-chat-action@main
+        with:
+          url: ${{ secrets.GOOGLE_CHAT_DSP_RELEASES_WEBHOOK_URL }}

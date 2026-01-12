@@ -1,0 +1,164 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+# Prevent wasting resources by canceling in-progress runs when a new run is triggered
+# on the same PR or branch
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+
+  lint:
+    name: DSP-APP Linting
+    runs-on: ubuntu-latest
+    if: |
+      github.event.head_commit == null ||
+      (!startsWith(github.event.head_commit.message, 'chore(main): release') &&
+      github.event.head_commit.author.username != 'daschbot')
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 2
+      - name: Set up Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22.12.0
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci --prefer-offline --no-audit
+        env:
+          NODE_OPTIONS: '--max-old-space-size=4096'
+      - name: Run linting
+        run: npx nx run-many --all --target=lint --skip-nx-cache
+
+  test:
+    name: DSP-APP Unit tests
+    runs-on: ubuntu-latest
+    if: |
+      github.event.head_commit == null ||
+      (!startsWith(github.event.head_commit.message, 'chore(main): release') &&
+      github.event.head_commit.author.username != 'daschbot')
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 2
+      - name: Set up Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22.12.0
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci --prefer-offline --no-audit
+        env:
+          NODE_OPTIONS: '--max-old-space-size=4096'
+      - name: Run tests with coverage
+        run: npm run unit-test-coverage-ci
+        env:
+          TZ: Europe/Zurich
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage/lcov.info
+          flags: unittests
+          name: unit-test-coverage
+          fail_ci_if_error: false
+
+  dsp-app-e2e-tests:
+    name: DSP-APP E2E tests
+    runs-on: ubuntu-latest
+    if: |
+      github.event.head_commit == null ||
+      (!startsWith(github.event.head_commit.message, 'chore(main): release') &&
+      github.event.head_commit.author.username != 'daschbot')
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0 # gets additionally all tags which we need
+      - name: Set up Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22.12.0
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci --prefer-offline --no-audit
+        env:
+          NODE_OPTIONS: '--max-old-space-size=4096'
+      - name: Install Cypress dependencies
+        run: |
+          cd ../dsp-das/apps/dsp-app/cypress
+          npm ci --prefer-offline --no-audit
+      - name: Checkout DSP-API repo
+        uses: actions/checkout@v6
+        with:
+          repository: dasch-swiss/dsp-api
+          ref: main
+          path: dsp-api
+      - name: Start API
+        run: |
+          cd dsp-api
+          make init-db-test
+          docker compose -f docker-compose.yml up -d sipi ingest api
+          ./webapi/scripts/wait-for-api.sh
+      - name: Run e2e tests in CI
+        run: |
+          cd ../dsp-das
+          npm run e2e-ci
+      - name: Upload artifact
+        uses: actions/upload-artifact@v6
+        if: failure()
+        with:
+          name: cypress-snapshots
+          path: apps/dsp-app/cypress/fixtures/screenshots
+      - name: Check Docker Container Logs
+        run: |
+          docker ps
+          docker ps -q | xargs -I {} docker logs {}
+
+  check-openapi-sync:
+    name: Check OpenAPI Spec is Up-to-Date
+    runs-on: ubuntu-latest
+    if: |
+      github.event.head_commit == null ||
+      (!startsWith(github.event.head_commit.message, 'chore(main): release') &&
+      github.event.head_commit.author.username != 'daschbot')
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Set up yq
+        uses: mikefarah/yq@v4
+      - name: Run OpenAPI sync check
+        run: ./scripts/check-openapi-sync.sh --verbose
+
+  docs-build-test:
+    name: Docs Build Test
+    runs-on: ubuntu-latest
+    if: |
+      github.event.head_commit == null ||
+      (!startsWith(github.event.head_commit.message, 'chore(main): release') &&
+      github.event.head_commit.author.username != 'daschbot')
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: 3.11
+          cache: 'pip'
+      - name: Install dependencies
+        run: pip install -r docs/requirements.txt
+      - name: Lint documentation
+        run: make docs-lint
+      - name: Build documentation
+        run: make docs-build
