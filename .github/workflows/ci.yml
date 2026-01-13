@@ -1,15 +1,11 @@
 name: CI
 
-on:
-  push:
-    branches:
-      - main
-  pull_request:
+on: [ push ]
 
 # Prevent wasting resources by canceling in-progress runs when a new run is triggered
-# on the same PR or branch
+# on the same branch
 concurrency:
-  group: ci-${{ github.event.pull_request.number || github.ref }}
+  group: ci-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:

@@ -130,7 +130,7 @@ For detailed configuration and troubleshooting, see the inline documentation in 
 
 The project uses GitHub Actions with three focused workflows:
 
-- **CI** (`.github/workflows/ci.yml`) - Runs on PRs and main branch: linting, unit tests, E2E tests, OpenAPI validation, docs build
+- **CI** (`.github/workflows/ci.yml`) - Runs on all pushes (including PR branches): linting, unit tests, E2E tests, OpenAPI validation, docs build
 - **Deploy** (`.github/workflows/deploy.yml`) - Runs after CI passes on main or on tag pushes: Docker image publish, DEV deployment trigger, release notifications
 - **Release** (`.github/workflows/release.yml`) - Automated release management with release-please on main branch
 
