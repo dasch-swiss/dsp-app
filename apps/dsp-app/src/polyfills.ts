@@ -1,70 +1,43 @@
 /**
- * This file includes polyfills needed by Angular and is loaded before the app.
- * You can add your own extra polyfills to this file.
+ * Polyfills for DSP-APP
  *
- * This file is divided into 2 sections:
- *   1. Browser polyfills. These are applied before loading ZoneJS and are sorted by browsers.
- *   2. Application imports. Files imported after ZoneJS that should be loaded before your main
- *      file.
+ * This file includes polyfills required by Angular and is loaded before the app.
  *
- * The current setup is for so-called "evergreen" browsers; the last versions of browsers that
- * automatically update themselves. This includes Safari >= 10, Chrome >= 55 (including Opera),
- * Edge >= 13 on the desktop, and iOS 10 and Chrome on mobile.
+ * Target browsers: Modern evergreen browsers (Chrome, Firefox, Safari, Edge)
+ * - ES2022 features are natively supported
+ * - No legacy browser support (IE11, older Safari/Chrome versions)
  *
- * Learn more in https://angular.io/guide/browser-support
+ * Learn more: https://angular.dev/reference/configs/workspace-config#browser-support
  */
 
 /** *************************************************************************************************
- * BROWSER POLYFILLS
+ * ZONE.JS - Required by Angular
+ *
+ * Zone.js is required for Angular's change detection mechanism.
+ * Must be imported before the application bootstrap.
  */
-
-/** IE9, IE10 and IE11 requires all of the following polyfills. * */
-// import 'core-js/es6/symbol';
-// import 'core-js/es6/object';
-// import 'core-js/es6/function';
-// import 'core-js/es6/parse-int';
-// import 'core-js/es6/parse-float';
-// import 'core-js/es6/number';
-// import 'core-js/es6/math';
-// import 'core-js/es6/string';
-// import 'core-js/es6/date';
-// import 'core-js/es6/array';
-// import 'core-js/es6/regexp';
-// import 'core-js/es6/map';
-// import 'core-js/es6/weak-map';
-// import 'core-js/es6/set';
-
-/**
- * If the application will be indexed by Google Search, the following is required.
- * Googlebot uses a renderer based on Chrome 41.
- * https://developers.google.com/search/docs/guides/rendering
- * */
-// import 'core-js/es6/array';
-
-/** IE10 and IE11 requires the following for the Reflect API. */
-// import 'core-js/es6/reflect';
-
-/**
- * By default, zone.js will patch all possible macroTask and DomEvents
- * user can disable parts of macroTask/DomEvents patch by setting following flags
- */
-
-// (window as any).__Zone_disable_requestAnimationFrame = true; // disable patch requestAnimationFrame
-// (window as any).__Zone_disable_on_property = true; // disable patch onProperty such as onclick
-// (window as any).__zone_symbol__BLACK_LISTED_EVENTS = ['scroll', 'mousemove']; // disable patch specified eventNames
-
-/*
- * in IE/Edge developer tools, the addEventListener will also be wrapped by zone.js
- * with the following flag, it will bypass `zone.js` patch for IE/Edge
- */
-// (window as any).__Zone_enable_cross_context_check = true;
+import 'zone.js';
 
 /** *************************************************************************************************
- * Zone JS is required by default for Angular itself.
- */
-import 'zone.js'; // included with Angular CLI.
-
-/** *************************************************************************************************
- * APPLICATION IMPORTS
+ * APPLICATION POLYFILLS
+ *
+ * Global object polyfill for Node.js compatibility in browser environments.
+ * Some libraries (e.g., OpenSeadragon, certain Node-based packages) expect
+ * a global 'global' object that's available in Node but not in browsers.
  */
 (window as any).global = window;
+
+/** *************************************************************************************************
+ * ZONE.JS CONFIGURATION (Optional)
+ *
+ * Uncomment below to customize zone.js behavior for performance optimization.
+ * Only enable if you experience performance issues with specific event types.
+ */
+
+// Disable patching of specific events (reduces zone.js overhead)
+// (window as any).__Zone_disable_requestAnimationFrame = true;
+// (window as any).__Zone_disable_on_property = true;
+// (window as any).__zone_symbol__UNPATCHED_EVENTS = ['scroll', 'mousemove'];
+
+// Disable cross-context checks (for iframe/worker scenarios)
+// (window as any).__Zone_enable_cross_context_check = true;

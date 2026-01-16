@@ -1,10 +1,10 @@
+/// <reference types="window" />
+
 import { inject, Injectable } from '@angular/core';
 import { AppConfigService } from '@dasch-swiss/vre/core/config';
-import { LogLevel } from '@grafana/faro-core';
-import { OtlpHttpTransport } from '@grafana/faro-transport-otlp-http';
-import { Faro, getWebInstrumentations, initializeFaro } from '@grafana/faro-web-sdk';
-import { TracingInstrumentation } from '@grafana/faro-web-tracing';
-import { v5 as uuidv5 } from 'uuid';
+
+// Faro types are defined globally to avoid eager imports
+type Faro = any;
 
 @Injectable({ providedIn: 'root' })
 export class GrafanaFaroService {
@@ -13,9 +13,10 @@ export class GrafanaFaroService {
   private _faroInstance?: Faro;
 
   /**
-   * Initialize Faro Web SDK with configuration from environment
+   * Initialize Faro Web SDK with configuration from environment (lazy loaded)
+   * Faro is ~300KB and only loaded when enabled in configuration
    */
-  setup(): void {
+  async setup(): Promise<void> {
     const faroConfig = this._appConfig.dspInstrumentationConfig.faro;
 
     // Skip initialization if Faro is disabled
@@ -24,6 +25,24 @@ export class GrafanaFaroService {
     }
 
     try {
+      // Dynamically import Faro dependencies only when enabled
+      const [
+        { LogLevel },
+        { OtlpHttpTransport },
+        { getWebInstrumentations, initializeFaro },
+        { TracingInstrumentation },
+        { v5: uuidv5 },
+      ] = await Promise.all([
+        import('@grafana/faro-core'),
+        import('@grafana/faro-transport-otlp-http'),
+        import('@grafana/faro-web-sdk'),
+        import('@grafana/faro-web-tracing'),
+        import('uuid'),
+      ]);
+
+      // Store uuidv5 for later use
+      (this as any)._uuidv5 = uuidv5;
+
       // Build base config
       const baseConfig = {
         app: {
@@ -46,7 +65,7 @@ export class GrafanaFaroService {
         sessionTracking: faroConfig.sessionTracking,
         // Faro v2: Console configuration at top level
         consoleInstrumentation: {
-          disabledLevels: faroConfig.console.disabledLevels as LogLevel[],
+          disabledLevels: faroConfig.console.disabledLevels as (typeof LogLevel)[keyof typeof LogLevel][],
         },
       };
 
@@ -68,6 +87,9 @@ export class GrafanaFaroService {
           url: faroConfig.collectorUrl,
         });
       }
+
+      // Expose Faro instance globally for error handler
+      window.__FARO__ = this._faroInstance;
     } catch (error) {
       // Fail silently - don't break the app if Faro fails to initialize
       console.error('Faro initialization failed:', error);
@@ -118,6 +140,12 @@ export class GrafanaFaroService {
     }
 
     try {
+      const uuidv5 = (this as any)._uuidv5;
+      if (!uuidv5) {
+        console.warn('UUID v5 not loaded, cannot hash user ID');
+        return;
+      }
+
       // Hash the user IRI using UUID v5 with URL namespace
       const hashedUserId = uuidv5(userIri, uuidv5.URL);
       this._faroInstance.api.setUser({

@@ -64,8 +64,22 @@
             }
           ],
           "outputHashing": "all",
-          "optimization": true,
-          "sourceMap": true
+          "optimization": {
+            "scripts": true,
+            "styles": {
+              "minify": true,
+              "inlineCritical": true
+            },
+            "fonts": {
+              "inline": true
+            }
+          },
+          "sourceMap": {
+            "scripts": true,
+            "styles": false,
+            "hidden": true,
+            "vendor": false
+          }
         },
         "development": {
           "buildOptimizer": false,
