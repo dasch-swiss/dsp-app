@@ -52,7 +52,7 @@ describe('AutoLoginService', () => {
 
     mockAuthService = {
       afterSuccessfulLogin$: jest.fn(),
-      afterLogout: jest.fn(),
+      logout: jest.fn(),
     };
 
     TestBed.configureTestingModule({
@@ -190,7 +190,7 @@ describe('AutoLoginService', () => {
       expect(mockAuthService.afterSuccessfulLogin$).not.toHaveBeenCalled();
     });
 
-    it('should call afterLogout on error', async () => {
+    it('should call logout on error', async () => {
       mockDspApiConnection.v2!.auth!.checkCredentials = jest
         .fn()
         .mockReturnValue(throwError(() => new Error('Invalid')));
@@ -198,7 +198,7 @@ describe('AutoLoginService', () => {
       service.setup();
       await new Promise(resolve => setTimeout(resolve, 0)); // Wait for async
 
-      expect(mockAuthService.afterLogout).toHaveBeenCalled();
+      expect(mockAuthService.logout).toHaveBeenCalled();
     });
 
     it('should set hasCheckedCredentials$ to true even on error', async () => {
@@ -218,7 +218,7 @@ describe('AutoLoginService', () => {
       service.setup();
       await new Promise(resolve => setTimeout(resolve, 0)); // Wait for async
 
-      expect(mockAuthService.afterLogout).toHaveBeenCalled();
+      expect(mockAuthService.logout).toHaveBeenCalled();
       expect(service.hasCheckedCredentials$.value).toBe(true);
     });
   });

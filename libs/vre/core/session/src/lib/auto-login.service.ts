@@ -58,7 +58,7 @@ export class AutoLoginService {
       )
       .subscribe({
         error: () => {
-          this._authService.afterLogout();
+          this._authService.logout();
         },
       });
   }
