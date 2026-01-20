@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: DSP-API
-  version: v34.1.0-1-g91df139
+  version: v34.1.1-7-gef5fa48
   summary: DSP-API is part of the DaSCH Service Platform, a repository for the long-term
     preservation and reuse of data in the humanities.
   contact:
@@ -4497,7 +4497,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/RuI5OopNRhagzVKNaIP2xw
+        example: http://rdfh.ch/users/ThINowjEQKK3Yp9l1aF7zQ
       responses:
         '200':
           description: ''
@@ -4549,7 +4549,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/RuI5OopNRhagzVKNaIP2xw
+        example: http://rdfh.ch/users/ThINowjEQKK3Yp9l1aF7zQ
       responses:
         '200':
           description: ''
@@ -4601,7 +4601,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/RuI5OopNRhagzVKNaIP2xw
+        example: http://rdfh.ch/users/ThINowjEQKK3Yp9l1aF7zQ
       responses:
         '200':
           description: ''
@@ -4754,7 +4754,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/RuI5OopNRhagzVKNaIP2xw
+        example: http://rdfh.ch/users/ThINowjEQKK3Yp9l1aF7zQ
       responses:
         '200':
           description: ''
@@ -4808,7 +4808,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/RuI5OopNRhagzVKNaIP2xw
+        example: http://rdfh.ch/users/ThINowjEQKK3Yp9l1aF7zQ
       responses:
         '200':
           description: ''
@@ -4976,7 +4976,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/RuI5OopNRhagzVKNaIP2xw
+        example: http://rdfh.ch/users/ThINowjEQKK3Yp9l1aF7zQ
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -5037,7 +5037,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/RuI5OopNRhagzVKNaIP2xw
+        example: http://rdfh.ch/users/ThINowjEQKK3Yp9l1aF7zQ
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -5099,7 +5099,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/RuI5OopNRhagzVKNaIP2xw
+        example: http://rdfh.ch/users/ThINowjEQKK3Yp9l1aF7zQ
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -5160,7 +5160,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/RuI5OopNRhagzVKNaIP2xw
+        example: http://rdfh.ch/users/ThINowjEQKK3Yp9l1aF7zQ
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -5222,7 +5222,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/RuI5OopNRhagzVKNaIP2xw
+        example: http://rdfh.ch/users/ThINowjEQKK3Yp9l1aF7zQ
       - name: groupIri
         in: path
         description: The IRI of a group. Must be URL-encoded.
@@ -5283,7 +5283,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/RuI5OopNRhagzVKNaIP2xw
+        example: http://rdfh.ch/users/ThINowjEQKK3Yp9l1aF7zQ
       - name: groupIri
         in: path
         description: The IRI of a group. Must be URL-encoded.
@@ -5345,7 +5345,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/RuI5OopNRhagzVKNaIP2xw
+        example: http://rdfh.ch/users/ThINowjEQKK3Yp9l1aF7zQ
       requestBody:
         content:
           application/json:
@@ -5406,7 +5406,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/RuI5OopNRhagzVKNaIP2xw
+        example: http://rdfh.ch/users/ThINowjEQKK3Yp9l1aF7zQ
       requestBody:
         content:
           application/json:
@@ -5467,7 +5467,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/RuI5OopNRhagzVKNaIP2xw
+        example: http://rdfh.ch/users/ThINowjEQKK3Yp9l1aF7zQ
       requestBody:
         content:
           application/json:
@@ -5528,7 +5528,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/RuI5OopNRhagzVKNaIP2xw
+        example: http://rdfh.ch/users/ThINowjEQKK3Yp9l1aF7zQ
       requestBody:
         content:
           application/json:
@@ -5583,6 +5583,13 @@ paths:
       responses:
         '200':
           description: ''
+          headers:
+            Set-Cookie:
+              required: false
+              schema:
+                type: array
+                items:
+                  type: string
           content:
             application/json:
               schema:
@@ -5744,7 +5751,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/lists/0001/fSMW5Ag1QMeci9BWMLBmNw
+        example: http://rdfh.ch/lists/0001/9HCBjpthRDmUT28jykY5VA
       - name: x-knora-accept-schema
         in: header
         description: |-
@@ -5851,7 +5858,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/lists/0001/fSMW5Ag1QMeci9BWMLBmNw
+        example: http://rdfh.ch/lists/0001/9HCBjpthRDmUT28jykY5VA
       - name: x-knora-accept-schema
         in: header
         description: |-
@@ -12622,9 +12629,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/VersionResponse'
               example:
-                webapi: v34.1.0-1-g91df139
-                buildCommit: 91df139c2
-                buildTime: '2026-01-08T09:01:37.656167213Z'
+                webapi: v34.1.1-7-gef5fa48
+                buildCommit: ef5fa48a0
+                buildTime: '2026-01-19T15:22:33.950630976Z'
                 fuseki: 5.5.0-2
                 scala: 3.3.7
                 sipi: v3.16.3
