@@ -99,7 +99,7 @@
     "@swc-node/register": "1.11.1",
     "@swc/core": "1.15.8",
     "@swc/helpers": "0.5.18",
-    "@types/jasmine": "~4.6.5",
+    "@types/jasmine": "~4.6.6",
     "@types/jest": "29.5.14",
     "@types/node": "^22.18.11",
     "@types/openseadragon": "3.0.0",
