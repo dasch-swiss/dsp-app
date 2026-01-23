@@ -9,7 +9,7 @@ import { SearchResultComponent } from './search-result.component';
   selector: 'app-fulltext-search-results-page',
   template: `@if (query$ | async; as query) {
     <div class="content">
-      <app-search-result [query]="query" />
+      <app-search-result [query]="query" [showProjectShortname]="true" />
     </div>
   } `,
   imports: [AsyncPipe, SearchResultComponent],

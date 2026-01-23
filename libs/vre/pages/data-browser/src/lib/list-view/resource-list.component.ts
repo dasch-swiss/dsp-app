@@ -6,11 +6,15 @@ import { ResourceListItemComponent } from './resource-list-item.component';
   selector: 'app-resource-list',
   template: `
     @for (resource of resources; track resource) {
-      <app-resource-list-item [resource]="resource" data-cy="resource-list-item" />
+      <app-resource-list-item
+        [resource]="resource"
+        [showProjectShortname]="showProjectShortname"
+        data-cy="resource-list-item" />
     }
   `,
   imports: [ResourceListItemComponent],
 })
 export class ResourceListComponent {
   @Input({ required: true }) resources: ReadResource[] = [];
+  @Input() showProjectShortname = false;
 }

@@ -25,7 +25,7 @@ import { ResourceListComponent } from './resource-list.component';
         [numberOfAllResults]="resourceResultService.numberOfResults" />
     }
 
-    <app-resource-list [resources]="resources" />`,
+    <app-resource-list [resources]="resources" [showProjectShortname]="showProjectShortname" />`,
   styles: [
     `
       app-pager {
@@ -38,6 +38,7 @@ import { ResourceListComponent } from './resource-list.component';
 export class ResourcesListComponent {
   @Input({ required: true }) resources!: ReadResource[];
   @Input({ required: true }) showBackToFormButton!: boolean;
+  @Input() showProjectShortname = false;
 
   constructor(
     public resourceResultService: ResourceResultService,

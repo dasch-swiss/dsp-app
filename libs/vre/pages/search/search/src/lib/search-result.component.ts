@@ -27,7 +27,10 @@ import { combineLatest, map, Observable, switchMap } from 'rxjs';
           <app-no-results-found [message]="noResultMessage" />
         </app-centered-box>
       } @else if (resources.length > 0) {
-        <app-resource-browser [data]="{ resources: resources, selectFirstResource: true }" [searchKeyword]="query" />
+        <app-resource-browser
+          [data]="{ resources: resources, selectFirstResource: true }"
+          [searchKeyword]="query"
+          [showProjectShortname]="showProjectShortname" />
       }
     }
   `,
@@ -37,6 +40,7 @@ import { combineLatest, map, Observable, switchMap } from 'rxjs';
 export class SearchResultComponent implements OnChanges {
   @Input({ required: true }) query!: string;
   @Input() projectId?: string;
+  @Input() showProjectShortname = false;
   loading = true;
 
   resources$!: Observable<ReadResource[]>;
