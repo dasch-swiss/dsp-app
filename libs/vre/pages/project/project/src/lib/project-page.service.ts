@@ -34,7 +34,7 @@ export class ProjectPageService {
     tap((project: ReadProject) => {
       this._currentProject = project;
     }),
-    shareReplay(1)
+    shareReplay({ bufferSize: 1, refCount: true })
   );
 
   private _user$ = this._userService.user$.pipe(filterNull());

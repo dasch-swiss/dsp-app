@@ -1,5 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { StringLiteral } from '@dasch-swiss/dsp-js';
+import { LanguageStringDto } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
 
 @Pipe({
@@ -8,12 +9,9 @@ import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services
 export class StringifyStringLiteralPipe implements PipeTransform {
   constructor(private readonly _localizationService: LocalizationService) {}
 
-  transform(value: StringLiteral[], allAsString = false): string {
+  transform(value: StringLiteral[] | LanguageStringDto[]): string {
     if (!value || value.length === 0) {
       return '';
-    }
-    if (allAsString) {
-      return value.map(sl => `${sl.value} (${sl.language})`).join(' / ');
     }
 
     const userPreferedLanguage = this._localizationService.getCurrentLanguage();

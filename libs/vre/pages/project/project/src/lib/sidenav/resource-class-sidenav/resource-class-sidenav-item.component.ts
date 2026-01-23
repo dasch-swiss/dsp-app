@@ -1,44 +1,24 @@
 import { AsyncPipe, NgClass } from '@angular/common';
-import { ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
-import { Constants, ResourceClassDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
+import { LanguageStringDto, RepresentationClass } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
-import { ResourceClassCountApi } from '@dasch-swiss/vre/pages/data-browser';
-import { LocalizationService, OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
-import { TranslateService } from '@ngx-translate/core';
-import {
-  combineLatest,
-  filter,
-  finalize,
-  first,
-  map,
-  Observable,
-  of,
-  startWith,
-  Subject,
-  switchMap,
-  takeUntil,
-} from 'rxjs';
-import { DataBrowserPageService } from '../../data-browser-page.service';
+import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
+import { combineLatest, filter, first, map, of, startWith, switchMap } from 'rxjs';
 import { ProjectPageService } from '../../project-page.service';
 
 @Component({
   selector: 'app-resource-class-sidenav-item',
   template: `
     <div (click)="selectResourceClass()" class="item" [ngClass]="{ selected: isSelected$ | async }">
-      <span style="flex: 1">
-        {{ ontologiesLabel }}
+      <span class="label">
+        {{ label | appStringifyStringLiteral }}
       </span>
-      <div
-        style="
-    justify-content: end;
-    display: flex;
-    align-items: center;
-    color: #b9b9b9;
-    margin-right: 0;">
-        <span>{{ count$ | async }}</span>
-        <mat-icon style="margin-left: 8px">{{ icon }}</mat-icon>
+      <div class="metadata">
+        <span>{{ count }}</span>
+        <mat-icon class="icon">{{ icon }}</mat-icon>
       </div>
     </div>
   `,
@@ -58,22 +38,51 @@ import { ProjectPageService } from '../../project-page.service';
           background-color: #d6e0e8;
         }
       }
+
+      .label {
+        flex: 1;
+      }
+
+      .metadata {
+        justify-content: end;
+        display: flex;
+        align-items: center;
+        color: #b9b9b9;
+        margin-right: 0;
+      }
+
+      .icon {
+        margin-left: 8px;
+      }
     `,
   ],
-  imports: [AsyncPipe, NgClass, MatIcon],
+  imports: [AsyncPipe, NgClass, MatIcon, StringifyStringLiteralPipe],
 })
-export class ResourceClassSidenavItemComponent implements OnInit, OnDestroy {
-  @Input({ required: true }) resClass!: ResourceClassDefinitionWithAllLanguages;
+export class ResourceClassSidenavItemComponent {
+  @Input({ required: true }) iri!: string;
+  @Input({ required: true }) count!: number;
+  @Input({ required: true }) label!: LanguageStringDto[];
+  @Input({ required: true }) representationClass!: RepresentationClass;
 
-  destroyed = new Subject<void>();
-  icon!: string;
-  ontologiesLabel!: string;
-  ontologiesDescription!: string;
-  count$!: Observable<number>;
-  loading = true;
-
-  ontologyLabel!: string;
-  classLabel!: string;
+  get icon(): string {
+    switch (this.representationClass) {
+      case 'ArchiveRepresentation':
+        return 'folder_zip';
+      case 'AudioRepresentation':
+        return 'audio_file';
+      case 'DocumentRepresentation':
+        return 'description';
+      case 'MovingImageRepresentation':
+        return 'video_file';
+      case 'StillImageRepresentation':
+        return 'image';
+      case 'TextRepresentation':
+        return 'text_snippet';
+      case 'WithoutRepresentation':
+      default: // resource does not have a file representation
+        return 'insert_drive_file';
+    }
+  }
 
   isSelected$ = this._router.events.pipe(
     filter(event => event instanceof NavigationEnd),
@@ -90,93 +99,23 @@ export class ResourceClassSidenavItemComponent implements OnInit, OnDestroy {
             params[RouteConstants.ontologyParameter],
             params[RouteConstants.classParameter]
           );
-          return this.resClass.id === selectedResClassId;
+          return this.iri === selectedResClassId;
         })
       );
     })
   );
 
   constructor(
-    private readonly _cd: ChangeDetectorRef,
     private readonly _ontologyService: OntologyService,
-    private readonly _localizationService: LocalizationService,
-    private readonly _translateService: TranslateService,
     private readonly _projectPageService: ProjectPageService,
     private readonly _router: Router,
-    private readonly _route: ActivatedRoute,
-    private readonly _resClassCountApi: ResourceClassCountApi,
-    private readonly _dataBrowserPageService: DataBrowserPageService
+    private readonly _route: ActivatedRoute
   ) {}
 
   selectResourceClass() {
-    this._router.navigate([this.ontologyLabel, this.classLabel], { relativeTo: this._route });
-  }
-
-  ngOnInit(): void {
-    this.icon = this._getIcon();
-
-    this._translateService.onLangChange.pipe(startWith(null), takeUntil(this.destroyed)).subscribe(() => {
-      this.getOntologiesLabelsInPreferredLanguage();
-      this.getOntologiesDescriptionInPreferredLanguage();
-    });
-
-    const [ontologyIri, className] = this.resClass.id.split('#');
+    const [ontologyIri, className] = this.iri.split('#');
     const ontologyName = OntologyService.getOntologyNameFromIri(ontologyIri);
 
-    this.ontologyLabel = ontologyName;
-    this.classLabel = className;
-
-    this._loadData();
-  }
-
-  ngOnDestroy(): void {
-    this.destroyed.next();
-    this.destroyed.complete();
-  }
-
-  private _loadData() {
-    this.count$ = this._dataBrowserPageService.onNavigationReload$.pipe(
-      switchMap(() => this._resClassCountApi.getResourceClassCount(this.resClass.id)),
-      finalize(() => {
-        this.loading = false;
-      })
-    );
-  }
-
-  private getOntologiesLabelsInPreferredLanguage(): void {
-    if (this.resClass.labels) {
-      const label = this.resClass.labels.find(l => l.language === this._localizationService.getCurrentLanguage());
-      this.ontologiesLabel = label ? label.value : this.resClass.labels[0].value;
-      this._cd.markForCheck();
-    }
-  }
-
-  private getOntologiesDescriptionInPreferredLanguage(): void {
-    if (this.resClass.comments) {
-      const description = this.resClass.comments.find(
-        l => l.language === this._localizationService.getCurrentLanguage()
-      );
-      this.ontologiesDescription = description ? description.value : this.resClass.comments[0]?.value;
-      this._cd.detectChanges();
-    }
-  }
-
-  private _getIcon(): string {
-    switch (this.resClass.subClassOf[0]) {
-      case Constants.AudioRepresentation:
-        return 'audio_file';
-      case Constants.ArchiveRepresentation:
-        return 'folder_zip';
-      case Constants.DocumentRepresentation:
-        return 'description';
-      case Constants.MovingImageRepresentation:
-        return 'video_file';
-      case Constants.StillImageRepresentation:
-        return 'image';
-      case Constants.TextRepresentation:
-        return 'text_snippet';
-      default: // resource does not have a file representation
-        return 'insert_drive_file';
-    }
+    this._router.navigate([ontologyName, className], { relativeTo: this._route });
   }
 }

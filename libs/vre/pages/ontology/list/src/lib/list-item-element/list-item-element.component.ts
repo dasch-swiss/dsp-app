@@ -25,7 +25,7 @@ import { ListItemComponent } from '../list-item/list-item.component';
       <div style="flex: 1">
         <div (mouseenter)="mouseEnter()" (mouseleave)="mouseLeave()" style="position: relative">
           <app-multi-language-input
-            [placeholder]="node.labels | appStringifyStringLiteral: true | appTruncate: 128"
+            [placeholder]="node.labels | appStringifyStringLiteral | appTruncate: 128"
             [editable]="false"
             [formArray]="readOnlyFormArray"
             [validators]="[]"
