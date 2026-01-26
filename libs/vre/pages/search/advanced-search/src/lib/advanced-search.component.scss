@@ -1,0 +1,67 @@
+.flex-space-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.margin-top-1em {
+  margin-top: 1em;
+}
+
+.margin-bottom-1em {
+  margin-bottom: 1em;
+}
+
+.width-90-percent {
+  width: 90%;
+}
+
+.max-width-100em {
+  max-width: 100em;
+}
+
+.min-width-20em {
+  min-width: 20em;
+}
+
+.min-width-25em {
+  min-width: 25em;
+}
+
+.min-width-30em {
+  min-width: 30em;
+}
+
+.width-100-percent {
+  width: 100%;
+}
+
+.flex-grow-1 {
+  flex-grow: 1;
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-end {
+  justify-content: flex-end;
+}
+
+.gap-05em {
+  gap: 0.5em;
+}
+
+.width-30-percent {
+  width: 30%;
+}
+
+.width-40-percent {
+  width: 40%;
+}
+
+.is-dimmed {
+  opacity: 0.4;
+}:hover {
+  opacity: 1;
+}

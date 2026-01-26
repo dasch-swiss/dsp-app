@@ -372,7 +372,8 @@
         "resourcesMustBeSameProject": "Les ressources doivent appartenir au même projet"
       },
       "resourcesList": {
-        "backToSearchForm": "Retour au formulaire de recherche"
+        "backToSearchForm": "Retour au formulaire de recherche",
+        "resultsCount": "{{count}} résultats"
       },
       "resourcesListFetcher": {
         "noResourcesFound": "Aucune ressource trouvée pour cette classe.",

@@ -18,7 +18,7 @@ import { ProjectPageService } from '../../project-page.service';
     @if (data$ | async; as data) {
       @if (userCanViewResources) {
         @if (data.resources.length > 0) {
-          <app-resources-list [resources]="data.resources" [showBackToFormButton]="false" />
+          <app-resources-list [resources]="data.resources" />
         } @else {
           <app-centered-message [message]="'pages.dataBrowser.resourcesListFetcher.noResourcesFound' | translate" />
         }
