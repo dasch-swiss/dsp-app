@@ -1,0 +1,45 @@
+<div class="parent-property-container">
+  <div class="form-fields-container">
+    <div class="dropdown-container">
+      <div class="content">
+        <mat-form-field>
+          <mat-label>Data model</mat-label>
+          <mat-select
+            #ontologiesList
+            (selectionChange)="onSelectedOntologyChanged()"
+            name="ontologies"
+            appearance="fill"
+            [compareWith]="compareApiDataObjects">
+            @if (ontologiesLoading) {
+            <mat-option disabled="true">Loading...</mat-option>
+            } @if (!ontologiesLoading) { @for (onto of ontologies; track onto) {
+            <mat-option [value]="onto"> {{ onto.label }} </mat-option>
+            } }
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+    <div class="dropdown-container">
+      <div class="content">
+        <mat-form-field>
+          <mat-label>Resource class (optional)</mat-label>
+          <mat-select
+            #resourceClassesList
+            (selectionChange)="onSelectedResourceClassChanged()"
+            name="resourceClass"
+            appearance="fill"
+            [compareWith]="compareApiDataObjects">
+            @if (resourceClassesLoading) {
+            <mat-option disabled="true">Loading...</mat-option>
+            } @if (!resourceClassesLoading) {
+            <mat-option>None</mat-option>
+            @for (class of resourceClasses; track class) {
+            <mat-option [value]="class"> {{ class.label }} </mat-option>
+            } }
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+  </div>
+  <div class="side-container"></div>
+</div>

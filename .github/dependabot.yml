@@ -79,6 +79,7 @@ updates:
       - dependency-name: "@angular-eslint/*"
       - dependency-name: "@schematics/angular"
       - dependency-name: "typescript"
+      - dependency-name: "@ngrx/component-store"
       - dependency-name: "nx*"
       - dependency-name: "@nx*"
       - dependency-name: "@nrwl/*"

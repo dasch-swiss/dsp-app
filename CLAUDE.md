@@ -271,7 +271,7 @@ constructor(
 this._dspApiConnection.v2.res.getResource(resourceIri, resourceVersion)
 
 // Search operations
-this._dspApiConnection.v2.search.doSearchByLabel(selectedObjectNode, offset, options)
+this._dspApiConnection.v2.search.doSearchByLabel(searchValue, offset, options)
 ```
 
 **Authentication:**

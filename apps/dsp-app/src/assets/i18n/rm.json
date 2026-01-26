@@ -372,8 +372,7 @@
         "resourcesMustBeSameProject": "Resources must be from the same project"
       },
       "resourcesList": {
-        "backToSearchForm": "Back to search form",
-        "resultsCount": "{{count}} results"
+        "backToSearchForm": "Back to search form"
       },
       "resourcesListFetcher": {
         "noResourcesFound": "No resources found for this class.",

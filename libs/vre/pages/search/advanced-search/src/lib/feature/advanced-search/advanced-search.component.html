@@ -1,0 +1,80 @@
+<div class="advanced-search-container">
+  <div class="header">
+    <div class="title">
+      <p>Advanced Search</p>
+    </div>
+    <div class="action-buttons right-margin" style="display: flex; gap: 16px">
+      <a mat-stroked-button [routerLink]="['..', 'search']">
+        <mat-icon>swap_horiz</mat-icon>
+        Switch to regular search
+      </a>
+
+      <button
+        class="previous-search-button"
+        [disabled]="!previousSearchObject"
+        mat-button
+        (click)="loadPreviousSearch()">
+        Use previous search
+      </button>
+    </div>
+  </div>
+  @if ({ ontologies: ontologies$ | async, ontologiesLoading: ontologiesLoading$ | async, resourceClasses:
+  resourceClasses$ | async, resourceClassesLoading: resourceClassesLoading$ | async, searchButtonDisabled:
+  searchButtonDisabled$ | async, propertyFormList: propertyFormList$ | async, propertiesOrderByList:
+  propertiesOrderByList$ | async, propertiesLoading: propertiesLoading$ | async, filteredProperties: filteredProperties$
+  | async, addButtonDisabled: addButtonDisabled$ | async, resetButtonDisabled: resetButtonDisabled$ | async,
+  selectedOntology: selectedOntology$ ? (selectedOntology$ | async) : undefined, selectedResourceClass:
+  selectedResourceClass$ ? (selectedResourceClass$| async) : undefined, matchResourceClassesLoading:
+  matchResourceClassesLoading$ | async, resourcesSearchResultsLoading: resourcesSearchResultsLoading$ | async,
+  resourcesSearchResultsCount: resourcesSearchResultsCount$ | async, resourcesSearchResults: resourcesSearchResults$ |
+  async, resourcesSearchNoResults: resourcesSearchNoResults$ | async, orderByButtonDisabled: orderByButtonDisabled$ |
+  async, }; as asyncData) {
+  <div>
+    <app-order-by
+      [orderByList]="asyncData.propertiesOrderByList"
+      [orderByDisabled]="asyncData.orderByButtonDisabled"
+      (emitPropertyOrderByChanged)="handlePropertyOrderByChanged($event)" />
+    <app-ontology-resource-form
+      [ontologies]="asyncData.ontologies"
+      [ontologiesLoading]="asyncData.ontologiesLoading"
+      [resourceClasses]="asyncData.resourceClasses"
+      [resourceClassesLoading]="asyncData.resourceClassesLoading"
+      [selectedOntology]="asyncData.selectedOntology"
+      [selectedResourceClass]="asyncData.selectedResourceClass"
+      (emitSelectedOntology)="handleSelectedOntology($event)"
+      (emitSelectedResourceClass)="handleSelectedResourceClass($event)" />
+    @for (propertyForm of asyncData.propertyFormList; track propertyForm) {
+    <app-property-form
+      [matchResourceClassesLoading]="asyncData.matchResourceClassesLoading"
+      [resourcesSearchResultsLoading]="asyncData.resourcesSearchResultsLoading"
+      [resourcesSearchResultsCount]="asyncData.resourcesSearchResultsCount"
+      [resourcesSearchResults]="asyncData.resourcesSearchResults"
+      [resourcesSearchNoResults]="asyncData.resourcesSearchNoResults"
+      [propertyFormItem]="propertyForm"
+      [properties]="asyncData.filteredProperties"
+      [propertiesLoading]="asyncData.propertiesLoading"
+      [selectedProperty]="propertyForm.selectedProperty"
+      [selectedOperator]="propertyForm.selectedOperator"
+      (emitRemovePropertyForm)="handleRemovePropertyForm($event)"
+      (emitSelectedPropertyChanged)="handleSelectedPropertyChanged($event)"
+      (emitSelectedOperatorChanged)="handleSelectedOperatorChanged($event)"
+      (emitSelectedMatchPropertyResourceClassChanged)="handleSelectedMatchPropertyResourceClassChanged($event)"
+      (emitSearchValueChanged)="handleSearchValueChanged($event)"
+      (emitResourceSearchValueChanged)="handleResourceSearchValueChanged($event)"
+      (emitLoadMoreSearchResults)="handleLoadMoreSearchResults($event)"
+      (emitAddChildPropertyForm)="handleAddChildPropertyForm($event)"
+      (emitRemoveChildPropertyForm)="handleRemoveChildPropertyForm($event)"
+      (emitChildSelectedPropertyChanged)="handleChildSelectedPropertyChanged($event)"
+      (emitChildSelectedOperatorChanged)="handleChildSelectedOperatorChanged($event)"
+      (emitChildValueChanged)="handleChildValueChanged($event)" />
+    }
+    <app-form-actions
+      [addButtonDisabled]="asyncData.addButtonDisabled"
+      [resetButtonDisabled]="asyncData.resetButtonDisabled"
+      [searchButtonDisabled]="asyncData.searchButtonDisabled"
+      (emitAddPropertyForm)="handleAddPropertyForm()"
+      (emitResetButtonClicked)="handleResetButtonClicked()"
+      (emitSearchButtonClicked)="handleSearchButtonClicked()" />
+  </div>
+  }
+</div>
