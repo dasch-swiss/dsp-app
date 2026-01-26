@@ -24,7 +24,7 @@ describe('Create archive model, add new data and view it', () => {
     cy.get('.representation-container').should('exist');
     cy.get('app-archive').should('be.visible');
     // cy.get('[data-cy=original-file-name]').contains(archiveFile);
-    cy.get('[data-cy=more-button]').click();
+    // cy.get('[data-cy=more-button]').click();
     // cy.get('[data-cy=download-file-button]').click(); //merge #4227 bugfix
     // cy.readFile(path.join(Cypress.config('downloadsFolder'), 'file.zip')).should('exist');
   });

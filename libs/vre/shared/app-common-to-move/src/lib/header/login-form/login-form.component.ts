@@ -39,6 +39,7 @@ import { PasswordFormFieldComponent } from '../password-form/password-form-field
         display: flex;
         flex-direction: column;
         padding: 16px;
+        width: 300px;
       }
 
       .login-error {

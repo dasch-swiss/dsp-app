@@ -3,30 +3,35 @@
   (mouseleave)="classHovered = false"
   data-cy="class-card"
   appearance="outlined"
-  class="resource-class"
   cdkDrag
   cdkDragBoundary=".drag-drop-stop">
-  <mat-card-header class="resource-class-header" cdkDragHandle>
-    <mat-card-title [matTooltip]="this.resourceClass.comments | appStringifyStringLiteral" matTooltipPosition="above">
-      {{ this.resourceClass.labels | appStringifyStringLiteral | appTruncate: 56 }}
-    </mat-card-title>
-    <mat-card-subtitle>
-      <span class="mat-caption class-name"> {{ resourceClass.name }} </span>
-      <span class="mat-caption">&nbsp;&middot;&nbsp;</span>
-      <span class="mat-caption" data-cy="class-type-label"
-        >@if (resourceClass.defaultClassIcon) {
-        <mat-icon>{{ resourceClass.defaultClassIcon }}</mat-icon>
-        } {{ resourceClass.defaultClassLabel }}
-      </span>
-    </mat-card-subtitle>
-    <span class="resource-class-header-action">
+  <mat-card-header cdkDragHandle>
+    <div style="flex: 1">
+      <mat-card-title [matTooltip]="this.resourceClass.comments | appStringifyStringLiteral" matTooltipPosition="above">
+        {{ this.resourceClass.labels | appStringifyStringLiteral | appTruncate: 56 }}
+      </mat-card-title>
+      <mat-card-subtitle>
+        <span class="mat-caption">
+          <span> {{ resourceClass.name }} </span>
+          <span>&nbsp;&middot;&nbsp;</span>
+          <span data-cy="class-type-label"
+            >@if (resourceClass.defaultClassIcon) {
+            <mat-icon
+              style="width: 14px; height: 14px; font-size: 14px; line-height: 14px; position: relative; top: 2px"
+              >{{ resourceClass.defaultClassIcon }}</mat-icon
+            >
+            } {{ resourceClass.defaultClassLabel }}
+          </span>
+        </span>
+      </mat-card-subtitle>
+    </div>
+    <span>
       @if ((project$ | async)?.status) {
-      <span class="resource-class-more">
+      <span>
         @if (classHovered || menuOpen) {
         <button
           mat-icon-button
           [matMenuTriggerFor]="resClassMenu"
-          class="res-class-menu"
           data-cy="more-button"
           (menuOpened)="menuOpen = true"
           (menuClosed)="menuOpen = false"
@@ -37,7 +42,6 @@
       </span>
       }
       <span
-        class="resource-class-size"
         [matTooltip]="
           expandClasses
             ? (_translate.instant('pages.ontology.resourceClassInfo.collapse'))
@@ -51,9 +55,9 @@
   </mat-card-header>
   <!-- resource class card content with list of properties -->
   @if (expandClasses) {
-  <mat-card-content class="resource-class-content">
+  <mat-card-content>
     @if (resourceClass.properties?.length) {
-    <mat-list cdkDropList class="resource-class-properties" (cdkDropListDropped)="onPropertyDropped($event)">
+    <mat-list cdkDropList (cdkDropListDropped)="onPropertyDropped($event)">
       @for (prop of resourceClass.properties; track trackByPropToDisplayFn(i, prop); let i = $index) {
       <app-property-item [classProp]="prop" (cardinalityChange)="onCardinalityChange($event)" />
       }
@@ -69,7 +73,7 @@
 
 <mat-menu #resClassMenu="matMenu" xPosition="before">
   @if ((hasProjectAdminRights$ | async) === true && (project$ | async)?.status === true) {
-  <button mat-menu-item class="res-class-edit" data-cy="edit-button" (click)="editResourceClassInfo()">
+  <button mat-menu-item data-cy="edit-button" (click)="editResourceClassInfo()">
     <mat-icon>edit</mat-icon>
     {{ 'pages.ontology.resourceClassInfo.edit' | translate }}
   </button>
@@ -95,7 +99,6 @@
     [disabled]="!classCanBeDeleted"
     (click)="deleteResourceClass()"
     mat-menu-item
-    class="res-class-delete"
     data-cy="delete-button">
     <mat-icon>delete</mat-icon>
     {{ 'pages.ontology.resourceClassInfo.delete' | translate }}

@@ -17,7 +17,6 @@ import { LicenseCaptionsMapping } from './license-captions-mapping';
 @Component({
   selector: 'app-project-description-page',
   templateUrl: './project-description-page.component.html',
-  styleUrls: ['./project-description-page.component.scss'],
   imports: [
     AsyncPipe,
     UpperCasePipe,

@@ -1,63 +1,57 @@
-@if ((isListsLoading$ | async)) {
-<div class="overlay-blocker">
-  <app-progress-indicator-overlay class="floating-center" />
-</div>
-} @if ((isListsLoading$ | async) === false && (rootListNodeInfo$ | async); as list) {
-<mat-toolbar class="sticky-header">
-  <mat-toolbar-row class="list-editor-header">
-    <a
-      class="back-button"
-      mat-button
-      (click)="navigateToDataModels()"
-      [matTooltip]="'pages.ontology.list.backToDataModels' | translate">
-      <mat-icon class="centered-icon">chevron_left</mat-icon>
-    </a>
-    <div class="list-info">
-      <h3
-        class="mat-headline-6"
-        [matTooltip]="list.labels | appStringifyStringLiteral"
-        matTooltipPosition="above"
-        data-cy="label-title">
-        {{ list.labels | appStringifyStringLiteral }}
-      </h3>
-      <p
-        class="mat-body"
-        [matTooltip]="list.comments | appStringifyStringLiteral"
-        matTooltipPosition="above"
-        data-cy="comment-title">
-        {{ list.comments | appStringifyStringLiteral | appTruncate:64 }}
-      </p>
-    </div>
-    <span class="fill-remaining-space"></span>
-    @if ((hasProjectAdminRights$ | async) === true) {
-    <div>
-      <button
-        color="primary"
-        mat-button
-        [disabled]="(project$ | async)?.status !== true"
-        (click)="editList(list!)"
-        [matTooltip]="'pages.ontology.list.editInfo' | translate"
-        data-cy="edit-button">
-        <mat-icon>edit</mat-icon>
-        {{ 'ui.common.actions.edit' | translate }}
-      </button>
-      <button
-        color="warn"
-        mat-button
-        [disabled]="(project$ | async)?.status !== true"
-        (click)="askToDeleteList(list)"
-        [matTooltip]="'pages.ontology.list.deleteList' | translate"
-        data-cy="delete-button">
-        <mat-icon>delete</mat-icon>
-        {{ 'ui.common.actions.delete' | translate }}
-      </button>
-    </div>
-    }
-  </mat-toolbar-row>
-</mat-toolbar>
-<div class="content large middle scroll">
+<app-centered-layout>
+  @if ((isListsLoading$ | async)) {
+  <div class="overlay-blocker">
+    <app-progress-indicator-overlay class="floating-center" />
+  </div>
+  } @if ((isListsLoading$ | async) === false && (rootListNodeInfo$ | async); as list) {
+  <mat-toolbar style="margin-bottom: 48px">
+    <mat-toolbar-row>
+      <a mat-button (click)="navigateToDataModels()" [matTooltip]="'pages.ontology.list.backToDataModels' | translate">
+        <mat-icon class="centered-icon">chevron_left</mat-icon>
+      </a>
+      <div style="display: flex; flex-direction: column; flex: 1">
+        <h3
+          class="mat-headline-6"
+          [matTooltip]="list.labels | appStringifyStringLiteral"
+          matTooltipPosition="above"
+          data-cy="label-title">
+          {{ list.labels | appStringifyStringLiteral }}
+        </h3>
+        <span
+          class="mat-body"
+          [matTooltip]="list.comments | appStringifyStringLiteral"
+          matTooltipPosition="above"
+          data-cy="comment-title">
+          {{ list.comments | appStringifyStringLiteral | appTruncate:64 }}
+        </span>
+      </div>
+      @if ((hasProjectAdminRights$ | async) === true) {
+      <div>
+        <button
+          color="primary"
+          mat-button
+          [disabled]="(project$ | async)?.status !== true"
+          (click)="editList(list!)"
+          [matTooltip]="'pages.ontology.list.editInfo' | translate"
+          data-cy="edit-button">
+          <mat-icon>edit</mat-icon>
+          {{ 'ui.common.actions.edit' | translate }}
+        </button>
+        <button
+          color="warn"
+          mat-button
+          [disabled]="(project$ | async)?.status !== true"
+          (click)="askToDeleteList(list)"
+          [matTooltip]="'pages.ontology.list.deleteList' | translate"
+          data-cy="delete-button">
+          <mat-icon>delete</mat-icon>
+          {{ 'ui.common.actions.delete' | translate }}
+        </button>
+      </div>
+      }
+    </mat-toolbar-row>
+  </mat-toolbar>
   @if (((isListsLoading$ | async) === false)) {
   <app-list-item [node]="list" [isAdmin]="(hasProjectAdminRights$ | async) === true" />
-  }
-</div>
-}
+  } }
+</app-centered-layout>

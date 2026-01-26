@@ -14,6 +14,7 @@
   line-height: normal;
   padding: 16px;
   margin-right: 16px;
+  overflow-wrap: break-word;
 }
 
 .hidden {
@@ -22,4 +23,8 @@
 
 .value.with-styling {
   padding: 16px;
+}
+
+.border-bottom {
+  border-bottom: 1px solid rgba($primary, 0.1);
 }

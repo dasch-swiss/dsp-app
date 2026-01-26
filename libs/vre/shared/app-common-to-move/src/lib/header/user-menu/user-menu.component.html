@@ -9,7 +9,7 @@
   {{ 'pages.userSettings.userMenu.login' | translate }}
 </button>
 }
-<mat-menu #loginForm xPosition="before" class="form-menu">
+<mat-menu #loginForm xPosition="before">
   <app-login-form (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()" />
 </mat-menu>
 

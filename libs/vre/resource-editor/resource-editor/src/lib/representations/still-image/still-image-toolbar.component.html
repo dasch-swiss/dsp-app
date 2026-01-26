@@ -75,7 +75,7 @@
       data-cy="zoom-reset"
       [matTooltip]="'resourceEditor.representations.stillImage.resetZoom' | translate"
       (click)="osd.viewer.viewport.goHome()">
-      <mat-icon>other_houses</mat-icon>
+      <mat-icon>youtube_searched_for</mat-icon>
     </div>
 
     <div
@@ -89,11 +89,11 @@
 </div>
 
 <mat-menu #more="matMenu" class="representation-menu">
-  <a class="menu-content" mat-menu-item [href]="imageFileValue.fileUrl" target="_blank" data-cy="open-iiif-new-tab">
+  <a mat-menu-item [href]="imageFileValue.fileUrl" target="_blank" data-cy="open-iiif-new-tab">
     {{ 'resourceEditor.representations.stillImage.openIiifInNewTab' | translate }}
   </a>
   @if (resourceFetcherService.userCanEdit$ | async) {
-  <button class="menu-content" data-cy="replace-image-button" mat-menu-item (click)="replaceImage()">
+  <button data-cy="replace-image-button" mat-menu-item (click)="replaceImage()">
     {{ 'resourceEditor.representations.replaceFile' | translate }}
   </button>
   }
@@ -118,7 +118,7 @@
   </button>
 </mat-menu>
 <mat-menu #settings="matMenu" class="settings-menu">
-  <button class="menu-content" data-cy="jpg-button" mat-menu-item (click)="imageIsPng.emit(false)">
+  <button data-cy="jpg-button" mat-menu-item (click)="imageIsPng.emit(false)">
     @if (!isPng) {
     <mat-icon>check</mat-icon>
     } JPG

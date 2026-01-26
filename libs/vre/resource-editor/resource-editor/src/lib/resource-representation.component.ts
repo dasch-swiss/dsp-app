@@ -5,58 +5,85 @@ import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { ArchiveComponent } from './representations/archive/archive.component';
 import { AudioComponent } from './representations/audio/audio.component';
 import { DocumentComponent } from './representations/document/document.component';
+import { PdfDocumentComponent } from './representations/document/pdf-document.component';
 import { getFileValue } from './representations/get-file-value';
 import { RepresentationConstants } from './representations/representation-constants';
 import { StillImageComponent } from './representations/still-image/still-image.component';
 import { TextComponent } from './representations/text/text.component';
 import { VideoComponent } from './representations/video/video.component';
+import { ResourceRepresentationContainerComponent } from './resource-representation-container.component';
 
 @Component({
   selector: 'app-resource-representation',
-  template: ` <div class="representation-container center">
+  template: `
     @switch (fileValue.type) {
       @case (representationConstants.stillImage) {
-        <app-still-image
-          #stillImage
-          class="dsp-representation stillimage"
-          [compoundMode]="false"
-          [resource]="resource.res" />
+        <app-resource-representation-container>
+          <app-still-image #stillImage [compoundMode]="false" [resource]="resource.res" />
+        </app-resource-representation-container>
       }
       @case (representationConstants.externalStillImage) {
-        <app-still-image
-          #stillImage
-          [compoundMode]="false"
-          class="dsp-representation stillimage"
-          [resource]="resource.res" />
+        <app-resource-representation-container>
+          <app-still-image #stillImage [compoundMode]="false" [resource]="resource.res" />
+        </app-resource-representation-container>
       }
       @case (representationConstants.document) {
-        <app-document
-          #document
-          class="dsp-representation document"
-          [class.pdf]="fileValue.filename.split('.').pop() === 'pdf'"
-          [src]="fileValue"
-          [parentResource]="resource.res" />
+        @if (isPdf) {
+          <app-resource-representation-container>
+            <app-pdf-document #document [src]="fileValue" [parentResource]="resource.res" />
+          </app-resource-representation-container>
+        } @else {
+          <app-resource-representation-container height="small">
+            <app-document #document [src]="fileValue" [parentResource]="resource.res" />
+          </app-resource-representation-container>
+        }
       }
       @case (representationConstants.audio) {
-        <app-audio #audio class="dsp-representation audio" [src]="fileValue" [parentResource]="resource.res" />
+        <app-resource-representation-container height="small">
+          <app-audio #audio [src]="fileValue" [parentResource]="resource.res" />
+        </app-resource-representation-container>
       }
       @case (representationConstants.movingImage) {
-        <app-video #video class="dsp-representation video" [src]="fileValue" [parentResource]="resource.res" />
+        <app-resource-representation-container height="auto">
+          <app-video #video [src]="fileValue" [parentResource]="resource.res" />
+        </app-resource-representation-container>
       }
       @case (representationConstants.archive) {
-        <app-archive #archive class="dsp-representation archive" [src]="fileValue" [parentResource]="resource.res" />
+        <app-resource-representation-container height="small">
+          <app-archive #archive [src]="fileValue" [parentResource]="resource.res" />
+        </app-resource-representation-container>
       }
       @case (representationConstants.text) {
-        <app-text #text class="dsp-representation text" [src]="fileValue" [parentResource]="resource.res" />
+        <app-resource-representation-container height="small">
+          <app-text #text [src]="fileValue" [parentResource]="resource.res" />
+        </app-resource-representation-container>
       }
     }
-  </div>`,
-  imports: [ArchiveComponent, AudioComponent, DocumentComponent, StillImageComponent, TextComponent, VideoComponent],
+  `,
+  imports: [
+    ArchiveComponent,
+    AudioComponent,
+    DocumentComponent,
+    PdfDocumentComponent,
+    StillImageComponent,
+    TextComponent,
+    VideoComponent,
+    ResourceRepresentationContainerComponent,
+  ],
 })
 export class ResourceRepresentationComponent implements OnChanges {
   @Input({ required: true }) resource!: DspResource;
 
   fileValue!: ReadFileValue | null;
+
+  get fileExtension() {
+    return this.fileValue?.filename.split('.').pop();
+  }
+
+  get isPdf() {
+    return this.fileExtension === 'pdf';
+  }
+
   loading = false;
   protected readonly representationConstants = RepresentationConstants;
 

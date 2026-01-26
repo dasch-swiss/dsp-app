@@ -15,8 +15,9 @@ import { ResourceFetcherService } from '../representations/resource-fetcher.serv
   template: ` <app-dialog-header
       [title]="'resourceEditor.propertiesDisplay.deleteResource.title' | translate"
       [subtitle]="data.label" />
-    <mat-dialog-content class="form-content">
-      <mat-form-field class="large-field">
+
+    <mat-dialog-content>
+      <mat-form-field style="width: 100%">
         <mat-label>{{ 'resourceEditor.propertiesDisplay.deleteResource.label' | translate }}</mat-label>
         <textarea
           data-cy="app-delete-resource-dialog-comment"
@@ -26,17 +27,16 @@ import { ResourceFetcherService } from '../representations/resource-fetcher.serv
           [placeholder]="'resourceEditor.propertiesDisplay.deleteResource.placeholder' | translate"></textarea>
       </mat-form-field>
     </mat-dialog-content>
-    <mat-dialog-actions>
-      <button mat-button color="primary" mat-dialog-close class="cancel-button center">
+
+    <mat-dialog-actions align="end">
+      <button mat-button color="primary" mat-dialog-close>
         {{ 'resourceEditor.propertiesDisplay.deleteResource.noKeep' | translate }}
       </button>
-      <span class="fill-remaining-space"></span>
       <button
         data-cy="app-delete-resource-dialog-button"
         mat-button
         mat-raised-button
         [color]="'warn'"
-        class="confirm-button center"
         (click)="submit()">
         {{ 'resourceEditor.propertiesDisplay.deleteResource.yesDelete' | translate }}
       </button>

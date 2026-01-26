@@ -68,15 +68,3 @@
     }
   }
 }
-
-// phone devices
-@media (max-width: map.get($grid-breakpoints, phone)) {
-  .app-grid {
-    margin: 50px -15px 0 0;
-    width: 100%;
-
-    .app-grid-item {
-      margin: 12px 0;
-    }
-  }
-}

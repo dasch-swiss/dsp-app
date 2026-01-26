@@ -30,7 +30,7 @@ import { SegmentsService } from './segment-support/segments.service';
     @if (isCompoundNavigation) {
       <app-compound-viewer />
     }
-    <app-resource-tabs [resource]="resource" />
+    <app-resource-tabs [resource]="resource" style="display: block; margin-top: 50px" />
   `,
   providers: [CompoundService, PropertiesDisplayService, RegionService, SegmentsService],
   imports: [

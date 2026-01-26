@@ -16,6 +16,7 @@ import {
   EditProjectFormPageComponent,
   ImageSettingsComponent,
   LegalSettingsComponent,
+  ProjectAdminGuard,
   ProjectPageComponent,
   ProjectPageGuard,
   ResourceMetadataComponent,
@@ -36,9 +37,10 @@ import {
 } from '@dasch-swiss/vre/pages/system/system';
 import { AccountComponent, ProjectOverviewComponent, UserComponent } from '@dasch-swiss/vre/pages/user-settings/user';
 import { SingleResourcePageComponent } from '@dasch-swiss/vre/resource-editor/resource-editor';
-import { StatusComponent } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { HelpPageComponent } from '@dasch-swiss/vre/shared/app-help-page';
+import { NoResultsFoundComponent, NoResultsFoundPageComponent, NotAllowedPageComponent } from '@dasch-swiss/vre/ui/ui';
 import { AuthGuard } from './main/guard/auth.guard';
+import { SysAdminGuard } from './main/guard/sys-admin.guard';
 
 export const routes: Routes = [
   {
@@ -92,7 +94,7 @@ export const routes: Routes = [
       {
         path: RouteConstants.settings,
         component: SettingsPageComponent,
-        canActivate: [AuthGuard],
+        canActivate: [ProjectAdminGuard],
         children: [
           {
             path: RouteConstants.home,
@@ -130,11 +132,6 @@ export const routes: Routes = [
         component: AdvancedSearchResultsPageComponent,
       },
       { path: RouteConstants.advancedSearch, component: AdvancedSearchPageComponent },
-      {
-        path: RouteConstants.notFoundWildcard,
-        component: StatusComponent,
-        data: { status: RouteConstants.notFound },
-      },
     ],
   },
   {
@@ -173,7 +170,7 @@ export const routes: Routes = [
       {
         path: RouteConstants.system,
         component: SystemPageComponent,
-        canActivate: [AuthGuard],
+        canActivate: [SysAdminGuard],
         children: [
           {
             path: '',
@@ -199,14 +196,17 @@ export const routes: Routes = [
         component: CookiePolicyComponent,
       },
       {
-        path: RouteConstants.notFound,
-        component: StatusComponent,
-        data: { status: RouteConstants.notFound },
+        path: RouteConstants.notAllowed,
+        component: NotAllowedPageComponent,
       },
       {
+        path: RouteConstants.notFound,
+        component: NoResultsFoundPageComponent,
+      },
+      // Wildcard route - must be last. Catches all unmatched routes
+      {
         path: RouteConstants.notFoundWildcard,
-        component: StatusComponent,
-        data: { status: RouteConstants.notFound },
+        redirectTo: RouteConstants.notFound,
       },
     ],
   },

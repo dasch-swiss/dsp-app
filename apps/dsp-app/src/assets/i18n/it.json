@@ -333,6 +333,10 @@
         "classCreated": "La classe {{classLabel}} è stata creata con successo."
       }
     },
+    "notAllowed": {
+      "title": "Accesso negato",
+      "message": "Non sei autorizzato a vedere questa pagina."
+    },
     "search": {
       "propertyFormListValue": "Seleziona un elemento",
       "fullTextSearch": {
@@ -782,6 +786,7 @@
   "shared": {
     "status": {
       "representationError": "Si è verificato un errore durante il caricamento della rappresentazione del file {{type}}. Prova ad aprirlo direttamente cliccando sull'URL del file qui sotto:",
+      "resourceNotLoaded": "La risorsa non è stata caricata.",
       "responseInDetail": "Risposta in dettaglio",
       "goBackToStartPage": "Torna alla pagina iniziale.",
       "reloadPrompt": "Torna tra qualche minuto e prova a <a (click)=\"reload()\">ricaricare la pagina</a>."

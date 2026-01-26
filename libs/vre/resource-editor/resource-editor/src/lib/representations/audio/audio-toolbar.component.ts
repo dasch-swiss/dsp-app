@@ -20,7 +20,7 @@ import { AudioMoreButtonComponent } from './audio-more-button.component';
   selector: 'app-audio-toolbar',
   imports: [AsyncPipe, MatIconButton, MatIcon, MatToolbarRow, AudioMoreButtonComponent],
   template: `
-    <mat-toolbar-row style="background: black; color: white; justify-content: space-between">
+    <mat-toolbar-row style="background: #292929; color: white; justify-content: space-between">
       <div>
         <button data-cy="play-pause-button" mat-icon-button (click)="mediaPlayer.togglePlay()">
           <mat-icon>{{ mediaPlayer.isPaused() ? 'play_arrow' : 'pause' }}</mat-icon>

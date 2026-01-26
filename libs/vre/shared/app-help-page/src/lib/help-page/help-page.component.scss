@@ -36,3 +36,22 @@ a.middle {
   flex-direction: column;
   align-items: center;
 }
+
+// for development only: display badge with release and environment
+.development {
+
+  &.hint {
+    border-radius: 4px;
+
+    &.accent {
+      background-color: $yellow !important;
+      color: $yellow_contrast;
+    }
+
+    &.warn {
+      background-color: $red !important;
+      color: $red_contrast;
+    }
+  }
+
+}

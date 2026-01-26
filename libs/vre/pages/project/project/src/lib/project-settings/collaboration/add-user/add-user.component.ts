@@ -49,12 +49,11 @@ import { CollaborationPageService } from '../collaboration-page.service';
         </mat-autocomplete>
       </mat-form-field>
 
-      <button mat-raised-button color="primary" class="add-new create-user-btn" (click)="createUser()">
+      <button mat-raised-button color="primary" (click)="createUser()">
         {{ 'pages.project.addUser.newUser' | translate }}
       </button>
     </div>
   `,
-  styleUrls: ['./add-user.component.scss'],
   imports: [
     AsyncPipe,
     ReactiveFormsModule,

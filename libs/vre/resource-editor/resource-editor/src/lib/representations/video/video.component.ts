@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import {
   ChangeDetectorRef,
   Component,
@@ -12,16 +13,16 @@ import {
 } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { ReadMovingImageFileValue, ReadResource } from '@dasch-swiss/dsp-js';
-import { StatusComponent } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { AppProgressIndicatorComponent } from '@dasch-swiss/vre/ui/progress-indicator';
 import { TranslateService } from '@ngx-translate/core';
-import { Subject, takeUntil } from 'rxjs';
+import { catchError, EMPTY, Subject, takeUntil } from 'rxjs';
 import { MediaControlService } from '../../segment-support/media-control.service';
 import { SegmentsDisplayComponent } from '../../segment-support/segments-display.component';
 import { SegmentsService } from '../../segment-support/segments.service';
 import { MediaSliderComponent } from '../audio/media-slider.component';
 import { MovingImageSidecar } from '../moving-image-sidecar';
+import { RepresentationErrorMessageComponent } from '../representation-error-message.component';
 import { RepresentationService } from '../representation.service';
 import { DisableContextMenuDirective } from './disable-context-menu.directive';
 import { MediaPlayerService } from './media-player.service';
@@ -34,12 +35,12 @@ import { VideoToolbarComponent } from './video-toolbar.component';
   providers: [MediaControlService, MediaPlayerService],
   imports: [
     DisableContextMenuDirective,
-    StatusComponent,
     AppProgressIndicatorComponent,
     VideoOverlayComponent,
     MediaSliderComponent,
     SegmentsDisplayComponent,
     VideoToolbarComponent,
+    RepresentationErrorMessageComponent,
   ],
 })
 export class VideoComponent implements OnChanges, OnDestroy {
@@ -52,9 +53,7 @@ export class VideoComponent implements OnChanges, OnDestroy {
   start = 0;
   video?: SafeUrl;
   videoError?: string;
-  timelineDimension?: DOMRect;
   myCurrentTime = 0;
-  previewTime = 0;
   duration = 0;
   watchForPause: number | null = null;
   isPlayerReady = false;
@@ -63,6 +62,7 @@ export class VideoComponent implements OnChanges, OnDestroy {
   readonly frameWidth = 160;
   readonly halfFrameWidth: number = Math.round(this.frameWidth / 2);
   private _ngUnsubscribe = new Subject<void>();
+  private _currentBlobUrl: string | null = null;
 
   private readonly _translateService = inject(TranslateService);
 
@@ -72,6 +72,7 @@ export class VideoComponent implements OnChanges, OnDestroy {
 
   constructor(
     private readonly _sanitizer: DomSanitizer,
+    private readonly _http: HttpClient,
     public mediaControl: MediaControlService,
     private readonly _notification: NotificationService,
     public segmentsService: SegmentsService,
@@ -86,10 +87,43 @@ export class VideoComponent implements OnChanges, OnDestroy {
     this._watchForMediaEvents();
     this.segmentsService.onInit(this.parentResource.id, 'VideoSegment');
     this.videoError = '';
-    this.video = this._sanitizer.bypassSecurityTrustUrl(this.src.fileUrl);
-    this._rs.getFileInfo(this.src.fileUrl).subscribe(file => {
-      this.fileInfo = file as MovingImageSidecar;
-    });
+
+    // Fetch video file as blob with credentials to ensure httpOnly cookies are sent
+    this._http
+      .get(this.src.fileUrl, {
+        responseType: 'blob',
+        withCredentials: true,
+      })
+      .subscribe({
+        next: blob => {
+          // Revoke previous blob URL to prevent memory leaks
+          if (this._currentBlobUrl) {
+            URL.revokeObjectURL(this._currentBlobUrl);
+          }
+
+          // Create new blob URL and store reference for cleanup
+          this._currentBlobUrl = URL.createObjectURL(blob);
+          this.video = this._sanitizer.bypassSecurityTrustUrl(this._currentBlobUrl);
+          this._cdr.detectChanges();
+        },
+        error: () => {
+          this.videoError = this._translateService.instant('resourceEditor.representations.video.errors.unknownError');
+          this._cdr.detectChanges();
+        },
+      });
+
+    this._rs
+      .getFileInfo(this.src.fileUrl)
+      .pipe(
+        takeUntil(this._ngUnsubscribe),
+        catchError(error => {
+          console.error('Failed to load file info:', error);
+          return EMPTY;
+        })
+      )
+      .subscribe(file => {
+        this.fileInfo = file as MovingImageSidecar;
+      });
   }
 
   onVideoPlayerReady() {
@@ -101,7 +135,7 @@ export class VideoComponent implements OnChanges, OnDestroy {
     this.isPlayerReady = true;
     this.loaded.emit(true);
     this.mediaControl.mediaDurationSecs = this.videoPlayer.duration();
-    this.videoPlayer.onTimeUpdate$.subscribe(seconds => {
+    this.videoPlayer.onTimeUpdate$.pipe(takeUntil(this._ngUnsubscribe)).subscribe(seconds => {
       this.myCurrentTime = seconds;
       this._cdr.detectChanges();
 
@@ -114,6 +148,12 @@ export class VideoComponent implements OnChanges, OnDestroy {
 
   ngOnDestroy() {
     this._ngUnsubscribe.next();
+
+    // Revoke blob URL to prevent memory leaks
+    if (this._currentBlobUrl) {
+      URL.revokeObjectURL(this._currentBlobUrl);
+      this._currentBlobUrl = null;
+    }
   }
 
   handleVideoError(event: ErrorEvent) {
@@ -169,7 +209,7 @@ export class VideoComponent implements OnChanges, OnDestroy {
       this.videoPlayer.play();
     });
 
-    this.mediaControl.watchForPause$.subscribe(seconds => {
+    this.mediaControl.watchForPause$.pipe(takeUntil(this._ngUnsubscribe)).subscribe(seconds => {
       this.watchForPause = seconds;
     });
   }

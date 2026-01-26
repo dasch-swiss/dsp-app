@@ -1,21 +1,17 @@
-<app-centered-layout>
-  <div class="data-models-container" data-cy="data-models-container">
-    <div class="header">
-      <p class="title">{{ 'pages.ontology.dataModels.title' | translate }}</p>
+<app-centered-layout data-cy="data-models-container">
+  <div style="display: flex; justify-content: space-between; align-items: center">
+    <div class="mat-subtitle-1" style="margin-bottom: 0; display: flex; align-items: center">
+      <span>{{ 'pages.ontology.dataModels.title' | translate }}</span>
       <mat-icon
         color="primary"
-        class="icon"
         [matTooltip]="'pages.ontology.dataModels.info' | translate"
-        matTooltipPosition="above">
+        matTooltipPosition="above"
+        style="margin-left: 8px">
         info
       </mat-icon>
     </div>
     @if (hasProjectAdminRights$ | async) {
-    <div class="data-models-admin-panel action-buttons">
-      <button color="primary" data-cy="create-button" mat-raised-button class="create" (click)="createNewOntology()">
-        <mat-icon class="v-align-middle">add_circle</mat-icon>
-        <span class="v-align-middle">{{ 'pages.ontology.dataModels.createNew' | translate }}</span>
-      </button>
+    <div style="display: flex; gap: 8px">
       <a
         color="primary"
         mat-stroked-button
@@ -25,47 +21,54 @@
         {{ 'pages.ontology.dataModels.documentation' | translate }}
         <mat-icon>chevron_right</mat-icon>
       </a>
-    </div>
-    } @if (ontologiesMetadata$ | async) {
-    <div class="list">
-      @for (onto of ontologiesMetadata$ | async; track trackByOntologyMetaFn($index, onto)) {
-      <div class="list-item ontos" data-cy="ontology-button" (click)="navigateToOntology(onto.id)">
-        <mat-icon class="icon-prefix">bubble_chart</mat-icon>
-        <p class="label">{{ onto.label }}</p>
-        <span class="fill-remaining-space"></span>
-        <mat-icon class="icon-suffix">chevron_right</mat-icon>
-      </div>
-      }
+
+      <button color="primary" data-cy="create-button" mat-raised-button (click)="createNewOntology()">
+        <mat-icon>add_circle</mat-icon>
+        <span>{{ 'pages.ontology.dataModels.createNew' | translate }}</span>
+      </button>
     </div>
     }
-    <div class="header">
-      <p class="title">{{ 'pages.ontology.dataModels.vocabularies.title' | translate }}</p>
+  </div>
+
+  @if (ontologiesMetadata$ | async) {
+  <app-clickable-list-card>
+    @for (onto of ontologiesMetadata$ | async; track trackByOntologyMetaFn($index, onto)) {
+    <mat-list-item (click)="navigateToOntology(onto.id)" data-cy="ontology-button">
+      <mat-icon matListItemIcon>bubble_chart</mat-icon>
+      <div matLine>{{ onto.label }}</div>
+    </mat-list-item>
+
+    }
+  </app-clickable-list-card>
+  }
+
+  <div style="margin-top: 80px; display: flex; justify-content: space-between">
+    <div class="mat-subtitle-1" style="display: flex; align-items: center">
+      <span>{{ 'pages.ontology.dataModels.vocabularies.title' | translate }}</span>
       <mat-icon
         color="primary"
-        class="icon"
         [matTooltip]="'pages.ontology.dataModels.vocabularies.info' | translate"
-        matTooltipPosition="above">
+        matTooltipPosition="above"
+        style="margin-left: 8px">
         info
       </mat-icon>
     </div>
-    @if (hasProjectAdminRights$ | async) {
-    <div class="data-models-admin-panel action-buttons">
-      <a color="primary" data-cy="create-list-button" mat-raised-button class="create" (click)="createNewList()">
-        <mat-icon class="v-align-middle">add_circle</mat-icon>
-        <span class="v-align-middle">{{ 'pages.ontology.dataModels.vocabularies.createNew' | translate }}</span>
-      </a>
-    </div>
-    }
 
-    <div class="list">
-      @for (list of (listsInProject$ | async); track trackByFn($index, list)) {
-      <div class="list-item" (click)="navigateToList(list.id)">
-        <mat-icon class="icon-prefix">list</mat-icon>
-        <p class="label">{{ list.labels | appStringifyStringLiteral }}</p>
-        <span class="fill-remaining-space"></span>
-        <mat-icon class="icon-suffix">chevron_right</mat-icon>
-      </div>
-      }
-    </div>
+    @if (hasProjectAdminRights$ | async) {
+    <button color="primary" data-cy="create-list-button" mat-raised-button (click)="createNewList()">
+      <mat-icon>add_circle</mat-icon>
+      {{ 'pages.ontology.dataModels.vocabularies.createNew' | translate }}
+    </button>
+    }
   </div>
+
+  <app-clickable-list-card>
+    @for (list of (listsInProject$ | async); track trackByFn($index, list)) {
+    <mat-list-item (click)="navigateToList(list.id)">
+      <mat-icon matListItemIcon>list</mat-icon>
+      <div matLine>{{ list.labels | appStringifyStringLiteral }}</div>
+    </mat-list-item>
+
+    }
+  </app-clickable-list-card>
 </app-centered-layout>

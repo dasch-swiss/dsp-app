@@ -17,7 +17,7 @@ import { HumanReadableErrorPipe } from '@dasch-swiss/vre/ui/ui';
     <mat-label>{{ placeholder }}</mat-label>
 
     @if (showToggleVisibility) {
-      <button type="button" matSuffix mat-icon-button class="input-icon" (click)="showPassword = !showPassword">
+      <button type="button" matSuffix mat-icon-button (click)="showPassword = !showPassword">
         <mat-icon> {{ showPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
       </button>
     }

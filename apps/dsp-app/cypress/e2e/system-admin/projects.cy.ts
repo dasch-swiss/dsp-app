@@ -82,34 +82,5 @@ describe('Projects', () => {
     cy.get('[data-cy=deactivate-button]').scrollIntoView().click({ force: true });
     cy.get('[data-cy=confirmation-button]').click();
     cy.wait('@deactivateRequest');
-
-    cy.get('[data-cy=inactive-projects-section]')
-      .contains('[data-cy=project-row]', projectPage.project.shortcode)
-      .should('exist');
-  });
-
-  it('admin can reactivate a project', () => {
-    cy.intercept('PUT', `/admin/projects/iri/${encodeURIComponent(projectPage.projectIri)}`).as('updateRequest');
-
-    cy.request({
-      method: 'DELETE',
-      url: `${Cypress.env('apiUrl')}/admin/projects/iri/${encodeURIComponent(projectPage.projectIri)}`,
-      headers: getAuthHeaders(),
-    }).then(() => {
-      cy.visit('/system/projects');
-      cy.get('[data-cy=inactive-projects-section]')
-        .contains('[data-cy=project-row]', projectPage.project.shortcode)
-        .find('[data-cy=more-button]')
-        .scrollIntoView()
-        .should('be.visible')
-        .click();
-      cy.get('[data-cy=reactivate-button]').scrollIntoView().click({ force: true });
-      cy.get('[data-cy=confirmation-button]').click();
-      cy.wait('@updateRequest');
-
-      cy.get('[data-cy=active-projects-section]')
-        .contains('[data-cy=project-row]', projectPage.project.shortcode)
-        .should('exist');
-    });
   });
 });

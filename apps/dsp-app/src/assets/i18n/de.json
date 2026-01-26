@@ -333,6 +333,10 @@
         "classCreated": "Die Klasse {{classLabel}} wurde erfolgreich erstellt."
       }
     },
+    "notAllowed": {
+      "title": "Zugriff verweigert",
+      "message": "Sie dürfen diese Seite nicht sehen."
+    },
     "search": {
       "propertyFormListValue": "Wählen Sie eine Option",
       "fullTextSearch": {
@@ -782,6 +786,7 @@
   "shared": {
     "status": {
       "representationError": "Beim Laden der {{type}}-Dateidarstellung ist ein Fehler aufgetreten. Versuchen Sie, sie direkt über die unten stehende Datei-URL zu öffnen:",
+      "resourceNotLoaded": "Die Ressource wurde nicht geladen.",
       "responseInDetail": "Antwort im Detail",
       "goBackToStartPage": "Bitte kehren Sie zur Startseite zurück.",
       "reloadPrompt": "Bitte kommen Sie in ein paar Minuten zurück und versuchen Sie, <a (click)=\"reload()\">die Seite neu zu laden</a>."

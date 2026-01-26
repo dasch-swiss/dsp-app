@@ -24,21 +24,20 @@ import { ResourceFetcherService } from '../resource-fetcher.service';
       <mat-icon>more_vert</mat-icon>
     </button>
     <mat-menu #more="matMenu" class="representation-menu">
-      <button mat-menu-item class="menu-content" (click)="openVideoInNewTab(this.src.fileUrl)">
+      <button mat-menu-item (click)="openVideoInNewTab(this.src.fileUrl)">
         {{ 'resourceEditor.representations.video.openInNewTab' | translate }}
       </button>
       <button
         mat-menu-item
-        class="menu-content"
         [cdkCopyToClipboard]="this.src.fileUrl"
         (click)="openSnackBar(_translateService.instant('resourceEditor.representations.video.urlCopied'))">
         {{ 'resourceEditor.representations.video.copyUrl' | translate }}
       </button>
-      <button mat-menu-item class="menu-content" (click)="downloadVideo()">
+      <button mat-menu-item (click)="downloadVideo()">
         {{ 'resourceEditor.representations.video.download' | translate }}
       </button>
       @if (resourceFetcherService.userCanEdit$ | async) {
-        <button mat-menu-item class="menu-content" (click)="openReplaceFileDialog()">
+        <button mat-menu-item (click)="openReplaceFileDialog()">
           {{ 'resourceEditor.representations.replaceFile' | translate }}
         </button>
       }

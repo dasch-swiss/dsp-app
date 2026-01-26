@@ -333,6 +333,10 @@
         "classCreated": "Successfully created the class {{classLabel}}."
       }
     },
+    "notAllowed": {
+      "title": "Access Denied",
+      "message": "You are not allowed to see this page."
+    },
     "search": {
       "propertyFormListValue": "Select an item",
       "fullTextSearch": {
@@ -782,6 +786,7 @@
   "shared": {
     "status": {
       "representationError": "There was an error loading the {{type}} file representation. Try to open it directly by clicking on the file url below:",
+      "resourceNotLoaded": "The resource has not loaded.",
       "responseInDetail": "Response in detail",
       "goBackToStartPage": "Please go back to the start page.",
       "reloadPrompt": "Please come back in a few minutes and try to <a (click)=\"reload()\">reload the page</a>."

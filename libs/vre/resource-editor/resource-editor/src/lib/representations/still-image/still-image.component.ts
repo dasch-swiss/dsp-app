@@ -31,7 +31,7 @@ import { StillImageToolbarComponent } from './still-image-toolbar.component';
         </div>
       }
     </div>
-    <div class="toolbar">
+    <div class="toolbar-container">
       @if (compoundMode) {
         <app-compound-slider />
       }

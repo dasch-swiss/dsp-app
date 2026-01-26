@@ -26,22 +26,19 @@ type UserSortKey = 'familyName' | 'givenName' | 'email' | 'username';
     @if (list.length > 0) {
       <div>
         <div style="display: flex; align-items: center; padding: 16px; background-color: #f5f5f5">
-          <span class="mat-headline-6" style="margin-bottom: 0; flex: 1" data-cy="user-count">
-            {{ list.length | i18nPlural: itemPluralMapping['user'] }}
-          </span>
+          <div style="flex: 1">
+            <div class="mat-headline-6" style="margin-bottom: 0; margin-left: 8px" data-cy="user-count">
+              {{ list.length | i18nPlural: itemPluralMapping['user'] }}
+            </div>
+            @if (list.length > 1) {
+              <app-sort-button [sortProps]="sortProps" [activeKey]="sortBy" (sortKeyChange)="sortList($event)" />
+            }
+          </div>
 
           @if (isButtonEnabledToCreateNewUser && (isSysAdmin$ | async)) {
             <button mat-flat-button [color]="'primary'" (click)="createUser()" style="margin-right: 16px">
               {{ 'pages.system.usersList.createNewUser' | translate }}
             </button>
-          }
-
-          @if (list.length > 1) {
-            <app-sort-button
-              [icon]="'sort_by_alpha'"
-              [sortProps]="sortProps"
-              [activeKey]="sortBy"
-              (sortKeyChange)="sortList($event)" />
           }
         </div>
 

@@ -28,7 +28,7 @@ export interface AddRegionFormDialogProps {
       [title]="'resourceEditor.representations.addRegionFormDialog.createAnnotation' | translate"
       [subtitle]="'resourceEditor.representations.addRegionFormDialog.subtitle' | translate" />
     <mat-dialog-content>
-      <form [formGroup]="regionForm" class="form-content">
+      <form [formGroup]="regionForm">
         <app-common-input
           [label]="'resourceEditor.representations.addRegionFormDialog.label' | translate"
           [control]="regionForm.controls.label" />

@@ -1,0 +1,30 @@
+@use '../../../../../../../../apps/dsp-app/src/styles/config' as *;
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  padding-right: 16px;
+  color: $primary_50;
+  height: 48px;
+  border-radius: 0 0 8px 8px;
+}
+
+.icon-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.clickable-icon {
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  width: 32px;
+}
+
+.clickable-icon.disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}

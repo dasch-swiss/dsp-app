@@ -20,17 +20,16 @@ import { OntologyEditService } from './services/ontology-edit.service';
   selector: 'app-ontology-editor-header',
   template: `
     @if (ontology$ | async; as ontology) {
-      <mat-toolbar class="ontology-editor-header">
+      <mat-toolbar>
         <mat-toolbar-row>
           <button
-            class="back-button"
             data-cy="back-to-data-models"
             mat-button
             (click)="navigateToDataModels()"
             [matTooltip]="_translate.instant('pages.ontology.editor.backToDataModels')">
-            <mat-icon class="centered-icon">chevron_left</mat-icon>
+            <mat-icon>chevron_left</mat-icon>
           </button>
-          <div class="ontology-info">
+          <div style="display: flex; flex-direction: column; flex: 1">
             <h3
               data-cy="ontology-label"
               class="mat-headline-6"
@@ -38,14 +37,12 @@ import { OntologyEditService } from './services/ontology-edit.service';
               matTooltipPosition="above">
               {{ ontology.label }}
             </h3>
-            <p class="mat-caption">
-              <span>
-                {{ _translate.instant('pages.ontology.editor.updatedOn') }}
-                {{ ontology.lastModificationDate | date: 'medium' }}
-              </span>
-            </p>
+            <span class="mat-caption">
+              {{ _translate.instant('pages.ontology.editor.updatedOn') }}
+              {{ ontology.lastModificationDate | date: 'medium' }}
+            </span>
           </div>
-          <span class="fill-remaining-space"></span>
+
           @if ((hasProjectAdminRights$ | async) === true) {
             <div>
               <button
@@ -77,40 +74,6 @@ import { OntologyEditService } from './services/ontology-edit.service';
           }
         </mat-toolbar-row>
       </mat-toolbar>
-    }
-  `,
-  styles: `
-    .ontology-editor-header {
-      margin-top: 0.5em;
-
-      .back-button {
-        height: 90%;
-        max-width: 0.5rem;
-        margin-right: 1em;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 0;
-
-        .centered-icon {
-          margin: 0;
-          display: flex;
-          justify-content: center;
-          align-self: center;
-          text-align: center;
-        }
-      }
-
-      .ontology-info {
-        h3,
-        p {
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          margin: 0;
-          padding: 0;
-        }
-      }
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,

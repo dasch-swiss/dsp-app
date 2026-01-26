@@ -1,12 +1,17 @@
-<div style="background: black; height: 200px; display: flex; justify-content: center; align-items: center">
+@if (failedToLoad) {
+<app-representation-error-message />
+} @else {
+
+<div style="height: 100%; display: flex; justify-content: center; align-items: center">
   <mat-icon style="color: white; transform: scale(4)"> audio_file</mat-icon>
-  @if (failedToLoad) {
-  <div>{{ 'resourceEditor.representations.audio.browserNotSupported' | translate }}</div>
-  } @if (audioFileUrl) {
+  @if (audioFileUrl) {
   <div class="audio-player">
-    <audio id="audio" preload="auto" (loadedmetadata)="onAudioPlayerReady()">
-      <source [src]="audioFileUrl" type="audio/mpeg" />
-    </audio>
+    <audio
+      #audioPlayer
+      [src]="audioFileUrl"
+      preload="auto"
+      (loadedmetadata)="onAudioPlayerReady()"
+      (error)="onAudioError($event)"></audio>
   </div>
   }
 </div>
@@ -20,4 +25,4 @@
 <app-segments-display [segments]="segmentsService.segments" [videoLengthSecs]="duration" />
 }
 <app-audio-toolbar [parentResource]="parentResource" />
-}
+} }

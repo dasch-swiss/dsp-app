@@ -27,7 +27,6 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-projects-list',
   templateUrl: './projects-list.component.html',
-  styleUrls: ['./projects-list.component.scss'],
   imports: [
     AsyncPipe,
     I18nPluralPipe,
@@ -41,6 +40,16 @@ import {
     MatMenuTrigger,
     SortButtonComponent,
     TranslatePipe,
+  ],
+  styles: [
+    `
+      table {
+        border-spacing: 0;
+      }
+      tr:hover {
+        background-color: #d6e0e8;
+      }
+    `,
   ],
 })
 export class ProjectsListComponent implements OnInit, OnDestroy {
@@ -92,8 +101,7 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
     private readonly _projectApiService: ProjectApiService,
     private readonly _router: Router,
     private readonly _userService: UserService,
-    private readonly _translateService: TranslateService,
-    private readonly _projectService: ProjectService
+    private readonly _translateService: TranslateService
   ) {}
 
   ngOnInit() {

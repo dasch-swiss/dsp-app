@@ -6,7 +6,7 @@ import { ResourceClassInfoComponent } from './resource-class-info/resource-class
 
 @Component({
   selector: 'app-ontology-editor-page',
-  template: `<div class="ontology-editor-grid classes drag-drop-stop">
+  template: `<div class="ontology-editor-grid drag-drop-stop">
     @for (resClass of oes.currentOntologyClasses$ | async; track trackByClassDefinitionFn($index, resClass)) {
       <app-resource-class-info [resourceClass]="resClass" />
     }
@@ -16,7 +16,8 @@ import { ResourceClassInfoComponent } from './resource-class-info/resource-class
       display: grid;
       grid-template-rows: auto;
       grid-template-columns: repeat(auto-fill, minmax(640px, 1fr));
-      grid-gap: 6px;
+      grid-gap: 8px;
+      padding: 8px;
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,

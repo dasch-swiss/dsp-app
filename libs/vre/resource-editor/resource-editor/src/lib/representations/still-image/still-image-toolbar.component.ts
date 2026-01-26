@@ -32,35 +32,7 @@ import { OpenSeaDragonService } from './open-sea-dragon.service';
 @Component({
   selector: 'app-still-image-toolbar',
   templateUrl: './still-image-toolbar.component.html',
-  styles: [
-    `
-      .toolbar {
-        display: flex;
-        justify-content: space-between;
-        padding-right: 16px;
-      }
-
-      .icon-container {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-      }
-
-      .clickable-icon {
-        cursor: pointer;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        height: 32px;
-        width: 32px;
-      }
-
-      .clickable-icon.disabled {
-        pointer-events: none;
-        opacity: 0.5;
-      }
-    `,
-  ],
+  styleUrls: ['./still-image-toolbar.component.scss'],
   imports: [
     MatMenuTrigger,
     MatTooltip,

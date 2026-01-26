@@ -70,6 +70,8 @@ export class RouteConstants {
   static readonly notFound = '404';
   static readonly notFoundWildcard = '**';
 
+  static readonly notAllowed = '403';
+
   static readonly uuidParameter = 'uuid';
   static readonly ontoParameter = 'onto';
   static readonly projectParameter = 'project';

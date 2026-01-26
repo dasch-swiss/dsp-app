@@ -1,7 +1,8 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { MatIconButton } from '@angular/material/button';
+import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
+import { AppError } from '@dasch-swiss/vre/core/error-handler';
 
 export interface SortProp {
   key: string;
@@ -14,30 +15,43 @@ export interface SortProp {
  */
 @Component({
   selector: 'app-sort-button',
-  templateUrl: './sort-button.component.html',
+  template: `
+    <button matButton="text" [matMenuTriggerFor]="sortSelection">
+      <mat-icon>sort</mat-icon>
+      Sort by{{ selectedLabel ? ': ' + selectedLabel : '' }}
+    </button>
+
+    <mat-menu #sortSelection="matMenu">
+      @for (item of sortProps; track item) {
+        <button mat-menu-item (click)="sortBy(item.key)" [class.active]="activeKey === item.key">
+          {{ item.label }}
+        </button>
+      }
+    </mat-menu>
+  `,
   styleUrls: ['./sort-button.component.scss'],
-  imports: [MatIcon, MatIconButton, MatMenu, MatMenuItem, MatMenuTrigger],
+  imports: [MatIcon, MatMenu, MatMenuItem, MatMenuTrigger, MatButton],
 })
 export class SortButtonComponent implements OnInit {
   @Input({ required: true }) sortProps!: SortProp[];
-  @Input() position: 'left' | 'right' = 'left';
-  @Input() icon = 'sort';
   @Input() activeKey?: string;
 
   @Output() sortKeyChange = new EventEmitter<string>();
 
-  menuXPos: 'before' | 'after' = 'after';
+  selectedLabel?: string;
 
   ngOnInit() {
-    if (this.position === 'right') {
-      this.menuXPos = 'before';
-    }
-
     this.sortBy(this.activeKey ?? this.sortProps[0].key);
   }
 
   sortBy(key: string) {
-    this.activeKey = key || this.sortProps[0].key;
-    this.sortKeyChange.emit(this.activeKey);
+    console.log(key, this);
+    const newSort = this.sortProps.find(prop => prop.key === key);
+    if (!newSort) {
+      throw new AppError(`Sort with key "${key}" not found`);
+    }
+
+    this.selectedLabel = newSort.label;
+    this.sortKeyChange.emit(newSort.key);
   }
 }

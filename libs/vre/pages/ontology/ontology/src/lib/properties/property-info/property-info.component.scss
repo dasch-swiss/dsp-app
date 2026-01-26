@@ -4,6 +4,16 @@
   width: 100%;
 }
 
+.wide-tooltip {
+  max-width: unset !important;
+}
+
+.multi-line-tooltip {
+  white-space: pre-line;
+  line-height: 1.5;
+  font-size: 11px;
+}
+
 .property-info {
   padding: 16px;
 }
@@ -15,10 +25,10 @@
 }
 
 .property-info-title {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 0.25rem;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.25rem;
 }
 
 .property-info-icon {

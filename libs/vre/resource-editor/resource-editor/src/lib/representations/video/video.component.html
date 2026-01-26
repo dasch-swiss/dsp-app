@@ -1,6 +1,6 @@
 <div appDisableContextMenu>
   @if (videoError) {
-  <app-status [comment]="videoError" [url]="src.fileUrl" [representation]="'video'" />
+  <app-representation-error-message />
   }
 
   <div style="margin-bottom: -4px">

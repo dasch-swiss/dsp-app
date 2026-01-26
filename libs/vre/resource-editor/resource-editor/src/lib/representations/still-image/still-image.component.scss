@@ -3,67 +3,60 @@
 
 :host {
   width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
 
-  @media (max-height: 636px) {
-    height: 364px;
+.osd-container {
+  color: $bright;
+  flex: 1;
+
+  &.drawing {
+    cursor: crosshair;
   }
 
-  .osd-container {
-    color: $bright;
-    background-color: $dark;
-    height: calc(100% - 112px);
-    border-radius: 8px 8px 0 0;
-
-    &.drawing {
-      cursor: crosshair;
-    }
-
-    &.fullscreen {
-      max-width: 100vw;
-    }
-  }
-
-  .mat-mdc-button {
-    color: $white;
-  }
-
-  .navigation {
-    position: absolute;
-    z-index: 1;
-
-    // vertical navigation
-    // on the left resp. on the right hand side of osd viewer
-    &.vertical {
-      height: calc(100% - #{$panel-height});
-      width: $panel-height;
-      top: $panel-height;
-
-      &.previous {
-        left: 0;
-      }
-
-      &.next {
-        right: 0;
-      }
-
-      .mat-mdc-button.full-size {
-        height: 100% !important;
-        width: $panel-height !important;
-        padding: 0 !important;
-        min-width: $panel-height !important;
-      }
-
-      .mat-mdc-button.full-size:disabled {
-        color: $grey !important;
-      }
-    }
-  }
-
-  .on-error {
-    height: 50%;
+  &.fullscreen {
+    max-width: 100vw;
   }
 }
 
+
+.navigation {
+  position: absolute;
+  z-index: 1;
+
+  // vertical navigation
+  // on the left resp. on the right hand side of osd viewer
+  &.vertical {
+    height: calc(100% - #{$panel-height});
+    width: $panel-height;
+    top: $panel-height;
+
+    &.previous {
+      left: 0;
+    }
+
+    &.next {
+      right: 0;
+    }
+
+    .mat-mdc-button.full-size {
+      height: 100% !important;
+      width: $panel-height !important;
+      padding: 0 !important;
+      min-width: $panel-height !important;
+    }
+
+    .mat-mdc-button.full-size:disabled {
+      color: $grey !important;
+    }
+  }
+}
+
+.on-error {
+  height: 50%;
+}
 
 .arrow {
   position: absolute;
@@ -77,4 +70,8 @@
   &:nth-child(2) {
     right: 0;
   }
+}
+
+.toolbar-container {
+  background-color: $dark;
 }

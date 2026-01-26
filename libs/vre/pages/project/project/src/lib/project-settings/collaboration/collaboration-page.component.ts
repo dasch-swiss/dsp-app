@@ -1,9 +1,8 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { StatusComponent } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { DoubleChipSelectorComponent } from '@dasch-swiss/vre/ui/ui';
-import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { map, tap } from 'rxjs';
 import { ProjectPageService } from '../../project-page.service';
 import { AddUserComponent } from './add-user/add-user.component';
@@ -14,62 +13,39 @@ import { ProjectMembersComponent } from './project-members.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-collaboration-page',
   template: `
-    @if (hasProjectAdminRights$ | async) {
-      <div>
-        @if (project$ | async; as project) {
-          @if (project.status && (hasProjectAdminRights$ | async)) {
-            <app-add-user [projectUuid]="projectUuid" />
-          }
-        }
-        @if (activeProjectMembers$ | async; as activeProjectMembers) {
-          @if (inactiveProjectMembers$ | async; as inactiveProjectMembers) {
-            <div style="display: flex; justify-content: center; margin: 16px 0">
-              <app-double-chip-selector
-                [options]="[
-                  ('pages.project.collaboration.activeUsers' | translate) + ' (' + activeProjectMembers.length + ')',
-                  ('pages.project.collaboration.inactiveUsers' | translate) +
-                    ' (' +
-                    inactiveProjectMembers.length +
-                    ')',
-                ]"
-                [(value)]="showActiveUsers" />
-            </div>
-            @if (showActiveUsers) {
-              <app-project-members [users]="activeProjectMembers" />
-            }
-            @if (!showActiveUsers) {
-              <app-project-members [users]="inactiveProjectMembers" />
-            }
-          }
-        }
-      </div>
+    @if (project$ | async; as project) {
+      @if (project.status) {
+        <app-add-user [projectUuid]="projectUuid" />
+      }
     }
-
-    @if ((hasProjectAdminRights$ | async) === false) {
-      <app-status [status]="403" />
+    @if (activeProjectMembers$ | async; as activeProjectMembers) {
+      @if (inactiveProjectMembers$ | async; as inactiveProjectMembers) {
+        <div style="display: flex; justify-content: center; margin: 16px 0">
+          <app-double-chip-selector
+            [options]="[
+              ('pages.project.collaboration.activeUsers' | translate) + ' (' + activeProjectMembers.length + ')',
+              ('pages.project.collaboration.inactiveUsers' | translate) + ' (' + inactiveProjectMembers.length + ')',
+            ]"
+            [(value)]="showActiveUsers" />
+        </div>
+        @if (showActiveUsers) {
+          <app-project-members [users]="activeProjectMembers" />
+        }
+        @if (!showActiveUsers) {
+          <app-project-members [users]="inactiveProjectMembers" />
+        }
+      }
     }
   `,
-  styleUrls: ['./collaboration-page.component.scss'],
   providers: [CollaborationPageService],
-  imports: [
-    AsyncPipe,
-    TranslatePipe,
-    DoubleChipSelectorComponent,
-    StatusComponent,
-    AddUserComponent,
-    ProjectMembersComponent,
-  ],
+  imports: [AsyncPipe, TranslatePipe, DoubleChipSelectorComponent, AddUserComponent, ProjectMembersComponent],
 })
 export class CollaborationPageComponent {
-  private _translateService = inject(TranslateService);
-
   project$ = this._projectPageService.currentProject$.pipe(
     tap(project => {
       this.titleService.setTitle(`Project ${project.shortname} | Collaboration`);
     })
   );
-  hasProjectAdminRights$ = this._projectPageService.hasProjectAdminRights$;
-
   get projectUuid() {
     return this._projectPageService.currentProjectUuid;
   }

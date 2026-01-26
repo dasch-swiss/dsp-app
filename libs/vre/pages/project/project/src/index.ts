@@ -1,6 +1,7 @@
 // Public API - Components used in routing
 export * from './lib/project-page.component';
 export * from './lib/project-page.guard';
+export * from './lib/project-admin.guard';
 export * from './lib/reusable-project-form/create-project-form-page.component';
 export * from './lib/reusable-project-form/edit-project-form-page.component';
 export * from './lib/project-settings/collaboration/collaboration-page.component';

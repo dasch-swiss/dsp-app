@@ -35,21 +35,3 @@ $gray_700: rgba(55, 65, 81, 1);
   color: $gray_700;
 }
 
-// mobile device: phone
-@media (max-width: map.get($grid-breakpoints, phone)) {
-  .user-menu {
-    padding: 0;
-  }
-
-  // ::ng-deep .menu {
-  //   padding-top: 0;
-  //   margin-top: 0;
-  // }
-  .menu-header {
-    width: 100%;
-  }
-
-  .user-menu-content {
-    width: 100%;
-  }
-}

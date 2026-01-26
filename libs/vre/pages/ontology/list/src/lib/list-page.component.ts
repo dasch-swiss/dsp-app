@@ -12,7 +12,7 @@ import { DspDialogConfig, RouteConstants } from '@dasch-swiss/vre/core/config';
 import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
 import { ProgressIndicatorOverlayComponent } from '@dasch-swiss/vre/ui/progress-indicator';
 import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
-import { DialogService, TruncatePipe } from '@dasch-swiss/vre/ui/ui';
+import { CenteredLayoutComponent, DialogService, TruncatePipe } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, combineLatest, map, of, Subject, switchMap, takeUntil } from 'rxjs';
 import { ListInfoFormComponent } from './list-info-form/list-info-form.component';
@@ -23,7 +23,6 @@ import { ListItemService } from './list-item/list-item.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-list-page',
   templateUrl: './list-page.component.html',
-  styleUrls: ['./list-page.component.scss'],
   providers: [ListItemService],
   imports: [
     AsyncPipe,
@@ -38,6 +37,7 @@ import { ListItemService } from './list-item/list-item.service';
     ListItemComponent,
     StringifyStringLiteralPipe,
     TruncatePipe,
+    CenteredLayoutComponent,
   ],
 })
 export class ListPageComponent implements OnInit, OnDestroy {
