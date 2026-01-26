@@ -59,7 +59,6 @@ export class AudioMoreButtonComponent {
     this._dialog.open<ReplaceFileDialogComponent, ReplaceFileDialogProps>(ReplaceFileDialogComponent, {
       ...DspDialogConfig.mediumDialog({
         title: this._translateService.instant('resourceEditor.representations.audio.title'),
-        subtitle: this._translateService.instant('resourceEditor.representations.audio.updateFile'),
         representation: Constants.HasAudioFileValue,
         resource: this.parentResource,
       }),

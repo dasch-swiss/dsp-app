@@ -41,11 +41,7 @@ import { UploadFileService } from '../representations/upload/upload-file.service
         @if (!processing) {
           <mat-progress-bar mode="determinate" [value]="uploadProgress"></mat-progress-bar>
           <div class="progress-text">
-            {{
-              _translateService.instant('resourceEditor.resourceCreator.upload.percentUploaded', {
-                percent: uploadProgress,
-              })
-            }}
+            {{ uploadProgress + ' %' }}
           </div>
         } @else {
           <mat-progress-bar mode="indeterminate"></mat-progress-bar>

@@ -56,7 +56,6 @@ describe('ReplaceFileMenuItemComponent', () => {
       const expectedConfig = {
         ...DspDialogConfig.mediumDialog({
           title: mockDialogConfig.title,
-          subtitle: 'resourceEditor.representations.replaceFile',
           representation: mockDialogConfig.representation,
           resource: mockParentResource,
         }),

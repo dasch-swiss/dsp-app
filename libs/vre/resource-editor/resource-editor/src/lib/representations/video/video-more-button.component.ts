@@ -74,7 +74,6 @@ export class VideoMoreButtonComponent {
     this._dialog.open<ReplaceFileDialogComponent, ReplaceFileDialogProps>(ReplaceFileDialogComponent, {
       ...DspDialogConfig.mediumDialog({
         title: this._translateService.instant('resourceEditor.representations.video.title'),
-        subtitle: this._translateService.instant('resourceEditor.representations.video.updateFile'),
         representation: Constants.HasMovingImageFileValue,
         resource: this.parentResource,
       }),

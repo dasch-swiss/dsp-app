@@ -158,7 +158,6 @@ export class PdfToolbarComponent {
     this._dialog.open<ReplaceFileDialogComponent, ReplaceFileDialogProps>(ReplaceFileDialogComponent, {
       ...DspDialogConfig.mediumDialog({
         title: this._translateService.instant('resourceEditor.representations.document.title'),
-        subtitle: this._translateService.instant('resourceEditor.representations.document.updateFile'),
         representation: Constants.HasDocumentFileValue,
         resource: this.parentResource,
       }),

@@ -133,7 +133,6 @@ describe('PdfToolbarComponent', () => {
 
       expect(dialogMock.open).toHaveBeenCalled();
       expect(translateServiceMock.instant).toHaveBeenCalledWith('resourceEditor.representations.document.title');
-      expect(translateServiceMock.instant).toHaveBeenCalledWith('resourceEditor.representations.document.updateFile');
     });
   });
 });

@@ -294,7 +294,9 @@
       },
       "propertyInfo": {
         "usedIn": "Verwendet in",
-        "notUsed": "Nicht verwendet"
+        "notUsed": "Nicht verwendet",
+        "cannotEdit": "Kann nicht bearbeitet werden",
+        "cannotDelete": "Kann nicht gelöscht werden"
       },
       "resourceClassInfo": {
         "collapse": "Einklappen",
@@ -486,7 +488,7 @@
         "title": "Text (csv, txt, xml)"
       },
       "replaceFileDialog": {
-        "willBeReplaced": " wird ersetzt."
+        "willBeReplaced": "Diese Datei wird ersetzt."
       },
       "iiifControl": {
         "label": "IIIF-URL",
@@ -671,6 +673,10 @@
       }
     },
     "templateSwitcher": {
+      "nullableEditor": {
+        "addTooltip": "Hinzufügen",
+        "removeTooltip": "Entfernen"
+      },
       "createResourceDialog": {
         "title": "Neue Ressource vom Typ erstellen: {{type}}"
       },
@@ -707,6 +713,7 @@
         "delete": "Löschen",
         "edit": "Bearbeiten",
         "create": "Erstellen",
+        "add": "Hinzufügen",
         "reset": "Zurücksetzen",
         "close": "Schliessen",
         "next": "Weiter",

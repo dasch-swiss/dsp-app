@@ -1,8 +1,10 @@
 import { ChangeDetectionStrategy, Component, Input, OnChanges } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
+import { MatTooltip } from '@angular/material/tooltip';
 import { Cardinality, ReadResource, ReadValue } from '@dasch-swiss/dsp-js';
 import { PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
+import { TranslatePipe } from '@ngx-translate/core';
 import { ResourceUtil } from '../representations/resource.util';
 import { JsLibPotentialError } from './JsLibPotentialError';
 import { PropertyValueAddComponent } from './property-value-add.component';
@@ -11,14 +13,18 @@ import { PropertyValueService } from './property-value.service';
 
 @Component({
   selector: 'app-property-values',
-  imports: [MatIconButton, MatIcon, PropertyValueComponent, PropertyValueAddComponent],
+  imports: [MatIconButton, MatIcon, PropertyValueComponent, PropertyValueAddComponent, MatTooltip, TranslatePipe],
   template: `
     @for (group of propertyValueService.editModeData.values; track group; let index = $index) {
       <app-property-value [index]="index" style="width: 100%" />
     }
 
     @if (userCanAdd && !currentlyAdding && (editModeData.values.length === 0 || matchesCardinality)) {
-      <button mat-icon-button (click)="currentlyAdding = true" data-cy="add-property-value-button">
+      <button
+        mat-icon-button
+        (click)="currentlyAdding = true"
+        data-cy="add-property-value-button"
+        [matTooltip]="'ui.common.actions.create' | translate">
         <mat-icon class="add-icon">add_box</mat-icon>
       </button>
     }

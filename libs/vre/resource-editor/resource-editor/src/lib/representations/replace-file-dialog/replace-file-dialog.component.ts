@@ -24,13 +24,12 @@ export interface ReplaceFileDialogProps {
   representation: FileRepresentationType;
   resource: ReadResource;
   title: string;
-  subtitle: string;
 }
 
 @Component({
   selector: 'app-replace-file-dialog',
   template: `
-    <app-dialog-header [title]="data.title" [subtitle]="data.subtitle" />
+    <app-dialog-header [subtitle]="data.title" [title]="'resourceEditor.representations.replaceFile' | translate" />
     <mat-dialog-content>
       <div class="warning">
         <div class="container">
@@ -38,11 +37,7 @@ export interface ReplaceFileDialogProps {
             <mat-icon>warning</mat-icon>
           </div>
           <div class="message">
-            {{
-              _translateService.instant('resourceEditor.representations.replaceFileDialog.willBeReplaced', {
-                title: data.title,
-              })
-            }}
+            {{ 'resourceEditor.representations.replaceFileDialog.willBeReplaced' | translate }}
           </div>
         </div>
       </div>

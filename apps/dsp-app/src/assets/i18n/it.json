@@ -294,7 +294,9 @@
       },
       "propertyInfo": {
         "usedIn": "Usato in",
-        "notUsed": "Non usato"
+        "notUsed": "Non usato",
+        "cannotEdit": "Non può essere modificato",
+        "cannotDelete": "Non può essere eliminato"
       },
       "resourceClassInfo": {
         "collapse": "Riduci",
@@ -526,7 +528,7 @@
         "openInFullscreen": "Apri a schermo intero"
       },
       "replaceFileDialog": {
-        "willBeReplaced": " sarà sostituito."
+        "willBeReplaced": "Questo file sarà sostituito."
       },
       "iiifControl": {
         "label": "URL IIIF",
@@ -671,6 +673,10 @@
       }
     },
     "templateSwitcher": {
+      "nullableEditor": {
+        "addTooltip": "Aggiungi",
+        "removeTooltip": "Rimuovi"
+      },
       "createResourceDialog": {
         "title": "Crea nuova risorsa di tipo: {{type}}"
       },
@@ -707,6 +713,7 @@
         "delete": "Elimina",
         "edit": "Modifica",
         "create": "Crea",
+        "add": "Aggiungi",
         "reset": "Reimposta",
         "close": "Chiudi",
         "next": "Avanti",

@@ -90,7 +90,7 @@
         [disabled]="!property.propDef!.isEditable"
         [matTooltip]="
           property.propDef!.isEditable
-            ? _translate.instant('pages.ontology.propertyInfo.edit')
+            ? _translate.instant('ui.common.actions.edit')
             : _translate.instant('pages.ontology.propertyInfo.cannotEdit')
         "
         matTooltipPosition="above"
@@ -103,7 +103,7 @@
         [matTooltip]="
           (canBeDeleted$ | async) === false
             ? _translate.instant('pages.ontology.propertyInfo.cannotDelete')
-            : _translate.instant('pages.ontology.propertyInfo.delete')
+            : _translate.instant('ui.common.actions.delete')
         "
         matTooltipPosition="above">
         <button
