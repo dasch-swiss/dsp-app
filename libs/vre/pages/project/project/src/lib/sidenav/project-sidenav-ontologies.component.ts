@@ -7,7 +7,7 @@ import { APIV3ApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { AppProgressIndicatorComponent } from '@dasch-swiss/vre/ui/progress-indicator';
-import { catchError, combineLatest, first, of, shareReplay, switchMap } from 'rxjs';
+import { catchError, combineLatest, first, map, of, shareReplay, switchMap } from 'rxjs';
 import { ProjectPageService } from '../project-page.service';
 import { ResourceClassSidenavComponent } from './resource-class-sidenav/resource-class-sidenav.component';
 
@@ -77,6 +77,9 @@ import { ResourceClassSidenavComponent } from './resource-class-sidenav/resource
 export class ProjectSidenavOntologiesComponent implements OnInit {
   projectOntologies$ = this._projectPageService.currentProject$.pipe(
     switchMap(project => this._v3.getV3ProjectsProjectiriResourcesperontology(project.id)),
+    map(ontologies =>
+      ontologies.sort((a, b) => a.ontology.label.toLowerCase().localeCompare(b.ontology.label.toLowerCase()))
+    ),
     shareReplay({ bufferSize: 1, refCount: true }),
     catchError(error => {
       console.error('Error loading project ontologies:', error);
