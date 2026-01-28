@@ -1,5 +1,27 @@
 # Changelog
 
+## [12.5.1](https://github.com/dasch-swiss/dsp-das/compare/v12.5.0...v12.5.1) (2026-01-28)
+
+
+### Bug Fixes
+
+* ng template error preventing the list from loading ([#2814](https://github.com/dasch-swiss/dsp-das/issues/2814)) ([6ae7bd1](https://github.com/dasch-swiss/dsp-das/commit/6ae7bd11340d6bfc5f0909cfc5079bd9470e78db))
+* patch value in formcontrol if there is a value input ([#2818](https://github.com/dasch-swiss/dsp-das/issues/2818)) ([416c9d0](https://github.com/dasch-swiss/dsp-das/commit/416c9d00a597bbbd05d0c2d155d37e933c2daec9))
+* reintroduce alphabetical sorting ([#2813](https://github.com/dasch-swiss/dsp-das/issues/2813)) ([69cd715](https://github.com/dasch-swiss/dsp-das/commit/69cd715c17ea1ced1d5de5fbf44f3678ff92c652))
+* reintroduce sorting of class labels acc. to language ([#2812](https://github.com/dasch-swiss/dsp-das/issues/2812)) ([4926e25](https://github.com/dasch-swiss/dsp-das/commit/4926e251552d9ec959e1525ba253363d00e9b6c4))
+* styling in resource class sidenav ([#2816](https://github.com/dasch-swiss/dsp-das/issues/2816)) ([983f1d8](https://github.com/dasch-swiss/dsp-das/commit/983f1d8276bf676073454a60dadf6d7b017067ed))
+* update openapi ([#2819](https://github.com/dasch-swiss/dsp-das/issues/2819)) ([ef31708](https://github.com/dasch-swiss/dsp-das/commit/ef31708502435118b9841ab841526e45cd212c60))
+* use standalone and import ([#2815](https://github.com/dasch-swiss/dsp-das/issues/2815)) ([0dbfa35](https://github.com/dasch-swiss/dsp-das/commit/0dbfa351ca528ab59d60083cffe751333c21b0c0))
+
+
+### Maintenances
+
+* fix and improve Claude Code workflow ([#2817](https://github.com/dasch-swiss/dsp-das/issues/2817)) ([00fd25e](https://github.com/dasch-swiss/dsp-das/commit/00fd25e4c55bfdc5758dad094e766321eb00c638))
+* ownership ([#2806](https://github.com/dasch-swiss/dsp-das/issues/2806)) ([46c6640](https://github.com/dasch-swiss/dsp-das/commit/46c6640732ec554d5d85283f535f8ff68684622f))
+* revert advanced search code to change git ownership ([#2804](https://github.com/dasch-swiss/dsp-das/issues/2804)) ([cf3484a](https://github.com/dasch-swiss/dsp-das/commit/cf3484af7c75bdc49558fab10fc5d888ee1de20f))
+* revert advanced search refactor ([#2808](https://github.com/dasch-swiss/dsp-das/issues/2808)) ([43f50f8](https://github.com/dasch-swiss/dsp-das/commit/43f50f862a6e4b064e64aad0547b59293f9924aa))
+* update Anthropic API key ([#2809](https://github.com/dasch-swiss/dsp-das/issues/2809)) ([34cf6c8](https://github.com/dasch-swiss/dsp-das/commit/34cf6c8c8bfb64d96e7198e56ba7ab156d648360))
+
 ## [12.5.0](https://github.com/dasch-swiss/dsp-das/compare/v12.4.2...v12.5.0) (2026-01-26)
 
 
