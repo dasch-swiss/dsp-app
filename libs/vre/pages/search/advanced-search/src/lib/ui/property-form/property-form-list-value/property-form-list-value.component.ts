@@ -1,5 +1,5 @@
-import { AsyncPipe } from '@angular/common';
-import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output } from '@angular/core';
+import { AsyncPipe, CommonModule } from '@angular/common';
+import { AfterViewInit, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatOptionModule } from '@angular/material/core';
@@ -15,6 +15,7 @@ import { PropertyFormItem } from '../../../data-access/advanced-search-store/adv
   selector: 'app-property-form-list-value',
   imports: [
     AsyncPipe,
+    CommonModule,
     MatAutocompleteModule,
     MatFormFieldModule,
     MatInputModule,
@@ -39,21 +40,24 @@ import { PropertyFormItem } from '../../../data-access/advanced-search-store/adv
         [displayWith]="displayNode"
         (optionSelected)="onSelectionChange($event.option.value)">
         @for (node of filteredList$ | async; track trackByFn($index, node)) {
+          <ng-container *ngTemplateOutlet="renderNode; context: { node: node, depth: 0 }" />
+        }
+
+        <ng-template #renderNode let-node="node" let-depth="depth">
           <mat-option [value]="node">
-            <span>{{ node.label }}</span>
+            <span [style.padding-left.px]="depth * 15">{{ node.label }}</span>
           </mat-option>
           @if (node.children?.length > 0) {
             @for (subchild of node.children; track trackByFn($index, subchild)) {
-              <mat-option [value]="node">
-                <span [style.padding-left.px]="15">{{ node.label }}</span>
-              </mat-option>
+              <ng-container *ngTemplateOutlet="renderNode; context: { node: subchild, depth: depth + 1 }" />
             }
           }
-        }
+        </ng-template>
       </mat-autocomplete>
     </mat-form-field>
   `,
   styleUrls: ['./property-form-list-value.component.scss'],
+  standalone: true,
 })
 export class PropertyFormListValueComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() list: ListNodeV2 | undefined = undefined;
