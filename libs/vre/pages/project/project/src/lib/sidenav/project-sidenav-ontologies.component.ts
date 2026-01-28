@@ -54,7 +54,7 @@ import { ResourceClassSidenavComponent } from './resource-class-sidenav/resource
   styles: [
     `
       .mat-expansion-panel-body {
-        padding: 0;
+        padding: 0 !important;
       }
 
       .empty-message {
@@ -63,7 +63,7 @@ import { ResourceClassSidenavComponent } from './resource-class-sidenav/resource
       }
 
       .ontology-panel {
-        box-shadow: none;
+        box-shadow: none !important;
       }
 
       .resource-class-sidenav {
