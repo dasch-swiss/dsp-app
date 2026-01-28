@@ -38,6 +38,8 @@ import { PropertyFormItem } from '../../../data-access/advanced-search-store/adv
       <mat-autocomplete
         #auto="matAutocomplete"
         [displayWith]="displayNode"
+        (opened)="onAutocompleteOpened()"
+        (closed)="onAutocompleteClosed()"
         (optionSelected)="onSelectionChange($event.option.value)">
         @for (node of filteredList$ | async; track trackByFn($index, node)) {
           <ng-container *ngTemplateOutlet="renderNode; context: { node: node, depth: 0 }" />
@@ -67,7 +69,7 @@ export class PropertyFormListValueComponent implements OnInit, AfterViewInit, On
 
   destroyed: Subject<void> = new Subject<void>();
 
-  valueFilterCtrl: FormControl<string | null> = new FormControl<string | null>(null);
+  valueFilterCtrl = new FormControl<ListNodeV2 | string | null>(null);
 
   constants = Constants;
 
@@ -86,18 +88,33 @@ export class PropertyFormListValueComponent implements OnInit, AfterViewInit, On
   ngAfterViewInit(): void {
     if (this.list && this.value && typeof this.value === 'string') {
       this.selectedItem = this.findItemById(this.list, this.value);
+      if (this.selectedItem) {
+        this.valueFilterCtrl.patchValue(this.selectedItem);
+      }
     }
   }
 
   trackByFn = (index: number, item: any) => `${index}-${item.label}`;
 
-  displayNode(node: any | null): string {
-    return node ? node.label : '';
-  }
+  displayNode = (v: ListNodeV2 | string | null): string => (typeof v === 'string' ? v : (v?.label ?? ''));
 
   onSelectionChange(node: ListNodeV2) {
     this.selectedItem = node;
     this.emitValueChanged.emit(node.id);
+  }
+
+  onAutocompleteOpened() {
+    // user should get all items when opening the autocomplete for selection
+    this.valueFilterCtrl.patchValue(null);
+  }
+
+  onAutocompleteClosed() {
+    // reset the input as there are no changes
+    if (this.selectedItem) {
+      this.valueFilterCtrl.patchValue(this.selectedItem);
+    } else {
+      this.valueFilterCtrl.patchValue(null);
+    }
   }
 
   ngOnDestroy(): void {
