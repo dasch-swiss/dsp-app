@@ -15,7 +15,7 @@ import { PropertyValueService } from './property-value.service';
   selector: 'app-property-values',
   imports: [MatIconButton, MatIcon, PropertyValueComponent, PropertyValueAddComponent, MatTooltip, TranslatePipe],
   template: `
-    @for (group of propertyValueService.editModeData.values; track group; let index = $index) {
+    @for (group of editModeData.values; track group.id; let index = $index) {
       <app-property-value [index]="index" style="width: 100%" />
     }
 
