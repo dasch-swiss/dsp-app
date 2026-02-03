@@ -1,5 +1,5 @@
 import { AsyncPipe, UpperCasePipe } from '@angular/common';
-import { Component, OnInit, ViewContainerRef } from '@angular/core';
+import { Component, ViewContainerRef } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
@@ -15,22 +15,21 @@ import { ProjectDescriptionPageComponent } from './project-description-page.comp
   imports: [AsyncPipe, UpperCasePipe, TranslatePipe, MatButton, ProjectImageCoverComponent],
   template: `
     @if (readProject$ | async; as project) {
-      @if (test) {
-        <div>
-          <app-project-image-cover [project]="project" />
-          @if (hasManualLicense) {
-            <div class="mat-caption">{{ hasManualLicense }}</div>
-          }
-        </div>
-        <h2>{{ project.longname }}</h2>
-        <h3 class="mat-body subtitle" style="margin-bottom: 32px">
-          Project {{ project.shortcode }} | {{ project.shortname | uppercase }}
-        </h3>
+      <div>
+        <app-project-image-cover [project]="project" />
+        @if (hasManualLicense) {
+          <div class="mat-caption">{{ hasManualLicense }}</div>
+        }
+      </div>
+      <h2>{{ project.longname }}</h2>
+      <h3 class="mat-body subtitle" style="margin-bottom: 32px">
+        Project {{ project.shortcode }} | {{ project.shortname | uppercase }}
+      </h3>
 
-        <div style="position: relative; max-height: 120px; padding: 16px; overflow: hidden">
-          <div [innerHtml]="project.description[0].value"></div>
-          <div
-            style="
+      <div style="position: relative; max-height: 120px; padding: 16px; overflow: hidden">
+        <div [innerHtml]="project.description[0].value"></div>
+        <div
+          style="
       position: absolute;
       left: 0;
       right: 0;
@@ -39,34 +38,26 @@ import { ProjectDescriptionPageComponent } from './project-description-page.comp
       background: linear-gradient(to bottom, transparent, white 80%);
       pointer-events: none;
     "></div>
-        </div>
-        <button mat-stroked-button (click)="readMore()" style="margin: 16px">
-          {{ 'pages.project.projectShortDescription.readMore' | translate }}
-        </button>
-      }
+      </div>
+      <button mat-stroked-button (click)="readMore()" style="margin: 16px">
+        {{ 'pages.project.projectShortDescription.readMore' | translate }}
+      </button>
     }
   `,
 })
-export class ProjectShortDescriptionComponent implements OnInit {
+export class ProjectShortDescriptionComponent {
   hasManualLicense?: string;
   readProject$ = this._projectPageService.currentProject$.pipe(
     tap(project => {
       this.hasManualLicense = LicenseCaptionsMapping.get(project.shortcode);
     })
   );
-  test = false;
 
   constructor(
     private readonly _projectPageService: ProjectPageService,
     private readonly _dialog: MatDialog,
     private readonly _viewContainerRef: ViewContainerRef
   ) {}
-
-  ngOnInit() {
-    setTimeout(() => {
-      this.test = true;
-    }, 0);
-  }
 
   readMore() {
     this._dialog.open(ProjectDescriptionPageComponent, {
