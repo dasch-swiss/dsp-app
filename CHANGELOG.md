@@ -1,5 +1,17 @@
 # Changelog
 
+## [12.5.2](https://github.com/dasch-swiss/dsp-das/compare/v12.5.1...v12.5.2) (2026-02-03)
+
+
+### Bug Fixes
+
+* prevent list items from reloading after adding a new item ([#2823](https://github.com/dasch-swiss/dsp-das/issues/2823)) ([153fa53](https://github.com/dasch-swiss/dsp-das/commit/153fa533ec0dd796fbf4b2fdad06ca257896842e))
+
+
+### Maintenances
+
+* remove unused variable ([#2821](https://github.com/dasch-swiss/dsp-das/issues/2821)) ([162ac3b](https://github.com/dasch-swiss/dsp-das/commit/162ac3bdff87633a90677f959f3e9e3180dae3cb))
+
 ## [12.5.1](https://github.com/dasch-swiss/dsp-das/compare/v12.5.0...v12.5.1) (2026-01-28)
 
 
