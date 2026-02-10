@@ -461,7 +461,15 @@
         "zoomOut": "Herauszoomen",
         "zoomIn": "Hineinzoomen",
         "resetZoom": "Zoom zurücksetzen",
-        "openInFullscreen": "Im Vollbildmodus öffnen"
+        "openInFullscreen": "Im Vollbildmodus öffnen",
+        "errors": {
+          "unknownImageType": "Unbekannter Bildtyp.",
+          "failedToLoadImage": "Bild konnte nicht geladen werden.",
+          "cannotOpenIiifUrl": "Externe IIIF-URL kann nicht geöffnet werden.",
+          "failedToFetchInfoJson": "Fehler beim Abrufen von IIIF info.json: {{status}} {{statusText}}.",
+          "invalidIiifSource": "Ungültige externe IIIF-Bildquelle: width, height oder @id fehlt.",
+          "failedToLoadExternalImage": "Externes IIIF-Bild konnte nicht geladen werden: {{error}}."
+        }
       },
       "downloadFile": "Datei herunterladen",
       "replaceFile": "Datei ersetzen",

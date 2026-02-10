@@ -34,5 +34,5 @@ export class CenteredMessageComponent {
   @Input() icon?: string;
   @Input() title?: string;
   @Input() message?: string;
-  @Input() color = '#757575';
+  @Input() color? = '#757575';
 }

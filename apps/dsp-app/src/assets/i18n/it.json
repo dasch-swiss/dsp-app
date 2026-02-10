@@ -524,7 +524,15 @@
         "zoomOut": "Riduci zoom",
         "zoomIn": "Aumenta zoom",
         "resetZoom": "Reimposta zoom",
-        "openInFullscreen": "Apri a schermo intero"
+        "openInFullscreen": "Apri a schermo intero",
+        "errors": {
+          "unknownImageType": "Tipo di immagine sconosciuto.",
+          "failedToLoadImage": "Impossibile caricare l'immagine.",
+          "cannotOpenIiifUrl": "Impossibile aprire l'URL IIIF esterno.",
+          "failedToFetchInfoJson": "Impossibile recuperare IIIF info.json: {{status}} {{statusText}}.",
+          "invalidIiifSource": "Sorgente immagine IIIF esterna non valida: mancano width, height o @id.",
+          "failedToLoadExternalImage": "Impossibile caricare l'immagine IIIF esterna: {{error}}."
+        }
       },
       "replaceFileDialog": {
         "willBeReplaced": "Questo file sarà sostituito."

@@ -8,10 +8,12 @@ import { CenteredMessageComponent } from './centered-message.component';
     <app-centered-message
       [icon]="'search_off'"
       [title]="'pages.search.noResultsFound' | translate"
-      [message]="message" />
+      [message]="message"
+      [color]="color" />
   `,
   imports: [TranslatePipe, CenteredMessageComponent],
 })
 export class NoResultsFoundComponent {
   @Input({ required: true }) message!: string;
+  @Input() color?: string;
 }
