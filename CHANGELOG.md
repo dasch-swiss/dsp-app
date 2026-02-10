@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.5.3](https://github.com/dasch-swiss/dsp-das/compare/v12.5.2...v12.5.3) (2026-02-10)
+
+
+### Bug Fixes
+
+* add external iiif infojson validation ([#2827](https://github.com/dasch-swiss/dsp-das/issues/2827)) ([9b34a54](https://github.com/dasch-swiss/dsp-das/commit/9b34a545e5f3e6c00d1eb2b215ba555d9dfb75c0))
+
 ## [12.5.2](https://github.com/dasch-swiss/dsp-das/compare/v12.5.1...v12.5.2) (2026-02-03)
 
 
