@@ -530,7 +530,7 @@
           "failedToLoadImage": "Impossibile caricare l'immagine.",
           "cannotOpenIiifUrl": "Impossibile aprire l'URL IIIF esterno.",
           "failedToFetchInfoJson": "Impossibile recuperare IIIF info.json: {{status}} {{statusText}}.",
-          "invalidIiifSource": "Sorgente immagine IIIF esterna non valida: mancano width, height o @id.",
+          "invalidIiifSource": "Sorgente immagine IIIF esterna non valida: mancano width, height o id.",
           "failedToLoadExternalImage": "Impossibile caricare l'immagine IIIF esterna: {{error}}."
         }
       },

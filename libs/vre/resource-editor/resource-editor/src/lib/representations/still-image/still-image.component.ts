@@ -169,7 +169,7 @@ export class StillImageComponent implements OnChanges, AfterViewInit, OnDestroy 
       const infoJson = await response.json();
 
       // Validate required IIIF parameters
-      if (!infoJson.width || !infoJson.height || !infoJson['@id']) {
+      if (!infoJson.width || !infoJson.height || !(infoJson['@id'] || infoJson['id'])) {
         this.errorMessage = this._translateService.instant(
           'resourceEditor.representations.stillImage.errors.invalidIiifSource'
         );
