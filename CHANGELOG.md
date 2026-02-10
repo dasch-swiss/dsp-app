@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.5.4](https://github.com/dasch-swiss/dsp-das/compare/v12.5.3...v12.5.4) (2026-02-10)
+
+
+### Bug Fixes
+
+* infoJson can be id or [@id](https://github.com/id) ([#2830](https://github.com/dasch-swiss/dsp-das/issues/2830)) ([e605972](https://github.com/dasch-swiss/dsp-das/commit/e605972faa5379e3d21d1efaee3a3973df3cf64f))
+
 ## [12.5.3](https://github.com/dasch-swiss/dsp-das/compare/v12.5.2...v12.5.3) (2026-02-10)
 
 
