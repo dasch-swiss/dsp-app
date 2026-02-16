@@ -131,7 +131,8 @@ export class PropertyValueEditComponent implements OnInit, OnDestroy {
     });
 
     this.hasValidValue$ = this.group.valueChanges.pipe(
-      switchMap(() => of(this.group.controls.item.valid && !!this.group.controls.item.value))
+      startWith(null),
+      switchMap(() => of(this.group.controls.item.valid && this.group.controls.item.value !== null))
     );
 
     this._watchAndSetupCommentStatus();
