@@ -1,13 +1,12 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { unescapeHtml } from '@dasch-swiss/vre/ui/ui';
 import { FootnoteService } from './footnote.service';
 
 @Pipe({
   name: 'footnoteParser',
 })
 export class FootnoteParserPipe implements PipeTransform {
-  private readonly _footnoteRegExp = /<footnote content="([^>]+)"\/>/g;
+  private readonly _footnoteRegExp = FootnoteService.FOOTNOTE_REGEXP;
 
   constructor(
     private readonly _sanitizer: DomSanitizer,
@@ -40,13 +39,6 @@ export class FootnoteParserPipe implements PipeTransform {
       Array.from(matches).forEach((matchArray, indexFootnote) => {
         const footnoteId = `${this._footnoteService.uuid}-${valueIndex}-${indexFootnote}`;
 
-        if (!this._footnoteAlreadyParsed(valueIndex, indexFootnote)) {
-          this._footnoteService.addFootnote(
-            valueIndex,
-            indexFootnote,
-            this._sanitizer.bypassSecurityTrustHtml(unescapeHtml(matchArray[1]))
-          );
-        }
         const startingIndex = this._footnoteService.footnotes.findIndex(footnote => footnote.indexValue === valueIndex);
 
         const parsedFootnote = `<footnote content="${matchArray[1]}" data-origin-uuid="${footnoteId}">${startingIndex + indexFootnote + 1}</footnote>`;
@@ -55,11 +47,5 @@ export class FootnoteParserPipe implements PipeTransform {
     }
 
     return this._sanitizer.bypassSecurityTrustHtml(newValue);
-  }
-
-  private _footnoteAlreadyParsed(valueIndex: number, indexFootnote: number) {
-    return this._footnoteService.footnotes.some(
-      footnote => footnote.indexValue === valueIndex && footnote.indexFootnote === indexFootnote
-    );
   }
 }
