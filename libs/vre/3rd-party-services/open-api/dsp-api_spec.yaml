@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: DSP-API
-  version: v34.1.1-7-gef5fa48
+  version: v34.2.2-7-g134844b
   summary: DSP-API is part of the DaSCH Service Platform, a repository for the long-term
     preservation and reuse of data in the humanities.
   contact:
@@ -4277,7 +4277,8 @@ paths:
     get:
       tags:
       - Admin API
-      description: Lists existing exports of all projects. Requires SystemAdmin permissions.
+      description: '**This endpoint is deprecated and will be removed in a future
+        version.** Lists existing exports of all projects. Requires SystemAdmin permissions.'
       operationId: getAdminProjectsExport
       responses:
         '200':
@@ -4318,6 +4319,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+      deprecated: true
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -4325,8 +4327,9 @@ paths:
     post:
       tags:
       - Admin API
-      description: Trigger an export of a project identified by the shortcode. Requires
-        SystemAdmin permissions.
+      description: '**This endpoint is deprecated and will be removed in a future
+        version.** Trigger an export of a project identified by the shortcode. Requires
+        SystemAdmin permissions.'
       operationId: postAdminProjectsShortcodeProjectshortcodeExport
       parameters:
       - name: projectShortcode
@@ -4369,6 +4372,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+      deprecated: true
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -4376,9 +4380,10 @@ paths:
     post:
       tags:
       - Admin API
-      description: Trigger an export of a project identified by the shortcode. Returns
+      description: '**This endpoint is deprecated and will be removed in a future
+        version.** Trigger an export of a project identified by the shortcode. Returns
         the shortcode and the export location when the process has finished successfully.
-        Requires SystemAdmin permissions.
+        Requires SystemAdmin permissions.'
       operationId: postAdminProjectsShortcodeProjectshortcodeExport-await
       parameters:
       - name: projectShortcode
@@ -4425,6 +4430,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+      deprecated: true
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -4432,8 +4438,9 @@ paths:
     post:
       tags:
       - Admin API
-      description: Trigger an import of a project identified by the shortcode. Requires
-        SystemAdmin permissions.
+      description: '**This endpoint is deprecated and will be removed in a future
+        version.** Trigger an import of a project identified by the shortcode. Requires
+        SystemAdmin permissions.'
       operationId: postAdminProjectsShortcodeProjectshortcodeImport
       parameters:
       - name: projectShortcode
@@ -4480,6 +4487,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+      deprecated: true
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -4497,7 +4505,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/g2XXXZOpTleQXmnsRYG2ew
+        example: http://rdfh.ch/users/Cjngo4kuQN6A3iettrlbDA
       responses:
         '200':
           description: ''
@@ -4549,7 +4557,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/g2XXXZOpTleQXmnsRYG2ew
+        example: http://rdfh.ch/users/Cjngo4kuQN6A3iettrlbDA
       responses:
         '200':
           description: ''
@@ -4601,7 +4609,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/g2XXXZOpTleQXmnsRYG2ew
+        example: http://rdfh.ch/users/Cjngo4kuQN6A3iettrlbDA
       responses:
         '200':
           description: ''
@@ -4754,7 +4762,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/g2XXXZOpTleQXmnsRYG2ew
+        example: http://rdfh.ch/users/Cjngo4kuQN6A3iettrlbDA
       responses:
         '200':
           description: ''
@@ -4808,7 +4816,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/g2XXXZOpTleQXmnsRYG2ew
+        example: http://rdfh.ch/users/Cjngo4kuQN6A3iettrlbDA
       responses:
         '200':
           description: ''
@@ -4976,7 +4984,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/g2XXXZOpTleQXmnsRYG2ew
+        example: http://rdfh.ch/users/Cjngo4kuQN6A3iettrlbDA
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -5037,7 +5045,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/g2XXXZOpTleQXmnsRYG2ew
+        example: http://rdfh.ch/users/Cjngo4kuQN6A3iettrlbDA
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -5099,7 +5107,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/g2XXXZOpTleQXmnsRYG2ew
+        example: http://rdfh.ch/users/Cjngo4kuQN6A3iettrlbDA
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -5160,7 +5168,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/g2XXXZOpTleQXmnsRYG2ew
+        example: http://rdfh.ch/users/Cjngo4kuQN6A3iettrlbDA
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -5222,7 +5230,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/g2XXXZOpTleQXmnsRYG2ew
+        example: http://rdfh.ch/users/Cjngo4kuQN6A3iettrlbDA
       - name: groupIri
         in: path
         description: The IRI of a group. Must be URL-encoded.
@@ -5283,7 +5291,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/g2XXXZOpTleQXmnsRYG2ew
+        example: http://rdfh.ch/users/Cjngo4kuQN6A3iettrlbDA
       - name: groupIri
         in: path
         description: The IRI of a group. Must be URL-encoded.
@@ -5345,7 +5353,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/g2XXXZOpTleQXmnsRYG2ew
+        example: http://rdfh.ch/users/Cjngo4kuQN6A3iettrlbDA
       requestBody:
         content:
           application/json:
@@ -5406,7 +5414,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/g2XXXZOpTleQXmnsRYG2ew
+        example: http://rdfh.ch/users/Cjngo4kuQN6A3iettrlbDA
       requestBody:
         content:
           application/json:
@@ -5467,7 +5475,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/g2XXXZOpTleQXmnsRYG2ew
+        example: http://rdfh.ch/users/Cjngo4kuQN6A3iettrlbDA
       requestBody:
         content:
           application/json:
@@ -5528,7 +5536,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/g2XXXZOpTleQXmnsRYG2ew
+        example: http://rdfh.ch/users/Cjngo4kuQN6A3iettrlbDA
       requestBody:
         content:
           application/json:
@@ -5751,7 +5759,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/lists/0001/EZAQ78inQGWrBmWxkOqZdw
+        example: http://rdfh.ch/lists/0001/JbbzSi76T5WdV0ShV1I3Jg
       - name: x-knora-accept-schema
         in: header
         description: |-
@@ -5858,7 +5866,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/lists/0001/EZAQ78inQGWrBmWxkOqZdw
+        example: http://rdfh.ch/lists/0001/JbbzSi76T5WdV0ShV1I3Jg
       - name: x-knora-accept-schema
         in: header
         description: |-
@@ -6229,6 +6237,66 @@ paths:
             application/json:
               schema:
                 type: string
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                anyOf:
+                - $ref: '#/components/schemas/OntologyConstraintException'
+                - $ref: '#/components/schemas/DuplicateValueException'
+                - $ref: '#/components/schemas/ValidationException'
+                - $ref: '#/components/schemas/BadRequestException'
+                - $ref: '#/components/schemas/GravsearchException'
+                - $ref: '#/components/schemas/EditConflictException'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadCredentialsException'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenException'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundException'
+      security:
+      - httpAuth: []
+      - httpAuth1: []
+  /v2/values/order:
+    put:
+      tags:
+      - API v2
+      description: Reorder values of a property on a resource. Requires modify permission
+        on the resource. Find detailed documentation on <a href="https://docs.dasch.swiss/latest/DSP-API/03-endpoints/api-v2/editing-values/">docs.dasch.swiss</a>.
+      operationId: putV2ValuesOrder
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReorderValuesRequest'
+            example:
+              resourceIri: http://rdfh.ch/0001/resource-1
+              propertyIri: http://0.0.0.0:3333/ontology/0001/anything/v2#hasText
+              orderedValueIris:
+              - http://rdfh.ch/0001/value-3
+              - http://rdfh.ch/0001/value-1
+              - http://rdfh.ch/0001/value-2
+        required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReorderValuesResponse'
         '400':
           description: ''
           content:
@@ -12492,13 +12560,13 @@ paths:
                   description: |-
                     Example template string for code `project_not_found`:
                     ```
-                    The project with IRI {id} was not found.
+                    The project '{id}' was not found.
                     ```
                   value:
-                    message: Not found example message
+                    message: The project '{id}' was not found.
                     errors:
                     - code: project_not_found
-                      message: Not found example message
+                      message: The project '{id}' was not found.
                       details:
                         id: example_id
   /v3/export/resources:
@@ -12577,43 +12645,665 @@ paths:
                   description: |-
                     Example template string for code `project_not_found`:
                     ```
-                    The project with IRI {id} was not found.
+                    The project '{id}' was not found.
                     ```
                   value:
-                    message: Not found example message
+                    message: The project '{id}' was not found.
                     errors:
                     - code: project_not_found
-                      message: Not found example message
+                      message: The project '{id}' was not found.
                       details:
                         id: example_id
                 ontology_not_found:
                   description: |-
                     Example template string for code `ontology_not_found`:
                     ```
-                    The ontology with IRI {id} was not found.
+                    The ontology '{id}' was not found.
                     ```
                   value:
-                    message: Not found example message
+                    message: The ontology '{id}' was not found.
                     errors:
                     - code: ontology_not_found
-                      message: Not found example message
+                      message: The ontology '{id}' was not found.
                       details:
                         id: example_id
                 resourceClass_not_found:
                   description: |-
                     Example template string for code `resourceClass_not_found`:
                     ```
-                    The resource class with IRI {id} was not found.
+                    The resource class '{id}' was not found.
                     ```
                   value:
-                    message: Not found example message
+                    message: The resource class '{id}' was not found.
                     errors:
                     - code: resourceclass_not_found
-                      message: Not found example message
+                      message: The resource class '{id}' was not found.
                       details:
                         id: example_id
       security:
       - {}
+      - httpAuth: []
+  /v3/projects/{projectIri}/exports:
+    post:
+      tags:
+      - API v3
+      description: Initiates an export of the project. The export will be performed
+        asynchronously, and the response will contain an export ID that can be used
+        to check the status of the export. An export can only be triggered when no
+        other export exists.
+      operationId: postV3ProjectsProjectiriExports
+      parameters:
+      - name: projectIri
+        in: path
+        description: The IRI of a project. Must be URL-encoded.
+        required: true
+        schema:
+          type: string
+        example: http://rdfh.ch/projects/0001
+      responses:
+        '202':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataTaskStatusResponse'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+              example:
+                message: Invalid token.
+                errors: []
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+              example:
+                message: User not active.
+                errors: []
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+              examples:
+                project_not_found:
+                  description: |-
+                    Example template string for code `project_not_found`:
+                    ```
+                    The project '{id}' was not found.
+                    ```
+                  value:
+                    message: The project '{id}' was not found.
+                    errors:
+                    - code: project_not_found
+                      message: The project '{id}' was not found.
+                      details:
+                        id: example_id
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conflict'
+              examples:
+                export_exists:
+                  description: |-
+                    Example template string for code `export_exists`:
+                    ```
+                    Export '{id}' exists for project '{projectIri}'.
+                    ```
+                  value:
+                    message: Export '{id}' exists for project '{projectIri}'.
+                    errors:
+                    - code: export_exists
+                      message: Export '{id}' exists for project '{projectIri}'.
+                      details:
+                        id: example_id
+                        projectIri: example_projectIri
+      security:
+      - httpAuth: []
+  /v3/projects/{projectIri}/exports/{exportId}:
+    get:
+      tags:
+      - API v3
+      description: Checks the status of an export. The response will indicate whether
+        the export is still in progress, has completed successfully, or has failed.
+      operationId: getV3ProjectsProjectiriExportsExportid
+      parameters:
+      - name: projectIri
+        in: path
+        description: The IRI of a project. Must be URL-encoded.
+        required: true
+        schema:
+          type: string
+        example: http://rdfh.ch/projects/0001
+      - name: exportId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataTaskStatusResponse'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+              example:
+                message: Invalid token.
+                errors: []
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+              example:
+                message: User not active.
+                errors: []
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+              examples:
+                project_not_found:
+                  description: |-
+                    Example template string for code `project_not_found`:
+                    ```
+                    The project '{id}' was not found.
+                    ```
+                  value:
+                    message: The project '{id}' was not found.
+                    errors:
+                    - code: project_not_found
+                      message: The project '{id}' was not found.
+                      details:
+                        id: example_id
+                export_not_found:
+                  description: |-
+                    Example template string for code `export_not_found`:
+                    ```
+                    The export '{id}' in project '{projectIri}' was not found.
+                    ```
+                  value:
+                    message: The export '{id}' in project '{projectIri}' was not found.
+                    errors:
+                    - code: export_not_found
+                      message: The export '{id}' in project '{projectIri}' was not
+                        found.
+                      details:
+                        id: example_id
+                        projectIri: example_projectIri
+      security:
+      - httpAuth: []
+    delete:
+      tags:
+      - API v3
+      description: Deletes an export irrevocably. Only exports in state failed or
+        completed can be deleted.
+      operationId: deleteV3ProjectsProjectiriExportsExportid
+      parameters:
+      - name: projectIri
+        in: path
+        description: The IRI of a project. Must be URL-encoded.
+        required: true
+        schema:
+          type: string
+        example: http://rdfh.ch/projects/0001
+      - name: exportId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: ''
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+              example:
+                message: Invalid token.
+                errors: []
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+              example:
+                message: User not active.
+                errors: []
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+              examples:
+                project_not_found:
+                  description: |-
+                    Example template string for code `project_not_found`:
+                    ```
+                    The project '{id}' was not found.
+                    ```
+                  value:
+                    message: The project '{id}' was not found.
+                    errors:
+                    - code: project_not_found
+                      message: The project '{id}' was not found.
+                      details:
+                        id: example_id
+                export_not_found:
+                  description: |-
+                    Example template string for code `export_not_found`:
+                    ```
+                    The export '{id}' in project '{projectIri}' was not found.
+                    ```
+                  value:
+                    message: The export '{id}' in project '{projectIri}' was not found.
+                    errors:
+                    - code: export_not_found
+                      message: The export '{id}' in project '{projectIri}' was not
+                        found.
+                      details:
+                        id: example_id
+                        projectIri: example_projectIri
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conflict'
+              examples:
+                export_in_progress:
+                  description: |-
+                    Example template string for code `export_in_progress`:
+                    ```
+                    Export '{id}' in progress for project '{projectIri}'.
+                    ```
+                  value:
+                    message: Export '{id}' in progress for project '{projectIri}'.
+                    errors:
+                    - code: export_in_progress
+                      message: Export '{id}' in progress for project '{projectIri}'.
+                      details:
+                        id: example_id
+                        projectIri: example_projectIri
+      security:
+      - httpAuth: []
+  /v3/projects/{projectIri}/exports/{exportId}/download:
+    get:
+      tags:
+      - API v3
+      description: Download an export. An export can only be downloaded when it has
+        completed successfully. If it is still in progress or has failed, the response
+        will be 409 Conflict.
+      operationId: getV3ProjectsProjectiriExportsExportidDownload
+      parameters:
+      - name: projectIri
+        in: path
+        description: The IRI of a project. Must be URL-encoded.
+        required: true
+        schema:
+          type: string
+        example: http://rdfh.ch/projects/0001
+      - name: exportId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          headers:
+            Content-Disposition:
+              required: true
+              schema:
+                type: string
+          content:
+            application/zip:
+              schema:
+                type: string
+                format: binary
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+              example:
+                message: Invalid token.
+                errors: []
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+              example:
+                message: User not active.
+                errors: []
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+              examples:
+                project_not_found:
+                  description: |-
+                    Example template string for code `project_not_found`:
+                    ```
+                    The project '{id}' was not found.
+                    ```
+                  value:
+                    message: The project '{id}' was not found.
+                    errors:
+                    - code: project_not_found
+                      message: The project '{id}' was not found.
+                      details:
+                        id: example_id
+                export_not_found:
+                  description: |-
+                    Example template string for code `export_not_found`:
+                    ```
+                    The export '{id}' in project '{projectIri}' was not found.
+                    ```
+                  value:
+                    message: The export '{id}' in project '{projectIri}' was not found.
+                    errors:
+                    - code: export_not_found
+                      message: The export '{id}' in project '{projectIri}' was not
+                        found.
+                      details:
+                        id: example_id
+                        projectIri: example_projectIri
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conflict'
+              examples:
+                export_in_progress:
+                  description: |-
+                    Example template string for code `export_in_progress`:
+                    ```
+                    Export '{id}' in progress for project '{projectIri}'.
+                    ```
+                  value:
+                    message: Export '{id}' in progress for project '{projectIri}'.
+                    errors:
+                    - code: export_in_progress
+                      message: Export '{id}' in progress for project '{projectIri}'.
+                      details:
+                        id: example_id
+                        projectIri: example_projectIri
+                export_failed:
+                  description: |-
+                    Example template string for code `export_failed`:
+                    ```
+                    Export '{id}' failed for project '{projectIri}'.
+                    ```
+                  value:
+                    message: Export '{id}' failed for project '{projectIri}'.
+                    errors:
+                    - code: export_failed
+                      message: Export '{id}' failed for project '{projectIri}'.
+                      details:
+                        id: example_id
+                        projectIri: example_projectIri
+      security:
+      - httpAuth: []
+  /v3/projects/{projectIri}/imports:
+    post:
+      tags:
+      - API v3
+      description: Initiates an import of a project from an export zip file. The import
+        will be performed asynchronously, and the response will indicate that the
+        import has been accepted. An import can only be triggered when no other import
+        exists.
+      operationId: postV3ProjectsProjectiriImports
+      parameters:
+      - name: projectIri
+        in: path
+        description: The IRI of a project. Must be URL-encoded.
+        required: true
+        schema:
+          type: string
+        example: http://rdfh.ch/projects/0001
+      requestBody:
+        description: The export zip file to import
+        content:
+          application/zip:
+            schema:
+              type: string
+              format: binary
+        required: true
+      responses:
+        '202':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataTaskStatusResponse'
+        '400':
+          description: 'Invalid value for: body'
+          content:
+            text/plain:
+              schema:
+                type: string
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+              example:
+                message: Invalid token.
+                errors: []
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+              example:
+                message: User not active.
+                errors: []
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conflict'
+              examples:
+                import_exists:
+                  description: |-
+                    Example template string for code `import_exists`:
+                    ```
+                    Import '{id}' exists for project '{projectIri}'.
+                    ```
+                  value:
+                    message: Import '{id}' exists for project '{projectIri}'.
+                    errors:
+                    - code: import_exists
+                      message: Import '{id}' exists for project '{projectIri}'.
+                      details:
+                        id: example_id
+                        projectIri: example_projectIri
+      security:
+      - httpAuth: []
+  /v3/projects/{projectIri}/imports/{importId}:
+    get:
+      tags:
+      - API v3
+      description: Checks the status of an import. The response will indicate whether
+        the import is still in progress, has completed successfully, or has failed.
+      operationId: getV3ProjectsProjectiriImportsImportid
+      parameters:
+      - name: projectIri
+        in: path
+        description: The IRI of a project. Must be URL-encoded.
+        required: true
+        schema:
+          type: string
+        example: http://rdfh.ch/projects/0001
+      - name: importId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataTaskStatusResponse'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+              example:
+                message: Invalid token.
+                errors: []
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+              example:
+                message: User not active.
+                errors: []
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+              examples:
+                import_not_found:
+                  description: |-
+                    Example template string for code `import_not_found`:
+                    ```
+                    The import '{id}' in project '{projectIri}' was not found.
+                    ```
+                  value:
+                    message: The import '{id}' in project '{projectIri}' was not found.
+                    errors:
+                    - code: import_not_found
+                      message: The import '{id}' in project '{projectIri}' was not
+                        found.
+                      details:
+                        id: example_id
+                        projectIri: example_projectIri
+      security:
+      - httpAuth: []
+    delete:
+      tags:
+      - API v3
+      description: Deletes an import. Only imports in state failed or completed can
+        be deleted. If it is still in progress, the response will be 409 Conflict.
+      operationId: deleteV3ProjectsProjectiriImportsImportid
+      parameters:
+      - name: projectIri
+        in: path
+        description: The IRI of a project. Must be URL-encoded.
+        required: true
+        schema:
+          type: string
+        example: http://rdfh.ch/projects/0001
+      - name: importId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: ''
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+              example:
+                message: Invalid token.
+                errors: []
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+              example:
+                message: User not active.
+                errors: []
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+              examples:
+                import_not_found:
+                  description: |-
+                    Example template string for code `import_not_found`:
+                    ```
+                    The import '{id}' in project '{projectIri}' was not found.
+                    ```
+                  value:
+                    message: The import '{id}' in project '{projectIri}' was not found.
+                    errors:
+                    - code: import_not_found
+                      message: The import '{id}' in project '{projectIri}' was not
+                        found.
+                      details:
+                        id: example_id
+                        projectIri: example_projectIri
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conflict'
+              examples:
+                import_in_progress:
+                  description: |-
+                    Example template string for code `import_in_progress`:
+                    ```
+                    Import '{id}' in progress for project '{projectIri}'.
+                    ```
+                  value:
+                    message: Import '{id}' in progress for project '{projectIri}'.
+                    errors:
+                    - code: import_in_progress
+                      message: Import '{id}' in progress for project '{projectIri}'.
+                      details:
+                        id: example_id
+                        projectIri: example_projectIri
+      security:
       - httpAuth: []
   /version:
     get:
@@ -12629,9 +13319,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/VersionResponse'
               example:
-                webapi: v34.1.1-7-gef5fa48
-                buildCommit: ef5fa48a0
-                buildTime: '2026-01-19T15:22:33.950630976Z'
+                webapi: v34.2.2-7-g134844b
+                buildCommit: 134844bfc
+                buildTime: '2026-02-16T10:00:13.835624546Z'
                 fuseki: 5.5.0-2
                 scala: 3.3.7
                 sipi: v3.16.3
@@ -12771,7 +13461,8 @@ components:
         iri:
           $ref: '#/components/schemas/PermissionIri'
         forProject:
-          $ref: '#/components/schemas/ProjectIri'
+          description: IRI for a project.
+          type: string
         forGroup:
           $ref: '#/components/schemas/GroupIri'
         hasPermissions:
@@ -12943,6 +13634,18 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/StringLiteralV2'
+    Conflict:
+      title: Conflict
+      type: object
+      required:
+      - message
+      properties:
+        message:
+          type: string
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorDetail'
     CopyrightHolderAddRequest:
       title: CopyrightHolderAddRequest
       type: object
@@ -12973,7 +13676,8 @@ components:
         id:
           $ref: '#/components/schemas/PermissionIri'
         forProject:
-          $ref: '#/components/schemas/ProjectIri'
+          description: IRI for a project.
+          type: string
         forGroup:
           $ref: '#/components/schemas/GroupIri'
         hasPermissions:
@@ -12990,7 +13694,8 @@ components:
         id:
           $ref: '#/components/schemas/PermissionIri'
         forProject:
-          $ref: '#/components/schemas/ProjectIri'
+          description: IRI for a project.
+          type: string
         forGroup:
           $ref: '#/components/schemas/GroupIri'
         forResourceClass:
@@ -13013,6 +13718,32 @@ components:
           type: string
         xml:
           type: string
+    DataTaskStatusResponse:
+      title: DataTaskStatusResponse
+      type: object
+      required:
+      - id
+      - projectIri
+      - status
+      - createdBy
+      - createdAt
+      properties:
+        id:
+          description: A unique identifier.
+          type: string
+        projectIri:
+          description: IRI for a project.
+          type: string
+        status:
+          description: The status of a task. One of 'in_progress,completed,failed'
+            expected.
+          type: string
+        createdBy:
+          description: IRI for a user.
+          type: string
+        createdAt:
+          type: string
+          format: date-time
     DefaultObjectAccessPermissionADM:
       title: DefaultObjectAccessPermissionADM
       type: object
@@ -13023,7 +13754,8 @@ components:
         iri:
           $ref: '#/components/schemas/PermissionIri'
         forProject:
-          $ref: '#/components/schemas/ProjectIri'
+          description: IRI for a project.
+          type: string
         forGroup:
           $ref: '#/components/schemas/GroupIri'
         forResourceClass:
@@ -13219,7 +13951,8 @@ components:
         descriptions:
           $ref: '#/components/schemas/GroupDescriptions'
         project:
-          $ref: '#/components/schemas/ProjectIri'
+          description: IRI for a project.
+          type: string
         status:
           $ref: '#/components/schemas/GroupStatus'
         selfjoin:
@@ -13336,7 +14069,8 @@ components:
       - password
       properties:
         iri:
-          $ref: '#/components/schemas/UserIri'
+          description: IRI for a user.
+          type: string
         password:
           type: string
     Keyword:
@@ -13434,7 +14168,8 @@ components:
         listIri:
           $ref: '#/components/schemas/ListIri'
         projectIri:
-          $ref: '#/components/schemas/ProjectIri'
+          description: IRI for a project.
+          type: string
         hasRootNode:
           $ref: '#/components/schemas/ListIri'
         position:
@@ -13516,7 +14251,8 @@ components:
         position:
           $ref: '#/components/schemas/Position'
         projectIri:
-          $ref: '#/components/schemas/ProjectIri'
+          description: IRI for a project.
+          type: string
     ListCreateRootNodeRequest:
       title: ListCreateRootNodeRequest
       type: object
@@ -13534,7 +14270,8 @@ components:
         name:
           $ref: '#/components/schemas/ListName'
         projectIri:
-          $ref: '#/components/schemas/ProjectIri'
+          description: IRI for a project.
+          type: string
     ListDeleteResponseADM:
       title: ListDeleteResponseADM
       type: object
@@ -13992,7 +14729,8 @@ components:
       - selfjoin
       properties:
         id:
-          $ref: '#/components/schemas/ProjectIri'
+          description: IRI for a project.
+          type: string
         shortname:
           $ref: '#/components/schemas/Shortname'
         shortcode:
@@ -14045,7 +14783,8 @@ components:
       - selfjoin
       properties:
         id:
-          $ref: '#/components/schemas/ProjectIri'
+          description: IRI for a project.
+          type: string
         shortname:
           $ref: '#/components/schemas/Shortname'
         shortcode:
@@ -14102,14 +14841,6 @@ components:
       - location
       properties:
         location:
-          type: string
-    ProjectIri:
-      title: ProjectIri
-      type: object
-      required:
-      - value
-      properties:
-        value:
           type: string
     ProjectKeywordsGetResponse:
       title: ProjectKeywordsGetResponse
@@ -14209,6 +14940,36 @@ components:
           type: array
           items:
             type: string
+    ReorderValuesRequest:
+      title: ReorderValuesRequest
+      type: object
+      required:
+      - resourceIri
+      - propertyIri
+      properties:
+        resourceIri:
+          type: string
+        propertyIri:
+          type: string
+        orderedValueIris:
+          type: array
+          items:
+            type: string
+    ReorderValuesResponse:
+      title: ReorderValuesResponse
+      type: object
+      required:
+      - resourceIri
+      - propertyIri
+      - valuesReordered
+      properties:
+        resourceIri:
+          type: string
+        propertyIri:
+          type: string
+        valuesReordered:
+          type: integer
+          format: int32
     RepresentationClass:
       title: RepresentationClass
       type: string
@@ -14403,7 +15164,8 @@ components:
       - systemAdmin
       properties:
         id:
-          $ref: '#/components/schemas/UserIri'
+          description: IRI for a user.
+          type: string
         username:
           $ref: '#/components/schemas/Username'
         email:
@@ -14466,14 +15228,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Group'
-    UserIri:
-      title: UserIri
-      type: object
-      required:
-      - value
-      properties:
-        value:
-          type: string
     UserProjectAdminMembershipsGetResponseADM:
       title: UserProjectAdminMembershipsGetResponseADM
       type: object
@@ -14537,6 +15291,13 @@ components:
       title: V3ErrorCode
       type: string
       enum:
+      - export_exists
+      - export_failed
+      - export_in_progress
+      - export_not_found
+      - import_exists
+      - import_in_progress
+      - import_not_found
       - ontology_not_found
       - project_not_found
       - resourceClass_not_found

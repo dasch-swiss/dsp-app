@@ -567,7 +567,11 @@
         "undo": "Rückgängig",
         "addComment": "Kommentar hinzufügen",
         "removeComment": "Kommentar entfernen",
-        "save": "Speichern"
+        "save": "Speichern",
+        "reorderStale": "Die Reihenfolge der Werte hat sich geändert. Bitte aktualisieren und erneut versuchen.",
+        "reorderForbidden": "Sie haben keine Berechtigung, diese Werte umzuordnen.",
+        "reorderFailed": "Umordnung fehlgeschlagen. Bitte erneut versuchen.",
+        "dragToReorder": "Zum Neuordnen ziehen"
       },
       "deleteValue": {
         "title": "{{label}} löschen",

@@ -80,3 +80,9 @@ body {
   max-width: 360px !important;
   padding: 6px !important;
 }
+
+.cdk-drag-preview {
+  border: 2px dashed #999;
+  border-radius: 4px;
+  background: white;
+}

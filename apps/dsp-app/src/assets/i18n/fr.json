@@ -607,7 +607,11 @@
         "undo": "Annuler",
         "addComment": "Ajouter un commentaire",
         "removeComment": "Supprimer le commentaire",
-        "save": "Enregistrer"
+        "save": "Enregistrer",
+        "reorderStale": "L'ordre des valeurs a changé. Veuillez actualiser et réessayer.",
+        "reorderForbidden": "Vous n'avez pas la permission de réordonner ces valeurs.",
+        "reorderFailed": "Le réordonnancement a échoué. Veuillez réessayer.",
+        "dragToReorder": "Glisser pour réordonner"
       },
       "deleteValue": {
         "title": "Supprimer {{label}}",
