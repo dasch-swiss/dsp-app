@@ -75,8 +75,8 @@ import { UriViewerComponent } from './viewer-components/uri-viewer.component';
       <app-list-viewer [value]="item" [propertyDef]="propertyDefinition" />
     </ng-template>
 
-    <ng-template #richTextDisplayTpl let-item="item" let-index="index">
-      <app-rich-text-viewer [value]="item" [index]="index" />
+    <ng-template #richTextDisplayTpl let-item="item">
+      <app-rich-text-viewer [value]="item" />
     </ng-template>
 
     <ng-template #textHtmlDisplayTpl let-item="item">

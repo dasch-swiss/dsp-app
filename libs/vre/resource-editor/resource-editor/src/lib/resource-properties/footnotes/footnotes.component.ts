@@ -9,14 +9,9 @@ import { FootnoteService } from './footnote.service';
   imports: [TranslatePipe, InternalLinkReplacerPipe, AddTargetBlankPipe],
   template: `<h5>{{ 'resourceEditor.resourceProperties.footnotes' | translate }}</h5>
     @for (footnote of footnoteService.footnotes; track footnote; let index = $index) {
-      <div
-        class="footnote"
-        [attr.data-uuid]="footnoteService.uuid + '-' + footnote.indexValue + '-' + footnote.indexFootnote"
-        data-cy="footnote">
-        <a (click)="goToFootnote(footnoteService.uuid + '-' + footnote.indexValue + '-' + footnote.indexFootnote)"
-          >{{ index + 1 }}.</a
-        >
-        <span class="footnote-value" [innerHTML]="footnote.content | internalLinkReplacer | addTargetBlank"></span>
+      <div class="footnote" [attr.data-uuid]="footnoteService.uuid + '-' + index" data-cy="footnote">
+        <a (click)="goToFootnote(footnoteService.uuid + '-' + index)">{{ index + 1 }}.</a>
+        <span class="footnote-value" [innerHTML]="footnote | internalLinkReplacer | addTargetBlank"></span>
       </div>
     }`,
   styles: [

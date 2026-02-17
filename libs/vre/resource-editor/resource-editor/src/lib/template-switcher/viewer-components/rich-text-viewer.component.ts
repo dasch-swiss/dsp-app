@@ -3,6 +3,7 @@ import { ReadTextValueAsXml } from '@dasch-swiss/dsp-js';
 import { AddTargetBlankPipe, InternalLinkReplacerPipe } from '@dasch-swiss/vre/ui/ui';
 import { FootnoteParserPipe } from '../../resource-properties/footnotes/footnote-parser.pipe';
 import { FootnoteDirective } from '../../resource-properties/footnotes/footnote.directive';
+import { FootnoteService } from '../../resource-properties/footnotes/footnote.service';
 
 @Component({
   selector: 'app-rich-text-viewer',
@@ -11,7 +12,9 @@ import { FootnoteDirective } from '../../resource-properties/footnotes/footnote.
     <div
       data-cy="rich-text-switch"
       class="rich-text-viewer"
-      [innerHTML]="value.strval || '' | footnoteParser: index | internalLinkReplacer | addTargetBlank"
+      [innerHTML]="
+        value.strval || '' | footnoteParser: footnoteService.reloadToken() | internalLinkReplacer | addTargetBlank
+      "
       appFootnote></div>
   `,
   styles: [
@@ -42,5 +45,6 @@ import { FootnoteDirective } from '../../resource-properties/footnotes/footnote.
 })
 export class RichTextViewerComponent {
   @Input({ required: true }) value!: ReadTextValueAsXml;
-  @Input({ required: true }) index!: number;
+
+  constructor(public readonly footnoteService: FootnoteService) {}
 }
