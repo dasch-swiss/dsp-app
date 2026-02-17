@@ -1,5 +1,13 @@
 # Changelog
 
+## [12.6.1](https://github.com/dasch-swiss/dsp-das/compare/v12.6.0...v12.6.1) (2026-02-17)
+
+
+### Bug Fixes
+
+* add stroke color to spinner ([#2839](https://github.com/dasch-swiss/dsp-das/issues/2839)) ([ff48a4d](https://github.com/dasch-swiss/dsp-das/commit/ff48a4d7f10b4ddf8513c4e0d96195820124e084))
+* footnotes ordering ([#2841](https://github.com/dasch-swiss/dsp-das/issues/2841)) ([70358bc](https://github.com/dasch-swiss/dsp-das/commit/70358bc4a9a877439894e46b64feb057fd9a0c38))
+
 ## [12.6.0](https://github.com/dasch-swiss/dsp-das/compare/v12.5.4...v12.6.0) (2026-02-16)
 
 
