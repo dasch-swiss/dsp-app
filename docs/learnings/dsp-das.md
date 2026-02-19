@@ -58,3 +58,60 @@ this.hasValidValue$ = this.group.valueChanges.pipe(
 - `iiif-control.component.ts`, `interval-value.component.ts`, `list-value.component.ts` — all use `startWith`
 
 **Rule of thumb:** When deriving state from `valueChanges` or `statusChanges`, always ask: "Does the initial state need to be evaluated?" If yes, add `startWith(null)` (or `startWith(initialValue)`). The `switchMap` reads from the form controls directly, so the emitted value doesn't matter — it just needs a "kick" to trigger the first evaluation.
+
+---
+
+## Reuse Existing CDK Drag-and-Drop Patterns (DEV-5870)
+
+**Context:** Needed to add drag-and-drop reordering for values within a property.
+
+**Decision:** Used Angular CDK `cdkDropList` + `cdkDrag` + `cdkDragHandle` with `drag_indicator` icon, matching existing patterns already in the codebase:
+
+- `resource-class-info.component.ts` — ontology property reorder
+- Search order-by components
+
+**Rule of thumb:** Before implementing drag-and-drop, search the codebase for existing CDK drag-drop patterns. Consistency reduces review friction and ensures tested behavior. The `cdkDragHandle` pattern (drag only via a handle icon, not the whole row) is the established convention in this codebase.
+
+**Affected file:** `draggable-value-list.component.ts`
+
+---
+
+## Use `cdkDragPlaceholder` for Clean Drop Zones (DEV-5870)
+
+**Context:** Value components contain complex sub-components (CKEditor instances, file previews, IIIF viewers). CDK's default placeholder can look messy when the dragged item's DOM is heavy.
+
+**Decision:** Use `cdkDragPlaceholder` to render a clean, minimal drop zone while dragging, instead of building a custom drag preview:
+
+```html
+<div cdkDragPlaceholder></div>
+```
+
+No custom `*cdkDragPreview` or summary helper was needed — the default drag preview (which clones the element) worked fine, and the placeholder keeps the drop target area clean.
+
+**Rule of thumb:** Use `cdkDragPlaceholder` to show a clean drop zone when reordering complex components. A custom `*cdkDragPreview` is only needed if the default clone causes performance or visual issues — start without one and add it only if necessary.
+
+**Affected file:** `draggable-value-list.component.ts`
+
+---
+
+## Prefer the OpenAPI-Generated Client Over Direct `HttpClient` (DEV-5870)
+
+**Context:** The new `PUT /v2/values/order` endpoint wasn't available in `@dasch-swiss/dsp-js` yet, but the frontend needed to call it.
+
+**Decision:** Used the OpenAPI-generated `APIV2ApiService` (auto-generated from `dsp-api_spec.yaml` via openapitools) instead of manual `HttpClient` calls:
+
+```typescript
+private readonly apiService = inject(APIV2ApiService);
+
+this.apiService.putV2ValuesOrder({
+  resourceIri,
+  propertyIri,
+  orderedValueIris,
+});
+```
+
+No manual URL construction, no `DspApiConfigToken` injection — the generated client handles base URL configuration and serialization.
+
+**Rule of thumb:** When `dsp-js` lacks an endpoint, prefer the OpenAPI-generated client (`APIV2ApiService`) if the endpoint is defined in `dsp-api_spec.yaml`. Fall back to direct `HttpClient` only when no generated client is available.
+
+**Affected file:** `draggable-value-list.component.ts`
