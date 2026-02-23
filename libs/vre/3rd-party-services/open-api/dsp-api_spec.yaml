@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: DSP-API
-  version: v34.2.2-7-g134844b
+  version: v34.4.1-10-gd3e3e82
   summary: DSP-API is part of the DaSCH Service Platform, a repository for the long-term
     preservation and reuse of data in the humanities.
   contact:
@@ -4273,224 +4273,6 @@ paths:
       security:
       - httpAuth: []
       - httpAuth1: []
-  /admin/projects/export:
-    get:
-      tags:
-      - Admin API
-      description: '**This endpoint is deprecated and will be removed in a future
-        version.** Lists existing exports of all projects. Requires SystemAdmin permissions.'
-      operationId: getAdminProjectsExport
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ProjectExportInfoResponse'
-        '400':
-          description: ''
-          content:
-            application/json:
-              schema:
-                anyOf:
-                - $ref: '#/components/schemas/OntologyConstraintException'
-                - $ref: '#/components/schemas/DuplicateValueException'
-                - $ref: '#/components/schemas/ValidationException'
-                - $ref: '#/components/schemas/BadRequestException'
-                - $ref: '#/components/schemas/GravsearchException'
-                - $ref: '#/components/schemas/EditConflictException'
-        '401':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BadCredentialsException'
-        '403':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ForbiddenException'
-        '404':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/NotFoundException'
-      deprecated: true
-      security:
-      - httpAuth: []
-      - httpAuth1: []
-  /admin/projects/shortcode/{projectShortcode}/export:
-    post:
-      tags:
-      - Admin API
-      description: '**This endpoint is deprecated and will be removed in a future
-        version.** Trigger an export of a project identified by the shortcode. Requires
-        SystemAdmin permissions.'
-      operationId: postAdminProjectsShortcodeProjectshortcodeExport
-      parameters:
-      - name: projectShortcode
-        in: path
-        description: The shortcode of a project. Must be a 4 digit hexadecimal String.
-        required: true
-        schema:
-          type: string
-        example: '0001'
-      responses:
-        '202':
-          description: ''
-        '400':
-          description: ''
-          content:
-            application/json:
-              schema:
-                anyOf:
-                - $ref: '#/components/schemas/OntologyConstraintException'
-                - $ref: '#/components/schemas/DuplicateValueException'
-                - $ref: '#/components/schemas/ValidationException'
-                - $ref: '#/components/schemas/BadRequestException'
-                - $ref: '#/components/schemas/GravsearchException'
-                - $ref: '#/components/schemas/EditConflictException'
-        '401':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BadCredentialsException'
-        '403':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ForbiddenException'
-        '404':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/NotFoundException'
-      deprecated: true
-      security:
-      - httpAuth: []
-      - httpAuth1: []
-  /admin/projects/shortcode/{projectShortcode}/export-await:
-    post:
-      tags:
-      - Admin API
-      description: '**This endpoint is deprecated and will be removed in a future
-        version.** Trigger an export of a project identified by the shortcode. Returns
-        the shortcode and the export location when the process has finished successfully.
-        Requires SystemAdmin permissions.'
-      operationId: postAdminProjectsShortcodeProjectshortcodeExport-await
-      parameters:
-      - name: projectShortcode
-        in: path
-        description: The shortcode of a project. Must be a 4 digit hexadecimal String.
-        required: true
-        schema:
-          type: string
-        example: '0001'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProjectExportInfoResponse'
-        '400':
-          description: ''
-          content:
-            application/json:
-              schema:
-                anyOf:
-                - $ref: '#/components/schemas/OntologyConstraintException'
-                - $ref: '#/components/schemas/DuplicateValueException'
-                - $ref: '#/components/schemas/ValidationException'
-                - $ref: '#/components/schemas/BadRequestException'
-                - $ref: '#/components/schemas/GravsearchException'
-                - $ref: '#/components/schemas/EditConflictException'
-        '401':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BadCredentialsException'
-        '403':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ForbiddenException'
-        '404':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/NotFoundException'
-      deprecated: true
-      security:
-      - httpAuth: []
-      - httpAuth1: []
-  /admin/projects/shortcode/{projectShortcode}/import:
-    post:
-      tags:
-      - Admin API
-      description: '**This endpoint is deprecated and will be removed in a future
-        version.** Trigger an import of a project identified by the shortcode. Requires
-        SystemAdmin permissions.'
-      operationId: postAdminProjectsShortcodeProjectshortcodeImport
-      parameters:
-      - name: projectShortcode
-        in: path
-        description: The shortcode of a project. Must be a 4 digit hexadecimal String.
-        required: true
-        schema:
-          type: string
-        example: '0001'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProjectImportResponse'
-        '400':
-          description: ''
-          content:
-            application/json:
-              schema:
-                anyOf:
-                - $ref: '#/components/schemas/OntologyConstraintException'
-                - $ref: '#/components/schemas/DuplicateValueException'
-                - $ref: '#/components/schemas/ValidationException'
-                - $ref: '#/components/schemas/BadRequestException'
-                - $ref: '#/components/schemas/GravsearchException'
-                - $ref: '#/components/schemas/EditConflictException'
-        '401':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BadCredentialsException'
-        '403':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ForbiddenException'
-        '404':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/NotFoundException'
-      deprecated: true
-      security:
-      - httpAuth: []
-      - httpAuth1: []
   /admin/users/iri/{userIri}/project-memberships:
     get:
       tags:
@@ -4505,7 +4287,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/Cjngo4kuQN6A3iettrlbDA
+        example: http://rdfh.ch/users/Pz0puJ_eQGeXxfOs_dvcvA
       responses:
         '200':
           description: ''
@@ -4557,7 +4339,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/Cjngo4kuQN6A3iettrlbDA
+        example: http://rdfh.ch/users/Pz0puJ_eQGeXxfOs_dvcvA
       responses:
         '200':
           description: ''
@@ -4609,7 +4391,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/Cjngo4kuQN6A3iettrlbDA
+        example: http://rdfh.ch/users/Pz0puJ_eQGeXxfOs_dvcvA
       responses:
         '200':
           description: ''
@@ -4762,7 +4544,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/Cjngo4kuQN6A3iettrlbDA
+        example: http://rdfh.ch/users/Pz0puJ_eQGeXxfOs_dvcvA
       responses:
         '200':
           description: ''
@@ -4816,7 +4598,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/Cjngo4kuQN6A3iettrlbDA
+        example: http://rdfh.ch/users/Pz0puJ_eQGeXxfOs_dvcvA
       responses:
         '200':
           description: ''
@@ -4984,7 +4766,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/Cjngo4kuQN6A3iettrlbDA
+        example: http://rdfh.ch/users/Pz0puJ_eQGeXxfOs_dvcvA
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -5045,7 +4827,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/Cjngo4kuQN6A3iettrlbDA
+        example: http://rdfh.ch/users/Pz0puJ_eQGeXxfOs_dvcvA
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -5107,7 +4889,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/Cjngo4kuQN6A3iettrlbDA
+        example: http://rdfh.ch/users/Pz0puJ_eQGeXxfOs_dvcvA
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -5168,7 +4950,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/Cjngo4kuQN6A3iettrlbDA
+        example: http://rdfh.ch/users/Pz0puJ_eQGeXxfOs_dvcvA
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -5230,7 +5012,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/Cjngo4kuQN6A3iettrlbDA
+        example: http://rdfh.ch/users/Pz0puJ_eQGeXxfOs_dvcvA
       - name: groupIri
         in: path
         description: The IRI of a group. Must be URL-encoded.
@@ -5291,7 +5073,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/Cjngo4kuQN6A3iettrlbDA
+        example: http://rdfh.ch/users/Pz0puJ_eQGeXxfOs_dvcvA
       - name: groupIri
         in: path
         description: The IRI of a group. Must be URL-encoded.
@@ -5353,7 +5135,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/Cjngo4kuQN6A3iettrlbDA
+        example: http://rdfh.ch/users/Pz0puJ_eQGeXxfOs_dvcvA
       requestBody:
         content:
           application/json:
@@ -5414,7 +5196,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/Cjngo4kuQN6A3iettrlbDA
+        example: http://rdfh.ch/users/Pz0puJ_eQGeXxfOs_dvcvA
       requestBody:
         content:
           application/json:
@@ -5475,7 +5257,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/Cjngo4kuQN6A3iettrlbDA
+        example: http://rdfh.ch/users/Pz0puJ_eQGeXxfOs_dvcvA
       requestBody:
         content:
           application/json:
@@ -5536,7 +5318,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/Cjngo4kuQN6A3iettrlbDA
+        example: http://rdfh.ch/users/Pz0puJ_eQGeXxfOs_dvcvA
       requestBody:
         content:
           application/json:
@@ -5759,7 +5541,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/lists/0001/JbbzSi76T5WdV0ShV1I3Jg
+        example: http://rdfh.ch/lists/0001/-CUK1H7gSSW_tL277mhK5A
       - name: x-knora-accept-schema
         in: header
         description: |-
@@ -5866,7 +5648,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/lists/0001/JbbzSi76T5WdV0ShV1I3Jg
+        example: http://rdfh.ch/lists/0001/-CUK1H7gSSW_tL277mhK5A
       - name: x-knora-accept-schema
         in: header
         description: |-
@@ -13319,9 +13101,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/VersionResponse'
               example:
-                webapi: v34.2.2-7-g134844b
-                buildCommit: 134844bfc
-                buildTime: '2026-02-16T10:00:13.835624546Z'
+                webapi: v34.4.1-10-gd3e3e82
+                buildCommit: d3e3e8227
+                buildTime: '2026-02-20T13:03:57Z'
                 fuseki: 5.5.0-2
                 scala: 3.3.7
                 sipi: v3.16.3
@@ -14815,17 +14597,6 @@ components:
           uniqueItems: true
           items:
             type: string
-    ProjectExportInfoResponse:
-      title: ProjectExportInfoResponse
-      type: object
-      required:
-      - projectShortcode
-      - location
-      properties:
-        projectShortcode:
-          type: string
-        location:
-          type: string
     ProjectGetResponse:
       title: ProjectGetResponse
       type: object
@@ -14834,14 +14605,6 @@ components:
       properties:
         project:
           $ref: '#/components/schemas/Project'
-    ProjectImportResponse:
-      title: ProjectImportResponse
-      type: object
-      required:
-      - location
-      properties:
-        location:
-          type: string
     ProjectKeywordsGetResponse:
       title: ProjectKeywordsGetResponse
       type: object
