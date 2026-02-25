@@ -74,3 +74,6 @@ apps/dsp-app/cypress/downloads
 libs/vre/3rd-party-services/open-api/src/generated/
 .cursor/rules/nx-rules.mdc
 .github/instructions/nx.instructions.md
+
+# Claude Code
+.claude/worktrees/
