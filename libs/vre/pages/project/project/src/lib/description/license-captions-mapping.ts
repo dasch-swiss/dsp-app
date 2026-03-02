@@ -38,4 +38,14 @@ Belltower of Aurigeno. © Romeo Dell’Era`,
   Staatsbibliothek Bamberg, Msc.Bibl.95, fol. 9r, Detail. Public Domain Mark 1.0 Universal Deed (https://creativecommons.org/publicdomain/mark/1.0/)`,
   ],
   ['0862', 'Author: Christian von Zimmermann.'],
+  [
+    '085c',
+    'Edition und Übersetzung der beiden von den St. Galler Mönchen Ekkehart I. und Herimannus verfassten Viten Wiboradas von St. Gallen († 926) durch Walter Berschin.',
+  ],
+  [
+    '0868',
+    'Licence Image:  CC BY\n' +
+      '\n' +
+      '"When did the Sun darken in antiquity? Discover calculated solar eclipses and their traces in ancient historical sources."',
+  ],
 ]);
