@@ -141,7 +141,7 @@ export class PropertyFormListValueComponent implements OnInit, AfterViewInit, On
     this.valueFilterCtrl.valueChanges.pipe(takeUntil(this.destroyed)).subscribe((value: any) => {
       let filtered = [];
       if (value) {
-        const label = typeof value === 'object' ? value.label : value.toLowerCase();
+        const label = typeof value === 'object' ? value.label : String(value).toLowerCase();
         filtered = this.filterItems(this.sortedLabelList || [], label);
       } else {
         filtered = [...(this.sortedLabelList || [])];
