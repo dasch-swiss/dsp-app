@@ -51,8 +51,12 @@ export class StillImageToolbarComponent {
   @Input({ required: true }) isPng!: boolean;
   @Output() imageIsPng = new EventEmitter<boolean>();
 
-  get imageFileValue() {
-    const image = this.resource.properties[Constants.HasStillImageFileValue][0];
+  get imageFileValue(): ReadStillImageFileValue | ReadStillImageExternalFileValue | null {
+    const imageValues = this.resource.properties[Constants.HasStillImageFileValue];
+    if (!imageValues?.length) {
+      return null;
+    }
+    const image = imageValues[0];
     switch (image.type) {
       case Constants.StillImageFileValue:
         return image as ReadStillImageFileValue;
@@ -93,6 +97,7 @@ export class StillImageToolbarComponent {
   }
 
   download() {
+    if (!this.imageFileValue) return;
     this._rs.downloadProjectFile(this.imageFileValue, this.resource);
   }
 

@@ -208,7 +208,9 @@ export class OsdDrawerService implements OnDestroy {
       return;
     }
 
-    const stillImage = this.resource.properties[Constants.HasStillImageFileValue][0] as ReadStillImageFileValue;
+    const imageValues = this.resource.properties[Constants.HasStillImageFileValue];
+    if (!imageValues?.length) return;
+    const stillImage = imageValues[0] as ReadStillImageFileValue;
     const aspectRatio = stillImage.dimY / stillImage.dimX;
 
     // Add only new regions to existing SVG
@@ -241,7 +243,9 @@ export class OsdDrawerService implements OnDestroy {
   }
 
   private _renderRegions(regions: ReadResource[]): void {
-    const stillImage = this.resource.properties[Constants.HasStillImageFileValue][0] as ReadStillImageFileValue;
+    const imageValues = this.resource.properties[Constants.HasStillImageFileValue];
+    if (!imageValues?.length) return;
+    const stillImage = imageValues[0] as ReadStillImageFileValue;
     const aspectRatio = stillImage.dimY / stillImage.dimX;
 
     const geometries = StillImageHelper.collectAndSortGeometries(regions, this._paintedPolygons);

@@ -110,7 +110,15 @@ export class StillImageComponent implements OnChanges, AfterViewInit, OnDestroy 
       // Clear any previous errors
       this.errorMessage = null;
 
-      const image = this.resource.properties[Constants.HasStillImageFileValue][0];
+      const imageValues = this.resource.properties[Constants.HasStillImageFileValue];
+      if (!imageValues?.length) {
+        this.errorMessage = this._translateService.instant(
+          'resourceEditor.representations.stillImage.errors.unknownImageType'
+        );
+        this._cdr.detectChanges();
+        return;
+      }
+      const image = imageValues[0];
 
       switch (image.type) {
         case Constants.StillImageFileValue:

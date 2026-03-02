@@ -2,7 +2,7 @@ import { AsyncPipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { Constants, ReadStillImageFileValue } from '@dasch-swiss/dsp-js';
 import { filterUndefined } from '@dasch-swiss/vre/shared/app-common';
-import { map } from 'rxjs';
+import { filter, map } from 'rxjs';
 import { StillImageComponent } from '../representations/still-image/still-image.component';
 import { ResourceLegalComponent } from '../resource-legal.component';
 import { ResourceRepresentationContainerComponent } from '../resource-representation-container.component';
@@ -29,6 +29,7 @@ export class CompoundViewerComponent {
 
   fileValue$ = this.compoundService.incomingResource$.pipe(
     filterUndefined(),
+    filter(value => !!value.res.properties[Constants.HasStillImageFileValue]?.length),
     map(value => {
       return value.res.properties[Constants.HasStillImageFileValue][0] as ReadStillImageFileValue;
     })
