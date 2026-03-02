@@ -608,7 +608,9 @@ export class AppDatePickerComponent
     } else {
       this.form.controls['calendar'].enable();
     }
-    this._setDays(this.calendar, this.era, this.year, this.month);
+    if (this.month) {
+      this._setDays(this.calendar, this.era, this.year, this.month);
+    }
   }
 
   /**
