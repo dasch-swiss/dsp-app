@@ -23,7 +23,9 @@ export class AddResourceInstancePage {
   };
 
   saveEdit() {
+    cy.intercept('PUT', '**/v2/values').as('saveValue');
     cy.get('[data-cy=save-button]').click({ force: true });
+    cy.wait('@saveValue');
     cy.reload();
     cy.get('[data-cy=property-value]').should('be.visible');
   }
