@@ -97,7 +97,9 @@ export class DataModelsPageComponent {
       })
       .afterClosed()
       .subscribe(response => {
-        this.navigateToList(response.list.listinfo.id);
+        if (response) {
+          this.navigateToList(response.list.listinfo.id);
+        }
       });
   }
 }
