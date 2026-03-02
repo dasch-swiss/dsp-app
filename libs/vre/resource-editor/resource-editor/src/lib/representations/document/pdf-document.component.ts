@@ -113,6 +113,9 @@ export class PdfDocumentComponent implements OnChanges, AfterViewInit, OnDestroy
 
   onPdfLoaded() {
     this.pdfLoaded = true;
+    if (!this._resizeObserver) {
+      this._setupResizeObserver();
+    }
   }
 
   onSearchQueryChange(query: string) {
@@ -202,7 +205,7 @@ export class PdfDocumentComponent implements OnChanges, AfterViewInit, OnDestroy
     }
 
     this._resizeObserver = new ResizeObserver(() => {
-      if (this._pdfComponent?.updateSize && !this.failedToLoad) {
+      if (this._pdfComponent?.updateSize && !this.failedToLoad && this.pdfLoaded) {
         setTimeout(() => {
           this._pdfComponent.updateSize();
         }, 0);
