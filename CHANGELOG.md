@@ -1,5 +1,43 @@
 # Changelog
 
+## [12.7.0](https://github.com/dasch-swiss/dsp-das/compare/v12.6.1...v12.7.0) (2026-03-02)
+
+
+### Enhancements
+
+* add /format-project-image Claude skill ([#2859](https://github.com/dasch-swiss/dsp-das/issues/2859)) ([54b8aef](https://github.com/dasch-swiss/dsp-das/commit/54b8aef80fc45164b4b32394453b580b30e2aa4d))
+* add images for projects 085C, 0868, 0869 ([#2855](https://github.com/dasch-swiss/dsp-das/issues/2855)) ([e84bd97](https://github.com/dasch-swiss/dsp-das/commit/e84bd9725cc5b79ae483f6f1d144ed288697166f))
+
+
+### Bug Fixes
+
+* coerce filter value to string before calling toLowerCase ([#2849](https://github.com/dasch-swiss/dsp-das/issues/2849)) ([98975f3](https://github.com/dasch-swiss/dsp-das/commit/98975f373f11ca795e69921fb5846934ea060a7d))
+* guard createNewList dialog response before navigating ([#2850](https://github.com/dasch-swiss/dsp-das/issues/2850)) ([ccdd62e](https://github.com/dasch-swiss/dsp-das/commit/ccdd62e3214e0d5e10513b30ad9d1af0ae05cd1b))
+* guard date picker against invalid month 0 ([#2848](https://github.com/dasch-swiss/dsp-das/issues/2848)) ([769efe7](https://github.com/dasch-swiss/dsp-das/commit/769efe7ba876ccb959b20929585f480792a388a6))
+* guard HasStillImageFileValue property access against undefined ([#2847](https://github.com/dasch-swiss/dsp-das/issues/2847)) ([4774d5c](https://github.com/dasch-swiss/dsp-das/commit/4774d5c3c209c8b84dd34060d12fae06a110faf6))
+* handle null apiPort in help page version URL ([#2846](https://github.com/dasch-swiss/dsp-das/issues/2846)) ([5536624](https://github.com/dasch-swiss/dsp-das/commit/5536624bc0a4197a2660f493c08d3df758cf81e7))
+* prevent PDF viewer race condition causing TypeError on resize ([#2844](https://github.com/dasch-swiss/dsp-das/issues/2844)) ([829f602](https://github.com/dasch-swiss/dsp-das/commit/829f602ae8712af796fe6c334f85273b8d1d5b43))
+
+
+### Maintenances
+
+* add .claude/worktrees/ to .gitignore ([#2851](https://github.com/dasch-swiss/dsp-das/issues/2851)) ([a102f5d](https://github.com/dasch-swiss/dsp-das/commit/a102f5d27bf8166bfa90e6fc412b0f778a10dce3))
+* **deps-dev:** bump basic-ftp from 5.0.5 to 5.2.0 ([#2854](https://github.com/dasch-swiss/dsp-das/issues/2854)) ([6192db9](https://github.com/dasch-swiss/dsp-das/commit/6192db955ace8044524e923a918d89141cf40391))
+* **deps-dev:** bump prettier from 3.8.0 to 3.8.1 in the prettier-deps group ([#2799](https://github.com/dasch-swiss/dsp-das/issues/2799)) ([4ee0fb1](https://github.com/dasch-swiss/dsp-das/commit/4ee0fb12dbfd4f5e62ce65cd0d88f844ae56d286))
+* **deps-dev:** bump the swc-deps group across 1 directory with 2 updates ([#2853](https://github.com/dasch-swiss/dsp-das/issues/2853)) ([5d75e06](https://github.com/dasch-swiss/dsp-das/commit/5d75e06d352f0826e89a95a41865882cbc911381))
+* **deps:** bump axios and @openapitools/openapi-generator-cli ([#2829](https://github.com/dasch-swiss/dsp-das/issues/2829)) ([e2633de](https://github.com/dasch-swiss/dsp-das/commit/e2633de794eef918f4c08468081ef8a07497766b))
+* **deps:** bump qs, express and @cypress/request ([#2833](https://github.com/dasch-swiss/dsp-das/issues/2833)) ([fcc1465](https://github.com/dasch-swiss/dsp-das/commit/fcc1465c89ff766e062b1f47dab14254c9ed631f))
+* **deps:** bump the grafana-deps group with 3 updates ([#2801](https://github.com/dasch-swiss/dsp-das/issues/2801)) ([d538dc3](https://github.com/dasch-swiss/dsp-das/commit/d538dc315ba3b1f168ba93da17f1020ae35923ae))
+* **deps:** bump the sentry-deps group across 1 directory with 2 updates ([#2852](https://github.com/dasch-swiss/dsp-das/issues/2852)) ([fed415a](https://github.com/dasch-swiss/dsp-das/commit/fed415a29e9e27af8124605ad8a93ac3b7560933))
+* **deps:** bump webpack and @angular-devkit/build-angular ([#2826](https://github.com/dasch-swiss/dsp-das/issues/2826)) ([b4546dc](https://github.com/dasch-swiss/dsp-das/commit/b4546dc83b8b745383549d5a3f820911a2709057))
+* update dsp-api to v34.4.1-14-ga737202 ([#2858](https://github.com/dasch-swiss/dsp-das/issues/2858)) ([d53e816](https://github.com/dasch-swiss/dsp-das/commit/d53e81656e00f831260e762640f22fcfe11e6891))
+* update OpenAPI spec from remote API ([#2845](https://github.com/dasch-swiss/dsp-das/issues/2845)) ([b897c62](https://github.com/dasch-swiss/dsp-das/commit/b897c62e820a249ec5cf4dcc1b435e7fd33cc93f))
+
+
+### Documentation
+
+* add value ordering learnings ([#2835](https://github.com/dasch-swiss/dsp-das/issues/2835)) ([8c5d836](https://github.com/dasch-swiss/dsp-das/commit/8c5d83641a04fdf9350f9515280f40573c2e1db5))
+
 ## [12.6.1](https://github.com/dasch-swiss/dsp-das/compare/v12.6.0...v12.6.1) (2026-02-17)
 
 
