@@ -152,6 +152,12 @@ The `libs/vre/` directory follows domain-driven design with clear separation:
 - **Reactive programming** with RxJS observables
 - **Component Store** for local state management
 
+### Project Images
+- Project cover images live in `apps/dsp-app/src/assets/images/project/width-500/` as `{shortcode}.webp` files
+- Use the `/format-project-image` skill to add or update project images (handles resize, conversion, optimization)
+- See [`apps/dsp-app/src/assets/images/project/CLAUDE.md`](apps/dsp-app/src/assets/images/project/CLAUDE.md) for detailed guidelines
+- License captions are managed in `libs/vre/pages/project/project/src/lib/description/license-captions-mapping.ts`
+
 ## Environment Configurations
 
 Multiple environment configurations available:
