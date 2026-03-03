@@ -57,7 +57,7 @@
     "@ngx-translate/core": "^17.0.0",
     "@ngx-translate/http-loader": "^17.0.0",
     "@nx/angular": "21.5.1",
-    "@sentry/angular": "^10.40.0",
+    "@sentry/angular": "^10.41.0",
     "@sentry/cli": "^2.58.5",
     "angular-imask": "^7.5.0",
     "angular-split": "^14.0.0",
