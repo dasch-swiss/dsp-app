@@ -18,6 +18,8 @@ import { Component, Input } from '@angular/core';
         overflow: hidden;
         background: rgb(41, 41, 41);
         color: white;
+        display: flex;
+        flex-direction: column;
       }
     `,
   ],
