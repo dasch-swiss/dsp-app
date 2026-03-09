@@ -20,14 +20,19 @@ import { ProjectShortnameService } from '../project-shortname.service';
       <div style="display: flex; align-items: center; min-height: 40px">
         <div style="flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
           <div style="color: black">
-            @if (showProjectShortname && (projectShortname$ | async); as shortname) {
-              <span style="font-weight: 500; color: #555;">[{{ shortname }}]</span>
-            }
             {{ resource.label }}
           </div>
           @if (foundIn.length > 0) {
             <div class="found-in">
-              {{ 'pages.dataBrowser.resourceListItem.foundIn' | translate }}{{ foundIn.join(', ') }}
+              <span>
+                {{ 'pages.dataBrowser.resourceListItem.foundIn' | translate
+                }}<span class="semibold">{{ foundIn.join(', ') }}</span></span
+              >
+              @if (showProjectShortname && (projectShortname$ | async); as shortname) {
+                <span>
+                  | Project: <span class="semibold">{{ shortname }}</span></span
+                >
+              }
             </div>
           }
         </div>
@@ -67,6 +72,9 @@ import { ProjectShortnameService } from '../project-shortname.service';
         text-overflow: ellipsis;
         margin-top: 8px;
         font-size: 12px;
+      }
+      .semibold {
+        font-weight: 500;
       }
     `,
   ],
