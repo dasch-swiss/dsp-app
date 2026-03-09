@@ -1,5 +1,30 @@
 # Changelog
 
+## [12.8.0](https://github.com/dasch-swiss/dsp-das/compare/v12.7.0...v12.8.0) (2026-03-09)
+
+
+### Enhancements
+
+* add copy link button to file representation resources ([#2867](https://github.com/dasch-swiss/dsp-das/issues/2867)) ([4efe494](https://github.com/dasch-swiss/dsp-das/commit/4efe4947c24b2eda177feeffc2dace183b429da4))
+
+
+### Bug Fixes
+
+* add project in fulltext search on second line ([#2872](https://github.com/dasch-swiss/dsp-das/issues/2872)) ([51adf15](https://github.com/dasch-swiss/dsp-das/commit/51adf153db90db5437f627f54c02e21b9118aff6))
+* make the host element grow when there is a legal info ([#2866](https://github.com/dasch-swiss/dsp-das/issues/2866)) ([b9c19ea](https://github.com/dasch-swiss/dsp-das/commit/b9c19ea88b6ace972f5feb6100b86267c2fe0ad5))
+
+
+### Maintenances
+
+* **deps-dev:** bump @swc/core from 1.15.13 to 1.15.18 in the swc-deps group ([#2860](https://github.com/dasch-swiss/dsp-das/issues/2860)) ([28cf18f](https://github.com/dasch-swiss/dsp-das/commit/28cf18fd3ee5952ab91046050aec59e417d47e92))
+* **deps-dev:** bump autoprefixer from 10.4.23 to 10.4.27 ([#2862](https://github.com/dasch-swiss/dsp-das/issues/2862)) ([9defdd3](https://github.com/dasch-swiss/dsp-das/commit/9defdd3dd7b65eae16275d38016eb989169a329e))
+* **deps-dev:** bump ng-mocks from 14.15.0 to 14.15.1 ([#2863](https://github.com/dasch-swiss/dsp-das/issues/2863)) ([4787909](https://github.com/dasch-swiss/dsp-das/commit/47879092fb80948cb1bf33ca4641eba98e08934e))
+* **deps:** bump @sentry/angular from 10.40.0 to 10.41.0 in the sentry-deps group ([#2861](https://github.com/dasch-swiss/dsp-das/issues/2861)) ([0838831](https://github.com/dasch-swiss/dsp-das/commit/0838831ac11f45c7fbe307b3b1d3939a7fc5f72f))
+* **deps:** bump actions/upload-artifact from 6 to 7 ([#2864](https://github.com/dasch-swiss/dsp-das/issues/2864)) ([65eef26](https://github.com/dasch-swiss/dsp-das/commit/65eef26c9e12a53c6ef75b647eeafe61b6a5f2c9))
+* **deps:** bump immutable from 5.1.3 to 5.1.5 ([#2868](https://github.com/dasch-swiss/dsp-das/issues/2868)) ([da69f23](https://github.com/dasch-swiss/dsp-das/commit/da69f23d19c92a1dcab99021cc5ea2c1e711d1ea))
+* **deps:** bump svgo from 3.3.2 to 3.3.3 ([#2869](https://github.com/dasch-swiss/dsp-das/issues/2869)) ([b7e364e](https://github.com/dasch-swiss/dsp-das/commit/b7e364ec39d2fd2207de31179155fc33ae4287c5))
+* **deps:** bump tar and @angular/cli ([#2870](https://github.com/dasch-swiss/dsp-das/issues/2870)) ([70e4a79](https://github.com/dasch-swiss/dsp-das/commit/70e4a797a6a12e38cfa773cf28168ba7bf74ef0c))
+
 ## [12.7.0](https://github.com/dasch-swiss/dsp-das/compare/v12.6.1...v12.7.0) (2026-03-02)
 
 
