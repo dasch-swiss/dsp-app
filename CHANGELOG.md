@@ -1,5 +1,13 @@
 # Changelog
 
+## [12.8.1](https://github.com/dasch-swiss/dsp-das/compare/v12.8.0...v12.8.1) (2026-03-10)
+
+
+### Maintenances
+
+* Revert "feat: add copy link button to file representation resources (… ([#2878](https://github.com/dasch-swiss/dsp-das/issues/2878)) ([fc52590](https://github.com/dasch-swiss/dsp-das/commit/fc525900632f83a8291293a45868e16e925e97ed))
+* update openAPI ([#2879](https://github.com/dasch-swiss/dsp-das/issues/2879)) ([5d3bcf9](https://github.com/dasch-swiss/dsp-das/commit/5d3bcf979544bd389ada597f9826116634b894a7))
+
 ## [12.8.0](https://github.com/dasch-swiss/dsp-das/compare/v12.7.0...v12.8.0) (2026-03-09)
 
 
