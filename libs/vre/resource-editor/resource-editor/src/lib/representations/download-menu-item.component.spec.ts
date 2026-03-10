@@ -1,10 +1,7 @@
-import { Clipboard } from '@angular/cdk/clipboard';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Constants, ReadArchiveFileValue, ReadResource } from '@dasch-swiss/dsp-js';
-import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { provideTranslateService } from '@ngx-translate/core';
-import { of } from 'rxjs';
 import { DownloadMenuItemComponent } from './download-menu-item.component';
 import { RepresentationService } from './representation.service';
 
@@ -30,18 +27,12 @@ describe('DownloadMenuItemComponent', () => {
   beforeEach(async () => {
     representationServiceMock = {
       downloadProjectFile: jest.fn(),
-      getIngestUrl: jest.fn().mockReturnValue(of('http://example.com/test-archive.zip')),
     };
 
     await TestBed.configureTestingModule({
       imports: [DownloadMenuItemComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
-      providers: [
-        provideTranslateService(),
-        { provide: RepresentationService, useValue: representationServiceMock },
-        { provide: Clipboard, useValue: { copy: jest.fn() } },
-        { provide: NotificationService, useValue: { openSnackBar: jest.fn() } },
-      ],
+      providers: [provideTranslateService(), { provide: RepresentationService, useValue: representationServiceMock }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(DownloadMenuItemComponent);
@@ -63,19 +54,6 @@ describe('DownloadMenuItemComponent', () => {
       component.download();
 
       expect(representationServiceMock.downloadProjectFile).toHaveBeenCalledWith(mockFileValue, mockParentResource);
-    });
-  });
-
-  describe('copyUrl', () => {
-    it('should copy the link to clipboard and show a notification', () => {
-      const clipboardSpy = TestBed.inject(Clipboard);
-      const notificationSpy = TestBed.inject(NotificationService);
-
-      component.copyUrl();
-
-      expect(representationServiceMock.getIngestUrl).toHaveBeenCalledWith(mockFileValue, mockParentResource);
-      expect(clipboardSpy.copy).toHaveBeenCalledWith('http://example.com/test-archive.zip');
-      expect(notificationSpy.openSnackBar).toHaveBeenCalled();
     });
   });
 });

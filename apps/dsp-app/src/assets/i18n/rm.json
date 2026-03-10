@@ -474,8 +474,6 @@
         "comment": "Comment"
       },
       "downloadFile": "Download file",
-      "copyLink": "Copy link",
-      "fileLinkCopied": "File link copied to clipboard",
       "replaceFile": "Replace file",
       "archive": {
         "title": "Archive"

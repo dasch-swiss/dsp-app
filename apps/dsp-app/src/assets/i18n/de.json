@@ -472,8 +472,6 @@
         }
       },
       "downloadFile": "Datei herunterladen",
-      "copyLink": "Link kopieren",
-      "fileLinkCopied": "Dateilink in die Zwischenablage kopiert",
       "replaceFile": "Datei ersetzen",
       "archive": {
         "title": "Archiv"
