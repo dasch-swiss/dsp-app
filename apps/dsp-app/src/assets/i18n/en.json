@@ -401,6 +401,8 @@
         "selectedCount": "{{count}} of {{total}} properties selected",
         "includeIrisLabel": "Include Resource IRIs for reference properties",
         "includeIrisExplanation": "When enabled, reference properties export both human-readable values (e.g., 'Alice') and Resource IRIs for proper data referencing.",
+        "includeArkUrlsLabel": "Include ARK identifiers",
+        "includeArkUrlsExplanation": "Adds an ARK URL column as the first column in the CSV for each resource.",
         "downloadCsv": "Download CSV",
         "downloadSuccess": "CSV downloaded successfully.",
         "downloadError": "Failed to download CSV. Please try again."

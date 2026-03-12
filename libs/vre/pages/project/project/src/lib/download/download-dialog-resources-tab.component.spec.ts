@@ -125,6 +125,10 @@ describe('DownloadDialogResourcesTabComponent', () => {
   });
 
   describe('initial state', () => {
+    it('should have includeArkUrls set to false', () => {
+      expect(component.includeArkUrls).toBe(false);
+    });
+
     it('should have includeResourceIris set to false', () => {
       expect(component.includeResourceIris).toBe(false);
     });
@@ -182,6 +186,7 @@ describe('DownloadDialogResourcesTabComponent', () => {
           selectedProperties: ['prop-1', 'prop-2'],
           language: 'en',
           includeIris: false,
+          includeArkUrls: false,
         },
         undefined,
         undefined,
@@ -353,6 +358,28 @@ describe('DownloadDialogResourcesTabComponent', () => {
       component.selectedPropertyIds = ['prop-1', 'prop-2'];
 
       expect(component.selectedPropertyIds).toEqual(['prop-1', 'prop-2']);
+    });
+  });
+
+  describe('includeArkUrls toggle', () => {
+    it('should default to false', () => {
+      expect(component.includeArkUrls).toBe(false);
+    });
+
+    it('should pass includeArkUrls=true when toggled', () => {
+      const mockCsvText = 'id,title\n1,Test';
+      (mockV3ApiService.postV3ExportResources as any).mockReturnValue(of(mockCsvText));
+      component.selectedPropertyIds = ['prop-1'];
+      component.includeArkUrls = true;
+
+      component.downloadCsv();
+
+      expect(mockV3ApiService.postV3ExportResources).toHaveBeenCalledWith(
+        expect.objectContaining({ includeArkUrls: true }),
+        undefined,
+        undefined,
+        { httpHeaderAccept: 'text/csv' }
+      );
     });
   });
 

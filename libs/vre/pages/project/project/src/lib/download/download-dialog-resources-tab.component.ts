@@ -28,6 +28,15 @@ import { DownloadPropertyListComponent } from './download-property-list.componen
     <app-download-property-list [propertyDefinitions]="properties" (propertiesChange)="selectedPropertyIds = $event" />
 
     <div style="margin-top: 16px; padding: 16px; background: #f5f5f5; border-radius: 4px">
+      <mat-checkbox [(ngModel)]="includeArkUrls">
+        <span style="font-weight: 500">{{ 'pages.dataBrowser.downloadDialog.includeArkUrlsLabel' | translate }}</span>
+      </mat-checkbox>
+      <p style="margin: 8px 0 0 32px; color: #666; font-size: 13px">
+        {{ 'pages.dataBrowser.downloadDialog.includeArkUrlsExplanation' | translate }}
+      </p>
+    </div>
+
+    <div style="margin-top: 16px; padding: 16px; background: #f5f5f5; border-radius: 4px">
       <mat-checkbox [(ngModel)]="includeResourceIris">
         <span style="font-weight: 500">{{ 'pages.dataBrowser.downloadDialog.includeIrisLabel' | translate }}</span>
       </mat-checkbox>
@@ -56,6 +65,7 @@ export class DownloadDialogResourcesTabComponent {
   @Input({ required: true }) properties!: PropertyInfoValues[];
   @Input({ required: true }) resourceClassIri!: string;
   @Output() afterClosed = new EventEmitter<void>();
+  includeArkUrls = false;
   includeResourceIris = false;
   isDownloading = false;
 
@@ -78,6 +88,7 @@ export class DownloadDialogResourcesTabComponent {
           selectedProperties: this.selectedPropertyIds,
           language: this._localizationService.getCurrentLanguage(),
           includeIris: this.includeResourceIris,
+          includeArkUrls: this.includeArkUrls,
         },
         undefined,
         undefined,

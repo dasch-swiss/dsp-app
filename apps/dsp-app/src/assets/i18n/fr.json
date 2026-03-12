@@ -401,6 +401,8 @@
         "selectedCount": "{{count}} propriétés sélectionnées sur {{total}}",
         "includeIrisLabel": "Inclure les IRI de ressources pour les propriétés de référence",
         "includeIrisExplanation": "Lorsque cette option est activée, les propriétés de référence exportent à la fois des valeurs lisibles par l'homme (p. ex. 'Alice') et des IRI de ressources pour un référencement correct des données.",
+        "includeArkUrlsLabel": "Inclure les identifiants ARK",
+        "includeArkUrlsExplanation": "Ajoute une colonne ARK URL en première position dans le CSV pour chaque ressource.",
         "downloadCsv": "Télécharger CSV",
         "downloadSuccess": "CSV téléchargé avec succès.",
         "downloadError": "Échec du téléchargement du CSV. Veuillez réessayer."
