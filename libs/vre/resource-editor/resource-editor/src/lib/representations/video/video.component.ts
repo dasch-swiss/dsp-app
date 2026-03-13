@@ -1,4 +1,3 @@
-import { HttpClient } from '@angular/common/http';
 import {
   ChangeDetectorRef,
   Component,
@@ -59,10 +58,7 @@ export class VideoComponent implements OnChanges, OnDestroy {
   isPlayerReady = false;
   fileInfo?: MovingImageSidecar;
 
-  readonly frameWidth = 160;
-  readonly halfFrameWidth: number = Math.round(this.frameWidth / 2);
   private _ngUnsubscribe = new Subject<void>();
-  private _currentBlobUrl: string | null = null;
 
   private readonly _translateService = inject(TranslateService);
 
@@ -72,7 +68,6 @@ export class VideoComponent implements OnChanges, OnDestroy {
 
   constructor(
     private readonly _sanitizer: DomSanitizer,
-    private readonly _http: HttpClient,
     public mediaControl: MediaControlService,
     private readonly _notification: NotificationService,
     public segmentsService: SegmentsService,
@@ -87,30 +82,7 @@ export class VideoComponent implements OnChanges, OnDestroy {
     this._watchForMediaEvents();
     this.segmentsService.onInit(this.parentResource.id, 'VideoSegment');
     this.videoError = '';
-
-    // Fetch video file as blob with credentials to ensure httpOnly cookies are sent
-    this._http
-      .get(this.src.fileUrl, {
-        responseType: 'blob',
-        withCredentials: true,
-      })
-      .subscribe({
-        next: blob => {
-          // Revoke previous blob URL to prevent memory leaks
-          if (this._currentBlobUrl) {
-            URL.revokeObjectURL(this._currentBlobUrl);
-          }
-
-          // Create new blob URL and store reference for cleanup
-          this._currentBlobUrl = URL.createObjectURL(blob);
-          this.video = this._sanitizer.bypassSecurityTrustUrl(this._currentBlobUrl);
-          this._cdr.detectChanges();
-        },
-        error: () => {
-          this.videoError = this._translateService.instant('resourceEditor.representations.video.errors.unknownError');
-          this._cdr.detectChanges();
-        },
-      });
+    this.video = this._sanitizer.bypassSecurityTrustUrl(this.src.fileUrl);
 
     this._rs
       .getFileInfo(this.src.fileUrl)
@@ -148,12 +120,6 @@ export class VideoComponent implements OnChanges, OnDestroy {
 
   ngOnDestroy() {
     this._ngUnsubscribe.next();
-
-    // Revoke blob URL to prevent memory leaks
-    if (this._currentBlobUrl) {
-      URL.revokeObjectURL(this._currentBlobUrl);
-      this._currentBlobUrl = null;
-    }
   }
 
   handleVideoError(event: ErrorEvent) {
