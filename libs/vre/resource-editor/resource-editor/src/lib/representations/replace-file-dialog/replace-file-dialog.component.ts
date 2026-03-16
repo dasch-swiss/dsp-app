@@ -10,6 +10,7 @@ import {
   UpdateFileValue,
   UpdateResource,
   UpdateStillImageFileValue,
+  UpdateStillImageVectorFileValue,
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { DialogHeaderComponent } from '@dasch-swiss/vre/ui/ui';
@@ -102,6 +103,9 @@ export class ReplaceFileDialogComponent {
     if (uploadedFile instanceof UpdateStillImageFileValue && formValue.link!.startsWith('http')) {
       uploadedFile = new UpdateExternalStillImageFileValue();
       (uploadedFile as UpdateExternalStillImageFileValue).externalUrl = formValue.link!;
+    } else if (uploadedFile instanceof UpdateStillImageFileValue && formValue.link!.toLowerCase().endsWith('.svg')) {
+      uploadedFile = new UpdateStillImageVectorFileValue();
+      (uploadedFile as UpdateStillImageVectorFileValue).filename = formValue.link!;
     } else {
       uploadedFile.filename = formValue.link!;
     }

@@ -6,6 +6,7 @@ export class RepresentationConstants {
   static movingImage = Constants.MovingImageFileValue;
   static stillImage = Constants.StillImageFileValue;
   static externalStillImage = Constants.StillImageExternalFileValue;
+  static svgStillImage = Constants.StillImageVectorFileValue;
   static archive = Constants.ArchiveFileValue;
   static text = Constants.TextFileValue;
 }

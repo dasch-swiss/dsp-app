@@ -7,6 +7,7 @@ import {
   CreateResource,
   CreateStillImageExternalFileValue,
   CreateStillImageFileValue,
+  CreateStillImageVectorFileValue,
   CreateValue,
   KnoraApiConnection,
   ResourceClassAndPropertyDefinitions,
@@ -270,6 +271,9 @@ export class CreateResourceFormComponent implements OnInit {
     if (createFile instanceof CreateStillImageFileValue && formFileValue.link!.startsWith('http')) {
       createFile = new CreateStillImageExternalFileValue();
       (createFile as CreateStillImageExternalFileValue).externalUrl = formFileValue.link!;
+    } else if (createFile instanceof CreateStillImageFileValue && formFileValue.link!.toLowerCase().endsWith('.svg')) {
+      createFile = new CreateStillImageVectorFileValue();
+      (createFile as CreateStillImageVectorFileValue).filename = formFileValue.link!;
     } else {
       createFile.filename = formFileValue.link!;
     }

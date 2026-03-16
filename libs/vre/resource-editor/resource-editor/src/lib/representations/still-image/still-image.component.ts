@@ -1,17 +1,26 @@
+import { HttpClient } from '@angular/common/http';
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  DestroyRef,
   ElementRef,
+  inject,
   Input,
   OnChanges,
   OnDestroy,
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
-import { Constants, ReadResource, ReadStillImageFileValue } from '@dasch-swiss/dsp-js';
-import { ReadStillImageExternalFileValue } from '@dasch-swiss/dsp-js/src/models/v2/resources/values/read/read-file-value';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {
+  Constants,
+  ReadResource,
+  ReadStillImageExternalFileValue,
+  ReadStillImageFileValue,
+  ReadStillImageVectorFileValue,
+} from '@dasch-swiss/dsp-js';
 import { NoResultsFoundComponent } from '@dasch-swiss/vre/ui/ui';
 import { TranslateService } from '@ngx-translate/core';
 import { CompoundArrowNavigationComponent } from '../../compound/compound-arrow-navigation.component';
@@ -51,7 +60,8 @@ import { StillImageToolbarComponent } from './still-image-toolbar.component';
             [resource]="resource"
             [compoundMode]="compoundMode"
             [isPng]="isPng"
-            (imageIsPng)="afterFormatChange($event)" />
+            (imageIsPng)="afterFormatChange($event)"
+            (svgBackgroundChange)="onSvgBackgroundChange($event)" />
         }
       </div>
     }`,
@@ -74,8 +84,12 @@ export class StillImageComponent implements OnChanges, AfterViewInit, OnDestroy 
   isPng = false;
   errorMessage: string | null = null;
 
+  private _svgBlobUrl: string | null = null;
+  private readonly _destroyRef = inject(DestroyRef);
+
   constructor(
     private readonly _cdr: ChangeDetectorRef,
+    private readonly _http: HttpClient,
     protected osdService: OpenSeaDragonService,
     private readonly _osdDrawerService: OsdDrawerService,
     private readonly _translateService: TranslateService
@@ -101,7 +115,24 @@ export class StillImageComponent implements OnChanges, AfterViewInit, OnDestroy 
     this._loadImage();
   }
 
+  onSvgBackgroundChange(bg: 'default' | 'white' | 'transparent'): void {
+    const container = this.osdViewerElement?.nativeElement as HTMLElement | null;
+    if (!container) return;
+    if (bg === 'white') {
+      container.style.background = 'white';
+    } else if (bg === 'transparent') {
+      container.style.background =
+        'linear-gradient(45deg, #ccc 25%, transparent 25%, transparent 75%, #ccc 75%) 0 0 / 24px 24px,' +
+        'linear-gradient(45deg, #ccc 25%, #fff 25%, #fff 75%, #ccc 75%) 12px 12px / 24px 24px';
+    } else {
+      container.style.background = '';
+    }
+  }
+
   ngOnDestroy() {
+    if (this._svgBlobUrl) {
+      URL.revokeObjectURL(this._svgBlobUrl);
+    }
     this.osdService.viewer.destroy();
   }
 
@@ -127,6 +158,9 @@ export class StillImageComponent implements OnChanges, AfterViewInit, OnDestroy 
         case Constants.StillImageExternalFileValue:
           await this._openExternal3iFImage(image as ReadStillImageExternalFileValue);
           break;
+        case Constants.StillImageVectorFileValue:
+          this._openSvgImage(image as ReadStillImageVectorFileValue);
+          break;
         default:
           this.errorMessage = this._translateService.instant(
             'resourceEditor.representations.stillImage.errors.unknownImageType'
@@ -150,6 +184,35 @@ export class StillImageComponent implements OnChanges, AfterViewInit, OnDestroy 
     );
     (this.osdService.viewer as any).loadTilesWithAjax = true;
     this.osdService.viewer.open(tiles);
+  }
+
+  private _openSvgImage(image: ReadStillImageVectorFileValue): void {
+    // Revoke previous blob URL to prevent memory leaks
+    if (this._svgBlobUrl) {
+      URL.revokeObjectURL(this._svgBlobUrl);
+      this._svgBlobUrl = null;
+    }
+
+    // Fetch SVG using HttpClient which has auth interceptor
+    this._http
+      .get(image.fileUrl, { responseType: 'blob' })
+      .pipe(takeUntilDestroyed(this._destroyRef))
+      .subscribe({
+        next: blob => {
+          this._svgBlobUrl = URL.createObjectURL(blob);
+          (this.osdService.viewer as any).loadTilesWithAjax = false;
+          this.osdService.viewer.open({
+            type: 'image',
+            url: this._svgBlobUrl,
+          });
+        },
+        error: () => {
+          this.errorMessage = this._translateService.instant(
+            'resourceEditor.representations.stillImage.errors.failedToLoadImage'
+          );
+          this._cdr.detectChanges();
+        },
+      });
   }
 
   private async _openExternal3iFImage(image: ReadStillImageExternalFileValue) {

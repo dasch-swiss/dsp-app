@@ -464,6 +464,10 @@
         "zoomIn": "Hineinzoomen",
         "resetZoom": "Zoom zurücksetzen",
         "openInFullscreen": "Im Vollbildmodus öffnen",
+        "backgroundColor": "Hintergrundfarbe",
+        "bgDefault": "Standard",
+        "bgWhite": "Weiss",
+        "bgTransparent": "Transparent",
         "errors": {
           "unknownImageType": "Unbekannter Bildtyp.",
           "failedToLoadImage": "Bild konnte nicht geladen werden.",

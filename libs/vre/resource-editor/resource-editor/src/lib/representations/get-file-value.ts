@@ -8,6 +8,7 @@ import {
   ReadResource,
   ReadStillImageExternalFileValue,
   ReadStillImageFileValue,
+  ReadStillImageVectorFileValue,
   ReadTextFileValue,
 } from '@dasch-swiss/dsp-js';
 
@@ -19,6 +20,8 @@ export function getFileValue(resource: ReadResource): ReadFileValue | null {
       resource.properties[Constants.HasStillImageFileValue][0].type === Constants.StillImageExternalFileValue
     ) {
       return resource.properties[Constants.HasStillImageFileValue][0] as ReadStillImageExternalFileValue;
+    } else if (resource.properties[Constants.HasStillImageFileValue][0].type === Constants.StillImageVectorFileValue) {
+      return resource.properties[Constants.HasStillImageFileValue][0] as ReadStillImageVectorFileValue;
     }
   } else if (resource.properties[Constants.HasDocumentFileValue]) {
     return resource.properties[Constants.HasDocumentFileValue][0] as ReadDocumentFileValue;

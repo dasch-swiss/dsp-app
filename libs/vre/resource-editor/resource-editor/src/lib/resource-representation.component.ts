@@ -27,6 +27,11 @@ import { ResourceRepresentationContainerComponent } from './resource-representat
           <app-still-image #stillImage [compoundMode]="false" [resource]="resource.res" />
         </app-resource-representation-container>
       }
+      @case (representationConstants.svgStillImage) {
+        <app-resource-representation-container>
+          <app-still-image #stillImage [compoundMode]="false" [resource]="resource.res" />
+        </app-resource-representation-container>
+      }
       @case (representationConstants.document) {
         @if (isPdf) {
           <app-resource-representation-container>

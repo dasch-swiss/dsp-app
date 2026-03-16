@@ -527,6 +527,10 @@
         "zoomIn": "Aumenta zoom",
         "resetZoom": "Reimposta zoom",
         "openInFullscreen": "Apri a schermo intero",
+        "backgroundColor": "Colore di sfondo",
+        "bgDefault": "Predefinito",
+        "bgWhite": "Bianco",
+        "bgTransparent": "Trasparente",
         "errors": {
           "unknownImageType": "Tipo di immagine sconosciuto.",
           "failedToLoadImage": "Impossibile caricare l'immagine.",

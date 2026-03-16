@@ -15,6 +15,30 @@ describe('File representation', () => {
     po = new AddResourceInstancePage();
   });
 
+  it('svg file upload is accepted', () => {
+    const classPayload = projectPayloads.stillImageRepresentation('svgclass');
+
+    cy.request({
+      method: 'POST',
+      url: `${Cypress.env('apiUrl')}/v2/ontologies/classes`,
+      headers: getAuthHeaders(),
+      body: classPayload,
+    }).then(() => {
+      cy.visit('/project/00FF/data/images/svgclass');
+      cy.get('[data-cy=create-resource-btn]').click();
+
+      po.addInitialLabel();
+
+      // Intercept ingest upload
+      cy.intercept('POST', '**/assets/ingest/**').as('ingestUpload');
+
+      cy.get('[data-cy=upload-file]').selectFile('cypress/fixtures/test.svg', { force: true });
+
+      // Verify the upload was initiated
+      cy.wait('@ingestUpload').its('response.statusCode').should('eq', 200);
+    });
+  });
+
   it('external iiif image', () => {
     const classPayload = projectPayloads.stillImageRepresentation('datamodelclass');
     const invalidIifImageUrl = 'https://example.com/wrong.jpg';

@@ -97,7 +97,7 @@ export class UploadComponent {
     [Constants.HasDocumentFileValue]: ['doc', 'docx', 'epub', 'pdf', 'ppt', 'pptx', 'xls', 'xlsx'],
     [Constants.HasTextFileValue]: ['csv', 'htm', 'html', 'json', 'odd', 'rng', 'txt', 'xml', 'xsd', 'xsl'],
     [Constants.HasArchiveFileValue]: ['7z', 'gz', 'gzip', 'tar', 'tgz', 'z', 'zip'],
-    [Constants.HasStillImageFileValue]: ['jp2', 'jpg', 'jpeg', 'png', 'tif', 'tiff'],
+    [Constants.HasStillImageFileValue]: ['jp2', 'jpg', 'jpeg', 'png', 'svg', 'tif', 'tiff'],
   } as const;
 
   get allowedFileTypes() {
