@@ -1,5 +1,34 @@
 # Changelog
 
+## [12.9.0](https://github.com/dasch-swiss/dsp-app/compare/v12.8.1...v12.9.0) (2026-03-16)
+
+
+### Enhancements
+
+* add teaser image for sva lenzburg (DEV-6016) ([#2886](https://github.com/dasch-swiss/dsp-app/issues/2886)) ([d353e65](https://github.com/dasch-swiss/dsp-app/commit/d353e65668ca1e778c08f8eb96e3550c67d89651))
+* implement vector image support (DEV-5965) ([#2888](https://github.com/dasch-swiss/dsp-app/issues/2888)) ([a574e15](https://github.com/dasch-swiss/dsp-app/commit/a574e15eca9d894a85e59f5967c847b5d2b58252))
+* **resource:** add ARK identifiers checkbox to CSV export (DEV-5942) ([#2884](https://github.com/dasch-swiss/dsp-app/issues/2884)) ([e0dcc70](https://github.com/dasch-swiss/dsp-app/commit/e0dcc705ec5353b30e62b6a3632681e9fd6e7785))
+
+
+### Bug Fixes
+
+* add correcty "copy link" button to resources ([#2890](https://github.com/dasch-swiss/dsp-app/issues/2890)) ([0382615](https://github.com/dasch-swiss/dsp-app/commit/038261540fa88d85a4d613662cec66ebc6e351dc))
+* update dsp-das references after repo rename to dsp-app ([#2893](https://github.com/dasch-swiss/dsp-app/issues/2893)) ([a96e11a](https://github.com/dasch-swiss/dsp-app/commit/a96e11a2ee1d6c6cf6ecb8864d96b26d868f4e4a))
+* video and audio streaming (DEV-6017) ([#2887](https://github.com/dasch-swiss/dsp-app/issues/2887)) ([0fa132b](https://github.com/dasch-swiss/dsp-app/commit/0fa132bd7e0ada680420f71b4b3b21ac3ee0f0c6))
+
+
+### Maintenances
+
+* **deps-dev:** bump @openapitools/openapi-generator-cli from 2.30.0 to 2.30.2 ([#2875](https://github.com/dasch-swiss/dsp-app/issues/2875)) ([1a6a853](https://github.com/dasch-swiss/dsp-app/commit/1a6a853aeac6f868c18b1d5e090fff796add1d9b))
+* **deps-dev:** bump hono from 4.12.5 to 4.12.7 ([#2881](https://github.com/dasch-swiss/dsp-app/issues/2881)) ([5954f35](https://github.com/dasch-swiss/dsp-app/commit/5954f35766004628b6d4f21e18c4103be1e0d0eb))
+* **deps-dev:** bump postcss from 8.5.6 to 8.5.8 in the postcss-deps group ([#2873](https://github.com/dasch-swiss/dsp-app/issues/2873)) ([a93b9d9](https://github.com/dasch-swiss/dsp-app/commit/a93b9d96a42971c91b48c26ebcb762a7bbc4c967))
+* **deps-dev:** bump tar from 7.5.10 to 7.5.11 ([#2883](https://github.com/dasch-swiss/dsp-app/issues/2883)) ([7470ede](https://github.com/dasch-swiss/dsp-app/commit/7470edef5ca255746780e05729123cc42ce3bbeb))
+* **deps:** bump @sentry/angular from 10.41.0 to 10.42.0 in the sentry-deps group ([#2874](https://github.com/dasch-swiss/dsp-app/issues/2874)) ([fe35c8c](https://github.com/dasch-swiss/dsp-app/commit/fe35c8c382fc0e8c7c3c1cc961300c499bf48965))
+* **deps:** bump docker/login-action from 3 to 4 ([#2877](https://github.com/dasch-swiss/dsp-app/issues/2877)) ([f5ddd05](https://github.com/dasch-swiss/dsp-app/commit/f5ddd05f6ecbfd0e5d3c7ac27a6a3b0db844102d))
+* **deps:** bump docker/setup-buildx-action from 3 to 4 ([#2876](https://github.com/dasch-swiss/dsp-app/issues/2876)) ([7cde83e](https://github.com/dasch-swiss/dsp-app/commit/7cde83e7055372814dbc31092ba2b44f90d894ff))
+* **deps:** bump flatted from 3.3.3 to 3.4.1 ([#2889](https://github.com/dasch-swiss/dsp-app/issues/2889)) ([5ac66d0](https://github.com/dasch-swiss/dsp-app/commit/5ac66d0bd7f0f3fb3339ce5511e1d2c8e5374088))
+* **deps:** bump the grafana-deps group with 3 updates ([#2891](https://github.com/dasch-swiss/dsp-app/issues/2891)) ([5bb0370](https://github.com/dasch-swiss/dsp-app/commit/5bb0370da801da197fdad79ac13c0a1a72e96d06))
+
 ## [12.8.1](https://github.com/dasch-swiss/dsp-das/compare/v12.8.0...v12.8.1) (2026-03-10)
 
 
