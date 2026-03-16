@@ -1,6 +1,6 @@
-# DSP-DAS — Learnings
+# DSP-APP — Learnings
 
-Accumulated debugging insights, architectural gotchas, and patterns discovered while working on [DSP-DAS](https://github.com/dasch-swiss/dsp-das).
+Accumulated debugging insights, architectural gotchas, and patterns discovered while working on [DSP-APP](https://github.com/dasch-swiss/dsp-app).
 
 ---
 

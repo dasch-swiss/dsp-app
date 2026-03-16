@@ -1,15 +1,15 @@
 # DaSCH Applications and Libraries Monorepo
 
-[![Github](https://img.shields.io/github/v/tag/dasch-swiss/dsp-das?include_prereleases&label=Github%20tag)](https://github.com/dasch-swiss/dsp-das)
+[![Github](https://img.shields.io/github/v/tag/dasch-swiss/dsp-app?include_prereleases&label=Github%20tag)](https://github.com/dasch-swiss/dsp-app)
 [![Docker](https://img.shields.io/docker/v/daschswiss/dsp-app?label=Docker%20image)](https://hub.docker.com/r/daschswiss/dsp-app)
-[![CI](https://github.com/dasch-swiss/dsp-das/workflows/CI/badge.svg)](https://github.com/dasch-swiss/dsp-das/actions?query=workflow%3ACI)
-[![codecov](https://codecov.io/gh/dasch-swiss/dsp-das/branch/main/graph/badge.svg)](https://codecov.io/gh/dasch-swiss/dsp-das)
+[![CI](https://github.com/dasch-swiss/dsp-app/workflows/CI/badge.svg)](https://github.com/dasch-swiss/dsp-app/actions?query=workflow%3ACI)
+[![codecov](https://codecov.io/gh/dasch-swiss/dsp-app/branch/main/graph/badge.svg)](https://codecov.io/gh/dasch-swiss/dsp-app)
 
 This monorepo hosts various libraries of the DaSCH Service Platform and it is built on:
 
-- Nx - See [package.json](https://github.com/dasch-swiss/dsp-das/blob/main/package.json) for current version
-- Angular - See [package.json](https://github.com/dasch-swiss/dsp-das/blob/main/package.json) for current version
-- Node.js - Version managed via [.nvmrc](https://github.com/dasch-swiss/dsp-das/blob/main/.nvmrc) file
+- Nx - See [package.json](https://github.com/dasch-swiss/dsp-app/blob/main/package.json) for current version
+- Angular - See [package.json](https://github.com/dasch-swiss/dsp-app/blob/main/package.json) for current version
+- Node.js - Version managed via [.nvmrc](https://github.com/dasch-swiss/dsp-app/blob/main/.nvmrc) file
 
 # Install libraries
 
@@ -34,11 +34,11 @@ Most common operations for daily development:
 | Build for production | `npm run build-prod` |
 | Generate test coverage | `npm run unit-test-coverage` |
 
-For all available commands, see [package.json](https://github.com/dasch-swiss/dsp-das/blob/main/package.json).
+For all available commands, see [package.json](https://github.com/dasch-swiss/dsp-app/blob/main/package.json).
 
 ## @dasch-swiss librairies
 
-For more information about available libraries, see the VRE libraries under `libs/vre/` and the library path aliases in [tsconfig.base.json](https://github.com/dasch-swiss/dsp-das/blob/main/tsconfig.base.json).
+For more information about available libraries, see the VRE libraries under `libs/vre/` and the library path aliases in [tsconfig.base.json](https://github.com/dasch-swiss/dsp-app/blob/main/tsconfig.base.json).
 
 ## DSP-APP &mdash; generic user interface of DaSCH Service Platform
 
@@ -101,13 +101,13 @@ nx run vre-ui-date-picker:test
 ```
 
 **Available libraries:**
-- See [tsconfig.base.json](https://github.com/dasch-swiss/dsp-das/blob/main/tsconfig.base.json) for all library path aliases under the `paths` configuration
+- See [tsconfig.base.json](https://github.com/dasch-swiss/dsp-app/blob/main/tsconfig.base.json) for all library path aliases under the `paths` configuration
 - Main VRE libraries are under `@dasch-swiss/vre/*` namespace
 
 ### OpenAPI Client Generation
 
 For API client generation and maintenance:
-- [OpenAPI Client Generation](https://github.com/dasch-swiss/dsp-das/blob/main/libs/vre/3rd-party-services/open-api/README.md) - Auto-generated TypeScript client for DSP-API
+- [OpenAPI Client Generation](https://github.com/dasch-swiss/dsp-app/blob/main/libs/vre/3rd-party-services/open-api/README.md) - Auto-generated TypeScript client for DSP-API
 
 ### IDE plugins
 
@@ -150,4 +150,4 @@ please follow the [general DSP contribution guidelines](https://docs.dasch.swiss
 ### Documentation
 
 We built the developer documentation with [MkDocs](https://www.mkdocs.org/).
-More information can be found in the specific [README](https://github.com/dasch-swiss/dsp-das/blob/main/docs/contribution/docs-documentation.md).
+More information can be found in the specific [README](https://github.com/dasch-swiss/dsp-app/blob/main/docs/contribution/docs-documentation.md).

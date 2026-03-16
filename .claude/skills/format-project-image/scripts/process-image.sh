@@ -31,7 +31,7 @@ fi
 
 if [[ ! -d "$OUTPUT_DIR" ]]; then
   echo "ERROR: Output directory not found: $OUTPUT_DIR" >&2
-  echo "Are you running this from the dsp-das repository?" >&2
+  echo "Are you running this from the dsp-app repository?" >&2
   exit 1
 fi
 

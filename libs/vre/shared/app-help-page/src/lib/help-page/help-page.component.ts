@@ -108,7 +108,7 @@ export class HelpPageComponent implements OnInit {
 
     this.support[0].url += `${this.dsp.environment}: ${this.dsp.release}`;
 
-    this.releaseNotesUrl = `https://github.com/dasch-swiss/dsp-das/releases/tag/v${this.appVersion}`;
+    this.releaseNotesUrl = `https://github.com/dasch-swiss/dsp-app/releases/tag/v${this.appVersion}`;
 
     const apiConfig = this._appConfigService.dspApiConfig;
     const portSuffix = apiConfig.apiPort !== null ? `:${apiConfig.apiPort}` : '';
