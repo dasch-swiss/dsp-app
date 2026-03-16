@@ -476,6 +476,8 @@
         "comment": "Commentaire"
       },
       "downloadFile": "Télécharger le fichier",
+      "copyLink": "Copier le lien",
+      "fileLinkCopied": "Lien du fichier copié dans le presse-papiers",
       "replaceFile": "Remplacer le fichier",
       "archive": {
         "title": "Archive"

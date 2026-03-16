@@ -1,3 +1,4 @@
+import { Clipboard } from '@angular/cdk/clipboard';
 import { AsyncPipe } from '@angular/common';
 import { Component, EventEmitter, inject, Input, Output, ViewContainerRef } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
@@ -9,11 +10,13 @@ import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Constants, ReadDocumentFileValue, ReadResource } from '@dasch-swiss/dsp-js';
 import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
+import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import {
   ReplaceFileDialogComponent,
   ReplaceFileDialogProps,
 } from '../replace-file-dialog/replace-file-dialog.component';
+import { RepresentationService } from '../representation.service';
 import { ResourceFetcherService } from '../resource-fetcher.service';
 
 @Component({
@@ -115,6 +118,9 @@ import { ResourceFetcherService } from '../resource-fetcher.service';
       <button mat-menu-item (click)="downloadFile.emit()">
         {{ 'resourceEditor.representations.downloadFile' | translate }}
       </button>
+      <button mat-menu-item (click)="copyLink()">
+        {{ 'resourceEditor.representations.copyLink' | translate }}
+      </button>
       @if (resourceFetcherService.userCanEdit$ | async) {
         <button mat-menu-item (click)="openReplaceDialog()">
           {{ 'resourceEditor.representations.replaceFile' | translate }}
@@ -138,7 +144,10 @@ export class PdfToolbarComponent {
   constructor(
     private readonly _dialog: MatDialog,
     private readonly _viewContainerRef: ViewContainerRef,
-    public readonly resourceFetcherService: ResourceFetcherService
+    public readonly resourceFetcherService: ResourceFetcherService,
+    private readonly _clipboard: Clipboard,
+    private readonly _notification: NotificationService,
+    private readonly _rs: RepresentationService
   ) {}
 
   onSearchInput(event: Event) {
@@ -152,6 +161,13 @@ export class PdfToolbarComponent {
 
   resetZoom() {
     this.zoomChange.emit(1);
+  }
+
+  copyLink() {
+    this._rs.getIngestOriginalUrl(this.src, this.parentResource).subscribe(link => {
+      this._clipboard.copy(link);
+      this._notification.openSnackBar(this._translateService.instant('resourceEditor.representations.fileLinkCopied'));
+    });
   }
 
   openReplaceDialog() {

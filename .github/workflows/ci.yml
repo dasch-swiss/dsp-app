@@ -94,7 +94,7 @@ jobs:
           NODE_OPTIONS: '--max-old-space-size=4096'
       - name: Install Cypress dependencies
         run: |
-          cd ../dsp-das/apps/dsp-app/cypress
+          cd ./apps/dsp-app/cypress
           npm ci --prefer-offline --no-audit
       - name: Checkout DSP-API repo
         uses: actions/checkout@v6
@@ -110,7 +110,6 @@ jobs:
           ./webapi/scripts/wait-for-api.sh
       - name: Run e2e tests in CI
         run: |
-          cd ../dsp-das
           npm run e2e-ci
       - name: Upload artifact
         uses: actions/upload-artifact@v7

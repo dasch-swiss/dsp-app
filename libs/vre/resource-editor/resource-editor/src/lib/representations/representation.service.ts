@@ -12,7 +12,7 @@ import {
 import { ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { AppConfigService } from '@dasch-swiss/vre/core/config';
 import { AccessTokenService, UserService } from '@dasch-swiss/vre/core/session';
-import { take } from 'rxjs';
+import { map, take } from 'rxjs';
 import { ResourceUtil } from './resource.util';
 
 @Injectable({
@@ -51,11 +51,40 @@ export class RepresentationService {
       | ReadArchiveFileValue,
     resource: ReadResource
   ) {
-    this._projectApiService.get(resource.attachedToProject).subscribe(response => {
-      const assetId = fileValue.filename.split('.')[0] || '';
-      const ingestFileUrl = this.getIngestFileUrl(response.project.shortcode, assetId);
+    this.getIngestUrl(fileValue, resource).subscribe(ingestFileUrl => {
       this.downloadFile(ingestFileUrl, this.userCanView(fileValue));
     });
+  }
+
+  getIngestUrl(
+    fileValue:
+      | ReadAudioFileValue
+      | ReadDocumentFileValue
+      | ReadMovingImageFileValue
+      | ReadStillImageFileValue
+      | ReadStillImageExternalFileValue
+      | ReadArchiveFileValue,
+    resource: ReadResource
+  ) {
+    return this._projectApiService.get(resource.attachedToProject).pipe(
+      map(response => {
+        const assetId = fileValue.filename.split('.')[0] || '';
+        return this.getIngestFileUrl(response.project.shortcode, assetId);
+      })
+    );
+  }
+
+  getIngestOriginalUrl(
+    fileValue:
+      | ReadAudioFileValue
+      | ReadDocumentFileValue
+      | ReadMovingImageFileValue
+      | ReadStillImageFileValue
+      | ReadStillImageExternalFileValue
+      | ReadArchiveFileValue,
+    resource: ReadResource
+  ) {
+    return this.getIngestUrl(fileValue, resource).pipe(map(url => `${url}/original`));
   }
 
   private downloadFile(url: string, userCanView = true) {

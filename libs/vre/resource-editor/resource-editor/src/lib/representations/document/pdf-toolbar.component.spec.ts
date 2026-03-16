@@ -1,9 +1,12 @@
+import { Clipboard } from '@angular/cdk/clipboard';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { Constants, ReadDocumentFileValue, ReadResource } from '@dasch-swiss/dsp-js';
+import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { provideTranslateService, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
+import { RepresentationService } from '../representation.service';
 import { ResourceFetcherService } from '../resource-fetcher.service';
 import { PdfToolbarComponent } from './pdf-toolbar.component';
 
@@ -49,6 +52,12 @@ describe('PdfToolbarComponent', () => {
         { provide: MatDialog, useValue: dialogMock },
         { provide: ResourceFetcherService, useValue: resourceFetcherServiceMock },
         { provide: TranslateService, useValue: translateServiceMock },
+        { provide: Clipboard, useValue: { copy: jest.fn() } },
+        { provide: NotificationService, useValue: { openSnackBar: jest.fn() } },
+        {
+          provide: RepresentationService,
+          useValue: { getIngestOriginalUrl: jest.fn().mockReturnValue(of('http://example.com/original')) },
+        },
       ],
     }).compileComponents();
 
@@ -67,7 +76,7 @@ describe('PdfToolbarComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  describe('onSearchInput', () => {
+  describe('onSearchInput method', () => {
     it('should emit searchQuery with input value', () => {
       const searchQuerySpy = jest.spyOn(component.searchQuery, 'emit');
       const mockEvent = { target: { value: 'test query' } } as any;
