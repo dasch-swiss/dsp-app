@@ -109,9 +109,11 @@ export class OntologyService {
    * TODO: move to DSP-JS-Lib similar to `get ApiUrl`
    */
   getIriBaseUrl(): string {
-    return `http://${this._dspApiConfig.apiHost}${
-      this._dspApiConfig.apiPort !== null ? `:${this._dspApiConfig.apiPort}` : ''
-    }${this._dspApiConfig.apiPath}`;
+    const includePort =
+      this._dspApiConfig.apiPort !== null &&
+      (this._dspApiConfig.apiHost === '0.0.0.0' || this._dspApiConfig.apiHost === 'localhost');
+
+    return `http://${this._dspApiConfig.apiHost}${includePort ? `:${this._dspApiConfig.apiPort}` : ''}${this._dspApiConfig.apiPath}`;
   }
 
   getOntologyIriFromRoute(projectShortcode: string, ontologyName: string) {
