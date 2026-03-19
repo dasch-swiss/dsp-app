@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: DSP-API
-  version: v35.1.0-6-gc7ffb3f
+  version: v35.2.0-16-g512f91d
   summary: DSP-API is part of the DaSCH Service Platform, a repository for the long-term
     preservation and reuse of data in the humanities.
   contact:
@@ -68,6 +68,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -155,6 +161,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
     post:
       tags:
       - Admin API
@@ -255,6 +267,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -350,6 +368,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
     put:
       tags:
       - Admin API
@@ -457,6 +481,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -552,6 +582,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -689,6 +725,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -791,6 +833,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -853,6 +901,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
     post:
       tags:
       - Admin API
@@ -902,6 +956,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -956,6 +1016,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
     put:
       tags:
       - Admin API
@@ -1012,6 +1078,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -1071,6 +1143,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -1124,6 +1202,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -1178,6 +1262,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /admin/lists/infos/{p1}:
     get:
       tags:
@@ -1230,6 +1320,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       deprecated: true
   /admin/lists/nodes/{p1}:
     get:
@@ -1283,6 +1379,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       deprecated: true
   /admin/lists/candelete/{p1}:
     get:
@@ -1334,6 +1436,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /admin/lists/{p1}/name:
     put:
       tags:
@@ -1391,6 +1499,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -1451,6 +1565,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -1511,6 +1631,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -1571,6 +1697,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -1624,6 +1756,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -1685,6 +1823,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -1738,6 +1882,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -1793,6 +1943,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -1855,6 +2011,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -1910,6 +2072,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -1965,6 +2133,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -2039,6 +2213,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -2099,6 +2279,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -2160,6 +2346,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -2221,6 +2413,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       deprecated: true
       security:
       - httpAuth: []
@@ -2283,6 +2481,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       deprecated: true
       security:
       - httpAuth: []
@@ -2338,6 +2542,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -2391,6 +2601,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -2562,6 +2778,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /admin/projects/shortcode/{projectShortcode}/legal-info/licenses/{licenseIri}:
     get:
       tags:
@@ -2621,6 +2843,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /admin/projects/shortcode/{projectShortcode}/legal-info/authorships:
     get:
       tags:
@@ -2715,6 +2943,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -2773,6 +3007,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -2831,6 +3071,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -2927,6 +3173,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -2987,6 +3239,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -3047,6 +3305,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -3093,6 +3357,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
     post:
       tags:
       - Admin API
@@ -3145,6 +3415,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -3192,6 +3468,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /admin/projects/iri/{projectIri}:
     get:
       tags:
@@ -3243,6 +3525,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
     put:
       tags:
       - Admin API
@@ -3300,6 +3588,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -3354,6 +3648,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -3409,6 +3709,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /admin/projects/shortname/{projectShortname}:
     get:
       tags:
@@ -3461,6 +3767,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /admin/projects/iri/{projectIri}/Keywords:
     get:
       tags:
@@ -3512,6 +3824,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /admin/projects/iri/{projectIri}/RestrictedViewSettings:
     get:
       tags:
@@ -3564,6 +3882,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
     post:
       tags:
       - Admin API
@@ -3633,6 +3957,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -3688,6 +4018,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
     post:
       tags:
       - Admin API
@@ -3757,6 +4093,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -3812,6 +4154,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /admin/projects/iri/{projectIri}/AllData:
     get:
       tags:
@@ -3875,6 +4223,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -3930,6 +4284,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -3985,6 +4345,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -4040,6 +4406,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -4095,6 +4467,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -4150,6 +4528,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -4205,6 +4589,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -4270,6 +4660,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -4287,7 +4683,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/HxV010UPRdCtBRxZsY_6ig
+        example: http://rdfh.ch/users/NdhIBhnLQOy_JSl9Ei3rgw
       responses:
         '200':
           description: ''
@@ -4325,6 +4721,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /admin/users/iri/{userIri}/project-admin-memberships:
     get:
       tags:
@@ -4339,7 +4741,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/HxV010UPRdCtBRxZsY_6ig
+        example: http://rdfh.ch/users/NdhIBhnLQOy_JSl9Ei3rgw
       responses:
         '200':
           description: ''
@@ -4377,6 +4779,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /admin/users/iri/{userIri}/group-memberships:
     get:
       tags:
@@ -4391,7 +4799,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/HxV010UPRdCtBRxZsY_6ig
+        example: http://rdfh.ch/users/NdhIBhnLQOy_JSl9Ei3rgw
       responses:
         '200':
           description: ''
@@ -4429,6 +4837,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /admin/users:
     get:
       tags:
@@ -4473,6 +4887,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -4526,6 +4946,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -4544,7 +4970,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/HxV010UPRdCtBRxZsY_6ig
+        example: http://rdfh.ch/users/NdhIBhnLQOy_JSl9Ei3rgw
       responses:
         '200':
           description: ''
@@ -4582,6 +5008,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -4598,7 +5030,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/HxV010UPRdCtBRxZsY_6ig
+        example: http://rdfh.ch/users/NdhIBhnLQOy_JSl9Ei3rgw
       responses:
         '200':
           description: ''
@@ -4636,6 +5068,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -4693,6 +5131,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -4749,6 +5193,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -4766,7 +5216,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/HxV010UPRdCtBRxZsY_6ig
+        example: http://rdfh.ch/users/NdhIBhnLQOy_JSl9Ei3rgw
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -4811,6 +5261,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -4827,7 +5283,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/HxV010UPRdCtBRxZsY_6ig
+        example: http://rdfh.ch/users/NdhIBhnLQOy_JSl9Ei3rgw
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -4872,6 +5328,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -4889,7 +5351,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/HxV010UPRdCtBRxZsY_6ig
+        example: http://rdfh.ch/users/NdhIBhnLQOy_JSl9Ei3rgw
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -4934,6 +5396,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -4950,7 +5418,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/HxV010UPRdCtBRxZsY_6ig
+        example: http://rdfh.ch/users/NdhIBhnLQOy_JSl9Ei3rgw
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -4995,6 +5463,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -5012,7 +5486,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/HxV010UPRdCtBRxZsY_6ig
+        example: http://rdfh.ch/users/NdhIBhnLQOy_JSl9Ei3rgw
       - name: groupIri
         in: path
         description: The IRI of a group. Must be URL-encoded.
@@ -5057,6 +5531,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -5073,7 +5553,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/HxV010UPRdCtBRxZsY_6ig
+        example: http://rdfh.ch/users/NdhIBhnLQOy_JSl9Ei3rgw
       - name: groupIri
         in: path
         description: The IRI of a group. Must be URL-encoded.
@@ -5118,6 +5598,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -5135,7 +5621,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/HxV010UPRdCtBRxZsY_6ig
+        example: http://rdfh.ch/users/NdhIBhnLQOy_JSl9Ei3rgw
       requestBody:
         content:
           application/json:
@@ -5179,6 +5665,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -5196,7 +5688,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/HxV010UPRdCtBRxZsY_6ig
+        example: http://rdfh.ch/users/NdhIBhnLQOy_JSl9Ei3rgw
       requestBody:
         content:
           application/json:
@@ -5240,6 +5732,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -5257,7 +5755,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/HxV010UPRdCtBRxZsY_6ig
+        example: http://rdfh.ch/users/NdhIBhnLQOy_JSl9Ei3rgw
       requestBody:
         content:
           application/json:
@@ -5301,6 +5799,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -5318,7 +5822,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/HxV010UPRdCtBRxZsY_6ig
+        example: http://rdfh.ch/users/NdhIBhnLQOy_JSl9Ei3rgw
       requestBody:
         content:
           application/json:
@@ -5362,6 +5866,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -5414,6 +5924,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -5471,6 +5987,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
     delete:
       tags:
       - API v2
@@ -5525,6 +6047,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - {}
       - httpAuth: []
@@ -5541,7 +6069,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/lists/0001/xTWhs9m1RK6t5MJaew5xfA
+        example: http://rdfh.ch/lists/0001/1Angw0EhQKGlFSDdtpuGDQ
       - name: x-knora-accept-schema
         in: header
         description: |-
@@ -5632,6 +6160,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -5648,7 +6182,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/lists/0001/xTWhs9m1RK6t5MJaew5xfA
+        example: http://rdfh.ch/lists/0001/1Angw0EhQKGlFSDdtpuGDQ
       - name: x-knora-accept-schema
         in: header
         description: |-
@@ -5739,6 +6273,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -5811,6 +6351,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /v2/values/{resourceIri}/{valueUuid}:
     get:
       tags:
@@ -5915,6 +6461,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -5983,6 +6535,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -6049,6 +6607,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -6109,6 +6673,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -6176,6 +6746,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -6243,6 +6819,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -6311,6 +6893,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -6402,6 +6990,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -6508,6 +7102,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -6634,6 +7234,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -6740,6 +7346,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -6841,6 +7453,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -6947,6 +7565,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -7053,6 +7677,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -7179,6 +7809,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -7302,6 +7938,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -7408,6 +8050,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -7513,6 +8161,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -7603,6 +8257,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -7710,6 +8370,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -7817,6 +8483,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -7957,6 +8629,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -8081,6 +8759,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -8208,6 +8892,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -8326,6 +9016,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -8440,6 +9136,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -8553,6 +9255,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -8667,6 +9375,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -8780,6 +9494,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -8903,6 +9623,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -9026,6 +9752,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -9140,6 +9872,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -9263,6 +10001,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -9358,6 +10102,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -9463,6 +10213,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
     put:
       tags:
       - API v2
@@ -9566,6 +10322,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -9677,6 +10439,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -9788,6 +10556,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -9911,6 +10685,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -10022,6 +10802,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -10127,6 +10913,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -10238,6 +11030,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -10348,6 +11146,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -10453,6 +11257,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -10558,6 +11368,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -10669,6 +11485,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -10780,6 +11602,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -10891,6 +11719,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -11002,6 +11836,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -11113,6 +11953,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -11220,6 +12066,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -11326,6 +12178,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -11432,6 +12290,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -11539,6 +12403,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -11645,6 +12515,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -11751,6 +12627,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -11858,6 +12740,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -11964,6 +12852,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -12071,6 +12965,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -12178,6 +13078,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -12285,6 +13191,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -13115,9 +14027,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/VersionResponse'
               example:
-                webapi: v35.1.0-6-gc7ffb3f
-                buildCommit: c7ffb3f66
-                buildTime: '2026-03-12T13:56:53Z'
+                webapi: v35.2.0-16-g512f91d
+                buildCommit: 512f91d82
+                buildTime: '2026-03-19T13:02:40Z'
                 fuseki: 5.5.0-2
                 scala: 3.3.7
                 sipi: v3.18.0
@@ -13152,6 +14064,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /health:
     get:
       tags:
@@ -13195,6 +14113,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /start-compaction:
     post:
       tags:
@@ -13238,6 +14162,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -13637,6 +14567,14 @@ components:
           type: string
         details:
           $ref: '#/components/schemas/Map_String'
+    ErrorResponse:
+      title: ErrorResponse
+      type: object
+      required:
+      - message
+      properties:
+        message:
+          type: string
     ExportFormat:
       title: ExportFormat
       default: CSV
