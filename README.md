@@ -142,12 +142,6 @@ All workflows use `npm ci` with caching for fast, deterministic builds and inclu
 
 ➡ [for developers](https://docs.dasch.swiss/latest/DSP-APP/contribution)
 
-## Contribution
+## Issues & Contributions
 
-If you would like to contribute to the development of the DSP-APP alongside us,
-please follow the [general DSP contribution guidelines](https://docs.dasch.swiss/latest/developers/contribution/).
-
-### Documentation
-
-We built the developer documentation with [MkDocs](https://www.mkdocs.org/).
-More information can be found in the specific [README](https://github.com/dasch-swiss/dsp-app/blob/main/docs/contribution/docs-documentation.md).
+If you'd like to report an issue or contribute to this project, please contact us at [support@dasch.swiss](mailto:support@dasch.swiss) so we can align it with our planning.
