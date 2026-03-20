@@ -1,0 +1,56 @@
+{
+  "component": "FilterBarPrototype",
+  "ontologies": [
+    { "iri": "http://www.knora.org/ontology/0803/incunabula", "label": "Incunabula" }
+  ],
+  "resourceClasses": [
+    { "iri": "http://www.knora.org/ontology/0803/incunabula#book", "label": "Book" },
+    { "iri": "http://www.knora.org/ontology/0803/incunabula#page", "label": "Page" },
+    { "iri": "http://www.knora.org/ontology/0803/incunabula#person", "label": "Person" }
+  ],
+  "properties": {
+    "Book": [
+      { "iri": "http://www.knora.org/ontology/0803/incunabula#title", "label": "Title", "valueType": "TextValue" },
+      { "iri": "http://www.knora.org/ontology/0803/incunabula#hasAuthor", "label": "Author", "valueType": "LinkValue", "linkedResourceClass": "Person" },
+      { "iri": "http://www.knora.org/ontology/0803/incunabula#pubdate", "label": "Publication Date", "valueType": "DateValue" },
+      { "iri": "http://www.knora.org/ontology/0803/incunabula#publisher", "label": "Publisher", "valueType": "TextValue" },
+      { "iri": "http://www.knora.org/ontology/0803/incunabula#publoc", "label": "Publication Location", "valueType": "TextValue" }
+    ],
+    "Page": [
+      { "iri": "http://www.knora.org/ontology/0803/incunabula#pagenum", "label": "Page Number", "valueType": "TextValue" },
+      { "iri": "http://www.knora.org/ontology/0803/incunabula#partOfValue", "label": "Part of", "valueType": "LinkValue", "linkedResourceClass": "Book" }
+    ],
+    "Person": [
+      { "iri": "http://www.knora.org/ontology/0803/incunabula#personName", "label": "Name", "valueType": "TextValue" }
+    ]
+  },
+  "operators": {
+    "TextValue": ["equals", "does not equal", "contains", "is like", "exists", "does not exist"],
+    "DateValue": ["equals", "does not equal", "greater than", "less than", "exists", "does not exist"],
+    "IntValue": ["equals", "does not equal", "greater than", "less than", "exists", "does not exist"],
+    "LinkValue": ["equals", "does not equal", "exists", "does not exist", "matches"],
+    "BooleanValue": ["equals", "exists", "does not exist"]
+  },
+  "searchResults": [
+    { "iri": "http://rdfh.ch/0803/001", "label": "Zeitglöcklein des Lebens und Leidens Christi", "resourceClass": "Book" },
+    { "iri": "http://rdfh.ch/0803/002", "label": "Narrenschiff", "resourceClass": "Book" },
+    { "iri": "http://rdfh.ch/0803/003", "label": "Das Lied der Nibelungen", "resourceClass": "Book" },
+    { "iri": "http://rdfh.ch/0803/004", "label": "Heilsspiegel", "resourceClass": "Book" },
+    { "iri": "http://rdfh.ch/0803/005", "label": "Von der Arznei beider Glück", "resourceClass": "Book" }
+  ],
+  "i18n": {
+    "en": {
+      "advancedSearch.selectOntology": "Select ontology",
+      "advancedSearch.selectResourceClass": "Select resource class",
+      "advancedSearch.addCondition": "Add condition",
+      "advancedSearch.search": "Search",
+      "advancedSearch.noResults": "No resources found. Try broadening your search by removing conditions.",
+      "advancedSearch.buildQuery": "Build your query and click Search.",
+      "advancedSearch.sortBy": "Sort by"
+    }
+  },
+  "meta": {
+    "generatedAt": "2026-03-19T12:00:00Z",
+    "purpose": "Advanced search filter bar prototype"
+  }
+}

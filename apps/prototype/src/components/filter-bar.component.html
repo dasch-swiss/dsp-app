@@ -1,0 +1,351 @@
+<div class="filter-bar" role="listbox" aria-label="Active search filters">
+  <!-- Ontology chip -->
+  <button mat-stroked-button class="filter-chip foundation-chip" [matMenuTriggerFor]="ontologyMenu"
+          [class.placeholder]="!selectedOntology">
+    <mat-icon class="chip-icon">lan</mat-icon>
+    {{ selectedOntology?.label || 'Select ontology' }}
+    <mat-icon iconPositionEnd>arrow_drop_down</mat-icon>
+  </button>
+  <mat-menu #ontologyMenu="matMenu">
+    @for (onto of ontologies; track onto.iri) {
+      <button mat-menu-item (click)="ontologySelected.emit(onto)">
+        <mat-icon>lan</mat-icon>
+        {{ onto.label }}
+      </button>
+    }
+  </mat-menu>
+
+  <span class="chip-divider"></span>
+
+  <!-- Resource class chip -->
+  <button mat-stroked-button class="filter-chip foundation-chip" [matMenuTriggerFor]="rcMenu"
+          [disabled]="!selectedOntology"
+          [class.placeholder]="!selectedResourceClass">
+    @if (selectedResourceClass?.icon) { <mat-icon class="chip-icon">{{ selectedResourceClass.icon }}</mat-icon> }
+    {{ selectedResourceClass?.label || 'Select class' }}
+    <mat-icon iconPositionEnd>arrow_drop_down</mat-icon>
+  </button>
+  <mat-menu #rcMenu="matMenu">
+    <button mat-menu-item (click)="resourceClassSelected.emit(null)">
+      <em>All resource classes</em>
+    </button>
+    @for (rc of resourceClasses; track rc.iri) {
+      <button mat-menu-item (click)="resourceClassSelected.emit(rc)">
+        @if (rc.icon) { <mat-icon>{{ rc.icon }}</mat-icon> }
+        {{ rc.label }}
+      </button>
+    }
+  </mat-menu>
+
+  <span class="chip-divider"></span>
+
+  <!-- Property condition chips -->
+  @for (condition of conditions; track condition.id; let i = $index) {
+    @if (i > 0) {
+      <span class="logic-operator">AND</span>
+    }
+    <div class="condition-wrapper" role="option">
+      @if (isMatchesCondition(condition)) {
+        <!-- Matches condition: wrapping container with sub-conditions -->
+        <div class="matches-chip">
+          <div class="matches-header">
+            <mat-icon class="chip-icon link-icon">link</mat-icon>
+            <span class="chip-part">{{ condition.property?.label }}</span>
+            <span class="chip-sep"></span>
+            <span class="chip-part chip-operator">matches</span>
+            <span class="chip-sep"></span>
+            <span class="chip-part" [matMenuTriggerFor]="matchClassMenu">
+              {{ condition.linkedResourceClass?.label || 'Select class...' }}
+              <mat-icon class="inline-dropdown-icon">arrow_drop_down</mat-icon>
+            </span>
+            <mat-menu #matchClassMenu="matMenu">
+              @for (rc of getLinkedResourceClasses(condition.property); track rc.iri) {
+                <button mat-menu-item (click)="condition.linkedResourceClass = rc; condition.subConditions = []">
+                  @if (rc.icon) { <mat-icon>{{ rc.icon }}</mat-icon> }
+                  {{ rc.label }}
+                </button>
+              }
+            </mat-menu>
+            <span class="matches-spacer"></span>
+            <span class="chip-remove"
+                  (click)="conditionRemoved.emit(condition); $event.stopPropagation()"
+                  matTooltip="Remove filter">
+              <mat-icon>close</mat-icon>
+            </span>
+          </div>
+          @if (condition.linkedResourceClass) {
+            <div class="matches-body">
+              @for (sub of condition.subConditions; track sub.id; let j = $index) {
+                @if (j > 0) {
+                  <span class="logic-operator">AND</span>
+                }
+                <div class="sub-condition-wrapper">
+                  <div class="filter-chip condition-chip sub-chip"
+                       [class.incomplete]="!sub.property || !sub.operator"
+                       (click)="toggleEdit(sub)" style="cursor: pointer">
+                    <span class="chip-content">
+                      <span class="chip-label">
+                        @if (sub.property) {
+                          <span class="chip-part">{{ sub.property.label }}</span>
+                        }
+                        @if (sub.operator) {
+                          <span class="chip-sep"></span>
+                          <span class="chip-part chip-operator">{{ sub.operator }}</span>
+                        }
+                        @if (sub.value) {
+                          <span class="chip-sep"></span>
+                          <span class="chip-part chip-value">{{ sub.value }}</span>
+                        }
+                        @if (!sub.property) {
+                          <span class="chip-part chip-placeholder">condition...</span>
+                        }
+                      </span>
+                    </span>
+                    <span class="chip-remove"
+                          (click)="removeSubCondition(condition, sub); $event.stopPropagation()"
+                          matTooltip="Remove">
+                      <mat-icon>close</mat-icon>
+                    </span>
+                  </div>
+                  <!-- Sub-condition popover -->
+                  @if (editingConditionId === sub.id) {
+                    <div class="popover-backdrop" (click)="closeEdit()"></div>
+                    <div class="popover-panel sub-popover">
+                      <div class="popover-header">
+                        <span>Edit sub-condition</span>
+                        <button mat-icon-button (click)="closeEdit()"><mat-icon>close</mat-icon></button>
+                      </div>
+                      <mat-form-field appearance="outline">
+                        <mat-label>Property</mat-label>
+                        <mat-select [value]="sub.property?.iri"
+                                    (selectionChange)="sub.property = $any($event.value); sub.operator = null; sub.value = null">
+                          @for (prop of getLinkedClassProperties(condition.linkedResourceClass!); track prop.iri) {
+                            <mat-option [value]="prop">
+                              <mat-icon class="option-icon">{{ getPropertyIcon(prop) }}</mat-icon>
+                              {{ prop.label }}
+                            </mat-option>
+                          }
+                        </mat-select>
+                      </mat-form-field>
+                      @if (sub.property) {
+                        <mat-form-field appearance="outline">
+                          <mat-label>Operator</mat-label>
+                          <mat-select [value]="sub.operator"
+                                      (selectionChange)="sub.operator = $event.value; sub.value = null">
+                            @for (op of getOperators(sub.property); track op) {
+                              <mat-option [value]="op">{{ op }}</mat-option>
+                            }
+                          </mat-select>
+                        </mat-form-field>
+                      }
+                      @if (sub.operator && needsValueInput(sub.operator)) {
+                        <mat-form-field appearance="outline">
+                          <mat-label>Value</mat-label>
+                          <input matInput [value]="sub.value || ''"
+                                 (input)="sub.value = $any($event.target).value" />
+                        </mat-form-field>
+                      }
+                      <div class="popover-footer">
+                        <button mat-flat-button color="primary" (click)="closeEdit()">Done</button>
+                      </div>
+                    </div>
+                  }
+                </div>
+              }
+              <button mat-stroked-button class="add-btn sub-add-btn"
+                      (click)="addSubCondition(condition)" matTooltip="Add sub-condition">
+                <mat-icon>add</mat-icon>
+              </button>
+            </div>
+          }
+        </div>
+      } @else {
+        <!-- Regular condition chip -->
+        <div class="filter-chip condition-chip"
+                [class.incomplete]="!condition.property || !condition.operator"
+                [class.linked]="condition.property?.isLinkedResourceProperty"
+                [class.editing]="editingConditionId === condition.id">
+          <span class="chip-content" (click)="toggleEdit(condition)">
+            @if (condition.property?.isLinkedResourceProperty) {
+              <mat-icon class="chip-icon link-icon">link</mat-icon>
+            }
+            <span class="chip-label">
+              @if (condition.property) {
+                <span class="chip-part">{{ condition.property.label }}</span>
+              }
+              @if (condition.operator) {
+                <span class="chip-sep"></span>
+                <span class="chip-part chip-operator">{{ condition.operator }}</span>
+              }
+              @if (condition.value) {
+                <span class="chip-sep"></span>
+                <span class="chip-part chip-value">{{ condition.value }}</span>
+              }
+              @if (!condition.property) {
+                <span class="chip-part chip-placeholder">New condition...</span>
+              }
+            </span>
+          </span>
+          <span class="chip-remove"
+                (click)="conditionRemoved.emit(condition); $event.stopPropagation()"
+                [attr.aria-label]="'Remove filter: ' + formatChipLabel(condition)"
+                matTooltip="Remove filter">
+            <mat-icon>close</mat-icon>
+          </span>
+        </div>
+      }
+
+      <!-- Inline popover editor -->
+      @if (editingConditionId === condition.id) {
+        <div class="popover-backdrop" (click)="closeEdit()"></div>
+        <div class="popover-panel">
+          <div class="popover-header">
+            <span>Edit condition</span>
+            <button mat-icon-button (click)="closeEdit()"><mat-icon>close</mat-icon></button>
+          </div>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Property</mat-label>
+            <mat-select [value]="condition.property?.iri"
+                        (selectionChange)="conditionPropertyChanged.emit({ condition, property: $any($event.value) })">
+              @for (prop of properties; track prop.iri) {
+                <mat-option [value]="prop">
+                  <mat-icon class="option-icon">{{ getPropertyIcon(prop) }}</mat-icon>
+                  {{ prop.label }}
+                </mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          @if (condition.property) {
+            <mat-form-field appearance="outline">
+              <mat-label>Operator</mat-label>
+              <mat-select [value]="condition.operator"
+                          (selectionChange)="onOperatorSelected(condition, $event.value)">
+                @for (op of getOperators(condition.property); track op) {
+                  <mat-option [value]="op">{{ op }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          }
+
+          @if (needsValueInputForCondition(condition)) {
+            @switch (getValueType(condition.property)) {
+              @case ('boolean') {
+                <mat-form-field appearance="outline">
+                  <mat-label>Value</mat-label>
+                  <mat-select [value]="condition.value"
+                              (selectionChange)="conditionValueChanged.emit({ condition, value: $event.value })">
+                    <mat-option value="true">True</mat-option>
+                    <mat-option value="false">False</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              }
+              @case ('list') {
+                <mat-form-field appearance="outline">
+                  <mat-label>Value</mat-label>
+                  <mat-select [value]="condition.value"
+                              (selectionChange)="conditionValueChanged.emit({ condition, value: $event.value })">
+                    @for (node of getListNodes(condition.property); track node.iri) {
+                      <mat-option [value]="node.label">{{ node.label }}</mat-option>
+                    }
+                  </mat-select>
+                </mat-form-field>
+              }
+              @case ('integer') {
+                <mat-form-field appearance="outline">
+                  <mat-label>Integer Value</mat-label>
+                  <input matInput type="number" step="1" [value]="condition.value || ''"
+                         (input)="conditionValueChanged.emit({ condition, value: $any($event.target).value })" />
+                </mat-form-field>
+              }
+              @case ('decimal') {
+                <mat-form-field appearance="outline">
+                  <mat-label>Decimal Value</mat-label>
+                  <input matInput type="number" step="0.01" [value]="condition.value || ''"
+                         (input)="conditionValueChanged.emit({ condition, value: $any($event.target).value })" />
+                </mat-form-field>
+              }
+              @case ('date') {
+                <div class="date-picker-row">
+                  <button mat-stroked-button class="date-picker-btn" (click)="datePicker.open()">
+                    <mat-icon>calendar_today</mat-icon>
+                    {{ condition.value || 'Select date' }}
+                  </button>
+                  <input [matDatepicker]="datePicker" class="hidden-date-input"
+                         (dateChange)="conditionValueChanged.emit({ condition, value: $event.value?.toLocaleDateString() || '' })" />
+                  <mat-datepicker #datePicker></mat-datepicker>
+                </div>
+              }
+              @case ('uri') {
+                <mat-form-field appearance="outline">
+                  <mat-label>URI</mat-label>
+                  <input matInput type="url" [value]="condition.value || ''"
+                         placeholder="https://..."
+                         (input)="conditionValueChanged.emit({ condition, value: $any($event.target).value })" />
+                </mat-form-field>
+              }
+              @case ('color') {
+                <div class="color-picker-row">
+                  <button mat-stroked-button class="color-picker-btn"
+                          [colorPicker]="condition.value || '#ff0000'"
+                          [cpOutputFormat]="'hex'"
+                          (colorPickerChange)="conditionValueChanged.emit({ condition, value: $event })">
+                    <span class="color-swatch" [style.background]="condition.value || '#ff0000'"></span>
+                    {{ condition.value || 'Select color' }}
+                  </button>
+                </div>
+              }
+              @default {
+                <mat-form-field appearance="outline">
+                  <mat-label>Value</mat-label>
+                  <input matInput [value]="condition.value || ''"
+                         (input)="conditionValueChanged.emit({ condition, value: $any($event.target).value })" />
+                </mat-form-field>
+              }
+            }
+          }
+
+          <div class="popover-footer">
+            <button mat-flat-button color="primary" (click)="closeEdit()">Done</button>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Add condition button -->
+  <button mat-stroked-button class="add-btn" [disabled]="!selectedOntology"
+          (click)="conditionAdded.emit()" matTooltip="Add condition">
+    <mat-icon>add</mat-icon>
+  </button>
+
+  <!-- Spacer pushes sort + search to right -->
+  <span class="spacer"></span>
+
+  <!-- Sort by -->
+  <button mat-stroked-button class="filter-chip sort-chip" [disabled]="!selectedOntology"
+          [matMenuTriggerFor]="sortMenu">
+    <mat-icon class="chip-icon">sort</mat-icon>
+    {{ sortBy || 'Sort by' }}
+    <mat-icon iconPositionEnd>arrow_drop_down</mat-icon>
+  </button>
+  <mat-menu #sortMenu="matMenu">
+    <button mat-menu-item (click)="sortByChanged.emit(null)"><em>No sorting</em></button>
+    @for (prop of properties; track prop.iri) {
+      <button mat-menu-item (click)="sortByChanged.emit(prop.label)">
+        <mat-icon>{{ getPropertyIcon(prop) }}</mat-icon>
+        {{ prop.label }}
+      </button>
+    }
+  </mat-menu>
+
+  <!-- Search button -->
+  <button mat-flat-button color="primary" class="search-btn"
+          [disabled]="!canSearch"
+          [class.stale]="isStale"
+          (click)="searchTriggered.emit()">
+    <mat-icon>search</mat-icon>
+    Search
+  </button>
+</div>
