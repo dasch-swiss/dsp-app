@@ -1,0 +1,7 @@
+{
+    "forGroup":"http://rdfh.ch/groups/0001/thing-searcher",
+    "forProject":"http://rdfh.ch/projects/0001",
+    "forProperty":null,
+    "forResourceClass":null,
+    "hasPermissions":[{"additionalInformation":"http://www.knora.org/ontology/knora-admin#ProjectMember","name":"D","permissionCode":7}]
+}

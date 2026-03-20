@@ -1,4 +1,4 @@
-import { CreateOntology, OntologyMetadata } from '@dasch-swiss/dsp-js';
+import { CreateOntology, OntologyMetadata } from '../../../../../libs/dsp-js/src';
 import { faker } from '@faker-js/faker';
 import { JsonConvert } from 'json2typescript';
 import ProjectPage from '../pages/project-page';

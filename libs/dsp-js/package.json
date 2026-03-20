@@ -1,0 +1,20 @@
+{
+  "name": "@dasch-swiss/dsp-js",
+  "version": "10.10.1",
+  "description": "TypeScript client library for DSP-API",
+  "main": "./src/index.js",
+  "types": "./src/index.d.ts",
+  "license": "AGPL-3.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dasch-swiss/dsp-app.git",
+    "directory": "libs/dsp-js"
+  },
+  "peerDependencies": {
+    "rxjs": "^7.8.0"
+  },
+  "dependencies": {
+    "json2typescript": "^1.6.1",
+    "jsonld": "^8.1.0"
+  }
+}

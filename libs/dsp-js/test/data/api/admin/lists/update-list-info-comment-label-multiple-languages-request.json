@@ -1,0 +1,14 @@
+{
+    "listIri": "http://rdfh.ch/lists/0001/treeList",
+    "projectIri": "http://rdfh.ch/projects/0001",
+  "labels": [
+    {"language": "en", "value": "Test List"},
+    {"language": "se", "value": "Test List"}
+  ],
+  "comments": [
+    {"language": "en", "value": "test"},
+    {"language": "de", "value": "test"},
+    {"language": "fr", "value": "test"},
+     {"language": "it", "value": "test"}
+  ]
+}
