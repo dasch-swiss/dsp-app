@@ -1,5 +1,24 @@
 # Changelog
 
+## [12.9.1](https://github.com/dasch-swiss/dsp-app/compare/v12.9.0...v12.9.1) (2026-03-20)
+
+
+### Bug Fixes
+
+* **download:** make download dialog responsive on small screens ([#2898](https://github.com/dasch-swiss/dsp-app/issues/2898)) ([54ff263](https://github.com/dasch-swiss/dsp-app/commit/54ff2638997b6a7fa30c58babe87525eedbc9aba))
+* **ontology-service:** only include port on localhost or 0.0.0.0 ([#2894](https://github.com/dasch-swiss/dsp-app/issues/2894)) ([275b35a](https://github.com/dasch-swiss/dsp-app/commit/275b35a382a125753ad4c75347f1bfeaaef08977))
+
+
+### Maintenances
+
+* **deps-dev:** bump ng-mocks from 14.15.1 to 14.15.2 ([#2892](https://github.com/dasch-swiss/dsp-app/issues/2892)) ([5ac178d](https://github.com/dasch-swiss/dsp-app/commit/5ac178dc8c508d3aea5042665a0ef9365de9b548))
+* update dsp-api to v35.2.0-16-g512f91d ([#2899](https://github.com/dasch-swiss/dsp-app/issues/2899)) ([4697ccf](https://github.com/dasch-swiss/dsp-app/commit/4697ccf715632dcad6ce29bac670e0051f323686))
+
+
+### Documentation
+
+* direct external contributors to info@dasch.swiss ([#2897](https://github.com/dasch-swiss/dsp-app/issues/2897)) ([6daace1](https://github.com/dasch-swiss/dsp-app/commit/6daace18f6b49173694ffa969b45a407893f3400))
+
 ## [12.9.0](https://github.com/dasch-swiss/dsp-app/compare/v12.8.1...v12.9.0) (2026-03-16)
 
 
