@@ -245,7 +245,7 @@ describe('DataClassPanelComponent', () => {
         expect(mockDialog.open).toHaveBeenCalledWith(
           DownloadDialogComponent,
           expect.objectContaining({
-            width: '500px',
+            maxWidth: '500px',
           })
         );
         done();

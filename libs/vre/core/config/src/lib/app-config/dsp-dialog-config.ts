@@ -4,8 +4,8 @@ export class DspDialogConfig {
   static dialogDrawerConfig<T = any>(dialogData?: T, isSideDialog = false): MatDialogConfig<T> {
     const dialogConfig = {
       height: 'calc(100vh)',
-      minWidth: 600,
-      maxWidth: '100%',
+      width: '100vw',
+      maxWidth: '600px',
       autoFocus: true,
       enterAnimationDuration: 0,
       exitAnimationDuration: 0,

@@ -128,7 +128,7 @@ export class DataClassPanelComponent {
           { resourceCount: resClassCount, resClass: this.classSelected.resClass, properties },
           true
         ),
-        width: '500px',
+        maxWidth: '500px',
       });
     });
   }
