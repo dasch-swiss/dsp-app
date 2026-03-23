@@ -95,6 +95,8 @@ updates:
       - dependency-name: "eslint"
       - dependency-name: "@typescript-eslint/*"
       - dependency-name: "eslint-plugin-angular"
+      # JS-LIB has to be updated manually
+      - dependency-name: "@dasch-swiss/dsp-js"
 
   - package-ecosystem: "github-actions"
     directory: "/"
