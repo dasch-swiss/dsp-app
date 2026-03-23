@@ -16,6 +16,7 @@ import {
 } from '../replace-file-dialog/replace-file-dialog.component';
 import { RepresentationService } from '../representation.service';
 import { ResourceFetcherService } from '../resource-fetcher.service';
+import { ResourceUtil } from '../resource.util';
 
 @Component({
   selector: 'app-video-more-button',
@@ -33,9 +34,11 @@ import { ResourceFetcherService } from '../resource-fetcher.service';
         (click)="openSnackBar(_translateService.instant('resourceEditor.representations.video.urlCopied'))">
         {{ 'resourceEditor.representations.video.copyUrl' | translate }}
       </button>
-      <button mat-menu-item (click)="downloadVideo()">
-        {{ 'resourceEditor.representations.video.download' | translate }}
-      </button>
+      @if (userCanView) {
+        <button mat-menu-item (click)="downloadVideo()">
+          {{ 'resourceEditor.representations.video.download' | translate }}
+        </button>
+      }
       @if (resourceFetcherService.userCanEdit$ | async) {
         <button mat-menu-item (click)="openReplaceFileDialog()">
           {{ 'resourceEditor.representations.replaceFile' | translate }}
@@ -49,6 +52,10 @@ export class VideoMoreButtonComponent {
   @Input({ required: true }) fileInfo!: MovingImageSidecar;
 
   readonly _translateService = inject(TranslateService);
+
+  get userCanView() {
+    return ResourceUtil.userCanView(this.src);
+  }
 
   constructor(
     private readonly _notification: NotificationService,
