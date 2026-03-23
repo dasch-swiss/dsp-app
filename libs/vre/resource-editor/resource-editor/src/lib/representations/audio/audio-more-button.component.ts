@@ -15,6 +15,7 @@ import {
 } from '../replace-file-dialog/replace-file-dialog.component';
 import { RepresentationService } from '../representation.service';
 import { ResourceFetcherService } from '../resource-fetcher.service';
+import { ResourceUtil } from '../resource.util';
 
 @Component({
   selector: 'app-audio-more-button',
@@ -29,9 +30,11 @@ import { ResourceFetcherService } from '../resource-fetcher.service';
       <button mat-menu-item [cdkCopyToClipboard]="fileValue.fileUrl">
         {{ 'resourceEditor.representations.audio.copyUrl' | translate }}
       </button>
-      <button mat-menu-item (click)="download()">
-        {{ 'resourceEditor.representations.audio.download' | translate }}
-      </button>
+      @if (userCanView) {
+        <button mat-menu-item (click)="download()">
+          {{ 'resourceEditor.representations.audio.download' | translate }}
+        </button>
+      }
       @if (resourceFetcherService.userCanEdit$ | async) {
         <button mat-menu-item (click)="openReplaceFileDialog()">
           {{ 'resourceEditor.representations.replaceFile' | translate }}
@@ -46,6 +49,10 @@ export class AudioMoreButtonComponent {
 
   get fileValue() {
     return getFileValue(this.parentResource) as ReadAudioFileValue;
+  }
+
+  get userCanView() {
+    return ResourceUtil.userCanView(this.fileValue);
   }
 
   constructor(
