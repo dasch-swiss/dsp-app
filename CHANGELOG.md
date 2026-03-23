@@ -1,5 +1,38 @@
 # Changelog
 
+## [12.10.0](https://github.com/dasch-swiss/dsp-app/compare/v12.9.0...v12.10.0) (2026-03-23)
+
+
+### Enhancements
+
+* Handle download restrictions for audio/video with restricted view permissions ([#2914](https://github.com/dasch-swiss/dsp-app/issues/2914)) ([4f6547d](https://github.com/dasch-swiss/dsp-app/commit/4f6547d866bb7b13a25bab43f7ce4d5d32e0d676))
+* **link-value-component:** Add headers in search result if instances of several classes (DEV-4807) ([#2904](https://github.com/dasch-swiss/dsp-app/issues/2904)) ([0fae879](https://github.com/dasch-swiss/dsp-app/commit/0fae8799e9f841fdde53728a76f9467d8f6ef708))
+
+
+### Bug Fixes
+
+* center footer text on help page ([#2896](https://github.com/dasch-swiss/dsp-app/issues/2896)) ([14e4673](https://github.com/dasch-swiss/dsp-app/commit/14e46730e93d28c3316c75e9bd27f95219190402))
+* **download:** make download dialog responsive on small screens ([#2898](https://github.com/dasch-swiss/dsp-app/issues/2898)) ([54ff263](https://github.com/dasch-swiss/dsp-app/commit/54ff2638997b6a7fa30c58babe87525eedbc9aba))
+* **ontology-service:** only include port on localhost or 0.0.0.0 ([#2894](https://github.com/dasch-swiss/dsp-app/issues/2894)) ([275b35a](https://github.com/dasch-swiss/dsp-app/commit/275b35a382a125753ad4c75347f1bfeaaef08977))
+* **resource-download:** narrow down scope of the dialog responsiveness ([#2911](https://github.com/dasch-swiss/dsp-app/issues/2911)) ([c400c97](https://github.com/dasch-swiss/dsp-app/commit/c400c97fcd069bc0b9113a1d5e3e67f893c3a309))
+
+
+### Maintenances
+
+* add dsp-js to dependabot ignore list ([#2912](https://github.com/dasch-swiss/dsp-app/issues/2912)) ([cf71c2b](https://github.com/dasch-swiss/dsp-app/commit/cf71c2b5be7a0004ae624a6e4e45c20755443a00))
+* **deps-dev:** bump @swc/core from 1.15.18 to 1.15.21 in the swc-deps group ([#2907](https://github.com/dasch-swiss/dsp-app/issues/2907)) ([f2ecd74](https://github.com/dasch-swiss/dsp-app/commit/f2ecd7491fb2e26e2894543934a0e35834cbaabd))
+* **deps-dev:** bump ng-mocks from 14.15.1 to 14.15.2 ([#2892](https://github.com/dasch-swiss/dsp-app/issues/2892)) ([5ac178d](https://github.com/dasch-swiss/dsp-app/commit/5ac178dc8c508d3aea5042665a0ef9365de9b548))
+* **deps:** bump @sentry/angular from 10.43.0 to 10.45.0 in the sentry-deps group ([#2909](https://github.com/dasch-swiss/dsp-app/issues/2909)) ([ac5bd4c](https://github.com/dasch-swiss/dsp-app/commit/ac5bd4c44dd28e255dfba63af806101d25aab965))
+* **deps:** bump flatted from 3.4.1 to 3.4.2 ([#2905](https://github.com/dasch-swiss/dsp-app/issues/2905)) ([27bf504](https://github.com/dasch-swiss/dsp-app/commit/27bf50400c6c5f0024ebed7d29369ce598299369))
+* **deps:** bump the grafana-deps group with 3 updates ([#2908](https://github.com/dasch-swiss/dsp-app/issues/2908)) ([a08fd63](https://github.com/dasch-swiss/dsp-app/commit/a08fd63b4d8fdcd1ee2fa1825639e05ad88a97c0))
+* speed up unit tests with SWC transformer (~50% faster) ([#2906](https://github.com/dasch-swiss/dsp-app/issues/2906)) ([e3be121](https://github.com/dasch-swiss/dsp-app/commit/e3be12144367e9d2afdc56a6770d5b5bd53d5d84))
+* update dsp-api to v35.2.0-16-g512f91d ([#2899](https://github.com/dasch-swiss/dsp-app/issues/2899)) ([4697ccf](https://github.com/dasch-swiss/dsp-app/commit/4697ccf715632dcad6ce29bac670e0051f323686))
+
+
+### Documentation
+
+* direct external contributors to info@dasch.swiss ([#2897](https://github.com/dasch-swiss/dsp-app/issues/2897)) ([6daace1](https://github.com/dasch-swiss/dsp-app/commit/6daace18f6b49173694ffa969b45a407893f3400))
+
 ## [12.9.0](https://github.com/dasch-swiss/dsp-app/compare/v12.8.1...v12.9.0) (2026-03-16)
 
 
