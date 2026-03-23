@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocomplete, MatAutocompleteTrigger } from '@angular/material/autocomplete';
-import { MatOption } from '@angular/material/core';
+import { MatOptgroup, MatOption } from '@angular/material/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatError, MatFormField, MatHint } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
@@ -29,6 +29,12 @@ import { EMPTY, expand, filter, finalize, from, Subject, switchMap, takeUntil } 
 import type { CreateResourceDialogComponent, CreateResourceDialogProps } from '../create-resource-dialog.component';
 import { LinkValueDataService } from './link-value-data.service';
 
+interface ResourceGroup {
+  classIri: string;
+  classLabel: string;
+  resources: ReadResource[];
+}
+
 @Component({
   selector: 'app-link-value',
   imports: [
@@ -38,6 +44,7 @@ import { LinkValueDataService } from './link-value-data.service';
     TranslatePipe,
     MatAutocompleteTrigger,
     MatAutocomplete,
+    MatOptgroup,
     MatOption,
     MatHint,
     MatError,
@@ -70,10 +77,22 @@ import { LinkValueDataService } from './link-value-data.service';
             {{ 'resourceEditor.templateSwitcher.linkValue.createNew' | translate }}: {{ rc?.label }}
           </mat-option>
         }
-        @for (res of resources; track trackByResourcesFn($index, res)) {
-          <mat-option [value]="res.id">
-            {{ res.label }}
-          </mat-option>
+        @if (showGroupHeaders) {
+          @for (group of groupedResources; track group.classIri) {
+            <mat-optgroup [label]="group.classLabel" class="link-value-class-group">
+              @for (res of group.resources; track res.id) {
+                <mat-option [value]="res.id">
+                  {{ res.label }}
+                </mat-option>
+              }
+            </mat-optgroup>
+          }
+        } @else {
+          @for (res of resources; track trackByResourcesFn($index, res)) {
+            <mat-option [value]="res.id">
+              {{ res.label }}
+            </mat-option>
+          }
         }
         @if (loading) {
           <mat-option [disabled]="true" class="loader">
@@ -88,6 +107,13 @@ import { LinkValueDataService } from './link-value-data.service';
     </mat-form-field>
   `,
   providers: [LinkValueDataService],
+  styles: `
+    .link-value-class-group {
+      --mat-optgroup-label-text-size: 0.85em;
+      --mat-optgroup-label-text-weight: 500;
+      --mat-optgroup-label-text-color: rgba(0, 0, 0, 0.6);
+    }
+  `,
 })
 export class LinkValueComponent implements OnInit {
   private cancelPreviousSearchRequest$ = new Subject<void>();
@@ -105,7 +131,12 @@ export class LinkValueComponent implements OnInit {
   loading = false;
   useDefaultValue = true;
   resources: ReadResource[] = [];
+  groupedResources: ResourceGroup[] = [];
   readResource?: ReadResource;
+
+  get showGroupHeaders(): boolean {
+    return this.groupedResources.length > 1;
+  }
 
   constructor(
     @Inject(DspApiConnectionToken)
@@ -217,6 +248,7 @@ export class LinkValueComponent implements OnInit {
       )
       .subscribe(response => {
         this.resources = response.resources;
+        this.groupedResources = this.groupByClass(this.resources);
         this._cd.detectChanges();
       });
   }
@@ -246,5 +278,22 @@ export class LinkValueComponent implements OnInit {
         this.useDefaultValue = false;
         this._cd.detectChanges();
       });
+  }
+
+  private groupByClass(resources: ReadResource[]): ResourceGroup[] {
+    const groups = new Map<string, ResourceGroup>();
+
+    resources.forEach(res => {
+      const group = groups.get(res.type) ?? {
+        classIri: res.type,
+        classLabel: res.resourceClassLabel ?? '',
+        resources: [],
+      };
+
+      group.resources.push(res);
+      groups.set(res.type, group);
+    });
+
+    return [...groups.values()];
   }
 }

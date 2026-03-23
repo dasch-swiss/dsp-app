@@ -110,7 +110,7 @@
       </div>
       @for (week of weeks; track week; let last = $last) {
       <div class="week">
-        @for (d of week; track d) {
+        @for (d of week; track $index) {
         <span class="day" [class.selected]="d === day">
           <!-- the following span is only a placeholder to set the position of the first day to the correct column-->
           @if (d === 0) {
