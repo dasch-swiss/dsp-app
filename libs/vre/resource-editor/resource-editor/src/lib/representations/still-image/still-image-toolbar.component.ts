@@ -63,10 +63,6 @@ export class StillImageToolbarComponent {
     return !!this.imageFileValue && this.imageFileValue.type === Constants.StillImageExternalFileValue;
   }
 
-  get isAnnotatable(): boolean {
-    return this.imageFileValue?.type === Constants.StillImageFileValue;
-  }
-
   get userCanView() {
     return this.imageFileValue && ResourceUtil.userCanView(this.imageFileValue);
   }

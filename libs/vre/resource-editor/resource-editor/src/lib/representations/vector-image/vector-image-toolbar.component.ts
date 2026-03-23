@@ -1,6 +1,6 @@
 import { ClipboardModule } from '@angular/cdk/clipboard';
 import { AsyncPipe } from '@angular/common';
-import { Component, EventEmitter, inject, Input, Output, ViewContainerRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, inject, Input, Output, ViewContainerRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
@@ -21,6 +21,7 @@ import { ResourceUtil } from '../resource.util';
   selector: 'app-vector-image-toolbar',
   templateUrl: './vector-image-toolbar.component.html',
   styleUrls: ['./vector-image-toolbar.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [MatMenuTrigger, MatTooltip, TranslatePipe, MatIcon, AsyncPipe, MatMenu, MatMenuItem, ClipboardModule],
 })
 export class VectorImageToolbarComponent {
@@ -31,7 +32,7 @@ export class VectorImageToolbarComponent {
   @Output() fullscreen = new EventEmitter<void>();
   @Output() backgroundChange = new EventEmitter<'default' | 'white' | 'transparent'>();
 
-  readonly _translateService = inject(TranslateService);
+  readonly translateService = inject(TranslateService);
 
   get imageFileValue(): ReadStillImageVectorFileValue | null {
     const imageValues = this.resource.properties[Constants.HasStillImageFileValue];
@@ -58,7 +59,8 @@ export class VectorImageToolbarComponent {
   ) {}
 
   download() {
-    this._rs.downloadProjectFile(this.imageFileValue!, this.resource);
+    if (!this.imageFileValue) return;
+    this._rs.downloadProjectFile(this.imageFileValue, this.resource);
   }
 
   replaceImage() {

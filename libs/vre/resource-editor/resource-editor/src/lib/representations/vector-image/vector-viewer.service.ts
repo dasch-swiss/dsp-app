@@ -17,7 +17,7 @@ export class VectorViewerService {
   private _translateX = 0;
   private _translateY = 0;
 
-  private _stateSubject = new BehaviorSubject<ViewerState>({
+  private readonly _stateSubject = new BehaviorSubject<ViewerState>({
     scale: 1,
     translateX: 0,
     translateY: 0,

@@ -119,8 +119,8 @@ export class VectorImageComponent implements OnChanges, AfterViewInit, OnDestroy
   private _dragStartY = 0;
   private _lastTranslateX = 0;
   private _lastTranslateY = 0;
-  private _svgRenderedWidth = 0;
-  private _svgRenderedHeight = 0;
+  private _containerWidth = 0;
+  private _containerHeight = 0;
   private readonly _destroyRef = inject(DestroyRef);
 
   constructor(
@@ -128,7 +128,7 @@ export class VectorImageComponent implements OnChanges, AfterViewInit, OnDestroy
     private readonly _http: HttpClient,
     private readonly _sanitizer: DomSanitizer,
     private readonly _translateService: TranslateService,
-    protected viewerService: VectorViewerService
+    public readonly viewerService: VectorViewerService
   ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -185,18 +185,16 @@ export class VectorImageComponent implements OnChanges, AfterViewInit, OnDestroy
     return svgContent;
   }
 
-  private _captureSvgSize(): void {
-    requestAnimationFrame(() => {
-      const svgElement = this.containerRef?.nativeElement?.querySelector('.svg-content svg') as SVGSVGElement;
-      if (svgElement) {
-        const rect = svgElement.getBoundingClientRect();
-        this._svgRenderedWidth = rect.width;
-        this._svgRenderedHeight = rect.height;
-        // Trigger viewport update with current state
-        this._updateNavigatorViewport(1, 0, 0);
-        this._cdr.markForCheck();
-      }
-    });
+  private _cacheContainerDimensions(): void {
+    if (this.containerRef?.nativeElement) {
+      this._containerWidth = this.containerRef.nativeElement.clientWidth;
+      this._containerHeight = this.containerRef.nativeElement.clientHeight;
+    }
+  }
+
+  @HostListener('window:resize')
+  onWindowResize(): void {
+    this._cacheContainerDimensions();
   }
 
   ngOnDestroy(): void {
@@ -315,8 +313,12 @@ export class VectorImageComponent implements OnChanges, AfterViewInit, OnDestroy
           const normalizedSvg = this._normalizeSvgDimensions(svgContent);
           this.sanitizedSvg = this._sanitizer.bypassSecurityTrustHtml(normalizedSvg);
           this.viewerService.goHome();
-          this._cdr.markForCheck();
-          this._captureSvgSize();
+          // Cache dimensions and initialize navigator after DOM updates
+          requestAnimationFrame(() => {
+            this._cacheContainerDimensions();
+            this._updateNavigatorViewport(1, 0, 0);
+            this._cdr.markForCheck();
+          });
         },
         error: () => {
           this.errorMessage = this._translateService.instant(
@@ -328,13 +330,15 @@ export class VectorImageComponent implements OnChanges, AfterViewInit, OnDestroy
   }
 
   private _updateNavigatorViewport(scale: number, translateX: number, translateY: number): void {
-    if (!this.containerRef?.nativeElement) {
-      return;
+    if (this._containerWidth === 0 || this._containerHeight === 0) {
+      this._cacheContainerDimensions();
+      if (this._containerWidth === 0 || this._containerHeight === 0) {
+        return;
+      }
     }
 
-    const container = this.containerRef.nativeElement;
-    const containerWidth = container.clientWidth;
-    const containerHeight = container.clientHeight;
+    const containerWidth = this._containerWidth;
+    const containerHeight = this._containerHeight;
 
     // Navigator is container divided by 8
     const navigatorWidthPx = containerWidth / this._NAVIGATOR_SCALE;

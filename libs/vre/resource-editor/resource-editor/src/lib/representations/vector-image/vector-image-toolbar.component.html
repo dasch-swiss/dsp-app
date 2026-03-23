@@ -84,7 +84,7 @@
   <button
     mat-menu-item
     [cdkCopyToClipboard]="imageFileValue?.arkUrl || ''"
-    (click)="notification.openSnackBar(_translateService.instant('resourceEditor.representations.stillImage.arkUrlCopied'))"
+    (click)="notification.openSnackBar(translateService.instant('resourceEditor.representations.stillImage.arkUrlCopied'))"
     data-cy="copy-ark-url">
     <mat-icon>content_copy</mat-icon>
     {{ 'resourceEditor.representations.stillImage.copyArkUrl' | translate }}

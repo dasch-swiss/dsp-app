@@ -27,7 +27,7 @@
       <mat-icon>download</mat-icon>
     </div>
 
-    @if ((resourceFetcherService.userCanEdit$ | async) && isAnnotatable) {
+    @if ((resourceFetcherService.userCanEdit$ | async) && !isReadStillImageExternalFileValue) {
     <div
       class="clickable-icon"
       data-cy="still-image-region-button"
