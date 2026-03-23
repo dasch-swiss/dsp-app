@@ -48,7 +48,11 @@ describe('VectorImageToolbarComponent', () => {
     fixture = TestBed.createComponent(VectorImageToolbarComponent);
     component = fixture.componentInstance;
     component.resource = createMockResource();
-    fixture.detectChanges();
+    // Don't call fixture.detectChanges() to avoid CSS parsing issues in JSDOM
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
   });
 
   describe('imageFileValue', () => {
