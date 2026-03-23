@@ -1,8 +1,13 @@
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatDialog } from '@angular/material/dialog';
 import { Constants, ReadResource, ReadStillImageVectorFileValue } from '@dasch-swiss/dsp-js';
+import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { provideTranslateService } from '@ngx-translate/core';
+import { of } from 'rxjs';
+import { RepresentationService } from '../representation.service';
+import { ResourceFetcherService } from '../resource-fetcher.service';
 import { VectorImageComponent } from './vector-image.component';
 
 describe('VectorImageComponent', () => {
@@ -30,7 +35,13 @@ describe('VectorImageComponent', () => {
     await TestBed.configureTestingModule({
       imports: [VectorImageComponent, HttpClientTestingModule],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
-      providers: [provideTranslateService()],
+      providers: [
+        provideTranslateService(),
+        { provide: NotificationService, useValue: { openSnackBar: jest.fn() } },
+        { provide: ResourceFetcherService, useValue: { userCanEdit$: of(true) } },
+        { provide: RepresentationService, useValue: { downloadProjectFile: jest.fn() } },
+        { provide: MatDialog, useValue: { open: jest.fn() } },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(VectorImageComponent);
