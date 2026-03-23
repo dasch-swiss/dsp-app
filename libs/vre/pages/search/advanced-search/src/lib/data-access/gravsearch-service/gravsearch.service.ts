@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Constants } from '@dasch-swiss/dsp-js';
 import { GravsearchPropertyString, ResourceLabel } from '../advanced-search-service/advanced-search.service';
-import { Operators, OrderByItem, PropertyFormItem } from '../advanced-search-store/advanced-search-store.service';
+import type { OrderByItem, PropertyFormItem } from '../advanced-search-store/advanced-search-store.service';
+import { Operators } from '../advanced-search-store/operators';
 
 @Injectable({
   providedIn: 'root',

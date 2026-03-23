@@ -28,6 +28,7 @@ updates:
         patterns:
           - "@swc/*"
           - "@swc-node/*"
+          - "@jscutlery/*"
       ngx-translate-deps:
         patterns:
           - "@ngx-translate/*"
@@ -39,6 +40,7 @@ updates:
           - "jest*"
           - "ts-jest"
           - "@types/jest"
+          - "reflect-metadata"
       jasmine-deps:
         patterns:
           - "jasmine-core"
