@@ -25,10 +25,6 @@ export class VectorViewerService {
 
   state$ = this._stateSubject.asObservable();
 
-  get scale(): number {
-    return this._scale;
-  }
-
   get translateX(): number {
     return this._translateX;
   }
@@ -58,9 +54,6 @@ export class VectorViewerService {
     this._emitState();
   }
 
-  /**
-   * Reset zoom and pan to initial state
-   */
   goHome(): void {
     this._scale = 1;
     this._translateX = 0;
@@ -68,29 +61,10 @@ export class VectorViewerService {
     this._emitState();
   }
 
-  /**
-   * Pan the view by delta amounts
-   */
-  pan(deltaX: number, deltaY: number): void {
-    this._translateX += deltaX;
-    this._translateY += deltaY;
-    this._emitState();
-  }
-
-  /**
-   * Set absolute position
-   */
   setPosition(x: number, y: number): void {
     this._translateX = x;
     this._translateY = y;
     this._emitState();
-  }
-
-  /**
-   * Get the CSS transform string for the current state
-   */
-  getTransform(): string {
-    return `translate(${this._translateX}px, ${this._translateY}px) scale(${this._scale})`;
   }
 
   private _emitState(): void {

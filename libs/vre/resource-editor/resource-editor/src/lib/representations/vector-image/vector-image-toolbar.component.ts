@@ -1,19 +1,16 @@
 import { ClipboardModule } from '@angular/cdk/clipboard';
 import { AsyncPipe } from '@angular/common';
-import { Component, EventEmitter, Inject, inject, Input, Output, ViewContainerRef } from '@angular/core';
+import { Component, EventEmitter, inject, Input, Output, ViewContainerRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatTooltip } from '@angular/material/tooltip';
 import {
   Constants,
-  KnoraApiConnection,
   ReadResource,
   ReadStillImageVectorFileValue,
-  UpdateFileValue,
-  UpdateResource,
 } from '@dasch-swiss/dsp-js';
-import { DspApiConnectionToken, DspDialogConfig } from '@dasch-swiss/vre/core/config';
+import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import {
@@ -58,8 +55,6 @@ export class VectorImageToolbarComponent {
 
   constructor(
     public notification: NotificationService,
-    @Inject(DspApiConnectionToken)
-    private _dspApiConnection: KnoraApiConnection,
     public resourceFetcherService: ResourceFetcherService,
     private _rs: RepresentationService,
     private _dialog: MatDialog,
@@ -67,8 +62,7 @@ export class VectorImageToolbarComponent {
   ) {}
 
   download() {
-    if (!this.imageFileValue) return;
-    this._rs.downloadProjectFile(this.imageFileValue, this.resource);
+    this._rs.downloadProjectFile(this.imageFileValue!, this.resource);
   }
 
   replaceImage() {
@@ -85,14 +79,5 @@ export class VectorImageToolbarComponent {
 
   setBackground(bg: 'default' | 'white' | 'transparent') {
     this.backgroundChange.emit(bg);
-  }
-
-  private _replaceFile(file: UpdateFileValue) {
-    const updateRes = new UpdateResource();
-    updateRes.id = this.resource.id;
-    updateRes.type = this.resource.type;
-    updateRes.property = Constants.HasStillImageFileValue;
-    updateRes.value = file;
-    return this._dspApiConnection.v2.values.updateValue(updateRes as UpdateResource<UpdateFileValue>);
   }
 }

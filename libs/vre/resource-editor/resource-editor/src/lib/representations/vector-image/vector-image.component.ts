@@ -56,11 +56,14 @@ import { VectorViewerService } from './vector-viewer.service';
         </div>
         <!-- Mini navigator -->
         @if (showNavigator && sanitizedSvg) {
-          <div class="navigator">
-            <div class="navigator-content">
-              <div class="navigator-svg" [innerHTML]="sanitizedSvg"></div>
-              <div class="viewport-indicator" [style.transform]="navigatorViewportTransform"></div>
-            </div>
+          <div class="navigator" [style.width]="navigatorWidth" [style.height]="navigatorHeight">
+            <div class="navigator-svg" [innerHTML]="sanitizedSvg" [style.transform]="navigatorSvgScale"></div>
+            <div
+              class="viewport-indicator"
+              [style.left]="viewportLeft"
+              [style.top]="viewportTop"
+              [style.width]="viewportWidth"
+              [style.height]="viewportHeight"></div>
           </div>
         }
       </div>
@@ -101,13 +104,23 @@ export class VectorImageComponent implements OnChanges, AfterViewInit, OnDestroy
   showNavigator = true;
   backgroundStyle = '';
   transform = '';
-  navigatorViewportTransform = '';
 
-  private _isViewInitialized = false;
+  // Navigator styles
+  navigatorWidth = '120px';
+  navigatorHeight = '120px';
+  navigatorSvgScale = 'scale(1)';
+  viewportLeft = '0px';
+  viewportTop = '0px';
+  viewportWidth = '100%';
+  viewportHeight = '100%';
+
+  private readonly _NAVIGATOR_SCALE = 8;
   private _dragStartX = 0;
   private _dragStartY = 0;
   private _lastTranslateX = 0;
   private _lastTranslateY = 0;
+  private _svgRenderedWidth = 0;
+  private _svgRenderedHeight = 0;
   private readonly _destroyRef = inject(DestroyRef);
 
   constructor(
@@ -119,15 +132,12 @@ export class VectorImageComponent implements OnChanges, AfterViewInit, OnDestroy
   ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (this._isViewInitialized && changes['resource']) {
+    if (changes['resource'] && !changes['resource'].firstChange) {
       this._loadSvg();
     }
   }
 
   ngAfterViewInit(): void {
-    this._isViewInitialized = true;
-
-    // Subscribe to viewer state changes
     this.viewerService.state$.pipe(takeUntilDestroyed(this._destroyRef)).subscribe(state => {
       this.transform = `translate(${state.translateX}px, ${state.translateY}px) scale(${state.scale})`;
       this._updateNavigatorViewport(state.scale, state.translateX, state.translateY);
@@ -135,6 +145,20 @@ export class VectorImageComponent implements OnChanges, AfterViewInit, OnDestroy
     });
 
     this._loadSvg();
+  }
+
+  private _captureSvgSize(): void {
+    requestAnimationFrame(() => {
+      const svgElement = this.containerRef?.nativeElement?.querySelector('.svg-content svg') as SVGSVGElement;
+      if (svgElement) {
+        const rect = svgElement.getBoundingClientRect();
+        this._svgRenderedWidth = rect.width;
+        this._svgRenderedHeight = rect.height;
+        // Trigger viewport update with current state
+        this._updateNavigatorViewport(1, 0, 0);
+        this._cdr.markForCheck();
+      }
+    });
   }
 
   ngOnDestroy(): void {
@@ -205,19 +229,17 @@ export class VectorImageComponent implements OnChanges, AfterViewInit, OnDestroy
     this._cdr.markForCheck();
   }
 
-  toggleFullscreen(): void {
-    const container = this.containerRef?.nativeElement?.parentElement;
-    if (!container) return;
+    toggleFullscreen(): void {
+        const container = this.containerRef?.nativeElement?.parentElement;
+        if (!container) return;
 
-    if (!this.isFullscreen) {
-      container.requestFullscreen?.();
-      this.isFullscreen = true;
-    } else {
-      document.exitFullscreen?.();
-      this.isFullscreen = false;
+        this.isFullscreen
+            ? document.exitFullscreen?.()
+            : container.requestFullscreen?.();
+
+        this.isFullscreen = !this.isFullscreen;
+        this._cdr.markForCheck();
     }
-    this._cdr.markForCheck();
-  }
 
   @HostListener('document:fullscreenchange')
   onFullscreenChange(): void {
@@ -233,7 +255,7 @@ export class VectorImageComponent implements OnChanges, AfterViewInit, OnDestroy
       this.errorMessage = this._translateService.instant(
         'resourceEditor.representations.stillImage.errors.unknownImageType'
       );
-      this._cdr.detectChanges();
+      this._cdr.markForCheck();
       return;
     }
 
@@ -242,7 +264,7 @@ export class VectorImageComponent implements OnChanges, AfterViewInit, OnDestroy
       this.errorMessage = this._translateService.instant(
         'resourceEditor.representations.stillImage.errors.unknownImageType'
       );
-      this._cdr.detectChanges();
+      this._cdr.markForCheck();
       return;
     }
 
@@ -256,23 +278,55 @@ export class VectorImageComponent implements OnChanges, AfterViewInit, OnDestroy
         next: svgContent => {
           this.sanitizedSvg = this._sanitizer.bypassSecurityTrustHtml(svgContent);
           this.viewerService.goHome();
-          this._cdr.detectChanges();
+          this._cdr.markForCheck();
+          this._captureSvgSize();
         },
         error: () => {
           this.errorMessage = this._translateService.instant(
             'resourceEditor.representations.stillImage.errors.failedToLoadImage'
           );
-          this._cdr.detectChanges();
+          this._cdr.markForCheck();
         },
       });
   }
 
   private _updateNavigatorViewport(scale: number, translateX: number, translateY: number): void {
-    // Calculate the inverse transform for the navigator viewport indicator
-    // The navigator shows where the current viewport is within the full image
-    const inverseScale = 1 / scale;
-    const navigatorTranslateX = (-translateX * inverseScale) / scale;
-    const navigatorTranslateY = (-translateY * inverseScale) / scale;
-    this.navigatorViewportTransform = `translate(${navigatorTranslateX}px, ${navigatorTranslateY}px) scale(${inverseScale})`;
+    if (!this.containerRef?.nativeElement) {
+      return;
+    }
+
+    const container = this.containerRef.nativeElement;
+    const containerWidth = container.clientWidth;
+    const containerHeight = container.clientHeight;
+
+    // Navigator is container divided by 8
+    const navigatorWidthPx = containerWidth / this._NAVIGATOR_SCALE;
+    const navigatorHeightPx = containerHeight / this._NAVIGATOR_SCALE;
+
+    this.navigatorWidth = `${navigatorWidthPx}px`;
+    this.navigatorHeight = `${navigatorHeightPx}px`;
+
+    // Scale the SVG in the navigator by 1/8
+    const scaleRatio = 1 / this._NAVIGATOR_SCALE;
+    this.navigatorSvgScale = `scale(${scaleRatio})`;
+
+    // At scale=1, viewport fills the navigator (we see everything)
+    // At scale=2, viewport is half size (we see half)
+    const viewportWidth = navigatorWidthPx / scale;
+    const viewportHeight = navigatorHeightPx / scale;
+
+
+    // To convert to "world" coordinates: divide by scale
+    // Then convert to navigator pixels: divide by _NAVIGATOR_SCALE
+    const viewportCenterX = navigatorWidthPx / 2 - translateX / scale / this._NAVIGATOR_SCALE;
+    const viewportCenterY = navigatorHeightPx / 2 - translateY / scale / this._NAVIGATOR_SCALE;
+
+    const viewportLeft = viewportCenterX - viewportWidth / 2;
+    const viewportTop = viewportCenterY - viewportHeight / 2;
+
+    this.viewportLeft = `${viewportLeft}px`;
+    this.viewportTop = `${viewportTop}px`;
+    this.viewportWidth = `${viewportWidth}px`;
+    this.viewportHeight = `${viewportHeight}px`;
   }
 }

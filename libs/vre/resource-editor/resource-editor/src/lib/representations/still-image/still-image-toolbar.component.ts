@@ -8,12 +8,9 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { DomSanitizer } from '@angular/platform-browser';
 import {
   Constants,
-  KnoraApiConnection,
   ReadResource,
   ReadStillImageExternalFileValue,
   ReadStillImageFileValue,
-  UpdateFileValue,
-  UpdateResource,
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken, DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import { AppError } from '@dasch-swiss/vre/core/error-handler';
@@ -71,9 +68,8 @@ export class StillImageToolbarComponent {
     return !!this.imageFileValue && this.imageFileValue.type === Constants.StillImageExternalFileValue;
   }
 
-  /** Only internal raster still images support polygon region annotations. */
   get isAnnotatable(): boolean {
-    return !!this.imageFileValue && this.imageFileValue.type === Constants.StillImageFileValue;
+    return this.imageFileValue?.type === Constants.StillImageFileValue;
   }
 
   get userCanView() {
@@ -85,7 +81,6 @@ export class StillImageToolbarComponent {
   constructor(
     public notification: NotificationService,
     @Inject(DspApiConnectionToken)
-    private _dspApiConnection: KnoraApiConnection,
     public resourceFetcherService: ResourceFetcherService,
     private _rs: RepresentationService,
     private _dialog: MatDialog,
@@ -116,15 +111,6 @@ export class StillImageToolbarComponent {
       }),
       viewContainerRef: this._viewContainerRef,
     });
-  }
-
-  private _replaceFile(file: UpdateFileValue) {
-    const updateRes = new UpdateResource();
-    updateRes.id = this.resource.id;
-    updateRes.type = this.resource.type;
-    updateRes.property = Constants.HasStillImageFileValue;
-    updateRes.value = file;
-    return this._dspApiConnection.v2.values.updateValue(updateRes as UpdateResource<UpdateFileValue>);
   }
 
   private _setupCssMaterialIcon() {
