@@ -147,6 +147,44 @@ export class VectorImageComponent implements OnChanges, AfterViewInit, OnDestroy
     this._loadSvg();
   }
 
+  /**
+   * Ensures SVG has width and height attributes.
+   * If missing, extracts dimensions from viewBox.
+   */
+  private _normalizeSvgDimensions(svgContent: string): string {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(svgContent, 'image/svg+xml');
+    const svg = doc.querySelector('svg');
+
+    if (!svg) {
+      return svgContent;
+    }
+
+    const hasWidth = svg.hasAttribute('width');
+    const hasHeight = svg.hasAttribute('height');
+
+    if (hasWidth && hasHeight) {
+      return svgContent;
+    }
+
+    const viewBox = svg.getAttribute('viewBox');
+    if (viewBox) {
+      const parts = viewBox.split(/\s+|,/).map(Number);
+      if (parts.length === 4) {
+        const [, , width, height] = parts;
+        if (!hasWidth) {
+          svg.setAttribute('width', String(width));
+        }
+        if (!hasHeight) {
+          svg.setAttribute('height', String(height));
+        }
+        return new XMLSerializer().serializeToString(doc);
+      }
+    }
+
+    return svgContent;
+  }
+
   private _captureSvgSize(): void {
     requestAnimationFrame(() => {
       const svgElement = this.containerRef?.nativeElement?.querySelector('.svg-content svg') as SVGSVGElement;
@@ -276,7 +314,8 @@ export class VectorImageComponent implements OnChanges, AfterViewInit, OnDestroy
       .pipe(takeUntilDestroyed(this._destroyRef))
       .subscribe({
         next: svgContent => {
-          this.sanitizedSvg = this._sanitizer.bypassSecurityTrustHtml(svgContent);
+          const normalizedSvg = this._normalizeSvgDimensions(svgContent);
+          this.sanitizedSvg = this._sanitizer.bypassSecurityTrustHtml(normalizedSvg);
           this.viewerService.goHome();
           this._cdr.markForCheck();
           this._captureSvgSize();
