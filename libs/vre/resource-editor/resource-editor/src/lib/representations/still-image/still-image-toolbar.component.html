@@ -28,19 +28,19 @@
     </div>
 
     @if ((resourceFetcherService.userCanEdit$ | async) && isAnnotatable) {
-      <div
-        class="clickable-icon"
-        data-cy="still-image-region-button"
-        matTooltip="{{ 'resourceEditor.representations.stillImage.createAnnotation' | translate }}"
-        (click)="toggleDrawMode()"
-        [class.active]="osd.drawing">
-        <mat-icon svgIcon="draw_region_icon" />
-      </div>
+    <div
+      class="clickable-icon"
+      data-cy="still-image-region-button"
+      matTooltip="{{ 'resourceEditor.representations.stillImage.createAnnotation' | translate }}"
+      (click)="toggleDrawMode()"
+      [class.active]="osd.drawing">
+      <mat-icon svgIcon="draw_region_icon" />
+    </div>
     }
   </div>
 
   @if (compoundMode) {
-    <app-compound-navigation />
+  <app-compound-navigation />
   }
 
   <div class="icon-container">
@@ -92,9 +92,9 @@
     {{ 'resourceEditor.representations.stillImage.openIiifInNewTab' | translate }}
   </a>
   @if (resourceFetcherService.userCanEdit$ | async) {
-    <button data-cy="replace-image-button" mat-menu-item (click)="replaceImage()">
-      {{ 'resourceEditor.representations.replaceFile' | translate }}
-    </button>
+  <button data-cy="replace-image-button" mat-menu-item (click)="replaceImage()">
+    {{ 'resourceEditor.representations.replaceFile' | translate }}
+  </button>
   }
 </mat-menu>
 
@@ -120,12 +120,12 @@
 <mat-menu #settings="matMenu" class="settings-menu">
   <button data-cy="jpg-button" mat-menu-item (click)="imageIsPng.emit(false)">
     @if (!isPng) {
-      <mat-icon>check</mat-icon>
+    <mat-icon>check</mat-icon>
     } JPG
   </button>
   <button mat-menu-item data-cy="png-button" (click)="imageIsPng.emit(true)">
     @if (isPng) {
-      <mat-icon>check</mat-icon>
+    <mat-icon>check</mat-icon>
     } PNG
   </button>
 </mat-menu>

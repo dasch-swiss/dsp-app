@@ -267,17 +267,15 @@ export class VectorImageComponent implements OnChanges, AfterViewInit, OnDestroy
     this._cdr.markForCheck();
   }
 
-    toggleFullscreen(): void {
-        const container = this.containerRef?.nativeElement?.parentElement;
-        if (!container) return;
+  toggleFullscreen(): void {
+    const container = this.containerRef?.nativeElement?.parentElement;
+    if (!container) return;
 
-        this.isFullscreen
-            ? document.exitFullscreen?.()
-            : container.requestFullscreen?.();
+    this.isFullscreen ? document.exitFullscreen?.() : container.requestFullscreen?.();
 
-        this.isFullscreen = !this.isFullscreen;
-        this._cdr.markForCheck();
-    }
+    this.isFullscreen = !this.isFullscreen;
+    this._cdr.markForCheck();
+  }
 
   @HostListener('document:fullscreenchange')
   onFullscreenChange(): void {
@@ -353,7 +351,6 @@ export class VectorImageComponent implements OnChanges, AfterViewInit, OnDestroy
     // At scale=2, viewport is half size (we see half)
     const viewportWidth = navigatorWidthPx / scale;
     const viewportHeight = navigatorHeightPx / scale;
-
 
     // To convert to "world" coordinates: divide by scale
     // Then convert to navigator pixels: divide by _NAVIGATOR_SCALE

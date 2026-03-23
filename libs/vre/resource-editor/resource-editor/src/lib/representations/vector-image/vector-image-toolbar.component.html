@@ -74,9 +74,9 @@
 
 <mat-menu #more="matMenu" class="representation-menu">
   @if (resourceFetcherService.userCanEdit$ | async) {
-    <button data-cy="replace-vector-button" mat-menu-item (click)="replaceImage()">
-      {{ 'resourceEditor.representations.replaceFile' | translate }}
-    </button>
+  <button data-cy="replace-vector-button" mat-menu-item (click)="replaceImage()">
+    {{ 'resourceEditor.representations.replaceFile' | translate }}
+  </button>
   }
 </mat-menu>
 

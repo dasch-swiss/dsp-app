@@ -10,12 +10,7 @@ import {
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
-import {
-  Constants,
-  ReadResource,
-  ReadStillImageExternalFileValue,
-  ReadStillImageFileValue,
-} from '@dasch-swiss/dsp-js';
+import { Constants, ReadResource, ReadStillImageExternalFileValue, ReadStillImageFileValue } from '@dasch-swiss/dsp-js';
 import { NoResultsFoundComponent } from '@dasch-swiss/vre/ui/ui';
 import { TranslateService } from '@ngx-translate/core';
 import { CompoundArrowNavigationComponent } from '../../compound/compound-arrow-navigation.component';

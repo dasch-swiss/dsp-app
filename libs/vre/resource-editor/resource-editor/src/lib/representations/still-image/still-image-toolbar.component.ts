@@ -6,12 +6,7 @@ import { MatIcon, MatIconRegistry } from '@angular/material/icon';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatTooltip } from '@angular/material/tooltip';
 import { DomSanitizer } from '@angular/platform-browser';
-import {
-  Constants,
-  ReadResource,
-  ReadStillImageExternalFileValue,
-  ReadStillImageFileValue,
-} from '@dasch-swiss/dsp-js';
+import { Constants, ReadResource, ReadStillImageExternalFileValue, ReadStillImageFileValue } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken, DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import { AppError } from '@dasch-swiss/vre/core/error-handler';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
