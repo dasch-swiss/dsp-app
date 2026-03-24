@@ -26,6 +26,7 @@ import { VectorImageToolbarComponent } from './vector-image-toolbar.component';
 import { VectorViewerService } from './vector-viewer.service';
 
 @Component({
+  standalone: true,
   selector: 'app-vector-image',
   template: `
     @if (errorMessage) {
@@ -154,9 +155,10 @@ export class VectorImageComponent implements OnChanges, AfterViewInit, OnDestroy
   private _normalizeSvgDimensions(svgContent: string): string {
     const parser = new DOMParser();
     const doc = parser.parseFromString(svgContent, 'image/svg+xml');
+    const parserError = doc.querySelector('parsererror');
     const svg = doc.querySelector('svg');
 
-    if (!svg) {
+    if (parserError || !svg) {
       return svgContent;
     }
 
@@ -205,6 +207,7 @@ export class VectorImageComponent implements OnChanges, AfterViewInit, OnDestroy
 
   onWheel(event: WheelEvent): void {
     event.preventDefault();
+    if (!this.containerRef?.nativeElement) return;
     const direction = event.deltaY > 0 ? -1 : 1;
     // Get the position relative to container center for zoom-to-cursor
     const rect = this.containerRef.nativeElement.getBoundingClientRect();
@@ -240,6 +243,7 @@ export class VectorImageComponent implements OnChanges, AfterViewInit, OnDestroy
   }
 
   onDoubleClick(event: MouseEvent): void {
+    if (!this.containerRef?.nativeElement) return;
     // Zoom in on double click (same behavior as OSD)
     const rect = this.containerRef.nativeElement.getBoundingClientRect();
     const centerX = rect.width / 2;
@@ -269,7 +273,11 @@ export class VectorImageComponent implements OnChanges, AfterViewInit, OnDestroy
     const container = this.containerRef?.nativeElement?.parentElement;
     if (!container) return;
 
-    this.isFullscreen ? document.exitFullscreen?.() : container.requestFullscreen?.();
+    if (this.isFullscreen) {
+      document.exitFullscreen?.();
+    } else {
+      container.requestFullscreen?.();
+    }
 
     this.isFullscreen = !this.isFullscreen;
     this._cdr.markForCheck();
