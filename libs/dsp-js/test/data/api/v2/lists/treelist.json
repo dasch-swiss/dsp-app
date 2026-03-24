@@ -1,0 +1,66 @@
+{
+    "rdfs:label": "Tree list root",
+    "knora-api:attachedToProject": {
+        "@id": "http://rdfh.ch/projects/0001"
+    },
+    "knora-api:hasSubListNode": [
+        {
+            "rdfs:label": "Tree list node 01",
+            "knora-api:hasRootNode": {
+                "@id": "http://rdfh.ch/lists/0001/treeList"
+            },
+            "knora-api:listNodePosition": 0,
+            "@type": "knora-api:ListNode",
+            "@id": "http://rdfh.ch/lists/0001/treeList01"
+        },
+        {
+            "rdfs:label": "Tree list node 02",
+            "knora-api:hasRootNode": {
+                "@id": "http://rdfh.ch/lists/0001/treeList"
+            },
+            "knora-api:listNodePosition": 1,
+            "@type": "knora-api:ListNode",
+            "@id": "http://rdfh.ch/lists/0001/treeList02"
+        },
+        {
+            "rdfs:label": "Tree list node 03",
+            "knora-api:hasRootNode": {
+                "@id": "http://rdfh.ch/lists/0001/treeList"
+            },
+            "knora-api:hasSubListNode": [
+                {
+                    "rdfs:label": "Tree list node 10",
+                    "knora-api:hasRootNode": {
+                        "@id": "http://rdfh.ch/lists/0001/treeList"
+                    },
+                    "knora-api:listNodePosition": 0,
+                    "@type": "knora-api:ListNode",
+                    "@id": "http://rdfh.ch/lists/0001/treeList10"
+                },
+                {
+                    "rdfs:label": "Tree list node 11",
+                    "knora-api:hasRootNode": {
+                        "@id": "http://rdfh.ch/lists/0001/treeList"
+                    },
+                    "knora-api:listNodePosition": 1,
+                    "@type": "knora-api:ListNode",
+                    "@id": "http://rdfh.ch/lists/0001/treeList11"
+                }
+            ],
+            "knora-api:listNodePosition": 2,
+            "@type": "knora-api:ListNode",
+            "@id": "http://rdfh.ch/lists/0001/treeList03"
+        }
+    ],
+    "knora-api:isRootNode": true,
+    "rdfs:comment": "Anything Tree List",
+    "@type": "knora-api:ListNode",
+    "@id": "http://rdfh.ch/lists/0001/treeList",
+    "@context": {
+        "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+        "knora-api": "http://api.knora.org/ontology/knora-api/v2#",
+        "owl": "http://www.w3.org/2002/07/owl#",
+        "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+        "xsd": "http://www.w3.org/2001/XMLSchema#"
+    }
+}

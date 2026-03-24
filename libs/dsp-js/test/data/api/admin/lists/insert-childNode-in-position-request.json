@@ -1,0 +1,8 @@
+{
+    "parentNodeIri": "http://rdfh.ch/lists/0001/Nri5eqUGTpiCZ5sz9XMZEA",
+    "projectIri": "http://rdfh.ch/projects/0001",
+    "name": "child with position",
+    "position": 1,
+    "labels": [{ "value": "Inserted List Node Label", "language": "en"}],
+    "comments": [{ "value": "Inserted List Node Comment", "language": "en"}]
+}

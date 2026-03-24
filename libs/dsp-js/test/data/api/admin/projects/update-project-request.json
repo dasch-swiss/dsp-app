@@ -1,0 +1,9 @@
+{
+    "shortname": "updatedproject",
+    "longname": "updated project longname",
+    "description": [{"value": "updated project description", "language": "en"}],
+    "keywords": ["updated", "keywords"],
+    "logo": "/fu/bar/baz-updated.jpg",
+    "status": true,
+    "selfjoin": true
+}
