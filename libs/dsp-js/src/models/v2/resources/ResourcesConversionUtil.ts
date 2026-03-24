@@ -65,9 +65,11 @@ export namespace ResourcesConversionUtil {
       if (graphLength > 0) {
         // sequence of resources
         return forkJoin(
-          ((resourcesJsonld as { [index: string]: object[] })['@graph'] as Array<{ [index: string]: object[] | string }>).map(
-            res => createReadResource(res, ontologyCache, listNodeCache, jsonConvert)
-          )
+          (
+            (resourcesJsonld as { [index: string]: object[] })['@graph'] as Array<{
+              [index: string]: object[] | string;
+            }>
+          ).map(res => createReadResource(res, ontologyCache, listNodeCache, jsonConvert))
         ).pipe(
           map((resources: ReadResource[]) => {
             // check for mayHaveMoreResults

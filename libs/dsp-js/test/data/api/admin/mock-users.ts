@@ -1,9 +1,4 @@
-import {
-  JsonConvert,
-  OperationMode,
-  PropertyMatchingRule,
-  ValueCheckingMode,
-} from 'json2typescript';
+import { JsonConvert, OperationMode, PropertyMatchingRule, ValueCheckingMode } from 'json2typescript';
 import { AjaxResponse } from 'rxjs/ajax';
 import { ApiResponseData } from '../../../../src/models/api-response-data';
 import { UsersResponse } from '../../../../src/models/admin/users-response';
@@ -46,9 +41,7 @@ export namespace MockUsers {
   );
 
   export const mockUsers = (): ApiResponseData<UsersResponse> => {
-    const responseData = ApiResponseData.fromAjaxResponse(
-      createMockAjaxResponse({} as object)
-    );
+    const responseData = ApiResponseData.fromAjaxResponse(createMockAjaxResponse({} as object));
 
     const usersRes = jsonConvert.serializeObject(users, UsersResponse);
     responseData.body = usersRes;
@@ -56,9 +49,7 @@ export namespace MockUsers {
   };
 
   export const mockUser = (): ApiResponseData<UserResponse> => {
-    const responseData = ApiResponseData.fromAjaxResponse(
-      createMockAjaxResponse({} as object)
-    );
+    const responseData = ApiResponseData.fromAjaxResponse(createMockAjaxResponse({} as object));
 
     const userRes = jsonConvert.serializeObject(user, UserResponse);
     responseData.body = userRes;

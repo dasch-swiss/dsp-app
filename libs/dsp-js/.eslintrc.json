@@ -31,8 +31,7 @@
         "no-multi-assign": "off",
         "no-useless-return": "off",
         "operator-assignment": "off",
-        "spaced-comment": "off",
-        "prettier/prettier": "off"
+        "spaced-comment": "off"
       }
     },
     {
@@ -43,8 +42,7 @@
         "createDefaultProgram": true
       },
       "rules": {
-        "@nrwl/nx/enforce-module-boundaries": "off",
-        "prettier/prettier": "off"
+        "@nrwl/nx/enforce-module-boundaries": "off"
       }
     }
   ]

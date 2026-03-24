@@ -1,9 +1,4 @@
-import {
-  JsonConvert,
-  OperationMode,
-  PropertyMatchingRule,
-  ValueCheckingMode,
-} from 'json2typescript';
+import { JsonConvert, OperationMode, PropertyMatchingRule, ValueCheckingMode } from 'json2typescript';
 import { AjaxResponse } from 'rxjs/ajax';
 import { ApiResponseData } from '../../../../src/models/api-response-data';
 import { HealthResponse } from '../../../../src/models/system/health-response';
@@ -46,9 +41,7 @@ export namespace MockHealth {
   );
 
   export const mockMaintenance = (): ApiResponseData<HealthResponse> => {
-    const responseData = ApiResponseData.fromAjaxResponse(
-      createMockAjaxResponse({} as object)
-    );
+    const responseData = ApiResponseData.fromAjaxResponse(createMockAjaxResponse({} as object));
 
     const healthRes = jsonConvert.serializeObject(maintenance, HealthResponse);
     responseData.body = healthRes;
@@ -56,9 +49,7 @@ export namespace MockHealth {
   };
 
   export const mockRunning = (): ApiResponseData<HealthResponse> => {
-    const responseData = ApiResponseData.fromAjaxResponse(
-      createMockAjaxResponse({} as object)
-    );
+    const responseData = ApiResponseData.fromAjaxResponse(createMockAjaxResponse({} as object));
 
     const healthRes = jsonConvert.serializeObject(running, HealthResponse);
     responseData.body = healthRes;
@@ -66,9 +57,7 @@ export namespace MockHealth {
   };
 
   export const mockStopped = (): ApiResponseData<HealthResponse> => {
-    const responseData = ApiResponseData.fromAjaxResponse(
-      createMockAjaxResponse({} as object)
-    );
+    const responseData = ApiResponseData.fromAjaxResponse(createMockAjaxResponse({} as object));
 
     const healthRes = jsonConvert.serializeObject(stopped, HealthResponse);
     responseData.body = healthRes;

@@ -11,6 +11,6 @@ export default {
   setupFilesAfterEnv: ['<rootDir>/test/jest-setup.ts'],
   moduleNameMapper: {
     '^rxjs/ajax$': '<rootDir>/../../node_modules/rxjs/dist/cjs/ajax/index.js',
-    '^rxjs$': '<rootDir>/../../node_modules/rxjs/dist/cjs/index.js'
-  }
+    '^rxjs$': '<rootDir>/../../node_modules/rxjs/dist/cjs/index.js',
+  },
 };

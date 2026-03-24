@@ -1,9 +1,4 @@
-import {
-  JsonConvert,
-  OperationMode,
-  PropertyMatchingRule,
-  ValueCheckingMode,
-} from 'json2typescript';
+import { JsonConvert, OperationMode, PropertyMatchingRule, ValueCheckingMode } from 'json2typescript';
 import { forkJoin, Observable, of } from 'rxjs';
 import { map } from 'rxjs';
 import { V2Endpoint } from '../../../../src/api/v2/v2-endpoint';

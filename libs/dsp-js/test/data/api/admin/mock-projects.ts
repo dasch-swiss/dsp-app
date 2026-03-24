@@ -1,9 +1,4 @@
-import {
-  JsonConvert,
-  OperationMode,
-  PropertyMatchingRule,
-  ValueCheckingMode,
-} from 'json2typescript';
+import { JsonConvert, OperationMode, PropertyMatchingRule, ValueCheckingMode } from 'json2typescript';
 import { AjaxResponse } from 'rxjs/ajax';
 import { ApiResponseData } from '../../../../src/models/api-response-data';
 import { ProjectsResponse } from '../../../../src/models/admin/projects-response';
@@ -46,9 +41,7 @@ export namespace MockProjects {
   );
 
   export const mockProjects = (): ApiResponseData<ProjectsResponse> => {
-    const responseData = ApiResponseData.fromAjaxResponse(
-      createMockAjaxResponse({} as object)
-    );
+    const responseData = ApiResponseData.fromAjaxResponse(createMockAjaxResponse({} as object));
 
     const projectsRes = jsonConvert.serializeObject(projects, ProjectsResponse);
     responseData.body = projectsRes;
@@ -56,9 +49,7 @@ export namespace MockProjects {
   };
 
   export const mockProject = (): ApiResponseData<ProjectResponse> => {
-    const responseData = ApiResponseData.fromAjaxResponse(
-      createMockAjaxResponse({} as object)
-    );
+    const responseData = ApiResponseData.fromAjaxResponse(createMockAjaxResponse({} as object));
 
     const projectRes = jsonConvert.serializeObject(project, ProjectResponse);
     responseData.body = projectRes;
