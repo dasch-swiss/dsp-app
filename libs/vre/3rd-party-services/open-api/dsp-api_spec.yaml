@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: DSP-API
-  version: v35.2.0-26-g46c7715
+  version: v35.3.0-1-g77f5021
   summary: DSP-API is part of the DaSCH Service Platform, a repository for the long-term
     preservation and reuse of data in the humanities.
   contact:
@@ -4683,7 +4683,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/a0U3dghnTBGnmKooHYArzw
+        example: http://rdfh.ch/users/vd3HyxvyQsyXL7wygjK_0Q
       responses:
         '200':
           description: ''
@@ -4741,7 +4741,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/a0U3dghnTBGnmKooHYArzw
+        example: http://rdfh.ch/users/vd3HyxvyQsyXL7wygjK_0Q
       responses:
         '200':
           description: ''
@@ -4799,7 +4799,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/a0U3dghnTBGnmKooHYArzw
+        example: http://rdfh.ch/users/vd3HyxvyQsyXL7wygjK_0Q
       responses:
         '200':
           description: ''
@@ -4970,7 +4970,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/a0U3dghnTBGnmKooHYArzw
+        example: http://rdfh.ch/users/vd3HyxvyQsyXL7wygjK_0Q
       responses:
         '200':
           description: ''
@@ -5030,7 +5030,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/a0U3dghnTBGnmKooHYArzw
+        example: http://rdfh.ch/users/vd3HyxvyQsyXL7wygjK_0Q
       responses:
         '200':
           description: ''
@@ -5216,7 +5216,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/a0U3dghnTBGnmKooHYArzw
+        example: http://rdfh.ch/users/vd3HyxvyQsyXL7wygjK_0Q
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -5283,7 +5283,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/a0U3dghnTBGnmKooHYArzw
+        example: http://rdfh.ch/users/vd3HyxvyQsyXL7wygjK_0Q
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -5351,7 +5351,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/a0U3dghnTBGnmKooHYArzw
+        example: http://rdfh.ch/users/vd3HyxvyQsyXL7wygjK_0Q
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -5418,7 +5418,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/a0U3dghnTBGnmKooHYArzw
+        example: http://rdfh.ch/users/vd3HyxvyQsyXL7wygjK_0Q
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -5486,7 +5486,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/a0U3dghnTBGnmKooHYArzw
+        example: http://rdfh.ch/users/vd3HyxvyQsyXL7wygjK_0Q
       - name: groupIri
         in: path
         description: The IRI of a group. Must be URL-encoded.
@@ -5553,7 +5553,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/a0U3dghnTBGnmKooHYArzw
+        example: http://rdfh.ch/users/vd3HyxvyQsyXL7wygjK_0Q
       - name: groupIri
         in: path
         description: The IRI of a group. Must be URL-encoded.
@@ -5621,7 +5621,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/a0U3dghnTBGnmKooHYArzw
+        example: http://rdfh.ch/users/vd3HyxvyQsyXL7wygjK_0Q
       requestBody:
         content:
           application/json:
@@ -5688,7 +5688,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/a0U3dghnTBGnmKooHYArzw
+        example: http://rdfh.ch/users/vd3HyxvyQsyXL7wygjK_0Q
       requestBody:
         content:
           application/json:
@@ -5755,7 +5755,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/a0U3dghnTBGnmKooHYArzw
+        example: http://rdfh.ch/users/vd3HyxvyQsyXL7wygjK_0Q
       requestBody:
         content:
           application/json:
@@ -5822,7 +5822,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/a0U3dghnTBGnmKooHYArzw
+        example: http://rdfh.ch/users/vd3HyxvyQsyXL7wygjK_0Q
       requestBody:
         content:
           application/json:
@@ -6069,7 +6069,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/lists/0001/AEbOv-WsT5q0Ma2Q2Pe4mQ
+        example: http://rdfh.ch/lists/0001/4hmrR3c0SIezQKECGqKvfg
       - name: x-knora-accept-schema
         in: header
         description: |-
@@ -6182,7 +6182,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/lists/0001/AEbOv-WsT5q0Ma2Q2Pe4mQ
+        example: http://rdfh.ch/lists/0001/4hmrR3c0SIezQKECGqKvfg
       - name: x-knora-accept-schema
         in: header
         description: |-
@@ -13378,6 +13378,387 @@ paths:
       security:
       - {}
       - httpAuth: []
+  /v3/ontologies/{ontologyIri}/classes/{classIri}/mapping:
+    put:
+      tags:
+      - Ontology Mappings
+      - API v3
+      description: Adds rdfs:subClassOf triples from the given class to the listed
+        external IRIs. Existing external super-class mappings are not removed - use
+        DELETE first to replace them.
+      operationId: putV3OntologiesOntologyiriClassesClassiriMapping
+      parameters:
+      - name: ontologyIri
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: classIri
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddClassMappingsRequest'
+        required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClassMappingResponse'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+              example:
+                message: Bad request example message
+                errors: []
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+              example:
+                message: Invalid token.
+                errors: []
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+              example:
+                message: User not active.
+                errors: []
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+              examples:
+                ontology_not_found:
+                  description: |-
+                    Example template string for code `ontology_not_found`:
+                    ```
+                    The ontology '{id}' was not found.
+                    ```
+                  value:
+                    message: The ontology '{id}' was not found.
+                    errors:
+                    - code: ontology_not_found
+                      message: The ontology '{id}' was not found.
+                      details:
+                        id: example_id
+                class_not_found:
+                  description: |-
+                    Example template string for code `class_not_found`:
+                    ```
+                    The class '{id}' was not found in ontology '{ontologyIri}'.
+                    ```
+                  value:
+                    message: The class '{id}' was not found in ontology '{ontologyIri}'.
+                    errors:
+                    - code: class_not_found
+                      message: The class '{id}' was not found in ontology '{ontologyIri}'.
+                      details:
+                        id: example_id
+                        ontologyIri: example_ontologyIri
+      security:
+      - httpAuth: []
+    delete:
+      tags:
+      - Ontology Mappings
+      - API v3
+      description: 'Removes a single rdfs:subClassOf triple from the given class to
+        the specified external IRI. Idempotent: deleting an absent triple is a no-op.'
+      operationId: deleteV3OntologiesOntologyiriClassesClassiriMapping
+      parameters:
+      - name: ontologyIri
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: classIri
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: mapping
+        in: query
+        description: The external IRI to remove from rdfs:subClassOf. Must be URL-encoded.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClassMappingResponse'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+              example:
+                message: Bad request example message
+                errors: []
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+              example:
+                message: Invalid token.
+                errors: []
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+              example:
+                message: User not active.
+                errors: []
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+              examples:
+                ontology_not_found:
+                  description: |-
+                    Example template string for code `ontology_not_found`:
+                    ```
+                    The ontology '{id}' was not found.
+                    ```
+                  value:
+                    message: The ontology '{id}' was not found.
+                    errors:
+                    - code: ontology_not_found
+                      message: The ontology '{id}' was not found.
+                      details:
+                        id: example_id
+                class_not_found:
+                  description: |-
+                    Example template string for code `class_not_found`:
+                    ```
+                    The class '{id}' was not found in ontology '{ontologyIri}'.
+                    ```
+                  value:
+                    message: The class '{id}' was not found in ontology '{ontologyIri}'.
+                    errors:
+                    - code: class_not_found
+                      message: The class '{id}' was not found in ontology '{ontologyIri}'.
+                      details:
+                        id: example_id
+                        ontologyIri: example_ontologyIri
+      security:
+      - httpAuth: []
+  /v3/ontologies/{ontologyIri}/properties/{propertyIri}/mapping:
+    put:
+      tags:
+      - Ontology Mappings
+      - API v3
+      description: Adds rdfs:subPropertyOf triples from the given property to the
+        listed external IRIs. Existing external super-property mappings are not removed
+        - use DELETE first to replace them.
+      operationId: putV3OntologiesOntologyiriPropertiesPropertyiriMapping
+      parameters:
+      - name: ontologyIri
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: propertyIri
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddPropertyMappingsRequest'
+        required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PropertyMappingResponse'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+              example:
+                message: Bad request example message
+                errors: []
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+              example:
+                message: Invalid token.
+                errors: []
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+              example:
+                message: User not active.
+                errors: []
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+              examples:
+                ontology_not_found:
+                  description: |-
+                    Example template string for code `ontology_not_found`:
+                    ```
+                    The ontology '{id}' was not found.
+                    ```
+                  value:
+                    message: The ontology '{id}' was not found.
+                    errors:
+                    - code: ontology_not_found
+                      message: The ontology '{id}' was not found.
+                      details:
+                        id: example_id
+                property_not_found:
+                  description: |-
+                    Example template string for code `property_not_found`:
+                    ```
+                    The property '{id}' was not found in ontology '{ontologyIri}'.
+                    ```
+                  value:
+                    message: The property '{id}' was not found in ontology '{ontologyIri}'.
+                    errors:
+                    - code: property_not_found
+                      message: The property '{id}' was not found in ontology '{ontologyIri}'.
+                      details:
+                        id: example_id
+                        ontologyIri: example_ontologyIri
+      security:
+      - httpAuth: []
+    delete:
+      tags:
+      - Ontology Mappings
+      - API v3
+      description: 'Removes a single rdfs:subPropertyOf triple from the given property
+        to the specified external IRI. Idempotent: deleting an absent triple is a
+        no-op.'
+      operationId: deleteV3OntologiesOntologyiriPropertiesPropertyiriMapping
+      parameters:
+      - name: ontologyIri
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: propertyIri
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: mapping
+        in: query
+        description: The external IRI to remove from rdfs:subPropertyOf. Must be URL-encoded.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PropertyMappingResponse'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+              example:
+                message: Bad request example message
+                errors: []
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+              example:
+                message: Invalid token.
+                errors: []
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+              example:
+                message: User not active.
+                errors: []
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+              examples:
+                ontology_not_found:
+                  description: |-
+                    Example template string for code `ontology_not_found`:
+                    ```
+                    The ontology '{id}' was not found.
+                    ```
+                  value:
+                    message: The ontology '{id}' was not found.
+                    errors:
+                    - code: ontology_not_found
+                      message: The ontology '{id}' was not found.
+                      details:
+                        id: example_id
+                property_not_found:
+                  description: |-
+                    Example template string for code `property_not_found`:
+                    ```
+                    The property '{id}' was not found in ontology '{ontologyIri}'.
+                    ```
+                  value:
+                    message: The property '{id}' was not found in ontology '{ontologyIri}'.
+                    errors:
+                    - code: property_not_found
+                      message: The property '{id}' was not found in ontology '{ontologyIri}'.
+                      details:
+                        id: example_id
+                        ontologyIri: example_ontologyIri
+      security:
+      - httpAuth: []
   /v3/projects/{projectIri}/exports:
     post:
       tags:
@@ -14027,9 +14408,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/VersionResponse'
               example:
-                webapi: v35.2.0-26-g46c7715
-                buildCommit: 46c7715af
-                buildTime: '2026-03-23T15:57:57Z'
+                webapi: v35.3.0-1-g77f5021
+                buildCommit: 77f502125
+                buildTime: '2026-03-24T14:18:39Z'
                 fuseki: 5.5.0-2
                 scala: 3.3.7
                 sipi: v4.0.0
@@ -14176,6 +14557,22 @@ components:
     Active:
       title: Active
       type: object
+    AddClassMappingsRequest:
+      title: AddClassMappingsRequest
+      type: object
+      properties:
+        mappings:
+          type: array
+          items:
+            type: string
+    AddPropertyMappingsRequest:
+      title: AddPropertyMappingsRequest
+      type: object
+      properties:
+        mappings:
+          type: array
+          items:
+            type: string
     AdministrativePermissionADM:
       title: AdministrativePermissionADM
       type: object
@@ -14352,6 +14749,33 @@ components:
       properties:
         nodeinfo:
           $ref: '#/components/schemas/ListChildNodeInfoADM'
+    ClassMappingResponse:
+      title: ClassMappingResponse
+      type: object
+      required:
+      - classIri
+      - ontologyIri
+      - lastModificationDate
+      properties:
+        classIri:
+          type: string
+        ontologyIri:
+          type: string
+        subClassOf:
+          type: array
+          items:
+            type: string
+        label:
+          type: array
+          items:
+            $ref: '#/components/schemas/LanguageStringDto'
+        comment:
+          type: array
+          items:
+            $ref: '#/components/schemas/LanguageStringDto'
+        lastModificationDate:
+          type: string
+          format: date-time
     Comments:
       title: Comments
       type: object
@@ -15658,6 +16082,33 @@ components:
           type: array
           items:
             type: string
+    PropertyMappingResponse:
+      title: PropertyMappingResponse
+      type: object
+      required:
+      - propertyIri
+      - ontologyIri
+      - lastModificationDate
+      properties:
+        propertyIri:
+          type: string
+        ontologyIri:
+          type: string
+        subPropertyOf:
+          type: array
+          items:
+            type: string
+        label:
+          type: array
+          items:
+            $ref: '#/components/schemas/LanguageStringDto'
+        comment:
+          type: array
+          items:
+            $ref: '#/components/schemas/LanguageStringDto'
+        lastModificationDate:
+          type: string
+          format: date-time
     ReorderValuesRequest:
       title: ReorderValuesRequest
       type: object
@@ -16009,6 +16460,7 @@ components:
       title: V3ErrorCode
       type: string
       enum:
+      - class_not_found
       - export_exists
       - export_failed
       - export_in_progress
@@ -16019,6 +16471,7 @@ components:
       - import_not_found
       - ontology_not_found
       - project_not_found
+      - property_not_found
       - resourceClass_not_found
       - resource_not_found
     ValidationException:
