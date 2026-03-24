@@ -311,4 +311,94 @@ describe('LinkValueComponent', () => {
       expect(result).toBe('1-http://example.org/ontology/test#Class');
     });
   });
+
+  describe('groupByClass', () => {
+    const createMockResource = (id: string, label: string, type: string, resourceClassLabel: string): ReadResource =>
+      ({
+        id,
+        label,
+        type,
+        resourceClassLabel,
+      }) as any;
+
+    it('should group resources by their class type', () => {
+      const resources = [
+        createMockResource('res1', 'Resource 1', 'http://example.org#ClassA', 'Class A'),
+        createMockResource('res2', 'Resource 2', 'http://example.org#ClassB', 'Class B'),
+        createMockResource('res3', 'Resource 3', 'http://example.org#ClassA', 'Class A'),
+      ];
+
+      component.resources = resources;
+      component.groupedResources = (component as any).groupByClass(resources);
+
+      expect(component.groupedResources).toHaveLength(2);
+      expect(component.groupedResources[0].classIri).toBe('http://example.org#ClassA');
+      expect(component.groupedResources[0].classLabel).toBe('Class A');
+      expect(component.groupedResources[0].resources).toHaveLength(2);
+      expect(component.groupedResources[1].classIri).toBe('http://example.org#ClassB');
+      expect(component.groupedResources[1].classLabel).toBe('Class B');
+      expect(component.groupedResources[1].resources).toHaveLength(1);
+    });
+
+    it('should return single group when all resources are same class', () => {
+      const resources = [
+        createMockResource('res1', 'Resource 1', 'http://example.org#ClassA', 'Class A'),
+        createMockResource('res2', 'Resource 2', 'http://example.org#ClassA', 'Class A'),
+      ];
+
+      component.resources = resources;
+      component.groupedResources = (component as any).groupByClass(resources);
+
+      expect(component.groupedResources).toHaveLength(1);
+      expect(component.groupedResources[0].resources).toHaveLength(2);
+    });
+
+    it('should return empty array for empty resources', () => {
+      component.resources = [];
+      component.groupedResources = (component as any).groupByClass([]);
+
+      expect(component.groupedResources).toHaveLength(0);
+    });
+  });
+
+  describe('showGroupHeaders', () => {
+    const createMockResource = (id: string, label: string, type: string, resourceClassLabel: string): ReadResource =>
+      ({
+        id,
+        label,
+        type,
+        resourceClassLabel,
+      }) as any;
+
+    it('should return true when multiple classes exist', () => {
+      const resources = [
+        createMockResource('res1', 'Resource 1', 'http://example.org#ClassA', 'Class A'),
+        createMockResource('res2', 'Resource 2', 'http://example.org#ClassB', 'Class B'),
+      ];
+
+      component.resources = resources;
+      component.groupedResources = (component as any).groupByClass(resources);
+
+      expect(component.showGroupHeaders).toBe(true);
+    });
+
+    it('should return false when only one class exists', () => {
+      const resources = [
+        createMockResource('res1', 'Resource 1', 'http://example.org#ClassA', 'Class A'),
+        createMockResource('res2', 'Resource 2', 'http://example.org#ClassA', 'Class A'),
+      ];
+
+      component.resources = resources;
+      component.groupedResources = (component as any).groupByClass(resources);
+
+      expect(component.showGroupHeaders).toBe(false);
+    });
+
+    it('should return false when no resources exist', () => {
+      component.resources = [];
+      component.groupedResources = [];
+
+      expect(component.showGroupHeaders).toBe(false);
+    });
+  });
 });

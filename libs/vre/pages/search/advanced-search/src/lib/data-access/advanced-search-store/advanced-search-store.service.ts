@@ -10,6 +10,9 @@ import {
   ResourceLabel,
 } from '../advanced-search-service/advanced-search.service';
 import { GravsearchService } from '../gravsearch-service/gravsearch.service';
+import { Operators } from './operators';
+
+export { Operators } from './operators';
 
 export interface AdvancedSearchState {
   ontologies: ApiData[];
@@ -74,19 +77,6 @@ export interface OrderByItem {
 export interface ParentChildPropertyPair {
   parentProperty: PropertyFormItem;
   childProperty: PropertyFormItem;
-}
-
-export enum Operators {
-  Equals = 'equals',
-  NotEquals = 'does not equal',
-  Exists = 'exists',
-  NotExists = 'does not exist',
-  GreaterThan = 'greater than',
-  GreaterThanEquals = 'greater than or equal to',
-  LessThan = 'less than',
-  LessThanEquals = 'less than or equal to',
-  IsLike = 'is like',
-  Matches = 'matches',
 }
 
 export enum PropertyFormListOperations {
