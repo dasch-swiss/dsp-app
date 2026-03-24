@@ -1,13 +1,13 @@
 import { ClipboardModule } from '@angular/cdk/clipboard';
 import { AsyncPipe } from '@angular/common';
-import { Component, EventEmitter, Inject, inject, Input, Output, ViewContainerRef } from '@angular/core';
+import { Component, EventEmitter, inject, Input, Output, ViewContainerRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIcon, MatIconRegistry } from '@angular/material/icon';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatTooltip } from '@angular/material/tooltip';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Constants, ReadResource, ReadStillImageExternalFileValue, ReadStillImageFileValue } from '@dasch-swiss/dsp-js';
-import { DspApiConnectionToken, DspDialogConfig } from '@dasch-swiss/vre/core/config';
+import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import { AppError } from '@dasch-swiss/vre/core/error-handler';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -71,7 +71,6 @@ export class StillImageToolbarComponent {
 
   constructor(
     public notification: NotificationService,
-    @Inject(DspApiConnectionToken)
     public resourceFetcherService: ResourceFetcherService,
     private _rs: RepresentationService,
     private _dialog: MatDialog,
