@@ -9,8 +9,6 @@ migrations.json
 
 # dependencies
 /node_modules
-/.yalc
-yalc.lock
 
 # IDEs and editors
 /.idea

@@ -234,9 +234,9 @@ Local observability infrastructure via Docker Compose:
 - Automatically started with observability development command
 - Grafana dashboard accessible at localhost after startup
 
-## DSP-JS Client Library (Most Crucial Dependency)
+## DSP-JS Client Library (Monorepo Library)
 
-**@dasch-swiss/dsp-js** is the primary API client library for communicating with DSP-API backend. It's deeply integrated throughout the application and essential for all data operations. See [package.json](package.json) for the current version.
+**@dasch-swiss/dsp-js** is the primary API client library for communicating with DSP-API backend. It's located at `libs/dsp-js/` and is deeply integrated throughout the application. The library is also published to NPM for external consumers.
 
 ### Configuration and Setup
 
@@ -344,11 +344,6 @@ DSP-JS `Constants` are extensively used throughout the codebase:
 - IIIF integration for image viewing
 - Media annotation capabilities
 
-### Development Commands for DSP-JS
-
-- `npm run yalc-add-lib` - Add local DSP-JS development version for testing
-- Check [package.json](package.json) for current version
-
 ## Working with APIs
 
 - **DSP-API** backend integration via DSP-JS client library (see detailed section above)
@@ -359,7 +354,6 @@ DSP-JS `Constants` are extensively used throughout the codebase:
 ## External Dependencies
 
 Key external libraries:
-- **@dasch-swiss/dsp-js** - DSP API client library (see detailed section above)
 - **@angular/material** - UI components
 - **openseadragon** - Image viewer
 - **ckeditor5-custom-build** - Rich text editing

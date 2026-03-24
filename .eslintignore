@@ -2,7 +2,6 @@
 .github/
 .idea/
 .vscode/
-.yalc/
 node_modules/
 dist/
 tmp/
