@@ -27,7 +27,11 @@
           "ngraph.forcelayout",
           "tinycolor2",
           "ng2-pdf-viewer",
-          "openseadragon"
+          "openseadragon",
+          "ckeditor5-custom-build",
+          "ua-parser-js",
+          "@opentelemetry/otlp-transformer/build/src/common/utils",
+          "@opentelemetry/otlp-transformer/build/src/trace/internal"
         ],
         "assets": [
           "apps/dsp-app/src/favicon.ico",
