@@ -1,0 +1,16 @@
+{
+    "knora-api:lastModificationDate": {
+        "@value": "2024-04-20T09:00:04.958638463Z",
+        "@type": "xsd:dateTimeStamp"
+    },
+    "rdfs:label": "test thing with modified label again",
+    "knora-api:resourceIri": "http://rdfh.ch/0001/a-thing",
+    "knora-api:hasPermissions": "CR knora-admin:ProjectMember|V knora-admin:ProjectMember",
+    "knora-api:resourceClassIri": "http://0.0.0.0:3333/ontology/0001/anything/v2#Thing",
+    "@context": {
+        "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+        "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+        "xsd": "http://www.w3.org/2001/XMLSchema#",
+        "knora-api": "http://api.knora.org/ontology/knora-api/v2#"
+    }
+}

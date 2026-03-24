@@ -1,0 +1,1 @@
+{"user":{"email":"userWithCustomIri@example.org","familyName":"with a custom Iri","givenName":"a user","groups":[],"id":"http://rdfh.ch/users/14pxW-LAQIaGcCRiNCPJcQ","lang":"en","password":null,"permissions":{"administrativePermissionsPerProject":{},"groupsPerProject":{}},"projects":[],"status":true,"username":"userWithCustomIri"}}

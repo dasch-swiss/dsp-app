@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@angular/core';
-import { KnoraApiConnection } from '@dasch-swiss/dsp-js/src/knora-api-connection';
+import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { DspResource, GenerateProperty } from '@dasch-swiss/vre/shared/app-common';
 import { BehaviorSubject, concatMap, EMPTY, expand, map, Subject, takeUntil, tap, toArray } from 'rxjs';

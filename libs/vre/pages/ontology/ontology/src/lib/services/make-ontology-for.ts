@@ -5,6 +5,7 @@ import {
   CreateResourceProperty,
   IHasProperty,
   StringLiteral,
+  UpdateEntityCommentOrLabel,
   UpdateOntology,
   UpdateOntologyMetadata,
   UpdateResourceClassCardinality,
@@ -13,7 +14,6 @@ import {
   UpdateResourcePropertyComment,
   UpdateResourcePropertyLabel,
 } from '@dasch-swiss/dsp-js';
-import { UpdateEntityCommentOrLabel } from '@dasch-swiss/dsp-js/src/models/v2/ontologies/update/update-entity-comment-or-label';
 import { StringLiteralV2 } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { DefaultProperty } from '@dasch-swiss/vre/shared/app-helper-services';
 import { CreatePropertyData } from '../forms/property-form/property-form.type';

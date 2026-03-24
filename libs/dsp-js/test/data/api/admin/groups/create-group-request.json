@@ -1,0 +1,7 @@
+{
+    "name": "NewGroup",
+    "descriptions": [{"value": "NewGroupDescription", "language": "en"}],
+    "project": "http://rdfh.ch/projects/00FF",
+    "status": true,
+    "selfjoin": false
+}

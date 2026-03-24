@@ -1,0 +1,17 @@
+{
+  "@id" : "http://rdfh.ch/0001/a-thing",
+  "@type" : "anything:Thing",
+  "anything:hasDate" : {
+    "@type" : "knora-api:DateValue",
+    "knora-api:dateValueHasCalendar" : "GREGORIAN",
+    "knora-api:dateValueHasStartYear" : 2018,
+    "knora-api:dateValueHasStartEra" : "CE",
+    "knora-api:dateValueHasEndYear" : 2019,
+    "knora-api:dateValueHasEndEra" : "CE"
+  },
+  "@context" : {
+    "xsd" : "http://www.w3.org/2001/XMLSchema#",
+    "knora-api" : "http://api.knora.org/ontology/knora-api/v2#",
+    "anything" : "http://0.0.0.0:3333/ontology/0001/anything/v2#"
+  }
+}

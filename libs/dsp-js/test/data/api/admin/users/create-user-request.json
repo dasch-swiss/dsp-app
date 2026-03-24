@@ -1,0 +1,10 @@
+{
+    "username": "donald.duck",
+    "email": "donald.duck@example.org",
+    "givenName": "Donald",
+    "familyName": "Duck",
+    "password": "test",
+    "status": true,
+    "lang": "en",
+    "systemAdmin": false
+}

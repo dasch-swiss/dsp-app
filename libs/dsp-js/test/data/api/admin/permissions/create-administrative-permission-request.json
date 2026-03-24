@@ -1,0 +1,5 @@
+{
+    "forGroup":"http://rdfh.ch/groups/0001/thing-searcher",
+    "forProject":"http://rdfh.ch/projects/0001",
+	"hasPermissions":[{"additionalInformation":null,"name":"ProjectAdminGroupAllPermission","permissionCode":null}]
+}

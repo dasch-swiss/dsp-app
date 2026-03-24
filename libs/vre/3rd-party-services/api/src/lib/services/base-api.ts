@@ -1,4 +1,4 @@
-import { KnoraApiConfig } from '@dasch-swiss/dsp-js/src/knora-api-config';
+import { KnoraApiConfig } from '@dasch-swiss/dsp-js';
 
 export abstract class BaseApi {
   protected baseUri: string;
