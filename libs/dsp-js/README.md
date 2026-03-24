@@ -4,15 +4,11 @@ TypeScript client library for DSP-API (Digital Scholarly Publishing API).
 
 ## Overview
 
-This library provides a JavaScript/TypeScript interface for interacting with DSP-API. It's framework-agnostic and works with Angular, React, Vue.js, etc.
-
-## Installation
-
-```bash
-npm install @dasch-swiss/dsp-js
-```
+This library provides a JavaScript/TypeScript interface for interacting with DSP-API. It's part of the dsp-app monorepo and is also published to NPM for external consumers.
 
 ## Usage
+
+Within the monorepo, import via the path alias:
 
 ```typescript
 import { KnoraApiConnection, KnoraApiConfig } from '@dasch-swiss/dsp-js';
@@ -30,6 +26,10 @@ connection.v2.res.getResource(resourceIri).subscribe(resource => {
   console.log('Resource:', resource);
 });
 ```
+
+## NPM Package
+
+This library is published to NPM as `@dasch-swiss/dsp-js` for external consumers.
 
 ## API Documentation
 
