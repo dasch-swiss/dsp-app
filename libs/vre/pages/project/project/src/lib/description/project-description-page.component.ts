@@ -5,7 +5,7 @@ import { MatChip, MatChipListbox } from '@angular/material/chips';
 import { MatDivider } from '@angular/material/divider';
 import { MatIcon } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
-import { StringLiteral } from '@dasch-swiss/dsp-js/src/models/admin/string-literal';
+import { StringLiteral } from '@dasch-swiss/dsp-js';
 import { AvailableLanguages, RouteConstants } from '@dasch-swiss/vre/core/config';
 import { ProjectImageCoverComponent } from '@dasch-swiss/vre/pages/user-settings/user';
 import { TranslatePipe } from '@ngx-translate/core';

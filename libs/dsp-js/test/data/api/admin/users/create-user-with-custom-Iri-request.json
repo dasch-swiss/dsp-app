@@ -1,0 +1,11 @@
+{
+    "id": "http://rdfh.ch/users/14pxW-LAQIaGcCRiNCPJcQ",
+    "username": "userWithCustomIri",
+    "email": "userWithCustomIri@example.org",
+    "givenName": "a user",
+    "familyName": "with a custom Iri",
+    "password": "test",
+    "status": true,
+    "lang": "en",
+    "systemAdmin": false
+}

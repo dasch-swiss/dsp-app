@@ -1,0 +1,10 @@
+{
+    "shortname": "newproject",
+    "shortcode": "1111",
+    "longname": "project longname",
+    "description": [{"value": "project description", "language": "en"}],
+    "keywords": ["keywords"],
+    "logo": "/fu/bar/baz.jpg",
+    "status": true,
+    "selfjoin": false
+}

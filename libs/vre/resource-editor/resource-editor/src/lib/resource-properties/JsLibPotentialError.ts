@@ -1,5 +1,4 @@
-import { ResourcePropertyDefinition } from '@dasch-swiss/dsp-js';
-import { PropertyDefinition } from '@dasch-swiss/dsp-js/src/models/v2/ontologies/property-definition';
+import { PropertyDefinition, ResourcePropertyDefinition } from '@dasch-swiss/dsp-js';
 
 export class JsLibPotentialError {
   static setAs(propertyDefinition: PropertyDefinition) {
