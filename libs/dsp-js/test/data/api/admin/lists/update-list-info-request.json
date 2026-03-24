@@ -1,0 +1,6 @@
+{
+    "listIri": "http://rdfh.ch/lists/0001/treeList",
+    "projectIri": "http://rdfh.ch/projects/0001",
+    "labels": [{ "value": "Neue geänderte Liste", "language": "de"}, { "value": "Changed list", "language": "en"}],
+    "comments": [{ "value": "Neuer Kommentar", "language": "de"}, { "value": "New comment", "language": "en"}]
+}

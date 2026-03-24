@@ -18,6 +18,7 @@
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
     "paths": {
+      "@dasch-swiss/dsp-js": ["libs/dsp-js/src/index.ts"],
       "@dasch-swiss/vre/3rd-party-services/analytics": ["libs/vre/3rd-party-services/analytics/src/index.ts"],
       "@dasch-swiss/vre/3rd-party-services/api": ["libs/vre/3rd-party-services/api/src/index.ts"],
       "@dasch-swiss/vre/3rd-party-services/open-api": ["libs/vre/3rd-party-services/open-api/src/index.ts"],
