@@ -1,22 +1,13 @@
 import { ClipboardModule } from '@angular/cdk/clipboard';
 import { AsyncPipe } from '@angular/common';
-import { Component, EventEmitter, Inject, inject, Input, Output, ViewContainerRef } from '@angular/core';
+import { Component, EventEmitter, inject, Input, Output, ViewContainerRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIcon, MatIconRegistry } from '@angular/material/icon';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatTooltip } from '@angular/material/tooltip';
 import { DomSanitizer } from '@angular/platform-browser';
-import {
-  Constants,
-  KnoraApiConnection,
-  ReadResource,
-  ReadStillImageExternalFileValue,
-  ReadStillImageFileValue,
-  ReadStillImageVectorFileValue,
-  UpdateFileValue,
-  UpdateResource,
-} from '@dasch-swiss/dsp-js';
-import { DspApiConnectionToken, DspDialogConfig } from '@dasch-swiss/vre/core/config';
+import { Constants, ReadResource, ReadStillImageExternalFileValue, ReadStillImageFileValue } from '@dasch-swiss/dsp-js';
+import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import { AppError } from '@dasch-swiss/vre/core/error-handler';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -51,13 +42,8 @@ export class StillImageToolbarComponent {
   @Input({ required: true }) compoundMode!: boolean;
   @Input({ required: true }) isPng!: boolean;
   @Output() imageIsPng = new EventEmitter<boolean>();
-  @Output() svgBackgroundChange = new EventEmitter<'default' | 'white' | 'transparent'>();
 
-  get imageFileValue():
-    | ReadStillImageFileValue
-    | ReadStillImageExternalFileValue
-    | ReadStillImageVectorFileValue
-    | null {
+  get imageFileValue(): ReadStillImageFileValue | ReadStillImageExternalFileValue | null {
     const imageValues = this.resource.properties[Constants.HasStillImageFileValue];
     if (!imageValues?.length) {
       return null;
@@ -68,8 +54,6 @@ export class StillImageToolbarComponent {
         return image as ReadStillImageFileValue;
       case Constants.StillImageExternalFileValue:
         return image as ReadStillImageExternalFileValue;
-      case Constants.StillImageVectorFileValue:
-        return image as ReadStillImageVectorFileValue;
       default:
         throw new AppError('Unknown image type');
     }
@@ -77,15 +61,6 @@ export class StillImageToolbarComponent {
 
   get isReadStillImageExternalFileValue(): boolean {
     return !!this.imageFileValue && this.imageFileValue.type === Constants.StillImageExternalFileValue;
-  }
-
-  get isReadStillImageVectorFileValue(): boolean {
-    return !!this.imageFileValue && this.imageFileValue.type === Constants.StillImageVectorFileValue;
-  }
-
-  /** Only raster still images support polygon region annotations. */
-  get isAnnotatable(): boolean {
-    return !!this.imageFileValue && this.imageFileValue.type === Constants.StillImageFileValue;
   }
 
   get userCanView() {
@@ -96,8 +71,6 @@ export class StillImageToolbarComponent {
 
   constructor(
     public notification: NotificationService,
-    @Inject(DspApiConnectionToken)
-    private _dspApiConnection: KnoraApiConnection,
     public resourceFetcherService: ResourceFetcherService,
     private _rs: RepresentationService,
     private _dialog: MatDialog,
@@ -128,19 +101,6 @@ export class StillImageToolbarComponent {
       }),
       viewContainerRef: this._viewContainerRef,
     });
-  }
-
-  setSvgBackground(bg: 'default' | 'white' | 'transparent') {
-    this.svgBackgroundChange.emit(bg);
-  }
-
-  private _replaceFile(file: UpdateFileValue) {
-    const updateRes = new UpdateResource();
-    updateRes.id = this.resource.id;
-    updateRes.type = this.resource.type;
-    updateRes.property = Constants.HasStillImageFileValue;
-    updateRes.value = file;
-    return this._dspApiConnection.v2.values.updateValue(updateRes as UpdateResource<UpdateFileValue>);
   }
 
   private _setupCssMaterialIcon() {
