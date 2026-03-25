@@ -9,7 +9,7 @@ import { CreateValue } from './create-value';
 @JsonObject('CreateGeonameValue')
 export class CreateGeonameValue extends CreateValue implements IBaseGeonameValue {
   @JsonProperty(Constants.GeonameValueAsGeonameCode, String)
-  geoname: string = '';
+  geoname = '';
 
   constructor() {
     super(Constants.GeonameValue);

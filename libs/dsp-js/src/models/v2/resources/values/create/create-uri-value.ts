@@ -10,7 +10,7 @@ import { CreateValue } from './create-value';
 @JsonObject('CreateUriValue')
 export class CreateUriValue extends CreateValue implements IBaseUriValue {
   @JsonProperty(Constants.UriValueAsUri, UriConverter)
-  uri: string = '';
+  uri = '';
 
   constructor() {
     super(Constants.UriValue);

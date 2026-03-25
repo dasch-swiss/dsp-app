@@ -1,14 +1,13 @@
 import { catchError, map } from 'rxjs';
 
-import { ApiResponseData } from '../../../models/api-response-data';
-import { Endpoint } from '../../endpoint';
-
 import { GroupsResponse } from '../../../models/admin/groups-response';
 import { ProjectsResponse } from '../../../models/admin/projects-response';
 import { UpdateUserRequest } from '../../../models/admin/update-user-request';
 import { User } from '../../../models/admin/user';
 import { UserResponse } from '../../../models/admin/user-response';
 import { UsersResponse } from '../../../models/admin/users-response';
+import { ApiResponseData } from '../../../models/api-response-data';
+import { Endpoint } from '../../endpoint';
 
 /**
  * An endpoint for working with Knora users.
@@ -33,7 +32,7 @@ export class UsersEndpointAdmin extends Endpoint {
    * @param value The value of the property by which the user is identified.
    */
   getUser(property: 'iri' | 'email' | 'username', value: string) {
-    return this.httpGet('/' + encodeURIComponent(property) + '/' + encodeURIComponent(value)).pipe(
+    return this.httpGet(`/${encodeURIComponent(property)}/${encodeURIComponent(value)}`).pipe(
       map(ajaxResponse => ApiResponseData.fromAjaxResponse(ajaxResponse, UserResponse, this.jsonConvert)),
       catchError(error => this.handleError(error))
     );
@@ -72,7 +71,7 @@ export class UsersEndpointAdmin extends Endpoint {
    * @param iri The user's IRI.
    */
   getUserGroupMemberships(iri: string) {
-    return this.httpGet('/iri/' + encodeURIComponent(iri) + '/group-memberships').pipe(
+    return this.httpGet(`/iri/${encodeURIComponent(iri)}/group-memberships`).pipe(
       map(ajaxResponse => ApiResponseData.fromAjaxResponse(ajaxResponse, GroupsResponse, this.jsonConvert)),
       catchError(error => this.handleError(error))
     );
@@ -84,7 +83,7 @@ export class UsersEndpointAdmin extends Endpoint {
    * @param iri The IRI of the user.
    */
   getUserProjectMemberships(iri: string) {
-    return this.httpGet('/iri/' + encodeURIComponent(iri) + '/project-memberships').pipe(
+    return this.httpGet(`/iri/${encodeURIComponent(iri)}/project-memberships`).pipe(
       map(ajaxResponse => ApiResponseData.fromAjaxResponse(ajaxResponse, ProjectsResponse, this.jsonConvert)),
       catchError(error => this.handleError(error))
     );
@@ -96,7 +95,7 @@ export class UsersEndpointAdmin extends Endpoint {
    * @param iri The user's IRI.
    */
   getUserProjectAdminMemberships(iri: string) {
-    return this.httpGet('/iri/' + encodeURIComponent(iri) + '/project-admin-memberships').pipe(
+    return this.httpGet(`/iri/${encodeURIComponent(iri)}/project-admin-memberships`).pipe(
       map(ajaxResponse => ApiResponseData.fromAjaxResponse(ajaxResponse, ProjectsResponse, this.jsonConvert)),
       catchError(error => this.handleError(error))
     );
@@ -122,7 +121,7 @@ export class UsersEndpointAdmin extends Endpoint {
    */
   updateUserBasicInformation(iri: string, userInfo: UpdateUserRequest) {
     return this.httpPut(
-      '/iri/' + encodeURIComponent(iri) + '/BasicUserInformation',
+      `/iri/${encodeURIComponent(iri)}/BasicUserInformation`,
       this.jsonConvert.serializeObject(userInfo)
     ).pipe(
       map(ajaxResponse => ApiResponseData.fromAjaxResponse(ajaxResponse, UserResponse, this.jsonConvert)),
@@ -137,7 +136,7 @@ export class UsersEndpointAdmin extends Endpoint {
    * @param status The user's new status.
    */
   updateUserStatus(iri: string, status: boolean) {
-    return this.httpPut('/iri/' + encodeURIComponent(iri) + '/Status', { status: status }).pipe(
+    return this.httpPut(`/iri/${encodeURIComponent(iri)}/Status`, { status }).pipe(
       map(ajaxResponse => ApiResponseData.fromAjaxResponse(ajaxResponse, UserResponse, this.jsonConvert)),
       catchError(error => this.handleError(error))
     );
@@ -151,9 +150,9 @@ export class UsersEndpointAdmin extends Endpoint {
    * @param newPassword The specified user's new password.
    */
   updateUserPassword(iri: string, requesterPassword: string, newPassword: string) {
-    return this.httpPut('/iri/' + encodeURIComponent(iri) + '/Password', {
-      requesterPassword: requesterPassword,
-      newPassword: newPassword,
+    return this.httpPut(`/iri/${encodeURIComponent(iri)}/Password`, {
+      requesterPassword,
+      newPassword,
     }).pipe(
       map(ajaxResponse => ApiResponseData.fromAjaxResponse(ajaxResponse, UserResponse, this.jsonConvert)),
       catchError(error => this.handleError(error))
@@ -167,9 +166,7 @@ export class UsersEndpointAdmin extends Endpoint {
    * @param groupIri The IRI of the group.
    */
   addUserToGroupMembership(userIri: string, groupIri: string) {
-    return this.httpPost(
-      '/iri/' + encodeURIComponent(userIri) + '/group-memberships/' + encodeURIComponent(groupIri)
-    ).pipe(
+    return this.httpPost(`/iri/${encodeURIComponent(userIri)}/group-memberships/${encodeURIComponent(groupIri)}`).pipe(
       map(ajaxResponse => ApiResponseData.fromAjaxResponse(ajaxResponse, UserResponse, this.jsonConvert)),
       catchError(error => this.handleError(error))
     );
@@ -183,7 +180,7 @@ export class UsersEndpointAdmin extends Endpoint {
    */
   removeUserFromGroupMembership(userIri: string, groupIri: string) {
     return this.httpDelete(
-      '/iri/' + encodeURIComponent(userIri) + '/group-memberships/' + encodeURIComponent(groupIri)
+      `/iri/${encodeURIComponent(userIri)}/group-memberships/${encodeURIComponent(groupIri)}`
     ).pipe(
       map(ajaxResponse => ApiResponseData.fromAjaxResponse(ajaxResponse, UserResponse, this.jsonConvert)),
       catchError(error => this.handleError(error))
@@ -198,7 +195,7 @@ export class UsersEndpointAdmin extends Endpoint {
    */
   addUserToProjectMembership(userIri: string, projectIri: string) {
     return this.httpPost(
-      '/iri/' + encodeURIComponent(userIri) + '/project-memberships/' + encodeURIComponent(projectIri)
+      `/iri/${encodeURIComponent(userIri)}/project-memberships/${encodeURIComponent(projectIri)}`
     ).pipe(
       map(ajaxResponse => ApiResponseData.fromAjaxResponse(ajaxResponse, UserResponse, this.jsonConvert)),
       catchError(error => this.handleError(error))
@@ -213,7 +210,7 @@ export class UsersEndpointAdmin extends Endpoint {
    */
   removeUserFromProjectMembership(userIri: string, projectIri: string) {
     return this.httpDelete(
-      '/iri/' + encodeURIComponent(userIri) + '/project-memberships/' + encodeURIComponent(projectIri)
+      `/iri/${encodeURIComponent(userIri)}/project-memberships/${encodeURIComponent(projectIri)}`
     ).pipe(
       map(ajaxResponse => ApiResponseData.fromAjaxResponse(ajaxResponse, UserResponse, this.jsonConvert)),
       catchError(error => this.handleError(error))
@@ -228,7 +225,7 @@ export class UsersEndpointAdmin extends Endpoint {
    */
   addUserToProjectAdminMembership(userIri: string, projectIri: string) {
     return this.httpPost(
-      '/iri/' + encodeURIComponent(userIri) + '/project-admin-memberships/' + encodeURIComponent(projectIri)
+      `/iri/${encodeURIComponent(userIri)}/project-admin-memberships/${encodeURIComponent(projectIri)}`
     ).pipe(
       map(ajaxResponse => ApiResponseData.fromAjaxResponse(ajaxResponse, UserResponse, this.jsonConvert)),
       catchError(error => this.handleError(error))
@@ -243,7 +240,7 @@ export class UsersEndpointAdmin extends Endpoint {
    */
   removeUserFromProjectAdminMembership(userIri: string, projectIri: string) {
     return this.httpDelete(
-      '/iri/' + encodeURIComponent(userIri) + '/project-admin-memberships/' + encodeURIComponent(projectIri)
+      `/iri/${encodeURIComponent(userIri)}/project-admin-memberships/${encodeURIComponent(projectIri)}`
     ).pipe(
       map(ajaxResponse => ApiResponseData.fromAjaxResponse(ajaxResponse, UserResponse, this.jsonConvert)),
       catchError(error => this.handleError(error))
@@ -257,7 +254,7 @@ export class UsersEndpointAdmin extends Endpoint {
    * @param systemAdmin True if the user should be a system admin
    */
   updateUserSystemAdminMembership(iri: string, systemAdmin: boolean) {
-    return this.httpPut('/iri/' + encodeURIComponent(iri) + '/SystemAdmin', { systemAdmin: systemAdmin }).pipe(
+    return this.httpPut(`/iri/${encodeURIComponent(iri)}/SystemAdmin`, { systemAdmin }).pipe(
       map(ajaxResponse => ApiResponseData.fromAjaxResponse(ajaxResponse, UserResponse, this.jsonConvert)),
       catchError(error => this.handleError(error))
     );
@@ -269,7 +266,7 @@ export class UsersEndpointAdmin extends Endpoint {
    * @param iri The IRI of the user to be deleted.
    */
   deleteUser(iri: string) {
-    return this.httpDelete('/iri/' + encodeURIComponent(iri)).pipe(
+    return this.httpDelete(`/iri/${encodeURIComponent(iri)}`).pipe(
       map(ajaxResponse => ApiResponseData.fromAjaxResponse(ajaxResponse, UserResponse, this.jsonConvert)),
       catchError(error => this.handleError(error))
     );

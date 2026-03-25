@@ -8,10 +8,10 @@ import { DateTimeStampConverter } from '../../custom-converters/date-time-stamp-
 @JsonObject('DeleteResource')
 export class DeleteResource {
   @JsonProperty('@id', String)
-  id: string = '';
+  id = '';
 
   @JsonProperty('@type', String)
-  type: string = '';
+  type = '';
 
   @JsonProperty(Constants.LastModificationDate, DateTimeStampConverter, true)
   lastModificationDate?: string = undefined;

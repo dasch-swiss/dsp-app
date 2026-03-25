@@ -10,10 +10,10 @@ import { UpdateValue } from './update-value';
 @JsonObject('UpdateIntervalValue')
 export class UpdateIntervalValue extends UpdateValue implements IBaseIntervalValue {
   @JsonProperty(Constants.IntervalValueHasStart, DecimalConverter)
-  start: number = 0;
+  start = 0;
 
   @JsonProperty(Constants.IntervalValueHasEnd, DecimalConverter)
-  end: number = 0;
+  end = 0;
 
   constructor() {
     super(Constants.IntervalValue);

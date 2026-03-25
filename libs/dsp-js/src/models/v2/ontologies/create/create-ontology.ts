@@ -8,14 +8,14 @@ import { IdConverter } from '../../custom-converters/id-converter';
 @JsonObject('CreateOntology')
 export class CreateOntology {
   @JsonProperty(Constants.Label, String)
-  label: string = '';
+  label = '';
 
   @JsonProperty(Constants.Comment, String, true)
   comment?: string = undefined;
 
   @JsonProperty(Constants.AttachedToProject, IdConverter)
-  attachedToProject: string = '';
+  attachedToProject = '';
 
   @JsonProperty(Constants.OntologyName, String)
-  name: string = '';
+  name = '';
 }
