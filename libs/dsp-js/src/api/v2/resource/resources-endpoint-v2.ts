@@ -1,17 +1,16 @@
-import { Observable } from 'rxjs';
+import { Observable, catchError, map, mergeMap } from 'rxjs';
 import { AjaxResponse } from 'rxjs/ajax';
-import { catchError, map, mergeMap } from 'rxjs';
 import { ListNodeV2Cache } from '../../../cache/ListNodeV2Cache';
 import { OntologyCache } from '../../../cache/ontology-cache/OntologyCache';
 import { KnoraApiConfig } from '../../../knora-api-config';
 import { ApiResponseError } from '../../../models/api-response-error';
 import { CanDoResponse } from '../../../models/v2/ontologies/read/can-do-response';
+import { ResourcesConversionUtil } from '../../../models/v2/resources/ResourcesConversionUtil';
 import { CreateResource } from '../../../models/v2/resources/create/create-resource';
 import { DeleteResource } from '../../../models/v2/resources/delete/delete-resource';
 import { DeleteResourceResponse } from '../../../models/v2/resources/delete/delete-resource-response';
 import { ReadResource } from '../../../models/v2/resources/read/read-resource';
 import { ReadResourceSequence } from '../../../models/v2/resources/read/read-resource-sequence';
-import { ResourcesConversionUtil } from '../../../models/v2/resources/ResourcesConversionUtil';
 import { UpdateResourceMetadata } from '../../../models/v2/resources/update/update-resource-metadata';
 import { UpdateResourceMetadataResponse } from '../../../models/v2/resources/update/update-resource-metadata-response';
 import { Endpoint } from '../../endpoint';
@@ -52,7 +51,7 @@ export class ResourcesEndpointV2 extends Endpoint {
     // make URL containing resource Iris as segments
     const resIris: string = resourceIris
       .map((resIri: string) => {
-        return '/' + encodeURIComponent(resIri) + (version ? '?version=' + version : '');
+        return `/${encodeURIComponent(resIri)}${version ? `?version=${version}` : ''}`;
       })
       .reduce((acc, currentValue) => {
         return acc + currentValue;
@@ -116,7 +115,7 @@ export class ResourcesEndpointV2 extends Endpoint {
     propIris.forEach(propIri => {
       // check that array contains least one value
       if (resource.properties[propIri].length === 0) {
-        throw new Error('No values defined for ' + propIri);
+        throw new Error(`No values defined for ${propIri}`);
       }
 
       // if array contains only one element, serialize as an object

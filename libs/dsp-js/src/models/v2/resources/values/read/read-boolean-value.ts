@@ -9,5 +9,5 @@ import { ReadValue } from './read-value';
 @JsonObject('ReadBooleanValue')
 export class ReadBooleanValue extends ReadValue implements IBaseBooleanValue {
   @JsonProperty(Constants.BooleanValueAsBoolean, Boolean)
-  bool: boolean = false;
+  bool = false;
 }

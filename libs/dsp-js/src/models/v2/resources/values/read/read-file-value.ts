@@ -12,10 +12,10 @@ import { ReadValue } from './read-value';
 @JsonObject('ReadFileValue')
 export abstract class ReadFileValue extends ReadValue implements IBaseFileValue {
   @JsonProperty(Constants.FileValueHasFilename, String)
-  filename: string = '';
+  filename = '';
 
   @JsonProperty(Constants.FileValueAsUrl, UriConverter)
-  fileUrl: string = '';
+  fileUrl = '';
 
   @JsonProperty(Constants.hasCopyrightHolder, String, true)
   copyrightHolder: string | null = null;
@@ -75,13 +75,13 @@ export class ReadMovingImageFileValue extends ReadFileValue {
 @JsonObject('ReadStillImageFileValue')
 export class ReadStillImageFileValue extends ReadFileValue {
   @JsonProperty(Constants.StillImageFileValueHasDimX, Number)
-  dimX: number = 0;
+  dimX = 0;
 
   @JsonProperty(Constants.StillImageFileValueHasDimY, Number)
-  dimY: number = 0;
+  dimY = 0;
 
   @JsonProperty(Constants.StillImageFileValueHasIIIFBaseUrl, UriConverter)
-  iiifBaseUrl: string = '';
+  iiifBaseUrl = '';
 }
 
 /**
@@ -90,7 +90,7 @@ export class ReadStillImageFileValue extends ReadFileValue {
 @JsonObject('ReadStillImageExternalFileValue')
 export class ReadStillImageExternalFileValue extends ReadFileValue {
   @JsonProperty(Constants.StillImageFileValueHasExternalUrl, UriConverter, true)
-  externalUrl: string = '';
+  externalUrl = '';
 }
 
 /**

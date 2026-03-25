@@ -10,5 +10,5 @@ import { ReadValue } from './read-value';
 @JsonObject('ReadDecimalValue')
 export class ReadDecimalValue extends ReadValue implements IBaseDecimalValue {
   @JsonProperty(Constants.DecimalValueAsDecimal, DecimalConverter)
-  decimal: number = 0;
+  decimal = 0;
 }

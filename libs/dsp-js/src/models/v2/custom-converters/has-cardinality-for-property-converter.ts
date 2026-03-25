@@ -26,7 +26,7 @@ export class HasCardinalityForPropertyConverter implements JsonCustomConvert<IHa
       } else if (card.cardinality === Cardinality._1) {
         cardEle[Constants.Cardinality] = 1;
       } else {
-        throw new Error('Invalid cardinality: ' + card.cardinality);
+        throw new Error(`Invalid cardinality: ${card.cardinality}`);
       }
 
       if (card.guiOrder) {
@@ -55,7 +55,7 @@ export class HasCardinalityForPropertyConverter implements JsonCustomConvert<IHa
           if (ele[Constants.MaxCardinality] === 1) {
             cardinality = Cardinality._0_1;
           } else {
-            throw new Error('Inconsistent value for max cardinality: ' + ele[Constants.MaxCardinality]);
+            throw new Error(`Inconsistent value for max cardinality: ${ele[Constants.MaxCardinality]}`);
           }
         } else if (ele.hasOwnProperty(Constants.MinCardinality)) {
           if (ele[Constants.MinCardinality] === 1) {
@@ -63,17 +63,17 @@ export class HasCardinalityForPropertyConverter implements JsonCustomConvert<IHa
           } else if (ele[Constants.MinCardinality] === 0) {
             cardinality = Cardinality._0_n;
           } else {
-            throw new Error('Inconsistent value for min cardinality ' + ele[Constants.MinCardinality]);
+            throw new Error(`Inconsistent value for min cardinality ${ele[Constants.MinCardinality]}`);
           }
         } else if (ele.hasOwnProperty(Constants.Cardinality)) {
           if (ele[Constants.Cardinality] === 1) {
             cardinality = Cardinality._1;
           } else {
-            throw new Error('Inconsistent value for cardinality ' + ele[Constants.Cardinality]);
+            throw new Error(`Inconsistent value for cardinality ${ele[Constants.Cardinality]}`);
           }
         }
 
-        let propertyIndex: string = '';
+        let propertyIndex = '';
         if (ele.hasOwnProperty(Constants.OnProperty)) {
           const propstruct: any = ele[Constants.OnProperty];
           if (propstruct.hasOwnProperty('@id') && CustomConverterUtils.isString(propstruct['@id'])) {
@@ -88,20 +88,20 @@ export class HasCardinalityForPropertyConverter implements JsonCustomConvert<IHa
           isInherited = true;
         }
 
-        let guiOrder: number = -1;
+        let guiOrder = -1;
         if (ele.hasOwnProperty(Constants.GuiOrder)) {
           guiOrder = ele[Constants.GuiOrder];
           hasCardForProp.push({
-            propertyIndex: propertyIndex,
-            cardinality: cardinality,
-            guiOrder: guiOrder,
-            isInherited: isInherited,
+            propertyIndex,
+            cardinality,
+            guiOrder,
+            isInherited,
           });
         } else {
           hasCardForProp.push({
-            propertyIndex: propertyIndex,
-            cardinality: cardinality,
-            isInherited: isInherited,
+            propertyIndex,
+            cardinality,
+            isInherited,
           });
         }
       }

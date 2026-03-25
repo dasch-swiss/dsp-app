@@ -1,5 +1,4 @@
-import { Observable } from 'rxjs';
-import { map } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { V2Endpoint } from '../api/v2/v2-endpoint';
 import { ListConversionUtil } from '../models/v2/lists/list-conversion-util';
 import { ListNodeV2 } from '../models/v2/lists/list-node-v2';

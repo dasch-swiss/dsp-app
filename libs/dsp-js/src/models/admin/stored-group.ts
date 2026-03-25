@@ -13,5 +13,5 @@ export class StoredGroup extends Group {
    * The ID of the enclosing object.
    */
   @JsonProperty('id', String)
-  id: string = '';
+  id = '';
 }

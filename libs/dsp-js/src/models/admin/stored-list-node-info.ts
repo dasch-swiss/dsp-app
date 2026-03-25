@@ -13,5 +13,5 @@ export class StoredListNodeInfo extends ListNodeInfo {
    * The ID of the enclosing object.
    */
   @JsonProperty('id', String)
-  override id: string = '';
+  override id = '';
 }

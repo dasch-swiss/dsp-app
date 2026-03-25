@@ -53,10 +53,10 @@ export class AdminEndpoint extends Endpoint {
 
     // Instantiate the endpoints
 
-    this.usersEndpoint = new UsersEndpointAdmin(knoraApiConfig, path + '/users');
-    this.groupsEndpoint = new GroupsEndpointAdmin(knoraApiConfig, path + '/groups');
-    this.projectsEndpoint = new ProjectsEndpointAdmin(knoraApiConfig, path + '/projects');
-    this.permissionsEndpoint = new PermissionsEndpointAdmin(knoraApiConfig, path + '/permissions');
-    this.listsEndpoint = new ListsEndpointAdmin(knoraApiConfig, path + '/lists');
+    this.usersEndpoint = new UsersEndpointAdmin(knoraApiConfig, `${path}/users`);
+    this.groupsEndpoint = new GroupsEndpointAdmin(knoraApiConfig, `${path}/groups`);
+    this.projectsEndpoint = new ProjectsEndpointAdmin(knoraApiConfig, `${path}/projects`);
+    this.permissionsEndpoint = new PermissionsEndpointAdmin(knoraApiConfig, `${path}/permissions`);
+    this.listsEndpoint = new ListsEndpointAdmin(knoraApiConfig, `${path}/lists`);
   }
 }

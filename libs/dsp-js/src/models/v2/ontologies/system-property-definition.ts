@@ -13,7 +13,7 @@ import { PropertyDefinition } from './property-definition';
 @JsonObject('SystemPropertyDefinition')
 export class SystemPropertyDefinition extends PropertyDefinition {
   @JsonProperty('@id', String)
-  id: string = '';
+  id = '';
 
   @JsonProperty(Constants.SubPropertyOf, SubPropertyOfConverter, true)
   subPropertyOf: string[] = [];

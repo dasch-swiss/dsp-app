@@ -10,7 +10,7 @@ import { UpdateValue } from './update-value';
 @JsonObject('UpdateTimeValue')
 export class UpdateTimeValue extends UpdateValue implements IBaseTimeValue {
   @JsonProperty(Constants.TimeValueAsTimeStamp, DateTimeStampConverter)
-  time: string = '';
+  time = '';
 
   constructor() {
     super(Constants.TimeValue);

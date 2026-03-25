@@ -44,13 +44,13 @@ export class SubListNodeConverter implements JsonCustomConvert<ListNodeV2[]> {
 @JsonObject('ListNodeV2')
 export class ListNodeV2 {
   @JsonProperty('@id', String)
-  id: string = '';
+  id = '';
 
   @JsonProperty(Constants.Label, String)
-  label: string = '';
+  label = '';
 
   @JsonProperty(Constants.IsRootNode, Boolean, true)
-  isRootNode: boolean = false;
+  isRootNode = false;
 
   @JsonProperty(Constants.HasRootNode, IdConverter, true)
   hasRootNode?: string = undefined;

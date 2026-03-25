@@ -10,5 +10,5 @@ import { ReadValue } from './read-value';
 @JsonObject('ReadUriValue')
 export class ReadUriValue extends ReadValue implements IBaseUriValue {
   @JsonProperty(Constants.UriValueAsUri, UriConverter)
-  uri: string = '';
+  uri = '';
 }

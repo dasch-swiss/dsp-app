@@ -1,9 +1,8 @@
-import { forkJoin, Observable, of } from 'rxjs';
-import { map, mergeMap } from 'rxjs';
+import { forkJoin, Observable, of, map, mergeMap } from 'rxjs';
 import { V2Endpoint } from '../../api/v2/v2-endpoint';
 import { KnoraApiConfig } from '../../knora-api-config';
-import { IHasProperty } from '../../models/v2/ontologies/class-definition';
 import { OntologyConversionUtil } from '../../models/v2/ontologies/OntologyConversionUtil';
+import { IHasProperty } from '../../models/v2/ontologies/class-definition';
 import { PropertyDefinition } from '../../models/v2/ontologies/property-definition';
 import { ReadOntology } from '../../models/v2/ontologies/read/read-ontology';
 import { ResourceClassDefinition } from '../../models/v2/ontologies/resource-class-definition';
@@ -76,7 +75,7 @@ export class OntologyCache extends GenericCache<ReadOntology> {
   getResourceClassDefinition(resourceClassIri: string) {
     const ontoIri = OntologyConversionUtil.getOntologyIriFromEntityIri(resourceClassIri, this.knoraApiConfig);
 
-    if (ontoIri.length !== 1) throw Error('Invalid resource class Iri ' + resourceClassIri);
+    if (ontoIri.length !== 1) throw Error(`Invalid resource class Iri ${resourceClassIri}`);
 
     const ontology: Observable<Map<string, ReadOntology>> = this.getOntology(ontoIri[0]);
 

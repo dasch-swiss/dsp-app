@@ -8,7 +8,7 @@ import { CannotDoContext } from './cannot-do-context';
 @JsonObject('CanDoResponse')
 export class CanDoResponse {
   @JsonProperty(Constants.CanDo, Boolean)
-  canDo: boolean = true;
+  canDo = true;
 
   @JsonProperty(Constants.CannotDoReason, String, true)
   cannotDoReason?: string = undefined;

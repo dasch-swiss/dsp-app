@@ -10,7 +10,7 @@ import { CreateValue } from './create-value';
 @JsonObject('CreateTextValueAsString')
 export class CreateTextValueAsString extends CreateValue implements IBaseTextValueAsString {
   @JsonProperty(Constants.ValueAsString, String)
-  text: string = '';
+  text = '';
 
   constructor() {
     super(Constants.TextValue);
@@ -23,10 +23,10 @@ export class CreateTextValueAsString extends CreateValue implements IBaseTextVal
 @JsonObject('CreateTextValueAsXml')
 export class CreateTextValueAsXml extends CreateValue implements IBaseTextValueAsXml {
   @JsonProperty(Constants.TextValueAsXml, String)
-  xml: string = '';
+  xml = '';
 
   @JsonProperty(Constants.TextValueHasMapping, IdConverter)
-  mapping: string = '';
+  mapping = '';
 
   constructor() {
     super(Constants.TextValue);

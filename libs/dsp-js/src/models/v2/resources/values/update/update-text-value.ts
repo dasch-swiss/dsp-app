@@ -14,7 +14,7 @@ import { UpdateValue } from './update-value';
 @JsonObject('UpdateTextValueAsString')
 export class UpdateTextValueAsString extends UpdateValue implements IBaseTextValueAsString {
   @JsonProperty(Constants.ValueAsString, String)
-  text: string = '';
+  text = '';
 
   constructor() {
     super(Constants.TextValue);
@@ -27,10 +27,10 @@ export class UpdateTextValueAsString extends UpdateValue implements IBaseTextVal
 @JsonObject('UpdateTextValueAsXml')
 export class UpdateTextValueAsXml extends UpdateValue implements IBaseTextValueAsXml {
   @JsonProperty(Constants.TextValueAsXml, String)
-  xml: string = '';
+  xml = '';
 
   @JsonProperty(Constants.TextValueHasMapping, IdConverter)
-  mapping: string = '';
+  mapping = '';
 
   constructor() {
     super(Constants.TextValue);
@@ -43,10 +43,10 @@ export class UpdateTextValueAsXml extends UpdateValue implements IBaseTextValueA
 @JsonObject('UpdateTextValueAsHtml')
 export class UpdateTextValueAsHtml extends UpdateValue implements IBaseTextValueAsHtml {
   @JsonProperty(Constants.TextValueAsHtml, String, true)
-  html: string = '';
+  html = '';
 
   @JsonProperty(Constants.TextValueAsXml, String)
-  xml: string = '';
+  xml = '';
 
   constructor() {
     super(Constants.TextValue);

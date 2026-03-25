@@ -7,5 +7,5 @@ import { Constants } from '../../../Constants';
 @JsonObject('DeleteValueResponse')
 export class DeleteValueResponse {
   @JsonProperty(Constants.Result, String)
-  result: string = '';
+  result = '';
 }

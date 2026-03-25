@@ -9,5 +9,5 @@ import { ReadValue } from './read-value';
 @JsonObject('ReadColorValue')
 export class ReadColorValue extends ReadValue implements IBaseColorValue {
   @JsonProperty(Constants.ColorValueAsColor, String)
-  color: string = '';
+  color = '';
 }

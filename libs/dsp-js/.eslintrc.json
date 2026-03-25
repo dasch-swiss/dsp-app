@@ -10,28 +10,11 @@
         "createDefaultProgram": true
       },
       "rules": {
-        "@typescript-eslint/no-explicit-any": "off",
-        "@typescript-eslint/no-unused-vars": "off",
-        "@typescript-eslint/no-inferrable-types": "off",
-        "@typescript-eslint/no-non-null-assertion": "off",
         "@typescript-eslint/no-namespace": "off",
-        "@typescript-eslint/no-shadow": "off",
         "@typescript-eslint/no-use-before-define": "off",
-        "@typescript-eslint/ban-types": "off",
         "import/no-extraneous-dependencies": "off",
-        "import/no-duplicates": "off",
         "import/extensions": "off",
-        "import/order": "off",
-        "import/no-useless-path-segments": "off",
-        "prefer-template": "off",
-        "prefer-const": "off",
-        "object-shorthand": "off",
-        "no-use-before-define": "off",
-        "no-lonely-if": "off",
-        "no-multi-assign": "off",
-        "no-useless-return": "off",
-        "operator-assignment": "off",
-        "spaced-comment": "off"
+        "no-use-before-define": "off"
       }
     },
     {

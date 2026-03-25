@@ -9,7 +9,7 @@ import { UpdateValue } from './update-value';
 @JsonObject('UpdateGeonameValue')
 export class UpdateGeonameValue extends UpdateValue implements IBaseGeonameValue {
   @JsonProperty(Constants.GeonameValueAsGeonameCode, String)
-  geoname: string = '';
+  geoname = '';
 
   constructor() {
     super(Constants.GeonameValue);

@@ -9,7 +9,7 @@ import { WriteValue } from '../write-value';
 @JsonObject('UpdateValue')
 export abstract class UpdateValue extends WriteValue {
   @JsonProperty('@id', String)
-  id: string = '';
+  id = '';
 
   constructor(type: string) {
     super();

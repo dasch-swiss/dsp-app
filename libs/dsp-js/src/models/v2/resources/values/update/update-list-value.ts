@@ -10,7 +10,7 @@ import { UpdateValue } from './update-value';
 @JsonObject('UpdateListValue')
 export class UpdateListValue extends UpdateValue implements IBaseListValue {
   @JsonProperty(Constants.ListValueAsListNode, IdConverter)
-  listNode: string = '';
+  listNode = '';
 
   constructor() {
     super(Constants.ListValue);

@@ -9,7 +9,7 @@ import { CreateValue } from './create-value';
 @JsonObject('CreateDateValue')
 export class CreateDateValue extends CreateValue implements IBaseDateValue {
   @JsonProperty(Constants.DateValueHasCalendar, String)
-  calendar: string = '';
+  calendar = '';
 
   @JsonProperty(Constants.DateValueHasStartDay, Number, true)
   startDay?: number = undefined;
@@ -18,7 +18,7 @@ export class CreateDateValue extends CreateValue implements IBaseDateValue {
   startMonth?: number = undefined;
 
   @JsonProperty(Constants.DateValueHasStartYear, Number)
-  startYear: number = 0;
+  startYear = 0;
 
   @JsonProperty(Constants.DateValueHasStartEra, String, true)
   startEra?: string = undefined;
@@ -30,7 +30,7 @@ export class CreateDateValue extends CreateValue implements IBaseDateValue {
   endMonth?: number = undefined;
 
   @JsonProperty(Constants.DateValueHasEndYear, Number)
-  endYear: number = 0;
+  endYear = 0;
 
   @JsonProperty(Constants.DateValueHasEndEra, String, true)
   endEra?: string = undefined;

@@ -9,7 +9,7 @@ import { UpdateValue } from './update-value';
 @JsonObject('UpdateColorValue')
 export class UpdateColorValue extends UpdateValue implements IBaseColorValue {
   @JsonProperty(Constants.ColorValueAsColor, String)
-  color: string = '';
+  color = '';
 
   constructor() {
     super(Constants.ColorValue);

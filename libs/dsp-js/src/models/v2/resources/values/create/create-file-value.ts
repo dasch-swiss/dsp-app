@@ -10,7 +10,7 @@ import { License } from './license';
 @JsonObject('CreateFileValue')
 export abstract class CreateFileValue extends CreateValue implements IBaseFileValue {
   @JsonProperty(Constants.FileValueHasFilename, String)
-  filename: string = '';
+  filename = '';
 
   @JsonProperty(Constants.hasCopyrightHolder, String, true)
   copyrightHolder!: string;

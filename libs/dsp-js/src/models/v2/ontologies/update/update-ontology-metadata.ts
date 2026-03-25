@@ -8,7 +8,7 @@ import { DateTimeStampConverter } from '../../custom-converters/date-time-stamp-
 @JsonObject('UpdateOntologyMetadata')
 export class UpdateOntologyMetadata {
   @JsonProperty('@id', String)
-  id: string = '';
+  id = '';
 
   @JsonProperty(Constants.LastModificationDate, DateTimeStampConverter, true)
   lastModificationDate!: string;

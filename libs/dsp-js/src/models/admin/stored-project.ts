@@ -13,5 +13,5 @@ export class StoredProject extends Project {
    * The ID of the enclosing object.
    */
   @JsonProperty('id', String)
-  id: string = '';
+  id = '';
 }

@@ -10,7 +10,7 @@ import { CreateValue } from './create-value';
 @JsonObject('CreateTimeValue')
 export class CreateTimeValue extends CreateValue implements IBaseTimeValue {
   @JsonProperty(Constants.TimeValueAsTimeStamp, DateTimeStampConverter)
-  time: string = '';
+  time = '';
 
   constructor() {
     super(Constants.TimeValue);

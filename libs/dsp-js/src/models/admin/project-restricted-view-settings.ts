@@ -17,5 +17,5 @@ export class ProjectRestrictedViewSettings {
    * The watermark used in restricted image view in a project.
    */
   @JsonProperty('watermark', Boolean, true)
-  watermark?: Boolean = false;
+  watermark?: boolean = false;
 }

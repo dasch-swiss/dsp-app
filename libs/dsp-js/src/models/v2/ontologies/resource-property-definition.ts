@@ -15,7 +15,7 @@ import { PropertyDefinition } from './property-definition';
 @JsonObject('ResourcePropertyDefinition')
 export class ResourcePropertyDefinition extends PropertyDefinition {
   @JsonProperty('@id', String)
-  id: string = '';
+  id = '';
 
   @JsonProperty(Constants.SubPropertyOf, SubPropertyOfConverter, true)
   subPropertyOf: string[] = [];
@@ -36,13 +36,13 @@ export class ResourcePropertyDefinition extends PropertyDefinition {
   objectType?: string = undefined;
 
   @JsonProperty(Constants.IsLinkProperty, Boolean, true)
-  isLinkProperty: boolean = false;
+  isLinkProperty = false;
 
   @JsonProperty(Constants.IsLinkValueProperty, Boolean, true)
-  isLinkValueProperty: boolean = false;
+  isLinkValueProperty = false;
 
   @JsonProperty(Constants.IsEditable, Boolean, true)
-  isEditable: boolean = false;
+  isEditable = false;
 
   @JsonProperty(Constants.GuiAttribute, GuiAttributeConverter, true)
   guiAttributes: string[] = [];

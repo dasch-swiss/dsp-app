@@ -10,7 +10,7 @@ import { UpdateValue } from './update-value';
 @JsonObject('UpdateLinkValue')
 export class UpdateLinkValue extends UpdateValue implements IBaseLinkValue {
   @JsonProperty(Constants.LinkValueHasTargetIri, IdConverter)
-  linkedResourceIri: string = '';
+  linkedResourceIri = '';
 
   constructor() {
     super(Constants.LinkValue);

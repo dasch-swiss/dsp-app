@@ -9,7 +9,7 @@ import { UpdateValue } from './update-value';
 @JsonObject('UpdateBooleanValue')
 export class UpdateBooleanValue extends UpdateValue implements IBaseBooleanValue {
   @JsonProperty(Constants.BooleanValueAsBoolean, Boolean)
-  bool: boolean = false;
+  bool = false;
 
   constructor() {
     super(Constants.BooleanValue);

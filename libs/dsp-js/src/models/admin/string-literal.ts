@@ -17,5 +17,5 @@ export class StringLiteral {
    * The value of a string literal.
    */
   @JsonProperty('value', String)
-  value: string = '';
+  value = '';
 }

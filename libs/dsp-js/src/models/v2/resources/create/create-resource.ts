@@ -1,8 +1,8 @@
 import { JsonObject, JsonProperty } from 'json2typescript';
-import { CreateValue } from '../../../../models/v2/resources/values/create/create-value';
 import { Constants } from '../../Constants';
 import { DateTimeStampConverter } from '../../custom-converters/date-time-stamp-converter';
 import { IdConverter } from '../../custom-converters/id-converter';
+import { CreateValue } from '../values/create/create-value';
 
 /**
  * @category Model V2
@@ -10,16 +10,16 @@ import { IdConverter } from '../../custom-converters/id-converter';
 @JsonObject('CreateResource')
 export class CreateResource {
   @JsonProperty('@type', String)
-  type: string = '';
+  type = '';
 
   @JsonProperty(Constants.Label, String)
-  label: string = '';
+  label = '';
 
   @JsonProperty(Constants.HasPermissions, String, true)
   hasPermissions?: string = undefined;
 
   @JsonProperty(Constants.AttachedToProject, IdConverter)
-  attachedToProject: string = '';
+  attachedToProject = '';
 
   @JsonProperty(Constants.AttachedToUser, IdConverter, true)
   attachedToUser?: string = undefined;

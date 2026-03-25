@@ -11,11 +11,11 @@ export class DeleteChildNodeCommentsResponse {
    * Status of list node comment.
    */
   @JsonProperty('commentsDeleted', Boolean)
-  commentsDeleted: boolean = false;
+  commentsDeleted = false;
 
   /**
    * The IRI of the deleted list node.
    */
   @JsonProperty('nodeIri', String)
-  nodeIri: string = '';
+  nodeIri = '';
 }

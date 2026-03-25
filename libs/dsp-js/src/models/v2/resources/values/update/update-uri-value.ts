@@ -10,7 +10,7 @@ import { UpdateValue } from './update-value';
 @JsonObject('UpdateUriValue')
 export class UpdateUriValue extends UpdateValue implements IBaseUriValue {
   @JsonProperty(Constants.UriValueAsUri, UriConverter)
-  uri: string = '';
+  uri = '';
 
   constructor() {
     super(Constants.UriValue);

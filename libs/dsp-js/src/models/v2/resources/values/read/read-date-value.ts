@@ -9,10 +9,10 @@ import { ReadValue } from './read-value';
 @JsonObject('ReadDateValue')
 export class ParseReadDateValue extends ReadValue implements IBaseDateValue {
   @JsonProperty(Constants.ValueAsString, String)
-  datestring: string = '';
+  datestring = '';
 
   @JsonProperty(Constants.DateValueHasCalendar, String)
-  calendar: string = '';
+  calendar = '';
 
   @JsonProperty(Constants.DateValueHasStartDay, Number, true)
   startDay?: number = undefined;
@@ -21,7 +21,7 @@ export class ParseReadDateValue extends ReadValue implements IBaseDateValue {
   startMonth?: number = undefined;
 
   @JsonProperty(Constants.DateValueHasStartYear, Number)
-  startYear: number = 0;
+  startYear = 0;
 
   @JsonProperty(Constants.DateValueHasStartEra, String, true)
   startEra?: string = undefined;
@@ -33,7 +33,7 @@ export class ParseReadDateValue extends ReadValue implements IBaseDateValue {
   endMonth?: number = undefined;
 
   @JsonProperty(Constants.DateValueHasEndYear, Number)
-  endYear: number = 0;
+  endYear = 0;
 
   @JsonProperty(Constants.DateValueHasEndEra, String, true)
   endEra?: string = undefined;

@@ -11,11 +11,11 @@ export class DeleteListResponse {
    * Status of list node.
    */
   @JsonProperty('deleted', Boolean)
-  deleted: boolean = false;
+  deleted = false;
 
   /**
    * The IRI of the deleted list.
    */
   @JsonProperty('iri', String)
-  iri: string = '';
+  iri = '';
 }

@@ -1,8 +1,8 @@
 import { JsonConvert } from 'json2typescript';
-import { forkJoin, Observable, of } from 'rxjs';
-import { map, mergeMap } from 'rxjs';
+import { forkJoin, Observable, of, map, mergeMap } from 'rxjs';
 import { ListNodeV2Cache } from '../../../cache/ListNodeV2Cache';
 import { OntologyCache } from '../../../cache/ontology-cache/OntologyCache';
+import { ResourceClassAndPropertyDefinitions } from '../../../cache/ontology-cache/resource-class-and-property-definitions';
 import { Constants } from '../Constants';
 import { ResourcePropertyDefinition } from '../ontologies/resource-property-definition';
 import { CountQueryResponse } from '../search/count-query-response';
@@ -37,7 +37,6 @@ import {
 import { ReadTimeValue } from './values/read/read-time-value';
 import { ReadUriValue } from './values/read/read-uri-value';
 import { ReadValue } from './values/read/read-value';
-import { ResourceClassAndPropertyDefinitions } from '../../../cache/ontology-cache/resource-class-and-property-definitions';
 
 /**
  * @category Internal
@@ -60,7 +59,7 @@ export namespace ResourcesConversionUtil {
     jsonConvert: JsonConvert
   ): Observable<ReadResourceSequence> => {
     if (resourcesJsonld.hasOwnProperty('@graph')) {
-      let graphLength: number = (resourcesJsonld as { [index: string]: object[] })['@graph'].length;
+      const graphLength: number = (resourcesJsonld as { [index: string]: object[] })['@graph'].length;
 
       if (graphLength > 0) {
         // sequence of resources
@@ -81,31 +80,27 @@ export namespace ResourcesConversionUtil {
             }
           })
         );
+      } else if (resourcesJsonld.hasOwnProperty(Constants.MayHaveMoreResults)) {
+        return of(new ReadResourceSequence([], true));
       } else {
-        if (resourcesJsonld.hasOwnProperty(Constants.MayHaveMoreResults)) {
-          return of(new ReadResourceSequence([], true));
-        } else {
-          return of(new ReadResourceSequence([]));
-        }
-      }
-    } else {
-      //  one or no resource
-      if (Object.keys(resourcesJsonld).length === 0) {
         return of(new ReadResourceSequence([]));
-      } else {
-        return forkJoin([
-          createReadResource(
-            resourcesJsonld as { [index: string]: object[] | string },
-            ontologyCache,
-            listNodeCache,
-            jsonConvert
-          ),
-        ]).pipe(
-          map((resources: ReadResource[]) => {
-            return new ReadResourceSequence(resources);
-          })
-        );
       }
+    } else if (Object.keys(resourcesJsonld).length === 0) {
+      //  one or no resource
+      return of(new ReadResourceSequence([]));
+    } else {
+      return forkJoin([
+        createReadResource(
+          resourcesJsonld as { [index: string]: object[] | string },
+          ontologyCache,
+          listNodeCache,
+          jsonConvert
+        ),
+      ]).pipe(
+        map((resources: ReadResource[]) => {
+          return new ReadResourceSequence(resources);
+        })
+      );
     }
   };
 
@@ -137,14 +132,12 @@ export namespace ResourcesConversionUtil {
         if (entitiyDefs.classes[resource.type]) {
           resource.resourceClassLabel = entitiyDefs.classes[resource.type].label;
           resource.resourceClassComment = entitiyDefs.classes[resource.type].comment;
-        } else {
+        } else if (resource.type === Constants.DeletedResource) {
           // the label is not defined in this ontology
-          if (resource.type === Constants.DeletedResource) {
-            resource.resourceClassLabel = resource.label;
-          } else {
-            console.warn('unsupported type: ', resource.type);
-            resource.resourceClassLabel = resource.type;
-          }
+          resource.resourceClassLabel = resource.label;
+        } else {
+          console.warn('unsupported type: ', resource.type);
+          resource.resourceClassLabel = resource.type;
         }
         resource.entityInfo = entitiyDefs;
 
@@ -398,7 +391,7 @@ export namespace ResourcesConversionUtil {
         const intervalVal = handleSimpleValue(valueJsonld, ReadIntervalValue, jsonConvert);
         value = intervalVal.pipe(
           map((val: ReadIntervalValue) => {
-            val.strval = val.start.toString() + ' - ' + val.end.toString();
+            val.strval = `${val.start.toString()} - ${val.end.toString()}`;
             return val;
           })
         );
@@ -406,7 +399,7 @@ export namespace ResourcesConversionUtil {
       }
 
       case Constants.ListValue: {
-        const listValue = (value = handleSimpleValue(valueJsonld, ReadListValue, jsonConvert));
+        const listValue = handleSimpleValue(valueJsonld, ReadListValue, jsonConvert);
         value = listValue.pipe(
           mergeMap((listVal: ReadListValue) => {
             // get referred list node's label

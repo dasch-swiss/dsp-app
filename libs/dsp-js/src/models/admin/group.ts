@@ -17,13 +17,13 @@ export class Group {
    * The name of the enclosing object.
    */
   @JsonProperty('name', String)
-  name: string = '';
+  name = '';
 
   /**
    * Exists and is true if users can add themselves to the project or group.
    */
   @JsonProperty('selfjoin', Boolean)
-  selfjoin: boolean = false;
+  selfjoin = false;
 
   /**
    * The status of the user / group / project. It is false if the entity has been deactivated (deleted).

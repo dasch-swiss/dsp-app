@@ -8,10 +8,10 @@ import { DateTimeStampConverter } from '../../custom-converters/date-time-stamp-
 @JsonObject('UpdateResourceMetadataResponse')
 export class UpdateResourceMetadataResponse {
   @JsonProperty(Constants.ResourceIri, String)
-  resourceIri: string = '';
+  resourceIri = '';
 
   @JsonProperty(Constants.ResourceClassIri, String)
-  resourceClassIri: string = '';
+  resourceClassIri = '';
 
   @JsonProperty(Constants.Label, String, true)
   label?: string = '';

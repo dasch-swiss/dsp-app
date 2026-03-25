@@ -10,13 +10,13 @@ export abstract class AdminDoapBase {
    * The administrative permission's iri.
    */
   @JsonProperty('iri', String)
-  id: string = '';
+  id = '';
 
   /**
    * The project that the permission applies to.
    */
   @JsonProperty('forProject', String)
-  forProject: string = '';
+  forProject = '';
 
   /**
    * The permissions granted by an AdministrativePermission.

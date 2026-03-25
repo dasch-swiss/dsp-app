@@ -9,7 +9,7 @@ import { StringLiteralV2 } from '../../string-literal-v2';
  */
 @JsonObject('CreateResourceClass')
 export class CreateResourceClass {
-  name: string = '';
+  name = '';
 
   @JsonProperty('@type', String, true)
   type: string = Constants.Class;
@@ -30,5 +30,5 @@ export class CreateResourceClass {
 @JsonObject('CreateResourceClassPayload')
 export class CreateResourceClassPayload extends CreateResourceClass {
   @JsonProperty('@id', String)
-  id: string = '';
+  id = '';
 }

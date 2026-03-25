@@ -11,28 +11,28 @@ import { BaseValue } from '../base-value';
 @JsonObject('ReadValue')
 export class ReadValue extends BaseValue {
   @JsonProperty('@id', String)
-  id: string = '';
+  id = '';
 
   @JsonProperty(Constants.AttachedToUser, IdConverter)
-  attachedToUser: string = '';
+  attachedToUser = '';
 
   @JsonProperty(Constants.ArkUrl, UriConverter)
-  arkUrl: string = '';
+  arkUrl = '';
 
   @JsonProperty(Constants.VersionArkUrl, UriConverter)
-  versionArkUrl: string = '';
+  versionArkUrl = '';
 
   @JsonProperty(Constants.ValueCreationDate, DateTimeStampConverter)
-  valueCreationDate: string = '';
+  valueCreationDate = '';
 
   @JsonProperty(Constants.HasPermissions, String)
-  hasPermissions: string = '';
+  hasPermissions = '';
 
   @JsonProperty(Constants.UserHasPermission, String)
-  userHasPermission: string = '';
+  userHasPermission = '';
 
   @JsonProperty(Constants.ValueHasUUID, String)
-  uuid: string = '';
+  uuid = '';
 
   @JsonProperty(Constants.ValueHasComment, String, true)
   valueHasComment?: string = undefined;

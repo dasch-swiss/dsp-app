@@ -10,5 +10,5 @@ import { ReadValue } from './read-value';
 @JsonObject('ReadTimeValue')
 export class ReadTimeValue extends ReadValue implements IBaseTimeValue {
   @JsonProperty(Constants.TimeValueAsTimeStamp, DateTimeStampConverter)
-  time: string = '';
+  time = '';
 }

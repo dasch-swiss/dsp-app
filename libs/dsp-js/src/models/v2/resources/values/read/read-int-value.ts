@@ -9,5 +9,5 @@ import { ReadValue } from './read-value';
 @JsonObject('ReadIntValue')
 export class ReadIntValue extends ReadValue implements IBaseIntValue {
   @JsonProperty(Constants.IntValueAsInt, Number)
-  int: number = 0;
+  int = 0;
 }

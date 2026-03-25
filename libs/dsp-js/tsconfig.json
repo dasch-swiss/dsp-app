@@ -10,8 +10,7 @@
     "resolveJsonModule": true,
     "moduleResolution": "node",
     "sourceMap": true,
-    "strictNullChecks": true,
-    "noImplicitAny": true,
+    "strict": true,
     "skipLibCheck": true
   },
   "files": [],

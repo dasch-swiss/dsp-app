@@ -1,19 +1,18 @@
-import { JsonConvert, OperationMode, ValueCheckingMode } from 'json2typescript';
-import { PropertyMatchingRule } from 'json2typescript';
-import { OntologiesMetadata } from '../../../../src/models/v2/ontologies/ontology-metadata';
+import { JsonConvert, OperationMode, ValueCheckingMode, PropertyMatchingRule } from 'json2typescript';
 import { ResourceClassAndPropertyDefinitions } from '../../../../src/cache/ontology-cache/resource-class-and-property-definitions';
 import { ResourceClassDefinitionWithPropertyDefinition } from '../../../../src/cache/ontology-cache/resource-class-definition-with-property-definition';
 import { Constants } from '../../../../src/models/v2/Constants';
-import { IHasProperty } from '../../../../src/models/v2/ontologies/class-definition';
 import { OntologyConversionUtil } from '../../../../src/models/v2/ontologies/OntologyConversionUtil';
+import { IHasProperty } from '../../../../src/models/v2/ontologies/class-definition';
+import { OntologiesMetadata } from '../../../../src/models/v2/ontologies/ontology-metadata';
 import { PropertyDefinition } from '../../../../src/models/v2/ontologies/property-definition';
 import { ReadOntology } from '../../../../src/models/v2/ontologies/read/read-ontology';
 import { ResourceClassDefinition } from '../../../../src/models/v2/ontologies/resource-class-definition';
 import { ResourcePropertyDefinition } from '../../../../src/models/v2/ontologies/resource-property-definition';
 import { StandoffClassDefinition } from '../../../../src/models/v2/ontologies/standoff-class-definition';
 import { SystemPropertyDefinition } from '../../../../src/models/v2/ontologies/system-property-definition';
-import anythingOntologyExpanded from '../v2/ontologies/anything-ontology-expanded.json';
-import knoraApiOntologyExpanded from '../v2/ontologies/knora-api-ontology-expanded.json';
+import anythingOntologyExpanded from './ontologies/anything-ontology-expanded.json';
+import knoraApiOntologyExpanded from './ontologies/knora-api-ontology-expanded.json';
 
 export namespace MockOntology {
   const jsonConvert: JsonConvert = new JsonConvert(
@@ -36,7 +35,7 @@ export namespace MockOntology {
         break;
       }
       default: {
-        throw new Error('Ontology not supported: ' + ontoIri);
+        throw new Error(`Ontology not supported: ${ontoIri}`);
       }
     }
 

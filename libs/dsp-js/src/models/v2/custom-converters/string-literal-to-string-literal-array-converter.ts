@@ -1,5 +1,11 @@
-import { JsonConvert, JsonConverter, JsonCustomConvert, OperationMode, ValueCheckingMode } from 'json2typescript';
-import { PropertyMatchingRule } from 'json2typescript';
+import {
+  JsonConvert,
+  JsonConverter,
+  JsonCustomConvert,
+  OperationMode,
+  ValueCheckingMode,
+  PropertyMatchingRule,
+} from 'json2typescript';
 import { StringLiteralV2 } from '../string-literal-v2';
 
 /**

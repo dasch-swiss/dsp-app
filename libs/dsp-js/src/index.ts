@@ -2,8 +2,8 @@
 import 'reflect-metadata';
 
 // Globally necessary files
-import { DefaultObjectAccessPermissionsResponse } from './models/admin/default-object-access-permissions-response';
 import { DefaultObjectAccessPermission } from './models/admin/default-object-access-permission';
+import { DefaultObjectAccessPermissionsResponse } from './models/admin/default-object-access-permissions-response';
 import { UpdateAdministrativePermissionGroup } from './models/admin/update-administrative-permission-group';
 
 export { KnoraApiConnection } from './knora-api-connection';

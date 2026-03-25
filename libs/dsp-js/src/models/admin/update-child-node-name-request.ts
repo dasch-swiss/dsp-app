@@ -11,5 +11,5 @@ export class UpdateChildNodeNameRequest {
    * The updated child node name.
    */
   @JsonProperty('name', String)
-  name: string = '';
+  name = '';
 }

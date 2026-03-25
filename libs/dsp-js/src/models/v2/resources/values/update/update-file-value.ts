@@ -10,7 +10,7 @@ import { UpdateValue } from './update-value';
 @JsonObject('UpdateFileValue')
 export abstract class UpdateFileValue extends UpdateValue implements IBaseFileValue {
   @JsonProperty(Constants.FileValueHasFilename, String)
-  filename: string = '';
+  filename = '';
 
   @JsonProperty(Constants.hasCopyrightHolder, String, true)
   copyrightHolder!: string;

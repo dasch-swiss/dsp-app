@@ -25,7 +25,7 @@ export class UpdateListInfoRequest {
    * Provides a list IRI.
    */
   @JsonProperty('listIri', String)
-  listIri: string = '';
+  listIri = '';
 
   /**
    * The IRI of a project.

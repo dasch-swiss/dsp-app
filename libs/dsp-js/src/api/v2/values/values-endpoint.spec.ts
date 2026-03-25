@@ -1,9 +1,9 @@
 import { of } from 'rxjs';
-import { ListNodeV2Cache } from '../../../cache/ListNodeV2Cache';
-import { OntologyCache } from '../../../cache/ontology-cache/OntologyCache';
+import { setupAjaxMock, AjaxMock } from '../../../../test/ajax-mock-helper';
 import { MockList } from '../../../../test/data/api/v2/mock-list';
 import { MockOntology } from '../../../../test/data/api/v2/mock-ontology';
-import { setupAjaxMock, AjaxMock } from '../../../../test/ajax-mock-helper';
+import { ListNodeV2Cache } from '../../../cache/ListNodeV2Cache';
+import { OntologyCache } from '../../../cache/ontology-cache/OntologyCache';
 import { KnoraApiConfig } from '../../../knora-api-config';
 import { KnoraApiConnection } from '../../../knora-api-connection';
 import { Constants } from '../../../models/v2/Constants';

@@ -11,11 +11,11 @@ export class ProjectPermission {
    * The Iri of the permission.
    */
   @JsonProperty('iri', String)
-  id: string = '';
+  id = '';
 
   /**
    * The type of the permission.
    */
   @JsonProperty('permissionType', String)
-  permissionType: string = '';
+  permissionType = '';
 }

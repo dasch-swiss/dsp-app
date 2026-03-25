@@ -1,4 +1,5 @@
 import { JsonObject, JsonProperty } from 'json2typescript';
+import { ResourceClassAndPropertyDefinitions } from '../../../../cache/ontology-cache/resource-class-and-property-definitions';
 import { Constants } from '../../Constants';
 import { DateTimeStampConverter } from '../../custom-converters/date-time-stamp-converter';
 import { IdConverter } from '../../custom-converters/id-converter';
@@ -7,7 +8,6 @@ import { ResourcePropertyDefinition } from '../../ontologies/resource-property-d
 import { ReadWriteResource } from '../read-write-resource';
 import { TypeGuard } from '../type-guard';
 import { ReadValue } from '../values/read/read-value';
-import { ResourceClassAndPropertyDefinitions } from '../../../../cache/ontology-cache/resource-class-and-property-definitions';
 
 /**
  * @category Model V2
@@ -15,28 +15,28 @@ import { ResourceClassAndPropertyDefinitions } from '../../../../cache/ontology-
 @JsonObject('ReadResource')
 export class ReadResource extends ReadWriteResource {
   @JsonProperty(Constants.Label, String)
-  label: string = '';
+  label = '';
 
   @JsonProperty(Constants.AttachedToProject, IdConverter)
-  attachedToProject: string = '';
+  attachedToProject = '';
 
   @JsonProperty(Constants.AttachedToUser, IdConverter)
-  attachedToUser: string = '';
+  attachedToUser = '';
 
   @JsonProperty(Constants.HasPermissions, String)
-  hasPermissions: string = '';
+  hasPermissions = '';
 
   @JsonProperty(Constants.UserHasPermission, String)
-  userHasPermission: string = '';
+  userHasPermission = '';
 
   @JsonProperty(Constants.ArkUrl, UriConverter)
-  arkUrl: string = '';
+  arkUrl = '';
 
   @JsonProperty(Constants.VersionArkUrl, UriConverter)
-  versionArkUrl: string = '';
+  versionArkUrl = '';
 
   @JsonProperty(Constants.CreationDate, DateTimeStampConverter)
-  creationDate: string = '';
+  creationDate = '';
 
   @JsonProperty(Constants.LastModificationDate, DateTimeStampConverter, true)
   lastModificationDate?: string = undefined;
@@ -150,7 +150,7 @@ export class ReadResource extends ReadWriteResource {
    * @param property the IRI of the property.
    * @param defaultStr placeholder if there is no string representation of a value.
    */
-  getValuesAsStringArray(property: string, defaultStr: string = '?'): string[] {
+  getValuesAsStringArray(property: string, defaultStr = '?'): string[] {
     const vals: ReadValue[] = this.getValues(property);
     return vals.map((val: ReadValue) => {
       return val.strval === undefined ? defaultStr : val.strval;
@@ -169,7 +169,7 @@ export class ReadResource extends ReadWriteResource {
       if (TypeGuard.typeGuard(val, valueType)) {
         return val as T;
       } else {
-        throw new Error('Cannot cast to type ' + valueType);
+        throw new Error(`Cannot cast to type ${valueType}`);
       }
     });
   }

@@ -1,6 +1,6 @@
 import { of, throwError } from 'rxjs';
-import { AjaxError } from 'rxjs/ajax';
 import { delay } from 'rxjs';
+import { AjaxError } from 'rxjs/ajax';
 import { MockOntology } from '../../../test/data/api/v2/mock-ontology';
 import { MockOntologyAssertions } from '../../../test/data/api/v2/mock-ontology-assertions';
 import { KnoraApiConfig } from '../../knora-api-config';

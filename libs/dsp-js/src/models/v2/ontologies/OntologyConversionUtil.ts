@@ -2,8 +2,8 @@ import { JsonConvert } from 'json2typescript';
 import { KnoraApiConfig } from '../../../knora-api-config';
 import { Constants } from '../Constants';
 import { TypeGuard } from '../resources/type-guard';
-import { IHasProperty } from './class-definition';
 import { EntityDefinition } from './EntityDefinition';
+import { IHasProperty } from './class-definition';
 import { OntologiesMetadata, OntologyMetadata } from './ontology-metadata';
 import { ReadOntology } from './read/read-ontology';
 import { ResourceClassDefinition, ResourceClassDefinitionWithAllLanguages } from './resource-class-definition';
@@ -28,14 +28,14 @@ export namespace OntologyConversionUtil {
 
     // set `http` regardless of  knoraApiConfig.apiProtocol
     // include port only when running locally
-    let projectEntityBase = 'http://' + knoraApiConfig.apiHost;
+    let projectEntityBase = `http://${knoraApiConfig.apiHost}`;
     if (
       knoraApiConfig.apiPort !== null &&
       (knoraApiConfig.apiHost === 'localhost' || knoraApiConfig.apiHost === '0.0.0.0')
     ) {
-      projectEntityBase = projectEntityBase + ':' + knoraApiConfig.apiPort;
+      projectEntityBase = `${projectEntityBase}:${knoraApiConfig.apiPort}`;
     }
-    projectEntityBase = projectEntityBase + '/ontology/';
+    projectEntityBase = `${projectEntityBase}/ontology/`;
 
     // Check if the given entity Iri belongs to knora-api or a project ontology.
     // Ignore external entity Iris.

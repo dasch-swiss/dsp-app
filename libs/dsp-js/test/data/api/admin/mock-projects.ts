@@ -1,11 +1,11 @@
 import { JsonConvert, OperationMode, PropertyMatchingRule, ValueCheckingMode } from 'json2typescript';
 import { AjaxResponse } from 'rxjs/ajax';
-import { ApiResponseData } from '../../../../src/models/api-response-data';
-import { ProjectsResponse } from '../../../../src/models/admin/projects-response';
 import { ProjectResponse } from '../../../../src/models/admin/project-response';
+import { ProjectsResponse } from '../../../../src/models/admin/projects-response';
+import { ApiResponseData } from '../../../../src/models/api-response-data';
 
-import projects from './projects/get-projects-response.json';
 import project from './projects/get-project-response.json';
+import projects from './projects/get-projects-response.json';
 
 // Helper to create a mock AjaxResponse compatible with RxJS 7.x
 function createMockAjaxResponse<T extends object>(response: T): AjaxResponse<T> {

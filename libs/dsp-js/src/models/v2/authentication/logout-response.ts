@@ -7,8 +7,8 @@ import { ILogoutResponse } from '../../../interfaces/models/v2/i-logout-response
 @JsonObject('LogoutResponse')
 export class LogoutResponse implements ILogoutResponse {
   @JsonProperty('message', String)
-  message: string = '';
+  message = '';
 
   @JsonProperty('status', Number)
-  status: number = 0;
+  status = 0;
 }

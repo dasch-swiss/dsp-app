@@ -13,5 +13,5 @@ export class StoredAdministrativePermission extends AdministrativePermission {
    * The IRI of the enclosing object.
    */
   @JsonProperty('iri', String)
-  iri: string = '';
+  iri = '';
 }
