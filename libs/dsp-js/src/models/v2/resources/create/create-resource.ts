@@ -1,8 +1,8 @@
 import { JsonObject, JsonProperty } from 'json2typescript';
-import { CreateValue } from '../../../../models/v2/resources/values/create/create-value';
 import { Constants } from '../../Constants';
 import { DateTimeStampConverter } from '../../custom-converters/date-time-stamp-converter';
 import { IdConverter } from '../../custom-converters/id-converter';
+import { CreateValue } from '../values/create/create-value';
 
 /**
  * @category Model V2

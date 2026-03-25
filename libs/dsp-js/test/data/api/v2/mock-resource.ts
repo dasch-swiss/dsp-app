@@ -7,9 +7,9 @@ import { KnoraApiConfig } from '../../../../src/knora-api-config';
 import { ResourcesConversionUtil } from '../../../../src/models/v2/resources/ResourcesConversionUtil';
 import { ReadResource } from '../../../../src/models/v2/resources/read/read-resource';
 import { ReadResourceSequence } from '../../../../src/models/v2/resources/read/read-resource-sequence';
-import testthing from '../v2/resources/testding-expanded.json';
 import { MockList } from './mock-list';
 import { MockOntology } from './mock-ontology';
+import testthing from './resources/testding-expanded.json';
 
 export namespace MockResource {
   const jsonConvert: JsonConvert = new JsonConvert(

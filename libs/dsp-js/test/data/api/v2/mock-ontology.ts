@@ -11,8 +11,8 @@ import { ResourceClassDefinition } from '../../../../src/models/v2/ontologies/re
 import { ResourcePropertyDefinition } from '../../../../src/models/v2/ontologies/resource-property-definition';
 import { StandoffClassDefinition } from '../../../../src/models/v2/ontologies/standoff-class-definition';
 import { SystemPropertyDefinition } from '../../../../src/models/v2/ontologies/system-property-definition';
-import anythingOntologyExpanded from '../v2/ontologies/anything-ontology-expanded.json';
-import knoraApiOntologyExpanded from '../v2/ontologies/knora-api-ontology-expanded.json';
+import anythingOntologyExpanded from './ontologies/anything-ontology-expanded.json';
+import knoraApiOntologyExpanded from './ontologies/knora-api-ontology-expanded.json';
 
 export namespace MockOntology {
   const jsonConvert: JsonConvert = new JsonConvert(
