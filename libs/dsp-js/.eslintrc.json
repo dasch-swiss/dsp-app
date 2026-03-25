@@ -17,7 +17,6 @@
         "@typescript-eslint/no-use-before-define": "off",
         "@typescript-eslint/ban-types": "off",
         "import/no-extraneous-dependencies": "off",
-        "import/no-duplicates": "off",
         "import/extensions": "off",
         "import/order": "off",
         "import/no-useless-path-segments": "off",

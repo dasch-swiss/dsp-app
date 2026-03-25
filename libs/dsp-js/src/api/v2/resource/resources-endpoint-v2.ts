@@ -1,6 +1,5 @@
-import { Observable } from 'rxjs';
+import { Observable, catchError, map, mergeMap } from 'rxjs';
 import { AjaxResponse } from 'rxjs/ajax';
-import { catchError, map, mergeMap } from 'rxjs';
 import { ListNodeV2Cache } from '../../../cache/ListNodeV2Cache';
 import { OntologyCache } from '../../../cache/ontology-cache/OntologyCache';
 import { KnoraApiConfig } from '../../../knora-api-config';

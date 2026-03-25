@@ -1,6 +1,5 @@
-import { Observable, of, throwError } from 'rxjs';
+import { Observable, of, throwError, retry, timer } from 'rxjs';
 import { AjaxError, AjaxResponse } from 'rxjs/ajax';
-import { retry, timer } from 'rxjs';
 
 /**
  *

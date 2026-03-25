@@ -1,6 +1,5 @@
 import { JsonConvert, OperationMode, PropertyMatchingRule, ValueCheckingMode } from 'json2typescript';
-import { forkJoin, Observable, of } from 'rxjs';
-import { map } from 'rxjs';
+import { forkJoin, Observable, of, map } from 'rxjs';
 import { V2Endpoint } from '../../../../src/api/v2/v2-endpoint';
 import { ListNodeV2Cache } from '../../../../src/cache/ListNodeV2Cache';
 import { OntologyCache } from '../../../../src/cache/ontology-cache/OntologyCache';

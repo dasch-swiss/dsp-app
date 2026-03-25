@@ -1,5 +1,4 @@
-import { JsonConvert, OperationMode, ValueCheckingMode } from 'json2typescript';
-import { PropertyMatchingRule } from 'json2typescript';
+import { JsonConvert, OperationMode, ValueCheckingMode, PropertyMatchingRule } from 'json2typescript';
 import { Observable, throwError } from 'rxjs';
 import { ajax, AjaxError, AjaxRequest, AjaxResponse } from 'rxjs/ajax';
 import { KnoraApiConfig } from '../knora-api-config';

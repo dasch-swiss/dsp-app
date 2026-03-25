@@ -1,5 +1,4 @@
-import { JsonConvert, OperationMode, ValueCheckingMode } from 'json2typescript';
-import { PropertyMatchingRule } from 'json2typescript';
+import { JsonConvert, OperationMode, ValueCheckingMode, PropertyMatchingRule } from 'json2typescript';
 import { OntologiesMetadata } from '../../../../src/models/v2/ontologies/ontology-metadata';
 import { ResourceClassAndPropertyDefinitions } from '../../../../src/cache/ontology-cache/resource-class-and-property-definitions';
 import { ResourceClassDefinitionWithPropertyDefinition } from '../../../../src/cache/ontology-cache/resource-class-definition-with-property-definition';

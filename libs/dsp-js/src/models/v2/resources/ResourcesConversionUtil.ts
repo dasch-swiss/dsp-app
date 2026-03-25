@@ -1,6 +1,5 @@
 import { JsonConvert } from 'json2typescript';
-import { forkJoin, Observable, of } from 'rxjs';
-import { map, mergeMap } from 'rxjs';
+import { forkJoin, Observable, of, map, mergeMap } from 'rxjs';
 import { ListNodeV2Cache } from '../../../cache/ListNodeV2Cache';
 import { OntologyCache } from '../../../cache/ontology-cache/OntologyCache';
 import { Constants } from '../Constants';
