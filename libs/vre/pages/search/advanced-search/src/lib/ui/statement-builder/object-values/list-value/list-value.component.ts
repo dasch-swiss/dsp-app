@@ -93,14 +93,7 @@ export class ListValueComponent implements OnChanges, OnDestroy {
           this.rootListNode = rootListNode;
           const list = [...(this.sortedLabelList || [])];
           this.filteredList$.next(list);
-          if (this.selectedListItem && this.sortedLabelList) {
-            const selectedItem = this.sortedLabelList.find(node => node.id === this.selectedListItem?.iri);
-            if (selectedItem) {
-              this.selectedListNode = selectedItem;
-              this.selectedListItem = undefined;
-              this.valueFilterCtrl.patchValue(selectedItem);
-            }
-          }
+          this._tryRestoreSelectedItem();
         });
       this.valueChangesSubscription = this.valueFilterCtrl.valueChanges
         .pipe(debounceTime(300))
@@ -115,6 +108,33 @@ export class ListValueComponent implements OnChanges, OnDestroy {
           this.filteredList$.next(filtered);
         });
     }
+
+    if (changes['selectedListItem'] && this.selectedListItem && this.rootListNode) {
+      this._tryRestoreSelectedItem();
+    }
+  }
+
+  private _tryRestoreSelectedItem(): void {
+    if (!this.selectedListItem || !this.sortedLabelList) return;
+
+    const selectedItem = this._findNodeById(this.sortedLabelList, this.selectedListItem.iri);
+    if (selectedItem) {
+      this.selectedListNode = selectedItem;
+      this.valueFilterCtrl.patchValue(selectedItem);
+    }
+  }
+
+  private _findNodeById(nodes: ListNodeV2[], id: string): ListNodeV2 | undefined {
+    for (const node of nodes) {
+      if (node.id === id) {
+        return node;
+      }
+      if (node.children?.length > 0) {
+        const found = this._findNodeById(node.children, id);
+        if (found) return found;
+      }
+    }
+    return undefined;
   }
 
   trackByFn = (index: number, item: any) => `${index}-${item.label}`;
@@ -138,6 +158,8 @@ export class ListValueComponent implements OnChanges, OnDestroy {
   }
 
   onSelectionChange(node: ListNodeV2) {
+    this.selectedListNode = node;
+    this.valueFilterCtrl.patchValue(node);
     const nodeValue: IriLabelPair = { iri: node.id, label: node.label };
     this.emitValueChanged.emit(nodeValue);
   }
