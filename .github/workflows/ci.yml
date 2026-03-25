@@ -153,6 +153,7 @@ jobs:
     needs: check-openapi-sync
     if: |
       always() &&
+      needs.check-openapi-sync.result != 'cancelled' &&
       needs.check-openapi-sync.outputs.exit_code == '1' &&
       github.ref == 'refs/heads/main'
     permissions:
@@ -161,8 +162,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Set up yq
+        uses: mikefarah/yq@v4
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version-file: .nvmrc
       - name: Install dependencies
@@ -175,15 +180,16 @@ jobs:
             echo "No spec changes after update — skipping PR creation."
             exit 0
           fi
+          DSP_API_VERSION=$(yq '.info.version' libs/vre/3rd-party-services/open-api/dsp-api_spec.yaml)
           git config user.name "daschbot"
           git config user.email "daschbot@dasch.swiss"
-          BRANCH="chore/update-dsp-api-openapi-spec-$(date +%Y%m%d-%H%M)"
+          BRANCH="chore/update-dsp-api-openapi-spec-$(date +%Y%m%d-%H%M%S)"
           git checkout -b "$BRANCH"
           git add libs/vre/3rd-party-services/open-api/dsp-api_spec.yaml
-          git commit -m "chore: update dsp-api OpenAPI spec"
+          git commit -m "chore: update dsp-api OpenAPI spec to ${DSP_API_VERSION}"
           git push origin "$BRANCH"
           gh pr create \
-            --title "chore: update dsp-api OpenAPI spec" \
+            --title "chore: update dsp-api OpenAPI spec to ${DSP_API_VERSION}" \
             --body "Automated spec update detected by CI. Review diff and merge when the frontend is ready to adopt the new API." \
             --base main
         env:
