@@ -1,0 +1,104 @@
+<div class="toolbar">
+  <div class="icon-container">
+    <div
+      class="clickable-icon"
+      data-cy="more-vert-vector-button"
+      [matMenuTriggerFor]="more"
+      [matTooltip]="'resourceEditor.representations.stillImage.more' | translate"
+      matTooltipPosition="above">
+      <mat-icon>more_vert</mat-icon>
+    </div>
+
+    <div
+      class="clickable-icon"
+      data-cy="vector-image-share-button"
+      [matMenuTriggerFor]="share"
+      [matTooltip]="'resourceEditor.representations.stillImage.share' | translate"
+      matTooltipPosition="above">
+      <mat-icon>share</mat-icon>
+    </div>
+
+    <div
+      class="clickable-icon"
+      data-cy="vector-image-download-button"
+      [matTooltip]="'resourceEditor.representations.stillImage.download' | translate"
+      [class.disabled]="!userCanView"
+      (click)="download()">
+      <mat-icon>download</mat-icon>
+    </div>
+
+    <div
+      class="clickable-icon"
+      data-cy="vector-image-bg-button"
+      [matMenuTriggerFor]="bgColor"
+      [matTooltip]="'resourceEditor.representations.stillImage.backgroundColor' | translate"
+      matTooltipPosition="above">
+      <mat-icon>palette</mat-icon>
+    </div>
+  </div>
+
+  <div class="icon-container">
+    <div
+      class="clickable-icon"
+      data-cy="vector-zoom-out"
+      [matTooltip]="'resourceEditor.representations.stillImage.zoomOut' | translate"
+      (click)="zoomOut.emit()">
+      <mat-icon>zoom_out</mat-icon>
+    </div>
+
+    <div
+      class="clickable-icon"
+      data-cy="vector-zoom-in"
+      [matTooltip]="'resourceEditor.representations.stillImage.zoomIn' | translate"
+      (click)="zoomIn.emit()">
+      <mat-icon>zoom_in</mat-icon>
+    </div>
+
+    <div
+      class="clickable-icon"
+      data-cy="vector-zoom-reset"
+      [matTooltip]="'resourceEditor.representations.stillImage.resetZoom' | translate"
+      (click)="resetZoom.emit()">
+      <mat-icon>youtube_searched_for</mat-icon>
+    </div>
+
+    <div
+      class="clickable-icon"
+      data-cy="vector-fullscreen"
+      [matTooltip]="'resourceEditor.representations.stillImage.openInFullscreen' | translate"
+      (click)="fullscreen.emit()">
+      <mat-icon>fullscreen</mat-icon>
+    </div>
+  </div>
+</div>
+
+<mat-menu #more="matMenu" class="representation-menu">
+  @if (resourceFetcherService.userCanEdit$ | async) {
+  <button data-cy="replace-vector-button" mat-menu-item (click)="replaceImage()">
+    {{ 'resourceEditor.representations.replaceFile' | translate }}
+  </button>
+  }
+</mat-menu>
+
+<mat-menu #share="matMenu" class="res-share-menu">
+  <button
+    mat-menu-item
+    [cdkCopyToClipboard]="imageFileValue?.arkUrl || ''"
+    (click)="notification.openSnackBar(translateService.instant('resourceEditor.representations.stillImage.arkUrlCopied'))"
+    data-cy="copy-ark-url">
+    <mat-icon>content_copy</mat-icon>
+    {{ 'resourceEditor.representations.stillImage.copyArkUrl' | translate }}
+  </button>
+</mat-menu>
+
+<mat-menu #bgColor="matMenu" class="settings-menu">
+  <button data-cy="bg-default-button" mat-menu-item (click)="setBackground('default')">
+    {{ 'resourceEditor.representations.stillImage.bgDefault' | translate }}
+  </button>
+  <button data-cy="bg-white-button" mat-menu-item (click)="setBackground('white')">
+    {{ 'resourceEditor.representations.stillImage.bgWhite' | translate }}
+  </button>
+  <button data-cy="bg-transparent-button" mat-menu-item (click)="setBackground('transparent')">
+    {{ 'resourceEditor.representations.stillImage.bgTransparent' | translate }}
+  </button>
+</mat-menu>

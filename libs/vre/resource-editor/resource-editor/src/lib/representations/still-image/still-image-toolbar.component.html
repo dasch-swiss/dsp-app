@@ -18,7 +18,6 @@
       matTooltipPosition="above">
       <mat-icon>share</mat-icon>
     </div>
-
     <div
       class="clickable-icon"
       data-cy="still-image-download-button"
@@ -28,7 +27,7 @@
       <mat-icon>download</mat-icon>
     </div>
 
-    @if ((resourceFetcherService.userCanEdit$ | async) && isAnnotatable) {
+    @if ((resourceFetcherService.userCanEdit$ | async) && !isReadStillImageExternalFileValue) {
     <div
       class="clickable-icon"
       data-cy="still-image-region-button"
@@ -36,15 +35,6 @@
       (click)="toggleDrawMode()"
       [class.active]="osd.drawing">
       <mat-icon svgIcon="draw_region_icon" />
-    </div>
-    } @if (isReadStillImageVectorFileValue) {
-    <div
-      class="clickable-icon"
-      data-cy="still-image-bg-button"
-      [matMenuTriggerFor]="bgColor"
-      [matTooltip]="'resourceEditor.representations.stillImage.backgroundColor' | translate"
-      matTooltipPosition="above">
-      <mat-icon>palette</mat-icon>
     </div>
     }
   </div>
@@ -59,7 +49,7 @@
       data-cy="still-image-settings-button"
       [matTooltip]="'resourceEditor.representations.stillImage.settings' | translate"
       [matMenuTriggerFor]="settings"
-      [class.disabled]="isReadStillImageExternalFileValue || isReadStillImageVectorFileValue">
+      [class.disabled]="isReadStillImageExternalFileValue">
       <mat-icon>settings</mat-icon>
     </div>
 
@@ -98,11 +88,10 @@
 </div>
 
 <mat-menu #more="matMenu" class="representation-menu">
-  @if (!isReadStillImageVectorFileValue) {
   <a mat-menu-item [href]="imageFileValue.fileUrl" target="_blank" data-cy="open-iiif-new-tab">
     {{ 'resourceEditor.representations.stillImage.openIiifInNewTab' | translate }}
   </a>
-  } @if (resourceFetcherService.userCanEdit$ | async) {
+  @if (resourceFetcherService.userCanEdit$ | async) {
   <button data-cy="replace-image-button" mat-menu-item (click)="replaceImage()">
     {{ 'resourceEditor.representations.replaceFile' | translate }}
   </button>
@@ -110,7 +99,6 @@
 </mat-menu>
 
 <mat-menu #share="matMenu" class="res-share-menu">
-  @if (!isReadStillImageVectorFileValue) {
   <button
     mat-menu-item
     (click)="notification.openSnackBar(_translateService.instant('resourceEditor.representations.stillImage.iiifUrlCopied'))"
@@ -119,7 +107,6 @@
     <mat-icon>content_copy</mat-icon>
     {{ 'resourceEditor.representations.stillImage.copyIiifUrl' | translate }}
   </button>
-  }
   <button
     mat-menu-item
     [cdkCopyToClipboard]="imageFileValue.arkUrl"
@@ -129,6 +116,7 @@
     {{ 'resourceEditor.representations.stillImage.copyArkUrl' | translate }}
   </button>
 </mat-menu>
+
 <mat-menu #settings="matMenu" class="settings-menu">
   <button data-cy="jpg-button" mat-menu-item (click)="imageIsPng.emit(false)">
     @if (!isPng) {
@@ -139,17 +127,5 @@
     @if (isPng) {
     <mat-icon>check</mat-icon>
     } PNG
-  </button>
-</mat-menu>
-
-<mat-menu #bgColor="matMenu" class="settings-menu">
-  <button data-cy="bg-default-button" mat-menu-item (click)="setSvgBackground('default')">
-    {{ 'resourceEditor.representations.stillImage.bgDefault' | translate }}
-  </button>
-  <button data-cy="bg-white-button" mat-menu-item (click)="setSvgBackground('white')">
-    {{ 'resourceEditor.representations.stillImage.bgWhite' | translate }}
-  </button>
-  <button data-cy="bg-transparent-button" mat-menu-item (click)="setSvgBackground('transparent')">
-    {{ 'resourceEditor.representations.stillImage.bgTransparent' | translate }}
   </button>
 </mat-menu>
