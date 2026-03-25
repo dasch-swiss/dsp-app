@@ -81,31 +81,27 @@ export namespace ResourcesConversionUtil {
             }
           })
         );
+      } else if (resourcesJsonld.hasOwnProperty(Constants.MayHaveMoreResults)) {
+        return of(new ReadResourceSequence([], true));
       } else {
-        if (resourcesJsonld.hasOwnProperty(Constants.MayHaveMoreResults)) {
-          return of(new ReadResourceSequence([], true));
-        } else {
-          return of(new ReadResourceSequence([]));
-        }
-      }
-    } else {
-      //  one or no resource
-      if (Object.keys(resourcesJsonld).length === 0) {
         return of(new ReadResourceSequence([]));
-      } else {
-        return forkJoin([
-          createReadResource(
-            resourcesJsonld as { [index: string]: object[] | string },
-            ontologyCache,
-            listNodeCache,
-            jsonConvert
-          ),
-        ]).pipe(
-          map((resources: ReadResource[]) => {
-            return new ReadResourceSequence(resources);
-          })
-        );
       }
+    } else if (Object.keys(resourcesJsonld).length === 0) {
+      //  one or no resource
+      return of(new ReadResourceSequence([]));
+    } else {
+      return forkJoin([
+        createReadResource(
+          resourcesJsonld as { [index: string]: object[] | string },
+          ontologyCache,
+          listNodeCache,
+          jsonConvert
+        ),
+      ]).pipe(
+        map((resources: ReadResource[]) => {
+          return new ReadResourceSequence(resources);
+        })
+      );
     }
   };
 
@@ -137,14 +133,12 @@ export namespace ResourcesConversionUtil {
         if (entitiyDefs.classes[resource.type]) {
           resource.resourceClassLabel = entitiyDefs.classes[resource.type].label;
           resource.resourceClassComment = entitiyDefs.classes[resource.type].comment;
-        } else {
+        } else if (resource.type === Constants.DeletedResource) {
           // the label is not defined in this ontology
-          if (resource.type === Constants.DeletedResource) {
-            resource.resourceClassLabel = resource.label;
-          } else {
-            console.warn('unsupported type: ', resource.type);
-            resource.resourceClassLabel = resource.type;
-          }
+          resource.resourceClassLabel = resource.label;
+        } else {
+          console.warn('unsupported type: ', resource.type);
+          resource.resourceClassLabel = resource.type;
         }
         resource.entityInfo = entitiyDefs;
 

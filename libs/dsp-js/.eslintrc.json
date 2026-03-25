@@ -22,7 +22,6 @@
         "import/order": "off",
         "import/no-useless-path-segments": "off",
         "no-use-before-define": "off",
-        "no-lonely-if": "off",
         "no-multi-assign": "off",
         "no-useless-return": "off",
         "operator-assignment": "off"
