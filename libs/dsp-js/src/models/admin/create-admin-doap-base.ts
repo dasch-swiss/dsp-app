@@ -16,7 +16,7 @@ export abstract class CreateAdminDoapBase {
    * The project that the permission applies to.
    */
   @JsonProperty('forProject', String)
-  forProject: string = '';
+  forProject = '';
 
   /**
    * The permissions granted by an AdministrativePermission.

@@ -2,8 +2,8 @@ import { JsonObject, JsonProperty } from 'json2typescript';
 import { Constants } from '../../Constants';
 import { DateTimeStampConverter } from '../../custom-converters/date-time-stamp-converter';
 import { TypeGuard } from '../../resources/type-guard';
-import { ClassDefinition } from '../class-definition';
 import { ClassAndPropertyDefinitions } from '../ClassAndPropertyDefinitions';
+import { ClassDefinition } from '../class-definition';
 import { PropertyDefinition } from '../property-definition';
 
 /**
@@ -12,10 +12,10 @@ import { PropertyDefinition } from '../property-definition';
 @JsonObject('ReadOntology')
 export class ReadOntology extends ClassAndPropertyDefinitions {
   @JsonProperty('@id', String)
-  id: string = '';
+  id = '';
 
   @JsonProperty(Constants.Label, String)
-  label: string = '';
+  label = '';
 
   @JsonProperty(Constants.Comment, String, true)
   comment?: string = undefined;

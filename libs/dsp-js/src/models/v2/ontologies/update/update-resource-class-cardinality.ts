@@ -10,7 +10,7 @@ import { UpdateDeleteEntity } from '../update-delete-entity';
 @JsonObject('UpdateResourceClassCardinality')
 export class UpdateResourceClassCardinality {
   @JsonProperty('@id', String)
-  id: string = '';
+  id = '';
 
   @JsonProperty('@type', String)
   type: string = Constants.Class;

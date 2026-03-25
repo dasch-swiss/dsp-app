@@ -10,7 +10,7 @@ import { CreateValue } from './create-value';
 @JsonObject('CreateLinkValue')
 export class CreateLinkValue extends CreateValue implements IBaseLinkValue {
   @JsonProperty(Constants.LinkValueHasTargetIri, IdConverter)
-  linkedResourceIri: string = '';
+  linkedResourceIri = '';
 
   constructor() {
     super(Constants.LinkValue);

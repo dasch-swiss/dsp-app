@@ -6,8 +6,8 @@ import {
   JsonProperty,
   OperationMode,
   ValueCheckingMode,
+  PropertyMatchingRule,
 } from 'json2typescript';
-import { PropertyMatchingRule } from 'json2typescript';
 import { Constants } from '../../Constants';
 import { CanSetCardinalityCheckFailure } from './can-set-cardinality-check-failure';
 

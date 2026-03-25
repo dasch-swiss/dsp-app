@@ -13,5 +13,5 @@ export class StoredUser extends User {
    * The ID of the enclosing object.
    */
   @JsonProperty('id', String)
-  id: string = '';
+  id = '';
 }

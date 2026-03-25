@@ -17,7 +17,7 @@ export abstract class CreateUpdatePermission {
    * The name of the enclosing object.
    */
   @JsonProperty('name', String)
-  name: string = '';
+  name = '';
 
   /**
    * A permission's numeric permission code.

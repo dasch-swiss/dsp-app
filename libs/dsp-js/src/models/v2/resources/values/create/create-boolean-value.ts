@@ -9,7 +9,7 @@ import { CreateValue } from './create-value';
 @JsonObject('CreateBooleanValue')
 export class CreateBooleanValue extends CreateValue implements IBaseBooleanValue {
   @JsonProperty(Constants.BooleanValueAsBoolean, Boolean)
-  bool: boolean = false;
+  bool = false;
 
   constructor() {
     super(Constants.BooleanValue);

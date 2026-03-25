@@ -9,7 +9,7 @@ import { UpdateValue } from './update-value';
 @JsonObject('UpdateGeomValue')
 export class UpdateGeomValue extends UpdateValue implements IBaseGeomValue {
   @JsonProperty(Constants.GeometryValueAsGeometry, String)
-  geometryString: string = '';
+  geometryString = '';
 
   constructor() {
     super(Constants.GeomValue);

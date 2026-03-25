@@ -25,7 +25,7 @@ export class ChildNodeInfo {
    * The ID of the enclosing object.
    */
   @JsonProperty('id', String)
-  id: string = '';
+  id = '';
 
   /**
    * The labels attached to the enclosing object.

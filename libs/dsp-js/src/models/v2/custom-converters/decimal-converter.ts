@@ -1,6 +1,6 @@
 import { JsonConverter, JsonCustomConvert } from 'json2typescript';
-import { Constants } from '../Constants';
 import { CustomConverterUtils } from '../../../util/utils';
+import { Constants } from '../Constants';
 
 /**
  * @category Internal
