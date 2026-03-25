@@ -1,14 +1,13 @@
 import { catchError, map } from 'rxjs';
 
-import { ApiResponseData } from '../../../models/api-response-data';
-import { Endpoint } from '../../endpoint';
-
 import { GroupsResponse } from '../../../models/admin/groups-response';
 import { ProjectsResponse } from '../../../models/admin/projects-response';
 import { UpdateUserRequest } from '../../../models/admin/update-user-request';
 import { User } from '../../../models/admin/user';
 import { UserResponse } from '../../../models/admin/user-response';
 import { UsersResponse } from '../../../models/admin/users-response';
+import { ApiResponseData } from '../../../models/api-response-data';
+import { Endpoint } from '../../endpoint';
 
 /**
  * An endpoint for working with Knora users.

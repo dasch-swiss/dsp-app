@@ -1,10 +1,10 @@
 import { JsonConvert, OperationMode, ValueCheckingMode, PropertyMatchingRule } from 'json2typescript';
-import { OntologiesMetadata } from '../../../../src/models/v2/ontologies/ontology-metadata';
 import { ResourceClassAndPropertyDefinitions } from '../../../../src/cache/ontology-cache/resource-class-and-property-definitions';
 import { ResourceClassDefinitionWithPropertyDefinition } from '../../../../src/cache/ontology-cache/resource-class-definition-with-property-definition';
 import { Constants } from '../../../../src/models/v2/Constants';
-import { IHasProperty } from '../../../../src/models/v2/ontologies/class-definition';
 import { OntologyConversionUtil } from '../../../../src/models/v2/ontologies/OntologyConversionUtil';
+import { IHasProperty } from '../../../../src/models/v2/ontologies/class-definition';
+import { OntologiesMetadata } from '../../../../src/models/v2/ontologies/ontology-metadata';
 import { PropertyDefinition } from '../../../../src/models/v2/ontologies/property-definition';
 import { ReadOntology } from '../../../../src/models/v2/ontologies/read/read-ontology';
 import { ResourceClassDefinition } from '../../../../src/models/v2/ontologies/resource-class-definition';

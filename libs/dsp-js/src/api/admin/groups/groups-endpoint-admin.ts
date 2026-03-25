@@ -1,13 +1,12 @@
 import { catchError, map } from 'rxjs';
 
-import { ApiResponseData } from '../../../models/api-response-data';
-import { Endpoint } from '../../endpoint';
-
 import { CreateGroupRequest } from '../../../models/admin/create-group-request';
 import { GroupResponse } from '../../../models/admin/group-response';
 import { GroupsResponse } from '../../../models/admin/groups-response';
 import { MembersResponse } from '../../../models/admin/members-response';
 import { UpdateGroupRequest } from '../../../models/admin/update-group-request';
+import { ApiResponseData } from '../../../models/api-response-data';
+import { Endpoint } from '../../endpoint';
 
 /**
  * An endpoint for working with Knora groups.

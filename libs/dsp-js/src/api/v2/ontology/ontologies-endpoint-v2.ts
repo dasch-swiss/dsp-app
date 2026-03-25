@@ -1,8 +1,9 @@
-import { AjaxResponse } from 'rxjs/ajax';
 import { catchError, map, mergeMap } from 'rxjs';
+import { AjaxResponse } from 'rxjs/ajax';
 import { ApiResponseError } from '../../../models/api-response-error';
 import { DataError } from '../../../models/data-error';
 import { Constants } from '../../../models/v2/Constants';
+import { OntologyConversionUtil } from '../../../models/v2/ontologies/OntologyConversionUtil';
 import { Cardinality } from '../../../models/v2/ontologies/class-definition';
 import { CreateOntology } from '../../../models/v2/ontologies/create/create-ontology';
 import {
@@ -20,7 +21,6 @@ import { DeleteResourceClassComment } from '../../../models/v2/ontologies/delete
 import { DeleteResourceProperty } from '../../../models/v2/ontologies/delete/delete-resource-property';
 import { DeleteResourcePropertyComment } from '../../../models/v2/ontologies/delete/delete-resource-property-comment';
 import { OntologiesMetadata, OntologyMetadata } from '../../../models/v2/ontologies/ontology-metadata';
-import { OntologyConversionUtil } from '../../../models/v2/ontologies/OntologyConversionUtil';
 import { CanDoResponse } from '../../../models/v2/ontologies/read/can-do-response';
 import { ReadOntology } from '../../../models/v2/ontologies/read/read-ontology';
 import { ResourceClassDefinitionWithAllLanguages } from '../../../models/v2/ontologies/resource-class-definition';

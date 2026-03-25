@@ -1,6 +1,6 @@
 import { TypeGuard } from '../resources/type-guard';
-import { ClassDefinition } from './class-definition';
 import { EntityDefinition } from './EntityDefinition';
+import { ClassDefinition } from './class-definition';
 import { PropertyDefinition } from './property-definition';
 
 /**

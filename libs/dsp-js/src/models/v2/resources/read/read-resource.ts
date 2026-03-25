@@ -1,4 +1,5 @@
 import { JsonObject, JsonProperty } from 'json2typescript';
+import { ResourceClassAndPropertyDefinitions } from '../../../../cache/ontology-cache/resource-class-and-property-definitions';
 import { Constants } from '../../Constants';
 import { DateTimeStampConverter } from '../../custom-converters/date-time-stamp-converter';
 import { IdConverter } from '../../custom-converters/id-converter';
@@ -7,7 +8,6 @@ import { ResourcePropertyDefinition } from '../../ontologies/resource-property-d
 import { ReadWriteResource } from '../read-write-resource';
 import { TypeGuard } from '../type-guard';
 import { ReadValue } from '../values/read/read-value';
-import { ResourceClassAndPropertyDefinitions } from '../../../../cache/ontology-cache/resource-class-and-property-definitions';
 
 /**
  * @category Model V2

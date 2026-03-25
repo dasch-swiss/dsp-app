@@ -1,5 +1,5 @@
-import { AjaxResponse } from 'rxjs/ajax';
 import { catchError, map } from 'rxjs';
+import { AjaxResponse } from 'rxjs/ajax';
 
 import { ApiResponseData } from '../../../models/api-response-data';
 import { CredentialsResponse } from '../../../models/v2/authentication/credentials-response';

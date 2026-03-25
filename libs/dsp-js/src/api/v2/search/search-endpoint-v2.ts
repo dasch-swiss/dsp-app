@@ -1,5 +1,5 @@
-import { AjaxResponse } from 'rxjs/ajax';
 import { catchError, map, mergeMap } from 'rxjs';
+import { AjaxResponse } from 'rxjs/ajax';
 import { ListNodeV2Cache } from '../../../cache/ListNodeV2Cache';
 import { OntologyCache } from '../../../cache/ontology-cache/OntologyCache';
 import { IFulltextSearchParams } from '../../../interfaces/models/v2/i-fulltext-search-params';

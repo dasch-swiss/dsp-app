@@ -1,8 +1,5 @@
 import { catchError, map } from 'rxjs';
 
-import { ApiResponseData } from '../../../models/api-response-data';
-import { Endpoint } from '../../endpoint';
-
 import { KeywordsResponse } from '../../../models/admin/keywords-response';
 import { MembersResponse } from '../../../models/admin/members-response';
 import { Project } from '../../../models/admin/project';
@@ -10,6 +7,8 @@ import { ProjectResponse } from '../../../models/admin/project-response';
 import { ProjectRestrictedViewSettingsResponse } from '../../../models/admin/project-restricted-view-settings-response';
 import { ProjectsResponse } from '../../../models/admin/projects-response';
 import { UpdateProjectRequest } from '../../../models/admin/update-project-request';
+import { ApiResponseData } from '../../../models/api-response-data';
+import { Endpoint } from '../../endpoint';
 
 /**
  * An endpoint for working with Knora projects.

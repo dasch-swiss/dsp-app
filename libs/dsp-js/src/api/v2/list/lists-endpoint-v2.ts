@@ -1,5 +1,5 @@
-import { AjaxResponse } from 'rxjs/ajax';
 import { catchError, map, mergeMap } from 'rxjs';
+import { AjaxResponse } from 'rxjs/ajax';
 import { ListNodeV2 } from '../../../models/v2/lists/list-node-v2';
 import { Endpoint } from '../../endpoint';
 
