@@ -125,11 +125,12 @@ main() {
     TEMP_DIR=$(mktemp -d)
     trap "rm -rf $TEMP_DIR" EXIT
 
-    # Download remote spec
+    # Download remote spec (retry up to 3 times with 30s delay to tolerate DEV deployments)
     log_verbose "Downloading remote spec..."
-    if ! curl -s -f -o "$TEMP_DIR/remote-spec.yaml" "$REMOTE_URL"; then
-        log "${RED}❌ Failed to download remote spec from: $REMOTE_URL${NC}"
-        exit 1
+    if ! curl -s -f --retry 3 --retry-delay 30 --retry-max-time 180 --retry-all-errors \
+         -o "$TEMP_DIR/remote-spec.yaml" "$REMOTE_URL"; then
+        log "${RED}❌ Failed to download remote spec from: $REMOTE_URL (after retries)${NC}"
+        exit 2
     fi
 
     # Clean both specs (remove metadata noise)
