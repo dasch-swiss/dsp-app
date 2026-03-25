@@ -49,6 +49,6 @@ export class CompoundViewerComponent {
   constructor(public readonly compoundService: CompoundService) {}
 
   isVectorImage(value: ReadValue): boolean {
-    return value?.type === Constants.StillImageVectorFileValue;
+    return value.type === Constants.StillImageVectorFileValue;
   }
 }
