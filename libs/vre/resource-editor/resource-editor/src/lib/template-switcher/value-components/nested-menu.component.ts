@@ -2,11 +2,22 @@ import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatSelect } from '@angular/material/select';
+import { MatTooltip } from '@angular/material/tooltip';
 import { ListNodeV2 } from '@dasch-swiss/dsp-js';
+import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
 
 @Component({
   selector: 'app-nested-menu',
-  imports: [MatFormField, MatMenuTrigger, MatLabel, MatSelect, MatMenuItem, MatMenu],
+  imports: [
+    MatFormField,
+    MatMenuTrigger,
+    MatLabel,
+    MatSelect,
+    MatMenuItem,
+    MatMenu,
+    MatTooltip,
+    StringifyStringLiteralPipe,
+  ],
   template: `
     @if (data.isRootNode) {
       <mat-form-field [matMenuTriggerFor]="menu" data-cy="select-list-button" style="width: 100%">
@@ -18,6 +29,8 @@ import { ListNodeV2 } from '@dasch-swiss/dsp-js';
       <div
         mat-menu-item
         [matMenuTriggerFor]="menu"
+        [matTooltip]="data.comments | appStringifyStringLiteral"
+        matTooltipPosition="above"
         style="width: 100%"
         (click)="selectMenuWithChildren(data)"
         (mouseenter)="openSubMenu()">
@@ -31,7 +44,13 @@ import { ListNodeV2 } from '@dasch-swiss/dsp-js';
             <app-nested-menu [data]="node" (selectedNode)="selectedNode.emit($event)" />
           </button>
         } @else {
-          <button mat-menu-item (click)="selectedNode.emit(node)" class="list-item-button" data-cy="list-item-button">
+          <button
+            mat-menu-item
+            [matTooltip]="node.comments | appStringifyStringLiteral"
+            matTooltipPosition="above"
+            (click)="selectedNode.emit(node)"
+            class="list-item-button"
+            data-cy="list-item-button">
             {{ node.label }}
           </button>
         }
