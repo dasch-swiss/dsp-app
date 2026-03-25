@@ -14,9 +14,7 @@ export class StringLiteralToStringConverter implements JsonCustomConvert<string>
     PropertyMatchingRule.CASE_STRICT
   );
 
-  serialize(item: string): any {
-    return;
-  }
+  serialize(item: string): any {}
 
   deserialize(item: object | object[]): string {
     if (Array.isArray(item) && item.length > 0) {
