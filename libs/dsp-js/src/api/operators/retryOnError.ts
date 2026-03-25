@@ -14,7 +14,7 @@ import { retry, timer } from 'rxjs';
  * @category Internal
  */
 export function retryOnError(delayMs: number, maxRetries: number, retryOnErrorStatus: number[], logError: boolean) {
-  let retries = maxRetries;
+  const retries = maxRetries;
 
   // inspired by https://medium.com/angular-in-depth/retry-failed-http-requests-in-angular-f5959d486294
   return (src: Observable<AjaxResponse<any>>): Observable<AjaxResponse<any>> =>

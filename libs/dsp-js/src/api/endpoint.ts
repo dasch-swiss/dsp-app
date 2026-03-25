@@ -215,9 +215,9 @@ export class Endpoint {
     body?: any,
     headers?: IHeaderOptions
   ): AjaxRequest {
-    let apiUrl = this.knoraApiConfig.apiUrl;
+    const apiUrl = this.knoraApiConfig.apiUrl;
 
-    let ajaxRequest: AjaxRequest = {
+    const ajaxRequest: AjaxRequest = {
       url: apiUrl + this.path + path,
       method: method,
       body: body,

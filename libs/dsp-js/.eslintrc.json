@@ -22,7 +22,6 @@
         "import/order": "off",
         "import/no-useless-path-segments": "off",
         "prefer-template": "off",
-        "prefer-const": "off",
         "object-shorthand": "off",
         "no-use-before-define": "off",
         "no-lonely-if": "off",

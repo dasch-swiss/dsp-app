@@ -60,7 +60,7 @@ export namespace ResourcesConversionUtil {
     jsonConvert: JsonConvert
   ): Observable<ReadResourceSequence> => {
     if (resourcesJsonld.hasOwnProperty('@graph')) {
-      let graphLength: number = (resourcesJsonld as { [index: string]: object[] })['@graph'].length;
+      const graphLength: number = (resourcesJsonld as { [index: string]: object[] })['@graph'].length;
 
       if (graphLength > 0) {
         // sequence of resources
