@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: DSP-API
-  version: v35.3.0-1-g77f5021
+  version: v35.3.0-4-g5c5a4bb
   summary: DSP-API is part of the DaSCH Service Platform, a repository for the long-term
     preservation and reuse of data in the humanities.
   contact:
@@ -4683,7 +4683,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/vd3HyxvyQsyXL7wygjK_0Q
+        example: http://rdfh.ch/users/8KFzDJUcQ9Sn9x0AIVPNwA
       responses:
         '200':
           description: ''
@@ -4741,7 +4741,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/vd3HyxvyQsyXL7wygjK_0Q
+        example: http://rdfh.ch/users/8KFzDJUcQ9Sn9x0AIVPNwA
       responses:
         '200':
           description: ''
@@ -4799,7 +4799,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/vd3HyxvyQsyXL7wygjK_0Q
+        example: http://rdfh.ch/users/8KFzDJUcQ9Sn9x0AIVPNwA
       responses:
         '200':
           description: ''
@@ -4970,7 +4970,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/vd3HyxvyQsyXL7wygjK_0Q
+        example: http://rdfh.ch/users/8KFzDJUcQ9Sn9x0AIVPNwA
       responses:
         '200':
           description: ''
@@ -5030,7 +5030,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/vd3HyxvyQsyXL7wygjK_0Q
+        example: http://rdfh.ch/users/8KFzDJUcQ9Sn9x0AIVPNwA
       responses:
         '200':
           description: ''
@@ -5216,7 +5216,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/vd3HyxvyQsyXL7wygjK_0Q
+        example: http://rdfh.ch/users/8KFzDJUcQ9Sn9x0AIVPNwA
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -5283,7 +5283,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/vd3HyxvyQsyXL7wygjK_0Q
+        example: http://rdfh.ch/users/8KFzDJUcQ9Sn9x0AIVPNwA
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -5351,7 +5351,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/vd3HyxvyQsyXL7wygjK_0Q
+        example: http://rdfh.ch/users/8KFzDJUcQ9Sn9x0AIVPNwA
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -5418,7 +5418,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/vd3HyxvyQsyXL7wygjK_0Q
+        example: http://rdfh.ch/users/8KFzDJUcQ9Sn9x0AIVPNwA
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -5486,7 +5486,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/vd3HyxvyQsyXL7wygjK_0Q
+        example: http://rdfh.ch/users/8KFzDJUcQ9Sn9x0AIVPNwA
       - name: groupIri
         in: path
         description: The IRI of a group. Must be URL-encoded.
@@ -5553,7 +5553,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/vd3HyxvyQsyXL7wygjK_0Q
+        example: http://rdfh.ch/users/8KFzDJUcQ9Sn9x0AIVPNwA
       - name: groupIri
         in: path
         description: The IRI of a group. Must be URL-encoded.
@@ -5621,7 +5621,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/vd3HyxvyQsyXL7wygjK_0Q
+        example: http://rdfh.ch/users/8KFzDJUcQ9Sn9x0AIVPNwA
       requestBody:
         content:
           application/json:
@@ -5688,7 +5688,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/vd3HyxvyQsyXL7wygjK_0Q
+        example: http://rdfh.ch/users/8KFzDJUcQ9Sn9x0AIVPNwA
       requestBody:
         content:
           application/json:
@@ -5755,7 +5755,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/vd3HyxvyQsyXL7wygjK_0Q
+        example: http://rdfh.ch/users/8KFzDJUcQ9Sn9x0AIVPNwA
       requestBody:
         content:
           application/json:
@@ -5822,7 +5822,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/vd3HyxvyQsyXL7wygjK_0Q
+        example: http://rdfh.ch/users/8KFzDJUcQ9Sn9x0AIVPNwA
       requestBody:
         content:
           application/json:
@@ -6069,7 +6069,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/lists/0001/4hmrR3c0SIezQKECGqKvfg
+        example: http://rdfh.ch/lists/0001/ree4l7EwR4GXaMaK0sJVJw
       - name: x-knora-accept-schema
         in: header
         description: |-
@@ -6182,7 +6182,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/lists/0001/4hmrR3c0SIezQKECGqKvfg
+        example: http://rdfh.ch/lists/0001/ree4l7EwR4GXaMaK0sJVJw
       - name: x-knora-accept-schema
         in: header
         description: |-
@@ -13378,6 +13378,75 @@ paths:
       security:
       - {}
       - httpAuth: []
+  /v3/export/resources/oai:
+    post:
+      tags:
+      - API v3
+      description: Export resources to CSV format. Publicly accessible. Requires appropriate
+        object access permissions on the resources.
+      operationId: postV3ExportResourcesOai
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExportRequestOai'
+            example:
+              shortcode: '0803'
+        required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            text/plain:
+              schema:
+                type: string
+        '400':
+          description: 'Invalid value for: body'
+          content:
+            text/plain:
+              schema:
+                type: string
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+              example:
+                message: Invalid token.
+                errors: []
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+              example:
+                message: User not active.
+                errors: []
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+              examples:
+                project_not_found:
+                  description: |-
+                    Example template string for code `project_not_found`:
+                    ```
+                    The project '{id}' was not found.
+                    ```
+                  value:
+                    message: The project '{id}' was not found.
+                    errors:
+                    - code: project_not_found
+                      message: The project '{id}' was not found.
+                      details:
+                        id: example_id
+      security:
+      - {}
+      - httpAuth: []
   /v3/ontologies/{ontologyIri}/classes/{classIri}/mapping:
     put:
       tags:
@@ -14408,9 +14477,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/VersionResponse'
               example:
-                webapi: v35.3.0-1-g77f5021
-                buildCommit: 77f502125
-                buildTime: '2026-03-24T14:18:39Z'
+                webapi: v35.3.0-4-g5c5a4bb
+                buildCommit: 5c5a4bbcd
+                buildTime: '2026-03-24T16:02:09Z'
                 fuseki: 5.5.0-2
                 scala: 3.3.7
                 sipi: v4.0.0
@@ -15028,6 +15097,14 @@ components:
           type: boolean
         includeArkUrls:
           type: boolean
+    ExportRequestOai:
+      title: ExportRequestOai
+      type: object
+      required:
+      - shortcode
+      properties:
+        shortcode:
+          $ref: '#/components/schemas/Shortcode'
     FamilyName:
       title: FamilyName
       type: object
