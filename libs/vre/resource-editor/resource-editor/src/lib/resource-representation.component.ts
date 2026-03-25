@@ -10,6 +10,7 @@ import { getFileValue } from './representations/get-file-value';
 import { RepresentationConstants } from './representations/representation-constants';
 import { StillImageComponent } from './representations/still-image/still-image.component';
 import { TextComponent } from './representations/text/text.component';
+import { VectorImageComponent } from './representations/vector-image/vector-image.component';
 import { VideoComponent } from './representations/video/video.component';
 import { ResourceRepresentationContainerComponent } from './resource-representation-container.component';
 
@@ -29,7 +30,7 @@ import { ResourceRepresentationContainerComponent } from './resource-representat
       }
       @case (representationConstants.svgStillImage) {
         <app-resource-representation-container>
-          <app-still-image #stillImage [compoundMode]="false" [resource]="resource.res" />
+          <app-vector-image #vectorImage [resource]="resource.res" />
         </app-resource-representation-container>
       }
       @case (representationConstants.document) {
@@ -72,6 +73,7 @@ import { ResourceRepresentationContainerComponent } from './resource-representat
     PdfDocumentComponent,
     StillImageComponent,
     TextComponent,
+    VectorImageComponent,
     VideoComponent,
     ResourceRepresentationContainerComponent,
   ],
