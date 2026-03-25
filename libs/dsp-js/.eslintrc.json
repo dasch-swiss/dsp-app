@@ -22,8 +22,7 @@
         "import/order": "off",
         "import/no-useless-path-segments": "off",
         "no-use-before-define": "off",
-        "no-multi-assign": "off",
-        "operator-assignment": "off"
+        "no-multi-assign": "off"
       }
     },
     {
