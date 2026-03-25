@@ -137,7 +137,7 @@ export class UsersEndpointAdmin extends Endpoint {
    * @param status The user's new status.
    */
   updateUserStatus(iri: string, status: boolean) {
-    return this.httpPut(`/iri/${encodeURIComponent(iri)}/Status`, { status: status }).pipe(
+    return this.httpPut(`/iri/${encodeURIComponent(iri)}/Status`, { status }).pipe(
       map(ajaxResponse => ApiResponseData.fromAjaxResponse(ajaxResponse, UserResponse, this.jsonConvert)),
       catchError(error => this.handleError(error))
     );
@@ -152,8 +152,8 @@ export class UsersEndpointAdmin extends Endpoint {
    */
   updateUserPassword(iri: string, requesterPassword: string, newPassword: string) {
     return this.httpPut(`/iri/${encodeURIComponent(iri)}/Password`, {
-      requesterPassword: requesterPassword,
-      newPassword: newPassword,
+      requesterPassword,
+      newPassword,
     }).pipe(
       map(ajaxResponse => ApiResponseData.fromAjaxResponse(ajaxResponse, UserResponse, this.jsonConvert)),
       catchError(error => this.handleError(error))
@@ -255,7 +255,7 @@ export class UsersEndpointAdmin extends Endpoint {
    * @param systemAdmin True if the user should be a system admin
    */
   updateUserSystemAdminMembership(iri: string, systemAdmin: boolean) {
-    return this.httpPut(`/iri/${encodeURIComponent(iri)}/SystemAdmin`, { systemAdmin: systemAdmin }).pipe(
+    return this.httpPut(`/iri/${encodeURIComponent(iri)}/SystemAdmin`, { systemAdmin }).pipe(
       map(ajaxResponse => ApiResponseData.fromAjaxResponse(ajaxResponse, UserResponse, this.jsonConvert)),
       catchError(error => this.handleError(error))
     );

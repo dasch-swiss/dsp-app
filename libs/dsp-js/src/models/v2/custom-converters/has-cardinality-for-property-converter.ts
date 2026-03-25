@@ -92,16 +92,16 @@ export class HasCardinalityForPropertyConverter implements JsonCustomConvert<IHa
         if (ele.hasOwnProperty(Constants.GuiOrder)) {
           guiOrder = ele[Constants.GuiOrder];
           hasCardForProp.push({
-            propertyIndex: propertyIndex,
-            cardinality: cardinality,
-            guiOrder: guiOrder,
-            isInherited: isInherited,
+            propertyIndex,
+            cardinality,
+            guiOrder,
+            isInherited,
           });
         } else {
           hasCardForProp.push({
-            propertyIndex: propertyIndex,
-            cardinality: cardinality,
-            isInherited: isInherited,
+            propertyIndex,
+            cardinality,
+            isInherited,
           });
         }
       }

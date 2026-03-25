@@ -756,7 +756,7 @@ export class OntologiesEndpointV2 extends Endpoint {
       error: 'Only one cardinality can be deleted at a time.',
       url: '/cardinalities',
       status: 400,
-      method: method,
+      method,
     };
     const error: DataError = new DataError('Bad request', response);
     return this.handleError(error);

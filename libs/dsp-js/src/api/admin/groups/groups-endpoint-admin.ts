@@ -69,7 +69,7 @@ export class GroupsEndpointAdmin extends Endpoint {
    * @param status The new status of the group.
    */
   updateGroupStatus(iri: string, status: boolean) {
-    return this.httpPut(`/${encodeURIComponent(iri)}/status`, { status: status }).pipe(
+    return this.httpPut(`/${encodeURIComponent(iri)}/status`, { status }).pipe(
       map(ajaxResponse => ApiResponseData.fromAjaxResponse(ajaxResponse, GroupResponse, this.jsonConvert)),
       catchError(error => this.handleError(error))
     );

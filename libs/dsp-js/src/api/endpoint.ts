@@ -219,8 +219,8 @@ export class Endpoint {
 
     const ajaxRequest: AjaxRequest = {
       url: apiUrl + this.path + path,
-      method: method,
-      body: body,
+      method,
+      body,
       async: true,
       withCredentials: true,
       headers: headers || {},
