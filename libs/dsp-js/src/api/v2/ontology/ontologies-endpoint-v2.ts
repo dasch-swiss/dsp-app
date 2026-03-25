@@ -205,7 +205,9 @@ export class OntologiesEndpointV2 extends Endpoint {
       return this.deleteOntologyComment(ontologyMetadata).pipe(
         mergeMap((res: OntologyMetadata) => {
           // update the lastModificationDate since the DELETE request changed it
-          ontologyMetadata.lastModificationDate = res.lastModificationDate!;
+          if (res.lastModificationDate) {
+            ontologyMetadata.lastModificationDate = res.lastModificationDate;
+          }
 
           // update the metadata, which in this case is only the label
           return this.updateOntologyMetadata(ontologyMetadata);

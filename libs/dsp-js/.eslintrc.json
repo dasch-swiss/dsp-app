@@ -10,7 +10,6 @@
         "createDefaultProgram": true
       },
       "rules": {
-        "@typescript-eslint/no-non-null-assertion": "off",
         "@typescript-eslint/no-namespace": "off",
         "@typescript-eslint/no-use-before-define": "off",
         "import/no-extraneous-dependencies": "off",
