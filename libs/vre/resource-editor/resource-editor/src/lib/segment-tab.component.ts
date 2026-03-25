@@ -1,21 +1,40 @@
-import { ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { ReadResource } from '@dasch-swiss/dsp-js';
 import { delay, Subscription } from 'rxjs';
-import { IncomingResourceHeaderComponent } from './incoming-resource-header.component';
+import { IncomingResourceToolbarComponent } from './incoming-resource-toolbar.component';
 import { PropertiesDisplayComponent } from './properties-display/properties-display.component';
+import { ResourceInfoBarComponent } from './resource-info-bar.component';
 import { Segment } from './segment-support/segment';
 import { SegmentsService } from './segment-support/segments.service';
 
 @Component({
   selector: 'app-segment-tab',
-  template: `@for (segment of segmentsService.segments; track segment) {
-    <div [id]="segment.resource.res.id" [class.active]="segment === selectedSegment">
-      <app-incoming-resource-header [resource]="resource" />
-      <app-properties-display [resource]="segment.resource" [parentResourceId]="resource.id" />
-    </div>
-  }`,
-  styles: ['.active {border: 1px solid}'],
-  imports: [IncomingResourceHeaderComponent, PropertiesDisplayComponent],
+  template: `
+    <mat-accordion>
+      @for (segment of segmentsService.segments; track segment) {
+        <mat-expansion-panel
+          #panel
+          [attr.data-segment-resource]="segment.resource.res.id"
+          [class.active]="segment === selectedSegment"
+          [expanded]="segment === selectedSegment"
+          data-cy="segment-border">
+          <mat-expansion-panel-header>
+            <div style="width: 100%; display: flex; align-items: center; justify-content: space-between">
+              <h3 class="label">{{ segment.label }}</h3>
+              <app-incoming-resource-toolbar [resource]="segment.resource.res" (click)="$event.stopPropagation()" />
+            </div>
+          </mat-expansion-panel-header>
+          @if (panel.expanded) {
+            <app-resource-info-bar [resource]="segment.resource.res" />
+            <app-properties-display [resource]="segment.resource" [parentResourceId]="resource.id" />
+          }
+        </mat-expansion-panel>
+      }
+    </mat-accordion>
+  `,
+  styles: ['.active {border: 1px solid} app-resource-info-bar {display: flex; flex-direction: row-reverse}'],
+  imports: [MatExpansionModule, IncomingResourceToolbarComponent, PropertiesDisplayComponent, ResourceInfoBarComponent],
 })
 export class SegmentTabComponent implements OnInit, OnDestroy {
   @Input({ required: true }) resource!: ReadResource;
@@ -43,7 +62,8 @@ export class SegmentTabComponent implements OnInit, OnDestroy {
   }
 
   private _openSegment(iri: string) {
-    document.getElementById(iri)?.scrollIntoView({
+    const element = document.querySelector(`[data-segment-resource="${iri}"]`) as HTMLElement;
+    element?.scrollIntoView({
       behavior: 'smooth',
       block: 'center',
     });
