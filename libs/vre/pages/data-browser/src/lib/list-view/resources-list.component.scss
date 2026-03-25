@@ -9,3 +9,9 @@ app-pager {
   text-align: center;
   border-radius: 10px;
 }
+
+.back-button-container {
+  padding: 16px;
+  display: flex;
+  flex-direction: row-reverse;
+}

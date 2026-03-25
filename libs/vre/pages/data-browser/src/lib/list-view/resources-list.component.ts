@@ -1,5 +1,9 @@
 import { Component, Input } from '@angular/core';
+import { MatAnchor } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ReadResource } from '@dasch-swiss/dsp-js';
+import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { ResourceResultService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { PagerComponent } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -7,7 +11,16 @@ import { ResourceListComponent } from './resource-list.component';
 
 @Component({
   selector: 'app-resources-list',
-  template: ` @if (resourceResultService.numberOfResults > resourceResultService.MAX_RESULTS_PER_PAGE) {
+  template: `
+    @if (isAdvancedSearchContext) {
+      <div class="back-button-container">
+        <a mat-stroked-button (click)="navigateBackToSearchForm()">
+          <mat-icon>chevron_left</mat-icon>{{ 'pages.dataBrowser.resourcesList.backToSearchForm' | translate }}
+        </a>
+      </div>
+    }
+
+    @if (resourceResultService.numberOfResults > resourceResultService.MAX_RESULTS_PER_PAGE) {
       <app-pager
         (pageIndexChanged)="updatePageIndex($event)"
         [numberOfAllResults]="resourceResultService.numberOfResults" />
@@ -19,17 +32,33 @@ import { ResourceListComponent } from './resource-list.component';
       </div>
     }
 
-    <app-resource-list [resources]="resources" [showProjectShortname]="showProjectShortname" />`,
+    <app-resource-list [resources]="resources" [showProjectShortname]="showProjectShortname" />
+  `,
   styleUrls: ['./resources-list.component.scss'],
-  imports: [PagerComponent, ResourceListComponent, TranslatePipe],
+  imports: [MatAnchor, MatIcon, PagerComponent, ResourceListComponent, TranslatePipe],
 })
 export class ResourcesListComponent {
   @Input({ required: true }) resources!: ReadResource[];
   @Input() showProjectShortname = false;
 
-  constructor(public resourceResultService: ResourceResultService) {}
+  readonly isAdvancedSearchContext: boolean;
+
+  constructor(
+    public resourceResultService: ResourceResultService,
+    private readonly _router: Router,
+    private readonly _route: ActivatedRoute
+  ) {
+    this.isAdvancedSearchContext = this._router.url.includes(`${RouteConstants.advancedSearch}/results`);
+  }
 
   updatePageIndex(index: number) {
     this.resourceResultService.updatePageIndex(index);
+  }
+
+  navigateBackToSearchForm() {
+    const projectUuid = this._route.parent?.snapshot.params['uuid'];
+    this._router.navigate([RouteConstants.project, projectUuid, RouteConstants.advancedSearch], {
+      queryParams: { restore: true },
+    });
   }
 }

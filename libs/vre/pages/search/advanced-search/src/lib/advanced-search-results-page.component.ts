@@ -1,20 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { ActivatedRoute, RouterLink } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
+import { ActivatedRoute } from '@angular/router';
 import { AdvancedSearchResultsComponent } from './advanced-search-results.component';
 import { QueryExecutionService } from './service/query-execution.service';
 
 @Component({
   selector: 'app-advanced-search-results-page',
   template: `
-    <div class="results-header">
-      <a mat-stroked-button [routerLink]="['..']" [queryParams]="{ restore: true }">
-        <mat-icon>arrow_back</mat-icon>
-        {{ 'pages.dataBrowser.resourcesList.backToSearchForm' | translate }}
-      </a>
-    </div>
     @if (query) {
       <app-advanced-search-results [query]="query" />
     }
@@ -25,12 +16,9 @@ import { QueryExecutionService } from './service/query-execution.service';
         display: block;
         height: 100%;
       }
-      .results-header {
-        padding: 16px;
-      }
     `,
   ],
-  imports: [AdvancedSearchResultsComponent, MatButtonModule, MatIconModule, RouterLink, TranslateModule],
+  imports: [AdvancedSearchResultsComponent],
   providers: [QueryExecutionService],
 })
 export class AdvancedSearchResultsPageComponent implements OnInit {
