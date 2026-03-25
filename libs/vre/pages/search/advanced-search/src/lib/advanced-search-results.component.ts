@@ -28,7 +28,7 @@ import { QueryExecutionService } from './service/query-execution.service';
 })
 export class AdvancedSearchResultsComponent implements OnChanges {
   @Input({ required: true }) query!: string;
-  querySubject = new BehaviorSubject<string | null>(null);
+  private readonly querySubject = new BehaviorSubject<string | null>(null);
 
   readonly resources$ = this.querySubject.pipe(
     filterNull(),
@@ -73,7 +73,7 @@ export class AdvancedSearchResultsComponent implements OnChanges {
     return this._dspApiConnection.v2.search.doExtendedSearch(query);
   }
 
-  private _getQuery(query: string): any {
+  private _getQuery(query: string): string {
     return query.substring(0, query.search('OFFSET'));
   }
 

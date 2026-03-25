@@ -32,7 +32,7 @@ import { TranslateModule } from '@ngx-translate/core';
 })
 export class AdvancedSearchHeaderComponent {
   @Input({ required: true }) isVerticalDirection: boolean | undefined;
-  @Output() toggleDirection = new EventEmitter<any>();
+  @Output() toggleDirection = new EventEmitter<void>();
 
   get isVertical() {
     return this.isVerticalDirection === true;

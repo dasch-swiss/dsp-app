@@ -351,6 +351,9 @@
         "exactPhrases": "Utilisez des guillemets pour des phrases exactes : \"down the rabbit hole\"",
         "booleanSearch": "Utilisez AND, OR, NOT pour des recherches booléennes : Alice AND Wonderland",
         "wildcards": "Utilisez des caractères génériques : Alice* trouvera Alice, Alices, etc."
+      },
+      "advancedSearch": {
+        "allResourceClasses": "Toutes les ressources"
       }
     },
     "dataBrowser": {

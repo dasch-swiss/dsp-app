@@ -8,10 +8,10 @@ import {
   Input,
   OnChanges,
   Output,
-  SimpleChanges,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatSelectModule } from '@angular/material/select';
+import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject } from 'rxjs';
 import { IriLabelPair, Predicate } from '../../../../model';
 import { OntologyDataService } from '../../../../service/ontology-data.service';
@@ -19,7 +19,7 @@ import { OntologyDataService } from '../../../../service/ontology-data.service';
 @Component({
   selector: 'app-resource-value',
   standalone: true,
-  imports: [CommonModule, MatSelectModule],
+  imports: [CommonModule, MatSelectModule, TranslateModule],
   template: `
     <mat-form-field class="width-100-percent" appearance="fill">
       <mat-label>Resource Class</mat-label>
@@ -31,7 +31,11 @@ import { OntologyDataService } from '../../../../service/ontology-data.service';
         required>
         @for (resClass of availableResources$ | async; track resClass.iri) {
           <mat-option [attr.data-cy]="resClass.label" [value]="resClass">
-            {{ resClass.label }}
+            @if (resClass.iri === '') {
+              {{ 'pages.search.advancedSearch.allResourceClasses' | translate }}
+            } @else {
+              {{ resClass.label }}
+            }
           </mat-option>
         }
       </mat-select>

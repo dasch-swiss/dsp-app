@@ -351,6 +351,9 @@
         "exactPhrases": "Verwenden Sie Anführungszeichen für exakte Phrasen: \"down the rabbit hole\"",
         "booleanSearch": "Verwenden Sie AND, OR, NOT für boolesche Suchen: Alice AND Wonderland",
         "wildcards": "Verwenden Sie Platzhalter: Alice* findet Alice, Alices, etc."
+      },
+      "advancedSearch": {
+        "allResourceClasses": "Alle Ressourcen"
       }
     },
     "dataBrowser": {

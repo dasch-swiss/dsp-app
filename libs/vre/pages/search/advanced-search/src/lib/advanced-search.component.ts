@@ -62,7 +62,7 @@ export class AdvancedSearchComponent implements OnInit {
   @Input({ required: true }) isVerticalDirection: boolean | undefined;
   @Input() queryToLoad?: string;
   @Input() restoreState = false;
-  @Output() toggleDirection = new EventEmitter<any>();
+  @Output() toggleDirection = new EventEmitter<void>();
   @Output() gravsearchQuery = new EventEmitter<string>();
 
   searchState: SearchStateService = inject(SearchStateService);

@@ -110,7 +110,7 @@ export class SearchStateStorageService {
 
     const keys = Object.keys(previousSearches);
     if (keys.length > this.MAX_STORED_SEARCHES) {
-      // only keep the 10 most recent searches, remove the oldest if necessary
+      // only keep the 20 most recent searches, remove the oldest if necessary
       const dates = keys.map(key => {
         const entry = previousSearches[key] as any;
         return { key, dateOfSnapshot: entry?.dateOfSnapshot || '' };
