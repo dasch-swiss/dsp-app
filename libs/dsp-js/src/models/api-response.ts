@@ -2,16 +2,16 @@
  * @category Response
  */
 export abstract class ApiResponse {
-  ///////////////
+  /// ////////////
   // CONSTANTS //
-  ///////////////
+  /// ////////////
 
   // <editor-fold desc="">
   // </editor-fold>
 
-  ////////////////
+  /// /////////////
   // PROPERTIES //
-  ////////////////
+  /// /////////////
 
   // <editor-fold desc="">
 
@@ -32,16 +32,16 @@ export abstract class ApiResponse {
 
   // </editor-fold>
 
-  /////////////////
+  /// //////////////
   // CONSTRUCTOR //
-  /////////////////
+  /// //////////////
 
   // <editor-fold desc="">
   // </editor-fold>
 
-  /////////////
+  /// //////////
   // METHODS //
-  /////////////
+  /// //////////
 
   // <editor-fold desc="">
   // </editor-fold>

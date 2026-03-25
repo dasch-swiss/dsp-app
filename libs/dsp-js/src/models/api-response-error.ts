@@ -7,16 +7,16 @@ import { ApiResponseData } from './api-response-data';
  * @category Response
  */
 export class ApiResponseError extends ApiResponse {
-  ///////////////
+  /// ////////////
   // CONSTANTS //
-  ///////////////
+  /// ////////////
 
   // <editor-fold desc="">
   // </editor-fold>
 
-  ////////////////
+  /// /////////////
   // PROPERTIES //
-  ////////////////
+  /// /////////////
 
   // <editor-fold desc="">
 
@@ -27,9 +27,9 @@ export class ApiResponseError extends ApiResponse {
 
   // </editor-fold>
 
-  /////////////////
+  /// //////////////
   // CONSTRUCTOR //
-  /////////////////
+  /// //////////////
 
   // <editor-fold desc="">
 
@@ -42,9 +42,9 @@ export class ApiResponseError extends ApiResponse {
 
   // </editor-fold>
 
-  /////////////
+  /// //////////
   // METHODS //
-  /////////////
+  /// //////////
 
   // <editor-fold desc="">
 
