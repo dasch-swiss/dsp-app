@@ -10,10 +10,10 @@ import { CreateValue } from './create-value';
 @JsonObject('CreateIntervalValue')
 export class CreateIntervalValue extends CreateValue implements IBaseIntervalValue {
   @JsonProperty(Constants.IntervalValueHasStart, DecimalConverter)
-  start: number = 0;
+  start = 0;
 
   @JsonProperty(Constants.IntervalValueHasEnd, DecimalConverter)
-  end: number = 0;
+  end = 0;
 
   constructor() {
     super(Constants.IntervalValue);

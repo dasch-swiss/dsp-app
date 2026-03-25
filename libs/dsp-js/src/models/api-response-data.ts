@@ -9,16 +9,16 @@ import { DataError } from './data-error';
  * @category Response
  */
 export class ApiResponseData<T> extends ApiResponse {
-  ///////////////
+  /// ////////////
   // CONSTANTS //
-  ///////////////
+  /// ////////////
 
   // <editor-fold desc="">
   // </editor-fold>
 
-  ////////////////
+  /// /////////////
   // PROPERTIES //
-  ////////////////
+  /// /////////////
 
   // <editor-fold desc="">
 
@@ -34,9 +34,9 @@ export class ApiResponseData<T> extends ApiResponse {
 
   // </editor-fold>
 
-  /////////////////
+  /// //////////////
   // CONSTRUCTOR //
-  /////////////////
+  /// //////////////
 
   // <editor-fold desc="">
 
@@ -49,9 +49,9 @@ export class ApiResponseData<T> extends ApiResponse {
 
   // </editor-fold>
 
-  /////////////
+  /// //////////
   // METHODS //
-  /////////////
+  /// //////////
 
   // <editor-fold desc="">
 

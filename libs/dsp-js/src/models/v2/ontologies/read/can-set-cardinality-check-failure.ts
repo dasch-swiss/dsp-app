@@ -6,14 +6,14 @@ import {
   JsonConvert,
   OperationMode,
   ValueCheckingMode,
+  PropertyMatchingRule,
 } from 'json2typescript';
-import { PropertyMatchingRule } from 'json2typescript';
 import { Constants } from '../../Constants';
 
 @JsonObject('ResourceClass')
 class ResourceClass {
   @JsonProperty('@id', String)
-  id: string = '';
+  id = '';
 }
 
 @JsonConverter

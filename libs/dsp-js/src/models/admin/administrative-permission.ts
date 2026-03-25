@@ -12,5 +12,5 @@ export class AdministrativePermission extends AdminDoapBase {
    * The group that the permission applies to.
    */
   @JsonProperty('forGroup', String)
-  forGroup: string = '';
+  forGroup = '';
 }

@@ -9,7 +9,7 @@ import { CreateValue } from './create-value';
 @JsonObject('CreateIntValue')
 export class CreateIntValue extends CreateValue implements IBaseIntValue {
   @JsonProperty(Constants.IntValueAsInt, Number)
-  int: number = 0;
+  int = 0;
 
   constructor() {
     super(Constants.IntValue);

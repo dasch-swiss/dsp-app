@@ -11,12 +11,12 @@ export class RepositionChildNodeRequest {
    * The IRI of the parent node which the child node will be moved to.
    */
   @JsonProperty('parentNodeIri', String)
-  parentNodeIri: string = '';
+  parentNodeIri = '';
 
   /**
    * The position the child node should be moved to.
    * -1 represents the end of the list.
    */
   @JsonProperty('position', Number)
-  position: number = -1;
+  position = -1;
 }

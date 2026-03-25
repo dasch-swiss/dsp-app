@@ -2,46 +2,46 @@
  * @category Response
  */
 export abstract class ApiResponse {
-  ///////////////
+  /// ////////////
   // CONSTANTS //
-  ///////////////
+  /// ////////////
 
   // <editor-fold desc="">
   // </editor-fold>
 
-  ////////////////
+  /// /////////////
   // PROPERTIES //
-  ////////////////
+  /// /////////////
 
   // <editor-fold desc="">
 
   /**
    * Original HTTP method
    */
-  method: string = '';
+  method = '';
 
   /**
    * Request URL
    */
-  url: string = '';
+  url = '';
 
   /**
    * Status number
    */
-  status: number = 0;
+  status = 0;
 
   // </editor-fold>
 
-  /////////////////
+  /// //////////////
   // CONSTRUCTOR //
-  /////////////////
+  /// //////////////
 
   // <editor-fold desc="">
   // </editor-fold>
 
-  /////////////
+  /// //////////
   // METHODS //
-  /////////////
+  /// //////////
 
   // <editor-fold desc="">
   // </editor-fold>

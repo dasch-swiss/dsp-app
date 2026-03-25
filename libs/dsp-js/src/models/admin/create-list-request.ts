@@ -31,5 +31,5 @@ export class CreateListRequest {
    * The IRI of a project.
    */
   @JsonProperty('projectIri', String)
-  projectIri: string = '';
+  projectIri = '';
 }

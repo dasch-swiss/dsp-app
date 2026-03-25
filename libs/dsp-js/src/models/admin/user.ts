@@ -11,25 +11,25 @@ export class User {
    * The email address and login name of a user.
    */
   @JsonProperty('email', String)
-  email: string = '';
+  email = '';
 
   /**
    * The user's family name.
    */
   @JsonProperty('familyName', String)
-  familyName: string = '';
+  familyName = '';
 
   /**
    * The user's given name.
    */
   @JsonProperty('givenName', String)
-  givenName: string = '';
+  givenName = '';
 
   /**
    * The ISO 639-1 code of the user's preferred language.
    */
   @JsonProperty('lang', String)
-  lang: string = '';
+  lang = '';
 
   /**
    * An encrypted credential for access
@@ -41,7 +41,7 @@ export class User {
    * The status of the user / group / project. It is false if the entity has been deactivated (deleted).
    */
   @JsonProperty('status', Boolean)
-  status: boolean = false;
+  status = false;
 
   /**
    * Exists and is true if the user is a member of the SystemAdmin group.
@@ -53,5 +53,5 @@ export class User {
    * The username and login name of a user.
    */
   @JsonProperty('username', String)
-  username: string = '';
+  username = '';
 }

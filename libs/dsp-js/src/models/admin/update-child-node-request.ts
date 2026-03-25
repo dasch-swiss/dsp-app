@@ -13,13 +13,13 @@ export class UpdateChildNodeRequest {
    * Provides a list IRI.
    */
   @JsonProperty('listIri', String)
-  listIri: string = '';
+  listIri = '';
 
   /**
    * The IRI of a project.
    */
   @JsonProperty('projectIri', String)
-  projectIri: string = '';
+  projectIri = '';
 
   /**
    * The name of the node.

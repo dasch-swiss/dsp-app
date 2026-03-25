@@ -10,8 +10,8 @@ import { ReadValue } from './read-value';
 @JsonObject('ReadIntervalValue')
 export class ReadIntervalValue extends ReadValue implements IBaseIntervalValue {
   @JsonProperty(Constants.IntervalValueHasStart, DecimalConverter)
-  start: number = 0;
+  start = 0;
 
   @JsonProperty(Constants.IntervalValueHasEnd, DecimalConverter)
-  end: number = 0;
+  end = 0;
 }
