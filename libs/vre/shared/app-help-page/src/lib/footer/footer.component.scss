@@ -1,22 +1,116 @@
 @use "config" as *;
 
 footer {
-  padding: 32px 0;
-  background: $primary_900;
+  background: $cool_gray_800;
   color: $white;
 }
 
-a {
-  color: $white !important;
-  font-weight: bold;
+.footer-inner {
+  max-width: 80rem;
+  margin: 0 auto;
+  padding: 48px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
 }
 
-.block {
-  flex: 1;
-  padding: 0 32px;
+// Navigation links
+.footer-nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+
+  a {
+    padding: 8px 20px;
+    color: $white;
+    text-decoration: none;
+    font-size: 1rem;
+    line-height: 1.5;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
 }
 
-.center-block a {
-  display: block;
-  margin-bottom: 16px;
+// Downloads section
+.footer-downloads {
+  width: 100%;
+  border-top: 1px solid $cool_gray_700;
+  padding-top: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.downloads-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: $white;
+}
+
+.downloads-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px 24px;
+
+  a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    color: $white;
+    text-decoration: none;
+    font-size: 0.875rem;
+
+    &:hover {
+      color: $cool_gray_300;
+    }
+
+    svg {
+      flex-shrink: 0;
+    }
+  }
+}
+
+// Social media icons
+.footer-socials {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+
+  a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    color: $white;
+    text-decoration: none;
+    opacity: 1;
+    transition: opacity 0.2s;
+
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+}
+
+// Copyright
+.footer-copyright {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: $cool_gray_400;
+  font-size: 0.75rem;
+  line-height: 1;
+
+  img {
+    flex-shrink: 0;
+  }
 }
