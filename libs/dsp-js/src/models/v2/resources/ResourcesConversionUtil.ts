@@ -399,7 +399,7 @@ export namespace ResourcesConversionUtil {
       }
 
       case Constants.ListValue: {
-        const listValue = (value = handleSimpleValue(valueJsonld, ReadListValue, jsonConvert));
+        const listValue = handleSimpleValue(valueJsonld, ReadListValue, jsonConvert);
         value = listValue.pipe(
           mergeMap((listVal: ReadListValue) => {
             // get referred list node's label

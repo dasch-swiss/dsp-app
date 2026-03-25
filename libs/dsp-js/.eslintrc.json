@@ -17,8 +17,7 @@
         "@typescript-eslint/ban-types": "off",
         "import/no-extraneous-dependencies": "off",
         "import/extensions": "off",
-        "no-use-before-define": "off",
-        "no-multi-assign": "off"
+        "no-use-before-define": "off"
       }
     },
     {
