@@ -36,7 +36,7 @@ export namespace MockOntology {
         break;
       }
       default: {
-        throw new Error('Ontology not supported: ' + ontoIri);
+        throw new Error(`Ontology not supported: ${ontoIri}`);
       }
     }
 

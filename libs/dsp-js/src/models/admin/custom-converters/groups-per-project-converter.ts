@@ -21,7 +21,7 @@ export class GroupsPerProjectConverter implements JsonCustomConvert<{ [key: stri
         if (CustomConverterUtils.isString(element)) {
           return element;
         } else {
-          throw new Error('Expected string, got ' + element);
+          throw new Error(`Expected string, got ${element}`);
         }
       });
     });

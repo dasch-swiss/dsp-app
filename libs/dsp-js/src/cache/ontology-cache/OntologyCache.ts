@@ -76,7 +76,7 @@ export class OntologyCache extends GenericCache<ReadOntology> {
   getResourceClassDefinition(resourceClassIri: string) {
     const ontoIri = OntologyConversionUtil.getOntologyIriFromEntityIri(resourceClassIri, this.knoraApiConfig);
 
-    if (ontoIri.length !== 1) throw Error('Invalid resource class Iri ' + resourceClassIri);
+    if (ontoIri.length !== 1) throw Error(`Invalid resource class Iri ${resourceClassIri}`);
 
     const ontology: Observable<Map<string, ReadOntology>> = this.getOntology(ontoIri[0]);
 

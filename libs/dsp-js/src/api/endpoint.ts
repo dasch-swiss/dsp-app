@@ -153,13 +153,13 @@ export class Endpoint {
       responseError = error.response;
 
       if (this.knoraApiConfig.logErrors) {
-        console.error('Parse Error in Knora API request: ' + responseError.error);
+        console.error(`Parse Error in Knora API request: ${responseError.error}`);
       }
     } else {
       responseError = ApiResponseError.fromAjaxError(error);
 
       if (this.knoraApiConfig.logErrors) {
-        console.error('Ajax Error in Knora API request: ' + responseError.method + ' ' + responseError.url);
+        console.error(`Ajax Error in Knora API request: ${responseError.method} ${responseError.url}`);
       }
     }
 
@@ -180,7 +180,7 @@ export class Endpoint {
       // NOTE: I think this is not needed anymore because with the `withCredentials = true`
       // the cookie will always be sent with each request.
       // But for the moment I'll keep it
-      header['Authorization'] = 'Bearer ' + this.jsonWebToken;
+      header['Authorization'] = `Bearer ${this.jsonWebToken}`;
     }
 
     if (contentType !== undefined) {

@@ -19,7 +19,7 @@ export class ListsEndpointV2 extends Endpoint {
    */
   getNode(nodeIri: string) {
     // TODO: Do not hard-code the URL and http call params, generate this from Knora
-    return this.httpGet('/node/' + encodeURIComponent(nodeIri)).pipe(
+    return this.httpGet(`/node/${encodeURIComponent(nodeIri)}`).pipe(
       mergeMap(ajaxResponse => {
         // TODO: @rosenth Adapt context object
         // TODO: adapt getOntologyIriFromEntityIri
@@ -41,7 +41,7 @@ export class ListsEndpointV2 extends Endpoint {
    */
   getList(rootNodeIri: string) {
     // TODO: Do not hard-code the URL and http call params, generate this from Knora
-    return this.httpGet('/lists/' + encodeURIComponent(rootNodeIri)).pipe(
+    return this.httpGet(`/lists/${encodeURIComponent(rootNodeIri)}`).pipe(
       mergeMap(ajaxResponse => {
         // TODO: @rosenth Adapt context object
         // TODO: adapt getOntologyIriFromEntityIri

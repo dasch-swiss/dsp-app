@@ -43,7 +43,7 @@ export class GroupsEndpointAdmin extends Endpoint {
    * @param iri The IRI of the group.
    */
   getGroupByIri(iri: string) {
-    return this.httpGet('/' + encodeURIComponent(iri)).pipe(
+    return this.httpGet(`/${encodeURIComponent(iri)}`).pipe(
       map(ajaxResponse => ApiResponseData.fromAjaxResponse(ajaxResponse, GroupResponse, this.jsonConvert)),
       catchError(error => this.handleError(error))
     );
@@ -56,7 +56,7 @@ export class GroupsEndpointAdmin extends Endpoint {
    * @param groupInfo The group information to be updated.
    */
   updateGroup(iri: string, groupInfo: UpdateGroupRequest) {
-    return this.httpPut('/' + encodeURIComponent(iri), this.jsonConvert.serializeObject(groupInfo)).pipe(
+    return this.httpPut(`/${encodeURIComponent(iri)}`, this.jsonConvert.serializeObject(groupInfo)).pipe(
       map(ajaxResponse => ApiResponseData.fromAjaxResponse(ajaxResponse, GroupResponse, this.jsonConvert)),
       catchError(error => this.handleError(error))
     );
@@ -69,7 +69,7 @@ export class GroupsEndpointAdmin extends Endpoint {
    * @param status The new status of the group.
    */
   updateGroupStatus(iri: string, status: boolean) {
-    return this.httpPut('/' + encodeURIComponent(iri) + '/status', { status: status }).pipe(
+    return this.httpPut(`/${encodeURIComponent(iri)}/status`, { status: status }).pipe(
       map(ajaxResponse => ApiResponseData.fromAjaxResponse(ajaxResponse, GroupResponse, this.jsonConvert)),
       catchError(error => this.handleError(error))
     );
@@ -81,7 +81,7 @@ export class GroupsEndpointAdmin extends Endpoint {
    * @param iri The IRI of the group.
    */
   deleteGroup(iri: string) {
-    return this.httpDelete('/' + encodeURIComponent(iri)).pipe(
+    return this.httpDelete(`/${encodeURIComponent(iri)}`).pipe(
       map(ajaxResponse => ApiResponseData.fromAjaxResponse(ajaxResponse, GroupResponse, this.jsonConvert)),
       catchError(error => this.handleError(error))
     );
@@ -93,7 +93,7 @@ export class GroupsEndpointAdmin extends Endpoint {
    * @param iri The IRI of the group.
    */
   getGroupMembers(iri: string) {
-    return this.httpGet('/' + encodeURIComponent(iri) + '/members').pipe(
+    return this.httpGet(`/${encodeURIComponent(iri)}/members`).pipe(
       map(ajaxResponse => ApiResponseData.fromAjaxResponse(ajaxResponse, MembersResponse, this.jsonConvert)),
       catchError(error => this.handleError(error))
     );

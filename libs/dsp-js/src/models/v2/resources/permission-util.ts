@@ -44,7 +44,7 @@ export namespace PermissionUtil {
     const givenPermIndex = permissionHierarchy.indexOf(highestPermission);
 
     if (givenPermIndex === -1) {
-      throw new Error('Invalid permission given ' + highestPermission);
+      throw new Error(`Invalid permission given ${highestPermission}`);
     }
 
     // return highest permission with all implied permissions

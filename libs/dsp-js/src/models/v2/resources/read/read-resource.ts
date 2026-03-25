@@ -169,7 +169,7 @@ export class ReadResource extends ReadWriteResource {
       if (TypeGuard.typeGuard(val, valueType)) {
         return val as T;
       } else {
-        throw new Error('Cannot cast to type ' + valueType);
+        throw new Error(`Cannot cast to type ${valueType}`);
       }
     });
   }

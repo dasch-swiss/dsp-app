@@ -14,7 +14,7 @@ export class KnoraApiConfig {
    * The full API URL
    */
   get apiUrl(): string {
-    return this.apiProtocol + '://' + this.apiHost + (this.apiPort !== null ? ':' + this.apiPort : '') + this.apiPath;
+    return `${this.apiProtocol}://${this.apiHost}${this.apiPort !== null ? `:${this.apiPort}` : ''}${this.apiPath}`;
   }
 
   /**

@@ -28,14 +28,14 @@ export namespace OntologyConversionUtil {
 
     // set `http` regardless of  knoraApiConfig.apiProtocol
     // include port only when running locally
-    let projectEntityBase = 'http://' + knoraApiConfig.apiHost;
+    let projectEntityBase = `http://${knoraApiConfig.apiHost}`;
     if (
       knoraApiConfig.apiPort !== null &&
       (knoraApiConfig.apiHost === 'localhost' || knoraApiConfig.apiHost === '0.0.0.0')
     ) {
-      projectEntityBase = projectEntityBase + ':' + knoraApiConfig.apiPort;
+      projectEntityBase = `${projectEntityBase}:${knoraApiConfig.apiPort}`;
     }
-    projectEntityBase = projectEntityBase + '/ontology/';
+    projectEntityBase = `${projectEntityBase}/ontology/`;
 
     // Check if the given entity Iri belongs to knora-api or a project ontology.
     // Ignore external entity Iris.

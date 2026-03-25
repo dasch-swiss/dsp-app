@@ -52,7 +52,7 @@ export class ResourcesEndpointV2 extends Endpoint {
     // make URL containing resource Iris as segments
     const resIris: string = resourceIris
       .map((resIri: string) => {
-        return '/' + encodeURIComponent(resIri) + (version ? '?version=' + version : '');
+        return `/${encodeURIComponent(resIri)}${version ? `?version=${version}` : ''}`;
       })
       .reduce((acc, currentValue) => {
         return acc + currentValue;
@@ -116,7 +116,7 @@ export class ResourcesEndpointV2 extends Endpoint {
     propIris.forEach(propIri => {
       // check that array contains least one value
       if (resource.properties[propIri].length === 0) {
-        throw new Error('No values defined for ' + propIri);
+        throw new Error(`No values defined for ${propIri}`);
       }
 
       // if array contains only one element, serialize as an object

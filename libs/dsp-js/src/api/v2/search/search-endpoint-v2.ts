@@ -37,15 +37,15 @@ export class SearchEndpointV2 extends Endpoint {
 
     if (params !== undefined) {
       if (params.limitToResourceClass !== undefined) {
-        paramsString += '&limitToResourceClass=' + encodeURIComponent(params.limitToResourceClass);
+        paramsString += `&limitToResourceClass=${encodeURIComponent(params.limitToResourceClass)}`;
       }
 
       if (params.limitToProject !== undefined) {
-        paramsString += '&limitToProject=' + encodeURIComponent(params.limitToProject);
+        paramsString += `&limitToProject=${encodeURIComponent(params.limitToProject)}`;
       }
 
       if (params.limitToStandoffClass !== undefined) {
-        paramsString += '&limitToStandoffClass=' + encodeURIComponent(params.limitToStandoffClass);
+        paramsString += `&limitToStandoffClass=${encodeURIComponent(params.limitToStandoffClass)}`;
       }
     }
 
@@ -63,11 +63,11 @@ export class SearchEndpointV2 extends Endpoint {
 
     if (params !== undefined) {
       if (params.limitToResourceClass !== undefined) {
-        paramsString += '&limitToResourceClass=' + encodeURIComponent(params.limitToResourceClass);
+        paramsString += `&limitToResourceClass=${encodeURIComponent(params.limitToResourceClass)}`;
       }
 
       if (params.limitToProject !== undefined) {
-        paramsString += '&limitToProject=' + encodeURIComponent(params.limitToProject);
+        paramsString += `&limitToProject=${encodeURIComponent(params.limitToProject)}`;
       }
     }
 
@@ -90,7 +90,7 @@ export class SearchEndpointV2 extends Endpoint {
     const tempListNodeCache = new ListNodeV2Cache(this.v2Endpoint);
 
     return this.httpGet(
-      '/search/' + encodeURIComponent(searchTerm) + SearchEndpointV2.encodeFulltextParams(offset, params)
+      `/search/${encodeURIComponent(searchTerm)}${SearchEndpointV2.encodeFulltextParams(offset, params)}`
     ).pipe(
       mergeMap(ajaxResponse => {
         // console.log(JSON.stringify(ajaxResponse.response));
@@ -124,7 +124,7 @@ export class SearchEndpointV2 extends Endpoint {
     // TODO: Do not hard-code the URL and http call params, generate this from Knora
 
     return this.httpGet(
-      '/search/count/' + encodeURIComponent(searchTerm) + SearchEndpointV2.encodeFulltextParams(offset, params)
+      `/search/count/${encodeURIComponent(searchTerm)}${SearchEndpointV2.encodeFulltextParams(offset, params)}`
     ).pipe(
       mergeMap(ajaxResponse => {
         // console.log(JSON.stringify(ajaxResponse.response));
@@ -328,7 +328,7 @@ export class SearchEndpointV2 extends Endpoint {
     const tempListNodeCache = new ListNodeV2Cache(this.v2Endpoint);
 
     return this.httpGet(
-      '/searchbylabel/' + encodeURIComponent(searchTerm) + SearchEndpointV2.encodeLabelParams(offset, params)
+      `/searchbylabel/${encodeURIComponent(searchTerm)}${SearchEndpointV2.encodeLabelParams(offset, params)}`
     ).pipe(
       mergeMap(ajaxResponse => {
         // console.log(JSON.stringify(ajaxResponse.response));
@@ -359,7 +359,7 @@ export class SearchEndpointV2 extends Endpoint {
    */
   doSearchByLabelCountQuery(searchTerm: string, params?: ILabelSearchParams) {
     return this.httpGet(
-      '/searchbylabel/count/' + encodeURIComponent(searchTerm) + SearchEndpointV2.encodeLabelParams(0, params)
+      `/searchbylabel/count/${encodeURIComponent(searchTerm)}${SearchEndpointV2.encodeLabelParams(0, params)}`
     ).pipe(
       mergeMap(ajaxResponse => {
         // console.log(JSON.stringify(ajaxResponse.response));

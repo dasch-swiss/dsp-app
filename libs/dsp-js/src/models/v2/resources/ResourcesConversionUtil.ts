@@ -398,7 +398,7 @@ export namespace ResourcesConversionUtil {
         const intervalVal = handleSimpleValue(valueJsonld, ReadIntervalValue, jsonConvert);
         value = intervalVal.pipe(
           map((val: ReadIntervalValue) => {
-            val.strval = val.start.toString() + ' - ' + val.end.toString();
+            val.strval = `${val.start.toString()} - ${val.end.toString()}`;
             return val;
           })
         );

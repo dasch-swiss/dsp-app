@@ -50,7 +50,7 @@ export class ValuesEndpointV2 extends Endpoint {
     const tempOntologyCache = new OntologyCache(this.knoraApiConfig, this.v2Endpoint);
     const tempListNodeCache = new ListNodeV2Cache(this.v2Endpoint);
 
-    return this.httpGet('/' + encodeURIComponent(resourceIri) + '/' + encodeURIComponent(valueUuid)).pipe(
+    return this.httpGet(`/${encodeURIComponent(resourceIri)}/${encodeURIComponent(valueUuid)}`).pipe(
       mergeMap(ajaxResponse => {
         // console.log(JSON.stringify(ajaxResponse.response));
         // TODO: @rosenth Adapt context object

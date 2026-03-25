@@ -77,7 +77,7 @@ export class OntologiesEndpointV2 extends Endpoint {
     }
 
     // TODO: Do not hard-code the URL and http call params, generate this from Knora
-    return this.httpGet('/allentities/' + encodeURIComponent(ontologyIri) + allLangSegment).pipe(
+    return this.httpGet(`/allentities/${encodeURIComponent(ontologyIri)}${allLangSegment}`).pipe(
       mergeMap(ajaxResponse => {
         // TODO: @rosenth Adapt context object
         // TODO: adapt getOntologyIriFromEntityIri
@@ -98,7 +98,7 @@ export class OntologiesEndpointV2 extends Endpoint {
    * @param projectIri the IRI of the project.
    */
   getOntologiesByProjectIri(projectIri: string) {
-    return this.httpGet('/metadata/' + encodeURIComponent(projectIri)).pipe(
+    return this.httpGet(`/metadata/${encodeURIComponent(projectIri)}`).pipe(
       mergeMap(ajaxResponse => {
         // TODO: @rosenth Adapt context object
         // TODO: adapt getOntologyIriFromEntityIri
@@ -142,7 +142,7 @@ export class OntologiesEndpointV2 extends Endpoint {
    * @param ontologyIri the Iri of the ontology to be checked.
    */
   canDeleteOntology(ontologyIri: string) {
-    return this.httpGet('/candeleteontology/' + encodeURIComponent(ontologyIri)).pipe(
+    return this.httpGet(`/candeleteontology/${encodeURIComponent(ontologyIri)}`).pipe(
       mergeMap(ajaxResponse => {
         // TODO: @rosenth Adapt context object
         // TODO: adapt getOntologyIriFromEntityIri
@@ -163,11 +163,9 @@ export class OntologiesEndpointV2 extends Endpoint {
    * @param ontology the ontology to be deleted.
    */
   deleteOntology(ontology: DeleteOntology) {
-    const path =
-      '/' +
-      encodeURIComponent(ontology.id) +
-      '?lastModificationDate=' +
-      encodeURIComponent(ontology.lastModificationDate);
+    const path = `/${encodeURIComponent(ontology.id)}?lastModificationDate=${encodeURIComponent(
+      ontology.lastModificationDate
+    )}`;
 
     return this.httpDelete(path).pipe(
       mergeMap(ajaxResponse => {
@@ -355,7 +353,7 @@ export class OntologiesEndpointV2 extends Endpoint {
    * @param resourceClassIri the iri of the resource class to be checked.
    */
   canDeleteResourceClass(resourceClassIri: string) {
-    return this.httpGet('/candeleteclass/' + encodeURIComponent(resourceClassIri)).pipe(
+    return this.httpGet(`/candeleteclass/${encodeURIComponent(resourceClassIri)}`).pipe(
       mergeMap(ajaxResponse => {
         // TODO: @rosenth Adapt context object
         // TODO: adapt getOntologyIriFromEntityIri
@@ -376,11 +374,9 @@ export class OntologiesEndpointV2 extends Endpoint {
    * @param deleteResourceClass with class IRI.
    */
   deleteResourceClass(deleteResourceClass: DeleteResourceClass) {
-    const path =
-      '/classes/' +
-      encodeURIComponent(deleteResourceClass.id) +
-      '?lastModificationDate=' +
-      encodeURIComponent(deleteResourceClass.lastModificationDate);
+    const path = `/classes/${encodeURIComponent(deleteResourceClass.id)}?lastModificationDate=${encodeURIComponent(
+      deleteResourceClass.lastModificationDate
+    )}`;
 
     return this.httpDelete(path).pipe(
       mergeMap(ajaxResponse => {
@@ -401,11 +397,9 @@ export class OntologiesEndpointV2 extends Endpoint {
    * @param deleteResourceClassComment with class IRI and lastModificationDate
    */
   deleteResourceClassComment(deleteResourceClassComment: DeleteResourceClassComment) {
-    const path =
-      '/classes/comment/' +
-      encodeURIComponent(deleteResourceClassComment.id) +
-      '?lastModificationDate=' +
-      encodeURIComponent(deleteResourceClassComment.lastModificationDate);
+    const path = `/classes/comment/${encodeURIComponent(
+      deleteResourceClassComment.id
+    )}?lastModificationDate=${encodeURIComponent(deleteResourceClassComment.lastModificationDate)}`;
 
     return this.httpDelete(path).pipe(
       mergeMap(ajaxResponse => {
@@ -489,7 +483,7 @@ export class OntologiesEndpointV2 extends Endpoint {
    * @param propertyIri the iri of the property to be checked.
    */
   canDeleteResourceProperty(propertyIri: string) {
-    return this.httpGet('/candeleteproperty/' + encodeURIComponent(propertyIri)).pipe(
+    return this.httpGet(`/candeleteproperty/${encodeURIComponent(propertyIri)}`).pipe(
       mergeMap(ajaxResponse => {
         // TODO: @rosenth Adapt context object
         // TODO: adapt getOntologyIriFromEntityIri
@@ -510,11 +504,9 @@ export class OntologiesEndpointV2 extends Endpoint {
    * @param  deleteResourceProperty with property IRI.
    */
   deleteResourceProperty(deleteResourceProperty: DeleteResourceProperty) {
-    const path =
-      '/properties/' +
-      encodeURIComponent(deleteResourceProperty.id) +
-      '?lastModificationDate=' +
-      encodeURIComponent(deleteResourceProperty.lastModificationDate);
+    const path = `/properties/${encodeURIComponent(
+      deleteResourceProperty.id
+    )}?lastModificationDate=${encodeURIComponent(deleteResourceProperty.lastModificationDate)}`;
 
     return this.httpDelete(path).pipe(
       mergeMap(ajaxResponse => {
@@ -535,11 +527,9 @@ export class OntologiesEndpointV2 extends Endpoint {
    * @param deleteResourcePropertyComment with property IRI and lastModificationDate
    */
   deleteResourcePropertyComment(deleteResourcePropertyComment: DeleteResourcePropertyComment) {
-    const path =
-      '/properties/comment/' +
-      encodeURIComponent(deleteResourcePropertyComment.id) +
-      '?lastModificationDate=' +
-      encodeURIComponent(deleteResourcePropertyComment.lastModificationDate);
+    const path = `/properties/comment/${encodeURIComponent(
+      deleteResourcePropertyComment.id
+    )}?lastModificationDate=${encodeURIComponent(deleteResourcePropertyComment.lastModificationDate)}`;
 
     return this.httpDelete(path).pipe(
       mergeMap(ajaxResponse => {
@@ -590,7 +580,7 @@ export class OntologiesEndpointV2 extends Endpoint {
    * @param resourceClassIri the iri of the resource class to be checked.
    */
   canReplaceCardinalityOfResourceClass(resourceClassIri: string) {
-    return this.httpGet('/canreplacecardinalities/' + encodeURIComponent(resourceClassIri)).pipe(
+    return this.httpGet(`/canreplacecardinalities/${encodeURIComponent(resourceClassIri)}`).pipe(
       mergeMap(ajaxResponse => {
         // TODO: @rosenth Adapt context object
         // TODO: adapt getOntologyIriFromEntityIri
@@ -620,12 +610,9 @@ export class OntologiesEndpointV2 extends Endpoint {
     const card = CardinalityUtil.cardinalities.get(desiredCardinality);
 
     return this.httpGet(
-      '/canreplacecardinalities/' +
-        encodeURIComponent(resourceClassIri) +
-        '?propertyIri=' +
-        encodeURIComponent(propertyIri) +
-        '&newCardinality=' +
-        card
+      `/canreplacecardinalities/${encodeURIComponent(resourceClassIri)}?propertyIri=${encodeURIComponent(
+        propertyIri
+      )}&newCardinality=${card}`
     ).pipe(
       mergeMap(ajaxResponse => {
         return jsonld.compact(ajaxResponse.response, {}) as Promise<object>;

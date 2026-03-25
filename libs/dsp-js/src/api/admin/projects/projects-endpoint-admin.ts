@@ -55,7 +55,7 @@ export class ProjectsEndpointAdmin extends Endpoint {
    * @param iri The IRI of the project.
    */
   getProjectKeywords(iri: string) {
-    return this.httpGet('/iri/' + encodeURIComponent(iri) + '/Keywords').pipe(
+    return this.httpGet(`/iri/${encodeURIComponent(iri)}/Keywords`).pipe(
       map(ajaxResponse => ApiResponseData.fromAjaxResponse(ajaxResponse, KeywordsResponse, this.jsonConvert)),
       catchError(error => this.handleError(error))
     );
@@ -68,7 +68,7 @@ export class ProjectsEndpointAdmin extends Endpoint {
    * @param projectInfo The project info to be updated.
    */
   updateProject(iri: string, projectInfo: UpdateProjectRequest) {
-    return this.httpPut('/iri/' + encodeURIComponent(iri), this.jsonConvert.serializeObject(projectInfo)).pipe(
+    return this.httpPut(`/iri/${encodeURIComponent(iri)}`, this.jsonConvert.serializeObject(projectInfo)).pipe(
       map(ajaxResponse => ApiResponseData.fromAjaxResponse(ajaxResponse, ProjectResponse, this.jsonConvert)),
       catchError(error => this.handleError(error))
     );
@@ -80,7 +80,7 @@ export class ProjectsEndpointAdmin extends Endpoint {
    * @param iri The project IRI.
    */
   deleteProject(iri: string) {
-    return this.httpDelete('/iri/' + encodeURIComponent(iri)).pipe(
+    return this.httpDelete(`/iri/${encodeURIComponent(iri)}`).pipe(
       map(ajaxResponse => ApiResponseData.fromAjaxResponse(ajaxResponse, ProjectResponse, this.jsonConvert)),
       catchError(error => this.handleError(error))
     );
@@ -93,7 +93,7 @@ export class ProjectsEndpointAdmin extends Endpoint {
    * @param value The value of the property by which the project is identified.
    */
   getProject(property: 'iri' | 'shortname' | 'shortcode', value: string) {
-    return this.httpGet('/' + encodeURIComponent(property) + '/' + encodeURIComponent(value), undefined).pipe(
+    return this.httpGet(`/${encodeURIComponent(property)}/${encodeURIComponent(value)}`, undefined).pipe(
       map(ajaxResponse => ApiResponseData.fromAjaxResponse(ajaxResponse, ProjectResponse, this.jsonConvert)),
       catchError(error => this.handleError(error))
     );
@@ -133,7 +133,7 @@ export class ProjectsEndpointAdmin extends Endpoint {
    * @param value The value of the property by which the project is identified.
    */
   getProjectMembers(property: 'iri' | 'shortname' | 'shortcode', value: string) {
-    return this.httpGet('/' + encodeURIComponent(property) + '/' + encodeURIComponent(value) + '/members').pipe(
+    return this.httpGet(`/${encodeURIComponent(property)}/${encodeURIComponent(value)}/members`).pipe(
       map(ajaxResponse => ApiResponseData.fromAjaxResponse(ajaxResponse, MembersResponse, this.jsonConvert)),
       catchError(error => this.handleError(error))
     );
@@ -173,7 +173,7 @@ export class ProjectsEndpointAdmin extends Endpoint {
    * @param value The value of the property by which the project is identified.
    */
   getProjectAdminMembers(property: 'iri' | 'shortname' | 'shortcode', value: string) {
-    return this.httpGet('/' + encodeURIComponent(property) + '/' + encodeURIComponent(value) + '/admin-members').pipe(
+    return this.httpGet(`/${encodeURIComponent(property)}/${encodeURIComponent(value)}/admin-members`).pipe(
       map(ajaxResponse => ApiResponseData.fromAjaxResponse(ajaxResponse, MembersResponse, this.jsonConvert)),
       catchError(error => this.handleError(error))
     );
@@ -213,9 +213,7 @@ export class ProjectsEndpointAdmin extends Endpoint {
    * @param value The value of the property by which the project is identified.
    */
   getProjectRestrictedViewSettings(property: 'iri' | 'shortname' | 'shortcode', value: string) {
-    return this.httpGet(
-      '/' + encodeURIComponent(property) + '/' + encodeURIComponent(value) + '/RestrictedViewSettings'
-    ).pipe(
+    return this.httpGet(`/${encodeURIComponent(property)}/${encodeURIComponent(value)}/RestrictedViewSettings`).pipe(
       map(ajaxResponse =>
         ApiResponseData.fromAjaxResponse(ajaxResponse, ProjectRestrictedViewSettingsResponse, this.jsonConvert)
       ),
