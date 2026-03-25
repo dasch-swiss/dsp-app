@@ -17,7 +17,7 @@ import { ResourceValueComponent } from './ui/statement-builder/object-values/res
 import { StatementBuilderComponent } from './ui/statement-builder/statement-builder.component';
 
 @Component({
-  selector: '   app-advanced-search',
+  selector: 'app-advanced-search',
   standalone: true,
   imports: [
     CommonModule,

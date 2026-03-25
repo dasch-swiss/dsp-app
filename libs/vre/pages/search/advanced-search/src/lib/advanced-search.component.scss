@@ -76,6 +76,8 @@
 
 .is-dimmed {
   opacity: 0.4;
-}:hover {
-  opacity: 1;
+
+  &:hover {
+    opacity: 1;
+  }
 }
