@@ -50,7 +50,7 @@ Swiss National Data and Service Center for the Humanities (DaSCH), which uses
 the [DSP-API](https://github.com/dasch-swiss/dsp-api) server application in the backend. It's a system for annotation and
 linkage of resources in arts and humanities.
 
-DSP-APP implements [DSP-JS](https://www.npmjs.com/package/@dasch-swiss/dsp-js)
+DSP-APP implements [DSP-JS](libs/dsp-js/) (also published to [NPM](https://www.npmjs.com/package/@dasch-swiss/dsp-js))
 to connect with [DSP-API](https://docs.dasch.swiss/latest/DSP-API/03-endpoints/api-v2/introduction/).
 
 DSP-APP is [free software](http://www.gnu.org/philosophy/free-sw.en.html), released
