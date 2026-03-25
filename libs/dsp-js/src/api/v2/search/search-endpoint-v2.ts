@@ -219,9 +219,9 @@ export class SearchEndpointV2 extends Endpoint {
       mergeMap(response => {
         return jsonld.compact(response.response, {}) as Promise<object>;
       }),
-      mergeMap((jsonld: object) => {
+      mergeMap((jsonldData: object) => {
         return ResourcesConversionUtil.createReadResourceSequence(
-          jsonld,
+          jsonldData,
           tempOntologyCache,
           tempListNodeCache,
           this.jsonConvert
@@ -249,9 +249,9 @@ export class SearchEndpointV2 extends Endpoint {
       mergeMap(response => {
         return jsonld.compact(response.response, {}) as Promise<object>;
       }),
-      mergeMap((jsonld: object) => {
+      mergeMap((jsonldData: object) => {
         return ResourcesConversionUtil.createReadResourceSequence(
-          jsonld,
+          jsonldData,
           tempOntologyCache,
           tempListNodeCache,
           this.jsonConvert
@@ -273,8 +273,8 @@ export class SearchEndpointV2 extends Endpoint {
       mergeMap(response => {
         return jsonld.compact(response.response, {}) as Promise<object>;
       }),
-      map((jsonld: object) => {
-        return ResourcesConversionUtil.createCountQueryResponse(jsonld, this.jsonConvert);
+      map((jsonldData: object) => {
+        return ResourcesConversionUtil.createCountQueryResponse(jsonldData, this.jsonConvert);
       }),
       catchError(err => {
         return this.handleError(err);
@@ -298,9 +298,9 @@ export class SearchEndpointV2 extends Endpoint {
       mergeMap(response => {
         return jsonld.compact(response.response, {}) as Promise<object>;
       }),
-      mergeMap((jsonld: object) => {
+      mergeMap((jsonldData: object) => {
         return ResourcesConversionUtil.createReadResourceSequence(
-          jsonld,
+          jsonldData,
           tempOntologyCache,
           tempListNodeCache,
           this.jsonConvert
