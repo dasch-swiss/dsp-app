@@ -125,9 +125,9 @@ jobs:
   check-openapi-sync:
     name: Check OpenAPI Spec is Up-to-Date
     runs-on: ubuntu-latest
-    continue-on-error: true
-    outputs:
-      exit_code: ${{ steps.check.outputs.exit_code }}
+    permissions:
+      contents: write
+      pull-requests: write
     if: |
       (github.event.head_commit == null ||
        !startsWith(github.event.head_commit.message, 'chore(main): release')) &&
@@ -136,6 +136,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Set up yq
         uses: mikefarah/yq@v4
       - id: check
@@ -145,36 +147,24 @@ jobs:
           ./scripts/check-openapi-sync.sh --verbose
           exit_code=$?
           echo "exit_code=$exit_code" >> "$GITHUB_OUTPUT"
+          if [ "$exit_code" -eq 2 ]; then
+            echo "::warning::Failed to download spec after retries — DEV server may be unavailable."
+            exit 0
+          fi
           exit $exit_code
-
-  update-openapi-spec:
-    name: Auto-update OpenAPI Spec
-    runs-on: ubuntu-latest
-    needs: check-openapi-sync
-    if: |
-      always() &&
-      needs.check-openapi-sync.result != 'cancelled' &&
-      needs.check-openapi-sync.outputs.exit_code == '1' &&
-      github.ref == 'refs/heads/main'
-    permissions:
-      contents: write
-      pull-requests: write
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Set up yq
-        uses: mikefarah/yq@v4
       - name: Set up Node.js
+        if: steps.check.outputs.exit_code == '1' && github.ref == 'refs/heads/main'
         uses: actions/setup-node@v6
         with:
           node-version-file: .nvmrc
       - name: Install dependencies
+        if: steps.check.outputs.exit_code == '1' && github.ref == 'refs/heads/main'
         run: npm ci
       - name: Update OpenAPI spec
+        if: steps.check.outputs.exit_code == '1' && github.ref == 'refs/heads/main'
         run: npm run update-openapi
       - name: Create PR if spec changed
+        if: steps.check.outputs.exit_code == '1' && github.ref == 'refs/heads/main'
         run: |
           if git diff --quiet; then
             echo "No spec changes after update — skipping PR creation."
