@@ -1,9 +1,10 @@
 import { AsyncPipe } from '@angular/common';
 import { Component } from '@angular/core';
-import { Constants, ReadStillImageFileValue } from '@dasch-swiss/dsp-js';
+import { Constants, ReadStillImageFileValue, ReadValue } from '@dasch-swiss/dsp-js';
 import { filterUndefined } from '@dasch-swiss/vre/shared/app-common';
 import { filter, map } from 'rxjs';
 import { StillImageComponent } from '../representations/still-image/still-image.component';
+import { VectorImageComponent } from '../representations/vector-image/vector-image.component';
 import { ResourceLegalComponent } from '../resource-legal.component';
 import { ResourceRepresentationContainerComponent } from '../resource-representation-container.component';
 import { CompoundService } from './compound.service';
@@ -16,13 +17,23 @@ import { CompoundService } from './compound.service';
         @if (fileValue$ | async; as fileValue) {
           <app-resource-legal [fileValue]="fileValue" />
         }
-        @if (incomingResource.res.properties[HasStillImageFileValue]) {
-          <app-still-image [resource]="incomingResource.res" [compoundMode]="true" />
+        @if (incomingResource.res.properties[HasStillImageFileValue]; as imageValues) {
+          @if (isVectorImage(imageValues[0])) {
+            <app-vector-image [resource]="incomingResource.res" [compoundMode]="true" />
+          } @else {
+            <app-still-image [resource]="incomingResource.res" [compoundMode]="true" />
+          }
         }
       }
     </app-resource-representation-container>
   `,
-  imports: [AsyncPipe, ResourceLegalComponent, StillImageComponent, ResourceRepresentationContainerComponent],
+  imports: [
+    AsyncPipe,
+    ResourceLegalComponent,
+    StillImageComponent,
+    VectorImageComponent,
+    ResourceRepresentationContainerComponent,
+  ],
 })
 export class CompoundViewerComponent {
   HasStillImageFileValue = Constants.HasStillImageFileValue;
@@ -36,4 +47,8 @@ export class CompoundViewerComponent {
   );
 
   constructor(public readonly compoundService: CompoundService) {}
+
+  isVectorImage(value: ReadValue): boolean {
+    return value.type === Constants.StillImageVectorFileValue;
+  }
 }
