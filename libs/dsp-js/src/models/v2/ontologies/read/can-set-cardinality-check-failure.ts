@@ -13,7 +13,7 @@ import { Constants } from '../../Constants';
 @JsonObject('ResourceClass')
 class ResourceClass {
   @JsonProperty('@id', String)
-  id: string = '';
+  id = '';
 }
 
 @JsonConverter

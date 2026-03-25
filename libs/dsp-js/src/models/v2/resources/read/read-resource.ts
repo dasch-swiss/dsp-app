@@ -15,28 +15,28 @@ import { ReadValue } from '../values/read/read-value';
 @JsonObject('ReadResource')
 export class ReadResource extends ReadWriteResource {
   @JsonProperty(Constants.Label, String)
-  label: string = '';
+  label = '';
 
   @JsonProperty(Constants.AttachedToProject, IdConverter)
-  attachedToProject: string = '';
+  attachedToProject = '';
 
   @JsonProperty(Constants.AttachedToUser, IdConverter)
-  attachedToUser: string = '';
+  attachedToUser = '';
 
   @JsonProperty(Constants.HasPermissions, String)
-  hasPermissions: string = '';
+  hasPermissions = '';
 
   @JsonProperty(Constants.UserHasPermission, String)
-  userHasPermission: string = '';
+  userHasPermission = '';
 
   @JsonProperty(Constants.ArkUrl, UriConverter)
-  arkUrl: string = '';
+  arkUrl = '';
 
   @JsonProperty(Constants.VersionArkUrl, UriConverter)
-  versionArkUrl: string = '';
+  versionArkUrl = '';
 
   @JsonProperty(Constants.CreationDate, DateTimeStampConverter)
-  creationDate: string = '';
+  creationDate = '';
 
   @JsonProperty(Constants.LastModificationDate, DateTimeStampConverter, true)
   lastModificationDate?: string = undefined;
@@ -150,7 +150,7 @@ export class ReadResource extends ReadWriteResource {
    * @param property the IRI of the property.
    * @param defaultStr placeholder if there is no string representation of a value.
    */
-  getValuesAsStringArray(property: string, defaultStr: string = '?'): string[] {
+  getValuesAsStringArray(property: string, defaultStr = '?'): string[] {
     const vals: ReadValue[] = this.getValues(property);
     return vals.map((val: ReadValue) => {
       return val.strval === undefined ? defaultStr : val.strval;

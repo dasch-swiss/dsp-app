@@ -18,17 +18,17 @@ export abstract class ApiResponse {
   /**
    * Original HTTP method
    */
-  method: string = '';
+  method = '';
 
   /**
    * Request URL
    */
-  url: string = '';
+  url = '';
 
   /**
    * Status number
    */
-  status: number = 0;
+  status = 0;
 
   // </editor-fold>
 

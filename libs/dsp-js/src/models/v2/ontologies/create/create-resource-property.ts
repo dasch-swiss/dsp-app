@@ -10,13 +10,13 @@ import { StringLiteralV2 } from '../../string-literal-v2';
  */
 @JsonObject('CreateResourceProperty')
 export class CreateResourceProperty {
-  name: string = '';
+  name = '';
 
   @JsonProperty(Constants.SubjectType, IdConverter, true)
   subjectType?: string = undefined;
 
   @JsonProperty(Constants.ObjectType, IdConverter)
-  objectType: string = '';
+  objectType = '';
 
   @JsonProperty(Constants.Label, StringLiteralToStringLiteralArrayConverter)
   label: StringLiteralV2[] = [];
@@ -40,7 +40,7 @@ export class CreateResourceProperty {
 @JsonObject('CreateResourcePropertyPayload')
 export class CreateResourcePropertyPayload extends CreateResourceProperty {
   @JsonProperty('@id', String)
-  id: string = '';
+  id = '';
 
   @JsonProperty('@type', String)
   type: string = Constants.ObjectProperty;

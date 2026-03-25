@@ -73,7 +73,7 @@ export class HasCardinalityForPropertyConverter implements JsonCustomConvert<IHa
           }
         }
 
-        let propertyIndex: string = '';
+        let propertyIndex = '';
         if (ele.hasOwnProperty(Constants.OnProperty)) {
           const propstruct: any = ele[Constants.OnProperty];
           if (propstruct.hasOwnProperty('@id') && CustomConverterUtils.isString(propstruct['@id'])) {
@@ -88,7 +88,7 @@ export class HasCardinalityForPropertyConverter implements JsonCustomConvert<IHa
           isInherited = true;
         }
 
-        let guiOrder: number = -1;
+        let guiOrder = -1;
         if (ele.hasOwnProperty(Constants.GuiOrder)) {
           guiOrder = ele[Constants.GuiOrder];
           hasCardForProp.push({

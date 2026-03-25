@@ -12,10 +12,10 @@ import { PropertyDefinition } from '../property-definition';
 @JsonObject('ReadOntology')
 export class ReadOntology extends ClassAndPropertyDefinitions {
   @JsonProperty('@id', String)
-  id: string = '';
+  id = '';
 
   @JsonProperty(Constants.Label, String)
-  label: string = '';
+  label = '';
 
   @JsonProperty(Constants.Comment, String, true)
   comment?: string = undefined;

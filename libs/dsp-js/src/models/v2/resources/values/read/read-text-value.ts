@@ -22,7 +22,7 @@ export class ReadTextValueAsString extends ReadTextValue implements IBaseTextVal
   // TODO: query standoff, if any.
 
   @JsonProperty(Constants.ValueAsString, String)
-  text: string = '';
+  text = '';
 }
 
 /**
@@ -31,10 +31,10 @@ export class ReadTextValueAsString extends ReadTextValue implements IBaseTextVal
 @JsonObject('ReadTextValueAsXml')
 export class ReadTextValueAsXml extends ReadTextValue implements IBaseTextValueAsXml {
   @JsonProperty(Constants.TextValueAsXml, String)
-  xml: string = '';
+  xml = '';
 
   @JsonProperty(Constants.TextValueHasMapping, IdConverter)
-  mapping: string = '';
+  mapping = '';
 }
 
 /**
@@ -43,9 +43,9 @@ export class ReadTextValueAsXml extends ReadTextValue implements IBaseTextValueA
 @JsonObject('ReadTextValueAsHtml')
 export class ReadTextValueAsHtml extends ReadTextValue implements IBaseTextValueAsHtml {
   @JsonProperty(Constants.TextValueAsHtml, String)
-  html: string = '';
+  html = '';
 
   // set xml value as optional to avoid breaking changes
   @JsonProperty(Constants.TextValueAsXml, String, true)
-  xml: string = '';
+  xml = '';
 }

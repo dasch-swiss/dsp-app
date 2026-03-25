@@ -11,23 +11,23 @@ export class HealthResponse {
    * Message
    */
   @JsonProperty('message', String)
-  message: string = '';
+  message = '';
 
   /**
    * Name
    */
   @JsonProperty('name', String)
-  name: string = '';
+  name = '';
 
   /**
    * Severity
    */
   @JsonProperty('severity', String)
-  severity: string = '';
+  severity = '';
 
   /**
    * Status
    */
   @JsonProperty('status', Boolean)
-  status: boolean = false;
+  status = false;
 }

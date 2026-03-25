@@ -13,7 +13,7 @@ import { ClassDefinition, IHasProperty } from './class-definition';
 @JsonObject('StandoffClassDefinition')
 export class StandoffClassDefinition extends ClassDefinition {
   @JsonProperty('@id', String)
-  id: string = '';
+  id = '';
 
   @JsonProperty(Constants.SubClassOf, SubClassOfConverter)
   subClassOf: string[] = [];

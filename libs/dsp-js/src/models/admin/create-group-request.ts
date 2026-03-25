@@ -18,23 +18,23 @@ export class CreateGroupRequest {
    * The name of the enclosing object.
    */
   @JsonProperty('name', String)
-  name: string = '';
+  name = '';
 
   /**
    * The IRI of a project.
    */
   @JsonProperty('project', String)
-  project: string = '';
+  project = '';
 
   /**
    * Exists and is true if users can add themselves to the project or group.
    */
   @JsonProperty('selfjoin', Boolean)
-  selfjoin: boolean = false;
+  selfjoin = false;
 
   /**
    * The status of the user / group / project. It is false if the entity has been deactivated (deleted).
    */
   @JsonProperty('status', Boolean)
-  status: boolean = false;
+  status = false;
 }

@@ -8,8 +8,8 @@ import { BaseValue } from '../base-value';
 @JsonObject('UpdateValuePermissions')
 export class UpdateValuePermissions extends BaseValue {
   @JsonProperty('@id', String)
-  id: string = '';
+  id = '';
 
   @JsonProperty(Constants.HasPermissions, String)
-  hasPermissions: string = '';
+  hasPermissions = '';
 }

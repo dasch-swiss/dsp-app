@@ -31,13 +31,13 @@ export class CreateChildNodeRequest {
    * Provides a the IRI of a parent list node.
    */
   @JsonProperty('parentNodeIri', String)
-  parentNodeIri: string = '';
+  parentNodeIri = '';
 
   /**
    * The IRI of a project.
    */
   @JsonProperty('projectIri', String)
-  projectIri: string = '';
+  projectIri = '';
 
   /**
    * The position of the node.

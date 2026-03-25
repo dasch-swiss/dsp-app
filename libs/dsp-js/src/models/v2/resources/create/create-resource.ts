@@ -10,16 +10,16 @@ import { CreateValue } from '../values/create/create-value';
 @JsonObject('CreateResource')
 export class CreateResource {
   @JsonProperty('@type', String)
-  type: string = '';
+  type = '';
 
   @JsonProperty(Constants.Label, String)
-  label: string = '';
+  label = '';
 
   @JsonProperty(Constants.HasPermissions, String, true)
   hasPermissions?: string = undefined;
 
   @JsonProperty(Constants.AttachedToProject, IdConverter)
-  attachedToProject: string = '';
+  attachedToProject = '';
 
   @JsonProperty(Constants.AttachedToUser, IdConverter, true)
   attachedToUser?: string = undefined;
