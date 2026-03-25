@@ -27,7 +27,7 @@ export class PermissionsEndpointAdmin extends Endpoint {
    * @param projectIri The project IRI.
    */
   getProjectPermissions(projectIri: string) {
-    return this.httpGet('/' + encodeURIComponent(projectIri)).pipe(
+    return this.httpGet(`/${encodeURIComponent(projectIri)}`).pipe(
       map(ajaxResponse => ApiResponseData.fromAjaxResponse(ajaxResponse, ProjectPermissionsResponse, this.jsonConvert)),
       catchError(error => this.handleError(error))
     );
@@ -39,7 +39,7 @@ export class PermissionsEndpointAdmin extends Endpoint {
    * @param projectIri The project IRI.
    */
   getAdministrativePermissions(projectIri: string) {
-    return this.httpGet('/ap/' + encodeURIComponent(projectIri)).pipe(
+    return this.httpGet(`/ap/${encodeURIComponent(projectIri)}`).pipe(
       map(ajaxResponse =>
         ApiResponseData.fromAjaxResponse(ajaxResponse, AdministrativePermissionsResponse, this.jsonConvert)
       ),
@@ -54,7 +54,7 @@ export class PermissionsEndpointAdmin extends Endpoint {
    * @param groupIri The group IRI.
    */
   getAdministrativePermission(projectIri: string, groupIri: string) {
-    return this.httpGet('/ap/' + encodeURIComponent(projectIri) + '/' + encodeURIComponent(groupIri)).pipe(
+    return this.httpGet(`/ap/${encodeURIComponent(projectIri)}/${encodeURIComponent(groupIri)}`).pipe(
       map(ajaxResponse =>
         ApiResponseData.fromAjaxResponse(ajaxResponse, AdministrativePermissionResponse, this.jsonConvert)
       ),
@@ -92,7 +92,7 @@ export class PermissionsEndpointAdmin extends Endpoint {
    */
   updateAdministrativePermission(permissionIri: string, administrativePermission: UpdateAdministrativePermission) {
     return this.httpPut(
-      '/' + encodeURIComponent(permissionIri) + '/hasPermissions',
+      `/${encodeURIComponent(permissionIri)}/hasPermissions`,
       this.jsonConvert.serializeObject(administrativePermission)
     ).pipe(
       map(ajaxResponse =>
@@ -113,7 +113,7 @@ export class PermissionsEndpointAdmin extends Endpoint {
     updateAdministrativePermissionGroup: UpdateAdministrativePermissionGroup
   ) {
     return this.httpPut(
-      '/' + encodeURIComponent(permissionIri) + '/group',
+      `/${encodeURIComponent(permissionIri)}/group`,
       this.jsonConvert.serializeObject(updateAdministrativePermissionGroup)
     ).pipe(
       map(ajaxResponse =>
@@ -129,7 +129,7 @@ export class PermissionsEndpointAdmin extends Endpoint {
    * @param projectIri The project IRI.
    */
   getDefaultObjectAccessPermissions(projectIri: string) {
-    return this.httpGet('/doap/' + encodeURIComponent(projectIri)).pipe(
+    return this.httpGet(`/doap/${encodeURIComponent(projectIri)}`).pipe(
       map(ajaxResponse =>
         ApiResponseData.fromAjaxResponse(ajaxResponse, DefaultObjectAccessPermissionsResponse, this.jsonConvert)
       ),
@@ -193,7 +193,7 @@ export class PermissionsEndpointAdmin extends Endpoint {
     defaultObjectAccessPermission: UpdateDefaultObjectAccessPermission
   ) {
     return this.httpPut(
-      '/' + encodeURIComponent(permissionIri) + '/hasPermissions',
+      `/${encodeURIComponent(permissionIri)}/hasPermissions`,
       this.jsonConvert.serializeObject(defaultObjectAccessPermission)
     ).pipe(
       map(ajaxResponse =>
@@ -214,7 +214,7 @@ export class PermissionsEndpointAdmin extends Endpoint {
     administrativePermission: UpdateAdministrativePermissionGroup
   ) {
     return this.httpPut(
-      '/' + encodeURIComponent(permissionIri) + '/group',
+      `/${encodeURIComponent(permissionIri)}/group`,
       this.jsonConvert.serializeObject(administrativePermission)
     ).pipe(
       map(ajaxResponse =>
@@ -235,7 +235,7 @@ export class PermissionsEndpointAdmin extends Endpoint {
     administrativePermission: UpdateDefaultObjectAccessPermissionResourceClass
   ) {
     return this.httpPut(
-      '/' + encodeURIComponent(permissionIri) + '/resourceClass',
+      `/${encodeURIComponent(permissionIri)}/resourceClass`,
       this.jsonConvert.serializeObject(administrativePermission)
     ).pipe(
       map(ajaxResponse =>
@@ -256,7 +256,7 @@ export class PermissionsEndpointAdmin extends Endpoint {
     administrativePermission: UpdateDefaultObjectAccessPermissionProperty
   ) {
     return this.httpPut(
-      '/' + encodeURIComponent(permissionIri) + '/property',
+      `/${encodeURIComponent(permissionIri)}/property`,
       this.jsonConvert.serializeObject(administrativePermission)
     ).pipe(
       map(ajaxResponse =>
@@ -272,7 +272,7 @@ export class PermissionsEndpointAdmin extends Endpoint {
    * @param permissionIri the IRI of the permission to be deleted.
    */
   deletePermission(permissionIri: string) {
-    return this.httpDelete('/' + encodeURIComponent(permissionIri)).pipe(
+    return this.httpDelete(`/${encodeURIComponent(permissionIri)}`).pipe(
       map(ajaxResponse => ApiResponseData.fromAjaxResponse(ajaxResponse, DeletePermissionResponse, this.jsonConvert)),
       catchError(error => this.handleError(error))
     );

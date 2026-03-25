@@ -10,7 +10,7 @@ import { CreateValue } from './create-value';
 @JsonObject('CreateDecimalValue')
 export class CreateDecimalValue extends CreateValue implements IBaseDecimalValue {
   @JsonProperty(Constants.DecimalValueAsDecimal, DecimalConverter)
-  decimal: number = 0;
+  decimal = 0;
 
   constructor() {
     super(Constants.DecimalValue);

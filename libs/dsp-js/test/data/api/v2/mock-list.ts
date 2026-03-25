@@ -1,9 +1,8 @@
-import { JsonConvert, OperationMode, ValueCheckingMode } from 'json2typescript';
-import { PropertyMatchingRule } from 'json2typescript';
+import { JsonConvert, OperationMode, ValueCheckingMode, PropertyMatchingRule } from 'json2typescript';
 import { ListConversionUtil } from '../../../../src/models/v2/lists/list-conversion-util';
 import { ListNodeV2 } from '../../../../src/models/v2/lists/list-node-v2';
-import treeListExpanded from '../v2/lists/treelist-expanded.json';
-import othertreeListExpanded from '../v2/lists/othertreelist-expanded.json';
+import othertreeListExpanded from './lists/othertreelist-expanded.json';
+import treeListExpanded from './lists/treelist-expanded.json';
 
 export namespace MockList {
   const jsonConvert: JsonConvert = new JsonConvert(

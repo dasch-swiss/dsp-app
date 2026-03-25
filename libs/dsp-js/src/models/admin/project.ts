@@ -37,23 +37,23 @@ export class Project {
    * Exists and is true if users can add themselves to the project or group.
    */
   @JsonProperty('selfjoin', Boolean)
-  selfjoin: boolean = false;
+  selfjoin = false;
 
   /**
    * The unique short code of a Knora project.
    */
   @JsonProperty('shortcode', String)
-  shortcode: string = '';
+  shortcode = '';
 
   /**
    * The unique shortname of a Knora project.
    */
   @JsonProperty('shortname', String)
-  shortname: string = '';
+  shortname = '';
 
   /**
    * The status of the user / group / project. It is false if the entity has been deactivated (deleted).
    */
   @JsonProperty('status', Boolean)
-  status: boolean = false;
+  status = false;
 }

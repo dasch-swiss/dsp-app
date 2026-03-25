@@ -11,11 +11,11 @@ export class DeletePermissionResponse {
    * Iri of the permission that has been deleted.
    */
   @JsonProperty('permissionIri', String)
-  permissionIri: string = '';
+  permissionIri = '';
 
   /**
    * Status of requested deletion.
    */
   @JsonProperty('deleted', Boolean)
-  deleted: boolean = false;
+  deleted = false;
 }
