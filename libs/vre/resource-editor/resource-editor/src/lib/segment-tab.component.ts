@@ -1,5 +1,8 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { ReadResource } from '@dasch-swiss/dsp-js';
 import { delay, Subscription } from 'rxjs';
 import { IncomingResourceToolbarComponent } from './incoming-resource-toolbar.component';
@@ -22,7 +25,17 @@ import { SegmentsService } from './segment-support/segments.service';
           <mat-expansion-panel-header>
             <div style="width: 100%; display: flex; align-items: center; justify-content: space-between">
               <h3 class="label">{{ segment.label }}</h3>
-              <app-incoming-resource-toolbar [resource]="segment.resource.res" (click)="$event.stopPropagation()" />
+              <div style="display: flex; align-items: center;">
+                <button
+                  mat-icon-button
+                  matTooltip="Go to segment"
+                  color="primary"
+                  matTooltipPosition="above"
+                  (click)="onTargetClicked(segment); $event.stopPropagation()">
+                  <mat-icon>my_location</mat-icon>
+                </button>
+                <app-incoming-resource-toolbar [resource]="segment.resource.res" (click)="$event.stopPropagation()" />
+              </div>
             </div>
           </mat-expansion-panel-header>
           @if (panel.expanded) {
@@ -34,7 +47,15 @@ import { SegmentsService } from './segment-support/segments.service';
     </mat-accordion>
   `,
   styles: ['.active {border: 1px solid} app-resource-info-bar {display: flex; flex-direction: row-reverse}'],
-  imports: [MatExpansionModule, IncomingResourceToolbarComponent, PropertiesDisplayComponent, ResourceInfoBarComponent],
+  imports: [
+    MatButtonModule,
+    MatExpansionModule,
+    MatIconModule,
+    MatTooltipModule,
+    IncomingResourceToolbarComponent,
+    PropertiesDisplayComponent,
+    ResourceInfoBarComponent,
+  ],
 })
 export class SegmentTabComponent implements OnInit, OnDestroy {
   @Input({ required: true }) resource!: ReadResource;
@@ -59,6 +80,10 @@ export class SegmentTabComponent implements OnInit, OnDestroy {
         }
         this._cdr.detectChanges();
       });
+  }
+
+  onTargetClicked(segment: Segment) {
+    this.segmentsService.playSegment(segment);
   }
 
   private _openSegment(iri: string) {
