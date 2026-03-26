@@ -67,7 +67,7 @@ export class ckEditor {
     link: {
       addTargetToExternalLinks: false,
       defaultProtocol: 'https://',
-      allowedProtocols: ['https', 'http', 'ftp', 'mailto'],
+      allowedProtocols: ['https', 'http'],
       decorators: {
         isInternal: {
           // DO NOT REMOVE THIS.. ADDING THIS CLASS MAKES THE BACKEND KNOW IT'S AN INTERNAL LINK.
