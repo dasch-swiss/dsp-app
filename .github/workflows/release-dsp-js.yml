@@ -3,7 +3,7 @@ name: Release dsp-js
 on:
   push:
     tags:
-      - '@dasch-swiss/dsp-js-v*'
+      - 'dsp-js-v*'
 
 env:
   NodeVersion: 22.12.0
