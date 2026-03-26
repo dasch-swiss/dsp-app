@@ -10,6 +10,18 @@
     "url": "https://github.com/dasch-swiss/dsp-app.git",
     "directory": "libs/dsp-js"
   },
+  "bugs": {
+    "url": "https://github.com/dasch-swiss/dsp-app/issues"
+  },
+  "homepage": "https://github.com/dasch-swiss/dsp-app/tree/main/libs/dsp-js#readme",
+  "keywords": [
+    "typescript",
+    "javascript",
+    "dsp",
+    "knora",
+    "api"
+  ],
+  "author": "Data & Service Center for the Humanities DaSCH, University of Basel",
   "peerDependencies": {
     "rxjs": "^7.8.0"
   },
