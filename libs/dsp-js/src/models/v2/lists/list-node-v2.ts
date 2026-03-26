@@ -10,6 +10,8 @@ import {
 } from 'json2typescript';
 import { Constants } from '../Constants';
 import { IdConverter } from '../custom-converters/id-converter';
+import { ListNodeCommentsConverter } from '../custom-converters/list-node-comments-converter';
+import { StringLiteralV2 } from '../string-literal-v2';
 
 /**
  * @category Internal
@@ -48,6 +50,9 @@ export class ListNodeV2 {
 
   @JsonProperty(Constants.Label, String)
   label = '';
+
+  @JsonProperty(Constants.Comment, ListNodeCommentsConverter, true)
+  comments: StringLiteralV2[] = [];
 
   @JsonProperty(Constants.IsRootNode, Boolean, true)
   isRootNode = false;
