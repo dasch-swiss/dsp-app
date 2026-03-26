@@ -1,22 +1,31 @@
 import { AsyncPipe, NgStyle } from '@angular/common';
 import { Component, Inject, Input, OnInit } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { KnoraApiConnection, ListNodeV2, ReadListValue, ResourcePropertyDefinition } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { filterUndefined } from '@dasch-swiss/vre/shared/app-common';
 import { combineLatest, map, Observable, Subject, switchMap } from 'rxjs';
 import { ResourceFetcherService } from '../../representations/resource-fetcher.service';
 
+interface ListNodeDisplay {
+  label: string;
+  comment: string;
+}
+
 @Component({
   selector: 'app-list-viewer',
-  imports: [AsyncPipe, NgStyle, MatIconModule],
+  imports: [AsyncPipe, NgStyle, MatIconModule, MatTooltipModule],
   template: `
     <div
       data-cy="list-switch"
       style="display: flex;
     align-items: center;">
-      @for (label of labels$ | async; track label; let last = $last; let index = $index) {
-        <span [ngStyle]="{ 'font-weight': last && index > 0 ? 'bold' : 'normal' }">{{ label }}</span>
+      @for (node of nodes$ | async; track node.label; let last = $last; let index = $index) {
+        <span
+          [ngStyle]="{ 'font-weight': last && index > 0 ? 'bold' : 'normal' }"
+          [matTooltip]="node.comment"
+          [matTooltipDisabled]="!node.comment">{{ node.label }}</span>
         @if (!last) {
           <mat-icon>chevron_right</mat-icon>
         }
@@ -33,7 +42,7 @@ import { ResourceFetcherService } from '../../representations/resource-fetcher.s
 export class ListViewerComponent implements OnInit {
   @Input() value!: ReadListValue;
   @Input() propertyDef!: ResourcePropertyDefinition;
-  labels$!: Observable<string[]>;
+  nodes$!: Observable<ListNodeDisplay[]>;
 
   linkToSearchList?: string;
   private _nodeIdSubject = new Subject<string>();
@@ -47,13 +56,16 @@ export class ListViewerComponent implements OnInit {
   ngOnInit() {
     this._fetchSearchLink();
 
-    this.labels$ = (this._dspApiConnection.v2.list.getNode(this.value.listNode) as Observable<ListNodeV2>).pipe(
+    this.nodes$ = (this._dspApiConnection.v2.list.getNode(this.value.listNode) as Observable<ListNodeV2>).pipe(
       switchMap(v => this._dspApiConnection.v2.list.getList(v.hasRootNode!)),
       map(v => {
         const tree = ListViewerComponent.lookFor([v as ListNodeV2], this.value.listNode) as ListNodeV2[];
         const nodeId = tree[tree.length - 1].id;
         this._nodeIdSubject.next(nodeId);
-        return tree.slice(1).map(node => node.label);
+        return tree.slice(1).map(node => ({
+          label: node.label,
+          comment: node.comments?.[0]?.value ?? '',
+        }));
       })
     );
   }
