@@ -11,7 +11,7 @@ import { AdvancedSearchComponent } from './advanced-search.component';
       <app-advanced-search
         [projectUuid]="uuid"
         [isVerticalDirection]="undefined"
-        [restoreState]="restoreState"
+        [queryToLoad]="queryToLoad"
         (gravsearchQuery)="onSearch($event)" />
     </app-centered-layout>
   `,
@@ -22,22 +22,14 @@ export class AdvancedSearchPageComponent implements OnInit {
   private readonly _router = inject(Router);
   private readonly _projectPageService = inject(ProjectPageService);
 
-  restoreState = false;
+  queryToLoad: string | undefined;
 
   get uuid(): string {
     return this._projectPageService.currentProjectUuid;
   }
 
   ngOnInit(): void {
-    this.restoreState = this._route.snapshot.queryParamMap.get('restore') === 'true';
-    // Clean up the query param from URL
-    if (this.restoreState) {
-      this._router.navigate([], {
-        relativeTo: this._route,
-        queryParams: {},
-        replaceUrl: true,
-      });
-    }
+    this.queryToLoad = this._route.snapshot.queryParamMap.get('q') ?? undefined;
   }
 
   onSearch(query: string): void {

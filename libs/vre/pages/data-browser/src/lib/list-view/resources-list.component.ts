@@ -56,9 +56,9 @@ export class ResourcesListComponent {
   }
 
   navigateBackToSearchForm() {
-    const projectUuid = this._route.parent?.snapshot.params['uuid'];
-    this._router.navigate([RouteConstants.project, projectUuid, RouteConstants.advancedSearch], {
-      queryParams: { restore: true },
+    this._router.navigate(['..'], {
+      relativeTo: this._route,
+      queryParamsHandling: 'preserve',
     });
   }
 }
