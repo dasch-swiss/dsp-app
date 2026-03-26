@@ -1,9 +1,9 @@
-import { ChangeDetectorRef, Component, Inject, Input, OnChanges } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, Input, OnChanges, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Constants, CountQueryResponse, KnoraApiConnection, ReadFileValue, ReadResource } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken, RouteConstants } from '@dasch-swiss/vre/core/config';
 import { DspCompoundPosition, DspResource } from '@dasch-swiss/vre/shared/app-common';
-import { filter, skip, take } from 'rxjs';
+import { filter, pairwise, Subject, take, takeUntil } from 'rxjs';
 import { CompoundViewerComponent } from './compound/compound-viewer.component';
 import { CompoundService } from './compound/compound.service';
 import { getFileValue } from './representations/get-file-value';
@@ -42,12 +42,14 @@ import { SegmentsService } from './segment-support/segments.service';
     ResourceTabsComponent,
   ],
 })
-export class ResourceComponent implements OnChanges {
+export class ResourceComponent implements OnChanges, OnDestroy {
   @Input({ required: true }) resource!: DspResource;
   representationsToDisplay!: ReadFileValue;
   isCompoundNavigation!: boolean;
   resourceIsObjectWithoutRepresentation!: boolean;
   annotationIri: string | null = null;
+
+  private _ngUnsubscribe = new Subject<void>();
 
   constructor(
     private readonly _cdr: ChangeDetectorRef,
@@ -58,6 +60,7 @@ export class ResourceComponent implements OnChanges {
   ) {}
 
   ngOnChanges() {
+    this._ngUnsubscribe.next(); // cancel any pending annotation subscription from previous resource
     this._compoundService.reset();
     this.isCompoundNavigation = false;
 
@@ -97,16 +100,22 @@ export class ResourceComponent implements OnChanges {
     this._regionService.showRegions(true);
     this._regionService.selectRegion(annotation);
 
-    // Wait until regions finish loading, then filter to show only this annotation
-    // and re-trigger selectRegion so the OSD highlights it after the SVG is drawn
+    // Wait for the true→false transition (loading started then finished),
+    // then filter to show only this annotation and re-trigger highlight on the drawn SVG
     this._regionService.regionsLoading$.pipe(
-      skip(1), // skip the initial false value
-      filter(loading => !loading),
-      take(1)
+      pairwise(),
+      filter(([prev, curr]) => prev && !curr),
+      take(1),
+      takeUntil(this._ngUnsubscribe)
     ).subscribe(() => {
       this._regionService.filterToRegion(annotation);
       this._regionService.selectRegion(annotation);
     });
+  }
+
+  ngOnDestroy() {
+    this._ngUnsubscribe.next();
+    this._ngUnsubscribe.complete();
   }
 
   private _checkForCompoundNavigation(resource: ReadResource) {

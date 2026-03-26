@@ -15,7 +15,7 @@ import { SegmentsService } from './segment-support/segments.service';
   selector: 'app-segment-tab',
   template: `
     <mat-accordion>
-      @for (segment of segmentsService.segments; track segment) {
+      @for (segment of segmentsService.segments; track segment.resource.res.id) {
         <mat-expansion-panel
           #panel
           [attr.data-segment-resource]="segment.resource.res.id"

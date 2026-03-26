@@ -186,7 +186,7 @@ export class ResourceTabsComponent implements OnInit, OnDestroy {
   }
 
   private _openAnnotationTab() {
-    this.selectedTab = 2;
+    this.selectedTab = this.annotationIri ? 0 : 2;
     this.regionService.showRegions(true);
   }
 }

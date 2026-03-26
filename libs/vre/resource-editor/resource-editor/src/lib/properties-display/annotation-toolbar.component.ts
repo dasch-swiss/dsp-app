@@ -124,8 +124,6 @@ import { ColorViewerComponent } from '../template-switcher/viewer-components/col
 export class AnnotationToolbarComponent {
   @Input({ required: true }) resource!: ReadResource;
   @Input({ required: true }) parentResourceId!: string;
-  @Input() toolBarActive = false;
-
   get readColorValue() {
     const colorValues: ReadColorValue[] = this.resource.properties[Constants.HasColor] as ReadColorValue[];
     return colorValues && colorValues.length ? colorValues[0] : null;
