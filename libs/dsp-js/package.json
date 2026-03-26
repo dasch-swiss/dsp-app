@@ -1,6 +1,6 @@
 {
   "name": "@dasch-swiss/dsp-js",
-  "version": "10.10.1",
+  "version": "11.0.0",
   "description": "TypeScript client library for DSP-API",
   "main": "./src/index.js",
   "types": "./src/index.d.ts",
