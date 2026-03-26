@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Constants, CountQueryResponse, KnoraApiConnection, ReadFileValue, ReadResource } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken, RouteConstants } from '@dasch-swiss/vre/core/config';
 import { DspCompoundPosition, DspResource } from '@dasch-swiss/vre/shared/app-common';
-import { take } from 'rxjs';
+import { filter, skip, take } from 'rxjs';
 import { CompoundViewerComponent } from './compound/compound-viewer.component';
 import { CompoundService } from './compound/compound.service';
 import { getFileValue } from './representations/get-file-value';
@@ -30,7 +30,7 @@ import { SegmentsService } from './segment-support/segments.service';
     @if (isCompoundNavigation) {
       <app-compound-viewer />
     }
-    <app-resource-tabs [resource]="resource" style="display: block; margin-top: 50px" />
+    <app-resource-tabs [resource]="resource" [annotationIri]="annotationIri" style="display: block; margin-top: 50px" />
   `,
   providers: [CompoundService, PropertiesDisplayService, RegionService, SegmentsService],
   imports: [
@@ -47,6 +47,7 @@ export class ResourceComponent implements OnChanges {
   representationsToDisplay!: ReadFileValue;
   isCompoundNavigation!: boolean;
   resourceIsObjectWithoutRepresentation!: boolean;
+  annotationIri: string | null = null;
 
   constructor(
     private readonly _cdr: ChangeDetectorRef,
@@ -92,8 +93,20 @@ export class ResourceComponent implements OnChanges {
       return;
     }
 
+    this.annotationIri = annotation;
     this._regionService.showRegions(true);
     this._regionService.selectRegion(annotation);
+
+    // Wait until regions finish loading, then filter to show only this annotation
+    // and re-trigger selectRegion so the OSD highlights it after the SVG is drawn
+    this._regionService.regionsLoading$.pipe(
+      skip(1), // skip the initial false value
+      filter(loading => !loading),
+      take(1)
+    ).subscribe(() => {
+      this._regionService.filterToRegion(annotation);
+      this._regionService.selectRegion(annotation);
+    });
   }
 
   private _checkForCompoundNavigation(resource: ReadResource) {

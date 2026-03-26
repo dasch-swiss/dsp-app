@@ -60,6 +60,11 @@ export class RegionService {
     this._highlightedRegionClicked.next(regionIri);
   }
 
+  filterToRegion(regionIri: string) {
+    const filtered = this._regionsSubject.getValue().filter(r => r.res.id === regionIri);
+    this._regionsSubject.next(filtered);
+  }
+
   private _getIncomingRegions(resourceId: string) {
     let offset = 0;
     let accumulated: DspResource[] = [];
