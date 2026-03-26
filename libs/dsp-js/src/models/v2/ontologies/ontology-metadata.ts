@@ -9,13 +9,13 @@ import { IdConverter } from '../custom-converters/id-converter';
 @JsonObject('OntologyMetadata')
 export class OntologyMetadata {
   @JsonProperty('@id', String)
-  id: string = '';
+  id = '';
 
   @JsonProperty('@type', String)
-  type: string = '';
+  type = '';
 
   @JsonProperty(Constants.Label, String)
-  label: string = '';
+  label = '';
 
   @JsonProperty(Constants.Comment, String, true)
   comment?: string = undefined;
@@ -24,7 +24,7 @@ export class OntologyMetadata {
   lastModificationDate?: string = undefined;
 
   @JsonProperty(Constants.AttachedToProject, IdConverter)
-  attachedToProject: string = '';
+  attachedToProject = '';
 }
 
 /**

@@ -10,7 +10,7 @@ import { ReadValue } from './read-value';
 @JsonObject('ReadListValue')
 export class ReadListValue extends ReadValue implements IBaseListValue {
   @JsonProperty(Constants.ListValueAsListNode, IdConverter)
-  listNode: string = '';
+  listNode = '';
 
   listNodeLabel!: string;
 }

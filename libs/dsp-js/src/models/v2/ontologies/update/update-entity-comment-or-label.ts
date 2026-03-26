@@ -6,7 +6,7 @@ import { JsonObject, JsonProperty } from 'json2typescript';
 @JsonObject('UpdateEntityCommentOrLabel')
 export abstract class UpdateEntityCommentOrLabel {
   @JsonProperty('@id', String)
-  id: string = '';
+  id = '';
 
   /**
    * Type will be assigned on construction.

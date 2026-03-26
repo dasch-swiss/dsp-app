@@ -25,7 +25,7 @@ export class ListNodeInfo {
    * The ID of the enclosing object.
    */
   @JsonProperty('id', String)
-  id: string = '';
+  id = '';
 
   /**
    * True if this is the root node of a list.

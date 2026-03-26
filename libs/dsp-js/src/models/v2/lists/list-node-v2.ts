@@ -10,6 +10,8 @@ import {
 } from 'json2typescript';
 import { Constants } from '../Constants';
 import { IdConverter } from '../custom-converters/id-converter';
+import { ListNodeCommentsConverter } from '../custom-converters/list-node-comments-converter';
+import { StringLiteralV2 } from '../string-literal-v2';
 
 /**
  * @category Internal
@@ -44,13 +46,16 @@ export class SubListNodeConverter implements JsonCustomConvert<ListNodeV2[]> {
 @JsonObject('ListNodeV2')
 export class ListNodeV2 {
   @JsonProperty('@id', String)
-  id: string = '';
+  id = '';
 
   @JsonProperty(Constants.Label, String)
-  label: string = '';
+  label = '';
+
+  @JsonProperty(Constants.Comment, ListNodeCommentsConverter, true)
+  comments: StringLiteralV2[] = [];
 
   @JsonProperty(Constants.IsRootNode, Boolean, true)
-  isRootNode: boolean = false;
+  isRootNode = false;
 
   @JsonProperty(Constants.HasRootNode, IdConverter, true)
   hasRootNode?: string = undefined;

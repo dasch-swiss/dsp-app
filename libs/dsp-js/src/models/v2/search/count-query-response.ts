@@ -7,5 +7,5 @@ import { Constants } from '../Constants';
 @JsonObject('CountQueryResponse')
 export class CountQueryResponse {
   @JsonProperty(Constants.SchemaNumberOfItems, Number)
-  numberOfResults: number = 0;
+  numberOfResults = 0;
 }

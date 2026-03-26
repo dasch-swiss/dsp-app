@@ -14,7 +14,7 @@ export class KnoraApiConfig {
    * The full API URL
    */
   get apiUrl(): string {
-    return this.apiProtocol + '://' + this.apiHost + (this.apiPort !== null ? ':' + this.apiPort : '') + this.apiPath;
+    return `${this.apiProtocol}://${this.apiHost}${this.apiPort !== null ? `:${this.apiPort}` : ''}${this.apiPath}`;
   }
 
   /**
@@ -29,9 +29,9 @@ export class KnoraApiConfig {
     public apiProtocol: 'http' | 'https',
     public apiHost: string,
     public apiPort: number | null = null,
-    public apiPath: string = '',
-    public jsonWebToken: string = '',
-    public logErrors: boolean = false
+    public apiPath = '',
+    public jsonWebToken = '',
+    public logErrors = false
   ) {
     // Remove port in case it's the default one
     if (apiProtocol === KnoraApiConfig.PROTOCOL_HTTP && apiPort === KnoraApiConfig.DEFAULT_PORT_HTTP) {

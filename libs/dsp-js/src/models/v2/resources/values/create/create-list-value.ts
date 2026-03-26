@@ -10,7 +10,7 @@ import { CreateValue } from './create-value';
 @JsonObject('CreateListValue')
 export class CreateListValue extends CreateValue implements IBaseListValue {
   @JsonProperty(Constants.ListValueAsListNode, IdConverter)
-  listNode: string = '';
+  listNode = '';
 
   constructor() {
     super(Constants.ListValue);

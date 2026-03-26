@@ -1,10 +1,10 @@
-import { AjaxResponse } from 'rxjs/ajax';
 import { catchError, map, mergeMap } from 'rxjs';
+import { AjaxResponse } from 'rxjs/ajax';
 import { ListNodeV2Cache } from '../../../cache/ListNodeV2Cache';
 import { OntologyCache } from '../../../cache/ontology-cache/OntologyCache';
 import { KnoraApiConfig } from '../../../knora-api-config';
-import { ReadResourceSequence } from '../../../models/v2/resources/read/read-resource-sequence';
 import { ResourcesConversionUtil } from '../../../models/v2/resources/ResourcesConversionUtil';
+import { ReadResourceSequence } from '../../../models/v2/resources/read/read-resource-sequence';
 import { UpdateResource } from '../../../models/v2/resources/update/update-resource';
 import { CreateFileValue } from '../../../models/v2/resources/values/create/create-file-value';
 import { CreateValue } from '../../../models/v2/resources/values/create/create-value';
@@ -50,7 +50,7 @@ export class ValuesEndpointV2 extends Endpoint {
     const tempOntologyCache = new OntologyCache(this.knoraApiConfig, this.v2Endpoint);
     const tempListNodeCache = new ListNodeV2Cache(this.v2Endpoint);
 
-    return this.httpGet('/' + encodeURIComponent(resourceIri) + '/' + encodeURIComponent(valueUuid)).pipe(
+    return this.httpGet(`/${encodeURIComponent(resourceIri)}/${encodeURIComponent(valueUuid)}`).pipe(
       mergeMap(ajaxResponse => {
         // console.log(JSON.stringify(ajaxResponse.response));
         // TODO: @rosenth Adapt context object

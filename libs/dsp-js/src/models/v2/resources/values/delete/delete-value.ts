@@ -8,7 +8,7 @@ import { BaseValue } from '../base-value';
 @JsonObject('DeleteValue')
 export class DeleteValue extends BaseValue {
   @JsonProperty('@id', String)
-  id: string = '';
+  id = '';
 
   @JsonProperty(Constants.DeleteComment, String, true)
   deleteComment?: string = undefined;
