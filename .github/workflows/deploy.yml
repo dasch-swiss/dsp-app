@@ -9,7 +9,7 @@ on:
       - main
   push:
     tags:
-      - '*'
+      - 'v[0-9]*'
 
 jobs:
 
