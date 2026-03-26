@@ -25,7 +25,9 @@ interface ListNodeDisplay {
         <span
           [ngStyle]="{ 'font-weight': last && index > 0 ? 'bold' : 'normal' }"
           [matTooltip]="node.comment"
-          [matTooltipDisabled]="!node.comment">{{ node.label }}</span>
+          [matTooltipDisabled]="!node.comment"
+          >{{ node.label }}</span
+        >
         @if (!last) {
           <mat-icon>chevron_right</mat-icon>
         }
