@@ -77,22 +77,14 @@ interface ResourceGroup {
             {{ 'resourceEditor.templateSwitcher.linkValue.createNew' | translate }}: {{ rc?.label }}
           </mat-option>
         }
-        @if (showGroupHeaders) {
-          @for (group of groupedResources; track group.classIri) {
-            <mat-optgroup [label]="group.classLabel" class="link-value-class-group">
-              @for (res of group.resources; track res.id) {
-                <mat-option [value]="res.id">
-                  {{ res.label }}
-                </mat-option>
-              }
-            </mat-optgroup>
-          }
-        } @else {
-          @for (res of resources; track trackByResourcesFn($index, res)) {
-            <mat-option [value]="res.id">
-              {{ res.label }}
-            </mat-option>
-          }
+        @for (group of groupedResources; track group.classIri) {
+          <mat-optgroup [label]="group.classLabel" class="link-value-class-group">
+            @for (res of group.resources; track res.id) {
+              <mat-option [value]="res.id">
+                {{ res.label }}
+              </mat-option>
+            }
+          </mat-optgroup>
         }
         @if (loading) {
           <mat-option [disabled]="true" class="loader">
@@ -133,10 +125,6 @@ export class LinkValueComponent implements OnInit {
   resources: ReadResource[] = [];
   groupedResources: ResourceGroup[] = [];
   readResource?: ReadResource;
-
-  get showGroupHeaders(): boolean {
-    return this.groupedResources.length > 1;
-  }
 
   constructor(
     @Inject(DspApiConnectionToken)
