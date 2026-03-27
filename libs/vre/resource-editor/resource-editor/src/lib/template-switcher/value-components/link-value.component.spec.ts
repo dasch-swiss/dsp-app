@@ -171,13 +171,13 @@ describe('LinkValueComponent', () => {
       expect(mockDspApiConnection.v2.search.doSearchByLabel).not.toHaveBeenCalled();
     });
 
-    it('should clear resources array when input changes', () => {
-      component.resources = [mockReadResource];
+    it('should clear groupedResources when input changes', () => {
+      component.groupedResources = (component as any).groupByClass([mockReadResource]);
       component.input.nativeElement.value = 'ab';
 
       component.onInputValueChange();
 
-      expect(component.resources).toEqual([]);
+      expect(component.groupedResources).toEqual([]);
     });
 
     it('should not search if readResource is not defined', () => {
@@ -222,7 +222,7 @@ describe('LinkValueComponent', () => {
   describe('handleNonSelectedValues', () => {
     beforeEach(() => {
       component.input = { nativeElement: { value: 'some text' } } as any;
-      component.resources = mockResources;
+      component.groupedResources = (component as any).groupByClass(mockResources);
       component.useDefaultValue = false;
     });
 
@@ -243,11 +243,34 @@ describe('LinkValueComponent', () => {
 
       expect(component.input.nativeElement.value).toBe('Test Resource 1');
     });
+
+    it('should reset groupedResources and hasSearched when no control value', () => {
+      component.control.setValue(null);
+      component.hasSearched = true;
+      component.groupedResources = (component as any).groupByClass(mockResources);
+
+      component.handleNonSelectedValues();
+
+      expect(component.groupedResources).toEqual([]);
+      expect(component.hasSearched).toBe(false);
+    });
+
+    it('should preserve groupedResources when control has a value', () => {
+      component.control.setValue('http://example.org/resource/1');
+      component.hasSearched = true;
+      const initialGroupedResources = (component as any).groupByClass(mockResources);
+      component.groupedResources = initialGroupedResources;
+
+      component.handleNonSelectedValues();
+
+      expect(component.groupedResources).toEqual(initialGroupedResources);
+      expect(component.hasSearched).toBe(true);
+    });
   });
 
   describe('displayResource', () => {
     beforeEach(() => {
-      component.resources = mockResources;
+      component.groupedResources = (component as any).groupByClass(mockResources);
     });
 
     it('should return default value when useDefaultValue is true', () => {
@@ -294,14 +317,6 @@ describe('LinkValueComponent', () => {
     });
   });
 
-  describe('trackByResourcesFn', () => {
-    it('should return unique identifier for resource', () => {
-      const result = component.trackByResourcesFn(0, mockReadResource);
-
-      expect(result).toBe('0-http://example.org/resource/1');
-    });
-  });
-
   describe('trackByResourceClassFn', () => {
     it('should return unique identifier for resource class', () => {
       const mockResourceClass = { id: 'http://example.org/ontology/test#Class' } as ResourceClassDefinition;
@@ -328,7 +343,6 @@ describe('LinkValueComponent', () => {
         createMockResource('res3', 'Resource 3', 'http://example.org#ClassA', 'Class A'),
       ];
 
-      component.resources = resources;
       component.groupedResources = (component as any).groupByClass(resources);
 
       expect(component.groupedResources).toHaveLength(2);
@@ -346,59 +360,32 @@ describe('LinkValueComponent', () => {
         createMockResource('res2', 'Resource 2', 'http://example.org#ClassA', 'Class A'),
       ];
 
-      component.resources = resources;
       component.groupedResources = (component as any).groupByClass(resources);
 
       expect(component.groupedResources).toHaveLength(1);
       expect(component.groupedResources[0].resources).toHaveLength(2);
     });
 
-    it('should return empty array for empty resources', () => {
-      component.resources = [];
-      component.groupedResources = (component as any).groupByClass([]);
-
-      expect(component.groupedResources).toHaveLength(0);
-    });
-  });
-
-  describe('showGroupHeaders', () => {
-    const createMockResource = (id: string, label: string, type: string, resourceClassLabel: string): ReadResource =>
-      ({
-        id,
-        label,
-        type,
-        resourceClassLabel,
-      }) as any;
-
-    it('should return true when multiple classes exist', () => {
-      const resources = [
-        createMockResource('res1', 'Resource 1', 'http://example.org#ClassA', 'Class A'),
-        createMockResource('res2', 'Resource 2', 'http://example.org#ClassB', 'Class B'),
-      ];
-
-      component.resources = resources;
-      component.groupedResources = (component as any).groupByClass(resources);
-
-      expect(component.showGroupHeaders).toBe(true);
-    });
-
-    it('should return false when only one class exists', () => {
+    it('should always provide group headers for template even with single class', () => {
+      // This test verifies that groupedResources always contains classLabel
+      // which the template uses to render mat-optgroup headers unconditionally
       const resources = [
         createMockResource('res1', 'Resource 1', 'http://example.org#ClassA', 'Class A'),
         createMockResource('res2', 'Resource 2', 'http://example.org#ClassA', 'Class A'),
       ];
 
-      component.resources = resources;
       component.groupedResources = (component as any).groupByClass(resources);
 
-      expect(component.showGroupHeaders).toBe(false);
+      // Verify single group exists with class label for header display
+      expect(component.groupedResources).toHaveLength(1);
+      expect(component.groupedResources[0].classLabel).toBe('Class A');
+      expect(component.groupedResources[0].classIri).toBe('http://example.org#ClassA');
     });
 
-    it('should return false when no resources exist', () => {
-      component.resources = [];
-      component.groupedResources = [];
+    it('should return empty array for empty resources', () => {
+      component.groupedResources = (component as any).groupByClass([]);
 
-      expect(component.showGroupHeaders).toBe(false);
+      expect(component.groupedResources).toHaveLength(0);
     });
   });
 });

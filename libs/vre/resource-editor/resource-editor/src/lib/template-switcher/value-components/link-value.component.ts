@@ -13,6 +13,7 @@ import { MatAutocomplete, MatAutocompleteTrigger } from '@angular/material/autoc
 import { MatOptgroup, MatOption } from '@angular/material/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatError, MatFormField, MatHint } from '@angular/material/form-field';
+import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import {
   KnoraApiConnection,
@@ -50,6 +51,7 @@ interface ResourceGroup {
     MatError,
     HumanReadableErrorPipe,
     AppProgressIndicatorComponent,
+    MatIcon,
   ],
   template: `
     <mat-form-field style="width: 100%">
@@ -67,35 +69,32 @@ interface ResourceGroup {
         requireSelection
         [displayWith]="displayResource.bind(this)"
         (closed)="handleNonSelectedValues()">
-        @if (resources.length === 0 && !loading) {
+        @if (groupedResources.length === 0 && !loading && hasSearched) {
           <mat-option [disabled]="true">{{
             'resourceEditor.templateSwitcher.linkValue.noResults' | translate
           }}</mat-option>
         }
-        @for (rc of _linkValueDataService.resourceClasses; track trackByResourceClassFn($index, rc)) {
+        @for (rc of linkValueDataService.resourceClasses; track trackByResourceClassFn($index, rc)) {
           <mat-option (click)="openCreateResourceDialog($event, rc.id, rc.label)">
-            {{ 'resourceEditor.templateSwitcher.linkValue.createNew' | translate }}: {{ rc?.label }}
+            <mat-icon>add</mat-icon>
+            {{ 'resourceEditor.templateSwitcher.linkValue.createNew' | translate }}: {{ rc.label }}
           </mat-option>
         }
-        @if (showGroupHeaders) {
-          @for (group of groupedResources; track group.classIri) {
+        @for (group of groupedResources; track group.classIri) {
+          @if (linkValueDataService.resourceClasses.length > 1) {
             <mat-optgroup [label]="group.classLabel" class="link-value-class-group">
               @for (res of group.resources; track res.id) {
-                <mat-option [value]="res.id">
-                  {{ res.label }}
-                </mat-option>
+                <mat-option [value]="res.id">{{ res.label }}</mat-option>
               }
             </mat-optgroup>
-          }
-        } @else {
-          @for (res of resources; track trackByResourcesFn($index, res)) {
-            <mat-option [value]="res.id">
-              {{ res.label }}
-            </mat-option>
+          } @else {
+            @for (res of group.resources; track res.id) {
+              <mat-option [value]="res.id">{{ res.label }}</mat-option>
+            }
           }
         }
         @if (loading) {
-          <mat-option [disabled]="true" class="loader">
+          <mat-option [disabled]="true">
             <app-progress-indicator />
           </mat-option>
         }
@@ -125,25 +124,20 @@ export class LinkValueComponent implements OnInit {
   @Input({ required: true }) projectShortcode!: string;
   @Input() defaultValue?: ReadValue;
   @ViewChild(MatAutocompleteTrigger) autoComplete!: MatAutocompleteTrigger;
-  @ViewChild(MatAutocomplete) auto!: MatAutocomplete;
   @ViewChild('input') input!: ElementRef<HTMLInputElement>;
 
   loading = false;
   useDefaultValue = true;
-  resources: ReadResource[] = [];
+  hasSearched = false;
   groupedResources: ResourceGroup[] = [];
   readResource?: ReadResource;
-
-  get showGroupHeaders(): boolean {
-    return this.groupedResources.length > 1;
-  }
 
   constructor(
     @Inject(DspApiConnectionToken)
     private _dspApiConnection: KnoraApiConnection,
     private _dialog: MatDialog,
     private _cd: ChangeDetectorRef,
-    public _linkValueDataService: LinkValueDataService,
+    public linkValueDataService: LinkValueDataService,
     private _viewContainerRef: ViewContainerRef
   ) {}
 
@@ -155,16 +149,21 @@ export class LinkValueComponent implements OnInit {
     if (this.input.nativeElement.value !== this.displayResource(this.control.value)) {
       this.input.nativeElement.value = '';
     }
+    if (!this.control.value) {
+      this.groupedResources = [];
+      this.hasSearched = false;
+    }
   }
 
   onInputValueChange() {
-    this.resources = [];
+    this.groupedResources = [];
     const searchTerm = this.input.nativeElement.value;
     if (!this.readResource || searchTerm?.length < 3) {
       return;
     }
 
     this.loading = true;
+    this.hasSearched = true;
     this._search(searchTerm);
   }
 
@@ -204,15 +203,12 @@ export class LinkValueComponent implements OnInit {
         })
       )
       .subscribe(res => {
-        this.resources = [];
-        this.resources.push(res as ReadResource);
+        this.groupedResources = this.groupByClass([res as ReadResource]);
         this.control.setValue(myResourceId);
         this.autoComplete.closePanel();
         this._cd.detectChanges();
       });
   }
-
-  trackByResourcesFn = (index: number, item: ReadResource) => `${index}-${item.id}`;
 
   trackByResourceClassFn = (index: number, item: ResourceClassDefinition) => `${index}-${item.id}`;
 
@@ -222,11 +218,16 @@ export class LinkValueComponent implements OnInit {
     }
 
     if (resId === null) return '';
-    return this.resources.find(res => res.id === resId)?.label ?? '';
+    for (const group of this.groupedResources) {
+      const found = group.resources.find(res => res.id === resId);
+      if (found) return found.label;
+    }
+    return '';
   }
 
   private _search(searchTerm: string) {
     let offset = 0;
+    let allResources: ReadResource[] = [];
     this.cancelPreviousSearchRequest$.next();
     const resourceClassIri = this._getRestrictToResourceClass(this.readResource as ReadResource)!;
 
@@ -247,8 +248,8 @@ export class LinkValueComponent implements OnInit {
         })
       )
       .subscribe(response => {
-        this.resources = response.resources;
-        this.groupedResources = this.groupByClass(this.resources);
+        allResources = [...allResources, ...response.resources];
+        this.groupedResources = this.groupByClass(allResources);
         this._cd.detectChanges();
       });
   }
@@ -274,7 +275,7 @@ export class LinkValueComponent implements OnInit {
         readResource.entityInfo = onto;
         this.readResource = readResource;
 
-        this._linkValueDataService.onInit(ontologyIri, readResource, this.propIri);
+        this.linkValueDataService.onInit(ontologyIri, readResource, this.propIri);
         this.useDefaultValue = false;
         this._cd.detectChanges();
       });
