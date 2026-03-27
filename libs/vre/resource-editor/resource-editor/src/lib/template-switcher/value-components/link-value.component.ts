@@ -69,7 +69,7 @@ interface ResourceGroup {
         requireSelection
         [displayWith]="displayResource.bind(this)"
         (closed)="handleNonSelectedValues()">
-        @if (resources.length === 0 && !loading) {
+        @if (groupedResources.length === 0 && !loading && hasSearched) {
           <mat-option [disabled]="true">{{
             'resourceEditor.templateSwitcher.linkValue.noResults' | translate
           }}</mat-option>
@@ -130,12 +130,11 @@ export class LinkValueComponent implements OnInit {
   @Input({ required: true }) projectShortcode!: string;
   @Input() defaultValue?: ReadValue;
   @ViewChild(MatAutocompleteTrigger) autoComplete!: MatAutocompleteTrigger;
-  @ViewChild(MatAutocomplete) auto!: MatAutocomplete;
   @ViewChild('input') input!: ElementRef<HTMLInputElement>;
 
   loading = false;
   useDefaultValue = true;
-  resources: ReadResource[] = [];
+  hasSearched = false;
   groupedResources: ResourceGroup[] = [];
   readResource?: ReadResource;
 
@@ -156,16 +155,21 @@ export class LinkValueComponent implements OnInit {
     if (this.input.nativeElement.value !== this.displayResource(this.control.value)) {
       this.input.nativeElement.value = '';
     }
+    if (!this.control.value) {
+      this.groupedResources = [];
+      this.hasSearched = false;
+    }
   }
 
   onInputValueChange() {
-    this.resources = [];
+    this.groupedResources = [];
     const searchTerm = this.input.nativeElement.value;
     if (!this.readResource || searchTerm?.length < 3) {
       return;
     }
 
     this.loading = true;
+    this.hasSearched = true;
     this._search(searchTerm);
   }
 
@@ -205,15 +209,12 @@ export class LinkValueComponent implements OnInit {
         })
       )
       .subscribe(res => {
-        this.resources = [];
-        this.resources.push(res as ReadResource);
+        this.groupedResources = this.groupByClass([res as ReadResource]);
         this.control.setValue(myResourceId);
         this.autoComplete.closePanel();
         this._cd.detectChanges();
       });
   }
-
-  trackByResourcesFn = (index: number, item: ReadResource) => `${index}-${item.id}`;
 
   trackByResourceClassFn = (index: number, item: ResourceClassDefinition) => `${index}-${item.id}`;
 
@@ -223,7 +224,11 @@ export class LinkValueComponent implements OnInit {
     }
 
     if (resId === null) return '';
-    return this.resources.find(res => res.id === resId)?.label ?? '';
+    for (const group of this.groupedResources) {
+      const found = group.resources.find(res => res.id === resId);
+      if (found) return found.label;
+    }
+    return '';
   }
 
   private _search(searchTerm: string) {
@@ -248,8 +253,7 @@ export class LinkValueComponent implements OnInit {
         })
       )
       .subscribe(response => {
-        this.resources = response.resources;
-        this.groupedResources = this.groupByClass(this.resources);
+        this.groupedResources = this.groupByClass(response.resources);
         this._cd.detectChanges();
       });
   }
