@@ -13,6 +13,7 @@ import { MatAutocomplete, MatAutocompleteTrigger } from '@angular/material/autoc
 import { MatOptgroup, MatOption } from '@angular/material/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatError, MatFormField, MatHint } from '@angular/material/form-field';
+import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import {
   KnoraApiConnection,
@@ -50,6 +51,7 @@ interface ResourceGroup {
     MatError,
     HumanReadableErrorPipe,
     AppProgressIndicatorComponent,
+    MatIcon,
   ],
   template: `
     <mat-form-field style="width: 100%">
@@ -74,7 +76,8 @@ interface ResourceGroup {
         }
         @for (rc of _linkValueDataService.resourceClasses; track trackByResourceClassFn($index, rc)) {
           <mat-option (click)="openCreateResourceDialog($event, rc.id, rc.label)">
-            {{ 'resourceEditor.templateSwitcher.linkValue.createNew' | translate }}: {{ rc?.label }}
+            <mat-icon>add</mat-icon>
+            {{ 'resourceEditor.templateSwitcher.linkValue.createNew' | translate }}: {{ rc.label }}
           </mat-option>
         }
         @for (group of groupedResources; track group.classIri) {
