@@ -22,8 +22,8 @@ import {
   ReadValue,
   ResourceClassDefinition,
 } from '@dasch-swiss/dsp-js';
+import { MatProgressBar } from '@angular/material/progress-bar';
 import { DspApiConnectionToken, DspDialogConfig } from '@dasch-swiss/vre/core/config';
-import { AppProgressIndicatorComponent } from '@dasch-swiss/vre/ui/progress-indicator';
 import { HumanReadableErrorPipe } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe } from '@ngx-translate/core';
 import { EMPTY, expand, filter, finalize, from, Subject, switchMap, takeUntil } from 'rxjs';
@@ -50,7 +50,7 @@ interface ResourceGroup {
     MatHint,
     MatError,
     HumanReadableErrorPipe,
-    AppProgressIndicatorComponent,
+    MatProgressBar,
     MatIcon,
   ],
   template: `
@@ -90,8 +90,8 @@ interface ResourceGroup {
           </mat-optgroup>
         }
         @if (loading) {
-          <mat-option [disabled]="true" class="loader">
-            <app-progress-indicator />
+          <mat-option [disabled]="true" class="loading-option">
+            <mat-progress-bar mode="indeterminate" color="primary" />
           </mat-option>
         }
       </mat-autocomplete>
@@ -107,6 +107,16 @@ interface ResourceGroup {
       --mat-optgroup-label-text-size: 0.85em;
       --mat-optgroup-label-text-weight: 500;
       --mat-optgroup-label-text-color: rgba(0, 0, 0, 0.6);
+    }
+
+    .loading-option {
+      mat-progress-bar {
+        width: 100%;
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+      }
     }
   `,
 })
