@@ -74,20 +74,24 @@ interface ResourceGroup {
             'resourceEditor.templateSwitcher.linkValue.noResults' | translate
           }}</mat-option>
         }
-        @for (rc of _linkValueDataService.resourceClasses; track trackByResourceClassFn($index, rc)) {
+        @for (rc of linkValueDataService.resourceClasses; track trackByResourceClassFn($index, rc)) {
           <mat-option (click)="openCreateResourceDialog($event, rc.id, rc.label)">
             <mat-icon>add</mat-icon>
             {{ 'resourceEditor.templateSwitcher.linkValue.createNew' | translate }}: {{ rc.label }}
           </mat-option>
         }
         @for (group of groupedResources; track group.classIri) {
-          <mat-optgroup [label]="group.classLabel" class="link-value-class-group">
+          @if (linkValueDataService.resourceClasses.length > 1) {
+            <mat-optgroup [label]="group.classLabel" class="link-value-class-group">
+              @for (res of group.resources; track res.id) {
+                <mat-option [value]="res.id">{{ res.label }}</mat-option>
+              }
+            </mat-optgroup>
+          } @else {
             @for (res of group.resources; track res.id) {
-              <mat-option [value]="res.id">
-                {{ res.label }}
-              </mat-option>
+              <mat-option [value]="res.id">{{ res.label }}</mat-option>
             }
-          </mat-optgroup>
+          }
         }
         @if (loading) {
           <mat-option [disabled]="true">
@@ -133,7 +137,7 @@ export class LinkValueComponent implements OnInit {
     private _dspApiConnection: KnoraApiConnection,
     private _dialog: MatDialog,
     private _cd: ChangeDetectorRef,
-    public _linkValueDataService: LinkValueDataService,
+    public linkValueDataService: LinkValueDataService,
     private _viewContainerRef: ViewContainerRef
   ) {}
 
@@ -271,7 +275,7 @@ export class LinkValueComponent implements OnInit {
         readResource.entityInfo = onto;
         this.readResource = readResource;
 
-        this._linkValueDataService.onInit(ontologyIri, readResource, this.propIri);
+        this.linkValueDataService.onInit(ontologyIri, readResource, this.propIri);
         this.useDefaultValue = false;
         this._cd.detectChanges();
       });
