@@ -12,6 +12,8 @@ import { BehaviorSubject, concatMap, EMPTY, expand, map, Subject, takeUntil, tap
 export class RegionService {
   private _resourceId!: string;
 
+  private _allRegions: DspResource[] = [];
+
   private _regionsSubject = new BehaviorSubject<DspResource[]>([]);
   regions$ = this._regionsSubject.asObservable();
 
@@ -43,9 +45,14 @@ export class RegionService {
   updateRegions$() {
     return this._getIncomingRegions(this._resourceId).pipe(
       tap(res => {
-        this._regionsSubject.next(res);
+        this._setRegions(res);
       })
     );
+  }
+
+  private _setRegions(list: DspResource[]) {
+    this._allRegions = list;
+    this._regionsSubject.next(list);
   }
 
   showRegions(value: boolean) {
@@ -61,7 +68,7 @@ export class RegionService {
   }
 
   filterToRegion(regionIri: string) {
-    const filtered = this._regionsSubject.getValue().filter(r => r.res.id === regionIri);
+    const filtered = this._allRegions.filter(r => r.res.id === regionIri);
     this._regionsSubject.next(filtered);
   }
 
@@ -78,7 +85,7 @@ export class RegionService {
         });
 
         accumulated = [...accumulated, ...currentPageResources];
-        this._regionsSubject.next(accumulated);
+        this._setRegions(accumulated);
 
         if (response.mayHaveMoreResults) {
           offset++;

@@ -448,6 +448,9 @@
       "by": "da",
       "on": "il"
     },
+    "segmentTab": {
+      "goToSegment": "Vai al segmento"
+    },
     "legal": {
       "copyrightHolder": "Titolare del copyright",
       "authorship": "Autore"

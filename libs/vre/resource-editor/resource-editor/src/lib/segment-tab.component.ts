@@ -1,9 +1,10 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ReadResource } from '@dasch-swiss/dsp-js';
+import { TranslatePipe } from '@ngx-translate/core';
 import { delay, Subscription } from 'rxjs';
 import { IncomingResourceToolbarComponent } from './incoming-resource-toolbar.component';
 import { PropertiesDisplayComponent } from './properties-display/properties-display.component';
@@ -28,7 +29,7 @@ import { SegmentsService } from './segment-support/segments.service';
               <div style="display: flex; align-items: center;">
                 <button
                   mat-icon-button
-                  matTooltip="Go to segment"
+                  [matTooltip]="'resourceEditor.segmentTab.goToSegment' | translate"
                   color="primary"
                   matTooltipPosition="above"
                   (click)="onTargetClicked(segment); $event.stopPropagation()">
@@ -52,6 +53,7 @@ import { SegmentsService } from './segment-support/segments.service';
     MatExpansionModule,
     MatIconModule,
     MatTooltipModule,
+    TranslatePipe,
     IncomingResourceToolbarComponent,
     PropertiesDisplayComponent,
     ResourceInfoBarComponent,

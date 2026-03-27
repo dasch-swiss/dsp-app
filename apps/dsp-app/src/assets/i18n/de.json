@@ -635,6 +635,9 @@
       "by": "von",
       "on": "am"
     },
+    "segmentTab": {
+      "goToSegment": "Zum Segment gehen"
+    },
     "legal": {
       "copyrightHolder": "Urheberrechtsinhaber",
       "authorship": "Autorenschaft"
