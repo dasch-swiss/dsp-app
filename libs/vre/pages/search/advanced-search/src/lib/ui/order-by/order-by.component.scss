@@ -1,24 +1,16 @@
-.order-by-button {
-  border: 1px solid;
-  width: 502px; // 500px + 2px border
+.label-icon-container {
+  display: flex;
+  align-items: center;
 
-  .label-icon-container {
-    display: flex;
-    align-items: center;
-
-    .icon {
-      display: inline-block;
-      height: 24px;
-      margin-left: 5px;
-    }
+  .icon {
+    display: inline-block;
+    height: 24px;
   }
 }
 
-
-// the width should equal to the width of the button until a certain lower bound
 .sort-list {
+  margin-top: 0.5em;
   width: 500px;
-  max-width: 100%;
   border: solid 1px #ccc;
   min-height: 60px;
   display: block;

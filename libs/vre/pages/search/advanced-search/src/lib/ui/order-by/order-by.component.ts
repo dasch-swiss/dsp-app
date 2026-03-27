@@ -1,12 +1,12 @@
 import { CdkDrag, CdkDragDrop, CdkDragHandle, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
 import { OverlayModule } from '@angular/cdk/overlay';
-
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import { AsyncPipe } from '@angular/common';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatListModule, MatSelectionList, MatSelectionListChange } from '@angular/material/list';
+import { MatListModule, MatSelectionListChange } from '@angular/material/list';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { OrderByItem } from '../../data-access/advanced-search-store/advanced-search-store.service';
+import { OrderByService } from '../../service/order-by.service';
 
 @Component({
   selector: 'app-order-by',
@@ -19,41 +19,34 @@ import { OrderByItem } from '../../data-access/advanced-search-store/advanced-se
     MatListModule,
     MatTooltipModule,
     OverlayModule,
+    AsyncPipe,
   ],
   templateUrl: './order-by.component.html',
   styleUrls: ['./order-by.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OrderByComponent {
-  @Input() orderByList: OrderByItem[] | null = [];
-  @Input() orderByDisabled: boolean | null = false;
+  readonly TOOLTIP_TEXT = 'Search cannot be ordered by a URI property or a property that links to a resource.';
+  private orderByService: OrderByService = inject(OrderByService);
 
-  @Output() emitPropertyOrderByChanged = new EventEmitter<OrderByItem[]>();
-
-  @ViewChild('sortOrderSelectionList')
-  sortOrderSelectionList!: MatSelectionList;
+  orderByItems$ = this.orderByService.orderByItems$;
 
   isOpen = false;
-  tooltipText = 'Search cannot be ordered by a URI property or a property that links to a resource.';
 
   drop(event: CdkDragDrop<string[]>) {
-    if (!this.orderByList) return;
-
-    moveItemInArray(this.orderByList, event.previousIndex, event.currentIndex);
-
-    this.emitPropertyOrderByChanged.emit(this.orderByList);
+    const orderBy = this.orderByService.currentOrderBy;
+    moveItemInArray(orderBy, event.previousIndex, event.currentIndex);
+    this.orderByService.updateOrderBy(orderBy);
   }
 
   onSelectionChange(event: MatSelectionListChange) {
-    if (!this.orderByList) return;
-
+    const currentOrderByList = this.orderByService.currentOrderBy;
     event.options.forEach(option => {
-      const selectedItem = this.orderByList?.find(item => item.id === option.value);
+      const selectedItem = currentOrderByList.find(item => item.id === option.value);
       if (selectedItem) {
         selectedItem.orderBy = option.selected;
       }
     });
-
-    this.emitPropertyOrderByChanged.emit(this.orderByList);
+    this.orderByService.updateOrderBy(currentOrderByList);
   }
 }

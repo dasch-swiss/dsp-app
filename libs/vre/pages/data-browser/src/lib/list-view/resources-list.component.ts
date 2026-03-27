@@ -11,9 +11,10 @@ import { ResourceListComponent } from './resource-list.component';
 
 @Component({
   selector: 'app-resources-list',
-  template: ` @if (showBackToFormButton) {
-      <div style="padding: 16px; display: flex; flex-direction: row-reverse">
-        <a mat-stroked-button (click)="navigate()">
+  template: `
+    @if (isAdvancedSearchContext) {
+      <div class="back-button-container">
+        <a mat-stroked-button (click)="navigateBackToSearchForm()">
           <mat-icon>chevron_left</mat-icon>{{ 'pages.dataBrowser.resourcesList.backToSearchForm' | translate }}
         </a>
       </div>
@@ -23,35 +24,41 @@ import { ResourceListComponent } from './resource-list.component';
       <app-pager
         (pageIndexChanged)="updatePageIndex($event)"
         [numberOfAllResults]="resourceResultService.numberOfResults" />
+    } @else {
+      <div class="results-count">
+        {{
+          'pages.dataBrowser.resourcesList.resultsCount' | translate: { count: resourceResultService.numberOfResults }
+        }}
+      </div>
     }
 
-    <app-resource-list [resources]="resources" [showProjectShortname]="showProjectShortname" />`,
-  styles: [
-    `
-      app-pager {
-        margin: 8px;
-      }
-    `,
-  ],
-  imports: [MatAnchor, MatIcon, TranslatePipe, PagerComponent, ResourceListComponent],
+    <app-resource-list [resources]="resources" [showProjectShortname]="showProjectShortname" />
+  `,
+  styleUrls: ['./resources-list.component.scss'],
+  imports: [MatAnchor, MatIcon, PagerComponent, ResourceListComponent, TranslatePipe],
 })
 export class ResourcesListComponent {
   @Input({ required: true }) resources!: ReadResource[];
-  @Input({ required: true }) showBackToFormButton!: boolean;
   @Input() showProjectShortname = false;
+
+  readonly isAdvancedSearchContext: boolean;
 
   constructor(
     public resourceResultService: ResourceResultService,
     private readonly _router: Router,
     private readonly _route: ActivatedRoute
-  ) {}
+  ) {
+    this.isAdvancedSearchContext = this._router.url.includes(`${RouteConstants.advancedSearch}/results`);
+  }
 
   updatePageIndex(index: number) {
     this.resourceResultService.updatePageIndex(index);
   }
 
-  navigate() {
-    const projectUuid = this._route.parent?.snapshot.params['uuid'];
-    this._router.navigate([RouteConstants.project, projectUuid, RouteConstants.advancedSearch]);
+  navigateBackToSearchForm() {
+    this._router.navigate(['..'], {
+      relativeTo: this._route,
+      queryParamsHandling: 'preserve',
+    });
   }
 }

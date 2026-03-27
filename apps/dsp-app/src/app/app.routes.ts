@@ -25,6 +25,8 @@ import {
 import {
   AdvancedSearchPageComponent,
   AdvancedSearchResultsPageComponent,
+} from '@dasch-swiss/vre/pages/search/advanced-search';
+import {
   FulltextSearchResultsPageComponent,
   GlobalPageComponent,
   ProjectFulltextSearchPageComponent,
@@ -128,10 +130,12 @@ export const routes: Routes = [
         component: ProjectFulltextSearchPageComponent,
       },
       {
-        path: RouteConstants.advancedSearchResultsRelative,
-        component: AdvancedSearchResultsPageComponent,
+        path: RouteConstants.advancedSearch,
+        children: [
+          { path: '', component: AdvancedSearchPageComponent },
+          { path: 'results', component: AdvancedSearchResultsPageComponent },
+        ],
       },
-      { path: RouteConstants.advancedSearch, component: AdvancedSearchPageComponent },
     ],
   },
   {
