@@ -351,6 +351,9 @@
         "exactPhrases": "Usa le virgolette per frasi esatte: \"down the rabbit hole\"",
         "booleanSearch": "Usa AND, OR, NOT per ricerche booleane: Alice AND Wonderland",
         "wildcards": "Usa i caratteri jolly: Alice* troverà Alice, Alices, ecc."
+      },
+      "advancedSearch": {
+        "allResourceClasses": "Tutte le risorse"
       }
     },
     "dataBrowser": {
@@ -372,7 +375,8 @@
         "resourcesMustBeSameProject": "Le risorse devono appartenere allo stesso progetto"
       },
       "resourcesList": {
-        "backToSearchForm": "Torna al modulo di ricerca"
+        "backToSearchForm": "Torna al modulo di ricerca",
+        "resultsCount": "{{count}} risultati"
       },
       "resourcesListFetcher": {
         "noResourcesFound": "Nessuna risorsa trovata per questa classe.",
