@@ -233,6 +233,7 @@ export class LinkValueComponent implements OnInit {
 
   private _search(searchTerm: string) {
     let offset = 0;
+    let allResources: ReadResource[] = [];
     this.cancelPreviousSearchRequest$.next();
     const resourceClassIri = this._getRestrictToResourceClass(this.readResource as ReadResource)!;
 
@@ -253,7 +254,8 @@ export class LinkValueComponent implements OnInit {
         })
       )
       .subscribe(response => {
-        this.groupedResources = this.groupByClass(response.resources);
+        allResources = [...allResources, ...response.resources];
+        this.groupedResources = this.groupByClass(allResources);
         this._cd.detectChanges();
       });
   }
