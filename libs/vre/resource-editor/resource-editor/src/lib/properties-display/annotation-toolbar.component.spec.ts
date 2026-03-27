@@ -110,3 +110,108 @@ describe('AnnotationToolbarComponent', () => {
     });
   });
 });
+
+describe('AnnotationToolbarComponent — behavior', () => {
+  let component: AnnotationToolbarComponent;
+  let regionServiceMock: jest.Mocked<Pick<RegionService, 'selectRegion' | 'setHighlightedRegionClicked' | 'updateRegions$'>>;
+  let resourceFetcherMock: jest.Mocked<Pick<ResourceFetcherService, 'scrollToTop' | 'reload'>>;
+  let resourceServiceMock: jest.Mocked<Pick<ResourceService, 'getResourcePath'>>;
+
+  const mockResource = {
+    id: 'http://r/annotation1',
+    versionArkUrl: 'http://ark/annotation1',
+    properties: {},
+  } as unknown as ReadResource;
+
+  beforeEach(async () => {
+    regionServiceMock = {
+      selectRegion: jest.fn(),
+      setHighlightedRegionClicked: jest.fn(),
+      updateRegions$: jest.fn().mockReturnValue(of(null)),
+    };
+    resourceFetcherMock = { scrollToTop: jest.fn(), reload: jest.fn() };
+    resourceServiceMock = { getResourcePath: jest.fn().mockReturnValue('/project/123/resource/456') };
+
+    await TestBed.configureTestingModule({
+      imports: [AnnotationToolbarComponent],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA],
+      providers: [
+        provideTranslateService(),
+        { provide: RegionService, useValue: regionServiceMock },
+        { provide: ResourceFetcherService, useValue: resourceFetcherMock },
+        { provide: ResourceService, useValue: resourceServiceMock },
+        { provide: NotificationService, useValue: { openSnackBar: jest.fn() } },
+      ],
+    })
+      .overrideComponent(AnnotationToolbarComponent, { set: { template: '<div></div>' } })
+      .compileComponents();
+
+    const fixture = TestBed.createComponent(AnnotationToolbarComponent);
+    component = fixture.componentInstance;
+    component.resource = mockResource;
+    component.parentResourceId = 'http://r/parent';
+  });
+
+  describe('when the user clicks "go to annotation" (pin-point button)', () => {
+    it('the image scrolls to the top to show the annotation', () => {
+      component.onPinPointClicked();
+
+      expect(resourceFetcherMock.scrollToTop).toHaveBeenCalled();
+    });
+
+    it('the annotation is highlighted on the image', () => {
+      component.onPinPointClicked();
+
+      expect(regionServiceMock.selectRegion).toHaveBeenCalledWith('http://r/annotation1');
+      expect(regionServiceMock.setHighlightedRegionClicked).toHaveBeenCalledWith('http://r/annotation1');
+    });
+  });
+
+  describe('when the user clicks "open in new tab"', () => {
+    it('a new browser tab opens with the annotation pre-selected (?annotation=<iri>)', () => {
+      const openSpy = jest.spyOn(window, 'open').mockImplementation(() => null);
+
+      component.openRegionInNewTab();
+
+      const expectedAnnotationId = encodeURIComponent('http://r/annotation1');
+      expect(openSpy).toHaveBeenCalledWith(
+        expect.stringContaining(`${RouteConstants.annotationQueryParam}=${expectedAnnotationId}`),
+        '_blank'
+      );
+
+      openSpy.mockRestore();
+    });
+  });
+
+  describe('when an annotation is deleted', () => {
+    it('the annotation list refreshes automatically', () => {
+      component.onResourceDeleted();
+
+      expect(regionServiceMock.updateRegions$).toHaveBeenCalled();
+    });
+  });
+
+  describe('when an annotation is edited', () => {
+    it('the resource view refreshes to show the updated data', () => {
+      component.onResourceUpdated();
+
+      expect(resourceFetcherMock.reload).toHaveBeenCalled();
+    });
+  });
+
+  describe('color display', () => {
+    it("the annotation's color is shown when the annotation has a color property", () => {
+      const colorValue = { color: '#ff0000' } as unknown as ReadColorValue;
+      component.resource = {
+        ...mockResource,
+        properties: { [Constants.HasColor]: [colorValue] },
+      } as unknown as ReadResource;
+
+      expect(component.readColorValue).toBe(colorValue);
+    });
+
+    it('no color swatch is shown when the annotation has no color property', () => {
+      expect(component.readColorValue).toBeNull();
+    });
+  });
+});

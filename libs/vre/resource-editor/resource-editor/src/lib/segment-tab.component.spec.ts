@@ -81,3 +81,62 @@ describe('SegmentTabComponent', () => {
     });
   });
 });
+
+describe('SegmentTabComponent — behavior', () => {
+  let component: SegmentTabComponent;
+  let fixture: ComponentFixture<SegmentTabComponent>;
+  let highlightSegment$: BehaviorSubject<Segment | null>;
+  let segmentsServiceMock: jest.Mocked<Pick<SegmentsService, 'segments' | 'highlightSegment$' | 'playSegment'>>;
+
+  const makeSegment = (id: string) =>
+    ({
+      resource: { res: { id } },
+      label: `Segment ${id}`,
+    }) as unknown as Segment;
+
+  beforeEach(async () => {
+    highlightSegment$ = new BehaviorSubject<Segment | null>(null);
+    segmentsServiceMock = {
+      segments: [],
+      highlightSegment$: highlightSegment$.asObservable(),
+      playSegment: jest.fn(),
+    };
+
+    await TestBed.configureTestingModule({
+      imports: [SegmentTabComponent],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA],
+      providers: [
+        { provide: SegmentsService, useValue: segmentsServiceMock },
+        { provide: ChangeDetectorRef, useValue: { detectChanges: jest.fn() } },
+      ],
+    })
+      .overrideComponent(SegmentTabComponent, { set: { template: '<div></div>' } })
+      .compileComponents();
+
+    fixture = TestBed.createComponent(SegmentTabComponent);
+    component = fixture.componentInstance;
+    component.resource = { id: 'http://r/parent' } as unknown as ReadResource;
+    fixture.detectChanges();
+  });
+
+  describe('when the media player reaches a segment during playback', () => {
+    it('the Segments tab highlights the matching segment panel', fakeAsync(() => {
+      const segment = makeSegment('http://r/seg1');
+
+      highlightSegment$.next(segment);
+      tick(100);
+
+      expect(component.selectedSegment).toBe(segment);
+    }));
+  });
+
+  describe('when the user clicks "go to segment" on a segment panel', () => {
+    it('the media player seeks to that segment\'s start time', () => {
+      const segment = makeSegment('http://r/seg1');
+
+      component.onTargetClicked(segment);
+
+      expect(segmentsServiceMock.playSegment).toHaveBeenCalledWith(segment);
+    });
+  });
+});

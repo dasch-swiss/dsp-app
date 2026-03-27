@@ -87,3 +87,67 @@ describe('SegmentsService', () => {
     });
   });
 });
+
+describe('SegmentsService — behavior', () => {
+  let service: SegmentsService;
+  let segmentApiMock: jest.Mocked<Pick<SegmentApiService, 'getSegment'>>;
+
+  beforeEach(() => {
+    segmentApiMock = { getSegment: jest.fn() };
+
+    TestBed.configureTestingModule({
+      providers: [
+        SegmentsService,
+        { provide: SegmentApiService, useValue: segmentApiMock },
+        { provide: ChangeDetectorRef, useValue: { detectChanges: jest.fn() } },
+      ],
+    });
+
+    service = TestBed.inject(SegmentsService);
+  });
+
+  describe('segment loading', () => {
+    it('segments are available after the resource loads', () => {
+      const segments = makeSegments(3);
+      segmentApiMock.getSegment.mockReturnValue(of(segments));
+
+      service.getSegment('http://example.org/resource', 'VideoSegment');
+
+      expect(service.segments).toHaveLength(3);
+    });
+
+    it('all segments are loaded even when there are more than 25 (pagination)', () => {
+      segmentApiMock.getSegment
+        .mockReturnValueOnce(of(makeSegments(25)))
+        .mockReturnValueOnce(of(makeSegments(8)));
+
+      service.getSegment('http://example.org/resource', 'AudioSegment');
+
+      expect(service.segments).toHaveLength(33);
+    });
+  });
+
+  describe('segment playback control', () => {
+    it('requesting playback of a segment notifies the media player', () => {
+      const segment = makeSegments(1)[0];
+      let notified: Segment | null = null;
+      service.playSegment$.subscribe(s => (notified = s));
+
+      service.playSegment(segment);
+
+      expect(notified).toBe(segment);
+    });
+  });
+
+  describe('segment highlighting', () => {
+    it('highlighting a segment notifies listening components', () => {
+      const segment = makeSegments(1)[0];
+      let notified: Segment | null = null;
+      service.highlightSegment$.subscribe(s => (notified = s));
+
+      service.highlightSegment(segment);
+
+      expect(notified).toBe(segment);
+    });
+  });
+});

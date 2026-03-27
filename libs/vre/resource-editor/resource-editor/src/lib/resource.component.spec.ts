@@ -198,3 +198,118 @@ describe('ResourceComponent', () => {
     });
   });
 });
+
+describe('ResourceComponent — behavior', () => {
+  let component: ResourceComponent;
+  let fixture: ComponentFixture<ResourceComponent>;
+  let regionServiceMock: jest.Mocked<Pick<RegionService, 'initialize' | 'showRegions' | 'selectRegion' | 'filterToRegion' | 'regionsLoading$'>>;
+  let compoundServiceMock: jest.Mocked<Pick<CompoundService, 'reset' | 'onInit' | 'incomingResource'>>;
+  let routeMock: { snapshot: { queryParamMap: { get: jest.Mock } } };
+  let dspApiMock: { v2: { search: { doSearchStillImageRepresentationsCount: jest.Mock } } };
+  let regionsLoading$: BehaviorSubject<boolean>;
+
+  beforeEach(async () => {
+    regionsLoading$ = new BehaviorSubject<boolean>(false);
+    regionServiceMock = {
+      initialize: jest.fn(),
+      showRegions: jest.fn(),
+      selectRegion: jest.fn(),
+      filterToRegion: jest.fn(),
+      regionsLoading$: regionsLoading$.asObservable(),
+    };
+    compoundServiceMock = {
+      reset: jest.fn(),
+      onInit: jest.fn(),
+      incomingResource: { next: jest.fn() } as any,
+    };
+    routeMock = { snapshot: { queryParamMap: { get: jest.fn().mockReturnValue(null) } } };
+    dspApiMock = {
+      v2: { search: { doSearchStillImageRepresentationsCount: jest.fn().mockReturnValue(of({ numberOfResults: 0 })) } },
+    };
+
+    await TestBed.configureTestingModule({
+      imports: [ResourceComponent],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA],
+      providers: [
+        { provide: ActivatedRoute, useValue: routeMock },
+        { provide: DspApiConnectionToken, useValue: dspApiMock as unknown as KnoraApiConnection },
+        { provide: ChangeDetectorRef, useValue: { detectChanges: jest.fn() } },
+      ],
+    })
+      .overrideComponent(ResourceComponent, {
+        set: {
+          template: '<div></div>',
+          providers: [
+            { provide: RegionService, useFactory: () => regionServiceMock },
+            { provide: CompoundService, useFactory: () => compoundServiceMock },
+            { provide: PropertiesDisplayService, useValue: {} },
+            { provide: SegmentsService, useValue: { onInit: jest.fn() } },
+          ],
+        },
+      })
+      .compileComponents();
+
+    fixture = TestBed.createComponent(ResourceComponent);
+    component = fixture.componentInstance;
+  });
+
+  const triggerChanges = (resource: DspResource) => {
+    component.resource = resource;
+    component.ngOnChanges({ resource: new SimpleChange(null, resource, true) });
+  };
+
+  describe('annotation-only mode (?annotation=<iri> query param)', () => {
+    describe('when the URL contains an annotation query param', () => {
+      beforeEach(() => {
+        routeMock.snapshot.queryParamMap.get.mockReturnValue('http://r/annotation1');
+      });
+
+      it('only the Annotations tab is visible (annotationIri is set, hiding other tabs)', () => {
+        triggerChanges(makeDspResource(makeReadResource(true)));
+
+        expect(component.annotationIri).toBe('http://r/annotation1');
+      });
+
+      it('the annotation matching the IRI is highlighted on the image', () => {
+        triggerChanges(makeDspResource(makeReadResource(true)));
+
+        expect(regionServiceMock.selectRegion).toHaveBeenCalledWith('http://r/annotation1');
+      });
+
+      it('regions are filtered to show only that one annotation after loading', () => {
+        triggerChanges(makeDspResource(makeReadResource(true)));
+
+        regionsLoading$.next(true);
+        regionsLoading$.next(false);
+
+        expect(regionServiceMock.filterToRegion).toHaveBeenCalledWith('http://r/annotation1');
+      });
+
+      it('regions load automatically without user interaction', () => {
+        triggerChanges(makeDspResource(makeReadResource(true)));
+
+        expect(regionServiceMock.showRegions).toHaveBeenCalledWith(true);
+      });
+    });
+
+    describe('when the URL has no annotation query param', () => {
+      it('all tabs are visible (annotationIri remains null)', () => {
+        routeMock.snapshot.queryParamMap.get.mockReturnValue(null);
+
+        triggerChanges(makeDspResource(makeReadResource(true)));
+
+        expect(component.annotationIri).toBeNull();
+      });
+    });
+  });
+
+  describe('resource without a file representation', () => {
+    it('when the resource has no image or media file, compound navigation is checked (may have child resources)', () => {
+      dspApiMock.v2.search.doSearchStillImageRepresentationsCount.mockReturnValue(of({ numberOfResults: 3 }));
+
+      triggerChanges(makeDspResource(makeReadResource(false)));
+
+      expect(component.isCompoundNavigation).toBe(true);
+    });
+  });
+});

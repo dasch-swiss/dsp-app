@@ -142,3 +142,117 @@ describe('RegionService', () => {
     });
   });
 });
+
+describe('RegionService — behavior', () => {
+  let service: RegionService;
+  let doSearchMock: jest.Mock;
+
+  beforeEach(() => {
+    doSearchMock = jest.fn();
+
+    TestBed.configureTestingModule({
+      providers: [
+        RegionService,
+        {
+          provide: DspApiConnectionToken,
+          useValue: {
+            v2: { search: { doSearchIncomingRegions: doSearchMock } },
+          } as unknown as KnoraApiConnection,
+        },
+      ],
+    });
+
+    service = TestBed.inject(RegionService);
+  });
+
+  describe('annotation loading', () => {
+    it('annotations are loaded when a resource is initialized', () => {
+      doSearchMock.mockReturnValue(of(makeRegionResponse(['http://r/1', 'http://r/2'])));
+
+      service.initialize('http://example.org/resource');
+
+      expect(doSearchMock).toHaveBeenCalledWith('http://example.org/resource', 0);
+    });
+
+    it('all annotations are loaded even when there are more than one page', () => {
+      doSearchMock
+        .mockReturnValueOnce(of(makeRegionResponse(['http://r/1'], true)))
+        .mockReturnValueOnce(of(makeRegionResponse(['http://r/2'], false)));
+      service.initialize('http://example.org/resource');
+      doSearchMock.mockClear();
+      doSearchMock
+        .mockReturnValueOnce(of(makeRegionResponse(['http://r/1'], true)))
+        .mockReturnValueOnce(of(makeRegionResponse(['http://r/2'], false)));
+
+      service.updateRegions$().subscribe();
+
+      expect(doSearchMock).toHaveBeenCalledTimes(2);
+    });
+
+    it('a loading indicator is active while annotations are being fetched', () => {
+      const loadingValues: boolean[] = [];
+      service.regionsLoading$.subscribe(v => loadingValues.push(v));
+      doSearchMock.mockReturnValue(of(makeRegionResponse(['http://r/1'])));
+
+      service.initialize('http://example.org/resource');
+
+      expect(loadingValues).toContain(true);
+      expect(loadingValues[loadingValues.length - 1]).toBe(false);
+    });
+  });
+
+  describe('annotation visibility', () => {
+    it('annotations can be shown on the image', () => {
+      let visible: boolean | null = null;
+      service.showRegions$.subscribe(v => (visible = v));
+
+      service.showRegions(true);
+
+      expect(visible).toBe(true);
+    });
+
+    it('annotations can be hidden from the image', () => {
+      let visible: boolean | null = null;
+      service.showRegions$.subscribe(v => (visible = v));
+
+      service.showRegions(false);
+
+      expect(visible).toBe(false);
+    });
+  });
+
+  describe('annotation selection', () => {
+    it('selecting an annotation notifies all listening components', () => {
+      let selected: string | null = null;
+      service.selectedRegion$.subscribe(v => (selected = v));
+
+      service.selectRegion('http://r/1');
+
+      expect(selected).toBe('http://r/1');
+    });
+
+    it('clicking an annotation on the image notifies the annotation list', () => {
+      let notified: string | null = null;
+      service.highlightedRegionClicked$.subscribe(v => (notified = v));
+
+      service.setHighlightedRegionClicked('http://r/1');
+
+      expect(notified).toBe('http://r/1');
+    });
+  });
+
+  describe('annotation filtering', () => {
+    it('the list can be narrowed to a single annotation (annotation-only mode)', () => {
+      doSearchMock.mockReturnValue(of(makeRegionResponse(['http://r/1', 'http://r/2'])));
+      service.initialize('http://example.org/resource');
+
+      let regions: DspResource[] = [];
+      service.regions$.subscribe(r => (regions = r));
+
+      service.filterToRegion('http://r/1');
+
+      expect(regions).toHaveLength(1);
+      expect((regions[0] as any).res.id).toBe('http://r/1');
+    });
+  });
+});
