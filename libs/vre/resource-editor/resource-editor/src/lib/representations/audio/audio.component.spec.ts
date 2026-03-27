@@ -22,7 +22,9 @@ describe('AudioComponent — behavior', () => {
   let fixture: ComponentFixture<AudioComponent>;
   let segmentsServiceMock: jest.Mocked<Pick<SegmentsService, 'onInit' | 'playSegment$'>>;
   let mediaControlMock: jest.Mocked<Pick<MediaControlService, 'playMedia' | 'play$' | 'watchForPause$'>>;
-  let mediaPlayerMock: jest.Mocked<Pick<MediaPlayerService, 'navigate' | 'play' | 'pause' | 'duration' | 'navigateToStart' | 'onTimeUpdate$'>>;
+  let mediaPlayerMock: jest.Mocked<
+    Pick<MediaPlayerService, 'navigate' | 'play' | 'pause' | 'duration' | 'navigateToStart' | 'onTimeUpdate$'>
+  >;
   let representationServiceMock: jest.Mocked<Pick<RepresentationService, 'getFileInfo'>>;
   let notificationMock: jest.Mocked<Pick<NotificationService, 'openSnackBar'>>;
   let playSegment$: Subject<{ hasSegmentBounds: { start: number; end: number } }>;

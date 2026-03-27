@@ -2,15 +2,17 @@ import { ChangeDetectorRef, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReadResource } from '@dasch-swiss/dsp-js';
 import { BehaviorSubject } from 'rxjs';
-import { RegionService } from './representations/region.service';
 import { AnnotationTabComponent } from './annotation-tab.component';
+import { RegionService } from './representations/region.service';
 
 describe('AnnotationTabComponent', () => {
   let component: AnnotationTabComponent;
   let fixture: ComponentFixture<AnnotationTabComponent>;
   let selectedRegion$: BehaviorSubject<string | null>;
   let highlightedRegionClicked$: BehaviorSubject<string | null>;
-  let regionServiceMock: jest.Mocked<Pick<RegionService, 'selectRegion' | 'selectedRegion$' | 'highlightedRegionClicked$' | 'regions$'>>;
+  let regionServiceMock: jest.Mocked<
+    Pick<RegionService, 'selectRegion' | 'selectedRegion$' | 'highlightedRegionClicked$' | 'regions$'>
+  >;
 
   beforeEach(async () => {
     selectedRegion$ = new BehaviorSubject<string | null>(null);
@@ -110,7 +112,9 @@ describe('AnnotationTabComponent — behavior', () => {
   let fixture: ComponentFixture<AnnotationTabComponent>;
   let selectedRegion$: BehaviorSubject<string | null>;
   let highlightedRegionClicked$: BehaviorSubject<string | null>;
-  let regionServiceMock: jest.Mocked<Pick<RegionService, 'selectRegion' | 'selectedRegion$' | 'highlightedRegionClicked$' | 'regions$'>>;
+  let regionServiceMock: jest.Mocked<
+    Pick<RegionService, 'selectRegion' | 'selectedRegion$' | 'highlightedRegionClicked$' | 'regions$'>
+  >;
 
   beforeEach(async () => {
     selectedRegion$ = new BehaviorSubject<string | null>(null);

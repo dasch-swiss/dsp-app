@@ -131,7 +131,7 @@ describe('SegmentTabComponent — behavior', () => {
   });
 
   describe('when the user clicks "go to segment" on a segment panel', () => {
-    it('the media player seeks to that segment\'s start time', () => {
+    it("the media player seeks to that segment's start time", () => {
       const segment = makeSegment('http://r/seg1');
 
       component.onTargetClicked(segment);

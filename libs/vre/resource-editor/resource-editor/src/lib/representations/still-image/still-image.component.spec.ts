@@ -2,11 +2,14 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Constants, ReadResource, ReadStillImageExternalFileValue, ReadStillImageFileValue } from '@dasch-swiss/dsp-js';
 import { provideTranslateService } from '@ngx-translate/core';
-import { OsdDrawerService } from './osd-drawer.service';
 import { OpenSeaDragonService } from './open-sea-dragon.service';
+import { OsdDrawerService } from './osd-drawer.service';
 import { StillImageComponent } from './still-image.component';
 
-const makeResource = (imageType: 'internal' | 'external' | 'none', url = 'http://example.org/image/full/max/0/default.jpg'): ReadResource => {
+const makeResource = (
+  imageType: 'internal' | 'external' | 'none',
+  url = 'http://example.org/image/full/max/0/default.jpg'
+): ReadResource => {
   let properties: Record<string, unknown[]> = {};
 
   if (imageType === 'internal') {
@@ -29,7 +32,11 @@ const makeResource = (imageType: 'internal' | 'external' | 'none', url = 'http:/
 describe('StillImageComponent — behavior', () => {
   let component: StillImageComponent;
   let fixture: ComponentFixture<StillImageComponent>;
-  let osdServiceMock: { viewer: { open: jest.Mock; destroy: jest.Mock; loadTilesWithAjax: boolean }; onInit: jest.Mock; drawing: boolean };
+  let osdServiceMock: {
+    viewer: { open: jest.Mock; destroy: jest.Mock; loadTilesWithAjax: boolean };
+    onInit: jest.Mock;
+    drawing: boolean;
+  };
   let osdDrawerServiceMock: { onInit: jest.Mock; update: jest.Mock };
 
   beforeEach(async () => {

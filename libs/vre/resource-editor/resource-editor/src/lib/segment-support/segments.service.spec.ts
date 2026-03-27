@@ -42,9 +42,7 @@ describe('SegmentsService', () => {
     it('paginates when first page returns exactly 25 results', () => {
       const page0 = makeSegments(25);
       const page1 = makeSegments(5);
-      segmentApiMock.getSegment
-        .mockReturnValueOnce(of(page0))
-        .mockReturnValueOnce(of(page1));
+      segmentApiMock.getSegment.mockReturnValueOnce(of(page0)).mockReturnValueOnce(of(page1));
 
       service.getSegment('http://example.org/resource', 'AudioSegment');
 
@@ -117,9 +115,7 @@ describe('SegmentsService — behavior', () => {
     });
 
     it('all segments are loaded even when there are more than 25 (pagination)', () => {
-      segmentApiMock.getSegment
-        .mockReturnValueOnce(of(makeSegments(25)))
-        .mockReturnValueOnce(of(makeSegments(8)));
+      segmentApiMock.getSegment.mockReturnValueOnce(of(makeSegments(25))).mockReturnValueOnce(of(makeSegments(8)));
 
       service.getSegment('http://example.org/resource', 'AudioSegment');
 

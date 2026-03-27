@@ -13,7 +13,9 @@ import { AnnotationToolbarComponent } from './annotation-toolbar.component';
 describe('AnnotationToolbarComponent', () => {
   let component: AnnotationToolbarComponent;
   let fixture: ComponentFixture<AnnotationToolbarComponent>;
-  let regionServiceMock: jest.Mocked<Pick<RegionService, 'selectRegion' | 'setHighlightedRegionClicked' | 'updateRegions$'>>;
+  let regionServiceMock: jest.Mocked<
+    Pick<RegionService, 'selectRegion' | 'setHighlightedRegionClicked' | 'updateRegions$'>
+  >;
   let resourceFetcherMock: jest.Mocked<Pick<ResourceFetcherService, 'scrollToTop' | 'reload'>>;
   let resourceServiceMock: jest.Mocked<Pick<ResourceService, 'getResourcePath'>>;
 
@@ -113,7 +115,9 @@ describe('AnnotationToolbarComponent', () => {
 
 describe('AnnotationToolbarComponent — behavior', () => {
   let component: AnnotationToolbarComponent;
-  let regionServiceMock: jest.Mocked<Pick<RegionService, 'selectRegion' | 'setHighlightedRegionClicked' | 'updateRegions$'>>;
+  let regionServiceMock: jest.Mocked<
+    Pick<RegionService, 'selectRegion' | 'setHighlightedRegionClicked' | 'updateRegions$'>
+  >;
   let resourceFetcherMock: jest.Mocked<Pick<ResourceFetcherService, 'scrollToTop' | 'reload'>>;
   let resourceServiceMock: jest.Mocked<Pick<ResourceService, 'getResourcePath'>>;
 

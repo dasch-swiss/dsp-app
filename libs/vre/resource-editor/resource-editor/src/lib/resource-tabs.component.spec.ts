@@ -6,9 +6,9 @@ import { provideTranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, of } from 'rxjs';
 import { CompoundService } from './compound/compound.service';
 import { RegionService } from './representations/region.service';
+import { ResourceTabsComponent } from './resource-tabs.component';
 import { Segment } from './segment-support/segment';
 import { SegmentsService } from './segment-support/segments.service';
-import { ResourceTabsComponent } from './resource-tabs.component';
 
 const makeResource = (withStillImage = false): DspResource => {
   const res = {
@@ -25,7 +25,9 @@ describe('ResourceTabsComponent', () => {
   let regions$: BehaviorSubject<DspResource[]>;
   let highlightSegment$: BehaviorSubject<Segment | null>;
   let incomingResource$: BehaviorSubject<DspResource | undefined>;
-  let regionServiceMock: jest.Mocked<Pick<RegionService, 'selectedRegion$' | 'regions$' | 'showRegions' | 'regionsLoading$'>>;
+  let regionServiceMock: jest.Mocked<
+    Pick<RegionService, 'selectedRegion$' | 'regions$' | 'showRegions' | 'regionsLoading$'>
+  >;
   let segmentsServiceMock: jest.Mocked<Pick<SegmentsService, 'segments' | 'highlightSegment$'>>;
   let compoundServiceMock: jest.Mocked<Pick<CompoundService, 'incomingResource$'>>;
 
@@ -166,7 +168,9 @@ describe('ResourceTabsComponent — behavior', () => {
   let regions$: BehaviorSubject<DspResource[]>;
   let highlightSegment$: BehaviorSubject<Segment | null>;
   let incomingResource$: BehaviorSubject<DspResource | undefined>;
-  let regionServiceMock: jest.Mocked<Pick<RegionService, 'selectedRegion$' | 'regions$' | 'showRegions' | 'regionsLoading$'>>;
+  let regionServiceMock: jest.Mocked<
+    Pick<RegionService, 'selectedRegion$' | 'regions$' | 'showRegions' | 'regionsLoading$'>
+  >;
   let segmentsServiceMock: jest.Mocked<Pick<SegmentsService, 'segments' | 'highlightSegment$'>>;
   let compoundServiceMock: jest.Mocked<Pick<CompoundService, 'incomingResource$'>>;
 

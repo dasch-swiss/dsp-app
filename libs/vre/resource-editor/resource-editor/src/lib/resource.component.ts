@@ -102,15 +102,17 @@ export class ResourceComponent implements OnChanges, OnDestroy {
 
     // Wait for the true→false transition (loading started then finished),
     // then filter to show only this annotation and re-trigger highlight on the drawn SVG
-    this._regionService.regionsLoading$.pipe(
-      pairwise(),
-      filter(([prev, curr]) => prev && !curr),
-      take(1),
-      takeUntil(this._ngUnsubscribe)
-    ).subscribe(() => {
-      this._regionService.filterToRegion(annotation);
-      this._regionService.selectRegion(annotation);
-    });
+    this._regionService.regionsLoading$
+      .pipe(
+        pairwise(),
+        filter(([prev, curr]) => prev && !curr),
+        take(1),
+        takeUntil(this._ngUnsubscribe)
+      )
+      .subscribe(() => {
+        this._regionService.filterToRegion(annotation);
+        this._regionService.selectRegion(annotation);
+      });
   }
 
   ngOnDestroy() {

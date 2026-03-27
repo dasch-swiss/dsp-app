@@ -1,5 +1,10 @@
 // jsdom does not define MediaError — provide the numeric constants used in VideoComponent
-(globalThis as any).MediaError = { MEDIA_ERR_ABORTED: 1, MEDIA_ERR_NETWORK: 2, MEDIA_ERR_DECODE: 3, MEDIA_ERR_SRC_NOT_SUPPORTED: 4 };
+(globalThis as any).MediaError = {
+  MEDIA_ERR_ABORTED: 1,
+  MEDIA_ERR_NETWORK: 2,
+  MEDIA_ERR_DECODE: 3,
+  MEDIA_ERR_SRC_NOT_SUPPORTED: 4,
+};
 
 import { CUSTOM_ELEMENTS_SCHEMA, SimpleChange } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
@@ -24,8 +29,12 @@ describe('VideoComponent — behavior', () => {
   let component: VideoComponent;
   let fixture: ComponentFixture<VideoComponent>;
   let segmentsServiceMock: jest.Mocked<Pick<SegmentsService, 'onInit' | 'playSegment$'>>;
-  let mediaControlMock: jest.Mocked<Pick<MediaControlService, 'playMedia' | 'play$' | 'watchForPause$' | 'mediaDurationSecs'>>;
-  let mediaPlayerMock: jest.Mocked<Pick<MediaPlayerService, 'navigate' | 'play' | 'pause' | 'duration' | 'onTimeUpdate$'>>;
+  let mediaControlMock: jest.Mocked<
+    Pick<MediaControlService, 'playMedia' | 'play$' | 'watchForPause$' | 'mediaDurationSecs'>
+  >;
+  let mediaPlayerMock: jest.Mocked<
+    Pick<MediaPlayerService, 'navigate' | 'play' | 'pause' | 'duration' | 'onTimeUpdate$'>
+  >;
   let representationServiceMock: jest.Mocked<Pick<RepresentationService, 'getFileInfo'>>;
   let notificationMock: jest.Mocked<Pick<NotificationService, 'openSnackBar'>>;
   let playSegment$: Subject<{ hasSegmentBounds: { start: number; end: number } }>;

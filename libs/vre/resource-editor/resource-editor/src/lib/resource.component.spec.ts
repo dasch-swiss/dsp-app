@@ -6,19 +6,18 @@ import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { BehaviorSubject, of } from 'rxjs';
 import { CompoundService } from './compound/compound.service';
-import { PropertiesDisplayService } from './resource-properties/properties-display.service';
 import { RegionService } from './representations/region.service';
+import { PropertiesDisplayService } from './resource-properties/properties-display.service';
 import { ResourceComponent } from './resource.component';
 import { SegmentsService } from './segment-support/segments.service';
 
-const makeReadResource = (withStillImage = false): ReadResource => ({
-  id: 'http://r/resource',
-  properties: {
-    ...(withStillImage
-      ? { [Constants.HasStillImageFileValue]: [{ type: Constants.StillImageFileValue }] }
-      : {}),
-  },
-} as unknown as ReadResource);
+const makeReadResource = (withStillImage = false): ReadResource =>
+  ({
+    id: 'http://r/resource',
+    properties: {
+      ...(withStillImage ? { [Constants.HasStillImageFileValue]: [{ type: Constants.StillImageFileValue }] } : {}),
+    },
+  }) as unknown as ReadResource;
 
 const makeDspResource = (readResource: ReadResource): DspResource =>
   ({ res: readResource, resProps: [] }) as unknown as DspResource;
@@ -26,7 +25,9 @@ const makeDspResource = (readResource: ReadResource): DspResource =>
 describe('ResourceComponent', () => {
   let component: ResourceComponent;
   let fixture: ComponentFixture<ResourceComponent>;
-  let regionServiceMock: jest.Mocked<Pick<RegionService, 'initialize' | 'showRegions' | 'selectRegion' | 'filterToRegion' | 'regionsLoading$'>>;
+  let regionServiceMock: jest.Mocked<
+    Pick<RegionService, 'initialize' | 'showRegions' | 'selectRegion' | 'filterToRegion' | 'regionsLoading$'>
+  >;
   let compoundServiceMock: jest.Mocked<Pick<CompoundService, 'reset' | 'onInit' | 'incomingResource'>>;
   let routeMock: { snapshot: { queryParamMap: { get: jest.Mock } } };
   let dspApiMock: { v2: { search: { doSearchStillImageRepresentationsCount: jest.Mock } } };
@@ -202,7 +203,9 @@ describe('ResourceComponent', () => {
 describe('ResourceComponent — behavior', () => {
   let component: ResourceComponent;
   let fixture: ComponentFixture<ResourceComponent>;
-  let regionServiceMock: jest.Mocked<Pick<RegionService, 'initialize' | 'showRegions' | 'selectRegion' | 'filterToRegion' | 'regionsLoading$'>>;
+  let regionServiceMock: jest.Mocked<
+    Pick<RegionService, 'initialize' | 'showRegions' | 'selectRegion' | 'filterToRegion' | 'regionsLoading$'>
+  >;
   let compoundServiceMock: jest.Mocked<Pick<CompoundService, 'reset' | 'onInit' | 'incomingResource'>>;
   let routeMock: { snapshot: { queryParamMap: { get: jest.Mock } } };
   let dspApiMock: { v2: { search: { doSearchStillImageRepresentationsCount: jest.Mock } } };
