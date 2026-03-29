@@ -54,7 +54,7 @@
     "@ngrx/component-store": "^20.0.0",
     "@ngx-translate/core": "^17.0.0",
     "@ngx-translate/http-loader": "^17.0.0",
-    "@nx/angular": "21.5.1",
+    "@nx/angular": "22.6.3",
     "@sentry/angular": "^10.45.0",
     "@sentry/cli": "^2.58.5",
     "angular-imask": "^7.5.0",
@@ -74,7 +74,7 @@
     "zone.js": "0.15.1"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "^20.3.17",
+    "@angular-devkit/build-angular": "^20.3.22",
     "@angular-devkit/core": "20.2.2",
     "@angular-devkit/schematics": "20.2.2",
     "@angular-eslint/eslint-plugin": "20.3.0",
