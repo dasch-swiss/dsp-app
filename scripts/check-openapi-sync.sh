@@ -140,19 +140,27 @@ main() {
 
     # Compare cleaned specs
     log_verbose "Comparing cleaned specifications..."
+    LOCAL_VERSION=$(yq '.info.version' "$LOCAL_SPEC")
+    REMOTE_VERSION=$(yq '.info.version' "$TEMP_DIR/remote-spec.yaml")
+
     if diff -q "$TEMP_DIR/clean-local.yaml" "$TEMP_DIR/clean-remote.yaml" > /dev/null; then
         log "${GREEN}✅ OpenAPI spec is up-to-date (no meaningful API changes)${NC}"
+        log_verbose "Version: ${LOCAL_VERSION}"
         exit 0
     else
         log "${RED}❌ API spec has meaningful changes!${NC}"
         log "Detected changes in API structure, endpoints, or schemas (ignoring metadata)."
-        log ""
-        log "${YELLOW}To update the spec file and regenerate OpenAPI code:${NC}"
-        log "  npm run update-openapi"
-        log ""
-        log "${YELLOW}Or manually:${NC}"
-        log "  curl -o $LOCAL_SPEC $REMOTE_URL"
-        log "  npm run generate-openapi-module"
+        log "  Local version:  ${LOCAL_VERSION}"
+        log "  Remote version: ${REMOTE_VERSION}"
+
+        if [ -n "$CI" ]; then
+            log ""
+            log "An update PR will be created automatically by CI."
+        else
+            log ""
+            log "${YELLOW}To update the spec file and regenerate OpenAPI code:${NC}"
+            log "  npm run update-openapi"
+        fi
 
         if [ "$VERBOSE" = true ]; then
             log ""
