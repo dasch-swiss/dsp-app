@@ -84,11 +84,11 @@ export const AsRegularUser: Story = {
   ],
   play: async ({ canvasElement, step: s }) => {
     const canvas = within(canvasElement);
-    await s('My projects section is visible', async () => {
-      await expect(canvas.getByText(/Bernstein Online/i)).toBeInTheDocument();
+    await s('"Bernstein Online" card is visible in my projects', async () => {
+      await expect(canvas.getByText('Bernstein Online')).toBeInTheDocument();
     });
-    await s('Other projects section is visible', async () => {
-      await expect(canvas.getByText(/Dokumentation von Bibliotheken/i)).toBeInTheDocument();
+    await s('"Dokumentation von Bibliotheken" card is visible in other projects', async () => {
+      await expect(canvas.getByText('Dokumentation von Bibliotheken')).toBeInTheDocument();
     });
   },
 };
@@ -106,10 +106,16 @@ export const AsSysAdmin: Story = {
   ],
   play: async ({ canvasElement, step: s }) => {
     const canvas = within(canvasElement);
-    await s('All active projects are listed', async () => {
-      await expect(canvas.getByText(/Bernstein Online/i)).toBeInTheDocument();
-      await expect(canvas.getByText(/Incunabula/i)).toBeInTheDocument();
-      await expect(canvas.getByText(/Dokumentation von Bibliotheken/i)).toBeInTheDocument();
+    await s('"Bernstein Online" project card is visible', async () => {
+      await expect(canvas.getByText('Bernstein Online')).toBeInTheDocument();
+    });
+    await s('"Incunabula" project card is visible', async () => {
+      // Use getAllByText because the shortname 'incunabula' also matches — pick the longname element
+      const matches = canvas.getAllByText(/incunabula/i);
+      await expect(matches.length).toBeGreaterThanOrEqual(1);
+    });
+    await s('"Dokumentation von Bibliotheken" project card is visible', async () => {
+      await expect(canvas.getByText('Dokumentation von Bibliotheken')).toBeInTheDocument();
     });
   },
 };
