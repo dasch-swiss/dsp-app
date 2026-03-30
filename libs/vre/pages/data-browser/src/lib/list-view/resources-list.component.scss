@@ -1,0 +1,17 @@
+app-pager {
+  margin: 8px;
+}
+
+.results-count {
+  margin: 8px;
+  border: 1px solid #ebebeb;
+  padding: 8px;
+  text-align: center;
+  border-radius: 10px;
+}
+
+.back-button-container {
+  padding: 16px;
+  display: flex;
+  flex-direction: row-reverse;
+}
