@@ -1,5 +1,46 @@
 # Changelog
 
+## [13.0.0](https://github.com/dasch-swiss/dsp-app/compare/v12.10.0...v13.0.0) (2026-03-27)
+
+
+### ⚠ BREAKING CHANGES
+
+* integrate dsp-js-lib into dsp-app monorepo ([#2900](https://github.com/dasch-swiss/dsp-app/issues/2900))
+
+### Enhancements
+
+* **ck-editor:** enable URLs without protocol for external links (DEV-5146) ([#2929](https://github.com/dasch-swiss/dsp-app/issues/2929)) ([d955dcc](https://github.com/dasch-swiss/dsp-app/commit/d955dcca647fd5628ea9c96429e3c1c1784243c9))
+* display list node comment in tooltip (DEV-5621) ([#2936](https://github.com/dasch-swiss/dsp-app/issues/2936)) ([10eb08b](https://github.com/dasch-swiss/dsp-app/commit/10eb08b4f1745347fefbeb3a42815a10fb961534))
+* **footer:** update dsp-app footer to match dasch.swiss ([#2922](https://github.com/dasch-swiss/dsp-app/issues/2922)) ([9984f9b](https://github.com/dasch-swiss/dsp-app/commit/9984f9b00ed06d3fd35e4cd36ef79b4d51a00c59))
+* introduce UI with vector scale support (Dev-6093) ([#2915](https://github.com/dasch-swiss/dsp-app/issues/2915)) ([2cbd5c7](https://github.com/dasch-swiss/dsp-app/commit/2cbd5c72ec2073f439d47fb831960fffe800f38a))
+* **property-value:** display list node description (DEV-5621) ([#2927](https://github.com/dasch-swiss/dsp-app/issues/2927)) ([b5f1b60](https://github.com/dasch-swiss/dsp-app/commit/b5f1b6021ea0b3934916e56dc04242a9f59f120f))
+
+
+### Bug Fixes
+
+* add separator between multiple property values ([#2917](https://github.com/dasch-swiss/dsp-app/issues/2917)) ([ca9b656](https://github.com/dasch-swiss/dsp-app/commit/ca9b6565b94c02df21802d5c2ebacf9f9ca451d4))
+* **ck-editor:** remove not supported protocols in rich text editor ([#2930](https://github.com/dasch-swiss/dsp-app/issues/2930)) ([ce397ff](https://github.com/dasch-swiss/dsp-app/commit/ce397ff7b94a50fa94100f525c6f50d23078ebc0))
+
+
+### Maintenances
+
+* **advanced search:** implement advanced search with minimal changes (DEV-6094) ([#2901](https://github.com/dasch-swiss/dsp-app/issues/2901)) ([9b9f07c](https://github.com/dasch-swiss/dsp-app/commit/9b9f07cb8d19b97af1c63c5bb23dd9d97bd31e77))
+* **dsp-js:** align eslint rules ([#2923](https://github.com/dasch-swiss/dsp-app/issues/2923)) ([3e9067d](https://github.com/dasch-swiss/dsp-app/commit/3e9067d9454cd9745c7092ba42701c52dd03cd13))
+* **dsp-js:** configure monorepo NPM publishing (DEV-6089) ([#2928](https://github.com/dasch-swiss/dsp-app/issues/2928)) ([f3cd427](https://github.com/dasch-swiss/dsp-app/commit/f3cd427d60168442cbf47a6ae0e82f46c582ca9a))
+* **dsp-js:** Update tag pattern for release workflow ([#2932](https://github.com/dasch-swiss/dsp-app/issues/2932)) ([3bcbee6](https://github.com/dasch-swiss/dsp-app/commit/3bcbee67325b377fdf3b0da8ae82b0c937f3b656))
+* exclude dsp-version-tag-from-being-a-build-tag-for-docker-i… ([#2937](https://github.com/dasch-swiss/dsp-app/issues/2937)) ([067409e](https://github.com/dasch-swiss/dsp-app/commit/067409e61958d72ce03da8cdb21fec5e9657f48a))
+* improve OpenAPI check run ([#2925](https://github.com/dasch-swiss/dsp-app/issues/2925)) ([395cac6](https://github.com/dasch-swiss/dsp-app/commit/395cac68435a51cbccda2c87c612a24aa80aea4c))
+* integrate dsp-js-lib into dsp-app monorepo ([#2900](https://github.com/dasch-swiss/dsp-app/issues/2900)) ([2046176](https://github.com/dasch-swiss/dsp-app/commit/2046176aae7b9e5a9d78927ceac3335f961ed3ef))
+* **link-value-component:** Always show class labels if there are more than one classes possible as target ([#2938](https://github.com/dasch-swiss/dsp-app/issues/2938)) ([f16f092](https://github.com/dasch-swiss/dsp-app/commit/f16f0924b0c86ea916e3789cfe3faaa6fd94e81f))
+* **main:** release dsp-js 11.0.0 ([#2931](https://github.com/dasch-swiss/dsp-app/issues/2931)) ([0614030](https://github.com/dasch-swiss/dsp-app/commit/06140304631cca08d1035cf3179954378f9374e8))
+* post dsp-js merge update of package-lock.json ([#2918](https://github.com/dasch-swiss/dsp-app/issues/2918)) ([fec37fa](https://github.com/dasch-swiss/dsp-app/commit/fec37fab07c5a7ea15c5d6dc3be15789138bbf2d))
+* remove build warnings ([#2913](https://github.com/dasch-swiss/dsp-app/issues/2913)) ([0938454](https://github.com/dasch-swiss/dsp-app/commit/0938454e86efefe6f1268a30990b2b426be03d8f))
+* remove yalc references after dsp-js integration ([#2919](https://github.com/dasch-swiss/dsp-app/issues/2919)) ([32f729c](https://github.com/dasch-swiss/dsp-app/commit/32f729cecf21a576509022afb1e9edd5895fdf0f))
+* Update openapi specs ([#2920](https://github.com/dasch-swiss/dsp-app/issues/2920)) ([b5bf264](https://github.com/dasch-swiss/dsp-app/commit/b5bf2649d7fbe5b72d11f37e6494eacc18895096))
+* Update openapi specs ([#2924](https://github.com/dasch-swiss/dsp-app/issues/2924)) ([2cf6dd5](https://github.com/dasch-swiss/dsp-app/commit/2cf6dd5cd9f6e5896c002a389eafe73cd2f52cea))
+* Update openapi specs ([#2926](https://github.com/dasch-swiss/dsp-app/issues/2926)) ([9dc2986](https://github.com/dasch-swiss/dsp-app/commit/9dc2986022319ff9dbaf422692f9a65642885429))
+* update tag pattern for deployment workflow ([#2933](https://github.com/dasch-swiss/dsp-app/issues/2933)) ([c2c673b](https://github.com/dasch-swiss/dsp-app/commit/c2c673b48028be72952d3ea34f2c56a487035070))
+
 ## [12.10.0](https://github.com/dasch-swiss/dsp-app/compare/v12.9.0...v12.10.0) (2026-03-23)
 
 
