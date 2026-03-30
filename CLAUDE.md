@@ -181,8 +181,21 @@ Multiple environment configurations available:
 ### Testing Framework
 - **Jest** for unit tests with Angular-specific preset
 - **Cypress** for E2E tests with multiple configurations
+- **Storybook** for component interaction tests and PO acceptance criteria (see below)
 - Code coverage reporting available
 - **ng-mocks** for advanced Angular component mocking
+
+### Storybook Convention
+- Stories live alongside their component file as `<component>.stories.ts`
+- Story titles follow the format: `Feature Area / Component / Scenario`
+  - e.g. `UI / Pager / Pagination`, `Resource Editor / Property Form / Validation`
+- Story export names encode acceptance criteria in plain language:
+  - e.g. `ShowsErrorWhenRequiredFieldIsEmpty`, `DisablesSubmitWhileLoading`
+- Use `storyName` when the export name would be awkward
+- Every story must have at least one `play()` function asserting a user-visible outcome
+- `argTypes` must include a `description` for every `@Input()` and `@Output()`
+- Run Storybook locally: `nx run vre-ui-ui:storybook`
+- Run interaction tests: `nx run vre-ui-ui:test-storybook`
 
 ### TypeScript Configuration
 - **Target:** ES2022 with ES2020 modules
