@@ -176,8 +176,10 @@ jobs:
             echo "No spec changes after update — skipping PR creation."
             exit 0
           fi
-          LOCAL_VERSION=$(git show HEAD:libs/vre/3rd-party-services/open-api/dsp-api_spec.yaml | yq '.info.version')
-          REMOTE_VERSION=$(yq '.info.version' libs/vre/3rd-party-services/open-api/dsp-api_spec.yaml)
+          SPEC="libs/vre/3rd-party-services/open-api/dsp-api_spec.yaml"
+          git fetch origin main
+          LOCAL_VERSION=$(git show origin/main:"$SPEC" | yq '.info.version')
+          REMOTE_VERSION=$(yq '.info.version' "$SPEC")
           if [ "$REMOTE_VERSION" = "$LOCAL_VERSION" ]; then
             echo "Spec changed but version is unchanged (${REMOTE_VERSION}) — skipping PR creation."
             exit 0
@@ -190,9 +192,11 @@ jobs:
           fi
           git config user.name "daschbot"
           git config user.email "daschbot@dasch.swiss"
+          cp "$SPEC" /tmp/updated-spec.yaml
           BRANCH="chore/update-dsp-api-openapi-spec-$(date +%Y%m%d-%H%M%S)"
-          git checkout -b "$BRANCH"
-          git add libs/vre/3rd-party-services/open-api/dsp-api_spec.yaml
+          git checkout -b "$BRANCH" origin/main
+          cp /tmp/updated-spec.yaml "$SPEC"
+          git add "$SPEC"
           git commit -m "chore(open-api): bump dsp-api spec ${LOCAL_VERSION} → ${REMOTE_VERSION}"
           git push origin "$BRANCH"
           gh pr create \
