@@ -23,6 +23,65 @@
       "options": {
         "command": "tsc --noEmit --project {projectRoot}/tsconfig.lib.json"
       }
+    },
+    "storybook": {
+      "executor": "@storybook/angular:start-storybook",
+      "options": {
+        "port": 4400,
+        "configDir": "libs/vre/ui/ui/.storybook",
+        "browserTarget": "dsp-app:build",
+        "compodoc": false,
+        "styles": ["apps/dsp-app/src/styles.scss"],
+        "stylePreprocessorOptions": {
+          "includePaths": ["apps/dsp-app/src/styles"]
+        },
+        "assets": [{ "glob": "**/*", "input": "apps/dsp-app/src/assets", "output": "assets" }]
+      },
+      "configurations": {
+        "ci": {
+          "quiet": true
+        }
+      }
+    },
+    "build-storybook": {
+      "executor": "@storybook/angular:build-storybook",
+      "outputs": ["{options.outputDir}"],
+      "options": {
+        "outputDir": "dist/storybook/vre-ui-ui",
+        "configDir": "libs/vre/ui/ui/.storybook",
+        "browserTarget": "dsp-app:build",
+        "compodoc": false,
+        "styles": ["apps/dsp-app/src/styles.scss"],
+        "stylePreprocessorOptions": {
+          "includePaths": ["apps/dsp-app/src/styles"]
+        },
+        "assets": [{ "glob": "**/*", "input": "apps/dsp-app/src/assets", "output": "assets" }]
+      },
+      "configurations": {
+        "ci": {
+          "quiet": true
+        }
+      }
+    },
+    "test-storybook": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "test-storybook -c libs/vre/ui/ui/.storybook --url=http://localhost:4400"
+      }
+    },
+    "static-storybook": {
+      "executor": "@nx/web:file-server",
+      "dependsOn": ["build-storybook"],
+      "options": {
+        "buildTarget": "vre-ui-ui:build-storybook",
+        "staticFilePath": "dist/storybook/vre-ui-ui",
+        "spa": true
+      },
+      "configurations": {
+        "ci": {
+          "buildTarget": "vre-ui-ui:build-storybook:ci"
+        }
+      }
     }
   }
 }
