@@ -143,7 +143,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.DASCHBOT_PAT }}
       - name: Set up yq
         uses: mikefarah/yq@v4
       - id: check
@@ -206,7 +206,7 @@ jobs:
             --label "dsp-api" \
             --base main
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.DASCHBOT_PAT }}
 
   docs-build-test:
     name: Docs Build Test
