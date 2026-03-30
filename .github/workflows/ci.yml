@@ -159,33 +159,43 @@ jobs:
           fi
           exit $exit_code
       - name: Set up Node.js
-        if: steps.check.outputs.exit_code == '1' && github.ref == 'refs/heads/main'
+        if: steps.check.outputs.exit_code == '1'
         uses: actions/setup-node@v6
         with:
           node-version-file: .nvmrc
       - name: Install dependencies
-        if: steps.check.outputs.exit_code == '1' && github.ref == 'refs/heads/main'
+        if: steps.check.outputs.exit_code == '1'
         run: npm ci --ignore-scripts
       - name: Update OpenAPI spec
-        if: steps.check.outputs.exit_code == '1' && github.ref == 'refs/heads/main'
+        if: steps.check.outputs.exit_code == '1'
         run: npm run update-openapi
       - name: Create PR if spec changed
-        if: steps.check.outputs.exit_code == '1' && github.ref == 'refs/heads/main'
+        if: steps.check.outputs.exit_code == '1'
         run: |
           if git diff --quiet; then
             echo "No spec changes after update — skipping PR creation."
             exit 0
           fi
-          DSP_API_VERSION=$(yq '.info.version' libs/vre/3rd-party-services/open-api/dsp-api_spec.yaml)
+          LOCAL_VERSION=$(git show HEAD:libs/vre/3rd-party-services/open-api/dsp-api_spec.yaml | yq '.info.version')
+          REMOTE_VERSION=$(yq '.info.version' libs/vre/3rd-party-services/open-api/dsp-api_spec.yaml)
+          if [ "$REMOTE_VERSION" = "$LOCAL_VERSION" ]; then
+            echo "Spec changed but version is unchanged (${REMOTE_VERSION}) — skipping PR creation."
+            exit 0
+          fi
+          EXISTING=$(gh pr list --state open --json title --jq "[.[] | select(.title | contains(\"update dsp-api OpenAPI spec to ${REMOTE_VERSION}\"))] | length")
+          if [ "$EXISTING" -gt 0 ]; then
+            echo "Open PR already exists for dsp-api version ${REMOTE_VERSION} — skipping PR creation."
+            exit 0
+          fi
           git config user.name "daschbot"
           git config user.email "daschbot@dasch.swiss"
           BRANCH="chore/update-dsp-api-openapi-spec-$(date +%Y%m%d-%H%M%S)"
           git checkout -b "$BRANCH"
           git add libs/vre/3rd-party-services/open-api/dsp-api_spec.yaml
-          git commit -m "chore: update dsp-api OpenAPI spec to ${DSP_API_VERSION}"
+          git commit -m "chore: update dsp-api OpenAPI spec to ${REMOTE_VERSION}"
           git push origin "$BRANCH"
           gh pr create \
-            --title "chore: update dsp-api OpenAPI spec to ${DSP_API_VERSION}" \
+            --title "chore: update dsp-api OpenAPI spec to ${REMOTE_VERSION}" \
             --body "Automated spec update detected by CI. Review diff and merge when the frontend is ready to adopt the new API." \
             --base main
         env:
