@@ -159,18 +159,18 @@ jobs:
           fi
           exit $exit_code
       - name: Set up Node.js
-        if: steps.check.outputs.exit_code == '1'
+        if: always() && steps.check.outputs.exit_code == '1'
         uses: actions/setup-node@v6
         with:
           node-version-file: .nvmrc
       - name: Install dependencies
-        if: steps.check.outputs.exit_code == '1'
+        if: always() && steps.check.outputs.exit_code == '1'
         run: npm ci --ignore-scripts
       - name: Update OpenAPI spec
-        if: steps.check.outputs.exit_code == '1'
+        if: always() && steps.check.outputs.exit_code == '1'
         run: npm run update-openapi
       - name: Create PR if spec changed
-        if: steps.check.outputs.exit_code == '1'
+        if: always() && steps.check.outputs.exit_code == '1'
         run: |
           if git diff --quiet; then
             echo "No spec changes after update — skipping PR creation."
