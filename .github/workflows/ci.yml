@@ -182,7 +182,8 @@ jobs:
             echo "Spec changed but version is unchanged (${REMOTE_VERSION}) — skipping PR creation."
             exit 0
           fi
-          EXISTING=$(gh pr list --state open --json title --jq "[.[] | select(.title | contains(\"update dsp-api OpenAPI spec to ${REMOTE_VERSION}\"))] | length")
+          PR_TITLE="chore(open-api): bump dsp-api spec ${LOCAL_VERSION} → ${REMOTE_VERSION}"
+          EXISTING=$(gh pr list --state open --json title --jq "[.[] | select(.title == \"${PR_TITLE}\")] | length")
           if [ "$EXISTING" -gt 0 ]; then
             echo "Open PR already exists for dsp-api version ${REMOTE_VERSION} — skipping PR creation."
             exit 0
@@ -192,11 +193,13 @@ jobs:
           BRANCH="chore/update-dsp-api-openapi-spec-$(date +%Y%m%d-%H%M%S)"
           git checkout -b "$BRANCH"
           git add libs/vre/3rd-party-services/open-api/dsp-api_spec.yaml
-          git commit -m "chore: update dsp-api OpenAPI spec to ${REMOTE_VERSION}"
+          git commit -m "chore(open-api): bump dsp-api spec ${LOCAL_VERSION} → ${REMOTE_VERSION}"
           git push origin "$BRANCH"
           gh pr create \
-            --title "chore: update dsp-api OpenAPI spec to ${REMOTE_VERSION}" \
+            --title "${PR_TITLE}" \
             --body "Automated spec update detected by CI. Review diff and merge when the frontend is ready to adopt the new API." \
+            --label "dependencies" \
+            --label "dsp-api" \
             --base main
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
