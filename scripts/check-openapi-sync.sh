@@ -153,10 +153,7 @@ main() {
         log "  Local version:  ${LOCAL_VERSION}"
         log "  Remote version: ${REMOTE_VERSION}"
 
-        if [ -n "$CI" ]; then
-            log ""
-            log "An update PR will be created automatically by CI."
-        else
+        if [ -z "$CI" ]; then
             log ""
             log "${YELLOW}To update the spec file and regenerate OpenAPI code:${NC}"
             log "  npm run update-openapi"
