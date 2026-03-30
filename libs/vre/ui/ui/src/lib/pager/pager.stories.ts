@@ -32,9 +32,11 @@ export const FirstPage: Story = {
     pageSize: 25,
     pageIndexChanged: fn(),
   },
-  play: async ({ canvasElement }) => {
+  play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
-    await expect(canvas.getByText(/1 - 25/)).toBeInTheDocument();
+    await step('Item range shows "1 - 25 of 100"', async () => {
+      await expect(canvas.getByText(/1 - 25/)).toBeInTheDocument();
+    });
   },
 };
 
@@ -54,9 +56,11 @@ export const NoResults: Story = {
     pageSize: 25,
     pageIndexChanged: fn(),
   },
-  play: async ({ canvasElement }) => {
+  play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
-    await expect(canvas.getByText(/0 - 0/)).toBeInTheDocument();
+    await step('Item range shows "0 - 0 of 0"', async () => {
+      await expect(canvas.getByText(/0 - 0/)).toBeInTheDocument();
+    });
   },
 };
 
@@ -67,11 +71,14 @@ export const NavigatesToNextPage: Story = {
     pageSize: 25,
     pageIndexChanged: fn(),
   },
-  play: async ({ canvasElement, args }) => {
-    // The next button contains the chevron_right icon — it is the 3rd button (index 2)
-    const buttons = canvasElement.querySelectorAll<HTMLButtonElement>('button[mat-icon-button]');
-    const nextButton = buttons[2]; // first_page, chevron_left, chevron_right, last_page
-    await userEvent.click(nextButton);
-    await expect(args.pageIndexChanged).toHaveBeenCalledWith(1);
+  play: async ({ canvasElement, args, step }) => {
+    await step('User clicks the next page button', async () => {
+      // The next button contains the chevron_right icon — it is the 3rd button (index 2)
+      const buttons = canvasElement.querySelectorAll<HTMLButtonElement>('button[mat-icon-button]');
+      await userEvent.click(buttons[2]);
+    });
+    await step('pageIndexChanged emits page index 1', async () => {
+      await expect(args.pageIndexChanged).toHaveBeenCalledWith(1);
+    });
   },
 };

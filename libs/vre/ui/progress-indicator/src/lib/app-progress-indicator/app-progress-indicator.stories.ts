@@ -24,8 +24,10 @@ type Story = StoryObj<AppProgressIndicatorComponent>;
 export const Default: Story = {
   name: 'Shows spinner at default (small) size',
   args: { size: 'small' },
-  play: async ({ canvasElement }) => {
-    await expect(canvasElement.querySelector('[data-cy="loader"]')).not.toBeNull();
+  play: async ({ canvasElement, step }) => {
+    await step('Spinner element is rendered in the DOM', async () => {
+      await expect(canvasElement.querySelector('[data-cy="loader"]')).not.toBeNull();
+    });
   },
 };
 

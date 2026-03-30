@@ -32,10 +32,11 @@ export const SelectsFirstOption: Story = {
     options: ['Upload file', 'Use URL'],
     valueChange: fn(),
   },
-  play: async ({ canvasElement }) => {
+  play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
-    const firstChip = canvas.getByText('Upload file');
-    await expect(firstChip).toBeInTheDocument();
+    await step('"Upload file" chip is visible', async () => {
+      await expect(canvas.getByText('Upload file')).toBeInTheDocument();
+    });
   },
 };
 
@@ -55,9 +56,13 @@ export const EmitsOnToggle: Story = {
     options: ['Yes', 'No'],
     valueChange: fn(),
   },
-  play: async ({ canvasElement, args }) => {
+  play: async ({ canvasElement, args, step }) => {
     const canvas = within(canvasElement);
-    await userEvent.click(canvas.getByText('No'));
-    await expect(args.valueChange).toHaveBeenCalled();
+    await step('User clicks the "No" chip', async () => {
+      await userEvent.click(canvas.getByText('No'));
+    });
+    await step('valueChange event is emitted', async () => {
+      await expect(args.valueChange).toHaveBeenCalled();
+    });
   },
 };

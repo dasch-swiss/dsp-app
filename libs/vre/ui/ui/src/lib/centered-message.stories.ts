@@ -38,22 +38,28 @@ export const WithAllContent: Story = {
     title: 'No results found',
     message: 'Try adjusting your search filters or entering a different keyword.',
   },
-  play: async ({ canvasElement }) => {
+  play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
-    await expect(canvas.getByText('Nos results found')).toBeInTheDocument();
-    await expect(
-      canvas.getByText('Try adjusting your search filters or entering a different keyword.')
-    ).toBeInTheDocument();
+    await step('Title "No results found" is visible', async () => {
+      await expect(canvas.getByText('No results found')).toBeInTheDocument();
+    });
+    await step('Supporting message is visible', async () => {
+      await expect(canvas.getByText('Try adjusting your search filters or entering a different keyword.')).toBeInTheDocument();
+    });
   },
 };
 
 export const TitleOnly: Story = {
   name: 'Shows only title when icon and message are omitted',
   args: { title: 'Nothing here yet' },
-  play: async ({ canvasElement }) => {
+  play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
-    await expect(canvas.getByText('Nothing here yet')).toBeInTheDocument();
-    await expect(canvasElement.querySelector('mat-icon')).toBeNull();
+    await step('Title "Nothing here yet" is visible', async () => {
+      await expect(canvas.getByText('Nothing here yet')).toBeInTheDocument();
+    });
+    await step('No icon is rendered', async () => {
+      await expect(canvasElement.querySelector('mat-icon')).toBeNull();
+    });
   },
 };
 

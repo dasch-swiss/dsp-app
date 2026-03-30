@@ -42,9 +42,11 @@ export const EmptyTextField: Story = {
     prefixIcon: null,
     type: 'text',
   },
-  play: async ({ canvasElement }) => {
+  play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
-    await expect(canvas.getByPlaceholderText('Project title')).toBeInTheDocument();
+    await step('Input field with placeholder "Project title" is visible', async () => {
+      await expect(canvas.getByPlaceholderText('Project title')).toBeInTheDocument();
+    });
   },
 };
 
@@ -70,9 +72,11 @@ export const ShowsValidationError: Story = {
     validatorErrors: [{ errorKey: 'required', message: 'This field is required' }],
     type: 'text',
   },
-  play: async ({ canvasElement }) => {
+  play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
-    await expect(canvas.getByText('This field is required')).toBeInTheDocument();
+    await step('Validation error "This field is required" is shown', async () => {
+      await expect(canvas.getByText('This field is required')).toBeInTheDocument();
+    });
   },
 };
 
@@ -83,10 +87,14 @@ export const AcceptsUserInput: Story = {
     label: 'Description',
     type: 'text',
   },
-  play: async ({ canvasElement }) => {
+  play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
     const input = canvas.getByPlaceholderText('Description');
-    await userEvent.type(input, 'Hello world');
-    await expect(input).toHaveValue('Hello world');
+    await step('User types "Hello world"', async () => {
+      await userEvent.type(input, 'Hello world');
+    });
+    await step('Input displays "Hello world"', async () => {
+      await expect(input).toHaveValue('Hello world');
+    });
   },
 };
