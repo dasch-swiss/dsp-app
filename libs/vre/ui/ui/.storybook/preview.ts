@@ -1,12 +1,8 @@
-import { HttpClient, provideHttpClient } from '@angular/common/http';
 import { applicationConfig, type Preview } from '@storybook/angular';
 import { provideAnimations } from '@angular/platform-browser/animations';
-import { TranslateHttpLoader } from '@ngx-translate/http-loader';
-import { TranslateLoader, provideTranslateService } from '@ngx-translate/core';
-
-function createTranslateLoader(http: HttpClient) {
-  return new TranslateHttpLoader(http, './assets/i18n/', '.json');
-}
+import { provideHttpClient } from '@angular/common/http';
+import { provideTranslateService } from '@ngx-translate/core';
+import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 
 const preview: Preview = {
   decorators: [
@@ -14,14 +10,8 @@ const preview: Preview = {
       providers: [
         provideAnimations(),
         provideHttpClient(),
-        provideTranslateService({
-          defaultLanguage: 'en',
-          loader: {
-            provide: TranslateLoader,
-            useFactory: createTranslateLoader,
-            deps: [HttpClient],
-          },
-        }),
+        provideTranslateService({ defaultLanguage: 'en' }),
+        provideTranslateHttpLoader({ prefix: './assets/i18n/', suffix: '.json' }),
       ],
     }),
   ],

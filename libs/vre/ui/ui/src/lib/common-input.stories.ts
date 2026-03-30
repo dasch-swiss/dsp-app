@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/angular';
-import { expect, within, userEvent } from '@storybook/test';
+import { expect, within, userEvent } from 'storybook/test';
 import { FormControl, Validators } from '@angular/forms';
 import { CommonInputComponent } from './common-input.component';
 
@@ -34,7 +34,7 @@ export default meta;
 type Story = StoryObj<CommonInputComponent>;
 
 export const EmptyTextField: Story = {
-  storyName: 'Shows empty text field with label',
+  name: 'Shows empty text field with label',
   args: {
     control: new FormControl('') as FormControl<string>,
     label: 'Project title',
@@ -49,7 +49,7 @@ export const EmptyTextField: Story = {
 };
 
 export const WithPrefixIcon: Story = {
-  storyName: 'Shows prefix icon inside the field',
+  name: 'Shows prefix icon inside the field',
   args: {
     control: new FormControl('') as FormControl<string>,
     label: 'Search',
@@ -59,7 +59,7 @@ export const WithPrefixIcon: Story = {
 };
 
 export const ShowsValidationError: Story = {
-  storyName: 'Shows validation error when field is touched and invalid',
+  name: 'Shows validation error when field is touched and invalid',
   args: {
     control: (() => {
       const c = new FormControl('', Validators.required);
@@ -77,7 +77,7 @@ export const ShowsValidationError: Story = {
 };
 
 export const AcceptsUserInput: Story = {
-  storyName: 'Accepts and displays typed text',
+  name: 'Accepts and displays typed text',
   args: {
     control: new FormControl('') as FormControl<string>,
     label: 'Description',

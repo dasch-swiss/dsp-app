@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/angular';
-import { expect, within, userEvent, fn } from '@storybook/test';
+import { expect, within, userEvent, fn } from 'storybook/test';
 import { DoubleChipSelectorComponent } from './double-chip-selector.component';
 
 const meta: Meta<DoubleChipSelectorComponent> = {
@@ -26,7 +26,7 @@ export default meta;
 type Story = StoryObj<DoubleChipSelectorComponent>;
 
 export const SelectsFirstOption: Story = {
-  storyName: 'Shows first option selected when value is true',
+  name: 'Shows first option selected when value is true',
   args: {
     value: true,
     options: ['Upload file', 'Use URL'],
@@ -40,7 +40,7 @@ export const SelectsFirstOption: Story = {
 };
 
 export const SelectsSecondOption: Story = {
-  storyName: 'Shows second option selected when value is false',
+  name: 'Shows second option selected when value is false',
   args: {
     value: false,
     options: ['Upload file', 'Use URL'],
@@ -49,7 +49,7 @@ export const SelectsSecondOption: Story = {
 };
 
 export const EmitsOnToggle: Story = {
-  storyName: 'Emits valueChange when user clicks the unselected option',
+  name: 'Emits valueChange when user clicks the unselected option',
   args: {
     value: true,
     options: ['Yes', 'No'],

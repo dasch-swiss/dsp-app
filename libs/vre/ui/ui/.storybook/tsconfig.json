@@ -10,6 +10,8 @@
     "../src/**/*.stories.jsx",
     "../src/**/*.stories.tsx",
     "../src/**/*.stories.mdx",
+    "../../progress-indicator/src/**/*.stories.ts",
+    "../../../../../apps/dsp-app/src/polyfills.ts",
     "*.js",
     "*.ts"
   ]

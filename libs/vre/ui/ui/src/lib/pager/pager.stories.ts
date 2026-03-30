@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/angular';
-import { expect, within, userEvent, fn } from '@storybook/test';
+import { expect, within, userEvent, fn } from 'storybook/test';
 import { PagerComponent } from './pager.component';
 
 const meta: Meta<PagerComponent> = {
@@ -26,7 +26,7 @@ export default meta;
 type Story = StoryObj<PagerComponent>;
 
 export const FirstPage: Story = {
-  storyName: 'Shows first page with correct item range',
+  name: 'Shows first page with correct item range',
   args: {
     numberOfAllResults: 100,
     pageSize: 25,
@@ -39,7 +39,7 @@ export const FirstPage: Story = {
 };
 
 export const SinglePage: Story = {
-  storyName: 'Disables navigation when all results fit on one page',
+  name: 'Disables navigation when all results fit on one page',
   args: {
     numberOfAllResults: 10,
     pageSize: 25,
@@ -48,7 +48,7 @@ export const SinglePage: Story = {
 };
 
 export const NoResults: Story = {
-  storyName: 'Shows zero range when there are no results',
+  name: 'Shows zero range when there are no results',
   args: {
     numberOfAllResults: 0,
     pageSize: 25,
@@ -61,7 +61,7 @@ export const NoResults: Story = {
 };
 
 export const NavigatesToNextPage: Story = {
-  storyName: 'Navigates to next page when next button is clicked',
+  name: 'Navigates to next page when next button is clicked',
   args: {
     numberOfAllResults: 100,
     pageSize: 25,

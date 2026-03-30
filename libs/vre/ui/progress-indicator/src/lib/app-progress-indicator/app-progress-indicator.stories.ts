@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/angular';
-import { expect, within } from '@storybook/test';
+import { expect, within } from 'storybook/test';
 import { AppProgressIndicatorComponent } from './app-progress-indicator.component';
 
 const meta: Meta<AppProgressIndicatorComponent> = {
@@ -22,7 +22,7 @@ export default meta;
 type Story = StoryObj<AppProgressIndicatorComponent>;
 
 export const Default: Story = {
-  storyName: 'Shows spinner at default (small) size',
+  name: 'Shows spinner at default (small) size',
   args: { size: 'small' },
   play: async ({ canvasElement }) => {
     await expect(canvasElement.querySelector('[data-cy="loader"]')).not.toBeNull();
@@ -30,11 +30,11 @@ export const Default: Story = {
 };
 
 export const MediumSize: Story = {
-  storyName: 'Shows medium spinner for section-level loading',
+  name: 'Shows medium spinner for section-level loading',
   args: { size: 'medium' },
 };
 
 export const LargeSize: Story = {
-  storyName: 'Shows large spinner for full-page loading states',
+  name: 'Shows large spinner for full-page loading states',
   args: { size: 'large' },
 };

@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/angular';
-import { expect, within } from '@storybook/test';
+import { expect, within } from 'storybook/test';
 import { CenteredMessageComponent } from './centered-message.component';
 
 const meta: Meta<CenteredMessageComponent> = {
@@ -32,7 +32,7 @@ export default meta;
 type Story = StoryObj<CenteredMessageComponent>;
 
 export const WithAllContent: Story = {
-  storyName: 'Shows icon, title, and message when all inputs provided',
+  name: 'Shows icon, title, and message when all inputs provided',
   args: {
     icon: 'search_off',
     title: 'No results found',
@@ -40,13 +40,15 @@ export const WithAllContent: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await expect(canvas.getByText('No results found')).toBeInTheDocument();
-    await expect(canvas.getByText('Try adjusting your search filters or entering a different keyword.')).toBeInTheDocument();
+    await expect(canvas.getByText('Nos results found')).toBeInTheDocument();
+    await expect(
+      canvas.getByText('Try adjusting your search filters or entering a different keyword.')
+    ).toBeInTheDocument();
   },
 };
 
 export const TitleOnly: Story = {
-  storyName: 'Shows only title when icon and message are omitted',
+  name: 'Shows only title when icon and message are omitted',
   args: { title: 'Nothing here yet' },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -56,7 +58,7 @@ export const TitleOnly: Story = {
 };
 
 export const CustomColor: Story = {
-  storyName: 'Applies custom color to all text elements',
+  name: 'Applies custom color to all text elements',
   args: {
     icon: 'warning',
     title: 'Access denied',
