@@ -35,7 +35,6 @@ import { ResourceInfoBarComponent } from './resource-info-bar.component';
                   style="width: 100%"
                   [resource]="annotation.res"
                   [parentResourceId]="resource.id"
-                  [toolBarActive]="annotation.res.id === selectedRegion"
                   (click)="$event.stopPropagation()" />
               </div>
             </div>
