@@ -183,7 +183,4 @@ describe('Check project admin existing resource functionality', () => {
     cy.log('new property value with comment has been removed');
   });
 
-  after(() => {
-    Cypress.env('skipDatabaseCleanup', false);
-  });
 });

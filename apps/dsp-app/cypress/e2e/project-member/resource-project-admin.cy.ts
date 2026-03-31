@@ -152,7 +152,4 @@ describe('Check project admin existing resource functionality', () => {
     cy.get('[data-cy=resource-list-item]').contains(resourceToErase.label).should('not.exist');
   });
 
-  after(() => {
-    Cypress.env('skipDatabaseCleanup', false);
-  });
 });
