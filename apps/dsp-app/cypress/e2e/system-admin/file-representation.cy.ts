@@ -12,6 +12,10 @@ describe('File representation', () => {
   const projectPayloads = new Project00FFPayloads();
 
   beforeEach(() => {
+    cy.resetDatabase();
+  });
+
+  beforeEach(() => {
     po = new AddResourceInstancePage();
   });
 
