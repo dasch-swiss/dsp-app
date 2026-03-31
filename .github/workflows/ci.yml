@@ -87,12 +87,12 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # Heavy runner: resource.cy.ts has 45 tests, each creates a class in the shared images ontology
+          # Heavy runner: resource.cy.ts (many API requests per test), data-model-class.cy.ts (DB reset per test), plus smaller specs to balance load
           - runner: heavy
-            specs: cypress/e2e/system-admin/resource.cy.ts
+            specs: cypress/e2e/system-admin/resource.cy.ts,cypress/e2e/system-admin/data-model-class.cy.ts,cypress/e2e/system-admin/still-image.cy.ts,cypress/e2e/system-admin/file-representation.cy.ts
           # Rest runner: remaining specs
           - runner: rest
-            specs: cypress/e2e/system-admin/data-model-class.cy.ts,cypress/e2e/system-admin/ontology.cy.ts,cypress/e2e/system-admin/projects.cy.ts,cypress/e2e/system-admin/file-representation.cy.ts,cypress/e2e/system-admin/lists.cy.ts,cypress/e2e/system-admin/project-members.cy.ts,cypress/e2e/system-admin/project-overview.cy.ts,cypress/e2e/system-admin/still-image.cy.ts,cypress/e2e/project-member/**/*.cy.ts,cypress/e2e/logged-out-user/**/*.cy.ts,cypress/e2e/performance/**/*.cy.ts
+            specs: cypress/e2e/system-admin/ontology.cy.ts,cypress/e2e/system-admin/projects.cy.ts,cypress/e2e/system-admin/lists.cy.ts,cypress/e2e/system-admin/project-members.cy.ts,cypress/e2e/system-admin/project-overview.cy.ts,cypress/e2e/project-member/**/*.cy.ts,cypress/e2e/logged-out-user/**/*.cy.ts,cypress/e2e/performance/**/*.cy.ts
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -117,6 +117,10 @@ jobs:
         run: npx cypress install
       - name: Generate OpenAPI client
         run: npm run generate-openapi-module
+      - name: Start app (background)
+        run: npx nx run dsp-app:serve:production &
+        env:
+          NODE_OPTIONS: '--max-old-space-size=4096'
       - name: Checkout DSP-API repo
         uses: actions/checkout@v6
         with:
@@ -129,10 +133,6 @@ jobs:
           make init-db-test
           docker compose -f docker-compose.yml up -d sipi ingest api
           ./webapi/scripts/wait-for-api.sh
-      - name: Start app (background)
-        run: npx nx run dsp-app:serve:production &
-        env:
-          NODE_OPTIONS: '--max-old-space-size=4096'
       - name: Wait for app to be ready
         run: timeout 180 bash -c 'until curl -sf http://localhost:4200 > /dev/null 2>&1; do sleep 3; done'
       - name: Run e2e tests in CI
