@@ -31,11 +31,9 @@ import { ResourceFetcherService } from '../representations/resource-fetcher.serv
       cdkDropListLockAxis="y"
       [cdkDropListData]="values"
       [cdkDropListDisabled]="disabled || reorderLoading"
+      [class.has-multiple]="values.length > 1"
       (cdkDropListDropped)="onDrop($event)">
       @for (value of values; track value.id; let index = $index) {
-        @if (index > 0 && values.length > 1) {
-          <div class="value-divider"></div>
-        }
         <div cdkDrag cdkDragLockAxis="y" [cdkDragDisabled]="disabled || reorderLoading" class="value-row">
           @if (showHandle) {
             <span
@@ -80,9 +78,8 @@ import { ResourceFetcherService } from '../representations/resource-fetcher.serv
         cursor: grabbing;
       }
 
-      .value-divider {
-        border-top: 1px solid #d3d4d6; /* $cold_grey_100 */
-        margin: 4px 0;
+      .has-multiple .value-row:not(:last-child) {
+        border-bottom: 1px solid rgba(51, 103, 144, 0.1); /* rgba($primary, 0.1) */
       }
 
       .cdk-drag-animating {
