@@ -16,6 +16,10 @@ describe('Resource', () => {
   const project00FFPayloads = new Project00FFPayloads();
 
   beforeEach(() => {
+    cy.resetDatabase();
+  });
+
+  beforeEach(() => {
     po = new AddResourceInstancePage();
 
     cy.request({
