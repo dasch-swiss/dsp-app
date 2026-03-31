@@ -12,11 +12,13 @@ const getAuthHeaders = () => ({
 
 describe('Resource', () => {
   let finalLastModificationDate: string;
+  let propertyName: string;
   let po: AddResourceInstancePage;
   const project00FFPayloads = new Project00FFPayloads();
 
   beforeEach(() => {
     const className = `class${faker.string.alphanumeric(8)}`;
+    propertyName = `prop${faker.string.alphanumeric(8)}`;
     po = new AddResourceInstancePage(className);
 
     const ontologyIri = encodeURIComponent(`${Cypress.env('apiUrl')}/ontology/00FF/images/v2`);
@@ -42,7 +44,7 @@ describe('Resource', () => {
       // Intercept the POST request
       cy.intercept('POST', 'http://0.0.0.0:3333/v2/resources').as('postRequest');
 
-      ResourceRequests.resourceRequest(ClassPropertyPayloads.richText(finalLastModificationDate));
+      ResourceRequests.resourceRequest(ClassPropertyPayloads.richText(finalLastModificationDate, propertyName), false, po.className, propertyName);
       po.visitAddPage();
 
       // create
@@ -86,7 +88,7 @@ describe('Resource', () => {
         },
       };
 
-      ResourceRequests.resourceRequest(ClassPropertyPayloads.richText(finalLastModificationDate));
+      ResourceRequests.resourceRequest(ClassPropertyPayloads.richText(finalLastModificationDate, propertyName), false, po.className, propertyName);
       cy.request({
         method: 'POST',
         url: `${Cypress.env('apiUrl')}/v2/resources`,
@@ -123,7 +125,7 @@ describe('Resource', () => {
       const initialValue = faker.lorem.word();
       const editedValue = faker.lorem.word();
 
-      ResourceRequests.resourceRequest(ClassPropertyPayloads.textShort(finalLastModificationDate));
+      ResourceRequests.resourceRequest(ClassPropertyPayloads.textShort(finalLastModificationDate, propertyName), false, po.className, propertyName);
       po.visitAddPage();
 
       // create
@@ -147,7 +149,7 @@ describe('Resource', () => {
       const initialValue = faker.number.int({ min: 0, max: 100 });
       const editedValue = faker.number.int({ min: 0, max: 100 });
 
-      ResourceRequests.resourceRequest(ClassPropertyPayloads.number(finalLastModificationDate));
+      ResourceRequests.resourceRequest(ClassPropertyPayloads.number(finalLastModificationDate, propertyName), false, po.className, propertyName);
       po.visitAddPage();
 
       // create
@@ -169,7 +171,7 @@ describe('Resource', () => {
     it('boolean', () => {
       const addBoolToggle = () => cy.get('[data-cy=add-value-button]');
       const boolToggle = () => cy.get('[data-cy=bool-toggle]');
-      ResourceRequests.resourceRequest(ClassPropertyPayloads.boolean(finalLastModificationDate));
+      ResourceRequests.resourceRequest(ClassPropertyPayloads.boolean(finalLastModificationDate, propertyName), false, po.className, propertyName);
       po.visitAddPage();
 
       // create
@@ -200,7 +202,7 @@ describe('Resource', () => {
         cy.get('[data-cy=color-box]').should('have.css', 'background-color').and('eq', rgb);
       };
 
-      ResourceRequests.resourceRequest(ClassPropertyPayloads.color(finalLastModificationDate));
+      ResourceRequests.resourceRequest(ClassPropertyPayloads.color(finalLastModificationDate, propertyName), false, po.className, propertyName);
       po.visitAddPage();
 
       // create
@@ -231,7 +233,7 @@ describe('Resource', () => {
           .type('{downarrow}{enter}');
       };
 
-      ResourceRequests.resourceRequest(ClassPropertyPayloads.place(finalLastModificationDate));
+      ResourceRequests.resourceRequest(ClassPropertyPayloads.place(finalLastModificationDate, propertyName), false, po.className, propertyName);
       po.visitAddPage();
 
       // create
@@ -250,7 +252,7 @@ describe('Resource', () => {
       po.delete();
     });
 
-    const propertyListPayload = (lastModificationDate: string, listId: string) => {
+    const propertyListPayload = (lastModificationDate: string, listId: string, pName: string) => {
       return {
         '@id': 'http://0.0.0.0:3333/ontology/00FF/images/v2',
         '@type': 'http://www.w3.org/2002/07/owl#Ontology',
@@ -265,7 +267,7 @@ describe('Resource', () => {
             },
             'http://www.w3.org/2000/01/rdf-schema#label': {
               '@language': 'de',
-              '@value': 'property',
+              '@value': pName,
             },
             'http://www.w3.org/2000/01/rdf-schema#subPropertyOf': {
               '@id': 'http://api.knora.org/ontology/knora-api/v2#hasValue',
@@ -274,7 +276,7 @@ describe('Resource', () => {
               '@id': 'http://api.knora.org/ontology/salsah-gui/v2#Pulldown',
             },
             'http://api.knora.org/ontology/salsah-gui/v2#guiAttribute': [`hlist=<${listId}>`],
-            '@id': 'http://0.0.0.0:3333/ontology/00FF/images/v2#property',
+            '@id': `http://0.0.0.0:3333/ontology/00FF/images/v2#${pName}`,
             '@type': 'http://www.w3.org/2002/07/owl#ObjectProperty',
           },
         ],
@@ -324,7 +326,7 @@ describe('Resource', () => {
           sendCreateListItemRequest(listId, item1Name);
         })
         .then(() => sendCreateListItemRequest(listId, item2Name))
-        .then(() => ResourceRequests.resourceRequest(propertyListPayload(finalLastModificationDate, listId)))
+        .then(() => ResourceRequests.resourceRequest(propertyListPayload(finalLastModificationDate, listId, propertyName), false, po.className, propertyName))
         .then(() => {
           po.visitAddPage();
 
@@ -368,7 +370,7 @@ describe('Resource', () => {
         },
       })
         .then(response => {
-          ResourceRequests.resourceRequest(ClassPropertyPayloads.link(finalLastModificationDate));
+          ResourceRequests.resourceRequest(ClassPropertyPayloads.link(finalLastModificationDate, po.className, propertyName), false, po.className, propertyName);
         })
         .then(() => {
           po.visitAddPage();
@@ -390,7 +392,7 @@ describe('Resource', () => {
         });
     });
     it.skip('date', () => {
-      ResourceRequests.resourceRequest(ClassPropertyPayloads.date(finalLastModificationDate));
+      ResourceRequests.resourceRequest(ClassPropertyPayloads.date(finalLastModificationDate, propertyName), false, po.className, propertyName);
       po.visitAddPage();
 
       // create
@@ -410,7 +412,7 @@ describe('Resource', () => {
     });
 
     it('timestamp', () => {
-      ResourceRequests.resourceRequest(ClassPropertyPayloads.timestamp(finalLastModificationDate));
+      ResourceRequests.resourceRequest(ClassPropertyPayloads.timestamp(finalLastModificationDate, propertyName), false, po.className, propertyName);
       po.visitAddPage();
 
       // create
@@ -432,7 +434,7 @@ describe('Resource', () => {
     });
 
     it('time sequence', () => {
-      ResourceRequests.resourceRequest(ClassPropertyPayloads.timesequence(finalLastModificationDate));
+      ResourceRequests.resourceRequest(ClassPropertyPayloads.timesequence(finalLastModificationDate, propertyName), false, po.className, propertyName);
       po.visitAddPage();
       const start = () => cy.get('[data-cy=start-input] input', { force: true });
       const end = () => cy.get('[data-cy=end-input] input');
@@ -463,16 +465,16 @@ describe('Resource', () => {
 
   describe('can not add an empty value when it is required', () => {
     const types = new Map<string, any>([
-      ['text', () => ClassPropertyPayloads.textShort(finalLastModificationDate)],
-      ['number', () => ClassPropertyPayloads.number(finalLastModificationDate)],
-      ['place', () => ClassPropertyPayloads.place(finalLastModificationDate)],
-      ['time sequence', () => ClassPropertyPayloads.timesequence(finalLastModificationDate)],
-      ['link', () => ClassPropertyPayloads.link(finalLastModificationDate)],
+      ['text', () => ClassPropertyPayloads.textShort(finalLastModificationDate, propertyName)],
+      ['number', () => ClassPropertyPayloads.number(finalLastModificationDate, propertyName)],
+      ['place', () => ClassPropertyPayloads.place(finalLastModificationDate, propertyName)],
+      ['time sequence', () => ClassPropertyPayloads.timesequence(finalLastModificationDate, propertyName)],
+      ['link', () => ClassPropertyPayloads.link(finalLastModificationDate, po.className, propertyName)],
     ]);
 
     types.forEach((value, name) => {
       it(name, () => {
-        ResourceRequests.resourceRequest(value(), true);
+        ResourceRequests.resourceRequest(value(), true, po.className, propertyName);
         // po.visitAddPage();
         // po.addInitialLabel();
         // po.clickOnSubmit();
