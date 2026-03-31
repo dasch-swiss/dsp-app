@@ -452,6 +452,9 @@
       "by": "par",
       "on": "le"
     },
+    "segmentTab": {
+      "goToSegment": "Aller au segment"
+    },
     "legal": {
       "copyrightHolder": "Titulaire des droits d'auteur",
       "authorship": "Auteur·ice"

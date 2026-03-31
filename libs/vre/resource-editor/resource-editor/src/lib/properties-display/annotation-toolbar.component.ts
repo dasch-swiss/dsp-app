@@ -20,20 +20,17 @@ import { ColorViewerComponent } from '../template-switcher/viewer-components/col
   selector: 'app-annotation-toolbar',
   template: `
     <div class="actions">
-      @if (!toolBarActive) {
-        <span class="color-value">
-          <app-color-viewer [value]="readColorValue" />
-        </span>
-      } @else {
-        <button
-          mat-icon-button
-          [matTooltip]="'resourceEditor.propertiesDisplay.annotationToolbar.highlightRegion' | translate"
-          color="primary"
-          matTooltipPosition="above"
-          (click)="onPinPointClicked()">
-          <mat-icon>my_location</mat-icon>
-        </button>
-      }
+      <span class="color-value">
+        <app-color-viewer [value]="readColorValue" />
+      </span>
+      <button
+        mat-icon-button
+        [matTooltip]="'resourceEditor.propertiesDisplay.annotationToolbar.highlightRegion' | translate"
+        color="primary"
+        matTooltipPosition="above"
+        (click)="onPinPointClicked()">
+        <mat-icon>my_location</mat-icon>
+      </button>
       <button
         mat-icon-button
         [matTooltip]="'resourceEditor.propertiesDisplay.annotationToolbar.openInNewTab' | translate"
@@ -127,8 +124,6 @@ import { ColorViewerComponent } from '../template-switcher/viewer-components/col
 export class AnnotationToolbarComponent {
   @Input({ required: true }) resource!: ReadResource;
   @Input({ required: true }) parentResourceId!: string;
-  @Input() toolBarActive = false;
-
   get readColorValue() {
     const colorValues: ReadColorValue[] = this.resource.properties[Constants.HasColor] as ReadColorValue[];
     return colorValues && colorValues.length ? colorValues[0] : null;
@@ -161,6 +156,8 @@ export class AnnotationToolbarComponent {
   }
 
   onPinPointClicked() {
+    this._regionService.selectRegion(this.resource.id);
+    this._regionService.setHighlightedRegionClicked(this.resource.id);
     this.resourceFetcher.scrollToTop();
   }
 }
