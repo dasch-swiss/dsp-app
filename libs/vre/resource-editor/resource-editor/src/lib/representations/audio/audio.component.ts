@@ -142,6 +142,10 @@ export class AudioComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   private _watchForMediaEvents() {
+    this.segmentsService.playSegment$.pipe(takeUntil(this._ngUnsubscribe)).subscribe(segment => {
+      this._mediaControl.playMedia(segment.hasSegmentBounds.start, segment.hasSegmentBounds.end);
+    });
+
     this._mediaControl.play$.pipe(takeUntil(this._ngUnsubscribe)).subscribe(seconds => {
       if (seconds >= this.duration) {
         this._notification.openSnackBar(

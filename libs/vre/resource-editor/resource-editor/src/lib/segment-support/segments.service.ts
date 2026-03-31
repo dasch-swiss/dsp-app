@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Injectable } from '@angular/core';
-import { BehaviorSubject, EMPTY, expand, reduce } from 'rxjs';
+import { BehaviorSubject, EMPTY, expand, reduce, Subject } from 'rxjs';
 import { Segment } from './segment';
 import { SegmentApiService } from './segment-api.service';
 
@@ -9,6 +9,9 @@ export class SegmentsService {
 
   private _highlightSegment = new BehaviorSubject<Segment | null>(null);
   highlightSegment$ = this._highlightSegment.asObservable();
+
+  private _playSegment = new Subject<Segment>();
+  playSegment$ = this._playSegment.asObservable();
 
   constructor(
     private readonly _segmentApi: SegmentApiService,
@@ -42,5 +45,9 @@ export class SegmentsService {
 
   highlightSegment(segment: Segment) {
     this._highlightSegment.next(segment);
+  }
+
+  playSegment(segment: Segment) {
+    this._playSegment.next(segment);
   }
 }

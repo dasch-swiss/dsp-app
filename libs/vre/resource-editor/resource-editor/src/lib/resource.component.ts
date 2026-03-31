@@ -1,9 +1,9 @@
-import { ChangeDetectorRef, Component, Inject, Input, OnChanges } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, Input, OnChanges, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Constants, CountQueryResponse, KnoraApiConnection, ReadFileValue, ReadResource } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken, RouteConstants } from '@dasch-swiss/vre/core/config';
 import { DspCompoundPosition, DspResource } from '@dasch-swiss/vre/shared/app-common';
-import { take } from 'rxjs';
+import { filter, pairwise, Subject, take, takeUntil } from 'rxjs';
 import { CompoundViewerComponent } from './compound/compound-viewer.component';
 import { CompoundService } from './compound/compound.service';
 import { getFileValue } from './representations/get-file-value';
@@ -30,7 +30,7 @@ import { SegmentsService } from './segment-support/segments.service';
     @if (isCompoundNavigation) {
       <app-compound-viewer />
     }
-    <app-resource-tabs [resource]="resource" style="display: block; margin-top: 50px" />
+    <app-resource-tabs [resource]="resource" [annotationIri]="annotationIri" style="display: block; margin-top: 50px" />
   `,
   providers: [CompoundService, PropertiesDisplayService, RegionService, SegmentsService],
   imports: [
@@ -42,11 +42,14 @@ import { SegmentsService } from './segment-support/segments.service';
     ResourceTabsComponent,
   ],
 })
-export class ResourceComponent implements OnChanges {
+export class ResourceComponent implements OnChanges, OnDestroy {
   @Input({ required: true }) resource!: DspResource;
   representationsToDisplay!: ReadFileValue;
   isCompoundNavigation!: boolean;
   resourceIsObjectWithoutRepresentation!: boolean;
+  annotationIri: string | null = null;
+
+  private _regionNgUnsubscribe = new Subject<void>();
 
   constructor(
     private readonly _cdr: ChangeDetectorRef,
@@ -57,6 +60,7 @@ export class ResourceComponent implements OnChanges {
   ) {}
 
   ngOnChanges() {
+    this._regionNgUnsubscribe.next(); // cancel any pending annotation subscription from previous resource
     this._compoundService.reset();
     this.isCompoundNavigation = false;
 
@@ -92,8 +96,28 @@ export class ResourceComponent implements OnChanges {
       return;
     }
 
+    this.annotationIri = annotation;
     this._regionService.showRegions(true);
     this._regionService.selectRegion(annotation);
+
+    // Wait for the true→false transition (loading started then finished),
+    // then filter to show only this annotation and re-trigger highlight on the drawn SVG
+    this._regionService.regionsLoading$
+      .pipe(
+        pairwise(),
+        filter(([prev, curr]) => prev && !curr),
+        take(1),
+        takeUntil(this._regionNgUnsubscribe)
+      )
+      .subscribe(() => {
+        this._regionService.filterToRegion(annotation);
+        this._regionService.selectRegion(annotation);
+      });
+  }
+
+  ngOnDestroy() {
+    this._regionNgUnsubscribe.next();
+    this._regionNgUnsubscribe.complete();
   }
 
   private _checkForCompoundNavigation(resource: ReadResource) {

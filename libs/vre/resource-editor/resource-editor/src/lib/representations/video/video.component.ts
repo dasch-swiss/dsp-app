@@ -164,6 +164,10 @@ export class VideoComponent implements OnChanges, OnDestroy {
   }
 
   private _watchForMediaEvents() {
+    this.segmentsService.playSegment$.pipe(takeUntil(this._ngUnsubscribe)).subscribe(segment => {
+      this.mediaControl.playMedia(segment.hasSegmentBounds.start, segment.hasSegmentBounds.end);
+    });
+
     this.mediaControl.play$.pipe(takeUntil(this._ngUnsubscribe)).subscribe(seconds => {
       if (seconds >= this.duration) {
         this._notification.openSnackBar(

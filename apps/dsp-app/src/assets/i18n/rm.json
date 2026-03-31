@@ -452,6 +452,9 @@
       "by": "by",
       "on": "on"
     },
+    "segmentTab": {
+      "goToSegment": "Go to segment"
+    },
     "legal": {
       "copyrightHolder": "Copyright holder",
       "authorship": "Authorship"
