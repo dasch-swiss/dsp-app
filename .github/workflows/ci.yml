@@ -75,13 +75,24 @@ jobs:
           fail_ci_if_error: false
 
   dsp-app-e2e-tests:
-    name: DSP-APP E2E tests
+    name: DSP-APP E2E tests (${{ matrix.runner }})
     runs-on: ubuntu-latest
     if: |
       (github.event.head_commit == null ||
        !startsWith(github.event.head_commit.message, 'chore(main): release')) &&
       (github.event.head_commit == null ||
        github.event.head_commit.author.username != 'daschbot')
+    strategy:
+      # Run all runners to completion even if one fails, so all failures are visible
+      fail-fast: false
+      matrix:
+        include:
+          # Heavy runner: specs with per-test DB resets (most resets, longest execution)
+          - runner: heavy
+            specs: cypress/e2e/system-admin/resource.cy.ts,cypress/e2e/system-admin/data-model-class.cy.ts
+          # Rest runner: remaining specs (lighter, roughly equal total reset count)
+          - runner: rest
+            specs: cypress/e2e/system-admin/ontology.cy.ts,cypress/e2e/system-admin/projects.cy.ts,cypress/e2e/system-admin/file-representation.cy.ts,cypress/e2e/system-admin/lists.cy.ts,cypress/e2e/system-admin/project-members.cy.ts,cypress/e2e/system-admin/project-overview.cy.ts,cypress/e2e/system-admin/still-image.cy.ts,cypress/e2e/project-member/**/*.cy.ts,cypress/e2e/logged-out-user/**/*.cy.ts,cypress/e2e/performance/**/*.cy.ts
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -115,13 +126,12 @@ jobs:
           docker compose -f docker-compose.yml up -d sipi ingest api
           ./webapi/scripts/wait-for-api.sh
       - name: Run e2e tests in CI
-        run: |
-          npm run e2e-ci
+        run: npm run e2e-ci -- --spec "${{ matrix.specs }}"
       - name: Upload artifact
         uses: actions/upload-artifact@v7
         if: failure()
         with:
-          name: cypress-snapshots
+          name: cypress-snapshots-${{ matrix.runner }}
           path: apps/dsp-app/cypress/fixtures/screenshots
       - name: Check Docker Container Logs
         run: |
