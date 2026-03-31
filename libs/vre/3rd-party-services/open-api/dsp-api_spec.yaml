@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: DSP-API
-  version: v35.3.0-4-g5c5a4bb
+  version: v35.4.0-4-g0c816ba
   summary: DSP-API is part of the DaSCH Service Platform, a repository for the long-term
     preservation and reuse of data in the humanities.
   contact:
@@ -4683,7 +4683,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/hEtAiK4ySl2x2URZMsV8RQ
+        example: http://rdfh.ch/users/bWyyKN8sQBKoXsaZH-XaVQ
       responses:
         '200':
           description: ''
@@ -4741,7 +4741,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/hEtAiK4ySl2x2URZMsV8RQ
+        example: http://rdfh.ch/users/bWyyKN8sQBKoXsaZH-XaVQ
       responses:
         '200':
           description: ''
@@ -4799,7 +4799,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/hEtAiK4ySl2x2URZMsV8RQ
+        example: http://rdfh.ch/users/bWyyKN8sQBKoXsaZH-XaVQ
       responses:
         '200':
           description: ''
@@ -4970,7 +4970,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/hEtAiK4ySl2x2URZMsV8RQ
+        example: http://rdfh.ch/users/bWyyKN8sQBKoXsaZH-XaVQ
       responses:
         '200':
           description: ''
@@ -5030,7 +5030,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/hEtAiK4ySl2x2URZMsV8RQ
+        example: http://rdfh.ch/users/bWyyKN8sQBKoXsaZH-XaVQ
       responses:
         '200':
           description: ''
@@ -5216,7 +5216,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/hEtAiK4ySl2x2URZMsV8RQ
+        example: http://rdfh.ch/users/bWyyKN8sQBKoXsaZH-XaVQ
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -5283,7 +5283,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/hEtAiK4ySl2x2URZMsV8RQ
+        example: http://rdfh.ch/users/bWyyKN8sQBKoXsaZH-XaVQ
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -5351,7 +5351,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/hEtAiK4ySl2x2URZMsV8RQ
+        example: http://rdfh.ch/users/bWyyKN8sQBKoXsaZH-XaVQ
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -5418,7 +5418,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/hEtAiK4ySl2x2URZMsV8RQ
+        example: http://rdfh.ch/users/bWyyKN8sQBKoXsaZH-XaVQ
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -5486,7 +5486,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/hEtAiK4ySl2x2URZMsV8RQ
+        example: http://rdfh.ch/users/bWyyKN8sQBKoXsaZH-XaVQ
       - name: groupIri
         in: path
         description: The IRI of a group. Must be URL-encoded.
@@ -5553,7 +5553,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/hEtAiK4ySl2x2URZMsV8RQ
+        example: http://rdfh.ch/users/bWyyKN8sQBKoXsaZH-XaVQ
       - name: groupIri
         in: path
         description: The IRI of a group. Must be URL-encoded.
@@ -5621,7 +5621,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/hEtAiK4ySl2x2URZMsV8RQ
+        example: http://rdfh.ch/users/bWyyKN8sQBKoXsaZH-XaVQ
       requestBody:
         content:
           application/json:
@@ -5688,7 +5688,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/hEtAiK4ySl2x2URZMsV8RQ
+        example: http://rdfh.ch/users/bWyyKN8sQBKoXsaZH-XaVQ
       requestBody:
         content:
           application/json:
@@ -5755,7 +5755,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/hEtAiK4ySl2x2URZMsV8RQ
+        example: http://rdfh.ch/users/bWyyKN8sQBKoXsaZH-XaVQ
       requestBody:
         content:
           application/json:
@@ -5822,7 +5822,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/hEtAiK4ySl2x2URZMsV8RQ
+        example: http://rdfh.ch/users/bWyyKN8sQBKoXsaZH-XaVQ
       requestBody:
         content:
           application/json:
@@ -6069,7 +6069,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/lists/0001/cs6U9jrBSruJ9fdQhKEujw
+        example: http://rdfh.ch/lists/0001/-eTtEx-6SJyzaAI2tSmQeg
       - name: x-knora-accept-schema
         in: header
         description: |-
@@ -6182,7 +6182,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/lists/0001/cs6U9jrBSruJ9fdQhKEujw
+        example: http://rdfh.ch/lists/0001/-eTtEx-6SJyzaAI2tSmQeg
       - name: x-knora-accept-schema
         in: header
         description: |-
@@ -14477,9 +14477,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/VersionResponse'
               example:
-                webapi: v35.3.0-4-g5c5a4bb
-                buildCommit: 5c5a4bbcd
-                buildTime: '2026-03-24T16:02:09Z'
+                webapi: v35.4.0-4-g0c816ba
+                buildCommit: 0c816bad2
+                buildTime: '2026-03-30T13:09:23Z'
                 fuseki: 5.5.0-2
                 scala: 3.3.7
                 sipi: v4.0.0
@@ -16546,8 +16546,11 @@ components:
       - import_exists
       - import_in_progress
       - import_not_found
+      - knora_ontology_mapping_iri
+      - malformed_mapping_iri
       - ontology_not_found
       - project_not_found
+      - project_ontology_mapping_iri
       - property_not_found
       - resourceClass_not_found
       - resource_not_found
