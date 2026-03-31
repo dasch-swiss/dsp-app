@@ -113,6 +113,8 @@ jobs:
         run: npm ci --prefer-offline --no-audit --ignore-scripts
         env:
           NODE_OPTIONS: '--max-old-space-size=4096'
+      - name: Install Cypress binary
+        run: npx cypress install
       - name: Generate OpenAPI client
         run: npm run generate-openapi-module
       - name: Checkout DSP-API repo
