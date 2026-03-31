@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/angular';
 import { expect, within } from 'storybook/test';
+
 import { CenteredMessageComponent } from './centered-message.component';
 
 const meta: Meta<CenteredMessageComponent> = {

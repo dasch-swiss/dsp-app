@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/angular';
 import { expect, within, userEvent, fn } from 'storybook/test';
+
 import { PagerComponent } from './pager.component';
 
 const meta: Meta<PagerComponent> = {

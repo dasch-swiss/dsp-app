@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/angular';
 import { expect, within } from 'storybook/test';
+
 import { AppProgressIndicatorComponent } from './app-progress-indicator.component';
 
 const meta: Meta<AppProgressIndicatorComponent> = {

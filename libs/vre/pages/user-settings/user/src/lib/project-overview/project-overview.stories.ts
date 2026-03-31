@@ -1,9 +1,10 @@
-import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { provideRouter } from '@angular/router';
-import { of } from 'rxjs';
 import { StoredProject } from '@dasch-swiss/dsp-js';
 import { UserService } from '@dasch-swiss/vre/core/session';
+import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
+import { of } from 'rxjs';
 import { expect, within } from 'storybook/test';
+
 import { AllProjectsService } from './all-projects.service';
 import { ProjectOverviewComponent } from './project-overview.component';
 
@@ -110,9 +111,7 @@ export const AsSysAdmin: Story = {
       await expect(canvas.getByText('Bernstein Online')).toBeInTheDocument();
     });
     await s('"Incunabula" project card is visible', async () => {
-      // Use getAllByText because the shortname 'incunabula' also matches — pick the longname element
-      const matches = canvas.getAllByText(/incunabula/i);
-      await expect(matches.length).toBeGreaterThanOrEqual(1);
+      await expect(canvas.getAllByText(/incunabula/i).length).toBeGreaterThanOrEqual(1);
     });
     await s('"Dokumentation von Bibliotheken" project card is visible', async () => {
       await expect(canvas.getByText('Dokumentation von Bibliotheken')).toBeInTheDocument();
