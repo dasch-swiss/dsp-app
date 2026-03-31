@@ -143,7 +143,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.DASCHBOT_PAT }}
       - name: Set up yq
         uses: mikefarah/yq@v4
       - id: check
@@ -159,37 +159,54 @@ jobs:
           fi
           exit $exit_code
       - name: Set up Node.js
-        if: steps.check.outputs.exit_code == '1' && github.ref == 'refs/heads/main'
+        if: always() && steps.check.outputs.exit_code == '1'
         uses: actions/setup-node@v6
         with:
           node-version-file: .nvmrc
       - name: Install dependencies
-        if: steps.check.outputs.exit_code == '1' && github.ref == 'refs/heads/main'
+        if: always() && steps.check.outputs.exit_code == '1'
         run: npm ci --ignore-scripts
       - name: Update OpenAPI spec
-        if: steps.check.outputs.exit_code == '1' && github.ref == 'refs/heads/main'
+        if: always() && steps.check.outputs.exit_code == '1'
         run: npm run update-openapi
       - name: Create PR if spec changed
-        if: steps.check.outputs.exit_code == '1' && github.ref == 'refs/heads/main'
+        if: always() && steps.check.outputs.exit_code == '1'
         run: |
           if git diff --quiet; then
             echo "No spec changes after update — skipping PR creation."
             exit 0
           fi
-          DSP_API_VERSION=$(yq '.info.version' libs/vre/3rd-party-services/open-api/dsp-api_spec.yaml)
+          SPEC="libs/vre/3rd-party-services/open-api/dsp-api_spec.yaml"
+          git fetch origin main
+          LOCAL_VERSION=$(git show origin/main:"$SPEC" | yq '.info.version')
+          REMOTE_VERSION=$(yq '.info.version' "$SPEC")
+          if [ "$REMOTE_VERSION" = "$LOCAL_VERSION" ]; then
+            echo "Spec changed but version is unchanged (${REMOTE_VERSION}) — skipping PR creation."
+            exit 0
+          fi
+          PR_TITLE="chore(open-api): bump dsp-api spec ${LOCAL_VERSION} → ${REMOTE_VERSION}"
+          EXISTING=$(gh pr list --state open --json title --jq "[.[] | select(.title == \"${PR_TITLE}\")] | length")
+          if [ "$EXISTING" -gt 0 ]; then
+            echo "Open PR already exists for dsp-api version ${REMOTE_VERSION} — skipping PR creation."
+            exit 0
+          fi
           git config user.name "daschbot"
           git config user.email "daschbot@dasch.swiss"
+          cp "$SPEC" /tmp/updated-spec.yaml
           BRANCH="chore/update-dsp-api-openapi-spec-$(date +%Y%m%d-%H%M%S)"
-          git checkout -b "$BRANCH"
-          git add libs/vre/3rd-party-services/open-api/dsp-api_spec.yaml
-          git commit -m "chore: update dsp-api OpenAPI spec to ${DSP_API_VERSION}"
+          git checkout -b "$BRANCH" origin/main
+          cp /tmp/updated-spec.yaml "$SPEC"
+          git add "$SPEC"
+          git commit -m "chore(open-api): bump dsp-api spec ${LOCAL_VERSION} → ${REMOTE_VERSION}"
           git push origin "$BRANCH"
           gh pr create \
-            --title "chore: update dsp-api OpenAPI spec to ${DSP_API_VERSION}" \
+            --title "${PR_TITLE}" \
             --body "Automated spec update detected by CI. Review diff and merge when the frontend is ready to adopt the new API." \
+            --label "dependencies" \
+            --label "dsp-api" \
             --base main
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.DASCHBOT_PAT }}
 
   docs-build-test:
     name: Docs Build Test

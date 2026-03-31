@@ -19,7 +19,7 @@ This library contains auto-generated TypeScript client code for the DSP-API base
 
 ### Updating the API client
 
-When DSP-API has meaningful changes, CI will automatically open a PR titled `chore: update dsp-api OpenAPI spec to <version>`. Review the spec diff and merge it when the frontend is ready to adopt the new API.
+When DSP-API has meaningful changes, CI will automatically open a PR titled `chore(open-api): bump dsp-api spec <old-version> → <new-version>`, labelled `dependencies` and `dsp-api`. Review the spec diff and merge it when the frontend is ready to adopt the new API.
 
 For manual updates (e.g. on a feature branch):
 
@@ -39,7 +39,7 @@ npm run generate-openapi-module
 
 # 3. Commit only the spec file change
 git add libs/vre/3rd-party-services/open-api/dsp-api_spec.yaml
-git commit -m "chore: update dsp-api OpenAPI spec to <version>"
+git commit -m "chore(open-api): bump dsp-api spec <old-version> → <new-version>"
 ```
 
 ### Available Scripts
@@ -52,8 +52,8 @@ git commit -m "chore: update dsp-api OpenAPI spec to <version>"
 
 The GitHub Actions workflow includes two jobs:
 
-- **`check-openapi-sync`**: Downloads the latest spec from `https://api.dev.dasch.swiss/api/docs/docs.yaml`, uses smart diff ignoring metadata, and runs on every push. Retries the download up to 3 times (30s apart) to tolerate DEV deployments. On transient download failure the job passes silently; on spec mismatch it records exit code 1.
-- **`update-openapi-spec`**: Runs on `main` only when a spec mismatch is detected. Automatically opens a PR with the updated spec and the detected dsp-api version in the title.
+- **`check-openapi-sync`**: Downloads the latest spec from `https://api.dev.dasch.swiss/api/docs/docs.yaml`, uses smart diff ignoring metadata, and runs on every push. Retries the download up to 3 times (30s apart) to tolerate DEV deployments. On spec mismatch it exits 1 and triggers the auto-update steps within the same job.
+- **Auto-update steps**: Run when a spec mismatch is detected on any branch. Compares the full version string (e.g. `v35.3.0-4-g5c5a4bb`) between local and remote — only opens a PR if the version changed and no open PR already exists for that version.
 
 **Smart Diff Logic:**
 Both local and CI use the same `scripts/check-openapi-sync.sh` script that:
