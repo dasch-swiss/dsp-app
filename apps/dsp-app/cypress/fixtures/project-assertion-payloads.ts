@@ -7,13 +7,17 @@ export class ProjectAssertionPageBase {
     this.ontologyName = ontologyName;
   }
 
-  createClassPayload = (value, subClassOf: string = 'http://api.knora.org/ontology/knora-api/v2#Resource') => {
+  createClassPayload = (
+    value: string,
+    subClassOf: string = 'http://api.knora.org/ontology/knora-api/v2#Resource',
+    lastModificationDate: string = '2012-12-12T12:12:12.120Z'
+  ) => {
     return {
       '@id': `http://0.0.0.0:3333/ontology/${this.projectShortCode}/${this.ontologyName}/v2`,
       '@type': 'http://www.w3.org/2002/07/owl#Ontology',
       'http://api.knora.org/ontology/knora-api/v2#lastModificationDate': {
         '@type': 'http://www.w3.org/2001/XMLSchema#dateTimeStamp',
-        '@value': '2012-12-12T12:12:12.120Z',
+        '@value': lastModificationDate,
       },
       '@graph': [
         {
@@ -29,8 +33,12 @@ export class ProjectAssertionPageBase {
     };
   };
 
-  stillImageRepresentation = (className: string) => {
-    return this.createClassPayload(className, 'http://api.knora.org/ontology/knora-api/v2#StillImageRepresentation');
+  stillImageRepresentation = (className: string, lastModificationDate?: string) => {
+    return this.createClassPayload(
+      className,
+      'http://api.knora.org/ontology/knora-api/v2#StillImageRepresentation',
+      lastModificationDate
+    );
   };
 
   label(className: string, value: string) {

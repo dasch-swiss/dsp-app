@@ -1,6 +1,12 @@
 export class AddResourceInstancePage {
+  className: string;
+
+  constructor(className: string = 'datamodelclass') {
+    this.className = className;
+  }
+
   visitAddPage = () => {
-    cy.visit('/project/00FF/data/images/datamodelclass');
+    cy.visit(`/project/00FF/data/images/${this.className}`);
     cy.get('[data-cy=create-resource-btn]').click();
   };
 

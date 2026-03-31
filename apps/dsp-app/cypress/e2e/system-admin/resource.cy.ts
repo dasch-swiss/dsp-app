@@ -16,19 +16,24 @@ describe('Resource', () => {
   const project00FFPayloads = new Project00FFPayloads();
 
   beforeEach(() => {
-    cy.resetDatabase();
-  });
+    const className = `class${faker.string.alphanumeric(8)}`;
+    po = new AddResourceInstancePage(className);
 
-  beforeEach(() => {
-    po = new AddResourceInstancePage();
-
+    const ontologyIri = encodeURIComponent(`${Cypress.env('apiUrl')}/ontology/00FF/images/v2`);
     cy.request({
-      method: 'POST',
-      url: `${Cypress.env('apiUrl')}/v2/ontologies/classes`,
+      method: 'GET',
+      url: `${Cypress.env('apiUrl')}/v2/ontologies/${ontologyIri}`,
       headers: getAuthHeaders(),
-      body: project00FFPayloads.createClassPayload('datamodelclass'),
-    }).then(response => {
-      finalLastModificationDate = ResponseUtil.lastModificationDate(response);
+    }).then(ontResponse => {
+      const currentLmd = ontResponse.body['knora-api:lastModificationDate']['@value'];
+      cy.request({
+        method: 'POST',
+        url: `${Cypress.env('apiUrl')}/v2/ontologies/classes`,
+        headers: getAuthHeaders(),
+        body: project00FFPayloads.createClassPayload(className, undefined, currentLmd),
+      }).then(response => {
+        finalLastModificationDate = ResponseUtil.lastModificationDate(response);
+      });
     });
   });
 
