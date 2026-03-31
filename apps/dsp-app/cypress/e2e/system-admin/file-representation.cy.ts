@@ -10,7 +10,7 @@ const getOntologyLmd = (): Cypress.Chainable<string> => {
   return cy
     .request({
       method: 'GET',
-      url: `${Cypress.env('apiUrl')}/v2/ontologies/${ontologyIri}`,
+      url: `${Cypress.env('apiUrl')}/v2/ontologies/allentities/${ontologyIri}`,
       headers: getAuthHeaders(),
     })
     .then(response => response.body['knora-api:lastModificationDate']['@value']);
