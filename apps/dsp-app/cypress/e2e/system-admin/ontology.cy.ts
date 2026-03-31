@@ -6,6 +6,10 @@ describe('Ontology', () => {
   const projectPage = new ProjectPage();
 
   beforeEach(() => {
+    cy.resetDatabase();
+  });
+
+  beforeEach(() => {
     projectPage.requestProject();
   });
 
