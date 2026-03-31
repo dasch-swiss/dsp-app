@@ -49,7 +49,7 @@ export class ResourceComponent implements OnChanges, OnDestroy {
   resourceIsObjectWithoutRepresentation!: boolean;
   annotationIri: string | null = null;
 
-  private _ngUnsubscribe = new Subject<void>();
+  private _regionNgUnsubscribe = new Subject<void>();
 
   constructor(
     private readonly _cdr: ChangeDetectorRef,
@@ -60,7 +60,7 @@ export class ResourceComponent implements OnChanges, OnDestroy {
   ) {}
 
   ngOnChanges() {
-    this._ngUnsubscribe.next(); // cancel any pending annotation subscription from previous resource
+    this._regionNgUnsubscribe.next(); // cancel any pending annotation subscription from previous resource
     this._compoundService.reset();
     this.isCompoundNavigation = false;
 
@@ -107,7 +107,7 @@ export class ResourceComponent implements OnChanges, OnDestroy {
         pairwise(),
         filter(([prev, curr]) => prev && !curr),
         take(1),
-        takeUntil(this._ngUnsubscribe)
+        takeUntil(this._regionNgUnsubscribe)
       )
       .subscribe(() => {
         this._regionService.filterToRegion(annotation);
@@ -116,8 +116,8 @@ export class ResourceComponent implements OnChanges, OnDestroy {
   }
 
   ngOnDestroy() {
-    this._ngUnsubscribe.next();
-    this._ngUnsubscribe.complete();
+    this._regionNgUnsubscribe.next();
+    this._regionNgUnsubscribe.complete();
   }
 
   private _checkForCompoundNavigation(resource: ReadResource) {
