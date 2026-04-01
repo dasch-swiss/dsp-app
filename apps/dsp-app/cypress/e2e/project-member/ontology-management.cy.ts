@@ -5,10 +5,6 @@ import { Project0001Page } from '../../support/pages/existing-ontology-class-pag
 describe('Project Member - Ontology management', () => {
   const projectPage = new Project0001Page();
 
-  before(() => {
-    cy.resetDatabase();
-  });
-
   beforeEach(() => {
     cy.readFile('cypress/fixtures/user_profiles.json').then((json: UserProfiles) => {
       const users: UserProfiles = json;
