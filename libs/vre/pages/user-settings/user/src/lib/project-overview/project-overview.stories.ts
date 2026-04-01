@@ -131,9 +131,8 @@ export const EmptyState: Story = {
     }),
   ],
   play: async ({ canvasElement, step: s }) => {
-    const canvas = within(canvasElement);
     await s('No project cards are rendered', async () => {
-      await expect(canvas.queryAllByTestId('project-card').length).toBe(0);
+      await expect(canvasElement.querySelectorAll('app-project-card').length).toBe(0);
     });
   },
 };

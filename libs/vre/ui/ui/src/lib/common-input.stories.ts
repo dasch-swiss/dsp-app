@@ -64,17 +64,19 @@ export const WithPrefixIcon: Story = {
 export const ShowsValidationError: Story = {
   name: 'Shows validation error when field is touched and invalid',
   args: {
-    control: (() => {
-      const c = new FormControl('', Validators.required);
-      c.markAsTouched();
-      return c as FormControl<string>;
-    })(),
+    control: new FormControl('', Validators.required) as FormControl<string>,
     label: 'Required field',
     validatorErrors: [{ errorKey: 'required', message: 'This field is required' }],
     type: 'text',
   },
-  play: async ({ canvasElement, step }) => {
+  play: async ({ canvasElement, args, step }) => {
     const canvas = within(canvasElement);
+    await step('Field is touched to trigger validation', async () => {
+      (args.control as FormControl).markAsTouched();
+      (args.control as FormControl).updateValueAndValidity();
+      await userEvent.click(canvas.getByPlaceholderText('Required field'));
+      await userEvent.tab();
+    });
     await step('Validation error "This field is required" is shown', async () => {
       await expect(canvas.getByText('This field is required')).toBeInTheDocument();
     });

@@ -33,6 +33,7 @@
     </div>
     <button
       mat-icon-button
+      data-testid="next-page"
       [matTooltip]="'ui.common.actions.next' | translate"
       (click)="pageIndex = pageIndex + 1"
       [disabled]="pageIndex === lastPageIndex">

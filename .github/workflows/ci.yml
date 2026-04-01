@@ -240,7 +240,7 @@ jobs:
         run: |
           npx http-server dist/storybook/vre-ui-ui --port 6006 --silent &
           npx wait-on tcp:6006 --timeout 60000
-          npx nx run vre-ui-ui:test-storybook -- --maxWorkers=2
+          npx nx run vre-ui-ui:test-storybook:ci -- --maxWorkers=2
 
   docs-build-test:
     name: Docs Build Test

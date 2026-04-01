@@ -67,6 +67,11 @@
       "executor": "nx:run-commands",
       "options": {
         "command": "test-storybook -c libs/vre/ui/ui/.storybook --url=http://localhost:4400"
+      },
+      "configurations": {
+        "ci": {
+          "command": "test-storybook -c libs/vre/ui/ui/.storybook --url=http://localhost:6006"
+        }
       }
     },
     "static-storybook": {

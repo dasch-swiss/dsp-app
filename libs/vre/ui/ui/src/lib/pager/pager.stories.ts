@@ -74,9 +74,8 @@ export const NavigatesToNextPage: Story = {
   },
   play: async ({ canvasElement, args, step }) => {
     await step('User clicks the next page button', async () => {
-      // The next button contains the chevron_right icon — it is the 3rd button (index 2)
-      const buttons = canvasElement.querySelectorAll<HTMLButtonElement>('button[mat-icon-button]');
-      await userEvent.click(buttons[2]);
+      const nextButton = canvasElement.querySelector<HTMLButtonElement>('[data-testid="next-page"]');
+      await userEvent.click(nextButton!);
     });
     await step('pageIndexChanged emits page index 1', async () => {
       await expect(args.pageIndexChanged).toHaveBeenCalledWith(1);
