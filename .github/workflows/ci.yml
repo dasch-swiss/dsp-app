@@ -158,8 +158,9 @@ jobs:
     steps:
       - name: Check matrix result
         run: |
-          if [ "${{ needs.dsp-app-e2e-tests.result }}" != "success" ]; then
-            echo "One or more e2e matrix runners failed"
+          result="${{ needs.dsp-app-e2e-tests.result }}"
+          if [ "$result" != "success" ] && [ "$result" != "skipped" ]; then
+            echo "One or more e2e matrix runners failed (result: $result)"
             exit 1
           fi
 
