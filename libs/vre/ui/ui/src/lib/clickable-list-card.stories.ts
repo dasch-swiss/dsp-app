@@ -1,8 +1,8 @@
+import { Component } from '@angular/core';
+import { MatListItem } from '@angular/material/list';
 import type { Meta, StoryObj } from '@storybook/angular';
 import { expect, within } from 'storybook/test';
 
-import { Component } from '@angular/core';
-import { MatListItem } from '@angular/material/list';
 import { ClickableListCardComponent } from './clickable-list-card.component';
 
 @Component({

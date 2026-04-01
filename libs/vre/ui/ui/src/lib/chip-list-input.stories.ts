@@ -1,7 +1,7 @@
+import { FormArray, FormBuilder, FormControl, Validators } from '@angular/forms';
 import type { Meta, StoryObj } from '@storybook/angular';
 import { expect, within, userEvent } from 'storybook/test';
 
-import { FormArray, FormBuilder, FormControl, Validators } from '@angular/forms';
 import { ChipListInputComponent } from './chip-list-input.component';
 
 const fb = new FormBuilder();
@@ -68,7 +68,8 @@ export const AddsNewChip: Story = {
     const input = canvas.getByRole('textbox');
     await step('User types "history" and presses Enter', async () => {
       await userEvent.click(input);
-      await userEvent.type(input, 'history{enter}');
+      await userEvent.type(input, 'history');
+      await userEvent.keyboard('{Enter}');
     });
     await step('"history" chip appears in the list', async () => {
       await expect(canvas.getByText('history')).toBeInTheDocument();

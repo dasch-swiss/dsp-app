@@ -1,8 +1,8 @@
+import { Component } from '@angular/core';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import type { Meta, StoryObj } from '@storybook/angular';
 import { expect } from 'storybook/test';
 
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { Component } from '@angular/core';
 import { ColorPickerComponent } from './app-color-picker.component';
 
 @Component({

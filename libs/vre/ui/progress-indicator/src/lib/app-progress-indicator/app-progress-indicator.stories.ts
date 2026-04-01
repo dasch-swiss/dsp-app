@@ -8,7 +8,8 @@ const meta: Meta<AppProgressIndicatorComponent> = {
   component: AppProgressIndicatorComponent,
   argTypes: {
     size: {
-      description: 'Controls the diameter of the spinner. Use "xsmall" or "small" for inline contexts, "large" for full-page loading states.',
+      description:
+        'Controls the diameter of the spinner. Use "xsmall" or "small" for inline contexts, "large" for full-page loading states.',
       control: 'select',
       options: ['xsmall', 'small', 'medium', 'large'],
       table: {

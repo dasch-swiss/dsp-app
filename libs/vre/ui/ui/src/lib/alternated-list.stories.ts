@@ -1,7 +1,7 @@
+import { Component } from '@angular/core';
 import type { Meta, StoryObj } from '@storybook/angular';
 import { expect, within } from 'storybook/test';
 
-import { Component } from '@angular/core';
 import { AlternatedListComponent } from './alternated-list.component';
 
 @Component({

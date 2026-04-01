@@ -45,7 +45,9 @@ export const WithAllContent: Story = {
       await expect(canvas.getByText('No results found')).toBeInTheDocument();
     });
     await step('Supporting message is visible', async () => {
-      await expect(canvas.getByText('Try adjusting your search filters or entering a different keyword.')).toBeInTheDocument();
+      await expect(
+        canvas.getByText('Try adjusting your search filters or entering a different keyword.')
+      ).toBeInTheDocument();
     });
   },
 };

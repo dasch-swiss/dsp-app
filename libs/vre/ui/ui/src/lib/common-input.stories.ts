@@ -1,7 +1,7 @@
+import { FormControl, Validators } from '@angular/forms';
 import type { Meta, StoryObj } from '@storybook/angular';
 import { expect, within, userEvent } from 'storybook/test';
 
-import { FormControl, Validators } from '@angular/forms';
 import { CommonInputComponent } from './common-input.component';
 
 const meta: Meta<CommonInputComponent> = {
