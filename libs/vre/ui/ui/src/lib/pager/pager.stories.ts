@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/angular';
-import { expect, within, userEvent, fn } from 'storybook/test';
+import { expect, within, userEvent } from 'storybook/test';
 
 import { PagerComponent } from './pager.component';
 
@@ -31,7 +31,6 @@ export const FirstPage: Story = {
   args: {
     numberOfAllResults: 100,
     pageSize: 25,
-    pageIndexChanged: fn(),
   },
   play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
@@ -46,7 +45,6 @@ export const SinglePage: Story = {
   args: {
     numberOfAllResults: 10,
     pageSize: 25,
-    pageIndexChanged: fn(),
   },
 };
 
@@ -55,7 +53,6 @@ export const NoResults: Story = {
   args: {
     numberOfAllResults: 0,
     pageSize: 25,
-    pageIndexChanged: fn(),
   },
   play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
@@ -70,15 +67,15 @@ export const NavigatesToNextPage: Story = {
   args: {
     numberOfAllResults: 100,
     pageSize: 25,
-    pageIndexChanged: fn(),
   },
-  play: async ({ canvasElement, args, step }) => {
+  play: async ({ canvasElement, step }) => {
+    const canvas = within(canvasElement);
     await step('User clicks the next page button', async () => {
       const nextButton = canvasElement.querySelector<HTMLButtonElement>('[data-testid="next-page"]');
       await userEvent.click(nextButton!);
     });
-    await step('pageIndexChanged emits page index 1', async () => {
-      await expect(args.pageIndexChanged).toHaveBeenCalledWith(1);
+    await step('Item range advances to page 2 (shows "26 - 50")', async () => {
+      await expect(canvas.getByText(/26 - 50/)).toBeInTheDocument();
     });
   },
 };

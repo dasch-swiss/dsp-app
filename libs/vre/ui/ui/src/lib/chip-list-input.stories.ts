@@ -65,7 +65,7 @@ export const AddsNewChip: Story = {
   },
   play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
-    const input = canvasElement.querySelector<HTMLInputElement>('input[matChipInput]')!;
+    const input = canvas.getByRole('textbox');
     await step('User types "history" and presses Enter', async () => {
       await userEvent.click(input);
       await userEvent.type(input, 'history{enter}');

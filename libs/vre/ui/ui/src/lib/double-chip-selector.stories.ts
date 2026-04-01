@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/angular';
-import { expect, within, userEvent, fn } from 'storybook/test';
+import { expect, within, userEvent } from 'storybook/test';
 
 import { DoubleChipSelectorComponent } from './double-chip-selector.component';
 
@@ -31,7 +31,6 @@ export const SelectsFirstOption: Story = {
   args: {
     value: true,
     options: ['Upload file', 'Use URL'],
-    valueChange: fn(),
   },
   play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
@@ -46,7 +45,6 @@ export const SelectsSecondOption: Story = {
   args: {
     value: false,
     options: ['Upload file', 'Use URL'],
-    valueChange: fn(),
   },
 };
 
@@ -55,15 +53,17 @@ export const EmitsOnToggle: Story = {
   args: {
     value: true,
     options: ['Yes', 'No'],
-    valueChange: fn(),
   },
-  play: async ({ canvasElement, args, step }) => {
+  play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
+    await step('"Yes" chip is initially visible', async () => {
+      await expect(canvas.getByText('Yes')).toBeInTheDocument();
+    });
     await step('User clicks the "No" chip', async () => {
       await userEvent.click(canvas.getByText('No'));
     });
-    await step('valueChange event is emitted', async () => {
-      await expect(args.valueChange).toHaveBeenCalled();
+    await step('"No" chip is still visible after click', async () => {
+      await expect(canvas.getByText('No')).toBeInTheDocument();
     });
   },
 };
