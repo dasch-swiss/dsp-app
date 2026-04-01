@@ -8,6 +8,10 @@ describe('Data Model Class', () => {
   const projectPage = new ProjectPage();
 
   beforeEach(() => {
+    cy.resetDatabase();
+  });
+
+  beforeEach(() => {
     projectPage.requestProject();
   });
 

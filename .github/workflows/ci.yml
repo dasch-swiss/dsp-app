@@ -75,13 +75,24 @@ jobs:
           fail_ci_if_error: false
 
   dsp-app-e2e-tests:
-    name: DSP-APP E2E tests
+    name: DSP-APP E2E tests (${{ matrix.runner }})
     runs-on: ubuntu-latest
     if: |
       (github.event.head_commit == null ||
        !startsWith(github.event.head_commit.message, 'chore(main): release')) &&
       (github.event.head_commit == null ||
        github.event.head_commit.author.username != 'daschbot')
+    strategy:
+      # Run all runners to completion even if one fails, so all failures are visible
+      fail-fast: false
+      matrix:
+        include:
+          # Heavy runner: resource.cy.ts (many API requests per test), data-model-class.cy.ts (DB reset per test), plus smaller specs to balance load
+          - runner: heavy
+            specs: cypress/e2e/system-admin/resource.cy.ts,cypress/e2e/system-admin/data-model-class.cy.ts,cypress/e2e/system-admin/still-image.cy.ts,cypress/e2e/system-admin/file-representation.cy.ts
+          # Rest runner: remaining specs
+          - runner: rest
+            specs: cypress/e2e/system-admin/ontology.cy.ts,cypress/e2e/system-admin/projects.cy.ts,cypress/e2e/system-admin/lists.cy.ts,cypress/e2e/system-admin/project-members.cy.ts,cypress/e2e/system-admin/project-overview.cy.ts,cypress/e2e/project-member/**/*.cy.ts,cypress/e2e/logged-out-user/**/*.cy.ts,cypress/e2e/performance/**/*.cy.ts
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -92,16 +103,24 @@ jobs:
         with:
           node-version: 22.12.0
           cache: 'npm'
+      - name: Cache Cypress binary
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/Cypress
+          key: cypress-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          restore-keys: cypress-${{ runner.os }}-
       - name: Install dependencies
         run: npm ci --prefer-offline --no-audit --ignore-scripts
         env:
           NODE_OPTIONS: '--max-old-space-size=4096'
+      - name: Install Cypress binary
+        run: npx cypress install
       - name: Generate OpenAPI client
         run: npm run generate-openapi-module
-      - name: Install Cypress dependencies
-        run: |
-          cd ./apps/dsp-app/cypress
-          npm ci --prefer-offline --no-audit
+      - name: Start app (background)
+        run: npx nx run dsp-app:serve:production &
+        env:
+          NODE_OPTIONS: '--max-old-space-size=4096'
       - name: Checkout DSP-API repo
         uses: actions/checkout@v6
         with:
@@ -114,19 +133,35 @@ jobs:
           make init-db-test
           docker compose -f docker-compose.yml up -d sipi ingest api
           ./webapi/scripts/wait-for-api.sh
+      - name: Wait for app to be ready
+        run: timeout 180 bash -c 'until curl -sf http://localhost:4200 > /dev/null 2>&1; do sleep 3; done'
       - name: Run e2e tests in CI
-        run: |
-          npm run e2e-ci
+        working-directory: apps/dsp-app
+        run: npx cypress run --browser chrome --spec "${{ matrix.specs }}"
       - name: Upload artifact
         uses: actions/upload-artifact@v7
         if: failure()
         with:
-          name: cypress-snapshots
+          name: cypress-snapshots-${{ matrix.runner }}
           path: apps/dsp-app/cypress/fixtures/screenshots
       - name: Check Docker Container Logs
+        if: failure()
         run: |
           docker ps
           docker ps -q | xargs -I {} docker logs {}
+
+  dsp-app-e2e-tests-status:
+    name: DSP-APP E2E tests
+    needs: dsp-app-e2e-tests
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check matrix result
+        run: |
+          if [ "${{ needs.dsp-app-e2e-tests.result }}" != "success" ]; then
+            echo "One or more e2e matrix runners failed"
+            exit 1
+          fi
 
   check-openapi-sync:
     name: Check OpenAPI Spec is Up-to-Date

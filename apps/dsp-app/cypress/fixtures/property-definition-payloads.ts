@@ -10,14 +10,16 @@ export class ClassPropertyPayloads {
     };
   }
 
-  private static baseGraph = {
-    'http://www.w3.org/2000/01/rdf-schema#label': {
-      '@language': 'de',
-      '@value': 'property',
-    },
-    '@id': 'http://0.0.0.0:3333/ontology/00FF/images/v2#property',
-    '@type': 'http://www.w3.org/2002/07/owl#ObjectProperty',
-  };
+  private static baseGraph(propertyName: string) {
+    return {
+      'http://www.w3.org/2000/01/rdf-schema#label': {
+        '@language': 'de',
+        '@value': propertyName,
+      },
+      '@id': `http://0.0.0.0:3333/ontology/00FF/images/v2#${propertyName}`,
+      '@type': 'http://www.w3.org/2002/07/owl#ObjectProperty',
+    };
+  }
 
   private static hasValue = {
     'http://www.w3.org/2000/01/rdf-schema#subPropertyOf': {
@@ -25,17 +27,17 @@ export class ClassPropertyPayloads {
     },
   };
 
-  static cardinality(lastModificationDate: string, required: boolean) {
+  static cardinality(lastModificationDate: string, required: boolean, className = 'datamodelclass', propertyName = 'property') {
     return {
       ...this.baseData(lastModificationDate),
       '@graph': [
         {
-          '@id': 'http://0.0.0.0:3333/ontology/00FF/images/v2#datamodelclass',
+          '@id': `http://0.0.0.0:3333/ontology/00FF/images/v2#${className}`,
           '@type': 'http://www.w3.org/2002/07/owl#Class',
           'http://www.w3.org/2000/01/rdf-schema#subClassOf': {
             '@type': 'http://www.w3.org/2002/07/owl#Restriction',
             'http://www.w3.org/2002/07/owl#onProperty': {
-              '@id': 'http://0.0.0.0:3333/ontology/00FF/images/v2#property',
+              '@id': `http://0.0.0.0:3333/ontology/00FF/images/v2#${propertyName}`,
             },
             'http://api.knora.org/ontology/salsah-gui/v2#guiOrder': 1,
             ...(required
@@ -47,12 +49,12 @@ export class ClassPropertyPayloads {
     };
   }
 
-  static textShort(lastModificationDate: string) {
+  static textShort(lastModificationDate: string, propertyName = 'property') {
     return {
       ...this.baseData(lastModificationDate),
       '@graph': [
         {
-          ...this.baseGraph,
+          ...this.baseGraph(propertyName),
           ...this.hasValue,
           'http://api.knora.org/ontology/knora-api/v2#objectType': {
             '@id': 'http://api.knora.org/ontology/knora-api/v2#TextValue',
@@ -66,12 +68,12 @@ export class ClassPropertyPayloads {
     };
   }
 
-  static richText(lastModificationDate: string) {
+  static richText(lastModificationDate: string, propertyName = 'property') {
     return {
       ...this.baseData(lastModificationDate),
       '@graph': [
         {
-          ...this.baseGraph,
+          ...this.baseGraph(propertyName),
           ...this.hasValue,
           'http://api.knora.org/ontology/knora-api/v2#objectType': {
             '@id': 'http://api.knora.org/ontology/knora-api/v2#TextValue',
@@ -84,12 +86,12 @@ export class ClassPropertyPayloads {
     };
   }
 
-  static number(lastModificationDate: string) {
+  static number(lastModificationDate: string, propertyName = 'property') {
     return {
       ...this.baseData(lastModificationDate),
       '@graph': [
         {
-          ...this.baseGraph,
+          ...this.baseGraph(propertyName),
           ...this.hasValue,
           'http://api.knora.org/ontology/knora-api/v2#objectType': {
             '@id': 'http://api.knora.org/ontology/knora-api/v2#IntValue',
@@ -102,12 +104,12 @@ export class ClassPropertyPayloads {
     };
   }
 
-  static boolean(lastModificationDate: string) {
+  static boolean(lastModificationDate: string, propertyName = 'property') {
     return {
       ...this.baseData(lastModificationDate),
       '@graph': [
         {
-          ...this.baseGraph,
+          ...this.baseGraph(propertyName),
           ...this.hasValue,
           'http://api.knora.org/ontology/knora-api/v2#objectType': {
             '@id': 'http://api.knora.org/ontology/knora-api/v2#BooleanValue',
@@ -120,12 +122,12 @@ export class ClassPropertyPayloads {
     };
   }
 
-  static color(lastModificationDate: string) {
+  static color(lastModificationDate: string, propertyName = 'property') {
     return {
       ...this.baseData(lastModificationDate),
       '@graph': [
         {
-          ...this.baseGraph,
+          ...this.baseGraph(propertyName),
           ...this.hasValue,
           'http://api.knora.org/ontology/knora-api/v2#objectType': {
             '@id': 'http://api.knora.org/ontology/knora-api/v2#ColorValue',
@@ -138,7 +140,7 @@ export class ClassPropertyPayloads {
     };
   }
 
-  static place(lastModificationDate: string) {
+  static place(lastModificationDate: string, propertyName = 'property') {
     return {
       ...this.baseData(lastModificationDate),
       '@graph': [
@@ -148,7 +150,7 @@ export class ClassPropertyPayloads {
           },
           'http://www.w3.org/2000/01/rdf-schema#label': {
             '@language': 'de',
-            '@value': 'property',
+            '@value': propertyName,
           },
           'http://www.w3.org/2000/01/rdf-schema#subPropertyOf': {
             '@id': 'http://api.knora.org/ontology/knora-api/v2#hasValue',
@@ -156,27 +158,27 @@ export class ClassPropertyPayloads {
           'http://api.knora.org/ontology/salsah-gui/v2#guiElement': {
             '@id': 'http://api.knora.org/ontology/salsah-gui/v2#Geonames',
           },
-          '@id': 'http://0.0.0.0:3333/ontology/00FF/images/v2#property',
+          '@id': `http://0.0.0.0:3333/ontology/00FF/images/v2#${propertyName}`,
           '@type': 'http://www.w3.org/2002/07/owl#ObjectProperty',
         },
       ],
     };
   }
 
-  static link(lastModificationDate: string) {
+  static link(lastModificationDate: string, className = 'datamodelclass', propertyName = 'property') {
     return {
       ...this.baseData(lastModificationDate),
       '@graph': [
         {
           'http://api.knora.org/ontology/knora-api/v2#subjectType': {
-            '@id': 'http://0.0.0.0:3333/ontology/00FF/images/v2#datamodelclass',
+            '@id': `http://0.0.0.0:3333/ontology/00FF/images/v2#${className}`,
           },
           'http://api.knora.org/ontology/knora-api/v2#objectType': {
             '@id': 'http://0.0.0.0:3333/ontology/00FF/images/v2#person',
           },
           'http://www.w3.org/2000/01/rdf-schema#label': {
             '@language': 'de',
-            '@value': 'property',
+            '@value': propertyName,
           },
           'http://www.w3.org/2000/01/rdf-schema#subPropertyOf': {
             '@id': 'http://api.knora.org/ontology/knora-api/v2#hasLinkTo',
@@ -184,19 +186,19 @@ export class ClassPropertyPayloads {
           'http://api.knora.org/ontology/salsah-gui/v2#guiElement': {
             '@id': 'http://api.knora.org/ontology/salsah-gui/v2#Searchbox',
           },
-          '@id': 'http://0.0.0.0:3333/ontology/00FF/images/v2#property',
+          '@id': `http://0.0.0.0:3333/ontology/00FF/images/v2#${propertyName}`,
           '@type': 'http://www.w3.org/2002/07/owl#ObjectProperty',
         },
       ],
     };
   }
 
-  static date(lastModificationDate: string) {
+  static date(lastModificationDate: string, propertyName = 'property') {
     return {
       ...this.baseData(lastModificationDate),
       '@graph': [
         {
-          ...this.baseGraph,
+          ...this.baseGraph(propertyName),
           ...this.hasValue,
           'http://api.knora.org/ontology/knora-api/v2#objectType': {
             '@id': 'http://api.knora.org/ontology/knora-api/v2#DateValue',
@@ -209,12 +211,12 @@ export class ClassPropertyPayloads {
     };
   }
 
-  static timestamp(lastModificationDate: string) {
+  static timestamp(lastModificationDate: string, propertyName = 'property') {
     return {
       ...this.baseData(lastModificationDate),
       '@graph': [
         {
-          ...this.baseGraph,
+          ...this.baseGraph(propertyName),
           ...this.hasValue,
           'http://api.knora.org/ontology/knora-api/v2#objectType': {
             '@id': 'http://api.knora.org/ontology/knora-api/v2#TimeValue',
@@ -227,12 +229,12 @@ export class ClassPropertyPayloads {
     };
   }
 
-  static timesequence(lastModificationDate: string) {
+  static timesequence(lastModificationDate: string, propertyName = 'property') {
     return {
       ...this.baseData(lastModificationDate),
       '@graph': [
         {
-          ...this.baseGraph,
+          ...this.baseGraph(propertyName),
           ...this.hasValue,
           'http://api.knora.org/ontology/knora-api/v2#objectType': {
             '@id': 'http://api.knora.org/ontology/knora-api/v2#IntervalValue',

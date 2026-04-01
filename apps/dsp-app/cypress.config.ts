@@ -6,7 +6,7 @@ export default defineConfig({
   projectId: 'n5b5id',
   e2e: {
     ...nxE2EPreset(__dirname),
-    specPattern: 'cypress/**/**/**/*.cy.ts',
+    specPattern: ['cypress/e2e/system-admin/resource.cy.ts', 'cypress/**/**/**/*.cy.ts'],
     excludeSpecPattern: ['*.spec.js', '*.spec.ts'],
     viewportHeight: 768,
     viewportWidth: 1024,

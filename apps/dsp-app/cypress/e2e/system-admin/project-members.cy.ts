@@ -4,7 +4,6 @@ describe('Project members', () => {
   let project0001Page: Project0001Page;
 
   before(() => {
-    cy.resetDatabase();
     project0001Page = new Project0001Page();
   });
 

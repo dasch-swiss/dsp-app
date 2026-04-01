@@ -11,7 +11,12 @@ export class ResponseUtil {
 }
 
 export class ResourceRequests {
-  static resourceRequest = (payload: any, required = false): Cypress.Chainable => {
+  static resourceRequest = (
+    payload: any,
+    required = false,
+    className = 'datamodelclass',
+    propertyName = 'property'
+  ): Cypress.Chainable => {
     return cy
       .request({
         method: 'POST',
@@ -21,12 +26,11 @@ export class ResourceRequests {
       })
       .then(response => {
         const modificationDate = ResponseUtil.lastModificationDate(response);
-        console.log(response);
         return cy.request({
           method: 'POST',
           url: `${Cypress.env('apiUrl')}/v2/ontologies/cardinalities`,
           headers: getAuthHeaders(),
-          body: ClassPropertyPayloads.cardinality(modificationDate, required),
+          body: ClassPropertyPayloads.cardinality(modificationDate, required, className, propertyName),
         });
       });
   };

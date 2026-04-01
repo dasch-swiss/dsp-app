@@ -28,7 +28,6 @@ describe('Check project admin existing resource functionality', () => {
   const uploadedImageFilePath = `/uploads/${uploadedImageFile}`;
 
   before(() => {
-    cy.resetDatabase();
     project0001Page = new Project0001Page();
   });
 
@@ -153,7 +152,4 @@ describe('Check project admin existing resource functionality', () => {
     cy.get('[data-cy=resource-list-item]').contains(resourceToErase.label).should('not.exist');
   });
 
-  after(() => {
-    Cypress.env('skipDatabaseCleanup', false);
-  });
 });

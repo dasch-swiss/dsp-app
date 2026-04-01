@@ -29,15 +29,29 @@ class ProjectPage {
     };
 
     cy.request<ProjectOperationResponseADM>({
-      method: 'POST',
-      url: `${Cypress.env('apiUrl')}/admin/projects`,
+      method: 'GET',
+      url: `${Cypress.env('apiUrl')}/admin/projects/shortcode/A0A0`,
       headers: getAuthHeaders(),
-      body: payload,
-    }).then(response => {
-      this.projectIri = response.body.project.id;
-      this.projectUuid = this.projectIri.match(/\/([^\/]+)$/)[1];
-      this.project = response.body.project;
-      this.visit();
+      failOnStatusCode: false,
+    }).then(getResponse => {
+      if (getResponse.status === 200) {
+        this.projectIri = getResponse.body.project.id;
+        this.projectUuid = this.projectIri.match(/\/([^\/]+)$/)[1];
+        this.project = getResponse.body.project;
+        this.visit();
+      } else {
+        cy.request<ProjectOperationResponseADM>({
+          method: 'POST',
+          url: `${Cypress.env('apiUrl')}/admin/projects`,
+          headers: getAuthHeaders(),
+          body: payload,
+        }).then(response => {
+          this.projectIri = response.body.project.id;
+          this.projectUuid = this.projectIri.match(/\/([^\/]+)$/)[1];
+          this.project = response.body.project;
+          this.visit();
+        });
+      }
     });
   }
 }
