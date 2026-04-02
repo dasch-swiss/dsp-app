@@ -20,7 +20,6 @@ describe('Check project admin existing resource functionality', () => {
   const uploadedImageFilePath = `/uploads/${uploadedImageFile}`;
 
   before(() => {
-    cy.resetDatabase();
     project0001Page = new Project0001Page();
   });
 
@@ -184,7 +183,4 @@ describe('Check project admin existing resource functionality', () => {
     cy.log('new property value with comment has been removed');
   });
 
-  after(() => {
-    Cypress.env('skipDatabaseCleanup', false);
-  });
 });

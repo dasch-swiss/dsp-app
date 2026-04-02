@@ -13,21 +13,17 @@ Cypress.on('uncaught:exception', err => {
   }
 });
 
-// do things here before each test if needed
-// All active session data (cookies, localStorage and sessionStorage) across all domains are cleared.
-beforeEach(() => {
-  // Skip database cleanup for remote environments or when explicitly disabled
+const isRemote = (): boolean => {
   const baseUrl = Cypress.config('baseUrl');
-  const isRemote =
-    baseUrl && (baseUrl.includes('dasch.swiss') || baseUrl.includes('stage') || baseUrl.includes('dev-'));
+  return !!(baseUrl && (baseUrl.includes('dasch.swiss') || baseUrl.includes('stage') || baseUrl.includes('dev-')));
+};
 
-  if (Cypress.env('skipDatabaseCleanup') || isRemote) {
-    return; // Skip cleanup
-  }
+// Reset the triplestore once per spec file (not per test).
+// Skipped for remote environments, when explicitly disabled, and for read-only logged-out-user specs.
+before(() => {
+  if (Cypress.env('skipDatabaseCleanup') || isRemote()) return;
+  if (Cypress.spec.relative.startsWith('cypress/e2e/logged-out-user')) return;
 
-  let users: UserProfiles;
-
-  // clear database (only for local testing)
   cy.request({
     method: 'POST',
     url: `${Cypress.env('apiUrl')}/admin/store/ResetTriplestoreContent`,
@@ -66,17 +62,20 @@ beforeEach(() => {
       // },
     ],
   });
+});
+
+// Re-login before each test for system-admin specs.
+// testIsolation: true (Cypress default) clears localStorage between tests, wiping the ACCESS_TOKEN.
+// Keeping login in beforeEach ensures each test starts authenticated.
+beforeEach(() => {
+  if (Cypress.env('skipDatabaseCleanup') || isRemote()) return;
+  if (!Cypress.spec.relative.startsWith('cypress/e2e/system-admin')) return;
 
   cy.readFile('cypress/fixtures/user_profiles.json').then((json: UserProfiles) => {
-    // read JSON data file
-    users = json;
-
-    if (Cypress.spec.relative.startsWith('cypress/e2e/system-admin')) {
-      cy.login({
-        username: users.systemAdmin_username_root,
-        password: users.systemAdmin_password_root,
-      });
-    }
+    cy.login({
+      username: json.systemAdmin_username_root,
+      password: json.systemAdmin_password_root,
+    });
   });
 });
 

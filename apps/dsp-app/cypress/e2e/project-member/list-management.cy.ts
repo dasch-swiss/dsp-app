@@ -12,10 +12,6 @@ describe('Project Member - List management', () => {
   let listUrl: string;
   let listId: string;
 
-  before(() => {
-    cy.resetDatabase();
-  });
-
   beforeEach(() => {
     cy.readFile('cypress/fixtures/user_profiles.json').then((json: UserProfiles) => {
       const users: UserProfiles = json;

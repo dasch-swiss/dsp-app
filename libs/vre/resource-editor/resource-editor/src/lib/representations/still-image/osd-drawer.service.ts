@@ -312,7 +312,6 @@ export class OsdDrawerService implements OnDestroy {
   private _highlightRegion(regionIri: string | null) {
     this._unhighlightSelectedRegion();
     this._currentHighlightedRegion = regionIri;
-
     const rect = this._masterSvgOverlay?.querySelector(`rect[data-region-iri="${regionIri}"]`);
     const originalWidth = rect?.getAttribute('data-original-stroke-width') || '2';
 
