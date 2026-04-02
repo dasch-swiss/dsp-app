@@ -5,12 +5,18 @@ version: 2
 updates:
   - package-ecosystem: "npm"
     directory: "/"
-    open-pull-requests-limit: 5
+    open-pull-requests-limit: 20
     schedule:
       interval: "weekly"
+      day: "tuesday"
+      time: "06:00"
+      timezone: "Europe/Zurich"
     commit-message:
       prefix: "chore"
       include: "scope"
+    labels:
+      - "dependencies"
+      - "npm"
     groups:
       eslint-deps:
         patterns:
@@ -41,6 +47,8 @@ updates:
           - "ts-jest"
           - "@types/jest"
           - "reflect-metadata"
+          - "ng-mocks"
+          - "@faker-js/faker"
       jasmine-deps:
         patterns:
           - "jasmine-core"
@@ -60,6 +68,7 @@ updates:
       postcss-deps:
         patterns:
           - "postcss*"
+          - "autoprefixer"
       sentry-deps:
         patterns:
           - "@sentry/*"
@@ -69,24 +78,65 @@ updates:
           - "@jsdevtools/coverage-istanbul-loader"
           - "istanbul-lib-coverage"
           - "ngx-build-plus"
+          - "nyc"
+      openapi-deps:
+        patterns:
+          - "openapi-typescript"
+          - "@openapitools/*"
+      cypress-deps:
+        patterns:
+          - "cypress"
+      angular-ecosystem-deps:
+        patterns:
+          - "angular-split"
+          - "angular-imask"
+          - "angular-html-parser"
+      misc-deps:
+        # Temporary catch-all; dissolve in Phase 2 (DEV-6206) once auto-merge handles individual PRs
+        patterns:
+          - "json2typescript"
+          - "zod"
+          - "tslib"
+          - "ts-md5"
+          - "jsonld"
+          - "@types/jsonld"
+          - "ng2-pdf-viewer"
+          - "ngx-color-picker"
+      angular-patches:
+        # Batches all Angular ecosystem patch PRs into one; works with ignore list allowing patches through
+        patterns:
+          - "@angular/*"
+          - "@angular-devkit/*"
+          - "@angular-eslint/*"
+          - "@schematics/angular"
+        update-types:
+          - "patch"
     ignore:
       - dependency-name: "*"
         update-types: [ "version-update:semver-major" ]
       # we use github:dasch-swiss/ckeditor_custom_build#v2.0.0 and v2.0.1 seems to be broken
       - dependency-name: "ckeditor5-custom-build"
-      # Angular, NX, TypeScript and related deps are handled manually due to tight version coupling
+      # Angular packages: ignore major+minor only — patches carry security fixes (allow through)
       - dependency-name: "@angular/*"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
       - dependency-name: "@angular-devkit/*"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
       # angular-eslint should match the angular version, also handled manually
       - dependency-name: "@angular-eslint/*"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
       - dependency-name: "@schematics/angular"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
+      # NX: ignore all — even patches can require migration steps; use nx migrate
       - dependency-name: "typescript"
       - dependency-name: "nx*"
       - dependency-name: "@nx*"
       - dependency-name: "@nrwl/*"
+      # zone.js: ignore major+minor only — in maintenance mode, patches are safe
       - dependency-name: "zone.js"
-      # RxJS and ng-packagr are tightly coupled to Angular version
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
+      # rxjs: ignore major only — minor/patch safe within major version
       - dependency-name: "rxjs"
+        update-types: ["version-update:semver-major"]
       - dependency-name: "ng-packagr"
       # @types/node should match Node.js version from Docker
       - dependency-name: "@types/node"
@@ -94,6 +144,8 @@ updates:
       - dependency-name: "eslint"
       - dependency-name: "@typescript-eslint/*"
       - dependency-name: "eslint-plugin-angular"
+      # @ngrx/component-store is Angular-version coupled; update during ng update
+      - dependency-name: "@ngrx/component-store"
       # JS-LIB has to be updated manually
       - dependency-name: "@dasch-swiss/dsp-js"
 
