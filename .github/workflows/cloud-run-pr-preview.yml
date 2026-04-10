@@ -22,36 +22,17 @@ env:
   IMAGE_TAG: pr-${{ github.event.pull_request.number }}
 
 jobs:
-  check-title:
-    name: Check PR title
-    if: >-
-      github.event_name == 'pull_request' &&
-      github.event.action != 'closed'
-    runs-on: ubuntu-latest
-    outputs:
-      eligible: ${{ steps.check.outputs.eligible }}
-    steps:
-      - name: Check if PR title is preview-eligible
-        id: check
-        env:
-          TITLE: ${{ github.event.pull_request.title }}
-        run: |
-          if echo "$TITLE" | grep -qE '^(feat|fix|refactor)(\(.+\))?!?:'; then
-            echo "eligible=true" >> $GITHUB_OUTPUT
-            echo "Title '$TITLE' → preview will be deployed."
-          else
-            echo "eligible=false" >> $GITHUB_OUTPUT
-            echo "Title '$TITLE' → no preview (only feat, fix, refactor types)."
-          fi
-
   deploy-preview:
     name: Build and deploy preview
-    needs: [check-title]
+    # check-pr-title.yml enforces valid conventional commit prefixes on every PR;
+    # this condition filters to only feat/fix/refactor PRs that need a live preview.
     if: >-
       github.event_name == 'pull_request' &&
       github.event.action != 'closed' &&
-      needs.check-title.outputs.eligible == 'true' &&
-      github.event.pull_request.head.repo.full_name == github.repository
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      (startsWith(github.event.pull_request.title, 'feat') ||
+       startsWith(github.event.pull_request.title, 'fix') ||
+       startsWith(github.event.pull_request.title, 'refactor'))
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
