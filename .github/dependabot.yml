@@ -1,102 +1,221 @@
 # Please see the documentation for all configuration options:
 # https://docs.github.com/github/administering-a-repository/configuration-options-for-dependency-updates
 
+# ─── Update strategy overview ──────────────────────────────────────────────────
+#
+# npm:
+#   Grouped PRs run weekly on Tuesday morning (Europe/Zurich) so they land
+#   before the work day. Limit is set to 20 to match the number of groups.
+#
+#   Manual-only packages (fully ignored or major/minor ignored):
+#     - Angular, NX, TypeScript, ESLint, ng-packagr — tightly coupled; update
+#       together via `ng update` / `nx migrate` during planned upgrade windows.
+#     - @ngrx/component-store — Angular-version coupled; update with Angular.
+#     - @types/node — must match the Node.js version pinned in Docker images.
+#     - @dasch-swiss/dsp-js — DSP JS client; updated manually per release.
+#     - ckeditor5-custom-build — custom GitHub build; tracked in DEV-6208.
+#
+#   Partial ignores (allow patches through):
+#     - @angular/* and related — patches carry real CVEs (3 in 2025); batched
+#       into the `angular-patches` group to avoid dozens of individual PRs.
+#     - rxjs — major is breaking; minor/patch are safe within a major version.
+#     - zone.js — in maintenance mode; patches are safe.
+#
+#   Security-driven PRs bypass all ignore rules (GitHub behaviour). Such PRs
+#   receive a `security` label automatically via the Dependabot auto-merge
+#   workflow (Phase 2, DEV-6206). Review them carefully — if an ignored package
+#   (e.g. @nx/angular) is bumped, run `nx migrate` before merging.
+#
+#   misc-deps is a temporary catch-all group (Phase 1). It will be dissolved
+#   in Phase 2 (DEV-6206) once auto-merge handles individual PRs safely.
+#
+# github-actions / docker:
+#   Weekly, ungrouped. docker ignores the node image (pinned to match runtime).
+# ───────────────────────────────────────────────────────────────────────────────
+
 version: 2
 updates:
+  # ── npm ──────────────────────────────────────────────────────────────────────
   - package-ecosystem: "npm"
     directory: "/"
-    open-pull-requests-limit: 5
+    open-pull-requests-limit: 20  # matches number of groups
     schedule:
       interval: "weekly"
+      day: "tuesday"
+      time: "06:00"
+      timezone: "Europe/Zurich"
     commit-message:
       prefix: "chore"
       include: "scope"
+    labels:
+      - "dependencies"
+      - "npm"
     groups:
+      # ── Linting ──────────────────────────────────────────────────────────────
       eslint-deps:
         patterns:
           - "eslint-config-*"
           - "eslint-plugin-*"
         exclude-patterns:
-          - "eslint-config-prettier"
-          - "eslint-plugin-prettier"
+          - "eslint-config-prettier"   # belongs to prettier-deps
+          - "eslint-plugin-prettier"   # belongs to prettier-deps
       prettier-deps:
         patterns:
           - "prettier"
           - "eslint-config-prettier"
           - "eslint-plugin-prettier"
+      # ── Compilation / transpilation ───────────────────────────────────────────
       swc-deps:
         patterns:
           - "@swc/*"
           - "@swc-node/*"
           - "@jscutlery/*"
+      # ── i18n ─────────────────────────────────────────────────────────────────
       ngx-translate-deps:
         patterns:
           - "@ngx-translate/*"
+      # ── Observability ─────────────────────────────────────────────────────────
       grafana-deps:
         patterns:
           - "@grafana/*"
+      sentry-deps:
+        patterns:
+          - "@sentry/*"
+      # ── Unit testing ─────────────────────────────────────────────────────────
       jest-deps:
         patterns:
           - "jest*"
           - "ts-jest"
           - "@types/jest"
           - "reflect-metadata"
+          - "ng-mocks"
+          - "@faker-js/faker"
       jasmine-deps:
         patterns:
           - "jasmine-core"
           - "@types/jasmine*"
-      jwt-decoder-deps:
+      # ── E2E / coverage ───────────────────────────────────────────────────────
+      cypress-deps:
         patterns:
-          - "jwt-decode"
-          - "@types/jwt-decode"
-      openseadragon-deps:
-        patterns:
-          - "openseadragon"
-          - "@types/openseadragon"
-      uuid-deps:
-        patterns:
-          - "uuid"
-          - "@types/uuid"
-      postcss-deps:
-        patterns:
-          - "postcss*"
-      sentry-deps:
-        patterns:
-          - "@sentry/*"
+          - "cypress"
       test-coverage-deps:
         patterns:
           - "@cypress/code-coverage"
           - "@jsdevtools/coverage-istanbul-loader"
           - "istanbul-lib-coverage"
           - "ngx-build-plus"
+          - "nyc"
+      # ── CSS / styling ────────────────────────────────────────────────────────
+      postcss-deps:
+        patterns:
+          - "postcss*"
+          - "autoprefixer"
+      # ── OpenAPI code generation ───────────────────────────────────────────────
+      openapi-deps:
+        patterns:
+          - "openapi-typescript"
+          - "@openapitools/*"
+      # ── Viewer / media ────────────────────────────────────────────────────────
+      openseadragon-deps:
+        patterns:
+          - "openseadragon"
+          - "@types/openseadragon"
+      # ── Utilities ─────────────────────────────────────────────────────────────
+      jwt-decoder-deps:
+        patterns:
+          - "jwt-decode"
+          - "@types/jwt-decode"
+      uuid-deps:
+        patterns:
+          - "uuid"
+          - "@types/uuid"
+      angular-ecosystem-deps:
+        # Third-party Angular-compatible packages not coupled to Angular version
+        patterns:
+          - "angular-split"
+          - "angular-imask"
+          - "angular-html-parser"
+      # ── Angular patches ───────────────────────────────────────────────────────
+      # Batches Angular ecosystem patch PRs into a single PR.
+      # Required because the ignore list allows patches through for security
+      # signal — without this group each Angular package would get its own PR
+      # per patch release. Major and minor updates remain fully ignored.
+      angular-patches:
+        patterns:
+          - "@angular/*"
+          - "@angular-devkit/*"
+          - "@angular-eslint/*"
+          - "@schematics/angular"
+        update-types:
+          - "patch"
+      # ── Miscellaneous (temporary catch-all) ───────────────────────────────────
+      # Packages that don't fit a semantic group yet. Grouped here to reduce
+      # PR noise during Phase 1. Dissolve this group in Phase 2 (DEV-6206)
+      # once auto-merge is in place and individual PRs can be handled safely.
+      misc-deps:
+        patterns:
+          - "json2typescript"
+          - "zod"
+          - "tslib"
+          - "ts-md5"
+          - "jsonld"
+          - "@types/jsonld"
+          - "ng2-pdf-viewer"
+          - "ngx-color-picker"
     ignore:
+      # Global: no major version bumps from the automated schedule.
+      # Individual ignore entries below refine this for specific packages.
       - dependency-name: "*"
-        update-types: [ "version-update:semver-major" ]
-      # we use github:dasch-swiss/ckeditor_custom_build#v2.0.0 and v2.0.1 seems to be broken
+        update-types: ["version-update:semver-major"]
+
+      # CKEditor: custom GitHub build; v2.0.1 is broken — tracked in DEV-6208.
       - dependency-name: "ckeditor5-custom-build"
-      # Angular, NX, TypeScript and related deps are handled manually due to tight version coupling
+
+      # Angular ecosystem: major+minor ignored — update via `ng update`.
+      # Patches are allowed through (security signal; batched by angular-patches group).
       - dependency-name: "@angular/*"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
       - dependency-name: "@angular-devkit/*"
-      # angular-eslint should match the angular version, also handled manually
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
       - dependency-name: "@angular-eslint/*"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
       - dependency-name: "@schematics/angular"
-      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
+
+      # NX: fully ignored — even patch releases can require `nx migrate`.
       - dependency-name: "nx*"
       - dependency-name: "@nx*"
       - dependency-name: "@nrwl/*"
-      - dependency-name: "zone.js"
-      # RxJS and ng-packagr are tightly coupled to Angular version
-      - dependency-name: "rxjs"
-      - dependency-name: "ng-packagr"
-      # @types/node should match Node.js version from Docker
-      - dependency-name: "@types/node"
-      # ESLint and TypeScript-ESLint are tightly coupled to TypeScript version
+
+      # TypeScript: tightly coupled to Angular, NX, and @typescript-eslint versions.
+      - dependency-name: "typescript"
+
+      # ESLint ecosystem: tightly coupled to TypeScript version; update together.
       - dependency-name: "eslint"
       - dependency-name: "@typescript-eslint/*"
       - dependency-name: "eslint-plugin-angular"
-      # JS-LIB has to be updated manually
+
+      # rxjs: major is breaking; minor/patch are safe within the current major.
+      - dependency-name: "rxjs"
+        update-types: ["version-update:semver-major"]
+
+      # zone.js: in maintenance mode; major+minor ignored, patches are safe.
+      - dependency-name: "zone.js"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
+
+      # ng-packagr: tightly coupled to Angular version.
+      - dependency-name: "ng-packagr"
+
+      # @ngrx/component-store: Angular-version coupled; update during `ng update`.
+      - dependency-name: "@ngrx/component-store"
+
+      # @types/node: must match the Node.js version pinned in Docker images.
+      - dependency-name: "@types/node"
+
+      # @dasch-swiss/dsp-js: DSP JS client library; updated manually per release.
       - dependency-name: "@dasch-swiss/dsp-js"
 
+  # ── GitHub Actions ────────────────────────────────────────────────────────────
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
@@ -109,6 +228,7 @@ updates:
       - "dependencies"
       - "github-actions"
 
+  # ── Docker ────────────────────────────────────────────────────────────────────
   - package-ecosystem: "docker"
     directory: "/"
     schedule:
@@ -120,4 +240,5 @@ updates:
       - "dependencies"
       - "docker"
     ignore:
+      # node image version is pinned intentionally to match the runtime environment.
       - dependency-name: "node"
