@@ -1,0 +1,15 @@
+{
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+    "emitDecoratorMetadata": true
+  },
+  "exclude": ["../**/*.spec.ts"],
+  "include": [
+    "libs/vre/ui/ui/src/**/*.stories.ts",
+    "libs/vre/ui/progress-indicator/src/**/*.stories.ts",
+    "libs/vre/pages/user-settings/user/src/**/*.stories.ts",
+    "apps/dsp-app/src/polyfills.ts",
+    "*.js",
+    "*.ts"
+  ]
+}

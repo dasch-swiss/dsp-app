@@ -28,7 +28,7 @@
       "executor": "@storybook/angular:start-storybook",
       "options": {
         "port": 4400,
-        "configDir": "libs/vre/ui/ui/.storybook",
+        "configDir": ".storybook",
         "browserTarget": "dsp-app:build",
         "compodoc": false,
         "styles": ["apps/dsp-app/src/styles.scss"],
@@ -48,7 +48,7 @@
       "outputs": ["{options.outputDir}"],
       "options": {
         "outputDir": "dist/storybook/vre-ui-ui",
-        "configDir": "libs/vre/ui/ui/.storybook",
+        "configDir": ".storybook",
         "browserTarget": "dsp-app:build",
         "compodoc": false,
         "styles": ["apps/dsp-app/src/styles.scss"],
@@ -66,11 +66,11 @@
     "test-storybook": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "test-storybook -c libs/vre/ui/ui/.storybook --url=http://localhost:4400"
+        "command": "test-storybook -c .storybook --url=http://localhost:4400"
       },
       "configurations": {
         "ci": {
-          "command": "test-storybook -c libs/vre/ui/ui/.storybook --url=http://localhost:6006"
+          "command": "test-storybook -c .storybook --url=http://localhost:6006"
         }
       }
     },
