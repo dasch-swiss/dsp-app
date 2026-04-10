@@ -7,8 +7,8 @@ import { Subject, takeUntil } from 'rxjs';
 import { PropertiesDisplayComponent } from './properties-display/properties-display.component';
 import { PropertiesToggleComponent } from './properties-display/properties-toggle.component';
 import { PropertiesDisplayService } from './resource-properties/properties-display.service';
-import { SegmentTabComponent } from './segment-tab.component';
 import { SegmentsService } from './segment-support/segments.service';
+import { SegmentTabComponent } from './segment-tab.component';
 
 @Component({
   selector: 'app-resource-media-tabs',
@@ -42,7 +42,14 @@ import { SegmentsService } from './segment-support/segments.service';
       }
     `,
   ],
-  imports: [MatBadgeModule, MatTabsModule, TranslatePipe, PropertiesDisplayComponent, PropertiesToggleComponent, SegmentTabComponent],
+  imports: [
+    MatBadgeModule,
+    MatTabsModule,
+    TranslatePipe,
+    PropertiesDisplayComponent,
+    PropertiesToggleComponent,
+    SegmentTabComponent,
+  ],
 })
 export class ResourceMediaTabsComponent implements OnInit, OnDestroy {
   @Input({ required: true }) resource!: DspResource;

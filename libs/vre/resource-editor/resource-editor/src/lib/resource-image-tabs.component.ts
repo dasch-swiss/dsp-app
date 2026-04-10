@@ -26,11 +26,7 @@ import { PropertiesDisplayService } from './resource-properties/properties-displ
         <mat-tab>
           <ng-template matTabLabel>
             <span>{{ 'resourceEditor.labelAnnotations' | translate }}</span>
-            <span
-              style="margin-left: 0.5em;"
-              [matBadge]="regionsCount"
-              matBadgeColor="primary"
-              matBadgeOverlap="false">
+            <span style="margin-left: 0.5em;" [matBadge]="regionsCount" matBadgeColor="primary" matBadgeOverlap="false">
             </span>
             <span [ngClass]="['dots-container', (regionService.regionsLoading$ | async) ? 'dots' : '']"> </span>
           </ng-template>

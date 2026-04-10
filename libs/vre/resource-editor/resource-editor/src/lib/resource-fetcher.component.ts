@@ -18,9 +18,9 @@ import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { AppProgressIndicatorComponent } from '@dasch-swiss/vre/ui/progress-indicator';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { filter, Subject, takeUntil } from 'rxjs';
-import { ResourceDispatcherComponent } from './resource-dispatcher.component';
 import { ResourceFetcherService } from './representations/resource-fetcher.service';
 import { ResourceUtil } from './representations/resource.util';
+import { ResourceDispatcherComponent } from './resource-dispatcher.component';
 import { ResourceVersionWarningComponent } from './resource-version-warning.component';
 
 type HideReason = 'NotFound' | 'Deleted' | 'Unauthorized' | null;
