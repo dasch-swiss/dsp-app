@@ -1,4 +1,4 @@
-name: Cloud Run PR Preview for DSP-APP
+name: PR Preview
 
 on:
   pull_request:
@@ -23,7 +23,7 @@ env:
 
 jobs:
   deploy-preview:
-    name: Build and deploy preview
+    name: Build and deploy
     # check-pr-title.yml enforces valid conventional commit prefixes on every PR;
     # this condition filters to only feat/fix/refactor PRs that need a live preview.
     if: >-
@@ -126,7 +126,7 @@ jobs:
             _Updated on every push. Deleted when PR closes or after 4 days._
 
   cleanup-preview:
-    name: Clean up preview on PR close
+    name: Clean up PR close
     if: >-
       github.event_name == 'pull_request' &&
       github.event.action == 'closed'
@@ -154,7 +154,7 @@ jobs:
             --delete-tags --quiet 2>/dev/null || echo "Image not found, nothing to clean up."
 
   cleanup-stale:
-    name: Clean up stale previews (>4 days)
+    name: Clean up stale (>4 days)
     if: github.event_name == 'schedule'
     runs-on: ubuntu-latest
     steps:
