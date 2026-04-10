@@ -3,6 +3,9 @@ name: PR Preview
 on:
   pull_request:
     types: [opened, edited, synchronize, reopened, closed]
+    paths:
+      - 'apps/dsp-app/src/**'
+      - 'libs/**'
   schedule:
     - cron: '0 2 * * *'  # daily at 02:00 UTC — clean up stale previews
 
