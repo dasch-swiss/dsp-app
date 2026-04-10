@@ -19,5 +19,5 @@ export interface GridItem {
   imports: [MatButtonModule, MatIconModule, RouterLink, RouterLinkActive, TranslatePipe],
 })
 export class GridComponent {
-  @Input() list: GridItem[];
+  @Input({ required: true }) list!: GridItem[];
 }
