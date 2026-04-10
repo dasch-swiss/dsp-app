@@ -1,0 +1,205 @@
+name: Cloud Run PR Preview for DSP-APP
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+  schedule:
+    - cron: '0 2 * * *'  # daily at 02:00 UTC — clean up stale previews
+
+permissions:
+  contents: read
+  id-token: write      # Required for OIDC / Workload Identity Federation
+  pull-requests: write # Required to post PR comments
+
+concurrency:
+  # On pull_request events: one group per PR number. On schedule: resolves to
+  # "cloud-run-preview-" (no number) — a single group that serialises runs.
+  group: cloud-run-preview-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+env:
+  SERVICE_NAME: dsp-app-pr-${{ github.event.pull_request.number }}
+  IMAGE_TAG: pr-${{ github.event.pull_request.number }}
+
+jobs:
+  check-title:
+    name: Check PR title
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.event.action != 'closed'
+    runs-on: ubuntu-latest
+    outputs:
+      eligible: ${{ steps.check.outputs.eligible }}
+    steps:
+      - name: Check if PR title is preview-eligible
+        id: check
+        env:
+          TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          if echo "$TITLE" | grep -qE '^(feat|fix|refactor)(\(.+\))?!?:'; then
+            echo "eligible=true" >> $GITHUB_OUTPUT
+            echo "Title '$TITLE' → preview will be deployed."
+          else
+            echo "eligible=false" >> $GITHUB_OUTPUT
+            echo "Title '$TITLE' → no preview (only feat, fix, refactor types)."
+          fi
+
+  deploy-preview:
+    name: Build and deploy preview
+    needs: [check-title]
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.event.action != 'closed' &&
+      needs.check-title.outputs.eligible == 'true' &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22.12.0
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --prefer-offline --no-audit --ignore-scripts
+        env:
+          NODE_OPTIONS: '--max-old-space-size=4096'
+
+      - name: Generate OpenAPI client
+        run: npm run generate-openapi-module
+
+      - name: Build Angular app (dev-server config → DEV API)
+        run: npx nx run dsp-app:build:dev-server
+        env:
+          NODE_OPTIONS: '--max-old-space-size=4096'
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Configure Docker for Artifact Registry
+        run: gcloud auth configure-docker ${{ secrets.GCP_REGION }}-docker.pkg.dev --quiet
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ secrets.GCP_ARTIFACT_REGISTRY }}/dsp-app:${{ env.IMAGE_TAG }}
+          build-args: build_tag=pr-${{ github.event.pull_request.number }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Deploy to Cloud Run
+        id: deploy
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: ${{ env.SERVICE_NAME }}
+          region: ${{ secrets.GCP_REGION }}
+          image: ${{ secrets.GCP_ARTIFACT_REGISTRY }}/dsp-app:${{ env.IMAGE_TAG }}
+          flags: >-
+            --port=4200
+            --allow-unauthenticated
+            --cpu=1
+            --memory=256Mi
+            --max-instances=1
+            --cpu-throttling
+
+      - name: Find existing preview comment
+        uses: peter-evans/find-comment@v3
+        id: find-comment
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: github-actions[bot]
+          body-includes: "<!-- dsp-app-preview -->"
+
+      - name: Post or update preview URL comment
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-id: ${{ steps.find-comment.outputs.comment-id }}
+          edit-mode: replace
+          body: |
+            <!-- dsp-app-preview -->
+            ### DSP-APP Preview
+
+            | | |
+            |---|---|
+            | **Preview URL** | ${{ steps.deploy.outputs.url }} |
+            | **Cloud Run Service** | `${{ env.SERVICE_NAME }}` |
+            | **Commit** | ${{ github.event.pull_request.head.sha }} |
+            | **Backend** | DEV API (`api.dev.dasch.swiss`) |
+
+            _Updated on every push. Deleted when PR closes or after 4 days._
+
+  cleanup-preview:
+    name: Clean up preview on PR close
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.event.action == 'closed'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Delete Cloud Run service (if it exists)
+        run: |
+          gcloud run services delete "$SERVICE_NAME" \
+            --region="${{ secrets.GCP_REGION }}" \
+            --quiet 2>/dev/null || echo "Service $SERVICE_NAME not found, nothing to clean up."
+
+      - name: Delete container image (if it exists)
+        run: |
+          gcloud artifacts docker images delete \
+            "${{ secrets.GCP_ARTIFACT_REGISTRY }}/dsp-app:${{ env.IMAGE_TAG }}" \
+            --delete-tags --quiet 2>/dev/null || echo "Image not found, nothing to clean up."
+
+  cleanup-stale:
+    name: Clean up stale previews (>4 days)
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Delete Cloud Run services older than 4 days
+        run: |
+          CUTOFF=$(date -u -d '4 days ago' +%Y-%m-%dT%H:%M:%SZ)
+          # Capture output before piping so jq receives "[]" if gcloud fails
+          SERVICES=$(gcloud run services list \
+            --region="${{ secrets.GCP_REGION }}" \
+            --filter="metadata.name:dsp-app-pr-" \
+            --format="json" 2>/dev/null || echo "[]")
+          echo "$SERVICES" | \
+          jq -r --arg cutoff "$CUTOFF" \
+            '.[] | select(.metadata.creationTimestamp < $cutoff) | .metadata.name' | \
+          while read -r SERVICE; do
+            echo "Deleting stale service: $SERVICE"
+            PR_NUM="${SERVICE#dsp-app-pr-}"
+            gcloud run services delete "$SERVICE" \
+              --region="${{ secrets.GCP_REGION }}" --quiet 2>/dev/null || true
+            gcloud artifacts docker images delete \
+              "${{ secrets.GCP_ARTIFACT_REGISTRY }}/dsp-app:pr-${PR_NUM}" \
+              --delete-tags --quiet 2>/dev/null || true
+          done
