@@ -10,7 +10,7 @@ import { SystemPropertyDefinition } from '../../models/v2/ontologies/system-prop
  * @category Model V2
  */
 export class ResourceClassDefinitionWithPropertyDefinition extends ResourceClassDefinition {
-  declare override propertiesList: IHasPropertyWithPropertyDefinition[];
+  override propertiesList: IHasPropertyWithPropertyDefinition[];
 
   /**
    * Create an instance from a given `ResourceClassDefinition`.
