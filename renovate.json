@@ -13,9 +13,9 @@
   "packageRules": [
 
     {
-      "description": "Add npm label to match Dependabot label convention",
+      "description": "Add javascript label to match Dependabot language label convention",
       "matchManagers": ["npm"],
-      "addLabels": ["npm"]
+      "addLabels": ["javascript"]
     },
 
     {
