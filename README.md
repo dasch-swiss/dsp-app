@@ -33,8 +33,28 @@ Most common operations for daily development:
 | Build for development | `npm run build` |
 | Build for production | `npm run build-prod` |
 | Generate test coverage | `npm run unit-test-coverage` |
+| Browse all component stories | `npm run storybook` |
+| Build static Storybook | `npm run build-storybook` |
+| Run Storybook interaction tests | `npm run test-storybook` |
 
 For all available commands, see [package.json](https://github.com/dasch-swiss/dsp-app/blob/main/package.json).
+
+## Storybook
+
+The project uses a single global [Storybook](https://storybook.js.org/) instance that aggregates stories from all libraries and apps in the monorepo.
+
+```shell
+# Start the Storybook dev server (http://localhost:4400)
+npm run storybook
+
+# Build a static Storybook bundle to dist/storybook/
+npm run build-storybook
+
+# Run story interaction tests (requires a running Storybook server)
+npm run test-storybook
+```
+
+Stories are auto-discovered from any `*.stories.ts` file under `libs/` or `apps/` — no registration required when adding new stories.
 
 ## @dasch-swiss librairies
 

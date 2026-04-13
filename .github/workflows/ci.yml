@@ -269,14 +269,14 @@ jobs:
       - name: Generate OpenAPI client
         run: npm run generate-openapi-module
       - name: Build Storybook
-        run: npx nx run vre-ui-ui:build-storybook:ci
+        run: npx nx run dsp-app:build-storybook:ci
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
       - name: Serve and run interaction tests
         run: |
-          npx http-server dist/storybook/vre-ui-ui --port 6006 --silent &
+          npx http-server dist/storybook --port 6006 --silent &
           npx wait-on tcp:6006 --timeout 60000
-          npx nx run vre-ui-ui:test-storybook:ci -- --maxWorkers=2
+          npx nx run dsp-app:test-storybook:ci -- --maxWorkers=2
 
   docs-build-test:
     name: Docs Build Test

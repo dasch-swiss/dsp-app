@@ -33,6 +33,9 @@
     "lint-all": "nx run-many --all --target=lint",
     "lint-fix-all": "nx run-many --all --target=lint --fix",
     "sentry:sourcemaps": "sentry-cli sourcemaps inject --org dasch --project javascript-angular ./dist/apps/dsp-app && sentry-cli sourcemaps upload --org dasch --project javascript-angular ./dist/apps/dsp-app",
+    "storybook": "nx run dsp-app:storybook",
+    "build-storybook": "nx run dsp-app:build-storybook",
+    "test-storybook": "nx run dsp-app:test-storybook",
     "postinstall": "npm run generate-openapi-module && nx reset"
   },
   "private": true,

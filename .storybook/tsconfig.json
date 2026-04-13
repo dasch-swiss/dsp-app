@@ -5,9 +5,8 @@
   },
   "exclude": ["../**/*.spec.ts"],
   "include": [
-    "../libs/vre/ui/ui/src/**/*.stories.ts",
-    "../libs/vre/ui/progress-indicator/src/**/*.stories.ts",
-    "../libs/vre/pages/user-settings/user/src/**/*.stories.ts",
+    "../libs/**/*.stories.ts",
+    "../apps/**/*.stories.ts",
     "../apps/dsp-app/src/polyfills.ts",
     "*.js",
     "*.ts"
