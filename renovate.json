@@ -1,0 +1,162 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "schedule": ["before 9am on Tuesday"],
+  "timezone": "Europe/Zurich",
+  "prConcurrentLimit": 5,
+  "prHourlyLimit": 2,
+  "dependencyDashboard": true,
+  "labels": ["dependencies"],
+  "vulnerabilityAlerts": {
+    "enabled": false
+  },
+  "packageRules": [
+
+    {
+      "description": "Angular and NX: manual upgrade only (ng update / nx migrate)",
+      "matchPackagePatterns": [
+        "^@angular/",
+        "^@angular-devkit/",
+        "^@angular-eslint/",
+        "^@schematics/angular",
+        "^nx$",
+        "^@nx/",
+        "^@nrwl/"
+      ],
+      "enabled": false
+    },
+    {
+      "description": "TypeScript: tightly coupled to Angular/NX version",
+      "matchPackageNames": ["typescript"],
+      "enabled": false
+    },
+    {
+      "description": "ESLint ecosystem: coupled to TypeScript version",
+      "matchPackagePatterns": ["^@typescript-eslint/"],
+      "matchPackageNames": ["eslint", "eslint-plugin-angular"],
+      "enabled": false
+    },
+    {
+      "description": "ng-packagr: coupled to Angular version",
+      "matchPackageNames": ["ng-packagr"],
+      "enabled": false
+    },
+    {
+      "description": "@ngrx/component-store: Angular-version coupled",
+      "matchPackageNames": ["@ngrx/component-store"],
+      "enabled": false
+    },
+    {
+      "description": "@types/node: must match Node.js version in Docker images",
+      "matchPackageNames": ["@types/node"],
+      "enabled": false
+    },
+    {
+      "description": "@dasch-swiss/dsp-js: updated manually per release",
+      "matchPackageNames": ["@dasch-swiss/dsp-js"],
+      "enabled": false
+    },
+    {
+      "description": "CKEditor: custom build + Angular adapter tracked in DEV-6208; disable both until resolved",
+      "matchPackageNames": ["ckeditor5-custom-build", "@ckeditor/ckeditor5-angular"],
+      "enabled": false
+    },
+    {
+      "description": "zone.js: maintenance mode — allow patches only (disable minor and major)",
+      "matchPackageNames": ["zone.js"],
+      "matchUpdateTypes": ["minor", "major"],
+      "enabled": false
+    },
+
+    {
+      "description": "Major updates: require manual approval via Dependency Dashboard",
+      "matchUpdateTypes": ["major"],
+      "dependencyDashboardApproval": true
+    },
+
+    {
+      "description": "@jscutlery utilities: not in monorepo:swc preset — explicit standalone group",
+      "matchPackagePatterns": ["^@jscutlery/"],
+      "groupName": "jscutlery-deps"
+    },
+    {
+      "description": "@sentry/cli: lives in getsentry/sentry-cli repo, not matched by monorepo:sentry-javascript — join sentry group manually",
+      "matchPackageNames": ["@sentry/cli"],
+      "groupName": "sentry-javascript"
+    },
+    {
+      "description": "Jest test framework and utilities (^jest pattern intentionally broad: groups all jest-* packages including future additions)",
+      "matchPackagePatterns": ["^jest", "^ts-jest$"],
+      "matchPackageNames": ["@types/jest", "reflect-metadata", "ng-mocks", "@faker-js/faker"],
+      "groupName": "jest-deps"
+    },
+    {
+      "description": "Jasmine",
+      "matchPackageNames": ["jasmine-core"],
+      "matchPackagePatterns": ["^@types/jasmine"],
+      "groupName": "jasmine-deps"
+    },
+    {
+      "description": "Prettier and ESLint-prettier bridge (prettier is not in the ESLint monorepo group)",
+      "matchPackageNames": ["prettier", "eslint-config-prettier", "eslint-plugin-prettier"],
+      "groupName": "prettier-deps"
+    },
+    {
+      "description": "PostCSS + autoprefixer (autoprefixer not in postcss monorepo preset)",
+      "matchPackageNames": ["autoprefixer"],
+      "matchPackagePatterns": ["^postcss"],
+      "groupName": "postcss-deps"
+    },
+    {
+      "description": "OpenAPI code generation",
+      "matchPackageNames": ["openapi-typescript"],
+      "matchPackagePatterns": ["^@openapitools/"],
+      "groupName": "openapi-deps"
+    },
+    {
+      "description": "OpenSeaDragon image viewer",
+      "matchPackageNames": ["openseadragon", "@types/openseadragon"],
+      "groupName": "openseadragon-deps"
+    },
+    {
+      "description": "JWT decode",
+      "matchPackageNames": ["jwt-decode", "@types/jwt-decode"],
+      "groupName": "jwt-decode-deps"
+    },
+    {
+      "description": "UUID",
+      "matchPackageNames": ["uuid", "@types/uuid"],
+      "groupName": "uuid-deps"
+    },
+    {
+      "description": "Test coverage tooling",
+      "matchPackageNames": [
+        "@cypress/code-coverage",
+        "@jsdevtools/coverage-istanbul-loader",
+        "istanbul-lib-coverage",
+        "ngx-build-plus",
+        "nyc"
+      ],
+      "groupName": "test-coverage-deps"
+    },
+    {
+      "description": "Third-party Angular-compatible packages (not coupled to Angular version)",
+      "matchPackageNames": ["angular-split", "angular-imask", "angular-html-parser"],
+      "groupName": "angular-ecosystem-deps"
+    },
+
+    {
+      "description": "Automerge patch updates (all dep types)",
+      "matchUpdateTypes": ["patch"],
+      "automerge": true,
+      "platformAutomerge": true
+    },
+    {
+      "description": "Automerge minor updates for dev dependencies",
+      "matchUpdateTypes": ["minor"],
+      "matchDepTypes": ["devDependencies"],
+      "automerge": true,
+      "platformAutomerge": true
+    }
+  ]
+}
