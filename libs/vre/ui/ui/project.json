@@ -23,6 +23,6 @@
       "options": {
         "command": "tsc --noEmit --project {projectRoot}/tsconfig.lib.json"
       }
-    }
+    },
   }
 }
