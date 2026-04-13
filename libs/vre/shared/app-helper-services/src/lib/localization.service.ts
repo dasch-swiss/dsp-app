@@ -6,7 +6,7 @@ import it_CH from '@angular/common/locales/it-CH';
 import { Injectable } from '@angular/core';
 import { AvailableLanguages, LocalStorageLanguageKey } from '@dasch-swiss/vre/core/config';
 import { TranslateService } from '@ngx-translate/core';
-import { map, startWith } from 'rxjs';
+import { Observable, map, startWith } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -27,7 +27,14 @@ export class LocalizationService {
     { locale: 'it-CH', localeData: it_CH },
   ] as const;
 
-  constructor(private readonly _translateService: TranslateService) {}
+  currentLanguage$!: Observable<string>;
+
+  constructor(private readonly _translateService: TranslateService) {
+    this.currentLanguage$ = this._translateService.onLangChange.pipe(
+      map(event => event.lang),
+      startWith(this.getCurrentLanguage())
+    );
+  }
 
   init() {
     this.setDefaultLanguage();
@@ -37,11 +44,6 @@ export class LocalizationService {
   getCurrentLanguage(): string {
     return this._translateService.currentLang ? this._translateService.currentLang : this.getLanguage();
   }
-
-  currentLanguage$ = this._translateService.onLangChange.pipe(
-    map(event => event.lang),
-    startWith(this.getCurrentLanguage())
-  );
 
   setLanguage(language: string) {
     this._translateService.use(language);
