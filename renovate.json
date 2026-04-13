@@ -13,6 +13,12 @@
   "packageRules": [
 
     {
+      "description": "Add javascript label to match Dependabot language label convention",
+      "matchManagers": ["npm"],
+      "addLabels": ["javascript"]
+    },
+
+    {
       "description": "Angular and NX: manual upgrade only (ng update / nx migrate)",
       "matchPackagePatterns": [
         "^@angular/",
