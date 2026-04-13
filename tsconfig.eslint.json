@@ -2,6 +2,7 @@
   "extends": "./tsconfig.base.json",
   "include": [
     "./apps/**/*.ts",
-    "./libs/**/*.ts"
+    "./libs/**/*.ts",
+    "./libs/**/.storybook/*.ts"
   ]
 }
