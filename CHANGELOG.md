@@ -1,5 +1,52 @@
 # Changelog
 
+## [13.1.0](https://github.com/dasch-swiss/dsp-app/compare/v13.0.0...v13.1.0) (2026-04-13)
+
+
+### Enhancements
+
+* **landing-page:** add footer to project overview page ([#2969](https://github.com/dasch-swiss/dsp-app/issues/2969)) ([756841c](https://github.com/dasch-swiss/dsp-app/commit/756841cae71afd58f4e6376246b3c764d8c02ef2))
+* unify annotation target icon behavior and show full context ([#2935](https://github.com/dasch-swiss/dsp-app/issues/2935)) ([e9028ed](https://github.com/dasch-swiss/dsp-app/commit/e9028edb1dc0b753aeb226788c82836b2cd2dcc6))
+
+
+### Bug Fixes
+
+* auto-update steps skipped when check exits with failure ([#2952](https://github.com/dasch-swiss/dsp-app/issues/2952)) ([7d2d89c](https://github.com/dasch-swiss/dsp-app/commit/7d2d89c1d2037b793bbce65996887db1b995b5e8))
+* **ci:** allow skipped e2e result in aggregator ([#2957](https://github.com/dasch-swiss/dsp-app/issues/2957)) ([7ec43e1](https://github.com/dasch-swiss/dsp-app/commit/7ec43e18161cd54de35e319c4b2b838f6a479025))
+* **deps:** add javascript label to Renovate npm PRs to match Dependabot convention ([#2983](https://github.com/dasch-swiss/dsp-app/issues/2983)) ([e623065](https://github.com/dasch-swiss/dsp-app/commit/e62306558a5a30f4ffeea0f51415e7a8ea4782bb))
+* **deps:** improve Dependabot grouping, ignore rules and schedule ([#2962](https://github.com/dasch-swiss/dsp-app/issues/2962)) ([3a8e5e3](https://github.com/dasch-swiss/dsp-app/commit/3a8e5e3f1623c08392a8e205ca57e22b09175fed))
+* improve separator between multiple property values ([#2949](https://github.com/dasch-swiss/dsp-app/issues/2949)) ([e57d550](https://github.com/dasch-swiss/dsp-app/commit/e57d5502deadb788decd8df17254734aa06f2a7f))
+* use GITHUB_TOKEN for checkout, DASCHBOT_PAT for gh pr create ([#2967](https://github.com/dasch-swiss/dsp-app/issues/2967)) ([0eef58e](https://github.com/dasch-swiss/dsp-app/commit/0eef58e757ee484a87a6c96da40da4a0c973416c))
+
+
+### Maintenances
+
+* add Cloud Run PR preview deployment ([#2973](https://github.com/dasch-swiss/dsp-app/issues/2973)) ([4dcf3c0](https://github.com/dasch-swiss/dsp-app/commit/4dcf3c038eb18f26a2569e292ae74d659ea15714))
+* add storybook and stories on UI components ([#2958](https://github.com/dasch-swiss/dsp-app/issues/2958)) ([8094b65](https://github.com/dasch-swiss/dsp-app/commit/8094b650d9770146714be7df1bb77b923bb51f8f))
+* create auto-update PR on any branch, guard by version and open PR ([#2950](https://github.com/dasch-swiss/dsp-app/issues/2950)) ([529f492](https://github.com/dasch-swiss/dsp-app/commit/529f4921c4c5d345eb8653787e9f40abbba403b5))
+* **deps-dev:** bump @hono/node-server from 1.19.11 to 1.19.13 ([#2970](https://github.com/dasch-swiss/dsp-app/issues/2970)) ([6dfb4b2](https://github.com/dasch-swiss/dsp-app/commit/6dfb4b2a631936056506720268d55f8aa2dd52c6))
+* **deps-dev:** bump @openapitools/openapi-generator-cli from 2.30.2 to 2.31.0 ([#2944](https://github.com/dasch-swiss/dsp-app/issues/2944)) ([1251bd0](https://github.com/dasch-swiss/dsp-app/commit/1251bd074c66c7ae942013e5ed27e4457468cbf6))
+* **deps-dev:** bump brace-expansion from 1.1.12 to 1.1.13 ([#2947](https://github.com/dasch-swiss/dsp-app/issues/2947)) ([e8d5348](https://github.com/dasch-swiss/dsp-app/commit/e8d53489fa9b83635eb793822c359fdc91daeb7c))
+* **deps-dev:** bump hono from 4.12.7 to 4.12.12 ([#2971](https://github.com/dasch-swiss/dsp-app/issues/2971)) ([b288db2](https://github.com/dasch-swiss/dsp-app/commit/b288db2ef2533d736bfbd1988a0857ae024295aa))
+* **deps-dev:** bump the swc-deps group across 1 directory with 2 updates ([#2963](https://github.com/dasch-swiss/dsp-app/issues/2963)) ([5526a9f](https://github.com/dasch-swiss/dsp-app/commit/5526a9f141c48a97df89eb23f2f005110643d238))
+* **deps-dev:** bump ts-jest from 29.4.6 to 29.4.9 in the jest-deps group across 1 directory ([#2965](https://github.com/dasch-swiss/dsp-app/issues/2965)) ([bd92563](https://github.com/dasch-swiss/dsp-app/commit/bd925634131402534ba80f042f3bd87730b3947e))
+* **deps:** bump @sentry/angular from 10.45.0 to 10.46.0 in the sentry-deps group across 1 directory ([#2942](https://github.com/dasch-swiss/dsp-app/issues/2942)) ([de92fc0](https://github.com/dasch-swiss/dsp-app/commit/de92fc07eb9abbc2972c538e22e61914acca8817))
+* **deps:** bump actions/cache from 4 to 5 ([#2964](https://github.com/dasch-swiss/dsp-app/issues/2964)) ([45d57a6](https://github.com/dasch-swiss/dsp-app/commit/45d57a62e12cf262938c00e2e7240f144bad8e97))
+* **deps:** bump codecov/codecov-action from 5 to 6 ([#2939](https://github.com/dasch-swiss/dsp-app/issues/2939)) ([594b402](https://github.com/dasch-swiss/dsp-app/commit/594b402c9f539a11bcac9c815298a9d1a9beb599))
+* **deps:** bump handlebars from 4.7.8 to 4.7.9 ([#2945](https://github.com/dasch-swiss/dsp-app/issues/2945)) ([315fb07](https://github.com/dasch-swiss/dsp-app/commit/315fb07f7ee0a7940d7f135fd05b50a2e48d19ab))
+* **deps:** bump node-forge from 1.3.3 to 1.4.0 ([#2946](https://github.com/dasch-swiss/dsp-app/issues/2946)) ([54c6090](https://github.com/dasch-swiss/dsp-app/commit/54c6090d9752c00bbeb7e9d60cb4765fc4a6eaf0))
+* **deps:** bump the angular-patches group across 1 directory with 4 updates ([#2966](https://github.com/dasch-swiss/dsp-app/issues/2966)) ([cc35b70](https://github.com/dasch-swiss/dsp-app/commit/cc35b70a22acc81aa501559ab6ffd421cba1509a))
+* **deps:** bump the grafana-deps group across 1 directory with 3 updates ([#2941](https://github.com/dasch-swiss/dsp-app/issues/2941)) ([3d75a16](https://github.com/dasch-swiss/dsp-app/commit/3d75a1678dcb89f0cb1c340e48552ebe5d180abf))
+* **deps:** migrate npm updates from Dependabot to Renovate ([#2975](https://github.com/dasch-swiss/dsp-app/issues/2975)) ([007040b](https://github.com/dasch-swiss/dsp-app/commit/007040b35b82fe5456b501f24ac731c96c1f746a))
+* make storybook available globally, add readme ([#2976](https://github.com/dasch-swiss/dsp-app/issues/2976)) ([af29b63](https://github.com/dasch-swiss/dsp-app/commit/af29b63af89a2e1b4c03a5e0a4ca67a46f4bfeec))
+* **open-api:** bump dsp-api spec v35.3.0-4-g5c5a4bb → v35.4.0-4-g0c816ba ([#2955](https://github.com/dasch-swiss/dsp-app/issues/2955)) ([5e645c8](https://github.com/dasch-swiss/dsp-app/commit/5e645c8130c4c2e18ef0ac5e41edcdb5a4b9a111))
+* **open-api:** bump dsp-api spec v35.4.0-4-g0c816ba → v35.4.0-11-g8b8a765 ([#2959](https://github.com/dasch-swiss/dsp-app/issues/2959)) ([882b2c3](https://github.com/dasch-swiss/dsp-app/commit/882b2c39073a65c5f13f2eeb12fe50d7ba66f69f))
+
+
+### Tests
+
+* speed up e2e suite with parallel CI runners and reduced DB resets ([#2956](https://github.com/dasch-swiss/dsp-app/issues/2956)) ([fa4db66](https://github.com/dasch-swiss/dsp-app/commit/fa4db669d84f335a2acfefe28619bea8c73cf0d3))
+
 ## [13.0.0](https://github.com/dasch-swiss/dsp-app/compare/v12.10.0...v13.0.0) (2026-03-27)
 
 
