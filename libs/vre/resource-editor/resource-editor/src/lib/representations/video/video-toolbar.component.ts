@@ -6,7 +6,6 @@ import { MatIcon, MatIconRegistry } from '@angular/material/icon';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatTooltip, TooltipPosition } from '@angular/material/tooltip';
 import { DomSanitizer } from '@angular/platform-browser';
-import { ReadMovingImageFileValue, ReadResource } from '@dasch-swiss/dsp-js';
 import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import { TimePipe } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -16,6 +15,7 @@ import {
   CreateSegmentDialogProps,
 } from '../../segment-support/create-segment-dialog.component';
 import { MovingImageSidecar } from '../moving-image-sidecar';
+import { FileRepresentationInput, ParentResourceInput } from '../representation-inputs';
 import { ResourceFetcherService } from '../resource-fetcher.service';
 import { MediaPlayerService } from './media-player.service';
 import { VideoMoreButtonComponent } from './video-more-button.component';
@@ -96,8 +96,8 @@ import { VideoMoreButtonComponent } from './video-more-button.component';
   ],
 })
 export class VideoToolbarComponent {
-  @Input({ required: true }) src!: ReadMovingImageFileValue;
-  @Input({ required: true }) parentResource!: ReadResource;
+  @Input({ required: true }) src!: FileRepresentationInput;
+  @Input({ required: true }) parentResource!: ParentResourceInput;
   @Input({ required: true }) fileInfo!: MovingImageSidecar;
 
   @Output() toggleCinemaMode = new EventEmitter<void>();

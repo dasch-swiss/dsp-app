@@ -14,7 +14,7 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "typeRoots": ["node_modules/@types", "types"],
-    "useDefineForClassFields": true,
+    "useDefineForClassFields": false,
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
     "paths": {

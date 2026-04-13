@@ -1,13 +1,13 @@
 import { Component, Input, ViewContainerRef } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
-import { ReadResource } from '@dasch-swiss/dsp-js';
 import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import { TranslatePipe } from '@ngx-translate/core';
 import {
   ReplaceFileDialogComponent,
   ReplaceFileDialogProps,
 } from './replace-file-dialog/replace-file-dialog.component';
+import { ParentResourceInput } from './representation-inputs';
 
 export interface ReplaceFileDialogConfig {
   title: string;
@@ -25,7 +25,7 @@ export interface ReplaceFileDialogConfig {
 })
 export class ReplaceFileMenuItemComponent {
   @Input({ required: true }) dialogConfig!: ReplaceFileDialogConfig;
-  @Input({ required: true }) parentResource!: ReadResource;
+  @Input({ required: true }) parentResource!: ParentResourceInput;
   @Input({ required: true }) viewContainerRef!: ViewContainerRef;
 
   constructor(private readonly _dialog: MatDialog) {}

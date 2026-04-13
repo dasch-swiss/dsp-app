@@ -5,13 +5,13 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatIcon, MatIconRegistry } from '@angular/material/icon';
 import { MatToolbar } from '@angular/material/toolbar';
 import { DomSanitizer } from '@angular/platform-browser';
-import { ReadResource } from '@dasch-swiss/dsp-js';
 import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import { firstValueFrom } from 'rxjs';
 import {
   CreateSegmentDialogComponent,
   CreateSegmentDialogProps,
 } from '../../segment-support/create-segment-dialog.component';
+import { ParentResourceInput } from '../representation-inputs';
 import { ResourceFetcherService } from '../resource-fetcher.service';
 import { MediaPlayerService } from '../video/media-player.service';
 import { AudioMoreButtonComponent } from './audio-more-button.component';
@@ -45,7 +45,7 @@ import { AudioMoreButtonComponent } from './audio-more-button.component';
   `,
 })
 export class AudioToolbarComponent implements OnInit {
-  @Input({ required: true }) parentResource!: ReadResource;
+  @Input({ required: true }) parentResource!: ParentResourceInput;
 
   durationString!: string;
 
