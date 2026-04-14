@@ -24,7 +24,18 @@
       "matchManagers": ["npm"],
       "addLabels": ["javascript"]
     },
-
+    {
+      "description": "Add github-actions label to match Dependabot convention",
+      "matchManagers": ["github-actions"],
+      "addLabels": ["github-actions"],
+      "groupName": "github-actions"
+    },
+    {
+      "description": "Add docker label to match Dependabot convention",
+      "matchManagers": ["dockerfile", "docker-compose"],
+      "addLabels": ["docker"],
+      "groupName": "docker-deps"
+    },
     {
       "description": "Angular and NX: manual upgrade only (ng update / nx migrate)",
       "matchPackagePatterns": [
