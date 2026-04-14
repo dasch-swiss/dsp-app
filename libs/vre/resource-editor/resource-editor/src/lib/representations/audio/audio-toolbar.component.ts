@@ -3,7 +3,7 @@ import { Component, Input, OnInit, ViewContainerRef } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIcon, MatIconRegistry } from '@angular/material/icon';
-import { MatToolbarRow } from '@angular/material/toolbar';
+import { MatToolbar } from '@angular/material/toolbar';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ReadResource } from '@dasch-swiss/dsp-js';
 import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
@@ -18,9 +18,9 @@ import { AudioMoreButtonComponent } from './audio-more-button.component';
 
 @Component({
   selector: 'app-audio-toolbar',
-  imports: [AsyncPipe, MatIconButton, MatIcon, MatToolbarRow, AudioMoreButtonComponent],
+  imports: [AsyncPipe, MatIconButton, MatIcon, MatToolbar, AudioMoreButtonComponent],
   template: `
-    <mat-toolbar-row style="background: #292929; color: white; justify-content: space-between">
+    <mat-toolbar style="background: #292929; color: white; justify-content: space-between">
       <div>
         <button data-cy="play-pause-button" mat-icon-button (click)="mediaPlayer.togglePlay()">
           <mat-icon>{{ mediaPlayer.isPaused() ? 'play_arrow' : 'pause' }}</mat-icon>
@@ -41,7 +41,7 @@ import { AudioMoreButtonComponent } from './audio-more-button.component';
         }
         <app-audio-more-button [parentResource]="parentResource" />
       </div>
-    </mat-toolbar-row>
+    </mat-toolbar>
   `,
 })
 export class AudioToolbarComponent implements OnInit {

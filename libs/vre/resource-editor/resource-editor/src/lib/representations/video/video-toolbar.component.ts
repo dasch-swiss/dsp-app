@@ -3,7 +3,7 @@ import { Component, EventEmitter, Input, Output, ViewContainerRef } from '@angul
 import { MatIconButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIcon, MatIconRegistry } from '@angular/material/icon';
-import { MatToolbarRow } from '@angular/material/toolbar';
+import { MatToolbar } from '@angular/material/toolbar';
 import { MatTooltip, TooltipPosition } from '@angular/material/tooltip';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ReadMovingImageFileValue, ReadResource } from '@dasch-swiss/dsp-js';
@@ -26,13 +26,13 @@ import { VideoMoreButtonComponent } from './video-more-button.component';
     AsyncPipe,
     MatIconButton,
     MatIcon,
-    MatToolbarRow,
+    MatToolbar,
     MatTooltip,
     VideoMoreButtonComponent,
     TranslatePipe,
     TimePipe,
   ],
-  template: ` <mat-toolbar-row style="background: black; color: white; justify-content: space-between">
+  template: ` <mat-toolbar style="background: black; color: white; justify-content: space-between">
     <div>
       <button
         mat-icon-button
@@ -86,7 +86,7 @@ import { VideoMoreButtonComponent } from './video-more-button.component';
         <mat-icon>{{ isFullscreen ? 'fullscreen_exit' : 'fullscreen' }}</mat-icon>
       </button>
     </div>
-  </mat-toolbar-row>`,
+  </mat-toolbar>`,
   styles: [
     `
       .mat-mdc-button-base .mat-icon {
