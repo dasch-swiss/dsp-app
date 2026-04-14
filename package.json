@@ -89,7 +89,6 @@
     "@faker-js/faker": "^8.3.1",
     "@jscutlery/swc-angular": "^0.22.0",
     "@jsdevtools/coverage-istanbul-loader": "^3.0.5",
-    "@nrwl/eslint-plugin-nx": "19.8.9",
     "@nx/cypress": "21.5.1",
     "@nx/eslint": "21.5.1",
     "@nx/eslint-plugin": "21.5.1",
