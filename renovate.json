@@ -18,25 +18,35 @@
     "enabled": false
   },
   "packageRules": [
-
     {
       "description": "Add javascript label to match Dependabot language label convention",
       "matchManagers": ["npm"],
       "addLabels": ["javascript"]
     },
-
+    {
+      "description": "Add github-actions label to match Dependabot convention",
+      "matchManagers": ["github-actions"],
+      "addLabels": ["github-actions"],
+      "groupName": "github-actions"
+    },
+    {
+      "description": "Add docker label to match Dependabot convention",
+      "matchManagers": ["dockerfile", "docker-compose"],
+      "addLabels": ["docker"],
+      "groupName": "docker-deps"
+    },
     {
       "description": "Angular and NX: manual upgrade only (ng update / nx migrate)",
-      "matchPackagePatterns": [
-        "^@angular/",
-        "^@angular-devkit/",
-        "^@angular-eslint/",
-        "^@schematics/angular",
-        "^nx$",
-        "^@nx/",
-        "^@nrwl/"
-      ],
-      "enabled": false
+      "enabled": false,
+      "matchPackageNames": [
+        "/^@angular//",
+        "/^@angular-devkit//",
+        "/^@angular-eslint//",
+        "/^@schematics/angular/",
+        "/^nx$/",
+        "/^@nx//",
+        "/^@nrwl//"
+      ]
     },
     {
       "description": "TypeScript: tightly coupled to Angular/NX version",
@@ -45,8 +55,11 @@
     },
     {
       "description": "ESLint ecosystem: coupled to TypeScript version",
-      "matchPackagePatterns": ["^@typescript-eslint/"],
-      "matchPackageNames": ["eslint", "eslint-plugin-angular"],
+      "matchPackageNames": [
+        "eslint",
+        "eslint-plugin-angular",
+        "/^@typescript-eslint//"
+      ],
       "enabled": false
     },
     {
@@ -71,7 +84,10 @@
     },
     {
       "description": "CKEditor: custom build + Angular adapter tracked in DEV-6208; disable both until resolved",
-      "matchPackageNames": ["ckeditor5-custom-build", "@ckeditor/ckeditor5-angular"],
+      "matchPackageNames": [
+        "ckeditor5-custom-build",
+        "@ckeditor/ckeditor5-angular"
+      ],
       "enabled": false
     },
     {
@@ -89,8 +105,8 @@
 
     {
       "description": "@jscutlery utilities: not in monorepo:swc preset — explicit standalone group",
-      "matchPackagePatterns": ["^@jscutlery/"],
-      "groupName": "jscutlery-deps"
+      "groupName": "jscutlery-deps",
+      "matchPackageNames": ["/^@jscutlery//"]
     },
     {
       "description": "@sentry/cli: lives in getsentry/sentry-cli repo, not matched by monorepo:sentry-javascript — join sentry group manually",
@@ -99,31 +115,38 @@
     },
     {
       "description": "Jest test framework and utilities (^jest pattern intentionally broad: groups all jest-* packages including future additions)",
-      "matchPackagePatterns": ["^jest", "^ts-jest$"],
-      "matchPackageNames": ["@types/jest", "reflect-metadata", "ng-mocks", "@faker-js/faker"],
+      "matchPackageNames": [
+        "@types/jest",
+        "reflect-metadata",
+        "ng-mocks",
+        "@faker-js/faker",
+        "/^jest/",
+        "/^ts-jest$/"
+      ],
       "groupName": "jest-deps"
     },
     {
       "description": "Jasmine",
-      "matchPackageNames": ["jasmine-core"],
-      "matchPackagePatterns": ["^@types/jasmine"],
+      "matchPackageNames": ["jasmine-core", "/^@types/jasmine/"],
       "groupName": "jasmine-deps"
     },
     {
       "description": "Prettier and ESLint-prettier bridge (prettier is not in the ESLint monorepo group)",
-      "matchPackageNames": ["prettier", "eslint-config-prettier", "eslint-plugin-prettier"],
+      "matchPackageNames": [
+        "prettier",
+        "eslint-config-prettier",
+        "eslint-plugin-prettier"
+      ],
       "groupName": "prettier-deps"
     },
     {
       "description": "PostCSS + autoprefixer (autoprefixer not in postcss monorepo preset)",
-      "matchPackageNames": ["autoprefixer"],
-      "matchPackagePatterns": ["^postcss"],
+      "matchPackageNames": ["autoprefixer", "/^postcss/"],
       "groupName": "postcss-deps"
     },
     {
       "description": "OpenAPI code generation",
-      "matchPackageNames": ["openapi-typescript"],
-      "matchPackagePatterns": ["^@openapitools/"],
+      "matchPackageNames": ["openapi-typescript", "/^@openapitools//"],
       "groupName": "openapi-deps"
     },
     {
@@ -154,7 +177,11 @@
     },
     {
       "description": "Third-party Angular-compatible packages (not coupled to Angular version)",
-      "matchPackageNames": ["angular-split", "angular-imask", "angular-html-parser"],
+      "matchPackageNames": [
+        "angular-split",
+        "angular-imask",
+        "angular-html-parser"
+      ],
       "groupName": "angular-ecosystem-deps"
     },
 
