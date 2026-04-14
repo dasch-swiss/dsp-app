@@ -37,13 +37,6 @@
       "groupName": "docker-deps"
     },
     {
-      "description": "node image: pinned intentionally to match Node.js version in Docker images",
-      "matchManagers": ["dockerfile", "docker-compose"],
-      "matchPackageNames": ["node"],
-      "enabled": false
-    },
-
-    {
       "description": "Angular and NX: manual upgrade only (ng update / nx migrate)",
       "matchPackagePatterns": [
         "^@angular/",
