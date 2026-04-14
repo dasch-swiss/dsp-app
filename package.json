@@ -64,7 +64,7 @@
     "ckeditor5-custom-build": "github:dasch-swiss/ckeditor_custom_build#v2.1.5",
     "json2typescript": "^1.6.1",
     "jsonld": "^8.1.0",
-    "jwt-decode": "^3.1.2",
+    "jwt-decode": "^4.0.0",
     "ng2-pdf-viewer": "^10.4.0",
     "ngx-color-picker": "^20.1.1",
     "openseadragon": "4.1.1",
