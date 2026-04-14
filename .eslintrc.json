@@ -131,8 +131,7 @@
         "*.spec.jsx"
       ],
       "env": {
-        "jest": true,
-        "jasmine": true
+        "jest": true
       },
       "rules": {
         "import/order": [

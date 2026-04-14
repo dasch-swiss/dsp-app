@@ -126,11 +126,6 @@
       "groupName": "jest-deps"
     },
     {
-      "description": "Jasmine",
-      "matchPackageNames": ["jasmine-core", "/^@types/jasmine/"],
-      "groupName": "jasmine-deps"
-    },
-    {
       "description": "Prettier and ESLint-prettier bridge (prettier is not in the ESLint monorepo group)",
       "matchPackageNames": [
         "prettier",
@@ -146,7 +141,7 @@
     },
     {
       "description": "OpenAPI code generation",
-      "matchPackageNames": ["openapi-typescript", "/^@openapitools//"],
+      "matchPackageNames": ["/^@openapitools//"],
       "groupName": "openapi-deps"
     },
     {
