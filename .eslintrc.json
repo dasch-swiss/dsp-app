@@ -4,7 +4,7 @@
     "**/*"
   ],
   "plugins": [
-    "@nrwl/nx",
+    "@nx",
     "ban",
     "unused-imports",
     "import",
@@ -31,7 +31,7 @@
         "airbnb-base",
         "airbnb-typescript/base",
         "plugin:@typescript-eslint/recommended",
-        "plugin:@nrwl/nx/typescript",
+        "plugin:@nx/typescript",
         "eslint:recommended"
       ],
       "rules": {
@@ -93,7 +93,7 @@
         "@typescript-eslint/naming-convention": "off",
         "@typescript-eslint/no-explicit-any": "off",
         "@typescript-eslint/no-unused-vars": "off",
-        "@nrwl/nx/enforce-module-boundaries": [
+        "@nx/enforce-module-boundaries": [
           "error",
           {
             "enforceBuildableLibDependency": true,
@@ -119,7 +119,7 @@
         "*.jsx"
       ],
       "extends": [
-        "plugin:@nrwl/nx/javascript"
+        "plugin:@nx/javascript"
       ],
       "rules": {}
     },
@@ -131,8 +131,7 @@
         "*.spec.jsx"
       ],
       "env": {
-        "jest": true,
-        "jasmine": true
+        "jest": true
       },
       "rules": {
         "import/order": [
