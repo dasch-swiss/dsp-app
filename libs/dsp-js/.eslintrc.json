@@ -25,7 +25,7 @@
         "createDefaultProgram": true
       },
       "rules": {
-        "@nrwl/nx/enforce-module-boundaries": "off"
+        "@nx/enforce-module-boundaries": "off"
       }
     }
   ]

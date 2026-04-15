@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { AppConfigService, DspConfig } from '@dasch-swiss/vre/core/config';
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import packageJson from '../../../../../../../package.json';
 import { FooterComponent } from '../footer/footer.component';
 import { GridComponent, GridItem } from '../grid/grid.component';
