@@ -1,0 +1,11 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "../../dist/out-tsc",
+    "types": [],
+    "useDefineForClassFields": false
+  },
+  "files": ["src/main.ts"],
+  "include": ["src/**/*.d.ts", "src/**/*.ts", "../../apps/dsp-app/src/app/**/*.ts"],
+  "exclude": ["../../apps/dsp-app/src/app/**/*.spec.ts"]
+}

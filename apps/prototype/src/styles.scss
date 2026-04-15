@@ -1,0 +1,27 @@
+@use '@angular/material' as mat;
+@use 'config';
+@use 'layout';
+@use 'elements';
+@use 'typography' as t;
+@use 'responsive';
+
+@include mat.elevation-classes();
+@include mat.app-background();
+@include mat.all-component-typographies(t.$dsp-typography-config);
+
+$primary: mat.m2-define-palette(config.$blue_palette, 700, 500, 900);
+$accent: mat.m2-define-palette(config.$light_blue_palette, 900, 600, 900);
+$warn: mat.m2-define-palette(config.$velvet_red_palette, 700, 500, 900);
+
+$theme: mat.m2-define-light-theme((
+  color: (primary: $primary, accent: $accent, warn: $warn),
+  typography: t.$dsp-typography-config,
+  density: 0
+));
+
+@include mat.all-component-themes($theme);
+
+body {
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
+  margin: 0;
+}

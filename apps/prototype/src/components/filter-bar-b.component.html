@@ -1,0 +1,457 @@
+<div class="filter-bar" role="listbox" aria-label="Active search filters">
+  <!-- Ontology chip -->
+  <button mat-stroked-button class="filter-chip foundation-chip" [matMenuTriggerFor]="ontologyMenu"
+          [class.placeholder]="!selectedOntology">
+    <mat-icon class="chip-icon">lan</mat-icon>
+    {{ selectedOntology?.label || 'Select ontology' }}
+    <mat-icon iconPositionEnd>arrow_drop_down</mat-icon>
+  </button>
+  <mat-menu #ontologyMenu="matMenu">
+    @for (onto of ontologies; track onto.iri) {
+      <button mat-menu-item (click)="ontologySelected.emit(onto)">
+        <mat-icon>lan</mat-icon>
+        {{ onto.label }}
+      </button>
+    }
+  </mat-menu>
+
+  <span class="chip-divider"></span>
+
+  <!-- Resource class chip -->
+  <button mat-stroked-button class="filter-chip foundation-chip" [matMenuTriggerFor]="rcMenu"
+          [disabled]="!selectedOntology"
+          [class.placeholder]="!selectedResourceClass">
+    @if (selectedResourceClass?.icon) { <mat-icon class="chip-icon">{{ selectedResourceClass.icon }}</mat-icon> }
+    {{ selectedResourceClass?.label || 'Select class' }}
+    <mat-icon iconPositionEnd>arrow_drop_down</mat-icon>
+  </button>
+  <mat-menu #rcMenu="matMenu">
+    <button mat-menu-item (click)="resourceClassSelected.emit(null)">
+      <em>All resource classes</em>
+    </button>
+    @for (rc of resourceClasses; track rc.iri) {
+      <button mat-menu-item (click)="resourceClassSelected.emit(rc)">
+        @if (rc.icon) { <mat-icon>{{ rc.icon }}</mat-icon> }
+        {{ rc.label }}
+      </button>
+    }
+  </mat-menu>
+
+  <span class="chip-divider"></span>
+
+  <!-- Property condition chips — segmented: each part is independently clickable -->
+  @for (condition of conditions; track condition.id; let i = $index) {
+    @if (i > 0) {
+      <span class="logic-operator">AND</span>
+    }
+    <div class="condition-wrapper" role="option">
+      @if (isMatchesCondition(condition)) {
+        <!-- Matches condition: wrapping container with sub-conditions -->
+        <div class="matches-chip">
+          <div class="matches-header">
+            <mat-icon class="chip-icon link-icon">link</mat-icon>
+            <span class="chip-part chip-segment" [matMenuTriggerFor]="matchPropMenu">{{ condition.property?.label }}</span>
+            <mat-menu #matchPropMenu="matMenu">
+              @for (prop of properties; track prop.iri) {
+                <button mat-menu-item (click)="onChangeProperty(condition, prop)">
+                  <mat-icon>{{ getPropertyIcon(prop) }}</mat-icon>
+                  {{ prop.label }}
+                </button>
+              }
+            </mat-menu>
+            <span class="chip-sep"></span>
+            <span class="chip-part chip-operator chip-segment" [matMenuTriggerFor]="matchOpMenu">matches</span>
+            <mat-menu #matchOpMenu="matMenu">
+              @for (op of getOperators(condition.property); track op) {
+                <button mat-menu-item (click)="onChangeOperator(condition, op)">{{ op }}</button>
+              }
+            </mat-menu>
+            <span class="chip-sep"></span>
+            <span class="chip-part">{{ condition.linkedResourceClass?.label || 'Select class...' }}</span>
+            <span class="matches-spacer"></span>
+            <span class="chip-remove"
+                  (click)="conditionRemoved.emit(condition); $event.stopPropagation()"
+                  matTooltip="Remove filter">
+              <mat-icon>close</mat-icon>
+            </span>
+          </div>
+          @if (condition.linkedResourceClass) {
+            <div class="matches-body">
+              @for (sub of condition.subConditions; track sub.id; let j = $index) {
+                @if (j > 0) {
+                  <span class="logic-operator">AND</span>
+                }
+                <div class="filter-chip condition-chip sub-chip"
+                     [class.incomplete]="!sub.property || !sub.operator">
+                  <span class="chip-label">
+                    @if (sub.property) {
+                      <!-- Property segment — cascading into operators -->
+                      <span class="chip-part chip-segment" [matMenuTriggerFor]="subPropMenu">{{ sub.property.label }}</span>
+                      <mat-menu #subPropMenu="matMenu">
+                        @for (prop of getLinkedClassProperties(condition.linkedResourceClass!); track prop.iri) {
+                          <button mat-menu-item [matMenuTriggerFor]="subChangePropOpMenu"
+                                  (click)="sub.property = prop; sub.operator = null; sub.value = null">
+                            <mat-icon>{{ getPropertyIcon(prop) }}</mat-icon>
+                            {{ prop.label }}
+                          </button>
+                          <mat-menu #subChangePropOpMenu="matMenu">
+                            @for (op of getOperators(prop); track op) {
+                              @if (needsValueInput(op)) {
+                                <button mat-menu-item [matMenuTriggerFor]="subChangeValMenu"
+                                        (menuOpened)="subValInput.focus()">{{ op }}</button>
+                                <mat-menu #subChangeValMenu="matMenu" class="value-input-menu">
+                                  <div class="cascade-value-panel" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()">
+                                    <input class="cascade-value-input" placeholder="Enter value..." #subValInput
+                                           (keydown.enter)="sub.property = prop; sub.operator = op; sub.value = subValInput.value; $event.preventDefault(); $event.stopPropagation()" />
+                                    <button mat-flat-button color="primary" class="cascade-value-confirm"
+                                            (click)="sub.property = prop; sub.operator = op; sub.value = subValInput.value">
+                                      <mat-icon>check</mat-icon>
+                                    </button>
+                                  </div>
+                                </mat-menu>
+                              } @else {
+                                <button mat-menu-item (click)="sub.property = prop; sub.operator = op; sub.value = null">{{ op }}</button>
+                              }
+                            }
+                          </mat-menu>
+                        }
+                      </mat-menu>
+                    }
+                    @if (sub.operator) {
+                      <span class="chip-sep"></span>
+                      <span class="chip-part chip-operator chip-segment" [matMenuTriggerFor]="subOpMenu">{{ sub.operator }}</span>
+                      <mat-menu #subOpMenu="matMenu">
+                        @for (op of getOperators(sub.property); track op) {
+                          @if (needsValueInput(op)) {
+                            <button mat-menu-item [matMenuTriggerFor]="subOpValMenu"
+                                    (menuOpened)="subOpValInput.focus()">{{ op }}</button>
+                            <mat-menu #subOpValMenu="matMenu" class="value-input-menu">
+                              <div class="cascade-value-panel" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()">
+                                <input class="cascade-value-input" placeholder="Enter value..." #subOpValInput
+                                       (keydown.enter)="sub.operator = op; sub.value = subOpValInput.value; $event.preventDefault(); $event.stopPropagation()" />
+                                <button mat-flat-button color="primary" class="cascade-value-confirm"
+                                        (click)="sub.operator = op; sub.value = subOpValInput.value">
+                                  <mat-icon>check</mat-icon>
+                                </button>
+                              </div>
+                            </mat-menu>
+                          } @else {
+                            <button mat-menu-item (click)="sub.operator = op; sub.value = null">{{ op }}</button>
+                          }
+                        }
+                      </mat-menu>
+                    }
+                    @if (sub.value) {
+                      <span class="chip-sep"></span>
+                      <span class="chip-part chip-value chip-segment" (click)="openValueEdit(sub)">{{ sub.value }}</span>
+                    }
+                    @if (!sub.property) {
+                      <!-- New sub-condition: full cascade property → operator → value -->
+                      <span class="chip-part chip-placeholder chip-segment" [matMenuTriggerFor]="subNewPropMenu">condition...</span>
+                      <mat-menu #subNewPropMenu="matMenu">
+                        @for (prop of getLinkedClassProperties(condition.linkedResourceClass!); track prop.iri) {
+                          <button mat-menu-item [matMenuTriggerFor]="subNewOpMenu">
+                            <mat-icon>{{ getPropertyIcon(prop) }}</mat-icon>
+                            {{ prop.label }}
+                          </button>
+                          <mat-menu #subNewOpMenu="matMenu">
+                            @for (op of getOperators(prop); track op) {
+                              @if (needsValueInput(op)) {
+                                <button mat-menu-item [matMenuTriggerFor]="subNewValMenu"
+                                        (menuOpened)="subNewValInput.focus()">{{ op }}</button>
+                                <mat-menu #subNewValMenu="matMenu" class="value-input-menu">
+                                  <div class="cascade-value-panel" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()">
+                                    <input class="cascade-value-input" placeholder="Enter value..." #subNewValInput
+                                           (keydown.enter)="sub.property = prop; sub.operator = op; sub.value = subNewValInput.value; $event.preventDefault(); $event.stopPropagation()" />
+                                    <button mat-flat-button color="primary" class="cascade-value-confirm"
+                                            (click)="sub.property = prop; sub.operator = op; sub.value = subNewValInput.value">
+                                      <mat-icon>check</mat-icon>
+                                    </button>
+                                  </div>
+                                </mat-menu>
+                              } @else {
+                                <button mat-menu-item (click)="sub.property = prop; sub.operator = op; sub.value = null">{{ op }}</button>
+                              }
+                            }
+                          </mat-menu>
+                        }
+                      </mat-menu>
+                    }
+                  </span>
+                  <span class="chip-remove"
+                        (click)="removeSubCondition(condition, sub); $event.stopPropagation()"
+                        matTooltip="Remove">
+                    <mat-icon>close</mat-icon>
+                  </span>
+                </div>
+              }
+              <button mat-stroked-button class="add-btn sub-add-btn"
+                      (click)="addSubCondition(condition)" matTooltip="Add sub-condition">
+                <mat-icon>add</mat-icon>
+              </button>
+            </div>
+          }
+        </div>
+      } @else {
+      <div class="filter-chip condition-chip"
+              [class.linked]="condition.property?.isLinkedResourceProperty">
+        @if (condition.property?.isLinkedResourceProperty) {
+          <mat-icon class="chip-icon link-icon">link</mat-icon>
+        }
+        <span class="chip-label">
+          <!-- Property segment — click opens property menu -->
+          @if (condition.property) {
+            <span class="chip-part chip-segment" [matMenuTriggerFor]="propMenu">
+              {{ condition.property.label }}
+            </span>
+            <mat-menu #propMenu="matMenu">
+              @for (prop of properties; track prop.iri) {
+                <button mat-menu-item (click)="onChangeProperty(condition, prop)">
+                  <mat-icon>{{ getPropertyIcon(prop) }}</mat-icon>
+                  {{ prop.label }}
+                </button>
+              }
+            </mat-menu>
+          }
+
+          <!-- Operator segment — click opens operator menu -->
+          @if (condition.operator) {
+            <span class="chip-sep"></span>
+            <span class="chip-part chip-operator chip-segment" [matMenuTriggerFor]="opMenu">
+              {{ condition.operator }}
+            </span>
+            <mat-menu #opMenu="matMenu">
+              @for (op of getOperators(condition.property); track op) {
+                <button mat-menu-item (click)="onChangeOperator(condition, op)">{{ op }}</button>
+              }
+            </mat-menu>
+          }
+
+          <!-- Value segment — type-specific editing -->
+          @if (needsValueInputForProperty(condition.operator, condition.property)) {
+            <span class="chip-sep"></span>
+            @switch (getValueType(condition.property)) {
+              @case ('boolean') {
+                <span class="chip-part chip-value chip-segment" [matMenuTriggerFor]="boolValMenu">
+                  {{ condition.value || 'select...' }}
+                </span>
+                <mat-menu #boolValMenu="matMenu">
+                  <button mat-menu-item (click)="onSegmentValueChanged(condition, 'True')">True</button>
+                  <button mat-menu-item (click)="onSegmentValueChanged(condition, 'False')">False</button>
+                </mat-menu>
+              }
+              @case ('list') {
+                <span class="chip-part chip-value chip-segment" [matMenuTriggerFor]="listValMenu">
+                  {{ condition.value || 'select...' }}
+                </span>
+                <mat-menu #listValMenu="matMenu">
+                  @for (node of getListNodes(condition.property); track node.iri) {
+                    <button mat-menu-item (click)="onSegmentValueChanged(condition, node.label)">{{ node.label }}</button>
+                  }
+                </mat-menu>
+              }
+              @case ('date') {
+                <span class="chip-part chip-value chip-segment" (click)="chipDatePicker.open()">
+                  {{ condition.value || 'select date...' }}
+                </span>
+                <input [matDatepicker]="chipDatePicker" class="hidden-date-input"
+                       (dateChange)="onSegmentValueChanged(condition, $event.value?.toLocaleDateString() || '')" />
+                <mat-datepicker #chipDatePicker></mat-datepicker>
+              }
+              @case ('color') {
+                <span class="chip-part chip-value chip-segment" style="display: inline-flex; align-items: center; gap: 4px; cursor: pointer;"
+                      [colorPicker]="condition.value || '#ff0000'"
+                      [cpOutputFormat]="'hex'"
+                      (colorPickerChange)="onSegmentValueChanged(condition, $event)">
+                  <span class="color-swatch" [style.background]="condition.value || '#ff0000'"></span>
+                  {{ condition.value || 'select color...' }}
+                </span>
+              }
+              @default {
+                <!-- Text, number, URI — inline text edit -->
+                @if (editingValueConditionId !== condition.id) {
+                  <span class="chip-part chip-value chip-segment"
+                        [class.chip-placeholder]="!condition.value"
+                        (click)="openValueEdit(condition)">
+                    {{ condition.value || 'enter value...' }}
+                  </span>
+                } @else {
+                  <span class="chip-part chip-value-edit">
+                    <input class="inline-value-input"
+                           [type]="getValueType(condition.property) === 'integer' || getValueType(condition.property) === 'decimal' ? 'number' : 'text'"
+                           [placeholder]="getValueType(condition.property) === 'date' ? 'JULIAN:1492' : getValueType(condition.property) === 'uri' ? 'https://...' : 'Enter value...'"
+                           [(ngModel)]="editingValueText"
+                           (keydown.enter)="confirmValueEdit(condition)"
+                           (keydown.escape)="cancelValueEdit()"
+                           (blur)="confirmValueEdit(condition)"
+                           autofocus />
+                  </span>
+                }
+              }
+            }
+          }
+        </span>
+        <span class="chip-remove"
+              (click)="conditionRemoved.emit(condition); $event.stopPropagation()"
+              [attr.aria-label]="'Remove filter: ' + formatChipLabel(condition)"
+              matTooltip="Remove filter">
+          <mat-icon>close</mat-icon>
+        </span>
+      </div>
+      }
+    </div>
+  }
+
+  <!-- Add condition button — cascading menu: property → operator → (value) -->
+  <button mat-stroked-button class="add-btn" [disabled]="!selectedOntology"
+          [matMenuTriggerFor]="addPropMenu" #addMenuTrigger="matMenuTrigger" matTooltip="Add condition">
+    <mat-icon>add</mat-icon>
+  </button>
+  <mat-menu #addPropMenu="matMenu">
+    @for (prop of properties; track prop.iri) {
+      <button mat-menu-item [matMenuTriggerFor]="operatorSubMenu">
+        <mat-icon>{{ getPropertyIcon(prop) }}</mat-icon>
+        {{ prop.label }}
+      </button>
+      <mat-menu #operatorSubMenu="matMenu">
+        @for (op of getOperators(prop); track op) {
+          @if (needsValueInputForProperty(op, prop)) {
+            @switch (getValueType(prop)) {
+              @case ('boolean') {
+                <!-- Boolean: submenu with True/False -->
+                <button mat-menu-item [matMenuTriggerFor]="boolSubMenu">{{ op }}</button>
+                <mat-menu #boolSubMenu="matMenu">
+                  <button mat-menu-item (click)="onCascadeCompleteWithValue(prop, op, 'True')">True</button>
+                  <button mat-menu-item (click)="onCascadeCompleteWithValue(prop, op, 'False')">False</button>
+                </mat-menu>
+              }
+              @case ('list') {
+                <!-- List: submenu with list nodes -->
+                <button mat-menu-item [matMenuTriggerFor]="listSubMenu">{{ op }}</button>
+                <mat-menu #listSubMenu="matMenu">
+                  @for (node of getListNodes(prop); track node.iri) {
+                    <button mat-menu-item (click)="onCascadeCompleteWithValue(prop, op, node.label)">{{ node.label }}</button>
+                  }
+                </mat-menu>
+              }
+              @case ('integer') {
+                <!-- Integer: text input -->
+                <button mat-menu-item [matMenuTriggerFor]="valueSubMenu"
+                        (menuOpened)="valueInput.focus()">{{ op }}</button>
+                <mat-menu #valueSubMenu="matMenu" class="value-input-menu">
+                  <div class="cascade-value-panel" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()">
+                    <input class="cascade-value-input" type="number" step="1"
+                           placeholder="Integer..."
+                           #valueInput
+                           (keydown.enter)="onCascadeCompleteWithValue(prop, op, valueInput.value); $event.preventDefault(); $event.stopPropagation()" />
+                    <button mat-flat-button color="primary" class="cascade-value-confirm"
+                            (click)="onCascadeCompleteWithValue(prop, op, valueInput.value)">
+                      <mat-icon>check</mat-icon>
+                    </button>
+                  </div>
+                </mat-menu>
+              }
+              @case ('date') {
+                <!-- Date: button that opens datepicker in submenu -->
+                <button mat-menu-item [matMenuTriggerFor]="dateSubMenu">{{ op }}</button>
+                <mat-menu #dateSubMenu="matMenu" class="value-input-menu">
+                  <div class="cascade-value-panel" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()">
+                    <button mat-stroked-button class="cascade-date-btn" (click)="cascadeDatePicker.open()">
+                      <mat-icon>calendar_today</mat-icon>
+                      Select date
+                    </button>
+                    <input [matDatepicker]="cascadeDatePicker" class="hidden-date-input"
+                           #cascadeDateInput
+                           (dateChange)="onCascadeCompleteWithValue(prop, op, $event.value?.toLocaleDateString() || '')" />
+                    <mat-datepicker #cascadeDatePicker></mat-datepicker>
+                  </div>
+                </mat-menu>
+              }
+              @case ('uri') {
+                <!-- URI: text input -->
+                <button mat-menu-item [matMenuTriggerFor]="valueSubMenu"
+                        (menuOpened)="valueInput.focus()">{{ op }}</button>
+                <mat-menu #valueSubMenu="matMenu" class="value-input-menu">
+                  <div class="cascade-value-panel" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()">
+                    <input class="cascade-value-input"
+                           placeholder="https://..."
+                           #valueInput
+                           (keydown.enter)="onCascadeCompleteWithValue(prop, op, valueInput.value); $event.preventDefault(); $event.stopPropagation()" />
+                    <button mat-flat-button color="primary" class="cascade-value-confirm"
+                            (click)="onCascadeCompleteWithValue(prop, op, valueInput.value)">
+                      <mat-icon>check</mat-icon>
+                    </button>
+                  </div>
+                </mat-menu>
+              }
+              @case ('color') {
+                <!-- Color: submenu with color picker button -->
+                <button mat-menu-item [matMenuTriggerFor]="colorSubMenu">{{ op }}</button>
+                <mat-menu #colorSubMenu="matMenu" class="value-input-menu">
+                  <div class="cascade-value-panel" (click)="$event.stopPropagation()">
+                    <button mat-stroked-button class="cascade-color-btn"
+                            [colorPicker]="'#ff0000'"
+                            [cpOutputFormat]="'hex'"
+                            (colorPickerChange)="onCascadeCompleteWithValue(prop, op, $event)">
+                      <mat-icon>palette</mat-icon>
+                      Select color
+                    </button>
+                  </div>
+                </mat-menu>
+              }
+              @default {
+                <!-- Text / other: free text input -->
+                <button mat-menu-item [matMenuTriggerFor]="valueSubMenu"
+                        (menuOpened)="valueInput.focus()">{{ op }}</button>
+                <mat-menu #valueSubMenu="matMenu" class="value-input-menu">
+                  <div class="cascade-value-panel" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()">
+                    <input class="cascade-value-input"
+                           placeholder="Enter value..."
+                           #valueInput
+                           (keydown.enter)="onCascadeCompleteWithValue(prop, op, valueInput.value); $event.preventDefault(); $event.stopPropagation()" />
+                    <button mat-flat-button color="primary" class="cascade-value-confirm"
+                            (click)="onCascadeCompleteWithValue(prop, op, valueInput.value)">
+                      <mat-icon>check</mat-icon>
+                    </button>
+                  </div>
+                </mat-menu>
+              }
+            }
+          } @else {
+            <!-- Operator without value (exists/not exists) → complete immediately -->
+            <button mat-menu-item (click)="onCascadeComplete(prop, op)">{{ op }}</button>
+          }
+        }
+      </mat-menu>
+    }
+  </mat-menu>
+
+  <!-- Spacer pushes sort + search to right -->
+  <span class="spacer"></span>
+
+  <!-- Sort by -->
+  <button mat-stroked-button class="filter-chip sort-chip" [disabled]="!selectedOntology"
+          [matMenuTriggerFor]="sortMenu">
+    <mat-icon class="chip-icon">sort</mat-icon>
+    {{ sortBy || 'Sort by' }}
+    <mat-icon iconPositionEnd>arrow_drop_down</mat-icon>
+  </button>
+  <mat-menu #sortMenu="matMenu">
+    <button mat-menu-item (click)="sortByChanged.emit(null)"><em>No sorting</em></button>
+    @for (prop of properties; track prop.iri) {
+      <button mat-menu-item (click)="sortByChanged.emit(prop.label)">
+        <mat-icon>{{ getPropertyIcon(prop) }}</mat-icon>
+        {{ prop.label }}
+      </button>
+    }
+  </mat-menu>
+
+  <!-- Search button -->
+  <button mat-flat-button color="primary" class="search-btn"
+          [disabled]="!canSearch"
+          [class.stale]="isStale"
+          (click)="searchTriggered.emit()">
+    <mat-icon>search</mat-icon>
+    Search
+  </button>
+</div>

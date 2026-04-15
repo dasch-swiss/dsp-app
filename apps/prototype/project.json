@@ -1,0 +1,55 @@
+{
+  "name": "prototype",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/prototype/src",
+  "projectType": "application",
+  "prefix": "proto",
+  "targets": {
+    "build": {
+      "executor": "@angular-devkit/build-angular:browser",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/prototype",
+        "index": "apps/prototype/src/index.html",
+        "main": "apps/prototype/src/main.ts",
+        "tsConfig": "apps/prototype/tsconfig.app.json",
+        "inlineStyleLanguage": "scss",
+        "assets": [
+          {
+            "glob": "**/*",
+            "input": "apps/dsp-app/src/assets",
+            "output": "/assets"
+          }
+        ],
+        "styles": ["apps/prototype/src/styles.scss"],
+        "stylePreprocessorOptions": {
+          "includePaths": ["apps/dsp-app/src/styles"]
+        },
+        "scripts": []
+      },
+      "configurations": {
+        "development": {
+          "buildOptimizer": false,
+          "optimization": false,
+          "vendorChunk": true,
+          "extractLicenses": false,
+          "sourceMap": true,
+          "namedChunks": true
+        }
+      },
+      "defaultConfiguration": "development"
+    },
+    "serve": {
+      "executor": "@angular-devkit/build-angular:dev-server",
+      "options": {
+        "buildTarget": "prototype:build",
+        "port": 4201
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "prototype:build:development"
+        }
+      }
+    }
+  }
+}
