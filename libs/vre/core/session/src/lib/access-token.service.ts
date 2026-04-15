@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Auth, LocalStorageLanguageKey } from '@dasch-swiss/vre/core/config';
-import jwt_decode, { JwtPayload } from 'jwt-decode';
+import { jwtDecode, JwtPayload } from 'jwt-decode';
 
 @Injectable({ providedIn: 'root' })
 export class AccessTokenService {
@@ -37,7 +37,7 @@ export class AccessTokenService {
 
   decodeAccessToken(token: string): JwtPayload | null {
     try {
-      return jwt_decode<JwtPayload>(token);
+      return jwtDecode<JwtPayload>(token);
     } catch (e) {
       return null;
     }
