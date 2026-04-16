@@ -137,6 +137,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           PR_NUMBER=$(gh pr list \
+            --repo "${{ github.repository }}" \
             --head "${{ github.ref_name }}" \
             --state open \
             --json number \
