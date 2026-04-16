@@ -99,7 +99,7 @@
     "@nx/workspace": "21.5.1",
     "@openapitools/openapi-generator-cli": "^2.31.1",
     "@schematics/angular": "20.2.2",
-    "@sentry/cli": "^2.58.5",
+    "@sentry/cli": "^3.0.0",
     "@storybook/angular": "9.1.20",
     "@storybook/test-runner": "^0.23.0",
     "@swc-node/register": "1.11.1",
