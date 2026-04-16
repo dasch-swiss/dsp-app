@@ -5,15 +5,32 @@
 [![CI](https://github.com/dasch-swiss/dsp-app/workflows/CI/badge.svg)](https://github.com/dasch-swiss/dsp-app/actions?query=workflow%3ACI)
 [![codecov](https://codecov.io/gh/dasch-swiss/dsp-app/branch/main/graph/badge.svg)](https://codecov.io/gh/dasch-swiss/dsp-app)
 
-This monorepo hosts various libraries of the DaSCH Service Platform and it is built on:
+DSP-APP is the user interface for the [DaSCH Service Platform](https://dasch.swiss) — a software framework for storing, sharing, and working with primary resources and data in the humanities. It connects to [DSP-API](https://github.com/dasch-swiss/dsp-api) via [DSP-JS](libs/dsp-js/) and is released under the [GNU Affero General Public License](http://www.gnu.org/licenses/agpl-3.0.en.html).
 
-- Nx - See [package.json](https://github.com/dasch-swiss/dsp-app/blob/main/package.json) for current version
-- Angular - See [package.json](https://github.com/dasch-swiss/dsp-app/blob/main/package.json) for current version
-- Node.js - Version managed via [.nvmrc](https://github.com/dasch-swiss/dsp-app/blob/main/.nvmrc) file
+This monorepo is built on:
 
-# Install libraries
+- **Nx** — See [package.json](package.json) for current version
+- **Angular** — See [package.json](package.json) for current version
+- **Node.js** — Version managed via [.nvmrc](.nvmrc)
 
-To install all libraries and external dependencies just run `npm install`.
+## Quick Start
+
+Use the Node.js version supported by the installed Angular version ([compatibility table](https://angular.dev/reference/versions)), or the version pinned in [.nvmrc](.nvmrc).
+
+```shell
+npm install
+npm run start-local   # app runs at http://localhost:4200
+```
+
+Requires a running [DSP-API](https://github.com/dasch-swiss/dsp-api) backend. To start it locally:
+
+```shell
+# In the dsp-api repository
+make init-db-test
+make stack-without-app
+```
+
+Every PR that touches `apps/dsp-app/src/` or `libs/` gets an automatic live preview deployed to Google Cloud Run — the URL is posted as a PR comment. You can also trigger a preview for any branch manually via the [PR Preview](https://github.com/dasch-swiss/dsp-app/actions/workflows/cloud-run-pr-preview.yml) workflow. To publish a Docker image directly from any branch (e.g. for a hotfix), trigger the [Publish from branch](https://github.com/dasch-swiss/dsp-app/actions/workflows/publish-from-branch.yml) workflow manually.
 
 ## Quick Commands
 
@@ -21,7 +38,6 @@ Most common operations for daily development:
 
 | Task | Command |
 |------|---------|
-| Install dependencies | `npm install` |
 | Start local development | `npm run start-local` |
 | Start with observability | `npm run start-local-with-observability` |
 | Run tests | `npm run test-local` |
@@ -37,131 +53,77 @@ Most common operations for daily development:
 | Build static Storybook | `npm run build-storybook` |
 | Run Storybook interaction tests | `npm run test-storybook` |
 
-For all available commands, see [package.json](https://github.com/dasch-swiss/dsp-app/blob/main/package.json).
+For all available commands, see [package.json](package.json).
 
-## Storybook
-
-The project uses a single global [Storybook](https://storybook.js.org/) instance that aggregates stories from all libraries and apps in the monorepo.
-
-```shell
-# Start the Storybook dev server (http://localhost:4400)
-npm run storybook
-
-# Build a static Storybook bundle to dist/storybook/
-npm run build-storybook
-
-# Run story interaction tests (requires a running Storybook server)
-npm run test-storybook
-```
-
-Stories are auto-discovered from any `*.stories.ts` file under `libs/` or `apps/` — no registration required when adding new stories.
-
-## @dasch-swiss librairies
-
-For more information about available libraries, see the VRE libraries under `libs/vre/` and the library path aliases in [tsconfig.base.json](https://github.com/dasch-swiss/dsp-app/blob/main/tsconfig.base.json).
-
-## DSP-APP &mdash; generic user interface of DaSCH Service Platform
-
-DSP (DaSCH Service Platform) is a software framework for storing, sharing, and
-working with primary resources and data in the humanities.
-
-DSP-APP is a simple user interface for the research data repository of the
-Swiss National Data and Service Center for the Humanities (DaSCH), which uses
-the [DSP-API](https://github.com/dasch-swiss/dsp-api) server application in the backend. It's a system for annotation and
-linkage of resources in arts and humanities.
-
-DSP-APP implements [DSP-JS](libs/dsp-js/) (also published to [NPM](https://www.npmjs.com/package/@dasch-swiss/dsp-js))
-to connect with [DSP-API](https://docs.dasch.swiss/latest/DSP-API/03-endpoints/api-v2/introduction/).
-
-DSP-APP is [free software](http://www.gnu.org/philosophy/free-sw.en.html), released
-under [GNU Affero General Public](http://www.gnu.org/licenses/agpl-3.0.en.html) license.
-
-## User Quickstart
-
-To try DSP-APP out the [DSP-API](https://github.com/dasch-swiss/dsp-api) backend should be started first:
-
-In terminal go to DSP-API repository and start the API by running following commands:
-
-```shell
-$ make init-db-test
-$ make stack-without-app
-```
-
-Once backend is up and running, in the second terminal instance start DSP-APP by running:
-
-```shell
-# come back to this repository and start the DSP-APP
-$ npx nx run dsp-app:serve
-```
-
-## Developer Quickstart
-
-It is recommended to use `Node.js` version which [is supported by installed Angular version](https://angular.dev/reference/versions).
-
-The monorepo is implemented using [NX](https://nx.dev).
-
-> **_NOTE:_** to run `nx` commands install it globally `npm install -g nx` or instead use `npx`.
+## Developer Guide
 
 ### Working with Individual Libraries
 
-The monorepo contains multiple libraries that can be developed independently. To work with specific libraries:
+The monorepo contains multiple independently buildable libraries:
 
 ```bash
-# Test a specific library
+# Test, build, or lint a specific library
 nx run [library-name]:test
-
-# Build a specific library
 nx run [library-name]:build
-
-# Lint a specific library
 nx run [library-name]:lint
 
-# Example: Test the date-picker library
+# Example
 nx run vre-ui-date-picker:test
 ```
 
-**Available libraries:**
-- See [tsconfig.base.json](https://github.com/dasch-swiss/dsp-app/blob/main/tsconfig.base.json) for all library path aliases under the `paths` configuration
-- Main VRE libraries are under `@dasch-swiss/vre/*` namespace
+> **Note:** To run `nx` commands, install it globally (`npm install -g nx`) or use `npx nx`.
+
+Library path aliases are defined in [tsconfig.base.json](tsconfig.base.json) under `paths`. Main VRE libraries use the `@dasch-swiss/vre/*` namespace.
 
 ### OpenAPI Client Generation
 
-For API client generation and maintenance:
-- [OpenAPI Client Generation](https://github.com/dasch-swiss/dsp-app/blob/main/libs/vre/3rd-party-services/open-api/README.md) - Auto-generated TypeScript client for DSP-API
+The TypeScript client for DSP-API is auto-generated from the OpenAPI spec:
 
-### IDE plugins
+```shell
+npm run check-openapi-sync      # Check if the generated client is up to date
+npm run update-openapi           # Update spec and regenerate client
+npm run generate-openapi-module # Regenerate from the local spec only
+```
 
-- https://plugins.jetbrains.com/plugin/15101-nx-console-idea
-- https://marketplace.visualstudio.com/items?itemName=nrwl.angular-console
+The client is also regenerated automatically as part of `npm install` (via `postinstall`), so it stays in sync after dependency updates.
+
+See [OpenAPI Client README](libs/vre/3rd-party-services/open-api/README.md) for full details.
+
+### IDE Plugins
+
+- [Nx Console for JetBrains](https://plugins.jetbrains.com/plugin/15101-nx-console-idea)
+- [Nx Console for VS Code](https://marketplace.visualstudio.com/items?itemName=nrwl.angular-console)
 
 ### Local Observability
 
-For local development, you can run a Grafana observability stack to view Faro telemetry data (logs, traces, Web Vitals):
+Run a Grafana stack alongside the app to view Faro telemetry (logs, traces, Web Vitals):
 
 ```shell
-$ npm run start-local-with-observability
+npm run start-local-with-observability
 ```
 
-This starts both the observability stack and the app. Access Grafana at [http://localhost:3001](http://localhost:3001) (credentials: `admin`/`admin`). The stack includes Loki for logs, Tempo for traces, and Mimir for metrics. To stop: `docker compose -f docker-compose.observability.yml down`
+Grafana is available at [http://localhost:3001](http://localhost:3001) (credentials: `admin`/`admin`). Includes Loki (logs), Tempo (traces), and Mimir (metrics).
 
-For detailed configuration and troubleshooting, see the inline documentation in `docker-compose.observability.yml` and `apps/dsp-app/src/config/config.dev.json`.
+To stop: `docker compose -f docker-compose.observability.yml down`
 
-## CI/CD Workflows
+## Storybook
 
-The project uses GitHub Actions with three focused workflows:
+A single global [Storybook](https://storybook.js.org/) instance aggregates stories from all libraries and apps:
 
-- **CI** (`.github/workflows/ci.yml`) - Runs on all pushes (including PR branches): linting, unit tests, E2E tests, OpenAPI validation, docs build
-- **Deploy** (`.github/workflows/deploy.yml`) - Runs after CI passes on main or on tag pushes: Docker image publish, DEV deployment trigger, release notifications
-- **Release** (`.github/workflows/release.yml`) - Automated release management with release-please on main branch
+```shell
+npm run storybook           # Start dev server (http://localhost:4400)
+npm run build-storybook     # Build a static bundle to dist/storybook/
+npm run test-storybook      # Run story interaction tests (requires a running server)
+```
 
-All workflows use `npm ci` with caching for fast, deterministic builds and include memory optimizations to prevent CI failures.
+Stories are auto-discovered from any `*.stories.ts` file under `libs/` or `apps/` — no registration needed when adding new stories.
 
-## Further Documentation
+## Libraries
 
-### Developer docs
-
-➡ [for developers](https://docs.dasch.swiss/latest/DSP-APP/contribution)
+DSP-APP implements [DSP-JS](libs/dsp-js/) (also published to [NPM](https://www.npmjs.com/package/@dasch-swiss/dsp-js)) to connect with [DSP-API](https://docs.dasch.swiss/latest/DSP-API/03-endpoints/api-v2/introduction/). For a full list of available libraries, see `libs/vre/` and the path aliases in [tsconfig.base.json](tsconfig.base.json).
 
 ## Issues & Contributions
 
-If you'd like to report an issue or contribute to this project, please contact us at [support@dasch.swiss](mailto:support@dasch.swiss) so we can align it with our planning.
+- [Developer docs](https://docs.dasch.swiss/latest/DSP-APP/contribution)
+
+To report an issue or contribute, contact us at [support@dasch.swiss](mailto:support@dasch.swiss).
