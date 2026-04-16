@@ -1,6 +1,6 @@
 services:
   influxdb:
-    image: influxdb:1.8-alpine
+    image: influxdb:2.8-alpine
     platform: linux/amd64
     ports:
       - '8086:8086'
