@@ -9,8 +9,8 @@ DSP-APP is the user interface for the [DaSCH Service Platform](https://dasch.swi
 
 This monorepo is built on:
 
-- **Nx** — See [package.json](package.json) for current version
-- **Angular** — See [package.json](package.json) for current version
+- **Nx** — See [package.json](https://github.com/dasch-swiss/dsp-app/blob/main/package.json) for current version
+- **Angular** — See [package.json](https://github.com/dasch-swiss/dsp-app/blob/main/package.json) for current version
 - **Node.js** — Version managed via [.nvmrc](.nvmrc)
 
 ## Quick Start
@@ -53,7 +53,7 @@ Most common operations for daily development:
 | Build static Storybook | `npm run build-storybook` |
 | Run Storybook interaction tests | `npm run test-storybook` |
 
-For all available commands, see [package.json](package.json).
+For all available commands, see [package.json](https://github.com/dasch-swiss/dsp-app/blob/main/package.json).
 
 ## Developer Guide
 
@@ -73,7 +73,7 @@ nx run vre-ui-date-picker:test
 
 > **Note:** To run `nx` commands, install it globally (`npm install -g nx`) or use `npx nx`.
 
-Library path aliases are defined in [tsconfig.base.json](tsconfig.base.json) under `paths`. Main VRE libraries use the `@dasch-swiss/vre/*` namespace.
+Library path aliases are defined in [tsconfig.base.json](https://github.com/dasch-swiss/dsp-app/blob/main/tsconfig.base.json) under `paths`. Main VRE libraries use the `@dasch-swiss/vre/*` namespace.
 
 ### OpenAPI Client Generation
 
@@ -87,7 +87,7 @@ npm run generate-openapi-module # Regenerate from the local spec only
 
 The client is also regenerated automatically as part of `npm install` (via `postinstall`), so it stays in sync after dependency updates.
 
-See [OpenAPI Client README](libs/vre/3rd-party-services/open-api/README.md) for full details.
+See [OpenAPI Client README](https://github.com/dasch-swiss/dsp-app/blob/main/libs/vre/3rd-party-services/open-api/README.md) for full details.
 
 ### IDE Plugins
 
@@ -120,7 +120,7 @@ Stories are auto-discovered from any `*.stories.ts` file under `libs/` or `apps/
 
 ## Libraries
 
-DSP-APP implements [DSP-JS](libs/dsp-js/) (also published to [NPM](https://www.npmjs.com/package/@dasch-swiss/dsp-js)) to connect with [DSP-API](https://docs.dasch.swiss/latest/DSP-API/03-endpoints/api-v2/introduction/). For a full list of available libraries, see `libs/vre/` and the path aliases in [tsconfig.base.json](tsconfig.base.json).
+DSP-APP implements [DSP-JS](libs/dsp-js/) (also published to [NPM](https://www.npmjs.com/package/@dasch-swiss/dsp-js)) to connect with [DSP-API](https://docs.dasch.swiss/latest/DSP-API/03-endpoints/api-v2/introduction/). For a full list of available libraries, see `libs/vre/` and the path aliases in [tsconfig.base.json](https://github.com/dasch-swiss/dsp-app/blob/main/tsconfig.base.json).
 
 ## Issues & Contributions
 
