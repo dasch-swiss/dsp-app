@@ -7,11 +7,6 @@ on:
       - 'apps/dsp-app/src/**'
       - 'libs/**'
   workflow_dispatch:
-    inputs:
-      branch:
-        description: 'Branch to deploy (leave blank to use the branch this workflow runs from)'
-        required: false
-        default: ''
   schedule:
     - cron: '0 2 * * *'  # daily at 02:00 UTC — clean up stale previews
 
@@ -124,30 +119,38 @@ jobs:
 
             _Updated on every push. Deleted when PR closes or after 4 days._
 
-  deploy-branch-preview:
-    name: Build and deploy branch preview
+  deploy-preview-manual:
+    name: Build and deploy manual PR preview
     if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     concurrency:
-      group: cloud-run-preview-branch-${{ inputs.branch || github.ref_name }}
+      group: cloud-run-preview-pr-${{ github.ref_name }}
       cancel-in-progress: true
     permissions:
       contents: read
       id-token: write
       pull-requests: write
     steps:
-      - name: Compute service name from branch
+      - name: Resolve open PR for branch
+        id: pr
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          BRANCH="${{ inputs.branch || github.ref_name }}"
-          # Lowercase, replace non-alphanumeric chars with hyphens, collapse runs, strip leading/trailing hyphens
-          SLUG=$(echo "$BRANCH" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | sed 's/-\+/-/g' | sed 's/^-//' | sed 's/-$//' | cut -c1-34)
-          echo "BRANCH_SLUG=${SLUG}" >> $GITHUB_ENV
-          echo "SERVICE_NAME=dsp-app-branch-${SLUG}" >> $GITHUB_ENV
-          echo "IMAGE_TAG=branch-${SLUG}" >> $GITHUB_ENV
+          PR_NUMBER=$(gh pr list \
+            --repo "${{ github.repository }}" \
+            --head "${{ github.ref_name }}" \
+            --state open \
+            --json number \
+            --jq '.[0].number // empty')
+          if [ -z "$PR_NUMBER" ]; then
+            echo "::error::No open PR found for branch '${{ github.ref_name }}'. Open a PR first, then re-run this workflow."
+            exit 1
+          fi
+          echo "number=${PR_NUMBER}" >> $GITHUB_OUTPUT
+          echo "SERVICE_NAME=dsp-app-pr-${PR_NUMBER}" >> $GITHUB_ENV
+          echo "IMAGE_TAG=pr-${PR_NUMBER}" >> $GITHUB_ENV
 
       - uses: actions/checkout@v6
-        with:
-          ref: ${{ inputs.branch || github.ref }}
 
       - uses: actions/setup-node@v6
         with:
@@ -210,45 +213,18 @@ jobs:
             --max-instances=1
             --cpu-throttling
 
-      - name: Output preview URL
-        run: |
-          echo "## Branch Preview Deployed" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "| | |" >> $GITHUB_STEP_SUMMARY
-          echo "|---|---|" >> $GITHUB_STEP_SUMMARY
-          echo "| **Preview URL** | ${{ steps.deploy.outputs.url }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| **Cloud Run Service** | \`${{ env.SERVICE_NAME }}\` |" >> $GITHUB_STEP_SUMMARY
-          echo "| **Branch** | \`${{ inputs.branch || github.ref_name }}\` |" >> $GITHUB_STEP_SUMMARY
-          echo "| **Backend** | DEV API (\`api.dev.dasch.swiss\`) |" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "_Deleted automatically after 4 days of inactivity._" >> $GITHUB_STEP_SUMMARY
-
-      - name: Find open PR for branch
-        id: find-pr
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          PR_NUMBER=$(gh pr list \
-            --head "${{ inputs.branch || github.ref_name }}" \
-            --state open \
-            --json number \
-            --jq '.[0].number // empty')
-          echo "pr_number=${PR_NUMBER}" >> $GITHUB_OUTPUT
-
-      - name: Find existing preview comment on PR
-        if: steps.find-pr.outputs.pr_number != ''
+      - name: Find existing preview comment
         uses: peter-evans/find-comment@v4
         id: find-comment
         with:
-          issue-number: ${{ steps.find-pr.outputs.pr_number }}
+          issue-number: ${{ steps.pr.outputs.number }}
           comment-author: github-actions[bot]
           body-includes: "<!-- dsp-app-preview -->"
 
-      - name: Post or update preview URL comment on PR
-        if: steps.find-pr.outputs.pr_number != ''
+      - name: Post or update preview URL comment
         uses: peter-evans/create-or-update-comment@v5
         with:
-          issue-number: ${{ steps.find-pr.outputs.pr_number }}
+          issue-number: ${{ steps.pr.outputs.number }}
           comment-id: ${{ steps.find-comment.outputs.comment-id }}
           edit-mode: replace
           body: |
@@ -259,10 +235,10 @@ jobs:
             |---|---|
             | **Preview URL** | ${{ steps.deploy.outputs.url }} |
             | **Cloud Run Service** | `${{ env.SERVICE_NAME }}` |
-            | **Branch** | `${{ inputs.branch || github.ref_name }}` |
+            | **Branch** | `${{ github.ref_name }}` |
             | **Backend** | DEV API (`api.dev.dasch.swiss`) |
 
-            _Deployed via workflow_dispatch. Deleted automatically after 4 days of inactivity._
+            _Deployed manually via workflow_dispatch. Deleted when PR closes or after 4 days._
 
   cleanup-preview:
     name: Clean up PR close
@@ -333,32 +309,3 @@ jobs:
               --delete-tags --quiet 2>/dev/null || true
           done
 
-      - name: Delete stale branch preview services older than 4 days
-        run: |
-          CUTOFF=$(date -u -d '4 days ago' +%Y-%m-%dT%H:%M:%SZ)
-          # Use the latest *revision* timestamp, not the service creation timestamp.
-          # This avoids deleting services that have been recently redeployed.
-          mapfile -t SERVICES < <(gcloud run services list \
-            --region="${{ secrets.GCP_REGION }}" \
-            --filter="metadata.name:dsp-app-branch-" \
-            --format="value(metadata.name)" 2>/dev/null || true)
-          for SERVICE in "${SERVICES[@]}"; do
-            [ -z "$SERVICE" ] && continue
-            LATEST=$(gcloud run revisions list \
-              --service="$SERVICE" \
-              --region="${{ secrets.GCP_REGION }}" \
-              --sort-by="~metadata.creationTimestamp" \
-              --limit=1 \
-              --format="value(metadata.creationTimestamp)" 2>/dev/null || echo "")
-            if [ -z "$LATEST" ] || [[ "$LATEST" < "$CUTOFF" ]]; then
-              echo "Deleting stale branch service: $SERVICE (last deployed: ${LATEST:-unknown})"
-              BRANCH_SLUG="${SERVICE#dsp-app-branch-}"
-              gcloud run services delete "$SERVICE" \
-                --region="${{ secrets.GCP_REGION }}" --quiet 2>/dev/null || true
-              gcloud artifacts docker images delete \
-                "${{ secrets.GCP_ARTIFACT_REGISTRY }}/dsp-app:branch-${BRANCH_SLUG}" \
-                --delete-tags --quiet 2>/dev/null || true
-            else
-              echo "Skipping $SERVICE — last deployed ${LATEST}, within 4-day window"
-            fi
-          done
