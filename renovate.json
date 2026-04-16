@@ -1,13 +1,13 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "description": [
-    "prConcurrentLimit: 1 — serial automerge queue; avoids package-lock.json race conditions that occur when multiple concurrent dep update PRs each rebase and re-run CI after every merge.",
+    "prConcurrentLimit: 2 — allows one automated PR and one unmerged major PR to coexist. A single slot would let a major PR waiting for manual merge block the entire automated queue. rebaseWhen: behind-base-branch on automated rules makes the automated slot effectively serial (each merge triggers a rebase + CI re-run on the next), so two slots do not cause package-lock.json race conditions.",
+    "No global schedule — with prConcurrentLimit: 2 and age guards (3d/7d) as the real safety mechanism, a schedule only adds unnecessary delay. Updates flow through as soon as age guards pass. lockFileMaintenance keeps its own Monday schedule.",
     "rebaseWhen: conflicted (global) — major PRs sit unmerged intentionally; rebasing them on every automated merge would waste CI runs on a PR nobody is about to merge. Automated rules override this with behind-base-branch to keep the automerge chain moving."
   ],
   "extends": ["config:recommended"],
-  "schedule": ["before 9am on Tuesday"],
   "timezone": "Europe/Zurich",
-  "prConcurrentLimit": 1,
+  "prConcurrentLimit": 2,
   "dependencyDashboard": true,
   "labels": ["dependencies"],
   "commitMessageExtra": "{{#if currentVersion}}from {{currentVersion}} to {{newVersion}}{{/if}}",
