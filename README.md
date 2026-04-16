@@ -118,10 +118,6 @@ npm run test-storybook      # Run story interaction tests (requires a running se
 
 Stories are auto-discovered from any `*.stories.ts` file under `libs/` or `apps/` — no registration needed when adding new stories.
 
-## Libraries
-
-DSP-APP implements [DSP-JS](libs/dsp-js/) (also published to [NPM](https://www.npmjs.com/package/@dasch-swiss/dsp-js)) to connect with [DSP-API](https://docs.dasch.swiss/latest/DSP-API/03-endpoints/api-v2/introduction/). For a full list of available libraries, see `libs/vre/` and the path aliases in [tsconfig.base.json](https://github.com/dasch-swiss/dsp-app/blob/main/tsconfig.base.json).
-
 ## Issues & Contributions
 
 - [Developer docs](https://docs.dasch.swiss/latest/DSP-APP/contribution)
