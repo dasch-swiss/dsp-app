@@ -1,5 +1,9 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "description": [
+    "prConcurrentLimit: 1 — serial automerge queue; avoids package-lock.json race conditions that occur when multiple concurrent dep update PRs each rebase and re-run CI after every merge.",
+    "rebaseWhen: conflicted (global) — major PRs sit unmerged intentionally; rebasing them on every automated merge would waste CI runs on a PR nobody is about to merge. Automated rules override this with behind-base-branch to keep the automerge chain moving."
+  ],
   "extends": ["config:recommended"],
   "schedule": ["before 9am on Tuesday"],
   "timezone": "Europe/Zurich",
