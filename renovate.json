@@ -7,7 +7,7 @@
   "dependencyDashboard": true,
   "labels": ["dependencies"],
   "commitMessageExtra": "{{#if currentVersion}}from {{currentVersion}} to {{newVersion}}{{/if}}",
-  "rebaseWhen": "behind-base-branch",
+  "rebaseWhen": "conflicted",
   "dependencyDashboardOSVVulnerabilitySummary": "all",
   "lockFileMaintenance": {
     "enabled": true,
@@ -184,7 +184,8 @@
       "matchUpdateTypes": ["patch", "minor"],
       "matchDepTypes": ["devDependencies"],
       "automerge": true,
-      "platformAutomerge": true
+      "platformAutomerge": true,
+      "rebaseWhen": "behind-base-branch"
     },
     {
       "description": "Automerge production patch updates — 3-day age guard prevents adopting broken releases",
@@ -192,7 +193,8 @@
       "matchDepTypes": ["dependencies"],
       "automerge": true,
       "platformAutomerge": true,
-      "minimumReleaseAge": "3 days"
+      "minimumReleaseAge": "3 days",
+      "rebaseWhen": "behind-base-branch"
     },
     {
       "description": "Automerge production minor updates — 7-day age guard for extra caution on production code",
@@ -200,7 +202,8 @@
       "matchDepTypes": ["dependencies"],
       "automerge": true,
       "platformAutomerge": true,
-      "minimumReleaseAge": "7 days"
+      "minimumReleaseAge": "7 days",
+      "rebaseWhen": "behind-base-branch"
     }
   ]
 }
