@@ -3,8 +3,7 @@
   "extends": ["config:recommended"],
   "schedule": ["before 9am on Tuesday"],
   "timezone": "Europe/Zurich",
-  "prConcurrentLimit": 5,
-  "prHourlyLimit": 2,
+  "prConcurrentLimit": 1,
   "dependencyDashboard": true,
   "labels": ["dependencies"],
   "commitMessageExtra": "{{#if currentVersion}}from {{currentVersion}} to {{newVersion}}{{/if}}",
@@ -181,19 +180,27 @@
     },
 
     {
-      "description": "Automerge patch updates (all dep types) — 3-day age guard prevents automerging broken releases",
+      "description": "Automerge all dev dependency updates (patch + minor) — no age guard; dev deps don't affect production",
+      "matchUpdateTypes": ["patch", "minor"],
+      "matchDepTypes": ["devDependencies"],
+      "automerge": true,
+      "platformAutomerge": true
+    },
+    {
+      "description": "Automerge production patch updates — 3-day age guard prevents adopting broken releases",
       "matchUpdateTypes": ["patch"],
+      "matchDepTypes": ["dependencies"],
       "automerge": true,
       "platformAutomerge": true,
       "minimumReleaseAge": "3 days"
     },
     {
-      "description": "Automerge minor updates for dev dependencies — 3-day age guard prevents automerging broken releases",
+      "description": "Automerge production minor updates — 7-day age guard for extra caution on production code",
       "matchUpdateTypes": ["minor"],
-      "matchDepTypes": ["devDependencies"],
+      "matchDepTypes": ["dependencies"],
       "automerge": true,
       "platformAutomerge": true,
-      "minimumReleaseAge": "3 days"
+      "minimumReleaseAge": "7 days"
     }
   ]
 }
