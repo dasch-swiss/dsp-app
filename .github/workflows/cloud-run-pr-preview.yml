@@ -134,6 +134,7 @@ jobs:
     permissions:
       contents: read
       id-token: write
+      pull-requests: write
     steps:
       - name: Compute service name from branch
         run: |
@@ -220,7 +221,48 @@ jobs:
           echo "| **Branch** | \`${{ inputs.branch || github.ref_name }}\` |" >> $GITHUB_STEP_SUMMARY
           echo "| **Backend** | DEV API (\`api.dev.dasch.swiss\`) |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "_Deleted automatically after 4 days by the daily stale-cleanup job._" >> $GITHUB_STEP_SUMMARY
+          echo "_Deleted automatically after 4 days of inactivity._" >> $GITHUB_STEP_SUMMARY
+
+      - name: Find open PR for branch
+        id: find-pr
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUMBER=$(gh pr list \
+            --head "${{ inputs.branch || github.ref_name }}" \
+            --state open \
+            --json number \
+            --jq '.[0].number // empty')
+          echo "pr_number=${PR_NUMBER}" >> $GITHUB_OUTPUT
+
+      - name: Find existing preview comment on PR
+        if: steps.find-pr.outputs.pr_number != ''
+        uses: peter-evans/find-comment@v4
+        id: find-comment
+        with:
+          issue-number: ${{ steps.find-pr.outputs.pr_number }}
+          comment-author: github-actions[bot]
+          body-includes: "<!-- dsp-app-preview -->"
+
+      - name: Post or update preview URL comment on PR
+        if: steps.find-pr.outputs.pr_number != ''
+        uses: peter-evans/create-or-update-comment@v5
+        with:
+          issue-number: ${{ steps.find-pr.outputs.pr_number }}
+          comment-id: ${{ steps.find-comment.outputs.comment-id }}
+          edit-mode: replace
+          body: |
+            <!-- dsp-app-preview -->
+            ### DSP-APP Preview
+
+            | | |
+            |---|---|
+            | **Preview URL** | ${{ steps.deploy.outputs.url }} |
+            | **Cloud Run Service** | `${{ env.SERVICE_NAME }}` |
+            | **Branch** | `${{ inputs.branch || github.ref_name }}` |
+            | **Backend** | DEV API (`api.dev.dasch.swiss`) |
+
+            _Deployed via workflow_dispatch. Deleted automatically after 4 days of inactivity._
 
   cleanup-preview:
     name: Clean up PR close
