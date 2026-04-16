@@ -7,10 +7,6 @@ on:
       - 'apps/dsp-app/src/**'
       - 'libs/**'
   workflow_dispatch:
-    inputs:
-      pr_number:
-        description: 'PR number to deploy a preview for'
-        required: true
   schedule:
     - cron: '0 2 * * *'  # daily at 02:00 UTC — clean up stale previews
 
@@ -128,27 +124,32 @@ jobs:
     if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     concurrency:
-      group: cloud-run-preview-pr-${{ inputs.pr_number }}
+      group: cloud-run-preview-pr-${{ github.ref_name }}
       cancel-in-progress: true
     permissions:
       contents: read
       id-token: write
       pull-requests: write
-    env:
-      SERVICE_NAME: dsp-app-pr-${{ inputs.pr_number }}
-      IMAGE_TAG: pr-${{ inputs.pr_number }}
     steps:
-      - name: Resolve PR head branch
+      - name: Resolve open PR for branch
         id: pr
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          BRANCH=$(gh pr view "${{ inputs.pr_number }}" --json headRefName --jq .headRefName)
-          echo "branch=${BRANCH}" >> $GITHUB_OUTPUT
+          PR_NUMBER=$(gh pr list \
+            --head "${{ github.ref_name }}" \
+            --state open \
+            --json number \
+            --jq '.[0].number // empty')
+          if [ -z "$PR_NUMBER" ]; then
+            echo "::error::No open PR found for branch '${{ github.ref_name }}'. Open a PR first, then re-run this workflow."
+            exit 1
+          fi
+          echo "number=${PR_NUMBER}" >> $GITHUB_OUTPUT
+          echo "SERVICE_NAME=dsp-app-pr-${PR_NUMBER}" >> $GITHUB_ENV
+          echo "IMAGE_TAG=pr-${PR_NUMBER}" >> $GITHUB_ENV
 
       - uses: actions/checkout@v6
-        with:
-          ref: ${{ steps.pr.outputs.branch }}
 
       - uses: actions/setup-node@v6
         with:
@@ -215,14 +216,14 @@ jobs:
         uses: peter-evans/find-comment@v4
         id: find-comment
         with:
-          issue-number: ${{ inputs.pr_number }}
+          issue-number: ${{ steps.pr.outputs.number }}
           comment-author: github-actions[bot]
           body-includes: "<!-- dsp-app-preview -->"
 
       - name: Post or update preview URL comment
         uses: peter-evans/create-or-update-comment@v5
         with:
-          issue-number: ${{ inputs.pr_number }}
+          issue-number: ${{ steps.pr.outputs.number }}
           comment-id: ${{ steps.find-comment.outputs.comment-id }}
           edit-mode: replace
           body: |
@@ -233,7 +234,7 @@ jobs:
             |---|---|
             | **Preview URL** | ${{ steps.deploy.outputs.url }} |
             | **Cloud Run Service** | `${{ env.SERVICE_NAME }}` |
-            | **Branch** | `${{ steps.pr.outputs.branch }}` |
+            | **Branch** | `${{ github.ref_name }}` |
             | **Backend** | DEV API (`api.dev.dasch.swiss`) |
 
             _Deployed manually via workflow_dispatch. Deleted when PR closes or after 4 days._
