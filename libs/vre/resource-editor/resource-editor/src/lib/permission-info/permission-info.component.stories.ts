@@ -24,24 +24,20 @@ const makeResource = (hasPermissions: string, userHasPermission: string): ReadRe
   return res;
 };
 
-// ProjectAdmin=CR (all), ProjectMember/KnownUser/UnknownUser=V (RV+V), user=CR
-// Matches: ProjectAdmin all ✓, Member/KnownUser/UnknownUser RV+V ✓ rest ✗, user all ✓
 const fullPermissionsResource = makeResource(
-  'CR knora-base:ProjectAdmin|V knora-base:ProjectMember|V knora-base:KnownUser|V knora-base:UnknownUser',
+  'CR knora-base:ProjectAdmin|M knora-base:ProjectMember|V knora-base:KnownUser|RV knora-base:UnknownUser',
   'CR'
 );
 
-// Restricted: only RV for all groups, user has RV
 const restrictedResource = makeResource(
   'RV knora-base:ProjectAdmin|RV knora-base:ProjectMember|RV knora-base:KnownUser|RV knora-base:UnknownUser',
-  'RV'
+  'V'
 );
 
-// Custom group IRI alongside standard groups
 const customGroupIri = 'http://rdfh.ch/groups/0001/customEditors';
 const customGroupResource = makeResource(
-  `CR knora-base:ProjectAdmin|M knora-base:ProjectMember,${customGroupIri}|V knora-base:KnownUser|V knora-base:UnknownUser`,
-  'CR'
+  `CR knora-base:ProjectAdmin|M knora-base:ProjectMember,${customGroupIri}|V knora-base:KnownUser|RV knora-base:UnknownUser`,
+  'M'
 );
 
 const dspApiConnectionStub = {

@@ -57,7 +57,9 @@ import { VideoMoreButtonComponent } from './video-more-button.component';
       <!-- TODO reached the end button "replay" -->
     </div>
 
-    <div data-cy="player-time">{{ mediaPlayer.currentTime() | appTime }}/ {{ mediaPlayer.duration() | appTime }}</div>
+    <div data-cy="player-time" style="font-size: 16px">
+      {{ mediaPlayer.currentTime() | appTime }}/ {{ mediaPlayer.duration() | appTime }}
+    </div>
 
     <div>
       <app-video-more-button [parentResource]="parentResource" [src]="src" [fileInfo]="fileInfo" />
