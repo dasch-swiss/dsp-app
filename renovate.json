@@ -7,7 +7,7 @@
   "dependencyDashboard": true,
   "labels": ["dependencies"],
   "commitMessageExtra": "{{#if currentVersion}}from {{currentVersion}} to {{newVersion}}{{/if}}",
-  "rebaseWhen": "conflicted",
+  "rebaseWhen": "behind-base-branch",
   "dependencyDashboardOSVVulnerabilitySummary": "all",
   "lockFileMaintenance": {
     "enabled": true,
