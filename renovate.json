@@ -97,9 +97,9 @@
     },
 
     {
-      "description": "Major updates: require manual approval via Dependency Dashboard",
+      "description": "Major updates: PRs open automatically but require manual merge. Timing matters — merging a major before a release or production deployment could introduce undetected breakage that poor test coverage would miss. Human decides when it is safe to merge.",
       "matchUpdateTypes": ["major"],
-      "dependencyDashboardApproval": true
+      "automerge": false
     },
 
     {
