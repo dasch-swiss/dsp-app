@@ -3,7 +3,8 @@
   "description": [
     "prConcurrentLimit: 2 — allows one automated PR and one unmerged major PR to coexist. A single slot would let a major PR waiting for manual merge block the entire automated queue. rebaseWhen: behind-base-branch on automated rules makes the automated slot effectively serial (each merge triggers a rebase + CI re-run on the next), so two slots do not cause package-lock.json race conditions.",
     "No global schedule — with prConcurrentLimit: 2 and age guards (3d/7d) as the real safety mechanism, a schedule only adds unnecessary delay. Updates flow through as soon as age guards pass. lockFileMaintenance keeps its own Monday schedule.",
-    "rebaseWhen: conflicted (global) — major PRs sit unmerged intentionally; rebasing them on every automated merge would waste CI runs on a PR nobody is about to merge. Automated rules override this with behind-base-branch to keep the automerge chain moving."
+    "rebaseWhen: conflicted (global) — major PRs sit unmerged intentionally; rebasing them on every automated merge would waste CI runs on a PR nobody is about to merge. Automated rules override this with behind-base-branch to keep the automerge chain moving.",
+    "vulnerabilityAlerts disabled — Dependabot handles security advisories instead. Its native GitHub Security Advisory integration links CVEs to the Security tab with GHSA references and co-locates with secret scanning and code scanning, which Renovate cannot replicate. Tradeoff: Dependabot covers only direct dependencies and is slower than Renovate would be, but the GitHub-native security workflow outweighs that for this project."
   ],
   "extends": ["config:recommended"],
   "semanticCommitType": "chore",
@@ -39,6 +40,7 @@
       "addLabels": ["docker"],
       "groupName": "docker-deps"
     },
+
     {
       "description": "Angular and NX: manual upgrade only (ng update / nx migrate)",
       "enabled": false,
@@ -58,12 +60,25 @@
       "enabled": false
     },
     {
-      "description": "ESLint ecosystem: coupled to TypeScript version",
+      "description": "ESLint core + TypeScript ESLint: frozen until Angular/NX upgrade unlocks ESLint 9 flat config migration",
       "matchPackageNames": [
         "eslint",
         "eslint-plugin-angular",
         "/^@typescript-eslint//"
       ],
+      "enabled": false
+    },
+    {
+      "description": "ESLint plugins and Airbnb configs: major updates disabled — coupled to frozen ESLint 8; a plugin major dropping ESLint 8 support would break the entire lint pipeline",
+      "matchPackageNames": [
+        "eslint-plugin-import",
+        "eslint-plugin-ban",
+        "eslint-plugin-jsdoc",
+        "eslint-plugin-unused-imports",
+        "eslint-config-airbnb-base",
+        "eslint-config-airbnb-typescript"
+      ],
+      "matchUpdateTypes": ["major"],
       "enabled": false
     },
     {
@@ -77,8 +92,14 @@
       "enabled": false
     },
     {
-      "description": "@types/node: must match Node.js version in Docker images",
+      "description": "@types/node: must match Node.js version used in CI and local toolchain",
       "matchPackageNames": ["@types/node"],
+      "enabled": false
+    },
+    {
+      "description": "Node.js (.nvmrc): major version managed manually — must align with CI runners and @types/node",
+      "matchManagers": ["nvm"],
+      "matchUpdateTypes": ["major"],
       "enabled": false
     },
     {
@@ -106,6 +127,7 @@
         "cypress",
         "@cypress/code-coverage",
         "/^jest/",
+        "jest-preset-angular",
         "@types/jest",
         "/^ts-jest$/",
         "storybook",
@@ -115,8 +137,15 @@
       "enabled": false
     },
     {
-      "description": "Angular-coupled ecosystem: rxjs major must align with Angular peer dep; ng-mocks and ngx-build-plus are Angular-version coupled — upgrade only after ng update",
-      "matchPackageNames": ["rxjs", "ng-mocks", "ngx-build-plus"],
+      "description": "Angular-coupled ecosystem: major version must align with Angular major — upgrade only after ng update",
+      "matchPackageNames": [
+        "rxjs",
+        "ng-mocks",
+        "ngx-build-plus",
+        "@ngx-translate/core",
+        "@ngx-translate/http-loader",
+        "@jscutlery/swc-angular"
+      ],
       "matchUpdateTypes": ["major"],
       "enabled": false
     },
@@ -128,6 +157,42 @@
     },
 
     {
+      "description": "SWC compiler suite — all packages must update together to avoid ABI mismatches between core, helpers, and jest transform",
+      "matchPackageNames": [
+        "/^@swc//",
+        "@swc-node/register",
+        "@jscutlery/swc-angular"
+      ],
+      "groupName": "swc-deps"
+    },
+    {
+      "description": "Grafana Faro observability SDK — packages are released together and must stay in sync",
+      "matchPackageNames": ["/^@grafana/faro/"],
+      "groupName": "grafana-faro-deps"
+    },
+    {
+      "description": "JSON-LD + its type definitions",
+      "matchPackageNames": ["jsonld", "@types/jsonld"],
+      "groupName": "jsonld-deps"
+    },
+    {
+      "description": "ngx-translate i18n — core and http-loader are always used together",
+      "matchPackageNames": ["/^@ngx-translate//"],
+      "groupName": "ngx-translate-deps"
+    },
+    {
+      "description": "ESLint plugins and Airbnb configs — group patch/minor together; major is disabled above",
+      "matchPackageNames": [
+        "eslint-plugin-import",
+        "eslint-plugin-ban",
+        "eslint-plugin-jsdoc",
+        "eslint-plugin-unused-imports",
+        "eslint-config-airbnb-base",
+        "eslint-config-airbnb-typescript"
+      ],
+      "groupName": "eslint-plugins-deps"
+    },
+    {
       "description": "@jscutlery utilities: not in monorepo:swc preset — explicit standalone group",
       "groupName": "jscutlery-deps",
       "matchPackageNames": ["/^@jscutlery//"]
@@ -138,9 +203,10 @@
       "groupName": "sentry-javascript"
     },
     {
-      "description": "Jest test framework and utilities (^jest pattern intentionally broad: groups all jest-* packages including future additions)",
+      "description": "Jest test framework and utilities — jest-preset-angular bridges Jest and Angular so it must move with the Jest group",
       "matchPackageNames": [
         "@types/jest",
+        "jest-preset-angular",
         "reflect-metadata",
         "ng-mocks",
         "@faker-js/faker",
@@ -195,11 +261,13 @@
       "groupName": "test-coverage-deps"
     },
     {
-      "description": "Third-party Angular-compatible packages (not coupled to Angular version)",
+      "description": "Third-party Angular-compatible packages (not strictly version-coupled to Angular)",
       "matchPackageNames": [
         "angular-split",
         "angular-imask",
-        "angular-html-parser"
+        "angular-html-parser",
+        "ng2-pdf-viewer",
+        "ngx-color-picker"
       ],
       "groupName": "angular-ecosystem-deps"
     },
