@@ -34,7 +34,7 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v6
         with:
-          node-version: 24.15.0
+          node-version-file: .nvmrc
           cache: 'npm'
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4

@@ -1,9 +1,16 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "description": [
+    "prConcurrentLimit: 2 — allows one automated PR and one unmerged major PR to coexist. A single slot would let a major PR waiting for manual merge block the entire automated queue. rebaseWhen: behind-base-branch on automated rules makes the automated slot effectively serial (each merge triggers a rebase + CI re-run on the next), so two slots do not cause package-lock.json race conditions.",
+    "schedule: before 5am on monday through friday — Renovate opens new PRs only during the midnight-to-5am window on weekdays (Europe/Zurich). platformAutomerge merges a PR the moment CI passes, so the last batch (Fri 00:00-05:00) runs CI during Friday and merges before the weekend. lockFileMaintenance keeps its own Monday schedule.",
+    "rebaseWhen: conflicted (global) — major PRs sit unmerged intentionally; rebasing them on every automated merge would waste CI runs on a PR nobody is about to merge. Automated rules override this with behind-base-branch to keep the automerge chain moving.",
+    "vulnerabilityAlerts disabled — Dependabot handles security advisories instead. Its native GitHub Security Advisory integration links CVEs to the Security tab with GHSA references and co-locates with secret scanning and code scanning, which Renovate cannot replicate. Tradeoff: Dependabot covers only direct dependencies and is slower than Renovate would be, but the GitHub-native security workflow outweighs that for this project."
+  ],
   "extends": ["config:recommended"],
-  "schedule": ["before 9am on Tuesday"],
+  "semanticCommitType": "chore",
   "timezone": "Europe/Zurich",
-  "prConcurrentLimit": 1,
+  "schedule": ["before 5am on monday through friday"],
+  "prConcurrentLimit": 2,
   "dependencyDashboard": true,
   "labels": ["dependencies"],
   "commitMessageExtra": "{{#if currentVersion}}from {{currentVersion}} to {{newVersion}}{{/if}}",
@@ -13,6 +20,7 @@
     "enabled": true,
     "schedule": ["before 9am on Monday"]
   },
+  "ignorePaths": ["libs/**/package.json"],
   "vulnerabilityAlerts": {
     "enabled": false
   },
@@ -34,6 +42,7 @@
       "addLabels": ["docker"],
       "groupName": "docker-deps"
     },
+
     {
       "description": "Angular and NX: manual upgrade only (ng update / nx migrate)",
       "enabled": false,
@@ -53,7 +62,13 @@
       "enabled": false
     },
     {
-      "description": "ESLint ecosystem: coupled to TypeScript version",
+      "description": "ts-node: major updates disabled — each major drops older TypeScript versions; must align with frozen TypeScript",
+      "matchPackageNames": ["ts-node"],
+      "matchUpdateTypes": ["major"],
+      "enabled": false
+    },
+    {
+      "description": "ESLint core + TypeScript ESLint: frozen until Angular/NX upgrade unlocks ESLint 9 flat config migration",
       "matchPackageNames": [
         "eslint",
         "eslint-plugin-angular",
@@ -62,23 +77,39 @@
       "enabled": false
     },
     {
+      "description": "ESLint plugins and Airbnb configs: major updates disabled — coupled to frozen ESLint 8; a plugin major dropping ESLint 8 support would break the entire lint pipeline",
+      "matchPackageNames": [
+        "eslint-plugin-import",
+        "eslint-plugin-ban",
+        "eslint-plugin-jsdoc",
+        "eslint-plugin-unused-imports",
+        "eslint-config-airbnb-base",
+        "eslint-config-airbnb-typescript",
+        "eslint-config-prettier",
+        "eslint-plugin-prettier"
+      ],
+      "matchUpdateTypes": ["major"],
+      "enabled": false
+    },
+    {
       "description": "ng-packagr: coupled to Angular version",
       "matchPackageNames": ["ng-packagr"],
       "enabled": false
     },
     {
-      "description": "@ngrx/component-store: Angular-version coupled",
-      "matchPackageNames": ["@ngrx/component-store"],
+      "description": "@ngrx/*: all packages are Angular-version coupled — upgrade only after ng update",
+      "matchPackageNames": ["/^@ngrx//"],
       "enabled": false
     },
     {
-      "description": "@types/node: must match Node.js version in Docker images",
+      "description": "@types/node: must match Node.js version used in CI and local toolchain",
       "matchPackageNames": ["@types/node"],
       "enabled": false
     },
     {
-      "description": "@dasch-swiss/dsp-js: updated manually per release",
-      "matchPackageNames": ["@dasch-swiss/dsp-js"],
+      "description": "Node.js (.nvmrc): major version managed manually — must align with CI runners and @types/node",
+      "matchManagers": ["nvm"],
+      "matchUpdateTypes": ["major"],
       "enabled": false
     },
     {
@@ -95,30 +126,84 @@
       "matchUpdateTypes": ["minor", "major"],
       "enabled": false
     },
-
     {
-      "description": "Major updates: require manual approval via Dependency Dashboard",
+      "description": "NX-wrapped tools: major version ceiling is set by @nx/* peer deps — disable majors until nx migrate lifts the constraint",
+      "matchPackageNames": [
+        "cypress",
+        "@cypress/code-coverage",
+        "/^jest/",
+        "jest-preset-angular",
+        "@types/jest",
+        "/^ts-jest$/",
+        "storybook",
+        "/^@storybook//"
+      ],
       "matchUpdateTypes": ["major"],
-      "dependencyDashboardApproval": true
+      "enabled": false
+    },
+    {
+      "description": "Angular-coupled ecosystem: major version must align with Angular major — upgrade only after ng update",
+      "matchPackageNames": [
+        "rxjs",
+        "ng-mocks",
+        "ngx-build-plus",
+        "@ngx-translate/core",
+        "@ngx-translate/http-loader",
+        "@jscutlery/swc-angular"
+      ],
+      "matchUpdateTypes": ["major"],
+      "enabled": false
     },
 
     {
-      "description": "@jscutlery utilities: not in monorepo:swc preset — explicit standalone group",
-      "groupName": "jscutlery-deps",
-      "matchPackageNames": ["/^@jscutlery//"]
+      "description": "Major updates: PRs open automatically but require manual merge. Timing matters — merging a major before a release or production deployment could introduce undetected breakage that poor test coverage would miss. Human decides when it is safe to merge.",
+      "matchUpdateTypes": ["major"],
+      "automerge": false
+    },
+
+    {
+      "description": "SWC compiler suite — all packages must update together to avoid ABI mismatches between core, helpers, and jest transform",
+      "matchPackageNames": [
+        "/^@swc//",
+        "@swc-node/register",
+        "@jscutlery/swc-angular"
+      ],
+      "groupName": "swc-deps"
     },
     {
-      "description": "@sentry/cli: lives in getsentry/sentry-cli repo, not matched by monorepo:sentry-javascript — join sentry group manually",
-      "matchPackageNames": ["@sentry/cli"],
-      "groupName": "sentry-javascript"
+      "description": "Grafana Faro observability SDK — packages are released together and must stay in sync",
+      "matchPackageNames": ["/^@grafana/faro/"],
+      "groupName": "grafana-faro-deps"
     },
     {
-      "description": "Jest test framework and utilities (^jest pattern intentionally broad: groups all jest-* packages including future additions)",
+      "description": "JSON-LD + its type definitions",
+      "matchPackageNames": ["jsonld", "@types/jsonld"],
+      "groupName": "jsonld-deps"
+    },
+    {
+      "description": "ngx-translate i18n — core and http-loader are always used together",
+      "matchPackageNames": ["/^@ngx-translate//"],
+      "groupName": "ngx-translate-deps"
+    },
+    {
+      "description": "ESLint plugins and Airbnb configs — group patch/minor together; major is disabled above",
+      "matchPackageNames": [
+        "eslint-plugin-import",
+        "eslint-plugin-ban",
+        "eslint-plugin-jsdoc",
+        "eslint-plugin-unused-imports",
+        "eslint-config-airbnb-base",
+        "eslint-config-airbnb-typescript"
+      ],
+      "groupName": "eslint-plugins-deps"
+    },
+    {
+      "description": "Jest test framework and utilities — jest-preset-angular bridges Jest and Angular so it must move with the Jest group",
       "matchPackageNames": [
         "@types/jest",
+        "jest-preset-angular",
         "reflect-metadata",
         "ng-mocks",
-        "@faker-js/faker",
         "/^jest/",
         "/^ts-jest$/"
       ],
@@ -139,19 +224,9 @@
       "groupName": "postcss-deps"
     },
     {
-      "description": "OpenAPI code generation",
-      "matchPackageNames": ["/^@openapitools//"],
-      "groupName": "openapi-deps"
-    },
-    {
       "description": "OpenSeaDragon image viewer",
       "matchPackageNames": ["openseadragon", "@types/openseadragon"],
       "groupName": "openseadragon-deps"
-    },
-    {
-      "description": "JWT decode",
-      "matchPackageNames": ["jwt-decode", "@types/jwt-decode"],
-      "groupName": "jwt-decode-deps"
     },
     {
       "description": "UUID",
@@ -170,13 +245,20 @@
       "groupName": "test-coverage-deps"
     },
     {
-      "description": "Third-party Angular-compatible packages (not coupled to Angular version)",
+      "description": "Third-party Angular-compatible packages (not strictly version-coupled to Angular)",
       "matchPackageNames": [
         "angular-split",
         "angular-imask",
-        "angular-html-parser"
+        "angular-html-parser",
+        "ng2-pdf-viewer",
+        "ngx-color-picker"
       ],
       "groupName": "angular-ecosystem-deps"
+    },
+    {
+      "description": "Storybook packages — @storybook/test-runner lives in a separate repo (storybookjs/test-runner) and is not covered by the monorepo:storybook preset in config:recommended; explicit group prevents sync drift on minor/patch updates",
+      "matchPackageNames": ["storybook", "/^@storybook//"],
+      "groupName": "storybook-deps"
     },
 
     {
@@ -184,7 +266,8 @@
       "matchUpdateTypes": ["patch", "minor"],
       "matchDepTypes": ["devDependencies"],
       "automerge": true,
-      "platformAutomerge": true
+      "platformAutomerge": true,
+      "rebaseWhen": "behind-base-branch"
     },
     {
       "description": "Automerge production patch updates — 3-day age guard prevents adopting broken releases",
@@ -192,7 +275,8 @@
       "matchDepTypes": ["dependencies"],
       "automerge": true,
       "platformAutomerge": true,
-      "minimumReleaseAge": "3 days"
+      "minimumReleaseAge": "3 days",
+      "rebaseWhen": "behind-base-branch"
     },
     {
       "description": "Automerge production minor updates — 7-day age guard for extra caution on production code",
@@ -200,7 +284,16 @@
       "matchDepTypes": ["dependencies"],
       "automerge": true,
       "platformAutomerge": true,
-      "minimumReleaseAge": "7 days"
+      "minimumReleaseAge": "7 days",
+      "rebaseWhen": "behind-base-branch"
+    },
+    {
+      "description": "Automerge github-actions and docker patch/minor updates — matchDepTypes: devDependencies does not apply to these managers so they need an explicit rule",
+      "matchManagers": ["github-actions", "dockerfile", "docker-compose"],
+      "matchUpdateTypes": ["patch", "minor"],
+      "automerge": true,
+      "platformAutomerge": true,
+      "rebaseWhen": "behind-base-branch"
     }
   ]
 }
