@@ -199,14 +199,10 @@
       "groupName": "eslint-plugins-deps"
     },
     {
-      "description": "@jscutlery utilities: not in monorepo:swc preset — explicit standalone group",
+      "description": "@jscutlery utilities: not in monorepo:swc preset — explicit standalone group. @jscutlery/swc-angular excluded here so it stays in swc-deps (later rules win in Renovate)",
       "groupName": "jscutlery-deps",
-      "matchPackageNames": ["/^@jscutlery//"]
-    },
-    {
-      "description": "@sentry/cli: lives in getsentry/sentry-cli repo, not matched by monorepo:sentry-javascript — join sentry group manually",
-      "matchPackageNames": ["@sentry/cli"],
-      "groupName": "sentry-javascript"
+      "matchPackageNames": ["/^@jscutlery//"],
+      "excludePackageNames": ["@jscutlery/swc-angular"]
     },
     {
       "description": "Jest test framework and utilities — jest-preset-angular bridges Jest and Angular so it must move with the Jest group",
