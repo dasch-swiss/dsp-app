@@ -71,8 +71,8 @@
       "enabled": false
     },
     {
-      "description": "@ngrx/component-store: Angular-version coupled",
-      "matchPackageNames": ["@ngrx/component-store"],
+      "description": "@ngrx/*: all packages are Angular-version coupled — upgrade only after ng update",
+      "matchPackageNames": ["/^@ngrx//"],
       "enabled": false
     },
     {
@@ -97,6 +97,26 @@
       "description": "zone.js: maintenance mode — allow patches only (disable minor and major)",
       "matchPackageNames": ["zone.js"],
       "matchUpdateTypes": ["minor", "major"],
+      "enabled": false
+    },
+    {
+      "description": "NX-wrapped tools: major version ceiling is set by @nx/* peer deps — disable majors until nx migrate lifts the constraint",
+      "matchPackageNames": [
+        "cypress",
+        "@cypress/code-coverage",
+        "/^jest/",
+        "@types/jest",
+        "/^ts-jest$/",
+        "storybook",
+        "/^@storybook//"
+      ],
+      "matchUpdateTypes": ["major"],
+      "enabled": false
+    },
+    {
+      "description": "Angular-coupled ecosystem: rxjs major must align with Angular peer dep; ng-mocks and ngx-build-plus are Angular-version coupled — upgrade only after ng update",
+      "matchPackageNames": ["rxjs", "ng-mocks", "ngx-build-plus"],
+      "matchUpdateTypes": ["major"],
       "enabled": false
     },
 
