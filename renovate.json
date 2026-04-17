@@ -215,7 +215,6 @@
         "jest-preset-angular",
         "reflect-metadata",
         "ng-mocks",
-        "@faker-js/faker",
         "/^jest/",
         "/^ts-jest$/"
       ],
