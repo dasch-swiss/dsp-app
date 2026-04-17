@@ -1,0 +1,73 @@
+import { importProvidersFrom } from '@angular/core';
+import { RouterModule } from '@angular/router';
+import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
+import { of } from 'rxjs';
+import { expect } from 'storybook/test';
+
+import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
+import { DspResource } from '@dasch-swiss/vre/shared/app-common';
+import { TranslateModule } from '@ngx-translate/core';
+import { ResourceComponent } from './resource.component';
+
+const makeResource = (): DspResource =>
+  ({
+    res: {
+      id: 'http://rdfh.ch/resource/1',
+      type: 'http://example.org/Thing',
+      label: 'Test Resource',
+      attachedToProject: 'http://rdfh.ch/projects/test',
+      attachedToUser: 'http://rdfh.ch/users/test',
+      userHasPermission: 'CR',
+      properties: {},
+      entityInfo: {
+        classes: {
+          'http://example.org/Thing': { label: 'Thing', comment: '' },
+        },
+      },
+    },
+    resProps: [],
+    incomingAnnotations: [],
+  }) as unknown as DspResource;
+
+const meta: Meta<ResourceComponent> = {
+  title: 'Devs / Resource Editor / Resource / Resource',
+  component: ResourceComponent,
+  decorators: [
+    applicationConfig({
+      providers: [
+        importProvidersFrom(RouterModule.forRoot([]), TranslateModule.forRoot()),
+        {
+          provide: DspApiConnectionToken,
+          useValue: {
+            v2: {
+              search: {
+                doSearchStillImageRepresentationsCount: () => of({ numberOfResults: 0 }),
+                doSearchIncomingLinks: () => of({ resources: [], mayHaveMoreResults: false }),
+              },
+              res: { getResource: () => of(null) },
+            },
+          },
+        },
+      ],
+    }),
+  ],
+  argTypes: {
+    resource: {
+      description: 'The DSP resource to display.',
+      table: { type: { summary: 'DspResource' }, category: 'State' },
+    },
+  },
+};
+export default meta;
+type Story = StoryObj<ResourceComponent>;
+
+export const ObjectWithoutRepresentation: Story = {
+  name: 'Shows resource header and tabs for object without file representation',
+  args: { resource: makeResource() },
+  play: async ({ canvasElement, step }) => {
+    await step('Resource header is rendered', async () => {
+      const header = canvasElement.querySelector('app-resource-header');
+      await expect(header).not.toBeNull();
+    });
+  },
+};
