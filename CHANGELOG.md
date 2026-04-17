@@ -1,5 +1,44 @@
 # Changelog
 
+## [13.1.1](https://github.com/dasch-swiss/dsp-app/compare/v13.1.0...v13.1.1) (2026-04-17)
+
+
+### Maintenances
+
+* add security label to Dependabot security alert PRs ([#2990](https://github.com/dasch-swiss/dsp-app/issues/2990)) ([71ac20d](https://github.com/dasch-swiss/dsp-app/commit/71ac20d3eb7426b7d3c3ef68da30b227fa10a96f))
+* audit and clean up deprecated/redundant dependencies ([#2991](https://github.com/dasch-swiss/dsp-app/issues/2991)) ([e0ddac8](https://github.com/dasch-swiss/dsp-app/commit/e0ddac86e87d0121ea971b41f7b297b2861d6c7c))
+* **ci:** add workflow_dispatch trigger to PR preview workflow ([#2992](https://github.com/dasch-swiss/dsp-app/issues/2992)) ([8a4f2c2](https://github.com/dasch-swiss/dsp-app/commit/8a4f2c2e9aa90f2d6c858205a1e068b592f61b94))
+* **ci:** avoid missing git context in deploy-preview-manual ([#2999](https://github.com/dasch-swiss/dsp-app/issues/2999)) ([7a9015a](https://github.com/dasch-swiss/dsp-app/commit/7a9015a3eed328fa74264d3f6867afa9d83f8e2f))
+* **ci:** post preview URL comment on PR when deploying via workflow_dispatch ([#2996](https://github.com/dasch-swiss/dsp-app/issues/2996)) ([5efa5fc](https://github.com/dasch-swiss/dsp-app/commit/5efa5fc9c87ba845ea43702687af1c746dcbc5ff))
+* **ci:** remove workflow_dispatch input — resolve PR from selected branch ([#2998](https://github.com/dasch-swiss/dsp-app/issues/2998)) ([07f94a0](https://github.com/dasch-swiss/dsp-app/commit/07f94a0e7fb246f033a1229f8663de2ee975b06b))
+* **ci:** use PR number as workflow_dispatch input instead of branch name ([#2997](https://github.com/dasch-swiss/dsp-app/issues/2997)) ([76d5be2](https://github.com/dasch-swiss/dsp-app/commit/76d5be25ff5c096f32a55de860eab3b026f80f4b))
+* **config:** migrate Renovate config ([#2988](https://github.com/dasch-swiss/dsp-app/issues/2988)) ([cfe97a6](https://github.com/dasch-swiss/dsp-app/commit/cfe97a601a789be9789a0fceab1dc24256f5cd88))
+* **deps:** bump docker/build-push-action from 6 to 7 ([#2977](https://github.com/dasch-swiss/dsp-app/issues/2977)) ([940d2d6](https://github.com/dasch-swiss/dsp-app/commit/940d2d646ee7c5c7f10513c94c160ed0067659ce))
+* **deps:** bump follow-redirects from 1.15.11 to 1.16.0 ([#2987](https://github.com/dasch-swiss/dsp-app/issues/2987)) ([199b345](https://github.com/dasch-swiss/dsp-app/commit/199b34583a90300248a2483c638cc05740ff4719))
+* **deps:** bump google-github-actions/auth from 2 to 3 ([#2978](https://github.com/dasch-swiss/dsp-app/issues/2978)) ([5f307ea](https://github.com/dasch-swiss/dsp-app/commit/5f307ea71edd1fdc33b34ebf76d3e22e92363409))
+* **deps:** bump google-github-actions/deploy-cloudrun from 2 to 3 ([#2980](https://github.com/dasch-swiss/dsp-app/issues/2980)) ([7ffb0c6](https://github.com/dasch-swiss/dsp-app/commit/7ffb0c6da19e9ff479d0d60072d18c5c020b3f9c))
+* **deps:** bump hono from 4.12.12 to 4.12.14 ([#2994](https://github.com/dasch-swiss/dsp-app/issues/2994)) ([7a90ede](https://github.com/dasch-swiss/dsp-app/commit/7a90edec87ffe632667ff53fe446199c5ff7c344))
+* **deps:** bump peter-evans/create-or-update-comment from 4 to 5 ([#2981](https://github.com/dasch-swiss/dsp-app/issues/2981)) ([62adec1](https://github.com/dasch-swiss/dsp-app/commit/62adec1b8e128d2b97ead187b5a5bffc45729686))
+* **deps:** bump peter-evans/find-comment from 3 to 4 ([#2979](https://github.com/dasch-swiss/dsp-app/issues/2979)) ([874fa76](https://github.com/dasch-swiss/dsp-app/commit/874fa76aab379e9d2606098bc10947a62cf53722))
+* **deps:** bump protobufjs from 7.5.4 to 7.5.5 ([#3013](https://github.com/dasch-swiss/dsp-app/issues/3013)) ([89f85af](https://github.com/dasch-swiss/dsp-app/commit/89f85af5bae0f35936b4dd43030f2dd88790449d))
+* **deps:** migrate github-actions and docker updates from Dependabot to Renovate ([#2989](https://github.com/dasch-swiss/dsp-app/issues/2989)) ([00f2d0b](https://github.com/dasch-swiss/dsp-app/commit/00f2d0ba3cf27338c9866e780405eedfa663cc63))
+* **deps:** tier automerge by dep type (DEV-6217) ([#2993](https://github.com/dasch-swiss/dsp-app/issues/2993)) ([40afe4e](https://github.com/dasch-swiss/dsp-app/commit/40afe4eeabe33915e57c73748857e1ef4f7288ac))
+* **deps:** tune Renovate config with safety and UX improvements ([#2985](https://github.com/dasch-swiss/dsp-app/issues/2985)) ([3d8ac16](https://github.com/dasch-swiss/dsp-app/commit/3d8ac1676d841b1d31b23eda9461526ace007720))
+* **deps:** update dependency @sentry/cli from 2.58.5 to 3.3.5 ([#3000](https://github.com/dasch-swiss/dsp-app/issues/3000)) ([515d5bc](https://github.com/dasch-swiss/dsp-app/commit/515d5bc2dc0bcc03ad65f52ed5fe0fdcbe9744d0))
+* **deps:** update dependency eslint-plugin-ban from 1.6.0 to 2.0.0 ([#3002](https://github.com/dasch-swiss/dsp-app/issues/3002)) ([d5d7210](https://github.com/dasch-swiss/dsp-app/commit/d5d72104d0b41ec95e7285398ab47f20b50e65ea))
+* **deps:** update dependency eslint-plugin-jsdoc from 48.11.0 to 62.9.0 ([#3004](https://github.com/dasch-swiss/dsp-app/issues/3004)) ([12c7962](https://github.com/dasch-swiss/dsp-app/commit/12c7962a1a6ac8174f0d329fcaf941994e0fccd0))
+* **deps:** update dependency eslint-plugin-unused-imports from 3.2.0 to 4.4.1 ([#3005](https://github.com/dasch-swiss/dsp-app/issues/3005)) ([1510de2](https://github.com/dasch-swiss/dsp-app/commit/1510de283dcd4fc2a3a7d34465d4c30f4b8e72b0))
+* **deps:** update dependency mkdocs-material from 6.0.1 to 9.7.6 ([#3006](https://github.com/dasch-swiss/dsp-app/issues/3006)) ([e3d4bcd](https://github.com/dasch-swiss/dsp-app/commit/e3d4bcda662a1ed58304681535174b623dad51dc))
+* **deps:** update docker-deps (major) ([#3007](https://github.com/dasch-swiss/dsp-app/issues/3007)) ([2a334c6](https://github.com/dasch-swiss/dsp-app/commit/2a334c6f968c01a45c032e512c7a69402c5c24d2))
+* **deps:** update github-actions (major) ([#3008](https://github.com/dasch-swiss/dsp-app/issues/3008)) ([2e165e7](https://github.com/dasch-swiss/dsp-app/commit/2e165e720d0a365efe18fba06d0c524a11f141a8))
+* **deps:** update postcss-deps (major) ([#3010](https://github.com/dasch-swiss/dsp-app/issues/3010)) ([9f9965f](https://github.com/dasch-swiss/dsp-app/commit/9f9965f4bd0dec993ec28f3933aaa60751415da6))
+* skip CodeQL analysis on release-please PRs ([#2984](https://github.com/dasch-swiss/dsp-app/issues/2984)) ([d2b2b54](https://github.com/dasch-swiss/dsp-app/commit/d2b2b544778138bd25733b8d519204a3921708d5))
+
+
+### Documentation
+
+* review and reorder README to surface most relevant sections first ([#2995](https://github.com/dasch-swiss/dsp-app/issues/2995)) ([e76de33](https://github.com/dasch-swiss/dsp-app/commit/e76de3345999595d1aecb8d83cf1cf2e74a51a85))
+
 ## [13.1.0](https://github.com/dasch-swiss/dsp-app/compare/v13.0.0...v13.1.0) (2026-04-13)
 
 
