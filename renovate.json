@@ -84,7 +84,9 @@
         "eslint-plugin-jsdoc",
         "eslint-plugin-unused-imports",
         "eslint-config-airbnb-base",
-        "eslint-config-airbnb-typescript"
+        "eslint-config-airbnb-typescript",
+        "eslint-config-prettier",
+        "eslint-plugin-prettier"
       ],
       "matchUpdateTypes": ["major"],
       "enabled": false
