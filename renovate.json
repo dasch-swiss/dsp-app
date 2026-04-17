@@ -109,11 +109,6 @@
       "enabled": false
     },
     {
-      "description": "@dasch-swiss/dsp-js: updated manually per release",
-      "matchPackageNames": ["@dasch-swiss/dsp-js"],
-      "enabled": false
-    },
-    {
       "description": "CKEditor: custom build + Angular adapter tracked in DEV-6208; disable both until resolved",
       "matchPackageNames": [
         "ckeditor5-custom-build",
@@ -272,6 +267,11 @@
       ],
       "groupName": "angular-ecosystem-deps"
     },
+    {
+      "description": "Storybook packages — @storybook/test-runner lives in a separate repo (storybookjs/test-runner) and is not covered by the monorepo:storybook preset in config:recommended; explicit group prevents sync drift on minor/patch updates",
+      "matchPackageNames": ["storybook", "/^@storybook//"],
+      "groupName": "storybook-deps"
+    },
 
     {
       "description": "Automerge all dev dependency updates (patch + minor) — no age guard; dev deps don't affect production",
@@ -297,6 +297,14 @@
       "automerge": true,
       "platformAutomerge": true,
       "minimumReleaseAge": "7 days",
+      "rebaseWhen": "behind-base-branch"
+    },
+    {
+      "description": "Automerge github-actions and docker patch/minor updates — matchDepTypes: devDependencies does not apply to these managers so they need an explicit rule",
+      "matchManagers": ["github-actions", "dockerfile", "docker-compose"],
+      "matchUpdateTypes": ["patch", "minor"],
+      "automerge": true,
+      "platformAutomerge": true,
       "rebaseWhen": "behind-base-branch"
     }
   ]
