@@ -19,6 +19,7 @@
     "enabled": true,
     "schedule": ["before 9am on Monday"]
   },
+  "ignorePaths": ["libs/**/package.json"],
   "vulnerabilityAlerts": {
     "enabled": false
   },
@@ -237,7 +238,7 @@
     },
     {
       "description": "JWT decode",
-      "matchPackageNames": ["jwt-decode", "@types/jwt-decode"],
+      "matchPackageNames": ["jwt-decode"],
       "groupName": "jwt-decode-deps"
     },
     {
