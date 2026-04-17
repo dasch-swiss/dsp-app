@@ -5,11 +5,11 @@ import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular'
 import { of } from 'rxjs';
 import { expect } from 'storybook/test';
 
-import { FileRepresentationInput, ParentResourceInput } from '../representation-inputs';
+import { ParentResourceInput } from '../representation-inputs';
 import { RepresentationService } from '../representation.service';
 import { ResourceFetcherService } from '../resource-fetcher.service';
+import { MediaPlayerService } from '../video/media-player.service';
 import { AudioToolbarComponent } from './audio-toolbar.component';
-import { MediaPlayerService } from './media-player.service';
 
 const makeParentResource = (): ParentResourceInput => ({
   id: 'http://rdfh.ch/resource/1',
