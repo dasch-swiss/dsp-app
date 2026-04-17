@@ -60,6 +60,12 @@
       "enabled": false
     },
     {
+      "description": "ts-node: major updates disabled — each major drops older TypeScript versions; must align with frozen TypeScript",
+      "matchPackageNames": ["ts-node"],
+      "matchUpdateTypes": ["major"],
+      "enabled": false
+    },
+    {
       "description": "ESLint core + TypeScript ESLint: frozen until Angular/NX upgrade unlocks ESLint 9 flat config migration",
       "matchPackageNames": [
         "eslint",
