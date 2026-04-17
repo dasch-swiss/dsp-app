@@ -1,0 +1,79 @@
+import { importProvidersFrom } from '@angular/core';
+import { RouterModule } from '@angular/router';
+import { ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
+import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
+import { of } from 'rxjs';
+import { expect } from 'storybook/test';
+
+import { ResourceFetcherService } from './representations/resource-fetcher.service';
+import { PropertiesDisplayService } from './resource-properties/properties-display.service';
+import { IncomingResourceHeaderComponent } from './incoming-resource-header.component';
+
+const makeResource = () =>
+  ({
+    id: 'http://rdfh.ch/resource/2',
+    type: 'http://example.org/Thing',
+    label: 'Incoming Resource Label',
+    attachedToProject: 'http://rdfh.ch/projects/test',
+    attachedToUser: 'http://rdfh.ch/users/test-user',
+    creationDate: '2024-06-15T10:00:00.000Z',
+    userHasPermission: 'RV',
+    versionArkUrl: 'ark:/99999/1/incoming',
+    entityInfo: { classes: {} },
+    getValues: () => [],
+    properties: {},
+  }) as any;
+
+const meta: Meta<IncomingResourceHeaderComponent> = {
+  title: 'Devs / Resource Editor / Resource Header / Incoming Resource Header',
+  component: IncomingResourceHeaderComponent,
+  decorators: [
+    applicationConfig({
+      providers: [
+        importProvidersFrom(RouterModule.forRoot([])),
+        {
+          provide: ResourceFetcherService,
+          useValue: {
+            userCanEdit$: of(false),
+            userCanDelete$: of(false),
+            attachedUser$: of({ givenName: 'Jane', familyName: 'Doe', username: 'jane.doe' }),
+          },
+        },
+        {
+          provide: ProjectApiService,
+          useValue: {
+            get: () =>
+              of({ project: { id: 'http://rdfh.ch/projects/test', shortname: 'test', longname: 'Test Project' } }),
+          },
+        },
+        {
+          provide: PropertiesDisplayService,
+          useValue: { showAllProperties$: of(false), showComments$: of(false), toggleShowProperties: () => {}, toggleShowComments: () => {} },
+        },
+      ],
+    }),
+  ],
+  argTypes: {
+    resource: {
+      description: 'The incoming resource to display in the header.',
+      table: { type: { summary: 'ReadResource' }, category: 'State' },
+    },
+  },
+};
+export default meta;
+type Story = StoryObj<IncomingResourceHeaderComponent>;
+
+export const DefaultView: Story = {
+  name: 'Shows incoming resource label and actions',
+  args: { resource: makeResource() },
+  play: async ({ canvasElement, step }) => {
+    await step('Resource label is displayed', async () => {
+      const label = canvasElement.querySelector('[data-cy="resource-header-label"]');
+      await expect(label?.textContent?.trim()).toBe('Incoming Resource Label');
+    });
+    await step('Show all properties button is rendered', async () => {
+      const button = canvasElement.querySelector('[data-cy="show-all-properties"]');
+      await expect(button).not.toBeNull();
+    });
+  },
+};
