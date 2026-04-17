@@ -6,6 +6,7 @@
     "rebaseWhen: conflicted (global) — major PRs sit unmerged intentionally; rebasing them on every automated merge would waste CI runs on a PR nobody is about to merge. Automated rules override this with behind-base-branch to keep the automerge chain moving."
   ],
   "extends": ["config:recommended"],
+  "semanticCommitType": "chore",
   "timezone": "Europe/Zurich",
   "prConcurrentLimit": 2,
   "dependencyDashboard": true,
