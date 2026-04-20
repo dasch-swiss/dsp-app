@@ -45,7 +45,7 @@ export const WithValue: Story = {
         <span>Current value</span>
       </app-nullable-editor>
     `,
-    imports: [NullableEditorComponent, ReactiveFormsModule],
+    moduleMetadata: { imports: [NullableEditorComponent, ReactiveFormsModule] },
   }),
   args: {
     defaultValue: 'default',

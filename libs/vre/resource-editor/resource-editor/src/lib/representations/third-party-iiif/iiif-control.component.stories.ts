@@ -47,13 +47,11 @@ export const WithValidUrl: Story = {
 
 export const WithError: Story = {
   name: 'Shows validation error for an invalid IIIF URL',
-  args: {
-    control: (() => {
-      const control = new FormControl<string | null>('not-a-valid-url');
-      control.setErrors({ invalidIiifUrl: true });
-      control.markAsTouched();
-      return control;
-    })(),
+  render: () => {
+    const control = new FormControl<string | null>('not-a-valid-url');
+    control.setErrors({ invalidIiifUrl: true });
+    control.markAsTouched();
+    return { props: { control } };
   },
   play: async ({ canvasElement, step }) => {
     await step('Error message is displayed', async () => {

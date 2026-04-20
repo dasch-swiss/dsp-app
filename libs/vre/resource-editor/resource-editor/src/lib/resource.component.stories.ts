@@ -6,6 +6,7 @@ import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { ResourceService } from '@dasch-swiss/vre/shared/app-common';
+import { ResourceFetcherService } from './representations/resource-fetcher.service';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
 import { expect } from 'storybook/test';
@@ -56,6 +57,7 @@ const meta: Meta<ResourceComponent> = {
         { provide: NotificationService, useValue: { openSnackBar: () => {} } },
         { provide: ResourceService, useValue: { getResourcePath: () => '/project/test/resource/1' } },
         { provide: ProjectApiService, useValue: { get: () => of({ project: { id: 'http://rdfh.ch/projects/test', shortname: 'test', longname: 'Test Project' } }) } },
+        { provide: ResourceFetcherService, useValue: { userCanEdit$: of(false), userCanDelete$: of(false), resource$: of(undefined), projectShortcode$: of('0001'), scrollToTop$: of() } },
       ],
     }),
   ],
