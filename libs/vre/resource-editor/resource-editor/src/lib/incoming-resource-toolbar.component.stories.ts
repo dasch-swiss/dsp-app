@@ -1,5 +1,7 @@
 import { importProvidersFrom } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
+import { UserService } from '@dasch-swiss/vre/core/session';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
 import { expect } from 'storybook/test';
@@ -31,6 +33,8 @@ const meta: Meta<IncomingResourceToolbarComponent> = {
         { provide: ResourceFetcherService, useValue: { userCanDelete$: of(false), userCanEdit$: of(false) } },
         { provide: NotificationService, useValue: { openSnackBar: () => {} } },
         { provide: ResourceService, useValue: { getResourcePath: () => '/project/test/resource/2' } },
+        { provide: UserService, useValue: { user$: of(null) } },
+        { provide: DspApiConnectionToken, useValue: { v2: { res: { canDeleteResource: () => of({ canDo: true }), getResourcePermissions: () => of([]) } } } },
       ],
     }),
   ],

@@ -1,7 +1,15 @@
+import { signal } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
+import { of } from 'rxjs';
 import { expect } from 'storybook/test';
 
+import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
+import { ResourceService } from '@dasch-swiss/vre/shared/app-common';
+import { ResourceFetcherService } from '../representations/resource-fetcher.service';
+import { FootnoteService } from './footnotes/footnote.service';
+import { GeonameService } from '../template-switcher/geoname.service';
+import { PropertiesDisplayService } from './properties-display.service';
 import { PropertyValueComponent } from './property-value.component';
 import { PropertyValueService } from './property-value.service';
 
@@ -38,7 +46,15 @@ const meta: Meta<PropertyValueComponent> = {
   component: PropertyValueComponent,
   decorators: [
     applicationConfig({
-      providers: [{ provide: PropertyValueService, useValue: makePropertyValueServiceStub(null) }],
+      providers: [
+        { provide: PropertyValueService, useValue: makePropertyValueServiceStub(null) },
+        { provide: PropertiesDisplayService, useValue: { showComments$: of(false) } },
+        { provide: ResourceService, useValue: { getResourcePath: (iri: string) => iri } },
+        { provide: GeonameService, useValue: { resolveGeonameID: () => of(null) } },
+        { provide: FootnoteService, useValue: { reloadToken: signal(0) } },
+        { provide: DspApiConnectionToken, useValue: { v2: { list: { getNode: () => of({}), getList: () => of({}) } } } },
+        { provide: ResourceFetcherService, useValue: { resource$: of(undefined), projectShortcode$: of('0001') } },
+      ],
     }),
   ],
   argTypes: {

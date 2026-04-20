@@ -1,11 +1,15 @@
 import { importProvidersFrom } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
+import { UserService } from '@dasch-swiss/vre/core/session';
+import { DspResource } from '@dasch-swiss/vre/shared/app-common';
+import { ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
+import { NotificationService } from '@dasch-swiss/vre/ui/notification';
+import { ResourceService } from '@dasch-swiss/vre/shared/app-common';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
 import { expect } from 'storybook/test';
 
-import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
-import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { TranslateModule } from '@ngx-translate/core';
 import { ResourceComponent } from './resource.component';
 
@@ -44,10 +48,14 @@ const meta: Meta<ResourceComponent> = {
                 doSearchStillImageRepresentationsCount: () => of({ numberOfResults: 0 }),
                 doSearchIncomingLinks: () => of({ resources: [], mayHaveMoreResults: false }),
               },
-              res: { getResource: () => of(null) },
+              res: { getResource: () => of(null), canDeleteResource: () => of({ canDo: true }), getResourcePermissions: () => of([]) },
             },
           },
         },
+        { provide: UserService, useValue: { user$: of(null) } },
+        { provide: NotificationService, useValue: { openSnackBar: () => {} } },
+        { provide: ResourceService, useValue: { getResourcePath: () => '/project/test/resource/1' } },
+        { provide: ProjectApiService, useValue: { get: () => of({ project: { id: 'http://rdfh.ch/projects/test', shortname: 'test', longname: 'Test Project' } }) } },
       ],
     }),
   ],
