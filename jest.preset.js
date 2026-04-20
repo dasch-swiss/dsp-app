@@ -12,6 +12,14 @@ module.exports = {
   coverageReporters: ['html', 'json', 'text-summary', 'lcov'],
   coverageProvider: 'v8',
   setupFiles: ['reflect-metadata'],
+  moduleNameMapper: {
+    // canvas is an optional peer dep of jest-environment-jsdom installed without its native binary
+    // (npm ci --ignore-scripts). jsdom detects it via require.resolve() then loads it unconditionally,
+    // causing "Cannot find module '../build/Release/canvas.node'". Returning an object without
+    // createCanvas() makes jsdom set Canvas = null and skip all canvas rendering silently.
+    '^canvas$': `${__dirname}/__mocks__/canvas.js`,
+    ...(nxPreset.moduleNameMapper || {}),
+  },
   transform: {
     '^.+\\.(ts|mjs|js)$': [swcTransformer, swcConfigEs5],
     '^.+\\.(html|svg)$': [
