@@ -3,6 +3,7 @@ import { RouterModule } from '@angular/router';
 import { ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { UserService } from '@dasch-swiss/vre/core/session';
+import { ResourceService } from '@dasch-swiss/vre/shared/app-common';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
 import { expect } from 'storybook/test';
@@ -58,6 +59,7 @@ const meta: Meta<IncomingResourceHeaderComponent> = {
           },
         },
         { provide: UserService, useValue: { user$: of(null) } },
+        { provide: ResourceService, useValue: { getResourcePath: (iri: string) => iri } },
         { provide: DspApiConnectionToken, useValue: { v2: { res: { canDeleteResource: () => of({ canDo: true }) } } } },
       ],
     }),

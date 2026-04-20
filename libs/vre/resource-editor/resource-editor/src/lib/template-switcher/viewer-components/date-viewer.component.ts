@@ -9,9 +9,10 @@ import { KnoraDatePipe } from '@dasch-swiss/vre/ui/ui';
   template: `
     @if (isKnoraPeriod) {
       <span>{{ start | knoraDate: 'dd.MM.YYYY' : 'era' }}</span>
+      <ng-container *ngTemplateOutlet="calendarType; context: { date: start }"></ng-container>
       -
       <span>{{ end | knoraDate: 'dd.MM.YYYY' : 'era' }}</span>
-      <ng-container *ngTemplateOutlet="calendarType; context: { date: start }"></ng-container>
+      <ng-container *ngTemplateOutlet="calendarType; context: { date: end }"></ng-container>
     } @else {
       <span>{{ knoraDate | knoraDate: 'dd.MM.YYYY' : 'era' }}</span>
       <ng-container *ngTemplateOutlet="calendarType; context: { date: knoraDate }"></ng-container>

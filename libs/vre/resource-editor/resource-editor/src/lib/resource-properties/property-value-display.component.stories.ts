@@ -1,4 +1,5 @@
-import { signal } from '@angular/core';
+import { importProvidersFrom, signal } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { ResourceService } from '@dasch-swiss/vre/shared/app-common';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
@@ -46,6 +47,7 @@ const meta: Meta<PropertyValueDisplayComponent> = {
   decorators: [
     applicationConfig({
       providers: [
+        importProvidersFrom(RouterModule.forRoot([])),
         { provide: PropertyValueService, useValue: makePropertyValueServiceStub() },
         { provide: PropertiesDisplayService, useValue: { showComments$: of(false) } },
         { provide: ResourceService, useValue: { getResourcePath: (iri: string) => iri } },

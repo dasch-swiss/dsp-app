@@ -63,8 +63,8 @@ export const WithValidUrl: Story = {
 export const WithError: Story = {
   name: 'Shows validation error for an invalid IIIF URL',
   render: () => ({
-    component: IiifControlWithErrorHostComponent,
-    props: {},
+    template: '<app-iiif-control-with-error-host />',
+    moduleMetadata: { imports: [IiifControlWithErrorHostComponent] },
   }),
   play: async ({ canvasElement, step }) => {
     await step('Error message is displayed', async () => {
