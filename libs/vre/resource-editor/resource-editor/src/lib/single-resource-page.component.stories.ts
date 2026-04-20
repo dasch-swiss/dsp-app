@@ -1,10 +1,10 @@
 import { importProvidersFrom } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { ResourceService } from '@dasch-swiss/vre/shared/app-common';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
 import { expect } from 'storybook/test';
 
-import { ResourceService } from '@dasch-swiss/vre/shared/app-common';
 import { SingleResourcePageComponent } from './single-resource-page.component';
 
 const meta: Meta<SingleResourcePageComponent> = {
@@ -17,8 +17,7 @@ const meta: Meta<SingleResourcePageComponent> = {
         {
           provide: ResourceService,
           useValue: {
-            getResourceIri: (shortcode: string, uuid: string) =>
-              `http://rdfh.ch/${shortcode}/${uuid}`,
+            getResourceIri: (shortcode: string, uuid: string) => `http://rdfh.ch/${shortcode}/${uuid}`,
           },
         },
       ],

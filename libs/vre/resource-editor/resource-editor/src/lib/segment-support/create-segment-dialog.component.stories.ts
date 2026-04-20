@@ -1,15 +1,19 @@
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DialogRef } from '@angular/cdk/dialog';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
 import { expect } from 'storybook/test';
 
+import { CreateSegmentDialogComponent } from './create-segment-dialog.component';
 import { SegmentApiService } from './segment-api.service';
 import { SegmentsService } from './segments.service';
-import { CreateSegmentDialogComponent } from './create-segment-dialog.component';
 
 const makeDialogData = () => ({
-  resource: { id: 'http://rdfh.ch/resource/1', type: 'http://example.org/Thing', attachedToProject: 'http://rdfh.ch/projects/test' },
+  resource: {
+    id: 'http://rdfh.ch/resource/1',
+    type: 'http://example.org/Thing',
+    attachedToProject: 'http://rdfh.ch/projects/test',
+  },
   videoDurationSecs: 300,
   type: 'VideoSegment',
   projectShortcode: 'test',

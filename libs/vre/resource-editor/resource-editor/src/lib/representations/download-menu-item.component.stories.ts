@@ -1,11 +1,11 @@
 import { Clipboard } from '@angular/cdk/clipboard';
+import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
 import { expect } from 'storybook/test';
 
-import { NotificationService } from '@dasch-swiss/vre/ui/notification';
-import { RepresentationService } from './representation.service';
 import { DownloadMenuItemComponent } from './download-menu-item.component';
+import { RepresentationService } from './representation.service';
 
 const makeSrc = () => ({
   fileUrl: 'https://example.org/file.mp4',
@@ -25,7 +25,10 @@ const meta: Meta<DownloadMenuItemComponent> = {
   decorators: [
     applicationConfig({
       providers: [
-        { provide: RepresentationService, useValue: { downloadProjectFile: () => {}, getIngestOriginalUrl: () => of('https://example.org/file.mp4') } },
+        {
+          provide: RepresentationService,
+          useValue: { downloadProjectFile: () => {}, getIngestOriginalUrl: () => of('https://example.org/file.mp4') },
+        },
         { provide: NotificationService, useValue: { openSnackBar: () => {} } },
         { provide: Clipboard, useValue: { copy: () => true } },
       ],

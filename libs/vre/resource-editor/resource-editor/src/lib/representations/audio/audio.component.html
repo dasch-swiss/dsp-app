@@ -5,8 +5,7 @@
 <div style="height: 100%; display: flex; justify-content: center; align-items: center">
   @if (!isPlayerReady) {
   <mat-icon style="color: white; transform: scale(4)"> audio_file</mat-icon>
-  }
-  @if (audioFileUrl) {
+  } @if (audioFileUrl) {
   <div class="audio-player">
     <audio
       #audioPlayer

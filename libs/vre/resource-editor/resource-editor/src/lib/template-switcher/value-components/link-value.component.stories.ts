@@ -1,11 +1,11 @@
 import { OverlayModule } from '@angular/cdk/overlay';
+import { importProvidersFrom } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
 import { expect } from 'storybook/test';
-import { importProvidersFrom } from '@angular/core';
 
 import { LinkValueDataService } from './link-value-data.service';
 import { LinkValueComponent } from './link-value.component';

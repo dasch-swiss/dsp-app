@@ -1,9 +1,9 @@
 import { FormControl } from '@angular/forms';
+import { PaginatedApiService } from '@dasch-swiss/vre/shared/app-common';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
 import { expect } from 'storybook/test';
 
-import { PaginatedApiService } from '@dasch-swiss/vre/shared/app-common';
 import { AuthorshipFormFieldComponent } from './authorship-form-field.component';
 
 const meta: Meta<AuthorshipFormFieldComponent> = {
@@ -11,9 +11,7 @@ const meta: Meta<AuthorshipFormFieldComponent> = {
   component: AuthorshipFormFieldComponent,
   decorators: [
     applicationConfig({
-      providers: [
-        { provide: PaginatedApiService, useValue: { getAuthorships: () => of([]) } },
-      ],
+      providers: [{ provide: PaginatedApiService, useValue: { getAuthorships: () => of([]) } }],
     }),
   ],
   argTypes: {

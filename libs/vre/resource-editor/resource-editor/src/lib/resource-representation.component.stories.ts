@@ -8,16 +8,16 @@ import {
   ReadMovingImageFileValue,
   ReadResource,
 } from '@dasch-swiss/dsp-js';
-import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
+import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { applicationConfig, moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import { of, Subject } from 'rxjs';
 import { expect } from 'storybook/test';
 
-import { SegmentsService } from './segment-support/segments.service';
 import { RepresentationService } from './representations/representation.service';
 import { ResourceFetcherService } from './representations/resource-fetcher.service';
 import { ResourceRepresentationComponent } from './resource-representation.component';
+import { SegmentsService } from './segment-support/segments.service';
 
 const makeDspResource = (propKey: string, fileValue: ReadFileValue): DspResource => {
   const res = new ReadResource();
@@ -29,70 +29,53 @@ const makeDspResource = (propKey: string, fileValue: ReadFileValue): DspResource
 };
 
 const makeAudioResource = (): DspResource =>
-  makeDspResource(
-    Constants.HasAudioFileValue,
-    {
-      type: Constants.AudioFileValue,
-      fileUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
-      filename: 'audio.mp3',
-      userHasPermission: 'RV',
-    } as unknown as ReadAudioFileValue
-  );
+  makeDspResource(Constants.HasAudioFileValue, {
+    type: Constants.AudioFileValue,
+    fileUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+    filename: 'audio.mp3',
+    userHasPermission: 'RV',
+  } as unknown as ReadAudioFileValue);
 
 const makeVideoResource = (): DspResource =>
-  makeDspResource(
-    Constants.HasMovingImageFileValue,
-    {
-      type: Constants.MovingImageFileValue,
-      fileUrl: 'https://iiif.stage.dasch.swiss:443/0869/3xUzuLcE9nC-MjBgXRjjsos.mp4/file',
-      filename: 'video.mp4',
-      userHasPermission: 'RV',
-    } as unknown as ReadMovingImageFileValue
-  );
+  makeDspResource(Constants.HasMovingImageFileValue, {
+    type: Constants.MovingImageFileValue,
+    fileUrl: 'https://iiif.stage.dasch.swiss:443/0869/3xUzuLcE9nC-MjBgXRjjsos.mp4/file',
+    filename: 'video.mp4',
+    userHasPermission: 'RV',
+  } as unknown as ReadMovingImageFileValue);
 
 const makeDocumentResource = (): DspResource =>
-  makeDspResource(
-    Constants.HasDocumentFileValue,
-    {
-      type: Constants.DocumentFileValue,
-      fileUrl: 'https://example.org/document.docx',
-      filename: 'document.docx',
-      userHasPermission: 'RV',
-    } as unknown as ReadDocumentFileValue
-  );
+  makeDspResource(Constants.HasDocumentFileValue, {
+    type: Constants.DocumentFileValue,
+    fileUrl: 'https://example.org/document.docx',
+    filename: 'document.docx',
+    userHasPermission: 'RV',
+  } as unknown as ReadDocumentFileValue);
 
 const makePdfResource = (): DspResource =>
-  makeDspResource(
-    Constants.HasDocumentFileValue,
-    {
-      type: Constants.DocumentFileValue,
-      fileUrl: 'data:application/pdf;base64,JVBERi0xLjQKMSAwIG9iago8PCAvVHlwZSAvQ2F0YWxvZyAvUGFnZXMgMiAwIFIgPj4KZW5kb2JqCjIgMCBvYmoKPDwgL1R5cGUgL1BhZ2VzIC9LaWRzIFszIDAgUl0gL0NvdW50IDEgPj4KZW5kb2JqCjMgMCBvYmoKPDwgL1R5cGUgL1BhZ2UgL1BhcmVudCAyIDAgUiAvTWVkaWFCb3ggWzAgMCA2MTIgNzkyXSAvQ29udGVudHMgNCAwIFIgL1Jlc291cmNlcyA8PCAvRm9udCA8PCAvRjEgNSAwIFIgPj4gPj4gPj4KZW5kb2JqCjQgMCBvYmoKPDwgL0xlbmd0aCAzNTkgPj4Kc3RyZWFtCkJUCi9GMSAxMiBUZgo1MCA3NTAgVGQKMTQgVEwKKExvcmVtIGlwc3VtIGRvbG9yIHNpdCBhbWV0LCBjb25zZWN0ZXR1ciBhZGlwaXNjaW5nIGVsaXQuKSBUaiBUKgooU2VkIGRvIGVpdXNtb2QgdGVtcG9yIGluY2lkaWR1bnQgdXQgbGFib3JlIGV0IGRvbG9yZSBtYWduYSBhbGlxdWEuKSBUaiBUKgooVXQgZW5pbSBhZCBtaW5pbSB2ZW5pYW0sIHF1aXMgbm9zdHJ1ZCBleGVyY2l0YXRpb24gdWxsYW1jby4pIFRqIFQqCihEdWlzIGF1dGUgaXJ1cmUgZG9sb3IgaW4gcmVwcmVoZW5kZXJpdCBpbiB2b2x1cHRhdGUgdmVsaXQgZXNzZS4pIFRqIFQqCihDaWxsdW0gZG9sb3JlIGV1IGZ1Z2lhdCBudWxsYSBwYXJpYXR1ci4pIFRqIFQqCkVUCmVuZHN0cmVhbQplbmRvYmoKNSAwIG9iago8PCAvVHlwZSAvRm9udCAvU3VidHlwZSAvVHlwZTEgL0Jhc2VGb250IC9IZWx2ZXRpY2EgPj4KZW5kb2JqCnhyZWYKMCA2CjAwMDAwMDAwMDAgNjU1MzUgZiAKMDAwMDAwMDAwOSAwMDAwMCBuIAowMDAwMDAwMDU4IDAwMDAwIG4gCjAwMDAwMDAxMTUgMDAwMDAgbiAKMDAwMDAwMDI0MSAwMDAwMCBuIAowMDAwMDAwNjUxIDAwMDAwIG4gCnRyYWlsZXIKPDwgL1NpemUgNiAvUm9vdCAxIDAgUiA+PgpzdGFydHhyZWYKNzIxCiUlRU9G',
-      filename: 'document.pdf',
-      userHasPermission: 'RV',
-    } as unknown as ReadDocumentFileValue
-  );
+  makeDspResource(Constants.HasDocumentFileValue, {
+    type: Constants.DocumentFileValue,
+    fileUrl:
+      'data:application/pdf;base64,JVBERi0xLjQKMSAwIG9iago8PCAvVHlwZSAvQ2F0YWxvZyAvUGFnZXMgMiAwIFIgPj4KZW5kb2JqCjIgMCBvYmoKPDwgL1R5cGUgL1BhZ2VzIC9LaWRzIFszIDAgUl0gL0NvdW50IDEgPj4KZW5kb2JqCjMgMCBvYmoKPDwgL1R5cGUgL1BhZ2UgL1BhcmVudCAyIDAgUiAvTWVkaWFCb3ggWzAgMCA2MTIgNzkyXSAvQ29udGVudHMgNCAwIFIgL1Jlc291cmNlcyA8PCAvRm9udCA8PCAvRjEgNSAwIFIgPj4gPj4gPj4KZW5kb2JqCjQgMCBvYmoKPDwgL0xlbmd0aCAzNTkgPj4Kc3RyZWFtCkJUCi9GMSAxMiBUZgo1MCA3NTAgVGQKMTQgVEwKKExvcmVtIGlwc3VtIGRvbG9yIHNpdCBhbWV0LCBjb25zZWN0ZXR1ciBhZGlwaXNjaW5nIGVsaXQuKSBUaiBUKgooU2VkIGRvIGVpdXNtb2QgdGVtcG9yIGluY2lkaWR1bnQgdXQgbGFib3JlIGV0IGRvbG9yZSBtYWduYSBhbGlxdWEuKSBUaiBUKgooVXQgZW5pbSBhZCBtaW5pbSB2ZW5pYW0sIHF1aXMgbm9zdHJ1ZCBleGVyY2l0YXRpb24gdWxsYW1jby4pIFRqIFQqCihEdWlzIGF1dGUgaXJ1cmUgZG9sb3IgaW4gcmVwcmVoZW5kZXJpdCBpbiB2b2x1cHRhdGUgdmVsaXQgZXNzZS4pIFRqIFQqCihDaWxsdW0gZG9sb3JlIGV1IGZ1Z2lhdCBudWxsYSBwYXJpYXR1ci4pIFRqIFQqCkVUCmVuZHN0cmVhbQplbmRvYmoKNSAwIG9iago8PCAvVHlwZSAvRm9udCAvU3VidHlwZSAvVHlwZTEgL0Jhc2VGb250IC9IZWx2ZXRpY2EgPj4KZW5kb2JqCnhyZWYKMCA2CjAwMDAwMDAwMDAgNjU1MzUgZiAKMDAwMDAwMDAwOSAwMDAwMCBuIAowMDAwMDAwMDU4IDAwMDAwIG4gCjAwMDAwMDAxMTUgMDAwMDAgbiAKMDAwMDAwMDI0MSAwMDAwMCBuIAowMDAwMDAwNjUxIDAwMDAwIG4gCnRyYWlsZXIKPDwgL1NpemUgNiAvUm9vdCAxIDAgUiA+PgpzdGFydHhyZWYKNzIxCiUlRU9G',
+    filename: 'document.pdf',
+    userHasPermission: 'RV',
+  } as unknown as ReadDocumentFileValue);
 
 const makeArchiveResource = (): DspResource =>
-  makeDspResource(
-    Constants.HasArchiveFileValue,
-    {
-      type: Constants.ArchiveFileValue,
-      fileUrl: 'https://example.org/archive.zip',
-      filename: 'archive.zip',
-      userHasPermission: 'RV',
-    } as unknown as ReadFileValue
-  );
+  makeDspResource(Constants.HasArchiveFileValue, {
+    type: Constants.ArchiveFileValue,
+    fileUrl: 'https://example.org/archive.zip',
+    filename: 'archive.zip',
+    userHasPermission: 'RV',
+  } as unknown as ReadFileValue);
 
 const makeTextResource = (): DspResource =>
-  makeDspResource(
-    Constants.HasTextFileValue,
-    {
-      type: Constants.TextFileValue,
-      fileUrl: 'https://example.org/document.txt',
-      filename: 'document.txt',
-      userHasPermission: 'RV',
-    } as unknown as ReadFileValue
-  );
+  makeDspResource(Constants.HasTextFileValue, {
+    type: Constants.TextFileValue,
+    fileUrl: 'https://example.org/document.txt',
+    filename: 'document.txt',
+    userHasPermission: 'RV',
+  } as unknown as ReadFileValue);
 
 const representationServiceStub: Partial<RepresentationService> = {
   getFileInfo: () => of({ originalFilename: 'file' }),
@@ -133,7 +116,8 @@ const meta: Meta<ResourceRepresentationComponent> = {
   ],
   argTypes: {
     resource: {
-      description: 'The DSP resource to display. The representation type is determined from the file value inside the resource.',
+      description:
+        'The DSP resource to display. The representation type is determined from the file value inside the resource.',
       table: { type: { summary: 'DspResource' }, category: 'State' },
     },
   },

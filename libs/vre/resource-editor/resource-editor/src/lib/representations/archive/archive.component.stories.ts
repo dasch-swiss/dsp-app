@@ -42,7 +42,7 @@ const meta: Meta<ArchiveComponent> = {
     },
     applicationConfig({
       providers: [
-{ provide: RepresentationService, useValue: representationServiceStub },
+        { provide: RepresentationService, useValue: representationServiceStub },
         { provide: ResourceFetcherService, useValue: resourceFetcherServiceStub },
       ],
     }),
@@ -80,7 +80,7 @@ export const WithError: Story = {
   decorators: [
     applicationConfig({
       providers: [
-{
+        {
           provide: RepresentationService,
           useValue: { getFileInfo: () => throwError(() => new Error('load failed')) } as Partial<RepresentationService>,
         },

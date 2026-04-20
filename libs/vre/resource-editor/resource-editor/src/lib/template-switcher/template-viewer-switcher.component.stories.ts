@@ -1,9 +1,5 @@
-import {
-  Component,
-  Input,
-  TemplateRef,
-} from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
+import { Component, Input, TemplateRef, signal } from '@angular/core';
 import {
   Constants,
   ReadBooleanValue,
@@ -15,23 +11,28 @@ import {
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { ResourceService } from '@dasch-swiss/vre/shared/app-common';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
-import { signal } from '@angular/core';
 import { of } from 'rxjs';
 import { expect } from 'storybook/test';
 
+import { ResourceFetcherService } from '../representations/resource-fetcher.service';
 import { FootnoteService } from '../resource-properties/footnotes/footnote.service';
 import { GeonameService } from './geoname.service';
 import { TemplateViewerSwitcherComponent } from './template-viewer-switcher.component';
-import { ResourceFetcherService } from '../representations/resource-fetcher.service';
 
-const makePropDef = (objectType: string) => ({ objectType } as any);
+const makePropDef = (objectType: string) => ({ objectType }) as any;
 
 const resourceServiceStub: Partial<ResourceService> = {
   getResourcePath: (iri: string) => iri.replace('http://rdfh.ch', ''),
 };
 
 const geonameServiceStub: Partial<GeonameService> = {
-  resolveGeonameID: () => of({ displayName: 'Bern, Switzerland', name: 'Bern', country: 'Switzerland', location: { lat: 46.948, lng: 7.4474 } } as any),
+  resolveGeonameID: () =>
+    of({
+      displayName: 'Bern, Switzerland',
+      name: 'Bern',
+      country: 'Switzerland',
+      location: { lat: 46.948, lng: 7.4474 },
+    } as any),
 };
 
 const footnoteServiceStub: Partial<FootnoteService> = {
@@ -41,8 +42,16 @@ const footnoteServiceStub: Partial<FootnoteService> = {
 const dspApiConnectionStub = {
   v2: {
     list: {
-      getNode: () => of({ id: 'http://rdfh.ch/lists/0001/item', label: 'Item', hasRootNode: 'http://rdfh.ch/lists/0001/root', children: [], comments: [] }),
-      getList: () => of({ id: 'http://rdfh.ch/lists/0001/root', label: 'Root', isRootNode: true, children: [], comments: [] }),
+      getNode: () =>
+        of({
+          id: 'http://rdfh.ch/lists/0001/item',
+          label: 'Item',
+          hasRootNode: 'http://rdfh.ch/lists/0001/root',
+          children: [],
+          comments: [],
+        }),
+      getList: () =>
+        of({ id: 'http://rdfh.ch/lists/0001/root', label: 'Root', isRootNode: true, children: [], comments: [] }),
     },
   },
 };
@@ -82,9 +91,7 @@ class ViewerSwitcherHostComponent {
 const meta: Meta<ViewerSwitcherHostComponent> = {
   title: 'Devs / Resource Editor / Template Switcher / Viewer Switcher',
   component: ViewerSwitcherHostComponent,
-  decorators: [
-    applicationConfig({ providers: sharedProviders }),
-  ],
+  decorators: [applicationConfig({ providers: sharedProviders })],
   argTypes: {
     value: {
       description: 'The ReadValue to display. The component selects the correct viewer based on value type.',
@@ -143,7 +150,11 @@ export const ColorValue: Story = {
 export const TextValue: Story = {
   name: 'Displays a plain text value',
   args: {
-    value: { text: 'Hello, world!', strval: 'Hello, world!', type: Constants.TextValue } as unknown as ReadTextValueAsString,
+    value: {
+      text: 'Hello, world!',
+      strval: 'Hello, world!',
+      type: Constants.TextValue,
+    } as unknown as ReadTextValueAsString,
     propDef: { objectType: Constants.TextValue, guiElement: Constants.GuiSimpleText } as any,
   },
   play: async ({ canvasElement, step }) => {
@@ -156,7 +167,11 @@ export const TextValue: Story = {
 export const UriValue: Story = {
   name: 'Displays a URI as a clickable link',
   args: {
-    value: { uri: 'https://www.dasch.swiss', strval: 'https://www.dasch.swiss', type: Constants.UriValue } as unknown as ReadUriValue,
+    value: {
+      uri: 'https://www.dasch.swiss',
+      strval: 'https://www.dasch.swiss',
+      type: Constants.UriValue,
+    } as unknown as ReadUriValue,
     propDef: makePropDef(Constants.UriValue),
   },
   play: async ({ canvasElement, step }) => {

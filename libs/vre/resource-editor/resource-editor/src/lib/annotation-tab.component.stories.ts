@@ -2,8 +2,8 @@ import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular'
 import { of } from 'rxjs';
 import { expect } from 'storybook/test';
 
-import { RegionService } from './representations/region.service';
 import { AnnotationTabComponent } from './annotation-tab.component';
+import { RegionService } from './representations/region.service';
 
 const makeResource = () =>
   ({

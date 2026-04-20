@@ -30,8 +30,15 @@ type Story = StoryObj<ReplaceFileMenuItemComponent>;
 export const DefaultView: Story = {
   name: 'Shows replace file button',
   args: {
-    dialogConfig: { title: 'Replace Video', representation: 'http://api.knora.org/ontology/knora-api/v2#HasMovingImageFileValue' },
-    parentResource: { id: 'http://rdfh.ch/resource/1', type: 'http://example.org/Thing', attachedToProject: 'http://rdfh.ch/projects/test' } as any,
+    dialogConfig: {
+      title: 'Replace Video',
+      representation: 'http://api.knora.org/ontology/knora-api/v2#HasMovingImageFileValue',
+    },
+    parentResource: {
+      id: 'http://rdfh.ch/resource/1',
+      type: 'http://example.org/Thing',
+      attachedToProject: 'http://rdfh.ch/projects/test',
+    } as any,
     viewContainerRef: {} as ViewContainerRef,
   },
   play: async ({ canvasElement, step }) => {

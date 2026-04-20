@@ -1,10 +1,10 @@
 import { FormControl, FormGroup } from '@angular/forms';
+import { AdminAPIApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
+import { PaginatedApiService } from '@dasch-swiss/vre/shared/app-common';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
 import { expect } from 'storybook/test';
 
-import { AdminAPIApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
-import { PaginatedApiService } from '@dasch-swiss/vre/shared/app-common';
 import { CreateResourceFormLegalComponent } from './create-resource-form-legal.component';
 
 const makeFormGroup = () =>

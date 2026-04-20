@@ -1,7 +1,17 @@
 import { OverlayModule } from '@angular/cdk/overlay';
 import { importProvidersFrom } from '@angular/core';
 import { provideRouter } from '@angular/router';
-import { ApiResponseError, Constants, IHasPropertyWithPropertyDefinition, ReadMovingImageFileValue, ReadResource, ReadTextValueAsString, ResourceClassAndPropertyDefinitions, ResourceClassDefinitionWithPropertyDefinition, ResourcePropertyDefinition } from '@dasch-swiss/dsp-js';
+import {
+  ApiResponseError,
+  Constants,
+  IHasPropertyWithPropertyDefinition,
+  ReadMovingImageFileValue,
+  ReadResource,
+  ReadTextValueAsString,
+  ResourceClassAndPropertyDefinitions,
+  ResourceClassDefinitionWithPropertyDefinition,
+  ResourcePropertyDefinition,
+} from '@dasch-swiss/dsp-js';
 import { ProjectApiService, UserApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { AdminAPIApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { AppConfigService, DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
@@ -50,7 +60,10 @@ const makeTextValue = (id: string, text: string): ReadTextValueAsString => {
   return v;
 };
 
-const makeEntityInfo = (resourceType: string, propEntries: IHasPropertyWithPropertyDefinition[] = []): ResourceClassAndPropertyDefinitions => {
+const makeEntityInfo = (
+  resourceType: string,
+  propEntries: IHasPropertyWithPropertyDefinition[] = []
+): ResourceClassAndPropertyDefinitions => {
   const classStub = {
     getResourcePropertiesList: () => propEntries,
     propertiesList: propEntries,
@@ -83,7 +96,9 @@ const makeVideoReadResource = (): ReadResource => {
       } as unknown as ReadMovingImageFileValue,
     ],
     [titlePropId]: [makeTextValue('http://rdfh.ch/value/title-1', 'My Storybook Video')],
-    [descriptionPropId]: [makeTextValue('http://rdfh.ch/value/desc-1', 'A sample video resource for Storybook previews.')],
+    [descriptionPropId]: [
+      makeTextValue('http://rdfh.ch/value/desc-1', 'A sample video resource for Storybook previews.'),
+    ],
   };
   res.entityInfo = makeEntityInfo(res.type, propEntries);
   return res;
@@ -122,7 +137,15 @@ const appConfigServiceStub = {
 // AppConfigService.dspApiConfig.apiUrl in its constructor.
 // Stub it directly so the constructor never runs.
 const projectApiServiceStub = {
-  get: () => of({ project: { id: 'http://rdfh.ch/project/1', shortcode: '0869', shortname: 'my-project', longname: 'My Storybook Project' } }),
+  get: () =>
+    of({
+      project: {
+        id: 'http://rdfh.ch/project/1',
+        shortcode: '0869',
+        shortname: 'my-project',
+        longname: 'My Storybook Project',
+      },
+    }),
 };
 
 const sharedProviders = [
@@ -133,13 +156,24 @@ const sharedProviders = [
   {
     provide: AdminAPIApiService,
     useValue: {
-      getAdminProjectsIriProjectiri: () => of({ project: { id: 'http://rdfh.ch/project/1', shortcode: '0869', shortname: 'my-project', longname: 'My Storybook Project' } }),
+      getAdminProjectsIriProjectiri: () =>
+        of({
+          project: {
+            id: 'http://rdfh.ch/project/1',
+            shortcode: '0869',
+            shortname: 'my-project',
+            longname: 'My Storybook Project',
+          },
+        }),
       getAdminProjectsShortcodeProjectshortcodeLegalInfoLicenses: () => of({ licenses: [] }),
     },
   },
   { provide: UserApiService, useValue: { get: () => of({ user: { givenName: 'Jane', familyName: 'Doe' } }) } },
   { provide: NotificationService, useValue: { openSnackBar: () => {} } },
-  { provide: RepresentationService, useValue: { getFileInfo: () => of({ originalFilename: 'video.mp4' }), downloadProjectFile: () => {} } },
+  {
+    provide: RepresentationService,
+    useValue: { getFileInfo: () => of({ originalFilename: 'video.mp4' }), downloadProjectFile: () => {} },
+  },
 ];
 
 // ---------------------------------------------------------------------------
@@ -203,7 +237,15 @@ export const Loading: Story = {
         ...sharedProviders,
         // NEVER ensures loadResource()'s getResource() call never emits,
         // keeping the component in the loading state.
-        { provide: DspApiConnectionToken, useValue: { v2: { res: { getResource: () => NEVER }, search: { doSearchIncomingLinks: () => NEVER, doExtendedSearch: () => NEVER } } } },
+        {
+          provide: DspApiConnectionToken,
+          useValue: {
+            v2: {
+              res: { getResource: () => NEVER },
+              search: { doSearchIncomingLinks: () => NEVER, doExtendedSearch: () => NEVER },
+            },
+          },
+        },
       ],
     }),
   ],

@@ -16,7 +16,15 @@ const meta: Meta<FootnotesComponent> = {
   component: FootnotesComponent,
   decorators: [
     applicationConfig({
-      providers: [{ provide: FootnoteService, useValue: makeFootnoteServiceStub(['First footnote text.', 'Second footnote with <strong>bold</strong> content.']) }],
+      providers: [
+        {
+          provide: FootnoteService,
+          useValue: makeFootnoteServiceStub([
+            'First footnote text.',
+            'Second footnote with <strong>bold</strong> content.',
+          ]),
+        },
+      ],
     }),
   ],
 };

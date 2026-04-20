@@ -1,11 +1,9 @@
-import { applicationConfig, moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
-import { of } from 'rxjs';
-import { expect } from 'storybook/test';
-
 import { Constants, ReadResource, ReadStillImageExternalFileValue, ReadStillImageFileValue } from '@dasch-swiss/dsp-js';
 import { AppConfigService, DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
-import { NEVER } from 'rxjs';
+import { applicationConfig, moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+import { of, NEVER } from 'rxjs';
+import { expect } from 'storybook/test';
 import { CompoundService } from '../../compound/compound.service';
 import { RegionService } from '../region.service';
 import { RepresentationService } from '../representation.service';
@@ -70,7 +68,13 @@ const makeEmptyResource = (): ReadResource =>
 // OpenSeadragon needs a real DOM element but we don't want it to load tiles.
 // Stub the service so it noops on init and exposes a minimal viewer shape.
 const osdServiceStub = {
-  viewer: { open: () => {}, destroy: () => {}, loadTilesWithAjax: false, addHandler: () => {}, removeHandler: () => {} },
+  viewer: {
+    open: () => {},
+    destroy: () => {},
+    loadTilesWithAjax: false,
+    addHandler: () => {},
+    removeHandler: () => {},
+  },
   onInit: () => {},
   drawing: false,
   toggleDrawing: () => {},
@@ -88,11 +92,48 @@ const osdDrawerServiceStub = {
 // ---------------------------------------------------------------------------
 
 const sharedProviders = [
-  { provide: AppConfigService, useValue: { dspApiConfig: { apiUrl: '' }, dspAppConfig: { iriBase: 'http://rdfh.ch' } } },
-  { provide: DspApiConnectionToken, useValue: { v2: { res: { getResource: () => NEVER }, search: { doSearchIncomingLinks: () => NEVER, doExtendedSearch: () => NEVER, doSearchIncomingRegions: () => NEVER } } } },
-  { provide: RegionService, useValue: { regions$: of([]), regionsLoading$: of(false), showRegions$: of(false), selectedRegion$: of(null), highlightedRegionClicked$: of(null), initialize: () => {}, showRegions: () => {}, selectRegion: () => {}, setHighlightedRegionClicked: () => {}, filterToRegion: () => {}, updateRegions: () => {} } },
+  {
+    provide: AppConfigService,
+    useValue: { dspApiConfig: { apiUrl: '' }, dspAppConfig: { iriBase: 'http://rdfh.ch' } },
+  },
+  {
+    provide: DspApiConnectionToken,
+    useValue: {
+      v2: {
+        res: { getResource: () => NEVER },
+        search: {
+          doSearchIncomingLinks: () => NEVER,
+          doExtendedSearch: () => NEVER,
+          doSearchIncomingRegions: () => NEVER,
+        },
+      },
+    },
+  },
+  {
+    provide: RegionService,
+    useValue: {
+      regions$: of([]),
+      regionsLoading$: of(false),
+      showRegions$: of(false),
+      selectedRegion$: of(null),
+      highlightedRegionClicked$: of(null),
+      initialize: () => {},
+      showRegions: () => {},
+      selectRegion: () => {},
+      setHighlightedRegionClicked: () => {},
+      filterToRegion: () => {},
+      updateRegions: () => {},
+    },
+  },
   { provide: ResourceFetcherService, useValue: { userCanEdit$: of(false), projectShortcode$: of('0001') } },
-  { provide: RepresentationService, useValue: { downloadProjectFile: () => {}, getFileInfo: () => of({ originalFilename: 'image.jp2' }), getIngestOriginalUrl: () => of('') } },
+  {
+    provide: RepresentationService,
+    useValue: {
+      downloadProjectFile: () => {},
+      getFileInfo: () => of({ originalFilename: 'image.jp2' }),
+      getIngestOriginalUrl: () => of(''),
+    },
+  },
   { provide: NotificationService, useValue: { openSnackBar: () => {} } },
 ];
 

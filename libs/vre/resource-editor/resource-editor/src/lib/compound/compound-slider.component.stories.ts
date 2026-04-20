@@ -1,8 +1,8 @@
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { expect } from 'storybook/test';
 
-import { CompoundService } from './compound.service';
 import { CompoundSliderComponent } from './compound-slider.component';
+import { CompoundService } from './compound.service';
 
 const makeCompoundServiceStub = (page = 3, totalPages = 10) => ({
   compoundPosition: { page, totalPages, isLastPage: page >= totalPages },

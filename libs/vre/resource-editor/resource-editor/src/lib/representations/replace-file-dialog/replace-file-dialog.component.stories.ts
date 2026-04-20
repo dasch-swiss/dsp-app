@@ -1,17 +1,21 @@
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
+import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
 import { expect } from 'storybook/test';
 
-import { NotificationService } from '@dasch-swiss/vre/ui/notification';
-import { UploadFileService } from '../../representations/upload/upload-file.service';
 import { ResourceFetcherService } from '../resource-fetcher.service';
+import { UploadFileService } from '../upload/upload-file.service';
 import { ReplaceFileDialogComponent } from './replace-file-dialog.component';
 
 const makeDialogData = () => ({
   representation: 'http://api.knora.org/ontology/knora-api/v2#StillImageRepresentation',
-  resource: { id: 'http://rdfh.ch/resource/1', type: 'http://example.org/Thing', attachedToProject: 'http://rdfh.ch/projects/test' },
+  resource: {
+    id: 'http://rdfh.ch/resource/1',
+    type: 'http://example.org/Thing',
+    attachedToProject: 'http://rdfh.ch/projects/test',
+  },
   title: 'Replace Image',
 });
 

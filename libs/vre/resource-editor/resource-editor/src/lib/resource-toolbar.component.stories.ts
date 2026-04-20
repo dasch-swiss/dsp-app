@@ -2,12 +2,12 @@ import { importProvidersFrom } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { UserService } from '@dasch-swiss/vre/core/session';
+import { ResourceService } from '@dasch-swiss/vre/shared/app-common';
+import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
 import { expect } from 'storybook/test';
 
-import { ResourceService } from '@dasch-swiss/vre/shared/app-common';
-import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { ResourceFetcherService } from './representations/resource-fetcher.service';
 import { ResourceToolbarComponent } from './resource-toolbar.component';
 
@@ -34,7 +34,12 @@ const meta: Meta<ResourceToolbarComponent> = {
         { provide: NotificationService, useValue: { openSnackBar: () => {} } },
         { provide: ResourceService, useValue: { getResourcePath: () => '/project/test/resource/1' } },
         { provide: UserService, useValue: { user$: of(null) } },
-        { provide: DspApiConnectionToken, useValue: { v2: { res: { canDeleteResource: () => of({ canDo: true }), getResourcePermissions: () => of([]) } } } },
+        {
+          provide: DspApiConnectionToken,
+          useValue: {
+            v2: { res: { canDeleteResource: () => of({ canDo: true }), getResourcePermissions: () => of([]) } },
+          },
+        },
       ],
     }),
   ],

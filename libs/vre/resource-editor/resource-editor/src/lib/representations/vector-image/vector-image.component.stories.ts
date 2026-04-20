@@ -1,12 +1,11 @@
 import { provideHttpClient } from '@angular/common/http';
-import { applicationConfig, moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
-import { of } from 'rxjs';
-import { expect } from 'storybook/test';
 
 import { Constants, ReadResource, ReadStillImageVectorFileValue } from '@dasch-swiss/dsp-js';
 import { AppConfigService, DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
-import { NEVER } from 'rxjs';
+import { applicationConfig, moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+import { of, NEVER } from 'rxjs';
+import { expect } from 'storybook/test';
 import { CompoundService } from '../../compound/compound.service';
 import { RepresentationService } from '../representation.service';
 import { ResourceFetcherService } from '../resource-fetcher.service';
@@ -17,16 +16,14 @@ import { VectorImageComponent } from './vector-image.component';
 // ---------------------------------------------------------------------------
 
 // Minimal SVG encoded as a data: URI so no network request is needed.
-const INLINE_SVG_URL =
-  'data:image/svg+xml;charset=utf-8,' +
-  encodeURIComponent(
-    '<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300">' +
-      '<rect width="400" height="300" fill="#2a2a2a"/>' +
-      '<circle cx="200" cy="150" r="80" fill="none" stroke="#4fc3f7" stroke-width="4"/>' +
-      '<line x1="50" y1="50" x2="350" y2="250" stroke="#ef9a9a" stroke-width="2"/>' +
-      '<text x="200" y="155" text-anchor="middle" fill="white" font-size="18">SVG Vector</text>' +
-      '</svg>'
-  );
+const INLINE_SVG_URL = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(
+  '<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300">' +
+    '<rect width="400" height="300" fill="#2a2a2a"/>' +
+    '<circle cx="200" cy="150" r="80" fill="none" stroke="#4fc3f7" stroke-width="4"/>' +
+    '<line x1="50" y1="50" x2="350" y2="250" stroke="#ef9a9a" stroke-width="2"/>' +
+    '<text x="200" y="155" text-anchor="middle" fill="white" font-size="18">SVG Vector</text>' +
+    '</svg>'
+)}`;
 
 const makeVectorResource = (fileUrl = INLINE_SVG_URL): ReadResource =>
   ({
@@ -62,10 +59,16 @@ const makeEmptyResource = (): ReadResource =>
 
 const sharedProviders = [
   provideHttpClient(),
-  { provide: AppConfigService, useValue: { dspApiConfig: { apiUrl: '' }, dspAppConfig: { iriBase: 'http://rdfh.ch' } } },
+  {
+    provide: AppConfigService,
+    useValue: { dspApiConfig: { apiUrl: '' }, dspAppConfig: { iriBase: 'http://rdfh.ch' } },
+  },
   { provide: DspApiConnectionToken, useValue: { v2: { res: { getResource: () => NEVER } } } },
   { provide: ResourceFetcherService, useValue: { userCanEdit$: of(false), projectShortcode$: of('0001') } },
-  { provide: RepresentationService, useValue: { downloadProjectFile: () => {}, getFileInfo: () => of({ originalFilename: 'diagram.svg' }) } },
+  {
+    provide: RepresentationService,
+    useValue: { downloadProjectFile: () => {}, getFileInfo: () => of({ originalFilename: 'diagram.svg' }) },
+  },
   { provide: NotificationService, useValue: { openSnackBar: () => {} } },
 ];
 

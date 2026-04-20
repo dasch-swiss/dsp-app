@@ -1,11 +1,11 @@
 import { importProvidersFrom } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
+import { TranslateModule } from '@ngx-translate/core';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
 import { expect } from 'storybook/test';
 
-import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
-import { TranslateModule } from '@ngx-translate/core';
 import { CreateResourceDialogComponent } from './create-resource-dialog.component';
 
 const makeDialogData = () => ({

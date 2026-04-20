@@ -7,9 +7,9 @@ import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular'
 import { of } from 'rxjs';
 import { expect } from 'storybook/test';
 
+import { IncomingResourceHeaderComponent } from './incoming-resource-header.component';
 import { ResourceFetcherService } from './representations/resource-fetcher.service';
 import { PropertiesDisplayService } from './resource-properties/properties-display.service';
-import { IncomingResourceHeaderComponent } from './incoming-resource-header.component';
 
 const makeResource = () =>
   ({
@@ -50,7 +50,12 @@ const meta: Meta<IncomingResourceHeaderComponent> = {
         },
         {
           provide: PropertiesDisplayService,
-          useValue: { showAllProperties$: of(false), showComments$: of(false), toggleShowProperties: () => {}, toggleShowComments: () => {} },
+          useValue: {
+            showAllProperties$: of(false),
+            showComments$: of(false),
+            toggleShowProperties: () => {},
+            toggleShowComments: () => {},
+          },
         },
         { provide: UserService, useValue: { user$: of(null) } },
         { provide: DspApiConnectionToken, useValue: { v2: { res: { canDeleteResource: () => of({ canDo: true }) } } } },

@@ -1,11 +1,11 @@
 import { Cardinality } from '@dasch-swiss/dsp-js';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
+import { ResourceService } from '@dasch-swiss/vre/shared/app-common';
+import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
 import { expect } from 'storybook/test';
 
-import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
-import { ResourceService } from '@dasch-swiss/vre/shared/app-common';
-import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { ResourceFetcherService } from '../representations/resource-fetcher.service';
 import { PropertyValuesWithFootnotesComponent } from './property-values-with-footnotes.component';
 
@@ -55,7 +55,10 @@ const meta: Meta<PropertyValuesWithFootnotesComponent> = {
       providers: [
         { provide: ResourceFetcherService, useValue: { resourceVersion: null, reload: () => {} } },
         { provide: ResourceService, useValue: { getProjectShortcode: () => 'test' } },
-        { provide: DspApiConnectionToken, useValue: { v2: { values: { createValue: () => of({}), updateValue: () => of({}) } } } },
+        {
+          provide: DspApiConnectionToken,
+          useValue: { v2: { values: { createValue: () => of({}), updateValue: () => of({}) } } },
+        },
         { provide: NotificationService, useValue: { openSnackBar: () => {} } },
       ],
     }),

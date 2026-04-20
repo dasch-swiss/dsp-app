@@ -1,9 +1,9 @@
-import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { ListNodeV2, ReadListValue, ResourcePropertyDefinition } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
-import { ResourceFetcherService } from '../../representations/resource-fetcher.service';
+import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of, Subject } from 'rxjs';
 import { expect } from 'storybook/test';
+import { ResourceFetcherService } from '../../representations/resource-fetcher.service';
 
 import { ListViewerComponent } from './list-viewer.component';
 
@@ -37,8 +37,8 @@ const resourceFetcherServiceStub: Partial<ResourceFetcherService> = {
   projectShortcode$: of('0001'),
 };
 
-const makeValue = (): ReadListValue => ({ listNode: 'http://rdfh.ch/lists/0001/itemA1' } as any);
-const makePropertyDef = (): ResourcePropertyDefinition => ({ id: 'http://example.org/listProp' } as any);
+const makeValue = (): ReadListValue => ({ listNode: 'http://rdfh.ch/lists/0001/itemA1' }) as any;
+const makePropertyDef = (): ResourcePropertyDefinition => ({ id: 'http://example.org/listProp' }) as any;
 
 const meta: Meta<ListViewerComponent> = {
   title: 'Devs / Resource Editor / Template Switcher / List Viewer',

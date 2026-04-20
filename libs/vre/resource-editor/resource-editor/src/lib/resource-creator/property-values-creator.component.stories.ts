@@ -1,10 +1,10 @@
-import { FormArray, FormBuilder } from '@angular/forms';
 import { importProvidersFrom } from '@angular/core';
+import { FormArray, FormBuilder } from '@angular/forms';
+import { Cardinality, Constants } from '@dasch-swiss/dsp-js';
+import { TranslateModule } from '@ngx-translate/core';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { expect } from 'storybook/test';
 
-import { Cardinality, Constants } from '@dasch-swiss/dsp-js';
-import { TranslateModule } from '@ngx-translate/core';
 import { PropertyValuesCreatorComponent } from './property-values-creator.component';
 
 const makeMyProperty = () =>
@@ -19,7 +19,11 @@ const makeMyProperty = () =>
       cardinality: Cardinality._0_n,
       isInherited: false,
       propertyIndex: 'http://example.org/prop',
-      propertyDefinition: { label: 'Integer Value', id: 'http://example.org/prop', objectType: Constants.IntValue } as any,
+      propertyDefinition: {
+        label: 'Integer Value',
+        id: 'http://example.org/prop',
+        objectType: Constants.IntValue,
+      } as any,
     } as any,
     values: [],
   }) as any;

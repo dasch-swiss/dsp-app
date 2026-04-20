@@ -1,8 +1,8 @@
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { expect } from 'storybook/test';
 
-import { SegmentsService } from './segments.service';
 import { SegmentTooltipComponent } from './segment-tooltip.component';
+import { SegmentsService } from './segments.service';
 
 const makeSegment = () => ({
   id: 'http://rdfh.ch/segment/1',

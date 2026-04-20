@@ -22,9 +22,7 @@ const rootNode = makeNode(
       makeNode('http://rdfh.ch/lists/0001/itemA1', 'Item A1'),
       makeNode('http://rdfh.ch/lists/0001/itemA2', 'Item A2'),
     ]),
-    makeNode('http://rdfh.ch/lists/0001/catB', 'Category B', [
-      makeNode('http://rdfh.ch/lists/0001/itemB1', 'Item B1'),
-    ]),
+    makeNode('http://rdfh.ch/lists/0001/catB', 'Category B', [makeNode('http://rdfh.ch/lists/0001/itemB1', 'Item B1')]),
   ],
   true
 );

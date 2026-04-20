@@ -1,9 +1,9 @@
+import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
+import { UserService } from '@dasch-swiss/vre/core/session';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
 import { expect } from 'storybook/test';
 
-import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
-import { UserService } from '@dasch-swiss/vre/core/session';
 import { ResourceFetcherService } from '../representations/resource-fetcher.service';
 import { ResourceMoreMenuComponent } from './resource-more-menu.component';
 
@@ -22,7 +22,14 @@ const meta: Meta<ResourceMoreMenuComponent> = {
   decorators: [
     applicationConfig({
       providers: [
-        { provide: ResourceFetcherService, useValue: { userCanDelete$: of(true), userCanEdit$: of(true), projectIri$: of('http://rdfh.ch/projects/test') } },
+        {
+          provide: ResourceFetcherService,
+          useValue: {
+            userCanDelete$: of(true),
+            userCanEdit$: of(true),
+            projectIri$: of('http://rdfh.ch/projects/test'),
+          },
+        },
         { provide: DspApiConnectionToken, useValue: { v2: { res: { canDeleteResource: () => of({ canDo: true }) } } } },
         { provide: UserService, useValue: { user$: of(null) } },
       ],

@@ -2,8 +2,8 @@ import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular'
 import { of } from 'rxjs';
 import { expect } from 'storybook/test';
 
-import { CompoundService } from './compound.service';
 import { CompoundViewerComponent } from './compound-viewer.component';
+import { CompoundService } from './compound.service';
 
 const meta: Meta<CompoundViewerComponent> = {
   title: 'Devs / Resource Editor / Compound / Compound Viewer',

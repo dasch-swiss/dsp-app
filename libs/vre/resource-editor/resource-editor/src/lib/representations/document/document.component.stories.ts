@@ -80,7 +80,7 @@ export const WithError: Story = {
   decorators: [
     applicationConfig({
       providers: [
-{
+        {
           provide: RepresentationService,
           useValue: { getFileInfo: () => throwError(() => new Error('load failed')) } as Partial<RepresentationService>,
         },

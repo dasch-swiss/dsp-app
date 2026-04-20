@@ -2,9 +2,9 @@ import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular'
 import { of } from 'rxjs';
 import { expect } from 'storybook/test';
 
-import { ResourceFetcherService } from './resource-fetcher.service';
-import { RepresentationService } from './representation.service';
 import { FileRepresentationComponent } from './file-representation.component';
+import { RepresentationService } from './representation.service';
+import { ResourceFetcherService } from './resource-fetcher.service';
 
 const makeSrc = () => ({
   fileUrl: 'https://example.org/document.pdf',

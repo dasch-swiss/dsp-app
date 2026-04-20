@@ -17,10 +17,7 @@ const meta: Meta<VideoOverlayComponent> = {
   component: VideoOverlayComponent,
   decorators: [
     applicationConfig({
-      providers: [
-        importProvidersFrom(OverlayModule),
-        { provide: MediaPlayerService, useValue: makeMediaPlayerStub() },
-      ],
+      providers: [importProvidersFrom(OverlayModule), { provide: MediaPlayerService, useValue: makeMediaPlayerStub() }],
     }),
   ],
 };

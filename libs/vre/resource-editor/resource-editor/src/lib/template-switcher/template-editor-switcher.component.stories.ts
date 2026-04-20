@@ -1,11 +1,8 @@
-import { NgTemplateOutlet } from '@angular/common';
-import { Component, Input, TemplateRef } from '@angular/core';
-import { FormControl } from '@angular/forms';
 import { OverlayModule } from '@angular/cdk/overlay';
-import { importProvidersFrom } from '@angular/core';
-import {
-  Constants,
-} from '@dasch-swiss/dsp-js';
+import { NgTemplateOutlet } from '@angular/common';
+import { Component, Input, TemplateRef, importProvidersFrom } from '@angular/core';
+import { FormControl } from '@angular/forms';
+import { Constants } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
@@ -16,7 +13,13 @@ import { TemplateEditorSwitcherComponent } from './template-editor-switcher.comp
 import { LinkValueDataService } from './value-components/link-value-data.service';
 
 const geonameServiceStub: Partial<GeonameService> = {
-  resolveGeonameID: () => of({ displayName: 'Bern, Switzerland', name: 'Bern', country: 'Switzerland', location: { lat: 46.948, lng: 7.4474 } } as any),
+  resolveGeonameID: () =>
+    of({
+      displayName: 'Bern, Switzerland',
+      name: 'Bern',
+      country: 'Switzerland',
+      location: { lat: 46.948, lng: 7.4474 },
+    } as any),
   searchPlace: () => of([]),
 };
 
@@ -32,7 +35,8 @@ const dspApiConnectionStub = {
       getResourceClassDefinition: () => of({ classes: {}, properties: {} }),
     },
     list: {
-      getList: () => of({ id: 'http://rdfh.ch/lists/0001/root', label: 'Root', isRootNode: true, children: [], comments: [] }),
+      getList: () =>
+        of({ id: 'http://rdfh.ch/lists/0001/root', label: 'Root', isRootNode: true, children: [], comments: [] }),
     },
   },
 };
@@ -71,9 +75,7 @@ class EditorSwitcherHostComponent {
 const meta: Meta<EditorSwitcherHostComponent> = {
   title: 'Devs / Resource Editor / Template Switcher / Editor Switcher',
   component: EditorSwitcherHostComponent,
-  decorators: [
-    applicationConfig({ providers: sharedProviders }),
-  ],
+  decorators: [applicationConfig({ providers: sharedProviders })],
   argTypes: {
     propDef: {
       description: 'PropertyDefinition used to determine which editor to render.',

@@ -1,11 +1,10 @@
-import { BehaviorSubject } from 'rxjs';
-import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
-import { of } from 'rxjs';
-import { expect } from 'storybook/test';
-
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { ResourceService } from '@dasch-swiss/vre/shared/app-common';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
+import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
+import { BehaviorSubject, of } from 'rxjs';
+import { expect } from 'storybook/test';
+
 import { ResourceFetcherService } from '../representations/resource-fetcher.service';
 import { PropertyValueAddComponent } from './property-value-add.component';
 import { PropertyValueService } from './property-value.service';

@@ -1,9 +1,9 @@
+import { APIV2ApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
+import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
 import { expect } from 'storybook/test';
 
-import { APIV2ApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
-import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { ResourceFetcherService } from '../representations/resource-fetcher.service';
 import { DraggableValueListComponent } from './draggable-value-list.component';
 

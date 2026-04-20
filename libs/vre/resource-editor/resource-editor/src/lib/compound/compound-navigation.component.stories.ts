@@ -1,8 +1,8 @@
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { expect } from 'storybook/test';
 
-import { CompoundService } from './compound.service';
 import { CompoundNavigationComponent } from './compound-navigation.component';
+import { CompoundService } from './compound.service';
 
 const meta: Meta<CompoundNavigationComponent> = {
   title: 'Devs / Resource Editor / Compound / Compound Navigation',

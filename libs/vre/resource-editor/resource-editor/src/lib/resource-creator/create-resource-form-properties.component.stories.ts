@@ -1,9 +1,9 @@
-import { FormBuilder } from '@angular/forms';
 import { importProvidersFrom } from '@angular/core';
+import { FormBuilder } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { expect } from 'storybook/test';
 
-import { TranslateModule } from '@ngx-translate/core';
 import { CreateResourceFormPropertiesComponent } from './create-resource-form-properties.component';
 
 const meta: Meta<CreateResourceFormPropertiesComponent> = {

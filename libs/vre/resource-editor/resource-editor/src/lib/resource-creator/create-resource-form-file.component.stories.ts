@@ -32,7 +32,9 @@ export const DefaultView: Story = {
   },
   play: async ({ canvasElement, step }) => {
     await step('Form container is rendered', async () => {
-      const form = canvasElement.querySelector('form, app-create-resource-form-image, app-create-resource-form-representation');
+      const form = canvasElement.querySelector(
+        'form, app-create-resource-form-image, app-create-resource-form-representation'
+      );
       await expect(form).not.toBeNull();
     });
   },

@@ -1,11 +1,11 @@
 import { importProvidersFrom } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { RouterModule } from '@angular/router';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
 import { expect } from 'storybook/test';
 
-import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
-import { MatDialog } from '@angular/material/dialog';
 import { PropertiesDisplayService } from '../resource-properties/properties-display.service';
 import { IncomingLinksPropertyComponent } from './incoming-links-property.component';
 

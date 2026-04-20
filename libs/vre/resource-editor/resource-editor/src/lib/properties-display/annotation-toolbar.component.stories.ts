@@ -1,12 +1,12 @@
 import { importProvidersFrom } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
+import { ResourceService } from '@dasch-swiss/vre/shared/app-common';
+import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
 import { expect } from 'storybook/test';
 
-import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
-import { ResourceService } from '@dasch-swiss/vre/shared/app-common';
-import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { RegionService } from '../representations/region.service';
 import { ResourceFetcherService } from '../representations/resource-fetcher.service';
 import { AnnotationToolbarComponent } from './annotation-toolbar.component';
@@ -31,10 +31,25 @@ const meta: Meta<AnnotationToolbarComponent> = {
       providers: [
         importProvidersFrom(RouterModule.forRoot([])),
         { provide: NotificationService, useValue: { openSnackBar: () => {} } },
-        { provide: RegionService, useValue: { selectRegion: () => {}, setHighlightedRegionClicked: () => {}, updateRegions$: () => of([]) } },
-        { provide: ResourceFetcherService, useValue: { userCanDelete$: of(false), userCanEdit$: of(false), projectIri$: of('http://rdfh.ch/projects/test'), reload: () => {}, scrollToTop: () => {} } },
+        {
+          provide: RegionService,
+          useValue: { selectRegion: () => {}, setHighlightedRegionClicked: () => {}, updateRegions$: () => of([]) },
+        },
+        {
+          provide: ResourceFetcherService,
+          useValue: {
+            userCanDelete$: of(false),
+            userCanEdit$: of(false),
+            projectIri$: of('http://rdfh.ch/projects/test'),
+            reload: () => {},
+            scrollToTop: () => {},
+          },
+        },
         { provide: ResourceService, useValue: { getResourcePath: () => '/project/test/resource/1' } },
-        { provide: DspApiConnectionToken, useValue: { v2: { res: { canDeleteResource: () => of({ canDo: false }) } } } },
+        {
+          provide: DspApiConnectionToken,
+          useValue: { v2: { res: { canDeleteResource: () => of({ canDo: false }) } } },
+        },
       ],
     }),
   ],

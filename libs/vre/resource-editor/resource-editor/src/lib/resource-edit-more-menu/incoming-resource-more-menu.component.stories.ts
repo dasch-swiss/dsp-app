@@ -1,9 +1,9 @@
+import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
+import { UserService } from '@dasch-swiss/vre/core/session';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
 import { expect } from 'storybook/test';
 
-import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
-import { UserService } from '@dasch-swiss/vre/core/session';
 import { ResourceFetcherService } from '../representations/resource-fetcher.service';
 import { IncomingResourceMoreMenuComponent } from './incoming-resource-more-menu.component';
 

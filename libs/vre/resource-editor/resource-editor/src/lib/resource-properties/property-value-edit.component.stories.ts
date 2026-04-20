@@ -1,8 +1,8 @@
-import { BehaviorSubject } from 'rxjs';
+import { ResourceService } from '@dasch-swiss/vre/shared/app-common';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
+import { BehaviorSubject } from 'rxjs';
 import { expect } from 'storybook/test';
 
-import { ResourceService } from '@dasch-swiss/vre/shared/app-common';
 import { PropertyValueEditComponent } from './property-value-edit.component';
 import { PropertyValueService } from './property-value.service';
 

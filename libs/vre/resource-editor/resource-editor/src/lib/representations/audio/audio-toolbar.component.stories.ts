@@ -92,9 +92,7 @@ export const WhilePlaying: Story = {
   name: 'Shows pause icon when audio is playing',
   decorators: [
     applicationConfig({
-      providers: [
-        { provide: MediaPlayerService, useValue: makeMediaPlayerStub({ isPaused: () => false }) },
-      ],
+      providers: [{ provide: MediaPlayerService, useValue: makeMediaPlayerStub({ isPaused: () => false }) }],
     }),
   ],
   args: {

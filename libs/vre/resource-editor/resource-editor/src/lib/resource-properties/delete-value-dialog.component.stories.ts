@@ -9,7 +9,11 @@ import { DeleteValueDialogComponent } from './delete-value-dialog.component';
 import { PropertyValueService } from './property-value.service';
 
 const propertyValueServiceStub: Partial<PropertyValueService> = {
-  propertyDefinition: { label: 'Description', id: 'http://example.org/prop', objectType: 'http://api.knora.org/ontology/knora-api/v2#TextValue' } as any,
+  propertyDefinition: {
+    label: 'Description',
+    id: 'http://example.org/prop',
+    objectType: 'http://api.knora.org/ontology/knora-api/v2#TextValue',
+  } as any,
   editModeData: {
     resource: { id: 'http://rdfh.ch/resource/1', type: 'http://example.org/Thing' } as any,
     values: [{ id: 'http://rdfh.ch/values/1', type: 'http://api.knora.org/ontology/knora-api/v2#TextValue' } as any],

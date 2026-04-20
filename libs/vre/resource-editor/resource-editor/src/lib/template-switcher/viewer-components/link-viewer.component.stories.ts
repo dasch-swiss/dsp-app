@@ -1,5 +1,5 @@
-import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { ResourceService } from '@dasch-swiss/vre/shared/app-common';
+import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { expect } from 'storybook/test';
 
 import { LinkViewerComponent } from './link-viewer.component';

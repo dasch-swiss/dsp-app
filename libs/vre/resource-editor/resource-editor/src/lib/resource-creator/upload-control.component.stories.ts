@@ -1,9 +1,9 @@
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { applicationConfig, moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
 import { expect } from 'storybook/test';
 
-import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { UploadFileService } from '../representations/upload/upload-file.service';
 import { UploadControlComponent } from './upload-control.component';
 

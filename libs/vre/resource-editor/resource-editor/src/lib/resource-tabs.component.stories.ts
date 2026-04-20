@@ -1,15 +1,15 @@
+import { importProvidersFrom } from '@angular/core';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
+import { DspResource } from '@dasch-swiss/vre/shared/app-common';
+import { TranslateModule } from '@ngx-translate/core';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of, Subject } from 'rxjs';
 import { expect } from 'storybook/test';
 
-import { DspResource } from '@dasch-swiss/vre/shared/app-common';
-import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
-import { TranslateModule } from '@ngx-translate/core';
-import { importProvidersFrom } from '@angular/core';
-import { RegionService } from './representations/region.service';
-import { SegmentsService } from './segment-support/segments.service';
 import { CompoundService } from './compound/compound.service';
+import { RegionService } from './representations/region.service';
 import { ResourceTabsComponent } from './resource-tabs.component';
+import { SegmentsService } from './segment-support/segments.service';
 
 const makeResource = (): DspResource =>
   ({

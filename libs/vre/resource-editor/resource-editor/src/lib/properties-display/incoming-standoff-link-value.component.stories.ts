@@ -1,6 +1,6 @@
 import { importProvidersFrom } from '@angular/core';
-import { RouterModule } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
+import { RouterModule } from '@angular/router';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { expect } from 'storybook/test';
 

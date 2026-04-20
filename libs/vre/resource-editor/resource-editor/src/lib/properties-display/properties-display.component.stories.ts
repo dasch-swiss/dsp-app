@@ -1,10 +1,10 @@
+import { Cardinality } from '@dasch-swiss/dsp-js';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
+import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
 import { expect } from 'storybook/test';
 
-import { Cardinality } from '@dasch-swiss/dsp-js';
-import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
-import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { PropertiesDisplayService } from '../resource-properties/properties-display.service';
 import { PropertiesDisplayComponent } from './properties-display.component';
 
@@ -39,7 +39,15 @@ const meta: Meta<PropertiesDisplayComponent> = {
             },
           },
         },
-        { provide: PropertiesDisplayService, useValue: { showAllProperties$: of(false), showComments$: of(false), toggleShowProperties: () => {}, toggleShowComments: () => {} } },
+        {
+          provide: PropertiesDisplayService,
+          useValue: {
+            showAllProperties$: of(false),
+            showComments$: of(false),
+            toggleShowProperties: () => {},
+            toggleShowComments: () => {},
+          },
+        },
       ],
     }),
   ],
