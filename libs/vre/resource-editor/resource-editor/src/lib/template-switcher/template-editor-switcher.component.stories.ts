@@ -68,7 +68,7 @@ class EditorSwitcherHostComponent {
   @Input() resourceClassIri = 'http://api.dasch.swiss/ontology/0001/anything/v2#Thing';
   @Input() projectIri = 'http://rdfh.ch/projects/0001';
   @Input() projectShortcode = '0001';
-  control = new FormControl<any>(null);
+  control = new FormControl<any>(false);
   template?: TemplateRef<any>;
 }
 

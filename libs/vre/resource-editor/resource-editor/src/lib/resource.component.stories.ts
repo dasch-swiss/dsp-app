@@ -1,3 +1,4 @@
+import { OverlayModule } from '@angular/cdk/overlay';
 import { importProvidersFrom } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
@@ -39,7 +40,7 @@ const meta: Meta<ResourceComponent> = {
   decorators: [
     applicationConfig({
       providers: [
-        importProvidersFrom(RouterModule.forRoot([]), TranslateModule.forRoot()),
+        importProvidersFrom(RouterModule.forRoot([]), TranslateModule.forRoot(), OverlayModule),
         {
           provide: DspApiConnectionToken,
           useValue: {
