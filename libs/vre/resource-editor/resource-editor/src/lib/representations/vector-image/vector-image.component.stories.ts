@@ -1,5 +1,5 @@
 import { provideHttpClient } from '@angular/common/http';
-import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
+import { applicationConfig, moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
 import { expect } from 'storybook/test';
 
@@ -7,6 +7,7 @@ import { Constants, ReadResource, ReadStillImageVectorFileValue } from '@dasch-s
 import { AppConfigService, DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { NEVER } from 'rxjs';
+import { CompoundService } from '../../compound/compound.service';
 import { RepresentationService } from '../representation.service';
 import { ResourceFetcherService } from '../resource-fetcher.service';
 import { VectorImageComponent } from './vector-image.component';
@@ -121,6 +122,21 @@ export const WithSvg: Story = {
 
 export const CompoundMode: Story = {
   name: 'Shows compound navigation arrows when in compound mode',
+  decorators: [
+    moduleMetadata({
+      providers: [
+        {
+          provide: CompoundService,
+          useValue: {
+            compoundPosition: { page: 2, isLastPage: false, offset: 0, maxOffsets: 3, position: 1, totalPages: 5 },
+            incomingResource$: of(undefined),
+            onInit: () => {},
+            openPage: () => {},
+          },
+        },
+      ],
+    }),
+  ],
   args: {
     resource: makeVectorResource(),
     compoundMode: true,

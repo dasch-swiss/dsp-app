@@ -6,6 +6,7 @@ import { Constants, ReadResource, ReadStillImageExternalFileValue, ReadStillImag
 import { AppConfigService, DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { NEVER } from 'rxjs';
+import { CompoundService } from '../../compound/compound.service';
 import { RegionService } from '../region.service';
 import { RepresentationService } from '../representation.service';
 import { ResourceFetcherService } from '../resource-fetcher.service';
@@ -183,6 +184,21 @@ export const NoImage: Story = {
 
 export const CompoundMode: Story = {
   name: 'Shows compound navigation arrows when in compound mode',
+  decorators: [
+    moduleMetadata({
+      providers: [
+        {
+          provide: CompoundService,
+          useValue: {
+            compoundPosition: { page: 2, isLastPage: false, offset: 0, maxOffsets: 3, position: 1, totalPages: 5 },
+            incomingResource$: of(undefined),
+            onInit: () => {},
+            openPage: () => {},
+          },
+        },
+      ],
+    }),
+  ],
   args: {
     resource: makeInternalResource(),
     compoundMode: true,

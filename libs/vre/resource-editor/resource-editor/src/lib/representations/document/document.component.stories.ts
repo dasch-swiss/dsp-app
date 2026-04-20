@@ -1,5 +1,5 @@
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { expect } from 'storybook/test';
 
 import { FileRepresentationInput, ParentResourceInput } from '../representation-inputs';
@@ -82,7 +82,7 @@ export const WithError: Story = {
       providers: [
 {
           provide: RepresentationService,
-          useValue: { getFileInfo: () => { throw new Error('load failed'); } } as Partial<RepresentationService>,
+          useValue: { getFileInfo: () => throwError(() => new Error('load failed')) } as Partial<RepresentationService>,
         },
         { provide: ResourceFetcherService, useValue: resourceFetcherServiceStub },
       ],

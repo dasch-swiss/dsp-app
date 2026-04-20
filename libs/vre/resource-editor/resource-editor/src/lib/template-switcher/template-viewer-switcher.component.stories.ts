@@ -1,19 +1,15 @@
 import {
+  Component,
+  Input,
+  TemplateRef,
+} from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
+import {
   Constants,
-  KnoraDate,
-  KnoraPeriod,
   ReadBooleanValue,
   ReadColorValue,
-  ReadDateValue,
-  ReadDecimalValue,
-  ReadGeonameValue,
   ReadIntValue,
-  ReadIntervalValue,
-  ReadLinkValue,
-  ReadListValue,
   ReadTextValueAsString,
-  ReadTextValueAsXml,
-  ReadTimeValue,
   ReadUriValue,
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
@@ -64,9 +60,28 @@ const sharedProviders = [
   { provide: ResourceFetcherService, useValue: resourceFetcherServiceStub },
 ];
 
-const meta: Meta<TemplateViewerSwitcherComponent> = {
+@Component({
+  selector: 'app-viewer-switcher-host',
+  template: `
+    <app-template-viewer-switcher
+      [value]="value"
+      [myPropertyDefinition]="propDef"
+      (templateFound)="template = $event" />
+    @if (template) {
+      <ng-container *ngTemplateOutlet="template; context: { item: value }" />
+    }
+  `,
+  imports: [TemplateViewerSwitcherComponent, NgTemplateOutlet],
+})
+class ViewerSwitcherHostComponent {
+  @Input() value: any;
+  @Input() propDef: any;
+  template?: TemplateRef<any>;
+}
+
+const meta: Meta<ViewerSwitcherHostComponent> = {
   title: 'Devs / Resource Editor / Template Switcher / Viewer Switcher',
-  component: TemplateViewerSwitcherComponent,
+  component: ViewerSwitcherHostComponent,
   decorators: [
     applicationConfig({ providers: sharedProviders }),
   ],
@@ -75,20 +90,20 @@ const meta: Meta<TemplateViewerSwitcherComponent> = {
       description: 'The ReadValue to display. The component selects the correct viewer based on value type.',
       table: { type: { summary: 'ReadValue' }, category: 'State' },
     },
-    myPropertyDefinition: {
+    propDef: {
       description: 'PropertyDefinition used to determine the value type.',
       table: { type: { summary: 'PropertyDefinition' }, category: 'State' },
     },
   },
 };
 export default meta;
-type Story = StoryObj<TemplateViewerSwitcherComponent>;
+type Story = StoryObj<ViewerSwitcherHostComponent>;
 
 export const IntValue: Story = {
   name: 'Displays an integer value',
   args: {
     value: { int: 42, strval: '42', type: Constants.IntValue } as unknown as ReadIntValue,
-    myPropertyDefinition: makePropDef(Constants.IntValue),
+    propDef: makePropDef(Constants.IntValue),
   },
   play: async ({ canvasElement, step }) => {
     await step('Integer value is rendered', async () => {
@@ -101,7 +116,7 @@ export const BooleanValue: Story = {
   name: 'Displays a boolean toggle in read-only mode',
   args: {
     value: { bool: true, strval: 'true', type: Constants.BooleanValue } as unknown as ReadBooleanValue,
-    myPropertyDefinition: makePropDef(Constants.BooleanValue),
+    propDef: makePropDef(Constants.BooleanValue),
   },
   play: async ({ canvasElement, step }) => {
     await step('Slide toggle is rendered for boolean value', async () => {
@@ -115,7 +130,7 @@ export const ColorValue: Story = {
   name: 'Displays a color swatch',
   args: {
     value: { color: '#ff6600', strval: '#ff6600', type: Constants.ColorValue } as unknown as ReadColorValue,
-    myPropertyDefinition: makePropDef(Constants.ColorValue),
+    propDef: makePropDef(Constants.ColorValue),
   },
   play: async ({ canvasElement, step }) => {
     await step('Color box is rendered', async () => {
@@ -129,7 +144,7 @@ export const TextValue: Story = {
   name: 'Displays a plain text value',
   args: {
     value: { text: 'Hello, world!', strval: 'Hello, world!', type: Constants.TextValue } as unknown as ReadTextValueAsString,
-    myPropertyDefinition: { objectType: Constants.TextValue, guiElement: Constants.GuiSimpleText } as any,
+    propDef: { objectType: Constants.TextValue, guiElement: Constants.GuiSimpleText } as any,
   },
   play: async ({ canvasElement, step }) => {
     await step('Text content is rendered', async () => {
@@ -142,7 +157,7 @@ export const UriValue: Story = {
   name: 'Displays a URI as a clickable link',
   args: {
     value: { uri: 'https://www.dasch.swiss', strval: 'https://www.dasch.swiss', type: Constants.UriValue } as unknown as ReadUriValue,
-    myPropertyDefinition: makePropDef(Constants.UriValue),
+    propDef: makePropDef(Constants.UriValue),
   },
   play: async ({ canvasElement, step }) => {
     await step('URI link is rendered', async () => {

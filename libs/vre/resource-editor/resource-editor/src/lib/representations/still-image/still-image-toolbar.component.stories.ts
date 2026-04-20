@@ -1,6 +1,6 @@
 import { OverlayModule } from '@angular/cdk/overlay';
 import { importProvidersFrom } from '@angular/core';
-import { Constants } from '@dasch-swiss/dsp-js';
+import { Constants, ReadStillImageFileValue } from '@dasch-swiss/dsp-js';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
@@ -19,11 +19,11 @@ const makeResource = () =>
     properties: {
       [Constants.HasStillImageFileValue]: [
         {
-          type: 'http://api.dasch.swiss/ontology/knora-api/v2#StillImageFileValue',
+          type: Constants.StillImageFileValue,
           fileUrl: 'https://example.org/image.jpx',
           arkUrl: 'http://ark.dasch.swiss/ark:/72163/1/1',
           userHasPermission: 'RV',
-        },
+        } as unknown as ReadStillImageFileValue,
       ],
     },
   }) as any;

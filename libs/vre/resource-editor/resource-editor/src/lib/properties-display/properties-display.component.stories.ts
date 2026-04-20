@@ -5,6 +5,7 @@ import { expect } from 'storybook/test';
 import { Cardinality } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
+import { PropertiesDisplayService } from '../resource-properties/properties-display.service';
 import { PropertiesDisplayComponent } from './properties-display.component';
 
 const makeResource = (): DspResource =>
@@ -38,6 +39,7 @@ const meta: Meta<PropertiesDisplayComponent> = {
             },
           },
         },
+        { provide: PropertiesDisplayService, useValue: { showAllProperties$: of(false), showComments$: of(false), toggleShowProperties: () => {}, toggleShowComments: () => {} } },
       ],
     }),
   ],

@@ -4,6 +4,8 @@ import { expect } from 'storybook/test';
 
 import { NullableEditorComponent } from './nullable-editor.component';
 
+const metaWithValue = new FormControl('some value');
+
 const meta: Meta<NullableEditorComponent> = {
   title: 'Devs / Resource Editor / Template Switcher / Nullable Editor',
   component: NullableEditorComponent,
@@ -37,9 +39,9 @@ export const Empty: Story = {
 export const WithValue: Story = {
   name: 'Shows cancel button when a value is set',
   render: args => ({
-    props: args,
+    props: { ...args, control: metaWithValue },
     template: `
-      <app-nullable-editor [defaultValue]="defaultValue" [ngModel]="'some value'">
+      <app-nullable-editor [defaultValue]="defaultValue" [formControl]="control">
         <span>Current value</span>
       </app-nullable-editor>
     `,

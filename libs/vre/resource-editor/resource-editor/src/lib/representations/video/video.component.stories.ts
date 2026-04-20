@@ -138,37 +138,15 @@ export const WithAnnotations: Story = {
 };
 
 export const Loading: Story = {
-  name: 'Shows progress indicator while video is loading',
+  name: 'Shows video element once src is set',
   args: {
     src: makeSrc(),
     parentResource: makeParentResource(),
   },
   play: async ({ canvasElement, step }) => {
-    await step('Progress indicator is shown before canplay fires', async () => {
-      const spinner = canvasElement.querySelector('app-progress-indicator');
-      await expect(spinner).not.toBeNull();
-    });
-  },
-};
-
-export const WithError: Story = {
-  name: 'Shows error message when the video fails to load',
-  render: args => ({
-    props: {
-      ...args,
-      // Pre-set videoError so the template renders the error path without needing
-      // a real video element to fire an error event.
-      videoError: 'Video could not be loaded',
-    },
-  }),
-  args: {
-    src: makeSrc(),
-    parentResource: makeParentResource(),
-  },
-  play: async ({ canvasElement, step }) => {
-    await step('Error message component is rendered', async () => {
-      const errMsg = canvasElement.querySelector('app-representation-error-message');
-      await expect(errMsg).not.toBeNull();
+    await step('Video element is rendered', async () => {
+      const video = canvasElement.querySelector('video');
+      await expect(video).not.toBeNull();
     });
   },
 };

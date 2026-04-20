@@ -14,7 +14,7 @@ const makeEditModeData = () => ({
     id: 'http://rdfh.ch/resource/1',
     type: 'http://example.org/Thing',
     attachedToProject: 'http://rdfh.ch/projects/test',
-    userHasPermission: 'RV',
+    userHasPermission: 'CR',
   } as any,
   values: [
     {

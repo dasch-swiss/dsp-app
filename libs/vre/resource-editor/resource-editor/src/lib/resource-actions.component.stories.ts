@@ -1,6 +1,8 @@
 import { importProvidersFrom } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
+import { of } from 'rxjs';
 import { expect } from 'storybook/test';
 
 import { ResourceService } from '@dasch-swiss/vre/shared/app-common';
@@ -28,6 +30,7 @@ const meta: Meta<ResourceActionsComponent> = {
         importProvidersFrom(RouterModule.forRoot([])),
         { provide: NotificationService, useValue: { openSnackBar: () => {} } },
         { provide: ResourceService, useValue: { getResourcePath: () => '/project/test/resource/1' } },
+        { provide: DspApiConnectionToken, useValue: { v2: { res: { getResourcePermissions: () => of([]) } } } },
       ],
     }),
   ],

@@ -1,6 +1,8 @@
 import { importProvidersFrom } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
+import { UserService } from '@dasch-swiss/vre/core/session';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
 import { expect } from 'storybook/test';
@@ -57,6 +59,8 @@ const meta: Meta<ResourceHeaderComponent> = {
         },
         { provide: NotificationService, useValue: { openSnackBar: () => {} } },
         { provide: ResourceService, useValue: { getResourcePath: () => '/project/test/resource/1' } },
+        { provide: UserService, useValue: { user$: of(null) } },
+        { provide: DspApiConnectionToken, useValue: { v2: { res: { canDeleteResource: () => of({ canDo: true }) } } } },
       ],
     }),
   ],
@@ -107,6 +111,8 @@ export const WithEditPermission: Story = {
         },
         { provide: NotificationService, useValue: { openSnackBar: () => {} } },
         { provide: ResourceService, useValue: { getResourcePath: () => '/project/test/resource/1' } },
+        { provide: UserService, useValue: { user$: of(null) } },
+        { provide: DspApiConnectionToken, useValue: { v2: { res: { canDeleteResource: () => of({ canDo: true }) } } } },
       ],
     }),
   ],

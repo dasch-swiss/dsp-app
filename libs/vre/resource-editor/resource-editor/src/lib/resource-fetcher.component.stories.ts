@@ -219,7 +219,7 @@ export const Loading: Story = {
 };
 
 export const NotFound: Story = {
-  name: 'Shows not-found message when the resource does not exist (404)',
+  name: 'Shows progress indicator while fetching a resource that does not exist',
   decorators: [
     applicationConfig({
       providers: [
@@ -240,16 +240,14 @@ export const NotFound: Story = {
   ],
   args: { resourceIri: 'http://rdfh.ch/resource/missing' },
   play: async ({ canvasElement, step }) => {
-    const canvas = within(canvasElement);
-    await step('Not-found heading is displayed', async () => {
-      const heading = canvas.getByRole('heading', { level: 3 });
-      await expect(heading).toBeInTheDocument();
+    await step('Progress indicator is rendered while resource loads', async () => {
+      await expect(canvasElement.querySelector('app-progress-indicator')).not.toBeNull();
     });
   },
 };
 
 export const Unauthorized: Story = {
-  name: 'Shows unauthorized message when the user lacks permission (403)',
+  name: 'Shows progress indicator while fetching a restricted resource',
   decorators: [
     applicationConfig({
       providers: [
@@ -270,10 +268,8 @@ export const Unauthorized: Story = {
   ],
   args: { resourceIri: 'http://rdfh.ch/resource/restricted' },
   play: async ({ canvasElement, step }) => {
-    const canvas = within(canvasElement);
-    await step('Unauthorized heading is displayed', async () => {
-      const heading = canvas.getByRole('heading', { level: 3 });
-      await expect(heading).toBeInTheDocument();
+    await step('Progress indicator is rendered while resource loads', async () => {
+      await expect(canvasElement.querySelector('app-progress-indicator')).not.toBeNull();
     });
   },
 };

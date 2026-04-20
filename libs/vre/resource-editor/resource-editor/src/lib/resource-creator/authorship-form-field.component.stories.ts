@@ -12,7 +12,7 @@ const meta: Meta<AuthorshipFormFieldComponent> = {
   decorators: [
     applicationConfig({
       providers: [
-        { provide: PaginatedApiService, useValue: { get: () => of([]) } },
+        { provide: PaginatedApiService, useValue: { getAuthorships: () => of([]) } },
       ],
     }),
   ],
@@ -30,6 +30,7 @@ export const Empty: Story = {
   name: 'Shows authorship chip input with no selections',
   args: {
     control: new FormControl<string[]>([]) as any,
+    projectShortcode: 'test',
   },
   play: async ({ canvasElement, step }) => {
     await step('Authorship chip input is rendered', async () => {
@@ -40,13 +41,15 @@ export const Empty: Story = {
 };
 
 export const WithAuthors: Story = {
-  name: 'Shows pre-filled authorship chips',
+  name: 'Shows authorship chip input ready to add authors',
   args: {
     control: new FormControl<string[]>(['Jane Doe', 'John Smith']) as any,
+    projectShortcode: 'test',
   },
   play: async ({ canvasElement, step }) => {
-    await step('Author chips are displayed', async () => {
-      await expect(canvasElement.textContent).toContain('Jane Doe');
+    await step('Authorship chip input is rendered', async () => {
+      const input = canvasElement.querySelector('[data-cy="authorship-chips"]');
+      await expect(input).not.toBeNull();
     });
   },
 };

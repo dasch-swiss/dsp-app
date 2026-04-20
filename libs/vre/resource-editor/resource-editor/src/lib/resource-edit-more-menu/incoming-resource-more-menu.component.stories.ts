@@ -3,6 +3,7 @@ import { of } from 'rxjs';
 import { expect } from 'storybook/test';
 
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
+import { UserService } from '@dasch-swiss/vre/core/session';
 import { ResourceFetcherService } from '../representations/resource-fetcher.service';
 import { IncomingResourceMoreMenuComponent } from './incoming-resource-more-menu.component';
 
@@ -30,6 +31,7 @@ const meta: Meta<IncomingResourceMoreMenuComponent> = {
           },
         },
         { provide: DspApiConnectionToken, useValue: { v2: { res: { canDeleteResource: () => of({ canDo: true }) } } } },
+        { provide: UserService, useValue: { user$: of(null) } },
       ],
     }),
   ],

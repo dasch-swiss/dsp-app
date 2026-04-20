@@ -1,4 +1,4 @@
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { applicationConfig, moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
 import { expect } from 'storybook/test';
@@ -33,10 +33,12 @@ const meta: Meta<UploadControlComponent> = {
 export default meta;
 type Story = StoryObj<UploadControlComponent>;
 
+const form = new FormGroup({ file: new FormControl<string | null>(null) });
+
 export const DefaultView: Story = {
   name: 'Shows upload area when no file is selected',
-  render: args => ({
-    props: args,
+  render: () => ({
+    props: { form },
     template: `
       <form [formGroup]="form">
         <app-upload-control
@@ -45,14 +47,7 @@ export const DefaultView: Story = {
           projectShortcode="test" />
       </form>
     `,
-    moduleMetadata: {
-      imports: [ReactiveFormsModule],
-    },
-    componentProperties: {
-      form: new (require('@angular/forms').FormGroup)({
-        file: new FormControl<string | null>(null),
-      }),
-    },
+    imports: [ReactiveFormsModule, UploadControlComponent],
   }),
   play: async ({ canvasElement, step }) => {
     await step('Upload component is rendered', async () => {

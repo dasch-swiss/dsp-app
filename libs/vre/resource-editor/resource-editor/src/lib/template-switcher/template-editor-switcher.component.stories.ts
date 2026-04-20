@@ -1,9 +1,10 @@
+import { NgTemplateOutlet } from '@angular/common';
+import { Component, Input, TemplateRef } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { importProvidersFrom } from '@angular/core';
-import { FormControl } from '@angular/forms';
 import {
   Constants,
-  KnoraApiConnection,
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
@@ -43,45 +44,50 @@ const sharedProviders = [
   { provide: LinkValueDataService, useValue: linkValueDataServiceStub },
 ];
 
-const meta: Meta<TemplateEditorSwitcherComponent> = {
+@Component({
+  selector: 'app-editor-switcher-host',
+  template: `
+    <app-template-editor-switcher
+      [myPropertyDefinition]="propDef"
+      [resourceClassIri]="resourceClassIri"
+      [projectIri]="projectIri"
+      [projectShortcode]="projectShortcode"
+      (templateFound)="template = $event" />
+    @if (template) {
+      <ng-container *ngTemplateOutlet="template; context: { item: control }" />
+    }
+  `,
+  imports: [TemplateEditorSwitcherComponent, NgTemplateOutlet],
+})
+class EditorSwitcherHostComponent {
+  @Input() propDef: any;
+  @Input() resourceClassIri = 'http://api.dasch.swiss/ontology/0001/anything/v2#Thing';
+  @Input() projectIri = 'http://rdfh.ch/projects/0001';
+  @Input() projectShortcode = '0001';
+  control = new FormControl<any>(null);
+  template?: TemplateRef<any>;
+}
+
+const meta: Meta<EditorSwitcherHostComponent> = {
   title: 'Devs / Resource Editor / Template Switcher / Editor Switcher',
-  component: TemplateEditorSwitcherComponent,
+  component: EditorSwitcherHostComponent,
   decorators: [
     applicationConfig({ providers: sharedProviders }),
   ],
   argTypes: {
-    myPropertyDefinition: {
+    propDef: {
       description: 'PropertyDefinition used to determine which editor to render.',
       table: { type: { summary: 'PropertyDefinition' }, category: 'State' },
-    },
-    resourceClassIri: {
-      description: 'IRI of the resource class (used by link value editor).',
-      table: { type: { summary: 'string' }, category: 'State' },
-    },
-    projectIri: {
-      description: 'IRI of the project.',
-      table: { type: { summary: 'string' }, category: 'State' },
-    },
-    projectShortcode: {
-      description: 'Shortcode of the project.',
-      table: { type: { summary: 'string' }, category: 'State' },
     },
   },
 };
 export default meta;
-type Story = StoryObj<TemplateEditorSwitcherComponent>;
-
-const baseArgs = {
-  resourceClassIri: 'http://api.dasch.swiss/ontology/0001/anything/v2#Thing',
-  projectIri: 'http://rdfh.ch/projects/0001',
-  projectShortcode: '0001',
-};
+type Story = StoryObj<EditorSwitcherHostComponent>;
 
 export const IntEditor: Story = {
   name: 'Renders integer input editor',
   args: {
-    ...baseArgs,
-    myPropertyDefinition: { objectType: Constants.IntValue } as any,
+    propDef: { objectType: Constants.IntValue } as any,
   },
   play: async ({ canvasElement, step }) => {
     await step('Integer input is rendered', async () => {
@@ -94,8 +100,7 @@ export const IntEditor: Story = {
 export const TextEditor: Story = {
   name: 'Renders plain text input editor',
   args: {
-    ...baseArgs,
-    myPropertyDefinition: { objectType: Constants.TextValue, guiElement: Constants.GuiSimpleText } as any,
+    propDef: { objectType: Constants.TextValue, guiElement: Constants.GuiSimpleText } as any,
   },
   play: async ({ canvasElement, step }) => {
     await step('Text input is rendered', async () => {
@@ -108,8 +113,7 @@ export const TextEditor: Story = {
 export const BooleanEditor: Story = {
   name: 'Renders boolean toggle editor',
   args: {
-    ...baseArgs,
-    myPropertyDefinition: { objectType: Constants.BooleanValue } as any,
+    propDef: { objectType: Constants.BooleanValue } as any,
   },
   play: async ({ canvasElement, step }) => {
     await step('Boolean toggle is rendered', async () => {
@@ -122,12 +126,11 @@ export const BooleanEditor: Story = {
 export const ColorEditor: Story = {
   name: 'Renders color picker editor',
   args: {
-    ...baseArgs,
-    myPropertyDefinition: { objectType: Constants.ColorValue } as any,
+    propDef: { objectType: Constants.ColorValue } as any,
   },
   play: async ({ canvasElement, step }) => {
     await step('Color picker is rendered', async () => {
-      const picker = canvasElement.querySelector('app-color-picker, app-nullable-editor');
+      const picker = canvasElement.querySelector('app-color-value, app-nullable-editor');
       await expect(picker).not.toBeNull();
     });
   },
@@ -136,8 +139,7 @@ export const ColorEditor: Story = {
 export const GeonameEditor: Story = {
   name: 'Renders geoname autocomplete editor',
   args: {
-    ...baseArgs,
-    myPropertyDefinition: { objectType: Constants.GeonameValue } as any,
+    propDef: { objectType: Constants.GeonameValue } as any,
   },
   play: async ({ canvasElement, step }) => {
     await step('Geoname autocomplete input is rendered', async () => {
