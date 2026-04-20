@@ -19,6 +19,14 @@ import { FootnoteService } from '../resource-properties/footnotes/footnote.servi
 import { GeonameService } from './geoname.service';
 import { TemplateViewerSwitcherComponent } from './template-viewer-switcher.component';
 
+const makeTextValue = (): ReadTextValueAsString => {
+  const v = new ReadTextValueAsString();
+  (v as any).text = 'Hello, world!';
+  (v as any).strval = 'Hello, world!';
+  (v as any).type = Constants.TextValue;
+  return v;
+};
+
 const makePropDef = (objectType: string) => ({ objectType }) as any;
 
 const resourceServiceStub: Partial<ResourceService> = {
@@ -150,11 +158,7 @@ export const ColorValue: Story = {
 export const TextValue: Story = {
   name: 'Displays a plain text value',
   args: {
-    value: {
-      text: 'Hello, world!',
-      strval: 'Hello, world!',
-      type: Constants.TextValue,
-    } as unknown as ReadTextValueAsString,
+    value: makeTextValue(),
     propDef: { objectType: Constants.TextValue, guiElement: Constants.GuiSimpleText } as any,
   },
   play: async ({ canvasElement, step }) => {
