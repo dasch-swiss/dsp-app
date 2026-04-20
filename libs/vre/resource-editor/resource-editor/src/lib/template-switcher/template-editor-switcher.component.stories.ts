@@ -6,7 +6,7 @@ import { Constants } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
-import { expect } from 'storybook/test';
+import { expect, waitFor } from 'storybook/test';
 
 import { GeonameService } from './geoname.service';
 import { TemplateEditorSwitcherComponent } from './template-editor-switcher.component';
@@ -119,8 +119,10 @@ export const BooleanEditor: Story = {
   },
   play: async ({ canvasElement, step }) => {
     await step('Boolean toggle is rendered', async () => {
-      const toggle = canvasElement.querySelector('mat-slide-toggle, [data-cy="bool-toggle"]');
-      await expect(toggle).not.toBeNull();
+      await waitFor(() => {
+        const toggle = canvasElement.querySelector('mat-slide-toggle, [data-cy="bool-toggle"]');
+        expect(toggle).not.toBeNull();
+      });
     });
   },
 };

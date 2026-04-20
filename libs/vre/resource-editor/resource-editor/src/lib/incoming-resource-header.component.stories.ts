@@ -22,7 +22,11 @@ const makeResource = () =>
     creationDate: '2024-06-15T10:00:00.000Z',
     userHasPermission: 'RV',
     versionArkUrl: 'ark:/99999/1/incoming',
-    entityInfo: { classes: {} },
+    entityInfo: {
+      classes: {
+        'http://example.org/Thing': { label: 'Thing', comment: '', getResourcePropertiesList: () => [] },
+      },
+    },
     getValues: () => [],
     properties: {},
   }) as any;
