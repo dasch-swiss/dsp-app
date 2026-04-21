@@ -57,7 +57,10 @@ const meta: Meta<ResourceComponent> = {
             },
           },
         },
-        { provide: AppConfigService, useValue: { dspApiConfig: { apiUrl: '' }, dspAppConfig: { iriBase: 'http://rdfh.ch' } } },
+        {
+          provide: AppConfigService,
+          useValue: { dspApiConfig: { apiUrl: '' }, dspAppConfig: { iriBase: 'http://rdfh.ch' } },
+        },
         { provide: UserService, useValue: { user$: of(null) } },
         { provide: NotificationService, useValue: { openSnackBar: () => {} } },
         { provide: ResourceService, useValue: { getResourcePath: () => '/project/test/resource/1' } },
