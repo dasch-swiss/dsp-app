@@ -15,7 +15,7 @@ class ColorPickerWrapperComponent {
 }
 
 const meta: Meta<ColorPickerWrapperComponent> = {
-  title: 'UI / Color Picker / Inline Picker',
+  title: 'Devs / UI / Color Picker / Inline Picker',
   component: ColorPickerWrapperComponent,
   argTypes: {},
 };
