@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { type Meta, type StoryObj } from '@storybook/angular';
-import { expect } from 'storybook/test';
+import { expect, waitFor } from 'storybook/test';
 
 import { IiifControlComponent } from './iiif-control.component';
 
@@ -68,8 +68,10 @@ export const WithError: Story = {
   }),
   play: async ({ canvasElement, step }) => {
     await step('Error message is displayed', async () => {
-      const error = canvasElement.querySelector('mat-error');
-      await expect(error).not.toBeNull();
+      await waitFor(() => {
+        const error = canvasElement.querySelector('mat-error');
+        expect(error).not.toBeNull();
+      });
     });
   },
 };
