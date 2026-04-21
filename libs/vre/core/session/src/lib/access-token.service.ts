@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Auth, LocalStorageLanguageKey } from '@dasch-swiss/vre/core/config';
-import jwtDecode, { JwtPayload } from 'jwt-decode';
+import { JwtPayload } from 'jwt-decode';
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const _jwtDecodeLib = require('jwt-decode');
+const jwtDecode: (token: string) => JwtPayload = _jwtDecodeLib.default ?? _jwtDecodeLib;
 
 @Injectable({ providedIn: 'root' })
 export class AccessTokenService {
@@ -37,7 +40,7 @@ export class AccessTokenService {
 
   decodeAccessToken(token: string): JwtPayload | null {
     try {
-      return jwtDecode<JwtPayload>(token);
+      return jwtDecode(token);
     } catch (e) {
       return null;
     }
