@@ -1,0 +1,30 @@
+name: Auto-approve Renovate PRs
+
+on:
+  pull_request_target:
+    types: [opened, reopened, synchronize]
+
+permissions:
+  pull-requests: write
+
+jobs:
+  auto-approve:
+    runs-on: ubuntu-latest
+    if: github.actor == 'renovate[bot]'
+    steps:
+      # Renovate enables auto-merge only for rules with automerge:true (patch/minor).
+      # Major PRs (automerge:false) never set autoMergeRequest, so approval is skipped,
+      # keeping manual-review enforcement for majors intact.
+      - name: Check if Renovate requested auto-merge
+        id: check
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          result=$(gh pr view ${{ github.event.pull_request.number }} \
+            --repo ${{ github.repository }} \
+            --json autoMergeRequest \
+            --jq '.autoMergeRequest != null')
+          echo "automerge=$result" >> $GITHUB_OUTPUT
+
+      - uses: hmarr/auto-approve-action@v4
+        if: steps.check.outputs.automerge == 'true'
