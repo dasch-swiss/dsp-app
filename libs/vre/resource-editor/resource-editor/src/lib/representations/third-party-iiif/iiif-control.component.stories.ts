@@ -1,23 +1,8 @@
-import { Component } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { type Meta, type StoryObj } from '@storybook/angular';
 import { expect, waitFor } from 'storybook/test';
 
 import { IiifControlComponent } from './iiif-control.component';
-
-@Component({
-  selector: 'app-iiif-control-with-error-host',
-  imports: [IiifControlComponent],
-  template: '<app-iiif-control [control]="control" />',
-})
-class IiifControlWithErrorHostComponent {
-  control = (() => {
-    const c = new FormControl<string | null>('not-a-valid-url');
-    c.setErrors({ invalidIiifUrl: true });
-    c.markAsTouched();
-    return c;
-  })();
-}
 
 const meta: Meta<IiifControlComponent> = {
   title: 'Devs / Resource Editor / Representation / IIIF Control',
@@ -62,10 +47,14 @@ export const WithValidUrl: Story = {
 
 export const WithError: Story = {
   name: 'Shows validation error for an invalid IIIF URL',
-  render: () => ({
-    template: '<app-iiif-control-with-error-host />',
-    moduleMetadata: { imports: [IiifControlWithErrorHostComponent] },
-  }),
+  args: {
+    control: (() => {
+      const c = new FormControl<string | null>('not-a-valid-url');
+      c.setErrors({ invalidIiifUrl: true });
+      c.markAsTouched();
+      return c;
+    })(),
+  },
   play: async ({ canvasElement, step }) => {
     await step('Error message is displayed', async () => {
       await waitFor(() => {
