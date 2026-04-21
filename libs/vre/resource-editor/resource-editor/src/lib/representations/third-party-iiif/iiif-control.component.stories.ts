@@ -1,6 +1,6 @@
 import { FormControl } from '@angular/forms';
 import { type Meta, type StoryObj } from '@storybook/angular';
-import { expect, waitFor } from 'storybook/test';
+import { expect, userEvent, waitFor } from 'storybook/test';
 
 import { IiifControlComponent } from './iiif-control.component';
 
@@ -57,6 +57,9 @@ export const WithError: Story = {
   },
   play: async ({ canvasElement, step }) => {
     await step('Error message is displayed', async () => {
+      const input = canvasElement.querySelector('[data-cy="external-iiif-input"]') as HTMLInputElement;
+      await userEvent.click(input);
+      await userEvent.tab();
       await waitFor(() => {
         const error = canvasElement.querySelector('mat-error');
         expect(error).not.toBeNull();
