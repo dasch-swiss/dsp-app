@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Auth, LocalStorageLanguageKey } from '@dasch-swiss/vre/core/config';
-import { jwtDecode, JwtPayload } from 'jwt-decode';
+import jwtDecode, { JwtPayload } from 'jwt-decode';
 
 @Injectable({ providedIn: 'root' })
 export class AccessTokenService {
