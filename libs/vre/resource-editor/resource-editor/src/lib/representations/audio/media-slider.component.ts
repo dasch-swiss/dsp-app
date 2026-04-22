@@ -1,16 +1,16 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatSlider, MatSliderThumb } from '@angular/material/slider';
-import { MatToolbarRow } from '@angular/material/toolbar';
+import { MatToolbar } from '@angular/material/toolbar';
 
 @Component({
   selector: 'app-media-slider',
-  imports: [FormsModule, MatSlider, MatSliderThumb, MatToolbarRow],
-  template: ` <mat-toolbar-row style="height: 34px; background-color: #292929">
+  imports: [FormsModule, MatSlider, MatSliderThumb, MatToolbar],
+  template: ` <mat-toolbar style="height: 34px; background-color: #292929; min-height: 34px">
     <mat-slider color="accent" style="width: 100%" [max]="max" [min]="0" [step]="1">
       <input matSliderThumb [ngModel]="currentTime" (ngModelChange)="afterNavigation.emit($event)" />
     </mat-slider>
-  </mat-toolbar-row>`,
+  </mat-toolbar>`,
   styles: [
     `
       ::ng-deep .mdc-slider__thumb-knob {

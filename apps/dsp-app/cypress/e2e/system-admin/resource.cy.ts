@@ -421,7 +421,8 @@ describe('Resource', () => {
       cy.get(':nth-child(4) > [data-mat-col="3"] > .mat-calendar-body-cell > .mat-calendar-body-cell-content').type(
         '{enter}'
       );
-      cy.get('[data-cy=time-input]').clear({ force: true }).type('00:00');
+      cy.get('body').type('{esc}');
+      cy.get('[data-cy=time-input]').clear().type('00:00');
       po.clickOnSubmit();
 
       // edit

@@ -3,7 +3,6 @@ import { Component, Inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogActions, MatDialogClose, MatDialogContent } from '@angular/material/dialog';
-import { ReadResource } from '@dasch-swiss/dsp-js';
 import { LoadingButtonDirective } from '@dasch-swiss/vre/ui/progress-indicator';
 import {
   ChipListInputComponent,
@@ -13,11 +12,12 @@ import {
   TimeInputComponent,
 } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe } from '@ngx-translate/core';
+import { ParentResourceInput } from '../representations/representation-inputs';
 import { SegmentApiService } from './segment-api.service';
 import { SegmentsService } from './segments.service';
 
 export interface CreateSegmentDialogProps {
-  resource: ReadResource;
+  resource: ParentResourceInput;
   videoDurationSecs: number;
   type: 'VideoSegment' | 'AudioSegment';
   projectShortcode: string;

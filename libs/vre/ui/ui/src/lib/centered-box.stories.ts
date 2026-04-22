@@ -16,7 +16,7 @@ import { CenteredBoxComponent } from './centered-box.component';
 class CenteredBoxWrapperComponent {}
 
 const meta: Meta<CenteredBoxWrapperComponent> = {
-  title: 'UI / Centered Box / Layout',
+  title: 'Devs / UI / Centered Box / Layout',
   component: CenteredBoxWrapperComponent,
   argTypes: {},
 };

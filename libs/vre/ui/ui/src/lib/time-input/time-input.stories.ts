@@ -5,7 +5,7 @@ import { expect, within, userEvent } from 'storybook/test';
 import { TimeInputComponent } from './time-input.component';
 
 const meta: Meta<TimeInputComponent> = {
-  title: 'UI / Time Input / Time Field',
+  title: 'Devs / UI / Time Input / Time Field',
   component: TimeInputComponent,
   argTypes: {
     label: {

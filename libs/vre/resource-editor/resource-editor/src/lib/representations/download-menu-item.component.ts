@@ -2,9 +2,9 @@ import { Clipboard } from '@angular/cdk/clipboard';
 import { Component, inject, Input } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { ReadFileValue, ReadResource } from '@dasch-swiss/dsp-js';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { FileRepresentationInput, ParentResourceInput } from './representation-inputs';
 import { RepresentationService } from './representation.service';
 
 @Component({
@@ -26,8 +26,8 @@ import { RepresentationService } from './representation.service';
   `,
 })
 export class DownloadMenuItemComponent {
-  @Input({ required: true }) src!: ReadFileValue;
-  @Input({ required: true }) parentResource!: ReadResource;
+  @Input({ required: true }) src!: FileRepresentationInput;
+  @Input({ required: true }) parentResource!: ParentResourceInput;
 
   private readonly _translateService = inject(TranslateService);
 

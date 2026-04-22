@@ -3,10 +3,9 @@ import { Component, EventEmitter, Input, Output, ViewContainerRef } from '@angul
 import { MatIconButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIcon, MatIconRegistry } from '@angular/material/icon';
-import { MatToolbarRow } from '@angular/material/toolbar';
+import { MatToolbar } from '@angular/material/toolbar';
 import { MatTooltip, TooltipPosition } from '@angular/material/tooltip';
 import { DomSanitizer } from '@angular/platform-browser';
-import { ReadMovingImageFileValue, ReadResource } from '@dasch-swiss/dsp-js';
 import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import { TimePipe } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -16,6 +15,7 @@ import {
   CreateSegmentDialogProps,
 } from '../../segment-support/create-segment-dialog.component';
 import { MovingImageSidecar } from '../moving-image-sidecar';
+import { FileRepresentationInput, ParentResourceInput } from '../representation-inputs';
 import { ResourceFetcherService } from '../resource-fetcher.service';
 import { MediaPlayerService } from './media-player.service';
 import { VideoMoreButtonComponent } from './video-more-button.component';
@@ -26,13 +26,13 @@ import { VideoMoreButtonComponent } from './video-more-button.component';
     AsyncPipe,
     MatIconButton,
     MatIcon,
-    MatToolbarRow,
+    MatToolbar,
     MatTooltip,
     VideoMoreButtonComponent,
     TranslatePipe,
     TimePipe,
   ],
-  template: ` <mat-toolbar-row style="background: black; color: white; justify-content: space-between">
+  template: ` <mat-toolbar style="background: black; color: white; justify-content: space-between">
     <div>
       <button
         mat-icon-button
@@ -57,7 +57,9 @@ import { VideoMoreButtonComponent } from './video-more-button.component';
       <!-- TODO reached the end button "replay" -->
     </div>
 
-    <div data-cy="player-time">{{ mediaPlayer.currentTime() | appTime }}/ {{ mediaPlayer.duration() | appTime }}</div>
+    <div data-cy="player-time" style="font-size: 16px">
+      {{ mediaPlayer.currentTime() | appTime }}/ {{ mediaPlayer.duration() | appTime }}
+    </div>
 
     <div>
       <app-video-more-button [parentResource]="parentResource" [src]="src" [fileInfo]="fileInfo" />
@@ -86,7 +88,7 @@ import { VideoMoreButtonComponent } from './video-more-button.component';
         <mat-icon>{{ isFullscreen ? 'fullscreen_exit' : 'fullscreen' }}</mat-icon>
       </button>
     </div>
-  </mat-toolbar-row>`,
+  </mat-toolbar>`,
   styles: [
     `
       .mat-mdc-button-base .mat-icon {
@@ -96,8 +98,8 @@ import { VideoMoreButtonComponent } from './video-more-button.component';
   ],
 })
 export class VideoToolbarComponent {
-  @Input({ required: true }) src!: ReadMovingImageFileValue;
-  @Input({ required: true }) parentResource!: ReadResource;
+  @Input({ required: true }) src!: FileRepresentationInput;
+  @Input({ required: true }) parentResource!: ParentResourceInput;
   @Input({ required: true }) fileInfo!: MovingImageSidecar;
 
   @Output() toggleCinemaMode = new EventEmitter<void>();
