@@ -5,7 +5,6 @@ import { MAT_DIALOG_DATA, MatDialogActions, MatDialogContent, MatDialogRef } fro
 import { MatIcon } from '@angular/material/icon';
 import {
   KnoraApiConnection,
-  ReadResource,
   UpdateExternalStillImageFileValue,
   UpdateFileValue,
   UpdateResource,
@@ -19,11 +18,12 @@ import { CreateResourceFormFileComponent } from '../../resource-creator/create-r
 import { FileForm } from '../file-form.type';
 import { FileRepresentationType } from '../file-representation.type';
 import { fileValueMapping } from '../file-value-mapping';
+import { ParentResourceInput } from '../representation-inputs';
 import { ResourceFetcherService } from '../resource-fetcher.service';
 
 export interface ReplaceFileDialogProps {
   representation: FileRepresentationType;
-  resource: ReadResource;
+  resource: ParentResourceInput;
   title: string;
 }
 

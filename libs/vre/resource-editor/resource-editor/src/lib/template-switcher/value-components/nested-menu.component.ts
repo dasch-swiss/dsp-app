@@ -28,6 +28,7 @@ import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
     @if (!data.isRootNode) {
       <div
         mat-menu-item
+        data-cy="list-item-button"
         [matMenuTriggerFor]="menu"
         [matTooltip]="data.comments | appStringifyStringLiteral"
         matTooltipPosition="above"

@@ -15,7 +15,7 @@ This monorepo is built on:
 
 ## Quick Start
 
-Use the Node.js version supported by the installed Angular version ([compatibility table](https://angular.dev/reference/versions)), or the version pinned in [.nvmrc](.nvmrc).
+Use the NodeJs version supported by the installed Angular version ([compatibility table](https://angular.dev/reference/versions)), or the version pinned in [.nvmrc](.nvmrc).
 
 ```shell
 npm install
@@ -36,22 +36,22 @@ Every PR that touches `apps/dsp-app/src/` or `libs/` gets an automatic live prev
 
 Most common operations for daily development:
 
-| Task | Command |
-|------|---------|
-| Start local development | `npm run start-local` |
-| Start with observability | `npm run start-local-with-observability` |
-| Run tests | `npm run test-local` |
-| Run all tests (CI mode) | `npm run test-ci-all` |
-| Lint all libs w/o auto-fix | `npm run lint-all` |
-| Lint all libs with auto-fix | `npm run lint-fix-all` |
-| Open E2E tests UI | `npm run e2e-local` |
-| Run E2E tests (headless) | `npm run e2e-ci` |
-| Build for development | `npm run build` |
-| Build for production | `npm run build-prod` |
-| Generate test coverage | `npm run unit-test-coverage` |
-| Browse all component stories | `npm run storybook` |
-| Build static Storybook | `npm run build-storybook` |
-| Run Storybook interaction tests | `npm run test-storybook` |
+| Task                            | Command                                  |
+|---------------------------------|------------------------------------------|
+| Start local development         | `npm run start-local`                    |
+| Start with observability        | `npm run start-local-with-observability` |
+| Run tests                       | `npm run test-local`                     |
+| Run all tests (CI mode)         | `npm run test-ci-all`                    |
+| Lint all libs w/o auto-fix      | `npm run lint-all`                       |
+| Lint all libs with auto-fix     | `npm run lint-fix-all`                   |
+| Open E2E tests UI               | `npm run e2e-local`                      |
+| Run E2E tests (headless)        | `npm run e2e-ci`                         |
+| Build for development           | `npm run build`                          |
+| Build for production            | `npm run build-prod`                     |
+| Generate test coverage          | `npm run unit-test-coverage`             |
+| Browse all component stories    | `npm run storybook`                      |
+| Build static Storybook          | `npm run build-storybook`                |
+| Run Storybook interaction tests | `npm run test-storybook`                 |
 
 For all available commands, see [package.json](https://github.com/dasch-swiss/dsp-app/blob/main/package.json).
 

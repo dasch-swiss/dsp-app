@@ -1,18 +1,11 @@
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import {
-  ReadArchiveFileValue,
-  ReadAudioFileValue,
-  ReadDocumentFileValue,
-  ReadMovingImageFileValue,
-  ReadResource,
-  ReadStillImageExternalFileValue,
-  ReadStillImageFileValue,
-} from '@dasch-swiss/dsp-js';
+import { ReadDocumentFileValue } from '@dasch-swiss/dsp-js';
 import { ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { AppConfigService } from '@dasch-swiss/vre/core/config';
 import { AccessTokenService, UserService } from '@dasch-swiss/vre/core/session';
 import { map, take } from 'rxjs';
+import { FileRepresentationInput, ParentResourceInput } from './representation-inputs';
 import { ResourceUtil } from './resource.util';
 
 @Injectable({
@@ -37,35 +30,17 @@ export class RepresentationService {
     return url;
   }
 
-  userCanView(fileValue: ReadDocumentFileValue) {
+  userCanView(fileValue: FileRepresentationInput) {
     return fileValue && ResourceUtil.userCanView(fileValue);
   }
 
-  downloadProjectFile(
-    fileValue:
-      | ReadAudioFileValue
-      | ReadDocumentFileValue
-      | ReadMovingImageFileValue
-      | ReadStillImageFileValue
-      | ReadStillImageExternalFileValue
-      | ReadArchiveFileValue,
-    resource: ReadResource
-  ) {
+  downloadProjectFile(fileValue: FileRepresentationInput, resource: ParentResourceInput) {
     this.getIngestUrl(fileValue, resource).subscribe(ingestFileUrl => {
       this.downloadFile(ingestFileUrl, this.userCanView(fileValue));
     });
   }
 
-  getIngestUrl(
-    fileValue:
-      | ReadAudioFileValue
-      | ReadDocumentFileValue
-      | ReadMovingImageFileValue
-      | ReadStillImageFileValue
-      | ReadStillImageExternalFileValue
-      | ReadArchiveFileValue,
-    resource: ReadResource
-  ) {
+  getIngestUrl(fileValue: FileRepresentationInput, resource: ParentResourceInput) {
     return this._projectApiService.get(resource.attachedToProject).pipe(
       map(response => {
         const assetId = fileValue.filename.split('.')[0] || '';
@@ -74,16 +49,7 @@ export class RepresentationService {
     );
   }
 
-  getIngestOriginalUrl(
-    fileValue:
-      | ReadAudioFileValue
-      | ReadDocumentFileValue
-      | ReadMovingImageFileValue
-      | ReadStillImageFileValue
-      | ReadStillImageExternalFileValue
-      | ReadArchiveFileValue,
-    resource: ReadResource
-  ) {
+  getIngestOriginalUrl(fileValue: FileRepresentationInput, resource: ParentResourceInput) {
     return this.getIngestUrl(fileValue, resource).pipe(map(url => `${url}/original`));
   }
 

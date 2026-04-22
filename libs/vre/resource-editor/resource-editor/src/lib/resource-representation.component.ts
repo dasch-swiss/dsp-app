@@ -50,9 +50,7 @@ import { ResourceRepresentationContainerComponent } from './resource-representat
         </app-resource-representation-container>
       }
       @case (representationConstants.movingImage) {
-        <app-resource-representation-container height="auto">
-          <app-video #video [src]="fileValue" [parentResource]="resource.res" />
-        </app-resource-representation-container>
+        <app-video #video [src]="fileValue" [parentResource]="resource.res" />
       }
       @case (representationConstants.archive) {
         <app-resource-representation-container height="small">

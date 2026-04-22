@@ -11,17 +11,18 @@ import {
   ViewChild,
 } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-import { ReadMovingImageFileValue, ReadResource } from '@dasch-swiss/dsp-js';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { AppProgressIndicatorComponent } from '@dasch-swiss/vre/ui/progress-indicator';
 import { TranslateService } from '@ngx-translate/core';
 import { catchError, EMPTY, Subject, takeUntil } from 'rxjs';
+import { ResourceRepresentationContainerComponent } from '../../resource-representation-container.component';
 import { MediaControlService } from '../../segment-support/media-control.service';
 import { SegmentsDisplayComponent } from '../../segment-support/segments-display.component';
 import { SegmentsService } from '../../segment-support/segments.service';
 import { MediaSliderComponent } from '../audio/media-slider.component';
 import { MovingImageSidecar } from '../moving-image-sidecar';
 import { RepresentationErrorMessageComponent } from '../representation-error-message.component';
+import { FileRepresentationInput, ParentResourceInput } from '../representation-inputs';
 import { RepresentationService } from '../representation.service';
 import { DisableContextMenuDirective } from './disable-context-menu.directive';
 import { MediaPlayerService } from './media-player.service';
@@ -40,11 +41,12 @@ import { VideoToolbarComponent } from './video-toolbar.component';
     SegmentsDisplayComponent,
     VideoToolbarComponent,
     RepresentationErrorMessageComponent,
+    ResourceRepresentationContainerComponent,
   ],
 })
 export class VideoComponent implements OnChanges, OnDestroy {
-  @Input({ required: true }) src!: ReadMovingImageFileValue;
-  @Input({ required: true }) parentResource!: ReadResource;
+  @Input({ required: true }) src!: FileRepresentationInput;
+  @Input({ required: true }) parentResource!: ParentResourceInput;
   @Output() loaded = new EventEmitter<boolean>();
 
   @ViewChild('videoElement', { static: false }) videoElement!: ElementRef<HTMLVideoElement>;
