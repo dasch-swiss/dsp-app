@@ -47,23 +47,16 @@ export class OsdDrawerService implements OnDestroy {
     this._subscribeToSelectedRegion();
     this._subscribeToCreatedRectangle();
 
-    this._osd.viewer.addHandler(
-      'canvas-click',
-      (
-        event: OpenSeadragon.ViewerEvent & {
-          originalTarget?: Element;
-        }
-      ) => {
-        event.preventDefaultAction = true;
-        const target = event.originalTarget as SVGElement;
-        const regionIri = target.getAttribute('data-region-iri');
-        if (regionIri === this._currentHighlightedRegion) {
-          this._regionService.setHighlightedRegionClicked(regionIri);
-        } else {
-          this._regionService.selectRegion(regionIri);
-        }
+    this._osd.viewer.addHandler('canvas-click', (event: OpenSeadragon.CanvasClickEvent) => {
+      event.preventDefaultAction = true;
+      const target = event.originalTarget as SVGElement;
+      const regionIri = target.getAttribute('data-region-iri');
+      if (regionIri === this._currentHighlightedRegion) {
+        this._regionService.setHighlightedRegionClicked(regionIri);
+      } else {
+        this._regionService.selectRegion(regionIri);
       }
-    );
+    });
   }
 
   update(resource: ReadResource): void {
@@ -303,7 +296,7 @@ export class OsdDrawerService implements OnDestroy {
     // Add the master SVG as a single overlay covering the entire image
     this._osd.viewer.addOverlay({
       id: this._masterOverlayId,
-      element: svgElement,
+      element: svgElement as unknown as HTMLElement,
       location: new OpenSeadragon.Rect(0, 0, 1, aspectRatio),
     });
     this._masterSvgOverlay = svgElement;
