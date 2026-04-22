@@ -8,7 +8,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatTooltip } from '@angular/material/tooltip';
-import { Constants, ReadDocumentFileValue, ReadResource } from '@dasch-swiss/dsp-js';
+import { Constants } from '@dasch-swiss/dsp-js';
 import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -16,6 +16,7 @@ import {
   ReplaceFileDialogComponent,
   ReplaceFileDialogProps,
 } from '../replace-file-dialog/replace-file-dialog.component';
+import { FileRepresentationInput, ParentResourceInput } from '../representation-inputs';
 import { RepresentationService } from '../representation.service';
 import { ResourceFetcherService } from '../resource-fetcher.service';
 
@@ -131,8 +132,8 @@ import { ResourceFetcherService } from '../resource-fetcher.service';
 })
 export class PdfToolbarComponent {
   @Input({ required: true }) zoomFactor!: number;
-  @Input({ required: true }) parentResource!: ReadResource;
-  @Input({ required: true }) src!: ReadDocumentFileValue;
+  @Input({ required: true }) parentResource!: ParentResourceInput;
+  @Input({ required: true }) src!: FileRepresentationInput;
 
   @Output() zoomChange = new EventEmitter<number>();
   @Output() searchQuery = new EventEmitter<string>();

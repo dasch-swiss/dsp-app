@@ -11,11 +11,11 @@ import {
   ViewChild,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ReadDocumentFileValue, ReadResource } from '@dasch-swiss/dsp-js';
 import { AccessTokenService } from '@dasch-swiss/vre/core/session';
 import { PdfViewerComponent, PdfViewerModule } from 'ng2-pdf-viewer';
 import { catchError, EMPTY } from 'rxjs';
 import { RepresentationErrorMessageComponent } from '../representation-error-message.component';
+import { FileRepresentationInput, ParentResourceInput } from '../representation-inputs';
 import { RepresentationService } from '../representation.service';
 import { PdfToolbarComponent } from './pdf-toolbar.component';
 
@@ -71,8 +71,8 @@ interface PdfSource {
   ],
 })
 export class PdfDocumentComponent implements OnChanges, AfterViewInit, OnDestroy {
-  @Input({ required: true }) src!: ReadDocumentFileValue;
-  @Input({ required: true }) parentResource!: ReadResource;
+  @Input({ required: true }) src!: FileRepresentationInput;
+  @Input({ required: true }) parentResource!: ParentResourceInput;
 
   @ViewChild(PdfViewerComponent, { static: false }) private _pdfComponent!: PdfViewerComponent;
   @ViewChild('pdfContainer', { static: false }) private _pdfContainer?: ElementRef<HTMLDivElement>;

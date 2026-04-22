@@ -1,12 +1,12 @@
 import { AsyncPipe } from '@angular/common';
 import { Component, DestroyRef, inject, Input, OnChanges, SimpleChanges, ViewContainerRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ReadArchiveFileValue, ReadResource } from '@dasch-swiss/dsp-js';
 import { CenteredMessageComponent } from '@dasch-swiss/vre/ui/ui';
 import { catchError, EMPTY } from 'rxjs';
 import { DownloadMenuItemComponent } from './download-menu-item.component';
 import { ReplaceFileDialogConfig, ReplaceFileMenuItemComponent } from './replace-file-menu-item.component';
 import { RepresentationErrorMessageComponent } from './representation-error-message.component';
+import { FileRepresentationInput, ParentResourceInput } from './representation-inputs';
 import { RepresentationService } from './representation.service';
 import { ResourceFetcherService } from './resource-fetcher.service';
 
@@ -41,8 +41,8 @@ import { ResourceFetcherService } from './resource-fetcher.service';
   `,
 })
 export class FileRepresentationComponent implements OnChanges {
-  @Input({ required: true }) src!: ReadArchiveFileValue;
-  @Input({ required: true }) parentResource!: ReadResource;
+  @Input({ required: true }) src!: FileRepresentationInput;
+  @Input({ required: true }) parentResource!: ParentResourceInput;
   @Input({ required: true }) dialogConfig!: ReplaceFileDialogConfig;
   originalFilename?: string;
 

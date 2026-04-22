@@ -37,7 +37,7 @@ export class AccessTokenService {
 
   decodeAccessToken(token: string): JwtPayload | null {
     try {
-      return jwtDecode<JwtPayload>(token);
+      return jwtDecode(token);
     } catch (e) {
       return null;
     }

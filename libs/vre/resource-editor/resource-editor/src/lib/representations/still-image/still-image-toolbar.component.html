@@ -88,7 +88,7 @@
 </div>
 
 <mat-menu #more="matMenu" class="representation-menu">
-  <a mat-menu-item [href]="imageFileValue.fileUrl" target="_blank" data-cy="open-iiif-new-tab">
+  <a mat-menu-item [href]="imageFileValue?.fileUrl" target="_blank" data-cy="open-iiif-new-tab">
     {{ 'resourceEditor.representations.stillImage.openIiifInNewTab' | translate }}
   </a>
   @if (resourceFetcherService.userCanEdit$ | async) {
@@ -102,14 +102,14 @@
   <button
     mat-menu-item
     (click)="notification.openSnackBar(_translateService.instant('resourceEditor.representations.stillImage.iiifUrlCopied'))"
-    [cdkCopyToClipboard]="imageFileValue.fileUrl"
+    [cdkCopyToClipboard]="imageFileValue?.fileUrl ?? ''"
     data-cy="copy-iiif-url">
     <mat-icon>content_copy</mat-icon>
     {{ 'resourceEditor.representations.stillImage.copyIiifUrl' | translate }}
   </button>
   <button
     mat-menu-item
-    [cdkCopyToClipboard]="imageFileValue.arkUrl"
+    [cdkCopyToClipboard]="imageFileValue?.arkUrl ?? ''"
     (click)="notification.openSnackBar(_translateService.instant('resourceEditor.representations.stillImage.arkUrlCopied'))"
     data-cy="copy-ark-url">
     <mat-icon>content_copy</mat-icon>
