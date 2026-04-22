@@ -113,6 +113,20 @@
       "enabled": false
     },
     {
+      "description": "Node.js (package.json engines): major managed manually — same rationale as .nvmrc rule; engines field is a separate manager not covered by the nvm rule above",
+      "matchManagers": ["npm"],
+      "matchPackageNames": ["node"],
+      "matchUpdateTypes": ["major"],
+      "enabled": false
+    },
+    {
+      "description": "npm major: managed manually — not Angular/NX coupled but major npm releases have behavioural changes worth evaluating before adopting",
+      "matchManagers": ["npm"],
+      "matchPackageNames": ["npm"],
+      "matchUpdateTypes": ["major"],
+      "enabled": false
+    },
+    {
       "description": "CKEditor: custom build + Angular adapter tracked in DEV-6208; disable both until resolved",
       "matchPackageNames": [
         "ckeditor5-custom-build",
