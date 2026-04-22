@@ -20,7 +20,7 @@ import { AlternatedListComponent } from './alternated-list.component';
 class AlternatedListWrapperComponent {}
 
 const meta: Meta<AlternatedListWrapperComponent> = {
-  title: 'Devs / UI / Alternated List / List',
+  title: 'Devs / UI / Alternated List / Lists',
   component: AlternatedListWrapperComponent,
   argTypes: {},
 };
