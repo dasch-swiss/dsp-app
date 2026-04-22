@@ -97,13 +97,13 @@ export class OpenSeaDragonService {
     viewer.addHandler('canvas-release', () => this._onCanvasRelease(viewer));
   }
 
-  private _onCanvasPress(event: OpenSeadragon.ViewerEvent, viewer: OpenSeadragon.Viewer): void {
+  private _onCanvasPress(event: OpenSeadragon.CanvasEvent, viewer: OpenSeadragon.Viewer): void {
     if (!this._drawing) {
       return;
     }
     const overlayElement: HTMLElement = document.createElement('div');
     overlayElement.style.background = this._OVERLAY_COLOR;
-    const viewportPos = viewer.viewport.pointFromPixel((event as OpenSeadragon.ViewerEvent).position!);
+    const viewportPos = viewer.viewport.pointFromPixel(event.position);
     viewer.addOverlay(overlayElement, new OpenSeadragon.Rect(viewportPos.x, viewportPos.y, 0, 0));
     this._rectangleInDrawing = {
       overlayElement,
@@ -111,11 +111,11 @@ export class OpenSeaDragonService {
     };
   }
 
-  private _onCanvasDrag(event: OpenSeadragon.ViewerEvent, viewer: OpenSeadragon.Viewer): void {
+  private _onCanvasDrag(event: OpenSeadragon.CanvasEvent, viewer: OpenSeadragon.Viewer): void {
     if (!this._drawing || !this._rectangleInDrawing) {
       return;
     }
-    const viewPortPos = viewer.viewport.pointFromPixel((event as OpenSeadragon.ViewerEvent).position!);
+    const viewPortPos = viewer.viewport.pointFromPixel(event.position);
     const diffX = viewPortPos.x - this._rectangleInDrawing.startPos.x;
     const diffY = viewPortPos.y - this._rectangleInDrawing.startPos.y;
     const location = new OpenSeadragon.Rect(
