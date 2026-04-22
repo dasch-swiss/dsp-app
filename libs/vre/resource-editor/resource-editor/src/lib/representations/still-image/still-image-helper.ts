@@ -11,7 +11,6 @@ import {
   RegionGeometry,
 } from '@dasch-swiss/dsp-js';
 import { handleXML } from '@dasch-swiss/vre/shared/app-common';
-import OpenSeadragon from 'openseadragon';
 import { Region } from '../region';
 import { GeometryForRegion } from './geometry-for-region';
 import { PolygonsForRegion } from './polygons-for-region.interface';
@@ -159,7 +158,7 @@ export class StillImageHelper {
     return w * h;
   }
 
-  static preventDefault(event: OpenSeadragon.ViewerEvent): void {
+  static preventDefault(event: { preventDefaultAction: boolean }): void {
     event.preventDefaultAction = true;
   }
 }
