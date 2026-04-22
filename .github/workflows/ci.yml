@@ -117,12 +117,10 @@ jobs:
         run: npx cypress install
       - name: Generate OpenAPI client
         run: npm run generate-openapi-module
-      - name: Build app
-        run: npx nx run dsp-app:build:production
+      - name: Start app (background)
+        run: npx nx run dsp-app:serve:production &
         env:
           NODE_OPTIONS: '--max-old-space-size=4096'
-      - name: Start app (background)
-        run: npx http-server dist/apps/dsp-app/browser -p 4200 --silent &
       - name: Checkout DSP-API repo
         uses: actions/checkout@v6
         with:
