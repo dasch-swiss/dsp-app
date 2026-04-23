@@ -4,17 +4,17 @@ import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { expect, within } from 'storybook/test';
 
+import {
+  makeResourceFetcherServiceStub,
+  notificationServiceStub,
+  representationServiceStub,
+} from '../../stories.helpers';
 import { MovingImageSidecar } from '../moving-image-sidecar';
 import { FileRepresentationInput, ParentResourceInput } from '../representation-inputs';
 import { RepresentationService } from '../representation.service';
 import { ResourceFetcherService } from '../resource-fetcher.service';
 import { MediaPlayerService } from './media-player.service';
 import { VideoToolbarComponent } from './video-toolbar.component';
-import {
-  makeResourceFetcherServiceStub,
-  notificationServiceStub,
-  representationServiceStub,
-} from '../../stories.helpers';
 
 const makeSrc = (): FileRepresentationInput => ({
   fileUrl: 'https://example.org/video.mp4',
@@ -51,7 +51,6 @@ const makeMediaPlayerStub = (overrides: Partial<MediaPlayerService> = {}): Parti
   navigate: () => {},
   ...overrides,
 });
-
 
 const meta: Meta<VideoToolbarComponent> = {
   title: 'Devs / Resource Editor / Representation / Video Toolbar',

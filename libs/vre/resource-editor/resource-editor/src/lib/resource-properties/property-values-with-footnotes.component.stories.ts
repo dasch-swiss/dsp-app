@@ -7,8 +7,8 @@ import { of } from 'rxjs';
 import { expect } from 'storybook/test';
 
 import { ResourceFetcherService } from '../representations/resource-fetcher.service';
-import { PropertyValuesWithFootnotesComponent } from './property-values-with-footnotes.component';
 import { notificationServiceStub } from '../stories.helpers';
+import { PropertyValuesWithFootnotesComponent } from './property-values-with-footnotes.component';
 
 const makeResource = () =>
   ({

@@ -7,8 +7,8 @@ import { of } from 'rxjs';
 import { expect } from 'storybook/test';
 
 import { ResourceFetcherService } from '../representations/resource-fetcher.service';
-import { PropertyValuesComponent } from './property-values.component';
 import { notificationServiceStub } from '../stories.helpers';
+import { PropertyValuesComponent } from './property-values.component';
 
 const makeEditModeData = () => ({
   resource: {

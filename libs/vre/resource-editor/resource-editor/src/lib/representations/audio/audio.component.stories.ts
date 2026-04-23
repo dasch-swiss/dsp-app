@@ -5,8 +5,14 @@ import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { applicationConfig, type Meta, moduleMetadata, type StoryObj } from '@storybook/angular';
 import { expect } from 'storybook/test';
 
-import { makeResourceFetcherServiceStub, makeSegment, makeSegmentsServiceStub, notificationServiceStub, representationServiceStub } from '../../stories.helpers';
 import { SegmentsService } from '../../segment-support/segments.service';
+import {
+  makeResourceFetcherServiceStub,
+  makeSegment,
+  makeSegmentsServiceStub,
+  notificationServiceStub,
+  representationServiceStub,
+} from '../../stories.helpers';
 import { FileRepresentationInput, ParentResourceInput } from '../representation-inputs';
 import { RepresentationService } from '../representation.service';
 import { ResourceFetcherService } from '../resource-fetcher.service';

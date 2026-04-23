@@ -9,8 +9,8 @@ import { expect } from 'storybook/test';
 
 import { RegionService } from '../representations/region.service';
 import { ResourceFetcherService } from '../representations/resource-fetcher.service';
-import { AnnotationToolbarComponent } from './annotation-toolbar.component';
 import { notificationServiceStub } from '../stories.helpers';
+import { AnnotationToolbarComponent } from './annotation-toolbar.component';
 
 const makeResource = () =>
   ({

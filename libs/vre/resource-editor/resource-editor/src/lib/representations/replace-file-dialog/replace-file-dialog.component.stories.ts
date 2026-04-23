@@ -5,10 +5,10 @@ import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular'
 import { of } from 'rxjs';
 import { expect } from 'storybook/test';
 
+import { notificationServiceStub } from '../../stories.helpers';
 import { ResourceFetcherService } from '../resource-fetcher.service';
 import { UploadFileService } from '../upload/upload-file.service';
 import { ReplaceFileDialogComponent } from './replace-file-dialog.component';
-import { notificationServiceStub } from '../../stories.helpers';
 
 const makeDialogData = () => ({
   representation: 'http://api.knora.org/ontology/knora-api/v2#StillImageRepresentation',

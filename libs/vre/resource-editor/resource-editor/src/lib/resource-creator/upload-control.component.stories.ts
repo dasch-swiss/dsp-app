@@ -5,8 +5,8 @@ import { of } from 'rxjs';
 import { expect } from 'storybook/test';
 
 import { UploadFileService } from '../representations/upload/upload-file.service';
-import { UploadControlComponent } from './upload-control.component';
 import { notificationServiceStub } from '../stories.helpers';
+import { UploadControlComponent } from './upload-control.component';
 
 const meta: Meta<UploadControlComponent> = {
   title: 'Devs / Resource Editor / Resource Creator / Upload Control',

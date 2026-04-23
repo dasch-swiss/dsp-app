@@ -82,7 +82,6 @@ const makeTextResource = (): DspResource =>
     userHasPermission: 'RV',
   } as unknown as ReadFileValue);
 
-
 const meta: Meta<ResourceRepresentationComponent> = {
   title: 'Visual / Resource Editor / Resource Representation',
   component: ResourceRepresentationComponent,

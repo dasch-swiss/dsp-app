@@ -5,8 +5,8 @@ import { of } from 'rxjs';
 import { expect } from 'storybook/test';
 
 import { ResourceFetcherService } from '../representations/resource-fetcher.service';
-import { DraggableValueListComponent } from './draggable-value-list.component';
 import { notificationServiceStub } from '../stories.helpers';
+import { DraggableValueListComponent } from './draggable-value-list.component';
 
 const makeValues = () =>
   [

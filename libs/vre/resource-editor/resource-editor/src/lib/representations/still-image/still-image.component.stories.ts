@@ -4,14 +4,14 @@ import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { applicationConfig, moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import { of, NEVER } from 'rxjs';
 
+import { expect } from 'storybook/test';
+import { CompoundService } from '../../compound/compound.service';
 import {
   appConfigServiceStub,
   makeResourceFetcherServiceStub,
   notificationServiceStub,
   representationServiceStub,
 } from '../../stories.helpers';
-import { expect } from 'storybook/test';
-import { CompoundService } from '../../compound/compound.service';
 import { RegionService } from '../region.service';
 import { RepresentationService } from '../representation.service';
 import { ResourceFetcherService } from '../resource-fetcher.service';

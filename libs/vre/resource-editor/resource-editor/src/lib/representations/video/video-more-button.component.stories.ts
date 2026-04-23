@@ -2,10 +2,10 @@ import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { expect } from 'storybook/test';
 
+import { makeResourceFetcherServiceStub, notificationServiceStub } from '../../stories.helpers';
 import { RepresentationService } from '../representation.service';
 import { ResourceFetcherService } from '../resource-fetcher.service';
 import { VideoMoreButtonComponent } from './video-more-button.component';
-import { makeResourceFetcherServiceStub, notificationServiceStub } from '../../stories.helpers';
 
 const makeSrc = () => ({
   fileUrl: 'https://example.org/video.mp4',

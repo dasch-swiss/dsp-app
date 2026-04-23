@@ -3,8 +3,8 @@ import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular'
 import { expect } from 'storybook/test';
 
 import { UploadFileService } from '../representations/upload/upload-file.service';
-import { UploadComponent } from './upload.component';
 import { notificationServiceStub } from '../stories.helpers';
+import { UploadComponent } from './upload.component';
 
 const meta: Meta<UploadComponent> = {
   title: 'Devs / Resource Editor / Resource Creator / Upload',

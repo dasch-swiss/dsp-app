@@ -4,8 +4,8 @@ import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular'
 import { expect } from 'storybook/test';
 
 import { UploadFileService } from '../representations/upload/upload-file.service';
-import { CreateResourceFormRepresentationComponent } from './create-resource-form-representation.component';
 import { notificationServiceStub } from '../stories.helpers';
+import { CreateResourceFormRepresentationComponent } from './create-resource-form-representation.component';
 
 const meta: Meta<CreateResourceFormRepresentationComponent> = {
   title: 'Devs / Resource Editor / Resource Creator / Create Resource Form Representation',

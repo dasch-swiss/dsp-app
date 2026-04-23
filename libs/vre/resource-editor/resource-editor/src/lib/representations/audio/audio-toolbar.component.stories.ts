@@ -4,12 +4,12 @@ import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { expect } from 'storybook/test';
 
+import { makeResourceFetcherServiceStub, notificationServiceStub } from '../../stories.helpers';
 import { ParentResourceInput } from '../representation-inputs';
 import { RepresentationService } from '../representation.service';
 import { ResourceFetcherService } from '../resource-fetcher.service';
 import { MediaPlayerService } from '../video/media-player.service';
 import { AudioToolbarComponent } from './audio-toolbar.component';
-import { makeResourceFetcherServiceStub, notificationServiceStub } from '../../stories.helpers';
 
 const makeParentResource = (): ParentResourceInput => ({
   id: 'http://rdfh.ch/resource/1',

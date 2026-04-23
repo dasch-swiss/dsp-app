@@ -7,15 +7,15 @@ import { applicationConfig, moduleMetadata, type Meta, type StoryObj } from '@st
 import { of, NEVER } from 'rxjs';
 import { expect } from 'storybook/test';
 import { CompoundService } from '../../compound/compound.service';
-import { RepresentationService } from '../representation.service';
-import { ResourceFetcherService } from '../resource-fetcher.service';
-import { VectorImageComponent } from './vector-image.component';
 import {
   appConfigServiceStub,
   makeResourceFetcherServiceStub,
   notificationServiceStub,
   representationServiceStub,
 } from '../../stories.helpers';
+import { RepresentationService } from '../representation.service';
+import { ResourceFetcherService } from '../resource-fetcher.service';
+import { VectorImageComponent } from './vector-image.component';
 
 // ---------------------------------------------------------------------------
 // Helpers

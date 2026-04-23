@@ -5,8 +5,14 @@ import { applicationConfig, moduleMetadata, type Meta, type StoryObj } from '@st
 import { of } from 'rxjs';
 import { expect, within } from 'storybook/test';
 
-import { makeResourceFetcherServiceStub, makeSegment, makeSegmentsServiceStub, notificationServiceStub, representationServiceStub } from '../../stories.helpers';
 import { SegmentsService } from '../../segment-support/segments.service';
+import {
+  makeResourceFetcherServiceStub,
+  makeSegment,
+  makeSegmentsServiceStub,
+  notificationServiceStub,
+  representationServiceStub,
+} from '../../stories.helpers';
 import { FileRepresentationInput, ParentResourceInput } from '../representation-inputs';
 import { RepresentationService } from '../representation.service';
 import { ResourceFetcherService } from '../resource-fetcher.service';

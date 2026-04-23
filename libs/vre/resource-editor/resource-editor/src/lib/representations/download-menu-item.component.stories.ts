@@ -4,9 +4,9 @@ import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular'
 import { of } from 'rxjs';
 import { expect } from 'storybook/test';
 
+import { notificationServiceStub } from '../stories.helpers';
 import { DownloadMenuItemComponent } from './download-menu-item.component';
 import { RepresentationService } from './representation.service';
-import { notificationServiceStub } from '../stories.helpers';
 
 const makeSrc = () => ({
   fileUrl: 'https://example.org/file.mp4',
