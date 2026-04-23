@@ -308,6 +308,14 @@
       "automerge": true,
       "platformAutomerge": true,
       "rebaseWhen": "behind-base-branch"
+    },
+    {
+      "description": "Automerge pip_requirements patch/minor updates — docs tooling only (docs/requirements.txt); matchDepTypes does not apply to this manager so an explicit rule is needed",
+      "matchManagers": ["pip_requirements"],
+      "matchUpdateTypes": ["patch", "minor"],
+      "automerge": true,
+      "platformAutomerge": true,
+      "rebaseWhen": "behind-base-branch"
     }
   ]
 }
