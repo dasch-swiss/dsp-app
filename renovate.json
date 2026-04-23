@@ -127,7 +127,7 @@
       "enabled": false
     },
     {
-      "description": "CKEditor: custom build + Angular adapter tracked in DEV-6208; disable both until resolved",
+      "description": "CKEditor: both packages frozen pending full architectural migration (DEV-6294). ckeditor5-custom-build has no newer tags so this freeze is a no-op for it. @ckeditor/ckeditor5-angular v6 is low-value, v7 would cause ckeditor-duplicated-modules, and v8+ requires replacing the custom build with the ckeditor5 npm package and rewriting the footnote plugin — tracked in DEV-6294.",
       "matchPackageNames": [
         "ckeditor5-custom-build",
         "@ckeditor/ckeditor5-angular"
