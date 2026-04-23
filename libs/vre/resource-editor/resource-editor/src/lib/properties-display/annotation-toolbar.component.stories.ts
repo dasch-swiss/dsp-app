@@ -10,6 +10,7 @@ import { expect } from 'storybook/test';
 import { RegionService } from '../representations/region.service';
 import { ResourceFetcherService } from '../representations/resource-fetcher.service';
 import { AnnotationToolbarComponent } from './annotation-toolbar.component';
+import { notificationServiceStub } from '../stories.helpers';
 
 const makeResource = () =>
   ({
@@ -30,7 +31,7 @@ const meta: Meta<AnnotationToolbarComponent> = {
     applicationConfig({
       providers: [
         importProvidersFrom(RouterModule.forRoot([])),
-        { provide: NotificationService, useValue: { openSnackBar: () => {} } },
+        { provide: NotificationService, useValue: notificationServiceStub },
         {
           provide: RegionService,
           useValue: { selectRegion: () => {}, setHighlightedRegionClicked: () => {}, updateRegions$: () => of([]) },

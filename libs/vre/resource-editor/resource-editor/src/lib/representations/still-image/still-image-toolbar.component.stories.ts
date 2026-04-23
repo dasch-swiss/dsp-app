@@ -3,13 +3,13 @@ import { importProvidersFrom } from '@angular/core';
 import { Constants, ReadStillImageFileValue } from '@dasch-swiss/dsp-js';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
-import { of } from 'rxjs';
 import { expect } from 'storybook/test';
 
 import { RepresentationService } from '../representation.service';
 import { ResourceFetcherService } from '../resource-fetcher.service';
 import { OpenSeaDragonService } from './open-sea-dragon.service';
 import { StillImageToolbarComponent } from './still-image-toolbar.component';
+import { makeResourceFetcherServiceStub, notificationServiceStub } from '../../stories.helpers';
 
 const makeResource = () =>
   ({
@@ -28,17 +28,8 @@ const makeResource = () =>
     },
   }) as any;
 
-const notificationServiceStub: Partial<NotificationService> = {
-  openSnackBar: () => {},
-};
-
 const representationServiceStub: Partial<RepresentationService> = {
   downloadProjectFile: () => {},
-};
-
-const resourceFetcherServiceStub: Partial<ResourceFetcherService> = {
-  userCanEdit$: of(false),
-  projectShortcode$: of('0001'),
 };
 
 const osdServiceStub: Partial<OpenSeaDragonService> = {
@@ -59,7 +50,7 @@ const meta: Meta<StillImageToolbarComponent> = {
         importProvidersFrom(OverlayModule),
         { provide: NotificationService, useValue: notificationServiceStub },
         { provide: RepresentationService, useValue: representationServiceStub },
-        { provide: ResourceFetcherService, useValue: resourceFetcherServiceStub },
+        { provide: ResourceFetcherService, useValue: makeResourceFetcherServiceStub() },
         { provide: OpenSeaDragonService, useValue: osdServiceStub },
       ],
     }),
@@ -118,7 +109,7 @@ export const WithEditPermission: Story = {
       providers: [
         {
           provide: ResourceFetcherService,
-          useValue: { ...resourceFetcherServiceStub, userCanEdit$: of(true) },
+          useValue: makeResourceFetcherServiceStub({ userCanEdit: true }),
         },
         { provide: OpenSeaDragonService, useValue: osdServiceStub },
       ],

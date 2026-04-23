@@ -3,6 +3,13 @@ import { AppConfigService, DspApiConnectionToken } from '@dasch-swiss/vre/core/c
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { applicationConfig, moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import { of, NEVER } from 'rxjs';
+
+import {
+  appConfigServiceStub,
+  makeResourceFetcherServiceStub,
+  notificationServiceStub,
+  representationServiceStub,
+} from '../../stories.helpers';
 import { expect } from 'storybook/test';
 import { CompoundService } from '../../compound/compound.service';
 import { RegionService } from '../region.service';
@@ -94,7 +101,7 @@ const osdDrawerServiceStub = {
 const sharedProviders = [
   {
     provide: AppConfigService,
-    useValue: { dspApiConfig: { apiUrl: '' }, dspAppConfig: { iriBase: 'http://rdfh.ch' } },
+    useValue: appConfigServiceStub,
   },
   {
     provide: DspApiConnectionToken,
@@ -125,16 +132,9 @@ const sharedProviders = [
       updateRegions: () => {},
     },
   },
-  { provide: ResourceFetcherService, useValue: { userCanEdit$: of(false), projectShortcode$: of('0001') } },
-  {
-    provide: RepresentationService,
-    useValue: {
-      downloadProjectFile: () => {},
-      getFileInfo: () => of({ originalFilename: 'image.jp2' }),
-      getIngestOriginalUrl: () => of(''),
-    },
-  },
-  { provide: NotificationService, useValue: { openSnackBar: () => {} } },
+  { provide: ResourceFetcherService, useValue: makeResourceFetcherServiceStub() },
+  { provide: RepresentationService, useValue: representationServiceStub },
+  { provide: NotificationService, useValue: notificationServiceStub },
 ];
 
 // ---------------------------------------------------------------------------

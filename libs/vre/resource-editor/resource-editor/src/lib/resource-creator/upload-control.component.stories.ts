@@ -6,6 +6,7 @@ import { expect } from 'storybook/test';
 
 import { UploadFileService } from '../representations/upload/upload-file.service';
 import { UploadControlComponent } from './upload-control.component';
+import { notificationServiceStub } from '../stories.helpers';
 
 const meta: Meta<UploadControlComponent> = {
   title: 'Devs / Resource Editor / Resource Creator / Upload Control',
@@ -14,7 +15,7 @@ const meta: Meta<UploadControlComponent> = {
     applicationConfig({
       providers: [
         { provide: UploadFileService, useValue: { upload: () => of({}), getFileInfo: () => of({}) } },
-        { provide: NotificationService, useValue: { openSnackBar: () => {} } },
+        { provide: NotificationService, useValue: notificationServiceStub },
       ],
     }),
     moduleMetadata({ imports: [ReactiveFormsModule] }),

@@ -5,6 +5,7 @@ import { expect } from 'storybook/test';
 
 import { UploadFileService } from '../representations/upload/upload-file.service';
 import { CreateResourceFormRepresentationComponent } from './create-resource-form-representation.component';
+import { notificationServiceStub } from '../stories.helpers';
 
 const meta: Meta<CreateResourceFormRepresentationComponent> = {
   title: 'Devs / Resource Editor / Resource Creator / Create Resource Form Representation',
@@ -13,7 +14,7 @@ const meta: Meta<CreateResourceFormRepresentationComponent> = {
     applicationConfig({
       providers: [
         { provide: UploadFileService, useValue: { upload: () => {}, getFileInfo: () => {} } },
-        { provide: NotificationService, useValue: { openSnackBar: () => {} } },
+        { provide: NotificationService, useValue: notificationServiceStub },
       ],
     }),
   ],

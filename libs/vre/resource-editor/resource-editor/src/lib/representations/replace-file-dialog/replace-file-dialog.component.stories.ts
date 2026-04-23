@@ -8,6 +8,7 @@ import { expect } from 'storybook/test';
 import { ResourceFetcherService } from '../resource-fetcher.service';
 import { UploadFileService } from '../upload/upload-file.service';
 import { ReplaceFileDialogComponent } from './replace-file-dialog.component';
+import { notificationServiceStub } from '../../stories.helpers';
 
 const makeDialogData = () => ({
   representation: 'http://api.knora.org/ontology/knora-api/v2#StillImageRepresentation',
@@ -30,7 +31,7 @@ const meta: Meta<ReplaceFileDialogComponent> = {
         { provide: ResourceFetcherService, useValue: { projectShortcode$: of('test'), reload: () => {} } },
         { provide: DspApiConnectionToken, useValue: { v2: { values: { updateValue: () => of({}) } } } },
         { provide: UploadFileService, useValue: { upload: () => {}, getFileInfo: () => {} } },
-        { provide: NotificationService, useValue: { openSnackBar: () => {} } },
+        { provide: NotificationService, useValue: notificationServiceStub },
       ],
     }),
   ],

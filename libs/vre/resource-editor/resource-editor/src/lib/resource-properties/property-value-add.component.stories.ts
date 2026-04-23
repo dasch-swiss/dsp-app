@@ -8,6 +8,7 @@ import { expect } from 'storybook/test';
 import { ResourceFetcherService } from '../representations/resource-fetcher.service';
 import { PropertyValueAddComponent } from './property-value-add.component';
 import { PropertyValueService } from './property-value.service';
+import { notificationServiceStub } from '../stories.helpers';
 
 const makePropertyValueServiceStub = (): Partial<PropertyValueService> => ({
   propertyDefinition: {
@@ -37,7 +38,7 @@ const meta: Meta<PropertyValueAddComponent> = {
         { provide: ResourceFetcherService, useValue: { reload: () => {} } },
         { provide: ResourceService, useValue: { getProjectShortcode: () => 'test' } },
         { provide: DspApiConnectionToken, useValue: { v2: { values: { createValue: () => of({}) } } } },
-        { provide: NotificationService, useValue: { openSnackBar: () => {} } },
+        { provide: NotificationService, useValue: notificationServiceStub },
       ],
     }),
   ],

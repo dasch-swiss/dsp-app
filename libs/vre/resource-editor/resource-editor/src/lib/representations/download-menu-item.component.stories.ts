@@ -6,6 +6,7 @@ import { expect } from 'storybook/test';
 
 import { DownloadMenuItemComponent } from './download-menu-item.component';
 import { RepresentationService } from './representation.service';
+import { notificationServiceStub } from '../stories.helpers';
 
 const makeSrc = () => ({
   fileUrl: 'https://example.org/file.mp4',
@@ -29,7 +30,7 @@ const meta: Meta<DownloadMenuItemComponent> = {
           provide: RepresentationService,
           useValue: { downloadProjectFile: () => {}, getIngestOriginalUrl: () => of('https://example.org/file.mp4') },
         },
-        { provide: NotificationService, useValue: { openSnackBar: () => {} } },
+        { provide: NotificationService, useValue: notificationServiceStub },
         { provide: Clipboard, useValue: { copy: () => true } },
       ],
     }),

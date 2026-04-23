@@ -8,6 +8,7 @@ import { expect } from 'storybook/test';
 
 import { ResourceFetcherService } from '../representations/resource-fetcher.service';
 import { PropertyValuesComponent } from './property-values.component';
+import { notificationServiceStub } from '../stories.helpers';
 
 const makeEditModeData = () => ({
   resource: {
@@ -61,7 +62,7 @@ const meta: Meta<PropertyValuesComponent> = {
           provide: DspApiConnectionToken,
           useValue: { v2: { values: { createValue: () => of({}), updateValue: () => of({}) } } },
         },
-        { provide: NotificationService, useValue: { openSnackBar: () => {} } },
+        { provide: NotificationService, useValue: notificationServiceStub },
       ],
     }),
   ],

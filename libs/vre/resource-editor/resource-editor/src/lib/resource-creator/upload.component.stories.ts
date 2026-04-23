@@ -4,6 +4,7 @@ import { expect } from 'storybook/test';
 
 import { UploadFileService } from '../representations/upload/upload-file.service';
 import { UploadComponent } from './upload.component';
+import { notificationServiceStub } from '../stories.helpers';
 
 const meta: Meta<UploadComponent> = {
   title: 'Devs / Resource Editor / Resource Creator / Upload',
@@ -12,7 +13,7 @@ const meta: Meta<UploadComponent> = {
     applicationConfig({
       providers: [
         { provide: UploadFileService, useValue: { upload: () => {} } },
-        { provide: NotificationService, useValue: { openSnackBar: () => {} } },
+        { provide: NotificationService, useValue: notificationServiceStub },
       ],
     }),
   ],
