@@ -28,7 +28,7 @@ describe('Authentication', () => {
 
     cy.get(po.loginButton).click();
 
-    cy.get(po.username).type(faker.internet.userName());
+    cy.get(po.username).type(faker.internet.username());
     cy.get(po.password).type(faker.internet.password());
     cy.get(po.submitButton).click();
 
