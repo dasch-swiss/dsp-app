@@ -5,6 +5,7 @@ import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular'
 import { of } from 'rxjs';
 import { expect } from 'storybook/test';
 
+import { makeResourceFetcherServiceStub, notificationServiceStub } from '../../stories.helpers';
 import { FileRepresentationInput, ParentResourceInput } from '../representation-inputs';
 import { RepresentationService } from '../representation.service';
 import { ResourceFetcherService } from '../resource-fetcher.service';
@@ -23,18 +24,9 @@ const makeParentResource = (): ParentResourceInput => ({
   type: 'http://api.dasch.swiss/ontology/knora-api/v2#DocumentRepresentation',
 });
 
-const notificationServiceStub: Partial<NotificationService> = {
-  openSnackBar: () => {},
-};
-
 const representationServiceStub: Partial<RepresentationService> = {
   getIngestOriginalUrl: () => of('https://example.org/document.pdf'),
   downloadProjectFile: () => {},
-};
-
-const resourceFetcherServiceStub: Partial<ResourceFetcherService> = {
-  userCanEdit$: of(false),
-  projectShortcode$: of('0001'),
 };
 
 const meta: Meta<PdfToolbarComponent> = {
@@ -46,7 +38,7 @@ const meta: Meta<PdfToolbarComponent> = {
         importProvidersFrom(OverlayModule),
         { provide: NotificationService, useValue: notificationServiceStub },
         { provide: RepresentationService, useValue: representationServiceStub },
-        { provide: ResourceFetcherService, useValue: resourceFetcherServiceStub },
+        { provide: ResourceFetcherService, useValue: makeResourceFetcherServiceStub() },
       ],
     }),
   ],
@@ -105,7 +97,7 @@ export const WithEditPermission: Story = {
       providers: [
         {
           provide: ResourceFetcherService,
-          useValue: { ...resourceFetcherServiceStub, userCanEdit$: of(true) },
+          useValue: makeResourceFetcherServiceStub({ userCanEdit: true }),
         },
       ],
     }),

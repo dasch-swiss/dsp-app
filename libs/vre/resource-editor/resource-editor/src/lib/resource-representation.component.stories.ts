@@ -11,13 +11,18 @@ import {
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { applicationConfig, moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
-import { of, Subject } from 'rxjs';
 import { expect } from 'storybook/test';
 
 import { RepresentationService } from './representations/representation.service';
 import { ResourceFetcherService } from './representations/resource-fetcher.service';
 import { ResourceRepresentationComponent } from './resource-representation.component';
 import { SegmentsService } from './segment-support/segments.service';
+import {
+  makeResourceFetcherServiceStub,
+  makeSegmentsServiceStub,
+  notificationServiceStub,
+  representationServiceStub,
+} from './stories.helpers';
 
 const makeDspResource = (propKey: string, fileValue: ReadFileValue): DspResource => {
   const res = new ReadResource();
@@ -77,27 +82,6 @@ const makeTextResource = (): DspResource =>
     userHasPermission: 'RV',
   } as unknown as ReadFileValue);
 
-const representationServiceStub: Partial<RepresentationService> = {
-  getFileInfo: () => of({ originalFilename: 'file' }),
-  downloadProjectFile: () => {},
-};
-
-const resourceFetcherServiceStub: Partial<ResourceFetcherService> = {
-  userCanEdit$: of(false),
-  projectShortcode$: of('0001'),
-};
-
-const notificationServiceStub: Partial<NotificationService> = {
-  openSnackBar: () => {},
-};
-
-const segmentsServiceStub: Partial<SegmentsService> = {
-  segments: [],
-  onInit: () => {},
-  playSegment$: new Subject<any>().asObservable(),
-  highlightSegment$: new Subject<any>().asObservable(),
-};
-
 const meta: Meta<ResourceRepresentationComponent> = {
   title: 'Visual / Resource Editor / Resource Representation',
   component: ResourceRepresentationComponent,
@@ -106,12 +90,12 @@ const meta: Meta<ResourceRepresentationComponent> = {
       providers: [
         importProvidersFrom(OverlayModule),
         { provide: RepresentationService, useValue: representationServiceStub },
-        { provide: ResourceFetcherService, useValue: resourceFetcherServiceStub },
+        { provide: ResourceFetcherService, useValue: makeResourceFetcherServiceStub() },
         { provide: NotificationService, useValue: notificationServiceStub },
       ],
     }),
     moduleMetadata({
-      providers: [{ provide: SegmentsService, useFactory: () => segmentsServiceStub }],
+      providers: [{ provide: SegmentsService, useFactory: () => makeSegmentsServiceStub() }],
     }),
   ],
   argTypes: {
