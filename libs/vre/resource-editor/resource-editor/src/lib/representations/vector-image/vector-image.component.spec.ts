@@ -215,10 +215,14 @@ describe('VectorImageComponent', () => {
   });
 
   describe('onBackgroundChange', () => {
-    it('should set white background', () => {
-      component.onBackgroundChange('white');
-
+    it('should have white as default background', () => {
       expect(component.backgroundStyle).toBe('white');
+    });
+
+    it('should set dark background', () => {
+      component.onBackgroundChange('dark');
+
+      expect(component.backgroundStyle).toBe('rgb(41, 41, 41)');
     });
 
     it('should set transparent checkerboard background', () => {
@@ -227,11 +231,11 @@ describe('VectorImageComponent', () => {
       expect(component.backgroundStyle).toContain('linear-gradient');
     });
 
-    it('should reset to default background', () => {
+    it('should set white background', () => {
+      component.onBackgroundChange('dark');
       component.onBackgroundChange('white');
-      component.onBackgroundChange('default');
 
-      expect(component.backgroundStyle).toBe('');
+      expect(component.backgroundStyle).toBe('white');
     });
   });
 
