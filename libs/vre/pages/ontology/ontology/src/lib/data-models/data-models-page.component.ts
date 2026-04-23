@@ -59,7 +59,7 @@ export class DataModelsPageComponent {
   trackByOntologyMetaFn = (index: number, item: OntologyMetadata) => `${index}-${item.id}`;
 
   navigateToList(id: string) {
-    const listName = id.split('/').pop();
+    const listName = id.split('/').pop()!;
     this._router.navigate([RouteConstants.list, encodeURIComponent(listName)], {
       relativeTo: this.route.parent,
     });

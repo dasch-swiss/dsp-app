@@ -11,6 +11,7 @@ Cypress.on('uncaught:exception', err => {
   if (resizeObserverLoopErrRe.test(err.message)) {
     return false;
   }
+  return undefined;
 });
 
 const isRemote = (): boolean => {

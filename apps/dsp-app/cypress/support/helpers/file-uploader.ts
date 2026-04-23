@@ -1,4 +1,4 @@
-import { UploadedFileResponse } from '../../../../../libs/vre/shared/app-representations/src';
+import { UploadedFileResponse } from '../../../../../libs/vre/resource-editor/resource-editor/src/lib/representations/upload/upload-file-response.interface';
 
 export function uploadProjectFile(
   filePath: string,
@@ -8,7 +8,7 @@ export function uploadProjectFile(
   jwt: string
 ) {
   const blob = Cypress.Blob.binaryStringToBlob(fileContent, mimeType);
-  const fileName = filePath.split('/').pop();
+  const fileName = filePath.split('/').pop()!;
   const headers = {
     'Content-Type': 'application/octet-stream',
     Authorization: `Bearer ${jwt}`,

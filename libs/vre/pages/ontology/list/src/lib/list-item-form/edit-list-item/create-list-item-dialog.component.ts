@@ -60,7 +60,7 @@ export interface CreateListItemDialogProps {
   ],
 })
 export class CreateListItemDialogComponent {
-  form: ListItemForm;
+  form!: ListItemForm;
   loading = false;
   initialFormValue = { labels: [] as MultiLanguages, comments: [] as MultiLanguages };
 
