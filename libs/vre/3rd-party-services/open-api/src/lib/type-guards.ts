@@ -1,4 +1,4 @@
-import { StringLiteralV2 } from '../generated';
+import { StringLiteralV2 } from '../generated/index';
 
 /**
  * StringLiteral with required language property.

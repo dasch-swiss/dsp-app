@@ -2,9 +2,9 @@ import { OverlayModule } from '@angular/cdk/overlay';
 import { importProvidersFrom } from '@angular/core';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
-import { of } from 'rxjs';
 import { expect } from 'storybook/test';
 
+import { makeResourceFetcherServiceStub, notificationServiceStub } from '../../stories.helpers';
 import { ParentResourceInput } from '../representation-inputs';
 import { RepresentationService } from '../representation.service';
 import { ResourceFetcherService } from '../resource-fetcher.service';
@@ -30,17 +30,8 @@ const makeMediaPlayerStub = (overrides: Partial<MediaPlayerService> = {}): Parti
   ...overrides,
 });
 
-const notificationServiceStub: Partial<NotificationService> = {
-  openSnackBar: () => {},
-};
-
 const representationServiceStub: Partial<RepresentationService> = {
   downloadProjectFile: () => {},
-};
-
-const resourceFetcherServiceStub: Partial<ResourceFetcherService> = {
-  userCanEdit$: of(false),
-  projectShortcode$: of('0001'),
 };
 
 const meta: Meta<AudioToolbarComponent> = {
@@ -52,7 +43,7 @@ const meta: Meta<AudioToolbarComponent> = {
         importProvidersFrom(OverlayModule),
         { provide: NotificationService, useValue: notificationServiceStub },
         { provide: RepresentationService, useValue: representationServiceStub },
-        { provide: ResourceFetcherService, useValue: resourceFetcherServiceStub },
+        { provide: ResourceFetcherService, useValue: makeResourceFetcherServiceStub() },
         { provide: MediaPlayerService, useValue: makeMediaPlayerStub() },
       ],
     }),
@@ -113,7 +104,7 @@ export const WithEditPermission: Story = {
       providers: [
         {
           provide: ResourceFetcherService,
-          useValue: { ...resourceFetcherServiceStub, userCanEdit$: of(true) },
+          useValue: makeResourceFetcherServiceStub({ userCanEdit: true }),
         },
         { provide: MediaPlayerService, useValue: makeMediaPlayerStub() },
       ],

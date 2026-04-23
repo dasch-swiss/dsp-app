@@ -21,7 +21,7 @@ type Story = StoryObj<TimeValueComponent>;
 export const Empty: Story = {
   name: 'Shows empty date and time picker inputs',
   args: {
-    control: new FormControl<DateTime>(new DateTime(undefined, '')) as any,
+    control: new FormControl<DateTime>(new DateTime(null as any, '')) as any,
   },
   play: async ({ canvasElement, step }) => {
     await step('Time input is rendered', async () => {

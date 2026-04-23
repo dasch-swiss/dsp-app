@@ -8,6 +8,7 @@ import { of } from 'rxjs';
 import { expect } from 'storybook/test';
 
 import { ResourceActionsComponent } from './resource-actions.component';
+import { notificationServiceStub } from './stories.helpers';
 
 const makeResource = () =>
   ({
@@ -28,7 +29,7 @@ const meta: Meta<ResourceActionsComponent> = {
     applicationConfig({
       providers: [
         importProvidersFrom(RouterModule.forRoot([])),
-        { provide: NotificationService, useValue: { openSnackBar: () => {} } },
+        { provide: NotificationService, useValue: notificationServiceStub },
         { provide: ResourceService, useValue: { getResourcePath: () => '/project/test/resource/1' } },
         { provide: DspApiConnectionToken, useValue: { v2: { res: { getResourcePermissions: () => of([]) } } } },
       ],
