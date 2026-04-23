@@ -103,7 +103,7 @@ export class VectorImageComponent implements OnChanges, AfterViewInit, OnDestroy
   isDragging = false;
   isFullscreen = false;
   showNavigator = true;
-  backgroundStyle = '';
+  backgroundStyle = 'white';
   transform = '';
 
   // Navigator styles
@@ -253,18 +253,19 @@ export class VectorImageComponent implements OnChanges, AfterViewInit, OnDestroy
     this.viewerService.zoom(1, mouseX - centerX, mouseY - centerY);
   }
 
-  onBackgroundChange(bg: 'default' | 'white' | 'transparent'): void {
+  onBackgroundChange(bg: 'white' | 'dark' | 'transparent'): void {
     switch (bg) {
-      case 'white':
-        this.backgroundStyle = 'white';
+      case 'dark':
+        this.backgroundStyle = 'rgb(41, 41, 41)';
         break;
       case 'transparent':
         this.backgroundStyle =
           'linear-gradient(45deg, #ccc 25%, transparent 25%, transparent 75%, #ccc 75%) 0 0 / 24px 24px,' +
           'linear-gradient(45deg, #ccc 25%, #fff 25%, #fff 75%, #ccc 75%) 12px 12px / 24px 24px';
         break;
+      case 'white':
       default:
-        this.backgroundStyle = '';
+        this.backgroundStyle = 'white';
     }
     this._cdr.markForCheck();
   }

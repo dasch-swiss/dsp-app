@@ -18,6 +18,7 @@ app-vector-image {
     display: flex;
     align-items: center;
     justify-content: center;
+    border: 16px solid $dark;
 
     &.dragging {
       cursor: grabbing;

@@ -92,11 +92,11 @@
 </mat-menu>
 
 <mat-menu #bgColor="matMenu" class="settings-menu">
-  <button data-cy="bg-default-button" mat-menu-item (click)="setBackground('default')">
-    {{ 'resourceEditor.representations.stillImage.bgDefault' | translate }}
-  </button>
   <button data-cy="bg-white-button" mat-menu-item (click)="setBackground('white')">
     {{ 'resourceEditor.representations.stillImage.bgWhite' | translate }}
+  </button>
+  <button data-cy="bg-dark-button" mat-menu-item (click)="setBackground('dark')">
+    {{ 'resourceEditor.representations.stillImage.bgDark' | translate }}
   </button>
   <button data-cy="bg-transparent-button" mat-menu-item (click)="setBackground('transparent')">
     {{ 'resourceEditor.representations.stillImage.bgTransparent' | translate }}
