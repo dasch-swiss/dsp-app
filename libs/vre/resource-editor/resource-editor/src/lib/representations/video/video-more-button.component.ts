@@ -5,7 +5,7 @@ import { MatIconButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
-import { Constants, ReadMovingImageFileValue, ReadResource } from '@dasch-swiss/dsp-js';
+import { Constants } from '@dasch-swiss/dsp-js';
 import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -14,6 +14,7 @@ import {
   ReplaceFileDialogComponent,
   ReplaceFileDialogProps,
 } from '../replace-file-dialog/replace-file-dialog.component';
+import { FileRepresentationInput, ParentResourceInput } from '../representation-inputs';
 import { RepresentationService } from '../representation.service';
 import { ResourceFetcherService } from '../resource-fetcher.service';
 import { ResourceUtil } from '../resource.util';
@@ -47,8 +48,8 @@ import { ResourceUtil } from '../resource.util';
     </mat-menu>`,
 })
 export class VideoMoreButtonComponent {
-  @Input({ required: true }) src!: ReadMovingImageFileValue;
-  @Input({ required: true }) parentResource!: ReadResource;
+  @Input({ required: true }) src!: FileRepresentationInput;
+  @Input({ required: true }) parentResource!: ParentResourceInput;
   @Input({ required: true }) fileInfo!: MovingImageSidecar;
 
   readonly _translateService = inject(TranslateService);

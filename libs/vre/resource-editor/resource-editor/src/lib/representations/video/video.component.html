@@ -1,40 +1,42 @@
-<div appDisableContextMenu>
-  @if (videoError) {
-  <app-representation-error-message />
-  }
+<app-resource-representation-container height="auto">
+  <div appDisableContextMenu>
+    @if (videoError) {
+    <app-representation-error-message />
+    }
 
-  <div style="margin-bottom: -4px">
-    @if (video) {
-    <video
-      style="width: 100%"
-      #videoElement
-      id="video"
-      [src]="video"
-      type="video/mp4"
-      preload="auto"
-      [muted]="false"
-      (canplay)="onVideoPlayerReady()"
-      (click)="videoPlayer.togglePlay()"
-      (error)="handleVideoError($event)"></video>
-    } @else {
-    <app-progress-indicator />
-    } @if (false) {
-    <app-video-overlay />
+    <div style="margin-bottom: -4px">
+      @if (video) {
+      <video
+        style="width: 100%"
+        #videoElement
+        id="video"
+        [src]="video"
+        type="video/mp4"
+        preload="auto"
+        [muted]="false"
+        (canplay)="onVideoPlayerReady()"
+        (click)="videoPlayer.togglePlay()"
+        (error)="handleVideoError($event)"></video>
+      } @else {
+      <app-progress-indicator />
+      } @if (false) {
+      <app-video-overlay />
+      }
+    </div>
+
+    @if (isPlayerReady) {
+    <app-media-slider
+      [max]="videoPlayer.duration()"
+      [currentTime]="myCurrentTime"
+      (afterNavigation)="videoPlayer.navigate($event)" />
+    } @if (segmentsService.segments.length > 0 && duration > 0) {
+    <app-segments-display [segments]="segmentsService.segments" [videoLengthSecs]="duration" />
+    } @if (fileInfo && isPlayerReady) {
+    <app-video-toolbar
+      [src]="src"
+      [parentResource]="parentResource"
+      [fileInfo]="fileInfo"
+      (toggleCinemaMode)="toggleCinemaMode()" />
     }
   </div>
-
-  @if (isPlayerReady) {
-  <app-media-slider
-    [max]="videoPlayer.duration()"
-    [currentTime]="myCurrentTime"
-    (afterNavigation)="videoPlayer.navigate($event)" />
-  } @if (segmentsService.segments.length > 0 && duration > 0) {
-  <app-segments-display [segments]="segmentsService.segments" [videoLengthSecs]="duration" />
-  } @if (fileInfo && isPlayerReady) {
-  <app-video-toolbar
-    [src]="src"
-    [parentResource]="parentResource"
-    [fileInfo]="fileInfo"
-    (toggleCinemaMode)="toggleCinemaMode()" />
-  }
-</div>
+</app-resource-representation-container>

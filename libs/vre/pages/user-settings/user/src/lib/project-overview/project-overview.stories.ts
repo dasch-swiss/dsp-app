@@ -62,7 +62,7 @@ const sysAdminUserServiceMock = {
 // ---------------------------------------------------------------------------
 
 const meta: Meta<ProjectOverviewComponent> = {
-  title: 'Pages / Project Overview',
+  title: 'Visual / Pages / Project Overview',
   component: ProjectOverviewComponent,
 };
 export default meta;

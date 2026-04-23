@@ -13,6 +13,7 @@ import {
   ReplaceFileDialogComponent,
   ReplaceFileDialogProps,
 } from '../replace-file-dialog/replace-file-dialog.component';
+import { ParentResourceInput } from '../representation-inputs';
 import { RepresentationService } from '../representation.service';
 import { ResourceFetcherService } from '../resource-fetcher.service';
 import { ResourceUtil } from '../resource.util';
@@ -43,12 +44,12 @@ import { ResourceUtil } from '../resource.util';
     </mat-menu>`,
 })
 export class AudioMoreButtonComponent {
-  @Input({ required: true }) parentResource!: ReadResource;
+  @Input({ required: true }) parentResource!: ParentResourceInput;
 
   private readonly _translateService = inject(TranslateService);
 
   get fileValue() {
-    return getFileValue(this.parentResource) as ReadAudioFileValue;
+    return getFileValue(this.parentResource as unknown as ReadResource) as ReadAudioFileValue;
   }
 
   get userCanView() {

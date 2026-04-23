@@ -12,7 +12,6 @@ import {
 } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-import { ReadAudioFileValue, ReadResource } from '@dasch-swiss/dsp-js';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { TranslateService } from '@ngx-translate/core';
 import { catchError, EMPTY, Subject, takeUntil } from 'rxjs';
@@ -20,6 +19,7 @@ import { MediaControlService } from '../../segment-support/media-control.service
 import { SegmentsDisplayComponent } from '../../segment-support/segments-display.component';
 import { SegmentsService } from '../../segment-support/segments.service';
 import { RepresentationErrorMessageComponent } from '../representation-error-message.component';
+import { FileRepresentationInput, ParentResourceInput } from '../representation-inputs';
 import { RepresentationService } from '../representation.service';
 import { MediaPlayerService } from '../video/media-player.service';
 import { AudioToolbarComponent } from './audio-toolbar.component';
@@ -47,8 +47,8 @@ import { MediaSliderComponent } from './media-slider.component';
   ],
 })
 export class AudioComponent implements OnInit, OnChanges, OnDestroy {
-  @Input({ required: true }) src!: ReadAudioFileValue;
-  @Input({ required: true }) parentResource!: ReadResource;
+  @Input({ required: true }) src!: FileRepresentationInput;
+  @Input({ required: true }) parentResource!: ParentResourceInput;
 
   @ViewChild('audioPlayer', { static: false }) audioPlayerRef!: ElementRef<HTMLAudioElement>;
 

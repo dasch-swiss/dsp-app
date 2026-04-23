@@ -1,7 +1,8 @@
 import { Component, Input } from '@angular/core';
-import { Constants, ReadDocumentFileValue, ReadResource } from '@dasch-swiss/dsp-js';
+import { Constants } from '@dasch-swiss/dsp-js';
 import { TranslatePipe } from '@ngx-translate/core';
 import { FileRepresentationComponent } from '../file-representation.component';
+import { FileRepresentationInput, ParentResourceInput } from '../representation-inputs';
 
 @Component({
   selector: 'app-document',
@@ -17,8 +18,8 @@ import { FileRepresentationComponent } from '../file-representation.component';
   `,
 })
 export class DocumentComponent {
-  @Input({ required: true }) src!: ReadDocumentFileValue;
-  @Input({ required: true }) parentResource!: ReadResource;
+  @Input({ required: true }) src!: FileRepresentationInput;
+  @Input({ required: true }) parentResource!: ParentResourceInput;
 
   readonly representationConstant = Constants.HasDocumentFileValue;
 }
