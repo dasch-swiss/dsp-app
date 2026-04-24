@@ -224,7 +224,7 @@ export const ResourceFetched: Story = {
   args: { resourceIri: 'http://rdfh.ch/resource/1' },
   play: async ({ canvasElement, step }) => {
     await step('Resource component is rendered', async () => {
-      await expect(canvasElement.querySelector('app-resource')).not.toBeNull();
+      await expect(canvasElement.querySelector('app-resource-dispatcher')).not.toBeNull();
     });
   },
 };

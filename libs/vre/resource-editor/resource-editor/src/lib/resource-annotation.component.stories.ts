@@ -1,10 +1,14 @@
 import { importProvidersFrom } from '@angular/core';
-import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
+import { provideRouter } from '@angular/router';
+import { ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
+import { AppConfigService, DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { TranslateModule } from '@ngx-translate/core';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
 import { expect } from 'storybook/test';
+
+import { ResourceFetcherService } from './representations/resource-fetcher.service';
 
 import { ResourceAnnotationComponent } from './resource-annotation.component';
 
@@ -33,6 +37,10 @@ const meta: Meta<ResourceAnnotationComponent> = {
     applicationConfig({
       providers: [
         importProvidersFrom(TranslateModule.forRoot()),
+        provideRouter([{ path: '**', redirectTo: '' }]),
+        { provide: AppConfigService, useValue: { dspApiConfig: { apiUrl: '' }, dspAppConfig: { iriBase: 'http://rdfh.ch' } } },
+        { provide: ProjectApiService, useValue: { get: () => of({ project: { id: '', shortcode: '0001', shortname: 'test', longname: 'Test' } }) } },
+        { provide: ResourceFetcherService, useValue: { userCanEdit$: of(false), projectShortcode$: of('0001') } },
         {
           provide: DspApiConnectionToken,
           useValue: {
