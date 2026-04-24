@@ -1,7 +1,5 @@
-import { importProvidersFrom } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
-import { TranslateModule } from '@ngx-translate/core';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
 import { expect } from 'storybook/test';
@@ -32,7 +30,6 @@ const meta: Meta<CreateResourceDialogComponent> = {
   decorators: [
     applicationConfig({
       providers: [
-        importProvidersFrom(TranslateModule.forRoot()),
         { provide: MAT_DIALOG_DATA, useValue: makeDialogData() },
         { provide: MatDialogRef, useValue: { close: () => {} } },
         {

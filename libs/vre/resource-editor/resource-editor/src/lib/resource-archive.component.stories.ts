@@ -1,4 +1,3 @@
-import { importProvidersFrom } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { Constants, ReadArchiveFileValue } from '@dasch-swiss/dsp-js';
 import { ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
@@ -6,7 +5,6 @@ import { AdminAPIApiService } from '@dasch-swiss/vre/3rd-party-services/open-api
 import { AppConfigService, DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
-import { TranslateModule } from '@ngx-translate/core';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
 import { expect } from 'storybook/test';
@@ -50,7 +48,6 @@ const meta: Meta<ResourceArchiveComponent> = {
   decorators: [
     applicationConfig({
       providers: [
-        importProvidersFrom(TranslateModule.forRoot()),
         provideRouter([{ path: '**', redirectTo: '' }]),
         { provide: AppConfigService, useValue: { dspApiConfig: { apiUrl: '' }, dspAppConfig: { iriBase: 'http://rdfh.ch' } } },
         { provide: ProjectApiService, useValue: { get: () => of({ project: { id: '', shortcode: '0001', shortname: 'test', longname: 'Test' } }) } },

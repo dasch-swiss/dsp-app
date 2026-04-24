@@ -1,8 +1,6 @@
-import { importProvidersFrom } from '@angular/core';
 import { FormArray, FormBuilder } from '@angular/forms';
 import { Cardinality, Constants } from '@dasch-swiss/dsp-js';
-import { TranslateModule } from '@ngx-translate/core';
-import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
+import { type Meta, type StoryObj } from '@storybook/angular';
 import { expect } from 'storybook/test';
 
 import { PropertyValuesCreatorComponent } from './property-values-creator.component';
@@ -36,11 +34,6 @@ const makeFormArray = () =>
 const meta: Meta<PropertyValuesCreatorComponent> = {
   title: 'Devs / Resource Editor / Resource Creator / Property Values Creator',
   component: PropertyValuesCreatorComponent,
-  decorators: [
-    applicationConfig({
-      providers: [importProvidersFrom(TranslateModule.forRoot())],
-    }),
-  ],
   argTypes: {
     myProperty: {
       description: 'Property definition with GUI settings and current values.',

@@ -1,8 +1,6 @@
-import { importProvidersFrom } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Cardinality, Constants } from '@dasch-swiss/dsp-js';
-import { TranslateModule } from '@ngx-translate/core';
-import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
+import { type Meta, type StoryObj } from '@storybook/angular';
 import { expect } from 'storybook/test';
 
 import { PropertyValueCreatorComponent } from './property-value-creator.component';
@@ -31,11 +29,6 @@ const makeMyProperty = () =>
 const meta: Meta<PropertyValueCreatorComponent> = {
   title: 'Devs / Resource Editor / Resource Creator / Property Value Creator',
   component: PropertyValueCreatorComponent,
-  decorators: [
-    applicationConfig({
-      providers: [importProvidersFrom(TranslateModule.forRoot())],
-    }),
-  ],
   argTypes: {
     myProperty: {
       description: 'Property definition with GUI settings and current values.',

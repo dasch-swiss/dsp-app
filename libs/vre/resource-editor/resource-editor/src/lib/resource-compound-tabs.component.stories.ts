@@ -1,9 +1,7 @@
-import { importProvidersFrom } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { AppConfigService, DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
-import { TranslateModule } from '@ngx-translate/core';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { delay, of } from 'rxjs';
 import { expect, waitFor } from 'storybook/test';
@@ -31,7 +29,6 @@ const makeResource = (): DspResource =>
   }) as unknown as DspResource;
 
 const sharedProviders = [
-  importProvidersFrom(TranslateModule.forRoot()),
   provideRouter([{ path: '**', redirectTo: '' }]),
   { provide: AppConfigService, useValue: { dspApiConfig: { apiUrl: '' }, dspAppConfig: { iriBase: 'http://rdfh.ch' } } },
   { provide: ProjectApiService, useValue: { get: () => of({ project: { id: '', shortcode: '0001', shortname: 'test', longname: 'Test' } }) } },
