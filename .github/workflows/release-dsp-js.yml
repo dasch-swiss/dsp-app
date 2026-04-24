@@ -31,7 +31,7 @@ jobs:
       - name: Build dsp-js
         run: npx nx build dsp-js
 
-      - name: Publish to NPM with trusted publishers
+      - name: Publish to NPM
         run: npx npm@11 publish dist/libs/dsp-js --access public --provenance
         # Uses npx to run npm@11 which supports trusted publishers
         # No NODE_AUTH_TOKEN needed - OIDC authentication via trusted publishers
