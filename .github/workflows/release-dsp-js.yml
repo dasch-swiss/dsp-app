@@ -23,9 +23,6 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
           cache: 'npm'
 
-      - name: Upgrade npm for trusted publishers
-        run: npm install -g npm@latest
-
       - name: Install dependencies
         run: npm ci --prefer-offline --no-audit
         env:
@@ -34,8 +31,9 @@ jobs:
       - name: Build dsp-js
         run: npx nx build dsp-js
 
-      - name: Publish to NPM
-        run: npm publish dist/libs/dsp-js --access public --provenance
+      - name: Publish to NPM with trusted publishers
+        run: npx npm@11 publish dist/libs/dsp-js --access public --provenance
+        # Uses npx to run npm@11 which supports trusted publishers
         # No NODE_AUTH_TOKEN needed - OIDC authentication via trusted publishers
 
   notification:
