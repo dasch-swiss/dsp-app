@@ -4,8 +4,8 @@ import { ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { AppConfigService, DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { TranslateModule } from '@ngx-translate/core';
-import { applicationConfig, moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
-import { of } from 'rxjs';
+import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
+import { delay, of } from 'rxjs';
 import { expect, waitFor } from 'storybook/test';
 
 import { CompoundService } from './compound/compound.service';
@@ -88,16 +88,20 @@ export const WithRegions: Story = {
     applicationConfig({
       providers: [
         ...sharedProviders,
-        { provide: RegionService, useValue: { regions$: of([{ id: 'region1' } as any, { id: 'region2' } as any]), regionsLoading$: of(false), selectedRegion$: of(null), showRegions: () => {} } },
+        { provide: RegionService, useValue: { regions$: of([{ id: 'region1' } as any, { id: 'region2' } as any]).pipe(delay(0)), regionsLoading$: of(false), selectedRegion$: of(null), showRegions: () => {} } },
       ],
     }),
   ],
   args: { resource: makeResource() },
   play: async ({ canvasElement, step }) => {
-    await step('Tab group is rendered with at least the properties tab', async () => {
-      await expect(canvasElement.querySelector('mat-tab-group')).not.toBeNull();
-      const tabs = canvasElement.querySelectorAll('.mat-mdc-tab');
-      await expect(tabs.length).toBeGreaterThanOrEqual(1);
+    await step('Annotations tab appears after regions are loaded', async () => {
+      await waitFor(
+        () => {
+          const tabs = canvasElement.querySelectorAll('.mat-mdc-tab');
+          expect(tabs.length).toBe(2);
+        },
+        { timeout: 3000 }
+      );
     });
   },
 };
