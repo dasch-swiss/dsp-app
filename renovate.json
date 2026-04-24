@@ -287,11 +287,12 @@
     },
 
     {
-      "description": "Automerge all dev dependency updates (patch + minor) — no age guard; dev deps don't affect production",
+      "description": "Automerge all dev dependency updates (patch + minor) — 3-day age guard prevents adopting a broken release before it gets yanked; dev deps don't affect production",
       "matchUpdateTypes": ["patch", "minor"],
       "matchDepTypes": ["devDependencies"],
       "automerge": true,
       "platformAutomerge": true,
+      "minimumReleaseAge": "3 days",
       "rebaseWhen": "behind-base-branch"
     },
     {
