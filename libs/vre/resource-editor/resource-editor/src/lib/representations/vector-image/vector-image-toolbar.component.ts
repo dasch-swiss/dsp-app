@@ -39,7 +39,7 @@ export class VectorImageToolbarComponent {
   @Output() zoomOut = new EventEmitter<void>();
   @Output() resetZoom = new EventEmitter<void>();
   @Output() fullscreen = new EventEmitter<void>();
-  @Output() backgroundChange = new EventEmitter<'default' | 'white' | 'transparent'>();
+  @Output() backgroundChange = new EventEmitter<'white' | 'dark' | 'transparent'>();
 
   readonly translateService = inject(TranslateService);
 
@@ -84,7 +84,7 @@ export class VectorImageToolbarComponent {
     });
   }
 
-  setBackground(bg: 'default' | 'white' | 'transparent') {
+  setBackground(bg: 'white' | 'dark' | 'transparent') {
     this.backgroundChange.emit(bg);
   }
 }
