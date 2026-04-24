@@ -107,16 +107,14 @@
       "enabled": false
     },
     {
-      "description": "Node.js (.nvmrc): major version managed manually — must align with CI runners and @types/node",
+      "description": "Node.js (.nvmrc): all updates managed manually — minor/patch must stay in sync with package.json engines and CI runners; @types/node is also frozen, so any Node.js bump is a coordinated toolchain decision",
       "matchManagers": ["nvm"],
-      "matchUpdateTypes": ["major"],
       "enabled": false
     },
     {
-      "description": "Node.js (package.json engines): major managed manually — same rationale as .nvmrc rule; engines field is a separate manager not covered by the nvm rule above",
+      "description": "Node.js (package.json engines): all updates managed manually — same rationale as .nvmrc rule; the ^ range means Renovate would only bump on version outside the current range anyway, so disabling prevents partial updates",
       "matchManagers": ["npm"],
       "matchPackageNames": ["node"],
-      "matchUpdateTypes": ["major"],
       "enabled": false
     },
     {
