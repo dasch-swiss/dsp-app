@@ -101,7 +101,7 @@
     "@schematics/angular": "20.2.2",
     "@sentry/cli": "^3.0.0",
     "@storybook/angular": "9.1.20",
-    "@storybook/test-runner": "^0.23.0",
+    "@storybook/test-runner": "^0.24.0",
     "@swc-node/register": "1.11.1",
     "@swc/core": "1.15.30",
     "@swc/helpers": "0.5.21",
