@@ -5,6 +5,7 @@ import { of } from 'rxjs';
 import { expect } from 'storybook/test';
 
 import { ResourceFetcherService } from '../representations/resource-fetcher.service';
+import { notificationServiceStub } from '../stories.helpers';
 import { DraggableValueListComponent } from './draggable-value-list.component';
 
 const makeValues = () =>
@@ -20,7 +21,7 @@ const meta: Meta<DraggableValueListComponent> = {
     applicationConfig({
       providers: [
         { provide: ResourceFetcherService, useValue: { reload: () => {} } },
-        { provide: NotificationService, useValue: { openSnackBar: () => {} } },
+        { provide: NotificationService, useValue: notificationServiceStub },
         { provide: APIV2ApiService, useValue: { putV2ValuesOrder: () => of({}) } },
       ],
     }),

@@ -209,8 +209,8 @@ describe('Data Model Class', () => {
     cy.get(`[data-cy=${PropertyType.Dropdown}]`).should('be.visible').click();
 
     cy.get('[data-cy=name-input]').clear().type(faker.lorem.word());
-    cy.get('[data-cy=label-input] input').clear().type(faker.lorem.word(2));
-    cy.get('[data-cy=comment-textarea]').type(faker.lorem.word(5));
+    cy.get('[data-cy=label-input] input').clear().type(faker.lorem.word({ length: 2 }));
+    cy.get('[data-cy=comment-textarea]').type(faker.lorem.word({ length: 5 }));
     cy.get('[data-cy=object-attribute-list]').click(); // open dropdown
 
     cy.get('mat-option').contains(listLabel).scrollIntoView().should('be.visible').click();

@@ -7,6 +7,12 @@ import { applicationConfig, moduleMetadata, type Meta, type StoryObj } from '@st
 import { of, NEVER } from 'rxjs';
 import { expect } from 'storybook/test';
 import { CompoundService } from '../../compound/compound.service';
+import {
+  appConfigServiceStub,
+  makeResourceFetcherServiceStub,
+  notificationServiceStub,
+  representationServiceStub,
+} from '../../stories.helpers';
 import { RepresentationService } from '../representation.service';
 import { ResourceFetcherService } from '../resource-fetcher.service';
 import { VectorImageComponent } from './vector-image.component';
@@ -61,15 +67,12 @@ const sharedProviders = [
   provideHttpClient(),
   {
     provide: AppConfigService,
-    useValue: { dspApiConfig: { apiUrl: '' }, dspAppConfig: { iriBase: 'http://rdfh.ch' } },
+    useValue: appConfigServiceStub,
   },
   { provide: DspApiConnectionToken, useValue: { v2: { res: { getResource: () => NEVER } } } },
-  { provide: ResourceFetcherService, useValue: { userCanEdit$: of(false), projectShortcode$: of('0001') } },
-  {
-    provide: RepresentationService,
-    useValue: { downloadProjectFile: () => {}, getFileInfo: () => of({ originalFilename: 'diagram.svg' }) },
-  },
-  { provide: NotificationService, useValue: { openSnackBar: () => {} } },
+  { provide: ResourceFetcherService, useValue: makeResourceFetcherServiceStub() },
+  { provide: RepresentationService, useValue: representationServiceStub },
+  { provide: NotificationService, useValue: notificationServiceStub },
 ];
 
 // ---------------------------------------------------------------------------

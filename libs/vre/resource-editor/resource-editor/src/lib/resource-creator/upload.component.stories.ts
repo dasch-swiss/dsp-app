@@ -3,6 +3,7 @@ import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular'
 import { expect } from 'storybook/test';
 
 import { UploadFileService } from '../representations/upload/upload-file.service';
+import { notificationServiceStub } from '../stories.helpers';
 import { UploadComponent } from './upload.component';
 
 const meta: Meta<UploadComponent> = {
@@ -12,7 +13,7 @@ const meta: Meta<UploadComponent> = {
     applicationConfig({
       providers: [
         { provide: UploadFileService, useValue: { upload: () => {} } },
-        { provide: NotificationService, useValue: { openSnackBar: () => {} } },
+        { provide: NotificationService, useValue: notificationServiceStub },
       ],
     }),
   ],

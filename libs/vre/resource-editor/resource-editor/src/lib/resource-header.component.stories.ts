@@ -11,6 +11,7 @@ import { expect } from 'storybook/test';
 
 import { ResourceFetcherService } from './representations/resource-fetcher.service';
 import { ResourceHeaderComponent } from './resource-header.component';
+import { makeResourceFetcherServiceStub, notificationServiceStub } from './stories.helpers';
 
 const makeResource = () =>
   ({
@@ -44,11 +45,9 @@ const meta: Meta<ResourceHeaderComponent> = {
         importProvidersFrom(RouterModule.forRoot([])),
         {
           provide: ResourceFetcherService,
-          useValue: {
-            userCanEdit$: of(false),
-            userCanDelete$: of(false),
-            attachedUser$: of({ givenName: 'Jane', familyName: 'Doe', username: 'jane.doe' }),
-          },
+          useValue: makeResourceFetcherServiceStub({
+            attachedUser: { givenName: 'Jane', familyName: 'Doe', username: 'jane.doe' },
+          }),
         },
         {
           provide: ProjectApiService,
@@ -57,7 +56,7 @@ const meta: Meta<ResourceHeaderComponent> = {
               of({ project: { id: 'http://rdfh.ch/projects/test', shortname: 'test', longname: 'Test Project' } }),
           },
         },
-        { provide: NotificationService, useValue: { openSnackBar: () => {} } },
+        { provide: NotificationService, useValue: notificationServiceStub },
         { provide: ResourceService, useValue: { getResourcePath: () => '/project/test/resource/1' } },
         { provide: UserService, useValue: { user$: of(null) } },
         { provide: DspApiConnectionToken, useValue: { v2: { res: { canDeleteResource: () => of({ canDo: true }) } } } },
@@ -96,11 +95,10 @@ export const WithEditPermission: Story = {
         importProvidersFrom(RouterModule.forRoot([])),
         {
           provide: ResourceFetcherService,
-          useValue: {
-            userCanEdit$: of(true),
-            userCanDelete$: of(false),
-            attachedUser$: of({ givenName: 'Jane', familyName: 'Doe', username: 'jane.doe' }),
-          },
+          useValue: makeResourceFetcherServiceStub({
+            userCanEdit: true,
+            attachedUser: { givenName: 'Jane', familyName: 'Doe', username: 'jane.doe' },
+          }),
         },
         {
           provide: ProjectApiService,
@@ -109,7 +107,7 @@ export const WithEditPermission: Story = {
               of({ project: { id: 'http://rdfh.ch/projects/test', shortname: 'test', longname: 'Test Project' } }),
           },
         },
-        { provide: NotificationService, useValue: { openSnackBar: () => {} } },
+        { provide: NotificationService, useValue: notificationServiceStub },
         { provide: ResourceService, useValue: { getResourcePath: () => '/project/test/resource/1' } },
         { provide: UserService, useValue: { user$: of(null) } },
         { provide: DspApiConnectionToken, useValue: { v2: { res: { canDeleteResource: () => of({ canDo: true }) } } } },

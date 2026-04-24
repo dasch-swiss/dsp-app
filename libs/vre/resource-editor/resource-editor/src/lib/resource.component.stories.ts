@@ -13,6 +13,7 @@ import { expect } from 'storybook/test';
 import { ResourceFetcherService } from './representations/resource-fetcher.service';
 
 import { ResourceComponent } from './resource.component';
+import { appConfigServiceStub, notificationServiceStub } from './stories.helpers';
 
 const makeResource = (): DspResource =>
   ({
@@ -59,10 +60,10 @@ const meta: Meta<ResourceComponent> = {
         },
         {
           provide: AppConfigService,
-          useValue: { dspApiConfig: { apiUrl: '' }, dspAppConfig: { iriBase: 'http://rdfh.ch' } },
+          useValue: appConfigServiceStub,
         },
         { provide: UserService, useValue: { user$: of(null) } },
-        { provide: NotificationService, useValue: { openSnackBar: () => {} } },
+        { provide: NotificationService, useValue: notificationServiceStub },
         { provide: ResourceService, useValue: { getResourcePath: () => '/project/test/resource/1' } },
         {
           provide: ProjectApiService,
