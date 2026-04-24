@@ -139,6 +139,11 @@
       "enabled": false
     },
     {
+      "description": "@storybook/test-runner: fully disabled — each minor release tracks a Storybook major and requires a matching Jest major; both are frozen, so any update is a coordinated toolchain decision",
+      "matchPackageNames": ["@storybook/test-runner"],
+      "enabled": false
+    },
+    {
       "description": "NX-wrapped tools: major version ceiling is set by @nx/* peer deps — disable majors until nx migrate lifts the constraint",
       "matchPackageNames": [
         "cypress",
