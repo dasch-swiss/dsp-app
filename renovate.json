@@ -161,7 +161,6 @@
       "enabled": false
     },
     {
-    {
       "description": "@jscutlery/swc-angular: fully disabled — bridges frozen Angular with SWC; package is at v0.x so the major-disable rule is a no-op, and any update is a coordinated toolchain decision",
       "matchPackageNames": ["@jscutlery/swc-angular"],
       "enabled": false
