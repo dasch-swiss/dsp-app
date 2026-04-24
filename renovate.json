@@ -161,14 +161,19 @@
       "enabled": false
     },
     {
+    {
+      "description": "@jscutlery/swc-angular: fully disabled — bridges frozen Angular with SWC; package is at v0.x so the major-disable rule is a no-op, and any update is a coordinated toolchain decision",
+      "matchPackageNames": ["@jscutlery/swc-angular"],
+      "enabled": false
+    },
+    {
       "description": "Angular-coupled ecosystem: major version must align with Angular major — upgrade only after ng update",
       "matchPackageNames": [
         "rxjs",
         "ng-mocks",
         "ngx-build-plus",
         "@ngx-translate/core",
-        "@ngx-translate/http-loader",
-        "@jscutlery/swc-angular"
+        "@ngx-translate/http-loader"
       ],
       "matchUpdateTypes": ["major"],
       "enabled": false
@@ -314,19 +319,21 @@
       "rebaseWhen": "behind-base-branch"
     },
     {
-      "description": "Automerge github-actions and docker patch/minor updates — matchDepTypes: devDependencies does not apply to these managers so they need an explicit rule",
+      "description": "Automerge github-actions and docker patch/minor updates — 3-day age guard matches devDep policy and guards against supply chain attacks on newly-published action versions; matchDepTypes: devDependencies does not apply to these managers so they need an explicit rule",
       "matchManagers": ["github-actions", "dockerfile", "docker-compose"],
       "matchUpdateTypes": ["patch", "minor"],
       "automerge": true,
       "platformAutomerge": true,
+      "minimumReleaseAge": "3 days",
       "rebaseWhen": "behind-base-branch"
     },
     {
-      "description": "Automerge pip_requirements patch/minor updates — docs tooling only (docs/requirements.txt); matchDepTypes does not apply to this manager so an explicit rule is needed",
+      "description": "Automerge pip_requirements patch/minor updates — 3-day age guard for consistency; docs tooling only (docs/requirements.txt); matchDepTypes does not apply to this manager so an explicit rule is needed",
       "matchManagers": ["pip_requirements"],
       "matchUpdateTypes": ["patch", "minor"],
       "automerge": true,
       "platformAutomerge": true,
+      "minimumReleaseAge": "3 days",
       "rebaseWhen": "behind-base-branch"
     }
   ]
