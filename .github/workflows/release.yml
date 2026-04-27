@@ -13,6 +13,6 @@ jobs:
     # Automate releases with Conventional Commit Messages as Pull Requests are merged into "main" branch
     steps:
       - name: Get release please action
-        uses: googleapis/release-please-action@v4
+        uses: googleapis/release-please-action@v5
         with:
           token: ${{ secrets.GH_TOKEN }}
