@@ -1,5 +1,57 @@
 # Changelog
 
+## [13.2.0](https://github.com/dasch-swiss/dsp-app/compare/v13.1.1...v13.2.0) (2026-04-27)
+
+
+### Enhancements
+
+* add image for project MSSL (086A) (DEV-6278) ([#3017](https://github.com/dasch-swiss/dsp-app/issues/3017)) ([26e4f1e](https://github.com/dasch-swiss/dsp-app/commit/26e4f1ec507ddfdcfb41b72d778eaab26eb34928))
+
+
+### Bug Fixes
+
+* **deps:** remove duplicate brace in renovate.json ([#3052](https://github.com/dasch-swiss/dsp-app/issues/3052)) ([9d8e932](https://github.com/dasch-swiss/dsp-app/commit/9d8e932a4e61398228a9cefbe294709464849bd3))
+* **deps:** update dependency ts-md5 from 1.3.1 to 2.0.1 ([#3060](https://github.com/dasch-swiss/dsp-app/issues/3060)) ([29d77e8](https://github.com/dasch-swiss/dsp-app/commit/29d77e88460e75c179aa9a8e426dc89f90ecda21))
+* **deps:** update dependency zod from 3.25.76 to 4.3.6 ([#3062](https://github.com/dasch-swiss/dsp-app/issues/3062)) ([b3726fc](https://github.com/dasch-swiss/dsp-app/commit/b3726fc27f4b9fa917cd2bf71b40b29d3da9025b))
+* **dsp-js:** remove registry-url for OIDC authentication ([#3053](https://github.com/dasch-swiss/dsp-app/issues/3053)) ([8d13a63](https://github.com/dasch-swiss/dsp-app/commit/8d13a638415719c662db27297c5d6d7e4077e335))
+* **dsp-js:** switch to npm trusted publishers (OIDC) ([#3049](https://github.com/dasch-swiss/dsp-app/issues/3049)) ([ff247dc](https://github.com/dasch-swiss/dsp-app/commit/ff247dc2978a056399839e9036891d6da3af85ac))
+* **dsp-js:** use npx npm@11 for trusted publishers ([#3050](https://github.com/dasch-swiss/dsp-app/issues/3050)) ([6e9ec8b](https://github.com/dasch-swiss/dsp-app/commit/6e9ec8b661062b24f846b384982c8a69a1c636f2))
+
+
+### Maintenances
+
+* add auto-approve workflow for Renovate patch/minor PRs ([#3021](https://github.com/dasch-swiss/dsp-app/issues/3021)) ([e5b34ac](https://github.com/dasch-swiss/dsp-app/commit/e5b34ace069bdfe23e512fdbca0b7fee2302260c))
+* add storybook stories for resource-editor ([#3023](https://github.com/dasch-swiss/dsp-app/issues/3023)) ([fd22a7e](https://github.com/dasch-swiss/dsp-app/commit/fd22a7e28939f759f60d27d010d73719c699d775))
+* Change default background to white ([#3037](https://github.com/dasch-swiss/dsp-app/issues/3037)) ([6c290f2](https://github.com/dasch-swiss/dsp-app/commit/6c290f2c866eae7e0122cab40a73e17df3ebcba2))
+* **deps-dev:** bump postcss from 8.5.10 to 8.5.11 ([#3059](https://github.com/dasch-swiss/dsp-app/issues/3059)) ([628ab5a](https://github.com/dasch-swiss/dsp-app/commit/628ab5a575e6b50a03193cf7c3c6f267522ed495))
+* **deps:** automerge pip_requirements patch/minor updates ([#3033](https://github.com/dasch-swiss/dsp-app/issues/3033)) ([57f874e](https://github.com/dasch-swiss/dsp-app/commit/57f874e4455140caf9c48ab9609e8374061a13d7))
+* **deps:** bump yaml ([#3058](https://github.com/dasch-swiss/dsp-app/issues/3058)) ([cebc137](https://github.com/dasch-swiss/dsp-app/commit/cebc1372699eaa4b75a243605b100777d330d32e))
+* **deps:** disable Node.js and npm major updates in package.json engines field ([#3027](https://github.com/dasch-swiss/dsp-app/issues/3027)) ([6daeca1](https://github.com/dasch-swiss/dsp-app/commit/6daeca16374f23b36e6080947ccd74a4595002d0))
+* **deps:** disable uuid major until Angular 21 / Jest 30 migration ([#3036](https://github.com/dasch-swiss/dsp-app/issues/3036)) ([f11272a](https://github.com/dasch-swiss/dsp-app/commit/f11272affe042f15398dfd345e41040effebcbfb))
+* **deps:** tighten Renovate rules — Node.js, SWC, storybook/test-runner, devDep age guard ([#3048](https://github.com/dasch-swiss/dsp-app/issues/3048)) ([afb3fff](https://github.com/dasch-swiss/dsp-app/commit/afb3fff0841ec7098ac95fa31e1a8209c968450b))
+* **deps:** update dependency @sentry/angular from 10.47.0 to 10.49.0 ([#3042](https://github.com/dasch-swiss/dsp-app/issues/3042)) ([072a8ca](https://github.com/dasch-swiss/dsp-app/commit/072a8caebd393478ea8795f8557f0b8fc2c48c05))
+* **deps:** update dependency @sentry/cli from 3.3.5 to 3.4.0 ([#3043](https://github.com/dasch-swiss/dsp-app/issues/3043)) ([2c9f90a](https://github.com/dasch-swiss/dsp-app/commit/2c9f90a063cdd6bf7dfd71edaa8a45a08f4ed6c5))
+* **deps:** update dependency @swc/core from 1.15.24 to 1.15.30 ([#3019](https://github.com/dasch-swiss/dsp-app/issues/3019)) ([976f0fb](https://github.com/dasch-swiss/dsp-app/commit/976f0fb975e61004a82416f7c31fe0f5ba2d2e20))
+* **deps:** update dependency mkdocs-git-revision-date-plugin from 0.3.1 to 0.3.2 ([#3028](https://github.com/dasch-swiss/dsp-app/issues/3028)) ([4302441](https://github.com/dasch-swiss/dsp-app/commit/4302441e06e900d134721e20cd1ca26558b95436))
+* **deps:** update dependency mkdocs-include-markdown-plugin from 7.1.8 to 7.2.2 ([#3045](https://github.com/dasch-swiss/dsp-app/issues/3045)) ([1c7f41d](https://github.com/dasch-swiss/dsp-app/commit/1c7f41d73542cc6a55923b55c22f219124a034ea))
+* **deps:** update dependency nyc from 17.1.0 to 18.0.0 ([#3020](https://github.com/dasch-swiss/dsp-app/issues/3020)) ([62e12f1](https://github.com/dasch-swiss/dsp-app/commit/62e12f108c606b4b9889e7e756a83b9643ce3a9b))
+* **deps:** update dependency prettier from 3.8.1 to 3.8.3 ([#3029](https://github.com/dasch-swiss/dsp-app/issues/3029)) ([853fa4a](https://github.com/dasch-swiss/dsp-app/commit/853fa4a38c518165a77f210685990f462b6c2850))
+* **deps:** update dependency python from 3.11.15 to 3.14.4 ([#3046](https://github.com/dasch-swiss/dsp-app/issues/3046)) ([57abb04](https://github.com/dasch-swiss/dsp-app/commit/57abb04d953d98a61c9a6e3a739a329b550ba7d4))
+* **deps:** update dependency wait-on from 9.0.4 to 9.0.5 ([#3031](https://github.com/dasch-swiss/dsp-app/issues/3031)) ([d28def1](https://github.com/dasch-swiss/dsp-app/commit/d28def13de0f3e44ac180f934d9b7c7f4949749a))
+* **deps:** update googleapis/release-please-action action from v4 to v5 ([#3057](https://github.com/dasch-swiss/dsp-app/issues/3057)) ([e33a544](https://github.com/dasch-swiss/dsp-app/commit/e33a544e1168b2c34eaa0ceea98b9d0f0bcd4196))
+* **deps:** update grafana/grafana docker tag to v13.0.1 ([#3032](https://github.com/dasch-swiss/dsp-app/issues/3032)) ([f52aa3e](https://github.com/dasch-swiss/dsp-app/commit/f52aa3ebf1eb0ddb9e6d1f825e6b875609ec9983))
+* **deps:** update node.js from v22.12.0 to v22.22.2 ([#3047](https://github.com/dasch-swiss/dsp-app/issues/3047)) ([78a0e96](https://github.com/dasch-swiss/dsp-app/commit/78a0e96dd0a46c062529c79c8a2a321255fa52e0))
+* **deps:** update postcss-deps ([#3056](https://github.com/dasch-swiss/dsp-app/issues/3056)) ([c41739c](https://github.com/dasch-swiss/dsp-app/commit/c41739c21e887cefed6e8489e520b072684451b5))
+* **deps:** upgrade @faker-js/faker to v10 and fix breaking API usages ([#3041](https://github.com/dasch-swiss/dsp-app/issues/3041)) ([18d8cd4](https://github.com/dasch-swiss/dsp-app/commit/18d8cd4afda85d3b40daf3ed3d4d4bd887866879))
+* **deps:** upgrade @types/openseadragon to 3.0.10 with type compatibility fixes ([#3026](https://github.com/dasch-swiss/dsp-app/issues/3026)) ([0e0707f](https://github.com/dasch-swiss/dsp-app/commit/0e0707f2be50fa354968ea628f34fd4e3eef594f))
+* document CKEditor Renovate freeze rationale (DEV-6208) ([#3034](https://github.com/dasch-swiss/dsp-app/issues/3034)) ([0f28a7e](https://github.com/dasch-swiss/dsp-app/commit/0f28a7e19265c285859647bf811d837246a285d9))
+* **dsp-js:** improve release notification with version info ([#3055](https://github.com/dasch-swiss/dsp-app/issues/3055)) ([1ff612d](https://github.com/dasch-swiss/dsp-app/commit/1ff612d63c4237b24b37c1793229e000f76ac395))
+* enforce chore(deps): commit prefix for all Renovate PRs ([#3063](https://github.com/dasch-swiss/dsp-app/issues/3063)) ([9dc8cb6](https://github.com/dasch-swiss/dsp-app/commit/9dc8cb6184273a151603a0ae2b74034ad7c245d3))
+* equate patch and minor production minimumReleaseAge ([#3061](https://github.com/dasch-swiss/dsp-app/issues/3061)) ([5e485bd](https://github.com/dasch-swiss/dsp-app/commit/5e485bd4e12a1a76edb56944fc84405be4668e8d))
+* **main:** release dsp-js 12.0.0 ([#2934](https://github.com/dasch-swiss/dsp-app/issues/2934)) ([aee0690](https://github.com/dasch-swiss/dsp-app/commit/aee06902e73e740b094dd324062387db73315615))
+* optimise CI workflow runs — skip checks where not applicable (DEV-6264) ([#3064](https://github.com/dasch-swiss/dsp-app/issues/3064)) ([1b12cea](https://github.com/dasch-swiss/dsp-app/commit/1b12ceab1a2ec52ff8aa8efc0f1fd38b7dcbd70f))
+* use common stub factories in storybook ([#3039](https://github.com/dasch-swiss/dsp-app/issues/3039)) ([00698a4](https://github.com/dasch-swiss/dsp-app/commit/00698a4807e32d3d789067f799b8232ef9cbab98))
+
 ## [13.1.1](https://github.com/dasch-swiss/dsp-app/compare/v13.1.0...v13.1.1) (2026-04-20)
 
 
