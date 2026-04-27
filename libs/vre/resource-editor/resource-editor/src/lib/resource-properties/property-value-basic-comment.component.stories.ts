@@ -5,7 +5,7 @@ import { expect } from 'storybook/test';
 import { PropertyValueBasicCommentComponent } from './property-value-basic-comment.component';
 
 const meta: Meta<PropertyValueBasicCommentComponent> = {
-  title: 'Devs / Resource Editor / 4. Properties / Property Value Basic Comment',
+  title: 'Devs / Resource Editor / 4. Properties / Property Value / Property Value Basic Comment',
   component: PropertyValueBasicCommentComponent,
   argTypes: {
     control: {
