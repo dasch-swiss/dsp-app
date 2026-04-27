@@ -20,7 +20,7 @@ const makeDialogData = () => ({
 });
 
 const meta: Meta<CreateSegmentDialogComponent> = {
-  title: 'Devs / Resource Editor / Segments / Create Segment Dialog',
+  title: 'Devs / Resource Editor / Representation / Segments / Create Segment Dialog',
   component: CreateSegmentDialogComponent,
   decorators: [
     applicationConfig({
