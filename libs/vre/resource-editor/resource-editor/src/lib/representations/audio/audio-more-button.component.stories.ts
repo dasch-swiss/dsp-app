@@ -19,7 +19,7 @@ const makeParentResource = () => ({
 });
 
 const meta: Meta<AudioMoreButtonComponent> = {
-  title: 'Devs / Resource Editor / 3. Representation / Audio More Button',
+  title: 'Devs / Resource Editor / 3. Representation / Audio / Audio More Button',
   component: AudioMoreButtonComponent,
   decorators: [
     applicationConfig({
