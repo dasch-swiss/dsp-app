@@ -18,7 +18,7 @@ const unknownLicense = {
 };
 
 const meta: Meta<ResourceLegalLicenseComponent> = {
-  title: 'Devs / Resource Editor / Header / Resource Legal License',
+  title: 'Devs / Resource Editor / Representation / Legal / Resource Legal License',
   component: ResourceLegalLicenseComponent,
   argTypes: {
     license: {

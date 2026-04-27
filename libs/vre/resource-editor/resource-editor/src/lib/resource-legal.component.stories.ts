@@ -24,7 +24,7 @@ const makeFileValue = (overrides: Record<string, unknown> = {}) =>
   }) as any;
 
 const meta: Meta<ResourceLegalComponent> = {
-  title: 'Devs / Resource Editor / Header / Resource Legal',
+  title: 'Devs / Resource Editor / Representation / Legal / Resource Legal',
   component: ResourceLegalComponent,
   decorators: [
     applicationConfig({
