@@ -143,7 +143,7 @@ jobs:
         env:
           TZ: Europe/Zurich
       - name: Upload coverage reports to Codecov
-        if: needs.changes.outputs.only_pkg == 'false'
+        if: needs.changes.result == 'success' && needs.changes.outputs.only_pkg == 'false'
         uses: codecov/codecov-action@v6
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
