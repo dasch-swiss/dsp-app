@@ -2,9 +2,9 @@ import { OverlayModule } from '@angular/cdk/overlay';
 import { importProvidersFrom } from '@angular/core';
 import { ReadIntervalValue } from '@dasch-swiss/dsp-js';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
-import { applicationConfig, moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+import { applicationConfig, type Meta, moduleMetadata, type StoryObj } from '@storybook/angular';
 import { of, Subject } from 'rxjs';
-import { expect, within } from 'storybook/test';
+import { expect } from 'storybook/test';
 
 import { Segment } from '../../segment-support/segment';
 import { SegmentsService } from '../../segment-support/segments.service';
@@ -81,7 +81,7 @@ const resourceFetcherServiceStub: Partial<ResourceFetcherService> = {
 };
 
 const meta: Meta<VideoComponent> = {
-  title: 'Devs / Resource Editor / 3. Representation / Video',
+  title: 'Devs / Resource Editor / 3. Representation / Video / Video',
   component: VideoComponent,
   decorators: [
     applicationConfig({
