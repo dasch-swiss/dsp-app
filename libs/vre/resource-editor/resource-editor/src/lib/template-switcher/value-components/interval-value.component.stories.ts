@@ -5,7 +5,7 @@ import { expect } from 'storybook/test';
 import { IntervalValueComponent } from './interval-value.component';
 
 const meta: Meta<IntervalValueComponent> = {
-  title: 'Devs / Resource Editor / Template Switcher / Interval Value',
+  title: 'Devs / Resource Editor / Resource Properties / Template Switcher / Interval Value',
   component: IntervalValueComponent,
   argTypes: {
     control: {

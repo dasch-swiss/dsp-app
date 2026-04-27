@@ -25,7 +25,7 @@ const makeOntologyStub = (resourceClassIri: string) => ({
 });
 
 const meta: Meta<CreateResourceDialogComponent> = {
-  title: 'Devs / Resource Editor / Template Switcher / Create Resource Dialog',
+  title: 'Devs / Resource Editor / Resource Properties / Template Switcher / Create Resource Dialog',
   component: CreateResourceDialogComponent,
   decorators: [
     applicationConfig({

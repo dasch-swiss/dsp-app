@@ -1,5 +1,5 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { Component, Input, TemplateRef, signal } from '@angular/core';
+import { Component, Input, signal, TemplateRef } from '@angular/core';
 import {
   Constants,
   ReadBooleanValue,
@@ -97,7 +97,7 @@ class ViewerSwitcherHostComponent {
 }
 
 const meta: Meta<ViewerSwitcherHostComponent> = {
-  title: 'Devs / Resource Editor / Template Switcher / Viewer Switcher',
+  title: 'Devs / Resource Editor / Resource Properties / Template Switcher / Viewer Switcher',
   component: ViewerSwitcherHostComponent,
   decorators: [applicationConfig({ providers: sharedProviders })],
   argTypes: {

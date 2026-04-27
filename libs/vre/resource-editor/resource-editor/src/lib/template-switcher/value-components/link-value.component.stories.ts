@@ -1,6 +1,6 @@
 import { OverlayModule } from '@angular/cdk/overlay';
 import { importProvidersFrom } from '@angular/core';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
@@ -28,7 +28,7 @@ const dspApiConnectionStub = {
 };
 
 const meta: Meta<LinkValueComponent> = {
-  title: 'Devs / Resource Editor / Template Switcher / Link Value',
+  title: 'Devs / Resource Editor / Resource Properties / Template Switcher / Link Value',
   component: LinkValueComponent,
   decorators: [
     applicationConfig({

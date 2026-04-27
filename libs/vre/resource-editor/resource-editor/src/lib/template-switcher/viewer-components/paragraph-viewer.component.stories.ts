@@ -4,7 +4,7 @@ import { expect } from 'storybook/test';
 import { ParagraphViewerComponent } from './paragraph-viewer.component';
 
 const meta: Meta<ParagraphViewerComponent> = {
-  title: 'Devs / Resource Editor / Template Switcher / Paragraph Viewer',
+  title: 'Devs / Resource Editor / Resource Properties / Template Switcher / Paragraph Viewer',
   component: ParagraphViewerComponent,
   argTypes: {
     value: {

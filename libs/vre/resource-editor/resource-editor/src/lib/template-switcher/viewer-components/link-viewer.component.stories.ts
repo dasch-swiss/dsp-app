@@ -9,7 +9,7 @@ const resourceServiceStub: Partial<ResourceService> = {
 };
 
 const meta: Meta<LinkViewerComponent> = {
-  title: 'Devs / Resource Editor / Template Switcher / Link Viewer',
+  title: 'Devs / Resource Editor / Resource Properties / Template Switcher / Link Viewer',
   component: LinkViewerComponent,
   decorators: [
     applicationConfig({
