@@ -12,7 +12,7 @@ const makeSegment = () => ({
 });
 
 const meta: Meta<SegmentComponent> = {
-  title: 'Devs / Resource Editor / Representation / Segments / Segment',
+  title: 'Devs / Resource Editor / 3. Representation / Segments / Segment',
   component: SegmentComponent,
   decorators: [
     applicationConfig({

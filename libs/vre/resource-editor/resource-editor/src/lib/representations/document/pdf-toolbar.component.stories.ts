@@ -38,7 +38,7 @@ const resourceFetcherServiceStub: Partial<ResourceFetcherService> = {
 };
 
 const meta: Meta<PdfToolbarComponent> = {
-  title: 'Devs / Resource Editor / Representation / PDF Toolbar',
+  title: 'Devs / Resource Editor / 3. Representation / PDF Toolbar',
   component: PdfToolbarComponent,
   decorators: [
     applicationConfig({

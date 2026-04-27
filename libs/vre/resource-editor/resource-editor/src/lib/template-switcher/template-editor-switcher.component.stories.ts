@@ -73,7 +73,7 @@ class EditorSwitcherHostComponent {
 }
 
 const meta: Meta<EditorSwitcherHostComponent> = {
-  title: 'Devs / Resource Editor / Properties / Template Switcher / Editor Switcher',
+  title: 'Devs / Resource Editor / 4. Properties / Template Switcher / Editor Switcher',
   component: EditorSwitcherHostComponent,
   decorators: [applicationConfig({ providers: sharedProviders })],
   argTypes: {

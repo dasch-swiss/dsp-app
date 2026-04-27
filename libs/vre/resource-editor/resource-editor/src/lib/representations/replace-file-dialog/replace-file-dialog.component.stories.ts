@@ -20,7 +20,7 @@ const makeDialogData = () => ({
 });
 
 const meta: Meta<ReplaceFileDialogComponent> = {
-  title: 'Devs / Resource Editor / Representation / Replace File Dialog',
+  title: 'Devs / Resource Editor / 3. Representation / Replace File Dialog',
   component: ReplaceFileDialogComponent,
   decorators: [
     applicationConfig({

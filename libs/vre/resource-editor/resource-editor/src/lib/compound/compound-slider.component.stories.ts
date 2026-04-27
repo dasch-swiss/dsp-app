@@ -10,7 +10,7 @@ const makeCompoundServiceStub = (page = 3, totalPages = 10) => ({
 });
 
 const meta: Meta<CompoundSliderComponent> = {
-  title: 'Devs / Resource Editor / Representation / Compound / Compound Slider',
+  title: 'Devs / Resource Editor / 3. Representation / Compound / Compound Slider',
   component: CompoundSliderComponent,
   decorators: [
     applicationConfig({

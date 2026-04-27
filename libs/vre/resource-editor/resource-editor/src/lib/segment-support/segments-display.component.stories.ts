@@ -26,7 +26,7 @@ const makeSegment = (label: string, start: number, end: number, row: number): Se
   }) as Segment;
 
 const meta: Meta<SegmentsDisplayComponent> = {
-  title: 'Devs / Resource Editor / Representation / Segments Representations / Segments display',
+  title: 'Devs / Resource Editor / 3. Representation / Segments Representations / Segments display',
   component: SegmentsDisplayComponent,
   decorators: [
     applicationConfig({

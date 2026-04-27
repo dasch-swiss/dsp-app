@@ -16,7 +16,7 @@ const makeResource = () =>
   }) as any;
 
 const meta: Meta<EditResourceLabelDialogComponent> = {
-  title: 'Devs / Resource Editor / Header / More Menu / Edit Resource Label Dialog',
+  title: 'Devs / Resource Editor / 2. Header / More Menu / Edit Resource Label Dialog',
   component: EditResourceLabelDialogComponent,
   decorators: [
     applicationConfig({

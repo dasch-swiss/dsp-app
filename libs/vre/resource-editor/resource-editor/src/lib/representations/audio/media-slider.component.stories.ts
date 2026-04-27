@@ -4,7 +4,7 @@ import { expect } from 'storybook/test';
 import { MediaSliderComponent } from './media-slider.component';
 
 const meta: Meta<MediaSliderComponent> = {
-  title: 'Devs / Resource Editor / Representation / Media Slider',
+  title: 'Devs / Resource Editor / 3. Representation / Media Slider',
   component: MediaSliderComponent,
   argTypes: {
     max: {

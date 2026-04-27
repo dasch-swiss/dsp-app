@@ -17,7 +17,7 @@ const makePeriod = (): ReadDateValue => {
 };
 
 const meta: Meta<DateViewerComponent> = {
-  title: 'Devs / Resource Editor / Properties / Template Switcher / Date Viewer',
+  title: 'Devs / Resource Editor / 4. Properties / Template Switcher / Date Viewer',
   component: DateViewerComponent,
   argTypes: {
     value: {

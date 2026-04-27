@@ -31,7 +31,7 @@ const makeResourceFetcherServiceStub = (): Partial<ResourceFetcherService> => ({
 });
 
 const meta: Meta<PropertyValueActionBubbleComponent> = {
-  title: 'Devs / Resource Editor / Properties / Property Value Action Bubble',
+  title: 'Devs / Resource Editor / 4. Properties / Property Value Action Bubble',
   component: PropertyValueActionBubbleComponent,
   decorators: [
     applicationConfig({

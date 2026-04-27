@@ -10,7 +10,7 @@ const dialogData: AddRegionFormDialogProps = {
 };
 
 const meta: Meta<AddRegionFormDialogComponent> = {
-  title: 'Devs / Resource Editor / Representation / Add Region Form Dialog',
+  title: 'Devs / Resource Editor / 3. Representation / Add Region Form Dialog',
   component: AddRegionFormDialogComponent,
   decorators: [
     applicationConfig({

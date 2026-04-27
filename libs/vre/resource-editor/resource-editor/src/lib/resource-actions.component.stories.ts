@@ -22,7 +22,7 @@ const makeResource = () =>
   }) as any;
 
 const meta: Meta<ResourceActionsComponent> = {
-  title: 'Devs / Resource Editor / Header / Resource Actions',
+  title: 'Devs / Resource Editor / 2. Header / Resource Actions',
   component: ResourceActionsComponent,
   decorators: [
     applicationConfig({

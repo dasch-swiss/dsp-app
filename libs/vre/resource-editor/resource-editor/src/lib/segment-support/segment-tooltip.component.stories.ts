@@ -11,7 +11,7 @@ const makeSegment = () => ({
 });
 
 const meta: Meta<SegmentTooltipComponent> = {
-  title: 'Devs / Resource Editor / Representation / Segments / Segment Tooltip',
+  title: 'Devs / Resource Editor / 3. Representation / Segments / Segment Tooltip',
   component: SegmentTooltipComponent,
   decorators: [
     applicationConfig({

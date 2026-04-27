@@ -20,7 +20,7 @@ const makePropertyValueServiceStub = (comment: string | null): Partial<PropertyV
 });
 
 const meta: Meta<PropertyValueDisplayCommentComponent> = {
-  title: 'Devs / Resource Editor / Properties / Property Value Display Comment',
+  title: 'Devs / Resource Editor / 4. Properties / Property Value Display Comment',
   component: PropertyValueDisplayCommentComponent,
   decorators: [
     applicationConfig({

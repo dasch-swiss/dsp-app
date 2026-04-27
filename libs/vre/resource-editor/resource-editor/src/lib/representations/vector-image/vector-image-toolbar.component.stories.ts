@@ -41,7 +41,7 @@ const resourceFetcherServiceStub: Partial<ResourceFetcherService> = {
 };
 
 const meta: Meta<VectorImageToolbarComponent> = {
-  title: 'Devs / Resource Editor / Representation / Vector Image Toolbar',
+  title: 'Devs / Resource Editor / 3. Representation / Vector Image Toolbar',
   component: VectorImageToolbarComponent,
   decorators: [
     applicationConfig({

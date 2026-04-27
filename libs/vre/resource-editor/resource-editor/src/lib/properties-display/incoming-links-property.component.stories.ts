@@ -19,7 +19,7 @@ const makeResource = () =>
 const makeEmptySequence = () => ({ resources: [], mayHaveMoreResults: false });
 
 const meta: Meta<IncomingLinksPropertyComponent> = {
-  title: 'Devs / Resource Editor / Properties / Properties Display / Incoming Links Property',
+  title: 'Devs / Resource Editor / 4. Properties / Properties Display / Incoming Links Property',
   component: IncomingLinksPropertyComponent,
   decorators: [
     applicationConfig({

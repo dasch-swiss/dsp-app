@@ -14,7 +14,7 @@ const makeResource = () =>
   }) as any;
 
 const meta: Meta<DeleteButtonComponent> = {
-  title: 'Devs / Resource Editor / Header / More Menu / Delete Button',
+  title: 'Devs / Resource Editor / 2. Header / More Menu / Delete Button',
   component: DeleteButtonComponent,
   decorators: [
     applicationConfig({

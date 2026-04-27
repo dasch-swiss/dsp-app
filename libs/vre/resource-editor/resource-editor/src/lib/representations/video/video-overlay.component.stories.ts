@@ -13,7 +13,7 @@ const makeMediaPlayerStub = (overrides: Partial<MediaPlayerService> = {}): Parti
 });
 
 const meta: Meta<VideoOverlayComponent> = {
-  title: 'Devs / Resource Editor / Representation / Video Overlay',
+  title: 'Devs / Resource Editor / 3. Representation / Video Overlay',
   component: VideoOverlayComponent,
   decorators: [
     applicationConfig({

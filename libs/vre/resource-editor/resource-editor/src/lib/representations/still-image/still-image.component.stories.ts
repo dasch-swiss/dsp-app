@@ -142,7 +142,7 @@ const sharedProviders = [
 // ---------------------------------------------------------------------------
 
 const meta: Meta<StillImageComponent> = {
-  title: 'Devs / Resource Editor / Representation / Still Image',
+  title: 'Devs / Resource Editor / 3. Representation / Still Image',
   component: StillImageComponent,
   decorators: [
     moduleMetadata({

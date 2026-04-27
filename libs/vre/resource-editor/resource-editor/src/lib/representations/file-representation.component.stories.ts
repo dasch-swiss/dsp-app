@@ -27,7 +27,7 @@ const makeDialogConfig = () => ({
 });
 
 const meta: Meta<FileRepresentationComponent> = {
-  title: 'Devs / Resource Editor / Representation / File Representation',
+  title: 'Devs / Resource Editor / 3. Representation / File Representation',
   component: FileRepresentationComponent,
   decorators: [
     applicationConfig({

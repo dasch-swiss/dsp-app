@@ -16,7 +16,7 @@ const makeResource = () =>
   }) as any;
 
 const meta: Meta<EraseResourceDialogComponent> = {
-  title: 'Devs / Resource Editor / Header / More Menu / Erase Resource Dialog',
+  title: 'Devs / Resource Editor / 2. Header / More Menu / Erase Resource Dialog',
   component: EraseResourceDialogComponent,
   decorators: [
     applicationConfig({
