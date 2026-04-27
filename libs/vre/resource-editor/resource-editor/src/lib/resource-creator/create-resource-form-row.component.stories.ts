@@ -4,7 +4,7 @@ import { expect } from 'storybook/test';
 import { CreateResourceFormRowComponent } from './create-resource-form-row.component';
 
 const meta: Meta<CreateResourceFormRowComponent> = {
-  title: 'Devs / Resource Editor / Resource Creator / Create Resource Form Row',
+  title: 'Devs / Resource Creator / Create Resource Form Row',
   component: CreateResourceFormRowComponent,
   argTypes: {
     label: {

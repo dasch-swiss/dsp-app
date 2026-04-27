@@ -7,7 +7,7 @@ import { UploadFileService } from '../representations/upload/upload-file.service
 import { CreateResourceFormRepresentationComponent } from './create-resource-form-representation.component';
 
 const meta: Meta<CreateResourceFormRepresentationComponent> = {
-  title: 'Devs / Resource Editor / Resource Creator / Create Resource Form Representation',
+  title: 'Devs / Resource Creator / Create Resource Form Representation',
   component: CreateResourceFormRepresentationComponent,
   decorators: [
     applicationConfig({

@@ -7,7 +7,7 @@ import { expect } from 'storybook/test';
 import { AuthorshipFormFieldComponent } from './authorship-form-field.component';
 
 const meta: Meta<AuthorshipFormFieldComponent> = {
-  title: 'Devs / Resource Editor / Resource Creator / Authorship Form Field',
+  title: 'Devs / Resource Creator / Authorship Form Field',
   component: AuthorshipFormFieldComponent,
   decorators: [
     applicationConfig({

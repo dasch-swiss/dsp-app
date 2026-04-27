@@ -17,7 +17,7 @@ const makeOntologyStub = (resourceClassIri: string) => ({
 });
 
 const meta: Meta<CreateResourceFormComponent> = {
-  title: 'Devs / Resource Editor / Resource Creator / Create Resource Form',
+  title: 'Devs / Resource Creator / Create Resource Form',
   component: CreateResourceFormComponent,
   decorators: [
     applicationConfig({

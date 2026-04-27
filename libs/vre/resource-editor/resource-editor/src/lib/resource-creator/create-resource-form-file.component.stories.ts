@@ -4,7 +4,7 @@ import { expect } from 'storybook/test';
 import { CreateResourceFormFileComponent } from './create-resource-form-file.component';
 
 const meta: Meta<CreateResourceFormFileComponent> = {
-  title: 'Devs / Resource Editor / Resource Creator / Create Resource Form File',
+  title: 'Devs / Resource Creator / Create Resource Form File',
   component: CreateResourceFormFileComponent,
   argTypes: {
     projectShortcode: {

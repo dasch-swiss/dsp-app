@@ -27,7 +27,7 @@ const makeMyProperty = () =>
   }) as any;
 
 const meta: Meta<PropertyValueCreatorComponent> = {
-  title: 'Devs / Resource Editor / Resource Creator / Property Value Creator',
+  title: 'Devs / Resource Creator / Property Value Creator',
   component: PropertyValueCreatorComponent,
   argTypes: {
     myProperty: {
