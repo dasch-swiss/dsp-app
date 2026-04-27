@@ -77,7 +77,7 @@ jobs:
         id: version
         run: echo "version=${GITHUB_REF_NAME#v}" >> $GITHUB_OUTPUT
       - name: Send notification to google chat room "DSP releases"
-        uses: google-github-actions/send-google-chat-webhook@v0
+        uses: google-github-actions/send-google-chat-webhook@v0.0.4
         with:
           webhook_url: ${{ secrets.GOOGLE_CHAT_DSP_RELEASES_WEBHOOK_URL }}
           mention: '<users/all>'
