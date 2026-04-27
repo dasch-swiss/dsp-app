@@ -29,7 +29,7 @@ const makeProjectApiStub = () => ({
 });
 
 const meta: Meta<ResourceInfoBarComponent> = {
-  title: 'Devs / Resource Editor / Resource Header / Resource Info Bar',
+  title: 'Devs / Resource Editor / Header / Resource Info Bar',
   component: ResourceInfoBarComponent,
   decorators: [
     applicationConfig({

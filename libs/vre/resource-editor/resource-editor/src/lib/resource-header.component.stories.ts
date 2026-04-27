@@ -36,7 +36,7 @@ const makeResource = () =>
   }) as any;
 
 const meta: Meta<ResourceHeaderComponent> = {
-  title: 'Devs / Resource Editor / Resource Header / Resource Header',
+  title: 'Devs / Resource Editor / Header / Resource Header',
   component: ResourceHeaderComponent,
   decorators: [
     applicationConfig({

@@ -4,7 +4,7 @@ import { expect } from 'storybook/test';
 import { ResourceRestrictionComponent } from './resource-restriction.component';
 
 const meta: Meta<ResourceRestrictionComponent> = {
-  title: 'Devs / Resource Editor / Resource Header / Resource Restriction',
+  title: 'Devs / Resource Editor / Header / Resource Restriction',
   component: ResourceRestrictionComponent,
 };
 export default meta;

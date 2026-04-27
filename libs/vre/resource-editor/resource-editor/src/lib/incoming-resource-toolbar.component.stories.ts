@@ -24,7 +24,7 @@ const makeResource = () =>
   }) as any;
 
 const meta: Meta<IncomingResourceToolbarComponent> = {
-  title: 'Devs / Resource Editor / Resource Header / Incoming Resource Toolbar',
+  title: 'Devs / Resource Editor / Header / Incoming Resource Toolbar',
   component: IncomingResourceToolbarComponent,
   decorators: [
     applicationConfig({

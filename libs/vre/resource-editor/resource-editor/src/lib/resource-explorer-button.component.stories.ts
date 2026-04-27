@@ -5,7 +5,7 @@ import { expect } from 'storybook/test';
 import { ResourceExplorerButtonComponent } from './resource-explorer-button.component';
 
 const meta: Meta<ResourceExplorerButtonComponent> = {
-  title: 'Devs / Resource Editor / Resource Header / Resource Explorer Button',
+  title: 'Devs / Resource Editor / Header / Resource Explorer Button',
   component: ResourceExplorerButtonComponent,
   decorators: [
     applicationConfig({

@@ -4,7 +4,7 @@ import { expect } from 'storybook/test';
 import { ResourceVersionWarningComponent } from './resource-version-warning.component';
 
 const meta: Meta<ResourceVersionWarningComponent> = {
-  title: 'Devs / Resource Editor / Resource Header / Resource Version Warning',
+  title: 'Devs / Resource Editor / Header / Resource Version Warning',
   component: ResourceVersionWarningComponent,
   argTypes: {
     resourceVersion: {
