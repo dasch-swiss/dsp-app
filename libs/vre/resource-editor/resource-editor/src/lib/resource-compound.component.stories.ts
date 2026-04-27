@@ -8,8 +8,8 @@ import { expect } from 'storybook/test';
 
 import { CompoundService } from './compound/compound.service';
 import { RegionService } from './representations/region.service';
-import { ResourceCompoundComponent } from './resource-compound.component';
 import { ResourceFetcherService } from './representations/resource-fetcher.service';
+import { ResourceCompoundComponent } from './resource-compound.component';
 
 const makeResource = (overrides: Record<string, unknown> = {}): DspResource =>
   ({
@@ -30,14 +30,20 @@ const makeResource = (overrides: Record<string, unknown> = {}): DspResource =>
   }) as unknown as DspResource;
 
 const meta: Meta<ResourceCompoundComponent> = {
-  title: 'Devs / Resource Editor / Resource / Compound',
+  title: 'Visual / Resource Editor / Resource / Compound',
   component: ResourceCompoundComponent,
   decorators: [
     applicationConfig({
       providers: [
         provideRouter([{ path: '**', redirectTo: '' }]),
-        { provide: AppConfigService, useValue: { dspApiConfig: { apiUrl: '' }, dspAppConfig: { iriBase: 'http://rdfh.ch' } } },
-        { provide: ProjectApiService, useValue: { get: () => of({ project: { id: '', shortcode: '0001', shortname: 'test', longname: 'Test' } }) } },
+        {
+          provide: AppConfigService,
+          useValue: { dspApiConfig: { apiUrl: '' }, dspAppConfig: { iriBase: 'http://rdfh.ch' } },
+        },
+        {
+          provide: ProjectApiService,
+          useValue: { get: () => of({ project: { id: '', shortcode: '0001', shortname: 'test', longname: 'Test' } }) },
+        },
         {
           provide: CompoundService,
           useValue: {

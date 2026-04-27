@@ -10,7 +10,7 @@ import { expect } from 'storybook/test';
 import { ResourceFetcherDialogComponent } from './resource-fetcher-dialog.component';
 
 const meta: Meta<ResourceFetcherDialogComponent> = {
-  title: 'Devs / Resource Editor / Resource / Resource Fetcher Dialog',
+  title: 'Visual / Resource Editor / Resource / Resource Fetcher Dialog',
   component: ResourceFetcherDialogComponent,
   decorators: [
     applicationConfig({

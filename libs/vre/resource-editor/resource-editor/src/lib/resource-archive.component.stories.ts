@@ -43,14 +43,20 @@ const makeResource = (overrides: Record<string, unknown> = {}): DspResource => {
 };
 
 const meta: Meta<ResourceArchiveComponent> = {
-  title: 'Devs / Resource Editor / Resource / Archive',
+  title: 'Visual / Resource Editor / Resource / Archive',
   component: ResourceArchiveComponent,
   decorators: [
     applicationConfig({
       providers: [
         provideRouter([{ path: '**', redirectTo: '' }]),
-        { provide: AppConfigService, useValue: { dspApiConfig: { apiUrl: '' }, dspAppConfig: { iriBase: 'http://rdfh.ch' } } },
-        { provide: ProjectApiService, useValue: { get: () => of({ project: { id: '', shortcode: '0001', shortname: 'test', longname: 'Test' } }) } },
+        {
+          provide: AppConfigService,
+          useValue: { dspApiConfig: { apiUrl: '' }, dspAppConfig: { iriBase: 'http://rdfh.ch' } },
+        },
+        {
+          provide: ProjectApiService,
+          useValue: { get: () => of({ project: { id: '', shortcode: '0001', shortname: 'test', longname: 'Test' } }) },
+        },
         {
           provide: ResourceFetcherService,
           useValue: { userCanEdit$: of(false), projectShortcode$: of('0001') },

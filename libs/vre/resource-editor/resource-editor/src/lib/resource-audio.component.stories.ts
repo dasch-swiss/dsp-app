@@ -5,7 +5,7 @@ import { AdminAPIApiService } from '@dasch-swiss/vre/3rd-party-services/open-api
 import { AppConfigService, DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
-import { applicationConfig, moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+import { applicationConfig, type Meta, moduleMetadata, type StoryObj } from '@storybook/angular';
 import { of, Subject } from 'rxjs';
 import { expect } from 'storybook/test';
 
@@ -51,14 +51,20 @@ const segmentsServiceStub: Partial<SegmentsService> = {
 };
 
 const meta: Meta<ResourceAudioComponent> = {
-  title: 'Devs / Resource Editor / Resource / Audio',
+  title: 'Visual / Resource Editor / Resource / Audio',
   component: ResourceAudioComponent,
   decorators: [
     applicationConfig({
       providers: [
         provideRouter([{ path: '**', redirectTo: '' }]),
-        { provide: AppConfigService, useValue: { dspApiConfig: { apiUrl: '' }, dspAppConfig: { iriBase: 'http://rdfh.ch' } } },
-        { provide: ProjectApiService, useValue: { get: () => of({ project: { id: '', shortcode: '0001', shortname: 'test', longname: 'Test' } }) } },
+        {
+          provide: AppConfigService,
+          useValue: { dspApiConfig: { apiUrl: '' }, dspAppConfig: { iriBase: 'http://rdfh.ch' } },
+        },
+        {
+          provide: ProjectApiService,
+          useValue: { get: () => of({ project: { id: '', shortcode: '0001', shortname: 'test', longname: 'Test' } }) },
+        },
         {
           provide: ResourceFetcherService,
           useValue: { userCanEdit$: of(false), projectShortcode$: of('0001') },

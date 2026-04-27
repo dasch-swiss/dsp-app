@@ -29,14 +29,20 @@ const makeResource = (overrides: Record<string, unknown> = {}): DspResource =>
   }) as unknown as DspResource;
 
 const meta: Meta<ResourceAnnotationComponent> = {
-  title: 'Devs / Resource Editor / Resource / Annotation',
+  title: 'Visual / Resource Editor / Resource / Annotation',
   component: ResourceAnnotationComponent,
   decorators: [
     applicationConfig({
       providers: [
         provideRouter([{ path: '**', redirectTo: '' }]),
-        { provide: AppConfigService, useValue: { dspApiConfig: { apiUrl: '' }, dspAppConfig: { iriBase: 'http://rdfh.ch' } } },
-        { provide: ProjectApiService, useValue: { get: () => of({ project: { id: '', shortcode: '0001', shortname: 'test', longname: 'Test' } }) } },
+        {
+          provide: AppConfigService,
+          useValue: { dspApiConfig: { apiUrl: '' }, dspAppConfig: { iriBase: 'http://rdfh.ch' } },
+        },
+        {
+          provide: ProjectApiService,
+          useValue: { get: () => of({ project: { id: '', shortcode: '0001', shortname: 'test', longname: 'Test' } }) },
+        },
         { provide: ResourceFetcherService, useValue: { userCanEdit$: of(false), projectShortcode$: of('0001') } },
         {
           provide: DspApiConnectionToken,

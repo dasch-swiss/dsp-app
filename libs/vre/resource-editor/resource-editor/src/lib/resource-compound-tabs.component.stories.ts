@@ -8,8 +8,8 @@ import { expect, waitFor } from 'storybook/test';
 
 import { CompoundService } from './compound/compound.service';
 import { RegionService } from './representations/region.service';
-import { PropertiesDisplayService } from './resource-properties/properties-display.service';
 import { ResourceCompoundTabsComponent } from './resource-compound-tabs.component';
+import { PropertiesDisplayService } from './resource-properties/properties-display.service';
 
 const makeResource = (): DspResource =>
   ({
@@ -30,8 +30,14 @@ const makeResource = (): DspResource =>
 
 const sharedProviders = [
   provideRouter([{ path: '**', redirectTo: '' }]),
-  { provide: AppConfigService, useValue: { dspApiConfig: { apiUrl: '' }, dspAppConfig: { iriBase: 'http://rdfh.ch' } } },
-  { provide: ProjectApiService, useValue: { get: () => of({ project: { id: '', shortcode: '0001', shortname: 'test', longname: 'Test' } }) } },
+  {
+    provide: AppConfigService,
+    useValue: { dspApiConfig: { apiUrl: '' }, dspAppConfig: { iriBase: 'http://rdfh.ch' } },
+  },
+  {
+    provide: ProjectApiService,
+    useValue: { get: () => of({ project: { id: '', shortcode: '0001', shortname: 'test', longname: 'Test' } }) },
+  },
   { provide: PropertiesDisplayService, useClass: PropertiesDisplayService },
   { provide: CompoundService, useValue: { incomingResource$: of(undefined) } },
   {
@@ -45,7 +51,7 @@ const sharedProviders = [
 ];
 
 const meta: Meta<ResourceCompoundTabsComponent> = {
-  title: 'Devs / Resource Editor / Resource / Compound Tabs',
+  title: 'Visual / Resource Editor / Resource / Compound Tabs',
   component: ResourceCompoundTabsComponent,
   argTypes: {
     resource: {
@@ -63,7 +69,10 @@ export const PropertiesTab: Story = {
     applicationConfig({
       providers: [
         ...sharedProviders,
-        { provide: RegionService, useValue: { regions$: of([]), regionsLoading$: of(false), selectedRegion$: of(null), showRegions: () => {} } },
+        {
+          provide: RegionService,
+          useValue: { regions$: of([]), regionsLoading$: of(false), selectedRegion$: of(null), showRegions: () => {} },
+        },
       ],
     }),
   ],
@@ -85,7 +94,15 @@ export const WithRegions: Story = {
     applicationConfig({
       providers: [
         ...sharedProviders,
-        { provide: RegionService, useValue: { regions$: of([{ id: 'region1' } as any, { id: 'region2' } as any]).pipe(delay(0)), regionsLoading$: of(false), selectedRegion$: of(null), showRegions: () => {} } },
+        {
+          provide: RegionService,
+          useValue: {
+            regions$: of([{ id: 'region1' } as any, { id: 'region2' } as any]).pipe(delay(0)),
+            regionsLoading$: of(false),
+            selectedRegion$: of(null),
+            showRegions: () => {},
+          },
+        },
       ],
     }),
   ],

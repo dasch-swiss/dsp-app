@@ -12,7 +12,7 @@ const makeResource = () =>
   }) as any;
 
 const meta: Meta<SegmentTabComponent> = {
-  title: 'Devs / Resource Editor / Resource / Segment Tab',
+  title: 'Visual / Resource Editor / Resource / Segment Tab',
   component: SegmentTabComponent,
   decorators: [
     applicationConfig({
