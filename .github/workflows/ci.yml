@@ -10,14 +10,104 @@ concurrency:
 
 jobs:
 
+  changes:
+    name: Detect changed paths
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      automation_skip: ${{ steps.detect.outputs.automation_skip }}
+      only_workflows: ${{ steps.detect.outputs.only_workflows }}
+      only_pkg: ${{ steps.detect.outputs.only_pkg }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0   # full history of the pushed ref; needed for merge-base
+      - id: detect
+        # Pass GitHub context via `env:` (NOT inline `${{ ... }}` in the script
+        # body) — inline interpolation is a documented shell-injection vector:
+        # a crafted commit message could break out of the string. Inside bash,
+        # references are normal `$VAR` expansions and are safe.
+        # https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions#using-an-intermediate-environment-variable
+        env:
+          COMMIT_MSG: ${{ github.event.head_commit.message }}
+          COMMIT_AUTHOR: ${{ github.event.head_commit.author.username }}
+          GH_REF: ${{ github.ref }}
+        run: |
+          set -euo pipefail
+
+          # Existing daschbot / release-please skip — consolidated.
+          # COMMIT_MSG / COMMIT_AUTHOR are empty on PR events (not used by ci.yml
+          # today, but defensively preserved). Empty strings don't match either
+          # pattern, so automation_skip=false — same outcome as the prior
+          # null-guard (head_commit == null || !startsWith(...)).
+          if [[ "$COMMIT_MSG" == "chore(main): release"* || "$COMMIT_AUTHOR" == "daschbot" ]]; then
+            echo "automation_skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "automation_skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+          # Tag and direct-main pushes: full pipeline (no path-based skip).
+          if [[ "$GH_REF" == refs/tags/* ]] || [ "$GH_REF" = "refs/heads/main" ]; then
+            echo "only_workflows=false" >> "$GITHUB_OUTPUT"
+            echo "only_pkg=false"       >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # Feature branch push: fetch main and three-dot-diff.
+          # No --depth on the fetch — the merge-base may be far back in main's
+          # history; --depth=1 would silently break for any branch even slightly
+          # behind main. Cost: a few seconds, runs once per CI invocation.
+          if ! git fetch --no-tags origin main 2>/dev/null; then
+            echo "::warning::could not fetch origin/main; running full pipeline"
+            echo "only_workflows=false" >> "$GITHUB_OUTPUT"
+            echo "only_pkg=false"       >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          DIFF=$(git diff --name-only origin/main...HEAD 2>/dev/null || true)
+          if [ -z "$DIFF" ]; then
+            # No diff (rare for push events) — fail-safe.
+            echo "only_workflows=false" >> "$GITHUB_OUTPUT"
+            echo "only_pkg=false"       >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # only_workflows: every changed file is under .github/workflows/
+          if echo "$DIFF" | grep -qv '^\.github/workflows/'; then
+            only_workflows="false"
+          else
+            only_workflows="true"
+          fi
+
+          # Author-based override: only bot-authored workflow-only PRs
+          # benefit from the skip. Human edits to workflow files often
+          # change job logic that needs validating in the same PR — force
+          # the full pipeline so the change is exercised.
+          if [ "$only_workflows" = "true" ]; then
+            case "$COMMIT_AUTHOR" in
+              renovate*|dependabot*) ;;       # bot — keep skip
+              *) only_workflows="false" ;;    # human — force full pipeline
+            esac
+          fi
+
+          echo "only_workflows=$only_workflows" >> "$GITHUB_OUTPUT"
+
+          # only_pkg: every changed file is package.json or package-lock.json
+          if echo "$DIFF" | grep -qvE '^(package\.json|package-lock\.json)$'; then
+            echo "only_pkg=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "only_pkg=true"  >> "$GITHUB_OUTPUT"
+          fi
+
   lint:
     name: DSP-APP Linting
-    runs-on: ubuntu-latest
+    needs: [changes]
     if: |
-      (github.event.head_commit == null ||
-       !startsWith(github.event.head_commit.message, 'chore(main): release')) &&
-      (github.event.head_commit == null ||
-       github.event.head_commit.author.username != 'daschbot')
+      needs.changes.result == 'success' &&
+      needs.changes.outputs.automation_skip == 'false' &&
+      needs.changes.outputs.only_workflows == 'false'
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -39,12 +129,12 @@ jobs:
 
   test:
     name: DSP-APP Unit tests
-    runs-on: ubuntu-latest
+    needs: [changes]
     if: |
-      (github.event.head_commit == null ||
-       !startsWith(github.event.head_commit.message, 'chore(main): release')) &&
-      (github.event.head_commit == null ||
-       github.event.head_commit.author.username != 'daschbot')
+      needs.changes.result == 'success' &&
+      needs.changes.outputs.automation_skip == 'false' &&
+      needs.changes.outputs.only_workflows == 'false'
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -66,6 +156,7 @@ jobs:
         env:
           TZ: Europe/Zurich
       - name: Upload coverage reports to Codecov
+        if: needs.changes.result == 'success' && needs.changes.outputs.only_pkg == 'false'
         uses: codecov/codecov-action@v6
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -76,12 +167,12 @@ jobs:
 
   dsp-app-e2e-tests:
     name: DSP-APP E2E tests (${{ matrix.runner }})
-    runs-on: ubuntu-latest
+    needs: [changes]
     if: |
-      (github.event.head_commit == null ||
-       !startsWith(github.event.head_commit.message, 'chore(main): release')) &&
-      (github.event.head_commit == null ||
-       github.event.head_commit.author.username != 'daschbot')
+      needs.changes.result == 'success' &&
+      needs.changes.outputs.automation_skip == 'false' &&
+      needs.changes.outputs.only_workflows == 'false'
+    runs-on: ubuntu-latest
     strategy:
       # Run all runners to completion even if one fails, so all failures are visible
       fail-fast: false
@@ -152,12 +243,16 @@ jobs:
 
   dsp-app-e2e-tests-status:
     name: DSP-APP E2E tests
-    needs: dsp-app-e2e-tests
+    needs: [changes, dsp-app-e2e-tests]
     if: always()
     runs-on: ubuntu-latest
     steps:
-      - name: Check matrix result
+      - name: Verify CI integrity and aggregate matrix result
         run: |
+          if [ "${{ needs.changes.result }}" != "success" ]; then
+            echo "::error::changes job failed (${{ needs.changes.result }}); refusing to report green"
+            exit 1
+          fi
           result="${{ needs.dsp-app-e2e-tests.result }}"
           if [ "$result" != "success" ] && [ "$result" != "skipped" ]; then
             echo "One or more e2e matrix runners failed (result: $result)"
@@ -166,15 +261,15 @@ jobs:
 
   check-openapi-sync:
     name: Check OpenAPI Spec is Up-to-Date
+    needs: [changes]
     runs-on: ubuntu-latest
     permissions:
       contents: write
       pull-requests: write
     if: |
-      (github.event.head_commit == null ||
-       !startsWith(github.event.head_commit.message, 'chore(main): release')) &&
-      (github.event.head_commit == null ||
-       github.event.head_commit.author.username != 'daschbot')
+      needs.changes.result == 'success' &&
+      needs.changes.outputs.automation_skip == 'false' &&
+      needs.changes.outputs.only_workflows == 'false'
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -246,12 +341,12 @@ jobs:
 
   storybook-tests:
     name: Storybook Interaction Tests
-    runs-on: ubuntu-latest
+    needs: [changes]
     if: |
-      (github.event.head_commit == null ||
-       !startsWith(github.event.head_commit.message, 'chore(main): release')) &&
-      (github.event.head_commit == null ||
-       github.event.head_commit.author.username != 'daschbot')
+      needs.changes.result == 'success' &&
+      needs.changes.outputs.automation_skip == 'false' &&
+      needs.changes.outputs.only_workflows == 'false'
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -280,12 +375,12 @@ jobs:
 
   docs-build-test:
     name: Docs Build Test
-    runs-on: ubuntu-latest
+    needs: [changes]
     if: |
-      (github.event.head_commit == null ||
-       !startsWith(github.event.head_commit.message, 'chore(main): release')) &&
-      (github.event.head_commit == null ||
-       github.event.head_commit.author.username != 'daschbot')
+      needs.changes.result == 'success' &&
+      needs.changes.outputs.automation_skip == 'false' &&
+      needs.changes.outputs.only_workflows == 'false'
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v6
