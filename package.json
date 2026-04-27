@@ -136,7 +136,7 @@
     "ngx-build-plus": "^20.0.0",
     "nx": "21.5.1",
     "nyc": "^18.0.0",
-    "postcss": "^8.5.8",
+    "postcss": "^8.5.11",
     "postcss-import": "~16.1.0",
     "postcss-preset-env": "~11.2.0",
     "postcss-url": "~10.1.3",
