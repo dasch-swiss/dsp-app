@@ -6,7 +6,7 @@ import { PropertiesDisplayService } from '../resource-properties/properties-disp
 import { PropertiesToggleComponent } from './properties-toggle.component';
 
 const meta: Meta<PropertiesToggleComponent> = {
-  title: 'Devs / Resource Editor / Properties Display / Properties Toggle',
+  title: 'Devs / Resource Editor / Resource properties / Properties Display / Properties Toggle',
   component: PropertiesToggleComponent,
   decorators: [
     applicationConfig({
