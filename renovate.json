@@ -8,6 +8,7 @@
   ],
   "extends": ["config:recommended"],
   "semanticCommitType": "chore",
+  "commitMessagePrefix": "chore(deps):",
   "timezone": "Europe/Zurich",
   "schedule": ["before 5am on monday through friday"],
   "prConcurrentLimit": 2,
