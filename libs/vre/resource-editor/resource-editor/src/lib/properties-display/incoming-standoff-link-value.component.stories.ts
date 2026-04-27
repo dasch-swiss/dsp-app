@@ -12,7 +12,7 @@ const makeLinks = () => [
 ];
 
 const meta: Meta<IncomingStandoffLinkValueComponent> = {
-  title: 'Devs / Resource Editor / Resource properties / Properties Display / Incoming Standoff Link Value',
+  title: 'Devs / Resource Editor / Properties / Properties Display / Incoming Standoff Link Value',
   component: IncomingStandoffLinkValueComponent,
   decorators: [
     applicationConfig({

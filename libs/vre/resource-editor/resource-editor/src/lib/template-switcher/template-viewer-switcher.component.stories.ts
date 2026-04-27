@@ -97,7 +97,7 @@ class ViewerSwitcherHostComponent {
 }
 
 const meta: Meta<ViewerSwitcherHostComponent> = {
-  title: 'Devs / Resource Editor / Resource Properties / Template Switcher / Viewer Switcher',
+  title: 'Devs / Resource Editor / Properties / Template Switcher / Viewer Switcher',
   component: ViewerSwitcherHostComponent,
   decorators: [applicationConfig({ providers: sharedProviders })],
   argTypes: {

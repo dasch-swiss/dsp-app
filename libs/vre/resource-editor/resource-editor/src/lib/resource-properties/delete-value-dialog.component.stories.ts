@@ -29,7 +29,7 @@ const resourceFetcherServiceStub: Partial<ResourceFetcherService> = {
 };
 
 const meta: Meta<DeleteValueDialogComponent> = {
-  title: 'Devs / Resource Editor / Resource Properties / Delete Value Dialog',
+  title: 'Devs / Resource Editor / Properties / Delete Value Dialog',
   component: DeleteValueDialogComponent,
   decorators: [
     applicationConfig({

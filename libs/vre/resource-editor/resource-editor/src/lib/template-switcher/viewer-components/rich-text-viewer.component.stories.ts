@@ -10,7 +10,7 @@ const footnoteServiceStub: Partial<FootnoteService> = {
 };
 
 const meta: Meta<RichTextViewerComponent> = {
-  title: 'Devs / Resource Editor / Resource Properties / Template Switcher / Rich Text Viewer',
+  title: 'Devs / Resource Editor / Properties / Template Switcher / Rich Text Viewer',
   component: RichTextViewerComponent,
   decorators: [
     applicationConfig({

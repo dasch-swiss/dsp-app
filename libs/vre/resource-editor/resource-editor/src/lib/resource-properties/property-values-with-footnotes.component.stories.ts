@@ -48,7 +48,7 @@ const makeProp = () => ({
 });
 
 const meta: Meta<PropertyValuesWithFootnotesComponent> = {
-  title: 'Devs / Resource Editor / Resource Properties / Property Values With Footnotes',
+  title: 'Devs / Resource Editor / Properties / Property Values With Footnotes',
   component: PropertyValuesWithFootnotesComponent,
   decorators: [
     applicationConfig({

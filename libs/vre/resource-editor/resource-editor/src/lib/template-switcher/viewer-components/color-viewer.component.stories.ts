@@ -4,7 +4,7 @@ import { expect } from 'storybook/test';
 import { ColorViewerComponent } from './color-viewer.component';
 
 const meta: Meta<ColorViewerComponent> = {
-  title: 'Devs / Resource Editor / Resource Properties / Template Switcher / Color Viewer',
+  title: 'Devs / Resource Editor / Properties / Template Switcher / Color Viewer',
   component: ColorViewerComponent,
   argTypes: {
     value: {

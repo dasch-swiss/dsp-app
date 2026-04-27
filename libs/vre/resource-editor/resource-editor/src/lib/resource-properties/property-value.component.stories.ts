@@ -42,7 +42,7 @@ const makePropertyValueServiceStub = (openedIndex: number | null = null): Partia
 });
 
 const meta: Meta<PropertyValueComponent> = {
-  title: 'Devs / Resource Editor / Resource Properties / Property Value',
+  title: 'Devs / Resource Editor / Properties / Property Value',
   component: PropertyValueComponent,
   decorators: [
     applicationConfig({

@@ -10,7 +10,7 @@ const propertiesDisplayServiceStub: Partial<PropertiesDisplayService> = {
 };
 
 const meta: Meta<PropertyRowComponent> = {
-  title: 'Devs / Resource Editor / Resource Properties / Property Row',
+  title: 'Devs / Resource Editor / Properties / Property Row',
   component: PropertyRowComponent,
   decorators: [
     applicationConfig({

@@ -21,7 +21,7 @@ const makeResource = () =>
   }) as any;
 
 const meta: Meta<StandoffLinksPropertyComponent> = {
-  title: 'Devs / Resource Editor / Resource properties / Properties Display / Standoff Links Property',
+  title: 'Devs / Resource Editor / Properties / Properties Display / Standoff Links Property',
   component: StandoffLinksPropertyComponent,
   decorators: [
     applicationConfig({

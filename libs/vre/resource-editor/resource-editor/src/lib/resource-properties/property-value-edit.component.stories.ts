@@ -32,7 +32,7 @@ const makePropertyValueServiceStub = (): Partial<PropertyValueService> => ({
 });
 
 const meta: Meta<PropertyValueEditComponent> = {
-  title: 'Devs / Resource Editor / Resource Properties / Property Value Edit',
+  title: 'Devs / Resource Editor / Properties / Property Value Edit',
   component: PropertyValueEditComponent,
   decorators: [
     applicationConfig({

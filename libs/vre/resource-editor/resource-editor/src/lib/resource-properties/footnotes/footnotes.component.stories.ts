@@ -12,7 +12,7 @@ const makeFootnoteServiceStub = (footnotes: string[] = []): Partial<FootnoteServ
 });
 
 const meta: Meta<FootnotesComponent> = {
-  title: 'Devs / Resource Editor / Resource Properties / Footnotes',
+  title: 'Devs / Resource Editor / Properties / Footnotes',
   component: FootnotesComponent,
   decorators: [
     applicationConfig({
