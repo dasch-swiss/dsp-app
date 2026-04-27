@@ -32,7 +32,7 @@ const makeFormArray = () =>
   ]) as any;
 
 const meta: Meta<PropertyValuesCreatorComponent> = {
-  title: 'Devs / Resource Creator / Property Values Creator',
+  title: 'Devs / Resource Creator / 3. Properties / Property Values Creator',
   component: PropertyValuesCreatorComponent,
   argTypes: {
     myProperty: {

@@ -5,7 +5,7 @@ import { expect } from 'storybook/test';
 import { CreateResourceFormPropertiesComponent } from './create-resource-form-properties.component';
 
 const meta: Meta<CreateResourceFormPropertiesComponent> = {
-  title: 'Devs / Resource Creator / Create Resource Form Properties',
+  title: 'Devs / Resource Creator / 3. Properties / Create Resource Form Properties',
   component: CreateResourceFormPropertiesComponent,
   argTypes: {
     resourceClassIri: {
