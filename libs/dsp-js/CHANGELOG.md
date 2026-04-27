@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.0.1](https://github.com/dasch-swiss/dsp-app/compare/dsp-js-v12.0.0...dsp-js-v12.0.1) (2026-04-27)
+
+
+### Maintenances
+
+* **main:** release dsp-js 12.0.0 ([#2934](https://github.com/dasch-swiss/dsp-app/issues/2934)) ([aee0690](https://github.com/dasch-swiss/dsp-app/commit/aee06902e73e740b094dd324062387db73315615))
+
 ## [12.0.0](https://github.com/dasch-swiss/dsp-app/compare/dsp-js-v11.0.0...dsp-js-v12.0.0) (2026-04-24)
 
 
