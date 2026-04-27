@@ -6,7 +6,7 @@ import { UploadFileService } from '../representations/upload/upload-file.service
 import { UploadComponent } from './upload.component';
 
 const meta: Meta<UploadComponent> = {
-  title: 'Devs / Resource Creator / Upload',
+  title: 'Devs / Resource Creator / 1. File Upload / Upload',
   component: UploadComponent,
   decorators: [
     applicationConfig({
