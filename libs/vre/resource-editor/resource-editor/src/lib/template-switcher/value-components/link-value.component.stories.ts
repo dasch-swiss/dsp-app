@@ -28,7 +28,7 @@ const dspApiConnectionStub = {
 };
 
 const meta: Meta<LinkValueComponent> = {
-  title: 'Devs / Resource Editor / 4. Properties / Template Switcher / Link Value',
+  title: 'Devs / Resource Editor / 4. Properties / Properties Display / Template Switcher / Link Value',
   component: LinkValueComponent,
   decorators: [
     applicationConfig({

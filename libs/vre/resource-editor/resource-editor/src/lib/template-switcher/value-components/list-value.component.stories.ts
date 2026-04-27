@@ -39,7 +39,7 @@ const makePropertyDef = (): ResourcePropertyDefinition =>
   }) as any;
 
 const meta: Meta<ListValueComponent> = {
-  title: 'Devs / Resource Editor / 4. Properties / Template Switcher / List Value',
+  title: 'Devs / Resource Editor / 4. Properties / Properties Display / Template Switcher / List Value',
   component: ListValueComponent,
   decorators: [
     applicationConfig({
