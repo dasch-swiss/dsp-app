@@ -75,10 +75,23 @@ jobs:
 
           # only_workflows: every changed file is under .github/workflows/
           if echo "$DIFF" | grep -qv '^\.github/workflows/'; then
-            echo "only_workflows=false" >> "$GITHUB_OUTPUT"
+            only_workflows="false"
           else
-            echo "only_workflows=true"  >> "$GITHUB_OUTPUT"
+            only_workflows="true"
           fi
+
+          # Author-based override: only bot-authored workflow-only PRs
+          # benefit from the skip. Human edits to workflow files often
+          # change job logic that needs validating in the same PR — force
+          # the full pipeline so the change is exercised.
+          if [ "$only_workflows" = "true" ]; then
+            case "$COMMIT_AUTHOR" in
+              renovate*|dependabot*) ;;       # bot — keep skip
+              *) only_workflows="false" ;;    # human — force full pipeline
+            esac
+          fi
+
+          echo "only_workflows=$only_workflows" >> "$GITHUB_OUTPUT"
 
           # only_pkg: every changed file is package.json or package-lock.json
           if echo "$DIFF" | grep -qvE '^(package\.json|package-lock\.json)$'; then
