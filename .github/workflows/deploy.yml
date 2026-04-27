@@ -73,7 +73,12 @@ jobs:
     # Only send notifications for tag releases
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
     steps:
+      - name: Extract version from tag
+        id: version
+        run: echo "version=${GITHUB_REF_NAME#v}" >> $GITHUB_OUTPUT
       - name: Send notification to google chat room "DSP releases"
-        uses: lakto/google-chat-action@main
+        uses: google-github-actions/send-google-chat-webhook@v0
         with:
-          url: ${{ secrets.GOOGLE_CHAT_DSP_RELEASES_WEBHOOK_URL }}
+          webhook_url: ${{ secrets.GOOGLE_CHAT_DSP_RELEASES_WEBHOOK_URL }}
+          mention: '<users/all>'
+          text: '🚀 *DSP-APP* ${{ steps.version.outputs.version }} released\n\n<https://github.com/${{ github.repository }}/releases/tag/${{ github.ref_name }}|Release Notes> · <https://hub.docker.com/r/daschswiss/dsp-app|Docker Hub>'
