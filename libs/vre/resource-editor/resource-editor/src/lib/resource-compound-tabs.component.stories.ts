@@ -1,7 +1,16 @@
 import { provideRouter } from '@angular/router';
+import {
+  Constants,
+  IHasPropertyWithPropertyDefinition,
+  ReadResource,
+  ReadTextValueAsString,
+  ResourceClassAndPropertyDefinitions,
+  ResourceClassDefinitionWithPropertyDefinition,
+  ResourcePropertyDefinition,
+} from '@dasch-swiss/dsp-js';
 import { ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { AppConfigService, DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
-import { DspResource } from '@dasch-swiss/vre/shared/app-common';
+import { DspResource, generateDspResource } from '@dasch-swiss/vre/shared/app-common';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { delay, of } from 'rxjs';
 import { expect, waitFor } from 'storybook/test';
@@ -11,22 +20,67 @@ import { RegionService } from './representations/region.service';
 import { ResourceCompoundTabsComponent } from './resource-compound-tabs.component';
 import { PropertiesDisplayService } from './resource-properties/properties-display.service';
 
-const makeResource = (): DspResource =>
-  ({
-    res: {
-      id: 'http://rdfh.ch/resource/1',
-      type: 'http://example.org/Thing',
-      label: 'Test Compound Resource',
-      attachedToProject: 'http://rdfh.ch/projects/test',
-      attachedToUser: 'http://rdfh.ch/users/test',
-      userHasPermission: 'CR',
-      properties: {},
-      entityInfo: { classes: { 'http://example.org/Thing': { label: 'Thing' } } },
-      getValues: () => [],
-    },
-    resProps: [],
-    incomingAnnotations: [],
-  }) as unknown as DspResource;
+const makeTextPropDef = (id: string, label: string): ResourcePropertyDefinition => {
+  const def = new ResourcePropertyDefinition();
+  def.id = id;
+  def.label = label;
+  def.objectType = Constants.TextValue;
+  def.subPropertyOf = [];
+  def.isLinkProperty = false;
+  def.isEditable = true;
+  return def;
+};
+
+const makePropEntry = (propDef: ResourcePropertyDefinition, guiOrder: number): IHasPropertyWithPropertyDefinition => ({
+  propertyIndex: propDef.id,
+  cardinality: 1 as any,
+  guiOrder,
+  isInherited: false,
+  propertyDefinition: propDef,
+});
+
+const makeTextValue = (id: string, text: string): ReadTextValueAsString => {
+  const v = new ReadTextValueAsString();
+  v.id = id;
+  v.text = text;
+  v.type = Constants.TextValue;
+  v.userHasPermission = 'RV';
+  return v;
+};
+
+const makeEntityInfo = (
+  resourceType: string,
+  propEntries: IHasPropertyWithPropertyDefinition[] = []
+): ResourceClassAndPropertyDefinitions => {
+  const classStub = {
+    getResourcePropertiesList: () => propEntries,
+    propertiesList: propEntries,
+  } as unknown as ResourceClassDefinitionWithPropertyDefinition;
+  return new ResourceClassAndPropertyDefinitions({ [resourceType]: classStub }, {});
+};
+
+const makeResource = (): DspResource => {
+  const titlePropId = 'http://0.0.0.0:3333/ontology/0001/example/v2#hasTitle';
+  const descriptionPropId = 'http://0.0.0.0:3333/ontology/0001/example/v2#hasDescription';
+  const titleDef = makeTextPropDef(titlePropId, 'Title');
+  const descriptionDef = makeTextPropDef(descriptionPropId, 'Description');
+  const propEntries = [makePropEntry(titleDef, 0), makePropEntry(descriptionDef, 1)];
+
+  const res = new ReadResource();
+  res.id = 'http://rdfh.ch/resource/1';
+  res.type = 'http://api.dasch.swiss/ontology/knora-api/v2#StillImageRepresentation';
+  res.label = 'My Storybook Compound';
+  res.attachedToProject = 'http://rdfh.ch/projects/0001';
+  res.attachedToUser = 'http://rdfh.ch/users/test';
+  res.userHasPermission = 'CR';
+  res.creationDate = '2024-03-15T10:30:00Z';
+  res.properties = {
+    [titlePropId]: [makeTextValue('http://rdfh.ch/value/title-1', 'My Storybook Compound')],
+    [descriptionPropId]: [makeTextValue('http://rdfh.ch/value/desc-1', 'A sample compound resource for Storybook previews.')],
+  };
+  res.entityInfo = makeEntityInfo(res.type, propEntries);
+  return generateDspResource(res);
+};
 
 const sharedProviders = [
   provideRouter([{ path: '**', redirectTo: '' }]),
