@@ -81,7 +81,7 @@ const resourceFetcherServiceStub: Partial<ResourceFetcherService> = {
 };
 
 const meta: Meta<VideoComponent> = {
-  title: 'Resource Editor / 3. Representation / Video / Video',
+  title: 'Resource Editor / Resource / Video / Video',
   component: VideoComponent,
   decorators: [
     applicationConfig({

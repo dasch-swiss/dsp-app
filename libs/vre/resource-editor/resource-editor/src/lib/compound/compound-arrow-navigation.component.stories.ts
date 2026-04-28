@@ -10,7 +10,7 @@ const makeCompoundServiceStub = (page = 2, totalPages = 5) => ({
 });
 
 const meta: Meta<CompoundArrowNavigationComponent> = {
-  title: 'Resource Editor / 3. Representation / Compound / Compound Arrow Navigation',
+  title: 'Resource Editor / Resource / Compound / Compound Arrow Navigation',
   component: CompoundArrowNavigationComponent,
   decorators: [
     applicationConfig({

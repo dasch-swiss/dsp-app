@@ -71,7 +71,7 @@ const resourceFetcherServiceStub: Partial<ResourceFetcherService> = {
 };
 
 const meta: Meta<AudioComponent> = {
-  title: 'Resource Editor / 3. Representation / Audio / Audio',
+  title: 'Resource Editor / Resource / Audio / Audio',
   component: AudioComponent,
   decorators: [
     story => {

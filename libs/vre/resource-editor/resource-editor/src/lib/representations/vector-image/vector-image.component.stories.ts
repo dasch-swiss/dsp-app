@@ -77,7 +77,7 @@ const sharedProviders = [
 // ---------------------------------------------------------------------------
 
 const meta: Meta<VectorImageComponent> = {
-  title: 'Resource Editor / 3. Representation / Vector Image / Vector Image',
+  title: 'Resource Editor / Resource / Vector Image / Vector Image',
   component: VectorImageComponent,
   decorators: [
     applicationConfig({ providers: sharedProviders }),

@@ -5,7 +5,7 @@ import { CompoundNavigationComponent } from './compound-navigation.component';
 import { CompoundService } from './compound.service';
 
 const meta: Meta<CompoundNavigationComponent> = {
-  title: 'Resource Editor / 3. Representation / Compound / Compound Navigation',
+  title: 'Resource Editor / Resource / Compound / Compound Navigation',
   component: CompoundNavigationComponent,
   decorators: [
     applicationConfig({

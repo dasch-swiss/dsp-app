@@ -44,7 +44,7 @@ const resourceFetcherServiceStub: Partial<ResourceFetcherService> = {
 };
 
 const meta: Meta<AudioToolbarComponent> = {
-  title: 'Resource Editor / 3. Representation / Audio / Audio Toolbar',
+  title: 'Resource Editor / Resource / Audio / Audio Toolbar',
   component: AudioToolbarComponent,
   decorators: [
     applicationConfig({
