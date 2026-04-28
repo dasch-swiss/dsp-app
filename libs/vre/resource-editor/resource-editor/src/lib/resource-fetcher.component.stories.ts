@@ -15,7 +15,6 @@ import {
 import { ProjectApiService, UserApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { AdminAPIApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { AppConfigService, DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
-import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { NEVER, of, throwError } from 'rxjs';
@@ -181,7 +180,7 @@ const sharedProviders = [
 // ---------------------------------------------------------------------------
 
 const meta: Meta<ResourceFetcherComponent> = {
-  title: 'Visual / Resource Editor / Resource Fetcher',
+  title: 'Devs / Resource Editor / Resource Fetcher',
   component: ResourceFetcherComponent,
   argTypes: {
     resourceIri: {

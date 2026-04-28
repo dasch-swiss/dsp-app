@@ -23,7 +23,7 @@ class ResourceFetcherDialogLauncherComponent implements OnInit {
 }
 
 const meta: Meta<ResourceFetcherDialogLauncherComponent> = {
-  title: 'Visual / Resource Editor / Resource / Resource Fetcher Dialog',
+  title: 'Devs / Resource Editor / Resource / Resource Fetcher Dialog',
   component: ResourceFetcherDialogLauncherComponent,
   decorators: [
     applicationConfig({

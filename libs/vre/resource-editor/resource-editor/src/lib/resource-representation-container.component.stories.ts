@@ -4,7 +4,7 @@ import { expect } from 'storybook/test';
 import { ResourceRepresentationContainerComponent } from './resource-representation-container.component';
 
 const meta: Meta<ResourceRepresentationContainerComponent> = {
-  title: 'Visual / Resource Editor / Resource / Resource Representation Container',
+  title: 'Devs / Resource Editor / Resource / Resource Representation Container',
   component: ResourceRepresentationContainerComponent,
   argTypes: {
     height: {

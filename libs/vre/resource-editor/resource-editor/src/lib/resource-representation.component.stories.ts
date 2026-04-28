@@ -10,7 +10,7 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
-import { applicationConfig, moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+import { applicationConfig, type Meta, moduleMetadata, type StoryObj } from '@storybook/angular';
 import { of, Subject } from 'rxjs';
 import { expect } from 'storybook/test';
 
@@ -99,7 +99,7 @@ const segmentsServiceStub: Partial<SegmentsService> = {
 };
 
 const meta: Meta<ResourceRepresentationComponent> = {
-  title: 'Visual / Resource Editor / Resource Representation',
+  title: 'Devs / Resource Editor / Resource Representation',
   component: ResourceRepresentationComponent,
   decorators: [
     applicationConfig({

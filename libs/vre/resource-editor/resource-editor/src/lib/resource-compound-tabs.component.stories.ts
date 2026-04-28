@@ -51,7 +51,7 @@ const sharedProviders = [
 ];
 
 const meta: Meta<ResourceCompoundTabsComponent> = {
-  title: 'Visual / Resource Editor / Resource / Compound Tabs',
+  title: 'Devs / Resource Editor / Resource / Compound Tabs',
   component: ResourceCompoundTabsComponent,
   argTypes: {
     resource: {
