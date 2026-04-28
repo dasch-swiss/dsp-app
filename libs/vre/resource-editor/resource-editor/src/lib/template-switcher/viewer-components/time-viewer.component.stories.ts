@@ -4,7 +4,8 @@ import { expect } from 'storybook/test';
 import { TimeViewerComponent } from './time-viewer.component';
 
 const meta: Meta<TimeViewerComponent> = {
-  title: 'Devs / Resource Editor / 4. Properties / Properties Display / Template Switcher / Time Viewer',
+  title:
+    'Devs / Resource Editor / 4. Properties / Resource Default Tabs / Properties Display / Template Switcher / Time Viewer',
   component: TimeViewerComponent,
   argTypes: {
     value: {

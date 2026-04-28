@@ -42,7 +42,8 @@ class DeleteValueDialogLauncherComponent implements OnInit {
 }
 
 const meta: Meta<DeleteValueDialogLauncherComponent> = {
-  title: 'Devs / Resource Editor / 4. Properties / Properties Display / Property Value / Delete Value Dialog',
+  title:
+    'Devs / Resource Editor / 4. Properties / Resource Default Tabs / Properties Display / Property Value / Delete Value Dialog',
   component: DeleteValueDialogLauncherComponent,
   decorators: [
     applicationConfig({

@@ -6,7 +6,8 @@ import { DateTime } from '../../resource-properties/date-time';
 import { TimeValueComponent } from './time-value.component';
 
 const meta: Meta<TimeValueComponent> = {
-  title: 'Devs / Resource Editor / 4. Properties / Properties Display / Template Switcher / Time Value',
+  title:
+    'Devs / Resource Editor / 4. Properties / Resource Default Tabs / Properties Display / Template Switcher / Time Value',
   component: TimeValueComponent,
   argTypes: {
     control: {

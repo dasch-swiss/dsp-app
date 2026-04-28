@@ -4,7 +4,8 @@ import { expect } from 'storybook/test';
 import { UriViewerComponent } from './uri-viewer.component';
 
 const meta: Meta<UriViewerComponent> = {
-  title: 'Devs / Resource Editor / 4. Properties / Properties Display / Template Switcher / URI Viewer',
+  title:
+    'Devs / Resource Editor / 4. Properties / Resource Default Tabs / Properties Display / Template Switcher / URI Viewer',
   component: UriViewerComponent,
   argTypes: {
     value: {

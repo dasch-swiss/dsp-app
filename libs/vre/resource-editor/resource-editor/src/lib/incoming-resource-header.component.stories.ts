@@ -32,7 +32,7 @@ const makeResource = () =>
   }) as any;
 
 const meta: Meta<IncomingResourceHeaderComponent> = {
-  title: 'Devs / Resource Editor / 4. Properties / Incoming Resource Header',
+  title: 'Devs / Resource Editor / 4. Properties / Resource Default Tabs / Incoming Resource Header',
   component: IncomingResourceHeaderComponent,
   decorators: [
     applicationConfig({

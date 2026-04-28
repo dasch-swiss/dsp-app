@@ -24,7 +24,7 @@ const makeResource = (): DspResource =>
   }) as unknown as DspResource;
 
 const meta: Meta<PropertiesDisplayComponent> = {
-  title: 'Devs / Resource Editor / 4. Properties / Properties Display / Properties Display',
+  title: 'Devs / Resource Editor / 4. Properties / Resource Default Tabs / Properties Display / Properties Display',
   component: PropertiesDisplayComponent,
   decorators: [
     applicationConfig({

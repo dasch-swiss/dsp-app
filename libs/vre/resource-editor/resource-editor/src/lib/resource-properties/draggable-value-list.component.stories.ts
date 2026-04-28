@@ -14,7 +14,8 @@ const makeValues = () =>
   ] as any[];
 
 const meta: Meta<DraggableValueListComponent> = {
-  title: 'Devs / Resource Editor / 4. Properties / Properties Display / Property Value / Draggable Value List',
+  title:
+    'Devs / Resource Editor / 4. Properties / Resource Default Tabs / Properties Display / Property Value / Draggable Value List',
   component: DraggableValueListComponent,
   decorators: [
     applicationConfig({

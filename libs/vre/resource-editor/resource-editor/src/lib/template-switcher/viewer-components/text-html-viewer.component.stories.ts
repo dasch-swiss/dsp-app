@@ -4,7 +4,8 @@ import { expect } from 'storybook/test';
 import { TextHtmlViewerComponent } from './text-html-viewer.component';
 
 const meta: Meta<TextHtmlViewerComponent> = {
-  title: 'Devs / Resource Editor / 4. Properties / Properties Display / Template Switcher / Text HTML Viewer',
+  title:
+    'Devs / Resource Editor / 4. Properties / Resource Default Tabs / Properties Display / Template Switcher / Text HTML Viewer',
   component: TextHtmlViewerComponent,
   argTypes: {
     value: {

@@ -4,7 +4,8 @@ import { expect } from 'storybook/test';
 import { IncomingResourcePagerComponent } from './incoming-resource-pager.component';
 
 const meta: Meta<IncomingResourcePagerComponent> = {
-  title: 'Devs / Resource Editor / 4. Properties / Properties Display /Incoming, standoff / Incoming Resource Pager',
+  title:
+    'Devs / Resource Editor / 4. Properties / Resource Default Tabs / Properties Display /Incoming, standoff / Incoming Resource Pager',
   component: IncomingResourcePagerComponent,
   argTypes: {
     pageIndex: {

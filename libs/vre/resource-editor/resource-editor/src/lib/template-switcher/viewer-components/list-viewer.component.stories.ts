@@ -41,7 +41,8 @@ const makeValue = (): ReadListValue => ({ listNode: 'http://rdfh.ch/lists/0001/i
 const makePropertyDef = (): ResourcePropertyDefinition => ({ id: 'http://example.org/listProp' }) as any;
 
 const meta: Meta<ListViewerComponent> = {
-  title: 'Devs / Resource Editor / 4. Properties / Properties Display / Template Switcher / List Viewer',
+  title:
+    'Devs / Resource Editor / 4. Properties / Resource Default Tabs / Properties Display / Template Switcher / List Viewer',
   component: ListViewerComponent,
   decorators: [
     applicationConfig({
