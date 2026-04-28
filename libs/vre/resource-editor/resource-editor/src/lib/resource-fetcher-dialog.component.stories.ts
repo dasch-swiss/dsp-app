@@ -57,9 +57,11 @@ const makeTextValue = (id: string, text: string): ReadTextValueAsString => {
 
 const makeEntityInfo = (
   resourceType: string,
-  propEntries: IHasPropertyWithPropertyDefinition[] = []
+  propEntries: IHasPropertyWithPropertyDefinition[] = [],
+  classLabel = 'Thing'
 ): ResourceClassAndPropertyDefinitions => {
   const classStub = {
+    label: classLabel,
     getResourcePropertiesList: () => propEntries,
     propertiesList: propEntries,
   } as unknown as ResourceClassDefinitionWithPropertyDefinition;
@@ -71,6 +73,7 @@ const makeVideoReadResource = (): ReadResource => {
   res.id = 'http://rdfh.ch/resource/1';
   res.attachedToProject = 'http://rdfh.ch/project/1';
   res.attachedToUser = 'http://rdfh.ch/user/1';
+  res.label = 'My Storybook Video';
   res.userHasPermission = 'RV';
   res.creationDate = '2024-03-15T10:30:00Z';
   res.type = 'http://api.dasch.swiss/ontology/knora-api/v2#MovingImageRepresentation';
@@ -95,7 +98,7 @@ const makeVideoReadResource = (): ReadResource => {
       makeTextValue('http://rdfh.ch/value/desc-1', 'A sample video resource for Storybook previews.'),
     ],
   };
-  res.entityInfo = makeEntityInfo(res.type, propEntries);
+  res.entityInfo = makeEntityInfo(res.type, propEntries, 'Moving Image');
   return res;
 };
 

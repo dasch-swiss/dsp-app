@@ -48,9 +48,11 @@ const makeTextValue = (id: string, text: string): ReadTextValueAsString => {
 
 const makeEntityInfo = (
   resourceType: string,
-  propEntries: IHasPropertyWithPropertyDefinition[] = []
+  propEntries: IHasPropertyWithPropertyDefinition[] = [],
+  classLabel = 'Thing'
 ): ResourceClassAndPropertyDefinitions => {
   const classStub = {
+    label: classLabel,
     getResourcePropertiesList: () => propEntries,
     propertiesList: propEntries,
   } as unknown as ResourceClassDefinitionWithPropertyDefinition;
@@ -77,7 +79,7 @@ const makeResource = (permission = 'CR'): DspResource => {
     [titlePropId]: [makeTextValue('http://rdfh.ch/value/title-1', 'My Storybook Annotation')],
     [descriptionPropId]: [makeTextValue('http://rdfh.ch/value/desc-1', 'A sample annotation for Storybook previews.')],
   };
-  res.entityInfo = makeEntityInfo(res.type, propEntries);
+  res.entityInfo = makeEntityInfo(res.type, propEntries, 'Region');
   return generateDspResource(res);
 };
 
