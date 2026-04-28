@@ -3,20 +3,24 @@ import {
   Constants,
   IHasPropertyWithPropertyDefinition,
   ReadResource,
+  ReadResourceSequence,
+  ReadStillImageFileValue,
   ReadTextValueAsString,
   ResourceClassAndPropertyDefinitions,
   ResourceClassDefinitionWithPropertyDefinition,
   ResourcePropertyDefinition,
 } from '@dasch-swiss/dsp-js';
 import { ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
+import { AdminAPIApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { AppConfigService, DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { DspResource, generateDspResource } from '@dasch-swiss/vre/shared/app-common';
+import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
 import { expect } from 'storybook/test';
 
-import { CompoundService } from './compound/compound.service';
 import { RegionService } from './representations/region.service';
+import { RepresentationService } from './representations/representation.service';
 import { ResourceFetcherService } from './representations/resource-fetcher.service';
 import { ResourceCompoundComponent } from './resource-compound.component';
 
@@ -61,6 +65,39 @@ const makeEntityInfo = (
   return new ResourceClassAndPropertyDefinitions({ [resourceType]: classStub }, {});
 };
 
+const makeStillImageFileValue = (): ReadStillImageFileValue =>
+  ({
+    type: Constants.StillImageFileValue,
+    fileUrl: 'https://iiif.dasch.swiss/0803/0tZ4P3NQCnP-D7jmYEVBSRw.jpx/full/,200/0/default.jpg',
+    filename: 'image.jpx',
+    userHasPermission: 'RV',
+    copyrightHolder: null,
+    authorship: [],
+    license: null,
+    iiifBaseUrl: 'https://iiif.dasch.swiss/0803/0tZ4P3NQCnP-D7jmYEVBSRw.jpx',
+  }) as unknown as ReadStillImageFileValue;
+
+const makeIncomingImageResource = (): ReadResource => {
+  const titlePropId = 'http://0.0.0.0:3333/ontology/0803/example/v2#hasTitle';
+  const titleDef = makeTextPropDef(titlePropId, 'Title');
+  const propEntries = [makePropEntry(titleDef, 0)];
+
+  const res = new ReadResource();
+  res.id = 'http://rdfh.ch/resource/incoming-1';
+  res.type = 'http://api.dasch.swiss/ontology/knora-api/v2#StillImageRepresentation';
+  res.label = 'Compound Page 1';
+  res.attachedToProject = 'http://rdfh.ch/projects/0803';
+  res.attachedToUser = 'http://rdfh.ch/users/test';
+  res.userHasPermission = 'CR';
+  res.creationDate = '2024-03-15T10:30:00Z';
+  res.properties = {
+    [Constants.HasStillImageFileValue]: [makeStillImageFileValue()],
+    [titlePropId]: [makeTextValue('http://rdfh.ch/value/title-1', 'Compound Page 1')],
+  };
+  res.entityInfo = makeEntityInfo(res.type, propEntries, 'Still Image Representation');
+  return res;
+};
+
 const makeResource = (permission = 'CR'): DspResource => {
   const titlePropId = 'http://0.0.0.0:3333/ontology/0001/example/v2#hasTitle';
   const descriptionPropId = 'http://0.0.0.0:3333/ontology/0001/example/v2#hasDescription';
@@ -84,6 +121,9 @@ const makeResource = (permission = 'CR'): DspResource => {
   return generateDspResource(res);
 };
 
+const incomingImage = makeIncomingImageResource();
+const incomingSequence = { resources: [incomingImage], mayHaveMoreResults: false } as unknown as ReadResourceSequence;
+
 const meta: Meta<ResourceCompoundComponent> = {
   title: 'Resource Editor / Resource / Compound / Compound',
   component: ResourceCompoundComponent,
@@ -97,17 +137,7 @@ const meta: Meta<ResourceCompoundComponent> = {
         },
         {
           provide: ProjectApiService,
-          useValue: { get: () => of({ project: { id: '', shortcode: '0001', shortname: 'test', longname: 'Test' } }) },
-        },
-        {
-          provide: CompoundService,
-          useValue: {
-            incomingResource$: of(undefined),
-            reset: () => {},
-            onInit: () => {},
-            currentPosition$: of(null),
-            compoundNavigation$: of(null),
-          },
+          useValue: { get: () => of({ project: { id: '', shortcode: '0803', shortname: 'example', longname: 'My Storybook Project' } }) },
         },
         {
           provide: RegionService,
@@ -122,15 +152,25 @@ const meta: Meta<ResourceCompoundComponent> = {
             updateRegions$: () => of([]),
           },
         },
+        { provide: ResourceFetcherService, useValue: { userCanEdit$: of(false), projectShortcode$: of('0803') } },
         {
-          provide: ResourceFetcherService,
-          useValue: { userCanEdit$: of(false), projectShortcode$: of('0001') },
+          provide: RepresentationService,
+          useValue: { getFileInfo: () => of({ originalFilename: 'image.jpx' }), downloadProjectFile: () => {} },
+        },
+        { provide: NotificationService, useValue: { openSnackBar: () => {} } },
+        {
+          provide: AdminAPIApiService,
+          useValue: { getAdminProjectsShortcodeProjectshortcodeLegalInfoLicenses: () => of({ data: [] }) },
         },
         {
           provide: DspApiConnectionToken,
           useValue: {
             v2: {
-              search: { doSearchIncomingLinks: () => of({ resources: [], mayHaveMoreResults: false }) },
+              res: { getResource: () => of(incomingImage) },
+              search: {
+                doSearchStillImageRepresentations: () => of(incomingSequence),
+                doSearchIncomingLinks: () => of({ resources: [], mayHaveMoreResults: false }),
+              },
             },
           },
         },
