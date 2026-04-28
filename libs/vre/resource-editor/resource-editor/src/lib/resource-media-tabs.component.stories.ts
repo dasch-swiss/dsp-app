@@ -1,8 +1,9 @@
 import { Constants, ReadIntervalValue, ReadTextValueAsString } from '@dasch-swiss/dsp-js';
 import { ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
-import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
-import { DspResource } from '@dasch-swiss/vre/shared/app-common';
+import { AppConfigService, DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
+import { DspResource, ResourceService } from '@dasch-swiss/vre/shared/app-common';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
+import { provideRouter } from '@angular/router';
 import { of, Subject } from 'rxjs';
 import { expect } from 'storybook/test';
 
@@ -73,6 +74,15 @@ const makeSegment = (index: number, label: string, start: number, end: number): 
 });
 
 const sharedProviders = [
+  provideRouter([{ path: '**', redirectTo: '' }]),
+  {
+    provide: AppConfigService,
+    useValue: { dspApiConfig: { apiUrl: '' }, dspAppConfig: { iriBase: 'http://rdfh.ch' } },
+  },
+  {
+    provide: ResourceService,
+    useValue: { getResourcePath: (iri: string) => iri, getResourceIri: (sc: string, uuid: string) => `http://rdfh.ch/${sc}/${uuid}` },
+  },
   {
     provide: DspApiConnectionToken,
     useValue: {
