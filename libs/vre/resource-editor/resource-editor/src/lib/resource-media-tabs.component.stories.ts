@@ -1,4 +1,4 @@
-import { Constants, ReadIntervalValue, ReadResource, ReadTextValueAsString } from '@dasch-swiss/dsp-js';
+import { Constants, ReadIntervalValue, ReadTextValueAsString } from '@dasch-swiss/dsp-js';
 import { ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
@@ -7,16 +7,26 @@ import { of, Subject } from 'rxjs';
 import { expect } from 'storybook/test';
 
 import { ResourceFetcherService } from './representations/resource-fetcher.service';
+import { ResourceMediaTabsComponent } from './resource-media-tabs.component';
+import { PropertiesDisplayService } from './resource-properties/properties-display.service';
 import { Segment } from './segment-support/segment';
 import { SegmentsService } from './segment-support/segments.service';
-import { SegmentTabComponent } from './segment-tab.component';
 
-const makeParentResource = (): ReadResource =>
+const makeResource = (): DspResource =>
   ({
-    id: 'http://rdfh.ch/resource/1',
-    type: 'http://example.org/Thing',
-    label: 'Test Resource',
-  }) as any;
+    res: {
+      id: 'http://rdfh.ch/resource/1',
+      type: 'http://example.org/Thing',
+      label: 'Test Resource',
+      attachedToProject: 'http://rdfh.ch/projects/test',
+      attachedToUser: 'http://rdfh.ch/users/test',
+      userHasPermission: 'CR',
+      properties: {},
+      entityInfo: { classes: {} },
+    },
+    resProps: [],
+    incomingAnnotations: [],
+  }) as unknown as DspResource;
 
 const makeSegmentResource = (index: number): DspResource =>
   ({
@@ -90,52 +100,57 @@ const sharedProviders = [
     provide: ResourceFetcherService,
     useValue: { attachedUser$: of({ givenName: 'Jane', familyName: 'Doe' }) },
   },
+  {
+    provide: PropertiesDisplayService,
+    useValue: {
+      showAllProperties$: of(false),
+      showComments$: of(false),
+      toggleShowProperties: () => {},
+      toggleShowComments: () => {},
+    },
+  },
 ];
 
-const meta: Meta<SegmentTabComponent> = {
-  title: 'Resource Editor / 4. Properties / Resource Media Tabs / Segment Tab',
-  component: SegmentTabComponent,
+const meta: Meta<ResourceMediaTabsComponent> = {
+  title: 'Resource Editor / 4. Properties / Resource Media Tabs / Resource Media Tabs',
+  component: ResourceMediaTabsComponent,
   argTypes: {
     resource: {
-      description: 'The parent resource whose segments are listed.',
-      table: { type: { summary: 'ReadResource' }, category: 'State' },
+      description: 'The DSP resource to display inside the tabs.',
+      table: { type: { summary: 'DspResource' }, category: 'State' },
     },
   },
 };
 export default meta;
-type Story = StoryObj<SegmentTabComponent>;
+type Story = StoryObj<ResourceMediaTabsComponent>;
 
-export const NoSegments: Story = {
-  name: 'Shows empty segment tab when resource has no segments',
+export const PropertiesOnly: Story = {
+  name: 'Shows only properties tab when resource has no segments',
   decorators: [
     applicationConfig({
       providers: [
         ...sharedProviders,
         {
           provide: SegmentsService,
-          useValue: {
-            segments: [],
-            highlightSegment$: new Subject(),
-          },
+          useValue: { segments: [], highlightSegment$: new Subject() },
         },
       ],
     }),
   ],
-  args: { resource: makeParentResource() },
+  args: { resource: makeResource() },
   play: async ({ canvasElement, step }) => {
-    await step('Accordion container is rendered', async () => {
-      const accordion = canvasElement.querySelector('mat-accordion');
-      await expect(accordion).not.toBeNull();
+    await step('Properties tab is rendered', async () => {
+      const tabs = canvasElement.querySelectorAll('.mat-mdc-tab');
+      await expect(tabs.length).toBe(1);
     });
-    await step('No segment panels are rendered', async () => {
-      const panels = canvasElement.querySelectorAll('[data-cy="segment-border"]');
-      await expect(panels.length).toBe(0);
+    await step('Properties display is rendered', async () => {
+      await expect(canvasElement.querySelector('app-properties-display')).not.toBeNull();
     });
   },
 };
 
 export const WithSegments: Story = {
-  name: 'Shows segment panels when resource has segments',
+  name: 'Shows annotations tab with badge when resource has segments',
   decorators: [
     applicationConfig({
       providers: [
@@ -155,15 +170,15 @@ export const WithSegments: Story = {
       ],
     }),
   ],
-  args: { resource: makeParentResource() },
+  args: { resource: makeResource() },
   play: async ({ canvasElement, step }) => {
-    await step('Three segment panels are rendered', async () => {
-      const panels = canvasElement.querySelectorAll('[data-cy="segment-border"]');
-      await expect(panels.length).toBe(3);
+    await step('Both properties and annotations tabs are rendered', async () => {
+      const tabs = canvasElement.querySelectorAll('.mat-mdc-tab');
+      await expect(tabs.length).toBe(2);
     });
-    await step('First segment label is displayed', async () => {
-      const labels = canvasElement.querySelectorAll('.label');
-      await expect(labels[0].textContent?.trim()).toBe('Introduction');
+    await step('Annotations tab badge shows segment count', async () => {
+      const badge = canvasElement.querySelector('.mat-badge-content');
+      await expect(badge?.textContent?.trim()).toBe('3');
     });
   },
 };

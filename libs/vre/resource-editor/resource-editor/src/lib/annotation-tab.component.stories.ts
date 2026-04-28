@@ -17,7 +17,7 @@ const makeResource = () =>
   }) as any;
 
 const meta: Meta<AnnotationTabComponent> = {
-  title: 'Resource Editor / Resource / Annotation Tab',
+  title: 'Resource Editor / Resource / Annotation / Annotation Tab',
   component: AnnotationTabComponent,
   decorators: [
     applicationConfig({
