@@ -23,7 +23,7 @@ class AddRegionFormDialogLauncherComponent implements OnInit {
 }
 
 const meta: Meta<AddRegionFormDialogLauncherComponent> = {
-  title: 'Devs / Resource Editor / 3. Representation / Add Region Form Dialog',
+  title: 'Devs / Resource Editor / 3. Representation / Still Image / Add Region Form Dialog',
   component: AddRegionFormDialogLauncherComponent,
   decorators: [applicationConfig({ providers: [] })],
   argTypes: {},
