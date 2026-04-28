@@ -3,8 +3,8 @@ import { provideHttpClient } from '@angular/common/http';
 import { Constants, ReadResource, ReadStillImageVectorFileValue } from '@dasch-swiss/dsp-js';
 import { AppConfigService, DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
-import { applicationConfig, moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
-import { of, NEVER } from 'rxjs';
+import { applicationConfig, type Meta, moduleMetadata, type StoryObj } from '@storybook/angular';
+import { NEVER, of } from 'rxjs';
 import { expect } from 'storybook/test';
 import { CompoundService } from '../../compound/compound.service';
 import { RepresentationService } from '../representation.service';
@@ -77,7 +77,7 @@ const sharedProviders = [
 // ---------------------------------------------------------------------------
 
 const meta: Meta<VectorImageComponent> = {
-  title: 'Devs / Resource Editor / 3. Representation / Vector Image',
+  title: 'Devs / Resource Editor / 3. Representation / Vector Image / Vector Image',
   component: VectorImageComponent,
   decorators: [
     applicationConfig({ providers: sharedProviders }),

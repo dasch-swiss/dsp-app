@@ -51,7 +51,7 @@ const osdServiceStub: Partial<OpenSeaDragonService> = {
 };
 
 const meta: Meta<StillImageToolbarComponent> = {
-  title: 'Devs / Resource Editor / 3. Representation / Still Image Toolbar',
+  title: 'Devs / Resource Editor / 3. Representation / Still Image / Still Image Toolbar',
   component: StillImageToolbarComponent,
   decorators: [
     applicationConfig({

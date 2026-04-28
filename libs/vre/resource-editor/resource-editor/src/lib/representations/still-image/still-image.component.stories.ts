@@ -1,8 +1,8 @@
 import { Constants, ReadResource, ReadStillImageExternalFileValue, ReadStillImageFileValue } from '@dasch-swiss/dsp-js';
 import { AppConfigService, DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
-import { applicationConfig, moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
-import { of, NEVER } from 'rxjs';
+import { applicationConfig, type Meta, moduleMetadata, type StoryObj } from '@storybook/angular';
+import { NEVER, of } from 'rxjs';
 import { expect } from 'storybook/test';
 import { CompoundService } from '../../compound/compound.service';
 import { RegionService } from '../region.service';
@@ -142,7 +142,7 @@ const sharedProviders = [
 // ---------------------------------------------------------------------------
 
 const meta: Meta<StillImageComponent> = {
-  title: 'Devs / Resource Editor / 3. Representation / Still Image',
+  title: 'Devs / Resource Editor / 3. Representation / Still Image / Still Image',
   component: StillImageComponent,
   decorators: [
     moduleMetadata({
