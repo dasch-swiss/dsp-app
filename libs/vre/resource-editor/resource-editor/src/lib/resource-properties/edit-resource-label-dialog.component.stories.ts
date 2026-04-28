@@ -1,4 +1,5 @@
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { Component, inject, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
@@ -15,14 +16,24 @@ const makeResource = () =>
     lastModificationDate: '2024-06-15T10:00:00.000Z',
   }) as any;
 
-const meta: Meta<EditResourceLabelDialogComponent> = {
+@Component({
+  selector: 'app-edit-resource-label-dialog-launcher',
+  template: ``,
+})
+class EditResourceLabelDialogLauncherComponent implements OnInit {
+  private _dialog = inject(MatDialog);
+
+  ngOnInit() {
+    this._dialog.open(EditResourceLabelDialogComponent, { data: makeResource() });
+  }
+}
+
+const meta: Meta<EditResourceLabelDialogLauncherComponent> = {
   title: 'Devs / Resource Editor / 2. Header / More Menu / Edit Resource Label Dialog',
-  component: EditResourceLabelDialogComponent,
+  component: EditResourceLabelDialogLauncherComponent,
   decorators: [
     applicationConfig({
       providers: [
-        { provide: MAT_DIALOG_DATA, useValue: makeResource() },
-        { provide: MatDialogRef, useValue: { close: () => {} } },
         {
           provide: DspApiConnectionToken,
           useValue: { v2: { res: { getResource: () => of(makeResource()), updateResourceMetadata: () => of({}) } } },
@@ -33,17 +44,17 @@ const meta: Meta<EditResourceLabelDialogComponent> = {
   ],
 };
 export default meta;
-type Story = StoryObj<EditResourceLabelDialogComponent>;
+type Story = StoryObj<EditResourceLabelDialogLauncherComponent>;
 
 export const DefaultView: Story = {
   name: 'Shows edit label dialog pre-filled with current label',
-  play: async ({ canvasElement, step }) => {
+  play: async ({ step }) => {
     await step('Submit button is rendered', async () => {
-      const button = canvasElement.querySelector('[data-cy="edit-resource-label-submit"]');
+      const button = document.querySelector('[data-cy="edit-resource-label-submit"]');
       await expect(button).not.toBeNull();
     });
     await step('Current label is pre-filled in the input', async () => {
-      const input = canvasElement.querySelector('input') as HTMLInputElement;
+      const input = document.querySelector('input') as HTMLInputElement;
       await expect(input?.value).toBe('My Test Resource');
     });
   },

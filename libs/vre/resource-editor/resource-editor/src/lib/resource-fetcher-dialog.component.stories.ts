@@ -1,4 +1,5 @@
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { Component, inject, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { provideRouter } from '@angular/router';
 import { UserApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { AdminAPIApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
@@ -9,15 +10,25 @@ import { expect } from 'storybook/test';
 
 import { ResourceFetcherDialogComponent } from './resource-fetcher-dialog.component';
 
-const meta: Meta<ResourceFetcherDialogComponent> = {
+@Component({
+  selector: 'app-resource-fetcher-dialog-launcher',
+  template: ``,
+})
+class ResourceFetcherDialogLauncherComponent implements OnInit {
+  private _dialog = inject(MatDialog);
+
+  ngOnInit() {
+    this._dialog.open(ResourceFetcherDialogComponent, { data: { resourceIri: 'http://rdfh.ch/resource/1', index: 0 } });
+  }
+}
+
+const meta: Meta<ResourceFetcherDialogLauncherComponent> = {
   title: 'Visual / Resource Editor / Resource / Resource Fetcher Dialog',
-  component: ResourceFetcherDialogComponent,
+  component: ResourceFetcherDialogLauncherComponent,
   decorators: [
     applicationConfig({
       providers: [
         provideRouter([{ path: '**', redirectTo: '' }]),
-        { provide: MAT_DIALOG_DATA, useValue: { resourceIri: 'http://rdfh.ch/resource/1', index: 0 } },
-        { provide: MatDialogRef, useValue: { close: () => {} } },
         {
           provide: DspApiConnectionToken,
           useValue: {
@@ -40,13 +51,13 @@ const meta: Meta<ResourceFetcherDialogComponent> = {
   ],
 };
 export default meta;
-type Story = StoryObj<ResourceFetcherDialogComponent>;
+type Story = StoryObj<ResourceFetcherDialogLauncherComponent>;
 
 export const DefaultView: Story = {
   name: 'Shows resource fetcher wrapped in closing dialog',
-  play: async ({ canvasElement, step }) => {
+  play: async ({ step }) => {
     await step('Resource dialog container is rendered', async () => {
-      const container = canvasElement.querySelector('[data-cy="resource-dialog"]');
+      const container = document.querySelector('[data-cy="resource-dialog"]');
       await expect(container).not.toBeNull();
     });
   },

@@ -1,4 +1,5 @@
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { Component, inject, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
@@ -19,14 +20,24 @@ const makeDialogData = () => ({
   title: 'Replace Image',
 });
 
-const meta: Meta<ReplaceFileDialogComponent> = {
+@Component({
+  selector: 'app-replace-file-dialog-launcher',
+  template: ``,
+})
+class ReplaceFileDialogLauncherComponent implements OnInit {
+  private _dialog = inject(MatDialog);
+
+  ngOnInit() {
+    this._dialog.open(ReplaceFileDialogComponent, { data: makeDialogData() });
+  }
+}
+
+const meta: Meta<ReplaceFileDialogLauncherComponent> = {
   title: 'Devs / Resource Editor / 3. Representation / Replace File Dialog',
-  component: ReplaceFileDialogComponent,
+  component: ReplaceFileDialogLauncherComponent,
   decorators: [
     applicationConfig({
       providers: [
-        { provide: MAT_DIALOG_DATA, useValue: makeDialogData() },
-        { provide: MatDialogRef, useValue: { close: () => {} } },
         { provide: ResourceFetcherService, useValue: { projectShortcode$: of('test'), reload: () => {} } },
         { provide: DspApiConnectionToken, useValue: { v2: { values: { updateValue: () => of({}) } } } },
         { provide: UploadFileService, useValue: { upload: () => {}, getFileInfo: () => {} } },
@@ -36,13 +47,13 @@ const meta: Meta<ReplaceFileDialogComponent> = {
   ],
 };
 export default meta;
-type Story = StoryObj<ReplaceFileDialogComponent>;
+type Story = StoryObj<ReplaceFileDialogLauncherComponent>;
 
 export const DefaultView: Story = {
   name: 'Shows replace file dialog with upload form',
-  play: async ({ canvasElement, step }) => {
+  play: async ({ step }) => {
     await step('Dialog content is rendered', async () => {
-      const content = canvasElement.querySelector('mat-dialog-content');
+      const content = document.querySelector('mat-dialog-content');
       await expect(content).not.toBeNull();
     });
   },

@@ -1,4 +1,5 @@
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { Component, inject, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
@@ -15,14 +16,24 @@ const makeResource = () =>
     lastModificationDate: '2024-06-15T10:00:00.000Z',
   }) as any;
 
-const meta: Meta<EraseResourceDialogComponent> = {
+@Component({
+  selector: 'app-erase-resource-dialog-launcher',
+  template: ``,
+})
+class EraseResourceDialogLauncherComponent implements OnInit {
+  private _dialog = inject(MatDialog);
+
+  ngOnInit() {
+    this._dialog.open(EraseResourceDialogComponent, { data: makeResource() });
+  }
+}
+
+const meta: Meta<EraseResourceDialogLauncherComponent> = {
   title: 'Devs / Resource Editor / 2. Header / More Menu / Erase Resource Dialog',
-  component: EraseResourceDialogComponent,
+  component: EraseResourceDialogLauncherComponent,
   decorators: [
     applicationConfig({
       providers: [
-        { provide: MAT_DIALOG_DATA, useValue: makeResource() },
-        { provide: MatDialogRef, useValue: { close: () => {} } },
         { provide: DspApiConnectionToken, useValue: { v2: { res: { eraseResource: () => of({}) } } } },
         { provide: ResourceFetcherService, useValue: { reload: () => {} } },
       ],
@@ -30,17 +41,17 @@ const meta: Meta<EraseResourceDialogComponent> = {
   ],
 };
 export default meta;
-type Story = StoryObj<EraseResourceDialogComponent>;
+type Story = StoryObj<EraseResourceDialogLauncherComponent>;
 
 export const DefaultView: Story = {
   name: 'Shows erase confirmation dialog with required comment',
-  play: async ({ canvasElement, step }) => {
+  play: async ({ step }) => {
     await step('Comment textarea is rendered', async () => {
-      const textarea = canvasElement.querySelector('[data-cy="app-erase-resource-dialog-comment"]');
+      const textarea = document.querySelector('[data-cy="app-erase-resource-dialog-comment"]');
       await expect(textarea).not.toBeNull();
     });
     await step('Confirm erase button is rendered', async () => {
-      const button = canvasElement.querySelector('[data-cy="app-erase-resource-dialog-button"]');
+      const button = document.querySelector('[data-cy="app-erase-resource-dialog-button"]');
       await expect(button).not.toBeNull();
     });
   },
