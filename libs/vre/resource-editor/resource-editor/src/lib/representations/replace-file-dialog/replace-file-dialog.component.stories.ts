@@ -33,7 +33,7 @@ class ReplaceFileDialogLauncherComponent implements OnInit {
 }
 
 const meta: Meta<ReplaceFileDialogLauncherComponent> = {
-  title: 'Devs / Resource Editor / 3. Representation / Replace File Dialog',
+  title: 'Resource Editor / 3. Representation / Replace File Dialog',
   component: ReplaceFileDialogLauncherComponent,
   decorators: [
     applicationConfig({

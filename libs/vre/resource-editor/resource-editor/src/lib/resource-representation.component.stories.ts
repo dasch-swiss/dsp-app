@@ -99,7 +99,7 @@ const segmentsServiceStub: Partial<SegmentsService> = {
 };
 
 const meta: Meta<ResourceRepresentationComponent> = {
-  title: 'Devs / Resource Editor / Resource Representation',
+  title: 'Resource Editor / Resource Representation',
   component: ResourceRepresentationComponent,
   decorators: [
     applicationConfig({

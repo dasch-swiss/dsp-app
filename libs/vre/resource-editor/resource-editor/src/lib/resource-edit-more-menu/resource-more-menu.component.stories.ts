@@ -17,7 +17,7 @@ const makeResource = () =>
   }) as any;
 
 const meta: Meta<ResourceMoreMenuComponent> = {
-  title: 'Devs / Resource Editor / 2. Header / More Menu / Resource More Menu',
+  title: 'Resource Editor / 2. Header / More Menu / Resource More Menu',
   component: ResourceMoreMenuComponent,
   decorators: [
     applicationConfig({

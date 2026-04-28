@@ -4,7 +4,7 @@ import { expect } from 'storybook/test';
 import { LoadingMenuItemComponent } from './loading-menu-item.component';
 
 const meta: Meta<LoadingMenuItemComponent> = {
-  title: 'Devs / Resource Editor / 2. Header / More Menu / Loading Menu Item',
+  title: 'Resource Editor / 2. Header / More Menu / Loading Menu Item',
   component: LoadingMenuItemComponent,
   argTypes: {
     dataCy: {

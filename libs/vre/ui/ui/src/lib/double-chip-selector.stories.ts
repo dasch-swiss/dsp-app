@@ -1,10 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/angular';
-import { expect, within, userEvent } from 'storybook/test';
+import { expect, userEvent, within } from 'storybook/test';
 
 import { DoubleChipSelectorComponent } from './double-chip-selector.component';
 
 const meta: Meta<DoubleChipSelectorComponent> = {
-  title: 'Devs / UI / Double Chip Selector / Toggle',
+  title: 'UI / Double Chip Selector / Toggle',
   component: DoubleChipSelectorComponent,
   argTypes: {
     value: {

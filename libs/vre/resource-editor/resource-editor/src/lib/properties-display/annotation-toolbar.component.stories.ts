@@ -24,7 +24,7 @@ const makeResource = () =>
   }) as any;
 
 const meta: Meta<AnnotationToolbarComponent> = {
-  title: 'Devs / Resource Editor / 4. Properties / Resource Default Tabs / Properties Display / Annotation Toolbar',
+  title: 'Resource Editor / 4. Properties / Resource Default Tabs / Properties Display / Annotation Toolbar',
   component: AnnotationToolbarComponent,
   decorators: [
     applicationConfig({

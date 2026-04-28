@@ -8,7 +8,7 @@ const metaWithValue = new FormControl('some value');
 
 const meta: Meta<NullableEditorComponent> = {
   title:
-    'Devs / Resource Editor / 4. Properties / Resource Default Tabs / Properties Display / Template Switcher / Nullable Editor',
+    'Resource Editor / 4. Properties / Resource Default Tabs / Properties Display / Template Switcher / Nullable Editor',
   component: NullableEditorComponent,
   argTypes: {
     defaultValue: {

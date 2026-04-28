@@ -6,7 +6,7 @@ import { CompoundViewerComponent } from './compound-viewer.component';
 import { CompoundService } from './compound.service';
 
 const meta: Meta<CompoundViewerComponent> = {
-  title: 'Devs / Resource Editor / 3. Representation / Compound / Compound Viewer',
+  title: 'Resource Editor / 3. Representation / Compound / Compound Viewer',
   component: CompoundViewerComponent,
   decorators: [
     applicationConfig({

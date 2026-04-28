@@ -29,7 +29,7 @@ class EraseResourceDialogLauncherComponent implements OnInit {
 }
 
 const meta: Meta<EraseResourceDialogLauncherComponent> = {
-  title: 'Devs / Resource Editor / 2. Header / More Menu / Erase Resource Dialog',
+  title: 'Resource Editor / 2. Header / More Menu / Erase Resource Dialog',
   component: EraseResourceDialogLauncherComponent,
   decorators: [
     applicationConfig({

@@ -5,7 +5,7 @@ import { expect } from 'storybook/test';
 import { ClosingDialogComponent } from './closing-dialog.component';
 
 const meta: Meta<ClosingDialogComponent> = {
-  title: 'Devs / Resource Editor / 2. Header / Closing Dialog',
+  title: 'Resource Editor / 2. Header / Closing Dialog',
   component: ClosingDialogComponent,
   decorators: [
     applicationConfig({

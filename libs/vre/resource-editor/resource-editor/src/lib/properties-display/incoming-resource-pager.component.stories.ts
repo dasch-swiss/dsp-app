@@ -5,7 +5,7 @@ import { IncomingResourcePagerComponent } from './incoming-resource-pager.compon
 
 const meta: Meta<IncomingResourcePagerComponent> = {
   title:
-    'Devs / Resource Editor / 4. Properties / Resource Default Tabs / Properties Display /Incoming, standoff / Incoming Resource Pager',
+    'Resource Editor / 4. Properties / Resource Default Tabs / Properties Display /Incoming, standoff / Incoming Resource Pager',
   component: IncomingResourcePagerComponent,
   argTypes: {
     pageIndex: {

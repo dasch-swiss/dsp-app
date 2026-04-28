@@ -29,7 +29,7 @@ const rootNode = makeNode(
 
 const meta: Meta<NestedMenuComponent> = {
   title:
-    'Devs / Resource Editor / 4. Properties / Resource Default Tabs / Properties Display / Template Switcher / Nested Menu',
+    'Resource Editor / 4. Properties / Resource Default Tabs / Properties Display / Template Switcher / Nested Menu',
   component: NestedMenuComponent,
   argTypes: {
     data: {

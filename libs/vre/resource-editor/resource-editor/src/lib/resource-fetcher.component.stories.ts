@@ -180,7 +180,7 @@ const sharedProviders = [
 // ---------------------------------------------------------------------------
 
 const meta: Meta<ResourceFetcherComponent> = {
-  title: 'Devs / Resource Editor / Resource Fetcher',
+  title: 'Resource Editor / Resource Fetcher',
   component: ResourceFetcherComponent,
   argTypes: {
     resourceIri: {

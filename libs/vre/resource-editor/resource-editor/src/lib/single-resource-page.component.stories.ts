@@ -7,7 +7,7 @@ import { expect } from 'storybook/test';
 import { SingleResourcePageComponent } from './single-resource-page.component';
 
 const meta: Meta<SingleResourcePageComponent> = {
-  title: 'Devs / Resource Editor / Resource / Single Resource Page',
+  title: 'Resource Editor / Resource / Single Resource Page',
   component: SingleResourcePageComponent,
   decorators: [
     applicationConfig({

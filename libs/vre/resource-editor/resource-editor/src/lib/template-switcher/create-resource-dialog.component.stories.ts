@@ -39,7 +39,7 @@ class CreateResourceDialogLauncherComponent implements OnInit {
 
 const meta: Meta<CreateResourceDialogLauncherComponent> = {
   title:
-    'Devs / Resource Editor / 4. Properties / Resource Default Tabs / Properties Display / Template Switcher / Create Resource Dialog',
+    'Resource Editor / 4. Properties / Resource Default Tabs / Properties Display / Template Switcher / Create Resource Dialog',
   component: CreateResourceDialogLauncherComponent,
   decorators: [
     applicationConfig({

@@ -6,7 +6,7 @@ import { IntervalValueComponent } from './interval-value.component';
 
 const meta: Meta<IntervalValueComponent> = {
   title:
-    'Devs / Resource Editor / 4. Properties / Resource Default Tabs / Properties Display / Template Switcher / Interval Value',
+    'Resource Editor / 4. Properties / Resource Default Tabs / Properties Display / Template Switcher / Interval Value',
   component: IntervalValueComponent,
   argTypes: {
     control: {

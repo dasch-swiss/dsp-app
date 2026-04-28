@@ -32,7 +32,7 @@ class CreateSegmentDialogLauncherComponent implements OnInit {
 }
 
 const meta: Meta<CreateSegmentDialogLauncherComponent> = {
-  title: 'Devs / Resource Editor / 3. Representation / Segments / Create Segment Dialog',
+  title: 'Resource Editor / 3. Representation / Segments / Create Segment Dialog',
   component: CreateSegmentDialogLauncherComponent,
   decorators: [
     applicationConfig({

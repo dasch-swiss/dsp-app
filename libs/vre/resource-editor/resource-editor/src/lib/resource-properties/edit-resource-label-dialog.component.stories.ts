@@ -29,7 +29,7 @@ class EditResourceLabelDialogLauncherComponent implements OnInit {
 }
 
 const meta: Meta<EditResourceLabelDialogLauncherComponent> = {
-  title: 'Devs / Resource Editor / 2. Header / More Menu / Edit Resource Label Dialog',
+  title: 'Resource Editor / 2. Header / More Menu / Edit Resource Label Dialog',
   component: EditResourceLabelDialogLauncherComponent,
   decorators: [
     applicationConfig({

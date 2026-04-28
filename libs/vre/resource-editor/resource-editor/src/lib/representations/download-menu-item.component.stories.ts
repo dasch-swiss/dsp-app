@@ -20,7 +20,7 @@ const makeParentResource = () => ({
 });
 
 const meta: Meta<DownloadMenuItemComponent> = {
-  title: 'Devs / Resource Editor / 3. Representation / File Representation / Download Menu Item',
+  title: 'Resource Editor / 3. Representation / File Representation / Download Menu Item',
   component: DownloadMenuItemComponent,
   decorators: [
     applicationConfig({

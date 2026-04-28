@@ -51,7 +51,7 @@ const segmentsServiceStub: Partial<SegmentsService> = {
 };
 
 const meta: Meta<ResourceAudioComponent> = {
-  title: 'Devs / Resource Editor / Resource / Audio',
+  title: 'Resource Editor / Resource / Audio',
   component: ResourceAudioComponent,
   decorators: [
     applicationConfig({

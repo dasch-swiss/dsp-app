@@ -4,8 +4,7 @@ import { expect } from 'storybook/test';
 import { FootnoteTooltipComponent } from './footnote-tooltip.component';
 
 const meta: Meta<FootnoteTooltipComponent> = {
-  title:
-    'Devs / Resource Editor / 4. Properties / Resource Default Tabs / Properties Display / Footnotes / Footnote Tooltip',
+  title: 'Resource Editor / 4. Properties / Resource Default Tabs / Properties Display / Footnotes / Footnote Tooltip',
   component: FootnoteTooltipComponent,
   argTypes: {
     content: {

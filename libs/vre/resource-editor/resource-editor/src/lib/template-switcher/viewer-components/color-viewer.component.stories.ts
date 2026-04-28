@@ -5,7 +5,7 @@ import { ColorViewerComponent } from './color-viewer.component';
 
 const meta: Meta<ColorViewerComponent> = {
   title:
-    'Devs / Resource Editor / 4. Properties / Resource Default Tabs / Properties Display / Template Switcher / Color Viewer',
+    'Resource Editor / 4. Properties / Resource Default Tabs / Properties Display / Template Switcher / Color Viewer',
   component: ColorViewerComponent,
   argTypes: {
     value: {

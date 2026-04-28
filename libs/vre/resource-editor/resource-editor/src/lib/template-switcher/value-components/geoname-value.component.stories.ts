@@ -19,7 +19,7 @@ const geonameServiceStub: Partial<GeonameService> = {
 
 const meta: Meta<GeonameValueComponent> = {
   title:
-    'Devs / Resource Editor / 4. Properties / Resource Default Tabs / Properties Display / Template Switcher / Geoname Value',
+    'Resource Editor / 4. Properties / Resource Default Tabs / Properties Display / Template Switcher / Geoname Value',
   component: GeonameValueComponent,
   decorators: [
     applicationConfig({

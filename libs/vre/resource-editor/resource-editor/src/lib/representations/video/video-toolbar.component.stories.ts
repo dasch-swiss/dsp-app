@@ -63,7 +63,7 @@ const resourceFetcherServiceStub: Partial<ResourceFetcherService> = {
 };
 
 const meta: Meta<VideoToolbarComponent> = {
-  title: 'Devs / Resource Editor / 3. Representation / Video / Video Toolbar',
+  title: 'Resource Editor / 3. Representation / Video / Video Toolbar',
   component: VideoToolbarComponent,
   decorators: [
     applicationConfig({

@@ -5,7 +5,7 @@ import { UriViewerComponent } from './uri-viewer.component';
 
 const meta: Meta<UriViewerComponent> = {
   title:
-    'Devs / Resource Editor / 4. Properties / Resource Default Tabs / Properties Display / Template Switcher / URI Viewer',
+    'Resource Editor / 4. Properties / Resource Default Tabs / Properties Display / Template Switcher / URI Viewer',
   component: UriViewerComponent,
   argTypes: {
     value: {

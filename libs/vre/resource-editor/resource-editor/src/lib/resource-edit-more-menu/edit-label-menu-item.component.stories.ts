@@ -13,7 +13,7 @@ const makeResource = () =>
   }) as any;
 
 const meta: Meta<EditLabelMenuItemComponent> = {
-  title: 'Devs / Resource Editor / 2. Header / More Menu / Edit Label Menu Item',
+  title: 'Resource Editor / 2. Header / More Menu / Edit Label Menu Item',
   component: EditLabelMenuItemComponent,
   decorators: [
     applicationConfig({

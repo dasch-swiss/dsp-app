@@ -29,7 +29,7 @@ class DeleteResourceDialogLauncherComponent implements OnInit {
 }
 
 const meta: Meta<DeleteResourceDialogLauncherComponent> = {
-  title: 'Devs / Resource Editor / 2. Header / More Menu / Delete Resource Dialog',
+  title: 'Resource Editor / 2. Header / More Menu / Delete Resource Dialog',
   component: DeleteResourceDialogLauncherComponent,
   decorators: [
     applicationConfig({

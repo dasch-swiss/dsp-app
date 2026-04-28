@@ -24,7 +24,7 @@ const makeResource = (): DspResource =>
   }) as unknown as DspResource;
 
 const meta: Meta<ResourceDefaultTabsComponent> = {
-  title: 'Devs / Resource Editor / 4. Properties / Resource Default Tabs / Resource Default Tabs',
+  title: 'Resource Editor / 4. Properties / Resource Default Tabs / Resource Default Tabs',
   component: ResourceDefaultTabsComponent,
   decorators: [
     applicationConfig({

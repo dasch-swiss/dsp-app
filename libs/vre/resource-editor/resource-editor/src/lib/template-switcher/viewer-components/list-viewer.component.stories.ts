@@ -42,7 +42,7 @@ const makePropertyDef = (): ResourcePropertyDefinition => ({ id: 'http://example
 
 const meta: Meta<ListViewerComponent> = {
   title:
-    'Devs / Resource Editor / 4. Properties / Resource Default Tabs / Properties Display / Template Switcher / List Viewer',
+    'Resource Editor / 4. Properties / Resource Default Tabs / Properties Display / Template Switcher / List Viewer',
   component: ListViewerComponent,
   decorators: [
     applicationConfig({

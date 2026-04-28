@@ -43,7 +43,7 @@ const makeResource = (overrides: Record<string, unknown> = {}): DspResource => {
 };
 
 const meta: Meta<ResourceArchiveComponent> = {
-  title: 'Devs / Resource Editor / Resource / Archive',
+  title: 'Resource Editor / Resource / Archive',
   component: ResourceArchiveComponent,
   decorators: [
     applicationConfig({

@@ -5,7 +5,7 @@ import { TextHtmlViewerComponent } from './text-html-viewer.component';
 
 const meta: Meta<TextHtmlViewerComponent> = {
   title:
-    'Devs / Resource Editor / 4. Properties / Resource Default Tabs / Properties Display / Template Switcher / Text HTML Viewer',
+    'Resource Editor / 4. Properties / Resource Default Tabs / Properties Display / Template Switcher / Text HTML Viewer',
   component: TextHtmlViewerComponent,
   argTypes: {
     value: {

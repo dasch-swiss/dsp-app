@@ -29,7 +29,7 @@ const makeResource = (overrides: Record<string, unknown> = {}): DspResource =>
   }) as unknown as DspResource;
 
 const meta: Meta<ResourceAnnotationComponent> = {
-  title: 'Devs / Resource Editor / Resource / Annotation',
+  title: 'Resource Editor / Resource / Annotation',
   component: ResourceAnnotationComponent,
   decorators: [
     applicationConfig({
