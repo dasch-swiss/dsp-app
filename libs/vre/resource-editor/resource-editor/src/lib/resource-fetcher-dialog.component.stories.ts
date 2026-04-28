@@ -102,7 +102,10 @@ const makeVideoReadResource = (): ReadResource => {
 const sharedProviders = [
   importProvidersFrom(OverlayModule),
   provideRouter([{ path: '**', redirectTo: '' }]),
-  { provide: AppConfigService, useValue: { dspApiConfig: { apiUrl: '' }, dspAppConfig: { iriBase: 'http://rdfh.ch' } } },
+  {
+    provide: AppConfigService,
+    useValue: { dspApiConfig: { apiUrl: '' }, dspAppConfig: { iriBase: 'http://rdfh.ch' } },
+  },
   {
     provide: ProjectApiService,
     useValue: {
@@ -157,7 +160,7 @@ class ResourceFetcherDialogLauncherComponent implements OnInit {
 }
 
 const meta: Meta<ResourceFetcherDialogLauncherComponent> = {
-  title: 'Resource Editor / Resource / Resource Fetcher Dialog',
+  title: 'Resource Editor / Resource Fetcher Dialog',
   component: ResourceFetcherDialogLauncherComponent,
 };
 export default meta;
