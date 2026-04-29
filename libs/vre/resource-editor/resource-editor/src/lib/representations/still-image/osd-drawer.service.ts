@@ -49,7 +49,7 @@ export class OsdDrawerService implements OnDestroy {
 
     this._osd.viewer.addHandler('canvas-click', (event: OpenSeadragon.CanvasClickEvent) => {
       event.preventDefaultAction = true;
-      const target = event.originalTarget as SVGElement;
+      const target = event.originalTarget as unknown as SVGElement;
       const regionIri = target.getAttribute('data-region-iri');
       if (regionIri === this._currentHighlightedRegion) {
         this._regionService.setHighlightedRegionClicked(regionIri);
