@@ -148,7 +148,7 @@ export class StillImageComponent implements OnChanges, AfterViewInit, OnDestroy 
       this.isPng
     );
     (this.osdService.viewer as any).loadTilesWithAjax = true;
-    this.osdService.viewer.open(tiles as any);
+    this.osdService.viewer.open(tiles);
   }
 
   private async _openExternal3iFImage(image: ReadStillImageExternalFileValue) {

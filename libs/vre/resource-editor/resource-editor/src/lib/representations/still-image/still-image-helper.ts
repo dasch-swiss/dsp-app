@@ -11,6 +11,7 @@ import {
   RegionGeometry,
 } from '@dasch-swiss/dsp-js';
 import { handleXML } from '@dasch-swiss/vre/shared/app-common';
+import OpenSeadragon from 'openseadragon';
 import { Region } from '../region';
 import { GeometryForRegion } from './geometry-for-region';
 import { PolygonsForRegion } from './polygons-for-region.interface';
@@ -64,7 +65,7 @@ export class StillImageHelper {
     images: ReadStillImageFileValue[],
     ajaxHeaders: any,
     pngFormat = false
-  ): object[] {
+  ): OpenSeadragon.TileSourceSpecifier[] {
     let imageXOffset = 0;
     const imageYOffset = 0;
     const tileSources = [];
