@@ -150,8 +150,8 @@ export const DefaultView: Story = {
     await step('Resource header is rendered', async () => {
       await expect(canvasElement.querySelector('app-resource-header')).not.toBeNull();
     });
-    await step('Resource representation is rendered', async () => {
-      await expect(canvasElement.querySelector('app-resource-representation')).not.toBeNull();
+    await step('PDF viewer is rendered', async () => {
+      await expect(canvasElement.querySelector('app-pdf-document')).not.toBeNull();
     });
   },
 };

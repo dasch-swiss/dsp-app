@@ -1,11 +1,12 @@
 import { Component, Input } from '@angular/core';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
+import { PdfDocumentComponent } from './representations/document/pdf-document.component';
 import { getFileValue } from './representations/get-file-value';
 import { ResourceDefaultTabsComponent } from './resource-default-tabs.component';
 import { ResourceHeaderComponent } from './resource-header.component';
 import { ResourceLegalComponent } from './resource-legal.component';
 import { PropertiesDisplayService } from './resource-properties/properties-display.service';
-import { ResourceRepresentationComponent } from './resource-representation.component';
+import { ResourceRepresentationContainerComponent } from './resource-representation-container.component';
 import { ResourceRestrictionComponent } from './resource-restriction.component';
 
 @Component({
@@ -16,7 +17,9 @@ import { ResourceRestrictionComponent } from './resource-restriction.component';
     }
     <app-resource-header [resource]="resource" />
     <app-resource-legal [fileValue]="fileValue" />
-    <app-resource-representation [resource]="resource" />
+    <app-resource-representation-container>
+      <app-pdf-document [src]="fileValue" [parentResource]="resource.res" />
+    </app-resource-representation-container>
     <app-resource-default-tabs [resource]="resource" style="display: block; margin-top: 50px" />
   `,
   providers: [PropertiesDisplayService],
@@ -24,7 +27,8 @@ import { ResourceRestrictionComponent } from './resource-restriction.component';
     ResourceRestrictionComponent,
     ResourceHeaderComponent,
     ResourceLegalComponent,
-    ResourceRepresentationComponent,
+    PdfDocumentComponent,
+    ResourceRepresentationContainerComponent,
     ResourceDefaultTabsComponent,
   ],
 })

@@ -38,6 +38,7 @@ const makeResource = (permission = 'CR'): DspResource =>
       ],
     },
     entityInfo: {
+      classes: { 'http://api.dasch.swiss/ontology/knora-api/v2#StillImageRepresentation': { label: 'Still Image Representation' } },
       getPropertyDefinitionsByType: () => [],
     },
   } as unknown as ReadResource);
@@ -115,8 +116,8 @@ export const DefaultView: Story = {
     await step('Resource header is rendered', async () => {
       await expect(canvasElement.querySelector('app-resource-header')).not.toBeNull();
     });
-    await step('Resource representation is rendered', async () => {
-      await expect(canvasElement.querySelector('app-resource-representation')).not.toBeNull();
+    await step('Still image viewer is rendered', async () => {
+      await expect(canvasElement.querySelector('app-still-image')).not.toBeNull();
     });
   },
 };

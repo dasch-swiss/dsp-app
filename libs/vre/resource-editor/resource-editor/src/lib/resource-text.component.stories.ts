@@ -1,18 +1,9 @@
 import { provideRouter } from '@angular/router';
-import {
-  Constants,
-  IHasPropertyWithPropertyDefinition,
-  ReadResource,
-  ReadTextFileValue,
-  ReadTextValueAsString,
-  ResourceClassAndPropertyDefinitions,
-  ResourceClassDefinitionWithPropertyDefinition,
-  ResourcePropertyDefinition,
-} from '@dasch-swiss/dsp-js';
+import { Constants, ReadResource, ReadTextFileValue } from '@dasch-swiss/dsp-js';
 import { ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { AdminAPIApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { AppConfigService, DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
-import { DspResource, generateDspResource } from '@dasch-swiss/vre/shared/app-common';
+import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
@@ -22,80 +13,28 @@ import { RepresentationService } from './representations/representation.service'
 import { ResourceFetcherService } from './representations/resource-fetcher.service';
 import { ResourceTextComponent } from './resource-text.component';
 
-const makeTextPropDef = (id: string, label: string): ResourcePropertyDefinition => {
-  const def = new ResourcePropertyDefinition();
-  def.id = id;
-  def.label = label;
-  def.objectType = Constants.TextValue;
-  def.subPropertyOf = [];
-  def.isLinkProperty = false;
-  def.isEditable = true;
-  return def;
-};
-
-const makePropEntry = (propDef: ResourcePropertyDefinition, guiOrder: number): IHasPropertyWithPropertyDefinition => ({
-  propertyIndex: propDef.id,
-  cardinality: 1 as any,
-  guiOrder,
-  isInherited: false,
-  propertyDefinition: propDef,
-});
-
-const makeTextValue = (id: string, text: string): ReadTextValueAsString => {
-  const v = new ReadTextValueAsString();
-  v.id = id;
-  v.text = text;
-  v.type = Constants.TextValue;
-  v.userHasPermission = 'RV';
-  return v;
-};
-
-const makeEntityInfo = (
-  resourceType: string,
-  propEntries: IHasPropertyWithPropertyDefinition[] = [],
-  classLabel = 'Thing'
-): ResourceClassAndPropertyDefinitions => {
-  const classStub = {
-    label: classLabel,
-    getResourcePropertiesList: () => propEntries,
-    propertiesList: propEntries,
-  } as unknown as ResourceClassDefinitionWithPropertyDefinition;
-  return new ResourceClassAndPropertyDefinitions({ [resourceType]: classStub }, {});
-};
-
-const makeResource = (permission = 'CR'): DspResource => {
-  const titlePropId = 'http://0.0.0.0:3333/ontology/0001/example/v2#hasTitle';
-  const descriptionPropId = 'http://0.0.0.0:3333/ontology/0001/example/v2#hasDescription';
-  const titleDef = makeTextPropDef(titlePropId, 'Title');
-  const descriptionDef = makeTextPropDef(descriptionPropId, 'Description');
-  const propEntries = [makePropEntry(titleDef, 0), makePropEntry(descriptionDef, 1)];
-
-  const fileValue = {
-    type: Constants.TextFileValue,
-    fileUrl: 'https://example.org/document.txt',
-    filename: 'document.txt',
-    userHasPermission: 'RV',
-    copyrightHolder: null,
-    authorship: [],
-    license: null,
-  } as unknown as ReadTextFileValue;
-
-  const res = new ReadResource();
-  res.id = 'http://rdfh.ch/resource/1';
-  res.type = 'http://api.dasch.swiss/ontology/knora-api/v2#TextRepresentation';
-  res.label = 'My Storybook Text';
-  res.attachedToProject = 'http://rdfh.ch/projects/0001';
-  res.attachedToUser = 'http://rdfh.ch/users/test';
-  res.userHasPermission = permission;
-  res.creationDate = '2024-03-15T10:30:00Z';
-  res.properties = {
-    [Constants.HasTextFileValue]: [fileValue],
-    [titlePropId]: [makeTextValue('http://rdfh.ch/value/title-1', 'My Storybook Text')],
-    [descriptionPropId]: [makeTextValue('http://rdfh.ch/value/desc-1', 'A sample text resource for Storybook previews.')],
-  };
-  res.entityInfo = makeEntityInfo(res.type, propEntries, 'Text Representation');
-  return generateDspResource(res);
-};
+const makeResource = (permission = 'CR'): DspResource =>
+  new DspResource({
+    id: 'http://rdfh.ch/resource/1',
+    type: 'http://api.dasch.swiss/ontology/knora-api/v2#TextRepresentation',
+    label: 'My Storybook Text',
+    attachedToProject: 'http://rdfh.ch/projects/0001',
+    attachedToUser: 'http://rdfh.ch/users/test',
+    userHasPermission: permission,
+    creationDate: '2024-03-15T10:30:00Z',
+    properties: {
+      [Constants.HasTextFileValue]: [
+        {
+          type: Constants.TextFileValue,
+          id: 'http://rdfh.ch/value/text-1',
+          fileUrl: 'https://example.org/document.txt',
+          filename: 'document.txt',
+          userHasPermission: 'RV',
+        } as unknown as ReadTextFileValue,
+      ],
+    },
+    entityInfo: { classes: { 'http://api.dasch.swiss/ontology/knora-api/v2#TextRepresentation': { label: 'Text Representation' } }, getPropertyDefinitionsByType: () => [] },
+  } as unknown as ReadResource);
 
 const meta: Meta<ResourceTextComponent> = {
   title: 'Resource Editor / Resource / Text',
@@ -150,8 +89,8 @@ export const DefaultView: Story = {
     await step('Resource header is rendered', async () => {
       await expect(canvasElement.querySelector('app-resource-header')).not.toBeNull();
     });
-    await step('Resource representation is rendered', async () => {
-      await expect(canvasElement.querySelector('app-resource-representation')).not.toBeNull();
+    await step('Text viewer is rendered', async () => {
+      await expect(canvasElement.querySelector('app-text')).not.toBeNull();
     });
   },
 };
