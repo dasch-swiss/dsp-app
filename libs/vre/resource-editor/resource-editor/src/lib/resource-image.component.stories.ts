@@ -1,11 +1,11 @@
 import { provideRouter } from '@angular/router';
-import { Constants, ReadResource, ReadStillImageFileValue } from '@dasch-swiss/dsp-js';
+import { Constants, ReadColorValue, ReadGeomValue, ReadResource, ReadStillImageFileValue, RegionGeometry } from '@dasch-swiss/dsp-js';
 import { ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { AdminAPIApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { AppConfigService, DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
-import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
+import { applicationConfig, moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
 import { expect } from 'storybook/test';
 
@@ -43,6 +43,59 @@ const makeResource = (permission = 'CR'): DspResource =>
     },
   } as unknown as ReadResource);
 
+const makeGeomValue = (id: string, type: 'rectangle' | 'circle', lineColor: string): ReadGeomValue =>
+  ({
+    id,
+    type: Constants.GeomValue,
+    userHasPermission: 'RV',
+    geometry: new RegionGeometry(
+      'active',
+      lineColor,
+      2,
+      type === 'rectangle' ? [{ x: 0.1, y: 0.1 }, { x: 0.4, y: 0.4 }] : [{ x: 0.6, y: 0.3 }],
+      type,
+      type === 'circle' ? { x: 0.1, y: 0.1 } : undefined
+    ),
+  }) as unknown as ReadGeomValue;
+
+const makeColorValue = (id: string, color: string): ReadColorValue =>
+  ({ id, type: Constants.ColorValue, userHasPermission: 'RV', color }) as unknown as ReadColorValue;
+
+const makeRegion = (id: string, label: string, geomType: 'rectangle' | 'circle', color: string): DspResource => {
+  const res = {
+    id,
+    type: Constants.Region,
+    label,
+    attachedToProject: 'http://rdfh.ch/projects/0803',
+    attachedToUser: 'http://rdfh.ch/users/test',
+    userHasPermission: 'CR',
+    properties: {
+      [Constants.HasGeometry]: [makeGeomValue(`${id}/geom`, geomType, color)],
+      [Constants.HasColor]: [makeColorValue(`${id}/color`, color)],
+    },
+  } as unknown as ReadResource;
+  return new DspResource(res);
+};
+
+const REGIONS = [
+  makeRegion('http://rdfh.ch/region/1', 'Region A', 'rectangle', '#ff3333'),
+  makeRegion('http://rdfh.ch/region/2', 'Region B', 'circle', '#33aaff'),
+];
+
+const regionServiceStub = (regions: DspResource[] = [], showRegions = false) => ({
+  regions$: of(regions),
+  regionsLoading$: of(false),
+  showRegions$: of(showRegions),
+  selectedRegion$: of(null),
+  highlightedRegionClicked$: of(null),
+  initialize: () => {},
+  showRegions: () => {},
+  selectRegion: () => {},
+  setHighlightedRegionClicked: () => {},
+  filterToRegion: () => {},
+  updateRegions: () => {},
+});
+
 const meta: Meta<ResourceImageComponent> = {
   title: 'Resource Editor / Resource / Still Image',
   component: ResourceImageComponent,
@@ -58,22 +111,7 @@ const meta: Meta<ResourceImageComponent> = {
           provide: ProjectApiService,
           useValue: { get: () => of({ project: { id: '', shortcode: '0803', shortname: 'example', longname: 'My Storybook Project' } }) },
         },
-        {
-          provide: RegionService,
-          useValue: {
-            regions$: of([]),
-            regionsLoading$: of(false),
-            showRegions$: of(false),
-            selectedRegion$: of(null),
-            highlightedRegionClicked$: of(null),
-            initialize: () => {},
-            showRegions: () => {},
-            selectRegion: () => {},
-            setHighlightedRegionClicked: () => {},
-            filterToRegion: () => {},
-            updateRegions: () => {},
-          },
-        },
+        { provide: RegionService, useValue: regionServiceStub() },
         { provide: ResourceFetcherService, useValue: { userCanEdit$: of(false), projectShortcode$: of('0803') } },
         {
           provide: RepresentationService,
@@ -116,6 +154,37 @@ export const DefaultView: Story = {
     await step('Resource header is rendered', async () => {
       await expect(canvasElement.querySelector('app-resource-header')).not.toBeNull();
     });
+    await step('Still image viewer is rendered', async () => {
+      await expect(canvasElement.querySelector('app-still-image')).not.toBeNull();
+    });
+  },
+};
+
+export const WithAnnotations: Story = {
+  name: 'Shows regions drawn over the image when annotations are present',
+  args: {
+    resource: makeResource(),
+    annotationIri: 'http://rdfh.ch/region/1',
+  },
+  decorators: [
+    applicationConfig({
+      providers: [
+        {
+          provide: DspApiConnectionToken,
+          useValue: {
+            v2: {
+              search: {
+                doSearchIncomingLinks: () => of({ resources: [], mayHaveMoreResults: false }),
+                doSearchIncomingRegions: () =>
+                  of({ resources: REGIONS.map(r => r.res), mayHaveMoreResults: false }),
+              },
+            },
+          },
+        },
+      ],
+    }),
+  ],
+  play: async ({ canvasElement, step }) => {
     await step('Still image viewer is rendered', async () => {
       await expect(canvasElement.querySelector('app-still-image')).not.toBeNull();
     });
