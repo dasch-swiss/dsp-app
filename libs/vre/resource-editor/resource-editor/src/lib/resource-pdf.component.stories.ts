@@ -72,7 +72,7 @@ const makeResource = (permission = 'CR'): DspResource => {
 
   const fileValue = {
     type: Constants.DocumentFileValue,
-    fileUrl: 'https://example.org/document.pdf',
+    fileUrl: 'https://ingest.stage.dasch.swiss/projects/0810/assets/4ljB8UqvMFX-diQyaSUVIbo/original',
     filename: 'document.pdf',
     userHasPermission: 'RV',
     copyrightHolder: null,
