@@ -1,9 +1,9 @@
 import { provideHttpClient } from '@angular/common/http';
 import { APP_INITIALIZER } from '@angular/core';
 import { provideAnimations } from '@angular/platform-browser/animations';
-import { TranslateService, provideTranslateService } from '@ngx-translate/core';
+import { provideTranslateService, TranslateService } from '@ngx-translate/core';
 import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
-import { applicationConfig, type Preview } from '@storybook/angular';
+import { applicationConfig, componentWrapperDecorator, type Preview } from '@storybook/angular';
 
 function initTranslations(translate: TranslateService) {
   return () => translate.use('en');
@@ -11,6 +11,7 @@ function initTranslations(translate: TranslateService) {
 
 const preview: Preview = {
   decorators: [
+    componentWrapperDecorator(story => `<div style="max-width: 1200px; margin: 0 auto;">${story}</div>`),
     applicationConfig({
       providers: [
         provideAnimations(),
