@@ -115,7 +115,9 @@ const makeResource = (permission = 'CR'): DspResource => {
   res.creationDate = '2024-03-15T10:30:00Z';
   res.properties = {
     [titlePropId]: [makeTextValue('http://rdfh.ch/value/title-1', 'My Storybook Compound')],
-    [descriptionPropId]: [makeTextValue('http://rdfh.ch/value/desc-1', 'A sample compound resource for Storybook previews.')],
+    [descriptionPropId]: [
+      makeTextValue('http://rdfh.ch/value/desc-1', 'A sample compound resource for Storybook previews.'),
+    ],
   };
   res.entityInfo = makeEntityInfo(res.type, propEntries, 'Still Image Representation');
   return generateDspResource(res);
@@ -125,7 +127,7 @@ const incomingImage = makeIncomingImageResource();
 const incomingSequence = { resources: [incomingImage], mayHaveMoreResults: false } as unknown as ReadResourceSequence;
 
 const meta: Meta<ResourceCompoundComponent> = {
-  title: 'Resource Editor / Resource / Compound / Compound',
+  title: 'Resource Editor / Resource / Compound',
   component: ResourceCompoundComponent,
   decorators: [
     applicationConfig({
@@ -137,7 +139,10 @@ const meta: Meta<ResourceCompoundComponent> = {
         },
         {
           provide: ProjectApiService,
-          useValue: { get: () => of({ project: { id: '', shortcode: '0803', shortname: 'example', longname: 'My Storybook Project' } }) },
+          useValue: {
+            get: () =>
+              of({ project: { id: '', shortcode: '0803', shortname: 'example', longname: 'My Storybook Project' } }),
+          },
         },
         {
           provide: RegionService,

@@ -1,18 +1,9 @@
 import { provideRouter } from '@angular/router';
-import {
-  Constants,
-  IHasPropertyWithPropertyDefinition,
-  ReadResource,
-  ReadStillImageFileValue,
-  ReadTextValueAsString,
-  ResourceClassAndPropertyDefinitions,
-  ResourceClassDefinitionWithPropertyDefinition,
-  ResourcePropertyDefinition,
-} from '@dasch-swiss/dsp-js';
+import { Constants, ReadResource, ReadStillImageFileValue } from '@dasch-swiss/dsp-js';
 import { ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { AdminAPIApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { AppConfigService, DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
-import { DspResource, generateDspResource } from '@dasch-swiss/vre/shared/app-common';
+import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
@@ -23,81 +14,33 @@ import { RepresentationService } from './representations/representation.service'
 import { ResourceFetcherService } from './representations/resource-fetcher.service';
 import { ResourceImageComponent } from './resource-image.component';
 
-const makeTextPropDef = (id: string, label: string): ResourcePropertyDefinition => {
-  const def = new ResourcePropertyDefinition();
-  def.id = id;
-  def.label = label;
-  def.objectType = Constants.TextValue;
-  def.subPropertyOf = [];
-  def.isLinkProperty = false;
-  def.isEditable = true;
-  return def;
-};
-
-const makePropEntry = (propDef: ResourcePropertyDefinition, guiOrder: number): IHasPropertyWithPropertyDefinition => ({
-  propertyIndex: propDef.id,
-  cardinality: 1 as any,
-  guiOrder,
-  isInherited: false,
-  propertyDefinition: propDef,
-});
-
-const makeTextValue = (id: string, text: string): ReadTextValueAsString => {
-  const v = new ReadTextValueAsString();
-  v.id = id;
-  v.text = text;
-  v.type = Constants.TextValue;
-  v.userHasPermission = 'RV';
-  return v;
-};
-
-const makeEntityInfo = (
-  resourceType: string,
-  propEntries: IHasPropertyWithPropertyDefinition[] = [],
-  classLabel = 'Thing'
-): ResourceClassAndPropertyDefinitions => {
-  const classStub = {
-    label: classLabel,
-    getResourcePropertiesList: () => propEntries,
-    propertiesList: propEntries,
-  } as unknown as ResourceClassDefinitionWithPropertyDefinition;
-  return new ResourceClassAndPropertyDefinitions({ [resourceType]: classStub }, {});
-};
-
-const makeResource = (permission = 'CR'): DspResource => {
-  const titlePropId = 'http://0.0.0.0:3333/ontology/0803/example/v2#hasTitle';
-  const descriptionPropId = 'http://0.0.0.0:3333/ontology/0803/example/v2#hasDescription';
-  const titleDef = makeTextPropDef(titlePropId, 'Title');
-  const descriptionDef = makeTextPropDef(descriptionPropId, 'Description');
-  const propEntries = [makePropEntry(titleDef, 0), makePropEntry(descriptionDef, 1)];
-
-  const fileValue = {
-    type: Constants.StillImageFileValue,
-    fileUrl: 'https://iiif.dasch.swiss/0803/0tZ4P3NQCnP-D7jmYEVBSRw.jpx/full/,200/0/default.jpg',
-    filename: 'image.jpx',
-    userHasPermission: 'RV',
-    copyrightHolder: null,
-    authorship: [],
-    license: null,
-    iiifBaseUrl: 'https://iiif.dasch.swiss/0803/0tZ4P3NQCnP-D7jmYEVBSRw.jpx',
-  } as unknown as ReadStillImageFileValue;
-
-  const res = new ReadResource();
-  res.id = 'http://rdfh.ch/resource/1';
-  res.type = 'http://api.dasch.swiss/ontology/knora-api/v2#StillImageRepresentation';
-  res.label = 'My Storybook Image';
-  res.attachedToProject = 'http://rdfh.ch/projects/0803';
-  res.attachedToUser = 'http://rdfh.ch/users/test';
-  res.userHasPermission = permission;
-  res.creationDate = '2024-03-15T10:30:00Z';
-  res.properties = {
-    [Constants.HasStillImageFileValue]: [fileValue],
-    [titlePropId]: [makeTextValue('http://rdfh.ch/value/title-1', 'My Storybook Image')],
-    [descriptionPropId]: [makeTextValue('http://rdfh.ch/value/desc-1', 'A sample image resource for Storybook previews.')],
-  };
-  res.entityInfo = makeEntityInfo(res.type, propEntries, 'Still Image Representation');
-  return generateDspResource(res);
-};
+const makeResource = (permission = 'CR'): DspResource =>
+  new DspResource({
+    id: 'http://rdfh.ch/resource/1',
+    type: 'http://api.dasch.swiss/ontology/knora-api/v2#StillImageRepresentation',
+    label: 'My Storybook Image',
+    attachedToProject: 'http://rdfh.ch/projects/0803',
+    attachedToUser: 'http://rdfh.ch/users/test',
+    userHasPermission: permission,
+    creationDate: '2024-03-15T10:30:00Z',
+    properties: {
+      [Constants.HasStillImageFileValue]: [
+        {
+          type: Constants.StillImageFileValue,
+          id: 'http://rdfh.ch/value/image-1',
+          fileUrl: 'https://iiif.dev.dasch.swiss/0803/1awyJYmiA5Z-FQ9xDcEh2Hi.jp2/full/1333,1815/0/default.jpg',
+          iiifBaseUrl: 'https://iiif.dev.dasch.swiss/0803',
+          filename: '1awyJYmiA5Z-FQ9xDcEh2Hi.jp2',
+          dimX: 1333,
+          dimY: 1815,
+          userHasPermission: 'RV',
+        } as unknown as ReadStillImageFileValue,
+      ],
+    },
+    entityInfo: {
+      getPropertyDefinitionsByType: () => [],
+    },
+  } as unknown as ReadResource);
 
 const meta: Meta<ResourceImageComponent> = {
   title: 'Resource Editor / Resource / Still Image',
@@ -119,12 +62,15 @@ const meta: Meta<ResourceImageComponent> = {
           useValue: {
             regions$: of([]),
             regionsLoading$: of(false),
+            showRegions$: of(false),
             selectedRegion$: of(null),
-            showRegions: () => {},
+            highlightedRegionClicked$: of(null),
             initialize: () => {},
+            showRegions: () => {},
             selectRegion: () => {},
+            setHighlightedRegionClicked: () => {},
             filterToRegion: () => {},
-            updateRegions$: () => of([]),
+            updateRegions: () => {},
           },
         },
         { provide: ResourceFetcherService, useValue: { userCanEdit$: of(false), projectShortcode$: of('0803') } },

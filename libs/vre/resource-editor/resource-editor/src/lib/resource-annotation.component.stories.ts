@@ -84,7 +84,7 @@ const makeResource = (permission = 'CR'): DspResource => {
 };
 
 const meta: Meta<ResourceAnnotationComponent> = {
-  title: 'Resource Editor / Resource / Annotation / Annotation',
+  title: 'Resource Editor / Resource / Annotation',
   component: ResourceAnnotationComponent,
   decorators: [
     applicationConfig({
