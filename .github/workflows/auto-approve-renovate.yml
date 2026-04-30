@@ -26,5 +26,12 @@ jobs:
             --jq '.autoMergeRequest != null')
           echo "automerge=$result" >> $GITHUB_OUTPUT
 
-      - uses: hmarr/auto-approve-action@v4
+      - name: Approve PR
         if: steps.check.outputs.automerge == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          gh pr review "${{ github.event.pull_request.number }}" \
+            --repo "${{ github.repository }}" \
+            --approve
