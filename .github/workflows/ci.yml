@@ -22,7 +22,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
         with:
-          fetch-depth: 0   # full history of the pushed ref; needed for merge-base
+          fetch-depth: 2   # shallow; depth-2 covers merge-base for branches off latest main
       - id: detect
         # Pass GitHub context via `env:` (NOT inline `${{ ... }}` in the script
         # body) — inline interpolation is a documented shell-injection vector:
@@ -187,8 +187,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
-        with:
-          fetch-depth: 0 # gets additionally all tags which we need
       - name: Set up Node
         uses: actions/setup-node@v6
         with:
