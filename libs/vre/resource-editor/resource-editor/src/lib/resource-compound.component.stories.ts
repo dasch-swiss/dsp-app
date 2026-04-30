@@ -23,15 +23,15 @@ import { DEFAULT_HAS_PERMISSIONS, dspApiConnectionStub, makeEntityInfo, makeProp
 const makeStillImageFileValue = (): ReadStillImageFileValue =>
   ({
     type: Constants.StillImageFileValue,
-    fileUrl: 'https://iiif.dasch.swiss/0803/0tZ4P3NQCnP-D7jmYEVBSRw.jpx/full/,200/0/default.jpg',
-    filename: 'image.jpx',
+    fileUrl: 'https://iiif.dev.dasch.swiss/0803/1awyJYmiA5Z-FQ9xDcEh2Hi.jp2/full/1333,1815/0/default.jpg',
+    filename: '1awyJYmiA5Z-FQ9xDcEh2Hi.jp2',
     userHasPermission: 'RV',
     copyrightHolder: null,
     authorship: [],
     license: null,
-    iiifBaseUrl: 'https://iiif.dasch.swiss/0803/0tZ4P3NQCnP-D7jmYEVBSRw.jpx',
-    dimX: 800,
-    dimY: 600,
+    iiifBaseUrl: 'https://iiif.dev.dasch.swiss/0803',
+    dimX: 1333,
+    dimY: 1815,
   }) as unknown as ReadStillImageFileValue;
 
 const makeIncomingImageResource = (): ReadResource => {
