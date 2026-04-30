@@ -69,8 +69,8 @@ const meta: Meta<ResourceAnnotationComponent> = {
 export default meta;
 type Story = StoryObj<ResourceAnnotationComponent>;
 
-export const DefaultView: Story = {
-  name: 'Shows annotation resource with header and properties tab',
+export const Editable: Story = {
+  name: 'Shows annotation resource with header and properties tab when user can edit (CR permission)',
   args: { resource: makeResource() },
   play: async ({ canvasElement, step }) => {
     await step('Resource header is rendered', async () => {
@@ -82,8 +82,8 @@ export const DefaultView: Story = {
   },
 };
 
-export const RestrictedView: Story = {
-  name: 'Shows restriction banner when user has only restricted view permission',
+export const ReadOnly: Story = {
+  name: 'Shows restriction banner when user has read-only permission (RV)',
   args: { resource: makeResource('RV') },
   play: async ({ canvasElement, step }) => {
     await step('Restriction banner is rendered', async () => {
