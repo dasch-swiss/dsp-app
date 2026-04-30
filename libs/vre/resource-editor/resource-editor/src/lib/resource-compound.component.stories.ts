@@ -20,41 +20,56 @@ import { ResourceFetcherService } from './representations/resource-fetcher.servi
 import { ResourceCompoundComponent } from './resource-compound.component';
 import { DEFAULT_HAS_PERMISSIONS, dspApiConnectionStub, makeEntityInfo, makePropEntry, makeTextPropDef, makeTextValue, resourceFetcherServiceStub } from './resource-stories.helper';
 
-const makeStillImageFileValue = (): ReadStillImageFileValue =>
-  ({
+const IIIF_BASE = 'https://iiif.wellcomecollection.org/image';
+
+const PAGES: { filename: string; dimX: number; dimY: number }[] = [
+  { filename: 'b20432033_B0008608.JP2', dimX: 3543, dimY: 2480 },
+  { filename: 'b18035723_0001.JP2',     dimX: 2569, dimY: 3543 },
+  { filename: 'b18035723_0002.JP2',     dimX: 2231, dimY: 3040 },
+  { filename: 'b18035723_0003.JP2',     dimX: 2411, dimY: 3372 },
+  { filename: 'b18035723_0004.JP2',     dimX: 2411, dimY: 3372 },
+];
+
+const makeStillImageFileValue = (page: number): ReadStillImageFileValue => {
+  const { filename, dimX, dimY } = PAGES[page];
+  return {
     type: Constants.StillImageFileValue,
-    fileUrl: 'https://iiif.dev.dasch.swiss/0803/1awyJYmiA5Z-FQ9xDcEh2Hi.jp2/full/1333,1815/0/default.jpg',
-    filename: '1awyJYmiA5Z-FQ9xDcEh2Hi.jp2',
+    fileUrl: `${IIIF_BASE}/${filename}/full/200,/0/default.jpg`,
+    filename,
     userHasPermission: 'RV',
     copyrightHolder: null,
     authorship: [],
     license: null,
-    iiifBaseUrl: 'https://iiif.dev.dasch.swiss/0803',
-    dimX: 1333,
-    dimY: 1815,
-  }) as unknown as ReadStillImageFileValue;
+    iiifBaseUrl: IIIF_BASE,
+    dimX,
+    dimY,
+  } as unknown as ReadStillImageFileValue;
+};
 
-const makeIncomingImageResource = (): ReadResource => {
+const makeIncomingImageResource = (index: number): ReadResource => {
   const titlePropId = 'http://0.0.0.0:3333/ontology/0803/example/v2#hasTitle';
   const titleDef = makeTextPropDef(titlePropId, 'Title');
   const propEntries = [makePropEntry(titleDef, 0)];
 
   const res = new ReadResource();
-  res.id = 'http://rdfh.ch/resource/incoming-1';
+  res.id = `http://rdfh.ch/resource/incoming-${index + 1}`;
   res.type = 'http://api.dasch.swiss/ontology/knora-api/v2#StillImageRepresentation';
-  res.label = 'Compound Page 1';
+  res.label = `Compound Page ${index + 1}`;
   res.attachedToProject = 'http://rdfh.ch/projects/0803';
   res.attachedToUser = 'http://rdfh.ch/users/test';
   res.userHasPermission = 'CR';
   res.hasPermissions = DEFAULT_HAS_PERMISSIONS;
   res.creationDate = '2024-03-15T10:30:00Z';
   res.properties = {
-    [Constants.HasStillImageFileValue]: [makeStillImageFileValue()],
-    [titlePropId]: [makeTextValue('http://rdfh.ch/value/title-1', 'Compound Page 1')],
+    [Constants.HasStillImageFileValue]: [makeStillImageFileValue(index)],
+    [titlePropId]: [makeTextValue(`http://rdfh.ch/value/title-${index + 1}`, `Compound Page ${index + 1}`)],
   };
   res.entityInfo = makeEntityInfo(res.type, propEntries, 'Still Image Representation');
   return res;
 };
+
+const incomingResources = PAGES.map((_, i) => makeIncomingImageResource(i));
+const incomingResourceMap = Object.fromEntries(incomingResources.map(r => [r.id, r]));
 
 const makeResource = (permission = 'CR'): DspResource => {
   const titlePropId = 'http://0.0.0.0:3333/ontology/0001/example/v2#hasTitle';
@@ -82,8 +97,7 @@ const makeResource = (permission = 'CR'): DspResource => {
   return generateDspResource(res);
 };
 
-const incomingImage = makeIncomingImageResource();
-const incomingSequence = { resources: [incomingImage], mayHaveMoreResults: false } as unknown as ReadResourceSequence;
+const incomingSequence = { resources: incomingResources, mayHaveMoreResults: false } as unknown as ReadResourceSequence;
 
 const meta: Meta<ResourceCompoundComponent> = {
   title: 'Resource Editor / Resource / Compound',
@@ -130,7 +144,7 @@ const meta: Meta<ResourceCompoundComponent> = {
           provide: DspApiConnectionToken,
           useValue: {
             v2: {
-              res: { getResource: () => of(incomingImage) },
+              res: { getResource: (iri: string) => of(incomingResourceMap[iri] ?? incomingResources[0]) },
               search: {
                 ...dspApiConnectionStub.v2.search,
                 doSearchStillImageRepresentations: () => of(incomingSequence),
