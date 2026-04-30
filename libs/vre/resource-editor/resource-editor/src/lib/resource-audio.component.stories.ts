@@ -12,6 +12,7 @@ import { expect } from 'storybook/test';
 import { RepresentationService } from './representations/representation.service';
 import { ResourceFetcherService } from './representations/resource-fetcher.service';
 import { ResourceAudioComponent } from './resource-audio.component';
+import { DEFAULT_HAS_PERMISSIONS, resourceFetcherServiceStub } from './resource-stories.helper';
 import { SegmentsService } from './segment-support/segments.service';
 
 const makeResource = (permission = 'CR'): DspResource =>
@@ -22,6 +23,7 @@ const makeResource = (permission = 'CR'): DspResource =>
     attachedToProject: 'http://rdfh.ch/projects/0001',
     attachedToUser: 'http://rdfh.ch/users/test',
     userHasPermission: permission,
+    hasPermissions: DEFAULT_HAS_PERMISSIONS,
     creationDate: '2024-03-15T10:30:00Z',
     properties: {
       [Constants.HasAudioFileValue]: [
@@ -59,7 +61,7 @@ const meta: Meta<ResourceAudioComponent> = {
           provide: ProjectApiService,
           useValue: { get: () => of({ project: { id: '', shortcode: '0001', shortname: 'test', longname: 'Test' } }) },
         },
-        { provide: ResourceFetcherService, useValue: { userCanEdit$: of(false), projectShortcode$: of('0001') } },
+        { provide: ResourceFetcherService, useValue: resourceFetcherServiceStub() },
         {
           provide: RepresentationService,
           useValue: { getFileInfo: () => of({ originalFilename: 'audio.mp3' }), downloadProjectFile: () => {} },

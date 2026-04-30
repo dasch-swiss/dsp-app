@@ -12,6 +12,7 @@ import { expect } from 'storybook/test';
 import { RepresentationService } from './representations/representation.service';
 import { ResourceFetcherService } from './representations/resource-fetcher.service';
 import { ResourceVideoComponent } from './resource-video.component';
+import { DEFAULT_HAS_PERMISSIONS, resourceFetcherServiceStub } from './resource-stories.helper';
 import { SegmentsService } from './segment-support/segments.service';
 
 const makeResource = (permission = 'CR'): DspResource =>
@@ -22,6 +23,7 @@ const makeResource = (permission = 'CR'): DspResource =>
     attachedToProject: 'http://rdfh.ch/projects/0869',
     attachedToUser: 'http://rdfh.ch/users/test',
     userHasPermission: permission,
+    hasPermissions: DEFAULT_HAS_PERMISSIONS,
     creationDate: '2024-03-15T10:30:00Z',
     properties: {
       [Constants.HasMovingImageFileValue]: [
@@ -59,7 +61,7 @@ const meta: Meta<ResourceVideoComponent> = {
           provide: ProjectApiService,
           useValue: { get: () => of({ project: { id: '', shortcode: '0869', shortname: 'example', longname: 'My Storybook Project' } }) },
         },
-        { provide: ResourceFetcherService, useValue: { userCanEdit$: of(false), projectShortcode$: of('0869') } },
+        { provide: ResourceFetcherService, useValue: resourceFetcherServiceStub('0869') },
         {
           provide: RepresentationService,
           useValue: { getFileInfo: () => of({ originalFilename: 'video.mp4' }), downloadProjectFile: () => {} },

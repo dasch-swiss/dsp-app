@@ -12,6 +12,7 @@ import { expect } from 'storybook/test';
 import { RepresentationService } from './representations/representation.service';
 import { ResourceFetcherService } from './representations/resource-fetcher.service';
 import { ResourceArchiveComponent } from './resource-archive.component';
+import { DEFAULT_HAS_PERMISSIONS, resourceFetcherServiceStub } from './resource-stories.helper';
 
 const makeResource = (permission = 'CR'): DspResource =>
   new DspResource({
@@ -21,6 +22,7 @@ const makeResource = (permission = 'CR'): DspResource =>
     attachedToProject: 'http://rdfh.ch/projects/0001',
     attachedToUser: 'http://rdfh.ch/users/test',
     userHasPermission: permission,
+    hasPermissions: DEFAULT_HAS_PERMISSIONS,
     creationDate: '2024-03-15T10:30:00Z',
     properties: {
       [Constants.HasArchiveFileValue]: [
@@ -51,7 +53,7 @@ const meta: Meta<ResourceArchiveComponent> = {
           provide: ProjectApiService,
           useValue: { get: () => of({ project: { id: '', shortcode: '0001', shortname: 'test', longname: 'Test' } }) },
         },
-        { provide: ResourceFetcherService, useValue: { userCanEdit$: of(false), projectShortcode$: of('0001') } },
+        { provide: ResourceFetcherService, useValue: resourceFetcherServiceStub() },
         {
           provide: RepresentationService,
           useValue: { getFileInfo: () => of({ originalFilename: 'archive.zip' }), downloadProjectFile: () => {} },

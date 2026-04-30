@@ -17,6 +17,7 @@ import { expect } from 'storybook/test';
 
 import { ResourceFetcherService } from './representations/resource-fetcher.service';
 import { ResourceSegmentComponent } from './resource-segment.component';
+import { DEFAULT_HAS_PERMISSIONS, resourceFetcherServiceStub } from './resource-stories.helper';
 
 const makeTextPropDef = (id: string, label: string): ResourcePropertyDefinition => {
   const def = new ResourcePropertyDefinition();
@@ -73,6 +74,7 @@ const makeResource = (permission = 'CR'): DspResource => {
   res.attachedToProject = 'http://rdfh.ch/projects/0001';
   res.attachedToUser = 'http://rdfh.ch/users/test';
   res.userHasPermission = permission;
+  res.hasPermissions = DEFAULT_HAS_PERMISSIONS;
   res.creationDate = '2024-03-15T10:30:00Z';
   res.properties = {
     [titlePropId]: [makeTextValue('http://rdfh.ch/value/title-1', 'My Storybook Segment')],
@@ -97,7 +99,7 @@ const meta: Meta<ResourceSegmentComponent> = {
           provide: ProjectApiService,
           useValue: { get: () => of({ project: { id: '', shortcode: '0001', shortname: 'test', longname: 'Test' } }) },
         },
-        { provide: ResourceFetcherService, useValue: { userCanEdit$: of(false), projectShortcode$: of('0001') } },
+        { provide: ResourceFetcherService, useValue: resourceFetcherServiceStub() },
         {
           provide: DspApiConnectionToken,
           useValue: {

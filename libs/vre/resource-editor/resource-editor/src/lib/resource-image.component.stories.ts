@@ -13,6 +13,7 @@ import { RegionService } from './representations/region.service';
 import { RepresentationService } from './representations/representation.service';
 import { ResourceFetcherService } from './representations/resource-fetcher.service';
 import { ResourceImageComponent } from './resource-image.component';
+import { DEFAULT_HAS_PERMISSIONS, resourceFetcherServiceStub } from './resource-stories.helper';
 
 const makeResource = (permission = 'CR'): DspResource =>
   new DspResource({
@@ -22,7 +23,7 @@ const makeResource = (permission = 'CR'): DspResource =>
     attachedToProject: 'http://rdfh.ch/projects/0803',
     attachedToUser: 'http://rdfh.ch/users/test',
     userHasPermission: permission,
-    hasPermissions: 'CR knora-base:ProjectAdmin|M knora-base:ProjectMember|V knora-base:KnownUser|RV knora-base:UnknownUser',
+    hasPermissions: DEFAULT_HAS_PERMISSIONS,
     creationDate: '2024-03-15T10:30:00Z',
     properties: {
       [Constants.HasStillImageFileValue]: [
@@ -125,7 +126,7 @@ const meta: Meta<ResourceImageComponent> = {
           useValue: { get: () => of({ project: { id: '', shortcode: '0803', shortname: 'example', longname: 'My Storybook Project' } }) },
         },
         { provide: RegionService, useValue: regionServiceStub() },
-        { provide: ResourceFetcherService, useValue: { resource$: of(undefined), userCanEdit$: of(false), projectShortcode$: of('0803') } },
+        { provide: ResourceFetcherService, useValue: resourceFetcherServiceStub('0803') },
         {
           provide: RepresentationService,
           useValue: { getFileInfo: () => of({ originalFilename: 'image.jpx' }), downloadProjectFile: () => {} },

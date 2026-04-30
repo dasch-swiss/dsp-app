@@ -23,6 +23,7 @@ import { RegionService } from './representations/region.service';
 import { RepresentationService } from './representations/representation.service';
 import { ResourceFetcherService } from './representations/resource-fetcher.service';
 import { ResourceCompoundComponent } from './resource-compound.component';
+import { DEFAULT_HAS_PERMISSIONS, resourceFetcherServiceStub } from './resource-stories.helper';
 
 const makeTextPropDef = (id: string, label: string): ResourcePropertyDefinition => {
   const def = new ResourcePropertyDefinition();
@@ -89,6 +90,7 @@ const makeIncomingImageResource = (): ReadResource => {
   res.attachedToProject = 'http://rdfh.ch/projects/0803';
   res.attachedToUser = 'http://rdfh.ch/users/test';
   res.userHasPermission = 'CR';
+  res.hasPermissions = DEFAULT_HAS_PERMISSIONS;
   res.creationDate = '2024-03-15T10:30:00Z';
   res.properties = {
     [Constants.HasStillImageFileValue]: [makeStillImageFileValue()],
@@ -112,6 +114,7 @@ const makeResource = (permission = 'CR'): DspResource => {
   res.attachedToProject = 'http://rdfh.ch/projects/0001';
   res.attachedToUser = 'http://rdfh.ch/users/test';
   res.userHasPermission = permission;
+  res.hasPermissions = DEFAULT_HAS_PERMISSIONS;
   res.creationDate = '2024-03-15T10:30:00Z';
   res.properties = {
     [titlePropId]: [makeTextValue('http://rdfh.ch/value/title-1', 'My Storybook Compound')],
@@ -157,7 +160,7 @@ const meta: Meta<ResourceCompoundComponent> = {
             updateRegions$: () => of([]),
           },
         },
-        { provide: ResourceFetcherService, useValue: { userCanEdit$: of(false), projectShortcode$: of('0803') } },
+        { provide: ResourceFetcherService, useValue: resourceFetcherServiceStub('0803') },
         {
           provide: RepresentationService,
           useValue: { getFileInfo: () => of({ originalFilename: 'image.jpx' }), downloadProjectFile: () => {} },
