@@ -1,13 +1,18 @@
 import { OverlayModule } from '@angular/cdk/overlay';
 import { importProvidersFrom } from '@angular/core';
-import { Constants, ReadIntervalValue } from '@dasch-swiss/dsp-js';
+import { Constants } from '@dasch-swiss/dsp-js';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { applicationConfig, type Meta, moduleMetadata, type StoryObj } from '@storybook/angular';
-import { of, Subject } from 'rxjs';
 import { expect } from 'storybook/test';
 
-import { Segment } from '../../segment-support/segment';
 import { SegmentsService } from '../../segment-support/segments.service';
+import {
+  makeResourceFetcherServiceStub,
+  makeSegment,
+  makeSegmentsServiceStub,
+  notificationServiceStub,
+  representationServiceStub,
+} from '../../stories.helpers';
 import { FileRepresentationInput, ParentResourceInput } from '../representation-inputs';
 import { RepresentationService } from '../representation.service';
 import { ResourceFetcherService } from '../resource-fetcher.service';
@@ -30,45 +35,12 @@ const makeParentResource = (fileUrl = PUBLIC_AUDIO_URL): ParentResourceInput => 
   type: 'http://api.dasch.swiss/ontology/knora-api/v2#AudioRepresentation',
 });
 
-const makeSegment = (label: string, start: number, end: number, row: number): Segment =>
-  ({
-    label,
-    row,
-    hasSegmentBounds: { start, end } as unknown as ReadIntervalValue,
-    hasVideoSegmentOfValue: undefined,
-    hasComment: undefined,
-    hasDescription: undefined,
-    hasKeyword: undefined,
-    hasTitle: undefined,
-    resource: {} as any,
-  }) as Segment;
-
-const sampleSegments: Segment[] = [
+const sampleSegments = [
   makeSegment('Intro', 0, 15, 0),
   makeSegment('Verse 1', 20, 60, 0),
   makeSegment('Chorus', 65, 90, 0),
   makeSegment('Bridge', 30, 70, 1),
 ];
-
-const makeSegmentsServiceStub = (segments: Segment[] = []): Partial<SegmentsService> => ({
-  segments,
-  onInit: () => {},
-  playSegment$: new Subject<any>().asObservable(),
-  highlightSegment$: new Subject<any>().asObservable(),
-});
-
-const representationServiceStub: Partial<RepresentationService> = {
-  getFileInfo: () => of({ originalFilename: 'audio.mp3' }),
-};
-
-const notificationServiceStub: Partial<NotificationService> = {
-  openSnackBar: () => {},
-};
-
-const resourceFetcherServiceStub: Partial<ResourceFetcherService> = {
-  userCanEdit$: of(false),
-  projectShortcode$: of('0001'),
-};
 
 const meta: Meta<AudioComponent> = {
   title: 'Resource Editor / Resource / Audio / Audio',
@@ -86,7 +58,7 @@ const meta: Meta<AudioComponent> = {
         importProvidersFrom(OverlayModule),
         { provide: RepresentationService, useValue: representationServiceStub },
         { provide: NotificationService, useValue: notificationServiceStub },
-        { provide: ResourceFetcherService, useValue: resourceFetcherServiceStub },
+        { provide: ResourceFetcherService, useValue: makeResourceFetcherServiceStub() },
       ],
     }),
     moduleMetadata({

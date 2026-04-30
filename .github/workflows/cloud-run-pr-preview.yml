@@ -16,7 +16,8 @@ jobs:
     if: >-
       github.event_name == 'pull_request' &&
       github.event.action != 'closed' &&
-      github.event.pull_request.head.repo.full_name == github.repository
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      !startsWith(github.head_ref, 'release-please-')
     runs-on: ubuntu-latest
     concurrency:
       group: cloud-run-preview-pr-${{ github.event.pull_request.number }}
@@ -121,6 +122,9 @@ jobs:
 
   deploy-preview-manual:
     name: Build and deploy manual PR preview
+    # No release-please head-ref guard here: github.head_ref is empty on
+    # workflow_dispatch (only set for pull_request events), so the check would
+    # be a no-op. Manual dispatch is intentionally opt-in.
     if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     concurrency:

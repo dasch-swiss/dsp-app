@@ -469,8 +469,8 @@
         "resetZoom": "Zoom zurücksetzen",
         "openInFullscreen": "Im Vollbildmodus öffnen",
         "backgroundColor": "Hintergrundfarbe",
-        "bgDefault": "Standard",
         "bgWhite": "Weiss",
+        "bgDark": "Dunkel",
         "bgTransparent": "Transparent",
         "errors": {
           "unknownImageType": "Unbekannter Bildtyp.",

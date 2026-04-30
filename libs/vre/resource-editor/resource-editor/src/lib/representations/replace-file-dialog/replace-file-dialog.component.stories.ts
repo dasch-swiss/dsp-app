@@ -6,6 +6,7 @@ import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular'
 import { of } from 'rxjs';
 import { expect } from 'storybook/test';
 
+import { notificationServiceStub } from '../../stories.helpers';
 import { ResourceFetcherService } from '../resource-fetcher.service';
 import { UploadFileService } from '../upload/upload-file.service';
 import { ReplaceFileDialogComponent } from './replace-file-dialog.component';
@@ -41,7 +42,7 @@ const meta: Meta<ReplaceFileDialogLauncherComponent> = {
         { provide: ResourceFetcherService, useValue: { projectShortcode$: of('test'), reload: () => {} } },
         { provide: DspApiConnectionToken, useValue: { v2: { values: { updateValue: () => of({}) } } } },
         { provide: UploadFileService, useValue: { upload: () => {}, getFileInfo: () => {} } },
-        { provide: NotificationService, useValue: { openSnackBar: () => {} } },
+        { provide: NotificationService, useValue: notificationServiceStub },
       ],
     }),
   ],

@@ -537,8 +537,8 @@
         "resetZoom": "Reimposta zoom",
         "openInFullscreen": "Apri a schermo intero",
         "backgroundColor": "Colore di sfondo",
-        "bgDefault": "Predefinito",
         "bgWhite": "Bianco",
+        "bgDark": "Scuro",
         "bgTransparent": "Trasparente",
         "errors": {
           "unknownImageType": "Tipo di immagine sconosciuto.",

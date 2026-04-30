@@ -40,7 +40,7 @@ describe('Lists', () => {
   it('user can edit a list', () => {
     const data = {
       label: faker.lorem.words(2),
-      comment: faker.lorem.word(2),
+      comment: faker.lorem.word({ length: 2 }),
     };
     cy.intercept('PUT', '/admin/lists/*').as('editRequest');
 

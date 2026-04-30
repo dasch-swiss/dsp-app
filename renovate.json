@@ -8,6 +8,7 @@
   ],
   "extends": ["config:recommended"],
   "semanticCommitType": "chore",
+  "commitMessagePrefix": "chore(deps):",
   "timezone": "Europe/Zurich",
   "schedule": ["before 5am on monday through friday"],
   "prConcurrentLimit": 2,
@@ -42,7 +43,6 @@
       "addLabels": ["docker"],
       "groupName": "docker-deps"
     },
-
     {
       "description": "Angular and NX: manual upgrade only (ng update / nx migrate)",
       "enabled": false,
@@ -107,16 +107,14 @@
       "enabled": false
     },
     {
-      "description": "Node.js (.nvmrc): major version managed manually — must align with CI runners and @types/node",
+      "description": "Node.js (.nvmrc): all updates managed manually — minor/patch must stay in sync with package.json engines and CI runners; @types/node is also frozen, so any Node.js bump is a coordinated toolchain decision",
       "matchManagers": ["nvm"],
-      "matchUpdateTypes": ["major"],
       "enabled": false
     },
     {
-      "description": "Node.js (package.json engines): major managed manually — same rationale as .nvmrc rule; engines field is a separate manager not covered by the nvm rule above",
+      "description": "Node.js (package.json engines): all updates managed manually — same rationale as .nvmrc rule; the ^ range means Renovate would only bump on version outside the current range anyway, so disabling prevents partial updates",
       "matchManagers": ["npm"],
       "matchPackageNames": ["node"],
-      "matchUpdateTypes": ["major"],
       "enabled": false
     },
     {
@@ -141,6 +139,11 @@
       "enabled": false
     },
     {
+      "description": "@storybook/test-runner: fully disabled — each minor release tracks a Storybook major and requires a matching Jest major; both are frozen, so any update is a coordinated toolchain decision",
+      "matchPackageNames": ["@storybook/test-runner"],
+      "enabled": false
+    },
+    {
       "description": "NX-wrapped tools: major version ceiling is set by @nx/* peer deps — disable majors until nx migrate lifts the constraint",
       "matchPackageNames": [
         "cypress",
@@ -150,9 +153,16 @@
         "@types/jest",
         "/^ts-jest$/",
         "storybook",
-        "/^@storybook//"
+        "/^@storybook//",
+        "/^@swc//",
+        "@swc-node/register"
       ],
       "matchUpdateTypes": ["major"],
+      "enabled": false
+    },
+    {
+      "description": "@jscutlery/swc-angular: fully disabled — bridges frozen Angular with SWC; package is at v0.x so the major-disable rule is a no-op, and any update is a coordinated toolchain decision",
+      "matchPackageNames": ["@jscutlery/swc-angular"],
       "enabled": false
     },
     {
@@ -162,8 +172,7 @@
         "ng-mocks",
         "ngx-build-plus",
         "@ngx-translate/core",
-        "@ngx-translate/http-loader",
-        "@jscutlery/swc-angular"
+        "@ngx-translate/http-loader"
       ],
       "matchUpdateTypes": ["major"],
       "enabled": false
@@ -174,13 +183,11 @@
       "matchUpdateTypes": ["major"],
       "enabled": false
     },
-
     {
       "description": "Major updates: PRs open automatically but require manual merge. Timing matters — merging a major before a release or production deployment could introduce undetected breakage that poor test coverage would miss. Human decides when it is safe to merge.",
       "matchUpdateTypes": ["major"],
       "automerge": false
     },
-
     {
       "description": "SWC compiler suite — all packages must update together to avoid ABI mismatches between core, helpers, and jest transform",
       "matchPackageNames": [
@@ -280,18 +287,18 @@
       "matchPackageNames": ["storybook", "/^@storybook//"],
       "groupName": "storybook-deps"
     },
-
     {
-      "description": "Automerge all dev dependency updates (patch + minor) — no age guard; dev deps don't affect production",
+      "description": "Automerge all dev dependency updates (patch + minor) — 3-day age guard prevents adopting a broken release before it gets yanked; dev deps don't affect production",
       "matchUpdateTypes": ["patch", "minor"],
       "matchDepTypes": ["devDependencies"],
       "automerge": true,
       "platformAutomerge": true,
+      "minimumReleaseAge": "3 days",
       "rebaseWhen": "behind-base-branch"
     },
     {
-      "description": "Automerge production patch updates — 3-day age guard prevents adopting broken releases",
-      "matchUpdateTypes": ["patch"],
+      "description": "Automerge production patch and minor updates — 3-day age guard prevents adopting broken releases",
+      "matchUpdateTypes": ["patch", "minor"],
       "matchDepTypes": ["dependencies"],
       "automerge": true,
       "platformAutomerge": true,
@@ -299,28 +306,21 @@
       "rebaseWhen": "behind-base-branch"
     },
     {
-      "description": "Automerge production minor updates — 7-day age guard for extra caution on production code",
-      "matchUpdateTypes": ["minor"],
-      "matchDepTypes": ["dependencies"],
-      "automerge": true,
-      "platformAutomerge": true,
-      "minimumReleaseAge": "7 days",
-      "rebaseWhen": "behind-base-branch"
-    },
-    {
-      "description": "Automerge github-actions and docker patch/minor updates — matchDepTypes: devDependencies does not apply to these managers so they need an explicit rule",
+      "description": "Automerge github-actions and docker patch/minor updates — 3-day age guard matches devDep policy and guards against supply chain attacks on newly-published action versions; matchDepTypes: devDependencies does not apply to these managers so they need an explicit rule",
       "matchManagers": ["github-actions", "dockerfile", "docker-compose"],
       "matchUpdateTypes": ["patch", "minor"],
       "automerge": true,
       "platformAutomerge": true,
+      "minimumReleaseAge": "3 days",
       "rebaseWhen": "behind-base-branch"
     },
     {
-      "description": "Automerge pip_requirements patch/minor updates — docs tooling only (docs/requirements.txt); matchDepTypes does not apply to this manager so an explicit rule is needed",
+      "description": "Automerge pip_requirements patch/minor updates — 3-day age guard for consistency; docs tooling only (docs/requirements.txt); matchDepTypes does not apply to this manager so an explicit rule is needed",
       "matchManagers": ["pip_requirements"],
       "matchUpdateTypes": ["patch", "minor"],
       "automerge": true,
       "platformAutomerge": true,
+      "minimumReleaseAge": "3 days",
       "rebaseWhen": "behind-base-branch"
     }
   ]

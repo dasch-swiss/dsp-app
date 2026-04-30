@@ -4,6 +4,7 @@ import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular'
 import { of } from 'rxjs';
 import { expect } from 'storybook/test';
 
+import { notificationServiceStub } from '../stories.helpers';
 import { DownloadMenuItemComponent } from './download-menu-item.component';
 import { RepresentationService } from './representation.service';
 
@@ -29,7 +30,7 @@ const meta: Meta<DownloadMenuItemComponent> = {
           provide: RepresentationService,
           useValue: { downloadProjectFile: () => {}, getIngestOriginalUrl: () => of('https://example.org/file.mp4') },
         },
-        { provide: NotificationService, useValue: { openSnackBar: () => {} } },
+        { provide: NotificationService, useValue: notificationServiceStub },
         { provide: Clipboard, useValue: { copy: () => true } },
       ],
     }),

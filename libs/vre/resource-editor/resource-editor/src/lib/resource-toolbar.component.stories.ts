@@ -10,6 +10,7 @@ import { expect } from 'storybook/test';
 
 import { ResourceFetcherService } from './representations/resource-fetcher.service';
 import { ResourceToolbarComponent } from './resource-toolbar.component';
+import { notificationServiceStub } from './stories.helpers';
 
 const makeResource = () =>
   ({
@@ -31,7 +32,7 @@ const meta: Meta<ResourceToolbarComponent> = {
       providers: [
         importProvidersFrom(RouterModule.forRoot([])),
         { provide: ResourceFetcherService, useValue: { userCanDelete$: of(false), userCanEdit$: of(false) } },
-        { provide: NotificationService, useValue: { openSnackBar: () => {} } },
+        { provide: NotificationService, useValue: notificationServiceStub },
         { provide: ResourceService, useValue: { getResourcePath: () => '/project/test/resource/1' } },
         { provide: UserService, useValue: { user$: of(null) } },
         {

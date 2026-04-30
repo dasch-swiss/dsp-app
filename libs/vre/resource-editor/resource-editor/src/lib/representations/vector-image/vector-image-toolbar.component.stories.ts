@@ -3,9 +3,9 @@ import { importProvidersFrom } from '@angular/core';
 import { Constants } from '@dasch-swiss/dsp-js';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
-import { of } from 'rxjs';
 import { expect } from 'storybook/test';
 
+import { makeResourceFetcherServiceStub, notificationServiceStub } from '../../stories.helpers';
 import { RepresentationService } from '../representation.service';
 import { ResourceFetcherService } from '../resource-fetcher.service';
 import { VectorImageToolbarComponent } from './vector-image-toolbar.component';
@@ -27,17 +27,8 @@ const makeResource = () =>
     },
   }) as any;
 
-const notificationServiceStub: Partial<NotificationService> = {
-  openSnackBar: () => {},
-};
-
 const representationServiceStub: Partial<RepresentationService> = {
   downloadProjectFile: () => {},
-};
-
-const resourceFetcherServiceStub: Partial<ResourceFetcherService> = {
-  userCanEdit$: of(false),
-  projectShortcode$: of('0001'),
 };
 
 const meta: Meta<VectorImageToolbarComponent> = {
@@ -49,7 +40,7 @@ const meta: Meta<VectorImageToolbarComponent> = {
         importProvidersFrom(OverlayModule),
         { provide: NotificationService, useValue: notificationServiceStub },
         { provide: RepresentationService, useValue: representationServiceStub },
-        { provide: ResourceFetcherService, useValue: resourceFetcherServiceStub },
+        { provide: ResourceFetcherService, useValue: makeResourceFetcherServiceStub() },
       ],
     }),
   ],
@@ -98,7 +89,7 @@ export const WithEditPermission: Story = {
       providers: [
         {
           provide: ResourceFetcherService,
-          useValue: { ...resourceFetcherServiceStub, userCanEdit$: of(true) },
+          useValue: makeResourceFetcherServiceStub({ userCanEdit: true }),
         },
       ],
     }),
