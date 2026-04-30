@@ -1,13 +1,8 @@
 import { provideRouter } from '@angular/router';
 import {
   Constants,
-  IHasPropertyWithPropertyDefinition,
   ReadDocumentFileValue,
   ReadResource,
-  ReadTextValueAsString,
-  ResourceClassAndPropertyDefinitions,
-  ResourceClassDefinitionWithPropertyDefinition,
-  ResourcePropertyDefinition,
 } from '@dasch-swiss/dsp-js';
 import { ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { AdminAPIApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
@@ -21,48 +16,7 @@ import { expect } from 'storybook/test';
 import { RepresentationService } from './representations/representation.service';
 import { ResourceFetcherService } from './representations/resource-fetcher.service';
 import { ResourcePdfComponent } from './resource-pdf.component';
-import { DEFAULT_HAS_PERMISSIONS, dspApiConnectionStub, resourceFetcherServiceStub } from './resource-stories.helper';
-
-const makeTextPropDef = (id: string, label: string): ResourcePropertyDefinition => {
-  const def = new ResourcePropertyDefinition();
-  def.id = id;
-  def.label = label;
-  def.objectType = Constants.TextValue;
-  def.subPropertyOf = [];
-  def.isLinkProperty = false;
-  def.isEditable = true;
-  return def;
-};
-
-const makePropEntry = (propDef: ResourcePropertyDefinition, guiOrder: number): IHasPropertyWithPropertyDefinition => ({
-  propertyIndex: propDef.id,
-  cardinality: 1 as any,
-  guiOrder,
-  isInherited: false,
-  propertyDefinition: propDef,
-});
-
-const makeTextValue = (id: string, text: string): ReadTextValueAsString => {
-  const v = new ReadTextValueAsString();
-  v.id = id;
-  v.text = text;
-  v.type = Constants.TextValue;
-  v.userHasPermission = 'RV';
-  return v;
-};
-
-const makeEntityInfo = (
-  resourceType: string,
-  propEntries: IHasPropertyWithPropertyDefinition[] = [],
-  classLabel = 'Thing'
-): ResourceClassAndPropertyDefinitions => {
-  const classStub = {
-    label: classLabel,
-    getResourcePropertiesList: () => propEntries,
-    propertiesList: propEntries,
-  } as unknown as ResourceClassDefinitionWithPropertyDefinition;
-  return new ResourceClassAndPropertyDefinitions({ [resourceType]: classStub }, {});
-};
+import { DEFAULT_HAS_PERMISSIONS, dspApiConnectionStub, makeEntityInfo, makePropEntry, makeTextPropDef, makeTextValue, resourceFetcherServiceStub } from './resource-stories.helper';
 
 const makeResource = (permission = 'CR'): DspResource => {
   const titlePropId = 'http://0.0.0.0:3333/ontology/0001/example/v2#hasTitle';

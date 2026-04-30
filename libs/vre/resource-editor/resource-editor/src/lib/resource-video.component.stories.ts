@@ -3,7 +3,7 @@ import { Constants, ReadMovingImageFileValue, ReadResource } from '@dasch-swiss/
 import { ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { AdminAPIApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { AppConfigService, DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
-import { DspResource } from '@dasch-swiss/vre/shared/app-common';
+import { DspResource, generateDspResource } from '@dasch-swiss/vre/shared/app-common';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { applicationConfig, type Meta, moduleMetadata, type StoryObj } from '@storybook/angular';
 import { of, Subject } from 'rxjs';
@@ -12,32 +12,32 @@ import { expect } from 'storybook/test';
 import { RepresentationService } from './representations/representation.service';
 import { ResourceFetcherService } from './representations/resource-fetcher.service';
 import { ResourceVideoComponent } from './resource-video.component';
-import { DEFAULT_HAS_PERMISSIONS, dspApiConnectionStub, resourceFetcherServiceStub } from './resource-stories.helper';
+import { addDescriptionToResource, DEFAULT_HAS_PERMISSIONS, dspApiConnectionStub, resourceFetcherServiceStub } from './resource-stories.helper';
 import { SegmentsService } from './segment-support/segments.service';
 
-const makeResource = (permission = 'CR'): DspResource =>
-  new DspResource({
-    id: 'http://rdfh.ch/resource/1',
-    type: 'http://api.dasch.swiss/ontology/knora-api/v2#MovingImageRepresentation',
-    label: 'My Storybook Video',
-    attachedToProject: 'http://rdfh.ch/projects/0869',
-    attachedToUser: 'http://rdfh.ch/users/test',
-    userHasPermission: permission,
-    hasPermissions: DEFAULT_HAS_PERMISSIONS,
-    creationDate: '2024-03-15T10:30:00Z',
-    properties: {
-      [Constants.HasMovingImageFileValue]: [
-        {
-          type: Constants.MovingImageFileValue,
-          id: 'http://rdfh.ch/value/video-1',
-          fileUrl: 'https://iiif.stage.dasch.swiss:443/0869/3xUzuLcE9nC-MjBgXRjjsos.mp4/file',
-          filename: 'video.mp4',
-          userHasPermission: 'RV',
-        } as unknown as ReadMovingImageFileValue,
-      ],
-    },
-    entityInfo: { classes: { 'http://api.dasch.swiss/ontology/knora-api/v2#MovingImageRepresentation': { label: 'Moving Image Representation' } }, getPropertyDefinitionsByType: () => [] },
-  } as unknown as ReadResource);
+const makeResource = (permission = 'CR'): DspResource => {
+  const res = new ReadResource();
+  res.id = 'http://rdfh.ch/resource/1';
+  res.type = 'http://api.dasch.swiss/ontology/knora-api/v2#MovingImageRepresentation';
+  res.label = 'My Storybook Video';
+  res.attachedToProject = 'http://rdfh.ch/projects/0869';
+  res.attachedToUser = 'http://rdfh.ch/users/test';
+  res.userHasPermission = permission;
+  res.hasPermissions = DEFAULT_HAS_PERMISSIONS;
+  res.creationDate = '2024-03-15T10:30:00Z';
+  res.properties = {
+    [Constants.HasMovingImageFileValue]: [
+      {
+        type: Constants.MovingImageFileValue,
+        id: 'http://rdfh.ch/value/video-1',
+        fileUrl: 'https://iiif.stage.dasch.swiss:443/0869/3xUzuLcE9nC-MjBgXRjjsos.mp4/file',
+        filename: 'video.mp4',
+        userHasPermission: 'RV',
+      } as unknown as ReadMovingImageFileValue,
+    ],
+  };
+  return generateDspResource(addDescriptionToResource(res));
+};
 
 const segmentsServiceStub: Partial<SegmentsService> = {
   segments: [],

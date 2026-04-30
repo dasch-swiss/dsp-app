@@ -3,7 +3,7 @@ import { Constants, ReadColorValue, ReadGeomValue, ReadResource, ReadStillImageF
 import { ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { AdminAPIApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { AppConfigService, DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
-import { DspResource } from '@dasch-swiss/vre/shared/app-common';
+import { DspResource, generateDspResource } from '@dasch-swiss/vre/shared/app-common';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { applicationConfig, moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
@@ -13,37 +13,34 @@ import { RegionService } from './representations/region.service';
 import { RepresentationService } from './representations/representation.service';
 import { ResourceFetcherService } from './representations/resource-fetcher.service';
 import { ResourceImageComponent } from './resource-image.component';
-import { DEFAULT_HAS_PERMISSIONS, dspApiConnectionStub, resourceFetcherServiceStub } from './resource-stories.helper';
+import { addDescriptionToResource, DEFAULT_HAS_PERMISSIONS, dspApiConnectionStub, resourceFetcherServiceStub } from './resource-stories.helper';
 
-const makeResource = (permission = 'CR'): DspResource =>
-  new DspResource({
-    id: 'http://rdfh.ch/resource/1',
-    type: 'http://api.dasch.swiss/ontology/knora-api/v2#StillImageRepresentation',
-    label: 'My Storybook Image',
-    attachedToProject: 'http://rdfh.ch/projects/0803',
-    attachedToUser: 'http://rdfh.ch/users/test',
-    userHasPermission: permission,
-    hasPermissions: DEFAULT_HAS_PERMISSIONS,
-    creationDate: '2024-03-15T10:30:00Z',
-    properties: {
-      [Constants.HasStillImageFileValue]: [
-        {
-          type: Constants.StillImageFileValue,
-          id: 'http://rdfh.ch/value/image-1',
-          fileUrl: 'https://iiif.dev.dasch.swiss/0803/1awyJYmiA5Z-FQ9xDcEh2Hi.jp2/full/1333,1815/0/default.jpg',
-          iiifBaseUrl: 'https://iiif.dev.dasch.swiss/0803',
-          filename: '1awyJYmiA5Z-FQ9xDcEh2Hi.jp2',
-          dimX: 1333,
-          dimY: 1815,
-          userHasPermission: 'RV',
-        } as unknown as ReadStillImageFileValue,
-      ],
-    },
-    entityInfo: {
-      classes: { 'http://api.dasch.swiss/ontology/knora-api/v2#StillImageRepresentation': { label: 'Still Image Representation' } },
-      getPropertyDefinitionsByType: () => [],
-    },
-  } as unknown as ReadResource);
+const makeResource = (permission = 'CR'): DspResource => {
+  const res = new ReadResource();
+  res.id = 'http://rdfh.ch/resource/1';
+  res.type = 'http://api.dasch.swiss/ontology/knora-api/v2#StillImageRepresentation';
+  res.label = 'My Storybook Image';
+  res.attachedToProject = 'http://rdfh.ch/projects/0803';
+  res.attachedToUser = 'http://rdfh.ch/users/test';
+  res.userHasPermission = permission;
+  res.hasPermissions = DEFAULT_HAS_PERMISSIONS;
+  res.creationDate = '2024-03-15T10:30:00Z';
+  res.properties = {
+    [Constants.HasStillImageFileValue]: [
+      {
+        type: Constants.StillImageFileValue,
+        id: 'http://rdfh.ch/value/image-1',
+        fileUrl: 'https://iiif.dev.dasch.swiss/0803/1awyJYmiA5Z-FQ9xDcEh2Hi.jp2/full/1333,1815/0/default.jpg',
+        iiifBaseUrl: 'https://iiif.dev.dasch.swiss/0803',
+        filename: '1awyJYmiA5Z-FQ9xDcEh2Hi.jp2',
+        dimX: 1333,
+        dimY: 1815,
+        userHasPermission: 'RV',
+      } as unknown as ReadStillImageFileValue,
+    ],
+  };
+  return generateDspResource(addDescriptionToResource(res));
+};
 
 const makeGeomValue = (id: string, type: 'rectangle' | 'circle', lineColor: string): ReadGeomValue =>
   ({

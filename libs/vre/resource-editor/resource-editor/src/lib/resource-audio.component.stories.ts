@@ -3,7 +3,7 @@ import { Constants, ReadAudioFileValue, ReadResource } from '@dasch-swiss/dsp-js
 import { ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { AdminAPIApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { AppConfigService, DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
-import { DspResource } from '@dasch-swiss/vre/shared/app-common';
+import { DspResource, generateDspResource } from '@dasch-swiss/vre/shared/app-common';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { applicationConfig, type Meta, moduleMetadata, type StoryObj } from '@storybook/angular';
 import { of, Subject } from 'rxjs';
@@ -12,32 +12,32 @@ import { expect } from 'storybook/test';
 import { RepresentationService } from './representations/representation.service';
 import { ResourceFetcherService } from './representations/resource-fetcher.service';
 import { ResourceAudioComponent } from './resource-audio.component';
-import { DEFAULT_HAS_PERMISSIONS, dspApiConnectionStub, resourceFetcherServiceStub } from './resource-stories.helper';
+import { DEFAULT_HAS_PERMISSIONS, addDescriptionToResource, dspApiConnectionStub, resourceFetcherServiceStub } from './resource-stories.helper';
 import { SegmentsService } from './segment-support/segments.service';
 
-const makeResource = (permission = 'CR'): DspResource =>
-  new DspResource({
-    id: 'http://rdfh.ch/resource/1',
-    type: 'http://api.dasch.swiss/ontology/knora-api/v2#AudioRepresentation',
-    label: 'My Storybook Audio',
-    attachedToProject: 'http://rdfh.ch/projects/0001',
-    attachedToUser: 'http://rdfh.ch/users/test',
-    userHasPermission: permission,
-    hasPermissions: DEFAULT_HAS_PERMISSIONS,
-    creationDate: '2024-03-15T10:30:00Z',
-    properties: {
-      [Constants.HasAudioFileValue]: [
-        {
-          type: Constants.AudioFileValue,
-          id: 'http://rdfh.ch/value/audio-1',
-          fileUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
-          filename: 'audio.mp3',
-          userHasPermission: 'RV',
-        } as unknown as ReadAudioFileValue,
-      ],
-    },
-    entityInfo: { classes: { 'http://api.dasch.swiss/ontology/knora-api/v2#AudioRepresentation': { label: 'Audio Representation' } }, getPropertyDefinitionsByType: () => [] },
-  } as unknown as ReadResource);
+const makeResource = (permission = 'CR'): DspResource => {
+  const res = new ReadResource();
+  res.id = 'http://rdfh.ch/resource/1';
+  res.type = 'http://api.dasch.swiss/ontology/knora-api/v2#AudioRepresentation';
+  res.label = 'My Storybook Audio';
+  res.attachedToProject = 'http://rdfh.ch/projects/0001';
+  res.attachedToUser = 'http://rdfh.ch/users/test';
+  res.userHasPermission = permission;
+  res.hasPermissions = DEFAULT_HAS_PERMISSIONS;
+  res.creationDate = '2024-03-15T10:30:00Z';
+  res.properties = {
+    [Constants.HasAudioFileValue]: [
+      {
+        type: Constants.AudioFileValue,
+        id: 'http://rdfh.ch/value/audio-1',
+        fileUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+        filename: 'audio.mp3',
+        userHasPermission: 'RV',
+      } as unknown as ReadAudioFileValue,
+    ],
+  };
+  return generateDspResource(addDescriptionToResource(res));
+};
 
 const segmentsServiceStub: Partial<SegmentsService> = {
   segments: [],

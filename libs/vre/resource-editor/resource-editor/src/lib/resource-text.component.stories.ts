@@ -3,7 +3,7 @@ import { Constants, ReadResource, ReadTextFileValue } from '@dasch-swiss/dsp-js'
 import { ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { AdminAPIApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { AppConfigService, DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
-import { DspResource } from '@dasch-swiss/vre/shared/app-common';
+import { DspResource, generateDspResource } from '@dasch-swiss/vre/shared/app-common';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
@@ -12,31 +12,31 @@ import { expect } from 'storybook/test';
 import { RepresentationService } from './representations/representation.service';
 import { ResourceFetcherService } from './representations/resource-fetcher.service';
 import { ResourceTextComponent } from './resource-text.component';
-import { DEFAULT_HAS_PERMISSIONS, dspApiConnectionStub, resourceFetcherServiceStub } from './resource-stories.helper';
+import { addDescriptionToResource, DEFAULT_HAS_PERMISSIONS, dspApiConnectionStub, resourceFetcherServiceStub } from './resource-stories.helper';
 
-const makeResource = (permission = 'CR'): DspResource =>
-  new DspResource({
-    id: 'http://rdfh.ch/resource/1',
-    type: 'http://api.dasch.swiss/ontology/knora-api/v2#TextRepresentation',
-    label: 'My Storybook Text',
-    attachedToProject: 'http://rdfh.ch/projects/0001',
-    attachedToUser: 'http://rdfh.ch/users/test',
-    userHasPermission: permission,
-    hasPermissions: DEFAULT_HAS_PERMISSIONS,
-    creationDate: '2024-03-15T10:30:00Z',
-    properties: {
-      [Constants.HasTextFileValue]: [
-        {
-          type: Constants.TextFileValue,
-          id: 'http://rdfh.ch/value/text-1',
-          fileUrl: 'https://example.org/document.txt',
-          filename: 'document.txt',
-          userHasPermission: 'RV',
-        } as unknown as ReadTextFileValue,
-      ],
-    },
-    entityInfo: { classes: { 'http://api.dasch.swiss/ontology/knora-api/v2#TextRepresentation': { label: 'Text Representation' } }, getPropertyDefinitionsByType: () => [] },
-  } as unknown as ReadResource);
+const makeResource = (permission = 'CR'): DspResource => {
+  const res = new ReadResource();
+  res.id = 'http://rdfh.ch/resource/1';
+  res.type = 'http://api.dasch.swiss/ontology/knora-api/v2#TextRepresentation';
+  res.label = 'My Storybook Text';
+  res.attachedToProject = 'http://rdfh.ch/projects/0001';
+  res.attachedToUser = 'http://rdfh.ch/users/test';
+  res.userHasPermission = permission;
+  res.hasPermissions = DEFAULT_HAS_PERMISSIONS;
+  res.creationDate = '2024-03-15T10:30:00Z';
+  res.properties = {
+    [Constants.HasTextFileValue]: [
+      {
+        type: Constants.TextFileValue,
+        id: 'http://rdfh.ch/value/text-1',
+        fileUrl: 'https://example.org/document.txt',
+        filename: 'document.txt',
+        userHasPermission: 'RV',
+      } as unknown as ReadTextFileValue,
+    ],
+  };
+  return generateDspResource(addDescriptionToResource(res));
+};
 
 const meta: Meta<ResourceTextComponent> = {
   title: 'Resource Editor / Resource / Text',
