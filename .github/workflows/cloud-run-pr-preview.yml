@@ -93,32 +93,47 @@ jobs:
             --max-instances=1
             --cpu-throttling
 
-      - name: Find existing preview comment
-        uses: peter-evans/find-comment@v4
-        id: find-comment
-        with:
-          issue-number: ${{ github.event.pull_request.number }}
-          comment-author: github-actions[bot]
-          body-includes: "<!-- dsp-app-preview -->"
-
       - name: Post or update preview URL comment
-        uses: peter-evans/create-or-update-comment@v5
-        with:
-          issue-number: ${{ github.event.pull_request.number }}
-          comment-id: ${{ steps.find-comment.outputs.comment-id }}
-          edit-mode: replace
-          body: |
-            <!-- dsp-app-preview -->
-            ### DSP-APP Preview
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PREVIEW_URL: ${{ steps.deploy.outputs.url }}
+          SERVICE: ${{ env.SERVICE_NAME }}
+          COMMIT: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          MARKER='<!-- dsp-app-preview -->'
 
-            | | |
-            |---|---|
-            | **Preview URL** | ${{ steps.deploy.outputs.url }} |
-            | **Cloud Run Service** | `${{ env.SERVICE_NAME }}` |
-            | **Commit** | ${{ github.event.pull_request.head.sha }} |
-            | **Backend** | DEV API (`api.dev.dasch.swiss`) |
+          COMMENT_ID=$(gh api \
+            "repos/${REPO}/issues/${PR_NUMBER}/comments" \
+            --paginate \
+            --jq ".[] | select(.user.login == \"github-actions[bot]\") | select(.body | contains(\"${MARKER}\")) | .id" \
+            | head -n1 || true)
 
-            _Updated on every push. Deleted when PR closes or after 4 days._
+          if [ -n "${COMMENT_ID}" ]; then
+            ENDPOINT="repos/${REPO}/issues/comments/${COMMENT_ID}"
+            METHOD="PATCH"
+          else
+            ENDPOINT="repos/${REPO}/issues/${PR_NUMBER}/comments"
+            METHOD="POST"
+          fi
+
+          gh api -X "${METHOD}" "${ENDPOINT}" -F body=@- >/dev/null <<EOF
+          ${MARKER}
+          ### DSP-APP Preview
+
+          | | |
+          |---|---|
+          | **Preview URL** | ${PREVIEW_URL} |
+          | **Cloud Run Service** | \`${SERVICE}\` |
+          | **Commit** | ${COMMIT} |
+          | **Backend** | DEV API (\`api.dev.dasch.swiss\`) |
+
+          _Updated on every push. Deleted when PR closes or after 4 days._
+          EOF
+
+          echo "${METHOD} ${ENDPOINT}"
 
   deploy-preview-manual:
     name: Build and deploy manual PR preview
@@ -217,32 +232,47 @@ jobs:
             --max-instances=1
             --cpu-throttling
 
-      - name: Find existing preview comment
-        uses: peter-evans/find-comment@v4
-        id: find-comment
-        with:
-          issue-number: ${{ steps.pr.outputs.number }}
-          comment-author: github-actions[bot]
-          body-includes: "<!-- dsp-app-preview -->"
-
       - name: Post or update preview URL comment
-        uses: peter-evans/create-or-update-comment@v5
-        with:
-          issue-number: ${{ steps.pr.outputs.number }}
-          comment-id: ${{ steps.find-comment.outputs.comment-id }}
-          edit-mode: replace
-          body: |
-            <!-- dsp-app-preview -->
-            ### DSP-APP Preview
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ steps.pr.outputs.number }}
+          PREVIEW_URL: ${{ steps.deploy.outputs.url }}
+          SERVICE: ${{ env.SERVICE_NAME }}
+          BRANCH: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          MARKER='<!-- dsp-app-preview -->'
 
-            | | |
-            |---|---|
-            | **Preview URL** | ${{ steps.deploy.outputs.url }} |
-            | **Cloud Run Service** | `${{ env.SERVICE_NAME }}` |
-            | **Branch** | `${{ github.ref_name }}` |
-            | **Backend** | DEV API (`api.dev.dasch.swiss`) |
+          COMMENT_ID=$(gh api \
+            "repos/${REPO}/issues/${PR_NUMBER}/comments" \
+            --paginate \
+            --jq ".[] | select(.user.login == \"github-actions[bot]\") | select(.body | contains(\"${MARKER}\")) | .id" \
+            | head -n1 || true)
 
-            _Deployed manually via workflow_dispatch. Deleted when PR closes or after 4 days._
+          if [ -n "${COMMENT_ID}" ]; then
+            ENDPOINT="repos/${REPO}/issues/comments/${COMMENT_ID}"
+            METHOD="PATCH"
+          else
+            ENDPOINT="repos/${REPO}/issues/${PR_NUMBER}/comments"
+            METHOD="POST"
+          fi
+
+          gh api -X "${METHOD}" "${ENDPOINT}" -F body=@- >/dev/null <<EOF
+          ${MARKER}
+          ### DSP-APP Preview
+
+          | | |
+          |---|---|
+          | **Preview URL** | ${PREVIEW_URL} |
+          | **Cloud Run Service** | \`${SERVICE}\` |
+          | **Branch** | \`${BRANCH}\` |
+          | **Backend** | DEV API (\`api.dev.dasch.swiss\`) |
+
+          _Deployed manually via workflow_dispatch. Deleted when PR closes or after 4 days._
+          EOF
+
+          echo "${METHOD} ${ENDPOINT}"
 
   cleanup-preview:
     name: Clean up PR close
