@@ -12,7 +12,7 @@ import { expect } from 'storybook/test';
 import { RepresentationService } from './representations/representation.service';
 import { ResourceFetcherService } from './representations/resource-fetcher.service';
 import { ResourceVideoComponent } from './resource-video.component';
-import { DEFAULT_HAS_PERMISSIONS, resourceFetcherServiceStub } from './resource-stories.helper';
+import { DEFAULT_HAS_PERMISSIONS, dspApiConnectionStub, resourceFetcherServiceStub } from './resource-stories.helper';
 import { SegmentsService } from './segment-support/segments.service';
 
 const makeResource = (permission = 'CR'): DspResource =>
@@ -71,14 +71,7 @@ const meta: Meta<ResourceVideoComponent> = {
           provide: AdminAPIApiService,
           useValue: { getAdminProjectsShortcodeProjectshortcodeLegalInfoLicenses: () => of({ data: [] }) },
         },
-        {
-          provide: DspApiConnectionToken,
-          useValue: {
-            v2: {
-              search: { doSearchIncomingLinks: () => of({ resources: [], mayHaveMoreResults: false }) },
-            },
-          },
-        },
+        { provide: DspApiConnectionToken, useValue: dspApiConnectionStub },
       ],
     }),
     moduleMetadata({

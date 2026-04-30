@@ -23,7 +23,7 @@ import { RegionService } from './representations/region.service';
 import { RepresentationService } from './representations/representation.service';
 import { ResourceFetcherService } from './representations/resource-fetcher.service';
 import { ResourceCompoundComponent } from './resource-compound.component';
-import { DEFAULT_HAS_PERMISSIONS, resourceFetcherServiceStub } from './resource-stories.helper';
+import { DEFAULT_HAS_PERMISSIONS, dspApiConnectionStub, resourceFetcherServiceStub } from './resource-stories.helper';
 
 const makeTextPropDef = (id: string, label: string): ResourcePropertyDefinition => {
   const def = new ResourcePropertyDefinition();
@@ -176,8 +176,8 @@ const meta: Meta<ResourceCompoundComponent> = {
             v2: {
               res: { getResource: () => of(incomingImage) },
               search: {
+                ...dspApiConnectionStub.v2.search,
                 doSearchStillImageRepresentations: () => of(incomingSequence),
-                doSearchIncomingLinks: () => of({ resources: [], mayHaveMoreResults: false }),
               },
             },
           },

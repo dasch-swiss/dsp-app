@@ -17,7 +17,7 @@ import { expect } from 'storybook/test';
 
 import { ResourceFetcherService } from './representations/resource-fetcher.service';
 import { ResourcePlainComponent } from './resource-plain.component';
-import { DEFAULT_HAS_PERMISSIONS, resourceFetcherServiceStub } from './resource-stories.helper';
+import { DEFAULT_HAS_PERMISSIONS, dspApiConnectionStub, resourceFetcherServiceStub } from './resource-stories.helper';
 
 const makeTextPropDef = (id: string, label: string): ResourcePropertyDefinition => {
   const def = new ResourcePropertyDefinition();
@@ -100,14 +100,7 @@ const meta: Meta<ResourcePlainComponent> = {
           useValue: { get: () => of({ project: { id: '', shortcode: '0001', shortname: 'test', longname: 'Test' } }) },
         },
         { provide: ResourceFetcherService, useValue: resourceFetcherServiceStub() },
-        {
-          provide: DspApiConnectionToken,
-          useValue: {
-            v2: {
-              search: { doSearchIncomingLinks: () => of({ resources: [], mayHaveMoreResults: false }) },
-            },
-          },
-        },
+        { provide: DspApiConnectionToken, useValue: dspApiConnectionStub },
       ],
     }),
   ],

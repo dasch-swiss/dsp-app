@@ -13,7 +13,7 @@ import { RegionService } from './representations/region.service';
 import { RepresentationService } from './representations/representation.service';
 import { ResourceFetcherService } from './representations/resource-fetcher.service';
 import { ResourceImageComponent } from './resource-image.component';
-import { DEFAULT_HAS_PERMISSIONS, resourceFetcherServiceStub } from './resource-stories.helper';
+import { DEFAULT_HAS_PERMISSIONS, dspApiConnectionStub, resourceFetcherServiceStub } from './resource-stories.helper';
 
 const makeResource = (permission = 'CR'): DspResource =>
   new DspResource({
@@ -136,14 +136,7 @@ const meta: Meta<ResourceImageComponent> = {
           provide: AdminAPIApiService,
           useValue: { getAdminProjectsShortcodeProjectshortcodeLegalInfoLicenses: () => of({ data: [] }) },
         },
-        {
-          provide: DspApiConnectionToken,
-          useValue: {
-            v2: {
-              search: { doSearchIncomingLinks: () => of({ resources: [], mayHaveMoreResults: false }) },
-            },
-          },
-        },
+        { provide: DspApiConnectionToken, useValue: dspApiConnectionStub },
       ],
     }),
   ],
@@ -188,7 +181,7 @@ export const WithAnnotations: Story = {
           useValue: {
             v2: {
               search: {
-                doSearchIncomingLinks: () => of({ resources: [], mayHaveMoreResults: false }),
+                ...dspApiConnectionStub.v2.search,
                 doSearchIncomingRegions: () =>
                   of({ resources: REGIONS.map(r => r.res), mayHaveMoreResults: false }),
               },
