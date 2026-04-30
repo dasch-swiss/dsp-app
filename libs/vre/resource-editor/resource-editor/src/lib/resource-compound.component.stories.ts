@@ -30,6 +30,8 @@ const makeStillImageFileValue = (): ReadStillImageFileValue =>
     authorship: [],
     license: null,
     iiifBaseUrl: 'https://iiif.dasch.swiss/0803/0tZ4P3NQCnP-D7jmYEVBSRw.jpx',
+    dimX: 800,
+    dimY: 600,
   }) as unknown as ReadStillImageFileValue;
 
 const makeIncomingImageResource = (): ReadResource => {
@@ -132,6 +134,7 @@ const meta: Meta<ResourceCompoundComponent> = {
               search: {
                 ...dspApiConnectionStub.v2.search,
                 doSearchStillImageRepresentations: () => of(incomingSequence),
+                doSearchIncomingRegions: () => of({ resources: [], mayHaveMoreResults: false }),
               },
             },
           },

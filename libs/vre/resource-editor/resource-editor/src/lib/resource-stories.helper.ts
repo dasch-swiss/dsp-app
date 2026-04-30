@@ -19,7 +19,12 @@ const STUB_RESOURCE = {
 export const resourceFetcherServiceStub = (shortcode = '0001') => ({
   resource$: of(STUB_RESOURCE),
   userCanEdit$: of(false),
+  userCanDelete$: of(false),
   projectShortcode$: of(shortcode),
+  attachedUser$: of(null),
+  scrollToTop$: NEVER,
+  scrollToTop: () => {},
+  reload: () => {},
 });
 
 export const makeTextPropDef = (id: string, label: string): ResourcePropertyDefinition => {
@@ -87,6 +92,7 @@ export const dspApiConnectionStub = {
     search: {
       doSearchIncomingLinks: () => of({ resources: [], mayHaveMoreResults: false }),
       doExtendedSearch: () => NEVER,
+      doSearchIncomingRegions: () => of({ resources: [], mayHaveMoreResults: false }),
     },
   },
 };
