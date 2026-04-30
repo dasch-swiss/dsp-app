@@ -35,7 +35,7 @@ const makeResource = (permission = 'CR'): DspResource => {
       } as unknown as ReadTextFileValue,
     ],
   };
-  return generateDspResource(addDescriptionToResource(res));
+  return generateDspResource(addDescriptionToResource(res, permission));
 };
 
 const meta: Meta<ResourceTextComponent> = {

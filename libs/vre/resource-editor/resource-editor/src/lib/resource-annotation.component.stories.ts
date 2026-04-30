@@ -32,8 +32,8 @@ const makeResource = (permission = 'CR'): DspResource => {
   res.creationDate = '2024-03-15T10:30:00Z';
   res.versionArkUrl = 'ark:/99999/1/annotation';
   res.properties = {
-    [titlePropId]: [makeTextValue('http://rdfh.ch/value/title-1', 'My Storybook Annotation')],
-    [descriptionPropId]: [makeTextValue('http://rdfh.ch/value/desc-1', 'A sample annotation for Storybook previews.')],
+    [titlePropId]: [makeTextValue('http://rdfh.ch/value/title-1', 'My Storybook Annotation', permission)],
+    [descriptionPropId]: [makeTextValue('http://rdfh.ch/value/desc-1', 'A sample annotation for Storybook previews.', permission)],
   };
   res.entityInfo = makeEntityInfo(res.type, propEntries, 'Region');
   return generateDspResource(res);

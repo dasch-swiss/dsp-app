@@ -31,8 +31,8 @@ const makeResource = (permission = 'CR'): DspResource => {
   res.hasPermissions = DEFAULT_HAS_PERMISSIONS;
   res.creationDate = '2024-03-15T10:30:00Z';
   res.properties = {
-    [titlePropId]: [makeTextValue('http://rdfh.ch/value/title-1', 'My Storybook Segment')],
-    [descriptionPropId]: [makeTextValue('http://rdfh.ch/value/desc-1', 'A sample video segment for Storybook previews.')],
+    [titlePropId]: [makeTextValue('http://rdfh.ch/value/title-1', 'My Storybook Segment', permission)],
+    [descriptionPropId]: [makeTextValue('http://rdfh.ch/value/desc-1', 'A sample video segment for Storybook previews.', permission)],
   };
   res.entityInfo = makeEntityInfo(res.type, propEntries, 'Video Segment');
   return generateDspResource(res);

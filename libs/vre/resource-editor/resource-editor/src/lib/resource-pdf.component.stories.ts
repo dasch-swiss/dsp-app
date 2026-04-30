@@ -46,8 +46,8 @@ const makeResource = (permission = 'CR'): DspResource => {
   res.creationDate = '2024-03-15T10:30:00Z';
   res.properties = {
     [Constants.HasDocumentFileValue]: [fileValue],
-    [titlePropId]: [makeTextValue('http://rdfh.ch/value/title-1', 'My Storybook PDF')],
-    [descriptionPropId]: [makeTextValue('http://rdfh.ch/value/desc-1', 'A sample PDF resource for Storybook previews.')],
+    [titlePropId]: [makeTextValue('http://rdfh.ch/value/title-1', 'My Storybook PDF', permission)],
+    [descriptionPropId]: [makeTextValue('http://rdfh.ch/value/desc-1', 'A sample PDF resource for Storybook previews.', permission)],
   };
   res.entityInfo = makeEntityInfo(res.type, propEntries, 'Document Representation');
   return generateDspResource(res);

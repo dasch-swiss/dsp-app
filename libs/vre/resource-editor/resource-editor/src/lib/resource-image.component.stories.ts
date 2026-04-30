@@ -39,7 +39,7 @@ const makeResource = (permission = 'CR'): DspResource => {
       } as unknown as ReadStillImageFileValue,
     ],
   };
-  return generateDspResource(addDescriptionToResource(res));
+  return generateDspResource(addDescriptionToResource(res, permission));
 };
 
 const makeGeomValue = (id: string, type: 'rectangle' | 'circle', lineColor: string): ReadGeomValue =>

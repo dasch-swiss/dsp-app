@@ -12,8 +12,12 @@ import { NEVER, of } from 'rxjs';
 export const DEFAULT_HAS_PERMISSIONS =
   'CR knora-base:ProjectAdmin|M knora-base:ProjectMember|V knora-base:KnownUser|RV knora-base:UnknownUser';
 
+const STUB_RESOURCE = {
+  res: { attachedToUser: 'http://rdfh.ch/users/test-user' },
+} as any;
+
 export const resourceFetcherServiceStub = (shortcode = '0001') => ({
-  resource$: of(undefined),
+  resource$: of(STUB_RESOURCE),
   userCanEdit$: of(false),
   projectShortcode$: of(shortcode),
 });
@@ -40,12 +44,13 @@ export const makePropEntry = (
   propertyDefinition: propDef,
 });
 
-export const makeTextValue = (id: string, text: string): ReadTextValueAsString => {
+export const makeTextValue = (id: string, text: string, userHasPermission = 'RV'): ReadTextValueAsString => {
   const v = new ReadTextValueAsString();
   v.id = id;
   v.text = text;
   v.type = Constants.TextValue;
-  v.userHasPermission = 'RV';
+  v.userHasPermission = userHasPermission;
+  v.valueCreationDate = '2024-03-15T10:30:00Z';
   return v;
 };
 
@@ -62,16 +67,16 @@ export const makeEntityInfo = (
   return new ResourceClassAndPropertyDefinitions({ [resourceType]: classStub }, {});
 };
 
-export const makeDescriptionProperty = () => {
+export const makeDescriptionProperty = (userHasPermission = 'RV') => {
   const descPropId = 'http://0.0.0.0:3333/ontology/0001/example/v2#hasDescription';
   const def = makeTextPropDef(descPropId, 'Description');
   const entry = makePropEntry(def, 0);
-  const value = makeTextValue('http://rdfh.ch/value/desc-1', 'A sample resource for Storybook previews.');
+  const value = makeTextValue('http://rdfh.ch/value/desc-1', 'A sample resource for Storybook previews.', userHasPermission);
   return { id: descPropId, def, entry, value };
 };
 
-export const addDescriptionToResource = (res: ReadResource): ReadResource => {
-  const { id, entry, value } = makeDescriptionProperty();
+export const addDescriptionToResource = (res: ReadResource, userHasPermission = 'RV'): ReadResource => {
+  const { id, entry, value } = makeDescriptionProperty(userHasPermission);
   res.entityInfo = makeEntityInfo(res.type, [entry], res.label);
   res.properties = { ...res.properties, [id]: [value] };
   return res;

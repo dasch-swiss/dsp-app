@@ -36,7 +36,7 @@ const makeResource = (permission = 'CR'): DspResource => {
       } as unknown as ReadAudioFileValue,
     ],
   };
-  return generateDspResource(addDescriptionToResource(res));
+  return generateDspResource(addDescriptionToResource(res, permission));
 };
 
 const segmentsServiceStub: Partial<SegmentsService> = {

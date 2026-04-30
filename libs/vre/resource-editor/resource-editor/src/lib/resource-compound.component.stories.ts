@@ -71,9 +71,9 @@ const makeResource = (permission = 'CR'): DspResource => {
   res.hasPermissions = DEFAULT_HAS_PERMISSIONS;
   res.creationDate = '2024-03-15T10:30:00Z';
   res.properties = {
-    [titlePropId]: [makeTextValue('http://rdfh.ch/value/title-1', 'My Storybook Compound')],
+    [titlePropId]: [makeTextValue('http://rdfh.ch/value/title-1', 'My Storybook Compound', permission)],
     [descriptionPropId]: [
-      makeTextValue('http://rdfh.ch/value/desc-1', 'A sample compound resource for Storybook previews.'),
+      makeTextValue('http://rdfh.ch/value/desc-1', 'A sample compound resource for Storybook previews.', permission),
     ],
   };
   res.entityInfo = makeEntityInfo(res.type, propEntries, 'Still Image Representation');
