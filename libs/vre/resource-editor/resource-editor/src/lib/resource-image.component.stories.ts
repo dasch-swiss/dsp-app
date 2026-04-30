@@ -22,6 +22,7 @@ const makeResource = (permission = 'CR'): DspResource =>
     attachedToProject: 'http://rdfh.ch/projects/0803',
     attachedToUser: 'http://rdfh.ch/users/test',
     userHasPermission: permission,
+    hasPermissions: 'CR knora-base:ProjectAdmin|M knora-base:ProjectMember|V knora-base:KnownUser|RV knora-base:UnknownUser',
     creationDate: '2024-03-15T10:30:00Z',
     properties: {
       [Constants.HasStillImageFileValue]: [
@@ -69,10 +70,22 @@ const makeRegion = (id: string, label: string, geomType: 'rectangle' | 'circle',
     attachedToProject: 'http://rdfh.ch/projects/0803',
     attachedToUser: 'http://rdfh.ch/users/test',
     userHasPermission: 'CR',
+    hasPermissions: 'CR knora-admin:Creator',
     properties: {
       [Constants.HasGeometry]: [makeGeomValue(`${id}/geom`, geomType, color)],
       [Constants.HasColor]: [makeColorValue(`${id}/color`, color)],
     },
+    entityInfo: {
+      classes: {
+        [Constants.Region]: {
+          label: 'Region',
+          getResourcePropertiesList: () => [],
+        },
+      },
+      getPropertyDefinitionsByType: () => [],
+    },
+    getValues: () => [],
+    getValuesAs: () => [],
   } as unknown as ReadResource;
   return new DspResource(res);
 };
@@ -112,7 +125,7 @@ const meta: Meta<ResourceImageComponent> = {
           useValue: { get: () => of({ project: { id: '', shortcode: '0803', shortname: 'example', longname: 'My Storybook Project' } }) },
         },
         { provide: RegionService, useValue: regionServiceStub() },
-        { provide: ResourceFetcherService, useValue: { userCanEdit$: of(false), projectShortcode$: of('0803') } },
+        { provide: ResourceFetcherService, useValue: { resource$: of(undefined), userCanEdit$: of(false), projectShortcode$: of('0803') } },
         {
           provide: RepresentationService,
           useValue: { getFileInfo: () => of({ originalFilename: 'image.jpx' }), downloadProjectFile: () => {} },
