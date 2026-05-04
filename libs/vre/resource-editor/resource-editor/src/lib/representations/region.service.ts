@@ -42,6 +42,12 @@ export class RegionService {
     this.updateRegions$().pipe(takeUntil(this._ngUnsubscribe)).subscribe();
   }
 
+  /** Use when the regions are already known and no API fetch is needed. */
+  initializeWithRegions(regions: DspResource[]) {
+    this._setRegions(regions);
+    this._showRegions.next(true);
+  }
+
   updateRegions$() {
     return this._getIncomingRegions(this._resourceId).pipe(
       tap(res => {

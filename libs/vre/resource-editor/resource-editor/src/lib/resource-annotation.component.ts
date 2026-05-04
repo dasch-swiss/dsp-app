@@ -1,9 +1,10 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
+import { RegionService } from './representations/region.service';
+import { StillImageComponent } from './representations/still-image/still-image.component';
 import { ResourceDefaultTabsComponent } from './resource-default-tabs.component';
 import { ResourceHeaderComponent } from './resource-header.component';
 import { PropertiesDisplayService } from './resource-properties/properties-display.service';
-import { StillImageComponent } from './representations/still-image/still-image.component';
 import { ResourceRepresentationContainerComponent } from './resource-representation-container.component';
 import { ResourceRestrictionComponent } from './resource-restriction.component';
 
@@ -19,7 +20,7 @@ import { ResourceRestrictionComponent } from './resource-restriction.component';
     </app-resource-representation-container>
     <app-resource-default-tabs [resource]="resource" style="display: block; margin-top: 50px" />
   `,
-  providers: [PropertiesDisplayService],
+  providers: [PropertiesDisplayService, RegionService],
   imports: [
     ResourceRestrictionComponent,
     ResourceHeaderComponent,
@@ -28,6 +29,12 @@ import { ResourceRestrictionComponent } from './resource-restriction.component';
     ResourceDefaultTabsComponent,
   ],
 })
-export class ResourceAnnotationComponent {
+export class ResourceAnnotationComponent implements OnInit {
   @Input({ required: true }) resource!: DspResource;
+
+  constructor(private readonly _regionService: RegionService) {}
+
+  ngOnInit() {
+    this._regionService.initializeWithRegions([this.resource]);
+  }
 }
