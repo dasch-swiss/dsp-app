@@ -22,10 +22,8 @@ export interface DownloadDialogData {
       [title]="'pages.dataBrowser.downloadDialog.title' | translate"
       [subtitle]="'pages.dataBrowser.downloadDialog.resourcesAvailable' | translate: { count: data.resourceCount }" />
     @if (data.resourceCount > largeThreshold) {
-      <div
-        data-cy="large-export-warning"
-        style="display: flex; align-items: flex-start; gap: 8px; padding: 12px 24px; background: #fff3e0; color: #e65100">
-        <mat-icon style="flex-shrink: 0">warning</mat-icon>
+      <div class="large-export-warning" data-cy="large-export-warning" role="alert">
+        <mat-icon color="warn">warning</mat-icon>
         <span>{{
           'pages.dataBrowser.downloadDialog.largeExportWarning' | translate: { count: data.resourceCount }
         }}</span>
@@ -39,6 +37,18 @@ export interface DownloadDialogData {
         style="display: block; height: 100%" />
     </div>
   `,
+  styles: [
+    `
+      .large-export-warning {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        padding: 12px 24px;
+        background: var(--mat-warn-container-color);
+        color: var(--mat-warn-on-container-color);
+      }
+    `,
+  ],
   standalone: true,
   imports: [DialogHeaderComponent, MatIcon, TranslatePipe, MatDialogContent, DownloadDialogResourcesTabComponent],
 })
