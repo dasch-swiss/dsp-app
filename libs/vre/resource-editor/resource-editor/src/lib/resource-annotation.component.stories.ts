@@ -2,15 +2,21 @@ import { provideRouter } from '@angular/router';
 import {
   Constants,
   ReadResource,
+  ReadStillImageFileValue,
 } from '@dasch-swiss/dsp-js';
 import { ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { AppConfigService, DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { DspResource, generateDspResource } from '@dasch-swiss/vre/shared/app-common';
-import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
+import { NotificationService } from '@dasch-swiss/vre/ui/notification';
+import { applicationConfig, type Meta, moduleMetadata, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
 import { expect } from 'storybook/test';
 
+import { RegionService } from './representations/region.service';
+import { RepresentationService } from './representations/representation.service';
 import { ResourceFetcherService } from './representations/resource-fetcher.service';
+import { OpenSeaDragonService } from './representations/still-image/open-sea-dragon.service';
+import { OsdDrawerService } from './representations/still-image/osd-drawer.service';
 import { ResourceAnnotationComponent } from './resource-annotation.component';
 import { DEFAULT_HAS_PERMISSIONS, dspApiConnectionStub, makeEntityInfo, makePropEntry, makeTextPropDef, makeTextValue, resourceFetcherServiceStub } from './resource-stories.helper';
 
@@ -34,15 +40,53 @@ const makeResource = (permission = 'CR'): DspResource => {
   res.properties = {
     [titlePropId]: [makeTextValue('http://rdfh.ch/value/title-1', 'My Storybook Annotation', permission)],
     [descriptionPropId]: [makeTextValue('http://rdfh.ch/value/desc-1', 'A sample annotation for Storybook previews.', permission)],
+    [Constants.HasStillImageFileValue]: [
+      {
+        type: Constants.StillImageFileValue,
+        id: 'http://rdfh.ch/value/image-1',
+        fileUrl: 'https://iiif.dev.dasch.swiss/0803/1awyJYmiA5Z-FQ9xDcEh2Hi.jp2/full/1333,1815/0/default.jpg',
+        iiifBaseUrl: 'https://iiif.dev.dasch.swiss/0803',
+        filename: '1awyJYmiA5Z-FQ9xDcEh2Hi.jp2',
+        dimX: 1333,
+        dimY: 1815,
+        userHasPermission: permission,
+      } as unknown as ReadStillImageFileValue,
+    ],
   };
   res.entityInfo = makeEntityInfo(res.type, propEntries, 'Region');
   return generateDspResource(res);
+};
+
+const osdServiceStub = {
+  viewer: {
+    open: () => {},
+    destroy: () => {},
+    loadTilesWithAjax: false,
+    addHandler: () => {},
+    removeHandler: () => {},
+  },
+  onInit: () => {},
+  drawing: false,
+  toggleDrawing: () => {},
+  zoom: () => {},
+  createdRectangle$: of(),
+};
+
+const osdDrawerServiceStub = {
+  onInit: () => {},
+  update: () => {},
 };
 
 const meta: Meta<ResourceAnnotationComponent> = {
   title: 'Resource Editor / Resource / Annotation',
   component: ResourceAnnotationComponent,
   decorators: [
+    moduleMetadata({
+      providers: [
+        { provide: OpenSeaDragonService, useValue: osdServiceStub },
+        { provide: OsdDrawerService, useValue: osdDrawerServiceStub },
+      ],
+    }),
     applicationConfig({
       providers: [
         provideRouter([{ path: '**', redirectTo: '' }]),
@@ -56,6 +100,31 @@ const meta: Meta<ResourceAnnotationComponent> = {
         },
         { provide: ResourceFetcherService, useValue: resourceFetcherServiceStub() },
         { provide: DspApiConnectionToken, useValue: dspApiConnectionStub },
+        {
+          provide: RegionService,
+          useValue: {
+            regions$: of([]),
+            regionsLoading$: of(false),
+            showRegions$: of(false),
+            selectedRegion$: of(null),
+            highlightedRegionClicked$: of(null),
+            initialize: () => {},
+            showRegions: () => {},
+            selectRegion: () => {},
+            setHighlightedRegionClicked: () => {},
+            filterToRegion: () => {},
+            updateRegions: () => {},
+          },
+        },
+        {
+          provide: RepresentationService,
+          useValue: {
+            downloadProjectFile: () => {},
+            getFileInfo: () => of({ originalFilename: 'image.jp2' }),
+            getIngestOriginalUrl: () => of(''),
+          },
+        },
+        { provide: NotificationService, useValue: { openSnackBar: () => {} } },
       ],
     }),
   ],
