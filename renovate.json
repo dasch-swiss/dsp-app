@@ -19,7 +19,10 @@
   "dependencyDashboardOSVVulnerabilitySummary": "all",
   "lockFileMaintenance": {
     "enabled": true,
-    "schedule": ["before 9am on Monday"]
+    "schedule": ["before 9am on Monday"],
+    "automerge": true,
+    "platformAutomerge": true,
+    "rebaseWhen": "behind-base-branch"
   },
   "ignorePaths": ["libs/**/package.json"],
   "vulnerabilityAlerts": {
