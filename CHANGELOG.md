@@ -1,5 +1,38 @@
 # Changelog
 
+## [13.3.0](https://github.com/dasch-swiss/dsp-app/compare/v13.2.0...v13.3.0) (2026-05-04)
+
+
+### Enhancements
+
+* **download-dialog:** warn user when CSV export may take a long time ([#3088](https://github.com/dasch-swiss/dsp-app/issues/3088)) ([f0fd4a7](https://github.com/dasch-swiss/dsp-app/commit/f0fd4a7ef950ba1ab89ebf2d632a402385d4595f))
+
+
+### Bug Fixes
+
+* **ci:** pin send-google-chat-webhook to v0.0.4 ([#3065](https://github.com/dasch-swiss/dsp-app/issues/3065)) ([33333f1](https://github.com/dasch-swiss/dsp-app/commit/33333f17c59adbb726a0824ff36b86e8258da230))
+
+
+### Maintenances
+
+* add npm overrides to prevent duplicate webpack instances ([#3083](https://github.com/dasch-swiss/dsp-app/issues/3083)) ([ea6d92d](https://github.com/dasch-swiss/dsp-app/commit/ea6d92db9a47cdf01fe4df3513c21801e68c0a5e))
+* bump openseadragon to v6 and fix type errors ([#3073](https://github.com/dasch-swiss/dsp-app/issues/3073)) ([16c94fe](https://github.com/dasch-swiss/dsp-app/commit/16c94feff895fcf3bcb9309ae0dd21577764b042))
+* **ci:** reduce fetch-depth in changes and e2e jobs ([#3077](https://github.com/dasch-swiss/dsp-app/issues/3077)) ([f813a75](https://github.com/dasch-swiss/dsp-app/commit/f813a756ea4345f4c308416ee2330f3683e4f0d8))
+* **deps:** bump path-to-regexp from 0.1.12 to 0.1.13 ([#3070](https://github.com/dasch-swiss/dsp-app/issues/3070)) ([6b4a26f](https://github.com/dasch-swiss/dsp-app/commit/6b4a26f42063d8ad637dc6c982f4099805231e25))
+* **deps:** Lock file maintenance ([#3082](https://github.com/dasch-swiss/dsp-app/issues/3082)) ([128e01e](https://github.com/dasch-swiss/dsp-app/commit/128e01eb7eb6e9015c52e6a9df847df46df72f06))
+* **deps:** Update angular-ecosystem-deps (major) ([#3071](https://github.com/dasch-swiss/dsp-app/issues/3071)) ([2ee8431](https://github.com/dasch-swiss/dsp-app/commit/2ee8431888680bcfb34eb5e174f3ce2e56c52ddc))
+* **deps:** Update dependency @openapitools/openapi-generator-cli from 2.31.1 to 2.32.0 ([#3080](https://github.com/dasch-swiss/dsp-app/issues/3080)) ([0e4e36e](https://github.com/dasch-swiss/dsp-app/commit/0e4e36eab79796c7e829f002b83f7658671dfb02))
+* **deps:** Update dependency @sentry/angular from 10.49.0 to 10.50.0 ([#3067](https://github.com/dasch-swiss/dsp-app/issues/3067)) ([c6c49a8](https://github.com/dasch-swiss/dsp-app/commit/c6c49a8361c2cda3dfcc6f93e6df7f7fa22982f5))
+* **deps:** Update dependency @sentry/angular from 10.50.0 to 10.51.0 ([#3081](https://github.com/dasch-swiss/dsp-app/issues/3081)) ([807e997](https://github.com/dasch-swiss/dsp-app/commit/807e997fbd97c5b7f0bbb69314672f4721f440cb))
+* **deps:** Update dependency @sentry/cli from 3.4.0 to 3.4.1 ([#3078](https://github.com/dasch-swiss/dsp-app/issues/3078)) ([91335c7](https://github.com/dasch-swiss/dsp-app/commit/91335c72b8be0038ddbc256b8f9b1ea62d711217))
+* **deps:** Update dependency @swc/core from 1.15.30 to 1.15.32 ([#3076](https://github.com/dasch-swiss/dsp-app/issues/3076)) ([54aa7bc](https://github.com/dasch-swiss/dsp-app/commit/54aa7bc8d8512392d41d8c64b813bf35c420ea22))
+* **deps:** Update dependency jsonld from 8.3.3 to 9.0.0 ([#3069](https://github.com/dasch-swiss/dsp-app/issues/3069)) ([d2ad361](https://github.com/dasch-swiss/dsp-app/commit/d2ad36126a98249d3b2e4c8b74214c5930ebb5da))
+* **deps:** Update dependency postcss from 8.5.11 to 8.5.12 ([#3074](https://github.com/dasch-swiss/dsp-app/issues/3074)) ([6f662e4](https://github.com/dasch-swiss/dsp-app/commit/6f662e40ab4c1b23eb6808217f33d360d605bdfc))
+* **deps:** Update dependency postcss from 8.5.12 to 8.5.13 ([#3079](https://github.com/dasch-swiss/dsp-app/issues/3079)) ([74aa1eb](https://github.com/dasch-swiss/dsp-app/commit/74aa1eb780f3145602ed18eba38af931fcf288ef))
+* **deps:** Update grafana-faro-deps from 2.3.1 to 2.4.0 ([#3068](https://github.com/dasch-swiss/dsp-app/issues/3068)) ([2ee7f45](https://github.com/dasch-swiss/dsp-app/commit/2ee7f45f7944f8449a11378dfccd53ab9371a92e))
+* **renovate:** automerge lock file maintenance and manage webpack ecosystem ([#3086](https://github.com/dasch-swiss/dsp-app/issues/3086)) ([31ffed4](https://github.com/dasch-swiss/dsp-app/commit/31ffed41f9d372791f1c1744b719b2d9af06cb22))
+* replace thin-wrapper third-party actions with native gh CLI ([#3075](https://github.com/dasch-swiss/dsp-app/issues/3075)) ([d8f2c8b](https://github.com/dasch-swiss/dsp-app/commit/d8f2c8b0a54684d96b040330ede9bbcaa7bc62be))
+
 ## [13.2.0](https://github.com/dasch-swiss/dsp-app/compare/v13.1.1...v13.2.0) (2026-04-27)
 
 
