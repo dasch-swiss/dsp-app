@@ -50,6 +50,7 @@ import { StillImageToolbarComponent } from './still-image-toolbar.component';
             [resource]="resource"
             [compoundMode]="compoundMode"
             [isPng]="isPng"
+            [showLeftToolbar]="showLeftToolbar"
             (imageIsPng)="afterFormatChange($event)" />
         }
       </div>
@@ -67,6 +68,7 @@ import { StillImageToolbarComponent } from './still-image-toolbar.component';
 export class StillImageComponent implements OnChanges, AfterViewInit, OnDestroy {
   @Input({ required: true }) compoundMode!: boolean;
   @Input({ required: true }) resource!: ReadResource;
+  @Input() showLeftToolbar = true;
   @ViewChild('osdViewer') osdViewerElement!: ElementRef;
 
   isViewInitialized = false;

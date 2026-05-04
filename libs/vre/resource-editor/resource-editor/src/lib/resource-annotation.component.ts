@@ -21,7 +21,7 @@ import { ResourceRestrictionComponent } from './resource-restriction.component';
     <app-resource-header [resource]="resource" />
     <app-resource-representation-container>
       @if (imageResource$ | async; as imageResource) {
-        <app-still-image [resource]="imageResource" [compoundMode]="false" />
+        <app-still-image [resource]="imageResource" [compoundMode]="false" [showLeftToolbar]="false" />
       }
     </app-resource-representation-container>
     <app-resource-default-tabs [resource]="resource" style="display: block; margin-top: 50px" />
