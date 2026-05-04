@@ -1,6 +1,7 @@
 import { provideRouter } from '@angular/router';
 import {
   Constants,
+  ReadLinkValue,
   ReadResource,
   ReadStillImageFileValue,
 } from '@dasch-swiss/dsp-js';
@@ -12,13 +13,36 @@ import { applicationConfig, type Meta, moduleMetadata, type StoryObj } from '@st
 import { of } from 'rxjs';
 import { expect } from 'storybook/test';
 
-import { RegionService } from './representations/region.service';
 import { RepresentationService } from './representations/representation.service';
 import { ResourceFetcherService } from './representations/resource-fetcher.service';
 import { OpenSeaDragonService } from './representations/still-image/open-sea-dragon.service';
 import { OsdDrawerService } from './representations/still-image/osd-drawer.service';
 import { ResourceAnnotationComponent } from './resource-annotation.component';
-import { DEFAULT_HAS_PERMISSIONS, dspApiConnectionStub, makeEntityInfo, makePropEntry, makeTextPropDef, makeTextValue, resourceFetcherServiceStub } from './resource-stories.helper';
+import { DEFAULT_HAS_PERMISSIONS, makeEntityInfo, makePropEntry, makeTextPropDef, makeTextValue, resourceFetcherServiceStub } from './resource-stories.helper';
+
+const IMAGE_IRI = 'http://rdfh.ch/resource/image-1';
+
+const makeImageResource = (): ReadResource =>
+  ({
+    id: IMAGE_IRI,
+    attachedToProject: 'http://rdfh.ch/projects/0001',
+    attachedToUser: 'http://rdfh.ch/users/test',
+    userHasPermission: 'CR',
+    properties: {
+      [Constants.HasStillImageFileValue]: [
+        {
+          type: Constants.StillImageFileValue,
+          id: 'http://rdfh.ch/value/image-1',
+          fileUrl: 'https://iiif.dev.dasch.swiss/0803/1awyJYmiA5Z-FQ9xDcEh2Hi.jp2/full/1333,1815/0/default.jpg',
+          iiifBaseUrl: 'https://iiif.dev.dasch.swiss/0803',
+          filename: '1awyJYmiA5Z-FQ9xDcEh2Hi.jp2',
+          dimX: 1333,
+          dimY: 1815,
+          userHasPermission: 'CR',
+        } as unknown as ReadStillImageFileValue,
+      ],
+    },
+  }) as unknown as ReadResource;
 
 const makeResource = (permission = 'CR'): DspResource => {
   const titlePropId = 'http://0.0.0.0:3333/ontology/0001/example/v2#hasTitle';
@@ -28,7 +52,7 @@ const makeResource = (permission = 'CR'): DspResource => {
   const propEntries = [makePropEntry(titleDef, 0), makePropEntry(descriptionDef, 1)];
 
   const res = new ReadResource();
-  res.id = 'http://rdfh.ch/resource/1';
+  res.id = 'http://rdfh.ch/resource/annotation-1';
   res.type = 'http://api.knora.org/ontology/knora-api/v2#Region';
   res.label = 'My Storybook Annotation';
   res.attachedToProject = 'http://rdfh.ch/projects/0001';
@@ -40,17 +64,8 @@ const makeResource = (permission = 'CR'): DspResource => {
   res.properties = {
     [titlePropId]: [makeTextValue('http://rdfh.ch/value/title-1', 'My Storybook Annotation', permission)],
     [descriptionPropId]: [makeTextValue('http://rdfh.ch/value/desc-1', 'A sample annotation for Storybook previews.', permission)],
-    [Constants.HasStillImageFileValue]: [
-      {
-        type: Constants.StillImageFileValue,
-        id: 'http://rdfh.ch/value/image-1',
-        fileUrl: 'https://iiif.dev.dasch.swiss/0803/1awyJYmiA5Z-FQ9xDcEh2Hi.jp2/full/1333,1815/0/default.jpg',
-        iiifBaseUrl: 'https://iiif.dev.dasch.swiss/0803',
-        filename: '1awyJYmiA5Z-FQ9xDcEh2Hi.jp2',
-        dimX: 1333,
-        dimY: 1815,
-        userHasPermission: permission,
-      } as unknown as ReadStillImageFileValue,
+    [Constants.IsRegionOfValue]: [
+      { linkedResourceIri: IMAGE_IRI } as unknown as ReadLinkValue,
     ],
   };
   res.entityInfo = makeEntityInfo(res.type, propEntries, 'Region');
@@ -99,21 +114,17 @@ const meta: Meta<ResourceAnnotationComponent> = {
           useValue: { get: () => of({ project: { id: '', shortcode: '0001', shortname: 'test', longname: 'Test' } }) },
         },
         { provide: ResourceFetcherService, useValue: resourceFetcherServiceStub() },
-        { provide: DspApiConnectionToken, useValue: dspApiConnectionStub },
         {
-          provide: RegionService,
+          provide: DspApiConnectionToken,
           useValue: {
-            regions$: of([]),
-            regionsLoading$: of(false),
-            showRegions$: of(false),
-            selectedRegion$: of(null),
-            highlightedRegionClicked$: of(null),
-            initialize: () => {},
-            showRegions: () => {},
-            selectRegion: () => {},
-            setHighlightedRegionClicked: () => {},
-            filterToRegion: () => {},
-            updateRegions: () => {},
+            v2: {
+              res: { getResource: () => of(makeImageResource()) },
+              search: {
+                doSearchIncomingLinks: () => of({ resources: [], mayHaveMoreResults: false }),
+                doExtendedSearch: () => of({ resources: [], mayHaveMoreResults: false }),
+                doSearchIncomingRegions: () => of({ resources: [], mayHaveMoreResults: false }),
+              },
+            },
           },
         },
         {
