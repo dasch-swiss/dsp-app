@@ -19,7 +19,10 @@
   "dependencyDashboardOSVVulnerabilitySummary": "all",
   "lockFileMaintenance": {
     "enabled": true,
-    "schedule": ["before 9am on Monday"]
+    "schedule": ["before 9am on Monday"],
+    "automerge": true,
+    "platformAutomerge": true,
+    "rebaseWhen": "behind-base-branch"
   },
   "ignorePaths": ["libs/**/package.json"],
   "vulnerabilityAlerts": {
@@ -178,6 +181,12 @@
       "enabled": false
     },
     {
+      "description": "webpack ecosystem: major version is pinned by @angular-devkit/build-angular — disable major updates until ng update lifts the constraint",
+      "matchPackageNames": ["webpack", "webpack-dev-middleware", "webpack-dev-server", "webpack-merge"],
+      "matchUpdateTypes": ["major"],
+      "enabled": false
+    },
+    {
       "description": "uuid major: v10+ is ESM-only, incompatible with Jest v29 CJS transform — disable until Angular 21 migration brings jest-preset-angular v16 + Jest 30 with proper ESM support (tracked in DEV-6217)",
       "matchPackageNames": ["uuid", "@types/uuid"],
       "matchUpdateTypes": ["major"],
@@ -249,6 +258,11 @@
       "description": "PostCSS + autoprefixer (autoprefixer not in postcss monorepo preset)",
       "matchPackageNames": ["autoprefixer", "/^postcss/"],
       "groupName": "postcss-deps"
+    },
+    {
+      "description": "webpack ecosystem — exact-pinned by @angular-devkit/build-angular; must move together to stay deduplicated",
+      "matchPackageNames": ["webpack", "webpack-dev-middleware", "webpack-dev-server", "webpack-merge"],
+      "groupName": "webpack-deps"
     },
     {
       "description": "OpenSeaDragon image viewer",
