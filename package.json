@@ -154,5 +154,11 @@
     "@nx/nx-linux-x64-gnu": "21.5.1",
     "@nx/nx-win32-x64-msvc": "21.5.1",
     "canvas": "file:mocks/canvas"
+  },
+  "overrides": {
+    "webpack": "^5.0.0",
+    "webpack-dev-middleware": "^7.0.0",
+    "webpack-dev-server": "^5.0.0",
+    "webpack-merge": "^6.0.0"
   }
 }
