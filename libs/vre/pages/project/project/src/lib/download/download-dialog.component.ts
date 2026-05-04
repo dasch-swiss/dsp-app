@@ -26,7 +26,9 @@ export interface DownloadDialogData {
         data-cy="large-export-warning"
         style="display: flex; align-items: flex-start; gap: 8px; padding: 12px 24px; background: #fff3e0; color: #e65100">
         <mat-icon style="flex-shrink: 0">warning</mat-icon>
-        <span>{{ 'pages.dataBrowser.downloadDialog.largeExportWarning' | translate: { count: data.resourceCount } }}</span>
+        <span>{{
+          'pages.dataBrowser.downloadDialog.largeExportWarning' | translate: { count: data.resourceCount }
+        }}</span>
       </div>
     }
     <div mat-dialog-content style="max-height: 90vh">
