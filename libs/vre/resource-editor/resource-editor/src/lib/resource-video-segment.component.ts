@@ -1,0 +1,68 @@
+import { AsyncPipe } from '@angular/common';
+import { Component, Inject, Input, OnInit } from '@angular/core';
+import { KnoraApiConnection, ReadIntervalValue, ReadLinkValue, ReadResource } from '@dasch-swiss/dsp-js';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
+import { DspResource } from '@dasch-swiss/vre/shared/app-common';
+import { map, Observable, of } from 'rxjs';
+import { getFileValue } from './representations/get-file-value';
+import { VideoComponent } from './representations/video/video.component';
+import { ResourceDefaultTabsComponent } from './resource-default-tabs.component';
+import { ResourceHeaderComponent } from './resource-header.component';
+import { ResourceLegalComponent } from './resource-legal.component';
+import { PropertiesDisplayService } from './resource-properties/properties-display.service';
+import { ResourceRestrictionComponent } from './resource-restriction.component';
+import { SegmentsService } from './segment-support/segments.service';
+
+const IS_VIDEO_SEGMENT_OF_VALUE = 'http://api.knora.org/ontology/knora-api/v2#isVideoSegmentOfValue';
+const HAS_SEGMENT_BOUNDS = 'http://api.knora.org/ontology/knora-api/v2#hasSegmentBounds';
+
+@Component({
+  selector: 'app-resource-video-segment',
+  template: `
+    @if (resource.res.userHasPermission === 'RV') {
+      <app-resource-restriction />
+    }
+    <app-resource-header [resource]="resource" />
+    @if (parentResource$ | async; as parentResource) {
+      <app-resource-legal [fileValue]="getFileValue(parentResource)" />
+      <app-video [src]="getFileValue(parentResource)" [parentResource]="parentResource" [start]="start" />
+    }
+    <app-resource-default-tabs [resource]="resource" style="display: block; margin-top: 50px" />
+  `,
+  providers: [PropertiesDisplayService, SegmentsService],
+  imports: [
+    AsyncPipe,
+    ResourceRestrictionComponent,
+    ResourceHeaderComponent,
+    ResourceLegalComponent,
+    VideoComponent,
+    ResourceDefaultTabsComponent,
+  ],
+})
+export class ResourceVideoSegmentComponent implements OnInit {
+  @Input({ required: true }) resource!: DspResource;
+
+  parentResource$!: Observable<ReadResource>;
+  start = 0;
+
+  constructor(@Inject(DspApiConnectionToken) private readonly _dspApi: KnoraApiConnection) {}
+
+  ngOnInit() {
+    const linkValue = this.resource.res.properties[IS_VIDEO_SEGMENT_OF_VALUE]?.[0] as ReadLinkValue | undefined;
+    if (!linkValue) {
+      this.parentResource$ = of();
+      return;
+    }
+    const bounds = this.resource.res.properties[HAS_SEGMENT_BOUNDS]?.[0] as ReadIntervalValue | undefined;
+    if (bounds?.start != null) {
+      this.start = bounds.start;
+    }
+    this.parentResource$ = this._dspApi.v2.res
+      .getResource(linkValue.linkedResourceIri)
+      .pipe(map(r => r as ReadResource));
+  }
+
+  getFileValue(resource: ReadResource) {
+    return getFileValue(resource)!;
+  }
+}

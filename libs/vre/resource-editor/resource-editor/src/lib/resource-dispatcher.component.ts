@@ -7,15 +7,16 @@ import { Subject, take, takeUntil } from 'rxjs';
 import { getResourceType } from './get-resource-type';
 import { ResourceAnnotationComponent } from './resource-annotation.component';
 import { ResourceArchiveComponent } from './resource-archive.component';
+import { ResourceAudioSegmentComponent } from './resource-audio-segment.component';
 import { ResourceAudioComponent } from './resource-audio.component';
 import { ResourceCompoundComponent } from './resource-compound.component';
 import { ResourceDocumentComponent } from './resource-document.component';
 import { ResourceImageComponent } from './resource-image.component';
 import { ResourcePdfComponent } from './resource-pdf.component';
 import { ResourcePlainComponent } from './resource-plain.component';
-import { ResourceSegmentComponent } from './resource-segment.component';
 import { ResourceTextComponent } from './resource-text.component';
 import { ResourceType } from './resource-type';
+import { ResourceVideoSegmentComponent } from './resource-video-segment.component';
 import { ResourceVideoComponent } from './resource-video.component';
 
 @Component({
@@ -52,8 +53,11 @@ import { ResourceVideoComponent } from './resource-video.component';
         @case (ResourceType.Annotation) {
           <app-resource-annotation [resource]="resource" />
         }
-        @case (ResourceType.Segment) {
-          <app-resource-segment [resource]="resource" />
+        @case (ResourceType.VideoSegment) {
+          <app-resource-video-segment [resource]="resource" />
+        }
+        @case (ResourceType.AudioSegment) {
+          <app-resource-audio-segment [resource]="resource" />
         }
         @case (ResourceType.Plain) {
           <app-resource-plain [resource]="resource" />
@@ -71,7 +75,8 @@ import { ResourceVideoComponent } from './resource-video.component';
     ResourceImageComponent,
     ResourcePdfComponent,
     ResourcePlainComponent,
-    ResourceSegmentComponent,
+    ResourceAudioSegmentComponent,
+    ResourceVideoSegmentComponent,
     ResourceTextComponent,
     ResourceVideoComponent,
   ],

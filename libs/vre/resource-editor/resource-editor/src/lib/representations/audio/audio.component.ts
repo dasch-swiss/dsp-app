@@ -49,6 +49,7 @@ import { MediaSliderComponent } from './media-slider.component';
 export class AudioComponent implements OnInit, OnChanges, OnDestroy {
   @Input({ required: true }) src!: FileRepresentationInput;
   @Input({ required: true }) parentResource!: ParentResourceInput;
+  @Input() start = 0;
 
   @ViewChild('audioPlayer', { static: false }) audioPlayerRef!: ElementRef<HTMLAudioElement>;
 
@@ -114,6 +115,9 @@ export class AudioComponent implements OnInit, OnChanges, OnDestroy {
   onAudioPlayerReady() {
     const player = this.audioPlayerRef.nativeElement;
     this.mediaPlayer.onInit(player);
+    if (this.start > 0) {
+      this.mediaPlayer.navigate(this.start);
+    }
     this.isPlayerReady = true;
     this.duration = this.mediaPlayer.duration();
     this._cd.detectChanges();

@@ -22,7 +22,8 @@ export function getResourceType(resource: ReadResource): ResourceType | null {
 
   // no file value — inspect resource class IRI
   if (resource.type === Constants.Region) return ResourceType.Annotation;
-  if (resource.type === VIDEO_SEGMENT_CLASS || resource.type === AUDIO_SEGMENT_CLASS) return ResourceType.Segment;
+  if (resource.type === VIDEO_SEGMENT_CLASS) return ResourceType.VideoSegment;
+  if (resource.type === AUDIO_SEGMENT_CLASS) return ResourceType.AudioSegment;
 
   // null = needs async compound check to distinguish plain from compound
   return null;

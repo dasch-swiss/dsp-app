@@ -55,8 +55,7 @@ const makeTextResource = (): DspResource =>
     properties: { [Constants.HasTextFileValue]: [{ filename: 'note.txt' }] },
   });
 
-const makeAnnotationResource = (): DspResource =>
-  makeResource({ type: Constants.Region, properties: {} });
+const makeAnnotationResource = (): DspResource => makeResource({ type: Constants.Region, properties: {} });
 
 const makeSegmentResource = (): DspResource =>
   makeResource({
@@ -166,10 +165,10 @@ describe('ResourceDispatcherComponent', () => {
     });
   });
 
-  describe('when the resource is a segment', () => {
-    it('sets resourceType to Segment immediately without an API call', () => {
+  describe('when the resource is a video segment', () => {
+    it('sets resourceType to VideoSegment immediately without an API call', () => {
       triggerNgOnChanges(makeSegmentResource());
-      expect(component.resourceType).toBe(ResourceType.Segment);
+      expect(component.resourceType).toBe(ResourceType.VideoSegment);
       expect(dspApiMock.v2.search.doSearchStillImageRepresentationsCount).not.toHaveBeenCalled();
     });
   });

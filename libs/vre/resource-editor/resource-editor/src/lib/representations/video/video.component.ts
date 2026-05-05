@@ -47,11 +47,10 @@ import { VideoToolbarComponent } from './video-toolbar.component';
 export class VideoComponent implements OnChanges, OnDestroy {
   @Input({ required: true }) src!: FileRepresentationInput;
   @Input({ required: true }) parentResource!: ParentResourceInput;
+  @Input() start = 0;
   @Output() loaded = new EventEmitter<boolean>();
 
   @ViewChild('videoElement', { static: false }) videoElement!: ElementRef<HTMLVideoElement>;
-
-  start = 0;
   video?: SafeUrl;
   videoError?: string;
   myCurrentTime = 0;
@@ -104,6 +103,10 @@ export class VideoComponent implements OnChanges, OnDestroy {
     const player = document.getElementById('video') as HTMLVideoElement;
 
     this.videoPlayer.onInit(player);
+
+    if (this.start > 0) {
+      this.videoPlayer.navigate(this.start);
+    }
 
     this.duration = this.videoPlayer.duration();
     this.isPlayerReady = true;

@@ -8,6 +8,7 @@ export enum ResourceType {
   Text = 'text',
   Compound = 'compound',
   Annotation = 'annotation',
-  Segment = 'segment',
+  VideoSegment = 'video-segment',
+  AudioSegment = 'audio-segment',
   Plain = 'plain',
 }
