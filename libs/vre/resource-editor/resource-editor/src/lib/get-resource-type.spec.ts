@@ -75,12 +75,12 @@ describe('getResourceType', () => {
 
     it('returns Segment for knora-api:VideoSegment resources', () => {
       const resource = makeResourceNoFile(`${KNORA_API_V2}VideoSegment`);
-      expect(getResourceType(resource)).toBe(ResourceType.Segment);
+      expect(getResourceType(resource)).toBe(ResourceType.VideoSegment);
     });
 
     it('returns Segment for knora-api:AudioSegment resources', () => {
       const resource = makeResourceNoFile(`${KNORA_API_V2}AudioSegment`);
-      expect(getResourceType(resource)).toBe(ResourceType.Segment);
+      expect(getResourceType(resource)).toBe(ResourceType.AudioSegment);
     });
 
     it('returns null for plain objects (compound check needed)', () => {
