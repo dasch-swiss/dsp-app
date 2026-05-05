@@ -48,6 +48,7 @@ export class ResourceAnnotationComponent implements OnInit {
 
   ngOnInit() {
     this._regionService.initializeWithRegions([this.resource]);
+    this._regionService.selectRegion(this.resource.res.id);
     this.imageResource$ = this._loadImageResource();
   }
 

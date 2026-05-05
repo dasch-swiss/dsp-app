@@ -25,6 +25,9 @@ export class RegionService {
 
   private _selectedRegion = new BehaviorSubject<string | null>(null);
   selectedRegion$ = this._selectedRegion.asObservable();
+  get selectedRegion() {
+    return this._selectedRegion.value;
+  }
 
   private _highlightedRegionClicked = new BehaviorSubject<string | null>(null);
   highlightedRegionClicked$ = this._highlightedRegionClicked.asObservable();
