@@ -409,7 +409,8 @@
         "includeArkUrlsExplanation": "Fügt eine ARK-URL-Spalte als erste Spalte in der CSV für jede Ressource hinzu.",
         "downloadCsv": "CSV herunterladen",
         "downloadSuccess": "CSV erfolgreich heruntergeladen.",
-        "downloadError": "Fehler beim Herunterladen der CSV. Bitte versuchen Sie es erneut."
+        "downloadError": "Fehler beim Herunterladen der CSV. Bitte versuchen Sie es erneut.",
+        "largeExportWarning": "Dieser Export enthält {{count}} Ressourcen und kann mehrere Minuten dauern. Bitte lassen Sie diesen Tab geöffnet."
       }
     }
   },

@@ -9,7 +9,21 @@ jobs:
     name: Check PR Title
     runs-on: ubuntu-latest
     steps:
-      - uses: deepakputhraya/action-pr-title@master
-        with:
-          regex: '^(feat|fix|docs|style|refactor|perf|test|chore)(\(.+\))?!?: .+$'
-          max_length: 140
+      - name: Validate PR title
+        env:
+          TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          set -euo pipefail
+          MAX_LENGTH=140
+          REGEX='^(feat|fix|docs|style|refactor|perf|test|chore)(\(.+\))?!?: .+$'
+          if [ "${#TITLE}" -gt "$MAX_LENGTH" ]; then
+            echo "::error::PR title exceeds ${MAX_LENGTH} characters (got ${#TITLE})."
+            exit 1
+          fi
+          if [[ ! "$TITLE" =~ $REGEX ]]; then
+            echo "::error::PR title does not match Conventional Commits format."
+            echo "::error::Expected: <type>(<scope>)!: <description>  where type ∈ {feat,fix,docs,style,refactor,perf,test,chore}"
+            echo "::error::Got: ${TITLE}"
+            exit 1
+          fi
+          echo "PR title OK: ${TITLE}"

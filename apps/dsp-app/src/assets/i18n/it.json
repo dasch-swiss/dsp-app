@@ -409,7 +409,8 @@
         "includeArkUrlsExplanation": "Aggiunge una colonna ARK URL come prima colonna nel CSV per ogni risorsa.",
         "downloadCsv": "Scarica CSV",
         "downloadSuccess": "CSV scaricato con successo.",
-        "downloadError": "Impossibile scaricare il CSV. Riprova."
+        "downloadError": "Impossibile scaricare il CSV. Riprova.",
+        "largeExportWarning": "Questo export contiene {{count}} risorse e potrebbe richiedere diversi minuti. Tieni aperta questa scheda."
       }
     }
   },

@@ -1,6 +1,6 @@
 {
   "name": "dsp-app",
-  "version": "13.2.0",
+  "version": "13.3.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/dasch-swiss/dsp-app.git"
@@ -103,7 +103,7 @@
     "@storybook/angular": "9.1.20",
     "@storybook/test-runner": "^0.23.0",
     "@swc-node/register": "1.11.1",
-    "@swc/core": "1.15.30",
+    "@swc/core": "1.15.32",
     "@swc/helpers": "0.5.21",
     "@swc/jest": "^0.2.39",
     "@types/jest": "29.5.14",
@@ -154,5 +154,11 @@
     "@nx/nx-linux-x64-gnu": "21.5.1",
     "@nx/nx-win32-x64-msvc": "21.5.1",
     "canvas": "file:mocks/canvas"
+  },
+  "overrides": {
+    "webpack": "^5.0.0",
+    "webpack-dev-middleware": "^7.0.0",
+    "webpack-dev-server": "^5.0.0",
+    "webpack-merge": "^6.0.0"
   }
 }
