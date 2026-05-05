@@ -17,6 +17,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { catchError, EMPTY, Subject, takeUntil } from 'rxjs';
 import { ResourceRepresentationContainerComponent } from '../../resource-representation-container.component';
 import { MediaControlService } from '../../segment-support/media-control.service';
+import { Segment } from '../../segment-support/segment';
 import { SegmentsDisplayComponent } from '../../segment-support/segments-display.component';
 import { SegmentsService } from '../../segment-support/segments.service';
 import { MediaSliderComponent } from '../audio/media-slider.component';
@@ -48,6 +49,7 @@ export class VideoComponent implements OnChanges, OnDestroy {
   @Input({ required: true }) src!: FileRepresentationInput;
   @Input({ required: true }) parentResource!: ParentResourceInput;
   @Input() start = 0;
+  @Input() overrideSegments?: Segment[];
   @Output() loaded = new EventEmitter<boolean>();
 
   @ViewChild('videoElement', { static: false }) videoElement!: ElementRef<HTMLVideoElement>;
@@ -80,8 +82,13 @@ export class VideoComponent implements OnChanges, OnDestroy {
   ngOnChanges(): void {
     this._ngUnsubscribe.next();
 
+    this.isPlayerReady = false;
     this._watchForMediaEvents();
-    this.segmentsService.onInit(this.parentResource.id, 'VideoSegment');
+    if (this.overrideSegments) {
+      this.segmentsService.segments = this.overrideSegments;
+    } else {
+      this.segmentsService.onInit(this.parentResource.id, 'VideoSegment');
+    }
     this.videoError = '';
     this.video = this._sanitizer.bypassSecurityTrustUrl(this.src.fileUrl);
 
@@ -100,6 +107,8 @@ export class VideoComponent implements OnChanges, OnDestroy {
   }
 
   onVideoPlayerReady() {
+    if (this.isPlayerReady) return;
+
     const player = document.getElementById('video') as HTMLVideoElement;
 
     this.videoPlayer.onInit(player);
@@ -116,7 +125,7 @@ export class VideoComponent implements OnChanges, OnDestroy {
       this.myCurrentTime = seconds;
       this._cdr.detectChanges();
 
-      if (this.watchForPause !== null && this.watchForPause === Math.floor(seconds)) {
+      if (this.watchForPause !== null && Math.floor(this.watchForPause) === Math.floor(seconds)) {
         this.videoPlayer.pause();
         this.watchForPause = null;
       }

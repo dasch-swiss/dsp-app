@@ -11,6 +11,7 @@ import { ResourceHeaderComponent } from './resource-header.component';
 import { ResourceLegalComponent } from './resource-legal.component';
 import { PropertiesDisplayService } from './resource-properties/properties-display.service';
 import { ResourceRestrictionComponent } from './resource-restriction.component';
+import { Segment } from './segment-support/segment';
 import { SegmentsService } from './segment-support/segments.service';
 
 const IS_VIDEO_SEGMENT_OF_VALUE = 'http://api.knora.org/ontology/knora-api/v2#isVideoSegmentOfValue';
@@ -25,7 +26,11 @@ const HAS_SEGMENT_BOUNDS = 'http://api.knora.org/ontology/knora-api/v2#hasSegmen
     <app-resource-header [resource]="resource" />
     @if (parentResource$ | async; as parentResource) {
       <app-resource-legal [fileValue]="getFileValue(parentResource)" />
-      <app-video [src]="getFileValue(parentResource)" [parentResource]="parentResource" [start]="start" />
+      <app-video
+        [src]="getFileValue(parentResource)"
+        [parentResource]="parentResource"
+        [start]="start"
+        [overrideSegments]="currentSegments" />
     }
     <app-resource-default-tabs [resource]="resource" style="display: block; margin-top: 50px" />
   `,
@@ -44,6 +49,7 @@ export class ResourceVideoSegmentComponent implements OnInit {
 
   parentResource$!: Observable<ReadResource>;
   start = 0;
+  currentSegments: Segment[] = [];
 
   constructor(@Inject(DspApiConnectionToken) private readonly _dspApi: KnoraApiConnection) {}
 
@@ -56,6 +62,21 @@ export class ResourceVideoSegmentComponent implements OnInit {
     const bounds = this.resource.res.properties[HAS_SEGMENT_BOUNDS]?.[0] as ReadIntervalValue | undefined;
     if (bounds?.start != null) {
       this.start = bounds.start;
+    }
+    if (bounds) {
+      this.currentSegments = [
+        {
+          resource: this.resource,
+          row: 0,
+          label: this.resource.res.label,
+          hasSegmentBounds: bounds,
+          hasVideoSegmentOfValue: linkValue,
+          hasComment: undefined,
+          hasDescription: undefined,
+          hasKeyword: undefined,
+          hasTitle: undefined,
+        },
+      ];
     }
     this.parentResource$ = this._dspApi.v2.res
       .getResource(linkValue.linkedResourceIri)
