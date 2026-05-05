@@ -86,9 +86,8 @@ describe('AnnotationToolbarComponent', () => {
 
       component.openRegionInNewTab();
 
-      const expectedAnnotationId = encodeURIComponent('http://r/annotation1');
       expect(openSpy).toHaveBeenCalledWith(
-        `/${RouteConstants.resource}/project/123/resource/456?${RouteConstants.annotationQueryParam}=${expectedAnnotationId}`,
+        `/${RouteConstants.resource}/project/123/resource/456`,
         '_blank'
       );
 
@@ -177,9 +176,8 @@ describe('AnnotationToolbarComponent — behavior', () => {
 
       component.openRegionInNewTab();
 
-      const expectedAnnotationId = encodeURIComponent('http://r/annotation1');
       expect(openSpy).toHaveBeenCalledWith(
-        expect.stringContaining(`${RouteConstants.annotationQueryParam}=${expectedAnnotationId}`),
+        `/${RouteConstants.resource}/project/123/resource/456`,
         '_blank'
       );
 
