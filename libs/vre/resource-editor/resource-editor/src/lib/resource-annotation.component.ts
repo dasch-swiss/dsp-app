@@ -5,6 +5,7 @@ import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { map, Observable, of } from 'rxjs';
 import { RegionService } from './representations/region.service';
+import { RepresentationErrorMessageComponent } from './representations/representation-error-message.component';
 import { StillImageComponent } from './representations/still-image/still-image.component';
 import { ResourceDefaultTabsComponent } from './resource-default-tabs.component';
 import { ResourceHeaderComponent } from './resource-header.component';
@@ -20,7 +21,9 @@ import { ResourceRestrictionComponent } from './resource-restriction.component';
     }
     <app-resource-header [resource]="resource" />
     <app-resource-representation-container>
-      @if (imageResource$ | async; as imageResource) {
+      @if (missingImageLink) {
+        <app-representation-error-message />
+      } @else if (imageResource$ | async; as imageResource) {
         <app-still-image [resource]="imageResource" [compoundMode]="false" [showLeftToolbar]="false" />
       }
     </app-resource-representation-container>
@@ -32,6 +35,7 @@ import { ResourceRestrictionComponent } from './resource-restriction.component';
     ResourceRestrictionComponent,
     ResourceHeaderComponent,
     ResourceRepresentationContainerComponent,
+    RepresentationErrorMessageComponent,
     StillImageComponent,
     ResourceDefaultTabsComponent,
   ],
@@ -40,6 +44,7 @@ export class ResourceAnnotationComponent implements OnInit {
   @Input({ required: true }) resource!: DspResource;
 
   imageResource$!: Observable<ReadResource>;
+  missingImageLink = false;
 
   constructor(
     private readonly _regionService: RegionService,
@@ -54,7 +59,11 @@ export class ResourceAnnotationComponent implements OnInit {
 
   private _loadImageResource(): Observable<ReadResource> {
     const linkValues = this.resource.res.properties[Constants.IsRegionOfValue];
-    if (!linkValues?.length) return of();
+    if (!linkValues?.length) {
+      console.warn(`ResourceAnnotationComponent: no IsRegionOfValue found on annotation ${this.resource.res.id}`);
+      this.missingImageLink = true;
+      return of();
+    }
     const imageIri = (linkValues[0] as ReadLinkValue).linkedResourceIri;
     return this._dspApi.v2.res.getResource(imageIri).pipe(map(r => r as ReadResource));
   }
