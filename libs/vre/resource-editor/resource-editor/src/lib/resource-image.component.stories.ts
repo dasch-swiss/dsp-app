@@ -1,5 +1,12 @@
 import { provideRouter } from '@angular/router';
-import { Constants, ReadColorValue, ReadGeomValue, ReadResource, ReadStillImageFileValue, RegionGeometry } from '@dasch-swiss/dsp-js';
+import {
+  Constants,
+  ReadColorValue,
+  ReadGeomValue,
+  ReadResource,
+  ReadStillImageFileValue,
+  RegionGeometry,
+} from '@dasch-swiss/dsp-js';
 import { ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { AdminAPIApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { AppConfigService, DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
@@ -13,7 +20,12 @@ import { RegionService } from './representations/region.service';
 import { RepresentationService } from './representations/representation.service';
 import { ResourceFetcherService } from './representations/resource-fetcher.service';
 import { ResourceImageComponent } from './resource-image.component';
-import { addDescriptionToResource, DEFAULT_HAS_PERMISSIONS, dspApiConnectionStub, resourceFetcherServiceStub } from './resource-stories.helper';
+import {
+  addDescriptionToResource,
+  DEFAULT_HAS_PERMISSIONS,
+  dspApiConnectionStub,
+  resourceFetcherServiceStub,
+} from './resource-stories.helper';
 
 const makeResource = (permission = 'CR'): DspResource => {
   const res = new ReadResource();
@@ -51,7 +63,12 @@ const makeGeomValue = (id: string, type: 'rectangle' | 'circle', lineColor: stri
       'active',
       lineColor,
       2,
-      type === 'rectangle' ? [{ x: 0.1, y: 0.1 }, { x: 0.4, y: 0.4 }] : [{ x: 0.6, y: 0.3 }],
+      type === 'rectangle'
+        ? [
+            { x: 0.1, y: 0.1 },
+            { x: 0.4, y: 0.4 },
+          ]
+        : [{ x: 0.6, y: 0.3 }],
       type,
       type === 'circle' ? { x: 0.1, y: 0.1 } : undefined
     ),
@@ -120,7 +137,10 @@ const meta: Meta<ResourceImageComponent> = {
         },
         {
           provide: ProjectApiService,
-          useValue: { get: () => of({ project: { id: '', shortcode: '0803', shortname: 'example', longname: 'My Storybook Project' } }) },
+          useValue: {
+            get: () =>
+              of({ project: { id: '', shortcode: '0803', shortname: 'example', longname: 'My Storybook Project' } }),
+          },
         },
         { provide: RegionService, useValue: regionServiceStub() },
         { provide: ResourceFetcherService, useValue: resourceFetcherServiceStub('0803') },
@@ -179,8 +199,7 @@ export const WithAnnotations: Story = {
             v2: {
               search: {
                 ...dspApiConnectionStub.v2.search,
-                doSearchIncomingRegions: () =>
-                  of({ resources: REGIONS.map(r => r.res), mayHaveMoreResults: false }),
+                doSearchIncomingRegions: () => of({ resources: REGIONS.map(r => r.res), mayHaveMoreResults: false }),
               },
             },
           },

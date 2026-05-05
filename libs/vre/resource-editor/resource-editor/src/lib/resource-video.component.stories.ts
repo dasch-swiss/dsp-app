@@ -11,8 +11,13 @@ import { expect } from 'storybook/test';
 
 import { RepresentationService } from './representations/representation.service';
 import { ResourceFetcherService } from './representations/resource-fetcher.service';
+import {
+  addDescriptionToResource,
+  DEFAULT_HAS_PERMISSIONS,
+  dspApiConnectionStub,
+  resourceFetcherServiceStub,
+} from './resource-stories.helper';
 import { ResourceVideoComponent } from './resource-video.component';
-import { addDescriptionToResource, DEFAULT_HAS_PERMISSIONS, dspApiConnectionStub, resourceFetcherServiceStub } from './resource-stories.helper';
 import { SegmentsService } from './segment-support/segments.service';
 
 const makeResource = (permission = 'CR'): DspResource => {
@@ -59,7 +64,10 @@ const meta: Meta<ResourceVideoComponent> = {
         },
         {
           provide: ProjectApiService,
-          useValue: { get: () => of({ project: { id: '', shortcode: '0869', shortname: 'example', longname: 'My Storybook Project' } }) },
+          useValue: {
+            get: () =>
+              of({ project: { id: '', shortcode: '0869', shortname: 'example', longname: 'My Storybook Project' } }),
+          },
         },
         { provide: ResourceFetcherService, useValue: resourceFetcherServiceStub('0869') },
         {

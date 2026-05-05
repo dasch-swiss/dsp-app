@@ -86,10 +86,7 @@ describe('AnnotationToolbarComponent', () => {
 
       component.openRegionInNewTab();
 
-      expect(openSpy).toHaveBeenCalledWith(
-        `/${RouteConstants.resource}/project/123/resource/456`,
-        '_blank'
-      );
+      expect(openSpy).toHaveBeenCalledWith(`/${RouteConstants.resource}/project/123/resource/456`, '_blank');
 
       openSpy.mockRestore();
     });
@@ -176,10 +173,7 @@ describe('AnnotationToolbarComponent — behavior', () => {
 
       component.openRegionInNewTab();
 
-      expect(openSpy).toHaveBeenCalledWith(
-        `/${RouteConstants.resource}/project/123/resource/456`,
-        '_blank'
-      );
+      expect(openSpy).toHaveBeenCalledWith(`/${RouteConstants.resource}/project/123/resource/456`, '_blank');
 
       openSpy.mockRestore();
     });

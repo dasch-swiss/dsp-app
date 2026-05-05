@@ -1,9 +1,5 @@
 import { provideRouter } from '@angular/router';
-import {
-  Constants,
-  ReadDocumentFileValue,
-  ReadResource,
-} from '@dasch-swiss/dsp-js';
+import { Constants, ReadDocumentFileValue, ReadResource } from '@dasch-swiss/dsp-js';
 import { ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { AdminAPIApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { AppConfigService, DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
@@ -16,7 +12,15 @@ import { expect } from 'storybook/test';
 import { RepresentationService } from './representations/representation.service';
 import { ResourceFetcherService } from './representations/resource-fetcher.service';
 import { ResourcePdfComponent } from './resource-pdf.component';
-import { DEFAULT_HAS_PERMISSIONS, dspApiConnectionStub, makeEntityInfo, makePropEntry, makeTextPropDef, makeTextValue, resourceFetcherServiceStub } from './resource-stories.helper';
+import {
+  DEFAULT_HAS_PERMISSIONS,
+  dspApiConnectionStub,
+  makeEntityInfo,
+  makePropEntry,
+  makeTextPropDef,
+  makeTextValue,
+  resourceFetcherServiceStub,
+} from './resource-stories.helper';
 
 const makeResource = (permission = 'CR'): DspResource => {
   const titlePropId = 'http://0.0.0.0:3333/ontology/0001/example/v2#hasTitle';
@@ -47,7 +51,9 @@ const makeResource = (permission = 'CR'): DspResource => {
   res.properties = {
     [Constants.HasDocumentFileValue]: [fileValue],
     [titlePropId]: [makeTextValue('http://rdfh.ch/value/title-1', 'My Storybook PDF', permission)],
-    [descriptionPropId]: [makeTextValue('http://rdfh.ch/value/desc-1', 'A sample PDF resource for Storybook previews.', permission)],
+    [descriptionPropId]: [
+      makeTextValue('http://rdfh.ch/value/desc-1', 'A sample PDF resource for Storybook previews.', permission),
+    ],
   };
   res.entityInfo = makeEntityInfo(res.type, propEntries, 'Document Representation');
   return generateDspResource(res);

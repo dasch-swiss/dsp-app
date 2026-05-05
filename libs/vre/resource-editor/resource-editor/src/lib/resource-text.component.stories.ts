@@ -11,8 +11,13 @@ import { expect } from 'storybook/test';
 
 import { RepresentationService } from './representations/representation.service';
 import { ResourceFetcherService } from './representations/resource-fetcher.service';
+import {
+  addDescriptionToResource,
+  DEFAULT_HAS_PERMISSIONS,
+  dspApiConnectionStub,
+  resourceFetcherServiceStub,
+} from './resource-stories.helper';
 import { ResourceTextComponent } from './resource-text.component';
-import { addDescriptionToResource, DEFAULT_HAS_PERMISSIONS, dspApiConnectionStub, resourceFetcherServiceStub } from './resource-stories.helper';
 
 const makeResource = (permission = 'CR'): DspResource => {
   const res = new ReadResource();

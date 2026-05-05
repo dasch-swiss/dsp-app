@@ -76,7 +76,11 @@ export const makeDescriptionProperty = (userHasPermission = 'RV') => {
   const descPropId = 'http://0.0.0.0:3333/ontology/0001/example/v2#hasDescription';
   const def = makeTextPropDef(descPropId, 'Description');
   const entry = makePropEntry(def, 0);
-  const value = makeTextValue('http://rdfh.ch/value/desc-1', 'A sample resource for Storybook previews.', userHasPermission);
+  const value = makeTextValue(
+    'http://rdfh.ch/value/desc-1',
+    'A sample resource for Storybook previews.',
+    userHasPermission
+  );
   return { id: descPropId, def, entry, value };
 };
 

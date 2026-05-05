@@ -1,8 +1,5 @@
 import { provideRouter } from '@angular/router';
-import {
-  Constants,
-  ReadResource,
-} from '@dasch-swiss/dsp-js';
+import { Constants, ReadResource } from '@dasch-swiss/dsp-js';
 import { ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { AppConfigService, DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { DspResource, generateDspResource } from '@dasch-swiss/vre/shared/app-common';
@@ -12,7 +9,15 @@ import { expect } from 'storybook/test';
 
 import { ResourceFetcherService } from './representations/resource-fetcher.service';
 import { ResourcePlainComponent } from './resource-plain.component';
-import { DEFAULT_HAS_PERMISSIONS, dspApiConnectionStub, makeEntityInfo, makePropEntry, makeTextPropDef, makeTextValue, resourceFetcherServiceStub } from './resource-stories.helper';
+import {
+  DEFAULT_HAS_PERMISSIONS,
+  dspApiConnectionStub,
+  makeEntityInfo,
+  makePropEntry,
+  makeTextPropDef,
+  makeTextValue,
+  resourceFetcherServiceStub,
+} from './resource-stories.helper';
 
 const makeResource = (permission = 'CR'): DspResource => {
   const titlePropId = 'http://0.0.0.0:3333/ontology/0001/example/v2#hasTitle';
@@ -32,7 +37,9 @@ const makeResource = (permission = 'CR'): DspResource => {
   res.creationDate = '2024-03-15T10:30:00Z';
   res.properties = {
     [titlePropId]: [makeTextValue('http://rdfh.ch/value/title-1', 'My Storybook Resource', permission)],
-    [descriptionPropId]: [makeTextValue('http://rdfh.ch/value/desc-1', 'A sample plain resource for Storybook previews.', permission)],
+    [descriptionPropId]: [
+      makeTextValue('http://rdfh.ch/value/desc-1', 'A sample plain resource for Storybook previews.', permission),
+    ],
   };
   res.entityInfo = makeEntityInfo(res.type, propEntries, 'Thing');
   return generateDspResource(res);

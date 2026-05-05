@@ -1,10 +1,5 @@
 import { provideRouter } from '@angular/router';
-import {
-  Constants,
-  ReadLinkValue,
-  ReadResource,
-  ReadStillImageFileValue,
-} from '@dasch-swiss/dsp-js';
+import { Constants, ReadLinkValue, ReadResource, ReadStillImageFileValue } from '@dasch-swiss/dsp-js';
 import { ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { AppConfigService, DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { DspResource, generateDspResource } from '@dasch-swiss/vre/shared/app-common';
@@ -18,7 +13,14 @@ import { ResourceFetcherService } from './representations/resource-fetcher.servi
 import { OpenSeaDragonService } from './representations/still-image/open-sea-dragon.service';
 import { OsdDrawerService } from './representations/still-image/osd-drawer.service';
 import { ResourceAnnotationComponent } from './resource-annotation.component';
-import { DEFAULT_HAS_PERMISSIONS, makeEntityInfo, makePropEntry, makeTextPropDef, makeTextValue, resourceFetcherServiceStub } from './resource-stories.helper';
+import {
+  DEFAULT_HAS_PERMISSIONS,
+  makeEntityInfo,
+  makePropEntry,
+  makeTextPropDef,
+  makeTextValue,
+  resourceFetcherServiceStub,
+} from './resource-stories.helper';
 
 const IMAGE_IRI = 'http://rdfh.ch/resource/image-1';
 
@@ -63,10 +65,10 @@ const makeResource = (permission = 'CR'): DspResource => {
   res.versionArkUrl = 'ark:/99999/1/annotation';
   res.properties = {
     [titlePropId]: [makeTextValue('http://rdfh.ch/value/title-1', 'My Storybook Annotation', permission)],
-    [descriptionPropId]: [makeTextValue('http://rdfh.ch/value/desc-1', 'A sample annotation for Storybook previews.', permission)],
-    [Constants.IsRegionOfValue]: [
-      { linkedResourceIri: IMAGE_IRI } as unknown as ReadLinkValue,
+    [descriptionPropId]: [
+      makeTextValue('http://rdfh.ch/value/desc-1', 'A sample annotation for Storybook previews.', permission),
     ],
+    [Constants.IsRegionOfValue]: [{ linkedResourceIri: IMAGE_IRI } as unknown as ReadLinkValue],
   };
   res.entityInfo = makeEntityInfo(res.type, propEntries, 'Region');
   return generateDspResource(res);

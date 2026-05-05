@@ -1,10 +1,5 @@
 import { provideRouter } from '@angular/router';
-import {
-  Constants,
-  ReadResource,
-  ReadResourceSequence,
-  ReadStillImageFileValue,
-} from '@dasch-swiss/dsp-js';
+import { Constants, ReadResource, ReadResourceSequence, ReadStillImageFileValue } from '@dasch-swiss/dsp-js';
 import { ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { AdminAPIApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { AppConfigService, DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
@@ -18,16 +13,24 @@ import { RegionService } from './representations/region.service';
 import { RepresentationService } from './representations/representation.service';
 import { ResourceFetcherService } from './representations/resource-fetcher.service';
 import { ResourceCompoundComponent } from './resource-compound.component';
-import { DEFAULT_HAS_PERMISSIONS, dspApiConnectionStub, makeEntityInfo, makePropEntry, makeTextPropDef, makeTextValue, resourceFetcherServiceStub } from './resource-stories.helper';
+import {
+  DEFAULT_HAS_PERMISSIONS,
+  dspApiConnectionStub,
+  makeEntityInfo,
+  makePropEntry,
+  makeTextPropDef,
+  makeTextValue,
+  resourceFetcherServiceStub,
+} from './resource-stories.helper';
 
 const IIIF_BASE = 'https://iiif.wellcomecollection.org/image';
 
 const PAGES: { filename: string; dimX: number; dimY: number }[] = [
   { filename: 'b20432033_B0008608.JP2', dimX: 3543, dimY: 2480 },
-  { filename: 'b18035723_0001.JP2',     dimX: 2569, dimY: 3543 },
-  { filename: 'b18035723_0002.JP2',     dimX: 2231, dimY: 3040 },
-  { filename: 'b18035723_0003.JP2',     dimX: 2411, dimY: 3372 },
-  { filename: 'b18035723_0004.JP2',     dimX: 2411, dimY: 3372 },
+  { filename: 'b18035723_0001.JP2', dimX: 2569, dimY: 3543 },
+  { filename: 'b18035723_0002.JP2', dimX: 2231, dimY: 3040 },
+  { filename: 'b18035723_0003.JP2', dimX: 2411, dimY: 3372 },
+  { filename: 'b18035723_0004.JP2', dimX: 2411, dimY: 3372 },
 ];
 
 const makeStillImageFileValue = (page: number): ReadStillImageFileValue => {
