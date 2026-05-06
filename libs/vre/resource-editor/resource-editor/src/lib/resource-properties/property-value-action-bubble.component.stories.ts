@@ -1,7 +1,7 @@
 import { Cardinality } from '@dasch-swiss/dsp-js';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, userEvent } from 'storybook/test';
 
 import { ResourceFetcherService } from '../representations/resource-fetcher.service';
 import { PropertyValueActionBubbleComponent } from './property-value-action-bubble.component';
@@ -67,7 +67,6 @@ export const EditAndDeleteVisible: Story = {
     }),
   ],
   play: async ({ canvasElement, step }) => {
-    const canvas = within(canvasElement);
     await step('Edit button is rendered', async () => {
       await expect(canvasElement.querySelector('[data-cy="edit-button"]')).not.toBeNull();
     });
@@ -75,7 +74,7 @@ export const EditAndDeleteVisible: Story = {
       await expect(canvasElement.querySelector('[data-cy="delete-button"]')).not.toBeNull();
     });
     await step('Delete button is enabled', async () => {
-      const btn = canvas.getByTestId('delete-button') as HTMLButtonElement;
+      const btn = canvasElement.querySelector('[data-cy="delete-button"]') as HTMLButtonElement;
       await expect(btn.disabled).toBe(false);
     });
   },
@@ -93,9 +92,8 @@ export const DeleteDisabledWhenLastRequiredValue: Story = {
     }),
   ],
   play: async ({ canvasElement, step }) => {
-    const canvas = within(canvasElement);
     await step('Delete button is rendered but disabled', async () => {
-      const btn = canvas.getByTestId('delete-button') as HTMLButtonElement;
+      const btn = canvasElement.querySelector('[data-cy="delete-button"]') as HTMLButtonElement;
       await expect(btn.disabled).toBe(true);
     });
   },
