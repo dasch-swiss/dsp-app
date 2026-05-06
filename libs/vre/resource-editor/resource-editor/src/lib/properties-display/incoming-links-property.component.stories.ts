@@ -19,7 +19,8 @@ const makeResource = () =>
 const makeEmptySequence = () => ({ resources: [], mayHaveMoreResults: false });
 
 const meta: Meta<IncomingLinksPropertyComponent> = {
-  title: 'Devs / Resource Editor / Properties Display / Incoming Links Property',
+  title:
+    'Resource Editor / 4. Properties / Resource Default Tabs / Properties Display /Incoming, standoff / Incoming Links Property',
   component: IncomingLinksPropertyComponent,
   decorators: [
     applicationConfig({

@@ -4,7 +4,7 @@ import { expect, within } from 'storybook/test';
 import { NoResultsFoundComponent } from './no-results-found.component';
 
 const meta: Meta<NoResultsFoundComponent> = {
-  title: 'Devs / UI / No Results Found / Empty State',
+  title: 'UI / No Results Found / Empty State',
   component: NoResultsFoundComponent,
   argTypes: {
     message: {

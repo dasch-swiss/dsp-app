@@ -16,7 +16,7 @@ import { CenteredLayoutComponent } from './centered-layout.component';
 class CenteredLayoutWrapperComponent {}
 
 const meta: Meta<CenteredLayoutWrapperComponent> = {
-  title: 'Devs / UI / Centered Layout / Layout',
+  title: 'UI / Centered Layout / Layout',
   component: CenteredLayoutWrapperComponent,
   argTypes: {},
 };

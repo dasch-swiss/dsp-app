@@ -4,7 +4,8 @@ import { expect, within } from 'storybook/test';
 import { IntervalViewerComponent } from './interval-viewer.component';
 
 const meta: Meta<IntervalViewerComponent> = {
-  title: 'Devs / Resource Editor / Template Switcher / Interval Viewer',
+  title:
+    'Resource Editor / 4. Properties / Resource Default Tabs / Properties Display / Template Switcher / Interval Viewer',
   component: IntervalViewerComponent,
   argTypes: {
     value: {

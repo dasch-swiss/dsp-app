@@ -4,7 +4,7 @@ import { expect } from 'storybook/test';
 import { RepresentationErrorMessageComponent } from './representation-error-message.component';
 
 const meta: Meta<RepresentationErrorMessageComponent> = {
-  title: 'Devs / Resource Editor / Representation / Error Message',
+  title: 'Resource Editor / 3. Representation / Error Message',
   component: RepresentationErrorMessageComponent,
 };
 export default meta;

@@ -12,6 +12,7 @@ import {
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApiResponseError, Constants, ReadResource } from '@dasch-swiss/dsp-js';
+import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { AppProgressIndicatorComponent } from '@dasch-swiss/vre/ui/progress-indicator';
@@ -19,8 +20,8 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { filter, Subject, takeUntil } from 'rxjs';
 import { ResourceFetcherService } from './representations/resource-fetcher.service';
 import { ResourceUtil } from './representations/resource.util';
+import { ResourceDispatcherComponent } from './resource-dispatcher.component';
 import { ResourceVersionWarningComponent } from './resource-version-warning.component';
-import { ResourceComponent } from './resource.component';
 
 type HideReason = 'NotFound' | 'Deleted' | 'Unauthorized' | null;
 
@@ -36,7 +37,7 @@ type HideReason = 'NotFound' | 'Deleted' | 'Unauthorized' | null;
 
       @if (!hideStatus) {
         @if (resource) {
-          <app-resource [resource]="resource" />
+          <app-resource-dispatcher [resource]="resource" [annotationIri]="annotationIri" />
         } @else {
           <app-progress-indicator />
         }
@@ -61,7 +62,7 @@ type HideReason = 'NotFound' | 'Deleted' | 'Unauthorized' | null;
     </div>
   `,
   providers: [ResourceFetcherService],
-  imports: [TranslatePipe, ResourceVersionWarningComponent, ResourceComponent, AppProgressIndicatorComponent],
+  imports: [TranslatePipe, ResourceVersionWarningComponent, ResourceDispatcherComponent, AppProgressIndicatorComponent],
 })
 export class ResourceFetcherComponent implements OnInit, OnChanges, OnDestroy {
   @Input({ required: true }) resourceIri!: string;
@@ -70,6 +71,7 @@ export class ResourceFetcherComponent implements OnInit, OnChanges, OnDestroy {
 
   resource?: DspResource;
   hideStatus: HideReason = null;
+  annotationIri: string | null = null;
 
   private _destroy$ = new Subject<void>();
 
@@ -109,6 +111,7 @@ export class ResourceFetcherComponent implements OnInit, OnChanges, OnDestroy {
 
           this.hideStatus = null;
           this.resource = resource;
+          this.annotationIri = this._route.snapshot.queryParamMap.get(RouteConstants.annotationQueryParam) ?? null;
 
           this._cdr.detectChanges();
 

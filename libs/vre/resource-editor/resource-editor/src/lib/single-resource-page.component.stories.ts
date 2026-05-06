@@ -2,13 +2,12 @@ import { importProvidersFrom } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { ResourceService } from '@dasch-swiss/vre/shared/app-common';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
-import { of } from 'rxjs';
 import { expect } from 'storybook/test';
 
 import { SingleResourcePageComponent } from './single-resource-page.component';
 
 const meta: Meta<SingleResourcePageComponent> = {
-  title: 'Devs / Resource Editor / Resource / Single Resource Page',
+  title: 'Pages / Single Resource Page',
   component: SingleResourcePageComponent,
   decorators: [
     applicationConfig({

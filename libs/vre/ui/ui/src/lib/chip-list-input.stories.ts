@@ -1,13 +1,13 @@
 import { FormArray, FormBuilder, FormControl, Validators } from '@angular/forms';
 import type { Meta, StoryObj } from '@storybook/angular';
-import { expect, within, userEvent } from 'storybook/test';
+import { expect, userEvent, within } from 'storybook/test';
 
 import { ChipListInputComponent } from './chip-list-input.component';
 
 const fb = new FormBuilder();
 
 const meta: Meta<ChipListInputComponent> = {
-  title: 'Devs / UI / Chip List Input / Keywords',
+  title: 'UI / Chip List Input / Keywords',
   component: ChipListInputComponent,
   argTypes: {
     formArray: {

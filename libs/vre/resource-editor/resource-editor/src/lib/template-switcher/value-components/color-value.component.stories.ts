@@ -5,7 +5,8 @@ import { expect } from 'storybook/test';
 import { ColorValueComponent } from './color-value.component';
 
 const meta: Meta<ColorValueComponent> = {
-  title: 'Devs / Resource Editor / Template Switcher / Color Value',
+  title:
+    'Resource Editor / 4. Properties / Resource Default Tabs / Properties Display / Template Switcher / Color Value',
   component: ColorValueComponent,
   argTypes: {
     control: {

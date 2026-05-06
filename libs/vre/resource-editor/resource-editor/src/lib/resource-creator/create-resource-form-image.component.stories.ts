@@ -8,7 +8,7 @@ import { notificationServiceStub } from '../stories.helpers';
 import { CreateResourceFormImageComponent } from './create-resource-form-image.component';
 
 const meta: Meta<CreateResourceFormImageComponent> = {
-  title: 'Devs / Resource Editor / Resource Creator / Create Resource Form Image',
+  title: 'Resource Creator / 1. File Upload / Create resource form image',
   component: CreateResourceFormImageComponent,
   decorators: [
     applicationConfig({

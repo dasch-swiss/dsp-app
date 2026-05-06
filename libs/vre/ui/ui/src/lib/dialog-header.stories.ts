@@ -4,7 +4,7 @@ import { expect, within } from 'storybook/test';
 import { DialogHeaderComponent } from './dialog-header.component';
 
 const meta: Meta<DialogHeaderComponent> = {
-  title: 'Devs / UI / Dialog Header / Header',
+  title: 'UI / Dialog Header / Header',
   component: DialogHeaderComponent,
   argTypes: {
     title: {

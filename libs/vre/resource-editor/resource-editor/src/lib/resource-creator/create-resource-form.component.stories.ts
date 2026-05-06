@@ -1,6 +1,4 @@
-import { importProvidersFrom } from '@angular/core';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
-import { TranslateModule } from '@ngx-translate/core';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
 import { expect } from 'storybook/test';
@@ -19,12 +17,11 @@ const makeOntologyStub = (resourceClassIri: string) => ({
 });
 
 const meta: Meta<CreateResourceFormComponent> = {
-  title: 'Devs / Resource Editor / Resource Creator / Create Resource Form',
+  title: 'Resource Creator / Create Resource Form',
   component: CreateResourceFormComponent,
   decorators: [
     applicationConfig({
       providers: [
-        importProvidersFrom(TranslateModule.forRoot()),
         {
           provide: DspApiConnectionToken,
           useValue: {

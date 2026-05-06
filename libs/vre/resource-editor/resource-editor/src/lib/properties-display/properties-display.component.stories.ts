@@ -1,4 +1,3 @@
-import { Cardinality } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
@@ -25,7 +24,7 @@ const makeResource = (): DspResource =>
   }) as unknown as DspResource;
 
 const meta: Meta<PropertiesDisplayComponent> = {
-  title: 'Devs / Resource Editor / Properties Display / Properties Display',
+  title: 'Resource Editor / 4. Properties / Resource Default Tabs / Properties Display / Properties Display',
   component: PropertiesDisplayComponent,
   decorators: [
     applicationConfig({

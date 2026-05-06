@@ -65,7 +65,7 @@ const dspApiConnectionWithCustomGroup = {
 // ---------------------------------------------------------------------------
 
 const meta: Meta<PermissionInfoComponent> = {
-  title: 'Devs / Resource Editor / Permission Info',
+  title: 'Resource Editor / 2. Header / Permission Info',
   component: PermissionInfoComponent,
   decorators: [componentWrapperDecorator(story => `<div style="display:flex;justify-content:center">${story}</div>`)],
   argTypes: {

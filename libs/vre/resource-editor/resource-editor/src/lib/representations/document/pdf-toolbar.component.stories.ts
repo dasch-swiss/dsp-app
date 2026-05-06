@@ -30,7 +30,7 @@ const representationServiceStub: Partial<RepresentationService> = {
 };
 
 const meta: Meta<PdfToolbarComponent> = {
-  title: 'Devs / Resource Editor / Representation / PDF Toolbar',
+  title: 'Resource Editor / Resource / PDF / PDF Toolbar',
   component: PdfToolbarComponent,
   decorators: [
     applicationConfig({

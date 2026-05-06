@@ -5,7 +5,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Cardinality } from '@dasch-swiss/dsp-js';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { map, Observable } from 'rxjs';
+import { EMPTY, map, Observable } from 'rxjs';
 import { ResourceFetcherService } from '../representations/resource-fetcher.service';
 import { ResourceUtil } from '../representations/resource.util';
 import { PropertyValueService } from './property-value.service';
@@ -91,7 +91,7 @@ export class PropertyValueActionBubbleComponent implements OnInit {
   }
 
   private _getInfoToolTip() {
-    return this._resourceFetcherService.resource$.pipe(
+    return (this._resourceFetcherService.resource$ ?? EMPTY).pipe(
       map(resource => {
         const creator = resource!.res!.attachedToUser;
         return this._translateService.instant('resourceEditor.resourceProperties.actions.creationInfo', {

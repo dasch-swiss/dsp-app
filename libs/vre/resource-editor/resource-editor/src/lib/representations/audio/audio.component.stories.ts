@@ -43,7 +43,7 @@ const sampleSegments = [
 ];
 
 const meta: Meta<AudioComponent> = {
-  title: 'Devs / Resource Editor / Representation / Audio',
+  title: 'Resource Editor / Resource / Audio / Audio',
   component: AudioComponent,
   decorators: [
     story => {

@@ -2,7 +2,6 @@ import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular'
 import { expect } from 'storybook/test';
 
 import { MediaControlService } from './media-control.service';
-import { SegmentTooltipComponent } from './segment-tooltip.component';
 import { SegmentComponent } from './segment.component';
 import { SegmentsService } from './segments.service';
 
@@ -13,7 +12,7 @@ const makeSegment = () => ({
 });
 
 const meta: Meta<SegmentComponent> = {
-  title: 'Devs / Resource Editor / Segments / Segment',
+  title: 'Resource Editor / 3. Representation / Segments / Segment',
   component: SegmentComponent,
   decorators: [
     applicationConfig({

@@ -11,7 +11,7 @@ export class Region {
    * get all geometry information belonging to this region.
    *
    */
-  getGeometries() {
-    return this.regionResource.properties[Constants.HasGeometry] as ReadGeomValue[];
+  getGeometries(): ReadGeomValue[] {
+    return (this.regionResource.properties[Constants.HasGeometry] as ReadGeomValue[]) ?? [];
   }
 }

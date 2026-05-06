@@ -1,7 +1,7 @@
 import { ListNodeV2, ReadListValue, ResourcePropertyDefinition } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
-import { of, Subject } from 'rxjs';
+import { of } from 'rxjs';
 import { expect } from 'storybook/test';
 import { ResourceFetcherService } from '../../representations/resource-fetcher.service';
 
@@ -41,7 +41,8 @@ const makeValue = (): ReadListValue => ({ listNode: 'http://rdfh.ch/lists/0001/i
 const makePropertyDef = (): ResourcePropertyDefinition => ({ id: 'http://example.org/listProp' }) as any;
 
 const meta: Meta<ListViewerComponent> = {
-  title: 'Devs / Resource Editor / Template Switcher / List Viewer',
+  title:
+    'Resource Editor / 4. Properties / Resource Default Tabs / Properties Display / Template Switcher / List Viewer',
   component: ListViewerComponent,
   decorators: [
     applicationConfig({

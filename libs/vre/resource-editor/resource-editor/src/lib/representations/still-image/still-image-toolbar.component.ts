@@ -41,6 +41,7 @@ export class StillImageToolbarComponent {
   @Input({ required: true }) resource!: ReadResource;
   @Input({ required: true }) compoundMode!: boolean;
   @Input({ required: true }) isPng!: boolean;
+  @Input() showLeftToolbar = true;
   @Output() imageIsPng = new EventEmitter<boolean>();
 
   get imageFileValue(): ReadStillImageFileValue | ReadStillImageExternalFileValue | null {

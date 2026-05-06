@@ -33,7 +33,8 @@ export class GroupPermissionsUtil {
 
   constructor(resource: ReadResource) {
     resource.hasPermissions.split('|').forEach(section => {
-      const [permissionKey, restrictedToGroupStr] = section.split(' ') as [Interaction, string];
+      const [permissionKey, restrictedToGroupStr] = section.trim().split(' ') as [Interaction, string | undefined];
+      if (!restrictedToGroupStr) return;
       const permissionLevel = PermissionUtil.Permissions[permissionKey];
       const sectionSeparator = section.includes(',') ? ',' : ' ';
       const restrictedToGroups = restrictedToGroupStr

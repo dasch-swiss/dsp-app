@@ -5,7 +5,16 @@ import { SegmentApiService } from './segment-api.service';
 
 @Injectable()
 export class SegmentsService {
-  segments: Segment[] = [];
+  private _segments: Segment[] = [];
+
+  get segments(): Segment[] {
+    return this._segments;
+  }
+
+  setSegments(segments: Segment[]) {
+    this._segments = segments;
+    this._cdr.detectChanges();
+  }
 
   private _highlightSegment = new BehaviorSubject<Segment | null>(null);
   highlightSegment$ = this._highlightSegment.asObservable();
@@ -38,8 +47,7 @@ export class SegmentsService {
         reduce((acc, value) => [...acc, ...value], [] as Segment[])
       )
       .subscribe(v => {
-        this.segments = v;
-        this._cdr.detectChanges();
+        this.setSegments(v);
       });
   }
 

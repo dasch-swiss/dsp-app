@@ -26,7 +26,7 @@ const makeUser = () =>
   }) as any;
 
 const meta: Meta<DeleteMenuItemsComponent> = {
-  title: 'Devs / Resource Editor / More Menu / Delete Menu Items',
+  title: 'Resource Editor / 2. Header / More Menu / Delete Menu Items',
   component: DeleteMenuItemsComponent,
   decorators: [
     applicationConfig({

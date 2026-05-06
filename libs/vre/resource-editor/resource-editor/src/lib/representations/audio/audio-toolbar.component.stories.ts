@@ -35,7 +35,7 @@ const representationServiceStub: Partial<RepresentationService> = {
 };
 
 const meta: Meta<AudioToolbarComponent> = {
-  title: 'Devs / Resource Editor / Representation / Audio Toolbar',
+  title: 'Resource Editor / Resource / Audio / Audio Toolbar',
   component: AudioToolbarComponent,
   decorators: [
     applicationConfig({

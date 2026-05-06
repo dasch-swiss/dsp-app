@@ -15,7 +15,7 @@ const makeFormGroup = () =>
   });
 
 const meta: Meta<CreateResourceFormLegalComponent> = {
-  title: 'Devs / Resource Editor / Resource Creator / Create Resource Form Legal',
+  title: 'Resource Creator / 2. Legal / Create Resource Form Legal',
   component: CreateResourceFormLegalComponent,
   decorators: [
     applicationConfig({

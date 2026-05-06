@@ -15,7 +15,6 @@ import {
 import { ProjectApiService, UserApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { AdminAPIApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { AppConfigService, DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
-import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { NEVER, of, throwError } from 'rxjs';
@@ -62,9 +61,11 @@ const makeTextValue = (id: string, text: string): ReadTextValueAsString => {
 
 const makeEntityInfo = (
   resourceType: string,
-  propEntries: IHasPropertyWithPropertyDefinition[] = []
+  propEntries: IHasPropertyWithPropertyDefinition[] = [],
+  classLabel = 'Thing'
 ): ResourceClassAndPropertyDefinitions => {
   const classStub = {
+    label: classLabel,
     getResourcePropertiesList: () => propEntries,
     propertiesList: propEntries,
   } as unknown as ResourceClassDefinitionWithPropertyDefinition;
@@ -76,6 +77,7 @@ const makeVideoReadResource = (): ReadResource => {
   res.id = 'http://rdfh.ch/resource/1';
   res.attachedToProject = 'http://rdfh.ch/project/1';
   res.attachedToUser = 'http://rdfh.ch/user/1';
+  res.label = 'My Storybook Video';
   res.userHasPermission = 'RV';
   res.creationDate = '2024-03-15T10:30:00Z';
   res.type = 'http://api.dasch.swiss/ontology/knora-api/v2#MovingImageRepresentation';
@@ -100,7 +102,7 @@ const makeVideoReadResource = (): ReadResource => {
       makeTextValue('http://rdfh.ch/value/desc-1', 'A sample video resource for Storybook previews.'),
     ],
   };
-  res.entityInfo = makeEntityInfo(res.type, propEntries);
+  res.entityInfo = makeEntityInfo(res.type, propEntries, 'Moving Image');
   return res;
 };
 
@@ -112,7 +114,7 @@ const makeDeletedReadResource = (): ReadResource => {
   res.attachedToProject = 'http://rdfh.ch/project/1';
   res.attachedToUser = 'http://rdfh.ch/user/1';
   res.properties = {};
-  res.entityInfo = makeEntityInfo(res.type);
+  res.entityInfo = makeEntityInfo(res.type, [], 'Deleted Resource');
   return res;
 };
 
@@ -181,7 +183,7 @@ const sharedProviders = [
 // ---------------------------------------------------------------------------
 
 const meta: Meta<ResourceFetcherComponent> = {
-  title: 'Visual / Resource Editor / Resource Fetcher',
+  title: 'Resource Editor / Resource Fetcher',
   component: ResourceFetcherComponent,
   argTypes: {
     resourceIri: {
@@ -224,7 +226,7 @@ export const ResourceFetched: Story = {
   args: { resourceIri: 'http://rdfh.ch/resource/1' },
   play: async ({ canvasElement, step }) => {
     await step('Resource component is rendered', async () => {
-      await expect(canvasElement.querySelector('app-resource')).not.toBeNull();
+      await expect(canvasElement.querySelector('app-resource-dispatcher')).not.toBeNull();
     });
   },
 };

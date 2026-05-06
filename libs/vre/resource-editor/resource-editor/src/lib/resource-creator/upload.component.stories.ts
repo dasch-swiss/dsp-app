@@ -7,7 +7,7 @@ import { notificationServiceStub } from '../stories.helpers';
 import { UploadComponent } from './upload.component';
 
 const meta: Meta<UploadComponent> = {
-  title: 'Devs / Resource Editor / Resource Creator / Upload',
+  title: 'Resource Creator / 1. File Upload / Upload',
   component: UploadComponent,
   decorators: [
     applicationConfig({

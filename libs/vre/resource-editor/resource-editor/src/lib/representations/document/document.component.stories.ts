@@ -30,7 +30,7 @@ const resourceFetcherServiceStub: Partial<ResourceFetcherService> = {
 };
 
 const meta: Meta<DocumentComponent> = {
-  title: 'Devs / Resource Editor / Representation / Document',
+  title: 'Resource Editor / Resource / Document / Representation',
   component: DocumentComponent,
   decorators: [
     story => {

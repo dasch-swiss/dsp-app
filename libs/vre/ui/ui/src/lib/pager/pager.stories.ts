@@ -1,10 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/angular';
-import { expect, within, userEvent } from 'storybook/test';
+import { expect, userEvent, within } from 'storybook/test';
 
 import { PagerComponent } from './pager.component';
 
 const meta: Meta<PagerComponent> = {
-  title: 'Devs / UI / Pager / Pagination',
+  title: 'UI / Pager / Pagination',
   component: PagerComponent,
   argTypes: {
     numberOfAllResults: {

@@ -55,7 +55,7 @@ export function makeSegment(label: string, start: number, end: number, row: numb
     label,
     row,
     hasSegmentBounds: { start, end } as unknown as ReadIntervalValue,
-    hasVideoSegmentOfValue: undefined,
+    hasSegmentOfValue: undefined,
     hasComment: undefined,
     hasDescription: undefined,
     hasKeyword: undefined,
@@ -68,6 +68,7 @@ export function makeSegmentsServiceStub(segments: Segment[] = []): Partial<Segme
   return {
     segments,
     onInit: () => {},
+    setSegments: () => {},
     playSegment$: new Subject<any>().asObservable(),
     highlightSegment$: new Subject<any>().asObservable(),
   };

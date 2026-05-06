@@ -29,7 +29,7 @@ const makeFileInfo = () => ({
 });
 
 const meta: Meta<VideoMoreButtonComponent> = {
-  title: 'Devs / Resource Editor / Representation / Video More Button',
+  title: 'Resource Editor / Resource / Video / Video More Button',
   component: VideoMoreButtonComponent,
   decorators: [
     applicationConfig({
