@@ -1,4 +1,5 @@
 <div class="toolbar">
+  @if (showLeftToolbar) {
   <div class="icon-container">
     <div
       class="clickable-icon"
@@ -38,12 +39,11 @@
     </div>
     }
   </div>
-
-  @if (compoundMode) {
+  } @if (compoundMode) {
   <app-compound-navigation />
   }
 
-  <div class="icon-container">
+  <div class="icon-container" style="margin-left: auto">
     <div
       class="clickable-icon"
       data-cy="still-image-settings-button"

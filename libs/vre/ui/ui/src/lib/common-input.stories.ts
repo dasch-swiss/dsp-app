@@ -1,11 +1,11 @@
 import { FormControl, Validators } from '@angular/forms';
 import type { Meta, StoryObj } from '@storybook/angular';
-import { expect, within, userEvent } from 'storybook/test';
+import { expect, userEvent, within } from 'storybook/test';
 
 import { CommonInputComponent } from './common-input.component';
 
 const meta: Meta<CommonInputComponent> = {
-  title: 'Devs / UI / Common Input / Text Field',
+  title: 'UI / Common Input / Text Field',
   component: CommonInputComponent,
   argTypes: {
     label: {

@@ -17,7 +17,7 @@ const makeSegment = (label: string, start: number, end: number, row: number): Se
     label,
     row,
     hasSegmentBounds: makeInterval(start, end),
-    hasVideoSegmentOfValue: undefined,
+    hasSegmentOfValue: undefined,
     hasComment: undefined,
     hasDescription: undefined,
     hasKeyword: undefined,
@@ -26,7 +26,7 @@ const makeSegment = (label: string, start: number, end: number, row: number): Se
   }) as Segment;
 
 const meta: Meta<SegmentsDisplayComponent> = {
-  title: 'Devs / Resource Editor / Segments Display',
+  title: 'Resource Editor / 3. Representation / Segments / Segments display',
   component: SegmentsDisplayComponent,
   decorators: [
     applicationConfig({

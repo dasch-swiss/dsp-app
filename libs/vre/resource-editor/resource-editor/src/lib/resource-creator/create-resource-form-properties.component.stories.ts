@@ -1,19 +1,12 @@
-import { importProvidersFrom } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { TranslateModule } from '@ngx-translate/core';
-import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
+import { type Meta, type StoryObj } from '@storybook/angular';
 import { expect } from 'storybook/test';
 
 import { CreateResourceFormPropertiesComponent } from './create-resource-form-properties.component';
 
 const meta: Meta<CreateResourceFormPropertiesComponent> = {
-  title: 'Devs / Resource Editor / Resource Creator / Create Resource Form Properties',
+  title: 'Resource Creator / 3. Properties / Create Resource Form Properties',
   component: CreateResourceFormPropertiesComponent,
-  decorators: [
-    applicationConfig({
-      providers: [importProvidersFrom(TranslateModule.forRoot())],
-    }),
-  ],
   argTypes: {
     resourceClassIri: {
       description: 'IRI of the resource class.',

@@ -1,6 +1,6 @@
 import { OverlayModule } from '@angular/cdk/overlay';
 import { NgTemplateOutlet } from '@angular/common';
-import { Component, Input, TemplateRef, importProvidersFrom } from '@angular/core';
+import { Component, importProvidersFrom, Input, TemplateRef } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { Constants } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
@@ -73,7 +73,8 @@ class EditorSwitcherHostComponent {
 }
 
 const meta: Meta<EditorSwitcherHostComponent> = {
-  title: 'Devs / Resource Editor / Template Switcher / Editor Switcher',
+  title:
+    'Resource Editor / 4. Properties / Resource Default Tabs / Properties Display / Template Switcher / Editor Switcher',
   component: EditorSwitcherHostComponent,
   decorators: [applicationConfig({ providers: sharedProviders })],
   argTypes: {

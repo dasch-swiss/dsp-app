@@ -32,7 +32,7 @@ const representationServiceStub: Partial<RepresentationService> = {
 };
 
 const meta: Meta<VectorImageToolbarComponent> = {
-  title: 'Devs / Resource Editor / Representation / Vector Image Toolbar',
+  title: 'Resource Editor / Resource / Vector Image / Vector Image Toolbar',
   component: VectorImageToolbarComponent,
   decorators: [
     applicationConfig({

@@ -51,7 +51,8 @@ const makeMyProperty = () => ({
 });
 
 const meta: Meta<PropertyValuesComponent> = {
-  title: 'Devs / Resource Editor / Resource Properties / Property Values',
+  title:
+    'Resource Editor / 4. Properties / Resource Default Tabs / Properties Display / Property Value / Properties Display / Property Values',
   component: PropertyValuesComponent,
   decorators: [
     applicationConfig({

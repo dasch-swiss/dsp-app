@@ -1,8 +1,8 @@
 import { AsyncPipe, NgClass } from '@angular/common';
 import { ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { MatBadgeModule } from '@angular/material/badge';
-import { MatTabsModule } from '@angular/material/tabs';
-import { Constants, ReadResource } from '@dasch-swiss/dsp-js';
+import { MatTabChangeEvent, MatTabsModule } from '@angular/material/tabs';
+import { ReadResource } from '@dasch-swiss/dsp-js';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
@@ -12,57 +12,33 @@ import { IncomingResourceHeaderComponent } from './incoming-resource-header.comp
 import { PropertiesDisplayComponent } from './properties-display/properties-display.component';
 import { PropertiesToggleComponent } from './properties-display/properties-toggle.component';
 import { RegionService } from './representations/region.service';
-import { SegmentsService } from './segment-support/segments.service';
-import { SegmentTabComponent } from './segment-tab.component';
+import { PropertiesDisplayService } from './resource-properties/properties-display.service';
 
 @Component({
-  selector: 'app-resource-tabs',
+  selector: 'app-resource-compound-tabs',
   template: `
     <mat-tab-group animationDuration="0ms" [selectedIndex]="selectedTab" (selectedTabChange)="onTabChange($event)">
-      @if (!annotationIri) {
-        <mat-tab #matTabProperties [label]="'resourceEditor.properties' | translate">
-          @if (resource) {
-            <app-properties-toggle [properties]="resource.resProps" />
-            <app-properties-display [resource]="resource" />
-          }
-        </mat-tab>
-      }
+      <mat-tab [label]="'resourceEditor.properties' | translate">
+        <app-properties-toggle [properties]="resource.resProps" />
+        <app-properties-display [resource]="resource" />
+      </mat-tab>
 
-      @if (!annotationIri && incomingResource) {
-        <mat-tab #matTabIncoming [label]="resourceClassLabel(incomingResource.res)">
+      @if (incomingResource) {
+        <mat-tab [label]="resourceClassLabel(incomingResource.res)">
           <app-incoming-resource-header [resource]="incomingResource.res" />
           <app-properties-display [resource]="incomingResource" [parentResourceId]="resource.res.id" />
         </mat-tab>
       }
 
-      <!-- image annotations -->
-      @if (displayAnnotations) {
-        <mat-tab label="Annotations">
+      @if (regionsCount > 0) {
+        <mat-tab>
           <ng-template matTabLabel>
             <span>{{ 'resourceEditor.labelAnnotations' | translate }}</span>
-            @if (regionsCount > 0) {
-              <span
-                style="margin-left: 0.5em;"
-                [matBadge]="regionsCount"
-                matBadgeColor="primary"
-                matBadgeOverlap="false">
-              </span>
-            }
+            <span style="margin-left: 0.5em;" [matBadge]="regionsCount" matBadgeColor="primary" matBadgeOverlap="false">
+            </span>
             <span [ngClass]="['dots-container', (regionService.regionsLoading$ | async) ? 'dots' : '']"> </span>
           </ng-template>
           <app-annotation-tab [resource]="resource.res" />
-        </mat-tab>
-      }
-
-      <!-- audio & video annotations -->
-      @if (!annotationIri && segmentsService.segments.length > 0) {
-        <mat-tab label="Segments">
-          <ng-template matTabLabel>
-            <span [matBadge]="segmentsService.segments.length" matBadgeColor="primary" matBadgeOverlap="false">
-              {{ 'resourceEditor.labelAnnotations' | translate }}
-            </span>
-          </ng-template>
-          <app-segment-tab [resource]="resource.res" />
         </mat-tab>
       }
     </mat-tab-group>
@@ -91,10 +67,8 @@ import { SegmentTabComponent } from './segment-tab.component';
         overflow: hidden;
         width: 0;
         vertical-align: bottom;
-
         animation: dots 1s steps(3, end) infinite;
       }
-
       @keyframes dots {
         to {
           width: 3ch;
@@ -112,82 +86,58 @@ import { SegmentTabComponent } from './segment-tab.component';
     IncomingResourceHeaderComponent,
     PropertiesDisplayComponent,
     PropertiesToggleComponent,
-    SegmentTabComponent,
   ],
 })
-export class ResourceTabsComponent implements OnInit, OnDestroy {
+export class ResourceCompoundTabsComponent implements OnInit, OnDestroy {
   @Input({ required: true }) resource!: DspResource;
-  @Input() annotationIri: string | null = null;
 
   selectedTab = 0;
   incomingResource: DspResource | undefined;
-
-  private ngUnsubscribe = new Subject<void>();
-
   regionsCount = 0;
 
-  get displayAnnotations() {
-    return (
-      (this.resource.res.properties[Constants.HasStillImageFileValue] !== undefined || this.incomingResource) &&
-      this.regionsCount > 0
-    );
-  }
+  private readonly _destroy$ = new Subject<void>();
 
   constructor(
     private readonly _cdr: ChangeDetectorRef,
-    public regionService: RegionService,
+    public readonly regionService: RegionService,
     private readonly _compoundService: CompoundService,
-    public segmentsService: SegmentsService
+    public readonly propertiesDisplayService: PropertiesDisplayService
   ) {}
 
   resourceClassLabel = (resource: ReadResource | undefined) => resource?.entityInfo?.classes[resource.type].label || '';
 
   ngOnInit() {
-    this.segmentsService.highlightSegment$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(segment => {
-      if (segment) {
-        this.selectedTab = 1;
-        this._cdr.detectChanges();
-      }
-    });
-
-    this._compoundService.incomingResource$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(resource => {
+    this._compoundService.incomingResource$.pipe(takeUntil(this._destroy$)).subscribe(resource => {
       this.incomingResource = resource;
       this._cdr.detectChanges();
     });
 
-    this.regionService.selectedRegion$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(region => {
+    this.regionService.selectedRegion$.pipe(takeUntil(this._destroy$)).subscribe(region => {
       if (region) {
-        this.selectedTab = this.annotationIri ? 0 : 2;
+        this.selectedTab = this.incomingResource ? 2 : 1;
         this._cdr.detectChanges();
       }
     });
 
-    this.regionService.regions$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(regions => {
+    this.regionService.regions$.pipe(takeUntil(this._destroy$)).subscribe(regions => {
       this.regionsCount = regions.length;
       this._cdr.detectChanges();
     });
   }
 
   ngOnDestroy() {
-    this.ngUnsubscribe.next();
-    this.ngUnsubscribe.complete();
+    this._destroy$.next();
+    this._destroy$.complete();
   }
 
-  onTabChange(event: any) {
+  onTabChange(event: MatTabChangeEvent) {
     this.selectedTab = event.index;
     const isAnnotationTab =
-      (this.annotationIri && event.index === 0) ||
-      (this.incomingResource && event.index === 2) ||
-      (!this.incomingResource && event.index === 1);
+      (this.incomingResource && event.index === 2) || (!this.incomingResource && event.index === 1);
     if (isAnnotationTab) {
-      this._openAnnotationTab();
+      this.regionService.showRegions(true);
     } else {
       this.regionService.showRegions(false);
     }
-  }
-
-  private _openAnnotationTab() {
-    this.selectedTab = this.annotationIri ? 0 : 2;
-    this.regionService.showRegions(true);
   }
 }

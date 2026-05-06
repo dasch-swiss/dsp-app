@@ -1,10 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/angular';
-import { expect, within } from 'storybook/test';
+import { expect } from 'storybook/test';
 
 import { NotAllowedPageComponent } from './not-allowed-page.component';
 
 const meta: Meta<NotAllowedPageComponent> = {
-  title: 'Devs / UI / Not Allowed Page / Full Page',
+  title: 'UI / Not Allowed Page / Full Page',
   component: NotAllowedPageComponent,
   argTypes: {},
 };

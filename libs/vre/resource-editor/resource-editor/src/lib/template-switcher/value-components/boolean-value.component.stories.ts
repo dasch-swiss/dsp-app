@@ -5,7 +5,8 @@ import { expect } from 'storybook/test';
 import { BooleanValueComponent } from './boolean-value.component';
 
 const meta: Meta<BooleanValueComponent> = {
-  title: 'Devs / Resource Editor / Template Switcher / Boolean Value',
+  title:
+    'Resource Editor / 4. Properties / Resource Default Tabs / Properties Display / Template Switcher / Boolean Value',
   component: BooleanValueComponent,
   argTypes: {
     control: {

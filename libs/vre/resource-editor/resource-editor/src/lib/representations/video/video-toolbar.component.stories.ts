@@ -53,7 +53,7 @@ const makeMediaPlayerStub = (overrides: Partial<MediaPlayerService> = {}): Parti
 });
 
 const meta: Meta<VideoToolbarComponent> = {
-  title: 'Devs / Resource Editor / Representation / Video Toolbar',
+  title: 'Resource Editor / Resource / Video / Video Toolbar',
   component: VideoToolbarComponent,
   decorators: [
     applicationConfig({

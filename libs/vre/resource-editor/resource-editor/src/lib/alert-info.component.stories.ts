@@ -4,7 +4,7 @@ import { expect } from 'storybook/test';
 import { AlertInfoComponent } from './alert-info.component';
 
 const meta: Meta<AlertInfoComponent> = {
-  title: 'Devs / Resource Editor / Resource Header / Alert Info',
+  title: 'Resource Editor / 2. Header / Alert Info',
   component: AlertInfoComponent,
   argTypes: {},
 };

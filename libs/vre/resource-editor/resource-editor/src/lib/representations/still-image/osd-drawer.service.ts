@@ -11,7 +11,7 @@ import {
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { ResourceService } from '@dasch-swiss/vre/shared/app-common';
 import * as OpenSeadragon from 'openseadragon';
-import { combineLatest, filter, map, of, Subject, switchMap, takeUntil } from 'rxjs';
+import { BehaviorSubject, combineLatest, filter, map, of, Subject, switchMap, takeUntil } from 'rxjs';
 import { AddRegionFormDialogComponent, AddRegionFormDialogProps } from '../add-region-form-dialog.component';
 import { Region } from '../region';
 import { RegionService } from '../region.service';
@@ -30,6 +30,7 @@ export class OsdDrawerService implements OnDestroy {
   private _tooltipUpdateFrame: number | null = null;
   private _currentHighlightedRegion: string | null = null;
   private _ngUnsubscribe = new Subject<void>();
+  private _imageLoaded$ = new BehaviorSubject<boolean>(false);
 
   constructor(
     @Inject(DspApiConnectionToken) private readonly _dspApiConnection: KnoraApiConnection,
@@ -42,6 +43,10 @@ export class OsdDrawerService implements OnDestroy {
 
   onInit(resource: ReadResource): void {
     this.resource = resource;
+
+    this._osd.viewer.addHandler('open', () => {
+      this._imageLoaded$.next(true);
+    });
 
     this._subscribeToRegions();
     this._subscribeToSelectedRegion();
@@ -61,6 +66,7 @@ export class OsdDrawerService implements OnDestroy {
 
   update(resource: ReadResource): void {
     this.resource = resource;
+    this._imageLoaded$.next(false);
   }
 
   private _subscribeToSelectedRegion() {
@@ -70,16 +76,20 @@ export class OsdDrawerService implements OnDestroy {
   }
 
   private _subscribeToRegions() {
-    combineLatest([this._regionService.showRegions$, this._regionService.regions$])
+    combineLatest([this._regionService.showRegions$, this._regionService.regions$, this._imageLoaded$])
       .pipe(takeUntil(this._ngUnsubscribe))
-      .subscribe(([showRegions, regions]) => {
+      .subscribe(([showRegions, regions, imageLoaded]) => {
         if (!showRegions) {
           this._removeOverlays();
           return;
         }
 
+        if (!imageLoaded) return;
+
         // Incremental update: only add/remove what changed
         this._updateRegionsIncrementally(regions.map(r => r.res));
+        // Re-apply highlight in case selectRegion was called before the SVG was ready
+        this._highlightRegion(this._regionService.selectedRegion);
       });
   }
 

@@ -6,7 +6,7 @@ export interface Segment {
   row: number;
   label: string;
   hasSegmentBounds: ReadIntervalValue;
-  hasVideoSegmentOfValue: ReadLinkValue | undefined;
+  hasSegmentOfValue: ReadLinkValue | undefined;
   hasComment: ReadTextValueAsString | undefined;
   hasDescription: ReadTextValueAsString | undefined;
   hasKeyword: ReadTextValueAsString | undefined;

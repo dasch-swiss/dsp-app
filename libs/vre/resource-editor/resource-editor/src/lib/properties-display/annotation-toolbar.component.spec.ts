@@ -86,11 +86,7 @@ describe('AnnotationToolbarComponent', () => {
 
       component.openRegionInNewTab();
 
-      const expectedAnnotationId = encodeURIComponent('http://r/annotation1');
-      expect(openSpy).toHaveBeenCalledWith(
-        `/${RouteConstants.resource}/project/123/resource/456?${RouteConstants.annotationQueryParam}=${expectedAnnotationId}`,
-        '_blank'
-      );
+      expect(openSpy).toHaveBeenCalledWith(`/${RouteConstants.resource}/project/123/resource/456`, '_blank');
 
       openSpy.mockRestore();
     });
@@ -172,16 +168,12 @@ describe('AnnotationToolbarComponent — behavior', () => {
   });
 
   describe('when the user clicks "open in new tab"', () => {
-    it('a new browser tab opens with the annotation pre-selected (?annotation=<iri>)', () => {
+    it('a new browser tab opens at the resource URL', () => {
       const openSpy = jest.spyOn(window, 'open').mockImplementation(() => null);
 
       component.openRegionInNewTab();
 
-      const expectedAnnotationId = encodeURIComponent('http://r/annotation1');
-      expect(openSpy).toHaveBeenCalledWith(
-        expect.stringContaining(`${RouteConstants.annotationQueryParam}=${expectedAnnotationId}`),
-        '_blank'
-      );
+      expect(openSpy).toHaveBeenCalledWith(`/${RouteConstants.resource}/project/123/resource/456`, '_blank');
 
       openSpy.mockRestore();
     });

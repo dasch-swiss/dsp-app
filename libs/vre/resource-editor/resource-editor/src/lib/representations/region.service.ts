@@ -25,6 +25,9 @@ export class RegionService {
 
   private _selectedRegion = new BehaviorSubject<string | null>(null);
   selectedRegion$ = this._selectedRegion.asObservable();
+  get selectedRegion() {
+    return this._selectedRegion.value;
+  }
 
   private _highlightedRegionClicked = new BehaviorSubject<string | null>(null);
   highlightedRegionClicked$ = this._highlightedRegionClicked.asObservable();
@@ -40,6 +43,12 @@ export class RegionService {
   initialize(resourceId: string) {
     this._resourceId = resourceId;
     this.updateRegions$().pipe(takeUntil(this._ngUnsubscribe)).subscribe();
+  }
+
+  /** Use when the regions are already known and no API fetch is needed. */
+  initializeWithRegions(regions: DspResource[]) {
+    this._setRegions(regions);
+    this._showRegions.next(true);
   }
 
   updateRegions$() {

@@ -6,7 +6,7 @@ import { expect } from 'storybook/test';
 import { ReplaceFileMenuItemComponent } from './replace-file-menu-item.component';
 
 const meta: Meta<ReplaceFileMenuItemComponent> = {
-  title: 'Devs / Resource Editor / Representation / Replace File Menu Item',
+  title: 'Resource Editor / 3. Representation / File Representation / Replace File Menu Item',
   component: ReplaceFileMenuItemComponent,
   decorators: [
     applicationConfig({

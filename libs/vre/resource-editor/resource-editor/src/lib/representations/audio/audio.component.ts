@@ -16,6 +16,7 @@ import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { TranslateService } from '@ngx-translate/core';
 import { catchError, EMPTY, Subject, takeUntil } from 'rxjs';
 import { MediaControlService } from '../../segment-support/media-control.service';
+import { Segment } from '../../segment-support/segment';
 import { SegmentsDisplayComponent } from '../../segment-support/segments-display.component';
 import { SegmentsService } from '../../segment-support/segments.service';
 import { RepresentationErrorMessageComponent } from '../representation-error-message.component';
@@ -49,6 +50,8 @@ import { MediaSliderComponent } from './media-slider.component';
 export class AudioComponent implements OnInit, OnChanges, OnDestroy {
   @Input({ required: true }) src!: FileRepresentationInput;
   @Input({ required: true }) parentResource!: ParentResourceInput;
+  @Input() start = 0;
+  @Input() overrideSegments?: Segment[];
 
   @ViewChild('audioPlayer', { static: false }) audioPlayerRef!: ElementRef<HTMLAudioElement>;
 
@@ -103,7 +106,11 @@ export class AudioComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     if (changes['parentResource']) {
-      this.segmentsService.onInit(this.parentResource.id, 'AudioSegment');
+      if (this.overrideSegments) {
+        this.segmentsService.setSegments(this.overrideSegments);
+      } else {
+        this.segmentsService.onInit(this.parentResource.id, 'AudioSegment');
+      }
     }
   }
 
@@ -114,6 +121,9 @@ export class AudioComponent implements OnInit, OnChanges, OnDestroy {
   onAudioPlayerReady() {
     const player = this.audioPlayerRef.nativeElement;
     this.mediaPlayer.onInit(player);
+    if (this.start > 0) {
+      this.mediaPlayer.navigate(this.start);
+    }
     this.isPlayerReady = true;
     this.duration = this.mediaPlayer.duration();
     this._cd.detectChanges();
@@ -122,7 +132,7 @@ export class AudioComponent implements OnInit, OnChanges, OnDestroy {
       this.currentTime = v;
       this._cd.detectChanges();
 
-      if (this.watchForPause !== null && this.watchForPause === Math.floor(this.currentTime)) {
+      if (this.watchForPause !== null && Math.floor(this.watchForPause) === Math.floor(this.currentTime)) {
         this.mediaPlayer.pause();
         this.watchForPause = null;
       }

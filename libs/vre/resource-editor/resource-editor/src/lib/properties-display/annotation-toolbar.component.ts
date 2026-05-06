@@ -147,12 +147,8 @@ export class AnnotationToolbarComponent {
   }
 
   openRegionInNewTab() {
-    const annotationId = encodeURIComponent(this.resource.id);
-    const resPath = this._resourceService.getResourcePath(this.parentResourceId);
-    window.open(
-      `/${RouteConstants.resource}${resPath}?${RouteConstants.annotationQueryParam}=${annotationId}`,
-      '_blank'
-    );
+    const resPath = this._resourceService.getResourcePath(this.resource.id);
+    window.open(`/${RouteConstants.resource}${resPath}`, '_blank');
   }
 
   onPinPointClicked() {
