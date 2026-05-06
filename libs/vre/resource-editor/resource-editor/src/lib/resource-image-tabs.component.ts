@@ -1,7 +1,7 @@
 import { AsyncPipe, NgClass } from '@angular/common';
 import { ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { MatBadgeModule } from '@angular/material/badge';
-import { MatTabsModule } from '@angular/material/tabs';
+import { MatTabChangeEvent, MatTabsModule } from '@angular/material/tabs';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
@@ -95,6 +95,8 @@ export class ResourceImageTabsComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
+    // When annotationIri is set, ResourceImageComponent calls showRegions(true) directly on init;
+    // tab-level showRegions toggling only applies to user-driven tab switches via onTabChange.
     this.regionService.selectedRegion$.pipe(takeUntil(this._destroy$)).subscribe(region => {
       if (region) {
         this.selectedTab = this.annotationIri ? 0 : 1;
@@ -113,7 +115,7 @@ export class ResourceImageTabsComponent implements OnInit, OnDestroy {
     this._destroy$.complete();
   }
 
-  onTabChange(event: any) {
+  onTabChange(event: MatTabChangeEvent) {
     this.selectedTab = event.index;
     const isAnnotationTab = (this.annotationIri && event.index === 0) || (!this.annotationIri && event.index === 1);
     if (isAnnotationTab) {

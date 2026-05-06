@@ -168,7 +168,7 @@ describe('AnnotationToolbarComponent — behavior', () => {
   });
 
   describe('when the user clicks "open in new tab"', () => {
-    it('a new browser tab opens with the annotation pre-selected (?annotation=<iri>)', () => {
+    it('a new browser tab opens at the resource URL', () => {
       const openSpy = jest.spyOn(window, 'open').mockImplementation(() => null);
 
       component.openRegionInNewTab();

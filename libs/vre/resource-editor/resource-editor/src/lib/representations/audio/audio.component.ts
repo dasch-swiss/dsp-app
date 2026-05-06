@@ -107,7 +107,7 @@ export class AudioComponent implements OnInit, OnChanges, OnDestroy {
 
     if (changes['parentResource']) {
       if (this.overrideSegments) {
-        this.segmentsService.segments = this.overrideSegments;
+        this.segmentsService.setSegments(this.overrideSegments);
       } else {
         this.segmentsService.onInit(this.parentResource.id, 'AudioSegment');
       }

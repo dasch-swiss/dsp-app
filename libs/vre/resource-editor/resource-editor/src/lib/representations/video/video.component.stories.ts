@@ -31,7 +31,7 @@ const makeSegment = (label: string, start: number, end: number, row: number): Se
     label,
     row,
     hasSegmentBounds: { start, end } as unknown as ReadIntervalValue,
-    hasVideoSegmentOfValue: undefined,
+    hasSegmentOfValue: undefined,
     hasComment: undefined,
     hasDescription: undefined,
     hasKeyword: undefined,

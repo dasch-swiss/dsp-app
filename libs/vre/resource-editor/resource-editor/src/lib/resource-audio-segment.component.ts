@@ -74,7 +74,7 @@ export class ResourceAudioSegmentComponent implements OnInit {
           row: 0,
           label: this.resource.res.label,
           hasSegmentBounds: bounds,
-          hasVideoSegmentOfValue: linkValue,
+          hasSegmentOfValue: linkValue,
           hasComment: undefined,
           hasDescription: undefined,
           hasKeyword: undefined,

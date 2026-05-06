@@ -3,7 +3,7 @@ import { Component, Inject, Input, OnInit } from '@angular/core';
 import { Constants, KnoraApiConnection, ReadLinkValue, ReadResource } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
-import { map, Observable, of } from 'rxjs';
+import { EMPTY, map, Observable } from 'rxjs';
 import { RegionService } from './representations/region.service';
 import { RepresentationErrorMessageComponent } from './representations/representation-error-message.component';
 import { StillImageComponent } from './representations/still-image/still-image.component';
@@ -62,7 +62,7 @@ export class ResourceAnnotationComponent implements OnInit {
     if (!linkValues?.length) {
       console.warn(`ResourceAnnotationComponent: no IsRegionOfValue found on annotation ${this.resource.res.id}`);
       this.missingImageLink = true;
-      return of();
+      return EMPTY;
     }
     const imageIri = (linkValues[0] as ReadLinkValue).linkedResourceIri;
     return this._dspApi.v2.res.getResource(imageIri).pipe(map(r => r as ReadResource));

@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { MatBadgeModule } from '@angular/material/badge';
-import { MatTabsModule } from '@angular/material/tabs';
+import { MatTabChangeEvent, MatTabsModule } from '@angular/material/tabs';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
@@ -78,7 +78,7 @@ export class ResourceMediaTabsComponent implements OnInit, OnDestroy {
     this._destroy$.complete();
   }
 
-  onTabChange(event: any) {
+  onTabChange(event: MatTabChangeEvent) {
     this.selectedTab = event.index;
   }
 }

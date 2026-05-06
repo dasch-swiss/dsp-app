@@ -56,7 +56,7 @@ const makeSegment = (index: number, label: string, start: number, end: number): 
   row: index,
   label,
   hasSegmentBounds: makeIntervalValue(start, end),
-  hasVideoSegmentOfValue: undefined,
+  hasSegmentOfValue: undefined,
   hasComment: makeTextValue(`Comment for segment ${index}`),
   hasDescription: makeTextValue(`Description for segment ${index}`),
   hasKeyword: undefined,

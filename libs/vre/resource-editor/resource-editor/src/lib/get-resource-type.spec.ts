@@ -73,12 +73,12 @@ describe('getResourceType', () => {
       expect(getResourceType(resource)).toBe(ResourceType.Annotation);
     });
 
-    it('returns Segment for knora-api:VideoSegment resources', () => {
+    it('returns VideoSegment for knora-api:VideoSegment resources', () => {
       const resource = makeResourceNoFile(`${KNORA_API_V2}VideoSegment`);
       expect(getResourceType(resource)).toBe(ResourceType.VideoSegment);
     });
 
-    it('returns Segment for knora-api:AudioSegment resources', () => {
+    it('returns AudioSegment for knora-api:AudioSegment resources', () => {
       const resource = makeResourceNoFile(`${KNORA_API_V2}AudioSegment`);
       expect(getResourceType(resource)).toBe(ResourceType.AudioSegment);
     });

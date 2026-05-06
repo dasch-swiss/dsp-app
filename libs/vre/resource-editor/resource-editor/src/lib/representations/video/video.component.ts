@@ -85,7 +85,7 @@ export class VideoComponent implements OnChanges, OnDestroy {
     this.isPlayerReady = false;
     this._watchForMediaEvents();
     if (this.overrideSegments) {
-      this.segmentsService.segments = this.overrideSegments;
+      this.segmentsService.setSegments(this.overrideSegments);
     } else {
       this.segmentsService.onInit(this.parentResource.id, 'VideoSegment');
     }

@@ -1,7 +1,7 @@
 import { AsyncPipe, NgClass } from '@angular/common';
 import { ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { MatBadgeModule } from '@angular/material/badge';
-import { MatTabsModule } from '@angular/material/tabs';
+import { MatTabChangeEvent, MatTabsModule } from '@angular/material/tabs';
 import { ReadResource } from '@dasch-swiss/dsp-js';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -130,7 +130,7 @@ export class ResourceCompoundTabsComponent implements OnInit, OnDestroy {
     this._destroy$.complete();
   }
 
-  onTabChange(event: any) {
+  onTabChange(event: MatTabChangeEvent) {
     this.selectedTab = event.index;
     const isAnnotationTab =
       (this.incomingResource && event.index === 2) || (!this.incomingResource && event.index === 1);

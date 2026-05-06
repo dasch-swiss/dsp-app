@@ -17,7 +17,7 @@ const makeSegment = (label: string, start: number, end: number, row: number): Se
     label,
     row,
     hasSegmentBounds: makeInterval(start, end),
-    hasVideoSegmentOfValue: undefined,
+    hasSegmentOfValue: undefined,
     hasComment: undefined,
     hasDescription: undefined,
     hasKeyword: undefined,

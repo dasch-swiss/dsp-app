@@ -3,7 +3,7 @@ import { CountQueryResponse, KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { AppProgressIndicatorComponent } from '@dasch-swiss/vre/ui/progress-indicator';
-import { Subject, take, takeUntil } from 'rxjs';
+import { catchError, EMPTY, Subject, take, takeUntil } from 'rxjs';
 import { getResourceType } from './get-resource-type';
 import { ResourceAnnotationComponent } from './resource-annotation.component';
 import { ResourceArchiveComponent } from './resource-archive.component';
@@ -108,9 +108,18 @@ export class ResourceDispatcherComponent implements OnChanges, OnDestroy {
     }
 
     // null result: needs async compound check to distinguish plain from compound
+    // annotationIri is forwarded only to ResourceType.Image; silently ignored for all other types
     this._dspApi.v2.search
       .doSearchStillImageRepresentationsCount(this.resource.res.id)
-      .pipe(take(1), takeUntil(this._destroy$))
+      .pipe(
+        take(1),
+        takeUntil(this._destroy$),
+        catchError(() => {
+          this.resourceType = ResourceType.Plain;
+          this._cdr.detectChanges();
+          return EMPTY;
+        })
+      )
       .subscribe((result: CountQueryResponse) => {
         this.compoundCount = result.numberOfResults;
         this.resourceType = result.numberOfResults > 0 ? ResourceType.Compound : ResourceType.Plain;

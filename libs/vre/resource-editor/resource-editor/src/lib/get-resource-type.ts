@@ -14,7 +14,7 @@ export function getResourceType(resource: ReadResource): ResourceType | null {
     if (resource.properties[Constants.HasMovingImageFileValue]) return ResourceType.Video;
     if (resource.properties[Constants.HasAudioFileValue]) return ResourceType.Audio;
     if (resource.properties[Constants.HasDocumentFileValue]) {
-      return fileValue.filename.split('.').pop() === 'pdf' ? ResourceType.Pdf : ResourceType.Document;
+      return fileValue.filename.split('.').pop()?.toLowerCase() === 'pdf' ? ResourceType.Pdf : ResourceType.Document;
     }
     if (resource.properties[Constants.HasArchiveFileValue]) return ResourceType.Archive;
     if (resource.properties[Constants.HasTextFileValue]) return ResourceType.Text;
