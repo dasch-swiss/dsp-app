@@ -4,7 +4,7 @@ import { CompoundViewerComponent } from './compound/compound-viewer.component';
 import { CompoundService } from './compound/compound.service';
 import { RegionService } from './representations/region.service';
 import { ResourceCompoundTabsComponent } from './resource-compound-tabs.component';
-import { ResourceHeaderComponent } from './resource-header.component';
+import { ResourceHeaderComponent } from './header/resource-header.component';
 import { PropertiesDisplayService } from './resource-properties/properties-display.service';
 import { ResourceRestrictionComponent } from './meta/resource-restriction.component';
 

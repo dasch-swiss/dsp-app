@@ -6,9 +6,9 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { ReadResource } from '@dasch-swiss/dsp-js';
 import { TranslatePipe } from '@ngx-translate/core';
 import { delay, Subscription } from 'rxjs';
-import { IncomingResourceToolbarComponent } from './incoming-resource-toolbar.component';
+import { IncomingResourceToolbarComponent } from './header/incoming-resource-toolbar.component';
 import { PropertiesDisplayComponent } from './properties-display/properties-display.component';
-import { ResourceInfoBarComponent } from './resource-info-bar.component';
+import { ResourceInfoBarComponent } from './header/resource-info-bar.component';
 import { Segment } from './segment-support/segment';
 import { SegmentsService } from './segment-support/segments.service';
 

@@ -2,7 +2,7 @@ import { Component, Input } from '@angular/core';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { getFileValue } from './representations/get-file-value';
 import { VideoComponent } from './representations/video/video.component';
-import { ResourceHeaderComponent } from './resource-header.component';
+import { ResourceHeaderComponent } from './header/resource-header.component';
 import { ResourceLegalComponent } from './resource-legal.component';
 import { ResourceMediaTabsComponent } from './resource-media-tabs.component';
 import { PropertiesDisplayService } from './resource-properties/properties-display.service';

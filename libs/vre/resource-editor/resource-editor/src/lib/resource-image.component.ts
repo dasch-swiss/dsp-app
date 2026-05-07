@@ -6,7 +6,7 @@ import { getFileValue } from './representations/get-file-value';
 import { RegionService } from './representations/region.service';
 import { StillImageComponent } from './representations/still-image/still-image.component';
 import { VectorImageComponent } from './representations/vector-image/vector-image.component';
-import { ResourceHeaderComponent } from './resource-header.component';
+import { ResourceHeaderComponent } from './header/resource-header.component';
 import { ResourceImageTabsComponent } from './resource-image-tabs.component';
 import { ResourceLegalComponent } from './resource-legal.component';
 import { PropertiesDisplayService } from './resource-properties/properties-display.service';

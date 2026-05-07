@@ -1,0 +1,121 @@
+import { AsyncPipe } from '@angular/common';
+import { Component, Input, ViewContainerRef } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialog } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { ReadResource, ResourceClassDefinitionWithPropertyDefinition } from '@dasch-swiss/dsp-js';
+import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
+import { DspResource } from '@dasch-swiss/vre/shared/app-common';
+import { TranslatePipe } from '@ngx-translate/core';
+import { ResourceFetcherService } from '../representations/resource-fetcher.service';
+import { ResourceInfoBarComponent } from './resource-info-bar.component';
+import { EditResourceLabelDialogComponent } from './more-menu/edit-resource-label-dialog.component';
+import { ResourceToolbarComponent } from './resource-toolbar.component';
+
+@Component({
+  selector: 'app-resource-header',
+  template: ` <div class="resource-header">
+    <div class="resource-class-header">
+      <h3
+        [class.label-info]="resourceClassType?.comment"
+        [matTooltip]="resourceClassType?.comment"
+        matTooltipClass="header-tooltip"
+        matTooltipPosition="above">
+        {{ resourceClassType?.label }}
+      </h3>
+      <app-resource-toolbar [resource]="resource.res" />
+    </div>
+    <div class="resource-label" style="display: flex; justify-content: space-between">
+      <h4 data-cy="resource-header-label">{{ resource.res.label }}</h4>
+      @if (resourceFetcherService.userCanEdit$ | async) {
+        <button
+          mat-icon-button
+          data-cy="edit-label-button"
+          color="primary"
+          [matTooltip]="'resourceEditor.moreMenu.editLabel' | translate"
+          (click)="openEditLabelDialog()">
+          <mat-icon>edit</mat-icon>
+        </button>
+      }
+    </div>
+    <app-resource-info-bar [resource]="resource.res" />
+  </div>`,
+  styles: [
+    `
+      .resource-header {
+        margin-bottom: 24px;
+      }
+
+      .resource-label h4 {
+        display: inline-block;
+        font-weight: 500;
+        font-size: 18px;
+        line-height: 22px;
+        margin-bottom: 0;
+        margin-block-start: 0;
+        margin-block-end: 0;
+        padding-top: 16px;
+      }
+
+      .resource-class-header {
+        display: flex;
+        box-sizing: border-box;
+        flex-direction: row;
+        align-items: flex-start;
+        justify-content: space-between;
+
+        h3.label-info {
+          cursor: help;
+        }
+
+        h3 {
+          display: inline-block;
+          text-transform: uppercase;
+          font-size: 16px;
+          font-weight: normal;
+          letter-spacing: 1.25px;
+          margin-block-end: 0em;
+        }
+
+        .action {
+          display: inline-block;
+          white-space: nowrap;
+
+          button {
+            border-radius: 0;
+          }
+        }
+      }
+    `,
+  ],
+  imports: [
+    AsyncPipe,
+    MatButtonModule,
+    MatIconModule,
+    MatTooltipModule,
+    TranslatePipe,
+    ResourceInfoBarComponent,
+    ResourceToolbarComponent,
+  ],
+})
+export class ResourceHeaderComponent {
+  @Input({ required: true }) resource!: DspResource;
+
+  get resourceClassType(): ResourceClassDefinitionWithPropertyDefinition {
+    return this.resource.res.entityInfo.classes[this.resource.res.type];
+  }
+
+  constructor(
+    private readonly _dialog: MatDialog,
+    private readonly _viewContainerRef: ViewContainerRef,
+    public resourceFetcherService: ResourceFetcherService
+  ) {}
+
+  openEditLabelDialog() {
+    this._dialog.open<EditResourceLabelDialogComponent, ReadResource, boolean>(EditResourceLabelDialogComponent, {
+      ...DspDialogConfig.smallDialog<ReadResource>(this.resource.res),
+      viewContainerRef: this._viewContainerRef,
+    });
+  }
+}

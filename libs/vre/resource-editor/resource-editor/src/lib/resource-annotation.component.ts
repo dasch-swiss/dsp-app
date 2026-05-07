@@ -8,7 +8,7 @@ import { RegionService } from './representations/region.service';
 import { RepresentationErrorMessageComponent } from './representations/representation-error-message.component';
 import { StillImageComponent } from './representations/still-image/still-image.component';
 import { ResourceDefaultTabsComponent } from './resource-default-tabs.component';
-import { ResourceHeaderComponent } from './resource-header.component';
+import { ResourceHeaderComponent } from './header/resource-header.component';
 import { PropertiesDisplayService } from './resource-properties/properties-display.service';
 import { ResourceRepresentationContainerComponent } from './resource-representation-container.component';
 import { ResourceRestrictionComponent } from './meta/resource-restriction.component';

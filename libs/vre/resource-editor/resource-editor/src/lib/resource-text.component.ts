@@ -3,7 +3,7 @@ import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { getFileValue } from './representations/get-file-value';
 import { TextComponent } from './representations/text/text.component';
 import { ResourceDefaultTabsComponent } from './resource-default-tabs.component';
-import { ResourceHeaderComponent } from './resource-header.component';
+import { ResourceHeaderComponent } from './header/resource-header.component';
 import { ResourceLegalComponent } from './resource-legal.component';
 import { PropertiesDisplayService } from './resource-properties/properties-display.service';
 import { ResourceRepresentationContainerComponent } from './resource-representation-container.component';

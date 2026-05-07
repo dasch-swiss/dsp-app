@@ -7,7 +7,7 @@ import { map, Observable, of } from 'rxjs';
 import { getFileValue } from './representations/get-file-value';
 import { VideoComponent } from './representations/video/video.component';
 import { ResourceDefaultTabsComponent } from './resource-default-tabs.component';
-import { ResourceHeaderComponent } from './resource-header.component';
+import { ResourceHeaderComponent } from './header/resource-header.component';
 import { ResourceLegalComponent } from './resource-legal.component';
 import { PropertiesDisplayService } from './resource-properties/properties-display.service';
 import { ResourceRestrictionComponent } from './meta/resource-restriction.component';

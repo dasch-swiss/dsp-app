@@ -8,7 +8,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { AnnotationToolbarComponent } from './properties-display/annotation-toolbar.component';
 import { PropertiesDisplayComponent } from './properties-display/properties-display.component';
 import { RegionService } from './representations/region.service';
-import { ResourceInfoBarComponent } from './resource-info-bar.component';
+import { ResourceInfoBarComponent } from './header/resource-info-bar.component';
 
 @Component({
   selector: 'app-annotation-tab',
