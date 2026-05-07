@@ -10,7 +10,7 @@ import { firstValueFrom } from 'rxjs';
 import {
   CreateSegmentDialogComponent,
   CreateSegmentDialogProps,
-} from '../../segment-support/create-segment-dialog.component';
+} from '../segments/create-segment-dialog.component';
 import { ParentResourceInput } from '../representation-inputs';
 import { ResourceFetcherService } from '../resource-fetcher.service';
 import { MediaPlayerService } from '../video/media-player.service';

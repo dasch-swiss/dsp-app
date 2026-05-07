@@ -6,7 +6,7 @@ import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular'
 import { BehaviorSubject, of } from 'rxjs';
 import { expect } from 'storybook/test';
 
-import { ResourceFetcherService } from '../representations/resource-fetcher.service';
+import { ResourceFetcherService } from '../representation/resource-fetcher.service';
 import { GeonameService } from '../template-switcher/geoname.service';
 import { FootnoteService } from './footnotes/footnote.service';
 import { PropertiesDisplayService } from './properties-display.service';

@@ -4,7 +4,7 @@ import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { AppError } from '@dasch-swiss/vre/core/error-handler';
 import { DspCompoundPosition, DspResource, GenerateProperty } from '@dasch-swiss/vre/shared/app-common';
 import { BehaviorSubject } from 'rxjs';
-import { RegionService } from '../representations/region.service';
+import { RegionService } from '../representation/region.service';
 
 /**
  * Service to handle compound resources, which are resources that are composed of multiple resources.

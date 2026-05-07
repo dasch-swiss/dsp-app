@@ -1,7 +1,7 @@
 import { Component, Input, OnChanges } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { ProjectLicenseDto } from '@dasch-swiss/vre/3rd-party-services/open-api';
-import { LicensesLogoMapping } from './licenses-logo-mapping';
+import { LicensesLogoMapping } from '../licenses-logo-mapping';
 
 @Component({
   selector: 'app-resource-legal-license',

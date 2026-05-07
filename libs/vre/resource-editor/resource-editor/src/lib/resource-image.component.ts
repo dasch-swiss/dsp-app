@@ -2,15 +2,15 @@ import { Component, Input, OnChanges, OnDestroy } from '@angular/core';
 import { Constants } from '@dasch-swiss/dsp-js';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { filter, pairwise, Subject, take, takeUntil } from 'rxjs';
-import { getFileValue } from './representations/get-file-value';
-import { RegionService } from './representations/region.service';
-import { StillImageComponent } from './representations/still-image/still-image.component';
-import { VectorImageComponent } from './representations/vector-image/vector-image.component';
+import { getFileValue } from './representation/get-file-value';
+import { RegionService } from './representation/region.service';
+import { StillImageComponent } from './representation/still-image/still-image.component';
+import { VectorImageComponent } from './representation/vector-image/vector-image.component';
 import { ResourceHeaderComponent } from './header/resource-header.component';
 import { ResourceImageTabsComponent } from './resource-image-tabs.component';
-import { ResourceLegalComponent } from './resource-legal.component';
+import { ResourceLegalComponent } from './representation/resource-legal.component';
 import { PropertiesDisplayService } from './resource-properties/properties-display.service';
-import { ResourceRepresentationContainerComponent } from './resource-representation-container.component';
+import { ResourceRepresentationContainerComponent } from './representation/resource-representation-container.component';
 import { ResourceRestrictionComponent } from './meta/resource-restriction.component';
 
 @Component({

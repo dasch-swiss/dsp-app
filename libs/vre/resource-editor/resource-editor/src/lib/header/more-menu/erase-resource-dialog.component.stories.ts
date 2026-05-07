@@ -5,7 +5,7 @@ import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular'
 import { of } from 'rxjs';
 import { expect } from 'storybook/test';
 
-import { ResourceFetcherService } from '../../representations/resource-fetcher.service';
+import { ResourceFetcherService } from '../../representation/resource-fetcher.service';
 import { EraseResourceDialogComponent } from './erase-resource-dialog.component';
 
 const makeResource = () =>

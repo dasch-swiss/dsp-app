@@ -9,8 +9,8 @@ import { delay, Subscription } from 'rxjs';
 import { IncomingResourceToolbarComponent } from './header/incoming-resource-toolbar.component';
 import { PropertiesDisplayComponent } from './properties-display/properties-display.component';
 import { ResourceInfoBarComponent } from './header/resource-info-bar.component';
-import { Segment } from './segment-support/segment';
-import { SegmentsService } from './segment-support/segments.service';
+import { Segment } from './representation/segments/segment';
+import { SegmentsService } from './representation/segments/segments.service';
 
 @Component({
   selector: 'app-segment-tab',

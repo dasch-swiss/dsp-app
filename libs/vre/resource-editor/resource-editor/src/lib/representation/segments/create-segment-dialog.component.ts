@@ -12,7 +12,7 @@ import {
   TimeInputComponent,
 } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe } from '@ngx-translate/core';
-import { ParentResourceInput } from '../representations/representation-inputs';
+import { ParentResourceInput } from '../representation-inputs';
 import { SegmentApiService } from './segment-api.service';
 import { SegmentsService } from './segments.service';
 

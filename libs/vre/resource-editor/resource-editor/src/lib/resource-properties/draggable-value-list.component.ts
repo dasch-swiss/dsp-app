@@ -19,7 +19,7 @@ import { APIV2ApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { finalize } from 'rxjs/operators';
-import { ResourceFetcherService } from '../representations/resource-fetcher.service';
+import { ResourceFetcherService } from '../representation/resource-fetcher.service';
 
 @Component({
   selector: 'app-draggable-value-list',

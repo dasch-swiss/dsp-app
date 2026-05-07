@@ -6,7 +6,7 @@ import { APIV2ApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { provideTranslateService } from '@ngx-translate/core';
 import { of, throwError } from 'rxjs';
-import { ResourceFetcherService } from '../representations/resource-fetcher.service';
+import { ResourceFetcherService } from '../representation/resource-fetcher.service';
 import { DraggableValueListComponent } from './draggable-value-list.component';
 
 describe('DraggableValueListComponent', () => {

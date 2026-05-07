@@ -4,16 +4,16 @@ import { KnoraApiConnection, ReadIntervalValue, ReadLinkValue, ReadResource } fr
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { map, Observable, of } from 'rxjs';
-import { AudioComponent } from './representations/audio/audio.component';
-import { getFileValue } from './representations/get-file-value';
+import { AudioComponent } from './representation/audio/audio.component';
+import { getFileValue } from './representation/get-file-value';
 import { ResourceDefaultTabsComponent } from './resource-default-tabs.component';
 import { ResourceHeaderComponent } from './header/resource-header.component';
-import { ResourceLegalComponent } from './resource-legal.component';
+import { ResourceLegalComponent } from './representation/resource-legal.component';
 import { PropertiesDisplayService } from './resource-properties/properties-display.service';
-import { ResourceRepresentationContainerComponent } from './resource-representation-container.component';
+import { ResourceRepresentationContainerComponent } from './representation/resource-representation-container.component';
 import { ResourceRestrictionComponent } from './meta/resource-restriction.component';
-import { Segment } from './segment-support/segment';
-import { SegmentsService } from './segment-support/segments.service';
+import { Segment } from './representation/segments/segment';
+import { SegmentsService } from './representation/segments/segments.service';
 
 const IS_AUDIO_SEGMENT_OF_VALUE = 'http://api.knora.org/ontology/knora-api/v2#isAudioSegmentOfValue';
 const HAS_SEGMENT_BOUNDS = 'http://api.knora.org/ontology/knora-api/v2#hasSegmentBounds';

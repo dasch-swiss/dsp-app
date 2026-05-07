@@ -8,7 +8,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { AnnotationTabComponent } from './annotation-tab.component';
 import { PropertiesDisplayComponent } from './properties-display/properties-display.component';
 import { PropertiesToggleComponent } from './properties-display/properties-toggle.component';
-import { RegionService } from './representations/region.service';
+import { RegionService } from './representation/region.service';
 import { PropertiesDisplayService } from './resource-properties/properties-display.service';
 
 @Component({

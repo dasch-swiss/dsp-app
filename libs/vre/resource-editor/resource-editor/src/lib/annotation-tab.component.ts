@@ -7,7 +7,7 @@ import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { Subject, takeUntil } from 'rxjs';
 import { AnnotationToolbarComponent } from './properties-display/annotation-toolbar.component';
 import { PropertiesDisplayComponent } from './properties-display/properties-display.component';
-import { RegionService } from './representations/region.service';
+import { RegionService } from './representation/region.service';
 import { ResourceInfoBarComponent } from './header/resource-info-bar.component';
 
 @Component({

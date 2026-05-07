@@ -16,7 +16,7 @@ import { LoadingButtonDirective } from '@dasch-swiss/vre/ui/progress-indicator';
 import { DialogHeaderComponent } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { tap } from 'rxjs';
-import { ResourceFetcherService } from '../representations/resource-fetcher.service';
+import { ResourceFetcherService } from '../representation/resource-fetcher.service';
 import { PropertyValueService } from './property-value.service';
 
 export interface DeleteValueDialogProps {

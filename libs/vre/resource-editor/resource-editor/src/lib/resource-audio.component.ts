@@ -1,14 +1,14 @@
 import { Component, Input } from '@angular/core';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
-import { AudioComponent } from './representations/audio/audio.component';
-import { getFileValue } from './representations/get-file-value';
+import { AudioComponent } from './representation/audio/audio.component';
+import { getFileValue } from './representation/get-file-value';
 import { ResourceHeaderComponent } from './header/resource-header.component';
-import { ResourceLegalComponent } from './resource-legal.component';
+import { ResourceLegalComponent } from './representation/resource-legal.component';
 import { ResourceMediaTabsComponent } from './resource-media-tabs.component';
 import { PropertiesDisplayService } from './resource-properties/properties-display.service';
-import { ResourceRepresentationContainerComponent } from './resource-representation-container.component';
+import { ResourceRepresentationContainerComponent } from './representation/resource-representation-container.component';
 import { ResourceRestrictionComponent } from './meta/resource-restriction.component';
-import { SegmentsService } from './segment-support/segments.service';
+import { SegmentsService } from './representation/segments/segments.service';
 
 @Component({
   selector: 'app-resource-audio',

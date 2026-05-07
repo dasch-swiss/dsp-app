@@ -9,7 +9,7 @@ import { of } from 'rxjs';
 import { expect } from 'storybook/test';
 
 import { IncomingResourceToolbarComponent } from './incoming-resource-toolbar.component';
-import { ResourceFetcherService } from '../representations/resource-fetcher.service';
+import { ResourceFetcherService } from '../representation/resource-fetcher.service';
 import { notificationServiceStub } from '../stories.helpers';
 
 const makeResource = () =>

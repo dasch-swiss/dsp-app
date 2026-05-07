@@ -3,7 +3,7 @@ import { ReadFileValue } from '@dasch-swiss/dsp-js';
 import { AdminAPIApiService, ProjectLicenseDto } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { TranslatePipe } from '@ngx-translate/core';
 import { switchMap, take } from 'rxjs';
-import { ResourceFetcherService } from './representations/resource-fetcher.service';
+import { ResourceFetcherService } from './resource-fetcher.service';
 import { ResourceLegalLicenseComponent } from './resource-legal-license.component';
 
 @Component({

@@ -2,8 +2,8 @@ import { ChangeDetectorRef, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { ReadResource } from '@dasch-swiss/dsp-js';
 import { BehaviorSubject } from 'rxjs';
-import { Segment } from './segment-support/segment';
-import { SegmentsService } from './segment-support/segments.service';
+import { Segment } from './representation/segments/segment';
+import { SegmentsService } from './representation/segments/segments.service';
 import { SegmentTabComponent } from './segment-tab.component';
 
 describe('SegmentTabComponent', () => {

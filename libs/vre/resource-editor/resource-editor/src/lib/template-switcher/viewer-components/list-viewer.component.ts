@@ -6,7 +6,7 @@ import { KnoraApiConnection, ListNodeV2, ReadListValue, ResourcePropertyDefiniti
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { filterUndefined } from '@dasch-swiss/vre/shared/app-common';
 import { combineLatest, map, Observable, Subject, switchMap } from 'rxjs';
-import { ResourceFetcherService } from '../../representations/resource-fetcher.service';
+import { ResourceFetcherService } from '../../representation/resource-fetcher.service';
 
 interface ListNodeDisplay {
   label: string;

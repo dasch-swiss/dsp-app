@@ -15,16 +15,16 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { TranslateService } from '@ngx-translate/core';
 import { catchError, EMPTY, Subject, takeUntil } from 'rxjs';
-import { MediaControlService } from '../../segment-support/media-control.service';
-import { Segment } from '../../segment-support/segment';
-import { SegmentsDisplayComponent } from '../../segment-support/segments-display.component';
-import { SegmentsService } from '../../segment-support/segments.service';
+import { MediaControlService } from '../segments/media-control.service';
+import { Segment } from '../segments/segment';
+import { SegmentsDisplayComponent } from '../segments/segments-display.component';
+import { SegmentsService } from '../segments/segments.service';
 import { RepresentationErrorMessageComponent } from '../representation-error-message.component';
 import { FileRepresentationInput, ParentResourceInput } from '../representation-inputs';
 import { RepresentationService } from '../representation.service';
 import { MediaPlayerService } from '../video/media-player.service';
 import { AudioToolbarComponent } from './audio-toolbar.component';
-import { MediaSliderComponent } from './media-slider.component';
+import { MediaSliderComponent } from '../media-slider.component';
 
 @Component({
   selector: 'app-audio',

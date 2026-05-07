@@ -9,9 +9,9 @@ import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular'
 import { of } from 'rxjs';
 import { expect } from 'storybook/test';
 
-import { RegionService } from './representations/region.service';
-import { RepresentationService } from './representations/representation.service';
-import { ResourceFetcherService } from './representations/resource-fetcher.service';
+import { RegionService } from './representation/region.service';
+import { RepresentationService } from './representation/representation.service';
+import { ResourceFetcherService } from './representation/resource-fetcher.service';
 import { ResourceCompoundComponent } from './resource-compound.component';
 import {
   DEFAULT_HAS_PERMISSIONS,

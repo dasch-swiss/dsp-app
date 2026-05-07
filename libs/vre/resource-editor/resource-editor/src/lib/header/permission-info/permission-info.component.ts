@@ -12,7 +12,7 @@ import { ApiResponseData, GroupResponse, KnoraApiConnection, ReadResource } from
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { TranslatePipe } from '@ngx-translate/core';
 import { filter, map, take } from 'rxjs';
-import { Interaction, ResourceUtil } from '../../representations/resource.util';
+import { Interaction, ResourceUtil } from '../../representation/resource.util';
 import {
   GroupPermissionsUtil,
   Permission,

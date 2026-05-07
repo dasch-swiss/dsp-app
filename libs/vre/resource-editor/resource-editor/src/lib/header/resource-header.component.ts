@@ -8,7 +8,7 @@ import { ReadResource, ResourceClassDefinitionWithPropertyDefinition } from '@da
 import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { TranslatePipe } from '@ngx-translate/core';
-import { ResourceFetcherService } from '../representations/resource-fetcher.service';
+import { ResourceFetcherService } from '../representation/resource-fetcher.service';
 import { ResourceInfoBarComponent } from './resource-info-bar.component';
 import { EditResourceLabelDialogComponent } from './more-menu/edit-resource-label-dialog.component';
 import { ResourceToolbarComponent } from './resource-toolbar.component';

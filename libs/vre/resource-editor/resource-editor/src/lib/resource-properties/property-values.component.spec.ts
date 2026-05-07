@@ -4,7 +4,7 @@ import { Cardinality, ReadResource, ReadValue, ResourcePropertyDefinition } from
 import { PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
 import { provideTranslateService } from '@ngx-translate/core';
 import { BehaviorSubject } from 'rxjs';
-import { ResourceFetcherService } from '../representations/resource-fetcher.service';
+import { ResourceFetcherService } from '../representation/resource-fetcher.service';
 import { PropertyValueService } from './property-value.service';
 import { PropertyValuesComponent } from './property-values.component';
 

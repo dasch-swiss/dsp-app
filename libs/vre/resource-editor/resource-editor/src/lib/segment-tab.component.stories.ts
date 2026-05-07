@@ -7,9 +7,9 @@ import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular'
 import { of, Subject } from 'rxjs';
 import { expect } from 'storybook/test';
 
-import { ResourceFetcherService } from './representations/resource-fetcher.service';
-import { Segment } from './segment-support/segment';
-import { SegmentsService } from './segment-support/segments.service';
+import { ResourceFetcherService } from './representation/resource-fetcher.service';
+import { Segment } from './representation/segments/segment';
+import { SegmentsService } from './representation/segments/segments.service';
 import { SegmentTabComponent } from './segment-tab.component';
 
 const makeParentResource = (): ReadResource =>

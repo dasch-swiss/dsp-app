@@ -1,29 +1,39 @@
+// jsdom does not define MediaError — provide the numeric constants used in VideoComponent
+(globalThis as any).MediaError = {
+  MEDIA_ERR_ABORTED: 1,
+  MEDIA_ERR_NETWORK: 2,
+  MEDIA_ERR_DECODE: 3,
+  MEDIA_ERR_SRC_NOT_SUPPORTED: 4,
+};
+
 import { CUSTOM_ELEMENTS_SCHEMA, SimpleChange } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { DomSanitizer } from '@angular/platform-browser';
-import { ReadAudioFileValue, ReadResource } from '@dasch-swiss/dsp-js';
+import { ReadMovingImageFileValue, ReadResource } from '@dasch-swiss/dsp-js';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { provideTranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, EMPTY, of, Subject } from 'rxjs';
-import { MediaControlService } from '../../segment-support/media-control.service';
-import { SegmentsService } from '../../segment-support/segments.service';
+import { MediaControlService } from '../segments/media-control.service';
+import { SegmentsService } from '../segments/segments.service';
 import { RepresentationService } from '../representation.service';
-import { MediaPlayerService } from '../video/media-player.service';
-import { AudioComponent } from './audio.component';
+import { MediaPlayerService } from './media-player.service';
+import { VideoComponent } from './video.component';
 
-const makeSrc = (): ReadAudioFileValue =>
-  ({ fileUrl: 'http://example.org/audio.mp3' }) as unknown as ReadAudioFileValue;
+const makeSrc = (): ReadMovingImageFileValue =>
+  ({ fileUrl: 'http://example.org/video.mp4' }) as unknown as ReadMovingImageFileValue;
 
 const makeParentResource = (id = 'http://r/resource'): ReadResource =>
   ({ id, properties: {} }) as unknown as ReadResource;
 
-describe('AudioComponent — behavior', () => {
-  let component: AudioComponent;
-  let fixture: ComponentFixture<AudioComponent>;
+describe('VideoComponent — behavior', () => {
+  let component: VideoComponent;
+  let fixture: ComponentFixture<VideoComponent>;
   let segmentsServiceMock: jest.Mocked<Pick<SegmentsService, 'onInit' | 'playSegment$'>>;
-  let mediaControlMock: jest.Mocked<Pick<MediaControlService, 'playMedia' | 'play$' | 'watchForPause$'>>;
+  let mediaControlMock: jest.Mocked<
+    Pick<MediaControlService, 'playMedia' | 'play$' | 'watchForPause$' | 'mediaDurationSecs'>
+  >;
   let mediaPlayerMock: jest.Mocked<
-    Pick<MediaPlayerService, 'navigate' | 'play' | 'pause' | 'duration' | 'navigateToStart' | 'onTimeUpdate$'>
+    Pick<MediaPlayerService, 'navigate' | 'play' | 'pause' | 'duration' | 'onTimeUpdate$'>
   >;
   let representationServiceMock: jest.Mocked<Pick<RepresentationService, 'getFileInfo'>>;
   let notificationMock: jest.Mocked<Pick<NotificationService, 'openSnackBar'>>;
@@ -44,26 +54,26 @@ describe('AudioComponent — behavior', () => {
       playMedia: jest.fn(),
       play$: play$.asObservable(),
       watchForPause$: watchForPause$.asObservable(),
+      mediaDurationSecs: undefined,
     };
     mediaPlayerMock = {
       navigate: jest.fn(),
       play: jest.fn(),
       pause: jest.fn(),
-      duration: jest.fn().mockReturnValue(120),
-      navigateToStart: jest.fn(),
+      duration: jest.fn().mockReturnValue(300),
       onTimeUpdate$: new BehaviorSubject(0).asObservable(),
     };
     representationServiceMock = {
-      getFileInfo: jest.fn().mockReturnValue(of({ originalFilename: 'audio-file.mp3' })),
+      getFileInfo: jest.fn().mockReturnValue(EMPTY),
     };
     notificationMock = { openSnackBar: jest.fn() };
 
     await TestBed.configureTestingModule({
-      imports: [AudioComponent],
+      imports: [VideoComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       providers: [provideTranslateService()],
     })
-      .overrideComponent(AudioComponent, {
+      .overrideComponent(VideoComponent, {
         set: {
           template: '<div></div>',
           providers: [
@@ -78,7 +88,7 @@ describe('AudioComponent — behavior', () => {
       })
       .compileComponents();
 
-    fixture = TestBed.createComponent(AudioComponent);
+    fixture = TestBed.createComponent(VideoComponent);
     component = fixture.componentInstance;
     component.src = makeSrc();
     component.parentResource = makeParentResource();
@@ -89,43 +99,27 @@ describe('AudioComponent — behavior', () => {
     fixture.detectChanges();
   });
 
-  describe('when the audio file loads', () => {
+  describe('when the video loads', () => {
     it('loads segments for the parent resource', () => {
-      expect(segmentsServiceMock.onInit).toHaveBeenCalledWith('http://r/resource', 'AudioSegment');
-    });
-
-    it('fetches the original filename for display', () => {
-      expect(component.originalFilename).toBe('audio-file.mp3');
-    });
-  });
-
-  describe('when the file fails to load', () => {
-    it('shows an error state', () => {
-      representationServiceMock.getFileInfo.mockReturnValue(EMPTY);
-
-      // Simulate native audio element error event
-      const errorEvent = { target: { error: { code: 2, message: 'Network error' } } } as unknown as Event;
-      component.onAudioError(errorEvent);
-
-      expect(component.failedToLoad).toBe(true);
+      expect(segmentsServiceMock.onInit).toHaveBeenCalledWith('http://r/resource', 'VideoSegment');
     });
   });
 
   describe('when a segment is selected for playback', () => {
     it('requests the media player to seek to the segment start time', () => {
-      playSegment$.next({ hasSegmentBounds: { start: 30, end: 60 } });
+      playSegment$.next({ hasSegmentBounds: { start: 10, end: 40 } });
 
-      expect(mediaControlMock.playMedia).toHaveBeenCalledWith(30, 60);
+      expect(mediaControlMock.playMedia).toHaveBeenCalledWith(10, 40);
     });
   });
 
   describe('when the media control requests playback at a valid position', () => {
     it('seeks to the requested time and starts playing', () => {
-      component.duration = 120;
+      component.duration = 300;
 
-      play$.next(45);
+      play$.next(100);
 
-      expect(mediaPlayerMock.navigate).toHaveBeenCalledWith(45);
+      expect(mediaPlayerMock.navigate).toHaveBeenCalledWith(100);
       expect(mediaPlayerMock.play).toHaveBeenCalled();
     });
   });
@@ -138,6 +132,35 @@ describe('AudioComponent — behavior', () => {
 
       expect(notificationMock.openSnackBar).toHaveBeenCalled();
       expect(mediaPlayerMock.navigate).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('when the video fails to play (MediaError)', () => {
+    // Use numeric constants directly — MediaError is not available in jsdom
+    const MEDIA_ERR_ABORTED = 1;
+    const MEDIA_ERR_NETWORK = 2;
+    const MEDIA_ERR_DECODE = 3;
+    const MEDIA_ERR_SRC_NOT_SUPPORTED = 4;
+
+    it('stores a human-readable error message for display', () => {
+      const event = {
+        target: {
+          error: { code: MEDIA_ERR_NETWORK },
+        },
+      } as unknown as ErrorEvent;
+
+      component.handleVideoError(event);
+
+      expect(component.videoError).toBeTruthy();
+    });
+
+    it('handles each known MediaError code without throwing', () => {
+      const codes = [MEDIA_ERR_ABORTED, MEDIA_ERR_NETWORK, MEDIA_ERR_DECODE, MEDIA_ERR_SRC_NOT_SUPPORTED];
+
+      for (const code of codes) {
+        const event = { target: { error: { code } } } as unknown as ErrorEvent;
+        expect(() => component.handleVideoError(event)).not.toThrow();
+      }
     });
   });
 

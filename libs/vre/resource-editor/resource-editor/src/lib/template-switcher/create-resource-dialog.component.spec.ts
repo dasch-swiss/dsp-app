@@ -4,7 +4,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { provideTranslateService, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
-import { ResourceFetcherService } from '../representations/resource-fetcher.service';
+import { ResourceFetcherService } from '../representation/resource-fetcher.service';
 import { CreateResourceDialogComponent, CreateResourceDialogProps } from './create-resource-dialog.component';
 
 describe('CreateResourceDialogComponent', () => {

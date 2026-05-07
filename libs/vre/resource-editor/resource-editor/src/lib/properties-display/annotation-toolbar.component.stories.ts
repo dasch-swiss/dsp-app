@@ -7,8 +7,8 @@ import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular'
 import { of } from 'rxjs';
 import { expect } from 'storybook/test';
 
-import { RegionService } from '../representations/region.service';
-import { ResourceFetcherService } from '../representations/resource-fetcher.service';
+import { RegionService } from '../representation/region.service';
+import { ResourceFetcherService } from '../representation/resource-fetcher.service';
 import { notificationServiceStub } from '../stories.helpers';
 import { AnnotationToolbarComponent } from './annotation-toolbar.component';
 

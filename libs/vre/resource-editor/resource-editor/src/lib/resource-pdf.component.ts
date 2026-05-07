@@ -1,12 +1,12 @@
 import { Component, Input } from '@angular/core';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
-import { PdfDocumentComponent } from './representations/document/pdf-document.component';
-import { getFileValue } from './representations/get-file-value';
+import { PdfDocumentComponent } from './representation/document/pdf-document.component';
+import { getFileValue } from './representation/get-file-value';
 import { ResourceDefaultTabsComponent } from './resource-default-tabs.component';
 import { ResourceHeaderComponent } from './header/resource-header.component';
-import { ResourceLegalComponent } from './resource-legal.component';
+import { ResourceLegalComponent } from './representation/resource-legal.component';
 import { PropertiesDisplayService } from './resource-properties/properties-display.service';
-import { ResourceRepresentationContainerComponent } from './resource-representation-container.component';
+import { ResourceRepresentationContainerComponent } from './representation/resource-representation-container.component';
 import { ResourceRestrictionComponent } from './meta/resource-restriction.component';
 
 @Component({

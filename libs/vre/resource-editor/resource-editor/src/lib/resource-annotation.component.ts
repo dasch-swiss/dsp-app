@@ -4,13 +4,13 @@ import { Constants, KnoraApiConnection, ReadLinkValue, ReadResource } from '@das
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { EMPTY, map, Observable } from 'rxjs';
-import { RegionService } from './representations/region.service';
-import { RepresentationErrorMessageComponent } from './representations/representation-error-message.component';
-import { StillImageComponent } from './representations/still-image/still-image.component';
+import { RegionService } from './representation/region.service';
+import { RepresentationErrorMessageComponent } from './representation/representation-error-message.component';
+import { StillImageComponent } from './representation/still-image/still-image.component';
 import { ResourceDefaultTabsComponent } from './resource-default-tabs.component';
 import { ResourceHeaderComponent } from './header/resource-header.component';
 import { PropertiesDisplayService } from './resource-properties/properties-display.service';
-import { ResourceRepresentationContainerComponent } from './resource-representation-container.component';
+import { ResourceRepresentationContainerComponent } from './representation/resource-representation-container.component';
 import { ResourceRestrictionComponent } from './meta/resource-restriction.component';
 
 @Component({

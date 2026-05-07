@@ -14,7 +14,7 @@ import { LoadingButtonDirective } from '@dasch-swiss/vre/ui/progress-indicator';
 import { CommonInputComponent, DialogHeaderComponent } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { finalize, switchMap } from 'rxjs';
-import { ResourceFetcherService } from '../../representations/resource-fetcher.service';
+import { ResourceFetcherService } from '../../representation/resource-fetcher.service';
 
 @Component({
   selector: 'app-edit-resource-label-dialog',

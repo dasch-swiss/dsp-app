@@ -3,7 +3,7 @@ import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular'
 import { of } from 'rxjs';
 import { expect } from 'storybook/test';
 
-import { ResourceFetcherService } from './representations/resource-fetcher.service';
+import { ResourceFetcherService } from './resource-fetcher.service';
 import { ResourceLegalComponent } from './resource-legal.component';
 
 const makeLicenses = () => [

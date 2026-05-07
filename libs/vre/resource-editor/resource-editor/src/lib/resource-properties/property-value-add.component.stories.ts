@@ -5,7 +5,7 @@ import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular'
 import { BehaviorSubject, of } from 'rxjs';
 import { expect } from 'storybook/test';
 
-import { ResourceFetcherService } from '../representations/resource-fetcher.service';
+import { ResourceFetcherService } from '../representation/resource-fetcher.service';
 import { notificationServiceStub } from '../stories.helpers';
 import { PropertyValueAddComponent } from './property-value-add.component';
 import { PropertyValueService } from './property-value.service';

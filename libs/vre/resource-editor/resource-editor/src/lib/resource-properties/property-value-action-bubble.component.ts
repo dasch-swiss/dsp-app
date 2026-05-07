@@ -6,8 +6,8 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { Cardinality } from '@dasch-swiss/dsp-js';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { EMPTY, map, Observable } from 'rxjs';
-import { ResourceFetcherService } from '../representations/resource-fetcher.service';
-import { ResourceUtil } from '../representations/resource.util';
+import { ResourceFetcherService } from '../representation/resource-fetcher.service';
+import { ResourceUtil } from '../representation/resource.util';
 import { PropertyValueService } from './property-value.service';
 
 @Component({

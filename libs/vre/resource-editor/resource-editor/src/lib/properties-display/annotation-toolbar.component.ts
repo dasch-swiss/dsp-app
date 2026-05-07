@@ -11,8 +11,8 @@ import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { take } from 'rxjs';
 import { PermissionInfoComponent } from '../header/permission-info/permission-info.component';
-import { RegionService } from '../representations/region.service';
-import { ResourceFetcherService } from '../representations/resource-fetcher.service';
+import { RegionService } from '../representation/region.service';
+import { ResourceFetcherService } from '../representation/resource-fetcher.service';
 import { IncomingResourceMoreMenuComponent } from '../header/more-menu/incoming-resource-more-menu.component';
 import { ColorViewerComponent } from '../template-switcher/viewer-components/color-viewer.component';
 

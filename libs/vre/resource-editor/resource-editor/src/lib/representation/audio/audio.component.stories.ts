@@ -5,7 +5,7 @@ import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { applicationConfig, type Meta, moduleMetadata, type StoryObj } from '@storybook/angular';
 import { expect } from 'storybook/test';
 
-import { SegmentsService } from '../../segment-support/segments.service';
+import { SegmentsService } from '../segments/segments.service';
 import {
   makeResourceFetcherServiceStub,
   makeSegment,

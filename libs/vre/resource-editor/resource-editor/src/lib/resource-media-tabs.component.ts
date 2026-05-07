@@ -7,7 +7,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { PropertiesDisplayComponent } from './properties-display/properties-display.component';
 import { PropertiesToggleComponent } from './properties-display/properties-toggle.component';
 import { PropertiesDisplayService } from './resource-properties/properties-display.service';
-import { SegmentsService } from './segment-support/segments.service';
+import { SegmentsService } from './representation/segments/segments.service';
 import { SegmentTabComponent } from './segment-tab.component';
 
 @Component({

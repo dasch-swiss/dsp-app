@@ -6,8 +6,8 @@ import { ResourceService } from '@dasch-swiss/vre/shared/app-common';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { provideTranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
-import { RegionService } from '../representations/region.service';
-import { ResourceFetcherService } from '../representations/resource-fetcher.service';
+import { RegionService } from '../representation/region.service';
+import { ResourceFetcherService } from '../representation/resource-fetcher.service';
 import { AnnotationToolbarComponent } from './annotation-toolbar.component';
 
 describe('AnnotationToolbarComponent', () => {

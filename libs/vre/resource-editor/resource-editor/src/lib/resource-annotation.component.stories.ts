@@ -8,10 +8,10 @@ import { applicationConfig, type Meta, moduleMetadata, type StoryObj } from '@st
 import { of } from 'rxjs';
 import { expect } from 'storybook/test';
 
-import { RepresentationService } from './representations/representation.service';
-import { ResourceFetcherService } from './representations/resource-fetcher.service';
-import { OpenSeaDragonService } from './representations/still-image/open-sea-dragon.service';
-import { OsdDrawerService } from './representations/still-image/osd-drawer.service';
+import { RepresentationService } from './representation/representation.service';
+import { ResourceFetcherService } from './representation/resource-fetcher.service';
+import { OpenSeaDragonService } from './representation/still-image/open-sea-dragon.service';
+import { OsdDrawerService } from './representation/still-image/osd-drawer.service';
 import { ResourceAnnotationComponent } from './resource-annotation.component';
 import {
   DEFAULT_HAS_PERMISSIONS,

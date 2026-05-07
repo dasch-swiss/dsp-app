@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Cardinality, ReadValue } from '@dasch-swiss/dsp-js';
 import { provideTranslateService, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
-import { ResourceFetcherService } from '../representations/resource-fetcher.service';
+import { ResourceFetcherService } from '../representation/resource-fetcher.service';
 import { PropertyValueActionBubbleComponent } from './property-value-action-bubble.component';
 import { PropertyValueService } from './property-value.service';
 

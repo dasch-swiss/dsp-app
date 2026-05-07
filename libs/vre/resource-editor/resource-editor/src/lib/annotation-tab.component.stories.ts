@@ -3,7 +3,7 @@ import { of } from 'rxjs';
 import { expect } from 'storybook/test';
 
 import { AnnotationTabComponent } from './annotation-tab.component';
-import { RegionService } from './representations/region.service';
+import { RegionService } from './representation/region.service';
 
 const makeResource = () =>
   ({

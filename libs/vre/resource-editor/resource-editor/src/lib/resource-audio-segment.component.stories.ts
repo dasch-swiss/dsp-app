@@ -9,8 +9,8 @@ import { applicationConfig, type Meta, moduleMetadata, type StoryObj } from '@st
 import { of, Subject } from 'rxjs';
 import { expect } from 'storybook/test';
 
-import { RepresentationService } from './representations/representation.service';
-import { ResourceFetcherService } from './representations/resource-fetcher.service';
+import { RepresentationService } from './representation/representation.service';
+import { ResourceFetcherService } from './representation/resource-fetcher.service';
 import { ResourceAudioSegmentComponent } from './resource-audio-segment.component';
 import {
   addDescriptionToResource,
@@ -21,7 +21,7 @@ import {
   makeTextValue,
   resourceFetcherServiceStub,
 } from './resource-stories.helper';
-import { SegmentsService } from './segment-support/segments.service';
+import { SegmentsService } from './representation/segments/segments.service';
 
 const AUDIO_IRI = 'http://rdfh.ch/resource/audio-1';
 const IS_AUDIO_SEGMENT_OF_VALUE = 'http://api.knora.org/ontology/knora-api/v2#isAudioSegmentOfValue';

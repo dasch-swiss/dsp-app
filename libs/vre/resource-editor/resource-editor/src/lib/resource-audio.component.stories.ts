@@ -9,8 +9,8 @@ import { applicationConfig, type Meta, moduleMetadata, type StoryObj } from '@st
 import { of, Subject } from 'rxjs';
 import { expect } from 'storybook/test';
 
-import { RepresentationService } from './representations/representation.service';
-import { ResourceFetcherService } from './representations/resource-fetcher.service';
+import { RepresentationService } from './representation/representation.service';
+import { ResourceFetcherService } from './representation/resource-fetcher.service';
 import { ResourceAudioComponent } from './resource-audio.component';
 import {
   DEFAULT_HAS_PERMISSIONS,
@@ -18,7 +18,7 @@ import {
   dspApiConnectionStub,
   resourceFetcherServiceStub,
 } from './resource-stories.helper';
-import { SegmentsService } from './segment-support/segments.service';
+import { SegmentsService } from './representation/segments/segments.service';
 
 const makeResource = (permission = 'CR'): DspResource => {
   const res = new ReadResource();

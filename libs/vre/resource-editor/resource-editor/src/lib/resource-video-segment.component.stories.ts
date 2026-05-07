@@ -15,8 +15,8 @@ import { applicationConfig, type Meta, moduleMetadata, type StoryObj } from '@st
 import { of, Subject } from 'rxjs';
 import { expect } from 'storybook/test';
 
-import { RepresentationService } from './representations/representation.service';
-import { ResourceFetcherService } from './representations/resource-fetcher.service';
+import { RepresentationService } from './representation/representation.service';
+import { ResourceFetcherService } from './representation/resource-fetcher.service';
 import {
   addDescriptionToResource,
   DEFAULT_HAS_PERMISSIONS,
@@ -27,7 +27,7 @@ import {
   resourceFetcherServiceStub,
 } from './resource-stories.helper';
 import { ResourceVideoSegmentComponent } from './resource-video-segment.component';
-import { SegmentsService } from './segment-support/segments.service';
+import { SegmentsService } from './representation/segments/segments.service';
 
 const VIDEO_IRI = 'http://rdfh.ch/resource/video-1';
 const IS_VIDEO_SEGMENT_OF_VALUE = 'http://api.knora.org/ontology/knora-api/v2#isVideoSegmentOfValue';

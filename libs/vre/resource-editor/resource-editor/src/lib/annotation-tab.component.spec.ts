@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReadResource } from '@dasch-swiss/dsp-js';
 import { BehaviorSubject } from 'rxjs';
 import { AnnotationTabComponent } from './annotation-tab.component';
-import { RegionService } from './representations/region.service';
+import { RegionService } from './representation/region.service';
 
 describe('AnnotationTabComponent', () => {
   let component: AnnotationTabComponent;

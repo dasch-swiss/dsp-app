@@ -14,7 +14,7 @@ import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular'
 import { of } from 'rxjs';
 import { expect } from 'storybook/test';
 
-import { ResourceFetcherService } from '../representations/resource-fetcher.service';
+import { ResourceFetcherService } from '../representation/resource-fetcher.service';
 import { FootnoteService } from '../resource-properties/footnotes/footnote.service';
 import { GeonameService } from './geoname.service';
 import { TemplateViewerSwitcherComponent } from './template-viewer-switcher.component';

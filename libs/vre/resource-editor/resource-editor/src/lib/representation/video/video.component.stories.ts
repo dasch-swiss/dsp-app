@@ -6,8 +6,8 @@ import { applicationConfig, type Meta, moduleMetadata, type StoryObj } from '@st
 import { of, Subject } from 'rxjs';
 import { expect } from 'storybook/test';
 
-import { Segment } from '../../segment-support/segment';
-import { SegmentsService } from '../../segment-support/segments.service';
+import { Segment } from '../segments/segment';
+import { SegmentsService } from '../segments/segments.service';
 import { FileRepresentationInput, ParentResourceInput } from '../representation-inputs';
 import { RepresentationService } from '../representation.service';
 import { ResourceFetcherService } from '../resource-fetcher.service';

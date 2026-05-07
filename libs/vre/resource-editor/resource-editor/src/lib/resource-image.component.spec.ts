@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Constants, ReadResource } from '@dasch-swiss/dsp-js';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { BehaviorSubject } from 'rxjs';
-import { RegionService } from './representations/region.service';
+import { RegionService } from './representation/region.service';
 import { ResourceImageComponent } from './resource-image.component';
 
 const makeResource = (id = 'http://rdfh.ch/resource1'): DspResource =>

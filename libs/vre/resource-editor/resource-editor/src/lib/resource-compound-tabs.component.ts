@@ -11,7 +11,7 @@ import { CompoundService } from './compound/compound.service';
 import { IncomingResourceHeaderComponent } from './header/incoming-resource-header.component';
 import { PropertiesDisplayComponent } from './properties-display/properties-display.component';
 import { PropertiesToggleComponent } from './properties-display/properties-toggle.component';
-import { RegionService } from './representations/region.service';
+import { RegionService } from './representation/region.service';
 import { PropertiesDisplayService } from './resource-properties/properties-display.service';
 
 @Component({

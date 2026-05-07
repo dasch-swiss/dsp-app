@@ -2,7 +2,7 @@ import { Component, Input, OnChanges } from '@angular/core';
 import { DspCompoundPosition, DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { CompoundViewerComponent } from './compound/compound-viewer.component';
 import { CompoundService } from './compound/compound.service';
-import { RegionService } from './representations/region.service';
+import { RegionService } from './representation/region.service';
 import { ResourceCompoundTabsComponent } from './resource-compound-tabs.component';
 import { ResourceHeaderComponent } from './header/resource-header.component';
 import { PropertiesDisplayService } from './resource-properties/properties-display.service';

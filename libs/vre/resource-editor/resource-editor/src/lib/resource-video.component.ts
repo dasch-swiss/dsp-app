@@ -1,13 +1,13 @@
 import { Component, Input } from '@angular/core';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
-import { getFileValue } from './representations/get-file-value';
-import { VideoComponent } from './representations/video/video.component';
+import { getFileValue } from './representation/get-file-value';
+import { VideoComponent } from './representation/video/video.component';
 import { ResourceHeaderComponent } from './header/resource-header.component';
-import { ResourceLegalComponent } from './resource-legal.component';
+import { ResourceLegalComponent } from './representation/resource-legal.component';
 import { ResourceMediaTabsComponent } from './resource-media-tabs.component';
 import { PropertiesDisplayService } from './resource-properties/properties-display.service';
 import { ResourceRestrictionComponent } from './meta/resource-restriction.component';
-import { SegmentsService } from './segment-support/segments.service';
+import { SegmentsService } from './representation/segments/segments.service';
 
 @Component({
   selector: 'app-resource-video',
