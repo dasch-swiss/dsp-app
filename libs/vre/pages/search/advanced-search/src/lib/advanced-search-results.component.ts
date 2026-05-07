@@ -9,6 +9,7 @@ import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { ResourceBrowserComponent } from '@dasch-swiss/vre/pages/data-browser';
 import { filterNull } from '@dasch-swiss/vre/shared/app-common';
 import { ResourceResultService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { AppProgressIndicatorComponent } from '@dasch-swiss/vre/ui/progress-indicator';
 import { CenteredBoxComponent, NoResultsFoundComponent } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe } from '@ngx-translate/core';
 import { BehaviorSubject, combineLatest, map, switchMap, tap } from 'rxjs';
@@ -17,6 +18,7 @@ import { QueryExecutionService } from './service/query-execution.service';
 @Component({
   selector: 'app-advanced-search-results',
   imports: [
+    AppProgressIndicatorComponent,
     AsyncPipe,
     CenteredBoxComponent,
     MatAnchor,
@@ -26,7 +28,12 @@ import { QueryExecutionService } from './service/query-execution.service';
     TranslatePipe,
   ],
   template: `
-    @if (resources$ | async; as resources) {
+    @let resources = resources$ | async;
+    @if (queryIsExecuting()) {
+      <app-centered-box>
+        <app-progress-indicator />
+      </app-centered-box>
+    } @else if (resources) {
       @if (resources.length === 0) {
         <app-centered-box>
           <app-no-results-found [message]="noResultMessage" />
@@ -47,6 +54,8 @@ export class AdvancedSearchResultsComponent implements OnChanges {
 
   @Input({ required: true }) query!: string;
   private readonly querySubject = new BehaviorSubject<string | null>(null);
+
+  readonly queryIsExecuting = this._queryExecutionService.queryIsExecuting;
 
   readonly resources$ = this.querySubject.pipe(
     filterNull(),
