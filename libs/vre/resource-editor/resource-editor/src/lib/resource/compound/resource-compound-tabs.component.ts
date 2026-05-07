@@ -2,23 +2,31 @@ import { AsyncPipe, NgClass } from '@angular/common';
 import { ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatTabChangeEvent, MatTabsModule } from '@angular/material/tabs';
+import { ReadResource } from '@dasch-swiss/dsp-js';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
-import { AnnotationTabComponent } from './resource/annotation/annotation-tab.component';
-import { PropertiesDisplayComponent } from './properties/properties-display/properties-display.component';
-import { PropertiesToggleComponent } from './properties/properties-display/properties-toggle.component';
-import { RegionService } from './representation/region.service';
-import { PropertiesDisplayService } from './properties/properties-display/property-value/properties-display.service';
+import { AnnotationTabComponent } from '../annotation/annotation-tab.component';
+import { CompoundService } from './compound.service';
+import { IncomingResourceHeaderComponent } from '../../header/incoming-resource-header.component';
+import { PropertiesDisplayComponent } from '../../properties/properties-display/properties-display.component';
+import { PropertiesToggleComponent } from '../../properties/properties-display/properties-toggle.component';
+import { RegionService } from '../../representation/region.service';
+import { PropertiesDisplayService } from '../../properties/properties-display/property-value/properties-display.service';
 
 @Component({
-  selector: 'app-resource-image-tabs',
+  selector: 'app-resource-compound-tabs',
   template: `
     <mat-tab-group animationDuration="0ms" [selectedIndex]="selectedTab" (selectedTabChange)="onTabChange($event)">
-      @if (!annotationIri) {
-        <mat-tab [label]="'resourceEditor.properties' | translate">
-          <app-properties-toggle [properties]="resource.resProps" />
-          <app-properties-display [resource]="resource" />
+      <mat-tab [label]="'resourceEditor.properties' | translate">
+        <app-properties-toggle [properties]="resource.resProps" />
+        <app-properties-display [resource]="resource" />
+      </mat-tab>
+
+      @if (incomingResource) {
+        <mat-tab [label]="resourceClassLabel(incomingResource.res)">
+          <app-incoming-resource-header [resource]="incomingResource.res" />
+          <app-properties-display [resource]="incomingResource" [parentResourceId]="resource.res.id" />
         </mat-tab>
       }
 
@@ -75,15 +83,16 @@ import { PropertiesDisplayService } from './properties/properties-display/proper
     MatTabsModule,
     TranslatePipe,
     AnnotationTabComponent,
+    IncomingResourceHeaderComponent,
     PropertiesDisplayComponent,
     PropertiesToggleComponent,
   ],
 })
-export class ResourceImageTabsComponent implements OnInit, OnDestroy {
+export class ResourceCompoundTabsComponent implements OnInit, OnDestroy {
   @Input({ required: true }) resource!: DspResource;
-  @Input() annotationIri: string | null = null;
 
   selectedTab = 0;
+  incomingResource: DspResource | undefined;
   regionsCount = 0;
 
   private readonly _destroy$ = new Subject<void>();
@@ -91,15 +100,21 @@ export class ResourceImageTabsComponent implements OnInit, OnDestroy {
   constructor(
     private readonly _cdr: ChangeDetectorRef,
     public readonly regionService: RegionService,
+    private readonly _compoundService: CompoundService,
     public readonly propertiesDisplayService: PropertiesDisplayService
   ) {}
 
+  resourceClassLabel = (resource: ReadResource | undefined) => resource?.entityInfo?.classes[resource.type].label || '';
+
   ngOnInit() {
-    // When annotationIri is set, ResourceImageComponent calls showRegions(true) directly on init;
-    // tab-level showRegions toggling only applies to user-driven tab switches via onTabChange.
+    this._compoundService.incomingResource$.pipe(takeUntil(this._destroy$)).subscribe(resource => {
+      this.incomingResource = resource;
+      this._cdr.detectChanges();
+    });
+
     this.regionService.selectedRegion$.pipe(takeUntil(this._destroy$)).subscribe(region => {
       if (region) {
-        this.selectedTab = this.annotationIri ? 0 : 1;
+        this.selectedTab = this.incomingResource ? 2 : 1;
         this._cdr.detectChanges();
       }
     });
@@ -117,7 +132,8 @@ export class ResourceImageTabsComponent implements OnInit, OnDestroy {
 
   onTabChange(event: MatTabChangeEvent) {
     this.selectedTab = event.index;
-    const isAnnotationTab = (this.annotationIri && event.index === 0) || (!this.annotationIri && event.index === 1);
+    const isAnnotationTab =
+      (this.incomingResource && event.index === 2) || (!this.incomingResource && event.index === 1);
     if (isAnnotationTab) {
       this.regionService.showRegions(true);
     } else {

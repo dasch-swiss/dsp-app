@@ -5,19 +5,19 @@ import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { AppProgressIndicatorComponent } from '@dasch-swiss/vre/ui/progress-indicator';
 import { catchError, EMPTY, Subject, take, takeUntil } from 'rxjs';
 import { getResourceType } from './get-resource-type';
-import { ResourceAnnotationComponent } from './resource-annotation.component';
-import { ResourceArchiveComponent } from './resource-archive.component';
-import { ResourceAudioSegmentComponent } from './resource-audio-segment.component';
-import { ResourceAudioComponent } from './resource-audio.component';
-import { ResourceCompoundComponent } from './resource-compound.component';
-import { ResourceDocumentComponent } from './resource-document.component';
-import { ResourceImageComponent } from './resource-image.component';
-import { ResourcePdfComponent } from './resource-pdf.component';
-import { ResourcePlainComponent } from './resource-plain.component';
-import { ResourceTextComponent } from './resource-text.component';
+import { ResourceAnnotationComponent } from './resource/annotation/resource-annotation.component';
+import { ResourceArchiveComponent } from './resource/archive/resource-archive.component';
+import { ResourceAudioSegmentComponent } from './resource/audio/resource-audio-segment.component';
+import { ResourceAudioComponent } from './resource/audio/resource-audio.component';
+import { ResourceCompoundComponent } from './resource/compound/resource-compound.component';
+import { ResourceDocumentComponent } from './resource/document/resource-document.component';
+import { ResourceImageComponent } from './resource/still-image/resource-image.component';
+import { ResourcePdfComponent } from './resource/document/resource-pdf.component';
+import { ResourcePlainComponent } from './resource/plain/resource-plain.component';
+import { ResourceTextComponent } from './resource/text/resource-text.component';
 import { ResourceType } from './resource-type';
-import { ResourceVideoSegmentComponent } from './resource-video-segment.component';
-import { ResourceVideoComponent } from './resource-video.component';
+import { ResourceVideoSegmentComponent } from './resource/video/resource-video-segment.component';
+import { ResourceVideoComponent } from './resource/video/resource-video.component';
 
 @Component({
   selector: 'app-resource-dispatcher',

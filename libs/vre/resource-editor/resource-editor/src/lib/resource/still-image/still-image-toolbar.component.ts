@@ -1,0 +1,113 @@
+import { ClipboardModule } from '@angular/cdk/clipboard';
+import { AsyncPipe } from '@angular/common';
+import { Component, EventEmitter, inject, Input, Output, ViewContainerRef } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { MatIcon, MatIconRegistry } from '@angular/material/icon';
+import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
+import { MatTooltip } from '@angular/material/tooltip';
+import { DomSanitizer } from '@angular/platform-browser';
+import { Constants, ReadResource, ReadStillImageExternalFileValue, ReadStillImageFileValue } from '@dasch-swiss/dsp-js';
+import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
+import { AppError } from '@dasch-swiss/vre/core/error-handler';
+import { NotificationService } from '@dasch-swiss/vre/ui/notification';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { CompoundNavigationComponent } from '../compound/compound-navigation.component';
+import {
+  ReplaceFileDialogComponent,
+  ReplaceFileDialogProps,
+} from '../../representation/replace-file-dialog/replace-file-dialog.component';
+import { RepresentationService } from '../../representation/representation.service';
+import { ResourceFetcherService } from '../../representation/resource-fetcher.service';
+import { ResourceUtil } from '../../representation/resource.util';
+import { OpenSeaDragonService } from './open-sea-dragon.service';
+
+@Component({
+  selector: 'app-still-image-toolbar',
+  templateUrl: './still-image-toolbar.component.html',
+  styleUrls: ['./still-image-toolbar.component.scss'],
+  imports: [
+    MatMenuTrigger,
+    MatTooltip,
+    TranslatePipe,
+    MatIcon,
+    AsyncPipe,
+    CompoundNavigationComponent,
+    MatMenu,
+    MatMenuItem,
+    ClipboardModule,
+  ],
+})
+export class StillImageToolbarComponent {
+  @Input({ required: true }) resource!: ReadResource;
+  @Input({ required: true }) compoundMode!: boolean;
+  @Input({ required: true }) isPng!: boolean;
+  @Input() showLeftToolbar = true;
+  @Output() imageIsPng = new EventEmitter<boolean>();
+
+  get imageFileValue(): ReadStillImageFileValue | ReadStillImageExternalFileValue | null {
+    const imageValues = this.resource.properties[Constants.HasStillImageFileValue];
+    if (!imageValues?.length) {
+      return null;
+    }
+    const image = imageValues[0];
+    switch (image.type) {
+      case Constants.StillImageFileValue:
+        return image as ReadStillImageFileValue;
+      case Constants.StillImageExternalFileValue:
+        return image as ReadStillImageExternalFileValue;
+      default:
+        throw new AppError('Unknown image type');
+    }
+  }
+
+  get isReadStillImageExternalFileValue(): boolean {
+    return !!this.imageFileValue && this.imageFileValue.type === Constants.StillImageExternalFileValue;
+  }
+
+  get userCanView() {
+    return this.imageFileValue && ResourceUtil.userCanView(this.imageFileValue);
+  }
+
+  readonly _translateService = inject(TranslateService);
+
+  constructor(
+    public notification: NotificationService,
+    public resourceFetcherService: ResourceFetcherService,
+    private _rs: RepresentationService,
+    private _dialog: MatDialog,
+    private _domSanitizer: DomSanitizer,
+    private _matIconRegistry: MatIconRegistry,
+    public osd: OpenSeaDragonService,
+    private _viewContainerRef: ViewContainerRef
+  ) {
+    this._setupCssMaterialIcon();
+  }
+
+  toggleDrawMode(): void {
+    this.osd.toggleDrawing();
+  }
+
+  download() {
+    if (!this.imageFileValue) return;
+    this._rs.downloadProjectFile(this.imageFileValue, this.resource);
+  }
+
+  replaceImage() {
+    this._dialog.open<ReplaceFileDialogComponent, ReplaceFileDialogProps>(ReplaceFileDialogComponent, {
+      ...DspDialogConfig.mediumDialog({
+        title: 'Image',
+        subtitle: 'Update image of the resource',
+        representation: Constants.HasStillImageFileValue,
+        resource: this.resource,
+      }),
+      viewContainerRef: this._viewContainerRef,
+    });
+  }
+
+  private _setupCssMaterialIcon() {
+    this._matIconRegistry.addSvgIcon(
+      'draw_region_icon',
+      this._domSanitizer.bypassSecurityTrustResourceUrl('/assets/images/draw-region-icon.svg')
+    );
+  }
+}
