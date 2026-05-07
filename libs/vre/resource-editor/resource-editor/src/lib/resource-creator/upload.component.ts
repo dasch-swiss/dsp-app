@@ -16,9 +16,9 @@ import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { DragDropDirective } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { finalize } from 'rxjs';
-import { FileRepresentationType } from '../representations/file-representation.type';
-import { UploadedFileResponse } from '../representations/upload/upload-file-response.interface';
-import { UploadFileService } from '../representations/upload/upload-file.service';
+import { FileRepresentationType } from '../representation/file-representation.type';
+import { UploadedFileResponse } from '../representation/upload/upload-file-response.interface';
+import { UploadFileService } from '../representation/upload/upload-file.service';
 
 @Component({
   selector: 'app-upload',

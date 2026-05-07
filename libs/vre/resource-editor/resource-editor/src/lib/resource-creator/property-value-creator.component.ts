@@ -8,9 +8,9 @@ import { PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
-import { FormValueGroup } from '../resource-properties/form-value-array.type';
-import { PropertyValueBasicCommentComponent } from '../resource-properties/property-value-basic-comment.component';
-import { propertiesTypeMapping } from '../resource-properties/resource-payloads-mapping';
+import { FormValueGroup } from '../properties/properties-display/property-value/form-value-array.type';
+import { PropertyValueBasicCommentComponent } from '../properties/properties-display/property-value/property-value-basic-comment.component';
+import { propertiesTypeMapping } from '../properties/properties-display/property-value/resource-payloads-mapping';
 
 @Component({
   selector: 'app-property-value-creator',
