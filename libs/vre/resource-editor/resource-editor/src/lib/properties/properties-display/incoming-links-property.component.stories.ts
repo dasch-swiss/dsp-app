@@ -6,8 +6,8 @@ import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular'
 import { of } from 'rxjs';
 import { expect } from 'storybook/test';
 
-import { PropertiesDisplayService } from './property-value/properties-display.service';
 import { IncomingLinksPropertyComponent } from './incoming-links-property.component';
+import { PropertiesDisplayService } from './property-value/properties-display.service';
 
 const makeResource = () =>
   ({

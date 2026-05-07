@@ -12,7 +12,6 @@ import { expect } from 'storybook/test';
 import { RegionService } from '../../representation/region.service';
 import { RepresentationService } from '../../representation/representation.service';
 import { ResourceFetcherService } from '../../representation/resource-fetcher.service';
-import { ResourceCompoundComponent } from './resource-compound.component';
 import {
   DEFAULT_HAS_PERMISSIONS,
   dspApiConnectionStub,
@@ -22,6 +21,7 @@ import {
   makeTextValue,
   resourceFetcherServiceStub,
 } from '../../resource-stories.helper';
+import { ResourceCompoundComponent } from './resource-compound.component';
 
 const IIIF_BASE = 'https://iiif.wellcomecollection.org/image';
 

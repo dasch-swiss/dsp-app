@@ -6,11 +6,11 @@ import { AppError } from '@dasch-swiss/vre/core/error-handler';
 import { AppProgressIndicatorComponent } from '@dasch-swiss/vre/ui/progress-indicator';
 import { TranslatePipe } from '@ngx-translate/core';
 import { expand, map, Observable, of, reduce, takeWhile } from 'rxjs';
-import { PropertyRowComponent } from './property-value/property-row.component';
-import { sortByKeys } from './property-value/sortByKeys';
 import { IncomingOrStandoffLink } from './incoming-link.interface';
 import { IncomingResourcePagerComponent } from './incoming-resource-pager.component';
 import { IncomingStandoffLinkValueComponent } from './incoming-standoff-link-value.component';
+import { PropertyRowComponent } from './property-value/property-row.component';
+import { sortByKeys } from './property-value/sortByKeys';
 
 @Component({
   selector: 'app-incoming-links-property',

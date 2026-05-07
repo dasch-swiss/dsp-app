@@ -7,11 +7,11 @@ import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular'
 import { delay, of } from 'rxjs';
 import { expect, waitFor } from 'storybook/test';
 
-import { CompoundService } from './compound.service';
-import { RegionService } from '../../representation/region.service';
-import { ResourceCompoundTabsComponent } from './resource-compound-tabs.component';
 import { PropertiesDisplayService } from '../../properties/properties-display/property-value/properties-display.service';
+import { RegionService } from '../../representation/region.service';
 import { makeEntityInfo, makePropEntry, makeTextPropDef, makeTextValue } from '../../resource-stories.helper';
+import { CompoundService } from './compound.service';
+import { ResourceCompoundTabsComponent } from './resource-compound-tabs.component';
 
 const makeResource = (): DspResource => {
   const titlePropId = 'http://0.0.0.0:3333/ontology/0001/example/v2#hasTitle';

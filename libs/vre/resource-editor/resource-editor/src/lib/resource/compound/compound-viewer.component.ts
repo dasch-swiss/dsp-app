@@ -3,10 +3,10 @@ import { Component } from '@angular/core';
 import { Constants, ReadStillImageFileValue, ReadValue } from '@dasch-swiss/dsp-js';
 import { filterUndefined } from '@dasch-swiss/vre/shared/app-common';
 import { filter, map } from 'rxjs';
-import { StillImageComponent } from '../still-image/still-image.component';
-import { VectorImageComponent } from '../vector-image/vector-image.component';
 import { ResourceLegalComponent } from '../../representation/resource-legal.component';
 import { ResourceRepresentationContainerComponent } from '../../representation/resource-representation-container.component';
+import { StillImageComponent } from '../still-image/still-image.component';
+import { VectorImageComponent } from '../vector-image/vector-image.component';
 import { CompoundService } from './compound.service';
 
 @Component({

@@ -13,9 +13,9 @@ import { ReadMovingImageFileValue, ReadResource } from '@dasch-swiss/dsp-js';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { provideTranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, EMPTY, of, Subject } from 'rxjs';
+import { RepresentationService } from '../../representation/representation.service';
 import { MediaControlService } from '../../representation/segments/media-control.service';
 import { SegmentsService } from '../../representation/segments/segments.service';
-import { RepresentationService } from '../../representation/representation.service';
 import { MediaPlayerService } from './media-player.service';
 import { VideoComponent } from './video.component';
 

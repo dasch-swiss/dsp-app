@@ -11,14 +11,14 @@ import { expect } from 'storybook/test';
 
 import { RepresentationService } from '../../representation/representation.service';
 import { ResourceFetcherService } from '../../representation/resource-fetcher.service';
-import { ResourceAudioComponent } from './resource-audio.component';
+import { SegmentsService } from '../../representation/segments/segments.service';
 import {
   DEFAULT_HAS_PERMISSIONS,
   addDescriptionToResource,
   dspApiConnectionStub,
   resourceFetcherServiceStub,
 } from '../../resource-stories.helper';
-import { SegmentsService } from '../../representation/segments/segments.service';
+import { ResourceAudioComponent } from './resource-audio.component';
 
 const makeResource = (permission = 'CR'): DspResource => {
   const res = new ReadResource();

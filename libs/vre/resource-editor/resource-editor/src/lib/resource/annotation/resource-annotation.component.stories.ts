@@ -10,9 +10,6 @@ import { expect } from 'storybook/test';
 
 import { RepresentationService } from '../../representation/representation.service';
 import { ResourceFetcherService } from '../../representation/resource-fetcher.service';
-import { OpenSeaDragonService } from '../still-image/open-sea-dragon.service';
-import { OsdDrawerService } from '../still-image/osd-drawer.service';
-import { ResourceAnnotationComponent } from './resource-annotation.component';
 import {
   DEFAULT_HAS_PERMISSIONS,
   makeEntityInfo,
@@ -21,6 +18,9 @@ import {
   makeTextValue,
   resourceFetcherServiceStub,
 } from '../../resource-stories.helper';
+import { OpenSeaDragonService } from '../still-image/open-sea-dragon.service';
+import { OsdDrawerService } from '../still-image/osd-drawer.service';
+import { ResourceAnnotationComponent } from './resource-annotation.component';
 
 const IMAGE_IRI = 'http://rdfh.ch/resource/image-1';
 

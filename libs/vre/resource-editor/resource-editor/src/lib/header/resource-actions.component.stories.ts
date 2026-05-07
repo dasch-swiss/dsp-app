@@ -7,8 +7,8 @@ import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular'
 import { of } from 'rxjs';
 import { expect } from 'storybook/test';
 
-import { ResourceActionsComponent } from './resource-actions.component';
 import { notificationServiceStub } from '../stories.helpers';
+import { ResourceActionsComponent } from './resource-actions.component';
 
 const makeResource = () =>
   ({

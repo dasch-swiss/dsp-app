@@ -6,13 +6,13 @@ import { ReadResource } from '@dasch-swiss/dsp-js';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
-import { AnnotationTabComponent } from '../annotation/annotation-tab.component';
-import { CompoundService } from './compound.service';
 import { IncomingResourceHeaderComponent } from '../../header/incoming-resource-header.component';
 import { PropertiesDisplayComponent } from '../../properties/properties-display/properties-display.component';
 import { PropertiesToggleComponent } from '../../properties/properties-display/properties-toggle.component';
-import { RegionService } from '../../representation/region.service';
 import { PropertiesDisplayService } from '../../properties/properties-display/property-value/properties-display.service';
+import { RegionService } from '../../representation/region.service';
+import { AnnotationTabComponent } from '../annotation/annotation-tab.component';
+import { CompoundService } from './compound.service';
 
 @Component({
   selector: 'app-resource-compound-tabs',

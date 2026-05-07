@@ -6,15 +6,15 @@ import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { applicationConfig, type Meta, moduleMetadata, type StoryObj } from '@storybook/angular';
 import { NEVER, of } from 'rxjs';
 import { expect } from 'storybook/test';
-import { CompoundService } from '../compound/compound.service';
+import { RepresentationService } from '../../representation/representation.service';
+import { ResourceFetcherService } from '../../representation/resource-fetcher.service';
 import {
   appConfigServiceStub,
   makeResourceFetcherServiceStub,
   notificationServiceStub,
   representationServiceStub,
 } from '../../stories.helpers';
-import { RepresentationService } from '../../representation/representation.service';
-import { ResourceFetcherService } from '../../representation/resource-fetcher.service';
+import { CompoundService } from '../compound/compound.service';
 import { VectorImageComponent } from './vector-image.component';
 
 // ---------------------------------------------------------------------------

@@ -10,13 +10,13 @@ import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import { TimePipe } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe } from '@ngx-translate/core';
 import { firstValueFrom } from 'rxjs';
+import { MovingImageSidecar } from '../../representation/moving-image-sidecar';
+import { FileRepresentationInput, ParentResourceInput } from '../../representation/representation-inputs';
+import { ResourceFetcherService } from '../../representation/resource-fetcher.service';
 import {
   CreateSegmentDialogComponent,
   CreateSegmentDialogProps,
 } from '../../representation/segments/create-segment-dialog.component';
-import { MovingImageSidecar } from '../../representation/moving-image-sidecar';
-import { FileRepresentationInput, ParentResourceInput } from '../../representation/representation-inputs';
-import { ResourceFetcherService } from '../../representation/resource-fetcher.service';
 import { MediaPlayerService } from './media-player.service';
 import { VideoMoreButtonComponent } from './video-more-button.component';
 

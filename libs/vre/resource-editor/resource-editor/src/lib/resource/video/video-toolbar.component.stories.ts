@@ -4,15 +4,15 @@ import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { expect, within } from 'storybook/test';
 
+import { MovingImageSidecar } from '../../representation/moving-image-sidecar';
+import { FileRepresentationInput, ParentResourceInput } from '../../representation/representation-inputs';
+import { RepresentationService } from '../../representation/representation.service';
+import { ResourceFetcherService } from '../../representation/resource-fetcher.service';
 import {
   makeResourceFetcherServiceStub,
   notificationServiceStub,
   representationServiceStub,
 } from '../../stories.helpers';
-import { MovingImageSidecar } from '../../representation/moving-image-sidecar';
-import { FileRepresentationInput, ParentResourceInput } from '../../representation/representation-inputs';
-import { RepresentationService } from '../../representation/representation.service';
-import { ResourceFetcherService } from '../../representation/resource-fetcher.service';
 import { MediaPlayerService } from './media-player.service';
 import { VideoToolbarComponent } from './video-toolbar.component';
 

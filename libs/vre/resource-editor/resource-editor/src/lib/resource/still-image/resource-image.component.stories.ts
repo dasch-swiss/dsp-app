@@ -19,13 +19,13 @@ import { expect } from 'storybook/test';
 import { RegionService } from '../../representation/region.service';
 import { RepresentationService } from '../../representation/representation.service';
 import { ResourceFetcherService } from '../../representation/resource-fetcher.service';
-import { ResourceImageComponent } from './resource-image.component';
 import {
   addDescriptionToResource,
   DEFAULT_HAS_PERMISSIONS,
   dspApiConnectionStub,
   resourceFetcherServiceStub,
 } from '../../resource-stories.helper';
+import { ResourceImageComponent } from './resource-image.component';
 
 const makeResource = (permission = 'CR'): DspResource => {
   const res = new ReadResource();

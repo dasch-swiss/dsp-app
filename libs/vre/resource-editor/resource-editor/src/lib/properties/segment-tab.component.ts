@@ -7,10 +7,10 @@ import { ReadResource } from '@dasch-swiss/dsp-js';
 import { TranslatePipe } from '@ngx-translate/core';
 import { delay, Subscription } from 'rxjs';
 import { IncomingResourceToolbarComponent } from '../header/incoming-resource-toolbar.component';
-import { PropertiesDisplayComponent } from './properties-display/properties-display.component';
 import { ResourceInfoBarComponent } from '../header/resource-info-bar.component';
 import { Segment } from '../representation/segments/segment';
 import { SegmentsService } from '../representation/segments/segments.service';
+import { PropertiesDisplayComponent } from './properties-display/properties-display.component';
 
 @Component({
   selector: 'app-segment-tab',

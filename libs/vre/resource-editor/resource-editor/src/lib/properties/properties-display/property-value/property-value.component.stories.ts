@@ -7,8 +7,8 @@ import { BehaviorSubject, of } from 'rxjs';
 import { expect } from 'storybook/test';
 
 import { ResourceFetcherService } from '../../../representation/resource-fetcher.service';
-import { GeonameService } from '../template-switcher/geoname.service';
 import { FootnoteService } from '../footnotes/footnote.service';
+import { GeonameService } from '../template-switcher/geoname.service';
 import { PropertiesDisplayService } from './properties-display.service';
 import { PropertyValueComponent } from './property-value.component';
 import { PropertyValueService } from './property-value.service';

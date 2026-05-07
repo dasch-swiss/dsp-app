@@ -8,7 +8,6 @@ import { of } from 'rxjs';
 import { expect } from 'storybook/test';
 
 import { ResourceFetcherService } from '../../representation/resource-fetcher.service';
-import { ResourcePlainComponent } from './resource-plain.component';
 import {
   DEFAULT_HAS_PERMISSIONS,
   dspApiConnectionStub,
@@ -18,6 +17,7 @@ import {
   makeTextValue,
   resourceFetcherServiceStub,
 } from '../../resource-stories.helper';
+import { ResourcePlainComponent } from './resource-plain.component';
 
 const makeResource = (permission = 'CR'): DspResource => {
   const titlePropId = 'http://0.0.0.0:3333/ontology/0001/example/v2#hasTitle';

@@ -8,10 +8,10 @@ import { of, Subject } from 'rxjs';
 import { expect } from 'storybook/test';
 
 import { ResourceFetcherService } from '../representation/resource-fetcher.service';
-import { ResourceMediaTabsComponent } from './resource-media-tabs.component';
-import { PropertiesDisplayService } from './properties-display/property-value/properties-display.service';
 import { Segment } from '../representation/segments/segment';
 import { SegmentsService } from '../representation/segments/segments.service';
+import { PropertiesDisplayService } from './properties-display/property-value/properties-display.service';
+import { ResourceMediaTabsComponent } from './resource-media-tabs.component';
 
 const makeResource = (): DspResource =>
   ({

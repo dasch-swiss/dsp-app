@@ -1,8 +1,8 @@
 import { Component, Input } from '@angular/core';
 import { ReadResource } from '@dasch-swiss/dsp-js';
 import { GenerateProperty } from '@dasch-swiss/vre/shared/app-common';
-import { IncomingResourceToolbarComponent } from './incoming-resource-toolbar.component';
 import { PropertiesToggleComponent } from '../properties/properties-display/properties-toggle.component';
+import { IncomingResourceToolbarComponent } from './incoming-resource-toolbar.component';
 import { ResourceInfoBarComponent } from './resource-info-bar.component';
 
 @Component({

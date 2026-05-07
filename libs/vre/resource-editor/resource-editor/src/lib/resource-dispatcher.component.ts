@@ -11,13 +11,13 @@ import { ResourceAudioSegmentComponent } from './resource/audio/resource-audio-s
 import { ResourceAudioComponent } from './resource/audio/resource-audio.component';
 import { ResourceCompoundComponent } from './resource/compound/resource-compound.component';
 import { ResourceDocumentComponent } from './resource/document/resource-document.component';
-import { ResourceImageComponent } from './resource/still-image/resource-image.component';
 import { ResourcePdfComponent } from './resource/document/resource-pdf.component';
 import { ResourcePlainComponent } from './resource/plain/resource-plain.component';
+import { ResourceImageComponent } from './resource/still-image/resource-image.component';
 import { ResourceTextComponent } from './resource/text/resource-text.component';
-import { ResourceType } from './resource-type';
 import { ResourceVideoSegmentComponent } from './resource/video/resource-video-segment.component';
 import { ResourceVideoComponent } from './resource/video/resource-video.component';
+import { ResourceType } from './resource-type';
 
 @Component({
   selector: 'app-resource-dispatcher',

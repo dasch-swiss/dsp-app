@@ -5,10 +5,10 @@ import { ReadResource } from '@dasch-swiss/dsp-js';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { Subject, takeUntil } from 'rxjs';
+import { ResourceInfoBarComponent } from '../../header/resource-info-bar.component';
 import { AnnotationToolbarComponent } from '../../properties/properties-display/annotation-toolbar.component';
 import { PropertiesDisplayComponent } from '../../properties/properties-display/properties-display.component';
 import { RegionService } from '../../representation/region.service';
-import { ResourceInfoBarComponent } from '../../header/resource-info-bar.component';
 
 @Component({
   selector: 'app-annotation-tab',

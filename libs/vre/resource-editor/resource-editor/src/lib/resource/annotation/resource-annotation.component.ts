@@ -4,14 +4,14 @@ import { Constants, KnoraApiConnection, ReadLinkValue, ReadResource } from '@das
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { EMPTY, map, Observable } from 'rxjs';
+import { ResourceHeaderComponent } from '../../header/resource-header.component';
+import { ResourceRestrictionComponent } from '../../meta/resource-restriction.component';
+import { PropertiesDisplayService } from '../../properties/properties-display/property-value/properties-display.service';
+import { ResourceDefaultTabsComponent } from '../../properties/resource-default-tabs.component';
 import { RegionService } from '../../representation/region.service';
 import { RepresentationErrorMessageComponent } from '../../representation/representation-error-message.component';
-import { StillImageComponent } from '../still-image/still-image.component';
-import { ResourceDefaultTabsComponent } from '../../properties/resource-default-tabs.component';
-import { ResourceHeaderComponent } from '../../header/resource-header.component';
-import { PropertiesDisplayService } from '../../properties/properties-display/property-value/properties-display.service';
 import { ResourceRepresentationContainerComponent } from '../../representation/resource-representation-container.component';
-import { ResourceRestrictionComponent } from '../../meta/resource-restriction.component';
+import { StillImageComponent } from '../still-image/still-image.component';
 
 @Component({
   selector: 'app-resource-annotation',

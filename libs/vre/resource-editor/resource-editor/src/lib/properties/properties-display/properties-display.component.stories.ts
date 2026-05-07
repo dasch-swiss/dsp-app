@@ -4,8 +4,8 @@ import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular'
 import { of } from 'rxjs';
 import { expect } from 'storybook/test';
 
-import { PropertiesDisplayService } from './property-value/properties-display.service';
 import { PropertiesDisplayComponent } from './properties-display.component';
+import { PropertiesDisplayService } from './property-value/properties-display.service';
 
 const makeResource = (): DspResource =>
   ({

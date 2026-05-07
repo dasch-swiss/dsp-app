@@ -11,7 +11,6 @@ import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import { AppError } from '@dasch-swiss/vre/core/error-handler';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { CompoundNavigationComponent } from '../compound/compound-navigation.component';
 import {
   ReplaceFileDialogComponent,
   ReplaceFileDialogProps,
@@ -19,6 +18,7 @@ import {
 import { RepresentationService } from '../../representation/representation.service';
 import { ResourceFetcherService } from '../../representation/resource-fetcher.service';
 import { ResourceUtil } from '../../representation/resource.util';
+import { CompoundNavigationComponent } from '../compound/compound-navigation.component';
 import { OpenSeaDragonService } from './open-sea-dragon.service';
 
 @Component({

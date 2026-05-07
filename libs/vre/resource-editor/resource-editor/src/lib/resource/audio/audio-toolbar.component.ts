@@ -7,12 +7,12 @@ import { MatToolbar } from '@angular/material/toolbar';
 import { DomSanitizer } from '@angular/platform-browser';
 import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import { firstValueFrom } from 'rxjs';
+import { ParentResourceInput } from '../../representation/representation-inputs';
+import { ResourceFetcherService } from '../../representation/resource-fetcher.service';
 import {
   CreateSegmentDialogComponent,
   CreateSegmentDialogProps,
 } from '../../representation/segments/create-segment-dialog.component';
-import { ParentResourceInput } from '../../representation/representation-inputs';
-import { ResourceFetcherService } from '../../representation/resource-fetcher.service';
 import { MediaPlayerService } from '../video/media-player.service';
 import { AudioMoreButtonComponent } from './audio-more-button.component';
 

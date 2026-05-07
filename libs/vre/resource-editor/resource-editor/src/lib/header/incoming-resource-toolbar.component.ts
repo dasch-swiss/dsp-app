@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { ReadResource } from '@dasch-swiss/dsp-js';
-import { ResourceActionsComponent } from './resource-actions.component';
 import { IncomingResourceMoreMenuComponent } from './more-menu/incoming-resource-more-menu.component';
+import { ResourceActionsComponent } from './resource-actions.component';
 
 @Component({
   selector: 'app-incoming-resource-toolbar',

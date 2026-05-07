@@ -20,11 +20,11 @@ import { AppProgressIndicatorComponent, LoadingButtonDirective } from '@dasch-sw
 import { CommonInputComponent, InvalidControlScrollDirective } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe } from '@ngx-translate/core';
 import { finalize, switchMap, take } from 'rxjs';
+import { FormValueGroup } from '../properties/properties-display/property-value/form-value-array.type';
+import { propertiesTypeMapping } from '../properties/properties-display/property-value/resource-payloads-mapping';
 import { FileForm } from '../representation/file-form.type';
 import { FileRepresentationType } from '../representation/file-representation.type';
 import { fileValueMapping } from '../representation/file-value-mapping';
-import { FormValueGroup } from '../properties/properties-display/property-value/form-value-array.type';
-import { propertiesTypeMapping } from '../properties/properties-display/property-value/resource-payloads-mapping';
 import { CreateResourceFormFileComponent } from './create-resource-form-file.component';
 import { CreateResourceFormPropertiesComponent } from './create-resource-form-properties.component';
 import { CreateResourceFormRowComponent } from './create-resource-form-row.component';

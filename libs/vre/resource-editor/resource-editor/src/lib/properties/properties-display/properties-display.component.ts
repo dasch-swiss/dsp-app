@@ -1,9 +1,9 @@
 import { Component, Input, OnChanges } from '@angular/core';
 import { Cardinality, ResourcePropertyDefinition } from '@dasch-swiss/dsp-js';
 import { DspResource, PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
+import { IncomingLinksPropertyComponent } from './incoming-links-property.component';
 import { PropertyRowComponent } from './property-value/property-row.component';
 import { PropertyValuesWithFootnotesComponent } from './property-value/property-values-with-footnotes.component';
-import { IncomingLinksPropertyComponent } from './incoming-links-property.component';
 import { StandoffLinksPropertyComponent } from './standoff-links-property.component';
 
 @Component({

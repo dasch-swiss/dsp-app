@@ -1,13 +1,13 @@
 import { Component, Input } from '@angular/core';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
-import { getFileValue } from '../../representation/get-file-value';
-import { TextComponent } from './text.component';
-import { ResourceDefaultTabsComponent } from '../../properties/resource-default-tabs.component';
 import { ResourceHeaderComponent } from '../../header/resource-header.component';
-import { ResourceLegalComponent } from '../../representation/resource-legal.component';
-import { PropertiesDisplayService } from '../../properties/properties-display/property-value/properties-display.service';
-import { ResourceRepresentationContainerComponent } from '../../representation/resource-representation-container.component';
 import { ResourceRestrictionComponent } from '../../meta/resource-restriction.component';
+import { PropertiesDisplayService } from '../../properties/properties-display/property-value/properties-display.service';
+import { ResourceDefaultTabsComponent } from '../../properties/resource-default-tabs.component';
+import { getFileValue } from '../../representation/get-file-value';
+import { ResourceLegalComponent } from '../../representation/resource-legal.component';
+import { ResourceRepresentationContainerComponent } from '../../representation/resource-representation-container.component';
+import { TextComponent } from './text.component';
 
 @Component({
   selector: 'app-resource-text',

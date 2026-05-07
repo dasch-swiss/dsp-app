@@ -10,10 +10,10 @@ import { ResourceService } from '@dasch-swiss/vre/shared/app-common';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { take } from 'rxjs';
+import { IncomingResourceMoreMenuComponent } from '../../header/more-menu/incoming-resource-more-menu.component';
 import { PermissionInfoComponent } from '../../header/permission-info/permission-info.component';
 import { RegionService } from '../../representation/region.service';
 import { ResourceFetcherService } from '../../representation/resource-fetcher.service';
-import { IncomingResourceMoreMenuComponent } from '../../header/more-menu/incoming-resource-more-menu.component';
 import { ColorViewerComponent } from './template-switcher/viewer-components/color-viewer.component';
 
 @Component({

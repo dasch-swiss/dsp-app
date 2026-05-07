@@ -13,9 +13,9 @@ import {
 import { Constants, ReadResource, ReadStillImageExternalFileValue, ReadStillImageFileValue } from '@dasch-swiss/dsp-js';
 import { NoResultsFoundComponent } from '@dasch-swiss/vre/ui/ui';
 import { TranslateService } from '@ngx-translate/core';
+import { IIIFUrl } from '../../representation/third-party-iiif/third-party-iiif';
 import { CompoundArrowNavigationComponent } from '../compound/compound-arrow-navigation.component';
 import { CompoundSliderComponent } from '../compound/compound-slider.component';
-import { IIIFUrl } from '../../representation/third-party-iiif/third-party-iiif';
 import { OpenSeaDragonService } from './open-sea-dragon.service';
 import { OsdDrawerService } from './osd-drawer.service';
 import { StillImageHelper } from './still-image-helper';

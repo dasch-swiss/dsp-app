@@ -1,12 +1,12 @@
 import { Component, Input, OnChanges } from '@angular/core';
 import { DspCompoundPosition, DspResource } from '@dasch-swiss/vre/shared/app-common';
+import { ResourceHeaderComponent } from '../../header/resource-header.component';
+import { ResourceRestrictionComponent } from '../../meta/resource-restriction.component';
+import { PropertiesDisplayService } from '../../properties/properties-display/property-value/properties-display.service';
+import { RegionService } from '../../representation/region.service';
 import { CompoundViewerComponent } from './compound-viewer.component';
 import { CompoundService } from './compound.service';
-import { RegionService } from '../../representation/region.service';
 import { ResourceCompoundTabsComponent } from './resource-compound-tabs.component';
-import { ResourceHeaderComponent } from '../../header/resource-header.component';
-import { PropertiesDisplayService } from '../../properties/properties-display/property-value/properties-display.service';
-import { ResourceRestrictionComponent } from '../../meta/resource-restriction.component';
 
 @Component({
   selector: 'app-resource-compound',

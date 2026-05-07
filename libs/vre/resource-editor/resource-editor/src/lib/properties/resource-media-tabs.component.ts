@@ -4,10 +4,10 @@ import { MatTabChangeEvent, MatTabsModule } from '@angular/material/tabs';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
+import { SegmentsService } from '../representation/segments/segments.service';
 import { PropertiesDisplayComponent } from './properties-display/properties-display.component';
 import { PropertiesToggleComponent } from './properties-display/properties-toggle.component';
 import { PropertiesDisplayService } from './properties-display/property-value/properties-display.service';
-import { SegmentsService } from '../representation/segments/segments.service';
 import { SegmentTabComponent } from './segment-tab.component';
 
 @Component({

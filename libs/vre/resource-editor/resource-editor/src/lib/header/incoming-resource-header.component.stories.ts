@@ -8,9 +8,9 @@ import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular'
 import { of } from 'rxjs';
 import { expect } from 'storybook/test';
 
-import { IncomingResourceHeaderComponent } from './incoming-resource-header.component';
-import { ResourceFetcherService } from '../representation/resource-fetcher.service';
 import { PropertiesDisplayService } from '../properties/properties-display/property-value/properties-display.service';
+import { ResourceFetcherService } from '../representation/resource-fetcher.service';
+import { IncomingResourceHeaderComponent } from './incoming-resource-header.component';
 
 const makeResource = () =>
   ({

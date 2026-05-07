@@ -5,6 +5,9 @@ import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { applicationConfig, type Meta, moduleMetadata, type StoryObj } from '@storybook/angular';
 import { expect } from 'storybook/test';
 
+import { FileRepresentationInput, ParentResourceInput } from '../../representation/representation-inputs';
+import { RepresentationService } from '../../representation/representation.service';
+import { ResourceFetcherService } from '../../representation/resource-fetcher.service';
 import { SegmentsService } from '../../representation/segments/segments.service';
 import {
   makeResourceFetcherServiceStub,
@@ -13,9 +16,6 @@ import {
   notificationServiceStub,
   representationServiceStub,
 } from '../../stories.helpers';
-import { FileRepresentationInput, ParentResourceInput } from '../../representation/representation-inputs';
-import { RepresentationService } from '../../representation/representation.service';
-import { ResourceFetcherService } from '../../representation/resource-fetcher.service';
 import { AudioComponent } from './audio.component';
 
 const PUBLIC_AUDIO_URL = 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3';

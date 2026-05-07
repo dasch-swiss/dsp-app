@@ -2,8 +2,8 @@ import { ChangeDetectorRef, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReadResource } from '@dasch-swiss/dsp-js';
 import { BehaviorSubject } from 'rxjs';
-import { AnnotationTabComponent } from './annotation-tab.component';
 import { RegionService } from '../../representation/region.service';
+import { AnnotationTabComponent } from './annotation-tab.component';
 
 describe('AnnotationTabComponent', () => {
   let component: AnnotationTabComponent;

@@ -3,10 +3,10 @@ import { Constants, ReadLinkValue } from '@dasch-swiss/dsp-js';
 import { AppError } from '@dasch-swiss/vre/core/error-handler';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { TranslatePipe } from '@ngx-translate/core';
-import { PropertyRowComponent } from './property-value/property-row.component';
-import { sortByKeys } from './property-value/sortByKeys';
 import { IncomingOrStandoffLink } from './incoming-link.interface';
 import { IncomingStandoffLinkValueComponent } from './incoming-standoff-link-value.component';
+import { PropertyRowComponent } from './property-value/property-row.component';
+import { sortByKeys } from './property-value/sortByKeys';
 
 @Component({
   selector: 'app-standoff-links-property',

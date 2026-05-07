@@ -5,10 +5,10 @@ import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular'
 import { of } from 'rxjs';
 import { expect } from 'storybook/test';
 
-import { makeResourceFetcherServiceStub, notificationServiceStub } from '../../stories.helpers';
 import { FileRepresentationInput, ParentResourceInput } from '../../representation/representation-inputs';
 import { RepresentationService } from '../../representation/representation.service';
 import { ResourceFetcherService } from '../../representation/resource-fetcher.service';
+import { makeResourceFetcherServiceStub, notificationServiceStub } from '../../stories.helpers';
 import { PdfToolbarComponent } from './pdf-toolbar.component';
 
 const makeSrc = (): FileRepresentationInput => ({

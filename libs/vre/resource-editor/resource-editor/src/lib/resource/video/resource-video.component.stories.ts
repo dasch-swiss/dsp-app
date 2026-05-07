@@ -11,6 +11,7 @@ import { expect } from 'storybook/test';
 
 import { RepresentationService } from '../../representation/representation.service';
 import { ResourceFetcherService } from '../../representation/resource-fetcher.service';
+import { SegmentsService } from '../../representation/segments/segments.service';
 import {
   addDescriptionToResource,
   DEFAULT_HAS_PERMISSIONS,
@@ -18,7 +19,6 @@ import {
   resourceFetcherServiceStub,
 } from '../../resource-stories.helper';
 import { ResourceVideoComponent } from './resource-video.component';
-import { SegmentsService } from '../../representation/segments/segments.service';
 
 const makeResource = (permission = 'CR'): DspResource => {
   const res = new ReadResource();

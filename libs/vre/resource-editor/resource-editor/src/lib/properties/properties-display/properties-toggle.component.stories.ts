@@ -2,8 +2,8 @@ import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular'
 import { of } from 'rxjs';
 import { expect } from 'storybook/test';
 
-import { PropertiesDisplayService } from './property-value/properties-display.service';
 import { PropertiesToggleComponent } from './properties-toggle.component';
+import { PropertiesDisplayService } from './property-value/properties-display.service';
 
 const meta: Meta<PropertiesToggleComponent> = {
   title: 'Resource Editor / 4. Properties / Resource Default Tabs / Properties Display / Properties Toggle',

@@ -4,8 +4,8 @@ import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular'
 import { of } from 'rxjs';
 import { expect } from 'storybook/test';
 
-import { ResourceDefaultTabsComponent } from './resource-default-tabs.component';
 import { PropertiesDisplayService } from './properties-display/property-value/properties-display.service';
+import { ResourceDefaultTabsComponent } from './resource-default-tabs.component';
 
 const makeResource = (): DspResource =>
   ({

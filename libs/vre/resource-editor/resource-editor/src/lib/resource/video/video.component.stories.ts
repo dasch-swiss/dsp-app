@@ -6,11 +6,11 @@ import { applicationConfig, type Meta, moduleMetadata, type StoryObj } from '@st
 import { of, Subject } from 'rxjs';
 import { expect } from 'storybook/test';
 
-import { Segment } from '../../representation/segments/segment';
-import { SegmentsService } from '../../representation/segments/segments.service';
 import { FileRepresentationInput, ParentResourceInput } from '../../representation/representation-inputs';
 import { RepresentationService } from '../../representation/representation.service';
 import { ResourceFetcherService } from '../../representation/resource-fetcher.service';
+import { Segment } from '../../representation/segments/segment';
+import { SegmentsService } from '../../representation/segments/segments.service';
 import { VideoComponent } from './video.component';
 
 const makeSrc = (fileUrl = 'https://example.org/video.mp4'): FileRepresentationInput => ({

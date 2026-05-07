@@ -2,16 +2,16 @@ import { Component, Input, OnChanges, OnDestroy } from '@angular/core';
 import { Constants } from '@dasch-swiss/dsp-js';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { filter, pairwise, Subject, take, takeUntil } from 'rxjs';
+import { ResourceHeaderComponent } from '../../header/resource-header.component';
+import { ResourceRestrictionComponent } from '../../meta/resource-restriction.component';
+import { PropertiesDisplayService } from '../../properties/properties-display/property-value/properties-display.service';
 import { getFileValue } from '../../representation/get-file-value';
 import { RegionService } from '../../representation/region.service';
-import { StillImageComponent } from './still-image.component';
-import { VectorImageComponent } from '../vector-image/vector-image.component';
-import { ResourceHeaderComponent } from '../../header/resource-header.component';
-import { ResourceImageTabsComponent } from '../../resource-image-tabs.component';
 import { ResourceLegalComponent } from '../../representation/resource-legal.component';
-import { PropertiesDisplayService } from '../../properties/properties-display/property-value/properties-display.service';
 import { ResourceRepresentationContainerComponent } from '../../representation/resource-representation-container.component';
-import { ResourceRestrictionComponent } from '../../meta/resource-restriction.component';
+import { ResourceImageTabsComponent } from '../../resource-image-tabs.component';
+import { VectorImageComponent } from '../vector-image/vector-image.component';
+import { StillImageComponent } from './still-image.component';
 
 @Component({
   selector: 'app-resource-image',
