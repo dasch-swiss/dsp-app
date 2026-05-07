@@ -10,7 +10,7 @@ import { ResourceDefaultTabsComponent } from './resource-default-tabs.component'
 import { ResourceHeaderComponent } from './resource-header.component';
 import { ResourceLegalComponent } from './resource-legal.component';
 import { PropertiesDisplayService } from './resource-properties/properties-display.service';
-import { ResourceRestrictionComponent } from './resource-restriction.component';
+import { ResourceRestrictionComponent } from './meta/resource-restriction.component';
 import { Segment } from './segment-support/segment';
 import { SegmentsService } from './segment-support/segments.service';
 

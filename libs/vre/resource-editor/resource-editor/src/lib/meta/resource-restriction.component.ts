@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslatePipe } from '@ngx-translate/core';
-import { AlertInfoComponent } from './alert-info.component';
+import { AlertInfoComponent } from '../alert-info.component';
 
 @Component({
   selector: 'app-resource-restriction',

@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { TranslatePipe } from '@ngx-translate/core';
-import { AlertInfoComponent } from './alert-info.component';
+import { AlertInfoComponent } from '../alert-info.component';
 
 @Component({
   selector: 'app-resource-version-warning',

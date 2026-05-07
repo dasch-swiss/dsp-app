@@ -6,7 +6,7 @@ import { RegionService } from './representations/region.service';
 import { ResourceCompoundTabsComponent } from './resource-compound-tabs.component';
 import { ResourceHeaderComponent } from './resource-header.component';
 import { PropertiesDisplayService } from './resource-properties/properties-display.service';
-import { ResourceRestrictionComponent } from './resource-restriction.component';
+import { ResourceRestrictionComponent } from './meta/resource-restriction.component';
 
 @Component({
   selector: 'app-resource-compound',

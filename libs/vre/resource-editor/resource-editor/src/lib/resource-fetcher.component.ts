@@ -21,7 +21,7 @@ import { filter, Subject, takeUntil } from 'rxjs';
 import { ResourceFetcherService } from './representations/resource-fetcher.service';
 import { ResourceUtil } from './representations/resource.util';
 import { ResourceDispatcherComponent } from './resource-dispatcher.component';
-import { ResourceVersionWarningComponent } from './resource-version-warning.component';
+import { ResourceVersionWarningComponent } from './meta/resource-version-warning.component';
 
 type HideReason = 'NotFound' | 'Deleted' | 'Unauthorized' | null;
 

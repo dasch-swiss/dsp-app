@@ -7,7 +7,7 @@ import { ResourceLegalComponent } from './resource-legal.component';
 import { ResourceMediaTabsComponent } from './resource-media-tabs.component';
 import { PropertiesDisplayService } from './resource-properties/properties-display.service';
 import { ResourceRepresentationContainerComponent } from './resource-representation-container.component';
-import { ResourceRestrictionComponent } from './resource-restriction.component';
+import { ResourceRestrictionComponent } from './meta/resource-restriction.component';
 import { SegmentsService } from './segment-support/segments.service';
 
 @Component({

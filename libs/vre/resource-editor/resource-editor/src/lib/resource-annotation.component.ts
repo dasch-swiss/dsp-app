@@ -11,7 +11,7 @@ import { ResourceDefaultTabsComponent } from './resource-default-tabs.component'
 import { ResourceHeaderComponent } from './resource-header.component';
 import { PropertiesDisplayService } from './resource-properties/properties-display.service';
 import { ResourceRepresentationContainerComponent } from './resource-representation-container.component';
-import { ResourceRestrictionComponent } from './resource-restriction.component';
+import { ResourceRestrictionComponent } from './meta/resource-restriction.component';
 
 @Component({
   selector: 'app-resource-annotation',
