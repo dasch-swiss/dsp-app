@@ -5,7 +5,7 @@ import { CompoundService } from './compound/compound.service';
 import { RegionService } from './representation/region.service';
 import { ResourceCompoundTabsComponent } from './resource-compound-tabs.component';
 import { ResourceHeaderComponent } from './header/resource-header.component';
-import { PropertiesDisplayService } from './resource-properties/properties-display.service';
+import { PropertiesDisplayService } from './properties/properties-display/property-value/properties-display.service';
 import { ResourceRestrictionComponent } from './meta/resource-restriction.component';
 
 @Component({

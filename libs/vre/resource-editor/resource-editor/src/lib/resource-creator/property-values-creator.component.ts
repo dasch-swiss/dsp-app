@@ -6,9 +6,9 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { Cardinality } from '@dasch-swiss/dsp-js';
 import { PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
 import { TranslatePipe } from '@ngx-translate/core';
-import { FormValueArray } from '../resource-properties/form-value-array.type';
-import { propertiesTypeMapping } from '../resource-properties/resource-payloads-mapping';
-import { TemplateEditorSwitcherComponent } from '../template-switcher/template-editor-switcher.component';
+import { FormValueArray } from '../properties/properties-display/property-value/form-value-array.type';
+import { propertiesTypeMapping } from '../properties/properties-display/property-value/resource-payloads-mapping';
+import { TemplateEditorSwitcherComponent } from '../properties/properties-display/template-switcher/template-editor-switcher.component';
 import { PropertyValueCreatorComponent } from './property-value-creator.component';
 
 @Component({

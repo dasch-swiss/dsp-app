@@ -10,7 +10,7 @@ import { expect } from 'storybook/test';
 
 import { IncomingResourceHeaderComponent } from './incoming-resource-header.component';
 import { ResourceFetcherService } from '../representation/resource-fetcher.service';
-import { PropertiesDisplayService } from '../resource-properties/properties-display.service';
+import { PropertiesDisplayService } from '../properties/properties-display/property-value/properties-display.service';
 
 const makeResource = () =>
   ({

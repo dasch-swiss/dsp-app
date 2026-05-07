@@ -7,9 +7,9 @@ import { EMPTY, map, Observable } from 'rxjs';
 import { RegionService } from './representation/region.service';
 import { RepresentationErrorMessageComponent } from './representation/representation-error-message.component';
 import { StillImageComponent } from './representation/still-image/still-image.component';
-import { ResourceDefaultTabsComponent } from './resource-default-tabs.component';
+import { ResourceDefaultTabsComponent } from './properties/resource-default-tabs.component';
 import { ResourceHeaderComponent } from './header/resource-header.component';
-import { PropertiesDisplayService } from './resource-properties/properties-display.service';
+import { PropertiesDisplayService } from './properties/properties-display/property-value/properties-display.service';
 import { ResourceRepresentationContainerComponent } from './representation/resource-representation-container.component';
 import { ResourceRestrictionComponent } from './meta/resource-restriction.component';
 

@@ -1,8 +1,8 @@
 import { Component, Input } from '@angular/core';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
-import { ResourceDefaultTabsComponent } from './resource-default-tabs.component';
+import { ResourceDefaultTabsComponent } from './properties/resource-default-tabs.component';
 import { ResourceHeaderComponent } from './header/resource-header.component';
-import { PropertiesDisplayService } from './resource-properties/properties-display.service';
+import { PropertiesDisplayService } from './properties/properties-display/property-value/properties-display.service';
 import { ResourceRestrictionComponent } from './meta/resource-restriction.component';
 
 @Component({

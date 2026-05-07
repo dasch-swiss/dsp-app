@@ -10,7 +10,7 @@ import { expect, waitFor } from 'storybook/test';
 import { CompoundService } from './compound/compound.service';
 import { RegionService } from './representation/region.service';
 import { ResourceCompoundTabsComponent } from './resource-compound-tabs.component';
-import { PropertiesDisplayService } from './resource-properties/properties-display.service';
+import { PropertiesDisplayService } from './properties/properties-display/property-value/properties-display.service';
 import { makeEntityInfo, makePropEntry, makeTextPropDef, makeTextValue } from './resource-stories.helper';
 
 const makeResource = (): DspResource => {

@@ -9,7 +9,7 @@ import { VectorImageComponent } from './representation/vector-image/vector-image
 import { ResourceHeaderComponent } from './header/resource-header.component';
 import { ResourceImageTabsComponent } from './resource-image-tabs.component';
 import { ResourceLegalComponent } from './representation/resource-legal.component';
-import { PropertiesDisplayService } from './resource-properties/properties-display.service';
+import { PropertiesDisplayService } from './properties/properties-display/property-value/properties-display.service';
 import { ResourceRepresentationContainerComponent } from './representation/resource-representation-container.component';
 import { ResourceRestrictionComponent } from './meta/resource-restriction.component';
 

@@ -2,10 +2,10 @@ import { Component, Input } from '@angular/core';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { ArchiveComponent } from './representation/archive/archive.component';
 import { getFileValue } from './representation/get-file-value';
-import { ResourceDefaultTabsComponent } from './resource-default-tabs.component';
+import { ResourceDefaultTabsComponent } from './properties/resource-default-tabs.component';
 import { ResourceHeaderComponent } from './header/resource-header.component';
 import { ResourceLegalComponent } from './representation/resource-legal.component';
-import { PropertiesDisplayService } from './resource-properties/properties-display.service';
+import { PropertiesDisplayService } from './properties/properties-display/property-value/properties-display.service';
 import { ResourceRepresentationContainerComponent } from './representation/resource-representation-container.component';
 import { ResourceRestrictionComponent } from './meta/resource-restriction.component';
 

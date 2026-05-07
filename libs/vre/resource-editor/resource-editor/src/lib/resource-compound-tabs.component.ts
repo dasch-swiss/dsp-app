@@ -9,10 +9,10 @@ import { Subject, takeUntil } from 'rxjs';
 import { AnnotationTabComponent } from './annotation-tab.component';
 import { CompoundService } from './compound/compound.service';
 import { IncomingResourceHeaderComponent } from './header/incoming-resource-header.component';
-import { PropertiesDisplayComponent } from './properties-display/properties-display.component';
-import { PropertiesToggleComponent } from './properties-display/properties-toggle.component';
+import { PropertiesDisplayComponent } from './properties/properties-display/properties-display.component';
+import { PropertiesToggleComponent } from './properties/properties-display/properties-toggle.component';
 import { RegionService } from './representation/region.service';
-import { PropertiesDisplayService } from './resource-properties/properties-display.service';
+import { PropertiesDisplayService } from './properties/properties-display/property-value/properties-display.service';
 
 @Component({
   selector: 'app-resource-compound-tabs',
