@@ -51,12 +51,11 @@ export const EmptyProject: Story = {
   decorators: [
     applicationConfig({
       providers: [
-        ...sharedProviders.slice(0, -2),
+        ...sharedProviders,
         {
           provide: ProjectPageService,
           useValue: makeProjectPageServiceStub({ ontologiesMetadata$: of([]) }),
         },
-        { provide: ListApiService, useValue: { listInProject: () => of({ lists: [] }) } },
       ],
     }),
   ],
@@ -73,8 +72,8 @@ export const AdminCanCreate: Story = {
   decorators: [applicationConfig({ providers: sharedProviders })],
   play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
-    await step('Page renders without error', async () => {
-      await expect(canvasElement).toBeInTheDocument();
+    await step('Create ontology button is visible', async () => {
+      await expect(canvas.getByTestId('create-ontology-button')).toBeInTheDocument();
     });
   },
 };

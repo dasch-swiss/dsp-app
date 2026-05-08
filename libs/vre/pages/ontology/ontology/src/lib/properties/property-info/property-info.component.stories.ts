@@ -75,7 +75,7 @@ export const ReadOnlyForNonAdmin: Story = {
   decorators: [
     applicationConfig({
       providers: [
-        ...sharedProviders.slice(0, -1),
+        ...sharedProviders,
         { provide: ProjectPageService, useValue: makeProjectPageServiceStub({ hasProjectAdminRights$: of(false) }) },
       ],
     }),

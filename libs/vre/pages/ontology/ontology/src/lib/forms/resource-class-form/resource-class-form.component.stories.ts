@@ -63,9 +63,9 @@ export const PreFilledEditForm: Story = {
   },
   play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
-    await step('Name input is pre-filled', async () => {
+    await step('Name input is pre-filled with TestClass', async () => {
       const nameInput = canvas.getByTestId('name-input');
-      await expect(nameInput).toBeInTheDocument();
+      await expect(nameInput).toHaveValue('TestClass');
     });
   },
 };

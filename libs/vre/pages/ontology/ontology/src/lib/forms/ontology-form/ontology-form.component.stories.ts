@@ -29,7 +29,7 @@ type Story = StoryObj<OntologyFormComponent>;
 
 const sharedDecorators = [
   applicationConfig({
-    providers: [provideAnimations(), TranslateModule.forRoot().providers!],
+    providers: [provideAnimations(), ...TranslateModule.forRoot().providers!],
   }),
 ];
 
@@ -68,11 +68,11 @@ export const ShowsValidationErrors: Story = {
   args: { mode: 'create' },
   play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
-    await step('Clicking on label and blurring shows error', async () => {
+    await step('Touching label and tabbing away shows mat-error', async () => {
       const label = canvas.getByTestId('label-input');
       await userEvent.click(label);
       await userEvent.tab();
-      await expect(canvas.getByTestId('label-input')).toBeInTheDocument();
+      await expect(canvas.getByRole('alert')).toBeInTheDocument();
     });
   },
 };

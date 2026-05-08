@@ -68,8 +68,8 @@ export const AdminView: Story = {
   args: { resourceClass },
   play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
-    await step('Card is rendered', async () => {
-      await expect(canvasElement).toBeInTheDocument();
+    await step('Edit menu button is visible', async () => {
+      await expect(canvas.getByTestId('class-menu-button')).toBeInTheDocument();
     });
   },
 };
@@ -79,19 +79,16 @@ export const ReadOnlyView: Story = {
   decorators: [
     applicationConfig({
       providers: [
-        ...sharedProviders.slice(0, -3),
+        ...sharedProviders,
         { provide: ProjectPageService, useValue: makeProjectPageServiceStub({ hasProjectAdminRights$: of(false) }) },
-        { provide: NotificationService, useValue: { openSnackBar: () => {} } },
-        { provide: Clipboard, useValue: { copy: () => {} } },
-        { provide: DialogService, useValue: { afterConfirmation: () => of(true) } },
       ],
     }),
   ],
   args: { resourceClass },
   play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
-    await step('Card renders without edit menu', async () => {
-      await expect(canvasElement).toBeInTheDocument();
+    await step('Edit menu button is not present', async () => {
+      await expect(canvas.queryByTestId('class-menu-button')).toBeNull();
     });
   },
 };

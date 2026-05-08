@@ -74,9 +74,8 @@ export const EmptyList: Story = {
   decorators: [
     applicationConfig({
       providers: [
-        ...sharedProviders.slice(0, -2),
+        ...sharedProviders,
         { provide: OntologyEditService, useValue: makeOntologyEditServiceStub({ currentOntologyProperties$: of([]) }) },
-        { provide: ProjectPageService, useValue: makeProjectPageServiceStub() },
       ],
     }),
   ],

@@ -62,12 +62,11 @@ export const NonAdminView: Story = {
   decorators: [
     applicationConfig({
       providers: [
-        ...sharedProviders.slice(0, -2),
+        ...sharedProviders,
         {
           provide: ProjectPageService,
           useValue: makeProjectPageServiceStub({ hasProjectAdminRights$: of(false) }),
         },
-        { provide: DialogService, useValue: { afterConfirmation: () => of(true) } },
       ],
     }),
   ],
@@ -87,7 +86,7 @@ export const NoOntologyLoaded: Story = {
   decorators: [
     applicationConfig({
       providers: [
-        ...sharedProviders.slice(0, -3),
+        ...sharedProviders,
         {
           provide: OntologyEditService,
           useValue: makeOntologyEditServiceStub({
@@ -95,8 +94,6 @@ export const NoOntologyLoaded: Story = {
             currentOntologyCanBeDeleted$: of(false),
           }),
         },
-        { provide: ProjectPageService, useValue: makeProjectPageServiceStub() },
-        { provide: DialogService, useValue: { afterConfirmation: () => of(true) } },
       ],
     }),
   ],

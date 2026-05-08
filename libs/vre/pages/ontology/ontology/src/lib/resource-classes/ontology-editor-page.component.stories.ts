@@ -64,13 +64,8 @@ export const EmptyOntology: Story = {
   decorators: [
     applicationConfig({
       providers: [
-        ...sharedProviders.slice(0, -5),
+        ...sharedProviders,
         { provide: OntologyEditService, useValue: makeOntologyEditServiceStub({ currentOntologyClasses$: of([]) }) },
-        { provide: OntologyPageService, useValue: makeOntologyPageServiceStub() },
-        { provide: ProjectPageService, useValue: makeProjectPageServiceStub() },
-        { provide: NotificationService, useValue: { openSnackBar: () => {} } },
-        { provide: Clipboard, useValue: { copy: () => {} } },
-        { provide: DialogService, useValue: { afterConfirmation: () => of(true) } },
       ],
     }),
   ],
