@@ -5,11 +5,11 @@ import { MatTabChangeEvent, MatTabsModule } from '@angular/material/tabs';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
-import { AnnotationTabComponent } from './annotation-tab.component';
-import { PropertiesDisplayComponent } from './properties-display/properties-display.component';
-import { PropertiesToggleComponent } from './properties-display/properties-toggle.component';
-import { RegionService } from './representations/region.service';
-import { PropertiesDisplayService } from './resource-properties/properties-display.service';
+import { PropertiesDisplayComponent } from './properties/properties-display/properties-display.component';
+import { PropertiesToggleComponent } from './properties/properties-display/properties-toggle.component';
+import { PropertiesDisplayService } from './properties/properties-display/property-value/properties-display.service';
+import { RegionService } from './representation/region.service';
+import { AnnotationTabComponent } from './resource/annotation/annotation-tab.component';
 
 @Component({
   selector: 'app-resource-image-tabs',

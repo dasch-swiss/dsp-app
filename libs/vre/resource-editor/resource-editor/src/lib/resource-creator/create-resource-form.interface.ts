@@ -1,6 +1,6 @@
 import { FormControl, FormGroup } from '@angular/forms';
-import { FileForm } from '../representations/file-form.type';
-import { FormValueArray } from '../resource-properties/form-value-array.type';
+import { FormValueArray } from '../properties/properties-display/property-value/form-value-array.type';
+import { FileForm } from '../representation/file-form.type';
 
 export interface CreateResourceFormInterface {
   label: FormControl<string>;
