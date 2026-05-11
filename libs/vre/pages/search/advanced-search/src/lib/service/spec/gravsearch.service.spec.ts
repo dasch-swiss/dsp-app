@@ -88,6 +88,17 @@ function changeOperator(searchStateService: SearchStateService, statementIndex: 
 }
 
 /**
+ * Helper function to set the selected value (StringValue) on a statement
+ * while preserving the existing operator. Useful for parameterising tests
+ * that vary the user-supplied search input.
+ */
+function setSelectedValue(searchStateService: SearchStateService, statementIndex: number, value: string): void {
+  const statements = searchStateService.currentState.statementElements;
+  statements[statementIndex].selectedObjectNode = new StringValue(statements[statementIndex].id, value);
+  searchStateService.patchState({ statementElements: statements });
+}
+
+/**
  * Helper function to normalize whitespace in queries for comparison
  */
 function normalizeQuery(query: string): string {
@@ -254,6 +265,37 @@ OFFSET 0`;
     // Only check the operator-specific FILTER clause
     expect(query).toContain('FILTER knora-api:matchLabel(?mainRes, "foo")');
   });
+
+  it('passes regex metacharacters through unchanged in label isLike pattern', () => {
+    const jsonSnapshot = JSON.stringify(baseJsonSnapshot);
+    const resourceClass: IriLabelPair = { iri: '', label: 'All resource classes' };
+    setupTestFromJson(searchStateService, jsonSnapshot, resourceClass);
+
+    changeOperator(searchStateService, 0, Operator.IsLike);
+    // User input: a.b*c(d) — full regex; user wants `.` `*` `(` `)` as metachars.
+    setSelectedValue(searchStateService, 0, 'a.b*c(d)');
+
+    const query = gravsearchService.generateGravSearchQuery(searchStateService.validStatementElements);
+
+    expect(query).toContain('FILTER regex(?res0, "a.b*c(d)", "i")');
+  });
+
+  it('quadruples user-typed backslashes and triples-escapes quotes in label isLike pattern', () => {
+    const jsonSnapshot = JSON.stringify(baseJsonSnapshot);
+    const resourceClass: IriLabelPair = { iri: '', label: 'All resource classes' };
+    setupTestFromJson(searchStateService, jsonSnapshot, resourceClass);
+
+    changeOperator(searchStateService, 0, Operator.IsLike);
+    // User input: say "hi" \* — TS source: 'say "hi" \\*'
+    // Intent: regex literal `*` (because user wrote `\*`), plus literal quotes.
+    setSelectedValue(searchStateService, 0, 'say "hi" \\*');
+
+    const query = gravsearchService.generateGravSearchQuery(searchStateService.validStatementElements);
+
+    // Runtime wire string inside the FILTER literal: say \\\"hi\\\" \\\\*
+    // (3 backslashes per quote, 4 backslashes per user backslash)
+    expect(query).toContain('FILTER regex(?res0, "say \\\\\\"hi\\\\\\" \\\\\\\\*", "i")');
+  });
 });
 
 describe('Gravsearch Service and Writer - TextValue', () => {
@@ -400,6 +442,38 @@ OFFSET 0`;
 
     // Only check the operator-specific FILTER clause
     expect(query).toContain('FILTER regex(?res0val, "Wien"^^<http://www.w3.org/2001/XMLSchema#string>, "i") .');
+  });
+
+  it('passes regex metacharacters through unchanged in TextValue isLike pattern', () => {
+    const jsonSnapshot = JSON.stringify(baseJsonSnapshot);
+    const resourceClass: IriLabelPair = { iri: '', label: 'All resource classes' };
+    setupTestFromJson(searchStateService, jsonSnapshot, resourceClass);
+
+    changeOperator(searchStateService, 0, Operator.IsLike);
+    // User input: Wien.* — wildcard search.
+    setSelectedValue(searchStateService, 0, 'Wien.*');
+
+    const query = gravsearchService.generateGravSearchQuery(searchStateService.validStatementElements);
+
+    expect(query).toContain('FILTER regex(?res0val, "Wien.*"^^<http://www.w3.org/2001/XMLSchema#string>, "i")');
+  });
+
+  it('quadruples user-typed backslashes and triples-escapes quotes in TextValue isLike pattern', () => {
+    const jsonSnapshot = JSON.stringify(baseJsonSnapshot);
+    const resourceClass: IriLabelPair = { iri: '', label: 'All resource classes' };
+    setupTestFromJson(searchStateService, jsonSnapshot, resourceClass);
+
+    changeOperator(searchStateService, 0, Operator.IsLike);
+    // User input: a"b\c — TS source: 'a"b\\c'
+    setSelectedValue(searchStateService, 0, 'a"b\\c');
+
+    const query = gravsearchService.generateGravSearchQuery(searchStateService.validStatementElements);
+
+    // Runtime wire string inside the FILTER literal: a\\\"b\\\\c
+    // (3 backslashes per quote, 4 backslashes per user backslash)
+    expect(query).toContain(
+      'FILTER regex(?res0val, "a\\\\\\"b\\\\\\\\c"^^<http://www.w3.org/2001/XMLSchema#string>, "i")'
+    );
   });
 });
 
