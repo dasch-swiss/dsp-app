@@ -10,6 +10,24 @@ import {
 } from './constants';
 import { getOperatorsForObjectType, Operator } from './operators.config';
 
+/**
+ * Escape a user-supplied IsLike value for safe embedding inside a Gravsearch
+ * FILTER regex(…) call. We do NOT escape regex metacharacters — IsLike is a
+ * regex field, so users can type `.`, `*`, `(`, etc. and have them reach the
+ * regex engine as metacharacters. To match a literal metacharacter the user
+ * escapes it themselves (`\*` for a literal asterisk), exactly as in SPARQL.
+ *
+ * Two string-escape layers stand between the HTTP body and the regex engine
+ * (verified empirically against api.dev.dasch.swiss). To deliver one literal
+ * `\` to the regex engine (so the user's `\*` reaches the regex as `\*` and
+ * matches a literal `*`), the wire must carry four backslashes. The double
+ * quote `"` is not a regex metacharacter, so it only needs to survive the
+ * two string layers — three backslashes + quote on the wire.
+ */
+function escapeForGravsearchStringLiteral(value: string): string {
+  return value.replace(/\\/g, '\\\\\\\\').replace(/"/g, '\\\\\\"');
+}
+
 export enum PropertyObjectType {
   None = 'NONE',
   ValueObject = 'VALUE_OBJECT',
@@ -377,8 +395,10 @@ class GravsearchWriterScoped {
         return `FILTER (${this.objectPlaceHolder} != "${this._selectedValue}") .\n`;
       case Operator.Matches:
         return `FILTER knora-api:matchLabel(${MAIN_RESOURCE_PLACEHOLDER}, "${this._selectedValue}") .\n`;
-      case Operator.IsLike:
-        return `FILTER regex(${this.objectPlaceHolder}, "${this._selectedValue}", "i") .\n`;
+      case Operator.IsLike: {
+        const pattern = escapeForGravsearchStringLiteral(this._selectedValue ?? '');
+        return `FILTER regex(${this.objectPlaceHolder}, "${pattern}", "i") .\n`;
+      }
       default:
         return '';
     }
@@ -403,7 +423,9 @@ class GravsearchWriterScoped {
         ? `knora-api:toSimpleDate(${this.objectPlaceHolder})`
         : `${this.objectPlaceHolder}${VALUE_SUFFIX}`;
     if (this._operator === Operator.IsLike && this._objectType === Constants.TextValue) {
-      return `FILTER regex(${object}, ${this.typedValueLiteral}, "i") .\n`;
+      const pattern = escapeForGravsearchStringLiteral(this._selectedValue ?? '');
+      const regexLiteral = `"${pattern}"^^<${this.valueTypeIri}>`;
+      return `FILTER regex(${object}, ${regexLiteral}, "i") .\n`;
     }
     return `FILTER (${object} ${this.operatorSymbol} ${this.typedValueLiteral} ) .\n`;
   }
