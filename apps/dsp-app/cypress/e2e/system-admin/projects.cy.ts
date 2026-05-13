@@ -47,16 +47,16 @@ describe('Projects', () => {
     };
     cy.intercept('PUT', '/admin/projects/iri/*').as('submitRequest');
 
-    const projectUuid = projectPage.projectIri.match(/\/([^\/]+)$/)[1];
+    const projectUuid = projectPage.projectIri.match(/\/([^\/]+)$/)![1];
     cy.visit(`/project/${projectUuid}/settings/edit`);
-    cy.get('[data-cy=shortcode-input] input').should('have.value', projectPage.project.shortcode);
+    cy.get('[data-cy=shortcode-input] input').should('have.value', projectPage.project.shortcode.value);
     cy.get('[data-cy=shortname-input] input').should('have.value', projectPage.project.shortname);
     cy.get('[data-cy=longname-input] input')
       .should('have.value', projectPage.project.longname)
       .clear()
       .type(data.longname);
     cy.get('[data-cy=description-input] textarea')
-      .should('have.value', projectPage.project.description[0].value)
+      .should('have.value', projectPage.project.description![0].value)
       .clear()
       .type(data.description);
     cy.get('[data-cy=keywords-input] input')
@@ -66,7 +66,7 @@ describe('Projects', () => {
 
     cy.wait('@submitRequest');
     cy.visit(`/project/${projectUuid}`);
-    cy.contains(projectPage.project.shortcode).should('be.visible');
+    cy.contains(projectPage.project.shortcode.value).should('be.visible');
   });
 
   it('admin can deactivate a project', () => {
@@ -74,7 +74,7 @@ describe('Projects', () => {
 
     cy.visit('/system/projects');
     cy.get('[data-cy=active-projects-section]')
-      .contains('[data-cy=project-row]', projectPage.project.shortcode)
+      .contains('[data-cy=project-row]', projectPage.project.shortcode.value)
       .find('[data-cy=more-button]')
       .scrollIntoView()
       .should('be.visible')

@@ -2,7 +2,7 @@ export const customShortcode = () => {
   const validLetters = 'ABCDEF';
   const validDigits = '0123456789';
 
-  const getRandomChar = characters => characters[Math.floor(Math.random() * characters.length)];
+  const getRandomChar = (characters: string) => characters[Math.floor(Math.random() * characters.length)];
 
   let result = '';
 

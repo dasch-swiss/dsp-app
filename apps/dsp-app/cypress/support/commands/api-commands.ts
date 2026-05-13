@@ -4,7 +4,7 @@ function getJwt(isAuthenticated?: boolean) {
   return isAuthenticated === true ? Cypress.env('authToken') : localStorage.getItem('ACCESS_TOKEN');
 }
 
-function getRequestOptions(params: Cypress.IRequestAuthenticatedParameters): Cypress.RequestOptions {
+function getRequestOptions(params: Cypress.IRequestAuthenticatedParameters): Partial<Cypress.RequestOptions> {
   return {
     method: 'POST',
     url: params.url,
@@ -15,13 +15,11 @@ function getRequestOptions(params: Cypress.IRequestAuthenticatedParameters): Cyp
       'X-Asset-Ingested': '1',
       'Accept-Encoding': 'gzip, deflate, br',
     },
-    auth: undefined,
     body: params.body,
     encoding: 'utf8',
     followRedirect: false,
     form: false,
     gzip: false,
-    qs: undefined,
     log: true,
     timeout: 0,
     failOnStatusCode: false,
@@ -31,18 +29,18 @@ function getRequestOptions(params: Cypress.IRequestAuthenticatedParameters): Cyp
 }
 
 Cypress.Commands.add('postAuthenticated', (params: Cypress.IRequestAuthenticatedParameters) => {
-  const cypressRequestOptions: Cypress.RequestOptions = getRequestOptions(params);
+  const cypressRequestOptions = getRequestOptions(params) as Cypress.RequestOptions;
   return cy.request(cypressRequestOptions).then(response => {
     console.log(response);
   });
 });
 
 Cypress.Commands.add('createResource', (payload: any, isAuthenticated: boolean = false) => {
-  const cypressRequestOptions: Cypress.RequestOptions = getRequestOptions({
+  const cypressRequestOptions = getRequestOptions({
     url: `${Cypress.env('apiUrl')}/v2/resources`,
     body: payload,
     isAuthenticated: isAuthenticated,
-  });
+  }) as Cypress.RequestOptions;
 
   return cy.request(cypressRequestOptions).then(response => {
     console.log(response);
@@ -51,10 +49,10 @@ Cypress.Commands.add('createResource', (payload: any, isAuthenticated: boolean =
 
 Cypress.Commands.add('uploadFile', (uploadFileParameters: Cypress.IUploadFileParameters) =>
   cy.fixture(uploadFileParameters.filePath, 'binary').then(fileContent => {
-    const jwt = getJwt(uploadFileParameters.isAuthenticated);
+    const jwt = getJwt(uploadFileParameters.isAuthenticated) ?? '';
     return uploadProjectFile(
       uploadFileParameters.filePath,
-      uploadFileParameters.mimeType,
+      uploadFileParameters.mimeType!,
       uploadFileParameters.projectShortCode,
       fileContent,
       jwt

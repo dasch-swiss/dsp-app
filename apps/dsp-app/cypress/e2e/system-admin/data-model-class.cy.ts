@@ -47,30 +47,30 @@ describe('Data Model Class', () => {
     cy.get('[data-cy=create-class-button]').scrollIntoView().should('be.visible').click();
     cy.get(`[data-cy=${classType.type}]`).scrollIntoView().should('be.visible').click({ force: true });
 
-    cy.get('[data-cy=name-input]').clear().type(textClass.id);
-    cy.get('[data-cy=label-input]').clear().type(textClass.label);
-    cy.get('[data-cy=comment-textarea]').type(textClass.comment);
+    cy.get('[data-cy=name-input]').clear().type(textClass.id!);
+    cy.get('[data-cy=label-input]').clear().type(textClass.label!);
+    cy.get('[data-cy=comment-textarea]').type(textClass.comment!);
     cy.get('[data-cy=submit-button]').click();
 
     cy.wait('@createRequest');
     cy.get('[data-cy=class-card]')
       .should('be.visible')
       .within(() => {
-        cy.get('mat-card-title').contains(textClass.label.split(' ')[0]);
+        cy.get('mat-card-title').contains(textClass.label!.split(' ')[0]);
       });
     // The within function is used to scope the search for mat-card-title within the visible class-card. This ensures that Cypress waits for mat-card-title to be available within the class-card.
     cy.get('[data-cy=create-class-button]').scrollIntoView().should('be.visible').click();
     cy.get(`[data-cy=Resource]`).scrollIntoView().should('be.visible').click({ force: true });
-    cy.get('[data-cy=name-input]').clear().type(resourceClass.id);
-    cy.get('[data-cy=label-input]').clear().type(resourceClass.label);
-    cy.get('[data-cy=comment-textarea]').type(resourceClass.comment);
+    cy.get('[data-cy=name-input]').clear().type(resourceClass.id!);
+    cy.get('[data-cy=label-input]').clear().type(resourceClass.label!);
+    cy.get('[data-cy=comment-textarea]').type(resourceClass.comment!);
     cy.get('[data-cy=submit-button]').click();
 
     cy.wait('@createRequest');
     cy.get('[data-cy=class-card]')
       .should('be.visible')
       .get('mat-card-title')
-      .contains(resourceClass.label.split(' ')[0]);
+      .contains(resourceClass.label!.split(' ')[0]);
     cy.get('[data-cy=class-type-label]').should('be.visible').should('include.text', classType.label);
   });
 
@@ -106,31 +106,31 @@ describe('Data Model Class', () => {
     cy.get('[data-cy=create-class-button]').scrollIntoView().should('be.visible').click();
     cy.get(`[data-cy=${bookType.type}]`).scrollIntoView().should('be.visible').click({ force: true });
 
-    cy.get('[data-cy=name-input]').clear().type(bookClass.id);
-    cy.get('[data-cy=label-input]').clear().type(bookClass.label);
-    cy.get('[data-cy=comment-textarea]').type(bookClass.comment);
+    cy.get('[data-cy=name-input]').clear().type(bookClass.id!);
+    cy.get('[data-cy=label-input]').clear().type(bookClass.label!);
+    cy.get('[data-cy=comment-textarea]').type(bookClass.comment!);
     cy.get('[data-cy=submit-button]').click();
 
     cy.wait('@createRequest');
     cy.get('[data-cy=class-card]')
       .should('be.visible')
       .within(() => {
-        cy.get('mat-card-title').contains(bookClass.label.split(' ')[0]);
+        cy.get('mat-card-title').contains(bookClass.label!.split(' ')[0]);
       });
 
     // create a still image class
     cy.get('[data-cy=create-class-button]').scrollIntoView().should('be.visible').click();
     cy.get(`[data-cy=${stillImageType.type}]`).scrollIntoView().should('be.visible').click({ force: true });
-    cy.get('[data-cy=name-input]').clear().type(stillImageClass.id);
-    cy.get('[data-cy=label-input]').clear().type(stillImageClass.label);
-    cy.get('[data-cy=comment-textarea]').type(stillImageClass.comment);
+    cy.get('[data-cy=name-input]').clear().type(stillImageClass.id!);
+    cy.get('[data-cy=label-input]').clear().type(stillImageClass.label!);
+    cy.get('[data-cy=comment-textarea]').type(stillImageClass.comment!);
     cy.get('[data-cy=submit-button]').click();
 
     cy.wait('@createRequest');
     cy.get('[data-cy=class-card]')
       .should('be.visible')
       .get('mat-card-title')
-      .contains(stillImageClass.label.split(' ')[0]);
+      .contains(stillImageClass.label!.split(' ')[0]);
     cy.get('[data-cy=class-type-label]').should('be.visible').should('include.text', stillImageType.label);
 
     // link them
@@ -160,7 +160,7 @@ describe('Data Model Class', () => {
     cy.get('[data-cy=comment-textarea]').type(partOfProperty.comment);
     cy.get('[data-cy=object-attribute-link]').click(); // open dropdown
 
-    cy.get('mat-option').contains(bookClass.label).scrollIntoView().should('be.visible').click();
+    cy.get('mat-option').contains(bookClass.label!).scrollIntoView().should('be.visible').click();
 
     cy.get('[data-cy=submit-button]').click();
 
@@ -179,7 +179,7 @@ describe('Data Model Class', () => {
     cy.get('[data-cy=label-input] input').clear().type(linkToClassProperty.label);
     cy.get('[data-cy=comment-textarea]').type(linkToClassProperty.comment);
     cy.get('[data-cy=object-attribute-link]').click();
-    cy.get('mat-option').contains(bookClass.label).scrollIntoView().should('be.visible').click();
+    cy.get('mat-option').contains(bookClass.label!).scrollIntoView().should('be.visible').click();
     cy.get('[data-cy=submit-button]').click();
 
     cy.wait('@createPropertyRequest');

@@ -56,7 +56,7 @@ async function initSentry(environmentName: string): Promise<void> {
   }
 }
 
-function configListener() {
+function configListener(this: XMLHttpRequest) {
   try {
     const configuration = JSON.parse(this.responseText);
     initSentry(configuration.instrumentation.environment);

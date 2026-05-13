@@ -29,6 +29,6 @@ export class AuthGuard implements CanActivate {
   private _goToHomePage() {
     // Navigate to home without returnLink query parameter
     // Users should log in from the main login page rather than being redirected back
-    this._document.defaultView.location.href = RouteConstants.home;
+    this._document.defaultView!.location.href = RouteConstants.home;
   }
 }

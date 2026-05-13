@@ -8,9 +8,9 @@
     "sourceMap": true,
     "declaration": false,
     "target": "ES2022",
-    "module": "ES2020",
+    "module": "ES2022",
     "lib": ["ES2021", "dom"],
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "typeRoots": ["node_modules/@types", "types"],
@@ -25,8 +25,7 @@
       "@dasch-swiss/vre/core/config": ["libs/vre/core/config/src/index.ts"],
       "@dasch-swiss/vre/core/error-handler": ["libs/vre/core/error-handler/src/index.ts"],
       "@dasch-swiss/vre/core/session": ["libs/vre/core/session/src/index.ts"],
-      "@dasch-swiss/vre/ontology/ontology-properties": ["libs/vre/pages/ontology/ontology-properties/src/index.ts"],
-      "@dasch-swiss/vre/pages/data-browser": ["libs/vre/pages/data-browser/src/index.ts"],
+"@dasch-swiss/vre/pages/data-browser": ["libs/vre/pages/data-browser/src/index.ts"],
       "@dasch-swiss/vre/pages/ontology/list": ["libs/vre/pages/ontology/list/src/index.ts"],
       "@dasch-swiss/vre/pages/ontology/ontology": ["libs/vre/pages/ontology/ontology/src/index.ts"],
       "@dasch-swiss/vre/pages/project/project": ["libs/vre/pages/project/project/src/index.ts"],
@@ -46,13 +45,23 @@
       "@dasch-swiss/vre/ui/progress-indicator": ["libs/vre/ui/progress-indicator/src/index.ts"],
       "@dasch-swiss/vre/ui/string-literal": ["libs/vre/ui/string-literal/src/index.ts"],
       "@dasch-swiss/vre/ui/ui": ["libs/vre/ui/ui/src/index.ts"],
-      "@dsp-app/*": ["apps/dsp-app/*"]
+      "@dsp-app/*": ["apps/dsp-app/*"],
+      "ckeditor5-custom-build": ["types/ckeditor5-custom-build.d.ts"]
     },
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true
   },
   "angularCompilerOptions": {
     "fullTemplateTypeCheck": true,
-    "strictTemplate": true
+    "strictTemplates": true,
+    "enableI18nLegacyMessageIdFormat": false,
+    "strictInjectionParameters": true,
+    "strictInputAccessModifiers": true
   },
   "exclude": ["node_modules", "tmp"]
 }
