@@ -28,11 +28,13 @@ import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { TranslateService } from '@ngx-translate/core';
 import {
   BehaviorSubject,
+  catchError,
   combineLatest,
   concat,
   defer,
   distinctUntilChanged,
   filter,
+  finalize,
   last,
   map,
   Observable,
@@ -40,6 +42,7 @@ import {
   switchMap,
   take,
   tap,
+  throwError,
 } from 'rxjs';
 import { UpdateOntologyData } from '../forms/ontology-form/ontology-form.type';
 import { CreatePropertyData, UpdatePropertyData } from '../forms/property-form/property-form.type';
@@ -314,6 +317,38 @@ export class OntologyEditService {
       .subscribe((res: ResourceClassDefinitionWithAllLanguages) => {
         this._loadOntology(this.ontologyId, propertyId);
       });
+  }
+
+  /**
+   * Observable variant of `assignPropertyToClass`. Emits once after the
+   * cardinality has been added and the ontology reloaded; errors are
+   * propagated to the caller. `_isTransacting` is reset in both success and
+   * error paths via `finalize`.
+   *
+   * Used by Phase 2's drag-to-assign flow so the caller can react to
+   * completion / failure (e.g., reset drag state, show a snackbar). The
+   * existing void method is kept for backwards-compatibility with the menu
+   * call site.
+   */
+  assignPropertyToClass$(propertyId: string, classDefinition: ClassDefinition): Observable<void> {
+    this._isTransacting.next(true);
+
+    const guiOrder = Math.max(0, ...classDefinition.propertiesList.map(p => p.guiOrder ?? 0)) + 1;
+    const propCard: IHasProperty = {
+      propertyIndex: propertyId,
+      cardinality: 1, // default: not required, not multiple
+      guiOrder,
+    };
+
+    const updateOntology = MakeOntologyFor.updateCardinalityOfResourceClass(this.ctx, classDefinition.id, [propCard]);
+    const ontoIri = this.ontologyId;
+
+    return this._dspApiConnection.v2.onto.addCardinalityToResourceClass(updateOntology).pipe(
+      take(1),
+      switchMap(() => this._loadOntology$(ontoIri, propertyId)),
+      catchError(err => throwError(() => err)),
+      finalize(() => this._isTransacting.next(false))
+    );
   }
 
   /**
