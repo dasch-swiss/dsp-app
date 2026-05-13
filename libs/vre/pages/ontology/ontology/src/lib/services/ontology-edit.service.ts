@@ -479,12 +479,23 @@ export class OntologyEditService {
   }
 
   private _loadOntology(iri: string, highLightItem?: string) {
-    this._dspApiConnection.v2.onto
-      .getOntology(iri, true)
-      .pipe(take(1))
-      .subscribe(onto => {
-        this._afterUpdateOntology(onto, highLightItem);
-      });
+    this._loadOntology$(iri, highLightItem).subscribe();
+  }
+
+  /**
+   * Observable variant of `_loadOntology`. Emits once after the ontology has been
+   * fetched and `_afterUpdateOntology` has updated state. Callers can chain
+   * (`switchMap`, `tap`) instead of fire-and-forget subscribing.
+   *
+   * The existing void `_loadOntology` delegates here so all current call sites
+   * keep their fire-and-forget semantics.
+   */
+  private _loadOntology$(iri: string, highLightItem?: string): Observable<void> {
+    return this._dspApiConnection.v2.onto.getOntology(iri, true).pipe(
+      take(1),
+      tap(onto => this._afterUpdateOntology(onto, highLightItem)),
+      map(() => undefined)
+    );
   }
 
   private _afterUpdateOntology(onto: ReadOntology, highLightItem?: string) {
