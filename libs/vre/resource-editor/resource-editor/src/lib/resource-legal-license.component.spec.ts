@@ -67,7 +67,6 @@ describe('ResourceLegalLicenseComponent', () => {
     setLicense(placeholderLicense);
     const chip = fixture.nativeElement.querySelector('[data-cy="placeholder-license"]');
     expect(chip).toBeTruthy();
-    expect(chip.getAttribute('role')).toBe('status');
     expect(fixture.nativeElement.querySelector('a')).toBeNull();
     expect(fixture.nativeElement.textContent).not.toContain('urn:placeholder');
   });

@@ -65,7 +65,6 @@ describe('ResourceLegalComponent', () => {
     fixture.detectChanges();
     const placeholderEl = fixture.nativeElement.querySelector('[data-cy="placeholder-copyright-holder"]');
     expect(placeholderEl).toBeTruthy();
-    expect(placeholderEl.getAttribute('role')).toBe('status');
     expect(fixture.nativeElement.textContent).not.toContain('urn:placeholder');
   });
 
@@ -82,7 +81,6 @@ describe('ResourceLegalComponent', () => {
     fixture.detectChanges();
     const placeholderEl = fixture.nativeElement.querySelector('[data-cy="placeholder-authorship"]');
     expect(placeholderEl).toBeTruthy();
-    expect(placeholderEl.getAttribute('role')).toBe('status');
     expect(fixture.nativeElement.textContent).not.toContain('urn:placeholder');
   });
 

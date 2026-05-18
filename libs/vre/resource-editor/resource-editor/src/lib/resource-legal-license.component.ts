@@ -9,9 +9,12 @@ import { LicensesLogoMapping } from './licenses-logo-mapping';
   selector: 'app-resource-legal-license',
   template: `
     @if (isPlaceholder) {
-      <span role="status" data-cy="placeholder-license" style="display: flex; align-items: center; color: white">
-        <em>{{ 'resourceEditor.legal.placeholder.license' | translate }}</em>
-      </span>
+      <div
+        data-cy="placeholder-license"
+        class="placeholder-text"
+        style="display: flex; align-items: center; color: white">
+        {{ 'resourceEditor.legal.placeholder.license' | translate }}
+      </div>
     } @else if (license) {
       @if (licenseLogo) {
         <a [href]="license.uri" target="_blank"><img [src]="licenseLogo" alt="license" style="width: 110px" /></a>
@@ -23,6 +26,7 @@ import { LicensesLogoMapping } from './licenses-logo-mapping';
       }
     }
   `,
+  styles: ['.placeholder-text { font-style: italic }'],
   imports: [MatIconModule, TranslatePipe],
 })
 export class ResourceLegalLicenseComponent implements OnChanges {

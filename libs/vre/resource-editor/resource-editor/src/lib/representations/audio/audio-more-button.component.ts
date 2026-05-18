@@ -26,18 +26,20 @@ import { ResourceUtil } from '../resource.util';
       <mat-icon>more_vert</mat-icon>
     </button>
     <mat-menu #more="matMenu" class="representation-menu">
-      @if (!isPlaceholder) {
-        <button mat-menu-item (click)="openIIIFnewTab()">
-          {{ 'resourceEditor.representations.audio.openInNewTab' | translate }}
+      <button mat-menu-item (click)="openIIIFnewTab()" [disabled]="isPlaceholder" [attr.aria-disabled]="isPlaceholder">
+        {{ 'resourceEditor.representations.audio.openInNewTab' | translate }}
+      </button>
+      <button
+        mat-menu-item
+        [cdkCopyToClipboard]="fileValue.fileUrl"
+        [disabled]="isPlaceholder"
+        [attr.aria-disabled]="isPlaceholder">
+        {{ 'resourceEditor.representations.audio.copyUrl' | translate }}
+      </button>
+      @if (userCanView) {
+        <button mat-menu-item (click)="download()" [disabled]="isPlaceholder" [attr.aria-disabled]="isPlaceholder">
+          {{ 'resourceEditor.representations.audio.download' | translate }}
         </button>
-        <button mat-menu-item [cdkCopyToClipboard]="fileValue.fileUrl">
-          {{ 'resourceEditor.representations.audio.copyUrl' | translate }}
-        </button>
-        @if (userCanView) {
-          <button mat-menu-item (click)="download()">
-            {{ 'resourceEditor.representations.audio.download' | translate }}
-          </button>
-        }
       }
       @if (resourceFetcherService.userCanEdit$ | async) {
         <button mat-menu-item (click)="openReplaceFileDialog()">
@@ -82,10 +84,12 @@ export class AudioMoreButtonComponent {
   }
 
   openIIIFnewTab() {
+    if (this.isPlaceholder) return;
     window.open(this.fileValue.fileUrl, '_blank');
   }
 
   download() {
+    if (this.isPlaceholder) return;
     this._rs.downloadProjectFile(this.fileValue, this.parentResource);
   }
 }

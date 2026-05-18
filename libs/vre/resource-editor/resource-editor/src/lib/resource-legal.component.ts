@@ -20,9 +20,11 @@ import { ResourceLegalLicenseComponent } from './resource-legal-license.componen
           <div>
             @if (fileValue.copyrightHolder) {
               @if (isPlaceholderValue(fileValue.copyrightHolder)) {
-                <div role="status" data-cy="placeholder-copyright-holder">
+                <div data-cy="placeholder-copyright-holder">
                   <span class="label">{{ 'resourceEditor.legal.copyrightHolder' | translate }}</span
-                  ><em>{{ 'resourceEditor.legal.placeholder.copyrightHolder' | translate }}</em>
+                  ><span class="placeholder-text">{{
+                    'resourceEditor.legal.placeholder.copyrightHolder' | translate
+                  }}</span>
                 </div>
               } @else {
                 <div>
@@ -33,9 +35,9 @@ import { ResourceLegalLicenseComponent } from './resource-legal-license.componen
             }
             @if ((fileValue.authorship?.length ?? 0) > 0) {
               @if (isPlaceholderAuthorship(fileValue.authorship)) {
-                <div role="status" data-cy="placeholder-authorship">
+                <div data-cy="placeholder-authorship">
                   <span class="label">{{ 'resourceEditor.legal.authorship' | translate }}</span
-                  ><em>{{ 'resourceEditor.legal.placeholder.authorship' | translate }}</em>
+                  ><span class="placeholder-text">{{ 'resourceEditor.legal.placeholder.authorship' | translate }}</span>
                 </div>
               } @else {
                 <div style="display: flex">
@@ -60,7 +62,10 @@ import { ResourceLegalLicenseComponent } from './resource-legal-license.componen
       </div>
     }
   `,
-  styles: ['.label { display: inline-block; width: 170px; font-weight: bold}'],
+  styles: [
+    '.label { display: inline-block; width: 170px; font-weight: bold}',
+    '.placeholder-text { font-style: italic }',
+  ],
   imports: [TranslatePipe, ResourceLegalLicenseComponent],
 })
 export class ResourceLegalComponent implements OnInit {

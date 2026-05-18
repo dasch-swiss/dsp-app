@@ -93,7 +93,7 @@ export class StillImageToolbarComponent {
   }
 
   download() {
-    if (!this.imageFileValue) return;
+    if (!this.imageFileValue || this.isPlaceholder) return;
     this._rs.downloadProjectFile(this.imageFileValue, this.resource);
   }
 

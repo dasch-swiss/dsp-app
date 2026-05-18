@@ -27,21 +27,25 @@ import { ResourceUtil } from '../resource.util';
       <mat-icon>more_vert</mat-icon>
     </button>
     <mat-menu #more="matMenu" class="representation-menu">
-      @if (!isPlaceholder) {
-        <button mat-menu-item (click)="openVideoInNewTab(this.src.fileUrl)">
-          {{ 'resourceEditor.representations.video.openInNewTab' | translate }}
+      <button
+        mat-menu-item
+        (click)="openVideoInNewTab(this.src.fileUrl)"
+        [disabled]="isPlaceholder"
+        [attr.aria-disabled]="isPlaceholder">
+        {{ 'resourceEditor.representations.video.openInNewTab' | translate }}
+      </button>
+      <button
+        mat-menu-item
+        [cdkCopyToClipboard]="this.src.fileUrl"
+        (click)="openSnackBar(_translateService.instant('resourceEditor.representations.video.urlCopied'))"
+        [disabled]="isPlaceholder"
+        [attr.aria-disabled]="isPlaceholder">
+        {{ 'resourceEditor.representations.video.copyUrl' | translate }}
+      </button>
+      @if (userCanView) {
+        <button mat-menu-item (click)="downloadVideo()" [disabled]="isPlaceholder" [attr.aria-disabled]="isPlaceholder">
+          {{ 'resourceEditor.representations.video.download' | translate }}
         </button>
-        <button
-          mat-menu-item
-          [cdkCopyToClipboard]="this.src.fileUrl"
-          (click)="openSnackBar(_translateService.instant('resourceEditor.representations.video.urlCopied'))">
-          {{ 'resourceEditor.representations.video.copyUrl' | translate }}
-        </button>
-        @if (userCanView) {
-          <button mat-menu-item (click)="downloadVideo()">
-            {{ 'resourceEditor.representations.video.download' | translate }}
-          </button>
-        }
       }
       @if (resourceFetcherService.userCanEdit$ | async) {
         <button mat-menu-item (click)="openReplaceFileDialog()">
@@ -74,6 +78,7 @@ export class VideoMoreButtonComponent {
   ) {}
 
   openVideoInNewTab(url: string) {
+    if (this.isPlaceholder) return;
     window.open(url, '_blank');
   }
 
@@ -82,6 +87,7 @@ export class VideoMoreButtonComponent {
   }
 
   downloadVideo() {
+    if (this.isPlaceholder) return;
     this._rs.downloadProjectFile(this.src, this.parentResource);
   }
 

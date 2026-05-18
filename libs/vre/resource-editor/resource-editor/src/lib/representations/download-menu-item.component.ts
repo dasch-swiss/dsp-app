@@ -13,19 +13,17 @@ import { RepresentationService } from './representation.service';
   standalone: true,
   imports: [MatButton, MatIcon, TranslatePipe],
   template: `
-    @if (!isPlaceholder) {
-      <div style="display: flex; gap: 16px">
-        <button mat-flat-button (click)="download()">
-          <mat-icon>download</mat-icon>
-          {{ 'resourceEditor.representations.downloadFile' | translate }}
-        </button>
+    <div style="display: flex; gap: 16px">
+      <button mat-flat-button (click)="download()" [disabled]="isPlaceholder" [attr.aria-disabled]="isPlaceholder">
+        <mat-icon>download</mat-icon>
+        {{ 'resourceEditor.representations.downloadFile' | translate }}
+      </button>
 
-        <button mat-flat-button (click)="copyUrl()">
-          <mat-icon>link</mat-icon>
-          {{ 'resourceEditor.representations.copyLink' | translate }}
-        </button>
-      </div>
-    }
+      <button mat-flat-button (click)="copyUrl()" [disabled]="isPlaceholder" [attr.aria-disabled]="isPlaceholder">
+        <mat-icon>link</mat-icon>
+        {{ 'resourceEditor.representations.copyLink' | translate }}
+      </button>
+    </div>
   `,
 })
 export class DownloadMenuItemComponent {
@@ -45,10 +43,12 @@ export class DownloadMenuItemComponent {
   ) {}
 
   download() {
+    if (this.isPlaceholder) return;
     this._rs.downloadProjectFile(this.src, this.parentResource);
   }
 
   copyUrl() {
+    if (this.isPlaceholder) return;
     this._rs.getIngestOriginalUrl(this.src, this.parentResource).subscribe(link => {
       this._clipboard.copy(link);
       this._notification.openSnackBar(this._translateService.instant('resourceEditor.representations.fileLinkCopied'));
