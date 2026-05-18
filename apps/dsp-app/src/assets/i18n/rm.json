@@ -716,7 +716,9 @@
     },
     "templateSwitcher": {
       "nullableEditor": {
+        "add": "Add",
         "addTooltip": "Add",
+        "remove": "Remove",
         "removeTooltip": "Remove"
       },
       "createResourceDialog": {
