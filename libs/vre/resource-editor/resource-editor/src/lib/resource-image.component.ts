@@ -1,8 +1,9 @@
 import { Component, Input, OnChanges, OnDestroy } from '@angular/core';
 import { Constants } from '@dasch-swiss/dsp-js';
-import { DspResource } from '@dasch-swiss/vre/shared/app-common';
+import { DspResource, isPlaceholderAsset } from '@dasch-swiss/vre/shared/app-common';
 import { filter, pairwise, Subject, take, takeUntil } from 'rxjs';
 import { getFileValue } from './representations/get-file-value';
+import { PlaceholderRepresentationComponent } from './representations/placeholder-representation.component';
 import { RegionService } from './representations/region.service';
 import { StillImageComponent } from './representations/still-image/still-image.component';
 import { VectorImageComponent } from './representations/vector-image/vector-image.component';
@@ -21,7 +22,11 @@ import { ResourceRestrictionComponent } from './resource-restriction.component';
     }
     <app-resource-header [resource]="resource" />
     <app-resource-legal [fileValue]="fileValue" />
-    @if (fileValue.type === svgStillImage) {
+    @if (isPlaceholderAsset(fileValue)) {
+      <app-resource-representation-container>
+        <app-placeholder-representation />
+      </app-resource-representation-container>
+    } @else if (fileValue.type === svgStillImage) {
       <app-resource-representation-container>
         <app-vector-image [resource]="resource.res" />
       </app-resource-representation-container>
@@ -40,6 +45,7 @@ import { ResourceRestrictionComponent } from './resource-restriction.component';
     ResourceRestrictionComponent,
     ResourceHeaderComponent,
     ResourceLegalComponent,
+    PlaceholderRepresentationComponent,
     StillImageComponent,
     VectorImageComponent,
     ResourceRepresentationContainerComponent,
@@ -51,6 +57,7 @@ export class ResourceImageComponent implements OnChanges, OnDestroy {
   @Input() annotationIri: string | null = null;
 
   readonly svgStillImage = Constants.StillImageVectorFileValue;
+  protected readonly isPlaceholderAsset = isPlaceholderAsset;
   private readonly _destroy$ = new Subject<void>();
 
   constructor(private readonly _regionService: RegionService) {}

@@ -1,7 +1,8 @@
 import { Component, Input } from '@angular/core';
-import { DspResource } from '@dasch-swiss/vre/shared/app-common';
+import { DspResource, isPlaceholderAsset } from '@dasch-swiss/vre/shared/app-common';
 import { AudioComponent } from './representations/audio/audio.component';
 import { getFileValue } from './representations/get-file-value';
+import { PlaceholderRepresentationComponent } from './representations/placeholder-representation.component';
 import { ResourceHeaderComponent } from './resource-header.component';
 import { ResourceLegalComponent } from './resource-legal.component';
 import { ResourceMediaTabsComponent } from './resource-media-tabs.component';
@@ -19,7 +20,11 @@ import { SegmentsService } from './segment-support/segments.service';
     <app-resource-header [resource]="resource" />
     <app-resource-legal [fileValue]="fileValue" />
     <app-resource-representation-container height="small">
-      <app-audio [src]="fileValue" [parentResource]="resource.res" />
+      @if (isPlaceholderAsset(fileValue)) {
+        <app-placeholder-representation />
+      } @else {
+        <app-audio [src]="fileValue" [parentResource]="resource.res" />
+      }
     </app-resource-representation-container>
     <app-resource-media-tabs [resource]="resource" style="display: block; margin-top: 50px" />
   `,
@@ -29,12 +34,15 @@ import { SegmentsService } from './segment-support/segments.service';
     ResourceHeaderComponent,
     ResourceLegalComponent,
     AudioComponent,
+    PlaceholderRepresentationComponent,
     ResourceRepresentationContainerComponent,
     ResourceMediaTabsComponent,
   ],
 })
 export class ResourceAudioComponent {
   @Input({ required: true }) resource!: DspResource;
+
+  protected readonly isPlaceholderAsset = isPlaceholderAsset;
 
   get fileValue() {
     return getFileValue(this.resource.res)!;
