@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ReadFileValue } from '@dasch-swiss/dsp-js';
 import { AdminAPIApiService, ProjectLicenseDto } from '@dasch-swiss/vre/3rd-party-services/open-api';
+import { isPlaceholderAuthorship, isPlaceholderValue } from '@dasch-swiss/vre/shared/app-common';
 import { TranslatePipe } from '@ngx-translate/core';
 import { switchMap, take } from 'rxjs';
 import { ResourceFetcherService } from './representations/resource-fetcher.service';
@@ -18,24 +19,40 @@ import { ResourceLegalLicenseComponent } from './resource-legal-license.componen
         <div style="display: flex; justify-content: space-between">
           <div>
             @if (fileValue.copyrightHolder) {
-              <div>
-                <span class="label">{{ 'resourceEditor.legal.copyrightHolder' | translate }}</span
-                >{{ fileValue.copyrightHolder }}
-              </div>
-            }
-            @if (fileValue.authorship.length > 0) {
-              <div style="display: flex">
-                <span class="label">{{ 'resourceEditor.legal.authorship' | translate }}</span>
-                <div style="max-width: 400px">
-                  @for (author of fileValue.authorship; track author; let last = $last) {
-                    <span>{{ author }}{{ last ? '' : ', ' }}</span>
-                  }
+              @if (isPlaceholderValue(fileValue.copyrightHolder)) {
+                <div role="status" data-cy="placeholder-copyright-holder">
+                  <span class="label">{{ 'resourceEditor.legal.copyrightHolder' | translate }}</span
+                  ><em>{{ 'resourceEditor.legal.placeholder.copyrightHolder' | translate }}</em>
                 </div>
-              </div>
+              } @else {
+                <div>
+                  <span class="label">{{ 'resourceEditor.legal.copyrightHolder' | translate }}</span
+                  >{{ fileValue.copyrightHolder }}
+                </div>
+              }
+            }
+            @if (fileValue.authorship?.length > 0) {
+              @if (isPlaceholderAuthorship(fileValue.authorship)) {
+                <div role="status" data-cy="placeholder-authorship">
+                  <span class="label">{{ 'resourceEditor.legal.authorship' | translate }}</span
+                  ><em>{{ 'resourceEditor.legal.placeholder.authorship' | translate }}</em>
+                </div>
+              } @else {
+                <div style="display: flex">
+                  <span class="label">{{ 'resourceEditor.legal.authorship' | translate }}</span>
+                  <div style="max-width: 400px">
+                    @for (author of fileValue.authorship; track author; let last = $last) {
+                      <span>{{ author }}{{ last ? '' : ', ' }}</span>
+                    }
+                  </div>
+                </div>
+              }
             }
           </div>
           <div style="display: flex; justify-content: flex-end">
-            @if (license) {
+            @if (isPlaceholderValue(fileValue.license?.id)) {
+              <app-resource-legal-license />
+            } @else if (license) {
               <app-resource-legal-license [license]="license" />
             }
           </div>
@@ -51,6 +68,9 @@ export class ResourceLegalComponent implements OnInit {
 
   licenses: ProjectLicenseDto[] = [];
 
+  protected readonly isPlaceholderValue = isPlaceholderValue;
+  protected readonly isPlaceholderAuthorship = isPlaceholderAuthorship;
+
   get license() {
     return this.licenses.find(license => license.id === this.fileValue.license?.id);
   }
@@ -61,6 +81,10 @@ export class ResourceLegalComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    if (isPlaceholderValue(this.fileValue.license?.id)) {
+      // No need to fetch licenses — placeholder license renders without DTO lookup.
+      return;
+    }
     this._fetchLicense();
   }
 
