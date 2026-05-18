@@ -3,9 +3,9 @@ import { FormControl } from '@angular/forms';
 import { MatError } from '@angular/material/form-field';
 import { KnoraApiConnection, ListNodeV2, ResourcePropertyDefinition } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
+import { NestedMenuComponent } from '@dasch-swiss/vre/ui/nested-menu';
 import { HumanReadableErrorPipe } from '@dasch-swiss/vre/ui/ui';
 import { startWith } from 'rxjs/operators';
-import { NestedMenuComponent } from './nested-menu.component';
 
 @Component({
   selector: 'app-list-value',
