@@ -8,7 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
   },
   template: `
     @if (icon) {
-      <mat-icon style="font-size: 64px; width: 64px; height: 64px">{{ icon }}</mat-icon>
+      <mat-icon style="font-size: 64px; width: 64px; height: 64px" aria-hidden="true">{{ icon }}</mat-icon>
     }
     @if (title) {
       <h2 style="font-weight: 400; margin-bottom: 0">{{ title }}</h2>

@@ -7,6 +7,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { Constants, ReadAudioFileValue, ReadResource } from '@dasch-swiss/dsp-js';
 import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
+import { isPlaceholderAsset } from '@dasch-swiss/vre/shared/app-common';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { getFileValue } from '../get-file-value';
 import {
@@ -25,14 +26,18 @@ import { ResourceUtil } from '../resource.util';
       <mat-icon>more_vert</mat-icon>
     </button>
     <mat-menu #more="matMenu" class="representation-menu">
-      <button mat-menu-item (click)="openIIIFnewTab()">
+      <button mat-menu-item (click)="openIIIFnewTab()" [disabled]="isPlaceholder" [attr.aria-disabled]="isPlaceholder">
         {{ 'resourceEditor.representations.audio.openInNewTab' | translate }}
       </button>
-      <button mat-menu-item [cdkCopyToClipboard]="fileValue.fileUrl">
+      <button
+        mat-menu-item
+        [cdkCopyToClipboard]="fileValue.fileUrl"
+        [disabled]="isPlaceholder"
+        [attr.aria-disabled]="isPlaceholder">
         {{ 'resourceEditor.representations.audio.copyUrl' | translate }}
       </button>
       @if (userCanView) {
-        <button mat-menu-item (click)="download()">
+        <button mat-menu-item (click)="download()" [disabled]="isPlaceholder" [attr.aria-disabled]="isPlaceholder">
           {{ 'resourceEditor.representations.audio.download' | translate }}
         </button>
       }
@@ -56,6 +61,10 @@ export class AudioMoreButtonComponent {
     return ResourceUtil.userCanView(this.fileValue);
   }
 
+  get isPlaceholder(): boolean {
+    return isPlaceholderAsset(this.fileValue);
+  }
+
   constructor(
     private readonly _dialog: MatDialog,
     private readonly _rs: RepresentationService,
@@ -75,10 +84,12 @@ export class AudioMoreButtonComponent {
   }
 
   openIIIFnewTab() {
+    if (this.isPlaceholder) return;
     window.open(this.fileValue.fileUrl, '_blank');
   }
 
   download() {
+    if (this.isPlaceholder) return;
     this._rs.downloadProjectFile(this.fileValue, this.parentResource);
   }
 }

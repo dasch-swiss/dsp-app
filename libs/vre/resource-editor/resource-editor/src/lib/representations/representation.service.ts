@@ -4,7 +4,8 @@ import { ReadDocumentFileValue } from '@dasch-swiss/dsp-js';
 import { ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { AppConfigService } from '@dasch-swiss/vre/core/config';
 import { AccessTokenService, UserService } from '@dasch-swiss/vre/core/session';
-import { map, take } from 'rxjs';
+import { isPlaceholderAsset, isPlaceholderValue } from '@dasch-swiss/vre/shared/app-common';
+import { EMPTY, map, Observable, take } from 'rxjs';
 import { FileRepresentationInput, ParentResourceInput } from './representation-inputs';
 import { ResourceUtil } from './resource.util';
 
@@ -20,7 +21,13 @@ export class RepresentationService {
     private readonly _projectApiService: ProjectApiService
   ) {}
 
-  getFileInfo(url: string) {
+  getFileInfo(url: string): Observable<{ originalFilename?: string }> {
+    // Defensive: per-type wrappers already short-circuit placeholder file values
+    // before any consumer reaches RepresentationService. This guard catches
+    // future code paths that bypass the wrapper-level guards.
+    if (isPlaceholderValue(url)) {
+      return EMPTY;
+    }
     const pathToJson = `${url.substring(0, url.lastIndexOf('/'))}/knora.json`;
     return this._http.get<{ originalFilename?: string }>(pathToJson, { withCredentials: true });
   }
@@ -35,12 +42,18 @@ export class RepresentationService {
   }
 
   downloadProjectFile(fileValue: FileRepresentationInput, resource: ParentResourceInput) {
+    if (isPlaceholderAsset(fileValue)) {
+      return;
+    }
     this.getIngestUrl(fileValue, resource).subscribe(ingestFileUrl => {
       this.downloadFile(ingestFileUrl, this.userCanView(fileValue));
     });
   }
 
-  getIngestUrl(fileValue: FileRepresentationInput, resource: ParentResourceInput) {
+  getIngestUrl(fileValue: FileRepresentationInput, resource: ParentResourceInput): Observable<string> {
+    if (isPlaceholderAsset(fileValue)) {
+      return EMPTY;
+    }
     return this._projectApiService.get(resource.attachedToProject).pipe(
       map(response => {
         const assetId = fileValue.filename.split('.')[0] || '';
@@ -49,7 +62,7 @@ export class RepresentationService {
     );
   }
 
-  getIngestOriginalUrl(fileValue: FileRepresentationInput, resource: ParentResourceInput) {
+  getIngestOriginalUrl(fileValue: FileRepresentationInput, resource: ParentResourceInput): Observable<string> {
     return this.getIngestUrl(fileValue, resource).pipe(map(url => `${url}/original`));
   }
 

@@ -1,7 +1,8 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Constants, ReadResource } from '@dasch-swiss/dsp-js';
-import { DspResource } from '@dasch-swiss/vre/shared/app-common';
+import { DspResource, PLACEHOLDER_IRI } from '@dasch-swiss/vre/shared/app-common';
+import { provideTranslateService } from '@ngx-translate/core';
 import { BehaviorSubject } from 'rxjs';
 import { RegionService } from './representations/region.service';
 import { ResourceImageComponent } from './resource-image.component';
@@ -145,5 +146,63 @@ describe('ResourceImageComponent — behavior', () => {
       component.ngOnChanges();
       expect(() => component.ngOnDestroy()).not.toThrow();
     });
+  });
+});
+
+describe('ResourceImageComponent — placeholder dispatch (template branch)', () => {
+  let fixture: ComponentFixture<ResourceImageComponent>;
+
+  // Trimmed template covering only the dispatch branch under test. Avoids
+  // standing up the full child-component DI graph (header / tabs / legal).
+  const dispatchTemplate = `
+    @if (isPlaceholderAsset(fileValue)) {
+      <app-placeholder-representation />
+    } @else if (fileValue.type === svgStillImage) {
+      <app-vector-image [resource]="resource.res" />
+    } @else {
+      <app-still-image [compoundMode]="false" [resource]="resource.res" />
+    }
+  `;
+
+  const makePlaceholderResource = (): DspResource =>
+    ({
+      res: {
+        id: 'http://rdfh.ch/img',
+        userHasPermission: 'CR',
+        properties: {
+          [Constants.HasStillImageFileValue]: [{ type: Constants.StillImageFileValue, filename: PLACEHOLDER_IRI }],
+        },
+      } as unknown as ReadResource,
+    }) as DspResource;
+
+  beforeEach(async () => {
+    const regionServiceMock = {
+      initialize: jest.fn(),
+      regionsLoading$: new BehaviorSubject<boolean>(false),
+    };
+
+    await TestBed.configureTestingModule({
+      imports: [ResourceImageComponent],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA],
+      providers: [provideTranslateService()],
+    })
+      .overrideComponent(ResourceImageComponent, {
+        set: {
+          template: dispatchTemplate,
+          providers: [{ provide: RegionService, useValue: regionServiceMock }],
+        },
+      })
+      .compileComponents();
+
+    fixture = TestBed.createComponent(ResourceImageComponent);
+  });
+
+  it('renders the placeholder card and not the still-image/vector player for a placeholder file value', () => {
+    fixture.componentInstance.resource = makePlaceholderResource();
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('app-placeholder-representation')).toBeTruthy();
+    expect(fixture.nativeElement.querySelector('app-still-image')).toBeNull();
+    expect(fixture.nativeElement.querySelector('app-vector-image')).toBeNull();
   });
 });

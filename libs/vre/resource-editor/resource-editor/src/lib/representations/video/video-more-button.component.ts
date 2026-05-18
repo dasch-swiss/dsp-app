@@ -7,6 +7,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { Constants } from '@dasch-swiss/dsp-js';
 import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
+import { isPlaceholderAsset } from '@dasch-swiss/vre/shared/app-common';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { MovingImageSidecar } from '../moving-image-sidecar';
@@ -26,17 +27,23 @@ import { ResourceUtil } from '../resource.util';
       <mat-icon>more_vert</mat-icon>
     </button>
     <mat-menu #more="matMenu" class="representation-menu">
-      <button mat-menu-item (click)="openVideoInNewTab(this.src.fileUrl)">
+      <button
+        mat-menu-item
+        (click)="openVideoInNewTab(this.src.fileUrl)"
+        [disabled]="isPlaceholder"
+        [attr.aria-disabled]="isPlaceholder">
         {{ 'resourceEditor.representations.video.openInNewTab' | translate }}
       </button>
       <button
         mat-menu-item
         [cdkCopyToClipboard]="this.src.fileUrl"
-        (click)="openSnackBar(_translateService.instant('resourceEditor.representations.video.urlCopied'))">
+        (click)="openSnackBar(_translateService.instant('resourceEditor.representations.video.urlCopied'))"
+        [disabled]="isPlaceholder"
+        [attr.aria-disabled]="isPlaceholder">
         {{ 'resourceEditor.representations.video.copyUrl' | translate }}
       </button>
       @if (userCanView) {
-        <button mat-menu-item (click)="downloadVideo()">
+        <button mat-menu-item (click)="downloadVideo()" [disabled]="isPlaceholder" [attr.aria-disabled]="isPlaceholder">
           {{ 'resourceEditor.representations.video.download' | translate }}
         </button>
       }
@@ -58,6 +65,10 @@ export class VideoMoreButtonComponent {
     return ResourceUtil.userCanView(this.src);
   }
 
+  get isPlaceholder(): boolean {
+    return isPlaceholderAsset(this.src);
+  }
+
   constructor(
     private readonly _notification: NotificationService,
     private readonly _dialog: MatDialog,
@@ -67,6 +78,7 @@ export class VideoMoreButtonComponent {
   ) {}
 
   openVideoInNewTab(url: string) {
+    if (this.isPlaceholder) return;
     window.open(url, '_blank');
   }
 
@@ -75,6 +87,7 @@ export class VideoMoreButtonComponent {
   }
 
   downloadVideo() {
+    if (this.isPlaceholder) return;
     this._rs.downloadProjectFile(this.src, this.parentResource);
   }
 

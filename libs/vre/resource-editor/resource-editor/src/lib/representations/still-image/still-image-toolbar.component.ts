@@ -9,6 +9,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { Constants, ReadResource, ReadStillImageExternalFileValue, ReadStillImageFileValue } from '@dasch-swiss/dsp-js';
 import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import { AppError } from '@dasch-swiss/vre/core/error-handler';
+import { isPlaceholderAsset } from '@dasch-swiss/vre/shared/app-common';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { CompoundNavigationComponent } from '../../compound/compound-navigation.component';
@@ -68,6 +69,10 @@ export class StillImageToolbarComponent {
     return this.imageFileValue && ResourceUtil.userCanView(this.imageFileValue);
   }
 
+  get isPlaceholder(): boolean {
+    return isPlaceholderAsset(this.imageFileValue);
+  }
+
   readonly _translateService = inject(TranslateService);
 
   constructor(
@@ -88,7 +93,7 @@ export class StillImageToolbarComponent {
   }
 
   download() {
-    if (!this.imageFileValue) return;
+    if (!this.imageFileValue || this.isPlaceholder) return;
     this._rs.downloadProjectFile(this.imageFileValue, this.resource);
   }
 

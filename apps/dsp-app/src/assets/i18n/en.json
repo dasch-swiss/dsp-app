@@ -465,7 +465,12 @@
     },
     "legal": {
       "copyrightHolder": "Copyright holder",
-      "authorship": "Authorship"
+      "authorship": "Authorship",
+      "placeholder": {
+        "copyrightHolder": "Copyright holder not yet provided",
+        "authorship": "Authorship not yet provided",
+        "license": "License not yet set"
+      }
     },
     "navigation": {
       "firstPage": "First page",
@@ -535,6 +540,10 @@
       },
       "text": {
         "title": "Text (csv, txt, xml)"
+      },
+      "placeholder": {
+        "title": "Asset not yet uploaded",
+        "message": "The file for this resource is still to be provided."
       },
       "stillImage": {
         "createAnnotation": "Create Annotation",

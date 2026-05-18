@@ -23,11 +23,11 @@
       class="clickable-icon"
       data-cy="still-image-download-button"
       [matTooltip]="'resourceEditor.representations.stillImage.download' | translate"
-      [class.disabled]="isReadStillImageExternalFileValue || !userCanView"
+      [class.disabled]="isReadStillImageExternalFileValue || !userCanView || isPlaceholder"
+      [attr.aria-disabled]="isReadStillImageExternalFileValue || !userCanView || isPlaceholder"
       (click)="download()">
       <mat-icon>download</mat-icon>
     </div>
-
     @if ((resourceFetcherService.userCanEdit$ | async) && !isReadStillImageExternalFileValue) {
     <div
       class="clickable-icon"
@@ -88,7 +88,13 @@
 </div>
 
 <mat-menu #more="matMenu" class="representation-menu">
-  <a mat-menu-item [href]="imageFileValue?.fileUrl" target="_blank" data-cy="open-iiif-new-tab">
+  <a
+    mat-menu-item
+    [href]="imageFileValue?.fileUrl"
+    target="_blank"
+    data-cy="open-iiif-new-tab"
+    [disabled]="isPlaceholder"
+    [attr.aria-disabled]="isPlaceholder">
     {{ 'resourceEditor.representations.stillImage.openIiifInNewTab' | translate }}
   </a>
   @if (resourceFetcherService.userCanEdit$ | async) {
@@ -103,7 +109,9 @@
     mat-menu-item
     (click)="notification.openSnackBar(_translateService.instant('resourceEditor.representations.stillImage.iiifUrlCopied'))"
     [cdkCopyToClipboard]="imageFileValue?.fileUrl ?? ''"
-    data-cy="copy-iiif-url">
+    data-cy="copy-iiif-url"
+    [disabled]="isPlaceholder"
+    [attr.aria-disabled]="isPlaceholder">
     <mat-icon>content_copy</mat-icon>
     {{ 'resourceEditor.representations.stillImage.copyIiifUrl' | translate }}
   </button>

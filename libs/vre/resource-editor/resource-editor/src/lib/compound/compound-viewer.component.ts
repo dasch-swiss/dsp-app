@@ -1,8 +1,9 @@
 import { AsyncPipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { Constants, ReadStillImageFileValue, ReadValue } from '@dasch-swiss/dsp-js';
-import { filterUndefined } from '@dasch-swiss/vre/shared/app-common';
+import { filterUndefined, isPlaceholderAsset } from '@dasch-swiss/vre/shared/app-common';
 import { filter, map } from 'rxjs';
+import { PlaceholderRepresentationComponent } from '../representations/placeholder-representation.component';
 import { StillImageComponent } from '../representations/still-image/still-image.component';
 import { VectorImageComponent } from '../representations/vector-image/vector-image.component';
 import { ResourceLegalComponent } from '../resource-legal.component';
@@ -16,12 +17,14 @@ import { CompoundService } from './compound.service';
       @if (compoundService.incomingResource$ | async; as incomingResource) {
         @if (fileValue$ | async; as fileValue) {
           <app-resource-legal [fileValue]="fileValue" />
-        }
-        @if (incomingResource.res.properties[HasStillImageFileValue]; as imageValues) {
-          @if (isVectorImage(imageValues[0])) {
-            <app-vector-image [resource]="incomingResource.res" [compoundMode]="true" />
-          } @else {
-            <app-still-image [resource]="incomingResource.res" [compoundMode]="true" />
+          @if (isPlaceholderAsset(fileValue)) {
+            <app-placeholder-representation />
+          } @else if (incomingResource.res.properties[HasStillImageFileValue]; as imageValues) {
+            @if (isVectorImage(imageValues[0])) {
+              <app-vector-image [resource]="incomingResource.res" [compoundMode]="true" />
+            } @else {
+              <app-still-image [resource]="incomingResource.res" [compoundMode]="true" />
+            }
           }
         }
       }
@@ -32,11 +35,14 @@ import { CompoundService } from './compound.service';
     ResourceLegalComponent,
     StillImageComponent,
     VectorImageComponent,
+    PlaceholderRepresentationComponent,
     ResourceRepresentationContainerComponent,
   ],
 })
 export class CompoundViewerComponent {
   HasStillImageFileValue = Constants.HasStillImageFileValue;
+
+  protected readonly isPlaceholderAsset = isPlaceholderAsset;
 
   fileValue$ = this.compoundService.incomingResource$.pipe(
     filterUndefined(),
