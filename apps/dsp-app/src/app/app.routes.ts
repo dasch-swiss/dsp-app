@@ -1,12 +1,7 @@
 import { Routes } from '@angular/router';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { ListPageComponent } from '@dasch-swiss/vre/pages/ontology/list';
-import {
-  DataModelsPageComponent,
-  OntologyEditorPageComponent,
-  OntologyPageComponent,
-  OntologyPropertiesComponent,
-} from '@dasch-swiss/vre/pages/ontology/ontology';
+import { DataModelsPageComponent, OntologyPageComponent } from '@dasch-swiss/vre/pages/ontology/ontology';
 import {
   CollaborationPageComponent,
   CreateProjectFormPageComponent,
@@ -73,21 +68,6 @@ export const routes: Routes = [
       {
         path: RouteConstants.ontologyEditorRelative,
         component: OntologyPageComponent,
-        children: [
-          {
-            path: '',
-            pathMatch: 'full',
-            redirectTo: RouteConstants.classes,
-          },
-          {
-            path: RouteConstants.classes,
-            component: OntologyEditorPageComponent,
-          },
-          {
-            path: RouteConstants.properties,
-            component: OntologyPropertiesComponent,
-          },
-        ],
       },
       {
         path: `${RouteConstants.list}/:${RouteConstants.listParameter}`,
