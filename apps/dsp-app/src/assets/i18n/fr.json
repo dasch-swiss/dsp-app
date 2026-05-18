@@ -465,7 +465,12 @@
     },
     "legal": {
       "copyrightHolder": "Titulaire des droits d'auteur",
-      "authorship": "Auteur·ice"
+      "authorship": "Auteur·ice",
+      "placeholder": {
+        "copyrightHolder": "Titulaire des droits d'auteur pas encore renseigné",
+        "authorship": "Auteur·ice pas encore renseigné·e",
+        "license": "Licence pas encore définie"
+      }
     },
     "navigation": {
       "firstPage": "Première page",
@@ -535,6 +540,10 @@
       },
       "text": {
         "title": "Texte (csv, txt, xml)"
+      },
+      "placeholder": {
+        "title": "Fichier pas encore téléversé",
+        "message": "Le fichier de cette ressource sera fourni ultérieurement."
       },
       "stillImage": {
         "createAnnotation": "Créer une annotation",

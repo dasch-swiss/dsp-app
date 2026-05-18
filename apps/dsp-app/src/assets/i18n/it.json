@@ -465,7 +465,12 @@
     },
     "legal": {
       "copyrightHolder": "Titolare del copyright",
-      "authorship": "Autore"
+      "authorship": "Autore",
+      "placeholder": {
+        "copyrightHolder": "Titolare del copyright non ancora indicato",
+        "authorship": "Autore non ancora indicato",
+        "license": "Licenza non ancora impostata"
+      }
     },
     "navigation": {
       "firstPage": "Prima pagina",
@@ -535,6 +540,10 @@
       },
       "text": {
         "title": "Testo (csv, txt, xml)"
+      },
+      "placeholder": {
+        "title": "File non ancora caricato",
+        "message": "Il file di questa risorsa verrà fornito in seguito."
       },
       "stillImage": {
         "createAnnotation": "Crea annotazione",

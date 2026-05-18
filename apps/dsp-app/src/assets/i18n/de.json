@@ -521,6 +521,10 @@
       "text": {
         "title": "Text (csv, txt, xml)"
       },
+      "placeholder": {
+        "title": "Datei noch nicht hochgeladen",
+        "message": "Die Datei für diese Ressource wird noch bereitgestellt."
+      },
       "replaceFileDialog": {
         "willBeReplaced": "Diese Datei wird ersetzt."
       },
@@ -659,7 +663,12 @@
     },
     "legal": {
       "copyrightHolder": "Urheberrechtsinhaber",
-      "authorship": "Autorenschaft"
+      "authorship": "Autorenschaft",
+      "placeholder": {
+        "copyrightHolder": "Rechteinhaber:in noch nicht angegeben",
+        "authorship": "Autorenschaft noch nicht angegeben",
+        "license": "Lizenz noch nicht gesetzt"
+      }
     },
     "navigation": {
       "firstPage": "Erste Seite",
