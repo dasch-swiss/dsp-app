@@ -12,7 +12,7 @@ import { ResourceLegalLicenseComponent } from './resource-legal-license.componen
     @if (fileValue.copyrightHolder || fileValue.authorship?.length > 0 || fileValue.license) {
       <div
         class="mat-caption"
-        style="border: 1px solid #292929;
+        style="border: 1px solid #292929; text-align: left;
     background: #292929; border-radius: 8px;
     color: #e4e9ed; padding: 8px; padding-bottom: 16px; margin-top: 8px; position: relative; top: 12px">
         <div style="display: flex; justify-content: space-between">
