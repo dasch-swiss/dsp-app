@@ -36,7 +36,7 @@ export class OntologyService {
   }
 
   getInPreferedLanguage(labels: StringLiteralV2[]): string | undefined {
-    const language = this._localizationService.getCurrentLanguage();
+    const language = this._localizationService.currentLanguage;
     const withLanguage = ensureWithDefaultLanguage(labels, language);
 
     if (withLanguage.length === 0) {

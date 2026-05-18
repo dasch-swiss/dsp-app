@@ -86,7 +86,7 @@ export class DownloadDialogResourcesTabComponent {
         {
           resourceClass: this.resourceClassIri,
           selectedProperties: this.selectedPropertyIds,
-          language: this._localizationService.getCurrentLanguage(),
+          language: this._localizationService.currentLanguage,
           includeIris: this.includeResourceIris,
           includeArkUrls: this.includeArkUrls,
         },

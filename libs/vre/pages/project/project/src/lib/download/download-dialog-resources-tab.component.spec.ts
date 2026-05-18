@@ -211,7 +211,7 @@ describe('DownloadDialogResourcesTabComponent', () => {
     });
 
     it('should use current language from localization service', () => {
-      mockLocalizationService.getCurrentLanguage.mockReturnValue('de');
+      mockLocalizationService.currentLanguage.mockReturnValue('de');
 
       component.downloadCsv();
 
