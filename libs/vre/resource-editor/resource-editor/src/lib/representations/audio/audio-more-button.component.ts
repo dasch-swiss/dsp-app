@@ -7,6 +7,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { Constants, ReadAudioFileValue, ReadResource } from '@dasch-swiss/dsp-js';
 import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
+import { isPlaceholderAsset } from '@dasch-swiss/vre/shared/app-common';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { getFileValue } from '../get-file-value';
 import {
@@ -25,16 +26,18 @@ import { ResourceUtil } from '../resource.util';
       <mat-icon>more_vert</mat-icon>
     </button>
     <mat-menu #more="matMenu" class="representation-menu">
-      <button mat-menu-item (click)="openIIIFnewTab()">
-        {{ 'resourceEditor.representations.audio.openInNewTab' | translate }}
-      </button>
-      <button mat-menu-item [cdkCopyToClipboard]="fileValue.fileUrl">
-        {{ 'resourceEditor.representations.audio.copyUrl' | translate }}
-      </button>
-      @if (userCanView) {
-        <button mat-menu-item (click)="download()">
-          {{ 'resourceEditor.representations.audio.download' | translate }}
+      @if (!isPlaceholder) {
+        <button mat-menu-item (click)="openIIIFnewTab()">
+          {{ 'resourceEditor.representations.audio.openInNewTab' | translate }}
         </button>
+        <button mat-menu-item [cdkCopyToClipboard]="fileValue.fileUrl">
+          {{ 'resourceEditor.representations.audio.copyUrl' | translate }}
+        </button>
+        @if (userCanView) {
+          <button mat-menu-item (click)="download()">
+            {{ 'resourceEditor.representations.audio.download' | translate }}
+          </button>
+        }
       }
       @if (resourceFetcherService.userCanEdit$ | async) {
         <button mat-menu-item (click)="openReplaceFileDialog()">
@@ -54,6 +57,10 @@ export class AudioMoreButtonComponent {
 
   get userCanView() {
     return ResourceUtil.userCanView(this.fileValue);
+  }
+
+  get isPlaceholder(): boolean {
+    return isPlaceholderAsset(this.fileValue);
   }
 
   constructor(

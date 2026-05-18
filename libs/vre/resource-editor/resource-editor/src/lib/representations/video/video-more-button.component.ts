@@ -7,6 +7,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { Constants } from '@dasch-swiss/dsp-js';
 import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
+import { isPlaceholderAsset } from '@dasch-swiss/vre/shared/app-common';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { MovingImageSidecar } from '../moving-image-sidecar';
@@ -26,19 +27,21 @@ import { ResourceUtil } from '../resource.util';
       <mat-icon>more_vert</mat-icon>
     </button>
     <mat-menu #more="matMenu" class="representation-menu">
-      <button mat-menu-item (click)="openVideoInNewTab(this.src.fileUrl)">
-        {{ 'resourceEditor.representations.video.openInNewTab' | translate }}
-      </button>
-      <button
-        mat-menu-item
-        [cdkCopyToClipboard]="this.src.fileUrl"
-        (click)="openSnackBar(_translateService.instant('resourceEditor.representations.video.urlCopied'))">
-        {{ 'resourceEditor.representations.video.copyUrl' | translate }}
-      </button>
-      @if (userCanView) {
-        <button mat-menu-item (click)="downloadVideo()">
-          {{ 'resourceEditor.representations.video.download' | translate }}
+      @if (!isPlaceholder) {
+        <button mat-menu-item (click)="openVideoInNewTab(this.src.fileUrl)">
+          {{ 'resourceEditor.representations.video.openInNewTab' | translate }}
         </button>
+        <button
+          mat-menu-item
+          [cdkCopyToClipboard]="this.src.fileUrl"
+          (click)="openSnackBar(_translateService.instant('resourceEditor.representations.video.urlCopied'))">
+          {{ 'resourceEditor.representations.video.copyUrl' | translate }}
+        </button>
+        @if (userCanView) {
+          <button mat-menu-item (click)="downloadVideo()">
+            {{ 'resourceEditor.representations.video.download' | translate }}
+          </button>
+        }
       }
       @if (resourceFetcherService.userCanEdit$ | async) {
         <button mat-menu-item (click)="openReplaceFileDialog()">
@@ -56,6 +59,10 @@ export class VideoMoreButtonComponent {
 
   get userCanView() {
     return ResourceUtil.userCanView(this.src);
+  }
+
+  get isPlaceholder(): boolean {
+    return isPlaceholderAsset(this.src);
   }
 
   constructor(
