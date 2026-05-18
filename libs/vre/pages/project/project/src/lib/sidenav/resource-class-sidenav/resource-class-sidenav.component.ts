@@ -1,10 +1,7 @@
-import { Component, Input, OnChanges } from '@angular/core';
-import {
-  OntologyAndResourceClasses,
-  ResourceClassAndCountDto,
-  ResourceClassDto,
-} from '@dasch-swiss/vre/3rd-party-services/open-api';
-import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { Component, Input, OnChanges, OnDestroy } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { OntologyAndResourceClasses, ResourceClassAndCountDto } from '@dasch-swiss/vre/3rd-party-services/open-api';
+import { LocalizationService, SortingHelper } from '@dasch-swiss/vre/shared/app-helper-services';
 import { ResourceClassSidenavItemComponent } from './resource-class-sidenav-item.component';
 
 @Component({
@@ -24,20 +21,20 @@ export class ResourceClassSidenavComponent implements OnChanges {
   @Input({ required: true }) ontology!: OntologyAndResourceClasses;
   resourceClassCounts: ResourceClassAndCountDto[] = [];
 
-  constructor(private readonly _localizationService: LocalizationService) {}
-
-  ngOnChanges() {
-    const lang = this._localizationService.getCurrentLanguage();
-    const classesCount = this.ontology.classesAndCount || [];
-
-    this.resourceClassCounts = [...classesCount].sort((a, b) => {
-      const labelA = this.getLabelInLanguage(a.resourceClass, lang).toLowerCase();
-      const labelB = this.getLabelInLanguage(b.resourceClass, lang).toLowerCase();
-      return labelA.localeCompare(labelB);
+  constructor(private readonly _localizationService: LocalizationService) {
+    this._localizationService.currentLanguage$.pipe(takeUntilDestroyed()).subscribe(() => {
+      this.ngOnChanges();
     });
   }
 
-  getLabelInLanguage(resourceClass: ResourceClassDto, lang = 'en'): string {
-    return resourceClass.label ? resourceClass.label.find(l => l.language === lang)?.value || '' : '';
+  ngOnChanges() {
+    const lang = this._localizationService.currentLanguage;
+    const classesCount = this.ontology.classesAndCount || [];
+
+    // SortingHelper.sortByLabelsAlphabetically looks for a `labels` key on each item.
+    // Project this shape onto each entry so the helper can apply its language-fallback
+    // logic (preferred language -> any non-empty label) when sorting.
+    const decorated = classesCount.map(c => ({ ...c, labels: c.resourceClass.label ?? [] }));
+    this.resourceClassCounts = SortingHelper.sortByLabelsAlphabetically(decorated, 'labels', lang);
   }
 }

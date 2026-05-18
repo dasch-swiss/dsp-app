@@ -62,7 +62,7 @@ export class SortingHelper {
       const primary = labels.find(l => l.language === language)?.value;
       if (primary) return primary;
 
-      const fallback = labels.find(l => l.value.trim() !== '')?.value;
+      const fallback = labels.find(l => l.value && l.value.trim() !== '')?.value;
       if (fallback) return fallback;
     }
 

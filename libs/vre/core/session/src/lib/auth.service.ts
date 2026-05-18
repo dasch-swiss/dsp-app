@@ -30,7 +30,7 @@ export class AuthService {
 
     return this._userService.loadUser(identifierOrIri, identifierType).pipe(
       tap(user => {
-        this._localizationsService.setLanguage(user.lang);
+        this._localizationsService.currentLanguage = user.lang;
         this._grafanaFaroService.trackEvent('auth.login', {
           identifierType,
         });

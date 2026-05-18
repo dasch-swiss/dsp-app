@@ -1,4 +1,5 @@
 import { inject, Inject, Injectable } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   ApiResponseError,
   CanDoResponse,
@@ -183,7 +184,16 @@ export class OntologyEditService {
     private _ontologyService: OntologyService,
     private _projectPageService: ProjectPageService,
     private _listApiService: ListApiService
-  ) {}
+  ) {
+    this._localizationService.currentLanguage$.pipe(takeUntilDestroyed()).subscribe(() => {
+      // reset the current ontology to trigger the update of labels and comments in the current language
+      const currentOntology = this._currentOntology.value;
+      if (currentOntology) {
+        this._currentOntologyInfo.next(currentOntology);
+        this._currentOntology.next(currentOntology);
+      }
+    });
+  }
 
   initOntologyByLabel(label: string) {
     this._isTransacting.next(true);
@@ -500,7 +510,7 @@ export class OntologyEditService {
     allLists: ListNodeInfo[],
     props: ResourcePropertyDefinitionWithAllLanguages[]
   ): PropertyInfo[] {
-    const lang = this._localizationService.getCurrentLanguage();
+    const lang = this._localizationService.currentLanguage;
     return SortingHelper.sortByLabelsAlphabetically(props, 'label', lang)
       .filter(resProp => resProp.objectType !== Constants.LinkValue && !resProp.subjectType?.includes('Standoff'))
       .map((prop): PropertyInfo => {
@@ -579,7 +589,7 @@ export class OntologyEditService {
         }
       }
     });
-    const lang = this._localizationService.getCurrentLanguage();
+    const lang = this._localizationService.currentLanguage;
     return SortingHelper.sortByLabelsAlphabetically(ontoClasses, 'label', lang);
   }
 

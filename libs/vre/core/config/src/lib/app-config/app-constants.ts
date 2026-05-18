@@ -25,6 +25,10 @@ export const AvailableLanguages: { language: DaschLanguage; value: string }[] = 
 
 export const LocalStorageLanguageKey = 'dsp_language';
 
+export const AvailableLanguageKeys = AvailableLanguages.map(lang => lang.language);
+
+export type AvailableLanguage = (typeof AvailableLanguageKeys)[number];
+
 export class RouteConstants {
   static readonly home = '';
   static readonly help = 'help';

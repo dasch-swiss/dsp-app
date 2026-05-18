@@ -83,7 +83,7 @@ export class EditUserDialogComponent {
       this._dialogRef.close(true);
       this._notification.openSnackBar(this._translateService.instant('pages.userSettings.userForm.updateSuccess'));
       if (userUpdate.lang !== undefined && this.data.user.username === this._userService.currentUser?.username) {
-        this._localizationsService.setLanguage(userUpdate.lang);
+        this._localizationsService.currentLanguage = userUpdate.lang;
         document.location.reload();
       }
     });

@@ -5,9 +5,9 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute } from '@angular/router';
 import { APIV3ApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
-import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { LocalizationService, OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { AppProgressIndicatorComponent } from '@dasch-swiss/vre/ui/progress-indicator';
-import { catchError, combineLatest, first, map, of, shareReplay, switchMap } from 'rxjs';
+import { catchError, combineLatest, first, map, of, shareReplay, startWith, switchMap } from 'rxjs';
 import { ProjectPageService } from '../project-page.service';
 import { ResourceClassSidenavComponent } from './resource-class-sidenav/resource-class-sidenav.component';
 
@@ -75,10 +75,23 @@ import { ResourceClassSidenavComponent } from './resource-class-sidenav/resource
   encapsulation: ViewEncapsulation.None,
 })
 export class ProjectSidenavOntologiesComponent implements OnInit {
-  projectOntologies$ = this._projectPageService.currentProject$.pipe(
-    switchMap(project => this._v3.getV3ProjectsProjectiriResourcesperontology(project.id)),
-    map(ontologies =>
-      ontologies.sort((a, b) => a.ontology.label.toLowerCase().localeCompare(b.ontology.label.toLowerCase()))
+  projectOntologies$ = combineLatest([
+    this._projectPageService.currentProject$,
+    this._localizationService.currentLanguage$.pipe(startWith(this._localizationService.currentLanguage)),
+  ]).pipe(
+    switchMap(([project, lang]) =>
+      this._v3.getV3ProjectsProjectiriResourcesperontology(project.id).pipe(
+        map(ontologies =>
+          // `OntologyDto.label` is a single string pre-selected server-side (the
+          // `/v3/projects/{projectIri}/resourcesPerOntology` endpoint has no
+          // `Accept-Language` support), so we cannot change the label text
+          // client-side. We re-sort with the current language so collation rules
+          // (e.g. German umlaut ordering) match the user's selection.
+          [...ontologies].sort((a, b) =>
+            a.ontology.label.toLowerCase().localeCompare(b.ontology.label.toLowerCase(), lang)
+          )
+        )
+      )
     ),
     shareReplay({ bufferSize: 1, refCount: true }),
     catchError(error => {
@@ -92,7 +105,8 @@ export class ProjectSidenavOntologiesComponent implements OnInit {
     private readonly _projectPageService: ProjectPageService,
     private readonly _route: ActivatedRoute,
     private readonly _ontologyService: OntologyService,
-    private readonly _v3: APIV3ApiService
+    private readonly _v3: APIV3ApiService,
+    private readonly _localizationService: LocalizationService
   ) {}
 
   ngOnInit() {
