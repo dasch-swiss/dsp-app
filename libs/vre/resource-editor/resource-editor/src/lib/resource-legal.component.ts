@@ -10,7 +10,7 @@ import { ResourceLegalLicenseComponent } from './resource-legal-license.componen
 @Component({
   selector: 'app-resource-legal',
   template: `
-    @if (fileValue.copyrightHolder || fileValue.authorship?.length > 0 || fileValue.license) {
+    @if (fileValue.copyrightHolder || (fileValue.authorship?.length ?? 0) > 0 || fileValue.license) {
       <div
         class="mat-caption"
         style="border: 1px solid #292929; text-align: left;
@@ -31,7 +31,7 @@ import { ResourceLegalLicenseComponent } from './resource-legal-license.componen
                 </div>
               }
             }
-            @if (fileValue.authorship?.length > 0) {
+            @if ((fileValue.authorship?.length ?? 0) > 0) {
               @if (isPlaceholderAuthorship(fileValue.authorship)) {
                 <div role="status" data-cy="placeholder-authorship">
                   <span class="label">{{ 'resourceEditor.legal.authorship' | translate }}</span
