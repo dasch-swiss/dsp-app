@@ -5,7 +5,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute } from '@angular/router';
 import { APIV3ApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
-import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { LocalizationService, OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { AppProgressIndicatorComponent } from '@dasch-swiss/vre/ui/progress-indicator';
 import { catchError, combineLatest, first, map, of, shareReplay, switchMap } from 'rxjs';
 import { ProjectPageService } from '../project-page.service';
@@ -77,9 +77,15 @@ import { ResourceClassSidenavComponent } from './resource-class-sidenav/resource
 export class ProjectSidenavOntologiesComponent implements OnInit {
   projectOntologies$ = this._projectPageService.currentProject$.pipe(
     switchMap(project => this._v3.getV3ProjectsProjectiriResourcesperontology(project.id)),
-    map(ontologies =>
-      ontologies.sort((a, b) => a.ontology.label.toLowerCase().localeCompare(b.ontology.label.toLowerCase()))
-    ),
+    map(ontologies => {
+      // `OntologyDto.label` is a single string already pre-selected by the API,
+      // so we cannot fall back to another language client-side. We still pass the
+      // current language to `localeCompare` so collation rules match the locale.
+      const lang = this._localizationService.currentLanguage;
+      return [...ontologies].sort((a, b) =>
+        a.ontology.label.toLowerCase().localeCompare(b.ontology.label.toLowerCase(), lang)
+      );
+    }),
     shareReplay({ bufferSize: 1, refCount: true }),
     catchError(error => {
       console.error('Error loading project ontologies:', error);
@@ -92,7 +98,8 @@ export class ProjectSidenavOntologiesComponent implements OnInit {
     private readonly _projectPageService: ProjectPageService,
     private readonly _route: ActivatedRoute,
     private readonly _ontologyService: OntologyService,
-    private readonly _v3: APIV3ApiService
+    private readonly _v3: APIV3ApiService,
+    private readonly _localizationService: LocalizationService
   ) {}
 
   ngOnInit() {

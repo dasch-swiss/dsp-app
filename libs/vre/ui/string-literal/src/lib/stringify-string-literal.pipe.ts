@@ -9,18 +9,14 @@ import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services
 export class StringifyStringLiteralPipe implements PipeTransform {
   constructor(private readonly _localizationService: LocalizationService) {}
 
-  transform(value: StringLiteral[] | LanguageStringDto[]): string {
-    if (!value || value.length === 0) {
-      return '';
-    }
+  transform(value: StringLiteral[] | LanguageStringDto[] | null | undefined): string {
+    if (!value || !value.length) return '';
 
-    const userPreferedLanguage = this._localizationService.getCurrentLanguage();
-    // passed preferred language
-    let translation = value.find(i => i.language === userPreferedLanguage)?.value;
-    if (!translation) {
-      // if the string literal is not translated in the user preferred language
-      translation = value.find(i => i.language === this._localizationService.getLanguageFromBrowser())?.value;
-    }
-    return translation || value[0].value; // fallback to the first value in the array
+    const byCurrentLanguage = value.find(l => l.language === this._localizationService.currentLanguage)?.value;
+    if (byCurrentLanguage) return byCurrentLanguage;
+
+    // If no value is found for the current language, return the first non-empty value in any language
+    const firstNonEmpty = value.find(l => l.value && l.value.trim() !== '')?.value;
+    return firstNonEmpty ?? '';
   }
 }
