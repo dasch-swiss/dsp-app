@@ -210,7 +210,9 @@
         "name": "Définir un nom unique",
         "label": "Label",
         "comment": "Commentaire",
-        "nameExists": "Ce nom n'est pas autorisé ou existe déjà."
+        "nameExists": "Ce nom n'est pas autorisé ou existe déjà.",
+        "namePatternError": "Le nom doit commencer par une lettre et ne peut contenir que des lettres, des chiffres, des traits d'union, des points et des soulignements.",
+        "nameExistsError": "Ce nom n'est pas autorisé ou existe déjà."
       },
       "list": {
         "deleteList": "Supprimer le vocabulaire contrôlé",
@@ -290,13 +292,16 @@
       "propertyItem": {
         "edit": "Modifier",
         "removeFromClass": "Retirer de la classe",
-        "copyId": "Copier l'ID de la propriété"
+        "copyId": "Copier l'ID de la propriété",
+        "idCopied": "ID de propriété copié dans le presse-papiers !"
       },
       "propertyInfo": {
         "usedIn": "Utilisé dans",
         "notUsed": "Non utilisé",
         "cannotEdit": "Ne peut pas être modifié",
-        "cannotDelete": "Ne peut pas être supprimé"
+        "cannotDelete": "Ne peut pas être supprimé",
+        "deleteConfirmation": "Voulez-vous supprimer cette propriété ?",
+        "restrictedTo": "Limité à {{className}}"
       },
       "resourceClassInfo": {
         "collapse": "Réduire",
@@ -306,7 +311,9 @@
         "openInstances": "Ouvrir les instances",
         "copyId": "Copier l'ID de la classe",
         "cannotDelete": "Cette classe ne peut pas être supprimée car elle est utilisée !",
-        "delete": "Supprimer"
+        "delete": "Supprimer",
+        "deleteConfirmation": "Voulez-vous supprimer cette classe de ressource ?",
+        "idCopied": "ID de classe copié dans le presse-papiers !"
       },
       "propertyForm": {
         "editTitle": "Modifier la propriété",
@@ -509,7 +516,14 @@
         "play": "Lire",
         "stop": "Arrêter et revenir au début",
         "defaultView": "Vue par défaut",
-        "cinemaMode": "Mode cinéma"
+        "cinemaMode": "Mode cinéma",
+        "errors": {
+          "playbackAborted": "La lecture de la vidéo a été interrompue.",
+          "networkError": "Une erreur réseau a empêché le téléchargement de la vidéo.",
+          "decodingError": "La vidéo n'a pas pu être décodée.",
+          "formatNotSupported": "Le format vidéo n'est pas pris en charge.",
+          "unknownError": "Une erreur vidéo inconnue s'est produite."
+        }
       },
       "document": {
         "searchPlaceholder": "Rechercher dans le pdf...",
@@ -673,7 +687,8 @@
       "authorship": {
         "label": "Auteur·ice",
         "placeholder": "Nouvel·le auteur·ice...",
-        "pressEnterOrTab": "Appuyez sur Entrée ou Tab pour ajouter un élément."
+        "pressEnterOrTab": "Appuyez sur Entrée ou Tab pour ajouter un élément.",
+        "removeItem": "Supprimer {{name}}"
       },
       "image": {
         "label": "Image",
@@ -701,7 +716,9 @@
     },
     "templateSwitcher": {
       "nullableEditor": {
+        "add": "Ajouter",
         "addTooltip": "Ajouter",
+        "remove": "Supprimer",
         "removeTooltip": "Supprimer"
       },
       "createResourceDialog": {

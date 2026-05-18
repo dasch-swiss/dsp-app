@@ -210,7 +210,9 @@
         "name": "Set a unique name",
         "label": "Label",
         "comment": "Comment",
-        "nameExists": "This name is not allowed or exists already."
+        "nameExists": "This name is not allowed or exists already.",
+        "namePatternError": "The name must start with a letter and may only contain letters, digits, hyphens, dots and underscores.",
+        "nameExistsError": "This name is not allowed or already exists."
       },
       "list": {
         "deleteList": "Delete controlled vocabulary",
@@ -290,13 +292,16 @@
       "propertyItem": {
         "edit": "Edit",
         "removeFromClass": "Remove from class",
-        "copyId": "Copy property ID"
+        "copyId": "Copy property ID",
+        "idCopied": "Property ID copied to clipboard!"
       },
       "propertyInfo": {
         "usedIn": "Used in",
         "notUsed": "Not used",
         "cannotEdit": "Cannot edit",
-        "cannotDelete": "Cannot delete"
+        "cannotDelete": "Cannot delete",
+        "deleteConfirmation": "Do you want to delete this property?",
+        "restrictedTo": "Restricted to {{className}}"
       },
       "resourceClassInfo": {
         "collapse": "Collapse",
@@ -306,7 +311,9 @@
         "openInstances": "Open instances",
         "copyId": "Copy class ID",
         "cannotDelete": "This class cannot be deleted because it is in use!",
-        "delete": "Delete"
+        "delete": "Delete",
+        "deleteConfirmation": "Do you want to delete this resource class?",
+        "idCopied": "Class ID copied to clipboard!"
       },
       "propertyForm": {
         "editTitle": "Edit property",
@@ -509,7 +516,14 @@
         "play": "Play",
         "stop": "Stop and go to start",
         "defaultView": "Default view",
-        "cinemaMode": "Cinema mode"
+        "cinemaMode": "Cinema mode",
+        "errors": {
+          "playbackAborted": "Video playback was aborted.",
+          "networkError": "A network error caused the video download to fail.",
+          "decodingError": "The video could not be decoded.",
+          "formatNotSupported": "The video format is not supported.",
+          "unknownError": "An unknown video error occurred."
+        }
       },
       "document": {
         "searchPlaceholder": "Search in pdf...",
@@ -673,7 +687,8 @@
       "authorship": {
         "label": "Authorship",
         "placeholder": "New authorship...",
-        "pressEnterOrTab": "Press Enter or Tab to add an item."
+        "pressEnterOrTab": "Press Enter or Tab to add an item.",
+        "removeItem": "Remove {{name}}"
       },
       "image": {
         "label": "Image",
@@ -701,7 +716,9 @@
     },
     "templateSwitcher": {
       "nullableEditor": {
+        "add": "Add",
         "addTooltip": "Add",
+        "remove": "Remove",
         "removeTooltip": "Remove"
       },
       "createResourceDialog": {
