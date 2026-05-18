@@ -1,5 +1,40 @@
 # Changelog
 
+## [13.4.0](https://github.com/dasch-swiss/dsp-app/compare/v13.3.0...v13.4.0) (2026-05-18)
+
+
+### Enhancements
+
+* **advanced search:** enable escaping and searching of regex ([#3102](https://github.com/dasch-swiss/dsp-app/issues/3102)) ([aa89bd3](https://github.com/dasch-swiss/dsp-app/commit/aa89bd3a35e2ea3e25460ab879cc3ed98b85bea1))
+* display loading spinner while searching ([#3096](https://github.com/dasch-swiss/dsp-app/issues/3096)) ([0be0583](https://github.com/dasch-swiss/dsp-app/commit/0be0583edbc927c59065532043f910de52dfd86c))
+
+
+### Bug Fixes
+
+* **download-dialog:** restore warning panel styling broken by M3 tokens (DEV-6423) ([#3097](https://github.com/dasch-swiss/dsp-app/issues/3097)) ([9a82807](https://github.com/dasch-swiss/dsp-app/commit/9a828075baba0f42feffb07e39f23c9794419ddb))
+* enforce text-align left (DEV-6533) ([#3105](https://github.com/dasch-swiss/dsp-app/issues/3105)) ([9876a0a](https://github.com/dasch-swiss/dsp-app/commit/9876a0a078f0cf091985f6a397821d8fc5924aeb))
+* **i18n:** add 15 missing translation keys (DEV-6239) ([#3114](https://github.com/dasch-swiss/dsp-app/issues/3114)) ([4f91e96](https://github.com/dasch-swiss/dsp-app/commit/4f91e96d2a372b36ddd43aa3e690e1d7a8050769))
+* include color picker component in region creation dialog ([#3101](https://github.com/dasch-swiss/dsp-app/issues/3101)) ([cdb2297](https://github.com/dasch-swiss/dsp-app/commit/cdb2297b0594d2fd4d07298bc2d9a830f497a1f0))
+
+
+### Maintenances
+
+* **advanced-search:** use cascading nested menu (DEV-6523) ([#3106](https://github.com/dasch-swiss/dsp-app/issues/3106)) ([ba9a56c](https://github.com/dasch-swiss/dsp-app/commit/ba9a56ceb07f90bfb3b451fe59552bd0472111c2))
+* **deps:** Lock file maintenance ([#3100](https://github.com/dasch-swiss/dsp-app/issues/3100)) ([530eca3](https://github.com/dasch-swiss/dsp-app/commit/530eca3a7d24ab581d735262ccc4705d25950d6b))
+* **deps:** Lock file maintenance ([#3113](https://github.com/dasch-swiss/dsp-app/issues/3113)) ([ef1bc23](https://github.com/dasch-swiss/dsp-app/commit/ef1bc23a12c39a8c162542b97702a361c30a8533))
+* **deps:** Update dependency @sentry/angular from 10.51.0 to 10.52.0 ([#3099](https://github.com/dasch-swiss/dsp-app/issues/3099)) ([7fe39bf](https://github.com/dasch-swiss/dsp-app/commit/7fe39bf0154c0d8cded2166999fc65e872953748))
+* **deps:** Update dependency @sentry/angular from 10.52.0 to 10.53.1 ([#3111](https://github.com/dasch-swiss/dsp-app/issues/3111)) ([cfb248e](https://github.com/dasch-swiss/dsp-app/commit/cfb248ee15388678252123ddbe5d7016d5e44aea))
+* **deps:** Update dependency @sentry/cli from 3.4.1 to 3.4.2 ([#3108](https://github.com/dasch-swiss/dsp-app/issues/3108)) ([455d4ae](https://github.com/dasch-swiss/dsp-app/commit/455d4ae7b0f17c672fec8f94c62f00568a218b4c))
+* **deps:** Update dependency @swc/core from 1.15.32 to 1.15.33 ([#3090](https://github.com/dasch-swiss/dsp-app/issues/3090)) ([3943d8f](https://github.com/dasch-swiss/dsp-app/commit/3943d8fb97c429aff4c5d3bf017240ec839f79df))
+* **deps:** Update dependency postcss from 8.5.13 to 8.5.14 ([#3098](https://github.com/dasch-swiss/dsp-app/issues/3098)) ([e768066](https://github.com/dasch-swiss/dsp-app/commit/e76806646202aacec43fa7025dd6393feb58c131))
+* **deps:** Update dependency postcss-preset-env from 11.2.1 to 11.3.0 ([#3112](https://github.com/dasch-swiss/dsp-app/issues/3112)) ([5591881](https://github.com/dasch-swiss/dsp-app/commit/559188125b1e1e592e4c73ad2ba0564514ff1625))
+* **deps:** Update dependency wait-on from 9.0.6 to 9.0.10 ([#3109](https://github.com/dasch-swiss/dsp-app/issues/3109)) ([0693782](https://github.com/dasch-swiss/dsp-app/commit/0693782a52f350f16f1ebef0a00ceb80618cf772))
+* **deps:** Update grafana-faro-deps from 2.5.0 to 2.6.3 ([#3110](https://github.com/dasch-swiss/dsp-app/issues/3110)) ([845049c](https://github.com/dasch-swiss/dsp-app/commit/845049c3f0451b5ca32093689a0ce850a815ad14))
+* **deps:** Update influxdb Docker tag to v2.9 ([#3103](https://github.com/dasch-swiss/dsp-app/issues/3103)) ([9fb0237](https://github.com/dasch-swiss/dsp-app/commit/9fb0237467e92dfe3e3a017c2dd3ec713ecff4b7))
+* migrate learnings to dasch-specs repository ([#3093](https://github.com/dasch-swiss/dsp-app/issues/3093)) ([60ba75d](https://github.com/dasch-swiss/dsp-app/commit/60ba75d1f68d303c9334718eb1fb2383361eb707))
+* **open-api:** bump dsp-api spec v35.4.0-11-g8b8a765 → v35.8.1-5-g8360b63 ([#3092](https://github.com/dasch-swiss/dsp-app/issues/3092)) ([07f8d8d](https://github.com/dasch-swiss/dsp-app/commit/07f8d8da1ed741990b04d6cdd4d94ca0ae1d902d))
+* resource editor now splits from start with multiple resource-type elements ([#3089](https://github.com/dasch-swiss/dsp-app/issues/3089)) ([2a12c1d](https://github.com/dasch-swiss/dsp-app/commit/2a12c1d85b96a50a23233fdb78e36b39f0bcefd4))
+
 ## [13.3.0](https://github.com/dasch-swiss/dsp-app/compare/v13.2.0...v13.3.0) (2026-05-04)
 
 
