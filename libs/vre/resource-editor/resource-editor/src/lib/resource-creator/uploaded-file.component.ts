@@ -3,7 +3,8 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
-import { Observable } from 'rxjs';
+import { isPlaceholderValue } from '@dasch-swiss/vre/shared/app-common';
+import { EMPTY, Observable } from 'rxjs';
 import { UploadedFileResponse } from '../representations/upload/upload-file-response.interface';
 import { UploadFileService } from '../representations/upload/upload-file.service';
 
@@ -33,6 +34,13 @@ export class UploadedFileComponent implements OnInit {
   constructor(private readonly _uploadFileService: UploadFileService) {}
 
   ngOnInit() {
+    // Defensive: Phase 1 write flow never produces placeholder filenames here,
+    // but if a future code path mounts this component with the sentinel,
+    // skip the dsp-ingest fileInfo lookup (which would 404).
+    if (isPlaceholderValue(this.internalFilename)) {
+      this.fileToUpload$ = EMPTY;
+      return;
+    }
     const assetId = this.internalFilename.split('.')[0];
     this.fileToUpload$ = this._uploadFileService.getFileInfo(assetId, this.projectShortcode);
   }
