@@ -210,7 +210,9 @@
         "name": "Eindeutigen Namen festlegen",
         "label": "Bezeichnung",
         "comment": "Kommentar",
-        "nameExists": "Dieser Name ist nicht erlaubt oder existiert bereits."
+        "nameExists": "Dieser Name ist nicht erlaubt oder existiert bereits.",
+        "namePatternError": "Der Name muss mit einem Buchstaben beginnen und darf nur Buchstaben, Ziffern, Bindestriche, Punkte und Unterstriche enthalten.",
+        "nameExistsError": "Dieser Name ist nicht erlaubt oder existiert bereits."
       },
       "list": {
         "deleteList": "Kontrolliertes Vokabular löschen",
@@ -290,13 +292,16 @@
       "propertyItem": {
         "edit": "Bearbeiten",
         "removeFromClass": "Aus Klasse entfernen",
-        "copyId": "Eigenschafts-ID kopieren"
+        "copyId": "Eigenschafts-ID kopieren",
+        "idCopied": "Eigenschafts-ID in Zwischenablage kopiert!"
       },
       "propertyInfo": {
         "usedIn": "Verwendet in",
         "notUsed": "Nicht verwendet",
         "cannotEdit": "Kann nicht bearbeitet werden",
-        "cannotDelete": "Kann nicht gelöscht werden"
+        "cannotDelete": "Kann nicht gelöscht werden",
+        "deleteConfirmation": "Möchten Sie diese Eigenschaft löschen?",
+        "restrictedTo": "Eingeschränkt auf {{className}}"
       },
       "resourceClassInfo": {
         "collapse": "Einklappen",
@@ -306,7 +311,9 @@
         "openInstances": "Instanzen öffnen",
         "copyId": "Klassen-ID kopieren",
         "cannotDelete": "Diese Klasse kann nicht gelöscht werden, da sie verwendet wird!",
-        "delete": "Löschen"
+        "delete": "Löschen",
+        "deleteConfirmation": "Möchten Sie diese Ressourcenklasse löschen?",
+        "idCopied": "Klassen-ID in Zwischenablage kopiert!"
       },
       "propertyForm": {
         "editTitle": "Eigenschaft bearbeiten",
@@ -452,7 +459,14 @@
         "play": "Abspielen",
         "stop": "Stoppen und zum Anfang gehen",
         "defaultView": "Standardansicht",
-        "cinemaMode": "Kinomodus"
+        "cinemaMode": "Kinomodus",
+        "errors": {
+          "playbackAborted": "Die Videowiedergabe wurde abgebrochen.",
+          "networkError": "Ein Netzwerkfehler hat das Herunterladen des Videos verhindert.",
+          "decodingError": "Das Video konnte nicht dekodiert werden.",
+          "formatNotSupported": "Das Videoformat wird nicht unterstützt.",
+          "unknownError": "Ein unbekannter Videofehler ist aufgetreten."
+        }
       },
       "stillImage": {
         "createAnnotation": "Annotation erstellen",
@@ -673,7 +687,8 @@
       "authorship": {
         "label": "Autorenschaft",
         "placeholder": "Neue Autorenschaft...",
-        "pressEnterOrTab": "Drücken Sie Enter oder Tab, um ein Element hinzuzufügen."
+        "pressEnterOrTab": "Drücken Sie Enter oder Tab, um ein Element hinzuzufügen.",
+        "removeItem": "{{name}} entfernen"
       },
       "image": {
         "label": "Bild",
