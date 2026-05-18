@@ -1,9 +1,4 @@
-import {
-  isPlaceholderAsset,
-  isPlaceholderAuthorship,
-  isPlaceholderValue,
-  PLACEHOLDER_IRI,
-} from './placeholder';
+import { isPlaceholderAsset, isPlaceholderAuthorship, isPlaceholderValue, PLACEHOLDER_IRI } from './placeholder';
 
 describe('placeholder utilities', () => {
   describe('PLACEHOLDER_IRI', () => {

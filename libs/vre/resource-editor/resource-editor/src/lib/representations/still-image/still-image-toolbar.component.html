@@ -20,17 +20,15 @@
       <mat-icon>share</mat-icon>
     </div>
     @if (!isPlaceholder) {
-      <div
-        class="clickable-icon"
-        data-cy="still-image-download-button"
-        [matTooltip]="'resourceEditor.representations.stillImage.download' | translate"
-        [class.disabled]="isReadStillImageExternalFileValue || !userCanView"
-        (click)="download()">
-        <mat-icon>download</mat-icon>
-      </div>
-    }
-
-    @if ((resourceFetcherService.userCanEdit$ | async) && !isReadStillImageExternalFileValue) {
+    <div
+      class="clickable-icon"
+      data-cy="still-image-download-button"
+      [matTooltip]="'resourceEditor.representations.stillImage.download' | translate"
+      [class.disabled]="isReadStillImageExternalFileValue || !userCanView"
+      (click)="download()">
+      <mat-icon>download</mat-icon>
+    </div>
+    } @if ((resourceFetcherService.userCanEdit$ | async) && !isReadStillImageExternalFileValue) {
     <div
       class="clickable-icon"
       data-cy="still-image-region-button"
@@ -91,11 +89,10 @@
 
 <mat-menu #more="matMenu" class="representation-menu">
   @if (!isPlaceholder) {
-    <a mat-menu-item [href]="imageFileValue?.fileUrl" target="_blank" data-cy="open-iiif-new-tab">
-      {{ 'resourceEditor.representations.stillImage.openIiifInNewTab' | translate }}
-    </a>
-  }
-  @if (resourceFetcherService.userCanEdit$ | async) {
+  <a mat-menu-item [href]="imageFileValue?.fileUrl" target="_blank" data-cy="open-iiif-new-tab">
+    {{ 'resourceEditor.representations.stillImage.openIiifInNewTab' | translate }}
+  </a>
+  } @if (resourceFetcherService.userCanEdit$ | async) {
   <button data-cy="replace-image-button" mat-menu-item (click)="replaceImage()">
     {{ 'resourceEditor.representations.replaceFile' | translate }}
   </button>
@@ -104,14 +101,14 @@
 
 <mat-menu #share="matMenu" class="res-share-menu">
   @if (!isPlaceholder) {
-    <button
-      mat-menu-item
-      (click)="notification.openSnackBar(_translateService.instant('resourceEditor.representations.stillImage.iiifUrlCopied'))"
-      [cdkCopyToClipboard]="imageFileValue?.fileUrl ?? ''"
-      data-cy="copy-iiif-url">
-      <mat-icon>content_copy</mat-icon>
-      {{ 'resourceEditor.representations.stillImage.copyIiifUrl' | translate }}
-    </button>
+  <button
+    mat-menu-item
+    (click)="notification.openSnackBar(_translateService.instant('resourceEditor.representations.stillImage.iiifUrlCopied'))"
+    [cdkCopyToClipboard]="imageFileValue?.fileUrl ?? ''"
+    data-cy="copy-iiif-url">
+    <mat-icon>content_copy</mat-icon>
+    {{ 'resourceEditor.representations.stillImage.copyIiifUrl' | translate }}
+  </button>
   }
   <button
     mat-menu-item
