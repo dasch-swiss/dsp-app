@@ -210,7 +210,9 @@
         "name": "Imposta un nome univoco",
         "label": "Etichetta",
         "comment": "Commento",
-        "nameExists": "Questo nome non è consentito o esiste già."
+        "nameExists": "Questo nome non è consentito o esiste già.",
+        "namePatternError": "Il nome deve iniziare con una lettera e può contenere solo lettere, cifre, trattini, punti e trattini bassi.",
+        "nameExistsError": "Questo nome non è consentito o esiste già."
       },
       "list": {
         "deleteList": "Elimina vocabolario controllato",
@@ -290,13 +292,16 @@
       "propertyItem": {
         "edit": "Modifica",
         "removeFromClass": "Rimuovi dalla classe",
-        "copyId": "Copia ID della proprietà"
+        "copyId": "Copia ID della proprietà",
+        "idCopied": "ID proprietà copiato negli appunti!"
       },
       "propertyInfo": {
         "usedIn": "Usato in",
         "notUsed": "Non usato",
         "cannotEdit": "Non può essere modificato",
-        "cannotDelete": "Non può essere eliminato"
+        "cannotDelete": "Non può essere eliminato",
+        "deleteConfirmation": "Vuoi eliminare questa proprietà?",
+        "restrictedTo": "Limitato a {{className}}"
       },
       "resourceClassInfo": {
         "collapse": "Riduci",
@@ -306,7 +311,9 @@
         "openInstances": "Apri istanze",
         "copyId": "Copia ID della classe",
         "cannotDelete": "Questa classe non può essere eliminata perché è in uso!",
-        "delete": "Elimina"
+        "delete": "Elimina",
+        "deleteConfirmation": "Vuoi eliminare questa classe di risorsa?",
+        "idCopied": "ID classe copiato negli appunti!"
       },
       "propertyForm": {
         "editTitle": "Modifica proprietà",
@@ -509,7 +516,14 @@
         "play": "Riproduci",
         "stop": "Ferma e torna all'inizio",
         "defaultView": "Vista predefinita",
-        "cinemaMode": "Modalità cinema"
+        "cinemaMode": "Modalità cinema",
+        "errors": {
+          "playbackAborted": "La riproduzione del video è stata interrotta.",
+          "networkError": "Un errore di rete ha impedito il download del video.",
+          "decodingError": "Impossibile decodificare il video.",
+          "formatNotSupported": "Il formato video non è supportato.",
+          "unknownError": "Si è verificato un errore video sconosciuto."
+        }
       },
       "document": {
         "searchPlaceholder": "Cerca nel pdf...",
@@ -673,7 +687,8 @@
       "authorship": {
         "label": "Autore",
         "placeholder": "Nuovo autore...",
-        "pressEnterOrTab": "Premere Invio o Tab per aggiungere un elemento."
+        "pressEnterOrTab": "Premere Invio o Tab per aggiungere un elemento.",
+        "removeItem": "Rimuovi {{name}}"
       },
       "image": {
         "label": "Immagine",
@@ -701,7 +716,9 @@
     },
     "templateSwitcher": {
       "nullableEditor": {
+        "add": "Aggiungi",
         "addTooltip": "Aggiungi",
+        "remove": "Rimuovi",
         "removeTooltip": "Rimuovi"
       },
       "createResourceDialog": {
