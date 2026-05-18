@@ -59,9 +59,11 @@ describe('DownloadDialogResourcesTabComponent', () => {
       openSnackBar: jest.fn(),
     } as any;
 
-    mockLocalizationService = {
-      getCurrentLanguage: jest.fn().mockReturnValue('en'),
-    } as any;
+    mockLocalizationService = {} as any;
+    Object.defineProperty(mockLocalizationService, 'currentLanguage', {
+      get: () => 'en',
+      configurable: true,
+    });
 
     mockTranslateService = {
       instant: jest.fn((key: string) => key),
@@ -211,7 +213,10 @@ describe('DownloadDialogResourcesTabComponent', () => {
     });
 
     it('should use current language from localization service', () => {
-      mockLocalizationService.currentLanguage.mockReturnValue('de');
+      Object.defineProperty(mockLocalizationService, 'currentLanguage', {
+        get: () => 'de',
+        configurable: true,
+      });
 
       component.downloadCsv();
 
