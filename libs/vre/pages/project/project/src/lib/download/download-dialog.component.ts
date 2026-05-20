@@ -23,7 +23,7 @@ export interface DownloadDialogData {
       [subtitle]="'pages.dataBrowser.downloadDialog.resourcesAvailable' | translate: { count: data.resourceCount }" />
     @if (data.resourceCount > largeThreshold) {
       <div class="large-export-warning" data-cy="large-export-warning" role="alert">
-        <mat-icon color="warn">warning</mat-icon>
+        <mat-icon>warning</mat-icon>
         <span>{{
           'pages.dataBrowser.downloadDialog.largeExportWarning' | translate: { count: data.resourceCount }
         }}</span>
@@ -44,8 +44,12 @@ export interface DownloadDialogData {
         align-items: flex-start;
         gap: 8px;
         padding: 12px 24px;
-        background: var(--mat-warn-container-color);
-        color: var(--mat-warn-on-container-color);
+        background: #fff3e0;
+        color: #e65100;
+      }
+
+      .large-export-warning mat-icon {
+        flex-shrink: 0;
       }
     `,
   ],

@@ -2,7 +2,12 @@ import { Component, Inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogActions, MatDialogClose, MatDialogContent } from '@angular/material/dialog';
-import { CkEditorControlComponent, CommonInputComponent, DialogHeaderComponent } from '@dasch-swiss/vre/ui/ui';
+import {
+  CkEditorControlComponent,
+  ColorPickerComponent,
+  CommonInputComponent,
+  DialogHeaderComponent,
+} from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe } from '@ngx-translate/core';
 
 export interface AddRegionFormDialogProps {
@@ -20,6 +25,7 @@ export interface AddRegionFormDialogProps {
     ReactiveFormsModule,
     CommonInputComponent,
     CkEditorControlComponent,
+    ColorPickerComponent,
     MatButton,
     TranslatePipe,
   ],
