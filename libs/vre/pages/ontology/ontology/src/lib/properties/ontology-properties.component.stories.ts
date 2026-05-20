@@ -4,7 +4,6 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 import { Constants } from '@dasch-swiss/dsp-js';
 import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
 import { DefaultProperties } from '@dasch-swiss/vre/shared/app-helper-services';
-import { TranslateModule } from '@ngx-translate/core';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
 import { expect, within } from 'storybook/test';
@@ -49,7 +48,6 @@ type Story = StoryObj<OntologyPropertiesComponent>;
 const sharedProviders = [
   provideAnimations(),
   importProvidersFrom(OverlayModule),
-  ...TranslateModule.forRoot().providers!,
   ...STORY_PROVIDERS,
   {
     provide: OntologyEditService,

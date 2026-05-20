@@ -1,7 +1,5 @@
-import { provideAnimations } from '@angular/platform-browser/animations';
 import { Cardinality } from '@dasch-swiss/dsp-js';
-import { TranslateModule } from '@ngx-translate/core';
-import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
+import { type Meta, type StoryObj } from '@storybook/angular';
 import { expect, within } from 'storybook/test';
 import { makeClassPropertyInfo } from '../../../stories.helpers';
 import { CardinalityComponent } from './cardinality.component';
@@ -30,15 +28,8 @@ const meta: Meta<CardinalityComponent> = {
 export default meta;
 type Story = StoryObj<CardinalityComponent>;
 
-const sharedDecorators = [
-  applicationConfig({
-    providers: [provideAnimations(), ...TranslateModule.forRoot().providers!],
-  }),
-];
-
 export const NotRequiredNotMultiple: Story = {
   name: 'Shows unchecked checkboxes for 0-1 cardinality',
-  decorators: sharedDecorators,
   args: {
     classProp: { ...classProp, iHasProperty: { ...classProp.iHasProperty, cardinality: Cardinality._0_1 } },
     disabled: false,
@@ -59,7 +50,6 @@ export const NotRequiredNotMultiple: Story = {
 
 export const RequiredSingle: Story = {
   name: 'Shows required checked for exactly-one cardinality',
-  decorators: sharedDecorators,
   args: {
     classProp: { ...classProp, iHasProperty: { ...classProp.iHasProperty, cardinality: Cardinality._1 } },
     disabled: false,
@@ -75,7 +65,6 @@ export const RequiredSingle: Story = {
 
 export const DisabledState: Story = {
   name: 'Disables checkboxes when disabled input is true',
-  decorators: sharedDecorators,
   args: {
     classProp,
     disabled: true,

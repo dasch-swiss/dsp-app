@@ -5,7 +5,6 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
-import { TranslateModule } from '@ngx-translate/core';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
 import { expect } from 'storybook/test';
@@ -25,7 +24,7 @@ class CreateOntologyFormDialogLauncherComponent implements OnInit {
 }
 
 const meta: Meta<CreateOntologyFormDialogLauncherComponent> = {
-  title: 'Ontology / Forms / Create Ontology Form Dialog',
+  title: 'Ontology / Data Models / Create Ontology Form Dialog',
   component: CreateOntologyFormDialogLauncherComponent,
 };
 export default meta;
@@ -34,11 +33,10 @@ type Story = StoryObj<CreateOntologyFormDialogLauncherComponent>;
 const sharedProviders = [
   provideAnimations(),
   importProvidersFrom(OverlayModule),
-  ...TranslateModule.forRoot().providers!,
   ...STORY_PROVIDERS,
   {
     provide: DspApiConnectionToken,
-    useValue: { v2: { onto: { createOntology: () => of({}) } } } as Partial<KnoraApiConnection>,
+    useValue: { v2: { onto: { createOntology: () => of({}) } } } as unknown as Partial<KnoraApiConnection>,
   },
   { provide: OntologyEditService, useValue: makeOntologyEditServiceStub() },
   { provide: ProjectPageService, useValue: makeProjectPageServiceStub() },

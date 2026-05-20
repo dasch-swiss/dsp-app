@@ -1,6 +1,4 @@
-import { provideAnimations } from '@angular/platform-browser/animations';
-import { TranslateModule } from '@ngx-translate/core';
-import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
+import { type Meta, type StoryObj } from '@storybook/angular';
 import { expect, userEvent, within } from 'storybook/test';
 import { OntologyFormComponent } from './ontology-form.component';
 
@@ -27,15 +25,8 @@ const meta: Meta<OntologyFormComponent> = {
 export default meta;
 type Story = StoryObj<OntologyFormComponent>;
 
-const sharedDecorators = [
-  applicationConfig({
-    providers: [provideAnimations(), ...TranslateModule.forRoot().providers!],
-  }),
-];
-
 export const CreateMode: Story = {
   name: 'Renders empty form in create mode',
-  decorators: sharedDecorators,
   args: { mode: 'create' },
   play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
@@ -48,7 +39,6 @@ export const CreateMode: Story = {
 
 export const EditMode: Story = {
   name: 'Pre-fills form fields in edit mode',
-  decorators: sharedDecorators,
   args: {
     mode: 'edit',
     data: { id: 'http://0.0.0.0:3333/ontology/0001/test/v2', label: 'My Ontology', comment: 'Describes test data' },
@@ -64,7 +54,6 @@ export const EditMode: Story = {
 
 export const ShowsValidationErrors: Story = {
   name: 'Shows required validation on submit attempt',
-  decorators: sharedDecorators,
   args: { mode: 'create' },
   play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);

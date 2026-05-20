@@ -4,7 +4,6 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 import { OntologyMetadata } from '@dasch-swiss/dsp-js';
 import { ListApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
-import { TranslateModule } from '@ngx-translate/core';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
 import { expect, within } from 'storybook/test';
@@ -16,7 +15,7 @@ const sampleOntologies: OntologyMetadata[] = [
 ];
 
 const meta: Meta<DataModelsPageComponent> = {
-  title: 'Ontology / Data Models / Data Models Page',
+  title: 'Ontology / Data Models / _Data Models Page',
   component: DataModelsPageComponent,
   argTypes: {},
 };
@@ -26,7 +25,6 @@ type Story = StoryObj<DataModelsPageComponent>;
 const sharedProviders = [
   provideAnimations(),
   importProvidersFrom(OverlayModule),
-  ...TranslateModule.forRoot().providers!,
   ...STORY_PROVIDERS,
   {
     provide: ProjectPageService,

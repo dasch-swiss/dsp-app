@@ -2,7 +2,6 @@ import { OverlayModule } from '@angular/cdk/overlay';
 import { Component, importProvidersFrom, inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { provideAnimations } from '@angular/platform-browser/animations';
-import { TranslateModule } from '@ngx-translate/core';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { expect } from 'storybook/test';
 import { OntologyEditService } from '../../services/ontology-edit.service';
@@ -37,7 +36,6 @@ type Story = StoryObj<EditOntologyFormDialogLauncherComponent>;
 const sharedProviders = [
   provideAnimations(),
   importProvidersFrom(OverlayModule),
-  ...TranslateModule.forRoot().providers!,
   ...STORY_PROVIDERS,
   { provide: OntologyEditService, useValue: makeOntologyEditServiceStub() },
   { provide: MAT_DIALOG_DATA, useValue: dialogData },

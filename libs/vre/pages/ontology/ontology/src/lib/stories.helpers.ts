@@ -1,5 +1,6 @@
 import { provideRouter } from '@angular/router';
 import { Cardinality, Constants, IHasProperty, ResourceClassDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
+import { UserService } from '@dasch-swiss/vre/core/session';
 import { DefaultProperties } from '@dasch-swiss/vre/shared/app-helper-services';
 import { BehaviorSubject, of } from 'rxjs';
 import { ClassPropertyInfo, ResourceClassInfo } from './ontology.types';
@@ -113,4 +114,7 @@ export const makeClassPropertyInfo = (): ClassPropertyInfo => {
   };
 };
 
-export const STORY_PROVIDERS = [provideRouter([{ path: '**', redirectTo: '' }])];
+export const STORY_PROVIDERS = [
+  provideRouter([{ path: '**', redirectTo: '' }]),
+  { provide: UserService, useValue: { currentUser: null } },
+];

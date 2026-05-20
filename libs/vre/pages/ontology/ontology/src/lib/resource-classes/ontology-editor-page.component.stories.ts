@@ -6,7 +6,6 @@ import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { DialogService } from '@dasch-swiss/vre/ui/ui';
-import { TranslateModule } from '@ngx-translate/core';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
 import { expect, within } from 'storybook/test';
@@ -34,7 +33,6 @@ type Story = StoryObj<OntologyEditorPageComponent>;
 const sharedProviders = [
   provideAnimations(),
   importProvidersFrom(OverlayModule),
-  ...TranslateModule.forRoot().providers!,
   ...STORY_PROVIDERS,
   { provide: DspApiConnectionToken, useValue: { v2: { onto: { canDeleteResourceClass: () => of({ canDo: true }) } } } },
   {

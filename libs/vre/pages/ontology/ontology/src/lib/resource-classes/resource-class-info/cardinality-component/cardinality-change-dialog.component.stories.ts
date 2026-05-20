@@ -4,7 +4,6 @@ import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { Cardinality, KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
-import { TranslateModule } from '@ngx-translate/core';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
 import { expect } from 'storybook/test';
@@ -59,7 +58,6 @@ type Story = StoryObj<CardinalityCanChangeLauncherComponent>;
 const sharedProviders = [
   provideAnimations(),
   importProvidersFrom(OverlayModule),
-  ...TranslateModule.forRoot().providers!,
   ...STORY_PROVIDERS,
 ];
 
@@ -73,7 +71,7 @@ export const CanChangeCardinality: Story = {
           provide: DspApiConnectionToken,
           useValue: {
             v2: { onto: { canReplaceCardinalityOfResourceClassWith: () => of({ canDo: true }) } },
-          } as Partial<KnoraApiConnection>,
+          } as unknown as Partial<KnoraApiConnection>,
         },
         { provide: MAT_DIALOG_DATA, useValue: canDoCardinalityData },
       ],
@@ -102,7 +100,7 @@ export const CannotChangeCardinality: Story = {
                   of({ canDo: false, cannotDoReason: 'is not included in the new cardinality' }),
               },
             },
-          } as Partial<KnoraApiConnection>,
+          } as unknown as Partial<KnoraApiConnection>,
         },
         { provide: MAT_DIALOG_DATA, useValue: cannotDoCardinalityData },
       ],

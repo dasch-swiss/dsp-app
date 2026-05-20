@@ -1,7 +1,6 @@
 import { OverlayModule } from '@angular/cdk/overlay';
 import { importProvidersFrom } from '@angular/core';
 import { provideAnimations } from '@angular/platform-browser/animations';
-import { TranslateModule } from '@ngx-translate/core';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { expect, within } from 'storybook/test';
 import { OntologyEditService } from '../../services/ontology-edit.service';
@@ -26,7 +25,6 @@ type Story = StoryObj<AddPropertyMenuComponent>;
 const sharedProviders = [
   provideAnimations(),
   importProvidersFrom(OverlayModule),
-  ...TranslateModule.forRoot().providers!,
   ...STORY_PROVIDERS,
   { provide: OntologyEditService, useValue: makeOntologyEditServiceStub() },
 ];

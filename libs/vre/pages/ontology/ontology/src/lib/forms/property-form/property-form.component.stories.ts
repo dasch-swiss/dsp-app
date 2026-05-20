@@ -1,7 +1,6 @@
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { Constants } from '@dasch-swiss/dsp-js';
 import { DefaultProperties } from '@dasch-swiss/vre/shared/app-helper-services';
-import { TranslateModule } from '@ngx-translate/core';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { expect, within } from 'storybook/test';
 import { OntologyEditService } from '../../services/ontology-edit.service';
@@ -31,7 +30,6 @@ const sharedDecorators = [
   applicationConfig({
     providers: [
       provideAnimations(),
-      ...TranslateModule.forRoot().providers!,
       ...STORY_PROVIDERS,
       { provide: OntologyEditService, useValue: makeOntologyEditServiceStub() },
     ],

@@ -7,7 +7,6 @@ import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
 import { LocalizationService, OntologyService, SortingHelper } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
 import { expect, within } from 'storybook/test';
@@ -34,9 +33,7 @@ export default meta;
 type Story = StoryObj<OntologyPageComponent>;
 
 const sharedProviders = [
-  provideAnimations(),
   importProvidersFrom(OverlayModule),
-  ...TranslateModule.forRoot().providers!,
   ...STORY_PROVIDERS,
   { provide: ProjectPageService, useValue: makeProjectPageServiceStub({ ontologies$: of([sampleOntology]) }) },
   { provide: ListApiService, useValue: { listInProject: () => of({ lists: [] }) } },
@@ -62,7 +59,6 @@ const sharedProviders = [
     },
   },
   { provide: SortingHelper, useValue: { sortByLabelsAlphabetically: (arr: any[]) => arr } },
-  { provide: TranslateService, useValue: { instant: (key: string) => key } },
 ];
 
 export const DefaultView: Story = {

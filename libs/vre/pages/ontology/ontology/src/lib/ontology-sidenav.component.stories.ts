@@ -2,7 +2,6 @@ import { OverlayModule } from '@angular/cdk/overlay';
 import { importProvidersFrom } from '@angular/core';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
-import { TranslateModule } from '@ngx-translate/core';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
 import { expect, within } from 'storybook/test';
@@ -21,7 +20,6 @@ type Story = StoryObj<OntologySidenavComponent>;
 const sharedProviders = [
   provideAnimations(),
   importProvidersFrom(OverlayModule),
-  ...TranslateModule.forRoot().providers!,
   ...STORY_PROVIDERS,
   { provide: OntologyPageService, useValue: makeOntologyPageServiceStub() },
   { provide: ProjectPageService, useValue: makeProjectPageServiceStub() },
