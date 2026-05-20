@@ -8,7 +8,7 @@ import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { DialogService } from '@dasch-swiss/vre/ui/ui';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
-import { expect, within } from 'storybook/test';
+import { expect, userEvent, within } from 'storybook/test';
 import { OntologyPageService } from '../../ontology-page.service';
 import { OntologyEditService } from '../../services/ontology-edit.service';
 import {
@@ -66,8 +66,10 @@ export const AdminView: Story = {
   args: { resourceClass },
   play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
-    await step('Edit menu button is visible', async () => {
-      await expect(canvas.getByTestId('class-menu-button')).toBeInTheDocument();
+    await step('Edit menu button is visible on hover', async () => {
+      const card = canvas.getByTestId('class-card');
+      await userEvent.hover(card);
+      await expect(canvas.getByTestId('more-button')).toBeInTheDocument();
     });
   },
 };

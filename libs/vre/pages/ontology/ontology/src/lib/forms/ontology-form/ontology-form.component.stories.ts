@@ -57,11 +57,12 @@ export const ShowsValidationErrors: Story = {
   args: { mode: 'create' },
   play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
-    await step('Touching label and tabbing away shows mat-error', async () => {
-      const label = canvas.getByTestId('label-input');
-      await userEvent.click(label);
+    await step('Touching label input and tabbing away shows mat-error', async () => {
+      const input = canvas.getByTestId('common-input-text');
+      await userEvent.click(input);
       await userEvent.tab();
-      await expect(canvas.getByRole('alert')).toBeInTheDocument();
+      const error = await canvas.findByText('This field is required');
+      await expect(error).toBeInTheDocument();
     });
   },
 };

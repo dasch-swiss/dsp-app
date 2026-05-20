@@ -6,7 +6,7 @@ import { Constants } from '@dasch-swiss/dsp-js';
 import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
 import { DefaultProperties } from '@dasch-swiss/vre/shared/app-helper-services';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
-import { expect } from 'storybook/test';
+import { expect, waitFor } from 'storybook/test';
 import { OntologyEditService } from '../../services/ontology-edit.service';
 import { makeOntologyEditServiceStub, makeProjectPageServiceStub, STORY_PROVIDERS } from '../../stories.helpers';
 import { EditPropertyFormDialogComponent } from './edit-property-form-dialog.component';
@@ -28,26 +28,23 @@ const editDialogData: EditPropertyDialogData = {
 };
 
 @Component({
-  selector: 'app-create-property-dialog-launcher',
+  selector: 'app-property-dialog-launcher',
   template: ``,
 })
-class CreatePropertyDialogLauncherComponent implements OnInit {
+class PropertyDialogLauncherComponent implements OnInit {
   private _dialog = inject(MatDialog);
+  private _data = inject<CreatePropertyDialogData | EditPropertyDialogData>(MAT_DIALOG_DATA);
   ngOnInit() {
-    this._dialog.open(EditPropertyFormDialogComponent, { data: createDialogData });
+    this._dialog.open(EditPropertyFormDialogComponent, { data: this._data });
   }
 }
 
-@Component({
-  selector: 'app-edit-property-dialog-launcher',
-  template: ``,
-})
-class EditPropertyDialogLauncherComponent implements OnInit {
-  private _dialog = inject(MatDialog);
-  ngOnInit() {
-    this._dialog.open(EditPropertyFormDialogComponent, { data: editDialogData });
-  }
-}
+const meta: Meta<PropertyDialogLauncherComponent> = {
+  title: 'Ontology Editor / 3b. Properties Tab / Edit Property Form Dialog',
+  component: PropertyDialogLauncherComponent,
+};
+export default meta;
+type Story = StoryObj<PropertyDialogLauncherComponent>;
 
 const sharedProviders = [
   provideAnimations(),
@@ -56,13 +53,6 @@ const sharedProviders = [
   { provide: OntologyEditService, useValue: makeOntologyEditServiceStub() },
   { provide: ProjectPageService, useValue: makeProjectPageServiceStub() },
 ];
-
-const meta: Meta<CreatePropertyDialogLauncherComponent> = {
-  title: 'Ontology Editor / 3b. Properties Tab / Edit Property Form Dialog',
-  component: CreatePropertyDialogLauncherComponent,
-};
-export default meta;
-type Story = StoryObj<CreatePropertyDialogLauncherComponent>;
 
 export const CreatePropertyDialog: Story = {
   name: 'Opens create property dialog with type selector and name field',
@@ -73,32 +63,33 @@ export const CreatePropertyDialog: Story = {
   ],
   play: async ({ step }) => {
     await step('Dialog is rendered', async () => {
-      const container = document.querySelector('mat-dialog-container');
-      await expect(container).not.toBeNull();
+      await waitFor(() => {
+        const container = document.querySelector('mat-dialog-container');
+        expect(container).not.toBeNull();
+      });
     });
     await step('Submit button is present', async () => {
-      const submitButton = document.querySelector('[data-cy="submit-button"]');
-      await expect(submitButton).not.toBeNull();
+      await waitFor(() => {
+        const submitButton = document.querySelector('[data-cy="submit-button"]');
+        expect(submitButton).not.toBeNull();
+      });
     });
   },
 };
 
 export const EditPropertyDialog: Story = {
-  storyName: 'Opens edit property dialog pre-filled with existing property data',
+  name: 'Opens edit property dialog pre-filled with existing property data',
   decorators: [
     applicationConfig({
       providers: [...sharedProviders, { provide: MAT_DIALOG_DATA, useValue: editDialogData }],
     }),
   ],
-  render: () => ({
-    props: {},
-    template: `<app-edit-property-dialog-launcher></app-edit-property-dialog-launcher>`,
-    imports: [EditPropertyDialogLauncherComponent],
-  }),
   play: async ({ step }) => {
     await step('Dialog is rendered', async () => {
-      const container = document.querySelector('mat-dialog-container');
-      await expect(container).not.toBeNull();
+      await waitFor(() => {
+        const container = document.querySelector('mat-dialog-container');
+        expect(container).not.toBeNull();
+      });
     });
   },
 };

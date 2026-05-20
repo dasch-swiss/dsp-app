@@ -71,7 +71,7 @@ export const AdminCanCreate: Story = {
   play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
     await step('Create ontology button is visible', async () => {
-      await expect(canvas.getByTestId('create-ontology-button')).toBeInTheDocument();
+      await expect(canvas.getByTestId('create-button')).toBeInTheDocument();
     });
   },
 };

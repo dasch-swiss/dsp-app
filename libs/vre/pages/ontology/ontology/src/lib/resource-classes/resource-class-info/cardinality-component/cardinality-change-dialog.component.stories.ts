@@ -6,7 +6,7 @@ import { Cardinality, KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
-import { expect } from 'storybook/test';
+import { expect, waitFor } from 'storybook/test';
 import { makeClassPropertyInfo, STORY_PROVIDERS } from '../../../stories.helpers';
 import { CardinalityChangeDialogComponent, CardinalityInfo } from './cardinality-change-dialog.component';
 
@@ -27,33 +27,23 @@ const cannotDoCardinalityData: CardinalityInfo = {
 };
 
 @Component({
-  selector: 'app-cardinality-can-change-launcher',
+  selector: 'app-cardinality-dialog-launcher',
   template: ``,
 })
-class CardinalityCanChangeLauncherComponent implements OnInit {
+class CardinalityDialogLauncherComponent implements OnInit {
   private _dialog = inject(MatDialog);
+  private _data = inject<CardinalityInfo>(MAT_DIALOG_DATA);
   ngOnInit() {
-    this._dialog.open(CardinalityChangeDialogComponent, { data: canDoCardinalityData });
+    this._dialog.open(CardinalityChangeDialogComponent, { data: this._data });
   }
 }
 
-@Component({
-  selector: 'app-cardinality-cannot-change-launcher',
-  template: ``,
-})
-class CardinalityCannotChangeLauncherComponent implements OnInit {
-  private _dialog = inject(MatDialog);
-  ngOnInit() {
-    this._dialog.open(CardinalityChangeDialogComponent, { data: cannotDoCardinalityData });
-  }
-}
-
-const meta: Meta<CardinalityCanChangeLauncherComponent> = {
+const meta: Meta<CardinalityDialogLauncherComponent> = {
   title: 'Ontology Editor / 3a. Resource Classes Tab / Resource Class Info / Cardinality Change Dialog',
-  component: CardinalityCanChangeLauncherComponent,
+  component: CardinalityDialogLauncherComponent,
 };
 export default meta;
-type Story = StoryObj<CardinalityCanChangeLauncherComponent>;
+type Story = StoryObj<CardinalityDialogLauncherComponent>;
 
 const sharedProviders = [provideAnimations(), importProvidersFrom(OverlayModule), ...STORY_PROVIDERS];
 
@@ -75,8 +65,10 @@ export const CanChangeCardinality: Story = {
   ],
   play: async ({ step }) => {
     await step('Dialog is rendered', async () => {
-      const container = document.querySelector('mat-dialog-container');
-      await expect(container).not.toBeNull();
+      await waitFor(() => {
+        const container = document.querySelector('mat-dialog-container');
+        expect(container).not.toBeNull();
+      });
     });
   },
 };
@@ -102,15 +94,12 @@ export const CannotChangeCardinality: Story = {
       ],
     }),
   ],
-  render: () => ({
-    props: {},
-    template: `<app-cardinality-cannot-change-launcher></app-cardinality-cannot-change-launcher>`,
-    imports: [CardinalityCannotChangeLauncherComponent],
-  }),
   play: async ({ step }) => {
     await step('Dialog is rendered', async () => {
-      const container = document.querySelector('mat-dialog-container');
-      await expect(container).not.toBeNull();
+      await waitFor(() => {
+        const container = document.querySelector('mat-dialog-container');
+        expect(container).not.toBeNull();
+      });
     });
   },
 };
