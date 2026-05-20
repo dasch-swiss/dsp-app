@@ -27,7 +27,7 @@ class EditOntologyFormDialogLauncherComponent implements OnInit {
 }
 
 const meta: Meta<EditOntologyFormDialogLauncherComponent> = {
-  title: 'Ontology / Forms / Edit Ontology Form Dialog',
+  title: 'Ontology Editor / 1. Header / Edit Ontology Form Dialog',
   component: EditOntologyFormDialogLauncherComponent,
 };
 export default meta;

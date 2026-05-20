@@ -10,7 +10,7 @@ import { PropertyFormComponent } from './property-form.component';
 const textPropType = DefaultProperties.data.find(g => g.group === 'Text')!.elements[0];
 
 const meta: Meta<PropertyFormComponent> = {
-  title: 'Ontology / Forms / Property Form',
+  title: 'Ontology Editor / 3b. Properties Tab / Edit Property Form Dialog / Property Form',
   component: PropertyFormComponent,
   argTypes: {
     propertyData: {

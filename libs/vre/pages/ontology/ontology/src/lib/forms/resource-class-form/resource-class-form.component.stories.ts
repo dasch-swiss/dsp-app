@@ -6,7 +6,7 @@ import { makeOntologyEditServiceStub, STORY_PROVIDERS } from '../../stories.help
 import { ResourceClassFormComponent } from './resource-class-form.component';
 
 const meta: Meta<ResourceClassFormComponent> = {
-  title: 'Ontology / Forms / Resource Class Form',
+  title: 'Ontology Editor / Common / Resource Class Form',
   component: ResourceClassFormComponent,
   argTypes: {
     formData: {

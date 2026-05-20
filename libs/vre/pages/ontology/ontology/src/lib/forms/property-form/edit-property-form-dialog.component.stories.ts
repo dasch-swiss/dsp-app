@@ -58,7 +58,7 @@ const sharedProviders = [
 ];
 
 const meta: Meta<CreatePropertyDialogLauncherComponent> = {
-  title: 'Ontology / Forms / Edit Property Form Dialog',
+  title: 'Ontology Editor / 3b. Properties Tab / Edit Property Form Dialog',
   component: CreatePropertyDialogLauncherComponent,
 };
 export default meta;

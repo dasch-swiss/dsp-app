@@ -9,7 +9,7 @@ import { NestedMenuComponent } from './nested-menu.component';
 
 @Component({
   selector: 'app-list-value',
-  imports: [NestedMenuComponent, MatError, HumanReadableErrorPipe, NestedMenuComponent],
+  imports: [NestedMenuComponent, MatError, HumanReadableErrorPipe],
   template: `
     @if (listRootNode) {
       <app-nested-menu

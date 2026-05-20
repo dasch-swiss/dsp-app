@@ -10,7 +10,7 @@ import { AddPropertyMenuComponent } from './add-property-menu.component';
 const resourceClass = makeResourceClassInfo();
 
 const meta: Meta<AddPropertyMenuComponent> = {
-  title: 'Ontology / Resource Classes / Add Property Menu',
+  title: 'Ontology Editor / 3a. Resource Classes Tab / Resource Class Info / Add Property Menu',
   component: AddPropertyMenuComponent,
   argTypes: {
     resourceClass: {

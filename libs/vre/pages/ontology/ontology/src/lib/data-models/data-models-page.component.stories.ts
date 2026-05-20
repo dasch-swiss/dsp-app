@@ -15,7 +15,7 @@ const sampleOntologies: OntologyMetadata[] = [
 ];
 
 const meta: Meta<DataModelsPageComponent> = {
-  title: 'Ontology / Data Models / _Data Models Page',
+  title: 'Data Models Page / _Data Models Page',
   component: DataModelsPageComponent,
   argTypes: {},
 };

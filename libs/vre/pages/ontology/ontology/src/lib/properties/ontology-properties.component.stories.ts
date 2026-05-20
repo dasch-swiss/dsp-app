@@ -38,7 +38,7 @@ const sampleProperties: PropertyInfo[] = [
 ];
 
 const meta: Meta<OntologyPropertiesComponent> = {
-  title: 'Ontology / Properties / Ontology Properties',
+  title: 'Ontology Editor / 3b. Properties Tab / Ontology Properties',
   component: OntologyPropertiesComponent,
   argTypes: {},
 };

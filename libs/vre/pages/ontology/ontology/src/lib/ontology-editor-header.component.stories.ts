@@ -19,7 +19,7 @@ const sampleOntologyMeta = {
 } as unknown as OntologyMetadata;
 
 const meta: Meta<OntologyEditorHeaderComponent> = {
-  title: 'Ontology / Header / Ontology Editor Header',
+  title: 'Ontology Editor / 1. Header',
   component: OntologyEditorHeaderComponent,
   argTypes: {},
 };

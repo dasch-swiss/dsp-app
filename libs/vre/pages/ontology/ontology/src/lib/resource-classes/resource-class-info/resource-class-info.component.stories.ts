@@ -23,7 +23,7 @@ import { ResourceClassInfoComponent } from './resource-class-info.component';
 const resourceClass = makeResourceClassInfo();
 
 const meta: Meta<ResourceClassInfoComponent> = {
-  title: 'Ontology / Resource Classes / Resource Class Info',
+  title: 'Ontology Editor / 3a. Resource Classes Tab / Resource Class Info',
   component: ResourceClassInfoComponent,
   argTypes: {
     resourceClass: {

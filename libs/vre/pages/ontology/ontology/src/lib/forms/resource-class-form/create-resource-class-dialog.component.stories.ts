@@ -24,7 +24,7 @@ class CreateResourceClassDialogLauncherComponent implements OnInit {
 }
 
 const meta: Meta<CreateResourceClassDialogLauncherComponent> = {
-  title: 'Ontology / Forms / Create Resource Class Dialog',
+  title: 'Ontology Editor / 3a. Resource Classes Tab / Create Resource Class Dialog',
   component: CreateResourceClassDialogLauncherComponent,
 };
 export default meta;
@@ -40,7 +40,7 @@ const sharedProviders = [
 ];
 
 export const DefaultView: Story = {
-  name: 'Opens create resource class dialog with name, label and comment fields',
+  name: 'Opens dialog with name, label and comment fields',
   decorators: [applicationConfig({ providers: sharedProviders })],
   play: async ({ step }) => {
     await step('Dialog is rendered', async () => {

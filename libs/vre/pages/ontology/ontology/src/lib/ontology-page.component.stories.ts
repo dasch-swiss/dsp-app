@@ -1,7 +1,5 @@
 import { OverlayModule } from '@angular/cdk/overlay';
 import { importProvidersFrom } from '@angular/core';
-import { provideAnimations } from '@angular/platform-browser/animations';
-import { OntologyMetadata } from '@dasch-swiss/dsp-js';
 import { ListApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
@@ -25,7 +23,7 @@ const sampleOntology = {
 } as unknown as any;
 
 const meta: Meta<OntologyPageComponent> = {
-  title: 'Ontology / Page / Ontology Page',
+  title: 'Ontology Editor',
   component: OntologyPageComponent,
   argTypes: {},
 };
