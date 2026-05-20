@@ -1,0 +1,17 @@
+import { Component, Input } from '@angular/core';
+import { ReadResource } from '@dasch-swiss/dsp-js';
+import { ResourceMoreMenuComponent } from './more-menu/resource-more-menu.component';
+import { ResourceActionsComponent } from './resource-actions.component';
+
+@Component({
+  selector: 'app-resource-toolbar',
+  template: `
+    <app-resource-actions [resource]="resource">
+      <app-resource-more-menu [resource]="resource" />
+    </app-resource-actions>
+  `,
+  imports: [ResourceActionsComponent, ResourceMoreMenuComponent],
+})
+export class ResourceToolbarComponent {
+  @Input({ required: true }) resource!: ReadResource;
+}

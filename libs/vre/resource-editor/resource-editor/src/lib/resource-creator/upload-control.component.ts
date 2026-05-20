@@ -2,8 +2,8 @@ import { Component, Input, Self } from '@angular/core';
 import { ControlValueAccessor, FormControl, NgControl } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { HumanReadableErrorPipe } from '@dasch-swiss/vre/ui/ui';
-import { FileRepresentationType } from '../representations/file-representation.type';
-import { UploadedFileResponse } from '../representations/upload/upload-file-response.interface';
+import { FileRepresentationType } from '../representation/file-representation.type';
+import { UploadedFileResponse } from '../representation/upload/upload-file-response.interface';
 import { UploadComponent } from './upload.component';
 import { UploadedFileComponent } from './uploaded-file.component';
 

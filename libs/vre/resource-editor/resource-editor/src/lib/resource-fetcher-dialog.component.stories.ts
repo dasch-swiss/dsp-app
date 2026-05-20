@@ -20,7 +20,7 @@ import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular'
 import { NEVER, of } from 'rxjs';
 import { expect } from 'storybook/test';
 
-import { RepresentationService } from './representations/representation.service';
+import { RepresentationService } from './representation/representation.service';
 import { ResourceFetcherDialogComponent } from './resource-fetcher-dialog.component';
 
 // ---------------------------------------------------------------------------
