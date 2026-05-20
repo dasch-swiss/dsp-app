@@ -7,7 +7,7 @@ import { CardinalityComponent } from './cardinality.component';
 const classProp = makeClassPropertyInfo();
 
 const meta: Meta<CardinalityComponent> = {
-  title: 'Ontology / Resource Classes / Cardinality',
+  title: 'Ontology Editor / 3a. Resource Classes Tab / Resource Class Info / Cardinality',
   component: CardinalityComponent,
   argTypes: {
     classProp: {

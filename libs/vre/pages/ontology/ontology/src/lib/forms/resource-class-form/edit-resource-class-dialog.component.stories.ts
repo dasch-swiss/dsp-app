@@ -30,7 +30,7 @@ class EditResourceClassDialogLauncherComponent implements OnInit {
 }
 
 const meta: Meta<EditResourceClassDialogLauncherComponent> = {
-  title: 'Ontology / Forms / Edit Resource Class Dialog',
+  title: 'Ontology Editor / 3a. Resource Classes Tab / Resource Class Info / Edit Resource Class Dialog',
   component: EditResourceClassDialogLauncherComponent,
 };
 export default meta;
@@ -46,7 +46,7 @@ const sharedProviders = [
 ];
 
 export const DefaultView: Story = {
-  name: 'Opens edit resource class dialog pre-filled with existing class data',
+  name: 'Opens 3a. Resource Classes Tab / Resource Class Info / Edit Resource Class Dialog pre-filled with existing class data',
   decorators: [applicationConfig({ providers: sharedProviders })],
   play: async ({ step }) => {
     await step('Dialog is rendered', async () => {

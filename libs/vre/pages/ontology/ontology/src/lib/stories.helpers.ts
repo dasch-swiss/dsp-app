@@ -116,5 +116,5 @@ export const makeClassPropertyInfo = (): ClassPropertyInfo => {
 
 export const STORY_PROVIDERS = [
   provideRouter([{ path: '**', redirectTo: '' }]),
-  { provide: UserService, useValue: { currentUser: null } },
+  { provide: UserService, useValue: { currentUser: null } as Partial<UserService> },
 ];

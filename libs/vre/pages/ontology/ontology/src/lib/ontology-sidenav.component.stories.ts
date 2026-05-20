@@ -10,7 +10,7 @@ import { OntologySidenavComponent } from './ontology-sidenav.component';
 import { makeOntologyPageServiceStub, makeProjectPageServiceStub, STORY_PROVIDERS } from './stories.helpers';
 
 const meta: Meta<OntologySidenavComponent> = {
-  title: 'Ontology / Sidenav / Ontology Sidenav',
+  title: 'Ontology Editor / 2. Sidenav',
   component: OntologySidenavComponent,
   argTypes: {},
 };

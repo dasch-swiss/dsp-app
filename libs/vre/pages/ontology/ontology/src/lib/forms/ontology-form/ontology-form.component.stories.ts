@@ -3,7 +3,7 @@ import { expect, userEvent, within } from 'storybook/test';
 import { OntologyFormComponent } from './ontology-form.component';
 
 const meta: Meta<OntologyFormComponent> = {
-  title: 'Ontology / Forms / Ontology Form',
+  title: 'Ontology Editor / Common / Ontology Form',
   component: OntologyFormComponent,
   argTypes: {
     mode: {

@@ -23,7 +23,7 @@ import { OntologyEditorPageComponent } from './ontology-editor-page.component';
 const resourceClass = makeResourceClassInfo();
 
 const meta: Meta<OntologyEditorPageComponent> = {
-  title: 'Ontology / Resource Classes / Ontology Editor Page',
+  title: 'Ontology Editor / 3a. Resource Classes Tab',
   component: OntologyEditorPageComponent,
   argTypes: {},
 };

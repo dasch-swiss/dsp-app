@@ -49,17 +49,13 @@ class CardinalityCannotChangeLauncherComponent implements OnInit {
 }
 
 const meta: Meta<CardinalityCanChangeLauncherComponent> = {
-  title: 'Ontology / Resource Classes / Cardinality Change Dialog',
+  title: 'Ontology Editor / 3a. Resource Classes Tab / Resource Class Info / Cardinality Change Dialog',
   component: CardinalityCanChangeLauncherComponent,
 };
 export default meta;
 type Story = StoryObj<CardinalityCanChangeLauncherComponent>;
 
-const sharedProviders = [
-  provideAnimations(),
-  importProvidersFrom(OverlayModule),
-  ...STORY_PROVIDERS,
-];
+const sharedProviders = [provideAnimations(), importProvidersFrom(OverlayModule), ...STORY_PROVIDERS];
 
 export const CanChangeCardinality: Story = {
   name: 'Shows confirmation prompt when cardinality change is allowed',

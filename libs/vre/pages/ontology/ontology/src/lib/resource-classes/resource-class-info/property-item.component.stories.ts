@@ -18,7 +18,7 @@ import { PropertyItemComponent } from './property-item.component';
 const classProp = makeClassPropertyInfo();
 
 const meta: Meta<PropertyItemComponent> = {
-  title: 'Ontology / Resource Classes / Property Item',
+  title: 'Ontology Editor / 3a. Resource Classes Tab / Resource Class Info / Property Item',
   component: PropertyItemComponent,
   argTypes: {
     classProp: {
