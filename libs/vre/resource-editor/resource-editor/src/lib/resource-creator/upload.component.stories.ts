@@ -2,7 +2,7 @@ import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { expect } from 'storybook/test';
 
-import { UploadFileService } from '../representations/upload/upload-file.service';
+import { UploadFileService } from '../representation/upload/upload-file.service';
 import { notificationServiceStub } from '../stories.helpers';
 import { UploadComponent } from './upload.component';
 

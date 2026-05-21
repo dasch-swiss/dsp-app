@@ -4,7 +4,7 @@ import { applicationConfig, type Meta, moduleMetadata, type StoryObj } from '@st
 import { of } from 'rxjs';
 import { expect } from 'storybook/test';
 
-import { UploadFileService } from '../representations/upload/upload-file.service';
+import { UploadFileService } from '../representation/upload/upload-file.service';
 import { notificationServiceStub } from '../stories.helpers';
 import { UploadControlComponent } from './upload-control.component';
 

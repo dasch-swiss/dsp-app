@@ -2,10 +2,10 @@ import { ReadIntervalValue } from '@dasch-swiss/dsp-js';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { of, Subject } from 'rxjs';
 
-import { RepresentationService } from './representations/representation.service';
-import { ResourceFetcherService } from './representations/resource-fetcher.service';
-import { Segment } from './segment-support/segment';
-import { SegmentsService } from './segment-support/segments.service';
+import { RepresentationService } from './representation/representation.service';
+import { ResourceFetcherService } from './representation/resource-fetcher.service';
+import { Segment } from './representation/segments/segment';
+import { SegmentsService } from './representation/segments/segments.service';
 
 export const notificationServiceStub: Partial<NotificationService> = {
   openSnackBar: () => {},

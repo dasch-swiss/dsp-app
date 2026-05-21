@@ -2,14 +2,14 @@ import { Component, Input } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DoubleChipSelectorComponent } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe } from '@ngx-translate/core';
-import { FileRepresentationType } from '../representations/file-representation.type';
-import { IiifControlComponent } from '../representations/third-party-iiif/iiif-control.component';
+import { FileRepresentationType } from '../representation/file-representation.type';
+import { IiifControlComponent } from '../representation/third-party-iiif/iiif-control.component';
 import {
   iiifUrlValidator,
   infoJsonUrlValidatorAsync,
   isExternalHostValidator,
   previewImageUrlValidatorAsync,
-} from '../representations/third-party-iiif/iiif-url-validator';
+} from '../representation/third-party-iiif/iiif-url-validator';
 import { CreateResourceFormRowComponent } from './create-resource-form-row.component';
 import { UploadControlComponent } from './upload-control.component';
 
