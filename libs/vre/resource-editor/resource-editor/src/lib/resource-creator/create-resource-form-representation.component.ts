@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from 
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Constants } from '@dasch-swiss/dsp-js';
 import { TranslatePipe } from '@ngx-translate/core';
-import { FileRepresentationType } from '../representations/file-representation.type';
+import { FileRepresentationType } from '../representation/file-representation.type';
 import { CreateResourceFormImageComponent } from './create-resource-form-image.component';
 import { CreateResourceFormRowComponent } from './create-resource-form-row.component';
 import { UploadControlComponent } from './upload-control.component';

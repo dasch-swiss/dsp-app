@@ -1,5 +1,5 @@
 import { Constants, ReadResource } from '@dasch-swiss/dsp-js';
-import { getFileValue } from './representations/get-file-value';
+import { getFileValue } from './representation/get-file-value';
 import { ResourceType } from './resource-type';
 
 const KNORA_API_V2 = 'http://api.knora.org/ontology/knora-api/v2#';

@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ProjectLicenseDto } from '@dasch-swiss/vre/3rd-party-services/open-api';
-import { FileForm } from '../representations/file-form.type';
+import { FileForm } from '../representation/file-form.type';
 import { CreateResourceFormLegalComponent } from './create-resource-form-legal.component';
 import { CreateResourceFormRepresentationComponent } from './create-resource-form-representation.component';
 

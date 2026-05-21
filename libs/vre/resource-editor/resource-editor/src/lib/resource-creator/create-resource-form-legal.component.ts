@@ -8,7 +8,7 @@ import { PaginatedApiService } from '@dasch-swiss/vre/shared/app-common';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { finalize, map } from 'rxjs/operators';
-import { CreateResourceFormLegal } from '../representations/file-form.type';
+import { CreateResourceFormLegal } from '../representation/file-form.type';
 import { AuthorshipFormFieldComponent } from './authorship-form-field.component';
 import { CreateResourceFormRowComponent } from './create-resource-form-row.component';
 

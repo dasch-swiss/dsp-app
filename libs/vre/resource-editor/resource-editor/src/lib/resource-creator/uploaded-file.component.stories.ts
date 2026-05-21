@@ -2,7 +2,7 @@ import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular'
 import { of } from 'rxjs';
 import { expect } from 'storybook/test';
 
-import { UploadFileService } from '../representations/upload/upload-file.service';
+import { UploadFileService } from '../representation/upload/upload-file.service';
 import { UploadedFileComponent } from './uploaded-file.component';
 
 const meta: Meta<UploadedFileComponent> = {

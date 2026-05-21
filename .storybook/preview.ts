@@ -4,6 +4,9 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideTranslateService, TranslateService } from '@ngx-translate/core';
 import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 import { applicationConfig, componentWrapperDecorator, type Preview } from '@storybook/angular';
+import { configure } from 'storybook/test';
+
+configure({ testIdAttribute: 'data-cy' });
 
 function initTranslations(translate: TranslateService) {
   return () => translate.use('en');
