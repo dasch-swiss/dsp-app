@@ -1,4 +1,3 @@
-import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { StoredProject } from '@dasch-swiss/dsp-js';
 import { ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { AppConfigService } from '@dasch-swiss/vre/core/config';
@@ -6,6 +5,7 @@ import { UserService } from '@dasch-swiss/vre/core/session';
 import { AllProjectsService } from '@dasch-swiss/vre/pages/user-settings/user';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { DialogService } from '@dasch-swiss/vre/ui/ui';
+import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
 import { expect, within } from 'storybook/test';
 import { makeUserServiceStub, STORY_PROVIDERS } from '../../stories.helpers';
@@ -70,7 +70,12 @@ export const ActiveProjects: Story = {
     isUserActive: true,
     projectsList: [
       makeProject({ longname: 'Alpha Project', shortcode: '0001', shortname: 'alpha' }),
-      makeProject({ id: 'http://rdfh.ch/projects/0002', longname: 'Beta Project', shortcode: '0002', shortname: 'beta' }),
+      makeProject({
+        id: 'http://rdfh.ch/projects/0002',
+        longname: 'Beta Project',
+        shortcode: '0002',
+        shortname: 'beta',
+      }),
     ],
   },
   play: async ({ canvasElement, step }) => {

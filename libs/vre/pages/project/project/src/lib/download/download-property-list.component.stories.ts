@@ -1,5 +1,5 @@
-import { type Meta, type StoryObj } from '@storybook/angular';
 import { PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
+import { type Meta, type StoryObj } from '@storybook/angular';
 import { expect, userEvent, within } from 'storybook/test';
 import { DownloadPropertyListComponent } from './download-property-list.component';
 

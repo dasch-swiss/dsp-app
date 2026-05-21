@@ -1,5 +1,5 @@
-import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { ResourceResultService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { expect, within } from 'storybook/test';
 import { makeReadResource, STORY_PROVIDERS } from '../stories.helpers';
 import { ResourcesListComponent } from './resources-list.component';
@@ -33,10 +33,7 @@ export const FewResults: Story = {
   name: 'Shows result count when total is below pagination threshold',
   decorators: [
     applicationConfig({
-      providers: [
-        ...STORY_PROVIDERS,
-        { provide: ResourceResultService, useValue: makeResourceResultServiceStub(3) },
-      ],
+      providers: [...STORY_PROVIDERS, { provide: ResourceResultService, useValue: makeResourceResultServiceStub(3) }],
     }),
   ],
   args: {
@@ -61,16 +58,11 @@ export const ManyResults: Story = {
   name: 'Shows pager when total results exceed the per-page limit',
   decorators: [
     applicationConfig({
-      providers: [
-        ...STORY_PROVIDERS,
-        { provide: ResourceResultService, useValue: makeResourceResultServiceStub(100) },
-      ],
+      providers: [...STORY_PROVIDERS, { provide: ResourceResultService, useValue: makeResourceResultServiceStub(100) }],
     }),
   ],
   args: {
-    resources: Array.from({ length: 25 }, (_, i) =>
-      makeReadResource({ id: `r${i}`, label: `Resource ${i + 1}` })
-    ),
+    resources: Array.from({ length: 25 }, (_, i) => makeReadResource({ id: `r${i}`, label: `Resource ${i + 1}` })),
   },
   play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
@@ -84,10 +76,7 @@ export const SingleResult: Story = {
   name: 'Shows singular result label for exactly one result',
   decorators: [
     applicationConfig({
-      providers: [
-        ...STORY_PROVIDERS,
-        { provide: ResourceResultService, useValue: makeResourceResultServiceStub(1) },
-      ],
+      providers: [...STORY_PROVIDERS, { provide: ResourceResultService, useValue: makeResourceResultServiceStub(1) }],
     }),
   ],
   args: {

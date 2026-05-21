@@ -1,8 +1,8 @@
 import { MatDialog } from '@angular/material/dialog';
-import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { UserApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { UserService } from '@dasch-swiss/vre/core/session';
 import { DialogService } from '@dasch-swiss/vre/ui/ui';
+import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
 import { expect, within } from 'storybook/test';
 import { makeReadUser, makeSystemAdminUser, makeUserServiceStub, STORY_PROVIDERS } from '../../stories.helpers';
@@ -72,10 +72,7 @@ export const WithActionMenuVisible: Story = {
   name: 'Shows action menu button when current user is system admin',
   decorators: [
     applicationConfig({
-      providers: [
-        ...baseProviders,
-        { provide: UserService, useValue: makeUserServiceStub({ isSysAdmin$: of(true) }) },
-      ],
+      providers: [...baseProviders, { provide: UserService, useValue: makeUserServiceStub({ isSysAdmin$: of(true) }) }],
     }),
   ],
   args: {

@@ -1,5 +1,5 @@
-import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { UserService } from '@dasch-swiss/vre/core/session';
+import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
 import { expect, within } from 'storybook/test';
 import { makeReadUser, makeSystemAdminUser, makeUserServiceStub, STORY_PROVIDERS } from '../stories.helpers';

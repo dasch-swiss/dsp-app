@@ -44,7 +44,7 @@ export const makeUserServiceStub = (partial: Partial<UserService> = {}): Partial
   currentUser: makeReadUser(),
   userActiveProjects$: of([]),
   userInactiveProjects$: of([]),
-  reloadUser: () => of(void 0),
+  reloadUser: () => of(undefined),
   ...partial,
 });
 

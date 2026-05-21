@@ -1,6 +1,6 @@
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { AdminAPIApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
+import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
 import { expect, userEvent, within } from 'storybook/test';
 import { STORY_PROVIDERS } from '../stories.helpers';

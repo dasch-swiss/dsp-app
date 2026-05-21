@@ -1,10 +1,10 @@
 import { ActivatedRoute } from '@angular/router';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
-import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
 import { of } from 'rxjs';
 import { expect, within } from 'storybook/test';
-import { makeProjectPageServiceStub, STORY_PROVIDERS } from './stories.helpers';
+import { ProjectPageService } from './project-admin.guard';
 import { ProjectNavigationTabsComponent } from './project-navigation-tabs.component';
+import { makeProjectPageServiceStub, STORY_PROVIDERS } from './stories.helpers';
 
 const activatedRouteStub = {
   snapshot: { children: [{ url: [{ path: 'data' }] }] },

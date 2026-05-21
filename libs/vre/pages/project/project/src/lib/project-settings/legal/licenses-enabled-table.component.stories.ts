@@ -1,5 +1,5 @@
-import { type Meta, type StoryObj } from '@storybook/angular';
 import { ProjectLicenseDto } from '@dasch-swiss/vre/3rd-party-services/open-api';
+import { type Meta, type StoryObj } from '@storybook/angular';
 import { expect, userEvent, within } from 'storybook/test';
 import { makeReadProject } from '../../stories.helpers';
 import { LicensesEnabledTableComponent } from './licenses-enabled-table.component';

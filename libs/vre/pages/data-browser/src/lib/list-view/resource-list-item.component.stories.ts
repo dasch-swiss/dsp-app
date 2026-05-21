@@ -1,9 +1,9 @@
-import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { ReadResource } from '@dasch-swiss/dsp-js';
+import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
 import { expect, within } from 'storybook/test';
-import { makeMultipleViewerServiceStub, makeReadResource, STORY_PROVIDERS } from '../stories.helpers';
 import { MultipleViewerService } from '../comparison/multiple-viewer.service';
+import { makeMultipleViewerServiceStub, makeReadResource, STORY_PROVIDERS } from '../stories.helpers';
 import { ResourceListItemComponent } from './resource-list-item.component';
 
 const meta: Meta<ResourceListItemComponent> = {

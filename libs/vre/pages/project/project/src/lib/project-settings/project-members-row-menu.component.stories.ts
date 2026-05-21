@@ -1,9 +1,9 @@
 import { MatDialog } from '@angular/material/dialog';
-import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { UserApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { AdminAPIApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { UserService } from '@dasch-swiss/vre/core/session';
 import { DialogService } from '@dasch-swiss/vre/ui/ui';
+import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
 import { expect, userEvent, within } from 'storybook/test';
 import { makeReadProject, makeReadUser, makeUserServiceStub, STORY_PROVIDERS } from '../stories.helpers';
@@ -81,10 +81,7 @@ export const SysAdminSeesEditActions: Story = {
   name: 'Shows edit and change password actions for system admin',
   decorators: [
     applicationConfig({
-      providers: [
-        ...baseProviders,
-        { provide: UserService, useValue: makeUserServiceStub({ isSysAdmin$: of(true) }) },
-      ],
+      providers: [...baseProviders, { provide: UserService, useValue: makeUserServiceStub({ isSysAdmin$: of(true) }) }],
     }),
   ],
   args: {

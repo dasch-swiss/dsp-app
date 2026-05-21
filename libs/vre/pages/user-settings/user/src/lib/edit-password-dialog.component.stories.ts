@@ -1,12 +1,12 @@
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { UserApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { UserService } from '@dasch-swiss/vre/core/session';
+import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
 import { expect, userEvent, within } from 'storybook/test';
-import { makeReadUser, STORY_PROVIDERS } from './stories.helpers';
 import { EditPasswordDialogComponent } from './edit-password-dialog.component';
+import { makeReadUser, STORY_PROVIDERS } from './stories.helpers';
 
 const sampleUser = makeReadUser({ username: 'testuser', id: 'http://rdfh.ch/users/testuser' });
 

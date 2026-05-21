@@ -1,9 +1,9 @@
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { UserApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { UserService } from '@dasch-swiss/vre/core/session';
 import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
+import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
 import { expect, within } from 'storybook/test';
 import { makeReadUser, STORY_PROVIDERS } from '../stories.helpers';
@@ -38,10 +38,7 @@ export const OwnAccount: Story = {
   name: 'Shows "Edit my profile" title when editing own account',
   decorators: [
     applicationConfig({
-      providers: [
-        ...sharedProviders,
-        { provide: MAT_DIALOG_DATA, useValue: { user: sampleUser, isOwnAccount: true } },
-      ],
+      providers: [...sharedProviders, { provide: MAT_DIALOG_DATA, useValue: { user: sampleUser, isOwnAccount: true } }],
     }),
   ],
   play: async ({ canvasElement, step }) => {

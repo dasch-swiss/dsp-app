@@ -1,16 +1,18 @@
 import { MatDialog } from '@angular/material/dialog';
-import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { UserService } from '@dasch-swiss/vre/core/session';
+import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
 import { expect, userEvent, within } from 'storybook/test';
-import { makeMultipleViewerServiceStub, makeReadResource, makeUserServiceStub, STORY_PROVIDERS } from '../stories.helpers';
 import { MultipleViewerService } from '../comparison/multiple-viewer.service';
+import {
+  makeMultipleViewerServiceStub,
+  makeReadResource,
+  makeUserServiceStub,
+  STORY_PROVIDERS,
+} from '../stories.helpers';
 import { ResourceListSelectionComponent } from './resource-list-selection.component';
 
-const baseProviders = [
-  ...STORY_PROVIDERS,
-  { provide: MatDialog, useValue: { open: () => {} } },
-];
+const baseProviders = [...STORY_PROVIDERS, { provide: MatDialog, useValue: { open: () => {} } }];
 
 const meta: Meta<ResourceListSelectionComponent> = {
   title: 'Pages / Data Browser / Resource List Selection',

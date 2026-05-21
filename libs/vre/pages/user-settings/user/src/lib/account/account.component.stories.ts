@@ -1,8 +1,8 @@
 import { MatDialog } from '@angular/material/dialog';
-import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { UserApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { AuthService, UserService } from '@dasch-swiss/vre/core/session';
 import { DialogService } from '@dasch-swiss/vre/ui/ui';
+import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
 import { expect, userEvent, within } from 'storybook/test';
 import { makeUserServiceStub, STORY_PROVIDERS } from '../stories.helpers';

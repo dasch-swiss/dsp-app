@@ -1,8 +1,8 @@
 import { provideRouter } from '@angular/router';
 import { ReadProject, ReadUser, StoredProject } from '@dasch-swiss/dsp-js';
-import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
 import { UserService } from '@dasch-swiss/vre/core/session';
 import { of } from 'rxjs';
+import { ProjectPageService } from './project-admin.guard';
 
 export const makeReadProject = (partial: Partial<ReadProject> = {}): ReadProject =>
   ({
