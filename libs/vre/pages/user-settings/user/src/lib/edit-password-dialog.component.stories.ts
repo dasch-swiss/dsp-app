@@ -50,7 +50,8 @@ export const AdvancesToNextStep: Story = {
   play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
     await step('Type current password', async () => {
-      await userEvent.type(canvas.getByRole('textbox'), 'currentpass');
+      const passwordInput = canvasElement.querySelector('input[type="password"]') as HTMLInputElement;
+      await userEvent.type(passwordInput, 'currentpass');
     });
     await step('Click next', async () => {
       await userEvent.click(canvas.getByRole('button', { name: /next/i }));

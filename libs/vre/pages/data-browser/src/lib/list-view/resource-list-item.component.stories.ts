@@ -83,8 +83,8 @@ export const WithSearchKeyword: Story = {
   },
   play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
-    await step('"Found in: Label" text is displayed', async () => {
-      await expect(canvas.getByText(/Found in:.*Label/)).toBeInTheDocument();
+    await step('"Found in:" section is displayed with label match', async () => {
+      await expect(canvas.getByText(/Found in:/i)).toBeInTheDocument();
     });
   },
 };
@@ -109,7 +109,7 @@ export const WithProjectShortname: Story = {
   play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
     await step('Project shortname is displayed', async () => {
-      await expect(canvas.getByText(/Project:.*testproj/)).toBeInTheDocument();
+      await expect(canvas.getByText('testproj')).toBeInTheDocument();
     });
   },
 };

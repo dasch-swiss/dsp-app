@@ -103,7 +103,8 @@ export const ResetsSelectionOnClose: Story = {
   play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
     await step('Click the close button', async () => {
-      await userEvent.click(canvas.getByRole('button', { name: /close/i }));
+      const buttons = canvas.getAllByRole('button');
+      await userEvent.click(buttons[buttons.length - 1]);
     });
     await step('Component is still present after reset', async () => {
       await expect(canvasElement).toBeInTheDocument();

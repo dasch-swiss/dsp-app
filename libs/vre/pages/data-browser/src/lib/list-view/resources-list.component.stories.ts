@@ -74,8 +74,8 @@ export const ManyResults: Story = {
   },
   play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
-    await step('Pager component is rendered', async () => {
-      await expect(canvas.getByRole('navigation')).toBeInTheDocument();
+    await step('Pager is rendered with item range info', async () => {
+      await expect(canvas.getByText(/Showing/i)).toBeInTheDocument();
     });
   },
 };

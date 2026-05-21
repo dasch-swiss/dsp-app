@@ -62,7 +62,7 @@ export const WrongShortCode: Story = {
       await userEvent.tab();
     });
     await step('Validation error is shown', async () => {
-      await expect(canvas.getByRole('alert')).toBeInTheDocument();
+      await expect(canvas.getByText('Short code does not match')).toBeInTheDocument();
     });
   },
 };
