@@ -2,7 +2,7 @@ import { ActivatedRoute } from '@angular/router';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
 import { expect, within } from 'storybook/test';
-import { ProjectPageService } from './project-admin.guard';
+import { ProjectPageService } from './project-page.service';
 import { ProjectNavigationTabsComponent } from './project-navigation-tabs.component';
 import { makeProjectPageServiceStub, STORY_PROVIDERS } from './stories.helpers';
 
