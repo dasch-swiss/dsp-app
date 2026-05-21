@@ -1,0 +1,84 @@
+import { CdkCopyToClipboard } from '@angular/cdk/clipboard';
+import { AsyncPipe } from '@angular/common';
+import { Component, inject, Input, ViewContainerRef } from '@angular/core';
+import { MatIconButton } from '@angular/material/button';
+import { MatDialog } from '@angular/material/dialog';
+import { MatIcon } from '@angular/material/icon';
+import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
+import { Constants, ReadAudioFileValue, ReadResource } from '@dasch-swiss/dsp-js';
+import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { getFileValue } from '../../representation/get-file-value';
+import {
+  ReplaceFileDialogComponent,
+  ReplaceFileDialogProps,
+} from '../../representation/replace-file-dialog/replace-file-dialog.component';
+import { ParentResourceInput } from '../../representation/representation-inputs';
+import { RepresentationService } from '../../representation/representation.service';
+import { ResourceFetcherService } from '../../representation/resource-fetcher.service';
+import { ResourceUtil } from '../../representation/resource.util';
+
+@Component({
+  selector: 'app-audio-more-button',
+  imports: [AsyncPipe, CdkCopyToClipboard, MatIconButton, MatIcon, MatMenu, MatMenuItem, MatMenuTrigger, TranslatePipe],
+  template: ` <button mat-icon-button [matMenuTriggerFor]="more">
+      <mat-icon>more_vert</mat-icon>
+    </button>
+    <mat-menu #more="matMenu" class="representation-menu">
+      <button mat-menu-item (click)="openIIIFnewTab()">
+        {{ 'resourceEditor.representations.audio.openInNewTab' | translate }}
+      </button>
+      <button mat-menu-item [cdkCopyToClipboard]="fileValue.fileUrl">
+        {{ 'resourceEditor.representations.audio.copyUrl' | translate }}
+      </button>
+      @if (userCanView) {
+        <button mat-menu-item (click)="download()">
+          {{ 'resourceEditor.representations.audio.download' | translate }}
+        </button>
+      }
+      @if (resourceFetcherService.userCanEdit$ | async) {
+        <button mat-menu-item (click)="openReplaceFileDialog()">
+          {{ 'resourceEditor.representations.replaceFile' | translate }}
+        </button>
+      }
+    </mat-menu>`,
+})
+export class AudioMoreButtonComponent {
+  @Input({ required: true }) parentResource!: ParentResourceInput;
+
+  private readonly _translateService = inject(TranslateService);
+
+  get fileValue() {
+    return getFileValue(this.parentResource as unknown as ReadResource) as ReadAudioFileValue;
+  }
+
+  get userCanView() {
+    return ResourceUtil.userCanView(this.fileValue);
+  }
+
+  constructor(
+    private readonly _dialog: MatDialog,
+    private readonly _rs: RepresentationService,
+    private readonly _viewContainerRef: ViewContainerRef,
+    public resourceFetcherService: ResourceFetcherService
+  ) {}
+
+  openReplaceFileDialog() {
+    this._dialog.open<ReplaceFileDialogComponent, ReplaceFileDialogProps>(ReplaceFileDialogComponent, {
+      ...DspDialogConfig.mediumDialog({
+        title: this._translateService.instant('resourceEditor.representations.audio.title'),
+        representation: Constants.HasAudioFileValue,
+        resource: this.parentResource,
+      }),
+      viewContainerRef: this._viewContainerRef,
+    });
+  }
+
+  openIIIFnewTab() {
+    window.open(this.fileValue.fileUrl, '_blank');
+  }
+
+  download() {
+    this._rs.downloadProjectFile(this.fileValue, this.parentResource);
+  }
+}

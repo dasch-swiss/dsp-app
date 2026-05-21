@@ -4,8 +4,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { Observable } from 'rxjs';
-import { UploadedFileResponse } from '../representations/upload/upload-file-response.interface';
-import { UploadFileService } from '../representations/upload/upload-file.service';
+import { UploadedFileResponse } from '../representation/upload/upload-file-response.interface';
+import { UploadFileService } from '../representation/upload/upload-file.service';
 
 @Component({
   selector: 'app-uploaded-file',
