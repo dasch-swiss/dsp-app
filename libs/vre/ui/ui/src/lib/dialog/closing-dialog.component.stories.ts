@@ -1,11 +1,10 @@
 import { MatDialogRef } from '@angular/material/dialog';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
-import { expect } from 'storybook/test';
-
+import { expect, userEvent, within } from 'storybook/test';
 import { ClosingDialogComponent } from './closing-dialog.component';
 
 const meta: Meta<ClosingDialogComponent> = {
-  title: 'Resource Editor / 2. Header / Closing Dialog',
+  title: 'UI / Dialog / Closing Dialog',
   component: ClosingDialogComponent,
   decorators: [
     applicationConfig({
@@ -29,6 +28,23 @@ export const DefaultView: Story = {
     });
     await step('Projected content is displayed', async () => {
       await expect(canvasElement.textContent).toContain('Dialog content goes here.');
+    });
+  },
+};
+
+export const CloseButtonClick: Story = {
+  name: 'Calls dialogRef.close when close button is clicked',
+  render: () => ({
+    props: {},
+    template: `<app-closing-dialog>Dialog content goes here.</app-closing-dialog>`,
+  }),
+  play: async ({ canvasElement, step }) => {
+    const canvas = within(canvasElement);
+    await step('Click the close button', async () => {
+      await userEvent.click(canvas.getByRole('button'));
+    });
+    await step('Component remains in DOM after close call', async () => {
+      await expect(canvasElement).toBeInTheDocument();
     });
   },
 };

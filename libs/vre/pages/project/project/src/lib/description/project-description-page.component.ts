@@ -11,7 +11,7 @@ import { ProjectImageCoverComponent } from '@dasch-swiss/vre/pages/user-settings
 import { TranslatePipe } from '@ngx-translate/core';
 import { map, tap } from 'rxjs';
 import { ProjectPageService } from '../project-page.service';
-import { ClosingDialogComponent } from './closing-dialog.component';
+import { ClosingDialogComponent } from '@dasch-swiss/vre/ui/ui';
 import { LicenseCaptionsMapping } from './license-captions-mapping';
 
 @Component({
