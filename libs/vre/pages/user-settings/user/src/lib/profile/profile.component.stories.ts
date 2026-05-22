@@ -6,7 +6,7 @@ import { makeReadUser, makeSystemAdminUser, makeUserServiceStub, STORY_PROVIDERS
 import { ProfileComponent } from './profile.component';
 
 const meta: Meta<ProfileComponent> = {
-  title: 'Pages / User Settings / Profile',
+  title: 'Pages / User Settings / 1. Profile',
   component: ProfileComponent,
   argTypes: {},
 };

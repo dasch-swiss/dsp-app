@@ -4,7 +4,7 @@ import { makeReadResource, STORY_PROVIDERS } from '../stories.helpers';
 import { ResourceListComponent } from './resource-list.component';
 
 const meta: Meta<ResourceListComponent> = {
-  title: 'Pages / Data Browser / Resource List',
+  title: 'Pages / Data Browser / Resources List / Resource List',
   component: ResourceListComponent,
   argTypes: {
     resources: {

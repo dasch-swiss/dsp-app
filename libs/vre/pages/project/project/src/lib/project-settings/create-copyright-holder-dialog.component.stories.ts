@@ -17,7 +17,7 @@ const sharedProviders = [
 ];
 
 const meta: Meta<CreateCopyrightHolderDialogComponent> = {
-  title: 'Pages / Project / Legal Settings / Create Copyright Holder Dialog',
+  title: 'Pages / Project / Settings Tab / Legal Settings / Create Copyright Holder Dialog',
   component: CreateCopyrightHolderDialogComponent,
   argTypes: {},
 };

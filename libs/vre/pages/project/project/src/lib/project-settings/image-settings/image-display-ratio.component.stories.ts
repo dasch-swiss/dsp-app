@@ -3,7 +3,7 @@ import { expect, within } from 'storybook/test';
 import { ImageDisplayRatioComponent } from './image-display-ratio.component';
 
 const meta: Meta<ImageDisplayRatioComponent> = {
-  title: 'Pages / Project / Image Settings / Image Display Ratio',
+  title: 'Pages / Project / Settings Tab / Image Settings / Image Display Ratio',
   component: ImageDisplayRatioComponent,
   argTypes: {
     ratio: {

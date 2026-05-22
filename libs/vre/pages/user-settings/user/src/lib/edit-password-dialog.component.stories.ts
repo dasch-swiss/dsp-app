@@ -20,7 +20,7 @@ const sharedProviders = [
 ];
 
 const meta: Meta<EditPasswordDialogComponent> = {
-  title: 'Pages / User Settings / Edit Password Dialog',
+  title: 'Pages / User Settings / Account / Edit Password Dialog',
   component: EditPasswordDialogComponent,
   argTypes: {},
 };

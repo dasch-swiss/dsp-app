@@ -14,7 +14,7 @@ const makeLicense = (partial: Partial<ProjectLicenseDto>): ProjectLicenseDto => 
 });
 
 const meta: Meta<LicensesEnabledTableComponent> = {
-  title: 'Pages / Project / Legal Settings / Licenses Enabled Table',
+  title: 'Pages / Project / Settings Tab / Legal Settings / Licenses Enabled Table',
   component: LicensesEnabledTableComponent,
   argTypes: {
     licenses: {

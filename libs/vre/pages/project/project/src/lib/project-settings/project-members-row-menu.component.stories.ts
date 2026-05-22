@@ -26,7 +26,7 @@ const baseProviders = [
 ];
 
 const meta: Meta<ProjectMembersRowMenuComponent> = {
-  title: 'Pages / Project / Collaboration / Members Row Menu',
+  title: 'Pages / Project / Settings Tab / Members / Members Row Menu',
   component: ProjectMembersRowMenuComponent,
   argTypes: {
     user: {

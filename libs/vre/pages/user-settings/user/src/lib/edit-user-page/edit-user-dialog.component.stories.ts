@@ -27,7 +27,7 @@ const sharedProviders = [
 ];
 
 const meta: Meta<EditUserDialogComponent> = {
-  title: 'Pages / User Settings / Edit User Dialog',
+  title: 'Pages / User Settings / Account / Edit User Dialog',
   component: EditUserDialogComponent,
   argTypes: {},
 };

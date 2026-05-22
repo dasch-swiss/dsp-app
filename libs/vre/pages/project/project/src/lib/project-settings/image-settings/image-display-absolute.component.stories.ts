@@ -3,7 +3,7 @@ import { expect, within } from 'storybook/test';
 import { ImageDisplayAbsoluteComponent } from './image-display-absolute.component';
 
 const meta: Meta<ImageDisplayAbsoluteComponent> = {
-  title: 'Pages / Project / Image Settings / Image Display Absolute',
+  title: 'Pages / Project / Settings Tab / Image Settings / Image Display Absolute',
   component: ImageDisplayAbsoluteComponent,
   argTypes: {
     widthPx: {
