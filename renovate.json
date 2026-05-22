@@ -212,11 +212,6 @@
       "groupName": "grafana-faro-deps"
     },
     {
-      "description": "JSON-LD + its type definitions",
-      "matchPackageNames": ["jsonld", "@types/jsonld"],
-      "groupName": "jsonld-deps"
-    },
-    {
       "description": "ngx-translate i18n — core and http-loader are always used together",
       "matchPackageNames": ["/^@ngx-translate//"],
       "groupName": "ngx-translate-deps"
