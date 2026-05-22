@@ -265,11 +265,6 @@
       "groupName": "webpack-deps"
     },
     {
-      "description": "OpenSeaDragon image viewer",
-      "matchPackageNames": ["openseadragon", "@types/openseadragon"],
-      "groupName": "openseadragon-deps"
-    },
-    {
       "description": "UUID",
       "matchPackageNames": ["uuid", "@types/uuid"],
       "groupName": "uuid-deps"
