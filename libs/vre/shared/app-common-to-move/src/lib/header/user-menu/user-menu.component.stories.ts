@@ -1,23 +1,14 @@
-import { provideRouter } from '@angular/router';
-import { AuthService } from '@dasch-swiss/vre/core/session';
 import { UserService } from '@dasch-swiss/vre/core/session';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { expect } from 'storybook/test';
 import { of } from 'rxjs';
 
+import { HEADER_BASE_PROVIDERS } from '../header-stories.helper';
 import { UserMenuComponent } from './user-menu.component';
 
 const meta: Meta<UserMenuComponent> = {
   title: 'Shared / Header / User Menu',
   component: UserMenuComponent,
-  decorators: [
-    applicationConfig({
-      providers: [
-        provideRouter([]),
-        { provide: AuthService, useValue: { logout: () => {} } },
-      ],
-    }),
-  ],
 };
 export default meta;
 type Story = StoryObj<UserMenuComponent>;
@@ -27,12 +18,8 @@ export const LoggedOut: Story = {
   decorators: [
     applicationConfig({
       providers: [
-        provideRouter([]),
-        { provide: AuthService, useValue: { logout: () => {} } },
-        {
-          provide: UserService,
-          useValue: { isLoggedIn$: of(false), user$: of(null), isSysAdmin$: of(false) },
-        },
+        ...HEADER_BASE_PROVIDERS,
+        { provide: UserService, useValue: { isLoggedIn$: of(false), user$: of(null), isSysAdmin$: of(false) } },
       ],
     }),
   ],
@@ -48,8 +35,7 @@ export const LoggedIn: Story = {
   decorators: [
     applicationConfig({
       providers: [
-        provideRouter([]),
-        { provide: AuthService, useValue: { logout: () => {} } },
+        ...HEADER_BASE_PROVIDERS,
         {
           provide: UserService,
           useValue: {
