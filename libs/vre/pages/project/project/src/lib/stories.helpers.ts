@@ -52,7 +52,7 @@ export const makeUserServiceStub = (partial: Partial<UserService> = {}): Partial
 });
 
 export const STORY_PROVIDERS = [
-  provideRouter([{ path: '**', redirectTo: '' }]),
+  provideRouter([{ path: '**', component: class {} }]),
   { provide: ProjectPageService, useValue: makeProjectPageServiceStub() },
   { provide: UserService, useValue: makeUserServiceStub() },
 ];

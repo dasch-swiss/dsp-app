@@ -74,7 +74,7 @@ const makeSegment = (index: number, label: string, start: number, end: number): 
 });
 
 const sharedProviders = [
-  provideRouter([{ path: '**', redirectTo: '' }]),
+  provideRouter([{ path: '**', component: class {} }]),
   {
     provide: AppConfigService,
     useValue: { dspApiConfig: { apiUrl: '' }, dspAppConfig: { iriBase: 'http://rdfh.ch' } },

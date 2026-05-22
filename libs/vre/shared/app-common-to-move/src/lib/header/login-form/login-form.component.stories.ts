@@ -2,8 +2,8 @@ import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { AuthService } from '@dasch-swiss/vre/core/session';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
-import { expect, within } from 'storybook/test';
 import { of } from 'rxjs';
+import { expect, within } from 'storybook/test';
 
 import { LoginFormComponent } from './login-form.component';
 

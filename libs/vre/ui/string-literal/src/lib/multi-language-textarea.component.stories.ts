@@ -1,8 +1,8 @@
 import { UserService } from '@dasch-swiss/vre/core/session';
-import { DEFAULT_MULTILANGUAGE_FORM } from './default-multi-language-form';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
-import { expect, within } from 'storybook/test';
 import { of } from 'rxjs';
+import { expect, within } from 'storybook/test';
+import { DEFAULT_MULTILANGUAGE_FORM } from './default-multi-language-form';
 
 import { MultiLanguageTextareaComponent } from './multi-language-textarea.component';
 

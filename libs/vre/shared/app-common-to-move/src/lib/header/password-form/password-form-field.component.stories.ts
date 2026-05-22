@@ -69,12 +69,17 @@ export const WithValidationError: Story = {
     })(),
     placeholder: 'Password',
     showToggleVisibility: false,
-    validatorErrors: [{ errorKey: 'required', message: 'Password is required' }],
+    validatorErrors: null,
   },
   play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
-    await step('"Password is required" error is visible', async () => {
-      await expect(canvas.getByText('Password is required')).toBeInTheDocument();
+    await step('Click and tab away to trigger validation display', async () => {
+      const input = canvasElement.querySelector('input') as HTMLInputElement;
+      await userEvent.click(input);
+      await userEvent.tab();
+    });
+    await step('"This field is required" error is visible', async () => {
+      await expect(canvas.getByText('This field is required')).toBeInTheDocument();
     });
   },
 };
