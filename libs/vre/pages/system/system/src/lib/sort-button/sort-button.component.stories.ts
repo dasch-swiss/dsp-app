@@ -79,7 +79,7 @@ export const EmitsSortKeyOnSelection: Story = {
       await userEvent.click(canvas.getByRole('button'));
     });
     await step('Select "Short code"', async () => {
-      await userEvent.click(within(document.body).getByText('Short code'));
+      await userEvent.click(within(document.body).getByRole('menuitem', { name: 'Short code' }));
     });
     await step('Button label updates to the selected option', async () => {
       await expect(canvas.getByText(/Sort by.*Short code/)).toBeInTheDocument();
