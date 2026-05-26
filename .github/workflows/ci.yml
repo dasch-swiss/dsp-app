@@ -257,6 +257,60 @@ jobs:
             exit 1
           fi
 
+  lint-status:
+    name: DSP-APP Linting
+    needs: [changes, lint]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Aggregate lint result
+        run: |
+          if [ "${{ needs.changes.result }}" != "success" ]; then
+            echo "::error::changes job failed (${{ needs.changes.result }}); refusing to report green"
+            exit 1
+          fi
+          result="${{ needs.lint.result }}"
+          if [ "$result" != "success" ] && [ "$result" != "skipped" ]; then
+            echo "::error::lint job failed (result: $result)"
+            exit 1
+          fi
+
+  test-status:
+    name: DSP-APP Unit tests
+    needs: [changes, test]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Aggregate test result
+        run: |
+          if [ "${{ needs.changes.result }}" != "success" ]; then
+            echo "::error::changes job failed (${{ needs.changes.result }}); refusing to report green"
+            exit 1
+          fi
+          result="${{ needs.test.result }}"
+          if [ "$result" != "success" ] && [ "$result" != "skipped" ]; then
+            echo "::error::test job failed (result: $result)"
+            exit 1
+          fi
+
+  docs-build-test-status:
+    name: Docs Build Test
+    needs: [changes, docs-build-test]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Aggregate docs build result
+        run: |
+          if [ "${{ needs.changes.result }}" != "success" ]; then
+            echo "::error::changes job failed (${{ needs.changes.result }}); refusing to report green"
+            exit 1
+          fi
+          result="${{ needs.docs-build-test.result }}"
+          if [ "$result" != "success" ] && [ "$result" != "skipped" ]; then
+            echo "::error::docs-build-test job failed (result: $result)"
+            exit 1
+          fi
+
   check-openapi-sync:
     name: Check OpenAPI Spec is Up-to-Date
     needs: [changes]
