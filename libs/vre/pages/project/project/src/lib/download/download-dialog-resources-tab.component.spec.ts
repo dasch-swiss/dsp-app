@@ -1,17 +1,23 @@
 import { Directive, Input, NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
+import {
+  HttpClient,
+  HttpDownloadProgressEvent,
+  HttpEvent,
+  HttpEventType,
+  HttpResponse,
+} from '@angular/common/http';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { PropertyDefinition } from '@dasch-swiss/dsp-js';
-import { APIV3ApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
+import { BASE_PATH } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
 import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { provideTranslateService, TranslateService } from '@ngx-translate/core';
-import { Observable, Observer, of, throwError } from 'rxjs';
+import { Subject } from 'rxjs';
 import { DownloadDialogResourcesTabComponent } from './download-dialog-resources-tab.component';
 
-// Mock LoadingButtonDirective
 @Directive({
   selector: '[appLoadingButton]',
   standalone: true,
@@ -23,25 +29,20 @@ class MockLoadingButtonDirective {
 describe('DownloadDialogResourcesTabComponent', () => {
   let component: DownloadDialogResourcesTabComponent;
   let fixture: ComponentFixture<DownloadDialogResourcesTabComponent>;
-  let mockV3ApiService: jest.Mocked<APIV3ApiService>;
+  let mockHttp: jest.Mocked<HttpClient>;
+  let events$: Subject<HttpEvent<string>>;
   let mockNotificationService: jest.Mocked<NotificationService>;
   let mockLocalizationService: jest.Mocked<LocalizationService>;
   let mockTranslateService: jest.Mocked<TranslateService>;
 
-  // Mock DOM methods
   let createElementSpy: jest.SpyInstance;
   let appendChildSpy: jest.SpyInstance;
   let removeChildSpy: jest.SpyInstance;
   let createObjectURLSpy: jest.SpyInstance;
   let revokeObjectURLSpy: jest.SpyInstance;
-  let mockAnchorElement: any;
 
-  // Mock property definitions
   const createMockPropertyInfo = (id: string, label: string): PropertyInfoValues => ({
-    propDef: {
-      id,
-      label,
-    } as PropertyDefinition,
+    propDef: { id, label } as PropertyDefinition,
     guiDef: {} as any,
     values: [],
   });
@@ -50,43 +51,19 @@ describe('DownloadDialogResourcesTabComponent', () => {
   const mockProperty2 = createMockPropertyInfo('prop-2', 'Description');
 
   beforeEach(async () => {
-    // Create mock services
-    mockV3ApiService = {
-      postV3ExportResources: jest.fn() as any,
-    } as any;
+    events$ = new Subject<HttpEvent<string>>();
+    mockHttp = { post: jest.fn().mockReturnValue(events$.asObservable()) } as unknown as jest.Mocked<HttpClient>;
 
-    mockNotificationService = {
-      openSnackBar: jest.fn(),
-    } as any;
+    mockNotificationService = { openSnackBar: jest.fn() } as any;
+    mockLocalizationService = { getCurrentLanguage: jest.fn().mockReturnValue('en') } as any;
+    mockTranslateService = { instant: jest.fn((key: string) => key) } as any;
 
-    mockLocalizationService = {
-      getCurrentLanguage: jest.fn().mockReturnValue('en'),
-    } as any;
-
-    mockTranslateService = {
-      instant: jest.fn((key: string) => key),
-    } as any;
-
-    // Mock DOM methods
-    mockAnchorElement = {
-      href: '',
-      download: '',
-      click: jest.fn(),
-    };
-
-    // Don't mock createElement globally - only spy on it for verification
-    // Let jsdom handle element creation naturally
     createElementSpy = jest.spyOn(document, 'createElement');
     appendChildSpy = jest.spyOn(document.body, 'appendChild');
     removeChildSpy = jest.spyOn(document.body, 'removeChild');
 
-    // Mock URL methods that don't exist in jsdom
-    if (!window.URL.createObjectURL) {
-      window.URL.createObjectURL = jest.fn();
-    }
-    if (!window.URL.revokeObjectURL) {
-      window.URL.revokeObjectURL = jest.fn();
-    }
+    if (!window.URL.createObjectURL) window.URL.createObjectURL = jest.fn();
+    if (!window.URL.revokeObjectURL) window.URL.revokeObjectURL = jest.fn();
     createObjectURLSpy = jest.spyOn(window.URL, 'createObjectURL').mockReturnValue('blob:mock-url');
     revokeObjectURLSpy = jest.spyOn(window.URL, 'revokeObjectURL').mockImplementation();
 
@@ -94,21 +71,21 @@ describe('DownloadDialogResourcesTabComponent', () => {
       imports: [DownloadDialogResourcesTabComponent, FormsModule, NoopAnimationsModule, MockLoadingButtonDirective],
       schemas: [NO_ERRORS_SCHEMA],
       providers: [
-        { provide: APIV3ApiService, useValue: mockV3ApiService },
+        { provide: HttpClient, useValue: mockHttp },
+        { provide: BASE_PATH, useValue: 'https://test-api' },
         { provide: NotificationService, useValue: mockNotificationService },
         { provide: LocalizationService, useValue: mockLocalizationService },
         { provide: TranslateService, useValue: mockTranslateService },
         provideTranslateService(),
-        TranslateService,
       ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(DownloadDialogResourcesTabComponent);
     component = fixture.componentInstance;
 
-    // Set required inputs
     component.properties = [mockProperty1, mockProperty2];
     component.resourceClassIri = 'http://example.org/ontology/ResourceClass';
+    component.resourceCount = 100;
   });
 
   afterEach(() => {
@@ -143,44 +120,18 @@ describe('DownloadDialogResourcesTabComponent', () => {
   });
 
   describe('downloadCsv', () => {
-    const mockCsvText = 'id,title,description\n1,Test,Test description';
-
     beforeEach(() => {
       component.selectedPropertyIds = ['prop-1', 'prop-2'];
-      (mockV3ApiService.postV3ExportResources as any).mockReturnValue(of(mockCsvText));
     });
 
-    it('should set isDownloading to true when starting download', done => {
-      // Use a delayed observable to check isDownloading state during execution
-      let observer!: Observer<string>;
-      const delayed = new Observable<string>(obs => {
-        observer = obs;
-      });
-      (mockV3ApiService.postV3ExportResources as any).mockReturnValue(delayed);
-
-      component.downloadCsv();
-
-      // Check that isDownloading is set to true
-      expect(component.isDownloading).toBe(true);
-
-      // Complete the observable
-      observer.next(mockCsvText);
-      observer.complete();
-
-      setTimeout(() => {
-        // After completion, isDownloading should be false
-        expect(component.isDownloading).toBe(false);
-        done();
-      }, 10);
-    });
-
-    it('should call API with correct parameters', () => {
+    it('calls HttpClient.post with expected URL, body, and streaming options', () => {
       component.includeResourceIris = false;
-      component.selectedPropertyIds = ['prop-1', 'prop-2'];
+      component.includeArkUrls = false;
 
       component.downloadCsv();
 
-      expect(mockV3ApiService.postV3ExportResources).toHaveBeenCalledWith(
+      expect(mockHttp.post).toHaveBeenCalledWith(
+        'https://test-api/v3/export/resources',
         {
           resourceClass: 'http://example.org/ontology/ResourceClass',
           selectedProperties: ['prop-1', 'prop-2'],
@@ -188,212 +139,256 @@ describe('DownloadDialogResourcesTabComponent', () => {
           includeIris: false,
           includeArkUrls: false,
         },
-        undefined,
-        undefined,
-        { httpHeaderAccept: 'text/csv' }
+        // All three flags are load-bearing: responseType:'text' enables partialText on DownloadProgress events.
+        expect.objectContaining({
+          reportProgress: true,
+          observe: 'events',
+          responseType: 'text',
+        })
       );
     });
 
-    it('should call API with includeIris=true when checkbox is checked', () => {
+    it('passes includeIris=true when toggled', () => {
       component.includeResourceIris = true;
-      component.selectedPropertyIds = ['prop-1'];
-
       component.downloadCsv();
-
-      expect(mockV3ApiService.postV3ExportResources).toHaveBeenCalledWith(
-        expect.objectContaining({
-          includeIris: true,
-        }),
-        undefined,
-        undefined,
-        { httpHeaderAccept: 'text/csv' }
+      expect(mockHttp.post).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({ includeIris: true }),
+        expect.any(Object)
       );
     });
 
-    it('should use current language from localization service', () => {
+    it('passes includeArkUrls=true when toggled', () => {
+      component.includeArkUrls = true;
+      component.downloadCsv();
+      expect(mockHttp.post).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({ includeArkUrls: true }),
+        expect.any(Object)
+      );
+    });
+
+    it('passes the current language from LocalizationService', () => {
       mockLocalizationService.getCurrentLanguage.mockReturnValue('de');
-
       component.downloadCsv();
-
-      expect(mockV3ApiService.postV3ExportResources).toHaveBeenCalledWith(
-        expect.objectContaining({
-          language: 'de',
-        }),
-        undefined,
-        undefined,
-        { httpHeaderAccept: 'text/csv' }
+      expect(mockHttp.post).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({ language: 'de' }),
+        expect.any(Object)
       );
     });
 
-    it('should create blob with CSV data', done => {
-      (mockV3ApiService.postV3ExportResources as any).mockReturnValue(of(mockCsvText));
-
+    it('sets isDownloading to true when download starts', () => {
       component.downloadCsv();
+      expect(component.isDownloading).toBe(true);
+    });
 
-      setTimeout(() => {
+    it('sets isDownloading to false after observable completes', () => {
+      component.downloadCsv();
+      events$.next(new HttpResponse({ body: 'h\nr1\n', status: 200 }));
+      events$.complete();
+      expect(component.isDownloading).toBe(false);
+    });
+
+    it('sets isDownloading to false after error', () => {
+      component.downloadCsv();
+      events$.error(new Error('network error'));
+      expect(component.isDownloading).toBe(false);
+    });
+
+    describe('DownloadProgress events', () => {
+      it('updates rowsReceived from partialText (subtracts header row)', () => {
+        component.resourceCount = 5_000;
+        component.downloadCsv();
+
+        events$.next({
+          type: HttpEventType.DownloadProgress,
+          loaded: 100,
+          total: 500,
+          partialText: 'h\nr1\nr2\n',
+        } as HttpDownloadProgressEvent);
+
+        expect(component.rowsReceived).toBe(2);
+      });
+
+      it('advances rowsReceived as more partialText arrives', () => {
+        component.resourceCount = 5_000;
+        component.downloadCsv();
+
+        events$.next({
+          type: HttpEventType.DownloadProgress,
+          loaded: 100,
+          total: 500,
+          partialText: 'h\nr1\nr2\n',
+        } as HttpDownloadProgressEvent);
+        expect(component.rowsReceived).toBe(2);
+
+        events$.next({
+          type: HttpEventType.DownloadProgress,
+          loaded: 300,
+          total: 500,
+          partialText: 'h\nr1\nr2\nr3\nr4\n',
+        } as HttpDownloadProgressEvent);
+        expect(component.rowsReceived).toBe(4);
+      });
+
+      it('rowsReceived is monotonically non-decreasing across events (REQ-2.3)', () => {
+        component.resourceCount = 5_000;
+        component.downloadCsv();
+
+        const snapshots = [
+          'h\nr1\n',
+          'h\nr1\nr2\n',
+          'h\nr1\nr2\nr3\n',
+          'h\nr1\nr2\nr3\nr4\n',
+        ];
+        let prev = 0;
+        for (const partialText of snapshots) {
+          events$.next({ type: HttpEventType.DownloadProgress, loaded: 0, partialText } as HttpDownloadProgressEvent);
+          expect(component.rowsReceived).toBeGreaterThanOrEqual(prev);
+          prev = component.rowsReceived;
+        }
+      });
+    });
+
+    describe('progressPercent', () => {
+      it('returns 0 when resourceCount is 0', () => {
+        component.resourceCount = 0;
+        expect(component.progressPercent).toBe(0);
+      });
+
+      it('reflects ratio of rowsReceived to resourceCount', () => {
+        component.resourceCount = 100;
+        component.downloadCsv();
+
+        events$.next({
+          type: HttpEventType.DownloadProgress,
+          loaded: 50,
+          partialText: 'h\n' + Array(51).fill('r\n').join(''),
+        } as HttpDownloadProgressEvent);
+
+        expect(component.progressPercent).toBeLessThanOrEqual(100);
+        expect(component.progressPercent).toBeGreaterThan(0);
+      });
+
+      it('clamps to 100 even when rowsReceived would exceed resourceCount (REQ-2.5)', () => {
+        component.resourceCount = 2;
+        component.downloadCsv();
+
+        // More rows than resourceCount — should not exceed 100%
+        events$.next({
+          type: HttpEventType.DownloadProgress,
+          loaded: 100,
+          partialText: 'h\nr1\nr2\nr3\nr4\nr5\n',
+        } as HttpDownloadProgressEvent);
+
+        expect(component.progressPercent).toBe(100);
+      });
+    });
+
+    describe('terminal HttpResponse', () => {
+      const finalBody = 'h\nr1\nr2\nr3\nr4\n';
+
+      it('creates blob with the response body', () => {
+        component.downloadCsv();
+        events$.next(new HttpResponse({ body: finalBody, status: 200 }));
+        events$.complete();
+
         expect(createObjectURLSpy).toHaveBeenCalled();
         const blobArg = createObjectURLSpy.mock.calls[0][0] as Blob;
         expect(blobArg.type).toBe('text/csv');
-        done();
-      }, 0);
-    });
+      });
 
-    it('should create download link and trigger click', done => {
-      (mockV3ApiService.postV3ExportResources as any).mockReturnValue(of(mockCsvText));
+      it('creates and clicks a download anchor', () => {
+        component.downloadCsv();
+        events$.next(new HttpResponse({ body: finalBody, status: 200 }));
+        events$.complete();
 
-      component.downloadCsv();
-
-      setTimeout(() => {
         expect(createElementSpy).toHaveBeenCalledWith('a');
-        // Verify that an anchor element was appended and removed
         expect(appendChildSpy).toHaveBeenCalled();
         expect(removeChildSpy).toHaveBeenCalled();
-        done();
-      }, 0);
-    });
+      });
 
-    it('should revoke object URL after download', done => {
-      (mockV3ApiService.postV3ExportResources as any).mockReturnValue(of(mockCsvText));
+      it('revokes the object URL after download', () => {
+        component.downloadCsv();
+        events$.next(new HttpResponse({ body: finalBody, status: 200 }));
+        events$.complete();
 
-      component.downloadCsv();
-
-      setTimeout(() => {
         expect(revokeObjectURLSpy).toHaveBeenCalledWith('blob:mock-url');
-        done();
-      }, 0);
-    });
+      });
 
-    it('should show success notification on successful download', done => {
-      (mockV3ApiService.postV3ExportResources as any).mockReturnValue(of(mockCsvText));
+      it('shows success snackbar', () => {
+        component.downloadCsv();
+        events$.next(new HttpResponse({ body: finalBody, status: 200 }));
+        events$.complete();
 
-      component.downloadCsv();
-
-      setTimeout(() => {
         expect(mockNotificationService.openSnackBar).toHaveBeenCalledWith(
           'pages.dataBrowser.downloadDialog.downloadSuccess'
         );
-        done();
-      }, 0);
-    });
+      });
 
-    it('should emit afterClosed event on successful download', done => {
-      (mockV3ApiService.postV3ExportResources as any).mockReturnValue(of(mockCsvText));
-      const emitSpy = jest.spyOn(component.afterClosed, 'emit');
+      it('emits afterClosed', () => {
+        const emitSpy = jest.spyOn(component.afterClosed, 'emit');
+        component.downloadCsv();
+        events$.next(new HttpResponse({ body: finalBody, status: 200 }));
+        events$.complete();
 
-      component.downloadCsv();
-
-      setTimeout(() => {
         expect(emitSpy).toHaveBeenCalled();
-        done();
-      }, 0);
+      });
     });
 
-    it('should set isDownloading to false after successful download', done => {
-      (mockV3ApiService.postV3ExportResources as any).mockReturnValue(of(mockCsvText));
+    describe('error path', () => {
+      it('shows error snackbar', () => {
+        component.downloadCsv();
+        events$.error(new Error('network error'));
 
-      component.downloadCsv();
-
-      setTimeout(() => {
-        expect(component.isDownloading).toBe(false);
-        done();
-      }, 0);
-    });
-
-    it('should show error notification on API failure', done => {
-      const error = new Error('API Error');
-      mockV3ApiService.postV3ExportResources.mockReturnValue(throwError(() => error));
-
-      component.downloadCsv();
-
-      setTimeout(() => {
         expect(mockNotificationService.openSnackBar).toHaveBeenCalledWith(
           'pages.dataBrowser.downloadDialog.downloadError'
         );
-        done();
-      }, 0);
-    });
+      });
 
-    it('should set isDownloading to false after error', done => {
-      const error = new Error('API Error');
-      mockV3ApiService.postV3ExportResources.mockReturnValue(throwError(() => error));
+      it('does not create blob on error', () => {
+        component.downloadCsv();
+        events$.error(new Error('network error'));
 
-      component.downloadCsv();
-
-      setTimeout(() => {
-        expect(component.isDownloading).toBe(false);
-        done();
-      }, 0);
-    });
-
-    it('should not emit afterClosed on error', done => {
-      const error = new Error('API Error');
-      mockV3ApiService.postV3ExportResources.mockReturnValue(throwError(() => error));
-      const emitSpy = jest.spyOn(component.afterClosed, 'emit');
-
-      component.downloadCsv();
-
-      setTimeout(() => {
-        expect(emitSpy).not.toHaveBeenCalled();
-        done();
-      }, 0);
-    });
-
-    it('should not create blob on error', done => {
-      const error = new Error('API Error');
-      mockV3ApiService.postV3ExportResources.mockReturnValue(throwError(() => error));
-
-      component.downloadCsv();
-
-      setTimeout(() => {
         expect(createObjectURLSpy).not.toHaveBeenCalled();
-        done();
-      }, 0);
+      });
+
+      it('does not emit afterClosed on error', () => {
+        const emitSpy = jest.spyOn(component.afterClosed, 'emit');
+        component.downloadCsv();
+        events$.error(new Error('network error'));
+
+        expect(emitSpy).not.toHaveBeenCalled();
+      });
+    });
+  });
+
+  describe('progress bar visibility', () => {
+    it('does not render mat-progress-bar when resourceCount <= 1000', () => {
+      component.resourceCount = 1_000;
+      component.downloadCsv();
+      fixture.detectChanges();
+
+      const progressBar = fixture.nativeElement.querySelector('mat-progress-bar');
+      expect(progressBar).toBeNull();
+    });
+
+    it('renders mat-progress-bar when isDownloading and resourceCount > 1000', () => {
+      component.resourceCount = 1_001;
+      component.downloadCsv();
+      fixture.detectChanges();
+
+      const progressBar = fixture.nativeElement.querySelector('mat-progress-bar');
+      expect(progressBar).not.toBeNull();
     });
   });
 
   describe('selectedPropertyIds', () => {
-    it('should update when property selection changes', () => {
+    it('updates when property selection changes', () => {
       expect(component.selectedPropertyIds).toEqual([]);
-
       component.selectedPropertyIds = ['prop-1', 'prop-2'];
-
       expect(component.selectedPropertyIds).toEqual(['prop-1', 'prop-2']);
-    });
-  });
-
-  describe('includeArkUrls toggle', () => {
-    it('should default to false', () => {
-      expect(component.includeArkUrls).toBe(false);
-    });
-
-    it('should pass includeArkUrls=true when toggled', () => {
-      const mockCsvText = 'id,title\n1,Test';
-      (mockV3ApiService.postV3ExportResources as any).mockReturnValue(of(mockCsvText));
-      component.selectedPropertyIds = ['prop-1'];
-      component.includeArkUrls = true;
-
-      component.downloadCsv();
-
-      expect(mockV3ApiService.postV3ExportResources).toHaveBeenCalledWith(
-        expect.objectContaining({ includeArkUrls: true }),
-        undefined,
-        undefined,
-        { httpHeaderAccept: 'text/csv' }
-      );
-    });
-  });
-
-  describe('includeResourceIris toggle', () => {
-    it('should start as false', () => {
-      expect(component.includeResourceIris).toBe(false);
-    });
-
-    it('should be toggleable', () => {
-      component.includeResourceIris = true;
-      expect(component.includeResourceIris).toBe(true);
-
-      component.includeResourceIris = false;
-      expect(component.includeResourceIris).toBe(false);
     });
   });
 });

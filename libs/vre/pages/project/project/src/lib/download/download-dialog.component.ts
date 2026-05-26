@@ -33,6 +33,7 @@ export interface DownloadDialogData {
       <app-download-dialog-properties-tab
         [properties]="data.properties"
         [resourceClassIri]="data.resClass.id"
+        [resourceCount]="data.resourceCount"
         (afterClosed)="dialogRef.close()"
         style="display: block; height: 100%" />
     </div>
