@@ -1,0 +1,102 @@
+import { OverlayModule } from '@angular/cdk/overlay';
+import { importProvidersFrom } from '@angular/core';
+import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
+import { of } from 'rxjs';
+import { expect, userEvent, within } from 'storybook/test';
+import { IriLabelPair, Predicate } from '../../model';
+import { OntologyDataService } from '../../service/ontology-data.service';
+import { STORY_PROVIDERS } from '../../stories.helpers';
+import { PropertyPickerPopoverComponent } from './property-picker-popover.component';
+
+const SAMPLE_PROPERTIES: IriLabelPair[] = [
+  { iri: 'http://ex.org/hasTitle', label: 'Title' },
+  { iri: 'http://ex.org/hasAuthor', label: 'Author' },
+  { iri: 'http://ex.org/hasDate', label: 'Date' },
+];
+
+const makeOntologyStub = (properties: IriLabelPair[] = SAMPLE_PROPERTIES) => ({
+  getProperties$: () => of(properties as Predicate[]),
+  ontologies$: of([]),
+  selectedOntology$: of(null),
+  ontologyLoading$: of(false),
+  resourceClasses$: of([]),
+  selectedOntology: null,
+  classIris: [],
+  init: () => {},
+  setOntology: () => {},
+  getResourceClassObjectsForProperty$: () => of([]),
+  getSubclassesOfResourceClass$: () => of([]),
+});
+
+const meta: Meta<PropertyPickerPopoverComponent> = {
+  title: 'Search / Advanced Search / Chip Bar / 3b. Filter Editor Popover / Property Picker Popover',
+  component: PropertyPickerPopoverComponent,
+  argTypes: {
+    subjectClassIri: { description: 'IRI of the subject class to filter properties for.' },
+    propertySelected: { description: 'Emitted when a property is picked.' },
+  },
+};
+export default meta;
+type Story = StoryObj<PropertyPickerPopoverComponent>;
+
+const baseProviders = [
+  ...STORY_PROVIDERS,
+  importProvidersFrom(OverlayModule),
+  { provide: OntologyDataService, useValue: makeOntologyStub() },
+];
+
+export const ShowsAllProperties: Story = {
+  name: 'Shows all available properties in the list',
+  decorators: [applicationConfig({ providers: baseProviders })],
+  play: async ({ canvasElement, step }) => {
+    await step('Property list options are rendered', async () => {
+      const options = canvasElement.querySelectorAll('mat-list-option');
+      await expect(options.length).toBe(SAMPLE_PROPERTIES.length);
+    });
+  },
+};
+
+export const ShowsSearchInput: Story = {
+  name: 'Shows search input for filtering properties',
+  decorators: [applicationConfig({ providers: baseProviders })],
+  play: async ({ canvasElement, step }) => {
+    await step('Search input is present', async () => {
+      const input = canvasElement.querySelector('input[matInput]');
+      await expect(input).not.toBeNull();
+    });
+  },
+};
+
+export const FiltersPropertiesBySearchTerm: Story = {
+  name: 'Filters property list when user types in the search field',
+  decorators: [applicationConfig({ providers: baseProviders })],
+  play: async ({ canvasElement, step }) => {
+    const canvas = within(canvasElement);
+    await step('Type search term into the input', async () => {
+      await userEvent.type(canvas.getByRole('textbox'), 'Title');
+    });
+    await step('Only matching properties are shown', async () => {
+      const options = canvasElement.querySelectorAll('mat-list-option');
+      await expect(options.length).toBe(1);
+    });
+  },
+};
+
+export const EmptyPropertyList: Story = {
+  name: 'Shows empty list when no properties are available',
+  decorators: [
+    applicationConfig({
+      providers: [
+        ...STORY_PROVIDERS,
+        importProvidersFrom(OverlayModule),
+        { provide: OntologyDataService, useValue: makeOntologyStub([]) },
+      ],
+    }),
+  ],
+  play: async ({ canvasElement, step }) => {
+    await step('No list options are rendered', async () => {
+      const options = canvasElement.querySelectorAll('mat-list-option');
+      await expect(options.length).toBe(0);
+    });
+  },
+};

@@ -1,0 +1,93 @@
+import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
+import { of } from 'rxjs';
+import { expect, userEvent, within } from 'storybook/test';
+import { IriLabelPair } from '../../../../model';
+import { DynamicFormsDataService } from '../../../../service/dynamic-forms-data.service';
+import { STORY_PROVIDERS } from '../../../../stories.helpers';
+import { LinkValueComponent } from './link-value.component';
+
+const makeDynamicFormsStub = (resources: IriLabelPair[] = []) => ({
+  searchResourcesByLabel$: () => of(resources),
+  getResourcesListCount$: () => of(resources.length),
+  getList$: () => of(undefined),
+});
+
+const SAMPLE_RESOURCES: IriLabelPair[] = [
+  { iri: 'http://rdfh.ch/resource1', label: 'Resource One' },
+  { iri: 'http://rdfh.ch/resource2', label: 'Resource Two' },
+];
+
+const meta: Meta<LinkValueComponent> = {
+  title: 'Search / Advanced Search / Value Inputs / Link Value',
+  component: LinkValueComponent,
+  argTypes: {
+    resourceClass: { description: 'IRI of the resource class to restrict the search to.' },
+    selectedResource: { description: 'The currently selected linked resource.' },
+    emitResourceSelected: { description: 'Emitted when the user selects a resource from the autocomplete.' },
+  },
+};
+export default meta;
+type Story = StoryObj<LinkValueComponent>;
+
+export const ShowsSearchInput: Story = {
+  name: 'Shows autocomplete input to search for linked resources',
+  decorators: [
+    applicationConfig({
+      providers: [
+        ...STORY_PROVIDERS,
+        { provide: DynamicFormsDataService, useValue: makeDynamicFormsStub() },
+      ],
+    }),
+  ],
+  play: async ({ canvasElement, step }) => {
+    await step('Search input is rendered', async () => {
+      const input = canvasElement.querySelector('input[matInput]');
+      await expect(input).not.toBeNull();
+    });
+    await step('Placeholder text prompts the user to search', async () => {
+      const input = canvasElement.querySelector('input[matInput]') as HTMLInputElement;
+      await expect(input?.placeholder).toContain('Search');
+    });
+  },
+};
+
+export const ShowsMinLengthHint: Story = {
+  name: 'Shows hint to type at least 3 characters before searching',
+  decorators: [
+    applicationConfig({
+      providers: [
+        ...STORY_PROVIDERS,
+        { provide: DynamicFormsDataService, useValue: makeDynamicFormsStub() },
+      ],
+    }),
+  ],
+  play: async ({ canvasElement, step }) => {
+    const canvas = within(canvasElement);
+    await step('Click into the search field', async () => {
+      await userEvent.click(canvas.getByRole('textbox'));
+    });
+    await step('Hint about minimum characters is shown', async () => {
+      await expect(document.body.textContent).toContain('3');
+    });
+  },
+};
+
+export const ShowsPreselectedResource: Story = {
+  name: 'Shows the pre-selected resource label in the input',
+  args: { selectedResource: SAMPLE_RESOURCES[0] },
+  decorators: [
+    applicationConfig({
+      providers: [
+        ...STORY_PROVIDERS,
+        { provide: DynamicFormsDataService, useValue: makeDynamicFormsStub(SAMPLE_RESOURCES) },
+      ],
+    }),
+  ],
+  play: async ({ canvasElement, step }) => {
+    const canvas = within(canvasElement);
+    await step('Input shows the pre-selected resource label', async () => {
+      const input = canvas.getByRole('textbox') as HTMLInputElement;
+      await expect(input.value).toBe(SAMPLE_RESOURCES[0].label);
+    });
+  },
+};
