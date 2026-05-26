@@ -8,6 +8,10 @@ const config: StorybookConfig = {
     options: {},
   },
   staticDirs: [{ from: '../apps/dsp-app/src/assets', to: '/assets' }],
+  webpackFinal: async webpackConfig => ({
+    ...webpackConfig,
+    cache: false,
+  }),
 };
 
 export default config;
