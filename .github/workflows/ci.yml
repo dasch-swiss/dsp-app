@@ -362,7 +362,9 @@ jobs:
       - name: Generate OpenAPI client
         run: npm run generate-openapi-module
       - name: Build Storybook
-        run: npx nx run dsp-app:build-storybook:ci --skip-nx-cache
+        run: |
+          rm -rf dist/storybook node_modules/.cache/storybook .angular/cache
+          npx nx run dsp-app:build-storybook:ci --skip-nx-cache
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
       - name: Serve and run interaction tests
