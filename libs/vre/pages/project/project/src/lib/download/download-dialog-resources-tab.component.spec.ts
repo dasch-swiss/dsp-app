@@ -1,13 +1,7 @@
+import { HttpClient, HttpDownloadProgressEvent, HttpEvent, HttpEventType, HttpResponse } from '@angular/common/http';
 import { Directive, Input, NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
-import {
-  HttpClient,
-  HttpDownloadProgressEvent,
-  HttpEvent,
-  HttpEventType,
-  HttpResponse,
-} from '@angular/common/http';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { PropertyDefinition } from '@dasch-swiss/dsp-js';
 import { BASE_PATH } from '@dasch-swiss/vre/3rd-party-services/open-api';
@@ -236,12 +230,7 @@ describe('DownloadDialogResourcesTabComponent', () => {
         component.resourceCount = 5_000;
         component.downloadCsv();
 
-        const snapshots = [
-          'h\nr1\n',
-          'h\nr1\nr2\n',
-          'h\nr1\nr2\nr3\n',
-          'h\nr1\nr2\nr3\nr4\n',
-        ];
+        const snapshots = ['h\nr1\n', 'h\nr1\nr2\n', 'h\nr1\nr2\nr3\n', 'h\nr1\nr2\nr3\nr4\n'];
         let prev = 0;
         for (const partialText of snapshots) {
           events$.next({ type: HttpEventType.DownloadProgress, loaded: 0, partialText } as HttpDownloadProgressEvent);

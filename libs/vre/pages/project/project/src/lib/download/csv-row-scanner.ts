@@ -12,8 +12,7 @@ export function initRowScanner(): RowScannerState {
 export function advanceRowScanner(state: RowScannerState, partialText: string): RowScannerState {
   // Defensive guard: if partialText shrank (unexpected Angular behaviour change),
   // reset and re-scan from the beginning — correct but O(n^2) for that frame.
-  let { inQuotes, cursor, rows } =
-    partialText.length < state.cursor ? { inQuotes: false, cursor: 0, rows: 0 } : state;
+  let { inQuotes, cursor, rows } = partialText.length < state.cursor ? { inQuotes: false, cursor: 0, rows: 0 } : state;
 
   for (let i = cursor; i < partialText.length; i++) {
     const c = partialText[i];

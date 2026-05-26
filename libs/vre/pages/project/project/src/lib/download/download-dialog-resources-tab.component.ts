@@ -1,10 +1,10 @@
+import { HttpClient, HttpDownloadProgressEvent, HttpEventType } from '@angular/common/http';
 import { ChangeDetectorRef, Component, EventEmitter, Inject, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatDialogActions } from '@angular/material/dialog';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { HttpClient, HttpDownloadProgressEvent, HttpEventType } from '@angular/common/http';
 import { BASE_PATH } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
 import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
@@ -12,9 +12,9 @@ import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { LoadingButtonDirective } from '@dasch-swiss/vre/ui/progress-indicator';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { finalize } from 'rxjs';
-import { DownloadPropertyListComponent } from './download-property-list.component';
-import { CSV_EXPORT_LARGE_THRESHOLD } from './download-dialog.component';
 import { RowScannerState, advanceRowScanner, initRowScanner } from './csv-row-scanner';
+import { CSV_EXPORT_LARGE_THRESHOLD } from './download-dialog.component';
+import { DownloadPropertyListComponent } from './download-property-list.component';
 
 @Component({
   selector: 'app-download-dialog-properties-tab',
@@ -53,7 +53,9 @@ import { RowScannerState, advanceRowScanner, initRowScanner } from './csv-row-sc
     @if (isDownloading && resourceCount > largeThreshold) {
       <div class="csv-export-progress" role="status" aria-live="polite">
         <mat-progress-bar mode="determinate" [value]="progressPercent"></mat-progress-bar>
-        <span>{{ 'pages.dataBrowser.downloadDialog.progressXofN' | translate: { x: rowsReceived, n: resourceCount } }}</span>
+        <span>{{
+          'pages.dataBrowser.downloadDialog.progressXofN' | translate: { x: rowsReceived, n: resourceCount }
+        }}</span>
       </div>
     }
 
@@ -130,7 +132,7 @@ export class DownloadDialogResourcesTabComponent {
           this.isDownloading = false;
           this.rowsReceived = 0;
           this._cdr.markForCheck();
-        }),
+        })
       )
       .subscribe({
         next: event => {
