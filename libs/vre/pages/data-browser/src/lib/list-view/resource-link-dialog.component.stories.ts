@@ -1,11 +1,10 @@
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
-import { UserService } from '@dasch-swiss/vre/core/session';
 import { ResourceService } from '@dasch-swiss/vre/shared/app-common';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
 import { expect, userEvent, within } from 'storybook/test';
-import { makeReadResource, makeUserServiceStub, STORY_PROVIDERS } from '../stories.helpers';
+import { makeReadResource, STORY_PROVIDERS } from '../stories.helpers';
 import { ResourceLinkDialogComponent } from './resource-link-dialog.component';
 
 const twoResources = [

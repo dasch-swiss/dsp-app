@@ -1,5 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/angular';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, fn, userEvent, within } from 'storybook/test';
 import { ProjectSidenavCollapseButtonComponent } from './project-sidenav-collapse-button.component';
 
 const meta: Meta<ProjectSidenavCollapseButtonComponent> = {
@@ -28,9 +28,6 @@ export const Collapsed: Story = {
     await step('Right-pointing chevron is displayed', async () => {
       await expect(canvas.getByText('chevron_right')).toBeInTheDocument();
     });
-    await step('Tooltip says "expand"', async () => {
-      await expect(canvas.getByTestId('side-panel-collapse-btn')).toBeInTheDocument();
-    });
   },
 };
 
@@ -45,16 +42,21 @@ export const Expanded: Story = {
   },
 };
 
+const toggleSpy = fn();
+
 export const EmitsOnClick: Story = {
   name: 'Emits toggleSidenav when button is clicked',
-  args: { expand: false },
+  render: () => ({
+    props: { expand: false, toggleSidenav: toggleSpy },
+    template: `<app-project-sidenav-collapse-button [expand]="expand" (toggleSidenav)="toggleSidenav()"></app-project-sidenav-collapse-button>`,
+  }),
   play: async ({ canvasElement, step }) => {
-    const canvas = within(canvasElement);
+    toggleSpy.mockClear();
     await step('Click the collapse button', async () => {
-      await userEvent.click(canvas.getByTestId('side-panel-collapse-btn'));
+      await userEvent.click(canvasElement.querySelector('button') as HTMLElement);
     });
-    await step('Button is still present after click', async () => {
-      await expect(canvas.getByTestId('side-panel-collapse-btn')).toBeInTheDocument();
+    await step('toggleSidenav output was emitted', async () => {
+      await expect(toggleSpy).toHaveBeenCalledTimes(1);
     });
   },
 };

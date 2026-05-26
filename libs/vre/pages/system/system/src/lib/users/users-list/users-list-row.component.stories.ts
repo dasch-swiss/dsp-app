@@ -4,7 +4,7 @@ import { UserService } from '@dasch-swiss/vre/core/session';
 import { DialogService } from '@dasch-swiss/vre/ui/ui';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
-import { expect, within } from 'storybook/test';
+import { expect, userEvent, within } from 'storybook/test';
 import { makeReadUser, makeSystemAdminUser, makeUserServiceStub, STORY_PROVIDERS } from '../../stories.helpers';
 import { UsersTabService } from '../users-tab.service';
 import { UsersListRowComponent } from './users-list-row.component';
@@ -69,7 +69,7 @@ export const SystemAdminUser: Story = {
 };
 
 export const WithActionMenuVisible: Story = {
-  name: 'Shows action menu button when current user is system admin',
+  name: 'Opens action menu when menu button is clicked by system admin',
   decorators: [
     applicationConfig({
       providers: [...baseProviders, { provide: UserService, useValue: makeUserServiceStub({ isSysAdmin$: of(true) }) }],
@@ -79,9 +79,13 @@ export const WithActionMenuVisible: Story = {
     user: makeReadUser(),
   },
   play: async ({ canvasElement, step }) => {
-    const canvas = within(canvasElement);
-    await step('Action menu button is visible', async () => {
-      await expect(canvas.getByTestId('user-menu')).toBeInTheDocument();
+    await step('Click the action menu button', async () => {
+      const menuBtn = canvasElement.querySelector('[data-cy="user-menu"]') as HTMLElement;
+      await userEvent.click(menuBtn);
+    });
+    await step('Edit user menu item is visible', async () => {
+      const menuItem = document.querySelector('button[mat-menu-item]') ?? document.querySelector('.mat-mdc-menu-item');
+      await expect(menuItem).not.toBeNull();
     });
   },
 };

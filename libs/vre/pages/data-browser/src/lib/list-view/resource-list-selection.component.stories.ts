@@ -2,7 +2,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { UserService } from '@dasch-swiss/vre/core/session';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, fn, userEvent, within } from 'storybook/test';
 import { MultipleViewerService } from '../comparison/multiple-viewer.service';
 import {
   makeMultipleViewerServiceStub,
@@ -87,6 +87,8 @@ export const SingleResourceSelected: Story = {
   },
 };
 
+const resetSpy = fn();
+
 export const ResetsSelectionOnClose: Story = {
   name: 'Resets selection when close button is clicked',
   decorators: [
@@ -97,19 +99,20 @@ export const ResetsSelectionOnClose: Story = {
           provide: MultipleViewerService,
           useValue: makeMultipleViewerServiceStub({
             selectedResources$: of([makeReadResource({ id: 'r1' }), makeReadResource({ id: 'r2' })]),
+            reset: resetSpy,
           }),
         },
       ],
     }),
   ],
   play: async ({ canvasElement, step }) => {
+    resetSpy.mockClear();
     const canvas = within(canvasElement);
-    await step('Click the close button', async () => {
-      const buttons = canvas.getAllByRole('button');
-      await userEvent.click(buttons[buttons.length - 1]);
+    await step('Click the close icon button', async () => {
+      await userEvent.click(canvas.getByRole('button'));
     });
-    await step('Component is still present after reset', async () => {
-      await expect(canvasElement).toBeInTheDocument();
+    await step('MultipleViewerService.reset was called', async () => {
+      await expect(resetSpy).toHaveBeenCalledTimes(1);
     });
   },
 };

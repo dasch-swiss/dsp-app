@@ -4,7 +4,7 @@ import { AuthService, UserService } from '@dasch-swiss/vre/core/session';
 import { DialogService } from '@dasch-swiss/vre/ui/ui';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, fn, userEvent, within } from 'storybook/test';
 import { makeUserServiceStub, STORY_PROVIDERS } from '../stories.helpers';
 import { AccountComponent } from './account.component';
 
@@ -41,23 +41,23 @@ export const DefaultView: Story = {
   },
 };
 
+const openDialogSpy = fn().mockReturnValue({ afterClosed: () => of(true) });
+
 export const OpensEditProfileDialog: Story = {
   name: 'Opens edit profile dialog when edit action is clicked',
   decorators: [
     applicationConfig({
-      providers: [
-        ...baseProviders,
-        { provide: MatDialog, useValue: { open: () => ({ afterClosed: () => of(true) }) } },
-      ],
+      providers: [...baseProviders, { provide: MatDialog, useValue: { open: openDialogSpy } }],
     }),
   ],
   play: async ({ canvasElement, step }) => {
+    openDialogSpy.mockClear();
     const canvas = within(canvasElement);
     await step('Click "Edit my profile"', async () => {
       await userEvent.click(canvas.getByText('Edit my profile'));
     });
-    await step('Component is still in the DOM after action', async () => {
-      await expect(canvas.getByText('Edit my profile')).toBeInTheDocument();
+    await step('MatDialog.open was called to open the edit profile dialog', async () => {
+      await expect(openDialogSpy).toHaveBeenCalledTimes(1);
     });
   },
 };
