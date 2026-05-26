@@ -1,5 +1,5 @@
 import { HttpClient, HttpDownloadProgressEvent, HttpEvent, HttpEventType, HttpResponse } from '@angular/common/http';
-import { Directive, Input, NO_ERRORS_SCHEMA } from '@angular/core';
+import { Directive, EventEmitter, Input, NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
@@ -8,8 +8,8 @@ import { BASE_PATH } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
 import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
-import { provideTranslateService, TranslateService } from '@ngx-translate/core';
-import { Subject } from 'rxjs';
+import { TranslateService } from '@ngx-translate/core';
+import { of, Subject } from 'rxjs';
 import { DownloadDialogResourcesTabComponent } from './download-dialog-resources-tab.component';
 
 @Directive({
@@ -50,7 +50,14 @@ describe('DownloadDialogResourcesTabComponent', () => {
 
     mockNotificationService = { openSnackBar: jest.fn() } as any;
     mockLocalizationService = { getCurrentLanguage: jest.fn().mockReturnValue('en') } as any;
-    mockTranslateService = { instant: jest.fn((key: string) => key) } as any;
+    mockTranslateService = {
+      instant: jest.fn((key: string) => key),
+      get: jest.fn((key: string) => of(key)),
+      onTranslationChange: new EventEmitter(),
+      onLangChange: new EventEmitter(),
+      onDefaultLangChange: new EventEmitter(),
+      currentLang: 'en',
+    } as any;
 
     createElementSpy = jest.spyOn(document, 'createElement');
     appendChildSpy = jest.spyOn(document.body, 'appendChild');
@@ -70,7 +77,6 @@ describe('DownloadDialogResourcesTabComponent', () => {
         { provide: NotificationService, useValue: mockNotificationService },
         { provide: LocalizationService, useValue: mockLocalizationService },
         { provide: TranslateService, useValue: mockTranslateService },
-        provideTranslateService(),
       ],
     }).compileComponents();
 

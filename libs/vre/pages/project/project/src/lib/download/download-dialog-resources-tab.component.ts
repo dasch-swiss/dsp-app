@@ -13,7 +13,6 @@ import { LoadingButtonDirective } from '@dasch-swiss/vre/ui/progress-indicator';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { finalize } from 'rxjs';
 import { RowScannerState, advanceRowScanner, initRowScanner } from './csv-row-scanner';
-import { CSV_EXPORT_LARGE_THRESHOLD } from './download-dialog.component';
 import { DownloadPropertyListComponent } from './download-property-list.component';
 
 @Component({
@@ -80,7 +79,7 @@ export class DownloadDialogResourcesTabComponent {
   @Input({ required: true }) resourceClassIri!: string;
   @Input({ required: true }) resourceCount!: number;
   @Output() afterClosed = new EventEmitter<void>();
-  readonly largeThreshold = CSV_EXPORT_LARGE_THRESHOLD;
+  readonly largeThreshold = 1_000;
   includeArkUrls = false;
   includeResourceIris = false;
   isDownloading = false;
