@@ -417,7 +417,8 @@
         "downloadCsv": "Télécharger CSV",
         "downloadSuccess": "CSV téléchargé avec succès.",
         "downloadError": "Échec du téléchargement du CSV. Veuillez réessayer.",
-        "largeExportWarning": "Cet export contient {{count}} ressources et peut prendre plusieurs minutes. Veuillez garder cet onglet ouvert."
+        "largeExportWarning": "Cet export contient {{count}} ressources et peut prendre plusieurs minutes. Veuillez garder cet onglet ouvert.",
+        "progressXofN": "{{x}} sur {{n}} ressources exportées"
       }
     }
   },
