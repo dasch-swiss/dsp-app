@@ -12,14 +12,14 @@ export interface ResourceFetcherDialogProps {
   selector: 'app-resource-fetcher-dialog',
   template: `
     <app-closing-dialog data-cy="resource-dialog">
-      <app-resource-fetcher [resourceIri]="data.resourceIri" />
+      <app-resource-fetcher [resourceIri]="datas.resourceIri" />
     </app-closing-dialog>
   `,
   imports: [ClosingDialogComponent, ResourceFetcherComponent],
 })
 export class ResourceFetcherDialogComponent {
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: ResourceFetcherDialogProps,
+    @Inject(MAT_DIALOG_DATA) public datas: ResourceFetcherDialogProps,
     public _dialogRef: MatDialogRef<any>
   ) {}
 }
