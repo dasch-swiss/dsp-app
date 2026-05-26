@@ -10,7 +10,6 @@ import { AdvancedSearchComponent } from './advanced-search.component';
     <app-centered-layout>
       <app-advanced-search
         [projectUuid]="uuid"
-        [isVerticalDirection]="undefined"
         [queryToLoad]="queryToLoad"
         (gravsearchQuery)="onSearch($event)" />
     </app-centered-layout>

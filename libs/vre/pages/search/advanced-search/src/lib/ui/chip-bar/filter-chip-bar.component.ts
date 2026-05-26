@@ -1,6 +1,7 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, EventEmitter, inject, Input, OnInit, Output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, inject, Input, Output, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { LoadingButtonDirective } from '@dasch-swiss/vre/ui/progress-indicator';
 import { map } from 'rxjs';
 import { StatementElement } from '../../model';
@@ -11,36 +12,74 @@ import { QueryExecutionService } from '../../service/query-execution.service';
 import { SearchStateService } from '../../service/search-state.service';
 import { SearchStateStorageService } from '../../service/search-state-storage.service';
 import { OrderByComponent } from '../order-by/order-by.component';
+import { AddFilterButtonComponent } from './add-filter-button.component';
 import { OPEN_CHIP_NONE, OpenChipId } from './chip-bar.helpers';
+import { DataModelChipComponent } from './data-model-chip.component';
+import { FilterChipComponent } from './filter-chip.component';
+import { ResourceClassChipComponent } from './resource-class-chip.component';
 
 @Component({
   selector: 'app-filter-chip-bar',
   standalone: true,
-  imports: [AsyncPipe, MatButtonModule, OrderByComponent, LoadingButtonDirective],
+  imports: [
+    AddFilterButtonComponent,
+    AsyncPipe,
+    DataModelChipComponent,
+    FilterChipComponent,
+    LoadingButtonDirective,
+    MatButtonModule,
+    MatProgressBarModule,
+    OrderByComponent,
+    ResourceClassChipComponent,
+  ],
   template: `
-    <div class="chip-bar">
-      @let searchEnabled = searchEnabled$ | async;
+    @if (ontologyLoading$ | async) {
+      <mat-progress-bar mode="query" />
+    } @else {
+      <div class="chip-bar">
+        @let searchEnabled = searchEnabled$ | async;
 
-      <span class="chip-bar__spacer"></span>
+        <app-data-model-chip />
+        <app-resource-class-chip />
 
-      <app-order-by />
+        @for (stmt of visibleStatements$ | async; track stmt.id) {
+          <app-filter-chip
+            [statement]="stmt"
+            [isOpen]="openChipId() === stmt.id"
+            (openChange)="onChipOpenChange(stmt.id, $event)"
+            (remove)="formManager.deleteStatement(stmt)" />
+          @for (child of getChildStatements(stmt.id); track child.id) {
+            <app-filter-chip
+              class="chip--indented"
+              [statement]="child"
+              [isOpen]="openChipId() === child.id"
+              (openChange)="onChipOpenChange(child.id, $event)"
+              (remove)="formManager.deleteStatement(child)" />
+          }
+        }
 
-      <button mat-stroked-button (click)="onReset()">Reset</button>
-      <button
-        mat-raised-button
-        color="primary"
-        appLoadingButton
-        [isLoading]="queryExecutionService.queryIsExecuting()"
-        [disabled]="searchEnabled === false"
-        (click)="onSearch()">
-        Search
-      </button>
-    </div>
+        <app-add-filter-button (filterAdded)="onFilterAdded($event)" />
+        <app-order-by />
+
+        <span class="chip-bar__spacer"></span>
+
+        <button mat-stroked-button (click)="onReset()">Reset</button>
+        <button
+          mat-raised-button
+          color="primary"
+          appLoadingButton
+          [isLoading]="queryExecutionService.queryIsExecuting()"
+          [disabled]="searchEnabled === false"
+          (click)="onSearch()">
+          Search
+        </button>
+      </div>
+    }
   `,
   styleUrl: './filter-chip-bar.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FilterChipBarComponent implements OnInit {
+export class FilterChipBarComponent {
   @Input({ required: true }) projectUuid!: string;
   @Output() gravsearchQuery = new EventEmitter<string>();
 
@@ -53,11 +92,7 @@ export class FilterChipBarComponent implements OnInit {
 
   readonly openChipId = signal<OpenChipId>(OPEN_CHIP_NONE);
 
-  readonly ontologyLabel$ = this._ontologyDataService.selectedOntology$.pipe(map(o => o?.label ?? '…'));
-
-  readonly resourceClassLabel$ = this._searchStateService.selectedResourceClass$.pipe(
-    map(rc => rc?.label || 'All resource classes')
-  );
+  readonly ontologyLoading$ = this._ontologyDataService.ontologyLoading$;
 
   readonly visibleStatements$ = this._searchStateService.statementElements$.pipe(
     map(stmts => stmts.filter(s => !s.isPristine))
@@ -69,12 +104,12 @@ export class FilterChipBarComponent implements OnInit {
     return `http://rdfh.ch/projects/${this.projectUuid}`;
   }
 
-  ngOnInit(): void {
-    this._ontologyDataService.init(this.projectIri);
-  }
-
   onChipOpenChange(chipId: string, isOpen: boolean): void {
     this.openChipId.set(isOpen ? chipId : OPEN_CHIP_NONE);
+  }
+
+  onFilterAdded(chipId: string): void {
+    this.openChipId.set(chipId);
   }
 
   getChildStatements(parentId: string): StatementElement[] {

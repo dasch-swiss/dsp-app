@@ -2,7 +2,7 @@ import { OverlayModule } from '@angular/cdk/overlay';
 import { importProvidersFrom } from '@angular/core';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
-import { NEVER, of } from 'rxjs';
+import { of, NEVER } from 'rxjs';
 import { expect } from 'storybook/test';
 import { AdvancedSearchComponent } from './advanced-search.component';
 import { OntologyDataService } from './service/ontology-data.service';
@@ -13,10 +13,8 @@ const meta: Meta<AdvancedSearchComponent> = {
   component: AdvancedSearchComponent,
   argTypes: {
     projectUuid: { description: 'UUID of the project whose ontologies are loaded.' },
-    isVerticalDirection: { description: 'Controls the layout direction toggle button.' },
     queryToLoad: { description: 'If set, restores the search state from a previously saved snapshot.' },
     restoreState: { description: 'When true, restores the last search state from local storage on init.' },
-    toggleDirection: { description: 'Emitted when the layout direction toggle is clicked.' },
     gravsearchQuery: { description: 'Emitted with the Gravsearch query string when Search is triggered.' },
   },
 };
@@ -27,29 +25,15 @@ const sharedProviders = [
   ...STORY_PROVIDERS,
   importProvidersFrom(OverlayModule),
   { provide: DspApiConnectionToken, useValue: makeDspApiConnectionStub() },
-  {
-    provide: OntologyDataService,
-    useValue: makeOntologyDataServiceStub(),
-  },
+  { provide: OntologyDataService, useValue: makeOntologyDataServiceStub() },
 ];
 
-export const HorizontalLayout: Story = {
-  name: 'Renders advanced search form in horizontal layout',
-  args: { projectUuid: '0001', isVerticalDirection: false },
+export const Default: Story = {
+  name: 'Renders chip-bar search interface',
+  args: { projectUuid: '0001' },
   decorators: [applicationConfig({ providers: sharedProviders })],
   play: async ({ canvasElement, step }) => {
-    await step('Header is rendered', async () => {
-      await expect(canvasElement).toBeInTheDocument();
-    });
-  },
-};
-
-export const VerticalLayout: Story = {
-  name: 'Renders advanced search form in vertical layout',
-  args: { projectUuid: '0001', isVerticalDirection: true },
-  decorators: [applicationConfig({ providers: sharedProviders })],
-  play: async ({ canvasElement, step }) => {
-    await step('Component renders in vertical layout', async () => {
+    await step('Chip bar is rendered', async () => {
       await expect(canvasElement).toBeInTheDocument();
     });
   },
@@ -57,17 +41,14 @@ export const VerticalLayout: Story = {
 
 export const LoadingOntologies: Story = {
   name: 'Shows progress bar while ontologies are loading',
-  args: { projectUuid: '0001', isVerticalDirection: false },
+  args: { projectUuid: '0001' },
   decorators: [
     applicationConfig({
       providers: [
         ...STORY_PROVIDERS,
         importProvidersFrom(OverlayModule),
         { provide: DspApiConnectionToken, useValue: makeDspApiConnectionStub() },
-        {
-          provide: OntologyDataService,
-          useValue: makeOntologyDataServiceStub({ ontologyLoading$: of(true) }),
-        },
+        { provide: OntologyDataService, useValue: makeOntologyDataServiceStub({ ontologyLoading$: of(true) }) },
       ],
     }),
   ],
@@ -75,15 +56,12 @@ export const LoadingOntologies: Story = {
     await step('Progress bar is shown', async () => {
       await expect(canvasElement.querySelector('mat-progress-bar')).not.toBeNull();
     });
-    await step('Form fields are hidden during loading', async () => {
-      await expect(canvasElement.querySelector('app-resource-value')).toBeNull();
-    });
   },
 };
 
 export const OntologyLoadError: Story = {
-  name: 'Shows form without ontology content when API call never resolves',
-  args: { projectUuid: '0001', isVerticalDirection: false },
+  name: 'Shows loading state when API call never resolves',
+  args: { projectUuid: '0001' },
   decorators: [
     applicationConfig({
       providers: [
@@ -98,10 +76,7 @@ export const OntologyLoadError: Story = {
             },
           }),
         },
-        {
-          provide: OntologyDataService,
-          useValue: makeOntologyDataServiceStub({ ontologyLoading$: of(true) }),
-        },
+        { provide: OntologyDataService, useValue: makeOntologyDataServiceStub({ ontologyLoading$: of(true) }) },
       ],
     }),
   ],
