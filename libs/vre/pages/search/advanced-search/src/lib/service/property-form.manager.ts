@@ -48,6 +48,24 @@ export class PropertyFormManager implements OnDestroy {
     this._updateStatementAndUpdateForms(statement);
   }
 
+  addBlankStatement(): StatementElement {
+    const blank = new StatementElement();
+    this.searchStateService.patchState({
+      statementElements: [...this.searchStateService.currentState.statementElements, blank],
+    });
+    return blank;
+  }
+
+  restoreStatement(snapshot: StatementElement, target: StatementElement): void {
+    target.clearSelections();
+    if (snapshot.selectedPredicate) target.selectedPredicate = snapshot.selectedPredicate;
+    if (snapshot.selectedOperator) target.selectedOperator = snapshot.selectedOperator;
+    if (snapshot.selectedObjectValue !== undefined) {
+      target.selectedObjectValue = snapshot.selectedObjectValue;
+    }
+    this.searchStateService.updateStatement(target);
+  }
+
   setObjectValue(statement: StatementElement, searchValue: string | IriLabelPair): void {
     statement.selectedObjectValue = searchValue;
     this._updateStatementAndUpdateForms(statement);

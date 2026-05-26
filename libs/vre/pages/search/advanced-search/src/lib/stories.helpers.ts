@@ -44,7 +44,7 @@ export const makeSearchStateServiceStub = (partial: Partial<SearchStateService> 
   const initialStatement = new StatementElement();
   return {
     statementElements$: of([initialStatement]),
-    selectedResourceClass$: of(null),
+    selectedResourceClass$: of(null as unknown as IriLabelPair),
     isFormStateValidAndComplete$: of(true),
     completeStatements$: of([]),
     orderByItems$: of([]),
