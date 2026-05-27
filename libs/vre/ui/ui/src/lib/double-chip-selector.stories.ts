@@ -4,7 +4,7 @@ import { expect, userEvent, within } from 'storybook/test';
 import { DoubleChipSelectorComponent } from './double-chip-selector.component';
 
 const meta: Meta<DoubleChipSelectorComponent> = {
-  title: 'UI / Double Chip Selector / Toggle',
+  title: 'UI / Double Chip Selector',
   component: DoubleChipSelectorComponent,
   argTypes: {
     value: {

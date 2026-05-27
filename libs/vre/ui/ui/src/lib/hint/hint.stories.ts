@@ -4,7 +4,7 @@ import { expect, within } from 'storybook/test';
 import { HintComponent } from './hint.component';
 
 const meta: Meta<HintComponent> = {
-  title: 'UI / Hint / Search Hint',
+  title: 'UI / Hint',
   component: HintComponent,
   argTypes: {},
 };

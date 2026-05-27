@@ -152,7 +152,7 @@ const projectApiServiceStub = {
 
 const sharedProviders = [
   importProvidersFrom(OverlayModule),
-  provideRouter([{ path: '**', redirectTo: '' }]),
+  provideRouter([{ path: '**', component: class {} }]),
   { provide: AppConfigService, useValue: appConfigServiceStub },
   { provide: ProjectApiService, useValue: projectApiServiceStub },
   {

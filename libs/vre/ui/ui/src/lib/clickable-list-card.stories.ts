@@ -19,7 +19,7 @@ import { ClickableListCardComponent } from './clickable-list-card.component';
 class ClickableListCardWrapperComponent {}
 
 const meta: Meta<ClickableListCardWrapperComponent> = {
-  title: 'UI / Clickable List Card / Card',
+  title: 'UI / Clickable List Card',
   component: ClickableListCardWrapperComponent,
   argTypes: {},
 };

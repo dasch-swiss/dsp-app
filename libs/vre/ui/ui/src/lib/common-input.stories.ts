@@ -5,7 +5,7 @@ import { expect, userEvent, within } from 'storybook/test';
 import { CommonInputComponent } from './common-input.component';
 
 const meta: Meta<CommonInputComponent> = {
-  title: 'UI / Common Input / Text Field',
+  title: 'UI / Common Input',
   component: CommonInputComponent,
   argTypes: {
     label: {
