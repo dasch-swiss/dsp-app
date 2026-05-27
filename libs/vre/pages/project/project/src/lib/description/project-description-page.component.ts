@@ -8,10 +8,10 @@ import { RouterLink } from '@angular/router';
 import { StringLiteral } from '@dasch-swiss/dsp-js';
 import { AvailableLanguages, RouteConstants } from '@dasch-swiss/vre/core/config';
 import { ProjectImageCoverComponent } from '@dasch-swiss/vre/pages/user-settings/user';
+import { ClosingDialogComponent } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe } from '@ngx-translate/core';
 import { map, tap } from 'rxjs';
 import { ProjectPageService } from '../project-page.service';
-import { ClosingDialogComponent } from './closing-dialog.component';
 import { LicenseCaptionsMapping } from './license-captions-mapping';
 
 @Component({

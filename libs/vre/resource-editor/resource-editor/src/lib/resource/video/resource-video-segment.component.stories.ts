@@ -89,7 +89,7 @@ const meta: Meta<ResourceVideoSegmentComponent> = {
   decorators: [
     applicationConfig({
       providers: [
-        provideRouter([{ path: '**', redirectTo: '' }]),
+        provideRouter([{ path: '**', component: class {} }]),
         {
           provide: AppConfigService,
           useValue: { dspApiConfig: { apiUrl: '' }, dspAppConfig: { iriBase: 'http://rdfh.ch' } },

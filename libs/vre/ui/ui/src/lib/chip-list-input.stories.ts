@@ -7,7 +7,7 @@ import { ChipListInputComponent } from './chip-list-input.component';
 const fb = new FormBuilder();
 
 const meta: Meta<ChipListInputComponent> = {
-  title: 'UI / Chip List Input / Keywords',
+  title: 'UI / Chip List Input',
   component: ChipListInputComponent,
   argTypes: {
     formArray: {

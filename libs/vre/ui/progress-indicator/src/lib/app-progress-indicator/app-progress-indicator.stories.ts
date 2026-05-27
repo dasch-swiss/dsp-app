@@ -4,7 +4,7 @@ import { expect } from 'storybook/test';
 import { AppProgressIndicatorComponent } from './app-progress-indicator.component';
 
 const meta: Meta<AppProgressIndicatorComponent> = {
-  title: 'UI / Progress Indicator / Spinner',
+  title: 'UI / Progress Indicator',
   component: AppProgressIndicatorComponent,
   argTypes: {
     size: {
