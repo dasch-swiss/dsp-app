@@ -1,15 +1,15 @@
-import { HttpClient, HttpDownloadProgressEvent, HttpEvent, HttpEventType, HttpResponse } from '@angular/common/http';
-import { Directive, EventEmitter, Input, NO_ERRORS_SCHEMA } from '@angular/core';
+import { HttpDownloadProgressEvent, HttpEvent, HttpEventType, HttpResponse } from '@angular/common/http';
+import { Directive, Input, NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { PropertyDefinition } from '@dasch-swiss/dsp-js';
-import { BASE_PATH } from '@dasch-swiss/vre/3rd-party-services/open-api';
+import { APIV3ApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
 import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
-import { TranslateService } from '@ngx-translate/core';
-import { of, Subject } from 'rxjs';
+import { provideTranslateService } from '@ngx-translate/core';
+import { Subject } from 'rxjs';
 import { DownloadDialogResourcesTabComponent } from './download-dialog-resources-tab.component';
 
 @Directive({
@@ -23,11 +23,10 @@ class MockLoadingButtonDirective {
 describe('DownloadDialogResourcesTabComponent', () => {
   let component: DownloadDialogResourcesTabComponent;
   let fixture: ComponentFixture<DownloadDialogResourcesTabComponent>;
-  let mockHttp: jest.Mocked<HttpClient>;
+  let mockV3: jest.Mocked<APIV3ApiService>;
   let events$: Subject<HttpEvent<string>>;
   let mockNotificationService: jest.Mocked<NotificationService>;
   let mockLocalizationService: jest.Mocked<LocalizationService>;
-  let mockTranslateService: jest.Mocked<TranslateService>;
 
   let createElementSpy: jest.SpyInstance;
   let appendChildSpy: jest.SpyInstance;
@@ -46,19 +45,12 @@ describe('DownloadDialogResourcesTabComponent', () => {
 
   beforeEach(async () => {
     events$ = new Subject<HttpEvent<string>>();
-    mockHttp = { post: jest.fn().mockReturnValue(events$.asObservable()) } as unknown as jest.Mocked<HttpClient>;
+    mockV3 = {
+      postV3ExportResources: jest.fn().mockReturnValue(events$.asObservable()),
+    } as unknown as jest.Mocked<APIV3ApiService>;
 
     mockNotificationService = { openSnackBar: jest.fn() } as any;
     mockLocalizationService = { getCurrentLanguage: jest.fn().mockReturnValue('en') } as any;
-    mockTranslateService = {
-      instant: jest.fn((key: string) => key),
-      get: jest.fn((key: string) => of(key)),
-      onTranslationChange: new EventEmitter(),
-      onLangChange: new EventEmitter(),
-      // ngx-translate v17 renamed onDefaultLangChange -> onFallbackLangChange; TranslatePipe subscribes to it.
-      onFallbackLangChange: new EventEmitter(),
-      currentLang: 'en',
-    } as any;
 
     createElementSpy = jest.spyOn(document, 'createElement');
     appendChildSpy = jest.spyOn(document.body, 'appendChild');
@@ -73,11 +65,10 @@ describe('DownloadDialogResourcesTabComponent', () => {
       imports: [DownloadDialogResourcesTabComponent, FormsModule, NoopAnimationsModule, MockLoadingButtonDirective],
       schemas: [NO_ERRORS_SCHEMA],
       providers: [
-        { provide: HttpClient, useValue: mockHttp },
-        { provide: BASE_PATH, useValue: 'https://test-api' },
+        { provide: APIV3ApiService, useValue: mockV3 },
         { provide: NotificationService, useValue: mockNotificationService },
         { provide: LocalizationService, useValue: mockLocalizationService },
-        { provide: TranslateService, useValue: mockTranslateService },
+        provideTranslateService(),
       ],
     }).compileComponents();
 
@@ -125,14 +116,15 @@ describe('DownloadDialogResourcesTabComponent', () => {
       component.selectedPropertyIds = ['prop-1', 'prop-2'];
     });
 
-    it('calls HttpClient.post with expected URL, body, and streaming options', () => {
+    it('calls postV3ExportResources with the body, events overload, reportProgress, and text/csv Accept', () => {
       component.includeResourceIris = false;
       component.includeArkUrls = false;
 
       component.downloadCsv();
 
-      expect(mockHttp.post).toHaveBeenCalledWith(
-        'https://test-api/v3/export/resources',
+      // observe:'events' + reportProgress + httpHeaderAccept:'text/csv' are load-bearing: the text/csv
+      // Accept makes the generated client select responseType:'text', which populates partialText for row counting.
+      expect(mockV3.postV3ExportResources).toHaveBeenCalledWith(
         {
           resourceClass: 'http://example.org/ontology/ResourceClass',
           selectedProperties: ['prop-1', 'prop-2'],
@@ -140,42 +132,42 @@ describe('DownloadDialogResourcesTabComponent', () => {
           includeIris: false,
           includeArkUrls: false,
         },
-        // All three flags are load-bearing: responseType:'text' enables partialText on DownloadProgress events.
-        expect.objectContaining({
-          reportProgress: true,
-          observe: 'events',
-          responseType: 'text',
-        })
+        'events',
+        true,
+        { httpHeaderAccept: 'text/csv' }
       );
     });
 
     it('passes includeIris=true when toggled', () => {
       component.includeResourceIris = true;
       component.downloadCsv();
-      expect(mockHttp.post).toHaveBeenCalledWith(
-        expect.any(String),
+      expect(mockV3.postV3ExportResources).toHaveBeenCalledWith(
         expect.objectContaining({ includeIris: true }),
-        expect.any(Object)
+        'events',
+        true,
+        { httpHeaderAccept: 'text/csv' }
       );
     });
 
     it('passes includeArkUrls=true when toggled', () => {
       component.includeArkUrls = true;
       component.downloadCsv();
-      expect(mockHttp.post).toHaveBeenCalledWith(
-        expect.any(String),
+      expect(mockV3.postV3ExportResources).toHaveBeenCalledWith(
         expect.objectContaining({ includeArkUrls: true }),
-        expect.any(Object)
+        'events',
+        true,
+        { httpHeaderAccept: 'text/csv' }
       );
     });
 
     it('passes the current language from LocalizationService', () => {
       mockLocalizationService.getCurrentLanguage.mockReturnValue('de');
       component.downloadCsv();
-      expect(mockHttp.post).toHaveBeenCalledWith(
-        expect.any(String),
+      expect(mockV3.postV3ExportResources).toHaveBeenCalledWith(
         expect.objectContaining({ language: 'de' }),
-        expect.any(Object)
+        'events',
+        true,
+        { httpHeaderAccept: 'text/csv' }
       );
     });
 

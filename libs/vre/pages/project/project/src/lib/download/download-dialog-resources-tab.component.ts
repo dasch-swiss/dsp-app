@@ -1,11 +1,12 @@
-import { HttpClient, HttpDownloadProgressEvent, HttpEventType } from '@angular/common/http';
-import { ChangeDetectorRef, Component, EventEmitter, Inject, Input, Output } from '@angular/core';
+import { HttpDownloadProgressEvent, HttpEvent, HttpEventType } from '@angular/common/http';
+import { ChangeDetectorRef, Component, DestroyRef, EventEmitter, Input, Output } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatDialogActions } from '@angular/material/dialog';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { BASE_PATH } from '@dasch-swiss/vre/3rd-party-services/open-api';
+import { APIV3ApiService, ExportRequest } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
 import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
@@ -55,9 +56,12 @@ export const CSV_EXPORT_LARGE_THRESHOLD = 1_000;
     </div>
 
     @if (isDownloading && resourceCount > largeThreshold) {
-      <div class="csv-export-progress" role="status" aria-live="polite">
-        <mat-progress-bar mode="determinate" [value]="progressPercent"></mat-progress-bar>
-        <span>{{
+      <div class="csv-export-progress">
+        <mat-progress-bar
+          mode="determinate"
+          [value]="progressPercent"
+          aria-labelledby="csvExportProgressLabel"></mat-progress-bar>
+        <span id="csvExportProgressLabel">{{
           'pages.dataBrowser.downloadDialog.progressXofN' | translate: { x: rowsReceived, n: resourceCount }
         }}</span>
       </div>
@@ -94,16 +98,13 @@ export class DownloadDialogResourcesTabComponent {
 
   private _scannerState: RowScannerState = initRowScanner();
 
-  // Hand-rolled HttpClient call (not APIV3ApiService) because the generated client
-  // does not expose `reportProgress: true` / `observe: 'events'`, which are required
-  // to derive real X-of-N progress from the streamed CSV body. See DEV-6462 / DEV-6336.
   constructor(
-    private readonly _http: HttpClient,
-    @Inject(BASE_PATH) private readonly _basePath: string,
-    private _localizationService: LocalizationService,
-    private _notificationService: NotificationService,
-    private _translateService: TranslateService,
-    private _cdr: ChangeDetectorRef
+    private readonly _v3: APIV3ApiService,
+    private readonly _localizationService: LocalizationService,
+    private readonly _notificationService: NotificationService,
+    private readonly _translateService: TranslateService,
+    private readonly _cdr: ChangeDetectorRef,
+    private readonly _destroyRef: DestroyRef
   ) {}
 
   get progressPercent(): number {
@@ -116,7 +117,7 @@ export class DownloadDialogResourcesTabComponent {
     this.rowsReceived = 0;
     this._scannerState = initRowScanner();
 
-    const body = {
+    const body: ExportRequest = {
       resourceClass: this.resourceClassIri,
       selectedProperties: this.selectedPropertyIds,
       language: this._localizationService.getCurrentLanguage(),
@@ -124,14 +125,13 @@ export class DownloadDialogResourcesTabComponent {
       includeArkUrls: this.includeArkUrls,
     };
 
-    this._http
-      .post(`${this._basePath}/v3/export/resources`, body, {
-        reportProgress: true,
-        observe: 'events' as const,
-        responseType: 'text' as const,
-        headers: { Accept: 'text/csv' },
-      })
+    // observe:'events' + reportProgress stream HttpDownloadProgressEvents; the text/csv Accept header
+    // makes the generated client select responseType:'text', which populates `partialText` for the
+    // row counter. This is the only reason the endpoint uses the events overload. See DEV-6462 / DEV-6336.
+    this._v3
+      .postV3ExportResources(body, 'events', true, { httpHeaderAccept: 'text/csv' })
       .pipe(
+        takeUntilDestroyed(this._destroyRef),
         finalize(() => {
           this.isDownloading = false;
           this.rowsReceived = 0;
@@ -139,7 +139,7 @@ export class DownloadDialogResourcesTabComponent {
         })
       )
       .subscribe({
-        next: event => {
+        next: (event: HttpEvent<string>) => {
           if (event.type === HttpEventType.DownloadProgress) {
             const partialText = (event as HttpDownloadProgressEvent).partialText ?? '';
             this._scannerState = advanceRowScanner(this._scannerState, partialText);
