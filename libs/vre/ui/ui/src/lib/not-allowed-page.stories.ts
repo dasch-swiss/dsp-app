@@ -4,7 +4,7 @@ import { expect } from 'storybook/test';
 import { NotAllowedPageComponent } from './not-allowed-page.component';
 
 const meta: Meta<NotAllowedPageComponent> = {
-  title: 'UI / Not Allowed Page / Full Page',
+  title: 'UI / Not Allowed Page',
   component: NotAllowedPageComponent,
   argTypes: {},
 };
