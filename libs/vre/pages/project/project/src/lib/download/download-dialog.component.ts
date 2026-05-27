@@ -5,9 +5,10 @@ import { ResourceClassDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
 import { PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
 import { DialogHeaderComponent } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe } from '@ngx-translate/core';
-import { DownloadDialogResourcesTabComponent } from './download-dialog-resources-tab.component';
-
-export const CSV_EXPORT_LARGE_THRESHOLD = 1_000;
+import {
+  CSV_EXPORT_LARGE_THRESHOLD,
+  DownloadDialogResourcesTabComponent,
+} from './download-dialog-resources-tab.component';
 
 export interface DownloadDialogData {
   resClass: ResourceClassDefinitionWithAllLanguages;

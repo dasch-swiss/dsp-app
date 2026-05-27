@@ -15,6 +15,11 @@ import { finalize } from 'rxjs';
 import { RowScannerState, advanceRowScanner, initRowScanner } from './csv-row-scanner';
 import { DownloadPropertyListComponent } from './download-property-list.component';
 
+// Threshold above which an export counts as "large": the dialog shows a warning and this tab
+// shows a real X-of-N progress bar. Defined here (the leaf the dialog already imports) rather
+// than in download-dialog.component.ts so the dialog can reuse it without a circular import.
+export const CSV_EXPORT_LARGE_THRESHOLD = 1_000;
+
 @Component({
   selector: 'app-download-dialog-properties-tab',
   standalone: true,
@@ -79,7 +84,7 @@ export class DownloadDialogResourcesTabComponent {
   @Input({ required: true }) resourceClassIri!: string;
   @Input({ required: true }) resourceCount!: number;
   @Output() afterClosed = new EventEmitter<void>();
-  readonly largeThreshold = 1_000;
+  readonly largeThreshold = CSV_EXPORT_LARGE_THRESHOLD;
   includeArkUrls = false;
   includeResourceIris = false;
   isDownloading = false;
