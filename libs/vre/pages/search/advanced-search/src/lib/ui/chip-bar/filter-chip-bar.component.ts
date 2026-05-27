@@ -10,7 +10,6 @@ import { OntologyDataService } from '../../service/ontology-data.service';
 import { PropertyFormManager } from '../../service/property-form.manager';
 import { QueryExecutionService } from '../../service/query-execution.service';
 import { SearchStateService } from '../../service/search-state.service';
-import { SearchStateStorageService } from '../../service/search-state-storage.service';
 import { OrderByComponent } from '../order-by/order-by.component';
 import { AddFilterButtonComponent } from './add-filter-button.component';
 import { OPEN_CHIP_NONE, OpenChipId } from './chip-bar.helpers';
@@ -46,6 +45,7 @@ import { ResourceClassChipComponent } from './resource-class-chip.component';
           <app-filter-chip
             [statement]="stmt"
             [isOpen]="openChipId() === stmt.id"
+            [isValid]="stmt.isValidAndComplete"
             (openChange)="onChipOpenChange(stmt.id, $event)"
             (remove)="formManager.deleteStatement(stmt)" />
           @for (child of getChildStatements(stmt.id); track child.id) {
@@ -53,6 +53,7 @@ import { ResourceClassChipComponent } from './resource-class-chip.component';
               class="chip--indented"
               [statement]="child"
               [isOpen]="openChipId() === child.id"
+              [isValid]="child.isValidAndComplete"
               (openChange)="onChipOpenChange(child.id, $event)"
               (remove)="formManager.deleteStatement(child)" />
           }
@@ -86,7 +87,6 @@ export class FilterChipBarComponent {
   private readonly _searchStateService = inject(SearchStateService);
   private readonly _ontologyDataService = inject(OntologyDataService);
   private readonly _gravsearchService = inject(GravsearchService);
-  private readonly _storageService = inject(SearchStateStorageService);
   readonly formManager = inject(PropertyFormManager);
   readonly queryExecutionService = inject(QueryExecutionService);
 
@@ -125,11 +125,6 @@ export class FilterChipBarComponent {
 
   onSearch(): void {
     const query = this._gravsearchService.generateGravSearchQuery(this._searchStateService.validStatementElements);
-    this._storageService.storeSearchSnapshot(
-      query,
-      this._ontologyDataService.selectedOntology,
-      this._searchStateService.currentState
-    );
     this.gravsearchQuery.emit(query);
   }
 }

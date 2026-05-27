@@ -37,6 +37,7 @@ import { OntologyDataService } from '../../service/ontology-data.service';
     .property-picker__search {
       width: 100%;
       padding: 8px 16px 0;
+      box-sizing: border-box;
     }
     .property-picker__list {
       max-height: 280px;

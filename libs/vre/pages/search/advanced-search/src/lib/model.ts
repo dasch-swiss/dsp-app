@@ -256,11 +256,6 @@ export interface SearchFormsState {
   orderBy: OrderByItem[];
 }
 
-export type AdvancedSearchStateSnapshot = SearchFormsState & {
-  selectedOntology: IriLabelPair;
-  dateOfSnapshot: string;
-};
-
 class GravsearchWriterScoped {
   private _id: string;
   private _parentId: string | undefined;

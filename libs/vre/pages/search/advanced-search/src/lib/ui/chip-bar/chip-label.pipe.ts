@@ -2,7 +2,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { StatementElement } from '../../model';
 import { Operator } from '../../operators.config';
 
-@Pipe({ name: 'chipLabel', standalone: true, pure: true })
+@Pipe({ name: 'chipLabel', standalone: true, pure: false })
 export class ChipLabelPipe implements PipeTransform {
   private readonly MAX_VALUE_LENGTH = 20;
 

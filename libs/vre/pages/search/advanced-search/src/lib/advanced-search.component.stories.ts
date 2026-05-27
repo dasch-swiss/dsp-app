@@ -5,16 +5,23 @@ import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular'
 import { of, NEVER } from 'rxjs';
 import { expect } from 'storybook/test';
 import { AdvancedSearchComponent } from './advanced-search.component';
+import { provideAdvancedSearch } from './providers';
 import { OntologyDataService } from './service/ontology-data.service';
-import { makeDspApiConnectionStub, makeOntologyDataServiceStub, STORY_PROVIDERS } from './stories.helpers';
+import { QueryExecutionService } from './service/query-execution.service';
+import { SearchStateService } from './service/search-state.service';
+import {
+  makeDspApiConnectionStub,
+  makeOntologyDataServiceStub,
+  makeQueryExecutionServiceStub,
+  makeSearchStateServiceStub,
+  STORY_PROVIDERS,
+} from './stories.helpers';
 
 const meta: Meta<AdvancedSearchComponent> = {
   title: 'Search / Advanced Search',
   component: AdvancedSearchComponent,
   argTypes: {
     projectUuid: { description: 'UUID of the project whose ontologies are loaded.' },
-    queryToLoad: { description: 'If set, restores the search state from a previously saved snapshot.' },
-    restoreState: { description: 'When true, restores the last search state from local storage on init.' },
     gravsearchQuery: { description: 'Emitted with the Gravsearch query string when Search is triggered.' },
   },
 };
@@ -25,7 +32,10 @@ const sharedProviders = [
   ...STORY_PROVIDERS,
   importProvidersFrom(OverlayModule),
   { provide: DspApiConnectionToken, useValue: makeDspApiConnectionStub() },
+  ...provideAdvancedSearch(),
   { provide: OntologyDataService, useValue: makeOntologyDataServiceStub() },
+  { provide: SearchStateService, useValue: makeSearchStateServiceStub() },
+  { provide: QueryExecutionService, useValue: makeQueryExecutionServiceStub() },
 ];
 
 export const Default: Story = {
@@ -48,7 +58,10 @@ export const LoadingOntologies: Story = {
         ...STORY_PROVIDERS,
         importProvidersFrom(OverlayModule),
         { provide: DspApiConnectionToken, useValue: makeDspApiConnectionStub() },
+        ...provideAdvancedSearch(),
         { provide: OntologyDataService, useValue: makeOntologyDataServiceStub({ ontologyLoading$: of(true) }) },
+        { provide: SearchStateService, useValue: makeSearchStateServiceStub() },
+        { provide: QueryExecutionService, useValue: makeQueryExecutionServiceStub() },
       ],
     }),
   ],
@@ -76,7 +89,10 @@ export const OntologyLoadError: Story = {
             },
           }),
         },
+        ...provideAdvancedSearch(),
         { provide: OntologyDataService, useValue: makeOntologyDataServiceStub({ ontologyLoading$: of(true) }) },
+        { provide: SearchStateService, useValue: makeSearchStateServiceStub() },
+        { provide: QueryExecutionService, useValue: makeQueryExecutionServiceStub() },
       ],
     }),
   ],
