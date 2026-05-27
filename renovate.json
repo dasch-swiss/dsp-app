@@ -212,11 +212,6 @@
       "groupName": "grafana-faro-deps"
     },
     {
-      "description": "JSON-LD + its type definitions",
-      "matchPackageNames": ["jsonld", "@types/jsonld"],
-      "groupName": "jsonld-deps"
-    },
-    {
       "description": "ngx-translate i18n — core and http-loader are always used together",
       "matchPackageNames": ["/^@ngx-translate//"],
       "groupName": "ngx-translate-deps"
@@ -263,11 +258,6 @@
       "description": "webpack ecosystem — exact-pinned by @angular-devkit/build-angular; must move together to stay deduplicated",
       "matchPackageNames": ["webpack", "webpack-dev-middleware", "webpack-dev-server", "webpack-merge"],
       "groupName": "webpack-deps"
-    },
-    {
-      "description": "OpenSeaDragon image viewer",
-      "matchPackageNames": ["openseadragon", "@types/openseadragon"],
-      "groupName": "openseadragon-deps"
     },
     {
       "description": "UUID",
