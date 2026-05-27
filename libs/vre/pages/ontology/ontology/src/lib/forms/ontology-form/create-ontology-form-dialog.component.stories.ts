@@ -24,7 +24,7 @@ class CreateOntologyFormDialogLauncherComponent implements OnInit {
 }
 
 const meta: Meta<CreateOntologyFormDialogLauncherComponent> = {
-  title: 'Data Models Page / Create Ontology Form Dialog',
+  title: 'Pages / Data Models / Create Ontology Form Dialog',
   component: CreateOntologyFormDialogLauncherComponent,
 };
 export default meta;

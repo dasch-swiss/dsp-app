@@ -4,7 +4,7 @@ import { expect, userEvent, within } from 'storybook/test';
 import { PagerComponent } from './pager.component';
 
 const meta: Meta<PagerComponent> = {
-  title: 'UI / Pager / Pagination',
+  title: 'UI / Pager',
   component: PagerComponent,
   argTypes: {
     numberOfAllResults: {
