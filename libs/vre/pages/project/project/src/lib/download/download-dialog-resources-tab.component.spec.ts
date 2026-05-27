@@ -55,7 +55,8 @@ describe('DownloadDialogResourcesTabComponent', () => {
       get: jest.fn((key: string) => of(key)),
       onTranslationChange: new EventEmitter(),
       onLangChange: new EventEmitter(),
-      onDefaultLangChange: new EventEmitter(),
+      // ngx-translate v17 renamed onDefaultLangChange -> onFallbackLangChange; TranslatePipe subscribes to it.
+      onFallbackLangChange: new EventEmitter(),
       currentLang: 'en',
     } as any;
 
