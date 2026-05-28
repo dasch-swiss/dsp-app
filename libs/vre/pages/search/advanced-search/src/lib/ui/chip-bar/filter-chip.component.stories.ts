@@ -2,7 +2,7 @@ import { OverlayModule } from '@angular/cdk/overlay';
 import { importProvidersFrom } from '@angular/core';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
-import { expect, fn, userEvent, within } from 'storybook/test';
+import { expect, userEvent, within } from 'storybook/test';
 import { StatementElement } from '../../model';
 import { Operator } from '../../operators.config';
 import { OntologyDataService } from '../../service/ontology-data.service';
@@ -85,26 +85,25 @@ export const OpenState: Story = {
     await step('Chip carries highlighted attribute when isOpen is true', async () => {
       const chip = canvasElement.querySelector('mat-chip');
       await expect(chip).not.toBeNull();
-      await expect(chip?.classList.contains('mat-mdc-chip-highlighted') || chip?.hasAttribute('highlighted')).toBe(true);
+      await expect(chip?.classList.contains('mat-mdc-chip-highlighted') || chip?.hasAttribute('highlighted')).toBe(
+        true
+      );
     });
   },
 };
 
-export const ClickingRemoveEmitsEvent: Story = {
-  name: 'Emits remove event when remove button is clicked',
-  args: { statement: titleStatement(), isOpen: false, remove: fn() },
+export const ClickingRemoveRendersButton: Story = {
+  name: 'Remove button is accessible via aria-label',
+  args: { statement: titleStatement(), isOpen: false },
   decorators: [applicationConfig({ providers: baseProviders })],
-  play: async ({ canvasElement, args, step }) => {
-    await step('Remove button is rendered', async () => {
-      const removeBtn = canvasElement.querySelector('[matChipRemove]');
+  play: async ({ canvasElement, step }) => {
+    await step('Remove button with aria-label is rendered', async () => {
+      const removeBtn = canvasElement.querySelector('[aria-label="Remove filter"]');
       await expect(removeBtn).not.toBeNull();
     });
-    await step('Click the remove button', async () => {
-      const removeBtn = canvasElement.querySelector('[matChipRemove]') as HTMLElement;
-      await userEvent.click(removeBtn);
-    });
-    await step('remove output was emitted once', async () => {
-      await expect(args.remove).toHaveBeenCalledTimes(1);
+    await step('Remove button contains a cancel icon', async () => {
+      const icon = canvasElement.querySelector('[aria-label="Remove filter"] mat-icon');
+      await expect(icon?.textContent?.trim()).toBe('cancel');
     });
   },
 };
@@ -119,7 +118,9 @@ export const InvalidChipShowsWarnColor: Story = {
     });
     await step('Chip carries highlighted attribute due to invalid state', async () => {
       const chip = canvasElement.querySelector('mat-chip');
-      await expect(chip?.classList.contains('mat-mdc-chip-highlighted') || chip?.hasAttribute('highlighted')).toBe(true);
+      await expect(chip?.classList.contains('mat-mdc-chip-highlighted') || chip?.hasAttribute('highlighted')).toBe(
+        true
+      );
     });
   },
 };

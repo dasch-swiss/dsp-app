@@ -28,22 +28,24 @@ import { OntologyDataService } from '../../service/ontology-data.service';
       </mat-selection-list>
     </div>
   `,
-  styles: [`
-    .property-picker {
-      background: white;
-      border-radius: 4px;
-      width: 260px;
-    }
-    .property-picker__search {
-      width: 100%;
-      padding: 8px 16px 0;
-      box-sizing: border-box;
-    }
-    .property-picker__list {
-      max-height: 280px;
-      overflow-y: auto;
-    }
-  `],
+  styles: [
+    `
+      .property-picker {
+        background: white;
+        border-radius: 4px;
+        width: 260px;
+      }
+      .property-picker__search {
+        width: 100%;
+        padding: 8px 16px 0;
+        box-sizing: border-box;
+      }
+      .property-picker__list {
+        max-height: 280px;
+        overflow-y: auto;
+      }
+    `,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PropertyPickerPopoverComponent implements OnChanges {
@@ -60,9 +62,7 @@ export class PropertyPickerPopoverComponent implements OnChanges {
     this._classIri$.pipe(switchMap(iri => this._dataService.getProperties$(iri))),
     this._searchFilter$,
   ]).pipe(
-    map(([props, term]) =>
-      term ? props.filter(p => p.label.toLowerCase().includes(term.toLowerCase())) : props
-    )
+    map(([props, term]) => (term ? props.filter(p => p.label.toLowerCase().includes(term.toLowerCase())) : props))
   );
 
   ngOnChanges(): void {

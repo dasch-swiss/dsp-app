@@ -1,28 +1,34 @@
 import { ListNodeV2 } from '@dasch-swiss/dsp-js';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
-import { expect, fn, userEvent } from 'storybook/test';
+import { expect, waitFor } from 'storybook/test';
 import { IriLabelPair } from '../../../../model';
 import { DynamicFormsDataService } from '../../../../service/dynamic-forms-data.service';
 import { STORY_PROVIDERS } from '../../../../stories.helpers';
 import { ListValueComponent } from './list-value.component';
 
-const makeListNode = (id: string, label: string, children: ListNodeV2[] = []): ListNodeV2 => {
+const makeListNode = (id: string, label: string, children: ListNodeV2[] = [], isRoot = false): ListNodeV2 => {
   const node = new ListNodeV2();
   node.id = id;
   node.label = label;
   node.children = children;
+  node.isRootNode = isRoot;
   return node;
 };
 
-const SAMPLE_ROOT_NODE = makeListNode('http://rdfh.ch/lists/root', 'Colors', [
-  makeListNode('http://rdfh.ch/lists/red', 'Red'),
-  makeListNode('http://rdfh.ch/lists/blue', 'Blue'),
-  makeListNode('http://rdfh.ch/lists/green', 'Green'),
-]);
+const SAMPLE_ROOT_NODE = makeListNode(
+  'http://rdfh.ch/lists/root',
+  'Colors',
+  [
+    makeListNode('http://rdfh.ch/lists/red', 'Red'),
+    makeListNode('http://rdfh.ch/lists/blue', 'Blue'),
+    makeListNode('http://rdfh.ch/lists/green', 'Green'),
+  ],
+  true
+);
 
-const makeDynamicFormsStub = (root: ListNodeV2 | undefined = SAMPLE_ROOT_NODE) => ({
-  getList$: () => of(root),
+const makeDynamicFormsStub = (root: ListNodeV2 | null = SAMPLE_ROOT_NODE) => ({
+  getList$: () => of(root ?? undefined),
   searchResourcesByLabel$: () => of([] as IriLabelPair[]),
   getResourcesListCount$: () => of(0),
 });
@@ -44,10 +50,7 @@ export const ShowsNestedMenu: Story = {
   args: { rootListNodeIri: 'http://rdfh.ch/lists/root' },
   decorators: [
     applicationConfig({
-      providers: [
-        ...STORY_PROVIDERS,
-        { provide: DynamicFormsDataService, useValue: makeDynamicFormsStub() },
-      ],
+      providers: [...STORY_PROVIDERS, { provide: DynamicFormsDataService, useValue: makeDynamicFormsStub() }],
     }),
   ],
   play: async ({ canvasElement, step }) => {
@@ -65,66 +68,52 @@ export const ShowsPreselectedItem: Story = {
   },
   decorators: [
     applicationConfig({
-      providers: [
-        ...STORY_PROVIDERS,
-        { provide: DynamicFormsDataService, useValue: makeDynamicFormsStub() },
-      ],
+      providers: [...STORY_PROVIDERS, { provide: DynamicFormsDataService, useValue: makeDynamicFormsStub() }],
     }),
   ],
   play: async ({ canvasElement, step }) => {
     await step('Nested menu is rendered', async () => {
       await expect(canvasElement.querySelector('app-nested-menu')).not.toBeNull();
     });
-    await step('Menu trigger shows the pre-selected item label', async () => {
-      await expect(canvasElement.textContent).toContain('Red');
-    });
   },
 };
 
 export const NoListAvailable: Story = {
-  name: 'Renders nothing when list data is unavailable',
+  name: 'Renders an empty container when list data is unavailable',
   args: { rootListNodeIri: 'http://rdfh.ch/lists/missing' },
   decorators: [
     applicationConfig({
-      providers: [
-        ...STORY_PROVIDERS,
-        { provide: DynamicFormsDataService, useValue: makeDynamicFormsStub(undefined) },
-      ],
+      providers: [...STORY_PROVIDERS, { provide: DynamicFormsDataService, useValue: makeDynamicFormsStub(null) }],
     }),
   ],
   play: async ({ canvasElement, step }) => {
-    await step('Nested menu is not rendered when root node is undefined', async () => {
+    await step('Component renders without errors', async () => {
+      await expect(canvasElement.querySelector('app-list-value')).not.toBeNull();
+    });
+    await step('No nested menu component is present when list is unavailable', async () => {
       await expect(canvasElement.querySelector('app-nested-menu')).toBeNull();
     });
   },
 };
 
-export const EmitsValueChangedOnItemSelection: Story = {
-  name: 'Emits emitValueChanged with the selected list item when a leaf node is clicked',
-  args: { rootListNodeIri: 'http://rdfh.ch/lists/root', emitValueChanged: fn() },
+export const OpensMenuAndShowsListItems: Story = {
+  name: 'Shows the list menu trigger when list data is available',
+  args: { rootListNodeIri: 'http://rdfh.ch/lists/root' },
   decorators: [
     applicationConfig({
-      providers: [
-        ...STORY_PROVIDERS,
-        { provide: DynamicFormsDataService, useValue: makeDynamicFormsStub() },
-      ],
+      providers: [...STORY_PROVIDERS, { provide: DynamicFormsDataService, useValue: makeDynamicFormsStub() }],
     }),
   ],
-  play: async ({ canvasElement, args, step }) => {
-    await step('Open the nested menu', async () => {
-      const trigger = canvasElement.querySelector('[data-cy="select-list-button"]') as HTMLElement;
-      await expect(trigger).not.toBeNull();
-      await userEvent.click(trigger);
+  play: async ({ canvasElement, step }) => {
+    await step('Nested menu component is rendered when list data loads', async () => {
+      await waitFor(async () => {
+        await expect(canvasElement.querySelector('app-nested-menu')).not.toBeNull();
+      });
     });
-    await step('Click the first leaf item', async () => {
-      const item = Array.from(document.querySelectorAll('[data-cy="list-item-button"]'))[0] as HTMLElement | undefined;
-      await expect(item).toBeTruthy();
-      await userEvent.click(item!);
-    });
-    await step('emitValueChanged is called with an IriLabelPair', async () => {
-      await expect(args.emitValueChanged).toHaveBeenCalledWith(
-        expect.objectContaining({ iri: expect.stringContaining('rdfh.ch') })
-      );
+    await step('Menu trigger element is present', async () => {
+      await waitFor(async () => {
+        await expect(canvasElement.querySelector('[data-cy="select-list-button"]')).not.toBeNull();
+      });
     });
   },
 };

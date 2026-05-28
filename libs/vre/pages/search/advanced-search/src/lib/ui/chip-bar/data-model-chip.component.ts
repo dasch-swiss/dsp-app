@@ -12,7 +12,15 @@ import { CHIP_POPOVER_POSITIONS } from './chip-bar.helpers';
 @Component({
   selector: 'app-data-model-chip',
   standalone: true,
-  imports: [AsyncPipe, CdkConnectedOverlay, CdkOverlayOrigin, MatButtonModule, MatIconModule, MatListModule, OverlayModule],
+  imports: [
+    AsyncPipe,
+    CdkConnectedOverlay,
+    CdkOverlayOrigin,
+    MatButtonModule,
+    MatIconModule,
+    MatListModule,
+    OverlayModule,
+  ],
   template: `
     <button mat-stroked-button cdkOverlayOrigin #trigger="cdkOverlayOrigin" (click)="isOpen = !isOpen">
       <mat-icon>schema</mat-icon>
@@ -40,15 +48,17 @@ import { CHIP_POPOVER_POSITIONS } from './chip-bar.helpers';
       </mat-selection-list>
     </ng-template>
   `,
-  styles: [`
-    .chip-popover-list {
-      background: white;
-      min-width: 200px;
-      max-height: 300px;
-      overflow-y: auto;
-      border-radius: 4px;
-    }
-  `],
+  styles: [
+    `
+      .chip-popover-list {
+        background: white;
+        min-width: 200px;
+        max-height: 300px;
+        overflow-y: auto;
+        border-radius: 4px;
+      }
+    `,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DataModelChipComponent {

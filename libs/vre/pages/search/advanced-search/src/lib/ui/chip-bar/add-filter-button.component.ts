@@ -11,7 +11,14 @@ import { PropertyPickerPopoverComponent } from './property-picker-popover.compon
 @Component({
   selector: 'app-add-filter-button',
   standalone: true,
-  imports: [CdkConnectedOverlay, CdkOverlayOrigin, MatButtonModule, MatIconModule, OverlayModule, PropertyPickerPopoverComponent],
+  imports: [
+    CdkConnectedOverlay,
+    CdkOverlayOrigin,
+    MatButtonModule,
+    MatIconModule,
+    OverlayModule,
+    PropertyPickerPopoverComponent,
+  ],
   template: `
     <button mat-stroked-button cdkOverlayOrigin #trigger="cdkOverlayOrigin" (click)="isOpen = !isOpen">
       <mat-icon>add</mat-icon>

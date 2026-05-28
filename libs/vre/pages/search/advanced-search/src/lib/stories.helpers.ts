@@ -1,13 +1,13 @@
+import { signal } from '@angular/core';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 import { UserService } from '@dasch-swiss/vre/core/session';
 import { of } from 'rxjs';
+import { IriLabelPair, OrderByItem, StatementElement } from './model';
 import { OntologyDataService } from './service/ontology-data.service';
 import { OrderByService } from './service/order-by.service';
 import { QueryExecutionService } from './service/query-execution.service';
 import { SearchStateService } from './service/search-state.service';
-import { IriLabelPair, OrderByItem, StatementElement } from './model';
-import { signal } from '@angular/core';
 
 export const STORY_PROVIDERS = [
   provideAnimations(),
@@ -25,7 +25,9 @@ export const SAMPLE_RESOURCE_CLASSES: IriLabelPair[] = [
   { iri: 'http://0.0.0.0:3333/ontology/0001/test/v2#Person', label: 'Person' },
 ];
 
-export const makeOntologyDataServiceStub = (partial: Partial<OntologyDataService> = {}): Partial<OntologyDataService> => ({
+export const makeOntologyDataServiceStub = (
+  partial: Partial<OntologyDataService> = {}
+): Partial<OntologyDataService> => ({
   ontologies$: of(SAMPLE_ONTOLOGIES),
   selectedOntology$: of({ id: SAMPLE_ONTOLOGIES[0].iri, label: SAMPLE_ONTOLOGIES[0].label } as any),
   ontologyLoading$: of(false),
@@ -48,7 +50,11 @@ export const makeSearchStateServiceStub = (partial: Partial<SearchStateService> 
     isFormStateValidAndComplete$: of(true),
     completeStatements$: of([]),
     orderByItems$: of([]),
-    currentState: { selectedResourceClass: SAMPLE_RESOURCE_CLASSES[0], statementElements: [initialStatement], orderBy: [] },
+    currentState: {
+      selectedResourceClass: SAMPLE_RESOURCE_CLASSES[0],
+      statementElements: [initialStatement],
+      orderBy: [],
+    },
     validStatementElements: [],
     patchState: () => {},
     clearAllSelections: () => {},
@@ -58,7 +64,9 @@ export const makeSearchStateServiceStub = (partial: Partial<SearchStateService> 
   };
 };
 
-export const makeQueryExecutionServiceStub = (partial: { queryIsExecuting?: boolean } = {}): Partial<QueryExecutionService> => ({
+export const makeQueryExecutionServiceStub = (
+  partial: { queryIsExecuting?: boolean } = {}
+): Partial<QueryExecutionService> => ({
   queryIsExecuting: signal(partial.queryIsExecuting ?? false),
 });
 

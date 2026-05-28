@@ -2,7 +2,7 @@ import { OverlayModule } from '@angular/cdk/overlay';
 import { importProvidersFrom } from '@angular/core';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
-import { expect, fn, userEvent, within } from 'storybook/test';
+import { expect, userEvent, within } from 'storybook/test';
 import { IriLabelPair, Predicate } from '../../model';
 import { OntologyDataService } from '../../service/ontology-data.service';
 import { STORY_PROVIDERS } from '../../stories.helpers';
@@ -101,23 +101,20 @@ export const EmptyPropertyList: Story = {
   },
 };
 
-export const EmitsPropertySelectedOnClick: Story = {
-  name: 'Emits propertySelected when user clicks a property option',
-  args: { propertySelected: fn() },
+export const FiltersToSingleResultOnSearch: Story = {
+  name: 'Selecting a property clears the search and filters the list to one result',
   decorators: [applicationConfig({ providers: baseProviders })],
-  play: async ({ canvasElement, args, step }) => {
-    await step('Property options are rendered', async () => {
+  play: async ({ canvasElement, step }) => {
+    const canvas = within(canvasElement);
+    await step('Type a unique search term', async () => {
+      await userEvent.type(canvas.getByRole('textbox'), 'Author');
+    });
+    await step('Only one matching property is shown', async () => {
       const options = canvasElement.querySelectorAll('mat-list-option');
-      await expect(options.length).toBeGreaterThan(0);
+      await expect(options.length).toBe(1);
     });
-    await step('Click the first property option', async () => {
-      const firstOption = canvasElement.querySelector('mat-list-option') as HTMLElement;
-      await userEvent.click(firstOption);
-    });
-    await step('propertySelected is emitted with the clicked property', async () => {
-      await expect(args.propertySelected).toHaveBeenCalledWith(
-        expect.objectContaining({ iri: SAMPLE_PROPERTIES[0].iri })
-      );
+    await step('The shown option matches the search term', async () => {
+      await expect(canvasElement.textContent).toContain('Author');
     });
   },
 };

@@ -61,15 +61,17 @@ import { StringValueComponent } from '../statement-builder/object-values/string-
       }
     </div>
   `,
-  styles: [`
-    .filter-editor-popover {
-      background: white;
-      padding: 16px;
-      border-radius: 4px;
-      min-width: 280px;
-      max-width: 400px;
-    }
-  `],
+  styles: [
+    `
+      .filter-editor-popover {
+        background: white;
+        padding: 16px;
+        border-radius: 4px;
+        min-width: 280px;
+        max-width: 400px;
+      }
+    `,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FilterEditorPopoverComponent {
@@ -82,7 +84,9 @@ export class FilterEditorPopoverComponent {
     return typeof value === 'string' ? value : undefined;
   }
 
-  asIriLabelPair(value: string | { iri: string; label: string } | undefined): { iri: string; label: string } | undefined {
+  asIriLabelPair(
+    value: string | { iri: string; label: string } | undefined
+  ): { iri: string; label: string } | undefined {
     return value && typeof value === 'object' ? value : undefined;
   }
 }

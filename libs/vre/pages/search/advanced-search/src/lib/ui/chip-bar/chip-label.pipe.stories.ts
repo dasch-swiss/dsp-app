@@ -40,11 +40,13 @@ const meta: Meta<ChipLabelPipeHarnessComponent> = {
 export default meta;
 type Story = StoryObj<ChipLabelPipeHarnessComponent>;
 
-export const PredicateOnly: Story = {
-  name: 'Shows only predicate label when no operator is selected',
+export const PredicateWithDefaultOperator: Story = {
+  name: 'Shows predicate with default equals operator when no value is set',
   args: { statement: makeStatement({ predicateLabel: 'Title' }) },
   play: async ({ canvasElement }) => {
-    await expect(canvasElement.querySelector('.label')?.textContent?.trim()).toBe('Title');
+    const label = canvasElement.querySelector('.label')?.textContent?.trim() ?? '';
+    await expect(label).toContain('Title');
+    await expect(label).toContain('equals');
   },
 };
 

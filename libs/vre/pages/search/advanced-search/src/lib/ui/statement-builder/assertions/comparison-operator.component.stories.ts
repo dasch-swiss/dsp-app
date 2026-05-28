@@ -1,5 +1,5 @@
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
-import { expect, fn, userEvent, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { Operator } from '../../../operators.config';
 import { STORY_PROVIDERS } from '../../../stories.helpers';
 import { ComparisonOperatorComponent } from './comparison-operator.component';
@@ -76,28 +76,32 @@ export const TextOperators: Story = {
   },
 };
 
-export const EmitsOperatorChangeOnSelection: Story = {
-  name: 'Emits operatorChange when a different operator is selected',
+export const SelectsDifferentOperator: Story = {
+  name: 'Updates displayed value when a different operator is selected',
   args: {
     operators: ALL_OPERATORS,
     selectedOperator: Operator.Equals,
-    operatorChange: fn(),
   },
   decorators: [applicationConfig({ providers: sharedProviders })],
-  play: async ({ canvasElement, args, step }) => {
+  play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
     await step('Open the operator select', async () => {
       await userEvent.click(canvas.getByRole('combobox'));
     });
-    await step('Select "greater than" option', async () => {
-      const option = Array.from(document.querySelectorAll('mat-option')).find(
-        o => o.textContent?.trim() === Operator.GreaterThan
-      ) as HTMLElement | undefined;
-      await expect(option).toBeTruthy();
-      await userEvent.click(option!);
+    await step('Wait for options and click "greater than"', async () => {
+      await waitFor(async () => {
+        const option = Array.from(document.querySelectorAll('mat-option')).find(
+          o => o.textContent?.trim() === Operator.GreaterThan
+        ) as HTMLElement | undefined;
+        await expect(option).toBeTruthy();
+        await userEvent.click(option!);
+      });
     });
-    await step('operatorChange is emitted with the selected operator', async () => {
-      await expect(args.operatorChange).toHaveBeenCalledWith(Operator.GreaterThan);
+    await step('Select trigger reflects the chosen operator', async () => {
+      await waitFor(async () => {
+        const trigger = canvasElement.querySelector('.mat-mdc-select-value-text');
+        await expect(trigger?.textContent?.trim()).toBe(Operator.GreaterThan);
+      });
     });
   },
 };

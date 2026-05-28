@@ -12,7 +12,16 @@ import { provideAdvancedSearch } from './providers';
 
 @Component({
   selector: 'app-advanced-search-page',
-  imports: [NgClass, RouterLink, MatButton, MatDivider, MatIcon, TranslatePipe, AdvancedSearchComponent, AdvancedSearchResultsComponent],
+  imports: [
+    NgClass,
+    RouterLink,
+    MatButton,
+    MatDivider,
+    MatIcon,
+    TranslatePipe,
+    AdvancedSearchComponent,
+    AdvancedSearchResultsComponent,
+  ],
   template: `
     <div class="search-bar" [ngClass]="{ big: !query() }">
       <a class="switch-btn" mat-stroked-button [routerLink]="['..', 'search']">
