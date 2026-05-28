@@ -43,8 +43,18 @@ export const Default: Story = {
   args: { projectUuid: '0001' },
   decorators: [applicationConfig({ providers: sharedProviders })],
   play: async ({ canvasElement, step }) => {
-    await step('Chip bar is rendered', async () => {
-      await expect(canvasElement).toBeInTheDocument();
+    await step('Data model chip is rendered', async () => {
+      await expect(canvasElement.querySelector('app-data-model-chip')).not.toBeNull();
+    });
+    await step('Resource class chip is rendered', async () => {
+      await expect(canvasElement.querySelector('app-resource-class-chip')).not.toBeNull();
+    });
+    await step('Add filter button is rendered', async () => {
+      await expect(canvasElement.querySelector('app-add-filter-button')).not.toBeNull();
+    });
+    await step('Search button is rendered', async () => {
+      const buttons = Array.from(canvasElement.querySelectorAll('button'));
+      await expect(buttons.some(b => b.textContent?.includes('Search'))).toBe(true);
     });
   },
 };

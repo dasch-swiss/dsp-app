@@ -1,6 +1,6 @@
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
-import { expect } from 'storybook/test';
+import { expect, fn, userEvent, within } from 'storybook/test';
 import { IriLabelPair } from '../../../../model';
 import { OntologyDataService } from '../../../../service/ontology-data.service';
 import { makeOntologyDataServiceStub, SAMPLE_RESOURCE_CLASSES, STORY_PROVIDERS } from '../../../../stories.helpers';
@@ -36,7 +36,7 @@ export const ShowsResourceClassDropdown: Story = {
 };
 
 export const ShowsSelectedResource: Story = {
-  name: 'Shows pre-selected resource class in the dropdown',
+  name: 'Shows pre-selected resource class label in the dropdown trigger',
   args: { selectedResource: SAMPLE_RESOURCE_CLASSES[0] },
   decorators: [
     applicationConfig({
@@ -47,9 +47,9 @@ export const ShowsSelectedResource: Story = {
     }),
   ],
   play: async ({ canvasElement, step }) => {
-    await step('Select element is present', async () => {
-      const select = canvasElement.querySelector('[data-cy="resource-class-select"]');
-      await expect(select).not.toBeNull();
+    await step('Select trigger shows the pre-selected class label', async () => {
+      const trigger = canvasElement.querySelector('.mat-mdc-select-value-text');
+      await expect(trigger?.textContent).toContain(SAMPLE_RESOURCE_CLASSES[0].label);
     });
   },
 };
@@ -70,6 +70,41 @@ export const EmptyAvailableClasses: Story = {
   play: async ({ canvasElement, step }) => {
     await step('Resource class select is rendered', async () => {
       await expect(canvasElement.querySelector('[data-cy="resource-class-select"]')).not.toBeNull();
+    });
+    await step('No options are listed in the dropdown', async () => {
+      const canvas = within(canvasElement);
+      await userEvent.click(canvas.getByRole('combobox'));
+      const options = document.querySelectorAll('mat-option');
+      await expect(options.length).toBe(0);
+    });
+  },
+};
+
+export const EmitsSelectionChangeOnOptionClick: Story = {
+  name: 'Emits selectedResourceChange when a resource class is chosen',
+  args: { selectedResourceChange: fn() },
+  decorators: [
+    applicationConfig({
+      providers: [
+        ...STORY_PROVIDERS,
+        { provide: OntologyDataService, useValue: makeOntologyDataServiceStub() },
+      ],
+    }),
+  ],
+  play: async ({ canvasElement, args, step }) => {
+    const canvas = within(canvasElement);
+    await step('Open the resource class dropdown', async () => {
+      await userEvent.click(canvas.getByRole('combobox'));
+    });
+    await step('Click the first option', async () => {
+      const option = document.querySelector('mat-option') as HTMLElement | null;
+      await expect(option).not.toBeNull();
+      await userEvent.click(option!);
+    });
+    await step('selectedResourceChange is emitted with the chosen class', async () => {
+      await expect(args.selectedResourceChange).toHaveBeenCalledWith(
+        expect.objectContaining({ iri: SAMPLE_RESOURCE_CLASSES[0].iri })
+      );
     });
   },
 };

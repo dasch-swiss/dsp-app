@@ -1,5 +1,5 @@
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
-import { expect } from 'storybook/test';
+import { expect, fn, userEvent, within } from 'storybook/test';
 import { Operator } from '../../../operators.config';
 import { STORY_PROVIDERS } from '../../../stories.helpers';
 import { ComparisonOperatorComponent } from './comparison-operator.component';
@@ -72,6 +72,51 @@ export const TextOperators: Story = {
   play: async ({ canvasElement, step }) => {
     await step('Operator select is rendered', async () => {
       await expect(canvasElement.querySelector('mat-select')).not.toBeNull();
+    });
+  },
+};
+
+export const EmitsOperatorChangeOnSelection: Story = {
+  name: 'Emits operatorChange when a different operator is selected',
+  args: {
+    operators: ALL_OPERATORS,
+    selectedOperator: Operator.Equals,
+    operatorChange: fn(),
+  },
+  decorators: [applicationConfig({ providers: sharedProviders })],
+  play: async ({ canvasElement, args, step }) => {
+    const canvas = within(canvasElement);
+    await step('Open the operator select', async () => {
+      await userEvent.click(canvas.getByRole('combobox'));
+    });
+    await step('Select "greater than" option', async () => {
+      const option = Array.from(document.querySelectorAll('mat-option')).find(
+        o => o.textContent?.trim() === Operator.GreaterThan
+      ) as HTMLElement | undefined;
+      await expect(option).toBeTruthy();
+      await userEvent.click(option!);
+    });
+    await step('operatorChange is emitted with the selected operator', async () => {
+      await expect(args.operatorChange).toHaveBeenCalledWith(Operator.GreaterThan);
+    });
+  },
+};
+
+export const RendersAllOptionsInDropdown: Story = {
+  name: 'Dropdown lists every operator passed via the operators input',
+  args: {
+    operators: ALL_OPERATORS,
+    selectedOperator: Operator.Equals,
+  },
+  decorators: [applicationConfig({ providers: sharedProviders })],
+  play: async ({ canvasElement, step }) => {
+    const canvas = within(canvasElement);
+    await step('Open the operator select', async () => {
+      await userEvent.click(canvas.getByRole('combobox'));
+    });
+    await step('All operators are listed as options', async () => {
+      const options = document.querySelectorAll('mat-option');
+      await expect(options.length).toBe(ALL_OPERATORS.length);
     });
   },
 };

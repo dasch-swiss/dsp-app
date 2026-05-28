@@ -34,6 +34,18 @@ const statementWithOperator = (): StatementElement => {
   return s;
 };
 
+const statementWithExistsOperator = (): StatementElement => {
+  const s = statementWithPredicate();
+  s.selectedOperator = Operator.Exists;
+  return s;
+};
+
+const statementWithNotExistsOperator = (): StatementElement => {
+  const s = statementWithPredicate();
+  s.selectedOperator = Operator.NotExists;
+  return s;
+};
+
 const meta: Meta<FilterEditorPopoverComponent> = {
   title: 'Search / Advanced Search / Chip Bar / 3b. Filter Editor Popover',
   component: FilterEditorPopoverComponent,
@@ -97,10 +109,43 @@ export const PopoverLayout: Story = {
   args: { statement: blankStatement() },
   decorators: [applicationConfig({ providers: baseProviders })],
   play: async ({ canvasElement, step }) => {
-    const canvas = within(canvasElement);
     await step('Elevated popover container is present', async () => {
       const container = canvasElement.querySelector('.filter-editor-popover');
       await expect(container).not.toBeNull();
+    });
+  },
+};
+
+export const HidesValueInputForExistsOperator: Story = {
+  name: 'Hides value input when operator is Exists',
+  args: { statement: statementWithExistsOperator() },
+  decorators: [applicationConfig({ providers: baseProviders })],
+  play: async ({ canvasElement, step }) => {
+    await step('Comparison operator is shown', async () => {
+      await expect(canvasElement.querySelector('app-comparison-operator')).not.toBeNull();
+    });
+    await step('No value input is rendered for Exists operator', async () => {
+      await expect(canvasElement.querySelector('app-string-value')).toBeNull();
+      await expect(canvasElement.querySelector('app-link-value')).toBeNull();
+      await expect(canvasElement.querySelector('app-list-value')).toBeNull();
+      await expect(canvasElement.querySelector('app-resource-value')).toBeNull();
+    });
+  },
+};
+
+export const HidesValueInputForNotExistsOperator: Story = {
+  name: 'Hides value input when operator is NotExists',
+  args: { statement: statementWithNotExistsOperator() },
+  decorators: [applicationConfig({ providers: baseProviders })],
+  play: async ({ canvasElement, step }) => {
+    await step('Comparison operator is shown', async () => {
+      await expect(canvasElement.querySelector('app-comparison-operator')).not.toBeNull();
+    });
+    await step('No value input is rendered for NotExists operator', async () => {
+      await expect(canvasElement.querySelector('app-string-value')).toBeNull();
+      await expect(canvasElement.querySelector('app-link-value')).toBeNull();
+      await expect(canvasElement.querySelector('app-list-value')).toBeNull();
+      await expect(canvasElement.querySelector('app-resource-value')).toBeNull();
     });
   },
 };

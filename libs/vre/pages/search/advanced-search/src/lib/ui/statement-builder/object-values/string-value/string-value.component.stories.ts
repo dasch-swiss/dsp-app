@@ -1,6 +1,6 @@
 import { Constants } from '@dasch-swiss/dsp-js';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, fn, userEvent, within } from 'storybook/test';
 import { STORY_PROVIDERS } from '../../../../stories.helpers';
 import { StringValueComponent } from './string-value.component';
 
@@ -96,6 +96,58 @@ export const ShowsValidationErrorForInvalidUri: Story = {
       const input = canvas.getByRole('textbox');
       await userEvent.click(input);
       await userEvent.type(input, 'not-a-valid-uri');
+      await userEvent.tab();
+    });
+    await step('Validation error is shown', async () => {
+      await expect(canvasElement.querySelector('mat-error')).not.toBeNull();
+    });
+  },
+};
+
+export const EmitsValueChangedOnTextInput: Story = {
+  name: 'Emits emitValueChanged when user types a valid text value',
+  args: { valueType: Constants.TextValue, emitValueChanged: fn() },
+  decorators: baseDecorators,
+  play: async ({ canvasElement, args, step }) => {
+    const canvas = within(canvasElement);
+    await step('Type a value into the text input', async () => {
+      const input = canvas.getByRole('textbox');
+      await userEvent.click(input);
+      await userEvent.type(input, 'Hamlet');
+    });
+    await step('emitValueChanged is called with the typed value', async () => {
+      await expect(args.emitValueChanged).toHaveBeenCalledWith('Hamlet');
+    });
+  },
+};
+
+export const EmitsUndefinedForInvalidValue: Story = {
+  name: 'Emits undefined when the input value is invalid',
+  args: { valueType: Constants.IntValue, emitValueChanged: fn() },
+  decorators: baseDecorators,
+  play: async ({ canvasElement, args, step }) => {
+    const canvas = within(canvasElement);
+    await step('Type a non-integer value', async () => {
+      const input = canvas.getByRole('textbox');
+      await userEvent.click(input);
+      await userEvent.type(input, 'not-a-number');
+    });
+    await step('emitValueChanged is called with undefined', async () => {
+      await expect(args.emitValueChanged).toHaveBeenCalledWith(undefined);
+    });
+  },
+};
+
+export const ShowsValidationErrorForInvalidInteger: Story = {
+  name: 'Shows validation error for a non-integer value in integer input',
+  args: { valueType: Constants.IntValue },
+  decorators: baseDecorators,
+  play: async ({ canvasElement, step }) => {
+    const canvas = within(canvasElement);
+    await step('Type a non-integer value', async () => {
+      const input = canvas.getByRole('textbox');
+      await userEvent.click(input);
+      await userEvent.type(input, '3.14');
       await userEvent.tab();
     });
     await step('Validation error is shown', async () => {

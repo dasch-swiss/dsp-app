@@ -2,7 +2,7 @@ import { OverlayModule } from '@angular/cdk/overlay';
 import { importProvidersFrom } from '@angular/core';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, fn, userEvent, within } from 'storybook/test';
 import { IriLabelPair, Predicate } from '../../model';
 import { OntologyDataService } from '../../service/ontology-data.service';
 import { STORY_PROVIDERS } from '../../stories.helpers';
@@ -95,6 +95,42 @@ export const EmptyPropertyList: Story = {
   ],
   play: async ({ canvasElement, step }) => {
     await step('No list options are rendered', async () => {
+      const options = canvasElement.querySelectorAll('mat-list-option');
+      await expect(options.length).toBe(0);
+    });
+  },
+};
+
+export const EmitsPropertySelectedOnClick: Story = {
+  name: 'Emits propertySelected when user clicks a property option',
+  args: { propertySelected: fn() },
+  decorators: [applicationConfig({ providers: baseProviders })],
+  play: async ({ canvasElement, args, step }) => {
+    await step('Property options are rendered', async () => {
+      const options = canvasElement.querySelectorAll('mat-list-option');
+      await expect(options.length).toBeGreaterThan(0);
+    });
+    await step('Click the first property option', async () => {
+      const firstOption = canvasElement.querySelector('mat-list-option') as HTMLElement;
+      await userEvent.click(firstOption);
+    });
+    await step('propertySelected is emitted with the clicked property', async () => {
+      await expect(args.propertySelected).toHaveBeenCalledWith(
+        expect.objectContaining({ iri: SAMPLE_PROPERTIES[0].iri })
+      );
+    });
+  },
+};
+
+export const NoResultsAfterSearch: Story = {
+  name: 'Shows empty list when search term matches no properties',
+  decorators: [applicationConfig({ providers: baseProviders })],
+  play: async ({ canvasElement, step }) => {
+    const canvas = within(canvasElement);
+    await step('Type a term that matches nothing', async () => {
+      await userEvent.type(canvas.getByRole('textbox'), 'zzznomatch');
+    });
+    await step('No list options are shown', async () => {
       const options = canvasElement.querySelectorAll('mat-list-option');
       await expect(options.length).toBe(0);
     });

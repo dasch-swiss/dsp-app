@@ -1,7 +1,7 @@
 import { ListNodeV2 } from '@dasch-swiss/dsp-js';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
-import { expect } from 'storybook/test';
+import { expect, fn, userEvent } from 'storybook/test';
 import { IriLabelPair } from '../../../../model';
 import { DynamicFormsDataService } from '../../../../service/dynamic-forms-data.service';
 import { STORY_PROVIDERS } from '../../../../stories.helpers';
@@ -75,6 +75,9 @@ export const ShowsPreselectedItem: Story = {
     await step('Nested menu is rendered', async () => {
       await expect(canvasElement.querySelector('app-nested-menu')).not.toBeNull();
     });
+    await step('Menu trigger shows the pre-selected item label', async () => {
+      await expect(canvasElement.textContent).toContain('Red');
+    });
   },
 };
 
@@ -92,6 +95,36 @@ export const NoListAvailable: Story = {
   play: async ({ canvasElement, step }) => {
     await step('Nested menu is not rendered when root node is undefined', async () => {
       await expect(canvasElement.querySelector('app-nested-menu')).toBeNull();
+    });
+  },
+};
+
+export const EmitsValueChangedOnItemSelection: Story = {
+  name: 'Emits emitValueChanged with the selected list item when a leaf node is clicked',
+  args: { rootListNodeIri: 'http://rdfh.ch/lists/root', emitValueChanged: fn() },
+  decorators: [
+    applicationConfig({
+      providers: [
+        ...STORY_PROVIDERS,
+        { provide: DynamicFormsDataService, useValue: makeDynamicFormsStub() },
+      ],
+    }),
+  ],
+  play: async ({ canvasElement, args, step }) => {
+    await step('Open the nested menu', async () => {
+      const trigger = canvasElement.querySelector('[data-cy="select-list-button"]') as HTMLElement;
+      await expect(trigger).not.toBeNull();
+      await userEvent.click(trigger);
+    });
+    await step('Click the first leaf item', async () => {
+      const item = Array.from(document.querySelectorAll('[data-cy="list-item-button"]'))[0] as HTMLElement | undefined;
+      await expect(item).toBeTruthy();
+      await userEvent.click(item!);
+    });
+    await step('emitValueChanged is called with an IriLabelPair', async () => {
+      await expect(args.emitValueChanged).toHaveBeenCalledWith(
+        expect.objectContaining({ iri: expect.stringContaining('rdfh.ch') })
+      );
     });
   },
 };

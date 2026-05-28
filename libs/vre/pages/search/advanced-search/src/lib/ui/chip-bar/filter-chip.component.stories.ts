@@ -2,7 +2,7 @@ import { OverlayModule } from '@angular/cdk/overlay';
 import { importProvidersFrom } from '@angular/core';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, fn, userEvent, within } from 'storybook/test';
 import { StatementElement } from '../../model';
 import { Operator } from '../../operators.config';
 import { OntologyDataService } from '../../service/ontology-data.service';
@@ -82,26 +82,44 @@ export const OpenState: Story = {
   args: { statement: titleStatement(), isOpen: true },
   decorators: [applicationConfig({ providers: baseProviders })],
   play: async ({ canvasElement, step }) => {
-    await step('Chip is highlighted when isOpen is true', async () => {
+    await step('Chip carries highlighted attribute when isOpen is true', async () => {
       const chip = canvasElement.querySelector('mat-chip');
       await expect(chip).not.toBeNull();
+      await expect(chip?.classList.contains('mat-mdc-chip-highlighted') || chip?.hasAttribute('highlighted')).toBe(true);
     });
   },
 };
 
 export const ClickingRemoveEmitsEvent: Story = {
   name: 'Emits remove event when remove button is clicked',
-  args: { statement: titleStatement(), isOpen: false },
+  args: { statement: titleStatement(), isOpen: false, remove: fn() },
   decorators: [applicationConfig({ providers: baseProviders })],
-  play: async ({ canvasElement, step }) => {
-    const canvas = within(canvasElement);
+  play: async ({ canvasElement, args, step }) => {
     await step('Remove button is rendered', async () => {
       const removeBtn = canvasElement.querySelector('[matChipRemove]');
       await expect(removeBtn).not.toBeNull();
     });
-    await step('Clicking remove button does not throw', async () => {
+    await step('Click the remove button', async () => {
       const removeBtn = canvasElement.querySelector('[matChipRemove]') as HTMLElement;
       await userEvent.click(removeBtn);
+    });
+    await step('remove output was emitted once', async () => {
+      await expect(args.remove).toHaveBeenCalledTimes(1);
+    });
+  },
+};
+
+export const InvalidChipShowsWarnColor: Story = {
+  name: 'Shows warn color when chip has an incomplete statement',
+  args: { statement: titleStatement(), isOpen: false, isValid: false },
+  decorators: [applicationConfig({ providers: baseProviders })],
+  play: async ({ canvasElement, step }) => {
+    await step('Chip is rendered', async () => {
+      await expect(canvasElement.querySelector('mat-chip')).not.toBeNull();
+    });
+    await step('Chip carries highlighted attribute due to invalid state', async () => {
+      const chip = canvasElement.querySelector('mat-chip');
+      await expect(chip?.classList.contains('mat-mdc-chip-highlighted') || chip?.hasAttribute('highlighted')).toBe(true);
     });
   },
 };
