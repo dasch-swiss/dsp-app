@@ -4,8 +4,11 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { PropertyDefinition, ResourceClassDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
 import { PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
 import { provideTranslateService, TranslateService } from '@ngx-translate/core';
-import { DownloadDialogResourcesTabComponent } from './download-dialog-resources-tab.component';
-import { CSV_EXPORT_LARGE_THRESHOLD, DownloadDialogComponent, DownloadDialogData } from './download-dialog.component';
+import {
+  CSV_EXPORT_LARGE_THRESHOLD,
+  DownloadDialogResourcesTabComponent,
+} from './download-dialog-resources-tab.component';
+import { DownloadDialogComponent, DownloadDialogData } from './download-dialog.component';
 
 @Component({ selector: 'app-download-dialog-properties-tab', standalone: true, template: '' })
 class StubDownloadDialogResourcesTabComponent {}
