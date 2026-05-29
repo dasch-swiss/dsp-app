@@ -1,11 +1,11 @@
 import { OverlayModule } from '@angular/cdk/overlay';
 import { importProvidersFrom } from '@angular/core';
 import { provideAnimations } from '@angular/platform-browser/animations';
+import { provideRouter } from '@angular/router';
 import { ReadResource } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
-import { ResourceResultService } from '@dasch-swiss/vre/shared/app-helper-services';
-import { provideRouter } from '@angular/router';
 import { UserService } from '@dasch-swiss/vre/core/session';
+import { ResourceResultService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { NEVER, of } from 'rxjs';
 import { expect } from 'storybook/test';
