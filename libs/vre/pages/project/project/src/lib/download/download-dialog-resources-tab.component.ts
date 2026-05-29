@@ -1,5 +1,5 @@
-import { HttpDownloadProgressEvent, HttpEvent, HttpEventType } from '@angular/common/http';
-import { ChangeDetectorRef, Component, DestroyRef, EventEmitter, Input, Output } from '@angular/core';
+import { HttpClient, HttpDownloadProgressEvent, HttpEvent, HttpEventType } from '@angular/common/http';
+import { ChangeDetectorRef, Component, DestroyRef, EventEmitter, Inject, Input, Output } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -7,7 +7,7 @@ import { MatCheckbox } from '@angular/material/checkbox';
 import { MatDialogActions } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { APIV3ApiService, ExportRequest } from '@dasch-swiss/vre/3rd-party-services/open-api';
+import { BASE_PATH, ExportRequest } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
 import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
@@ -176,7 +176,8 @@ export class DownloadDialogResourcesTabComponent {
   private _scannerState: RowScannerState = initRowScanner();
 
   constructor(
-    private readonly _v3: APIV3ApiService,
+    private readonly _http: HttpClient,
+    @Inject(BASE_PATH) private readonly _basePath: string,
     private readonly _localizationService: LocalizationService,
     private readonly _notificationService: NotificationService,
     private readonly _translateService: TranslateService,
@@ -203,11 +204,18 @@ export class DownloadDialogResourcesTabComponent {
       includeArkUrls: this.includeArkUrls,
     };
 
-    // observe:'events' + reportProgress stream HttpDownloadProgressEvents; the text/csv Accept header
-    // makes the generated client select responseType:'text', which populates `partialText` for the
-    // row counter. This is the only reason the endpoint uses the events overload. See DEV-6462 / DEV-6336.
-    this._v3
-      .postV3ExportResources(body, 'events', true, { httpHeaderAccept: 'text/csv' })
+    // Call HttpClient directly instead of the generated APIV3ApiService: now that dsp-api streams the
+    // CSV as a chunked binary body (format: binary), the generated client hardcodes responseType:'blob',
+    // which would drop `partialText` and break the row counter. responseType:'text' + observe:'events' +
+    // reportProgress give HttpDownloadProgressEvents whose `partialText` feeds the counter. The Bearer
+    // token is added by authInterceptorFn (matches the API base path). See DEV-6462 / DEV-6336.
+    this._http
+      .post(`${this._basePath}/v3/export/resources`, body, {
+        observe: 'events',
+        reportProgress: true,
+        responseType: 'text',
+        headers: { Accept: 'text/csv' },
+      })
       .pipe(
         takeUntilDestroyed(this._destroyRef),
         finalize(() => {
