@@ -417,7 +417,10 @@
         "downloadCsv": "Download CSV",
         "downloadSuccess": "CSV downloaded successfully.",
         "downloadError": "Failed to download CSV. Please try again.",
-        "largeExportWarning": "This export contains {{count}} resources and may take several minutes. Please keep this tab open."
+        "largeExportWarning": "This export contains {{count}} resources and may take several minutes. Please keep this tab open.",
+        "progressXofN": "Exported {{x}} of {{n}} resources",
+        "buildingCsv": "Building your CSV — keep this tab open. We'll start the download as soon as the file is ready.",
+        "preparing": "Preparing…"
       }
     }
   },
