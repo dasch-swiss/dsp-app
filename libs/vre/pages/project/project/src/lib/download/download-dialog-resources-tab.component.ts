@@ -5,12 +5,12 @@ import { FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatDialogActions } from '@angular/material/dialog';
+import { MatIcon } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { APIV3ApiService, ExportRequest } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
 import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
-import { LoadingButtonDirective } from '@dasch-swiss/vre/ui/progress-indicator';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { finalize } from 'rxjs';
 import { RowScannerState, advanceRowScanner, initRowScanner } from './csv-row-scanner';
@@ -31,10 +31,72 @@ export const CSV_EXPORT_LARGE_THRESHOLD = 1_000;
     TranslatePipe,
     MatDialogActions,
     MatButton,
-    LoadingButtonDirective,
+    MatIcon,
     MatProgressBarModule,
   ],
+  styles: [
+    `
+      .csv-export-info {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        margin-bottom: 16px;
+        padding: 12px;
+        background: #e3f2fd;
+        color: #0d47a1;
+        border-radius: 4px;
+        font-size: 13px;
+        line-height: 20px;
+      }
+
+      .csv-export-info mat-icon {
+        flex-shrink: 0;
+        color: #1565c0;
+      }
+
+      .csv-export-progress {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin-top: 16px;
+      }
+
+      .csv-export-progress-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        font-size: 12px;
+        color: #666;
+      }
+
+      .csv-export-progress-meta strong {
+        color: rgba(0, 0, 0, 0.87);
+        font-weight: 500;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .csv-export-spin {
+        animation: csv-export-spin 1.2s linear infinite;
+      }
+
+      @keyframes csv-export-spin {
+        from {
+          transform: rotate(0);
+        }
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    `,
+  ],
   template: `
+    @if (isDownloading) {
+      <div class="csv-export-info" role="status" aria-live="polite">
+        <mat-icon>file_download</mat-icon>
+        <span>{{ 'pages.dataBrowser.downloadDialog.buildingCsv' | translate }}</span>
+      </div>
+    }
+
     <app-download-property-list [propertyDefinitions]="properties" (propertiesChange)="selectedPropertyIds = $event" />
 
     <div style="margin-top: 16px; padding: 16px; background: #f5f5f5; border-radius: 4px">
@@ -57,13 +119,16 @@ export const CSV_EXPORT_LARGE_THRESHOLD = 1_000;
 
     @if (isDownloading && resourceCount > largeThreshold) {
       <div class="csv-export-progress">
+        <div class="csv-export-progress-meta">
+          <span id="csvExportProgressLabel">{{
+            'pages.dataBrowser.downloadDialog.progressXofN' | translate: { x: rowsReceived, n: resourceCount }
+          }}</span>
+          <strong>{{ progressPercent }}%</strong>
+        </div>
         <mat-progress-bar
           mode="determinate"
           [value]="progressPercent"
           aria-labelledby="csvExportProgressLabel"></mat-progress-bar>
-        <span id="csvExportProgressLabel">{{
-          'pages.dataBrowser.downloadDialog.progressXofN' | translate: { x: rowsReceived, n: resourceCount }
-        }}</span>
       </div>
     }
 
@@ -71,14 +136,13 @@ export const CSV_EXPORT_LARGE_THRESHOLD = 1_000;
       <button mat-button (click)="afterClosed.emit()" style="margin-right: 16px" [disabled]="isDownloading">
         {{ 'ui.common.actions.cancel' | translate }}
       </button>
-      <button
-        mat-raised-button
-        color="primary"
-        appLoadingButton
-        [isLoading]="isDownloading"
-        (click)="downloadCsv()"
-        [disabled]="isDownloading">
-        {{ 'pages.dataBrowser.downloadDialog.downloadCsv' | translate }}
+      <button mat-raised-button color="primary" (click)="downloadCsv()" [disabled]="isDownloading">
+        @if (isDownloading) {
+          <mat-icon class="csv-export-spin">autorenew</mat-icon>
+          {{ 'pages.dataBrowser.downloadDialog.preparing' | translate }}
+        } @else {
+          {{ 'pages.dataBrowser.downloadDialog.downloadCsv' | translate }}
+        }
       </button>
     </div>
   `,
@@ -88,6 +152,8 @@ export class DownloadDialogResourcesTabComponent {
   @Input({ required: true }) resourceClassIri!: string;
   @Input({ required: true }) resourceCount!: number;
   @Output() afterClosed = new EventEmitter<void>();
+  // Lets the parent dialog swap its idle "large export" warning for the in-progress info callout.
+  @Output() downloadStateChange = new EventEmitter<boolean>();
   readonly largeThreshold = CSV_EXPORT_LARGE_THRESHOLD;
   includeArkUrls = false;
   includeResourceIris = false;
@@ -114,6 +180,7 @@ export class DownloadDialogResourcesTabComponent {
 
   downloadCsv(): void {
     this.isDownloading = true;
+    this.downloadStateChange.emit(true);
     this.rowsReceived = 0;
     this._scannerState = initRowScanner();
 
@@ -134,6 +201,7 @@ export class DownloadDialogResourcesTabComponent {
         takeUntilDestroyed(this._destroyRef),
         finalize(() => {
           this.isDownloading = false;
+          this.downloadStateChange.emit(false);
           this.rowsReceived = 0;
           this._cdr.markForCheck();
         })

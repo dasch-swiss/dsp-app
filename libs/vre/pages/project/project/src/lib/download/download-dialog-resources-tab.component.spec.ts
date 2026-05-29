@@ -1,5 +1,5 @@
 import { HttpDownloadProgressEvent, HttpEvent, HttpEventType, HttpResponse } from '@angular/common/http';
-import { Directive, Input, NO_ERRORS_SCHEMA } from '@angular/core';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
@@ -11,14 +11,6 @@ import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { provideTranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import { DownloadDialogResourcesTabComponent } from './download-dialog-resources-tab.component';
-
-@Directive({
-  selector: '[appLoadingButton]',
-  standalone: true,
-})
-class MockLoadingButtonDirective {
-  @Input() isLoading = false;
-}
 
 describe('DownloadDialogResourcesTabComponent', () => {
   let component: DownloadDialogResourcesTabComponent;
@@ -62,7 +54,7 @@ describe('DownloadDialogResourcesTabComponent', () => {
     revokeObjectURLSpy = jest.spyOn(window.URL, 'revokeObjectURL').mockImplementation();
 
     await TestBed.configureTestingModule({
-      imports: [DownloadDialogResourcesTabComponent, FormsModule, NoopAnimationsModule, MockLoadingButtonDirective],
+      imports: [DownloadDialogResourcesTabComponent, FormsModule, NoopAnimationsModule],
       schemas: [NO_ERRORS_SCHEMA],
       providers: [
         { provide: APIV3ApiService, useValue: mockV3 },
@@ -187,6 +179,17 @@ describe('DownloadDialogResourcesTabComponent', () => {
       component.downloadCsv();
       events$.error(new Error('network error'));
       expect(component.isDownloading).toBe(false);
+    });
+
+    it('emits downloadStateChange true on start and false on completion', () => {
+      const emitted: boolean[] = [];
+      component.downloadStateChange.subscribe(v => emitted.push(v));
+
+      component.downloadCsv();
+      events$.next(new HttpResponse({ body: 'h\nr1\n', status: 200 }));
+      events$.complete();
+
+      expect(emitted).toEqual([true, false]);
     });
 
     describe('DownloadProgress events', () => {

@@ -418,7 +418,9 @@
         "downloadSuccess": "CSV scaricato con successo.",
         "downloadError": "Impossibile scaricare il CSV. Riprova.",
         "largeExportWarning": "Questo export contiene {{count}} risorse e potrebbe richiedere diversi minuti. Tieni aperta questa scheda.",
-        "progressXofN": "Esportate {{x}} su {{n}} risorse"
+        "progressXofN": "Esportate {{x}} su {{n}} risorse",
+        "buildingCsv": "Creazione del file CSV in corso — tieni aperta questa scheda. Il download inizierà non appena il file sarà pronto.",
+        "preparing": "Preparazione…"
       }
     }
   },

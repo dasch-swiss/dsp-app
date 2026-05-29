@@ -22,7 +22,7 @@ export interface DownloadDialogData {
     <app-dialog-header
       [title]="'pages.dataBrowser.downloadDialog.title' | translate"
       [subtitle]="'pages.dataBrowser.downloadDialog.resourcesAvailable' | translate: { count: data.resourceCount }" />
-    @if (data.resourceCount > largeThreshold) {
+    @if (data.resourceCount > largeThreshold && !isDownloading) {
       <div class="large-export-warning" data-cy="large-export-warning" role="alert">
         <mat-icon>warning</mat-icon>
         <span>{{
@@ -35,6 +35,7 @@ export interface DownloadDialogData {
         [properties]="data.properties"
         [resourceClassIri]="data.resClass.id"
         [resourceCount]="data.resourceCount"
+        (downloadStateChange)="isDownloading = $event"
         (afterClosed)="dialogRef.close()"
         style="display: block; height: 100%" />
     </div>
@@ -60,6 +61,7 @@ export interface DownloadDialogData {
 })
 export class DownloadDialogComponent {
   readonly largeThreshold = CSV_EXPORT_LARGE_THRESHOLD;
+  isDownloading = false;
 
   constructor(
     public dialogRef: MatDialogRef<DownloadDialogComponent>,
