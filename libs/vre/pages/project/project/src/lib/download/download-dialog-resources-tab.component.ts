@@ -75,7 +75,16 @@ export const CSV_EXPORT_LARGE_THRESHOLD = 1_000;
         font-variant-numeric: tabular-nums;
       }
 
+      .csv-export-preparing {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+
       .csv-export-spin {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
         animation: csv-export-spin 1.2s linear infinite;
       }
 
@@ -138,8 +147,10 @@ export const CSV_EXPORT_LARGE_THRESHOLD = 1_000;
       </button>
       <button mat-raised-button color="primary" (click)="downloadCsv()" [disabled]="isDownloading">
         @if (isDownloading) {
-          <mat-icon class="csv-export-spin">autorenew</mat-icon>
-          {{ 'pages.dataBrowser.downloadDialog.preparing' | translate }}
+          <span class="csv-export-preparing">
+            <mat-icon class="csv-export-spin">autorenew</mat-icon>
+            {{ 'pages.dataBrowser.downloadDialog.preparing' | translate }}
+          </span>
         } @else {
           {{ 'pages.dataBrowser.downloadDialog.downloadCsv' | translate }}
         }
