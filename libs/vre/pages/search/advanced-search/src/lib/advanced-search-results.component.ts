@@ -34,9 +34,6 @@ import { QueryExecutionService } from './service/query-execution.service';
         <app-progress-indicator />
       </app-centered-box>
     } @else if (resources) {
-      @if (queryIsExecuting()) {
-        <app-progress-indicator />
-      }
       @if (resources.length === 0) {
         <app-centered-box>
           <app-no-results-found [message]="noResultMessage" />
@@ -45,7 +42,7 @@ import { QueryExecutionService } from './service/query-execution.service';
           </a>
         </app-centered-box>
       } @else {
-        <app-resource-browser [data]="{ resources: resources, selectFirstResource: true }" />
+        <app-resource-browser [data]="{ resources: resources, selectFirstResource: true }" [loading]="queryIsExecuting()" />
       }
     }
   `,
