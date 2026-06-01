@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: DSP-API
-  version: v35.8.1-5-g8360b63
+  version: v35.9.0-6-g4f0f308
   summary: DSP-API is part of the DaSCH Service Platform, a repository for the long-term
     preservation and reuse of data in the humanities.
   contact:
@@ -121,6 +121,7 @@ paths:
                     - http://rdfh.ch/licenses/public-domain
                     - http://rdfh.ch/licenses/unknown
                     - http://rdfh.ch/licenses/ai-generated
+                    - urn:dasch:placeholder
                     - http://rdfh.ch/licenses/cc-by-4.0
                     - http://rdfh.ch/licenses/cc-by-nc-nd-4.0
                     - http://rdfh.ch/licenses/noc-nc-1.0
@@ -227,6 +228,7 @@ paths:
                     - http://rdfh.ch/licenses/public-domain
                     - http://rdfh.ch/licenses/unknown
                     - http://rdfh.ch/licenses/ai-generated
+                    - urn:dasch:placeholder
                     - http://rdfh.ch/licenses/cc-by-4.0
                     - http://rdfh.ch/licenses/cc-by-nc-nd-4.0
                     - http://rdfh.ch/licenses/noc-nc-1.0
@@ -328,6 +330,7 @@ paths:
                     - http://rdfh.ch/licenses/public-domain
                     - http://rdfh.ch/licenses/unknown
                     - http://rdfh.ch/licenses/ai-generated
+                    - urn:dasch:placeholder
                     - http://rdfh.ch/licenses/cc-by-4.0
                     - http://rdfh.ch/licenses/cc-by-nc-nd-4.0
                     - http://rdfh.ch/licenses/noc-nc-1.0
@@ -441,6 +444,7 @@ paths:
                     - http://rdfh.ch/licenses/public-domain
                     - http://rdfh.ch/licenses/unknown
                     - http://rdfh.ch/licenses/ai-generated
+                    - urn:dasch:placeholder
                     - http://rdfh.ch/licenses/cc-by-4.0
                     - http://rdfh.ch/licenses/cc-by-nc-nd-4.0
                     - http://rdfh.ch/licenses/noc-nc-1.0
@@ -542,6 +546,7 @@ paths:
                     - http://rdfh.ch/licenses/public-domain
                     - http://rdfh.ch/licenses/unknown
                     - http://rdfh.ch/licenses/ai-generated
+                    - urn:dasch:placeholder
                     - http://rdfh.ch/licenses/cc-by-4.0
                     - http://rdfh.ch/licenses/cc-by-nc-nd-4.0
                     - http://rdfh.ch/licenses/noc-nc-1.0
@@ -652,6 +657,7 @@ paths:
                       - http://rdfh.ch/licenses/public-domain
                       - http://rdfh.ch/licenses/unknown
                       - http://rdfh.ch/licenses/ai-generated
+                      - urn:dasch:placeholder
                       - http://rdfh.ch/licenses/cc-by-4.0
                       - http://rdfh.ch/licenses/cc-by-nc-nd-4.0
                       - http://rdfh.ch/licenses/noc-nc-1.0
@@ -684,6 +690,7 @@ paths:
                     - http://rdfh.ch/licenses/public-domain
                     - http://rdfh.ch/licenses/unknown
                     - http://rdfh.ch/licenses/ai-generated
+                    - urn:dasch:placeholder
                     - http://rdfh.ch/licenses/cc-by-4.0
                     - http://rdfh.ch/licenses/cc-by-nc-nd-4.0
                     - http://rdfh.ch/licenses/noc-nc-1.0
@@ -793,6 +800,7 @@ paths:
                     - http://rdfh.ch/licenses/public-domain
                     - http://rdfh.ch/licenses/unknown
                     - http://rdfh.ch/licenses/ai-generated
+                    - urn:dasch:placeholder
                     - http://rdfh.ch/licenses/cc-by-4.0
                     - http://rdfh.ch/licenses/cc-by-nc-nd-4.0
                     - http://rdfh.ch/licenses/noc-nc-1.0
@@ -2743,9 +2751,15 @@ paths:
                   labelEn: No Copyright - Non-Commercial Use Only
                   isRecommended: false
                   isEnabled: true
+                - id: urn:dasch:placeholder
+                  uri: urn:dasch:placeholder
+                  labelEn: Placeholder License - Not a Real License only to be used
+                    when the real license is not known yet.
+                  isRecommended: false
+                  isEnabled: true
                 pagination:
-                  pageSize: 14
-                  totalItems: 14
+                  pageSize: 15
+                  totalItems: 15
                   totalPages: 1
                   currentPage: 1
         '400':
@@ -4683,7 +4697,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/HzYygl4IQUy7pswFZOE33Q
+        example: http://rdfh.ch/users/6ZTcDAqLSTOUgKfcAVZoog
       responses:
         '200':
           description: ''
@@ -4741,7 +4755,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/HzYygl4IQUy7pswFZOE33Q
+        example: http://rdfh.ch/users/6ZTcDAqLSTOUgKfcAVZoog
       responses:
         '200':
           description: ''
@@ -4799,7 +4813,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/HzYygl4IQUy7pswFZOE33Q
+        example: http://rdfh.ch/users/6ZTcDAqLSTOUgKfcAVZoog
       responses:
         '200':
           description: ''
@@ -4970,7 +4984,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/HzYygl4IQUy7pswFZOE33Q
+        example: http://rdfh.ch/users/6ZTcDAqLSTOUgKfcAVZoog
       responses:
         '200':
           description: ''
@@ -5030,7 +5044,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/HzYygl4IQUy7pswFZOE33Q
+        example: http://rdfh.ch/users/6ZTcDAqLSTOUgKfcAVZoog
       responses:
         '200':
           description: ''
@@ -5216,7 +5230,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/HzYygl4IQUy7pswFZOE33Q
+        example: http://rdfh.ch/users/6ZTcDAqLSTOUgKfcAVZoog
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -5283,7 +5297,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/HzYygl4IQUy7pswFZOE33Q
+        example: http://rdfh.ch/users/6ZTcDAqLSTOUgKfcAVZoog
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -5351,7 +5365,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/HzYygl4IQUy7pswFZOE33Q
+        example: http://rdfh.ch/users/6ZTcDAqLSTOUgKfcAVZoog
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -5418,7 +5432,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/HzYygl4IQUy7pswFZOE33Q
+        example: http://rdfh.ch/users/6ZTcDAqLSTOUgKfcAVZoog
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -5486,7 +5500,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/HzYygl4IQUy7pswFZOE33Q
+        example: http://rdfh.ch/users/6ZTcDAqLSTOUgKfcAVZoog
       - name: groupIri
         in: path
         description: The IRI of a group. Must be URL-encoded.
@@ -5553,7 +5567,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/HzYygl4IQUy7pswFZOE33Q
+        example: http://rdfh.ch/users/6ZTcDAqLSTOUgKfcAVZoog
       - name: groupIri
         in: path
         description: The IRI of a group. Must be URL-encoded.
@@ -5621,7 +5635,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/HzYygl4IQUy7pswFZOE33Q
+        example: http://rdfh.ch/users/6ZTcDAqLSTOUgKfcAVZoog
       requestBody:
         content:
           application/json:
@@ -5688,7 +5702,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/HzYygl4IQUy7pswFZOE33Q
+        example: http://rdfh.ch/users/6ZTcDAqLSTOUgKfcAVZoog
       requestBody:
         content:
           application/json:
@@ -5755,7 +5769,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/HzYygl4IQUy7pswFZOE33Q
+        example: http://rdfh.ch/users/6ZTcDAqLSTOUgKfcAVZoog
       requestBody:
         content:
           application/json:
@@ -5822,7 +5836,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/HzYygl4IQUy7pswFZOE33Q
+        example: http://rdfh.ch/users/6ZTcDAqLSTOUgKfcAVZoog
       requestBody:
         content:
           application/json:
@@ -6069,7 +6083,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/lists/0001/ffsOwpBiRv2DxgRjJQQp0g
+        example: http://rdfh.ch/lists/0001/_WW78UKASIKpjuUuIduvpw
       - name: x-knora-accept-schema
         in: header
         description: |-
@@ -6182,7 +6196,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/lists/0001/ffsOwpBiRv2DxgRjJQQp0g
+        example: http://rdfh.ch/lists/0001/_WW78UKASIKpjuUuIduvpw
       - name: x-knora-accept-schema
         in: header
         description: |-
@@ -13287,10 +13301,6 @@ paths:
         '200':
           description: ''
           headers:
-            Content-Type:
-              required: true
-              schema:
-                type: string
             Content-Disposition:
               required: true
               schema:
@@ -13299,6 +13309,7 @@ paths:
             text/csv:
               schema:
                 type: string
+                format: binary
         '400':
           description: ''
           content:
@@ -14477,10 +14488,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/VersionResponse'
               example:
-                webapi: v35.8.1-5-g8360b63
-                buildCommit: 8360b6363
-                buildTime: '2026-05-06T07:40:09Z'
-                fuseki: 5.5.0-3
+                webapi: v35.9.0-6-g4f0f308
+                buildCommit: 4f0f30876
+                buildTime: '2026-05-29T13:57:30Z'
+                fuseki: 6.1.0-0
                 scala: 3.3.7
                 sipi: v4.1.1
                 name: version
