@@ -24,6 +24,11 @@ const meta: Meta<ResourcesListComponent> = {
       control: 'boolean',
       table: { type: { summary: 'boolean' }, defaultValue: { summary: 'false' }, category: 'Behavior' },
     },
+    loading: {
+      description: 'Replaces the resource list with a spinner while a new page is loading.',
+      control: 'boolean',
+      table: { type: { summary: 'boolean' }, defaultValue: { summary: 'false' }, category: 'Behavior' },
+    },
   },
 };
 export default meta;
@@ -68,6 +73,28 @@ export const ManyResults: Story = {
     const canvas = within(canvasElement);
     await step('Pager is rendered with item range info', async () => {
       await expect(canvas.getByText(/Showing/i)).toBeInTheDocument();
+    });
+  },
+};
+
+export const Loading: Story = {
+  name: 'Shows spinner instead of list while loading',
+  decorators: [
+    applicationConfig({
+      providers: [...STORY_PROVIDERS, { provide: ResourceResultService, useValue: makeResourceResultServiceStub(25) }],
+    }),
+  ],
+  args: {
+    resources: [],
+    loading: true,
+  },
+  play: async ({ canvasElement, step }) => {
+    const canvas = within(canvasElement);
+    await step('Spinner is visible', async () => {
+      await expect(canvas.getByRole('progressbar')).toBeInTheDocument();
+    });
+    await step('Resource list is not rendered', async () => {
+      await expect(canvas.queryByRole('list')).toBeNull();
     });
   },
 };
