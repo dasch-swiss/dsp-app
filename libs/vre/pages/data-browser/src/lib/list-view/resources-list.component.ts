@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ReadResource } from '@dasch-swiss/dsp-js';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { ResourceResultService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { AppProgressIndicatorComponent } from '@dasch-swiss/vre/ui/progress-indicator';
 import { PagerComponent } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe } from '@ngx-translate/core';
 import { ResourceListComponent } from './resource-list.component';
@@ -32,14 +33,19 @@ import { ResourceListComponent } from './resource-list.component';
       </div>
     }
 
-    <app-resource-list [resources]="resources" [showProjectShortname]="showProjectShortname" />
+    @if (loading) {
+      <app-progress-indicator />
+    } @else {
+      <app-resource-list [resources]="resources" [showProjectShortname]="showProjectShortname" />
+    }
   `,
   styleUrls: ['./resources-list.component.scss'],
-  imports: [MatAnchor, MatIcon, PagerComponent, ResourceListComponent, TranslatePipe],
+  imports: [AppProgressIndicatorComponent, MatAnchor, MatIcon, PagerComponent, ResourceListComponent, TranslatePipe],
 })
 export class ResourcesListComponent {
   @Input({ required: true }) resources!: ReadResource[];
   @Input() showProjectShortname = false;
+  @Input() loading = false;
 
   readonly isAdvancedSearchContext: boolean;
 
