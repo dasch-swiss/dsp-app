@@ -1,12 +1,12 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, Inject, Input, OnChanges } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, Input, OnChanges } from '@angular/core';
 import { IFulltextSearchParams, KnoraApiConnection, ReadResource } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { ResourceBrowserComponent } from '@dasch-swiss/vre/pages/data-browser';
 import { ResourceResultService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { AppProgressIndicatorComponent } from '@dasch-swiss/vre/ui/progress-indicator';
 import { CenteredBoxComponent, NoResultsFoundComponent } from '@dasch-swiss/vre/ui/ui';
-import { combineLatest, map, Observable, switchMap } from 'rxjs';
+import { combineLatest, map, Observable, switchMap, tap } from 'rxjs';
 
 @Component({
   selector: 'app-search-result',
@@ -18,7 +18,7 @@ import { combineLatest, map, Observable, switchMap } from 'rxjs';
     AppProgressIndicatorComponent,
   ],
   template: `
-    @if (loading) {
+    @if (loading && !(resources$ | async)) {
       <app-progress-indicator />
     }
     @if (resources$ | async; as resources) {
@@ -30,7 +30,8 @@ import { combineLatest, map, Observable, switchMap } from 'rxjs';
         <app-resource-browser
           [data]="{ resources: resources, selectFirstResource: true }"
           [searchKeyword]="query"
-          [showProjectShortname]="showProjectShortname" />
+          [showProjectShortname]="showProjectShortname"
+          [loading]="loading" />
       }
     }
   `,
@@ -58,7 +59,8 @@ export class SearchResultComponent implements OnChanges {
   constructor(
     @Inject(DspApiConnectionToken)
     private readonly _dspApiConnection: KnoraApiConnection,
-    private readonly _resourceResultService: ResourceResultService
+    private readonly _resourceResultService: ResourceResultService,
+    private readonly _cdr: ChangeDetectorRef
   ) {}
 
   ngOnChanges() {
@@ -66,6 +68,10 @@ export class SearchResultComponent implements OnChanges {
 
     this.resources$ = combineLatest([
       this._resourceResultService.pageIndex$.pipe(
+        tap(() => {
+          this.loading = true;
+          this._cdr.markForCheck();
+        }),
         switchMap(pageNumber =>
           this._dspApiConnection.v2.search.doFulltextSearch(this.query, pageNumber, this.searchInProjectParam)
         )
