@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, Input, OnChanges } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject, Input, OnChanges, signal } from '@angular/core';
 import { IFulltextSearchParams, KnoraApiConnection, ReadResource } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { ResourceBrowserComponent } from '@dasch-swiss/vre/pages/data-browser';
@@ -18,20 +18,20 @@ import { combineLatest, map, Observable, switchMap, tap } from 'rxjs';
     AppProgressIndicatorComponent,
   ],
   template: `
-    @if (loading && !(resources$ | async)) {
+    @let resources = resources$ | async;
+    @if (!resources && loading()) {
       <app-progress-indicator />
-    }
-    @if (resources$ | async; as resources) {
+    } @else if (resources) {
       @if (resources.length === 0) {
         <app-centered-box>
           <app-no-results-found [message]="noResultMessage" />
         </app-centered-box>
-      } @else if (resources.length > 0) {
+      } @else {
         <app-resource-browser
           [data]="{ resources: resources, selectFirstResource: true }"
           [searchKeyword]="query"
           [showProjectShortname]="showProjectShortname"
-          [loading]="loading" />
+          [loading]="loading()" />
       }
     }
   `,
@@ -42,7 +42,8 @@ export class SearchResultComponent implements OnChanges {
   @Input({ required: true }) query!: string;
   @Input() projectId?: string;
   @Input() showProjectShortname = false;
-  loading = true;
+
+  readonly loading = signal(true);
 
   resources$!: Observable<ReadResource[]>;
 
@@ -59,28 +60,26 @@ export class SearchResultComponent implements OnChanges {
   constructor(
     @Inject(DspApiConnectionToken)
     private readonly _dspApiConnection: KnoraApiConnection,
-    private readonly _resourceResultService: ResourceResultService,
-    private readonly _cdr: ChangeDetectorRef
+    private readonly _resourceResultService: ResourceResultService
   ) {}
 
   ngOnChanges() {
-    this.loading = true;
+    this.loading.set(true);
 
     this.resources$ = combineLatest([
       this._resourceResultService.pageIndex$.pipe(
-        tap(() => {
-          this.loading = true;
-          this._cdr.markForCheck();
-        }),
+        tap(() => this.loading.set(true)),
         switchMap(pageNumber =>
           this._dspApiConnection.v2.search.doFulltextSearch(this.query, pageNumber, this.searchInProjectParam)
         )
       ),
       this._numberOfAllResults$(this.query),
     ]).pipe(
-      map(([resourceResponse, countResponse]) => {
-        this.loading = false;
+      tap(([, countResponse]) => {
         this._resourceResultService.numberOfResults = countResponse.numberOfResults;
+      }),
+      map(([resourceResponse]) => {
+        this.loading.set(false);
         return resourceResponse.resources;
       })
     );
