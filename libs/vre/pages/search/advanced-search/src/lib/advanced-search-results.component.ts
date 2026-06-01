@@ -29,7 +29,7 @@ import { QueryExecutionService } from './service/query-execution.service';
   ],
   template: `
     @let resources = resources$ | async;
-    @if (queryIsExecuting()) {
+    @if (!resources && queryIsExecuting()) {
       <app-centered-box>
         <app-progress-indicator />
       </app-centered-box>
@@ -38,11 +38,14 @@ import { QueryExecutionService } from './service/query-execution.service';
         <app-centered-box>
           <app-no-results-found [message]="noResultMessage" />
           <a mat-stroked-button (click)="navigateBackToSearchForm()" style="margin-top: 24px;">
-            <mat-icon>chevron_left</mat-icon>{{ 'pages.dataBrowser.resourcesList.backToSearchForm' | translate }}
+            <mat-icon>chevron_left</mat-icon>
+            {{ 'pages.dataBrowser.resourcesList.backToSearchForm' | translate }}
           </a>
         </app-centered-box>
       } @else {
-        <app-resource-browser [data]="{ resources: resources, selectFirstResource: true }" />
+        <app-resource-browser
+          [data]="{ resources: resources, selectFirstResource: true }"
+          [loading]="queryIsExecuting()" />
       }
     }
   `,
