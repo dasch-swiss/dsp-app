@@ -360,7 +360,8 @@
         "wildcards": "Verwenden Sie Platzhalter: Alice* findet Alice, Alices, etc."
       },
       "advancedSearch": {
-        "allResourceClasses": "Alle Ressourcen"
+        "allResourceClasses": "Alle Ressourcen",
+        "switchToFulltextSearch": "Zur Volltextsuche wechseln"
       }
     },
     "dataBrowser": {
@@ -382,7 +383,6 @@
         "resourcesMustBeSameProject": "Die Ressourcen müssen zum selben Projekt gehören"
       },
       "resourcesList": {
-        "backToSearchForm": "Zurück zum Suchformular",
         "resultsCount": "{{count}} Ergebnisse"
       },
       "resourcesListFetcher": {

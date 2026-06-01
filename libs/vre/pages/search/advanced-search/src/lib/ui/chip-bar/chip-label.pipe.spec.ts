@@ -1,0 +1,91 @@
+import { Constants } from '@dasch-swiss/dsp-js';
+import { Predicate, StatementElement } from '../../model';
+import { Operator } from '../../operators.config';
+import { ChipLabelPipe } from './chip-label.pipe';
+
+describe('ChipLabelPipe', () => {
+  let pipe: ChipLabelPipe;
+
+  const makePredicate = (label: string, objectValueType = Constants.TextValue) =>
+    new Predicate('http://ex.org/prop', label, objectValueType, false);
+
+  const makeStatement = (
+    predicateLabel?: string,
+    operator?: Operator,
+    objectValue?: string | { iri: string; label: string }
+  ) => {
+    const s = new StatementElement();
+    if (predicateLabel) {
+      s.selectedPredicate = makePredicate(predicateLabel);
+    }
+    if (operator) s.selectedOperator = operator;
+    if (objectValue !== undefined) s.selectedObjectValue = objectValue;
+    return s;
+  };
+
+  beforeEach(() => {
+    pipe = new ChipLabelPipe();
+  });
+
+  it('returns empty string when no predicate is set', () => {
+    const s = new StatementElement();
+    expect(pipe.transform(s)).toBe('');
+  });
+
+  it('returns predicate label with equals and ellipsis when no value is set', () => {
+    const s = makeStatement('Title');
+    expect(pipe.transform(s)).toBe('Title equals …');
+  });
+
+  it('returns "<predicate> exists" for Exists operator', () => {
+    const s = makeStatement('Author', Operator.Exists);
+    expect(pipe.transform(s)).toBe('Author exists');
+  });
+
+  it('returns "<predicate> does not exist" for NotExists operator', () => {
+    const s = makeStatement('Author', Operator.NotExists);
+    expect(pipe.transform(s)).toBe('Author does not exist');
+  });
+
+  it('wraps value in quotes for IsLike operator', () => {
+    const s = makeStatement('Title', Operator.IsLike, 'Hamlet');
+    expect(pipe.transform(s)).toBe('Title is like "Hamlet"');
+  });
+
+  it('wraps value in quotes for Matches operator', () => {
+    const s = makeStatement('Title', Operator.Matches, 'Hamlet');
+    expect(pipe.transform(s)).toBe('Title matches "Hamlet"');
+  });
+
+  it('uses IriLabelPair label for object display', () => {
+    const s = makeStatement('Author', Operator.Equals, { iri: 'http://ex.org/person1', label: 'Shakespeare' });
+    expect(pipe.transform(s)).toBe('Author equals Shakespeare');
+  });
+
+  it('uses string value directly for plain string object', () => {
+    const s = makeStatement('Title', Operator.Equals, 'Hamlet');
+    expect(pipe.transform(s)).toBe('Title equals Hamlet');
+  });
+
+  it('truncates values longer than 20 characters', () => {
+    const s = makeStatement('Title', Operator.IsLike, 'A Very Long Title That Exceeds Limit');
+    const result = pipe.transform(s);
+    expect(result).toContain('…');
+    expect(result).toBe('Title is like "A Very Long Title Th…"');
+  });
+
+  it('does not truncate values of exactly 20 characters', () => {
+    const s = makeStatement('Title', Operator.Equals, '12345678901234567890');
+    expect(pipe.transform(s)).toBe('Title equals 12345678901234567890');
+  });
+
+  it('truncates values of exactly 21 characters', () => {
+    const s = makeStatement('Title', Operator.Equals, '123456789012345678901');
+    expect(pipe.transform(s)).toBe('Title equals 12345678901234567890…');
+  });
+
+  it('renders NotEquals operator', () => {
+    const s = makeStatement('Title', Operator.NotEquals, 'Hamlet');
+    expect(pipe.transform(s)).toBe('Title does not equal Hamlet');
+  });
+});

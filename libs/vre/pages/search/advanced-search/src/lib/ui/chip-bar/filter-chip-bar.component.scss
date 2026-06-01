@@ -1,0 +1,15 @@
+.chip-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+
+  &__spacer {
+    flex: 1;
+  }
+}
+
+.chip--indented {
+  margin-left: 24px;
+}
