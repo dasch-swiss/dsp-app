@@ -29,11 +29,14 @@ import { QueryExecutionService } from './service/query-execution.service';
   ],
   template: `
     @let resources = resources$ | async;
-    @if (queryIsExecuting()) {
+    @if (!resources && queryIsExecuting()) {
       <app-centered-box>
         <app-progress-indicator />
       </app-centered-box>
     } @else if (resources) {
+      @if (queryIsExecuting()) {
+        <app-progress-indicator />
+      }
       @if (resources.length === 0) {
         <app-centered-box>
           <app-no-results-found [message]="noResultMessage" />
