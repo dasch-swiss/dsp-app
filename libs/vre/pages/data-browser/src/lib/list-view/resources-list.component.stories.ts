@@ -91,7 +91,7 @@ export const Loading: Story = {
   play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
     await step('Spinner is visible', async () => {
-      await expect(canvas.getByRole('progressbar')).toBeInTheDocument();
+      await expect(canvas.getByTestId('loader')).toBeInTheDocument();
     });
     await step('Resource list is not rendered', async () => {
       await expect(canvas.queryByRole('list')).toBeNull();
