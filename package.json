@@ -35,6 +35,7 @@
     "storybook": "nx run dsp-app:storybook",
     "build-storybook": "nx run dsp-app:build-storybook",
     "test-storybook": "nx run dsp-app:test-storybook",
+    "pixeleye": "pixeleye storybook http://localhost:6006",
     "postinstall": "npm run generate-openapi-module && nx reset"
   },
   "private": true,
@@ -129,6 +130,7 @@
     "ng-packagr": "21.2.5",
     "nx": "23.0.1",
     "nyc": "^18.0.0",
+    "pixeleye": "^0.8.8",
     "postcss": "^8.5.11",
     "postcss-import": "~17.0.0",
     "postcss-preset-env": "~11.5.0",
