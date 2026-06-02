@@ -12,7 +12,13 @@ import { provideAdvancedSearch } from './providers';
   imports: [NgClass, MatDivider, AdvancedSearchComponent, AdvancedSearchResultsComponent, SearchTipsComponent],
   template: `
     <div class="search-bar" [ngClass]="{ big: !query() }">
-      <app-advanced-search [projectUuid]="uuid" (gravsearchQuery)="query.set($event)" />
+      <div class="search-bar__inner">
+        <app-advanced-search [projectUuid]="uuid" (gravsearchQuery)="query.set($event)" />
+
+        @if (!query()) {
+          <app-search-tips style="margin-top: 100px" />
+        }
+      </div>
     </div>
 
     @if (query()) {
@@ -20,8 +26,6 @@ import { provideAdvancedSearch } from './providers';
       <div class="whole-height">
         <app-advanced-search-results [query]="query()!" />
       </div>
-    } @else {
-      <app-search-tips />
     }
   `,
   styleUrl: './advanced-search-page.component.scss',

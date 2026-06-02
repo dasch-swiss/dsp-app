@@ -12,7 +12,7 @@ import { FilterChipBarComponent } from './ui/chip-bar/filter-chip-bar.component'
 })
 export class AdvancedSearchComponent implements OnInit {
   @Input({ required: true }) projectUuid!: string;
-  @Output() gravsearchQuery = new EventEmitter<string>();
+  @Output() gravsearchQuery = new EventEmitter<string | null>();
 
   private readonly _dataService = inject(OntologyDataService);
 

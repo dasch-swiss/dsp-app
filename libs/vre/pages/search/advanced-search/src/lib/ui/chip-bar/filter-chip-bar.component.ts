@@ -39,7 +39,7 @@ import { ResourceClassChipComponent } from './resource-class-chip.component';
     @if (ontologyLoading$ | async) {
       <mat-progress-bar mode="query" />
     } @else {
-      <mat-form-field appearance="outline" style="width: 100%">
+      <mat-form-field appearance="outline" style="width: 100%" subscriptSizing="dynamic">
         <mat-label>Search in all text fields</mat-label>
         <input matInput type="text" [formControl]="fulltextControl" placeholder="Search in all text fields" />
         <mat-icon matSuffix>search</mat-icon>
@@ -80,7 +80,7 @@ import { ResourceClassChipComponent } from './resource-class-chip.component';
 })
 export class FilterChipBarComponent implements OnInit {
   @Input({ required: true }) projectUuid!: string;
-  @Output() gravsearchQuery = new EventEmitter<string>();
+  @Output() gravsearchQuery = new EventEmitter<string | null>();
 
   private readonly _searchStateService = inject(SearchStateService);
   private readonly _ontologyDataService = inject(OntologyDataService);
@@ -102,7 +102,7 @@ export class FilterChipBarComponent implements OnInit {
 
   ngOnInit(): void {
     merge(
-      this.confirmedStatements$.pipe(skip(1), filter(stmts => stmts.length > 0)),
+      this.confirmedStatements$.pipe(skip(1)),
       this._searchStateService.completeStatements$.pipe(
         skip(1),
         filter(stmts => stmts.length > 0 && this.confirmedStatements().length > 0)
@@ -152,9 +152,15 @@ export class FilterChipBarComponent implements OnInit {
   }
 
   private _emitSearch(): void {
+    const fulltext = this.fulltextControl.value ?? '';
+    const hasFilters = this.confirmedStatements().length > 0;
+    if (!fulltext && !hasFilters) {
+      this.gravsearchQuery.emit(null);
+      return;
+    }
     const query = this._gravsearchService.generateGravSearchQuery(
       this._searchStateService.validStatementElements,
-      this.fulltextControl.value ?? ''
+      fulltext
     );
     this.gravsearchQuery.emit(query);
   }
