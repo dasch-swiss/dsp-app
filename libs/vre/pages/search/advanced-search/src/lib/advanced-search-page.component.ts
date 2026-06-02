@@ -8,12 +8,7 @@ import { provideAdvancedSearch } from './providers';
 
 @Component({
   selector: 'app-advanced-search-page',
-  imports: [
-    NgClass,
-    MatDivider,
-    AdvancedSearchComponent,
-    AdvancedSearchResultsComponent,
-  ],
+  imports: [NgClass, MatDivider, AdvancedSearchComponent, AdvancedSearchResultsComponent],
   template: `
     <div class="search-bar" [ngClass]="{ big: !query() }">
       <app-advanced-search [projectUuid]="uuid" (gravsearchQuery)="query.set($event)" />
