@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { Constants } from '@dasch-swiss/dsp-js';
 import { MAIN_RESOURCE_PLACEHOLDER, RDFS_TYPE, RESOURCE_PLACEHOLDER, ResourceLabel } from '../constants';
-import { GravsearchWriter, StatementElement } from '../model';
+import { escapeForGravsearchStringLiteral, GravsearchWriter, StatementElement } from '../model';
 import { Operator } from '../operators.config';
 import { OntologyDataService } from './ontology-data.service';
 import { SearchStateService } from './search-state.service';
@@ -23,9 +23,13 @@ export class GravsearchService {
     return ontoShortCodeMatch[1];
   }
 
-  generateGravSearchQuery(statements: StatementElement[]): string {
+  generateGravSearchQuery(statements: StatementElement[], fulltextTerm?: string): string {
     const constructStatements = this._buildConstructStatements(statements);
     const whereClause = this._buildWhereClause(statements);
+    const trimmedTerm = fulltextTerm?.trim() ?? '';
+    const fulltextTriple = trimmedTerm
+      ? `?mainRes knora-api:matchesText "${escapeForGravsearchStringLiteral(trimmedTerm)}" .\n`
+      : '';
 
     const gravSearch =
       'PREFIX knora-api: <http://api.knora.org/ontology/knora-api/v2#>\n' +
@@ -36,6 +40,7 @@ export class GravsearchService {
       '} WHERE {\n' +
       '?mainRes a knora-api:Resource .\n' +
       `${this._restrictToResourceClassStatement()}\n` +
+      `${fulltextTriple}` +
       `${whereClause}\n` +
       '}\n' +
       `${this._getOrderByString(statements)}\n` +

@@ -24,7 +24,7 @@ import { getOperatorsForObjectType, Operator } from './operators.config';
  * quote `"` is not a regex metacharacter, so it only needs to survive the
  * two string layers — three backslashes + quote on the wire.
  */
-function escapeForGravsearchStringLiteral(value: string): string {
+export function escapeForGravsearchStringLiteral(value: string): string {
   return value.replace(/\\/g, '\\\\\\\\').replace(/"/g, '\\\\\\"');
 }
 

@@ -838,3 +838,90 @@ OFFSET 0`;
     expect(query).toContain('FILTER (?res0val <= "1"^^<http://www.w3.org/2001/XMLSchema#integer> )');
   });
 });
+
+describe('GravsearchService — fulltextTerm parameter', () => {
+  let gravsearchService: GravsearchService;
+  let searchStateService: SearchStateService;
+  let ontologyDataService: OntologyDataService;
+
+  const ontologyIri = 'http://api.stage.dasch.swiss/ontology/0806/webern-onto/v2';
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      providers: [
+        GravsearchService,
+        SearchStateService,
+        OntologyDataService,
+        { provide: DspApiConnectionToken, useValue: {} },
+      ],
+    });
+
+    gravsearchService = TestBed.inject(GravsearchService);
+    searchStateService = TestBed.inject(SearchStateService);
+    ontologyDataService = TestBed.inject(OntologyDataService);
+
+    jest.spyOn(ontologyDataService, 'selectedOntology', 'get').mockReturnValue({ iri: ontologyIri, label: 'webern-onto' });
+    jest.spyOn(ontologyDataService, 'classIris', 'get').mockReturnValue([`${ontologyIri}#Person`]);
+  });
+
+  it('injects matchesText triple when term is provided', () => {
+    const query = gravsearchService.generateGravSearchQuery([], 'hello');
+    expect(query).toContain('?mainRes knora-api:matchesText "hello" .');
+  });
+
+  it('does not inject matchesText triple when term is empty string', () => {
+    const query = gravsearchService.generateGravSearchQuery([], '');
+    expect(query).not.toContain('matchesText');
+  });
+
+  it('does not inject matchesText triple when term is undefined', () => {
+    const query = gravsearchService.generateGravSearchQuery([]);
+    expect(query).not.toContain('matchesText');
+  });
+
+  it('does not inject matchesText triple when term is whitespace only', () => {
+    const query = gravsearchService.generateGravSearchQuery([], '   ');
+    expect(query).not.toContain('matchesText');
+  });
+
+  it('trims the term before injecting', () => {
+    const query = gravsearchService.generateGravSearchQuery([], '  hello  ');
+    expect(query).toContain('?mainRes knora-api:matchesText "hello" .');
+  });
+
+  it('escapes double quotes in the term', () => {
+    const query = gravsearchService.generateGravSearchQuery([], 'say "hi"');
+    expect(query).toContain('matchesText');
+    expect(query).not.toContain('"say "hi""');
+  });
+
+  it('places matchesText triple after class restriction and before chip statements', () => {
+    const jsonSnapshot = JSON.stringify({
+      selectedOntology: { iri: ontologyIri, label: 'webern-onto' },
+      selectedResourceClass: { iri: `${ontologyIri}#Person`, label: 'Person' },
+      statementElements: [
+        {
+          id: 'abc-123',
+          statementLevel: 0,
+          _selectedPredicate: {
+            iri: 'http://www.w3.org/2000/01/rdf-schema#label',
+            label: 'Resource Label',
+            objectValueType: 'http://api.knora.org/ontology/knora-api/v2#ResourceLabel',
+            isLinkProperty: false,
+          },
+          _selectedOperator: 'equals',
+          _selectedObjectNode: { statementId: 'abc-123', _value: 'bar' },
+        },
+      ],
+      orderBy: [],
+    });
+    setupTestFromJson(searchStateService, jsonSnapshot, { iri: `${ontologyIri}#Person`, label: 'Person' });
+
+    const query = gravsearchService.generateGravSearchQuery(searchStateService.validStatementElements, 'foo');
+    const matchesIdx = query.indexOf('matchesText');
+    const chipIdx = query.indexOf('?res0');
+    expect(matchesIdx).toBeGreaterThan(-1);
+    expect(chipIdx).toBeGreaterThan(-1);
+    expect(matchesIdx).toBeLessThan(chipIdx);
+  });
+});
