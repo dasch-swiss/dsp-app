@@ -107,6 +107,10 @@ export class FilterChipBarComponent implements OnInit {
         skip(1),
         filter(stmts => stmts.length > 0 && this.confirmedStatements().length > 0)
       ),
+      this._searchStateService.selectedResourceClass$.pipe(
+        skip(1),
+        filter(rc => !!rc?.iri)
+      ),
       this.fulltextControl.valueChanges,
     )
       .pipe(debounceTime(300), takeUntilDestroyed(this._destroyRef))
@@ -154,7 +158,8 @@ export class FilterChipBarComponent implements OnInit {
   private _emitSearch(): void {
     const fulltext = this.fulltextControl.value ?? '';
     const hasFilters = this.confirmedStatements().length > 0;
-    if (!fulltext && !hasFilters) {
+    const hasResourceClass = !!this._searchStateService.currentState.selectedResourceClass?.iri;
+    if (!fulltext && !hasFilters && !hasResourceClass) {
       this.gravsearchQuery.emit(null);
       return;
     }
