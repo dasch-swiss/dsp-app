@@ -1,6 +1,10 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, EventEmitter, inject, Input, Output, signal } from '@angular/core';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { LoadingButtonDirective } from '@dasch-swiss/vre/ui/progress-indicator';
 import { map } from 'rxjs';
@@ -27,14 +31,28 @@ import { ResourceClassChipComponent } from './resource-class-chip.component';
     FilterChipComponent,
     LoadingButtonDirective,
     MatButtonModule,
+    MatFormFieldModule,
+    MatIconModule,
+    MatInputModule,
     MatProgressBarModule,
     OrderByComponent,
+    ReactiveFormsModule,
     ResourceClassChipComponent,
   ],
   template: `
     @if (ontologyLoading$ | async) {
       <mat-progress-bar mode="query" />
     } @else {
+      <mat-form-field appearance="outline" style="width: 100%">
+        <mat-label>Search in all text fields</mat-label>
+        <input
+          matInput
+          type="text"
+          [formControl]="fulltextControl"
+          placeholder="Search in all text fields"
+          (keydown.enter)="onSearch()" />
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
       <div class="chip-bar">
         @let searchEnabled = searchEnabled$ | async;
 
@@ -91,6 +109,7 @@ export class FilterChipBarComponent {
   readonly queryExecutionService = inject(QueryExecutionService);
 
   readonly openChipId = signal<OpenChipId>(OPEN_CHIP_NONE);
+  readonly fulltextControl = new FormControl<string>('');
 
   readonly ontologyLoading$ = this._ontologyDataService.ontologyLoading$;
 
@@ -119,12 +138,16 @@ export class FilterChipBarComponent {
   }
 
   onReset(): void {
+    this.fulltextControl.reset('');
     this._searchStateService.clearAllSelections();
     this._ontologyDataService.init(this.projectIri);
   }
 
   onSearch(): void {
-    const query = this._gravsearchService.generateGravSearchQuery(this._searchStateService.validStatementElements);
+    const query = this._gravsearchService.generateGravSearchQuery(
+      this._searchStateService.validStatementElements,
+      this.fulltextControl.value ?? ''
+    );
     this.gravsearchQuery.emit(query);
   }
 }
