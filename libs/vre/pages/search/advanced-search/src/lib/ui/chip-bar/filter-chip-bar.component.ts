@@ -1,17 +1,16 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, EventEmitter, inject, Input, Output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, EventEmitter, inject, Input, OnInit, Output, signal } from '@angular/core';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { LoadingButtonDirective } from '@dasch-swiss/vre/ui/progress-indicator';
+import { debounceTime, filter, merge, skip } from 'rxjs';
 import { StatementElement } from '../../model';
 import { GravsearchService } from '../../service/gravsearch.service';
 import { OntologyDataService } from '../../service/ontology-data.service';
 import { PropertyFormManager } from '../../service/property-form.manager';
-import { QueryExecutionService } from '../../service/query-execution.service';
 import { SearchStateService } from '../../service/search-state.service';
 import { OrderByComponent } from '../order-by/order-by.component';
 import { AddFilterButtonComponent } from './add-filter-button.component';
@@ -28,8 +27,6 @@ import { ResourceClassChipComponent } from './resource-class-chip.component';
     AsyncPipe,
     DataModelChipComponent,
     FilterChipComponent,
-    LoadingButtonDirective,
-    MatButtonModule,
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
@@ -44,17 +41,10 @@ import { ResourceClassChipComponent } from './resource-class-chip.component';
     } @else {
       <mat-form-field appearance="outline" style="width: 100%">
         <mat-label>Search in all text fields</mat-label>
-        <input
-          matInput
-          type="text"
-          [formControl]="fulltextControl"
-          placeholder="Search in all text fields"
-          (keydown.enter)="onSearch()" />
+        <input matInput type="text" [formControl]="fulltextControl" placeholder="Search in all text fields" />
         <mat-icon matSuffix>search</mat-icon>
       </mat-form-field>
       <div class="chip-bar">
-        @let searchEnabled = searchEnabled$ | async;
-
         <app-data-model-chip />
         <app-resource-class-chip />
 
@@ -82,44 +72,45 @@ import { ResourceClassChipComponent } from './resource-class-chip.component';
 
         <app-add-filter-button (filterConfirmed)="onFilterConfirmed($event)" />
         <app-order-by />
-
-        <span class="chip-bar__spacer"></span>
-
-        <button mat-stroked-button (click)="onReset()">Reset</button>
-        <button
-          mat-raised-button
-          color="primary"
-          appLoadingButton
-          [isLoading]="queryExecutionService.queryIsExecuting()"
-          [disabled]="searchEnabled === false"
-          (click)="onSearch()">
-          Search
-        </button>
       </div>
     }
   `,
   styleUrl: './filter-chip-bar.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FilterChipBarComponent {
+export class FilterChipBarComponent implements OnInit {
   @Input({ required: true }) projectUuid!: string;
   @Output() gravsearchQuery = new EventEmitter<string>();
 
   private readonly _searchStateService = inject(SearchStateService);
   private readonly _ontologyDataService = inject(OntologyDataService);
   private readonly _gravsearchService = inject(GravsearchService);
+  private readonly _destroyRef = inject(DestroyRef);
   readonly formManager = inject(PropertyFormManager);
-  readonly queryExecutionService = inject(QueryExecutionService);
 
   readonly openChipId = signal<OpenChipId>(OPEN_CHIP_NONE);
   readonly fulltextControl = new FormControl<string>('');
   readonly confirmedStatements = signal<StatementElement[]>([]);
 
   readonly ontologyLoading$ = this._ontologyDataService.ontologyLoading$;
-  readonly searchEnabled$ = this._searchStateService.isFormStateValidAndComplete$;
+
+  readonly confirmedStatements$ = toObservable(this.confirmedStatements);
 
   get projectIri(): string {
     return `http://rdfh.ch/projects/${this.projectUuid}`;
+  }
+
+  ngOnInit(): void {
+    merge(
+      this.confirmedStatements$.pipe(skip(1), filter(stmts => stmts.length > 0)),
+      this._searchStateService.completeStatements$.pipe(
+        skip(1),
+        filter(stmts => stmts.length > 0 && this.confirmedStatements().length > 0)
+      ),
+      this.fulltextControl.valueChanges,
+    )
+      .pipe(debounceTime(300), takeUntilDestroyed(this._destroyRef))
+      .subscribe(() => this._emitSearch());
   }
 
   onChipOpenChange(chipId: string, isOpen: boolean): void {
@@ -160,7 +151,7 @@ export class FilterChipBarComponent {
     this._ontologyDataService.init(this.projectIri);
   }
 
-  onSearch(): void {
+  private _emitSearch(): void {
     const query = this._gravsearchService.generateGravSearchQuery(
       this._searchStateService.validStatementElements,
       this.fulltextControl.value ?? ''

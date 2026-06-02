@@ -22,10 +22,13 @@ import { CHIP_POPOVER_POSITIONS } from './chip-bar.helpers';
     OverlayModule,
   ],
   template: `
+    <div style="display: flex; flex-direction: column;">
+      <span style="font-size: 11px; color: rgba(0,0,0,0.6); margin-bottom: 2px;">Data Model</span>
     <button mat-stroked-button cdkOverlayOrigin #trigger="cdkOverlayOrigin" (click)="isOpen = !isOpen">
       {{ ontologyLabel$ | async }}
       <mat-icon>arrow_drop_down</mat-icon>
     </button>
+    </div>
 
     <ng-template
       cdkConnectedOverlay

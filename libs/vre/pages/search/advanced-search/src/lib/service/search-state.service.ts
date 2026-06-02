@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, distinctUntilChanged, map, startWith } from 'rxjs';
+import { BehaviorSubject, distinctUntilChanged, map } from 'rxjs';
 import { SEARCH_ALL_RESOURCE_CLASSES_OPTION } from '../constants';
 import { IriLabelPair, StatementElement, OrderByItem, SearchFormsState } from '../model';
 
@@ -22,8 +22,7 @@ export class SearchStateService {
     distinctUntilChanged(),
     map(state => state.statementElements),
     map(elements => elements.filter(prop => prop.isValidAndComplete)),
-    distinctUntilChanged(),
-    startWith([] as StatementElement[])
+    distinctUntilChanged()
   );
 
   orderByItems$ = this._state.pipe(
