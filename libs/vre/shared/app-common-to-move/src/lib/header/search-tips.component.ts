@@ -5,7 +5,6 @@ import { TranslatePipe } from '@ngx-translate/core';
   selector: 'app-search-tips',
   template: ` <div
     style="
-    width: 100%;
     border-radius: 5px;
     background: white;
     padding: 16px;
