@@ -7,7 +7,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { LoadingButtonDirective } from '@dasch-swiss/vre/ui/progress-indicator';
-import { map } from 'rxjs';
 import { StatementElement } from '../../model';
 import { GravsearchService } from '../../service/gravsearch.service';
 import { OntologyDataService } from '../../service/ontology-data.service';
@@ -59,13 +58,13 @@ import { ResourceClassChipComponent } from './resource-class-chip.component';
         <app-data-model-chip />
         <app-resource-class-chip />
 
-        @for (stmt of visibleStatements$ | async; track stmt.id) {
+        @for (stmt of confirmedStatements(); track stmt.id) {
           <app-filter-chip
             [statement]="stmt"
             [isOpen]="openChipId() === stmt.id"
             [isValid]="stmt.isValidAndComplete"
             (openChange)="onChipOpenChange(stmt.id, $event)"
-            (remove)="formManager.deleteStatement(stmt)"
+            (remove)="onRemoveStatement(stmt)"
             (confirm)="onConfirmNewFilter(stmt.id)"
             (cancel)="onCancelNewFilter(stmt)" />
           @for (child of getChildStatements(stmt.id); track child.id) {
@@ -114,13 +113,9 @@ export class FilterChipBarComponent {
 
   readonly openChipId = signal<OpenChipId>(OPEN_CHIP_NONE);
   readonly fulltextControl = new FormControl<string>('');
+  readonly confirmedStatements = signal<StatementElement[]>([]);
 
   readonly ontologyLoading$ = this._ontologyDataService.ontologyLoading$;
-
-  readonly visibleStatements$ = this._searchStateService.statementElements$.pipe(
-    map(stmts => stmts.filter(s => !s.isPristine))
-  );
-
   readonly searchEnabled$ = this._searchStateService.isFormStateValidAndComplete$;
 
   get projectIri(): string {
@@ -140,7 +135,17 @@ export class FilterChipBarComponent {
     this.openChipId.set(OPEN_CHIP_NONE);
   }
 
-  onFilterConfirmed(_chipId: string): void {}
+  onFilterConfirmed(chipId: string): void {
+    const stmt = this._searchStateService.currentState.statementElements.find(s => s.id === chipId);
+    if (stmt) {
+      this.confirmedStatements.update(stmts => [...stmts, stmt]);
+    }
+  }
+
+  onRemoveStatement(stmt: StatementElement): void {
+    this.formManager.deleteStatement(stmt);
+    this.confirmedStatements.update(stmts => stmts.filter(s => s.id !== stmt.id));
+  }
 
   getChildStatements(parentId: string): StatementElement[] {
     return this._searchStateService.currentState.statementElements.filter(
@@ -150,6 +155,7 @@ export class FilterChipBarComponent {
 
   onReset(): void {
     this.fulltextControl.reset('');
+    this.confirmedStatements.set([]);
     this._searchStateService.clearAllSelections();
     this._ontologyDataService.init(this.projectIri);
   }

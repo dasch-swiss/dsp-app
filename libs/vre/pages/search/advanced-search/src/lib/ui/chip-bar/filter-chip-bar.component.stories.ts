@@ -4,7 +4,6 @@ import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
 import { expect } from 'storybook/test';
-import { StatementElement } from '../../model';
 import { provideAdvancedSearch } from '../../providers';
 import { OntologyDataService } from '../../service/ontology-data.service';
 import { QueryExecutionService } from '../../service/query-execution.service';
@@ -62,33 +61,15 @@ export const Empty: Story = {
 };
 
 export const WithActiveFilters: Story = {
-  name: 'Shows chip bar with active filter chips',
+  name: 'Shows no filter chips before a filter is confirmed',
   args: { projectUuid: '0001' },
-  decorators: [
-    applicationConfig({
-      providers: [
-        ...STORY_PROVIDERS,
-        importProvidersFrom(OverlayModule),
-        { provide: DspApiConnectionToken, useValue: makeDspApiConnectionStub() },
-        ...provideAdvancedSearch(),
-        { provide: OntologyDataService, useValue: makeOntologyDataServiceStub() },
-        {
-          provide: SearchStateService,
-          useValue: makeSearchStateServiceStub({
-            statementElements$: of([
-              Object.assign(new StatementElement(), {
-                selectedPredicate: { iri: 'http://ex.org/hasTitle', label: 'Title', objectValueType: 'TextValue' },
-              }),
-            ]),
-          }),
-        },
-        { provide: QueryExecutionService, useValue: makeQueryExecutionServiceStub() },
-      ],
-    }),
-  ],
+  decorators: [applicationConfig({ providers: baseProviders })],
   play: async ({ canvasElement, step }) => {
-    await step('Filter chip is rendered for active statement', async () => {
-      await expect(canvasElement.querySelector('app-filter-chip')).not.toBeNull();
+    await step('No filter chips rendered before confirming a filter', async () => {
+      await expect(canvasElement.querySelector('app-filter-chip')).toBeNull();
+    });
+    await step('Add filter button is present', async () => {
+      await expect(canvasElement.querySelector('app-add-filter-button')).not.toBeNull();
     });
   },
 };

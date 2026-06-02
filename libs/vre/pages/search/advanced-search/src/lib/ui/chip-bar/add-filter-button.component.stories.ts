@@ -17,7 +17,7 @@ const meta: Meta<AddFilterButtonComponent> = {
   title: 'Search / Advanced Search / Chip Bar / 4. Add Filter Button',
   component: AddFilterButtonComponent,
   argTypes: {
-    filterAdded: { description: 'Emitted with the new statement ID when a property is selected.' },
+    filterConfirmed: { description: 'Emitted with the new statement ID when the filter is confirmed.' },
   },
 };
 export default meta;

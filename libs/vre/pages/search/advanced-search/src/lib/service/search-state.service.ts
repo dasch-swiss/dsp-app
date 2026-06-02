@@ -18,17 +18,12 @@ export class SearchStateService {
     map(state => state.selectedResourceClass)
   );
 
-  statementElements$ = this._state.pipe(
-    map(state => state.statementElements),
-    distinctUntilChanged(),
-    startWith(this.INITIAL_FORMS_STATE.statementElements)
-  );
-
   completeStatements$ = this._state.pipe(
     distinctUntilChanged(),
     map(state => state.statementElements),
     map(elements => elements.filter(prop => prop.isValidAndComplete)),
-    distinctUntilChanged()
+    distinctUntilChanged(),
+    startWith([] as StatementElement[])
   );
 
   orderByItems$ = this._state.pipe(
