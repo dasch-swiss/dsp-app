@@ -26,7 +26,6 @@ import { CHIP_POPOVER_POSITIONS } from './chip-bar.helpers';
   ],
   template: `
     <button mat-stroked-button cdkOverlayOrigin #trigger="cdkOverlayOrigin" (click)="isOpen = !isOpen">
-      <mat-icon>category</mat-icon>
       {{ classLabel$ | async }}
       <mat-icon>arrow_drop_down</mat-icon>
     </button>
@@ -42,6 +41,7 @@ import { CHIP_POPOVER_POSITIONS } from './chip-bar.helpers';
       <mat-selection-list
         class="chip-popover-list mat-elevation-z4"
         [multiple]="false"
+        [hideSingleSelectionIndicator]="true"
         (selectionChange)="onClassSelected($event.options[0]?.value)">
         <mat-list-option [value]="allOption" [selected]="(selectedClassIri$ | async) === ''">
           All resource classes

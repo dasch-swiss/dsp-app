@@ -23,7 +23,6 @@ import { CHIP_POPOVER_POSITIONS } from './chip-bar.helpers';
   ],
   template: `
     <button mat-stroked-button cdkOverlayOrigin #trigger="cdkOverlayOrigin" (click)="isOpen = !isOpen">
-      <mat-icon>schema</mat-icon>
       {{ ontologyLabel$ | async }}
       <mat-icon>arrow_drop_down</mat-icon>
     </button>
@@ -39,6 +38,7 @@ import { CHIP_POPOVER_POSITIONS } from './chip-bar.helpers';
       <mat-selection-list
         class="chip-popover-list mat-elevation-z4"
         [multiple]="false"
+        [hideSingleSelectionIndicator]="true"
         (selectionChange)="onOntologySelected($event.options[0]?.value)">
         @for (onto of ontologies$ | async; track onto.iri) {
           <mat-list-option [value]="onto.iri" [selected]="onto.iri === (selectedOntologyIri$ | async)">
