@@ -1,5 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, EventEmitter, inject, Input, Output, signal } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -7,7 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { LoadingButtonDirective } from '@dasch-swiss/vre/ui/progress-indicator';
-import { map } from 'rxjs';
+import { combineLatest, map } from 'rxjs';
 import { StatementElement } from '../../model';
 import { GravsearchService } from '../../service/gravsearch.service';
 import { OntologyDataService } from '../../service/ontology-data.service';
@@ -65,7 +66,9 @@ import { ResourceClassChipComponent } from './resource-class-chip.component';
             [isOpen]="openChipId() === stmt.id"
             [isValid]="stmt.isValidAndComplete"
             (openChange)="onChipOpenChange(stmt.id, $event)"
-            (remove)="formManager.deleteStatement(stmt)" />
+            (remove)="formManager.deleteStatement(stmt)"
+            (confirm)="onChipOpenChange(stmt.id, false)"
+            (cancel)="onCancelNewFilter(stmt)" />
           @for (child of getChildStatements(stmt.id); track child.id) {
             <app-filter-chip
               class="chip--indented"
@@ -73,7 +76,9 @@ import { ResourceClassChipComponent } from './resource-class-chip.component';
               [isOpen]="openChipId() === child.id"
               [isValid]="child.isValidAndComplete"
               (openChange)="onChipOpenChange(child.id, $event)"
-              (remove)="formManager.deleteStatement(child)" />
+              (remove)="formManager.deleteStatement(child)"
+              (confirm)="onChipOpenChange(child.id, false)"
+              (cancel)="onCancelNewFilter(child)" />
           }
         }
 
@@ -113,9 +118,10 @@ export class FilterChipBarComponent {
 
   readonly ontologyLoading$ = this._ontologyDataService.ontologyLoading$;
 
-  readonly visibleStatements$ = this._searchStateService.statementElements$.pipe(
-    map(stmts => stmts.filter(s => !s.isPristine))
-  );
+  readonly visibleStatements$ = combineLatest([
+    this._searchStateService.statementElements$,
+    toObservable(this.openChipId),
+  ]).pipe(map(([stmts, openId]) => stmts.filter(s => !s.isPristine || s.id === openId)));
 
   readonly searchEnabled$ = this._searchStateService.isFormStateValidAndComplete$;
 
@@ -124,7 +130,18 @@ export class FilterChipBarComponent {
   }
 
   onChipOpenChange(chipId: string, isOpen: boolean): void {
+    if (!isOpen) {
+      const stmt = this._searchStateService.currentState.statementElements.find(s => s.id === chipId);
+      if (stmt?.isPristine) {
+        this.formManager.deleteStatement(stmt);
+      }
+    }
     this.openChipId.set(isOpen ? chipId : OPEN_CHIP_NONE);
+  }
+
+  onCancelNewFilter(stmt: StatementElement): void {
+    this.formManager.deleteStatement(stmt);
+    this.openChipId.set(OPEN_CHIP_NONE);
   }
 
   onFilterAdded(chipId: string): void {

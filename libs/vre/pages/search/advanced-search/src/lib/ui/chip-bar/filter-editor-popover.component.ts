@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, inject, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, inject, Input, Output } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import { PropertyObjectType, StatementElement } from '../../model';
 import { PropertyFormManager } from '../../service/property-form.manager';
 import { ComparisonOperatorComponent } from '../statement-builder/assertions/comparison-operator.component';
@@ -15,6 +16,7 @@ import { StringValueComponent } from '../statement-builder/object-values/string-
     ComparisonOperatorComponent,
     LinkValueComponent,
     ListValueComponent,
+    MatButtonModule,
     PredicateSelectComponent,
     ResourceValueComponent,
     StringValueComponent,
@@ -26,12 +28,10 @@ import { StringValueComponent } from '../statement-builder/object-values/string-
         [selectedPredicate]="statement.selectedPredicate"
         (selectedPredicateChange)="formManager.setSelectedPredicate(statement, $event)" />
 
-      @if (statement.selectedPredicate) {
-        <app-comparison-operator
-          [operators]="statement.operators"
-          [selectedOperator]="statement.selectedOperator"
-          (operatorChange)="formManager.setSelectedOperator(statement, $event)" />
-      }
+      <app-comparison-operator
+        [operators]="statement.operators"
+        [selectedOperator]="statement.selectedOperator"
+        (operatorChange)="formManager.setSelectedOperator(statement, $event)" />
 
       @switch (statement.objectType) {
         @case (PROPERTY_OBJECT_TYPES.ResourceObject) {
@@ -59,6 +59,11 @@ import { StringValueComponent } from '../statement-builder/object-values/string-
             (emitResourceSelected)="formManager.setObjectValue(statement, $event)" />
         }
       }
+
+      <div class="filter-editor-popover__actions">
+        <button mat-button (click)="cancel.emit()">Cancel</button>
+        <button mat-raised-button color="primary" (click)="confirm.emit()">Add filter</button>
+      </div>
     </div>
   `,
   styles: [
@@ -70,12 +75,21 @@ import { StringValueComponent } from '../statement-builder/object-values/string-
         min-width: 280px;
         max-width: 400px;
       }
+      .filter-editor-popover__actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        margin-top: 8px;
+      }
     `,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FilterEditorPopoverComponent {
   @Input({ required: true }) statement!: StatementElement;
+  @Input() isPristine = false;
+  @Output() confirm = new EventEmitter<void>();
+  @Output() cancel = new EventEmitter<void>();
 
   readonly formManager = inject(PropertyFormManager);
   readonly PROPERTY_OBJECT_TYPES = PropertyObjectType;

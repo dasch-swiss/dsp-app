@@ -54,6 +54,9 @@ export class PredicateSelectComponent implements OnChanges {
       .pipe(take(1), takeUntilDestroyed(this.destroyRef))
       .subscribe(properties => {
         this.properties = properties;
+        if (!this.selectedPredicate && properties.length > 0) {
+          this.selectedPredicateChange.emit(properties[0]);
+        }
       });
   }
 

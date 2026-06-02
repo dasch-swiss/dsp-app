@@ -45,7 +45,11 @@ import { FilterEditorPopoverComponent } from './filter-editor-popover.component'
       [cdkConnectedOverlayHasBackdrop]="true"
       [cdkConnectedOverlayBackdropClass]="'cdk-overlay-transparent-backdrop'"
       (backdropClick)="onBackdropClick()">
-      <app-filter-editor-popover [statement]="statement" />
+      <app-filter-editor-popover
+        [statement]="statement"
+        [isPristine]="statement.isPristine"
+        (confirm)="confirm.emit()"
+        (cancel)="cancel.emit()" />
     </ng-template>
   `,
   styles: [
@@ -66,6 +70,8 @@ export class FilterChipComponent {
   @Input() isValid = true;
   @Output() openChange = new EventEmitter<boolean>();
   @Output() remove = new EventEmitter<void>();
+  @Output() confirm = new EventEmitter<void>();
+  @Output() cancel = new EventEmitter<void>();
 
   readonly positions = CHIP_POPOVER_POSITIONS;
 
