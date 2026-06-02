@@ -860,7 +860,9 @@ describe('GravsearchService — fulltextTerm parameter', () => {
     searchStateService = TestBed.inject(SearchStateService);
     ontologyDataService = TestBed.inject(OntologyDataService);
 
-    jest.spyOn(ontologyDataService, 'selectedOntology', 'get').mockReturnValue({ iri: ontologyIri, label: 'webern-onto' });
+    jest
+      .spyOn(ontologyDataService, 'selectedOntology', 'get')
+      .mockReturnValue({ iri: ontologyIri, label: 'webern-onto' });
     jest.spyOn(ontologyDataService, 'classIris', 'get').mockReturnValue([`${ontologyIri}#Person`]);
   });
 
