@@ -28,7 +28,7 @@ export class GravsearchService {
     const whereClause = this._buildWhereClause(statements);
     const trimmedTerm = fulltextTerm?.trim() ?? '';
     const fulltextTriple = trimmedTerm
-      ? `?mainRes knora-api:matchesText "${escapeForGravsearchStringLiteral(trimmedTerm)}" .\n`
+      ? `?mainRes ?valueProperty ?searchThis .\n  FILTER knora-api:matchText(?searchThis, "${escapeForGravsearchStringLiteral(trimmedTerm)}") .\n`
       : '';
 
     const gravSearch =
