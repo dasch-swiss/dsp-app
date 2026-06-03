@@ -28,6 +28,7 @@ import { FilterEditorPopoverComponent } from './filter-editor-popover.component'
         cdkOverlayOrigin
         #trigger="cdkOverlayOrigin"
         [highlighted]="isOpen || !isValid"
+        style="margin: 0 8px"
         [color]="isValid ? undefined : 'warn'"
         (click)="onOpen()">
         {{ statement | chipLabel }}

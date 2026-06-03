@@ -1,5 +1,15 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, EventEmitter, inject, Input, OnInit, Output, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  EventEmitter,
+  inject,
+  Input,
+  OnInit,
+  Output,
+  signal,
+} from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -39,7 +49,7 @@ import { ResourceClassChipComponent } from './resource-class-chip.component';
     @if (ontologyLoading$ | async) {
       <mat-progress-bar mode="query" />
     } @else {
-      <mat-form-field appearance="outline" style="width: 100%" subscriptSizing="dynamic">
+      <mat-form-field appearance="outline" style="width: 600px" subscriptSizing="dynamic">
         <mat-label>Search in all text fields</mat-label>
         <input matInput type="text" [formControl]="fulltextControl" placeholder="Search in all text fields" />
         <mat-icon matSuffix>search</mat-icon>
@@ -111,7 +121,7 @@ export class FilterChipBarComponent implements OnInit {
         skip(1),
         filter(rc => !!rc?.iri)
       ),
-      this.fulltextControl.valueChanges,
+      this.fulltextControl.valueChanges
     )
       .pipe(debounceTime(300), takeUntilDestroyed(this._destroyRef))
       .subscribe(() => this._emitSearch());
