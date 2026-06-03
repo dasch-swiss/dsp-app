@@ -4,6 +4,7 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule, MatSelectionListChange } from '@angular/material/list';
+import { OrderByItem } from '../../model';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { OrderByService } from '../../service/order-by.service';
 
@@ -28,6 +29,10 @@ export class OrderByComponent {
   orderByItems$ = this.orderByService.orderByItems$;
 
   isOpen = false;
+
+  activeLabel(items: OrderByItem[] | null): string | null {
+    return items?.find(i => i.orderBy)?.label ?? null;
+  }
 
   onSelectionChange(event: MatSelectionListChange) {
     const currentOrderByList = this.orderByService.currentOrderBy;

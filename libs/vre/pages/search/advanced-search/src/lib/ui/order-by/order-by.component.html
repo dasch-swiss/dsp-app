@@ -8,7 +8,7 @@
   [disabled]="orderByItems.length === 0"
   (click)="isOpen = !isOpen">
   <p class="label-icon-container">
-    <span class="label">Order by</span>
+    <span class="label">Order by{{ activeLabel(orderByItems) ? ': ' + activeLabel(orderByItems) : '' }}</span>
     <span class="icon">
       <mat-icon>expand_more</mat-icon>
     </span>
