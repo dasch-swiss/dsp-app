@@ -1,4 +1,3 @@
-import { CdkDrag, CdkDragDrop, CdkDragHandle, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
@@ -11,15 +10,12 @@ import { OrderByService } from '../../service/order-by.service';
 @Component({
   selector: 'app-order-by',
   imports: [
-    CdkDrag,
-    CdkDragHandle,
-    CdkDropList,
+    AsyncPipe,
     MatButtonModule,
     MatIconModule,
     MatListModule,
     MatTooltipModule,
     OverlayModule,
-    AsyncPipe,
   ],
   templateUrl: './order-by.component.html',
   styleUrls: ['./order-by.component.scss'],
@@ -33,16 +29,10 @@ export class OrderByComponent {
 
   isOpen = false;
 
-  drop(event: CdkDragDrop<string[]>) {
-    const orderBy = this.orderByService.currentOrderBy;
-    moveItemInArray(orderBy, event.previousIndex, event.currentIndex);
-    this.orderByService.updateOrderBy(orderBy);
-  }
-
   onSelectionChange(event: MatSelectionListChange) {
     const currentOrderByList = this.orderByService.currentOrderBy;
     event.options.forEach(option => {
-      const selectedItem = currentOrderByList.find(item => item.id === option.value);
+      const selectedItem = currentOrderByList.find(item => item.id === option.value.id);
       if (selectedItem) {
         selectedItem.orderBy = option.selected;
       }

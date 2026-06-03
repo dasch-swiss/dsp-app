@@ -1,10 +1,11 @@
 import { CdkConnectedOverlay, CdkOverlayOrigin, OverlayModule } from '@angular/cdk/overlay';
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, inject, Input, Output, signal, ViewEncapsulation } from '@angular/core';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { StatementElement } from '../../model';
+import { PropertyFormManager } from '../../service/property-form.manager';
 import { CHIP_POPOVER_POSITIONS } from './chip-bar.helpers';
 import { ChipLabelPipe } from './chip-label.pipe';
 import { FilterEditorPopoverComponent } from './filter-editor-popover.component';
@@ -47,10 +48,10 @@ import { FilterEditorPopoverComponent } from './filter-editor-popover.component'
       [cdkConnectedOverlayBackdropClass]="'cdk-overlay-transparent-backdrop'"
       (backdropClick)="onBackdropClick()">
       <app-filter-editor-popover
-        [statement]="statement"
+        [statement]="draft() ?? statement"
         [isPristine]="statement.isPristine"
-        (confirm)="confirm.emit()"
-        (cancel)="cancel.emit()" />
+        (confirm)="onConfirm()"
+        (cancel)="onCancel()" />
     </ng-template>
   `,
   styles: [
@@ -75,12 +76,30 @@ export class FilterChipComponent {
   @Output() cancel = new EventEmitter<void>();
 
   readonly positions = CHIP_POPOVER_POSITIONS;
+  readonly draft = signal<StatementElement | null>(null);
+  private readonly _formManager = inject(PropertyFormManager);
 
   onOpen(): void {
+    this.draft.set(StatementElement.detachedClone(this.statement));
     this.openChange.emit(true);
   }
 
+  onConfirm(): void {
+    const d = this.draft();
+    if (d) {
+      this._formManager.restoreStatement(d, this.statement);
+    }
+    this.draft.set(null);
+    this.confirm.emit();
+  }
+
+  onCancel(): void {
+    this.draft.set(null);
+    this.cancel.emit();
+  }
+
   onBackdropClick(): void {
+    this.draft.set(null);
     this.openChange.emit(false);
   }
 }

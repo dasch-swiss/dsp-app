@@ -19,29 +19,22 @@
   [cdkConnectedOverlayOrigin]="trigger"
   [cdkConnectedOverlayOpen]="isOpen"
   [cdkConnectedOverlayHasBackdrop]="true"
-  [cdkConnectedOverlayBackdropClass]="[
-            'cdk-overlay-transparent-backdrop'
-        ]"
+  [cdkConnectedOverlayBackdropClass]="'cdk-overlay-transparent-backdrop'"
   (backdropClick)="isOpen = false">
   <mat-selection-list
-    cdkDropList
-    class="sort-list"
-    (cdkDropListDropped)="drop($event)"
+    class="chip-popover-list mat-elevation-z4"
+    [multiple]="false"
+    [hideSingleSelectionIndicator]="true"
     (selectionChange)="onSelectionChange($event)">
     @for (item of orderByItems; track item.id) {
-    <mat-list-option
-      class="sort-item"
-      [selected]="item.orderBy"
-      [value]="item.id"
-      [disabled]="item.disabled"
-      [matTooltip]="TOOLTIP_TEXT"
-      [matTooltipDisabled]="!item.disabled"
-      cdkDrag>
-      <span cdkDragHandle matListItemIcon class="drag-handle">
-        <mat-icon>drag_indicator</mat-icon>
-      </span>
-      <span matListItemTitle> {{ item.label }} </span>
-    </mat-list-option>
+      <mat-list-option
+        [value]="item"
+        [selected]="item.orderBy"
+        [disabled]="item.disabled"
+        [matTooltip]="TOOLTIP_TEXT"
+        [matTooltipDisabled]="!item.disabled">
+        {{ item.label }}
+      </mat-list-option>
     }
   </mat-selection-list>
 </ng-template>

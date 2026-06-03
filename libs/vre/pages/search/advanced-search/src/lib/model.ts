@@ -211,6 +211,14 @@ export class StatementElement {
     this._selectedObjectNode = undefined;
   }
 
+  static detachedClone(source: StatementElement): StatementElement {
+    const clone = new StatementElement(source.subjectNode, source.statementLevel);
+    if (source.selectedPredicate) clone.selectedPredicate = source.selectedPredicate;
+    if (source.selectedOperator) clone.selectedOperator = source.selectedOperator;
+    if (source.selectedObjectValue !== undefined) clone.selectedObjectValue = source.selectedObjectValue;
+    return clone;
+  }
+
   get parentId(): string | undefined {
     return this._parentStatement?.id;
   }
