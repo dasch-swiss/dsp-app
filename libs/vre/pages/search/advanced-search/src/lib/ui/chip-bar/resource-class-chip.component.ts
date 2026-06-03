@@ -10,6 +10,7 @@ import { IriLabelPair } from '../../model';
 import { OntologyDataService } from '../../service/ontology-data.service';
 import { PropertyFormManager } from '../../service/property-form.manager';
 import { SearchStateService } from '../../service/search-state.service';
+import { SearchUrlSyncService } from '../../service/search-url-sync.service';
 import { CHIP_POPOVER_POSITIONS } from './chip-bar.helpers';
 
 @Component({
@@ -27,10 +28,10 @@ import { CHIP_POPOVER_POSITIONS } from './chip-bar.helpers';
   template: `
     <div style="display: flex; flex-direction: column;">
       <span style="font-size: 11px; color: rgba(0,0,0,0.6); margin-bottom: 2px;">Resource Class</span>
-    <button mat-stroked-button cdkOverlayOrigin #trigger="cdkOverlayOrigin" (click)="isOpen = !isOpen">
-      {{ classLabel$ | async }}
-      <mat-icon>arrow_drop_down</mat-icon>
-    </button>
+      <button mat-stroked-button cdkOverlayOrigin #trigger="cdkOverlayOrigin" (click)="isOpen = !isOpen">
+        {{ classLabel$ | async }}
+        <mat-icon>arrow_drop_down</mat-icon>
+      </button>
     </div>
 
     <ng-template
@@ -74,6 +75,7 @@ export class ResourceClassChipComponent {
   private readonly _dataService = inject(OntologyDataService);
   private readonly _searchStateService = inject(SearchStateService);
   private readonly _formManager = inject(PropertyFormManager);
+  private readonly _urlSync = inject(SearchUrlSyncService);
 
   readonly positions = CHIP_POPOVER_POSITIONS;
   readonly allOption = SEARCH_ALL_RESOURCE_CLASSES_OPTION;
@@ -89,8 +91,10 @@ export class ResourceClassChipComponent {
     if (!selection) return;
     if (selection.iri === '') {
       this._searchStateService.clearAllSelections();
+      this._urlSync.writeState({ class: undefined });
     } else {
       this._formManager.setMainResource(selection);
+      this._urlSync.writeState({ class: selection.iri });
     }
     this.isOpen = false;
   }

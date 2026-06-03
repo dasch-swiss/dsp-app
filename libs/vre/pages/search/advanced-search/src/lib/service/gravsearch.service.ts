@@ -74,7 +74,7 @@ export class GravsearchService {
     const orderByProps: string[] = this._searchStateService.currentState.orderBy
       .filter(o => o.orderBy)
       .map(o => {
-        const index = statements.findIndex(stm => stm.id === o.id);
+        const index = statements.findIndex(stm => stm.selectedPredicate?.iri === o.id);
         return `${RESOURCE_PLACEHOLDER}${index}`;
       });
 

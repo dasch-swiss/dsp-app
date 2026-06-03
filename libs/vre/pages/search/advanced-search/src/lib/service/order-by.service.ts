@@ -15,7 +15,7 @@ export class OrderByService implements OnDestroy {
       elements =>
         new Map(
           elements.map(stmt => [
-            stmt.id,
+            stmt.selectedPredicate!.iri,
             { label: stmt.selectedPredicate!.label, isLinkProperty: stmt.selectedPredicate!.isLinkProperty },
           ])
         )

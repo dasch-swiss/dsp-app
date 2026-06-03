@@ -6,6 +6,7 @@ import { OrderByService } from './service/order-by.service';
 import { PropertyFormManager } from './service/property-form.manager';
 import { QueryExecutionService } from './service/query-execution.service';
 import { SearchStateService } from './service/search-state.service';
+import { SearchUrlSyncService } from './service/search-url-sync.service';
 
 export function provideAdvancedSearch(): Provider[] {
   return [
@@ -16,5 +17,6 @@ export function provideAdvancedSearch(): Provider[] {
     DynamicFormsDataService,
     GravsearchService,
     QueryExecutionService,
+    SearchUrlSyncService,
   ];
 }

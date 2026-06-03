@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
 import { OntologyDataService } from './service/ontology-data.service';
+import { SearchUrlSyncService } from './service/search-url-sync.service';
 import { FilterChipBarComponent } from './ui/chip-bar/filter-chip-bar.component';
 
 @Component({
@@ -15,12 +16,15 @@ export class AdvancedSearchComponent implements OnInit {
   @Output() gravsearchQuery = new EventEmitter<string | null>();
 
   private readonly _dataService = inject(OntologyDataService);
+  private readonly _urlSync = inject(SearchUrlSyncService);
 
   get projectIri(): string {
     return `http://rdfh.ch/projects/${this.projectUuid}`;
   }
 
   ngOnInit(): void {
-    this._dataService.init(this.projectIri);
+    const params = this._urlSync.readParams();
+    const ontologyParam = params.ontology ? { iri: params.ontology, label: '' } : undefined;
+    this._dataService.init(this.projectIri, ontologyParam);
   }
 }
