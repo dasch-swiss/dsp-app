@@ -104,6 +104,7 @@ export class LinkValueComponent implements OnInit, AfterViewInit, OnChanges, OnD
 
   @Input() resourceClass?: string;
   @Input() selectedResource?: IriLabelPair;
+  @Input() showError = false;
 
   @Output() emitResourceSelected = new EventEmitter<IriLabelPair>();
 
@@ -153,6 +154,9 @@ export class LinkValueComponent implements OnInit, AfterViewInit, OnChanges, OnD
     if (changes['selectedResource'] && this.selectedResource) {
       this.inputControl.setValue(this.selectedResource.label, { emitEvent: false });
       this.inputControl.updateValueAndValidity();
+    }
+    if (changes['showError']?.currentValue) {
+      this.inputControl.markAsTouched();
     }
   }
 

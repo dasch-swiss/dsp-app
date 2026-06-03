@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, inject, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, inject, Input, Output, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { PropertyObjectType, StatementElement } from '../../model';
 import { PropertyFormManager } from '../../service/property-form.manager';
@@ -44,6 +44,7 @@ import { StringValueComponent } from '../statement-builder/object-values/string-
           <app-string-value
             [valueType]="statement.selectedPredicate!.objectValueType"
             [value]="asString(statement.selectedObjectValue)"
+            [showError]="showErrors()"
             (emitValueChanged)="formManager.setObjectValue(statement, $event)" />
         }
         @case (PROPERTY_OBJECT_TYPES.ListValueObject) {
@@ -56,13 +57,14 @@ import { StringValueComponent } from '../statement-builder/object-values/string-
           <app-link-value
             [resourceClass]="statement.selectedPredicate?.objectValueType"
             [selectedResource]="asIriLabelPair(statement.selectedObjectValue)"
+            [showError]="showErrors()"
             (emitResourceSelected)="formManager.setObjectValue(statement, $event)" />
         }
       }
 
       <div class="filter-editor-popover__actions">
         <button mat-button (click)="cancel.emit()">Cancel</button>
-        <button mat-raised-button color="primary" (click)="confirm.emit()">Add filter</button>
+        <button mat-raised-button color="primary" (click)="onConfirmClick()">Add filter</button>
       </div>
     </div>
   `,
@@ -93,6 +95,15 @@ export class FilterEditorPopoverComponent {
 
   readonly formManager = inject(PropertyFormManager);
   readonly PROPERTY_OBJECT_TYPES = PropertyObjectType;
+  readonly showErrors = signal(false);
+
+  onConfirmClick(): void {
+    if (!this.statement.isValidAndComplete) {
+      this.showErrors.set(true);
+      return;
+    }
+    this.confirm.emit();
+  }
 
   asString(value: string | { iri: string; label: string } | undefined): string | undefined {
     return typeof value === 'string' ? value : undefined;
