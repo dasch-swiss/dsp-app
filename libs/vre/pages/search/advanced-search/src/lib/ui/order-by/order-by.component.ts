@@ -44,4 +44,14 @@ export class OrderByComponent {
     });
     this.orderByService.updateOrderBy(currentOrderByList);
   }
+
+  removeOrderBy(item: OrderByItem) {
+    const currentOrderByList = this.orderByService.currentOrderBy;
+    const target = currentOrderByList.find(i => i.id === item.id);
+    if (target) {
+      target.orderBy = false;
+      this.orderByService.updateOrderBy(currentOrderByList);
+    }
+    this.isOpen = false;
+  }
 }

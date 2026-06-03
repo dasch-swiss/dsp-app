@@ -8,6 +8,13 @@
   }
 }
 
+.order-by-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
 .chip-popover-list {
   background: white;
   min-width: 200px;

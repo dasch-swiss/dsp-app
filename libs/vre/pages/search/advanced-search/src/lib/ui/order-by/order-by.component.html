@@ -33,7 +33,14 @@
         [disabled]="item.disabled"
         [matTooltip]="TOOLTIP_TEXT"
         [matTooltipDisabled]="!item.disabled">
-        {{ item.label }}
+        <span class="order-by-item">
+          <span>{{ item.label }}</span>
+          @if (item.orderBy) {
+            <button mat-icon-button (click)="$event.stopPropagation(); removeOrderBy(item)">
+              <mat-icon>close</mat-icon>
+            </button>
+          }
+        </span>
       </mat-list-option>
     }
   </mat-selection-list>
