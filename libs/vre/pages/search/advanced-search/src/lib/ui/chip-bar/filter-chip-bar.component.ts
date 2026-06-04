@@ -16,7 +16,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { debounceTime, filter, merge, skip, take } from 'rxjs';
+import { debounceTime, filter, merge, skip, take, tap } from 'rxjs';
 import { NodeValue, StatementElement } from '../../model';
 import { GravsearchService } from '../../service/gravsearch.service';
 import { OntologyDataService } from '../../service/ontology-data.service';
@@ -123,7 +123,9 @@ export class FilterChipBarComponent implements OnInit {
         skip(1),
         filter(rc => !!rc?.iri)
       ),
-      this.fulltextControl.valueChanges
+      this.fulltextControl.valueChanges.pipe(
+        tap(q => this._urlSync.writeState({ q: q ?? undefined }))
+      )
     )
       .pipe(
         filter(() => this.restored()),
@@ -131,14 +133,6 @@ export class FilterChipBarComponent implements OnInit {
         takeUntilDestroyed(this._destroyRef)
       )
       .subscribe(() => this._emitSearch());
-
-    this.fulltextControl.valueChanges
-      .pipe(
-        filter(() => this.restored()),
-        debounceTime(300),
-        takeUntilDestroyed(this._destroyRef)
-      )
-      .subscribe(q => this._urlSync.writeState({ q: q ?? undefined }));
 
     this._ontologyDataService.ontologyLoading$
       .pipe(
