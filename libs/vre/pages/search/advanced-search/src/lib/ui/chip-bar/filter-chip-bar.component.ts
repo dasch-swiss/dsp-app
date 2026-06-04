@@ -16,7 +16,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { debounceTime, filter, merge, skip, take, tap } from 'rxjs';
+import { combineLatest, debounceTime, filter, merge, skip, switchMap, take } from 'rxjs';
 import { NodeValue, StatementElement } from '../../model';
 import { GravsearchService } from '../../service/gravsearch.service';
 import { OntologyDataService } from '../../service/ontology-data.service';
@@ -123,16 +123,17 @@ export class FilterChipBarComponent implements OnInit {
         skip(1),
         filter(rc => !!rc?.iri)
       ),
-      this.fulltextControl.valueChanges.pipe(
-        tap(q => this._urlSync.writeState({ q: q ?? undefined }))
-      )
+      this.fulltextControl.valueChanges
     )
       .pipe(
         filter(() => this.restored()),
         debounceTime(300),
         takeUntilDestroyed(this._destroyRef)
       )
-      .subscribe(() => this._emitSearch());
+      .subscribe(() => {
+        this._urlSync.writeState({ q: this.fulltextControl.value ?? undefined });
+        this._emitSearch();
+      });
 
     this._ontologyDataService.ontologyLoading$
       .pipe(
@@ -211,62 +212,71 @@ export class FilterChipBarComponent implements OnInit {
   private _restoreFromUrl(): void {
     const params = this._urlSync.readParams();
 
-    if (params.class) {
-      this._ontologyDataService.resourceClasses$.pipe(take(1)).subscribe(classes => {
-        const found = classes.find(c => c.iri === params.class);
-        if (found) {
-          this.formManager.setMainResource(found);
-        }
-      });
-    }
+    const classRestore$ = params.class
+      ? this._ontologyDataService.resourceClasses$.pipe(
+          filter(classes => classes.length > 0),
+          take(1),
+          switchMap(classes => {
+            const found = classes.find(c => c.iri === params.class);
+            if (found) this.formManager.setMainResource(found);
+            return params.filters
+              ? this._ontologyDataService.getProperties$().pipe(take(1))
+              : [null];
+          })
+        )
+      : params.filters
+        ? this._ontologyDataService.getProperties$().pipe(take(1))
+        : [null];
 
-    if (params.filters) {
-      const filterParams = this._urlSync.decodeFilters(params.filters);
-      this._ontologyDataService
-        .getProperties$()
-        .pipe(take(1))
-        .subscribe(predicates => {
-          const statements: StatementElement[] = filterParams.reduce((acc, fp) => {
-            const predicate = predicates.find(p => p.iri === fp.predicateIri);
-            if (!predicate) return acc;
-            const parentStmt = fp.parentIndex !== null ? acc[fp.parentIndex] : undefined;
-            const stmt = new StatementElement(
-              parentStmt?.selectedObjectNode instanceof NodeValue ? parentStmt.selectedObjectNode : undefined,
-              parentStmt ? parentStmt.statementLevel + 1 : 0,
-              parentStmt
-            );
-            stmt.selectedPredicate = predicate;
-            if (fp.operator) stmt.selectedOperator = fp.operator;
-            if (fp.value) stmt.selectedObjectValue = fp.value;
-            this._searchStateService.patchState({
-              statementElements: [...this._searchStateService.currentState.statementElements, stmt],
-            });
-            return [...acc, stmt];
-          }, [] as StatementElement[]);
-          this.confirmedStatements.set(statements.filter(s => s.isValidAndComplete));
+    classRestore$.subscribe(predicates => {
+      if (predicates && params.filters) {
+        const filterParams = this._urlSync.decodeFilters(params.filters);
+        const statements: StatementElement[] = filterParams.reduce((acc, fp) => {
+          if (fp.parentIndex !== null && fp.parentIndex >= acc.length) return acc;
+          const predicate = predicates.find(p => p.iri === fp.predicateIri);
+          if (!predicate) return acc;
+          const parentStmt = fp.parentIndex !== null ? acc[fp.parentIndex] : undefined;
+          const stmt = new StatementElement(
+            parentStmt?.selectedObjectNode instanceof NodeValue ? parentStmt.selectedObjectNode : undefined,
+            parentStmt ? parentStmt.statementLevel + 1 : 0,
+            parentStmt
+          );
+          stmt.selectedPredicate = predicate;
+          if (fp.operator) stmt.selectedOperator = fp.operator;
+          if (fp.value) stmt.selectedObjectValue = fp.value;
+          return [...acc, stmt];
+        }, [] as StatementElement[]);
+
+        this._searchStateService.patchState({
+          statementElements: [
+            ...this._searchStateService.currentState.statementElements,
+            ...statements,
+          ],
         });
-    }
-
-    if (params.orderBy) {
-      const orderByList = this._searchStateService.currentState.orderBy;
-      const target = orderByList.find(o => o.id === params.orderBy);
-      if (target) {
-        target.orderBy = true;
-        this._searchStateService.updateOrderBy(orderByList);
+        this.confirmedStatements.set(statements.filter(s => s.isValidAndComplete));
       }
-    }
 
-    if (params.q) {
-      this.fulltextControl.setValue(params.q, { emitEvent: false });
-    }
+      if (params.orderBy) {
+        const orderByList = this._searchStateService.currentState.orderBy;
+        const target = orderByList.find(o => o.id === params.orderBy);
+        if (target) {
+          target.orderBy = true;
+          this._searchStateService.updateOrderBy(orderByList);
+        }
+      }
 
-    const ontologyIri = this._ontologyDataService.selectedOntology.iri;
-    if (ontologyIri && !params.ontology) {
-      this._urlSync.writeState({ ontology: ontologyIri });
-    }
+      if (params.q) {
+        this.fulltextControl.setValue(params.q, { emitEvent: false });
+      }
 
-    this.restored.set(true);
-    this._emitSearch();
+      const ontologyIri = this._ontologyDataService.selectedOntology.iri;
+      if (ontologyIri && !params.ontology) {
+        this._urlSync.writeState({ ontology: ontologyIri });
+      }
+
+      this.restored.set(true);
+      this._emitSearch();
+    });
   }
 
   private _emitSearch(): void {

@@ -109,6 +109,7 @@ export class FilterChipComponent {
 
   onBackdropClick(): void {
     this.draft.set(null);
+    this.cancel.emit();
     this.openChange.emit(false);
   }
 }
