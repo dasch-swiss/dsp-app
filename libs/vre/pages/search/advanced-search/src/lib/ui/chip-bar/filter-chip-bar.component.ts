@@ -10,13 +10,13 @@ import {
   Output,
   signal,
 } from '@angular/core';
-import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { debounceTime, distinctUntilChanged, filter, merge, of, skip, switchMap, take } from 'rxjs';
+import { debounceTime, distinctUntilChanged, filter, of, switchMap, take } from 'rxjs';
 import { NodeValue, StatementElement } from '../../model';
 import { GravsearchService } from '../../service/gravsearch.service';
 import { OntologyDataService } from '../../service/ontology-data.service';
@@ -103,45 +103,26 @@ export class FilterChipBarComponent implements OnInit {
   readonly openChipId = signal<OpenChipId>(OPEN_CHIP_NONE);
   readonly fulltextControl = new FormControl<string>('');
   readonly confirmedStatements = signal<StatementElement[]>([]);
-  readonly restored = signal(false);
 
   readonly ontologyLoading$ = this._ontologyDataService.ontologyLoading$;
-  readonly confirmedStatements$ = toObservable(this.confirmedStatements);
 
   get projectIri(): string {
     return `http://rdfh.ch/projects/${this.projectUuid}`;
   }
 
   ngOnInit(): void {
-    merge(
-      this.confirmedStatements$.pipe(skip(1)),
-      this._searchStateService.completeStatements$.pipe(
-        skip(1),
-        filter(stmts => stmts.length > 0 && this.confirmedStatements().length > 0)
-      ),
-      this._searchStateService.selectedResourceClass$.pipe(
-        skip(1),
-        filter(rc => !!rc?.iri)
-      ),
-      this.fulltextControl.valueChanges
-    )
-      .pipe(
-        filter(() => this.restored()),
-        debounceTime(300),
-        takeUntilDestroyed(this._destroyRef)
-      )
-      .subscribe(() => {
-        this._urlSync.writeState({ q: this.fulltextControl.value ?? undefined });
-        this._emitSearch();
-      });
+    // Fulltext field is the only reactive writer — debounce and push to URL.
+    this.fulltextControl.valueChanges
+      .pipe(debounceTime(300), takeUntilDestroyed(this._destroyRef))
+      .subscribe(q => this._urlSync.writeState({ q: q ?? undefined }));
 
+    // URL is the single source of truth — every param change drives state.
     this._urlSync.queryParams$
       .pipe(
         distinctUntilChanged((a, b) => JSON.stringify(a) === JSON.stringify(b)),
         takeUntilDestroyed(this._destroyRef)
       )
       .subscribe(params => {
-        this.restored.set(false);
         this._resetState();
         this._ontologyDataService.ontologyLoading$
           .pipe(
@@ -223,6 +204,27 @@ export class FilterChipBarComponent implements OnInit {
   }
 
   private _restoreFromUrl(params: SearchUrlParams): void {
+    // Ensure the correct ontology is loaded.
+    const currentOntologyIri = this._ontologyDataService.selectedOntology.iri;
+    if (params.ontology && params.ontology !== currentOntologyIri) {
+      this._ontologyDataService.setOntology(params.ontology);
+      // setOntology triggers ontologyLoading$ again — wait for it to settle before continuing.
+      this._ontologyDataService.ontologyLoading$
+        .pipe(
+          filter(loading => !loading),
+          take(1),
+          takeUntilDestroyed(this._destroyRef)
+        )
+        .subscribe(() => this._applyParams(params));
+      return;
+    }
+    if (!params.ontology && currentOntologyIri) {
+      this._urlSync.writeState({ ontology: currentOntologyIri });
+    }
+    this._applyParams(params);
+  }
+
+  private _applyParams(params: SearchUrlParams): void {
     const classRestore$ = params.class
       ? this._ontologyDataService.resourceClasses$.pipe(
           filter(classes => classes.length > 0),
@@ -271,16 +273,8 @@ export class FilterChipBarComponent implements OnInit {
         }
       }
 
-      if (params.q) {
-        this.fulltextControl.setValue(params.q, { emitEvent: false });
-      }
+      this.fulltextControl.setValue(params.q ?? '', { emitEvent: false });
 
-      const ontologyIri = this._ontologyDataService.selectedOntology.iri;
-      if (ontologyIri && !params.ontology) {
-        this._urlSync.writeState({ ontology: ontologyIri });
-      }
-
-      this.restored.set(true);
       this._emitSearch();
     });
   }

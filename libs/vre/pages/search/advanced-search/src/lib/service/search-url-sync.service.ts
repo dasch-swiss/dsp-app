@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
-import { ActivatedRoute, NavigationStart, Router } from '@angular/router';
-import { filter, map, switchMap } from 'rxjs';
+import { ActivatedRoute, Router } from '@angular/router';
+import { map } from 'rxjs';
 import { Operator } from '../operators.config';
 
 export interface SearchUrlParams {
@@ -23,11 +23,7 @@ export class SearchUrlSyncService {
   private readonly _router = inject(Router);
   private readonly _route = inject(ActivatedRoute);
 
-  // Emits only when navigation was triggered by browser back/forward (popstate),
-  // not by programmatic writeState/clearAll calls (imperative).
-  readonly queryParams$ = this._router.events.pipe(
-    filter((e): e is NavigationStart => e instanceof NavigationStart && e.navigationTrigger === 'popstate'),
-    switchMap(() => this._route.queryParams),
+  readonly queryParams$ = this._route.queryParams.pipe(
     map(
       p =>
         ({
