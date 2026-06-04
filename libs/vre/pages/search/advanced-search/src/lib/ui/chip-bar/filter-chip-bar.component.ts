@@ -104,7 +104,6 @@ export class FilterChipBarComponent implements OnInit {
   readonly fulltextControl = new FormControl<string>('');
   readonly confirmedStatements = signal<StatementElement[]>([]);
   readonly restored = signal(false);
-  private _writingToUrl = false;
 
   readonly ontologyLoading$ = this._ontologyDataService.ontologyLoading$;
   readonly confirmedStatements$ = toObservable(this.confirmedStatements);
@@ -132,20 +131,13 @@ export class FilterChipBarComponent implements OnInit {
         takeUntilDestroyed(this._destroyRef)
       )
       .subscribe(() => {
-        this._writeToUrl({ q: this.fulltextControl.value ?? undefined });
+        this._urlSync.writeState({ q: this.fulltextControl.value ?? undefined });
         this._emitSearch();
       });
 
     this._urlSync.queryParams$
       .pipe(
         distinctUntilChanged((a, b) => JSON.stringify(a) === JSON.stringify(b)),
-        filter(() => {
-          if (this._writingToUrl) {
-            this._writingToUrl = false;
-            return false;
-          }
-          return true;
-        }),
         takeUntilDestroyed(this._destroyRef)
       )
       .subscribe(params => {
@@ -197,7 +189,6 @@ export class FilterChipBarComponent implements OnInit {
 
   onReset(): void {
     this._resetState();
-    this._writingToUrl = true;
     this._urlSync.clearAll();
   }
 
@@ -206,11 +197,6 @@ export class FilterChipBarComponent implements OnInit {
     this.confirmedStatements.set([]);
     this.openChipId.set(OPEN_CHIP_NONE);
     this._searchStateService.clearAllSelections();
-  }
-
-  private _writeToUrl(params: SearchUrlParams): void {
-    this._writingToUrl = true;
-    this._urlSync.writeState(params);
   }
 
   private _writeFiltersToUrl(): void {
@@ -230,7 +216,7 @@ export class FilterChipBarComponent implements OnInit {
       : null;
 
     const activeOrderBy = this._searchStateService.currentState.orderBy.find(o => o.orderBy);
-    this._writeToUrl({
+    this._urlSync.writeState({
       filters: encoded ?? undefined,
       orderBy: activeOrderBy?.id,
     });
@@ -291,7 +277,7 @@ export class FilterChipBarComponent implements OnInit {
 
       const ontologyIri = this._ontologyDataService.selectedOntology.iri;
       if (ontologyIri && !params.ontology) {
-        this._writeToUrl({ ontology: ontologyIri });
+        this._urlSync.writeState({ ontology: ontologyIri });
       }
 
       this.restored.set(true);

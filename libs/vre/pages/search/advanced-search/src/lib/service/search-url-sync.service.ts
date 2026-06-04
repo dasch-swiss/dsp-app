@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { map } from 'rxjs';
+import { ActivatedRoute, NavigationStart, Router } from '@angular/router';
+import { filter, map, switchMap } from 'rxjs';
 import { Operator } from '../operators.config';
 
 export interface SearchUrlParams {
@@ -23,7 +23,11 @@ export class SearchUrlSyncService {
   private readonly _router = inject(Router);
   private readonly _route = inject(ActivatedRoute);
 
-  readonly queryParams$ = this._route.queryParams.pipe(
+  // Emits only when navigation was triggered by browser back/forward (popstate),
+  // not by programmatic writeState/clearAll calls (imperative).
+  readonly queryParams$ = this._router.events.pipe(
+    filter((e): e is NavigationStart => e instanceof NavigationStart && e.navigationTrigger === 'popstate'),
+    switchMap(() => this._route.queryParams),
     map(
       p =>
         ({
@@ -91,12 +95,12 @@ export class SearchUrlSyncService {
   }
 
   private _toQueryParams(state: SearchUrlParams): Record<string, string | null> {
-    return {
-      q: state.q || null,
-      ontology: state.ontology || null,
-      class: state.class || null,
-      filters: state.filters || null,
-      orderBy: state.orderBy || null,
-    };
+    const params: Record<string, string | null> = {};
+    if ('q' in state) params['q'] = state.q || null;
+    if ('ontology' in state) params['ontology'] = state.ontology || null;
+    if ('class' in state) params['class'] = state.class || null;
+    if ('filters' in state) params['filters'] = state.filters || null;
+    if ('orderBy' in state) params['orderBy'] = state.orderBy || null;
+    return params;
   }
 }
