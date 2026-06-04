@@ -10,7 +10,14 @@ import { FilterEditorPopoverComponent } from './filter-editor-popover.component'
 @Component({
   selector: 'app-add-filter-button',
   standalone: true,
-  imports: [CdkConnectedOverlay, CdkOverlayOrigin, FilterEditorPopoverComponent, MatButtonModule, MatIconModule, OverlayModule],
+  imports: [
+    CdkConnectedOverlay,
+    CdkOverlayOrigin,
+    FilterEditorPopoverComponent,
+    MatButtonModule,
+    MatIconModule,
+    OverlayModule,
+  ],
   template: `
     <button mat-stroked-button cdkOverlayOrigin #trigger="cdkOverlayOrigin" (click)="onAdd()">
       <mat-icon>add</mat-icon>

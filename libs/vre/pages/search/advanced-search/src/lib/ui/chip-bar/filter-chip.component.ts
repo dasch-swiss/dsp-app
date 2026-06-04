@@ -1,5 +1,14 @@
 import { CdkConnectedOverlay, CdkOverlayOrigin, OverlayModule } from '@angular/cdk/overlay';
-import { ChangeDetectionStrategy, Component, EventEmitter, inject, Input, Output, signal, ViewEncapsulation } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  inject,
+  Input,
+  Output,
+  signal,
+  ViewEncapsulation,
+} from '@angular/core';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';

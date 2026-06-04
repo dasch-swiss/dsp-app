@@ -4,20 +4,13 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule, MatSelectionListChange } from '@angular/material/list';
-import { OrderByItem } from '../../model';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { OrderByItem } from '../../model';
 import { OrderByService } from '../../service/order-by.service';
 
 @Component({
   selector: 'app-order-by',
-  imports: [
-    AsyncPipe,
-    MatButtonModule,
-    MatIconModule,
-    MatListModule,
-    MatTooltipModule,
-    OverlayModule,
-  ],
+  imports: [AsyncPipe, MatButtonModule, MatIconModule, MatListModule, MatTooltipModule, OverlayModule],
   templateUrl: './order-by.component.html',
   styleUrls: ['./order-by.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

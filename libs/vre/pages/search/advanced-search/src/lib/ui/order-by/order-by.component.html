@@ -27,21 +27,21 @@
     [hideSingleSelectionIndicator]="true"
     (selectionChange)="onSelectionChange($event)">
     @for (item of orderByItems; track item.id) {
-      <mat-list-option
-        [value]="item"
-        [selected]="item.orderBy"
-        [disabled]="item.disabled"
-        [matTooltip]="TOOLTIP_TEXT"
-        [matTooltipDisabled]="!item.disabled">
-        <span class="order-by-item">
-          <span>{{ item.label }}</span>
-          @if (item.orderBy) {
-            <button mat-icon-button (click)="$event.stopPropagation(); removeOrderBy(item)">
-              <mat-icon>close</mat-icon>
-            </button>
-          }
-        </span>
-      </mat-list-option>
+    <mat-list-option
+      [value]="item"
+      [selected]="item.orderBy"
+      [disabled]="item.disabled"
+      [matTooltip]="TOOLTIP_TEXT"
+      [matTooltipDisabled]="!item.disabled">
+      <span class="order-by-item">
+        <span>{{ item.label }}</span>
+        @if (item.orderBy) {
+        <button mat-icon-button (click)="$event.stopPropagation(); removeOrderBy(item)">
+          <mat-icon>close</mat-icon>
+        </button>
+        }
+      </span>
+    </mat-list-option>
     }
   </mat-selection-list>
 </ng-template>
