@@ -16,13 +16,13 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { combineLatest, debounceTime, filter, merge, skip, switchMap, take } from 'rxjs';
+import { debounceTime, distinctUntilChanged, filter, merge, of, skip, switchMap, take } from 'rxjs';
 import { NodeValue, StatementElement } from '../../model';
 import { GravsearchService } from '../../service/gravsearch.service';
 import { OntologyDataService } from '../../service/ontology-data.service';
 import { PropertyFormManager } from '../../service/property-form.manager';
 import { SearchStateService } from '../../service/search-state.service';
-import { SearchUrlSyncService } from '../../service/search-url-sync.service';
+import { SearchUrlSyncService, SearchUrlParams } from '../../service/search-url-sync.service';
 import { OrderByComponent } from '../order-by/order-by.component';
 import { AddFilterButtonComponent } from './add-filter-button.component';
 import { OPEN_CHIP_NONE, OpenChipId } from './chip-bar.helpers';
@@ -104,6 +104,7 @@ export class FilterChipBarComponent implements OnInit {
   readonly fulltextControl = new FormControl<string>('');
   readonly confirmedStatements = signal<StatementElement[]>([]);
   readonly restored = signal(false);
+  private _writingToUrl = false;
 
   readonly ontologyLoading$ = this._ontologyDataService.ontologyLoading$;
   readonly confirmedStatements$ = toObservable(this.confirmedStatements);
@@ -131,17 +132,33 @@ export class FilterChipBarComponent implements OnInit {
         takeUntilDestroyed(this._destroyRef)
       )
       .subscribe(() => {
-        this._urlSync.writeState({ q: this.fulltextControl.value ?? undefined });
+        this._writeToUrl({ q: this.fulltextControl.value ?? undefined });
         this._emitSearch();
       });
 
-    this._ontologyDataService.ontologyLoading$
+    this._urlSync.queryParams$
       .pipe(
-        filter(loading => !loading),
-        take(1),
+        distinctUntilChanged((a, b) => JSON.stringify(a) === JSON.stringify(b)),
+        filter(() => {
+          if (this._writingToUrl) {
+            this._writingToUrl = false;
+            return false;
+          }
+          return true;
+        }),
         takeUntilDestroyed(this._destroyRef)
       )
-      .subscribe(() => this._restoreFromUrl());
+      .subscribe(params => {
+        this.restored.set(false);
+        this._resetState();
+        this._ontologyDataService.ontologyLoading$
+          .pipe(
+            filter(loading => !loading),
+            take(1),
+            takeUntilDestroyed(this._destroyRef)
+          )
+          .subscribe(() => this._restoreFromUrl(params));
+      });
   }
 
   onChipOpenChange(chipId: string, isOpen: boolean): void {
@@ -179,11 +196,21 @@ export class FilterChipBarComponent implements OnInit {
   }
 
   onReset(): void {
-    this.fulltextControl.reset('');
-    this.confirmedStatements.set([]);
-    this._searchStateService.clearAllSelections();
-    this._ontologyDataService.init(this.projectIri);
+    this._resetState();
+    this._writingToUrl = true;
     this._urlSync.clearAll();
+  }
+
+  private _resetState(): void {
+    this.fulltextControl.reset('', { emitEvent: false });
+    this.confirmedStatements.set([]);
+    this.openChipId.set(OPEN_CHIP_NONE);
+    this._searchStateService.clearAllSelections();
+  }
+
+  private _writeToUrl(params: SearchUrlParams): void {
+    this._writingToUrl = true;
+    this._urlSync.writeState(params);
   }
 
   private _writeFiltersToUrl(): void {
@@ -203,15 +230,13 @@ export class FilterChipBarComponent implements OnInit {
       : null;
 
     const activeOrderBy = this._searchStateService.currentState.orderBy.find(o => o.orderBy);
-    this._urlSync.writeState({
+    this._writeToUrl({
       filters: encoded ?? undefined,
       orderBy: activeOrderBy?.id,
     });
   }
 
-  private _restoreFromUrl(): void {
-    const params = this._urlSync.readParams();
-
+  private _restoreFromUrl(params: SearchUrlParams): void {
     const classRestore$ = params.class
       ? this._ontologyDataService.resourceClasses$.pipe(
           filter(classes => classes.length > 0),
@@ -219,14 +244,12 @@ export class FilterChipBarComponent implements OnInit {
           switchMap(classes => {
             const found = classes.find(c => c.iri === params.class);
             if (found) this.formManager.setMainResource(found);
-            return params.filters
-              ? this._ontologyDataService.getProperties$().pipe(take(1))
-              : [null];
+            return params.filters ? this._ontologyDataService.getProperties$().pipe(take(1)) : of(null);
           })
         )
       : params.filters
         ? this._ontologyDataService.getProperties$().pipe(take(1))
-        : [null];
+        : of(null);
 
     classRestore$.subscribe(predicates => {
       if (predicates && params.filters) {
@@ -248,10 +271,7 @@ export class FilterChipBarComponent implements OnInit {
         }, [] as StatementElement[]);
 
         this._searchStateService.patchState({
-          statementElements: [
-            ...this._searchStateService.currentState.statementElements,
-            ...statements,
-          ],
+          statementElements: [...this._searchStateService.currentState.statementElements, ...statements],
         });
         this.confirmedStatements.set(statements.filter(s => s.isValidAndComplete));
       }
@@ -271,7 +291,7 @@ export class FilterChipBarComponent implements OnInit {
 
       const ontologyIri = this._ontologyDataService.selectedOntology.iri;
       if (ontologyIri && !params.ontology) {
-        this._urlSync.writeState({ ontology: ontologyIri });
+        this._writeToUrl({ ontology: ontologyIri });
       }
 
       this.restored.set(true);

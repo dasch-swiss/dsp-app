@@ -1,5 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { map } from 'rxjs';
 import { Operator } from '../operators.config';
 
 export interface SearchUrlParams {
@@ -21,6 +22,19 @@ export interface FilterParam {
 export class SearchUrlSyncService {
   private readonly _router = inject(Router);
   private readonly _route = inject(ActivatedRoute);
+
+  readonly queryParams$ = this._route.queryParams.pipe(
+    map(
+      p =>
+        ({
+          q: p['q'] || undefined,
+          ontology: p['ontology'] || undefined,
+          class: p['class'] || undefined,
+          filters: p['filters'] || undefined,
+          orderBy: p['orderBy'] || undefined,
+        }) as SearchUrlParams
+    )
+  );
 
   readParams(): SearchUrlParams {
     const p = this._route.snapshot.queryParams;
