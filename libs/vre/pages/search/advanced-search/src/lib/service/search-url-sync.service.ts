@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { map } from 'rxjs';
+import { ActivatedRoute, NavigationStart, Router } from '@angular/router';
+import { filter, map, switchMap } from 'rxjs';
 import { Operator } from '../operators.config';
 
 export interface SearchUrlParams {
@@ -23,28 +23,15 @@ export class SearchUrlSyncService {
   private readonly _router = inject(Router);
   private readonly _route = inject(ActivatedRoute);
 
-  readonly queryParams$ = this._route.queryParams.pipe(
-    map(
-      p =>
-        ({
-          q: p['q'] || undefined,
-          ontology: p['ontology'] || undefined,
-          class: p['class'] || undefined,
-          filters: p['filters'] || undefined,
-          orderBy: p['orderBy'] || undefined,
-        }) as SearchUrlParams
-    )
+  // Fires only on browser back/forward — the only time full state restore is needed.
+  readonly popstate$ = this._router.events.pipe(
+    filter((e): e is NavigationStart => e instanceof NavigationStart && e.navigationTrigger === 'popstate'),
+    switchMap(() => this._route.queryParams),
+    map(p => this._mapParams(p))
   );
 
   readParams(): SearchUrlParams {
-    const p = this._route.snapshot.queryParams;
-    return {
-      q: p['q'] || undefined,
-      ontology: p['ontology'] || undefined,
-      class: p['class'] || undefined,
-      filters: p['filters'] || undefined,
-      orderBy: p['orderBy'] || undefined,
-    };
+    return this._mapParams(this._route.snapshot.queryParams);
   }
 
   writeState(state: SearchUrlParams): void {
@@ -88,6 +75,16 @@ export class SearchUrlSyncService {
         value,
       };
     });
+  }
+
+  private _mapParams(p: Record<string, string>): SearchUrlParams {
+    return {
+      q: p['q'] || undefined,
+      ontology: p['ontology'] || undefined,
+      class: p['class'] || undefined,
+      filters: p['filters'] || undefined,
+      orderBy: p['orderBy'] || undefined,
+    };
   }
 
   private _toQueryParams(state: SearchUrlParams): Record<string, string | null> {
