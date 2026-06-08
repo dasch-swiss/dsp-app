@@ -269,10 +269,27 @@ jobs:
       needs.changes.outputs.automation_skip == 'false' &&
       needs.changes.outputs.only_workflows == 'false'
     steps:
+      # Mint a short-lived GitHub App token (DaSCH Bot App) scoped to dsp-app.
+      # Used by checkout — so the `git push` below pushes AS the App, not the
+      # built-in GITHUB_TOKEN — and by `gh pr create`. Pushes made with an App
+      # token DO trigger the `on: push` CI that produces the required checks;
+      # GITHUB_TOKEN pushes are suppressed by GitHub's recursion guard, which
+      # left those checks unreported and the spec-bump PRs permanently BLOCKED.
+      # SHA-pinned (v3 == bcd2ba4) since this action handles private-key material.
+      - name: Mint App token (write — dsp-app only)
+        id: app-token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1  # v3
+        with:
+          app-id: ${{ secrets.DASCH_BOT_APP_ID }}
+          private-key: ${{ secrets.DASCH_BOT_APP_PRIVATE_KEY }}
+          owner: dasch-swiss
+          repositories: dsp-app
+          permission-contents: write
+          permission-pull-requests: write
       - name: Checkout
         uses: actions/checkout@v6
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ steps.app-token.outputs.token }}
       - name: Set up yq
         uses: mikefarah/yq@v4
       - id: check
@@ -319,8 +336,13 @@ jobs:
             echo "Open PR already exists for dsp-api version ${REMOTE_VERSION} — skipping PR creation."
             exit 0
           fi
-          git config user.name "daschbot"
-          git config user.email "daschbot@dasch.swiss"
+          # Commit as the App's bot identity. GitHub's noreply email format is
+          # <bot-user-id>+<slug>[bot]@users.noreply.github.com (bot-user-id is the
+          # numeric user id, NOT the App id); resolved dynamically so a future App
+          # rename can't silently break attribution.
+          BOT_USER_ID=$(gh api "/users/${APP_SLUG}[bot]" --jq .id)
+          git config user.name "${APP_SLUG}[bot]"
+          git config user.email "${BOT_USER_ID}+${APP_SLUG}[bot]@users.noreply.github.com"
           cp "$SPEC" /tmp/updated-spec.yaml
           BRANCH="chore/update-dsp-api-openapi-spec-$(date +%Y%m%d-%H%M%S)"
           git checkout -b "$BRANCH" origin/main
@@ -335,7 +357,8 @@ jobs:
             --label "dsp-api" \
             --base main
         env:
-          GH_TOKEN: ${{ secrets.DASCHBOT_PAT }}
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          APP_SLUG: ${{ steps.app-token.outputs.app-slug }}
 
   storybook-tests:
     name: Storybook Interaction Tests
