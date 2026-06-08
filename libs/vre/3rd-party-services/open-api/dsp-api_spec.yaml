@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: DSP-API
-  version: v35.9.0-6-g4f0f308
+  version: v35.10.0-13-g4349516
   summary: DSP-API is part of the DaSCH Service Platform, a repository for the long-term
     preservation and reuse of data in the humanities.
   contact:
@@ -4697,7 +4697,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/6ZTcDAqLSTOUgKfcAVZoog
+        example: http://rdfh.ch/users/e_uOlZ1qQ-iDahTTDaJ8fg
       responses:
         '200':
           description: ''
@@ -4755,7 +4755,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/6ZTcDAqLSTOUgKfcAVZoog
+        example: http://rdfh.ch/users/e_uOlZ1qQ-iDahTTDaJ8fg
       responses:
         '200':
           description: ''
@@ -4813,7 +4813,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/6ZTcDAqLSTOUgKfcAVZoog
+        example: http://rdfh.ch/users/e_uOlZ1qQ-iDahTTDaJ8fg
       responses:
         '200':
           description: ''
@@ -4984,7 +4984,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/6ZTcDAqLSTOUgKfcAVZoog
+        example: http://rdfh.ch/users/e_uOlZ1qQ-iDahTTDaJ8fg
       responses:
         '200':
           description: ''
@@ -5044,7 +5044,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/6ZTcDAqLSTOUgKfcAVZoog
+        example: http://rdfh.ch/users/e_uOlZ1qQ-iDahTTDaJ8fg
       responses:
         '200':
           description: ''
@@ -5230,7 +5230,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/6ZTcDAqLSTOUgKfcAVZoog
+        example: http://rdfh.ch/users/e_uOlZ1qQ-iDahTTDaJ8fg
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -5297,7 +5297,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/6ZTcDAqLSTOUgKfcAVZoog
+        example: http://rdfh.ch/users/e_uOlZ1qQ-iDahTTDaJ8fg
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -5365,7 +5365,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/6ZTcDAqLSTOUgKfcAVZoog
+        example: http://rdfh.ch/users/e_uOlZ1qQ-iDahTTDaJ8fg
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -5432,7 +5432,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/6ZTcDAqLSTOUgKfcAVZoog
+        example: http://rdfh.ch/users/e_uOlZ1qQ-iDahTTDaJ8fg
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -5500,7 +5500,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/6ZTcDAqLSTOUgKfcAVZoog
+        example: http://rdfh.ch/users/e_uOlZ1qQ-iDahTTDaJ8fg
       - name: groupIri
         in: path
         description: The IRI of a group. Must be URL-encoded.
@@ -5567,7 +5567,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/6ZTcDAqLSTOUgKfcAVZoog
+        example: http://rdfh.ch/users/e_uOlZ1qQ-iDahTTDaJ8fg
       - name: groupIri
         in: path
         description: The IRI of a group. Must be URL-encoded.
@@ -5635,7 +5635,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/6ZTcDAqLSTOUgKfcAVZoog
+        example: http://rdfh.ch/users/e_uOlZ1qQ-iDahTTDaJ8fg
       requestBody:
         content:
           application/json:
@@ -5702,7 +5702,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/6ZTcDAqLSTOUgKfcAVZoog
+        example: http://rdfh.ch/users/e_uOlZ1qQ-iDahTTDaJ8fg
       requestBody:
         content:
           application/json:
@@ -5769,7 +5769,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/6ZTcDAqLSTOUgKfcAVZoog
+        example: http://rdfh.ch/users/e_uOlZ1qQ-iDahTTDaJ8fg
       requestBody:
         content:
           application/json:
@@ -5836,7 +5836,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/6ZTcDAqLSTOUgKfcAVZoog
+        example: http://rdfh.ch/users/e_uOlZ1qQ-iDahTTDaJ8fg
       requestBody:
         content:
           application/json:
@@ -6083,7 +6083,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/lists/0001/_WW78UKASIKpjuUuIduvpw
+        example: http://rdfh.ch/lists/0001/HJHy51grQBWUzsHXdwEUOw
       - name: x-knora-accept-schema
         in: header
         description: |-
@@ -6196,7 +6196,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/lists/0001/_WW78UKASIKpjuUuIduvpw
+        example: http://rdfh.ch/lists/0001/HJHy51grQBWUzsHXdwEUOw
       - name: x-knora-accept-schema
         in: header
         description: |-
@@ -14474,6 +14474,319 @@ paths:
                         projectIri: example_projectIri
       security:
       - httpAuth: []
+  /v3/projects/{projectIri}/data-imports:
+    post:
+      tags:
+      - API v3
+      description: 'Initiates an import of a project''s data graph from a knora-api
+        JSON-LD payload. The import will be performed asynchronously, and the response
+        will contain an import ID that can be used to check the status of the import.
+        The import is create-only: it fails if the project already has a data graph.
+        An import can only be triggered when no other data-graph import exists.'
+      operationId: postV3ProjectsProjectiriData-imports
+      parameters:
+      - name: projectIri
+        in: path
+        description: The IRI of a project. Must be URL-encoded.
+        required: true
+        schema:
+          type: string
+        example: http://rdfh.ch/projects/0001
+      requestBody:
+        description: The project's data graph as knora-api (v2 external) JSON-LD
+        content:
+          application/ld+json:
+            schema:
+              type: string
+              format: binary
+        required: true
+      responses:
+        '202':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataTaskStatusResponse'
+        '400':
+          description: 'Invalid value for: body'
+          content:
+            text/plain:
+              schema:
+                type: string
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+              example:
+                message: Invalid token.
+                errors: []
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+              example:
+                message: User not active.
+                errors: []
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+              examples:
+                project_not_found:
+                  description: |-
+                    Example template string for code `project_not_found`:
+                    ```
+                    The project '{id}' was not found.
+                    ```
+                  value:
+                    message: The project '{id}' was not found.
+                    errors:
+                    - code: project_not_found
+                      message: The project '{id}' was not found.
+                      details:
+                        id: example_id
+                feature_missing:
+                  description: |-
+                    Example template string for code `feature_missing`:
+                    ```
+                    The required feature '{name}' is missing. Ask your system administrator to enable it.
+                    ```
+                  value:
+                    message: The required feature '{name}' is missing. Ask your system
+                      administrator to enable it.
+                    errors:
+                    - code: feature_missing
+                      message: The required feature '{name}' is missing. Ask your
+                        system administrator to enable it.
+                      details:
+                        name: example_name
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conflict'
+              examples:
+                import_exists:
+                  description: |-
+                    Example template string for code `import_exists`:
+                    ```
+                    Import '{id}' exists for project '{projectIri}'.
+                    ```
+                  value:
+                    message: Import '{id}' exists for project '{projectIri}'.
+                    errors:
+                    - code: import_exists
+                      message: Import '{id}' exists for project '{projectIri}'.
+                      details:
+                        id: example_id
+                        projectIri: example_projectIri
+                data_graph_exists:
+                  description: |-
+                    Example template string for code `data_graph_exists`:
+                    ```
+                    The data graph for project '{projectIri}' already exists.
+                    ```
+                  value:
+                    message: The data graph for project '{projectIri}' already exists.
+                    errors:
+                    - code: data_graph_exists
+                      message: The data graph for project '{projectIri}' already exists.
+                      details:
+                        projectIri: example_projectIri
+      security:
+      - httpAuth: []
+  /v3/projects/{projectIri}/data-imports/{importId}:
+    get:
+      tags:
+      - API v3
+      description: Checks the status of a data-graph import. The response will indicate
+        whether the import is still in progress, has completed successfully, or has
+        failed.
+      operationId: getV3ProjectsProjectiriData-importsImportid
+      parameters:
+      - name: projectIri
+        in: path
+        description: The IRI of a project. Must be URL-encoded.
+        required: true
+        schema:
+          type: string
+        example: http://rdfh.ch/projects/0001
+      - name: importId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataTaskStatusResponse'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+              example:
+                message: Invalid token.
+                errors: []
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+              example:
+                message: User not active.
+                errors: []
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+              examples:
+                import_not_found:
+                  description: |-
+                    Example template string for code `import_not_found`:
+                    ```
+                    The import '{id}' in project '{projectIri}' was not found.
+                    ```
+                  value:
+                    message: The import '{id}' in project '{projectIri}' was not found.
+                    errors:
+                    - code: import_not_found
+                      message: The import '{id}' in project '{projectIri}' was not
+                        found.
+                      details:
+                        id: example_id
+                        projectIri: example_projectIri
+                feature_missing:
+                  description: |-
+                    Example template string for code `feature_missing`:
+                    ```
+                    The required feature '{name}' is missing. Ask your system administrator to enable it.
+                    ```
+                  value:
+                    message: The required feature '{name}' is missing. Ask your system
+                      administrator to enable it.
+                    errors:
+                    - code: feature_missing
+                      message: The required feature '{name}' is missing. Ask your
+                        system administrator to enable it.
+                      details:
+                        name: example_name
+      security:
+      - httpAuth: []
+    delete:
+      tags:
+      - API v3
+      description: Deletes a data-graph import. Only imports in state failed or completed
+        can be deleted. If it is still in progress, the response will be 409 Conflict.
+      operationId: deleteV3ProjectsProjectiriData-importsImportid
+      parameters:
+      - name: projectIri
+        in: path
+        description: The IRI of a project. Must be URL-encoded.
+        required: true
+        schema:
+          type: string
+        example: http://rdfh.ch/projects/0001
+      - name: importId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: ''
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+              example:
+                message: Invalid token.
+                errors: []
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+              example:
+                message: User not active.
+                errors: []
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+              examples:
+                import_not_found:
+                  description: |-
+                    Example template string for code `import_not_found`:
+                    ```
+                    The import '{id}' in project '{projectIri}' was not found.
+                    ```
+                  value:
+                    message: The import '{id}' in project '{projectIri}' was not found.
+                    errors:
+                    - code: import_not_found
+                      message: The import '{id}' in project '{projectIri}' was not
+                        found.
+                      details:
+                        id: example_id
+                        projectIri: example_projectIri
+                feature_missing:
+                  description: |-
+                    Example template string for code `feature_missing`:
+                    ```
+                    The required feature '{name}' is missing. Ask your system administrator to enable it.
+                    ```
+                  value:
+                    message: The required feature '{name}' is missing. Ask your system
+                      administrator to enable it.
+                    errors:
+                    - code: feature_missing
+                      message: The required feature '{name}' is missing. Ask your
+                        system administrator to enable it.
+                      details:
+                        name: example_name
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conflict'
+              examples:
+                import_in_progress:
+                  description: |-
+                    Example template string for code `import_in_progress`:
+                    ```
+                    Import '{id}' in progress for project '{projectIri}'.
+                    ```
+                  value:
+                    message: Import '{id}' in progress for project '{projectIri}'.
+                    errors:
+                    - code: import_in_progress
+                      message: Import '{id}' in progress for project '{projectIri}'.
+                      details:
+                        id: example_id
+                        projectIri: example_projectIri
+      security:
+      - httpAuth: []
   /version:
     get:
       tags:
@@ -14488,12 +14801,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/VersionResponse'
               example:
-                webapi: v35.9.0-6-g4f0f308
-                buildCommit: 4f0f30876
-                buildTime: '2026-05-29T13:57:30Z'
+                webapi: v35.10.0-13-g4349516
+                buildCommit: 4349516bb
+                buildTime: '2026-06-08T12:19:40Z'
                 fuseki: 6.1.0-0
                 scala: 3.3.7
-                sipi: v4.1.1
+                sipi: v5.0.1
                 name: version
         '400':
           description: ''
@@ -16551,6 +16864,7 @@ components:
       type: string
       enum:
       - class_not_found
+      - data_graph_exists
       - export_exists
       - export_failed
       - export_in_progress
