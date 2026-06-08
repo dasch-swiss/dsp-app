@@ -269,10 +269,27 @@ jobs:
       needs.changes.outputs.automation_skip == 'false' &&
       needs.changes.outputs.only_workflows == 'false'
     steps:
+      # Mint a short-lived GitHub App token (DaSCH Bot App) scoped to dsp-app.
+      # Used by checkout — so the `git push` below pushes AS the App, not the
+      # built-in GITHUB_TOKEN — and by `gh pr create`. Pushes made with an App
+      # token DO trigger the `on: push` CI that produces the required checks;
+      # GITHUB_TOKEN pushes are suppressed by GitHub's recursion guard, which
+      # left those checks unreported and the spec-bump PRs permanently BLOCKED.
+      # SHA-pinned (v3 == bcd2ba4) since this action handles private-key material.
+      - name: Mint App token (write — dsp-app only)
+        id: app-token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1  # v3
+        with:
+          app-id: ${{ secrets.DASCH_BOT_APP_ID }}
+          private-key: ${{ secrets.DASCH_BOT_APP_PRIVATE_KEY }}
+          owner: dasch-swiss
+          repositories: dsp-app
+          permission-contents: write
+          permission-pull-requests: write
       - name: Checkout
         uses: actions/checkout@v6
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ steps.app-token.outputs.token }}
       - name: Set up yq
         uses: mikefarah/yq@v4
       - id: check
@@ -314,13 +331,26 @@ jobs:
             exit 0
           fi
           PR_TITLE="chore(open-api): bump dsp-api spec ${LOCAL_VERSION} → ${REMOTE_VERSION}"
-          EXISTING=$(gh pr list --state open --json title --jq "[.[] | select(.title == \"${PR_TITLE}\")] | length")
+          # Dedup on the bot's branch namespace, NOT the exact title. The title
+          # embeds the full `git describe` version (e.g. v35.10.0-13-g4349516);
+          # any new dsp-api commit changes that suffix, so a title-exact check
+          # spawns a fresh PR every time DEV drifts while a bump PR is still open
+          # (e.g. #3153 then #3154 when a dsp-api release landed between two CI
+          # runs). Allow at most ONE open spec-bump PR; once it merges/closes the
+          # next run picks up the latest DEV version.
+          EXISTING=$(gh pr list --state open --json headRefName \
+            --jq '[.[] | select(.headRefName | startswith("chore/update-dsp-api-openapi-spec-"))] | length')
           if [ "$EXISTING" -gt 0 ]; then
-            echo "Open PR already exists for dsp-api version ${REMOTE_VERSION} — skipping PR creation."
+            echo "An open dsp-api spec-bump PR already exists — skipping (it will be superseded once merged/closed)."
             exit 0
           fi
-          git config user.name "daschbot"
-          git config user.email "daschbot@dasch.swiss"
+          # Commit as the App's bot identity. GitHub's noreply email format is
+          # <bot-user-id>+<slug>[bot]@users.noreply.github.com (bot-user-id is the
+          # numeric user id, NOT the App id); resolved dynamically so a future App
+          # rename can't silently break attribution.
+          BOT_USER_ID=$(gh api "/users/${APP_SLUG}[bot]" --jq .id)
+          git config user.name "${APP_SLUG}[bot]"
+          git config user.email "${BOT_USER_ID}+${APP_SLUG}[bot]@users.noreply.github.com"
           cp "$SPEC" /tmp/updated-spec.yaml
           BRANCH="chore/update-dsp-api-openapi-spec-$(date +%Y%m%d-%H%M%S)"
           git checkout -b "$BRANCH" origin/main
@@ -330,12 +360,25 @@ jobs:
           git push origin "$BRANCH"
           gh pr create \
             --title "${PR_TITLE}" \
-            --body "Automated spec update detected by CI. Review diff and merge when the frontend is ready to adopt the new API." \
+            --body "Automated spec update detected by CI. Auto-merges once the required checks pass; a breaking change the APP uses fails compilation and blocks the merge." \
             --label "dependencies" \
             --label "dsp-api" \
             --base main
+          # Enable auto-merge: the PR squash-merges itself once required checks
+          # are green. No review gate because the DaSCH Bot App is a bypass actor
+          # for the required-review rule on main (branch protection / ruleset).
+          PR_URL=$(gh pr list --head "$BRANCH" --state open --json url --jq '.[0].url // empty')
+          if [ -z "$PR_URL" ]; then
+            echo "::error::No open PR found for branch ${BRANCH} after create."
+            exit 1
+          fi
+          if ! gh pr merge --auto --squash "$PR_URL"; then
+            echo "::warning::Enabling auto-merge failed; current state:"
+            gh pr view "$PR_URL" --json autoMergeRequest --jq .autoMergeRequest || true
+          fi
         env:
-          GH_TOKEN: ${{ secrets.DASCHBOT_PAT }}
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          APP_SLUG: ${{ steps.app-token.outputs.app-slug }}
 
   storybook-tests:
     name: Storybook Interaction Tests
