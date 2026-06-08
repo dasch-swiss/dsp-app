@@ -331,9 +331,17 @@ jobs:
             exit 0
           fi
           PR_TITLE="chore(open-api): bump dsp-api spec ${LOCAL_VERSION} → ${REMOTE_VERSION}"
-          EXISTING=$(gh pr list --state open --json title --jq "[.[] | select(.title == \"${PR_TITLE}\")] | length")
+          # Dedup on the bot's branch namespace, NOT the exact title. The title
+          # embeds the full `git describe` version (e.g. v35.10.0-13-g4349516);
+          # any new dsp-api commit changes that suffix, so a title-exact check
+          # spawns a fresh PR every time DEV drifts while a bump PR is still open
+          # (e.g. #3153 then #3154 when a dsp-api release landed between two CI
+          # runs). Allow at most ONE open spec-bump PR; once it merges/closes the
+          # next run picks up the latest DEV version.
+          EXISTING=$(gh pr list --state open --json headRefName \
+            --jq '[.[] | select(.headRefName | startswith("chore/update-dsp-api-openapi-spec-"))] | length')
           if [ "$EXISTING" -gt 0 ]; then
-            echo "Open PR already exists for dsp-api version ${REMOTE_VERSION} — skipping PR creation."
+            echo "An open dsp-api spec-bump PR already exists — skipping (it will be superseded once merged/closed)."
             exit 0
           fi
           # Commit as the App's bot identity. GitHub's noreply email format is
