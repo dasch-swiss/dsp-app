@@ -1,5 +1,19 @@
 # Changelog
 
+## [13.5.1](https://github.com/dasch-swiss/dsp-app/compare/v13.5.0...v13.5.1) (2026-06-08)
+
+
+### Maintenances
+
+* **deps:** Lock file maintenance ([#3152](https://github.com/dasch-swiss/dsp-app/issues/3152)) ([48dec18](https://github.com/dasch-swiss/dsp-app/commit/48dec1880f8525f1b5cf99c980772e88c66babe6))
+* **deps:** Update angular-ecosystem-deps from 10.6.1 to 10.7.0 ([#3150](https://github.com/dasch-swiss/dsp-app/issues/3150)) ([27f2f86](https://github.com/dasch-swiss/dsp-app/commit/27f2f865b5285680bec54063b4c6464946af07e8))
+* **deps:** Update dependency @sentry/cli from 3.4.3 to 3.5.0 ([#3151](https://github.com/dasch-swiss/dsp-app/issues/3151)) ([ef68ba5](https://github.com/dasch-swiss/dsp-app/commit/ef68ba59c8b7dd2e6bfe2fb0500894a83e697877))
+* **deps:** Update dependency ng-mocks from 14.15.2 to 14.15.3 ([#3146](https://github.com/dasch-swiss/dsp-app/issues/3146)) ([e01a838](https://github.com/dasch-swiss/dsp-app/commit/e01a83859519c1985d7047b7c95d5443c1938c48))
+* **deps:** Update docker-deps to v13.0.2 ([#3148](https://github.com/dasch-swiss/dsp-app/issues/3148)) ([0887712](https://github.com/dasch-swiss/dsp-app/commit/08877127954315fc916439034dbcb3fc0a501f2c))
+* **deps:** Update grafana-faro-deps from 2.7.0 to 2.7.1 ([#3149](https://github.com/dasch-swiss/dsp-app/issues/3149)) ([f6a8c8c](https://github.com/dasch-swiss/dsp-app/commit/f6a8c8c45476450a6913fe44719fe1b17b10b93a))
+* **open-api:** bump dsp-api spec v35.9.0-6-g4f0f308 → v35.10.0-13-g4349516 ([#3156](https://github.com/dasch-swiss/dsp-app/issues/3156)) ([287e789](https://github.com/dasch-swiss/dsp-app/commit/287e7896feeaddb34d8ec3be72192812ff21f783))
+* openapi spec-bump PRs — trigger CI (App token), dedup, auto-merge ([#3155](https://github.com/dasch-swiss/dsp-app/issues/3155)) ([3f3ae96](https://github.com/dasch-swiss/dsp-app/commit/3f3ae96d73233b7eab0266ae40471904ea49c0b9))
+
 ## [13.5.0](https://github.com/dasch-swiss/dsp-app/compare/v13.4.0...v13.5.0) (2026-06-01)
 
 
