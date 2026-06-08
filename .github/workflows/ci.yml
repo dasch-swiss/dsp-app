@@ -372,10 +372,24 @@ jobs:
             echo "::error::No open PR found for branch ${BRANCH} after create."
             exit 1
           fi
-          if ! gh pr merge --auto --squash "$PR_URL"; then
-            echo "::warning::Enabling auto-merge failed; current state:"
-            gh pr view "$PR_URL" --json autoMergeRequest --jq .autoMergeRequest || true
-          fi
+          # Enabling auto-merge immediately after `gh pr create` often fails
+          # while GitHub is still computing mergeability (mergeable: UNKNOWN),
+          # which previously left the PR needing a manual click. Retry until it
+          # sticks. Arming it via the App token (a bypass actor) is what lets the
+          # PR merge without a review once the required checks pass.
+          for attempt in 1 2 3 4 5; do
+            if gh pr merge --auto --squash "$PR_URL"; then
+              echo "Auto-merge enabled (attempt ${attempt})."
+              break
+            fi
+            if [ "$attempt" -eq 5 ]; then
+              echo "::warning::Could not enable auto-merge after ${attempt} attempts; current state:"
+              gh pr view "$PR_URL" --json autoMergeRequest --jq .autoMergeRequest || true
+            else
+              echo "Enabling auto-merge failed (attempt ${attempt}); retrying in 10s…"
+              sleep 10
+            fi
+          done
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
           APP_SLUG: ${{ steps.app-token.outputs.app-slug }}
