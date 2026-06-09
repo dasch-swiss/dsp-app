@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ReadResource, ResourceClassDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
 import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import { MultipleViewerService, ResourceClassCountApi } from '@dasch-swiss/vre/pages/data-browser';
-import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { createMockLocalizationService, LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
 import { provideTranslateService, TranslateService } from '@ngx-translate/core';
@@ -25,7 +25,7 @@ describe('DataClassPanelComponent', () => {
   let mockStringifyPipe: jest.Mocked<StringifyStringLiteralPipe>;
   let mockNotificationService: jest.Mocked<NotificationService>;
   let mockDataBrowserPageService: jest.Mocked<DataBrowserPageService>;
-  let mockLocalizationService: jest.Mocked<LocalizationService>;
+  let mockLocalizationService: Partial<LocalizationService>;
 
   // Mock observables
   let selectedResourcesSubject: BehaviorSubject<ReadResource[]>;
@@ -119,11 +119,7 @@ describe('DataClassPanelComponent', () => {
       reloadNavigation: jest.fn(),
     } as any;
 
-    mockLocalizationService = {} as any;
-    Object.defineProperty(mockLocalizationService, 'currentLanguage', {
-      get: () => 'en',
-      configurable: true,
-    });
+    mockLocalizationService = createMockLocalizationService('en').service;
 
     await TestBed.configureTestingModule({
       imports: [DataClassPanelComponent],

@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { KnoraApiConnection, ReadUser } from '@dasch-swiss/dsp-js';
 import { GrafanaFaroService } from '@dasch-swiss/vre/3rd-party-services/analytics';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
-import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { createMockLocalizationService, LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { firstValueFrom, of, throwError } from 'rxjs';
 import { AccessTokenService } from './access-token.service';
 import { AuthService } from './auth.service';
@@ -68,7 +68,7 @@ describe('AuthService', () => {
   let mockAccessTokenService: jest.Mocked<Partial<AccessTokenService>>;
   let mockDspApiConnection: jest.Mocked<Partial<KnoraApiConnection>>;
   let mockLocalizationService: Partial<LocalizationService>;
-  let assignedLanguage: string | undefined;
+  let setLanguageSpy: jest.Mock<void, [string]>;
   let mockGrafanaFaro: jest.Mocked<Partial<GrafanaFaroService>>;
 
   const mockUser = createMockUser();
@@ -96,14 +96,7 @@ describe('AuthService', () => {
       },
     } as unknown as jest.Mocked<KnoraApiConnection>;
 
-    mockLocalizationService = {};
-    assignedLanguage = undefined;
-    Object.defineProperty(mockLocalizationService, 'currentLanguage', {
-      set: (value: string) => {
-        assignedLanguage = value;
-      },
-      configurable: true,
-    });
+    ({ service: mockLocalizationService, setLanguageSpy } = createMockLocalizationService('en'));
 
     mockGrafanaFaro = {
       trackEvent: jest.fn(),
@@ -153,7 +146,7 @@ describe('AuthService', () => {
       );
 
       expect(mockUserService.loadUser).toHaveBeenCalledWith(TEST_CONSTANTS.EMAIL, 'email');
-      expect(assignedLanguage).toBe(TEST_CONSTANTS.USER_LANG);
+      expect(setLanguageSpy).toHaveBeenCalledWith(TEST_CONSTANTS.USER_LANG);
       expect(user).toEqual(mockUser);
     });
 
@@ -184,7 +177,7 @@ describe('AuthService', () => {
       );
 
       expect(mockUserService.loadUser).toHaveBeenCalledWith(TEST_CONSTANTS.USER_IRI, 'iri');
-      expect(assignedLanguage).toBe(TEST_CONSTANTS.USER_LANG);
+      expect(setLanguageSpy).toHaveBeenCalledWith(TEST_CONSTANTS.USER_LANG);
       expect(user).toEqual(mockUser);
     });
 
@@ -194,7 +187,7 @@ describe('AuthService', () => {
 
       await firstValueFrom(service.afterSuccessfulLogin$(TEST_CONSTANTS.JWT_TOKEN, TEST_CONSTANTS.EMAIL, 'email'));
 
-      expect(assignedLanguage).toBe('de');
+      expect(setLanguageSpy).toHaveBeenCalledWith('de');
     });
   });
 

@@ -6,7 +6,7 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ResourcePropertyDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
 import { BASE_PATH } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
-import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { createMockLocalizationService, LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { provideTranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
@@ -19,7 +19,7 @@ describe('DownloadDialogResourcesTabComponent', () => {
   let events$: Subject<HttpEvent<string>>;
   const basePath = 'http://api.test';
   let mockNotificationService: jest.Mocked<NotificationService>;
-  let mockLocalizationService: jest.Mocked<LocalizationService>;
+  let mockLocalizationService: Partial<LocalizationService>;
 
   let createElementSpy: jest.SpyInstance;
   let appendChildSpy: jest.SpyInstance;
@@ -47,11 +47,7 @@ describe('DownloadDialogResourcesTabComponent', () => {
 
     mockNotificationService = { openSnackBar: jest.fn() } as any;
 
-    mockLocalizationService = {} as any;
-    Object.defineProperty(mockLocalizationService, 'currentLanguage', {
-      get: () => 'en',
-      configurable: true,
-    });
+    mockLocalizationService = createMockLocalizationService('en').service;
 
     createElementSpy = jest.spyOn(document, 'createElement');
     appendChildSpy = jest.spyOn(document.body, 'appendChild');
@@ -166,10 +162,7 @@ describe('DownloadDialogResourcesTabComponent', () => {
     });
 
     it('passes the current language from LocalizationService', () => {
-      Object.defineProperty(mockLocalizationService, 'currentLanguage', {
-        get: () => 'de',
-        configurable: true,
-      });
+      mockLocalizationService.currentLanguage = 'de';
 
       component.downloadCsv();
       expect(mockHttp.post).toHaveBeenCalledWith(
