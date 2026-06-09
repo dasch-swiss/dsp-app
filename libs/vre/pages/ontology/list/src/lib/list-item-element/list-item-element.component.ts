@@ -1,8 +1,9 @@
-import { Component, forwardRef, Input, OnChanges } from '@angular/core';
+import { Component, forwardRef, inject, Input, OnChanges } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { ListNode } from '@dasch-swiss/dsp-js';
 import { ensureWithDefaultLanguage } from '@dasch-swiss/vre/3rd-party-services/open-api';
+import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
 import {
   DEFAULT_MULTILANGUAGE_FORM,
   MultiLanguageFormArray,
@@ -10,7 +11,6 @@ import {
   StringifyStringLiteralPipe,
 } from '@dasch-swiss/vre/ui/string-literal';
 import { TruncatePipe } from '@dasch-swiss/vre/ui/ui';
-import { TranslateService } from '@ngx-translate/core';
 import { ActionBubbleComponent } from '../action-bubble/action-bubble.component';
 import { ListItemComponent } from '../list-item/list-item.component';
 
@@ -65,7 +65,7 @@ export class ListItemElementComponent implements OnChanges {
 
   readOnlyFormArray: MultiLanguageFormArray = DEFAULT_MULTILANGUAGE_FORM([]);
 
-  constructor(private readonly _translate: TranslateService) {}
+  private readonly _localizationService = inject(LocalizationService);
 
   ngOnChanges() {
     this.buildForm();
@@ -73,7 +73,7 @@ export class ListItemElementComponent implements OnChanges {
 
   private buildForm() {
     this.readOnlyFormArray = DEFAULT_MULTILANGUAGE_FORM(
-      ensureWithDefaultLanguage(this.node.labels, this._translate.currentLang)
+      ensureWithDefaultLanguage(this.node.labels, this._localizationService.currentLanguage)
     );
   }
 

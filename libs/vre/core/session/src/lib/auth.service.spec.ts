@@ -67,7 +67,8 @@ describe('AuthService', () => {
   let mockUserService: jest.Mocked<Partial<UserService>>;
   let mockAccessTokenService: jest.Mocked<Partial<AccessTokenService>>;
   let mockDspApiConnection: jest.Mocked<Partial<KnoraApiConnection>>;
-  let mockLocalizationService: jest.Mocked<Partial<LocalizationService>>;
+  let mockLocalizationService: Partial<LocalizationService>;
+  let assignedLanguage: string | undefined;
   let mockGrafanaFaro: jest.Mocked<Partial<GrafanaFaroService>>;
 
   const mockUser = createMockUser();
@@ -80,7 +81,7 @@ describe('AuthService', () => {
 
     mockAccessTokenService = {
       storeToken: jest.fn(),
-      removeTokens: jest.fn(),
+      removeToken: jest.fn(),
       getAccessToken: jest.fn(),
       decodeAccessToken: jest.fn(),
     };
@@ -95,9 +96,14 @@ describe('AuthService', () => {
       },
     } as unknown as jest.Mocked<KnoraApiConnection>;
 
-    mockLocalizationService = {
-      setLanguage: jest.fn(),
-    };
+    mockLocalizationService = {};
+    assignedLanguage = undefined;
+    Object.defineProperty(mockLocalizationService, 'currentLanguage', {
+      set: (value: string) => {
+        assignedLanguage = value;
+      },
+      configurable: true,
+    });
 
     mockGrafanaFaro = {
       trackEvent: jest.fn(),
@@ -147,7 +153,7 @@ describe('AuthService', () => {
       );
 
       expect(mockUserService.loadUser).toHaveBeenCalledWith(TEST_CONSTANTS.EMAIL, 'email');
-      expect(mockLocalizationService.setLanguage).toHaveBeenCalledWith(TEST_CONSTANTS.USER_LANG);
+      expect(assignedLanguage).toBe(TEST_CONSTANTS.USER_LANG);
       expect(user).toEqual(mockUser);
     });
 
@@ -178,7 +184,7 @@ describe('AuthService', () => {
       );
 
       expect(mockUserService.loadUser).toHaveBeenCalledWith(TEST_CONSTANTS.USER_IRI, 'iri');
-      expect(mockLocalizationService.setLanguage).toHaveBeenCalledWith(TEST_CONSTANTS.USER_LANG);
+      expect(assignedLanguage).toBe(TEST_CONSTANTS.USER_LANG);
       expect(user).toEqual(mockUser);
     });
 
@@ -188,7 +194,7 @@ describe('AuthService', () => {
 
       await firstValueFrom(service.afterSuccessfulLogin$(TEST_CONSTANTS.JWT_TOKEN, TEST_CONSTANTS.EMAIL, 'email'));
 
-      expect(mockLocalizationService.setLanguage).toHaveBeenCalledWith('de');
+      expect(assignedLanguage).toBe('de');
     });
   });
 
@@ -197,7 +203,7 @@ describe('AuthService', () => {
       service.afterLogout();
 
       expect(mockUserService.logout).toHaveBeenCalled();
-      expect(mockAccessTokenService.removeTokens).toHaveBeenCalled();
+      expect(mockAccessTokenService.removeToken).toHaveBeenCalled();
     });
 
     it('should clear JWT token', () => {

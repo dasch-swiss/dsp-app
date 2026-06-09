@@ -5,6 +5,7 @@ import { MatDialogActions, MatDialogClose, MatDialogContent, MatDialogRef } from
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { User } from '@dasch-swiss/dsp-js';
 import { UserApiService } from '@dasch-swiss/vre/3rd-party-services/api';
+import { AvailableLanguage } from '@dasch-swiss/vre/core/config';
 import { PasswordConfirmFormComponent, UserForm, UserFormComponent } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { LoadingButtonDirective } from '@dasch-swiss/vre/ui/progress-indicator';
 import { DialogHeaderComponent } from '@dasch-swiss/vre/ui/ui';
@@ -54,7 +55,14 @@ export class CreateUserDialogComponent implements OnInit {
   );
   isLoading = false;
 
-  readonly data = { givenName: '', familyName: '', email: '', username: '', lang: 'en', isSystemAdmin: false };
+  readonly data: {
+    givenName: string;
+    familyName: string;
+    email: string;
+    username: string;
+    lang: AvailableLanguage;
+    isSystemAdmin: boolean;
+  } = { givenName: '', familyName: '', email: '', username: '', lang: 'en', isSystemAdmin: false };
 
   constructor(
     private readonly _dialogRef: MatDialogRef<CreateUserDialogComponent>,

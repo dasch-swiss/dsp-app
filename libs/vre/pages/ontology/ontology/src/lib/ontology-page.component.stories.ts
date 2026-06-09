@@ -47,7 +47,7 @@ const sharedProviders = [
       },
     },
   },
-  { provide: LocalizationService, useValue: { getCurrentLanguage: () => 'en' } },
+  { provide: LocalizationService, useValue: { currentLanguage: 'en', currentLanguage$: of('en') } },
   {
     provide: OntologyService,
     useValue: {

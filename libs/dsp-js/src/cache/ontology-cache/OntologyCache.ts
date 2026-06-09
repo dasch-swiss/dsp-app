@@ -150,7 +150,7 @@ export class OntologyCache extends GenericCache<ReadOntology> {
   }
 
   protected requestItemFromKnora(key: string, isDependency: boolean) {
-    return this.v2Endpoint.onto.getOntology(key).pipe(map((onto: ReadOntology) => [onto]));
+    return this.v2Endpoint.onto.getOntology(key, true).pipe(map((onto: ReadOntology) => [onto]));
   }
 
   protected getKeyOfItem(item: ReadOntology) {

@@ -2,7 +2,6 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatOption, MatSelect } from '@angular/material/select';
-import { StringLiteral } from '@dasch-swiss/dsp-js';
 import { AvailableLanguages } from '@dasch-swiss/vre/core/config';
 import { CustomRegex } from '@dasch-swiss/vre/shared/app-common';
 import { CommonInputComponent } from '@dasch-swiss/vre/ui/ui';
@@ -48,7 +47,7 @@ export class UserFormComponent implements OnInit {
 
   userForm!: UserForm;
 
-  readonly languagesList: StringLiteral[] = AvailableLanguages;
+  readonly languagesList = AvailableLanguages;
 
   readonly emailPatternErrorMsg = {
     errorKey: 'pattern',

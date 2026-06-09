@@ -85,7 +85,7 @@ describe('Check project admin existing resource functionality', () => {
     cy.get('[data-cy=resource-label]').find('[data-cy=common-input-text]').type(newLabel, { force: true });
 
     const newTitle = faker.lorem.word();
-    cy.get('[data-cy=creator-row-Titel]').find('[data-cy=common-input-text]').type(newTitle);
+    cy.get('[data-cy*="creator-row-"][data-cy$="hasPictureTitle"]').find('[data-cy=common-input-text]').type(newTitle);
     cy.get('[data-cy="submit-button"]').click();
     cy.wait('@resourceRequest').its('response.statusCode').should('eq', 200);
 

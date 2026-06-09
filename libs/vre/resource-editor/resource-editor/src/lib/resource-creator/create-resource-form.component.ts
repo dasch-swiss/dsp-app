@@ -13,6 +13,7 @@ import {
   ResourceClassAndPropertyDefinitions,
   ResourceClassDefinitionWithPropertyDefinition,
   ResourcePropertyDefinition,
+  ResourcePropertyDefinitionWithAllLanguages,
 } from '@dasch-swiss/dsp-js';
 import { ApiConstants, DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
@@ -189,7 +190,11 @@ export class CreateResourceFormComponent implements OnInit {
           .getResourcePropertiesList()
           .filter(v => v.propertyIndex.indexOf(ApiConstants.apiKnoraOntologyUrl))
           .map(v => {
-            return { guiDef: v, propDef: v.propertyDefinition, values: [] };
+            return {
+              guiDef: v,
+              propDef: v.propertyDefinition as ResourcePropertyDefinitionWithAllLanguages,
+              values: [],
+            };
           });
 
         this._buildForm();

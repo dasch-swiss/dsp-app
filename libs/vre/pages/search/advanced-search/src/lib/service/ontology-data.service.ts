@@ -8,6 +8,7 @@ import {
   ResourcePropertyDefinition,
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
+import { LocalizationService, SortingHelper } from '@dasch-swiss/vre/shared/app-helper-services';
 import { BehaviorSubject, combineLatest, filter, map, Observable, of, startWith, switchMap, tap } from 'rxjs';
 import { RDFS_LABEL, ResourceLabel, SEARCH_ALL_RESOURCE_CLASSES_OPTION } from '../constants';
 import { IriLabelPair, Predicate } from '../model';
@@ -28,7 +29,8 @@ export class OntologyDataService {
   constructor(
     @Inject(DspApiConnectionToken)
     private readonly _dspApiConnection: KnoraApiConnection,
-    private readonly _destroyRef: DestroyRef
+    private readonly _destroyRef: DestroyRef,
+    private readonly _localizationService: LocalizationService
   ) {}
 
   init(projectIri: string, ontology?: IriLabelPair) {
@@ -61,13 +63,16 @@ export class OntologyDataService {
       });
   }
 
-  private _resourceClassDefinitions$ = this.selectedOntology$.pipe(
-    filter((o): o is ReadOntology => o !== null),
-    map(o => o.getClassDefinitionsByType(ResourceClassDefinitionWithAllLanguages)),
-    map(xs =>
-      [...xs].sort((a: ResourceClassDefinitionWithAllLanguages, b: ResourceClassDefinitionWithAllLanguages) =>
-        (a.label || '').localeCompare(b.label || '')
-      )
+  private _resourceClassDefinitions$ = combineLatest([
+    this.selectedOntology$.pipe(filter((o): o is ReadOntology => o !== null)),
+    this._localizationService.currentLanguage$,
+  ]).pipe(
+    map(([o, lang]) => ({
+      classes: o.getClassDefinitionsByType(ResourceClassDefinitionWithAllLanguages),
+      lang,
+    })),
+    map(({ classes, lang }) =>
+      [...classes].sort((a, b) => SortingHelper.compareStringsByLanguage(a.label, b.label, lang))
     )
   );
 
@@ -117,15 +122,17 @@ export class OntologyDataService {
       )
     );
 
-  private _propertyDefinitions$: Observable<ResourcePropertyDefinition[]> = this.selectedOntology$.pipe(
-    filter((o): o is ReadOntology => o !== null),
-    map(o => o.getPropertyDefinitionsByType(ResourcePropertyDefinition)),
-    map(props => props.filter(propDef => propDef.isEditable && !propDef.isLinkValueProperty)),
-    map(xs =>
-      [...xs].sort((a: ResourcePropertyDefinition, b: ResourcePropertyDefinition) =>
-        (a.label || '').localeCompare(b.label || '')
-      )
-    )
+  private _propertyDefinitions$: Observable<ResourcePropertyDefinition[]> = combineLatest([
+    this.selectedOntology$.pipe(filter((o): o is ReadOntology => o !== null)),
+    this._localizationService.currentLanguage$,
+  ]).pipe(
+    map(([o, lang]) => ({
+      props: o
+        .getPropertyDefinitionsByType(ResourcePropertyDefinition)
+        .filter(propDef => propDef.isEditable && !propDef.isLinkValueProperty),
+      lang,
+    })),
+    map(({ props, lang }) => [...props].sort((a, b) => SortingHelper.compareStringsByLanguage(a.label, b.label, lang)))
   );
 
   getProperties$(classIri?: string): Observable<Predicate[]> {

@@ -1,7 +1,11 @@
-import { IHasPropertyWithPropertyDefinition, PropertyDefinition, ReadValue } from '@dasch-swiss/dsp-js';
+import {
+  IHasPropertyWithPropertyDefinition,
+  ReadValue,
+  ResourcePropertyDefinitionWithAllLanguages,
+} from '@dasch-swiss/dsp-js';
 
 export interface PropertyInfoValues {
   guiDef: IHasPropertyWithPropertyDefinition;
-  propDef: PropertyDefinition;
+  propDef: ResourcePropertyDefinitionWithAllLanguages;
   values: ReadValue[];
 }

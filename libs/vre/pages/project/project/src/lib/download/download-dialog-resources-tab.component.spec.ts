@@ -43,7 +43,12 @@ describe('DownloadDialogResourcesTabComponent', () => {
     } as unknown as jest.Mocked<HttpClient>;
 
     mockNotificationService = { openSnackBar: jest.fn() } as any;
-    mockLocalizationService = { getCurrentLanguage: jest.fn().mockReturnValue('en') } as any;
+
+    mockLocalizationService = {} as any;
+    Object.defineProperty(mockLocalizationService, 'currentLanguage', {
+      get: () => 'en',
+      configurable: true,
+    });
 
     createElementSpy = jest.spyOn(document, 'createElement');
     appendChildSpy = jest.spyOn(document.body, 'appendChild');
@@ -158,7 +163,11 @@ describe('DownloadDialogResourcesTabComponent', () => {
     });
 
     it('passes the current language from LocalizationService', () => {
-      mockLocalizationService.getCurrentLanguage.mockReturnValue('de');
+      Object.defineProperty(mockLocalizationService, 'currentLanguage', {
+        get: () => 'de',
+        configurable: true,
+      });
+
       component.downloadCsv();
       expect(mockHttp.post).toHaveBeenCalledWith(
         `${basePath}/v3/export/resources`,

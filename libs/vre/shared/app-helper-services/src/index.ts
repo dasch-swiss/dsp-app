@@ -5,3 +5,4 @@ export * from './lib/project.service';
 export * from './lib/sorting.helper';
 export * from './lib/localization.service';
 export * from './lib/resource-result.service';
+export * from './lib/pick-preferred-label';

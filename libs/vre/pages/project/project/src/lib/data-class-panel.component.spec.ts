@@ -119,10 +119,11 @@ describe('DataClassPanelComponent', () => {
       reloadNavigation: jest.fn(),
     } as any;
 
-    mockLocalizationService = {
-      getCurrentLanguage: jest.fn().mockReturnValue('en'),
-      getLanguageFromBrowser: jest.fn().mockReturnValue('en'),
-    } as any;
+    mockLocalizationService = {} as any;
+    Object.defineProperty(mockLocalizationService, 'currentLanguage', {
+      get: () => 'en',
+      configurable: true,
+    });
 
     await TestBed.configureTestingModule({
       imports: [DataClassPanelComponent],

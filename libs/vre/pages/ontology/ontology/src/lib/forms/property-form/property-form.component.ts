@@ -122,7 +122,7 @@ export class PropertyFormComponent implements OnInit {
 
     const defaultData = [
       {
-        language: this._localizationService.getCurrentLanguage(),
+        language: this._localizationService.currentLanguage,
         value: '',
       },
     ];
@@ -147,13 +147,13 @@ export class PropertyFormComponent implements OnInit {
       ),
       labels: DEFAULT_MULTILANGUAGE_FORM(
         this.propertyData.label
-          ? ensureWithDefaultLanguage(this.propertyData.label, this._localizationService.getCurrentLanguage())
+          ? ensureWithDefaultLanguage(this.propertyData.label, this._localizationService.currentLanguage)
           : defaultData,
         [Validators.required]
       ),
       comments: DEFAULT_MULTILANGUAGE_FORM(
         this.propertyData.comment
-          ? ensureWithDefaultLanguage(this.propertyData.comment, this._localizationService.getCurrentLanguage())
+          ? ensureWithDefaultLanguage(this.propertyData.comment, this._localizationService.currentLanguage)
           : defaultData,
         [Validators.required]
       ),
