@@ -6,7 +6,6 @@ import { LocalizationService } from './localization.service';
 describe('LocalizationService', () => {
   let service: LocalizationService;
   let translateService: {
-    getCurrentLang: jest.Mock;
     getBrowserLang: jest.Mock;
     use: jest.Mock;
   };
@@ -15,7 +14,6 @@ describe('LocalizationService', () => {
     localStorage.clear();
 
     translateService = {
-      getCurrentLang: jest.fn().mockReturnValue('en'),
       getBrowserLang: jest.fn().mockReturnValue(undefined),
       use: jest.fn(),
     };
@@ -79,6 +77,22 @@ describe('LocalizationService', () => {
       service.init();
 
       expect(JSON.parse(localStorage.getItem(LocalStorageLanguageKey) as string)).toBe('it');
+    });
+
+    it('does not throw and falls back to the default when localStorage contains malformed JSON', () => {
+      localStorage.setItem(LocalStorageLanguageKey, '{not-json');
+
+      service.init();
+
+      expect(translateService.use).toHaveBeenCalledWith('en');
+    });
+
+    it('ignores non-string values stored under the language key', () => {
+      localStorage.setItem(LocalStorageLanguageKey, JSON.stringify({ unexpected: 'object' }));
+
+      service.init();
+
+      expect(translateService.use).toHaveBeenCalledWith('en');
     });
   });
 

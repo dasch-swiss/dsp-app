@@ -13,8 +13,14 @@ export class LocalizationService {
   readonly currentLanguage$ = this._currentLanguage$.asObservable();
 
   private get _localStorageLanguage(): string | undefined {
-    const key = localStorage.getItem(LocalStorageLanguageKey);
-    return key ? JSON.parse(key) : undefined;
+    const raw = localStorage.getItem(LocalStorageLanguageKey);
+    if (raw === null) return undefined;
+    try {
+      const parsed = JSON.parse(raw);
+      return typeof parsed === 'string' ? parsed : undefined;
+    } catch {
+      return undefined;
+    }
   }
 
   constructor(private readonly _translateService: TranslateService) {}
