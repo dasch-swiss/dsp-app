@@ -190,6 +190,9 @@ export class CreateResourceFormComponent implements OnInit {
           .getResourcePropertiesList()
           .filter(v => v.propertyIndex.indexOf(ApiConstants.apiKnoraOntologyUrl))
           .map(v => {
+            // Safe cast: the ontology was loaded via OntologyCache.reloadCachedItem above,
+            // which always requests allLanguages=true (see OntologyCache.requestItemFromKnora),
+            // so dsp-js deserializes property definitions as the WithAllLanguages subclass.
             return {
               guiDef: v,
               propDef: v.propertyDefinition as ResourcePropertyDefinitionWithAllLanguages,

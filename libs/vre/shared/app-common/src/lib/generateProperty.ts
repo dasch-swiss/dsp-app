@@ -40,6 +40,9 @@ export class GenerateProperty {
 
   private static _initProps(resource: ReadResource): PropertyInfoValues[] {
     let props = resource.entityInfo.classes[resource.type].getResourcePropertiesList().map(prop => {
+      // Safe cast: ReadResource.entityInfo is populated from OntologyCache, which always
+      // requests allLanguages=true (see OntologyCache.requestItemFromKnora), so property
+      // definitions are deserialized as the WithAllLanguages subclass at runtime.
       const propDef = prop.propertyDefinition as ResourcePropertyDefinitionWithAllLanguages;
       let propInfoAndValues: PropertyInfoValues;
 
