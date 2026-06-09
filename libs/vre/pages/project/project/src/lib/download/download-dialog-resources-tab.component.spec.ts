@@ -3,7 +3,7 @@ import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { PropertyDefinition } from '@dasch-swiss/dsp-js';
+import { ResourcePropertyDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
 import { BASE_PATH } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
 import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
@@ -28,7 +28,10 @@ describe('DownloadDialogResourcesTabComponent', () => {
   let revokeObjectURLSpy: jest.SpyInstance;
 
   const createMockPropertyInfo = (id: string, label: string): PropertyInfoValues => ({
-    propDef: { id, label } as PropertyDefinition,
+    // The component only reads propDef.id / propDef.label / propDef.comment, so a
+    // structural stub is fine. Casting through unknown avoids constructing a full
+    // @JsonObject-decorated ResourcePropertyDefinitionWithAllLanguages.
+    propDef: { id, label } as unknown as ResourcePropertyDefinitionWithAllLanguages,
     guiDef: {} as any,
     values: [],
   });
