@@ -1,5 +1,17 @@
 # Changelog
 
+## [13.5.2](https://github.com/dasch-swiss/dsp-app/compare/v13.5.1...v13.5.2) (2026-06-09)
+
+
+### Bug Fixes
+
+* retry enabling auto-merge on openapi spec-bump PRs ([#3157](https://github.com/dasch-swiss/dsp-app/issues/3157)) ([7fad83d](https://github.com/dasch-swiss/dsp-app/commit/7fad83d798646314db247d60073b4ecec0874c06))
+
+
+### Maintenances
+
+* **deps:** Update github-actions from v6.0.2 to v7.0.0 ([#3159](https://github.com/dasch-swiss/dsp-app/issues/3159)) ([1e5d1a0](https://github.com/dasch-swiss/dsp-app/commit/1e5d1a07d19f6f55f91e320d6db597c25848dd15))
+
 ## [13.5.1](https://github.com/dasch-swiss/dsp-app/compare/v13.5.0...v13.5.1) (2026-06-08)
 
 
