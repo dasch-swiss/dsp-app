@@ -157,7 +157,7 @@ jobs:
           TZ: Europe/Zurich
       - name: Upload coverage reports to Codecov
         if: needs.changes.result == 'success' && needs.changes.outputs.only_pkg == 'false'
-        uses: codecov/codecov-action@v6
+        uses: codecov/codecov-action@v7
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./coverage/lcov.info
