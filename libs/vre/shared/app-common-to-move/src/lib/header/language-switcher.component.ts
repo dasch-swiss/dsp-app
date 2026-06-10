@@ -52,11 +52,8 @@ export class LanguageSwitcherComponent {
 
   selectLanguage(language: AvailableLanguage): void {
     this._localizationService.currentLanguage = language;
-    this._notification.openSnackBar(this._translateService.instant('ui.header.changeLanguageInfo'));
+    this._translateService.get('ui.header.changeLanguageInfo').subscribe(text => this._notification.openSnackBar(text));
 
-    // For logged-in users, silently persist to the user's profile so the
-    // preference follows them across devices. No confirmation snackbar — the
-    // changeLanguageInfo above is the only feedback the user sees.
     const user = this._userService.currentUser;
     if (user) {
       this._userApiService
