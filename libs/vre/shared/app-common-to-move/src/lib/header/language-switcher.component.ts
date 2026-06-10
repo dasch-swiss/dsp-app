@@ -51,33 +51,21 @@ export class LanguageSwitcherComponent {
   ) {}
 
   selectLanguage(language: AvailableLanguage): void {
-    // The LocalizationService setter persists to localStorage and calls
-    // TranslateService.use, so the UI updates and the choice survives reloads
-    // for anonymous users with no further work.
     this._localizationService.currentLanguage = language;
+    this._notification.openSnackBar(this._translateService.instant('ui.header.changeLanguageInfo'));
 
+    // For logged-in users, silently persist to the user's profile so the
+    // preference follows them across devices. No confirmation snackbar — the
+    // changeLanguageInfo above is the only feedback the user sees.
     const user = this._userService.currentUser;
-    if (!user) {
-      // Anonymous users don't have a profile-language preference, so make the
-      // scope of the switch explicit: app chrome flips, project data does not.
-      this._notification.openSnackBar(
-        this._translateService.instant('ui.header.changeLanguageInfo')
-      );
-      return;
+    if (user) {
+      this._userApiService
+        .updateBasicInformation(user.id, {
+          familyName: user.familyName,
+          givenName: user.givenName,
+          lang: language,
+        })
+        .subscribe();
     }
-
-    // For logged-in users, additionally persist to the user's profile so the
-    // preference follows them across devices — same call the profile editor uses.
-    this._userApiService
-      .updateBasicInformation(user.id, {
-        familyName: user.familyName,
-        givenName: user.givenName,
-        lang: language,
-      })
-      .subscribe(() => {
-        this._notification.openSnackBar(
-          this._translateService.instant('pages.userSettings.userForm.updateSuccess')
-        );
-      });
   }
 }
