@@ -9,9 +9,7 @@ import {
 } from '@angular/material/dialog';
 import { ReadUser, UpdateUserRequest } from '@dasch-swiss/dsp-js';
 import { UserApiService } from '@dasch-swiss/vre/3rd-party-services/api';
-import { UserService } from '@dasch-swiss/vre/core/session';
 import { UserForm, UserFormComponent } from '@dasch-swiss/vre/shared/app-common-to-move';
-import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { DialogHeaderComponent } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -32,7 +30,7 @@ export interface EditUserDialogProps {
       " />
     @if (data.user; as user) {
       <div mat-dialog-content>
-        <app-user-form [data]="user" (afterFormInit)="afterFormInit($event)" />
+        <app-user-form [data]="user" [showLanguage]="!data.isOwnAccount" (afterFormInit)="afterFormInit($event)" />
       </div>
     }
 
@@ -60,8 +58,6 @@ export class EditUserDialogComponent {
     private readonly _dialogRef: MatDialogRef<EditUserDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public readonly data: EditUserDialogProps,
     private readonly _notification: NotificationService,
-    private readonly _userService: UserService,
-    private readonly _localizationsService: LocalizationService,
     private readonly _translateService: TranslateService,
     private readonly _userApiService: UserApiService
   ) {}
@@ -76,17 +72,17 @@ export class EditUserDialogComponent {
     const userUpdate: UpdateUserRequest = {
       familyName: this.form.controls.familyName.value,
       givenName: this.form.controls.givenName.value,
-      lang: this.form.controls.lang.value,
     };
+    // Only admins editing someone else can change another user's language here.
+    // Self-edit users change their own UI language via the header LanguageSwitcherComponent,
+    // so omit `lang` entirely to avoid overwriting a value the switcher just persisted.
+    if (!this.data.isOwnAccount) {
+      userUpdate.lang = this.form.controls.lang.value;
+    }
 
     this._userApiService.updateBasicInformation(this.data.user.id, userUpdate).subscribe(() => {
       this._dialogRef.close(true);
       this._notification.openSnackBar(this._translateService.instant('pages.userSettings.userForm.updateSuccess'));
-      const lang = LocalizationService.parseLanguage(userUpdate.lang);
-      if (lang && this.data.user.username === this._userService.currentUser?.username) {
-        this._localizationsService.currentLanguage = lang;
-        document.location.reload();
-      }
     });
   }
 }
