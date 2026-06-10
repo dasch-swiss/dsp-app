@@ -808,7 +808,8 @@
     },
     "header": {
       "help": "Help",
-      "changeLanguage": "Change language"
+      "changeLanguage": "Change language",
+      "changeLanguageInfo": "The app interface is now shown in the chosen language. Project content such as data and data models stays in the language chosen by the project."
     },
     "chipListInput": {
       "keywords": "Keywords"

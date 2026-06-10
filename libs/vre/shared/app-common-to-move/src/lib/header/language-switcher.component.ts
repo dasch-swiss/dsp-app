@@ -56,11 +56,18 @@ export class LanguageSwitcherComponent {
     // for anonymous users with no further work.
     this._localizationService.currentLanguage = language;
 
+    const user = this._userService.currentUser;
+    if (!user) {
+      // Anonymous users don't have a profile-language preference, so make the
+      // scope of the switch explicit: app chrome flips, project data does not.
+      this._notification.openSnackBar(
+        this._translateService.instant('ui.header.changeLanguageInfo')
+      );
+      return;
+    }
+
     // For logged-in users, additionally persist to the user's profile so the
     // preference follows them across devices — same call the profile editor uses.
-    const user = this._userService.currentUser;
-    if (!user) return;
-
     this._userApiService
       .updateBasicInformation(user.id, {
         familyName: user.familyName,

@@ -808,7 +808,8 @@
     },
     "header": {
       "help": "Aiuto",
-      "changeLanguage": "Cambia lingua"
+      "changeLanguage": "Cambia lingua",
+      "changeLanguageInfo": "L'interfaccia dell'app è ora visualizzata nella lingua scelta. I contenuti del progetto, come dati e modelli di dati, restano nella lingua scelta dal progetto."
     },
     "chipListInput": {
       "keywords": "Parole chiave"

@@ -808,7 +808,8 @@
     },
     "header": {
       "help": "Hilfe",
-      "changeLanguage": "Sprache ändern"
+      "changeLanguage": "Sprache ändern",
+      "changeLanguageInfo": "Die App-Oberfläche wird nun in der gewählten Sprache angezeigt. Projektinhalte wie Daten und Datenmodelle bleiben in der vom Projekt gewählten Sprache."
     },
     "chipListInput": {
       "keywords": "Schlagworte"
