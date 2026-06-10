@@ -1,7 +1,7 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { AvailableLanguage } from '@dasch-swiss/vre/core/config';
 import { StringLiteral } from '@dasch-swiss/dsp-js';
 import { LanguageStringDto } from '@dasch-swiss/vre/3rd-party-services/open-api';
+import { AvailableLanguage } from '@dasch-swiss/vre/core/config';
 import { LocalizationService, pickPreferredLabel } from '@dasch-swiss/vre/shared/app-helper-services';
 
 type LabelInput = StringLiteral[] | LanguageStringDto[] | null | undefined;
