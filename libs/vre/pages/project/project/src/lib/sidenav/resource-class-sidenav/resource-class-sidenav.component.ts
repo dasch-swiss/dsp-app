@@ -2,7 +2,7 @@ import { AsyncPipe } from '@angular/common';
 import { Component, Input, OnChanges } from '@angular/core';
 import { OntologyAndResourceClasses, ResourceClassAndCountDto } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { LocalizationService, SortingHelper } from '@dasch-swiss/vre/shared/app-helper-services';
-import { BehaviorSubject, combineLatest, filter, map, Observable } from 'rxjs';
+import { combineLatest, map, Observable, ReplaySubject } from 'rxjs';
 import { ResourceClassSidenavItemComponent } from './resource-class-sidenav-item.component';
 
 @Component({
@@ -21,10 +21,12 @@ import { ResourceClassSidenavItemComponent } from './resource-class-sidenav-item
 export class ResourceClassSidenavComponent implements OnChanges {
   @Input({ required: true }) ontology!: OntologyAndResourceClasses;
 
-  private readonly _ontology$ = new BehaviorSubject<OntologyAndResourceClasses | null>(null);
+  // ReplaySubject (no initial value) so consumers don't need to filter out a `null`
+  // placeholder for the gap between construction and the first ngOnChanges.
+  private readonly _ontology$ = new ReplaySubject<OntologyAndResourceClasses>(1);
 
   resourceClassCounts$: Observable<ResourceClassAndCountDto[]> = combineLatest([
-    this._ontology$.pipe(filter((v): v is OntologyAndResourceClasses => v !== null)),
+    this._ontology$,
     this._localizationService.currentLanguage$,
   ]).pipe(
     map(([ontology, lang]) =>
