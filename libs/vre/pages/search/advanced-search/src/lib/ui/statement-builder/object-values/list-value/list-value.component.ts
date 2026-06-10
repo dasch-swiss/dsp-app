@@ -1,5 +1,15 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, inject, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  inject,
+  Input,
+  OnChanges,
+  Output,
+  SimpleChanges,
+} from '@angular/core';
 import { ListNodeV2 } from '@dasch-swiss/dsp-js';
 import { NestedMenuComponent } from '@dasch-swiss/vre/ui/nested-menu';
 import { TranslateModule } from '@ngx-translate/core';
@@ -19,6 +29,7 @@ import { DynamicFormsDataService } from '../../../../service/dynamic-forms-data.
         (selectedNode)="onSelectionChange($event)" />
     }
   `,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ListValueComponent implements OnChanges {
   @Input({ required: true }) rootListNodeIri!: string;
@@ -28,6 +39,7 @@ export class ListValueComponent implements OnChanges {
   @Output() emitValueChanged = new EventEmitter<IriLabelPair>();
 
   private _dataService = inject(DynamicFormsDataService);
+  private _cdr = inject(ChangeDetectorRef);
 
   selectedListNode?: ListNodeV2;
 
@@ -54,6 +66,7 @@ export class ListValueComponent implements OnChanges {
     if (selectedItem) {
       this.selectedListNode = selectedItem;
     }
+    this._cdr.markForCheck();
   }
 
   private _findNodeById(nodes: ListNodeV2[], id: string): ListNodeV2 | undefined {
