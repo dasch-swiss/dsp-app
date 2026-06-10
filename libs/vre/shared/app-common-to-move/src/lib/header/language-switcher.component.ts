@@ -9,6 +9,7 @@ import { UserService } from '@dasch-swiss/vre/core/session';
 import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-language-switcher',
@@ -51,8 +52,10 @@ export class LanguageSwitcherComponent {
   ) {}
 
   selectLanguage(language: AvailableLanguage): void {
+    this._translateService.onLangChange
+      .pipe(take(1))
+      .subscribe(() => this._notification.openSnackBar(this._translateService.instant('ui.header.changeLanguageInfo')));
     this._localizationService.currentLanguage = language;
-    this._translateService.get('ui.header.changeLanguageInfo').subscribe(text => this._notification.openSnackBar(text));
 
     const user = this._userService.currentUser;
     if (user) {
