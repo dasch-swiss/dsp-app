@@ -73,4 +73,42 @@ describe('StringifyStringLiteralPipe', () => {
     localization.currentLanguage = 'de';
     expect(pipe.transform(labels)).toBe('Dokumentation');
   });
+
+  describe('memoization', () => {
+    it('returns the same string instance on repeat calls with unchanged inputs', () => {
+      const labels = [
+        { language: 'de', value: 'Dokumentation' },
+        { language: 'en', value: 'Documentation' },
+      ];
+      const first = pipe.transform(labels);
+      const second = pipe.transform(labels);
+      // Same string content AND same reference — confirms the cached branch was hit.
+      expect(second).toBe(first);
+    });
+
+    it('recomputes when the input array reference changes', () => {
+      localization.currentLanguage = 'en';
+      const first = pipe.transform([
+        { language: 'de', value: 'Dokumentation' },
+        { language: 'en', value: 'Documentation' },
+      ]);
+      const second = pipe.transform([
+        { language: 'de', value: 'Hallo' },
+        { language: 'en', value: 'Hello' },
+      ]);
+      expect(first).toBe('Documentation');
+      expect(second).toBe('Hello');
+    });
+
+    it('recomputes when the current language changes for the same input reference', () => {
+      const labels = [
+        { language: 'de', value: 'Dokumentation' },
+        { language: 'en', value: 'Documentation' },
+      ];
+      localization.currentLanguage = 'en';
+      expect(pipe.transform(labels)).toBe('Documentation');
+      localization.currentLanguage = 'de';
+      expect(pipe.transform(labels)).toBe('Dokumentation');
+    });
+  });
 });
