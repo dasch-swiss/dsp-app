@@ -807,7 +807,8 @@
       "showing": "Showing"
     },
     "header": {
-      "help": "Help"
+      "help": "Help",
+      "changeLanguage": "Change language"
     },
     "chipListInput": {
       "keywords": "Keywords"

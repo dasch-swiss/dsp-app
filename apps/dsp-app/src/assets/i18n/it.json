@@ -807,7 +807,8 @@
       "showing": "Visualizzazione"
     },
     "header": {
-      "help": "Aiuto"
+      "help": "Aiuto",
+      "changeLanguage": "Cambia lingua"
     },
     "chipListInput": {
       "keywords": "Parole chiave"

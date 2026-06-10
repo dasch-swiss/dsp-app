@@ -807,7 +807,8 @@
       "showing": "Anzeigen"
     },
     "header": {
-      "help": "Hilfe"
+      "help": "Hilfe",
+      "changeLanguage": "Sprache ändern"
     },
     "chipListInput": {
       "keywords": "Schlagworte"
