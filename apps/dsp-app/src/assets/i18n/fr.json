@@ -809,7 +809,7 @@
     "header": {
       "help": "Aide",
       "changeLanguage": "Changer la langue",
-      "changeLanguageInfo": "L'interface de l'application s'affiche désormais dans la langue choisie. Les contenus des projets, tels que les données et les modèles de données, restent dans la langue choisie par le projet."
+      "changeLanguageInfo": "L'interface de l'application s'affiche désormais dans la langue choisie. Les contenus des projets, tels que les données et les modèles de données, ne sont affichés dans la langue choisie que s'ils sont disponibles dans cette langue."
     },
     "chipListInput": {
       "keywords": "Mots clés"

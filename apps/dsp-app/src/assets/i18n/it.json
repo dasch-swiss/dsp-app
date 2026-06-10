@@ -809,7 +809,7 @@
     "header": {
       "help": "Aiuto",
       "changeLanguage": "Cambia lingua",
-      "changeLanguageInfo": "L'interfaccia dell'app è ora visualizzata nella lingua scelta. I contenuti del progetto, come dati e modelli di dati, restano nella lingua scelta dal progetto."
+      "changeLanguageInfo": "L'interfaccia dell'app è ora visualizzata nella lingua scelta. I contenuti del progetto, come dati e modelli di dati, vengono mostrati nella lingua scelta solo se disponibili in tale lingua."
     },
     "chipListInput": {
       "keywords": "Parole chiave"
