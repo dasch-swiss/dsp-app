@@ -6,6 +6,7 @@ import {
   ReadOntology,
   ResourceClassDefinitionWithAllLanguages,
   ResourcePropertyDefinition,
+  ResourcePropertyDefinitionWithAllLanguages,
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { LocalizationService, pickPreferredLabel, SortingHelper } from '@dasch-swiss/vre/shared/app-helper-services';
@@ -128,13 +129,13 @@ export class OntologyDataService {
       )
     );
 
-  private _propertyDefinitions$: Observable<ResourcePropertyDefinition[]> = combineLatest([
+  private _propertyDefinitions$: Observable<ResourcePropertyDefinitionWithAllLanguages[]> = combineLatest([
     this.selectedOntology$.pipe(filter((o): o is ReadOntology => o !== null)),
     this._localizationService.currentLanguage$,
   ]).pipe(
     map(([o, lang]) => ({
       props: o
-        .getPropertyDefinitionsByType(ResourcePropertyDefinition)
+        .getPropertyDefinitionsByType(ResourcePropertyDefinitionWithAllLanguages)
         .filter(propDef => propDef.isEditable && !propDef.isLinkValueProperty),
       lang,
     })),
