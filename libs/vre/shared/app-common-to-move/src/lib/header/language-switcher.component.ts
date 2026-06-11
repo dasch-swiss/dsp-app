@@ -16,11 +16,12 @@ import { take } from 'rxjs/operators';
   imports: [MatButtonModule, MatMenuModule, MatIconModule, MatTooltipModule, TranslatePipe],
   template: `
     <button
-      mat-icon-button
+      mat-button
       [matMenuTriggerFor]="langMenu"
       [attr.aria-label]="'ui.header.changeLanguage' | translate"
       [matTooltip]="'ui.header.changeLanguage' | translate">
-      <mat-icon>translate</mat-icon>
+      <mat-icon>language</mat-icon>
+      {{ currentLanguage.toUpperCase() }}
     </button>
     <mat-menu #langMenu="matMenu" xPosition="before">
       @for (lang of availableLanguages; track lang.language) {
