@@ -1,8 +1,7 @@
-// The lib's production tsconfig has `types: []`, so jest globals are not visible by
-// default. This helper is exported from index.ts so it can be imported from specs in
-// other libraries; declaring the jest reference here lets it type-check during the
-// lib build without polluting the lib's types config or moving the helper into a
-// secondary entry point.
+// Exposed via the `@dasch-swiss/vre/shared/app-helper-services/testing` secondary
+// entry point so spec files in other libraries can import it without polluting the
+// production barrel. The lib's production tsconfig has `types: []`, so this
+// reference lets the file type-check during the lib build.
 /// <reference types="jest" />
 import { AvailableLanguage } from '@dasch-swiss/vre/core/config';
 import { BehaviorSubject, Observable } from 'rxjs';

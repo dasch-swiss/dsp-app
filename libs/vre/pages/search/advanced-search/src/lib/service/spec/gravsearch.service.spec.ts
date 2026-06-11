@@ -1,7 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { Constants } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
-import { createMockLocalizationService, LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { createMockLocalizationService } from '@dasch-swiss/vre/shared/app-helper-services/testing';
 import { IriLabelPair, NodeValue, Predicate, StatementElement, StringValue } from '../../model';
 import { Operator } from '../../operators.config';
 import { GravsearchService } from '../gravsearch.service';
