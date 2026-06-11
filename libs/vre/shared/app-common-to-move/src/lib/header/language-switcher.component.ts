@@ -66,7 +66,11 @@ export class LanguageSwitcherComponent {
           givenName: user.givenName,
           lang: language,
         })
-        .subscribe();
+        .subscribe({
+          next: () => {
+            user.lang = language;
+          },
+        });
     }
   }
 }

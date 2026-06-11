@@ -92,7 +92,7 @@ describe('Check project admin existing resource functionality', () => {
     cy.get('[data-cy=resource-header-label]').contains(newLabel);
     cy.get('.representation-container').should('exist');
     cy.get('app-still-image').should('be.visible');
-    cy.get('[data-cy=row-Titel]').contains(newTitle);
+    cy.get('[data-cy*="row-"][data-cy$="hasPictureTitle"]').contains(newTitle);
 
     cy.intercept('POST', '**/resources/delete').as('resourceDeleteRequest');
     cy.get('[data-cy=resource-dialog]').find('[data-cy=resource-toolbar-more-button]').click();

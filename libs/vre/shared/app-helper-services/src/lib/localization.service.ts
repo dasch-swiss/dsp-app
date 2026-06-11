@@ -43,6 +43,7 @@ export class LocalizationService {
 
   set currentLanguage(language: AvailableLanguage) {
     localStorage.setItem(LocalStorageLanguageKey, JSON.stringify(language));
+    document.documentElement.lang = language;
     this._currentLanguage$.next(language);
     this._translateService.use(language);
   }

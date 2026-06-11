@@ -18,7 +18,7 @@ import { StandoffLinksPropertyComponent } from './standoff-links-property.compon
           [tooltip]="prop.propDef.comments | appStringifyStringLiteral"
           [prop]="prop"
           [singleRow]="false"
-          [attr.data-cy]="'row-' + prop.propDef.label"
+          [attr.data-cy]="'row-' + prop.propDef.id"
           [label]="
             (prop.propDef.labels | appStringifyStringLiteral) +
             (prop.guiDef.cardinality === cardinality._1 || prop.guiDef.cardinality === cardinality._1_n ? '*' : '')
