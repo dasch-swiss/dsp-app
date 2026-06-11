@@ -1,20 +1,24 @@
-import { ProjectADM, ProjectOperationResponseADM } from '../../../../../libs/vre/open-api/src';
+import { Project, ProjectOperationResponseADM } from '../../../../../libs/vre/3rd-party-services/open-api/src';
 
 const getAuthHeaders = () => ({
   Authorization: `Bearer ${localStorage.getItem('ACCESS_TOKEN')}`,
 });
 
 class ProjectPage {
-  projectIri: string;
-  projectUuid: string;
-  project: ProjectADM;
+  projectIri!: string;
+  projectUuid!: string;
+  project!: Project;
+
+  get projectShortCode() {
+    return this.projectIri.match(/\/([^\/]+)$/)![1];
+  }
 
   visit() {
-    cy.visit(`/project/${this.projectIri.match(/\/([^\/]+)$/)[1]}`);
+    cy.visit(`/project/${this.projectIri.match(/\/([^\/]+)$/)![1]}`);
   }
 
   visitDataModels() {
-    cy.visit(`/project/${this.projectIri.match(/\/([^\/]+)$/)[1]}/data-models`);
+    cy.visit(`/project/${this.projectIri.match(/\/([^\/]+)$/)![1]}/data-models`);
   }
 
   requestProject() {
@@ -35,8 +39,8 @@ class ProjectPage {
       failOnStatusCode: false,
     }).then(getResponse => {
       if (getResponse.status === 200) {
-        this.projectIri = getResponse.body.project.id;
-        this.projectUuid = this.projectIri.match(/\/([^\/]+)$/)[1];
+        this.projectIri = getResponse.body.project.id!;
+        this.projectUuid = this.projectIri.match(/\/([^\/]+)$/)![1];
         this.project = getResponse.body.project;
         this.visit();
       } else {
@@ -46,8 +50,8 @@ class ProjectPage {
           headers: getAuthHeaders(),
           body: payload,
         }).then(response => {
-          this.projectIri = response.body.project.id;
-          this.projectUuid = this.projectIri.match(/\/([^\/]+)$/)[1];
+          this.projectIri = response.body.project.id!;
+          this.projectUuid = this.projectIri.match(/\/([^\/]+)$/)![1];
           this.project = response.body.project;
           this.visit();
         });

@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker';
-import { ListGetResponseADM } from '../../../../../libs/vre/open-api/src';
+import { ListGetResponseADM } from '../../../../../libs/vre/3rd-party-services/open-api/src';
 import { Project00FFPayloads } from '../../fixtures/project00FF-resource-payloads';
 import { ClassPropertyPayloads } from '../../fixtures/property-definition-payloads';
 import { ResourceRequests, ResponseUtil } from '../../fixtures/requests';
@@ -437,7 +437,7 @@ describe('Resource', () => {
     it('time sequence', () => {
       ResourceRequests.resourceRequest(ClassPropertyPayloads.timesequence(finalLastModificationDate, propertyName), false, po.className, propertyName);
       po.visitAddPage();
-      const start = () => cy.get('[data-cy=start-input] input', { force: true });
+      const start = () => cy.get('[data-cy=start-input] input');
       const end = () => cy.get('[data-cy=end-input] input');
 
       const randomTime = () => {

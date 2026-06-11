@@ -129,7 +129,7 @@ export class ImageSettingsComponent implements OnInit {
         }
 
         this.currentSettings = settings;
-        if ((settings.watermark === false && !settings.size) || (settings.size && settings.size === 'pct:100')) {
+        if ((!settings.watermark && !settings.size) || (settings.size && settings.size === 'pct:100')) {
           this.imageSettings = this.imageSettingsEnum.Off;
           return;
         }

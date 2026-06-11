@@ -60,7 +60,7 @@ export interface EditListItemDialogProps {
   ],
 })
 export class EditListItemDialogComponent {
-  form: ListItemForm;
+  form!: ListItemForm;
   loading = false;
 
   constructor(
@@ -77,7 +77,7 @@ export class EditListItemDialogComponent {
       projectIri: this.data.projectIri,
       listIri: this.data.nodeIri,
       labels: this.form.getRawValue().labels as StringLiteral[],
-      comments: this.form.getRawValue().comments.length > 0 ? (this.form.value.comments as StringLiteral[]) : null, // TODO: improve form to avoir this ?
+      comments: this.form.getRawValue().comments.length > 0 ? (this.form.value.comments as StringLiteral[]) : undefined,
     };
 
     this._listApiService
@@ -85,7 +85,7 @@ export class EditListItemDialogComponent {
       .pipe(
         switchMap(() => {
           // if initial comments Length is not equal to 0 and the comment is now empty, send request to delete comment
-          if (this.data.formData.comments.length > 0 && this.form.value.comments.length === 0) {
+          if (this.data.formData.comments.length > 0 && (this.form.value.comments?.length ?? 0) === 0) {
             return this._listApiService.deleteChildComments(payload.listIri);
           }
           return of(true);

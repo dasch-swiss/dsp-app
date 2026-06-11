@@ -27,13 +27,13 @@ import { ListItemForm } from './list-item-form.type';
   imports: [TranslatePipe, MultiLanguageInputComponent, MultiLanguageTextareaComponent],
 })
 export class ReusableListItemFormComponent implements OnInit {
-  @Input() formData: {
+  @Input() formData!: {
     labels: MultiLanguages;
     comments: MultiLanguages;
   };
   @Output() afterFormInit = new EventEmitter<ListItemForm>();
 
-  form: ListItemForm;
+  form!: ListItemForm;
 
   readonly labelsValidators = [Validators.required, Validators.maxLength(2000)];
   readonly commentsValidators = [Validators.required, Validators.maxLength(2000)];

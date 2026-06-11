@@ -1,7 +1,0 @@
-{
-  "extends": "../../../../tsconfig.base.json",
-  "compilerOptions": {
-    "emitDecoratorMetadata": true
-  },
-  "include": ["src/**/*.ts"]
-}

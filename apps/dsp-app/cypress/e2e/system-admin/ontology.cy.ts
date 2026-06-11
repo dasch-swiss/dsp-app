@@ -57,7 +57,7 @@ describe('Ontology', () => {
     cy.createOntology(projectPage).then(ontology => {
       cy.get('[data-cy=edit-ontology-button]').scrollIntoView().should('be.visible').click();
       cy.get('[data-cy=label-input]').clear().type(data.label);
-      cy.get('[data-cy=comment-textarea]').type(data.comment);
+      cy.get('[data-cy=comment-textarea]').type(data.comment!);
       cy.get('[data-cy=submit-button]').click();
 
       cy.wait('@updateRequest');

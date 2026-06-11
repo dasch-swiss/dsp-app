@@ -3,6 +3,7 @@
   "include": [
     "./apps/**/*.ts",
     "./libs/**/*.ts",
-    "./libs/**/.storybook/*.ts"
+    "./libs/**/.storybook/*.ts",
+    "./apps/**/.storybook/*.ts"
   ]
 }
