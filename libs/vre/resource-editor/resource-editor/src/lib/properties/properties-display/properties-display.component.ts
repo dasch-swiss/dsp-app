@@ -1,6 +1,7 @@
 import { Component, Input, OnChanges } from '@angular/core';
-import { Cardinality, ResourcePropertyDefinition } from '@dasch-swiss/dsp-js';
+import { Cardinality } from '@dasch-swiss/dsp-js';
 import { DspResource, PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
+import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
 import { IncomingLinksPropertyComponent } from './incoming-links-property.component';
 import { PropertyRowComponent } from './property-value/property-row.component';
 import { PropertyValuesWithFootnotesComponent } from './property-value/property-values-with-footnotes.component';
@@ -14,12 +15,12 @@ import { StandoffLinksPropertyComponent } from './standoff-links-property.compon
         <app-property-row
           [isEmptyRow]="prop.values.length === 0"
           [borderBottom]="true"
-          [tooltip]="prop.propDef.comment"
+          [tooltip]="prop.propDef.comments | appStringifyStringLiteral"
           [prop]="prop"
           [singleRow]="false"
-          [attr.data-cy]="'row-' + prop.propDef.label"
+          [attr.data-cy]="'row-' + prop.propDef.id"
           [label]="
-            prop.propDef.label +
+            (prop.propDef.labels | appStringifyStringLiteral) +
             (prop.guiDef.cardinality === cardinality._1 || prop.guiDef.cardinality === cardinality._1_n ? '*' : '')
           ">
           <app-property-values-with-footnotes [prop]="prop" [resource]="resource.res" />
@@ -39,6 +40,7 @@ import { StandoffLinksPropertyComponent } from './standoff-links-property.compon
     PropertyValuesWithFootnotesComponent,
     StandoffLinksPropertyComponent,
     IncomingLinksPropertyComponent,
+    StringifyStringLiteralPipe,
   ],
 })
 export class PropertiesDisplayComponent implements OnChanges {
@@ -51,8 +53,6 @@ export class PropertiesDisplayComponent implements OnChanges {
   editableProperties: PropertyInfoValues[] = [];
 
   ngOnChanges() {
-    this.editableProperties = this.resource.resProps.filter(
-      prop => (prop.propDef as ResourcePropertyDefinition).isEditable
-    );
+    this.editableProperties = this.resource.resProps.filter(prop => prop.propDef.isEditable);
   }
 }

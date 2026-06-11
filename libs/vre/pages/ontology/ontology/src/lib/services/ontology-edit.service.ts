@@ -1,4 +1,5 @@
 import { inject, Inject, Injectable } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   ApiResponseError,
   CanDoResponse,
@@ -23,7 +24,12 @@ import { ListApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { StringLiteralV2 } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { DspApiConnectionToken, RouteConstants } from '@dasch-swiss/vre/core/config';
 import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
-import { LocalizationService, OntologyService, SortingHelper } from '@dasch-swiss/vre/shared/app-helper-services';
+import {
+  LocalizationService,
+  OntologyService,
+  pickPreferredLabel,
+  SortingHelper,
+} from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { TranslateService } from '@ngx-translate/core';
 import {
@@ -37,6 +43,7 @@ import {
   map,
   Observable,
   of,
+  skip,
   switchMap,
   take,
   tap,
@@ -179,11 +186,20 @@ export class OntologyEditService {
     @Inject(DspApiConnectionToken)
     private _dspApiConnection: KnoraApiConnection,
     private _notification: NotificationService,
-    private _localizationService: LocalizationService,
     private _ontologyService: OntologyService,
     private _projectPageService: ProjectPageService,
-    private _listApiService: ListApiService
-  ) {}
+    private _listApiService: ListApiService,
+    private _localizationService: LocalizationService
+  ) {
+    // skip(1): currentLanguage$ is a BehaviorSubject, we ignore the initial value
+    // emitted at subscription time.
+    this._localizationService.currentLanguage$.pipe(skip(1), takeUntilDestroyed()).subscribe(() => {
+      this._isTransacting.next(true);
+      this._currentOntologyInfo.next(this._currentOntologyInfo.value);
+      this._currentOntology.next(this._currentOntology.value);
+      this._isTransacting.next(false);
+    });
+  }
 
   initOntologyByLabel(label: string) {
     this._isTransacting.next(true);
@@ -234,7 +250,8 @@ export class OntologyEditService {
       tap(resClass => {
         this.lastModificationDate = resClass.lastModificationDate;
         this._loadOntology(this.ontologyId, resClass.id);
-        const classLabel = this._ontologyService.getInPreferedLanguage(resClass.labels) || resClass.label;
+        const classLabel =
+          pickPreferredLabel(resClass.labels, this._localizationService.currentLanguage) || resClass.label;
         this._notification.openSnackBar(this._translate.instant('pages.ontology.service.classCreated', { classLabel }));
       })
     );
@@ -500,8 +517,8 @@ export class OntologyEditService {
     allLists: ListNodeInfo[],
     props: ResourcePropertyDefinitionWithAllLanguages[]
   ): PropertyInfo[] {
-    const lang = this._localizationService.getCurrentLanguage();
-    return SortingHelper.sortByLabelsAlphabetically(props, 'label', lang)
+    const lang = this._localizationService.currentLanguage;
+    return SortingHelper.sortByLocalizedString(props, p => p.labels, lang)
       .filter(resProp => resProp.objectType !== Constants.LinkValue && !resProp.subjectType?.includes('Standoff'))
       .map((prop): PropertyInfo => {
         const propId = prop.id;
@@ -579,8 +596,8 @@ export class OntologyEditService {
         }
       }
     });
-    const lang = this._localizationService.getCurrentLanguage();
-    return SortingHelper.sortByLabelsAlphabetically(ontoClasses, 'label', lang);
+    const lang = this._localizationService.currentLanguage;
+    return SortingHelper.sortByLocalizedString(ontoClasses, c => c.labels, lang);
   }
 
   private _getObjectLabelAndComment(

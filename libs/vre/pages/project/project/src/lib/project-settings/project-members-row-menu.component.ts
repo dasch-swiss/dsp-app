@@ -123,10 +123,14 @@ export class ProjectMembersRowMenuComponent {
   }
 
   editUser(user: ReadUser) {
+    // Determine ownership from identity — a project admin can edit their
+    // own record here, in which case the dialog must behave as self-edit
+    // (no language picker, no `lang` submit).
+    const isOwnAccount = user.username === this._userService.currentUser?.username;
     this._matDialog
       .open<EditUserDialogComponent, EditUserDialogProps, boolean>(
         EditUserDialogComponent,
-        DspDialogConfig.dialogDrawerConfig<EditUserDialogProps>({ user, isOwnAccount: false }, true)
+        DspDialogConfig.dialogDrawerConfig<EditUserDialogProps>({ user, isOwnAccount }, true)
       )
       .afterClosed()
       .subscribe(success => {
