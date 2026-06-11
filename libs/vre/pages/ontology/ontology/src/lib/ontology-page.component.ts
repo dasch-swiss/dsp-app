@@ -1,52 +1,33 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { MatSidenav, MatSidenavContainer, MatSidenavContent } from '@angular/material/sidenav';
 import { Title } from '@angular/platform-browser';
-import { ActivatedRoute, RouterOutlet } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
 import { ProgressIndicatorOverlayComponent } from '@dasch-swiss/vre/ui/progress-indicator';
 import { combineLatest, take } from 'rxjs';
 import { OntologyEditorHeaderComponent } from './ontology-editor-header.component';
+import { OntologyEditorShellComponent } from './ontology-editor-shell/ontology-editor-shell.component';
 import { OntologyPageService } from './ontology-page.service';
-import { OntologySidenavComponent } from './ontology-sidenav.component';
 import { OntologyEditService } from './services/ontology-edit.service';
 
 @Component({
   selector: 'app-ontology',
   template: `
-    <div class="ontology-editor">
+    <div class="ontology-editor drag-drop-stop">
       @if (isTransacting$ | async) {
         <div class="overlay-blocker">
           <app-progress-indicator-overlay class="floating-center" />
         </div>
       }
-      <mat-sidenav-container class="ontology-editor-container">
-        <mat-sidenav class="ontology-editor-sidenav" mode="side" position="end" opened>
-          <app-ontology-sidenav />
-        </mat-sidenav>
-        <mat-sidenav-content class="ontology-editor-canvas drag-drop-stop">
-          <app-ontology-editor-header class="sticky-header" />
-          <div class="scroll">
-            <router-outlet />
-          </div>
-        </mat-sidenav-content>
-      </mat-sidenav-container>
+      <app-ontology-editor-header />
+      <app-ontology-editor-shell />
     </div>
   `,
   styleUrls: ['./ontology-page.component.scss'],
   providers: [OntologyPageService, OntologyEditService],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    AsyncPipe,
-    MatSidenav,
-    MatSidenavContainer,
-    MatSidenavContent,
-    OntologyEditorHeaderComponent,
-    OntologySidenavComponent,
-    ProgressIndicatorOverlayComponent,
-    RouterOutlet,
-  ],
+  imports: [AsyncPipe, OntologyEditorHeaderComponent, OntologyEditorShellComponent, ProgressIndicatorOverlayComponent],
 })
 export class OntologyPageComponent implements OnInit {
   project$ = this._projectPageService.currentProject$;
