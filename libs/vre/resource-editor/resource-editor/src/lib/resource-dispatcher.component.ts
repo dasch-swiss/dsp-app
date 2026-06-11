@@ -102,9 +102,7 @@ export class ResourceDispatcherComponent implements OnChanges, OnDestroy {
     // torn down and recreated, which would scroll the page back to the top.
     const previousResource = changes?.['resource']?.previousValue as DspResource | undefined;
     const isSameResource =
-      previousResource !== undefined &&
-      previousResource.res.id === this.resource.res.id &&
-      this.resourceType !== null;
+      previousResource !== undefined && previousResource.res.id === this.resource.res.id && this.resourceType !== null;
     if (isSameResource) {
       return;
     }
