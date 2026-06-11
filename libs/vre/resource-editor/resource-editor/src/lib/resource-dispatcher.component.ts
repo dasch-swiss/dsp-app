@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, Inject, Input, OnChanges, OnDestroy } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, Input, OnChanges, OnDestroy, SimpleChanges } from '@angular/core';
 import { CountQueryResponse, KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
@@ -96,7 +96,17 @@ export class ResourceDispatcherComponent implements OnChanges, OnDestroy {
     @Inject(DspApiConnectionToken) private readonly _dspApi: KnoraApiConnection
   ) {}
 
-  ngOnChanges() {
+  ngOnChanges(changes?: SimpleChanges) {
+    // Reloading the same resource (same id) cannot change its type — skip re-classification
+    // so the existing subtree (PropertiesDisplay etc.) receives ngOnChanges instead of being
+    // torn down and recreated, which would scroll the page back to the top.
+    const previousResource = changes?.['resource']?.previousValue as DspResource | undefined;
+    const isSameResource =
+      previousResource !== undefined && previousResource.res.id === this.resource.res.id && this.resourceType !== null;
+    if (isSameResource) {
+      return;
+    }
+
     this._destroy$.next();
     this.resourceType = null;
     this.compoundCount = 0;
