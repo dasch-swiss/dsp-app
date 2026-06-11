@@ -41,6 +41,11 @@ export class LocalizationService {
     return this._currentLanguage$.getValue();
   }
 
+  /**
+   * Always change the UI language through this setter. Calling
+   * `TranslateService.use(...)` directly bypasses `currentLanguage$`,
+   * `localStorage`, and `<html lang>`, leaving the BehaviorSubject desynced.
+   */
   set currentLanguage(language: AvailableLanguage) {
     localStorage.setItem(LocalStorageLanguageKey, JSON.stringify(language));
     document.documentElement.lang = language;
