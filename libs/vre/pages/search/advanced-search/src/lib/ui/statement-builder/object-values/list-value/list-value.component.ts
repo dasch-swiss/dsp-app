@@ -51,6 +51,7 @@ export class ListValueComponent implements OnChanges {
         .subscribe(rootListNode => {
           this.rootListNode = rootListNode;
           this._tryRestoreSelectedItem();
+          this._cdr.markForCheck();
         });
     }
 
