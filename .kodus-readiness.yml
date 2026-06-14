@@ -1,5 +1,3 @@
 criteria:
   # Kodus does not recognise TypeScript/tsconfig strict mode or Cypress E2E tests —
   # supplemental assessment script handles type-checker, test-script, e2e-tests.
-  # This criterion cannot be evaluated from the local filesystem:
-  branch-protection: false # Requires GitHub API; checked by assess.py
