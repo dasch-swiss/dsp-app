@@ -807,7 +807,9 @@
       "showing": "Affichage"
     },
     "header": {
-      "help": "Aide"
+      "help": "Aide",
+      "changeLanguage": "Changer la langue",
+      "changeLanguageInfo": "Les contenus des projets, tels que les données, les modèles de données ou les listes, sont affichés dans la langue originale s'ils ne sont pas disponibles dans la langue choisie."
     },
     "chipListInput": {
       "keywords": "Mots clés"

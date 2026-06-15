@@ -85,9 +85,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
     map(([userActiveProjects, allActiveProjects]) => (this.isUsersProjects ? userActiveProjects : allActiveProjects))
   );
 
-  combinedProjects$ = combineLatest([this._allActiveProjects$, this._allInactiveProjects$]).pipe(
-    tap(v => console.log('a', v))
-  );
+  combinedProjects$ = combineLatest([this._allActiveProjects$, this._allInactiveProjects$]);
 
   constructor(
     private readonly _userService: UserService,

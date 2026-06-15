@@ -45,7 +45,6 @@ export class SortButtonComponent implements OnInit {
   }
 
   sortBy(key: string) {
-    console.log(key, this);
     const newSort = this.sortProps.find(prop => prop.key === key);
     if (!newSort) {
       throw new AppError(`Sort with key "${key}" not found`);

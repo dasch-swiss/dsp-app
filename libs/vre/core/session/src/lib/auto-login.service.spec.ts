@@ -37,7 +37,7 @@ describe('AutoLoginService', () => {
       isValidToken: jest.fn(),
       getAccessToken: jest.fn(),
       getTokenUser: jest.fn(),
-      removeTokens: jest.fn(),
+      removeToken: jest.fn(),
       decodeAccessToken: jest.fn(),
     };
 
@@ -110,7 +110,7 @@ describe('AutoLoginService', () => {
       service.setup();
 
       expect(mockAccessTokenService.isValidToken).toHaveBeenCalled();
-      expect(mockAccessTokenService.removeTokens).toHaveBeenCalled();
+      expect(mockAccessTokenService.removeToken).toHaveBeenCalled();
       expect(service.hasCheckedCredentials$.value).toBe(true);
       expect(mockDspApiConnection.v2!.jsonWebToken).toBe('');
     });

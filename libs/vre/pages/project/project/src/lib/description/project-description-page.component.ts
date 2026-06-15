@@ -6,7 +6,7 @@ import { MatDivider } from '@angular/material/divider';
 import { MatIcon } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
 import { StringLiteral } from '@dasch-swiss/dsp-js';
-import { AvailableLanguages, RouteConstants } from '@dasch-swiss/vre/core/config';
+import { AvailableLanguageKeys, RouteConstants } from '@dasch-swiss/vre/core/config';
 import { ProjectImageCoverComponent } from '@dasch-swiss/vre/pages/user-settings/user';
 import { ClosingDialogComponent } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -49,7 +49,7 @@ export class ProjectDescriptionPageComponent {
   constructor(private readonly _projectPageService: ProjectPageService) {}
 
   private _sortDescriptionsByLanguage(descriptions: StringLiteral[]): StringLiteral[] {
-    const languageOrder = AvailableLanguages.map(l => l.language) as string[];
+    const languageOrder = AvailableLanguageKeys as readonly string[];
 
     return descriptions.sort((a, b) => {
       const indexA = languageOrder.indexOf(a.language!);
