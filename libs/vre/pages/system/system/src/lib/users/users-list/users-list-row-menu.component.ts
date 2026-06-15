@@ -106,10 +106,14 @@ export class UsersListRowMenuComponent {
   }
 
   editUser(user: ReadUser) {
+    // Determine ownership from identity, not the entry point — a sysadmin
+    // can land here while editing their own record, in which case the
+    // dialog must behave as self-edit (no language picker, no `lang` submit).
+    const isOwnAccount = user.username === this._userService.currentUser?.username;
     this._matDialog
       .open<EditUserDialogComponent, EditUserDialogProps, boolean>(
         EditUserDialogComponent,
-        DspDialogConfig.dialogDrawerConfig({ user, isOwnAccount: false }, true)
+        DspDialogConfig.dialogDrawerConfig({ user, isOwnAccount }, true)
       )
       .afterClosed()
       .subscribe(success => {

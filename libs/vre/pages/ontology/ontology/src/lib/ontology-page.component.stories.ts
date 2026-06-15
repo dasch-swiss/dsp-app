@@ -3,7 +3,7 @@ import { importProvidersFrom } from '@angular/core';
 import { ListApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
-import { LocalizationService, OntologyService, SortingHelper } from '@dasch-swiss/vre/shared/app-helper-services';
+import { LocalizationService, OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
@@ -47,16 +47,14 @@ const sharedProviders = [
       },
     },
   },
-  { provide: LocalizationService, useValue: { getCurrentLanguage: () => 'en' } },
+  { provide: LocalizationService, useValue: { currentLanguage: 'en', currentLanguage$: of('en') } },
   {
     provide: OntologyService,
     useValue: {
       getDefaultProperty: () => ({}),
       getIriBaseUrl: () => 'http://0.0.0.0:3333',
-      getInPreferedLanguage: () => '',
     },
   },
-  { provide: SortingHelper, useValue: { sortByLabelsAlphabetically: (arr: any[]) => arr } },
 ];
 
 export const DefaultView: Story = {

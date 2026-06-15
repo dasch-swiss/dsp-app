@@ -1,11 +1,15 @@
 import { TestBed } from '@angular/core/testing';
 import { Constants } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
+import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { createMockLocalizationService } from '@dasch-swiss/vre/shared/app-helper-services/testing';
 import { IriLabelPair, NodeValue, Predicate, StatementElement, StringValue } from '../../model';
 import { Operator } from '../../operators.config';
 import { GravsearchService } from '../gravsearch.service';
 import { OntologyDataService } from '../ontology-data.service';
 import { SearchStateService } from '../search-state.service';
+
+const { service: mockLocalizationService } = createMockLocalizationService('en');
 
 /**
  * Helper function to set up test from JSON input
@@ -185,6 +189,7 @@ describe('Gravsearch Service and Writer - Label', () => {
         SearchStateService,
         OntologyDataService,
         { provide: DspApiConnectionToken, useValue: mockDspApiConnection },
+        { provide: LocalizationService, useValue: mockLocalizationService },
       ],
     });
 
@@ -375,6 +380,7 @@ describe('Gravsearch Service and Writer - TextValue', () => {
         SearchStateService,
         OntologyDataService,
         { provide: DspApiConnectionToken, useValue: mockDspApiConnection },
+        { provide: LocalizationService, useValue: mockLocalizationService },
       ],
     });
 
@@ -569,6 +575,7 @@ describe('Gravsearch Service and Writer - ListValue', () => {
         SearchStateService,
         OntologyDataService,
         { provide: DspApiConnectionToken, useValue: mockDspApiConnection },
+        { provide: LocalizationService, useValue: mockLocalizationService },
       ],
     });
 
@@ -711,6 +718,7 @@ describe('Gravsearch Service and Writer - IntValue', () => {
         SearchStateService,
         OntologyDataService,
         { provide: DspApiConnectionToken, useValue: mockDspApiConnection },
+        { provide: LocalizationService, useValue: mockLocalizationService },
       ],
     });
 

@@ -3,7 +3,7 @@ import { Component, Input, ViewContainerRef } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
-import { ResourceClassDefinitionWithAllLanguages, ResourcePropertyDefinition } from '@dasch-swiss/dsp-js';
+import { ResourceClassDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
 import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import { MultipleViewerService, ResourceClassCountApi } from '@dasch-swiss/vre/pages/data-browser';
 import { filterUndefined, generateDspResource } from '@dasch-swiss/vre/shared/app-common';
@@ -119,9 +119,7 @@ export class DataClassPanelComponent {
         return;
       }
 
-      const properties = generateDspResource(resources[0]).resProps.filter(
-        prop => (prop.propDef as ResourcePropertyDefinition).isEditable
-      );
+      const properties = generateDspResource(resources[0]).resProps.filter(prop => prop.propDef.isEditable);
 
       this._dialog.open(DownloadDialogComponent, {
         ...DspDialogConfig.dialogDrawerConfig(

@@ -1,4 +1,10 @@
-import { Constants, ReadLinkValue, ReadResource, ReadStillImageFileValue } from '@dasch-swiss/dsp-js';
+import {
+  Constants,
+  ReadLinkValue,
+  ReadResource,
+  ReadStillImageFileValue,
+  ResourcePropertyDefinitionWithAllLanguages,
+} from '@dasch-swiss/dsp-js';
 import { ApiConstants } from '@dasch-swiss/vre/core/config';
 import { PropertyInfoValues } from './property-info-values.interface';
 
@@ -9,7 +15,7 @@ import { PropertyInfoValues } from './property-info-values.interface';
 export class GenerateProperty {
   public static commonProperty(resource: ReadResource) {
     return this._initProps(resource)
-      .filter(prop => !(prop.propDef as unknown as { isLinkProperty?: any })['isLinkProperty'])
+      .filter(prop => !prop.propDef.isLinkProperty)
       .filter(prop => !prop.propDef.subPropertyOf.includes(`${ApiConstants.apiKnoraOntologyUrl}#hasFileValue`))
       .map(this._displayExistingLinkedValues);
   }
@@ -34,12 +40,16 @@ export class GenerateProperty {
 
   private static _initProps(resource: ReadResource): PropertyInfoValues[] {
     let props = resource.entityInfo.classes[resource.type].getResourcePropertiesList().map(prop => {
+      // Safe cast: ReadResource.entityInfo is populated from OntologyCache, which always
+      // requests allLanguages=true (see OntologyCache.requestItemFromKnora), so property
+      // definitions are deserialized as the WithAllLanguages subclass at runtime.
+      const propDef = prop.propertyDefinition as ResourcePropertyDefinitionWithAllLanguages;
       let propInfoAndValues: PropertyInfoValues;
 
-      switch (prop.propertyDefinition.objectType) {
+      switch (propDef.objectType) {
         case Constants.StillImageFileValue:
           propInfoAndValues = {
-            propDef: prop.propertyDefinition,
+            propDef,
             guiDef: prop,
             values: resource.getValuesAs(prop.propertyIndex, ReadStillImageFileValue),
           };
@@ -48,7 +58,7 @@ export class GenerateProperty {
         default:
           // the object type is none from above
           propInfoAndValues = {
-            propDef: prop.propertyDefinition,
+            propDef,
             guiDef: prop,
             values: resource.getValues(prop.propertyIndex),
           };

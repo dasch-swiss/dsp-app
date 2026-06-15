@@ -2,7 +2,6 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatOption, MatSelect } from '@angular/material/select';
-import { StringLiteral } from '@dasch-swiss/dsp-js';
 import { AvailableLanguages } from '@dasch-swiss/vre/core/config';
 import { CustomRegex } from '@dasch-swiss/vre/shared/app-common';
 import { CommonInputComponent } from '@dasch-swiss/vre/ui/ui';
@@ -24,14 +23,16 @@ import { UserForm } from './user-form.type';
       <app-common-input [control]="userForm.controls.givenName" [label]="'ui.common.fields.firstName' | translate" />
       <app-common-input [control]="userForm.controls.familyName" [label]="'ui.common.fields.lastName' | translate" />
 
-      <mat-form-field style="width: 100%">
-        <mat-label>{{ 'pages.userSettings.userForm.language' | translate }}</mat-label>
-        <mat-select [formControl]="userForm.controls.lang">
-          @for (lang of languagesList; track lang) {
-            <mat-option [value]="lang.language"> {{ lang.value }}</mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
+      @if (showLanguage) {
+        <mat-form-field style="width: 100%">
+          <mat-label>{{ 'pages.userSettings.userForm.language' | translate }}</mat-label>
+          <mat-select [formControl]="userForm.controls.lang">
+            @for (lang of languagesList; track lang) {
+              <mat-option [value]="lang.language"> {{ lang.value }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      }
     </form>
   `,
   imports: [CommonInputComponent, TranslatePipe, MatFormField, MatLabel, MatSelect, MatOption, ReactiveFormsModule],
@@ -44,11 +45,19 @@ export class UserFormComponent implements OnInit {
     username: string;
     lang: string;
   };
+  /**
+   * Whether to render the language picker. Defaults to `true` so admin
+   * contexts (CreateUserDialog, EditUserDialog with isOwnAccount=false)
+   * keep the field. Self-edit (isOwnAccount=true) passes `false` because
+   * the header LanguageSwitcherComponent is now the canonical entry point
+   * for self-service language changes.
+   */
+  @Input() showLanguage = true;
   @Output() afterFormInit = new EventEmitter<UserForm>();
 
   userForm!: UserForm;
 
-  readonly languagesList: StringLiteral[] = AvailableLanguages;
+  readonly languagesList = AvailableLanguages;
 
   readonly emailPatternErrorMsg = {
     errorKey: 'pattern',

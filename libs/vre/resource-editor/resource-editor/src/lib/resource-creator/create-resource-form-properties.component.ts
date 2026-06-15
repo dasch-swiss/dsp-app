@@ -2,6 +2,7 @@ import { Component, Input } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { Cardinality } from '@dasch-swiss/dsp-js';
 import { PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
+import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
 import { FormValueArray } from '../properties/properties-display/property-value/form-value-array.type';
 import { propertiesTypeMapping } from '../properties/properties-display/property-value/resource-payloads-mapping';
 import { CreateResourceFormRowComponent } from './create-resource-form-row.component';
@@ -10,17 +11,17 @@ import { PropertyValuesCreatorComponent } from './property-values-creator.compon
 @Component({
   selector: 'app-create-resource-form-properties',
   template: `
-    @for (prop of myProperties; track prop) {
+    @for (prop of myProperties; track prop.propDef.id) {
       <div style="border-top: 1px solid rgba(51, 103, 144, .1); padding: 16px 0">
         <app-create-resource-form-row
           [label]="
-            prop.propDef.label +
+            (prop.propDef.labels | appStringifyStringLiteral) +
             (prop.guiDef.cardinality === cardinality._1 || prop.guiDef.cardinality === cardinality._1_n ? '*' : '')
           "
-          [tooltip]="prop.propDef.comment">
+          [tooltip]="prop.propDef.comments | appStringifyStringLiteral">
           <app-property-values-creator
             [myProperty]="prop"
-            [attr.data-cy]="'creator-row-' + prop.propDef.label"
+            [attr.data-cy]="'creator-row-' + prop.propDef.id"
             [formArray]="formGroup.controls[prop.propDef.id]"
             [resourceClassIri]="resourceClassIri"
             [projectIri]="projectIri"
@@ -37,7 +38,7 @@ import { PropertyValuesCreatorComponent } from './property-values-creator.compon
       }
     `,
   ],
-  imports: [CreateResourceFormRowComponent, PropertyValuesCreatorComponent],
+  imports: [CreateResourceFormRowComponent, PropertyValuesCreatorComponent, StringifyStringLiteralPipe],
 })
 export class CreateResourceFormPropertiesComponent {
   @Input({ required: true }) resourceClassIri!: string;
