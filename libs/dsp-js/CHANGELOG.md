@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.0.1](https://github.com/dasch-swiss/dsp-app/compare/dsp-js-v12.0.0...dsp-js-v12.0.1) (2026-06-15)
+
+
+### Bug Fixes
+
+* streamline translations with current language (DEV-6607) ([#3115](https://github.com/dasch-swiss/dsp-app/issues/3115)) ([8b6bc68](https://github.com/dasch-swiss/dsp-app/commit/8b6bc68d656aeb6bef20ab81cbeea42cb64d3d86))
+
 ## [12.0.0](https://github.com/dasch-swiss/dsp-app/compare/dsp-js-v11.0.0...dsp-js-v12.0.0) (2026-04-24)
 
 
