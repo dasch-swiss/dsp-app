@@ -32,7 +32,7 @@ export class CookieBannerComponent implements OnInit {
     if (localStorage.getItem('cookieBanner') === null) {
       localStorage.setItem('cookieBanner', JSON.stringify(this.showCookieBanner));
     } else {
-      this.showCookieBanner = JSON.parse(localStorage.getItem('cookieBanner'));
+      this.showCookieBanner = JSON.parse(localStorage.getItem('cookieBanner')!);
     }
   }
 

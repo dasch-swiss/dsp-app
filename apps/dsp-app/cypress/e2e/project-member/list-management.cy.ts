@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker';
-import { ListGetResponseADM } from '../../../../../libs/vre/open-api/src';
+import { ListGetResponseADM } from '../../../../../libs/vre/3rd-party-services/open-api/src';
 import { UserProfiles } from '../../models/user-profiles';
 import { Project0001Page } from '../../support/pages/existing-ontology-class-page';
 
@@ -34,7 +34,7 @@ describe('Project Member - List management', () => {
           projectIri: `http://rdfh.ch/projects/${projectPage.projectShortCode}`,
         },
       }).then(response => {
-        listId = response.body.list.listinfo.id.match(/\/([^\/]*)$/)[1];
+        listId = response.body.list.listinfo.id.match(/\/([^\/]*)$/)![1];
         listUrl = `/project/${projectPage.projectShortCode}/list/${listId}`;
       });
     });

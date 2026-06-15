@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "declaration": true,
+    "declarationMap": true,
+    "inlineSources": true,
+    "types": []
+  },
+  "exclude": [
+    "src/**/*.spec.ts",
+    "src/test-setup.ts",
+    "jest.config.ts",
+    "src/**/*.test.ts",
+    "**/*.stories.ts",
+    "**/*.stories.js"
+  ],
+  "include": ["src/**/*.ts"]
+}

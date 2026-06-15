@@ -4,7 +4,7 @@ import { Subject } from 'rxjs';
 @Injectable()
 export class ListItemService {
   onUpdate$ = new Subject<void>();
-  private _projectInfos: {
+  private _projectInfos!: {
     projectIri: string;
     rootNodeIri: string;
   };
