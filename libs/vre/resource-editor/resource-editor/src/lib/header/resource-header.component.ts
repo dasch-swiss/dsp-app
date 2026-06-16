@@ -7,6 +7,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { ReadResource, ResourceClassDefinitionWithPropertyDefinition } from '@dasch-swiss/dsp-js';
 import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
+import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
 import { TranslatePipe } from '@ngx-translate/core';
 import { ResourceFetcherService } from '../representation/resource-fetcher.service';
 import { EditResourceLabelDialogComponent } from './more-menu/edit-resource-label-dialog.component';
@@ -17,12 +18,13 @@ import { ResourceToolbarComponent } from './resource-toolbar.component';
   selector: 'app-resource-header',
   template: ` <div class="resource-header">
     <div class="resource-class-header">
+      @let resolvedComment = resourceClassType?.comments | appStringifyStringLiteral;
       <h3
-        [class.label-info]="resourceClassType?.comment"
-        [matTooltip]="resourceClassType?.comment"
+        [class.label-info]="resolvedComment"
+        [matTooltip]="resolvedComment"
         matTooltipClass="header-tooltip"
         matTooltipPosition="above">
-        {{ resourceClassType?.label }}
+        {{ resourceClassType?.labels | appStringifyStringLiteral }}
       </h3>
       <app-resource-toolbar [resource]="resource.res" />
     </div>
@@ -94,6 +96,7 @@ import { ResourceToolbarComponent } from './resource-toolbar.component';
     MatButtonModule,
     MatIconModule,
     MatTooltipModule,
+    StringifyStringLiteralPipe,
     TranslatePipe,
     ResourceInfoBarComponent,
     ResourceToolbarComponent,
