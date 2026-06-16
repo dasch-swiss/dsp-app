@@ -4,6 +4,7 @@ import { MAT_DIALOG_DATA, MatDialogActions, MatDialogContent, MatDialogRef } fro
 import { MatIcon } from '@angular/material/icon';
 import { Cardinality, Constants, KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
+import { LocalizationService, pickPreferredLanguageString } from '@dasch-swiss/vre/shared/app-helper-services';
 import { ProgressIndicatorOverlayComponent } from '@dasch-swiss/vre/ui/progress-indicator';
 import { DialogHeaderComponent } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -122,14 +123,18 @@ export class CardinalityChangeDialogComponent implements OnInit {
   }
 
   get propertyLabel(): string {
-    return this.data.propertyInfo.propDef?.label || '';
+    return pickPreferredLanguageString(
+      this.data.propertyInfo.propDef?.labels,
+      this._localizationService.currentLanguage
+    );
   }
 
   constructor(
     @Inject(DspApiConnectionToken) private readonly _dspApiConnection: KnoraApiConnection,
     @Inject(MAT_DIALOG_DATA) public data: CardinalityInfo,
     private readonly _cdr: ChangeDetectorRef,
-    protected dialogRef: MatDialogRef<CardinalityChangeDialogComponent, boolean>
+    protected dialogRef: MatDialogRef<CardinalityChangeDialogComponent, boolean>,
+    private readonly _localizationService: LocalizationService
   ) {}
 
   ngOnInit() {
