@@ -27,7 +27,7 @@ import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
 import {
   LocalizationService,
   OntologyService,
-  pickPreferredLabel,
+  pickPreferredLanguageString,
   SortingHelper,
 } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
@@ -251,7 +251,7 @@ export class OntologyEditService {
         this.lastModificationDate = resClass.lastModificationDate;
         this._loadOntology(this.ontologyId, resClass.id);
         const classLabel =
-          pickPreferredLabel(resClass.labels, this._localizationService.currentLanguage) || resClass.label;
+          pickPreferredLanguageString(resClass.labels, this._localizationService.currentLanguage) || resClass.label;
         this._notification.openSnackBar(this._translate.instant('pages.ontology.service.classCreated', { classLabel }));
       })
     );

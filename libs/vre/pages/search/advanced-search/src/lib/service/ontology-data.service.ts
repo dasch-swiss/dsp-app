@@ -9,7 +9,7 @@ import {
   ResourcePropertyDefinitionWithAllLanguages,
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
-import { LocalizationService, pickPreferredLabel, SortingHelper } from '@dasch-swiss/vre/shared/app-helper-services';
+import { LocalizationService, pickPreferredLanguageString, SortingHelper } from '@dasch-swiss/vre/shared/app-helper-services';
 import { BehaviorSubject, combineLatest, filter, map, Observable, of, startWith, switchMap, tap } from 'rxjs';
 import { RDFS_LABEL, ResourceLabel, SEARCH_ALL_RESOURCE_CLASSES_OPTION } from '../constants';
 import { IriLabelPair, Predicate } from '../model';
@@ -75,8 +75,8 @@ export class OntologyDataService {
     map(({ classes, lang }) =>
       [...classes].sort((a, b) =>
         SortingHelper.compareStringsByLanguage(
-          pickPreferredLabel(a.labels, lang),
-          pickPreferredLabel(b.labels, lang),
+          pickPreferredLanguageString(a.labels, lang),
+          pickPreferredLanguageString(b.labels, lang),
           lang
         )
       )
@@ -142,8 +142,8 @@ export class OntologyDataService {
     map(({ props, lang }) =>
       [...props].sort((a, b) =>
         SortingHelper.compareStringsByLanguage(
-          pickPreferredLabel(a.labels, lang),
-          pickPreferredLabel(b.labels, lang),
+          pickPreferredLanguageString(a.labels, lang),
+          pickPreferredLanguageString(b.labels, lang),
           lang
         )
       )

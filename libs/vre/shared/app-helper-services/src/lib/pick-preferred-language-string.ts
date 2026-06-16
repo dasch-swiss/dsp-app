@@ -10,7 +10,7 @@ import { AvailableLanguage } from '@dasch-swiss/vre/core/config';
  * Shared between `StringifyStringLiteralPipe` (display) and any
  * call site that needs the same string for sort-key consistency.
  */
-export function pickPreferredLabel(
+export function pickPreferredLanguageString(
   value: ReadonlyArray<StringLiteral | LanguageStringDto> | null | undefined,
   language: AvailableLanguage
 ): string {

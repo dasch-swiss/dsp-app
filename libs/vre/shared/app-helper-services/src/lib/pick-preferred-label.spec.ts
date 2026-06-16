@@ -1,4 +1,4 @@
-import { pickPreferredLabel } from './pick-preferred-label';
+import { pickPreferredLanguageString } from './pick-preferred-language-string';
 
 describe('pickPreferredLabel', () => {
   it('returns the preferred-language value when present and non-empty', () => {
@@ -6,7 +6,7 @@ describe('pickPreferredLabel', () => {
       { language: 'de', value: 'Dokumentation' },
       { language: 'en', value: 'Documentation' },
     ];
-    expect(pickPreferredLabel(labels, 'en')).toBe('Documentation');
+    expect(pickPreferredLanguageString(labels, 'en')).toBe('Documentation');
   });
 
   it('returns the first non-empty value when preferred language is missing', () => {
@@ -14,7 +14,7 @@ describe('pickPreferredLabel', () => {
       { language: 'de', value: 'Dokumentation' },
       { language: 'en', value: 'Documentation' },
     ];
-    expect(pickPreferredLabel(labels, 'fr')).toBe('Dokumentation');
+    expect(pickPreferredLanguageString(labels, 'fr')).toBe('Dokumentation');
   });
 
   it('returns the first non-empty value when preferred value is empty', () => {
@@ -22,7 +22,7 @@ describe('pickPreferredLabel', () => {
       { language: 'en', value: '' },
       { language: 'de', value: 'Dokumentation' },
     ];
-    expect(pickPreferredLabel(labels, 'en')).toBe('Dokumentation');
+    expect(pickPreferredLanguageString(labels, 'en')).toBe('Dokumentation');
   });
 
   it('returns the first non-empty value when preferred value is whitespace-only', () => {
@@ -30,12 +30,12 @@ describe('pickPreferredLabel', () => {
       { language: 'en', value: '   ' },
       { language: 'de', value: 'Dokumentation' },
     ];
-    expect(pickPreferredLabel(labels, 'en')).toBe('Dokumentation');
+    expect(pickPreferredLanguageString(labels, 'en')).toBe('Dokumentation');
   });
 
   it('returns empty string for null, undefined, or empty input', () => {
-    expect(pickPreferredLabel(null, 'en')).toBe('');
-    expect(pickPreferredLabel(undefined, 'en')).toBe('');
-    expect(pickPreferredLabel([], 'en')).toBe('');
+    expect(pickPreferredLanguageString(null, 'en')).toBe('');
+    expect(pickPreferredLanguageString(undefined, 'en')).toBe('');
+    expect(pickPreferredLanguageString([], 'en')).toBe('');
   });
 });
