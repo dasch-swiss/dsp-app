@@ -75,22 +75,9 @@ import { ResourceClassSidenavComponent } from './resource-class-sidenav/resource
   encapsulation: ViewEncapsulation.None,
 })
 export class ProjectSidenavOntologiesComponent implements OnInit {
-  projectOntologies$ = combineLatest([
-    this._projectPageService.currentProject$,
-    this._localizationService.currentLanguage$,
-  ]).pipe(
-    switchMap(([project, lang]) =>
+  private readonly _projectOntologies$ = this._projectPageService.currentProject$.pipe(
+    switchMap(project =>
       this._v3.getV3ProjectsProjectiriResourcesperontology(project.id).pipe(
-        map(ontologies =>
-          // `OntologyDto.label` is a single string pre-selected server-side (the
-          // `/v3/projects/{projectIri}/resourcesPerOntology` endpoint has no
-          // `Accept-Language` support), so we cannot change the label text
-          // client-side. We re-sort with the current language so collation rules
-          // (e.g. German umlaut ordering) match the user's selection.
-          [...ontologies].sort((a, b) =>
-            SortingHelper.compareStringsByLanguage(a.ontology.label, b.ontology.label, lang)
-          )
-        ),
         catchError(error => {
           console.error('Error loading project ontologies:', error);
           return of([]);
@@ -98,6 +85,14 @@ export class ProjectSidenavOntologiesComponent implements OnInit {
       )
     ),
     shareReplay({ bufferSize: 1, refCount: true })
+  );
+
+  projectOntologies$ = combineLatest([this._projectOntologies$, this._localizationService.currentLanguage$]).pipe(
+    map(([ontologies, lang]) =>
+      [...ontologies].sort((a, b) =>
+        SortingHelper.compareStringsByLanguage(a.ontology.label, b.ontology.label, lang)
+      )
+    )
   );
   initialExpandIri?: string;
 
