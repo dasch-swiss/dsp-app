@@ -99,9 +99,7 @@ export class OntologyCache extends GenericCache<ReadOntology> {
           // The cache fetches ontologies with allLanguages=true (see requestItemFromKnora below),
           // so the runtime instance carries the labels/comments arrays even though the deserialised
           // declared type is the base ResourceClassDefinition.
-          tmpClasses[resourceClassIri] = mainOnto.classes[
-            resourceClassIri
-          ] as ResourceClassDefinitionWithAllLanguages;
+          tmpClasses[resourceClassIri] = mainOnto.classes[resourceClassIri] as ResourceClassDefinitionWithAllLanguages;
 
           // filter out non Knora properties
           tmpClasses[resourceClassIri].propertiesList = tmpClasses[resourceClassIri].propertiesList.filter(
