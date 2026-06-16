@@ -89,9 +89,7 @@ export class ProjectSidenavOntologiesComponent implements OnInit {
 
   projectOntologies$ = combineLatest([this._projectOntologies$, this._localizationService.currentLanguage$]).pipe(
     map(([ontologies, lang]) =>
-      [...ontologies].sort((a, b) =>
-        SortingHelper.compareStringsByLanguage(a.ontology.label, b.ontology.label, lang)
-      )
+      [...ontologies].sort((a, b) => SortingHelper.compareStringsByLanguage(a.ontology.label, b.ontology.label, lang))
     )
   );
   initialExpandIri?: string;
