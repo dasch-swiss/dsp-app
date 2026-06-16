@@ -1,6 +1,6 @@
 import { pickPreferredLanguageString } from './pick-preferred-language-string';
 
-describe('pickPreferredLabel', () => {
+describe('pickPreferredLanguageString', () => {
   it('returns the preferred-language value when present and non-empty', () => {
     const labels = [
       { language: 'de', value: 'Dokumentation' },
