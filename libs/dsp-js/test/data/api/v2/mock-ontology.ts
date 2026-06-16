@@ -7,10 +7,7 @@ import { IHasProperty } from '../../../../src/models/v2/ontologies/class-definit
 import { OntologiesMetadata } from '../../../../src/models/v2/ontologies/ontology-metadata';
 import { PropertyDefinition } from '../../../../src/models/v2/ontologies/property-definition';
 import { ReadOntology } from '../../../../src/models/v2/ontologies/read/read-ontology';
-import {
-  ResourceClassDefinition,
-  ResourceClassDefinitionWithAllLanguages,
-} from '../../../../src/models/v2/ontologies/resource-class-definition';
+import { ResourceClassDefinition } from '../../../../src/models/v2/ontologies/resource-class-definition';
 import { ResourcePropertyDefinition } from '../../../../src/models/v2/ontologies/resource-property-definition';
 import { StandoffClassDefinition } from '../../../../src/models/v2/ontologies/standoff-class-definition';
 import { SystemPropertyDefinition } from '../../../../src/models/v2/ontologies/system-property-definition';
