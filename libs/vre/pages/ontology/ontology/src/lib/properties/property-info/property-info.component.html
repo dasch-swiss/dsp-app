@@ -15,8 +15,7 @@
         matTooltipPosition="above"
         matTooltipClass="multi-line-tooltip"
         data-cy="property-labels">
-        {{ property.propDef!.labels.length ? (property.propDef!.labels | appStringifyStringLiteral) :
-        property.propDef?.label }}
+        {{ property.propDef!.labels | appStringifyStringLiteral }}
       </span>
       <mat-icon
         [matTooltip]="property.propDef.comments | appStringifyStringLiteral"
