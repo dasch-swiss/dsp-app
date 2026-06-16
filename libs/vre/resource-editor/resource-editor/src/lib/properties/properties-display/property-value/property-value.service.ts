@@ -1,10 +1,5 @@
 import { Injectable } from '@angular/core';
-import {
-  Cardinality,
-  ReadResource,
-  ReadValue,
-  ResourcePropertyDefinitionWithAllLanguages,
-} from '@dasch-swiss/dsp-js';
+import { Cardinality, ReadResource, ReadValue, ResourcePropertyDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
 import { BehaviorSubject } from 'rxjs';
 
 @Injectable()
