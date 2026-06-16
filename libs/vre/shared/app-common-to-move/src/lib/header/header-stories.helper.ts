@@ -1,5 +1,5 @@
 import { provideRouter } from '@angular/router';
-import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
+import { KnoraApiConfig, KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { AppConfigService, AppConfigToken, DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 
 export const APP_CONFIG_TOKEN_STUB = {
@@ -40,6 +40,7 @@ export const HEADER_BASE_PROVIDERS = [
     provide: AppConfigService,
     useValue: {
       dspConfig: { production: false, environment: 'dev', release: '0.0.0', color: 'accent' },
+      dspApiConfig: new KnoraApiConfig('https', 'api.example.com'),
     },
   },
 ];

@@ -75,12 +75,12 @@ export class ResourceClassFormComponent implements OnInit {
         nonNullable: true,
       }),
       labels: DEFAULT_MULTILANGUAGE_FORM(
-        ensureWithDefaultLanguage(this.formData.labels, this._localizationService.getCurrentLanguage()),
+        ensureWithDefaultLanguage(this.formData.labels, this._localizationService.currentLanguage),
         this.labelsValidators,
         [atLeastOneStringRequired('value')]
       ),
       comments: DEFAULT_MULTILANGUAGE_FORM(
-        ensureWithDefaultLanguage(this.formData.comments, this._localizationService.getCurrentLanguage()),
+        ensureWithDefaultLanguage(this.formData.comments, this._localizationService.currentLanguage),
         this.commentsValidators,
         [atLeastOneStringRequired('value')]
       ),

@@ -31,7 +31,7 @@ export class AutoLoginService {
     }
 
     if (!this._accessTokenService.isValidToken()) {
-      this._accessTokenService.removeTokens();
+      this._accessTokenService.removeToken();
       this.hasCheckedCredentials$.next(true);
       return;
     }

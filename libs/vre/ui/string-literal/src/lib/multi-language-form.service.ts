@@ -1,8 +1,7 @@
 import { ChangeDetectorRef, Injectable } from '@angular/core';
 import { FormBuilder, ValidatorFn } from '@angular/forms';
-import { AvailableLanguages, DaschLanguage } from '@dasch-swiss/vre/core/config';
-import { UserService } from '@dasch-swiss/vre/core/session';
-import { isDaschLanguage } from './dash-language.type';
+import { AvailableLanguage, AvailableLanguageKeys } from '@dasch-swiss/vre/core/config';
+import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { MultiLanguageFormArray } from './multi-language-form-array.type';
 
 /** Component Provider used in combination with
@@ -11,7 +10,7 @@ import { MultiLanguageFormArray } from './multi-language-form-array.type';
  */
 @Injectable()
 export class MultiLanguageFormService {
-  readonly availableLanguages = AvailableLanguages.map(lang => lang.language);
+  readonly availableLanguages = AvailableLanguageKeys;
   selectedLanguageIndex!: number;
   formArray!: MultiLanguageFormArray;
   validators!: ValidatorFn[];
@@ -42,7 +41,7 @@ export class MultiLanguageFormService {
   }
 
   constructor(
-    private readonly _userService: UserService,
+    private readonly _localizationService: LocalizationService,
     private readonly _fb: FormBuilder,
     private readonly _cd: ChangeDetectorRef
   ) {}
@@ -88,8 +87,10 @@ export class MultiLanguageFormService {
     this.inputValue = newText;
   }
 
-  getFormControlWithLanguage(lang: string) {
-    return this.formArray.controls.find(control => control.value.language === lang && control.value.value !== '');
+  getFormControlWithLanguage(lang: AvailableLanguage) {
+    return this.formArray.controls.find(
+      control => control.value.language === lang && (control.value.value?.trim() ?? '') !== ''
+    );
   }
 
   changeLanguage(languageIndex: number) {
@@ -111,39 +112,30 @@ export class MultiLanguageFormService {
     });
   }
 
+  /**
+   * Select the language tab to display initially.
+   *
+   * Preference order:
+   *  1. the user's current UI language, if the form has a non-empty value for it
+   *  2. the first language in `availableLanguages` that has a non-empty value
+   *  3. the user's current UI language as a fallback (typical create-flow with an
+   *     empty form), defaulting to index 0 if the current language is unknown
+   */
   private _setupLanguageIndex(): number {
-    const responseLanguages = this.formArray
-      .getRawValue()
-      .map(v => v.language)
-      .filter(language => this.availableLanguages.includes(language));
+    const currentLanguage = this._localizationService.currentLanguage;
+    const currentLanguageIndex = this.availableLanguages.indexOf(currentLanguage);
 
-    const user = this._userService.currentUser;
-    const userFavoriteLanguage = (user?.lang || navigator.language.substring(0, 2)) as DaschLanguage;
-
-    if (responseLanguages.length === 0) {
-      if (!isDaschLanguage(userFavoriteLanguage)) {
-        return 0;
-      }
-      // form is empty, push a new value
-      const indexFavoriteLanguage = this.availableLanguages.indexOf(userFavoriteLanguage);
-
-      // with user favorite language
-      if (indexFavoriteLanguage !== -1) {
-        return indexFavoriteLanguage;
-        // with default language
-      } else {
-        return 0;
-      }
+    if (currentLanguageIndex !== -1 && this.getFormControlWithLanguage(currentLanguage) !== undefined) {
+      return currentLanguageIndex;
     }
 
-    if (
-      isDaschLanguage(userFavoriteLanguage) &&
-      responseLanguages.includes(userFavoriteLanguage) &&
-      this.availableLanguages.includes(userFavoriteLanguage)
-    ) {
-      return this.availableLanguages.indexOf(userFavoriteLanguage);
+    const firstAvailableWithValue = this.availableLanguages.findIndex(
+      lang => this.getFormControlWithLanguage(lang) !== undefined
+    );
+    if (firstAvailableWithValue !== -1) {
+      return firstAvailableWithValue;
     }
 
-    return this.availableLanguages.indexOf(responseLanguages[0]);
+    return Math.max(currentLanguageIndex, 0);
   }
 }

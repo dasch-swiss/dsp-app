@@ -44,8 +44,8 @@ describe('OntologyCache', () => {
             expect(onto.id).toEqual('http://0.0.0.0:3333/ontology/0001/anything/v2');
 
             expect(getOntoSpy).toHaveBeenCalledTimes(2);
-            expect(getOntoSpy).toHaveBeenCalledWith('http://0.0.0.0:3333/ontology/0001/anything/v2');
-            expect(getOntoSpy).toHaveBeenCalledWith('http://api.knora.org/ontology/knora-api/v2'); // anything onto depends on knora-api
+            expect(getOntoSpy).toHaveBeenCalledWith('http://0.0.0.0:3333/ontology/0001/anything/v2', true);
+            expect(getOntoSpy).toHaveBeenCalledWith('http://api.knora.org/ontology/knora-api/v2', true); // anything onto depends on knora-api
 
             expect(
               knoraApiConnection.v2.ontologyCache['cache']['http://0.0.0.0:3333/ontology/0001/anything/v2']
@@ -64,8 +64,8 @@ describe('OntologyCache', () => {
             expect(onto.id).toEqual('http://0.0.0.0:3333/ontology/0001/anything/v2');
 
             expect(getOntoSpy).toHaveBeenCalledTimes(2);
-            expect(getOntoSpy).toHaveBeenCalledWith('http://0.0.0.0:3333/ontology/0001/anything/v2');
-            expect(getOntoSpy).toHaveBeenCalledWith('http://api.knora.org/ontology/knora-api/v2'); // anything onto depends on knora-api
+            expect(getOntoSpy).toHaveBeenCalledWith('http://0.0.0.0:3333/ontology/0001/anything/v2', true);
+            expect(getOntoSpy).toHaveBeenCalledWith('http://api.knora.org/ontology/knora-api/v2', true); // anything onto depends on knora-api
 
             expect(
               knoraApiConnection.v2.ontologyCache['cache']['http://0.0.0.0:3333/ontology/0001/anything/v2']
@@ -81,8 +81,8 @@ describe('OntologyCache', () => {
             expect(onto.id).toEqual('http://0.0.0.0:3333/ontology/0001/anything/v2');
 
             expect(getOntoSpy).toHaveBeenCalledTimes(2);
-            expect(getOntoSpy).toHaveBeenCalledWith('http://0.0.0.0:3333/ontology/0001/anything/v2');
-            expect(getOntoSpy).toHaveBeenCalledWith('http://api.knora.org/ontology/knora-api/v2'); // anything onto depends on knora-api
+            expect(getOntoSpy).toHaveBeenCalledWith('http://0.0.0.0:3333/ontology/0001/anything/v2', true);
+            expect(getOntoSpy).toHaveBeenCalledWith('http://api.knora.org/ontology/knora-api/v2', true); // anything onto depends on knora-api
 
             expect(
               knoraApiConnection.v2.ontologyCache['cache']['http://0.0.0.0:3333/ontology/0001/anything/v2']
@@ -98,8 +98,8 @@ describe('OntologyCache', () => {
             expect(onto.id).toEqual('http://0.0.0.0:3333/ontology/0001/anything/v2');
 
             expect(getOntoSpy).toHaveBeenCalledTimes(2);
-            expect(getOntoSpy).toHaveBeenCalledWith('http://0.0.0.0:3333/ontology/0001/anything/v2');
-            expect(getOntoSpy).toHaveBeenCalledWith('http://api.knora.org/ontology/knora-api/v2'); // anything onto depends on knora-api
+            expect(getOntoSpy).toHaveBeenCalledWith('http://0.0.0.0:3333/ontology/0001/anything/v2', true);
+            expect(getOntoSpy).toHaveBeenCalledWith('http://api.knora.org/ontology/knora-api/v2', true); // anything onto depends on knora-api
 
             expect(
               knoraApiConnection.v2.ontologyCache['cache']['http://0.0.0.0:3333/ontology/0001/anything/v2']
@@ -118,7 +118,7 @@ describe('OntologyCache', () => {
             expect(onto.id).toEqual('http://api.knora.org/ontology/knora-api/v2');
 
             expect(getOntoSpy).toHaveBeenCalledTimes(1);
-            expect(getOntoSpy).toHaveBeenCalledWith('http://api.knora.org/ontology/knora-api/v2');
+            expect(getOntoSpy).toHaveBeenCalledWith('http://api.knora.org/ontology/knora-api/v2', true);
 
             expect(
               knoraApiConnection.v2.ontologyCache['cache']['http://api.knora.org/ontology/knora-api/v2']
@@ -142,8 +142,8 @@ describe('OntologyCache', () => {
             expect(ontos.get('http://api.knora.org/ontology/knora-api/v2') instanceof ReadOntology).toBeTruthy();
 
             expect(getOntoSpy).toHaveBeenCalledTimes(2);
-            expect(getOntoSpy).toHaveBeenCalledWith('http://0.0.0.0:3333/ontology/0001/anything/v2');
-            expect(getOntoSpy).toHaveBeenCalledWith('http://api.knora.org/ontology/knora-api/v2'); // anything onto depends on knora-api
+            expect(getOntoSpy).toHaveBeenCalledWith('http://0.0.0.0:3333/ontology/0001/anything/v2', true);
+            expect(getOntoSpy).toHaveBeenCalledWith('http://api.knora.org/ontology/knora-api/v2', true); // anything onto depends on knora-api
 
             done();
           });
@@ -164,7 +164,7 @@ describe('OntologyCache', () => {
             expect(ontos.get('http://api.knora.org/ontology/knora-api/v2') instanceof ReadOntology).toBeTruthy();
 
             expect(getOntoSpy).toHaveBeenCalledTimes(1);
-            expect(getOntoSpy).toHaveBeenCalledWith('http://api.knora.org/ontology/knora-api/v2');
+            expect(getOntoSpy).toHaveBeenCalledWith('http://api.knora.org/ontology/knora-api/v2', true);
 
             done();
           });
@@ -286,8 +286,8 @@ describe('OntologyCache', () => {
           expect(onto.id).toEqual('http://0.0.0.0:3333/ontology/0001/anything/v2');
 
           expect(getOntoSpy).toHaveBeenCalledTimes(2);
-          expect(getOntoSpy).toHaveBeenCalledWith('http://0.0.0.0:3333/ontology/0001/anything/v2');
-          expect(getOntoSpy).toHaveBeenCalledWith('http://api.knora.org/ontology/knora-api/v2'); // anything onto depends on knora-api
+          expect(getOntoSpy).toHaveBeenCalledWith('http://0.0.0.0:3333/ontology/0001/anything/v2', true);
+          expect(getOntoSpy).toHaveBeenCalledWith('http://api.knora.org/ontology/knora-api/v2', true); // anything onto depends on knora-api
 
           expect(
             knoraApiConnection.v2.ontologyCache['cache']['http://0.0.0.0:3333/ontology/0001/anything/v2']
@@ -337,7 +337,7 @@ describe('OntologyCache', () => {
           ontos => {},
           (err: ApiResponseError) => {
             expect(getOntoSpy).toHaveBeenCalledTimes(1);
-            expect(getOntoSpy).toHaveBeenCalledWith('http://api.knora.org/ontology/knora-api/v2');
+            expect(getOntoSpy).toHaveBeenCalledWith('http://api.knora.org/ontology/knora-api/v2', true);
 
             done();
           }

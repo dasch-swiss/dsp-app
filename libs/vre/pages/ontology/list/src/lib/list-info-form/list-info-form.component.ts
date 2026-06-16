@@ -19,6 +19,7 @@ import { ListApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { ensureWithDefaultLanguage } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
 import { atLeastOneStringRequired } from '@dasch-swiss/vre/shared/app-common';
+import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { LoadingButtonDirective } from '@dasch-swiss/vre/ui/progress-indicator';
 import {
   DEFAULT_MULTILANGUAGE_FORM,
@@ -78,6 +79,7 @@ export class ListInfoFormComponent implements OnInit {
   loading = false;
 
   protected readonly _translate = inject(TranslateService);
+  private readonly _localizationService = inject(LocalizationService);
 
   get title() {
     return this.data
@@ -101,12 +103,12 @@ export class ListInfoFormComponent implements OnInit {
   _buildForm() {
     this.form = this._fb.group({
       labels: DEFAULT_MULTILANGUAGE_FORM(
-        this.data ? ensureWithDefaultLanguage(this.data.labels, this._translate.currentLang) : [],
+        this.data ? ensureWithDefaultLanguage(this.data.labels, this._localizationService.currentLanguage) : [],
         [Validators.maxLength(2000)],
         [atLeastOneStringRequired('value')]
       ),
       comments: DEFAULT_MULTILANGUAGE_FORM(
-        this.data ? ensureWithDefaultLanguage(this.data.comments, this._translate.currentLang) : [],
+        this.data ? ensureWithDefaultLanguage(this.data.comments, this._localizationService.currentLanguage) : [],
         [Validators.maxLength(2000)],
         [atLeastOneStringRequired('value')]
       ),

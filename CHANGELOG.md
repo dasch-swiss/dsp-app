@@ -1,5 +1,31 @@
 # Changelog
 
+## [13.6.0](https://github.com/dasch-swiss/dsp-app/compare/v13.5.1...v13.6.0) (2026-06-15)
+
+
+### Enhancements
+
+* advanced search restore list value v2 (DEV-6608) ([#3162](https://github.com/dasch-swiss/dsp-app/issues/3162)) ([9648598](https://github.com/dasch-swiss/dsp-app/commit/96485984fdd7725589cbb4f3b02dfa880744d068))
+
+
+### Bug Fixes
+
+* prevent destruction if the resource does not change (DEV-6611) ([#3164](https://github.com/dasch-swiss/dsp-app/issues/3164)) ([1414f50](https://github.com/dasch-swiss/dsp-app/commit/1414f507dbb2e09229c65dd8bb948c41e1fa2d6b))
+* retry enabling auto-merge on openapi spec-bump PRs ([#3157](https://github.com/dasch-swiss/dsp-app/issues/3157)) ([7fad83d](https://github.com/dasch-swiss/dsp-app/commit/7fad83d798646314db247d60073b4ecec0874c06))
+* streamline translations with current language (DEV-6607) ([#3115](https://github.com/dasch-swiss/dsp-app/issues/3115)) ([8b6bc68](https://github.com/dasch-swiss/dsp-app/commit/8b6bc68d656aeb6bef20ab81cbeea42cb64d3d86))
+
+
+### Maintenances
+
+* **deps:** Lock file maintenance ([#3170](https://github.com/dasch-swiss/dsp-app/issues/3170)) ([570bbde](https://github.com/dasch-swiss/dsp-app/commit/570bbde783ed65f3fd39b40a8691bf2d060d0758))
+* **deps:** Update dependency @openapitools/openapi-generator-cli from 2.34.0 to 2.38.0 ([#3168](https://github.com/dasch-swiss/dsp-app/issues/3168)) ([31efca1](https://github.com/dasch-swiss/dsp-app/commit/31efca1eab040e8d94c4c48d0f0d2d91998a4db3))
+* **deps:** Update github-actions from v6.0.2 to v7.0.0 ([#3159](https://github.com/dasch-swiss/dsp-app/issues/3159)) ([1e5d1a0](https://github.com/dasch-swiss/dsp-app/commit/1e5d1a07d19f6f55f91e320d6db597c25848dd15))
+* **deps:** Update prettier-deps from 3.8.3 to 3.8.4 ([#3166](https://github.com/dasch-swiss/dsp-app/issues/3166)) ([9fc5e62](https://github.com/dasch-swiss/dsp-app/commit/9fc5e626551e44b3f01063ee396e140f8731478c))
+* **deps:** Update sentry-javascript monorepo from 10.56.0 to 10.57.0 ([#3169](https://github.com/dasch-swiss/dsp-app/issues/3169)) ([6d23a13](https://github.com/dasch-swiss/dsp-app/commit/6d23a13ce60f20de220ad583c3a32319c687f449))
+* **deps:** Update swc-deps from 1.15.40 to 1.15.41 ([#3167](https://github.com/dasch-swiss/dsp-app/issues/3167)) ([83d3b11](https://github.com/dasch-swiss/dsp-app/commit/83d3b113a8b962d145f171747ac7d54fe4ba3d08))
+* **main:** release dsp-js 12.0.1 ([#3054](https://github.com/dasch-swiss/dsp-app/issues/3054)) ([cf40c8f](https://github.com/dasch-swiss/dsp-app/commit/cf40c8f98bf98b7a58372919b5533c044e4c0cb8))
+* **open-api:** bump dsp-api spec v35.10.0-13-g4349516 → v36.0.0-3-g42c7a03 ([#3163](https://github.com/dasch-swiss/dsp-app/issues/3163)) ([b985efa](https://github.com/dasch-swiss/dsp-app/commit/b985efa8de9c98acacdf4e8a6452250f8fd3a03d))
+
 ## [13.5.1](https://github.com/dasch-swiss/dsp-app/compare/v13.5.0...v13.5.1) (2026-06-08)
 
 

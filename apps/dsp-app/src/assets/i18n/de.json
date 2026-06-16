@@ -807,7 +807,9 @@
       "showing": "Anzeigen"
     },
     "header": {
-      "help": "Hilfe"
+      "help": "Hilfe",
+      "changeLanguage": "Sprache ändern",
+      "changeLanguageInfo": "Projektinhalte wie Daten, Datenmodelle oder Listen werden in der Originalsprache dargestellt, wenn sie nicht in der gewählten Sprache verfügbar sind."
     },
     "chipListInput": {
       "keywords": "Schlagworte"

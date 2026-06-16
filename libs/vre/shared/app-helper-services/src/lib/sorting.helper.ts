@@ -1,71 +1,55 @@
+import { StringLiteral } from '@dasch-swiss/dsp-js';
+import { LanguageStringDto } from '@dasch-swiss/vre/3rd-party-services/open-api';
+import { AvailableLanguage } from '@dasch-swiss/vre/core/config';
+import { pickPreferredLanguageString } from './pick-preferred-language-string';
+
 export class SortingHelper {
   /**
-   * compares value by value and sorts in alphabetical order using the provided first key, in case the comparison
-   * of the values results in zero the second key is used if provided.
+   * Sort items alphabetically by a property key, case-insensitively.
+   * Use for admin tables where the sort field is a non-translatable string
+   * (username, email, shortname). For multi-language labels use `sortByLocalizedString`.
    */
-  static keySortByAlphabetical<T extends object>(
-    value: Array<T>,
-    firstSortKey: keyof T,
-    secondSortKey?: keyof T
-  ): Array<T> {
-    const sortedArray = value.slice();
-    sortedArray.sort((a: T, b: T) => {
-      if (String(a[firstSortKey]).toLowerCase() < String(b[firstSortKey]).toLowerCase()) {
-        return -1;
-      } else if (String(a[firstSortKey]).toLowerCase() > String(b[firstSortKey]).toLowerCase()) {
-        return 1;
-      } else if (secondSortKey) {
-        if (String(a[secondSortKey]).toLowerCase() < String(b[secondSortKey]).toLowerCase()) {
-          return -1;
-        } else if (String(a[secondSortKey]).toLowerCase() > String(b[secondSortKey]).toLowerCase()) {
-          return 1;
-        } else {
-          return 0;
-        }
-      } else {
-        return 0;
-      }
-    });
-    return sortedArray;
+  static keySortByAlphabetical<T extends object>(items: ReadonlyArray<T>, key: keyof T): T[] {
+    return [...items].sort((a, b) =>
+      String(a[key] ?? '').localeCompare(String(b[key] ?? ''), undefined, { sensitivity: 'base' })
+    );
   }
 
-  static sortByLabelsAlphabetically<T extends object>(value: Array<T>, sortKey: keyof T, language?: string): Array<T> {
-    const sortedArray = value.slice();
-    sortedArray.sort((a: T, b: T) => {
-      let rawLabelA = String(a[sortKey] ?? '');
-      let rawLabelB = String(b[sortKey] ?? '');
-      if (language !== undefined) {
-        rawLabelA = SortingHelper.getLabelValue(a, sortKey, language);
-        rawLabelB = SortingHelper.getLabelValue(b, sortKey, language);
-      }
-
-      const comparison = rawLabelA.localeCompare(rawLabelB, language, {
-        numeric: true,
-        sensitivity: 'variant',
-        ignorePunctuation: false,
-      });
-
-      if (comparison !== 0) return comparison;
-
-      return 0;
+  /**
+   * Language-aware string comparator with consistent collation options across the app.
+   * `language` is one of the UI languages exposed by `LocalizationService`.
+   * Falls back to empty string for nullish input.
+   */
+  static compareStringsByLanguage(
+    a: string | undefined | null,
+    b: string | undefined | null,
+    language: AvailableLanguage
+  ): number {
+    return (a ?? '').localeCompare(b ?? '', language, {
+      numeric: true,
+      sensitivity: 'variant',
+      ignorePunctuation: false,
     });
-
-    return sortedArray;
   }
 
-  private static getLabelValue<T>(item: T, sortKey: keyof T, language: string): string {
-    type Label = { language: string; value: string };
-    type TWithLabels = T & { labels: Label[] };
-
-    const labels = (item as TWithLabels).labels;
-    if (Array.isArray(labels)) {
-      const primary = labels.find(l => l.language === language)?.value;
-      if (primary) return primary;
-
-      const fallback = labels.find(l => l.value.trim() !== '')?.value;
-      if (fallback) return fallback;
-    }
-
-    return String(item[sortKey]) || '';
+  /**
+   * Sort items by a localized string accessor using language-aware collation.
+   *
+   * Resolves each item's language-tagged values to the current language via
+   * `pickPreferredLanguageString`, then compares with language-aware collation. Use
+   * whenever the underlying field is `StringLiteral[]` / `LanguageStringDto[]`.
+   */
+  static sortByLocalizedString<T>(
+    items: ReadonlyArray<T>,
+    getValues: (item: T) => ReadonlyArray<StringLiteral | LanguageStringDto> | null | undefined,
+    language: AvailableLanguage
+  ): T[] {
+    return [...items].sort((a, b) =>
+      SortingHelper.compareStringsByLanguage(
+        pickPreferredLanguageString(getValues(a), language),
+        pickPreferredLanguageString(getValues(b), language),
+        language
+      )
+    );
   }
 }
