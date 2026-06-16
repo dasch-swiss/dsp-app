@@ -7,7 +7,10 @@ import { IHasProperty } from '../../../../src/models/v2/ontologies/class-definit
 import { OntologiesMetadata } from '../../../../src/models/v2/ontologies/ontology-metadata';
 import { PropertyDefinition } from '../../../../src/models/v2/ontologies/property-definition';
 import { ReadOntology } from '../../../../src/models/v2/ontologies/read/read-ontology';
-import { ResourceClassDefinition } from '../../../../src/models/v2/ontologies/resource-class-definition';
+import {
+  ResourceClassDefinition,
+  ResourceClassDefinitionWithAllLanguages,
+} from '../../../../src/models/v2/ontologies/resource-class-definition';
 import { ResourcePropertyDefinition } from '../../../../src/models/v2/ontologies/resource-property-definition';
 import { StandoffClassDefinition } from '../../../../src/models/v2/ontologies/standoff-class-definition';
 import { SystemPropertyDefinition } from '../../../../src/models/v2/ontologies/system-property-definition';
@@ -97,7 +100,7 @@ export namespace MockOntology {
   export const mockIResourceClassAndPropertyDefinitions = (
     resClassIri: string
   ): ResourceClassAndPropertyDefinitions => {
-    const tmpClasses: { [index: string]: ResourceClassDefinition } = {};
+    const tmpClasses: { [index: string]: ResourceClassDefinitionWithAllLanguages } = {};
 
     const tmpProps: { [index: string]: PropertyDefinition } = {};
 
@@ -112,9 +115,11 @@ export namespace MockOntology {
     // Convert resource classes
     entities
       .filter(OntologyConversionUtil.filterResourceClassDefinitions)
-      .map(resclassJsonld => OntologyConversionUtil.convertEntity(resclassJsonld, ResourceClassDefinition, jsonConvert))
+      .map(resclassJsonld =>
+        OntologyConversionUtil.convertEntity(resclassJsonld, ResourceClassDefinitionWithAllLanguages, jsonConvert)
+      )
       .filter(resclassDef => resclassDef.id === resClassIri)
-      .forEach((resClass: ResourceClassDefinition) => {
+      .forEach((resClass: ResourceClassDefinitionWithAllLanguages) => {
         tmpClasses[resClass.id] = resClass;
       });
 

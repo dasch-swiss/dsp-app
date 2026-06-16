@@ -1,6 +1,6 @@
 import { IHasProperty } from '../../models/v2/ontologies/class-definition';
 import { PropertyDefinition } from '../../models/v2/ontologies/property-definition';
-import { ResourceClassDefinition } from '../../models/v2/ontologies/resource-class-definition';
+import { ResourceClassDefinitionWithAllLanguages } from '../../models/v2/ontologies/resource-class-definition';
 import { ResourcePropertyDefinition } from '../../models/v2/ontologies/resource-property-definition';
 import { SystemPropertyDefinition } from '../../models/v2/ontologies/system-property-definition';
 
@@ -9,22 +9,27 @@ import { SystemPropertyDefinition } from '../../models/v2/ontologies/system-prop
  *
  * @category Model V2
  */
-export class ResourceClassDefinitionWithPropertyDefinition extends ResourceClassDefinition {
+export class ResourceClassDefinitionWithPropertyDefinition extends ResourceClassDefinitionWithAllLanguages {
   override propertiesList: IHasPropertyWithPropertyDefinition[] = [];
 
   /**
-   * Create an instance from a given `ResourceClassDefinition`.
+   * Create an instance from a given `ResourceClassDefinitionWithAllLanguages`.
    *
-   * @param resClassDef instance of `ResourceClassDefinition`.
+   * @param resClassDef instance of `ResourceClassDefinitionWithAllLanguages`.
    * @param propertyDefinitions object containing all `PropertyDefinition`
    *                            the resource class definition has cardinalities for.
    */
-  constructor(resClassDef: ResourceClassDefinition, propertyDefinitions: { [index: string]: PropertyDefinition }) {
+  constructor(
+    resClassDef: ResourceClassDefinitionWithAllLanguages,
+    propertyDefinitions: { [index: string]: PropertyDefinition }
+  ) {
     super();
 
     this.id = resClassDef.id;
     this.label = resClassDef.label;
+    this.labels = resClassDef.labels;
     this.comment = resClassDef.comment;
+    this.comments = resClassDef.comments;
     this.subClassOf = resClassDef.subClassOf;
 
     // add property definition to properties list's items
