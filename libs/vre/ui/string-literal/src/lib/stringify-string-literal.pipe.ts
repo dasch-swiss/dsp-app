@@ -2,7 +2,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { StringLiteral } from '@dasch-swiss/dsp-js';
 import { LanguageStringDto } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { AvailableLanguage } from '@dasch-swiss/vre/core/config';
-import { LocalizationService, pickPreferredLabel } from '@dasch-swiss/vre/shared/app-helper-services';
+import { LocalizationService, pickPreferredLanguageString } from '@dasch-swiss/vre/shared/app-helper-services';
 
 type LabelInput = StringLiteral[] | LanguageStringDto[] | null | undefined;
 
@@ -14,7 +14,7 @@ type LabelInput = StringLiteral[] | LanguageStringDto[] | null | undefined;
  * input array reference changing. To keep impurity cheap inside @for
  * loops (the pipe is called once per change-detection cycle per usage),
  * the last (input, language) result is memoized — repeat calls with the
- * same inputs return immediately without re-running pickPreferredLabel.
+ * same inputs return immediately without re-running pickPreferredLanguageString.
  *
  * Language is read from LocalizationService — the single gate-keeper of
  * the current language. Do not introduce TranslateService here.
@@ -36,7 +36,7 @@ export class StringifyStringLiteralPipe implements PipeTransform {
     if (this._hasResult && this._lastValue === value && this._lastLanguage === language) {
       return this._lastResult;
     }
-    const result = pickPreferredLabel(value, language);
+    const result = pickPreferredLanguageString(value, language);
     this._lastValue = value;
     this._lastLanguage = language;
     this._lastResult = result;
