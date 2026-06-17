@@ -29,6 +29,8 @@ const makeResource = () =>
           'http://example.org/Thing': {
             label: 'Thing',
             comment: 'A generic thing resource',
+            labels: [{ language: 'en', value: 'Thing' }],
+            comments: [{ language: 'en', value: 'A generic thing resource' }],
           },
         },
       },

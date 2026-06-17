@@ -10,7 +10,7 @@ import {
 import { StringLiteral } from '@dasch-swiss/dsp-js';
 import { ListApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { LoadingButtonDirective } from '@dasch-swiss/vre/ui/progress-indicator';
-import { MultiLanguages } from '@dasch-swiss/vre/ui/string-literal';
+import { MultiLanguages, StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
 import { DialogHeaderComponent } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe } from '@ngx-translate/core';
 import { finalize, of, switchMap } from 'rxjs';
@@ -27,7 +27,7 @@ export interface EditListItemDialogProps {
   selector: 'app-edit-list-item-dialog',
   template: `
     <app-dialog-header
-      [title]="data.formData.labels[0].value"
+      [title]="data.formData.labels | appStringifyStringLiteral"
       [subtitle]="'pages.ontology.list.editDialog.subtitle' | translate" />
 
     <div mat-dialog-content>
@@ -53,6 +53,7 @@ export interface EditListItemDialogProps {
     MatDialogActions,
     MatDialogClose,
     MatDialogContent,
+    StringifyStringLiteralPipe,
     TranslatePipe,
     DialogHeaderComponent,
     LoadingButtonDirective,

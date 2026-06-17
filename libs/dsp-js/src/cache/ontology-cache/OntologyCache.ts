@@ -5,7 +5,10 @@ import { OntologyConversionUtil } from '../../models/v2/ontologies/OntologyConve
 import { IHasProperty } from '../../models/v2/ontologies/class-definition';
 import { PropertyDefinition } from '../../models/v2/ontologies/property-definition';
 import { ReadOntology } from '../../models/v2/ontologies/read/read-ontology';
-import { ResourceClassDefinition } from '../../models/v2/ontologies/resource-class-definition';
+import {
+  ResourceClassDefinition,
+  ResourceClassDefinitionWithAllLanguages,
+} from '../../models/v2/ontologies/resource-class-definition';
 import { GenericCache } from '../GenericCache';
 import { ResourceClassAndPropertyDefinitions } from './resource-class-and-property-definitions';
 import { ResourceClassDefinitionWithPropertyDefinition } from './resource-class-definition-with-property-definition';
@@ -89,11 +92,14 @@ export class OntologyCache extends GenericCache<ReadOntology> {
           mainOnto.classes.hasOwnProperty(resourceClassIri) &&
           mainOnto.classes[resourceClassIri] instanceof ResourceClassDefinition
         ) {
-          const tmpClasses: { [index: string]: ResourceClassDefinition } = {};
+          const tmpClasses: { [index: string]: ResourceClassDefinitionWithAllLanguages } = {};
 
           const tmpProps: { [index: string]: PropertyDefinition } = {};
 
-          tmpClasses[resourceClassIri] = mainOnto.classes[resourceClassIri] as ResourceClassDefinition;
+          // The cache fetches ontologies with allLanguages=true (see requestItemFromKnora below),
+          // so the runtime instance carries the labels/comments arrays even though the deserialised
+          // declared type is the base ResourceClassDefinition.
+          tmpClasses[resourceClassIri] = mainOnto.classes[resourceClassIri] as ResourceClassDefinitionWithAllLanguages;
 
           // filter out non Knora properties
           tmpClasses[resourceClassIri].propertiesList = tmpClasses[resourceClassIri].propertiesList.filter(

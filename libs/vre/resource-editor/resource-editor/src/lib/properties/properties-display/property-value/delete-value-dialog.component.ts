@@ -12,6 +12,7 @@ import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { DeleteValue, KnoraApiConnection, ReadResource, UpdateResource } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
+import { LocalizationService, pickPreferredLanguageString } from '@dasch-swiss/vre/shared/app-helper-services';
 import { LoadingButtonDirective } from '@dasch-swiss/vre/ui/progress-indicator';
 import { DialogHeaderComponent } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -42,7 +43,7 @@ export interface DeleteValueDialogProps {
     <app-dialog-header
       [title]="
         _translateService.instant('resourceEditor.resourceProperties.deleteValue.title', {
-          label: propertyValueService.propertyDefinition.label,
+          label: propertyLabel,
         })
       " />
     <div mat-dialog-content>
@@ -88,8 +89,16 @@ export class DeleteValueDialogComponent {
     public dialogRef: MatDialogRef<DeleteValueDialogComponent, boolean>,
     public propertyValueService: PropertyValueService,
     private _resourceFetcherService: ResourceFetcherService,
-    private _cd: ChangeDetectorRef
+    private _cd: ChangeDetectorRef,
+    private readonly _localizationService: LocalizationService
   ) {}
+
+  get propertyLabel(): string {
+    return pickPreferredLanguageString(
+      this.propertyValueService.propertyDefinition.labels,
+      this._localizationService.currentLanguage
+    );
+  }
 
   deleteValue() {
     const resource = this.propertyValueService.editModeData.resource as ReadResource;

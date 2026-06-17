@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
-import { Cardinality, ReadResource, ReadValue, ResourcePropertyDefinition } from '@dasch-swiss/dsp-js';
+import { Cardinality, ReadResource, ReadValue, ResourcePropertyDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
 import { BehaviorSubject } from 'rxjs';
 
 @Injectable()
 export class PropertyValueService {
   private _editModeData!: { resource: ReadResource; values: ReadValue[] };
-  propertyDefinition!: ResourcePropertyDefinition;
+  propertyDefinition!: ResourcePropertyDefinitionWithAllLanguages;
   cardinality!: Cardinality;
   lastOpenedItem$ = new BehaviorSubject<number | null>(null);
 

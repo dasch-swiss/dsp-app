@@ -7,6 +7,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { ListNode } from '@dasch-swiss/dsp-js';
 import { ListApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
+import { LocalizationService, pickPreferredLanguageString } from '@dasch-swiss/vre/shared/app-helper-services';
 import { MultiLanguages } from '@dasch-swiss/vre/ui/string-literal';
 import { DIALOG_LARGE, DialogService } from '@dasch-swiss/vre/ui/ui';
 import { TranslateService } from '@ngx-translate/core';
@@ -89,14 +90,15 @@ export class ActionBubbleComponent {
     private readonly _dialog: DialogService,
     private readonly _matDialog: MatDialog,
     private readonly _listItemService: ListItemService,
-    private readonly _listApiService: ListApiService
+    private readonly _listApiService: ListApiService,
+    private readonly _localizationService: LocalizationService
   ) {}
 
   askToDeleteListNode() {
     this._dialog
       .afterConfirmation(
         this._translate.instant('pages.ontology.list.actionBubble.deleteNode'),
-        this.node.labels[0].value
+        pickPreferredLanguageString(this.node.labels, this._localizationService.currentLanguage)
       )
       .pipe(switchMap(() => this._listApiService.deleteListNode(this.node.id)))
       .subscribe(() => {
