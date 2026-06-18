@@ -7,6 +7,7 @@ import { filter, map } from 'rxjs';
 import { IriLabelPair } from '../model';
 import { OntologyDataService } from '../service/ontology-data.service';
 import { SearchStateService } from '../service/search-state.service';
+import { toLabels } from '../util/labels';
 
 @Component({
   selector: 'app-advanced-search-ontology-form',
@@ -38,7 +39,7 @@ export class AdvancedSearchOntologySelectComponent {
       o =>
         ({
           iri: o.id,
-          labels: o.label ? [{ language: '', value: o.label }] : [],
+          labels: toLabels(o.label),
           comments: [],
         }) as IriLabelPair
     )

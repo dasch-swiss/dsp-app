@@ -15,6 +15,7 @@ import {
 } from '@dasch-swiss/vre/shared/app-helper-services';
 import { BehaviorSubject, combineLatest, filter, map, Observable, of, startWith, switchMap } from 'rxjs';
 import { IriLabelPair, Predicate } from '../model';
+import { toLabels } from '../util/labels';
 
 @Injectable()
 export class OntologyDataService {
@@ -39,11 +40,9 @@ export class OntologyDataService {
       .getOntologiesByProjectIri(projectIri)
       .pipe(
         map(r =>
-          // ontologies do only have one label and it is not specified in which language,
-          // so we simply set the language to an empty string
           r.ontologies.map(o => ({
             iri: o.id,
-            labels: o.label ? [{ language: '', value: o.label }] : [],
+            labels: toLabels(o.label),
             comments: [],
           }))
         ),
@@ -207,7 +206,7 @@ export class OntologyDataService {
     return ontology
       ? {
           iri: ontology.id,
-          labels: ontology.label ? [{ language: '', value: ontology.label }] : [],
+          labels: toLabels(ontology.label),
           comments: [],
         }
       : ({ iri: '', labels: [], comments: [] } as IriLabelPair);

@@ -3,6 +3,7 @@ import { KnoraApiConnection, ListNodeV2 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { catchError, map, Observable, of, Subject, takeUntil } from 'rxjs';
 import { IriLabelPair } from '../model';
+import { toLabels } from '../util/labels';
 
 @Injectable()
 export class DynamicFormsDataService {
@@ -42,11 +43,9 @@ export class DynamicFormsDataService {
         map(response =>
           response.resources.map(
             res =>
-              // a resource is only available in one language and it is not specified which language that is,
-              // so we simply set the language to an empty string
               ({
                 iri: res.id,
-                labels: res.label ? [{ language: '', value: res.label }] : [],
+                labels: toLabels(res.label),
                 comments: [],
               }) as IriLabelPair
           )

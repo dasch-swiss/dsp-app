@@ -16,6 +16,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { take } from 'rxjs';
 import { IriLabelPair } from '../../../../model';
 import { DynamicFormsDataService } from '../../../../service/dynamic-forms-data.service';
+import { toLabels } from '../../../../util/labels';
 
 @Component({
   standalone: true,
@@ -84,11 +85,10 @@ export class ListValueComponent implements OnChanges {
   }
 
   onSelectionChange(node: ListNodeV2) {
-    // ListNodeV2 does only have one label property and we dont know the language of the label
     this.selectedListNode = node;
     const nodeValue: IriLabelPair = {
       iri: node.id,
-      labels: node.label ? [{ language: '', value: node.label }] : [],
+      labels: toLabels(node.label),
       comments: [],
     };
     this.emitValueChanged.emit(nodeValue);
