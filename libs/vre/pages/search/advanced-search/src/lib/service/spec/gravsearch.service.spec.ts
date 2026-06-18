@@ -15,12 +15,12 @@ const { service: mockLocalizationService } = createMockLocalizationService('en')
 
 // Translate mock — OntologyDataService injects TranslateService to build i18n options
 // via labelsFromI18n(), which reads translate.translations[language] synchronously
-// and calls translate.getParsedResult(...). We don't care about the actual translation
-// in these specs; getParsedResult() echoes the key back.
+// using ngx-translate's getValue() path walker. We don't care about the actual
+// translation in these specs; the empty per-language tables mean every key resolves
+// to the key itself (the documented fallback in labels-from-i18n.ts).
 const mockTranslateService = {
   instant: (key: string) => key,
   get: (key: string) => ({ subscribe: (cb: (v: string) => void) => cb(key) }),
-  getParsedResult: (_translations: any, key: string) => key,
   translations: { en: {}, de: {}, fr: {}, it: {}, rm: {} },
   onLangChange: { subscribe: () => ({ unsubscribe: () => {} }) },
   onTranslationChange: { subscribe: () => ({ unsubscribe: () => {} }) },

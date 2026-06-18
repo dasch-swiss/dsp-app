@@ -34,23 +34,32 @@ const LANGUAGE_KEYS = ['en', 'de', 'fr', 'it', 'rm'] as const;
 
 /**
  * Mock that mirrors `labelsFromI18n`'s contract:
- * `translate.getParsedResult(translate.translations[language] ?? {}, key)`.
- * Each language's translations map echoes the key prefixed by the language
- * code so assertions can verify per-language sourcing without coupling to
- * production i18n JSON.
+ * reads `translate.translations[language]` and walks the dot-separated key
+ * path via ngx-translate's `getValue()` helper. Translations are stored
+ * nested (matching production i18n JSON shape), so the path
+ * `pages.search.advancedSearch.resourceLabel` resolves through
+ * `translations[lang].pages.search.advancedSearch.resourceLabel`.
+ *
+ * Each language echoes the key prefixed by the language code so assertions
+ * can verify per-language sourcing without coupling to production i18n JSON.
  */
 function buildTranslateMock(): TranslateService {
-  const translations: Record<string, Record<string, string>> = {};
+  const translations: Record<string, unknown> = {};
   for (const lang of LANGUAGE_KEYS) {
     translations[lang] = {
-      [ENGLISH_LABEL_KEY]: `[${lang}] Resource Label`,
-      [ALL_CLASSES_KEY]: `[${lang}] All resource classes`,
+      pages: {
+        search: {
+          advancedSearch: {
+            resourceLabel: `[${lang}] Resource Label`,
+            allResourceClasses: `[${lang}] All resource classes`,
+          },
+        },
+      },
     };
   }
   return {
     instant: (key: string) => key,
     get: (key: string) => ({ subscribe: (cb: (v: string) => void) => cb(key) }),
-    getParsedResult: (table: Record<string, string>, key: string) => table[key] ?? key,
     translations,
     onLangChange: { subscribe: () => ({ unsubscribe: () => {} }) },
     onTranslationChange: { subscribe: () => ({ unsubscribe: () => {} }) },

@@ -1,6 +1,6 @@
 import { StringLiteralV2 } from '@dasch-swiss/dsp-js';
 import { AvailableLanguageKeys } from '@dasch-swiss/vre/core/config';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, getValue } from '@ngx-translate/core';
 
 /**
  * Build a multi-language `StringLiteralV2[]` from an i18n translation key.
@@ -17,13 +17,13 @@ import { TranslateService } from '@ngx-translate/core';
  * call time. In dsp-app this is guaranteed by the bootstrap loader
  * (TranslateModule.forRoot at app startup) before any feature module
  * is instantiated.
+ *
+ * Missing translation fallback: when the key is not present in a given
+ * language's table the key itself is returned. This matches the
+ * default ngx-translate behaviour for `instant()`.
  */
-export const labelsFromI18n = (
-  translate: TranslateService,
-  key: string,
-  params?: Record<string, unknown>
-): StringLiteralV2[] =>
-  AvailableLanguageKeys.map(language => ({
-    language,
-    value: translate.getParsedResult(translate.translations[language] ?? {}, key, params) as string,
-  }));
+export const labelsFromI18n = (translate: TranslateService, key: string): StringLiteralV2[] =>
+  AvailableLanguageKeys.map(language => {
+    const raw = getValue(translate.translations[language] ?? {}, key);
+    return { language, value: typeof raw === 'string' ? raw : key };
+  });
