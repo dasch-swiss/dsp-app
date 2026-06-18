@@ -101,7 +101,7 @@ import { StringValueComponent } from './object-values/string-value/string-value.
     } @else {
       <div
         [style.margin-left.em]="(statementElement.statementLevel + 1) * 2"
-        class="flex-column width-12em margin-bottom-1em">
+        class="flex-column min-width-12em margin-bottom-1em">
         <button
           mat-button
           mat-stroked-button
