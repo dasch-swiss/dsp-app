@@ -40,13 +40,7 @@ export class OntologyDataService {
     this._dspApiConnection.v2.onto
       .getOntologiesByProjectIri(projectIri)
       .pipe(
-        map(r =>
-          r.ontologies.map(o => ({
-            iri: o.id,
-            labels: toLabels(o.label),
-            comments: [],
-          }))
-        ),
+        map(r => r.ontologies.map(o => this._toIriLabelPair(o.id, toLabels(o.label), []))),
         takeUntilDestroyed(this._destroyRef)
       )
       .subscribe({
@@ -204,13 +198,7 @@ export class OntologyDataService {
 
   get selectedOntology(): IriLabelPair {
     const ontology = this._selectedOntology.value;
-    return ontology
-      ? {
-          iri: ontology.id,
-          labels: toLabels(ontology.label),
-          comments: [],
-        }
-      : ALL_RESOURCE_CLASSES;
+    return ontology ? this._toIriLabelPair(ontology.id, toLabels(ontology.label), []) : ALL_RESOURCE_CLASSES;
   }
 
   get classIris(): string[] {
