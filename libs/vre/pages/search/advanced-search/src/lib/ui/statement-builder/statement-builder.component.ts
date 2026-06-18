@@ -99,13 +99,12 @@ import { StringValueComponent } from './object-values/string-value/string-value.
         }
       </div>
     } @else {
-      <div
-        [style.margin-left.em]="(statementElement.statementLevel + 1) * 2"
-        class="flex-column min-width-12em margin-bottom-1em">
+      <div [style.margin-left.em]="(statementElement.statementLevel + 1) * 2" class="margin-bottom-1em">
         <button
           mat-button
           mat-stroked-button
           color="primary"
+          class="min-width-12em"
           (click)="displayForm(statementElement)"
           [matTooltip]="
             (statementElement.statementLevel === 0
