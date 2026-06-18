@@ -12,9 +12,8 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { LocalizationService, pickPreferredLanguageString } from '@dasch-swiss/vre/shared/app-helper-services';
 import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { take } from 'rxjs';
 import { RDFS_LABEL, ResourceLabel } from '../../../constants';
 import { IriLabelPair, Predicate } from '../../../model';
@@ -26,7 +25,16 @@ import { OntologyDataService } from '../../../service/ontology-data.service';
   imports: [CommonModule, MatInputModule, MatSelectModule, StringifyStringLiteralPipe, TranslateModule],
   template: `
     <mat-form-field class="width-100-percent" appearance="fill">
-      <mat-label>{{ label }}</mat-label>
+      <mat-label>
+        @if (subjectClass?.labels?.length) {
+          {{
+            'pages.search.advancedSearch.propertyOfClass'
+              | translate: { class: subjectClass!.labels | appStringifyStringLiteral }
+          }}
+        } @else {
+          {{ 'pages.search.advancedSearch.resourceClass' | translate }}
+        }
+      </mat-label>
       <mat-select
         [value]="selectedPredicate"
         (selectionChange)="selectedPredicateChange.emit($event.value)"
@@ -48,8 +56,6 @@ import { OntologyDataService } from '../../../service/ontology-data.service';
 })
 export class PredicateSelectComponent implements OnChanges {
   private readonly _dataService = inject(OntologyDataService);
-  private readonly _translate = inject(TranslateService);
-  private readonly _localizationService = inject(LocalizationService);
   private readonly destroyRef = inject(DestroyRef);
 
   @Input() subjectClass?: IriLabelPair;
@@ -71,16 +77,6 @@ export class PredicateSelectComponent implements OnChanges {
       .subscribe(properties => {
         this.properties = properties;
       });
-  }
-
-  get label(): string {
-    const className = pickPreferredLanguageString(
-      this.subjectClass?.labels ?? [],
-      this._localizationService.currentLanguage
-    );
-    return className
-      ? this._translate.instant('pages.search.advancedSearch.propertyOfClass', { class: className })
-      : this._translate.instant('pages.search.advancedSearch.resourceClass');
   }
 
   compareObjects(object1: Predicate | IriLabelPair, object2: Predicate | IriLabelPair) {

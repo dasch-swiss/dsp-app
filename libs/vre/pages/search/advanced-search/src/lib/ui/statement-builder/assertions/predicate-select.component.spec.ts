@@ -24,8 +24,10 @@ import { PredicateSelectComponent } from './predicate-select.component';
  *   2. Switching the language flips the rendered option labels on the next
  *      change-detection cycle (pipe impurity + memoization handle this; we
  *      verify the user-visible outcome, not the pipe internals).
- *   3. The dynamic mat-label uses `pickPreferredLanguageString` against the
- *      subject class's `labels` array and interpolates via `TranslateService`.
+ *   3. The dynamic mat-label is rendered declaratively in the template:
+ *      `appStringifyStringLiteral` resolves the active language and the
+ *      `translate` pipe interpolates the class name into the propertyOfClass
+ *      key. When no subject class is set, the `resourceClass` key is rendered.
  *
  * The component declares `StringifyStringLiteralPipe` in its standalone
  * imports, but importing that pipe pulls in the entire `vre/ui/string-literal`
@@ -48,15 +50,16 @@ class TestStringifyStringLiteralPipe implements PipeTransform {
   }
 }
 
-// Stub `translate` pipe so the static "ResourceLabel" <mat-option> renders
-// in tests without pulling the real ngx-translate pipe (which would require
-// a configured TranslateModule). The TranslateService mock supplied by the
-// test bed provides `instant`; we echo it here.
+// Stub `translate` pipe so the static "ResourceLabel" <mat-option> and the
+// dynamic mat-label render in tests without pulling the real ngx-translate
+// pipe (which would require a configured TranslateModule). The TranslateService
+// mock supplied by the test bed provides `instant`; we forward params verbatim
+// so callers can assert interpolation behaviour.
 @Pipe({ name: 'translate', pure: false, standalone: true })
 class TestTranslatePipe implements PipeTransform {
   constructor(private readonly _translate: TranslateService) {}
-  transform(key: string): string {
-    return this._translate.instant(key);
+  transform(key: string, params?: Record<string, unknown>): string {
+    return this._translate.instant(key, params);
   }
 }
 
@@ -176,19 +179,20 @@ describe('PredicateSelectComponent — i18n label rendering (DEV-6645)', () => {
   });
 
   describe('dynamic mat-label', () => {
-    it('interpolates the subject class name via pickPreferredLanguageString + TranslateService', () => {
+    function getLabelText(f: ComponentFixture<PredicateSelectComponent>): string {
+      const labelEl = (f.nativeElement as HTMLElement).querySelector('mat-label');
+      return (labelEl?.textContent ?? '').trim().replace(/\s+/g, ' ');
+    }
+
+    it('interpolates the subject class name via the active language pipe + translate pipe', () => {
       component.subjectClass = {
         iri: 'http://example/Book',
         labels: bookLabels,
         comments: [],
       };
+      fixture.detectChanges();
 
-      const label = component.label;
-
-      expect(translate.instant).toHaveBeenCalledWith('pages.search.advancedSearch.propertyOfClass', {
-        class: 'Book',
-      });
-      expect(label).toBe('pages.search.advancedSearch.propertyOfClass::Book');
+      expect(getLabelText(fixture)).toBe('pages.search.advancedSearch.propertyOfClass::Book');
     });
 
     it('uses the German class name when the active language is German', () => {
@@ -198,22 +202,16 @@ describe('PredicateSelectComponent — i18n label rendering (DEV-6645)', () => {
         comments: [],
       };
       (mockLocalization.service as { currentLanguage: string }).currentLanguage = 'de';
+      fixture.detectChanges();
 
-      const label = component.label;
-
-      expect(translate.instant).toHaveBeenCalledWith('pages.search.advancedSearch.propertyOfClass', {
-        class: 'Buch',
-      });
-      expect(label).toBe('pages.search.advancedSearch.propertyOfClass::Buch');
+      expect(getLabelText(fixture)).toBe('pages.search.advancedSearch.propertyOfClass::Buch');
     });
 
     it('falls back to the resourceClass key when no subject class is set', () => {
       component.subjectClass = undefined;
+      fixture.detectChanges();
 
-      const label = component.label;
-
-      expect(translate.instant).toHaveBeenCalledWith('pages.search.advancedSearch.resourceClass');
-      expect(label).toBe('pages.search.advancedSearch.resourceClass');
+      expect(getLabelText(fixture)).toBe('pages.search.advancedSearch.resourceClass');
     });
   });
 
