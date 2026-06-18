@@ -23,11 +23,7 @@ function makeCompletedStatement(predicateIri: string, labels: ReturnType<typeof 
   statement.selectedPredicate = makePredicate(predicateIri, '', Constants.TextValue, false);
   // Overwrite with the desired multi-language labels (makePredicate wraps a
   // single language; we need the full set to validate propagation).
-  (statement.selectedPredicate as any)._labels = labels;
-  Object.defineProperty(statement.selectedPredicate, 'labels', {
-    get: () => labels,
-    configurable: true,
-  });
+  statement.selectedPredicate.labels = labels;
   statement.selectedOperator = Operator.Equals;
   statement.selectedObjectValue = 'test';
   return statement;
