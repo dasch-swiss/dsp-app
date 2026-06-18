@@ -360,7 +360,10 @@
         "wildcards": "Usa i caratteri jolly: Alice* troverà Alice, Alices, ecc."
       },
       "advancedSearch": {
-        "allResourceClasses": "Tutte le risorse"
+        "allResourceClasses": "Tutte le risorse",
+        "propertyOfClass": "Proprietà di {{class}}",
+        "resourceClass": "Classe di risorsa",
+        "resourceLabel": "Etichetta di risorsa"
       }
     },
     "dataBrowser": {

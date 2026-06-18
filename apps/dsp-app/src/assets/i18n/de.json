@@ -360,7 +360,10 @@
         "wildcards": "Verwenden Sie Platzhalter: Alice* findet Alice, Alices, etc."
       },
       "advancedSearch": {
-        "allResourceClasses": "Alle Ressourcen"
+        "allResourceClasses": "Alle Ressourcen",
+        "propertyOfClass": "Eigenschaft von {{class}}",
+        "resourceClass": "Ressourcenklasse",
+        "resourceLabel": "Ressourcen-Label"
       }
     },
     "dataBrowser": {

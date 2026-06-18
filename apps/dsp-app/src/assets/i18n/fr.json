@@ -360,7 +360,10 @@
         "wildcards": "Utilisez des caractères génériques : Alice* trouvera Alice, Alices, etc."
       },
       "advancedSearch": {
-        "allResourceClasses": "Toutes les ressources"
+        "allResourceClasses": "Toutes les ressources",
+        "propertyOfClass": "Propriété de {{class}}",
+        "resourceClass": "Classe de ressource",
+        "resourceLabel": "Libellé de ressource"
       }
     },
     "dataBrowser": {

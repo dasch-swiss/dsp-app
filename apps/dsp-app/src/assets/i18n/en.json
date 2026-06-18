@@ -360,7 +360,10 @@
         "wildcards": "Use wildcards: Alice* will match Alice, Alices, etc."
       },
       "advancedSearch": {
-        "allResourceClasses": "All resources"
+        "allResourceClasses": "All resources",
+        "propertyOfClass": "Property of {{class}}",
+        "resourceClass": "Resource Class",
+        "resourceLabel": "Resource Label"
       }
     },
     "dataBrowser": {
