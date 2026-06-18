@@ -361,9 +361,22 @@
       },
       "advancedSearch": {
         "allResourceClasses": "Tutte le risorse",
+        "dataModel": "Modello di dati",
+        "orderBy": "Ordina per",
         "propertyOfClass": "Proprietà di {{class}}",
         "resourceClass": "Classe di risorsa",
-        "resourceLabel": "Etichetta di risorsa"
+        "resourceLabel": "Etichetta di risorsa",
+        "switchToRegular": "Passa alla ricerca standard",
+        "title": "Ricerca avanzata",
+        "tooltips": {
+          "addCriteria": "Aggiungi criterio di ricerca",
+          "addSubCriteria": "Aggiungi sotto-criterio",
+          "orderByDisabled": "La ricerca non può essere ordinata per una proprietà URI o una proprietà che rimanda a una risorsa.",
+          "removeCriteria": "Rimuovi criterio di ricerca",
+          "switchToHorizontal": "Passa alla disposizione orizzontale",
+          "switchToVertical": "Passa alla disposizione verticale"
+        },
+        "usePreviousSearch": "Usa la ricerca precedente"
       }
     },
     "dataBrowser": {

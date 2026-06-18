@@ -361,9 +361,22 @@
       },
       "advancedSearch": {
         "allResourceClasses": "Alle Ressourcen",
+        "dataModel": "Datenmodell",
+        "orderBy": "Sortieren nach",
         "propertyOfClass": "Eigenschaft von {{class}}",
         "resourceClass": "Ressourcenklasse",
-        "resourceLabel": "Ressourcen-Label"
+        "resourceLabel": "Ressourcen-Label",
+        "switchToRegular": "Zur regulären Suche wechseln",
+        "title": "Erweiterte Suche",
+        "tooltips": {
+          "addCriteria": "Suchkriterium hinzufügen",
+          "addSubCriteria": "Unterkriterium hinzufügen",
+          "orderByDisabled": "Die Suche kann nicht nach einer URI-Eigenschaft oder einer Eigenschaft, die auf eine Ressource verweist, sortiert werden.",
+          "removeCriteria": "Suchkriterium entfernen",
+          "switchToHorizontal": "Zu horizontalem Layout wechseln",
+          "switchToVertical": "Zu vertikalem Layout wechseln"
+        },
+        "usePreviousSearch": "Vorherige Suche verwenden"
       }
     },
     "dataBrowser": {
