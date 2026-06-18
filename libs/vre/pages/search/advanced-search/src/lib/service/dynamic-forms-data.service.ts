@@ -42,6 +42,8 @@ export class DynamicFormsDataService {
         map(response =>
           response.resources.map(
             res =>
+              // a resource is only available in one language and it is not specified which language that is,
+              // so we simply set the language to an empty string
               ({
                 iri: res.id,
                 labels: res.label ? [{ language: '', value: res.label }] : [],

@@ -84,6 +84,7 @@ export class ListValueComponent implements OnChanges {
   }
 
   onSelectionChange(node: ListNodeV2) {
+    // ListNodeV2 does only have one label property and we dont know the language of the label
     this.selectedListNode = node;
     const nodeValue: IriLabelPair = {
       iri: node.id,
