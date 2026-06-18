@@ -13,7 +13,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatSelectModule } from '@angular/material/select';
 import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
 import { TranslateModule } from '@ngx-translate/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, switchMap } from 'rxjs';
 import { IriLabelPair, Predicate } from '../../../../model';
 import { OntologyDataService } from '../../../../service/ontology-data.service';
 
@@ -61,13 +61,20 @@ export class ResourceValueComponent implements OnChanges {
   // "search across all resource classes" downstream (see gravsearch.service.ts).
   readonly allResourceClassesOption: IriLabelPair = { iri: '', labels: [], comments: [] };
 
+  // Drives a single long-lived subscription; `ngOnChanges` pushes new IRIs in.
+  private readonly _selectedPredicateIri$ = new BehaviorSubject<string | undefined>(undefined);
+
+  constructor() {
+    this._selectedPredicateIri$
+      .pipe(
+        switchMap(iri => this._dataService.getResourceClassObjectsForProperty$(iri)),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe(resources => this.availableResources$.next(resources));
+  }
+
   ngOnChanges(): void {
-    this._dataService
-      .getResourceClassObjectsForProperty$(this.selectedPredicate?.iri)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(resources => {
-        this.availableResources$.next(resources);
-      });
+    this._selectedPredicateIri$.next(this.selectedPredicate?.iri);
   }
 
   compareObjects(object1: IriLabelPair, object2: IriLabelPair) {
