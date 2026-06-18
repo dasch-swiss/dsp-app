@@ -26,13 +26,13 @@ import { OntologyDataService } from '../../../service/ontology-data.service';
   template: `
     <mat-form-field class="width-100-percent" appearance="fill">
       <mat-label>
-        @if (subjectClass?.labels?.length) {
+        @if (subjectClass?.iri && subjectClass?.labels?.length) {
           {{
             'pages.search.advancedSearch.propertyOfClass'
               | translate: { class: subjectClass!.labels | appStringifyStringLiteral }
           }}
         } @else {
-          {{ 'pages.search.advancedSearch.resourceClass' | translate }}
+          {{ 'pages.search.advancedSearch.property' | translate }}
         }
       </mat-label>
       <mat-select

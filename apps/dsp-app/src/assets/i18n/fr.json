@@ -363,6 +363,7 @@
         "allResourceClasses": "Toutes les ressources",
         "dataModel": "Modèle de données",
         "orderBy": "Trier par",
+        "property": "Propriété",
         "propertyOfClass": "Propriété de {{class}}",
         "resourceClass": "Classe de ressource",
         "resourceLabel": "Libellé de ressource",

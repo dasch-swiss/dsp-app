@@ -27,7 +27,12 @@ import { PredicateSelectComponent } from './predicate-select.component';
  *   3. The dynamic mat-label is rendered declaratively in the template:
  *      `appStringifyStringLiteral` resolves the active language and the
  *      `translate` pipe interpolates the class name into the propertyOfClass
- *      key. When no subject class is set, the `resourceClass` key is rendered.
+ *      key. When no concrete subject class is set — either because the input
+ *      is `undefined`, or because it is the empty-IRI "all classes" sentinel
+ *      (`{ iri: '', labels: [], comments: [] }`) — the plain `property` key
+ *      is rendered instead. The empty-IRI case matters because selecting
+ *      "All resource classes" upstream propagates that sentinel through the
+ *      statement element down to this component.
  *
  * The component declares `StringifyStringLiteralPipe` in its standalone
  * imports, but importing that pipe pulls in the entire `vre/ui/string-literal`
@@ -207,11 +212,21 @@ describe('PredicateSelectComponent — i18n label rendering (DEV-6645)', () => {
       expect(getLabelText(fixture)).toBe('pages.search.advancedSearch.propertyOfClass::Buch');
     });
 
-    it('falls back to the resourceClass key when no subject class is set', () => {
+    it('falls back to the property key when no subject class is set', () => {
       component.subjectClass = undefined;
       fixture.detectChanges();
 
-      expect(getLabelText(fixture)).toBe('pages.search.advancedSearch.resourceClass');
+      expect(getLabelText(fixture)).toBe('pages.search.advancedSearch.property');
+    });
+
+    it('falls back to the property key for the empty-IRI "all classes" sentinel', () => {
+      // Selecting "All resource classes" upstream emits this sentinel as the
+      // subject node value; the predicate-select must not treat the empty
+      // labels array as a missing class and render the resourceClass label.
+      component.subjectClass = { iri: '', labels: [], comments: [] };
+      fixture.detectChanges();
+
+      expect(getLabelText(fixture)).toBe('pages.search.advancedSearch.property');
     });
   });
 
