@@ -14,6 +14,7 @@ import {
   SortingHelper,
 } from '@dasch-swiss/vre/shared/app-helper-services';
 import { BehaviorSubject, combineLatest, filter, map, Observable, of, startWith, switchMap } from 'rxjs';
+import { ALL_RESOURCE_CLASSES } from '../constants';
 import { IriLabelPair, Predicate } from '../model';
 import { toLabels } from '../util/labels';
 
@@ -209,7 +210,7 @@ export class OntologyDataService {
           labels: toLabels(ontology.label),
           comments: [],
         }
-      : ({ iri: '', labels: [], comments: [] } as IriLabelPair);
+      : ALL_RESOURCE_CLASSES;
   }
 
   get classIris(): string[] {

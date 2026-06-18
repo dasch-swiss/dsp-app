@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Pipe, PipeTransform } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { Constants, StringLiteralV2 } from '@dasch-swiss/dsp-js';
@@ -135,7 +134,7 @@ describe('PredicateSelectComponent — i18n label rendering (DEV-6645)', () => {
       // file header) without touching the component under test.
       .overrideComponent(PredicateSelectComponent, {
         set: {
-          imports: [CommonModule, MatInputModule, MatSelectModule, TestStringifyStringLiteralPipe, TestTranslatePipe],
+          imports: [CommonModule, MatSelectModule, TestStringifyStringLiteralPipe, TestTranslatePipe],
         },
       })
       .compileComponents();

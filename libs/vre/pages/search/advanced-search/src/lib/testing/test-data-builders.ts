@@ -23,9 +23,11 @@ export const makeIriLabelPair = (
 });
 
 /**
- * Construct a `Predicate` from positional arguments mirroring the legacy
- * constructor call shape `new Predicate(iri, label, objectValueType, isLinkProperty, listObjectIri?)`.
- * Wraps the single label string in an English-only `StringLiteralV2[]`.
+ * Construct a `Predicate` from a single English label string, mirroring
+ * the current constructor shape
+ * `new Predicate(iri, labels, objectValueType, isLinkProperty, listObjectIri?, comments?)`
+ * but wrapping the label string in an English-only `StringLiteralV2[]` so
+ * fixtures don't have to spell out the language array.
  */
 export const makePredicate = (
   iri: string,

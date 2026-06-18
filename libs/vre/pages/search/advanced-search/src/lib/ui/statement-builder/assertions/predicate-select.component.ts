@@ -10,7 +10,6 @@ import {
   Output,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
 import { TranslateModule } from '@ngx-translate/core';
@@ -22,14 +21,15 @@ import { OntologyDataService } from '../../../service/ontology-data.service';
 @Component({
   selector: 'app-predicate-select',
   standalone: true,
-  imports: [CommonModule, MatInputModule, MatSelectModule, StringifyStringLiteralPipe, TranslateModule],
+  imports: [CommonModule, MatSelectModule, StringifyStringLiteralPipe, TranslateModule],
   template: `
     <mat-form-field class="width-100-percent" appearance="fill">
       <mat-label>
-        @if (subjectClass?.iri && subjectClass?.labels?.length) {
+        @let subject = subjectClass;
+        @if (subject?.iri && subject?.labels?.length) {
           {{
             'pages.search.advancedSearch.propertyOfClass'
-              | translate: { class: subjectClass!.labels | appStringifyStringLiteral }
+              | translate: { class: subject!.labels | appStringifyStringLiteral }
           }}
         } @else {
           {{ 'pages.search.advancedSearch.property' | translate }}
@@ -80,6 +80,6 @@ export class PredicateSelectComponent implements OnChanges {
   }
 
   compareObjects(object1: Predicate | IriLabelPair, object2: Predicate | IriLabelPair) {
-    return object1 && object2 && object1.iri == object2.iri;
+    return object1 && object2 && object1.iri === object2.iri;
   }
 }
