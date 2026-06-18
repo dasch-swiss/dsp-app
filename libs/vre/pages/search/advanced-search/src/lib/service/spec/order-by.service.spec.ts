@@ -3,7 +3,7 @@ import { Constants } from '@dasch-swiss/dsp-js';
 import { firstValueFrom } from 'rxjs';
 import { OrderByItem, StatementElement } from '../../model';
 import { Operator } from '../../operators.config';
-import { englishLabels, makePredicate } from '../../testing/builders';
+import { englishLabels, makePredicate } from '../../testing/test-data-builders';
 import { OrderByService } from '../order-by.service';
 import { SearchStateService } from '../search-state.service';
 

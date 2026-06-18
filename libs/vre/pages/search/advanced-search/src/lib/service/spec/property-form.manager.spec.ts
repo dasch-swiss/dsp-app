@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { Constants } from '@dasch-swiss/dsp-js';
 import { IriLabelPair } from '../../model';
 import { Operator } from '../../operators.config';
-import { makeIriLabelPair, makePredicate } from '../../testing/builders';
+import { makeIriLabelPair, makePredicate } from '../../testing/test-data-builders';
 import { PropertyFormManager } from '../property-form.manager';
 import { SearchStateService } from '../search-state.service';
 
