@@ -1,7 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { Constants } from '@dasch-swiss/dsp-js';
-import { IriLabelPair, Predicate } from '../../model';
+import { IriLabelPair } from '../../model';
 import { Operator } from '../../operators.config';
+import { makeIriLabelPair, makePredicate } from '../../testing/builders';
 import { PropertyFormManager } from '../property-form.manager';
 import { SearchStateService } from '../search-state.service';
 
@@ -9,19 +10,13 @@ describe('PropertyFormManager', () => {
   let service: PropertyFormManager;
   let searchStateService: SearchStateService;
 
-  const mockResourceClass: IriLabelPair = {
-    iri: 'http://test.org/Class',
-    label: 'TestClass',
-  };
+  const mockResourceClass: IriLabelPair = makeIriLabelPair('http://test.org/Class', 'TestClass');
 
-  const mockLinkedResourceClass: IriLabelPair = {
-    iri: 'http://test.org/LinkedClass',
-    label: 'LinkedClass',
-  };
+  const mockLinkedResourceClass: IriLabelPair = makeIriLabelPair('http://test.org/LinkedClass', 'LinkedClass');
 
-  const mockTextPredicate = new Predicate('http://test.org/hasText', 'Has Text', Constants.TextValue, false);
+  const mockTextPredicate = makePredicate('http://test.org/hasText', 'Has Text', Constants.TextValue, false);
 
-  const mockLinkPredicate = new Predicate('http://test.org/hasLink', 'Has Link', 'http://test.org/LinkedClass', true);
+  const mockLinkPredicate = makePredicate('http://test.org/hasLink', 'Has Link', 'http://test.org/LinkedClass', true);
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -180,7 +175,7 @@ describe('PropertyFormManager', () => {
       expect(statements.filter(s => s.parentId === parentStatement.id)).toHaveLength(1);
 
       // Change parent's object value
-      const newLinkedClass: IriLabelPair = { iri: 'http://test.org/OtherClass', label: 'OtherClass' };
+      const newLinkedClass: IriLabelPair = makeIriLabelPair('http://test.org/OtherClass', 'OtherClass');
       service.setObjectValue(parentStatement, newLinkedClass);
 
       // Old children should be removed, new child added

@@ -492,7 +492,7 @@ in providers for any spec that exercises label display.
 ```
 [ ] 1.  Reshape model.ts (IriLabelPair, Predicate, OrderByItem) — drop label, add labels. Make comments defaulted to [] on both interface and Predicate for consistency.
 [ ] 2.  Add testing/builders.ts factory.
-[ ] 3.  Add labels-from-i18n.ts helper (TranslateService-backed builder).
+[x] 3.  Add labels-from-i18n.ts helper (TranslateService-backed builder).
 [ ] 4.  Update OntologyDataService:
         - resourceClasses$, getSubclassesOfResourceClass$ pass labels through.
         - _toPredicate (keep as method) threads labels + comments from the WithAllLanguages variant.
@@ -504,7 +504,7 @@ in providers for any spec that exercises label display.
 [ ] 7.  Swap the 4 in-scope display sites to pipe / translate (step 5 table).
 [ ] 8.  Migrate deferred-site DTO shape (step 5b table) — link-value.component.ts, list-value.component.ts:88, dynamic-forms-data.service.ts:45.
 [ ] 9.  Type-only changes in SearchStateStorageService; no logic changes (verify no LocalizationService import sneaks in).
-[ ] 10. Add i18n keys to en.json / de.json / fr.json / it.json / rm.json (propertyOfClass, resourceClass, resourceLabel, allResourceClasses).
+[x] 10. Add i18n keys to en.json / de.json / fr.json / it.json / rm.json (propertyOfClass, resourceClass, resourceLabel, allResourceClasses).
 [ ] 11. Migrate existing specs to the factory.
 [ ] 12. Add new acceptance specs (per step 9).
 [ ] 13. nx run vre-pages-search-advanced-search:lint and nx run vre-pages-search-advanced-search:test.

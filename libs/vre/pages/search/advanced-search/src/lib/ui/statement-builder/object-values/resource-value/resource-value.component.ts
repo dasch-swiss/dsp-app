@@ -11,6 +11,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatSelectModule } from '@angular/material/select';
+import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
 import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject } from 'rxjs';
 import { IriLabelPair, Predicate } from '../../../../model';
@@ -19,10 +20,10 @@ import { OntologyDataService } from '../../../../service/ontology-data.service';
 @Component({
   selector: 'app-resource-value',
   standalone: true,
-  imports: [CommonModule, MatSelectModule, TranslateModule],
+  imports: [CommonModule, MatSelectModule, TranslateModule, StringifyStringLiteralPipe],
   template: `
     <mat-form-field class="width-100-percent" appearance="fill">
-      <mat-label>Resource Class</mat-label>
+      <mat-label>{{ 'pages.search.advancedSearch.resourceClass' | translate }}</mat-label>
       <mat-select
         [value]="selectedResource"
         (selectionChange)="selectedResourceChange.emit($event.value)"
@@ -30,12 +31,8 @@ import { OntologyDataService } from '../../../../service/ontology-data.service';
         [compareWith]="compareObjects"
         required>
         @for (resClass of availableResources$ | async; track resClass.iri) {
-          <mat-option [attr.data-cy]="resClass.label" [value]="resClass">
-            @if (resClass.iri === '') {
-              {{ 'pages.search.advancedSearch.allResourceClasses' | translate }}
-            } @else {
-              {{ resClass.label }}
-            }
+          <mat-option [attr.data-cy]="resClass.labels | appStringifyStringLiteral" [value]="resClass">
+            {{ resClass.labels | appStringifyStringLiteral }}
           </mat-option>
         }
       </mat-select>

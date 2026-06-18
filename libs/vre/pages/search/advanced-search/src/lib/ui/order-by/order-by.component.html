@@ -40,7 +40,7 @@
       <span cdkDragHandle matListItemIcon class="drag-handle">
         <mat-icon>drag_indicator</mat-icon>
       </span>
-      <span matListItemTitle> {{ item.label }} </span>
+      <span matListItemTitle> {{ item.labels | appStringifyStringLiteral }} </span>
     </mat-list-option>
     }
   </mat-selection-list>

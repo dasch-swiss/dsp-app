@@ -12,6 +12,9 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { LocalizationService, pickPreferredLanguageString } from '@dasch-swiss/vre/shared/app-helper-services';
+import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
+import { TranslateService } from '@ngx-translate/core';
 import { take } from 'rxjs';
 import { IriLabelPair, Predicate } from '../../../model';
 import { OntologyDataService } from '../../../service/ontology-data.service';
@@ -19,7 +22,7 @@ import { OntologyDataService } from '../../../service/ontology-data.service';
 @Component({
   selector: 'app-predicate-select',
   standalone: true,
-  imports: [CommonModule, MatInputModule, MatSelectModule],
+  imports: [CommonModule, MatInputModule, MatSelectModule, StringifyStringLiteralPipe],
   template: `
     <mat-form-field class="width-100-percent" appearance="fill">
       <mat-label>{{ label }}</mat-label>
@@ -29,7 +32,9 @@ import { OntologyDataService } from '../../../service/ontology-data.service';
         data-cy="predicate-select"
         [compareWith]="compareObjects">
         @for (prop of properties; track prop.iri) {
-          <mat-option [value]="prop" [attr.data-cy]="prop.label">{{ prop.label }}</mat-option>
+          <mat-option [value]="prop" [attr.data-cy]="prop.labels | appStringifyStringLiteral">
+            {{ prop.labels | appStringifyStringLiteral }}
+          </mat-option>
         }
       </mat-select>
     </mat-form-field>
@@ -39,6 +44,8 @@ import { OntologyDataService } from '../../../service/ontology-data.service';
 })
 export class PredicateSelectComponent implements OnChanges {
   private readonly _dataService = inject(OntologyDataService);
+  private readonly _translate = inject(TranslateService);
+  private readonly _localizationService = inject(LocalizationService);
   private readonly destroyRef = inject(DestroyRef);
 
   @Input() subjectClass?: IriLabelPair;
@@ -58,7 +65,13 @@ export class PredicateSelectComponent implements OnChanges {
   }
 
   get label(): string {
-    return this.subjectClass?.label ? `Property of ${this.subjectClass?.label}` : 'Property';
+    const className = pickPreferredLanguageString(
+      this.subjectClass?.labels ?? [],
+      this._localizationService.currentLanguage
+    );
+    return className
+      ? this._translate.instant('pages.search.advancedSearch.propertyOfClass', { class: className })
+      : this._translate.instant('pages.search.advancedSearch.resourceClass');
   }
 
   compareObjects(object1: Predicate | IriLabelPair, object2: Predicate | IriLabelPair) {

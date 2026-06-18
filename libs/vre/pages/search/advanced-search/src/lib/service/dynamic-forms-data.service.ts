@@ -40,10 +40,14 @@ export class DynamicFormsDataService {
       .pipe(
         takeUntil(this.cancelPreviousSearchRequest$),
         map(response =>
-          response.resources.map(res => ({
-            iri: res.id,
-            label: res.label,
-          }))
+          response.resources.map(
+            res =>
+              ({
+                iri: res.id,
+                labels: res.label ? [{ language: '', value: res.label }] : [],
+                comments: [],
+              }) as IriLabelPair
+          )
         ),
         catchError(err => {
           return of([]); // return an empty array on error wrapped in an observable

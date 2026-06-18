@@ -5,7 +5,6 @@ import {
   KnoraApiConnection,
   ReadOntology,
   ResourceClassDefinitionWithAllLanguages,
-  ResourcePropertyDefinition,
   ResourcePropertyDefinitionWithAllLanguages,
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
@@ -14,13 +13,17 @@ import {
   pickPreferredLanguageString,
   SortingHelper,
 } from '@dasch-swiss/vre/shared/app-helper-services';
-import { BehaviorSubject, combineLatest, filter, map, Observable, of, startWith, switchMap, tap } from 'rxjs';
-import { RDFS_LABEL, ResourceLabel, SEARCH_ALL_RESOURCE_CLASSES_OPTION } from '../constants';
+import { TranslateService } from '@ngx-translate/core';
+import { BehaviorSubject, combineLatest, filter, map, Observable, of, startWith, switchMap } from 'rxjs';
+import { RDFS_LABEL, ResourceLabel } from '../constants';
 import { IriLabelPair, Predicate } from '../model';
+import { labelsFromI18n } from './labels-from-i18n';
 
 @Injectable()
 export class OntologyDataService {
-  private readonly ResourceLabelPropertyData = new Predicate(RDFS_LABEL, 'Resource Label', ResourceLabel, false);
+  private readonly _resourceLabelPropertyData: Predicate;
+
+  readonly searchAllResourceClassesOption: IriLabelPair;
 
   private _ontologies = new BehaviorSubject<IriLabelPair[]>([]);
   ontologies$ = this._ontologies.asObservable();
@@ -35,14 +38,33 @@ export class OntologyDataService {
     @Inject(DspApiConnectionToken)
     private readonly _dspApiConnection: KnoraApiConnection,
     private readonly _destroyRef: DestroyRef,
-    private readonly _localizationService: LocalizationService
-  ) {}
+    private readonly _localizationService: LocalizationService,
+    private readonly _translate: TranslateService
+  ) {
+    this._resourceLabelPropertyData = new Predicate(
+      RDFS_LABEL,
+      labelsFromI18n(this._translate, 'pages.search.advancedSearch.resourceLabel'),
+      ResourceLabel,
+      false
+    );
+    this.searchAllResourceClassesOption = {
+      iri: '',
+      labels: labelsFromI18n(this._translate, 'pages.search.advancedSearch.allResourceClasses'),
+      comments: [],
+    };
+  }
 
   init(projectIri: string, ontology?: IriLabelPair) {
     this._dspApiConnection.v2.onto
       .getOntologiesByProjectIri(projectIri)
       .pipe(
-        map(r => r.ontologies.map(o => ({ iri: o.id, label: o.label }))),
+        map(r =>
+          r.ontologies.map(o => ({
+            iri: o.id,
+            labels: o.label ? [{ language: '', value: o.label }] : [],
+            comments: [],
+          }))
+        ),
         takeUntilDestroyed(this._destroyRef)
       )
       .subscribe({
@@ -90,17 +112,17 @@ export class OntologyDataService {
   resourceClasses$: Observable<IriLabelPair[]> = this._resourceClassDefinitions$.pipe(
     startWith([]),
     map(resClasses =>
-      resClasses.map((resClassDef: ResourceClassDefinitionWithAllLanguages) => {
-        return { iri: resClassDef.id, label: resClassDef.label || '' };
-      })
+      resClasses.map((resClassDef: ResourceClassDefinitionWithAllLanguages) =>
+        this._toIriLabelPair(resClassDef.id, resClassDef.labels, resClassDef.comments)
+      )
     )
   );
 
   getResourceClassObjectsForProperty$(propertyIri?: string): Observable<IriLabelPair[]> {
     if (!propertyIri) {
       return this.resourceClasses$.pipe(
-        map(classes => [SEARCH_ALL_RESOURCE_CLASSES_OPTION, ...classes]),
-        startWith([SEARCH_ALL_RESOURCE_CLASSES_OPTION])
+        map(classes => [this.searchAllResourceClassesOption, ...classes]),
+        startWith([this.searchAllResourceClassesOption])
       );
     }
 
@@ -129,7 +151,9 @@ export class OntologyDataService {
   getSubclassesOfResourceClass$ = (classIri: string): Observable<IriLabelPair[]> =>
     this._resourceClassDefinitions$.pipe(
       map(resClasses =>
-        resClasses.filter(r => r.subClassOf.includes(classIri)).map(r => ({ iri: r.id, label: r.label || '' }))
+        resClasses
+          .filter(r => r.subClassOf.includes(classIri))
+          .map(r => this._toIriLabelPair(r.id, r.labels, r.comments))
       )
     );
 
@@ -155,12 +179,14 @@ export class OntologyDataService {
   );
 
   getProperties$(classIri?: string): Observable<Predicate[]> {
-    const withResourceLabel = (preds: Predicate[]) => [this.ResourceLabelPropertyData, ...preds];
+    const withResourceLabel = (preds: Predicate[]) => [this._resourceLabelPropertyData, ...preds];
     if (!classIri) {
-      return this._propertyDefinitions$.pipe(map(props => withResourceLabel(props.map(this._toPredicate))));
+      return this._propertyDefinitions$.pipe(map(props => withResourceLabel(props.map(p => this._toPredicate(p)))));
     }
     return combineLatest([this._getPropertyIrisOfClass$(classIri), this._propertyDefinitions$]).pipe(
-      map(([resProps, props]) => withResourceLabel(props.filter(p => resProps.includes(p.id)).map(this._toPredicate)))
+      map(([resProps, props]) =>
+        withResourceLabel(props.filter(p => resProps.includes(p.id)).map(p => this._toPredicate(p)))
+      )
     );
   }
 
@@ -173,8 +199,15 @@ export class OntologyDataService {
       )
     );
 
-  private _toPredicate(propDef: ResourcePropertyDefinition): Predicate {
-    const predicate = new Predicate(propDef.id, propDef.label || '', propDef.objectType || '', propDef.isLinkProperty);
+  private _toPredicate(propDef: ResourcePropertyDefinitionWithAllLanguages): Predicate {
+    const predicate = new Predicate(
+      propDef.id,
+      propDef.labels ?? [],
+      propDef.objectType || '',
+      propDef.isLinkProperty,
+      undefined,
+      propDef.comments ?? []
+    );
     if (
       propDef.objectType === Constants.ListValue &&
       propDef.guiAttributes.length === 1 &&
@@ -185,10 +218,23 @@ export class OntologyDataService {
     return predicate;
   }
 
+  private _toIriLabelPair(
+    iri: string,
+    labels: IriLabelPair['labels'] | undefined,
+    comments: IriLabelPair['comments'] | undefined
+  ): IriLabelPair {
+    return { iri, labels: labels ?? [], comments: comments ?? [] };
+  }
+
   get selectedOntology(): IriLabelPair {
-    return this._selectedOntology.value
-      ? { iri: this._selectedOntology.value.id, label: this._selectedOntology.value.label || '' }
-      : ({} as IriLabelPair);
+    const ontology = this._selectedOntology.value;
+    return ontology
+      ? {
+          iri: ontology.id,
+          labels: ontology.label ? [{ language: '', value: ontology.label }] : [],
+          comments: [],
+        }
+      : ({ iri: '', labels: [], comments: [] } as IriLabelPair);
   }
 
   get classIris(): string[] {

@@ -85,7 +85,11 @@ export class ListValueComponent implements OnChanges {
 
   onSelectionChange(node: ListNodeV2) {
     this.selectedListNode = node;
-    const nodeValue: IriLabelPair = { iri: node.id, label: node.label };
+    const nodeValue: IriLabelPair = {
+      iri: node.id,
+      labels: node.label ? [{ language: '', value: node.label }] : [],
+      comments: [],
+    };
     this.emitValueChanged.emit(nodeValue);
   }
 }
