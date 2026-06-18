@@ -13,18 +13,11 @@ import {
   pickPreferredLanguageString,
   SortingHelper,
 } from '@dasch-swiss/vre/shared/app-helper-services';
-import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, combineLatest, filter, map, Observable, of, startWith, switchMap } from 'rxjs';
-import { RDFS_LABEL, ResourceLabel } from '../constants';
 import { IriLabelPair, Predicate } from '../model';
-import { labelsFromI18n } from './labels-from-i18n';
 
 @Injectable()
 export class OntologyDataService {
-  private readonly _resourceLabelPropertyData: Predicate;
-
-  readonly searchAllResourceClassesOption: IriLabelPair;
-
   private _ontologies = new BehaviorSubject<IriLabelPair[]>([]);
   ontologies$ = this._ontologies.asObservable();
 
@@ -38,27 +31,16 @@ export class OntologyDataService {
     @Inject(DspApiConnectionToken)
     private readonly _dspApiConnection: KnoraApiConnection,
     private readonly _destroyRef: DestroyRef,
-    private readonly _localizationService: LocalizationService,
-    private readonly _translate: TranslateService
-  ) {
-    this._resourceLabelPropertyData = new Predicate(
-      RDFS_LABEL,
-      labelsFromI18n(this._translate, 'pages.search.advancedSearch.resourceLabel'),
-      ResourceLabel,
-      false
-    );
-    this.searchAllResourceClassesOption = {
-      iri: '',
-      labels: labelsFromI18n(this._translate, 'pages.search.advancedSearch.allResourceClasses'),
-      comments: [],
-    };
-  }
+    private readonly _localizationService: LocalizationService
+  ) {}
 
   init(projectIri: string, ontology?: IriLabelPair) {
     this._dspApiConnection.v2.onto
       .getOntologiesByProjectIri(projectIri)
       .pipe(
         map(r =>
+          // ontologies do only have one label and it is not specified in which language,
+          // so we simply set the language to an empty string
           r.ontologies.map(o => ({
             iri: o.id,
             labels: o.label ? [{ language: '', value: o.label }] : [],
@@ -120,10 +102,7 @@ export class OntologyDataService {
 
   getResourceClassObjectsForProperty$(propertyIri?: string): Observable<IriLabelPair[]> {
     if (!propertyIri) {
-      return this.resourceClasses$.pipe(
-        map(classes => [this.searchAllResourceClassesOption, ...classes]),
-        startWith([this.searchAllResourceClassesOption])
-      );
+      return this.resourceClasses$;
     }
 
     return combineLatest([this.resourceClasses$, this._propertyDefinitions$]).pipe(
@@ -179,14 +158,11 @@ export class OntologyDataService {
   );
 
   getProperties$(classIri?: string): Observable<Predicate[]> {
-    const withResourceLabel = (preds: Predicate[]) => [this._resourceLabelPropertyData, ...preds];
     if (!classIri) {
-      return this._propertyDefinitions$.pipe(map(props => withResourceLabel(props.map(p => this._toPredicate(p)))));
+      return this._propertyDefinitions$.pipe(map(props => props.map(p => this._toPredicate(p))));
     }
     return combineLatest([this._getPropertyIrisOfClass$(classIri), this._propertyDefinitions$]).pipe(
-      map(([resProps, props]) =>
-        withResourceLabel(props.filter(p => resProps.includes(p.id)).map(p => this._toPredicate(p)))
-      )
+      map(([resProps, props]) => props.filter(p => resProps.includes(p.id)).map(p => this._toPredicate(p)))
     );
   }
 

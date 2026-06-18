@@ -14,15 +14,16 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { LocalizationService, pickPreferredLanguageString } from '@dasch-swiss/vre/shared/app-helper-services';
 import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { take } from 'rxjs';
+import { RDFS_LABEL, ResourceLabel } from '../../../constants';
 import { IriLabelPair, Predicate } from '../../../model';
 import { OntologyDataService } from '../../../service/ontology-data.service';
 
 @Component({
   selector: 'app-predicate-select',
   standalone: true,
-  imports: [CommonModule, MatInputModule, MatSelectModule, StringifyStringLiteralPipe],
+  imports: [CommonModule, MatInputModule, MatSelectModule, StringifyStringLiteralPipe, TranslateModule],
   template: `
     <mat-form-field class="width-100-percent" appearance="fill">
       <mat-label>{{ label }}</mat-label>
@@ -31,6 +32,9 @@ import { OntologyDataService } from '../../../service/ontology-data.service';
         (selectionChange)="selectedPredicateChange.emit($event.value)"
         data-cy="predicate-select"
         [compareWith]="compareObjects">
+        <mat-option [value]="resourceLabelPredicate">
+          {{ 'pages.search.advancedSearch.resourceLabel' | translate }}
+        </mat-option>
         @for (prop of properties; track prop.iri) {
           <mat-option [value]="prop" [attr.data-cy]="prop.labels | appStringifyStringLiteral">
             {{ prop.labels | appStringifyStringLiteral }}
@@ -54,6 +58,11 @@ export class PredicateSelectComponent implements OnChanges {
   @Output() selectedPredicateChange = new EventEmitter<Predicate>();
 
   properties: Predicate[] = [];
+
+  // Synthetic predicate for searching by rdfs:label. Rendered as a static
+  // <mat-option> in the template; downstream code keys off iri/objectValueType
+  // (see ResourceLabel in operators.config.ts and gravsearch.service.ts).
+  readonly resourceLabelPredicate = new Predicate(RDFS_LABEL, [], ResourceLabel, false);
 
   ngOnChanges(): void {
     this._dataService

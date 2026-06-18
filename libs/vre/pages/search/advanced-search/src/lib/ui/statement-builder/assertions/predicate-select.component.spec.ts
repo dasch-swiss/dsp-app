@@ -48,6 +48,18 @@ class TestStringifyStringLiteralPipe implements PipeTransform {
   }
 }
 
+// Stub `translate` pipe so the static "ResourceLabel" <mat-option> renders
+// in tests without pulling the real ngx-translate pipe (which would require
+// a configured TranslateModule). The TranslateService mock supplied by the
+// test bed provides `instant`; we echo it here.
+@Pipe({ name: 'translate', pure: false, standalone: true })
+class TestTranslatePipe implements PipeTransform {
+  constructor(private readonly _translate: TranslateService) {}
+  transform(key: string): string {
+    return this._translate.instant(key);
+  }
+}
+
 function makeMultiPredicate(iri: string, labels: StringLiteralV2[]): Predicate {
   return new Predicate(iri, labels, Constants.TextValue, false);
 }
@@ -115,7 +127,7 @@ describe('PredicateSelectComponent — i18n label rendering (DEV-6645)', () => {
       // file header) without touching the component under test.
       .overrideComponent(PredicateSelectComponent, {
         set: {
-          imports: [CommonModule, MatInputModule, MatSelectModule, TestStringifyStringLiteralPipe],
+          imports: [CommonModule, MatInputModule, MatSelectModule, TestStringifyStringLiteralPipe, TestTranslatePipe],
         },
       })
       .compileComponents();

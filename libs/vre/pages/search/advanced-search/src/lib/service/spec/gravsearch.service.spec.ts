@@ -1,31 +1,15 @@
 import { TestBed } from '@angular/core/testing';
-import { Constants } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { createMockLocalizationService } from '@dasch-swiss/vre/shared/app-helper-services/testing';
-import { TranslateService } from '@ngx-translate/core';
 import { IriLabelPair, NodeValue, Predicate, StatementElement, StringValue } from '../../model';
 import { Operator } from '../../operators.config';
-import { englishLabels, makeIriLabelPair } from '../../testing/builders';
+import { englishLabels, makeIriLabelPair } from '../../testing/test-data-builders';
 import { GravsearchService } from '../gravsearch.service';
 import { OntologyDataService } from '../ontology-data.service';
 import { SearchStateService } from '../search-state.service';
 
 const { service: mockLocalizationService } = createMockLocalizationService('en');
-
-// Translate mock — OntologyDataService injects TranslateService to build i18n options
-// via labelsFromI18n(), which reads translate.translations[language] synchronously
-// using ngx-translate's getValue() path walker. We don't care about the actual
-// translation in these specs; the empty per-language tables mean every key resolves
-// to the key itself (the documented fallback in labels-from-i18n.ts).
-const mockTranslateService = {
-  instant: (key: string) => key,
-  get: (key: string) => ({ subscribe: (cb: (v: string) => void) => cb(key) }),
-  translations: { en: {}, de: {}, fr: {}, it: {}, rm: {} },
-  onLangChange: { subscribe: () => ({ unsubscribe: () => {} }) },
-  onTranslationChange: { subscribe: () => ({ unsubscribe: () => {} }) },
-  onDefaultLangChange: { subscribe: () => ({ unsubscribe: () => {} }) },
-} as unknown as TranslateService;
 
 /**
  * Helper function to set up test from JSON input
@@ -206,7 +190,6 @@ describe('Gravsearch Service and Writer - Label', () => {
         OntologyDataService,
         { provide: DspApiConnectionToken, useValue: mockDspApiConnection },
         { provide: LocalizationService, useValue: mockLocalizationService },
-        { provide: TranslateService, useValue: mockTranslateService },
       ],
     });
 
@@ -397,7 +380,6 @@ describe('Gravsearch Service and Writer - TextValue', () => {
         OntologyDataService,
         { provide: DspApiConnectionToken, useValue: mockDspApiConnection },
         { provide: LocalizationService, useValue: mockLocalizationService },
-        { provide: TranslateService, useValue: mockTranslateService },
       ],
     });
 
@@ -592,7 +574,6 @@ describe('Gravsearch Service and Writer - ListValue', () => {
         OntologyDataService,
         { provide: DspApiConnectionToken, useValue: mockDspApiConnection },
         { provide: LocalizationService, useValue: mockLocalizationService },
-        { provide: TranslateService, useValue: mockTranslateService },
       ],
     });
 
@@ -735,7 +716,6 @@ describe('Gravsearch Service and Writer - IntValue', () => {
         OntologyDataService,
         { provide: DspApiConnectionToken, useValue: mockDspApiConnection },
         { provide: LocalizationService, useValue: mockLocalizationService },
-        { provide: TranslateService, useValue: mockTranslateService },
       ],
     });
 

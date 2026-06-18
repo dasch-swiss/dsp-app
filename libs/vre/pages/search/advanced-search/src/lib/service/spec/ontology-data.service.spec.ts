@@ -9,63 +9,20 @@ import {
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { createMockLocalizationService } from '@dasch-swiss/vre/shared/app-helper-services/testing';
-import { TranslateService } from '@ngx-translate/core';
 import { firstValueFrom, skip } from 'rxjs';
-import { RDFS_LABEL, ResourceLabel } from '../../constants';
 import { OntologyDataService } from '../ontology-data.service';
 
 /**
  * Acceptance specs for the i18n DTO contract introduced by DEV-6645.
  *
- * Asserts that:
- *   1. `resourceClasses$`, `getSubclassesOfResourceClass$`, and `_toPredicate`
- *      propagate `labels: StringLiteralV2[]` (and `comments`) unchanged from
- *      the source ontology definitions — no normalisation, no flattening.
- *   2. `_resourceLabelPropertyData` and `searchAllResourceClassesOption` are
- *      synthesised from i18n JSON via `labelsFromI18n` (no hard-coded fallback
- *      strings) — every supported UI language is represented in the resulting
- *      `labels` array.
+ * Verifies that `OntologyDataService` is purely a data-propagation layer:
+ * `resourceClasses$`, `getSubclassesOfResourceClass$`, and `_toPredicate`
+ * forward `labels: StringLiteralV2[]` (and `comments`) unchanged from the
+ * source ontology definitions — no normalisation, no flattening, no
+ * translation logic. Display-time language resolution is the responsibility
+ * of the consuming components (via `appStringifyStringLiteral` /
+ * `pickPreferredLanguageString`).
  */
-
-const ENGLISH_LABEL_KEY = 'pages.search.advancedSearch.resourceLabel';
-const ALL_CLASSES_KEY = 'pages.search.advancedSearch.allResourceClasses';
-
-const LANGUAGE_KEYS = ['en', 'de', 'fr', 'it', 'rm'] as const;
-
-/**
- * Mock that mirrors `labelsFromI18n`'s contract:
- * reads `translate.translations[language]` and walks the dot-separated key
- * path via ngx-translate's `getValue()` helper. Translations are stored
- * nested (matching production i18n JSON shape), so the path
- * `pages.search.advancedSearch.resourceLabel` resolves through
- * `translations[lang].pages.search.advancedSearch.resourceLabel`.
- *
- * Each language echoes the key prefixed by the language code so assertions
- * can verify per-language sourcing without coupling to production i18n JSON.
- */
-function buildTranslateMock(): TranslateService {
-  const translations: Record<string, unknown> = {};
-  for (const lang of LANGUAGE_KEYS) {
-    translations[lang] = {
-      pages: {
-        search: {
-          advancedSearch: {
-            resourceLabel: `[${lang}] Resource Label`,
-            allResourceClasses: `[${lang}] All resource classes`,
-          },
-        },
-      },
-    };
-  }
-  return {
-    instant: (key: string) => key,
-    get: (key: string) => ({ subscribe: (cb: (v: string) => void) => cb(key) }),
-    translations,
-    onLangChange: { subscribe: () => ({ unsubscribe: () => {} }) },
-    onTranslationChange: { subscribe: () => ({ unsubscribe: () => {} }) },
-    onDefaultLangChange: { subscribe: () => ({ unsubscribe: () => {} }) },
-  } as unknown as TranslateService;
-}
 
 function makeStringLiterals(values: Record<string, string>): StringLiteralV2[] {
   return Object.entries(values).map(([language, value]) => ({ language, value }));
@@ -77,8 +34,6 @@ function makeClassDef(
   comments: StringLiteralV2[] = [],
   subClassOf: string[] = []
 ): ResourceClassDefinitionWithAllLanguages {
-  // ResourceClassDefinitionWithAllLanguages is a DSP-JS class with many
-  // fields the service does not touch; the cast keeps the fixture minimal.
   return {
     id,
     labels,
@@ -106,13 +61,6 @@ function makePropDef(
   } as unknown as ResourcePropertyDefinitionWithAllLanguages;
 }
 
-/**
- * Push a fake ReadOntology into the service's private `_selectedOntology`
- * BehaviorSubject so the production observable pipelines
- * (`_resourceClassDefinitions$`, `_propertyDefinitions$`) emit. We deliberately
- * reach through `as any` because we are validating the public contract of the
- * service against fixture data, not testing how DSP-JS materialises ontologies.
- */
 function pushOntology(
   service: OntologyDataService,
   classes: ResourceClassDefinitionWithAllLanguages[],
@@ -127,62 +75,17 @@ function pushOntology(
 
 describe('OntologyDataService — i18n DTO propagation (DEV-6645)', () => {
   let service: OntologyDataService;
-  let translate: TranslateService;
-  const { service: mockLocalizationService } = createMockLocalizationService('en');
 
   beforeEach(() => {
-    translate = buildTranslateMock();
-
     TestBed.configureTestingModule({
       providers: [
         OntologyDataService,
         { provide: DspApiConnectionToken, useValue: {} },
         { provide: DestroyRef, useValue: { onDestroy: () => () => {} } },
-        { provide: LocalizationService, useValue: mockLocalizationService },
-        { provide: TranslateService, useValue: translate },
+        { provide: LocalizationService, useValue: createMockLocalizationService('en').service },
       ],
     });
     service = TestBed.inject(OntologyDataService);
-  });
-
-  describe('searchAllResourceClassesOption', () => {
-    it('is built from i18n JSON via labelsFromI18n, one entry per supported language', () => {
-      const option = service.searchAllResourceClassesOption;
-
-      expect(option.iri).toBe('');
-      expect(option.labels).toHaveLength(LANGUAGE_KEYS.length);
-      expect(option.comments).toEqual([]);
-
-      for (const lang of LANGUAGE_KEYS) {
-        const entry = option.labels.find(l => l.language === lang);
-        expect(entry).toBeDefined();
-        // value comes from the stubbed translations table — proves the
-        // synthesis went through labelsFromI18n + TranslateService, not a
-        // hard-coded fallback string.
-        expect(entry!.value).toBe(`[${lang}] All resource classes`);
-      }
-    });
-  });
-
-  describe('ResourceLabel synthetic predicate (via getProperties$)', () => {
-    it('exposes labels from i18n JSON for every supported language', async () => {
-      // Empty ontology so getProperties$ emits only the synthetic predicate.
-      pushOntology(service, [], []);
-
-      const predicates = await firstValueFrom(service.getProperties$());
-      const resourceLabelPredicate = predicates.find(p => p.iri === RDFS_LABEL);
-
-      expect(resourceLabelPredicate).toBeDefined();
-      expect(resourceLabelPredicate!.objectValueType).toBe(ResourceLabel);
-      expect(resourceLabelPredicate!.isLinkProperty).toBe(false);
-      expect(resourceLabelPredicate!.labels).toHaveLength(LANGUAGE_KEYS.length);
-
-      for (const lang of LANGUAGE_KEYS) {
-        const entry = resourceLabelPredicate!.labels.find(l => l.language === lang);
-        expect(entry).toBeDefined();
-        expect(entry!.value).toBe(`[${lang}] Resource Label`);
-      }
-    });
   });
 
   describe('_toPredicate', () => {

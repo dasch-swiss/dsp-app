@@ -30,6 +30,11 @@ import { OntologyDataService } from '../../../../service/ontology-data.service';
         data-cy="resource-class-select"
         [compareWith]="compareObjects"
         required>
+        @if (!selectedPredicate) {
+          <mat-option [value]="allResourceClassesOption">
+            {{ 'pages.search.advancedSearch.allResourceClasses' | translate }}
+          </mat-option>
+        }
         @for (resClass of availableResources$ | async; track resClass.iri) {
           <mat-option [attr.data-cy]="resClass.labels | appStringifyStringLiteral" [value]="resClass">
             {{ resClass.labels | appStringifyStringLiteral }}
@@ -51,6 +56,10 @@ export class ResourceValueComponent implements OnChanges {
   @Output() selectedResourceChange = new EventEmitter<IriLabelPair>();
 
   availableResources$ = new BehaviorSubject<IriLabelPair[]>([]);
+
+  // Static sentinel matching the default in SearchStateService — empty iri means
+  // "search across all resource classes" downstream (see gravsearch.service.ts).
+  readonly allResourceClassesOption: IriLabelPair = { iri: '', labels: [], comments: [] };
 
   ngOnChanges(): void {
     this._dataService
