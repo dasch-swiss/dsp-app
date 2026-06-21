@@ -11,8 +11,9 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTooltip } from '@angular/material/tooltip';
 import { PaginatedApiService } from '@dasch-swiss/vre/shared/app-common';
+import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { AlternatedListComponent } from '@dasch-swiss/vre/ui/ui';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, first, switchMap } from 'rxjs';
 import { ProjectPageService } from '../../project-page.service';
 import {
@@ -65,10 +66,10 @@ type ResourceSideForm = FormGroup<{
             </mat-select>
           </mat-form-field>
 
+          <p class="mat-caption" style="margin: 0 0 4px">{{ 'legal.dataSide.settings.holderHelper' | translate }}</p>
           <mat-form-field style="width: 100%">
             <mat-label>{{ 'legal.dataSide.settings.holderLabel' | translate }}</mat-label>
             <input matInput formControlName="copyrightHolder" />
-            <mat-hint>{{ 'legal.dataSide.settings.holderHelper' | translate }}</mat-hint>
           </mat-form-field>
 
           <!-- TODO(verify-locally): mat-chips wiring (version-specific API for chip-grid + input token end). -->
@@ -89,7 +90,11 @@ type ResourceSideForm = FormGroup<{
 
           <div style="display: flex; gap: 8px; justify-content: flex-end; margin-top: 16px">
             <button mat-button (click)="resetResourceSide()">{{ 'legal.dataSide.settings.cancel' | translate }}</button>
-            <button mat-raised-button color="primary" (click)="saveResourceSide()">
+            <button
+              mat-raised-button
+              color="primary"
+              [disabled]="resourceSideForm.pristine || saving"
+              (click)="saveResourceSide()">
               {{ 'legal.dataSide.settings.save' | translate }}
             </button>
           </div>
@@ -167,6 +172,7 @@ export class LegalSettingsComponent implements OnInit {
   private readonly _reloadSubject = new BehaviorSubject<void>(undefined);
 
   side: 'resource' | 'asset' = 'resource';
+  saving = false;
   readonly ccLicenses = CC_LICENSES;
 
   readonly resourceSideForm: ResourceSideForm = new FormGroup({
@@ -187,8 +193,10 @@ export class LegalSettingsComponent implements OnInit {
 
   constructor(
     private readonly _dialog: MatDialog,
+    private readonly _notification: NotificationService,
     private readonly _paginatedApi: PaginatedApiService,
-    private readonly _projectPageService: ProjectPageService
+    private readonly _projectPageService: ProjectPageService,
+    private readonly _translate: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -224,15 +232,26 @@ export class LegalSettingsComponent implements OnInit {
   saveResourceSide(): void {
     const shortcode = this._projectPageService.currentProject.shortcode;
     const { license, copyrightHolder, dataAuthorship } = this.resourceSideForm.getRawValue();
+    this.saving = true;
     this._paginatedApi
       .updateResourceSideLegalInfo(shortcode, {
         dataLicense: license,
         dataCopyrightHolder: copyrightHolder,
         dataAuthorship: dataAuthorship ?? [],
       })
-      .subscribe(() => {
-        this._reloadSubject.next();
-        this._projectPageService.reloadProject();
+      .subscribe({
+        next: () => {
+          this.saving = false;
+          // Back to pristine so the Save button greys out again until the next edit.
+          this.resourceSideForm.markAsPristine();
+          this._notification.openSnackBar(this._translate.instant('legal.dataSide.settings.saved'));
+          this._reloadSubject.next();
+          this._projectPageService.reloadProject();
+        },
+        error: () => {
+          this.saving = false;
+          this._notification.openSnackBar(this._translate.instant('legal.dataSide.settings.saveError'));
+        },
       });
   }
 

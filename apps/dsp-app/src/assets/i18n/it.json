@@ -18,7 +18,9 @@
         "licensePlaceholder": "Choose a Creative Commons license",
         "liveWarning": "This license applies live to every resource in the project and may differ from license text already in your project description.",
         "save": "Save changes",
-        "cancel": "Cancel"
+        "cancel": "Cancel",
+        "saved": "Resource-side legal info saved.",
+        "saveError": "Could not save — please try again."
       },
       "summaries": {
         "ccBy40": "CC BY 4.0 — Reuse freely, with credit to the author",
