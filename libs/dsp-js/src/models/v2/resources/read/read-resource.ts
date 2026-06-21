@@ -50,6 +50,12 @@ export class ReadResource extends ReadWriteResource {
   @JsonProperty(Constants.IsDeleted, Boolean, true)
   isDeleted?: boolean = false;
 
+  // Per-resource (data-side) authorship, emitted by the API as a plain string array when set.
+  // TODO(verify-locally): confirm the JSON-LD shape against a real /v2/resources response
+  // (the API emits an array even for a single value; json2typescript ignores undeclared keys).
+  @JsonProperty(Constants.hasResourceAuthorship, [String], true)
+  resourceAuthorship: string[] = [];
+
   resourceClassLabel?: string;
 
   resourceClassComment?: string;

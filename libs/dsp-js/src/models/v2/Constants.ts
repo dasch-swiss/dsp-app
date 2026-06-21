@@ -157,6 +157,7 @@ export class Constants {
   static hasCopyrightHolder = `${Constants.KnoraApiV2 + Constants.HashDelimiter}hasCopyrightHolder`;
   static hasAuthorship = `${Constants.KnoraApiV2 + Constants.HashDelimiter}hasAuthorship`;
   static hasLicense = `${Constants.KnoraApiV2 + Constants.HashDelimiter}hasLicense`;
+  static hasResourceAuthorship = `${Constants.KnoraApiV2 + Constants.HashDelimiter}hasResourceAuthorship`;
 
   static MatchText = `${Constants.KnoraApiV2 + Constants.HashDelimiter}matchText`;
 

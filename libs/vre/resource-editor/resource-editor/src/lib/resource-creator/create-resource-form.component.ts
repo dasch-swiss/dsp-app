@@ -29,6 +29,7 @@ import { fileValueMapping } from '../representation/file-value-mapping';
 import { CreateResourceFormFileComponent } from './create-resource-form-file.component';
 import { CreateResourceFormPropertiesComponent } from './create-resource-form-properties.component';
 import { CreateResourceFormRowComponent } from './create-resource-form-row.component';
+import { AuthorshipFormFieldComponent } from './authorship-form-field.component';
 import { CreateResourceFormInterface } from './create-resource-form.interface';
 
 @Component({
@@ -62,6 +63,14 @@ import { CreateResourceFormInterface } from './create-resource-form.interface';
             [properties]="properties"
             [formGroup]="form.controls.properties" />
         }
+        <!-- Data-side Resource Rights Statement: authorship is editable (license/holder come from the project).
+             TODO(verify-locally): show the project default authorship as a placeholder. -->
+        <h3>{{ 'legal.dataSide.heading' | translate }}</h3>
+        <app-create-resource-form-row [label]="'legal.dataSide.authorship' | translate">
+          <app-authorship-form-field
+            [control]="form.controls.resourceAuthorship"
+            [projectShortcode]="projectShortcode" />
+        </app-create-resource-form-row>
         <div class="form-actions">
           <button mat-raised-button type="button" data-cy="cancel-button" (click)="onCancel()">
             {{ 'ui.common.actions.cancel' | translate }}
@@ -91,6 +100,7 @@ import { CreateResourceFormInterface } from './create-resource-form.interface';
   imports: [
     ReactiveFormsModule,
     InvalidControlScrollDirective,
+    AuthorshipFormFieldComponent,
     CreateResourceFormFileComponent,
     CreateResourceFormRowComponent,
     CommonInputComponent,
@@ -112,6 +122,7 @@ export class CreateResourceFormComponent implements OnInit {
   form: FormGroup<CreateResourceFormInterface> = this._fb.group({
     label: this._fb.control('', { nonNullable: true, validators: [Validators.required] }),
     properties: this._fb.group({}),
+    resourceAuthorship: this._fb.control<string[] | null>([]),
   });
 
   resourceClass!: ResourceClassDefinitionWithPropertyDefinition;
@@ -242,6 +253,13 @@ export class CreateResourceFormComponent implements OnInit {
     createResource.type = this.resourceClass.id;
     createResource.properties = this._getPropertiesObj();
     createResource.attachedToProject = this.projectIri;
+
+    // Per-resource (data-side) authorship: persist ONLY when the field was touched/edited
+    // (dirty flag — never by value-equality against the project default).
+    const authorshipControl = this.form.controls.resourceAuthorship;
+    if (authorshipControl.dirty && authorshipControl.value && authorshipControl.value.length > 0) {
+      createResource.resourceAuthorship = authorshipControl.value;
+    }
 
     return createResource;
   }

@@ -1,4 +1,35 @@
 {
+  "legal": {
+    "dataSide": {
+      "heading": "Resource Rights Statement",
+      "license": "License",
+      "copyrightHolder": "Copyright holder",
+      "authorship": "Authorship",
+      "edit": "Edit",
+      "uncategorized": "This resource's legal information is uncategorized — please review.",
+      "editLegalInfo": "Edit legal info",
+      "noAuthorshipFallback": "No authorship recorded for this resource. Project default: {{default}}",
+      "settings": {
+        "resourceSide": "Resource side",
+        "assetSide": "Asset side",
+        "paneHeading": "Resource side · data license",
+        "holderLabel": "Copyright holder · your official project name",
+        "holderHelper": "Your project is the rights holder for every resource record. Name it below, then add the authorship.",
+        "licensePlaceholder": "Choose a Creative Commons license",
+        "liveWarning": "This license applies live to every resource in the project and may differ from license text already in your project description.",
+        "save": "Save changes",
+        "cancel": "Cancel"
+      },
+      "summaries": {
+        "ccBy40": "CC BY 4.0 — Reuse freely, with credit to the author",
+        "ccBySa40": "CC BY-SA 4.0 — Reuse with credit; share adaptations under the same license",
+        "ccByNc40": "CC BY-NC 4.0 — Non-commercial reuse, with credit to the author",
+        "ccByNcSa40": "CC BY-NC-SA 4.0 — Non-commercial reuse with credit; share alike",
+        "ccByNd40": "CC BY-ND 4.0 — Reuse with credit; no adaptations",
+        "ccByNcNd40": "CC BY-NC-ND 4.0 — Non-commercial reuse with credit; no adaptations"
+      }
+    }
+  },
   "pages": {
     "landingPage": {
       "usersProjects": "Mes projets",
