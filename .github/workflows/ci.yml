@@ -20,7 +20,7 @@ jobs:
       only_workflows: ${{ steps.detect.outputs.only_workflows }}
       only_pkg: ${{ steps.detect.outputs.only_pkg }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 2   # shallow; depth-2 covers merge-base for branches off latest main
       - id: detect
@@ -110,7 +110,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: 2
       - name: Set up Node
@@ -137,7 +137,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: 2
       - name: Set up Node
@@ -186,7 +186,7 @@ jobs:
             specs: cypress/e2e/system-admin/resource-edit-preserves-view.cy.ts,cypress/e2e/system-admin/ontology.cy.ts,cypress/e2e/system-admin/projects.cy.ts,cypress/e2e/system-admin/lists.cy.ts,cypress/e2e/system-admin/project-members.cy.ts,cypress/e2e/system-admin/project-overview.cy.ts,cypress/e2e/project-member/**/*.cy.ts,cypress/e2e/logged-out-user/**/*.cy.ts,cypress/e2e/performance/**/*.cy.ts
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - name: Set up Node
         uses: actions/setup-node@v6
         with:
@@ -211,7 +211,7 @@ jobs:
         env:
           NODE_OPTIONS: '--max-old-space-size=4096'
       - name: Checkout DSP-API repo
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           repository: dasch-swiss/dsp-api
           ref: main
@@ -287,7 +287,7 @@ jobs:
           permission-contents: write
           permission-pull-requests: write
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           token: ${{ steps.app-token.outputs.token }}
       - name: Set up yq
@@ -404,7 +404,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: 2
       - name: Set up Node
@@ -438,7 +438,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - name: Set up Python
