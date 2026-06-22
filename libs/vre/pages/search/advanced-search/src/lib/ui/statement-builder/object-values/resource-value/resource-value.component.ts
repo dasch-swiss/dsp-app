@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, EventEmitter, inject, Input, OnChan
 import { MatSelectModule } from '@angular/material/select';
 import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
 import { TranslateModule } from '@ngx-translate/core';
-import { BehaviorSubject, switchMap } from 'rxjs';
+import { BehaviorSubject, distinctUntilChanged, switchMap } from 'rxjs';
 import { ALL_RESOURCE_CLASSES } from '../../../../constants';
 import { IriLabelPair, Predicate } from '../../../../model';
 import { OntologyDataService } from '../../../../service/ontology-data.service';
@@ -47,8 +47,12 @@ export class ResourceValueComponent implements OnChanges {
 
   // Drives a single long-lived stream; `ngOnChanges` pushes new IRIs in.
   // Async pipe in the template owns the subscription lifecycle.
+  // `distinctUntilChanged` shields the downstream `switchMap` from
+  // re-firing when `ngOnChanges` runs for unrelated input changes
+  // (e.g. `selectedResource`) that leave `selectedPredicate?.iri` untouched.
   private readonly _selectedPredicateIri$ = new BehaviorSubject<string | undefined>(undefined);
   availableResources$ = this._selectedPredicateIri$.pipe(
+    distinctUntilChanged(),
     switchMap(iri => this._dataService.getResourceClassObjectsForProperty$(iri))
   );
 
