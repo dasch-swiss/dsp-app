@@ -73,14 +73,26 @@ import { TranslatePipe } from '@ngx-translate/core';
       .rights-statement {
         margin: 16px 0;
       }
+      /* Mirror create-resource-form-row's layout so the viewer matches the create form:
+         a grey, right-aligned, fixed-width label and a flex value that aligns with it. */
       .row {
         display: flex;
-        gap: 8px;
-        margin: 4px 0;
+        align-items: center;
       }
       .label {
-        min-width: 140px;
+        width: 140px;
+        text-align: end;
+        padding: 16px;
+        margin: 0;
+        color: rgb(107, 114, 128);
         font-weight: 500;
+      }
+      .value {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        padding: 16px 0;
       }
       .uncategorized {
         display: flex;
