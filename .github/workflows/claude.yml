@@ -29,7 +29,7 @@ jobs:
       id-token: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           ref: ${{ (github.event.issue.pull_request && format('refs/pull/{0}/head', github.event.issue.number)) || (github.event.pull_request && format('refs/pull/{0}/head', github.event.pull_request.number)) || github.ref }}
           fetch-depth: 1
@@ -94,7 +94,7 @@ jobs:
       actions: read
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           ref: ${{ (github.event.issue.pull_request && format('refs/pull/{0}/head', github.event.issue.number)) || (github.event.pull_request && format('refs/pull/{0}/head', github.event.pull_request.number)) || github.ref }}
           fetch-depth: 1
