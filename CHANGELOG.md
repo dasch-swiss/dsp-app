@@ -1,5 +1,30 @@
 # Changelog
 
+## [13.7.0](https://github.com/dasch-swiss/dsp-app/compare/v13.6.0...v13.7.0) (2026-06-22)
+
+
+### Enhancements
+
+* display entities in the current language (DEV-6627) ([#3174](https://github.com/dasch-swiss/dsp-app/issues/3174)) ([1dae05a](https://github.com/dasch-swiss/dsp-app/commit/1dae05a370c7d24086ec14336f16e84504c9ce6c))
+* translate advanced search and its displayed classes and properties (DEV-6645) ([#3177](https://github.com/dasch-swiss/dsp-app/issues/3177)) ([513cefe](https://github.com/dasch-swiss/dsp-app/commit/513cefe166c5b2d22f34220128843d57901ef9e6))
+
+
+### Bug Fixes
+
+* fix footer sticky position and hidden social icons (DEV-6644) ([#3176](https://github.com/dasch-swiss/dsp-app/issues/3176)) ([daea558](https://github.com/dasch-swiss/dsp-app/commit/daea558ba52ef0fa4153ed2c08daa08306223b6c))
+
+
+### Maintenances
+
+* add .kodus-readiness.yml to skip N/A agent-readiness criteria ([#3165](https://github.com/dasch-swiss/dsp-app/issues/3165)) ([868fe63](https://github.com/dasch-swiss/dsp-app/commit/868fe631fc9ae5c5fbecd475be7dcc82bd1e1d1b))
+* avoid unnecessary re fetch on language (DEV-6628) ([#3172](https://github.com/dasch-swiss/dsp-app/issues/3172)) ([019cc44](https://github.com/dasch-swiss/dsp-app/commit/019cc448ff310378895a0f2d3ccc61a81dea59b2))
+* **deps:** Lock file maintenance ([#3183](https://github.com/dasch-swiss/dsp-app/issues/3183)) ([60b783c](https://github.com/dasch-swiss/dsp-app/commit/60b783c328d381a4712e75a71536e7cdbaf9df31))
+* **deps:** Update dependency @faker-js/faker from 10.4.0 to 10.5.0 ([#3180](https://github.com/dasch-swiss/dsp-app/issues/3180)) ([952b86b](https://github.com/dasch-swiss/dsp-app/commit/952b86b8818255c6651d5b3e5a738d9d6dceb7ed))
+* **deps:** Update dependency @sentry/cli from 3.5.0 to 3.5.1 ([#3179](https://github.com/dasch-swiss/dsp-app/issues/3179)) ([d91e2f2](https://github.com/dasch-swiss/dsp-app/commit/d91e2f2adf220bb90b7b0297ed15e3e5c469aceb))
+* **deps:** Update github-actions from v6.0.3 to v7.0.0 ([#3182](https://github.com/dasch-swiss/dsp-app/issues/3182)) ([126cd2f](https://github.com/dasch-swiss/dsp-app/commit/126cd2f64b80cba0475b61b5d8445c126b1483af))
+* **deps:** Update sentry-javascript monorepo from 10.57.0 to 10.58.0 ([#3181](https://github.com/dasch-swiss/dsp-app/issues/3181)) ([4d5054e](https://github.com/dasch-swiss/dsp-app/commit/4d5054ece159b5aa1738862c234710a717d058d5))
+* use DaSCH Bot App token for release-please ([#3160](https://github.com/dasch-swiss/dsp-app/issues/3160)) ([5750b11](https://github.com/dasch-swiss/dsp-app/commit/5750b116df1d1b31b0003486c1e65334b97f5a01))
+
 ## [13.6.0](https://github.com/dasch-swiss/dsp-app/compare/v13.5.1...v13.6.0) (2026-06-15)
 
 
