@@ -53,7 +53,11 @@ export class ProjectDescriptionPageComponent {
   dataRights$ = this.readProject$.pipe(
     switchMap(project => {
       if (!project.dataLicense) {
-        return of({ project, licenseLabel: undefined as string | undefined, licenseUrl: undefined as string | undefined });
+        return of({
+          project,
+          licenseLabel: undefined as string | undefined,
+          licenseUrl: undefined as string | undefined,
+        });
       }
       return this._paginatedApi.getLicenses(project.shortcode).pipe(
         map(licenses => {

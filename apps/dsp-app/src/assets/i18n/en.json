@@ -12,7 +12,7 @@
       "settings": {
         "resourceSide": "Resource side",
         "assetSide": "Asset side",
-        "paneHeading": "Resource side · data license",
+        "paneHeading": "Data license",
         "holderLabel": "Copyright holder · your official project name",
         "holderHelper": "Your project is the rights holder for every resource record. Name it below, then add the authorship.",
         "licensePlaceholder": "Choose a Creative Commons license",
