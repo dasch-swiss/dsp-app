@@ -2,6 +2,8 @@ import { TestBed } from '@angular/core/testing';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { createMockLocalizationService } from '@dasch-swiss/vre/shared/app-helper-services/testing';
+import { TranslateLoader } from '@ngx-translate/core';
+import { of } from 'rxjs';
 import { IriLabelPair, NodeValue, Predicate, StatementElement, StringValue } from '../../model';
 import { Operator } from '../../operators.config';
 import { englishLabels, makeIriLabelPair } from '../../testing/test-data-builders';
@@ -10,6 +12,14 @@ import { OntologyDataService } from '../ontology-data.service';
 import { SearchStateService } from '../search-state.service';
 
 const { service: mockLocalizationService } = createMockLocalizationService('en');
+
+// OntologyDataService eagerly loads the synthetic rdfs:label predicate via
+// TranslateLoader on init. The gravsearch suite does not exercise that
+// behaviour, so a minimal stub returning empty translation objects is
+// sufficient to satisfy DI.
+const mockTranslateLoader: TranslateLoader = {
+  getTranslation: () => of({}),
+};
 
 /**
  * Helper function to set up test from JSON input
@@ -190,6 +200,7 @@ describe('Gravsearch Service and Writer - Label', () => {
         OntologyDataService,
         { provide: DspApiConnectionToken, useValue: mockDspApiConnection },
         { provide: LocalizationService, useValue: mockLocalizationService },
+        { provide: TranslateLoader, useValue: mockTranslateLoader },
       ],
     });
 
@@ -380,6 +391,7 @@ describe('Gravsearch Service and Writer - TextValue', () => {
         OntologyDataService,
         { provide: DspApiConnectionToken, useValue: mockDspApiConnection },
         { provide: LocalizationService, useValue: mockLocalizationService },
+        { provide: TranslateLoader, useValue: mockTranslateLoader },
       ],
     });
 
@@ -574,6 +586,7 @@ describe('Gravsearch Service and Writer - ListValue', () => {
         OntologyDataService,
         { provide: DspApiConnectionToken, useValue: mockDspApiConnection },
         { provide: LocalizationService, useValue: mockLocalizationService },
+        { provide: TranslateLoader, useValue: mockTranslateLoader },
       ],
     });
 
@@ -716,6 +729,7 @@ describe('Gravsearch Service and Writer - IntValue', () => {
         OntologyDataService,
         { provide: DspApiConnectionToken, useValue: mockDspApiConnection },
         { provide: LocalizationService, useValue: mockLocalizationService },
+        { provide: TranslateLoader, useValue: mockTranslateLoader },
       ],
     });
 

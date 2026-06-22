@@ -6,15 +6,17 @@ import {
   ReadOntology,
   ResourceClassDefinitionWithAllLanguages,
   ResourcePropertyDefinitionWithAllLanguages,
+  StringLiteralV2,
 } from '@dasch-swiss/dsp-js';
-import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
+import { AvailableLanguageKeys, DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import {
   LocalizationService,
   pickPreferredLanguageString,
   SortingHelper,
 } from '@dasch-swiss/vre/shared/app-helper-services';
+import { TranslateLoader } from '@ngx-translate/core';
 import { BehaviorSubject, combineLatest, filter, map, Observable, of, startWith, switchMap } from 'rxjs';
-import { ALL_RESOURCE_CLASSES } from '../constants';
+import { ALL_RESOURCE_CLASSES, RDFS_LABEL, RESOURCE_LABEL_TRANSLATION_KEY, ResourceLabel } from '../constants';
 import { IriLabelPair, Predicate } from '../model';
 import { toLabels } from '../util/labels';
 
@@ -29,12 +31,62 @@ export class OntologyDataService {
   private _ontologyLoading = new BehaviorSubject<boolean>(true);
   ontologyLoading$ = this._ontologyLoading.asObservable();
 
+  /**
+   * Synthetic `rdfs:label` predicate that every consumer of the predicate
+   * stream sees as if it were a normal property. The backend omits
+   * `rdfs:label` as property of resource classes in the ReadOntology response. (The property "rdfs label" is
+   * universal and ontologically required by the base model. It is and will always be available in data.).
+   * As it is not available in the ontology response as veritable property, we materialize it here once,
+   * with labels resolved per supported locale from the i18n JSON.
+   *
+   * Seeded with an empty `labels` array; each entry is appended as the
+   * configured `TranslateLoader.getTranslation(lang)` resolves it.
+   */
+  private _resourceLabelPredicate$ = new BehaviorSubject<Predicate>(
+    new Predicate(RDFS_LABEL, [], ResourceLabel, false)
+  );
+
   constructor(
     @Inject(DspApiConnectionToken)
     private readonly _dspApiConnection: KnoraApiConnection,
     private readonly _destroyRef: DestroyRef,
-    private readonly _localizationService: LocalizationService
-  ) {}
+    private readonly _localizationService: LocalizationService,
+    private readonly _translateLoader: TranslateLoader
+  ) {
+    this._initResourceLabelPredicate();
+  }
+
+  private _initResourceLabelPredicate(): void {
+    const labels: StringLiteralV2[] = [];
+    for (const language of AvailableLanguageKeys) {
+      this._translateLoader
+        .getTranslation(language)
+        .pipe(takeUntilDestroyed(this._destroyRef))
+        .subscribe(translations => {
+          const value = this._readKey(translations, RESOURCE_LABEL_TRANSLATION_KEY);
+          // Replace any existing entry for this language to keep the array deduped
+          const next = labels.filter(l => l.language !== language);
+          next.push({ language, value });
+          labels.length = 0;
+          labels.push(...next);
+          this._resourceLabelPredicate$.next(new Predicate(RDFS_LABEL, [...labels], ResourceLabel, false));
+        });
+    }
+  }
+
+  /** Walks a dotted i18n key (e.g. `a.b.c`) through a nested translations object. */
+  private _readKey(translations: unknown, key: string): string {
+    const parts = key.split('.');
+    let node: unknown = translations;
+    for (const part of parts) {
+      if (node && typeof node === 'object' && part in (node as Record<string, unknown>)) {
+        node = (node as Record<string, unknown>)[part];
+      } else {
+        return '';
+      }
+    }
+    return typeof node === 'string' ? node : '';
+  }
 
   init(projectIri: string, ontology?: IriLabelPair) {
     this._dspApiConnection.v2.onto
@@ -152,11 +204,16 @@ export class OntologyDataService {
   );
 
   getProperties$(classIri?: string): Observable<Predicate[]> {
-    if (!classIri) {
-      return this._propertyDefinitions$.pipe(map(props => props.map(p => this._toPredicate(p))));
-    }
-    return combineLatest([this._getPropertyIrisOfClass$(classIri), this._propertyDefinitions$]).pipe(
-      map(([resProps, props]) => props.filter(p => resProps.includes(p.id)).map(p => this._toPredicate(p)))
+    const rest$ = !classIri
+      ? this._propertyDefinitions$.pipe(map(props => props.map(p => this._toPredicate(p))))
+      : combineLatest([this._getPropertyIrisOfClass$(classIri), this._propertyDefinitions$]).pipe(
+          map(([resProps, props]) => props.filter(p => resProps.includes(p.id)).map(p => this._toPredicate(p)))
+        );
+
+    // `rdfs:label` is universal, mandatory, and missing from the API's
+    // property list — prepend it so every consumer sees a uniform stream.
+    return combineLatest([this._resourceLabelPredicate$, rest$]).pipe(
+      map(([resourceLabel, rest]) => [resourceLabel, ...rest])
     );
   }
 

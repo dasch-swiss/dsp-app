@@ -9,7 +9,9 @@ import {
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { createMockLocalizationService } from '@dasch-swiss/vre/shared/app-helper-services/testing';
-import { firstValueFrom, skip } from 'rxjs';
+import { TranslateLoader } from '@ngx-translate/core';
+import { firstValueFrom, of, skip } from 'rxjs';
+import { RDFS_LABEL, ResourceLabel } from '../../constants';
 import { OntologyDataService } from '../ontology-data.service';
 
 /**
@@ -76,6 +78,30 @@ function pushOntology(
 describe('OntologyDataService — i18n DTO propagation (DEV-6645)', () => {
   let service: OntologyDataService;
 
+  // Per-locale sentinel values. The contract under test is "for every supported
+  // language, the service walks the dotted i18n key and stores the resolved
+  // string as a StringLiteralV2 on the synthetic predicate". The *content* of
+  // the real translation files is irrelevant to that contract and is owned by
+  // translators — using obvious sentinels keeps the spec stable across copy
+  // changes and makes the propagation intent unmistakable.
+  const RESOURCE_LABEL_BY_LANG: Record<string, string> = {
+    en: 'rdfs-label-en',
+    de: 'rdfs-label-de',
+    fr: 'rdfs-label-fr',
+    it: 'rdfs-label-it',
+    rm: 'rdfs-label-rm',
+  };
+
+  function makeTranslateStub() {
+    return {
+      getTranslation: jest.fn((lang: string) =>
+        of({
+          pages: { search: { advancedSearch: { resourceLabel: RESOURCE_LABEL_BY_LANG[lang] ?? '' } } },
+        })
+      ),
+    };
+  }
+
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
@@ -83,6 +109,7 @@ describe('OntologyDataService — i18n DTO propagation (DEV-6645)', () => {
         { provide: DspApiConnectionToken, useValue: {} },
         { provide: DestroyRef, useValue: { onDestroy: () => () => {} } },
         { provide: LocalizationService, useValue: createMockLocalizationService('en').service },
+        { provide: TranslateLoader, useValue: makeTranslateStub() },
       ],
     });
     service = TestBed.inject(OntologyDataService);
@@ -154,6 +181,33 @@ describe('OntologyDataService — i18n DTO propagation (DEV-6645)', () => {
       expect(subs[0].iri).toBe('http://example/Letter');
       expect(subs[0].labels).toEqual(childLabels);
       expect(subs[0].comments).toEqual(childComments);
+    });
+  });
+
+  describe('getProperties$ — synthetic rdfs:label predicate', () => {
+    it('prepends a synthetic rdfs:label predicate with labels for every supported language', async () => {
+      const hasAuthorLabels = makeStringLiterals({ en: 'has author', de: 'hat Autor' });
+      const propDef = makePropDef('http://example/hasAuthor', hasAuthorLabels);
+      pushOntology(service, [], [propDef]);
+
+      const properties = await firstValueFrom(service.getProperties$());
+
+      expect(properties.length).toBeGreaterThan(0);
+      const first = properties[0];
+      expect(first.iri).toBe(RDFS_LABEL);
+      expect(first.objectValueType).toBe(ResourceLabel);
+      expect(first.isLinkProperty).toBe(false);
+
+      // Every supported locale resolved from the i18n fixture.
+      const byLang = new Map(first.labels.map(l => [l.language, l.value]));
+      expect(byLang.get('en')).toBe('rdfs-label-en');
+      expect(byLang.get('de')).toBe('rdfs-label-de');
+      expect(byLang.get('fr')).toBe('rdfs-label-fr');
+      expect(byLang.get('it')).toBe('rdfs-label-it');
+      expect(byLang.get('rm')).toBe('rdfs-label-rm');
+
+      // Backend-supplied property still follows.
+      expect(properties[1].iri).toBe('http://example/hasAuthor');
     });
   });
 });

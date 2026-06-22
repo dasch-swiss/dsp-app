@@ -8,6 +8,14 @@ export const VALUE_SUFFIX = 'val';
 export const RDFS_TYPE = 'a';
 
 /**
+ * i18n key for the app-owned label of the synthetic `rdfs:label` predicate.
+ * The backend never returns `rdfs:label` in an ontology's property list, so
+ * `OntologyDataService` prepends it to every predicate stream using this key
+ * to resolve labels per locale via `TranslateService.getTranslation`.
+ */
+export const RESOURCE_LABEL_TRANSLATION_KEY = 'pages.search.advancedSearch.resourceLabel';
+
+/**
  * Sentinel `IriLabelPair` representing "search across all resource classes".
  * Downstream (gravsearch.service.ts) keys off the empty `iri`.
  *

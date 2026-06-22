@@ -54,11 +54,11 @@ class TestStringifyStringLiteralPipe implements PipeTransform {
   }
 }
 
-// Stub `translate` pipe so the static "ResourceLabel" <mat-option> and the
-// dynamic mat-label render in tests without pulling the real ngx-translate
-// pipe (which would require a configured TranslateModule). The TranslateService
-// mock supplied by the test bed provides `instant`; we forward params verbatim
-// so callers can assert interpolation behaviour.
+// Stub `translate` pipe so the dynamic mat-label renders in tests without
+// pulling the real ngx-translate pipe (which would require a configured
+// TranslateModule). The TranslateService mock supplied by the test bed
+// provides `instant`; we forward params verbatim so callers can assert
+// interpolation behaviour.
 @Pipe({ name: 'translate', pure: false, standalone: true })
 class TestTranslatePipe implements PipeTransform {
   constructor(private readonly _translate: TranslateService) {}
@@ -179,6 +179,26 @@ describe('PredicateSelectComponent — i18n label rendering (DEV-6645)', () => {
       expect(germanTexts).toContain('hat Autor');
       expect(germanTexts).toContain('hat Titel');
       expect(germanTexts).not.toContain('has author');
+    });
+
+    it('renders the synthetic rdfs:label predicate (supplied by getProperties$) as a normal option', () => {
+      // The production OntologyDataService prepends a synthetic rdfs:label
+      // predicate with translated labels. The component must not special-case
+      // it — it is rendered through the same @for loop as any other property.
+      const resourceLabelLabels: StringLiteralV2[] = [
+        { language: 'en', value: 'Resource Label' },
+        { language: 'de', value: 'Ressourcenbezeichnung' },
+      ];
+      mockOntologyData.getProperties$.mockReturnValueOnce(
+        of([makeMultiPredicate('rdfs:label', resourceLabelLabels), ...predicates])
+      );
+
+      component.subjectClass = { iri: 'http://example/Book', labels: bookLabels, comments: [] };
+      component.ngOnChanges();
+      fixture.detectChanges();
+
+      const optionTexts = openSelectAndGetOptionTexts(fixture);
+      expect(optionTexts).toContain('Resource Label');
     });
   });
 
