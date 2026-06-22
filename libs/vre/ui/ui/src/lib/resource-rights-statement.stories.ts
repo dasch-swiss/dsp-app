@@ -19,8 +19,14 @@ const meta: Meta<ResourceRightsStatementComponent> = {
       control: 'object',
     },
     perResource: { description: 'Per-resource display (viewer/create) vs. project-level display.', control: 'boolean' },
-    isAdmin: { description: 'Whether the user is a project/system admin (controls the unconfigured callout).', control: 'boolean' },
-    canEditAuthorship: { description: 'Whether the user may edit per-resource authorship (Modify rights).', control: 'boolean' },
+    isAdmin: {
+      description: 'Whether the user is a project/system admin (controls the unconfigured callout).',
+      control: 'boolean',
+    },
+    canEditAuthorship: {
+      description: 'Whether the user may edit per-resource authorship (Modify rights).',
+      control: 'boolean',
+    },
     editLegalInfo: { description: 'Emitted when an admin clicks "Edit legal info" on the unconfigured callout.' },
     editAuthorship: { description: 'Emitted when a Modify user clicks the inline authorship edit affordance.' },
   },

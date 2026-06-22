@@ -90,7 +90,12 @@ export class ResourceRightsStatementContainerComponent implements OnInit {
           return;
         }
         this._resourceLegal
-          .updateResourceAuthorship(this.resource.res.id, this.resource.res.type, result, this.resource.res.lastModificationDate)
+          .updateResourceAuthorship(
+            this.resource.res.id,
+            this.resource.res.type,
+            result,
+            this.resource.res.lastModificationDate
+          )
           .subscribe(() => {
             // Optimistic local update so the viewer reflects the change immediately.
             // TODO(verify-locally): trigger a proper resource reload instead of mutating in place.

@@ -51,7 +51,10 @@ import { TranslatePipe } from '@ngx-translate/core';
               <em>{{ 'legal.dataSide.noAuthorshipFallback' | translate: { default: authorship.join(', ') } }}</em>
             }
             @if (canEditAuthorship) {
-              <button mat-icon-button [attr.aria-label]="'legal.dataSide.edit' | translate" (click)="editAuthorship.emit()">
+              <button
+                mat-icon-button
+                [attr.aria-label]="'legal.dataSide.edit' | translate"
+                (click)="editAuthorship.emit()">
                 <mat-icon>edit</mat-icon>
               </button>
             }
