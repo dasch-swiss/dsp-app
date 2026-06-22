@@ -3,6 +3,7 @@ import { KnoraApiConnection, ListNodeV2 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { catchError, map, Observable, of, Subject, takeUntil } from 'rxjs';
 import { IriLabelPair } from '../model';
+import { toLabels } from '../util/labels';
 
 @Injectable()
 export class DynamicFormsDataService {
@@ -40,10 +41,14 @@ export class DynamicFormsDataService {
       .pipe(
         takeUntil(this.cancelPreviousSearchRequest$),
         map(response =>
-          response.resources.map(res => ({
-            iri: res.id,
-            label: res.label,
-          }))
+          response.resources.map(
+            res =>
+              ({
+                iri: res.id,
+                labels: toLabels(res.label),
+                comments: [],
+              }) as IriLabelPair
+          )
         ),
         catchError(err => {
           return of([]); // return an empty array on error wrapped in an observable

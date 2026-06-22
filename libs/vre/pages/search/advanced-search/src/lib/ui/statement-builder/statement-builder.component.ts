@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, Component, inject, Input, OnChanges } from '@a
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { TranslateModule } from '@ngx-translate/core';
 import { PropertyObjectType, StatementElement } from '../../model';
 import { PropertyFormManager } from '../../service/property-form.manager';
 import { ComparisonOperatorComponent } from './assertions/comparison-operator.component';
@@ -26,6 +27,7 @@ import { StringValueComponent } from './object-values/string-value/string-value.
     ListValueComponent,
     ResourceValueComponent,
     StringValueComponent,
+    TranslateModule,
   ],
   template: ` @for (
     statementElement of statementElements;
@@ -82,7 +84,7 @@ import { StringValueComponent } from './object-values/string-value/string-value.
             mat-icon-button
             color="primary"
             (click)="formManager.deleteStatement(statementElement)"
-            matTooltip="Remove search criteria">
+            [matTooltip]="'pages.search.advancedSearch.tooltips.removeCriteria' | translate">
             <mat-icon>remove_circle</mat-icon>
           </button>
         }
@@ -91,23 +93,32 @@ import { StringValueComponent } from './object-values/string-value/string-value.
             mat-icon-button
             color="primary"
             (click)="formManager.clearStatementElement(statementElement)"
-            matTooltip="Remove search criteria">
+            [matTooltip]="'pages.search.advancedSearch.tooltips.removeCriteria' | translate">
             <mat-icon>remove_circle</mat-icon>
           </button>
         }
       </div>
     } @else {
-      <div
-        [style.margin-left.em]="(statementElement.statementLevel + 1) * 2"
-        class="flex-column width-12em margin-bottom-1em">
+      <div [style.margin-left.em]="(statementElement.statementLevel + 1) * 2" class="margin-bottom-1em">
         <button
           mat-button
           mat-stroked-button
           color="primary"
+          class="min-width-12em"
           (click)="displayForm(statementElement)"
-          [matTooltip]="statementElement.statementLevel === 0 ? 'Add Search Criteria' : 'Add Sub-criteria'">
+          [matTooltip]="
+            (statementElement.statementLevel === 0
+              ? 'pages.search.advancedSearch.tooltips.addCriteria'
+              : 'pages.search.advancedSearch.tooltips.addSubCriteria'
+            ) | translate
+          ">
           <mat-icon>add_circle</mat-icon>
-          <span>{{ statementElement.statementLevel === 0 ? 'Add Search Criteria' : 'Add Sub-criteria' }}</span>
+          <span>{{
+            (statementElement.statementLevel === 0
+              ? 'pages.search.advancedSearch.tooltips.addCriteria'
+              : 'pages.search.advancedSearch.tooltips.addSubCriteria'
+            ) | translate
+          }}</span>
         </button>
       </div>
     }

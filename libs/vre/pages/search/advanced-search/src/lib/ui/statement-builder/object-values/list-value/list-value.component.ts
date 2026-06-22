@@ -12,15 +12,15 @@ import {
 } from '@angular/core';
 import { ListNodeV2 } from '@dasch-swiss/dsp-js';
 import { NestedMenuComponent } from '@dasch-swiss/vre/ui/nested-menu';
-import { TranslateModule } from '@ngx-translate/core';
 import { take } from 'rxjs';
 import { IriLabelPair } from '../../../../model';
 import { DynamicFormsDataService } from '../../../../service/dynamic-forms-data.service';
+import { toLabels } from '../../../../util/labels';
 
 @Component({
   standalone: true,
   selector: 'app-list-value',
-  imports: [CommonModule, NestedMenuComponent, TranslateModule],
+  imports: [CommonModule, NestedMenuComponent],
   template: `
     @if (rootListNode) {
       <app-nested-menu
@@ -85,7 +85,11 @@ export class ListValueComponent implements OnChanges {
 
   onSelectionChange(node: ListNodeV2) {
     this.selectedListNode = node;
-    const nodeValue: IriLabelPair = { iri: node.id, label: node.label };
+    const nodeValue: IriLabelPair = {
+      iri: node.id,
+      labels: toLabels(node.label),
+      comments: [],
+    };
     this.emitValueChanged.emit(nodeValue);
   }
 }
