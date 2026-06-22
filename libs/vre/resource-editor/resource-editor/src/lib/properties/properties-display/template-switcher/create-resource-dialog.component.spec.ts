@@ -1,7 +1,9 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { AdminAPIApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
+import { PaginatedApiService } from '@dasch-swiss/vre/shared/app-common';
 import { provideTranslateService, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { ResourceFetcherService } from '../../../representation/resource-fetcher.service';
@@ -49,6 +51,12 @@ describe('CreateResourceDialogComponent', () => {
         { provide: MatDialogRef, useValue: mockDialogRef },
         { provide: ResourceFetcherService, useValue: mockResourceFetcherService },
         { provide: DspApiConnectionToken, useValue: mockDspApiConnection },
+        // The hosted create-resource form loads project legal info on init; stub the APIs it calls.
+        {
+          provide: AdminAPIApiService,
+          useValue: { getAdminProjectsShortcodeProjectshortcode: jest.fn().mockReturnValue(of({ project: {} })) },
+        },
+        { provide: PaginatedApiService, useValue: { getLicenses: jest.fn().mockReturnValue(of([])) } },
         provideTranslateService(),
         TranslateService,
       ],
