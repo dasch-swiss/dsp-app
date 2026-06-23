@@ -22,7 +22,7 @@ import { TranslatePipe } from '@ngx-translate/core';
   selector: 'app-resource-rights-statement',
   template: `
     @if (configured) {
-      <section class="rights-statement">
+      <section class="rights-statement" [class.label-start]="labelAlign === 'start'">
         <h3 class="mat-subtitle-2">{{ 'legal.dataSide.heading' | translate }}</h3>
 
         <div class="row">
@@ -93,21 +93,27 @@ import { TranslatePipe } from '@ngx-translate/core';
          width and value offset. */
       .row {
         display: flex;
+        align-items: baseline;
       }
       .label {
         color: rgb(107, 114, 128);
         width: 150px;
         text-align: right;
-        padding: 16px;
-        margin-right: 16px;
-        align-self: start;
+        padding: 6px 16px;
         line-height: normal;
         flex-shrink: 0;
         overflow-wrap: break-word;
       }
       .value {
         flex: 1;
-        padding: 16px;
+        padding: 6px 8px;
+      }
+      /* Project-level (card) variant: left-align the labels, drop the left padding so they line up
+         flush with the heading, and use a tighter label column. */
+      .label-start .label {
+        text-align: left;
+        padding-left: 0;
+        width: 130px;
       }
       .authorship-row {
         position: relative;
@@ -147,6 +153,8 @@ export class ResourceRightsStatementComponent {
   @Input() isAdmin = false;
   /** Whether the current user may edit the per-resource authorship (Modify rights). */
   @Input() canEditAuthorship = false;
+  /** Label alignment: 'end' (right — matches property rows in the viewer) or 'start' (left — for the project card). */
+  @Input() labelAlign: 'start' | 'end' = 'end';
 
   /** Emitted when an admin clicks "Edit legal info" on the unconfigured callout (routes to Settings → Legal). */
   @Output() editLegalInfo = new EventEmitter<void>();
