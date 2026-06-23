@@ -26,7 +26,7 @@ import { TranslatePipe } from '@ngx-translate/core';
         <h3 class="mat-subtitle-2">{{ 'legal.dataSide.heading' | translate }}</h3>
 
         <div class="row">
-          <span class="label">{{ 'legal.dataSide.license' | translate }}</span>
+          <span class="label mat-subtitle-2">{{ 'legal.dataSide.license' | translate }}</span>
           <span class="value">
             @if (licenseUrl) {
               <a [href]="licenseUrl" target="_blank" rel="noopener">{{ licenseLabel }}</a>
@@ -38,7 +38,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 
         @if (copyrightHolder) {
           <div class="row">
-            <span class="label">{{ 'legal.dataSide.copyrightHolder' | translate }}</span>
+            <span class="label mat-subtitle-2">{{ 'legal.dataSide.copyrightHolder' | translate }}</span>
             <span class="value">{{ copyrightHolder }}</span>
           </div>
         }
@@ -47,7 +47,7 @@ import { TranslatePipe } from '@ngx-translate/core';
           class="row authorship-row"
           (mouseenter)="showAuthorshipActions = true"
           (mouseleave)="showAuthorshipActions = false">
-          <span class="label">{{ 'legal.dataSide.authorship' | translate }}</span>
+          <span class="label mat-subtitle-2">{{ 'legal.dataSide.authorship' | translate }}</span>
           <span class="value">
             @if (displayedAuthorship.length > 0) {
               {{ displayedAuthorship.join(', ') }}
@@ -88,26 +88,26 @@ import { TranslatePipe } from '@ngx-translate/core';
       .rights-statement {
         margin: 16px 0;
       }
-      /* Mirror create-resource-form-row's layout so the viewer matches the create form:
-         a grey, right-aligned, fixed-width label and a flex value that aligns with it. */
+      /* Mirror the property value rows (property-row.component) so the rights statement
+         reads as one block with the properties above it — same label typography, column
+         width and value offset. */
       .row {
         display: flex;
-        align-items: center;
       }
       .label {
-        width: 140px;
-        text-align: end;
-        padding: 16px;
-        margin: 0;
         color: rgb(107, 114, 128);
-        font-weight: 500;
+        width: 150px;
+        text-align: right;
+        padding: 16px;
+        margin-right: 16px;
+        align-self: start;
+        line-height: normal;
+        flex-shrink: 0;
+        overflow-wrap: break-word;
       }
       .value {
         flex: 1;
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        padding: 16px 0;
+        padding: 16px;
       }
       .authorship-row {
         position: relative;
