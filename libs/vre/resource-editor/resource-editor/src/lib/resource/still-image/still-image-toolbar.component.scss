@@ -31,9 +31,11 @@
 }
 
 app-compound-navigation {
+  grid-column: 2;
   justify-self: center;
 }
 
 .icon-container:last-child {
+  grid-column: 3;
   justify-self: end;
 }
