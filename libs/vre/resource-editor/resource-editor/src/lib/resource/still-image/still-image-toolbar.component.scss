@@ -1,8 +1,9 @@
 @use '../../../../../../../../apps/dsp-app/src/styles/config' as *;
 
 .toolbar {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
   padding-right: 16px;
   color: $primary_50;
   height: 48px;
@@ -27,4 +28,12 @@
 .clickable-icon.disabled {
   pointer-events: none;
   opacity: 0.5;
+}
+
+app-compound-navigation {
+  justify-self: center;
+}
+
+.icon-container:last-child {
+  justify-self: end;
 }
