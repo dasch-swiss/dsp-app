@@ -41,10 +41,9 @@ type ResourceSideForm = FormGroup<{
 @Component({
   selector: 'app-legal-settings',
   template: `
-    <mat-tab-group animationDuration="0ms" [mat-stretch-tabs]="false" class="legal-side-tabs">
+    <mat-tab-group animationDuration="0ms" [mat-stretch-tabs]="false" mat-align-tabs="center" class="legal-side-tabs">
       <mat-tab [label]="'legal.dataSide.settings.resourceSide' | translate">
         <section class="section">
-          <h2>{{ 'legal.dataSide.settings.paneHeading' | translate }}</h2>
           <div style="display: flex; justify-content: center; margin: 16px 0">
             <div style="border: 1px solid; padding: 16px">{{ 'legal.dataSide.settings.liveWarning' | translate }}</div>
           </div>
