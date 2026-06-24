@@ -16,7 +16,7 @@
         "holderLabel": "Copyright holder · your official project name",
         "holderHelper": "Your project is the rights holder for every resource record. Name it below, then add the authorship.",
         "licensePlaceholder": "Choose a Creative Commons license",
-        "liveWarning": "This license applies live to every resource in the project and may differ from license text already in your project description.",
+        "liveWarning": "This license applies live to every resource in the project.",
         "save": "Save changes",
         "cancel": "Cancel",
         "saved": "Resource-side legal info saved.",
