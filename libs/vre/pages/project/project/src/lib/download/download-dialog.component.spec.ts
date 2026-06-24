@@ -1,4 +1,4 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, EventEmitter, Input, Output } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { PropertyDefinition, ResourceClassDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
@@ -10,8 +10,16 @@ import {
 } from './download-dialog-resources-tab.component';
 import { DownloadDialogComponent, DownloadDialogData } from './download-dialog.component';
 
+// Stub must declare the inputs/outputs the parent template binds, otherwise
+// TestBed's errorOnUnknownProperties (Angular 21) rejects the bindings.
 @Component({ selector: 'app-download-dialog-properties-tab', standalone: true, template: '' })
-class StubDownloadDialogResourcesTabComponent {}
+class StubDownloadDialogResourcesTabComponent {
+  @Input() properties: PropertyInfoValues[] = [];
+  @Input() resourceClassIri = '';
+  @Input() resourceCount = 0;
+  @Output() downloadStateChange = new EventEmitter<boolean>();
+  @Output() afterClosed = new EventEmitter<void>();
+}
 
 describe('DownloadDialogComponent', () => {
   let component: DownloadDialogComponent;

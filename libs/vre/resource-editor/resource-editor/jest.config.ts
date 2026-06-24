@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName: 'vre-shared-app-resource-page',
   preset: '../../../../jest.preset.js',
   coverageDirectory: '../../../../coverage/libs/vre/resource-editor/resource-editor',

@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName: 'vre-ui-progress-indicator',
   preset: '../../../../jest.preset.js',
   coverageDirectory: '../../../../coverage/libs/vre/ui/progress-indicator',

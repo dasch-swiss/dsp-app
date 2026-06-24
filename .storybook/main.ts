@@ -1,10 +1,12 @@
+import { fileURLToPath } from "node:url";
+import { dirname } from "node:path";
 import type { StorybookConfig } from '@storybook/angular';
 
 const config: StorybookConfig = {
   stories: ['../libs/**/*.stories.@(ts|mdx)', '../apps/**/*.stories.@(ts|mdx)'],
   addons: [],
   framework: {
-    name: '@storybook/angular',
+    name: getAbsolutePath("@storybook/angular"),
     options: {},
   },
   staticDirs: [{ from: '../apps/dsp-app/src/assets', to: '/assets' }],
@@ -23,3 +25,7 @@ const config: StorybookConfig = {
 };
 
 export default config;
+
+function getAbsolutePath(value: string): any {
+  return dirname(fileURLToPath(import.meta.resolve(`${value}/package.json`)));
+}
