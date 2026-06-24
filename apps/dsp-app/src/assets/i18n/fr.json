@@ -14,7 +14,7 @@
         "assetSide": "Asset side",
         "paneHeading": "Data license",
         "holderLabel": "Copyright holder · your official project name",
-        "holderHelper": "Your project is the rights holder for every resource record. Name it below, then add the authorship.",
+        "holderHelper": "Your project is the rights holder for every resource record. Its official name is filled in below — edit it if needed, then add the authorship.",
         "licensePlaceholder": "Choose a Creative Commons license",
         "liveWarning": "This license applies live to every resource in the project.",
         "save": "Save changes",
