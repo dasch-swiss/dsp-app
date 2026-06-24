@@ -1,11 +1,13 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslatePipe } from '@ngx-translate/core';
 
 /**
- * Canonical, read-only display of a resource's data-side legal information
+ * Canonical display of a resource's data-side legal information
  * (license, copyright holder, authorship) — the "Resource Rights Statement".
  *
  * Used on the resource viewer, the create-resource form (preview) and the project description.
@@ -17,6 +19,8 @@ import { TranslatePipe } from '@ngx-translate/core';
  *   holder and the authorship.
  * - In a per-resource context, when the resource has no own authorship, shows a labeled fallback
  *   ("No authorship recorded for this resource. Project default: …") rather than asserting the default.
+ * - For users with edit rights (`canEditAuthorship`), the authorship row edits inline in place
+ *   (a chip editor with save/undo) — no dialog — and emits the new list via `saveAuthorship`.
  */
 @Component({
   selector: 'app-resource-rights-statement',
@@ -45,24 +49,62 @@ import { TranslatePipe } from '@ngx-translate/core';
 
         <div class="row">
           <span class="label mat-subtitle-2">{{ 'legal.dataSide.authorship' | translate }}</span>
-          <span class="value">
-            @if (displayedAuthorship.length > 0) {
-              {{ displayedAuthorship.join(', ') }}
-            } @else if (perResource) {
-              <em>{{ 'legal.dataSide.noAuthorshipFallback' | translate: { default: authorship.join(', ') } }}</em>
-            }
-            @if (canEditAuthorship) {
-              <!-- Inline, always-visible edit affordance, right after the value (discoverable, close to the text). -->
+          @if (editing) {
+            <!-- Inline editor: opens in place (no dialog) with a chip input and save/undo, like a property row. -->
+            <span class="value value-editing">
+              <mat-form-field class="authorship-edit-field" subscriptSizing="dynamic">
+                <mat-chip-grid #chipGrid [attr.aria-label]="'legal.dataSide.authorship' | translate">
+                  @for (author of editAuthorshipList; track $index) {
+                    <mat-chip-row (removed)="removeEditAuthor($index)">
+                      {{ author }}
+                      <button matChipRemove [attr.aria-label]="'legal.dataSide.edit' | translate">
+                        <mat-icon>cancel</mat-icon>
+                      </button>
+                    </mat-chip-row>
+                  }
+                  <input
+                    autocomplete="off"
+                    [matChipInputFor]="chipGrid"
+                    (matChipInputTokenEnd)="addEditAuthor($event)" />
+                </mat-chip-grid>
+              </mat-form-field>
               <button
                 type="button"
-                class="edit-authorship"
-                [matTooltip]="'legal.dataSide.edit' | translate"
-                [attr.aria-label]="'legal.dataSide.edit' | translate"
-                (click)="editAuthorship.emit()">
-                <mat-icon>edit</mat-icon>
+                class="edit-action"
+                [matTooltip]="'legal.dataSide.settings.cancel' | translate"
+                [attr.aria-label]="'legal.dataSide.settings.cancel' | translate"
+                (click)="cancelEdit()">
+                <mat-icon>undo</mat-icon>
               </button>
-            }
-          </span>
+              <button
+                type="button"
+                class="edit-action save"
+                [matTooltip]="'legal.dataSide.settings.save' | translate"
+                [attr.aria-label]="'legal.dataSide.settings.save' | translate"
+                (click)="saveEdit()">
+                <mat-icon>save</mat-icon>
+              </button>
+            </span>
+          } @else {
+            <span class="value">
+              @if (displayedAuthorship.length > 0) {
+                {{ displayedAuthorship.join(', ') }}
+              } @else if (perResource) {
+                <em>{{ 'legal.dataSide.noAuthorshipFallback' | translate: { default: authorship.join(', ') } }}</em>
+              }
+              @if (canEditAuthorship) {
+                <!-- Inline, always-visible edit affordance, right after the value (discoverable, close to the text). -->
+                <button
+                  type="button"
+                  class="edit-authorship"
+                  [matTooltip]="'legal.dataSide.edit' | translate"
+                  [attr.aria-label]="'legal.dataSide.edit' | translate"
+                  (click)="startEdit()">
+                  <mat-icon>edit</mat-icon>
+                </button>
+              }
+            </span>
+          }
         </div>
       </section>
     } @else if (isAdmin) {
@@ -132,6 +174,40 @@ import { TranslatePipe } from '@ngx-translate/core';
         height: 18px;
         line-height: 18px;
       }
+      /* Inline edit mode: the chip field grows to fill the value cell, with the save/undo
+         actions sitting right after it (mirrors the property-row inline edit). */
+      .value-editing {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .authorship-edit-field {
+        flex: 1;
+      }
+      .edit-action {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        padding: 4px;
+        border: none;
+        background: none;
+        color: rgb(107, 114, 128);
+        cursor: pointer;
+        border-radius: 4px;
+      }
+      .edit-action:hover {
+        background: rgba(0, 0, 0, 0.04);
+      }
+      .edit-action.save:hover {
+        color: var(--primary);
+      }
+      .edit-action mat-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+        line-height: 20px;
+      }
       .uncategorized {
         display: flex;
         align-items: center;
@@ -142,7 +218,7 @@ import { TranslatePipe } from '@ngx-translate/core';
       }
     `,
   ],
-  imports: [MatButtonModule, MatIconModule, MatTooltipModule, TranslatePipe],
+  imports: [MatButtonModule, MatChipsModule, MatFormFieldModule, MatIconModule, MatTooltipModule, TranslatePipe],
 })
 export class ResourceRightsStatementComponent {
   /** The human-readable license label, e.g. "CC BY 4.0". Its presence means the project is "configured". */
@@ -166,8 +242,13 @@ export class ResourceRightsStatementComponent {
 
   /** Emitted when an admin clicks "Edit legal info" on the unconfigured callout (routes to Settings → Legal). */
   @Output() editLegalInfo = new EventEmitter<void>();
-  /** Emitted when a Modify user clicks the inline authorship edit affordance. */
-  @Output() editAuthorship = new EventEmitter<void>();
+  /** Emitted with the new authorship list when a Modify user saves the inline editor. */
+  @Output() saveAuthorship = new EventEmitter<string[]>();
+
+  /** Whether the inline authorship editor is open. */
+  editing = false;
+  /** Working copy of the authorship list while editing (committed only on save). */
+  editAuthorshipList: string[] = [];
 
   get configured(): boolean {
     return !!this.licenseLabel;
@@ -179,5 +260,34 @@ export class ResourceRightsStatementComponent {
       return this.resourceAuthorship ?? [];
     }
     return this.authorship;
+  }
+
+  /** Open the inline editor, seeded with the currently displayed authorship. */
+  startEdit(): void {
+    this.editAuthorshipList = [...this.displayedAuthorship];
+    this.editing = true;
+  }
+
+  addEditAuthor(event: MatChipInputEvent): void {
+    const value = (event.value || '').trim();
+    if (value) {
+      this.editAuthorshipList = [...this.editAuthorshipList, value];
+    }
+    event.chipInput!.clear();
+  }
+
+  removeEditAuthor(index: number): void {
+    this.editAuthorshipList = this.editAuthorshipList.filter((_, i) => i !== index);
+  }
+
+  /** Discard edits and close the editor. */
+  cancelEdit(): void {
+    this.editing = false;
+  }
+
+  /** Commit the edited list to the parent and close the editor. */
+  saveEdit(): void {
+    this.saveAuthorship.emit([...this.editAuthorshipList]);
+    this.editing = false;
   }
 }

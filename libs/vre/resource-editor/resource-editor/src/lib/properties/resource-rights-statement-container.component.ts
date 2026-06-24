@@ -1,14 +1,10 @@
 import { AsyncPipe } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { DspResource, PaginatedApiService } from '@dasch-swiss/vre/shared/app-common';
 import { ResourceRightsStatementComponent } from '@dasch-swiss/vre/ui/ui';
 import { map, Observable, of, switchMap } from 'rxjs';
-import {
-  ResourceAuthorshipEditDialogComponent,
-  ResourceAuthorshipEditDialogProps,
-} from './resource-authorship-edit-dialog.component';
+import { ResourceFetcherService } from '../representation/resource-fetcher.service';
 import { ResourceLegalService } from './resource-legal.service';
 
 interface DataRights {
@@ -35,7 +31,7 @@ interface DataRights {
         [authorship]="rights.authorship"
         [resourceAuthorship]="resource.res.resourceAuthorship"
         [canEditAuthorship]="canEditAuthorship"
-        (editAuthorship)="onEditAuthorship()" />
+        (saveAuthorship)="onSaveAuthorship($event)" />
     }
   `,
   imports: [AsyncPipe, ResourceRightsStatementComponent],
@@ -51,9 +47,9 @@ export class ResourceRightsStatementContainerComponent implements OnInit {
   }
 
   constructor(
-    private readonly _dialog: MatDialog,
     private readonly _paginatedApi: PaginatedApiService,
     private readonly _projectApi: ProjectApiService,
+    private readonly _resourceFetcher: ResourceFetcherService,
     private readonly _resourceLegal: ResourceLegalService
   ) {}
 
@@ -78,29 +74,20 @@ export class ResourceRightsStatementContainerComponent implements OnInit {
     );
   }
 
-  onEditAuthorship(): void {
-    this._dialog
-      .open<ResourceAuthorshipEditDialogComponent, ResourceAuthorshipEditDialogProps, string[] | undefined>(
-        ResourceAuthorshipEditDialogComponent,
-        { data: { authorship: this.resource.res.resourceAuthorship ?? [] } }
+  onSaveAuthorship(authorship: string[]): void {
+    this._resourceLegal
+      .updateResourceAuthorship(
+        this.resource.res.id,
+        this.resource.res.type,
+        authorship,
+        this.resource.res.lastModificationDate
       )
-      .afterClosed()
-      .subscribe(result => {
-        if (result === undefined) {
-          return;
-        }
-        this._resourceLegal
-          .updateResourceAuthorship(
-            this.resource.res.id,
-            this.resource.res.type,
-            result,
-            this.resource.res.lastModificationDate
-          )
-          .subscribe(() => {
-            // Optimistic local update so the viewer reflects the change immediately.
-            // TODO(verify-locally): trigger a proper resource reload instead of mutating in place.
-            this.resource.res.resourceAuthorship = result;
-          });
+      .subscribe(() => {
+        // Refetch the resource so resourceAuthorship AND lastModificationDate are re-synced from
+        // the server (DSP-API optimistic locking). Mirrors how property-value edits reload; without
+        // this, the stale in-memory lastModificationDate makes the next save fail. The reload pushes
+        // a fresh DspResource down through the viewer tree, re-binding this component's [resource].
+        this._resourceFetcher.reload();
       });
   }
 }

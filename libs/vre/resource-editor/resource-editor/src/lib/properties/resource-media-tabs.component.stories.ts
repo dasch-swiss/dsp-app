@@ -1,4 +1,3 @@
-import { MatDialog } from '@angular/material/dialog';
 import { provideRouter } from '@angular/router';
 import { Constants, ReadIntervalValue, ReadTextValueAsString } from '@dasch-swiss/dsp-js';
 import { ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
@@ -113,7 +112,7 @@ const sharedProviders = [
   },
   {
     provide: ResourceFetcherService,
-    useValue: { attachedUser$: of({ givenName: 'Jane', familyName: 'Doe' }) },
+    useValue: { attachedUser$: of({ givenName: 'Jane', familyName: 'Doe' }), reload: () => {} },
   },
   {
     provide: PropertiesDisplayService,
@@ -126,7 +125,6 @@ const sharedProviders = [
   },
   // Stubs for the embedded app-resource-rights-statement-container (data-side rights statement).
   { provide: PaginatedApiService, useValue: { getLicenses: () => of([]) } },
-  { provide: MatDialog, useValue: { open: () => ({ afterClosed: () => of(undefined) }) } },
   { provide: ResourceLegalService, useValue: { updateResourceAuthorship: () => of(undefined) } },
 ];
 

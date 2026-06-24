@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/angular';
-import { expect, within } from 'storybook/test';
+import { expect, userEvent, within } from 'storybook/test';
 
 import { ResourceRightsStatementComponent } from './resource-rights-statement.component';
 
@@ -28,7 +28,7 @@ const meta: Meta<ResourceRightsStatementComponent> = {
       control: 'boolean',
     },
     editLegalInfo: { description: 'Emitted when an admin clicks "Edit legal info" on the unconfigured callout.' },
-    editAuthorship: { description: 'Emitted when a Modify user clicks the inline authorship edit affordance.' },
+    saveAuthorship: { description: 'Emitted with the new authorship list when a Modify user saves the inline editor.' },
   },
 };
 export default meta;
@@ -85,6 +85,28 @@ export const ShowsAlwaysVisibleEditAffordanceForModifyUsers: Story = {
     await step('The authorship edit affordance is present without any hover', async () => {
       // The button is in the DOM immediately (no mouseenter); guards against reverting to a hover-only pill.
       await expect(canvas.getByRole('button')).toBeInTheDocument();
+    });
+  },
+};
+
+export const EditsAuthorshipInlineWithoutADialog: Story = {
+  name: 'Edits authorship inline, in place, without opening a dialog',
+  args: {
+    licenseLabel: 'CC BY 4.0',
+    licenseUrl: 'https://creativecommons.org/licenses/by/4.0/',
+    copyrightHolder: 'University of Basel',
+    authorship: ['Lotte Reiniger'],
+    resourceAuthorship: ['Lotte Reiniger'],
+    perResource: true,
+    canEditAuthorship: true,
+  },
+  play: async ({ canvasElement, step }) => {
+    const canvas = within(canvasElement);
+    await step('Clicking edit opens the chip editor in place (no dialog)', async () => {
+      await userEvent.click(canvas.getByRole('button'));
+      // The editor renders inline inside the component, not in a CDK overlay/dialog.
+      await expect(canvasElement.querySelector('mat-chip-grid')).not.toBeNull();
+      await expect(document.querySelector('mat-dialog-container')).toBeNull();
     });
   },
 };

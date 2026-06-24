@@ -1,4 +1,3 @@
-import { MatDialog } from '@angular/material/dialog';
 import { ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { DspResource, PaginatedApiService } from '@dasch-swiss/vre/shared/app-common';
@@ -6,6 +5,7 @@ import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular'
 import { of } from 'rxjs';
 import { expect } from 'storybook/test';
 
+import { ResourceFetcherService } from '../representation/resource-fetcher.service';
 import { PropertiesDisplayService } from './properties-display/property-value/properties-display.service';
 import { ResourceDefaultTabsComponent } from './resource-default-tabs.component';
 import { ResourceLegalService } from './resource-legal.service';
@@ -56,8 +56,8 @@ const meta: Meta<ResourceDefaultTabsComponent> = {
           useValue: { get: () => of({ project: { shortcode: '0001', dataAuthorship: [] } }) },
         },
         { provide: PaginatedApiService, useValue: { getLicenses: () => of([]) } },
-        { provide: MatDialog, useValue: { open: () => ({ afterClosed: () => of(undefined) }) } },
         { provide: ResourceLegalService, useValue: { updateResourceAuthorship: () => of(undefined) } },
+        { provide: ResourceFetcherService, useValue: { reload: () => {} } },
       ],
     }),
   ],
