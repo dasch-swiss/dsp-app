@@ -66,7 +66,7 @@ type ResourceSideForm = FormGroup<{
             <p class="mat-caption" style="margin: 0 0 4px">{{ 'legal.dataSide.settings.holderHelper' | translate }}</p>
             <mat-form-field style="width: 100%">
               <mat-label>{{ 'legal.dataSide.settings.holderLabel' | translate }}</mat-label>
-              <input matInput formControlName="copyrightHolder" />
+              <input matInput formControlName="copyrightHolder" autocomplete="off" />
             </mat-form-field>
 
             <!-- TODO(verify-locally): mat-chips wiring (version-specific API for chip-grid + input token end). -->
@@ -82,6 +82,7 @@ type ResourceSideForm = FormGroup<{
                   </mat-chip-row>
                 }
                 <input
+                  autocomplete="off"
                   [matChipInputFor]="chipGrid"
                   (matChipInputTokenEnd)="addAuthor($event.value); $event.chipInput!.clear()" />
               </mat-chip-grid>
