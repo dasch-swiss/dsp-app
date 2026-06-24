@@ -213,7 +213,8 @@ Multiple environment configurations available:
 
 ### Internationalization
 Multi-language support with translation files in:
-- `apps/dsp-app/src/assets/i18n/` (de.json, en.json, fr.json, it.json, rm.json)
+- `apps/dsp-app/src/assets/i18n/` (de.json, en.json, fr.json, it.json)
+- Romansh (`rm`) has no file; it is bound to English at runtime by the fallback loader (`apps/dsp-app/src/app/i18n-fallback-translate-loader.ts`). See DEV-6629.
 
 ### Resource Management
 Application handles various file types and representations:
