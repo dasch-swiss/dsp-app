@@ -78,8 +78,9 @@ export class ProjectDescriptionPageComponent {
   ) {}
 
   goToLegalSettings(): void {
-    // TODO(verify-locally): confirm the exact settings → legal route segment in RouteConstants.
-    this._router.navigate(['..', RouteConstants.settings], { relativeTo: this._route });
+    // ['..', settings] alone hits the settings default child (edit = Description); target legal-settings
+    // explicitly so the "Edit legal info" callout lands on the Legal Settings → Resource side tab.
+    this._router.navigate(['..', RouteConstants.settings, RouteConstants.legalSettings], { relativeTo: this._route });
   }
 
   private _sortDescriptionsByLanguage(descriptions: StringLiteral[]): StringLiteral[] {
