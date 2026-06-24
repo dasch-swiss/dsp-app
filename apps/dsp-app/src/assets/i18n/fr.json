@@ -1,34 +1,33 @@
 {
   "legal": {
     "dataSide": {
-      "heading": "Resource Rights Statement",
-      "license": "License",
-      "copyrightHolder": "Copyright holder",
-      "authorship": "Authorship",
-      "edit": "Edit",
-      "uncategorized": "This resource's legal information is uncategorized — please review.",
-      "editLegalInfo": "Edit legal info",
-      "noAuthorshipFallback": "No authorship recorded for this resource. Project default: {{default}}",
+      "heading": "Déclaration des droits de la ressource",
+      "license": "Licence",
+      "copyrightHolder": "Titulaire des droits",
+      "authorship": "Auteur·ice",
+      "edit": "Modifier",
+      "uncategorized": "Les informations légales de cette ressource n'ont pas encore été définies — veuillez les ajouter.",
+      "editLegalInfo": "Modifier les informations légales",
+      "noAuthorshipFallback": "Aucun·e auteur·ice enregistré·e pour cette ressource. Valeur par défaut du projet : {{default}}",
       "settings": {
-        "resourceSide": "Resource side",
-        "assetSide": "Asset side",
-        "paneHeading": "Data license",
-        "holderLabel": "Copyright holder · your official project name",
-        "holderHelper": "Your project is the rights holder for every resource record. Its official name is filled in below — edit it if needed, then add the authorship.",
-        "licensePlaceholder": "Choose a Creative Commons license",
-        "liveWarning": "This license applies live to every resource in the project.",
-        "save": "Save changes",
-        "cancel": "Cancel",
-        "saved": "Resource-side legal info saved.",
-        "saveError": "Could not save — please try again."
+        "resourceSide": "Côté ressource",
+        "assetSide": "Côté asset",
+        "holderLabel": "Titulaire des droits · nom officiel de votre projet",
+        "holderHelper": "Votre projet est titulaire des droits de chaque enregistrement de ressource. Son nom officiel est indiqué ci-dessous — modifiez-le si nécessaire, puis ajoutez l'auteur·ice.",
+        "licensePlaceholder": "Choisir une licence Creative Commons",
+        "liveWarning": "Cette licence s'applique immédiatement à toutes les ressources du projet.",
+        "save": "Enregistrer les modifications",
+        "cancel": "Annuler",
+        "saved": "Informations légales côté ressource enregistrées.",
+        "saveError": "Échec de l'enregistrement — veuillez réessayer."
       },
       "summaries": {
-        "ccBy40": "CC BY 4.0 — Reuse freely, with credit to the author",
-        "ccBySa40": "CC BY-SA 4.0 — Reuse with credit; share adaptations under the same license",
-        "ccByNc40": "CC BY-NC 4.0 — Non-commercial reuse, with credit to the author",
-        "ccByNcSa40": "CC BY-NC-SA 4.0 — Non-commercial reuse with credit; share alike",
-        "ccByNd40": "CC BY-ND 4.0 — Reuse with credit; no adaptations",
-        "ccByNcNd40": "CC BY-NC-ND 4.0 — Non-commercial reuse with credit; no adaptations"
+        "ccBy40": "CC BY 4.0 — Réutilisation libre, avec mention de l'auteur·ice",
+        "ccBySa40": "CC BY-SA 4.0 — Réutilisation avec mention ; partager les adaptations sous la même licence",
+        "ccByNc40": "CC BY-NC 4.0 — Réutilisation non commerciale, avec mention de l'auteur·ice",
+        "ccByNcSa40": "CC BY-NC-SA 4.0 — Réutilisation non commerciale avec mention ; partage dans les mêmes conditions",
+        "ccByNd40": "CC BY-ND 4.0 — Réutilisation avec mention ; pas de modifications",
+        "ccByNcNd40": "CC BY-NC-ND 4.0 — Réutilisation non commerciale avec mention ; pas de modifications"
       }
     }
   },

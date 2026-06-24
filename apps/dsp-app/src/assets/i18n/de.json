@@ -1,34 +1,33 @@
 {
   "legal": {
     "dataSide": {
-      "heading": "Resource Rights Statement",
-      "license": "License",
-      "copyrightHolder": "Copyright holder",
-      "authorship": "Authorship",
-      "edit": "Edit",
-      "uncategorized": "This resource's legal information is uncategorized — please review.",
-      "editLegalInfo": "Edit legal info",
-      "noAuthorshipFallback": "No authorship recorded for this resource. Project default: {{default}}",
+      "heading": "Rechtehinweis zur Ressource",
+      "license": "Lizenz",
+      "copyrightHolder": "Rechteinhaber:in",
+      "authorship": "Urheber:innen",
+      "edit": "Bearbeiten",
+      "uncategorized": "Die rechtlichen Angaben dieser Ressource wurden noch nicht festgelegt — bitte ergänzen.",
+      "editLegalInfo": "Rechtliches bearbeiten",
+      "noAuthorshipFallback": "Für diese Ressource sind keine Urheber:innen erfasst. Projektstandard: {{default}}",
       "settings": {
-        "resourceSide": "Resource side",
-        "assetSide": "Asset side",
-        "paneHeading": "Data license",
-        "holderLabel": "Copyright holder · your official project name",
-        "holderHelper": "Your project is the rights holder for every resource record. Its official name is filled in below — edit it if needed, then add the authorship.",
-        "licensePlaceholder": "Choose a Creative Commons license",
-        "liveWarning": "This license applies live to every resource in the project.",
-        "save": "Save changes",
-        "cancel": "Cancel",
-        "saved": "Resource-side legal info saved.",
-        "saveError": "Could not save — please try again."
+        "resourceSide": "Ressourcen-Seite",
+        "assetSide": "Asset-Seite",
+        "holderLabel": "Rechteinhaber:in · offizieller Projektname",
+        "holderHelper": "Ihr Projekt ist Rechteinhaber:in jedes Ressourcendatensatzes. Der offizielle Name ist unten bereits eingetragen — passen Sie ihn bei Bedarf an und ergänzen Sie anschliessend die Urheber:innen.",
+        "licensePlaceholder": "Creative-Commons-Lizenz auswählen",
+        "liveWarning": "Diese Lizenz gilt unmittelbar für jede Ressource im Projekt.",
+        "save": "Änderungen speichern",
+        "cancel": "Abbrechen",
+        "saved": "Rechtliche Angaben auf Ressourcen-Seite gespeichert.",
+        "saveError": "Speichern fehlgeschlagen — bitte erneut versuchen."
       },
       "summaries": {
-        "ccBy40": "CC BY 4.0 — Reuse freely, with credit to the author",
-        "ccBySa40": "CC BY-SA 4.0 — Reuse with credit; share adaptations under the same license",
-        "ccByNc40": "CC BY-NC 4.0 — Non-commercial reuse, with credit to the author",
-        "ccByNcSa40": "CC BY-NC-SA 4.0 — Non-commercial reuse with credit; share alike",
-        "ccByNd40": "CC BY-ND 4.0 — Reuse with credit; no adaptations",
-        "ccByNcNd40": "CC BY-NC-ND 4.0 — Non-commercial reuse with credit; no adaptations"
+        "ccBy40": "CC BY 4.0 — Freie Weiterverwendung mit Nennung der Urheber:in",
+        "ccBySa40": "CC BY-SA 4.0 — Weiterverwendung mit Nennung; Bearbeitungen unter derselben Lizenz teilen",
+        "ccByNc40": "CC BY-NC 4.0 — Nicht-kommerzielle Weiterverwendung mit Nennung der Urheber:in",
+        "ccByNcSa40": "CC BY-NC-SA 4.0 — Nicht-kommerzielle Weiterverwendung mit Nennung; unter gleichen Bedingungen teilen",
+        "ccByNd40": "CC BY-ND 4.0 — Weiterverwendung mit Nennung; keine Bearbeitungen",
+        "ccByNcNd40": "CC BY-NC-ND 4.0 — Nicht-kommerzielle Weiterverwendung mit Nennung; keine Bearbeitungen"
       }
     }
   },
