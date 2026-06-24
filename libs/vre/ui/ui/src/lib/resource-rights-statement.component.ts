@@ -43,10 +43,7 @@ import { TranslatePipe } from '@ngx-translate/core';
           </div>
         }
 
-        <div
-          class="row authorship-row"
-          (mouseenter)="showAuthorshipActions = true"
-          (mouseleave)="showAuthorshipActions = false">
+        <div class="row">
           <span class="label mat-subtitle-2">{{ 'legal.dataSide.authorship' | translate }}</span>
           <span class="value">
             @if (displayedAuthorship.length > 0) {
@@ -54,23 +51,18 @@ import { TranslatePipe } from '@ngx-translate/core';
             } @else if (perResource) {
               <em>{{ 'legal.dataSide.noAuthorshipFallback' | translate: { default: authorship.join(', ') } }}</em>
             }
+            @if (canEditAuthorship) {
+              <!-- Inline, always-visible edit affordance, right after the value (discoverable, close to the text). -->
+              <button
+                type="button"
+                class="edit-authorship"
+                [matTooltip]="'legal.dataSide.edit' | translate"
+                [attr.aria-label]="'legal.dataSide.edit' | translate"
+                (click)="editAuthorship.emit()">
+                <mat-icon>edit</mat-icon>
+              </button>
+            }
           </span>
-          @if (canEditAuthorship && showAuthorshipActions) {
-            <!-- Same hover-revealed action pill as property value rows (global .action-bubble styling), edit only. -->
-            <div class="action-bubble">
-              <div class="button-container d-flex">
-                <span [matTooltip]="'legal.dataSide.edit' | translate">
-                  <button
-                    mat-button
-                    class="edit"
-                    [attr.aria-label]="'legal.dataSide.edit' | translate"
-                    (click)="editAuthorship.emit()">
-                    <mat-icon>edit</mat-icon>
-                  </button>
-                </span>
-              </div>
-            </div>
-          }
         </div>
       </section>
     } @else if (isAdmin) {
@@ -115,14 +107,30 @@ import { TranslatePipe } from '@ngx-translate/core';
         padding-left: 0;
         width: 130px;
       }
-      .authorship-row {
-        position: relative;
+      /* Inline, always-visible authorship edit affordance, sitting right after the value
+         (not a hover pill — discoverable and close to the text). */
+      .edit-authorship {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        vertical-align: middle;
+        margin-left: 6px;
+        padding: 2px;
+        border: none;
+        background: none;
+        color: rgb(107, 114, 128);
+        cursor: pointer;
+        border-radius: 4px;
       }
-      /* Pill look comes from the global .action-bubble styles; nudge it to the row's right edge
-         to line up with the property-row action pills (the global default sits further left). */
-      .authorship-row .action-bubble {
-        right: 16px;
-        top: 8px;
+      .edit-authorship:hover {
+        color: var(--primary);
+        background: rgba(0, 0, 0, 0.04);
+      }
+      .edit-authorship mat-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+        line-height: 18px;
       }
       .uncategorized {
         display: flex;
@@ -160,9 +168,6 @@ export class ResourceRightsStatementComponent {
   @Output() editLegalInfo = new EventEmitter<void>();
   /** Emitted when a Modify user clicks the inline authorship edit affordance. */
   @Output() editAuthorship = new EventEmitter<void>();
-
-  /** Reveals the authorship action pill on row hover (mirrors property value rows). */
-  showAuthorshipActions = false;
 
   get configured(): boolean {
     return !!this.licenseLabel;

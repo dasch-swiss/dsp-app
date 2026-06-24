@@ -69,6 +69,26 @@ export const ShowsFallbackWhenResourceHasNoOwnAuthorship: Story = {
   },
 };
 
+export const ShowsAlwaysVisibleEditAffordanceForModifyUsers: Story = {
+  name: 'Shows an always-visible authorship edit affordance for Modify users',
+  args: {
+    licenseLabel: 'CC BY 4.0',
+    licenseUrl: 'https://creativecommons.org/licenses/by/4.0/',
+    copyrightHolder: 'University of Basel',
+    authorship: ['Lotte Reiniger'],
+    resourceAuthorship: ['Lotte Reiniger'],
+    perResource: true,
+    canEditAuthorship: true,
+  },
+  play: async ({ canvasElement, step }) => {
+    const canvas = within(canvasElement);
+    await step('The authorship edit affordance is present without any hover', async () => {
+      // The button is in the DOM immediately (no mouseenter); guards against reverting to a hover-only pill.
+      await expect(canvas.getByRole('button')).toBeInTheDocument();
+    });
+  },
+};
+
 export const ShowsAdminsOnlyCalloutWhenUnconfigured: Story = {
   name: 'Shows the admins-only "uncategorized" callout when unconfigured',
   args: { isAdmin: true },
