@@ -53,16 +53,18 @@ import { ProjectDescriptionPageComponent } from './project-description-page.comp
       </button>
 
       @if (dataRights$ | async; as rights) {
-        <div style="border-top: 1px solid #ebebeb; margin: 0 16px; text-align: left">
-          <app-resource-rights-statement
-            [licenseLabel]="rights.licenseLabel"
-            [licenseUrl]="rights.licenseUrl"
-            [copyrightHolder]="rights.project.dataCopyrightHolder"
-            [authorship]="rights.project.dataAuthorship ?? []"
-            [perResource]="false"
-            [isAdmin]="false"
-            labelAlign="start" />
-        </div>
+        @if (rights.licenseLabel) {
+          <div style="border-top: 1px solid #ebebeb; margin: 0 16px; text-align: left">
+            <app-resource-rights-statement
+              [licenseLabel]="rights.licenseLabel"
+              [licenseUrl]="rights.licenseUrl"
+              [copyrightHolder]="rights.project.dataCopyrightHolder"
+              [authorship]="rights.project.dataAuthorship ?? []"
+              [perResource]="false"
+              [isAdmin]="false"
+              labelAlign="start" />
+          </div>
+        }
       }
     }
   `,

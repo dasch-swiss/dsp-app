@@ -40,7 +40,7 @@
     </section>
 
     <!-- Data-side Resource Rights Statement (project-level). Distinct from the hand-typed caption above. -->
-    @if (dataRights$ | async; as rights) {
+    @if (dataRights$ | async; as rights) { @if (rights.licenseLabel || (hasProjectAdminRights$ | async)) {
     <mat-divider style="margin: 24px 0" />
     <section class="project rights">
       <app-resource-rights-statement
@@ -51,7 +51,7 @@
         [isAdmin]="(hasProjectAdminRights$ | async) ?? false"
         (editLegalInfo)="goToLegalSettings()" />
     </section>
-    }
+    } }
   </div>
 </app-closing-dialog>
 
