@@ -109,21 +109,19 @@
     "@types/jest": "30.0.0",
     "@types/node": "^22.18.11",
     "@types/uuid": "^9.0.2",
-    "@typescript-eslint/eslint-plugin": "7.18.0",
-    "@typescript-eslint/parser": "7.18.0",
-    "@typescript-eslint/utils": "7.18.0",
+    "@typescript-eslint/eslint-plugin": "^8.40.0",
+    "@typescript-eslint/parser": "^8.40.0",
+    "@typescript-eslint/utils": "^8.40.0",
+    "angular-eslint": "21.4.0",
     "angular-html-parser": "^10.0.0",
     "autoprefixer": "^10.4.27",
     "cypress": "15.18.0",
-    "eslint": "^8.57.1",
-    "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-config-airbnb-typescript": "^18.0.0",
+    "eslint": "^9.8.0",
     "eslint-config-prettier": "10.1.8",
-    "eslint-plugin-angular": "^4.1.0",
     "eslint-plugin-ban": "^2.0.0",
     "eslint-plugin-import": "^2.32.0",
-    "eslint-plugin-jsdoc": "^62.0.0",
     "eslint-plugin-prettier": "^5.5.5",
+    "eslint-plugin-storybook": "10.4.6",
     "eslint-plugin-unused-imports": "^4.0.0",
     "http-server": "^14.1.1",
     "istanbul-lib-coverage": "^3.2.2",
@@ -145,8 +143,8 @@
     "ts-jest": "29.4.11",
     "ts-node": "~10.9.1",
     "typescript": "5.9.3",
-    "wait-on": "^9.0.4",
-    "eslint-plugin-storybook": "10.4.6"
+    "typescript-eslint": "^8.40.0",
+    "wait-on": "^9.0.4"
   },
   "optionalDependencies": {
     "@nx/nx-darwin-arm64": "23.0.1",
@@ -159,7 +157,6 @@
     "webpack": "^5.0.0",
     "webpack-dev-middleware": "^7.0.0",
     "webpack-dev-server": "^5.0.0",
-    "webpack-merge": "^6.0.0",
-    "@typescript-eslint/parser": "7.18.0"
+    "webpack-merge": "^6.0.0"
   }
 }
