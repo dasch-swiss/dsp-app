@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   displayName: 'calendar',
   preset: '../../../../jest.preset.js',
   testEnvironment: 'node',

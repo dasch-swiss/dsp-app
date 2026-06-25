@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -20,7 +19,7 @@ import { toLabels } from '../../../../util/labels';
 @Component({
   standalone: true,
   selector: 'app-list-value',
-  imports: [CommonModule, NestedMenuComponent],
+  imports: [NestedMenuComponent],
   template: `
     @if (rootListNode) {
       <app-nested-menu

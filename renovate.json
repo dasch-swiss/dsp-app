@@ -187,12 +187,6 @@
       "enabled": false
     },
     {
-      "description": "uuid major: v10+ is ESM-only, incompatible with Jest v29 CJS transform — disable until Angular 21 migration brings jest-preset-angular v16 + Jest 30 with proper ESM support (tracked in DEV-6217)",
-      "matchPackageNames": ["uuid", "@types/uuid"],
-      "matchUpdateTypes": ["major"],
-      "enabled": false
-    },
-    {
       "description": "Major updates: PRs open automatically but require manual merge. Timing matters — merging a major before a release or production deployment could introduce undetected breakage that poor test coverage would miss. Human decides when it is safe to merge.",
       "matchUpdateTypes": ["major"],
       "automerge": false

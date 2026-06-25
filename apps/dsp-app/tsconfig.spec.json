@@ -3,7 +3,8 @@
   "compilerOptions": {
     "experimentalDecorators": true,
     "outDir": "../../dist/out-tsc",
-    "types": ["jest", "node"]
+    "types": ["jest", "node"],
+    "isolatedModules": true
   },
   "files": ["src/test-setup.ts"],
   "include": ["jest.config.ts", "src/**/*.spec.ts", "src/**/*.test.ts", "src/**/*.d.ts"]

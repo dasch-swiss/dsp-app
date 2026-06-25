@@ -11,7 +11,8 @@
     "prettier"
   ],
   "extends": [
-    "prettier"
+    "prettier",
+    "plugin:storybook/recommended"
   ],
   "rules": {
     "prettier/prettier": "error"

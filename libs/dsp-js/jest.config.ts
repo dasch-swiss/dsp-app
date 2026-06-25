@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName: 'dsp-js',
   preset: '../../jest.preset.js',
   testEnvironment: 'jsdom',

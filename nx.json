@@ -45,7 +45,13 @@
       }
     },
     "@nx/eslint:lint": {
-      "inputs": ["default", "{workspaceRoot}/.eslintrc.json", "{workspaceRoot}/.eslintignore"],
+      "inputs": [
+        "default",
+        "^default",
+        "{workspaceRoot}/.eslintrc.json",
+        "{workspaceRoot}/.eslintignore",
+        "{workspaceRoot}/tools/eslint-rules/**/*"
+      ],
       "cache": true
     },
     "@nx/js:tsc": {
@@ -55,7 +61,13 @@
     },
     "build-storybook": {
       "cache": true,
-      "inputs": ["default", "^production", "{workspaceRoot}/.storybook/**/*", "{projectRoot}/.storybook/**/*", "{projectRoot}/tsconfig.storybook.json"]
+      "inputs": [
+        "default",
+        "^production",
+        "{workspaceRoot}/.storybook/**/*",
+        "{projectRoot}/.storybook/**/*",
+        "{projectRoot}/tsconfig.storybook.json"
+      ]
     }
   },
   "generators": {
