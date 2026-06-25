@@ -138,5 +138,6 @@
     }
   },
   "defaultBase": "main",
-  "useInferencePlugins": false
+  "useInferencePlugins": false,
+  "analytics": false
 }
