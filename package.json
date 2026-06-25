@@ -103,7 +103,7 @@
     "@storybook/angular": "10.4.6",
     "@storybook/test-runner": "^0.24.4",
     "@swc-node/register": "1.11.1",
-    "@swc/core": "1.15.41",
+    "@swc/core": "1.15.43",
     "@swc/helpers": "0.5.23",
     "@swc/jest": "^0.2.39",
     "@types/jest": "30.0.0",
