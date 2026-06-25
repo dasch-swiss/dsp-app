@@ -210,14 +210,11 @@
       "groupName": "ngx-translate-deps"
     },
     {
-      "description": "ESLint plugins and Airbnb configs — group patch/minor together; major is disabled above",
+      "description": "ESLint plugins — group patch/minor together; major is disabled above",
       "matchPackageNames": [
         "eslint-plugin-import",
         "eslint-plugin-ban",
-        "eslint-plugin-jsdoc",
-        "eslint-plugin-unused-imports",
-        "eslint-config-airbnb-base",
-        "eslint-config-airbnb-typescript"
+        "eslint-plugin-unused-imports"
       ],
       "groupName": "eslint-plugins-deps"
     },

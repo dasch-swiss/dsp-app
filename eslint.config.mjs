@@ -27,6 +27,9 @@ export default [
     },
   },
   {
+    // Type-aware linting is intentionally not configured: no active rule needs type
+    // information. Add languageOptions.parserOptions.project here if a type-checked
+    // rule (e.g. @typescript-eslint/only-throw-error) is ever enabled.
     files: ['**/*.ts', '**/*.tsx'],
     rules: {
       'prettier/prettier': 'error',
