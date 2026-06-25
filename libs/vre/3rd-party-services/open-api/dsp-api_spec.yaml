@@ -8,7 +8,7 @@ info:
     name: DaSCH
     url: https://www.dasch.swiss/
 servers:
-- url: http://0.0.0.0:3333
+- url: https://api.dev.dasch.swiss:443
   description: The dsp-api server
 paths:
   /admin/files/{projectShortcode}/{filename}:
