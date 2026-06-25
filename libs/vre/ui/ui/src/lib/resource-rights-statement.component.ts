@@ -57,7 +57,9 @@ import { TranslatePipe } from '@ngx-translate/core';
                   @for (author of editAuthorshipList; track $index) {
                     <mat-chip-row (removed)="removeEditAuthor($index)">
                       {{ author }}
-                      <button matChipRemove [attr.aria-label]="'legal.dataSide.edit' | translate">
+                      <button
+                        matChipRemove
+                        [attr.aria-label]="'legal.dataSide.removeAuthor' | translate: { name: author }">
                         <mat-icon>cancel</mat-icon>
                       </button>
                     </mat-chip-row>

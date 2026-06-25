@@ -1,4 +1,5 @@
-import { ChangeDetectorRef, Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, DestroyRef, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
@@ -25,7 +26,7 @@ import { PaginatedApiService, PropertyInfoValues } from '@dasch-swiss/vre/shared
 import { AppProgressIndicatorComponent, LoadingButtonDirective } from '@dasch-swiss/vre/ui/progress-indicator';
 import { CommonInputComponent, InvalidControlScrollDirective } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe } from '@ngx-translate/core';
-import { finalize, switchMap, take } from 'rxjs';
+import { finalize, map, of, switchMap, take } from 'rxjs';
 import { FormValueGroup } from '../properties/properties-display/property-value/form-value-array.type';
 import { propertiesTypeMapping } from '../properties/properties-display/property-value/resource-payloads-mapping';
 import { FileForm } from '../representation/file-form.type';
@@ -90,10 +91,10 @@ import { CreateResourceFormInterface } from './create-resource-form.interface';
         <app-create-resource-form-row [label]="'legal.dataSide.authorship' | translate">
           <mat-form-field style="width: 100%">
             <mat-chip-grid #dataAuthorshipGrid [attr.aria-label]="'legal.dataSide.authorship' | translate">
-              @for (author of form.controls.resourceAuthorship.value; track author) {
-                <mat-chip-row (removed)="removeDataAuthor(author)">
+              @for (author of form.controls.resourceAuthorship.value; track $index) {
+                <mat-chip-row (removed)="removeDataAuthor($index)">
                   {{ author }}
-                  <button matChipRemove [attr.aria-label]="'legal.dataSide.edit' | translate">
+                  <button matChipRemove [attr.aria-label]="'legal.dataSide.removeAuthor' | translate: { name: author }">
                     <mat-icon>cancel</mat-icon>
                   </button>
                 </mat-chip-row>
@@ -198,7 +199,8 @@ export class CreateResourceFormComponent implements OnInit {
     private _fb: FormBuilder,
     private _cd: ChangeDetectorRef,
     private _adminApi: AdminAPIApiService,
-    private _paginatedApi: PaginatedApiService
+    private _paginatedApi: PaginatedApiService,
+    private _destroyRef: DestroyRef
   ) {}
 
   ngOnInit(): void {
@@ -211,23 +213,29 @@ export class CreateResourceFormComponent implements OnInit {
    * and copyright holder, and pre-fills the authorship with the project default for the user to confirm or edit.
    */
   private _loadDataSideLegal(): void {
-    this._adminApi.getAdminProjectsShortcodeProjectshortcode(this.projectShortcode).subscribe(response => {
-      const project = response.project;
-      this.dataCopyrightHolder = project.dataCopyrightHolder;
-      if (project.dataAuthorship && project.dataAuthorship.length > 0) {
-        // Programmatic seed keeps the control pristine; the user confirms (submits) or edits these.
-        this.form.controls.resourceAuthorship.setValue(project.dataAuthorship);
-      }
-      if (project.dataLicense) {
-        this._paginatedApi.getLicenses(this.projectShortcode).subscribe(licenses => {
-          const license = licenses.find(l => l.id === project.dataLicense);
-          this.dataLicenseLabel = license?.labelEn;
-          this.dataLicenseUrl = license?.uri;
-          this._cd.detectChanges();
-        });
-      }
-      this._cd.detectChanges();
-    });
+    this._adminApi
+      .getAdminProjectsShortcodeProjectshortcode(this.projectShortcode)
+      .pipe(
+        switchMap(response => {
+          const project = response.project;
+          this.dataCopyrightHolder = project.dataCopyrightHolder;
+          if (project.dataAuthorship && project.dataAuthorship.length > 0) {
+            // Programmatic seed keeps the control pristine; the user confirms (submits) or edits these.
+            this.form.controls.resourceAuthorship.setValue(project.dataAuthorship);
+          }
+          return project.dataLicense
+            ? this._paginatedApi
+                .getLicenses(this.projectShortcode)
+                .pipe(map(licenses => licenses.find(l => l.id === project.dataLicense)))
+            : of(undefined);
+        }),
+        takeUntilDestroyed(this._destroyRef)
+      )
+      .subscribe(license => {
+        this.dataLicenseLabel = license?.labelEn;
+        this.dataLicenseUrl = license?.uri;
+        this._cd.detectChanges();
+      });
   }
 
   addDataAuthor(value: string): void {
@@ -240,9 +248,9 @@ export class CreateResourceFormComponent implements OnInit {
     control.markAsDirty();
   }
 
-  removeDataAuthor(author: string): void {
+  removeDataAuthor(index: number): void {
     const control = this.form.controls.resourceAuthorship;
-    control.setValue((control.value ?? []).filter(a => a !== author));
+    control.setValue((control.value ?? []).filter((_, i) => i !== index));
     control.markAsDirty();
   }
 

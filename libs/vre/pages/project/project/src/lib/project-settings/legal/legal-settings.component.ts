@@ -45,7 +45,9 @@ type ResourceSideForm = FormGroup<{
       <mat-tab [label]="'legal.dataSide.settings.resourceSide' | translate">
         <section class="section">
           <div style="display: flex; justify-content: center; margin: 16px 0">
-            <div style="border: 1px solid; padding: 16px">{{ 'legal.dataSide.settings.liveWarning' | translate }}</div>
+            <div role="note" style="border: 1px solid; padding: 16px">
+              {{ 'legal.dataSide.settings.liveWarning' | translate }}
+            </div>
           </div>
 
           <form [formGroup]="resourceSideForm">
@@ -73,10 +75,12 @@ type ResourceSideForm = FormGroup<{
             <mat-form-field style="width: 100%">
               <mat-label>{{ 'legal.dataSide.authorship' | translate }}</mat-label>
               <mat-chip-grid #chipGrid>
-                @for (author of resourceSideForm.controls.dataAuthorship.value; track author) {
-                  <mat-chip-row (removed)="removeAuthor(author)">
+                @for (author of resourceSideForm.controls.dataAuthorship.value; track $index) {
+                  <mat-chip-row (removed)="removeAuthor($index)">
                     {{ author }}
-                    <button matChipRemove [attr.aria-label]="'legal.dataSide.edit' | translate">
+                    <button
+                      matChipRemove
+                      [attr.aria-label]="'legal.dataSide.removeAuthor' | translate: { name: author }">
                       <mat-icon>cancel</mat-icon>
                     </button>
                   </mat-chip-row>
@@ -234,9 +238,9 @@ export class LegalSettingsComponent implements OnInit {
     control.markAsDirty();
   }
 
-  removeAuthor(author: string): void {
+  removeAuthor(index: number): void {
     const control = this.resourceSideForm.controls.dataAuthorship;
-    control.setValue(control.value.filter(a => a !== author));
+    control.setValue(control.value.filter((_, i) => i !== index));
     control.markAsDirty();
   }
 

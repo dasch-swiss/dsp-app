@@ -6,6 +6,7 @@
       "copyrightHolder": "Titulaire des droits",
       "authorship": "Auteur·ice",
       "edit": "Modifier",
+      "removeAuthor": "Supprimer {{name}}",
       "uncategorized": "Les informations légales de cette ressource n'ont pas encore été définies — veuillez les ajouter.",
       "editLegalInfo": "Modifier les informations légales",
       "noAuthorshipFallback": "Aucun·e auteur·ice enregistré·e pour cette ressource. Valeur par défaut du projet : {{default}}",
