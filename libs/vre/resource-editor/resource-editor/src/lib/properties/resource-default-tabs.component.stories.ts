@@ -1,6 +1,9 @@
+import { provideRouter } from '@angular/router';
 import { ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
+import { UserService } from '@dasch-swiss/vre/core/session';
 import { DspResource, PaginatedApiService } from '@dasch-swiss/vre/shared/app-common';
+import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
 import { expect } from 'storybook/test';
@@ -51,6 +54,7 @@ const meta: Meta<ResourceDefaultTabsComponent> = {
           },
         },
         // The default tabs view embeds the rights-statement container; stub its data sources so it renders.
+        provideRouter([{ path: '**', component: class {} }]),
         {
           provide: ProjectApiService,
           useValue: { get: () => of({ project: { shortcode: '0001', dataAuthorship: [] } }) },
@@ -58,6 +62,8 @@ const meta: Meta<ResourceDefaultTabsComponent> = {
         { provide: PaginatedApiService, useValue: { getLicenses: () => of([]) } },
         { provide: ResourceLegalService, useValue: { updateResourceAuthorship: () => of(undefined) } },
         { provide: ResourceFetcherService, useValue: { reload: () => {} } },
+        { provide: UserService, useValue: { user$: of(null) } },
+        { provide: NotificationService, useValue: { openSnackBar: () => {} } },
       ],
     }),
   ],
