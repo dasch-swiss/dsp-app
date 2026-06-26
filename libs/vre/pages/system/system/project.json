@@ -14,10 +14,6 @@
         "tsConfig": "libs/vre/pages/system/system/tsconfig.spec.json"
       }
     },
-    "lint": {
-      "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"]
-    },
     "tsc-errors": {
       "executor": "nx:run-commands",
       "options": {

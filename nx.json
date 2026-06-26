@@ -44,10 +44,6 @@
         }
       }
     },
-    "@nx/eslint:lint": {
-      "inputs": ["default", "^default", "{workspaceRoot}/eslint.config.mjs", "{workspaceRoot}/tools/eslint-rules/**/*"],
-      "cache": true
-    },
     "@nx/js:tsc": {
       "cache": true,
       "dependsOn": ["^build"],
@@ -133,5 +129,44 @@
   },
   "defaultBase": "main",
   "useInferencePlugins": false,
-  "analytics": false
+  "analytics": false,
+  "plugins": [
+    {
+      "plugin": "@nx/eslint/plugin",
+      "options": {
+        "targetName": "lint"
+      },
+      "include": [
+        "apps/dsp-app/**/*",
+        "libs/dsp-js/**/*",
+        "libs/vre/3rd-party-services/analytics/**/*",
+        "libs/vre/3rd-party-services/api/**/*",
+        "libs/vre/3rd-party-services/open-api/**/*",
+        "libs/vre/core/config/**/*",
+        "libs/vre/core/error-handler/**/*",
+        "libs/vre/core/session/**/*",
+        "libs/vre/pages/data-browser/**/*",
+        "libs/vre/pages/ontology/list/**/*",
+        "libs/vre/pages/ontology/ontology/**/*",
+        "libs/vre/pages/project/project/**/*",
+        "libs/vre/pages/search/advanced-search/**/*",
+        "libs/vre/pages/search/search/**/*",
+        "libs/vre/pages/system/system/**/*",
+        "libs/vre/pages/user-settings/user/**/*",
+        "libs/vre/resource-editor/resource-editor/**/*",
+        "libs/vre/shared/app-common/**/*",
+        "libs/vre/shared/app-common-to-move/**/*",
+        "libs/vre/shared/app-help-page/**/*",
+        "libs/vre/shared/app-helper-services/**/*",
+        "libs/vre/shared/assets/status-msg/**/*",
+        "libs/vre/shared/calendar/**/*",
+        "libs/vre/ui/date-picker/**/*",
+        "libs/vre/ui/nested-menu/**/*",
+        "libs/vre/ui/notification/**/*",
+        "libs/vre/ui/progress-indicator/**/*",
+        "libs/vre/ui/string-literal/**/*",
+        "libs/vre/ui/ui/**/*"
+      ]
+    }
+  ]
 }

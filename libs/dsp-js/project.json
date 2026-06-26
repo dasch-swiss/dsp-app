@@ -22,10 +22,6 @@
         "jestConfig": "libs/dsp-js/jest.config.ts",
         "tsConfig": "libs/dsp-js/tsconfig.spec.json"
       }
-    },
-    "lint": {
-      "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"]
     }
   }
 }
