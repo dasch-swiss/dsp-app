@@ -119,8 +119,7 @@ The main application is **DSP-APP** - a user interface for the Swiss National Da
 ### Code Coverage
 - `npm run unit-test-coverage` - Generate combined unit test coverage for all projects
 - `npm run unit-test-coverage-ci` - CI-mode coverage with reports
-- `npm run e2e-coverage` - E2E test coverage with instrumentation
-- Coverage merging via `tools/merge-coverage.js` and `tools/lcov-parser.js`
+- Coverage merging via `tools/merge-coverage.js`
 
 ### Additional Commands
 - `npm run lint-fix-all` - Lint and fix all projects in monorepo

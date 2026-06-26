@@ -220,19 +220,7 @@
           "env": {
             "API_URL": "http://0.0.0.0:3333/api"
           }
-        },
-        "coverage": {
-          "devServerTarget": "dsp-app:serve-app-e2e"
         }
-      }
-    },
-    "serve-app-e2e": {
-      "executor": "ngx-build-plus:dev-server",
-      "defaultConfiguration": "",
-      "options": {
-        "browserTarget": "dsp-app:build:development",
-        "extraWebpackConfig": "./webpack.coverage.js",
-        "port": 3000
       }
     },
     "storybook": {
