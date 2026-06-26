@@ -14,6 +14,7 @@
       "executor": "@angular-devkit/build-angular:application",
       "outputs": ["{options.outputPath.base}"],
       "dependsOn": ["vre-open-api:generate"],
+      "defaultConfiguration": "production",
       "options": {
         "outputPath": {
           "base": "dist/apps/dsp-app",
@@ -142,11 +143,11 @@
           "sourceMap": true,
           "extractLicenses": false
         }
-      },
-      "defaultConfiguration": "production"
+      }
     },
     "serve": {
       "executor": "@angular-devkit/build-angular:dev-server",
+      "continuous": true,
       "options": {
         "buildTarget": "dsp-app:build"
       },
@@ -166,8 +167,7 @@
         "stage-server": {
           "buildTarget": "dsp-app:build:stage-server"
         }
-      },
-      "continuous": true
+      }
     },
     "extract-i18n": {
       "executor": "@angular-devkit/build-angular:extract-i18n",
@@ -175,20 +175,15 @@
         "buildTarget": "dsp-app:build"
       }
     },
-    "lint": {
-      "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"]
-    },
     "test": {
-      "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "apps/dsp-app/jest.config.ts"
+        "passWithNoTests": true
       },
       "configurations": {
         "ci": {
           "ci": true,
-          "codeCoverage": true
+          "runInBand": true,
+          "coverage": true
         }
       }
     },
@@ -230,7 +225,13 @@
         "stylePreprocessorOptions": {
           "includePaths": ["apps/dsp-app/src/styles"]
         },
-        "assets": [{ "glob": "**/*", "input": "apps/dsp-app/src/assets", "output": "assets" }]
+        "assets": [
+          {
+            "glob": "**/*",
+            "input": "apps/dsp-app/src/assets",
+            "output": "assets"
+          }
+        ]
       },
       "configurations": {
         "ci": {
@@ -250,7 +251,13 @@
         "stylePreprocessorOptions": {
           "includePaths": ["apps/dsp-app/src/styles"]
         },
-        "assets": [{ "glob": "**/*", "input": "apps/dsp-app/src/assets", "output": "assets" }]
+        "assets": [
+          {
+            "glob": "**/*",
+            "input": "apps/dsp-app/src/assets",
+            "output": "assets"
+          }
+        ]
       },
       "configurations": {
         "ci": {
