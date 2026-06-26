@@ -4,7 +4,7 @@
 /dist
 /tmp
 /out-tsc
-/.swc
+.swc/
 migrations.json
 
 # dependencies
