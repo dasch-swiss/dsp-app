@@ -123,7 +123,7 @@ The main application is **DSP-APP** - a user interface for the Swiss National Da
 
 ### Additional Commands
 - `npm run lint-fix-all` - Lint and fix all projects in monorepo
-- `npm run lint-ci-all` - Lint all projects without auto-fix
+- `npm run lint-all` - Lint all projects without auto-fix
 
 ## Architecture Overview
 
