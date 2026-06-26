@@ -149,7 +149,6 @@
       "description": "NX-wrapped tools: major version ceiling is set by @nx/* peer deps — disable majors until nx migrate lifts the constraint",
       "matchPackageNames": [
         "cypress",
-        "@cypress/code-coverage",
         "/^jest/",
         "jest-preset-angular",
         "@types/jest",
@@ -172,7 +171,6 @@
       "matchPackageNames": [
         "rxjs",
         "ng-mocks",
-        "ngx-build-plus",
         "@ngx-translate/core",
         "@ngx-translate/http-loader"
       ],
@@ -257,10 +255,7 @@
     {
       "description": "Test coverage tooling",
       "matchPackageNames": [
-        "@cypress/code-coverage",
-        "@jsdevtools/coverage-istanbul-loader",
         "istanbul-lib-coverage",
-        "ngx-build-plus",
         "nyc"
       ],
       "groupName": "test-coverage-deps"
