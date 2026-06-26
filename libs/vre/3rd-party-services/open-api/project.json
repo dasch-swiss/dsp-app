@@ -24,11 +24,16 @@
       }
     },
     "test": {
-      "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "dependsOn": ["generate"],
       "options": {
-        "jestConfig": "libs/vre/3rd-party-services/open-api/jest.config.ts"
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "runInBand": true,
+          "coverage": true
+        }
       }
     }
   }
