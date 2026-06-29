@@ -3,13 +3,21 @@ import { FormControl, ReactiveFormsModule, ValidatorFn } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
 import { TranslatePipe } from '@ngx-translate/core';
-import * as Editor from 'ckeditor5-custom-build';
+import * as EditorNs from 'ckeditor5-custom-build';
 import { Subject } from 'rxjs';
 import { startWith, takeUntil } from 'rxjs/operators';
 import { HumanReadableErrorPipe } from '../human-readable-error.pipe';
 import { ckEditor } from './ck-editor';
 import { crossProjectLinkValidator } from './cross-project-link.validator';
 import { unescapeHtml } from './unescape-html';
+
+// `ckeditor5-custom-build` is a CommonJS UMD bundle whose `module.exports` is
+// the ClassicEditor class. Under the legacy webpack builder, `import * as`
+// collapsed to the class. The new esbuild `:application` builder follows ESM
+// interop semantics, so the namespace becomes `{ default: ClassicEditor, ... }`.
+// Unwrap defensively so it works under both builders.
+type EditorNamespace = typeof EditorNs & { default?: typeof EditorNs };
+const Editor = (EditorNs as EditorNamespace).default ?? EditorNs;
 
 @Component({
   selector: 'app-ck-editor',

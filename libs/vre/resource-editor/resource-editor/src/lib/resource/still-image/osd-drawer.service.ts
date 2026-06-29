@@ -10,7 +10,7 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { ResourceService } from '@dasch-swiss/vre/shared/app-common';
-import * as OpenSeadragon from 'openseadragon';
+import OpenSeadragon from 'openseadragon';
 import { BehaviorSubject, combineLatest, filter, map, of, Subject, switchMap, takeUntil } from 'rxjs';
 import {
   AddRegionFormDialogComponent,
