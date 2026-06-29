@@ -16,7 +16,8 @@ import { unescapeHtml } from './unescape-html';
 // collapsed to the class. The new esbuild `:application` builder follows ESM
 // interop semantics, so the namespace becomes `{ default: ClassicEditor, ... }`.
 // Unwrap defensively so it works under both builders.
-const Editor = (EditorNs as any).default ?? EditorNs;
+type EditorNamespace = typeof EditorNs & { default?: typeof EditorNs };
+const Editor = (EditorNs as EditorNamespace).default ?? EditorNs;
 
 @Component({
   selector: 'app-ck-editor',
