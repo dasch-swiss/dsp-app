@@ -48,6 +48,7 @@ import { ResourceFetcherService } from '../representation/resource-fetcher.servi
         box-sizing: border-box;
         white-space: nowrap;
         color: rgba(0, 0, 0, 0.87);
+        padding-right: 16px;
       }
     `,
   ],
