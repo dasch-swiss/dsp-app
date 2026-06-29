@@ -15,7 +15,12 @@ import { TranslateService } from '@ngx-translate/core';
       <div style="display: flex; gap: 24px; align-items: flex-start; width: 100%">
         <mat-nav-list style="min-width: 200px; padding: 0">
           @for (link of navigation; track trackByFn($index, link)) {
-            <a mat-list-item [routerLink]="link.route" routerLinkActive="active-tab">
+            <a
+              mat-list-item
+              [routerLink]="link.route"
+              routerLinkActive
+              #rla="routerLinkActive"
+              [activated]="rla.isActive">
               <mat-icon matListItemIcon>{{ link.icon }}</mat-icon>
               <span matListItemTitle>{{ link.label }}</span>
             </a>
