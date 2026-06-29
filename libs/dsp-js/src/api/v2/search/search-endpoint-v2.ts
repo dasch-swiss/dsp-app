@@ -1,3 +1,4 @@
+import jsonld from 'jsonld/dist/jsonld.js';
 import { catchError, map, mergeMap } from 'rxjs';
 import { AjaxResponse } from 'rxjs/ajax';
 import { ListNodeV2Cache } from '../../../cache/ListNodeV2Cache';
@@ -8,9 +9,6 @@ import { KnoraApiConfig } from '../../../knora-api-config';
 import { ResourcesConversionUtil } from '../../../models/v2/resources/ResourcesConversionUtil';
 import { Endpoint } from '../../endpoint';
 import { V2Endpoint } from '../v2-endpoint';
-
-declare let require: any; // http://stackoverflow.com/questions/34730010/angular2-5-minute-install-bug-require-is-not-defined
-const jsonld = require('jsonld/dist/jsonld.js');
 
 /**
  * Handles requests to the search route of the Knora API.
