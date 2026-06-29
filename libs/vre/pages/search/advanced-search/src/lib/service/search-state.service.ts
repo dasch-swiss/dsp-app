@@ -14,26 +14,24 @@ export class SearchStateService {
   private _state = new BehaviorSubject<SearchFormsState>(this.INITIAL_FORMS_STATE);
 
   selectedResourceClass$ = this._state.pipe(
-    distinctUntilChanged(),
-    map(state => state.selectedResourceClass)
+    map(state => state.selectedResourceClass),
+    distinctUntilChanged((a, b) => a?.iri === b?.iri)
   );
 
   completeStatements$ = this._state.pipe(
-    distinctUntilChanged(),
     map(state => state.statementElements),
-    map(elements => elements.filter(prop => prop.isValidAndComplete)),
-    distinctUntilChanged()
+    distinctUntilChanged((a, b) => a.length === b.length && a.every((s, i) => s === b[i])),
+    map(elements => elements.filter(prop => prop.isValidAndComplete))
   );
 
   orderByItems$ = this._state.pipe(
-    distinctUntilChanged(),
     map(state => state.orderBy),
-    distinctUntilChanged()
+    distinctUntilChanged((a, b) => a === b)
   );
 
   isFormStateValidAndComplete$ = this._state.pipe(
-    distinctUntilChanged(),
     map(state => state.statementElements),
+    distinctUntilChanged((a, b) => a.length === b.length && a.every((s, i) => s === b[i])),
     map(elements => {
       const allValid = elements.every(statement => statement.isValidAndComplete || statement.isPristine);
       const canSearch = elements.length > 1 || (elements.length === 1 && elements[0].isPristine);

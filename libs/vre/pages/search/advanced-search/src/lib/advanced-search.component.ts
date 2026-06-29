@@ -1,5 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
-import { OntologyDataService } from './service/ontology-data.service';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { FilterChipBarComponent } from './ui/chip-bar/filter-chip-bar.component';
 
 @Component({
@@ -10,17 +9,7 @@ import { FilterChipBarComponent } from './ui/chip-bar/filter-chip-bar.component'
   styleUrls: ['./advanced-search.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AdvancedSearchComponent implements OnInit {
+export class AdvancedSearchComponent {
   @Input({ required: true }) projectUuid!: string;
   @Output() gravsearchQuery = new EventEmitter<string | null>();
-
-  private readonly _dataService = inject(OntologyDataService);
-
-  get projectIri(): string {
-    return `http://rdfh.ch/projects/${this.projectUuid}`;
-  }
-
-  ngOnInit(): void {
-    this._dataService.init(this.projectIri);
-  }
 }

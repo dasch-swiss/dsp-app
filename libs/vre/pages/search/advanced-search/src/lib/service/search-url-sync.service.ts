@@ -43,9 +43,11 @@ export class SearchUrlSyncService {
   }
 
   clearAll(): void {
-    this._router.navigate([], {
-      queryParams: { q: null, ontology: null, class: null, filters: null, orderBy: null },
-    });
+    const nulled: Record<string, null> = {};
+    for (const key of ['q', 'ontology', 'class', 'filters', 'orderBy'] satisfies (keyof SearchUrlParams)[]) {
+      nulled[key] = null;
+    }
+    this._router.navigate([], { queryParams: nulled, replaceUrl: true });
   }
 
   encodeFilters(

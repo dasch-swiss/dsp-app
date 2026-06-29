@@ -125,6 +125,8 @@ export class FilterChipBarComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this._ontologyDataService.init(`http://rdfh.ch/projects/${this.projectUuid}`);
+
     // Restore from URL once on init, after ontology finishes loading.
     this._ontologyDataService.ontologyLoading$
       .pipe(
@@ -214,15 +216,15 @@ export class FilterChipBarComponent implements OnInit {
 
     const encoded = stmts.length
       ? this._urlSync.encodeFilters(
-          stmts.map(stmt => {
-            const parentIdx = stmt.parentId ? stmts.findIndex(s => s.id === stmt.parentId) : undefined;
-            return {
+          (() => {
+            const idxById = new Map(stmts.map((s, i) => [s.id, i]));
+            return stmts.map(stmt => ({
               predicateIri: stmt.selectedPredicate!.iri,
               operator: stmt.selectedOperator!,
               value: stmt.selectedObjectWriteValue ?? '',
-              parentIndex: parentIdx !== undefined && parentIdx >= 0 ? parentIdx : undefined,
-            };
-          })
+              parentIndex: stmt.parentId !== undefined ? idxById.get(stmt.parentId) : undefined,
+            }));
+          })()
         )
       : null;
 

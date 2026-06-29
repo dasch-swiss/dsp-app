@@ -3,16 +3,16 @@ import { MatDivider } from '@angular/material/divider';
 import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
 import { SearchTipsComponent } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { AdvancedSearchResultsComponent } from './advanced-search-results.component';
-import { AdvancedSearchComponent } from './advanced-search.component';
 import { provideAdvancedSearch } from './providers';
+import { FilterChipBarComponent } from './ui/chip-bar/filter-chip-bar.component';
 
 @Component({
   selector: 'app-advanced-search-page',
-  imports: [MatDivider, AdvancedSearchComponent, AdvancedSearchResultsComponent, SearchTipsComponent],
+  imports: [MatDivider, FilterChipBarComponent, AdvancedSearchResultsComponent, SearchTipsComponent],
   template: `
     <div class="search-bar">
       <div class="search-bar__inner">
-        <app-advanced-search [projectUuid]="uuid" (gravsearchQuery)="query.set($event)" />
+        <app-filter-chip-bar [projectUuid]="uuid" (gravsearchQuery)="query.set($event)" />
       </div>
     </div>
 
