@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: DSP-API
-  version: v36.0.0-3-g42c7a03
+  version: v36.3.0-1-g9bd6eee
   summary: DSP-API is part of the DaSCH Service Platform, a repository for the long-term
     preservation and reuse of data in the humanities.
   contact:
@@ -5225,7 +5225,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/6DR27OmxSKeDsQpoLzOF4Q
+        example: http://rdfh.ch/users/uKOlBV-ES7CfmpuAyPPP8A
       responses:
         '200':
           description: ''
@@ -5289,7 +5289,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/6DR27OmxSKeDsQpoLzOF4Q
+        example: http://rdfh.ch/users/uKOlBV-ES7CfmpuAyPPP8A
       responses:
         '200':
           description: ''
@@ -5353,7 +5353,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/6DR27OmxSKeDsQpoLzOF4Q
+        example: http://rdfh.ch/users/uKOlBV-ES7CfmpuAyPPP8A
       responses:
         '200':
           description: ''
@@ -5542,7 +5542,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/6DR27OmxSKeDsQpoLzOF4Q
+        example: http://rdfh.ch/users/uKOlBV-ES7CfmpuAyPPP8A
       responses:
         '200':
           description: ''
@@ -5608,7 +5608,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/6DR27OmxSKeDsQpoLzOF4Q
+        example: http://rdfh.ch/users/uKOlBV-ES7CfmpuAyPPP8A
       responses:
         '200':
           description: ''
@@ -5812,7 +5812,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/6DR27OmxSKeDsQpoLzOF4Q
+        example: http://rdfh.ch/users/uKOlBV-ES7CfmpuAyPPP8A
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -5885,7 +5885,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/6DR27OmxSKeDsQpoLzOF4Q
+        example: http://rdfh.ch/users/uKOlBV-ES7CfmpuAyPPP8A
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -5959,7 +5959,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/6DR27OmxSKeDsQpoLzOF4Q
+        example: http://rdfh.ch/users/uKOlBV-ES7CfmpuAyPPP8A
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -6032,7 +6032,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/6DR27OmxSKeDsQpoLzOF4Q
+        example: http://rdfh.ch/users/uKOlBV-ES7CfmpuAyPPP8A
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -6106,7 +6106,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/6DR27OmxSKeDsQpoLzOF4Q
+        example: http://rdfh.ch/users/uKOlBV-ES7CfmpuAyPPP8A
       - name: groupIri
         in: path
         description: The IRI of a group. Must be URL-encoded.
@@ -6179,7 +6179,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/6DR27OmxSKeDsQpoLzOF4Q
+        example: http://rdfh.ch/users/uKOlBV-ES7CfmpuAyPPP8A
       - name: groupIri
         in: path
         description: The IRI of a group. Must be URL-encoded.
@@ -6253,7 +6253,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/6DR27OmxSKeDsQpoLzOF4Q
+        example: http://rdfh.ch/users/uKOlBV-ES7CfmpuAyPPP8A
       requestBody:
         content:
           application/json:
@@ -6326,7 +6326,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/6DR27OmxSKeDsQpoLzOF4Q
+        example: http://rdfh.ch/users/uKOlBV-ES7CfmpuAyPPP8A
       requestBody:
         content:
           application/json:
@@ -6399,7 +6399,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/6DR27OmxSKeDsQpoLzOF4Q
+        example: http://rdfh.ch/users/uKOlBV-ES7CfmpuAyPPP8A
       requestBody:
         content:
           application/json:
@@ -6472,7 +6472,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/6DR27OmxSKeDsQpoLzOF4Q
+        example: http://rdfh.ch/users/uKOlBV-ES7CfmpuAyPPP8A
       requestBody:
         content:
           application/json:
@@ -6743,7 +6743,16 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/lists/0001/MUTRMhySTtelIUBvFgiVvQ
+        example: http://rdfh.ch/lists/0001/GUwM_dH8R-yeYt_1im-mJQ
+      - name: allLanguages
+        in: query
+        description: If true, return rdfs:label and rdfs:comment as JSON-LD arrays
+          of language-tagged objects (sorted alphabetically by tag). Default false
+          preserves the legacy single-string shape.
+        required: false
+        schema:
+          default: false
+          type: boolean
       - name: x-knora-accept-schema
         in: header
         description: |-
@@ -6862,7 +6871,16 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/lists/0001/MUTRMhySTtelIUBvFgiVvQ
+        example: http://rdfh.ch/lists/0001/GUwM_dH8R-yeYt_1im-mJQ
+      - name: allLanguages
+        in: query
+        description: If true, return rdfs:label and rdfs:comment as JSON-LD arrays
+          of language-tagged objects (sorted alphabetically by tag). Default false
+          preserves the legacy single-string shape.
+        required: false
+        schema:
+          default: false
+          type: boolean
       - name: x-knora-accept-schema
         in: header
         description: |-
@@ -11253,6 +11271,9 @@ paths:
       parameters:
       - name: allLanguages
         in: query
+        description: If true, return rdfs:label and rdfs:comment as JSON-LD arrays
+          of language-tagged objects (sorted alphabetically by tag). Default false
+          preserves the legacy single-string shape.
         required: false
         schema:
           default: false
@@ -11376,6 +11397,9 @@ paths:
           type: string
       - name: allLanguages
         in: query
+        description: If true, return rdfs:label and rdfs:comment as JSON-LD arrays
+          of language-tagged objects (sorted alphabetically by tag). Default false
+          preserves the legacy single-string shape.
         required: false
         schema:
           default: false
@@ -11634,6 +11658,9 @@ paths:
           type: string
       - name: allLanguages
         in: query
+        description: If true, return rdfs:label and rdfs:comment as JSON-LD arrays
+          of language-tagged objects (sorted alphabetically by tag). Default false
+          preserves the legacy single-string shape.
         required: false
         schema:
           default: false
@@ -11874,6 +11901,9 @@ paths:
           type: string
       - name: allLanguages
         in: query
+        description: If true, return rdfs:label and rdfs:comment as JSON-LD arrays
+          of language-tagged objects (sorted alphabetically by tag). Default false
+          preserves the legacy single-string shape.
         required: false
         schema:
           default: false
@@ -15845,9 +15875,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/VersionResponse'
               example:
-                webapi: v36.0.0-3-g42c7a03
-                buildCommit: 42c7a03f8
-                buildTime: '2026-06-11T13:53:18Z'
+                webapi: v36.3.0-1-g9bd6eee
+                buildCommit: 9bd6eee4f
+                buildTime: '2026-06-26T16:03:25Z'
                 fuseki: 6.1.0-0
                 scala: 3.3.7
                 sipi: v5.0.1
