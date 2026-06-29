@@ -2,7 +2,6 @@ import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
-  computed,
   DestroyRef,
   EventEmitter,
   inject,
@@ -11,13 +10,13 @@ import {
   Output,
   signal,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { debounceTime, distinctUntilChanged, filter, of, switchMap, take } from 'rxjs';
+import { catchError, debounceTime, distinctUntilChanged, EMPTY, filter, map, of, switchMap, take } from 'rxjs';
 import { NodeValue, StatementElement } from '../../model';
 import { GravsearchService } from '../../service/gravsearch.service';
 import { OntologyDataService } from '../../service/ontology-data.service';
@@ -105,18 +104,22 @@ export class FilterChipBarComponent implements OnInit {
   readonly fulltextControl = new FormControl<string>('');
   readonly confirmedStatements = signal<StatementElement[]>([]);
 
-  readonly childStatementsMap = computed(() => {
-    const all = this._searchStateService.currentState.statementElements;
-    const map = new Map<string, StatementElement[]>();
-    for (const s of all) {
+  // Derived from the reactive state stream so Angular's signal graph tracks updates.
+  private readonly _statementElements = toSignal(this._searchStateService.statementElements$, {
+    initialValue: this._searchStateService.currentState.statementElements,
+  });
+
+  readonly childStatementsMap = signal<Record<string, StatementElement[]>>({});
+
+  private _rebuildChildMap(): void {
+    const result: Record<string, StatementElement[]> = {};
+    for (const s of this._statementElements()) {
       if (s.parentId && !s.isPristine) {
-        const children = map.get(s.parentId) ?? [];
-        children.push(s);
-        map.set(s.parentId, children);
+        (result[s.parentId] ??= []).push(s);
       }
     }
-    return Object.fromEntries(map);
-  });
+    this.childStatementsMap.set(result);
+  }
 
   readonly ontologyLoading$ = this._ontologyDataService.ontologyLoading$;
 
@@ -127,14 +130,18 @@ export class FilterChipBarComponent implements OnInit {
   ngOnInit(): void {
     this._ontologyDataService.init(`http://rdfh.ch/projects/${this.projectUuid}`);
 
+    // Rebuild child map whenever statements change.
+    this._searchStateService.statementElements$
+      .pipe(takeUntilDestroyed(this._destroyRef))
+      .subscribe(() => this._rebuildChildMap());
+
     // Restore from URL once on init, after ontology finishes loading.
     this._ontologyDataService.ontologyLoading$
       .pipe(
         filter(loading => !loading),
-        take(1),
-        takeUntilDestroyed(this._destroyRef)
+        take(1)
       )
-      .subscribe(() => this._restoreFromUrl(this._urlSync.readParams()));
+      .subscribe(() => this._applyParamsWithOntologySwitch(this._urlSync.readParams()));
 
     // Fulltext debounces and writes to URL as a side-effect only.
     this.fulltextControl.valueChanges
@@ -146,22 +153,7 @@ export class FilterChipBarComponent implements OnInit {
       .pipe(
         switchMap(params => {
           this._resetState();
-          return this._ontologyDataService.ontologyLoading$.pipe(
-            filter(loading => !loading),
-            take(1),
-            switchMap(() => {
-              const currentOntologyIri = this._ontologyDataService.selectedOntology.iri;
-              if (params.ontology && params.ontology !== currentOntologyIri) {
-                this._ontologyDataService.setOntology(params.ontology);
-                return this._ontologyDataService.ontologyLoading$.pipe(
-                  filter(loading => !loading),
-                  take(1)
-                );
-              }
-              return of(null);
-            }),
-            switchMap(() => of(params))
-          );
+          return this._applyParamsWithOntologySwitchObs(params).pipe(catchError(() => EMPTY));
         }),
         takeUntilDestroyed(this._destroyRef)
       )
@@ -212,29 +204,34 @@ export class FilterChipBarComponent implements OnInit {
 
   private _writeFiltersToUrl(): void {
     const stmts = this.confirmedStatements();
-
-    const encoded = stmts.length
-      ? this._urlSync.encodeFilters(
-          (() => {
-            const idxById = new Map(stmts.map((s, i) => [s.id, i]));
-            return stmts.map(stmt => ({
-              predicateIri: stmt.selectedPredicate!.iri,
-              operator: stmt.selectedOperator!,
-              value: stmt.selectedObjectWriteValue ?? '',
-              parentIndex: stmt.parentId !== undefined ? idxById.get(stmt.parentId) : undefined,
-            }));
-          })()
-        )
-      : null;
-
+    const idxById = new Map(stmts.map((s, i) => [s.id, i]));
+    const filterArgs = stmts.map(stmt => ({
+      predicateIri: stmt.selectedPredicate!.iri,
+      operator: stmt.selectedOperator!,
+      value: stmt.selectedObjectWriteValue ?? '',
+      parentIndex: stmt.parentId !== undefined ? idxById.get(stmt.parentId) : undefined,
+    }));
+    const encoded = stmts.length ? this._urlSync.encodeFilters(filterArgs) : null;
     const activeOrderBy = this._searchStateService.currentState.orderBy.find(o => o.orderBy);
-    this._urlSync.writeState({
-      filters: encoded ?? undefined,
-      orderBy: activeOrderBy?.id,
-    });
+    this._urlSync.writeState({ filters: encoded ?? undefined, orderBy: activeOrderBy?.id });
   }
 
-  private _restoreFromUrl(params: SearchUrlParams): void {
+  /** Switches ontology if needed, then emits params for `_applyParams`. Used by popstate handler. */
+  private _applyParamsWithOntologySwitchObs(params: SearchUrlParams) {
+    const currentOntologyIri = this._ontologyDataService.selectedOntology.iri;
+    if (params.ontology && params.ontology !== currentOntologyIri) {
+      this._ontologyDataService.setOntology(params.ontology);
+      return this._ontologyDataService.ontologyLoading$.pipe(
+        filter(loading => !loading),
+        take(1),
+        map(() => params)
+      );
+    }
+    return of(params);
+  }
+
+  /** Switches ontology if needed, then calls `_applyParams`. Used by init restore. */
+  private _applyParamsWithOntologySwitch(params: SearchUrlParams): void {
     const currentOntologyIri = this._ontologyDataService.selectedOntology.iri;
     if (params.ontology && params.ontology !== currentOntologyIri) {
       this._ontologyDataService.setOntology(params.ontology);

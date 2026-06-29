@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
-import { ActivatedRoute, NavigationStart, Router } from '@angular/router';
-import { filter, map, switchMap, take } from 'rxjs';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { filter, map } from 'rxjs';
 import { Operator } from '../operators.config';
 
 export interface SearchUrlParams {
@@ -23,11 +23,13 @@ export class SearchUrlSyncService {
   private readonly _router = inject(Router);
   private readonly _route = inject(ActivatedRoute);
 
-  // Fires only on browser back/forward — the only time full state restore is needed.
+  // Fires only on browser back/forward — after navigation commits so queryParams are already updated.
   readonly popstate$ = this._router.events.pipe(
-    filter((e): e is NavigationStart => e instanceof NavigationStart && e.navigationTrigger === 'popstate'),
-    switchMap(() => this._route.queryParams.pipe(take(1))),
-    map(p => this._mapParams(p))
+    filter(
+      (e): e is NavigationEnd =>
+        e instanceof NavigationEnd && this._router.lastSuccessfulNavigation?.extras.navigationTrigger === 'popstate'
+    ),
+    map(() => this._mapParams(this._route.snapshot.queryParams))
   );
 
   readParams(): SearchUrlParams {
@@ -53,31 +55,20 @@ export class SearchUrlSyncService {
   encodeFilters(
     statements: { predicateIri: string; operator: Operator; value: string; parentIndex?: number }[]
   ): string {
-    return statements
-      .map(s => {
-        const prefix = s.parentIndex !== undefined ? `${s.parentIndex}:` : '';
-        return `${prefix}${s.predicateIri}|${s.operator}|${encodeURIComponent(s.value ?? '')}`;
-      })
-      .join(',');
+    return encodeURIComponent(JSON.stringify(statements));
   }
 
   decodeFilters(raw: string): FilterParam[] {
     if (!raw) return [];
-    return raw.split(',').map(segment => {
-      const parentMatch = segment.match(/^(\d+):/);
-      const body = parentMatch ? segment.slice(parentMatch[0].length) : segment;
-      const pipeIndex1 = body.indexOf('|');
-      const pipeIndex2 = body.indexOf('|', pipeIndex1 + 1);
-      const predicateIri = body.slice(0, pipeIndex1);
-      const operator = body.slice(pipeIndex1 + 1, pipeIndex2) as Operator;
-      const value = decodeURIComponent(body.slice(pipeIndex2 + 1));
-      return {
-        parentIndex: parentMatch ? +parentMatch[1] : null,
-        predicateIri,
-        operator,
-        value,
-      };
-    });
+    try {
+      const parsed = JSON.parse(decodeURIComponent(raw));
+      return (parsed as { predicateIri: string; operator: Operator; value: string; parentIndex?: number }[]).map(s => ({
+        ...s,
+        parentIndex: s.parentIndex ?? null,
+      }));
+    } catch {
+      return [];
+    }
   }
 
   private _mapParams(p: Record<string, string>): SearchUrlParams {

@@ -24,8 +24,9 @@ export class GravsearchService {
 
   generateGravSearchQuery(statements: StatementElement[], fulltextTerm?: string): string {
     const writer = new GravsearchWriter(statements);
-    const constructStatements = statements.map((_, i) => writer.at(i).constructStatement).join('\n');
-    const whereClause = statements.map((_, i) => writer.at(i).whereStatement).join('\n');
+    const scoped = statements.map((_, i) => writer.at(i));
+    const constructStatements = scoped.map(s => s.constructStatement).join('\n');
+    const whereClause = scoped.map(s => s.whereStatement).join('\n');
     const trimmedTerm = fulltextTerm?.trim() ?? '';
     const fulltextTriple = trimmedTerm
       ? `?mainRes ?valueProperty ?searchThis .\n  FILTER knora-api:matchText(?searchThis, "${escapeForGravsearchStringLiteral(trimmedTerm)}") .\n`

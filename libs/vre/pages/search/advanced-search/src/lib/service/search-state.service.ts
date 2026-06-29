@@ -18,6 +18,11 @@ export class SearchStateService {
     distinctUntilChanged((a, b) => a?.iri === b?.iri)
   );
 
+  statementElements$ = this._state.pipe(
+    map(state => state.statementElements),
+    distinctUntilChanged((a, b) => a.length === b.length && a.every((s, i) => s === b[i]))
+  );
+
   completeStatements$ = this._state.pipe(
     map(state => state.statementElements),
     distinctUntilChanged((a, b) => a.length === b.length && a.every((s, i) => s === b[i])),

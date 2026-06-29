@@ -3,7 +3,7 @@ import { StatementElement } from '../../model';
 import { Operator } from '../../operators.config';
 import { getLabel } from '../../util/labels';
 
-@Pipe({ name: 'chipLabel', standalone: true, pure: false })
+@Pipe({ name: 'chipLabel', standalone: true })
 export class ChipLabelPipe implements PipeTransform {
   private readonly MAX_VALUE_LENGTH = 20;
 

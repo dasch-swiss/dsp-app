@@ -7,7 +7,7 @@ describe('ChipLabelPipe', () => {
   let pipe: ChipLabelPipe;
 
   const makePredicate = (label: string, objectValueType = Constants.TextValue) =>
-    new Predicate('http://ex.org/prop', label, objectValueType, false);
+    new Predicate('http://ex.org/prop', [{ language: 'en', value: label }], objectValueType, false);
 
   const makeStatement = (
     predicateLabel?: string,

@@ -5,7 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { map } from 'rxjs';
-import { SEARCH_ALL_RESOURCE_CLASSES_OPTION } from '../../constants';
+import { ALL_RESOURCE_CLASSES } from '../../constants';
 import { IriLabelPair } from '../../model';
 import { OntologyDataService } from '../../service/ontology-data.service';
 import { PropertyFormManager } from '../../service/property-form.manager';
@@ -80,7 +80,7 @@ export class ResourceClassChipComponent {
   private readonly _urlSync = inject(SearchUrlSyncService);
 
   readonly positions = CHIP_POPOVER_POSITIONS;
-  readonly allOption = SEARCH_ALL_RESOURCE_CLASSES_OPTION;
+  readonly allOption = ALL_RESOURCE_CLASSES;
   isOpen = false;
 
   readonly resourceClasses$ = this._dataService.resourceClasses$;
