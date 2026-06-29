@@ -76,7 +76,7 @@ export class DataModelChipComponent {
   isOpen = false;
 
   readonly ontologies$ = this._dataService.ontologies$;
-  readonly ontologyLabel$ = this._dataService.selectedOntology$.pipe(map(o => (o ? getLabel(o.labels) : '…')));
+  readonly ontologyLabel$ = this._dataService.selectedOntology$.pipe(map(o => (o ? o.label : '…')));
   readonly selectedOntologyIri$ = this._dataService.selectedOntology$.pipe(map(o => o?.id ?? null));
 
   onOntologySelected(iri: string): void {
