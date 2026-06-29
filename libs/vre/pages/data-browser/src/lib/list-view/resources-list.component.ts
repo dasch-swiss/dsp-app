@@ -28,6 +28,7 @@ import { ResourceListComponent } from './resource-list.component';
 export class ResourcesListComponent {
   @Input({ required: true }) resources!: ReadResource[];
   @Input() showProjectShortname = false;
+  @Input() loading = false;
 
   constructor(public resourceResultService: ResourceResultService) {}
 

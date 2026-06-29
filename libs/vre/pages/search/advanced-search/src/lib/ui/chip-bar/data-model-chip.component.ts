@@ -8,6 +8,7 @@ import { map } from 'rxjs';
 import { OntologyDataService } from '../../service/ontology-data.service';
 import { SearchStateService } from '../../service/search-state.service';
 import { SearchUrlSyncService } from '../../service/search-url-sync.service';
+import { getLabel } from '../../util/labels';
 import { CHIP_POPOVER_POSITIONS } from './chip-bar.helpers';
 
 @Component({
@@ -46,7 +47,7 @@ import { CHIP_POPOVER_POSITIONS } from './chip-bar.helpers';
         (selectionChange)="onOntologySelected($event.options[0]?.value)">
         @for (onto of ontologies$ | async; track onto.iri) {
           <mat-list-option [value]="onto.iri" [selected]="onto.iri === (selectedOntologyIri$ | async)">
-            {{ onto.label }}
+            {{ getLabel(onto.labels) }}
           </mat-list-option>
         }
       </mat-selection-list>
@@ -66,6 +67,7 @@ import { CHIP_POPOVER_POSITIONS } from './chip-bar.helpers';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DataModelChipComponent {
+  readonly getLabel = getLabel;
   private readonly _dataService = inject(OntologyDataService);
   private readonly _searchStateService = inject(SearchStateService);
   private readonly _urlSync = inject(SearchUrlSyncService);
@@ -74,7 +76,7 @@ export class DataModelChipComponent {
   isOpen = false;
 
   readonly ontologies$ = this._dataService.ontologies$;
-  readonly ontologyLabel$ = this._dataService.selectedOntology$.pipe(map(o => o?.label ?? '…'));
+  readonly ontologyLabel$ = this._dataService.selectedOntology$.pipe(map(o => (o ? getLabel(o.labels) : '…')));
   readonly selectedOntologyIri$ = this._dataService.selectedOntology$.pipe(map(o => o?.id ?? null));
 
   onOntologySelected(iri: string): void {

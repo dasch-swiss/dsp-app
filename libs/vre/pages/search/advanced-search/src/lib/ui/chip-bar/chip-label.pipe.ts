@@ -1,13 +1,14 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { StatementElement } from '../../model';
 import { Operator } from '../../operators.config';
+import { getLabel } from '../../util/labels';
 
 @Pipe({ name: 'chipLabel', standalone: true, pure: false })
 export class ChipLabelPipe implements PipeTransform {
   private readonly MAX_VALUE_LENGTH = 20;
 
   transform(statement: StatementElement): string {
-    const prop = statement.selectedPredicate?.label ?? '';
+    const prop = statement.selectedPredicate ? getLabel(statement.selectedPredicate.labels) : '';
     const op = statement.selectedOperator;
     if (!op) return prop;
 

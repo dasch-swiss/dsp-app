@@ -7,6 +7,7 @@ import { MatListModule, MatSelectionListChange } from '@angular/material/list';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { OrderByItem } from '../../model';
 import { OrderByService } from '../../service/order-by.service';
+import { getLabel } from '../../util/labels';
 
 @Component({
   selector: 'app-order-by',
@@ -17,6 +18,7 @@ import { OrderByService } from '../../service/order-by.service';
 })
 export class OrderByComponent {
   readonly TOOLTIP_TEXT = 'Search cannot be ordered by a URI property or a property that links to a resource.';
+  readonly getLabel = getLabel;
   private orderByService: OrderByService = inject(OrderByService);
 
   orderByItems$ = this.orderByService.orderByItems$;
@@ -24,7 +26,8 @@ export class OrderByComponent {
   isOpen = false;
 
   activeLabel(items: OrderByItem[] | null): string | null {
-    return items?.find(i => i.orderBy)?.label ?? null;
+    const active = items?.find(i => i.orderBy);
+    return active ? getLabel(active.labels) || null : null;
   }
 
   onSelectionChange(event: MatSelectionListChange) {

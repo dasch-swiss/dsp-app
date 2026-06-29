@@ -26,3 +26,6 @@ export const ALL_RESOURCE_CLASSES: { iri: string; labels: StringLiteralV2[]; com
   labels: [],
   comments: [],
 };
+
+/** Alias for ALL_RESOURCE_CLASSES — sentinel representing "search across all resource classes". */
+export const SEARCH_ALL_RESOURCE_CLASSES_OPTION = ALL_RESOURCE_CLASSES;

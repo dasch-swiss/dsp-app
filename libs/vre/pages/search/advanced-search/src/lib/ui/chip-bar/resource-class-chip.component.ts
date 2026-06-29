@@ -11,6 +11,7 @@ import { OntologyDataService } from '../../service/ontology-data.service';
 import { PropertyFormManager } from '../../service/property-form.manager';
 import { SearchStateService } from '../../service/search-state.service';
 import { SearchUrlSyncService } from '../../service/search-url-sync.service';
+import { getLabel } from '../../util/labels';
 import { CHIP_POPOVER_POSITIONS } from './chip-bar.helpers';
 
 @Component({
@@ -52,7 +53,7 @@ import { CHIP_POPOVER_POSITIONS } from './chip-bar.helpers';
         </mat-list-option>
         @for (cls of resourceClasses$ | async; track cls.iri) {
           <mat-list-option [value]="cls" [selected]="cls.iri === (selectedClassIri$ | async)">
-            {{ cls.label }}
+            {{ getLabel(cls.labels) }}
           </mat-list-option>
         }
       </mat-selection-list>
@@ -72,6 +73,7 @@ import { CHIP_POPOVER_POSITIONS } from './chip-bar.helpers';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResourceClassChipComponent {
+  readonly getLabel = getLabel;
   private readonly _dataService = inject(OntologyDataService);
   private readonly _searchStateService = inject(SearchStateService);
   private readonly _formManager = inject(PropertyFormManager);
@@ -83,7 +85,7 @@ export class ResourceClassChipComponent {
 
   readonly resourceClasses$ = this._dataService.resourceClasses$;
   readonly classLabel$ = this._searchStateService.selectedResourceClass$.pipe(
-    map(rc => (rc?.iri ? rc.label : 'All resource classes'))
+    map(rc => (rc?.iri ? getLabel(rc.labels) : 'All resource classes'))
   );
   readonly selectedClassIri$ = this._searchStateService.selectedResourceClass$.pipe(map(rc => rc?.iri ?? ''));
 

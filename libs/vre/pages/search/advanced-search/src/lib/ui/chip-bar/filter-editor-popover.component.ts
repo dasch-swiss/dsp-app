@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, inject, Input, Output, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { PropertyObjectType, StatementElement } from '../../model';
+import { IriLabelPair, PropertyObjectType, StatementElement } from '../../model';
 import { PropertyFormManager } from '../../service/property-form.manager';
 import { ComparisonOperatorComponent } from '../statement-builder/assertions/comparison-operator.component';
 import { PredicateSelectComponent } from '../statement-builder/assertions/predicate-select.component';
@@ -105,13 +105,11 @@ export class FilterEditorPopoverComponent {
     this.confirm.emit();
   }
 
-  asString(value: string | { iri: string; label: string } | undefined): string | undefined {
+  asString(value: string | IriLabelPair | undefined): string | undefined {
     return typeof value === 'string' ? value : undefined;
   }
 
-  asIriLabelPair(
-    value: string | { iri: string; label: string } | undefined
-  ): { iri: string; label: string } | undefined {
+  asIriLabelPair(value: string | IriLabelPair | undefined): IriLabelPair | undefined {
     return value && typeof value === 'object' ? value : undefined;
   }
 }
