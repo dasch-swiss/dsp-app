@@ -1,82 +1,61 @@
-import { registerLocaleData } from '@angular/common';
-import de_CH from '@angular/common/locales/de-CH';
-import en_GB from '@angular/common/locales/en-GB';
-import fr_CH from '@angular/common/locales/fr-CH';
-import it_CH from '@angular/common/locales/it-CH';
 import { Injectable } from '@angular/core';
-import { AvailableLanguages, LocalStorageLanguageKey } from '@dasch-swiss/vre/core/config';
+import { AvailableLanguage, AvailableLanguageKeys, LocalStorageLanguageKey } from '@dasch-swiss/vre/core/config';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable, map, startWith } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class LocalizationService {
-  private readonly _defaultLanguage = 'en';
+  private readonly _defaultLanguage: AvailableLanguage = 'en';
 
-  private _locale: any;
-  set locale(value: string) {
-    this._locale = value;
-    this.setLocale(this._locale);
+  private readonly _currentLanguage$ = new BehaviorSubject<AvailableLanguage>(this._defaultLanguage);
+  readonly currentLanguage$ = this._currentLanguage$.asObservable();
+
+  private get _localStorageLanguage(): string | undefined {
+    const raw = localStorage.getItem(LocalStorageLanguageKey);
+    if (raw === null) return undefined;
+    try {
+      const parsed = JSON.parse(raw);
+      return typeof parsed === 'string' ? parsed : undefined;
+    } catch {
+      return undefined;
+    }
   }
 
-  private readonly _AVAILABLE_LOCALES = [
-    { locale: 'en-GB', localeData: en_GB },
-    { locale: 'fr-CH', localeData: fr_CH },
-    { locale: 'de-CH', localeData: de_CH },
-    { locale: 'it-CH', localeData: it_CH },
-  ] as const;
-
-  currentLanguage$!: Observable<string>;
-
-  constructor(private readonly _translateService: TranslateService) {
-    this.currentLanguage$ = this._translateService.onLangChange.pipe(
-      map(event => event.lang),
-      startWith(this.getCurrentLanguage())
-    );
-  }
+  constructor(private readonly _translateService: TranslateService) {}
 
   init() {
-    this.setDefaultLanguage();
-    this.locale = 'en-GB';
+    const preferredLanguage = this._localStorageLanguage
+      ? this._localStorageLanguage
+      : this._translateService.getBrowserLang();
+
+    const initialLanguage =
+      preferredLanguage && AvailableLanguageKeys.includes(preferredLanguage as AvailableLanguage)
+        ? (preferredLanguage as AvailableLanguage)
+        : this._defaultLanguage;
+    this.currentLanguage = initialLanguage;
   }
 
-  getCurrentLanguage(): string {
-    return this._translateService.currentLang ? this._translateService.currentLang : this.getLanguage();
+  get currentLanguage(): AvailableLanguage {
+    return this._currentLanguage$.getValue();
   }
 
-  setLanguage(language: string) {
-    this._translateService.use(language);
-    this.saveLanguageToLocalStorage(language);
-  }
-
-  getLanguageFromBrowser(): string {
-    const browserLang = this._translateService.getBrowserLang();
-    const availableLanguageExp = AvailableLanguages.map(lang => lang.language).join('|');
-    return browserLang?.match(`/${availableLanguageExp}/`) ? browserLang : this._defaultLanguage;
-  }
-
-  private saveLanguageToLocalStorage(language: string) {
+  /**
+   * Always change the UI language through this setter. Calling
+   * `TranslateService.use(...)` directly bypasses `currentLanguage$`,
+   * `localStorage`, and `<html lang>`, leaving the BehaviorSubject desynced.
+   */
+  set currentLanguage(language: AvailableLanguage) {
     localStorage.setItem(LocalStorageLanguageKey, JSON.stringify(language));
+    document.documentElement.lang = language;
+    this._currentLanguage$.next(language);
+    this._translateService.use(language);
   }
 
-  private getLanguage(): string {
-    const key = localStorage.getItem(LocalStorageLanguageKey);
-    return key ? JSON.parse(key) : this.getLanguageFromBrowser();
-  }
-
-  private setDefaultLanguage() {
-    this.setLanguage(this.getLanguage());
-  }
-
-  private setLocale(locale: string) {
-    let localeItem = this._AVAILABLE_LOCALES.find(item => item.locale === locale);
-
-    if (!localeItem) {
-      localeItem = { locale: 'en-GB', localeData: en_GB };
-    }
-
-    registerLocaleData(localeItem.localeData, locale);
-    document.documentElement.lang = (localeItem.localeData[0] as string).substring(0, 1);
+  static parseLanguage(value: string | undefined | null): AvailableLanguage | undefined {
+    return value && AvailableLanguageKeys.includes(value as AvailableLanguage)
+      ? (value as AvailableLanguage)
+      : undefined;
   }
 }

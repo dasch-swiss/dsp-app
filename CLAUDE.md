@@ -119,12 +119,11 @@ The main application is **DSP-APP** - a user interface for the Swiss National Da
 ### Code Coverage
 - `npm run unit-test-coverage` - Generate combined unit test coverage for all projects
 - `npm run unit-test-coverage-ci` - CI-mode coverage with reports
-- `npm run e2e-coverage` - E2E test coverage with instrumentation
-- Coverage merging via `tools/merge-coverage.js` and `tools/lcov-parser.js`
+- Coverage merging via `tools/merge-coverage.js`
 
 ### Additional Commands
 - `npm run lint-fix-all` - Lint and fix all projects in monorepo
-- `npm run lint-ci-all` - Lint all projects without auto-fix
+- `npm run lint-all` - Lint all projects without auto-fix
 
 ## Architecture Overview
 
@@ -213,7 +212,8 @@ Multiple environment configurations available:
 
 ### Internationalization
 Multi-language support with translation files in:
-- `apps/dsp-app/src/assets/i18n/` (de.json, en.json, fr.json, it.json, rm.json)
+- `apps/dsp-app/src/assets/i18n/` (de.json, en.json, fr.json, it.json)
+- Romansh (`rm`) has no file; it is bound to English at runtime by the fallback loader (`apps/dsp-app/src/app/i18n-fallback-translate-loader.ts`). See DEV-6629.
 
 ### Resource Management
 Application handles various file types and representations:

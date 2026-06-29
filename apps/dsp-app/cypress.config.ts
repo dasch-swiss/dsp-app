@@ -23,8 +23,6 @@ export default defineConfig({
     trashAssetsBeforeRuns: true,
     screenshotsFolder: 'cypress/fixtures/screenshots',
     setupNodeEvents(on, config) {
-      // eslint-disable-next-line
-      require('@cypress/code-coverage/task')(on, config);
       on('before:browser:launch', (browser, launchOptions) => {
         if (browser.name === 'chrome' && browser.isHeadless) {
           // fullPage screenshot size is 1600x1400 on non-retina screens

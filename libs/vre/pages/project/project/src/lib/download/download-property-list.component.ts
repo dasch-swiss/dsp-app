@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output
 import { MatButton } from '@angular/material/button';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
+import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
 import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
@@ -33,9 +34,9 @@ import { TranslatePipe } from '@ngx-translate/core';
               style="margin-right: 12px" />
             <div style="flex: 1">
               <div style="display: flex; align-items: center; gap: 8px">
-                <span style="font-weight: 500">{{ property.property.propDef.label }}</span>
+                <span style="font-weight: 500">{{ property.property.propDef.labels | appStringifyStringLiteral }}</span>
               </div>
-              @if (property.property.propDef.comment; as comment) {
+              @if (property.property.propDef.comments | appStringifyStringLiteral; as comment) {
                 <p style="margin: 0; color: #666; font-size: 13px">{{ comment }}</p>
               }
             </div>
@@ -57,7 +58,7 @@ import { TranslatePipe } from '@ngx-translate/core';
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [MatButton, MatCheckbox, TranslatePipe],
+  imports: [MatButton, MatCheckbox, StringifyStringLiteralPipe, TranslatePipe],
 })
 export class DownloadPropertyListComponent implements OnInit {
   @Input({ required: true }) propertyDefinitions!: PropertyInfoValues[];

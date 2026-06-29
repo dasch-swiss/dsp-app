@@ -70,7 +70,7 @@ export class GuiAttrLinkComponent {
       const ontologyClasses = [] as ClassToSelect[];
       response.forEach(onto => {
         const classes = onto.getClassDefinitionsByType(ResourceClassDefinitionWithAllLanguages);
-        const classDefs = SortingHelper.sortByLabelsAlphabetically(classes, 'label', lang);
+        const classDefs = SortingHelper.sortByLocalizedString(classes, c => c.labels, lang);
         if (classDefs.length) {
           ontologyClasses.push({
             ontologyId: onto.id,

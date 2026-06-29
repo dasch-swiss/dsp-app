@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -10,8 +9,9 @@ import {
   Output,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
+import { TranslateModule } from '@ngx-translate/core';
 import { take } from 'rxjs';
 import { IriLabelPair, Predicate } from '../../../model';
 import { OntologyDataService } from '../../../service/ontology-data.service';
@@ -19,17 +19,29 @@ import { OntologyDataService } from '../../../service/ontology-data.service';
 @Component({
   selector: 'app-predicate-select',
   standalone: true,
-  imports: [CommonModule, MatInputModule, MatSelectModule],
+  imports: [MatSelectModule, StringifyStringLiteralPipe, TranslateModule],
   template: `
     <mat-form-field class="width-100-percent" appearance="fill">
-      <mat-label>{{ label }}</mat-label>
+      <mat-label>
+        @let subject = subjectClass;
+        @if (subject?.iri && subject?.labels?.length) {
+          {{
+            'pages.search.advancedSearch.propertyOfClass'
+              | translate: { class: subject!.labels | appStringifyStringLiteral }
+          }}
+        } @else {
+          {{ 'pages.search.advancedSearch.property' | translate }}
+        }
+      </mat-label>
       <mat-select
         [value]="selectedPredicate"
         (selectionChange)="selectedPredicateChange.emit($event.value)"
         data-cy="predicate-select"
         [compareWith]="compareObjects">
         @for (prop of properties; track prop.iri) {
-          <mat-option [value]="prop" [attr.data-cy]="prop.label">{{ prop.label }}</mat-option>
+          <mat-option [value]="prop" [attr.data-cy]="prop.labels | appStringifyStringLiteral">
+            {{ prop.labels | appStringifyStringLiteral }}
+          </mat-option>
         }
       </mat-select>
     </mat-form-field>
@@ -60,11 +72,7 @@ export class PredicateSelectComponent implements OnChanges {
       });
   }
 
-  get label(): string {
-    return this.subjectClass?.label ? `Property of ${this.subjectClass?.label}` : 'Property';
-  }
-
   compareObjects(object1: Predicate | IriLabelPair, object2: Predicate | IriLabelPair) {
-    return object1 && object2 && object1.iri == object2.iri;
+    return object1 && object2 && object1.iri === object2.iri;
   }
 }

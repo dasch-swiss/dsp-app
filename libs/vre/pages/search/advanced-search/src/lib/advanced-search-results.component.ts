@@ -22,7 +22,7 @@ import { QueryExecutionService } from './service/query-execution.service';
   ],
   template: `
     @let resources = resources$ | async;
-    @if (queryIsExecuting()) {
+    @if (!resources && queryIsExecuting()) {
       <app-centered-box>
         <app-progress-indicator />
       </app-centered-box>
@@ -32,7 +32,9 @@ import { QueryExecutionService } from './service/query-execution.service';
           <app-no-results-found [message]="noResultMessage" />
         </app-centered-box>
       } @else {
-        <app-resource-browser [data]="{ resources: resources, selectFirstResource: true }" />
+        <app-resource-browser
+          [data]="{ resources: resources, selectFirstResource: true }"
+          [loading]="queryIsExecuting()" />
       }
     }
   `,

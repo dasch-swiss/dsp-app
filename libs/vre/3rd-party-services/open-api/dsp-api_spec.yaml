@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: DSP-API
-  version: v35.9.0-6-g4f0f308
+  version: v36.0.0-3-g42c7a03
   summary: DSP-API is part of the DaSCH Service Platform, a repository for the long-term
     preservation and reuse of data in the humanities.
   contact:
@@ -68,6 +68,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -162,6 +168,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -269,6 +281,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -371,6 +389,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -485,6 +509,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -587,6 +617,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -732,6 +768,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -841,6 +883,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -909,6 +957,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -964,6 +1018,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -1024,6 +1084,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -1086,6 +1152,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -1151,6 +1223,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -1210,6 +1288,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -1270,6 +1354,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -1328,6 +1418,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -1387,6 +1483,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -1444,6 +1546,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -1507,6 +1615,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -1573,6 +1687,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -1639,6 +1759,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -1705,6 +1831,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -1764,6 +1896,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -1831,6 +1969,144 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - httpAuth: []
+      - httpAuth1: []
+  /admin/maintenance/users/replace-iri:
+    post:
+      tags:
+      - Admin API
+      description: 'Replace a user IRI across the entire database (admin graph + all
+        project data graphs). SystemAdmin only. Irreversible -- no undo mechanism.
+        Not idempotent: retrying after success returns 404.'
+      operationId: postAdminMaintenanceUsersReplace-iri
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReplaceUserIriRequest'
+        required: true
+      responses:
+        '204':
+          description: ''
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                anyOf:
+                - $ref: '#/components/schemas/OntologyConstraintException'
+                - $ref: '#/components/schemas/DuplicateValueException'
+                - $ref: '#/components/schemas/ValidationException'
+                - $ref: '#/components/schemas/BadRequestException'
+                - $ref: '#/components/schemas/GravsearchException'
+                - $ref: '#/components/schemas/EditConflictException'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadCredentialsException'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenException'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - httpAuth: []
+      - httpAuth1: []
+  /admin/maintenance/projects/{projectShortcode}/replace-user-iri:
+    post:
+      tags:
+      - Admin API
+      description: 'Re-attribute all references to a user IRI within a single project''s
+        data graph. Both user accounts remain intact. SystemAdmin only. Not idempotent:
+        retrying after success returns 404.'
+      operationId: postAdminMaintenanceProjectsProjectshortcodeReplace-user-iri
+      parameters:
+      - name: projectShortcode
+        in: path
+        description: The shortcode of a project. Must be a 4 digit hexadecimal String.
+        required: true
+        schema:
+          type: string
+        example: '0001'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReplaceUserIriRequest'
+        required: true
+      responses:
+        '204':
+          description: ''
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                anyOf:
+                - $ref: '#/components/schemas/OntologyConstraintException'
+                - $ref: '#/components/schemas/DuplicateValueException'
+                - $ref: '#/components/schemas/ValidationException'
+                - $ref: '#/components/schemas/BadRequestException'
+                - $ref: '#/components/schemas/GravsearchException'
+                - $ref: '#/components/schemas/EditConflictException'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadCredentialsException'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenException'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -1890,6 +2166,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -1951,6 +2233,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -2019,6 +2307,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -2080,6 +2374,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -2141,6 +2441,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -2221,6 +2527,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -2287,6 +2599,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -2354,6 +2672,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -2421,6 +2745,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -2489,6 +2819,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -2550,6 +2886,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -2609,6 +2951,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -2792,6 +3140,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -2857,6 +3211,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -2957,6 +3317,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -3021,6 +3387,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -3085,6 +3457,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -3187,6 +3565,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -3253,6 +3637,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -3319,6 +3709,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -3371,6 +3767,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -3429,6 +3831,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -3482,6 +3890,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -3539,6 +3953,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -3602,6 +4022,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -3662,6 +4088,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -3723,6 +4155,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -3781,6 +4219,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -3838,6 +4282,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -3896,6 +4346,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -3971,6 +4427,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -4032,6 +4494,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -4107,6 +4575,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -4168,6 +4642,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -4237,6 +4717,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -4298,6 +4784,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -4359,6 +4851,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -4420,6 +4918,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -4481,6 +4985,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -4542,6 +5052,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -4603,6 +5119,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -4674,6 +5196,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -4697,7 +5225,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/6ZTcDAqLSTOUgKfcAVZoog
+        example: http://rdfh.ch/users/6DR27OmxSKeDsQpoLzOF4Q
       responses:
         '200':
           description: ''
@@ -4735,6 +5263,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -4755,7 +5289,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/6ZTcDAqLSTOUgKfcAVZoog
+        example: http://rdfh.ch/users/6DR27OmxSKeDsQpoLzOF4Q
       responses:
         '200':
           description: ''
@@ -4793,6 +5327,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -4813,7 +5353,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/6ZTcDAqLSTOUgKfcAVZoog
+        example: http://rdfh.ch/users/6DR27OmxSKeDsQpoLzOF4Q
       responses:
         '200':
           description: ''
@@ -4851,6 +5391,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -4901,6 +5447,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -4960,6 +5512,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -4984,7 +5542,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/6ZTcDAqLSTOUgKfcAVZoog
+        example: http://rdfh.ch/users/6DR27OmxSKeDsQpoLzOF4Q
       responses:
         '200':
           description: ''
@@ -5022,6 +5580,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -5044,7 +5608,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/6ZTcDAqLSTOUgKfcAVZoog
+        example: http://rdfh.ch/users/6DR27OmxSKeDsQpoLzOF4Q
       responses:
         '200':
           description: ''
@@ -5082,6 +5646,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -5145,6 +5715,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -5207,6 +5783,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -5230,7 +5812,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/6ZTcDAqLSTOUgKfcAVZoog
+        example: http://rdfh.ch/users/6DR27OmxSKeDsQpoLzOF4Q
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -5275,6 +5857,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -5297,7 +5885,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/6ZTcDAqLSTOUgKfcAVZoog
+        example: http://rdfh.ch/users/6DR27OmxSKeDsQpoLzOF4Q
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -5342,6 +5930,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -5365,7 +5959,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/6ZTcDAqLSTOUgKfcAVZoog
+        example: http://rdfh.ch/users/6DR27OmxSKeDsQpoLzOF4Q
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -5410,6 +6004,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -5432,7 +6032,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/6ZTcDAqLSTOUgKfcAVZoog
+        example: http://rdfh.ch/users/6DR27OmxSKeDsQpoLzOF4Q
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -5477,6 +6077,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -5500,7 +6106,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/6ZTcDAqLSTOUgKfcAVZoog
+        example: http://rdfh.ch/users/6DR27OmxSKeDsQpoLzOF4Q
       - name: groupIri
         in: path
         description: The IRI of a group. Must be URL-encoded.
@@ -5545,6 +6151,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -5567,7 +6179,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/6ZTcDAqLSTOUgKfcAVZoog
+        example: http://rdfh.ch/users/6DR27OmxSKeDsQpoLzOF4Q
       - name: groupIri
         in: path
         description: The IRI of a group. Must be URL-encoded.
@@ -5612,6 +6224,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -5635,7 +6253,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/6ZTcDAqLSTOUgKfcAVZoog
+        example: http://rdfh.ch/users/6DR27OmxSKeDsQpoLzOF4Q
       requestBody:
         content:
           application/json:
@@ -5679,6 +6297,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -5702,7 +6326,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/6ZTcDAqLSTOUgKfcAVZoog
+        example: http://rdfh.ch/users/6DR27OmxSKeDsQpoLzOF4Q
       requestBody:
         content:
           application/json:
@@ -5746,6 +6370,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -5769,7 +6399,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/6ZTcDAqLSTOUgKfcAVZoog
+        example: http://rdfh.ch/users/6DR27OmxSKeDsQpoLzOF4Q
       requestBody:
         content:
           application/json:
@@ -5813,6 +6443,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -5836,7 +6472,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/6ZTcDAqLSTOUgKfcAVZoog
+        example: http://rdfh.ch/users/6DR27OmxSKeDsQpoLzOF4Q
       requestBody:
         content:
           application/json:
@@ -5880,6 +6516,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -5938,6 +6580,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -6001,6 +6649,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -6061,6 +6715,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -6083,7 +6743,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/lists/0001/_WW78UKASIKpjuUuIduvpw
+        example: http://rdfh.ch/lists/0001/MUTRMhySTtelIUBvFgiVvQ
       - name: x-knora-accept-schema
         in: header
         description: |-
@@ -6174,6 +6834,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -6196,7 +6862,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/lists/0001/_WW78UKASIKpjuUuIduvpw
+        example: http://rdfh.ch/lists/0001/MUTRMhySTtelIUBvFgiVvQ
       - name: x-knora-accept-schema
         in: header
         description: |-
@@ -6287,6 +6953,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -6365,6 +7037,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -6475,6 +7153,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -6549,6 +7233,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -6621,6 +7311,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -6687,6 +7383,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -6760,6 +7462,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -6833,6 +7541,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -6907,6 +7621,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -7004,6 +7724,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -7116,6 +7842,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -7248,6 +7980,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -7360,6 +8098,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -7467,6 +8211,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -7579,6 +8329,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -7691,6 +8447,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -7823,6 +8585,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -7952,6 +8720,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -8064,6 +8838,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -8175,6 +8955,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -8271,6 +9057,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -8384,6 +9176,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -8497,6 +9295,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -8643,6 +9447,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -8773,6 +9583,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -8906,6 +9722,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -9030,6 +9852,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -9150,6 +9978,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -9269,6 +10103,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -9389,6 +10229,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -9508,6 +10354,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -9637,6 +10489,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -9766,6 +10624,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -9886,6 +10750,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -10015,6 +10885,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -10116,6 +10992,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -10227,6 +11109,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -10336,6 +11224,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -10453,6 +11347,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -10570,6 +11470,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -10699,6 +11605,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -10816,6 +11728,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -10927,6 +11845,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -11044,6 +11968,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -11160,6 +12090,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -11271,6 +12207,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -11382,6 +12324,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -11499,6 +12447,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -11616,6 +12570,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -11733,6 +12693,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -11850,6 +12816,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -11967,6 +12939,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -12080,6 +13058,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -12192,6 +13176,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -12304,6 +13294,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -12417,6 +13413,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -12529,6 +13531,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -12641,6 +13649,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -12754,6 +13768,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -12866,6 +13886,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -12979,6 +14005,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -13092,6 +14124,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -13205,6 +14243,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -14474,6 +15518,319 @@ paths:
                         projectIri: example_projectIri
       security:
       - httpAuth: []
+  /v3/projects/{projectIri}/data-imports:
+    post:
+      tags:
+      - API v3
+      description: 'Initiates an import of a project''s data graph from a knora-api
+        JSON-LD payload. The import will be performed asynchronously, and the response
+        will contain an import ID that can be used to check the status of the import.
+        The import is create-only: it fails if the project already has a data graph.
+        An import can only be triggered when no other data-graph import exists.'
+      operationId: postV3ProjectsProjectiriData-imports
+      parameters:
+      - name: projectIri
+        in: path
+        description: The IRI of a project. Must be URL-encoded.
+        required: true
+        schema:
+          type: string
+        example: http://rdfh.ch/projects/0001
+      requestBody:
+        description: The project's data graph as knora-api (v2 external) JSON-LD
+        content:
+          application/ld+json:
+            schema:
+              type: string
+              format: binary
+        required: true
+      responses:
+        '202':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataTaskStatusResponse'
+        '400':
+          description: 'Invalid value for: body'
+          content:
+            text/plain:
+              schema:
+                type: string
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+              example:
+                message: Invalid token.
+                errors: []
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+              example:
+                message: User not active.
+                errors: []
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+              examples:
+                project_not_found:
+                  description: |-
+                    Example template string for code `project_not_found`:
+                    ```
+                    The project '{id}' was not found.
+                    ```
+                  value:
+                    message: The project '{id}' was not found.
+                    errors:
+                    - code: project_not_found
+                      message: The project '{id}' was not found.
+                      details:
+                        id: example_id
+                feature_missing:
+                  description: |-
+                    Example template string for code `feature_missing`:
+                    ```
+                    The required feature '{name}' is missing. Ask your system administrator to enable it.
+                    ```
+                  value:
+                    message: The required feature '{name}' is missing. Ask your system
+                      administrator to enable it.
+                    errors:
+                    - code: feature_missing
+                      message: The required feature '{name}' is missing. Ask your
+                        system administrator to enable it.
+                      details:
+                        name: example_name
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conflict'
+              examples:
+                import_exists:
+                  description: |-
+                    Example template string for code `import_exists`:
+                    ```
+                    Import '{id}' exists for project '{projectIri}'.
+                    ```
+                  value:
+                    message: Import '{id}' exists for project '{projectIri}'.
+                    errors:
+                    - code: import_exists
+                      message: Import '{id}' exists for project '{projectIri}'.
+                      details:
+                        id: example_id
+                        projectIri: example_projectIri
+                data_graph_exists:
+                  description: |-
+                    Example template string for code `data_graph_exists`:
+                    ```
+                    The data graph for project '{projectIri}' already exists.
+                    ```
+                  value:
+                    message: The data graph for project '{projectIri}' already exists.
+                    errors:
+                    - code: data_graph_exists
+                      message: The data graph for project '{projectIri}' already exists.
+                      details:
+                        projectIri: example_projectIri
+      security:
+      - httpAuth: []
+  /v3/projects/{projectIri}/data-imports/{importId}:
+    get:
+      tags:
+      - API v3
+      description: Checks the status of a data-graph import. The response will indicate
+        whether the import is still in progress, has completed successfully, or has
+        failed.
+      operationId: getV3ProjectsProjectiriData-importsImportid
+      parameters:
+      - name: projectIri
+        in: path
+        description: The IRI of a project. Must be URL-encoded.
+        required: true
+        schema:
+          type: string
+        example: http://rdfh.ch/projects/0001
+      - name: importId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataTaskStatusResponse'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+              example:
+                message: Invalid token.
+                errors: []
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+              example:
+                message: User not active.
+                errors: []
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+              examples:
+                import_not_found:
+                  description: |-
+                    Example template string for code `import_not_found`:
+                    ```
+                    The import '{id}' in project '{projectIri}' was not found.
+                    ```
+                  value:
+                    message: The import '{id}' in project '{projectIri}' was not found.
+                    errors:
+                    - code: import_not_found
+                      message: The import '{id}' in project '{projectIri}' was not
+                        found.
+                      details:
+                        id: example_id
+                        projectIri: example_projectIri
+                feature_missing:
+                  description: |-
+                    Example template string for code `feature_missing`:
+                    ```
+                    The required feature '{name}' is missing. Ask your system administrator to enable it.
+                    ```
+                  value:
+                    message: The required feature '{name}' is missing. Ask your system
+                      administrator to enable it.
+                    errors:
+                    - code: feature_missing
+                      message: The required feature '{name}' is missing. Ask your
+                        system administrator to enable it.
+                      details:
+                        name: example_name
+      security:
+      - httpAuth: []
+    delete:
+      tags:
+      - API v3
+      description: Deletes a data-graph import. Only imports in state failed or completed
+        can be deleted. If it is still in progress, the response will be 409 Conflict.
+      operationId: deleteV3ProjectsProjectiriData-importsImportid
+      parameters:
+      - name: projectIri
+        in: path
+        description: The IRI of a project. Must be URL-encoded.
+        required: true
+        schema:
+          type: string
+        example: http://rdfh.ch/projects/0001
+      - name: importId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: ''
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+              example:
+                message: Invalid token.
+                errors: []
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+              example:
+                message: User not active.
+                errors: []
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+              examples:
+                import_not_found:
+                  description: |-
+                    Example template string for code `import_not_found`:
+                    ```
+                    The import '{id}' in project '{projectIri}' was not found.
+                    ```
+                  value:
+                    message: The import '{id}' in project '{projectIri}' was not found.
+                    errors:
+                    - code: import_not_found
+                      message: The import '{id}' in project '{projectIri}' was not
+                        found.
+                      details:
+                        id: example_id
+                        projectIri: example_projectIri
+                feature_missing:
+                  description: |-
+                    Example template string for code `feature_missing`:
+                    ```
+                    The required feature '{name}' is missing. Ask your system administrator to enable it.
+                    ```
+                  value:
+                    message: The required feature '{name}' is missing. Ask your system
+                      administrator to enable it.
+                    errors:
+                    - code: feature_missing
+                      message: The required feature '{name}' is missing. Ask your
+                        system administrator to enable it.
+                      details:
+                        name: example_name
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conflict'
+              examples:
+                import_in_progress:
+                  description: |-
+                    Example template string for code `import_in_progress`:
+                    ```
+                    Import '{id}' in progress for project '{projectIri}'.
+                    ```
+                  value:
+                    message: Import '{id}' in progress for project '{projectIri}'.
+                    errors:
+                    - code: import_in_progress
+                      message: Import '{id}' in progress for project '{projectIri}'.
+                      details:
+                        id: example_id
+                        projectIri: example_projectIri
+      security:
+      - httpAuth: []
   /version:
     get:
       tags:
@@ -14488,12 +15845,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/VersionResponse'
               example:
-                webapi: v35.9.0-6-g4f0f308
-                buildCommit: 4f0f30876
-                buildTime: '2026-05-29T13:57:30Z'
+                webapi: v36.0.0-3-g42c7a03
+                buildCommit: 42c7a03f8
+                buildTime: '2026-06-11T13:53:18Z'
                 fuseki: 6.1.0-0
                 scala: 3.3.7
-                sipi: v4.1.1
+                sipi: v5.0.1
                 name: version
         '400':
           description: ''
@@ -14525,6 +15882,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -14574,6 +15937,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -14623,6 +15992,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
         '500':
           description: ''
           content:
@@ -14876,6 +16251,14 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ErrorDetail'
+    ConflictException:
+      title: ConflictException
+      type: object
+      required:
+      - message
+      properties:
+        message:
+          type: string
     CopyrightHolderAddRequest:
       title: CopyrightHolderAddRequest
       type: object
@@ -16229,6 +17612,19 @@ components:
         valuesReordered:
           type: integer
           format: int32
+    ReplaceUserIriRequest:
+      title: ReplaceUserIriRequest
+      type: object
+      required:
+      - oldIri
+      - newIri
+      properties:
+        oldIri:
+          description: IRI for a user.
+          type: string
+        newIri:
+          description: IRI for a user.
+          type: string
     RepresentationClass:
       title: RepresentationClass
       type: string
@@ -16551,6 +17947,7 @@ components:
       type: string
       enum:
       - class_not_found
+      - data_graph_exists
       - export_exists
       - export_failed
       - export_in_progress

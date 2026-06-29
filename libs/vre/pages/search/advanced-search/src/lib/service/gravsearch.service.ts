@@ -1,8 +1,6 @@
 import { inject, Injectable } from '@angular/core';
-import { Constants } from '@dasch-swiss/dsp-js';
-import { MAIN_RESOURCE_PLACEHOLDER, RDFS_TYPE, RESOURCE_PLACEHOLDER, ResourceLabel } from '../constants';
+import { MAIN_RESOURCE_PLACEHOLDER, RDFS_TYPE, RESOURCE_PLACEHOLDER } from '../constants';
 import { escapeForGravsearchStringLiteral, GravsearchWriter, StatementElement } from '../model';
-import { Operator } from '../operators.config';
 import { OntologyDataService } from './ontology-data.service';
 import { SearchStateService } from './search-state.service';
 

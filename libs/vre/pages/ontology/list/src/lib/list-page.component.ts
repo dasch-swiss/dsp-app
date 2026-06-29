@@ -10,6 +10,7 @@ import { ListNodeInfo, ListResponse } from '@dasch-swiss/dsp-js';
 import { ListApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { DspDialogConfig, RouteConstants } from '@dasch-swiss/vre/core/config';
 import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
+import { LocalizationService, pickPreferredLanguageString } from '@dasch-swiss/vre/shared/app-helper-services';
 import { ProgressIndicatorOverlayComponent } from '@dasch-swiss/vre/ui/progress-indicator';
 import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
 import { CenteredLayoutComponent, DialogService, TruncatePipe } from '@dasch-swiss/vre/ui/ui';
@@ -65,6 +66,7 @@ export class ListPageComponent implements OnInit, OnDestroy {
   constructor(
     private readonly _dialog: DialogService,
     private readonly _listItemService: ListItemService,
+    private readonly _localizationService: LocalizationService,
     private readonly _matDialog: MatDialog,
     private readonly _projectPageService: ProjectPageService,
     private readonly _route: ActivatedRoute,
@@ -95,7 +97,10 @@ export class ListPageComponent implements OnInit, OnDestroy {
 
   askToDeleteList(list: ListNodeInfo): void {
     this._dialog
-      .afterConfirmation(this._translate.instant('pages.ontology.list.deleteConfirmation'), list.labels[0].value)
+      .afterConfirmation(
+        this._translate.instant('pages.ontology.list.deleteConfirmation'),
+        pickPreferredLanguageString(list.labels, this._localizationService.currentLanguage)
+      )
       .pipe(switchMap(() => this._listApiService.deleteListNode(list.id)))
       .subscribe(() => {
         this.navigateToDataModels();

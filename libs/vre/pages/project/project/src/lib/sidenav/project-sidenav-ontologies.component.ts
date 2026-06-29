@@ -5,7 +5,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute } from '@angular/router';
 import { APIV3ApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
-import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { LocalizationService, OntologyService, SortingHelper } from '@dasch-swiss/vre/shared/app-helper-services';
 import { AppProgressIndicatorComponent } from '@dasch-swiss/vre/ui/progress-indicator';
 import { catchError, combineLatest, first, map, of, shareReplay, switchMap } from 'rxjs';
 import { ProjectPageService } from '../project-page.service';
@@ -75,16 +75,22 @@ import { ResourceClassSidenavComponent } from './resource-class-sidenav/resource
   encapsulation: ViewEncapsulation.None,
 })
 export class ProjectSidenavOntologiesComponent implements OnInit {
-  projectOntologies$ = this._projectPageService.currentProject$.pipe(
-    switchMap(project => this._v3.getV3ProjectsProjectiriResourcesperontology(project.id)),
-    map(ontologies =>
-      ontologies.sort((a, b) => a.ontology.label.toLowerCase().localeCompare(b.ontology.label.toLowerCase()))
+  private readonly _projectOntologies$ = this._projectPageService.currentProject$.pipe(
+    switchMap(project =>
+      this._v3.getV3ProjectsProjectiriResourcesperontology(project.id).pipe(
+        catchError(error => {
+          console.error('Error loading project ontologies:', error);
+          return of([]);
+        })
+      )
     ),
-    shareReplay({ bufferSize: 1, refCount: true }),
-    catchError(error => {
-      console.error('Error loading project ontologies:', error);
-      return of([]);
-    })
+    shareReplay({ bufferSize: 1, refCount: true })
+  );
+
+  projectOntologies$ = combineLatest([this._projectOntologies$, this._localizationService.currentLanguage$]).pipe(
+    map(([ontologies, lang]) =>
+      [...ontologies].sort((a, b) => SortingHelper.compareStringsByLanguage(a.ontology.label, b.ontology.label, lang))
+    )
   );
   initialExpandIri?: string;
 
@@ -92,7 +98,8 @@ export class ProjectSidenavOntologiesComponent implements OnInit {
     private readonly _projectPageService: ProjectPageService,
     private readonly _route: ActivatedRoute,
     private readonly _ontologyService: OntologyService,
-    private readonly _v3: APIV3ApiService
+    private readonly _v3: APIV3ApiService,
+    private readonly _localizationService: LocalizationService
   ) {}
 
   ngOnInit() {

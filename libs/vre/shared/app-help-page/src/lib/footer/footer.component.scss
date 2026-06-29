@@ -78,8 +78,8 @@ footer {
   }
 }
 
-// Social media icons
-.footer-socials {
+// Social media icons — class avoids the "social" token, which content blockers (e.g. Brave Shields) hide.
+.footer-icon-links {
   display: flex;
   align-items: center;
   gap: 24px;

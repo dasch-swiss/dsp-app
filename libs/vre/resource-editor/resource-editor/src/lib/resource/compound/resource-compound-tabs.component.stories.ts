@@ -9,6 +9,7 @@ import { expect, waitFor } from 'storybook/test';
 
 import { PropertiesDisplayService } from '../../properties/properties-display/property-value/properties-display.service';
 import { RegionService } from '../../representation/region.service';
+import { ResourceFetcherService } from '../../representation/resource-fetcher.service';
 import { makeEntityInfo, makePropEntry, makeTextPropDef, makeTextValue } from '../../resource-stories.helper';
 import { CompoundService } from './compound.service';
 import { ResourceCompoundTabsComponent } from './resource-compound-tabs.component';
@@ -38,6 +39,20 @@ const makeResource = (): DspResource => {
   return generateDspResource(res);
 };
 
+const makeRegion = (id: string, label: string): DspResource => {
+  const res = new ReadResource();
+  res.id = id;
+  res.label = label;
+  res.type = 'http://api.knora.org/ontology/knora-api/v2#Region';
+  res.attachedToProject = 'http://rdfh.ch/projects/0001';
+  res.attachedToUser = 'http://rdfh.ch/users/test';
+  res.userHasPermission = 'CR';
+  res.versionArkUrl = `http://ark.example/${encodeURIComponent(id)}`;
+  res.properties = {};
+  res.entityInfo = makeEntityInfo(res.type, [], 'Region');
+  return generateDspResource(res);
+};
+
 const sharedProviders = [
   provideRouter([{ path: '**', component: class {} }]),
   {
@@ -50,6 +65,16 @@ const sharedProviders = [
   },
   { provide: PropertiesDisplayService, useClass: PropertiesDisplayService },
   { provide: CompoundService, useValue: { incomingResource$: of(undefined) } },
+  {
+    provide: ResourceFetcherService,
+    useValue: {
+      reload: () => {},
+      scrollToTop: () => {},
+      attachedUser$: of(null),
+      userCanEdit$: of(false),
+      userCanDelete$: of(false),
+    },
+  },
   {
     provide: DspApiConnectionToken,
     useValue: {
@@ -107,10 +132,17 @@ export const WithRegions: Story = {
         {
           provide: RegionService,
           useValue: {
-            regions$: of([{ id: 'region1' } as any, { id: 'region2' } as any]).pipe(delay(0)),
+            regions$: of([
+              makeRegion('http://rdfh.ch/region/1', 'Region 1'),
+              makeRegion('http://rdfh.ch/region/2', 'Region 2'),
+            ]).pipe(delay(0)),
             regionsLoading$: of(false),
             selectedRegion$: of(null),
+            highlightedRegionClicked$: of(null),
             showRegions: () => {},
+            selectRegion: () => {},
+            setHighlightedRegionClicked: () => {},
+            updateRegions$: () => of(undefined),
           },
         },
       ],

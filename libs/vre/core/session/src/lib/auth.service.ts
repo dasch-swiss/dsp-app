@@ -30,7 +30,10 @@ export class AuthService {
 
     return this._userService.loadUser(identifierOrIri, identifierType).pipe(
       tap(user => {
-        this._localizationsService.setLanguage(user.lang);
+        const lang = LocalizationService.parseLanguage(user.lang);
+        if (lang) {
+          this._localizationsService.currentLanguage = lang;
+        }
         this._grafanaFaroService.trackEvent('auth.login', {
           identifierType,
         });
@@ -44,7 +47,7 @@ export class AuthService {
    */
   afterLogout(): void {
     this._userService.logout();
-    this._accessTokenService.removeTokens();
+    this._accessTokenService.removeToken();
     this._dspApiConnection.v2.jsonWebToken = '';
     this._grafanaFaroService.trackEvent('auth.logout');
     this._grafanaFaroService.removeUser();
@@ -59,9 +62,18 @@ export class AuthService {
       .pipe(
         finalize(() => {
           this.afterLogout();
-          window.location.reload();
+          this.reloadPage();
         })
       )
       .subscribe();
+  }
+
+  /**
+   * Reloads the page after logout. Extracted as a seam so tests can intercept it:
+   * `window.location.reload()` cannot be mocked under jsdom >=26 (the `location`
+   * object and its members are [LegacyUnforgeable]).
+   */
+  reloadPage(): void {
+    window.location.reload();
   }
 }

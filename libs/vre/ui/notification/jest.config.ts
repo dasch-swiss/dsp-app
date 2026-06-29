@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName: 'vre-ui-notification',
   preset: '../../../../jest.preset.js',
   coverageDirectory: '../../../../coverage/libs/vre/ui/notification',

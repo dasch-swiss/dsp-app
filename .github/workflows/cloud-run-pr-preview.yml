@@ -30,7 +30,7 @@ jobs:
       SERVICE_NAME: dsp-app-pr-${{ github.event.pull_request.number }}
       IMAGE_TAG: pr-${{ github.event.pull_request.number }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - uses: actions/setup-node@v6
         with:
@@ -169,7 +169,7 @@ jobs:
           echo "SERVICE_NAME=dsp-app-pr-${PR_NUMBER}" >> $GITHUB_ENV
           echo "IMAGE_TAG=pr-${PR_NUMBER}" >> $GITHUB_ENV
 
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - uses: actions/setup-node@v6
         with:

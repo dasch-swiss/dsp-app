@@ -1,27 +1,15 @@
-export type DaschLanguage = 'en' | 'de' | 'fr' | 'it' | 'rm';
-
-export const AvailableLanguages: { language: DaschLanguage; value: string }[] = [
-  {
-    language: 'en',
-    value: 'English',
-  },
-  {
-    language: 'de',
-    value: 'German (Deutsch)',
-  },
-  {
-    language: 'fr',
-    value: 'French (Francais)',
-  },
-  {
-    language: 'it',
-    value: 'Italian (Italiano)',
-  },
-  {
-    language: 'rm',
-    value: 'Romanic (Rumantsch)',
-  },
+export const AvailableLanguages = [
+  { language: 'en', value: 'English' },
+  { language: 'de', value: 'German (Deutsch)' },
+  { language: 'fr', value: 'French (Francais)' },
+  { language: 'it', value: 'Italian (Italiano)' },
+  // Romansh has no translation file yet; the fallback loader serves en.json for 'rm' (DEV-6629).
+  { language: 'rm', value: 'Romanic (Rumantsch)' },
 ] as const;
+
+export type AvailableLanguage = (typeof AvailableLanguages)[number]['language'];
+
+export const AvailableLanguageKeys = AvailableLanguages.map(l => l.language) as readonly AvailableLanguage[];
 
 export const LocalStorageLanguageKey = 'dsp_language';
 

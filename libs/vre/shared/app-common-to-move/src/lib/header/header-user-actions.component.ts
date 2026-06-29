@@ -3,16 +3,25 @@ import { MatButtonModule } from '@angular/material/button';
 import { RouterModule } from '@angular/router';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { TranslatePipe } from '@ngx-translate/core';
+import { LanguageSwitcherComponent } from './language-switcher.component';
 import { UserMenuComponent } from './user-menu/user-menu.component';
 import { VersionBadgeComponent } from './version-badge.component';
 
 @Component({
   selector: 'app-header-user-actions',
-  imports: [MatButtonModule, RouterModule, TranslatePipe, VersionBadgeComponent, UserMenuComponent],
+  imports: [
+    MatButtonModule,
+    RouterModule,
+    TranslatePipe,
+    VersionBadgeComponent,
+    LanguageSwitcherComponent,
+    UserMenuComponent,
+  ],
   template: `
     <span style="display: flex; align-items: center; gap: 8px">
       <app-version-badge />
       <a mat-button [routerLink]="['/', HELP_LINK]">{{ 'ui.header.help' | translate }}</a>
+      <app-language-switcher />
       <app-user-menu />
     </span>
   `,

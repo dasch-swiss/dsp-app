@@ -1,11 +1,25 @@
 import { TestBed } from '@angular/core/testing';
-import { Constants } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
+import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { createMockLocalizationService } from '@dasch-swiss/vre/shared/app-helper-services/testing';
+import { TranslateLoader } from '@ngx-translate/core';
+import { of } from 'rxjs';
 import { IriLabelPair, NodeValue, Predicate, StatementElement, StringValue } from '../../model';
 import { Operator } from '../../operators.config';
+import { englishLabels, makeIriLabelPair } from '../../testing/test-data-builders';
 import { GravsearchService } from '../gravsearch.service';
 import { OntologyDataService } from '../ontology-data.service';
 import { SearchStateService } from '../search-state.service';
+
+const { service: mockLocalizationService } = createMockLocalizationService('en');
+
+// OntologyDataService eagerly loads the synthetic rdfs:label predicate via
+// TranslateLoader on init. The gravsearch suite does not exercise that
+// behaviour, so a minimal stub returning empty translation objects is
+// sufficient to satisfy DI.
+const mockTranslateLoader: TranslateLoader = {
+  getTranslation: () => of({}),
+};
 
 /**
  * Helper function to set up test from JSON input
@@ -40,7 +54,7 @@ function setupTestFromJson(
       const pred = jsonElement._selectedPredicate;
       (statement as any)._selectedPredicate = new Predicate(
         pred.iri,
-        pred.label,
+        englishLabels(pred.label),
         pred.objectValueType,
         pred.isLinkProperty,
         pred.listObjectIri
@@ -185,6 +199,8 @@ describe('Gravsearch Service and Writer - Label', () => {
         SearchStateService,
         OntologyDataService,
         { provide: DspApiConnectionToken, useValue: mockDspApiConnection },
+        { provide: LocalizationService, useValue: mockLocalizationService },
+        { provide: TranslateLoader, useValue: mockTranslateLoader },
       ],
     });
 
@@ -193,16 +209,15 @@ describe('Gravsearch Service and Writer - Label', () => {
     ontologyDataService = TestBed.inject(OntologyDataService);
 
     // Mock OntologyDataService
-    jest.spyOn(ontologyDataService, 'selectedOntology', 'get').mockReturnValue({
-      iri: webernOntologyIri,
-      label: 'webern-onto',
-    });
+    jest
+      .spyOn(ontologyDataService, 'selectedOntology', 'get')
+      .mockReturnValue(makeIriLabelPair(webernOntologyIri, 'webern-onto'));
     jest.spyOn(ontologyDataService, 'classIris', 'get').mockReturnValue(webernClassIris);
   });
 
   it('should generate query with equals operator', () => {
     const jsonSnapshot = JSON.stringify(baseJsonSnapshot);
-    const resourceClass: IriLabelPair = { iri: '', label: 'All resource classes' };
+    const resourceClass: IriLabelPair = makeIriLabelPair('', 'All resource classes');
     setupTestFromJson(searchStateService, jsonSnapshot, resourceClass);
 
     const statements = searchStateService.validStatementElements;
@@ -229,7 +244,7 @@ OFFSET 0`;
 
   it('should generate query with notEquals operator', () => {
     const jsonSnapshot = JSON.stringify(baseJsonSnapshot);
-    const resourceClass: IriLabelPair = { iri: '', label: 'All resource classes' };
+    const resourceClass: IriLabelPair = makeIriLabelPair('', 'All resource classes');
     setupTestFromJson(searchStateService, jsonSnapshot, resourceClass);
 
     changeOperator(searchStateService, 0, Operator.NotEquals);
@@ -242,7 +257,7 @@ OFFSET 0`;
 
   it('should generate query with isLike operator', () => {
     const jsonSnapshot = JSON.stringify(baseJsonSnapshot);
-    const resourceClass: IriLabelPair = { iri: '', label: 'All resource classes' };
+    const resourceClass: IriLabelPair = makeIriLabelPair('', 'All resource classes');
     setupTestFromJson(searchStateService, jsonSnapshot, resourceClass);
 
     changeOperator(searchStateService, 0, Operator.IsLike);
@@ -255,7 +270,7 @@ OFFSET 0`;
 
   it('should generate query with matches operator', () => {
     const jsonSnapshot = JSON.stringify(baseJsonSnapshot);
-    const resourceClass: IriLabelPair = { iri: '', label: 'All resource classes' };
+    const resourceClass: IriLabelPair = makeIriLabelPair('', 'All resource classes');
     setupTestFromJson(searchStateService, jsonSnapshot, resourceClass);
 
     changeOperator(searchStateService, 0, Operator.Matches);
@@ -268,7 +283,7 @@ OFFSET 0`;
 
   it('passes regex metacharacters through unchanged in label isLike pattern', () => {
     const jsonSnapshot = JSON.stringify(baseJsonSnapshot);
-    const resourceClass: IriLabelPair = { iri: '', label: 'All resource classes' };
+    const resourceClass: IriLabelPair = makeIriLabelPair('', 'All resource classes');
     setupTestFromJson(searchStateService, jsonSnapshot, resourceClass);
 
     changeOperator(searchStateService, 0, Operator.IsLike);
@@ -282,7 +297,7 @@ OFFSET 0`;
 
   it('quadruples user-typed backslashes and triples-escapes quotes in label isLike pattern', () => {
     const jsonSnapshot = JSON.stringify(baseJsonSnapshot);
-    const resourceClass: IriLabelPair = { iri: '', label: 'All resource classes' };
+    const resourceClass: IriLabelPair = makeIriLabelPair('', 'All resource classes');
     setupTestFromJson(searchStateService, jsonSnapshot, resourceClass);
 
     changeOperator(searchStateService, 0, Operator.IsLike);
@@ -375,6 +390,8 @@ describe('Gravsearch Service and Writer - TextValue', () => {
         SearchStateService,
         OntologyDataService,
         { provide: DspApiConnectionToken, useValue: mockDspApiConnection },
+        { provide: LocalizationService, useValue: mockLocalizationService },
+        { provide: TranslateLoader, useValue: mockTranslateLoader },
       ],
     });
 
@@ -383,16 +400,15 @@ describe('Gravsearch Service and Writer - TextValue', () => {
     ontologyDataService = TestBed.inject(OntologyDataService);
 
     // Mock OntologyDataService
-    jest.spyOn(ontologyDataService, 'selectedOntology', 'get').mockReturnValue({
-      iri: webernOntologyIri,
-      label: 'webern-onto',
-    });
+    jest
+      .spyOn(ontologyDataService, 'selectedOntology', 'get')
+      .mockReturnValue(makeIriLabelPair(webernOntologyIri, 'webern-onto'));
     jest.spyOn(ontologyDataService, 'classIris', 'get').mockReturnValue(webernClassIris);
   });
 
   it('should generate query with equals operator', () => {
     const jsonSnapshot = JSON.stringify(baseJsonSnapshot);
-    const resourceClass: IriLabelPair = { iri: '', label: 'All resource classes' };
+    const resourceClass: IriLabelPair = makeIriLabelPair('', 'All resource classes');
     setupTestFromJson(searchStateService, jsonSnapshot, resourceClass);
 
     const statements = searchStateService.validStatementElements;
@@ -420,7 +436,7 @@ OFFSET 0`;
 
   it('should generate query with notEquals operator', () => {
     const jsonSnapshot = JSON.stringify(baseJsonSnapshot);
-    const resourceClass: IriLabelPair = { iri: '', label: 'All resource classes' };
+    const resourceClass: IriLabelPair = makeIriLabelPair('', 'All resource classes');
     setupTestFromJson(searchStateService, jsonSnapshot, resourceClass);
 
     changeOperator(searchStateService, 0, Operator.NotEquals);
@@ -433,7 +449,7 @@ OFFSET 0`;
 
   it('should generate query with isLike operator', () => {
     const jsonSnapshot = JSON.stringify(baseJsonSnapshot);
-    const resourceClass: IriLabelPair = { iri: '', label: 'All resource classes' };
+    const resourceClass: IriLabelPair = makeIriLabelPair('', 'All resource classes');
     setupTestFromJson(searchStateService, jsonSnapshot, resourceClass);
 
     changeOperator(searchStateService, 0, Operator.IsLike);
@@ -446,7 +462,7 @@ OFFSET 0`;
 
   it('passes regex metacharacters through unchanged in TextValue isLike pattern', () => {
     const jsonSnapshot = JSON.stringify(baseJsonSnapshot);
-    const resourceClass: IriLabelPair = { iri: '', label: 'All resource classes' };
+    const resourceClass: IriLabelPair = makeIriLabelPair('', 'All resource classes');
     setupTestFromJson(searchStateService, jsonSnapshot, resourceClass);
 
     changeOperator(searchStateService, 0, Operator.IsLike);
@@ -460,7 +476,7 @@ OFFSET 0`;
 
   it('quadruples user-typed backslashes and triples-escapes quotes in TextValue isLike pattern', () => {
     const jsonSnapshot = JSON.stringify(baseJsonSnapshot);
-    const resourceClass: IriLabelPair = { iri: '', label: 'All resource classes' };
+    const resourceClass: IriLabelPair = makeIriLabelPair('', 'All resource classes');
     setupTestFromJson(searchStateService, jsonSnapshot, resourceClass);
 
     changeOperator(searchStateService, 0, Operator.IsLike);
@@ -569,6 +585,8 @@ describe('Gravsearch Service and Writer - ListValue', () => {
         SearchStateService,
         OntologyDataService,
         { provide: DspApiConnectionToken, useValue: mockDspApiConnection },
+        { provide: LocalizationService, useValue: mockLocalizationService },
+        { provide: TranslateLoader, useValue: mockTranslateLoader },
       ],
     });
 
@@ -577,19 +595,18 @@ describe('Gravsearch Service and Writer - ListValue', () => {
     ontologyDataService = TestBed.inject(OntologyDataService);
 
     // Mock OntologyDataService
-    jest.spyOn(ontologyDataService, 'selectedOntology', 'get').mockReturnValue({
-      iri: webernOntologyIri,
-      label: 'webern-onto',
-    });
+    jest
+      .spyOn(ontologyDataService, 'selectedOntology', 'get')
+      .mockReturnValue(makeIriLabelPair(webernOntologyIri, 'webern-onto'));
     jest.spyOn(ontologyDataService, 'classIris', 'get').mockReturnValue(webernClassIris);
   });
 
   it('should generate query with equals operator', () => {
     const jsonSnapshot = JSON.stringify(baseJsonSnapshot);
-    const resourceClass: IriLabelPair = {
-      iri: 'http://api.stage.dasch.swiss/ontology/0806/webern-onto/v2#SourceDescriptionManuscript',
-      label: '[AWG] Quellenbeschreibung (MS)',
-    };
+    const resourceClass: IriLabelPair = makeIriLabelPair(
+      'http://api.stage.dasch.swiss/ontology/0806/webern-onto/v2#SourceDescriptionManuscript',
+      '[AWG] Quellenbeschreibung (MS)'
+    );
     setupTestFromJson(searchStateService, jsonSnapshot, resourceClass);
 
     const statements = searchStateService.validStatementElements;
@@ -617,10 +634,10 @@ OFFSET 0`;
 
   it('should generate query with notEquals operator', () => {
     const jsonSnapshot = JSON.stringify(baseJsonSnapshot);
-    const resourceClass: IriLabelPair = {
-      iri: 'http://api.stage.dasch.swiss/ontology/0806/webern-onto/v2#SourceDescriptionManuscript',
-      label: '[AWG] Quellenbeschreibung (MS)',
-    };
+    const resourceClass: IriLabelPair = makeIriLabelPair(
+      'http://api.stage.dasch.swiss/ontology/0806/webern-onto/v2#SourceDescriptionManuscript',
+      '[AWG] Quellenbeschreibung (MS)'
+    );
     setupTestFromJson(searchStateService, jsonSnapshot, resourceClass);
 
     changeOperator(searchStateService, 0, Operator.NotEquals);
@@ -711,6 +728,8 @@ describe('Gravsearch Service and Writer - IntValue', () => {
         SearchStateService,
         OntologyDataService,
         { provide: DspApiConnectionToken, useValue: mockDspApiConnection },
+        { provide: LocalizationService, useValue: mockLocalizationService },
+        { provide: TranslateLoader, useValue: mockTranslateLoader },
       ],
     });
 
@@ -719,19 +738,18 @@ describe('Gravsearch Service and Writer - IntValue', () => {
     ontologyDataService = TestBed.inject(OntologyDataService);
 
     // Mock OntologyDataService
-    jest.spyOn(ontologyDataService, 'selectedOntology', 'get').mockReturnValue({
-      iri: webernOntologyIri,
-      label: 'webern-onto',
-    });
+    jest
+      .spyOn(ontologyDataService, 'selectedOntology', 'get')
+      .mockReturnValue(makeIriLabelPair(webernOntologyIri, 'webern-onto'));
     jest.spyOn(ontologyDataService, 'classIris', 'get').mockReturnValue(webernClassIris);
   });
 
   it('should generate query with equals operator', () => {
     const jsonSnapshot = JSON.stringify(baseJsonSnapshot);
-    const resourceClass: IriLabelPair = {
-      iri: 'http://api.stage.dasch.swiss/ontology/0806/webern-onto/v2#MusicalPiece',
-      label: 'Musikstück (AWG-ID)',
-    };
+    const resourceClass: IriLabelPair = makeIriLabelPair(
+      'http://api.stage.dasch.swiss/ontology/0806/webern-onto/v2#MusicalPiece',
+      'Musikstück (AWG-ID)'
+    );
     setupTestFromJson(searchStateService, jsonSnapshot, resourceClass);
 
     const statements = searchStateService.validStatementElements;
@@ -760,10 +778,10 @@ OFFSET 0`;
 
   it('should generate query with notEquals operator', () => {
     const jsonSnapshot = JSON.stringify(baseJsonSnapshot);
-    const resourceClass: IriLabelPair = {
-      iri: 'http://api.stage.dasch.swiss/ontology/0806/webern-onto/v2#MusicalPiece',
-      label: 'Musikstück (AWG-ID)',
-    };
+    const resourceClass: IriLabelPair = makeIriLabelPair(
+      'http://api.stage.dasch.swiss/ontology/0806/webern-onto/v2#MusicalPiece',
+      'Musikstück (AWG-ID)'
+    );
     setupTestFromJson(searchStateService, jsonSnapshot, resourceClass);
 
     changeOperator(searchStateService, 0, Operator.NotEquals);
@@ -776,10 +794,10 @@ OFFSET 0`;
 
   it('should generate query with greaterThan operator', () => {
     const jsonSnapshot = JSON.stringify(baseJsonSnapshot);
-    const resourceClass: IriLabelPair = {
-      iri: 'http://api.stage.dasch.swiss/ontology/0806/webern-onto/v2#MusicalPiece',
-      label: 'Musikstück (AWG-ID)',
-    };
+    const resourceClass: IriLabelPair = makeIriLabelPair(
+      'http://api.stage.dasch.swiss/ontology/0806/webern-onto/v2#MusicalPiece',
+      'Musikstück (AWG-ID)'
+    );
     setupTestFromJson(searchStateService, jsonSnapshot, resourceClass);
 
     changeOperator(searchStateService, 0, Operator.GreaterThan);
@@ -792,10 +810,10 @@ OFFSET 0`;
 
   it('should generate query with greaterThanEquals operator', () => {
     const jsonSnapshot = JSON.stringify(baseJsonSnapshot);
-    const resourceClass: IriLabelPair = {
-      iri: 'http://api.stage.dasch.swiss/ontology/0806/webern-onto/v2#MusicalPiece',
-      label: 'Musikstück (AWG-ID)',
-    };
+    const resourceClass: IriLabelPair = makeIriLabelPair(
+      'http://api.stage.dasch.swiss/ontology/0806/webern-onto/v2#MusicalPiece',
+      'Musikstück (AWG-ID)'
+    );
     setupTestFromJson(searchStateService, jsonSnapshot, resourceClass);
 
     changeOperator(searchStateService, 0, Operator.GreaterThanEquals);
@@ -808,10 +826,10 @@ OFFSET 0`;
 
   it('should generate query with lessThan operator', () => {
     const jsonSnapshot = JSON.stringify(baseJsonSnapshot);
-    const resourceClass: IriLabelPair = {
-      iri: 'http://api.stage.dasch.swiss/ontology/0806/webern-onto/v2#MusicalPiece',
-      label: 'Musikstück (AWG-ID)',
-    };
+    const resourceClass: IriLabelPair = makeIriLabelPair(
+      'http://api.stage.dasch.swiss/ontology/0806/webern-onto/v2#MusicalPiece',
+      'Musikstück (AWG-ID)'
+    );
     setupTestFromJson(searchStateService, jsonSnapshot, resourceClass);
 
     changeOperator(searchStateService, 0, Operator.LessThan);
@@ -824,10 +842,10 @@ OFFSET 0`;
 
   it('should generate query with lessThanEquals operator', () => {
     const jsonSnapshot = JSON.stringify(baseJsonSnapshot);
-    const resourceClass: IriLabelPair = {
-      iri: 'http://api.stage.dasch.swiss/ontology/0806/webern-onto/v2#MusicalPiece',
-      label: 'Musikstück (AWG-ID)',
-    };
+    const resourceClass: IriLabelPair = makeIriLabelPair(
+      'http://api.stage.dasch.swiss/ontology/0806/webern-onto/v2#MusicalPiece',
+      'Musikstück (AWG-ID)'
+    );
     setupTestFromJson(searchStateService, jsonSnapshot, resourceClass);
 
     changeOperator(searchStateService, 0, Operator.LessThanEquals);

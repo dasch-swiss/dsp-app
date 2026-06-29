@@ -361,7 +361,24 @@
       },
       "advancedSearch": {
         "allResourceClasses": "Toutes les ressources",
-        "switchToFulltextSearch": "Passer à la recherche plein texte"
+        "switchToFulltextSearch": "Passer à la recherche plein texte",
+        "dataModel": "Modèle de données",
+        "orderBy": "Trier par",
+        "property": "Propriété",
+        "propertyOfClass": "Propriété de {{class}}",
+        "resourceClass": "Classe de ressource",
+        "resourceLabel": "Libellé de ressource",
+        "switchToRegular": "Passer à la recherche standard",
+        "title": "Recherche avancée",
+        "tooltips": {
+          "addCriteria": "Ajouter un critère de recherche",
+          "addSubCriteria": "Ajouter un sous-critère",
+          "orderByDisabled": "La recherche ne peut pas être triée par une propriété URI ou une propriété qui renvoie à une ressource.",
+          "removeCriteria": "Supprimer le critère de recherche",
+          "switchToHorizontal": "Passer à la disposition horizontale",
+          "switchToVertical": "Passer à la disposition verticale"
+        },
+        "usePreviousSearch": "Utiliser la recherche précédente"
       }
     },
     "dataBrowser": {
@@ -807,7 +824,9 @@
       "showing": "Affichage"
     },
     "header": {
-      "help": "Aide"
+      "help": "Aide",
+      "changeLanguage": "Changer la langue",
+      "changeLanguageInfo": "Les contenus des projets, tels que les données, les modèles de données ou les listes, sont affichés dans la langue originale s'ils ne sont pas disponibles dans la langue choisie."
     },
     "chipListInput": {
       "keywords": "Mots clés"

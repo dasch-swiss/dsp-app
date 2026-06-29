@@ -1,3 +1,16 @@
+@use "config" as *;
+
+// Sticky footer: fill at least the viewport below the header so the footer stays at the bottom on short pages.
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - #{$small-header-height});
+}
+
+.content {
+  flex: 1 0 auto;
+}
+
 .project-overview-subtitle {
   margin-top: 2rem;
 }

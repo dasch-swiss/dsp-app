@@ -11,6 +11,12 @@ const meta: Meta<UserFormComponent> = {
       description: 'Initial user data to pre-populate the form.',
       table: { type: { summary: '{ givenName, familyName, email, username, lang }' }, category: 'State' },
     },
+    showLanguage: {
+      description:
+        'Whether to render the language picker. Default true. Self-edit flows pass false so the header LanguageSwitcherComponent is the canonical entry point.',
+      control: 'boolean',
+      table: { type: { summary: 'boolean' }, defaultValue: { summary: 'true' }, category: 'Behavior' },
+    },
   },
 };
 export default meta;
@@ -52,6 +58,28 @@ export const PrefilledForm: Story = {
     });
     await step('"Doe" family name is pre-filled', async () => {
       await expect(canvas.getByDisplayValue('Doe')).toBeInTheDocument();
+    });
+    await step('Language picker is shown by default', async () => {
+      await expect(canvasElement.querySelector('mat-select')).not.toBeNull();
+    });
+  },
+};
+
+export const HidesLanguagePickerWhenShowLanguageIsFalse: Story = {
+  name: 'Hides language picker when showLanguage is false (self-edit)',
+  args: {
+    data: {
+      givenName: 'John',
+      familyName: 'Doe',
+      email: 'john.doe@example.com',
+      username: 'john.doe',
+      lang: 'en',
+    },
+    showLanguage: false,
+  },
+  play: async ({ canvasElement, step }) => {
+    await step('Language mat-select is not rendered', async () => {
+      await expect(canvasElement.querySelector('mat-select')).toBeNull();
     });
   },
 };

@@ -5,7 +5,13 @@ import { DownloadPropertyListComponent } from './download-property-list.componen
 
 const makePropertyInfoValues = (id: string, label: string, comment?: string): PropertyInfoValues =>
   ({
-    propDef: { id, label, comment },
+    propDef: {
+      id,
+      label,
+      comment,
+      labels: [{ language: 'en', value: label }],
+      comments: comment ? [{ language: 'en', value: comment }] : [],
+    },
     guiDef: {},
     values: [],
   }) as unknown as PropertyInfoValues;

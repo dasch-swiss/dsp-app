@@ -1,4 +1,4 @@
-import { Constants } from '@dasch-swiss/dsp-js';
+import { Constants, StringLiteralV2 } from '@dasch-swiss/dsp-js';
 import { v4 as uuidv4 } from 'uuid';
 import {
   RDFS_LABEL,
@@ -38,7 +38,8 @@ export enum PropertyObjectType {
 
 export interface IriLabelPair {
   iri: string;
-  label: string;
+  labels: StringLiteralV2[];
+  comments: StringLiteralV2[];
 }
 
 abstract class StatementValue {
@@ -59,7 +60,7 @@ export class NodeValue extends StatementValue {
   }
 
   get label(): string | undefined {
-    return this._value?.label;
+    return this._value?.labels.find(l => l.value && l.value.trim() !== '')?.value;
   }
 
   get writeValue(): string | undefined {
@@ -87,10 +88,11 @@ export class StringValue extends StatementValue {
 export class Predicate implements IriLabelPair {
   constructor(
     public iri: string,
-    public label: string,
+    public labels: StringLiteralV2[],
     public objectValueType: string,
     public isLinkProperty: boolean,
-    public listObjectIri?: string
+    public listObjectIri?: string,
+    public comments: StringLiteralV2[] = []
   ) {}
 }
 
@@ -248,7 +250,7 @@ export class OrderByItem {
   orderBy = false;
   constructor(
     public id: string,
-    public label?: string,
+    public labels: StringLiteralV2[] = [],
     public disabled?: boolean
   ) {}
 }

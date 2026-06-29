@@ -12,7 +12,22 @@ jobs:
     runs-on: ubuntu-latest
     # Automate releases with Conventional Commit Messages as Pull Requests are merged into "main" branch
     steps:
+      # Mint a short-lived GitHub App token (DaSCH Bot App) scoped to dsp-app.
+      # release-please needs a token whose PRs trigger downstream CI; the built-in
+      # GITHUB_TOKEN is suppressed by GitHub's recursion guard. The App token does
+      # trigger those workflows — same reason the openapi spec-bump job uses it.
+      # SHA-pinned (v3 == bcd2ba4) since this action handles private-key material.
+      - name: Mint App token (write — dsp-app only)
+        id: app-token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1  # v3
+        with:
+          app-id: ${{ secrets.DASCH_BOT_APP_ID }}
+          private-key: ${{ secrets.DASCH_BOT_APP_PRIVATE_KEY }}
+          owner: dasch-swiss
+          repositories: dsp-app
+          permission-contents: write
+          permission-pull-requests: write
       - name: Get release please action
         uses: googleapis/release-please-action@v5
         with:
-          token: ${{ secrets.GH_TOKEN }}
+          token: ${{ steps.app-token.outputs.token }}

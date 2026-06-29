@@ -361,7 +361,24 @@
       },
       "advancedSearch": {
         "allResourceClasses": "All resources",
-        "switchToFulltextSearch": "Switch to fulltext search"
+        "switchToFulltextSearch": "Switch to fulltext search",
+        "dataModel": "Data model",
+        "orderBy": "Order by",
+        "property": "Property",
+        "propertyOfClass": "Property of {{class}}",
+        "resourceClass": "Resource Class",
+        "resourceLabel": "Resource Label",
+        "switchToRegular": "Switch to regular search",
+        "title": "Advanced search",
+        "tooltips": {
+          "addCriteria": "Add search criteria",
+          "addSubCriteria": "Add sub-criteria",
+          "orderByDisabled": "Search cannot be ordered by a URI property or a property that links to a resource.",
+          "removeCriteria": "Remove search criteria",
+          "switchToHorizontal": "Switch to horizontal layout",
+          "switchToVertical": "Switch to vertical layout"
+        },
+        "usePreviousSearch": "Use previous search"
       }
     },
     "dataBrowser": {
@@ -807,7 +824,9 @@
       "showing": "Showing"
     },
     "header": {
-      "help": "Help"
+      "help": "Help",
+      "changeLanguage": "Change language",
+      "changeLanguageInfo": "Project content such as data, data models or lists is shown in the project's original language if it is not available in the chosen language."
     },
     "chipListInput": {
       "keywords": "Keywords"

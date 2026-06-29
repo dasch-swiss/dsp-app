@@ -3,6 +3,7 @@ import { KnoraApiConnection, ReadUser } from '@dasch-swiss/dsp-js';
 import { GrafanaFaroService } from '@dasch-swiss/vre/3rd-party-services/analytics';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { createMockLocalizationService } from '@dasch-swiss/vre/shared/app-helper-services/testing';
 import { firstValueFrom, of, throwError } from 'rxjs';
 import { AccessTokenService } from './access-token.service';
 import { AuthService } from './auth.service';
@@ -41,24 +42,17 @@ function createMockUser(overrides?: Partial<ReadUser>): ReadUser {
   } as ReadUser;
 }
 
-// Helper for window.location mocking
-function mockWindowReload(): { reloadMock: jest.Mock; restore: () => void } {
-  const originalLocation = window.location;
+// Helper to intercept the page reload triggered by logout().
+// jsdom >=26 makes `window.location` and its members [LegacyUnforgeable]
+// (non-configurable + non-writable), so they cannot be mocked directly. AuthService
+// wraps the reload in a `reloadPage()` seam that we spy on instead.
+function mockWindowReload(service: AuthService): { reloadMock: jest.Mock; restore: () => void } {
   const reloadMock = jest.fn();
-
-  Object.defineProperty(window, 'location', {
-    writable: true,
-    value: { ...originalLocation, reload: reloadMock },
-  });
+  const spy = jest.spyOn(service, 'reloadPage').mockImplementation(reloadMock);
 
   return {
     reloadMock,
-    restore: () => {
-      Object.defineProperty(window, 'location', {
-        writable: true,
-        value: originalLocation,
-      });
-    },
+    restore: () => spy.mockRestore(),
   };
 }
 
@@ -67,7 +61,8 @@ describe('AuthService', () => {
   let mockUserService: jest.Mocked<Partial<UserService>>;
   let mockAccessTokenService: jest.Mocked<Partial<AccessTokenService>>;
   let mockDspApiConnection: jest.Mocked<Partial<KnoraApiConnection>>;
-  let mockLocalizationService: jest.Mocked<Partial<LocalizationService>>;
+  let mockLocalizationService: Partial<LocalizationService>;
+  let setLanguageSpy: jest.Mock<void, [string]>;
   let mockGrafanaFaro: jest.Mocked<Partial<GrafanaFaroService>>;
 
   const mockUser = createMockUser();
@@ -80,7 +75,7 @@ describe('AuthService', () => {
 
     mockAccessTokenService = {
       storeToken: jest.fn(),
-      removeTokens: jest.fn(),
+      removeToken: jest.fn(),
       getAccessToken: jest.fn(),
       decodeAccessToken: jest.fn(),
     };
@@ -95,9 +90,7 @@ describe('AuthService', () => {
       },
     } as unknown as jest.Mocked<KnoraApiConnection>;
 
-    mockLocalizationService = {
-      setLanguage: jest.fn(),
-    };
+    ({ service: mockLocalizationService, setLanguageSpy } = createMockLocalizationService('en'));
 
     mockGrafanaFaro = {
       trackEvent: jest.fn(),
@@ -147,7 +140,7 @@ describe('AuthService', () => {
       );
 
       expect(mockUserService.loadUser).toHaveBeenCalledWith(TEST_CONSTANTS.EMAIL, 'email');
-      expect(mockLocalizationService.setLanguage).toHaveBeenCalledWith(TEST_CONSTANTS.USER_LANG);
+      expect(setLanguageSpy).toHaveBeenCalledWith(TEST_CONSTANTS.USER_LANG);
       expect(user).toEqual(mockUser);
     });
 
@@ -178,7 +171,7 @@ describe('AuthService', () => {
       );
 
       expect(mockUserService.loadUser).toHaveBeenCalledWith(TEST_CONSTANTS.USER_IRI, 'iri');
-      expect(mockLocalizationService.setLanguage).toHaveBeenCalledWith(TEST_CONSTANTS.USER_LANG);
+      expect(setLanguageSpy).toHaveBeenCalledWith(TEST_CONSTANTS.USER_LANG);
       expect(user).toEqual(mockUser);
     });
 
@@ -188,7 +181,7 @@ describe('AuthService', () => {
 
       await firstValueFrom(service.afterSuccessfulLogin$(TEST_CONSTANTS.JWT_TOKEN, TEST_CONSTANTS.EMAIL, 'email'));
 
-      expect(mockLocalizationService.setLanguage).toHaveBeenCalledWith('de');
+      expect(setLanguageSpy).toHaveBeenCalledWith('de');
     });
   });
 
@@ -197,7 +190,7 @@ describe('AuthService', () => {
       service.afterLogout();
 
       expect(mockUserService.logout).toHaveBeenCalled();
-      expect(mockAccessTokenService.removeTokens).toHaveBeenCalled();
+      expect(mockAccessTokenService.removeToken).toHaveBeenCalled();
     });
 
     it('should clear JWT token', () => {
@@ -211,7 +204,7 @@ describe('AuthService', () => {
 
   describe('logout()', () => {
     it('should call API logout, execute afterLogout, and reload page', () => {
-      const { reloadMock, restore } = mockWindowReload();
+      const { reloadMock, restore } = mockWindowReload(service);
       mockDspApiConnection.v2!.auth!.logout = jest.fn().mockReturnValue(of({}));
       const afterLogoutSpy = jest.spyOn(service, 'afterLogout');
 
@@ -224,7 +217,7 @@ describe('AuthService', () => {
     });
 
     it('should handle API logout errors gracefully', () => {
-      const { reloadMock, restore } = mockWindowReload();
+      const { reloadMock, restore } = mockWindowReload(service);
       const logoutError = new Error('Logout failed');
       mockDspApiConnection.v2!.auth!.logout = jest.fn().mockReturnValue(throwError(() => logoutError));
       const afterLogoutSpy = jest.spyOn(service, 'afterLogout');
