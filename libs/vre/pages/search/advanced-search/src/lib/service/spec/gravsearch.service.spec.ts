@@ -871,6 +871,8 @@ describe('GravsearchService — fulltextTerm parameter', () => {
         SearchStateService,
         OntologyDataService,
         { provide: DspApiConnectionToken, useValue: {} },
+        { provide: LocalizationService, useValue: mockLocalizationService },
+        { provide: TranslateLoader, useValue: mockTranslateLoader },
       ],
     });
 
@@ -884,34 +886,34 @@ describe('GravsearchService — fulltextTerm parameter', () => {
     jest.spyOn(ontologyDataService, 'classIris', 'get').mockReturnValue([`${ontologyIri}#Person`]);
   });
 
-  it('injects matchesText triple when term is provided', () => {
+  it('injects matchText filter when term is provided', () => {
     const query = gravsearchService.generateGravSearchQuery([], 'hello');
-    expect(query).toContain('?mainRes knora-api:matchesText "hello" .');
+    expect(query).toContain('FILTER knora-api:matchText(?searchThis, "hello")');
   });
 
-  it('does not inject matchesText triple when term is empty string', () => {
+  it('does not inject matchText filter when term is empty string', () => {
     const query = gravsearchService.generateGravSearchQuery([], '');
-    expect(query).not.toContain('matchesText');
+    expect(query).not.toContain('matchText');
   });
 
-  it('does not inject matchesText triple when term is undefined', () => {
+  it('does not inject matchText filter when term is undefined', () => {
     const query = gravsearchService.generateGravSearchQuery([]);
-    expect(query).not.toContain('matchesText');
+    expect(query).not.toContain('matchText');
   });
 
-  it('does not inject matchesText triple when term is whitespace only', () => {
+  it('does not inject matchText filter when term is whitespace only', () => {
     const query = gravsearchService.generateGravSearchQuery([], '   ');
-    expect(query).not.toContain('matchesText');
+    expect(query).not.toContain('matchText');
   });
 
   it('trims the term before injecting', () => {
     const query = gravsearchService.generateGravSearchQuery([], '  hello  ');
-    expect(query).toContain('?mainRes knora-api:matchesText "hello" .');
+    expect(query).toContain('FILTER knora-api:matchText(?searchThis, "hello")');
   });
 
   it('escapes double quotes in the term', () => {
     const query = gravsearchService.generateGravSearchQuery([], 'say "hi"');
-    expect(query).toContain('matchesText');
+    expect(query).toContain('matchText');
     expect(query).not.toContain('"say "hi""');
   });
 
@@ -938,7 +940,7 @@ describe('GravsearchService — fulltextTerm parameter', () => {
     setupTestFromJson(searchStateService, jsonSnapshot, { iri: `${ontologyIri}#Person`, label: 'Person' });
 
     const query = gravsearchService.generateGravSearchQuery(searchStateService.validStatementElements, 'foo');
-    const matchesIdx = query.indexOf('matchesText');
+    const matchesIdx = query.indexOf('matchText');
     const chipIdx = query.indexOf('?res0');
     expect(matchesIdx).toBeGreaterThan(-1);
     expect(chipIdx).toBeGreaterThan(-1);
