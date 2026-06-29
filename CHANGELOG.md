@@ -1,5 +1,35 @@
 # Changelog
 
+## [13.7.1](https://github.com/dasch-swiss/dsp-app/compare/v13.7.0...v13.7.1) (2026-06-29)
+
+
+### Bug Fixes
+
+* advanced search allows unsupported order by (DEV-6677) ([#3184](https://github.com/dasch-swiss/dsp-app/issues/3184)) ([c610af0](https://github.com/dasch-swiss/dsp-app/commit/c610af00854105df7121c2917f33d40af0e0aa0e))
+* annotation hover preview is on several lines ([#3205](https://github.com/dasch-swiss/dsp-app/issues/3205)) ([2340cfe](https://github.com/dasch-swiss/dsp-app/commit/2340cfe78c887fa3024d3f82e6e46df48fb94f8e))
+* annotation metadata has right padding ([#3206](https://github.com/dasch-swiss/dsp-app/issues/3206)) ([2ab1c50](https://github.com/dasch-swiss/dsp-app/commit/2ab1c501a3f3ada4460c48e2969fb86407b301a2))
+* CJS interop fixes after application builder upgrade ([#3204](https://github.com/dasch-swiss/dsp-app/issues/3204)) ([2669888](https://github.com/dasch-swiss/dsp-app/commit/2669888b54f7342fecef1a4c0f99cc80a54197cf))
+
+
+### Maintenances
+
+* bind Romansch to English translations and remove rm.json (DEV-6629) ([#3188](https://github.com/dasch-swiss/dsp-app/issues/3188)) ([84a61e2](https://github.com/dasch-swiss/dsp-app/commit/84a61e27c547a50d6f0ed4ecc36a4a244156fefb))
+* center the paginator ([#3186](https://github.com/dasch-swiss/dsp-app/issues/3186)) ([9cfa01c](https://github.com/dasch-swiss/dsp-app/commit/9cfa01ca22d6ae3356861f6a379c70cd442b9218))
+* convert NX lint/test targets to inferred + align Node engines floor (DEV-6686) ([#3196](https://github.com/dasch-swiss/dsp-app/issues/3196)) ([d6ffc7b](https://github.com/dasch-swiss/dsp-app/commit/d6ffc7b1c1e7aaeef2f0596bc4dbdc13bb301afd))
+* **deps:** Update dependency @sentry/angular from 10.60.0 to 10.61.0 ([#3201](https://github.com/dasch-swiss/dsp-app/issues/3201)) ([0210847](https://github.com/dasch-swiss/dsp-app/commit/0210847a049f6681b5544ee7d5563648dd5a5d81))
+* **deps:** Update dependency @swc/core from 1.15.41 to 1.15.43 ([#3191](https://github.com/dasch-swiss/dsp-app/issues/3191)) ([ac32055](https://github.com/dasch-swiss/dsp-app/commit/ac320553b018912e95c9f995e5bb96fa539daddf))
+* **deps:** Update dependency angular-html-parser from 10.9.0 to 10.10.0 ([#3202](https://github.com/dasch-swiss/dsp-app/issues/3202)) ([7b6e996](https://github.com/dasch-swiss/dsp-app/commit/7b6e996d300534e54cc3a5dbf7b3cd56a08dbcc3))
+* **deps:** Update dependency autoprefixer from 10.5.1 to 10.5.2 ([#3200](https://github.com/dasch-swiss/dsp-app/issues/3200)) ([464fd3d](https://github.com/dasch-swiss/dsp-app/commit/464fd3d4e2ab153af36d03b606883a2d68db3d7f))
+* **deps:** Update dependency zod from 4.3.6 to 4.4.3 ([#3192](https://github.com/dasch-swiss/dsp-app/issues/3192)) ([270205c](https://github.com/dasch-swiss/dsp-app/commit/270205c4a344dca8f587201fbe208295307dea09))
+* **deps:** Update github-actions (major) ([#3187](https://github.com/dasch-swiss/dsp-app/issues/3187)) ([7479af6](https://github.com/dasch-swiss/dsp-app/commit/7479af6f7d6b6b317395a552dc794629cc357d66))
+* **deps:** Update grafana-faro-deps from 2.7.1 to 2.8.0 ([#3203](https://github.com/dasch-swiss/dsp-app/issues/3203)) ([b04db24](https://github.com/dasch-swiss/dsp-app/commit/b04db2472cc4eb61a1fde6637dfcf75941516c82))
+* **deps:** Update jest-deps ([#3193](https://github.com/dasch-swiss/dsp-app/issues/3193)) ([2a41678](https://github.com/dasch-swiss/dsp-app/commit/2a41678004277c516dce9ebf0d9958521341cc24))
+* **deps:** update uuid to v14 (major) ([#3197](https://github.com/dasch-swiss/dsp-app/issues/3197)) ([f39aeb6](https://github.com/dasch-swiss/dsp-app/commit/f39aeb69f14ce7d7432feb0b2d7fc71333678e1d))
+* migrate dsp-app to ESLint 9 flat config + ts-eslint 8 (DEV-6685) ([#3190](https://github.com/dasch-swiss/dsp-app/issues/3190)) ([b8b7a7c](https://github.com/dasch-swiss/dsp-app/commit/b8b7a7ccae7e8538ff6ec91fcd49926d245cb893))
+* migrate esbuild application builder, drop ngx-build-plus (DEV-6687) ([#3195](https://github.com/dasch-swiss/dsp-app/issues/3195)) ([649ab3a](https://github.com/dasch-swiss/dsp-app/commit/649ab3a14007d4f0146c680bfd68468d23b3c905))
+* **open-api:** bump dsp-api spec v36.0.0-3-g42c7a03 → v36.3.0-1-g9bd6eee ([#3199](https://github.com/dasch-swiss/dsp-app/issues/3199)) ([e745e78](https://github.com/dasch-swiss/dsp-app/commit/e745e78cfaf0b8992b68850498d8e7b4510a5c6f))
+* upgrade Angular to v21 and NX to v23 (DEV-5699) ([#3189](https://github.com/dasch-swiss/dsp-app/issues/3189)) ([baef357](https://github.com/dasch-swiss/dsp-app/commit/baef357a0e1352798d731ca6c6917c259362848f))
+
 ## [13.7.0](https://github.com/dasch-swiss/dsp-app/compare/v13.6.0...v13.7.0) (2026-06-22)
 
 
