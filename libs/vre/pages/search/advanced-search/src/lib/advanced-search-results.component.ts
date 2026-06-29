@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, Inject, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
@@ -39,9 +39,16 @@ import { QueryExecutionService } from './service/query-execution.service';
     }
   `,
   providers: [ResourceResultService],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AdvancedSearchResultsComponent implements OnChanges {
   @Input({ required: true }) query!: string;
+
+  private readonly _dspApiConnection = inject<KnoraApiConnection>(DspApiConnectionToken);
+  private readonly _resourceResultService = inject(ResourceResultService);
+  private readonly _titleService = inject(Title);
+  private readonly _queryExecutionService = inject(QueryExecutionService);
+
   private readonly querySubject = new BehaviorSubject<string | null>(null);
 
   readonly queryIsExecuting = this._queryExecutionService.queryIsExecuting;
@@ -67,12 +74,7 @@ export class AdvancedSearchResultsComponent implements OnChanges {
 
   readonly noResultMessage = `We couldn't find any resources matching your search criteria. Try adjusting your search parameters.`;
 
-  constructor(
-    @Inject(DspApiConnectionToken) private readonly _dspApiConnection: KnoraApiConnection,
-    private readonly _resourceResultService: ResourceResultService,
-    private readonly _titleService: Title,
-    private readonly _queryExecutionService: QueryExecutionService
-  ) {
+  constructor() {
     this._titleService.setTitle(`Advanced search results`);
   }
 

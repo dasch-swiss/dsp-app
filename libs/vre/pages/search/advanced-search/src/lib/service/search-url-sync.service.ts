@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { ActivatedRoute, NavigationStart, Router } from '@angular/router';
-import { filter, map, switchMap } from 'rxjs';
+import { filter, map, switchMap, take } from 'rxjs';
 import { Operator } from '../operators.config';
 
 export interface SearchUrlParams {
@@ -26,7 +26,7 @@ export class SearchUrlSyncService {
   // Fires only on browser back/forward — the only time full state restore is needed.
   readonly popstate$ = this._router.events.pipe(
     filter((e): e is NavigationStart => e instanceof NavigationStart && e.navigationTrigger === 'popstate'),
-    switchMap(() => this._route.queryParams),
+    switchMap(() => this._route.queryParams.pipe(take(1))),
     map(p => this._mapParams(p))
   );
 
@@ -38,6 +38,7 @@ export class SearchUrlSyncService {
     this._router.navigate([], {
       queryParams: this._toQueryParams(state),
       queryParamsHandling: 'merge',
+      replaceUrl: true,
     });
   }
 

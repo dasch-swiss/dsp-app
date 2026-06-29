@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { MatDivider } from '@angular/material/divider';
 import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
 import { SearchTipsComponent } from '@dasch-swiss/vre/shared/app-common-to-move';
@@ -30,6 +30,7 @@ import { provideAdvancedSearch } from './providers';
   `,
   styleUrl: './advanced-search-page.component.scss',
   providers: [provideAdvancedSearch()],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AdvancedSearchPageComponent {
   private readonly _projectPageService = inject(ProjectPageService);

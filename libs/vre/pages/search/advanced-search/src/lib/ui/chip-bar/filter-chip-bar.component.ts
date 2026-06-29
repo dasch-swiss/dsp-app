@@ -2,6 +2,7 @@ import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   DestroyRef,
   EventEmitter,
   inject,
@@ -16,7 +17,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { debounceTime, filter, of, switchMap, take } from 'rxjs';
+import { debounceTime, distinctUntilChanged, filter, of, switchMap, take } from 'rxjs';
 import { NodeValue, StatementElement } from '../../model';
 import { GravsearchService } from '../../service/gravsearch.service';
 import { OntologyDataService } from '../../service/ontology-data.service';
@@ -68,7 +69,7 @@ import { ResourceClassChipComponent } from './resource-class-chip.component';
             (remove)="onRemoveStatement(stmt)"
             (confirm)="onConfirmNewFilter(stmt.id)"
             (cancel)="onCancelNewFilter(stmt)" />
-          @for (child of getChildStatements(stmt.id); track child.id) {
+          @for (child of childStatementsMap()[stmt.id] ?? []; track child.id) {
             <app-filter-chip
               class="chip--indented"
               [statement]="child"
@@ -104,6 +105,19 @@ export class FilterChipBarComponent implements OnInit {
   readonly fulltextControl = new FormControl<string>('');
   readonly confirmedStatements = signal<StatementElement[]>([]);
 
+  readonly childStatementsMap = computed(() => {
+    const all = this._searchStateService.currentState.statementElements;
+    const map = new Map<string, StatementElement[]>();
+    for (const s of all) {
+      if (s.parentId && !s.isPristine) {
+        const children = map.get(s.parentId) ?? [];
+        children.push(s);
+        map.set(s.parentId, children);
+      }
+    }
+    return Object.fromEntries(map);
+  });
+
   readonly ontologyLoading$ = this._ontologyDataService.ontologyLoading$;
 
   get projectIri(): string {
@@ -122,7 +136,7 @@ export class FilterChipBarComponent implements OnInit {
 
     // Fulltext debounces and writes to URL as a side-effect only.
     this.fulltextControl.valueChanges
-      .pipe(debounceTime(300), takeUntilDestroyed(this._destroyRef))
+      .pipe(debounceTime(300), distinctUntilChanged(), takeUntilDestroyed(this._destroyRef))
       .subscribe(q => this._urlSync.writeState({ q: q ?? undefined }));
 
     // Back/forward: full reset + restore from the URL the browser navigated to.
@@ -181,12 +195,6 @@ export class FilterChipBarComponent implements OnInit {
     this.confirmedStatements.update(stmts => stmts.filter(s => s.id !== stmt.id));
     this._writeFiltersToUrl();
     this._emitSearch();
-  }
-
-  getChildStatements(parentId: string): StatementElement[] {
-    return this._searchStateService.currentState.statementElements.filter(
-      s => s.parentId === parentId && !s.isPristine
-    );
   }
 
   onReset(): void {
@@ -256,7 +264,7 @@ export class FilterChipBarComponent implements OnInit {
         ? this._ontologyDataService.getProperties$().pipe(take(1))
         : of(null);
 
-    classRestore$.subscribe(predicates => {
+    classRestore$.pipe(takeUntilDestroyed(this._destroyRef)).subscribe(predicates => {
       if (predicates && params.filters) {
         const filterParams = this._urlSync.decodeFilters(params.filters);
         const statements: StatementElement[] = filterParams.reduce((acc, fp) => {

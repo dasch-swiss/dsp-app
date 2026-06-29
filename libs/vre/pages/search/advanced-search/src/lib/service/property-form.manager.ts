@@ -1,18 +1,11 @@
-import { Injectable, inject, OnDestroy } from '@angular/core';
-import { Subject } from 'rxjs';
+import { Injectable, inject } from '@angular/core';
 import { StatementElement, Predicate, IriLabelPair, NodeValue } from '../model';
 import { Operator } from '../operators.config';
 import { SearchStateService } from './search-state.service';
 
 @Injectable()
-export class PropertyFormManager implements OnDestroy {
+export class PropertyFormManager {
   private searchStateService = inject(SearchStateService);
-  private destroy$ = new Subject<void>();
-
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
-  }
 
   setMainResource(resourceClass: IriLabelPair): void {
     const statement = new StatementElement(new NodeValue(resourceClass.iri, resourceClass), 0);
