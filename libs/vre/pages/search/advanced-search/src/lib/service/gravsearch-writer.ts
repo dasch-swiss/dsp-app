@@ -1,9 +1,5 @@
 import { Constants } from '@dasch-swiss/dsp-js';
 import {
-  escapeForGravsearchStringLiteral,
-  StatementElement,
-} from '../model';
-import {
   MAIN_RESOURCE_PLACEHOLDER,
   RESOURCE_PLACEHOLDER,
   RDFS_LABEL,
@@ -11,6 +7,7 @@ import {
   VALUE_SUFFIX,
   RDFS_TYPE,
 } from '../constants';
+import { escapeForGravsearchStringLiteral, StatementElement } from '../model';
 import { Operator } from '../operators.config';
 
 class GravsearchWriterScoped {

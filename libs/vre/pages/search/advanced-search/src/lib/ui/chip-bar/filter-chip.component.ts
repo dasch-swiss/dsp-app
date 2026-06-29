@@ -59,8 +59,8 @@ import { FilterEditorPopoverComponent } from './filter-editor-popover.component'
       <app-filter-editor-popover
         [statement]="draft() ?? statement"
         [isPristine]="statement.isPristine"
-        (confirm)="onConfirm()"
-        (cancel)="onCancel()" />
+        (filterConfirm)="onConfirm()"
+        (filterCancel)="onCancel()" />
     </ng-template>
   `,
   styles: [
@@ -81,8 +81,8 @@ export class FilterChipComponent {
   @Input() isValid = true;
   @Output() openChange = new EventEmitter<boolean>();
   @Output() remove = new EventEmitter<void>();
-  @Output() confirm = new EventEmitter<void>();
-  @Output() cancel = new EventEmitter<void>();
+  @Output() filterConfirm = new EventEmitter<void>();
+  @Output() filterCancel = new EventEmitter<void>();
 
   readonly positions = CHIP_POPOVER_POSITIONS;
   readonly draft = signal<StatementElement | null>(null);
@@ -99,17 +99,17 @@ export class FilterChipComponent {
       this._formManager.restoreStatement(d, this.statement);
     }
     this.draft.set(null);
-    this.confirm.emit();
+    this.filterConfirm.emit();
   }
 
   onCancel(): void {
     this.draft.set(null);
-    this.cancel.emit();
+    this.filterCancel.emit();
   }
 
   onBackdropClick(): void {
     this.draft.set(null);
-    this.cancel.emit();
+    this.filterCancel.emit();
     this.openChange.emit(false);
   }
 }

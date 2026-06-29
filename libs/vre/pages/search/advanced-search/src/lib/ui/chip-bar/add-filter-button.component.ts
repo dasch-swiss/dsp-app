@@ -36,8 +36,8 @@ import { FilterEditorPopoverComponent } from './filter-editor-popover.component'
         <app-filter-editor-popover
           [statement]="pendingStatement"
           [isPristine]="true"
-          (confirm)="onConfirm()"
-          (cancel)="onCancel()" />
+          (filterConfirm)="onConfirm()"
+          (filterCancel)="onCancel()" />
       </ng-template>
     }
   `,

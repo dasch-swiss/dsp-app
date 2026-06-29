@@ -1,5 +1,5 @@
-import { StringLiteralV2 } from '@dasch-swiss/dsp-js';
 import { Injectable, inject, OnDestroy } from '@angular/core';
+import { StringLiteralV2 } from '@dasch-swiss/dsp-js';
 import { distinctUntilChanged, map, skip, Subject, takeUntil } from 'rxjs';
 import { OrderByItem } from '../model';
 import { SearchStateService } from './search-state.service';

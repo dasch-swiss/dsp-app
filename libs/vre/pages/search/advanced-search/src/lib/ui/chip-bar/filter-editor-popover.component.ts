@@ -63,7 +63,7 @@ import { StringValueComponent } from '../statement-builder/object-values/string-
       }
 
       <div class="filter-editor-popover__actions">
-        <button mat-button (click)="cancel.emit()">Cancel</button>
+        <button mat-button (click)="filterCancel.emit()">Cancel</button>
         <button mat-raised-button color="primary" (click)="onConfirmClick()">Add filter</button>
       </div>
     </div>
@@ -90,8 +90,8 @@ import { StringValueComponent } from '../statement-builder/object-values/string-
 export class FilterEditorPopoverComponent {
   @Input({ required: true }) statement!: StatementElement;
   @Input() isPristine = false;
-  @Output() confirm = new EventEmitter<void>();
-  @Output() cancel = new EventEmitter<void>();
+  @Output() filterConfirm = new EventEmitter<void>();
+  @Output() filterCancel = new EventEmitter<void>();
 
   readonly formManager = inject(PropertyFormManager);
   readonly PROPERTY_OBJECT_TYPES = PropertyObjectType;
@@ -102,7 +102,7 @@ export class FilterEditorPopoverComponent {
       this.showErrors.set(true);
       return;
     }
-    this.confirm.emit();
+    this.filterConfirm.emit();
   }
 
   asString(value: string | IriLabelPair | undefined): string | undefined {

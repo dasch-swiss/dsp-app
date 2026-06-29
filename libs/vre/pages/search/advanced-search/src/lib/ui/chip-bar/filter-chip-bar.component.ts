@@ -67,8 +67,8 @@ import { ResourceClassChipComponent } from './resource-class-chip.component';
             [isValid]="stmt.isValidAndComplete"
             (openChange)="onChipOpenChange(stmt.id, $event)"
             (remove)="onRemoveStatement(stmt)"
-            (confirm)="onConfirmNewFilter(stmt.id)"
-            (cancel)="onCancelNewFilter(stmt)" />
+            (filterConfirm)="onConfirmNewFilter(stmt.id)"
+            (filterCancel)="onCancelNewFilter(stmt)" />
           @for (child of childStatementsMap()[stmt.id] ?? []; track child.id) {
             <app-filter-chip
               class="chip--indented"
@@ -185,11 +185,10 @@ export class FilterChipBarComponent implements OnInit {
 
   onFilterConfirmed(chipId: string): void {
     const stmt = this._searchStateService.currentState.statementElements.find(s => s.id === chipId);
-    if (stmt) {
-      this.confirmedStatements.update(stmts => [...stmts, stmt]);
-      this._writeFiltersToUrl();
-      this._emitSearch();
-    }
+    if (!stmt) return;
+    this.confirmedStatements.update(stmts => [...stmts, stmt]);
+    this._writeFiltersToUrl();
+    this._emitSearch();
   }
 
   onRemoveStatement(stmt: StatementElement): void {

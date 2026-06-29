@@ -257,4 +257,3 @@ export interface SearchFormsState {
   statementElements: StatementElement[];
   orderBy: OrderByItem[];
 }
-

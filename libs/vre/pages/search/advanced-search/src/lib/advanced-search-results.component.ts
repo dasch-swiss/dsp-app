@@ -95,6 +95,7 @@ export class AdvancedSearchResultsComponent implements OnChanges {
     return query.substring(0, query.search('OFFSET'));
   }
 
-  private _numberOfAllResults$ = (query_: string) =>
-    this._dspApiConnection.v2.search.doExtendedSearchCountQuery(`${this._getQuery(query_)}OFFSET 0`);
+  private _numberOfAllResults$(query_: string) {
+    return this._dspApiConnection.v2.search.doExtendedSearchCountQuery(`${this._getQuery(query_)}OFFSET 0`);
+  }
 }
