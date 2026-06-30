@@ -3732,7 +3732,7 @@ paths:
       security:
       - httpAuth: []
       - httpAuth1: []
-  /admin/projects/shortcode/{projectShortcode}/legal-info/resource-side:
+  /admin/projects/shortcode/{projectShortcode}/legal-info/resource:
     put:
       tags:
       - Admin API
@@ -3740,7 +3740,7 @@ paths:
         data license (Creative Commons only), the copyright holder and the default
         authorship, each applied to every resource record in the project. Returns
         the saved values. The user must be a system or project admin.'
-      operationId: putAdminProjectsShortcodeProjectshortcodeLegal-infoResource-side
+      operationId: putAdminProjectsShortcodeProjectshortcodeLegal-infoResource
       parameters:
       - name: projectShortcode
         in: path

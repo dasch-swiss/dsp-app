@@ -4,7 +4,7 @@ import { EMPTY, expand, map, reduce } from 'rxjs';
 
 /**
  * Body for setting the project's resource-side (data) legal info.
- * Mirrors the dsp-api `PUT /admin/projects/{shortcode}/legal-info/resource-side` request.
+ * Mirrors the dsp-api `PUT /admin/projects/{shortcode}/legal-info/resource` request.
  * TODO(verify-after-regen): once `npm run update-openapi` regenerates the client, prefer the
  * generated request DTO over this local interface.
  */
@@ -21,10 +21,10 @@ export class PaginatedApiService {
   /**
    * Set the project's resource-side (data) legal info (license, copyright holder, default authorship).
    * TODO(verify-after-regen): confirm the generated method name after `npm run update-openapi`.
-   * Expected from the OpenAPI generator: `putAdminProjectsShortcodeProjectshortcodeLegalInfoResourceSide`.
+   * Expected from the OpenAPI generator: `putAdminProjectsShortcodeProjectshortcodeLegalInfoResource`.
    */
   updateResourceSideLegalInfo(projectShortcode: string, body: ResourceSideLegalInfoUpdate) {
-    return this._adminApiService.putAdminProjectsShortcodeProjectshortcodeLegalInfoResourceSide(projectShortcode, body);
+    return this._adminApiService.putAdminProjectsShortcodeProjectshortcodeLegalInfoResource(projectShortcode, body);
   }
 
   getLicenses(projectShortcode: string, pageSize = 100) {
