@@ -25,6 +25,13 @@
             "knora-api:listNodePosition": 1,
             "@type": "knora-api:ListNode",
             "@id": "http://rdfh.ch/lists/0001/treeList02"
+        },
+        {
+            "rdfs:label": { "@language": "en", "@value": "Tree list node 03" },
+            "knora-api:hasRootNode": { "@id": "http://rdfh.ch/lists/0001/treeList" },
+            "knora-api:listNodePosition": 2,
+            "@type": "knora-api:ListNode",
+            "@id": "http://rdfh.ch/lists/0001/treeList03"
         }
     ],
     "knora-api:isRootNode": true,
