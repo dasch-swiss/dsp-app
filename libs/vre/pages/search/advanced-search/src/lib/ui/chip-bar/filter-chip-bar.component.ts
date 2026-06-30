@@ -148,12 +148,14 @@ export class FilterChipBarComponent implements OnInit {
         this._applyParamsWithOntologySwitch(this._urlSync.readParams());
       });
 
-    // Fulltext debounces and writes to URL as a side-effect only.
+    // Fulltext: after the user pauses typing (debounce), push one history entry so back/forward
+    // steps through searched terms. The debounce coalesces a burst of keystrokes into a single entry.
+    // Restores set the control with `emitEvent: false`, so a back/forward navigation never re-pushes here.
     this.fulltextControl.valueChanges
       .pipe(debounceTime(300), distinctUntilChanged(), takeUntilDestroyed(this._destroyRef))
       .subscribe(q => {
         this._logger.fulltextChanged(q ?? '');
-        this._urlSync.writeState({ q: q ?? undefined });
+        this._urlSync.writeState({ q: q ?? undefined }, { replaceUrl: false });
         this._emitSearch('fulltext');
       });
 
