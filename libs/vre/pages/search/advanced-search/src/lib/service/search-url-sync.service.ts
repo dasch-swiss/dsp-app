@@ -44,12 +44,15 @@ export class SearchUrlSyncService {
     return params;
   }
 
-  writeState(state: SearchUrlParams): void {
+  // `replaceUrl` defaults to true so continuous changes (e.g. debounced fulltext typing) overwrite the
+  // current history entry. Discrete user actions (confirming/removing a filter, changing class or ontology)
+  // pass `replaceUrl: false` to push a new entry so browser back/forward steps through them.
+  writeState(state: SearchUrlParams, { replaceUrl = true }: { replaceUrl?: boolean } = {}): void {
     this._logger.urlWrite(state);
     this._router.navigate([], {
       queryParams: this._toQueryParams(state),
       queryParamsHandling: 'merge',
-      replaceUrl: true,
+      replaceUrl,
     });
   }
 

@@ -1,10 +1,11 @@
 import { CdkConnectedOverlay, CdkOverlayOrigin, OverlayModule } from '@angular/cdk/overlay';
 import { AsyncPipe } from '@angular/common';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { ChangeDetectionStrategy, Component, EventEmitter, inject, Output } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
+import { LocalizationService, pickPreferredLanguageString } from '@dasch-swiss/vre/shared/app-helper-services';
 import { map } from 'rxjs';
 import { ALL_RESOURCE_CLASSES } from '../../constants';
 import { IriLabelPair } from '../../model';
@@ -12,7 +13,6 @@ import { OntologyDataService } from '../../service/ontology-data.service';
 import { PropertyFormManager } from '../../service/property-form.manager';
 import { SearchStateService } from '../../service/search-state.service';
 import { SearchUrlSyncService } from '../../service/search-url-sync.service';
-import { LocalizationService, pickPreferredLanguageString } from '@dasch-swiss/vre/shared/app-helper-services';
 import { CHIP_POPOVER_POSITIONS } from './chip-bar.helpers';
 
 @Component({
@@ -90,7 +90,11 @@ export class ResourceClassChipComponent {
 
   readonly resourceClasses$ = this._dataService.resourceClasses$;
   readonly classLabel$ = this._searchStateService.selectedResourceClass$.pipe(
-    map(rc => (rc?.iri ? pickPreferredLanguageString(rc.labels, this._localizationService.currentLanguage) : 'All resource classes'))
+    map(rc =>
+      rc?.iri
+        ? pickPreferredLanguageString(rc.labels, this._localizationService.currentLanguage)
+        : 'All resource classes'
+    )
   );
   readonly selectedClassIri$ = this._searchStateService.selectedResourceClass$.pipe(map(rc => rc?.iri ?? ''));
 
@@ -101,7 +105,10 @@ export class ResourceClassChipComponent {
     } else {
       this._searchStateService.clearAllSelections();
     }
-    this._urlSync.writeState({ class: selection.iri || undefined, filters: undefined, orderBy: undefined });
+    this._urlSync.writeState(
+      { class: selection.iri || undefined, filters: undefined, orderBy: undefined },
+      { replaceUrl: false }
+    );
     this.isOpen = false;
     this.classSelected.emit();
   }

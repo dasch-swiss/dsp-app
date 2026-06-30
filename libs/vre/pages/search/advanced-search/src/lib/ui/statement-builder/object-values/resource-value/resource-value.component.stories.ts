@@ -52,7 +52,12 @@ export const ShowsSelectedResource: Story = {
 export const EmptyAvailableClasses: Story = {
   name: 'Shows empty dropdown when no resource classes are available',
   args: {
-    selectedPredicate: new Predicate('http://ex.org/hasPart', toLabels('Has Part'), 'http://api.knora.org/ontology/knora-api/v2#LinkValue', true),
+    selectedPredicate: new Predicate(
+      'http://ex.org/hasPart',
+      toLabels('Has Part'),
+      'http://api.knora.org/ontology/knora-api/v2#LinkValue',
+      true
+    ),
   },
   decorators: [
     applicationConfig({

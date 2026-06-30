@@ -230,7 +230,7 @@ export class FilterChipBarComponent implements OnInit {
     }));
     const encoded = stmts.length ? this._urlSync.encodeFilters(filterArgs) : null;
     const activeOrderBy = this._searchStateService.currentState.orderBy.find(o => o.orderBy);
-    this._urlSync.writeState({ filters: encoded ?? undefined, orderBy: activeOrderBy?.id });
+    this._urlSync.writeState({ filters: encoded ?? undefined, orderBy: activeOrderBy?.id }, { replaceUrl: false });
   }
 
   /** Switches ontology if needed, then emits params for `_applyParams`. Used by popstate handler. */

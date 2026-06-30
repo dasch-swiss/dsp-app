@@ -5,7 +5,6 @@ import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular'
 import { expect, within } from 'storybook/test';
 import { StatementElement } from '../../model';
 import { Operator } from '../../operators.config';
-import { toLabels } from '../../util/labels';
 import { OntologyDataService } from '../../service/ontology-data.service';
 import { PropertyFormManager } from '../../service/property-form.manager';
 import { SearchStateService } from '../../service/search-state.service';
@@ -15,6 +14,7 @@ import {
   makeSearchStateServiceStub,
   STORY_PROVIDERS,
 } from '../../stories.helpers';
+import { toLabels } from '../../util/labels';
 import { FilterEditorPopoverComponent } from './filter-editor-popover.component';
 
 const blankStatement = (): StatementElement => new StatementElement();

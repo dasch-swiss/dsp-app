@@ -109,8 +109,14 @@ export const ShowsDisabledItemWithTooltip: Story = {
         {
           provide: OrderByService,
           useValue: makeOrderByServiceStub({
-            orderByItems$: of([new OrderByItem('prop1', toLabels('Title')), new OrderByItem('prop2', toLabels('Link (disabled)'), true)]),
-            currentOrderBy: [new OrderByItem('prop1', toLabels('Title')), new OrderByItem('prop2', toLabels('Link (disabled)'), true)],
+            orderByItems$: of([
+              new OrderByItem('prop1', toLabels('Title')),
+              new OrderByItem('prop2', toLabels('Link (disabled)'), true),
+            ]),
+            currentOrderBy: [
+              new OrderByItem('prop1', toLabels('Title')),
+              new OrderByItem('prop2', toLabels('Link (disabled)'), true),
+            ],
           }),
         },
       ],

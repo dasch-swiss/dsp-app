@@ -83,7 +83,10 @@ export class DataModelChipComponent {
     if (!iri) return;
     this._dataService.setOntology(iri);
     this._searchStateService.clearAllSelections();
-    this._urlSync.writeState({ ontology: iri, class: undefined, filters: undefined, orderBy: undefined });
+    this._urlSync.writeState(
+      { ontology: iri, class: undefined, filters: undefined, orderBy: undefined },
+      { replaceUrl: false }
+    );
     this.isOpen = false;
   }
 }
