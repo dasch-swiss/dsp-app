@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -24,7 +23,7 @@ import { DynamicFormsDataService } from '../../../../service/dynamic-forms-data.
 @Component({
   standalone: true,
   selector: 'app-list-value',
-  imports: [CommonModule, NestedMenuComponent],
+  imports: [NestedMenuComponent],
   template: `
     @if (rootListNode) {
       <app-nested-menu

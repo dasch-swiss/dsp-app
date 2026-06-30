@@ -11,27 +11,36 @@
   },
   "targets": {
     "build": {
-      "executor": "@angular-devkit/build-angular:browser",
-      "outputs": ["{options.outputPath}"],
+      "executor": "@angular-devkit/build-angular:application",
+      "outputs": ["{options.outputPath.base}"],
       "dependsOn": ["vre-open-api:generate"],
+      "defaultConfiguration": "production",
       "options": {
-        "outputPath": "dist/apps/dsp-app",
+        "outputPath": {
+          "base": "dist/apps/dsp-app",
+          "browser": ""
+        },
         "index": "apps/dsp-app/src/index.html",
-        "main": "apps/dsp-app/src/main.ts",
-        "polyfills": "apps/dsp-app/src/polyfills.ts",
+        "browser": "apps/dsp-app/src/main.ts",
+        "polyfills": ["apps/dsp-app/src/polyfills.ts"],
         "tsConfig": "apps/dsp-app/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
         "allowedCommonJsDependencies": [
           "json2typescript",
+          "jsonld",
           "ngraph.graph",
           "ngraph.forcelayout",
+          "reflect-metadata",
           "tinycolor2",
           "ng2-pdf-viewer",
           "openseadragon",
           "ckeditor5-custom-build",
           "ua-parser-js",
+          "@opentelemetry/api",
+          "@opentelemetry/semantic-conventions",
           "@opentelemetry/otlp-transformer/build/src/common/utils",
-          "@opentelemetry/otlp-transformer/build/src/trace/internal"
+          "@opentelemetry/otlp-transformer/build/src/trace/internal",
+          "@opentelemetry/otlp-transformer/build/src/trace/internal-types"
         ],
         "assets": [
           "apps/dsp-app/src/favicon.ico",
@@ -86,12 +95,9 @@
           }
         },
         "development": {
-          "buildOptimizer": false,
           "optimization": false,
-          "vendorChunk": true,
           "extractLicenses": false,
-          "sourceMap": true,
-          "namedChunks": true
+          "sourceMap": true
         },
         "test-server": {
           "fileReplacements": [
@@ -102,11 +108,7 @@
           ],
           "optimization": false,
           "sourceMap": true,
-          "namedChunks": true,
-          "aot": true,
-          "extractLicenses": false,
-          "vendorChunk": false,
-          "buildOptimizer": false
+          "extractLicenses": false
         },
         "dev-server": {
           "fileReplacements": [
@@ -117,11 +119,7 @@
           ],
           "optimization": false,
           "sourceMap": true,
-          "namedChunks": true,
-          "aot": true,
-          "extractLicenses": false,
-          "vendorChunk": false,
-          "buildOptimizer": false
+          "extractLicenses": false
         },
         "ls-test-server": {
           "fileReplacements": [
@@ -132,11 +130,7 @@
           ],
           "optimization": false,
           "sourceMap": true,
-          "namedChunks": true,
-          "aot": true,
-          "extractLicenses": false,
-          "vendorChunk": false,
-          "buildOptimizer": false
+          "extractLicenses": false
         },
         "stage-server": {
           "fileReplacements": [
@@ -147,17 +141,13 @@
           ],
           "optimization": false,
           "sourceMap": true,
-          "namedChunks": true,
-          "aot": true,
-          "extractLicenses": false,
-          "vendorChunk": false,
-          "buildOptimizer": false
+          "extractLicenses": false
         }
-      },
-      "defaultConfiguration": "production"
+      }
     },
     "serve": {
       "executor": "@angular-devkit/build-angular:dev-server",
+      "continuous": true,
       "options": {
         "buildTarget": "dsp-app:build"
       },
@@ -177,8 +167,7 @@
         "stage-server": {
           "buildTarget": "dsp-app:build:stage-server"
         }
-      },
-      "continuous": true
+      }
     },
     "extract-i18n": {
       "executor": "@angular-devkit/build-angular:extract-i18n",
@@ -186,20 +175,15 @@
         "buildTarget": "dsp-app:build"
       }
     },
-    "lint": {
-      "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"]
-    },
     "test": {
-      "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "apps/dsp-app/jest.config.ts"
+        "passWithNoTests": true
       },
       "configurations": {
         "ci": {
           "ci": true,
-          "codeCoverage": true
+          "runInBand": true,
+          "coverage": true
         }
       }
     },
@@ -227,19 +211,7 @@
           "env": {
             "API_URL": "http://0.0.0.0:3333/api"
           }
-        },
-        "coverage": {
-          "devServerTarget": "dsp-app:serve-app-e2e"
         }
-      }
-    },
-    "serve-app-e2e": {
-      "executor": "ngx-build-plus:dev-server",
-      "defaultConfiguration": "",
-      "options": {
-        "browserTarget": "dsp-app:build:development",
-        "extraWebpackConfig": "./webpack.coverage.js",
-        "port": 3000
       }
     },
     "storybook": {
@@ -253,7 +225,13 @@
         "stylePreprocessorOptions": {
           "includePaths": ["apps/dsp-app/src/styles"]
         },
-        "assets": [{ "glob": "**/*", "input": "apps/dsp-app/src/assets", "output": "assets" }]
+        "assets": [
+          {
+            "glob": "**/*",
+            "input": "apps/dsp-app/src/assets",
+            "output": "assets"
+          }
+        ]
       },
       "configurations": {
         "ci": {
@@ -273,7 +251,13 @@
         "stylePreprocessorOptions": {
           "includePaths": ["apps/dsp-app/src/styles"]
         },
-        "assets": [{ "glob": "**/*", "input": "apps/dsp-app/src/assets", "output": "assets" }]
+        "assets": [
+          {
+            "glob": "**/*",
+            "input": "apps/dsp-app/src/assets",
+            "output": "assets"
+          }
+        ]
       },
       "configurations": {
         "ci": {

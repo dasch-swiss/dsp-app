@@ -1,50 +1,48 @@
 import { provideRouter } from '@angular/router';
-import { Constants, ReadIntervalValue, ReadTextValueAsString } from '@dasch-swiss/dsp-js';
+import { Constants, ReadIntervalValue, ReadResource, ReadTextValueAsString } from '@dasch-swiss/dsp-js';
 import { ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { AppConfigService, DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
-import { DspResource, ResourceService } from '@dasch-swiss/vre/shared/app-common';
+import { DspResource, generateDspResource, ResourceService } from '@dasch-swiss/vre/shared/app-common';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of, Subject } from 'rxjs';
 import { expect } from 'storybook/test';
 
+import { RegionService } from '../representation/region.service';
 import { ResourceFetcherService } from '../representation/resource-fetcher.service';
 import { Segment } from '../representation/segments/segment';
 import { SegmentsService } from '../representation/segments/segments.service';
+import { makeEntityInfo } from '../resource-stories.helper';
 import { PropertiesDisplayService } from './properties-display/property-value/properties-display.service';
 import { ResourceMediaTabsComponent } from './resource-media-tabs.component';
 
-const makeResource = (): DspResource =>
-  ({
-    res: {
-      id: 'http://rdfh.ch/resource/1',
-      type: 'http://example.org/Thing',
-      label: 'Test Resource',
-      attachedToProject: 'http://rdfh.ch/projects/test',
-      attachedToUser: 'http://rdfh.ch/users/test',
-      userHasPermission: 'CR',
-      properties: {},
-      entityInfo: { classes: {} },
-    },
-    resProps: [],
-    incomingAnnotations: [],
-  }) as unknown as DspResource;
+const makeResource = (): DspResource => {
+  const res = new ReadResource();
+  res.id = 'http://rdfh.ch/resource/1';
+  res.type = 'http://example.org/Thing';
+  res.label = 'Test Resource';
+  res.attachedToProject = 'http://rdfh.ch/projects/test';
+  res.attachedToUser = 'http://rdfh.ch/users/test';
+  res.userHasPermission = 'CR';
+  res.versionArkUrl = 'http://ark.example/resource-1';
+  res.properties = {};
+  res.entityInfo = makeEntityInfo(res.type, [], 'Thing');
+  return generateDspResource(res);
+};
 
-const makeSegmentResource = (index: number): DspResource =>
-  ({
-    res: {
-      id: `http://rdfh.ch/resource/segment/${index}`,
-      type: 'http://api.knora.org/ontology/knora-api/v2#VideoSegment',
-      label: `Segment ${index}`,
-      attachedToProject: 'http://rdfh.ch/projects/test',
-      attachedToUser: 'http://rdfh.ch/users/test',
-      userHasPermission: 'CR',
-      creationDate: '2024-06-15T10:00:00.000Z',
-      properties: {},
-      entityInfo: { classes: {} },
-    },
-    resProps: [],
-    incomingAnnotations: [],
-  }) as unknown as DspResource;
+const makeSegmentResource = (index: number): DspResource => {
+  const res = new ReadResource();
+  res.id = `http://rdfh.ch/resource/segment/${index}`;
+  res.type = 'http://api.knora.org/ontology/knora-api/v2#VideoSegment';
+  res.label = `Segment ${index}`;
+  res.attachedToProject = 'http://rdfh.ch/projects/test';
+  res.attachedToUser = 'http://rdfh.ch/users/test';
+  res.userHasPermission = 'CR';
+  res.creationDate = '2024-06-15T10:00:00.000Z';
+  res.versionArkUrl = `http://ark.example/segment-${index}`;
+  res.properties = {};
+  res.entityInfo = makeEntityInfo(res.type, [], 'Video Segment');
+  return generateDspResource(res);
+};
 
 const makeTextValue = (text: string): ReadTextValueAsString => {
   const v = new ReadTextValueAsString();
@@ -82,7 +80,7 @@ const sharedProviders = [
   {
     provide: ResourceService,
     useValue: {
-      getResourcePath: (iri: string) => iri,
+      getResourcePath: (iri?: string) => iri ?? '0001/test-resource',
       getResourceIri: (sc: string, uuid: string) => `http://rdfh.ch/${sc}/${uuid}`,
     },
   },
@@ -111,7 +109,23 @@ const sharedProviders = [
   },
   {
     provide: ResourceFetcherService,
-    useValue: { attachedUser$: of({ givenName: 'Jane', familyName: 'Doe' }) },
+    useValue: {
+      attachedUser$: of({ givenName: 'Jane', familyName: 'Doe' }),
+      userCanEdit$: of(false),
+      userCanDelete$: of(false),
+    },
+  },
+  {
+    provide: RegionService,
+    useValue: {
+      regions$: of([]),
+      regionsLoading$: of(false),
+      selectedRegion$: of(null),
+      showRegions: () => {},
+      updateRegions$: () => of(undefined),
+      selectRegion: () => {},
+      setHighlightedRegionClicked: () => {},
+    },
   },
   {
     provide: PropertiesDisplayService,

@@ -53,6 +53,7 @@
         "/^@angular//",
         "/^@angular-devkit//",
         "/^@angular-eslint//",
+        "angular-eslint",
         "/^@schematics/angular/",
         "/^nx$/",
         "/^@nx//",
@@ -71,23 +72,21 @@
       "enabled": false
     },
     {
-      "description": "ESLint core + TypeScript ESLint: frozen until Angular/NX upgrade unlocks ESLint 9 flat config migration",
+      "description": "ESLint core + TypeScript ESLint: major updates disabled — eslint 10 / ts-eslint 9 are coupled to the manually-managed Angular, NX and TypeScript versions; minor and patch updates are managed by Renovate",
       "matchPackageNames": [
         "eslint",
-        "eslint-plugin-angular",
+        "typescript-eslint",
         "/^@typescript-eslint//"
       ],
+      "matchUpdateTypes": ["major"],
       "enabled": false
     },
     {
-      "description": "ESLint plugins and Airbnb configs: major updates disabled — coupled to frozen ESLint 8; a plugin major dropping ESLint 8 support would break the entire lint pipeline",
+      "description": "ESLint plugins: major updates disabled — a plugin major dropping ESLint 9 support would break the lint pipeline; majors are adopted manually alongside an ESLint upgrade",
       "matchPackageNames": [
         "eslint-plugin-import",
         "eslint-plugin-ban",
-        "eslint-plugin-jsdoc",
         "eslint-plugin-unused-imports",
-        "eslint-config-airbnb-base",
-        "eslint-config-airbnb-typescript",
         "eslint-config-prettier",
         "eslint-plugin-prettier"
       ],
@@ -150,7 +149,6 @@
       "description": "NX-wrapped tools: major version ceiling is set by @nx/* peer deps — disable majors until nx migrate lifts the constraint",
       "matchPackageNames": [
         "cypress",
-        "@cypress/code-coverage",
         "/^jest/",
         "jest-preset-angular",
         "@types/jest",
@@ -173,7 +171,6 @@
       "matchPackageNames": [
         "rxjs",
         "ng-mocks",
-        "ngx-build-plus",
         "@ngx-translate/core",
         "@ngx-translate/http-loader"
       ],
@@ -183,12 +180,6 @@
     {
       "description": "webpack ecosystem: major version is pinned by @angular-devkit/build-angular — disable major updates until ng update lifts the constraint",
       "matchPackageNames": ["webpack", "webpack-dev-middleware", "webpack-dev-server", "webpack-merge"],
-      "matchUpdateTypes": ["major"],
-      "enabled": false
-    },
-    {
-      "description": "uuid major: v10+ is ESM-only, incompatible with Jest v29 CJS transform — disable until Angular 21 migration brings jest-preset-angular v16 + Jest 30 with proper ESM support (tracked in DEV-6217)",
-      "matchPackageNames": ["uuid", "@types/uuid"],
       "matchUpdateTypes": ["major"],
       "enabled": false
     },
@@ -217,14 +208,11 @@
       "groupName": "ngx-translate-deps"
     },
     {
-      "description": "ESLint plugins and Airbnb configs — group patch/minor together; major is disabled above",
+      "description": "ESLint plugins — group patch/minor together; major is disabled above",
       "matchPackageNames": [
         "eslint-plugin-import",
         "eslint-plugin-ban",
-        "eslint-plugin-jsdoc",
-        "eslint-plugin-unused-imports",
-        "eslint-config-airbnb-base",
-        "eslint-config-airbnb-typescript"
+        "eslint-plugin-unused-imports"
       ],
       "groupName": "eslint-plugins-deps"
     },
@@ -267,10 +255,7 @@
     {
       "description": "Test coverage tooling",
       "matchPackageNames": [
-        "@cypress/code-coverage",
-        "@jsdevtools/coverage-istanbul-loader",
         "istanbul-lib-coverage",
-        "ngx-build-plus",
         "nyc"
       ],
       "groupName": "test-coverage-deps"

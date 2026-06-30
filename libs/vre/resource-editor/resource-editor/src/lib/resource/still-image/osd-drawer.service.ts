@@ -10,7 +10,7 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { ResourceService } from '@dasch-swiss/vre/shared/app-common';
-import * as OpenSeadragon from 'openseadragon';
+import OpenSeadragon from 'openseadragon';
 import { BehaviorSubject, combineLatest, filter, map, of, Subject, switchMap, takeUntil } from 'rxjs';
 import {
   AddRegionFormDialogComponent,
@@ -230,7 +230,7 @@ export class OsdDrawerService implements OnDestroy {
       }
 
       const commentValue = region.properties[Constants.HasComment]
-        ? region.properties[Constants.HasComment][0].strval
+        ? region.properties[Constants.HasComment].map((c: { strval?: string }) => c.strval ?? '').join('\n')
         : '';
 
       const rectGroup = this._createSVGRectangle(
@@ -290,7 +290,7 @@ export class OsdDrawerService implements OnDestroy {
       }
 
       const commentValue = geom.region.properties[Constants.HasComment]
-        ? geom.region.properties[Constants.HasComment][0].strval
+        ? geom.region.properties[Constants.HasComment].map((c: { strval?: string }) => c.strval ?? '').join('\n')
         : '';
 
       const rectGroup = this._createSVGRectangle(
@@ -399,7 +399,11 @@ export class OsdDrawerService implements OnDestroy {
       tooltip = document.createElement('div');
       tooltip.id = tooltipId;
       tooltip.className = 'annotation-tooltip';
-      tooltip.innerHTML = `<strong>${regionLabel}</strong><br>${regionComment}`;
+      const commentsHtml = regionComment
+        .split('\n')
+        .map(c => `<p>${c}</p>`)
+        .join('');
+      tooltip.innerHTML = `<strong>${regionLabel}</strong>${commentsHtml}`;
       tooltip.style.display = 'none';
       tooltip.style.position = 'fixed';
       tooltip.style.zIndex = '10000';

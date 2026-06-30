@@ -1,9 +1,7 @@
+import jsonld from 'jsonld/dist/jsonld.js';
 import { catchError, map, mergeMap } from 'rxjs';
 import { ListNodeV2, ListNodeV2WithAllLanguages } from '../../../models/v2/lists/list-node-v2';
 import { Endpoint } from '../../endpoint';
-
-declare let require: any; // http://stackoverflow.com/questions/34730010/angular2-5-minute-install-bug-require-is-not-defined
-const jsonld = require('jsonld/dist/jsonld.js');
 
 /**
  * Handles requests to the lists route of the Knora API.

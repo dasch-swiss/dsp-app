@@ -62,9 +62,18 @@ export class AuthService {
       .pipe(
         finalize(() => {
           this.afterLogout();
-          window.location.reload();
+          this.reloadPage();
         })
       )
       .subscribe();
+  }
+
+  /**
+   * Reloads the page after logout. Extracted as a seam so tests can intercept it:
+   * `window.location.reload()` cannot be mocked under jsdom >=26 (the `location`
+   * object and its members are [LegacyUnforgeable]).
+   */
+  reloadPage(): void {
+    window.location.reload();
   }
 }

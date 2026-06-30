@@ -9,7 +9,8 @@ This directory contains internationalization files for the DSP-APP application i
 - `de.json` - German
 - `fr.json` - French  
 - `it.json` - Italian
-- `rm.json` - Romansh
+
+Romansh (`rm`) has no file of its own. It is bound to English at runtime by the fallback translation loader (`apps/dsp-app/src/app/i18n-fallback-translate-loader.ts`), so selecting Romansh in the UI serves `en.json`. See DEV-6629.
 
 ## Core Translation Rules
 
@@ -23,12 +24,10 @@ Every key that exists in English must exist in all other language files.
 - New keys should always be added to English first, then propagated to other languages
 - If no translation is provided by PM for a new key, the English value should be used as a placeholder in the other language files
 
-### 3. Romansh Translation Policy
-**IMPORTANT**: For Romansh (`rm.json`) translations:
-- **DO NOT** suggest or create Romansh translations unless explicitly instructed
-- **ALWAYS** use English values as placeholders for missing or new keys
-- When English is updated, immediately update `rm.json` with the same English values
-- This ensures functionality remains intact while proper Romansh translations are handled separately
+### 3. Romansh Policy
+**IMPORTANT**: Romansh (`rm`) has no translation file. It is bound to English at runtime via the fallback loader, so it always reflects `en.json` automatically — there is nothing to maintain.
+- **DO NOT** create `rm.json` or add Romansh translations unless real, PM-provided Romansh translations exist; doing so would reintroduce the duplicate file this setup removed (DEV-6629).
+- When real translations do arrive, add `rm.json` and remove the `{ rm: 'en' }` entry from the fallback loader.
 
 ### 4. Translation Consistency
 - Maintain consistent terminology across all languages
@@ -43,22 +42,20 @@ Verify key parity between translation files after any changes made.
 
 ### When Adding New Keys:
 1. Add the key to `en.json` with the English text
-2. Add the same key to `rm.json` using the English value
-3. Add proper translations to `de.json`, `fr.json`, and `it.json`
-4. **Update the relevant code** to replace hardcoded text with the translation key (e.g., `"Add user"` → `{{ 'pages.project.add' | translate }}`)
-5. Run the parity verification script
-6. Test the application to ensure functionality
+2. Add proper translations to `de.json`, `fr.json`, and `it.json`
+3. **Update the relevant code** to replace hardcoded text with the translation key (e.g., `"Add user"` → `{{ 'pages.project.add' | translate }}`)
+4. Run the parity verification script
+5. Test the application to ensure functionality
 
 ### When Updating Existing Keys:
 1. Update the key in `en.json`
-2. Update the same key in `rm.json` with the new English value
-3. Update translations in other language files as needed
-4. Run the parity verification script
-5. Test the application
+2. Update translations in other language files as needed
+3. Run the parity verification script
+4. Test the application
 
 ### When Removing Keys:
 1. Remove from `en.json` first
-2. Remove from all other language files (`de.json`, `fr.json`, `it.json`, `rm.json`)
+2. Remove from all other language files (`de.json`, `fr.json`, `it.json`)
 3. Verify no references remain in the codebase
 4. Run the parity verification script
 

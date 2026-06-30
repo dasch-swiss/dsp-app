@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -20,7 +19,7 @@ import { OntologyDataService } from '../../../service/ontology-data.service';
 @Component({
   selector: 'app-predicate-select',
   standalone: true,
-  imports: [CommonModule, MatSelectModule, StringifyStringLiteralPipe, TranslateModule],
+  imports: [MatSelectModule, StringifyStringLiteralPipe, TranslateModule],
   template: `
     <mat-form-field class="width-100-percent" appearance="fill">
       <mat-label>

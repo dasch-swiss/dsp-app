@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName: 'vre-open-api',
   preset: '../../../../jest.preset.js',
   coverageDirectory: '../../../../coverage/libs/vre/3rd-party-services/open-api',

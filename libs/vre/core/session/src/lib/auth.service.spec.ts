@@ -42,24 +42,17 @@ function createMockUser(overrides?: Partial<ReadUser>): ReadUser {
   } as ReadUser;
 }
 
-// Helper for window.location mocking
-function mockWindowReload(): { reloadMock: jest.Mock; restore: () => void } {
-  const originalLocation = window.location;
+// Helper to intercept the page reload triggered by logout().
+// jsdom >=26 makes `window.location` and its members [LegacyUnforgeable]
+// (non-configurable + non-writable), so they cannot be mocked directly. AuthService
+// wraps the reload in a `reloadPage()` seam that we spy on instead.
+function mockWindowReload(service: AuthService): { reloadMock: jest.Mock; restore: () => void } {
   const reloadMock = jest.fn();
-
-  Object.defineProperty(window, 'location', {
-    writable: true,
-    value: { ...originalLocation, reload: reloadMock },
-  });
+  const spy = jest.spyOn(service, 'reloadPage').mockImplementation(reloadMock);
 
   return {
     reloadMock,
-    restore: () => {
-      Object.defineProperty(window, 'location', {
-        writable: true,
-        value: originalLocation,
-      });
-    },
+    restore: () => spy.mockRestore(),
   };
 }
 
@@ -211,7 +204,7 @@ describe('AuthService', () => {
 
   describe('logout()', () => {
     it('should call API logout, execute afterLogout, and reload page', () => {
-      const { reloadMock, restore } = mockWindowReload();
+      const { reloadMock, restore } = mockWindowReload(service);
       mockDspApiConnection.v2!.auth!.logout = jest.fn().mockReturnValue(of({}));
       const afterLogoutSpy = jest.spyOn(service, 'afterLogout');
 
@@ -224,7 +217,7 @@ describe('AuthService', () => {
     });
 
     it('should handle API logout errors gracefully', () => {
-      const { reloadMock, restore } = mockWindowReload();
+      const { reloadMock, restore } = mockWindowReload(service);
       const logoutError = new Error('Logout failed');
       mockDspApiConnection.v2!.auth!.logout = jest.fn().mockReturnValue(throwError(() => logoutError));
       const afterLogoutSpy = jest.spyOn(service, 'afterLogout');
