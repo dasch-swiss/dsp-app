@@ -43,7 +43,7 @@ export const ShowsSelectedResource: Story = {
   play: async ({ canvasElement, step }) => {
     await step('Select trigger shows the pre-selected class label', async () => {
       const trigger = canvasElement.querySelector('.mat-mdc-select-value-text');
-      await expect(trigger?.textContent).toContain(SAMPLE_RESOURCE_CLASSES[0].label);
+      await expect(trigger?.textContent).toContain(SAMPLE_RESOURCE_CLASSES[0].labels[0].value);
     });
   },
 };

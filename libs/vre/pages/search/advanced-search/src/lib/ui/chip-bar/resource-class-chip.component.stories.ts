@@ -77,7 +77,7 @@ export const ShowsSelectedClass: Story = {
   play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
     await step('Button shows selected class label', async () => {
-      await expect(canvas.getByText(SAMPLE_RESOURCE_CLASSES[0].label, { exact: false })).toBeTruthy();
+      await expect(canvas.getByText(SAMPLE_RESOURCE_CLASSES[0].labels[0].value, { exact: false })).toBeTruthy();
     });
   },
 };

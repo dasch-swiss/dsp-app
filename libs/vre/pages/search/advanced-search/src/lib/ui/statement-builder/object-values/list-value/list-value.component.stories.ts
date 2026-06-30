@@ -5,6 +5,7 @@ import { expect, waitFor } from 'storybook/test';
 import { IriLabelPair } from '../../../../model';
 import { DynamicFormsDataService } from '../../../../service/dynamic-forms-data.service';
 import { STORY_PROVIDERS } from '../../../../stories.helpers';
+import { toLabels } from '../../../../util/labels';
 import { ListValueComponent } from './list-value.component';
 
 const makeListNode = (id: string, label: string, children: ListNodeV2[] = [], isRoot = false): ListNodeV2 => {
@@ -64,7 +65,7 @@ export const ShowsPreselectedItem: Story = {
   name: 'Shows pre-selected list item label in the menu trigger',
   args: {
     rootListNodeIri: 'http://rdfh.ch/lists/root',
-    selectedListItem: { iri: 'http://rdfh.ch/lists/red', label: 'Red' } satisfies IriLabelPair,
+    selectedListItem: { iri: 'http://rdfh.ch/lists/red', labels: toLabels('Red'), comments: [] } satisfies IriLabelPair,
   },
   decorators: [
     applicationConfig({

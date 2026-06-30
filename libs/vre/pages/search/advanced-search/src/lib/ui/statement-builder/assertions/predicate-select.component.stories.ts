@@ -5,12 +5,13 @@ import { expect, within } from 'storybook/test';
 import { Predicate } from '../../../model';
 import { OntologyDataService } from '../../../service/ontology-data.service';
 import { makeOntologyDataServiceStub, STORY_PROVIDERS } from '../../../stories.helpers';
+import { toLabels } from '../../../util/labels';
 import { PredicateSelectComponent } from './predicate-select.component';
 
 const samplePredicates: Predicate[] = [
-  new Predicate('http://0.0.0.0:3333/ontology/0001/test/v2#hasTitle', 'Title', Constants.TextValue, false),
-  new Predicate('http://0.0.0.0:3333/ontology/0001/test/v2#hasYear', 'Year', Constants.IntValue, false),
-  new Predicate('http://0.0.0.0:3333/ontology/0001/test/v2#hasAuthor', 'Author', Constants.LinkValue, true),
+  new Predicate('http://0.0.0.0:3333/ontology/0001/test/v2#hasTitle', toLabels('Title'), Constants.TextValue, false),
+  new Predicate('http://0.0.0.0:3333/ontology/0001/test/v2#hasYear', toLabels('Year'), Constants.IntValue, false),
+  new Predicate('http://0.0.0.0:3333/ontology/0001/test/v2#hasAuthor', toLabels('Author'), Constants.LinkValue, true),
 ];
 
 const meta: Meta<PredicateSelectComponent> = {
@@ -47,7 +48,7 @@ export const NoClassFilter: Story = {
 export const WithClassFilter: Story = {
   name: 'Shows class-scoped properties when a subject class is provided',
   args: {
-    subjectClass: { iri: 'http://0.0.0.0:3333/ontology/0001/test/v2#Book', label: 'Book' },
+    subjectClass: { iri: 'http://0.0.0.0:3333/ontology/0001/test/v2#Book', labels: toLabels('Book'), comments: [] },
     selectedPredicate: undefined,
   },
   decorators: [applicationConfig({ providers: sharedProviders })],

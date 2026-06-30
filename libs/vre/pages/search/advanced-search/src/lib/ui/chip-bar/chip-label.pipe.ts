@@ -1,6 +1,6 @@
 import { inject, Pipe, PipeTransform } from '@angular/core';
 import { LocalizationService, pickPreferredLanguageString } from '@dasch-swiss/vre/shared/app-helper-services';
-import { StatementElement } from '../../model';
+import { IriLabelPair, StatementElement } from '../../model';
 import { Operator } from '../../operators.config';
 
 @Pipe({ name: 'chipLabel', standalone: true, pure: false })
@@ -30,7 +30,9 @@ export class ChipLabelPipe implements PipeTransform {
   private _resolveValueLabel(statement: StatementElement): string | undefined {
     const v = statement.selectedObjectValue;
     if (typeof v === 'string') return v;
-    if (v && typeof v === 'object') return (v as { label?: string }).label;
+    if (v && typeof v === 'object') {
+      return pickPreferredLanguageString((v as IriLabelPair).labels, this._localizationService.currentLanguage);
+    }
     return undefined;
   }
 

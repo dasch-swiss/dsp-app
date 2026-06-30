@@ -6,12 +6,13 @@ import { expect, userEvent, within } from 'storybook/test';
 import { OrderByItem } from '../../model';
 import { OrderByService } from '../../service/order-by.service';
 import { makeOrderByServiceStub, STORY_PROVIDERS } from '../../stories.helpers';
+import { toLabels } from '../../util/labels';
 import { OrderByComponent } from './order-by.component';
 
 const SAMPLE_ORDER_BY_ITEMS: OrderByItem[] = [
-  new OrderByItem('prop1', 'Title'),
-  new OrderByItem('prop2', 'Author'),
-  new OrderByItem('prop3', 'Date'),
+  new OrderByItem('prop1', toLabels('Title')),
+  new OrderByItem('prop2', toLabels('Author')),
+  new OrderByItem('prop3', toLabels('Date')),
 ];
 
 const meta: Meta<OrderByComponent> = {
@@ -108,8 +109,8 @@ export const ShowsDisabledItemWithTooltip: Story = {
         {
           provide: OrderByService,
           useValue: makeOrderByServiceStub({
-            orderByItems$: of([new OrderByItem('prop1', 'Title'), new OrderByItem('prop2', 'Link (disabled)', true)]),
-            currentOrderBy: [new OrderByItem('prop1', 'Title'), new OrderByItem('prop2', 'Link (disabled)', true)],
+            orderByItems$: of([new OrderByItem('prop1', toLabels('Title')), new OrderByItem('prop2', toLabels('Link (disabled)'), true)]),
+            currentOrderBy: [new OrderByItem('prop1', toLabels('Title')), new OrderByItem('prop2', toLabels('Link (disabled)'), true)],
           }),
         },
       ],

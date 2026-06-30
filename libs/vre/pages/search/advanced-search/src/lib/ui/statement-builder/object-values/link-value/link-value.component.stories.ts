@@ -4,6 +4,7 @@ import { expect, userEvent, waitFor } from 'storybook/test';
 import { IriLabelPair } from '../../../../model';
 import { DynamicFormsDataService } from '../../../../service/dynamic-forms-data.service';
 import { STORY_PROVIDERS } from '../../../../stories.helpers';
+import { toLabels } from '../../../../util/labels';
 import { LinkValueComponent } from './link-value.component';
 
 const makeDynamicFormsStub = (resources: IriLabelPair[] = []) => ({
@@ -13,8 +14,8 @@ const makeDynamicFormsStub = (resources: IriLabelPair[] = []) => ({
 });
 
 const SAMPLE_RESOURCES: IriLabelPair[] = [
-  { iri: 'http://rdfh.ch/resource1', label: 'Resource One' },
-  { iri: 'http://rdfh.ch/resource2', label: 'Resource Two' },
+  { iri: 'http://rdfh.ch/resource1', labels: toLabels('Resource One'), comments: [] },
+  { iri: 'http://rdfh.ch/resource2', labels: toLabels('Resource Two'), comments: [] },
 ];
 
 const meta: Meta<LinkValueComponent> = {
@@ -79,7 +80,7 @@ export const ShowsPreselectedResource: Story = {
   play: async ({ canvasElement, step }) => {
     await step('Input shows the pre-selected resource label', async () => {
       const input = canvasElement.querySelector('input[matInput]') as HTMLInputElement;
-      await expect(input.value).toBe(SAMPLE_RESOURCES[0].label);
+      await expect(input.value).toBe(SAMPLE_RESOURCES[0].labels[0].value);
     });
   },
 };
@@ -152,7 +153,7 @@ export const SelectsResourceFromAutocomplete: Story = {
     await step('Input is filled with the selected resource label', async () => {
       await waitFor(async () => {
         const input = canvasElement.querySelector('input[matInput]') as HTMLInputElement;
-        await expect(input.value).toBe(SAMPLE_RESOURCES[0].label);
+        await expect(input.value).toBe(SAMPLE_RESOURCES[0].labels[0].value);
       });
     });
   },

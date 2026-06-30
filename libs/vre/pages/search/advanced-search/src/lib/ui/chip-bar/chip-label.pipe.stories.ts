@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
 import { type Meta, type StoryObj } from '@storybook/angular';
 import { expect } from 'storybook/test';
-import { StatementElement } from '../../model';
+import { IriLabelPair, StatementElement } from '../../model';
 import { Operator } from '../../operators.config';
+import { toLabels } from '../../util/labels';
 import { ChipLabelPipe } from './chip-label.pipe';
 
 @Component({
@@ -18,15 +19,17 @@ class ChipLabelPipeHarnessComponent {
 const makeStatement = (overrides: {
   predicateLabel?: string;
   operator?: Operator;
-  objectValue?: string | { iri: string; label: string };
+  objectValue?: string | IriLabelPair;
 }): StatementElement => {
   const s = new StatementElement();
   if (overrides.predicateLabel) {
     s.selectedPredicate = {
       iri: 'http://ex.org/prop',
-      label: overrides.predicateLabel,
+      labels: toLabels(overrides.predicateLabel),
+      comments: [],
       objectValueType: 'TextValue',
-    } as any;
+      isLinkProperty: false,
+    };
   }
   if (overrides.operator) s.selectedOperator = overrides.operator;
   if (overrides.objectValue !== undefined) s.selectedObjectValue = overrides.objectValue;
@@ -82,7 +85,7 @@ export const EqualsWithObjectLabel: Story = {
     statement: makeStatement({
       predicateLabel: 'Author',
       operator: Operator.Equals,
-      objectValue: { iri: 'http://ex.org/person1', label: 'Shakespeare' },
+      objectValue: { iri: 'http://ex.org/person1', labels: toLabels('Shakespeare'), comments: [] },
     }),
   },
   play: async ({ canvasElement }) => {

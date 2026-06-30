@@ -8,6 +8,7 @@ import { OntologyDataService } from './service/ontology-data.service';
 import { OrderByService } from './service/order-by.service';
 import { QueryExecutionService } from './service/query-execution.service';
 import { SearchStateService } from './service/search-state.service';
+import { toLabels } from './util/labels';
 
 export const STORY_PROVIDERS = [
   provideAnimations(),
@@ -16,20 +17,20 @@ export const STORY_PROVIDERS = [
 ];
 
 export const SAMPLE_ONTOLOGIES: IriLabelPair[] = [
-  { iri: 'http://0.0.0.0:3333/ontology/0001/test/v2', label: 'Test Ontology' },
-  { iri: 'http://0.0.0.0:3333/ontology/0001/images/v2', label: 'Images Ontology' },
+  { iri: 'http://0.0.0.0:3333/ontology/0001/test/v2', labels: toLabels('Test Ontology'), comments: [] },
+  { iri: 'http://0.0.0.0:3333/ontology/0001/images/v2', labels: toLabels('Images Ontology'), comments: [] },
 ];
 
 export const SAMPLE_RESOURCE_CLASSES: IriLabelPair[] = [
-  { iri: 'http://0.0.0.0:3333/ontology/0001/test/v2#Book', label: 'Book' },
-  { iri: 'http://0.0.0.0:3333/ontology/0001/test/v2#Person', label: 'Person' },
+  { iri: 'http://0.0.0.0:3333/ontology/0001/test/v2#Book', labels: toLabels('Book'), comments: [] },
+  { iri: 'http://0.0.0.0:3333/ontology/0001/test/v2#Person', labels: toLabels('Person'), comments: [] },
 ];
 
 export const makeOntologyDataServiceStub = (
   partial: Partial<OntologyDataService> = {}
 ): Partial<OntologyDataService> => ({
   ontologies$: of(SAMPLE_ONTOLOGIES),
-  selectedOntology$: of({ id: SAMPLE_ONTOLOGIES[0].iri, label: SAMPLE_ONTOLOGIES[0].label } as any),
+  selectedOntology$: of({ id: SAMPLE_ONTOLOGIES[0].iri, labels: SAMPLE_ONTOLOGIES[0].labels } as any),
   ontologyLoading$: of(false),
   resourceClasses$: of(SAMPLE_RESOURCE_CLASSES),
   selectedOntology: SAMPLE_ONTOLOGIES[0],
@@ -80,7 +81,7 @@ export const makeDspApiConnectionStub = (partial: Record<string, unknown> = {}) 
   v2: {
     onto: {
       getOntologiesByProjectIri: () => of({ ontologies: [] }),
-      getOntology: () => of({ id: SAMPLE_ONTOLOGIES[0].iri, label: SAMPLE_ONTOLOGIES[0].label }),
+      getOntology: () => of({ id: SAMPLE_ONTOLOGIES[0].iri, labels: SAMPLE_ONTOLOGIES[0].labels }),
     },
     search: {
       doFulltextSearch: () => of({ resources: [] }),

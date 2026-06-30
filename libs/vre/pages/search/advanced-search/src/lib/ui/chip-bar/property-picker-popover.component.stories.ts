@@ -6,12 +6,13 @@ import { expect, userEvent, within } from 'storybook/test';
 import { IriLabelPair, Predicate } from '../../model';
 import { OntologyDataService } from '../../service/ontology-data.service';
 import { STORY_PROVIDERS } from '../../stories.helpers';
+import { toLabels } from '../../util/labels';
 import { PropertyPickerPopoverComponent } from './property-picker-popover.component';
 
 const SAMPLE_PROPERTIES: IriLabelPair[] = [
-  { iri: 'http://ex.org/hasTitle', label: 'Title' },
-  { iri: 'http://ex.org/hasAuthor', label: 'Author' },
-  { iri: 'http://ex.org/hasDate', label: 'Date' },
+  { iri: 'http://ex.org/hasTitle', labels: toLabels('Title'), comments: [] },
+  { iri: 'http://ex.org/hasAuthor', labels: toLabels('Author'), comments: [] },
+  { iri: 'http://ex.org/hasDate', labels: toLabels('Date'), comments: [] },
 ];
 
 const makeOntologyStub = (properties: IriLabelPair[] = SAMPLE_PROPERTIES) => ({
