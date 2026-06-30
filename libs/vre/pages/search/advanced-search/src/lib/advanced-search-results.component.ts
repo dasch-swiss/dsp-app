@@ -8,7 +8,7 @@ import { filterNull } from '@dasch-swiss/vre/shared/app-common';
 import { ResourceResultService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { AppProgressIndicatorComponent } from '@dasch-swiss/vre/ui/progress-indicator';
 import { CenteredBoxComponent, NoResultsFoundComponent } from '@dasch-swiss/vre/ui/ui';
-import { BehaviorSubject, combineLatest, map, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, catchError, combineLatest, map, of, switchMap, tap } from 'rxjs';
 import { QueryExecutionService } from './service/query-execution.service';
 
 @Component({
@@ -61,15 +61,20 @@ export class AdvancedSearchResultsComponent implements OnChanges {
           switchMap(pageNumber => this._performGravSearch$(query, pageNumber))
         ),
         this._numberOfAllResults$(query),
-      ])
-    ),
-    tap(() => {
-      this._queryExecutionService.queryIsExecuting.set(false);
-    }),
-    map(([resourceResponse, countResponse]) => {
-      this._resourceResultService.numberOfResults = countResponse.numberOfResults;
-      return resourceResponse.resources;
-    })
+      ]).pipe(
+        tap(() => {
+          this._queryExecutionService.queryIsExecuting.set(false);
+        }),
+        map(([resourceResponse, countResponse]) => {
+          this._resourceResultService.numberOfResults = countResponse.numberOfResults;
+          return resourceResponse.resources;
+        }),
+        catchError(() => {
+          this._queryExecutionService.queryIsExecuting.set(false);
+          return of([]);
+        })
+      )
+    )
   );
 
   readonly noResultMessage = `We couldn't find any resources matching your search criteria. Try adjusting your search parameters.`;

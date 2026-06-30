@@ -146,7 +146,10 @@ export class FilterChipBarComponent implements OnInit {
     // Fulltext debounces and writes to URL as a side-effect only.
     this.fulltextControl.valueChanges
       .pipe(debounceTime(300), distinctUntilChanged(), takeUntilDestroyed(this._destroyRef))
-      .subscribe(q => this._urlSync.writeState({ q: q ?? undefined }));
+      .subscribe(q => {
+        this._urlSync.writeState({ q: q ?? undefined });
+        this._emitSearch();
+      });
 
     // Back/forward: full reset + restore from the URL the browser navigated to.
     this._urlSync.popstate$
