@@ -2,6 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { filter, map } from 'rxjs';
 import { Operator } from '../operators.config';
+import { SearchFlowLogger } from './search-flow-logger.service';
 
 export interface SearchUrlParams {
   q?: string;
@@ -22,6 +23,7 @@ export interface FilterParam {
 export class SearchUrlSyncService {
   private readonly _router = inject(Router);
   private readonly _route = inject(ActivatedRoute);
+  private readonly _logger = inject(SearchFlowLogger);
 
   // Fires only on browser back/forward — after navigation commits so queryParams are already updated.
   readonly popstate$ = this._router.events.pipe(
@@ -29,14 +31,21 @@ export class SearchUrlSyncService {
       (e): e is NavigationEnd =>
         e instanceof NavigationEnd && this._router.lastSuccessfulNavigation?.extras.navigationTrigger === 'popstate'
     ),
-    map(() => this._mapParams(this._route.snapshot.queryParams))
+    map(() => {
+      const params = this._mapParams(this._route.snapshot.queryParams);
+      this._logger.popstate(params);
+      return params;
+    })
   );
 
   readParams(): SearchUrlParams {
-    return this._mapParams(this._route.snapshot.queryParams);
+    const params = this._mapParams(this._route.snapshot.queryParams);
+    this._logger.urlRead(params);
+    return params;
   }
 
   writeState(state: SearchUrlParams): void {
+    this._logger.urlWrite(state);
     this._router.navigate([], {
       queryParams: this._toQueryParams(state),
       queryParamsHandling: 'merge',
@@ -45,6 +54,7 @@ export class SearchUrlSyncService {
   }
 
   clearAll(): void {
+    this._logger.urlClear();
     const nulled: Record<string, null> = {};
     for (const key of ['q', 'ontology', 'class', 'filters', 'orderBy'] satisfies (keyof SearchUrlParams)[]) {
       nulled[key] = null;

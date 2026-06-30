@@ -21,6 +21,7 @@ import { NodeValue, StatementElement } from '../../model';
 import { GravsearchService } from '../../service/gravsearch.service';
 import { OntologyDataService } from '../../service/ontology-data.service';
 import { PropertyFormManager } from '../../service/property-form.manager';
+import { SearchFlowLogger } from '../../service/search-flow-logger.service';
 import { SearchStateService } from '../../service/search-state.service';
 import { SearchUrlSyncService, SearchUrlParams } from '../../service/search-url-sync.service';
 import { OrderByComponent } from '../order-by/order-by.component';
@@ -98,6 +99,7 @@ export class FilterChipBarComponent implements OnInit {
   private readonly _gravsearchService = inject(GravsearchService);
   private readonly _destroyRef = inject(DestroyRef);
   private readonly _urlSync = inject(SearchUrlSyncService);
+  private readonly _logger = inject(SearchFlowLogger);
   readonly formManager = inject(PropertyFormManager);
 
   readonly openChipId = signal<OpenChipId>(OPEN_CHIP_NONE);
@@ -141,14 +143,18 @@ export class FilterChipBarComponent implements OnInit {
         filter(loading => !loading),
         take(1)
       )
-      .subscribe(() => this._applyParamsWithOntologySwitch(this._urlSync.readParams()));
+      .subscribe(() => {
+        this._logger.ontologyReady(this._ontologyDataService.selectedOntology.iri);
+        this._applyParamsWithOntologySwitch(this._urlSync.readParams());
+      });
 
     // Fulltext debounces and writes to URL as a side-effect only.
     this.fulltextControl.valueChanges
       .pipe(debounceTime(300), distinctUntilChanged(), takeUntilDestroyed(this._destroyRef))
       .subscribe(q => {
+        this._logger.fulltextChanged(q ?? '');
         this._urlSync.writeState({ q: q ?? undefined });
-        this._emitSearch();
+        this._emitSearch('fulltext');
       });
 
     // Back/forward: full reset + restore from the URL the browser navigated to.
@@ -160,7 +166,7 @@ export class FilterChipBarComponent implements OnInit {
         }),
         takeUntilDestroyed(this._destroyRef)
       )
-      .subscribe(params => this._applyParams(params));
+      .subscribe(params => this._applyParams(params, 'popstate'));
   }
 
   onChipOpenChange(chipId: string, isOpen: boolean): void {
@@ -173,24 +179,27 @@ export class FilterChipBarComponent implements OnInit {
   }
 
   onConfirmNewFilter(chipId: string): void {
+    this._logger.filterConfirmed(chipId);
     this.openChipId.set(OPEN_CHIP_NONE);
     this._writeFiltersToUrl();
-    this._emitSearch();
+    this._emitSearch('filter-confirm');
   }
 
   onFilterConfirmed(chipId: string): void {
     const stmt = this._searchStateService.currentState.statementElements.find(s => s.id === chipId);
     if (!stmt) return;
+    this._logger.filterConfirmed(chipId);
     this.confirmedStatements.update(stmts => [...stmts, stmt]);
     this._writeFiltersToUrl();
-    this._emitSearch();
+    this._emitSearch('filter-confirm');
   }
 
   onRemoveStatement(stmt: StatementElement): void {
+    this._logger.filterRemoved(stmt.id);
     this.formManager.deleteStatement(stmt);
     this.confirmedStatements.update(stmts => stmts.filter(s => s.id !== stmt.id));
     this._writeFiltersToUrl();
-    this._emitSearch();
+    this._emitSearch('filter-remove');
   }
 
   onReset(): void {
@@ -199,6 +208,7 @@ export class FilterChipBarComponent implements OnInit {
   }
 
   private _resetState(): void {
+    this._logger.stateReset();
     this.fulltextControl.reset('', { emitEvent: false });
     this.confirmedStatements.set([]);
     this.openChipId.set(OPEN_CHIP_NONE);
@@ -250,7 +260,8 @@ export class FilterChipBarComponent implements OnInit {
     this._applyParams(params);
   }
 
-  private _applyParams(params: SearchUrlParams): void {
+  private _applyParams(params: SearchUrlParams, reason: 'restore' | 'popstate' = 'restore'): void {
+    this._logger.applyParams(params);
     const classRestore$ = params.class
       ? this._ontologyDataService.resourceClasses$.pipe(
           filter(classes => classes.length > 0),
@@ -288,6 +299,7 @@ export class FilterChipBarComponent implements OnInit {
           statementElements: [...this._searchStateService.currentState.statementElements, ...statements],
         });
         this.confirmedStatements.set(statements.filter(s => s.isValidAndComplete));
+        this._logger.filtersRestored(statements.length);
       }
 
       if (params.orderBy) {
@@ -299,15 +311,17 @@ export class FilterChipBarComponent implements OnInit {
 
       this.fulltextControl.setValue(params.q ?? '', { emitEvent: false });
 
-      this._emitSearch();
+      this._emitSearch(reason);
     });
   }
 
-  private _emitSearch(): void {
+  private _emitSearch(reason: Parameters<SearchFlowLogger['emitSearch']>[0] = 'restore'): void {
+    this._logger.emitSearch(reason);
     const fulltext = this.fulltextControl.value ?? '';
     const hasFilters = this.confirmedStatements().length > 0;
     const hasResourceClass = !!this._searchStateService.currentState.selectedResourceClass?.iri;
     if (!fulltext && !hasFilters && !hasResourceClass) {
+      this._logger.queryNull();
       this.gravsearchQuery.emit(null);
       return;
     }
@@ -315,6 +329,7 @@ export class FilterChipBarComponent implements OnInit {
       this._searchStateService.validStatementElements,
       fulltext
     );
+    this._logger.queryGenerated(query);
     this.gravsearchQuery.emit(query);
   }
 }

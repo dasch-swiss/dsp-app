@@ -10,6 +10,7 @@ import { AppProgressIndicatorComponent } from '@dasch-swiss/vre/ui/progress-indi
 import { CenteredBoxComponent, NoResultsFoundComponent } from '@dasch-swiss/vre/ui/ui';
 import { BehaviorSubject, catchError, combineLatest, map, of, switchMap, tap } from 'rxjs';
 import { QueryExecutionService } from './service/query-execution.service';
+import { SearchFlowLogger } from './service/search-flow-logger.service';
 
 @Component({
   selector: 'app-advanced-search-results',
@@ -48,6 +49,7 @@ export class AdvancedSearchResultsComponent implements OnChanges {
   private readonly _resourceResultService = inject(ResourceResultService);
   private readonly _titleService = inject(Title);
   private readonly _queryExecutionService = inject(QueryExecutionService);
+  private readonly _logger = inject(SearchFlowLogger);
 
   private readonly querySubject = new BehaviorSubject<string | null>(null);
 
@@ -62,14 +64,16 @@ export class AdvancedSearchResultsComponent implements OnChanges {
         ),
         this._numberOfAllResults$(query),
       ]).pipe(
-        tap(() => {
+        tap(([resourceResponse, countResponse]) => {
           this._queryExecutionService.queryIsExecuting.set(false);
+          this._logger.searchSuccess(resourceResponse.resources.length, countResponse.numberOfResults);
         }),
         map(([resourceResponse, countResponse]) => {
           this._resourceResultService.numberOfResults = countResponse.numberOfResults;
           return resourceResponse.resources;
         }),
-        catchError(() => {
+        catchError(err => {
+          this._logger.searchError(err);
           this._queryExecutionService.queryIsExecuting.set(false);
           return of([]);
         })
@@ -92,6 +96,7 @@ export class AdvancedSearchResultsComponent implements OnChanges {
   private _performGravSearch$(query_: string, index: number) {
     let query = this._getQuery(query_);
     query = `${query}OFFSET ${index}`;
+    this._logger.searchStart(index);
     this._queryExecutionService.queryIsExecuting.set(true);
     return this._dspApiConnection.v2.search.doExtendedSearch(query);
   }
