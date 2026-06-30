@@ -12,7 +12,7 @@ import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { filterUndefined } from '@dasch-swiss/vre/shared/app-common';
 import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
-import { combineLatest, map, Observable, Subject, switchMap } from 'rxjs';
+import { combineLatest, map, Observable, Subject, switchMap, tap } from 'rxjs';
 import { ResourceFetcherService } from '../../../../representation/resource-fetcher.service';
 
 @Component({
@@ -64,11 +64,9 @@ export class ListViewerComponent implements OnInit {
 
     const tree$ = this._dspApiConnection.v2.list.getNodeWithAllLanguages(this.value.listNode).pipe(
       switchMap(v => this._dspApiConnection.v2.list.getListWithAllLanguages(v.hasRootNode!)),
-      map(v => {
-        const tree = ListViewerComponent.lookFor([v], this.value.listNode) as ListNodeV2WithAllLanguages[];
-        this._nodeIdSubject.next(tree[tree.length - 1].id);
-        return tree.slice(1);
-      })
+      map(v => ListViewerComponent.lookFor([v], this.value.listNode) as ListNodeV2WithAllLanguages[]),
+      tap(tree => this._nodeIdSubject.next(tree[tree.length - 1].id)),
+      map(tree => tree.slice(1))
     );
 
     // Re-emit on language change so AsyncPipe triggers a change-detection pass

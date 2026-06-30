@@ -8,6 +8,7 @@ import {
   inject,
   Input,
   OnChanges,
+  OnInit,
   Output,
   SimpleChanges,
 } from '@angular/core';
@@ -15,7 +16,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ListNodeV2WithAllLanguages } from '@dasch-swiss/dsp-js';
 import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NestedMenuComponent } from '@dasch-swiss/vre/ui/nested-menu';
-import { combineLatest } from 'rxjs';
+import { BehaviorSubject, combineLatest } from 'rxjs';
+import { filter, switchMap } from 'rxjs/operators';
 import { IriLabelPair } from '../../../../model';
 import { DynamicFormsDataService } from '../../../../service/dynamic-forms-data.service';
 
@@ -33,7 +35,7 @@ import { DynamicFormsDataService } from '../../../../service/dynamic-forms-data.
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ListValueComponent implements OnChanges {
+export class ListValueComponent implements OnInit, OnChanges {
   @Input({ required: true }) rootListNodeIri!: string;
   rootListNode?: ListNodeV2WithAllLanguages;
   @Input() selectedListItem?: IriLabelPair;
@@ -45,23 +47,32 @@ export class ListValueComponent implements OnChanges {
   private _localizationService = inject(LocalizationService);
   private _destroyRef = inject(DestroyRef);
 
+  private _rootIri$ = new BehaviorSubject<string | undefined>(undefined);
+
   selectedListNode?: ListNodeV2WithAllLanguages;
+
+  ngOnInit(): void {
+    // Single lifetime-scoped subscription. switchMap cancels any in-flight
+    // fetch when rootListNodeIri changes, and combineLatest with
+    // currentLanguage$ keeps the nested menu rendering in the active language.
+    this._rootIri$
+      .pipe(
+        filter((iri): iri is string => iri !== undefined),
+        switchMap(iri =>
+          combineLatest([this._dataService.getListWithAllLanguages$(iri), this._localizationService.currentLanguage$])
+        ),
+        takeUntilDestroyed(this._destroyRef)
+      )
+      .subscribe(([rootListNode]) => {
+        this.rootListNode = rootListNode;
+        this._tryRestoreSelectedItem();
+        this._cdr.markForCheck();
+      });
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['rootListNodeIri']) {
-      // combineLatest with currentLanguage$ keeps the nested menu re-rendering
-      // in the active language while the menu is open and idle. The subscription
-      // is tied to the component lifetime via takeUntilDestroyed.
-      combineLatest([
-        this._dataService.getListWithAllLanguages$(this.rootListNodeIri),
-        this._localizationService.currentLanguage$,
-      ])
-        .pipe(takeUntilDestroyed(this._destroyRef))
-        .subscribe(([rootListNode]) => {
-          this.rootListNode = rootListNode;
-          this._tryRestoreSelectedItem();
-          this._cdr.markForCheck();
-        });
+      this._rootIri$.next(this.rootListNodeIri);
     }
 
     if (changes['selectedListItem'] && this.selectedListItem && this.rootListNode) {
