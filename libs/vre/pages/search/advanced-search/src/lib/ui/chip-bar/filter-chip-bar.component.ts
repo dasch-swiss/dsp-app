@@ -58,7 +58,7 @@ import { ResourceClassChipComponent } from './resource-class-chip.component';
       </mat-form-field>
       <div class="chip-bar">
         <app-data-model-chip />
-        <app-resource-class-chip />
+        <app-resource-class-chip (classSelected)="onResourceClassSelected()" />
 
         @for (stmt of confirmedStatements(); track stmt.id) {
           <app-filter-chip
@@ -192,6 +192,10 @@ export class FilterChipBarComponent implements OnInit {
     this.confirmedStatements.update(stmts => [...stmts, stmt]);
     this._writeFiltersToUrl();
     this._emitSearch('filter-confirm');
+  }
+
+  onResourceClassSelected(): void {
+    this._emitSearch('resource-class');
   }
 
   onRemoveStatement(stmt: StatementElement): void {

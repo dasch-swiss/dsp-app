@@ -1,6 +1,6 @@
 import { CdkConnectedOverlay, CdkOverlayOrigin, OverlayModule } from '@angular/cdk/overlay';
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, inject, Output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
@@ -73,6 +73,8 @@ import { CHIP_POPOVER_POSITIONS } from './chip-bar.helpers';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResourceClassChipComponent {
+  @Output() classSelected = new EventEmitter<void>();
+
   readonly getLabel = getLabel;
   private readonly _dataService = inject(OntologyDataService);
   private readonly _searchStateService = inject(SearchStateService);
@@ -98,5 +100,6 @@ export class ResourceClassChipComponent {
     }
     this._urlSync.writeState({ class: selection.iri || undefined, filters: undefined, orderBy: undefined });
     this.isOpen = false;
+    this.classSelected.emit();
   }
 }
