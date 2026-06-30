@@ -1,8 +1,20 @@
 import { ListNodeV2WithAllLanguages, StringLiteralV2 } from '@dasch-swiss/dsp-js';
-import { type Meta, type StoryObj } from '@storybook/angular';
+import { AvailableLanguage } from '@dasch-swiss/vre/core/config';
+import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
+import { of } from 'rxjs';
 import { expect } from 'storybook/test';
 
 import { NestedMenuComponent } from './nested-menu.component';
+
+// StringifyStringLiteralPipe (used in NestedMenuComponent) reads
+// currentLanguage (synchronous getter), not the observable, so the stub needs
+// both: the observable for any future combineLatest wiring, the getter for the
+// impure pipe.
+const localizationServiceStub: Partial<LocalizationService> = {
+  currentLanguage: 'en' as AvailableLanguage,
+  currentLanguage$: of<AvailableLanguage>('en'),
+};
 
 const literal = (language: string, value: string): StringLiteralV2 => {
   const l = new StringLiteralV2();
@@ -52,6 +64,11 @@ const meta: Meta<NestedMenuComponent> = {
   title:
     'Resource Editor / 4. Properties / Resource Default Tabs / Properties Display / Template Switcher / Nested Menu',
   component: NestedMenuComponent,
+  decorators: [
+    applicationConfig({
+      providers: [{ provide: LocalizationService, useValue: localizationServiceStub }],
+    }),
+  ],
   argTypes: {
     data: {
       description: 'Root ListNodeV2WithAllLanguages tree to render as a nested menu.',
