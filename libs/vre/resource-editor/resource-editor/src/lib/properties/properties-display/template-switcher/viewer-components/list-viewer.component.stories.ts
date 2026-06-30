@@ -61,7 +61,11 @@ const resourceFetcherServiceStub: Partial<ResourceFetcherService> = {
   projectShortcode$: of('0001'),
 };
 
+// StringifyStringLiteralPipe reads currentLanguage (synchronous getter), not the
+// observable, so the stub needs both: the observable drives combineLatest in the
+// component pipeline, the getter feeds the impure pipe.
 const localizationServiceStub: Partial<LocalizationService> = {
+  currentLanguage: 'en' as AvailableLanguage,
   currentLanguage$: of<AvailableLanguage>('en'),
 };
 
