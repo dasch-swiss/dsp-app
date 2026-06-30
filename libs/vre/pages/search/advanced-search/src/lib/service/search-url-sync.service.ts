@@ -29,7 +29,7 @@ export class SearchUrlSyncService {
   readonly popstate$ = this._router.events.pipe(
     filter(
       (e): e is NavigationEnd =>
-        e instanceof NavigationEnd && this._router.lastSuccessfulNavigation?.extras.navigationTrigger === 'popstate'
+        e instanceof NavigationEnd && this._router.lastSuccessfulNavigation()?.trigger === 'popstate'
     ),
     map(() => {
       const params = this._mapParams(this._route.snapshot.queryParams);
