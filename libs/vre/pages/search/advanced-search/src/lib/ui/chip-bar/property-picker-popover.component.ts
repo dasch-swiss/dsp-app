@@ -1,14 +1,15 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, EventEmitter, inject, Input, OnChanges, Output } from '@angular/core';
 import { MatListModule } from '@angular/material/list';
-import { BehaviorSubject, map, switchMap } from 'rxjs';
+import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
+import { BehaviorSubject, switchMap } from 'rxjs';
 import { IriLabelPair, Predicate } from '../../model';
 import { OntologyDataService } from '../../service/ontology-data.service';
 
 @Component({
   selector: 'app-property-picker-popover',
   standalone: true,
-  imports: [AsyncPipe, MatListModule],
+  imports: [AsyncPipe, MatListModule, StringifyStringLiteralPipe],
   template: `
     <div class="property-picker mat-elevation-z4">
       <mat-selection-list
@@ -17,7 +18,7 @@ import { OntologyDataService } from '../../service/ontology-data.service';
         [hideSingleSelectionIndicator]="true"
         (selectionChange)="onPropertySelected($event.options[0]?.value)">
         @for (prop of filteredProperties$ | async; track prop.iri) {
-          <mat-list-option [value]="prop">{{ prop.label }}</mat-list-option>
+          <mat-list-option [value]="prop">{{ prop.labels | appStringifyStringLiteral }}</mat-list-option>
         }
       </mat-selection-list>
     </div>

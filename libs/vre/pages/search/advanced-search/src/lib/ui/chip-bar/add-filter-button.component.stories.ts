@@ -47,22 +47,22 @@ export const ShowsAddFilterButton: Story = {
 };
 
 export const OpensPropertyPickerOnClick: Story = {
-  name: 'Opens property picker popover on click',
+  name: 'Opens filter editor popover on click',
   decorators: [applicationConfig({ providers: baseProviders })],
   play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
     await step('Click Add filter button', async () => {
       await userEvent.click(canvas.getByRole('button'));
     });
-    await step('Property picker popover appears', async () => {
-      const popover = document.querySelector('app-property-picker-popover');
+    await step('Filter editor popover appears', async () => {
+      const popover = document.querySelector('app-filter-editor-popover');
       await expect(popover).not.toBeNull();
     });
   },
 };
 
 export const PassesClassIriToPickerWhenClassSelected: Story = {
-  name: 'Passes selected resource class IRI to the property picker',
+  name: 'Opens filter editor when resource class is selected',
   decorators: [
     applicationConfig({
       providers: [
@@ -85,11 +85,11 @@ export const PassesClassIriToPickerWhenClassSelected: Story = {
   ],
   play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
-    await step('Click to open picker', async () => {
+    await step('Click to open filter editor', async () => {
       await userEvent.click(canvas.getByRole('button'));
     });
-    await step('Property picker is rendered in overlay', async () => {
-      await expect(document.querySelector('app-property-picker-popover')).not.toBeNull();
+    await step('Filter editor popover is rendered in overlay', async () => {
+      await expect(document.querySelector('app-filter-editor-popover')).not.toBeNull();
     });
   },
 };
@@ -117,8 +117,8 @@ export const NoClassSelected: Story = {
     await step('Click Add filter without a class selected', async () => {
       await userEvent.click(canvas.getByRole('button'));
     });
-    await step('Property picker still opens', async () => {
-      await expect(document.querySelector('app-property-picker-popover')).not.toBeNull();
+    await step('Filter editor popover still opens', async () => {
+      await expect(document.querySelector('app-filter-editor-popover')).not.toBeNull();
     });
   },
 };

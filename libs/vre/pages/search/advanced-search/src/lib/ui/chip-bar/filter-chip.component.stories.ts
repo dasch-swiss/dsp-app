@@ -5,6 +5,7 @@ import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular'
 import { expect, userEvent, within } from 'storybook/test';
 import { StatementElement } from '../../model';
 import { Operator } from '../../operators.config';
+import { toLabels } from '../../util/labels';
 import { OntologyDataService } from '../../service/ontology-data.service';
 import { PropertyFormManager } from '../../service/property-form.manager';
 import { SearchStateService } from '../../service/search-state.service';
@@ -18,7 +19,7 @@ import { FilterChipComponent } from './filter-chip.component';
 
 const titleStatement = (): StatementElement => {
   const s = new StatementElement();
-  s.selectedPredicate = { iri: 'http://ex.org/hasTitle', label: 'Title', objectValueType: 'TextValue' } as any;
+  s.selectedPredicate = { iri: 'http://ex.org/hasTitle', labels: toLabels('Title'), comments: [], objectValueType: 'TextValue', isLinkProperty: false };
   s.selectedOperator = Operator.IsLike;
   s.selectedObjectValue = 'Hamlet';
   return s;
@@ -26,7 +27,7 @@ const titleStatement = (): StatementElement => {
 
 const predicateOnlyStatement = (): StatementElement => {
   const s = new StatementElement();
-  s.selectedPredicate = { iri: 'http://ex.org/hasAuthor', label: 'Author', objectValueType: 'TextValue' } as any;
+  s.selectedPredicate = { iri: 'http://ex.org/hasAuthor', labels: toLabels('Author'), comments: [], objectValueType: 'TextValue', isLinkProperty: false };
   return s;
 };
 

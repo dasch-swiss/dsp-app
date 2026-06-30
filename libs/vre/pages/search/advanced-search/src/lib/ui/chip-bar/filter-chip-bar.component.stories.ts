@@ -9,6 +9,7 @@ import { OntologyDataService } from '../../service/ontology-data.service';
 import { QueryExecutionService } from '../../service/query-execution.service';
 import { SearchStateService } from '../../service/search-state.service';
 import {
+  ADVANCED_SEARCH_SERVICE_STUBS,
   makeDspApiConnectionStub,
   makeOntologyDataServiceStub,
   makeQueryExecutionServiceStub,
@@ -34,6 +35,7 @@ const baseProviders = [
   importProvidersFrom(OverlayModule),
   { provide: DspApiConnectionToken, useValue: makeDspApiConnectionStub() },
   ...provideAdvancedSearch(),
+  ...ADVANCED_SEARCH_SERVICE_STUBS,
   { provide: OntologyDataService, useValue: makeOntologyDataServiceStub() },
   { provide: SearchStateService, useValue: makeSearchStateServiceStub() },
   { provide: QueryExecutionService, useValue: makeQueryExecutionServiceStub() },
@@ -53,9 +55,8 @@ export const Empty: Story = {
     await step('Add filter button is rendered', async () => {
       await expect(canvasElement.querySelector('app-add-filter-button')).not.toBeNull();
     });
-    await step('Search button is rendered', async () => {
-      const buttons = Array.from(canvasElement.querySelectorAll('button'));
-      await expect(buttons.some(b => b.textContent?.includes('Search'))).toBe(true);
+    await step('Fulltext search input is rendered', async () => {
+      await expect(canvasElement.querySelector('input[matInput]')).not.toBeNull();
     });
   },
 };
@@ -75,7 +76,7 @@ export const WithActiveFilters: Story = {
 };
 
 export const SearchDisabled: Story = {
-  name: 'Disables Search button when form is incomplete',
+  name: 'Renders chip bar when form is incomplete',
   args: { projectUuid: '0001' },
   decorators: [
     applicationConfig({
@@ -84,11 +85,13 @@ export const SearchDisabled: Story = {
         importProvidersFrom(OverlayModule),
         { provide: DspApiConnectionToken, useValue: makeDspApiConnectionStub() },
         ...provideAdvancedSearch(),
+        ...ADVANCED_SEARCH_SERVICE_STUBS,
         { provide: OntologyDataService, useValue: makeOntologyDataServiceStub() },
         {
           provide: SearchStateService,
           useValue: makeSearchStateServiceStub({
             isFormStateValidAndComplete$: of(false),
+            statementElements$: of([]),
             currentState: { selectedResourceClass: SAMPLE_RESOURCE_CLASSES[0], statementElements: [], orderBy: [] },
           }),
         },
@@ -97,10 +100,11 @@ export const SearchDisabled: Story = {
     }),
   ],
   play: async ({ canvasElement, step }) => {
-    await step('Search button is disabled', async () => {
-      const buttons = Array.from(canvasElement.querySelectorAll('button'));
-      const searchBtn = buttons.find(b => b.textContent?.includes('Search'));
-      await expect(searchBtn?.hasAttribute('disabled')).toBe(true);
+    await step('Chip bar is rendered', async () => {
+      await expect(canvasElement.querySelector('app-data-model-chip')).not.toBeNull();
+    });
+    await step('Fulltext input is present', async () => {
+      await expect(canvasElement.querySelector('input[matInput]')).not.toBeNull();
     });
   },
 };
@@ -115,6 +119,7 @@ export const LoadingState: Story = {
         importProvidersFrom(OverlayModule),
         { provide: DspApiConnectionToken, useValue: makeDspApiConnectionStub() },
         ...provideAdvancedSearch(),
+        ...ADVANCED_SEARCH_SERVICE_STUBS,
         { provide: OntologyDataService, useValue: makeOntologyDataServiceStub({ ontologyLoading$: of(true) }) },
         { provide: SearchStateService, useValue: makeSearchStateServiceStub() },
         { provide: QueryExecutionService, useValue: makeQueryExecutionServiceStub() },

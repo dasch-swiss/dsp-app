@@ -2,19 +2,61 @@ import { signal } from '@angular/core';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 import { UserService } from '@dasch-swiss/vre/core/session';
-import { of } from 'rxjs';
+import { EMPTY, of } from 'rxjs';
 import { IriLabelPair, OrderByItem, StatementElement } from './model';
 import { OntologyDataService } from './service/ontology-data.service';
 import { OrderByService } from './service/order-by.service';
 import { QueryExecutionService } from './service/query-execution.service';
+import { SearchFlowLogger } from './service/search-flow-logger.service';
 import { SearchStateService } from './service/search-state.service';
+import { SearchUrlSyncService } from './service/search-url-sync.service';
 import { toLabels } from './util/labels';
+
+const searchUrlSyncServiceStub = {
+  provide: SearchUrlSyncService,
+  useValue: {
+    popstate$: EMPTY,
+    readParams: () => ({}),
+    writeState: () => {},
+    clearAll: () => {},
+    encodeFilters: () => '',
+    decodeFilters: () => [],
+  } as Partial<SearchUrlSyncService>,
+};
+
+const searchFlowLoggerStub = {
+  provide: SearchFlowLogger,
+  useValue: {
+    ontologyReady: () => {},
+    fulltextChanged: () => {},
+    filterConfirmed: () => {},
+    filterRemoved: () => {},
+    stateReset: () => {},
+    applyParams: () => {},
+    filtersRestored: () => {},
+    emitSearch: () => {},
+    queryNull: () => {},
+    queryGenerated: () => {},
+    searchStart: () => {},
+    searchSuccess: () => {},
+    searchError: () => {},
+    popstate: () => {},
+    urlRead: () => {},
+    urlWrite: () => {},
+    urlClear: () => {},
+  } as Partial<SearchFlowLogger>,
+};
 
 export const STORY_PROVIDERS = [
   provideAnimations(),
   provideRouter([{ path: '**', redirectTo: '' }]),
   { provide: UserService, useValue: { currentUser: null } as Partial<UserService> },
+  searchUrlSyncServiceStub,
+  searchFlowLoggerStub,
 ];
+
+/** Use these AFTER provideAdvancedSearch() to override the real services with story-safe stubs. */
+export const ADVANCED_SEARCH_SERVICE_STUBS = [searchUrlSyncServiceStub, searchFlowLoggerStub];
 
 export const SAMPLE_ONTOLOGIES: IriLabelPair[] = [
   { iri: 'http://0.0.0.0:3333/ontology/0001/test/v2', labels: toLabels('Test Ontology'), comments: [] },
@@ -30,7 +72,7 @@ export const makeOntologyDataServiceStub = (
   partial: Partial<OntologyDataService> = {}
 ): Partial<OntologyDataService> => ({
   ontologies$: of(SAMPLE_ONTOLOGIES),
-  selectedOntology$: of({ id: SAMPLE_ONTOLOGIES[0].iri, labels: SAMPLE_ONTOLOGIES[0].labels } as any),
+  selectedOntology$: of({ id: SAMPLE_ONTOLOGIES[0].iri, label: SAMPLE_ONTOLOGIES[0].labels[0].value } as any),
   ontologyLoading$: of(false),
   resourceClasses$: of(SAMPLE_RESOURCE_CLASSES),
   selectedOntology: SAMPLE_ONTOLOGIES[0],
@@ -49,6 +91,7 @@ export const makeSearchStateServiceStub = (partial: Partial<SearchStateService> 
     selectedResourceClass$: of(null as unknown as IriLabelPair),
     isFormStateValidAndComplete$: of(true),
     completeStatements$: of([]),
+    statementElements$: of([initialStatement]),
     orderByItems$: of([]),
     currentState: {
       selectedResourceClass: SAMPLE_RESOURCE_CLASSES[0],
@@ -81,7 +124,7 @@ export const makeDspApiConnectionStub = (partial: Record<string, unknown> = {}) 
   v2: {
     onto: {
       getOntologiesByProjectIri: () => of({ ontologies: [] }),
-      getOntology: () => of({ id: SAMPLE_ONTOLOGIES[0].iri, labels: SAMPLE_ONTOLOGIES[0].labels }),
+      getOntology: () => of({ id: SAMPLE_ONTOLOGIES[0].iri, label: SAMPLE_ONTOLOGIES[0].labels[0].value }),
     },
     search: {
       doFulltextSearch: () => of({ resources: [] }),

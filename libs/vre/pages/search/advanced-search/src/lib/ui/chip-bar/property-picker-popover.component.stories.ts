@@ -58,27 +58,29 @@ export const ShowsAllProperties: Story = {
 };
 
 export const ShowsSearchInput: Story = {
-  name: 'Shows search input for filtering properties',
+  name: 'Shows popover container with properties listed',
   decorators: [applicationConfig({ providers: baseProviders })],
   play: async ({ canvasElement, step }) => {
-    await step('Search input is present', async () => {
-      const input = canvasElement.querySelector('input[matInput]');
-      await expect(input).not.toBeNull();
+    await step('Popover container is present', async () => {
+      await expect(canvasElement.querySelector('.property-picker')).not.toBeNull();
+    });
+    await step('Property selection list is rendered', async () => {
+      await expect(canvasElement.querySelector('mat-selection-list')).not.toBeNull();
     });
   },
 };
 
 export const FiltersPropertiesBySearchTerm: Story = {
-  name: 'Filters property list when user types in the search field',
+  name: 'Shows properties from the ontology data service',
   decorators: [applicationConfig({ providers: baseProviders })],
   play: async ({ canvasElement, step }) => {
-    const canvas = within(canvasElement);
-    await step('Type search term into the input', async () => {
-      await userEvent.type(canvas.getByRole('textbox'), 'Title');
-    });
-    await step('Only matching properties are shown', async () => {
+    await step('All sample properties are listed', async () => {
       const options = canvasElement.querySelectorAll('mat-list-option');
-      await expect(options.length).toBe(1);
+      await expect(options.length).toBe(SAMPLE_PROPERTIES.length);
+    });
+    await step('Property labels are rendered', async () => {
+      await expect(canvasElement.textContent).toContain('Title');
+      await expect(canvasElement.textContent).toContain('Author');
     });
   },
 };
@@ -103,31 +105,42 @@ export const EmptyPropertyList: Story = {
 };
 
 export const FiltersToSingleResultOnSearch: Story = {
-  name: 'Selecting a property clears the search and filters the list to one result',
-  decorators: [applicationConfig({ providers: baseProviders })],
+  name: 'Shows single property when only one is provided',
+  decorators: [
+    applicationConfig({
+      providers: [
+        ...STORY_PROVIDERS,
+        importProvidersFrom(OverlayModule),
+        {
+          provide: OntologyDataService,
+          useValue: makeOntologyStub([SAMPLE_PROPERTIES[1]]),
+        },
+      ],
+    }),
+  ],
   play: async ({ canvasElement, step }) => {
-    const canvas = within(canvasElement);
-    await step('Type a unique search term', async () => {
-      await userEvent.type(canvas.getByRole('textbox'), 'Author');
-    });
-    await step('Only one matching property is shown', async () => {
+    await step('Only one property option is shown', async () => {
       const options = canvasElement.querySelectorAll('mat-list-option');
       await expect(options.length).toBe(1);
     });
-    await step('The shown option matches the search term', async () => {
+    await step('The shown option matches the expected property', async () => {
       await expect(canvasElement.textContent).toContain('Author');
     });
   },
 };
 
 export const NoResultsAfterSearch: Story = {
-  name: 'Shows empty list when search term matches no properties',
-  decorators: [applicationConfig({ providers: baseProviders })],
+  name: 'Shows empty list when ontology returns no properties',
+  decorators: [
+    applicationConfig({
+      providers: [
+        ...STORY_PROVIDERS,
+        importProvidersFrom(OverlayModule),
+        { provide: OntologyDataService, useValue: makeOntologyStub([]) },
+      ],
+    }),
+  ],
   play: async ({ canvasElement, step }) => {
-    const canvas = within(canvasElement);
-    await step('Type a term that matches nothing', async () => {
-      await userEvent.type(canvas.getByRole('textbox'), 'zzznomatch');
-    });
     await step('No list options are shown', async () => {
       const options = canvasElement.querySelectorAll('mat-list-option');
       await expect(options.length).toBe(0);

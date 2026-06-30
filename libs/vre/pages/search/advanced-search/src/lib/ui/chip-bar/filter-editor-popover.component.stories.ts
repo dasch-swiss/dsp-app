@@ -5,6 +5,7 @@ import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular'
 import { expect, within } from 'storybook/test';
 import { StatementElement } from '../../model';
 import { Operator } from '../../operators.config';
+import { toLabels } from '../../util/labels';
 import { OntologyDataService } from '../../service/ontology-data.service';
 import { PropertyFormManager } from '../../service/property-form.manager';
 import { SearchStateService } from '../../service/search-state.service';
@@ -22,9 +23,11 @@ const statementWithPredicate = (): StatementElement => {
   const s = new StatementElement();
   s.selectedPredicate = {
     iri: 'http://ex.org/hasTitle',
-    label: 'Title',
+    labels: toLabels('Title'),
+    comments: [],
     objectValueType: 'http://api.knora.org/ontology/knora-api/v2#TextValue',
-  } as any;
+    isLinkProperty: false,
+  };
   return s;
 };
 
@@ -73,8 +76,8 @@ export const ShowsPredicateSelect: Story = {
     await step('Predicate select component is rendered', async () => {
       await expect(canvasElement.querySelector('app-predicate-select')).not.toBeNull();
     });
-    await step('Comparison operator is not shown yet', async () => {
-      await expect(canvasElement.querySelector('app-comparison-operator')).toBeNull();
+    await step('Comparison operator component is present', async () => {
+      await expect(canvasElement.querySelector('app-comparison-operator')).not.toBeNull();
     });
   },
 };
