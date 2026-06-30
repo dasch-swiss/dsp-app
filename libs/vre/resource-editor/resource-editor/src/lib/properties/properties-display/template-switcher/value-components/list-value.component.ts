@@ -1,4 +1,12 @@
-import { ChangeDetectorRef, Component, DestroyRef, Inject, Input, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  DestroyRef,
+  Inject,
+  Input,
+  OnInit,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl } from '@angular/forms';
 import { MatError } from '@angular/material/form-field';
@@ -7,8 +15,10 @@ import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { HumanReadableErrorPipe } from '@dasch-swiss/vre/ui/ui';
 import { combineLatest } from 'rxjs';
-import { startWith, switchMap } from 'rxjs/operators';
+import { filter, startWith, switchMap } from 'rxjs/operators';
 import { NestedMenuComponent } from './nested-menu.component';
+
+const HLIST_PREFIX = 'hlist=<';
 
 @Component({
   selector: 'app-list-value',
@@ -25,6 +35,7 @@ import { NestedMenuComponent } from './nested-menu.component';
       <mat-error>{{ control.errors | humanReadableError }}</mat-error>
     }
   `,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ListValueComponent implements OnInit {
   @Input({ required: true }) propertyDef!: ResourcePropertyDefinition;
@@ -44,23 +55,28 @@ export class ListValueComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    // One subscription for the component's lifetime. control.valueChanges
-    // drives the data fetch via switchMap (previous fetch is cancelled when
-    // the value changes), and combineLatest with currentLanguage$ re-emits
-    // on language change so the nested menu re-renders in the active language.
+    const rootIri = this._rootNodeIri();
+    if (!rootIri) return; // no list configured on this property → nothing to fetch
+
+    // One subscription for the component's lifetime. control.valueChanges drives
+    // the data fetch via switchMap (cancelling any in-flight fetch when the value
+    // changes), and combineLatest with currentLanguage$ re-emits on language
+    // change so the nested menu re-renders in the active language. The
+    // `updating` gate short-circuits BEFORE the fetch so a programmatic
+    // patchValue (from selectedNode) doesn't trigger a redundant GET.
     this.control.valueChanges
       .pipe(
         startWith(this.control.value),
+        filter(() => !this.updating),
         switchMap(() =>
           combineLatest([
-            this._dspApiConnection.v2.list.getListWithAllLanguages(this._rootNodeIri()),
+            this._dspApiConnection.v2.list.getListWithAllLanguages(rootIri),
             this._localizationService.currentLanguage$,
           ])
         ),
         takeUntilDestroyed(this._destroyRef)
       )
       .subscribe(([response]) => {
-        if (this.updating) return;
         this.listRootNode = response;
         const found = this._lookForNode(response);
         if (!found) {
@@ -83,13 +99,11 @@ export class ListValueComponent implements OnInit {
     this.mySelectedNode = node;
   }
 
-  private _rootNodeIri(): string {
-    // For a list-value property, guiAttributes has one entry of the shape
-    // `hlist=<iri>`. The previous implementation looped over guiAttributes and
-    // assigned each fetched tree to the same listRootNode field - only the last
-    // write won. Treating it as a single value matches the de-facto behaviour.
+  private _rootNodeIri(): string | undefined {
+    // guiAttributes[0] has shape `hlist=<iri>` for a list-value property.
     const raw = this.propertyDef.guiAttributes[0];
-    return raw.substring(7, raw.length - 1);
+    if (!raw?.startsWith(HLIST_PREFIX) || !raw.endsWith('>')) return undefined;
+    return raw.substring(HLIST_PREFIX.length, raw.length - 1);
   }
 
   private _lookForNode(response: ListNodeV2WithAllLanguages): boolean {
