@@ -8,7 +8,7 @@ import { filterNull } from '@dasch-swiss/vre/shared/app-common';
 import { ResourceResultService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { AppProgressIndicatorComponent } from '@dasch-swiss/vre/ui/progress-indicator';
 import { CenteredBoxComponent, NoResultsFoundComponent } from '@dasch-swiss/vre/ui/ui';
-import { BehaviorSubject, catchError, combineLatest, map, of, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, catchError, combineLatest, map, of, startWith, switchMap, tap } from 'rxjs';
 import { QueryExecutionService } from './service/query-execution.service';
 import { SearchFlowLogger } from './service/search-flow-logger.service';
 
@@ -57,8 +57,9 @@ export class AdvancedSearchResultsComponent implements OnChanges {
 
   readonly resources$ = this.querySubject.pipe(
     filterNull(),
-    switchMap(query =>
-      combineLatest([
+    switchMap(query => {
+      this._queryExecutionService.queryIsExecuting.set(true);
+      return combineLatest([
         this._resourceResultService.pageIndex$.pipe(
           switchMap(pageNumber => this._performGravSearch$(query, pageNumber))
         ),
@@ -76,9 +77,10 @@ export class AdvancedSearchResultsComponent implements OnChanges {
           this._logger.searchError(err);
           this._queryExecutionService.queryIsExecuting.set(false);
           return of([]);
-        })
-      )
-    )
+        }),
+        startWith(null)
+      );
+    })
   );
 
   readonly noResultMessage = `We couldn't find any resources matching your search criteria. Try adjusting your search parameters.`;
@@ -97,7 +99,6 @@ export class AdvancedSearchResultsComponent implements OnChanges {
     let query = this._getQuery(query_);
     query = `${query}OFFSET ${index}`;
     this._logger.searchStart(index);
-    this._queryExecutionService.queryIsExecuting.set(true);
     return this._dspApiConnection.v2.search.doExtendedSearch(query);
   }
 
