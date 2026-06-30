@@ -1,5 +1,6 @@
 import { CdkConnectedOverlay, CdkOverlayOrigin, OverlayModule } from '@angular/cdk/overlay';
 import { AsyncPipe } from '@angular/common';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { ChangeDetectionStrategy, Component, EventEmitter, inject, Output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -11,7 +12,7 @@ import { OntologyDataService } from '../../service/ontology-data.service';
 import { PropertyFormManager } from '../../service/property-form.manager';
 import { SearchStateService } from '../../service/search-state.service';
 import { SearchUrlSyncService } from '../../service/search-url-sync.service';
-import { getLabel } from '../../util/labels';
+import { LocalizationService, pickPreferredLanguageString } from '@dasch-swiss/vre/shared/app-helper-services';
 import { CHIP_POPOVER_POSITIONS } from './chip-bar.helpers';
 
 @Component({
@@ -53,7 +54,7 @@ import { CHIP_POPOVER_POSITIONS } from './chip-bar.helpers';
         </mat-list-option>
         @for (cls of resourceClasses$ | async; track cls.iri) {
           <mat-list-option [value]="cls" [selected]="cls.iri === (selectedClassIri$ | async)">
-            {{ getLabel(cls.labels) }}
+            {{ pickPreferredLanguageString(cls.labels, currentLang()) }}
           </mat-list-option>
         }
       </mat-selection-list>
@@ -75,11 +76,13 @@ import { CHIP_POPOVER_POSITIONS } from './chip-bar.helpers';
 export class ResourceClassChipComponent {
   @Output() classSelected = new EventEmitter<void>();
 
-  readonly getLabel = getLabel;
+  readonly pickPreferredLanguageString = pickPreferredLanguageString;
   private readonly _dataService = inject(OntologyDataService);
   private readonly _searchStateService = inject(SearchStateService);
   private readonly _formManager = inject(PropertyFormManager);
   private readonly _urlSync = inject(SearchUrlSyncService);
+  private readonly _localizationService = inject(LocalizationService);
+  readonly currentLang = toSignal(this._localizationService.currentLanguage$, { initialValue: 'en' as const });
 
   readonly positions = CHIP_POPOVER_POSITIONS;
   readonly allOption = ALL_RESOURCE_CLASSES;
@@ -87,7 +90,7 @@ export class ResourceClassChipComponent {
 
   readonly resourceClasses$ = this._dataService.resourceClasses$;
   readonly classLabel$ = this._searchStateService.selectedResourceClass$.pipe(
-    map(rc => (rc?.iri ? getLabel(rc.labels) : 'All resource classes'))
+    map(rc => (rc?.iri ? pickPreferredLanguageString(rc.labels, this._localizationService.currentLanguage) : 'All resource classes'))
   );
   readonly selectedClassIri$ = this._searchStateService.selectedResourceClass$.pipe(map(rc => rc?.iri ?? ''));
 

@@ -35,6 +35,7 @@ export class GravsearchService {
 
     return (
       'PREFIX knora-api: <http://api.knora.org/ontology/knora-api/v2#>\n' +
+      'PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n' +
       `PREFIX ${ontoShortCode}: <${this.ontoIri}#>\n` +
       'CONSTRUCT {\n' +
       '?mainRes knora-api:isMainResource true .\n' +
@@ -42,6 +43,7 @@ export class GravsearchService {
       '} WHERE {\n' +
       '?mainRes a knora-api:Resource .\n' +
       `${this._restrictToResourceClassStatement()}\n` +
+      '?mainRes rdfs:label ?label .\n' +
       `${fulltextTriple}` +
       `${whereClause}\n` +
       '}\n' +
@@ -69,6 +71,6 @@ export class GravsearchService {
         return `${RESOURCE_PLACEHOLDER}${index}`;
       });
 
-    return orderByProps.length ? `ORDER BY ${orderByProps.join(' ')}` : '';
+    return orderByProps.length ? `ORDER BY ${orderByProps.join(' ')}` : 'ORDER BY ASC(?label)';
   }
 }

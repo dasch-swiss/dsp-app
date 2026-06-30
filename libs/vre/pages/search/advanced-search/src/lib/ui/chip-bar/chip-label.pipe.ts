@@ -1,14 +1,17 @@
-import { Pipe, PipeTransform } from '@angular/core';
+import { inject, Pipe, PipeTransform } from '@angular/core';
+import { LocalizationService, pickPreferredLanguageString } from '@dasch-swiss/vre/shared/app-helper-services';
 import { StatementElement } from '../../model';
 import { Operator } from '../../operators.config';
-import { getLabel } from '../../util/labels';
 
-@Pipe({ name: 'chipLabel', standalone: true })
+@Pipe({ name: 'chipLabel', standalone: true, pure: false })
 export class ChipLabelPipe implements PipeTransform {
   private readonly MAX_VALUE_LENGTH = 20;
+  private readonly _localizationService = inject(LocalizationService);
 
   transform(statement: StatementElement): string {
-    const prop = statement.selectedPredicate ? getLabel(statement.selectedPredicate.labels) : '';
+    const prop = statement.selectedPredicate
+      ? pickPreferredLanguageString(statement.selectedPredicate.labels, this._localizationService.currentLanguage)
+      : '';
     const op = statement.selectedOperator;
     if (!op) return prop;
 
