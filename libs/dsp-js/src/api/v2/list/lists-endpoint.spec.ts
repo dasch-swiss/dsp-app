@@ -1,7 +1,7 @@
 import { setupAjaxMock, AjaxMock } from '../../../../test/ajax-mock-helper';
 import { KnoraApiConfig } from '../../../knora-api-config';
 import { KnoraApiConnection } from '../../../knora-api-connection';
-import { ListNodeV2 } from '../../../models/v2/lists/list-node-v2';
+import { ListNodeV2, ListNodeV2WithAllLanguages } from '../../../models/v2/lists/list-node-v2';
 
 describe('ListsEndpoint', () => {
   const config = new KnoraApiConfig('http', '0.0.0.0', 3333, undefined, undefined, true);
@@ -117,6 +117,58 @@ describe('ListsEndpoint', () => {
 
         done();
       });
+    });
+  });
+
+  describe('all-languages mode', () => {
+    const listData = require('../../../../test/data/api/v2/manually-generated/treelist-with-all-languages.json');
+
+    it('getListWithAllLanguages appends ?allLanguages=true and deserialises labels[]', done => {
+      ajaxMock.setMockResponse(listData);
+
+      knoraApiConnection.v2.list
+        .getListWithAllLanguages('http://rdfh.ch/lists/0001/treeList')
+        .subscribe((list: ListNodeV2WithAllLanguages) => {
+          expect(list.id).toEqual('http://rdfh.ch/lists/0001/treeList');
+          expect(list.labels.length).toEqual(2);
+          expect(list.labels[0]).toEqual(expect.objectContaining({ language: 'de', value: 'Listenwurzel' }));
+          expect(list.labels[1]).toEqual(expect.objectContaining({ language: 'en', value: 'Tree list root' }));
+
+          // Children come back as the subclass too so their labels[] are populated.
+          expect(list.children[1].labels.length).toEqual(2);
+
+          // Third child uses the single-object label shape (no array wrapper);
+          // StringLiteralToStringLiteralArrayConverter must wrap it to [obj].
+          expect(list.children[2].labels.length).toEqual(1);
+          expect(list.children[2].labels[0]).toEqual(
+            expect.objectContaining({ language: 'en', value: 'Tree list node 03' })
+          );
+
+          const request = ajaxMock.getLastRequest();
+          expect(request?.url).toBe(
+            'http://0.0.0.0:3333/v2/lists/http%3A%2F%2Frdfh.ch%2Flists%2F0001%2FtreeList?allLanguages=true'
+          );
+          expect(request?.method).toEqual('GET');
+
+          done();
+        });
+    });
+
+    it('getNodeWithAllLanguages appends ?allLanguages=true and deserialises labels[]', done => {
+      ajaxMock.setMockResponse(listData);
+
+      knoraApiConnection.v2.list
+        .getNodeWithAllLanguages('http://rdfh.ch/lists/0001/treeList')
+        .subscribe((node: ListNodeV2WithAllLanguages) => {
+          expect(node.labels.length).toEqual(2);
+
+          const request = ajaxMock.getLastRequest();
+          expect(request?.url).toBe(
+            'http://0.0.0.0:3333/v2/node/http%3A%2F%2Frdfh.ch%2Flists%2F0001%2FtreeList?allLanguages=true'
+          );
+
+          done();
+        });
     });
   });
 });
