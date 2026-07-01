@@ -1,5 +1,5 @@
 import { Injectable, inject, OnDestroy } from '@angular/core';
-import { StringLiteralV2, Constants } from '@dasch-swiss/dsp-js';
+import { Constants, StringLiteralV2 } from '@dasch-swiss/dsp-js';
 import { distinctUntilChanged, map, skip, Subject, takeUntil } from 'rxjs';
 import { OrderByItem } from '../model';
 import { SearchStateService } from './search-state.service';
@@ -16,7 +16,7 @@ export class OrderByService implements OnDestroy {
       elements =>
         new Map(
           elements.map(stmt => [
-            stmt.id,
+            stmt.selectedPredicate!.iri,
             {
               labels: stmt.selectedPredicate!.labels,
               disabledForSorting:

@@ -59,6 +59,7 @@ export class StringValueComponent implements OnInit, OnChanges, AfterViewInit {
 
   @Input({ required: true }) valueType!: string;
   @Input() value?: string;
+  @Input() showError = false;
 
   @Output() emitValueChanged = new EventEmitter<string>();
 
@@ -83,6 +84,9 @@ export class StringValueComponent implements OnInit, OnChanges, AfterViewInit {
   ngOnChanges(changes: SimpleChanges) {
     if (changes['value'] && !changes['value'].firstChange) {
       this._setValue();
+    }
+    if (changes['showError']?.currentValue) {
+      this.inputControl.markAsTouched();
     }
   }
 

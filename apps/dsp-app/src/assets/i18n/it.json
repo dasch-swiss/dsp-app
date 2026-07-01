@@ -361,6 +361,7 @@
       },
       "advancedSearch": {
         "allResourceClasses": "Tutte le risorse",
+        "switchToFulltextSearch": "Passa alla ricerca full-text",
         "dataModel": "Modello di dati",
         "orderBy": "Ordina per",
         "property": "Proprietà",
@@ -399,7 +400,6 @@
         "resourcesMustBeSameProject": "Le risorse devono appartenere allo stesso progetto"
       },
       "resourcesList": {
-        "backToSearchForm": "Torna al modulo di ricerca",
         "resultsCount": "{{count}} risultati"
       },
       "resourcesListFetcher": {

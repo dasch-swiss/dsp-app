@@ -8,7 +8,7 @@
   [disabled]="orderByItems.length === 0"
   (click)="isOpen = !isOpen">
   <p class="label-icon-container">
-    <span class="label">{{ 'pages.search.advancedSearch.orderBy' | translate }}</span>
+    <span class="label">Order by{{ activeLabel(orderByItems) ? ': ' + activeLabel(orderByItems) : '' }}</span>
     <span class="icon">
       <mat-icon>expand_more</mat-icon>
     </span>
@@ -19,28 +19,28 @@
   [cdkConnectedOverlayOrigin]="trigger"
   [cdkConnectedOverlayOpen]="isOpen"
   [cdkConnectedOverlayHasBackdrop]="true"
-  [cdkConnectedOverlayBackdropClass]="[
-            'cdk-overlay-transparent-backdrop'
-        ]"
+  [cdkConnectedOverlayBackdropClass]="'cdk-overlay-transparent-backdrop'"
   (backdropClick)="isOpen = false">
   <mat-selection-list
-    cdkDropList
-    class="sort-list"
-    (cdkDropListDropped)="drop($event)"
+    class="chip-popover-list mat-elevation-z4"
+    [multiple]="false"
+    [hideSingleSelectionIndicator]="true"
     (selectionChange)="onSelectionChange($event)">
     @for (item of orderByItems; track item.id) {
     <mat-list-option
-      class="sort-item"
+      [value]="item"
       [selected]="item.orderBy"
-      [value]="item.id"
       [disabled]="item.disabled"
-      [matTooltip]="'pages.search.advancedSearch.tooltips.orderByDisabled' | translate"
-      [matTooltipDisabled]="!item.disabled"
-      cdkDrag>
-      <span cdkDragHandle matListItemIcon class="drag-handle">
-        <mat-icon>drag_indicator</mat-icon>
+      [matTooltip]="TOOLTIP_TEXT"
+      [matTooltipDisabled]="!item.disabled">
+      <span class="order-by-item">
+        <span>{{ getLabel(item.labels) }}</span>
+        @if (item.orderBy) {
+        <button mat-icon-button (click)="$event.stopPropagation(); removeOrderBy(item)">
+          <mat-icon>close</mat-icon>
+        </button>
+        }
       </span>
-      <span matListItemTitle> {{ item.labels | appStringifyStringLiteral }} </span>
     </mat-list-option>
     }
   </mat-selection-list>

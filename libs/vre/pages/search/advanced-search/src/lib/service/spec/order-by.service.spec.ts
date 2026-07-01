@@ -67,7 +67,7 @@ describe('OrderByService — i18n DTO propagation (DEV-6645)', () => {
       const map = await firstValueFrom(service.availablePredicates$);
 
       expect(map.size).toBe(1);
-      const entry = map.get(statement.id);
+      const entry = map.get('http://example/hasAuthor');
       expect(entry).toBeDefined();
       expect(entry!.labels).toBe(labels); // identity — no clone, no flatten
       expect(entry!.disabledForSorting).toBe(false);
@@ -166,14 +166,12 @@ describe('OrderByService — disabledForSorting (DEV-6677)', () => {
     });
 
     const orderBy = searchStateService.currentState.orderBy;
-    // Look up by statement id (OrderByItem.id matches StatementElement.id, not the predicate IRI).
-    const byStatementId = new Map(orderBy.map(item => [item.id, item]));
-    const stmts = searchStateService.currentState.statementElements;
-    const findStmt = (predIri: string) => stmts.find(s => s.selectedPredicate?.iri === predIri)!;
+    // OrderByItem.id now holds the predicate IRI (changed from statement id in the refactor).
+    const byPredicateIri = new Map(orderBy.map(item => [item.id, item]));
 
-    expect(byStatementId.get(findStmt(textPredicate.iri).id)?.disabled).toBe(false);
-    expect(byStatementId.get(findStmt(intPredicate.iri).id)?.disabled).toBe(false);
-    expect(byStatementId.get(findStmt(linkPredicate.iri).id)?.disabled).toBe(true);
-    expect(byStatementId.get(findStmt(listPredicate.iri).id)?.disabled).toBe(true);
+    expect(byPredicateIri.get(textPredicate.iri)?.disabled).toBe(false);
+    expect(byPredicateIri.get(intPredicate.iri)?.disabled).toBe(false);
+    expect(byPredicateIri.get(linkPredicate.iri)?.disabled).toBe(true);
+    expect(byPredicateIri.get(listPredicate.iri)?.disabled).toBe(true);
   });
 });

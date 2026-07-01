@@ -1,18 +1,11 @@
-import { Injectable, inject, OnDestroy } from '@angular/core';
-import { Subject } from 'rxjs';
+import { Injectable, inject } from '@angular/core';
 import { StatementElement, Predicate, IriLabelPair, NodeValue } from '../model';
 import { Operator } from '../operators.config';
 import { SearchStateService } from './search-state.service';
 
 @Injectable()
-export class PropertyFormManager implements OnDestroy {
+export class PropertyFormManager {
   private searchStateService = inject(SearchStateService);
-  private destroy$ = new Subject<void>();
-
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
-  }
 
   setMainResource(resourceClass: IriLabelPair): void {
     const statement = new StatementElement(new NodeValue(resourceClass.iri, resourceClass), 0);
@@ -46,6 +39,24 @@ export class PropertyFormManager implements OnDestroy {
   setSelectedOperator(statement: StatementElement, selectedOperator: Operator): void {
     statement.selectedOperator = selectedOperator;
     this._updateStatementAndUpdateForms(statement);
+  }
+
+  addBlankStatement(): StatementElement {
+    const blank = new StatementElement();
+    this.searchStateService.patchState({
+      statementElements: [...this.searchStateService.currentState.statementElements, blank],
+    });
+    return blank;
+  }
+
+  restoreStatement(snapshot: StatementElement, target: StatementElement): void {
+    target.clearSelections();
+    if (snapshot.selectedPredicate) target.selectedPredicate = snapshot.selectedPredicate;
+    if (snapshot.selectedOperator) target.selectedOperator = snapshot.selectedOperator;
+    if (snapshot.selectedObjectValue !== undefined) {
+      target.selectedObjectValue = snapshot.selectedObjectValue;
+    }
+    this.searchStateService.updateStatement(target);
   }
 
   setObjectValue(statement: StatementElement, searchValue: string | IriLabelPair): void {

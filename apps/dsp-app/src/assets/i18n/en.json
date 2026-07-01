@@ -361,6 +361,7 @@
       },
       "advancedSearch": {
         "allResourceClasses": "All resources",
+        "switchToFulltextSearch": "Switch to fulltext search",
         "dataModel": "Data model",
         "orderBy": "Order by",
         "property": "Property",
@@ -399,7 +400,6 @@
         "resourcesMustBeSameProject": "Resources must be from the same project"
       },
       "resourcesList": {
-        "backToSearchForm": "Back to search form",
         "resultsCount": "{{count}} results"
       },
       "resourcesListFetcher": {

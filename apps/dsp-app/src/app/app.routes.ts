@@ -22,15 +22,8 @@ import {
   ResourceMetadataComponent,
   SettingsPageComponent,
 } from '@dasch-swiss/vre/pages/project/project';
-import {
-  AdvancedSearchPageComponent,
-  AdvancedSearchResultsPageComponent,
-} from '@dasch-swiss/vre/pages/search/advanced-search';
-import {
-  FulltextSearchResultsPageComponent,
-  GlobalPageComponent,
-  ProjectFulltextSearchPageComponent,
-} from '@dasch-swiss/vre/pages/search/search';
+import { AdvancedSearchPageComponent } from '@dasch-swiss/vre/pages/search/advanced-search';
+import { FulltextSearchResultsPageComponent, GlobalPageComponent } from '@dasch-swiss/vre/pages/search/search';
 import {
   CookiePolicyComponent,
   ProjectsComponent,
@@ -127,14 +120,12 @@ export const routes: Routes = [
       },
       {
         path: RouteConstants.search,
-        component: ProjectFulltextSearchPageComponent,
+        redirectTo: RouteConstants.advancedSearch,
+        pathMatch: 'full',
       },
       {
         path: RouteConstants.advancedSearch,
-        children: [
-          { path: '', component: AdvancedSearchPageComponent },
-          { path: 'results', component: AdvancedSearchResultsPageComponent },
-        ],
+        component: AdvancedSearchPageComponent,
       },
     ],
   },

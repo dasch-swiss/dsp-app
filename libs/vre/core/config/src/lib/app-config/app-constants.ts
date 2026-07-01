@@ -96,6 +96,12 @@ export class RouteConstants {
   static readonly notFoundWildcardRelative = `/${RouteConstants.notFound}`;
 
   static readonly annotationQueryParam = 'annotation';
+
+  static readonly advancedSearchQ = 'q';
+  static readonly advancedSearchOntology = 'ontology';
+  static readonly advancedSearchClass = 'class';
+  static readonly advancedSearchFilters = 'filters';
+  static readonly advancedSearchOrderBy = 'orderBy';
 }
 
 export class ApiConstants {

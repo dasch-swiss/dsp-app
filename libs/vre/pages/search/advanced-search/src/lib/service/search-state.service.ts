@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, distinctUntilChanged, map, startWith } from 'rxjs';
+import { BehaviorSubject, distinctUntilChanged, map } from 'rxjs';
 import { ALL_RESOURCE_CLASSES } from '../constants';
 import { StatementElement, OrderByItem, SearchFormsState } from '../model';
 
@@ -14,32 +14,29 @@ export class SearchStateService {
   private _state = new BehaviorSubject<SearchFormsState>(this.INITIAL_FORMS_STATE);
 
   selectedResourceClass$ = this._state.pipe(
-    distinctUntilChanged(),
-    map(state => state.selectedResourceClass)
+    map(state => state.selectedResourceClass),
+    distinctUntilChanged((a, b) => a?.iri === b?.iri)
   );
 
   statementElements$ = this._state.pipe(
     map(state => state.statementElements),
-    distinctUntilChanged(),
-    startWith(this.INITIAL_FORMS_STATE.statementElements)
+    distinctUntilChanged((a, b) => a.length === b.length && a.every((s, i) => s === b[i]))
   );
 
   completeStatements$ = this._state.pipe(
-    distinctUntilChanged(),
     map(state => state.statementElements),
-    map(elements => elements.filter(prop => prop.isValidAndComplete)),
-    distinctUntilChanged()
+    distinctUntilChanged((a, b) => a.length === b.length && a.every((s, i) => s === b[i])),
+    map(elements => elements.filter(prop => prop.isValidAndComplete))
   );
 
   orderByItems$ = this._state.pipe(
-    distinctUntilChanged(),
     map(state => state.orderBy),
-    distinctUntilChanged()
+    distinctUntilChanged((a, b) => a === b)
   );
 
   isFormStateValidAndComplete$ = this._state.pipe(
-    distinctUntilChanged(),
     map(state => state.statementElements),
+    distinctUntilChanged((a, b) => a.length === b.length && a.every((s, i) => s === b[i])),
     map(elements => {
       const allValid = elements.every(statement => statement.isValidAndComplete || statement.isPristine);
       const canSearch = elements.length > 1 || (elements.length === 1 && elements[0].isPristine);
