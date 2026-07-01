@@ -28,7 +28,6 @@ export class CreateResource {
   creationDate?: string = undefined;
 
   // Per-resource (data-side) authorship; serialized to knora-api:hasResourceAuthorship when set.
-  // TODO(verify-locally): confirm CreateResource serialization includes this @JsonProperty in the POST body.
   @JsonProperty(Constants.hasResourceAuthorship, [String], true)
   resourceAuthorship?: string[] = undefined;
 
