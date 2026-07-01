@@ -1,6 +1,6 @@
 import { provideRouter } from '@angular/router';
 import { Constants, ReadIntervalValue, ReadResource, ReadTextValueAsString } from '@dasch-swiss/dsp-js';
-import { ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
+import { ProjectApiService, ResourceLegalV2ApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { AppConfigService, DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import {
   DspResource,
@@ -18,7 +18,6 @@ import { Segment } from '../representation/segments/segment';
 import { SegmentsService } from '../representation/segments/segments.service';
 import { makeEntityInfo } from '../resource-stories.helper';
 import { PropertiesDisplayService } from './properties-display/property-value/properties-display.service';
-import { ResourceLegalService } from './resource-legal.service';
 import { ResourceMediaTabsComponent } from './resource-media-tabs.component';
 
 const makeResource = (): DspResource => {
@@ -144,7 +143,7 @@ const sharedProviders = [
   },
   // Stubs for the embedded app-resource-rights-statement-container (data-side rights statement).
   { provide: PaginatedApiService, useValue: { getLicenses: () => of([]) } },
-  { provide: ResourceLegalService, useValue: { updateResourceAuthorship: () => of(undefined) } },
+  { provide: ResourceLegalV2ApiService, useValue: { updateResourceAuthorship: () => of(undefined) } },
 ];
 
 const meta: Meta<ResourceMediaTabsComponent> = {

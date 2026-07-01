@@ -1,5 +1,5 @@
 import { provideRouter } from '@angular/router';
-import { ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
+import { ProjectApiService, ResourceLegalV2ApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { UserService } from '@dasch-swiss/vre/core/session';
 import { DspResource, PaginatedApiService } from '@dasch-swiss/vre/shared/app-common';
@@ -9,7 +9,6 @@ import { of } from 'rxjs';
 import { expect } from 'storybook/test';
 
 import { PropertiesDisplayService } from './properties/properties-display/property-value/properties-display.service';
-import { ResourceLegalService } from './properties/resource-legal.service';
 import { RegionService } from './representation/region.service';
 import { ResourceFetcherService } from './representation/resource-fetcher.service';
 import { ResourceImageTabsComponent } from './resource-image-tabs.component';
@@ -65,7 +64,7 @@ const meta: Meta<ResourceImageTabsComponent> = {
           useValue: { get: () => of({ project: { shortcode: '0001', dataAuthorship: [] } }) },
         },
         { provide: PaginatedApiService, useValue: { getLicenses: () => of([]) } },
-        { provide: ResourceLegalService, useValue: { updateResourceAuthorship: () => of(undefined) } },
+        { provide: ResourceLegalV2ApiService, useValue: { updateResourceAuthorship: () => of(undefined) } },
         { provide: ResourceFetcherService, useValue: { reload: () => {} } },
         { provide: UserService, useValue: { user$: of(null) } },
         { provide: NotificationService, useValue: { openSnackBar: () => {} } },

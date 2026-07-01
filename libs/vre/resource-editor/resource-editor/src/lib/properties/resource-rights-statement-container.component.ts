@@ -2,7 +2,7 @@ import { AsyncPipe } from '@angular/common';
 import { Component, DestroyRef, Input, OnInit } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
-import { ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
+import { ProjectApiService, ResourceLegalV2ApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { UserService } from '@dasch-swiss/vre/core/session';
 import { DspResource, filterNull, PaginatedApiService, UserPermissions } from '@dasch-swiss/vre/shared/app-common';
@@ -12,7 +12,6 @@ import { ResourceRightsStatementComponent } from '@dasch-swiss/vre/ui/ui';
 import { TranslateService } from '@ngx-translate/core';
 import { map, Observable, of, switchMap } from 'rxjs';
 import { ResourceFetcherService } from '../representation/resource-fetcher.service';
-import { ResourceLegalService } from './resource-legal.service';
 
 interface DataRights {
   licenseLabel?: string;
@@ -62,7 +61,7 @@ export class ResourceRightsStatementContainerComponent implements OnInit {
     private readonly _paginatedApi: PaginatedApiService,
     private readonly _projectApi: ProjectApiService,
     private readonly _resourceFetcher: ResourceFetcherService,
-    private readonly _resourceLegal: ResourceLegalService,
+    private readonly _resourceLegal: ResourceLegalV2ApiService,
     private readonly _router: Router,
     private readonly _translate: TranslateService,
     private readonly _userService: UserService
