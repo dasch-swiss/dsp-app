@@ -259,7 +259,7 @@ export { CreateGeonameValue } from './models/v2/resources/values/create/create-g
 
 export { BaseValue } from './models/v2/resources/values/base-value';
 
-export { ListNodeV2 } from './models/v2/lists/list-node-v2';
+export { ListNodeV2, ListNodeV2WithAllLanguages } from './models/v2/lists/list-node-v2';
 
 export { Constants } from './models/v2/Constants';
 

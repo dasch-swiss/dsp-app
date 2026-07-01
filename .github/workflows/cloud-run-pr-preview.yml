@@ -69,6 +69,7 @@ jobs:
           password: ${{ steps.auth.outputs.access_token }}
 
       - name: Build and push image
+        id: build
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -84,7 +85,14 @@ jobs:
         with:
           service: ${{ env.SERVICE_NAME }}
           region: ${{ secrets.GCP_REGION }}
-          image: ${{ secrets.GCP_ARTIFACT_REGISTRY }}/dsp-app:${{ env.IMAGE_TAG }}
+          # Deploy by immutable digest, not the mutable :pr-N tag. Re-deploying
+          # the same tag string is a no-op on Cloud Run (the revision is pinned
+          # to the digest resolved at the previous deploy), so pushes would not
+          # roll out. The digest changes on every build, forcing a new revision.
+          image: ${{ secrets.GCP_ARTIFACT_REGISTRY }}/dsp-app@${{ steps.build.outputs.digest }}
+          # Wait for the new revision to become ready and take traffic so the
+          # job status reflects deploy success instead of always going green.
+          wait: true
           flags: >-
             --port=4200
             --allow-unauthenticated
@@ -208,6 +216,7 @@ jobs:
           password: ${{ steps.auth.outputs.access_token }}
 
       - name: Build and push image
+        id: build
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -223,7 +232,14 @@ jobs:
         with:
           service: ${{ env.SERVICE_NAME }}
           region: ${{ secrets.GCP_REGION }}
-          image: ${{ secrets.GCP_ARTIFACT_REGISTRY }}/dsp-app:${{ env.IMAGE_TAG }}
+          # Deploy by immutable digest, not the mutable :pr-N tag. Re-deploying
+          # the same tag string is a no-op on Cloud Run (the revision is pinned
+          # to the digest resolved at the previous deploy), so pushes would not
+          # roll out. The digest changes on every build, forcing a new revision.
+          image: ${{ secrets.GCP_ARTIFACT_REGISTRY }}/dsp-app@${{ steps.build.outputs.digest }}
+          # Wait for the new revision to become ready and take traffic so the
+          # job status reflects deploy success instead of always going green.
+          wait: true
           flags: >-
             --port=4200
             --allow-unauthenticated
