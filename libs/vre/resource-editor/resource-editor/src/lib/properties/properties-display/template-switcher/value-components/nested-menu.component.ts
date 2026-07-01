@@ -3,7 +3,7 @@ import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatSelect } from '@angular/material/select';
 import { MatTooltip } from '@angular/material/tooltip';
-import { ListNodeV2 } from '@dasch-swiss/dsp-js';
+import { ListNodeV2WithAllLanguages, StringLiteralV2 } from '@dasch-swiss/dsp-js';
 import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
 
 @Component({
@@ -21,7 +21,9 @@ import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
   template: `
     @if (data.isRootNode) {
       <mat-form-field [matMenuTriggerFor]="menu" data-cy="select-list-button" style="width: 100%">
-        <mat-label>{{ selection ?? data.label }}</mat-label>
+        <mat-label>{{
+          (selection | appStringifyStringLiteral) || (data.labels | appStringifyStringLiteral)
+        }}</mat-label>
         <mat-select />
       </mat-form-field>
     }
@@ -35,7 +37,7 @@ import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
         style="width: 100%"
         (click)="selectMenuWithChildren(data)"
         (mouseenter)="openSubMenu()">
-        {{ data.label }}
+        {{ data.labels | appStringifyStringLiteral }}
       </div>
     }
     <mat-menu #menu="matMenu">
@@ -52,7 +54,7 @@ import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
             (click)="selectedNode.emit(node)"
             class="list-item-button"
             data-cy="list-item-button">
-            {{ node.label }}
+            {{ node.labels | appStringifyStringLiteral }}
           </button>
         }
       }
@@ -72,14 +74,14 @@ import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
   ],
 })
 export class NestedMenuComponent {
-  @Input() data!: ListNodeV2;
-  @Input() selection!: string;
-  @Output() selectedNode = new EventEmitter<ListNodeV2>();
+  @Input() data!: ListNodeV2WithAllLanguages;
+  @Input() selection: StringLiteralV2[] = [];
+  @Output() selectedNode = new EventEmitter<ListNodeV2WithAllLanguages>();
 
   @ViewChild(MatMenu) menu!: MatMenu;
   @ViewChild(MatMenuTrigger) trigger!: MatMenuTrigger;
 
-  selectMenuWithChildren(node: ListNodeV2) {
+  selectMenuWithChildren(node: ListNodeV2WithAllLanguages) {
     this.menu.closed.emit('click');
     this.selectedNode.emit(node);
   }

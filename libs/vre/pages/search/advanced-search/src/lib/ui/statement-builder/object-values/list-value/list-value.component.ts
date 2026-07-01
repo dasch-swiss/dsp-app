@@ -2,19 +2,23 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  DestroyRef,
   EventEmitter,
   inject,
   Input,
   OnChanges,
+  OnInit,
   Output,
   SimpleChanges,
 } from '@angular/core';
-import { ListNodeV2 } from '@dasch-swiss/dsp-js';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ListNodeV2WithAllLanguages } from '@dasch-swiss/dsp-js';
+import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NestedMenuComponent } from '@dasch-swiss/vre/ui/nested-menu';
-import { take } from 'rxjs';
+import { BehaviorSubject, combineLatest } from 'rxjs';
+import { filter, switchMap } from 'rxjs/operators';
 import { IriLabelPair } from '../../../../model';
 import { DynamicFormsDataService } from '../../../../service/dynamic-forms-data.service';
-import { toLabels } from '../../../../util/labels';
 
 @Component({
   standalone: true,
@@ -24,34 +28,50 @@ import { toLabels } from '../../../../util/labels';
     @if (rootListNode) {
       <app-nested-menu
         [data]="rootListNode"
-        [selection]="selectedListNode?.label || ''"
+        [selection]="selectedListNode?.labels ?? []"
         (selectedNode)="onSelectionChange($event)" />
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ListValueComponent implements OnChanges {
+export class ListValueComponent implements OnInit, OnChanges {
   @Input({ required: true }) rootListNodeIri!: string;
-  rootListNode?: ListNodeV2;
+  rootListNode?: ListNodeV2WithAllLanguages;
   @Input() selectedListItem?: IriLabelPair;
 
   @Output() emitValueChanged = new EventEmitter<IriLabelPair>();
 
   private _dataService = inject(DynamicFormsDataService);
   private _cdr = inject(ChangeDetectorRef);
+  private _localizationService = inject(LocalizationService);
+  private _destroyRef = inject(DestroyRef);
 
-  selectedListNode?: ListNodeV2;
+  private _rootIri$ = new BehaviorSubject<string | undefined>(undefined);
+
+  selectedListNode?: ListNodeV2WithAllLanguages;
+
+  ngOnInit(): void {
+    // Single lifetime-scoped subscription. switchMap cancels any in-flight
+    // fetch when rootListNodeIri changes, and combineLatest with
+    // currentLanguage$ keeps the nested menu rendering in the active language.
+    this._rootIri$
+      .pipe(
+        filter((iri): iri is string => iri !== undefined),
+        switchMap(iri =>
+          combineLatest([this._dataService.getListWithAllLanguages$(iri), this._localizationService.currentLanguage$])
+        ),
+        takeUntilDestroyed(this._destroyRef)
+      )
+      .subscribe(([rootListNode]) => {
+        this.rootListNode = rootListNode;
+        this._tryRestoreSelectedItem();
+        this._cdr.markForCheck();
+      });
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['rootListNodeIri']) {
-      this._dataService
-        .getList$(this.rootListNodeIri)
-        .pipe(take(1))
-        .subscribe(rootListNode => {
-          this.rootListNode = rootListNode;
-          this._tryRestoreSelectedItem();
-          this._cdr.markForCheck();
-        });
+      this._rootIri$.next(this.rootListNodeIri);
     }
 
     if (changes['selectedListItem'] && this.selectedListItem && this.rootListNode) {
@@ -69,7 +89,7 @@ export class ListValueComponent implements OnChanges {
     this._cdr.markForCheck();
   }
 
-  private _findNodeById(nodes: ListNodeV2[], id: string): ListNodeV2 | undefined {
+  private _findNodeById(nodes: ListNodeV2WithAllLanguages[], id: string): ListNodeV2WithAllLanguages | undefined {
     for (const node of nodes) {
       if (node.id === id) {
         return node;
@@ -82,12 +102,12 @@ export class ListValueComponent implements OnChanges {
     return undefined;
   }
 
-  onSelectionChange(node: ListNodeV2) {
+  onSelectionChange(node: ListNodeV2WithAllLanguages) {
     this.selectedListNode = node;
     const nodeValue: IriLabelPair = {
       iri: node.id,
-      labels: toLabels(node.label),
-      comments: [],
+      labels: node.labels,
+      comments: node.comments,
     };
     this.emitValueChanged.emit(nodeValue);
   }

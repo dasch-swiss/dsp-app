@@ -1,4 +1,4 @@
-import { StringLiteral } from '@dasch-swiss/dsp-js';
+import { StringLiteral, StringLiteralV2 } from '@dasch-swiss/dsp-js';
 import { LanguageStringDto } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { AvailableLanguage } from '@dasch-swiss/vre/core/config';
 import { pickPreferredLanguageString } from './pick-preferred-language-string';
@@ -37,11 +37,12 @@ export class SortingHelper {
    *
    * Resolves each item's language-tagged values to the current language via
    * `pickPreferredLanguageString`, then compares with language-aware collation. Use
-   * whenever the underlying field is `StringLiteral[]` / `LanguageStringDto[]`.
+   * whenever the underlying field is `StringLiteral[]` / `StringLiteralV2[]` /
+   * `LanguageStringDto[]`.
    */
   static sortByLocalizedString<T>(
     items: ReadonlyArray<T>,
-    getValues: (item: T) => ReadonlyArray<StringLiteral | LanguageStringDto> | null | undefined,
+    getValues: (item: T) => ReadonlyArray<StringLiteral | StringLiteralV2 | LanguageStringDto> | null | undefined,
     language: AvailableLanguage
   ): T[] {
     return [...items].sort((a, b) =>
