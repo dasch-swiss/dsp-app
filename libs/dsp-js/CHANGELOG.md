@@ -1,5 +1,26 @@
 # Changelog
 
+## [12.1.0](https://github.com/dasch-swiss/dsp-app/compare/dsp-js-v12.0.1...dsp-js-v12.1.0) (2026-07-01)
+
+
+### Enhancements
+
+* display entities in the current language (DEV-6627) ([#3174](https://github.com/dasch-swiss/dsp-app/issues/3174)) ([1dae05a](https://github.com/dasch-swiss/dsp-app/commit/1dae05a370c7d24086ec14336f16e84504c9ce6c))
+* multi-language list-node labels with reactive language switch (DEV-6555) ([#3211](https://github.com/dasch-swiss/dsp-app/issues/3211)) ([f2b418d](https://github.com/dasch-swiss/dsp-app/commit/f2b418d12415a7425c1f8f83d73d46f157c97857))
+* translate advanced search and its displayed classes and properties (DEV-6645) ([#3177](https://github.com/dasch-swiss/dsp-app/issues/3177)) ([513cefe](https://github.com/dasch-swiss/dsp-app/commit/513cefe166c5b2d22f34220128843d57901ef9e6))
+
+
+### Bug Fixes
+
+* CJS interop fixes after application builder upgrade ([#3204](https://github.com/dasch-swiss/dsp-app/issues/3204)) ([2669888](https://github.com/dasch-swiss/dsp-app/commit/2669888b54f7342fecef1a4c0f99cc80a54197cf))
+
+
+### Maintenances
+
+* convert NX lint/test targets to inferred + align Node engines floor (DEV-6686) ([#3196](https://github.com/dasch-swiss/dsp-app/issues/3196)) ([d6ffc7b](https://github.com/dasch-swiss/dsp-app/commit/d6ffc7b1c1e7aaeef2f0596bc4dbdc13bb301afd))
+* migrate dsp-app to ESLint 9 flat config + ts-eslint 8 (DEV-6685) ([#3190](https://github.com/dasch-swiss/dsp-app/issues/3190)) ([b8b7a7c](https://github.com/dasch-swiss/dsp-app/commit/b8b7a7ccae7e8538ff6ec91fcd49926d245cb893))
+* upgrade Angular to v21 and NX to v23 (DEV-5699) ([#3189](https://github.com/dasch-swiss/dsp-app/issues/3189)) ([baef357](https://github.com/dasch-swiss/dsp-app/commit/baef357a0e1352798d731ca6c6917c259362848f))
+
 ## [12.0.1](https://github.com/dasch-swiss/dsp-app/compare/dsp-js-v12.0.0...dsp-js-v12.0.1) (2026-06-15)
 
 
