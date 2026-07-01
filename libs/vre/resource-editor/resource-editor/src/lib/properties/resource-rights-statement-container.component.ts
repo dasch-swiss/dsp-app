@@ -31,7 +31,7 @@ interface DataRights {
   template: `
     @if (dataRights$ | async; as rights) {
       <app-resource-rights-statement
-        perResource
+        [perResource]="true"
         [licenseLabel]="rights.licenseLabel"
         [licenseUrl]="rights.licenseUrl"
         [copyrightHolder]="rights.copyrightHolder"
