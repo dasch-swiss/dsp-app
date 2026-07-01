@@ -28,7 +28,7 @@ Cypress.Commands.add(
       .then(response => {
         const ontologyMetadata = response.body;
         cy.log('Ontology created!');
-        cy.visit(`/project/${projectPage.projectUuid}/ontology/${ontology.name}/editor/classes`);
+        cy.visit(`/project/${projectPage.projectUuid}/ontology/${ontology.name}/editor`);
         return cy.wrap({ ontology, ontologyMetadata }).as('ontology');
       });
   }

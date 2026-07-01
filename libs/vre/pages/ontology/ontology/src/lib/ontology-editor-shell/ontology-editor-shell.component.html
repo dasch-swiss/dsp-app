@@ -1,0 +1,11 @@
+<as-split direction="horizontal" [disabled]="(viewService.isPropertyDragging$ | async) ?? false">
+  <as-split-area [size]="25">
+    <div class="pane-placeholder" data-testid="navigator-pane">Class navigator (Phase 2)</div>
+  </as-split-area>
+  <as-split-area [size]="50">
+    <div class="pane-placeholder" data-testid="workspace-pane">Class workspace (Phase 2)</div>
+  </as-split-area>
+  <as-split-area [size]="25">
+    <div class="pane-placeholder" data-testid="library-pane">Property library (Phase 2)</div>
+  </as-split-area>
+</as-split>
