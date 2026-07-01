@@ -2,31 +2,34 @@ import { AsyncPipe, NgStyle } from '@angular/common';
 import { Component, Inject, Input, OnInit } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { KnoraApiConnection, ListNodeV2, ReadListValue, ResourcePropertyDefinition } from '@dasch-swiss/dsp-js';
+import {
+  KnoraApiConnection,
+  ListNodeV2WithAllLanguages,
+  ReadListValue,
+  ResourcePropertyDefinition,
+} from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { filterUndefined } from '@dasch-swiss/vre/shared/app-common';
-import { combineLatest, map, Observable, Subject, switchMap } from 'rxjs';
+import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
+import { combineLatest, map, Observable, Subject, switchMap, tap } from 'rxjs';
 import { ResourceFetcherService } from '../../../../representation/resource-fetcher.service';
-
-interface ListNodeDisplay {
-  label: string;
-  comment: string;
-}
 
 @Component({
   selector: 'app-list-viewer',
-  imports: [AsyncPipe, NgStyle, MatIconModule, MatTooltipModule],
+  imports: [AsyncPipe, NgStyle, MatIconModule, MatTooltipModule, StringifyStringLiteralPipe],
   template: `
     <div
       data-cy="list-switch"
       style="display: flex;
     align-items: center;">
-      @for (node of nodes$ | async; track node.label; let last = $last; let index = $index) {
+      @for (node of nodes$ | async; track node.id; let last = $last; let index = $index) {
+        @let comment = node.comments | appStringifyStringLiteral;
         <span
           [ngStyle]="{ 'font-weight': last && index > 0 ? 'bold' : 'normal' }"
-          [matTooltip]="node.comment"
-          [matTooltipDisabled]="!node.comment"
-          >{{ node.label }}</span
+          [matTooltip]="comment"
+          [matTooltipDisabled]="!comment"
+          >{{ node.labels | appStringifyStringLiteral }}</span
         >
         @if (!last) {
           <mat-icon>chevron_right</mat-icon>
@@ -44,7 +47,7 @@ interface ListNodeDisplay {
 export class ListViewerComponent implements OnInit {
   @Input() value!: ReadListValue;
   @Input() propertyDef!: ResourcePropertyDefinition;
-  nodes$!: Observable<ListNodeDisplay[]>;
+  nodes$!: Observable<ListNodeV2WithAllLanguages[]>;
 
   linkToSearchList?: string;
   private _nodeIdSubject = new Subject<string>();
@@ -52,24 +55,23 @@ export class ListViewerComponent implements OnInit {
   constructor(
     @Inject(DspApiConnectionToken)
     private _dspApiConnection: KnoraApiConnection,
-    private _resourceFetcher: ResourceFetcherService
+    private _resourceFetcher: ResourceFetcherService,
+    private _localizationService: LocalizationService
   ) {}
 
   ngOnInit() {
     this._fetchSearchLink();
 
-    this.nodes$ = (this._dspApiConnection.v2.list.getNode(this.value.listNode) as Observable<ListNodeV2>).pipe(
-      switchMap(v => this._dspApiConnection.v2.list.getList(v.hasRootNode!)),
-      map(v => {
-        const tree = ListViewerComponent.lookFor([v as ListNodeV2], this.value.listNode) as ListNodeV2[];
-        const nodeId = tree[tree.length - 1].id;
-        this._nodeIdSubject.next(nodeId);
-        return tree.slice(1).map(node => ({
-          label: node.label,
-          comment: node.comments?.[0]?.value ?? '',
-        }));
-      })
+    const tree$ = this._dspApiConnection.v2.list.getNodeWithAllLanguages(this.value.listNode).pipe(
+      switchMap(v => this._dspApiConnection.v2.list.getListWithAllLanguages(v.hasRootNode!)),
+      map(v => ListViewerComponent.lookFor([v], this.value.listNode) as ListNodeV2WithAllLanguages[]),
+      tap(tree => this._nodeIdSubject.next(tree[tree.length - 1].id)),
+      map(tree => tree.slice(1))
     );
+
+    // Re-emit on language change so AsyncPipe triggers a change-detection pass
+    // and the impure label/comment pipes resolve against the new language.
+    this.nodes$ = combineLatest([tree$, this._localizationService.currentLanguage$]).pipe(map(([tree]) => tree));
   }
 
   private _fetchSearchLink() {
@@ -98,7 +100,7 @@ OFFSET 0`;
     });
   }
 
-  static lookFor(tree: ListNodeV2[], id: string): ListNodeV2[] | null {
+  static lookFor(tree: ListNodeV2WithAllLanguages[], id: string): ListNodeV2WithAllLanguages[] | null {
     const node = tree[tree.length - 1];
     if (node.id === id) {
       return tree;

@@ -1,4 +1,4 @@
-import { StringLiteral } from '@dasch-swiss/dsp-js';
+import { StringLiteral, StringLiteralV2 } from '@dasch-swiss/dsp-js';
 import { LanguageStringDto } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { AvailableLanguage } from '@dasch-swiss/vre/core/config';
 
@@ -11,7 +11,7 @@ import { AvailableLanguage } from '@dasch-swiss/vre/core/config';
  * call site that needs the same string for sort-key consistency.
  */
 export function pickPreferredLanguageString(
-  value: ReadonlyArray<StringLiteral | LanguageStringDto> | null | undefined,
+  value: ReadonlyArray<StringLiteral | StringLiteralV2 | LanguageStringDto> | null | undefined,
   language: AvailableLanguage
 ): string {
   if (!value || value.length === 0) return '';
