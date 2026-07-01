@@ -2,6 +2,7 @@ import { ResourceClassDefinitionWithAllLanguages } from '../../../../../libs/dsp
 import { faker } from '@faker-js/faker';
 import { DataModelClassProperty } from '../../models/data-model-class';
 import { CLASS_TYPES, PropertyType } from '../../support/helpers/constants';
+import { uniqueName } from '../../support/helpers/unique-name';
 import ProjectPage from '../../support/pages/project-page';
 
 describe('Data Model Class', () => {
@@ -19,7 +20,7 @@ describe('Data Model Class', () => {
     const classType = CLASS_TYPES.textRepresentation;
 
     const textClass: ResourceClassDefinitionWithAllLanguages = {
-      id: faker.lorem.word(),
+      id: uniqueName(),
       subClassOf: [],
       propertiesList: [],
       canBeInstantiated: true,
@@ -30,7 +31,7 @@ describe('Data Model Class', () => {
     };
 
     const resourceClass: ResourceClassDefinitionWithAllLanguages = {
-      id: faker.lorem.word(),
+      id: uniqueName(),
       subClassOf: [],
       propertiesList: [],
       canBeInstantiated: true,
@@ -77,7 +78,7 @@ describe('Data Model Class', () => {
   it('should create new class with object class constraints (e.g. page as part of a book)', () => {
     const bookType = CLASS_TYPES.objectWithoutRepresentation;
     const bookClass: ResourceClassDefinitionWithAllLanguages = {
-      id: faker.lorem.word(),
+      id: uniqueName(),
       subClassOf: [],
       propertiesList: [],
       canBeInstantiated: true,
@@ -89,7 +90,7 @@ describe('Data Model Class', () => {
 
     const stillImageType = CLASS_TYPES.stillImageRepresentation;
     const stillImageClass: ResourceClassDefinitionWithAllLanguages = {
-      id: faker.lorem.word(),
+      id: uniqueName(),
       subClassOf: [],
       propertiesList: [],
       canBeInstantiated: true,
@@ -135,13 +136,13 @@ describe('Data Model Class', () => {
 
     // link them
     const partOfProperty = <DataModelClassProperty>{
-      name: faker.lorem.word(),
+      name: uniqueName(),
       label: `B${faker.lorem.words(5)}`,
       comment: faker.lorem.words(10),
     };
 
     const linkToClassProperty = <DataModelClassProperty>{
-      name: faker.lorem.word(),
+      name: uniqueName(),
       label: `A${faker.lorem.words(5)}`,
       comment: faker.lorem.words(10),
     };
@@ -191,7 +192,7 @@ describe('Data Model Class', () => {
     cy.get('[data-cy=back-to-data-models]').should('be.visible').click();
     cy.get('[data-cy=create-list-button]').should('be.visible').click();
 
-    const listLabel = faker.lorem.word();
+    const listLabel = uniqueName();
 
     cy.get('[data-cy=create-list-button]').click({ force: true, multiple: false });
     cy.get('[data-cy=label-input]:visible').should('have.length', 1).type(listLabel);
@@ -208,7 +209,7 @@ describe('Data Model Class', () => {
     cy.get(`[data-cy=${PropertyType.List}]`).should('be.visible').click();
     cy.get(`[data-cy=${PropertyType.Dropdown}]`).should('be.visible').click();
 
-    cy.get('[data-cy=name-input]').clear().type(faker.lorem.word());
+    cy.get('[data-cy=name-input]').clear().type(uniqueName());
     cy.get('[data-cy=label-input] input').clear().type(faker.lorem.word({ length: 2 }));
     cy.get('[data-cy=comment-textarea]').type(faker.lorem.word({ length: 5 }));
     cy.get('[data-cy=object-attribute-list]').click(); // open dropdown
@@ -252,7 +253,7 @@ describe('Data Model Class', () => {
 
   it('should add property to a data model class', () => {
     const textProperty = <DataModelClassProperty>{
-      name: faker.lorem.word(),
+      name: uniqueName(),
       label: faker.lorem.words(5),
       comment: faker.lorem.words(10),
     };
