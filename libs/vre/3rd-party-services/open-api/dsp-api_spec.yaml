@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: DSP-API
-  version: v36.3.0-1-g9bd6eee
+  version: v36.4.0-5-g9df9bf5
   summary: DSP-API is part of the DaSCH Service Platform, a repository for the long-term
     preservation and reuse of data in the humanities.
   contact:
@@ -136,6 +136,7 @@ paths:
                     - http://rdfh.ch/licenses/cc-0-1.0
                     - http://rdfh.ch/licenses/cc-by-nc-4.0
                     - http://rdfh.ch/licenses/cc-by-sa-4.0
+                    dataAuthorship: []
                   status: true
                   selfjoin: false
         '400':
@@ -249,6 +250,7 @@ paths:
                     - http://rdfh.ch/licenses/cc-0-1.0
                     - http://rdfh.ch/licenses/cc-by-nc-4.0
                     - http://rdfh.ch/licenses/cc-by-sa-4.0
+                    dataAuthorship: []
                   status: true
                   selfjoin: false
         '400':
@@ -357,6 +359,7 @@ paths:
                     - http://rdfh.ch/licenses/cc-0-1.0
                     - http://rdfh.ch/licenses/cc-by-nc-4.0
                     - http://rdfh.ch/licenses/cc-by-sa-4.0
+                    dataAuthorship: []
                   status: true
                   selfjoin: false
         '400':
@@ -477,6 +480,7 @@ paths:
                     - http://rdfh.ch/licenses/cc-0-1.0
                     - http://rdfh.ch/licenses/cc-by-nc-4.0
                     - http://rdfh.ch/licenses/cc-by-sa-4.0
+                    dataAuthorship: []
                   status: true
                   selfjoin: false
         '400':
@@ -585,6 +589,7 @@ paths:
                     - http://rdfh.ch/licenses/cc-0-1.0
                     - http://rdfh.ch/licenses/cc-by-nc-4.0
                     - http://rdfh.ch/licenses/cc-by-sa-4.0
+                    dataAuthorship: []
                   status: true
                   selfjoin: false
         '400':
@@ -702,6 +707,7 @@ paths:
                       - http://rdfh.ch/licenses/cc-0-1.0
                       - http://rdfh.ch/licenses/cc-by-nc-4.0
                       - http://rdfh.ch/licenses/cc-by-sa-4.0
+                      dataAuthorship: []
                     status: true
                     selfjoin: false
                   projects:
@@ -735,6 +741,7 @@ paths:
                     - http://rdfh.ch/licenses/cc-0-1.0
                     - http://rdfh.ch/licenses/cc-by-nc-4.0
                     - http://rdfh.ch/licenses/cc-by-sa-4.0
+                    dataAuthorship: []
                   permissions:
                     groupsPerProject: {}
                     administrativePermissionsPerProject: {}
@@ -851,6 +858,7 @@ paths:
                     - http://rdfh.ch/licenses/cc-0-1.0
                     - http://rdfh.ch/licenses/cc-by-nc-4.0
                     - http://rdfh.ch/licenses/cc-by-sa-4.0
+                    dataAuthorship: []
                   status: true
                   selfjoin: false
         '400':
@@ -3724,6 +3732,93 @@ paths:
       security:
       - httpAuth: []
       - httpAuth1: []
+  /admin/projects/shortcode/{projectShortcode}/legal-info/resource:
+    put:
+      tags:
+      - Admin API
+      description: 'Set the resource-side (data) legal info for this project: the
+        data license (Creative Commons only), the copyright holder and the default
+        authorship, each applied to every resource record in the project. Returns
+        the saved values. The user must be a system or project admin.'
+      operationId: putAdminProjectsShortcodeProjectshortcodeLegal-infoResource
+      parameters:
+      - name: projectShortcode
+        in: path
+        description: The shortcode of a project. Must be a 4 digit hexadecimal String.
+        required: true
+        schema:
+          type: string
+        example: '0001'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResourceSideLegalInfo'
+            example:
+              dataLicense: http://rdfh.ch/licenses/cc-by-4.0
+              dataCopyrightHolder: University of Basel
+              dataAuthorship:
+              - Lotte Reiniger
+              - Hilma af Klint
+        required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceSideLegalInfo'
+              example:
+                dataLicense: http://rdfh.ch/licenses/cc-by-4.0
+                dataCopyrightHolder: University of Basel
+                dataAuthorship:
+                - Lotte Reiniger
+                - Hilma af Klint
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                anyOf:
+                - $ref: '#/components/schemas/OntologyConstraintException'
+                - $ref: '#/components/schemas/DuplicateValueException'
+                - $ref: '#/components/schemas/ValidationException'
+                - $ref: '#/components/schemas/BadRequestException'
+                - $ref: '#/components/schemas/GravsearchException'
+                - $ref: '#/components/schemas/EditConflictException'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadCredentialsException'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenException'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - httpAuth: []
+      - httpAuth1: []
   /admin/projects:
     get:
       tags:
@@ -5225,7 +5320,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/uKOlBV-ES7CfmpuAyPPP8A
+        example: http://rdfh.ch/users/q5KfSIXnRtygfY3e3cEUhg
       responses:
         '200':
           description: ''
@@ -5289,7 +5384,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/uKOlBV-ES7CfmpuAyPPP8A
+        example: http://rdfh.ch/users/q5KfSIXnRtygfY3e3cEUhg
       responses:
         '200':
           description: ''
@@ -5353,7 +5448,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/uKOlBV-ES7CfmpuAyPPP8A
+        example: http://rdfh.ch/users/q5KfSIXnRtygfY3e3cEUhg
       responses:
         '200':
           description: ''
@@ -5542,7 +5637,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/uKOlBV-ES7CfmpuAyPPP8A
+        example: http://rdfh.ch/users/q5KfSIXnRtygfY3e3cEUhg
       responses:
         '200':
           description: ''
@@ -5608,7 +5703,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/uKOlBV-ES7CfmpuAyPPP8A
+        example: http://rdfh.ch/users/q5KfSIXnRtygfY3e3cEUhg
       responses:
         '200':
           description: ''
@@ -5812,7 +5907,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/uKOlBV-ES7CfmpuAyPPP8A
+        example: http://rdfh.ch/users/q5KfSIXnRtygfY3e3cEUhg
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -5885,7 +5980,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/uKOlBV-ES7CfmpuAyPPP8A
+        example: http://rdfh.ch/users/q5KfSIXnRtygfY3e3cEUhg
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -5959,7 +6054,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/uKOlBV-ES7CfmpuAyPPP8A
+        example: http://rdfh.ch/users/q5KfSIXnRtygfY3e3cEUhg
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -6032,7 +6127,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/uKOlBV-ES7CfmpuAyPPP8A
+        example: http://rdfh.ch/users/q5KfSIXnRtygfY3e3cEUhg
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -6106,7 +6201,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/uKOlBV-ES7CfmpuAyPPP8A
+        example: http://rdfh.ch/users/q5KfSIXnRtygfY3e3cEUhg
       - name: groupIri
         in: path
         description: The IRI of a group. Must be URL-encoded.
@@ -6179,7 +6274,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/uKOlBV-ES7CfmpuAyPPP8A
+        example: http://rdfh.ch/users/q5KfSIXnRtygfY3e3cEUhg
       - name: groupIri
         in: path
         description: The IRI of a group. Must be URL-encoded.
@@ -6253,7 +6348,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/uKOlBV-ES7CfmpuAyPPP8A
+        example: http://rdfh.ch/users/q5KfSIXnRtygfY3e3cEUhg
       requestBody:
         content:
           application/json:
@@ -6326,7 +6421,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/uKOlBV-ES7CfmpuAyPPP8A
+        example: http://rdfh.ch/users/q5KfSIXnRtygfY3e3cEUhg
       requestBody:
         content:
           application/json:
@@ -6399,7 +6494,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/uKOlBV-ES7CfmpuAyPPP8A
+        example: http://rdfh.ch/users/q5KfSIXnRtygfY3e3cEUhg
       requestBody:
         content:
           application/json:
@@ -6472,7 +6567,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/uKOlBV-ES7CfmpuAyPPP8A
+        example: http://rdfh.ch/users/q5KfSIXnRtygfY3e3cEUhg
       requestBody:
         content:
           application/json:
@@ -6743,7 +6838,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/lists/0001/GUwM_dH8R-yeYt_1im-mJQ
+        example: http://rdfh.ch/lists/0001/6a6FUHw_QDucPFKJWR8C-w
       - name: allLanguages
         in: query
         description: If true, return rdfs:label and rdfs:comment as JSON-LD arrays
@@ -6871,7 +6966,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/lists/0001/GUwM_dH8R-yeYt_1im-mJQ
+        example: http://rdfh.ch/lists/0001/6a6FUHw_QDucPFKJWR8C-w
       - name: allLanguages
         in: query
         description: If true, return rdfs:label and rdfs:comment as JSON-LD arrays
@@ -9216,6 +9311,125 @@ paths:
       description: Mark a resource as deleted. Requires appropriate object access
         permissions on the resource.
       operationId: postV2ResourcesDelete
+      parameters:
+      - name: x-knora-accept-schema
+        in: header
+        description: |-
+          The ontology schema to be used for the request.
+          If not specified, the default schema ApiV2Complex will be used.
+        required: false
+        schema:
+          type: string
+      - name: schema
+        in: query
+        description: |-
+          The ontology schema to be used for the request.
+          If not specified, the default schema ApiV2Complex will be used.
+        required: false
+        schema:
+          type: string
+      - name: x-knora-json-ld-rendering
+        in: header
+        description: |-
+          The JSON-LD rendering to be used for the request (flat or hierarchical).
+          If not specified, hierarchical JSON-LD will be used.
+        required: false
+        schema:
+          type: string
+      - name: markup
+        in: query
+        description: The markup rendering to be used for the request (XML or standoff).
+        required: false
+        schema:
+          type: string
+      - name: x-knora-accept-markup
+        in: header
+        description: The markup rendering to be used for the request (XML or standoff).
+        required: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        required: true
+      responses:
+        '200':
+          description: ''
+          headers:
+            Content-Type:
+              required: true
+              schema:
+                type: string
+          content:
+            application/ld+json:
+              schema:
+                type: string
+            text/turtle:
+              schema:
+                type: string
+            application/trig:
+              schema:
+                type: string
+            application/rdf+xml:
+              schema:
+                type: string
+            application/n-quads:
+              schema:
+                type: string
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                anyOf:
+                - $ref: '#/components/schemas/OntologyConstraintException'
+                - $ref: '#/components/schemas/DuplicateValueException'
+                - $ref: '#/components/schemas/ValidationException'
+                - $ref: '#/components/schemas/BadRequestException'
+                - $ref: '#/components/schemas/GravsearchException'
+                - $ref: '#/components/schemas/EditConflictException'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadCredentialsException'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenException'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - httpAuth: []
+      - httpAuth1: []
+  /v2/resources/authorship:
+    put:
+      tags:
+      - API v2
+      description: Update a resource's authorship (data side). Requires Modify object
+        access permission on the resource.
+      operationId: putV2ResourcesAuthorship
       parameters:
       - name: x-knora-accept-schema
         in: header
@@ -15875,9 +16089,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/VersionResponse'
               example:
-                webapi: v36.3.0-1-g9bd6eee
-                buildCommit: 9bd6eee4f
-                buildTime: '2026-06-26T16:03:25Z'
+                webapi: v36.4.0-5-g9df9bf5
+                buildCommit: 9df9bf5b6
+                buildTime: '2026-06-30T17:13:51Z'
                 fuseki: 6.1.0-0
                 scala: 3.3.7
                 sipi: v5.0.1
@@ -17429,6 +17643,14 @@ components:
           uniqueItems: true
           items:
             type: string
+        dataLicense:
+          type: string
+        dataCopyrightHolder:
+          type: string
+        dataAuthorship:
+          type: array
+          items:
+            type: string
     ProjectAdminMembersGetResponseADM:
       title: ProjectAdminMembersGetResponseADM
       type: object
@@ -17720,6 +17942,18 @@ components:
           format: date-time
         isDeleted:
           type: boolean
+    ResourceSideLegalInfo:
+      title: ResourceSideLegalInfo
+      type: object
+      properties:
+        dataLicense:
+          type: string
+        dataCopyrightHolder:
+          type: string
+        dataAuthorship:
+          type: array
+          items:
+            type: string
     RestrictedViewResponse:
       title: RestrictedViewResponse
       type: object
