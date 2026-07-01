@@ -15,10 +15,10 @@ const meta: Meta<ResourceRightsStatementComponent> = {
     copyrightHolder: { description: 'Project-wide copyright holder.', control: 'text' },
     authorship: { description: 'Project default authorship.', control: 'object' },
     resourceAuthorship: {
-      description: 'Per-resource authorship; empty/absent shows the labeled fallback in a per-resource context.',
+      description:
+        'Per-resource authorship. When bound (even to []), the component is in per-resource mode: the resource value is shown when non-empty, otherwise the labeled fallback ("no authorship recorded — project default: …") is shown. When left unbound (null), the project-level defaults are shown plainly.',
       control: 'object',
     },
-    perResource: { description: 'Per-resource display (viewer/create) vs. project-level display.', control: 'boolean' },
     isAdmin: {
       description: 'Whether the user is a project/system admin (controls the unconfigured callout).',
       control: 'boolean',
@@ -65,7 +65,6 @@ export const ShowsFallbackWhenResourceHasNoOwnAuthorship: Story = {
     copyrightHolder: 'University of Basel',
     authorship: ['Project Default Author'],
     resourceAuthorship: [],
-    perResource: true,
   },
 };
 
@@ -77,7 +76,6 @@ export const ShowsAlwaysVisibleEditAffordanceForModifyUsers: Story = {
     copyrightHolder: 'University of Basel',
     authorship: ['Lotte Reiniger'],
     resourceAuthorship: ['Lotte Reiniger'],
-    perResource: true,
     canEditAuthorship: true,
   },
   play: async ({ canvasElement, step }) => {
@@ -97,7 +95,6 @@ export const EditsAuthorshipInlineWithoutADialog: Story = {
     copyrightHolder: 'University of Basel',
     authorship: ['Lotte Reiniger'],
     resourceAuthorship: ['Lotte Reiniger'],
-    perResource: true,
     canEditAuthorship: true,
   },
   play: async ({ canvasElement, step }) => {

@@ -89,10 +89,12 @@ import { TranslatePipe } from '@ngx-translate/core';
             </span>
           } @else {
             <span class="value">
-              @if (displayedAuthorship.length > 0) {
-                {{ displayedAuthorship.join(', ') }}
-              } @else if (perResource) {
+              @if (resourceAuthorship && !resourceAuthorship.length) {
                 <em>{{ 'legal.dataSide.noAuthorshipFallback' | translate: { default: authorship.join(', ') } }}</em>
+              } @else if (resourceAuthorship) {
+                {{ resourceAuthorship.join(', ') }}
+              } @else {
+                {{ authorship.join(', ') }}
               }
               @if (canEditAuthorship) {
                 <!-- Inline, always-visible edit affordance, right after the value (discoverable, close to the text). -->
@@ -233,8 +235,6 @@ export class ResourceRightsStatementComponent {
   @Input() authorship: string[] = [];
   /** The per-resource authorship (only in a per-resource context); empty/absent ⇒ labeled fallback. */
   @Input() resourceAuthorship: string[] | null = null;
-  /** Whether this is a per-resource display (viewer/create) vs. a project-level display. */
-  @Input() perResource = false;
   /** Whether the current user is a project/system admin (controls the unconfigured callout). */
   @Input() isAdmin = false;
   /** Whether the current user may edit the per-resource authorship (Modify rights). */
@@ -256,17 +256,10 @@ export class ResourceRightsStatementComponent {
     return !!this.licenseLabel;
   }
 
-  /** Authorship actually shown: the resource's own when present, otherwise the project default in a project-level context. */
-  get displayedAuthorship(): string[] {
-    if (this.perResource) {
-      return this.resourceAuthorship ?? [];
-    }
-    return this.authorship;
-  }
-
   /** Open the inline editor, seeded with the currently displayed authorship. */
   startEdit(): void {
-    this.editAuthorshipList = [...this.displayedAuthorship];
+    const valueToEdit = this.resourceAuthorship?.length ? this.resourceAuthorship : this.authorship;
+    this.editAuthorshipList = [...valueToEdit];
     this.editing = true;
   }
 
