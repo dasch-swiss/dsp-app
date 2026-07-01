@@ -224,6 +224,7 @@ describe('Gravsearch Service and Writer - Label', () => {
     const query = gravsearchService.generateGravSearchQuery(statements);
 
     const expectedQuery = `PREFIX knora-api: <http://api.knora.org/ontology/knora-api/v2#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX webern-onto: <http://api.stage.dasch.swiss/ontology/0806/webern-onto/v2#>
 CONSTRUCT {
 ?mainRes knora-api:isMainResource true .
@@ -231,12 +232,14 @@ CONSTRUCT {
 } WHERE {
 ?mainRes a knora-api:Resource .
 { ?mainRes a webern-onto:Bibliography . } UNION { ?mainRes a webern-onto:Chronology . } UNION { ?mainRes a webern-onto:Convolute . } UNION { ?mainRes a webern-onto:Correspondence . } UNION { ?mainRes a webern-onto:DigitalCopyEditedText . } UNION { ?mainRes a webern-onto:DigitalCopyMusicalPiece . } UNION { ?mainRes a webern-onto:DigitalCopySourceDescription . } UNION { ?mainRes a webern-onto:DigitalCopySupplement . } UNION { ?mainRes a webern-onto:EditedText . } UNION { ?mainRes a webern-onto:Einleitung . } UNION { ?mainRes a webern-onto:Institution . } UNION { ?mainRes a webern-onto:MusicalPiece . } UNION { ?mainRes a webern-onto:Opus . } UNION { ?mainRes a webern-onto:Person . } UNION { ?mainRes a webern-onto:RismReference . } UNION { ?mainRes a webern-onto:SourceDescriptionManuscript . } UNION { ?mainRes a webern-onto:SourceDescriptionPrint . } UNION { ?mainRes a webern-onto:Supplement . } UNION { ?mainRes a webern-onto:TextEdition . } UNION { ?mainRes a webern-onto:test_reception . }
+?mainRes rdfs:label ?label .
 ?mainRes <http://www.w3.org/2000/01/rdf-schema#label> ?res0 .
 
 FILTER (?res0 = "foo") .
 
 }
 
+ORDER BY ASC(?label)
 OFFSET 0`;
 
     expect(normalizeQuery(query)).toBe(normalizeQuery(expectedQuery));
@@ -415,6 +418,7 @@ describe('Gravsearch Service and Writer - TextValue', () => {
     const query = gravsearchService.generateGravSearchQuery(statements);
 
     const expectedQuery = `PREFIX knora-api: <http://api.knora.org/ontology/knora-api/v2#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX webern-onto: <http://api.stage.dasch.swiss/ontology/0806/webern-onto/v2#>
 CONSTRUCT {
 ?mainRes knora-api:isMainResource true .
@@ -423,12 +427,14 @@ CONSTRUCT {
 } WHERE {
 ?mainRes a knora-api:Resource .
 { ?mainRes a webern-onto:Bibliography . } UNION { ?mainRes a webern-onto:Chronology . } UNION { ?mainRes a webern-onto:Convolute . } UNION { ?mainRes a webern-onto:Correspondence . } UNION { ?mainRes a webern-onto:DigitalCopyEditedText . } UNION { ?mainRes a webern-onto:DigitalCopyMusicalPiece . } UNION { ?mainRes a webern-onto:DigitalCopySourceDescription . } UNION { ?mainRes a webern-onto:DigitalCopySupplement . } UNION { ?mainRes a webern-onto:EditedText . } UNION { ?mainRes a webern-onto:Einleitung . } UNION { ?mainRes a webern-onto:Institution . } UNION { ?mainRes a webern-onto:MusicalPiece . } UNION { ?mainRes a webern-onto:Opus . } UNION { ?mainRes a webern-onto:Person . } UNION { ?mainRes a webern-onto:RismReference . } UNION { ?mainRes a webern-onto:SourceDescriptionManuscript . } UNION { ?mainRes a webern-onto:SourceDescriptionPrint . } UNION { ?mainRes a webern-onto:Supplement . } UNION { ?mainRes a webern-onto:TextEdition . } UNION { ?mainRes a webern-onto:test_reception . }
+?mainRes rdfs:label ?label .
 ?mainRes <http://api.stage.dasch.swiss/ontology/0806/webern-onto/v2#hasPlacePublisher> ?res0 .
 ?res0 <http://api.knora.org/ontology/knora-api/v2#valueAsString> ?res0val .
 FILTER (?res0val = "Wien"^^<http://www.w3.org/2001/XMLSchema#string> ) .
 
 }
 
+ORDER BY ASC(?label)
 OFFSET 0`;
 
     expect(normalizeQuery(query)).toBe(normalizeQuery(expectedQuery));
@@ -613,6 +619,7 @@ describe('Gravsearch Service and Writer - ListValue', () => {
     const query = gravsearchService.generateGravSearchQuery(statements);
 
     const expectedQuery = `PREFIX knora-api: <http://api.knora.org/ontology/knora-api/v2#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX webern-onto: <http://api.stage.dasch.swiss/ontology/0806/webern-onto/v2#>
 CONSTRUCT {
 ?mainRes knora-api:isMainResource true .
@@ -621,12 +628,14 @@ CONSTRUCT {
 } WHERE {
 ?mainRes a knora-api:Resource .
 ?mainRes a <http://api.stage.dasch.swiss/ontology/0806/webern-onto/v2#SourceDescriptionManuscript> .
+?mainRes rdfs:label ?label .
 ?mainRes <http://api.stage.dasch.swiss/ontology/0806/webern-onto/v2#hasSourceDescMainWritingInstr> ?res0 .
 ?res0 <http://api.knora.org/ontology/knora-api/v2#listValueAsListNode> <http://rdfh.ch/lists/0806/8mpYXDnYRYi_9HAHXzmzIA> .
 
 
 }
 
+ORDER BY ASC(?label)
 OFFSET 0`;
 
     expect(normalizeQuery(query)).toBe(normalizeQuery(expectedQuery));
@@ -756,6 +765,7 @@ describe('Gravsearch Service and Writer - IntValue', () => {
     const query = gravsearchService.generateGravSearchQuery(statements);
 
     const expectedQuery = `PREFIX knora-api: <http://api.knora.org/ontology/knora-api/v2#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX webern-onto: <http://api.stage.dasch.swiss/ontology/0806/webern-onto/v2#>
 CONSTRUCT {
 ?mainRes knora-api:isMainResource true .
@@ -764,6 +774,7 @@ CONSTRUCT {
 } WHERE {
 ?mainRes a knora-api:Resource .
 ?mainRes a <http://api.stage.dasch.swiss/ontology/0806/webern-onto/v2#MusicalPiece> .
+?mainRes rdfs:label ?label .
 ?mainRes <http://api.stage.dasch.swiss/ontology/0806/webern-onto/v2#hasMnr> ?res0 .
 ?res0 <http://api.knora.org/ontology/knora-api/v2#intValueAsInt> ?res0val .
 FILTER (?res0val = "1"^^<http://www.w3.org/2001/XMLSchema#integer> ) .
@@ -771,6 +782,7 @@ FILTER (?res0val = "1"^^<http://www.w3.org/2001/XMLSchema#integer> ) .
 
 }
 
+ORDER BY ASC(?label)
 OFFSET 0`;
 
     expect(normalizeQuery(query)).toBe(normalizeQuery(expectedQuery));

@@ -1,5 +1,7 @@
+import { TestBed } from '@angular/core/testing';
 import { Constants } from '@dasch-swiss/dsp-js';
-import { Predicate, StatementElement } from '../../model';
+import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { IriLabelPair, Predicate, StatementElement } from '../../model';
 import { Operator } from '../../operators.config';
 import { ChipLabelPipe } from './chip-label.pipe';
 
@@ -9,11 +11,7 @@ describe('ChipLabelPipe', () => {
   const makePredicate = (label: string, objectValueType = Constants.TextValue) =>
     new Predicate('http://ex.org/prop', [{ language: 'en', value: label }], objectValueType, false);
 
-  const makeStatement = (
-    predicateLabel?: string,
-    operator?: Operator,
-    objectValue?: string | { iri: string; label: string }
-  ) => {
+  const makeStatement = (predicateLabel?: string, operator?: Operator, objectValue?: string | IriLabelPair) => {
     const s = new StatementElement();
     if (predicateLabel) {
       s.selectedPredicate = makePredicate(predicateLabel);
@@ -24,7 +22,10 @@ describe('ChipLabelPipe', () => {
   };
 
   beforeEach(() => {
-    pipe = new ChipLabelPipe();
+    TestBed.configureTestingModule({
+      providers: [{ provide: LocalizationService, useValue: { currentLanguage: 'en' } }],
+    });
+    pipe = TestBed.runInInjectionContext(() => new ChipLabelPipe());
   });
 
   it('returns empty string when no predicate is set', () => {
@@ -58,7 +59,11 @@ describe('ChipLabelPipe', () => {
   });
 
   it('uses IriLabelPair label for object display', () => {
-    const s = makeStatement('Author', Operator.Equals, { iri: 'http://ex.org/person1', label: 'Shakespeare' });
+    const s = makeStatement('Author', Operator.Equals, {
+      iri: 'http://ex.org/person1',
+      labels: [{ language: 'en', value: 'Shakespeare' }],
+      comments: [],
+    });
     expect(pipe.transform(s)).toBe('Author equals Shakespeare');
   });
 
