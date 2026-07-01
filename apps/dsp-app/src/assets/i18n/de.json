@@ -1,4 +1,37 @@
 {
+  "legal": {
+    "dataSide": {
+      "heading": "Rechtehinweis zur Ressource",
+      "license": "Lizenz",
+      "copyrightHolder": "Rechteinhaber:in",
+      "authorship": "Urheber:innen",
+      "edit": "Bearbeiten",
+      "removeAuthor": "{{name}} entfernen",
+      "uncategorized": "Die rechtlichen Angaben dieser Ressource wurden noch nicht festgelegt — bitte ergänzen.",
+      "editLegalInfo": "Rechtliches bearbeiten",
+      "noAuthorshipFallback": "Für diese Ressource sind keine Urheber:innen erfasst. Projektstandard: {{default}}",
+      "settings": {
+        "resourceSide": "Ressourcen-Seite",
+        "assetSide": "Asset-Seite",
+        "holderLabel": "Rechteinhaber:in · offizieller Projektname",
+        "holderHelper": "Ihr Projekt ist Rechteinhaber:in jedes Ressourcendatensatzes. Der offizielle Name ist unten bereits eingetragen — passen Sie ihn bei Bedarf an und ergänzen Sie anschliessend die Urheber:innen.",
+        "licensePlaceholder": "Creative-Commons-Lizenz auswählen",
+        "liveWarning": "Diese Lizenz gilt unmittelbar für jede Ressource im Projekt.",
+        "save": "Änderungen speichern",
+        "cancel": "Abbrechen",
+        "saved": "Rechtliche Angaben auf Ressourcen-Seite gespeichert.",
+        "saveError": "Speichern fehlgeschlagen — bitte erneut versuchen."
+      },
+      "summaries": {
+        "ccBy40": "CC BY 4.0 — Freie Weiterverwendung mit Nennung der Urheber:in",
+        "ccBySa40": "CC BY-SA 4.0 — Weiterverwendung mit Nennung; Bearbeitungen unter derselben Lizenz teilen",
+        "ccByNc40": "CC BY-NC 4.0 — Nicht-kommerzielle Weiterverwendung mit Nennung der Urheber:in",
+        "ccByNcSa40": "CC BY-NC-SA 4.0 — Nicht-kommerzielle Weiterverwendung mit Nennung; unter gleichen Bedingungen teilen",
+        "ccByNd40": "CC BY-ND 4.0 — Weiterverwendung mit Nennung; keine Bearbeitungen",
+        "ccByNcNd40": "CC BY-NC-ND 4.0 — Nicht-kommerzielle Weiterverwendung mit Nennung; keine Bearbeitungen"
+      }
+    }
+  },
   "pages": {
     "landingPage": {
       "usersProjects": "Meine Projekte",

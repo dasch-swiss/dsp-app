@@ -4,15 +4,24 @@ import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import { ProjectImageCoverComponent } from '@dasch-swiss/vre/pages/user-settings/user';
+import { PaginatedApiService } from '@dasch-swiss/vre/shared/app-common';
+import { ResourceRightsStatementComponent } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe } from '@ngx-translate/core';
-import { tap } from 'rxjs';
+import { map, of, switchMap, tap } from 'rxjs';
 import { ProjectPageService } from '../project-page.service';
 import { LicenseCaptionsMapping } from './license-captions-mapping';
 import { ProjectDescriptionPageComponent } from './project-description-page.component';
 
 @Component({
   selector: 'app-project-short-description',
-  imports: [AsyncPipe, UpperCasePipe, TranslatePipe, MatButton, ProjectImageCoverComponent],
+  imports: [
+    AsyncPipe,
+    UpperCasePipe,
+    TranslatePipe,
+    MatButton,
+    ProjectImageCoverComponent,
+    ResourceRightsStatementComponent,
+  ],
   template: `
     @if (readProject$ | async; as project) {
       <div>
@@ -42,6 +51,20 @@ import { ProjectDescriptionPageComponent } from './project-description-page.comp
       <button mat-stroked-button (click)="readMore()" style="margin: 16px">
         {{ 'pages.project.projectShortDescription.readMore' | translate }}
       </button>
+
+      @if (dataRights$ | async; as rights) {
+        @if (rights.licenseLabel) {
+          <div style="border-top: 1px solid #ebebeb; margin: 0 16px; text-align: left">
+            <app-resource-rights-statement
+              [licenseLabel]="rights.licenseLabel"
+              [licenseUrl]="rights.licenseUrl"
+              [copyrightHolder]="rights.project.dataCopyrightHolder"
+              [authorship]="rights.project.dataAuthorship ?? []"
+              [isAdmin]="false"
+              labelAlign="start" />
+          </div>
+        }
+      }
     }
   `,
 })
@@ -53,10 +76,30 @@ export class ProjectShortDescriptionComponent {
     })
   );
 
+  /** The project's data-side legal info, resolved like the expanded description page. */
+  dataRights$ = this._projectPageService.currentProject$.pipe(
+    switchMap(project => {
+      if (!project.dataLicense) {
+        return of({
+          project,
+          licenseLabel: undefined as string | undefined,
+          licenseUrl: undefined as string | undefined,
+        });
+      }
+      return this._paginatedApi.getLicenses(project.shortcode).pipe(
+        map(licenses => {
+          const license = licenses.find(l => l.id === project.dataLicense);
+          return { project, licenseLabel: license?.labelEn, licenseUrl: license?.uri };
+        })
+      );
+    })
+  );
+
   constructor(
     private readonly _projectPageService: ProjectPageService,
     private readonly _dialog: MatDialog,
-    private readonly _viewContainerRef: ViewContainerRef
+    private readonly _viewContainerRef: ViewContainerRef,
+    private readonly _paginatedApi: PaginatedApiService
   ) {}
 
   readMore() {

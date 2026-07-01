@@ -1,8 +1,13 @@
 import { provideRouter } from '@angular/router';
 import { Constants, ReadIntervalValue, ReadResource, ReadTextValueAsString } from '@dasch-swiss/dsp-js';
-import { ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
+import { ProjectApiService, ResourceLegalV2ApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { AppConfigService, DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
-import { DspResource, generateDspResource, ResourceService } from '@dasch-swiss/vre/shared/app-common';
+import {
+  DspResource,
+  generateDspResource,
+  PaginatedApiService,
+  ResourceService,
+} from '@dasch-swiss/vre/shared/app-common';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of, Subject } from 'rxjs';
 import { expect } from 'storybook/test';
@@ -136,6 +141,9 @@ const sharedProviders = [
       toggleShowComments: () => {},
     },
   },
+  // Stubs for the embedded app-resource-rights-statement-container (data-side rights statement).
+  { provide: PaginatedApiService, useValue: { getLicenses: () => of([]) } },
+  { provide: ResourceLegalV2ApiService, useValue: { updateResourceAuthorship: () => of(undefined) } },
 ];
 
 const meta: Meta<ResourceMediaTabsComponent> = {

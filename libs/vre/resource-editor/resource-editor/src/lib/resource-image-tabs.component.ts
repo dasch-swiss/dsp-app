@@ -8,6 +8,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { PropertiesDisplayComponent } from './properties/properties-display/properties-display.component';
 import { PropertiesToggleComponent } from './properties/properties-display/properties-toggle.component';
 import { PropertiesDisplayService } from './properties/properties-display/property-value/properties-display.service';
+import { ResourceRightsStatementContainerComponent } from './properties/resource-rights-statement-container.component';
 import { RegionService } from './representation/region.service';
 import { AnnotationTabComponent } from './resource/annotation/annotation-tab.component';
 
@@ -19,6 +20,7 @@ import { AnnotationTabComponent } from './resource/annotation/annotation-tab.com
         <mat-tab [label]="'resourceEditor.properties' | translate">
           <app-properties-toggle [properties]="resource.resProps" />
           <app-properties-display [resource]="resource" />
+          <app-resource-rights-statement-container [resource]="resource" />
         </mat-tab>
       }
 
@@ -77,6 +79,7 @@ import { AnnotationTabComponent } from './resource/annotation/annotation-tab.com
     AnnotationTabComponent,
     PropertiesDisplayComponent,
     PropertiesToggleComponent,
+    ResourceRightsStatementContainerComponent,
   ],
 })
 export class ResourceImageTabsComponent implements OnInit, OnDestroy {

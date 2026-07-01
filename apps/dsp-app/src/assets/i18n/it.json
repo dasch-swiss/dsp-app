@@ -1,4 +1,37 @@
 {
+  "legal": {
+    "dataSide": {
+      "heading": "Dichiarazione dei diritti della risorsa",
+      "license": "Licenza",
+      "copyrightHolder": "Titolare dei diritti",
+      "authorship": "Autore",
+      "edit": "Modifica",
+      "removeAuthor": "Rimuovi {{name}}",
+      "uncategorized": "Le informazioni legali di questa risorsa non sono ancora state definite — si prega di aggiungerle.",
+      "editLegalInfo": "Modifica le informazioni legali",
+      "noAuthorshipFallback": "Nessun autore registrato per questa risorsa. Valore predefinito del progetto: {{default}}",
+      "settings": {
+        "resourceSide": "Lato risorsa",
+        "assetSide": "Lato asset",
+        "holderLabel": "Titolare dei diritti · nome ufficiale del progetto",
+        "holderHelper": "Il vostro progetto è titolare dei diritti di ogni record di risorsa. Il nome ufficiale è indicato di seguito — modificatelo se necessario, quindi aggiungete l'autore.",
+        "licensePlaceholder": "Scegli una licenza Creative Commons",
+        "liveWarning": "Questa licenza si applica immediatamente a tutte le risorse del progetto.",
+        "save": "Salva le modifiche",
+        "cancel": "Annulla",
+        "saved": "Informazioni legali lato risorsa salvate.",
+        "saveError": "Salvataggio non riuscito — si prega di riprovare."
+      },
+      "summaries": {
+        "ccBy40": "CC BY 4.0 — Riuso libero, con menzione dell'autore",
+        "ccBySa40": "CC BY-SA 4.0 — Riuso con menzione; condividere le opere derivate con la stessa licenza",
+        "ccByNc40": "CC BY-NC 4.0 — Riuso non commerciale, con menzione dell'autore",
+        "ccByNcSa40": "CC BY-NC-SA 4.0 — Riuso non commerciale con menzione; condividere allo stesso modo",
+        "ccByNd40": "CC BY-ND 4.0 — Riuso con menzione; nessuna opera derivata",
+        "ccByNcNd40": "CC BY-NC-ND 4.0 — Riuso non commerciale con menzione; nessuna opera derivata"
+      }
+    }
+  },
   "pages": {
     "landingPage": {
       "usersProjects": "I miei progetti",

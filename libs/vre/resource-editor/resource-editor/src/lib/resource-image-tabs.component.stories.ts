@@ -8,9 +8,10 @@ import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular'
 import { of } from 'rxjs';
 import { expect } from 'storybook/test';
 
-import { ResourceFetcherService } from '../representation/resource-fetcher.service';
-import { PropertiesDisplayService } from './properties-display/property-value/properties-display.service';
-import { ResourceDefaultTabsComponent } from './resource-default-tabs.component';
+import { PropertiesDisplayService } from './properties/properties-display/property-value/properties-display.service';
+import { RegionService } from './representation/region.service';
+import { ResourceFetcherService } from './representation/resource-fetcher.service';
+import { ResourceImageTabsComponent } from './resource-image-tabs.component';
 
 const makeResource = (): DspResource =>
   ({
@@ -28,9 +29,9 @@ const makeResource = (): DspResource =>
     incomingAnnotations: [],
   }) as unknown as DspResource;
 
-const meta: Meta<ResourceDefaultTabsComponent> = {
-  title: 'Resource Editor / 4. Properties / Resource Default Tabs / Resource Default Tabs',
-  component: ResourceDefaultTabsComponent,
+const meta: Meta<ResourceImageTabsComponent> = {
+  title: 'Resource Editor / 4. Properties / Resource Image Tabs / Resource Image Tabs',
+  component: ResourceImageTabsComponent,
   decorators: [
     applicationConfig({
       providers: [
@@ -52,7 +53,11 @@ const meta: Meta<ResourceDefaultTabsComponent> = {
             toggleShowComments: () => {},
           },
         },
-        // The default tabs view embeds the rights-statement container; stub its data sources so it renders.
+        {
+          provide: RegionService,
+          useValue: { regions$: of([]), regionsLoading$: of(false), selectedRegion$: of(null), showRegions: () => {} },
+        },
+        // The image tabs view embeds the rights-statement container; stub its data sources so it renders.
         provideRouter([{ path: '**', component: class {} }]),
         {
           provide: ProjectApiService,
@@ -68,13 +73,13 @@ const meta: Meta<ResourceDefaultTabsComponent> = {
   ],
   argTypes: {
     resource: {
-      description: 'The DSP resource to display inside the tabs.',
+      description: 'The DSP resource (with a still-image asset) to display inside the tabs.',
       table: { type: { summary: 'DspResource' }, category: 'State' },
     },
   },
 };
 export default meta;
-type Story = StoryObj<ResourceDefaultTabsComponent>;
+type Story = StoryObj<ResourceImageTabsComponent>;
 
 export const DefaultView: Story = {
   name: 'Shows properties tab with toggle and display',

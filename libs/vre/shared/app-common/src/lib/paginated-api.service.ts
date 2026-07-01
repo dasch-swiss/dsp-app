@@ -2,9 +2,30 @@ import { Injectable } from '@angular/core';
 import { AdminAPIApiService, ProjectLicenseDto } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { EMPTY, expand, map, reduce } from 'rxjs';
 
+/**
+ * Body for setting the project's resource-side (data) legal info.
+ * Mirrors the dsp-api `PUT /admin/projects/{shortcode}/legal-info/resource` request.
+ * TODO(verify-after-regen): once `npm run update-openapi` regenerates the client, prefer the
+ * generated request DTO over this local interface.
+ */
+export interface ResourceSideLegalInfoUpdate {
+  dataLicense: string | null;
+  dataCopyrightHolder: string | null;
+  dataAuthorship: string[];
+}
+
 @Injectable({ providedIn: 'root' })
 export class PaginatedApiService {
   constructor(private readonly _adminApiService: AdminAPIApiService) {}
+
+  /**
+   * Set the project's resource-side (data) legal info (license, copyright holder, default authorship).
+   * TODO(verify-after-regen): confirm the generated method name after `npm run update-openapi`.
+   * Expected from the OpenAPI generator: `putAdminProjectsShortcodeProjectshortcodeLegalInfoResource`.
+   */
+  updateResourceSideLegalInfo(projectShortcode: string, body: ResourceSideLegalInfoUpdate) {
+    return this._adminApiService.putAdminProjectsShortcodeProjectshortcodeLegalInfoResource(projectShortcode, body);
+  }
 
   getLicenses(projectShortcode: string, pageSize = 100) {
     return this._adminApiService.getAdminProjectsShortcodeProjectshortcodeLegalInfoLicenses(projectShortcode).pipe(

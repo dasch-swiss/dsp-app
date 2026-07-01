@@ -8,6 +8,7 @@ import { SegmentsService } from '../representation/segments/segments.service';
 import { PropertiesDisplayComponent } from './properties-display/properties-display.component';
 import { PropertiesToggleComponent } from './properties-display/properties-toggle.component';
 import { PropertiesDisplayService } from './properties-display/property-value/properties-display.service';
+import { ResourceRightsStatementContainerComponent } from './resource-rights-statement-container.component';
 import { SegmentTabComponent } from './segment-tab.component';
 
 @Component({
@@ -17,6 +18,7 @@ import { SegmentTabComponent } from './segment-tab.component';
       <mat-tab [label]="'resourceEditor.properties' | translate">
         <app-properties-toggle [properties]="resource.resProps" />
         <app-properties-display [resource]="resource" />
+        <app-resource-rights-statement-container [resource]="resource" />
       </mat-tab>
 
       @if (segmentsService.segments.length > 0) {
@@ -48,6 +50,7 @@ import { SegmentTabComponent } from './segment-tab.component';
     TranslatePipe,
     PropertiesDisplayComponent,
     PropertiesToggleComponent,
+    ResourceRightsStatementContainerComponent,
     SegmentTabComponent,
   ],
 })
