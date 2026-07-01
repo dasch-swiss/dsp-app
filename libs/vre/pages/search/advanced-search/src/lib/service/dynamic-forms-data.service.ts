@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@angular/core';
-import { KnoraApiConnection, ListNodeV2 } from '@dasch-swiss/dsp-js';
+import { KnoraApiConnection, ListNodeV2WithAllLanguages } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { catchError, map, Observable, of, Subject, takeUntil } from 'rxjs';
 import { IriLabelPair } from '../model';
@@ -56,8 +56,8 @@ export class DynamicFormsDataService {
       );
   }
 
-  getList$(rootNodeIri: string): Observable<ListNodeV2 | undefined> {
-    return this._dspApiConnection.v2.list.getList(rootNodeIri).pipe(
+  getListWithAllLanguages$(rootNodeIri: string): Observable<ListNodeV2WithAllLanguages | undefined> {
+    return this._dspApiConnection.v2.list.getListWithAllLanguages(rootNodeIri).pipe(
       catchError(err => {
         return of(undefined);
       })

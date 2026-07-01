@@ -1,5 +1,11 @@
-import { ListNodeV2, ReadListValue, ResourcePropertyDefinition } from '@dasch-swiss/dsp-js';
-import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
+import {
+  ListNodeV2WithAllLanguages,
+  ReadListValue,
+  ResourcePropertyDefinition,
+  StringLiteralV2,
+} from '@dasch-swiss/dsp-js';
+import { AvailableLanguage, DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
+import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
 import { expect } from 'storybook/test';
@@ -7,27 +13,45 @@ import { ResourceFetcherService } from '../../../../representation/resource-fetc
 
 import { ListViewerComponent } from './list-viewer.component';
 
-const makeListNode = (id: string, label: string, children: ListNodeV2[] = []): ListNodeV2 => {
-  const node = new ListNodeV2();
-  (node as any).id = id;
-  (node as any).label = label;
-  (node as any).comments = [];
-  (node as any).children = children;
-  (node as any).hasRootNode = 'http://rdfh.ch/lists/0001/root';
+const literal = (language: string, value: string): StringLiteralV2 => {
+  const l = new StringLiteralV2();
+  l.language = language;
+  l.value = value;
+  return l;
+};
+
+const makeListNode = (
+  id: string,
+  labels: StringLiteralV2[],
+  children: ListNodeV2WithAllLanguages[] = []
+): ListNodeV2WithAllLanguages => {
+  const node = new ListNodeV2WithAllLanguages();
+  node.id = id;
+  node.label = labels[0]?.value ?? '';
+  node.labels = labels;
+  node.comments = [];
+  node.children = children;
+  node.hasRootNode = 'http://rdfh.ch/lists/0001/root';
   return node;
 };
 
-const rootNode = makeListNode('http://rdfh.ch/lists/0001/root', 'Root', [
-  makeListNode('http://rdfh.ch/lists/0001/categoryA', 'Category A', [
-    makeListNode('http://rdfh.ch/lists/0001/itemA1', 'Item A1'),
-  ]),
-]);
+const rootNode = makeListNode(
+  'http://rdfh.ch/lists/0001/root',
+  [literal('en', 'Root'), literal('de', 'Wurzel')],
+  [
+    makeListNode(
+      'http://rdfh.ch/lists/0001/categoryA',
+      [literal('en', 'Category A'), literal('de', 'Kategorie A')],
+      [makeListNode('http://rdfh.ch/lists/0001/itemA1', [literal('en', 'Item A1'), literal('de', 'Element A1')])]
+    ),
+  ]
+);
 
 const dspApiConnectionStub = {
   v2: {
     list: {
-      getNode: () => of(rootNode.children[0].children[0]),
-      getList: () => of(rootNode),
+      getNodeWithAllLanguages: () => of(rootNode.children[0].children[0]),
+      getListWithAllLanguages: () => of(rootNode),
     },
   },
 };
@@ -35,6 +59,14 @@ const dspApiConnectionStub = {
 const resourceFetcherServiceStub: Partial<ResourceFetcherService> = {
   resource$: of(undefined),
   projectShortcode$: of('0001'),
+};
+
+// StringifyStringLiteralPipe reads currentLanguage (synchronous getter), not the
+// observable, so the stub needs both: the observable drives combineLatest in the
+// component pipeline, the getter feeds the impure pipe.
+const localizationServiceStub: Partial<LocalizationService> = {
+  currentLanguage: 'en' as AvailableLanguage,
+  currentLanguage$: of<AvailableLanguage>('en'),
 };
 
 const makeValue = (): ReadListValue => ({ listNode: 'http://rdfh.ch/lists/0001/itemA1' }) as any;
@@ -49,6 +81,7 @@ const meta: Meta<ListViewerComponent> = {
       providers: [
         { provide: DspApiConnectionToken, useValue: dspApiConnectionStub },
         { provide: ResourceFetcherService, useValue: resourceFetcherServiceStub },
+        { provide: LocalizationService, useValue: localizationServiceStub },
       ],
     }),
   ],
