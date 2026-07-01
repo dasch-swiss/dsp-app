@@ -66,6 +66,29 @@ export const ShowsFallbackWhenResourceHasNoOwnAuthorship: Story = {
     authorship: ['Project Default Author'],
     resourceAuthorship: [],
   },
+  play: async ({ canvasElement, step }) => {
+    const canvas = within(canvasElement);
+    await step('The labeled fallback is rendered', async () => {
+      // Guards against the pre-refactor regression where this branch was dead code
+      // and the project defaults leaked in as if they were the resource's own value.
+      const fallback = canvas.getByText(
+        /No authorship recorded for this resource\. Project default: Project Default Author/
+      );
+      await expect(fallback).toBeInTheDocument();
+    });
+    await step('The fallback is rendered in italic (labeled, not asserted as the resource value)', async () => {
+      const fallback = canvas.getByText(/No authorship recorded for this resource/);
+      await expect(fallback.tagName.toLowerCase()).toBe('em');
+    });
+    await step('The project defaults do not leak in as if they were the resource value', async () => {
+      // Pre-refactor regression: when perResource was falsy (attribute-form binding bug),
+      // the else arm rendered `authorship.join(', ')` plainly. Assert the value cell contains
+      // the italic fallback, not the raw defaults as a bare text node.
+      const valueCell = canvasElement.querySelector('.row:last-of-type .value');
+      await expect(valueCell).not.toBeNull();
+      await expect(valueCell!.querySelector('em')).not.toBeNull();
+    });
+  },
 };
 
 export const ShowsAlwaysVisibleEditAffordanceForModifyUsers: Story = {
