@@ -1,4 +1,4 @@
-import { ListNodeV2 } from '@dasch-swiss/dsp-js';
+import { ListNodeV2WithAllLanguages } from '@dasch-swiss/dsp-js';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
 import { expect, waitFor } from 'storybook/test';
@@ -8,10 +8,16 @@ import { STORY_PROVIDERS } from '../../../../stories.helpers';
 import { toLabels } from '../../../../util/labels';
 import { ListValueComponent } from './list-value.component';
 
-const makeListNode = (id: string, label: string, children: ListNodeV2[] = [], isRoot = false): ListNodeV2 => {
-  const node = new ListNodeV2();
+const makeListNode = (
+  id: string,
+  label: string,
+  children: ListNodeV2WithAllLanguages[] = [],
+  isRoot = false
+): ListNodeV2WithAllLanguages => {
+  const node = new ListNodeV2WithAllLanguages();
   node.id = id;
   node.label = label;
+  node.labels = toLabels(label);
   node.children = children;
   node.isRootNode = isRoot;
   return node;
@@ -28,8 +34,8 @@ const SAMPLE_ROOT_NODE = makeListNode(
   true
 );
 
-const makeDynamicFormsStub = (root: ListNodeV2 | null = SAMPLE_ROOT_NODE) => ({
-  getList$: () => of(root ?? undefined),
+const makeDynamicFormsStub = (root: ListNodeV2WithAllLanguages | null = SAMPLE_ROOT_NODE) => ({
+  getListWithAllLanguages$: () => of(root ?? undefined),
   searchResourcesByLabel$: () => of([] as IriLabelPair[]),
   getResourcesListCount$: () => of(0),
 });
