@@ -60,7 +60,6 @@ import { ProjectDescriptionPageComponent } from './project-description-page.comp
               [licenseUrl]="rights.licenseUrl"
               [copyrightHolder]="rights.project.dataCopyrightHolder"
               [authorship]="rights.project.dataAuthorship ?? []"
-              [perResource]="false"
               [isAdmin]="false"
               labelAlign="start" />
           </div>
