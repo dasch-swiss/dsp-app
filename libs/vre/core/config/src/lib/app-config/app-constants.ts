@@ -3,6 +3,7 @@ export const AvailableLanguages = [
   { language: 'de', value: 'German (Deutsch)' },
   { language: 'fr', value: 'French (Francais)' },
   { language: 'it', value: 'Italian (Italiano)' },
+  // Romansh has no translation file yet; the fallback loader serves en.json for 'rm' (DEV-6629).
   { language: 'rm', value: 'Romanic (Rumantsch)' },
 ] as const;
 

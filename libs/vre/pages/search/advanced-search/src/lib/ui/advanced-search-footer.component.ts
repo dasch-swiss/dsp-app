@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, EventEmitter, inject, Output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { LoadingButtonDirective } from '@dasch-swiss/vre/ui/progress-indicator';
+import { TranslateModule } from '@ngx-translate/core';
 import { QueryExecutionService } from '../service/query-execution.service';
 import { SearchStateService } from '../service/search-state.service';
 import { OrderByComponent } from './order-by/order-by.component';
@@ -9,13 +10,15 @@ import { OrderByComponent } from './order-by/order-by.component';
 @Component({
   selector: 'app-advanced-search-footer',
   standalone: true,
-  imports: [CommonModule, MatButtonModule, OrderByComponent, LoadingButtonDirective],
+  imports: [CommonModule, MatButtonModule, OrderByComponent, LoadingButtonDirective, TranslateModule],
   template: `
     <app-order-by />
     <div class="flex flex-end gap-05em">
-      <button mat-button mat-stroked-button color="primary" (click)="resetTriggered.emit()">Reset</button>
+      <button mat-button mat-stroked-button color="primary" (click)="resetTriggered.emit()">
+        {{ 'ui.common.actions.reset' | translate }}
+      </button>
       <button mat-button mat-stroked-button color="primary" (click)="restorePreviousSearch.emit()">
-        Use previous search
+        {{ 'pages.search.advancedSearch.usePreviousSearch' | translate }}
       </button>
       <button
         mat-button
@@ -26,7 +29,7 @@ import { OrderByComponent } from './order-by/order-by.component';
         [isLoading]="queryExecutionService.queryIsExecuting()"
         [disabled]="(searchState.isFormStateValidAndComplete$ | async) === false"
         (click)="searchTriggered.emit()">
-        Search
+        {{ 'ui.common.actions.search' | translate }}
       </button>
     </div>
   `,

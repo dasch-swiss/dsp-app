@@ -1,4 +1,4 @@
-import { enableProdMode } from '@angular/core';
+import { enableProdMode, provideZoneChangeDetection } from '@angular/core';
 import { bootstrapApplication } from '@angular/platform-browser';
 import { AppConfigToken } from '@dasch-swiss/vre/core/config';
 import { AppComponent } from './app/app.component';
@@ -64,7 +64,11 @@ function configListener() {
     // which will make the encapsulated value available inside
     // services that inject this token
     bootstrapApplication(AppComponent, {
-      providers: [...appConfig.providers, { provide: AppConfigToken, useValue: configuration }],
+      providers: [
+        provideZoneChangeDetection(),
+        ...appConfig.providers,
+        { provide: AppConfigToken, useValue: configuration },
+      ],
     }).catch(err => console.error(err));
   } catch (error) {
     console.error(error);

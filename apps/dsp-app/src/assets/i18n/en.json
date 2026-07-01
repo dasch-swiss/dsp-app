@@ -393,7 +393,24 @@
         "wildcards": "Use wildcards: Alice* will match Alice, Alices, etc."
       },
       "advancedSearch": {
-        "allResourceClasses": "All resources"
+        "allResourceClasses": "All resources",
+        "dataModel": "Data model",
+        "orderBy": "Order by",
+        "property": "Property",
+        "propertyOfClass": "Property of {{class}}",
+        "resourceClass": "Resource Class",
+        "resourceLabel": "Resource Label",
+        "switchToRegular": "Switch to regular search",
+        "title": "Advanced search",
+        "tooltips": {
+          "addCriteria": "Add search criteria",
+          "addSubCriteria": "Add sub-criteria",
+          "orderByDisabled": "Search cannot be ordered by a URI property or a property that links to a resource.",
+          "removeCriteria": "Remove search criteria",
+          "switchToHorizontal": "Switch to horizontal layout",
+          "switchToVertical": "Switch to vertical layout"
+        },
+        "usePreviousSearch": "Use previous search"
       }
     },
     "dataBrowser": {

@@ -1,5 +1,60 @@
 # Changelog
 
+## [13.7.1](https://github.com/dasch-swiss/dsp-app/compare/v13.7.0...v13.7.1) (2026-06-29)
+
+
+### Bug Fixes
+
+* advanced search allows unsupported order by (DEV-6677) ([#3184](https://github.com/dasch-swiss/dsp-app/issues/3184)) ([c610af0](https://github.com/dasch-swiss/dsp-app/commit/c610af00854105df7121c2917f33d40af0e0aa0e))
+* annotation hover preview is on several lines ([#3205](https://github.com/dasch-swiss/dsp-app/issues/3205)) ([2340cfe](https://github.com/dasch-swiss/dsp-app/commit/2340cfe78c887fa3024d3f82e6e46df48fb94f8e))
+* annotation metadata has right padding ([#3206](https://github.com/dasch-swiss/dsp-app/issues/3206)) ([2ab1c50](https://github.com/dasch-swiss/dsp-app/commit/2ab1c501a3f3ada4460c48e2969fb86407b301a2))
+* CJS interop fixes after application builder upgrade ([#3204](https://github.com/dasch-swiss/dsp-app/issues/3204)) ([2669888](https://github.com/dasch-swiss/dsp-app/commit/2669888b54f7342fecef1a4c0f99cc80a54197cf))
+
+
+### Maintenances
+
+* bind Romansch to English translations and remove rm.json (DEV-6629) ([#3188](https://github.com/dasch-swiss/dsp-app/issues/3188)) ([84a61e2](https://github.com/dasch-swiss/dsp-app/commit/84a61e27c547a50d6f0ed4ecc36a4a244156fefb))
+* center the paginator ([#3186](https://github.com/dasch-swiss/dsp-app/issues/3186)) ([9cfa01c](https://github.com/dasch-swiss/dsp-app/commit/9cfa01ca22d6ae3356861f6a379c70cd442b9218))
+* convert NX lint/test targets to inferred + align Node engines floor (DEV-6686) ([#3196](https://github.com/dasch-swiss/dsp-app/issues/3196)) ([d6ffc7b](https://github.com/dasch-swiss/dsp-app/commit/d6ffc7b1c1e7aaeef2f0596bc4dbdc13bb301afd))
+* **deps:** Update dependency @sentry/angular from 10.60.0 to 10.61.0 ([#3201](https://github.com/dasch-swiss/dsp-app/issues/3201)) ([0210847](https://github.com/dasch-swiss/dsp-app/commit/0210847a049f6681b5544ee7d5563648dd5a5d81))
+* **deps:** Update dependency @swc/core from 1.15.41 to 1.15.43 ([#3191](https://github.com/dasch-swiss/dsp-app/issues/3191)) ([ac32055](https://github.com/dasch-swiss/dsp-app/commit/ac320553b018912e95c9f995e5bb96fa539daddf))
+* **deps:** Update dependency angular-html-parser from 10.9.0 to 10.10.0 ([#3202](https://github.com/dasch-swiss/dsp-app/issues/3202)) ([7b6e996](https://github.com/dasch-swiss/dsp-app/commit/7b6e996d300534e54cc3a5dbf7b3cd56a08dbcc3))
+* **deps:** Update dependency autoprefixer from 10.5.1 to 10.5.2 ([#3200](https://github.com/dasch-swiss/dsp-app/issues/3200)) ([464fd3d](https://github.com/dasch-swiss/dsp-app/commit/464fd3d4e2ab153af36d03b606883a2d68db3d7f))
+* **deps:** Update dependency zod from 4.3.6 to 4.4.3 ([#3192](https://github.com/dasch-swiss/dsp-app/issues/3192)) ([270205c](https://github.com/dasch-swiss/dsp-app/commit/270205c4a344dca8f587201fbe208295307dea09))
+* **deps:** Update github-actions (major) ([#3187](https://github.com/dasch-swiss/dsp-app/issues/3187)) ([7479af6](https://github.com/dasch-swiss/dsp-app/commit/7479af6f7d6b6b317395a552dc794629cc357d66))
+* **deps:** Update grafana-faro-deps from 2.7.1 to 2.8.0 ([#3203](https://github.com/dasch-swiss/dsp-app/issues/3203)) ([b04db24](https://github.com/dasch-swiss/dsp-app/commit/b04db2472cc4eb61a1fde6637dfcf75941516c82))
+* **deps:** Update jest-deps ([#3193](https://github.com/dasch-swiss/dsp-app/issues/3193)) ([2a41678](https://github.com/dasch-swiss/dsp-app/commit/2a41678004277c516dce9ebf0d9958521341cc24))
+* **deps:** update uuid to v14 (major) ([#3197](https://github.com/dasch-swiss/dsp-app/issues/3197)) ([f39aeb6](https://github.com/dasch-swiss/dsp-app/commit/f39aeb69f14ce7d7432feb0b2d7fc71333678e1d))
+* migrate dsp-app to ESLint 9 flat config + ts-eslint 8 (DEV-6685) ([#3190](https://github.com/dasch-swiss/dsp-app/issues/3190)) ([b8b7a7c](https://github.com/dasch-swiss/dsp-app/commit/b8b7a7ccae7e8538ff6ec91fcd49926d245cb893))
+* migrate esbuild application builder, drop ngx-build-plus (DEV-6687) ([#3195](https://github.com/dasch-swiss/dsp-app/issues/3195)) ([649ab3a](https://github.com/dasch-swiss/dsp-app/commit/649ab3a14007d4f0146c680bfd68468d23b3c905))
+* **open-api:** bump dsp-api spec v36.0.0-3-g42c7a03 → v36.3.0-1-g9bd6eee ([#3199](https://github.com/dasch-swiss/dsp-app/issues/3199)) ([e745e78](https://github.com/dasch-swiss/dsp-app/commit/e745e78cfaf0b8992b68850498d8e7b4510a5c6f))
+* upgrade Angular to v21 and NX to v23 (DEV-5699) ([#3189](https://github.com/dasch-swiss/dsp-app/issues/3189)) ([baef357](https://github.com/dasch-swiss/dsp-app/commit/baef357a0e1352798d731ca6c6917c259362848f))
+
+## [13.7.0](https://github.com/dasch-swiss/dsp-app/compare/v13.6.0...v13.7.0) (2026-06-22)
+
+
+### Enhancements
+
+* display entities in the current language (DEV-6627) ([#3174](https://github.com/dasch-swiss/dsp-app/issues/3174)) ([1dae05a](https://github.com/dasch-swiss/dsp-app/commit/1dae05a370c7d24086ec14336f16e84504c9ce6c))
+* translate advanced search and its displayed classes and properties (DEV-6645) ([#3177](https://github.com/dasch-swiss/dsp-app/issues/3177)) ([513cefe](https://github.com/dasch-swiss/dsp-app/commit/513cefe166c5b2d22f34220128843d57901ef9e6))
+
+
+### Bug Fixes
+
+* fix footer sticky position and hidden social icons (DEV-6644) ([#3176](https://github.com/dasch-swiss/dsp-app/issues/3176)) ([daea558](https://github.com/dasch-swiss/dsp-app/commit/daea558ba52ef0fa4153ed2c08daa08306223b6c))
+
+
+### Maintenances
+
+* add .kodus-readiness.yml to skip N/A agent-readiness criteria ([#3165](https://github.com/dasch-swiss/dsp-app/issues/3165)) ([868fe63](https://github.com/dasch-swiss/dsp-app/commit/868fe631fc9ae5c5fbecd475be7dcc82bd1e1d1b))
+* avoid unnecessary re fetch on language (DEV-6628) ([#3172](https://github.com/dasch-swiss/dsp-app/issues/3172)) ([019cc44](https://github.com/dasch-swiss/dsp-app/commit/019cc448ff310378895a0f2d3ccc61a81dea59b2))
+* **deps:** Lock file maintenance ([#3183](https://github.com/dasch-swiss/dsp-app/issues/3183)) ([60b783c](https://github.com/dasch-swiss/dsp-app/commit/60b783c328d381a4712e75a71536e7cdbaf9df31))
+* **deps:** Update dependency @faker-js/faker from 10.4.0 to 10.5.0 ([#3180](https://github.com/dasch-swiss/dsp-app/issues/3180)) ([952b86b](https://github.com/dasch-swiss/dsp-app/commit/952b86b8818255c6651d5b3e5a738d9d6dceb7ed))
+* **deps:** Update dependency @sentry/cli from 3.5.0 to 3.5.1 ([#3179](https://github.com/dasch-swiss/dsp-app/issues/3179)) ([d91e2f2](https://github.com/dasch-swiss/dsp-app/commit/d91e2f2adf220bb90b7b0297ed15e3e5c469aceb))
+* **deps:** Update github-actions from v6.0.3 to v7.0.0 ([#3182](https://github.com/dasch-swiss/dsp-app/issues/3182)) ([126cd2f](https://github.com/dasch-swiss/dsp-app/commit/126cd2f64b80cba0475b61b5d8445c126b1483af))
+* **deps:** Update sentry-javascript monorepo from 10.57.0 to 10.58.0 ([#3181](https://github.com/dasch-swiss/dsp-app/issues/3181)) ([4d5054e](https://github.com/dasch-swiss/dsp-app/commit/4d5054ece159b5aa1738862c234710a717d058d5))
+* use DaSCH Bot App token for release-please ([#3160](https://github.com/dasch-swiss/dsp-app/issues/3160)) ([5750b11](https://github.com/dasch-swiss/dsp-app/commit/5750b116df1d1b31b0003486c1e65334b97f5a01))
+
 ## [13.6.0](https://github.com/dasch-swiss/dsp-app/compare/v13.5.1...v13.6.0) (2026-06-15)
 
 

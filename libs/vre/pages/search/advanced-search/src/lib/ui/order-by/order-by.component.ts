@@ -6,6 +6,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule, MatSelectionListChange } from '@angular/material/list';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
+import { TranslateModule } from '@ngx-translate/core';
 import { OrderByService } from '../../service/order-by.service';
 
 @Component({
@@ -20,13 +22,14 @@ import { OrderByService } from '../../service/order-by.service';
     MatTooltipModule,
     OverlayModule,
     AsyncPipe,
+    StringifyStringLiteralPipe,
+    TranslateModule,
   ],
   templateUrl: './order-by.component.html',
   styleUrls: ['./order-by.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OrderByComponent {
-  readonly TOOLTIP_TEXT = 'Search cannot be ordered by a URI property or a property that links to a resource.';
   private orderByService: OrderByService = inject(OrderByService);
 
   orderByItems$ = this.orderByService.orderByItems$;

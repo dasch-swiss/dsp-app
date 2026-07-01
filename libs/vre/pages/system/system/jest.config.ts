@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName: 'vre-pages-system-system',
   preset: '../../../../../jest.preset.js',
   coverageDirectory: '../../../../../coverage/libs/vre/pages/system/system',

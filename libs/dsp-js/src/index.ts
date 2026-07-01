@@ -115,6 +115,7 @@ export { CredentialsResponse } from './models/v2/authentication/credentials-resp
 export { LogoutResponse } from './models/v2/authentication/logout-response';
 
 export { StringLiteral } from './models/admin/string-literal';
+export { StringLiteralV2 } from './models/v2/string-literal-v2';
 
 export { ApiResponse } from './models/api-response';
 export { ApiResponseData } from './models/api-response-data';

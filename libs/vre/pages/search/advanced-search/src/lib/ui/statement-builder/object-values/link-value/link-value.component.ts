@@ -25,6 +25,7 @@ import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/ma
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { MatAutocompleteOptionsScrollDirective } from '@dasch-swiss/vre/shared/app-common';
+import { LocalizationService, pickPreferredLanguageString } from '@dasch-swiss/vre/shared/app-helper-services';
 import {
   BehaviorSubject,
   debounceTime,
@@ -84,7 +85,7 @@ import { DynamicFormsDataService } from '../../../../service/dynamic-forms-data.
           </mat-option>
         }
         @for (obj of linkObjects; track obj.iri ?? obj) {
-          <mat-option [value]="obj">{{ obj?.label }}</mat-option>
+          <mat-option [value]="obj">{{ pickLabel(obj) }}</mat-option>
         }
         @if (loading) {
           <mat-progress-bar mode="query" />
@@ -100,6 +101,7 @@ export class LinkValueComponent implements OnInit, AfterViewInit, OnChanges, OnD
   private readonly OFFSET = 25;
   readonly MIN_SEARCH_LENGTH = 3;
   private _dataService = inject(DynamicFormsDataService);
+  private _localizationService = inject(LocalizationService);
   private destroy$ = new Subject<void>();
 
   @Input() resourceClass?: string;
@@ -151,21 +153,25 @@ export class LinkValueComponent implements OnInit, AfterViewInit, OnChanges, OnD
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['selectedResource'] && this.selectedResource) {
-      this.inputControl.setValue(this.selectedResource.label, { emitEvent: false });
+      this.inputControl.setValue(this.pickLabel(this.selectedResource), { emitEvent: false });
       this.inputControl.updateValueAndValidity();
     }
   }
 
   ngAfterViewInit(): void {
     if (this.selectedResource) {
-      this.inputControl.setValue(this.selectedResource.label, { emitEvent: false });
+      this.inputControl.setValue(this.pickLabel(this.selectedResource), { emitEvent: false });
     }
   }
 
   onResourceSelected(event: MatAutocompleteSelectedEvent) {
     const data = event.option.value as IriLabelPair;
-    this.inputControl.setValue(data.label, { emitEvent: false });
+    this.inputControl.setValue(this.pickLabel(data), { emitEvent: false });
     this.emitResourceSelected.emit(data);
+  }
+
+  pickLabel(pair?: IriLabelPair): string {
+    return pair ? pickPreferredLanguageString(pair.labels, this._localizationService.currentLanguage) : '';
   }
 
   onScroll() {

@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName: 'vre-core-error-handler',
   preset: '../../../../jest.preset.js',
   coverageDirectory: '../../../../coverage/libs/vre/core/error-handler',

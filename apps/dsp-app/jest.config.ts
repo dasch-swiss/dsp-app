@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName: 'dsp-app',
   preset: '../../jest.preset.js',
   coverageDirectory: '../../coverage/apps/dsp-app',

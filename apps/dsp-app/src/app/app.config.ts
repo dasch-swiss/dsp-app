@@ -17,9 +17,10 @@ import { apiConnectionTokenProvider } from '@dasch-swiss/vre/pages/user-settings
 import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { provideCalendarDateAdapter } from '@dasch-swiss/vre/ui/date-picker';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
-import { provideTranslateService } from '@ngx-translate/core';
-import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
+import { provideTranslateService, TranslateLoader } from '@ngx-translate/core';
+import { TRANSLATE_HTTP_LOADER_CONFIG } from '@ngx-translate/http-loader';
 import { routes } from './app.routes';
+import { I18nFallbackTranslateLoader } from './i18n-fallback-translate-loader';
 import { authInterceptorFn } from './main/http-interceptors/auth.interceptor.fn';
 import { iiifWithCredentialsInterceptorFn } from './main/http-interceptors/iiif-with-credentials.interceptor.fn';
 
@@ -35,7 +36,10 @@ export const appConfig: ApplicationConfig = {
     provideAnimations(),
     provideHttpClient(withInterceptors([authInterceptorFn, iiifWithCredentialsInterceptorFn])),
     provideTranslateService({
-      loader: provideTranslateHttpLoader({ prefix: 'assets/i18n/', suffix: '.json' }),
+      loader: [
+        { provide: TRANSLATE_HTTP_LOADER_CONFIG, useValue: { prefix: 'assets/i18n/', suffix: '.json' } },
+        { provide: TranslateLoader, useClass: I18nFallbackTranslateLoader },
+      ],
     }),
     AppConfigService,
     GrafanaFaroService,

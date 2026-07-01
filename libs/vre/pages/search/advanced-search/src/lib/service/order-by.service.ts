@@ -1,4 +1,5 @@
 import { Injectable, inject, OnDestroy } from '@angular/core';
+import { StringLiteralV2, Constants } from '@dasch-swiss/dsp-js';
 import { distinctUntilChanged, map, skip, Subject, takeUntil } from 'rxjs';
 import { OrderByItem } from '../model';
 import { SearchStateService } from './search-state.service';
@@ -16,7 +17,12 @@ export class OrderByService implements OnDestroy {
         new Map(
           elements.map(stmt => [
             stmt.id,
-            { label: stmt.selectedPredicate!.label, isLinkProperty: stmt.selectedPredicate!.isLinkProperty },
+            {
+              labels: stmt.selectedPredicate!.labels,
+              disabledForSorting:
+                stmt.selectedPredicate!.isLinkProperty ||
+                stmt.selectedPredicate!.objectValueType === Constants.ListValue,
+            },
           ])
         )
     ),
@@ -47,13 +53,13 @@ export class OrderByService implements OnDestroy {
   }
 
   private _computeNextOrderBy(
-    availablePredicates: Map<string, { label: string; isLinkProperty: boolean }>
+    availablePredicates: Map<string, { labels: StringLiteralV2[]; disabledForSorting: boolean }>
   ): OrderByItem[] {
     const toKeep = this.currentOrderBy.filter(item => availablePredicates.has(item.id));
 
     const toAdd = [...availablePredicates]
       .filter(([id]) => !toKeep.some(i => i.id === id))
-      .map(([id, info]) => new OrderByItem(id, info.label, info.isLinkProperty));
+      .map(([id, info]) => new OrderByItem(id, info.labels, info.disabledForSorting));
 
     return [...toKeep, ...toAdd];
   }

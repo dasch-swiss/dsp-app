@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName: 'app-date-picker',
   preset: '../../../../jest.preset.js',
   coverageDirectory: '../../../../coverage/libs/vre/ui/date-picker',

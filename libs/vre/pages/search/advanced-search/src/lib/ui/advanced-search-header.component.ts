@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -9,22 +8,27 @@ import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-advanced-search-header',
   standalone: true,
-  imports: [CommonModule, MatButtonModule, MatIconModule, MatTooltipModule, TranslateModule, RouterLink],
+  imports: [MatButtonModule, MatIconModule, MatTooltipModule, TranslateModule, RouterLink],
   template: `
     <div style="display: flex; align-items: center; gap: 8px">
-      <h2 style="flex: 1">Advanced search</h2>
+      <h2 style="flex: 1">{{ 'pages.search.advancedSearch.title' | translate }}</h2>
       @if (isVerticalDirection !== undefined) {
         <button
           mat-icon-button
           (click)="toggleDirection.emit()"
           data-faro-user-action-name="advanced-search-toggle-layout-button"
-          [matTooltip]="isVertical ? 'Switch to horizontal layout' : 'Switch to vertical layout'">
+          [matTooltip]="
+            (isVertical
+              ? 'pages.search.advancedSearch.tooltips.switchToHorizontal'
+              : 'pages.search.advancedSearch.tooltips.switchToVertical'
+            ) | translate
+          ">
           <mat-icon style="color: #646465">{{ isVertical ? 'vertical_split' : 'horizontal_split' }}</mat-icon>
         </button>
       }
       <a mat-stroked-button [routerLink]="['..', 'search']">
         <mat-icon>swap_horiz</mat-icon>
-        Switch to regular search
+        {{ 'pages.search.advancedSearch.switchToRegular' | translate }}
       </a>
     </div>
   `,

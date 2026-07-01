@@ -8,7 +8,7 @@
   [disabled]="orderByItems.length === 0"
   (click)="isOpen = !isOpen">
   <p class="label-icon-container">
-    <span class="label">Order by</span>
+    <span class="label">{{ 'pages.search.advancedSearch.orderBy' | translate }}</span>
     <span class="icon">
       <mat-icon>expand_more</mat-icon>
     </span>
@@ -34,13 +34,13 @@
       [selected]="item.orderBy"
       [value]="item.id"
       [disabled]="item.disabled"
-      [matTooltip]="TOOLTIP_TEXT"
+      [matTooltip]="'pages.search.advancedSearch.tooltips.orderByDisabled' | translate"
       [matTooltipDisabled]="!item.disabled"
       cdkDrag>
       <span cdkDragHandle matListItemIcon class="drag-handle">
         <mat-icon>drag_indicator</mat-icon>
       </span>
-      <span matListItemTitle> {{ item.label }} </span>
+      <span matListItemTitle> {{ item.labels | appStringifyStringLiteral }} </span>
     </mat-list-option>
     }
   </mat-selection-list>
