@@ -17,13 +17,14 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { catchError, debounceTime, distinctUntilChanged, EMPTY, filter, map, of, skip, switchMap, take } from 'rxjs';
-import { NodeValue, StatementElement } from '../../model';
+import { StatementElement } from '../../model';
 import { GravsearchService } from '../../service/gravsearch.service';
 import { OntologyDataService } from '../../service/ontology-data.service';
 import { PropertyFormManager } from '../../service/property-form.manager';
 import { SearchFlowLogger } from '../../service/search-flow-logger.service';
 import { SearchStateService } from '../../service/search-state.service';
 import { SearchUrlSyncService, SearchUrlParams } from '../../service/search-url-sync.service';
+import { buildStatementsFromFilterParams } from '../../util/build-statements';
 import { OrderByComponent } from '../order-by/order-by.component';
 import { AddFilterButtonComponent } from './add-filter-button.component';
 import { OPEN_CHIP_NONE, OpenChipId } from './chip-bar.helpers';
@@ -315,21 +316,7 @@ export class FilterChipBarComponent implements OnInit {
       this._restoring = true;
       if (predicates && params.filters) {
         const filterParams = this._urlSync.decodeFilters(params.filters);
-        const statements: StatementElement[] = filterParams.reduce((acc, fp) => {
-          if (fp.parentIndex !== null && fp.parentIndex >= acc.length) return acc;
-          const predicate = predicates.find(p => p.iri === fp.predicateIri);
-          if (!predicate) return acc;
-          const parentStmt = fp.parentIndex !== null ? acc[fp.parentIndex] : undefined;
-          const stmt = new StatementElement(
-            parentStmt?.selectedObjectNode instanceof NodeValue ? parentStmt.selectedObjectNode : undefined,
-            parentStmt ? parentStmt.statementLevel + 1 : 0,
-            parentStmt
-          );
-          stmt.selectedPredicate = predicate;
-          if (fp.operator) stmt.selectedOperator = fp.operator;
-          if (fp.value) stmt.selectedObjectValue = fp.value;
-          return [...acc, stmt];
-        }, [] as StatementElement[]);
+        const statements = buildStatementsFromFilterParams(filterParams, predicates);
 
         this._searchStateService.patchState({
           statementElements: [...this._searchStateService.currentState.statementElements, ...statements],
