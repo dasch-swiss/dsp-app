@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Constants } from '@dasch-swiss/dsp-js';
 import { AppConfigService } from '@dasch-swiss/vre/core/config';
@@ -46,6 +46,8 @@ export class ResourceLegalV2ApiService extends BaseApi {
         '@value': lastModificationDate,
       };
     }
-    return this._http.put(this.baseUri, body);
+    return this._http.put(this.baseUri, body, {
+      headers: new HttpHeaders({ 'Content-Type': 'application/ld+json' }),
+    });
   }
 }
