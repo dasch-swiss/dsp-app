@@ -364,7 +364,9 @@ export class FilterChipBarComponent implements OnInit {
     }
     const query = this._gravsearchService.generateGravSearchQuery(
       this._searchStateService.validStatementElements,
-      fulltext
+      fulltext,
+      this._searchStateService.currentState.selectedResourceClass?.iri ?? '',
+      this._searchStateService.currentState.orderBy
     );
     this._logger.queryGenerated(query);
     this.gravsearchQuery.emit(query);

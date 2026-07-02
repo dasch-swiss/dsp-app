@@ -58,11 +58,9 @@ export class SearchUrlSyncService {
 
   clearAll(): void {
     this._logger.urlClear();
-    const nulled: Record<string, null> = {};
-    for (const key of ['q', 'ontology', 'class', 'filters', 'orderBy'] satisfies (keyof SearchUrlParams)[]) {
-      nulled[key] = null;
-    }
-    this._router.navigate([], { queryParams: nulled, replaceUrl: true });
+    // Route through the single write API (DEV-6576 D5). Under `merge`, nulling every known param
+    // removes it — equivalent to clearing. `replaceUrl: true` keeps reset out of history.
+    this.writeState({ q: undefined, ontology: undefined, class: undefined, filters: undefined, orderBy: undefined });
   }
 
   encodeFilters(

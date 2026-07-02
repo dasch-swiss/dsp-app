@@ -165,11 +165,13 @@ describe('SearchUrlSyncService — URL param contract (DEV-6576 Phase 0)', () =>
   });
 
   describe('clearAll', () => {
-    it('nulls every known param and replaces the history entry', () => {
+    it('nulls every known param and replaces the history entry (routed through writeState)', () => {
       service.clearAll();
 
+      // Folded into the single write API (D5): merge + all-null = cleared, replaceUrl defaults true.
       expect(navigateSpy).toHaveBeenCalledWith([], {
         queryParams: { q: null, ontology: null, class: null, filters: null, orderBy: null },
+        queryParamsHandling: 'merge',
         replaceUrl: true,
       });
     });

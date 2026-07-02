@@ -1,14 +1,12 @@
 import { inject, Injectable } from '@angular/core';
 import { MAIN_RESOURCE_PLACEHOLDER, RDFS_TYPE, RESOURCE_PLACEHOLDER } from '../constants';
-import { escapeForGravsearchStringLiteral, StatementElement } from '../model';
+import { escapeForGravsearchStringLiteral, OrderByItem, StatementElement } from '../model';
 import { GravsearchWriter } from './gravsearch-writer';
 import { OntologyDataService } from './ontology-data.service';
-import { SearchStateService } from './search-state.service';
 
 @Injectable()
 export class GravsearchService {
   private dataService: OntologyDataService = inject(OntologyDataService);
-  private _searchStateService = inject(SearchStateService);
 
   get ontoIri(): string {
     return this.dataService.selectedOntology.iri;
@@ -22,7 +20,19 @@ export class GravsearchService {
     return ontoShortCodeMatch[1];
   }
 
-  generateGravSearchQuery(statements: StatementElement[], fulltextTerm?: string): string {
+  /**
+   * Pure w.r.t. the search form state: `resourceClassIri` and `orderBy` are passed explicitly
+   * rather than read from `SearchStateService` (DEV-6576 D1). Ontology IRI/short-code still come
+   * from `OntologyDataService` — the ontology is itself URL-driven, not committed form state.
+   * The generated query string is byte-identical to the previous ambient-read implementation for
+   * the same (statements, fulltext, resourceClassIri, orderBy) inputs.
+   */
+  generateGravSearchQuery(
+    statements: StatementElement[],
+    fulltextTerm?: string,
+    resourceClassIri = '',
+    orderBy: OrderByItem[] = []
+  ): string {
     const writer = new GravsearchWriter(statements);
     const scoped = statements.map((_, i) => writer.at(i));
     const constructStatements = scoped.map(s => s.constructStatement).join('\n');
@@ -42,19 +52,19 @@ export class GravsearchService {
       `${constructStatements}\n` +
       '} WHERE {\n' +
       '?mainRes a knora-api:Resource .\n' +
-      `${this._restrictToResourceClassStatement()}\n` +
+      `${this._restrictToResourceClassStatement(resourceClassIri)}\n` +
       '?mainRes rdfs:label ?label .\n' +
       `${fulltextTriple}` +
       `${whereClause}\n` +
       '}\n' +
-      `${this._getOrderByString(statements)}\n` +
+      `${this._getOrderByString(statements, orderBy)}\n` +
       'OFFSET 0'
     );
   }
 
-  private _restrictToResourceClassStatement() {
-    return this._searchStateService.currentState.selectedResourceClass?.iri
-      ? `?mainRes a <${this._searchStateService.currentState.selectedResourceClass?.iri}> .`
+  private _restrictToResourceClassStatement(resourceClassIri: string) {
+    return resourceClassIri
+      ? `?mainRes a <${resourceClassIri}> .`
       : this.dataService.classIris
           .map(
             resourceClass =>
@@ -63,8 +73,8 @@ export class GravsearchService {
           .join(' UNION ');
   }
 
-  private _getOrderByString(statements: StatementElement[]): string {
-    const orderByProps: string[] = this._searchStateService.currentState.orderBy
+  private _getOrderByString(statements: StatementElement[], orderBy: OrderByItem[]): string {
+    const orderByProps: string[] = orderBy
       .filter(o => o.orderBy)
       .map(o => {
         const index = statements.findIndex(stm => stm.selectedPredicate?.iri === o.id);

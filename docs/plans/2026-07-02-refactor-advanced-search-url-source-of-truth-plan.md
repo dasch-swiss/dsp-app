@@ -2,7 +2,7 @@
 title: "refactor: Advanced Search — URL as Single Source of Truth"
 type: refactor
 date: 2026-07-02
-status: ready
+status: in-progress (Phase 0 ✅, Phase 1 ✅)
 repository: /Users/julien/WebstormProjects/dsp-das
 ---
 
@@ -143,7 +143,18 @@ trimmed-service state and is promoted to the URL only on **commit**.
 
 ### Implementation Phases
 
-#### Phase 1: Pure query function + single write API (Foundation)
+#### Phase 1: Pure query function + single write API (Foundation) — ✅ DONE (2026-07-02)
+
+**Completion notes:**
+- `generateGravSearchQuery(statements, fulltext, resourceClassIri = '', orderBy = [])` — now pure
+  w.r.t. form state; removed the `SearchStateService` dependency + `currentState` reads at old
+  `gravsearch.service.ts:56,67`. Ontology IRI/short-code still from `OntologyDataService` (by design).
+- Sole production caller updated: `filter-chip-bar.component.ts:_emitSearch` passes class iri + orderBy
+  explicitly.
+- Characterization oracle: existing 26 gravsearch specs stay **byte-identical** (proves D1); added 2
+  specs exercising the previously-untested active-orderBy path (`ORDER BY ?resN` + label fallback).
+- `clearAll` folded into `writeState` (D5); Phase-0 `clearAll` assertion updated for merge semantics.
+- Result: `vre-pages-search-advanced-search` — 132 tests green, lint clean.
 
 **Tasks**
 - Change `generateGravSearchQuery(statements, fulltext)` →

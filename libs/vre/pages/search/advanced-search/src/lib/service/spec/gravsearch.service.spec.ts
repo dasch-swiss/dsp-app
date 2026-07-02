@@ -4,7 +4,7 @@ import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services
 import { createMockLocalizationService } from '@dasch-swiss/vre/shared/app-helper-services/testing';
 import { TranslateLoader } from '@ngx-translate/core';
 import { of } from 'rxjs';
-import { IriLabelPair, NodeValue, Predicate, StatementElement, StringValue } from '../../model';
+import { IriLabelPair, NodeValue, OrderByItem, Predicate, StatementElement, StringValue } from '../../model';
 import { Operator } from '../../operators.config';
 import { englishLabels, makeIriLabelPair } from '../../testing/test-data-builders';
 import { GravsearchService } from '../gravsearch.service';
@@ -616,7 +616,7 @@ describe('Gravsearch Service and Writer - ListValue', () => {
     setupTestFromJson(searchStateService, jsonSnapshot, resourceClass);
 
     const statements = searchStateService.validStatementElements;
-    const query = gravsearchService.generateGravSearchQuery(statements);
+    const query = gravsearchService.generateGravSearchQuery(statements, undefined, resourceClass.iri);
 
     const expectedQuery = `PREFIX knora-api: <http://api.knora.org/ontology/knora-api/v2#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -762,7 +762,7 @@ describe('Gravsearch Service and Writer - IntValue', () => {
     setupTestFromJson(searchStateService, jsonSnapshot, resourceClass);
 
     const statements = searchStateService.validStatementElements;
-    const query = gravsearchService.generateGravSearchQuery(statements);
+    const query = gravsearchService.generateGravSearchQuery(statements, undefined, resourceClass.iri);
 
     const expectedQuery = `PREFIX knora-api: <http://api.knora.org/ontology/knora-api/v2#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -802,6 +802,48 @@ OFFSET 0`;
 
     // Only check the operator-specific FILTER clause
     expect(query).toContain('FILTER (?res0val != "1"^^<http://www.w3.org/2001/XMLSchema#integer> )');
+  });
+
+  it('emits ORDER BY on the active predicate index when an orderBy item is active (DEV-6576 D1)', () => {
+    // Characterization oracle: orderBy is now an explicit argument, not read from currentState.
+    // An active sort on hasMnr (statement index 0) must render `ORDER BY ?res0`.
+    const jsonSnapshot = JSON.stringify(baseJsonSnapshot);
+    const resourceClass: IriLabelPair = makeIriLabelPair(
+      'http://api.stage.dasch.swiss/ontology/0806/webern-onto/v2#MusicalPiece',
+      'Musikstück (AWG-ID)'
+    );
+    setupTestFromJson(searchStateService, jsonSnapshot, resourceClass);
+
+    const activeOrderBy = [
+      new OrderByItem('http://api.stage.dasch.swiss/ontology/0806/webern-onto/v2#hasMnr', [], false, true),
+    ];
+    const query = gravsearchService.generateGravSearchQuery(
+      searchStateService.validStatementElements,
+      undefined,
+      resourceClass.iri,
+      activeOrderBy
+    );
+
+    expect(query).toContain('ORDER BY ?res0');
+    expect(query).not.toContain('ORDER BY ASC(?label)');
+  });
+
+  it('falls back to ORDER BY ASC(?label) when no orderBy item is active', () => {
+    const jsonSnapshot = JSON.stringify(baseJsonSnapshot);
+    const resourceClass: IriLabelPair = makeIriLabelPair(
+      'http://api.stage.dasch.swiss/ontology/0806/webern-onto/v2#MusicalPiece',
+      'Musikstück (AWG-ID)'
+    );
+    setupTestFromJson(searchStateService, jsonSnapshot, resourceClass);
+
+    const query = gravsearchService.generateGravSearchQuery(
+      searchStateService.validStatementElements,
+      undefined,
+      resourceClass.iri,
+      []
+    );
+
+    expect(query).toContain('ORDER BY ASC(?label)');
   });
 
   it('should generate query with greaterThan operator', () => {
