@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router } from '@angular/router';
+import { BehaviorSubject, firstValueFrom } from 'rxjs';
 import { Operator } from '../../operators.config';
 import { SearchFlowLogger } from '../search-flow-logger.service';
 import { FilterParam, SearchUrlParams, SearchUrlSyncService } from '../search-url-sync.service';
@@ -19,10 +20,12 @@ describe('SearchUrlSyncService — URL param contract (DEV-6576 Phase 0)', () =>
   let service: SearchUrlSyncService;
   let navigateSpy: jest.Mock;
   let queryParams: Record<string, string>;
+  let queryParams$: BehaviorSubject<Record<string, string>>;
 
   beforeEach(() => {
     navigateSpy = jest.fn();
     queryParams = {};
+    queryParams$ = new BehaviorSubject<Record<string, string>>({});
 
     const routerStub = {
       navigate: navigateSpy,
@@ -30,6 +33,7 @@ describe('SearchUrlSyncService — URL param contract (DEV-6576 Phase 0)', () =>
       lastSuccessfulNavigation: () => null,
     };
     const routeStub = {
+      queryParams: queryParams$.asObservable(),
       snapshot: {
         get queryParams() {
           return queryParams;
@@ -174,6 +178,37 @@ describe('SearchUrlSyncService — URL param contract (DEV-6576 Phase 0)', () =>
         queryParamsHandling: 'merge',
         replaceUrl: true,
       });
+    });
+  });
+
+  describe('params$', () => {
+    it('decodes the current query params on subscribe', async () => {
+      queryParams$.next({ q: 'whale', class: 'http://x#Book' });
+
+      const params = await firstValueFrom(service.params$);
+
+      expect(params.q).toBe('whale');
+      expect(params.class).toBe('http://x#Book');
+    });
+
+    it('does not re-emit when the decoded shape is unchanged (Q9 no-op guard)', () => {
+      const seen: SearchUrlParams[] = [];
+      service.params$.subscribe(p => seen.push(p));
+
+      queryParams$.next({ q: 'a' });
+      queryParams$.next({ q: 'a' }); // identical decoded shape → suppressed
+
+      expect(seen.map(p => p.q)).toEqual([undefined, 'a']); // initial {} then 'a', no duplicate
+    });
+
+    it('re-emits when a param actually changes', () => {
+      const seen: (string | undefined)[] = [];
+      service.params$.subscribe(p => seen.push(p.q));
+
+      queryParams$.next({ q: 'a' });
+      queryParams$.next({ q: 'b' });
+
+      expect(seen).toEqual([undefined, 'a', 'b']);
     });
   });
 });

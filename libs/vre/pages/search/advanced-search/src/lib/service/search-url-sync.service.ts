@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
-import { filter, map } from 'rxjs';
+import { distinctUntilChanged, filter, map, Observable } from 'rxjs';
 import { Operator } from '../operators.config';
 import { SearchFlowLogger } from './search-flow-logger.service';
 
@@ -36,6 +36,24 @@ export class SearchUrlSyncService {
       this._logger.popstate(params);
       return params;
     })
+  );
+
+  /**
+   * Continuous decoded query-param stream — the read side of "URL is the source of truth"
+   * (DEV-6576 Phase 2). Emits on every navigation (initial, user action, back/forward), deduped on
+   * the decoded shape so identical params do not re-trigger downstream work (Q9). Fires immediately
+   * with the current params on subscribe (Router's `queryParams` replays the latest value).
+   */
+  readonly params$: Observable<SearchUrlParams> = this._route.queryParams.pipe(
+    map(p => this._mapParams(p)),
+    distinctUntilChanged(
+      (a, b) =>
+        a.q === b.q &&
+        a.ontology === b.ontology &&
+        a.class === b.class &&
+        a.filters === b.filters &&
+        a.orderBy === b.orderBy
+    )
   );
 
   readParams(): SearchUrlParams {

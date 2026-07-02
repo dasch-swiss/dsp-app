@@ -2,7 +2,7 @@
 title: "refactor: Advanced Search — URL as Single Source of Truth"
 type: refactor
 date: 2026-07-02
-status: in-progress (Phase 0 ✅, Phase 1 ✅)
+status: in-progress (Phase 0 ✅, Phase 1 ✅, Phase 2 ✅)
 repository: /Users/julien/WebstormProjects/dsp-das
 ---
 
@@ -173,7 +173,25 @@ trimmed-service state and is promoted to the URL only on **commit**.
 `writeState`; existing tests + Storybook green.
 **Effort**: S–M. Low risk (behavior-preserving).
 
-#### Phase 2: Extract pure selectors, run in parallel (Core)
+#### Phase 2: Extract pure selectors, run in parallel (Core) — ✅ DONE (2026-07-02)
+
+**Completion notes:**
+- `SearchUrlSyncService.params$` — continuous decoded query-param stream, `distinctUntilChanged` on
+  the decoded shape (Q9 no-op guard).
+- Extracted pure `buildStatementsFromFilterParams` (util) + 8 restore-baseline tests (committed
+  separately, `0a26e3a`).
+- New `SearchDerivationService` (registered in `providers.ts`, not yet consumed as source of truth):
+  `searchState$` (readiness-gated: ontology + classes + predicates), `orderByItems$` (pure, from
+  confirmed statements + orderBy param; sortable-aware; stale ids → no active item), `gravsearchQuery$`
+  (pure Phase-1 query fn), `loading$` (combined readiness).
+- Parallel-comparison satisfied at **test level**: `search-derivation.service.spec` asserts the derived
+  query is byte-identical to the pure `GravsearchService` oracle. Chose this over a runtime dev-flagged
+  logger — Phase 1's pure query makes the deterministic test oracle stronger, and avoids throwaway code
+  in `filter-chip-bar` that Phase 3 deletes.
+- Result: `vre-pages-search-advanced-search` — 153 tests green, lint clean.
+- **Phase 3 entry point:** the page can bind `[query]="derivation.gravsearchQuery$ | async"` and delete
+  the imperative restore paths; `OntologyDataService.setOntology` must be triggered from an
+  ontology-param change (co-land with deleting `_applyParamsWithOntologySwitch*`).
 
 **Tasks**
 - `rawParams$` = `route.queryParams` → decode → `distinctUntilChanged` on decoded shape (guards Q9:
