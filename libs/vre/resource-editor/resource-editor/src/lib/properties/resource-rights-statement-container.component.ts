@@ -12,6 +12,7 @@ import { ResourceRightsStatementComponent } from '@dasch-swiss/vre/ui/ui';
 import { TranslateService } from '@ngx-translate/core';
 import { map, Observable, of, switchMap } from 'rxjs';
 import { ResourceFetcherService } from '../representation/resource-fetcher.service';
+import { ResourceUtil } from '../representation/resource.util';
 
 interface DataRights {
   licenseLabel?: string;
@@ -50,9 +51,8 @@ export class ResourceRightsStatementContainerComponent implements OnInit {
   /** Whether the current user may configure the project's legal info (controls the unconfigured callout). */
   userHasProjectAdminRights$!: Observable<boolean>;
 
-  // TODO(verify-locally): confirm userHasPermission codes that imply Modify rights.
   get canEditAuthorship(): boolean {
-    return ['M', 'D', 'CR'].includes(this.resource.res.userHasPermission);
+    return ResourceUtil.userCanEdit(this.resource.res);
   }
 
   constructor(
