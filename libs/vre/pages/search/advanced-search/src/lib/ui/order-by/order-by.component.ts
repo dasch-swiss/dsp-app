@@ -31,23 +31,17 @@ export class OrderByComponent {
   }
 
   onSelectionChange(event: MatSelectionListChange) {
-    // Build a new array with new item references so `orderByItems$` (distinct by reference) emits.
+    // Produce new item references so `orderByItems$` emits (see OrderByItem — items are immutable).
     const selected = new Map(event.options.map(o => [o.value.id, o.selected]));
     const next = this.orderByService.currentOrderBy.map(item =>
-      selected.has(item.id) ? this._withOrderBy(item, selected.get(item.id)!) : item
+      selected.has(item.id) ? item.withOrderBy(selected.get(item.id)!) : item
     );
     this.orderByService.updateOrderBy(next);
   }
 
   removeOrderBy(item: OrderByItem) {
-    const next = this.orderByService.currentOrderBy.map(i => (i.id === item.id ? this._withOrderBy(i, false) : i));
+    const next = this.orderByService.currentOrderBy.map(i => (i.id === item.id ? i.withOrderBy(false) : i));
     this.orderByService.updateOrderBy(next);
     this.isOpen = false;
-  }
-
-  private _withOrderBy(item: OrderByItem, orderBy: boolean): OrderByItem {
-    const clone = new OrderByItem(item.id, item.labels, item.disabled);
-    clone.orderBy = orderBy;
-    return clone;
   }
 }

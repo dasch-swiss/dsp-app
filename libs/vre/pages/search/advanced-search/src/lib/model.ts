@@ -239,12 +239,17 @@ export class StatementElement {
 }
 
 export class OrderByItem {
-  orderBy = false;
   constructor(
-    public id: string,
-    public labels: StringLiteralV2[] = [],
-    public disabled?: boolean
+    public readonly id: string,
+    public readonly labels: StringLiteralV2[] = [],
+    public readonly disabled?: boolean,
+    public readonly orderBy = false
   ) {}
+
+  /** Immutable update: returns a new item with the given active flag, preserving id/labels/disabled. */
+  withOrderBy(orderBy: boolean): OrderByItem {
+    return new OrderByItem(this.id, this.labels, this.disabled, orderBy);
+  }
 }
 
 export interface QueryObject {

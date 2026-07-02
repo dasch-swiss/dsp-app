@@ -256,8 +256,9 @@ export class FilterChipBarComponent implements OnInit {
       parentIndex: stmt.parentId !== undefined ? idxById.get(stmt.parentId) : undefined,
     }));
     const encoded = stmts.length ? this._urlSync.encodeFilters(filterArgs) : null;
-    const activeOrderBy = this._searchStateService.currentState.orderBy.find(o => o.orderBy);
-    this._urlSync.writeState({ filters: encoded ?? undefined, orderBy: activeOrderBy?.id }, { replaceUrl: false });
+    // orderBy has its own write-back subscription (orderByItems$), so it is not written here —
+    // one owner per URL param. `merge` handling preserves any existing orderBy param.
+    this._urlSync.writeState({ filters: encoded ?? undefined }, { replaceUrl: false });
   }
 
   /** Switches ontology if needed, then emits params for `_applyParams`. Used by popstate handler. */
@@ -339,7 +340,7 @@ export class FilterChipBarComponent implements OnInit {
 
       if (params.orderBy) {
         const updated = this._searchStateService.currentState.orderBy.map(o =>
-          o.id === params.orderBy ? { ...o, orderBy: true } : o
+          o.id === params.orderBy ? o.withOrderBy(true) : o
         );
         this._searchStateService.updateOrderBy(updated);
       }

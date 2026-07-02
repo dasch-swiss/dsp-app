@@ -31,7 +31,11 @@ export class SearchStateService {
 
   orderByItems$ = this._state.pipe(
     map(state => state.orderBy),
-    distinctUntilChanged((a, b) => a === b)
+    // Compare by value (id + orderBy flag), not reference: callers may mutate items in place,
+    // which a reference check would silently swallow. See DEV-6576.
+    distinctUntilChanged(
+      (a, b) => a.length === b.length && a.every((x, i) => x.id === b[i]?.id && x.orderBy === b[i]?.orderBy)
+    )
   );
 
   isFormStateValidAndComplete$ = this._state.pipe(
