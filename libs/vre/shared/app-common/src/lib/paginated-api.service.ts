@@ -11,7 +11,7 @@ import { EMPTY, expand, map, reduce } from 'rxjs';
 export interface ResourceSideLegalInfoUpdate {
   dataLicense: string | null;
   dataCopyrightHolder: string | null;
-  defaultDataAuthorship: string[];
+  dataAuthorship: string[];
 }
 
 @Injectable({ providedIn: 'root' })

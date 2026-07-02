@@ -56,7 +56,7 @@ const meta: Meta<ResourceDefaultTabsComponent> = {
         provideRouter([{ path: '**', component: class {} }]),
         {
           provide: ProjectApiService,
-          useValue: { get: () => of({ project: { shortcode: '0001', defaultDataAuthorship: [] } }) },
+          useValue: { get: () => of({ project: { shortcode: '0001', dataAuthorship: [] } }) },
         },
         { provide: PaginatedApiService, useValue: { getLicenses: () => of([]) } },
         { provide: ResourceLegalV2ApiService, useValue: { updateResourceAuthorship: () => of(undefined) } },

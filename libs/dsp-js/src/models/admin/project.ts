@@ -72,6 +72,6 @@ export class Project {
   /**
    * The data-side default authorship of the project (applied to resource records).
    */
-  @JsonProperty('defaultDataAuthorship', [String], true)
-  defaultDataAuthorship?: string[] = undefined;
+  @JsonProperty('dataAuthorship', [String], true)
+  dataAuthorship?: string[] = undefined;
 }

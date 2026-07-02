@@ -136,7 +136,7 @@ paths:
                     - http://rdfh.ch/licenses/cc-0-1.0
                     - http://rdfh.ch/licenses/cc-by-nc-4.0
                     - http://rdfh.ch/licenses/cc-by-sa-4.0
-                    defaultDataAuthorship: []
+                    dataAuthorship: []
                   status: true
                   selfjoin: false
         '400':
@@ -250,7 +250,7 @@ paths:
                     - http://rdfh.ch/licenses/cc-0-1.0
                     - http://rdfh.ch/licenses/cc-by-nc-4.0
                     - http://rdfh.ch/licenses/cc-by-sa-4.0
-                    defaultDataAuthorship: []
+                    dataAuthorship: []
                   status: true
                   selfjoin: false
         '400':
@@ -359,7 +359,7 @@ paths:
                     - http://rdfh.ch/licenses/cc-0-1.0
                     - http://rdfh.ch/licenses/cc-by-nc-4.0
                     - http://rdfh.ch/licenses/cc-by-sa-4.0
-                    defaultDataAuthorship: []
+                    dataAuthorship: []
                   status: true
                   selfjoin: false
         '400':
@@ -480,7 +480,7 @@ paths:
                     - http://rdfh.ch/licenses/cc-0-1.0
                     - http://rdfh.ch/licenses/cc-by-nc-4.0
                     - http://rdfh.ch/licenses/cc-by-sa-4.0
-                    defaultDataAuthorship: []
+                    dataAuthorship: []
                   status: true
                   selfjoin: false
         '400':
@@ -589,7 +589,7 @@ paths:
                     - http://rdfh.ch/licenses/cc-0-1.0
                     - http://rdfh.ch/licenses/cc-by-nc-4.0
                     - http://rdfh.ch/licenses/cc-by-sa-4.0
-                    defaultDataAuthorship: []
+                    dataAuthorship: []
                   status: true
                   selfjoin: false
         '400':
@@ -707,7 +707,7 @@ paths:
                       - http://rdfh.ch/licenses/cc-0-1.0
                       - http://rdfh.ch/licenses/cc-by-nc-4.0
                       - http://rdfh.ch/licenses/cc-by-sa-4.0
-                      defaultDataAuthorship: []
+                      dataAuthorship: []
                     status: true
                     selfjoin: false
                   projects:
@@ -741,7 +741,7 @@ paths:
                     - http://rdfh.ch/licenses/cc-0-1.0
                     - http://rdfh.ch/licenses/cc-by-nc-4.0
                     - http://rdfh.ch/licenses/cc-by-sa-4.0
-                    defaultDataAuthorship: []
+                    dataAuthorship: []
                   permissions:
                     groupsPerProject: {}
                     administrativePermissionsPerProject: {}
@@ -858,7 +858,7 @@ paths:
                     - http://rdfh.ch/licenses/cc-0-1.0
                     - http://rdfh.ch/licenses/cc-by-nc-4.0
                     - http://rdfh.ch/licenses/cc-by-sa-4.0
-                    defaultDataAuthorship: []
+                    dataAuthorship: []
                   status: true
                   selfjoin: false
         '400':
@@ -3757,7 +3757,7 @@ paths:
             example:
               dataLicense: http://rdfh.ch/licenses/cc-by-4.0
               dataCopyrightHolder: University of Basel
-              defaultDataAuthorship:
+              dataAuthorship:
               - Lotte Reiniger
               - Hilma af Klint
         required: true
@@ -3771,7 +3771,7 @@ paths:
               example:
                 dataLicense: http://rdfh.ch/licenses/cc-by-4.0
                 dataCopyrightHolder: University of Basel
-                defaultDataAuthorship:
+                dataAuthorship:
                 - Lotte Reiniger
                 - Hilma af Klint
         '400':
@@ -17647,7 +17647,7 @@ components:
           type: string
         dataCopyrightHolder:
           type: string
-        defaultDataAuthorship:
+        dataAuthorship:
           type: array
           items:
             type: string
@@ -17950,7 +17950,7 @@ components:
           type: string
         dataCopyrightHolder:
           type: string
-        defaultDataAuthorship:
+        dataAuthorship:
           type: array
           items:
             type: string
