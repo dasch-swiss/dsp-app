@@ -61,10 +61,14 @@ export class SearchFlowLogger {
     console.log(`%c${TAG} Filter removed`, c.data, chipId);
   }
 
+  orderByChanged(orderById: string | undefined): void {
+    console.log(`%c${TAG} Order by changed`, c.data, orderById ?? '(none)');
+  }
+
   // ── Query generation ──────────────────────────────────────────────────────
 
   emitSearch(
-    reason: 'fulltext' | 'filter-confirm' | 'filter-remove' | 'restore' | 'popstate' | 'resource-class'
+    reason: 'fulltext' | 'filter-confirm' | 'filter-remove' | 'restore' | 'popstate' | 'resource-class' | 'order-by'
   ): void {
     console.log(`%c${TAG} _emitSearch triggered by: ${reason}`, c.stage);
   }

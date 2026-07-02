@@ -16,7 +16,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { catchError, debounceTime, distinctUntilChanged, EMPTY, filter, map, of, switchMap, take } from 'rxjs';
+import { catchError, debounceTime, distinctUntilChanged, EMPTY, filter, map, of, skip, switchMap, take } from 'rxjs';
 import { NodeValue, StatementElement } from '../../model';
 import { GravsearchService } from '../../service/gravsearch.service';
 import { OntologyDataService } from '../../service/ontology-data.service';
@@ -113,6 +113,10 @@ export class FilterChipBarComponent implements OnInit {
 
   readonly childStatementsMap = signal<Record<string, StatementElement[]>>({});
 
+  // Set while restoring state from the URL (init / popstate) so the orderBy write-back
+  // subscription ignores programmatic changes and never re-writes or re-pushes history.
+  private _restoring = false;
+
   private _rebuildChildMap(): void {
     const result: Record<string, StatementElement[]> = {};
     for (const s of this._statementElements()) {
@@ -157,6 +161,23 @@ export class FilterChipBarComponent implements OnInit {
         this._logger.fulltextChanged(q ?? '');
         this._urlSync.writeState({ q: q ?? undefined }, { replaceUrl: false });
         this._emitSearch('fulltext');
+      });
+
+    // OrderBy: when the user changes the sort directly (via the order-by menu), persist it to the URL
+    // and re-emit the search (orderBy is part of the Gravsearch query). `_restoring` gates out the
+    // programmatic patches made while restoring from the URL, and `skip(1)` drops the initial `[]`.
+    this._searchStateService.orderByItems$
+      .pipe(
+        map(items => items.find(o => o.orderBy)?.id),
+        distinctUntilChanged(),
+        skip(1),
+        filter(() => !this._restoring),
+        takeUntilDestroyed(this._destroyRef)
+      )
+      .subscribe(activeId => {
+        this._logger.orderByChanged(activeId);
+        this._urlSync.writeState({ orderBy: activeId ?? undefined }, { replaceUrl: false });
+        this._emitSearch('order-by');
       });
 
     // Back/forward: full reset + restore from the URL the browser navigated to.
@@ -215,10 +236,14 @@ export class FilterChipBarComponent implements OnInit {
 
   private _resetState(): void {
     this._logger.stateReset();
+    // Clearing selections resets orderBy to []; guard so the write-back subscription doesn't
+    // treat this programmatic reset as a user sort change and write to the URL/history.
+    this._restoring = true;
     this.fulltextControl.reset('', { emitEvent: false });
     this.confirmedStatements.set([]);
     this.openChipId.set(OPEN_CHIP_NONE);
     this._searchStateService.clearAllSelections();
+    this._restoring = false;
   }
 
   private _writeFiltersToUrl(): void {
@@ -283,6 +308,10 @@ export class FilterChipBarComponent implements OnInit {
         : of(null);
 
     classRestore$.pipe(takeUntilDestroyed(this._destroyRef)).subscribe(predicates => {
+      // Guard the whole restore: patching statements makes OrderByService rebuild the orderBy array,
+      // and we set the active item below — both flow through orderByItems$. Without this flag the
+      // write-back subscription would echo the restored value straight back into the URL/history.
+      this._restoring = true;
       if (predicates && params.filters) {
         const filterParams = this._urlSync.decodeFilters(params.filters);
         const statements: StatementElement[] = filterParams.reduce((acc, fp) => {
@@ -317,6 +346,7 @@ export class FilterChipBarComponent implements OnInit {
 
       this.fulltextControl.setValue(params.q ?? '', { emitEvent: false });
 
+      this._restoring = false;
       this._emitSearch(reason);
     });
   }
