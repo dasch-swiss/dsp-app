@@ -94,7 +94,10 @@ import { CreateResourceFormInterface } from './create-resource-form.interface';
               @for (author of form.controls.resourceAuthorship.value; track $index) {
                 <mat-chip-row (removed)="removeDataAuthor($index)">
                   {{ author }}
-                  <button matChipRemove [attr.aria-label]="'legal.dataSide.removeAuthor' | translate: { name: author }">
+                  <button
+                    type="button"
+                    matChipRemove
+                    [attr.aria-label]="'legal.dataSide.removeAuthor' | translate: { name: author }">
                     <mat-icon>cancel</mat-icon>
                   </button>
                 </mat-chip-row>

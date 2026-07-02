@@ -58,6 +58,7 @@ import { TranslatePipe } from '@ngx-translate/core';
                     <mat-chip-row (removed)="removeEditAuthor($index)">
                       {{ author }}
                       <button
+                        type="button"
                         matChipRemove
                         [attr.aria-label]="'legal.dataSide.removeAuthor' | translate: { name: author }">
                         <mat-icon>cancel</mat-icon>
@@ -115,7 +116,7 @@ import { TranslatePipe } from '@ngx-translate/core';
       <section class="rights-statement uncategorized">
         <mat-icon color="warn">warning</mat-icon>
         <span>{{ 'legal.dataSide.uncategorized' | translate }}</span>
-        <button mat-button color="primary" (click)="editLegalInfo.emit()">
+        <button type="button" mat-button color="primary" (click)="editLegalInfo.emit()">
           {{ 'legal.dataSide.editLegalInfo' | translate }}
         </button>
       </section>

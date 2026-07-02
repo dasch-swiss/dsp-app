@@ -79,6 +79,7 @@ type ResourceSideForm = FormGroup<{
                   <mat-chip-row (removed)="removeAuthor($index)">
                     {{ author }}
                     <button
+                      type="button"
                       matChipRemove
                       [attr.aria-label]="'legal.dataSide.removeAuthor' | translate: { name: author }">
                       <mat-icon>cancel</mat-icon>
@@ -93,10 +94,11 @@ type ResourceSideForm = FormGroup<{
             </mat-form-field>
 
             <div style="display: flex; gap: 8px; justify-content: flex-end; margin-top: 16px">
-              <button mat-button (click)="resetResourceSide()">
+              <button type="button" mat-button (click)="resetResourceSide()">
                 {{ 'legal.dataSide.settings.cancel' | translate }}
               </button>
               <button
+                type="button"
                 mat-raised-button
                 color="primary"
                 [disabled]="resourceSideForm.pristine || saving"
