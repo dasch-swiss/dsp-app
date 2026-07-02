@@ -90,7 +90,7 @@ import { CreateResourceFormInterface } from './create-resource-form.interface';
         </app-create-resource-form-row>
         <app-create-resource-form-row [label]="'legal.dataSide.authorship' | translate">
           <mat-form-field style="width: 100%">
-            <mat-chip-grid #dataAuthorshipGrid [attr.aria-label]="'legal.dataSide.authorship' | translate">
+            <mat-chip-grid #defaultDataAuthorshipGrid [attr.aria-label]="'legal.dataSide.authorship' | translate">
               @for (author of form.controls.resourceAuthorship.value; track $index) {
                 <mat-chip-row (removed)="removeDataAuthor($index)">
                   {{ author }}
@@ -105,7 +105,7 @@ import { CreateResourceFormInterface } from './create-resource-form.interface';
               <input
                 data-cy="data-authorship-chips"
                 [placeholder]="'resourceEditor.resourceCreator.authorship.placeholder' | translate"
-                [matChipInputFor]="dataAuthorshipGrid"
+                [matChipInputFor]="defaultDataAuthorshipGrid"
                 (matChipInputTokenEnd)="addDataAuthor($event.value); $event.chipInput!.clear()" />
             </mat-chip-grid>
           </mat-form-field>
@@ -222,9 +222,9 @@ export class CreateResourceFormComponent implements OnInit {
         switchMap(response => {
           const project = response.project;
           this.dataCopyrightHolder = project.dataCopyrightHolder;
-          if (project.dataAuthorship && project.dataAuthorship.length > 0) {
+          if (project.defaultDataAuthorship && project.defaultDataAuthorship.length > 0) {
             // Programmatic seed keeps the control pristine; the user confirms (submits) or edits these.
-            this.form.controls.resourceAuthorship.setValue(project.dataAuthorship);
+            this.form.controls.resourceAuthorship.setValue(project.defaultDataAuthorship);
           }
           return project.dataLicense
             ? this._paginatedApi
