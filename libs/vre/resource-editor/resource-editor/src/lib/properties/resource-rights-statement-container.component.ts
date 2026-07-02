@@ -73,7 +73,7 @@ export class ResourceRightsStatementContainerComponent implements OnInit {
         const project = response.project;
         const base = {
           copyrightHolder: project.dataCopyrightHolder,
-          authorship: project.dataAuthorship ?? [],
+          authorship: project.defaultDataAuthorship ?? [],
         };
         if (!project.dataLicense) {
           return of({ ...base, licenseLabel: undefined, licenseUrl: undefined } as DataRights);

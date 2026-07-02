@@ -35,7 +35,7 @@ const CC_LICENSES: { iri: string; summaryKey: string }[] = [
 type ResourceSideForm = FormGroup<{
   license: FormControl<string | null>;
   copyrightHolder: FormControl<string | null>;
-  dataAuthorship: FormControl<string[]>;
+  defaultDataAuthorship: FormControl<string[]>;
 }>;
 
 @Component({
@@ -75,7 +75,7 @@ type ResourceSideForm = FormGroup<{
             <mat-form-field style="width: 100%">
               <mat-label>{{ 'legal.dataSide.authorship' | translate }}</mat-label>
               <mat-chip-grid #chipGrid>
-                @for (author of resourceSideForm.controls.dataAuthorship.value; track $index) {
+                @for (author of resourceSideForm.controls.defaultDataAuthorship.value; track $index) {
                   <mat-chip-row (removed)="removeAuthor($index)">
                     {{ author }}
                     <button
@@ -195,7 +195,7 @@ export class LegalSettingsComponent implements OnInit {
   readonly resourceSideForm: ResourceSideForm = new FormGroup({
     license: new FormControl<string | null>(null),
     copyrightHolder: new FormControl<string | null>(null),
-    dataAuthorship: new FormControl<string[]>([], { nonNullable: true }),
+    defaultDataAuthorship: new FormControl<string[]>([], { nonNullable: true }),
   });
 
   readonly project$ = this._reloadSubject
@@ -226,7 +226,7 @@ export class LegalSettingsComponent implements OnInit {
       license: project.dataLicense ?? null,
       // Pre-fill the holder from the official project name when not yet set.
       copyrightHolder: project.dataCopyrightHolder ?? project.longname ?? null,
-      dataAuthorship: project.dataAuthorship ?? [],
+      defaultDataAuthorship: project.defaultDataAuthorship ?? [],
     });
   }
 
@@ -235,26 +235,26 @@ export class LegalSettingsComponent implements OnInit {
     if (!trimmed) {
       return;
     }
-    const control = this.resourceSideForm.controls.dataAuthorship;
+    const control = this.resourceSideForm.controls.defaultDataAuthorship;
     control.setValue([...control.value, trimmed]);
     control.markAsDirty();
   }
 
   removeAuthor(index: number): void {
-    const control = this.resourceSideForm.controls.dataAuthorship;
+    const control = this.resourceSideForm.controls.defaultDataAuthorship;
     control.setValue(control.value.filter((_, i) => i !== index));
     control.markAsDirty();
   }
 
   saveResourceSide(): void {
     const shortcode = this._projectPageService.currentProject.shortcode;
-    const { license, copyrightHolder, dataAuthorship } = this.resourceSideForm.getRawValue();
+    const { license, copyrightHolder, defaultDataAuthorship } = this.resourceSideForm.getRawValue();
     this.saving = true;
     this._paginatedApi
       .updateResourceSideLegalInfo(shortcode, {
         dataLicense: license,
         dataCopyrightHolder: copyrightHolder,
-        dataAuthorship: dataAuthorship ?? [],
+        defaultDataAuthorship: defaultDataAuthorship ?? [],
       })
       .subscribe({
         next: () => {

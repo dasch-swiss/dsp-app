@@ -61,7 +61,7 @@ const meta: Meta<ResourceImageTabsComponent> = {
         provideRouter([{ path: '**', component: class {} }]),
         {
           provide: ProjectApiService,
-          useValue: { get: () => of({ project: { shortcode: '0001', dataAuthorship: [] } }) },
+          useValue: { get: () => of({ project: { shortcode: '0001', defaultDataAuthorship: [] } }) },
         },
         { provide: PaginatedApiService, useValue: { getLicenses: () => of([]) } },
         { provide: ResourceLegalV2ApiService, useValue: { updateResourceAuthorship: () => of(undefined) } },
