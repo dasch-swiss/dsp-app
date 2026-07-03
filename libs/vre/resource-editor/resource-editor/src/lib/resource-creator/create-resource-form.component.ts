@@ -77,7 +77,13 @@ import { CreateResourceFormInterface } from './create-resource-form.interface';
             style="display: flex; align-items: center; gap: 4px; padding: 16px 0"
             [attr.aria-label]="'legal.dataSide.readOnlyValue' | translate: { value: dataLicenseLabel || '—' }">
             @if (dataLicenseUrl) {
-              <a [href]="dataLicenseUrl" target="_blank" rel="noopener noreferrer">{{ dataLicenseLabel }}</a>
+              <a
+                [href]="dataLicenseUrl"
+                target="_blank"
+                rel="noopener noreferrer"
+                [attr.aria-label]="dataLicenseLabel + ', ' + ('legal.dataSide.opensInNewTab' | translate)"
+                >{{ dataLicenseLabel }}</a
+              >
             } @else {
               <span>{{ dataLicenseLabel || '—' }}</span>
             }

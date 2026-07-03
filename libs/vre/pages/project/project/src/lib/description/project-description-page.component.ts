@@ -4,7 +4,7 @@ import { MatButton } from '@angular/material/button';
 import { MatChip, MatChipListbox } from '@angular/material/chips';
 import { MatDivider } from '@angular/material/divider';
 import { MatIcon } from '@angular/material/icon';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { StringLiteral } from '@dasch-swiss/dsp-js';
 import { AvailableLanguageKeys, RouteConstants } from '@dasch-swiss/vre/core/config';
 import { ProjectImageCoverComponent } from '@dasch-swiss/vre/pages/user-settings/user';
@@ -53,12 +53,11 @@ export class ProjectDescriptionPageComponent {
   constructor(
     private readonly _dataRights: ProjectDataRightsService,
     private readonly _projectPageService: ProjectPageService,
-    private readonly _router: Router,
-    private readonly _route: ActivatedRoute
+    private readonly _router: Router
   ) {}
 
   goToLegalSettings(): void {
-    this._router.navigate(['..', RouteConstants.settings, RouteConstants.legalSettings], { relativeTo: this._route });
+    this._router.navigate(RouteConstants.legalSettingsFor(this._projectPageService.currentProjectUuid));
   }
 
   private _sortDescriptionsByLanguage(descriptions: StringLiteral[]): StringLiteral[] {

@@ -110,6 +110,6 @@ export class ResourceRightsStatementContainerComponent implements OnInit {
 
   onEditLegalInfo(): void {
     const projectUuid = ProjectService.IriToUuid(this.resource.res.attachedToProject);
-    this._router.navigate([RouteConstants.project, projectUuid, RouteConstants.settings, RouteConstants.legalSettings]);
+    this._router.navigate(RouteConstants.legalSettingsFor(projectUuid));
   }
 }

@@ -11,6 +11,7 @@
       "editLegalInfo": "Edit legal info",
       "noAuthorshipFallback": "No authorship recorded for this resource. Project default: {{default}}",
       "readOnlyValue": "{{value}}, read-only",
+      "opensInNewTab": "opens in a new tab",
       "settings": {
         "resourceSide": "Resource side",
         "assetSide": "Asset side",

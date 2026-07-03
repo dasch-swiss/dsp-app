@@ -96,6 +96,14 @@ export class RouteConstants {
   static readonly notFoundWildcardRelative = `/${RouteConstants.notFound}`;
 
   static readonly annotationQueryParam = 'annotation';
+
+  /**
+   * Absolute router commands to a project's Legal Settings tab.
+   * Prefer this over hand-building the segments so a route rename only has to happen here.
+   */
+  static legalSettingsFor(projectUuid: string): readonly string[] {
+    return [RouteConstants.project, projectUuid, RouteConstants.settings, RouteConstants.legalSettings];
+  }
 }
 
 export class ApiConstants {

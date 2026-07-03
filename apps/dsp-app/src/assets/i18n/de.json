@@ -11,6 +11,7 @@
       "editLegalInfo": "Rechtliches bearbeiten",
       "noAuthorshipFallback": "Für diese Ressource sind keine Urheber:innen erfasst. Projektstandard: {{default}}",
       "readOnlyValue": "{{value}}, schreibgeschützt",
+      "opensInNewTab": "öffnet in neuem Tab",
       "settings": {
         "resourceSide": "Ressourcen-Seite",
         "assetSide": "Asset-Seite",

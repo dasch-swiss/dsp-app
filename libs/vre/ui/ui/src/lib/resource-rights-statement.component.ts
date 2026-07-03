@@ -33,7 +33,13 @@ import { TranslatePipe } from '@ngx-translate/core';
           <span class="label mat-subtitle-2">{{ 'legal.dataSide.license' | translate }}</span>
           <span class="value">
             @if (licenseUrl) {
-              <a [href]="licenseUrl" target="_blank" rel="noopener noreferrer">{{ licenseLabel }}</a>
+              <a
+                [href]="licenseUrl"
+                target="_blank"
+                rel="noopener noreferrer"
+                [attr.aria-label]="licenseLabel + ', ' + ('legal.dataSide.opensInNewTab' | translate)">
+                {{ licenseLabel }}
+              </a>
             } @else {
               {{ licenseLabel }}
             }

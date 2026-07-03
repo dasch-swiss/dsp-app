@@ -11,6 +11,7 @@
       "editLegalInfo": "Modifica le informazioni legali",
       "noAuthorshipFallback": "Nessun autore registrato per questa risorsa. Valore predefinito del progetto: {{default}}",
       "readOnlyValue": "{{value}}, sola lettura",
+      "opensInNewTab": "si apre in una nuova scheda",
       "settings": {
         "resourceSide": "Lato risorsa",
         "assetSide": "Lato asset",
