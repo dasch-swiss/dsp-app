@@ -23,7 +23,6 @@ const meta: Meta<AdvancedSearchComponent> = {
   component: AdvancedSearchComponent,
   argTypes: {
     projectUuid: { description: 'UUID of the project whose ontologies are loaded.' },
-    gravsearchQuery: { description: 'Emitted with the Gravsearch query string when Search is triggered.' },
   },
 };
 export default meta;

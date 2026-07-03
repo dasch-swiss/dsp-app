@@ -4,9 +4,10 @@ import { FilterParam } from '../service/search-url-sync.service';
 /**
  * Pure reconstruction of the confirmed statement tree from decoded URL filter params.
  *
- * Extracted verbatim (DEV-6576 Phase 2) from the inline reducer in
- * `FilterChipBarComponent._applyParams`, so it can be unit-tested in isolation and reused by the
- * `searchState$` derivation. Given the URL's `FilterParam[]` and the ontology's hydrated
+ * Extracted (DEV-6576 Phase 2) from what was the inline reducer in the old imperative restore path
+ * (`FilterChipBarComponent._applyParams`, since deleted in Phase 3d), so it can be unit-tested in
+ * isolation and is now the reconstruction used by the `searchState$` derivation. Given the URL's
+ * `FilterParam[]` and the ontology's hydrated
  * `Predicate[]`, it returns the `StatementElement[]` those params describe — resolving each
  * predicate by IRI and wiring parent/child links via `parentIndex`.
  *

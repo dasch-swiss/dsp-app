@@ -1,30 +1,19 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  DestroyRef,
-  EventEmitter,
-  inject,
-  Input,
-  OnInit,
-  Output,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, Input, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { catchError, debounceTime, distinctUntilChanged, EMPTY, filter, map, of, skip, switchMap, take } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs';
 import { StatementElement } from '../../model';
-import { GravsearchService } from '../../service/gravsearch.service';
 import { OntologyDataService } from '../../service/ontology-data.service';
 import { PropertyFormManager } from '../../service/property-form.manager';
+import { SearchDerivationService } from '../../service/search-derivation.service';
 import { SearchFlowLogger } from '../../service/search-flow-logger.service';
 import { SearchStateService } from '../../service/search-state.service';
-import { SearchUrlSyncService, SearchUrlParams } from '../../service/search-url-sync.service';
-import { buildStatementsFromFilterParams } from '../../util/build-statements';
+import { SearchUrlSyncService } from '../../service/search-url-sync.service';
 import { OrderByComponent } from '../order-by/order-by.component';
 import { AddFilterButtonComponent } from './add-filter-button.component';
 import { OPEN_CHIP_NONE, OpenChipId } from './chip-bar.helpers';
@@ -78,8 +67,8 @@ import { ResourceClassChipComponent } from './resource-class-chip.component';
               [isValid]="child.isValidAndComplete"
               (openChange)="onChipOpenChange(child.id, $event)"
               (remove)="formManager.deleteStatement(child)"
-              (confirm)="onConfirmNewFilter(child.id)"
-              (cancel)="onCancelNewFilter(child)" />
+              (filterConfirm)="onConfirmNewFilter(child.id)"
+              (filterCancel)="onCancelNewFilter(child)" />
           }
         }
 
@@ -93,11 +82,10 @@ import { ResourceClassChipComponent } from './resource-class-chip.component';
 })
 export class FilterChipBarComponent implements OnInit {
   @Input({ required: true }) projectUuid!: string;
-  @Output() gravsearchQuery = new EventEmitter<string | null>();
 
   private readonly _searchStateService = inject(SearchStateService);
   private readonly _ontologyDataService = inject(OntologyDataService);
-  private readonly _gravsearchService = inject(GravsearchService);
+  private readonly _derivation = inject(SearchDerivationService);
   private readonly _destroyRef = inject(DestroyRef);
   private readonly _urlSync = inject(SearchUrlSyncService);
   private readonly _logger = inject(SearchFlowLogger);
@@ -113,10 +101,6 @@ export class FilterChipBarComponent implements OnInit {
   });
 
   readonly childStatementsMap = signal<Record<string, StatementElement[]>>({});
-
-  // Set while restoring state from the URL (init / popstate) so the orderBy write-back
-  // subscription ignores programmatic changes and never re-writes or re-pushes history.
-  private _restoring = false;
 
   private _rebuildChildMap(): void {
     const result: Record<string, StatementElement[]> = {};
@@ -142,55 +126,38 @@ export class FilterChipBarComponent implements OnInit {
       .pipe(takeUntilDestroyed(this._destroyRef))
       .subscribe(() => this._rebuildChildMap());
 
-    // Restore from URL once on init, after ontology finishes loading.
-    this._ontologyDataService.ontologyLoading$
+    // Seed the chip-bar UI from the URL-derived state (DEV-6576 Phase 3d). This replaces the imperative
+    // `_applyParams`/popstate restore: first load, back/forward, and any URL change all flow through the
+    // single `searchState$` pipeline. The query itself is derived on the page (Phase 3c); here we only
+    // hydrate the *display* — the confirmed filter chips. (The in-progress statement tree moves to the
+    // ephemeral store in Phase 3.5; today confirmed statements come straight from the URL.)
+    this._derivation.searchState$.pipe(takeUntilDestroyed(this._destroyRef)).subscribe(state => {
+      this.confirmedStatements.set(state.statements.filter(s => s.isValidAndComplete));
+    });
+
+    // Seed the fulltext input from the `q` param on any URL change, without echoing back into the URL
+    // (`emitEvent: false`), so back/forward restores the field but does not re-push history.
+    this._urlSync.params$
       .pipe(
-        filter(loading => !loading),
-        take(1)
+        map(params => params.q ?? ''),
+        distinctUntilChanged(),
+        takeUntilDestroyed(this._destroyRef)
       )
-      .subscribe(() => {
-        this._logger.ontologyReady(this._ontologyDataService.selectedOntology.iri);
-        this._applyParamsWithOntologySwitch(this._urlSync.readParams());
+      .subscribe(q => {
+        if ((this.fulltextControl.value ?? '') !== q) {
+          this.fulltextControl.setValue(q, { emitEvent: false });
+        }
       });
 
     // Fulltext: after the user pauses typing (debounce), push one history entry so back/forward
     // steps through searched terms. The debounce coalesces a burst of keystrokes into a single entry.
-    // Restores set the control with `emitEvent: false`, so a back/forward navigation never re-pushes here.
+    // The seed above uses `emitEvent: false`, so a back/forward navigation never re-pushes here.
     this.fulltextControl.valueChanges
       .pipe(debounceTime(300), distinctUntilChanged(), takeUntilDestroyed(this._destroyRef))
       .subscribe(q => {
         this._logger.fulltextChanged(q ?? '');
         this._urlSync.writeState({ q: q ?? undefined }, { replaceUrl: false });
-        this._emitSearch('fulltext');
       });
-
-    // OrderBy: when the user changes the sort directly (via the order-by menu), persist it to the URL
-    // and re-emit the search (orderBy is part of the Gravsearch query). `_restoring` gates out the
-    // programmatic patches made while restoring from the URL, and `skip(1)` drops the initial `[]`.
-    this._searchStateService.orderByItems$
-      .pipe(
-        map(items => items.find(o => o.orderBy)?.id),
-        distinctUntilChanged(),
-        skip(1),
-        filter(() => !this._restoring),
-        takeUntilDestroyed(this._destroyRef)
-      )
-      .subscribe(activeId => {
-        this._logger.orderByChanged(activeId);
-        this._urlSync.writeState({ orderBy: activeId ?? undefined }, { replaceUrl: false });
-        this._emitSearch('order-by');
-      });
-
-    // Back/forward: full reset + restore from the URL the browser navigated to.
-    this._urlSync.popstate$
-      .pipe(
-        switchMap(params => {
-          this._resetState();
-          return this._applyParamsWithOntologySwitchObs(params).pipe(catchError(() => EMPTY));
-        }),
-        takeUntilDestroyed(this._destroyRef)
-      )
-      .subscribe(params => this._applyParams(params, 'popstate'));
   }
 
   onChipOpenChange(chipId: string, isOpen: boolean): void {
@@ -206,7 +173,6 @@ export class FilterChipBarComponent implements OnInit {
     this._logger.filterConfirmed(chipId);
     this.openChipId.set(OPEN_CHIP_NONE);
     this._writeFiltersToUrl();
-    this._emitSearch('filter-confirm');
   }
 
   onFilterConfirmed(chipId: string): void {
@@ -215,11 +181,10 @@ export class FilterChipBarComponent implements OnInit {
     this._logger.filterConfirmed(chipId);
     this.confirmedStatements.update(stmts => [...stmts, stmt]);
     this._writeFiltersToUrl();
-    this._emitSearch('filter-confirm');
   }
 
   onResourceClassSelected(): void {
-    this._emitSearch('resource-class');
+    // No-op beyond the class write (owned by resource-class-chip). The query re-derives from the URL.
   }
 
   onRemoveStatement(stmt: StatementElement): void {
@@ -228,29 +193,19 @@ export class FilterChipBarComponent implements OnInit {
     this.confirmedStatements.update(stmts => stmts.filter(s => s.id !== stmt.id));
     this._writeFiltersToUrl();
     // Explicit stale-orderBy cleanup (DEV-6576 D3 / US-3): if the removed filter was the active sort,
-    // clear `orderBy` from the URL. Under the URL-derived model this can no longer be emergent (the old
-    // orderByItems$ write-back is retired in 3d), so the removal handler owns it.
+    // clear `orderBy` from the URL — under the URL-derived model this is no longer emergent.
     if (stmt.selectedPredicate?.iri && stmt.selectedPredicate.iri === this._urlSync.readParams().orderBy) {
       this._urlSync.writeState({ orderBy: undefined }, { replaceUrl: false });
     }
-    this._emitSearch('filter-remove');
   }
 
   onReset(): void {
-    this._resetState();
-    this._urlSync.clearAll();
-  }
-
-  private _resetState(): void {
     this._logger.stateReset();
-    // Clearing selections resets orderBy to []; guard so the write-back subscription doesn't
-    // treat this programmatic reset as a user sort change and write to the URL/history.
-    this._restoring = true;
     this.fulltextControl.reset('', { emitEvent: false });
     this.confirmedStatements.set([]);
     this.openChipId.set(OPEN_CHIP_NONE);
     this._searchStateService.clearAllSelections();
-    this._restoring = false;
+    this._urlSync.clearAll();
   }
 
   private _writeFiltersToUrl(): void {
@@ -263,105 +218,7 @@ export class FilterChipBarComponent implements OnInit {
       parentIndex: stmt.parentId !== undefined ? idxById.get(stmt.parentId) : undefined,
     }));
     const encoded = stmts.length ? this._urlSync.encodeFilters(filterArgs) : null;
-    // orderBy has its own write-back subscription (orderByItems$), so it is not written here —
-    // one owner per URL param. `merge` handling preserves any existing orderBy param.
+    // `merge` handling preserves any existing orderBy param; orderBy is written by OrderByComponent.
     this._urlSync.writeState({ filters: encoded ?? undefined }, { replaceUrl: false });
-  }
-
-  /** Switches ontology if needed, then emits params for `_applyParams`. Used by popstate handler. */
-  private _applyParamsWithOntologySwitchObs(params: SearchUrlParams) {
-    const currentOntologyIri = this._ontologyDataService.selectedOntology.iri;
-    if (params.ontology && params.ontology !== currentOntologyIri) {
-      this._ontologyDataService.setOntology(params.ontology);
-      return this._ontologyDataService.ontologyLoading$.pipe(
-        filter(loading => !loading),
-        take(1),
-        map(() => params)
-      );
-    }
-    return of(params);
-  }
-
-  /** Switches ontology if needed, then calls `_applyParams`. Used by init restore. */
-  private _applyParamsWithOntologySwitch(params: SearchUrlParams): void {
-    const currentOntologyIri = this._ontologyDataService.selectedOntology.iri;
-    if (params.ontology && params.ontology !== currentOntologyIri) {
-      this._ontologyDataService.setOntology(params.ontology);
-      this._ontologyDataService.ontologyLoading$
-        .pipe(
-          filter(loading => !loading),
-          take(1),
-          takeUntilDestroyed(this._destroyRef)
-        )
-        .subscribe(() => this._applyParams(params));
-      return;
-    }
-    this._applyParams(params);
-  }
-
-  private _applyParams(params: SearchUrlParams, reason: 'restore' | 'popstate' = 'restore'): void {
-    this._logger.applyParams(params);
-    const classRestore$ = params.class
-      ? this._ontologyDataService.resourceClasses$.pipe(
-          filter(classes => classes.length > 0),
-          take(1),
-          switchMap(classes => {
-            const found = classes.find(c => c.iri === params.class);
-            if (found) this.formManager.setMainResource(found);
-            return params.filters ? this._ontologyDataService.getProperties$().pipe(take(1)) : of(null);
-          })
-        )
-      : params.filters
-        ? this._ontologyDataService.getProperties$().pipe(take(1))
-        : of(null);
-
-    classRestore$.pipe(takeUntilDestroyed(this._destroyRef)).subscribe(predicates => {
-      // Guard the whole restore: patching statements makes OrderByService rebuild the orderBy array,
-      // and we set the active item below — both flow through orderByItems$. Without this flag the
-      // write-back subscription would echo the restored value straight back into the URL/history.
-      this._restoring = true;
-      if (predicates && params.filters) {
-        const filterParams = this._urlSync.decodeFilters(params.filters);
-        const statements = buildStatementsFromFilterParams(filterParams, predicates);
-
-        this._searchStateService.patchState({
-          statementElements: [...this._searchStateService.currentState.statementElements, ...statements],
-        });
-        this.confirmedStatements.set(statements.filter(s => s.isValidAndComplete));
-        this._logger.filtersRestored(statements.length);
-      }
-
-      if (params.orderBy) {
-        const updated = this._searchStateService.currentState.orderBy.map(o =>
-          o.id === params.orderBy ? o.withOrderBy(true) : o
-        );
-        this._searchStateService.updateOrderBy(updated);
-      }
-
-      this.fulltextControl.setValue(params.q ?? '', { emitEvent: false });
-
-      this._restoring = false;
-      this._emitSearch(reason);
-    });
-  }
-
-  private _emitSearch(reason: Parameters<SearchFlowLogger['emitSearch']>[0] = 'restore'): void {
-    this._logger.emitSearch(reason);
-    const fulltext = this.fulltextControl.value ?? '';
-    const hasFilters = this.confirmedStatements().length > 0;
-    const hasResourceClass = !!this._searchStateService.currentState.selectedResourceClass?.iri;
-    if (!fulltext && !hasFilters && !hasResourceClass) {
-      this._logger.queryNull();
-      this.gravsearchQuery.emit(null);
-      return;
-    }
-    const query = this._gravsearchService.generateGravSearchQuery(
-      this._searchStateService.validStatementElements,
-      fulltext,
-      this._searchStateService.currentState.selectedResourceClass?.iri ?? '',
-      this._searchStateService.currentState.orderBy
-    );
-    this._logger.queryGenerated(query);
-    this.gravsearchQuery.emit(query);
   }
 }
