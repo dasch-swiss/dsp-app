@@ -2,13 +2,23 @@
 title: "refactor: Advanced Search — URL as Single Source of Truth"
 type: refactor
 date: 2026-07-02
-status: in-progress (0 ✅ 1 ✅ 2 ✅ P2.5 ✅ 3a ✅ 3a.1 ✅ 3b+3c ✅ 3d ✅ 3.5 Steps 0-1 ✅ — 3.5 Steps 2-5 next; a 6-step 3.5 plan is in "Phase 3.5" below)
+status: COMPLETE ✅ (Phases 0–5 all done, 2026-07-03) — URL is the single source of truth; SearchStateService + OrderByService deleted; final E2E 7/7 vs live dev (incl. interactive add-filter). 168 unit tests green, lint clean, zero in-lib TS errors.
 repository: /Users/julien/WebstormProjects/dsp-das
 ---
 
 # refactor: Advanced Search — URL as Single Source of Truth (DEV-6576)
 
 ## Overview
+
+> **✅ COMPLETE (2026-07-03).** All phases (0–5) shipped. Final state: the query, page, order-by,
+> selected class, and editing tree are all derived from / committed to the URL. `SearchStateService`
+> (the committed `BehaviorSubject`) and `OrderByService` (the second orderBy source) are **deleted
+> entirely** — the PRD's headline metric, sources of truth 2 → 1, is met by construction (no committed-
+> state subject exists to read). Verified: 168 unit tests green, lint clean, zero in-lib TS errors, and
+> **two live-backend E2E passes** (8/8 at the 3b+3c flip, 7/7 after the final cleanup incl. interactive
+> add-filter). Implementation reshaped the plan four times vs. the original phase list — all documented
+> inline: 3a.1 (setOntology error branch), 3b+3c merged (order-by coupling), 3d added URL seeds (not a
+> pure deletion), 3e was a full OrderByService deletion (zero consumers). See per-phase notes below.
 
 Migrate the advanced-search feature so that **Angular Router `queryParams` is the single writable
 source of truth**. State, the Gravsearch query, and results become pure derivations of the URL.
