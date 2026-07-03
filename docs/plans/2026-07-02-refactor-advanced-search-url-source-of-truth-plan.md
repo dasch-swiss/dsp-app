@@ -2,7 +2,7 @@
 title: "refactor: Advanced Search — URL as Single Source of Truth"
 type: refactor
 date: 2026-07-02
-status: in-progress (Phase 0 ✅, Phase 1 ✅, Phase 2 ✅, P2.5 ✅, 3a ✅, 3a.1 ✅, 3b+3c ✅, E2E ✅ 8/8 vs live dev — Phase 3d next)
+status: in-progress (0 ✅ 1 ✅ 2 ✅ P2.5 ✅ 3a ✅ 3a.1 ✅ 3b+3c ✅ 3d ✅ — E2E 7/7 post-3d vs live dev; Phase 3.5 next)
 repository: /Users/julien/WebstormProjects/dsp-das
 ---
 
@@ -305,7 +305,19 @@ explicit **revert = one commit** rollback (the parallel path from Phase 2 stays 
   checklist here before 3d. **Rollback:** revert the page + order-by component; the old `@Output` +
   service path is still intact.
 
-**Phase 3d — Delete the imperative restore machinery**
+**Phase 3d — Delete the imperative restore machinery — ✅ DONE (2026-07-03)**
+
+> **Scope correction found during implementation:** 3d could **not** be a pure deletion. Removing
+> `_applyParams` also removes how the *chip-bar UI* (fulltext input, confirmed filter chips) hydrates
+> **from** the URL on reload/popstate — which is really Phase 3.5's job (seed the ephemeral store from
+> `searchState$`). To keep the feature shippable, 3d **added two small URL-driven seeds** as the interim
+> hydration that 3.5 will refine: `searchState$` → `confirmedStatements` (chips), and `params$.q` →
+> fulltext control (`emitEvent:false`, no write-back loop). Also fixed a latent child-chip binding bug
+> (`(confirm)/(cancel)` → `(filterConfirm)/(filterCancel)`) that strict template checking surfaced once
+> the file was touched, and retired the orphaned `app-advanced-search` wrapper's dead output.
+> **For Phase 3.5:** the `searchState$`→`confirmedStatements` seed is the seam — move it into the
+> `PropertyFormManager` ephemeral store and reconcile with the in-progress tree there.
+
 - Now that the page reads the derivation, delete from `filter-chip-bar.component.ts`:
   `_applyParams` (`:296-340`), `_applyParamsWithOntologySwitch` (`:280-294`) and its Obs variant
   (`:266-277`), the first-load restore (`:146-154`), the popstate subscription (`:185-193`), the
@@ -516,7 +528,7 @@ on every PR from Phase 1 onward: no PR merges if the derived query diverges from
 | ~~P3a~~ | ontology-param reaction in derivation | done ✅ (2026-07-03) — T3a (4 cases); derivation still not consumed → zero behavior change; 170 tests green | revert 1 commit |
 | ~~P3a.1~~ | `setOntology` error branch (settle loading + `ontologyError$`) | done ✅ (2026-07-03, `de12fcb48`) — 3 specs | revert 1 commit |
 | ~~P3b+3c~~ | page consumes derivation **+** OrderByComponent writes → URL (merged — coupled for order-by) | done ✅ (2026-07-03, `712dd385b`) — 173 tests green, in-lib TS clean; **E2E checklist still owed before P3d** | revert page + order-by component |
-| **P3d** | delete imperative restore machinery | grep-clean (`_restoring`/`_applyParams`/`_emitSearch`/component `setOntology`); E2E re-run | keep P3a–c a release cycle first |
+| ~~P3d~~ | delete imperative restore machinery | done ✅ (2026-07-03) — grep-clean; **replaced restore with `searchState$`→chips + `params$.q`→input seeds** (not a pure deletion — the UI still needs to hydrate from the URL until 3.5); ~140 net lines gone; E2E 7/7 post-3d; 173 tests green | keep P3a–d a release cycle first |
 | **P3e** | retire OrderByService write-back | T3e; grep no `patchState({ orderBy })` | revert 1 commit |
 | **P3.5** | relocate ephemeral edit-state | T3.5 (encode-side exclusion); editing UX unchanged | revert (isolated to manager) |
 | **P4** | remove committed BehaviorSubject fields | grep no committed `currentState` read; oracle holds | last consumers |
