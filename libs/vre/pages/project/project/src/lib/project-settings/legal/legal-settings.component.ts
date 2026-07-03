@@ -3,7 +3,6 @@ import { Component, DestroyRef, OnInit } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import { MatChipsModule } from '@angular/material/chips';
 import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
@@ -14,7 +13,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { LegalInfoApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { ProjectDataRightsService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
-import { AlternatedListComponent } from '@dasch-swiss/vre/ui/ui';
+import { AlternatedListComponent, AuthorshipChipEditorComponent } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, first, map, Observable, switchMap } from 'rxjs';
 import { ProjectPageService } from '../../project-page.service';
@@ -91,27 +90,11 @@ type ResourceSideForm = FormGroup<{
               <mat-hint>{{ 'legal.dataSide.settings.holderHelper' | translate }}</mat-hint>
             </mat-form-field>
 
-            <mat-form-field style="width: 100%">
-              <mat-label>{{ 'legal.dataSide.authorship' | translate }}</mat-label>
-              <mat-chip-grid #chipGrid [attr.aria-label]="'legal.dataSide.authorship' | translate">
-                @for (author of resourceSideForm.controls.dataAuthorship.value; track $index) {
-                  <mat-chip-row (removed)="removeAuthor($index)">
-                    {{ author }}
-                    <button
-                      type="button"
-                      matChipRemove
-                      [attr.aria-label]="'legal.dataSide.removeAuthor' | translate: { name: author }">
-                      <mat-icon>cancel</mat-icon>
-                    </button>
-                  </mat-chip-row>
-                }
-                <input
-                  autocomplete="off"
-                  [attr.aria-label]="'legal.dataSide.authorship' | translate"
-                  [matChipInputFor]="chipGrid"
-                  (matChipInputTokenEnd)="addAuthor($event.value); $event.chipInput?.clear()" />
-              </mat-chip-grid>
-            </mat-form-field>
+            <app-authorship-chip-editor
+              [control]="resourceSideForm.controls.dataAuthorship"
+              [label]="'legal.dataSide.authorship' | translate"
+              [ariaLabel]="'legal.dataSide.authorship' | translate"
+              [removeAuthorLabel]="removeAuthorLabel" />
 
             <div style="display: flex; gap: 8px; justify-content: flex-end; margin-top: 16px">
               <button type="button" mat-button (click)="resetResourceSide()">
@@ -193,9 +176,9 @@ type ResourceSideForm = FormGroup<{
   imports: [
     AlternatedListComponent,
     AsyncPipe,
+    AuthorshipChipEditorComponent,
     LegalSettingsLicensesComponent,
     MatButton,
-    MatChipsModule,
     MatFormFieldModule,
     MatIcon,
     MatInputModule,
@@ -271,21 +254,9 @@ export class LegalSettingsComponent implements OnInit {
     }
   }
 
-  addAuthor(value: string): void {
-    const trimmed = value.trim();
-    if (!trimmed) {
-      return;
-    }
-    const control = this.resourceSideForm.controls.dataAuthorship;
-    control.setValue([...control.value, trimmed]);
-    control.markAsDirty();
-  }
-
-  removeAuthor(index: number): void {
-    const control = this.resourceSideForm.controls.dataAuthorship;
-    control.setValue(control.value.filter((_, i) => i !== index));
-    control.markAsDirty();
-  }
+  /** Builds the per-chip remove-button aria-label; arrow so it binds correctly when passed as an @Input. */
+  readonly removeAuthorLabel = (name: string): string =>
+    this._translate.instant('legal.dataSide.removeAuthor', { name });
 
   saveResourceSide(): void {
     const shortcode = this._projectPageService.currentProject.shortcode;

@@ -2,7 +2,6 @@ import { ChangeDetectorRef, Component, DestroyRef, EventEmitter, Inject, Input, 
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MatChipsModule } from '@angular/material/chips';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -24,8 +23,12 @@ import { ApiConstants, DspApiConnectionToken } from '@dasch-swiss/vre/core/confi
 import { PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
 import { ProjectDataRightsService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { AppProgressIndicatorComponent, LoadingButtonDirective } from '@dasch-swiss/vre/ui/progress-indicator';
-import { CommonInputComponent, InvalidControlScrollDirective } from '@dasch-swiss/vre/ui/ui';
-import { TranslatePipe } from '@ngx-translate/core';
+import {
+  AuthorshipChipEditorComponent,
+  CommonInputComponent,
+  InvalidControlScrollDirective,
+} from '@dasch-swiss/vre/ui/ui';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { finalize, switchMap, take } from 'rxjs';
 import { FormValueGroup } from '../properties/properties-display/property-value/form-value-array.type';
 import { propertiesTypeMapping } from '../properties/properties-display/property-value/resource-payloads-mapping';
@@ -99,26 +102,12 @@ import { CreateResourceFormInterface } from './create-resource-form.interface';
           </div>
         </app-create-resource-form-row>
         <app-create-resource-form-row [label]="'legal.dataSide.authorship' | translate">
-          <mat-form-field style="width: 100%">
-            <mat-chip-grid #dataAuthorshipGrid [attr.aria-label]="'legal.dataSide.authorship' | translate">
-              @for (author of form.controls.resourceAuthorship.value; track $index) {
-                <mat-chip-row (removed)="removeDataAuthor($index)">
-                  {{ author }}
-                  <button
-                    type="button"
-                    matChipRemove
-                    [attr.aria-label]="'legal.dataSide.removeAuthor' | translate: { name: author }">
-                    <mat-icon>cancel</mat-icon>
-                  </button>
-                </mat-chip-row>
-              }
-              <input
-                data-cy="data-authorship-chips"
-                [placeholder]="'resourceEditor.resourceCreator.authorship.placeholder' | translate"
-                [matChipInputFor]="dataAuthorshipGrid"
-                (matChipInputTokenEnd)="addDataAuthor($event.value); $event.chipInput?.clear()" />
-            </mat-chip-grid>
-          </mat-form-field>
+          <app-authorship-chip-editor
+            [control]="form.controls.resourceAuthorship"
+            [ariaLabel]="'legal.dataSide.authorship' | translate"
+            [placeholder]="'resourceEditor.resourceCreator.authorship.placeholder' | translate"
+            [removeAuthorLabel]="removeDataAuthorLabel"
+            dataCy="data-authorship-chips" />
         </app-create-resource-form-row>
         <div class="form-actions">
           <button mat-raised-button type="button" data-cy="cancel-button" (click)="onCancel()">
@@ -153,8 +142,8 @@ import { CreateResourceFormInterface } from './create-resource-form.interface';
     CreateResourceFormRowComponent,
     CommonInputComponent,
     CreateResourceFormPropertiesComponent,
+    AuthorshipChipEditorComponent,
     MatButtonModule,
-    MatChipsModule,
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
@@ -212,7 +201,8 @@ export class CreateResourceFormComponent implements OnInit {
     private _fb: FormBuilder,
     private _cd: ChangeDetectorRef,
     private _dataRights: ProjectDataRightsService,
-    private _destroyRef: DestroyRef
+    private _destroyRef: DestroyRef,
+    private _translate: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -234,21 +224,9 @@ export class CreateResourceFormComponent implements OnInit {
       });
   }
 
-  addDataAuthor(value: string): void {
-    const trimmed = value.trim();
-    if (!trimmed) {
-      return;
-    }
-    const control = this.form.controls.resourceAuthorship;
-    control.setValue([...control.value, trimmed]);
-    control.markAsDirty();
-  }
-
-  removeDataAuthor(index: number): void {
-    const control = this.form.controls.resourceAuthorship;
-    control.setValue(control.value.filter((_, i) => i !== index));
-    control.markAsDirty();
-  }
+  /** Builds the per-chip remove-button aria-label; arrow so it binds correctly when passed as an @Input. */
+  readonly removeDataAuthorLabel = (name: string): string =>
+    this._translate.instant('legal.dataSide.removeAuthor', { name });
 
   afterFileFormCreated(fileForm: FileForm) {
     this.form.addControl('file', fileForm);
