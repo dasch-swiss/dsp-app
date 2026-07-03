@@ -5,7 +5,6 @@ import { UserService } from '@dasch-swiss/vre/core/session';
 import { EMPTY, of } from 'rxjs';
 import { IriLabelPair, OrderByItem, StatementElement } from './model';
 import { OntologyDataService } from './service/ontology-data.service';
-import { OrderByService } from './service/order-by.service';
 import { QueryExecutionService } from './service/query-execution.service';
 import { SearchDerivationService } from './service/search-derivation.service';
 import { SearchFlowLogger } from './service/search-flow-logger.service';
@@ -115,13 +114,6 @@ export const makeQueryExecutionServiceStub = (
   partial: { queryIsExecuting?: boolean } = {}
 ): Partial<QueryExecutionService> => ({
   queryIsExecuting: signal(partial.queryIsExecuting ?? false),
-});
-
-export const makeOrderByServiceStub = (partial: Partial<OrderByService> = {}): Partial<OrderByService> => ({
-  orderByItems$: of([] as OrderByItem[]),
-  currentOrderBy: [],
-  updateOrderBy: () => {},
-  ...partial,
 });
 
 /**
