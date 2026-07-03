@@ -1,8 +1,12 @@
 import { Injectable } from '@angular/core';
 import { ReadProject } from '@dasch-swiss/dsp-js';
 import { ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
-import { AdminAPIApiService, ProjectLicenseDto } from '@dasch-swiss/vre/3rd-party-services/open-api';
-import { map, Observable, of, shareReplay, switchMap } from 'rxjs';
+import {
+  AdminAPIApiService,
+  ProjectLicenseDto,
+  ResourceSideLegalInfo,
+} from '@dasch-swiss/vre/3rd-party-services/open-api';
+import { catchError, map, Observable, of, shareReplay, switchMap, tap, throwError } from 'rxjs';
 import { PaginatedApiService } from './paginated-api.service';
 
 export interface ProjectDataRights {
@@ -12,14 +16,6 @@ export interface ProjectDataRights {
   licenseUrl?: string;
 }
 
-/** Structural subset of the fields needed to resolve rights — accepts either dsp-js ReadProject or the generated admin Project. */
-interface ProjectDataRightsSource {
-  shortcode: string;
-  dataLicense?: string;
-  dataCopyrightHolder?: string;
-  dataAuthorship?: string[];
-}
-
 /**
  * Resolves a project's data-side legal info (license label + deed URL, copyright holder,
  * default authorship) into the display-shape used by the Resource Rights Statement viewer,
@@ -27,14 +23,20 @@ interface ProjectDataRightsSource {
  *
  * Cache scope: per project session. `ProjectPageGuard` calls `clearAll()` on every entry into
  * `/project/:uuid`, so switching to a different project (or re-entering after leaving the
- * project scope) starts with fresh data. Mutating endpoints
- * (`updateResourceSideLegalInfo`, `enableLicense`, `disableLicense`) call
- * `invalidateByShortcode` via `PaginatedApiService`.
+ * project scope) starts with fresh data. Mutating endpoints on `PaginatedApiService` call
+ * `invalidateByShortcode` via `tap`.
+ *
+ * Security invariant: this cache is root-scoped and mutable. Cross-user isolation currently
+ * relies on `AuthService.logout()` calling `window.location.reload()` (which destroys the
+ * singleton). If that changes, this service must subscribe to identity changes and call
+ * `clearAll()` on user switch.
  */
 @Injectable({ providedIn: 'root' })
 export class ProjectDataRightsService {
   private readonly _licensesByShortcode = new Map<string, Observable<ProjectLicenseDto[]>>();
   private readonly _projectByIri = new Map<string, Observable<ReadProject>>();
+  /** Reverse index used by invalidateByShortcode to evict the matching project entry precisely. */
+  private readonly _iriByShortcode = new Map<string, string>();
 
   constructor(
     private readonly _adminApi: AdminAPIApiService,
@@ -46,36 +48,45 @@ export class ProjectDataRightsService {
     return this._cachedProject(projectIri).pipe(switchMap(project => this._resolve(project)));
   }
 
-  forShortcode(shortcode: string): Observable<ProjectDataRights> {
-    return this._adminApi.getAdminProjectsShortcodeProjectshortcode(shortcode).pipe(
-      switchMap(response =>
-        this._resolve({
-          shortcode: response.project.shortcode.value,
-          dataLicense: response.project.dataLicense,
-          dataCopyrightHolder: response.project.dataCopyrightHolder,
-          dataAuthorship: response.project.dataAuthorship,
-        })
-      )
-    );
+  fromProject(project: ReadProject): Observable<ProjectDataRights> {
+    return this._resolve(project);
   }
 
-  fromProject(project: ProjectDataRightsSource): Observable<ProjectDataRights> {
-    return this._resolve(project);
+  /** Persist the project's data-side legal info; invalidates the shortcode's cache on success. */
+  updateResourceSideLegalInfo(shortcode: string, body: ResourceSideLegalInfo): Observable<ResourceSideLegalInfo> {
+    return this._adminApi
+      .putAdminProjectsShortcodeProjectshortcodeLegalInfoResource(shortcode, body)
+      .pipe(tap(() => this.invalidateByShortcode(shortcode)));
+  }
+
+  enableLicense(shortcode: string, licenseIri: string): Observable<unknown> {
+    return this._adminApi
+      .putAdminProjectsShortcodeProjectshortcodeLegalInfoLicensesLicenseiriEnable(shortcode, licenseIri)
+      .pipe(tap(() => this.invalidateByShortcode(shortcode)));
+  }
+
+  disableLicense(shortcode: string, licenseIri: string): Observable<unknown> {
+    return this._adminApi
+      .putAdminProjectsShortcodeProjectshortcodeLegalInfoLicensesLicenseiriDisable(shortcode, licenseIri)
+      .pipe(tap(() => this.invalidateByShortcode(shortcode)));
   }
 
   invalidateByShortcode(shortcode: string): void {
     this._licensesByShortcode.delete(shortcode);
-    for (const iri of Array.from(this._projectByIri.keys())) {
+    const iri = this._iriByShortcode.get(shortcode);
+    if (iri) {
       this._projectByIri.delete(iri);
+      this._iriByShortcode.delete(shortcode);
     }
   }
 
   clearAll(): void {
     this._licensesByShortcode.clear();
     this._projectByIri.clear();
+    this._iriByShortcode.clear();
   }
 
-  private _resolve(project: ProjectDataRightsSource): Observable<ProjectDataRights> {
+  private _resolve(project: ReadProject): Observable<ProjectDataRights> {
     const base: ProjectDataRights = {
       copyrightHolder: project.dataCopyrightHolder,
       authorship: project.dataAuthorship ?? [],
@@ -96,6 +107,12 @@ export class ProjectDataRightsService {
     if (!cached) {
       cached = this._projectApi.get(iri).pipe(
         map(response => response.project),
+        tap(project => this._iriByShortcode.set(project.shortcode, iri)),
+        // Evict on error so the next subscriber gets a fresh attempt instead of a replayed failure.
+        catchError(err => {
+          this._projectByIri.delete(iri);
+          return throwError(() => err);
+        }),
         shareReplay({ bufferSize: 1, refCount: false })
       );
       this._projectByIri.set(iri, cached);
@@ -106,7 +123,13 @@ export class ProjectDataRightsService {
   private _cachedLicenses(shortcode: string): Observable<ProjectLicenseDto[]> {
     let cached = this._licensesByShortcode.get(shortcode);
     if (!cached) {
-      cached = this._paginatedApi.getLicenses(shortcode).pipe(shareReplay({ bufferSize: 1, refCount: false }));
+      cached = this._paginatedApi.getLicenses(shortcode).pipe(
+        catchError(err => {
+          this._licensesByShortcode.delete(shortcode);
+          return throwError(() => err);
+        }),
+        shareReplay({ bufferSize: 1, refCount: false })
+      );
       this._licensesByShortcode.set(shortcode, cached);
     }
     return cached;

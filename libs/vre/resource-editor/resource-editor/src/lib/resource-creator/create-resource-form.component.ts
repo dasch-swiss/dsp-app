@@ -20,7 +20,6 @@ import {
   ResourcePropertyDefinition,
   ResourcePropertyDefinitionWithAllLanguages,
 } from '@dasch-swiss/dsp-js';
-import { AdminAPIApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { ApiConstants, DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { ProjectDataRightsService, PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
 import { AppProgressIndicatorComponent, LoadingButtonDirective } from '@dasch-swiss/vre/ui/progress-indicator';
@@ -201,7 +200,6 @@ export class CreateResourceFormComponent implements OnInit {
     private _dspApiConnection: KnoraApiConnection,
     private _fb: FormBuilder,
     private _cd: ChangeDetectorRef,
-    private _adminApi: AdminAPIApiService,
     private _dataRights: ProjectDataRightsService,
     private _destroyRef: DestroyRef
   ) {}
@@ -212,27 +210,16 @@ export class CreateResourceFormComponent implements OnInit {
   }
 
   private _loadDataSideLegal(): void {
-    this._adminApi
-      .getAdminProjectsShortcodeProjectshortcode(this.projectShortcode)
-      .pipe(
-        switchMap(response => {
-          const project = response.project;
-          if (project.dataAuthorship && project.dataAuthorship.length > 0) {
-            this.form.controls.resourceAuthorship.setValue(project.dataAuthorship);
-          }
-          return this._dataRights.fromProject({
-            shortcode: project.shortcode.value,
-            dataLicense: project.dataLicense,
-            dataCopyrightHolder: project.dataCopyrightHolder,
-            dataAuthorship: project.dataAuthorship,
-          });
-        }),
-        takeUntilDestroyed(this._destroyRef)
-      )
+    this._dataRights
+      .forProject(this.projectIri)
+      .pipe(takeUntilDestroyed(this._destroyRef))
       .subscribe(rights => {
         this.dataLicenseLabel = rights.licenseLabel;
         this.dataLicenseUrl = rights.licenseUrl;
         this.dataCopyrightHolder = rights.copyrightHolder;
+        if (rights.authorship.length > 0) {
+          this.form.controls.resourceAuthorship.setValue(rights.authorship);
+        }
         this._cd.detectChanges();
       });
   }

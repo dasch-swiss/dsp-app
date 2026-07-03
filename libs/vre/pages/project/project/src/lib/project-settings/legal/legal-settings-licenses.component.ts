@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { PaginatedApiService } from '@dasch-swiss/vre/shared/app-common';
+import { PaginatedApiService, ProjectDataRightsService } from '@dasch-swiss/vre/shared/app-common';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { TranslatePipe } from '@ngx-translate/core';
 import { BehaviorSubject, catchError, map, shareReplay, switchMap, tap } from 'rxjs';
@@ -51,6 +51,7 @@ export class LegalSettingsLicensesComponent {
 
   constructor(
     private readonly _paginatedApi: PaginatedApiService,
+    private readonly _dataRights: ProjectDataRightsService,
     private readonly _projectPageService: ProjectPageService,
     private readonly _notification: NotificationService
   ) {}
@@ -59,8 +60,8 @@ export class LegalSettingsLicensesComponent {
     const project = this._projectPageService.currentProject;
 
     const apiCall = event.enabled
-      ? this._paginatedApi.enableLicense(project.shortcode, event.licenseId)
-      : this._paginatedApi.disableLicense(project.shortcode, event.licenseId);
+      ? this._dataRights.enableLicense(project.shortcode, event.licenseId)
+      : this._dataRights.disableLicense(project.shortcode, event.licenseId);
 
     apiCall
       .pipe(

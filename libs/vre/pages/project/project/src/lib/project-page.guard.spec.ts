@@ -90,6 +90,8 @@ describe('ProjectPageGuard', () => {
         expect(result).toBe(true);
         expect(projectPageServiceMock.setup).toHaveBeenCalledWith(projectUuid);
         expect(projectPageServiceMock.setup).toHaveBeenCalledTimes(1);
+        // clearAll must fire on every project-scope entry so the rights cache stays scoped to the current project.
+        expect(dataRightsServiceMock.clearAll).toHaveBeenCalledTimes(1);
         done();
       });
     });

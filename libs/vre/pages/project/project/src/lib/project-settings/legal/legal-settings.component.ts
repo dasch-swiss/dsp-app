@@ -10,7 +10,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltip } from '@angular/material/tooltip';
-import { PaginatedApiService } from '@dasch-swiss/vre/shared/app-common';
+import { PaginatedApiService, ProjectDataRightsService } from '@dasch-swiss/vre/shared/app-common';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { AlternatedListComponent } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -209,6 +209,7 @@ export class LegalSettingsComponent implements OnInit {
   authorships$ = this.project$.pipe(switchMap(project => this._paginatedApi.getAuthorships(project.shortcode)));
 
   constructor(
+    private readonly _dataRights: ProjectDataRightsService,
     private readonly _dialog: MatDialog,
     private readonly _notification: NotificationService,
     private readonly _paginatedApi: PaginatedApiService,
@@ -250,7 +251,7 @@ export class LegalSettingsComponent implements OnInit {
     const shortcode = this._projectPageService.currentProject.shortcode;
     const { license, copyrightHolder, dataAuthorship } = this.resourceSideForm.getRawValue();
     this.saving = true;
-    this._paginatedApi
+    this._dataRights
       .updateResourceSideLegalInfo(shortcode, {
         dataLicense: license ?? undefined,
         dataCopyrightHolder: copyrightHolder ?? undefined,
