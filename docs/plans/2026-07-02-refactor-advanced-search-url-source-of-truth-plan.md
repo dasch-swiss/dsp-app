@@ -2,7 +2,7 @@
 title: "refactor: Advanced Search — URL as Single Source of Truth"
 type: refactor
 date: 2026-07-02
-status: in-progress (Phase 0 ✅, Phase 1 ✅, Phase 2 ✅, P2.5 ✅, Phase 3a ✅ — Phase 3b next)
+status: in-progress (Phase 0 ✅, Phase 1 ✅, Phase 2 ✅, P2.5 ✅, Phase 3a ✅, 3a.1 ✅ — Phase 3b next)
 repository: /Users/julien/WebstormProjects/dsp-das
 ---
 
@@ -269,12 +269,11 @@ explicit **revert = one commit** rollback (the parallel path from Phase 2 stays 
   `setOntology`. De-dup verified by T3a. Mirrors the imperative `_applyParamsWithOntologySwitch(+Obs)`
   diff logic (`filter-chip-bar.component.ts:267-268`).
 - Nothing deleted; reaction is dormant until the page consumes the derivation (3c/3d).
-- **Deferred:** the `setOntology`-failure-settles case (T3a case c) was **not** written — it depends on
-  the open question below. `setOntology` (`ontology-data.service.ts:108`) has **no error branch**, so
-  `ontologyLoading` stays `true` on load failure and `loading$` would hang. Writing the test now would
-  only pin the known-bad behavior. **Resolve the open question, add the `catchError`/`finalize` fix,
-  then add T3a case c** — recommended as its own tiny PR (P3a.1) before P3c, since E2E item #3 exercises
-  exactly this path.
+- **Phase 3a.1 — ✅ DONE (2026-07-03, commit `de12fcb48`):** the deferred `setOntology`-failure case.
+  Added the `error` branch to `setOntology` (settle loading + `ontologyError$`), covered by 3 specs in
+  `ontology-data.service.spec.ts`. T3a case (c) is satisfied by composition: T3a proves the reaction
+  calls `setOntology`; the `ontology-data` specs prove `setOntology` settles loading on failure — no
+  redundant wired-together test in the derivation spec (which stubs `OntologyDataService`).
 
 **Phase 3b — Redirect `OrderByComponent` writes to the URL**
 - Change `OrderByComponent.onSelectionChange`/`removeOrderBy` (`order-by.component.ts:36-44`) to
@@ -593,7 +592,7 @@ one-commit rollback.
 | Ephemeral edit-state relocation becomes big-bang | L (revised) | H | D4: dedicated Phase 3.5; research shows manager has no state to migrate (only to add); 5 consumers' signatures unchanged |
 | **Silent behavior change**: query moves from `validStatementElements` (valid rows incl. unconfirmed) to `confirmedStatements`/`filters` (confirmed only) | H (certain, if unguarded) | M | **D6**: called out as intended + guarded by T-D6; if product wants live-preview, that's a separate scoped feature |
 | Deleting imperative ontology helper breaks ontology switch (`loading$` hangs on non-default-ontology URL) | H | H | **3a before 3d**: add the `params.ontology → setOntology` reaction to the derivation (currently absent) and verify (T3a) *before* deleting `_applyParamsWithOntologySwitch(+Obs)`. E2E item #3. |
-| `setOntology` failure leaves `loading$` stuck true (no error branch at `ontology-data.service.ts:108`) | M | M | Add `catchError`/`finalize` in the 3a reaction (Open Question) |
+| ~~`setOntology` failure leaves `loading$` stuck true~~ | — | — | **Resolved (3a.1):** `error` branch settles loading + `ontologyError$`; 3 specs |
 | `OrderByComponent` write path left pointing at retired service (sort goes read-only) | M | H | Phase 3b explicitly redirects component writes to `writeState` before 3e retires the service |
 | Readiness gate emits empty/partial query (classes/predicates not hydrated) | M | M | `loading$` combines ontology + classes + predicates; AC guards |
 | No-op navigations re-hit the API | M | M | `distinctUntilChanged` on decoded `rawParams$` |
@@ -626,11 +625,12 @@ independently mergeable and shippable.
 These are the genuinely-undecided items, tightened with the 2026-07-03 research. The four already-
 settled ones are under "Resolved Decisions" below.
 
-- [ ] **`setOntology` has no error branch (Phase 3a).** `ontology-data.service.ts:108` never handles a
-  failed load — `ontologyLoading` stays `true`, so `loading$` would hang forever on a bad ontology
-  IRI in a shared URL. Decide: add `catchError` in the Phase-3a reaction to settle `loading$` (show an
-  error state), or accept it as pre-existing and out of scope. **Recommendation:** handle it — a
-  hanging spinner on a shared URL is exactly the shareability failure this PRD is about.
+- [x] **`setOntology` has no error branch** — *resolved (Phase 3a.1, commit `de12fcb48`).* Added an
+  `error` branch to `setOntology` that settles `ontologyLoading` to `false` and exposes the failure via
+  a new `ontologyError$` stream (`null` = no error, cleared on the next load). Chosen over a silent
+  settle so a future error-state UI has a hook, without forcing a visual change now. `ontologyError$`
+  is currently unconsumed — **wiring it to a UI error state (instead of a blank tips fallback) is a
+  follow-up**, tracked alongside the empty-results-flash question below and E2E item #3.
 - [ ] **Write-side no-op dedup (Phase 3, non-functional AC).** `params$` already suppresses re-derivation
   on identical decoded params, so a redundant `router.navigate` is *mostly* harmless (it self-absorbs).
   Decide whether to also guard `writeState` against navigating to the current URL, or rely solely on the
