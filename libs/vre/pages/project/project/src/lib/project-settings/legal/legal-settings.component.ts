@@ -16,7 +16,7 @@ import { ProjectDataRightsService } from '@dasch-swiss/vre/shared/app-helper-ser
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { AlternatedListComponent } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { BehaviorSubject, first, switchMap } from 'rxjs';
+import { BehaviorSubject, first, map, Observable, switchMap } from 'rxjs';
 import { ProjectPageService } from '../../project-page.service';
 import {
   CreateCopyrightHolderDialogComponent,
@@ -24,15 +24,29 @@ import {
 } from '../create-copyright-holder-dialog.component';
 import { LegalSettingsLicensesComponent } from './legal-settings-licenses.component';
 
-/** The Creative Commons licenses allowed as a project's data-side license (CC-BY family only; CC0/PDM excluded). */
-const CC_LICENSES: { iri: string; summaryKey: string }[] = [
-  { iri: 'http://rdfh.ch/licenses/cc-by-4.0', summaryKey: 'ccBy40' },
-  { iri: 'http://rdfh.ch/licenses/cc-by-sa-4.0', summaryKey: 'ccBySa40' },
-  { iri: 'http://rdfh.ch/licenses/cc-by-nc-4.0', summaryKey: 'ccByNc40' },
-  { iri: 'http://rdfh.ch/licenses/cc-by-nc-sa-4.0', summaryKey: 'ccByNcSa40' },
-  { iri: 'http://rdfh.ch/licenses/cc-by-nd-4.0', summaryKey: 'ccByNd40' },
-  { iri: 'http://rdfh.ch/licenses/cc-by-nc-nd-4.0', summaryKey: 'ccByNcNd40' },
-];
+/**
+ * Localized summary translation keys for the CC-BY family, keyed by license IRI.
+ * The dropdown *existence* is driven by `LegalInfoApiService.getLicenses` (filtered to CC-BY);
+ * this map only provides the translated label. Licenses not listed here fall back to the API's `labelEn`.
+ */
+const CC_BY_SUMMARY_KEYS: Record<string, string> = {
+  'http://rdfh.ch/licenses/cc-by-4.0': 'ccBy40',
+  'http://rdfh.ch/licenses/cc-by-sa-4.0': 'ccBySa40',
+  'http://rdfh.ch/licenses/cc-by-nc-4.0': 'ccByNc40',
+  'http://rdfh.ch/licenses/cc-by-nc-sa-4.0': 'ccByNcSa40',
+  'http://rdfh.ch/licenses/cc-by-nd-4.0': 'ccByNd40',
+  'http://rdfh.ch/licenses/cc-by-nc-nd-4.0': 'ccByNcNd40',
+};
+
+const CC_BY_IRI_PREFIX = 'http://rdfh.ch/licenses/cc-by';
+
+interface CcLicenseOption {
+  iri: string;
+  /** Translation key under `legal.dataSide.summaries.*` when known; otherwise `undefined`. */
+  summaryKey?: string;
+  /** English label from the API, used as a fallback when no translation key is registered. */
+  fallbackLabel: string;
+}
 
 type ResourceSideForm = FormGroup<{
   license: FormControl<string | null>;
@@ -59,10 +73,14 @@ type ResourceSideForm = FormGroup<{
                 formControlName="license"
                 [placeholder]="'legal.dataSide.settings.licensePlaceholder' | translate">
                 <mat-option [value]="null">{{ 'resourceEditor.resourceCreator.legal.none' | translate }}</mat-option>
-                @for (lic of ccLicenses; track lic.iri) {
-                  <mat-option [value]="lic.iri">{{
-                    'legal.dataSide.summaries.' + lic.summaryKey | translate
-                  }}</mat-option>
+                @for (lic of ccLicenses$ | async; track lic.iri) {
+                  <mat-option [value]="lic.iri">
+                    @if (lic.summaryKey) {
+                      {{ 'legal.dataSide.summaries.' + lic.summaryKey | translate }}
+                    } @else {
+                      {{ lic.fallbackLabel }}
+                    }
+                  </mat-option>
                 }
               </mat-select>
             </mat-form-field>
@@ -192,7 +210,6 @@ export class LegalSettingsComponent implements OnInit {
   private readonly _reloadSubject = new BehaviorSubject<void>(undefined);
 
   saving = false;
-  readonly ccLicenses = CC_LICENSES;
 
   readonly resourceSideForm: ResourceSideForm = new FormGroup({
     license: new FormControl<string | null>(null),
@@ -203,6 +220,20 @@ export class LegalSettingsComponent implements OnInit {
   readonly project$ = this._reloadSubject
     .asObservable()
     .pipe(switchMap(() => this._projectPageService.currentProject$));
+
+  /**
+   * CC-BY family license options for the dropdown, filtered from the project's license catalog.
+   * Existence is API-driven (no drift when the catalog changes); labels use the localized
+   * summary translations when known and fall back to the API's `labelEn` otherwise.
+   */
+  ccLicenses$: Observable<CcLicenseOption[]> = this.project$.pipe(
+    switchMap(project => this._legalInfoApi.getLicenses(project.shortcode)),
+    map(licenses =>
+      licenses
+        .filter(l => l.id.startsWith(CC_BY_IRI_PREFIX))
+        .map(l => ({ iri: l.id, summaryKey: CC_BY_SUMMARY_KEYS[l.id], fallbackLabel: l.labelEn }))
+    )
+  );
 
   copyrightHolders$ = this.project$.pipe(
     switchMap(project => this._legalInfoApi.getCopyrightHolders(project.shortcode))
