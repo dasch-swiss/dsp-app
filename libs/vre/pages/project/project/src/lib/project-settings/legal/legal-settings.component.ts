@@ -1,5 +1,6 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, DestroyRef, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
@@ -90,7 +91,7 @@ type ResourceSideForm = FormGroup<{
                   autocomplete="off"
                   [attr.aria-label]="'legal.dataSide.authorship' | translate"
                   [matChipInputFor]="chipGrid"
-                  (matChipInputTokenEnd)="addAuthor($event.value); $event.chipInput!.clear()" />
+                  (matChipInputTokenEnd)="addAuthor($event.value); $event.chipInput?.clear()" />
               </mat-chip-grid>
             </mat-form-field>
 
@@ -211,6 +212,7 @@ export class LegalSettingsComponent implements OnInit {
 
   constructor(
     private readonly _dataRights: ProjectDataRightsService,
+    private readonly _destroyRef: DestroyRef,
     private readonly _dialog: MatDialog,
     private readonly _notification: NotificationService,
     private readonly _legalInfoApi: LegalInfoApiService,
@@ -219,17 +221,23 @@ export class LegalSettingsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.project$.pipe(first()).subscribe(() => this.resetResourceSide());
+    this.project$.pipe(first(), takeUntilDestroyed(this._destroyRef)).subscribe(() => this.resetResourceSide());
   }
 
   resetResourceSide(): void {
     const project = this._projectPageService.currentProject;
+    const holderNotYetSet = !project.dataCopyrightHolder;
     this.resourceSideForm.reset({
       license: project.dataLicense ?? null,
       // Pre-fill the holder from the official project name when not yet set.
       copyrightHolder: project.dataCopyrightHolder ?? project.longname ?? null,
       dataAuthorship: project.dataAuthorship ?? [],
     });
+    // If we filled the holder from the project name (not from a persisted value), mark the form dirty
+    // so Save is enabled and the user can accept the pre-fill with one click.
+    if (holderNotYetSet && project.longname) {
+      this.resourceSideForm.controls.copyrightHolder.markAsDirty();
+    }
   }
 
   addAuthor(value: string): void {
@@ -258,6 +266,7 @@ export class LegalSettingsComponent implements OnInit {
         dataCopyrightHolder: copyrightHolder ?? undefined,
         dataAuthorship: dataAuthorship ?? [],
       })
+      .pipe(takeUntilDestroyed(this._destroyRef))
       .subscribe({
         next: () => {
           this.saving = false;

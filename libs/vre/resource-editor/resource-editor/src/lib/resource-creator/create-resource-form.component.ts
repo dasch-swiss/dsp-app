@@ -77,7 +77,7 @@ import { CreateResourceFormInterface } from './create-resource-form.interface';
             style="display: flex; align-items: center; gap: 4px; padding: 16px 0"
             [attr.aria-label]="'legal.dataSide.readOnlyValue' | translate: { value: dataLicenseLabel || '—' }">
             @if (dataLicenseUrl) {
-              <a [href]="dataLicenseUrl" target="_blank" rel="noopener">{{ dataLicenseLabel }}</a>
+              <a [href]="dataLicenseUrl" target="_blank" rel="noopener noreferrer">{{ dataLicenseLabel }}</a>
             } @else {
               <span>{{ dataLicenseLabel || '—' }}</span>
             }
@@ -110,7 +110,7 @@ import { CreateResourceFormInterface } from './create-resource-form.interface';
                 data-cy="data-authorship-chips"
                 [placeholder]="'resourceEditor.resourceCreator.authorship.placeholder' | translate"
                 [matChipInputFor]="dataAuthorshipGrid"
-                (matChipInputTokenEnd)="addDataAuthor($event.value); $event.chipInput!.clear()" />
+                (matChipInputTokenEnd)="addDataAuthor($event.value); $event.chipInput?.clear()" />
             </mat-chip-grid>
           </mat-form-field>
         </app-create-resource-form-row>
@@ -168,7 +168,7 @@ export class CreateResourceFormComponent implements OnInit {
   form: FormGroup<CreateResourceFormInterface> = this._fb.group({
     label: this._fb.control('', { nonNullable: true, validators: [Validators.required] }),
     properties: this._fb.group({}),
-    resourceAuthorship: this._fb.control<string[] | null>([]),
+    resourceAuthorship: this._fb.control<string[]>([], { nonNullable: true }),
   });
 
   resourceClass!: ResourceClassDefinitionWithPropertyDefinition;
@@ -225,7 +225,6 @@ export class CreateResourceFormComponent implements OnInit {
         if (rights.authorship.length > 0) {
           this.form.controls.resourceAuthorship.setValue(rights.authorship);
         }
-        this._cd.detectChanges();
       });
   }
 
@@ -235,13 +234,13 @@ export class CreateResourceFormComponent implements OnInit {
       return;
     }
     const control = this.form.controls.resourceAuthorship;
-    control.setValue([...(control.value ?? []), trimmed]);
+    control.setValue([...control.value, trimmed]);
     control.markAsDirty();
   }
 
   removeDataAuthor(index: number): void {
     const control = this.form.controls.resourceAuthorship;
-    control.setValue((control.value ?? []).filter((_, i) => i !== index));
+    control.setValue(control.value.filter((_, i) => i !== index));
     control.markAsDirty();
   }
 
@@ -342,7 +341,7 @@ export class CreateResourceFormComponent implements OnInit {
     // Per-resource (data-side) authorship: the field is pre-filled with the project default for the
     // user to confirm or edit; persist whatever they confirmed/entered.
     const authorshipControl = this.form.controls.resourceAuthorship;
-    if (authorshipControl.value && authorshipControl.value.length > 0) {
+    if (authorshipControl.value.length > 0) {
       createResource.resourceAuthorship = authorshipControl.value;
     }
 

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AdminAPIApiService, ProjectLicenseDto } from '@dasch-swiss/vre/3rd-party-services/open-api';
-import { EMPTY, expand, map, reduce } from 'rxjs';
+import { EMPTY, expand, map, Observable, reduce } from 'rxjs';
 
 /**
  * Wraps the paginated admin legal-info catalog endpoints (licenses, copyright holders, authorships)
@@ -10,7 +10,7 @@ import { EMPTY, expand, map, reduce } from 'rxjs';
 export class LegalInfoApiService {
   constructor(private readonly _adminApiService: AdminAPIApiService) {}
 
-  getLicenses(projectShortcode: string, pageSize = 100) {
+  getLicenses(projectShortcode: string, pageSize = 100): Observable<ProjectLicenseDto[]> {
     return this._adminApiService
       .getAdminProjectsShortcodeProjectshortcodeLegalInfoLicenses(projectShortcode, 1, pageSize)
       .pipe(
@@ -30,7 +30,7 @@ export class LegalInfoApiService {
       );
   }
 
-  getCopyrightHolders(projectShortcode: string, pageSize = 100) {
+  getCopyrightHolders(projectShortcode: string, pageSize = 100): Observable<string[]> {
     return this._adminApiService
       .getAdminProjectsShortcodeProjectshortcodeLegalInfoCopyrightHolders(projectShortcode, 1, pageSize)
       .pipe(
@@ -50,7 +50,7 @@ export class LegalInfoApiService {
       );
   }
 
-  getAuthorships(projectShortcode: string, pageSize = 100) {
+  getAuthorships(projectShortcode: string, pageSize = 100): Observable<string[]> {
     return this._adminApiService
       .getAdminProjectsShortcodeProjectshortcodeLegalInfoAuthorships(projectShortcode, 1, pageSize)
       .pipe(

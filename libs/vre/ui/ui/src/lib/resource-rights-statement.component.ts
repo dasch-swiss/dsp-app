@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -33,7 +33,7 @@ import { TranslatePipe } from '@ngx-translate/core';
           <span class="label mat-subtitle-2">{{ 'legal.dataSide.license' | translate }}</span>
           <span class="value">
             @if (licenseUrl) {
-              <a [href]="licenseUrl" target="_blank" rel="noopener">{{ licenseLabel }}</a>
+              <a [href]="licenseUrl" target="_blank" rel="noopener noreferrer">{{ licenseLabel }}</a>
             } @else {
               {{ licenseLabel }}
             }
@@ -230,6 +230,7 @@ import { TranslatePipe } from '@ngx-translate/core';
     `,
   ],
   imports: [MatButtonModule, MatChipsModule, MatFormFieldModule, MatIconModule, MatTooltipModule, TranslatePipe],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResourceRightsStatementComponent {
   /** The human-readable license label, e.g. "CC BY 4.0". Its presence means the project is "configured". */
@@ -280,7 +281,7 @@ export class ResourceRightsStatementComponent {
     if (value) {
       this.editAuthorshipList = [...this.editAuthorshipList, value];
     }
-    event.chipInput!.clear();
+    event.chipInput?.clear();
   }
 
   removeEditAuthor(index: number): void {

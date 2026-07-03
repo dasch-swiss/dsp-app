@@ -105,7 +105,7 @@ export const ShowsAlwaysVisibleEditAffordanceForModifyUsers: Story = {
     const canvas = within(canvasElement);
     await step('The authorship edit affordance is present without any hover', async () => {
       // The button is in the DOM immediately (no mouseenter); guards against reverting to a hover-only pill.
-      await expect(canvas.getByRole('button')).toBeInTheDocument();
+      await expect(canvas.getByRole('button', { name: /edit/i })).toBeInTheDocument();
     });
   },
 };
@@ -123,7 +123,7 @@ export const EditsAuthorshipInlineWithoutADialog: Story = {
   play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
     await step('Clicking edit opens the chip editor in place (no dialog)', async () => {
-      await userEvent.click(canvas.getByRole('button'));
+      await userEvent.click(canvas.getByRole('button', { name: /edit/i }));
       // The editor renders inline inside the component, not in a CDK overlay/dialog.
       await expect(canvasElement.querySelector('mat-chip-grid')).not.toBeNull();
       await expect(document.querySelector('mat-dialog-container')).toBeNull();
@@ -137,7 +137,7 @@ export const ShowsAdminsOnlyCalloutWhenUnconfigured: Story = {
   play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
     await step('An "Edit legal info" action is offered to admins', async () => {
-      await expect(canvas.getByRole('button')).toBeInTheDocument();
+      await expect(canvas.getByRole('button', { name: /edit legal info/i })).toBeInTheDocument();
     });
   },
 };

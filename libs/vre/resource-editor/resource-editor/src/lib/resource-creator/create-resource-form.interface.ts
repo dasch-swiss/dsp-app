@@ -7,5 +7,5 @@ export interface CreateResourceFormInterface {
   properties: FormGroup<{ [key: string]: FormValueArray }>;
   file?: FileForm;
   // Per-resource (data-side) authorship; persisted only when the user touches it (dirty flag).
-  resourceAuthorship: FormControl<string[] | null>;
+  resourceAuthorship: FormControl<string[]>;
 }

@@ -41,10 +41,7 @@ export class ResourceRightsStatementContainerComponent implements OnInit {
 
   dataRights$!: Observable<ProjectDataRights>;
   userHasProjectAdminRights$!: Observable<boolean>;
-
-  get canEditAuthorship(): boolean {
-    return ResourceUtil.userCanEdit(this.resource.res);
-  }
+  canEditAuthorship = false;
 
   constructor(
     private readonly _dataRights: ProjectDataRightsService,
@@ -63,6 +60,7 @@ export class ResourceRightsStatementContainerComponent implements OnInit {
       filterNull(),
       map(user => UserPermissions.hasProjectAdminRights(user, this.resource.res.attachedToProject))
     );
+    this.canEditAuthorship = ResourceUtil.userCanEdit(this.resource.res);
   }
 
   onSaveAuthorship(authorship: string[]): void {
@@ -75,7 +73,10 @@ export class ResourceRightsStatementContainerComponent implements OnInit {
       )
       .pipe(takeUntilDestroyed(this._destroyRef))
       .subscribe({
-        next: () => this._resourceFetcher.reload(),
+        next: () => {
+          this._resourceFetcher.reload();
+          this._notification.openSnackBar(this._translate.instant('legal.dataSide.settings.saved'));
+        },
         error: () => this._notification.openSnackBar(this._translate.instant('legal.dataSide.settings.saveError')),
       });
   }
