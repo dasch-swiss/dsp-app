@@ -14,22 +14,22 @@ import {
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { ResourceRightsStatementComponent } from '@dasch-swiss/vre/ui/ui';
 import { TranslateService } from '@ngx-translate/core';
-import { map, Observable } from 'rxjs';
+import { BehaviorSubject, combineLatest, distinctUntilChanged, filter, map, Observable, switchMap } from 'rxjs';
 import { ResourceFetcherService } from '../representation/resource-fetcher.service';
 import { ResourceUtil } from '../representation/resource.util';
 
 @Component({
   selector: 'app-resource-rights-statement-container',
   template: `
-    @if (dataRights$ | async; as rights) {
+    @if (viewModel$ | async; as vm) {
       <app-resource-rights-statement
-        [licenseLabel]="rights.licenseLabel"
-        [licenseUrl]="rights.licenseUrl"
-        [copyrightHolder]="rights.copyrightHolder"
-        [authorship]="rights.authorship"
-        [resourceAuthorship]="resource.res.resourceAuthorship"
-        [isAdmin]="(userHasProjectAdminRights$ | async) === true"
-        [canEditAuthorship]="canEditAuthorship"
+        [licenseLabel]="vm.rights.licenseLabel"
+        [licenseUrl]="vm.rights.licenseUrl"
+        [copyrightHolder]="vm.rights.copyrightHolder"
+        [authorship]="vm.rights.authorship"
+        [resourceAuthorship]="vm.resourceAuthorship"
+        [isAdmin]="vm.isAdmin"
+        [canEditAuthorship]="vm.canEditAuthorship"
         (saveAuthorship)="onSaveAuthorship($event)"
         (editLegalInfo)="onEditLegalInfo()" />
     }
@@ -37,11 +37,22 @@ import { ResourceUtil } from '../representation/resource.util';
   imports: [AsyncPipe, ResourceRightsStatementComponent],
 })
 export class ResourceRightsStatementContainerComponent implements OnInit {
-  @Input({ required: true }) resource!: DspResource;
+  @Input({ required: true }) set resource(value: DspResource) {
+    this._resource$.next(value);
+  }
+  get resource(): DspResource {
+    // Non-null: setter is called before any consumer of `resource` runs (required @Input).
+    return this._resource$.value!;
+  }
 
-  dataRights$!: Observable<ProjectDataRights>;
-  userHasProjectAdminRights$!: Observable<boolean>;
-  canEditAuthorship = false;
+  private readonly _resource$ = new BehaviorSubject<DspResource | null>(null);
+
+  viewModel$!: Observable<{
+    rights: ProjectDataRights;
+    resourceAuthorship: string[];
+    isAdmin: boolean;
+    canEditAuthorship: boolean;
+  }>;
 
   constructor(
     private readonly _dataRights: ProjectDataRightsService,
@@ -55,12 +66,28 @@ export class ResourceRightsStatementContainerComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.dataRights$ = this._dataRights.forProject(this.resource.res.attachedToProject);
-    this.userHasProjectAdminRights$ = this._userService.user$.pipe(
-      filterNull(),
-      map(user => UserPermissions.hasProjectAdminRights(user, this.resource.res.attachedToProject))
+    const resource$ = this._resource$.pipe(filter((r): r is DspResource => r !== null));
+
+    // Refetch project rights only when the resource's project actually changes; unrelated resource
+    // re-bindings (same project) keep the shared cache warm.
+    const rights$ = resource$.pipe(
+      map(resource => resource.res.attachedToProject),
+      distinctUntilChanged(),
+      switchMap(projectIri => this._dataRights.forProject(projectIri))
     );
-    this.canEditAuthorship = ResourceUtil.userCanEdit(this.resource.res);
+
+    const isAdmin$ = combineLatest([resource$, this._userService.user$.pipe(filterNull())]).pipe(
+      map(([resource, user]) => UserPermissions.hasProjectAdminRights(user, resource.res.attachedToProject))
+    );
+
+    this.viewModel$ = combineLatest([resource$, rights$, isAdmin$]).pipe(
+      map(([resource, rights, isAdmin]) => ({
+        rights,
+        resourceAuthorship: resource.res.resourceAuthorship,
+        isAdmin,
+        canEditAuthorship: ResourceUtil.userCanEdit(resource.res),
+      }))
+    );
   }
 
   onSaveAuthorship(authorship: string[]): void {

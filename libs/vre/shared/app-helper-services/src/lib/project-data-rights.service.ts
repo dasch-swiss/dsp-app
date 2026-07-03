@@ -53,21 +53,29 @@ export class ProjectDataRightsService {
 
   /** Persist the project's data-side legal info; invalidates the shortcode's cache on success. */
   updateResourceSideLegalInfo(shortcode: string, body: ResourceSideLegalInfo): Observable<ResourceSideLegalInfo> {
-    return this._adminApi
-      .putAdminProjectsShortcodeProjectshortcodeLegalInfoResource(shortcode, body)
-      .pipe(tap(() => this.invalidateByShortcode(shortcode)));
+    return this._withCacheBust(
+      shortcode,
+      this._adminApi.putAdminProjectsShortcodeProjectshortcodeLegalInfoResource(shortcode, body)
+    );
   }
 
   enableLicense(shortcode: string, licenseIri: string): Observable<unknown> {
-    return this._adminApi
-      .putAdminProjectsShortcodeProjectshortcodeLegalInfoLicensesLicenseiriEnable(shortcode, licenseIri)
-      .pipe(tap(() => this.invalidateByShortcode(shortcode)));
+    return this._withCacheBust(
+      shortcode,
+      this._adminApi.putAdminProjectsShortcodeProjectshortcodeLegalInfoLicensesLicenseiriEnable(shortcode, licenseIri)
+    );
   }
 
   disableLicense(shortcode: string, licenseIri: string): Observable<unknown> {
-    return this._adminApi
-      .putAdminProjectsShortcodeProjectshortcodeLegalInfoLicensesLicenseiriDisable(shortcode, licenseIri)
-      .pipe(tap(() => this.invalidateByShortcode(shortcode)));
+    return this._withCacheBust(
+      shortcode,
+      this._adminApi.putAdminProjectsShortcodeProjectshortcodeLegalInfoLicensesLicenseiriDisable(shortcode, licenseIri)
+    );
+  }
+
+  /** Runs a mutating request and invalidates the rights cache for the given shortcode on success. */
+  private _withCacheBust<T>(shortcode: string, mutation$: Observable<T>): Observable<T> {
+    return mutation$.pipe(tap(() => this.invalidateByShortcode(shortcode)));
   }
 
   invalidateByShortcode(shortcode: string): void {
