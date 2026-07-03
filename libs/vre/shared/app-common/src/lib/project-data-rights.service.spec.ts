@@ -1,14 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 import { ReadProject } from '@dasch-swiss/dsp-js';
-import { ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
+import { LegalInfoApiService, ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { of, ReplaySubject, throwError } from 'rxjs';
-import { PaginatedApiService } from './paginated-api.service';
 import { ProjectDataRightsService } from './project-data-rights.service';
 
 describe('ProjectDataRightsService', () => {
   let service: ProjectDataRightsService;
   let projectApi: { get: jest.Mock };
-  let paginatedApi: { getLicenses: jest.Mock };
+  let legalInfoApi: { getLicenses: jest.Mock };
 
   const makeProject = (overrides: Partial<ReadProject> = {}): ReadProject =>
     ({
@@ -32,12 +31,12 @@ describe('ProjectDataRightsService', () => {
 
   beforeEach(() => {
     projectApi = { get: jest.fn() };
-    paginatedApi = { getLicenses: jest.fn() };
+    legalInfoApi = { getLicenses: jest.fn() };
 
     TestBed.configureTestingModule({
       providers: [
         { provide: ProjectApiService, useValue: projectApi },
-        { provide: PaginatedApiService, useValue: paginatedApi },
+        { provide: LegalInfoApiService, useValue: legalInfoApi },
       ],
     });
 
@@ -47,7 +46,7 @@ describe('ProjectDataRightsService', () => {
   describe('forProject', () => {
     it('fetches the project, resolves the license, and returns the rights payload', done => {
       projectApi.get.mockReturnValue(of({ project: makeProject() }));
-      paginatedApi.getLicenses.mockReturnValue(of(licenseCatalog));
+      legalInfoApi.getLicenses.mockReturnValue(of(licenseCatalog));
 
       service.forProject('http://rdfh.ch/projects/0001').subscribe(rights => {
         expect(rights).toEqual({
@@ -62,12 +61,12 @@ describe('ProjectDataRightsService', () => {
 
     it('serves subsequent subscribers from cache without re-fetching', done => {
       projectApi.get.mockReturnValue(of({ project: makeProject() }));
-      paginatedApi.getLicenses.mockReturnValue(of(licenseCatalog));
+      legalInfoApi.getLicenses.mockReturnValue(of(licenseCatalog));
 
       service.forProject('http://rdfh.ch/projects/0001').subscribe(() => {
         service.forProject('http://rdfh.ch/projects/0001').subscribe(() => {
           expect(projectApi.get).toHaveBeenCalledTimes(1);
-          expect(paginatedApi.getLicenses).toHaveBeenCalledTimes(1);
+          expect(legalInfoApi.getLicenses).toHaveBeenCalledTimes(1);
           done();
         });
       });
@@ -79,7 +78,7 @@ describe('ProjectDataRightsService', () => {
       service.forProject('http://rdfh.ch/projects/0001').subscribe(rights => {
         expect(rights.licenseLabel).toBeUndefined();
         expect(rights.licenseUrl).toBeUndefined();
-        expect(paginatedApi.getLicenses).not.toHaveBeenCalled();
+        expect(legalInfoApi.getLicenses).not.toHaveBeenCalled();
         done();
       });
     });
@@ -92,7 +91,7 @@ describe('ProjectDataRightsService', () => {
         calls += 1;
         return calls === 1 ? throwError(() => new Error('boom')) : of({ project: makeProject() });
       });
-      paginatedApi.getLicenses.mockReturnValue(of(licenseCatalog));
+      legalInfoApi.getLicenses.mockReturnValue(of(licenseCatalog));
 
       service.forProject('http://rdfh.ch/projects/0001').subscribe({
         error: () => {
@@ -108,7 +107,7 @@ describe('ProjectDataRightsService', () => {
     it('does not cache a failed license fetch', done => {
       projectApi.get.mockReturnValue(of({ project: makeProject() }));
       let calls = 0;
-      paginatedApi.getLicenses.mockImplementation(() => {
+      legalInfoApi.getLicenses.mockImplementation(() => {
         calls += 1;
         return calls === 1 ? throwError(() => new Error('boom')) : of(licenseCatalog);
       });
@@ -128,13 +127,13 @@ describe('ProjectDataRightsService', () => {
   describe('invalidateByShortcode', () => {
     it('evicts both the license cache and the matching project entry', done => {
       projectApi.get.mockReturnValue(of({ project: makeProject() }));
-      paginatedApi.getLicenses.mockReturnValue(of(licenseCatalog));
+      legalInfoApi.getLicenses.mockReturnValue(of(licenseCatalog));
 
       service.forProject('http://rdfh.ch/projects/0001').subscribe(() => {
         service.invalidateByShortcode('0001');
         service.forProject('http://rdfh.ch/projects/0001').subscribe(() => {
           expect(projectApi.get).toHaveBeenCalledTimes(2);
-          expect(paginatedApi.getLicenses).toHaveBeenCalledTimes(2);
+          expect(legalInfoApi.getLicenses).toHaveBeenCalledTimes(2);
           done();
         });
       });
@@ -146,7 +145,7 @@ describe('ProjectDataRightsService', () => {
       projectApi.get.mockImplementation((iri: string) =>
         iri === 'http://rdfh.ch/projects/AAAA' ? of({ project: projectA }) : of({ project: projectB })
       );
-      paginatedApi.getLicenses.mockReturnValue(of(licenseCatalog));
+      legalInfoApi.getLicenses.mockReturnValue(of(licenseCatalog));
 
       service.forProject('http://rdfh.ch/projects/AAAA').subscribe(() => {
         service.forProject('http://rdfh.ch/projects/BBBB').subscribe(() => {
@@ -167,13 +166,13 @@ describe('ProjectDataRightsService', () => {
   describe('clearAll', () => {
     it('drops every cached entry', done => {
       projectApi.get.mockReturnValue(of({ project: makeProject() }));
-      paginatedApi.getLicenses.mockReturnValue(of(licenseCatalog));
+      legalInfoApi.getLicenses.mockReturnValue(of(licenseCatalog));
 
       service.forProject('http://rdfh.ch/projects/0001').subscribe(() => {
         service.clearAll();
         service.forProject('http://rdfh.ch/projects/0001').subscribe(() => {
           expect(projectApi.get).toHaveBeenCalledTimes(2);
-          expect(paginatedApi.getLicenses).toHaveBeenCalledTimes(2);
+          expect(legalInfoApi.getLicenses).toHaveBeenCalledTimes(2);
           done();
         });
       });
@@ -182,7 +181,7 @@ describe('ProjectDataRightsService', () => {
 
   describe('fromProject', () => {
     it('resolves license from the licenses catalog without refetching the project', done => {
-      paginatedApi.getLicenses.mockReturnValue(of(licenseCatalog));
+      legalInfoApi.getLicenses.mockReturnValue(of(licenseCatalog));
 
       service.fromProject(makeProject()).subscribe(rights => {
         expect(projectApi.get).not.toHaveBeenCalled();

@@ -2,8 +2,12 @@ import { Injectable } from '@angular/core';
 import { AdminAPIApiService, ProjectLicenseDto } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { EMPTY, expand, map, reduce } from 'rxjs';
 
+/**
+ * Wraps the paginated admin legal-info catalog endpoints (licenses, copyright holders, authorships)
+ * and auto-expands them to full arrays so callers do not have to page manually.
+ */
 @Injectable({ providedIn: 'root' })
-export class PaginatedApiService {
+export class LegalInfoApiService {
   constructor(private readonly _adminApiService: AdminAPIApiService) {}
 
   getLicenses(projectShortcode: string, pageSize = 100) {

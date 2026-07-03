@@ -11,5 +11,4 @@ export * from './lib/rxjs-operators/filter-null-operator';
 export * from './lib/handle-xml';
 export * from './lib/user-permissions';
 export * from './lib/generate-dsp-resource';
-export * from './lib/paginated-api.service';
 export * from './lib/project-data-rights.service';

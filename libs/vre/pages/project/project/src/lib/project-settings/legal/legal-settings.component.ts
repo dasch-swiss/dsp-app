@@ -10,7 +10,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltip } from '@angular/material/tooltip';
-import { PaginatedApiService, ProjectDataRightsService } from '@dasch-swiss/vre/shared/app-common';
+import { LegalInfoApiService } from '@dasch-swiss/vre/3rd-party-services/api';
+import { ProjectDataRightsService } from '@dasch-swiss/vre/shared/app-common';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { AlternatedListComponent } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -203,16 +204,16 @@ export class LegalSettingsComponent implements OnInit {
     .pipe(switchMap(() => this._projectPageService.currentProject$));
 
   copyrightHolders$ = this.project$.pipe(
-    switchMap(project => this._paginatedApi.getCopyrightHolders(project.shortcode))
+    switchMap(project => this._legalInfoApi.getCopyrightHolders(project.shortcode))
   );
 
-  authorships$ = this.project$.pipe(switchMap(project => this._paginatedApi.getAuthorships(project.shortcode)));
+  authorships$ = this.project$.pipe(switchMap(project => this._legalInfoApi.getAuthorships(project.shortcode)));
 
   constructor(
     private readonly _dataRights: ProjectDataRightsService,
     private readonly _dialog: MatDialog,
     private readonly _notification: NotificationService,
-    private readonly _paginatedApi: PaginatedApiService,
+    private readonly _legalInfoApi: LegalInfoApiService,
     private readonly _projectPageService: ProjectPageService,
     private readonly _translate: TranslateService
   ) {}

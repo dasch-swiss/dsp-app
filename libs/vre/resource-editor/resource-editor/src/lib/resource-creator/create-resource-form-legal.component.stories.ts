@@ -1,6 +1,6 @@
 import { FormControl, FormGroup } from '@angular/forms';
+import { LegalInfoApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { AdminAPIApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
-import { PaginatedApiService } from '@dasch-swiss/vre/shared/app-common';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
 import { expect } from 'storybook/test';
@@ -20,7 +20,7 @@ const meta: Meta<CreateResourceFormLegalComponent> = {
   decorators: [
     applicationConfig({
       providers: [
-        { provide: PaginatedApiService, useValue: { get: () => of([]) } },
+        { provide: LegalInfoApiService, useValue: { get: () => of([]) } },
         {
           provide: AdminAPIApiService,
           useValue: {

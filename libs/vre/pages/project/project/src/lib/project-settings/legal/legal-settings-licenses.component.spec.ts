@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { PaginatedApiService, ProjectDataRightsService } from '@dasch-swiss/vre/shared/app-common';
+import { LegalInfoApiService } from '@dasch-swiss/vre/3rd-party-services/api';
+import { ProjectDataRightsService } from '@dasch-swiss/vre/shared/app-common';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { of, throwError } from 'rxjs';
 import { ProjectPageService } from '../../project-page.service';
@@ -9,7 +10,7 @@ import { LicenseToggleEvent } from './licenses-enabled-table.component';
 describe('LegalSettingsLicensesComponent - Business Logic', () => {
   let component: LegalSettingsLicensesComponent;
   let fixture: ComponentFixture<LegalSettingsLicensesComponent>;
-  let mockPaginatedApiService: jest.Mocked<PaginatedApiService>;
+  let mockLegalInfoApiService: jest.Mocked<LegalInfoApiService>;
   let mockDataRightsService: jest.Mocked<ProjectDataRightsService>;
   let mockProjectPageService: jest.Mocked<ProjectPageService>;
   let mockNotificationService: jest.Mocked<NotificationService>;
@@ -20,7 +21,7 @@ describe('LegalSettingsLicensesComponent - Business Logic', () => {
   };
 
   beforeEach(async () => {
-    mockPaginatedApiService = {
+    mockLegalInfoApiService = {
       getLicenses: jest.fn().mockReturnValue(of([])),
     } as any;
 
@@ -41,7 +42,7 @@ describe('LegalSettingsLicensesComponent - Business Logic', () => {
     await TestBed.configureTestingModule({
       imports: [LegalSettingsLicensesComponent],
       providers: [
-        { provide: PaginatedApiService, useValue: mockPaginatedApiService },
+        { provide: LegalInfoApiService, useValue: mockLegalInfoApiService },
         { provide: ProjectDataRightsService, useValue: mockDataRightsService },
         { provide: ProjectPageService, useValue: mockProjectPageService },
         { provide: NotificationService, useValue: mockNotificationService },
@@ -115,11 +116,11 @@ describe('LegalSettingsLicensesComponent - Business Logic', () => {
         { id: 'license2', isRecommended: false, isEnabled: true },
       ];
 
-      mockPaginatedApiService.getLicenses.mockReturnValue(of(mockLicenses as any));
+      mockLegalInfoApiService.getLicenses.mockReturnValue(of(mockLicenses as any));
 
       component.licenses$.subscribe(licenses => {
         expect(licenses).toEqual(mockLicenses);
-        expect(mockPaginatedApiService.getLicenses).toHaveBeenCalledWith('0001');
+        expect(mockLegalInfoApiService.getLicenses).toHaveBeenCalledWith('0001');
         done();
       });
     });
@@ -131,7 +132,7 @@ describe('LegalSettingsLicensesComponent - Business Logic', () => {
         { id: 'license3', isRecommended: true, isEnabled: true },
       ];
 
-      mockPaginatedApiService.getLicenses.mockReturnValue(of(mockLicenses as any));
+      mockLegalInfoApiService.getLicenses.mockReturnValue(of(mockLicenses as any));
 
       component.recommendedLicenses$.subscribe(licenses => {
         expect(licenses.length).toBe(2);
@@ -147,7 +148,7 @@ describe('LegalSettingsLicensesComponent - Business Logic', () => {
         { id: 'license3', isRecommended: true, isEnabled: true },
       ];
 
-      mockPaginatedApiService.getLicenses.mockReturnValue(of(mockLicenses as any));
+      mockLegalInfoApiService.getLicenses.mockReturnValue(of(mockLicenses as any));
 
       component.nonRecommendedLicenses$.subscribe(licenses => {
         expect(licenses.length).toBe(1);

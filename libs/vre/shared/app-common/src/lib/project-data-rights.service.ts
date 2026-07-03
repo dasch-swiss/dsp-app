@@ -1,13 +1,12 @@
 import { Injectable } from '@angular/core';
 import { ReadProject } from '@dasch-swiss/dsp-js';
-import { ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
+import { LegalInfoApiService, ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import {
   AdminAPIApiService,
   ProjectLicenseDto,
   ResourceSideLegalInfo,
 } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { catchError, map, Observable, of, shareReplay, switchMap, tap, throwError } from 'rxjs';
-import { PaginatedApiService } from './paginated-api.service';
 
 export interface ProjectDataRights {
   copyrightHolder?: string;
@@ -23,8 +22,8 @@ export interface ProjectDataRights {
  *
  * Cache scope: per project session. `ProjectPageGuard` calls `clearAll()` on every entry into
  * `/project/:uuid`, so switching to a different project (or re-entering after leaving the
- * project scope) starts with fresh data. Mutating endpoints on `PaginatedApiService` call
- * `invalidateByShortcode` via `tap`.
+ * project scope) starts with fresh data. Mutation methods on this service call
+ * `invalidateByShortcode` via `tap` on success.
  *
  * Security invariant: this cache is root-scoped and mutable. Cross-user isolation currently
  * relies on `AuthService.logout()` calling `window.location.reload()` (which destroys the
@@ -41,7 +40,7 @@ export class ProjectDataRightsService {
   constructor(
     private readonly _adminApi: AdminAPIApiService,
     private readonly _projectApi: ProjectApiService,
-    private readonly _paginatedApi: PaginatedApiService
+    private readonly _legalInfoApi: LegalInfoApiService
   ) {}
 
   forProject(projectIri: string): Observable<ProjectDataRights> {
@@ -123,7 +122,7 @@ export class ProjectDataRightsService {
   private _cachedLicenses(shortcode: string): Observable<ProjectLicenseDto[]> {
     let cached = this._licensesByShortcode.get(shortcode);
     if (!cached) {
-      cached = this._paginatedApi.getLicenses(shortcode).pipe(
+      cached = this._legalInfoApi.getLicenses(shortcode).pipe(
         catchError(err => {
           this._licensesByShortcode.delete(shortcode);
           return throwError(() => err);
