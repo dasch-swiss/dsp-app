@@ -468,4 +468,75 @@ describe('SearchDerivationService (DEV-6576 Phase 2)', () => {
       expect(derived).toContain('whale');
     });
   });
+
+  describe('ontology-param reaction (T3a / Phase 3a)', () => {
+    // The service reacts to `params.ontology` in its constructor, calling `setOntology` when the URL
+    // names a different ontology than the one loaded. Built here with a `setOntology` spy and a
+    // mutable `selectedOntology.iri` so we can assert the de-dup / diff logic.
+    let setOntology: jest.Mock;
+    let currentOntologyIri: string;
+    let p$: BehaviorSubject<SearchUrlParams>;
+
+    const buildService = () => {
+      TestBed.resetTestingModule();
+      p$ = new BehaviorSubject<SearchUrlParams>({});
+      setOntology = jest.fn();
+      const stub: Partial<OntologyDataService> = {
+        ...ontologyStubBase({}),
+        setOntology,
+        get selectedOntology() {
+          return makeIriLabelPair(currentOntologyIri, 'current');
+        },
+      };
+      TestBed.configureTestingModule({
+        providers: [
+          SearchDerivationService,
+          GravsearchService,
+          { provide: SearchUrlSyncService, useValue: { ...urlSyncStub, params$: p$ } },
+          { provide: OntologyDataService, useValue: stub },
+        ],
+      });
+      TestBed.inject(SearchDerivationService); // constructor wires the reaction
+    };
+
+    it('calls setOntology once when the ontology param differs from the loaded one', () => {
+      currentOntologyIri = ONTO;
+      buildService();
+      const other = `${ONTO}-other`;
+
+      p$.next({ ontology: other });
+
+      expect(setOntology).toHaveBeenCalledTimes(1);
+      expect(setOntology).toHaveBeenCalledWith(other);
+    });
+
+    it('does not call setOntology when the ontology param equals the loaded one (de-dup)', () => {
+      currentOntologyIri = ONTO;
+      buildService();
+
+      p$.next({ ontology: ONTO });
+
+      expect(setOntology).not.toHaveBeenCalled();
+    });
+
+    it('does not re-trigger setOntology when the ontology param is unchanged across emissions', () => {
+      currentOntologyIri = ONTO;
+      buildService();
+      const other = `${ONTO}-other`;
+
+      p$.next({ ontology: other });
+      p$.next({ ontology: other, q: 'whale' }); // ontology unchanged, other param changed
+
+      expect(setOntology).toHaveBeenCalledTimes(1);
+    });
+
+    it('does not call setOntology when the URL has no ontology param', () => {
+      currentOntologyIri = ONTO;
+      buildService();
+
+      p$.next({ class: bookClass.iri });
+
+      expect(setOntology).not.toHaveBeenCalled();
+    });
+  });
 });

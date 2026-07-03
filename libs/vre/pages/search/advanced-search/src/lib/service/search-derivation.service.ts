@@ -1,6 +1,7 @@
-import { inject, Injectable } from '@angular/core';
+import { DestroyRef, inject, Injectable } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Constants } from '@dasch-swiss/dsp-js';
-import { combineLatest, distinctUntilChanged, map, Observable, switchMap } from 'rxjs';
+import { combineLatest, distinctUntilChanged, filter, map, Observable, switchMap } from 'rxjs';
 import { IriLabelPair, OrderByItem, Predicate, StatementElement } from '../model';
 import { buildStatementsFromFilterParams } from '../util/build-statements';
 import { GravsearchService } from './gravsearch.service';
@@ -29,6 +30,35 @@ export class SearchDerivationService {
   private readonly _urlSync = inject(SearchUrlSyncService);
   private readonly _ontology = inject(OntologyDataService);
   private readonly _gravsearch = inject(GravsearchService);
+  private readonly _destroyRef = inject(DestroyRef);
+
+  constructor() {
+    this._reactToOntologyParam();
+  }
+
+  /**
+   * Ontology-switch reaction (DEV-6576 Phase 3a). When the URL's `ontology` param names a different
+   * ontology than the one currently loaded, trigger `setOntology` so `resourceClasses$`/predicates
+   * re-hydrate and `loading$` settles. De-duped via `distinctUntilChanged` on the ontology param plus
+   * the identity guard, so an unchanged ontology never reloads.
+   *
+   * This mirrors the imperative `_applyParamsWithOntologySwitch(+Obs)` in `filter-chip-bar` and is
+   * additive: nothing consumes the derivation as the source of truth yet, so the imperative helpers
+   * still run in parallel. Phase 3d deletes them once the page reads this pipeline — at which point
+   * this reaction is the *only* thing switching the ontology from the URL.
+   */
+  private _reactToOntologyParam(): void {
+    this._urlSync.params$
+      .pipe(
+        map(params => params.ontology),
+        distinctUntilChanged(),
+        filter(
+          (ontologyIri): ontologyIri is string => !!ontologyIri && ontologyIri !== this._ontology.selectedOntology.iri
+        ),
+        takeUntilDestroyed(this._destroyRef)
+      )
+      .subscribe(ontologyIri => this._ontology.setOntology(ontologyIri));
+  }
 
   /**
    * Combined readiness gate. True while any source needed to hydrate the URL is not yet available:
