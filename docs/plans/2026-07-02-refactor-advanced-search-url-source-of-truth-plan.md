@@ -2,7 +2,7 @@
 title: "refactor: Advanced Search — URL as Single Source of Truth"
 type: refactor
 date: 2026-07-02
-status: in-progress (Phase 0 ✅, Phase 1 ✅, Phase 2 ✅, P2.5 test-gaps ✅ — Phase 3a next, sub-stepped below)
+status: in-progress (Phase 0 ✅, Phase 1 ✅, Phase 2 ✅, P2.5 ✅, Phase 3a ✅ — Phase 3b next)
 repository: /Users/julien/WebstormProjects/dsp-das
 ---
 
@@ -263,17 +263,18 @@ below keep the feature shippable after each, and — critically — order the on
 the deletion so `loading$` can never hang. Each sub-step is independently mergeable; each has an
 explicit **revert = one commit** rollback (the parallel path from Phase 2 stays live until 3d).
 
-**Phase 3a — Add the ontology-param reaction to the derivation (additive, no deletion)**
-- In `SearchDerivationService`, add a side effect on `params$`: when `params.ontology` changes and
-  differs from `_ontology.selectedOntology.iri` (and isn't already loading), call
-  `_ontology.setOntology(params.ontology)`. De-dup so an unchanged ontology never reloads
-  (`distinctUntilChanged` on the ontology param). Note `setOntology` (`ontology-data.service.ts:108`)
-  has **no error branch** — on load failure `ontologyLoading` stays `true` forever; add a
-  `catchError`/`finalize` so `loading$` can still settle (or explicitly document this as pre-existing
-  and out of scope).
-- **Do not delete anything yet.** The imperative helpers still run; this reaction is dormant until
-  the page consumes the derivation (3d). Verify in isolation via a spec (see Test Plan T3a).
-- **Rollback:** revert this one additive commit.
+**Phase 3a — Add the ontology-param reaction to the derivation (additive, no deletion) — ✅ DONE (2026-07-03, commit `980f7caed`)**
+- Added a constructor side effect on `params$` in `SearchDerivationService._reactToOntologyParam`:
+  `params.ontology` → `map` → `distinctUntilChanged` → `filter(differs from selectedOntology.iri)` →
+  `setOntology`. De-dup verified by T3a. Mirrors the imperative `_applyParamsWithOntologySwitch(+Obs)`
+  diff logic (`filter-chip-bar.component.ts:267-268`).
+- Nothing deleted; reaction is dormant until the page consumes the derivation (3c/3d).
+- **Deferred:** the `setOntology`-failure-settles case (T3a case c) was **not** written — it depends on
+  the open question below. `setOntology` (`ontology-data.service.ts:108`) has **no error branch**, so
+  `ontologyLoading` stays `true` on load failure and `loading$` would hang. Writing the test now would
+  only pin the known-bad behavior. **Resolve the open question, add the `catchError`/`finalize` fix,
+  then add T3a case c** — recommended as its own tiny PR (P3a.1) before P3c, since E2E item #3 exercises
+  exactly this path.
 
 **Phase 3b — Redirect `OrderByComponent` writes to the URL**
 - Change `OrderByComponent.onSelectionChange`/`removeOrderBy` (`order-by.component.ts:36-44`) to
@@ -493,7 +494,7 @@ on every PR from Phase 1 onward: no PR merges if the derived query diverges from
 | ~~P1~~ | pure query fn + single write API | done ✅ (26 gravsearch specs byte-identical) | — |
 | ~~P2~~ | pure selectors, parallel path | done ✅ (oracle at test level) | — |
 | ~~P2.5~~ | **Close test gaps G1–G4** (readiness gate, `loading$` branches, oracle matrix, real-service round-trip) | done ✅ (2026-07-03) — 11 new specs, 166 lib tests green, lint clean | revert specs (no prod code) |
-| **P3a** | ontology-param reaction in derivation | T3a; derivation still not consumed → zero behavior change | revert 1 commit |
+| ~~P3a~~ | ontology-param reaction in derivation | done ✅ (2026-07-03) — T3a (4 cases); derivation still not consumed → zero behavior change; 170 tests green | revert 1 commit |
 | **P3b** | OrderByComponent writes → URL | T3b; sort still works via old subject too | revert 1 commit |
 | **P3c** | page consumes derivation (both paths live) | E2E checklist 1–7 pass; oracle holds on live nav | revert page only |
 | **P3d** | delete imperative restore machinery | grep-clean (`_restoring`/`_applyParams`/`_emitSearch`/component `setOntology`); E2E re-run | keep P3a–c a release cycle first |
