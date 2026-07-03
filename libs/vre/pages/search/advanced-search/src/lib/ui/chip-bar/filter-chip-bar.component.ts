@@ -12,7 +12,6 @@ import { OntologyDataService } from '../../service/ontology-data.service';
 import { PropertyFormManager } from '../../service/property-form.manager';
 import { SearchDerivationService } from '../../service/search-derivation.service';
 import { SearchFlowLogger } from '../../service/search-flow-logger.service';
-import { SearchStateService } from '../../service/search-state.service';
 import { SearchUrlSyncService } from '../../service/search-url-sync.service';
 import { OrderByComponent } from '../order-by/order-by.component';
 import { AddFilterButtonComponent } from './add-filter-button.component';
@@ -83,7 +82,6 @@ import { ResourceClassChipComponent } from './resource-class-chip.component';
 export class FilterChipBarComponent implements OnInit {
   @Input({ required: true }) projectUuid!: string;
 
-  private readonly _searchStateService = inject(SearchStateService);
   private readonly _ontologyDataService = inject(OntologyDataService);
   private readonly _derivation = inject(SearchDerivationService);
   private readonly _destroyRef = inject(DestroyRef);
@@ -114,10 +112,6 @@ export class FilterChipBarComponent implements OnInit {
   }
 
   readonly ontologyLoading$ = this._ontologyDataService.ontologyLoading$;
-
-  get projectIri(): string {
-    return `http://rdfh.ch/projects/${this.projectUuid}`;
-  }
 
   ngOnInit(): void {
     this._ontologyDataService.init(`http://rdfh.ch/projects/${this.projectUuid}`);
@@ -196,15 +190,6 @@ export class FilterChipBarComponent implements OnInit {
     if (stmt.selectedPredicate?.iri && stmt.selectedPredicate.iri === this._urlSync.readParams().orderBy) {
       this._urlSync.writeState({ orderBy: undefined }, { replaceUrl: false });
     }
-  }
-
-  onReset(): void {
-    this._logger.stateReset();
-    this.fulltextControl.reset('', { emitEvent: false });
-    this.confirmedStatements.set([]);
-    this.openChipId.set(OPEN_CHIP_NONE);
-    this._searchStateService.clearAllSelections();
-    this._urlSync.clearAll();
   }
 
   private _writeFiltersToUrl(): void {

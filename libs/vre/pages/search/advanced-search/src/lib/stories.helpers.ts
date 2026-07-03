@@ -3,12 +3,12 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 import { UserService } from '@dasch-swiss/vre/core/session';
 import { EMPTY, of } from 'rxjs';
-import { IriLabelPair, OrderByItem, StatementElement } from './model';
+import { IriLabelPair, OrderByItem } from './model';
 import { OntologyDataService } from './service/ontology-data.service';
+import { PropertyFormManager } from './service/property-form.manager';
 import { QueryExecutionService } from './service/query-execution.service';
 import { SearchDerivationService } from './service/search-derivation.service';
 import { SearchFlowLogger } from './service/search-flow-logger.service';
-import { SearchStateService } from './service/search-state.service';
 import { SearchUrlSyncService } from './service/search-url-sync.service';
 import { toLabels } from './util/labels';
 
@@ -88,28 +88,6 @@ export const makeOntologyDataServiceStub = (
   ...partial,
 });
 
-export const makeSearchStateServiceStub = (partial: Partial<SearchStateService> = {}): Partial<SearchStateService> => {
-  const initialStatement = new StatementElement();
-  return {
-    selectedResourceClass$: of(null as unknown as IriLabelPair),
-    isFormStateValidAndComplete$: of(true),
-    completeStatements$: of([]),
-    statementElements$: of([initialStatement]),
-    orderByItems$: of([]),
-    currentState: {
-      selectedResourceClass: SAMPLE_RESOURCE_CLASSES[0],
-      statementElements: [initialStatement],
-      orderBy: [],
-    },
-    validStatementElements: [],
-    patchState: () => {},
-    clearAllSelections: () => {},
-    updateStatement: () => {},
-    updateOrderBy: () => {},
-    ...partial,
-  };
-};
-
 export const makeQueryExecutionServiceStub = (
   partial: { queryIsExecuting?: boolean } = {}
 ): Partial<QueryExecutionService> => ({
@@ -125,8 +103,19 @@ export const makeSearchDerivationServiceStub = (
   partial: Partial<SearchDerivationService> = {}
 ): Partial<SearchDerivationService> => ({
   orderByItems$: of([] as OrderByItem[]),
+  // PropertyFormManager seeds its store from searchState$ on construction, so every story that provides
+  // the real manager needs this to emit at least once (DEV-6576 Phase 3.5).
+  searchState$: of({ resourceClass: null, statements: [], orderByItems: [] }),
+  loading$: of(false),
+  gravsearchQuery$: of(null),
   ...partial,
 });
+
+/** Convenience provider pairing the manager with a derivation stub — for chip stories that edit filters. */
+export const PROPERTY_FORM_MANAGER_STORY_PROVIDERS = [
+  { provide: SearchDerivationService, useValue: makeSearchDerivationServiceStub() },
+  PropertyFormManager,
+];
 
 export const makeDspApiConnectionStub = (partial: Record<string, unknown> = {}) => ({
   v2: {

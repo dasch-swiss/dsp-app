@@ -9,9 +9,31 @@ import { Operator } from '../../operators.config';
 import { englishLabels, makeIriLabelPair } from '../../testing/test-data-builders';
 import { GravsearchService } from '../gravsearch.service';
 import { OntologyDataService } from '../ontology-data.service';
-import { SearchStateService } from '../search-state.service';
 
 const { service: mockLocalizationService } = createMockLocalizationService('en');
+
+/**
+ * Minimal statement container used to drive the pure `generateGravSearchQuery` (DEV-6576). The
+ * production `SearchStateService` was retired in Phase 4; these query-generation tests only ever used
+ * it as a place to hold a statement tree and read it back, so a local double keeps the spec focused on
+ * the query output without depending on removed production state.
+ */
+class StatementStore {
+  private _state: {
+    selectedResourceClass?: IriLabelPair;
+    statementElements: StatementElement[];
+    orderBy: OrderByItem[];
+  } = { statementElements: [], orderBy: [] };
+  get currentState() {
+    return this._state;
+  }
+  get validStatementElements() {
+    return this._state.statementElements.filter(s => s.isValidAndComplete);
+  }
+  patchState(partial: Partial<typeof this._state>) {
+    this._state = { ...this._state, ...partial };
+  }
+}
 
 // OntologyDataService eagerly loads the synthetic rdfs:label predicate via
 // TranslateLoader on init. The gravsearch suite does not exercise that
@@ -26,7 +48,7 @@ const mockTranslateLoader: TranslateLoader = {
  * Reconstructs StatementElement objects from JSON snapshot
  */
 function setupTestFromJson(
-  searchStateService: SearchStateService,
+  searchStateService: StatementStore,
   jsonSnapshot: string,
   resourceClass?: IriLabelPair,
   orderBy: any[] = []
@@ -93,7 +115,7 @@ function setupTestFromJson(
  * @param statementIndex - Index of the statement to modify
  * @param operator - The new operator to set
  */
-function changeOperator(searchStateService: SearchStateService, statementIndex: number, operator: Operator): void {
+function changeOperator(searchStateService: StatementStore, statementIndex: number, operator: Operator): void {
   const statements = searchStateService.currentState.statementElements;
   const originalValue = statements[statementIndex].selectedObjectNode;
   statements[statementIndex].selectedOperator = operator;
@@ -106,7 +128,7 @@ function changeOperator(searchStateService: SearchStateService, statementIndex: 
  * while preserving the existing operator. Useful for parameterising tests
  * that vary the user-supplied search input.
  */
-function setSelectedValue(searchStateService: SearchStateService, statementIndex: number, value: string): void {
+function setSelectedValue(searchStateService: StatementStore, statementIndex: number, value: string): void {
   const statements = searchStateService.currentState.statementElements;
   statements[statementIndex].selectedObjectNode = new StringValue(statements[statementIndex].id, value);
   searchStateService.patchState({ statementElements: statements });
@@ -124,7 +146,7 @@ function normalizeQuery(query: string): string {
 
 describe('Gravsearch Service and Writer - Label', () => {
   let gravsearchService: GravsearchService;
-  let searchStateService: SearchStateService;
+  let searchStateService: StatementStore;
   let ontologyDataService: OntologyDataService;
 
   const baseJsonSnapshot = {
@@ -196,7 +218,6 @@ describe('Gravsearch Service and Writer - Label', () => {
     TestBed.configureTestingModule({
       providers: [
         GravsearchService,
-        SearchStateService,
         OntologyDataService,
         { provide: DspApiConnectionToken, useValue: mockDspApiConnection },
         { provide: LocalizationService, useValue: mockLocalizationService },
@@ -205,7 +226,7 @@ describe('Gravsearch Service and Writer - Label', () => {
     });
 
     gravsearchService = TestBed.inject(GravsearchService);
-    searchStateService = TestBed.inject(SearchStateService);
+    searchStateService = new StatementStore();
     ontologyDataService = TestBed.inject(OntologyDataService);
 
     // Mock OntologyDataService
@@ -318,7 +339,7 @@ OFFSET 0`;
 
 describe('Gravsearch Service and Writer - TextValue', () => {
   let gravsearchService: GravsearchService;
-  let searchStateService: SearchStateService;
+  let searchStateService: StatementStore;
   let ontologyDataService: OntologyDataService;
 
   const baseJsonSnapshot = {
@@ -390,7 +411,6 @@ describe('Gravsearch Service and Writer - TextValue', () => {
     TestBed.configureTestingModule({
       providers: [
         GravsearchService,
-        SearchStateService,
         OntologyDataService,
         { provide: DspApiConnectionToken, useValue: mockDspApiConnection },
         { provide: LocalizationService, useValue: mockLocalizationService },
@@ -399,7 +419,7 @@ describe('Gravsearch Service and Writer - TextValue', () => {
     });
 
     gravsearchService = TestBed.inject(GravsearchService);
-    searchStateService = TestBed.inject(SearchStateService);
+    searchStateService = new StatementStore();
     ontologyDataService = TestBed.inject(OntologyDataService);
 
     // Mock OntologyDataService
@@ -501,7 +521,7 @@ OFFSET 0`;
 
 describe('Gravsearch Service and Writer - ListValue', () => {
   let gravsearchService: GravsearchService;
-  let searchStateService: SearchStateService;
+  let searchStateService: StatementStore;
   let ontologyDataService: OntologyDataService;
 
   const baseJsonSnapshot = {
@@ -588,7 +608,6 @@ describe('Gravsearch Service and Writer - ListValue', () => {
     TestBed.configureTestingModule({
       providers: [
         GravsearchService,
-        SearchStateService,
         OntologyDataService,
         { provide: DspApiConnectionToken, useValue: mockDspApiConnection },
         { provide: LocalizationService, useValue: mockLocalizationService },
@@ -597,7 +616,7 @@ describe('Gravsearch Service and Writer - ListValue', () => {
     });
 
     gravsearchService = TestBed.inject(GravsearchService);
-    searchStateService = TestBed.inject(SearchStateService);
+    searchStateService = new StatementStore();
     ontologyDataService = TestBed.inject(OntologyDataService);
 
     // Mock OntologyDataService
@@ -662,7 +681,7 @@ OFFSET 0`;
 
 describe('Gravsearch Service and Writer - IntValue', () => {
   let gravsearchService: GravsearchService;
-  let searchStateService: SearchStateService;
+  let searchStateService: StatementStore;
   let ontologyDataService: OntologyDataService;
 
   const baseJsonSnapshot = {
@@ -734,7 +753,6 @@ describe('Gravsearch Service and Writer - IntValue', () => {
     TestBed.configureTestingModule({
       providers: [
         GravsearchService,
-        SearchStateService,
         OntologyDataService,
         { provide: DspApiConnectionToken, useValue: mockDspApiConnection },
         { provide: LocalizationService, useValue: mockLocalizationService },
@@ -743,7 +761,7 @@ describe('Gravsearch Service and Writer - IntValue', () => {
     });
 
     gravsearchService = TestBed.inject(GravsearchService);
-    searchStateService = TestBed.inject(SearchStateService);
+    searchStateService = new StatementStore();
     ontologyDataService = TestBed.inject(OntologyDataService);
 
     // Mock OntologyDataService
@@ -913,7 +931,7 @@ OFFSET 0`;
 
 describe('GravsearchService — fulltextTerm parameter', () => {
   let gravsearchService: GravsearchService;
-  let searchStateService: SearchStateService;
+  let searchStateService: StatementStore;
   let ontologyDataService: OntologyDataService;
 
   const ontologyIri = 'http://api.stage.dasch.swiss/ontology/0806/webern-onto/v2';
@@ -922,7 +940,6 @@ describe('GravsearchService — fulltextTerm parameter', () => {
     TestBed.configureTestingModule({
       providers: [
         GravsearchService,
-        SearchStateService,
         OntologyDataService,
         { provide: DspApiConnectionToken, useValue: {} },
         { provide: LocalizationService, useValue: mockLocalizationService },
@@ -931,7 +948,7 @@ describe('GravsearchService — fulltextTerm parameter', () => {
     });
 
     gravsearchService = TestBed.inject(GravsearchService);
-    searchStateService = TestBed.inject(SearchStateService);
+    searchStateService = new StatementStore();
     ontologyDataService = TestBed.inject(OntologyDataService);
 
     jest

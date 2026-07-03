@@ -12,7 +12,6 @@ import { IriLabelPair } from '../../model';
 import { OntologyDataService } from '../../service/ontology-data.service';
 import { PropertyFormManager } from '../../service/property-form.manager';
 import { SearchDerivationService } from '../../service/search-derivation.service';
-import { SearchStateService } from '../../service/search-state.service';
 import { SearchUrlSyncService } from '../../service/search-url-sync.service';
 import { CHIP_POPOVER_POSITIONS } from './chip-bar.helpers';
 
@@ -79,7 +78,6 @@ export class ResourceClassChipComponent {
 
   readonly pickPreferredLanguageString = pickPreferredLanguageString;
   private readonly _dataService = inject(OntologyDataService);
-  private readonly _searchStateService = inject(SearchStateService);
   private readonly _derivation = inject(SearchDerivationService);
   private readonly _formManager = inject(PropertyFormManager);
   private readonly _urlSync = inject(SearchUrlSyncService);
@@ -106,9 +104,9 @@ export class ResourceClassChipComponent {
     if (!selection) return;
     if (selection.iri) {
       this._formManager.setMainResource(selection);
-    } else {
-      this._searchStateService.clearAllSelections();
     }
+    // Nulling class/filters/orderBy in the URL is the reset; the ephemeral tree reseeds from
+    // searchState$ (DEV-6576 Phase 4). The "all classes" branch needs no extra reset.
     this._urlSync.writeState(
       { class: selection.iri || undefined, filters: undefined, orderBy: undefined },
       { replaceUrl: false }

@@ -4,13 +4,7 @@ import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular'
 import { of } from 'rxjs';
 import { expect, userEvent, within } from 'storybook/test';
 import { OntologyDataService } from '../../service/ontology-data.service';
-import { SearchStateService } from '../../service/search-state.service';
-import {
-  makeOntologyDataServiceStub,
-  makeSearchStateServiceStub,
-  SAMPLE_ONTOLOGIES,
-  STORY_PROVIDERS,
-} from '../../stories.helpers';
+import { makeOntologyDataServiceStub, SAMPLE_ONTOLOGIES, STORY_PROVIDERS } from '../../stories.helpers';
 import { DataModelChipComponent } from './data-model-chip.component';
 
 const meta: Meta<DataModelChipComponent> = {
@@ -24,7 +18,6 @@ const baseProviders = [
   ...STORY_PROVIDERS,
   importProvidersFrom(OverlayModule),
   { provide: OntologyDataService, useValue: makeOntologyDataServiceStub() },
-  { provide: SearchStateService, useValue: makeSearchStateServiceStub() },
 ];
 
 export const ShowsSelectedOntology: Story = {
@@ -78,7 +71,6 @@ export const WithMultipleOntologies: Story = {
             ontologies$: of(SAMPLE_ONTOLOGIES),
           }),
         },
-        { provide: SearchStateService, useValue: makeSearchStateServiceStub() },
       ],
     }),
   ],

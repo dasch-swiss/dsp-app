@@ -6,12 +6,10 @@ import { expect, within } from 'storybook/test';
 import { StatementElement } from '../../model';
 import { Operator } from '../../operators.config';
 import { OntologyDataService } from '../../service/ontology-data.service';
-import { PropertyFormManager } from '../../service/property-form.manager';
-import { SearchStateService } from '../../service/search-state.service';
 import {
   makeDspApiConnectionStub,
   makeOntologyDataServiceStub,
-  makeSearchStateServiceStub,
+  PROPERTY_FORM_MANAGER_STORY_PROVIDERS,
   STORY_PROVIDERS,
 } from '../../stories.helpers';
 import { toLabels } from '../../util/labels';
@@ -64,8 +62,7 @@ const baseProviders = [
   importProvidersFrom(OverlayModule),
   { provide: DspApiConnectionToken, useValue: makeDspApiConnectionStub() },
   { provide: OntologyDataService, useValue: makeOntologyDataServiceStub() },
-  { provide: SearchStateService, useValue: makeSearchStateServiceStub() },
-  PropertyFormManager,
+  ...PROPERTY_FORM_MANAGER_STORY_PROVIDERS,
 ];
 
 export const ShowsPredicateSelect: Story = {

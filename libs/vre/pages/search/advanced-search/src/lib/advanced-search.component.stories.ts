@@ -8,13 +8,11 @@ import { AdvancedSearchComponent } from './advanced-search.component';
 import { provideAdvancedSearch } from './providers';
 import { OntologyDataService } from './service/ontology-data.service';
 import { QueryExecutionService } from './service/query-execution.service';
-import { SearchStateService } from './service/search-state.service';
 import {
   ADVANCED_SEARCH_SERVICE_STUBS,
   makeDspApiConnectionStub,
   makeOntologyDataServiceStub,
   makeQueryExecutionServiceStub,
-  makeSearchStateServiceStub,
   STORY_PROVIDERS,
 } from './stories.helpers';
 
@@ -35,7 +33,6 @@ const sharedProviders = [
   ...provideAdvancedSearch(),
   ...ADVANCED_SEARCH_SERVICE_STUBS,
   { provide: OntologyDataService, useValue: makeOntologyDataServiceStub() },
-  { provide: SearchStateService, useValue: makeSearchStateServiceStub() },
   { provide: QueryExecutionService, useValue: makeQueryExecutionServiceStub() },
 ];
 
@@ -71,7 +68,6 @@ export const LoadingOntologies: Story = {
         ...provideAdvancedSearch(),
         ...ADVANCED_SEARCH_SERVICE_STUBS,
         { provide: OntologyDataService, useValue: makeOntologyDataServiceStub({ ontologyLoading$: of(true) }) },
-        { provide: SearchStateService, useValue: makeSearchStateServiceStub() },
         { provide: QueryExecutionService, useValue: makeQueryExecutionServiceStub() },
       ],
     }),
@@ -103,7 +99,6 @@ export const OntologyLoadError: Story = {
         ...provideAdvancedSearch(),
         ...ADVANCED_SEARCH_SERVICE_STUBS,
         { provide: OntologyDataService, useValue: makeOntologyDataServiceStub({ ontologyLoading$: of(true) }) },
-        { provide: SearchStateService, useValue: makeSearchStateServiceStub() },
         { provide: QueryExecutionService, useValue: makeQueryExecutionServiceStub() },
       ],
     }),

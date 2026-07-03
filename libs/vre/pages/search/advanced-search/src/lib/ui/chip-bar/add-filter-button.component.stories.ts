@@ -3,12 +3,9 @@ import { importProvidersFrom } from '@angular/core';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { expect, userEvent, within } from 'storybook/test';
 import { OntologyDataService } from '../../service/ontology-data.service';
-import { PropertyFormManager } from '../../service/property-form.manager';
-import { SearchStateService } from '../../service/search-state.service';
 import {
   makeOntologyDataServiceStub,
-  makeSearchStateServiceStub,
-  SAMPLE_RESOURCE_CLASSES,
+  PROPERTY_FORM_MANAGER_STORY_PROVIDERS,
   STORY_PROVIDERS,
 } from '../../stories.helpers';
 import { AddFilterButtonComponent } from './add-filter-button.component';
@@ -27,8 +24,7 @@ const baseProviders = [
   ...STORY_PROVIDERS,
   importProvidersFrom(OverlayModule),
   { provide: OntologyDataService, useValue: makeOntologyDataServiceStub() },
-  { provide: SearchStateService, useValue: makeSearchStateServiceStub() },
-  PropertyFormManager,
+  ...PROPERTY_FORM_MANAGER_STORY_PROVIDERS,
 ];
 
 export const ShowsAddFilterButton: Story = {
@@ -69,17 +65,7 @@ export const PassesClassIriToPickerWhenClassSelected: Story = {
         ...STORY_PROVIDERS,
         importProvidersFrom(OverlayModule),
         { provide: OntologyDataService, useValue: makeOntologyDataServiceStub() },
-        {
-          provide: SearchStateService,
-          useValue: makeSearchStateServiceStub({
-            currentState: {
-              selectedResourceClass: SAMPLE_RESOURCE_CLASSES[0],
-              statementElements: [],
-              orderBy: [],
-            },
-          }),
-        },
-        PropertyFormManager,
+        ...PROPERTY_FORM_MANAGER_STORY_PROVIDERS,
       ],
     }),
   ],
@@ -102,13 +88,7 @@ export const NoClassSelected: Story = {
         ...STORY_PROVIDERS,
         importProvidersFrom(OverlayModule),
         { provide: OntologyDataService, useValue: makeOntologyDataServiceStub() },
-        {
-          provide: SearchStateService,
-          useValue: makeSearchStateServiceStub({
-            currentState: { selectedResourceClass: null as any, statementElements: [], orderBy: [] },
-          }),
-        },
-        PropertyFormManager,
+        ...PROPERTY_FORM_MANAGER_STORY_PROVIDERS,
       ],
     }),
   ],

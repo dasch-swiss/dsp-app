@@ -6,11 +6,9 @@ import { expect, userEvent, within } from 'storybook/test';
 import { OntologyDataService } from '../../service/ontology-data.service';
 import { PropertyFormManager } from '../../service/property-form.manager';
 import { DerivedSearchState, SearchDerivationService } from '../../service/search-derivation.service';
-import { SearchStateService } from '../../service/search-state.service';
 import {
   makeOntologyDataServiceStub,
   makeSearchDerivationServiceStub,
-  makeSearchStateServiceStub,
   SAMPLE_RESOURCE_CLASSES,
   STORY_PROVIDERS,
 } from '../../stories.helpers';
@@ -34,7 +32,6 @@ const baseProviders = [
   ...STORY_PROVIDERS,
   importProvidersFrom(OverlayModule),
   { provide: OntologyDataService, useValue: makeOntologyDataServiceStub() },
-  { provide: SearchStateService, useValue: makeSearchStateServiceStub() },
   derivationWithClass(null),
   PropertyFormManager,
 ];
@@ -47,7 +44,6 @@ export const ShowsAllResourceClasses: Story = {
         ...STORY_PROVIDERS,
         importProvidersFrom(OverlayModule),
         { provide: OntologyDataService, useValue: makeOntologyDataServiceStub() },
-        { provide: SearchStateService, useValue: makeSearchStateServiceStub() },
         derivationWithClass(null),
         PropertyFormManager,
       ],
@@ -69,7 +65,6 @@ export const ShowsSelectedClass: Story = {
         ...STORY_PROVIDERS,
         importProvidersFrom(OverlayModule),
         { provide: OntologyDataService, useValue: makeOntologyDataServiceStub() },
-        { provide: SearchStateService, useValue: makeSearchStateServiceStub() },
         derivationWithClass(SAMPLE_RESOURCE_CLASSES[0]),
         PropertyFormManager,
       ],

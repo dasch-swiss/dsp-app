@@ -6,12 +6,10 @@ import { PropertyFormManager } from './service/property-form.manager';
 import { QueryExecutionService } from './service/query-execution.service';
 import { SearchDerivationService } from './service/search-derivation.service';
 import { SearchFlowLogger } from './service/search-flow-logger.service';
-import { SearchStateService } from './service/search-state.service';
 import { SearchUrlSyncService } from './service/search-url-sync.service';
 
 export function provideAdvancedSearch(): Provider[] {
   return [
-    SearchStateService,
     PropertyFormManager,
     OntologyDataService,
     DynamicFormsDataService,

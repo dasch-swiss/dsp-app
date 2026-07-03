@@ -7,13 +7,11 @@ import { expect } from 'storybook/test';
 import { provideAdvancedSearch } from '../../providers';
 import { OntologyDataService } from '../../service/ontology-data.service';
 import { QueryExecutionService } from '../../service/query-execution.service';
-import { SearchStateService } from '../../service/search-state.service';
 import {
   ADVANCED_SEARCH_SERVICE_STUBS,
   makeDspApiConnectionStub,
   makeOntologyDataServiceStub,
   makeQueryExecutionServiceStub,
-  makeSearchStateServiceStub,
   SAMPLE_RESOURCE_CLASSES,
   STORY_PROVIDERS,
 } from '../../stories.helpers';
@@ -36,7 +34,6 @@ const baseProviders = [
   ...provideAdvancedSearch(),
   ...ADVANCED_SEARCH_SERVICE_STUBS,
   { provide: OntologyDataService, useValue: makeOntologyDataServiceStub() },
-  { provide: SearchStateService, useValue: makeSearchStateServiceStub() },
   { provide: QueryExecutionService, useValue: makeQueryExecutionServiceStub() },
 ];
 
@@ -86,14 +83,6 @@ export const SearchDisabled: Story = {
         ...provideAdvancedSearch(),
         ...ADVANCED_SEARCH_SERVICE_STUBS,
         { provide: OntologyDataService, useValue: makeOntologyDataServiceStub() },
-        {
-          provide: SearchStateService,
-          useValue: makeSearchStateServiceStub({
-            isFormStateValidAndComplete$: of(false),
-            statementElements$: of([]),
-            currentState: { selectedResourceClass: SAMPLE_RESOURCE_CLASSES[0], statementElements: [], orderBy: [] },
-          }),
-        },
         { provide: QueryExecutionService, useValue: makeQueryExecutionServiceStub() },
       ],
     }),
@@ -120,7 +109,6 @@ export const LoadingState: Story = {
         ...provideAdvancedSearch(),
         ...ADVANCED_SEARCH_SERVICE_STUBS,
         { provide: OntologyDataService, useValue: makeOntologyDataServiceStub({ ontologyLoading$: of(true) }) },
-        { provide: SearchStateService, useValue: makeSearchStateServiceStub() },
         { provide: QueryExecutionService, useValue: makeQueryExecutionServiceStub() },
       ],
     }),
