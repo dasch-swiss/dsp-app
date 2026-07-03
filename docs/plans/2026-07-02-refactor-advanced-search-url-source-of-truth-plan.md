@@ -2,7 +2,7 @@
 title: "refactor: Advanced Search — URL as Single Source of Truth"
 type: refactor
 date: 2026-07-02
-status: in-progress (Phase 0 ✅, Phase 1 ✅, Phase 2 ✅ — Phase 3 next, sub-stepped below)
+status: in-progress (Phase 0 ✅, Phase 1 ✅, Phase 2 ✅, P2.5 test-gaps ✅ — Phase 3a next, sub-stepped below)
 repository: /Users/julien/WebstormProjects/dsp-das
 ---
 
@@ -406,10 +406,10 @@ Concrete, named test cases per phase. Existing coverage (verified 2026-07-03): `
 
 | ID | Test | File | Why it matters |
 |----|------|------|----------------|
-| G1 | **Readiness gate blocks a premature query.** With a filter-bearing URL, `searchState$`/`gravsearchQuery$` emit **nothing** until ontology loaded + `resourceClasses$` non-empty + predicates hydrated (> synthetic seed). Use a delayed/late-emitting stub for classes+predicates and assert no emission before readiness, exactly one after. | `search-derivation.service.spec.ts` | The entire point of the gate; currently only the already-ready case is tested. |
-| G2 | **`loading$` blocking branches.** Three cases each → `loading$ === true`: (a) `ontologyLoading` true; (b) `classes.length === 0`; (c) `params.filters` present AND `predicates.length <= 1`. | `search-derivation.service.spec.ts` | Only the `false`/ready case exists today. |
-| G3 | **Byte-identity oracle across the value-type matrix.** Run the derived query vs. `generateGravSearchQuery(...)` for: nested/child filters, list/int/link value types, orderBy-active, class-less fulltext-only, all-classes UNION, escaping (quote/backslash/regex metachar). | `search-derivation.service.spec.ts` | Oracle currently covers ~one shape; the rich matrix lives only in the pure gravsearch spec, never through the URL path. |
-| G4 | **End-to-end real-service round-trip.** `encodeFilters` (real) → URL params → `params$` (real) → `searchState$` → `gravsearchQuery$` = expected query. Stop stubbing `decodeFilters` with an ad-hoc parser. | new `search-derivation.integration.spec.ts` | The two halves of "single source of truth" are only tested in isolation today. |
+| G1 ✅ | **Readiness gate blocks a premature query.** With a filter-bearing URL, `searchState$`/`gravsearchQuery$` emit **nothing** until ontology loaded + `resourceClasses$` non-empty + predicates hydrated (> synthetic seed). Uses `BehaviorSubject` stubs flipped ready after subscribe; asserts nothing carries the hydrated filter before readiness. | `search-derivation.service.spec.ts` ("readiness gate blocks premature emission (G1)") | The entire point of the gate; previously only the already-ready case was tested. |
+| G2 ✅ | **`loading$` blocking branches.** Three cases each → `loading$ === true`: (a) `ontologyLoading` true; (b) `classes.length === 0`; (c) `params.filters` present AND `predicates.length <= 1`. | `search-derivation.service.spec.ts` ("loading$ blocking branches (G2)") | Only the `false`/ready case existed. |
+| G3 ✅ | **Byte-identity oracle across the value-type matrix.** Derived query vs. `generateGravSearchQuery(...)` for: nested/child filters, list/int/link value types, orderBy-active, class-less fulltext-only UNION, escaping (quote/backslash/regex metachar). | `search-derivation.service.spec.ts` ("byte-identity oracle matrix (G3)") | Oracle previously covered ~one shape; the rich matrix lived only in the pure gravsearch spec, never through the URL path. |
+| G4 ✅ | **End-to-end real-service round-trip.** `encodeFilters` (real) → `queryParams` → `params$` (real) → `searchState$` → `gravsearchQuery$` = oracle. Uses the real `SearchUrlSyncService` (real `Router`/`ActivatedRoute`/`SearchFlowLogger` stubs), not the ad-hoc `decodeFilters` stub. | `search-derivation.service.spec.ts` ("real-service round-trip (G4)") | The two halves of "single source of truth" were only tested in isolation. |
 
 ### Phase 3 test cases
 
@@ -492,7 +492,7 @@ on every PR from Phase 1 onward: no PR merges if the derived query diverges from
 | ~~P0~~ | URL contract tests | done ✅ | — |
 | ~~P1~~ | pure query fn + single write API | done ✅ (26 gravsearch specs byte-identical) | — |
 | ~~P2~~ | pure selectors, parallel path | done ✅ (oracle at test level) | — |
-| **P2.5** | **Close test gaps G1–G4** (readiness gate, `loading$` branches, oracle matrix, real-service round-trip) | new specs green; oracle matrix passes | revert specs (no prod code) |
+| ~~P2.5~~ | **Close test gaps G1–G4** (readiness gate, `loading$` branches, oracle matrix, real-service round-trip) | done ✅ (2026-07-03) — 11 new specs, 166 lib tests green, lint clean | revert specs (no prod code) |
 | **P3a** | ontology-param reaction in derivation | T3a; derivation still not consumed → zero behavior change | revert 1 commit |
 | **P3b** | OrderByComponent writes → URL | T3b; sort still works via old subject too | revert 1 commit |
 | **P3c** | page consumes derivation (both paths live) | E2E checklist 1–7 pass; oracle holds on live nav | revert page only |
