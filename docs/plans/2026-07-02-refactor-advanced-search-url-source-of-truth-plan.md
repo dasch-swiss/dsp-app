@@ -2,7 +2,7 @@
 title: "refactor: Advanced Search — URL as Single Source of Truth"
 type: refactor
 date: 2026-07-02
-status: in-progress (Phase 0 ✅, Phase 1 ✅, Phase 2 ✅, P2.5 ✅, Phase 3a ✅, 3a.1 ✅ — Phase 3b next)
+status: in-progress (Phase 0 ✅, Phase 1 ✅, Phase 2 ✅, P2.5 ✅, 3a ✅, 3a.1 ✅, 3b+3c ✅ — Phase 3d next; E2E checklist due before 3d)
 repository: /Users/julien/WebstormProjects/dsp-das
 ---
 
@@ -275,26 +275,35 @@ explicit **revert = one commit** rollback (the parallel path from Phase 2 stays 
   calls `setOntology`; the `ontology-data` specs prove `setOntology` settles loading on failure — no
   redundant wired-together test in the derivation spec (which stubs `OntologyDataService`).
 
-**Phase 3b — Redirect `OrderByComponent` writes to the URL**
-- Change `OrderByComponent.onSelectionChange`/`removeOrderBy` (`order-by.component.ts:36-44`) to
-  build the next `orderBy` id and call `_urlSync.writeState({ orderBy })` (discrete action ⇒
-  `replaceUrl:false`) instead of `orderByService.updateOrderBy`. Read the active item from the pure
-  `SearchDerivationService.orderByItems$`, not `currentOrderBy`.
-- Add the **explicit stale-orderBy commit write** in the filter-removal handler: when the removed
-  filter is the active sort, `writeState({ orderBy: null })` (D3 / US-3 AC).
-- Leave `OrderByService`'s constructor write-back (`:36-49`) in place *for now* — it's harmless while
-  the old committed subject still exists, and deleting it here would couple 3b to 3d. It's removed in
-  3e.
-- **Rollback:** revert; component points back at `updateOrderBy`.
+**Phase 3b+3c — Flip page-consumption and order-by writes together (merged)**
 
-**Phase 3c — Consume the derivation on the page (behind the existing `@if` gate)**
-- `advanced-search-page.component.ts`: replace the `query` signal fed by `(gravsearchQuery)="query.set($event)"` (`:15,:38`)
-  with `query = toSignal(derivation.gravsearchQuery$)`. Keep the `@if(query())` gate (`:20`) and the
-  `<app-search-tips>` else branch (`:24-28`); the results binding (`:22`) is unchanged.
-- At this point **both paths produce the query**: the old `@Output` still fires but the page ignores
-  it. This is the moment the derivation is proven live against real navigation. Keep it here long
-  enough to smoke-test (see E2E checklist) — this is the safe checkpoint.
-- **Rollback:** revert the page component only; the `@Output` path is still intact.
+> **Sequencing correction (2026-07-03):** the original plan put 3b (order-by → URL) *before* 3c (page
+> consumes derivation). Implementation revealed these are **coupled for order-by** and cannot be cleanly
+> separated: the old path's query reads `currentState.orderBy` (`filter-chip-bar.component.ts:356`, fed
+> by `OrderByService.updateOrderBy`). If 3b redirects `OrderByComponent` to `writeState` *before* the
+> page reads the derivation, the still-live old query loses its order-by (regression); if the component
+> writes to *both* the service and the URL, one click yields two `writeState({orderBy})` calls → two
+> history entries (breaks US-2). Merging 3b into 3c removes the bad window entirely and leaves 3d a pure
+> deletion. 3b as a standalone step was the wrong cut.
+
+- **Page** (`advanced-search-page.component.ts`): replace the `query` signal fed by
+  `(gravsearchQuery)="query.set($event)"` (`:15,:38`) with `query = toSignal(derivation.gravsearchQuery$)`.
+  Keep the `@if(query())` gate (`:20`), the results binding (`:22`), and the `<app-search-tips>` else
+  branch (`:24-28`).
+- **OrderByComponent**: read `orderByItems$` from `SearchDerivationService` (pure), not
+  `OrderByService`. In `onSelectionChange`/`removeOrderBy`, compute the next active id and call
+  `_urlSync.writeState({ orderBy })` (discrete ⇒ `replaceUrl:false`); stop calling `updateOrderBy` /
+  reading `currentOrderBy`.
+- **No double-write:** once the component stops calling `updateOrderBy`, nothing feeds
+  `SearchStateService.orderByItems$` from a user action, so the old filter-chip-bar orderBy write-back
+  subscription (`:170-182`) goes **dormant** naturally (deleted in 3d). The old `@Output` still fires
+  but the page ignores it.
+- **Explicit stale-orderBy cleanup** (D3 / US-3): add it in the filter-removal handler now — when the
+  removed filter is the active sort, `writeState({ orderBy: null })`. (Idempotent with the emergent
+  cleanup that still exists until 3d.)
+- **Checkpoint:** this is the safe point where the derivation is proven live. Run the full E2E
+  checklist here before 3d. **Rollback:** revert the page + order-by component; the old `@Output` +
+  service path is still intact.
 
 **Phase 3d — Delete the imperative restore machinery**
 - Now that the page reads the derivation, delete from `filter-chip-bar.component.ts`:
@@ -494,8 +503,8 @@ on every PR from Phase 1 onward: no PR merges if the derived query diverges from
 | ~~P2~~ | pure selectors, parallel path | done ✅ (oracle at test level) | — |
 | ~~P2.5~~ | **Close test gaps G1–G4** (readiness gate, `loading$` branches, oracle matrix, real-service round-trip) | done ✅ (2026-07-03) — 11 new specs, 166 lib tests green, lint clean | revert specs (no prod code) |
 | ~~P3a~~ | ontology-param reaction in derivation | done ✅ (2026-07-03) — T3a (4 cases); derivation still not consumed → zero behavior change; 170 tests green | revert 1 commit |
-| **P3b** | OrderByComponent writes → URL | T3b; sort still works via old subject too | revert 1 commit |
-| **P3c** | page consumes derivation (both paths live) | E2E checklist 1–7 pass; oracle holds on live nav | revert page only |
+| ~~P3a.1~~ | `setOntology` error branch (settle loading + `ontologyError$`) | done ✅ (2026-07-03, `de12fcb48`) — 3 specs | revert 1 commit |
+| ~~P3b+3c~~ | page consumes derivation **+** OrderByComponent writes → URL (merged — coupled for order-by) | done ✅ (2026-07-03, `712dd385b`) — 173 tests green, in-lib TS clean; **E2E checklist still owed before P3d** | revert page + order-by component |
 | **P3d** | delete imperative restore machinery | grep-clean (`_restoring`/`_applyParams`/`_emitSearch`/component `setOntology`); E2E re-run | keep P3a–c a release cycle first |
 | **P3e** | retire OrderByService write-back | T3e; grep no `patchState({ orderBy })` | revert 1 commit |
 | **P3.5** | relocate ephemeral edit-state | T3.5 (encode-side exclusion); editing UX unchanged | revert (isolated to manager) |
