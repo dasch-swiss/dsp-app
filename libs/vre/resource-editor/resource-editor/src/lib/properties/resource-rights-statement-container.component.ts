@@ -5,14 +5,12 @@ import { Router } from '@angular/router';
 import { ResourceLegalV2ApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { UserService } from '@dasch-swiss/vre/core/session';
+import { DspResource, filterNull, UserPermissions } from '@dasch-swiss/vre/shared/app-common';
 import {
-  DspResource,
-  filterNull,
   ProjectDataRights,
   ProjectDataRightsService,
-  UserPermissions,
-} from '@dasch-swiss/vre/shared/app-common';
-import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
+  ProjectService,
+} from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { ResourceRightsStatementComponent } from '@dasch-swiss/vre/ui/ui';
 import { TranslateService } from '@ngx-translate/core';

@@ -1,7 +1,7 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { LegalInfoApiService } from '@dasch-swiss/vre/3rd-party-services/api';
-import { ProjectDataRightsService } from '@dasch-swiss/vre/shared/app-common';
+import { ProjectDataRightsService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { TranslatePipe } from '@ngx-translate/core';
 import { BehaviorSubject, catchError, map, shareReplay, switchMap, tap } from 'rxjs';
