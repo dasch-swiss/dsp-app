@@ -2,7 +2,7 @@
 title: "refactor: Advanced Search — URL as Single Source of Truth"
 type: refactor
 date: 2026-07-02
-status: in-progress (0 ✅ 1 ✅ 2 ✅ P2.5 ✅ 3a ✅ 3a.1 ✅ 3b+3c ✅ 3d ✅ — E2E 7/7 post-3d vs live dev; Phase 3.5 next)
+status: in-progress (0 ✅ 1 ✅ 2 ✅ P2.5 ✅ 3a ✅ 3a.1 ✅ 3b+3c ✅ 3d ✅ 3.5 Steps 0-1 ✅ — 3.5 Steps 2-5 next; a 6-step 3.5 plan is in "Phase 3.5" below)
 repository: /Users/julien/WebstormProjects/dsp-das
 ---
 
@@ -346,6 +346,35 @@ vs. the Phase-1 oracle. See Test Plan §Phase 3 and the E2E checklist.
 checkpoint where both paths coexist.
 
 #### Phase 3.5: Relocate ephemeral edit-state (Enabler for Phase 4)
+
+> **6-step execution plan (2026-07-03, from a Plan-agent pass). Steps 0–1 ✅ done (commit `aff6015d9`).**
+> The governing distinction: `SearchStateService.statementElements` is a flat list mixing (1) confirmed
+> top-level statements — already URL-derived via `confirmedStatements`/`searchState$`; (2) in-progress
+> **children** of confirmed link statements — rendered via `childStatementsMap`; (3) blank/unconfirmed
+> rows + auto-grow. Items 2–3 are the ephemeral state that moves to `PropertyFormManager`. Item 1 stays
+> URL-derived. Key finding: **the add-filter flow is already component-local** (`add-filter-button`'s
+> `pendingStatement`), so much of the flat list is vestigial — the real substance/risk is the child
+> sub-query flow.
+>
+> - **Step 0 ✅** — add the store (private `BehaviorSubject`), route all mutations through it, **mirror**
+>   to `SearchStateService` (dual-write) so consumers keep working. Prove in isolation.
+> - **Step 1 ✅** — repoint `filter-chip-bar` child rendering + `onFilterConfirmed` lookup to
+>   `formManager.statements$`/`currentStatements`. Byte-identical thanks to the mirror.
+> - **Step 2 (next)** — reactive **seed from `searchState$`**: on each URL emission rebuild the store so
+>   ephemeral children hang off the *current* confirmed parents (which get new ids per emission via
+>   `buildStatementsFromFilterParams`). Unconfirmed children are lost across navigation — correct under
+>   D4/D6. Watch: no DI cycle (`SearchDerivationService` must not inject `PropertyFormManager`).
+> - **Step 3** — cut the mirror: delete every `searchStateService.*` write in the manager + the
+>   injection. Manager spec drops the `SearchStateService` provider.
+> - **Step 4** — `resource-class-chip` reads `classLabel$`/`selectedClassIri$` from
+>   `searchState$.resourceClass` instead of `SearchStateService.selectedResourceClass$`.
+> - **Step 5** — collapse `setMainResource` to an ephemeral-tree reset only (no `patchState`).
+>
+> **Highest risk (Step 2):** child-identity churn — parents get new ids each URL emission; the
+> child-chip round-trip (confirm link filter → open child → confirm child → child renders under new
+> parent + fresh blank child) must be integration-tested. **Deferred to Phase 4:** `OrderByService`
+> (still reads `SearchStateService.orderBy` — that's 3e), `clearAllSelections` (used by
+> `data-model-chip` + `resource-class-chip`), and full removal of `setMainResource`.
 
 > **Research note (2026-07-03):** `PropertyFormManager` holds **no local state today** — it is a pure
 > command layer that mutates `SearchStateService` via `patchState`/`updateStatement` (writes at
