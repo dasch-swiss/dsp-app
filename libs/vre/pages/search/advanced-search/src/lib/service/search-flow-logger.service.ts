@@ -6,15 +6,20 @@ const c = {
   stage: 'color: #7c3aed; font-weight: bold',
   data: 'color: #0369a1',
   warn: 'color: #b45309',
-  query: 'color: #166534; font-family: monospace',
 };
 
+/**
+ * Dev-time trace of the single URL-driven search pipeline (DEV-6576). Trimmed in Phase 5 to just the
+ * events that still exist after the flip: URL reads/writes, user interactions, and the results API.
+ * The old per-concern restore/query logging (`_applyParams`, `_emitSearch`, popstate, orderBy
+ * write-back, …) went away with the imperative path it described.
+ */
 @Injectable()
 export class SearchFlowLogger {
   // ── URL sync ─────────────────────────────────────────────────────────────
 
   urlRead(params: SearchUrlParams): void {
-    console.log(`%c${TAG} URL read on init`, c.stage, params);
+    console.log(`%c${TAG} URL read`, c.stage, params);
   }
 
   urlWrite(state: SearchUrlParams): void {
@@ -23,28 +28,6 @@ export class SearchFlowLogger {
 
   urlClear(): void {
     console.log(`%c${TAG} URL cleared`, c.warn);
-  }
-
-  popstate(params: SearchUrlParams): void {
-    console.log(`%c${TAG} popstate (back/forward)`, c.stage, params);
-  }
-
-  // ── State restores ────────────────────────────────────────────────────────
-
-  ontologyReady(iri: string): void {
-    console.log(`%c${TAG} Ontology ready → restoring from URL`, c.stage, iri);
-  }
-
-  applyParams(params: SearchUrlParams): void {
-    console.log(`%c${TAG} _applyParams`, c.data, params);
-  }
-
-  filtersRestored(count: number): void {
-    console.log(`%c${TAG} Filters restored from URL`, c.data, `${count} statement(s)`);
-  }
-
-  stateReset(): void {
-    console.log(`%c${TAG} State reset`, c.warn);
   }
 
   // ── User interactions ─────────────────────────────────────────────────────
@@ -59,27 +42,6 @@ export class SearchFlowLogger {
 
   filterRemoved(chipId: string): void {
     console.log(`%c${TAG} Filter removed`, c.data, chipId);
-  }
-
-  orderByChanged(orderById: string | undefined): void {
-    console.log(`%c${TAG} Order by changed`, c.data, orderById ?? '(none)');
-  }
-
-  // ── Query generation ──────────────────────────────────────────────────────
-
-  emitSearch(
-    reason: 'fulltext' | 'filter-confirm' | 'filter-remove' | 'restore' | 'popstate' | 'resource-class' | 'order-by'
-  ): void {
-    console.log(`%c${TAG} _emitSearch triggered by: ${reason}`, c.stage);
-  }
-
-  queryGenerated(query: string): void {
-    const short = query.length > 300 ? query.slice(0, 300) + '…' : query;
-    console.log(`%c${TAG} GravSearch query generated`, c.query, '\n' + short);
-  }
-
-  queryNull(): void {
-    console.log(`%c${TAG} Query set to null (no active filters)`, c.warn);
   }
 
   // ── Results ───────────────────────────────────────────────────────────────

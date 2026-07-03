@@ -438,7 +438,7 @@ describe('SearchDerivationService (DEV-6576 Phase 2)', () => {
           },
           {
             provide: SearchFlowLogger,
-            useValue: { popstate: () => {}, urlRead: () => {}, urlWrite: () => {}, urlClear: () => {} },
+            useValue: { urlRead: () => {}, urlWrite: () => {}, urlClear: () => {} },
           },
           { provide: OntologyDataService, useValue: ontologyStubBase({}) },
         ],

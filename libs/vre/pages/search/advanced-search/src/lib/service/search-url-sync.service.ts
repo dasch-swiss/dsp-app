@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
-import { distinctUntilChanged, filter, map, Observable } from 'rxjs';
+import { ActivatedRoute, Router } from '@angular/router';
+import { distinctUntilChanged, map, Observable } from 'rxjs';
 import { Operator } from '../operators.config';
 import { SearchFlowLogger } from './search-flow-logger.service';
 
@@ -24,19 +24,6 @@ export class SearchUrlSyncService {
   private readonly _router = inject(Router);
   private readonly _route = inject(ActivatedRoute);
   private readonly _logger = inject(SearchFlowLogger);
-
-  // Fires only on browser back/forward — after navigation commits so queryParams are already updated.
-  readonly popstate$ = this._router.events.pipe(
-    filter(
-      (e): e is NavigationEnd =>
-        e instanceof NavigationEnd && this._router.lastSuccessfulNavigation()?.trigger === 'popstate'
-    ),
-    map(() => {
-      const params = this._mapParams(this._route.snapshot.queryParams);
-      this._logger.popstate(params);
-      return params;
-    })
-  );
 
   /**
    * Continuous decoded query-param stream — the read side of "URL is the source of truth"

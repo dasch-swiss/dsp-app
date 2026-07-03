@@ -2,7 +2,7 @@ import { signal } from '@angular/core';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 import { UserService } from '@dasch-swiss/vre/core/session';
-import { EMPTY, of } from 'rxjs';
+import { of } from 'rxjs';
 import { IriLabelPair, OrderByItem } from './model';
 import { OntologyDataService } from './service/ontology-data.service';
 import { PropertyFormManager } from './service/property-form.manager';
@@ -15,7 +15,6 @@ import { toLabels } from './util/labels';
 const searchUrlSyncServiceStub = {
   provide: SearchUrlSyncService,
   useValue: {
-    popstate$: EMPTY,
     // The URL-derived pipeline (SearchDerivationService) subscribes to `params$` on construction, so
     // stories that provide the real services need it to emit at least once (DEV-6576 Phase 3).
     params$: of({}),
@@ -30,23 +29,15 @@ const searchUrlSyncServiceStub = {
 const searchFlowLoggerStub = {
   provide: SearchFlowLogger,
   useValue: {
-    ontologyReady: () => {},
-    fulltextChanged: () => {},
-    filterConfirmed: () => {},
-    filterRemoved: () => {},
-    stateReset: () => {},
-    applyParams: () => {},
-    filtersRestored: () => {},
-    emitSearch: () => {},
-    queryNull: () => {},
-    queryGenerated: () => {},
-    searchStart: () => {},
-    searchSuccess: () => {},
-    searchError: () => {},
-    popstate: () => {},
     urlRead: () => {},
     urlWrite: () => {},
     urlClear: () => {},
+    fulltextChanged: () => {},
+    filterConfirmed: () => {},
+    filterRemoved: () => {},
+    searchStart: () => {},
+    searchSuccess: () => {},
+    searchError: () => {},
   } as Partial<SearchFlowLogger>,
 };
 
