@@ -2,7 +2,7 @@
 title: "Advanced Search — URL as Single Source of Truth"
 date: 2026-07-02
 author: "Julien Schneider"
-status: draft
+status: in-progress (Phases 0–2 done; see plan for live status)
 ---
 
 # Advanced Search — URL as Single Source of Truth PRD
@@ -69,9 +69,16 @@ deliberate exception to pure derivation, scoped tightly to transient editing.
 
 ### Feature 4: Single write API
 
-One `writeState(partial)` helper owns all URL writes (merge semantics; `replaceUrl` policy:
-`true` for continuous changes like typing, `false` for discrete actions to build history). Each
-param has exactly one writer — no more `_writeFiltersToUrl` also writing `orderBy`.
+One `writeState(partial)` helper owns all URL writes (merge semantics). Each param has exactly one
+*owning* writer — no more `_writeFiltersToUrl` also writing `orderBy` — while a single user action may
+still write several params in one merge-navigate (atomic multi-param commit, one history entry).
+
+**History policy:** discrete actions (confirm/remove filter, change class, change order-by) use
+`replaceUrl: false` to build one history entry each. Fulltext typing is coalesced by
+`debounceTime(300)`; **each debounced pause is a commit with `replaceUrl: false`** (one history entry
+per pause, not per keystroke). An earlier draft of this feature said `replaceUrl: true` for typing —
+that conflated keystroke-coalescing (handled by the debounce) with session-coalescing and is
+corrected here. See the plan's "Resolved Decisions → Fulltext `replaceUrl` policy."
 
 ## User Stories
 
@@ -157,14 +164,32 @@ param has exactly one writer — no more `_writeFiltersToUrl` also writing `orde
 
 ## Open Questions
 
-- [ ] Where exactly does ephemeral edit-state live after Phase 4 — a trimmed `SearchStateService`,
-      or purely local component signals?
-- [ ] Fulltext debounce + `replaceUrl: true`: confirm history coalescing still behaves under the
-      derivation model
+- [x] **Where ephemeral edit-state lives** — *resolved in the plan (Phase 3.5):* a **trimmed
+      `PropertyFormManager`** owns an ephemeral store (blank rows, in-progress children, unconfirmed
+      edits), seeded from `searchState$` and flushed to the URL only on commit. Not the
+      `SearchStateService` subject, not scattered component signals.
+- [x] **Fulltext debounce + `replaceUrl`** — *resolved in the plan:* the earlier `replaceUrl: true`
+      wording was wrong; each debounced pause commits with `replaceUrl: false` (see corrected
+      Feature 4).
 - [ ] Does gating `searchState$` on ontology load introduce a flash of empty results before the
-      ontology is ready, and is `loading$` enough to mask it?
+      ontology is ready, and is `loading$` enough to mask it? *(Still open — the plan carries it as an
+      open question and puts it on the E2E checklist, items #1/#3, to verify in the browser.)*
+- [ ] **(New, surfaced during implementation) Two "committed" definitions.** The query is built from
+      *all valid* statement rows (`validStatementElements`) — including rows the user filled in but did
+      not confirm — while the URL `filters` param is built only from *confirmed* rows. Making the query
+      URL-derived unifies these on the confirmed set, which **changes behavior** (valid-but-unconfirmed
+      rows stop affecting results). Is that the intended product behavior, or is live-preview of
+      unconfirmed rows a feature to preserve? *(Plan decision D6 assumes the former and guards it with a
+      test; product to confirm.)*
 
 ## Next Steps
+
+> **The authoritative, up-to-date phase breakdown lives in the implementation plan**
+> (`docs/plans/2026-07-02-refactor-advanced-search-url-source-of-truth-plan.md`). It sub-steps the
+> risky flip into 3a–3e, adds Phase 3.5 (ephemeral edit-state), and carries the per-phase Test Plan,
+> PR breakdown, and E2E checklist. As of 2026-07-03: **Phases 0–2 are ✅ done**; the recommended next
+> PR is **P2.5** (land the readiness-gate + byte-identity oracle tests before any Phase-3 prod change).
+> The list below is the original high-level outline, kept for context.
 
 Sequenced so the feature stays shippable after each step. Each step is independently mergeable.
 
@@ -258,3 +283,4 @@ component-local exception, promoted to the URL on commit.
 | Date | Author | Changes |
 |------|--------|---------|
 | 2026-07-02 | Julien Schneider | Initial draft |
+| 2026-07-03 | Julien Schneider | Reconciled with implementation plan: corrected Feature 4 `replaceUrl` (debounced pause = `false`, not `true`); resolved Open Questions #1 (ephemeral state → trimmed `PropertyFormManager`) and #2 (debounce policy); added new Open Question on the two "committed" definitions (D6 behavior change); pointed Next Steps at the plan as authoritative; status → in-progress. |
