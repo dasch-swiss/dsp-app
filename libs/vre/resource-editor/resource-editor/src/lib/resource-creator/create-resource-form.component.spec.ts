@@ -4,7 +4,7 @@ import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { AdminAPIApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
-import { PaginatedApiService } from '@dasch-swiss/vre/shared/app-common';
+import { ProjectDataRightsService } from '@dasch-swiss/vre/shared/app-common';
 import { provideTranslateService, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { CreateResourceFormComponent } from './create-resource-form.component';
@@ -46,9 +46,16 @@ describe('CreateResourceFormComponent', () => {
         // The form loads the project's resource-side legal info on init; stub the APIs it calls.
         {
           provide: AdminAPIApiService,
-          useValue: { getAdminProjectsShortcodeProjectshortcode: jest.fn().mockReturnValue(of({ project: {} })) },
+          useValue: {
+            getAdminProjectsShortcodeProjectshortcode: jest
+              .fn()
+              .mockReturnValue(of({ project: { shortcode: { value: 'test' } } })),
+          },
         },
-        { provide: PaginatedApiService, useValue: { getLicenses: jest.fn().mockReturnValue(of([])) } },
+        {
+          provide: ProjectDataRightsService,
+          useValue: { fromProject: jest.fn().mockReturnValue(of({ authorship: [] })) },
+        },
         provideTranslateService(),
         TranslateService,
       ],

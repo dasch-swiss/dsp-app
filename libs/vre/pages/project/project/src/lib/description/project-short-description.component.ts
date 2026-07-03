@@ -4,10 +4,10 @@ import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import { ProjectImageCoverComponent } from '@dasch-swiss/vre/pages/user-settings/user';
-import { PaginatedApiService } from '@dasch-swiss/vre/shared/app-common';
+import { ProjectDataRightsService } from '@dasch-swiss/vre/shared/app-common';
 import { ResourceRightsStatementComponent } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe } from '@ngx-translate/core';
-import { map, of, switchMap, tap } from 'rxjs';
+import { switchMap, tap } from 'rxjs';
 import { ProjectPageService } from '../project-page.service';
 import { LicenseCaptionsMapping } from './license-captions-mapping';
 import { ProjectDescriptionPageComponent } from './project-description-page.component';
@@ -58,8 +58,8 @@ import { ProjectDescriptionPageComponent } from './project-description-page.comp
             <app-resource-rights-statement
               [licenseLabel]="rights.licenseLabel"
               [licenseUrl]="rights.licenseUrl"
-              [copyrightHolder]="rights.project.dataCopyrightHolder"
-              [authorship]="rights.project.dataAuthorship ?? []"
+              [copyrightHolder]="rights.copyrightHolder"
+              [authorship]="rights.authorship"
               [isAdmin]="false"
               labelAlign="start" />
           </div>
@@ -76,30 +76,15 @@ export class ProjectShortDescriptionComponent {
     })
   );
 
-  /** The project's data-side legal info, resolved like the expanded description page. */
   dataRights$ = this._projectPageService.currentProject$.pipe(
-    switchMap(project => {
-      if (!project.dataLicense) {
-        return of({
-          project,
-          licenseLabel: undefined as string | undefined,
-          licenseUrl: undefined as string | undefined,
-        });
-      }
-      return this._paginatedApi.getLicenses(project.shortcode).pipe(
-        map(licenses => {
-          const license = licenses.find(l => l.id === project.dataLicense);
-          return { project, licenseLabel: license?.labelEn, licenseUrl: license?.uri };
-        })
-      );
-    })
+    switchMap(project => this._dataRights.fromProject(project))
   );
 
   constructor(
     private readonly _projectPageService: ProjectPageService,
     private readonly _dialog: MatDialog,
     private readonly _viewContainerRef: ViewContainerRef,
-    private readonly _paginatedApi: PaginatedApiService
+    private readonly _dataRights: ProjectDataRightsService
   ) {}
 
   readMore() {

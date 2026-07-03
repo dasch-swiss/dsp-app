@@ -6,7 +6,7 @@ import { UserService } from '@dasch-swiss/vre/core/session';
 import {
   DspResource,
   generateDspResource,
-  PaginatedApiService,
+  ProjectDataRightsService,
   ResourceService,
 } from '@dasch-swiss/vre/shared/app-common';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
@@ -144,7 +144,7 @@ const sharedProviders = [
     },
   },
   // Stubs for the embedded app-resource-rights-statement-container (data-side rights statement).
-  { provide: PaginatedApiService, useValue: { getLicenses: () => of([]) } },
+  { provide: ProjectDataRightsService, useValue: { forProject: () => of({ authorship: [] }) } },
   { provide: ResourceLegalV2ApiService, useValue: { updateResourceAuthorship: () => of(undefined) } },
   { provide: UserService, useValue: { user$: of(null) } },
   { provide: NotificationService, useValue: { openSnackBar: () => {} } },

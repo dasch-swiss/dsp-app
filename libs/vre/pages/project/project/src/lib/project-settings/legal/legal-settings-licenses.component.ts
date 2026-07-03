@@ -1,6 +1,5 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { AdminAPIApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { PaginatedApiService } from '@dasch-swiss/vre/shared/app-common';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -53,7 +52,6 @@ export class LegalSettingsLicensesComponent {
   constructor(
     private readonly _paginatedApi: PaginatedApiService,
     private readonly _projectPageService: ProjectPageService,
-    private readonly _adminApiService: AdminAPIApiService,
     private readonly _notification: NotificationService
   ) {}
 
@@ -61,14 +59,8 @@ export class LegalSettingsLicensesComponent {
     const project = this._projectPageService.currentProject;
 
     const apiCall = event.enabled
-      ? this._adminApiService.putAdminProjectsShortcodeProjectshortcodeLegalInfoLicensesLicenseiriEnable(
-          project.shortcode,
-          event.licenseId
-        )
-      : this._adminApiService.putAdminProjectsShortcodeProjectshortcodeLegalInfoLicensesLicenseiriDisable(
-          project.shortcode,
-          event.licenseId
-        );
+      ? this._paginatedApi.enableLicense(project.shortcode, event.licenseId)
+      : this._paginatedApi.disableLicense(project.shortcode, event.licenseId);
 
     apiCall
       .pipe(

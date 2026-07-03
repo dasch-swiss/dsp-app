@@ -22,11 +22,11 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { AdminAPIApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { ApiConstants, DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
-import { PaginatedApiService, PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
+import { ProjectDataRightsService, PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
 import { AppProgressIndicatorComponent, LoadingButtonDirective } from '@dasch-swiss/vre/ui/progress-indicator';
 import { CommonInputComponent, InvalidControlScrollDirective } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe } from '@ngx-translate/core';
-import { finalize, map, of, switchMap, take } from 'rxjs';
+import { finalize, switchMap, take } from 'rxjs';
 import { FormValueGroup } from '../properties/properties-display/property-value/form-value-array.type';
 import { propertiesTypeMapping } from '../properties/properties-display/property-value/resource-payloads-mapping';
 import { FileForm } from '../representation/file-form.type';
@@ -202,7 +202,7 @@ export class CreateResourceFormComponent implements OnInit {
     private _fb: FormBuilder,
     private _cd: ChangeDetectorRef,
     private _adminApi: AdminAPIApiService,
-    private _paginatedApi: PaginatedApiService,
+    private _dataRights: ProjectDataRightsService,
     private _destroyRef: DestroyRef
   ) {}
 
@@ -211,32 +211,28 @@ export class CreateResourceFormComponent implements OnInit {
     this._loadDataSideLegal();
   }
 
-  /**
-   * Loads the project's resource-side legal info: the locked license (resolved to a label + CC deed URL)
-   * and copyright holder, and pre-fills the authorship with the project default for the user to confirm or edit.
-   */
   private _loadDataSideLegal(): void {
     this._adminApi
       .getAdminProjectsShortcodeProjectshortcode(this.projectShortcode)
       .pipe(
         switchMap(response => {
           const project = response.project;
-          this.dataCopyrightHolder = project.dataCopyrightHolder;
           if (project.dataAuthorship && project.dataAuthorship.length > 0) {
-            // Programmatic seed keeps the control pristine; the user confirms (submits) or edits these.
             this.form.controls.resourceAuthorship.setValue(project.dataAuthorship);
           }
-          return project.dataLicense
-            ? this._paginatedApi
-                .getLicenses(this.projectShortcode)
-                .pipe(map(licenses => licenses.find(l => l.id === project.dataLicense)))
-            : of(undefined);
+          return this._dataRights.fromProject({
+            shortcode: project.shortcode.value,
+            dataLicense: project.dataLicense,
+            dataCopyrightHolder: project.dataCopyrightHolder,
+            dataAuthorship: project.dataAuthorship,
+          });
         }),
         takeUntilDestroyed(this._destroyRef)
       )
-      .subscribe(license => {
-        this.dataLicenseLabel = license?.labelEn;
-        this.dataLicenseUrl = license?.uri;
+      .subscribe(rights => {
+        this.dataLicenseLabel = rights.licenseLabel;
+        this.dataLicenseUrl = rights.licenseUrl;
+        this.dataCopyrightHolder = rights.copyrightHolder;
         this._cd.detectChanges();
       });
   }

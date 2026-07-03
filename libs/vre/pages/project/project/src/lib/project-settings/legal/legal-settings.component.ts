@@ -252,8 +252,8 @@ export class LegalSettingsComponent implements OnInit {
     this.saving = true;
     this._paginatedApi
       .updateResourceSideLegalInfo(shortcode, {
-        dataLicense: license,
-        dataCopyrightHolder: copyrightHolder,
+        dataLicense: license ?? undefined,
+        dataCopyrightHolder: copyrightHolder ?? undefined,
         dataAuthorship: dataAuthorship ?? [],
       })
       .subscribe({

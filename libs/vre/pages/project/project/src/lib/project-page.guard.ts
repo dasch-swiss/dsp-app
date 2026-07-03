@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
+import { ProjectDataRightsService } from '@dasch-swiss/vre/shared/app-common';
 import { catchError, first, map, Observable, of } from 'rxjs';
 import { ProjectPageService } from './project-page.service';
 
@@ -10,6 +11,7 @@ import { ProjectPageService } from './project-page.service';
 export class ProjectPageGuard implements CanActivate {
   constructor(
     private readonly _projectPageService: ProjectPageService,
+    private readonly _dataRights: ProjectDataRightsService,
     private readonly _router: Router
   ) {}
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean | UrlTree> {
@@ -18,6 +20,7 @@ export class ProjectPageGuard implements CanActivate {
       return of(this._routeTo404());
     }
 
+    this._dataRights.clearAll();
     this._projectPageService.setup(projectUuid);
 
     return this._projectPageService.currentProject$.pipe(

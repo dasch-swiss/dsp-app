@@ -8,10 +8,10 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { StringLiteral } from '@dasch-swiss/dsp-js';
 import { AvailableLanguageKeys, RouteConstants } from '@dasch-swiss/vre/core/config';
 import { ProjectImageCoverComponent } from '@dasch-swiss/vre/pages/user-settings/user';
-import { PaginatedApiService } from '@dasch-swiss/vre/shared/app-common';
+import { ProjectDataRightsService } from '@dasch-swiss/vre/shared/app-common';
 import { ClosingDialogComponent, ResourceRightsStatementComponent } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe } from '@ngx-translate/core';
-import { map, of, switchMap, tap } from 'rxjs';
+import { map, switchMap, tap } from 'rxjs';
 import { ProjectPageService } from '../project-page.service';
 import { LicenseCaptionsMapping } from './license-captions-mapping';
 
@@ -46,40 +46,18 @@ export class ProjectDescriptionPageComponent {
 
   hasProjectAdminRights$ = this._projectPageService.hasProjectAdminRights$;
 
-  /**
-   * The data-side rights statement for the project, resolving the configured `dataLicense` IRI
-   * to its catalog label + Creative Commons deed URL.
-   */
-  dataRights$ = this.readProject$.pipe(
-    switchMap(project => {
-      if (!project.dataLicense) {
-        return of({
-          project,
-          licenseLabel: undefined as string | undefined,
-          licenseUrl: undefined as string | undefined,
-        });
-      }
-      return this._paginatedApi.getLicenses(project.shortcode).pipe(
-        map(licenses => {
-          const license = licenses.find(l => l.id === project.dataLicense);
-          return { project, licenseLabel: license?.labelEn, licenseUrl: license?.uri };
-        })
-      );
-    })
-  );
+  dataRights$ = this.readProject$.pipe(switchMap(project => this._dataRights.fromProject(project)));
 
   hasManualLicense?: string;
 
   constructor(
-    private readonly _paginatedApi: PaginatedApiService,
+    private readonly _dataRights: ProjectDataRightsService,
     private readonly _projectPageService: ProjectPageService,
     private readonly _router: Router,
     private readonly _route: ActivatedRoute
   ) {}
 
   goToLegalSettings(): void {
-    // ['..', settings] alone hits the settings default child (edit = Description); target legal-settings
-    // explicitly so the "Edit legal info" callout lands on the Legal Settings → Resource side tab.
     this._router.navigate(['..', RouteConstants.settings, RouteConstants.legalSettings], { relativeTo: this._route });
   }
 

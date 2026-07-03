@@ -1,8 +1,8 @@
 import { provideRouter } from '@angular/router';
-import { ProjectApiService, ResourceLegalV2ApiService } from '@dasch-swiss/vre/3rd-party-services/api';
+import { ResourceLegalV2ApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { UserService } from '@dasch-swiss/vre/core/session';
-import { DspResource, PaginatedApiService } from '@dasch-swiss/vre/shared/app-common';
+import { DspResource, ProjectDataRightsService } from '@dasch-swiss/vre/shared/app-common';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
@@ -59,11 +59,7 @@ const meta: Meta<ResourceImageTabsComponent> = {
         },
         // The image tabs view embeds the rights-statement container; stub its data sources so it renders.
         provideRouter([{ path: '**', component: class {} }]),
-        {
-          provide: ProjectApiService,
-          useValue: { get: () => of({ project: { shortcode: '0001', dataAuthorship: [] } }) },
-        },
-        { provide: PaginatedApiService, useValue: { getLicenses: () => of([]) } },
+        { provide: ProjectDataRightsService, useValue: { forProject: () => of({ authorship: [] }) } },
         { provide: ResourceLegalV2ApiService, useValue: { updateResourceAuthorship: () => of(undefined) } },
         { provide: ResourceFetcherService, useValue: { reload: () => {} } },
         { provide: UserService, useValue: { user$: of(null) } },

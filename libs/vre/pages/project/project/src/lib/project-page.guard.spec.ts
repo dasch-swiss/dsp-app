@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { ActivatedRouteSnapshot, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
 import { ReadProject } from '@dasch-swiss/dsp-js';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
+import { ProjectDataRightsService } from '@dasch-swiss/vre/shared/app-common';
 import { BehaviorSubject, of, throwError } from 'rxjs';
 import { ProjectPageGuard } from './project-page.guard';
 import { ProjectPageService } from './project-page.service';
@@ -9,6 +10,7 @@ import { ProjectPageService } from './project-page.service';
 describe('ProjectPageGuard', () => {
   let guard: ProjectPageGuard;
   let projectPageServiceMock: Partial<ProjectPageService>;
+  let dataRightsServiceMock: Partial<ProjectDataRightsService>;
   let routerMock: jest.Mocked<Partial<Router>>;
   let routeSnapshot: ActivatedRouteSnapshot;
   let stateSnapshot: RouterStateSnapshot;
@@ -49,10 +51,13 @@ describe('ProjectPageGuard', () => {
       parseUrl: jest.fn().mockReturnValue(mockUrlTree),
     };
 
+    dataRightsServiceMock = { clearAll: jest.fn() };
+
     TestBed.configureTestingModule({
       providers: [
         ProjectPageGuard,
         { provide: ProjectPageService, useValue: projectPageServiceMock },
+        { provide: ProjectDataRightsService, useValue: dataRightsServiceMock },
         { provide: Router, useValue: routerMock },
       ],
     });
@@ -153,6 +158,7 @@ describe('ProjectPageGuard', () => {
         providers: [
           ProjectPageGuard,
           { provide: ProjectPageService, useValue: errorProjectServiceMock },
+          { provide: ProjectDataRightsService, useValue: { clearAll: jest.fn() } },
           { provide: Router, useValue: routerMock },
         ],
       });
