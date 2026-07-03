@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: DSP-API
-  version: v36.4.0-5-g9df9bf5
+  version: v36.4.0-9-g0edfb4b
   summary: DSP-API is part of the DaSCH Service Platform, a repository for the long-term
     preservation and reuse of data in the humanities.
   contact:
@@ -136,7 +136,7 @@ paths:
                     - http://rdfh.ch/licenses/cc-0-1.0
                     - http://rdfh.ch/licenses/cc-by-nc-4.0
                     - http://rdfh.ch/licenses/cc-by-sa-4.0
-                    dataAuthorship: []
+                    defaultDataAuthorship: []
                   status: true
                   selfjoin: false
         '400':
@@ -250,7 +250,7 @@ paths:
                     - http://rdfh.ch/licenses/cc-0-1.0
                     - http://rdfh.ch/licenses/cc-by-nc-4.0
                     - http://rdfh.ch/licenses/cc-by-sa-4.0
-                    dataAuthorship: []
+                    defaultDataAuthorship: []
                   status: true
                   selfjoin: false
         '400':
@@ -359,7 +359,7 @@ paths:
                     - http://rdfh.ch/licenses/cc-0-1.0
                     - http://rdfh.ch/licenses/cc-by-nc-4.0
                     - http://rdfh.ch/licenses/cc-by-sa-4.0
-                    dataAuthorship: []
+                    defaultDataAuthorship: []
                   status: true
                   selfjoin: false
         '400':
@@ -480,7 +480,7 @@ paths:
                     - http://rdfh.ch/licenses/cc-0-1.0
                     - http://rdfh.ch/licenses/cc-by-nc-4.0
                     - http://rdfh.ch/licenses/cc-by-sa-4.0
-                    dataAuthorship: []
+                    defaultDataAuthorship: []
                   status: true
                   selfjoin: false
         '400':
@@ -589,7 +589,7 @@ paths:
                     - http://rdfh.ch/licenses/cc-0-1.0
                     - http://rdfh.ch/licenses/cc-by-nc-4.0
                     - http://rdfh.ch/licenses/cc-by-sa-4.0
-                    dataAuthorship: []
+                    defaultDataAuthorship: []
                   status: true
                   selfjoin: false
         '400':
@@ -707,7 +707,7 @@ paths:
                       - http://rdfh.ch/licenses/cc-0-1.0
                       - http://rdfh.ch/licenses/cc-by-nc-4.0
                       - http://rdfh.ch/licenses/cc-by-sa-4.0
-                      dataAuthorship: []
+                      defaultDataAuthorship: []
                     status: true
                     selfjoin: false
                   projects:
@@ -741,7 +741,7 @@ paths:
                     - http://rdfh.ch/licenses/cc-0-1.0
                     - http://rdfh.ch/licenses/cc-by-nc-4.0
                     - http://rdfh.ch/licenses/cc-by-sa-4.0
-                    dataAuthorship: []
+                    defaultDataAuthorship: []
                   permissions:
                     groupsPerProject: {}
                     administrativePermissionsPerProject: {}
@@ -858,7 +858,7 @@ paths:
                     - http://rdfh.ch/licenses/cc-0-1.0
                     - http://rdfh.ch/licenses/cc-by-nc-4.0
                     - http://rdfh.ch/licenses/cc-by-sa-4.0
-                    dataAuthorship: []
+                    defaultDataAuthorship: []
                   status: true
                   selfjoin: false
         '400':
@@ -3757,7 +3757,7 @@ paths:
             example:
               dataLicense: http://rdfh.ch/licenses/cc-by-4.0
               dataCopyrightHolder: University of Basel
-              dataAuthorship:
+              defaultDataAuthorship:
               - Lotte Reiniger
               - Hilma af Klint
         required: true
@@ -3771,7 +3771,7 @@ paths:
               example:
                 dataLicense: http://rdfh.ch/licenses/cc-by-4.0
                 dataCopyrightHolder: University of Basel
-                dataAuthorship:
+                defaultDataAuthorship:
                 - Lotte Reiniger
                 - Hilma af Klint
         '400':
@@ -5320,7 +5320,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/q5KfSIXnRtygfY3e3cEUhg
+        example: http://rdfh.ch/users/ebrTxDYnSpyDZ7-3ePIQtw
       responses:
         '200':
           description: ''
@@ -5384,7 +5384,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/q5KfSIXnRtygfY3e3cEUhg
+        example: http://rdfh.ch/users/ebrTxDYnSpyDZ7-3ePIQtw
       responses:
         '200':
           description: ''
@@ -5448,7 +5448,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/q5KfSIXnRtygfY3e3cEUhg
+        example: http://rdfh.ch/users/ebrTxDYnSpyDZ7-3ePIQtw
       responses:
         '200':
           description: ''
@@ -5637,7 +5637,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/q5KfSIXnRtygfY3e3cEUhg
+        example: http://rdfh.ch/users/ebrTxDYnSpyDZ7-3ePIQtw
       responses:
         '200':
           description: ''
@@ -5703,7 +5703,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/q5KfSIXnRtygfY3e3cEUhg
+        example: http://rdfh.ch/users/ebrTxDYnSpyDZ7-3ePIQtw
       responses:
         '200':
           description: ''
@@ -5907,7 +5907,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/q5KfSIXnRtygfY3e3cEUhg
+        example: http://rdfh.ch/users/ebrTxDYnSpyDZ7-3ePIQtw
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -5980,7 +5980,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/q5KfSIXnRtygfY3e3cEUhg
+        example: http://rdfh.ch/users/ebrTxDYnSpyDZ7-3ePIQtw
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -6054,7 +6054,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/q5KfSIXnRtygfY3e3cEUhg
+        example: http://rdfh.ch/users/ebrTxDYnSpyDZ7-3ePIQtw
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -6127,7 +6127,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/q5KfSIXnRtygfY3e3cEUhg
+        example: http://rdfh.ch/users/ebrTxDYnSpyDZ7-3ePIQtw
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -6201,7 +6201,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/q5KfSIXnRtygfY3e3cEUhg
+        example: http://rdfh.ch/users/ebrTxDYnSpyDZ7-3ePIQtw
       - name: groupIri
         in: path
         description: The IRI of a group. Must be URL-encoded.
@@ -6274,7 +6274,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/q5KfSIXnRtygfY3e3cEUhg
+        example: http://rdfh.ch/users/ebrTxDYnSpyDZ7-3ePIQtw
       - name: groupIri
         in: path
         description: The IRI of a group. Must be URL-encoded.
@@ -6348,7 +6348,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/q5KfSIXnRtygfY3e3cEUhg
+        example: http://rdfh.ch/users/ebrTxDYnSpyDZ7-3ePIQtw
       requestBody:
         content:
           application/json:
@@ -6421,7 +6421,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/q5KfSIXnRtygfY3e3cEUhg
+        example: http://rdfh.ch/users/ebrTxDYnSpyDZ7-3ePIQtw
       requestBody:
         content:
           application/json:
@@ -6494,7 +6494,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/q5KfSIXnRtygfY3e3cEUhg
+        example: http://rdfh.ch/users/ebrTxDYnSpyDZ7-3ePIQtw
       requestBody:
         content:
           application/json:
@@ -6567,7 +6567,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/q5KfSIXnRtygfY3e3cEUhg
+        example: http://rdfh.ch/users/ebrTxDYnSpyDZ7-3ePIQtw
       requestBody:
         content:
           application/json:
@@ -6838,7 +6838,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/lists/0001/6a6FUHw_QDucPFKJWR8C-w
+        example: http://rdfh.ch/lists/0001/WnMNhkHERiO6qTQeIb6JwA
       - name: allLanguages
         in: query
         description: If true, return rdfs:label and rdfs:comment as JSON-LD arrays
@@ -6966,7 +6966,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/lists/0001/6a6FUHw_QDucPFKJWR8C-w
+        example: http://rdfh.ch/lists/0001/WnMNhkHERiO6qTQeIb6JwA
       - name: allLanguages
         in: query
         description: If true, return rdfs:label and rdfs:comment as JSON-LD arrays
@@ -16089,9 +16089,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/VersionResponse'
               example:
-                webapi: v36.4.0-5-g9df9bf5
-                buildCommit: 9df9bf5b6
-                buildTime: '2026-06-30T17:13:51Z'
+                webapi: v36.4.0-9-g0edfb4b
+                buildCommit: 0edfb4b05
+                buildTime: '2026-07-03T09:39:21Z'
                 fuseki: 6.1.0-0
                 scala: 3.3.7
                 sipi: v5.0.1
@@ -17647,7 +17647,7 @@ components:
           type: string
         dataCopyrightHolder:
           type: string
-        dataAuthorship:
+        defaultDataAuthorship:
           type: array
           items:
             type: string
@@ -17950,7 +17950,7 @@ components:
           type: string
         dataCopyrightHolder:
           type: string
-        dataAuthorship:
+        defaultDataAuthorship:
           type: array
           items:
             type: string
