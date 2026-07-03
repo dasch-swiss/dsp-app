@@ -6,7 +6,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatListModule, MatSelectionListChange } from '@angular/material/list';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { OrderByItem } from '../../model';
-import { OrderByService } from '../../service/order-by.service';
+import { SearchDerivationService } from '../../service/search-derivation.service';
+import { SearchUrlSyncService } from '../../service/search-url-sync.service';
 import { getLabel } from '../../util/labels';
 
 @Component({
@@ -19,9 +20,11 @@ import { getLabel } from '../../util/labels';
 export class OrderByComponent {
   readonly TOOLTIP_TEXT = 'Search cannot be ordered by a URI property or a property that links to a resource.';
   readonly getLabel = getLabel;
-  private orderByService: OrderByService = inject(OrderByService);
+  private readonly _derivation = inject(SearchDerivationService);
+  private readonly _urlSync = inject(SearchUrlSyncService);
 
-  orderByItems$ = this.orderByService.orderByItems$;
+  // Pure, URL-derived list (DEV-6576 Phase 3b): the active item reflects the `orderBy` param.
+  orderByItems$ = this._derivation.orderByItems$;
 
   isOpen = false;
 
@@ -31,17 +34,20 @@ export class OrderByComponent {
   }
 
   onSelectionChange(event: MatSelectionListChange) {
-    // Produce new item references so `orderByItems$` emits (see OrderByItem — items are immutable).
-    const selected = new Map(event.options.map(o => [o.value.id, o.selected]));
-    const next = this.orderByService.currentOrderBy.map(item =>
-      selected.has(item.id) ? item.withOrderBy(selected.get(item.id)!) : item
-    );
-    this.orderByService.updateOrderBy(next);
+    // The URL's `orderBy` param holds a single active id. A selection toggles it on; deselecting the
+    // active one clears it. Write straight to the URL — the derived `orderByItems$` reflects it back.
+    const turnedOn = event.options.find(o => o.selected);
+    this._writeOrderBy(turnedOn ? turnedOn.value.id : undefined);
   }
 
-  removeOrderBy(item: OrderByItem) {
-    const next = this.orderByService.currentOrderBy.map(i => (i.id === item.id ? i.withOrderBy(false) : i));
-    this.orderByService.updateOrderBy(next);
+  removeOrderBy() {
+    // The URL holds a single active id, so removing the active sort just clears it.
+    this._writeOrderBy(undefined);
     this.isOpen = false;
+  }
+
+  private _writeOrderBy(orderBy: string | undefined) {
+    // Discrete user action ⇒ push a history entry (replaceUrl:false) so back/forward steps through it.
+    this._urlSync.writeState({ orderBy }, { replaceUrl: false });
   }
 }

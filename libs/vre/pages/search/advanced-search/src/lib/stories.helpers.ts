@@ -7,6 +7,7 @@ import { IriLabelPair, OrderByItem, StatementElement } from './model';
 import { OntologyDataService } from './service/ontology-data.service';
 import { OrderByService } from './service/order-by.service';
 import { QueryExecutionService } from './service/query-execution.service';
+import { SearchDerivationService } from './service/search-derivation.service';
 import { SearchFlowLogger } from './service/search-flow-logger.service';
 import { SearchStateService } from './service/search-state.service';
 import { SearchUrlSyncService } from './service/search-url-sync.service';
@@ -16,6 +17,9 @@ const searchUrlSyncServiceStub = {
   provide: SearchUrlSyncService,
   useValue: {
     popstate$: EMPTY,
+    // The URL-derived pipeline (SearchDerivationService) subscribes to `params$` on construction, so
+    // stories that provide the real services need it to emit at least once (DEV-6576 Phase 3).
+    params$: of({}),
     readParams: () => ({}),
     writeState: () => {},
     clearAll: () => {},
@@ -117,6 +121,18 @@ export const makeOrderByServiceStub = (partial: Partial<OrderByService> = {}): P
   orderByItems$: of([] as OrderByItem[]),
   currentOrderBy: [],
   updateOrderBy: () => {},
+  ...partial,
+});
+
+/**
+ * Stub for the URL-derived order-by list (DEV-6576 Phase 3b). `OrderByComponent` now reads
+ * `orderByItems$` from `SearchDerivationService` and writes via `SearchUrlSyncService` (stubbed no-op
+ * in `STORY_PROVIDERS`), so stories drive the list from here.
+ */
+export const makeSearchDerivationServiceStub = (
+  partial: Partial<SearchDerivationService> = {}
+): Partial<SearchDerivationService> => ({
+  orderByItems$: of([] as OrderByItem[]),
   ...partial,
 });
 

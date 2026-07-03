@@ -227,6 +227,12 @@ export class FilterChipBarComponent implements OnInit {
     this.formManager.deleteStatement(stmt);
     this.confirmedStatements.update(stmts => stmts.filter(s => s.id !== stmt.id));
     this._writeFiltersToUrl();
+    // Explicit stale-orderBy cleanup (DEV-6576 D3 / US-3): if the removed filter was the active sort,
+    // clear `orderBy` from the URL. Under the URL-derived model this can no longer be emergent (the old
+    // orderByItems$ write-back is retired in 3d), so the removal handler owns it.
+    if (stmt.selectedPredicate?.iri && stmt.selectedPredicate.iri === this._urlSync.readParams().orderBy) {
+      this._urlSync.writeState({ orderBy: undefined }, { replaceUrl: false });
+    }
     this._emitSearch('filter-remove');
   }
 

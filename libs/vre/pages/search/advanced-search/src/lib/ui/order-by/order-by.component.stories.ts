@@ -4,8 +4,8 @@ import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular'
 import { of } from 'rxjs';
 import { expect, userEvent, within } from 'storybook/test';
 import { OrderByItem } from '../../model';
-import { OrderByService } from '../../service/order-by.service';
-import { makeOrderByServiceStub, STORY_PROVIDERS } from '../../stories.helpers';
+import { SearchDerivationService } from '../../service/search-derivation.service';
+import { makeSearchDerivationServiceStub, STORY_PROVIDERS } from '../../stories.helpers';
 import { toLabels } from '../../util/labels';
 import { OrderByComponent } from './order-by.component';
 
@@ -29,7 +29,7 @@ export const DisabledWhenNoItems: Story = {
       providers: [
         ...STORY_PROVIDERS,
         importProvidersFrom(OverlayModule),
-        { provide: OrderByService, useValue: makeOrderByServiceStub() },
+        { provide: SearchDerivationService, useValue: makeSearchDerivationServiceStub() },
       ],
     }),
   ],
@@ -49,11 +49,8 @@ export const EnabledWithItems: Story = {
         ...STORY_PROVIDERS,
         importProvidersFrom(OverlayModule),
         {
-          provide: OrderByService,
-          useValue: makeOrderByServiceStub({
-            orderByItems$: of(SAMPLE_ORDER_BY_ITEMS),
-            currentOrderBy: SAMPLE_ORDER_BY_ITEMS,
-          }),
+          provide: SearchDerivationService,
+          useValue: makeSearchDerivationServiceStub({ orderByItems$: of(SAMPLE_ORDER_BY_ITEMS) }),
         },
       ],
     }),
@@ -74,11 +71,8 @@ export const OpensPopoverOnClick: Story = {
         ...STORY_PROVIDERS,
         importProvidersFrom(OverlayModule),
         {
-          provide: OrderByService,
-          useValue: makeOrderByServiceStub({
-            orderByItems$: of(SAMPLE_ORDER_BY_ITEMS),
-            currentOrderBy: SAMPLE_ORDER_BY_ITEMS,
-          }),
+          provide: SearchDerivationService,
+          useValue: makeSearchDerivationServiceStub({ orderByItems$: of(SAMPLE_ORDER_BY_ITEMS) }),
         },
       ],
     }),
@@ -107,16 +101,12 @@ export const ShowsDisabledItemWithTooltip: Story = {
         ...STORY_PROVIDERS,
         importProvidersFrom(OverlayModule),
         {
-          provide: OrderByService,
-          useValue: makeOrderByServiceStub({
+          provide: SearchDerivationService,
+          useValue: makeSearchDerivationServiceStub({
             orderByItems$: of([
               new OrderByItem('prop1', toLabels('Title')),
               new OrderByItem('prop2', toLabels('Link (disabled)'), true),
             ]),
-            currentOrderBy: [
-              new OrderByItem('prop1', toLabels('Title')),
-              new OrderByItem('prop2', toLabels('Link (disabled)'), true),
-            ],
           }),
         },
       ],
