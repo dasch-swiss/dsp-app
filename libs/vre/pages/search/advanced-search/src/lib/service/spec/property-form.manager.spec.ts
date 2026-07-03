@@ -30,6 +30,18 @@ describe('PropertyFormManager', () => {
     expect(service).toBeTruthy();
   });
 
+  it('exposes its own statement store, kept in sync with the mirrored SearchStateService (Phase 3.5 Step 0)', () => {
+    service.setMainResource(mockResourceClass);
+    const statement = service.currentStatements[0];
+    statement.selectedPredicate = mockTextPredicate;
+    service.setSelectedOperator(statement, Operator.Equals);
+    service.setObjectValue(statement, 'test value');
+
+    // The manager's own store is the source of truth and matches the (still-mirrored) subject.
+    expect(service.currentStatements).toHaveLength(2);
+    expect(service.currentStatements).toEqual(searchStateService.currentState.statementElements);
+  });
+
   describe('empty statement insertion', () => {
     it('should add empty sibling statement when completing a root statement', () => {
       service.setMainResource(mockResourceClass);

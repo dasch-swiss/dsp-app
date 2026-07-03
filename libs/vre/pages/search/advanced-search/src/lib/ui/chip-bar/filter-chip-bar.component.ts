@@ -95,9 +95,10 @@ export class FilterChipBarComponent implements OnInit {
   readonly fulltextControl = new FormControl<string>('');
   readonly confirmedStatements = signal<StatementElement[]>([]);
 
-  // Derived from the reactive state stream so Angular's signal graph tracks updates.
-  private readonly _statementElements = toSignal(this._searchStateService.statementElements$, {
-    initialValue: this._searchStateService.currentState.statementElements,
+  // The ephemeral editing tree — owned by PropertyFormManager (DEV-6576 Phase 3.5). Child chips and
+  // auto-grow blanks render from here; confirmed top-level chips come from the URL (searchState$).
+  private readonly _statementElements = toSignal(this.formManager.statements$, {
+    initialValue: this.formManager.currentStatements,
   });
 
   readonly childStatementsMap = signal<Record<string, StatementElement[]>>({});
@@ -121,10 +122,8 @@ export class FilterChipBarComponent implements OnInit {
   ngOnInit(): void {
     this._ontologyDataService.init(`http://rdfh.ch/projects/${this.projectUuid}`);
 
-    // Rebuild child map whenever statements change.
-    this._searchStateService.statementElements$
-      .pipe(takeUntilDestroyed(this._destroyRef))
-      .subscribe(() => this._rebuildChildMap());
+    // Rebuild child map whenever the ephemeral editing tree changes (DEV-6576 Phase 3.5).
+    this.formManager.statements$.pipe(takeUntilDestroyed(this._destroyRef)).subscribe(() => this._rebuildChildMap());
 
     // Seed the chip-bar UI from the URL-derived state (DEV-6576 Phase 3d). This replaces the imperative
     // `_applyParams`/popstate restore: first load, back/forward, and any URL change all flow through the
@@ -176,7 +175,7 @@ export class FilterChipBarComponent implements OnInit {
   }
 
   onFilterConfirmed(chipId: string): void {
-    const stmt = this._searchStateService.currentState.statementElements.find(s => s.id === chipId);
+    const stmt = this.formManager.currentStatements.find(s => s.id === chipId);
     if (!stmt) return;
     this._logger.filterConfirmed(chipId);
     this.confirmedStatements.update(stmts => [...stmts, stmt]);
