@@ -1,9 +1,11 @@
 import { TestBed } from '@angular/core/testing';
 import { Constants } from '@dasch-swiss/dsp-js';
-import { IriLabelPair } from '../../model';
+import { BehaviorSubject, EMPTY, of } from 'rxjs';
+import { IriLabelPair, NodeValue, StatementElement } from '../../model';
 import { Operator } from '../../operators.config';
 import { makeIriLabelPair, makePredicate } from '../../testing/test-data-builders';
 import { PropertyFormManager } from '../property-form.manager';
+import { DerivedSearchState, SearchDerivationService } from '../search-derivation.service';
 import { SearchStateService } from '../search-state.service';
 
 describe('PropertyFormManager', () => {
@@ -20,7 +22,13 @@ describe('PropertyFormManager', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [PropertyFormManager, SearchStateService],
+      providers: [
+        PropertyFormManager,
+        SearchStateService,
+        // The manager seeds its store from searchState$ on construction; an inert stream leaves the
+        // default single blank root in place so these auto-grow tests drive the tree directly.
+        { provide: SearchDerivationService, useValue: { searchState$: EMPTY } as Partial<SearchDerivationService> },
+      ],
     });
     service = TestBed.inject(PropertyFormManager);
     searchStateService = TestBed.inject(SearchStateService);
@@ -40,6 +48,90 @@ describe('PropertyFormManager', () => {
     // The manager's own store is the source of truth and matches the (still-mirrored) subject.
     expect(service.currentStatements).toHaveLength(2);
     expect(service.currentStatements).toEqual(searchStateService.currentState.statementElements);
+  });
+
+  describe('reactive seed from searchState$ (Phase 3.5 Step 2)', () => {
+    // Build the manager against a controllable searchState$ so we can assert the seed re-keys children
+    // onto URL-confirmed parents.
+    const buildWithState = (statements: StatementElement[]) => {
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({
+        providers: [
+          PropertyFormManager,
+          SearchStateService,
+          {
+            provide: SearchDerivationService,
+            useValue: {
+              searchState$: of({ resourceClass: null, statements, orderByItems: [] }),
+            } as Partial<SearchDerivationService>,
+          },
+        ],
+      });
+      return TestBed.inject(PropertyFormManager);
+    };
+
+    const makeConfirmedLink = (): StatementElement => {
+      const stmt = new StatementElement(new NodeValue(mockResourceClass.iri, mockResourceClass), 0);
+      stmt.selectedPredicate = mockLinkPredicate;
+      stmt.selectedOperator = Operator.Matches;
+      stmt.selectedObjectValue = mockLinkedResourceClass;
+      return stmt;
+    };
+
+    it('leaves a single blank root when there are no confirmed statements', () => {
+      const svc = buildWithState([]);
+      expect(svc.currentStatements).toHaveLength(1);
+      expect(svc.currentStatements[0].isPristine).toBe(true);
+    });
+
+    it('appends a trailing blank child under a confirmed link statement that opens a sub-query', () => {
+      const parent = makeConfirmedLink();
+      const svc = buildWithState([parent]);
+
+      const children = svc.currentStatements.filter(s => s.parentId === parent.id);
+      expect(children).toHaveLength(1);
+      expect(children[0].isPristine).toBe(true);
+      expect(children[0].statementLevel).toBe(1);
+      expect(children[0].subjectNode?.value?.iri).toBe(mockLinkedResourceClass.iri);
+    });
+
+    it('does not add a child under a plain value statement', () => {
+      const stmt = new StatementElement(new NodeValue(mockResourceClass.iri, mockResourceClass), 0);
+      stmt.selectedPredicate = mockTextPredicate;
+      stmt.selectedOperator = Operator.Equals;
+      stmt.selectedObjectValue = 'x';
+      const svc = buildWithState([stmt]);
+
+      expect(svc.currentStatements.filter(s => s.parentId === stmt.id)).toHaveLength(0);
+    });
+
+    it('re-keys the blank child onto the new parent identity on a subsequent URL emission', () => {
+      // First emission: parent A + its blank child. Second emission: a fresh parent B (new id, as
+      // buildStatementsFromFilterParams produces on every URL change). The child must hang off B, not A.
+      const parentA = makeConfirmedLink();
+      const store$ = new BehaviorSubject<DerivedSearchState>({
+        resourceClass: null,
+        statements: [parentA],
+        orderByItems: [],
+      });
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({
+        providers: [
+          PropertyFormManager,
+          SearchStateService,
+          { provide: SearchDerivationService, useValue: { searchState$: store$ } as Partial<SearchDerivationService> },
+        ],
+      });
+      const svc = TestBed.inject(PropertyFormManager);
+      expect(svc.currentStatements.some(s => s.parentId === parentA.id && s.isPristine)).toBe(true);
+
+      const parentB = makeConfirmedLink(); // fresh instance → different id
+      store$.next({ resourceClass: null, statements: [parentB], orderByItems: [] });
+
+      expect(parentB.id).not.toBe(parentA.id);
+      expect(svc.currentStatements.some(s => s.parentId === parentB.id && s.isPristine)).toBe(true);
+      expect(svc.currentStatements.some(s => s.parentId === parentA.id)).toBe(false);
+    });
   });
 
   describe('empty statement insertion', () => {

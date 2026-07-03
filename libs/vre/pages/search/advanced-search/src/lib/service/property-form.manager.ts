@@ -1,7 +1,9 @@
-import { Injectable, inject } from '@angular/core';
+import { DestroyRef, Injectable, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { BehaviorSubject, distinctUntilChanged, Observable } from 'rxjs';
-import { StatementElement, Predicate, IriLabelPair, NodeValue } from '../model';
+import { PropertyObjectType, StatementElement, Predicate, IriLabelPair, NodeValue } from '../model';
 import { Operator } from '../operators.config';
+import { SearchDerivationService } from './search-derivation.service';
 import { SearchStateService } from './search-state.service';
 
 /**
@@ -17,6 +19,8 @@ import { SearchStateService } from './search-state.service';
 @Injectable()
 export class PropertyFormManager {
   private searchStateService = inject(SearchStateService);
+  private readonly _derivation = inject(SearchDerivationService);
+  private readonly _destroyRef = inject(DestroyRef);
 
   // The ephemeral tree — this service's own source of truth for in-progress editing.
   private readonly _statements = new BehaviorSubject<StatementElement[]>([new StatementElement()]);
@@ -27,6 +31,42 @@ export class PropertyFormManager {
 
   get currentStatements(): StatementElement[] {
     return this._statements.value;
+  }
+
+  constructor() {
+    // Reactive seed (DEV-6576 Phase 3.5 Step 2): on every URL change the confirmed tree comes from
+    // `searchState$` with fresh StatementElement instances (new ids). Rebuild the ephemeral store so
+    // in-progress children re-key onto the *current* confirmed parents, and each confirmed link/
+    // resource statement gets a trailing blank child to edit. Unconfirmed rows do not survive a URL
+    // change — that is correct under D4/D6 (only the URL is durable). No DI cycle: SearchDerivationService
+    // does not depend on PropertyFormManager.
+    this._derivation.searchState$
+      .pipe(takeUntilDestroyed(this._destroyRef))
+      .subscribe(state => this._seedFromConfirmed(state.statements));
+  }
+
+  /**
+   * Rebuild the editing tree from the URL-confirmed statements: keep the confirmed statements as-is,
+   * then append a trailing blank child under every confirmed statement that opens a sub-query and does
+   * not already have a pristine child. A single blank root row is preserved when there are no confirmed
+   * statements so the user can start a filter.
+   */
+  private _seedFromConfirmed(confirmed: StatementElement[]): void {
+    if (confirmed.length === 0) {
+      this._statements.next([new StatementElement()]);
+      return;
+    }
+    const next = [...confirmed];
+    for (const stmt of confirmed) {
+      if (this._opensSubQuery(stmt) && !next.some(s => s.parentId === stmt.id && !s.isValidAndComplete)) {
+        next.push(new StatementElement(stmt.selectedObjectNode as NodeValue, stmt.statementLevel + 1, stmt));
+      }
+    }
+    this._statements.next(next);
+  }
+
+  private _opensSubQuery(statement: StatementElement): boolean {
+    return statement.isValidAndComplete && statement.objectType === PropertyObjectType.ResourceObject;
   }
 
   /** Set the tree (new array ref) and mirror to SearchStateService until Step 1 repoints consumers. */
