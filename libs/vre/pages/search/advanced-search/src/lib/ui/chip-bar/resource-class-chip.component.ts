@@ -11,6 +11,7 @@ import { ALL_RESOURCE_CLASSES } from '../../constants';
 import { IriLabelPair } from '../../model';
 import { OntologyDataService } from '../../service/ontology-data.service';
 import { PropertyFormManager } from '../../service/property-form.manager';
+import { SearchDerivationService } from '../../service/search-derivation.service';
 import { SearchStateService } from '../../service/search-state.service';
 import { SearchUrlSyncService } from '../../service/search-url-sync.service';
 import { CHIP_POPOVER_POSITIONS } from './chip-bar.helpers';
@@ -79,6 +80,7 @@ export class ResourceClassChipComponent {
   readonly pickPreferredLanguageString = pickPreferredLanguageString;
   private readonly _dataService = inject(OntologyDataService);
   private readonly _searchStateService = inject(SearchStateService);
+  private readonly _derivation = inject(SearchDerivationService);
   private readonly _formManager = inject(PropertyFormManager);
   private readonly _urlSync = inject(SearchUrlSyncService);
   private readonly _localizationService = inject(LocalizationService);
@@ -89,14 +91,16 @@ export class ResourceClassChipComponent {
   isOpen = false;
 
   readonly resourceClasses$ = this._dataService.resourceClasses$;
-  readonly classLabel$ = this._searchStateService.selectedResourceClass$.pipe(
-    map(rc =>
-      rc?.iri
-        ? pickPreferredLanguageString(rc.labels, this._localizationService.currentLanguage)
+  // The selected class is URL-derived (DEV-6576 Phase 3.5 Step 4): read it from searchState$, not the
+  // committed SearchStateService subject.
+  readonly classLabel$ = this._derivation.searchState$.pipe(
+    map(state =>
+      state.resourceClass?.iri
+        ? pickPreferredLanguageString(state.resourceClass.labels, this._localizationService.currentLanguage)
         : 'All resource classes'
     )
   );
-  readonly selectedClassIri$ = this._searchStateService.selectedResourceClass$.pipe(map(rc => rc?.iri ?? ''));
+  readonly selectedClassIri$ = this._derivation.searchState$.pipe(map(state => state.resourceClass?.iri ?? ''));
 
   onClassSelected(selection: IriLabelPair): void {
     if (!selection) return;

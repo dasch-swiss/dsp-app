@@ -4,21 +4,18 @@ import { BehaviorSubject, distinctUntilChanged, Observable } from 'rxjs';
 import { PropertyObjectType, StatementElement, Predicate, IriLabelPair, NodeValue } from '../model';
 import { Operator } from '../operators.config';
 import { SearchDerivationService } from './search-derivation.service';
-import { SearchStateService } from './search-state.service';
 
 /**
  * Owns the **ephemeral** in-progress statement tree (blank rows, in-progress children, unconfirmed
  * edits) plus the auto-grow logic that inserts trailing blank siblings/children as the user fills a
  * filter in (DEV-6576 Phase 3.5).
  *
- * Migration note: the tree lives in this service's own `_statements` store. During Phase 3.5 Step 0
- * every mutation is **mirrored** to `SearchStateService` as well (dual-write), so existing consumers
- * still reading `SearchStateService.statementElements$` keep working until they are repointed at
- * `statements$` (Step 1). Steps 3+ drop the mirror and the `SearchStateService` dependency entirely.
+ * The tree lives entirely in this service's own `_statements` store; it is seeded from the URL via
+ * `searchState$` and never writes to `SearchStateService` (DEV-6576 Phase 3.5 Step 3 — the mirror
+ * is gone). Consumers read `statements$`/`currentStatements`.
  */
 @Injectable()
 export class PropertyFormManager {
-  private searchStateService = inject(SearchStateService);
   private readonly _derivation = inject(SearchDerivationService);
   private readonly _destroyRef = inject(DestroyRef);
 
@@ -69,21 +66,16 @@ export class PropertyFormManager {
     return statement.isValidAndComplete && statement.objectType === PropertyObjectType.ResourceObject;
   }
 
-  /** Set the tree (new array ref) and mirror to SearchStateService until Step 1 repoints consumers. */
+  /** Set the tree with a new array reference so `statements$` emits. */
   private _setStatements(statements: StatementElement[]): void {
     this._statements.next([...statements]);
-    this.searchStateService.patchState({ statementElements: statements });
   }
 
   setMainResource(resourceClass: IriLabelPair): void {
+    // Reset the ephemeral editing tree to a single root statement seeded with the new class. The
+    // selected class + orderBy are URL params owned by resource-class-chip (`writeState`), not here.
     const statement = new StatementElement(new NodeValue(resourceClass.iri, resourceClass), 0);
     this._statements.next([statement]);
-    // Mirror (dual-write): also reset the committed subject's class/orderBy as before.
-    this.searchStateService.patchState({
-      selectedResourceClass: resourceClass,
-      statementElements: [statement],
-      orderBy: [],
-    });
   }
 
   deleteStatement(statement: StatementElement): void {

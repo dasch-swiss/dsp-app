@@ -6,11 +6,9 @@ import { Operator } from '../../operators.config';
 import { makeIriLabelPair, makePredicate } from '../../testing/test-data-builders';
 import { PropertyFormManager } from '../property-form.manager';
 import { DerivedSearchState, SearchDerivationService } from '../search-derivation.service';
-import { SearchStateService } from '../search-state.service';
 
 describe('PropertyFormManager', () => {
   let service: PropertyFormManager;
-  let searchStateService: SearchStateService;
 
   const mockResourceClass: IriLabelPair = makeIriLabelPair('http://test.org/Class', 'TestClass');
 
@@ -24,30 +22,28 @@ describe('PropertyFormManager', () => {
     TestBed.configureTestingModule({
       providers: [
         PropertyFormManager,
-        SearchStateService,
         // The manager seeds its store from searchState$ on construction; an inert stream leaves the
         // default single blank root in place so these auto-grow tests drive the tree directly.
         { provide: SearchDerivationService, useValue: { searchState$: EMPTY } as Partial<SearchDerivationService> },
       ],
     });
     service = TestBed.inject(PropertyFormManager);
-    searchStateService = TestBed.inject(SearchStateService);
   });
 
   it('should be created', () => {
     expect(service).toBeTruthy();
   });
 
-  it('exposes its own statement store, kept in sync with the mirrored SearchStateService (Phase 3.5 Step 0)', () => {
+  it('holds the editing tree in its own store (no SearchStateService dependency — Phase 3.5 Step 3)', () => {
     service.setMainResource(mockResourceClass);
     const statement = service.currentStatements[0];
     statement.selectedPredicate = mockTextPredicate;
     service.setSelectedOperator(statement, Operator.Equals);
     service.setObjectValue(statement, 'test value');
 
-    // The manager's own store is the source of truth and matches the (still-mirrored) subject.
+    // Completing the root grows a trailing blank sibling — all in the manager's own store.
     expect(service.currentStatements).toHaveLength(2);
-    expect(service.currentStatements).toEqual(searchStateService.currentState.statementElements);
+    expect(service.currentStatements[1].isPristine).toBe(true);
   });
 
   describe('reactive seed from searchState$ (Phase 3.5 Step 2)', () => {
@@ -58,7 +54,6 @@ describe('PropertyFormManager', () => {
       TestBed.configureTestingModule({
         providers: [
           PropertyFormManager,
-          SearchStateService,
           {
             provide: SearchDerivationService,
             useValue: {
@@ -118,7 +113,6 @@ describe('PropertyFormManager', () => {
       TestBed.configureTestingModule({
         providers: [
           PropertyFormManager,
-          SearchStateService,
           { provide: SearchDerivationService, useValue: { searchState$: store$ } as Partial<SearchDerivationService> },
         ],
       });
@@ -137,13 +131,13 @@ describe('PropertyFormManager', () => {
   describe('empty statement insertion', () => {
     it('should add empty sibling statement when completing a root statement', () => {
       service.setMainResource(mockResourceClass);
-      const statement = searchStateService.currentState.statementElements[0];
+      const statement = service.currentStatements[0];
 
       statement.selectedPredicate = mockTextPredicate;
       service.setSelectedOperator(statement, Operator.Equals);
       service.setObjectValue(statement, 'test value');
 
-      const statements = searchStateService.currentState.statementElements;
+      const statements = service.currentStatements;
       expect(statements).toHaveLength(2);
       expect(statements[1].isPristine).toBe(true);
       expect(statements[1].subjectNode?.value?.iri).toBe(mockResourceClass.iri);
@@ -151,7 +145,7 @@ describe('PropertyFormManager', () => {
 
     it('should insert empty statement at correct position after completed statement', () => {
       service.setMainResource(mockResourceClass);
-      const firstStatement = searchStateService.currentState.statementElements[0];
+      const firstStatement = service.currentStatements[0];
 
       // Complete first statement
       firstStatement.selectedPredicate = mockTextPredicate;
@@ -159,12 +153,12 @@ describe('PropertyFormManager', () => {
       service.setObjectValue(firstStatement, 'value 1');
 
       // Complete second statement
-      const secondStatement = searchStateService.currentState.statementElements[1];
+      const secondStatement = service.currentStatements[1];
       secondStatement.selectedPredicate = mockTextPredicate;
       service.setSelectedOperator(secondStatement, Operator.Equals);
       service.setObjectValue(secondStatement, 'value 2');
 
-      const statements = searchStateService.currentState.statementElements;
+      const statements = service.currentStatements;
       expect(statements).toHaveLength(3);
       expect(statements[0].selectedObjectValue).toBe('value 1');
       expect(statements[1].selectedObjectValue).toBe('value 2');
@@ -173,13 +167,13 @@ describe('PropertyFormManager', () => {
 
     it('should not add empty statement when statement is incomplete', () => {
       service.setMainResource(mockResourceClass);
-      const statement = searchStateService.currentState.statementElements[0];
+      const statement = service.currentStatements[0];
 
       statement.selectedPredicate = mockTextPredicate;
       service.setSelectedOperator(statement, Operator.Equals);
       // Not setting object value - statement is incomplete
 
-      const statements = searchStateService.currentState.statementElements;
+      const statements = service.currentStatements;
       expect(statements).toHaveLength(1);
     });
   });
@@ -187,13 +181,13 @@ describe('PropertyFormManager', () => {
   describe('child statement management', () => {
     it('should add empty child statement when completing a link property with Matches operator', () => {
       service.setMainResource(mockResourceClass);
-      const statement = searchStateService.currentState.statementElements[0];
+      const statement = service.currentStatements[0];
 
       statement.selectedPredicate = mockLinkPredicate;
       service.setSelectedOperator(statement, Operator.Matches);
       service.setObjectValue(statement, mockLinkedResourceClass);
 
-      const statements = searchStateService.currentState.statementElements;
+      const statements = service.currentStatements;
       const childStatements = statements.filter(s => s.parentId === statement.id);
 
       expect(childStatements).toHaveLength(1);
@@ -204,7 +198,7 @@ describe('PropertyFormManager', () => {
 
     it('should add new empty child statement when completing an existing child statement', () => {
       service.setMainResource(mockResourceClass);
-      const parentStatement = searchStateService.currentState.statementElements[0];
+      const parentStatement = service.currentStatements[0];
 
       // Complete parent with link property
       parentStatement.selectedPredicate = mockLinkPredicate;
@@ -212,7 +206,7 @@ describe('PropertyFormManager', () => {
       service.setObjectValue(parentStatement, mockLinkedResourceClass);
 
       // Get and complete the child statement
-      let statements = searchStateService.currentState.statementElements;
+      let statements = service.currentStatements;
       const childStatement = statements.find(s => s.parentId === parentStatement.id)!;
 
       childStatement.selectedPredicate = mockTextPredicate;
@@ -220,7 +214,7 @@ describe('PropertyFormManager', () => {
       service.setObjectValue(childStatement, 'child value');
 
       // Should have added another empty child
-      statements = searchStateService.currentState.statementElements;
+      statements = service.currentStatements;
       const childStatements = statements.filter(s => s.parentId === parentStatement.id);
 
       expect(childStatements).toHaveLength(2);
@@ -230,7 +224,7 @@ describe('PropertyFormManager', () => {
 
     it('should insert child statement at correct position after existing children', () => {
       service.setMainResource(mockResourceClass);
-      const parentStatement = searchStateService.currentState.statementElements[0];
+      const parentStatement = service.currentStatements[0];
 
       // Complete parent with link property
       parentStatement.selectedPredicate = mockLinkPredicate;
@@ -238,20 +232,20 @@ describe('PropertyFormManager', () => {
       service.setObjectValue(parentStatement, mockLinkedResourceClass);
 
       // Complete first child
-      let statements = searchStateService.currentState.statementElements;
+      let statements = service.currentStatements;
       const firstChild = statements.find(s => s.parentId === parentStatement.id)!;
       firstChild.selectedPredicate = mockTextPredicate;
       service.setSelectedOperator(firstChild, Operator.Equals);
       service.setObjectValue(firstChild, 'first child');
 
       // Complete second child
-      statements = searchStateService.currentState.statementElements;
+      statements = service.currentStatements;
       const secondChild = statements.filter(s => s.parentId === parentStatement.id)[1];
       secondChild.selectedPredicate = mockTextPredicate;
       service.setSelectedOperator(secondChild, Operator.Equals);
       service.setObjectValue(secondChild, 'second child');
 
-      statements = searchStateService.currentState.statementElements;
+      statements = service.currentStatements;
       const parentIndex = statements.findIndex(s => s.id === parentStatement.id);
       const childStatements = statements.filter(s => s.parentId === parentStatement.id);
 
@@ -267,7 +261,7 @@ describe('PropertyFormManager', () => {
 
     it('should remove children when parent object value changes', () => {
       service.setMainResource(mockResourceClass);
-      const parentStatement = searchStateService.currentState.statementElements[0];
+      const parentStatement = service.currentStatements[0];
 
       // Complete parent with link property
       parentStatement.selectedPredicate = mockLinkPredicate;
@@ -275,7 +269,7 @@ describe('PropertyFormManager', () => {
       service.setObjectValue(parentStatement, mockLinkedResourceClass);
 
       // Verify child exists
-      let statements = searchStateService.currentState.statementElements;
+      let statements = service.currentStatements;
       expect(statements.filter(s => s.parentId === parentStatement.id)).toHaveLength(1);
 
       // Change parent's object value
@@ -283,7 +277,7 @@ describe('PropertyFormManager', () => {
       service.setObjectValue(parentStatement, newLinkedClass);
 
       // Old children should be removed, new child added
-      statements = searchStateService.currentState.statementElements;
+      statements = service.currentStatements;
       const children = statements.filter(s => s.parentId === parentStatement.id);
       expect(children).toHaveLength(1);
       expect(children[0].subjectNode?.value?.iri).toBe(newLinkedClass.iri);
@@ -293,7 +287,7 @@ describe('PropertyFormManager', () => {
   describe('deleteStatement', () => {
     it('should remove all children when deleting parent statement', () => {
       service.setMainResource(mockResourceClass);
-      const parentStatement = searchStateService.currentState.statementElements[0];
+      const parentStatement = service.currentStatements[0];
 
       // Complete parent with link property to create child
       parentStatement.selectedPredicate = mockLinkPredicate;
@@ -301,7 +295,7 @@ describe('PropertyFormManager', () => {
       service.setObjectValue(parentStatement, mockLinkedResourceClass);
 
       // Verify we have parent + empty sibling + child
-      let statements = searchStateService.currentState.statementElements;
+      let statements = service.currentStatements;
       const childId = statements.find(s => s.parentId === parentStatement.id)?.id;
       expect(childId).toBeDefined();
 
@@ -309,14 +303,14 @@ describe('PropertyFormManager', () => {
       service.deleteStatement(parentStatement);
 
       // Parent and child should be removed
-      statements = searchStateService.currentState.statementElements;
+      statements = service.currentStatements;
       expect(statements.find(s => s.id === parentStatement.id)).toBeUndefined();
       expect(statements.find(s => s.id === childId)).toBeUndefined();
     });
 
     it('should keep statements after deleted parent', () => {
       service.setMainResource(mockResourceClass);
-      const firstStatement = searchStateService.currentState.statementElements[0];
+      const firstStatement = service.currentStatements[0];
 
       // Complete first statement (no children)
       firstStatement.selectedPredicate = mockTextPredicate;
@@ -324,7 +318,7 @@ describe('PropertyFormManager', () => {
       service.setObjectValue(firstStatement, 'value 1');
 
       // Complete second statement
-      let statements = searchStateService.currentState.statementElements;
+      let statements = service.currentStatements;
       const secondStatement = statements[1];
       secondStatement.selectedPredicate = mockTextPredicate;
       service.setSelectedOperator(secondStatement, Operator.Equals);
@@ -334,7 +328,7 @@ describe('PropertyFormManager', () => {
       service.deleteStatement(firstStatement);
 
       // Second statement and empty third should remain
-      statements = searchStateService.currentState.statementElements;
+      statements = service.currentStatements;
       expect(statements.find(s => s.id === firstStatement.id)).toBeUndefined();
       expect(statements.find(s => s.id === secondStatement.id)).toBeDefined();
     });

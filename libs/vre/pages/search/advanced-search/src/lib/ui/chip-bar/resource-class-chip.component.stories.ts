@@ -3,17 +3,25 @@ import { importProvidersFrom } from '@angular/core';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
 import { expect, userEvent, within } from 'storybook/test';
-import { IriLabelPair } from '../../model';
 import { OntologyDataService } from '../../service/ontology-data.service';
 import { PropertyFormManager } from '../../service/property-form.manager';
+import { DerivedSearchState, SearchDerivationService } from '../../service/search-derivation.service';
 import { SearchStateService } from '../../service/search-state.service';
 import {
   makeOntologyDataServiceStub,
+  makeSearchDerivationServiceStub,
   makeSearchStateServiceStub,
   SAMPLE_RESOURCE_CLASSES,
   STORY_PROVIDERS,
 } from '../../stories.helpers';
 import { ResourceClassChipComponent } from './resource-class-chip.component';
+
+const derivationWithClass = (resourceClass: DerivedSearchState['resourceClass']) => ({
+  provide: SearchDerivationService,
+  useValue: makeSearchDerivationServiceStub({
+    searchState$: of({ resourceClass, statements: [], orderByItems: [] }),
+  }),
+});
 
 const meta: Meta<ResourceClassChipComponent> = {
   title: 'Search / Advanced Search / Chip Bar / 2. Resource Class Chip',
@@ -27,6 +35,7 @@ const baseProviders = [
   importProvidersFrom(OverlayModule),
   { provide: OntologyDataService, useValue: makeOntologyDataServiceStub() },
   { provide: SearchStateService, useValue: makeSearchStateServiceStub() },
+  derivationWithClass(null),
   PropertyFormManager,
 ];
 
@@ -38,12 +47,8 @@ export const ShowsAllResourceClasses: Story = {
         ...STORY_PROVIDERS,
         importProvidersFrom(OverlayModule),
         { provide: OntologyDataService, useValue: makeOntologyDataServiceStub() },
-        {
-          provide: SearchStateService,
-          useValue: makeSearchStateServiceStub({
-            selectedResourceClass$: of(null as unknown as IriLabelPair),
-          }),
-        },
+        { provide: SearchStateService, useValue: makeSearchStateServiceStub() },
+        derivationWithClass(null),
         PropertyFormManager,
       ],
     }),
@@ -64,12 +69,8 @@ export const ShowsSelectedClass: Story = {
         ...STORY_PROVIDERS,
         importProvidersFrom(OverlayModule),
         { provide: OntologyDataService, useValue: makeOntologyDataServiceStub() },
-        {
-          provide: SearchStateService,
-          useValue: makeSearchStateServiceStub({
-            selectedResourceClass$: of(SAMPLE_RESOURCE_CLASSES[0]),
-          }),
-        },
+        { provide: SearchStateService, useValue: makeSearchStateServiceStub() },
+        derivationWithClass(SAMPLE_RESOURCE_CLASSES[0]),
         PropertyFormManager,
       ],
     }),
