@@ -73,19 +73,23 @@ import { CreateResourceFormInterface } from './create-resource-form.interface';
              to confirm or edit. -->
         <h3>{{ 'legal.dataSide.heading' | translate }}</h3>
         <app-create-resource-form-row [label]="'legal.dataSide.license' | translate">
-          <div style="display: flex; align-items: center; gap: 4px; padding: 16px 0">
+          <div
+            style="display: flex; align-items: center; gap: 4px; padding: 16px 0"
+            [attr.aria-label]="'legal.dataSide.readOnlyValue' | translate: { value: dataLicenseLabel || '—' }">
             @if (dataLicenseUrl) {
               <a [href]="dataLicenseUrl" target="_blank" rel="noopener">{{ dataLicenseLabel }}</a>
             } @else {
               <span>{{ dataLicenseLabel || '—' }}</span>
             }
-            <mat-icon style="font-size: 16px; height: 16px; width: 16px">lock</mat-icon>
+            <mat-icon aria-hidden="true" style="font-size: 16px; height: 16px; width: 16px">lock</mat-icon>
           </div>
         </app-create-resource-form-row>
         <app-create-resource-form-row [label]="'legal.dataSide.copyrightHolder' | translate">
-          <div style="display: flex; align-items: center; gap: 4px; padding: 16px 0">
+          <div
+            style="display: flex; align-items: center; gap: 4px; padding: 16px 0"
+            [attr.aria-label]="'legal.dataSide.readOnlyValue' | translate: { value: dataCopyrightHolder || '—' }">
             <span>{{ dataCopyrightHolder || '—' }}</span>
-            <mat-icon style="font-size: 16px; height: 16px; width: 16px">lock</mat-icon>
+            <mat-icon aria-hidden="true" style="font-size: 16px; height: 16px; width: 16px">lock</mat-icon>
           </div>
         </app-create-resource-form-row>
         <app-create-resource-form-row [label]="'legal.dataSide.authorship' | translate">

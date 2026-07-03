@@ -46,7 +46,7 @@ type ResourceSideForm = FormGroup<{
       <mat-tab [label]="'legal.dataSide.settings.resourceSide' | translate">
         <section class="section">
           <div style="display: flex; justify-content: center; margin: 16px 0">
-            <div role="note" style="border: 1px solid; padding: 16px">
+            <div role="status" style="border: 1px solid; padding: 16px">
               {{ 'legal.dataSide.settings.liveWarning' | translate }}
             </div>
           </div>
@@ -66,16 +66,15 @@ type ResourceSideForm = FormGroup<{
               </mat-select>
             </mat-form-field>
 
-            <p class="mat-caption" style="margin: 0 0 4px">{{ 'legal.dataSide.settings.holderHelper' | translate }}</p>
-            <mat-form-field style="width: 100%">
+            <mat-form-field style="width: 100%" subscriptSizing="dynamic">
               <mat-label>{{ 'legal.dataSide.settings.holderLabel' | translate }}</mat-label>
               <input matInput formControlName="copyrightHolder" autocomplete="off" />
+              <mat-hint>{{ 'legal.dataSide.settings.holderHelper' | translate }}</mat-hint>
             </mat-form-field>
 
-            <!-- TODO(verify-locally): mat-chips wiring (version-specific API for chip-grid + input token end). -->
             <mat-form-field style="width: 100%">
               <mat-label>{{ 'legal.dataSide.authorship' | translate }}</mat-label>
-              <mat-chip-grid #chipGrid>
+              <mat-chip-grid #chipGrid [attr.aria-label]="'legal.dataSide.authorship' | translate">
                 @for (author of resourceSideForm.controls.dataAuthorship.value; track $index) {
                   <mat-chip-row (removed)="removeAuthor($index)">
                     {{ author }}
@@ -89,6 +88,7 @@ type ResourceSideForm = FormGroup<{
                 }
                 <input
                   autocomplete="off"
+                  [attr.aria-label]="'legal.dataSide.authorship' | translate"
                   [matChipInputFor]="chipGrid"
                   (matChipInputTokenEnd)="addAuthor($event.value); $event.chipInput!.clear()" />
               </mat-chip-grid>

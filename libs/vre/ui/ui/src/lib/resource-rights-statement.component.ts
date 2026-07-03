@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -66,6 +66,7 @@ import { TranslatePipe } from '@ngx-translate/core';
                     </mat-chip-row>
                   }
                   <input
+                    #chipInput
                     autocomplete="off"
                     [matChipInputFor]="chipGrid"
                     (matChipInputTokenEnd)="addEditAuthor($event)" />
@@ -100,6 +101,7 @@ import { TranslatePipe } from '@ngx-translate/core';
               @if (canEditAuthorship) {
                 <!-- Inline, always-visible edit affordance, right after the value (discoverable, close to the text). -->
                 <button
+                  #editButton
                   type="button"
                   class="edit-authorship"
                   [matTooltip]="'legal.dataSide.edit' | translate"
@@ -113,8 +115,8 @@ import { TranslatePipe } from '@ngx-translate/core';
         </div>
       </section>
     } @else if (isAdmin) {
-      <section class="rights-statement uncategorized">
-        <mat-icon color="warn">warning</mat-icon>
+      <section class="rights-statement uncategorized" role="status">
+        <mat-icon aria-hidden="true" color="warn">warning</mat-icon>
         <span>{{ 'legal.dataSide.uncategorized' | translate }}</span>
         <button type="button" mat-button color="primary" (click)="editLegalInfo.emit()">
           {{ 'legal.dataSide.editLegalInfo' | translate }}
@@ -136,7 +138,8 @@ import { TranslatePipe } from '@ngx-translate/core';
       }
       .label {
         color: rgb(107, 114, 128);
-        width: 150px;
+        /* rem so the column scales with user font-size settings (WCAG 1.4.4, 1.4.10). */
+        width: 9.375rem;
         text-align: right;
         padding: 6px 16px;
         line-height: normal;
@@ -152,7 +155,7 @@ import { TranslatePipe } from '@ngx-translate/core';
       .label-start .label {
         text-align: left;
         padding-left: 0;
-        width: 130px;
+        width: 8.125rem;
       }
       /* Inline, always-visible authorship edit affordance, sitting right after the value
          (not a hover pill — discoverable and close to the text). */
@@ -162,7 +165,10 @@ import { TranslatePipe } from '@ngx-translate/core';
         justify-content: center;
         vertical-align: middle;
         margin-left: 6px;
-        padding: 2px;
+        /* Hit-area ≥ 24×24 CSS px (WCAG 2.5.8): 18px icon + 4px padding each side = 26px. */
+        min-width: 24px;
+        min-height: 24px;
+        padding: 4px;
         border: none;
         background: none;
         color: rgb(107, 114, 128);
@@ -253,6 +259,9 @@ export class ResourceRightsStatementComponent {
   /** Working copy of the authorship list while editing (committed only on save). */
   editAuthorshipList: string[] = [];
 
+  @ViewChild('chipInput') private _chipInput?: ElementRef<HTMLInputElement>;
+  @ViewChild('editButton') private _editButton?: ElementRef<HTMLButtonElement>;
+
   get configured(): boolean {
     return !!this.licenseLabel;
   }
@@ -262,6 +271,8 @@ export class ResourceRightsStatementComponent {
     const valueToEdit = this.resourceAuthorship?.length ? this.resourceAuthorship : this.authorship;
     this.editAuthorshipList = [...valueToEdit];
     this.editing = true;
+    // Move focus into the chip input once Angular has rendered the editor branch (WCAG 2.4.3).
+    queueMicrotask(() => this._chipInput?.nativeElement.focus());
   }
 
   addEditAuthor(event: MatChipInputEvent): void {
@@ -279,11 +290,18 @@ export class ResourceRightsStatementComponent {
   /** Discard edits and close the editor. */
   cancelEdit(): void {
     this.editing = false;
+    this._restoreFocusToEditButton();
   }
 
   /** Commit the edited list to the parent and close the editor. */
   saveEdit(): void {
     this.saveAuthorship.emit([...this.editAuthorshipList]);
     this.editing = false;
+    this._restoreFocusToEditButton();
+  }
+
+  private _restoreFocusToEditButton(): void {
+    // Restore focus once Angular has rendered the read-only branch (WCAG 2.4.3).
+    queueMicrotask(() => this._editButton?.nativeElement.focus());
   }
 }

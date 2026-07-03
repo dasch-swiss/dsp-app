@@ -10,6 +10,7 @@
       "uncategorized": "This resource's legal information hasn't been set yet — please add it.",
       "editLegalInfo": "Edit legal info",
       "noAuthorshipFallback": "No authorship recorded for this resource. Project default: {{default}}",
+      "readOnlyValue": "{{value}}, read-only",
       "settings": {
         "resourceSide": "Resource side",
         "assetSide": "Asset side",
