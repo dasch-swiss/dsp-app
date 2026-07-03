@@ -2,7 +2,7 @@
 title: "refactor: Advanced Search — URL as Single Source of Truth"
 type: refactor
 date: 2026-07-02
-status: in-progress (Phase 0 ✅, Phase 1 ✅, Phase 2 ✅, P2.5 ✅, 3a ✅, 3a.1 ✅, 3b+3c ✅ — Phase 3d next; E2E checklist due before 3d)
+status: in-progress (Phase 0 ✅, Phase 1 ✅, Phase 2 ✅, P2.5 ✅, 3a ✅, 3a.1 ✅, 3b+3c ✅, E2E ✅ 8/8 vs live dev — Phase 3d next)
 repository: /Users/julien/WebstormProjects/dsp-das
 ---
 
@@ -462,6 +462,17 @@ Concrete, named test cases per phase. Existing coverage (verified 2026-07-03): `
 - **History semantics:** tie specific actions to push-vs-replace — discrete action (sort, add/remove
   filter, class change) ⇒ `replaceUrl:false` (one history entry); debounced fulltext pause ⇒
   `replaceUrl:false` per pause (resolved decision); continuous typing coalesced by `debounceTime`.
+
+> **E2E run 2026-07-03 — ✅ 8/8 against the live dev backend** (`api.dev.dasch.swiss`, gotthelf
+> project), driven with Playwright at the P3b+3c checkpoint: chip bar renders with the URL-named
+> ontology; loading settles on an ontology-param URL (landmine 3a defused, also confirmed settling on a
+> 400); reload round-trips the ontology param; back/forward step through `q=alpha`↔`q=beta`; zero
+> uncaught page errors. **The run caught a real regression** the unit tests missed:
+> `OrderByComponent` template dereferenced a `null` async value (the derived `orderByItems$` emits
+> `null` before its readiness-gated first value, unlike the old `[]`-seeded `BehaviorSubject`) — fixed
+> in commit `4b79d5313` (`!orderByItems || …`, `orderByItems ?? []`). Lesson: readiness-gated streams
+> feed `null` through the async pipe; template-guard every dereference. Full click-through of confirm/
+> remove-filter and order-by *selection* (vs. URL-param load) still worth a manual pass before 3d.
 
 ## E2E / Manual Verification Checklist
 
