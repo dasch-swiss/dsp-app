@@ -81,7 +81,6 @@ type ResourceSideForm = FormGroup<{
             matInput
             formControlName="copyrightHolder"
             autocomplete="off"
-            required
             [placeholder]="project.longname ?? ''" />
           @if (canPrefillLongname()) {
             <button
@@ -95,9 +94,6 @@ type ResourceSideForm = FormGroup<{
             </button>
           }
           <mat-hint>{{ 'legal.dataSide.settings.holderHelper' | translate }}</mat-hint>
-          @if (form.controls.copyrightHolder.hasError('required')) {
-            <mat-error>{{ 'legal.dataSide.settings.holderRequired' | translate }}</mat-error>
-          }
         </mat-form-field>
 
         <app-authorship-chip-editor
@@ -160,9 +156,7 @@ export class ResourceSideLegalFormComponent implements OnInit {
   ngOnInit(): void {
     this.form = new FormGroup({
       license: new FormControl<string | null>(this.project.dataLicense ?? null),
-      copyrightHolder: new FormControl<string | null>(this.project.dataCopyrightHolder ?? null, {
-        validators: Validators.required,
-      }),
+      copyrightHolder: new FormControl<string | null>(this.project.dataCopyrightHolder ?? null),
       dataAuthorship: new FormControl<string[]>(this.project.defaultDataAuthorship ?? [], { nonNullable: true }),
     });
 
