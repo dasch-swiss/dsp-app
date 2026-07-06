@@ -98,13 +98,19 @@ import { TranslatePipe } from '@ngx-translate/core';
           } @else {
             <span class="value">
               @if (resourceAuthorship && !resourceAuthorship.length) {
-                <em>{{
-                  'legal.dataSide.noAuthorshipFallback' | translate: { default: defaultResourceAuthorship.join(', ') }
-                }}</em>
+                @if (defaultResourceAuthorship.length) {
+                  <em>{{
+                    'legal.dataSide.noAuthorshipFallback' | translate: { default: defaultResourceAuthorship.join(', ') }
+                  }}</em>
+                } @else {
+                  <em>{{ 'legal.dataSide.noAuthorshipFallbackNoDefault' | translate }}</em>
+                }
               } @else if (resourceAuthorship) {
                 {{ resourceAuthorship.join(', ') }}
-              } @else {
+              } @else if (defaultResourceAuthorship.length) {
                 {{ defaultResourceAuthorship.join(', ') }}
+              } @else {
+                <em>{{ 'legal.dataSide.noAuthorshipFallbackNoDefault' | translate }}</em>
               }
               @if (canEditAuthorship) {
                 <!-- Inline, always-visible edit affordance, right after the value (discoverable, close to the text). -->

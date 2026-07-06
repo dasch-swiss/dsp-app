@@ -10,6 +10,7 @@
       "uncategorized": "Die rechtlichen Angaben dieser Ressource wurden noch nicht festgelegt — bitte ergänzen.",
       "editLegalInfo": "Rechtliches bearbeiten",
       "noAuthorshipFallback": "Für diese Ressource sind keine Urheber:innen erfasst. Projektstandard: {{default}}",
+      "noAuthorshipFallbackNoDefault": "Für diese Ressource sind keine Urheber:innen erfasst.",
       "readOnlyValue": "{{value}}, schreibgeschützt",
       "opensInNewTab": "öffnet in neuem Tab",
       "settings": {
