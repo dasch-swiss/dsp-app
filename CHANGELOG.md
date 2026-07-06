@@ -1,5 +1,32 @@
 # Changelog
 
+## [13.8.0](https://github.com/dasch-swiss/dsp-app/compare/v13.7.1...v13.8.0) (2026-07-06)
+
+
+### Enhancements
+
+* add resource-side legal metadata UI (DEV-6663) ([#3178](https://github.com/dasch-swiss/dsp-app/issues/3178)) ([36e56e3](https://github.com/dasch-swiss/dsp-app/commit/36e56e3582c9ceaf9452b63a983739e5fa759d61))
+* multi-language list-node labels with reactive language switch (DEV-6555) ([#3211](https://github.com/dasch-swiss/dsp-app/issues/3211)) ([f2b418d](https://github.com/dasch-swiss/dsp-app/commit/f2b418d12415a7425c1f8f83d73d46f157c97857))
+* settings panel is on the left side ([#3207](https://github.com/dasch-swiss/dsp-app/issues/3207)) ([5ed1a55](https://github.com/dasch-swiss/dsp-app/commit/5ed1a554fa814a06266a0f5c595d9024e8dd77d4))
+
+
+### Bug Fixes
+
+* **ci:** deploy PR preview by image digest so pushes roll out ([#3215](https://github.com/dasch-swiss/dsp-app/issues/3215)) ([8a89fa8](https://github.com/dasch-swiss/dsp-app/commit/8a89fa876993aa48415d3f16c9f17781443f72fb))
+* **e2e:** use unique entity names in data-model-class spec ([#3216](https://github.com/dasch-swiss/dsp-app/issues/3216)) ([d74ae52](https://github.com/dasch-swiss/dsp-app/commit/d74ae52c466f0d2171743eb61b7c8fadcc5f3e95))
+
+
+### Maintenances
+
+* **deps:** Update dependency @openapitools/openapi-generator-cli from 2.39.0 to 2.39.1 ([#3224](https://github.com/dasch-swiss/dsp-app/issues/3224)) ([ad08120](https://github.com/dasch-swiss/dsp-app/commit/ad081207b2c0bdb2e0b5da73489517095e8561c4))
+* **deps:** Update dependency @sentry/angular from 10.61.0 to 10.62.0 ([#3210](https://github.com/dasch-swiss/dsp-app/issues/3210)) ([659bf55](https://github.com/dasch-swiss/dsp-app/commit/659bf55c1674fc6daafc13c9a360696fb49aee3c))
+* **deps:** Update dependency @sentry/cli from 3.5.1 to 3.6.0 ([#3212](https://github.com/dasch-swiss/dsp-app/issues/3212)) ([3824bf0](https://github.com/dasch-swiss/dsp-app/commit/3824bf03065b70493dddc0bdb812d74423e51a91))
+* **deps:** Update dependency prettier from 3.8.4 to 3.8.5 ([#3209](https://github.com/dasch-swiss/dsp-app/issues/3209)) ([301b4b6](https://github.com/dasch-swiss/dsp-app/commit/301b4b6e8af13807fe35196a0fdeff3759148bb7))
+* **deps:** Update grafana-faro-deps from 2.8.0 to 2.8.1 ([#3221](https://github.com/dasch-swiss/dsp-app/issues/3221)) ([876bdc6](https://github.com/dasch-swiss/dsp-app/commit/876bdc68012d51e4a590cc40494f2f0fe6825a8d))
+* **deps:** Update grafana/grafana Docker tag to v13.1.0 ([#3219](https://github.com/dasch-swiss/dsp-app/issues/3219)) ([72ae15e](https://github.com/dasch-swiss/dsp-app/commit/72ae15e08880cc6fca916b315360975bad086162))
+* **deps:** Update postcss-deps ([#3218](https://github.com/dasch-swiss/dsp-app/issues/3218)) ([c3f7313](https://github.com/dasch-swiss/dsp-app/commit/c3f7313550043360fd387fc489c76b9cc39ae86f))
+* **deps:** Update typescript-eslint monorepo from 8.62.0 to 8.62.1 ([#3222](https://github.com/dasch-swiss/dsp-app/issues/3222)) ([6d6f392](https://github.com/dasch-swiss/dsp-app/commit/6d6f3924cf50311aad4a36bd7c60416772713547))
+
 ## [13.7.1](https://github.com/dasch-swiss/dsp-app/compare/v13.7.0...v13.7.1) (2026-06-29)
 
 
