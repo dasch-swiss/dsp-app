@@ -1,5 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import { Component } from '@angular/core';
+import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
@@ -90,6 +91,7 @@ import { ResourceSideLegalFormComponent } from './resource-side-legal-form.compo
     AlternatedListComponent,
     AsyncPipe,
     LegalSettingsLicensesComponent,
+    MatButton,
     MatIcon,
     MatTabsModule,
     MatTooltip,

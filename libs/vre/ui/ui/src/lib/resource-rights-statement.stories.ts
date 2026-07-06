@@ -13,7 +13,7 @@ const meta: Meta<ResourceRightsStatementComponent> = {
     },
     licenseUrl: { description: 'Creative Commons deed URL; the label is rendered as a link to it.', control: 'text' },
     copyrightHolder: { description: 'Project-wide copyright holder.', control: 'text' },
-    authorship: { description: 'Project default authorship.', control: 'object' },
+    defaultResourceAuthorship: { description: 'Project default authorship.', control: 'object' },
     resourceAuthorship: {
       description:
         'Per-resource authorship. When bound (even to []), the component is in per-resource mode: the resource value is shown when non-empty, otherwise the labeled fallback ("no authorship recorded — project default: …") is shown. When left unbound (null), the project-level defaults are shown plainly.',
@@ -26,6 +26,12 @@ const meta: Meta<ResourceRightsStatementComponent> = {
     canEditAuthorship: {
       description: 'Whether the user may edit per-resource authorship (Modify rights).',
       control: 'boolean',
+    },
+    labelAlign: {
+      description:
+        'Label alignment: "end" (right — matches property rows in the viewer) or "start" (left — for the project card).',
+      control: { type: 'radio' },
+      options: ['start', 'end'],
     },
     editLegalInfo: { description: 'Emitted when an admin clicks "Edit legal info" on the unconfigured callout.' },
     saveAuthorship: { description: 'Emitted with the new authorship list when a Modify user saves the inline editor.' },
@@ -40,7 +46,7 @@ export const ShowsLicenseHolderAndAuthorshipWhenConfigured: Story = {
     licenseLabel: 'CC BY 4.0',
     licenseUrl: 'https://creativecommons.org/licenses/by/4.0/',
     copyrightHolder: 'University of Basel',
-    authorship: ['Lotte Reiniger', 'Hilma af Klint'],
+    defaultResourceAuthorship: ['Lotte Reiniger', 'Hilma af Klint'],
   },
   play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
@@ -65,7 +71,7 @@ export const ShowsFallbackWhenResourceHasNoOwnAuthorship: Story = {
     licenseLabel: 'CC BY 4.0',
     licenseUrl: 'https://creativecommons.org/licenses/by/4.0/',
     copyrightHolder: 'University of Basel',
-    authorship: ['Project Default Author'],
+    defaultResourceAuthorship: ['Project Default Author'],
     resourceAuthorship: [],
   },
   play: async ({ canvasElement, step }) => {
@@ -99,7 +105,7 @@ export const ShowsAlwaysVisibleEditAffordanceForModifyUsers: Story = {
     licenseLabel: 'CC BY 4.0',
     licenseUrl: 'https://creativecommons.org/licenses/by/4.0/',
     copyrightHolder: 'University of Basel',
-    authorship: ['Lotte Reiniger'],
+    defaultResourceAuthorship: ['Lotte Reiniger'],
     resourceAuthorship: ['Lotte Reiniger'],
     canEditAuthorship: true,
   },
@@ -118,7 +124,7 @@ export const EditsAuthorshipInlineWithoutADialog: Story = {
     licenseLabel: 'CC BY 4.0',
     licenseUrl: 'https://creativecommons.org/licenses/by/4.0/',
     copyrightHolder: 'University of Basel',
-    authorship: ['Lotte Reiniger'],
+    defaultResourceAuthorship: ['Lotte Reiniger'],
     resourceAuthorship: ['Lotte Reiniger'],
     canEditAuthorship: true,
   },

@@ -211,9 +211,12 @@ export class CreateResourceFormComponent implements OnInit {
   }
 
   private _loadDataSideLegal(): void {
+    // take(1): the cached rights emit synchronously after the initial fetch. We seed the form
+    // authorship from the project default on first emission only — any later re-emission (cache
+    // invalidation elsewhere in the session) must not clobber what the user has typed since.
     this._dataRights
       .forProject(this.projectIri)
-      .pipe(takeUntilDestroyed(this._destroyRef))
+      .pipe(take(1), takeUntilDestroyed(this._destroyRef))
       .subscribe(rights => {
         this.dataLicenseLabel = rights.licenseLabel;
         this.dataLicenseUrl = rights.licenseUrl;
@@ -242,7 +245,12 @@ export class CreateResourceFormComponent implements OnInit {
 
     this._dspApiConnection.v2.res
       .createResource(this._getPayload())
-      .pipe(take(1))
+      .pipe(
+        take(1),
+        finalize(() => {
+          this.loading = false;
+        })
+      )
       .subscribe(res => {
         this.createdResourceIri.emit(res.id);
       });
