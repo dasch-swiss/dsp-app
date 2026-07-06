@@ -45,7 +45,9 @@ export const ShowsLicenseHolderAndAuthorshipWhenConfigured: Story = {
   play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
     await step('License renders as a link to the deed', async () => {
-      const link = canvas.getByRole('link', { name: 'CC BY 4.0' });
+      // The link's accessible name is composed from the label + "opens in a new tab" (WCAG 3.2.5),
+      // so match on a regex that anchors on the license label.
+      const link = canvas.getByRole('link', { name: /CC BY 4\.0/ });
       await expect(link).toHaveAttribute('href', 'https://creativecommons.org/licenses/by/4.0/');
     });
     await step('Copyright holder is visible', async () => {

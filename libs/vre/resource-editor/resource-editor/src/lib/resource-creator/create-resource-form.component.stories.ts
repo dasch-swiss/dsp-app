@@ -1,4 +1,5 @@
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
+import { ProjectDataRightsService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
 import { expect } from 'storybook/test';
@@ -36,6 +37,8 @@ const meta: Meta<CreateResourceFormComponent> = {
             },
           },
         },
+        // The form loads the project's resource-side legal info on init; stub the rights service.
+        { provide: ProjectDataRightsService, useValue: { forProject: () => of({ authorship: [] }) } },
       ],
     }),
   ],
