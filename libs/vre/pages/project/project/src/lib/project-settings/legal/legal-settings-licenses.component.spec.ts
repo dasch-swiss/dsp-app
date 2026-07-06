@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { AdminAPIApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
-import { PaginatedApiService } from '@dasch-swiss/vre/shared/app-common';
+import { LegalInfoApiService } from '@dasch-swiss/vre/3rd-party-services/api';
+import { ProjectDataRightsService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { of, throwError } from 'rxjs';
 import { ProjectPageService } from '../../project-page.service';
@@ -10,8 +10,8 @@ import { LicenseToggleEvent } from './licenses-enabled-table.component';
 describe('LegalSettingsLicensesComponent - Business Logic', () => {
   let component: LegalSettingsLicensesComponent;
   let fixture: ComponentFixture<LegalSettingsLicensesComponent>;
-  let mockAdminApiService: jest.Mocked<AdminAPIApiService>;
-  let mockPaginatedApiService: jest.Mocked<PaginatedApiService>;
+  let mockLegalInfoApiService: jest.Mocked<LegalInfoApiService>;
+  let mockDataRightsService: jest.Mocked<ProjectDataRightsService>;
   let mockProjectPageService: jest.Mocked<ProjectPageService>;
   let mockNotificationService: jest.Mocked<NotificationService>;
 
@@ -21,13 +21,13 @@ describe('LegalSettingsLicensesComponent - Business Logic', () => {
   };
 
   beforeEach(async () => {
-    mockAdminApiService = {
-      putAdminProjectsShortcodeProjectshortcodeLegalInfoLicensesLicenseiriEnable: jest.fn().mockReturnValue(of({})),
-      putAdminProjectsShortcodeProjectshortcodeLegalInfoLicensesLicenseiriDisable: jest.fn().mockReturnValue(of({})),
+    mockLegalInfoApiService = {
+      getLicenses: jest.fn().mockReturnValue(of([])),
     } as any;
 
-    mockPaginatedApiService = {
-      getLicenses: jest.fn().mockReturnValue(of([])),
+    mockDataRightsService = {
+      enableLicense: jest.fn().mockReturnValue(of({})),
+      disableLicense: jest.fn().mockReturnValue(of({})),
     } as any;
 
     mockProjectPageService = {
@@ -42,8 +42,8 @@ describe('LegalSettingsLicensesComponent - Business Logic', () => {
     await TestBed.configureTestingModule({
       imports: [LegalSettingsLicensesComponent],
       providers: [
-        { provide: AdminAPIApiService, useValue: mockAdminApiService },
-        { provide: PaginatedApiService, useValue: mockPaginatedApiService },
+        { provide: LegalInfoApiService, useValue: mockLegalInfoApiService },
+        { provide: ProjectDataRightsService, useValue: mockDataRightsService },
         { provide: ProjectPageService, useValue: mockProjectPageService },
         { provide: NotificationService, useValue: mockNotificationService },
       ],
@@ -54,7 +54,7 @@ describe('LegalSettingsLicensesComponent - Business Logic', () => {
   });
 
   describe('onLicenseToggle', () => {
-    it('should call enable API when event.enabled is true', done => {
+    it('should call enableLicense when event.enabled is true', done => {
       const event: LicenseToggleEvent = {
         licenseId: 'http://creativecommons.org/licenses/by/4.0/',
         enabled: true,
@@ -63,14 +63,12 @@ describe('LegalSettingsLicensesComponent - Business Logic', () => {
       component.onLicenseToggle(event);
 
       setTimeout(() => {
-        expect(
-          mockAdminApiService.putAdminProjectsShortcodeProjectshortcodeLegalInfoLicensesLicenseiriEnable
-        ).toHaveBeenCalledWith('0001', event.licenseId);
+        expect(mockDataRightsService.enableLicense).toHaveBeenCalledWith('0001', event.licenseId);
         done();
       }, 100);
     });
 
-    it('should call disable API when event.enabled is false', done => {
+    it('should call disableLicense when event.enabled is false', done => {
       const event: LicenseToggleEvent = {
         licenseId: 'http://creativecommons.org/licenses/by/4.0/',
         enabled: false,
@@ -79,17 +77,13 @@ describe('LegalSettingsLicensesComponent - Business Logic', () => {
       component.onLicenseToggle(event);
 
       setTimeout(() => {
-        expect(
-          mockAdminApiService.putAdminProjectsShortcodeProjectshortcodeLegalInfoLicensesLicenseiriDisable
-        ).toHaveBeenCalledWith('0001', event.licenseId);
+        expect(mockDataRightsService.disableLicense).toHaveBeenCalledWith('0001', event.licenseId);
         done();
       }, 100);
     });
 
     it('should show notification on API error when enabling', () => {
-      mockAdminApiService.putAdminProjectsShortcodeProjectshortcodeLegalInfoLicensesLicenseiriEnable.mockReturnValue(
-        throwError(() => new Error('API Error'))
-      );
+      mockDataRightsService.enableLicense.mockReturnValue(throwError(() => new Error('API Error')));
 
       const event: LicenseToggleEvent = {
         licenseId: 'http://creativecommons.org/licenses/by/4.0/',
@@ -102,9 +96,7 @@ describe('LegalSettingsLicensesComponent - Business Logic', () => {
     });
 
     it('should show notification on API error when disabling', () => {
-      mockAdminApiService.putAdminProjectsShortcodeProjectshortcodeLegalInfoLicensesLicenseiriDisable.mockReturnValue(
-        throwError(() => new Error('API Error'))
-      );
+      mockDataRightsService.disableLicense.mockReturnValue(throwError(() => new Error('API Error')));
 
       const event: LicenseToggleEvent = {
         licenseId: 'http://creativecommons.org/licenses/by-sa/4.0/',
@@ -124,11 +116,11 @@ describe('LegalSettingsLicensesComponent - Business Logic', () => {
         { id: 'license2', isRecommended: false, isEnabled: true },
       ];
 
-      mockPaginatedApiService.getLicenses.mockReturnValue(of(mockLicenses as any));
+      mockLegalInfoApiService.getLicenses.mockReturnValue(of(mockLicenses as any));
 
       component.licenses$.subscribe(licenses => {
         expect(licenses).toEqual(mockLicenses);
-        expect(mockPaginatedApiService.getLicenses).toHaveBeenCalledWith('0001');
+        expect(mockLegalInfoApiService.getLicenses).toHaveBeenCalledWith('0001');
         done();
       });
     });
@@ -140,7 +132,7 @@ describe('LegalSettingsLicensesComponent - Business Logic', () => {
         { id: 'license3', isRecommended: true, isEnabled: true },
       ];
 
-      mockPaginatedApiService.getLicenses.mockReturnValue(of(mockLicenses as any));
+      mockLegalInfoApiService.getLicenses.mockReturnValue(of(mockLicenses as any));
 
       component.recommendedLicenses$.subscribe(licenses => {
         expect(licenses.length).toBe(2);
@@ -156,7 +148,7 @@ describe('LegalSettingsLicensesComponent - Business Logic', () => {
         { id: 'license3', isRecommended: true, isEnabled: true },
       ];
 
-      mockPaginatedApiService.getLicenses.mockReturnValue(of(mockLicenses as any));
+      mockLegalInfoApiService.getLicenses.mockReturnValue(of(mockLicenses as any));
 
       component.nonRecommendedLicenses$.subscribe(licenses => {
         expect(licenses.length).toBe(1);

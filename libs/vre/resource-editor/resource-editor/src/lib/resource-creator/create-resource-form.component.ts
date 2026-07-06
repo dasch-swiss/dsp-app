@@ -1,6 +1,10 @@
-import { ChangeDetectorRef, Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, DestroyRef, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 import {
   Cardinality,
   Constants,
@@ -17,9 +21,14 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { ApiConstants, DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
+import { ProjectDataRightsService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { AppProgressIndicatorComponent, LoadingButtonDirective } from '@dasch-swiss/vre/ui/progress-indicator';
-import { CommonInputComponent, InvalidControlScrollDirective } from '@dasch-swiss/vre/ui/ui';
-import { TranslatePipe } from '@ngx-translate/core';
+import {
+  AuthorshipChipEditorComponent,
+  CommonInputComponent,
+  InvalidControlScrollDirective,
+} from '@dasch-swiss/vre/ui/ui';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { finalize, switchMap, take } from 'rxjs';
 import { FormValueGroup } from '../properties/properties-display/property-value/form-value-array.type';
 import { propertiesTypeMapping } from '../properties/properties-display/property-value/resource-payloads-mapping';
@@ -62,6 +71,44 @@ import { CreateResourceFormInterface } from './create-resource-form.interface';
             [properties]="properties"
             [formGroup]="form.controls.properties" />
         }
+        <!-- Data-side Resource Rights Statement: license + copyright holder are LOCKED (from the project's
+             resource-side legal settings); authorship is pre-filled from the project default for the user
+             to confirm or edit. -->
+        <h3>{{ 'legal.dataSide.heading' | translate }}</h3>
+        <app-create-resource-form-row [label]="'legal.dataSide.license' | translate">
+          <div
+            style="display: flex; align-items: center; gap: 4px; padding: 16px 0"
+            [attr.aria-label]="'legal.dataSide.readOnlyValue' | translate: { value: dataLicenseLabel || '—' }">
+            @if (dataLicenseUrl) {
+              <a
+                [href]="dataLicenseUrl"
+                target="_blank"
+                rel="noopener noreferrer"
+                [attr.aria-label]="dataLicenseLabel + ', ' + ('legal.dataSide.opensInNewTab' | translate)"
+                >{{ dataLicenseLabel }}</a
+              >
+            } @else {
+              <span>{{ dataLicenseLabel || '—' }}</span>
+            }
+            <mat-icon aria-hidden="true" style="font-size: 16px; height: 16px; width: 16px">lock</mat-icon>
+          </div>
+        </app-create-resource-form-row>
+        <app-create-resource-form-row [label]="'legal.dataSide.copyrightHolder' | translate">
+          <div
+            style="display: flex; align-items: center; gap: 4px; padding: 16px 0"
+            [attr.aria-label]="'legal.dataSide.readOnlyValue' | translate: { value: dataCopyrightHolder || '—' }">
+            <span>{{ dataCopyrightHolder || '—' }}</span>
+            <mat-icon aria-hidden="true" style="font-size: 16px; height: 16px; width: 16px">lock</mat-icon>
+          </div>
+        </app-create-resource-form-row>
+        <app-create-resource-form-row [label]="'legal.dataSide.authorship' | translate">
+          <app-authorship-chip-editor
+            [control]="form.controls.resourceAuthorship"
+            [ariaLabel]="'legal.dataSide.authorship' | translate"
+            [placeholder]="'resourceEditor.resourceCreator.authorship.placeholder' | translate"
+            [removeAuthorLabel]="removeDataAuthorLabel"
+            dataCy="data-authorship-chips" />
+        </app-create-resource-form-row>
         <div class="form-actions">
           <button mat-raised-button type="button" data-cy="cancel-button" (click)="onCancel()">
             {{ 'ui.common.actions.cancel' | translate }}
@@ -95,7 +142,11 @@ import { CreateResourceFormInterface } from './create-resource-form.interface';
     CreateResourceFormRowComponent,
     CommonInputComponent,
     CreateResourceFormPropertiesComponent,
+    AuthorshipChipEditorComponent,
     MatButtonModule,
+    MatFormFieldModule,
+    MatIconModule,
+    MatInputModule,
     LoadingButtonDirective,
     TranslatePipe,
     AppProgressIndicatorComponent,
@@ -112,6 +163,7 @@ export class CreateResourceFormComponent implements OnInit {
   form: FormGroup<CreateResourceFormInterface> = this._fb.group({
     label: this._fb.control('', { nonNullable: true, validators: [Validators.required] }),
     properties: this._fb.group({}),
+    resourceAuthorship: this._fb.control<string[]>([], { nonNullable: true }),
   });
 
   resourceClass!: ResourceClassDefinitionWithPropertyDefinition;
@@ -119,6 +171,11 @@ export class CreateResourceFormComponent implements OnInit {
 
   properties!: PropertyInfoValues[];
   loading = true;
+
+  // Resource-side (data) legal info from the project — license + holder are shown locked.
+  dataLicenseLabel?: string;
+  dataLicenseUrl?: string;
+  dataCopyrightHolder?: string;
 
   mapping = new Map<string, string>();
   readonly resourceClassTypes = [
@@ -142,12 +199,37 @@ export class CreateResourceFormComponent implements OnInit {
     @Inject(DspApiConnectionToken)
     private _dspApiConnection: KnoraApiConnection,
     private _fb: FormBuilder,
-    private _cd: ChangeDetectorRef
+    private _cd: ChangeDetectorRef,
+    private _dataRights: ProjectDataRightsService,
+    private _destroyRef: DestroyRef,
+    private _translate: TranslateService
   ) {}
 
   ngOnInit(): void {
     this._getResourceProperties();
+    this._loadDataSideLegal();
   }
+
+  private _loadDataSideLegal(): void {
+    // take(1): the cached rights emit synchronously after the initial fetch. We seed the form
+    // authorship from the project default on first emission only — any later re-emission (cache
+    // invalidation elsewhere in the session) must not clobber what the user has typed since.
+    this._dataRights
+      .forProject(this.projectIri)
+      .pipe(take(1), takeUntilDestroyed(this._destroyRef))
+      .subscribe(rights => {
+        this.dataLicenseLabel = rights.licenseLabel;
+        this.dataLicenseUrl = rights.licenseUrl;
+        this.dataCopyrightHolder = rights.copyrightHolder;
+        if (rights.defaultDataAuthorship.length > 0) {
+          this.form.controls.resourceAuthorship.setValue(rights.defaultDataAuthorship);
+        }
+      });
+  }
+
+  /** Builds the per-chip remove-button aria-label; arrow so it binds correctly when passed as an @Input. */
+  readonly removeDataAuthorLabel = (name: string): string =>
+    this._translate.instant('legal.dataSide.removeAuthor', { name });
 
   afterFileFormCreated(fileForm: FileForm) {
     this.form.addControl('file', fileForm);
@@ -163,7 +245,12 @@ export class CreateResourceFormComponent implements OnInit {
 
     this._dspApiConnection.v2.res
       .createResource(this._getPayload())
-      .pipe(take(1))
+      .pipe(
+        take(1),
+        finalize(() => {
+          this.loading = false;
+        })
+      )
       .subscribe(res => {
         this.createdResourceIri.emit(res.id);
       });
@@ -242,6 +329,13 @@ export class CreateResourceFormComponent implements OnInit {
     createResource.type = this.resourceClass.id;
     createResource.properties = this._getPropertiesObj();
     createResource.attachedToProject = this.projectIri;
+
+    // Per-resource (data-side) authorship: the field is pre-filled with the project default for the
+    // user to confirm or edit; persist whatever they confirmed/entered.
+    const authorshipControl = this.form.controls.resourceAuthorship;
+    if (authorshipControl.value.length > 0) {
+      createResource.resourceAuthorship = authorshipControl.value;
+    }
 
     return createResource;
   }

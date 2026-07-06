@@ -1,4 +1,43 @@
 {
+  "legal": {
+    "dataSide": {
+      "heading": "Déclaration des droits de la ressource",
+      "license": "Licence",
+      "copyrightHolder": "Titulaire des droits",
+      "authorship": "Auteur·ice",
+      "edit": "Modifier",
+      "removeAuthor": "Supprimer {{name}}",
+      "uncategorized": "Les informations légales de cette ressource n'ont pas encore été définies — veuillez les ajouter.",
+      "editLegalInfo": "Modifier les informations légales",
+      "noAuthorshipFallback": "Aucun·e auteur·ice enregistré·e pour cette ressource. Valeur par défaut du projet : {{default}}",
+      "noAuthorshipFallbackNoDefault": "Aucun·e auteur·ice enregistré·e pour cette ressource.",
+      "readOnlyValue": "{{value}}, en lecture seule",
+      "opensInNewTab": "ouvre dans un nouvel onglet",
+      "settings": {
+        "resourceSide": "Côté ressource",
+        "assetSide": "Côté asset",
+        "holderLabel": "Titulaire des droits",
+        "holderHelper": "Titulaire des droits pour chaque ressource de ce projet. Si le champ reste vide, le nom officiel de votre projet sera utilisé par défaut.",
+        "holderRequired": "Un·e titulaire des droits est requis·e.",
+        "useLongname": "Utiliser le nom officiel du projet",
+        "useLongnameAria": "Utiliser {{name}} comme titulaire des droits",
+        "licensePlaceholder": "Choisir une licence Creative Commons",
+        "liveWarning": "Cette licence s'applique immédiatement à toutes les ressources du projet.",
+        "save": "Enregistrer les modifications",
+        "cancel": "Annuler",
+        "saved": "Informations légales côté ressource enregistrées.",
+        "saveError": "Échec de l'enregistrement — veuillez réessayer."
+      },
+      "summaries": {
+        "ccBy40": "CC BY 4.0 — Réutilisation libre, avec mention de l'auteur·ice",
+        "ccBySa40": "CC BY-SA 4.0 — Réutilisation avec mention ; partager les adaptations sous la même licence",
+        "ccByNc40": "CC BY-NC 4.0 — Réutilisation non commerciale, avec mention de l'auteur·ice",
+        "ccByNcSa40": "CC BY-NC-SA 4.0 — Réutilisation non commerciale avec mention ; partage dans les mêmes conditions",
+        "ccByNd40": "CC BY-ND 4.0 — Réutilisation avec mention ; pas de modifications",
+        "ccByNcNd40": "CC BY-NC-ND 4.0 — Réutilisation non commerciale avec mention ; pas de modifications"
+      }
+    }
+  },
   "pages": {
     "landingPage": {
       "usersProjects": "Mes projets",

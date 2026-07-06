@@ -6,3 +6,4 @@ export * from './lib/sorting.helper';
 export * from './lib/localization.service';
 export * from './lib/resource-result.service';
 export * from './lib/pick-preferred-language-string';
+export * from './lib/project-data-rights.service';

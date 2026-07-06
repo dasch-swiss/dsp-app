@@ -1,6 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
+import { ProjectDataRightsService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
 import { expect } from 'storybook/test';
@@ -56,6 +57,8 @@ const meta: Meta<CreateResourceDialogLauncherComponent> = {
             },
           },
         },
+        // The hosted create-resource form loads project legal info on init; stub the rights service.
+        { provide: ProjectDataRightsService, useValue: { forProject: () => of({ defaultDataAuthorship: [] }) } },
       ],
     }),
   ],

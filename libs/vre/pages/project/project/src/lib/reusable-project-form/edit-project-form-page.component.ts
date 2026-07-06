@@ -3,9 +3,10 @@ import { Component, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { UpdateProjectRequest } from '@dasch-swiss/dsp-js';
 import { ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
+import { ensureWithDefaultLanguage } from '@dasch-swiss/vre/3rd-party-services/open-api';
+import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { LoadingButtonDirective } from '@dasch-swiss/vre/ui/progress-indicator';
-import { MultiLanguages } from '@dasch-swiss/vre/ui/string-literal';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { map, switchMap, take } from 'rxjs';
 import { ProjectPageService } from '../project-page.service';
@@ -46,7 +47,7 @@ export class EditProjectFormPageComponent {
         shortcode: project.shortcode,
         shortname: project.shortname,
         longname: project.longname,
-        description: project.description as MultiLanguages,
+        description: ensureWithDefaultLanguage(project.description, this._localizationService.currentLanguage),
         keywords: project.keywords,
       };
     })
@@ -55,7 +56,8 @@ export class EditProjectFormPageComponent {
   constructor(
     private readonly _projectPageService: ProjectPageService,
     private readonly _projectApiService: ProjectApiService,
-    private readonly _notification: NotificationService
+    private readonly _notification: NotificationService,
+    private readonly _localizationService: LocalizationService
   ) {}
 
   onSubmit() {

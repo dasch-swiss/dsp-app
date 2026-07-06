@@ -3,8 +3,8 @@ import { Component, inject, Input, OnInit } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
+import { LegalInfoApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { ProjectLicenseDto } from '@dasch-swiss/vre/3rd-party-services/open-api';
-import { PaginatedApiService } from '@dasch-swiss/vre/shared/app-common';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { finalize, map } from 'rxjs/operators';
@@ -87,22 +87,22 @@ export class CreateResourceFormLegalComponent implements OnInit {
 
   private readonly _translateService = inject(TranslateService);
 
-  constructor(private readonly _paginatedApi: PaginatedApiService) {}
+  constructor(private readonly _legalInfoApi: LegalInfoApiService) {}
 
   ngOnInit() {
-    this.copyrightHolders$ = this._paginatedApi.getCopyrightHolders(this.projectShortcode).pipe(
+    this.copyrightHolders$ = this._legalInfoApi.getCopyrightHolders(this.projectShortcode).pipe(
       finalize(() => {
         this.copyrightHoldersLoading = false;
       })
     );
 
-    this.licenses$ = this._paginatedApi.getLicenses(this.projectShortcode).pipe(
+    this.licenses$ = this._legalInfoApi.getLicenses(this.projectShortcode).pipe(
       map(data => data.filter(license => license.isEnabled)),
       finalize(() => {
         this.licensesLoading = false;
       })
     );
 
-    this.authorship$ = this._paginatedApi.getAuthorships(this.projectShortcode);
+    this.authorship$ = this._legalInfoApi.getAuthorships(this.projectShortcode);
   }
 }
