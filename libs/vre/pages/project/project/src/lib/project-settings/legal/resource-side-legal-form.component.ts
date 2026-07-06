@@ -77,11 +77,7 @@ type ResourceSideForm = FormGroup<{
 
         <mat-form-field style="width: 100%" subscriptSizing="dynamic">
           <mat-label>{{ 'legal.dataSide.settings.holderLabel' | translate }}</mat-label>
-          <input
-            matInput
-            formControlName="copyrightHolder"
-            autocomplete="off"
-            [placeholder]="project.longname ?? ''" />
+          <input matInput formControlName="copyrightHolder" autocomplete="off" [placeholder]="project.longname ?? ''" />
           @if (canPrefillLongname()) {
             <button
               matSuffix
