@@ -20,6 +20,36 @@ export function escapeForGravsearchStringLiteral(value: string): string {
   return value.replace(/\\/g, '\\\\\\\\').replace(/"/g, '\\\\\\"');
 }
 
+/**
+ * Escape a user-supplied value for embedding inside a plain, double-quoted SPARQL/Gravsearch string
+ * literal (`"…"`) — the value comparison and label FILTER paths, NOT the regex(…) path (use
+ * {@link escapeForGravsearchStringLiteral} there). Escapes backslash, double quote, and the newline/
+ * carriage-return/tab control characters, so a value can never close the literal and inject query
+ * structure. Values reach here from the URL `filters` param, so treat them as untrusted.
+ */
+export function escapeSparqlStringLiteral(value: string): string {
+  return value
+    .replace(/\\/g, '\\\\')
+    .replace(/"/g, '\\"')
+    .replace(/\n/g, '\\n')
+    .replace(/\r/g, '\\r')
+    .replace(/\t/g, '\\t');
+}
+
+/**
+ * Sanitize a user-supplied value for embedding inside a SPARQL IRI reference (`<…>`) — the link- and
+ * list-object comparison paths. A SPARQL IRIREF cannot contain any of `<>"{}|^\`` , backtick, space,
+ * or control characters; percent-encode those so the value can never close the `<…>` and inject
+ * structure. Well-formed IRIs (the normal picker-selected case) pass through unchanged.
+ */
+export function sanitizeSparqlIri(value: string): string {
+  // Illegal in a SPARQL IRIREF: < > " { } | ^ ` \\, plus space and every control char
+  // (0x00-0x20). Percent-encode them so the value can never close the <...> and inject structure.
+  /* eslint-disable-next-line no-control-regex */
+  const illegalIriChars = /[<>"{}|^`\\\u0000-\u0020]/g;
+  return value.replace(illegalIriChars, ch => `%${ch.charCodeAt(0).toString(16).toUpperCase().padStart(2, '0')}`);
+}
+
 export enum PropertyObjectType {
   None = 'NONE',
   ValueObject = 'VALUE_OBJECT',

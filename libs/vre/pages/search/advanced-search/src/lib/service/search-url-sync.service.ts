@@ -19,6 +19,28 @@ export interface FilterParam {
   value: string;
 }
 
+const VALID_OPERATORS = new Set<string>(Object.values(Operator));
+
+/**
+ * Structural validation for a single decoded filter entry from the untrusted `filters` URL param.
+ * Requires string `predicateIri` and `value` (empty allowed — Exists/NotExists carry no value) and a
+ * recognised `operator`. `parentIndex` is not validated here: it is optional metadata that the caller
+ * coerces to null when it is not a number, so a bad `parentIndex` should not discard an otherwise-valid
+ * filter. Everything failing the required checks is dropped.
+ */
+function isValidFilterParam(
+  s: unknown
+): s is { predicateIri: string; operator: Operator; value: string; parentIndex?: unknown } {
+  if (typeof s !== 'object' || s === null) return false;
+  const f = s as Record<string, unknown>;
+  return (
+    typeof f['predicateIri'] === 'string' &&
+    typeof f['value'] === 'string' &&
+    typeof f['operator'] === 'string' &&
+    VALID_OPERATORS.has(f['operator'])
+  );
+}
+
 @Injectable()
 export class SearchUrlSyncService {
   private readonly _router = inject(Router);
@@ -79,9 +101,15 @@ export class SearchUrlSyncService {
     if (!raw) return [];
     try {
       const parsed = JSON.parse(decodeURIComponent(raw));
-      return (parsed as { predicateIri: string; operator: Operator; value: string; parentIndex?: number }[]).map(s => ({
-        ...s,
-        parentIndex: s.parentIndex ?? null,
+      if (!Array.isArray(parsed)) return [];
+      // The `filters` param is untrusted (bookmarked/shared URLs, hand-edited). Validate each entry
+      // against the expected shape and drop anything malformed, so only well-formed filters reach the
+      // hydration/query pipeline. This is defence in depth — the Gravsearch writer also escapes values.
+      return parsed.filter(isValidFilterParam).map(s => ({
+        predicateIri: s.predicateIri,
+        operator: s.operator,
+        value: s.value,
+        parentIndex: typeof s.parentIndex === 'number' ? s.parentIndex : null,
       }));
     } catch {
       return [];

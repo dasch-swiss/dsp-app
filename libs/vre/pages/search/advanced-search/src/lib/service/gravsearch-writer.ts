@@ -7,7 +7,12 @@ import {
   VALUE_SUFFIX,
   RDFS_TYPE,
 } from '../constants';
-import { escapeForGravsearchStringLiteral, StatementElement } from '../model';
+import {
+  escapeForGravsearchStringLiteral,
+  escapeSparqlStringLiteral,
+  sanitizeSparqlIri,
+  StatementElement,
+} from '../model';
 import { Operator } from '../operators.config';
 
 class GravsearchWriterScoped {
@@ -61,7 +66,7 @@ class GravsearchWriterScoped {
   }
 
   get objectValue(): string {
-    return `<${this._selectedValue}>`;
+    return `<${sanitizeSparqlIri(this._selectedValue ?? '')}>`;
   }
 
   get objectProjection(): string {
@@ -137,11 +142,13 @@ class GravsearchWriterScoped {
   private _whereStatementForLabelComparison(): string {
     switch (this._operator) {
       case Operator.Equals:
-        return `FILTER (${this.objectPlaceHolder} = "${this._selectedValue}") .\n`;
+        return `FILTER (${this.objectPlaceHolder} = "${escapeSparqlStringLiteral(this._selectedValue ?? '')}") .\n`;
       case Operator.NotEquals:
-        return `FILTER (${this.objectPlaceHolder} != "${this._selectedValue}") .\n`;
+        return `FILTER (${this.objectPlaceHolder} != "${escapeSparqlStringLiteral(this._selectedValue ?? '')}") .\n`;
       case Operator.Matches:
-        return `FILTER knora-api:matchLabel(${MAIN_RESOURCE_PLACEHOLDER}, "${this._selectedValue}") .\n`;
+        return `FILTER knora-api:matchLabel(${MAIN_RESOURCE_PLACEHOLDER}, "${escapeSparqlStringLiteral(
+          this._selectedValue ?? ''
+        )}") .\n`;
       case Operator.IsLike: {
         const pattern = escapeForGravsearchStringLiteral(this._selectedValue ?? '');
         return `FILTER regex(${this.objectPlaceHolder}, "${pattern}", "i") .\n`;
@@ -154,10 +161,14 @@ class GravsearchWriterScoped {
   private _getWhereStatementForListObjectComparison(): string {
     let whereStm = '';
     if (this._operator === Operator.NotEquals) {
-      whereStm += `FILTER NOT EXISTS { ${this.objectPlaceHolder} <${this.valueTypeIri}> <${this._selectedValue}> . }`;
+      whereStm += `FILTER NOT EXISTS { ${this.objectPlaceHolder} <${this.valueTypeIri}> <${sanitizeSparqlIri(
+        this._selectedValue ?? ''
+      )}> . }`;
     }
     if (this._operator === Operator.Equals || this._operator === Operator.Matches) {
-      whereStm += `${this.objectPlaceHolder} <${this.valueTypeIri}> <${this._selectedValue}> .\n`;
+      whereStm += `${this.objectPlaceHolder} <${this.valueTypeIri}> <${sanitizeSparqlIri(
+        this._selectedValue ?? ''
+      )}> .\n`;
     }
     return whereStm;
   }
@@ -180,7 +191,7 @@ class GravsearchWriterScoped {
   }
 
   get typedValueLiteral(): string {
-    return `"${this._selectedValue}"^^<${this.valueTypeIri}>`;
+    return `"${escapeSparqlStringLiteral(this._selectedValue ?? '')}"^^<${this.valueTypeIri}>`;
   }
 
   get operatorSymbol(): string {

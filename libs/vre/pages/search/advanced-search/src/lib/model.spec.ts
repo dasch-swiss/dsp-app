@@ -1,5 +1,12 @@
 import { Constants } from '@dasch-swiss/dsp-js';
-import { NodeValue, Predicate, StatementElement, StringValue } from './model';
+import {
+  escapeSparqlStringLiteral,
+  NodeValue,
+  Predicate,
+  sanitizeSparqlIri,
+  StatementElement,
+  StringValue,
+} from './model';
 import { Operator } from './operators.config';
 
 const makeTextPredicate = (label = 'Title') =>
@@ -196,5 +203,49 @@ describe('StatementElement', () => {
       expect(s.selectedObjectValue).toBeUndefined();
       expect(s.isPristine).toBe(true);
     });
+  });
+});
+
+describe('escapeSparqlStringLiteral', () => {
+  it('escapes backslash, double quote, and newline/CR/tab control chars', () => {
+    expect(escapeSparqlStringLiteral('a"b')).toBe('a\\"b');
+    expect(escapeSparqlStringLiteral('a\\b')).toBe('a\\\\b');
+    expect(escapeSparqlStringLiteral('a\nb')).toBe('a\\nb');
+    expect(escapeSparqlStringLiteral('a\rb')).toBe('a\\rb');
+    expect(escapeSparqlStringLiteral('a\tb')).toBe('a\\tb');
+  });
+
+  it('leaves an ordinary value unchanged', () => {
+    expect(escapeSparqlStringLiteral('Wien')).toBe('Wien');
+  });
+
+  it('neutralizes a literal-breakout injection payload', () => {
+    const payload = 'x"^^<http://www.w3.org/2001/XMLSchema#string>) . ?x a foo:Secret . #';
+    const escaped = escapeSparqlStringLiteral(payload);
+    // The quote that would close the literal is escaped, so `"` is never emitted bare.
+    expect(escaped).not.toMatch(/(^|[^\\])"/);
+    expect(escaped).toContain('\\"^^');
+  });
+});
+
+describe('sanitizeSparqlIri', () => {
+  it('leaves a well-formed IRI unchanged', () => {
+    const iri = 'http://rdfh.ch/lists/0001/abc123';
+    expect(sanitizeSparqlIri(iri)).toBe(iri);
+  });
+
+  it('percent-encodes IRIREF-illegal delimiters so the value cannot close the <...>', () => {
+    expect(sanitizeSparqlIri('a>b')).toBe('a%3Eb');
+    expect(sanitizeSparqlIri('a<b')).toBe('a%3Cb');
+    expect(sanitizeSparqlIri('a b')).toBe('a%20b');
+    expect(sanitizeSparqlIri('a"b')).toBe('a%22b');
+    expect(sanitizeSparqlIri('a\\b')).toBe('a%5Cb');
+  });
+
+  it('neutralizes an IRI-breakout injection payload', () => {
+    const payload = 'x> . ?mainRes a foo:Secret . <';
+    const sanitized = sanitizeSparqlIri(payload);
+    expect(sanitized).not.toContain('>');
+    expect(sanitized).not.toContain('<');
   });
 });

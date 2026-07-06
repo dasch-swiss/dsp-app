@@ -109,6 +109,40 @@ describe('SearchUrlSyncService — URL param contract (DEV-6576 Phase 0)', () =>
       expect(service.decodeFilters('%%%not-json%%%')).toEqual([]);
       expect(service.decodeFilters('')).toEqual([]);
     });
+
+    it('drops entries with an unrecognised operator', () => {
+      const raw = encodeURIComponent(
+        JSON.stringify([
+          { predicateIri: 'http://x/p', operator: 'equals', value: 'ok' },
+          { predicateIri: 'http://x/p', operator: 'DROP TABLE', value: 'evil' },
+        ])
+      );
+      const decoded = service.decodeFilters(raw);
+      expect(decoded).toHaveLength(1);
+      expect(decoded[0].value).toBe('ok');
+    });
+
+    it('drops entries missing or mistyping required string fields', () => {
+      const raw = encodeURIComponent(
+        JSON.stringify([
+          { operator: 'equals', value: 'no-predicate' },
+          { predicateIri: 'http://x/p', operator: 'equals', value: 42 },
+          { predicateIri: 42, operator: 'equals', value: 'bad-predicate' },
+        ])
+      );
+      expect(service.decodeFilters(raw)).toEqual([]);
+    });
+
+    it('returns an empty array when the decoded JSON is not an array', () => {
+      expect(service.decodeFilters(encodeURIComponent(JSON.stringify({ predicateIri: 'x' })))).toEqual([]);
+    });
+
+    it('normalises a non-numeric parentIndex to null', () => {
+      const raw = encodeURIComponent(
+        JSON.stringify([{ predicateIri: 'http://x/p', operator: 'equals', value: 'v', parentIndex: 'nope' }])
+      );
+      expect(service.decodeFilters(raw)[0].parentIndex).toBeNull();
+    });
   });
 
   describe('readParams', () => {

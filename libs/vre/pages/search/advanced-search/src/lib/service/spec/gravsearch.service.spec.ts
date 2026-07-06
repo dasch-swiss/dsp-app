@@ -517,6 +517,28 @@ OFFSET 0`;
       'FILTER regex(?res0val, "a\\\\\\"b\\\\\\\\c"^^<http://www.w3.org/2001/XMLSchema#string>, "i")'
     );
   });
+
+  it('escapes a quote-bearing value so it cannot break out of the equals literal (injection defence)', () => {
+    const jsonSnapshot = JSON.stringify(baseJsonSnapshot);
+    const resourceClass: IriLabelPair = makeIriLabelPair('', 'All resource classes');
+    setupTestFromJson(searchStateService, jsonSnapshot, resourceClass);
+
+    // A crafted value (as would arrive via the `filters` URL param) that tries to close the literal
+    // and inject a triple pattern into the WHERE clause.
+    const payload = 'x"^^<http://www.w3.org/2001/XMLSchema#string>) . ?mainRes a foo:Secret . #';
+    setSelectedValue(searchStateService, 0, payload);
+
+    const query = gravsearchService.generateGravSearchQuery(searchStateService.validStatementElements);
+
+    // The internal quote is escaped (\"), so the literal is never closed: the whole payload — including
+    // the would-be `?mainRes a foo:Secret .` — stays trapped inside the string, not emitted as query
+    // structure. Assert structurally: exactly one FILTER for this statement, and the injected triple
+    // never appears as a real (line-leading) pattern.
+    expect(query).toContain('\\"^^');
+    const filterCount = (query.match(/FILTER \(/g) ?? []).length;
+    expect(filterCount).toBe(1);
+    expect(query).not.toMatch(/^\s*\?mainRes a foo:Secret \./m);
+  });
 });
 
 describe('Gravsearch Service and Writer - ListValue', () => {
