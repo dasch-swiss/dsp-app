@@ -218,8 +218,8 @@ export class CreateResourceFormComponent implements OnInit {
         this.dataLicenseLabel = rights.licenseLabel;
         this.dataLicenseUrl = rights.licenseUrl;
         this.dataCopyrightHolder = rights.copyrightHolder;
-        if (rights.authorship.length > 0) {
-          this.form.controls.resourceAuthorship.setValue(rights.authorship);
+        if (rights.defaultDataAuthorship.length > 0) {
+          this.form.controls.resourceAuthorship.setValue(rights.defaultDataAuthorship);
         }
       });
   }

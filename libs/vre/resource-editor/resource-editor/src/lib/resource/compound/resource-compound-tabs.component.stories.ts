@@ -87,7 +87,7 @@ const sharedProviders = [
     },
   },
   // Stubs for the embedded app-resource-rights-statement-container (data-side rights statement).
-  { provide: ProjectDataRightsService, useValue: { forProject: () => of({ authorship: [] }) } },
+  { provide: ProjectDataRightsService, useValue: { forProject: () => of({ defaultDataAuthorship: [] }) } },
   { provide: ResourceLegalV2ApiService, useValue: { updateResourceAuthorship: () => of(undefined) } },
   { provide: UserService, useValue: { user$: of(null) } },
   { provide: NotificationService, useValue: { openSnackBar: () => {} } },

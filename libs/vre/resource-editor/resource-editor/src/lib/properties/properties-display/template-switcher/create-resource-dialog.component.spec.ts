@@ -53,7 +53,7 @@ describe('CreateResourceDialogComponent', () => {
         // The hosted create-resource form loads project legal info on init; stub the rights service.
         {
           provide: ProjectDataRightsService,
-          useValue: { forProject: jest.fn().mockReturnValue(of({ authorship: [] })) },
+          useValue: { forProject: jest.fn().mockReturnValue(of({ defaultDataAuthorship: [] })) },
         },
         provideTranslateService(),
         TranslateService,

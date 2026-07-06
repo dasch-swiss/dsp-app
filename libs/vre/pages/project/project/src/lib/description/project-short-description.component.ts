@@ -4,10 +4,10 @@ import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import { ProjectImageCoverComponent } from '@dasch-swiss/vre/pages/user-settings/user';
-import { ProjectDataRightsService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { ProjectDataRights, ProjectDataRightsService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { ResourceRightsStatementComponent } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe } from '@ngx-translate/core';
-import { switchMap, tap } from 'rxjs';
+import { Observable, switchMap, tap } from 'rxjs';
 import { ProjectPageService } from '../project-page.service';
 import { LicenseCaptionsMapping } from './license-captions-mapping';
 import { ProjectDescriptionPageComponent } from './project-description-page.component';
@@ -59,7 +59,7 @@ import { ProjectDescriptionPageComponent } from './project-description-page.comp
               [licenseLabel]="rights.licenseLabel"
               [licenseUrl]="rights.licenseUrl"
               [copyrightHolder]="rights.copyrightHolder"
-              [authorship]="rights.authorship"
+              [defaultResourceAuthorship]="rights.defaultDataAuthorship"
               [isAdmin]="false"
               labelAlign="start" />
           </div>
@@ -76,7 +76,7 @@ export class ProjectShortDescriptionComponent {
     })
   );
 
-  dataRights$ = this._projectPageService.currentProject$.pipe(
+  dataRights$: Observable<ProjectDataRights> = this._projectPageService.currentProject$.pipe(
     switchMap(project => this._dataRights.fromProject(project))
   );
 

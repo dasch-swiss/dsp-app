@@ -98,11 +98,13 @@ import { TranslatePipe } from '@ngx-translate/core';
           } @else {
             <span class="value">
               @if (resourceAuthorship && !resourceAuthorship.length) {
-                <em>{{ 'legal.dataSide.noAuthorshipFallback' | translate: { default: authorship.join(', ') } }}</em>
+                <em>{{
+                  'legal.dataSide.noAuthorshipFallback' | translate: { default: defaultResourceAuthorship.join(', ') }
+                }}</em>
               } @else if (resourceAuthorship) {
                 {{ resourceAuthorship.join(', ') }}
               } @else {
-                {{ authorship.join(', ') }}
+                {{ defaultResourceAuthorship.join(', ') }}
               }
               @if (canEditAuthorship) {
                 <!-- Inline, always-visible edit affordance, right after the value (discoverable, close to the text). -->
@@ -246,7 +248,7 @@ export class ResourceRightsStatementComponent {
   /** The project-wide copyright holder. */
   @Input() copyrightHolder?: string;
   /** The project default authorship. */
-  @Input() authorship: string[] = [];
+  @Input() defaultResourceAuthorship: string[] = [];
   /** The per-resource authorship (only in a per-resource context); empty/absent ⇒ labeled fallback. */
   @Input() resourceAuthorship: string[] | null = null;
   /** Whether the current user is a project/system admin (controls the unconfigured callout). */
@@ -275,7 +277,7 @@ export class ResourceRightsStatementComponent {
 
   /** Open the inline editor, seeded with the currently displayed authorship. */
   startEdit(): void {
-    const valueToEdit = this.resourceAuthorship?.length ? this.resourceAuthorship : this.authorship;
+    const valueToEdit = this.resourceAuthorship?.length ? this.resourceAuthorship : this.defaultResourceAuthorship;
     this.editAuthorshipList = [...valueToEdit];
     this.editing = true;
     // Move focus into the chip input once Angular has rendered the editor branch (WCAG 2.4.3).

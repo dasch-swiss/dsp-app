@@ -10,7 +10,7 @@ import { catchError, map, Observable, of, shareReplay, switchMap, tap, throwErro
 
 export interface ProjectDataRights {
   copyrightHolder?: string;
-  authorship: string[];
+  defaultDataAuthorship: string[];
   licenseLabel?: string;
   licenseUrl?: string;
 }
@@ -96,7 +96,7 @@ export class ProjectDataRightsService {
   private _resolve(project: ReadProject): Observable<ProjectDataRights> {
     const base: ProjectDataRights = {
       copyrightHolder: project.dataCopyrightHolder,
-      authorship: project.dataAuthorship ?? [],
+      defaultDataAuthorship: project.defaultDataAuthorship ?? [],
     };
     if (!project.dataLicense) {
       return of(base);

@@ -58,7 +58,7 @@ const meta: Meta<CreateResourceDialogLauncherComponent> = {
           },
         },
         // The hosted create-resource form loads project legal info on init; stub the rights service.
-        { provide: ProjectDataRightsService, useValue: { forProject: () => of({ authorship: [] }) } },
+        { provide: ProjectDataRightsService, useValue: { forProject: () => of({ defaultDataAuthorship: [] }) } },
       ],
     }),
   ],

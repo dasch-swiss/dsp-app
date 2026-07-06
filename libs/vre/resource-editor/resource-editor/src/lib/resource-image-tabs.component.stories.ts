@@ -60,7 +60,7 @@ const meta: Meta<ResourceImageTabsComponent> = {
         },
         // The image tabs view embeds the rights-statement container; stub its data sources so it renders.
         provideRouter([{ path: '**', component: class {} }]),
-        { provide: ProjectDataRightsService, useValue: { forProject: () => of({ authorship: [] }) } },
+        { provide: ProjectDataRightsService, useValue: { forProject: () => of({ defaultDataAuthorship: [] }) } },
         { provide: ResourceLegalV2ApiService, useValue: { updateResourceAuthorship: () => of(undefined) } },
         { provide: ResourceFetcherService, useValue: { reload: () => {} } },
         { provide: UserService, useValue: { user$: of(null) } },

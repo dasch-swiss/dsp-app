@@ -38,7 +38,7 @@ const meta: Meta<CreateResourceFormComponent> = {
           },
         },
         // The form loads the project's resource-side legal info on init; stub the rights service.
-        { provide: ProjectDataRightsService, useValue: { forProject: () => of({ authorship: [] }) } },
+        { provide: ProjectDataRightsService, useValue: { forProject: () => of({ defaultDataAuthorship: [] }) } },
       ],
     }),
   ],

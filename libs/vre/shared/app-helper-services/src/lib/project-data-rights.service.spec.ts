@@ -17,7 +17,7 @@ describe('ProjectDataRightsService', () => {
       longname: 'Test Project',
       dataLicense: 'http://rdfh.ch/licenses/cc-by-4.0',
       dataCopyrightHolder: 'University of Basel',
-      dataAuthorship: ['Author A'],
+      defaultDataAuthorship: ['Author A'],
       ...overrides,
     }) as ReadProject;
 
@@ -51,7 +51,7 @@ describe('ProjectDataRightsService', () => {
       service.forProject('http://rdfh.ch/projects/0001').subscribe(rights => {
         expect(rights).toEqual({
           copyrightHolder: 'University of Basel',
-          authorship: ['Author A'],
+          defaultDataAuthorship: ['Author A'],
           licenseLabel: 'CC BY 4.0',
           licenseUrl: 'https://creativecommons.org/licenses/by/4.0/',
         });
