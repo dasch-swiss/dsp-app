@@ -15,8 +15,11 @@
       "settings": {
         "resourceSide": "Resource side",
         "assetSide": "Asset side",
-        "holderLabel": "Copyright holder · your official project name",
-        "holderHelper": "Your project is the rights holder for every resource record. Its official name is filled in below — edit it if needed, then add the authorship.",
+        "holderLabel": "Copyright holder",
+        "holderHelper": "The rights holder for every resource in this project. Defaults to your project's official name if left empty.",
+        "holderRequired": "A copyright holder is required.",
+        "useLongname": "Use the project's official name",
+        "useLongnameAria": "Use {{name}} as the copyright holder",
         "licensePlaceholder": "Choose a Creative Commons license",
         "liveWarning": "This license applies live to every resource in the project.",
         "save": "Save changes",

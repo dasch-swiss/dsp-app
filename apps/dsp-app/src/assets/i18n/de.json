@@ -15,8 +15,11 @@
       "settings": {
         "resourceSide": "Ressourcen-Seite",
         "assetSide": "Asset-Seite",
-        "holderLabel": "Rechteinhaber:in · offizieller Projektname",
-        "holderHelper": "Ihr Projekt ist Rechteinhaber:in jedes Ressourcendatensatzes. Der offizielle Name ist unten bereits eingetragen — passen Sie ihn bei Bedarf an und ergänzen Sie anschliessend die Urheber:innen.",
+        "holderLabel": "Rechteinhaber:in",
+        "holderHelper": "Rechteinhaber:in jeder Ressource in diesem Projekt. Bleibt das Feld leer, wird automatisch der offizielle Projektname übernommen.",
+        "holderRequired": "Rechteinhaber:in ist erforderlich.",
+        "useLongname": "Offiziellen Projektnamen übernehmen",
+        "useLongnameAria": "{{name}} als Rechteinhaber:in übernehmen",
         "licensePlaceholder": "Creative-Commons-Lizenz auswählen",
         "liveWarning": "Diese Lizenz gilt unmittelbar für jede Ressource im Projekt.",
         "save": "Änderungen speichern",

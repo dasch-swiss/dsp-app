@@ -15,8 +15,11 @@
       "settings": {
         "resourceSide": "Côté ressource",
         "assetSide": "Côté asset",
-        "holderLabel": "Titulaire des droits · nom officiel de votre projet",
-        "holderHelper": "Votre projet est titulaire des droits de chaque enregistrement de ressource. Son nom officiel est indiqué ci-dessous — modifiez-le si nécessaire, puis ajoutez l'auteur·ice.",
+        "holderLabel": "Titulaire des droits",
+        "holderHelper": "Titulaire des droits pour chaque ressource de ce projet. Si le champ reste vide, le nom officiel de votre projet sera utilisé par défaut.",
+        "holderRequired": "Un·e titulaire des droits est requis·e.",
+        "useLongname": "Utiliser le nom officiel du projet",
+        "useLongnameAria": "Utiliser {{name}} comme titulaire des droits",
         "licensePlaceholder": "Choisir une licence Creative Commons",
         "liveWarning": "Cette licence s'applique immédiatement à toutes les ressources du projet.",
         "save": "Enregistrer les modifications",
