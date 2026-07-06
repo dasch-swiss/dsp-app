@@ -1,5 +1,12 @@
 # Changelog
 
+## [13.8.1](https://github.com/dasch-swiss/dsp-app/compare/v13.8.0...v13.8.1) (2026-07-06)
+
+
+### Bug Fixes
+
+* no form should be required ([#3226](https://github.com/dasch-swiss/dsp-app/issues/3226)) ([953d2f8](https://github.com/dasch-swiss/dsp-app/commit/953d2f8351642869f2129a530466347aa32b4d3c))
+
 ## [13.8.0](https://github.com/dasch-swiss/dsp-app/compare/v13.7.1...v13.8.0) (2026-07-06)
 
 
