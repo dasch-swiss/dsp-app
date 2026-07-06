@@ -8,11 +8,11 @@ import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs';
 import { StatementElement } from '../../model';
+import { DerivedSearchStateService } from '../../service/derived-search-state.service';
 import { OntologyDataService } from '../../service/ontology-data.service';
-import { PropertyFormManager } from '../../service/property-form.manager';
-import { SearchDerivationService } from '../../service/search-derivation.service';
 import { SearchFlowLogger } from '../../service/search-flow-logger.service';
 import { SearchUrlSyncService } from '../../service/search-url-sync.service';
+import { StatementDraftStore } from '../../service/statement-draft.store';
 import { OrderByComponent } from '../order-by/order-by.component';
 import { AddFilterButtonComponent } from './add-filter-button.component';
 import { OPEN_CHIP_NONE, OpenChipId } from './chip-bar.helpers';
@@ -21,7 +21,7 @@ import { FilterChipComponent } from './filter-chip.component';
 import { ResourceClassChipComponent } from './resource-class-chip.component';
 
 @Component({
-  selector: 'app-filter-chip-bar',
+  selector: 'app-advanced-search-bar',
   standalone: true,
   imports: [
     AddFilterButtonComponent,
@@ -65,7 +65,7 @@ import { ResourceClassChipComponent } from './resource-class-chip.component';
               [isOpen]="openChipId() === child.id"
               [isValid]="child.isValidAndComplete"
               (openChange)="onChipOpenChange(child.id, $event)"
-              (remove)="formManager.deleteStatement(child)"
+              (remove)="draftStore.deleteStatement(child)"
               (filterConfirm)="onConfirmNewFilter(child.id)"
               (filterCancel)="onCancelNewFilter(child)" />
           }
@@ -76,27 +76,27 @@ import { ResourceClassChipComponent } from './resource-class-chip.component';
       </div>
     }
   `,
-  styleUrl: './filter-chip-bar.component.scss',
+  styleUrl: './advanced-search-bar.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FilterChipBarComponent implements OnInit {
+export class AdvancedSearchBarComponent implements OnInit {
   @Input({ required: true }) projectUuid!: string;
 
   private readonly _ontologyDataService = inject(OntologyDataService);
-  private readonly _derivation = inject(SearchDerivationService);
+  private readonly _derivation = inject(DerivedSearchStateService);
   private readonly _destroyRef = inject(DestroyRef);
   private readonly _urlSync = inject(SearchUrlSyncService);
   private readonly _logger = inject(SearchFlowLogger);
-  readonly formManager = inject(PropertyFormManager);
+  readonly draftStore = inject(StatementDraftStore);
 
   readonly openChipId = signal<OpenChipId>(OPEN_CHIP_NONE);
   readonly fulltextControl = new FormControl<string>('');
   readonly confirmedStatements = signal<StatementElement[]>([]);
 
-  // The ephemeral editing tree — owned by PropertyFormManager (DEV-6576 Phase 3.5). Child chips and
-  // auto-grow blanks render from here; confirmed top-level chips come from the URL (searchState$).
-  private readonly _statementElements = toSignal(this.formManager.statements$, {
-    initialValue: this.formManager.currentStatements,
+  // The ephemeral editing tree — owned by StatementDraftStore. Child chips and auto-grow blanks
+  // render from here; confirmed top-level chips come from the URL (searchState$).
+  private readonly _statementElements = toSignal(this.draftStore.statements$, {
+    initialValue: this.draftStore.currentStatements,
   });
 
   readonly childStatementsMap = signal<Record<string, StatementElement[]>>({});
@@ -116,14 +116,13 @@ export class FilterChipBarComponent implements OnInit {
   ngOnInit(): void {
     this._ontologyDataService.init(`http://rdfh.ch/projects/${this.projectUuid}`);
 
-    // Rebuild child map whenever the ephemeral editing tree changes (DEV-6576 Phase 3.5).
-    this.formManager.statements$.pipe(takeUntilDestroyed(this._destroyRef)).subscribe(() => this._rebuildChildMap());
+    // Rebuild child map whenever the ephemeral editing tree changes.
+    this.draftStore.statements$.pipe(takeUntilDestroyed(this._destroyRef)).subscribe(() => this._rebuildChildMap());
 
-    // Seed the chip-bar UI from the URL-derived state (DEV-6576 Phase 3d). This replaces the imperative
-    // `_applyParams`/popstate restore: first load, back/forward, and any URL change all flow through the
-    // single `searchState$` pipeline. The query itself is derived on the page (Phase 3c); here we only
-    // hydrate the *display* — the confirmed filter chips. (The in-progress statement tree moves to the
-    // ephemeral store in Phase 3.5; today confirmed statements come straight from the URL.)
+    // Seed the chip-bar UI from the URL-derived state: first load, back/forward, and any URL change
+    // all flow through the single `searchState$` pipeline. The query itself is derived on the page;
+    // here we only hydrate the *display* — the confirmed filter chips (top-level chips come straight
+    // from the URL, in-progress rows live in StatementDraftStore).
     this._derivation.searchState$.pipe(takeUntilDestroyed(this._destroyRef)).subscribe(state => {
       this.confirmedStatements.set(state.statements.filter(s => s.isValidAndComplete));
     });
@@ -158,7 +157,7 @@ export class FilterChipBarComponent implements OnInit {
   }
 
   onCancelNewFilter(stmt: StatementElement): void {
-    this.formManager.deleteStatement(stmt);
+    this.draftStore.deleteStatement(stmt);
     this.openChipId.set(OPEN_CHIP_NONE);
   }
 
@@ -169,7 +168,7 @@ export class FilterChipBarComponent implements OnInit {
   }
 
   onFilterConfirmed(chipId: string): void {
-    const stmt = this.formManager.currentStatements.find(s => s.id === chipId);
+    const stmt = this.draftStore.currentStatements.find(s => s.id === chipId);
     if (!stmt) return;
     this._logger.filterConfirmed(chipId);
     this.confirmedStatements.update(stmts => [...stmts, stmt]);
@@ -182,10 +181,10 @@ export class FilterChipBarComponent implements OnInit {
 
   onRemoveStatement(stmt: StatementElement): void {
     this._logger.filterRemoved(stmt.id);
-    this.formManager.deleteStatement(stmt);
+    this.draftStore.deleteStatement(stmt);
     this.confirmedStatements.update(stmts => stmts.filter(s => s.id !== stmt.id));
     this._writeFiltersToUrl();
-    // Explicit stale-orderBy cleanup (DEV-6576 D3 / US-3): if the removed filter was the active sort,
+    // Explicit stale-orderBy cleanup: if the removed filter was the active sort,
     // clear `orderBy` from the URL — under the URL-derived model this is no longer emergent.
     if (stmt.selectedPredicate?.iri && stmt.selectedPredicate.iri === this._urlSync.readParams().orderBy) {
       this._urlSync.writeState({ orderBy: undefined }, { replaceUrl: false });

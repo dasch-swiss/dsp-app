@@ -4,19 +4,19 @@ import { provideRouter } from '@angular/router';
 import { UserService } from '@dasch-swiss/vre/core/session';
 import { of } from 'rxjs';
 import { IriLabelPair, OrderByItem } from './model';
+import { DerivedSearchStateService } from './service/derived-search-state.service';
 import { OntologyDataService } from './service/ontology-data.service';
-import { PropertyFormManager } from './service/property-form.manager';
 import { QueryExecutionService } from './service/query-execution.service';
-import { SearchDerivationService } from './service/search-derivation.service';
 import { SearchFlowLogger } from './service/search-flow-logger.service';
 import { SearchUrlSyncService } from './service/search-url-sync.service';
+import { StatementDraftStore } from './service/statement-draft.store';
 import { toLabels } from './util/labels';
 
 const searchUrlSyncServiceStub = {
   provide: SearchUrlSyncService,
   useValue: {
-    // The URL-derived pipeline (SearchDerivationService) subscribes to `params$` on construction, so
-    // stories that provide the real services need it to emit at least once (DEV-6576 Phase 3).
+    // The URL-derived pipeline (DerivedSearchStateService) subscribes to `params$` on construction, so
+    // stories that provide the real services need it to emit at least once.
     params$: of({}),
     readParams: () => ({}),
     writeState: () => {},
@@ -86,16 +86,16 @@ export const makeQueryExecutionServiceStub = (
 });
 
 /**
- * Stub for the URL-derived order-by list (DEV-6576 Phase 3b). `OrderByComponent` now reads
- * `orderByItems$` from `SearchDerivationService` and writes via `SearchUrlSyncService` (stubbed no-op
- * in `STORY_PROVIDERS`), so stories drive the list from here.
+ * Stub for the URL-derived order-by list. `OrderByComponent` reads `orderByItems$` from
+ * `DerivedSearchStateService` and writes via `SearchUrlSyncService` (stubbed no-op in
+ * `STORY_PROVIDERS`), so stories drive the list from here.
  */
-export const makeSearchDerivationServiceStub = (
-  partial: Partial<SearchDerivationService> = {}
-): Partial<SearchDerivationService> => ({
+export const makeDerivedSearchStateServiceStub = (
+  partial: Partial<DerivedSearchStateService> = {}
+): Partial<DerivedSearchStateService> => ({
   orderByItems$: of([] as OrderByItem[]),
-  // PropertyFormManager seeds its store from searchState$ on construction, so every story that provides
-  // the real manager needs this to emit at least once (DEV-6576 Phase 3.5).
+  // StatementDraftStore seeds its store from searchState$ on construction, so every story that provides
+  // the real store needs this to emit at least once.
   searchState$: of({ resourceClass: null, statements: [], orderByItems: [] }),
   loading$: of(false),
   gravsearchQuery$: of(null),
@@ -104,8 +104,8 @@ export const makeSearchDerivationServiceStub = (
 
 /** Convenience provider pairing the manager with a derivation stub — for chip stories that edit filters. */
 export const PROPERTY_FORM_MANAGER_STORY_PROVIDERS = [
-  { provide: SearchDerivationService, useValue: makeSearchDerivationServiceStub() },
-  PropertyFormManager,
+  { provide: DerivedSearchStateService, useValue: makeDerivedSearchStateServiceStub() },
+  StatementDraftStore,
 ];
 
 export const makeDspApiConnectionStub = (partial: Record<string, unknown> = {}) => ({

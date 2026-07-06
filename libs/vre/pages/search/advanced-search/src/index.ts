@@ -1,4 +1,3 @@
-export * from './lib/advanced-search.component';
 export * from './lib/constants';
 export * from './lib/model';
 export * from './lib/providers';

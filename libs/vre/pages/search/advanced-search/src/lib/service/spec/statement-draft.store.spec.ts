@@ -4,11 +4,11 @@ import { BehaviorSubject, EMPTY, of } from 'rxjs';
 import { IriLabelPair, NodeValue, StatementElement } from '../../model';
 import { Operator } from '../../operators.config';
 import { makeIriLabelPair, makePredicate } from '../../testing/test-data-builders';
-import { PropertyFormManager } from '../property-form.manager';
-import { DerivedSearchState, SearchDerivationService } from '../search-derivation.service';
+import { DerivedSearchState, DerivedSearchStateService } from '../derived-search-state.service';
+import { StatementDraftStore } from '../statement-draft.store';
 
-describe('PropertyFormManager', () => {
-  let service: PropertyFormManager;
+describe('StatementDraftStore', () => {
+  let service: StatementDraftStore;
 
   const mockResourceClass: IriLabelPair = makeIriLabelPair('http://test.org/Class', 'TestClass');
 
@@ -21,13 +21,13 @@ describe('PropertyFormManager', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
-        PropertyFormManager,
+        StatementDraftStore,
         // The manager seeds its store from searchState$ on construction; an inert stream leaves the
         // default single blank root in place so these auto-grow tests drive the tree directly.
-        { provide: SearchDerivationService, useValue: { searchState$: EMPTY } as Partial<SearchDerivationService> },
+        { provide: DerivedSearchStateService, useValue: { searchState$: EMPTY } as Partial<DerivedSearchStateService> },
       ],
     });
-    service = TestBed.inject(PropertyFormManager);
+    service = TestBed.inject(StatementDraftStore);
   });
 
   it('should be created', () => {
@@ -53,16 +53,16 @@ describe('PropertyFormManager', () => {
       TestBed.resetTestingModule();
       TestBed.configureTestingModule({
         providers: [
-          PropertyFormManager,
+          StatementDraftStore,
           {
-            provide: SearchDerivationService,
+            provide: DerivedSearchStateService,
             useValue: {
               searchState$: of({ resourceClass: null, statements, orderByItems: [] }),
-            } as Partial<SearchDerivationService>,
+            } as Partial<DerivedSearchStateService>,
           },
         ],
       });
-      return TestBed.inject(PropertyFormManager);
+      return TestBed.inject(StatementDraftStore);
     };
 
     const makeConfirmedLink = (): StatementElement => {
@@ -112,11 +112,14 @@ describe('PropertyFormManager', () => {
       TestBed.resetTestingModule();
       TestBed.configureTestingModule({
         providers: [
-          PropertyFormManager,
-          { provide: SearchDerivationService, useValue: { searchState$: store$ } as Partial<SearchDerivationService> },
+          StatementDraftStore,
+          {
+            provide: DerivedSearchStateService,
+            useValue: { searchState$: store$ } as Partial<DerivedSearchStateService>,
+          },
         ],
       });
-      const svc = TestBed.inject(PropertyFormManager);
+      const svc = TestBed.inject(StatementDraftStore);
       expect(svc.currentStatements.some(s => s.parentId === parentA.id && s.isPristine)).toBe(true);
 
       const parentB = makeConfirmedLink(); // fresh instance → different id

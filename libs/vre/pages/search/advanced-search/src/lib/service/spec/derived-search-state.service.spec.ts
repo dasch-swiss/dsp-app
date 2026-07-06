@@ -5,9 +5,9 @@ import { BehaviorSubject, firstValueFrom, of } from 'rxjs';
 import { IriLabelPair, Predicate } from '../../model';
 import { Operator } from '../../operators.config';
 import { makeIriLabelPair, makePredicate } from '../../testing/test-data-builders';
+import { DerivedSearchStateService } from '../derived-search-state.service';
 import { GravsearchService } from '../gravsearch.service';
 import { OntologyDataService } from '../ontology-data.service';
-import { SearchDerivationService } from '../search-derivation.service';
 import { SearchFlowLogger } from '../search-flow-logger.service';
 import { FilterParam, SearchUrlParams, SearchUrlSyncService } from '../search-url-sync.service';
 
@@ -19,9 +19,9 @@ import { FilterParam, SearchUrlParams, SearchUrlSyncService } from '../search-ur
  */
 const ONTO = 'http://api.stage.dasch.swiss/ontology/0806/webern-onto/v2';
 
-describe('SearchDerivationService (DEV-6576 Phase 2)', () => {
+describe('DerivedSearchStateService (DEV-6576 Phase 2)', () => {
   let params$: BehaviorSubject<SearchUrlParams>;
-  let service: SearchDerivationService;
+  let service: DerivedSearchStateService;
   let gravsearch: GravsearchService;
 
   const bookClass: IriLabelPair = makeIriLabelPair(`${ONTO}#Book`, 'Book');
@@ -67,14 +67,14 @@ describe('SearchDerivationService (DEV-6576 Phase 2)', () => {
 
     TestBed.configureTestingModule({
       providers: [
-        SearchDerivationService,
+        DerivedSearchStateService,
         GravsearchService,
         { provide: SearchUrlSyncService, useValue: { ...urlSyncStub, params$ } },
         { provide: OntologyDataService, useValue: ontologyStub },
       ],
     });
 
-    service = TestBed.inject(SearchDerivationService);
+    service = TestBed.inject(DerivedSearchStateService);
     gravsearch = TestBed.inject(GravsearchService);
   });
 
@@ -192,13 +192,13 @@ describe('SearchDerivationService (DEV-6576 Phase 2)', () => {
       const p$ = new BehaviorSubject<SearchUrlParams>({});
       TestBed.configureTestingModule({
         providers: [
-          SearchDerivationService,
+          DerivedSearchStateService,
           GravsearchService,
           { provide: SearchUrlSyncService, useValue: { ...urlSyncStub, params$: p$ } },
           { provide: OntologyDataService, useValue: ontologyStub },
         ],
       });
-      return { svc: TestBed.inject(SearchDerivationService), p$ };
+      return { svc: TestBed.inject(DerivedSearchStateService), p$ };
     };
 
     it('is true while the ontology is still loading', async () => {
@@ -228,7 +228,7 @@ describe('SearchDerivationService (DEV-6576 Phase 2)', () => {
     let predicates$: BehaviorSubject<Predicate[]>;
     let ontologyLoading$: BehaviorSubject<boolean>;
     let p$: BehaviorSubject<SearchUrlParams>;
-    let svc: SearchDerivationService;
+    let svc: DerivedSearchStateService;
 
     beforeEach(() => {
       TestBed.resetTestingModule();
@@ -244,7 +244,7 @@ describe('SearchDerivationService (DEV-6576 Phase 2)', () => {
 
       TestBed.configureTestingModule({
         providers: [
-          SearchDerivationService,
+          DerivedSearchStateService,
           GravsearchService,
           { provide: SearchUrlSyncService, useValue: { ...urlSyncStub, params$: p$ } },
           {
@@ -257,7 +257,7 @@ describe('SearchDerivationService (DEV-6576 Phase 2)', () => {
           },
         ],
       });
-      svc = TestBed.inject(SearchDerivationService);
+      svc = TestBed.inject(DerivedSearchStateService);
     });
 
     it('does not settle the query until classes and predicates are hydrated', () => {
@@ -331,7 +331,7 @@ describe('SearchDerivationService (DEV-6576 Phase 2)', () => {
       params$ = new BehaviorSubject<SearchUrlParams>({});
       TestBed.configureTestingModule({
         providers: [
-          SearchDerivationService,
+          DerivedSearchStateService,
           GravsearchService,
           { provide: SearchUrlSyncService, useValue: { ...urlSyncStub, params$ } },
           {
@@ -340,7 +340,7 @@ describe('SearchDerivationService (DEV-6576 Phase 2)', () => {
           },
         ],
       });
-      service = TestBed.inject(SearchDerivationService);
+      service = TestBed.inject(DerivedSearchStateService);
       gravsearch = TestBed.inject(GravsearchService);
     });
 
@@ -416,7 +416,7 @@ describe('SearchDerivationService (DEV-6576 Phase 2)', () => {
     // controllable queryParams stream, proving the two halves of "URL is the source of truth" compose:
     // encodeFilters (real) → URL → params$ (real) → searchState$ → gravsearchQuery$.
     let queryParams$: BehaviorSubject<Record<string, string>>;
-    let svc: SearchDerivationService;
+    let svc: DerivedSearchStateService;
     let urlSync: SearchUrlSyncService;
     let grav: GravsearchService;
 
@@ -425,7 +425,7 @@ describe('SearchDerivationService (DEV-6576 Phase 2)', () => {
       queryParams$ = new BehaviorSubject<Record<string, string>>({});
       TestBed.configureTestingModule({
         providers: [
-          SearchDerivationService,
+          DerivedSearchStateService,
           GravsearchService,
           SearchUrlSyncService,
           {
@@ -443,7 +443,7 @@ describe('SearchDerivationService (DEV-6576 Phase 2)', () => {
           { provide: OntologyDataService, useValue: ontologyStubBase({}) },
         ],
       });
-      svc = TestBed.inject(SearchDerivationService);
+      svc = TestBed.inject(DerivedSearchStateService);
       urlSync = TestBed.inject(SearchUrlSyncService);
       grav = TestBed.inject(GravsearchService);
     });
@@ -490,13 +490,13 @@ describe('SearchDerivationService (DEV-6576 Phase 2)', () => {
       };
       TestBed.configureTestingModule({
         providers: [
-          SearchDerivationService,
+          DerivedSearchStateService,
           GravsearchService,
           { provide: SearchUrlSyncService, useValue: { ...urlSyncStub, params$: p$ } },
           { provide: OntologyDataService, useValue: stub },
         ],
       });
-      TestBed.inject(SearchDerivationService); // constructor wires the reaction
+      TestBed.inject(DerivedSearchStateService); // constructor wires the reaction
     };
 
     it('calls setOntology once when the ontology param differs from the loaded one', () => {

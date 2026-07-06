@@ -14,7 +14,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { StatementElement } from '../../model';
-import { PropertyFormManager } from '../../service/property-form.manager';
+import { StatementDraftStore } from '../../service/statement-draft.store';
 import { CHIP_POPOVER_POSITIONS } from './chip-bar.helpers';
 import { ChipLabelPipe } from './chip-label.pipe';
 import { FilterEditorPopoverComponent } from './filter-editor-popover.component';
@@ -86,7 +86,7 @@ export class FilterChipComponent {
 
   readonly positions = CHIP_POPOVER_POSITIONS;
   readonly draft = signal<StatementElement | null>(null);
-  private readonly _formManager = inject(PropertyFormManager);
+  private readonly _draftStore = inject(StatementDraftStore);
 
   onOpen(): void {
     this.draft.set(StatementElement.detachedClone(this.statement));
@@ -96,7 +96,7 @@ export class FilterChipComponent {
   onConfirm(): void {
     const d = this.draft();
     if (d) {
-      this._formManager.restoreStatement(d, this.statement);
+      this._draftStore.restoreStatement(d, this.statement);
     }
     this.draft.set(null);
     this.filterConfirm.emit();

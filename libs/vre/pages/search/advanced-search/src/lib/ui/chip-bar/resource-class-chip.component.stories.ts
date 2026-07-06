@@ -3,20 +3,20 @@ import { importProvidersFrom } from '@angular/core';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
 import { expect, userEvent, within } from 'storybook/test';
+import { DerivedSearchState, DerivedSearchStateService } from '../../service/derived-search-state.service';
 import { OntologyDataService } from '../../service/ontology-data.service';
-import { PropertyFormManager } from '../../service/property-form.manager';
-import { DerivedSearchState, SearchDerivationService } from '../../service/search-derivation.service';
+import { StatementDraftStore } from '../../service/statement-draft.store';
 import {
   makeOntologyDataServiceStub,
-  makeSearchDerivationServiceStub,
+  makeDerivedSearchStateServiceStub,
   SAMPLE_RESOURCE_CLASSES,
   STORY_PROVIDERS,
 } from '../../stories.helpers';
 import { ResourceClassChipComponent } from './resource-class-chip.component';
 
 const derivationWithClass = (resourceClass: DerivedSearchState['resourceClass']) => ({
-  provide: SearchDerivationService,
-  useValue: makeSearchDerivationServiceStub({
+  provide: DerivedSearchStateService,
+  useValue: makeDerivedSearchStateServiceStub({
     searchState$: of({ resourceClass, statements: [], orderByItems: [] }),
   }),
 });
@@ -33,7 +33,7 @@ const baseProviders = [
   importProvidersFrom(OverlayModule),
   { provide: OntologyDataService, useValue: makeOntologyDataServiceStub() },
   derivationWithClass(null),
-  PropertyFormManager,
+  StatementDraftStore,
 ];
 
 export const ShowsAllResourceClasses: Story = {
@@ -45,7 +45,7 @@ export const ShowsAllResourceClasses: Story = {
         importProvidersFrom(OverlayModule),
         { provide: OntologyDataService, useValue: makeOntologyDataServiceStub() },
         derivationWithClass(null),
-        PropertyFormManager,
+        StatementDraftStore,
       ],
     }),
   ],
@@ -66,7 +66,7 @@ export const ShowsSelectedClass: Story = {
         importProvidersFrom(OverlayModule),
         { provide: OntologyDataService, useValue: makeOntologyDataServiceStub() },
         derivationWithClass(SAMPLE_RESOURCE_CLASSES[0]),
-        PropertyFormManager,
+        StatementDraftStore,
       ],
     }),
   ],

@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, EventEmitter, inject, Output } from
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { StatementElement } from '../../model';
-import { PropertyFormManager } from '../../service/property-form.manager';
+import { StatementDraftStore } from '../../service/statement-draft.store';
 import { CHIP_POPOVER_POSITIONS } from './chip-bar.helpers';
 import { FilterEditorPopoverComponent } from './filter-editor-popover.component';
 
@@ -46,14 +46,14 @@ import { FilterEditorPopoverComponent } from './filter-editor-popover.component'
 export class AddFilterButtonComponent {
   @Output() filterConfirmed = new EventEmitter<string>();
 
-  private readonly _formManager = inject(PropertyFormManager);
+  private readonly _draftStore = inject(StatementDraftStore);
 
   readonly positions = CHIP_POPOVER_POSITIONS;
   pendingStatement: StatementElement | null = null;
 
   onAdd(): void {
     if (!this.pendingStatement) {
-      this.pendingStatement = this._formManager.addBlankStatement();
+      this.pendingStatement = this._draftStore.addBlankStatement();
     }
   }
 
@@ -66,7 +66,7 @@ export class AddFilterButtonComponent {
 
   onCancel(): void {
     if (this.pendingStatement) {
-      this._formManager.deleteStatement(this.pendingStatement);
+      this._draftStore.deleteStatement(this.pendingStatement);
       this.pendingStatement = null;
     }
   }

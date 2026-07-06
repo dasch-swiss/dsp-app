@@ -32,7 +32,7 @@ export class OntologyDataService {
   ontologyLoading$ = this._ontologyLoading.asObservable();
 
   // Set when an ontology load fails; cleared when a new load starts. Lets consumers surface an error
-  // state instead of a spinner that never resolves (DEV-6576 Phase 3a.1). `null` = no error.
+  // state instead of a spinner that never resolves. `null` = no error.
   private _ontologyError = new BehaviorSubject<unknown | null>(null);
   ontologyError$ = this._ontologyError.asObservable();
 
@@ -122,8 +122,8 @@ export class OntologyDataService {
           this._ontologyLoading.next(false);
         },
         // Without this branch a failed load leaves `ontologyLoading` stuck true, so any consumer
-        // gating on readiness (e.g. SearchDerivationService.loading$) hangs forever — notably a
-        // shared URL naming a bad/unreachable ontology (DEV-6576 Phase 3a.1).
+        // gating on readiness (e.g. DerivedSearchStateService.loading$) hangs forever — notably a
+        // shared URL naming a bad/unreachable ontology.
         error: err => {
           this._ontologyError.next(err);
           this._ontologyLoading.next(false);

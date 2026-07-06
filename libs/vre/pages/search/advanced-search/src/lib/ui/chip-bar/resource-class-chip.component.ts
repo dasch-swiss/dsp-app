@@ -9,10 +9,10 @@ import { LocalizationService, pickPreferredLanguageString } from '@dasch-swiss/v
 import { map } from 'rxjs';
 import { ALL_RESOURCE_CLASSES } from '../../constants';
 import { IriLabelPair } from '../../model';
+import { DerivedSearchStateService } from '../../service/derived-search-state.service';
 import { OntologyDataService } from '../../service/ontology-data.service';
-import { PropertyFormManager } from '../../service/property-form.manager';
-import { SearchDerivationService } from '../../service/search-derivation.service';
 import { SearchUrlSyncService } from '../../service/search-url-sync.service';
+import { StatementDraftStore } from '../../service/statement-draft.store';
 import { CHIP_POPOVER_POSITIONS } from './chip-bar.helpers';
 
 @Component({
@@ -78,8 +78,8 @@ export class ResourceClassChipComponent {
 
   readonly pickPreferredLanguageString = pickPreferredLanguageString;
   private readonly _dataService = inject(OntologyDataService);
-  private readonly _derivation = inject(SearchDerivationService);
-  private readonly _formManager = inject(PropertyFormManager);
+  private readonly _derivation = inject(DerivedSearchStateService);
+  private readonly _draftStore = inject(StatementDraftStore);
   private readonly _urlSync = inject(SearchUrlSyncService);
   private readonly _localizationService = inject(LocalizationService);
   readonly currentLang = toSignal(this._localizationService.currentLanguage$, { initialValue: 'en' as const });
@@ -89,8 +89,7 @@ export class ResourceClassChipComponent {
   isOpen = false;
 
   readonly resourceClasses$ = this._dataService.resourceClasses$;
-  // The selected class is URL-derived (DEV-6576 Phase 3.5 Step 4): read it from searchState$, not the
-  // committed SearchStateService subject.
+  // The selected class is URL-derived: read it from searchState$.
   readonly classLabel$ = this._derivation.searchState$.pipe(
     map(state =>
       state.resourceClass?.iri
@@ -103,10 +102,10 @@ export class ResourceClassChipComponent {
   onClassSelected(selection: IriLabelPair): void {
     if (!selection) return;
     if (selection.iri) {
-      this._formManager.setMainResource(selection);
+      this._draftStore.setMainResource(selection);
     }
     // Nulling class/filters/orderBy in the URL is the reset; the ephemeral tree reseeds from
-    // searchState$ (DEV-6576 Phase 4). The "all classes" branch needs no extra reset.
+    // searchState$. The "all classes" branch needs no extra reset.
     this._urlSync.writeState(
       { class: selection.iri || undefined, filters: undefined, orderBy: undefined },
       { replaceUrl: false }

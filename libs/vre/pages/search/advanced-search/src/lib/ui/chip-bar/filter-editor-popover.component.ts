@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, inject, Input, Output, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { IriLabelPair, PropertyObjectType, StatementElement } from '../../model';
-import { PropertyFormManager } from '../../service/property-form.manager';
+import { StatementDraftStore } from '../../service/statement-draft.store';
 import { ComparisonOperatorComponent } from '../statement-builder/assertions/comparison-operator.component';
 import { PredicateSelectComponent } from '../statement-builder/assertions/predicate-select.component';
 import { LinkValueComponent } from '../statement-builder/object-values/link-value/link-value.component';
@@ -26,39 +26,39 @@ import { StringValueComponent } from '../statement-builder/object-values/string-
       <app-predicate-select
         [subjectClass]="statement.subjectNode?.value"
         [selectedPredicate]="statement.selectedPredicate"
-        (selectedPredicateChange)="formManager.setSelectedPredicate(statement, $event)" />
+        (selectedPredicateChange)="draftStore.setSelectedPredicate(statement, $event)" />
 
       <app-comparison-operator
         [operators]="statement.operators"
         [selectedOperator]="statement.selectedOperator"
-        (operatorChange)="formManager.setSelectedOperator(statement, $event)" />
+        (operatorChange)="draftStore.setSelectedOperator(statement, $event)" />
 
       @switch (statement.objectType) {
         @case (PROPERTY_OBJECT_TYPES.ResourceObject) {
           <app-resource-value
             [selectedPredicate]="statement.selectedPredicate"
             [selectedResource]="asIriLabelPair(statement.selectedObjectValue)"
-            (selectedResourceChange)="formManager.setObjectValue(statement, $event)" />
+            (selectedResourceChange)="draftStore.setObjectValue(statement, $event)" />
         }
         @case (PROPERTY_OBJECT_TYPES.ValueObject) {
           <app-string-value
             [valueType]="statement.selectedPredicate!.objectValueType"
             [value]="asString(statement.selectedObjectValue)"
             [showError]="showErrors()"
-            (emitValueChanged)="formManager.setObjectValue(statement, $event)" />
+            (emitValueChanged)="draftStore.setObjectValue(statement, $event)" />
         }
         @case (PROPERTY_OBJECT_TYPES.ListValueObject) {
           <app-list-value
             [rootListNodeIri]="statement.selectedPredicate!.listObjectIri!"
             [selectedListItem]="asIriLabelPair(statement.selectedObjectValue)"
-            (emitValueChanged)="formManager.setObjectValue(statement, $event)" />
+            (emitValueChanged)="draftStore.setObjectValue(statement, $event)" />
         }
         @case (PROPERTY_OBJECT_TYPES.LinkValueObject) {
           <app-link-value
             [resourceClass]="statement.selectedPredicate?.objectValueType"
             [selectedResource]="asIriLabelPair(statement.selectedObjectValue)"
             [showError]="showErrors()"
-            (emitResourceSelected)="formManager.setObjectValue(statement, $event)" />
+            (emitResourceSelected)="draftStore.setObjectValue(statement, $event)" />
         }
       }
 
@@ -93,7 +93,7 @@ export class FilterEditorPopoverComponent {
   @Output() filterConfirm = new EventEmitter<void>();
   @Output() filterCancel = new EventEmitter<void>();
 
-  readonly formManager = inject(PropertyFormManager);
+  readonly draftStore = inject(StatementDraftStore);
   readonly PROPERTY_OBJECT_TYPES = PropertyObjectType;
   readonly showErrors = signal(false);
 

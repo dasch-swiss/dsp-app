@@ -3,20 +3,20 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { BehaviorSubject, distinctUntilChanged, Observable } from 'rxjs';
 import { PropertyObjectType, StatementElement, Predicate, IriLabelPair, NodeValue } from '../model';
 import { Operator } from '../operators.config';
-import { SearchDerivationService } from './search-derivation.service';
+import { DerivedSearchStateService } from './derived-search-state.service';
 
 /**
  * Owns the **ephemeral** in-progress statement tree (blank rows, in-progress children, unconfirmed
  * edits) plus the auto-grow logic that inserts trailing blank siblings/children as the user fills a
- * filter in (DEV-6576 Phase 3.5).
+ * filter in.
  *
  * The tree lives entirely in this service's own `_statements` store; it is seeded from the URL via
- * `searchState$` and never writes to `SearchStateService` (DEV-6576 Phase 3.5 Step 3 — the mirror
- * is gone). Consumers read `statements$`/`currentStatements`.
+ * `DerivedSearchStateService.searchState$` and never writes back to the URL — committed state is the
+ * URL's job. Consumers read `statements$`/`currentStatements`.
  */
 @Injectable()
-export class PropertyFormManager {
-  private readonly _derivation = inject(SearchDerivationService);
+export class StatementDraftStore {
+  private readonly _derivation = inject(DerivedSearchStateService);
   private readonly _destroyRef = inject(DestroyRef);
 
   // The ephemeral tree — this service's own source of truth for in-progress editing.
@@ -31,12 +31,11 @@ export class PropertyFormManager {
   }
 
   constructor() {
-    // Reactive seed (DEV-6576 Phase 3.5 Step 2): on every URL change the confirmed tree comes from
-    // `searchState$` with fresh StatementElement instances (new ids). Rebuild the ephemeral store so
-    // in-progress children re-key onto the *current* confirmed parents, and each confirmed link/
-    // resource statement gets a trailing blank child to edit. Unconfirmed rows do not survive a URL
-    // change — that is correct under D4/D6 (only the URL is durable). No DI cycle: SearchDerivationService
-    // does not depend on PropertyFormManager.
+    // Reactive seed: on every URL change the confirmed tree comes from `searchState$` with fresh
+    // StatementElement instances (new ids). Rebuild the ephemeral store so in-progress children re-key
+    // onto the *current* confirmed parents, and each confirmed link/resource statement gets a trailing
+    // blank child to edit. Unconfirmed rows do not survive a URL change — that is correct: only the URL
+    // is durable. No DI cycle: DerivedSearchStateService does not depend on StatementDraftStore.
     this._derivation.searchState$
       .pipe(takeUntilDestroyed(this._destroyRef))
       .subscribe(state => this._seedFromConfirmed(state.statements));

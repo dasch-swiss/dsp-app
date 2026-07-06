@@ -9,10 +9,8 @@ const c = {
 };
 
 /**
- * Dev-time trace of the single URL-driven search pipeline (DEV-6576). Trimmed in Phase 5 to just the
- * events that still exist after the flip: URL reads/writes, user interactions, and the results API.
- * The old per-concern restore/query logging (`_applyParams`, `_emitSearch`, popstate, orderBy
- * write-back, …) went away with the imperative path it described.
+ * Dev-time trace of the URL-driven search pipeline: URL reads/writes, user interactions, and the
+ * results API. Useful for following how a user action flows through the URL to the query and back.
  */
 @Injectable()
 export class SearchFlowLogger {

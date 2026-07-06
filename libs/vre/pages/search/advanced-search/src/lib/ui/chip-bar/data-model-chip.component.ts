@@ -80,8 +80,8 @@ export class DataModelChipComponent {
   onOntologySelected(iri: string): void {
     if (!iri) return;
     this._dataService.setOntology(iri);
-    // Nulling class/filters/orderBy in the URL is the reset; the ephemeral tree reseeds from
-    // searchState$ (DEV-6576 Phase 4 — no committed subject left to clear).
+    // Changing the ontology resets class/filters/orderBy in the URL; the ephemeral tree reseeds
+    // from searchState$.
     this._urlSync.writeState(
       { ontology: iri, class: undefined, filters: undefined, orderBy: undefined },
       { replaceUrl: false }

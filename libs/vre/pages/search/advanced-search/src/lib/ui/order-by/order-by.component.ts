@@ -6,7 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatListModule, MatSelectionListChange } from '@angular/material/list';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { OrderByItem } from '../../model';
-import { SearchDerivationService } from '../../service/search-derivation.service';
+import { DerivedSearchStateService } from '../../service/derived-search-state.service';
 import { SearchUrlSyncService } from '../../service/search-url-sync.service';
 import { getLabel } from '../../util/labels';
 
@@ -20,10 +20,10 @@ import { getLabel } from '../../util/labels';
 export class OrderByComponent {
   readonly TOOLTIP_TEXT = 'Search cannot be ordered by a URI property or a property that links to a resource.';
   readonly getLabel = getLabel;
-  private readonly _derivation = inject(SearchDerivationService);
+  private readonly _derivation = inject(DerivedSearchStateService);
   private readonly _urlSync = inject(SearchUrlSyncService);
 
-  // Pure, URL-derived list (DEV-6576 Phase 3b): the active item reflects the `orderBy` param.
+  // Pure, URL-derived list: the active item reflects the `orderBy` param.
   orderByItems$ = this._derivation.orderByItems$;
 
   isOpen = false;

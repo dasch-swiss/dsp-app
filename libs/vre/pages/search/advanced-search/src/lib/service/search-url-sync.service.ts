@@ -26,10 +26,10 @@ export class SearchUrlSyncService {
   private readonly _logger = inject(SearchFlowLogger);
 
   /**
-   * Continuous decoded query-param stream — the read side of "URL is the source of truth"
-   * (DEV-6576 Phase 2). Emits on every navigation (initial, user action, back/forward), deduped on
-   * the decoded shape so identical params do not re-trigger downstream work (Q9). Fires immediately
-   * with the current params on subscribe (Router's `queryParams` replays the latest value).
+   * Continuous decoded query-param stream — the read side of "URL is the source of truth".
+   * Emits on every navigation (initial, user action, back/forward), deduped on the decoded shape so
+   * identical params do not re-trigger downstream work. Fires immediately with the current params on
+   * subscribe (Router's `queryParams` replays the latest value).
    */
   readonly params$: Observable<SearchUrlParams> = this._route.queryParams.pipe(
     map(p => this._mapParams(p)),
@@ -49,9 +49,10 @@ export class SearchUrlSyncService {
     return params;
   }
 
-  // `replaceUrl` defaults to true so continuous changes (e.g. debounced fulltext typing) overwrite the
-  // current history entry. Discrete user actions (confirming/removing a filter, changing class or ontology)
-  // pass `replaceUrl: false` to push a new entry so browser back/forward steps through them.
+  // Every current caller passes `replaceUrl: false` to push a new history entry so browser back/forward
+  // steps through each action — including debounced fulltext, where each pause is one entry (the debounce
+  // itself coalesces the keystroke burst). Pass `replaceUrl: true` for a change that should overwrite the
+  // current entry instead of adding one.
   writeState(state: SearchUrlParams, { replaceUrl = true }: { replaceUrl?: boolean } = {}): void {
     this._logger.urlWrite(state);
     this._router.navigate([], {
@@ -63,7 +64,7 @@ export class SearchUrlSyncService {
 
   clearAll(): void {
     this._logger.urlClear();
-    // Route through the single write API (DEV-6576 D5). Under `merge`, nulling every known param
+    // Route through the single write API. Under `merge`, nulling every known param
     // removes it — equivalent to clearing. `replaceUrl: true` keeps reset out of history.
     this.writeState({ q: undefined, ontology: undefined, class: undefined, filters: undefined, orderBy: undefined });
   }

@@ -9,14 +9,13 @@ import { OntologyDataService } from './ontology-data.service';
 import { SearchUrlSyncService, SearchUrlParams } from './search-url-sync.service';
 
 /**
- * Derived, read-only view of the search form, computed purely from the URL (DEV-6576 Phase 2).
+ * Derived, read-only view of the search form, computed purely from the URL.
  *
- * This is the target "everything flows from the URL params" pipeline. It is built here to run
- * **in parallel** with the existing `SearchStateService`/`_applyParams` path; nothing consumes it
- * as the source of truth yet (that flip is Phase 3). It exposes:
+ * The URL query params are the single source of truth; everything the search UI reads flows from
+ * here. First load, back/forward, and user actions all go through the same derivation. It exposes:
  *   - `searchState$`  — { resourceClass, statements, orderByItems }, gated on ontology readiness
  *   - `orderByItems$` — pure order-by list derived from (confirmed statements, orderBy param)
- *   - `gravsearchQuery$` — the query string (or null), via the pure Phase-1 GravsearchService
+ *   - `gravsearchQuery$` — the query string (or null), via the pure GravsearchService
  *   - `loading$`      — combined readiness (ontology + classes + predicates)
  */
 export interface DerivedSearchState {
@@ -26,7 +25,7 @@ export interface DerivedSearchState {
 }
 
 @Injectable()
-export class SearchDerivationService {
+export class DerivedSearchStateService {
   private readonly _urlSync = inject(SearchUrlSyncService);
   private readonly _ontology = inject(OntologyDataService);
   private readonly _gravsearch = inject(GravsearchService);
@@ -37,15 +36,10 @@ export class SearchDerivationService {
   }
 
   /**
-   * Ontology-switch reaction (DEV-6576 Phase 3a). When the URL's `ontology` param names a different
-   * ontology than the one currently loaded, trigger `setOntology` so `resourceClasses$`/predicates
-   * re-hydrate and `loading$` settles. De-duped via `distinctUntilChanged` on the ontology param plus
-   * the identity guard, so an unchanged ontology never reloads.
-   *
-   * This mirrors the imperative `_applyParamsWithOntologySwitch(+Obs)` in `filter-chip-bar` and is
-   * additive: nothing consumes the derivation as the source of truth yet, so the imperative helpers
-   * still run in parallel. Phase 3d deletes them once the page reads this pipeline — at which point
-   * this reaction is the *only* thing switching the ontology from the URL.
+   * Ontology-switch reaction. When the URL's `ontology` param names a different ontology than the one
+   * currently loaded, trigger `setOntology` so `resourceClasses$`/predicates re-hydrate and `loading$`
+   * settles. De-duped via `distinctUntilChanged` on the ontology param plus the identity guard, so an
+   * unchanged ontology never reloads. This is the only thing that switches the ontology from the URL.
    */
   private _reactToOntologyParam(): void {
     this._urlSync.params$
@@ -63,7 +57,7 @@ export class SearchDerivationService {
   /**
    * Combined readiness gate. True while any source needed to hydrate the URL is not yet available:
    * ontology still loading, resource classes not yet emitted, or (for a filter-bearing URL) the
-   * predicate list not yet hydrated. Mirrors what `_applyParams` waits on today.
+   * predicate list not yet hydrated.
    */
   readonly loading$: Observable<boolean> = combineLatest([
     this._urlSync.params$,
@@ -135,8 +129,8 @@ export class SearchDerivationService {
   /**
    * Pure order-by derivation: one `OrderByItem` per confirmed statement's predicate, with the item
    * whose id matches the URL's `orderBy` param marked active. Non-sortable predicates (link / list)
-   * are flagged disabled, mirroring `OrderByService`. Stale `orderBy` ids (not among the current
-   * statements) simply produce no active item — the query then falls back to ASC(?label).
+   * are flagged disabled. Stale `orderBy` ids (not among the current statements) simply produce no
+   * active item — the query then falls back to ASC(?label).
    */
   private _deriveOrderByItems(statements: StatementElement[], activeOrderById?: string): OrderByItem[] {
     const seen = new Set<string>();

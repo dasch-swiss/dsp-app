@@ -15,17 +15,17 @@ import {
   SAMPLE_RESOURCE_CLASSES,
   STORY_PROVIDERS,
 } from '../../stories.helpers';
-import { FilterChipBarComponent } from './filter-chip-bar.component';
+import { AdvancedSearchBarComponent } from './advanced-search-bar.component';
 
-const meta: Meta<FilterChipBarComponent> = {
-  title: 'Search / Advanced Search / Chip Bar',
-  component: FilterChipBarComponent,
+const meta: Meta<AdvancedSearchBarComponent> = {
+  title: 'Search / Advanced Search / Search Bar',
+  component: AdvancedSearchBarComponent,
   argTypes: {
     projectUuid: { description: 'UUID of the project whose ontologies are loaded.' },
   },
 };
 export default meta;
-type Story = StoryObj<FilterChipBarComponent>;
+type Story = StoryObj<AdvancedSearchBarComponent>;
 
 const baseProviders = [
   ...STORY_PROVIDERS,

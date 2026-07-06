@@ -21,11 +21,9 @@ export class GravsearchService {
   }
 
   /**
-   * Pure w.r.t. the search form state: `resourceClassIri` and `orderBy` are passed explicitly
-   * rather than read from `SearchStateService` (DEV-6576 D1). Ontology IRI/short-code still come
-   * from `OntologyDataService` — the ontology is itself URL-driven, not committed form state.
-   * The generated query string is byte-identical to the previous ambient-read implementation for
-   * the same (statements, fulltext, resourceClassIri, orderBy) inputs.
+   * Pure w.r.t. the search form state: `statements`, `fulltext`, `resourceClassIri`, and `orderBy`
+   * are all passed explicitly, so the query is a pure function of its inputs. Ontology IRI/short-code
+   * still come from `OntologyDataService` — the ontology is itself URL-driven, not form state.
    */
   generateGravSearchQuery(
     statements: StatementElement[],

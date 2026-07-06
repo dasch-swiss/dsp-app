@@ -4,8 +4,8 @@ import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular'
 import { of } from 'rxjs';
 import { expect, userEvent, within } from 'storybook/test';
 import { OrderByItem } from '../../model';
-import { SearchDerivationService } from '../../service/search-derivation.service';
-import { makeSearchDerivationServiceStub, STORY_PROVIDERS } from '../../stories.helpers';
+import { DerivedSearchStateService } from '../../service/derived-search-state.service';
+import { makeDerivedSearchStateServiceStub, STORY_PROVIDERS } from '../../stories.helpers';
 import { toLabels } from '../../util/labels';
 import { OrderByComponent } from './order-by.component';
 
@@ -29,7 +29,7 @@ export const DisabledWhenNoItems: Story = {
       providers: [
         ...STORY_PROVIDERS,
         importProvidersFrom(OverlayModule),
-        { provide: SearchDerivationService, useValue: makeSearchDerivationServiceStub() },
+        { provide: DerivedSearchStateService, useValue: makeDerivedSearchStateServiceStub() },
       ],
     }),
   ],
@@ -49,8 +49,8 @@ export const EnabledWithItems: Story = {
         ...STORY_PROVIDERS,
         importProvidersFrom(OverlayModule),
         {
-          provide: SearchDerivationService,
-          useValue: makeSearchDerivationServiceStub({ orderByItems$: of(SAMPLE_ORDER_BY_ITEMS) }),
+          provide: DerivedSearchStateService,
+          useValue: makeDerivedSearchStateServiceStub({ orderByItems$: of(SAMPLE_ORDER_BY_ITEMS) }),
         },
       ],
     }),
@@ -71,8 +71,8 @@ export const OpensPopoverOnClick: Story = {
         ...STORY_PROVIDERS,
         importProvidersFrom(OverlayModule),
         {
-          provide: SearchDerivationService,
-          useValue: makeSearchDerivationServiceStub({ orderByItems$: of(SAMPLE_ORDER_BY_ITEMS) }),
+          provide: DerivedSearchStateService,
+          useValue: makeDerivedSearchStateServiceStub({ orderByItems$: of(SAMPLE_ORDER_BY_ITEMS) }),
         },
       ],
     }),
@@ -101,8 +101,8 @@ export const ShowsDisabledItemWithTooltip: Story = {
         ...STORY_PROVIDERS,
         importProvidersFrom(OverlayModule),
         {
-          provide: SearchDerivationService,
-          useValue: makeSearchDerivationServiceStub({
+          provide: DerivedSearchStateService,
+          useValue: makeDerivedSearchStateServiceStub({
             orderByItems$: of([
               new OrderByItem('prop1', toLabels('Title')),
               new OrderByItem('prop2', toLabels('Link (disabled)'), true),

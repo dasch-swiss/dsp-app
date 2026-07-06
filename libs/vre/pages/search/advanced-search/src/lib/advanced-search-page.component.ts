@@ -5,16 +5,16 @@ import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
 import { SearchTipsComponent } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { AdvancedSearchResultsComponent } from './advanced-search-results.component';
 import { provideAdvancedSearch } from './providers';
-import { SearchDerivationService } from './service/search-derivation.service';
-import { FilterChipBarComponent } from './ui/chip-bar/filter-chip-bar.component';
+import { DerivedSearchStateService } from './service/derived-search-state.service';
+import { AdvancedSearchBarComponent } from './ui/chip-bar/advanced-search-bar.component';
 
 @Component({
   selector: 'app-advanced-search-page',
-  imports: [MatDivider, FilterChipBarComponent, AdvancedSearchResultsComponent, SearchTipsComponent],
+  imports: [MatDivider, AdvancedSearchBarComponent, AdvancedSearchResultsComponent, SearchTipsComponent],
   template: `
     <div class="search-bar">
       <div class="search-bar__inner">
-        <app-filter-chip-bar [projectUuid]="uuid" />
+        <app-advanced-search-bar [projectUuid]="uuid" />
       </div>
     </div>
 
@@ -36,10 +36,10 @@ import { FilterChipBarComponent } from './ui/chip-bar/filter-chip-bar.component'
 })
 export class AdvancedSearchPageComponent {
   private readonly _projectPageService = inject(ProjectPageService);
-  private readonly _derivation = inject(SearchDerivationService);
+  private readonly _derivation = inject(DerivedSearchStateService);
 
-  // Query is now derived purely from the URL (DEV-6576 Phase 3c) — the same pipeline serves first
-  // load, popstate, and user actions. The old `@Output() gravsearchQuery` push chain is retired in 3d.
+  // Query is derived purely from the URL — the same pipeline serves first load, back/forward, and
+  // user actions.
   readonly query = toSignal(this._derivation.gravsearchQuery$, { initialValue: null });
 
   get uuid(): string {
