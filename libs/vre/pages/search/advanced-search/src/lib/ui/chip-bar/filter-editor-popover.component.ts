@@ -23,44 +23,46 @@ import { StringValueComponent } from '../statement-builder/object-values/string-
   ],
   template: `
     <div class="filter-editor-popover mat-elevation-z4">
-      <app-predicate-select
-        [subjectClass]="statement.subjectNode?.value"
-        [selectedPredicate]="statement.selectedPredicate"
-        (selectedPredicateChange)="draftStore.setSelectedPredicate(statement, $event)" />
+      <div class="filter-editor-popover__fields">
+        <app-predicate-select
+          [subjectClass]="statement.subjectNode?.value"
+          [selectedPredicate]="statement.selectedPredicate"
+          (selectedPredicateChange)="draftStore.setSelectedPredicate(statement, $event)" />
 
-      <app-comparison-operator
-        [operators]="statement.operators"
-        [selectedOperator]="statement.selectedOperator"
-        (operatorChange)="draftStore.setSelectedOperator(statement, $event)" />
+        <app-comparison-operator
+          [operators]="statement.operators"
+          [selectedOperator]="statement.selectedOperator"
+          (operatorChange)="draftStore.setSelectedOperator(statement, $event)" />
 
-      @switch (statement.objectType) {
-        @case (PROPERTY_OBJECT_TYPES.ResourceObject) {
-          <app-resource-value
-            [selectedPredicate]="statement.selectedPredicate"
-            [selectedResource]="asIriLabelPair(statement.selectedObjectValue)"
-            (selectedResourceChange)="draftStore.setObjectValue(statement, $event)" />
+        @switch (statement.objectType) {
+          @case (PROPERTY_OBJECT_TYPES.ResourceObject) {
+            <app-resource-value
+              [selectedPredicate]="statement.selectedPredicate"
+              [selectedResource]="asIriLabelPair(statement.selectedObjectValue)"
+              (selectedResourceChange)="draftStore.setObjectValue(statement, $event)" />
+          }
+          @case (PROPERTY_OBJECT_TYPES.ValueObject) {
+            <app-string-value
+              [valueType]="statement.selectedPredicate!.objectValueType"
+              [value]="asString(statement.selectedObjectValue)"
+              [showError]="showErrors()"
+              (emitValueChanged)="draftStore.setObjectValue(statement, $event)" />
+          }
+          @case (PROPERTY_OBJECT_TYPES.ListValueObject) {
+            <app-list-value
+              [rootListNodeIri]="statement.selectedPredicate!.listObjectIri!"
+              [selectedListItem]="asIriLabelPair(statement.selectedObjectValue)"
+              (emitValueChanged)="draftStore.setObjectValue(statement, $event)" />
+          }
+          @case (PROPERTY_OBJECT_TYPES.LinkValueObject) {
+            <app-link-value
+              [resourceClass]="statement.selectedPredicate?.objectValueType"
+              [selectedResource]="asIriLabelPair(statement.selectedObjectValue)"
+              [showError]="showErrors()"
+              (emitResourceSelected)="draftStore.setObjectValue(statement, $event)" />
+          }
         }
-        @case (PROPERTY_OBJECT_TYPES.ValueObject) {
-          <app-string-value
-            [valueType]="statement.selectedPredicate!.objectValueType"
-            [value]="asString(statement.selectedObjectValue)"
-            [showError]="showErrors()"
-            (emitValueChanged)="draftStore.setObjectValue(statement, $event)" />
-        }
-        @case (PROPERTY_OBJECT_TYPES.ListValueObject) {
-          <app-list-value
-            [rootListNodeIri]="statement.selectedPredicate!.listObjectIri!"
-            [selectedListItem]="asIriLabelPair(statement.selectedObjectValue)"
-            (emitValueChanged)="draftStore.setObjectValue(statement, $event)" />
-        }
-        @case (PROPERTY_OBJECT_TYPES.LinkValueObject) {
-          <app-link-value
-            [resourceClass]="statement.selectedPredicate?.objectValueType"
-            [selectedResource]="asIriLabelPair(statement.selectedObjectValue)"
-            [showError]="showErrors()"
-            (emitResourceSelected)="draftStore.setObjectValue(statement, $event)" />
-        }
-      }
+      </div>
 
       <div class="filter-editor-popover__actions">
         <button mat-button (click)="filterCancel.emit()">Cancel</button>
@@ -75,7 +77,19 @@ import { StringValueComponent } from '../statement-builder/object-values/string-
         padding: 16px;
         border-radius: 4px;
         min-width: 280px;
-        max-width: 400px;
+        max-width: 720px;
+      }
+      .filter-editor-popover__fields {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-start;
+        gap: 8px;
+      }
+      /* Each field component (predicate / operator / value) is a flex item so they sit inline;
+         they wrap onto the next line when the popover is too narrow to hold them side by side. */
+      .filter-editor-popover__fields > * {
+        flex: 1 1 180px;
+        min-width: 160px;
       }
       .filter-editor-popover__actions {
         display: flex;
