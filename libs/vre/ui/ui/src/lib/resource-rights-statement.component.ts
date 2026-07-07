@@ -104,7 +104,8 @@ import { TranslatePipe } from '@ngx-translate/core';
                 @if (resourceAuthorship && !resourceAuthorship.length) {
                   @if (defaultResourceAuthorship.length) {
                     <em>{{
-                      'legal.dataSide.noAuthorshipFallback' | translate: { default: defaultResourceAuthorship.join(', ') }
+                      'legal.dataSide.noAuthorshipFallback'
+                        | translate: { default: defaultResourceAuthorship.join(', ') }
                     }}</em>
                   } @else {
                     <em>{{ 'legal.dataSide.noAuthorshipFallbackNoDefault' | translate }}</em>
