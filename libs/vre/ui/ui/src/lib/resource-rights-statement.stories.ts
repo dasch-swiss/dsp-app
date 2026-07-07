@@ -69,6 +69,43 @@ export const ShowsLicenseHolderAndAuthorshipWhenConfigured: Story = {
   },
 };
 
+export const ShowsCopyrightHolderOnlyWhenNoLicense: Story = {
+  name: 'Shows the copyright holder alone when no license is set',
+  args: {
+    copyrightHolder: 'University of Basel',
+    showAuthorship: false,
+  },
+  play: async ({ canvasElement, step }) => {
+    const canvas = within(canvasElement);
+    await step('The copyright holder renders even without a license', async () => {
+      await expect(canvas.getByText('University of Basel')).toBeInTheDocument();
+    });
+    await step('No (empty) license row is rendered', async () => {
+      // Only the copyright-holder row remains; the license row is gated on its own licenseLabel.
+      await expect(canvasElement.querySelectorAll('.row')).toHaveLength(1);
+      await expect(canvas.queryByRole('link')).toBeNull();
+    });
+  },
+};
+
+export const ShowsLicenseOnlyWhenNoCopyrightHolder: Story = {
+  name: 'Shows the license alone when no copyright holder is set',
+  args: {
+    licenseLabel: 'CC BY 4.0',
+    licenseUrl: 'https://creativecommons.org/licenses/by/4.0/',
+    showAuthorship: false,
+  },
+  play: async ({ canvasElement, step }) => {
+    const canvas = within(canvasElement);
+    await step('The license renders as a link', async () => {
+      await expect(canvas.getByRole('link', { name: /CC BY 4\.0/ })).toBeInTheDocument();
+    });
+    await step('No copyright-holder row is rendered', async () => {
+      await expect(canvasElement.querySelectorAll('.row')).toHaveLength(1);
+    });
+  },
+};
+
 export const HidesAuthorshipOnProjectLevelDisplay: Story = {
   name: 'Hides the authorship row on a project-level display',
   args: {

@@ -13,11 +13,11 @@ import { TranslatePipe } from '@ngx-translate/core';
  * Used on the resource viewer, the create-resource form (preview) and the project description.
  *
  * Behaviour (per spec §1b):
- * - When NOT configured (no `licenseLabel`): renders the admins-only "uncategorized — please
- *   review" callout for admins, and renders nothing for everyone else (no public regression).
- * - When configured: shows the license (linked to its Creative Commons deed), the copyright
- *   holder and — unless `showAuthorship` is false — the authorship. Project-level displays pass
- *   `showAuthorship=false`, since authorship is per-resource, not a property of the whole project.
+ * - When NOT configured (neither a license nor a copyright holder): renders the admins-only
+ *   "uncategorized — please review" callout for admins, and renders nothing for everyone else.
+ * - When configured: shows whichever of the license (linked to its Creative Commons deed) and the
+ *   copyright holder are set — each independently — and, unless `showAuthorship` is false, the
+ *   authorship. Project-level displays pass `showAuthorship=false`, since authorship is per-resource.
  * - In a per-resource context, when the resource has no own authorship, shows a labeled fallback
  *   ("No authorship recorded for this resource. Project default: …") rather than asserting the default.
  * - For users with edit rights (`canEditAuthorship`), the authorship row edits inline in place
@@ -30,22 +30,24 @@ import { TranslatePipe } from '@ngx-translate/core';
       <section class="rights-statement" [class.label-start]="labelAlign === 'start'">
         <h3 class="mat-subtitle-2">{{ 'legal.dataSide.heading' | translate }}</h3>
 
-        <div class="row">
-          <span class="label mat-subtitle-2">{{ 'legal.dataSide.license' | translate }}</span>
-          <span class="value">
-            @if (licenseUrl) {
-              <a
-                [href]="licenseUrl"
-                target="_blank"
-                rel="noopener noreferrer"
-                [attr.aria-label]="licenseLabel + ', ' + ('legal.dataSide.opensInNewTab' | translate)">
+        @if (licenseLabel) {
+          <div class="row">
+            <span class="label mat-subtitle-2">{{ 'legal.dataSide.license' | translate }}</span>
+            <span class="value">
+              @if (licenseUrl) {
+                <a
+                  [href]="licenseUrl"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  [attr.aria-label]="licenseLabel + ', ' + ('legal.dataSide.opensInNewTab' | translate)">
+                  {{ licenseLabel }}
+                </a>
+              } @else {
                 {{ licenseLabel }}
-              </a>
-            } @else {
-              {{ licenseLabel }}
-            }
-          </span>
-        </div>
+              }
+            </span>
+          </div>
+        }
 
         @if (copyrightHolder) {
           <div class="row">
@@ -250,7 +252,7 @@ import { TranslatePipe } from '@ngx-translate/core';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResourceRightsStatementComponent {
-  /** The human-readable license label, e.g. "CC BY 4.0". Its presence means the project is "configured". */
+  /** The human-readable license label, e.g. "CC BY 4.0". Rendered only when set (see `configured`). */
   @Input() licenseLabel?: string;
   /** The license deed URL (Creative Commons), rendered as a link. */
   @Input() licenseUrl?: string;
@@ -283,7 +285,7 @@ export class ResourceRightsStatementComponent {
   @ViewChild('editButton') private _editButton?: ElementRef<HTMLButtonElement>;
 
   get configured(): boolean {
-    return !!this.licenseLabel;
+    return !!this.licenseLabel || !!this.copyrightHolder;
   }
 
   /** Open the inline editor, seeded with the currently displayed authorship. */
