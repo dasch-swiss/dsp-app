@@ -8,7 +8,7 @@ import { makeOntologyDataServiceStub, SAMPLE_ONTOLOGIES, STORY_PROVIDERS } from 
 import { DataModelChipComponent } from './data-model-chip.component';
 
 const meta: Meta<DataModelChipComponent> = {
-  title: 'Search / Advanced Search / Chip Bar / 1. Data Model Chip',
+  title: 'Search / Advanced Search / Search bar / 1. Data Model Chip',
   component: DataModelChipComponent,
 };
 export default meta;

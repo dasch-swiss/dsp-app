@@ -37,7 +37,7 @@ const makeStatement = (overrides: {
 };
 
 const meta: Meta<ChipLabelPipeHarnessComponent> = {
-  title: 'Search / Advanced Search / Chip Bar / 3b. Filter Editor Popover / Chip Label Pipe',
+  title: 'Search / Advanced Search / Search bar / 3a. Filter Chip / Chip Label Pipe',
   component: ChipLabelPipeHarnessComponent,
 };
 export default meta;

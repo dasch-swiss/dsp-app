@@ -11,7 +11,7 @@ import {
 import { AddFilterButtonComponent } from './add-filter-button.component';
 
 const meta: Meta<AddFilterButtonComponent> = {
-  title: 'Search / Advanced Search / Chip Bar / 4. Add Filter Button',
+  title: 'Search / Advanced Search / Search bar / 4. Add Filter Button',
   component: AddFilterButtonComponent,
   argTypes: {
     filterConfirmed: { description: 'Emitted with the new statement ID when the filter is confirmed.' },

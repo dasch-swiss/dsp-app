@@ -2,7 +2,7 @@ import { OverlayModule } from '@angular/cdk/overlay';
 import { importProvidersFrom } from '@angular/core';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
-import { expect, within } from 'storybook/test';
+import { expect } from 'storybook/test';
 import { StatementElement } from '../../model';
 import { Operator } from '../../operators.config';
 import { OntologyDataService } from '../../service/ontology-data.service';
@@ -48,7 +48,7 @@ const statementWithNotExistsOperator = (): StatementElement => {
 };
 
 const meta: Meta<FilterEditorPopoverComponent> = {
-  title: 'Search / Advanced Search / Chip Bar / 3b. Filter Editor Popover',
+  title: 'Search / Advanced Search / Search bar / 4. Add Filter Button / Filter Editor Popover',
   component: FilterEditorPopoverComponent,
   argTypes: {
     statement: { description: 'The StatementElement being edited.' },

@@ -16,7 +16,7 @@ const SAMPLE_ORDER_BY_ITEMS: OrderByItem[] = [
 ];
 
 const meta: Meta<OrderByComponent> = {
-  title: 'Search / Advanced Search / Chip Bar / 5. Order By',
+  title: 'Search / Advanced Search / Search bar / 5. Order By',
   component: OrderByComponent,
 };
 export default meta;

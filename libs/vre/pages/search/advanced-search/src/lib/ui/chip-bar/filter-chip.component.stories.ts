@@ -2,7 +2,7 @@ import { OverlayModule } from '@angular/cdk/overlay';
 import { importProvidersFrom } from '@angular/core';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect } from 'storybook/test';
 import { StatementElement } from '../../model';
 import { Operator } from '../../operators.config';
 import { OntologyDataService } from '../../service/ontology-data.service';
@@ -42,7 +42,7 @@ const predicateOnlyStatement = (): StatementElement => {
 };
 
 const meta: Meta<FilterChipComponent> = {
-  title: 'Search / Advanced Search / Chip Bar / 3a. Filter Chip',
+  title: 'Search / Advanced Search / Search bar / 3a. Filter Chip',
   component: FilterChipComponent,
   argTypes: {
     statement: { description: 'The StatementElement this chip represents.' },

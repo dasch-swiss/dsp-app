@@ -7,8 +7,8 @@ import { DerivedSearchState, DerivedSearchStateService } from '../../service/der
 import { OntologyDataService } from '../../service/ontology-data.service';
 import { StatementDraftStore } from '../../service/statement-draft.store';
 import {
-  makeOntologyDataServiceStub,
   makeDerivedSearchStateServiceStub,
+  makeOntologyDataServiceStub,
   SAMPLE_RESOURCE_CLASSES,
   STORY_PROVIDERS,
 } from '../../stories.helpers';
@@ -22,7 +22,7 @@ const derivationWithClass = (resourceClass: DerivedSearchState['resourceClass'])
 });
 
 const meta: Meta<ResourceClassChipComponent> = {
-  title: 'Search / Advanced Search / Chip Bar / 2. Resource Class Chip',
+  title: 'Search / Advanced Search / Search bar / 2. Resource Class Chip',
   component: ResourceClassChipComponent,
 };
 export default meta;

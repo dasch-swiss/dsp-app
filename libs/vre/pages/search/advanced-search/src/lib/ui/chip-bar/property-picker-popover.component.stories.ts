@@ -2,7 +2,7 @@ import { OverlayModule } from '@angular/cdk/overlay';
 import { importProvidersFrom } from '@angular/core';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect } from 'storybook/test';
 import { IriLabelPair, Predicate } from '../../model';
 import { OntologyDataService } from '../../service/ontology-data.service';
 import { STORY_PROVIDERS } from '../../stories.helpers';
@@ -30,7 +30,8 @@ const makeOntologyStub = (properties: IriLabelPair[] = SAMPLE_PROPERTIES) => ({
 });
 
 const meta: Meta<PropertyPickerPopoverComponent> = {
-  title: 'Search / Advanced Search / Chip Bar / 3b. Filter Editor Popover / Property Picker Popover',
+  title:
+    'Search / Advanced Search / Search bar / 4. Add Filter Button / Filter Editor Popover / Property Picker Popover',
   component: PropertyPickerPopoverComponent,
   argTypes: {
     subjectClassIri: { description: 'IRI of the subject class to filter properties for.' },

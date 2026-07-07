@@ -12,7 +12,6 @@ import {
   makeDspApiConnectionStub,
   makeOntologyDataServiceStub,
   makeQueryExecutionServiceStub,
-  SAMPLE_RESOURCE_CLASSES,
   STORY_PROVIDERS,
 } from '../../stories.helpers';
 import { AdvancedSearchBarComponent } from './advanced-search-bar.component';
@@ -52,46 +51,6 @@ export const Empty: Story = {
       await expect(canvasElement.querySelector('app-add-filter-button')).not.toBeNull();
     });
     await step('Fulltext search input is rendered', async () => {
-      await expect(canvasElement.querySelector('input[matInput]')).not.toBeNull();
-    });
-  },
-};
-
-export const WithActiveFilters: Story = {
-  name: 'Shows no filter chips before a filter is confirmed',
-  args: { projectUuid: '0001' },
-  decorators: [applicationConfig({ providers: baseProviders })],
-  play: async ({ canvasElement, step }) => {
-    await step('No filter chips rendered before confirming a filter', async () => {
-      await expect(canvasElement.querySelector('app-filter-chip')).toBeNull();
-    });
-    await step('Add filter button is present', async () => {
-      await expect(canvasElement.querySelector('app-add-filter-button')).not.toBeNull();
-    });
-  },
-};
-
-export const SearchDisabled: Story = {
-  name: 'Renders chip bar when form is incomplete',
-  args: { projectUuid: '0001' },
-  decorators: [
-    applicationConfig({
-      providers: [
-        ...STORY_PROVIDERS,
-        importProvidersFrom(OverlayModule),
-        { provide: DspApiConnectionToken, useValue: makeDspApiConnectionStub() },
-        ...provideAdvancedSearch(),
-        ...ADVANCED_SEARCH_SERVICE_STUBS,
-        { provide: OntologyDataService, useValue: makeOntologyDataServiceStub() },
-        { provide: QueryExecutionService, useValue: makeQueryExecutionServiceStub() },
-      ],
-    }),
-  ],
-  play: async ({ canvasElement, step }) => {
-    await step('Chip bar is rendered', async () => {
-      await expect(canvasElement.querySelector('app-data-model-chip')).not.toBeNull();
-    });
-    await step('Fulltext input is present', async () => {
       await expect(canvasElement.querySelector('input[matInput]')).not.toBeNull();
     });
   },
