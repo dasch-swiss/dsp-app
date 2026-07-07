@@ -33,6 +33,10 @@ const meta: Meta<ResourceRightsStatementComponent> = {
       control: { type: 'radio' },
       options: ['start', 'end'],
     },
+    showAuthorship: {
+      description: 'Render the authorship row. Project-level displays pass false — authorship is per-resource.',
+      control: 'boolean',
+    },
     editLegalInfo: { description: 'Emitted when an admin clicks "Edit legal info" on the unconfigured callout.' },
     saveAuthorship: { description: 'Emitted with the new authorship list when a Modify user saves the inline editor.' },
   },
@@ -61,6 +65,29 @@ export const ShowsLicenseHolderAndAuthorshipWhenConfigured: Story = {
     });
     await step('Authorship is listed', async () => {
       await expect(canvas.getByText('Lotte Reiniger, Hilma af Klint')).toBeInTheDocument();
+    });
+  },
+};
+
+export const HidesAuthorshipOnProjectLevelDisplay: Story = {
+  name: 'Hides the authorship row on a project-level display',
+  args: {
+    licenseLabel: 'CC BY 4.0',
+    licenseUrl: 'https://creativecommons.org/licenses/by/4.0/',
+    copyrightHolder: 'University of Basel',
+    defaultResourceAuthorship: ['Lotte Reiniger', 'Hilma af Klint'],
+    showAuthorship: false,
+  },
+  play: async ({ canvasElement, step }) => {
+    const canvas = within(canvasElement);
+    await step('License and copyright holder still render', async () => {
+      await expect(canvas.getByRole('link', { name: /CC BY 4\.0/ })).toBeInTheDocument();
+      await expect(canvas.getByText('University of Basel')).toBeInTheDocument();
+    });
+    await step('The authorship row is gated out, even though a default authorship was provided', async () => {
+      // Only the license and copyright-holder rows remain; on project-level displays authorship is per-resource.
+      await expect(canvasElement.querySelectorAll('.row')).toHaveLength(2);
+      await expect(canvas.queryByText('Lotte Reiniger, Hilma af Klint')).toBeNull();
     });
   },
 };

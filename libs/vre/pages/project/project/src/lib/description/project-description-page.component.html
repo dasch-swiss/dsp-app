@@ -48,7 +48,7 @@
             [licenseLabel]="rights.licenseLabel"
             [licenseUrl]="rights.licenseUrl"
             [copyrightHolder]="rights.copyrightHolder"
-            [defaultResourceAuthorship]="rights.defaultDataAuthorship"
+            [showAuthorship]="false"
             [isAdmin]="(hasProjectAdminRights$ | async) ?? false"
             (editLegalInfo)="goToLegalSettings()" />
         </section>

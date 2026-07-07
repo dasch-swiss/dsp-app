@@ -16,7 +16,8 @@ import { TranslatePipe } from '@ngx-translate/core';
  * - When NOT configured (no `licenseLabel`): renders the admins-only "uncategorized — please
  *   review" callout for admins, and renders nothing for everyone else (no public regression).
  * - When configured: shows the license (linked to its Creative Commons deed), the copyright
- *   holder and the authorship.
+ *   holder and — unless `showAuthorship` is false — the authorship. Project-level displays pass
+ *   `showAuthorship=false`, since authorship is per-resource, not a property of the whole project.
  * - In a per-resource context, when the resource has no own authorship, shows a labeled fallback
  *   ("No authorship recorded for this resource. Project default: …") rather than asserting the default.
  * - For users with edit rights (`canEditAuthorship`), the authorship row edits inline in place
@@ -53,80 +54,82 @@ import { TranslatePipe } from '@ngx-translate/core';
           </div>
         }
 
-        <div class="row">
-          <span class="label mat-subtitle-2">{{ 'legal.dataSide.authorship' | translate }}</span>
-          @if (editing) {
-            <!-- Inline editor: opens in place (no dialog) with a chip input and save/undo, like a property row. -->
-            <span class="value value-editing">
-              <mat-form-field class="authorship-edit-field" subscriptSizing="dynamic">
-                <mat-chip-grid #chipGrid [attr.aria-label]="'legal.dataSide.authorship' | translate">
-                  @for (author of editAuthorshipList; track $index) {
-                    <mat-chip-row (removed)="removeEditAuthor($index)">
-                      {{ author }}
-                      <button
-                        type="button"
-                        matChipRemove
-                        [attr.aria-label]="'legal.dataSide.removeAuthor' | translate: { name: author }">
-                        <mat-icon>cancel</mat-icon>
-                      </button>
-                    </mat-chip-row>
+        @if (showAuthorship) {
+          <div class="row">
+            <span class="label mat-subtitle-2">{{ 'legal.dataSide.authorship' | translate }}</span>
+            @if (editing) {
+              <!-- Inline editor: opens in place (no dialog) with a chip input and save/undo, like a property row. -->
+              <span class="value value-editing">
+                <mat-form-field class="authorship-edit-field" subscriptSizing="dynamic">
+                  <mat-chip-grid #chipGrid [attr.aria-label]="'legal.dataSide.authorship' | translate">
+                    @for (author of editAuthorshipList; track $index) {
+                      <mat-chip-row (removed)="removeEditAuthor($index)">
+                        {{ author }}
+                        <button
+                          type="button"
+                          matChipRemove
+                          [attr.aria-label]="'legal.dataSide.removeAuthor' | translate: { name: author }">
+                          <mat-icon>cancel</mat-icon>
+                        </button>
+                      </mat-chip-row>
+                    }
+                    <input
+                      #chipInput
+                      autocomplete="off"
+                      [matChipInputFor]="chipGrid"
+                      (matChipInputTokenEnd)="addEditAuthor($event)" />
+                  </mat-chip-grid>
+                </mat-form-field>
+                <button
+                  type="button"
+                  class="edit-action"
+                  [matTooltip]="'legal.dataSide.settings.cancel' | translate"
+                  [attr.aria-label]="'legal.dataSide.settings.cancel' | translate"
+                  (click)="cancelEdit()">
+                  <mat-icon>undo</mat-icon>
+                </button>
+                <button
+                  type="button"
+                  class="edit-action save"
+                  [matTooltip]="'legal.dataSide.settings.save' | translate"
+                  [attr.aria-label]="'legal.dataSide.settings.save' | translate"
+                  (click)="saveEdit()">
+                  <mat-icon>save</mat-icon>
+                </button>
+              </span>
+            } @else {
+              <span class="value">
+                @if (resourceAuthorship && !resourceAuthorship.length) {
+                  @if (defaultResourceAuthorship.length) {
+                    <em>{{
+                      'legal.dataSide.noAuthorshipFallback' | translate: { default: defaultResourceAuthorship.join(', ') }
+                    }}</em>
+                  } @else {
+                    <em>{{ 'legal.dataSide.noAuthorshipFallbackNoDefault' | translate }}</em>
                   }
-                  <input
-                    #chipInput
-                    autocomplete="off"
-                    [matChipInputFor]="chipGrid"
-                    (matChipInputTokenEnd)="addEditAuthor($event)" />
-                </mat-chip-grid>
-              </mat-form-field>
-              <button
-                type="button"
-                class="edit-action"
-                [matTooltip]="'legal.dataSide.settings.cancel' | translate"
-                [attr.aria-label]="'legal.dataSide.settings.cancel' | translate"
-                (click)="cancelEdit()">
-                <mat-icon>undo</mat-icon>
-              </button>
-              <button
-                type="button"
-                class="edit-action save"
-                [matTooltip]="'legal.dataSide.settings.save' | translate"
-                [attr.aria-label]="'legal.dataSide.settings.save' | translate"
-                (click)="saveEdit()">
-                <mat-icon>save</mat-icon>
-              </button>
-            </span>
-          } @else {
-            <span class="value">
-              @if (resourceAuthorship && !resourceAuthorship.length) {
-                @if (defaultResourceAuthorship.length) {
-                  <em>{{
-                    'legal.dataSide.noAuthorshipFallback' | translate: { default: defaultResourceAuthorship.join(', ') }
-                  }}</em>
+                } @else if (resourceAuthorship) {
+                  {{ resourceAuthorship.join(', ') }}
+                } @else if (defaultResourceAuthorship.length) {
+                  {{ defaultResourceAuthorship.join(', ') }}
                 } @else {
                   <em>{{ 'legal.dataSide.noAuthorshipFallbackNoDefault' | translate }}</em>
                 }
-              } @else if (resourceAuthorship) {
-                {{ resourceAuthorship.join(', ') }}
-              } @else if (defaultResourceAuthorship.length) {
-                {{ defaultResourceAuthorship.join(', ') }}
-              } @else {
-                <em>{{ 'legal.dataSide.noAuthorshipFallbackNoDefault' | translate }}</em>
-              }
-              @if (canEditAuthorship) {
-                <!-- Inline, always-visible edit affordance, right after the value (discoverable, close to the text). -->
-                <button
-                  #editButton
-                  type="button"
-                  class="edit-authorship"
-                  [matTooltip]="'legal.dataSide.edit' | translate"
-                  [attr.aria-label]="'legal.dataSide.edit' | translate"
-                  (click)="startEdit()">
-                  <mat-icon>edit</mat-icon>
-                </button>
-              }
-            </span>
-          }
-        </div>
+                @if (canEditAuthorship) {
+                  <!-- Inline, always-visible edit affordance, right after the value (discoverable, close to the text). -->
+                  <button
+                    #editButton
+                    type="button"
+                    class="edit-authorship"
+                    [matTooltip]="'legal.dataSide.edit' | translate"
+                    [attr.aria-label]="'legal.dataSide.edit' | translate"
+                    (click)="startEdit()">
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                }
+              </span>
+            }
+          </div>
+        }
       </section>
     } @else if (isAdmin) {
       <section class="rights-statement uncategorized" role="status">
@@ -263,6 +266,8 @@ export class ResourceRightsStatementComponent {
   @Input() canEditAuthorship = false;
   /** Label alignment: 'end' (right — matches property rows in the viewer) or 'start' (left — for the project card). */
   @Input() labelAlign: 'start' | 'end' = 'end';
+  /** Whether to render the authorship row. Authorship is per-resource; project-level displays pass `false`. */
+  @Input() showAuthorship = true;
 
   /** Emitted when an admin clicks "Edit legal info" on the unconfigured callout (routes to Settings → Legal). */
   @Output() editLegalInfo = new EventEmitter<void>();
