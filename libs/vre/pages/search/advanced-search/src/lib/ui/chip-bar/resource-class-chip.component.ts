@@ -28,11 +28,21 @@ import { CHIP_POPOVER_POSITIONS } from './chip-bar.helpers';
     OverlayModule,
   ],
   template: `
+    @let selectedIri = selectedClassIri$ | async;
     <div style="display: flex; flex-direction: column;">
       <span style="font-size: 11px; color: rgba(0,0,0,0.6); margin-bottom: 2px;">Resource Class</span>
-      <button mat-stroked-button cdkOverlayOrigin #trigger="cdkOverlayOrigin" (click)="isOpen = !isOpen">
+      <button
+        mat-stroked-button
+        cdkOverlayOrigin
+        #trigger="cdkOverlayOrigin"
+        [color]="selectedIri ? 'primary' : undefined"
+        (click)="isOpen = !isOpen">
         {{ classLabel$ | async }}
-        <mat-icon>arrow_drop_down</mat-icon>
+        @if (selectedIri) {
+          <mat-icon aria-label="Clear resource class" (click)="$event.stopPropagation(); resetToAll()">cancel</mat-icon>
+        } @else {
+          <mat-icon>arrow_drop_down</mat-icon>
+        }
       </button>
     </div>
 
@@ -98,6 +108,11 @@ export class ResourceClassChipComponent {
     )
   );
   readonly selectedClassIri$ = this._derivation.searchState$.pipe(map(state => state.resourceClass?.iri ?? ''));
+
+  /** Clear the selected class and go back to "All resource classes" (same reset path as picking it in the list). */
+  resetToAll(): void {
+    this.onClassSelected(this.allOption);
+  }
 
   onClassSelected(selection: IriLabelPair): void {
     if (!selection) return;
