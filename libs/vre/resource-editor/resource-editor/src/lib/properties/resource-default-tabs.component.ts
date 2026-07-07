@@ -5,6 +5,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { PropertiesDisplayComponent } from './properties-display/properties-display.component';
 import { PropertiesToggleComponent } from './properties-display/properties-toggle.component';
 import { PropertiesDisplayService } from './properties-display/property-value/properties-display.service';
+import { ResourceRightsStatementContainerComponent } from './resource-rights-statement-container.component';
 
 @Component({
   selector: 'app-resource-default-tabs',
@@ -13,6 +14,7 @@ import { PropertiesDisplayService } from './properties-display/property-value/pr
       <mat-tab [label]="'resourceEditor.properties' | translate">
         <app-properties-toggle [properties]="resource.resProps" />
         <app-properties-display [resource]="resource" />
+        <app-resource-rights-statement-container [resource]="resource" />
       </mat-tab>
     </mat-tab-group>
   `,
@@ -27,7 +29,13 @@ import { PropertiesDisplayService } from './properties-display/property-value/pr
       }
     `,
   ],
-  imports: [MatTabsModule, TranslatePipe, PropertiesDisplayComponent, PropertiesToggleComponent],
+  imports: [
+    MatTabsModule,
+    TranslatePipe,
+    PropertiesDisplayComponent,
+    PropertiesToggleComponent,
+    ResourceRightsStatementContainerComponent,
+  ],
 })
 export class ResourceDefaultTabsComponent {
   @Input({ required: true }) resource!: DspResource;

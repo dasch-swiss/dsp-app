@@ -42,3 +42,5 @@ export * from './lib/no-results-found-page.component';
 export * from './lib/not-allowed-page.component';
 export * from './lib/human-readable-error.pipe';
 export * from './lib/clickable-list-card.component';
+export * from './lib/resource-rights-statement.component';
+export * from './lib/authorship-chip-editor.component';

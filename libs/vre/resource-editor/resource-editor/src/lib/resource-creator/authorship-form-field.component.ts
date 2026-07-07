@@ -7,7 +7,7 @@ import { MatChipInput, MatChipInputEvent, MatChipsModule } from '@angular/materi
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { PaginatedApiService } from '@dasch-swiss/vre/shared/app-common';
+import { LegalInfoApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { HumanReadableErrorPipe } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
@@ -97,12 +97,12 @@ export class AuthorshipFormFieldComponent implements OnInit, OnDestroy {
   readonly _translateService = inject(TranslateService);
 
   constructor(
-    private readonly _paginatedApi: PaginatedApiService,
+    private readonly _legalInfoApi: LegalInfoApiService,
     private readonly _cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
-    this._paginatedApi
+    this._legalInfoApi
       .getAuthorships(this.projectShortcode)
       .pipe(
         finalize(() => {

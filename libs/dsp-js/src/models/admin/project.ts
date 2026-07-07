@@ -56,4 +56,22 @@ export class Project {
    */
   @JsonProperty('status', Boolean)
   status = false;
+
+  /**
+   * The data-side (resource record) license IRI of the project, if configured. Creative Commons only.
+   */
+  @JsonProperty('dataLicense', String, true)
+  dataLicense?: string = undefined;
+
+  /**
+   * The data-side copyright holder of the project, if configured.
+   */
+  @JsonProperty('dataCopyrightHolder', String, true)
+  dataCopyrightHolder?: string = undefined;
+
+  /**
+   * The data-side default authorship of the project (applied to resource records).
+   */
+  @JsonProperty('defaultDataAuthorship', [String], true)
+  defaultDataAuthorship?: string[] = undefined;
 }

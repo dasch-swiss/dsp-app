@@ -3,6 +3,7 @@ import { ResourceClassAndPropertyDefinitions } from '../../../../cache/ontology-
 import { Constants } from '../../Constants';
 import { DateTimeStampConverter } from '../../custom-converters/date-time-stamp-converter';
 import { IdConverter } from '../../custom-converters/id-converter';
+import { UnionStringArrayOfStringsConverter } from '../../custom-converters/union-string-array-of-strings-converter';
 import { UriConverter } from '../../custom-converters/uri-converter';
 import { ResourcePropertyDefinition } from '../../ontologies/resource-property-definition';
 import { ReadWriteResource } from '../read-write-resource';
@@ -49,6 +50,11 @@ export class ReadResource extends ReadWriteResource {
 
   @JsonProperty(Constants.IsDeleted, Boolean, true)
   isDeleted?: boolean = false;
+
+  // Per-resource (data-side) authorship. JSON-LD emits a single string when there is one value
+  // and an array when there are many, so use the union converter to normalize to string[].
+  @JsonProperty(Constants.hasResourceAuthorship, UnionStringArrayOfStringsConverter, true)
+  resourceAuthorship: string[] = [];
 
   resourceClassLabel?: string;
 

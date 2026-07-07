@@ -41,11 +41,13 @@ export class ProjectPageService {
   private _projectAndUser$ = combineLatest([this.currentProject$, this._user$]);
 
   hasProjectAdminRights$ = this._projectAndUser$.pipe(
-    map(([currentProject, user]) => UserPermissions.hasProjectAdminRights(user, currentProject.id))
+    map(([currentProject, user]) => UserPermissions.hasProjectAdminRights(user, currentProject.id)),
+    shareReplay({ bufferSize: 1, refCount: true })
   );
 
   hasProjectMemberRights$ = this._projectAndUser$.pipe(
-    map(([currentProject, user]) => UserPermissions.hasProjectMemberRights(user, currentProject.id))
+    map(([currentProject, user]) => UserPermissions.hasProjectMemberRights(user, currentProject.id)),
+    shareReplay({ bufferSize: 1, refCount: true })
   );
 
   ontologiesMetadata$ = this.currentProject$.pipe(

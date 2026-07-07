@@ -2,6 +2,7 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
+import { ProjectDataRightsService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { provideTranslateService, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { ResourceFetcherService } from '../../../representation/resource-fetcher.service';
@@ -49,6 +50,11 @@ describe('CreateResourceDialogComponent', () => {
         { provide: MatDialogRef, useValue: mockDialogRef },
         { provide: ResourceFetcherService, useValue: mockResourceFetcherService },
         { provide: DspApiConnectionToken, useValue: mockDspApiConnection },
+        // The hosted create-resource form loads project legal info on init; stub the rights service.
+        {
+          provide: ProjectDataRightsService,
+          useValue: { forProject: jest.fn().mockReturnValue(of({ defaultDataAuthorship: [] })) },
+        },
         provideTranslateService(),
         TranslateService,
       ],
