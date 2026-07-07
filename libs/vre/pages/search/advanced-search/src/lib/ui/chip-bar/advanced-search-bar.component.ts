@@ -198,6 +198,9 @@ export class AdvancedSearchBarComponent implements OnInit {
       predicateIri: stmt.selectedPredicate!.iri,
       operator: stmt.selectedOperator!,
       value: stmt.selectedObjectWriteValue ?? '',
+      // Persist the linked-resource label (e.g. "Rita") next to its IRI so the chip shows the name,
+      // not the raw IRI, after a reload/back-forward. Undefined for plain string values.
+      valueLabel: stmt.selectedObjectLabel,
       parentIndex: stmt.parentId !== undefined ? idxById.get(stmt.parentId) : undefined,
     }));
     const encoded = stmts.length ? this._urlSync.encodeFilters(filterArgs) : null;

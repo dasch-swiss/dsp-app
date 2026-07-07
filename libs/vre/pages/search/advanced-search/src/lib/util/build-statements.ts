@@ -1,5 +1,6 @@
 import { NodeValue, Predicate, StatementElement } from '../model';
 import { FilterParam } from '../service/search-url-sync.service';
+import { toLabels } from './labels';
 
 /**
  * Pure reconstruction of the confirmed statement tree from decoded URL filter params. This is the
@@ -29,7 +30,13 @@ export function buildStatementsFromFilterParams(
     );
     stmt.selectedPredicate = predicate;
     if (fp.operator) stmt.selectedOperator = fp.operator;
-    if (fp.value) stmt.selectedObjectValue = fp.value;
+    if (fp.value) {
+      // A linked-resource value carries a `valueLabel` (its human name): rebuild it as an IriLabelPair so
+      // the chip and editor show the label, not the IRI. Plain string values stay as-is.
+      stmt.selectedObjectValue = fp.valueLabel
+        ? { iri: fp.value, labels: toLabels(fp.valueLabel), comments: [] }
+        : fp.value;
+    }
     return [...acc, stmt];
   }, [] as StatementElement[]);
 }

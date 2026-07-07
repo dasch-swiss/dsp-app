@@ -188,6 +188,15 @@ export class StatementElement {
     return this._selectedObjectNode?.writeValue;
   }
 
+  /**
+   * Human-readable label of the selected object when it is a linked resource (`NodeValue`), e.g. "Rita"
+   * for an author IRI. Undefined for plain string values (which are their own label) and empty selections.
+   * Persisted alongside the IRI in the URL so a rehydrated link filter can show the name, not the IRI.
+   */
+  get selectedObjectLabel(): string | undefined {
+    return this._selectedObjectNode instanceof NodeValue ? this._selectedObjectNode.label : undefined;
+  }
+
   get operators(): Operator[] {
     return this._selectedPredicate ? getOperatorsForObjectType(this._selectedPredicate) : [];
   }

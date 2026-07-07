@@ -38,6 +38,37 @@ describe('buildStatementsFromFilterParams (DEV-6576)', () => {
     expect(stmt.parentId).toBeUndefined();
   });
 
+  it('rebuilds a linked-resource value as an IriLabelPair carrying its label (DEV-6576)', () => {
+    // A link filter round-trips through the URL as { value: <resource IRI>, valueLabel: "Rita" }; on
+    // rehydration the value must become an IriLabelPair so the chip shows "Rita", not the IRI.
+    const [stmt] = buildStatementsFromFilterParams(
+      [
+        fp({
+          predicateIri: authorPred.iri,
+          operator: Operator.Equals,
+          value: 'http://rdfh.ch/0801/abc',
+          valueLabel: 'Rita',
+        }),
+      ],
+      [authorPred]
+    );
+
+    expect(typeof stmt.selectedObjectValue).toBe('object');
+    expect(stmt.selectedObjectValue).toMatchObject({ iri: 'http://rdfh.ch/0801/abc' });
+    // NodeValue.label picks the first non-empty label value → what the chip renders.
+    expect(stmt.selectedObjectLabel).toBe('Rita');
+  });
+
+  it('keeps a plain string value as a string when there is no valueLabel', () => {
+    const [stmt] = buildStatementsFromFilterParams(
+      [fp({ predicateIri: titlePred.iri, operator: Operator.Equals, value: 'Moby Dick' })],
+      [titlePred]
+    );
+
+    expect(stmt.selectedObjectValue).toBe('Moby Dick');
+    expect(stmt.selectedObjectLabel).toBeUndefined();
+  });
+
   it('skips a param whose predicate IRI is not among the hydrated predicates', () => {
     const result = buildStatementsFromFilterParams([fp({ predicateIri: 'http://x/unknown', value: 'v' })], [titlePred]);
 

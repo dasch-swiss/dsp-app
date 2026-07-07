@@ -20,6 +20,8 @@ export interface FilterParam {
   predicateIri: string;
   operator: Operator;
   value: string;
+  /** Display label for a linked-resource `value` (its IRI). Absent for plain string values. */
+  valueLabel?: string;
 }
 
 const VALID_OPERATORS = new Set<string>(Object.values(Operator));
@@ -33,7 +35,7 @@ const VALID_OPERATORS = new Set<string>(Object.values(Operator));
  */
 function isValidFilterParam(
   s: unknown
-): s is { predicateIri: string; operator: Operator; value: string; parentIndex?: unknown } {
+): s is { predicateIri: string; operator: Operator; value: string; valueLabel?: unknown; parentIndex?: unknown } {
   if (typeof s !== 'object' || s === null) return false;
   const f = s as Record<string, unknown>;
   return (
@@ -103,7 +105,13 @@ export class SearchUrlSyncService {
   }
 
   encodeFilters(
-    statements: { predicateIri: string; operator: Operator; value: string; parentIndex?: number }[]
+    statements: {
+      predicateIri: string;
+      operator: Operator;
+      value: string;
+      valueLabel?: string;
+      parentIndex?: number;
+    }[]
   ): string {
     return encodeURIComponent(JSON.stringify(statements));
   }
@@ -120,6 +128,8 @@ export class SearchUrlSyncService {
         predicateIri: s.predicateIri,
         operator: s.operator,
         value: s.value,
+        // Optional display label for a linked-resource value; only keep a non-empty string.
+        valueLabel: typeof s.valueLabel === 'string' && s.valueLabel ? s.valueLabel : undefined,
         parentIndex: typeof s.parentIndex === 'number' ? s.parentIndex : null,
       }));
     } catch {

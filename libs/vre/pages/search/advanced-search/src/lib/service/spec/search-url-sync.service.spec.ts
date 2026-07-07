@@ -63,6 +63,30 @@ describe('SearchUrlSyncService — URL param contract (DEV-6576 Phase 0)', () =>
       ]);
     });
 
+    it('round-trips a linked-resource valueLabel alongside its IRI value (DEV-6576)', () => {
+      const input = [
+        {
+          predicateIri: 'http://x/hasAuthor',
+          operator: Operator.Equals,
+          value: 'http://rdfh.ch/0801/abc',
+          valueLabel: 'Rita',
+        },
+      ];
+
+      const decoded = service.decodeFilters(service.encodeFilters(input));
+
+      expect(decoded[0].value).toBe('http://rdfh.ch/0801/abc');
+      expect(decoded[0].valueLabel).toBe('Rita');
+    });
+
+    it('drops an empty valueLabel to undefined (plain string values carry no label)', () => {
+      const decoded = service.decodeFilters(
+        service.encodeFilters([{ predicateIri: 'http://x/hasTitle', operator: Operator.Equals, value: 'Moby Dick' }])
+      );
+
+      expect(decoded[0].valueLabel).toBeUndefined();
+    });
+
     it('round-trips nested filters preserving parentIndex', () => {
       const input = [
         { predicateIri: 'http://x/hasAuthor', operator: Operator.Exists, value: '' },
