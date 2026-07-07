@@ -8,7 +8,8 @@ import { toLabels } from '../../../../util/labels';
 import { ResourceValueComponent } from './resource-value.component';
 
 const meta: Meta<ResourceValueComponent> = {
-  title: 'Search / Advanced Search / Value Inputs / Resource Value',
+  title:
+    'Search / Advanced Search / Search bar / 4. Add Filter Button / Filter Editor Popover / Statement Builder / Value Inputs / Resource Value',
   component: ResourceValueComponent,
   argTypes: {
     selectedResource: { description: 'The currently selected resource class.' },

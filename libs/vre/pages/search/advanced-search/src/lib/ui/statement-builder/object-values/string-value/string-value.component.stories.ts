@@ -1,11 +1,12 @@
 import { Constants } from '@dasch-swiss/dsp-js';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
-import { expect, userEvent, waitFor, within } from 'storybook/test';
+import { expect, userEvent, within } from 'storybook/test';
 import { STORY_PROVIDERS } from '../../../../stories.helpers';
 import { StringValueComponent } from './string-value.component';
 
 const meta: Meta<StringValueComponent> = {
-  title: 'Search / Advanced Search / Value Inputs / String Value',
+  title:
+    'Search / Advanced Search / Search bar / 4. Add Filter Button / Filter Editor Popover / Statement Builder / Value Inputs / String Value',
   component: StringValueComponent,
   argTypes: {
     valueType: { description: 'The Knora value type constant that determines which input to render.' },

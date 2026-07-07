@@ -5,7 +5,8 @@ import { STORY_PROVIDERS } from '../../../stories.helpers';
 import { ComparisonOperatorComponent } from './comparison-operator.component';
 
 const meta: Meta<ComparisonOperatorComponent> = {
-  title: 'Search / Advanced Search / 2b. Statement Builder / Comparison Operator',
+  title:
+    'Search / Advanced Search / Search bar / 4. Add Filter Button / Filter Editor Popover /Statement Builder / Comparison Operator',
   component: ComparisonOperatorComponent,
   argTypes: {
     operators: { description: 'List of available operators to display in the select.' },

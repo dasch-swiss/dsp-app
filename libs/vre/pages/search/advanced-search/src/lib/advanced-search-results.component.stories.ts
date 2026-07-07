@@ -32,7 +32,7 @@ const makeReadResource = (id: string, label: string): ReadResource => {
 };
 
 const meta: Meta<AdvancedSearchResultsComponent> = {
-  title: 'Search / Advanced Search Results',
+  title: 'Search / Advanced Search / Advanced Search Results',
   component: AdvancedSearchResultsComponent,
   argTypes: {
     query: { description: 'Gravsearch query string to execute against the API.' },

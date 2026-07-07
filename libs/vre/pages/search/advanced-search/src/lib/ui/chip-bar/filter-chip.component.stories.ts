@@ -42,7 +42,7 @@ const predicateOnlyStatement = (): StatementElement => {
 };
 
 const meta: Meta<FilterChipComponent> = {
-  title: 'Search / Advanced Search / Search bar / 3a. Filter Chip',
+  title: 'Search / Advanced Search / Search bar / 3. Filter Chip',
   component: FilterChipComponent,
   argTypes: {
     statement: { description: 'The StatementElement this chip represents.' },

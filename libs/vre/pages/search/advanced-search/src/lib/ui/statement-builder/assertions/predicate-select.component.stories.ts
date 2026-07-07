@@ -15,7 +15,8 @@ const samplePredicates: Predicate[] = [
 ];
 
 const meta: Meta<PredicateSelectComponent> = {
-  title: 'Search / Advanced Search / 2b. Statement Builder / Predicate Select',
+  title:
+    'Search / Advanced Search / Search bar / 4. Add Filter Button / Filter Editor Popover /Statement Builder / Predicate Select',
   component: PredicateSelectComponent,
   argTypes: {
     subjectClass: { description: 'The resource class that constrains which properties are shown.' },

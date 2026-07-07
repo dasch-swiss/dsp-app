@@ -37,7 +37,7 @@ const makeStatement = (overrides: {
 };
 
 const meta: Meta<ChipLabelPipeHarnessComponent> = {
-  title: 'Search / Advanced Search / Search bar / 3a. Filter Chip / Chip Label Pipe',
+  title: 'Search / Advanced Search / Search bar / 3. Filter Chip / Chip Label Pipe',
   component: ChipLabelPipeHarnessComponent,
 };
 export default meta;

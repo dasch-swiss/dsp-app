@@ -19,7 +19,8 @@ const SAMPLE_RESOURCES: IriLabelPair[] = [
 ];
 
 const meta: Meta<LinkValueComponent> = {
-  title: 'Search / Advanced Search / Value Inputs / Link Value',
+  title:
+    'Search / Advanced Search / Search bar / 4. Add Filter Button / Filter Editor Popover / Statement Builder / Value Inputs / Link Value',
   component: LinkValueComponent,
   argTypes: {
     resourceClass: { description: 'IRI of the resource class to restrict the search to.' },

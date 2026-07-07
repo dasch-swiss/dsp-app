@@ -41,7 +41,8 @@ const makeDynamicFormsStub = (root: ListNodeV2WithAllLanguages | null = SAMPLE_R
 });
 
 const meta: Meta<ListValueComponent> = {
-  title: 'Search / Advanced Search / Value Inputs / List Value',
+  title:
+    'Search / Advanced Search / Search bar / 4. Add Filter Button / Filter Editor Popover / Statement Builder / Value Inputs / List Value',
   component: ListValueComponent,
   argTypes: {
     rootListNodeIri: { description: 'IRI of the root list node to render.' },
