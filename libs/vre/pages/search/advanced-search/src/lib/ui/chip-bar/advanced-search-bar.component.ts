@@ -11,7 +11,7 @@ import { StatementElement } from '../../model';
 import { DerivedSearchStateService } from '../../service/derived-search-state.service';
 import { OntologyDataService } from '../../service/ontology-data.service';
 import { SearchFlowLogger } from '../../service/search-flow-logger.service';
-import { SearchUrlSyncService } from '../../service/search-url-sync.service';
+import { SearchUrlParams, SearchUrlSyncService } from '../../service/search-url-sync.service';
 import { StatementDraftStore } from '../../service/statement-draft.store';
 import { OrderByComponent } from '../order-by/order-by.component';
 import { AddFilterButtonComponent } from './add-filter-button.component';
@@ -183,15 +183,15 @@ export class AdvancedSearchBarComponent implements OnInit {
     this._logger.filterRemoved(stmt.id);
     this.draftStore.deleteStatement(stmt);
     this.confirmedStatements.update(stmts => stmts.filter(s => s.id !== stmt.id));
-    this._writeFiltersToUrl();
-    // Explicit stale-orderBy cleanup: if the removed filter was the active sort,
-    // clear `orderBy` from the URL — under the URL-derived model this is no longer emergent.
-    if (stmt.selectedPredicate?.iri && stmt.selectedPredicate.iri === this._urlSync.readParams().orderBy) {
-      this._urlSync.writeState({ orderBy: undefined }, { replaceUrl: false });
-    }
+    // Stale-orderBy cleanup: if the removed filter was the active sort, drop `orderBy` (and its direction)
+    // too. This must go out in the SAME writeState as the filter change — two synchronous navigations get
+    // coalesced by the Router, and the second would discard the first, so the filter removal would be lost.
+    const clearsOrderBy =
+      !!stmt.selectedPredicate?.iri && stmt.selectedPredicate.iri === this._urlSync.readParams().orderBy;
+    this._writeFiltersToUrl(clearsOrderBy ? { orderBy: undefined, orderDir: undefined } : undefined);
   }
 
-  private _writeFiltersToUrl(): void {
+  private _writeFiltersToUrl(extra?: Partial<SearchUrlParams>): void {
     const stmts = this.confirmedStatements();
     const idxById = new Map(stmts.map((s, i) => [s.id, i]));
     const filterArgs = stmts.map(stmt => ({
@@ -201,7 +201,8 @@ export class AdvancedSearchBarComponent implements OnInit {
       parentIndex: stmt.parentId !== undefined ? idxById.get(stmt.parentId) : undefined,
     }));
     const encoded = stmts.length ? this._urlSync.encodeFilters(filterArgs) : null;
-    // `merge` handling preserves any existing orderBy param; orderBy is written by OrderByComponent.
-    this._urlSync.writeState({ filters: encoded ?? undefined }, { replaceUrl: false });
+    // `merge` handling preserves any param not named here (e.g. an unaffected orderBy, written by
+    // OrderByComponent). `extra` folds any coupled change into this single navigation.
+    this._urlSync.writeState({ filters: encoded ?? undefined, ...extra }, { replaceUrl: false });
   }
 }
