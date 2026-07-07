@@ -88,16 +88,13 @@ export const ShowsPredicateWithoutOperator: Story = {
 };
 
 export const OpenState: Story = {
-  name: 'Highlights chip when popover is open',
+  name: 'Renders the chip as a button when popover is open',
   args: { statement: titleStatement(), isOpen: true },
   decorators: [applicationConfig({ providers: baseProviders })],
   play: async ({ canvasElement, step }) => {
-    await step('Chip carries highlighted attribute when isOpen is true', async () => {
-      const chip = canvasElement.querySelector('mat-chip');
-      await expect(chip).not.toBeNull();
-      await expect(chip?.classList.contains('mat-mdc-chip-highlighted') || chip?.hasAttribute('highlighted')).toBe(
-        true
-      );
+    await step('Chip renders as a stroked button', async () => {
+      const btn = canvasElement.querySelector('button.filter-chip-button');
+      await expect(btn).not.toBeNull();
     });
   },
 };
@@ -107,12 +104,12 @@ export const ClickingRemoveRendersButton: Story = {
   args: { statement: titleStatement(), isOpen: false },
   decorators: [applicationConfig({ providers: baseProviders })],
   play: async ({ canvasElement, step }) => {
-    await step('Remove button with aria-label is rendered', async () => {
+    await step('Remove control with aria-label is rendered', async () => {
       const removeBtn = canvasElement.querySelector('[aria-label="Remove filter"]');
       await expect(removeBtn).not.toBeNull();
     });
-    await step('Remove button contains a cancel icon', async () => {
-      const icon = canvasElement.querySelector('[aria-label="Remove filter"] mat-icon');
+    await step('Remove control is the cancel icon', async () => {
+      const icon = canvasElement.querySelector('mat-icon[aria-label="Remove filter"]');
       await expect(icon?.textContent?.trim()).toBe('cancel');
     });
   },
@@ -123,14 +120,10 @@ export const InvalidChipShowsWarnColor: Story = {
   args: { statement: titleStatement(), isOpen: false, isValid: false },
   decorators: [applicationConfig({ providers: baseProviders })],
   play: async ({ canvasElement, step }) => {
-    await step('Chip is rendered', async () => {
-      await expect(canvasElement.querySelector('mat-chip')).not.toBeNull();
-    });
-    await step('Chip carries highlighted attribute due to invalid state', async () => {
-      const chip = canvasElement.querySelector('mat-chip');
-      await expect(chip?.classList.contains('mat-mdc-chip-highlighted') || chip?.hasAttribute('highlighted')).toBe(
-        true
-      );
+    await step('Chip button is flagged invalid when the statement is incomplete', async () => {
+      const btn = canvasElement.querySelector('button.filter-chip-button');
+      await expect(btn).not.toBeNull();
+      await expect(btn?.classList.contains('filter-chip-button--invalid')).toBe(true);
     });
   },
 };

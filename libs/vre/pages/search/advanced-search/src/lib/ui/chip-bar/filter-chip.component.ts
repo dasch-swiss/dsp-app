@@ -36,6 +36,7 @@ import { FilterEditorPopoverComponent } from './filter-editor-popover.component'
       cdkOverlayOrigin
       #trigger="cdkOverlayOrigin"
       class="filter-chip-button"
+      [class.filter-chip-button--invalid]="!isValid"
       style="margin: 0 8px"
       [color]="isValid ? 'primary' : 'warn'"
       (click)="onOpen()">

@@ -4,7 +4,7 @@
   mat-stroked-button
   cdkOverlayOrigin
   #trigger="cdkOverlayOrigin"
-  color="primary"
+  [color]="activeLabel(orderByItems) ? 'primary' : undefined"
   [disabled]="!orderByItems || orderByItems.length === 0"
   (click)="isOpen = !isOpen">
   <p class="label-icon-container">
