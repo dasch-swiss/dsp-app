@@ -8,8 +8,7 @@ import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular'
 import { NEVER, of } from 'rxjs';
 import { expect } from 'storybook/test';
 import { AdvancedSearchResultsComponent } from './advanced-search-results.component';
-import { QueryExecutionService } from './service/query-execution.service';
-import { makeDspApiConnectionStub, makeQueryExecutionServiceStub, STORY_PROVIDERS } from './stories.helpers';
+import { makeDspApiConnectionStub, STORY_PROVIDERS } from './stories.helpers';
 
 const SAMPLE_QUERY = `
 PREFIX knora-api: <http://api.knora.org/ontology/knora-api/v2#>
@@ -45,7 +44,6 @@ const sharedProviders = [
   ...STORY_PROVIDERS,
   provideAnimations(),
   importProvidersFrom(OverlayModule),
-  { provide: QueryExecutionService, useValue: makeQueryExecutionServiceStub() },
   { provide: ResourceResultService, useValue: { pageIndex$: of(0), numberOfResults: 0 } },
 ];
 
@@ -109,11 +107,11 @@ export const Loading: Story = {
     applicationConfig({
       providers: [
         ...sharedProviders,
-        { provide: QueryExecutionService, useValue: makeQueryExecutionServiceStub({ queryIsExecuting: true }) },
         {
           provide: DspApiConnectionToken,
           useValue: makeDspApiConnectionStub({
             search: {
+              // The search never resolves, so the component keeps `queryIsExecuting` true and shows the indicator.
               doExtendedSearch: () => NEVER,
               doExtendedSearchCountQuery: () => NEVER,
             },

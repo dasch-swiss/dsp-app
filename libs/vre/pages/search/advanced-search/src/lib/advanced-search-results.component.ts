@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, Input, OnChanges, signal, SimpleChanges } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
@@ -9,7 +9,6 @@ import { ResourceResultService } from '@dasch-swiss/vre/shared/app-helper-servic
 import { AppProgressIndicatorComponent } from '@dasch-swiss/vre/ui/progress-indicator';
 import { CenteredBoxComponent, NoResultsFoundComponent } from '@dasch-swiss/vre/ui/ui';
 import { BehaviorSubject, catchError, combineLatest, map, of, startWith, switchMap, tap } from 'rxjs';
-import { QueryExecutionService } from './service/query-execution.service';
 import { SearchFlowLogger } from './service/search-flow-logger.service';
 
 @Component({
@@ -48,17 +47,16 @@ export class AdvancedSearchResultsComponent implements OnChanges {
   private readonly _dspApiConnection = inject<KnoraApiConnection>(DspApiConnectionToken);
   private readonly _resourceResultService = inject(ResourceResultService);
   private readonly _titleService = inject(Title);
-  private readonly _queryExecutionService = inject(QueryExecutionService);
   private readonly _logger = inject(SearchFlowLogger);
 
   private readonly querySubject = new BehaviorSubject<string | null>(null);
 
-  readonly queryIsExecuting = this._queryExecutionService.queryIsExecuting;
+  readonly queryIsExecuting = signal(false);
 
   readonly resources$ = this.querySubject.pipe(
     filterNull(),
     switchMap(query => {
-      this._queryExecutionService.queryIsExecuting.set(true);
+      this.queryIsExecuting.set(true);
       return combineLatest([
         this._resourceResultService.pageIndex$.pipe(
           switchMap(pageNumber => this._performGravSearch$(query, pageNumber))
@@ -66,7 +64,7 @@ export class AdvancedSearchResultsComponent implements OnChanges {
         this._numberOfAllResults$(query),
       ]).pipe(
         tap(([resourceResponse, countResponse]) => {
-          this._queryExecutionService.queryIsExecuting.set(false);
+          this.queryIsExecuting.set(false);
           this._logger.searchSuccess(resourceResponse.resources.length, countResponse.numberOfResults);
         }),
         map(([resourceResponse, countResponse]) => {
@@ -75,7 +73,7 @@ export class AdvancedSearchResultsComponent implements OnChanges {
         }),
         catchError(err => {
           this._logger.searchError(err);
-          this._queryExecutionService.queryIsExecuting.set(false);
+          this.queryIsExecuting.set(false);
           return of([]);
         }),
         startWith(null)

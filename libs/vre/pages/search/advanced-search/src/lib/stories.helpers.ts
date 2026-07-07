@@ -1,4 +1,3 @@
-import { signal } from '@angular/core';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 import { UserService } from '@dasch-swiss/vre/core/session';
@@ -6,7 +5,6 @@ import { of } from 'rxjs';
 import { IriLabelPair, OrderByItem } from './model';
 import { DerivedSearchStateService } from './service/derived-search-state.service';
 import { OntologyDataService } from './service/ontology-data.service';
-import { QueryExecutionService } from './service/query-execution.service';
 import { SearchFlowLogger } from './service/search-flow-logger.service';
 import { SearchUrlSyncService } from './service/search-url-sync.service';
 import { StatementDraftStore } from './service/statement-draft.store';
@@ -77,12 +75,6 @@ export const makeOntologyDataServiceStub = (
   getResourceClassObjectsForProperty$: () => of(SAMPLE_RESOURCE_CLASSES),
   getSubclassesOfResourceClass$: () => of([]),
   ...partial,
-});
-
-export const makeQueryExecutionServiceStub = (
-  partial: { queryIsExecuting?: boolean } = {}
-): Partial<QueryExecutionService> => ({
-  queryIsExecuting: signal(partial.queryIsExecuting ?? false),
 });
 
 /**

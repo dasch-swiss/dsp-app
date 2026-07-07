@@ -3,7 +3,6 @@ import { DerivedSearchStateService } from './service/derived-search-state.servic
 import { DynamicFormsDataService } from './service/dynamic-forms-data.service';
 import { GravsearchService } from './service/gravsearch.service';
 import { OntologyDataService } from './service/ontology-data.service';
-import { QueryExecutionService } from './service/query-execution.service';
 import { SearchFlowLogger } from './service/search-flow-logger.service';
 import { SearchUrlSyncService } from './service/search-url-sync.service';
 import { StatementDraftStore } from './service/statement-draft.store';
@@ -14,7 +13,6 @@ export function provideAdvancedSearch(): Provider[] {
     OntologyDataService,
     DynamicFormsDataService,
     GravsearchService,
-    QueryExecutionService,
     SearchUrlSyncService,
     DerivedSearchStateService,
     SearchFlowLogger,

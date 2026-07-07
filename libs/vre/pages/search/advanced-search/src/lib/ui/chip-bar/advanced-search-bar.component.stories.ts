@@ -6,12 +6,10 @@ import { of } from 'rxjs';
 import { expect } from 'storybook/test';
 import { provideAdvancedSearch } from '../../providers';
 import { OntologyDataService } from '../../service/ontology-data.service';
-import { QueryExecutionService } from '../../service/query-execution.service';
 import {
   ADVANCED_SEARCH_SERVICE_STUBS,
   makeDspApiConnectionStub,
   makeOntologyDataServiceStub,
-  makeQueryExecutionServiceStub,
   STORY_PROVIDERS,
 } from '../../stories.helpers';
 import { AdvancedSearchBarComponent } from './advanced-search-bar.component';
@@ -33,7 +31,6 @@ const baseProviders = [
   ...provideAdvancedSearch(),
   ...ADVANCED_SEARCH_SERVICE_STUBS,
   { provide: OntologyDataService, useValue: makeOntologyDataServiceStub() },
-  { provide: QueryExecutionService, useValue: makeQueryExecutionServiceStub() },
 ];
 
 export const Empty: Story = {
@@ -68,7 +65,6 @@ export const LoadingState: Story = {
         ...provideAdvancedSearch(),
         ...ADVANCED_SEARCH_SERVICE_STUBS,
         { provide: OntologyDataService, useValue: makeOntologyDataServiceStub({ ontologyLoading$: of(true) }) },
-        { provide: QueryExecutionService, useValue: makeQueryExecutionServiceStub() },
       ],
     }),
   ],
