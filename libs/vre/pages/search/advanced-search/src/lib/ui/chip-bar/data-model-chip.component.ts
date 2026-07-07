@@ -23,34 +23,38 @@ import { CHIP_POPOVER_POSITIONS } from './chip-bar.helpers';
     OverlayModule,
   ],
   template: `
-    <div style="display: flex; flex-direction: column;">
-      <span style="font-size: 11px; color: rgba(0,0,0,0.6); margin-bottom: 2px;">Data Model</span>
-      <button mat-stroked-button cdkOverlayOrigin #trigger="cdkOverlayOrigin" (click)="isOpen = !isOpen">
-        {{ ontologyLabel$ | async }}
-        <mat-icon>arrow_drop_down</mat-icon>
-      </button>
-    </div>
+    <!-- With a single data model there is nothing to switch between, so the picker is hidden entirely
+         (the sole ontology is still selected under the hood — this only removes the redundant control). -->
+    @if (showChip$ | async) {
+      <div style="display: flex; flex-direction: column;">
+        <span style="font-size: 11px; color: rgba(0,0,0,0.6); margin-bottom: 2px;">Data Model</span>
+        <button mat-stroked-button cdkOverlayOrigin #trigger="cdkOverlayOrigin" (click)="isOpen = !isOpen">
+          {{ ontologyLabel$ | async }}
+          <mat-icon>arrow_drop_down</mat-icon>
+        </button>
+      </div>
 
-    <ng-template
-      cdkConnectedOverlay
-      [cdkConnectedOverlayOrigin]="trigger"
-      [cdkConnectedOverlayOpen]="isOpen"
-      [cdkConnectedOverlayPositions]="positions"
-      [cdkConnectedOverlayHasBackdrop]="true"
-      [cdkConnectedOverlayBackdropClass]="'cdk-overlay-transparent-backdrop'"
-      (backdropClick)="isOpen = false">
-      <mat-selection-list
-        class="chip-popover-list mat-elevation-z4"
-        [multiple]="false"
-        [hideSingleSelectionIndicator]="true"
-        (selectionChange)="onOntologySelected($event.options[0]?.value)">
-        @for (onto of ontologies$ | async; track onto.iri) {
-          <mat-list-option [value]="onto.iri" [selected]="onto.iri === (selectedOntologyIri$ | async)">
-            {{ getLabel(onto.labels) }}
-          </mat-list-option>
-        }
-      </mat-selection-list>
-    </ng-template>
+      <ng-template
+        cdkConnectedOverlay
+        [cdkConnectedOverlayOrigin]="trigger"
+        [cdkConnectedOverlayOpen]="isOpen"
+        [cdkConnectedOverlayPositions]="positions"
+        [cdkConnectedOverlayHasBackdrop]="true"
+        [cdkConnectedOverlayBackdropClass]="'cdk-overlay-transparent-backdrop'"
+        (backdropClick)="isOpen = false">
+        <mat-selection-list
+          class="chip-popover-list mat-elevation-z4"
+          [multiple]="false"
+          [hideSingleSelectionIndicator]="true"
+          (selectionChange)="onOntologySelected($event.options[0]?.value)">
+          @for (onto of ontologies$ | async; track onto.iri) {
+            <mat-list-option [value]="onto.iri" [selected]="onto.iri === (selectedOntologyIri$ | async)">
+              {{ getLabel(onto.labels) }}
+            </mat-list-option>
+          }
+        </mat-selection-list>
+      </ng-template>
+    }
   `,
   styles: [
     `
@@ -74,6 +78,8 @@ export class DataModelChipComponent {
   isOpen = false;
 
   readonly ontologies$ = this._dataService.ontologies$;
+  // Only show the picker when there is more than one data model to choose from; a single model needs no control.
+  readonly showChip$ = this.ontologies$.pipe(map(ontologies => ontologies.length > 1));
   readonly ontologyLabel$ = this._dataService.selectedOntology$.pipe(map(o => (o ? o.label : '…')));
   readonly selectedOntologyIri$ = this._dataService.selectedOntology$.pipe(map(o => o?.id ?? null));
 
