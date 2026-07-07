@@ -2,7 +2,7 @@ import { DestroyRef, inject, Injectable } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Constants } from '@dasch-swiss/dsp-js';
 import { combineLatest, distinctUntilChanged, filter, map, Observable, switchMap } from 'rxjs';
-import { IriLabelPair, OrderByItem, Predicate, StatementElement } from '../model';
+import { IriLabelPair, OrderByItem, OrderDirection, Predicate, StatementElement } from '../model';
 import { buildStatementsFromFilterParams } from '../util/build-statements';
 import { GravsearchService } from './gravsearch.service';
 import { OntologyDataService } from './ontology-data.service';
@@ -94,7 +94,9 @@ export class DerivedSearchStateService {
   readonly orderByItems$: Observable<OrderByItem[]> = this.searchState$.pipe(
     map(state => state.orderByItems),
     distinctUntilChanged(
-      (a, b) => a.length === b.length && a.every((x, i) => x.id === b[i]?.id && x.orderBy === b[i]?.orderBy)
+      (a, b) =>
+        a.length === b.length &&
+        a.every((x, i) => x.id === b[i]?.id && x.orderBy === b[i]?.orderBy && x.direction === b[i]?.direction)
     )
   );
 
@@ -122,17 +124,22 @@ export class DerivedSearchStateService {
     const statements = params.filters
       ? buildStatementsFromFilterParams(this._urlSync.decodeFilters(params.filters), predicates)
       : [];
-    const orderByItems = this._deriveOrderByItems(statements, params.orderBy);
+    const orderByItems = this._deriveOrderByItems(statements, params.orderBy, params.orderDir);
     return { resourceClass, statements, orderByItems };
   }
 
   /**
    * Pure order-by derivation: one `OrderByItem` per confirmed statement's predicate, with the item
-   * whose id matches the URL's `orderBy` param marked active. Non-sortable predicates (link / list)
-   * are flagged disabled. Stale `orderBy` ids (not among the current statements) simply produce no
-   * active item — the query then falls back to ASC(?label).
+   * whose id matches the URL's `orderBy` param marked active and carrying its `orderDir` direction
+   * (defaulting to ascending). Non-sortable predicates (link / list) are flagged disabled. Stale
+   * `orderBy` ids (not among the current statements) simply produce no active item — the query then
+   * falls back to ASC(?label).
    */
-  private _deriveOrderByItems(statements: StatementElement[], activeOrderById?: string): OrderByItem[] {
+  private _deriveOrderByItems(
+    statements: StatementElement[],
+    activeOrderById?: string,
+    activeDirection?: OrderDirection
+  ): OrderByItem[] {
     const seen = new Set<string>();
     const items: OrderByItem[] = [];
     for (const stmt of statements) {
@@ -140,7 +147,10 @@ export class DerivedSearchStateService {
       if (!pred || !stmt.isValidAndComplete || seen.has(pred.iri)) continue;
       seen.add(pred.iri);
       const disabled = pred.isLinkProperty || pred.objectValueType === Constants.ListValue;
-      items.push(new OrderByItem(pred.iri, pred.labels, disabled, pred.iri === activeOrderById));
+      const isActive = pred.iri === activeOrderById;
+      items.push(
+        new OrderByItem(pred.iri, pred.labels, disabled, isActive, isActive ? (activeDirection ?? 'asc') : 'asc')
+      );
     }
     return items;
   }

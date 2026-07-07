@@ -9,6 +9,11 @@
   (click)="isOpen = !isOpen">
   <p class="label-icon-container">
     <span class="label">Order by{{ activeLabel(orderByItems) ? ': ' + activeLabel(orderByItems) : '' }}</span>
+    @if (activeDirection(orderByItems); as direction) {
+    <span class="direction-icon">
+      <mat-icon>{{ direction === 'desc' ? 'arrow_downward' : 'arrow_upward' }}</mat-icon>
+    </span>
+    }
     <span class="icon">
       <mat-icon>expand_more</mat-icon>
     </span>
@@ -36,9 +41,17 @@
       <span class="order-by-item">
         <span>{{ getLabel(item.labels) }}</span>
         @if (item.orderBy) {
-        <button mat-icon-button (click)="$event.stopPropagation(); removeOrderBy()">
-          <mat-icon>close</mat-icon>
-        </button>
+        <span class="order-by-actions">
+          <button
+            mat-icon-button
+            [matTooltip]="item.direction === 'desc' ? 'Sorted descending — click for ascending' : 'Sorted ascending — click for descending'"
+            (click)="$event.stopPropagation(); toggleDirection(item)">
+            <mat-icon>{{ item.direction === 'desc' ? 'arrow_downward' : 'arrow_upward' }}</mat-icon>
+          </button>
+          <button mat-icon-button (click)="$event.stopPropagation(); removeOrderBy()">
+            <mat-icon>close</mat-icon>
+          </button>
+        </span>
         }
       </span>
     </mat-list-option>

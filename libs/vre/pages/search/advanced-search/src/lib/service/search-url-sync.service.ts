@@ -1,6 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { distinctUntilChanged, map, Observable } from 'rxjs';
+import { OrderDirection } from '../model';
 import { Operator } from '../operators.config';
 import { SearchFlowLogger } from './search-flow-logger.service';
 
@@ -10,6 +11,8 @@ export interface SearchUrlParams {
   class?: string;
   filters?: string;
   orderBy?: string;
+  /** Sort direction for `orderBy`. Meaningless on its own — only ever set when `orderBy` is present. */
+  orderDir?: OrderDirection;
 }
 
 export interface FilterParam {
@@ -61,7 +64,8 @@ export class SearchUrlSyncService {
         a.ontology === b.ontology &&
         a.class === b.class &&
         a.filters === b.filters &&
-        a.orderBy === b.orderBy
+        a.orderBy === b.orderBy &&
+        a.orderDir === b.orderDir
     )
   );
 
@@ -88,7 +92,14 @@ export class SearchUrlSyncService {
     this._logger.urlClear();
     // Route through the single write API. Under `merge`, nulling every known param
     // removes it — equivalent to clearing. `replaceUrl: true` keeps reset out of history.
-    this.writeState({ q: undefined, ontology: undefined, class: undefined, filters: undefined, orderBy: undefined });
+    this.writeState({
+      q: undefined,
+      ontology: undefined,
+      class: undefined,
+      filters: undefined,
+      orderBy: undefined,
+      orderDir: undefined,
+    });
   }
 
   encodeFilters(
@@ -117,12 +128,17 @@ export class SearchUrlSyncService {
   }
 
   private _mapParams(p: Record<string, string>): SearchUrlParams {
+    const orderBy = p['orderBy'] || undefined;
     return {
       q: p['q'] || undefined,
       ontology: p['ontology'] || undefined,
       class: p['class'] || undefined,
       filters: p['filters'] || undefined,
-      orderBy: p['orderBy'] || undefined,
+      orderBy,
+      // `orderDir` is meaningful only alongside `orderBy`, and only `desc` changes behaviour (ASC is the
+      // default). Drop an orphan direction and normalise anything but the literal `desc` to undefined, so
+      // hand-edited / stale URLs can never produce a half-set sort state.
+      orderDir: orderBy && p['orderDir'] === 'desc' ? 'desc' : undefined,
     };
   }
 
@@ -133,6 +149,8 @@ export class SearchUrlSyncService {
     if ('class' in state) params['class'] = state.class || null;
     if ('filters' in state) params['filters'] = state.filters || null;
     if ('orderBy' in state) params['orderBy'] = state.orderBy || null;
+    // Only `desc` is ever written; `asc` is the default and stays out of the URL to keep it clean.
+    if ('orderDir' in state) params['orderDir'] = state.orderDir === 'desc' ? 'desc' : null;
     return params;
   }
 }

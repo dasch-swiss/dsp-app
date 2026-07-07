@@ -268,17 +268,26 @@ export class StatementElement {
   }
 }
 
+export type OrderDirection = 'asc' | 'desc';
+
 export class OrderByItem {
   constructor(
     public readonly id: string,
     public readonly labels: StringLiteralV2[] = [],
     public readonly disabled?: boolean,
-    public readonly orderBy = false
+    public readonly orderBy = false,
+    /** Sort direction; only meaningful while `orderBy` is true. Defaults to ascending. */
+    public readonly direction: OrderDirection = 'asc'
   ) {}
 
-  /** Immutable update: returns a new item with the given active flag, preserving id/labels/disabled. */
+  /** Immutable update: returns a new item with the given active flag, preserving id/labels/disabled/direction. */
   withOrderBy(orderBy: boolean): OrderByItem {
-    return new OrderByItem(this.id, this.labels, this.disabled, orderBy);
+    return new OrderByItem(this.id, this.labels, this.disabled, orderBy, this.direction);
+  }
+
+  /** Immutable update: returns a new item with the given sort direction, preserving everything else. */
+  withDirection(direction: OrderDirection): OrderByItem {
+    return new OrderByItem(this.id, this.labels, this.disabled, this.orderBy, direction);
   }
 }
 

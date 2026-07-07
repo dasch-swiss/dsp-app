@@ -76,7 +76,9 @@ export class GravsearchService {
       .filter(o => o.orderBy)
       .map(o => {
         const index = statements.findIndex(stm => stm.selectedPredicate?.iri === o.id);
-        return `${RESOURCE_PLACEHOLDER}${index}`;
+        const variable = `${RESOURCE_PLACEHOLDER}${index}`;
+        const fn = o.direction === 'desc' ? 'DESC' : 'ASC';
+        return `${fn}(${variable})`;
       });
 
     return orderByProps.length ? `ORDER BY ${orderByProps.join(' ')}` : 'ORDER BY ASC(?label)';

@@ -6,6 +6,18 @@
     display: inline-block;
     height: 24px;
   }
+
+  .direction-icon {
+    display: inline-flex;
+    align-items: center;
+    margin-left: 8px;
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+  }
 }
 
 .order-by-item {
@@ -13,6 +25,12 @@
   align-items: center;
   justify-content: space-between;
   width: 100%;
+
+  .order-by-actions {
+    display: inline-flex;
+    align-items: center;
+    margin-left: 8px;
+  }
 }
 
 .chip-popover-list {
