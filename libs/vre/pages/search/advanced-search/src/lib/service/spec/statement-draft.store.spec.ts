@@ -79,6 +79,46 @@ describe('StatementDraftStore', () => {
       expect(svc.currentStatements[0].isPristine).toBe(true);
     });
 
+    // Build against a searchState$ that carries a selected resource class, mirroring a URL with `?class=`.
+    const buildWithClass = (resourceClass: IriLabelPair | null, statements: StatementElement[] = []) => {
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({
+        providers: [
+          StatementDraftStore,
+          {
+            provide: DerivedSearchStateService,
+            useValue: {
+              searchState$: of({ resourceClass, statements, orderByItems: [] }),
+            } as Partial<DerivedSearchStateService>,
+          },
+        ],
+      });
+      return TestBed.inject(StatementDraftStore);
+    };
+
+    it('seeds the blank root with the selected class subject so the property picker is class-scoped (DEV-6576)', () => {
+      const svc = buildWithClass(mockResourceClass);
+      // predicate-select reads `subjectNode.value.iri` → getProperties$(iri) → only that class's properties.
+      expect(svc.currentStatements[0].subjectNode?.value?.iri).toBe(mockResourceClass.iri);
+    });
+
+    it('leaves the blank root subjectless for "all resource classes" (null class → all properties)', () => {
+      const svc = buildWithClass(null);
+      expect(svc.currentStatements[0].subjectNode).toBeUndefined();
+    });
+
+    it('seeds a subsequently added blank statement with the selected class subject (DEV-6576)', () => {
+      const svc = buildWithClass(mockResourceClass);
+      const added = svc.addBlankStatement();
+      expect(added.subjectNode?.value?.iri).toBe(mockResourceClass.iri);
+    });
+
+    it('adds a subjectless blank statement when no class is selected', () => {
+      const svc = buildWithClass(null);
+      const added = svc.addBlankStatement();
+      expect(added.subjectNode).toBeUndefined();
+    });
+
     it('appends a trailing blank child under a confirmed link statement that opens a sub-query', () => {
       const parent = makeConfirmedLink();
       const svc = buildWithState([parent]);

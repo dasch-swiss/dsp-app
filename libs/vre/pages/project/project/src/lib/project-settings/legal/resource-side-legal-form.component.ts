@@ -196,7 +196,7 @@ export class ResourceSideLegalFormComponent implements OnInit {
       .updateResourceSideLegalInfo(this.project.shortcode, {
         dataLicense: license ?? undefined,
         dataCopyrightHolder: copyrightHolder ?? undefined,
-        defaultDataAuthorship: dataAuthorship ?? [],
+        dataAuthorship: dataAuthorship ?? [],
       })
       .pipe(takeUntilDestroyed(this._destroyRef))
       .subscribe({

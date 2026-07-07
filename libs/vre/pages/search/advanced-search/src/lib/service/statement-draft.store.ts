@@ -22,6 +22,10 @@ export class StatementDraftStore {
   // The ephemeral tree — this service's own source of truth for in-progress editing.
   private readonly _statements = new BehaviorSubject<StatementElement[]>([new StatementElement()]);
 
+  // The currently-selected resource class (URL-derived, mirrored from `searchState$`). Used to seed every
+  // new root statement's subject node so the property picker is scoped to that class. Null = "all classes".
+  private _resourceClass: IriLabelPair | null = null;
+
   readonly statements$: Observable<StatementElement[]> = this._statements.pipe(
     distinctUntilChanged((a, b) => a.length === b.length && a.every((s, i) => s === b[i]))
   );
@@ -36,9 +40,21 @@ export class StatementDraftStore {
     // onto the *current* confirmed parents, and each confirmed link/resource statement gets a trailing
     // blank child to edit. Unconfirmed rows do not survive a URL change — that is correct: only the URL
     // is durable. No DI cycle: DerivedSearchStateService does not depend on StatementDraftStore.
-    this._derivation.searchState$
-      .pipe(takeUntilDestroyed(this._destroyRef))
-      .subscribe(state => this._seedFromConfirmed(state.statements));
+    this._derivation.searchState$.pipe(takeUntilDestroyed(this._destroyRef)).subscribe(state => {
+      this._resourceClass = state.resourceClass;
+      this._seedFromConfirmed(state.statements);
+    });
+  }
+
+  /**
+   * A fresh top-level statement, seeded with the selected resource class as its subject node when one is
+   * chosen. That subject scopes the property picker (`getProperties$(subjectClass.iri)`) to the class; with
+   * no class selected ("all classes") the subject is left empty so all properties remain available.
+   */
+  private _makeRootStatement(): StatementElement {
+    return this._resourceClass?.iri
+      ? new StatementElement(new NodeValue(this._resourceClass.iri, this._resourceClass), 0)
+      : new StatementElement();
   }
 
   /**
@@ -49,7 +65,7 @@ export class StatementDraftStore {
    */
   private _seedFromConfirmed(confirmed: StatementElement[]): void {
     if (confirmed.length === 0) {
-      this._statements.next([new StatementElement()]);
+      this._statements.next([this._makeRootStatement()]);
       return;
     }
     const next = [...confirmed];
@@ -95,7 +111,7 @@ export class StatementDraftStore {
   }
 
   addBlankStatement(): StatementElement {
-    const blank = new StatementElement();
+    const blank = this._makeRootStatement();
     this._setStatements([...this.currentStatements, blank]);
     return blank;
   }
