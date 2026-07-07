@@ -846,7 +846,7 @@ OFFSET 0`;
 
   it('emits ORDER BY on the active predicate index when an orderBy item is active (DEV-6576 D1)', () => {
     // Characterization oracle: orderBy is now an explicit argument, not read from currentState.
-    // An active sort on hasMnr (statement index 0) must render `ORDER BY ?res0`.
+    // An active sort on hasMnr (statement index 0) defaults to ascending → `ORDER BY ASC(?res0)`.
     const jsonSnapshot = JSON.stringify(baseJsonSnapshot);
     const resourceClass: IriLabelPair = makeIriLabelPair(
       'http://api.stage.dasch.swiss/ontology/0806/webern-onto/v2#MusicalPiece',
@@ -864,7 +864,29 @@ OFFSET 0`;
       activeOrderBy
     );
 
-    expect(query).toContain('ORDER BY ?res0');
+    expect(query).toContain('ORDER BY ASC(?res0)');
+    expect(query).not.toContain('ORDER BY ASC(?label)');
+  });
+
+  it('emits ORDER BY DESC on the active predicate index when the orderBy direction is desc (DEV-6576)', () => {
+    const jsonSnapshot = JSON.stringify(baseJsonSnapshot);
+    const resourceClass: IriLabelPair = makeIriLabelPair(
+      'http://api.stage.dasch.swiss/ontology/0806/webern-onto/v2#MusicalPiece',
+      'Musikstück (AWG-ID)'
+    );
+    setupTestFromJson(searchStateService, jsonSnapshot, resourceClass);
+
+    const activeOrderBy = [
+      new OrderByItem('http://api.stage.dasch.swiss/ontology/0806/webern-onto/v2#hasMnr', [], false, true, 'desc'),
+    ];
+    const query = gravsearchService.generateGravSearchQuery(
+      searchStateService.validStatementElements,
+      undefined,
+      resourceClass.iri,
+      activeOrderBy
+    );
+
+    expect(query).toContain('ORDER BY DESC(?res0)');
     expect(query).not.toContain('ORDER BY ASC(?label)');
   });
 

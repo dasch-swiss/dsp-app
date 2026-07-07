@@ -208,7 +208,7 @@ describe('SearchUrlSyncService — URL param contract (DEV-6576 Phase 0)', () =>
 
       // Folded into the single write API (D5): merge + all-null = cleared, replaceUrl defaults true.
       expect(navigateSpy).toHaveBeenCalledWith([], {
-        queryParams: { q: null, ontology: null, class: null, filters: null, orderBy: null },
+        queryParams: { q: null, ontology: null, class: null, filters: null, orderBy: null, orderDir: null },
         queryParamsHandling: 'merge',
         replaceUrl: true,
       });

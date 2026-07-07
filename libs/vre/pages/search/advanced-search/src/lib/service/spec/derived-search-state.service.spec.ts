@@ -160,14 +160,25 @@ describe('DerivedSearchStateService (DEV-6576 Phase 2)', () => {
       expect(derived).toContain('FILTER knora-api:matchText(?searchThis, "whale")');
     });
 
-    it('emits ORDER BY on the active predicate when orderBy is set', async () => {
+    it('emits ORDER BY ASC on the active predicate when orderBy is set without a direction', async () => {
       params$.next({
         class: bookClass.iri,
         filters: encode([{ predicateIri: titlePred.iri, operator: Operator.Equals, value: 'x' }]),
         orderBy: titlePred.iri,
       });
       const query = await firstValueFrom(service.gravsearchQuery$);
-      expect(query).toContain('ORDER BY ?res0');
+      expect(query).toContain('ORDER BY ASC(?res0)');
+    });
+
+    it('emits ORDER BY DESC on the active predicate when orderDir is desc', async () => {
+      params$.next({
+        class: bookClass.iri,
+        filters: encode([{ predicateIri: titlePred.iri, operator: Operator.Equals, value: 'x' }]),
+        orderBy: titlePred.iri,
+        orderDir: 'desc',
+      });
+      const query = await firstValueFrom(service.gravsearchQuery$);
+      expect(query).toContain('ORDER BY DESC(?res0)');
     });
   });
 
