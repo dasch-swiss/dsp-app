@@ -8,7 +8,7 @@ import { Operator } from '../../../operators.config';
   standalone: true,
   imports: [MatInputModule, MatSelectModule],
   template: `
-    <mat-form-field>
+    <mat-form-field style="width: 100%">
       <mat-label>Operator</mat-label>
       <mat-select
         [value]="selectedOperator"

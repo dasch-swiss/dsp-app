@@ -62,11 +62,10 @@ import { StringValueComponent } from '../statement-builder/object-values/string-
               (emitResourceSelected)="draftStore.setObjectValue(statement, $event)" />
           }
         }
-      </div>
 
-      <div class="filter-editor-popover__actions">
-        <button mat-button (click)="filterCancel.emit()">Cancel</button>
-        <button mat-raised-button color="primary" (click)="onConfirmClick()">Add filter</button>
+        <button class="filter-editor-popover__add" mat-raised-button color="primary" (click)="onConfirmClick()">
+          Add
+        </button>
       </div>
     </div>
   `,
@@ -74,28 +73,30 @@ import { StringValueComponent } from '../statement-builder/object-values/string-
     `
       .filter-editor-popover {
         background: white;
-        padding: 16px;
+        padding: 8px 12px;
         border-radius: 4px;
-        min-width: 280px;
-        max-width: 720px;
       }
+      /* Single row: no wrapping. Fields shrink to share the row rather than dropping to a new line. */
       .filter-editor-popover__fields {
         display: flex;
-        flex-wrap: wrap;
-        align-items: flex-start;
+        flex-wrap: nowrap;
+        align-items: center;
         gap: 8px;
       }
-      /* Each field component (predicate / operator / value) is a flex item so they sit inline;
-         they wrap onto the next line when the popover is too narrow to hold them side by side. */
-      .filter-editor-popover__fields > * {
-        flex: 1 1 180px;
-        min-width: 160px;
+      /* Each field component shares the row and may shrink (min-width:0 lets flex compress the inner
+         inputs below their content width instead of forcing an overflow/wrap). */
+      .filter-editor-popover__fields > app-predicate-select,
+      .filter-editor-popover__fields > app-comparison-operator,
+      .filter-editor-popover__fields > app-resource-value,
+      .filter-editor-popover__fields > app-string-value,
+      .filter-editor-popover__fields > app-list-value,
+      .filter-editor-popover__fields > app-link-value {
+        flex: 1 1 0;
+        min-width: 0;
       }
-      .filter-editor-popover__actions {
-        display: flex;
-        justify-content: flex-end;
-        gap: 8px;
-        margin-top: 8px;
+      /* The Add button anchors the row end and never stretches or shrinks. */
+      .filter-editor-popover__add {
+        flex: 0 0 auto;
       }
     `,
   ],

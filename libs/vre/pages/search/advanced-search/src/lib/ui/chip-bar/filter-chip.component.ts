@@ -11,7 +11,6 @@ import {
 } from '@angular/core';
 
 import { MatButtonModule } from '@angular/material/button';
-import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { StatementElement } from '../../model';
 import { StatementDraftStore } from '../../service/statement-draft.store';
@@ -28,25 +27,26 @@ import { FilterEditorPopoverComponent } from './filter-editor-popover.component'
     ChipLabelPipe,
     FilterEditorPopoverComponent,
     MatButtonModule,
-    MatChipsModule,
     MatIconModule,
     OverlayModule,
   ],
   template: `
-    <mat-chip-set>
-      <mat-chip
-        cdkOverlayOrigin
-        #trigger="cdkOverlayOrigin"
-        [highlighted]="isOpen || !isValid"
-        style="margin: 0 8px"
-        [color]="isValid ? undefined : 'warn'"
-        (click)="onOpen()">
-        {{ statement | chipLabel }}
-        <button matChipRemove aria-label="Remove filter" (click)="$event.stopPropagation(); remove.emit()">
-          <mat-icon>cancel</mat-icon>
-        </button>
-      </mat-chip>
-    </mat-chip-set>
+    <button
+      mat-stroked-button
+      cdkOverlayOrigin
+      #trigger="cdkOverlayOrigin"
+      class="filter-chip-button"
+      style="margin: 0 8px"
+      [color]="isValid ? 'primary' : 'warn'"
+      (click)="onOpen()">
+      {{ statement | chipLabel }}
+      <mat-icon
+        class="filter-chip-button__remove"
+        aria-label="Remove filter"
+        (click)="$event.stopPropagation(); remove.emit()">
+        cancel
+      </mat-icon>
+    </button>
 
     <ng-template
       cdkConnectedOverlay
@@ -65,10 +65,15 @@ import { FilterEditorPopoverComponent } from './filter-editor-popover.component'
   `,
   styles: [
     `
-      app-filter-chip .mdc-evolution-chip__text-label {
-        white-space: normal !important;
-        overflow: visible !important;
-        text-overflow: unset !important;
+      /* The trailing remove (✕) icon sits inside the button; nudge it so it reads as a clear affordance
+         and gains a subtle hover without the button's own ripple hiding it. */
+      app-filter-chip .filter-chip-button__remove {
+        margin-left: 4px;
+        cursor: pointer;
+        opacity: 0.7;
+      }
+      app-filter-chip .filter-chip-button__remove:hover {
+        opacity: 1;
       }
     `,
   ],
