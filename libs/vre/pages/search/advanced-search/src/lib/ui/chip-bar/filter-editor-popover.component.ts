@@ -1,4 +1,13 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, inject, Input, Output, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  inject,
+  Input,
+  Output,
+  signal,
+  ViewEncapsulation,
+} from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { IriLabelPair, PropertyObjectType, StatementElement } from '../../model';
 import { StatementDraftStore } from '../../service/statement-draft.store';
@@ -98,8 +107,15 @@ import { StringValueComponent } from '../statement-builder/object-values/string-
       .filter-editor-popover__add {
         flex: 0 0 auto;
       }
+      /* Collapse the reserved hint/error subscript under the inputs — but ONLY inside this popover.
+         Encapsulation is None so these rules could leak; the .filter-editor-popover prefix scopes them
+         to fields rendered here, leaving the same shared field components untouched elsewhere. */
+      .filter-editor-popover .mat-mdc-form-field-subscript-wrapper {
+        display: none;
+      }
     `,
   ],
+  encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FilterEditorPopoverComponent {
