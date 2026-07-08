@@ -59,6 +59,9 @@ export class AddFilterButtonComponent {
 
   onConfirm(): void {
     if (this.pendingStatement) {
+      // Promote the in-progress filter (and its subtree) from editing to confirmed, then let the bar
+      // project it as a chip and persist it to the URL.
+      this._draftStore.commitNewFilter(this.pendingStatement);
       this.filterConfirmed.emit(this.pendingStatement.id);
       this.pendingStatement = null;
     }

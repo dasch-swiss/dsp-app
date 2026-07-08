@@ -75,6 +75,9 @@ export class StatementDraftStore {
    * row is preserved when there are no confirmed statements so the user can start a filter.
    */
   private _seedFromConfirmed(confirmed: StatementElement[]): void {
+    // A URL reseed mints fresh reconstructed instances (new ids) and represents the committed truth, so
+    // any in-flight editing draft (whose ids are now gone) is abandoned — drop the stale editing flags.
+    this._editingIds.clear();
     this._statements.next(confirmed.length === 0 ? [this._makeRootStatement()] : [...confirmed]);
   }
 
@@ -107,6 +110,9 @@ export class StatementDraftStore {
    */
   addChildStatement(parent: StatementElement): StatementElement {
     const child = new StatementElement(parent.selectedObjectNode as NodeValue, parent.statementLevel + 1, parent);
+    // A subcriterion inherits its parent's editing flag: while a new/edited filter is being built in the
+    // popover, its whole subtree must stay out of the chip row and URL until commit.
+    if (this._editingIds.has(parent.id)) this._editingIds.add(child.id);
     const statements = this.currentStatements;
     const subtree = this.descendantsOf(parent);
     const lastOfSubtree = subtree.length ? subtree[subtree.length - 1] : parent;
@@ -176,6 +182,8 @@ export class StatementDraftStore {
   setMainResource(resourceClass: IriLabelPair): void {
     // Reset the ephemeral editing tree to a single root statement seeded with the new class. The
     // selected class + orderBy are URL params owned by resource-class-chip (`writeState`), not here.
+    // Resetting the tree abandons any in-flight editing draft, so drop stale editing flags too.
+    this._editingIds.clear();
     const statement = new StatementElement(new NodeValue(resourceClass.iri, resourceClass), 0);
     this._statements.next([statement]);
   }
@@ -200,10 +208,21 @@ export class StatementDraftStore {
     this._pruneChildrenIfNotSubQuery(statement);
   }
 
+  /**
+   * Start a new filter: append a blank root statement flagged as "editing" so it — and any subcriteria it
+   * grows while being built in the popover — stays out of the chip row and URL until the user clicks Add
+   * ({@link commitNewFilter}). Cancelling removes it via {@link deleteStatement}.
+   */
   addBlankStatement(): StatementElement {
     const blank = this._makeRootStatement();
+    this._editingIds.add(blank.id);
     this._setStatements([...this.currentStatements, blank]);
     return blank;
+  }
+
+  /** Commit a new filter (the Add click): clear editing flags on it and its subtree so it becomes a chip. */
+  commitNewFilter(root: StatementElement): void {
+    [root.id, ...this.descendantsOf(root).map(s => s.id)].forEach(id => this._editingIds.delete(id));
   }
 
   setObjectValue(statement: StatementElement, searchValue: string | IriLabelPair): void {

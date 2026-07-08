@@ -337,4 +337,41 @@ describe('StatementDraftStore', () => {
       expect(service.isEditing(clone)).toBe(false);
     });
   });
+
+  describe('new-filter isolation (addBlankStatement / commitNewFilter)', () => {
+    it('flags a newly added blank statement (and its subcriteria) as editing until committed', () => {
+      service.setMainResource(mockResourceClass);
+      const pending = service.addBlankStatement();
+      expect(service.isEditing(pending)).toBe(true);
+
+      // A subcriterion grown under the in-progress filter inherits the editing flag.
+      makeSubQuery(pending);
+      const child = service.addChildStatement(pending);
+      expect(service.isEditing(child)).toBe(true);
+    });
+
+    it('commitNewFilter clears editing flags on the whole subtree', () => {
+      service.setMainResource(mockResourceClass);
+      const pending = service.addBlankStatement();
+      makeSubQuery(pending);
+      const child = service.addChildStatement(pending);
+
+      service.commitNewFilter(pending);
+
+      expect(service.isEditing(pending)).toBe(false);
+      expect(service.isEditing(child)).toBe(false);
+    });
+
+    it('a URL reseed clears any in-flight editing flags', () => {
+      service.setMainResource(mockResourceClass);
+      const pending = service.addBlankStatement();
+      expect(service.isEditing(pending)).toBe(true);
+
+      // Simulate a URL-driven reseed by driving setMainResource (which replaces the tree). Editing flags
+      // from the abandoned draft must not linger.
+      service.setMainResource(mockResourceClass);
+      // Any statement now in the store is a fresh instance and must not be flagged editing.
+      expect(service.currentStatements.every(s => !service.isEditing(s))).toBe(true);
+    });
+  });
 });
