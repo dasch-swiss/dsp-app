@@ -94,9 +94,7 @@ export class AdvancedSearchBarComponent implements OnInit {
     // resolves — otherwise the chip could hold a parent from one emission while the store's children
     // point at a parent from a later emission (different id), and subcriteria would vanish on re-open.
     // Top-level, valid statements only: subcriteria are edited inside the parent popover, not as chips.
-    this.draftStore.statements$.pipe(takeUntilDestroyed(this._destroyRef)).subscribe(statements => {
-      this.confirmedStatements.set(statements.filter(s => s.isValidAndComplete && !s.parentId));
-    });
+    this.draftStore.statements$.pipe(takeUntilDestroyed(this._destroyRef)).subscribe(() => this._refreshChips());
 
     // Seed the fulltext input from the `q` param on any URL change, without echoing back into the URL
     // (`emitEvent: false`), so back/forward restores the field but does not re-push history.
@@ -135,6 +133,7 @@ export class AdvancedSearchBarComponent implements OnInit {
   onConfirmNewFilter(chipId: string): void {
     this._logger.filterConfirmed(chipId);
     this.openChipId.set(OPEN_CHIP_NONE);
+    this._refreshChips();
     this._writeFiltersToUrl();
   }
 
@@ -142,10 +141,17 @@ export class AdvancedSearchBarComponent implements OnInit {
     const stmt = this.draftStore.currentStatements.find(s => s.id === chipId);
     if (!stmt) return;
     this._logger.filterConfirmed(chipId);
-    // The statement is already valid and in the draft store, so `confirmedStatements` (a projection of
-    // the store) already includes it as a chip; its subcriteria travel with it and are encoded into the
-    // URL by _writeFiltersToUrl (which flattens each chip's subtree). Just persist to the URL.
+    // The statement is already valid and in the draft store, so it belongs in the chip row now. Refresh
+    // the projection here (a signal write inside this click handler, so OnPush re-renders immediately —
+    // the store's own emission during typing fired outside a render pass and left the chip hidden until
+    // the next interaction). Subcriteria travel with the parent and are encoded by _writeFiltersToUrl.
+    this._refreshChips();
     this._writeFiltersToUrl();
+  }
+
+  /** Re-project the top-level, valid statements from the draft store into the chip signal. */
+  private _refreshChips(): void {
+    this.confirmedStatements.set(this.draftStore.currentStatements.filter(s => s.isValidAndComplete && !s.parentId));
   }
 
   onResourceClassSelected(): void {
