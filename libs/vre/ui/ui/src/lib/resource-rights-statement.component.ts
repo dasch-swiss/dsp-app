@@ -13,8 +13,9 @@ import { TranslatePipe } from '@ngx-translate/core';
  * Used on the resource viewer, the create-resource form (preview) and the project description.
  *
  * Behaviour (per spec §1b):
- * - When NOT configured (neither a license nor a copyright holder): renders the admins-only
- *   "uncategorized — please review" callout for admins, and renders nothing for everyone else.
+ * - Renders as soon as any field is set (license, copyright holder, or — in a per-resource context —
+ *   authorship). When NOTHING is set: renders the admins-only "uncategorized — please review" callout
+ *   for admins, and renders nothing for everyone else (including logged-out visitors).
  * - When configured: shows whichever of the license (linked to its Creative Commons deed) and the
  *   copyright holder are set — each independently — and, unless `showAuthorship` is false, the
  *   authorship. Project-level displays pass `showAuthorship=false`, since authorship is per-resource.
@@ -286,7 +287,16 @@ export class ResourceRightsStatementComponent {
   @ViewChild('editButton') private _editButton?: ElementRef<HTMLButtonElement>;
 
   get configured(): boolean {
-    return !!this.licenseLabel || !!this.copyrightHolder;
+    return !!this.licenseLabel || !!this.copyrightHolder || this._hasDisplayableAuthorship;
+  }
+
+  /** Per-resource authorship worth showing: only in an authorship context (`showAuthorship`), and
+   *  only when there are actual authors (own or project default). Lets a resource that has only
+   *  authorship set still render the statement. */
+  private get _hasDisplayableAuthorship(): boolean {
+    return (
+      this.showAuthorship && ((this.resourceAuthorship?.length ?? 0) > 0 || this.defaultResourceAuthorship.length > 0)
+    );
   }
 
   /** Open the inline editor, seeded with the currently displayed authorship. */
