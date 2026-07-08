@@ -9,72 +9,20 @@ import {
   ViewEncapsulation,
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { IriLabelPair, PropertyObjectType, StatementElement } from '../../model';
+import { StatementElement } from '../../model';
 import { StatementDraftStore } from '../../service/statement-draft.store';
-import { ComparisonOperatorComponent } from '../statement-builder/assertions/comparison-operator.component';
-import { PredicateSelectComponent } from '../statement-builder/assertions/predicate-select.component';
-import { LinkValueComponent } from '../statement-builder/object-values/link-value/link-value.component';
-import { ListValueComponent } from '../statement-builder/object-values/list-value/list-value.component';
-import { ResourceValueComponent } from '../statement-builder/object-values/resource-value/resource-value.component';
-import { StringValueComponent } from '../statement-builder/object-values/string-value/string-value.component';
+import { StatementFieldsComponent } from '../statement-builder/statement-fields.component';
 
 @Component({
   selector: 'app-filter-editor-popover',
   standalone: true,
-  imports: [
-    ComparisonOperatorComponent,
-    LinkValueComponent,
-    ListValueComponent,
-    MatButtonModule,
-    PredicateSelectComponent,
-    ResourceValueComponent,
-    StringValueComponent,
-  ],
+  imports: [MatButtonModule, StatementFieldsComponent],
   template: `
     <div class="filter-editor-popover mat-elevation-z4">
-      <div class="filter-editor-popover__fields">
-        <app-predicate-select
-          [subjectClass]="statement.subjectNode?.value"
-          [selectedPredicate]="statement.selectedPredicate"
-          (selectedPredicateChange)="draftStore.setSelectedPredicate(statement, $event)" />
+      <app-statement-fields [statement]="statement" [showErrors]="showErrors()" />
 
-        <app-comparison-operator
-          [operators]="statement.operators"
-          [selectedOperator]="statement.selectedOperator"
-          (operatorChange)="draftStore.setSelectedOperator(statement, $event)" />
-
-        @switch (statement.objectType) {
-          @case (PROPERTY_OBJECT_TYPES.ResourceObject) {
-            <app-resource-value
-              [selectedPredicate]="statement.selectedPredicate"
-              [selectedResource]="asIriLabelPair(statement.selectedObjectValue)"
-              (selectedResourceChange)="draftStore.setObjectValue(statement, $event)" />
-          }
-          @case (PROPERTY_OBJECT_TYPES.ValueObject) {
-            <app-string-value
-              [valueType]="statement.selectedPredicate!.objectValueType"
-              [value]="asString(statement.selectedObjectValue)"
-              [showError]="showErrors()"
-              (emitValueChanged)="draftStore.setObjectValue(statement, $event)" />
-          }
-          @case (PROPERTY_OBJECT_TYPES.ListValueObject) {
-            <app-list-value
-              [rootListNodeIri]="statement.selectedPredicate!.listObjectIri!"
-              [selectedListItem]="asIriLabelPair(statement.selectedObjectValue)"
-              (emitValueChanged)="draftStore.setObjectValue(statement, $event)" />
-          }
-          @case (PROPERTY_OBJECT_TYPES.LinkValueObject) {
-            <app-link-value
-              [resourceClass]="statement.selectedPredicate?.objectValueType"
-              [selectedResource]="asIriLabelPair(statement.selectedObjectValue)"
-              [showError]="showErrors()"
-              (emitResourceSelected)="draftStore.setObjectValue(statement, $event)" />
-          }
-        }
-
-        <button class="filter-editor-popover__add" mat-raised-button color="primary" (click)="onConfirmClick()">
-          Add
-        </button>
+      <div class="filter-editor-popover__actions">
+        <button mat-raised-button color="primary" (click)="onConfirmClick()">Add</button>
       </div>
     </div>
   `,
@@ -84,32 +32,16 @@ import { StringValueComponent } from '../statement-builder/object-values/string-
         background: white;
         padding: 8px 12px;
         border-radius: 4px;
+        min-width: 480px;
       }
-      /* Single row: no wrapping. Fields shrink to share the row rather than dropping to a new line. */
-      .filter-editor-popover__fields {
+      .filter-editor-popover__actions {
         display: flex;
-        flex-wrap: nowrap;
-        align-items: center;
-        gap: 8px;
-      }
-      /* Each field component shares the row and may shrink (min-width:0 lets flex compress the inner
-         inputs below their content width instead of forcing an overflow/wrap). */
-      .filter-editor-popover__fields > app-predicate-select,
-      .filter-editor-popover__fields > app-comparison-operator,
-      .filter-editor-popover__fields > app-resource-value,
-      .filter-editor-popover__fields > app-string-value,
-      .filter-editor-popover__fields > app-list-value,
-      .filter-editor-popover__fields > app-link-value {
-        flex: 1 1 0;
-        min-width: 0;
-      }
-      /* The Add button anchors the row end and never stretches or shrinks. */
-      .filter-editor-popover__add {
-        flex: 0 0 auto;
+        justify-content: flex-end;
+        margin-top: 8px;
       }
       /* Collapse the reserved hint/error subscript under the inputs — but ONLY inside this popover.
-         Encapsulation is None so these rules could leak; the .filter-editor-popover prefix scopes them
-         to fields rendered here, leaving the same shared field components untouched elsewhere. */
+         The .filter-editor-popover prefix scopes these rules to fields rendered here (encapsulation is
+         None on the field components), leaving the same shared field components untouched elsewhere. */
       .filter-editor-popover .mat-mdc-form-field-subscript-wrapper {
         display: none;
       }
@@ -125,22 +57,15 @@ export class FilterEditorPopoverComponent {
   @Output() filterCancel = new EventEmitter<void>();
 
   readonly draftStore = inject(StatementDraftStore);
-  readonly PROPERTY_OBJECT_TYPES = PropertyObjectType;
   readonly showErrors = signal(false);
 
   onConfirmClick(): void {
-    if (!this.statement.isValidAndComplete) {
+    // The whole filter — the top row and every subcriterion at any depth — must be complete before it
+    // can be committed. `subtreeComplete` also requires a sub-query to have at least one subcriterion.
+    if (!this.draftStore.subtreeComplete(this.statement)) {
       this.showErrors.set(true);
       return;
     }
     this.filterConfirm.emit();
-  }
-
-  asString(value: string | IriLabelPair | undefined): string | undefined {
-    return typeof value === 'string' ? value : undefined;
-  }
-
-  asIriLabelPair(value: string | IriLabelPair | undefined): IriLabelPair | undefined {
-    return value && typeof value === 'object' ? value : undefined;
   }
 }

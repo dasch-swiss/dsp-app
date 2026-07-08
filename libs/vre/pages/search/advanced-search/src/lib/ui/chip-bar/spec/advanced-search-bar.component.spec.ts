@@ -58,7 +58,12 @@ describe('AdvancedSearchBarComponent.onRemoveStatement (DEV-6576)', () => {
         { provide: SearchFlowLogger, useValue: { filterRemoved: () => {} } },
         {
           provide: StatementDraftStore,
-          useValue: { statements$: of([]), currentStatements: [], deleteStatement: () => {} },
+          useValue: {
+            statements$: of([]),
+            currentStatements: [],
+            deleteStatement: () => {},
+            descendantsOf: () => [],
+          },
         },
       ],
     });

@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, Input, OnInit, signal } from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -58,17 +58,6 @@ import { ResourceClassChipComponent } from './resource-class-chip.component';
             (remove)="onRemoveStatement(stmt)"
             (filterConfirm)="onConfirmNewFilter(stmt.id)"
             (filterCancel)="onCancelNewFilter(stmt)" />
-          @for (child of childStatementsMap()[stmt.id] ?? []; track child.id) {
-            <app-filter-chip
-              class="chip--indented"
-              [statement]="child"
-              [isOpen]="openChipId() === child.id"
-              [isValid]="child.isValidAndComplete"
-              (openChange)="onChipOpenChange(child.id, $event)"
-              (remove)="draftStore.deleteStatement(child)"
-              (filterConfirm)="onConfirmNewFilter(child.id)"
-              (filterCancel)="onCancelNewFilter(child)" />
-          }
         }
 
         <app-add-filter-button (filterConfirmed)="onFilterConfirmed($event)" />
@@ -91,40 +80,21 @@ export class AdvancedSearchBarComponent implements OnInit {
 
   readonly openChipId = signal<OpenChipId>(OPEN_CHIP_NONE);
   readonly fulltextControl = new FormControl<string>('');
+  // Top-level confirmed filters shown as chips. Subcriteria (child statements) are not shown as chips —
+  // they are edited inside the parent's popover and travel with it when confirmed.
   readonly confirmedStatements = signal<StatementElement[]>([]);
-
-  // The ephemeral editing tree — owned by StatementDraftStore. Child chips and auto-grow blanks
-  // render from here; confirmed top-level chips come from the URL (searchState$).
-  private readonly _statementElements = toSignal(this.draftStore.statements$, {
-    initialValue: this.draftStore.currentStatements,
-  });
-
-  readonly childStatementsMap = signal<Record<string, StatementElement[]>>({});
-
-  private _rebuildChildMap(): void {
-    const result: Record<string, StatementElement[]> = {};
-    for (const s of this._statementElements()) {
-      if (s.parentId && !s.isPristine) {
-        (result[s.parentId] ??= []).push(s);
-      }
-    }
-    this.childStatementsMap.set(result);
-  }
 
   readonly ontologyLoading$ = this._ontologyDataService.ontologyLoading$;
 
   ngOnInit(): void {
     this._ontologyDataService.init(`http://rdfh.ch/projects/${this.projectUuid}`);
 
-    // Rebuild child map whenever the ephemeral editing tree changes.
-    this.draftStore.statements$.pipe(takeUntilDestroyed(this._destroyRef)).subscribe(() => this._rebuildChildMap());
-
     // Seed the chip-bar UI from the URL-derived state: first load, back/forward, and any URL change
     // all flow through the single `searchState$` pipeline. The query itself is derived on the page;
-    // here we only hydrate the *display* — the confirmed filter chips (top-level chips come straight
-    // from the URL, in-progress rows live in StatementDraftStore).
+    // here we only hydrate the *display* — the top-level confirmed filter chips. Subcriteria (child
+    // statements) are edited inside the parent popover, so they are excluded from the chip row.
     this._derivation.searchState$.pipe(takeUntilDestroyed(this._destroyRef)).subscribe(state => {
-      this.confirmedStatements.set(state.statements.filter(s => s.isValidAndComplete));
+      this.confirmedStatements.set(state.statements.filter(s => s.isValidAndComplete && !s.parentId));
     });
 
     // Seed the fulltext input from the `q` param on any URL change, without echoing back into the URL
@@ -171,6 +141,8 @@ export class AdvancedSearchBarComponent implements OnInit {
     const stmt = this.draftStore.currentStatements.find(s => s.id === chipId);
     if (!stmt) return;
     this._logger.filterConfirmed(chipId);
+    // Only the top-level statement becomes a chip; its subcriteria travel with it and are encoded into
+    // the URL by _writeFiltersToUrl (which flattens each chip's subtree).
     this.confirmedStatements.update(stmts => [...stmts, stmt]);
     this._writeFiltersToUrl();
   }
@@ -192,7 +164,9 @@ export class AdvancedSearchBarComponent implements OnInit {
   }
 
   private _writeFiltersToUrl(extra?: Partial<SearchUrlParams>): void {
-    const stmts = this.confirmedStatements();
+    // Flatten each top-level chip's whole subtree, keeping every parent before its descendants so the
+    // `parentIndex` back-references stay valid. Subcriteria are not chips but must be encoded here.
+    const stmts = this.confirmedStatements().flatMap(stmt => [stmt, ...this.draftStore.descendantsOf(stmt)]);
     const idxById = new Map(stmts.map((s, i) => [s.id, i]));
     const filterArgs = stmts.map(stmt => ({
       predicateIri: stmt.selectedPredicate!.iri,

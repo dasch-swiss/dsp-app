@@ -1,19 +1,9 @@
 import { CdkConnectedOverlay, CdkOverlayOrigin, OverlayModule } from '@angular/cdk/overlay';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  EventEmitter,
-  inject,
-  Input,
-  Output,
-  signal,
-  ViewEncapsulation,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, ViewEncapsulation } from '@angular/core';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { StatementElement } from '../../model';
-import { StatementDraftStore } from '../../service/statement-draft.store';
 import { CHIP_POPOVER_POSITIONS } from './chip-bar.helpers';
 import { ChipLabelPipe } from './chip-label.pipe';
 import { FilterEditorPopoverComponent } from './filter-editor-popover.component';
@@ -58,7 +48,7 @@ import { FilterEditorPopoverComponent } from './filter-editor-popover.component'
       [cdkConnectedOverlayBackdropClass]="'cdk-overlay-transparent-backdrop'"
       (backdropClick)="onBackdropClick()">
       <app-filter-editor-popover
-        [statement]="draft() ?? statement"
+        [statement]="statement"
         [isPristine]="statement.isPristine"
         (filterConfirm)="onConfirm()"
         (filterCancel)="onCancel()" />
@@ -91,30 +81,22 @@ export class FilterChipComponent {
   @Output() filterCancel = new EventEmitter<void>();
 
   readonly positions = CHIP_POPOVER_POSITIONS;
-  readonly draft = signal<StatementElement | null>(null);
-  private readonly _draftStore = inject(StatementDraftStore);
 
   onOpen(): void {
-    this.draft.set(StatementElement.detachedClone(this.statement));
+    // Edits apply live to the statement in the draft store (subcriteria included). This keeps the
+    // confirmed-chip edit path identical to the add-filter path, which also edits the store directly.
     this.openChange.emit(true);
   }
 
   onConfirm(): void {
-    const d = this.draft();
-    if (d) {
-      this._draftStore.restoreStatement(d, this.statement);
-    }
-    this.draft.set(null);
     this.filterConfirm.emit();
   }
 
   onCancel(): void {
-    this.draft.set(null);
     this.filterCancel.emit();
   }
 
   onBackdropClick(): void {
-    this.draft.set(null);
     this.filterCancel.emit();
     this.openChange.emit(false);
   }

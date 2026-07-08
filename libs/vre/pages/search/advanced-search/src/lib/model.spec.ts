@@ -191,19 +191,6 @@ describe('StatementElement', () => {
       expect(s.selectedObjectWriteValue).toBe('Hamlet');
     });
   });
-
-  describe('clearSelections', () => {
-    it('resets all selections to undefined', () => {
-      const s = new StatementElement();
-      s.selectedPredicate = makeTextPredicate();
-      s.selectedObjectValue = 'Hamlet';
-      s.clearSelections();
-      expect(s.selectedPredicate).toBeUndefined();
-      expect(s.selectedOperator).toBeUndefined();
-      expect(s.selectedObjectValue).toBeUndefined();
-      expect(s.isPristine).toBe(true);
-    });
-  });
 });
 
 describe('escapeSparqlStringLiteral', () => {

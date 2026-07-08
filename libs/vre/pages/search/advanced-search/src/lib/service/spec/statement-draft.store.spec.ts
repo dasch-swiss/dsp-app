@@ -1,29 +1,33 @@
 import { TestBed } from '@angular/core/testing';
 import { Constants } from '@dasch-swiss/dsp-js';
-import { BehaviorSubject, EMPTY, of } from 'rxjs';
+import { EMPTY, of } from 'rxjs';
 import { IriLabelPair, NodeValue, StatementElement } from '../../model';
 import { Operator } from '../../operators.config';
 import { makeIriLabelPair, makePredicate } from '../../testing/test-data-builders';
-import { DerivedSearchState, DerivedSearchStateService } from '../derived-search-state.service';
+import { DerivedSearchStateService } from '../derived-search-state.service';
 import { StatementDraftStore } from '../statement-draft.store';
 
 describe('StatementDraftStore', () => {
   let service: StatementDraftStore;
 
   const mockResourceClass: IriLabelPair = makeIriLabelPair('http://test.org/Class', 'TestClass');
-
   const mockLinkedResourceClass: IriLabelPair = makeIriLabelPair('http://test.org/LinkedClass', 'LinkedClass');
-
   const mockTextPredicate = makePredicate('http://test.org/hasText', 'Has Text', Constants.TextValue, false);
-
   const mockLinkPredicate = makePredicate('http://test.org/hasLink', 'Has Link', 'http://test.org/LinkedClass', true);
+
+  /** Complete a statement as a link + Matches sub-query pointing at the linked class. */
+  const makeSubQuery = (statement: StatementElement, linkedClass = mockLinkedResourceClass): void => {
+    service.setSelectedPredicate(statement, mockLinkPredicate);
+    service.setSelectedOperator(statement, Operator.Matches);
+    service.setObjectValue(statement, linkedClass);
+  };
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
         StatementDraftStore,
-        // The manager seeds its store from searchState$ on construction; an inert stream leaves the
-        // default single blank root in place so these auto-grow tests drive the tree directly.
+        // The store seeds from searchState$ on construction; an inert stream leaves the default single
+        // blank root in place so these tests drive the tree directly.
         { provide: DerivedSearchStateService, useValue: { searchState$: EMPTY } as Partial<DerivedSearchStateService> },
       ],
     });
@@ -34,51 +38,19 @@ describe('StatementDraftStore', () => {
     expect(service).toBeTruthy();
   });
 
-  it('holds the editing tree in its own store (no SearchStateService dependency — Phase 3.5 Step 3)', () => {
+  it('holds the editing tree in its own store (no SearchStateService dependency)', () => {
     service.setMainResource(mockResourceClass);
     const statement = service.currentStatements[0];
-    statement.selectedPredicate = mockTextPredicate;
+    service.setSelectedPredicate(statement, mockTextPredicate);
     service.setSelectedOperator(statement, Operator.Equals);
     service.setObjectValue(statement, 'test value');
 
-    // Completing the root grows a trailing blank sibling — all in the manager's own store.
-    expect(service.currentStatements).toHaveLength(2);
-    expect(service.currentStatements[1].isPristine).toBe(true);
+    // Editing no longer auto-grows a trailing sibling — the single root is edited in place.
+    expect(service.currentStatements).toHaveLength(1);
+    expect(service.currentStatements[0].selectedObjectValue).toBe('test value');
   });
 
-  describe('reactive seed from searchState$ (Phase 3.5 Step 2)', () => {
-    // Build the manager against a controllable searchState$ so we can assert the seed re-keys children
-    // onto URL-confirmed parents.
-    const buildWithState = (statements: StatementElement[]) => {
-      TestBed.resetTestingModule();
-      TestBed.configureTestingModule({
-        providers: [
-          StatementDraftStore,
-          {
-            provide: DerivedSearchStateService,
-            useValue: {
-              searchState$: of({ resourceClass: null, statements, orderByItems: [] }),
-            } as Partial<DerivedSearchStateService>,
-          },
-        ],
-      });
-      return TestBed.inject(StatementDraftStore);
-    };
-
-    const makeConfirmedLink = (): StatementElement => {
-      const stmt = new StatementElement(new NodeValue(mockResourceClass.iri, mockResourceClass), 0);
-      stmt.selectedPredicate = mockLinkPredicate;
-      stmt.selectedOperator = Operator.Matches;
-      stmt.selectedObjectValue = mockLinkedResourceClass;
-      return stmt;
-    };
-
-    it('leaves a single blank root when there are no confirmed statements', () => {
-      const svc = buildWithState([]);
-      expect(svc.currentStatements).toHaveLength(1);
-      expect(svc.currentStatements[0].isPristine).toBe(true);
-    });
-
+  describe('reactive seed from searchState$', () => {
     // Build against a searchState$ that carries a selected resource class, mirroring a URL with `?class=`.
     const buildWithClass = (resourceClass: IriLabelPair | null, statements: StatementElement[] = []) => {
       TestBed.resetTestingModule();
@@ -96,9 +68,14 @@ describe('StatementDraftStore', () => {
       return TestBed.inject(StatementDraftStore);
     };
 
+    it('leaves a single blank root when there are no confirmed statements', () => {
+      const svc = buildWithClass(null, []);
+      expect(svc.currentStatements).toHaveLength(1);
+      expect(svc.currentStatements[0].isPristine).toBe(true);
+    });
+
     it('seeds the blank root with the selected class subject so the property picker is class-scoped (DEV-6576)', () => {
       const svc = buildWithClass(mockResourceClass);
-      // predicate-select reads `subjectNode.value.iri` → getProperties$(iri) → only that class's properties.
       expect(svc.currentStatements[0].subjectNode?.value?.iri).toBe(mockResourceClass.iri);
     });
 
@@ -113,267 +90,180 @@ describe('StatementDraftStore', () => {
       expect(added.subjectNode?.value?.iri).toBe(mockResourceClass.iri);
     });
 
-    it('adds a subjectless blank statement when no class is selected', () => {
-      const svc = buildWithClass(null);
-      const added = svc.addBlankStatement();
-      expect(added.subjectNode).toBeUndefined();
-    });
+    it('takes confirmed statements as-is without appending trailing blank children', () => {
+      const parent = new StatementElement(new NodeValue(mockResourceClass.iri, mockResourceClass), 0);
+      parent.selectedPredicate = mockLinkPredicate;
+      parent.selectedOperator = Operator.Matches;
+      parent.selectedObjectValue = mockLinkedResourceClass;
+      const svc = buildWithClass(null, [parent]);
 
-    it('appends a trailing blank child under a confirmed link statement that opens a sub-query', () => {
-      const parent = makeConfirmedLink();
-      const svc = buildWithState([parent]);
-
-      const children = svc.currentStatements.filter(s => s.parentId === parent.id);
-      expect(children).toHaveLength(1);
-      expect(children[0].isPristine).toBe(true);
-      expect(children[0].statementLevel).toBe(1);
-      expect(children[0].subjectNode?.value?.iri).toBe(mockLinkedResourceClass.iri);
-    });
-
-    it('does not add a child under a plain value statement', () => {
-      const stmt = new StatementElement(new NodeValue(mockResourceClass.iri, mockResourceClass), 0);
-      stmt.selectedPredicate = mockTextPredicate;
-      stmt.selectedOperator = Operator.Equals;
-      stmt.selectedObjectValue = 'x';
-      const svc = buildWithState([stmt]);
-
-      expect(svc.currentStatements.filter(s => s.parentId === stmt.id)).toHaveLength(0);
-    });
-
-    it('re-keys the blank child onto the new parent identity on a subsequent URL emission', () => {
-      // First emission: parent A + its blank child. Second emission: a fresh parent B (new id, as
-      // buildStatementsFromFilterParams produces on every URL change). The child must hang off B, not A.
-      const parentA = makeConfirmedLink();
-      const store$ = new BehaviorSubject<DerivedSearchState>({
-        resourceClass: null,
-        statements: [parentA],
-        orderByItems: [],
-      });
-      TestBed.resetTestingModule();
-      TestBed.configureTestingModule({
-        providers: [
-          StatementDraftStore,
-          {
-            provide: DerivedSearchStateService,
-            useValue: { searchState$: store$ } as Partial<DerivedSearchStateService>,
-          },
-        ],
-      });
-      const svc = TestBed.inject(StatementDraftStore);
-      expect(svc.currentStatements.some(s => s.parentId === parentA.id && s.isPristine)).toBe(true);
-
-      const parentB = makeConfirmedLink(); // fresh instance → different id
-      store$.next({ resourceClass: null, statements: [parentB], orderByItems: [] });
-
-      expect(parentB.id).not.toBe(parentA.id);
-      expect(svc.currentStatements.some(s => s.parentId === parentB.id && s.isPristine)).toBe(true);
-      expect(svc.currentStatements.some(s => s.parentId === parentA.id)).toBe(false);
+      // No auto-grown blank child: nesting is now edited explicitly in the popover.
+      expect(svc.currentStatements).toEqual([parent]);
+      expect(svc.childrenOf(parent)).toHaveLength(0);
     });
   });
 
-  describe('empty statement insertion', () => {
-    it('should add empty sibling statement when completing a root statement', () => {
+  describe('addChildStatement', () => {
+    it('adds a blank subcriterion under a sub-query, scoped to the linked class, at level+1', () => {
       service.setMainResource(mockResourceClass);
-      const statement = service.currentStatements[0];
+      const parent = service.currentStatements[0];
+      makeSubQuery(parent);
 
-      statement.selectedPredicate = mockTextPredicate;
-      service.setSelectedOperator(statement, Operator.Equals);
-      service.setObjectValue(statement, 'test value');
+      const child = service.addChildStatement(parent);
 
-      const statements = service.currentStatements;
-      expect(statements).toHaveLength(2);
-      expect(statements[1].isPristine).toBe(true);
-      expect(statements[1].subjectNode?.value?.iri).toBe(mockResourceClass.iri);
+      const children = service.childrenOf(parent);
+      expect(children).toEqual([child]);
+      expect(child.isPristine).toBe(true);
+      expect(child.parentId).toBe(parent.id);
+      expect(child.statementLevel).toBe(1);
+      expect(child.subjectNode?.value?.iri).toBe(mockLinkedResourceClass.iri);
     });
 
-    it('should insert empty statement at correct position after completed statement', () => {
+    it('inserts each new subcriterion after the parent’s existing subtree, keeping parent before children', () => {
       service.setMainResource(mockResourceClass);
-      const firstStatement = service.currentStatements[0];
+      const parent = service.currentStatements[0];
+      makeSubQuery(parent);
 
-      // Complete first statement
-      firstStatement.selectedPredicate = mockTextPredicate;
-      service.setSelectedOperator(firstStatement, Operator.Equals);
-      service.setObjectValue(firstStatement, 'value 1');
+      const first = service.addChildStatement(parent);
+      const second = service.addChildStatement(parent);
 
-      // Complete second statement
-      const secondStatement = service.currentStatements[1];
-      secondStatement.selectedPredicate = mockTextPredicate;
-      service.setSelectedOperator(secondStatement, Operator.Equals);
-      service.setObjectValue(secondStatement, 'value 2');
-
-      const statements = service.currentStatements;
-      expect(statements).toHaveLength(3);
-      expect(statements[0].selectedObjectValue).toBe('value 1');
-      expect(statements[1].selectedObjectValue).toBe('value 2');
-      expect(statements[2].isPristine).toBe(true);
+      const ids = service.currentStatements.map(s => s.id);
+      expect(ids.indexOf(parent.id)).toBeLessThan(ids.indexOf(first.id));
+      expect(ids.indexOf(first.id)).toBeLessThan(ids.indexOf(second.id));
     });
 
-    it('should not add empty statement when statement is incomplete', () => {
+    it('supports nesting to arbitrary depth (grandchildren)', () => {
       service.setMainResource(mockResourceClass);
-      const statement = service.currentStatements[0];
+      const parent = service.currentStatements[0];
+      makeSubQuery(parent);
+      const child = service.addChildStatement(parent);
+      makeSubQuery(child);
 
-      statement.selectedPredicate = mockTextPredicate;
-      service.setSelectedOperator(statement, Operator.Equals);
-      // Not setting object value - statement is incomplete
+      const grandchild = service.addChildStatement(child);
 
-      const statements = service.currentStatements;
-      expect(statements).toHaveLength(1);
+      expect(service.childrenOf(child)).toEqual([grandchild]);
+      expect(service.descendantsOf(parent)).toEqual([child, grandchild]);
+      expect(grandchild.statementLevel).toBe(2);
     });
   });
 
-  describe('child statement management', () => {
-    it('should add empty child statement when completing a link property with Matches operator', () => {
+  describe('pruning subcriteria when a statement stops opening a sub-query', () => {
+    it('removes the subtree when the operator changes away from Matches', () => {
       service.setMainResource(mockResourceClass);
-      const statement = service.currentStatements[0];
+      const parent = service.currentStatements[0];
+      makeSubQuery(parent);
+      service.addChildStatement(parent);
+      expect(service.childrenOf(parent)).toHaveLength(1);
 
-      statement.selectedPredicate = mockLinkPredicate;
-      service.setSelectedOperator(statement, Operator.Matches);
-      service.setObjectValue(statement, mockLinkedResourceClass);
+      service.setSelectedOperator(parent, Operator.Exists);
 
-      const statements = service.currentStatements;
-      const childStatements = statements.filter(s => s.parentId === statement.id);
-
-      expect(childStatements).toHaveLength(1);
-      expect(childStatements[0].isPristine).toBe(true);
-      expect(childStatements[0].subjectNode?.value?.iri).toBe(mockLinkedResourceClass.iri);
-      expect(childStatements[0].statementLevel).toBe(1);
+      expect(service.childrenOf(parent)).toHaveLength(0);
     });
 
-    it('should add new empty child statement when completing an existing child statement', () => {
+    it('removes the subtree when the predicate changes to a non-link property', () => {
       service.setMainResource(mockResourceClass);
-      const parentStatement = service.currentStatements[0];
+      const parent = service.currentStatements[0];
+      makeSubQuery(parent);
+      service.addChildStatement(parent);
 
-      // Complete parent with link property
-      parentStatement.selectedPredicate = mockLinkPredicate;
-      service.setSelectedOperator(parentStatement, Operator.Matches);
-      service.setObjectValue(parentStatement, mockLinkedResourceClass);
+      service.setSelectedPredicate(parent, mockTextPredicate);
 
-      // Get and complete the child statement
-      let statements = service.currentStatements;
-      const childStatement = statements.find(s => s.parentId === parentStatement.id)!;
-
-      childStatement.selectedPredicate = mockTextPredicate;
-      service.setSelectedOperator(childStatement, Operator.Equals);
-      service.setObjectValue(childStatement, 'child value');
-
-      // Should have added another empty child
-      statements = service.currentStatements;
-      const childStatements = statements.filter(s => s.parentId === parentStatement.id);
-
-      expect(childStatements).toHaveLength(2);
-      expect(childStatements[0].selectedObjectValue).toBe('child value');
-      expect(childStatements[1].isPristine).toBe(true);
+      expect(service.childrenOf(parent)).toHaveLength(0);
     });
 
-    it('should insert child statement at correct position after existing children', () => {
+    it('keeps the subtree while the statement remains a sub-query (e.g. changing the linked class)', () => {
       service.setMainResource(mockResourceClass);
-      const parentStatement = service.currentStatements[0];
+      const parent = service.currentStatements[0];
+      makeSubQuery(parent);
+      const child = service.addChildStatement(parent);
 
-      // Complete parent with link property
-      parentStatement.selectedPredicate = mockLinkPredicate;
-      service.setSelectedOperator(parentStatement, Operator.Matches);
-      service.setObjectValue(parentStatement, mockLinkedResourceClass);
+      const otherClass: IriLabelPair = makeIriLabelPair('http://test.org/OtherClass', 'OtherClass');
+      service.setObjectValue(parent, otherClass);
 
-      // Complete first child
-      let statements = service.currentStatements;
-      const firstChild = statements.find(s => s.parentId === parentStatement.id)!;
-      firstChild.selectedPredicate = mockTextPredicate;
-      service.setSelectedOperator(firstChild, Operator.Equals);
-      service.setObjectValue(firstChild, 'first child');
+      expect(service.childrenOf(parent)).toEqual([child]);
+    });
+  });
 
-      // Complete second child
-      statements = service.currentStatements;
-      const secondChild = statements.filter(s => s.parentId === parentStatement.id)[1];
-      secondChild.selectedPredicate = mockTextPredicate;
-      service.setSelectedOperator(secondChild, Operator.Equals);
-      service.setObjectValue(secondChild, 'second child');
-
-      statements = service.currentStatements;
-      const parentIndex = statements.findIndex(s => s.id === parentStatement.id);
-      const childStatements = statements.filter(s => s.parentId === parentStatement.id);
-
-      // All children should be after parent
-      childStatements.forEach(child => {
-        const childIndex = statements.findIndex(s => s.id === child.id);
-        expect(childIndex).toBeGreaterThan(parentIndex);
-      });
-
-      // Third child (empty) should be last among children
-      expect(childStatements[2].isPristine).toBe(true);
+  describe('subtreeComplete', () => {
+    it('is false for an incomplete statement', () => {
+      service.setMainResource(mockResourceClass);
+      const stmt = service.currentStatements[0];
+      service.setSelectedPredicate(stmt, mockTextPredicate);
+      service.setSelectedOperator(stmt, Operator.Equals);
+      // no object value
+      expect(service.subtreeComplete(stmt)).toBe(false);
     });
 
-    it('should remove children when parent object value changes', () => {
+    it('is true for a complete plain value statement', () => {
       service.setMainResource(mockResourceClass);
-      const parentStatement = service.currentStatements[0];
+      const stmt = service.currentStatements[0];
+      service.setSelectedPredicate(stmt, mockTextPredicate);
+      service.setSelectedOperator(stmt, Operator.Equals);
+      service.setObjectValue(stmt, 'x');
+      expect(service.subtreeComplete(stmt)).toBe(true);
+    });
 
-      // Complete parent with link property
-      parentStatement.selectedPredicate = mockLinkPredicate;
-      service.setSelectedOperator(parentStatement, Operator.Matches);
-      service.setObjectValue(parentStatement, mockLinkedResourceClass);
+    it('is false for a sub-query with no subcriteria', () => {
+      service.setMainResource(mockResourceClass);
+      const parent = service.currentStatements[0];
+      makeSubQuery(parent);
+      expect(service.subtreeComplete(parent)).toBe(false);
+    });
 
-      // Verify child exists
-      let statements = service.currentStatements;
-      expect(statements.filter(s => s.parentId === parentStatement.id)).toHaveLength(1);
+    it('is false for a sub-query whose subcriterion is incomplete', () => {
+      service.setMainResource(mockResourceClass);
+      const parent = service.currentStatements[0];
+      makeSubQuery(parent);
+      service.addChildStatement(parent); // blank
+      expect(service.subtreeComplete(parent)).toBe(false);
+    });
 
-      // Change parent's object value
-      const newLinkedClass: IriLabelPair = makeIriLabelPair('http://test.org/OtherClass', 'OtherClass');
-      service.setObjectValue(parentStatement, newLinkedClass);
-
-      // Old children should be removed, new child added
-      statements = service.currentStatements;
-      const children = statements.filter(s => s.parentId === parentStatement.id);
-      expect(children).toHaveLength(1);
-      expect(children[0].subjectNode?.value?.iri).toBe(newLinkedClass.iri);
+    it('is true for a sub-query whose subcriteria are all complete (any depth)', () => {
+      service.setMainResource(mockResourceClass);
+      const parent = service.currentStatements[0];
+      makeSubQuery(parent);
+      const child = service.addChildStatement(parent);
+      service.setSelectedPredicate(child, mockTextPredicate);
+      service.setSelectedOperator(child, Operator.Equals);
+      service.setObjectValue(child, 'child value');
+      expect(service.subtreeComplete(parent)).toBe(true);
     });
   });
 
   describe('deleteStatement', () => {
-    it('should remove all children when deleting parent statement', () => {
+    it('removes the whole subtree (any depth) when deleting a parent', () => {
       service.setMainResource(mockResourceClass);
-      const parentStatement = service.currentStatements[0];
+      const parent = service.currentStatements[0];
+      makeSubQuery(parent);
+      const child = service.addChildStatement(parent);
+      makeSubQuery(child);
+      const grandchild = service.addChildStatement(child);
 
-      // Complete parent with link property to create child
-      parentStatement.selectedPredicate = mockLinkPredicate;
-      service.setSelectedOperator(parentStatement, Operator.Matches);
-      service.setObjectValue(parentStatement, mockLinkedResourceClass);
+      service.deleteStatement(parent);
 
-      // Verify we have parent + empty sibling + child
-      let statements = service.currentStatements;
-      const childId = statements.find(s => s.parentId === parentStatement.id)?.id;
-      expect(childId).toBeDefined();
-
-      // Delete parent
-      service.deleteStatement(parentStatement);
-
-      // Parent and child should be removed
-      statements = service.currentStatements;
-      expect(statements.find(s => s.id === parentStatement.id)).toBeUndefined();
-      expect(statements.find(s => s.id === childId)).toBeUndefined();
+      const ids = service.currentStatements.map(s => s.id);
+      expect(ids).not.toContain(parent.id);
+      expect(ids).not.toContain(child.id);
+      expect(ids).not.toContain(grandchild.id);
     });
 
-    it('should keep statements after deleted parent', () => {
+    it('keeps sibling statements after a deleted parent', () => {
       service.setMainResource(mockResourceClass);
-      const firstStatement = service.currentStatements[0];
+      const first = service.currentStatements[0];
+      service.setSelectedPredicate(first, mockTextPredicate);
+      service.setSelectedOperator(first, Operator.Equals);
+      service.setObjectValue(first, 'value 1');
 
-      // Complete first statement (no children)
-      firstStatement.selectedPredicate = mockTextPredicate;
-      service.setSelectedOperator(firstStatement, Operator.Equals);
-      service.setObjectValue(firstStatement, 'value 1');
+      const second = service.addBlankStatement();
+      service.setSelectedPredicate(second, mockTextPredicate);
+      service.setSelectedOperator(second, Operator.Equals);
+      service.setObjectValue(second, 'value 2');
 
-      // Complete second statement
-      let statements = service.currentStatements;
-      const secondStatement = statements[1];
-      secondStatement.selectedPredicate = mockTextPredicate;
-      service.setSelectedOperator(secondStatement, Operator.Equals);
-      service.setObjectValue(secondStatement, 'value 2');
+      service.deleteStatement(first);
 
-      // Delete first statement
-      service.deleteStatement(firstStatement);
-
-      // Second statement and empty third should remain
-      statements = service.currentStatements;
-      expect(statements.find(s => s.id === firstStatement.id)).toBeUndefined();
-      expect(statements.find(s => s.id === secondStatement.id)).toBeDefined();
+      const ids = service.currentStatements.map(s => s.id);
+      expect(ids).not.toContain(first.id);
+      expect(ids).toContain(second.id);
     });
   });
 });
