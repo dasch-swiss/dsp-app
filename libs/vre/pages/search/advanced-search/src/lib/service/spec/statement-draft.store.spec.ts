@@ -266,4 +266,75 @@ describe('StatementDraftStore', () => {
       expect(ids).toContain(second.id);
     });
   });
+
+  describe('isolated editing (beginEdit / commitEdit / cancelEdit)', () => {
+    /** Seed the store with one confirmed link+Matches sub-query (parent + one complete subcriterion). */
+    const seedConfirmedSubQuery = (): StatementElement => {
+      service.setMainResource(mockResourceClass);
+      const parent = service.currentStatements[0];
+      makeSubQuery(parent);
+      const child = service.addChildStatement(parent);
+      service.setSelectedPredicate(child, mockTextPredicate);
+      service.setSelectedOperator(child, Operator.Equals);
+      service.setObjectValue(child, 'original');
+      return parent;
+    };
+
+    it('beginEdit clones the whole subtree with fresh ids and flags them as editing', () => {
+      const parent = seedConfirmedSubQuery();
+
+      const clone = service.beginEdit(parent);
+
+      expect(clone.id).not.toBe(parent.id);
+      expect(service.isEditing(clone)).toBe(true);
+      const cloneChildren = service.childrenOf(clone);
+      expect(cloneChildren).toHaveLength(1);
+      expect(cloneChildren[0].id).not.toBe(service.childrenOf(parent)[0].id);
+      expect(service.isEditing(cloneChildren[0])).toBe(true);
+      // Original is untouched and NOT flagged editing.
+      expect(service.isEditing(parent)).toBe(false);
+      expect(service.childrenOf(parent)[0].selectedObjectValue).toBe('original');
+    });
+
+    it('editing the clone does not mutate the original subtree', () => {
+      const parent = seedConfirmedSubQuery();
+      const clone = service.beginEdit(parent);
+      const cloneChild = service.childrenOf(clone)[0];
+
+      service.setObjectValue(cloneChild, 'edited');
+
+      expect(service.childrenOf(clone)[0].selectedObjectValue).toBe('edited');
+      // Original stays as it was — the displayed chip must not change mid-edit.
+      expect(service.childrenOf(parent)[0].selectedObjectValue).toBe('original');
+    });
+
+    it('commitEdit promotes the clone (clears editing flags) and drops the original subtree', () => {
+      const parent = seedConfirmedSubQuery();
+      const clone = service.beginEdit(parent);
+      const cloneChild = service.childrenOf(clone)[0];
+      service.setObjectValue(cloneChild, 'edited');
+
+      service.commitEdit(clone, parent);
+
+      const ids = service.currentStatements.map(s => s.id);
+      expect(ids).not.toContain(parent.id);
+      expect(ids).toContain(clone.id);
+      expect(service.isEditing(clone)).toBe(false);
+      expect(service.childrenOf(clone)[0].selectedObjectValue).toBe('edited');
+    });
+
+    it('cancelEdit discards the clone subtree and leaves the original intact', () => {
+      const parent = seedConfirmedSubQuery();
+      const originalChildId = service.childrenOf(parent)[0].id;
+      const clone = service.beginEdit(parent);
+
+      service.cancelEdit(clone);
+
+      const ids = service.currentStatements.map(s => s.id);
+      expect(ids).not.toContain(clone.id);
+      expect(ids).toContain(parent.id);
+      expect(ids).toContain(originalChildId);
+      expect(service.isEditing(clone)).toBe(false);
+    });
+  });
 });

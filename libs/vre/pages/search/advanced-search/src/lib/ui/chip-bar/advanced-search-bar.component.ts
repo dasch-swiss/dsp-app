@@ -56,7 +56,7 @@ import { ResourceClassChipComponent } from './resource-class-chip.component';
             (openChange)="onChipOpenChange(stmt.id, $event)"
             (remove)="onRemoveStatement(stmt)"
             (filterConfirm)="onConfirmNewFilter(stmt.id)"
-            (filterCancel)="onCancelNewFilter(stmt)" />
+            (filterCancel)="onCancelEdit()" />
         }
 
         <app-add-filter-button (filterConfirmed)="onFilterConfirmed($event)" />
@@ -125,12 +125,15 @@ export class AdvancedSearchBarComponent implements OnInit {
     this.openChipId.set(isOpen ? chipId : OPEN_CHIP_NONE);
   }
 
-  onCancelNewFilter(stmt: StatementElement): void {
-    this.draftStore.deleteStatement(stmt);
+  onCancelEdit(): void {
+    // The chip discarded its own editing clone; the original statement (and its chip) is untouched.
+    // Nothing to persist — just close the popover.
     this.openChipId.set(OPEN_CHIP_NONE);
   }
 
   onConfirmNewFilter(chipId: string): void {
+    // An edited confirmed chip was committed (the chip promoted its clone over the original). Re-project
+    // and persist the now-current confirmed set to the URL.
     this._logger.filterConfirmed(chipId);
     this.openChipId.set(OPEN_CHIP_NONE);
     this._refreshChips();
@@ -149,9 +152,17 @@ export class AdvancedSearchBarComponent implements OnInit {
     this._writeFiltersToUrl();
   }
 
-  /** Re-project the top-level, valid statements from the draft store into the chip signal. */
+  /**
+   * Re-project the top-level, valid, *non-editing* statements from the draft store into the chip signal.
+   * Editing clones (a confirmed filter being edited in isolation in its popover) are excluded so the
+   * displayed chip does not change while its popover is open.
+   */
   private _refreshChips(): void {
-    this.confirmedStatements.set(this.draftStore.currentStatements.filter(s => s.isValidAndComplete && !s.parentId));
+    this.confirmedStatements.set(
+      this.draftStore.currentStatements.filter(
+        s => s.isValidAndComplete && !s.parentId && !this.draftStore.isEditing(s)
+      )
+    );
   }
 
   onResourceClassSelected(): void {

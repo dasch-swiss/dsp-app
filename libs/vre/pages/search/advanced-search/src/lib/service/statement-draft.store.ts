@@ -22,6 +22,17 @@ export class StatementDraftStore {
   // The ephemeral tree — this service's own source of truth for in-progress editing.
   private readonly _statements = new BehaviorSubject<StatementElement[]>([new StatementElement()]);
 
+  // IDs of statements that are *editing clones* — a detached copy of a confirmed filter's subtree that
+  // the popover mutates in isolation. They live in `_statements` so the recursive field editors can
+  // address them by id, but are excluded from the confirmed-chip projection and from URL writes until
+  // committed. Editing a confirmed chip must not change the displayed chip until the user confirms.
+  private readonly _editingIds = new Set<string>();
+
+  /** True when the statement is an uncommitted editing clone (not part of the confirmed/displayed set). */
+  isEditing(statement: StatementElement): boolean {
+    return this._editingIds.has(statement.id);
+  }
+
   // The currently-selected resource class (URL-derived, mirrored from `searchState$`). Used to seed every
   // new root statement's subject node so the property picker is scoped to that class. Null = "all classes".
   private _resourceClass: IriLabelPair | null = null;
@@ -102,6 +113,59 @@ export class StatementDraftStore {
     const insertIndex = statements.findIndex(s => s.id === lastOfSubtree.id) + 1;
     this._setStatements([...statements.slice(0, insertIndex), child, ...statements.slice(insertIndex)]);
     return child;
+  }
+
+  /**
+   * Begin an isolated edit of a confirmed statement: deep-clone its whole subtree (fresh ids, so it is a
+   * distinct instance set), insert the clone into the store, and flag every clone node as "editing" so it
+   * is kept out of the chip row and URL until committed. The popover edits the returned clone root; the
+   * original (and its chip) stay untouched. Returns the clone root to bind the popover to.
+   */
+  beginEdit(source: StatementElement): StatementElement {
+    const clones = this._cloneSubtree(source);
+    clones.forEach(c => this._editingIds.add(c.id));
+    this._setStatements([...this.currentStatements, ...clones]);
+    return clones[0];
+  }
+
+  /**
+   * Commit an isolated edit: drop the original subtree, promote the clone by clearing its editing flags,
+   * so it becomes the confirmed statement. The caller then persists to the URL, which re-seeds the store
+   * from scratch anyway — commit only needs to make the clone the live, displayed statement meanwhile.
+   */
+  commitEdit(cloneRoot: StatementElement, original: StatementElement): void {
+    const cloneIds = [cloneRoot.id, ...this.descendantsOf(cloneRoot).map(s => s.id)];
+    cloneIds.forEach(id => this._editingIds.delete(id));
+    const originalIds = new Set([original.id, ...this.descendantsOf(original).map(s => s.id)]);
+    this._setStatements(this.currentStatements.filter(s => !originalIds.has(s.id)));
+  }
+
+  /** Cancel an isolated edit: discard the clone subtree; the original (and its chip) is unaffected. */
+  cancelEdit(cloneRoot: StatementElement): void {
+    const cloneIds = [cloneRoot.id, ...this.descendantsOf(cloneRoot).map(s => s.id)];
+    cloneIds.forEach(id => this._editingIds.delete(id));
+    this._setStatements(this.currentStatements.filter(s => !cloneIds.includes(s.id)));
+  }
+
+  /**
+   * Deep-clone a statement and its subtree into fresh instances (new ids), preserving predicate/operator/
+   * value and rewiring parent links among the clones. Returns the clones in parent-before-child order,
+   * clone root first.
+   */
+  private _cloneSubtree(source: StatementElement): StatementElement[] {
+    const flat = [source, ...this.descendantsOf(source)];
+    const byOldId = new Map<string, StatementElement>();
+    const result: StatementElement[] = [];
+    for (const orig of flat) {
+      const parentClone = orig.parentId ? byOldId.get(orig.parentId) : undefined;
+      const clone = new StatementElement(orig.subjectNode, orig.statementLevel, parentClone);
+      if (orig.selectedPredicate) clone.selectedPredicate = orig.selectedPredicate;
+      if (orig.selectedOperator) clone.selectedOperator = orig.selectedOperator;
+      if (orig.selectedObjectValue !== undefined) clone.selectedObjectValue = orig.selectedObjectValue;
+      byOldId.set(orig.id, clone);
+      result.push(clone);
+    }
+    return result;
   }
 
   /** Set the tree with a new array reference so `statements$` emits. */
