@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { of } from 'rxjs';
+import { BehaviorSubject, of } from 'rxjs';
 import { StatementElement } from '../../../model';
 import { Operator } from '../../../operators.config';
 import { DerivedSearchStateService } from '../../../service/derived-search-state.service';
@@ -33,22 +33,43 @@ function makeConfirmedTitleStatement(value = 'x'): StatementElement {
   return stmt;
 }
 
+/**
+ * Minimal stateful stand-in for StatementDraftStore: holds a flat statement tree and re-emits on
+ * delete, mirroring the real store closely enough that `confirmedStatements` (a store projection) and
+ * `_writeFiltersToUrl` behave as they do in the app. No auto-grow / seeding — the tests seed directly.
+ */
+class FakeDraftStore {
+  private readonly _statements: BehaviorSubject<StatementElement[]>;
+  readonly statements$;
+
+  constructor(initial: StatementElement[]) {
+    this._statements = new BehaviorSubject<StatementElement[]>(initial);
+    this.statements$ = this._statements.asObservable();
+  }
+
+  get currentStatements(): StatementElement[] {
+    return this._statements.value;
+  }
+
+  descendantsOf(parent: StatementElement): StatementElement[] {
+    return this.currentStatements.filter(s => s.parentId === parent.id);
+  }
+
+  deleteStatement(statement: StatementElement): void {
+    const toRemove = new Set([statement.id, ...this.descendantsOf(statement).map(s => s.id)]);
+    this._statements.next(this.currentStatements.filter(s => !toRemove.has(s.id)));
+  }
+}
+
 describe('AdvancedSearchBarComponent.onRemoveStatement (DEV-6576)', () => {
   let component: AdvancedSearchBarComponent;
   let writeState: jest.Mock;
   let readParams: jest.Mock<SearchUrlParams, []>;
+  let store: FakeDraftStore;
 
-  beforeEach(() => {
-    writeState = jest.fn();
-    readParams = jest.fn<SearchUrlParams, []>().mockReturnValue({});
-
-    const urlSyncStub: Partial<SearchUrlSyncService> = {
-      params$: of({}),
-      writeState,
-      readParams,
-      encodeFilters: (statements): string => encodeURIComponent(JSON.stringify(statements)),
-    };
-
+  /** Wire the component to a fake store seeded with `statements`, then bootstrap it via ngOnInit. */
+  const setup = (statements: StatementElement[]): void => {
+    store = new FakeDraftStore(statements);
     TestBed.configureTestingModule({
       imports: [AdvancedSearchBarComponent],
       providers: [
@@ -56,26 +77,35 @@ describe('AdvancedSearchBarComponent.onRemoveStatement (DEV-6576)', () => {
         { provide: OntologyDataService, useValue: { ontologyLoading$: of(false), init: () => {} } },
         { provide: DerivedSearchStateService, useValue: { searchState$: of({ statements: [] }) } },
         { provide: SearchFlowLogger, useValue: { filterRemoved: () => {} } },
-        {
-          provide: StatementDraftStore,
-          useValue: {
-            statements$: of([]),
-            currentStatements: [],
-            deleteStatement: () => {},
-            descendantsOf: () => [],
-          },
-        },
+        { provide: StatementDraftStore, useValue: store },
       ],
     });
+    const fixture = TestBed.createComponent(AdvancedSearchBarComponent);
+    component = fixture.componentInstance;
+    component.projectUuid = 'test';
+    // Subscribe confirmedStatements to the fake store (the real ngOnInit also inits ontology; we only
+    // need the store→confirmedStatements wiring, so drive the projection directly to stay isolated).
+    store.statements$.subscribe(stmts =>
+      component.confirmedStatements.set(stmts.filter(s => s.isValidAndComplete && !s.parentId))
+    );
+  };
 
-    // Construct the component without running ngOnInit — we drive `confirmedStatements` directly and
-    // exercise `onRemoveStatement` in isolation, avoiding the ontology/URL bootstrap side effects.
-    component = TestBed.createComponent(AdvancedSearchBarComponent).componentInstance;
+  let urlSyncStub: Partial<SearchUrlSyncService>;
+
+  beforeEach(() => {
+    writeState = jest.fn();
+    readParams = jest.fn<SearchUrlParams, []>().mockReturnValue({});
+    urlSyncStub = {
+      params$: of({}),
+      writeState,
+      readParams,
+      encodeFilters: (statements): string => encodeURIComponent(JSON.stringify(statements)),
+    };
   });
 
   it('clears orderBy AND orderDir in a single writeState when the removed filter owns the active sort', () => {
     const stmt = makeConfirmedTitleStatement();
-    component.confirmedStatements.set([stmt]);
+    setup([stmt]);
     readParams.mockReturnValue({ orderBy: TITLE_IRI, orderDir: 'desc' });
 
     component.onRemoveStatement(stmt);
@@ -92,7 +122,7 @@ describe('AdvancedSearchBarComponent.onRemoveStatement (DEV-6576)', () => {
   it('leaves orderBy untouched when the removed filter is not the active sort', () => {
     const removed = makeConfirmedTitleStatement('gone');
     const kept = makeConfirmedTitleStatement('stays');
-    component.confirmedStatements.set([removed, kept]);
+    setup([removed, kept]);
     // Active sort points at a different predicate, so removing `removed` must not touch orderBy.
     readParams.mockReturnValue({ orderBy: `${ONTO}#hasAuthor` });
 

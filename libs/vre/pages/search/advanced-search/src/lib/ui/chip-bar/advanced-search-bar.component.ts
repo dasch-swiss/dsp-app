@@ -8,7 +8,6 @@ import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs';
 import { StatementElement } from '../../model';
-import { DerivedSearchStateService } from '../../service/derived-search-state.service';
 import { OntologyDataService } from '../../service/ontology-data.service';
 import { SearchFlowLogger } from '../../service/search-flow-logger.service';
 import { SearchUrlParams, SearchUrlSyncService } from '../../service/search-url-sync.service';
@@ -72,7 +71,6 @@ export class AdvancedSearchBarComponent implements OnInit {
   @Input({ required: true }) projectUuid!: string;
 
   private readonly _ontologyDataService = inject(OntologyDataService);
-  private readonly _derivation = inject(DerivedSearchStateService);
   private readonly _destroyRef = inject(DestroyRef);
   private readonly _urlSync = inject(SearchUrlSyncService);
   private readonly _logger = inject(SearchFlowLogger);
@@ -89,12 +87,15 @@ export class AdvancedSearchBarComponent implements OnInit {
   ngOnInit(): void {
     this._ontologyDataService.init(`http://rdfh.ch/projects/${this.projectUuid}`);
 
-    // Seed the chip-bar UI from the URL-derived state: first load, back/forward, and any URL change
-    // all flow through the single `searchState$` pipeline. The query itself is derived on the page;
-    // here we only hydrate the *display* — the top-level confirmed filter chips. Subcriteria (child
-    // statements) are edited inside the parent popover, so they are excluded from the chip row.
-    this._derivation.searchState$.pipe(takeUntilDestroyed(this._destroyRef)).subscribe(state => {
-      this.confirmedStatements.set(state.statements.filter(s => s.isValidAndComplete && !s.parentId));
+    // Seed the chip-bar UI from the *draft store* tree, NOT directly from `searchState$`. The store is
+    // itself re-seeded from `searchState$` (URL is source of truth), but reconstruction mints fresh
+    // StatementElement instances on every emission. Binding the chips to the store guarantees the chip
+    // parent and its child statements are the *same* instances, so `childrenOf(parent)` in the popover
+    // resolves — otherwise the chip could hold a parent from one emission while the store's children
+    // point at a parent from a later emission (different id), and subcriteria would vanish on re-open.
+    // Top-level, valid statements only: subcriteria are edited inside the parent popover, not as chips.
+    this.draftStore.statements$.pipe(takeUntilDestroyed(this._destroyRef)).subscribe(statements => {
+      this.confirmedStatements.set(statements.filter(s => s.isValidAndComplete && !s.parentId));
     });
 
     // Seed the fulltext input from the `q` param on any URL change, without echoing back into the URL
@@ -141,9 +142,9 @@ export class AdvancedSearchBarComponent implements OnInit {
     const stmt = this.draftStore.currentStatements.find(s => s.id === chipId);
     if (!stmt) return;
     this._logger.filterConfirmed(chipId);
-    // Only the top-level statement becomes a chip; its subcriteria travel with it and are encoded into
-    // the URL by _writeFiltersToUrl (which flattens each chip's subtree).
-    this.confirmedStatements.update(stmts => [...stmts, stmt]);
+    // The statement is already valid and in the draft store, so `confirmedStatements` (a projection of
+    // the store) already includes it as a chip; its subcriteria travel with it and are encoded into the
+    // URL by _writeFiltersToUrl (which flattens each chip's subtree). Just persist to the URL.
     this._writeFiltersToUrl();
   }
 
@@ -153,8 +154,8 @@ export class AdvancedSearchBarComponent implements OnInit {
 
   onRemoveStatement(stmt: StatementElement): void {
     this._logger.filterRemoved(stmt.id);
+    // deleteStatement updates the store; `confirmedStatements` (a store projection) drops the chip.
     this.draftStore.deleteStatement(stmt);
-    this.confirmedStatements.update(stmts => stmts.filter(s => s.id !== stmt.id));
     // Stale-orderBy cleanup: if the removed filter was the active sort, drop `orderBy` (and its direction)
     // too. This must go out in the SAME writeState as the filter change — two synchronous navigations get
     // coalesced by the Router, and the second would discard the first, so the filter removal would be lost.
