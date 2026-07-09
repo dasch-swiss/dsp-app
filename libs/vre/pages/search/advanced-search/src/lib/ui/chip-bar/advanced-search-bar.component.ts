@@ -186,15 +186,20 @@ export class AdvancedSearchBarComponent implements OnInit {
     // `parentIndex` back-references stay valid. Subcriteria are not chips but must be encoded here.
     const stmts = this.confirmedStatements().flatMap(stmt => [stmt, ...this.draftStore.descendantsOf(stmt)]);
     const idxById = new Map(stmts.map((s, i) => [s.id, i]));
-    const filterArgs = stmts.map(stmt => ({
-      predicateIri: stmt.selectedPredicate!.iri,
-      operator: stmt.selectedOperator!,
-      value: stmt.selectedObjectWriteValue ?? '',
-      // Persist the linked-resource label (e.g. "Rita") next to its IRI so the chip shows the name,
-      // not the raw IRI, after a reload/back-forward. Undefined for plain string values.
-      valueLabel: stmt.selectedObjectLabel,
-      parentIndex: stmt.parentId !== undefined ? idxById.get(stmt.parentId) : undefined,
-    }));
+    const filterArgs = stmts
+      // Drop any statement whose parent is not in the flattened set (a phantom orphan) rather than
+      // encoding `parentIndex: undefined`, which would decode as a spurious top-level filter. The flatten
+      // above keeps every parent before its descendants, so a present parent always resolves here.
+      .filter(stmt => stmt.parentId === undefined || idxById.has(stmt.parentId))
+      .map(stmt => ({
+        predicateIri: stmt.selectedPredicate!.iri,
+        operator: stmt.selectedOperator!,
+        value: stmt.selectedObjectWriteValue ?? '',
+        // Persist the linked-resource label (e.g. "Rita") next to its IRI so the chip shows the name,
+        // not the raw IRI, after a reload/back-forward. Undefined for plain string values.
+        valueLabel: stmt.selectedObjectLabel,
+        parentIndex: stmt.parentId !== undefined ? idxById.get(stmt.parentId) : undefined,
+      }));
     const encoded = stmts.length ? this._urlSync.encodeFilters(filterArgs) : null;
     // `merge` handling preserves any param not named here (e.g. an unaffected orderBy, written by
     // OrderByComponent). `extra` folds any coupled change into this single navigation.

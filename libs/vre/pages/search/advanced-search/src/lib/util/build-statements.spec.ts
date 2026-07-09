@@ -90,6 +90,46 @@ describe('buildStatementsFromFilterParams (DEV-6576)', () => {
     expect(child.parentId).toBe(parent.id);
   });
 
+  it('keeps parentIndex aligned to the ORIGINAL positions when an earlier param is dropped', () => {
+    // The first param's predicate is not hydrated (e.g. a shared URL / ontology switch), so it is
+    // skipped. The child at index 2 must still resolve its parent (index 1), not misalign onto the
+    // shrunken result array. Regression for the parentIndex positional-desync bug.
+    const result = buildStatementsFromFilterParams(
+      [
+        fp({ predicateIri: 'http://x/unknown-not-hydrated', value: 'x' }), // index 0 → dropped
+        fp({ predicateIri: authorPred.iri, operator: Operator.Exists }), // index 1 → parent
+        fp({ predicateIri: namePred.iri, operator: Operator.Equals, value: 'Melville', parentIndex: 1 }), // child of 1
+      ],
+      [authorPred, namePred]
+    );
+
+    expect(result).toHaveLength(2);
+    const [parent, child] = result;
+    expect(parent.selectedPredicate?.iri).toBe(authorPred.iri);
+    expect(child.selectedPredicate?.iri).toBe(namePred.iri);
+    // The child is correctly wired to the author (originally index 1), NOT dropped or reparented.
+    expect(child.parentId).toBe(parent.id);
+    expect(child.statementLevel).toBe(parent.statementLevel + 1);
+  });
+
+  it('drops a child whose parent param was dropped (orphan), without reparenting it', () => {
+    // Parent (index 0) has an unhydrated predicate → dropped. Its child (index 1, parentIndex 0) must
+    // be dropped as an orphan, not silently attached to some other surviving statement.
+    const result = buildStatementsFromFilterParams(
+      [
+        fp({ predicateIri: 'http://x/unknown-not-hydrated', operator: Operator.Exists }), // index 0 → dropped
+        fp({ predicateIri: namePred.iri, value: 'orphan', parentIndex: 0 }), // child of the dropped parent
+        fp({ predicateIri: titlePred.iri, value: 'sibling' }), // index 2 → unrelated top-level
+      ],
+      [namePred, titlePred]
+    );
+
+    // Only the unrelated top-level survives; the orphaned child is not reparented onto it.
+    expect(result).toHaveLength(1);
+    expect(result[0].selectedPredicate?.iri).toBe(titlePred.iri);
+    expect(result[0].parentId).toBeUndefined();
+  });
+
   it('does not inherit a subject node when the parent object is a plain string value', () => {
     // Faithful to the original reducer: only a NodeValue parent object propagates as the child's
     // subject node. URL filter values decode to string object values, so no subject is inherited.

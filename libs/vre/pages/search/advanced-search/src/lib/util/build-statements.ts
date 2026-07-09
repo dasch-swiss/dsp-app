@@ -8,9 +8,17 @@ import { toLabels } from './labels';
  * ontology's hydrated `Predicate[]`, it returns the `StatementElement[]` those params describe —
  * resolving each predicate by IRI and wiring parent/child links via `parentIndex`.
  *
+ * `parentIndex` is a position in the *original* `filterParams` array (that is how the encoder assigns
+ * it). Reconstruction therefore keeps a slot array aligned to those original indices — dropped entries
+ * leave a `null` slot rather than shifting later ones — so a child's `parentIndex` still resolves to the
+ * right parent even when an *earlier* entry was skipped (e.g. its predicate is not in the currently
+ * hydrated ontology, common for shared/bookmarked URLs and ontology switches). Resolving into the
+ * growing result array instead would misalign every index after the first drop, silently dropping or
+ * reparenting subcriteria.
+ *
  * Reconstruction rules:
- * - a `FilterParam` whose predicate IRI is not among `predicates` is skipped;
- * - a child whose `parentIndex` points past the already-built statements is skipped;
+ * - a `FilterParam` whose predicate IRI is not among `predicates` is skipped (its slot becomes `null`);
+ * - a child whose `parentIndex` is out of range or points at a dropped (`null`) slot is skipped;
  * - a child inherits its parent's object node (when it is a `NodeValue`) as its subject node,
  *   and `parentStatementLevel + 1`.
  */
@@ -18,11 +26,22 @@ export function buildStatementsFromFilterParams(
   filterParams: FilterParam[],
   predicates: Predicate[]
 ): StatementElement[] {
-  return filterParams.reduce((acc, fp) => {
-    if (fp.parentIndex !== null && fp.parentIndex >= acc.length) return acc;
+  // Slot array aligned 1:1 with `filterParams` by original index; `null` marks a dropped entry.
+  const slots: (StatementElement | null)[] = new Array(filterParams.length).fill(null);
+  const result: StatementElement[] = [];
+
+  filterParams.forEach((fp, index) => {
     const predicate = predicates.find(p => p.iri === fp.predicateIri);
-    if (!predicate) return acc;
-    const parentStmt = fp.parentIndex !== null ? acc[fp.parentIndex] : undefined;
+    if (!predicate) return; // leave slots[index] = null
+
+    // Resolve the parent by its ORIGINAL index. Out-of-range or a dropped parent → orphan, skip the child.
+    // Parents always precede their children in the encoding, so a valid parent slot is already filled here.
+    let parentStmt: StatementElement | undefined;
+    if (fp.parentIndex !== null) {
+      if (fp.parentIndex < 0 || fp.parentIndex >= slots.length || slots[fp.parentIndex] === null) return;
+      parentStmt = slots[fp.parentIndex] ?? undefined;
+    }
+
     const stmt = new StatementElement(
       parentStmt?.selectedObjectNode instanceof NodeValue ? parentStmt.selectedObjectNode : undefined,
       parentStmt ? parentStmt.statementLevel + 1 : 0,
@@ -37,6 +56,9 @@ export function buildStatementsFromFilterParams(
         ? { iri: fp.value, labels: toLabels(fp.valueLabel), comments: [] }
         : fp.value;
     }
-    return [...acc, stmt];
-  }, [] as StatementElement[]);
+    slots[index] = stmt;
+    result.push(stmt);
+  });
+
+  return result;
 }

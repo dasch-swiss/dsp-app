@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, Input, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, Input } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { IriLabelPair, PropertyObjectType, StatementElement } from '../../model';
@@ -132,7 +132,6 @@ import { StringValueComponent } from './object-values/string-value/string-value.
       }
     `,
   ],
-  encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StatementFieldsComponent {
