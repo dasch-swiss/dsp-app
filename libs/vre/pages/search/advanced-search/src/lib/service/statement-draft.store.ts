@@ -134,16 +134,27 @@ export class StatementDraftStore {
     return clones[0];
   }
 
+  /** True when the statement instance is still present in the ephemeral tree (not wiped by a reseed). */
+  has(statement: StatementElement): boolean {
+    return this.currentStatements.some(s => s.id === statement.id);
+  }
+
   /**
    * Commit an isolated edit: drop the original subtree, promote the clone by clearing its editing flags,
    * so it becomes the confirmed statement. The caller then persists to the URL, which re-seeds the store
    * from scratch anyway — commit only needs to make the clone the live, displayed statement meanwhile.
+   *
+   * Returns `false` (a no-op) when the clone is no longer in the store — a URL navigation reseeded the
+   * tree mid-edit, so the clone is orphaned. The caller must NOT then persist to the URL, or it would
+   * write the reseeded set as if the edit had been discarded. See DEV-6576 review finding #4.
    */
-  commitEdit(cloneRoot: StatementElement, original: StatementElement): void {
+  commitEdit(cloneRoot: StatementElement, original: StatementElement): boolean {
+    if (!this.has(cloneRoot)) return false;
     const cloneIds = [cloneRoot.id, ...this.descendantsOf(cloneRoot).map(s => s.id)];
     cloneIds.forEach(id => this._editingIds.delete(id));
     const originalIds = new Set([original.id, ...this.descendantsOf(original).map(s => s.id)]);
     this._setStatements(this.currentStatements.filter(s => !originalIds.has(s.id)));
+    return true;
   }
 
   /** Cancel an isolated edit: discard the clone subtree; the original (and its chip) is unaffected. */

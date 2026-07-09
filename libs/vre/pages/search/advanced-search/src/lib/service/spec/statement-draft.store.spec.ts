@@ -308,19 +308,33 @@ describe('StatementDraftStore', () => {
       expect(service.childrenOf(parent)[0].selectedObjectValue).toBe('original');
     });
 
-    it('commitEdit promotes the clone (clears editing flags) and drops the original subtree', () => {
+    it('commitEdit promotes the clone (clears editing flags), drops the original, and returns true', () => {
       const parent = seedConfirmedSubQuery();
       const clone = service.beginEdit(parent);
       const cloneChild = service.childrenOf(clone)[0];
       service.setObjectValue(cloneChild, 'edited');
 
-      service.commitEdit(clone, parent);
+      expect(service.commitEdit(clone, parent)).toBe(true);
 
       const ids = service.currentStatements.map(s => s.id);
       expect(ids).not.toContain(parent.id);
       expect(ids).toContain(clone.id);
       expect(service.isEditing(clone)).toBe(false);
       expect(service.childrenOf(clone)[0].selectedObjectValue).toBe('edited');
+    });
+
+    it('commitEdit is a no-op returning false when the clone was wiped by a reseed mid-edit', () => {
+      const parent = seedConfirmedSubQuery();
+      const clone = service.beginEdit(parent);
+
+      // Simulate a URL navigation reseeding the store mid-edit (wipes the clone, clears editing flags).
+      service.setMainResource(mockResourceClass);
+      expect(service.has(clone)).toBe(false);
+
+      // Commit must not resurrect the clone or mutate the freshly-seeded tree.
+      const before = service.currentStatements.map(s => s.id);
+      expect(service.commitEdit(clone, parent)).toBe(false);
+      expect(service.currentStatements.map(s => s.id)).toEqual(before);
     });
 
     it('cancelEdit discards the clone subtree and leaves the original intact', () => {

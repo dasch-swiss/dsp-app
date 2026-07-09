@@ -106,9 +106,16 @@ export class FilterChipComponent {
 
   onConfirm(): void {
     const d = this.draft();
-    if (d) this._draftStore.commitEdit(d, this.statement);
+    // Only emit filterConfirm (which persists to the URL) when the edit actually committed. If a URL
+    // navigation reseeded the store mid-edit, the clone is orphaned and commitEdit is a no-op — emitting
+    // would then write the reseeded set, silently discarding the edit. In that case just close.
+    const committed = d ? this._draftStore.commitEdit(d, this.statement) : false;
     this.draft.set(null);
-    this.filterConfirm.emit();
+    if (committed) {
+      this.filterConfirm.emit();
+    } else {
+      this.filterCancel.emit();
+    }
   }
 
   onCancel(): void {
