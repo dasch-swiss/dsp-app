@@ -252,7 +252,6 @@ CONSTRUCT {
 
 } WHERE {
 ?mainRes a knora-api:Resource .
-{ ?mainRes a webern-onto:Bibliography . } UNION { ?mainRes a webern-onto:Chronology . } UNION { ?mainRes a webern-onto:Convolute . } UNION { ?mainRes a webern-onto:Correspondence . } UNION { ?mainRes a webern-onto:DigitalCopyEditedText . } UNION { ?mainRes a webern-onto:DigitalCopyMusicalPiece . } UNION { ?mainRes a webern-onto:DigitalCopySourceDescription . } UNION { ?mainRes a webern-onto:DigitalCopySupplement . } UNION { ?mainRes a webern-onto:EditedText . } UNION { ?mainRes a webern-onto:Einleitung . } UNION { ?mainRes a webern-onto:Institution . } UNION { ?mainRes a webern-onto:MusicalPiece . } UNION { ?mainRes a webern-onto:Opus . } UNION { ?mainRes a webern-onto:Person . } UNION { ?mainRes a webern-onto:RismReference . } UNION { ?mainRes a webern-onto:SourceDescriptionManuscript . } UNION { ?mainRes a webern-onto:SourceDescriptionPrint . } UNION { ?mainRes a webern-onto:Supplement . } UNION { ?mainRes a webern-onto:TextEdition . } UNION { ?mainRes a webern-onto:test_reception . }
 ?mainRes rdfs:label ?label .
 ?mainRes <http://www.w3.org/2000/01/rdf-schema#label> ?res0 .
 
@@ -446,7 +445,6 @@ CONSTRUCT {
 
 } WHERE {
 ?mainRes a knora-api:Resource .
-{ ?mainRes a webern-onto:Bibliography . } UNION { ?mainRes a webern-onto:Chronology . } UNION { ?mainRes a webern-onto:Convolute . } UNION { ?mainRes a webern-onto:Correspondence . } UNION { ?mainRes a webern-onto:DigitalCopyEditedText . } UNION { ?mainRes a webern-onto:DigitalCopyMusicalPiece . } UNION { ?mainRes a webern-onto:DigitalCopySourceDescription . } UNION { ?mainRes a webern-onto:DigitalCopySupplement . } UNION { ?mainRes a webern-onto:EditedText . } UNION { ?mainRes a webern-onto:Einleitung . } UNION { ?mainRes a webern-onto:Institution . } UNION { ?mainRes a webern-onto:MusicalPiece . } UNION { ?mainRes a webern-onto:Opus . } UNION { ?mainRes a webern-onto:Person . } UNION { ?mainRes a webern-onto:RismReference . } UNION { ?mainRes a webern-onto:SourceDescriptionManuscript . } UNION { ?mainRes a webern-onto:SourceDescriptionPrint . } UNION { ?mainRes a webern-onto:Supplement . } UNION { ?mainRes a webern-onto:TextEdition . } UNION { ?mainRes a webern-onto:test_reception . }
 ?mainRes rdfs:label ?label .
 ?mainRes <http://api.stage.dasch.swiss/ontology/0806/webern-onto/v2#hasPlacePublisher> ?res0 .
 ?res0 <http://api.knora.org/ontology/knora-api/v2#valueAsString> ?res0val .
@@ -1001,38 +999,54 @@ describe('GravsearchService — fulltextTerm parameter', () => {
     jest.spyOn(ontologyDataService, 'classIris', 'get').mockReturnValue([`${ontologyIri}#Person`]);
   });
 
-  it('injects matchText filter when term is provided', () => {
+  it('injects matchFulltext filter on the main resource when term is provided', () => {
     const query = gravsearchService.generateGravSearchQuery([], 'hello');
-    expect(query).toContain('FILTER knora-api:matchText(?searchThis, "hello")');
+    expect(query).toContain('FILTER knora-api:matchFulltext(?mainRes, "hello")');
   });
 
-  it('does not inject matchText filter when term is empty string', () => {
+  it('no longer emits the old value-object matchText pattern for the fulltext term', () => {
+    const query = gravsearchService.generateGravSearchQuery([], 'hello');
+    expect(query).not.toContain('?mainRes ?valueProperty ?searchThis');
+    expect(query).not.toContain('matchText');
+  });
+
+  it('does not inject matchFulltext filter when term is empty string', () => {
     const query = gravsearchService.generateGravSearchQuery([], '');
-    expect(query).not.toContain('matchText');
+    expect(query).not.toContain('matchFulltext');
   });
 
-  it('does not inject matchText filter when term is undefined', () => {
+  it('does not inject matchFulltext filter when term is undefined', () => {
     const query = gravsearchService.generateGravSearchQuery([]);
-    expect(query).not.toContain('matchText');
+    expect(query).not.toContain('matchFulltext');
   });
 
-  it('does not inject matchText filter when term is whitespace only', () => {
+  it('does not inject matchFulltext filter when term is whitespace only', () => {
     const query = gravsearchService.generateGravSearchQuery([], '   ');
-    expect(query).not.toContain('matchText');
+    expect(query).not.toContain('matchFulltext');
   });
 
   it('trims the term before injecting', () => {
     const query = gravsearchService.generateGravSearchQuery([], '  hello  ');
-    expect(query).toContain('FILTER knora-api:matchText(?searchThis, "hello")');
+    expect(query).toContain('FILTER knora-api:matchFulltext(?mainRes, "hello")');
   });
 
-  it('escapes double quotes in the term', () => {
+  it('escapes the term with single-layer SPARQL escaping (quote, backslash, newline)', () => {
+    // TS source 'a"b\\c\nd' → runtime term: a"b\c<newline>d. escapeSparqlStringLiteral applies ONE
+    // SPARQL layer: " → \" , \ → \\ , newline → \n — NOT the quadruple-backslash / triple-quote form
+    // used on the regex/IsLike path (that would mangle the Lucene syntax matchFulltext must pass through).
+    const query = gravsearchService.generateGravSearchQuery([], 'a"b\\c\nd');
+    expect(query).toContain('FILTER knora-api:matchFulltext(?mainRes, "a\\"b\\\\c\\nd")');
+  });
+
+  it('escapes a quote so the term cannot break out of the literal (injection defence)', () => {
     const query = gravsearchService.generateGravSearchQuery([], 'say "hi"');
-    expect(query).toContain('matchText');
+    expect(query).toContain('matchFulltext');
+    // The internal quotes are escaped (\"), so the literal is never closed by the raw term.
     expect(query).not.toContain('"say "hi""');
+    expect(query).toContain('\\"hi\\"');
   });
 
-  it('places matchesText triple after class restriction and before chip statements', () => {
+  it('places the matchFulltext filter after the class restriction and before chip statements', () => {
     const jsonSnapshot = JSON.stringify({
       selectedOntology: { iri: ontologyIri, label: 'webern-onto' },
       selectedResourceClass: { iri: `${ontologyIri}#Person`, label: 'Person' },
@@ -1055,10 +1069,59 @@ describe('GravsearchService — fulltextTerm parameter', () => {
     setupTestFromJson(searchStateService, jsonSnapshot, { iri: `${ontologyIri}#Person`, label: 'Person' });
 
     const query = gravsearchService.generateGravSearchQuery(searchStateService.validStatementElements, 'foo');
-    const matchesIdx = query.indexOf('matchText');
+    const matchesIdx = query.indexOf('matchFulltext');
     const chipIdx = query.indexOf('?res0');
     expect(matchesIdx).toBeGreaterThan(-1);
     expect(chipIdx).toBeGreaterThan(-1);
     expect(matchesIdx).toBeLessThan(chipIdx);
+  });
+
+  it('combines matchFulltext with a class restriction and a property filter in one query (AND semantics)', () => {
+    // REQ-4.1 / REQ-4.2: a single generated query where the fulltext match AND the structured
+    // restrictions all apply together.
+    const jsonSnapshot = JSON.stringify({
+      selectedOntology: { iri: ontologyIri, label: 'webern-onto' },
+      selectedResourceClass: { iri: `${ontologyIri}#Person`, label: 'Person' },
+      statementElements: [
+        {
+          id: 'abc-123',
+          statementLevel: 0,
+          _selectedPredicate: {
+            iri: 'http://www.w3.org/2000/01/rdf-schema#label',
+            label: 'Resource Label',
+            objectValueType: 'http://api.knora.org/ontology/knora-api/v2#ResourceLabel',
+            isLinkProperty: false,
+          },
+          _selectedOperator: 'equals',
+          _selectedObjectNode: { statementId: 'abc-123', _value: 'bar' },
+        },
+      ],
+      orderBy: [],
+    });
+    setupTestFromJson(searchStateService, jsonSnapshot, { iri: `${ontologyIri}#Person`, label: 'Person' });
+
+    const query = gravsearchService.generateGravSearchQuery(
+      searchStateService.validStatementElements,
+      'foo',
+      `${ontologyIri}#Person`
+    );
+
+    expect(query).toContain('FILTER knora-api:matchFulltext(?mainRes, "foo")');
+    expect(query).toContain(`?mainRes a <${ontologyIri}#Person> .`);
+    expect(query).toContain('FILTER (?res0 = "bar")');
+  });
+
+  it('generates a project-wide fulltext query (no PREFIX, no throw) when no data model is selected', () => {
+    // REQ-3.3: a fulltext-only search performed before any data model is chosen (selectedOntology.iri
+    // is the empty ALL_RESOURCE_CLASSES sentinel) must still generate — no ontoShortCode throw, no
+    // per-class restriction, no malformed data-model PREFIX.
+    jest.spyOn(ontologyDataService, 'selectedOntology', 'get').mockReturnValue(makeIriLabelPair('', ''));
+
+    const query = gravsearchService.generateGravSearchQuery([], 'whale');
+
+    expect(query).toContain('FILTER knora-api:matchFulltext(?mainRes, "whale")');
+    expect(query).toContain('?mainRes a knora-api:Resource .');
+    expect(query).not.toContain('<#>'); // no malformed `PREFIX : <#>` line
+    expect(query).not.toContain('UNION');
   });
 });

@@ -157,7 +157,7 @@ describe('DerivedSearchStateService (DEV-6576 Phase 2)', () => {
 
       expect(derived).toBe(oracle);
       expect(derived).toContain(`?mainRes a <${bookClass.iri}> .`);
-      expect(derived).toContain('FILTER knora-api:matchText(?searchThis, "whale")');
+      expect(derived).toContain('FILTER knora-api:matchFulltext(?mainRes, "whale")');
     });
 
     it('emits ORDER BY ASC on the active predicate when orderBy is set without a direction', async () => {
@@ -470,11 +470,53 @@ describe('DerivedSearchStateService (DEV-6576 Phase 2)', () => {
       expect(derived).toContain('ORDER BY');
     });
 
-    it('class-less fulltext-only (UNION over all classes)', async () => {
+    it('class-less fulltext-only (no class restriction, project-wide)', async () => {
       params$.next({ q: 'whale' });
       const { derived, oracle } = await oracleFor();
       expect(derived).toBe(oracle);
-      expect(derived).toContain('whale');
+      expect(derived).toContain('FILTER knora-api:matchFulltext(?mainRes, "whale")');
+      // No class was selected → no per-class type restriction / UNION (REQ-3.1).
+      expect(derived).not.toContain('UNION');
+    });
+  });
+
+  describe('fulltext-only with no data model selected (REQ-3.3)', () => {
+    // A project-wide fulltext search with no selected data model: selectedOntology.iri is the empty
+    // ALL_RESOURCE_CLASSES sentinel. The derived path must still produce a valid query (the generator
+    // omits the data-model PREFIX and never calls ontoShortCode), not throw.
+    let p$: BehaviorSubject<SearchUrlParams>;
+    let svc: DerivedSearchStateService;
+
+    beforeEach(() => {
+      TestBed.resetTestingModule();
+      p$ = new BehaviorSubject<SearchUrlParams>({});
+      TestBed.configureTestingModule({
+        providers: [
+          DerivedSearchStateService,
+          GravsearchService,
+          { provide: SearchUrlSyncService, useValue: { ...urlSyncStub, params$: p$ } },
+          {
+            provide: OntologyDataService,
+            useValue: ontologyStubBase({
+              get selectedOntology() {
+                return makeIriLabelPair('', '');
+              },
+              get classIris() {
+                return [];
+              },
+            }),
+          },
+        ],
+      });
+      svc = TestBed.inject(DerivedSearchStateService);
+    });
+
+    it('generates a project-wide fulltext query without throwing on the missing data model', async () => {
+      p$.next({ q: 'whale' });
+      const query = await firstValueFrom(svc.gravsearchQuery$);
+      expect(query).toContain('FILTER knora-api:matchFulltext(?mainRes, "whale")');
+      expect(query).not.toContain('<#>');
+      expect(query).not.toContain('UNION');
     });
   });
 
