@@ -195,7 +195,9 @@ export class ResourceSideLegalFormComponent implements OnInit {
     this._dataRights
       .updateResourceSideLegalInfo(this.project.shortcode, {
         dataLicense: license ?? undefined,
-        dataCopyrightHolder: copyrightHolder ?? undefined,
+        // Omit an empty holder so the PUT clears it (the endpoint replaces, so a missing field ⇒ None).
+        // Sending "" instead would be rejected by the CopyrightHolder value object (must be non-empty).
+        dataCopyrightHolder: copyrightHolder?.trim() ? copyrightHolder : undefined,
         defaultDataAuthorship: dataAuthorship ?? [],
       })
       .pipe(takeUntilDestroyed(this._destroyRef))
