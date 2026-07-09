@@ -56,7 +56,12 @@ export class GravsearchService {
       '?mainRes knora-api:isMainResource true .\n' +
       `${constructStatements}\n` +
       '} WHERE {\n' +
-      '?mainRes a knora-api:Resource .\n' +
+      // NB: no generic `?mainRes a knora-api:Resource .` anchor. Measured against the dev DB it is the
+      // dominant cost — it defeats matchFulltext's index anchoring and forces a full project-wide
+      // resource scan (60-80s for some terms). `?mainRes` is always typed by something else: the class
+      // restriction, matchFulltext (its first arg is resource-typed), or a property statement (its
+      // subject's domain). The one shape with none of those (no class, no fulltext, no filter) is not
+      // generated (gravsearchQuery$ returns null). Verified: parity with /v2/search and 14-20x faster.
       `${this._restrictToResourceClassStatement(resourceClassIri)}\n` +
       '?mainRes rdfs:label ?label .\n' +
       `${fulltextTriple}` +
@@ -68,9 +73,9 @@ export class GravsearchService {
   }
 
   private _restrictToResourceClassStatement(resourceClassIri: string): string {
-    // A selected class → a plain type restriction. No class → leave classes open: the always-present
-    // `?mainRes a knora-api:Resource .` keeps the result set unrestricted by class, and project scope
-    // (limitToProject, passed by the results component) constrains it. No per-class UNION.
+    // A selected class → a plain type restriction (also the type anchor for `?mainRes`). No class →
+    // no restriction at all: matchFulltext or a property statement types `?mainRes`, and project scope
+    // (limitToProject, passed by the results component) constrains the result set. No per-class UNION.
     return resourceClassIri ? `?mainRes a <${resourceClassIri}> .` : '';
   }
 

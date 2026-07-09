@@ -251,7 +251,6 @@ CONSTRUCT {
 ?mainRes knora-api:isMainResource true .
 
 } WHERE {
-?mainRes a knora-api:Resource .
 ?mainRes rdfs:label ?label .
 ?mainRes <http://www.w3.org/2000/01/rdf-schema#label> ?res0 .
 
@@ -444,7 +443,6 @@ CONSTRUCT {
 ?mainRes <http://api.stage.dasch.swiss/ontology/0806/webern-onto/v2#hasPlacePublisher> ?res0 .
 
 } WHERE {
-?mainRes a knora-api:Resource .
 ?mainRes rdfs:label ?label .
 ?mainRes <http://api.stage.dasch.swiss/ontology/0806/webern-onto/v2#hasPlacePublisher> ?res0 .
 ?res0 <http://api.knora.org/ontology/knora-api/v2#valueAsString> ?res0val .
@@ -665,7 +663,6 @@ CONSTRUCT {
 ?mainRes <http://api.stage.dasch.swiss/ontology/0806/webern-onto/v2#hasSourceDescMainWritingInstr> ?res0 .
 
 } WHERE {
-?mainRes a knora-api:Resource .
 ?mainRes a <http://api.stage.dasch.swiss/ontology/0806/webern-onto/v2#SourceDescriptionManuscript> .
 ?mainRes rdfs:label ?label .
 ?mainRes <http://api.stage.dasch.swiss/ontology/0806/webern-onto/v2#hasSourceDescMainWritingInstr> ?res0 .
@@ -810,7 +807,6 @@ CONSTRUCT {
 ?mainRes <http://api.stage.dasch.swiss/ontology/0806/webern-onto/v2#hasMnr> ?res0 .
 
 } WHERE {
-?mainRes a knora-api:Resource .
 ?mainRes a <http://api.stage.dasch.swiss/ontology/0806/webern-onto/v2#MusicalPiece> .
 ?mainRes rdfs:label ?label .
 ?mainRes <http://api.stage.dasch.swiss/ontology/0806/webern-onto/v2#hasMnr> ?res0 .
@@ -1002,6 +998,8 @@ describe('GravsearchService — fulltextTerm parameter', () => {
   it('injects matchFulltext filter on the main resource when term is provided', () => {
     const query = gravsearchService.generateGravSearchQuery([], 'hello');
     expect(query).toContain('FILTER knora-api:matchFulltext(?mainRes, "hello")');
+    // matchFulltext types ?mainRes on its own; the generic type anchor is omitted (backend perf).
+    expect(query).not.toContain('a knora-api:Resource');
   });
 
   it('no longer emits the old value-object matchText pattern for the fulltext term', () => {
@@ -1120,7 +1118,8 @@ describe('GravsearchService — fulltextTerm parameter', () => {
     const query = gravsearchService.generateGravSearchQuery([], 'whale');
 
     expect(query).toContain('FILTER knora-api:matchFulltext(?mainRes, "whale")');
-    expect(query).toContain('?mainRes a knora-api:Resource .');
+    // No generic type anchor: it defeats matchFulltext index-anchoring on the backend (perf).
+    expect(query).not.toContain('a knora-api:Resource');
     expect(query).not.toContain('<#>'); // no malformed `PREFIX : <#>` line
     expect(query).not.toContain('UNION');
   });
