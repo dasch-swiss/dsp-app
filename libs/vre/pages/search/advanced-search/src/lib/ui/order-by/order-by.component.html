@@ -39,7 +39,7 @@
       [matTooltip]="TOOLTIP_TEXT"
       [matTooltipDisabled]="!item.disabled">
       <span class="order-by-item">
-        <span>{{ getLabel(item.labels) }}</span>
+        <span>{{ label(item.labels) }}</span>
         @if (item.orderBy) {
         <span class="order-by-actions">
           <button

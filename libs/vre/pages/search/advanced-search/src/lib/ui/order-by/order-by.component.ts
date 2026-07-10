@@ -1,14 +1,15 @@
 import { OverlayModule } from '@angular/cdk/overlay';
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule, MatSelectionListChange } from '@angular/material/list';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { LocalizationService, pickPreferredLanguageString } from '@dasch-swiss/vre/shared/app-helper-services';
 import { OrderByItem, OrderDirection } from '../../model';
 import { DerivedSearchStateService } from '../../service/derived-search-state.service';
 import { SearchUrlSyncService } from '../../service/search-url-sync.service';
-import { getLabel } from '../../util/labels';
 
 @Component({
   selector: 'app-order-by',
@@ -19,9 +20,17 @@ import { getLabel } from '../../util/labels';
 })
 export class OrderByComponent {
   readonly TOOLTIP_TEXT = 'Search cannot be ordered by a URI property or a property that links to a resource.';
-  readonly getLabel = getLabel;
   private readonly _derivation = inject(DerivedSearchStateService);
   private readonly _urlSync = inject(SearchUrlSyncService);
+  private readonly _localizationService = inject(LocalizationService);
+
+  // Resolve predicate labels in the app's current language (falling back to the first non-empty label),
+  // so an English UI shows English order-by labels instead of whatever language happens to be listed first.
+  readonly currentLang = toSignal(this._localizationService.currentLanguage$, { initialValue: 'en' as const });
+
+  label(labels: OrderByItem['labels']): string {
+    return pickPreferredLanguageString(labels, this.currentLang());
+  }
 
   // Pure, URL-derived list: the active item reflects the `orderBy` param.
   orderByItems$ = this._derivation.orderByItems$;
@@ -30,7 +39,7 @@ export class OrderByComponent {
 
   activeLabel(items: OrderByItem[] | null): string | null {
     const active = items?.find(i => i.orderBy);
-    return active ? getLabel(active.labels) || null : null;
+    return active ? this.label(active.labels) || null : null;
   }
 
   /** Direction of the active sort, or null when no property is selected — drives the arrow on the trigger button. */
