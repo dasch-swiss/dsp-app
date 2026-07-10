@@ -53,13 +53,13 @@ import { ProjectDescriptionPageComponent } from './project-description-page.comp
       </button>
 
       @if (dataRights$ | async; as rights) {
-        @if (rights.licenseLabel) {
+        @if (rights.licenseLabel || rights.copyrightHolder) {
           <div style="border-top: 1px solid #ebebeb; margin: 0 16px; text-align: left">
             <app-resource-rights-statement
               [licenseLabel]="rights.licenseLabel"
               [licenseUrl]="rights.licenseUrl"
               [copyrightHolder]="rights.copyrightHolder"
-              [defaultResourceAuthorship]="rights.defaultDataAuthorship"
+              [showAuthorship]="false"
               [isAdmin]="false"
               labelAlign="start" />
           </div>
