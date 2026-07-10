@@ -39,7 +39,12 @@ import { CHIP_POPOVER_POSITIONS } from './chip-bar.helpers';
         (click)="isOpen = !isOpen">
         {{ classLabel$ | async }}
         @if (selectedIri) {
-          <mat-icon aria-label="Clear resource class" (click)="$event.stopPropagation(); resetToAll()">cancel</mat-icon>
+          <mat-icon
+            class="resource-class-chip__remove"
+            aria-label="Clear resource class"
+            (click)="$event.stopPropagation(); resetToAll()">
+            cancel
+          </mat-icon>
         } @else {
           <mat-icon>arrow_drop_down</mat-icon>
         }
@@ -78,6 +83,16 @@ import { CHIP_POPOVER_POSITIONS } from './chip-bar.helpers';
         max-height: 300px;
         overflow-y: auto;
         border-radius: 4px;
+      }
+      /* Match the filter chip's remove (✕) icon: dimmed at rest, full-strength on hover, so both chips'
+         close affordances read the same shade of primary. */
+      .resource-class-chip__remove {
+        margin-left: 4px;
+        cursor: pointer;
+        opacity: 0.7;
+      }
+      .resource-class-chip__remove:hover {
+        opacity: 1;
       }
     `,
   ],
