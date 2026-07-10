@@ -18,7 +18,7 @@ import { StatementFieldsComponent } from '../statement-builder/statement-fields.
   standalone: true,
   imports: [MatButtonModule, StatementFieldsComponent],
   template: `
-    <div class="filter-editor-popover mat-elevation-z4">
+    <div class="filter-editor-popover mat-elevation-z4" (keydown.enter)="onEnter($event)">
       <app-statement-fields [statement]="statement" [showErrors]="showErrors()" />
 
       <div class="filter-editor-popover__actions">
@@ -58,6 +58,15 @@ export class FilterEditorPopoverComponent {
 
   readonly draftStore = inject(StatementDraftStore);
   readonly showErrors = signal(false);
+
+  onEnter(event: Event): void {
+    // Submit on Enter, like a form. When a mat-autocomplete panel is open (link/resource value), the
+    // autocomplete swallows Enter to pick the highlighted option, so this handler never fires — Enter
+    // selects the option instead of submitting, which is the desired behaviour. Guarding on the target
+    // being a textarea would also let multi-line values keep Enter, but no value input here is multi-line.
+    event.preventDefault();
+    this.onConfirmClick();
+  }
 
   onConfirmClick(): void {
     // The whole filter — the top row and every subcriterion at any depth — must be complete before it
