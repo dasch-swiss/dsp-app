@@ -35,6 +35,7 @@ import { CHIP_POPOVER_POSITIONS } from './chip-bar.helpers';
         mat-stroked-button
         cdkOverlayOrigin
         #trigger="cdkOverlayOrigin"
+        class="resource-class-chip__button"
         [color]="selectedIri ? 'primary' : undefined"
         (click)="isOpen = !isOpen">
         {{ classLabel$ | async }}
@@ -83,6 +84,13 @@ import { CHIP_POPOVER_POSITIONS } from './chip-bar.helpers';
         max-height: 300px;
         overflow-y: auto;
         border-radius: 4px;
+      }
+      /* This button has a trailing icon (cancel / arrow_drop_down), but because that icon sits inside a
+         control-flow block it is not a direct last-child, so Material's trailing-icon rule that trims the
+         right padding never matches — leaving more internal padding than the filter chip. Trim it here to
+         the same value so both chips have matching internal spacing. */
+      .resource-class-chip__button {
+        padding-right: 8px;
       }
       /* Match the filter chip's remove (✕) icon: dimmed at rest, full-strength on hover, so both chips'
          close affordances read the same shade of primary. */
