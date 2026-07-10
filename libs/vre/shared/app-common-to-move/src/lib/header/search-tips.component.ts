@@ -6,6 +6,7 @@ import { TranslatePipe } from '@ngx-translate/core';
   template: ` <div
     style="
     border-radius: 5px;
+    width: 570px;
     background: white;
     padding: 16px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);

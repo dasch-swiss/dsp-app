@@ -41,7 +41,7 @@ import { ResourceClassChipComponent } from './resource-class-chip.component';
     @if (ontologyLoading$ | async) {
       <mat-progress-bar mode="query" />
     } @else {
-      <mat-form-field appearance="outline" style="width: 600px" subscriptSizing="dynamic">
+      <mat-form-field appearance="outline" style="margin-left: 8px; width: 600px" subscriptSizing="dynamic">
         <mat-label>Search in all text fields</mat-label>
         <input matInput type="text" [formControl]="fulltextControl" placeholder="Search in all text fields" />
         <mat-icon matSuffix>search</mat-icon>

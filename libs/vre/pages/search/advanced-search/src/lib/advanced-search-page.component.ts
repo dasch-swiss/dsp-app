@@ -27,7 +27,7 @@ import { AdvancedSearchBarComponent } from './ui/chip-bar/advanced-search-bar.co
       <app-search-tips
         style="
     display: flex;
-    padding: 16px;" />
+    padding: 16px; margin-left: 8px" />
     }
   `,
   styleUrl: './advanced-search-page.component.scss',
