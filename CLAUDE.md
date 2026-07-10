@@ -359,7 +359,7 @@ DSP-JS `Constants` are extensively used throughout the codebase:
   `"prop": "value"` for one value and `"prop": ["a", "b"]` for several. A model field typed
   `string[]` must use a coercing converter — do not assume an array. Reuse the existing
   converters in `libs/dsp-js/src/models/v2/custom-converters/`
-  (e.g. `UnionStringArrayOfStringsConverter`, `string-or-array-converter`) instead of writing
+  (e.g. `UnionStringArrayOfStringsConverter`, `StringOrArrayToArrayConverter`) instead of writing
   ad-hoc checks.
 - **Set the Content-Type explicitly.** Requests to custom v2 endpoints must send
   `Content-Type: application/ld+json` — Angular's `HttpClient` defaults to `application/json`,
