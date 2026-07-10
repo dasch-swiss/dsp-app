@@ -2,6 +2,7 @@ import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, Input, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -27,6 +28,7 @@ import { ResourceClassChipComponent } from './resource-class-chip.component';
     AsyncPipe,
     DataModelChipComponent,
     FilterChipComponent,
+    MatButtonModule,
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
@@ -61,6 +63,14 @@ import { ResourceClassChipComponent } from './resource-class-chip.component';
 
         <app-add-filter-button (filterConfirmed)="onFilterConfirmed($event)" />
         <app-order-by />
+
+        @if (hasActiveState$ | async) {
+          <span class="chip-bar__spacer"></span>
+          <button mat-button color="primary" type="button" (click)="onReset()">
+            <mat-icon>restart_alt</mat-icon>
+            Reset
+          </button>
+        }
       </div>
     }
   `,
@@ -83,6 +93,13 @@ export class AdvancedSearchBarComponent implements OnInit {
   readonly confirmedStatements = signal<StatementElement[]>([]);
 
   readonly ontologyLoading$ = this._ontologyDataService.ontologyLoading$;
+
+  // Show the reset button only when there is something to clear. Any of the persisted search params
+  // (fulltext, data model, resource class, filters, sort) counts as active state — reset wipes them all.
+  readonly hasActiveState$ = this._urlSync.params$.pipe(
+    map(p => !!(p.q || p.ontology || p.class || p.filters || p.orderBy)),
+    distinctUntilChanged()
+  );
 
   ngOnInit(): void {
     this._ontologyDataService.init(`http://rdfh.ch/projects/${this.projectUuid}`);
@@ -163,6 +180,13 @@ export class AdvancedSearchBarComponent implements OnInit {
         s => s.isValidAndComplete && !s.parentId && !this.draftStore.isEditing(s)
       )
     );
+  }
+
+  onReset(): void {
+    // Full reset: clearAll nulls every search param in a single navigation. The store re-seeds from the
+    // (now empty) URL and `_refreshChips` drops every chip; the fulltext input re-seeds from the empty `q`.
+    this.openChipId.set(OPEN_CHIP_NONE);
+    this._urlSync.clearAll();
   }
 
   onResourceClassSelected(): void {
