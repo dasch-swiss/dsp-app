@@ -150,12 +150,14 @@ export const HidesValueInputForNotExistsOperator: Story = {
   },
 };
 
-// Dispatch a real, bubbling Enter keydown from a field inside the popover. Angular's `(keydown.enter)`
-// on the container catches the bubbling event — this mirrors a user pressing Enter while typing in a
-// field, without depending on the container div being focusable.
+// Dispatch a real, bubbling Enter keydown inside the popover. Angular registers the `(keydown.enter)`
+// handler directly on the `.filter-editor-popover` element, so we dispatch on that element itself: this
+// fires the listener deterministically regardless of which descendant happens to be focusable or whether
+// an intermediate component would stop propagation — while still faithfully modelling "user presses Enter
+// somewhere in the popover". The bubbling flag keeps the event realistic.
 const pressEnterInside = (canvasElement: HTMLElement) => {
-  const target = canvasElement.querySelector('.filter-editor-popover app-predicate-select') as HTMLElement;
-  target.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true }));
+  const container = canvasElement.querySelector('.filter-editor-popover') as HTMLElement;
+  container.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true }));
 };
 
 export const ConfirmsOnEnterWhenComplete: Story = {
