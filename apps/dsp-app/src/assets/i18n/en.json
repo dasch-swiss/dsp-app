@@ -401,7 +401,7 @@
         "allResourceClasses": "All resources",
         "switchToFulltextSearch": "Switch to fulltext search",
         "dataModel": "Data model",
-        "orderBy": "Order by",
+        "orderBy": "Sort by",
         "property": "Property",
         "propertyOfClass": "Property of {{class}}",
         "resourceClass": "Resource Class",

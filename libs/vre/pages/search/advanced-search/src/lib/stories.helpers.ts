@@ -50,7 +50,7 @@ const STORY_TRANSLATIONS = {
       advancedSearch: {
         allResourceClasses: 'All resources',
         dataModel: 'Data model',
-        orderBy: 'Order by',
+        orderBy: 'Sort by',
         property: 'Property',
         propertyOfClass: 'Property of {{class}}',
         resourceClass: 'Resource Class',
