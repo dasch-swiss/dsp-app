@@ -1,5 +1,25 @@
 # Changelog
 
+## [13.9.0](https://github.com/dasch-swiss/dsp-app/compare/v13.8.1...v13.9.0) (2026-07-13)
+
+
+### Enhancements
+
+* adopt matchFulltext in the redesigned advanced search (DEV-6715) ([#3235](https://github.com/dasch-swiss/dsp-app/issues/3235)) ([dae1363](https://github.com/dasch-swiss/dsp-app/commit/dae1363270282125cfb3e4602fd0c950eb3bfff5))
+* new design of advanced search in row ([#3236](https://github.com/dasch-swiss/dsp-app/issues/3236)) ([996c597](https://github.com/dasch-swiss/dsp-app/commit/996c597452fd3ef7234204ea84be20692dd59362))
+
+
+### Bug Fixes
+
+* **ci:** correct dsp-api wait-for-api.sh path in e2e workflow ([#3232](https://github.com/dasch-swiss/dsp-app/issues/3232)) ([1dbd982](https://github.com/dasch-swiss/dsp-app/commit/1dbd982856c34594d2ba24ab6e1b30714984e5bf))
+* **legal:** correct the project Rights Statement display and holder clearing ([#3230](https://github.com/dasch-swiss/dsp-app/issues/3230)) ([a5e8a6b](https://github.com/dasch-swiss/dsp-app/commit/a5e8a6b17375f2889bc169224f5b52e3f39d5a74))
+* **legal:** show rights statement to logged-out users and when any field is set (DEV-6723) ([#3231](https://github.com/dasch-swiss/dsp-app/issues/3231)) ([057d254](https://github.com/dasch-swiss/dsp-app/commit/057d25496c419c8c26921543d8cf489f82c97bd9))
+
+
+### Maintenances
+
+* **open-api:** bump dsp-api spec v36.4.0-5-g9df9bf5 → v36.4.0-9-g0edfb4b ([#3223](https://github.com/dasch-swiss/dsp-app/issues/3223)) ([f73f08a](https://github.com/dasch-swiss/dsp-app/commit/f73f08aff3bddf19f3f9beab85cd15af2a85b2eb))
+
 ## [13.8.1](https://github.com/dasch-swiss/dsp-app/compare/v13.8.0...v13.8.1) (2026-07-06)
 
 
