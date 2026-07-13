@@ -1,6 +1,7 @@
 import { CdkConnectedOverlay, CdkOverlayOrigin, OverlayModule } from '@angular/cdk/overlay';
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
@@ -13,6 +14,12 @@ import { CHIP_POPOVER_POSITIONS } from './chip-bar.helpers';
 @Component({
   selector: 'app-data-model-chip',
   standalone: true,
+  // Collapse the host to `display: none` when the picker is hidden (single data model). Otherwise the
+  // empty host stays a flex item in `.chip-bar` and its `gap` shifts the first visible chip ~8px, which
+  // silently mis-aligns the chip row against the input above. `@if` alone leaves a comment placeholder,
+  // so the host box (and its gap) would remain without this. Host bindings cannot use pipes, so this
+  // reads the `showChip` signal rather than `showChip$ | async`.
+  host: { '[style.display]': "showChip() ? null : 'none'" },
   imports: [
     AsyncPipe,
     CdkConnectedOverlay,
@@ -80,6 +87,8 @@ export class DataModelChipComponent {
   readonly ontologies$ = this._dataService.ontologies$;
   // Only show the picker when there is more than one data model to choose from; a single model needs no control.
   readonly showChip$ = this.ontologies$.pipe(map(ontologies => ontologies.length > 1));
+  // Signal mirror of `showChip$` for the host `display` binding (host bindings cannot use the async pipe).
+  readonly showChip = toSignal(this.showChip$, { initialValue: false });
   readonly ontologyLabel$ = this._dataService.selectedOntology$.pipe(map(o => (o ? o.label : '…')));
   readonly selectedOntologyIri$ = this._dataService.selectedOntology$.pipe(map(o => o?.id ?? null));
 
