@@ -2,7 +2,7 @@ import { OverlayModule } from '@angular/cdk/overlay';
 import { importProvidersFrom } from '@angular/core';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
-import { expect } from 'storybook/test';
+import { expect, fn } from 'storybook/test';
 import { StatementElement } from '../../model';
 import { Operator } from '../../operators.config';
 import { OntologyDataService } from '../../service/ontology-data.service';
@@ -146,6 +146,44 @@ export const HidesValueInputForNotExistsOperator: Story = {
       await expect(canvasElement.querySelector('app-link-value')).toBeNull();
       await expect(canvasElement.querySelector('app-list-value')).toBeNull();
       await expect(canvasElement.querySelector('app-resource-value')).toBeNull();
+    });
+  },
+};
+
+// Dispatch a real, bubbling Enter keydown from a field inside the popover. Angular's `(keydown.enter)`
+// on the container catches the bubbling event — this mirrors a user pressing Enter while typing in a
+// field, without depending on the container div being focusable.
+const pressEnterInside = (canvasElement: HTMLElement) => {
+  const target = canvasElement.querySelector('.filter-editor-popover app-predicate-select') as HTMLElement;
+  target.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true }));
+};
+
+export const ConfirmsOnEnterWhenComplete: Story = {
+  name: 'Pressing Enter confirms the filter when it is complete',
+  // Exists is a complete statement on its own (no value required), so Enter should submit immediately.
+  args: { statement: statementWithExistsOperator(), filterConfirm: fn() },
+  decorators: [applicationConfig({ providers: baseProviders })],
+  play: async ({ canvasElement, args, step }) => {
+    await step('Press Enter inside the popover', async () => {
+      pressEnterInside(canvasElement);
+    });
+    await step('filterConfirm is emitted', async () => {
+      await expect(args.filterConfirm).toHaveBeenCalled();
+    });
+  },
+};
+
+export const DoesNotConfirmOnEnterWhenIncomplete: Story = {
+  name: 'Pressing Enter does not confirm an incomplete filter',
+  // Only a predicate is selected (no operator/value), so the statement is incomplete and Enter must not submit.
+  args: { statement: statementWithPredicate(), filterConfirm: fn() },
+  decorators: [applicationConfig({ providers: baseProviders })],
+  play: async ({ canvasElement, args, step }) => {
+    await step('Press Enter on the incomplete popover', async () => {
+      pressEnterInside(canvasElement);
+    });
+    await step('filterConfirm is not emitted', async () => {
+      await expect(args.filterConfirm).not.toHaveBeenCalled();
     });
   },
 };
