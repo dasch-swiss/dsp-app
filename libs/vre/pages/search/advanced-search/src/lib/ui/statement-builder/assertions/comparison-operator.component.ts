@@ -1,15 +1,16 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { TranslateModule } from '@ngx-translate/core';
 import { Operator } from '../../../operators.config';
 
 @Component({
   selector: 'app-comparison-operator',
   standalone: true,
-  imports: [MatInputModule, MatSelectModule],
+  imports: [MatInputModule, MatSelectModule, TranslateModule],
   template: `
-    <mat-form-field>
-      <mat-label>Operator</mat-label>
+    <mat-form-field style="width: 100%">
+      <mat-label>{{ 'pages.search.advancedSearch.operator' | translate }}</mat-label>
       <mat-select
         [value]="selectedOperator"
         (selectionChange)="operatorChange.emit($event.value)"

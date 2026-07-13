@@ -1,0 +1,129 @@
+import { OverlayModule } from '@angular/cdk/overlay';
+import { importProvidersFrom } from '@angular/core';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
+import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
+import { expect } from 'storybook/test';
+import { StatementElement } from '../../model';
+import { Operator } from '../../operators.config';
+import { OntologyDataService } from '../../service/ontology-data.service';
+import {
+  makeDspApiConnectionStub,
+  makeOntologyDataServiceStub,
+  PROPERTY_FORM_MANAGER_STORY_PROVIDERS,
+  STORY_PROVIDERS,
+} from '../../stories.helpers';
+import { toLabels } from '../../util/labels';
+import { FilterChipComponent } from './filter-chip.component';
+
+const titleStatement = (): StatementElement => {
+  const s = new StatementElement();
+  s.selectedPredicate = {
+    iri: 'http://ex.org/hasTitle',
+    labels: toLabels('Title'),
+    comments: [],
+    objectValueType: 'TextValue',
+    isLinkProperty: false,
+  };
+  s.selectedOperator = Operator.IsLike;
+  s.selectedObjectValue = 'Hamlet';
+  return s;
+};
+
+const predicateOnlyStatement = (): StatementElement => {
+  const s = new StatementElement();
+  s.selectedPredicate = {
+    iri: 'http://ex.org/hasAuthor',
+    labels: toLabels('Author'),
+    comments: [],
+    objectValueType: 'TextValue',
+    isLinkProperty: false,
+  };
+  return s;
+};
+
+const meta: Meta<FilterChipComponent> = {
+  title: 'Search / Advanced Search / Search bar / 3. Filter Chip',
+  component: FilterChipComponent,
+  argTypes: {
+    statement: { description: 'The StatementElement this chip represents.' },
+    isOpen: { description: 'Whether the edit popover is open.' },
+    openChange: { description: 'Emitted when the popover open state changes.' },
+    remove: { description: 'Emitted when the remove button is clicked.' },
+  },
+};
+export default meta;
+type Story = StoryObj<FilterChipComponent>;
+
+const baseProviders = [
+  ...STORY_PROVIDERS,
+  importProvidersFrom(OverlayModule),
+  { provide: DspApiConnectionToken, useValue: makeDspApiConnectionStub() },
+  { provide: OntologyDataService, useValue: makeOntologyDataServiceStub() },
+  ...PROPERTY_FORM_MANAGER_STORY_PROVIDERS,
+];
+
+export const ShowsChipLabel: Story = {
+  name: 'Shows the formatted filter label on the chip',
+  args: { statement: titleStatement(), isOpen: false },
+  decorators: [applicationConfig({ providers: baseProviders })],
+  play: async ({ canvasElement, step }) => {
+    await step('Chip label contains predicate name', async () => {
+      await expect(canvasElement.textContent).toContain('Title');
+    });
+    await step('Chip label contains operator and value', async () => {
+      await expect(canvasElement.textContent).toContain('Hamlet');
+    });
+  },
+};
+
+export const ShowsPredicateWithoutOperator: Story = {
+  name: 'Shows only predicate label when operator is not yet selected',
+  args: { statement: predicateOnlyStatement(), isOpen: false },
+  decorators: [applicationConfig({ providers: baseProviders })],
+  play: async ({ canvasElement, step }) => {
+    await step('Chip label shows predicate name', async () => {
+      await expect(canvasElement.textContent).toContain('Author');
+    });
+  },
+};
+
+export const OpenState: Story = {
+  name: 'Renders the chip as a button when popover is open',
+  args: { statement: titleStatement(), isOpen: true },
+  decorators: [applicationConfig({ providers: baseProviders })],
+  play: async ({ canvasElement, step }) => {
+    await step('Chip renders as a stroked button', async () => {
+      const btn = canvasElement.querySelector('button.filter-chip-button');
+      await expect(btn).not.toBeNull();
+    });
+  },
+};
+
+export const ClickingRemoveRendersButton: Story = {
+  name: 'Remove button is accessible via aria-label',
+  args: { statement: titleStatement(), isOpen: false },
+  decorators: [applicationConfig({ providers: baseProviders })],
+  play: async ({ canvasElement, step }) => {
+    await step('Remove control with aria-label is rendered', async () => {
+      const removeBtn = canvasElement.querySelector('[aria-label="Remove filter"]');
+      await expect(removeBtn).not.toBeNull();
+    });
+    await step('Remove control is the cancel icon', async () => {
+      const icon = canvasElement.querySelector('mat-icon[aria-label="Remove filter"]');
+      await expect(icon?.textContent?.trim()).toBe('cancel');
+    });
+  },
+};
+
+export const InvalidChipShowsWarnColor: Story = {
+  name: 'Shows warn color when chip has an incomplete statement',
+  args: { statement: titleStatement(), isOpen: false, isValid: false },
+  decorators: [applicationConfig({ providers: baseProviders })],
+  play: async ({ canvasElement, step }) => {
+    await step('Chip button is flagged invalid when the statement is incomplete', async () => {
+      const btn = canvasElement.querySelector('button.filter-chip-button');
+      await expect(btn).not.toBeNull();
+      await expect(btn?.classList.contains('filter-chip-button--invalid')).toBe(true);
+    });
+  },
+};

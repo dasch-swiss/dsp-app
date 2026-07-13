@@ -4,14 +4,36 @@ import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services
 import { createMockLocalizationService } from '@dasch-swiss/vre/shared/app-helper-services/testing';
 import { TranslateLoader } from '@ngx-translate/core';
 import { of } from 'rxjs';
-import { IriLabelPair, NodeValue, Predicate, StatementElement, StringValue } from '../../model';
+import { IriLabelPair, NodeValue, OrderByItem, Predicate, StatementElement, StringValue } from '../../model';
 import { Operator } from '../../operators.config';
 import { englishLabels, makeIriLabelPair } from '../../testing/test-data-builders';
 import { GravsearchService } from '../gravsearch.service';
 import { OntologyDataService } from '../ontology-data.service';
-import { SearchStateService } from '../search-state.service';
 
 const { service: mockLocalizationService } = createMockLocalizationService('en');
+
+/**
+ * Minimal statement container used to drive the pure `generateGravSearchQuery` (DEV-6576). The
+ * production `SearchStateService` was retired in Phase 4; these query-generation tests only ever used
+ * it as a place to hold a statement tree and read it back, so a local double keeps the spec focused on
+ * the query output without depending on removed production state.
+ */
+class StatementStore {
+  private _state: {
+    selectedResourceClass?: IriLabelPair;
+    statementElements: StatementElement[];
+    orderBy: OrderByItem[];
+  } = { statementElements: [], orderBy: [] };
+  get currentState() {
+    return this._state;
+  }
+  get validStatementElements() {
+    return this._state.statementElements.filter(s => s.isValidAndComplete);
+  }
+  patchState(partial: Partial<typeof this._state>) {
+    this._state = { ...this._state, ...partial };
+  }
+}
 
 // OntologyDataService eagerly loads the synthetic rdfs:label predicate via
 // TranslateLoader on init. The gravsearch suite does not exercise that
@@ -26,7 +48,7 @@ const mockTranslateLoader: TranslateLoader = {
  * Reconstructs StatementElement objects from JSON snapshot
  */
 function setupTestFromJson(
-  searchStateService: SearchStateService,
+  searchStateService: StatementStore,
   jsonSnapshot: string,
   resourceClass?: IriLabelPair,
   orderBy: any[] = []
@@ -93,7 +115,7 @@ function setupTestFromJson(
  * @param statementIndex - Index of the statement to modify
  * @param operator - The new operator to set
  */
-function changeOperator(searchStateService: SearchStateService, statementIndex: number, operator: Operator): void {
+function changeOperator(searchStateService: StatementStore, statementIndex: number, operator: Operator): void {
   const statements = searchStateService.currentState.statementElements;
   const originalValue = statements[statementIndex].selectedObjectNode;
   statements[statementIndex].selectedOperator = operator;
@@ -106,7 +128,7 @@ function changeOperator(searchStateService: SearchStateService, statementIndex: 
  * while preserving the existing operator. Useful for parameterising tests
  * that vary the user-supplied search input.
  */
-function setSelectedValue(searchStateService: SearchStateService, statementIndex: number, value: string): void {
+function setSelectedValue(searchStateService: StatementStore, statementIndex: number, value: string): void {
   const statements = searchStateService.currentState.statementElements;
   statements[statementIndex].selectedObjectNode = new StringValue(statements[statementIndex].id, value);
   searchStateService.patchState({ statementElements: statements });
@@ -124,7 +146,7 @@ function normalizeQuery(query: string): string {
 
 describe('Gravsearch Service and Writer - Label', () => {
   let gravsearchService: GravsearchService;
-  let searchStateService: SearchStateService;
+  let searchStateService: StatementStore;
   let ontologyDataService: OntologyDataService;
 
   const baseJsonSnapshot = {
@@ -196,7 +218,6 @@ describe('Gravsearch Service and Writer - Label', () => {
     TestBed.configureTestingModule({
       providers: [
         GravsearchService,
-        SearchStateService,
         OntologyDataService,
         { provide: DspApiConnectionToken, useValue: mockDspApiConnection },
         { provide: LocalizationService, useValue: mockLocalizationService },
@@ -205,7 +226,7 @@ describe('Gravsearch Service and Writer - Label', () => {
     });
 
     gravsearchService = TestBed.inject(GravsearchService);
-    searchStateService = TestBed.inject(SearchStateService);
+    searchStateService = new StatementStore();
     ontologyDataService = TestBed.inject(OntologyDataService);
 
     // Mock OntologyDataService
@@ -224,6 +245,7 @@ describe('Gravsearch Service and Writer - Label', () => {
     const query = gravsearchService.generateGravSearchQuery(statements);
 
     const expectedQuery = `PREFIX knora-api: <http://api.knora.org/ontology/knora-api/v2#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX webern-onto: <http://api.stage.dasch.swiss/ontology/0806/webern-onto/v2#>
 CONSTRUCT {
 ?mainRes knora-api:isMainResource true .
@@ -231,12 +253,14 @@ CONSTRUCT {
 } WHERE {
 ?mainRes a knora-api:Resource .
 { ?mainRes a webern-onto:Bibliography . } UNION { ?mainRes a webern-onto:Chronology . } UNION { ?mainRes a webern-onto:Convolute . } UNION { ?mainRes a webern-onto:Correspondence . } UNION { ?mainRes a webern-onto:DigitalCopyEditedText . } UNION { ?mainRes a webern-onto:DigitalCopyMusicalPiece . } UNION { ?mainRes a webern-onto:DigitalCopySourceDescription . } UNION { ?mainRes a webern-onto:DigitalCopySupplement . } UNION { ?mainRes a webern-onto:EditedText . } UNION { ?mainRes a webern-onto:Einleitung . } UNION { ?mainRes a webern-onto:Institution . } UNION { ?mainRes a webern-onto:MusicalPiece . } UNION { ?mainRes a webern-onto:Opus . } UNION { ?mainRes a webern-onto:Person . } UNION { ?mainRes a webern-onto:RismReference . } UNION { ?mainRes a webern-onto:SourceDescriptionManuscript . } UNION { ?mainRes a webern-onto:SourceDescriptionPrint . } UNION { ?mainRes a webern-onto:Supplement . } UNION { ?mainRes a webern-onto:TextEdition . } UNION { ?mainRes a webern-onto:test_reception . }
+?mainRes rdfs:label ?label .
 ?mainRes <http://www.w3.org/2000/01/rdf-schema#label> ?res0 .
 
 FILTER (?res0 = "foo") .
 
 }
 
+ORDER BY ASC(?label)
 OFFSET 0`;
 
     expect(normalizeQuery(query)).toBe(normalizeQuery(expectedQuery));
@@ -315,7 +339,7 @@ OFFSET 0`;
 
 describe('Gravsearch Service and Writer - TextValue', () => {
   let gravsearchService: GravsearchService;
-  let searchStateService: SearchStateService;
+  let searchStateService: StatementStore;
   let ontologyDataService: OntologyDataService;
 
   const baseJsonSnapshot = {
@@ -387,7 +411,6 @@ describe('Gravsearch Service and Writer - TextValue', () => {
     TestBed.configureTestingModule({
       providers: [
         GravsearchService,
-        SearchStateService,
         OntologyDataService,
         { provide: DspApiConnectionToken, useValue: mockDspApiConnection },
         { provide: LocalizationService, useValue: mockLocalizationService },
@@ -396,7 +419,7 @@ describe('Gravsearch Service and Writer - TextValue', () => {
     });
 
     gravsearchService = TestBed.inject(GravsearchService);
-    searchStateService = TestBed.inject(SearchStateService);
+    searchStateService = new StatementStore();
     ontologyDataService = TestBed.inject(OntologyDataService);
 
     // Mock OntologyDataService
@@ -415,6 +438,7 @@ describe('Gravsearch Service and Writer - TextValue', () => {
     const query = gravsearchService.generateGravSearchQuery(statements);
 
     const expectedQuery = `PREFIX knora-api: <http://api.knora.org/ontology/knora-api/v2#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX webern-onto: <http://api.stage.dasch.swiss/ontology/0806/webern-onto/v2#>
 CONSTRUCT {
 ?mainRes knora-api:isMainResource true .
@@ -423,12 +447,14 @@ CONSTRUCT {
 } WHERE {
 ?mainRes a knora-api:Resource .
 { ?mainRes a webern-onto:Bibliography . } UNION { ?mainRes a webern-onto:Chronology . } UNION { ?mainRes a webern-onto:Convolute . } UNION { ?mainRes a webern-onto:Correspondence . } UNION { ?mainRes a webern-onto:DigitalCopyEditedText . } UNION { ?mainRes a webern-onto:DigitalCopyMusicalPiece . } UNION { ?mainRes a webern-onto:DigitalCopySourceDescription . } UNION { ?mainRes a webern-onto:DigitalCopySupplement . } UNION { ?mainRes a webern-onto:EditedText . } UNION { ?mainRes a webern-onto:Einleitung . } UNION { ?mainRes a webern-onto:Institution . } UNION { ?mainRes a webern-onto:MusicalPiece . } UNION { ?mainRes a webern-onto:Opus . } UNION { ?mainRes a webern-onto:Person . } UNION { ?mainRes a webern-onto:RismReference . } UNION { ?mainRes a webern-onto:SourceDescriptionManuscript . } UNION { ?mainRes a webern-onto:SourceDescriptionPrint . } UNION { ?mainRes a webern-onto:Supplement . } UNION { ?mainRes a webern-onto:TextEdition . } UNION { ?mainRes a webern-onto:test_reception . }
+?mainRes rdfs:label ?label .
 ?mainRes <http://api.stage.dasch.swiss/ontology/0806/webern-onto/v2#hasPlacePublisher> ?res0 .
 ?res0 <http://api.knora.org/ontology/knora-api/v2#valueAsString> ?res0val .
 FILTER (?res0val = "Wien"^^<http://www.w3.org/2001/XMLSchema#string> ) .
 
 }
 
+ORDER BY ASC(?label)
 OFFSET 0`;
 
     expect(normalizeQuery(query)).toBe(normalizeQuery(expectedQuery));
@@ -491,11 +517,33 @@ OFFSET 0`;
       'FILTER regex(?res0val, "a\\\\\\"b\\\\\\\\c"^^<http://www.w3.org/2001/XMLSchema#string>, "i")'
     );
   });
+
+  it('escapes a quote-bearing value so it cannot break out of the equals literal (injection defence)', () => {
+    const jsonSnapshot = JSON.stringify(baseJsonSnapshot);
+    const resourceClass: IriLabelPair = makeIriLabelPair('', 'All resource classes');
+    setupTestFromJson(searchStateService, jsonSnapshot, resourceClass);
+
+    // A crafted value (as would arrive via the `filters` URL param) that tries to close the literal
+    // and inject a triple pattern into the WHERE clause.
+    const payload = 'x"^^<http://www.w3.org/2001/XMLSchema#string>) . ?mainRes a foo:Secret . #';
+    setSelectedValue(searchStateService, 0, payload);
+
+    const query = gravsearchService.generateGravSearchQuery(searchStateService.validStatementElements);
+
+    // The internal quote is escaped (\"), so the literal is never closed: the whole payload — including
+    // the would-be `?mainRes a foo:Secret .` — stays trapped inside the string, not emitted as query
+    // structure. Assert structurally: exactly one FILTER for this statement, and the injected triple
+    // never appears as a real (line-leading) pattern.
+    expect(query).toContain('\\"^^');
+    const filterCount = (query.match(/FILTER \(/g) ?? []).length;
+    expect(filterCount).toBe(1);
+    expect(query).not.toMatch(/^\s*\?mainRes a foo:Secret \./m);
+  });
 });
 
 describe('Gravsearch Service and Writer - ListValue', () => {
   let gravsearchService: GravsearchService;
-  let searchStateService: SearchStateService;
+  let searchStateService: StatementStore;
   let ontologyDataService: OntologyDataService;
 
   const baseJsonSnapshot = {
@@ -582,7 +630,6 @@ describe('Gravsearch Service and Writer - ListValue', () => {
     TestBed.configureTestingModule({
       providers: [
         GravsearchService,
-        SearchStateService,
         OntologyDataService,
         { provide: DspApiConnectionToken, useValue: mockDspApiConnection },
         { provide: LocalizationService, useValue: mockLocalizationService },
@@ -591,7 +638,7 @@ describe('Gravsearch Service and Writer - ListValue', () => {
     });
 
     gravsearchService = TestBed.inject(GravsearchService);
-    searchStateService = TestBed.inject(SearchStateService);
+    searchStateService = new StatementStore();
     ontologyDataService = TestBed.inject(OntologyDataService);
 
     // Mock OntologyDataService
@@ -610,9 +657,10 @@ describe('Gravsearch Service and Writer - ListValue', () => {
     setupTestFromJson(searchStateService, jsonSnapshot, resourceClass);
 
     const statements = searchStateService.validStatementElements;
-    const query = gravsearchService.generateGravSearchQuery(statements);
+    const query = gravsearchService.generateGravSearchQuery(statements, undefined, resourceClass.iri);
 
     const expectedQuery = `PREFIX knora-api: <http://api.knora.org/ontology/knora-api/v2#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX webern-onto: <http://api.stage.dasch.swiss/ontology/0806/webern-onto/v2#>
 CONSTRUCT {
 ?mainRes knora-api:isMainResource true .
@@ -621,12 +669,14 @@ CONSTRUCT {
 } WHERE {
 ?mainRes a knora-api:Resource .
 ?mainRes a <http://api.stage.dasch.swiss/ontology/0806/webern-onto/v2#SourceDescriptionManuscript> .
+?mainRes rdfs:label ?label .
 ?mainRes <http://api.stage.dasch.swiss/ontology/0806/webern-onto/v2#hasSourceDescMainWritingInstr> ?res0 .
 ?res0 <http://api.knora.org/ontology/knora-api/v2#listValueAsListNode> <http://rdfh.ch/lists/0806/8mpYXDnYRYi_9HAHXzmzIA> .
 
 
 }
 
+ORDER BY ASC(?label)
 OFFSET 0`;
 
     expect(normalizeQuery(query)).toBe(normalizeQuery(expectedQuery));
@@ -653,7 +703,7 @@ OFFSET 0`;
 
 describe('Gravsearch Service and Writer - IntValue', () => {
   let gravsearchService: GravsearchService;
-  let searchStateService: SearchStateService;
+  let searchStateService: StatementStore;
   let ontologyDataService: OntologyDataService;
 
   const baseJsonSnapshot = {
@@ -725,7 +775,6 @@ describe('Gravsearch Service and Writer - IntValue', () => {
     TestBed.configureTestingModule({
       providers: [
         GravsearchService,
-        SearchStateService,
         OntologyDataService,
         { provide: DspApiConnectionToken, useValue: mockDspApiConnection },
         { provide: LocalizationService, useValue: mockLocalizationService },
@@ -734,7 +783,7 @@ describe('Gravsearch Service and Writer - IntValue', () => {
     });
 
     gravsearchService = TestBed.inject(GravsearchService);
-    searchStateService = TestBed.inject(SearchStateService);
+    searchStateService = new StatementStore();
     ontologyDataService = TestBed.inject(OntologyDataService);
 
     // Mock OntologyDataService
@@ -753,9 +802,10 @@ describe('Gravsearch Service and Writer - IntValue', () => {
     setupTestFromJson(searchStateService, jsonSnapshot, resourceClass);
 
     const statements = searchStateService.validStatementElements;
-    const query = gravsearchService.generateGravSearchQuery(statements);
+    const query = gravsearchService.generateGravSearchQuery(statements, undefined, resourceClass.iri);
 
     const expectedQuery = `PREFIX knora-api: <http://api.knora.org/ontology/knora-api/v2#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX webern-onto: <http://api.stage.dasch.swiss/ontology/0806/webern-onto/v2#>
 CONSTRUCT {
 ?mainRes knora-api:isMainResource true .
@@ -764,6 +814,7 @@ CONSTRUCT {
 } WHERE {
 ?mainRes a knora-api:Resource .
 ?mainRes a <http://api.stage.dasch.swiss/ontology/0806/webern-onto/v2#MusicalPiece> .
+?mainRes rdfs:label ?label .
 ?mainRes <http://api.stage.dasch.swiss/ontology/0806/webern-onto/v2#hasMnr> ?res0 .
 ?res0 <http://api.knora.org/ontology/knora-api/v2#intValueAsInt> ?res0val .
 FILTER (?res0val = "1"^^<http://www.w3.org/2001/XMLSchema#integer> ) .
@@ -771,6 +822,7 @@ FILTER (?res0val = "1"^^<http://www.w3.org/2001/XMLSchema#integer> ) .
 
 }
 
+ORDER BY ASC(?label)
 OFFSET 0`;
 
     expect(normalizeQuery(query)).toBe(normalizeQuery(expectedQuery));
@@ -790,6 +842,70 @@ OFFSET 0`;
 
     // Only check the operator-specific FILTER clause
     expect(query).toContain('FILTER (?res0val != "1"^^<http://www.w3.org/2001/XMLSchema#integer> )');
+  });
+
+  it('emits ORDER BY on the active predicate index when an orderBy item is active (DEV-6576 D1)', () => {
+    // Characterization oracle: orderBy is now an explicit argument, not read from currentState.
+    // An active sort on hasMnr (statement index 0) defaults to ascending → `ORDER BY ASC(?res0)`.
+    const jsonSnapshot = JSON.stringify(baseJsonSnapshot);
+    const resourceClass: IriLabelPair = makeIriLabelPair(
+      'http://api.stage.dasch.swiss/ontology/0806/webern-onto/v2#MusicalPiece',
+      'Musikstück (AWG-ID)'
+    );
+    setupTestFromJson(searchStateService, jsonSnapshot, resourceClass);
+
+    const activeOrderBy = [
+      new OrderByItem('http://api.stage.dasch.swiss/ontology/0806/webern-onto/v2#hasMnr', [], false, true),
+    ];
+    const query = gravsearchService.generateGravSearchQuery(
+      searchStateService.validStatementElements,
+      undefined,
+      resourceClass.iri,
+      activeOrderBy
+    );
+
+    expect(query).toContain('ORDER BY ASC(?res0)');
+    expect(query).not.toContain('ORDER BY ASC(?label)');
+  });
+
+  it('emits ORDER BY DESC on the active predicate index when the orderBy direction is desc (DEV-6576)', () => {
+    const jsonSnapshot = JSON.stringify(baseJsonSnapshot);
+    const resourceClass: IriLabelPair = makeIriLabelPair(
+      'http://api.stage.dasch.swiss/ontology/0806/webern-onto/v2#MusicalPiece',
+      'Musikstück (AWG-ID)'
+    );
+    setupTestFromJson(searchStateService, jsonSnapshot, resourceClass);
+
+    const activeOrderBy = [
+      new OrderByItem('http://api.stage.dasch.swiss/ontology/0806/webern-onto/v2#hasMnr', [], false, true, 'desc'),
+    ];
+    const query = gravsearchService.generateGravSearchQuery(
+      searchStateService.validStatementElements,
+      undefined,
+      resourceClass.iri,
+      activeOrderBy
+    );
+
+    expect(query).toContain('ORDER BY DESC(?res0)');
+    expect(query).not.toContain('ORDER BY ASC(?label)');
+  });
+
+  it('falls back to ORDER BY ASC(?label) when no orderBy item is active', () => {
+    const jsonSnapshot = JSON.stringify(baseJsonSnapshot);
+    const resourceClass: IriLabelPair = makeIriLabelPair(
+      'http://api.stage.dasch.swiss/ontology/0806/webern-onto/v2#MusicalPiece',
+      'Musikstück (AWG-ID)'
+    );
+    setupTestFromJson(searchStateService, jsonSnapshot, resourceClass);
+
+    const query = gravsearchService.generateGravSearchQuery(
+      searchStateService.validStatementElements,
+      undefined,
+      resourceClass.iri,
+      []
+    );
+
+    expect(query).toContain('ORDER BY ASC(?label)');
   });
 
   it('should generate query with greaterThan operator', () => {
@@ -854,5 +970,95 @@ OFFSET 0`;
 
     // Only check the operator-specific FILTER clause
     expect(query).toContain('FILTER (?res0val <= "1"^^<http://www.w3.org/2001/XMLSchema#integer> )');
+  });
+});
+
+describe('GravsearchService — fulltextTerm parameter', () => {
+  let gravsearchService: GravsearchService;
+  let searchStateService: StatementStore;
+  let ontologyDataService: OntologyDataService;
+
+  const ontologyIri = 'http://api.stage.dasch.swiss/ontology/0806/webern-onto/v2';
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      providers: [
+        GravsearchService,
+        OntologyDataService,
+        { provide: DspApiConnectionToken, useValue: {} },
+        { provide: LocalizationService, useValue: mockLocalizationService },
+        { provide: TranslateLoader, useValue: mockTranslateLoader },
+      ],
+    });
+
+    gravsearchService = TestBed.inject(GravsearchService);
+    searchStateService = new StatementStore();
+    ontologyDataService = TestBed.inject(OntologyDataService);
+
+    jest
+      .spyOn(ontologyDataService, 'selectedOntology', 'get')
+      .mockReturnValue({ iri: ontologyIri, label: 'webern-onto' });
+    jest.spyOn(ontologyDataService, 'classIris', 'get').mockReturnValue([`${ontologyIri}#Person`]);
+  });
+
+  it('injects matchText filter when term is provided', () => {
+    const query = gravsearchService.generateGravSearchQuery([], 'hello');
+    expect(query).toContain('FILTER knora-api:matchText(?searchThis, "hello")');
+  });
+
+  it('does not inject matchText filter when term is empty string', () => {
+    const query = gravsearchService.generateGravSearchQuery([], '');
+    expect(query).not.toContain('matchText');
+  });
+
+  it('does not inject matchText filter when term is undefined', () => {
+    const query = gravsearchService.generateGravSearchQuery([]);
+    expect(query).not.toContain('matchText');
+  });
+
+  it('does not inject matchText filter when term is whitespace only', () => {
+    const query = gravsearchService.generateGravSearchQuery([], '   ');
+    expect(query).not.toContain('matchText');
+  });
+
+  it('trims the term before injecting', () => {
+    const query = gravsearchService.generateGravSearchQuery([], '  hello  ');
+    expect(query).toContain('FILTER knora-api:matchText(?searchThis, "hello")');
+  });
+
+  it('escapes double quotes in the term', () => {
+    const query = gravsearchService.generateGravSearchQuery([], 'say "hi"');
+    expect(query).toContain('matchText');
+    expect(query).not.toContain('"say "hi""');
+  });
+
+  it('places matchesText triple after class restriction and before chip statements', () => {
+    const jsonSnapshot = JSON.stringify({
+      selectedOntology: { iri: ontologyIri, label: 'webern-onto' },
+      selectedResourceClass: { iri: `${ontologyIri}#Person`, label: 'Person' },
+      statementElements: [
+        {
+          id: 'abc-123',
+          statementLevel: 0,
+          _selectedPredicate: {
+            iri: 'http://www.w3.org/2000/01/rdf-schema#label',
+            label: 'Resource Label',
+            objectValueType: 'http://api.knora.org/ontology/knora-api/v2#ResourceLabel',
+            isLinkProperty: false,
+          },
+          _selectedOperator: 'equals',
+          _selectedObjectNode: { statementId: 'abc-123', _value: 'bar' },
+        },
+      ],
+      orderBy: [],
+    });
+    setupTestFromJson(searchStateService, jsonSnapshot, { iri: `${ontologyIri}#Person`, label: 'Person' });
+
+    const query = gravsearchService.generateGravSearchQuery(searchStateService.validStatementElements, 'foo');
+    const matchesIdx = query.indexOf('matchText');
+    const chipIdx = query.indexOf('?res0');
+    expect(matchesIdx).toBeGreaterThan(-1);
+    expect(chipIdx).toBeGreaterThan(-1);
+    expect(matchesIdx).toBeLessThan(chipIdx);
   });
 });

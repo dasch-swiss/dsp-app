@@ -97,6 +97,12 @@ export class RouteConstants {
 
   static readonly annotationQueryParam = 'annotation';
 
+  static readonly advancedSearchQ = 'q';
+  static readonly advancedSearchOntology = 'ontology';
+  static readonly advancedSearchClass = 'class';
+  static readonly advancedSearchFilters = 'filters';
+  static readonly advancedSearchOrderBy = 'orderBy';
+
   /**
    * Absolute router commands to a project's Legal Settings tab.
    * Prefer this over hand-building the segments so a route rename only has to happen here.

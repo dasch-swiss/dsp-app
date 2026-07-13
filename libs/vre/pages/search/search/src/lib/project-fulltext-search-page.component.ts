@@ -3,12 +3,10 @@ import { ComponentPortal } from '@angular/cdk/portal';
 import { AsyncPipe, NgClass } from '@angular/common';
 import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
 import { MatDivider } from '@angular/material/divider';
 import { MatFormField, MatSuffix } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
-import { RouterLink } from '@angular/router';
 import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
 import { SearchTipsComponent } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -21,13 +19,11 @@ import { SearchResultComponent } from './search-result.component';
     AsyncPipe,
     NgClass,
     ReactiveFormsModule,
-    MatButton,
     MatDivider,
     MatFormField,
     MatIcon,
     MatInput,
     MatSuffix,
-    RouterLink,
     TranslatePipe,
     SearchResultComponent,
   ],
@@ -35,10 +31,6 @@ import { SearchResultComponent } from './search-result.component';
     <div
       style="display: flex; justify-content: center; align-items: center; gap: 32px; padding: 16px;"
       [ngClass]="{ big: (isNotQuerying$ | async) }">
-      <a mat-stroked-button [routerLink]="['..', 'advanced-search']">
-        <mat-icon>swap_horiz</mat-icon>
-        {{ 'pages.search.fullTextSearch.switchToAdvancedSearch' | translate }}
-      </a>
       <form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
         <mat-form-field appearance="outline" style="width: 600px">
           <input

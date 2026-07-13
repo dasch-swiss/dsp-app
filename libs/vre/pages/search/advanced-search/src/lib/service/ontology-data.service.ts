@@ -31,6 +31,11 @@ export class OntologyDataService {
   private _ontologyLoading = new BehaviorSubject<boolean>(true);
   ontologyLoading$ = this._ontologyLoading.asObservable();
 
+  // Set when an ontology load fails; cleared when a new load starts. Lets consumers surface an error
+  // state instead of a spinner that never resolves. `null` = no error.
+  private _ontologyError = new BehaviorSubject<unknown | null>(null);
+  ontologyError$ = this._ontologyError.asObservable();
+
   /**
    * Synthetic `rdfs:label` predicate that every consumer of the predicate
    * stream sees as if it were a normal property. The backend omits
@@ -107,12 +112,20 @@ export class OntologyDataService {
 
   setOntology(ontologyIri: string) {
     this._ontologyLoading.next(true);
+    this._ontologyError.next(null);
     this._dspApiConnection.v2.onto
       .getOntology(ontologyIri, true)
       .pipe(takeUntilDestroyed(this._destroyRef))
       .subscribe({
         next: ontology => {
           this._selectedOntology.next(ontology);
+          this._ontologyLoading.next(false);
+        },
+        // Without this branch a failed load leaves `ontologyLoading` stuck true, so any consumer
+        // gating on readiness (e.g. DerivedSearchStateService.loading$) hangs forever — notably a
+        // shared URL naming a bad/unreachable ontology.
+        error: err => {
+          this._ontologyError.next(err);
           this._ontologyLoading.next(false);
         },
       });
@@ -256,6 +269,15 @@ export class OntologyDataService {
   get selectedOntology(): IriLabelPair {
     const ontology = this._selectedOntology.value;
     return ontology ? this._toIriLabelPair(ontology.id, toLabels(ontology.label), []) : ALL_RESOURCE_CLASSES;
+  }
+
+  /**
+   * IRI of the ontology selected by default — the first one loaded for the project (see `init`). Used
+   * to restore the selection when the URL carries no `ontology` param (e.g. after Reset), keeping the
+   * Data Model chip in sync with the URL rather than stuck on a previously chosen ontology.
+   */
+  get defaultOntologyIri(): string | undefined {
+    return this._ontologies.value[0]?.iri;
   }
 
   get classIris(): string[] {

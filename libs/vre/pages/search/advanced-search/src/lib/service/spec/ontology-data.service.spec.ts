@@ -10,7 +10,7 @@ import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { createMockLocalizationService } from '@dasch-swiss/vre/shared/app-helper-services/testing';
 import { TranslateLoader } from '@ngx-translate/core';
-import { firstValueFrom, of, skip } from 'rxjs';
+import { firstValueFrom, of, skip, throwError } from 'rxjs';
 import { RDFS_LABEL, ResourceLabel } from '../../constants';
 import { OntologyDataService } from '../ontology-data.service';
 
@@ -181,6 +181,61 @@ describe('OntologyDataService — i18n DTO propagation (DEV-6645)', () => {
       expect(subs[0].iri).toBe('http://example/Letter');
       expect(subs[0].labels).toEqual(childLabels);
       expect(subs[0].comments).toEqual(childComments);
+    });
+  });
+
+  describe('setOntology — loading + error settling (DEV-6576 Phase 3a.1)', () => {
+    // These need a real connection stub whose getOntology we control per-test, so they build their own
+    // TestBed rather than reuse the outer one (which provides an empty connection).
+    const buildWithConnection = (getOntology: jest.Mock) => {
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({
+        providers: [
+          OntologyDataService,
+          { provide: DspApiConnectionToken, useValue: { v2: { onto: { getOntology } } } },
+          { provide: DestroyRef, useValue: { onDestroy: () => () => {} } },
+          { provide: LocalizationService, useValue: createMockLocalizationService('en').service },
+          { provide: TranslateLoader, useValue: makeTranslateStub() },
+        ],
+      });
+      return TestBed.inject(OntologyDataService);
+    };
+
+    it('settles loading to false and clears error on a successful load', async () => {
+      const fakeOntology = { id: 'http://example/onto', getClassDefinitionsByType: () => [] } as any;
+      const svc = buildWithConnection(jest.fn().mockReturnValue(of(fakeOntology)));
+
+      svc.setOntology('http://example/onto');
+
+      expect(await firstValueFrom(svc.ontologyLoading$)).toBe(false);
+      expect(await firstValueFrom(svc.ontologyError$)).toBeNull();
+    });
+
+    it('settles loading to false and exposes the error when the load fails', async () => {
+      const err = new Error('ontology not found');
+      const svc = buildWithConnection(jest.fn().mockReturnValue(throwError(() => err)));
+
+      svc.setOntology('http://example/bad');
+
+      // The critical property: loading does NOT hang true on failure (a hanging spinner on a shared
+      // URL naming a bad ontology is exactly what this fix prevents).
+      expect(await firstValueFrom(svc.ontologyLoading$)).toBe(false);
+      expect(await firstValueFrom(svc.ontologyError$)).toBe(err);
+    });
+
+    it('clears a prior error when a new load starts', async () => {
+      const getOntology = jest
+        .fn()
+        .mockReturnValueOnce(throwError(() => new Error('boom')))
+        .mockReturnValueOnce(of({ id: 'http://example/ok', getClassDefinitionsByType: () => [] } as any));
+      const svc = buildWithConnection(getOntology);
+
+      svc.setOntology('http://example/bad');
+      expect(await firstValueFrom(svc.ontologyError$)).not.toBeNull();
+
+      svc.setOntology('http://example/ok');
+      expect(await firstValueFrom(svc.ontologyError$)).toBeNull();
+      expect(await firstValueFrom(svc.ontologyLoading$)).toBe(false);
     });
   });
 

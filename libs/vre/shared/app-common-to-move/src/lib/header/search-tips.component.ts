@@ -5,8 +5,8 @@ import { TranslatePipe } from '@ngx-translate/core';
   selector: 'app-search-tips',
   template: ` <div
     style="
-    width: 100%;
     border-radius: 5px;
+    width: 570px;
     background: white;
     padding: 16px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);

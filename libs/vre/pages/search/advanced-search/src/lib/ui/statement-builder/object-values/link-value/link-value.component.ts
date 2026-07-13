@@ -26,6 +26,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { MatAutocompleteOptionsScrollDirective } from '@dasch-swiss/vre/shared/app-common';
 import { LocalizationService, pickPreferredLanguageString } from '@dasch-swiss/vre/shared/app-helper-services';
+import { TranslateModule } from '@ngx-translate/core';
 import {
   BehaviorSubject,
   debounceTime,
@@ -52,13 +53,14 @@ import { DynamicFormsDataService } from '../../../../service/dynamic-forms-data.
     MatAutocompleteModule,
     MatAutocompleteOptionsScrollDirective,
     MatProgressBar,
+    TranslateModule,
   ],
   template: `
     <mat-form-field class="width-100-percent" appearance="fill">
       <input
         matInput
-        placeholder="Search for a resource"
-        aria-label="Search for a resource by name"
+        [placeholder]="'pages.search.advancedSearch.searchForResource' | translate"
+        [attr.aria-label]="'pages.search.advancedSearch.searchForResource' | translate"
         [matAutocomplete]="auto"
         [formControl]="inputControl"
         required />
@@ -74,14 +76,19 @@ import { DynamicFormsDataService } from '../../../../service/dynamic-forms-data.
 
         @if (!linkObjects?.length && !loading) {
           @if (lastSearch && lastSearch.length >= this.MIN_SEARCH_LENGTH) {
-            <mat-option [disabled]="true">No resources found for "{{ lastSearch }}"</mat-option>
+            <mat-option [disabled]="true">{{
+              'pages.search.advancedSearch.noResourcesFound' | translate: { term: lastSearch }
+            }}</mat-option>
           } @else {
-            <mat-option [disabled]="true">Type at least 3 characters to search</mat-option>
+            <mat-option [disabled]="true">{{ 'pages.search.advancedSearch.typeToSearch' | translate }}</mat-option>
           }
         }
         @if (linkObjects?.length && !loading) {
           <mat-option [disabled]="true">
-            Showing {{ linkObjects.length }} results of {{ resultCount$ | async }}
+            {{
+              'pages.search.advancedSearch.showingResults'
+                | translate: { count: linkObjects.length, total: resultCount$ | async }
+            }}
           </mat-option>
         }
         @for (obj of linkObjects; track obj.iri ?? obj) {
@@ -89,7 +96,7 @@ import { DynamicFormsDataService } from '../../../../service/dynamic-forms-data.
         }
         @if (loading) {
           <mat-progress-bar mode="query" />
-          <mat-option [disabled]="true">Loading resources...</mat-option>
+          <mat-option [disabled]="true">{{ 'pages.search.advancedSearch.loadingResources' | translate }}</mat-option>
         }
       </mat-autocomplete>
     </mat-form-field>
@@ -106,6 +113,7 @@ export class LinkValueComponent implements OnInit, AfterViewInit, OnChanges, OnD
 
   @Input() resourceClass?: string;
   @Input() selectedResource?: IriLabelPair;
+  @Input() showError = false;
 
   @Output() emitResourceSelected = new EventEmitter<IriLabelPair>();
 
@@ -155,6 +163,9 @@ export class LinkValueComponent implements OnInit, AfterViewInit, OnChanges, OnD
     if (changes['selectedResource'] && this.selectedResource) {
       this.inputControl.setValue(this.pickLabel(this.selectedResource), { emitEvent: false });
       this.inputControl.updateValueAndValidity();
+    }
+    if (changes['showError']?.currentValue) {
+      this.inputControl.markAsTouched();
     }
   }
 

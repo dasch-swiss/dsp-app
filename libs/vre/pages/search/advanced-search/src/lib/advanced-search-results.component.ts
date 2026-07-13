@@ -1,9 +1,6 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, Inject, inject, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { MatAnchor } from '@angular/material/button';
-import { MatIcon } from '@angular/material/icon';
+import { ChangeDetectionStrategy, Component, inject, Input, OnChanges, signal, SimpleChanges } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { ActivatedRoute, Router } from '@angular/router';
 import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { ResourceBrowserComponent } from '@dasch-swiss/vre/pages/data-browser';
@@ -11,9 +8,9 @@ import { filterNull } from '@dasch-swiss/vre/shared/app-common';
 import { ResourceResultService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { AppProgressIndicatorComponent } from '@dasch-swiss/vre/ui/progress-indicator';
 import { CenteredBoxComponent, NoResultsFoundComponent } from '@dasch-swiss/vre/ui/ui';
-import { TranslatePipe } from '@ngx-translate/core';
-import { BehaviorSubject, combineLatest, map, switchMap, tap } from 'rxjs';
-import { QueryExecutionService } from './service/query-execution.service';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { BehaviorSubject, catchError, combineLatest, map, of, startWith, switchMap, tap } from 'rxjs';
+import { SearchFlowLogger } from './service/search-flow-logger.service';
 
 @Component({
   selector: 'app-advanced-search-results',
@@ -21,11 +18,9 @@ import { QueryExecutionService } from './service/query-execution.service';
     AppProgressIndicatorComponent,
     AsyncPipe,
     CenteredBoxComponent,
-    MatAnchor,
-    MatIcon,
     NoResultsFoundComponent,
     ResourceBrowserComponent,
-    TranslatePipe,
+    TranslateModule,
   ],
   template: `
     @let resources = resources$ | async;
@@ -36,11 +31,7 @@ import { QueryExecutionService } from './service/query-execution.service';
     } @else if (resources) {
       @if (resources.length === 0) {
         <app-centered-box>
-          <app-no-results-found [message]="noResultMessage" />
-          <a mat-stroked-button (click)="navigateBackToSearchForm()" style="margin-top: 24px;">
-            <mat-icon>chevron_left</mat-icon>
-            {{ 'pages.dataBrowser.resourcesList.backToSearchForm' | translate }}
-          </a>
+          <app-no-results-found [message]="'pages.search.advancedSearch.noResultsFound' | translate" />
         </app-centered-box>
       } @else {
         <app-resource-browser
@@ -50,44 +41,51 @@ import { QueryExecutionService } from './service/query-execution.service';
     }
   `,
   providers: [ResourceResultService],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AdvancedSearchResultsComponent implements OnChanges {
-  private readonly _router = inject(Router);
-  private readonly _route = inject(ActivatedRoute);
-
   @Input({ required: true }) query!: string;
+
+  private readonly _dspApiConnection = inject<KnoraApiConnection>(DspApiConnectionToken);
+  private readonly _resourceResultService = inject(ResourceResultService);
+  private readonly _titleService = inject(Title);
+  private readonly _translateService = inject(TranslateService);
+  private readonly _logger = inject(SearchFlowLogger);
+
   private readonly querySubject = new BehaviorSubject<string | null>(null);
 
-  readonly queryIsExecuting = this._queryExecutionService.queryIsExecuting;
+  readonly queryIsExecuting = signal(false);
 
   readonly resources$ = this.querySubject.pipe(
     filterNull(),
-    switchMap(query =>
-      combineLatest([
+    switchMap(query => {
+      this.queryIsExecuting.set(true);
+      return combineLatest([
         this._resourceResultService.pageIndex$.pipe(
           switchMap(pageNumber => this._performGravSearch$(query, pageNumber))
         ),
         this._numberOfAllResults$(query),
-      ])
-    ),
-    tap(() => {
-      this._queryExecutionService.queryIsExecuting.set(false);
-    }),
-    map(([resourceResponse, countResponse]) => {
-      this._resourceResultService.numberOfResults = countResponse.numberOfResults;
-      return resourceResponse.resources;
+      ]).pipe(
+        tap(([resourceResponse, countResponse]) => {
+          this.queryIsExecuting.set(false);
+          this._logger.searchSuccess(resourceResponse.resources.length, countResponse.numberOfResults);
+        }),
+        map(([resourceResponse, countResponse]) => {
+          this._resourceResultService.numberOfResults = countResponse.numberOfResults;
+          return resourceResponse.resources;
+        }),
+        catchError(err => {
+          this._logger.searchError(err);
+          this.queryIsExecuting.set(false);
+          return of([]);
+        }),
+        startWith(null)
+      );
     })
   );
 
-  readonly noResultMessage = `We couldn't find any resources matching your search criteria. Try adjusting your search parameters.`;
-
-  constructor(
-    @Inject(DspApiConnectionToken) private readonly _dspApiConnection: KnoraApiConnection,
-    private readonly _resourceResultService: ResourceResultService,
-    private readonly _titleService: Title,
-    private readonly _queryExecutionService: QueryExecutionService
-  ) {
-    this._titleService.setTitle(`Advanced search results`);
+  constructor() {
+    this._titleService.setTitle(this._translateService.instant('pages.search.advancedSearch.resultsTitle'));
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -99,7 +97,7 @@ export class AdvancedSearchResultsComponent implements OnChanges {
   private _performGravSearch$(query_: string, index: number) {
     let query = this._getQuery(query_);
     query = `${query}OFFSET ${index}`;
-    this._queryExecutionService.queryIsExecuting.set(true);
+    this._logger.searchStart(index);
     return this._dspApiConnection.v2.search.doExtendedSearch(query);
   }
 
@@ -107,13 +105,7 @@ export class AdvancedSearchResultsComponent implements OnChanges {
     return query.substring(0, query.search('OFFSET'));
   }
 
-  private _numberOfAllResults$ = (query_: string) =>
-    this._dspApiConnection.v2.search.doExtendedSearchCountQuery(`${this._getQuery(query_)}OFFSET 0`);
-
-  navigateBackToSearchForm() {
-    this._router.navigate(['..'], {
-      relativeTo: this._route,
-      queryParamsHandling: 'preserve',
-    });
+  private _numberOfAllResults$(query_: string) {
+    return this._dspApiConnection.v2.search.doExtendedSearchCountQuery(`${this._getQuery(query_)}OFFSET 0`);
   }
 }

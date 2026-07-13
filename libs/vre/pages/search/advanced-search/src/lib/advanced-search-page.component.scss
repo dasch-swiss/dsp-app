@@ -1,0 +1,24 @@
+@use '../../../../../../../apps/dsp-app/src/styles/config' as *;
+
+$search-height: 89px;
+
+.search-bar {
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+
+  &__inner {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+}
+
+.whole-height {
+  height: calc(100vh - $header-height - $search-height);
+}
+
+.big {
+  margin-top: 70px;
+}

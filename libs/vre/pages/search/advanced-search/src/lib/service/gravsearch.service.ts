@@ -1,13 +1,12 @@
 import { inject, Injectable } from '@angular/core';
 import { MAIN_RESOURCE_PLACEHOLDER, RDFS_TYPE, RESOURCE_PLACEHOLDER } from '../constants';
-import { GravsearchWriter, StatementElement } from '../model';
+import { escapeForGravsearchStringLiteral, OrderByItem, StatementElement } from '../model';
+import { GravsearchWriter } from './gravsearch-writer';
 import { OntologyDataService } from './ontology-data.service';
-import { SearchStateService } from './search-state.service';
 
 @Injectable()
 export class GravsearchService {
   private dataService: OntologyDataService = inject(OntologyDataService);
-  private _searchStateService = inject(SearchStateService);
 
   get ontoIri(): string {
     return this.dataService.selectedOntology.iri;
@@ -21,40 +20,49 @@ export class GravsearchService {
     return ontoShortCodeMatch[1];
   }
 
-  generateGravSearchQuery(statements: StatementElement[]): string {
-    const constructStatements = this._buildConstructStatements(statements);
-    const whereClause = this._buildWhereClause(statements);
+  /**
+   * Pure w.r.t. the search form state: `statements`, `fulltext`, `resourceClassIri`, and `orderBy`
+   * are all passed explicitly, so the query is a pure function of its inputs. Ontology IRI/short-code
+   * still come from `OntologyDataService` — the ontology is itself URL-driven, not form state.
+   */
+  generateGravSearchQuery(
+    statements: StatementElement[],
+    fulltextTerm?: string,
+    resourceClassIri = '',
+    orderBy: OrderByItem[] = []
+  ): string {
+    const writer = new GravsearchWriter(statements);
+    const scoped = statements.map((_, i) => writer.at(i));
+    const constructStatements = scoped.map(s => s.constructStatement).join('\n');
+    const whereClause = scoped.map(s => s.whereStatement).join('\n');
+    const trimmedTerm = fulltextTerm?.trim() ?? '';
+    const fulltextTriple = trimmedTerm
+      ? `?mainRes ?valueProperty ?searchThis .\n  FILTER knora-api:matchText(?searchThis, "${escapeForGravsearchStringLiteral(trimmedTerm)}") .\n`
+      : '';
+    const ontoShortCode = this.ontoShortCode;
 
-    const gravSearch =
+    return (
       'PREFIX knora-api: <http://api.knora.org/ontology/knora-api/v2#>\n' +
-      `PREFIX ${this.ontoShortCode}: <${this.ontoIri}#>\n` +
+      'PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n' +
+      `PREFIX ${ontoShortCode}: <${this.ontoIri}#>\n` +
       'CONSTRUCT {\n' +
       '?mainRes knora-api:isMainResource true .\n' +
       `${constructStatements}\n` +
       '} WHERE {\n' +
       '?mainRes a knora-api:Resource .\n' +
-      `${this._restrictToResourceClassStatement()}\n` +
+      `${this._restrictToResourceClassStatement(resourceClassIri)}\n` +
+      '?mainRes rdfs:label ?label .\n' +
+      `${fulltextTriple}` +
       `${whereClause}\n` +
       '}\n' +
-      `${this._getOrderByString(statements)}\n` +
-      'OFFSET 0';
-
-    return gravSearch;
+      `${this._getOrderByString(statements, orderBy)}\n` +
+      'OFFSET 0'
+    );
   }
 
-  private _buildConstructStatements(statements: StatementElement[]): string {
-    const writer = new GravsearchWriter(statements);
-    return statements.map((_, i) => writer.at(i).constructStatement).join('\n');
-  }
-
-  private _buildWhereClause(statements: StatementElement[]): string {
-    const writer = new GravsearchWriter(statements);
-    return statements.map((_, i) => writer.at(i).whereStatement).join('\n');
-  }
-
-  private _restrictToResourceClassStatement() {
-    return this._searchStateService.currentState.selectedResourceClass?.iri
-      ? `?mainRes a <${this._searchStateService.currentState.selectedResourceClass?.iri}> .`
+  private _restrictToResourceClassStatement(resourceClassIri: string) {
+    return resourceClassIri
+      ? `?mainRes a <${resourceClassIri}> .`
       : this.dataService.classIris
           .map(
             resourceClass =>
@@ -63,14 +71,16 @@ export class GravsearchService {
           .join(' UNION ');
   }
 
-  private _getOrderByString(statements: StatementElement[]): string {
-    const orderByProps: string[] = this._searchStateService.currentState.orderBy
+  private _getOrderByString(statements: StatementElement[], orderBy: OrderByItem[]): string {
+    const orderByProps: string[] = orderBy
       .filter(o => o.orderBy)
       .map(o => {
-        const index = statements.findIndex(stm => stm.id === o.id);
-        return `${RESOURCE_PLACEHOLDER}${index}`;
+        const index = statements.findIndex(stm => stm.selectedPredicate?.iri === o.id);
+        const variable = `${RESOURCE_PLACEHOLDER}${index}`;
+        const fn = o.direction === 'desc' ? 'DESC' : 'ASC';
+        return `${fn}(${variable})`;
       });
 
-    return orderByProps.length ? `ORDER BY ${orderByProps.join(' ')}` : '';
+    return orderByProps.length ? `ORDER BY ${orderByProps.join(' ')}` : 'ORDER BY ASC(?label)';
   }
 }
