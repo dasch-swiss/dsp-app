@@ -49,7 +49,7 @@ import { ResourceClassChipComponent } from './resource-class-chip.component';
           matInput
           type="text"
           [formControl]="fulltextControl"
-          [placeholder]="'pages.search.advancedSearch.fulltextSearch' | translate" />
+          [placeholder]="'pages.search.advancedSearch.fulltextSearchPlaceholder' | translate" />
         <mat-icon matSuffix>search</mat-icon>
       </mat-form-field>
       <div class="chip-bar">

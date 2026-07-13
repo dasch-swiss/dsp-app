@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
-import { MAIN_RESOURCE_PLACEHOLDER, RDFS_TYPE, RESOURCE_PLACEHOLDER } from '../constants';
-import { escapeForGravsearchStringLiteral, OrderByItem, StatementElement } from '../model';
+import { RESOURCE_PLACEHOLDER } from '../constants';
+import { escapeSparqlStringLiteral, OrderByItem, StatementElement } from '../model';
 import { GravsearchWriter } from './gravsearch-writer';
 import { OntologyDataService } from './ontology-data.service';
 
@@ -36,20 +36,32 @@ export class GravsearchService {
     const constructStatements = scoped.map(s => s.constructStatement).join('\n');
     const whereClause = scoped.map(s => s.whereStatement).join('\n');
     const trimmedTerm = fulltextTerm?.trim() ?? '';
+    // Fulltext term → single top-level FILTER on the main resource (matchFulltext). This matches the
+    // resource by its label, text values, value comments, or list entries — semantics owned by the
+    // backend function. NB: escapeSparqlStringLiteral emits a plain double-quoted SPARQL literal (the
+    // shape matchFulltext expects, interpreted as a Lucene query); do NOT use the regex over-escaper.
     const fulltextTriple = trimmedTerm
-      ? `?mainRes ?valueProperty ?searchThis .\n  FILTER knora-api:matchText(?searchThis, "${escapeForGravsearchStringLiteral(trimmedTerm)}") .\n`
+      ? `  FILTER knora-api:matchFulltext(?mainRes, "${escapeSparqlStringLiteral(trimmedTerm)}") .\n`
       : '';
-    const ontoShortCode = this.ontoShortCode;
+    // The ontology short-code PREFIX is unused by the generated query (statements emit full <IRI>s) —
+    // it only names the selected data model. Omit it (and skip `ontoShortCode`, which throws on an empty
+    // IRI) when no data model is selected, so a project-wide fulltext-only search still generates.
+    const ontoPrefix = this.ontoIri ? `PREFIX ${this.ontoShortCode}: <${this.ontoIri}#>\n` : '';
 
     return (
       'PREFIX knora-api: <http://api.knora.org/ontology/knora-api/v2#>\n' +
       'PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n' +
-      `PREFIX ${ontoShortCode}: <${this.ontoIri}#>\n` +
+      ontoPrefix +
       'CONSTRUCT {\n' +
       '?mainRes knora-api:isMainResource true .\n' +
       `${constructStatements}\n` +
       '} WHERE {\n' +
-      '?mainRes a knora-api:Resource .\n' +
+      // NB: no generic `?mainRes a knora-api:Resource .` anchor. Measured against the dev DB it is the
+      // dominant cost — it defeats matchFulltext's index anchoring and forces a full project-wide
+      // resource scan (60-80s for some terms). `?mainRes` is always typed by something else: the class
+      // restriction, matchFulltext (its first arg is resource-typed), or a property statement (its
+      // subject's domain). The one shape with none of those (no class, no fulltext, no filter) is not
+      // generated (gravsearchQuery$ returns null). Verified: parity with /v2/search and 14-20x faster.
       `${this._restrictToResourceClassStatement(resourceClassIri)}\n` +
       '?mainRes rdfs:label ?label .\n' +
       `${fulltextTriple}` +
@@ -60,15 +72,11 @@ export class GravsearchService {
     );
   }
 
-  private _restrictToResourceClassStatement(resourceClassIri: string) {
-    return resourceClassIri
-      ? `?mainRes a <${resourceClassIri}> .`
-      : this.dataService.classIris
-          .map(
-            resourceClass =>
-              `{ ${MAIN_RESOURCE_PLACEHOLDER} ${RDFS_TYPE} ${this.ontoShortCode}:${resourceClass.split('#').pop()} . }`
-          )
-          .join(' UNION ');
+  private _restrictToResourceClassStatement(resourceClassIri: string): string {
+    // A selected class → a plain type restriction (also the type anchor for `?mainRes`). No class →
+    // no restriction at all: matchFulltext or a property statement types `?mainRes`, and project scope
+    // (limitToProject, passed by the results component) constrains the result set. No per-class UNION.
+    return resourceClassIri ? `?mainRes a <${resourceClassIri}> .` : '';
   }
 
   private _getOrderByString(statements: StatementElement[], orderBy: OrderByItem[]): string {

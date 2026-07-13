@@ -144,8 +144,9 @@ export class SearchEndpointV2 extends Endpoint {
    * Performs a Gravsearch query.
    *
    * @param gravsearchQuery the given Gravsearch query.
+   * @param limitToProject if provided, restricts the search to the project with this IRI.
    */
-  doExtendedSearch(gravsearchQuery: string) {
+  doExtendedSearch(gravsearchQuery: string, limitToProject?: string) {
     // TODO: Do not hard-code the URL and http call params, generate this from Knora
     // TODO: check if content-type have to be set to text/plain
 
@@ -154,7 +155,11 @@ export class SearchEndpointV2 extends Endpoint {
     const tempOntologyCache = new OntologyCache(this.knoraApiConfig, this.v2Endpoint);
     const tempListNodeCache = new ListNodeV2Cache(this.v2Endpoint);
 
-    return this.httpPost('/searchextended', gravsearchQuery, 'sparql').pipe(
+    const path = `/searchextended${
+      limitToProject !== undefined ? `?limitToProject=${encodeURIComponent(limitToProject)}` : ''
+    }`;
+
+    return this.httpPost(path, gravsearchQuery, 'sparql').pipe(
       mergeMap(ajaxResponse => {
         // console.log(JSON.stringify(ajaxResponse.response));
         // TODO: @rosenth Adapt context object
@@ -180,11 +185,16 @@ export class SearchEndpointV2 extends Endpoint {
    * Performs a Gravsearch count query.
    *
    * @param gravsearchQuery the given Gravsearch query.
+   * @param limitToProject if provided, restricts the count to the project with this IRI.
    */
-  doExtendedSearchCountQuery(gravsearchQuery: string) {
+  doExtendedSearchCountQuery(gravsearchQuery: string, limitToProject?: string) {
     // TODO: Do not hard-code the URL and http call params, generate this from Knora
 
-    return this.httpPost('/searchextended/count', gravsearchQuery, 'sparql').pipe(
+    const path = `/searchextended/count${
+      limitToProject !== undefined ? `?limitToProject=${encodeURIComponent(limitToProject)}` : ''
+    }`;
+
+    return this.httpPost(path, gravsearchQuery, 'sparql').pipe(
       mergeMap(ajaxResponse => {
         // console.log(JSON.stringify(ajaxResponse.response));
         // TODO: @rosenth Adapt context object

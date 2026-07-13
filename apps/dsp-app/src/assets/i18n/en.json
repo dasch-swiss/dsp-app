@@ -422,7 +422,7 @@
           "sortDescending": "Sorted descending — click for ascending"
         },
         "usePreviousSearch": "Use previous search",
-        "fulltextSearch": "Search in all text fields",
+        "fulltextSearch": "Full-text search",
         "reset": "Reset",
         "addFilter": "Add filter",
         "add": "Add",
@@ -448,7 +448,8 @@
           "uri": "Value must be a URI value.",
           "integer": "Value must be an integer value.",
           "decimal": "Value must be a decimal value."
-        }
+        },
+        "fulltextSearchPlaceholder": "Search…"
       }
     },
     "dataBrowser": {

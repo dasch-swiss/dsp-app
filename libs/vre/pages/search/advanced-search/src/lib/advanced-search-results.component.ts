@@ -4,6 +4,7 @@ import { Title } from '@angular/platform-browser';
 import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { ResourceBrowserComponent } from '@dasch-swiss/vre/pages/data-browser';
+import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
 import { filterNull } from '@dasch-swiss/vre/shared/app-common';
 import { ResourceResultService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { AppProgressIndicatorComponent } from '@dasch-swiss/vre/ui/progress-indicator';
@@ -51,6 +52,7 @@ export class AdvancedSearchResultsComponent implements OnChanges {
   private readonly _titleService = inject(Title);
   private readonly _translateService = inject(TranslateService);
   private readonly _logger = inject(SearchFlowLogger);
+  private readonly _projectPageService = inject(ProjectPageService);
 
   private readonly querySubject = new BehaviorSubject<string | null>(null);
 
@@ -98,14 +100,20 @@ export class AdvancedSearchResultsComponent implements OnChanges {
     let query = this._getQuery(query_);
     query = `${query}OFFSET ${index}`;
     this._logger.searchStart(index);
-    return this._dspApiConnection.v2.search.doExtendedSearch(query);
+    return this._dspApiConnection.v2.search.doExtendedSearch(query, this._projectPageService.currentProject.id);
   }
 
   private _getQuery(query: string): string {
-    return query.substring(0, query.search('OFFSET'));
+    // Strip the trailing paging clause. Use lastIndexOf, not search/indexOf: the fulltext term is now
+    // embedded in `matchFulltext(?mainRes, "…")`, so a term containing the substring "OFFSET" would make
+    // indexOf cut mid-literal and corrupt the query. The real paging clause is always the final "OFFSET".
+    return query.substring(0, query.lastIndexOf('OFFSET'));
   }
 
   private _numberOfAllResults$(query_: string) {
-    return this._dspApiConnection.v2.search.doExtendedSearchCountQuery(`${this._getQuery(query_)}OFFSET 0`);
+    return this._dspApiConnection.v2.search.doExtendedSearchCountQuery(
+      `${this._getQuery(query_)}OFFSET 0`,
+      this._projectPageService.currentProject.id
+    );
   }
 }

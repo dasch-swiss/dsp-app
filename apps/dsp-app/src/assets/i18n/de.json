@@ -422,7 +422,7 @@
           "sortDescending": "Absteigend sortiert — klicken für aufsteigend"
         },
         "usePreviousSearch": "Vorherige Suche verwenden",
-        "fulltextSearch": "In allen Textfeldern suchen",
+        "fulltextSearch": "Volltextsuche",
         "reset": "Zurücksetzen",
         "addFilter": "Filter hinzufügen",
         "add": "Hinzufügen",
@@ -448,7 +448,8 @@
           "uri": "Der Wert muss ein URI-Wert sein.",
           "integer": "Der Wert muss eine Ganzzahl sein.",
           "decimal": "Der Wert muss ein Dezimalwert sein."
-        }
+        },
+        "fulltextSearchPlaceholder": "Suchen…"
       }
     },
     "dataBrowser": {

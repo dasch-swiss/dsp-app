@@ -3,6 +3,7 @@ import { importProvidersFrom } from '@angular/core';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { ReadResource } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
+import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
 import { ResourceResultService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { NEVER, of } from 'rxjs';
@@ -45,6 +46,9 @@ const sharedProviders = [
   provideAnimations(),
   importProvidersFrom(OverlayModule),
   { provide: ResourceResultService, useValue: { pageIndex$: of(0), numberOfResults: 0 } },
+  // The component now reads `currentProject.id` synchronously (to pass limitToProject). The real
+  // root ProjectPageService throws unless setup()/currentProject$ ran, so stub it as the unit test does.
+  { provide: ProjectPageService, useValue: { currentProject: { id: 'http://rdfh.ch/projects/0001' } } },
 ];
 
 export const NoResults: Story = {
