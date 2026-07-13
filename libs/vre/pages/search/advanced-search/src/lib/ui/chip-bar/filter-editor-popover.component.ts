@@ -9,6 +9,7 @@ import {
   ViewEncapsulation,
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { TranslateModule } from '@ngx-translate/core';
 import { StatementElement } from '../../model';
 import { StatementDraftStore } from '../../service/statement-draft.store';
 import { StatementFieldsComponent } from '../statement-builder/statement-fields.component';
@@ -16,13 +17,15 @@ import { StatementFieldsComponent } from '../statement-builder/statement-fields.
 @Component({
   selector: 'app-filter-editor-popover',
   standalone: true,
-  imports: [MatButtonModule, StatementFieldsComponent],
+  imports: [MatButtonModule, StatementFieldsComponent, TranslateModule],
   template: `
     <div class="filter-editor-popover mat-elevation-z4" (keydown.enter)="onEnter($event)">
       <app-statement-fields [statement]="statement" [showErrors]="showErrors()" />
 
       <div class="filter-editor-popover__actions">
-        <button mat-raised-button color="primary" (click)="onConfirmClick()">Add</button>
+        <button mat-raised-button color="primary" (click)="onConfirmClick()">
+          {{ 'pages.search.advancedSearch.add' | translate }}
+        </button>
       </div>
     </div>
   `,

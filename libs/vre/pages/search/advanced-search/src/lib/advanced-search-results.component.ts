@@ -8,6 +8,7 @@ import { filterNull } from '@dasch-swiss/vre/shared/app-common';
 import { ResourceResultService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { AppProgressIndicatorComponent } from '@dasch-swiss/vre/ui/progress-indicator';
 import { CenteredBoxComponent, NoResultsFoundComponent } from '@dasch-swiss/vre/ui/ui';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, catchError, combineLatest, map, of, startWith, switchMap, tap } from 'rxjs';
 import { SearchFlowLogger } from './service/search-flow-logger.service';
 
@@ -19,6 +20,7 @@ import { SearchFlowLogger } from './service/search-flow-logger.service';
     CenteredBoxComponent,
     NoResultsFoundComponent,
     ResourceBrowserComponent,
+    TranslateModule,
   ],
   template: `
     @let resources = resources$ | async;
@@ -29,7 +31,7 @@ import { SearchFlowLogger } from './service/search-flow-logger.service';
     } @else if (resources) {
       @if (resources.length === 0) {
         <app-centered-box>
-          <app-no-results-found [message]="noResultMessage" />
+          <app-no-results-found [message]="'pages.search.advancedSearch.noResultsFound' | translate" />
         </app-centered-box>
       } @else {
         <app-resource-browser
@@ -47,6 +49,7 @@ export class AdvancedSearchResultsComponent implements OnChanges {
   private readonly _dspApiConnection = inject<KnoraApiConnection>(DspApiConnectionToken);
   private readonly _resourceResultService = inject(ResourceResultService);
   private readonly _titleService = inject(Title);
+  private readonly _translateService = inject(TranslateService);
   private readonly _logger = inject(SearchFlowLogger);
 
   private readonly querySubject = new BehaviorSubject<string | null>(null);
@@ -81,10 +84,8 @@ export class AdvancedSearchResultsComponent implements OnChanges {
     })
   );
 
-  readonly noResultMessage = `We couldn't find any resources matching your search criteria. Try adjusting your search parameters.`;
-
   constructor() {
-    this._titleService.setTitle(`Advanced search results`);
+    this._titleService.setTitle(this._translateService.instant('pages.search.advancedSearch.resultsTitle'));
   }
 
   ngOnChanges(changes: SimpleChanges): void {

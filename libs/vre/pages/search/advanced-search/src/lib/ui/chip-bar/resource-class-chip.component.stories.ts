@@ -51,8 +51,8 @@ export const ShowsAllResourceClasses: Story = {
   ],
   play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
-    await step('Button shows "All resource classes"', async () => {
-      await expect(canvas.getByText('All resource classes', { exact: false })).toBeTruthy();
+    await step('Button shows the "all resources" label', async () => {
+      await expect(canvas.getByText('All resources', { exact: false })).toBeTruthy();
     });
   },
 };
@@ -101,8 +101,8 @@ export const ListsAllClasses: Story = {
     await step('Click to open popover', async () => {
       await userEvent.click(canvas.getByRole('button'));
     });
-    await step('"All resource classes" option is present', async () => {
-      await expect(document.body.textContent).toContain('All resource classes');
+    await step('"All resources" option is present', async () => {
+      await expect(document.body.textContent).toContain('All resources');
     });
     await step('Each resource class is shown as an option', async () => {
       const options = document.querySelectorAll('mat-list-option');

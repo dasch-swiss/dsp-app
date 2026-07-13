@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, Input } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { TranslateModule } from '@ngx-translate/core';
 import { IriLabelPair, PropertyObjectType, StatementElement } from '../../model';
 import { StatementDraftStore } from '../../service/statement-draft.store';
 import { ComparisonOperatorComponent } from './assertions/comparison-operator.component';
@@ -29,6 +30,7 @@ import { StringValueComponent } from './object-values/string-value/string-value.
     PredicateSelectComponent,
     ResourceValueComponent,
     StringValueComponent,
+    TranslateModule,
   ],
   template: `
     <div class="statement-fields__row">
@@ -76,7 +78,7 @@ import { StringValueComponent } from './object-values/string-value/string-value.
           class="statement-fields__remove"
           mat-icon-button
           type="button"
-          aria-label="Remove subcriteria"
+          [attr.aria-label]="'pages.search.advancedSearch.tooltips.removeSubcriteria' | translate"
           (click)="draftStore.deleteStatement(statement)">
           <mat-icon>close</mat-icon>
         </button>
@@ -94,7 +96,7 @@ import { StringValueComponent } from './object-values/string-value/string-value.
           type="button"
           (click)="draftStore.addChildStatement(statement)">
           <mat-icon>add</mat-icon>
-          Add subcriteria
+          {{ 'pages.search.advancedSearch.tooltips.addSubCriteria' | translate }}
         </button>
       </div>
     }

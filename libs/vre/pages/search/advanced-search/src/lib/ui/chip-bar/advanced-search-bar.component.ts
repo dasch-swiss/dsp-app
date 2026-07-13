@@ -7,6 +7,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { TranslateModule } from '@ngx-translate/core';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs';
 import { StatementElement } from '../../model';
 import { OntologyDataService } from '../../service/ontology-data.service';
@@ -36,14 +37,19 @@ import { ResourceClassChipComponent } from './resource-class-chip.component';
     OrderByComponent,
     ReactiveFormsModule,
     ResourceClassChipComponent,
+    TranslateModule,
   ],
   template: `
     @if (ontologyLoading$ | async) {
       <mat-progress-bar mode="query" />
     } @else {
       <mat-form-field appearance="outline" style="margin-left: 8px; width: 600px" subscriptSizing="dynamic">
-        <mat-label>Search in all text fields</mat-label>
-        <input matInput type="text" [formControl]="fulltextControl" placeholder="Search in all text fields" />
+        <mat-label>{{ 'pages.search.advancedSearch.fulltextSearch' | translate }}</mat-label>
+        <input
+          matInput
+          type="text"
+          [formControl]="fulltextControl"
+          [placeholder]="'pages.search.advancedSearch.fulltextSearch' | translate" />
         <mat-icon matSuffix>search</mat-icon>
       </mat-form-field>
       <div class="chip-bar">
@@ -67,7 +73,7 @@ import { ResourceClassChipComponent } from './resource-class-chip.component';
         @if (hasActiveState$ | async) {
           <button mat-button color="primary" type="button" (click)="onReset()">
             <mat-icon>restart_alt</mat-icon>
-            Reset
+            {{ 'pages.search.advancedSearch.reset' | translate }}
           </button>
         }
       </div>

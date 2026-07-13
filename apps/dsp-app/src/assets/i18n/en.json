@@ -414,9 +414,41 @@
           "orderByDisabled": "Search cannot be ordered by a URI property or a property that links to a resource.",
           "removeCriteria": "Remove search criteria",
           "switchToHorizontal": "Switch to horizontal layout",
-          "switchToVertical": "Switch to vertical layout"
+          "switchToVertical": "Switch to vertical layout",
+          "clearResourceClass": "Clear resource class",
+          "removeFilter": "Remove filter",
+          "removeSubcriteria": "Remove sub-criteria",
+          "sortAscending": "Sorted ascending — click for descending",
+          "sortDescending": "Sorted descending — click for ascending"
         },
-        "usePreviousSearch": "Use previous search"
+        "usePreviousSearch": "Use previous search",
+        "fulltextSearch": "Search in all text fields",
+        "reset": "Reset",
+        "addFilter": "Add filter",
+        "add": "Add",
+        "operator": "Operator",
+        "noResultsFound": "We couldn't find any resources matching your search criteria. Try adjusting your search parameters.",
+        "resultsTitle": "Advanced search results",
+        "searchForResource": "Search for a resource",
+        "noResourcesFound": "No resources found for \"{{term}}\"",
+        "typeToSearch": "Type at least 3 characters to search",
+        "loadingResources": "Loading resources...",
+        "showingResults": "Showing {{count}} results of {{total}}",
+        "valueLabels": {
+          "label": "Label's value",
+          "text": "Text Value",
+          "boolean": "Value",
+          "uri": "URI Value",
+          "integer": "Integer Value",
+          "decimal": "Decimal Value",
+          "true": "True",
+          "false": "False"
+        },
+        "errors": {
+          "uri": "Value must be a URI value.",
+          "integer": "Value must be an integer value.",
+          "decimal": "Value must be a decimal value."
+        }
       }
     },
     "dataBrowser": {

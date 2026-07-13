@@ -1,28 +1,28 @@
 @switch (valueType) { @case (resourceLabel) {
 <mat-form-field class="width-100-percent" appearance="fill">
-  <mat-label>Label's value</mat-label>
+  <mat-label>{{ 'pages.search.advancedSearch.valueLabels.label' | translate }}</mat-label>
   <input matInput type="text" [formControl]="inputControl" data-cy="label-input" required />
 </mat-form-field>
 } @case (constants.TextValue) {
 <mat-form-field class="width-100-percent" appearance="fill">
-  <mat-label>Text Value</mat-label>
+  <mat-label>{{ 'pages.search.advancedSearch.valueLabels.text' | translate }}</mat-label>
   <input matInput type="text" [formControl]="inputControl" data-cy="text-value-input" required />
 </mat-form-field>
 } @case (constants.BooleanValue) {
 <mat-form-field class="width-100-percent" appearance="fill">
-  <mat-label>Value</mat-label>
+  <mat-label>{{ 'pages.search.advancedSearch.valueLabels.boolean' | translate }}</mat-label>
   <mat-select [formControl]="inputControl" data-cy="value-select" required>
-    <mat-option value="true"> True</mat-option>
-    <mat-option value="false"> False</mat-option>
+    <mat-option value="true"> {{ 'pages.search.advancedSearch.valueLabels.true' | translate }}</mat-option>
+    <mat-option value="false"> {{ 'pages.search.advancedSearch.valueLabels.false' | translate }}</mat-option>
   </mat-select>
 </mat-form-field>
 } @case (constants.UriValue) {
 <mat-form-field class="width-100-percent" appearance="fill">
-  <mat-label>URI Value</mat-label>
+  <mat-label>{{ 'pages.search.advancedSearch.valueLabels.uri' | translate }}</mat-label>
   <input matInput [formControl]="inputControl" [errorStateMatcher]="matcher" data-cy="uri-value-input" required />
   @if (inputControl.hasError('pattern')) {
   <mat-error>
-    <span class="custom-error-message"> Value must be a URI value. </span>
+    <span class="custom-error-message"> {{ 'pages.search.advancedSearch.errors.uri' | translate }} </span>
   </mat-error>
   }
 </mat-form-field>
@@ -30,7 +30,7 @@
 <!-- integer value -->
 @case (constants.IntValue) {
 <mat-form-field class="width-100-percent" appearance="fill">
-  <mat-label>Integer Value</mat-label>
+  <mat-label>{{ 'pages.search.advancedSearch.valueLabels.integer' | translate }}</mat-label>
   <input
     matInput
     type="number"
@@ -40,7 +40,7 @@
     required />
   @if (inputControl.hasError('pattern')) {
   <mat-error>
-    <span class="custom-error-message"> Value must be an integer value. </span>
+    <span class="custom-error-message"> {{ 'pages.search.advancedSearch.errors.integer' | translate }} </span>
   </mat-error>
   }
 </mat-form-field>
@@ -48,7 +48,7 @@
 <!-- decimal value -->
 @case (constants.DecimalValue) {
 <mat-form-field class="width-100-percent" appearance="fill">
-  <mat-label>Decimal Value</mat-label>
+  <mat-label>{{ 'pages.search.advancedSearch.valueLabels.decimal' | translate }}</mat-label>
   <input
     matInput
     type="number"
@@ -58,7 +58,7 @@
     required />
   @if (inputControl.hasError('pattern')) {
   <mat-error>
-    <span class="custom-error-message"> Value must be a decimal value. </span>
+    <span class="custom-error-message"> {{ 'pages.search.advancedSearch.errors.decimal' | translate }} </span>
   </mat-error>
   }
 </mat-form-field>

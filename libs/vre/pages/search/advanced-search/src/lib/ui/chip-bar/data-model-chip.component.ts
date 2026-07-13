@@ -5,6 +5,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
+import { TranslateModule } from '@ngx-translate/core';
 import { map } from 'rxjs';
 import { OntologyDataService } from '../../service/ontology-data.service';
 import { SearchUrlSyncService } from '../../service/search-url-sync.service';
@@ -28,13 +29,16 @@ import { CHIP_POPOVER_POSITIONS } from './chip-bar.helpers';
     MatIconModule,
     MatListModule,
     OverlayModule,
+    TranslateModule,
   ],
   template: `
     <!-- With a single data model there is nothing to switch between, so the picker is hidden entirely
          (the sole ontology is still selected under the hood — this only removes the redundant control). -->
     @if (showChip$ | async) {
       <div style="display: flex; flex-direction: column;">
-        <span style="font-size: 11px; color: rgba(0,0,0,0.6); margin-bottom: 2px;">Data Model</span>
+        <span style="font-size: 11px; color: rgba(0,0,0,0.6); margin-bottom: 2px;">{{
+          'pages.search.advancedSearch.dataModel' | translate
+        }}</span>
         <button mat-stroked-button cdkOverlayOrigin #trigger="cdkOverlayOrigin" (click)="isOpen = !isOpen">
           {{ ontologyLabel$ | async }}
           <mat-icon>arrow_drop_down</mat-icon>

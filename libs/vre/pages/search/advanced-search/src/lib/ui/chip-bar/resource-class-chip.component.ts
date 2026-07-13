@@ -6,6 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { LocalizationService, pickPreferredLanguageString } from '@dasch-swiss/vre/shared/app-helper-services';
+import { TranslateModule } from '@ngx-translate/core';
 import { map } from 'rxjs';
 import { ALL_RESOURCE_CLASSES } from '../../constants';
 import { IriLabelPair } from '../../model';
@@ -26,11 +27,14 @@ import { CHIP_POPOVER_POSITIONS } from './chip-bar.helpers';
     MatIconModule,
     MatListModule,
     OverlayModule,
+    TranslateModule,
   ],
   template: `
     @let selectedIri = selectedClassIri$ | async;
     <div style="display: flex; flex-direction: column;">
-      <span style="font-size: 11px; color: rgba(0,0,0,0.6); margin-bottom: 2px;">Resource Class</span>
+      <span style="font-size: 11px; color: rgba(0,0,0,0.6); margin-bottom: 2px;">{{
+        'pages.search.advancedSearch.resourceClass' | translate
+      }}</span>
       <button
         mat-stroked-button
         cdkOverlayOrigin
@@ -38,11 +42,11 @@ import { CHIP_POPOVER_POSITIONS } from './chip-bar.helpers';
         class="resource-class-chip__button"
         [color]="selectedIri ? 'primary' : undefined"
         (click)="isOpen = !isOpen">
-        {{ classLabel$ | async }}
+        {{ (classLabel$ | async) ?? ('pages.search.advancedSearch.allResourceClasses' | translate) }}
         @if (selectedIri) {
           <mat-icon
             class="resource-class-chip__remove"
-            aria-label="Clear resource class"
+            [attr.aria-label]="'pages.search.advancedSearch.tooltips.clearResourceClass' | translate"
             (click)="$event.stopPropagation(); resetToAll()">
             cancel
           </mat-icon>
@@ -66,7 +70,7 @@ import { CHIP_POPOVER_POSITIONS } from './chip-bar.helpers';
         [hideSingleSelectionIndicator]="true"
         (selectionChange)="onClassSelected($event.options[0]?.value)">
         <mat-list-option [value]="allOption" [selected]="(selectedClassIri$ | async) === ''">
-          All resource classes
+          {{ 'pages.search.advancedSearch.allResourceClasses' | translate }}
         </mat-list-option>
         @for (cls of resourceClasses$ | async; track cls.iri) {
           <mat-list-option [value]="cls" [selected]="cls.iri === (selectedClassIri$ | async)">
@@ -122,12 +126,13 @@ export class ResourceClassChipComponent {
   isOpen = false;
 
   readonly resourceClasses$ = this._dataService.resourceClasses$;
-  // The selected class is URL-derived: read it from searchState$.
+  // The selected class is URL-derived: read it from searchState$. Emits null when no class is
+  // selected; the template renders the translated "all resource classes" label in that case.
   readonly classLabel$ = this._derivation.searchState$.pipe(
     map(state =>
       state.resourceClass?.iri
         ? pickPreferredLanguageString(state.resourceClass.labels, this._localizationService.currentLanguage)
-        : 'All resource classes'
+        : null
     )
   );
   readonly selectedClassIri$ = this._derivation.searchState$.pipe(map(state => state.resourceClass?.iri ?? ''));

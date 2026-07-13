@@ -8,7 +8,10 @@
   [disabled]="!orderByItems || orderByItems.length === 0"
   (click)="isOpen = !isOpen">
   <p class="label-icon-container">
-    <span class="label">Order by{{ activeLabel(orderByItems) ? ': ' + activeLabel(orderByItems) : '' }}</span>
+    <span class="label"
+      >{{ 'pages.search.advancedSearch.orderBy' | translate
+      }}{{ activeLabel(orderByItems) ? ': ' + activeLabel(orderByItems) : '' }}</span
+    >
     @if (activeDirection(orderByItems); as direction) {
     <span class="direction-icon">
       <mat-icon>{{ direction === 'desc' ? 'arrow_downward' : 'arrow_upward' }}</mat-icon>
@@ -36,7 +39,7 @@
       [value]="item"
       [selected]="item.orderBy"
       [disabled]="item.disabled"
-      [matTooltip]="TOOLTIP_TEXT"
+      [matTooltip]="'pages.search.advancedSearch.tooltips.orderByDisabled' | translate"
       [matTooltipDisabled]="!item.disabled">
       <span class="order-by-item">
         <span>{{ label(item.labels) }}</span>
@@ -44,7 +47,12 @@
         <span class="order-by-actions">
           <button
             mat-icon-button
-            [matTooltip]="item.direction === 'desc' ? 'Sorted descending — click for ascending' : 'Sorted ascending — click for descending'"
+            [matTooltip]="
+              (item.direction === 'desc'
+                ? 'pages.search.advancedSearch.tooltips.sortDescending'
+                : 'pages.search.advancedSearch.tooltips.sortAscending'
+              ) | translate
+            "
             (click)="$event.stopPropagation(); toggleDirection(item)">
             <mat-icon>{{ item.direction === 'desc' ? 'arrow_downward' : 'arrow_upward' }}</mat-icon>
           </button>

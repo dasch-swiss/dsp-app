@@ -19,6 +19,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
 import { Constants, KnoraDate } from '@dasch-swiss/dsp-js';
 import { AppDatePickerComponent } from '@dasch-swiss/vre/ui/date-picker';
+import { TranslateModule } from '@ngx-translate/core';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { ResourceLabel } from '../../../../constants';
 
@@ -50,6 +51,7 @@ class ValueErrorStateMatcher implements ErrorStateMatcher {
     MatSelectModule,
     FormsModule,
     ReactiveFormsModule,
+    TranslateModule,
   ],
   templateUrl: './string-value.component.html',
   styleUrl: '../../../../advanced-search.component.scss',

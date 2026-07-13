@@ -7,19 +7,19 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatListModule, MatSelectionListChange } from '@angular/material/list';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { LocalizationService, pickPreferredLanguageString } from '@dasch-swiss/vre/shared/app-helper-services';
+import { TranslateModule } from '@ngx-translate/core';
 import { OrderByItem, OrderDirection } from '../../model';
 import { DerivedSearchStateService } from '../../service/derived-search-state.service';
 import { SearchUrlSyncService } from '../../service/search-url-sync.service';
 
 @Component({
   selector: 'app-order-by',
-  imports: [AsyncPipe, MatButtonModule, MatIconModule, MatListModule, MatTooltipModule, OverlayModule],
+  imports: [AsyncPipe, MatButtonModule, MatIconModule, MatListModule, MatTooltipModule, OverlayModule, TranslateModule],
   templateUrl: './order-by.component.html',
   styleUrls: ['./order-by.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OrderByComponent {
-  readonly TOOLTIP_TEXT = 'Search cannot be ordered by a URI property or a property that links to a resource.';
   private readonly _derivation = inject(DerivedSearchStateService);
   private readonly _urlSync = inject(SearchUrlSyncService);
   private readonly _localizationService = inject(LocalizationService);

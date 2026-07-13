@@ -2,6 +2,7 @@ import { CdkConnectedOverlay, CdkOverlayOrigin, OverlayModule } from '@angular/c
 import { ChangeDetectionStrategy, Component, EventEmitter, inject, Output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { TranslateModule } from '@ngx-translate/core';
 import { StatementElement } from '../../model';
 import { StatementDraftStore } from '../../service/statement-draft.store';
 import { CHIP_POPOVER_POSITIONS } from './chip-bar.helpers';
@@ -17,11 +18,12 @@ import { FilterEditorPopoverComponent } from './filter-editor-popover.component'
     MatButtonModule,
     MatIconModule,
     OverlayModule,
+    TranslateModule,
   ],
   template: `
     <button mat-stroked-button cdkOverlayOrigin #trigger="cdkOverlayOrigin" (click)="onAdd()">
       <mat-icon>add</mat-icon>
-      Add filter
+      {{ 'pages.search.advancedSearch.addFilter' | translate }}
     </button>
 
     @if (pendingStatement) {

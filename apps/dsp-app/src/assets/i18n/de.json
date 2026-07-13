@@ -414,9 +414,41 @@
           "orderByDisabled": "Die Suche kann nicht nach einer URI-Eigenschaft oder einer Eigenschaft, die auf eine Ressource verweist, sortiert werden.",
           "removeCriteria": "Suchkriterium entfernen",
           "switchToHorizontal": "Zu horizontalem Layout wechseln",
-          "switchToVertical": "Zu vertikalem Layout wechseln"
+          "switchToVertical": "Zu vertikalem Layout wechseln",
+          "clearResourceClass": "Ressourcenklasse zurücksetzen",
+          "removeFilter": "Filter entfernen",
+          "removeSubcriteria": "Unterkriterium entfernen",
+          "sortAscending": "Aufsteigend sortiert — klicken für absteigend",
+          "sortDescending": "Absteigend sortiert — klicken für aufsteigend"
         },
-        "usePreviousSearch": "Vorherige Suche verwenden"
+        "usePreviousSearch": "Vorherige Suche verwenden",
+        "fulltextSearch": "In allen Textfeldern suchen",
+        "reset": "Zurücksetzen",
+        "addFilter": "Filter hinzufügen",
+        "add": "Hinzufügen",
+        "operator": "Operator",
+        "noResultsFound": "Wir konnten keine Ressourcen finden, die Ihren Suchkriterien entsprechen. Passen Sie Ihre Suchparameter an.",
+        "resultsTitle": "Ergebnisse der erweiterten Suche",
+        "searchForResource": "Nach einer Ressource suchen",
+        "noResourcesFound": "Keine Ressourcen gefunden für \"{{term}}\"",
+        "typeToSearch": "Geben Sie mindestens 3 Zeichen ein, um zu suchen",
+        "loadingResources": "Ressourcen werden geladen...",
+        "showingResults": "{{count}} von {{total}} Ergebnissen werden angezeigt",
+        "valueLabels": {
+          "label": "Label-Wert",
+          "text": "Textwert",
+          "boolean": "Wert",
+          "uri": "URI-Wert",
+          "integer": "Ganzzahlwert",
+          "decimal": "Dezimalwert",
+          "true": "Wahr",
+          "false": "Falsch"
+        },
+        "errors": {
+          "uri": "Der Wert muss ein URI-Wert sein.",
+          "integer": "Der Wert muss eine Ganzzahl sein.",
+          "decimal": "Der Wert muss ein Dezimalwert sein."
+        }
       }
     },
     "dataBrowser": {

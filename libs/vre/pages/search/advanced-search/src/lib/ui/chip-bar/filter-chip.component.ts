@@ -12,6 +12,7 @@ import {
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { TranslateModule } from '@ngx-translate/core';
 import { StatementElement } from '../../model';
 import { StatementDraftStore } from '../../service/statement-draft.store';
 import { CHIP_POPOVER_POSITIONS } from './chip-bar.helpers';
@@ -29,6 +30,7 @@ import { FilterEditorPopoverComponent } from './filter-editor-popover.component'
     MatButtonModule,
     MatIconModule,
     OverlayModule,
+    TranslateModule,
   ],
   template: `
     <button
@@ -42,7 +44,7 @@ import { FilterEditorPopoverComponent } from './filter-editor-popover.component'
       {{ statement | chipLabel }}
       <mat-icon
         class="filter-chip-button__remove"
-        aria-label="Remove filter"
+        [attr.aria-label]="'pages.search.advancedSearch.tooltips.removeFilter' | translate"
         (click)="$event.stopPropagation(); remove.emit()">
         cancel
       </mat-icon>

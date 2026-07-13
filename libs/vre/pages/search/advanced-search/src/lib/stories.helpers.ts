@@ -1,7 +1,9 @@
+import { importProvidersFrom } from '@angular/core';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 import { UserService } from '@dasch-swiss/vre/core/session';
-import { of } from 'rxjs';
+import { TranslateLoader, TranslateModule, TranslationObject } from '@ngx-translate/core';
+import { Observable, of } from 'rxjs';
 import { IriLabelPair, OrderByItem } from './model';
 import { DerivedSearchStateService } from './service/derived-search-state.service';
 import { OntologyDataService } from './service/ontology-data.service';
@@ -39,9 +41,78 @@ const searchFlowLoggerStub = {
   } as Partial<SearchFlowLogger>,
 };
 
+// Static English translations for Storybook, mirroring the app's en.json `pages.search.advancedSearch`
+// namespace so the `translate` pipe renders the real UI text (not the raw key) in stories and their
+// play() assertions. Keep in sync with apps/dsp-app/src/assets/i18n/en.json.
+const STORY_TRANSLATIONS = {
+  pages: {
+    search: {
+      advancedSearch: {
+        allResourceClasses: 'All resources',
+        dataModel: 'Data model',
+        orderBy: 'Order by',
+        property: 'Property',
+        propertyOfClass: 'Property of {{class}}',
+        resourceClass: 'Resource Class',
+        fulltextSearch: 'Search in all text fields',
+        reset: 'Reset',
+        addFilter: 'Add filter',
+        add: 'Add',
+        operator: 'Operator',
+        noResultsFound:
+          "We couldn't find any resources matching your search criteria. Try adjusting your search parameters.",
+        resultsTitle: 'Advanced search results',
+        searchForResource: 'Search for a resource',
+        noResourcesFound: 'No resources found for "{{term}}"',
+        typeToSearch: 'Type at least 3 characters to search',
+        loadingResources: 'Loading resources...',
+        showingResults: 'Showing {{count}} results of {{total}}',
+        valueLabels: {
+          label: "Label's value",
+          text: 'Text Value',
+          boolean: 'Value',
+          uri: 'URI Value',
+          integer: 'Integer Value',
+          decimal: 'Decimal Value',
+          true: 'True',
+          false: 'False',
+        },
+        errors: {
+          uri: 'Value must be a URI value.',
+          integer: 'Value must be an integer value.',
+          decimal: 'Value must be a decimal value.',
+        },
+        tooltips: {
+          addCriteria: 'Add search criteria',
+          addSubCriteria: 'Add sub-criteria',
+          clearResourceClass: 'Clear resource class',
+          orderByDisabled: 'Search cannot be ordered by a URI property or a property that links to a resource.',
+          removeCriteria: 'Remove search criteria',
+          removeFilter: 'Remove filter',
+          removeSubcriteria: 'Remove sub-criteria',
+          sortAscending: 'Sorted ascending — click for descending',
+          sortDescending: 'Sorted descending — click for ascending',
+        },
+      },
+    },
+  },
+};
+
+class StoryTranslateLoader implements TranslateLoader {
+  getTranslation(): Observable<TranslationObject> {
+    return of(STORY_TRANSLATIONS);
+  }
+}
+
 export const STORY_PROVIDERS = [
   provideAnimations(),
   provideRouter([{ path: '**', redirectTo: '' }]),
+  importProvidersFrom(
+    TranslateModule.forRoot({
+      defaultLanguage: 'en',
+      loader: { provide: TranslateLoader, useClass: StoryTranslateLoader },
+    })
+  ),
   { provide: UserService, useValue: { currentUser: null } as Partial<UserService> },
   searchUrlSyncServiceStub,
   searchFlowLoggerStub,
