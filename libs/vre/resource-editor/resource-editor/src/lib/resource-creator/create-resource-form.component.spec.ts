@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
+import { ProjectDataRightsService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { provideTranslateService, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { CreateResourceFormComponent } from './create-resource-form.component';
@@ -41,6 +42,11 @@ describe('CreateResourceFormComponent', () => {
       providers: [
         FormBuilder,
         { provide: DspApiConnectionToken, useValue: mockDspApiConnection },
+        // The form loads the project's resource-side legal info on init; stub the rights service.
+        {
+          provide: ProjectDataRightsService,
+          useValue: { forProject: jest.fn().mockReturnValue(of({ defaultDataAuthorship: [] })) },
+        },
         provideTranslateService(),
         TranslateService,
       ],

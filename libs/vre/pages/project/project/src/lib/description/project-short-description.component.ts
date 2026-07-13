@@ -4,15 +4,24 @@ import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import { ProjectImageCoverComponent } from '@dasch-swiss/vre/pages/user-settings/user';
+import { ProjectDataRights, ProjectDataRightsService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { ResourceRightsStatementComponent } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe } from '@ngx-translate/core';
-import { tap } from 'rxjs';
+import { Observable, switchMap, tap } from 'rxjs';
 import { ProjectPageService } from '../project-page.service';
 import { LicenseCaptionsMapping } from './license-captions-mapping';
 import { ProjectDescriptionPageComponent } from './project-description-page.component';
 
 @Component({
   selector: 'app-project-short-description',
-  imports: [AsyncPipe, UpperCasePipe, TranslatePipe, MatButton, ProjectImageCoverComponent],
+  imports: [
+    AsyncPipe,
+    UpperCasePipe,
+    TranslatePipe,
+    MatButton,
+    ProjectImageCoverComponent,
+    ResourceRightsStatementComponent,
+  ],
   template: `
     @if (readProject$ | async; as project) {
       <div>
@@ -42,6 +51,20 @@ import { ProjectDescriptionPageComponent } from './project-description-page.comp
       <button mat-stroked-button (click)="readMore()" style="margin: 16px">
         {{ 'pages.project.projectShortDescription.readMore' | translate }}
       </button>
+
+      @if (dataRights$ | async; as rights) {
+        @if (rights.licenseLabel || rights.copyrightHolder) {
+          <div style="border-top: 1px solid #ebebeb; margin: 0 16px; text-align: left">
+            <app-resource-rights-statement
+              [licenseLabel]="rights.licenseLabel"
+              [licenseUrl]="rights.licenseUrl"
+              [copyrightHolder]="rights.copyrightHolder"
+              [showAuthorship]="false"
+              [isAdmin]="false"
+              labelAlign="start" />
+          </div>
+        }
+      }
     }
   `,
 })
@@ -53,10 +76,15 @@ export class ProjectShortDescriptionComponent {
     })
   );
 
+  dataRights$: Observable<ProjectDataRights> = this._projectPageService.currentProject$.pipe(
+    switchMap(project => this._dataRights.fromProject(project))
+  );
+
   constructor(
     private readonly _projectPageService: ProjectPageService,
     private readonly _dialog: MatDialog,
-    private readonly _viewContainerRef: ViewContainerRef
+    private readonly _viewContainerRef: ViewContainerRef,
+    private readonly _dataRights: ProjectDataRightsService
   ) {}
 
   readMore() {
