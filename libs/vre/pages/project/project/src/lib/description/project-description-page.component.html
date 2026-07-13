@@ -41,14 +41,14 @@
 
     <!-- Data-side Resource Rights Statement (project-level). Distinct from the hand-typed caption above. -->
     @if (dataRights$ | async; as rights) {
-      @if (rights.licenseLabel || (hasProjectAdminRights$ | async)) {
+      @if (rights.licenseLabel || rights.copyrightHolder || (hasProjectAdminRights$ | async)) {
         <mat-divider style="margin: 24px 0" />
         <section class="project rights">
           <app-resource-rights-statement
             [licenseLabel]="rights.licenseLabel"
             [licenseUrl]="rights.licenseUrl"
             [copyrightHolder]="rights.copyrightHolder"
-            [defaultResourceAuthorship]="rights.defaultDataAuthorship"
+            [showAuthorship]="false"
             [isAdmin]="(hasProjectAdminRights$ | async) ?? false"
             (editLegalInfo)="goToLegalSettings()" />
         </section>

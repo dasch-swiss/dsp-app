@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { ResourceLegalV2ApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { UserService } from '@dasch-swiss/vre/core/session';
-import { DspResource, filterNull, UserPermissions } from '@dasch-swiss/vre/shared/app-common';
+import { DspResource, UserPermissions } from '@dasch-swiss/vre/shared/app-common';
 import {
   ProjectDataRights,
   ProjectDataRightsService,
@@ -76,8 +76,14 @@ export class ResourceRightsStatementContainerComponent implements OnInit {
       switchMap(projectIri => this._dataRights.forProject(projectIri))
     );
 
-    const isAdmin$ = combineLatest([resource$, this._userService.user$.pipe(filterNull())]).pipe(
-      map(([resource, user]) => UserPermissions.hasProjectAdminRights(user, resource.res.attachedToProject))
+    // The rights statement is public and must render for logged-out users too. Treat "no user" as
+    // "not admin" (emit false) rather than filtering the stream, which would stall viewModel$ and
+    // hide the statement entirely for anonymous visitors.
+    const isAdmin$ = combineLatest([resource$, this._userService.user$]).pipe(
+      map(
+        ([resource, user]) =>
+          user !== null && UserPermissions.hasProjectAdminRights(user, resource.res.attachedToProject)
+      )
     );
 
     this.viewModel$ = combineLatest([resource$, rights$, isAdmin$]).pipe(
