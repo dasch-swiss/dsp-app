@@ -1,8 +1,10 @@
 import { Component } from '@angular/core';
-import { type Meta, type StoryObj } from '@storybook/angular';
+import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { expect } from 'storybook/test';
 import { IriLabelPair, StatementElement } from '../../model';
 import { Operator } from '../../operators.config';
+import { PROPERTY_FORM_MANAGER_STORY_PROVIDERS, STORY_PROVIDERS } from '../../stories.helpers';
 import { toLabels } from '../../util/labels';
 import { ChipLabelPipe } from './chip-label.pipe';
 
@@ -36,9 +38,18 @@ const makeStatement = (overrides: {
   return s;
 };
 
+// The ChipLabelPipe injects LocalizationService (only reads currentLanguage) and StatementDraftStore
+// (for nested subcriteria). The store pulls in DerivedSearchStateService + the URL/logger stubs.
+const baseProviders = [
+  ...STORY_PROVIDERS,
+  { provide: LocalizationService, useValue: { currentLanguage: 'en' } as Partial<LocalizationService> },
+  ...PROPERTY_FORM_MANAGER_STORY_PROVIDERS,
+];
+
 const meta: Meta<ChipLabelPipeHarnessComponent> = {
   title: 'Search / Advanced Search / Search bar / 3. Filter Chip / Chip Label Pipe',
   component: ChipLabelPipeHarnessComponent,
+  decorators: [applicationConfig({ providers: baseProviders })],
 };
 export default meta;
 type Story = StoryObj<ChipLabelPipeHarnessComponent>;
