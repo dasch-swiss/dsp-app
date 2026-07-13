@@ -2,7 +2,7 @@ import { OverlayModule } from '@angular/cdk/overlay';
 import { importProvidersFrom } from '@angular/core';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
-import { expect, fn } from 'storybook/test';
+import { expect, fn, userEvent } from 'storybook/test';
 import { StatementElement } from '../../model';
 import { Operator } from '../../operators.config';
 import { OntologyDataService } from '../../service/ontology-data.service';
@@ -150,14 +150,15 @@ export const HidesValueInputForNotExistsOperator: Story = {
   },
 };
 
-// Dispatch a real, bubbling Enter keydown inside the popover. Angular registers the `(keydown.enter)`
-// handler directly on the `.filter-editor-popover` element, so we dispatch on that element itself: this
-// fires the listener deterministically regardless of which descendant happens to be focusable or whether
-// an intermediate component would stop propagation — while still faithfully modelling "user presses Enter
-// somewhere in the popover". The bubbling flag keeps the event realistic.
-const pressEnterInside = (canvasElement: HTMLElement) => {
-  const container = canvasElement.querySelector('.filter-editor-popover') as HTMLElement;
-  container.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true }));
+// Press Enter from a real, focused element inside the popover. A programmatically-dispatched
+// `KeyboardEvent` is not recognised by Angular's `(keydown.enter)` binding in the real-browser test
+// runner (it only matches genuine, user-agent key events), so we drive it through `userEvent`: focus the
+// Add button — a real focusable element inside `.filter-editor-popover` that does not swallow Enter the
+// way a `mat-select` does — then send a trusted Enter keystroke that bubbles up to the container handler.
+const pressEnterInside = async (canvasElement: HTMLElement) => {
+  const addButton = canvasElement.querySelector('.filter-editor-popover__actions button') as HTMLElement;
+  addButton.focus();
+  await userEvent.keyboard('{Enter}');
 };
 
 export const ConfirmsOnEnterWhenComplete: Story = {
@@ -167,7 +168,7 @@ export const ConfirmsOnEnterWhenComplete: Story = {
   decorators: [applicationConfig({ providers: baseProviders })],
   play: async ({ canvasElement, args, step }) => {
     await step('Press Enter inside the popover', async () => {
-      pressEnterInside(canvasElement);
+      await pressEnterInside(canvasElement);
     });
     await step('filterConfirm is emitted', async () => {
       await expect(args.filterConfirm).toHaveBeenCalled();
@@ -182,7 +183,7 @@ export const DoesNotConfirmOnEnterWhenIncomplete: Story = {
   decorators: [applicationConfig({ providers: baseProviders })],
   play: async ({ canvasElement, args, step }) => {
     await step('Press Enter on the incomplete popover', async () => {
-      pressEnterInside(canvasElement);
+      await pressEnterInside(canvasElement);
     });
     await step('filterConfirm is not emitted', async () => {
       await expect(args.filterConfirm).not.toHaveBeenCalled();
