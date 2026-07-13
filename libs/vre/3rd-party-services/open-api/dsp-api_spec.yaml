@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: DSP-API
-  version: v36.4.0-9-g0edfb4b
+  version: v37.0.0-9-g2237e0f
   summary: DSP-API is part of the DaSCH Service Platform, a repository for the long-term
     preservation and reuse of data in the humanities.
   contact:
@@ -5320,7 +5320,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/ebrTxDYnSpyDZ7-3ePIQtw
+        example: http://rdfh.ch/users/zvUOFurbSP29KwKz1w6CFw
       responses:
         '200':
           description: ''
@@ -5384,7 +5384,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/ebrTxDYnSpyDZ7-3ePIQtw
+        example: http://rdfh.ch/users/zvUOFurbSP29KwKz1w6CFw
       responses:
         '200':
           description: ''
@@ -5448,7 +5448,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/ebrTxDYnSpyDZ7-3ePIQtw
+        example: http://rdfh.ch/users/zvUOFurbSP29KwKz1w6CFw
       responses:
         '200':
           description: ''
@@ -5637,7 +5637,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/ebrTxDYnSpyDZ7-3ePIQtw
+        example: http://rdfh.ch/users/zvUOFurbSP29KwKz1w6CFw
       responses:
         '200':
           description: ''
@@ -5703,7 +5703,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/ebrTxDYnSpyDZ7-3ePIQtw
+        example: http://rdfh.ch/users/zvUOFurbSP29KwKz1w6CFw
       responses:
         '200':
           description: ''
@@ -5907,7 +5907,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/ebrTxDYnSpyDZ7-3ePIQtw
+        example: http://rdfh.ch/users/zvUOFurbSP29KwKz1w6CFw
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -5980,7 +5980,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/ebrTxDYnSpyDZ7-3ePIQtw
+        example: http://rdfh.ch/users/zvUOFurbSP29KwKz1w6CFw
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -6054,7 +6054,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/ebrTxDYnSpyDZ7-3ePIQtw
+        example: http://rdfh.ch/users/zvUOFurbSP29KwKz1w6CFw
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -6127,7 +6127,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/ebrTxDYnSpyDZ7-3ePIQtw
+        example: http://rdfh.ch/users/zvUOFurbSP29KwKz1w6CFw
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -6201,7 +6201,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/ebrTxDYnSpyDZ7-3ePIQtw
+        example: http://rdfh.ch/users/zvUOFurbSP29KwKz1w6CFw
       - name: groupIri
         in: path
         description: The IRI of a group. Must be URL-encoded.
@@ -6274,7 +6274,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/ebrTxDYnSpyDZ7-3ePIQtw
+        example: http://rdfh.ch/users/zvUOFurbSP29KwKz1w6CFw
       - name: groupIri
         in: path
         description: The IRI of a group. Must be URL-encoded.
@@ -6348,7 +6348,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/ebrTxDYnSpyDZ7-3ePIQtw
+        example: http://rdfh.ch/users/zvUOFurbSP29KwKz1w6CFw
       requestBody:
         content:
           application/json:
@@ -6421,7 +6421,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/ebrTxDYnSpyDZ7-3ePIQtw
+        example: http://rdfh.ch/users/zvUOFurbSP29KwKz1w6CFw
       requestBody:
         content:
           application/json:
@@ -6494,7 +6494,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/ebrTxDYnSpyDZ7-3ePIQtw
+        example: http://rdfh.ch/users/zvUOFurbSP29KwKz1w6CFw
       requestBody:
         content:
           application/json:
@@ -6567,7 +6567,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/ebrTxDYnSpyDZ7-3ePIQtw
+        example: http://rdfh.ch/users/zvUOFurbSP29KwKz1w6CFw
       requestBody:
         content:
           application/json:
@@ -6838,7 +6838,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/lists/0001/WnMNhkHERiO6qTQeIb6JwA
+        example: http://rdfh.ch/lists/0001/VGvlN1sZScOwyGdYjaVSww
       - name: allLanguages
         in: query
         description: If true, return rdfs:label and rdfs:comment as JSON-LD arrays
@@ -6966,7 +6966,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/lists/0001/WnMNhkHERiO6qTQeIb6JwA
+        example: http://rdfh.ch/lists/0001/VGvlN1sZScOwyGdYjaVSww
       - name: allLanguages
         in: query
         description: If true, return rdfs:label and rdfs:comment as JSON-LD arrays
@@ -9013,6 +9013,138 @@ paths:
           application/json:
             schema:
               type: string
+        required: true
+      responses:
+        '200':
+          description: ''
+          headers:
+            Content-Type:
+              required: true
+              schema:
+                type: string
+          content:
+            application/ld+json:
+              schema:
+                type: string
+            text/turtle:
+              schema:
+                type: string
+            application/trig:
+              schema:
+                type: string
+            application/rdf+xml:
+              schema:
+                type: string
+            application/n-quads:
+              schema:
+                type: string
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                anyOf:
+                - $ref: '#/components/schemas/OntologyConstraintException'
+                - $ref: '#/components/schemas/DuplicateValueException'
+                - $ref: '#/components/schemas/ValidationException'
+                - $ref: '#/components/schemas/BadRequestException'
+                - $ref: '#/components/schemas/GravsearchException'
+                - $ref: '#/components/schemas/EditConflictException'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadCredentialsException'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenException'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - httpAuth: []
+      - httpAuth1: []
+  /v2/resources/batch:
+    post:
+      tags:
+      - API v2
+      description: 'Fetch one or more resources by IRI, supplied as a JSON body `{"resourceIris":
+        [...]}`. A POST alternative to GET /v2/resources for large IRI sets that would
+        exceed URL-length limits. Between 1 and 100 IRIs may be sent per request (this
+        deployment''s configured limit; exceeding it is a 400). Publicly accessible.
+        Requires appropriate object access permissions on the resources.'
+      operationId: postV2ResourcesBatch
+      parameters:
+      - name: x-knora-accept-schema
+        in: header
+        description: |-
+          The ontology schema to be used for the request.
+          If not specified, the default schema ApiV2Complex will be used.
+        required: false
+        schema:
+          type: string
+      - name: schema
+        in: query
+        description: |-
+          The ontology schema to be used for the request.
+          If not specified, the default schema ApiV2Complex will be used.
+        required: false
+        schema:
+          type: string
+      - name: x-knora-json-ld-rendering
+        in: header
+        description: |-
+          The JSON-LD rendering to be used for the request (flat or hierarchical).
+          If not specified, hierarchical JSON-LD will be used.
+        required: false
+        schema:
+          type: string
+      - name: markup
+        in: query
+        description: The markup rendering to be used for the request (XML or standoff).
+        required: false
+        schema:
+          type: string
+      - name: x-knora-accept-markup
+        in: header
+        description: The markup rendering to be used for the request (XML or standoff).
+        required: false
+        schema:
+          type: string
+      - name: version
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: version date
+        in: query
+        required: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResourcesBatchRequest'
         required: true
       responses:
         '200':
@@ -16089,9 +16221,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/VersionResponse'
               example:
-                webapi: v36.4.0-9-g0edfb4b
-                buildCommit: 0edfb4b05
-                buildTime: '2026-07-03T09:39:21Z'
+                webapi: v37.0.0-9-g2237e0f
+                buildCommit: 2237e0ff3
+                buildTime: '2026-07-12T14:11:40Z'
                 fuseki: 6.1.0-0
                 scala: 3.3.7
                 sipi: v5.0.1
@@ -17952,6 +18084,16 @@ components:
           type: string
         defaultDataAuthorship:
           type: array
+          items:
+            type: string
+    ResourcesBatchRequest:
+      title: ResourcesBatchRequest
+      type: object
+      properties:
+        resourceIris:
+          type: array
+          maxItems: 100
+          minItems: 1
           items:
             type: string
     RestrictedViewResponse:
