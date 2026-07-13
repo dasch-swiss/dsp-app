@@ -65,7 +65,6 @@ import { ResourceClassChipComponent } from './resource-class-chip.component';
         <app-order-by />
 
         @if (hasActiveState$ | async) {
-          <span class="chip-bar__spacer"></span>
           <button mat-button color="primary" type="button" (click)="onReset()">
             <mat-icon>restart_alt</mat-icon>
             Reset

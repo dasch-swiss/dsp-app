@@ -7,8 +7,4 @@
   // input above it. This must be an explicit padding — not a leftover flex gap from an empty leading
   // chip host — so the alignment holds whether or not the data-model chip is rendered.
   padding: 8px 0 8px 8px;
-
-  &__spacer {
-    flex: 1;
-  }
 }
