@@ -36,16 +36,20 @@ export class DerivedSearchStateService {
   }
 
   /**
-   * Ontology-switch reaction. When the URL's `ontology` param names a different ontology than the one
-   * currently loaded, trigger `setOntology` so `resourceClasses$`/predicates re-hydrate and `loading$`
-   * settles. De-duped via `distinctUntilChanged` on the ontology param plus the identity guard, so an
-   * unchanged ontology never reloads. This is the only thing that switches the ontology from the URL.
+   * Ontology-switch reaction. Keeps the loaded ontology in sync with the URL's `ontology` param:
+   *   - a non-empty param names the ontology to load;
+   *   - an empty param (no `ontology` in the URL, e.g. after Reset) falls back to the project default,
+   *     so the Data Model chip reverts instead of staying stuck on a previously chosen ontology.
+   * `setOntology` re-hydrates `resourceClasses$`/predicates and lets `loading$` settle. De-duped via
+   * `distinctUntilChanged` on the param plus an identity guard against the currently-loaded ontology,
+   * so an unchanged target never reloads. This is the only thing that switches the ontology from the URL.
    */
   private _reactToOntologyParam(): void {
     this._urlSync.params$
       .pipe(
         map(params => params.ontology),
         distinctUntilChanged(),
+        map(ontologyIri => ontologyIri || this._ontology.defaultOntologyIri),
         filter(
           (ontologyIri): ontologyIri is string => !!ontologyIri && ontologyIri !== this._ontology.selectedOntology.iri
         ),

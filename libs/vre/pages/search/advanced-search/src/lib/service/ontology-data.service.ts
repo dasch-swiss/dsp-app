@@ -271,6 +271,15 @@ export class OntologyDataService {
     return ontology ? this._toIriLabelPair(ontology.id, toLabels(ontology.label), []) : ALL_RESOURCE_CLASSES;
   }
 
+  /**
+   * IRI of the ontology selected by default — the first one loaded for the project (see `init`). Used
+   * to restore the selection when the URL carries no `ontology` param (e.g. after Reset), keeping the
+   * Data Model chip in sync with the URL rather than stuck on a previously chosen ontology.
+   */
+  get defaultOntologyIri(): string | undefined {
+    return this._ontologies.value[0]?.iri;
+  }
+
   get classIris(): string[] {
     const ontology = this._selectedOntology.value;
     if (!ontology) {

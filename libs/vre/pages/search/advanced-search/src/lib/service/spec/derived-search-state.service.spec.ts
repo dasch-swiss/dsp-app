@@ -189,6 +189,62 @@ describe('DerivedSearchStateService (DEV-6576 Phase 2)', () => {
     });
   });
 
+  describe('_reactToOntologyParam — keeps the loaded ontology in sync with the URL', () => {
+    const DEFAULT_ONTO = 'http://api.stage.dasch.swiss/ontology/0806/default-onto/v2';
+    const OTHER_ONTO = 'http://api.stage.dasch.swiss/ontology/0806/other-onto/v2';
+
+    // Build the service with a settable `selectedOntology` and a `setOntology` spy, plus a controllable
+    // params$, so we can assert exactly which ontology the URL reaction drives.
+    const build = (initialSelectedIri: string) => {
+      TestBed.resetTestingModule();
+      const p$ = new BehaviorSubject<SearchUrlParams>({});
+      let selected = makeIriLabelPair(initialSelectedIri, 'selected');
+      const setOntology = jest.fn((iri: string) => {
+        selected = makeIriLabelPair(iri, 'selected');
+      });
+      const ontologyStub = ontologyStubBase({
+        get selectedOntology() {
+          return selected;
+        },
+        get defaultOntologyIri() {
+          return DEFAULT_ONTO;
+        },
+        setOntology,
+      } as Partial<OntologyDataService>);
+      TestBed.configureTestingModule({
+        providers: [
+          DerivedSearchStateService,
+          GravsearchService,
+          { provide: SearchUrlSyncService, useValue: { ...urlSyncStub, params$: p$ } },
+          { provide: OntologyDataService, useValue: ontologyStub },
+        ],
+      });
+      TestBed.inject(DerivedSearchStateService);
+      return { p$, setOntology };
+    };
+
+    it('switches to the ontology named by a non-empty ontology param', () => {
+      const { p$, setOntology } = build(DEFAULT_ONTO);
+      p$.next({ ontology: OTHER_ONTO });
+      expect(setOntology).toHaveBeenCalledWith(OTHER_ONTO);
+    });
+
+    it('reverts to the default ontology when the ontology param is cleared (Reset)', () => {
+      // Start on a non-default ontology (as after the user picked one), then clear the param — the
+      // reaction must restore the default so the Data Model chip does not stay stuck on the old choice.
+      const { p$, setOntology } = build(OTHER_ONTO);
+      p$.next({ ontology: undefined });
+      expect(setOntology).toHaveBeenCalledWith(DEFAULT_ONTO);
+    });
+
+    it('does not reload when the cleared param already resolves to the loaded ontology', () => {
+      // Already on the default and the param is empty → target === selected, so no redundant reload.
+      const { p$, setOntology } = build(DEFAULT_ONTO);
+      p$.next({ ontology: undefined });
+      expect(setOntology).not.toHaveBeenCalled();
+    });
+  });
+
   // ---------------------------------------------------------------------------
   // P2.5 — gap tests that lock the safety net before the Phase-3 flip (DEV-6576).
   // G2 (loading$ blocking branches) and G3 (byte-identity oracle matrix) fit the
