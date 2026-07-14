@@ -627,6 +627,10 @@
       "text": {
         "title": "Text (csv, txt, xml)"
       },
+      "placeholder": {
+        "title": "Placeholder – asset not yet available",
+        "message": "This resource references a placeholder. The actual file has not been delivered yet."
+      },
       "stillImage": {
         "createAnnotation": "Create Annotation",
         "more": "More",

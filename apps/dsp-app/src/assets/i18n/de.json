@@ -612,6 +612,10 @@
       "text": {
         "title": "Text (csv, txt, xml)"
       },
+      "placeholder": {
+        "title": "Platzhalter – Datei noch nicht verfügbar",
+        "message": "Diese Ressource verweist auf einen Platzhalter. Die eigentliche Datei wurde noch nicht geliefert."
+      },
       "replaceFileDialog": {
         "willBeReplaced": "Diese Datei wird ersetzt."
       },

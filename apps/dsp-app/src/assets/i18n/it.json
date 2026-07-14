@@ -627,6 +627,10 @@
       "text": {
         "title": "Testo (csv, txt, xml)"
       },
+      "placeholder": {
+        "title": "Segnaposto – file non ancora disponibile",
+        "message": "Questa risorsa fa riferimento a un segnaposto. Il file effettivo non è ancora stato fornito."
+      },
       "stillImage": {
         "createAnnotation": "Crea annotazione",
         "more": "Altro",

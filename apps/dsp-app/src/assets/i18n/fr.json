@@ -627,6 +627,10 @@
       "text": {
         "title": "Texte (csv, txt, xml)"
       },
+      "placeholder": {
+        "title": "Espace réservé – fichier pas encore disponible",
+        "message": "Cette ressource référence un espace réservé. Le fichier réel n’a pas encore été livré."
+      },
       "stillImage": {
         "createAnnotation": "Créer une annotation",
         "more": "Plus",
