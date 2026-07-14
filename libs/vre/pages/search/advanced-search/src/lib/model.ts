@@ -1,13 +1,5 @@
 import { Constants, StringLiteralV2 } from '@dasch-swiss/dsp-js';
 import { v4 as uuidv4 } from 'uuid';
-import {
-  RDFS_LABEL,
-  ResourceLabel,
-  MAIN_RESOURCE_PLACEHOLDER,
-  RESOURCE_PLACEHOLDER,
-  VALUE_SUFFIX,
-  RDFS_TYPE,
-} from './constants';
 import { getOperatorsForObjectType, Operator } from './operators.config';
 
 /**
@@ -24,8 +16,38 @@ import { getOperatorsForObjectType, Operator } from './operators.config';
  * quote `"` is not a regex metacharacter, so it only needs to survive the
  * two string layers — three backslashes + quote on the wire.
  */
-function escapeForGravsearchStringLiteral(value: string): string {
+export function escapeForGravsearchStringLiteral(value: string): string {
   return value.replace(/\\/g, '\\\\\\\\').replace(/"/g, '\\\\\\"');
+}
+
+/**
+ * Escape a user-supplied value for embedding inside a plain, double-quoted SPARQL/Gravsearch string
+ * literal (`"…"`) — the value comparison and label FILTER paths, NOT the regex(…) path (use
+ * {@link escapeForGravsearchStringLiteral} there). Escapes backslash, double quote, and the newline/
+ * carriage-return/tab control characters, so a value can never close the literal and inject query
+ * structure. Values reach here from the URL `filters` param, so treat them as untrusted.
+ */
+export function escapeSparqlStringLiteral(value: string): string {
+  return value
+    .replace(/\\/g, '\\\\')
+    .replace(/"/g, '\\"')
+    .replace(/\n/g, '\\n')
+    .replace(/\r/g, '\\r')
+    .replace(/\t/g, '\\t');
+}
+
+/**
+ * Sanitize a user-supplied value for embedding inside a SPARQL IRI reference (`<…>`) — the link- and
+ * list-object comparison paths. A SPARQL IRIREF cannot contain any of `<>"{}|^\`` , backtick, space,
+ * or control characters; percent-encode those so the value can never close the `<…>` and inject
+ * structure. Well-formed IRIs (the normal picker-selected case) pass through unchanged.
+ */
+export function sanitizeSparqlIri(value: string): string {
+  // Illegal in a SPARQL IRIREF: < > " { } | ^ ` \\, plus space and every control char
+  // (0x00-0x20). Percent-encode them so the value can never close the <...> and inject structure.
+  /* eslint-disable-next-line no-control-regex */
+  const illegalIriChars = /[<>"{}|^`\\\u0000-\u0020]/g;
+  return value.replace(illegalIriChars, ch => `%${ch.charCodeAt(0).toString(16).toUpperCase().padStart(2, '0')}`);
 }
 
 export enum PropertyObjectType {
@@ -166,6 +188,15 @@ export class StatementElement {
     return this._selectedObjectNode?.writeValue;
   }
 
+  /**
+   * Human-readable label of the selected object when it is a linked resource (`NodeValue`), e.g. "Rita"
+   * for an author IRI. Undefined for plain string values (which are their own label) and empty selections.
+   * Persisted alongside the IRI in the URL so a rehydrated link filter can show the name, not the IRI.
+   */
+  get selectedObjectLabel(): string | undefined {
+    return this._selectedObjectNode instanceof NodeValue ? this._selectedObjectNode.label : undefined;
+  }
+
   get operators(): Operator[] {
     return this._selectedPredicate ? getOperatorsForObjectType(this._selectedPredicate) : [];
   }
@@ -207,12 +238,6 @@ export class StatementElement {
     return PropertyObjectType.ValueObject;
   }
 
-  clearSelections() {
-    this._selectedPredicate = undefined;
-    this._selectedOperator = undefined;
-    this._selectedObjectNode = undefined;
-  }
-
   get parentId(): string | undefined {
     return this._parentStatement?.id;
   }
@@ -238,13 +263,27 @@ export class StatementElement {
   }
 }
 
+export type OrderDirection = 'asc' | 'desc';
+
 export class OrderByItem {
-  orderBy = false;
   constructor(
-    public id: string,
-    public labels: StringLiteralV2[] = [],
-    public disabled?: boolean
+    public readonly id: string,
+    public readonly labels: StringLiteralV2[] = [],
+    public readonly disabled?: boolean,
+    public readonly orderBy = false,
+    /** Sort direction; only meaningful while `orderBy` is true. Defaults to ascending. */
+    public readonly direction: OrderDirection = 'asc'
   ) {}
+
+  /** Immutable update: returns a new item with the given active flag, preserving id/labels/disabled/direction. */
+  withOrderBy(orderBy: boolean): OrderByItem {
+    return new OrderByItem(this.id, this.labels, this.disabled, orderBy, this.direction);
+  }
+
+  /** Immutable update: returns a new item with the given sort direction, preserving everything else. */
+  withDirection(direction: OrderDirection): OrderByItem {
+    return new OrderByItem(this.id, this.labels, this.disabled, this.orderBy, direction);
+  }
 }
 
 export interface QueryObject {
@@ -256,244 +295,4 @@ export interface SearchFormsState {
   selectedResourceClass: IriLabelPair;
   statementElements: StatementElement[];
   orderBy: OrderByItem[];
-}
-
-export type AdvancedSearchStateSnapshot = SearchFormsState & {
-  selectedOntology: IriLabelPair;
-  dateOfSnapshot: string;
-};
-
-class GravsearchWriterScoped {
-  private _id: string;
-  private _parentId: string | undefined;
-  private _operator;
-  private _objectType: string | undefined;
-  private _selectedValue: string | undefined;
-  private _selectedPredicate: string;
-
-  constructor(
-    private _statements: StatementElement[],
-    private _index: number
-  ) {
-    const currentStatement = this._statements[this._index];
-    this._id = currentStatement.id;
-    this._parentId = currentStatement.parentId;
-    this._operator = currentStatement.selectedOperator;
-    this._selectedPredicate = currentStatement.selectedPredicate!.iri;
-    this._objectType = currentStatement.selectedPredicate?.objectValueType;
-    this._selectedValue = currentStatement.selectedObjectWriteValue;
-  }
-
-  get isKnoraValueType(): boolean {
-    return !!this._objectType && this._objectType.includes(Constants.KnoraApiV2);
-  }
-
-  get isLinkValueType(): boolean {
-    return !this._objectType?.includes(Constants.KnoraApiV2) && this._objectType !== ResourceLabel;
-  }
-
-  get hasChildStatements(): boolean {
-    return this._statements.some(stm => stm.parentId === this._id);
-  }
-
-  get subject(): string {
-    if (!this._parentId) {
-      return MAIN_RESOURCE_PLACEHOLDER;
-    } // for child statements
-    const subjectId = this._parentId || this._id;
-    const subjectIndex = this._statements.findIndex(stm => stm.id === subjectId);
-    return `${RESOURCE_PLACEHOLDER}${subjectIndex}`;
-  }
-
-  get predicate() {
-    return this._selectedPredicate === RDFS_LABEL ? RDFS_LABEL : `<${this._selectedPredicate}>`;
-  }
-
-  get objectPlaceHolder(): string {
-    return `${RESOURCE_PLACEHOLDER}${this._index}`;
-  }
-
-  get objectValue(): string {
-    return `<${this._selectedValue}>`;
-  }
-
-  get objectProjection(): string {
-    return `${this.subject} ${this.predicate} ${this.objectPlaceHolder} .\n`;
-  }
-
-  get valueProjection(): string {
-    return this._objectType === Constants.DateValue
-      ? ''
-      : `${this.objectPlaceHolder} <${this.valueAsValueIri}> ${this.objectPlaceHolder}${VALUE_SUFFIX} .\n`;
-  }
-
-  get constructStatement(): string {
-    return this._objectType !== ResourceLabel && this._operator !== Operator.IsLike ? this.objectProjection : '';
-  }
-
-  get whereStatement(): string {
-    let statement = this.objectProjection;
-    if (this._objectType === ResourceLabel) {
-      statement += this._whereStatementForLabelComparison();
-    } else if (this._objectType === Constants.ListValue) {
-      statement += this._getWhereStatementForListObjectComparison();
-    } else if (this.isKnoraValueType) {
-      statement += this._whereStatementForValueComparison();
-    } else if (this.isLinkValueType) {
-      statement += this._getWhereStatementForLinkObjectComparison();
-    }
-    return this._operator === Operator.NotExists ? `FILTER NOT EXISTS { \n${statement}\n}\n` : `${statement}\n`;
-  }
-
-  private _whereStatementForValueComparison(): string {
-    let whereStm = '';
-    if (this._operator !== Operator.Exists && this._operator !== Operator.NotExists) {
-      whereStm += this.valueProjection;
-      whereStm += this._operator !== Operator.Matches ? this.valueFilterStatement : this.valueMatchStatement;
-    }
-    return whereStm;
-  }
-
-  private _getWhereStatementForLinkObjectComparison(): string {
-    let statement = '';
-    if (this._operator === Operator.Equals) {
-      statement += `${this.subject} ${this.predicate} ${this.objectValue} .\n`;
-    }
-    if (this._operator === Operator.NotEquals) {
-      statement += `FILTER NOT EXISTS { ${this.subject} ${this.predicate} ${this.objectValue} . } \n`;
-    }
-
-    if (this._operator === Operator.Matches && !this.hasChildStatements) {
-      statement += `${this.objectPlaceHolder} ${RDFS_TYPE} ${this.objectValue} .\n`;
-    }
-
-    return statement;
-  }
-
-  get valueAsValueIri(): string | undefined {
-    switch (this._objectType) {
-      case Constants.IntValue:
-        return Constants.IntValueAsInt;
-      case Constants.TextValue:
-        return Constants.ValueAsString;
-      case Constants.DateValue:
-        return 'dateValueAsSimpleDate';
-      case Constants.DecimalValue:
-        return Constants.DecimalValueAsDecimal;
-      case Constants.UriValue:
-        return Constants.UriValueAsUri;
-      case Constants.BooleanValue:
-        return Constants.BooleanValueAsBoolean;
-      default:
-        return undefined;
-    }
-  }
-
-  private _whereStatementForLabelComparison(): string {
-    switch (this._operator) {
-      case Operator.Equals:
-        return `FILTER (${this.objectPlaceHolder} = "${this._selectedValue}") .\n`;
-      case Operator.NotEquals:
-        return `FILTER (${this.objectPlaceHolder} != "${this._selectedValue}") .\n`;
-      case Operator.Matches:
-        return `FILTER knora-api:matchLabel(${MAIN_RESOURCE_PLACEHOLDER}, "${this._selectedValue}") .\n`;
-      case Operator.IsLike: {
-        const pattern = escapeForGravsearchStringLiteral(this._selectedValue ?? '');
-        return `FILTER regex(${this.objectPlaceHolder}, "${pattern}", "i") .\n`;
-      }
-      default:
-        return '';
-    }
-  }
-
-  private _getWhereStatementForListObjectComparison(): string {
-    let whereStm = '';
-
-    if (this._operator === Operator.NotEquals) {
-      // This is how the api solves list value not equals
-      whereStm += `FILTER NOT EXISTS { ${this.objectPlaceHolder} <${this.valueTypeIri}> <${this._selectedValue}> . }`;
-    }
-    if (this._operator === Operator.Equals || this._operator === Operator.Matches) {
-      whereStm += `${this.objectPlaceHolder} <${this.valueTypeIri}> <${this._selectedValue}> .\n`;
-    }
-    return whereStm;
-  }
-
-  get valueFilterStatement(): string {
-    const object =
-      this._objectType === Constants.DateValue
-        ? `knora-api:toSimpleDate(${this.objectPlaceHolder})`
-        : `${this.objectPlaceHolder}${VALUE_SUFFIX}`;
-    if (this._operator === Operator.IsLike && this._objectType === Constants.TextValue) {
-      const pattern = escapeForGravsearchStringLiteral(this._selectedValue ?? '');
-      const regexLiteral = `"${pattern}"^^<${this.valueTypeIri}>`;
-      return `FILTER regex(${object}, ${regexLiteral}, "i") .\n`;
-    }
-    return `FILTER (${object} ${this.operatorSymbol} ${this.typedValueLiteral} ) .\n`;
-  }
-
-  get valueMatchStatement(): string {
-    return `FILTER knora-api:matchText(${this.objectPlaceHolder}, ${this.typedValueLiteral}) .\n`;
-  }
-
-  get typedValueLiteral(): string {
-    return `"${this._selectedValue}"^^<${this.valueTypeIri}>`;
-  }
-
-  get operatorSymbol(): string {
-    switch (this._operator) {
-      case Operator.Equals:
-        return '=';
-      case Operator.NotEquals:
-        return '!=';
-      case Operator.GreaterThan:
-        return '>';
-      case Operator.GreaterThanEquals:
-        return '>=';
-      case Operator.LessThan:
-        return '<';
-      case Operator.LessThanEquals:
-        return '<=';
-      case Operator.Exists:
-        return 'E';
-      case Operator.NotExists:
-        return '!E';
-      case Operator.IsLike:
-        return 'regex';
-      case Operator.Matches:
-        return Constants.MatchText;
-      default:
-        return '';
-    }
-  }
-
-  get valueTypeIri(): string | undefined {
-    switch (this._objectType) {
-      case Constants.TextValue:
-      case `${Constants.KnoraApiV2}#StringValue`:
-        return Constants.XsdString;
-      case Constants.IntValue:
-        return Constants.XsdInteger;
-      case Constants.DateValue:
-        return `http://api.knora.org/ontology/knora-api/simple/v2${Constants.HashDelimiter}Date`;
-      case Constants.DecimalValue:
-        return Constants.XsdDecimal;
-      case Constants.UriValue:
-        return Constants.XsdAnyUri;
-      case Constants.BooleanValue:
-        return Constants.XsdBoolean;
-      case Constants.ListValue:
-        return Constants.ListValueAsListNode;
-      default:
-        return '';
-    }
-  }
-}
-
-export class GravsearchWriter {
-  constructor(private _statements: StatementElement[]) {}
-
-  at(index: number): GravsearchWriterScoped {
-    return new GravsearchWriterScoped(this._statements, index);
-  }
 }

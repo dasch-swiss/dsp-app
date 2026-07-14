@@ -1,0 +1,10 @@
+.chip-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 8px;
+  // Left padding matches the fulltext input's `margin-left: 8px` so the first chip lines up with the
+  // input above it. This must be an explicit padding — not a leftover flex gap from an empty leading
+  // chip host — so the alignment holds whether or not the data-model chip is rendered.
+  padding: 8px 0 8px 8px;
+}

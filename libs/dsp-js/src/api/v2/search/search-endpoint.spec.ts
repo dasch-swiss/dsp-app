@@ -399,6 +399,34 @@ describe('SearchEndpoint', () => {
       );
     });
 
+    it('should append limitToProject to the extended search URL when provided', done => {
+      const gravsearchQuery = `
+                PREFIX knora-api: <http://api.knora.org/ontology/knora-api/v2#>
+                CONSTRUCT {
+                    ?mainRes knora-api:isMainResource true .
+                } WHERE {
+                    ?mainRes a knora-api:Resource .
+                }
+                OFFSET 0
+            `;
+
+      const resource = require('../../../../test/data/api/v2/resources/things.json');
+
+      ajaxMock.setMockResponse(resource);
+
+      knoraApiConnection.v2.search
+        .doExtendedSearch(gravsearchQuery, 'http://rdfh.ch/projects/0001')
+        .subscribe((response: ReadResourceSequence) => {
+          const request = ajaxMock.getLastRequest();
+
+          expect(request?.url).toBe(
+            'http://0.0.0.0:3333/v2/searchextended?limitToProject=http%3A%2F%2Frdfh.ch%2Fprojects%2F0001'
+          );
+
+          done();
+        });
+    });
+
     it('should perform an extended search count query', done => {
       const gravsearchQuery = `
                 PREFIX knora-api: <http://api.knora.org/ontology/knora-api/v2#>
@@ -434,6 +462,34 @@ describe('SearchEndpoint', () => {
           expect(request?.headers?.['Content-Type']).toEqual('application/sparql-query; charset=utf-8');
 
           expect(request?.body).toEqual(gravsearchQuery);
+
+          done();
+        });
+    });
+
+    it('should append limitToProject to the extended search count URL when provided', done => {
+      const gravsearchQuery = `
+                PREFIX knora-api: <http://api.knora.org/ontology/knora-api/v2#>
+                CONSTRUCT {
+                    ?mainRes knora-api:isMainResource true .
+                } WHERE {
+                    ?mainRes a knora-api:Resource .
+                }
+                OFFSET 0
+            `;
+
+      const resource = require('../../../../test/data/api/v2/search/count-query-result.json');
+
+      ajaxMock.setMockResponse(resource);
+
+      knoraApiConnection.v2.search
+        .doExtendedSearchCountQuery(gravsearchQuery, 'http://rdfh.ch/projects/0001')
+        .subscribe((response: CountQueryResponse) => {
+          const request = ajaxMock.getLastRequest();
+
+          expect(request?.url).toBe(
+            'http://0.0.0.0:3333/v2/searchextended/count?limitToProject=http%3A%2F%2Frdfh.ch%2Fprojects%2F0001'
+          );
 
           done();
         });

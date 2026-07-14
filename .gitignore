@@ -76,3 +76,6 @@ libs/vre/3rd-party-services/open-api/src/generated/
 
 # Claude Code
 .claude/worktrees/
+
+# ad-hoc E2E driver scripts (scratch)
+.drive-e2e*.mjs

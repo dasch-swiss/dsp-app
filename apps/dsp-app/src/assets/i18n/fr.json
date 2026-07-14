@@ -399,6 +399,7 @@
       },
       "advancedSearch": {
         "allResourceClasses": "Toutes les ressources",
+        "switchToFulltextSearch": "Passer à la recherche plein texte",
         "dataModel": "Modèle de données",
         "orderBy": "Trier par",
         "property": "Propriété",
@@ -413,9 +414,42 @@
           "orderByDisabled": "La recherche ne peut pas être triée par une propriété URI ou une propriété qui renvoie à une ressource.",
           "removeCriteria": "Supprimer le critère de recherche",
           "switchToHorizontal": "Passer à la disposition horizontale",
-          "switchToVertical": "Passer à la disposition verticale"
+          "switchToVertical": "Passer à la disposition verticale",
+          "clearResourceClass": "Effacer la classe de ressource",
+          "removeFilter": "Supprimer le filtre",
+          "removeSubcriteria": "Supprimer le sous-critère",
+          "sortAscending": "Trié par ordre croissant — cliquer pour décroissant",
+          "sortDescending": "Trié par ordre décroissant — cliquer pour croissant"
         },
-        "usePreviousSearch": "Utiliser la recherche précédente"
+        "usePreviousSearch": "Utiliser la recherche précédente",
+        "fulltextSearch": "Recherche plein texte",
+        "reset": "Réinitialiser",
+        "addFilter": "Ajouter un filtre",
+        "add": "Ajouter",
+        "operator": "Opérateur",
+        "noResultsFound": "Nous n'avons trouvé aucune ressource correspondant à vos critères de recherche. Essayez d'ajuster vos paramètres de recherche.",
+        "resultsTitle": "Résultats de la recherche avancée",
+        "searchForResource": "Rechercher une ressource",
+        "noResourcesFound": "Aucune ressource trouvée pour « {{term}} »",
+        "typeToSearch": "Saisissez au moins 3 caractères pour rechercher",
+        "loadingResources": "Chargement des ressources...",
+        "showingResults": "Affichage de {{count}} résultats sur {{total}}",
+        "valueLabels": {
+          "label": "Valeur du libellé",
+          "text": "Valeur textuelle",
+          "boolean": "Valeur",
+          "uri": "Valeur URI",
+          "integer": "Valeur entière",
+          "decimal": "Valeur décimale",
+          "true": "Vrai",
+          "false": "Faux"
+        },
+        "errors": {
+          "uri": "La valeur doit être une valeur URI.",
+          "integer": "La valeur doit être un nombre entier.",
+          "decimal": "La valeur doit être une valeur décimale."
+        },
+        "fulltextSearchPlaceholder": "Rechercher…"
       }
     },
     "dataBrowser": {
@@ -437,7 +471,6 @@
         "resourcesMustBeSameProject": "Les ressources doivent appartenir au même projet"
       },
       "resourcesList": {
-        "backToSearchForm": "Retour au formulaire de recherche",
         "resultsCount": "{{count}} résultats"
       },
       "resourcesListFetcher": {

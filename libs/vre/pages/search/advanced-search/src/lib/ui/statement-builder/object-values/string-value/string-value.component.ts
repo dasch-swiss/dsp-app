@@ -19,6 +19,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
 import { Constants, KnoraDate } from '@dasch-swiss/dsp-js';
 import { AppDatePickerComponent } from '@dasch-swiss/vre/ui/date-picker';
+import { TranslateModule } from '@ngx-translate/core';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { ResourceLabel } from '../../../../constants';
 
@@ -50,6 +51,7 @@ class ValueErrorStateMatcher implements ErrorStateMatcher {
     MatSelectModule,
     FormsModule,
     ReactiveFormsModule,
+    TranslateModule,
   ],
   templateUrl: './string-value.component.html',
   styleUrl: '../../../../advanced-search.component.scss',
@@ -59,6 +61,7 @@ export class StringValueComponent implements OnInit, OnChanges, AfterViewInit {
 
   @Input({ required: true }) valueType!: string;
   @Input() value?: string;
+  @Input() showError = false;
 
   @Output() emitValueChanged = new EventEmitter<string>();
 
@@ -83,6 +86,9 @@ export class StringValueComponent implements OnInit, OnChanges, AfterViewInit {
   ngOnChanges(changes: SimpleChanges) {
     if (changes['value'] && !changes['value'].firstChange) {
       this._setValue();
+    }
+    if (changes['showError']?.currentValue) {
+      this.inputControl.markAsTouched();
     }
   }
 
