@@ -9,6 +9,16 @@ import { TranslatePipe } from '@ngx-translate/core';
     [icon]="'hourglass_empty'"
     [title]="'resourceEditor.representations.placeholder.title' | translate"
     [message]="'resourceEditor.representations.placeholder.message' | translate"
-    style="display: block; padding: 16px" />`,
+    [color]="'white'"
+    style="padding: 48px" />`,
+  styles: [
+    `
+      :host {
+        display: block;
+        background: #ff2222;
+        border-radius: 16px;
+      }
+    `,
+  ],
 })
 export class RepresentationPlaceholderComponent {}
