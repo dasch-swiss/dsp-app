@@ -21,6 +21,9 @@ export class RepresentationService {
   ) {}
 
   getFileInfo(url: string) {
+    // TEMP DEBUG (DEV-6568): remove after confirming the real placeholder payload.
+    // eslint-disable-next-line no-console
+    console.warn('[DEV-6568] (9) getFileInfo called with fileUrl =', JSON.stringify(url));
     const pathToJson = `${url.substring(0, url.lastIndexOf('/'))}/knora.json`;
     return this._http.get<{ originalFilename?: string }>(pathToJson, { withCredentials: true });
   }

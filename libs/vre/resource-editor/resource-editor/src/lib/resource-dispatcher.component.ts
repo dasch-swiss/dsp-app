@@ -112,6 +112,13 @@ export class ResourceDispatcherComponent implements OnChanges, OnDestroy {
     this.compoundCount = 0;
 
     const type = getResourceType(this.resource.res);
+    // TEMP DEBUG (DEV-6568): which resource component will render.
+    // eslint-disable-next-line no-console
+    console.warn(
+      `[DEV-6568] (6) dispatcher resourceId=${JSON.stringify(this.resource.res.id)} classifiedType=${JSON.stringify(
+        type
+      )}`
+    );
     if (type !== null) {
       this.resourceType = type;
       return;
