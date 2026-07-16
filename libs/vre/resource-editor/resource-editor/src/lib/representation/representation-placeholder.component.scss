@@ -1,0 +1,7 @@
+@use '../../../../../../../apps/dsp-app/src/styles/config' as *;
+
+:host {
+  display: block;
+  background: $red_800;
+  border-radius: 16px;
+}

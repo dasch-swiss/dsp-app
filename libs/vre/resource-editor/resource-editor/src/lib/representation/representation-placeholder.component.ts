@@ -11,14 +11,6 @@ import { TranslatePipe } from '@ngx-translate/core';
     [message]="'resourceEditor.representations.placeholder.message' | translate"
     [color]="'white'"
     style="padding: 48px" />`,
-  styles: [
-    `
-      :host {
-        display: block;
-        background: #ff2222;
-        border-radius: 16px;
-      }
-    `,
-  ],
+  styleUrl: './representation-placeholder.component.scss',
 })
 export class RepresentationPlaceholderComponent {}
