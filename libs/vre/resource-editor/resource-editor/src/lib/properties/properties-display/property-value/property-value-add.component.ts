@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Inject, inject, Output } from '@angular/core';
-import { ApiResponseError, CreateValue, KnoraApiConnection, UpdateResource } from '@dasch-swiss/dsp-js';
+import { ApiResponseError, Constants, CreateValue, KnoraApiConnection, UpdateResource } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { TranslateService } from '@ngx-translate/core';
@@ -64,6 +64,12 @@ export class PropertyValueAddComponent {
         },
         error: e => {
           if (e instanceof ApiResponseError && e.status === 400) {
+            // RegionPreviewValue: surface the real API rejection (e.g. "not a Region") via the global
+            // AppErrorHandler, which extracts the DSP BadRequestException message. Other value types keep
+            // the generic "value already exists" message.
+            if (this.propertyValueService.propertyDefinition.objectType === Constants.RegionPreviewValue) {
+              throw e;
+            }
             this._notification.openSnackBar(
               this._translateService.instant('resourceEditor.resourceProperties.valueAlreadyExists')
             );
