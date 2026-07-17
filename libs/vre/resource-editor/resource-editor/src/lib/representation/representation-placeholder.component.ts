@@ -9,8 +9,7 @@ import { TranslatePipe } from '@ngx-translate/core';
     [icon]="'hourglass_empty'"
     [title]="'resourceEditor.representations.placeholder.title' | translate"
     [message]="'resourceEditor.representations.placeholder.message' | translate"
-    [color]="'white'"
-    style="padding: 48px" />`,
+    [color]="'white'" />`,
   styleUrl: './representation-placeholder.component.scss',
 })
 export class RepresentationPlaceholderComponent {}
