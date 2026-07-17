@@ -585,7 +585,7 @@ export namespace ResourcesConversionUtil {
         rp.regionIri = valueJsonld[Constants.IsRegionPreviewOf]?.['@id'] ?? '';
         const fullImg = valueJsonld[Constants.HasPreviewFullImage];
         if (fullImg) {
-          rp.fullImageIri = fullImg['@id'];
+          rp.fullImageIri = fullImg['@id'] ?? '';
           rp.fullImageLabel = fullImg[Constants.Label] ?? ''; // Constants.Label = full IRI rdf-schema#label
         }
         rp.strval = rp.fullImageLabel || rp.regionIri; // human-readable fallback, like the LinkValue case
