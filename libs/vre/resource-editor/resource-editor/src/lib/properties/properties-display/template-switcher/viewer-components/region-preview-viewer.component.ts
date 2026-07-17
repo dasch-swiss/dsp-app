@@ -45,6 +45,7 @@ import { ResourceFetcherService } from '../../../../representation/resource-fetc
                 @if (hasBox) {
                   <div
                     class="highlight"
+                    [style.border-color]="value.color || '#d32f2f'"
                     [style.left.%]="value.highlightBoxX"
                     [style.top.%]="value.highlightBoxY"
                     [style.width.%]="value.highlightBoxW"

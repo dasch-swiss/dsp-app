@@ -15,6 +15,7 @@ const fullValue = () =>
     highlightBoxY: 20,
     highlightBoxW: 30,
     highlightBoxH: 40,
+    color: '#00aa00',
     fullImageIri: 'http://rdfh.ch/0001/img',
     fullImageLabel: 'Source page 42',
     copyrightHolder: 'DaSCH',
@@ -65,6 +66,16 @@ describe('RegionPreviewViewerComponent', () => {
     expect(box.style.top).toEqual('20%');
     expect(box.style.width).toEqual('30%');
     expect(box.style.height).toEqual('40%');
+    // the highlight is tinted with the region's served colour (jsdom normalizes the hex to rgb)
+    expect(box.style.borderColor).toEqual('rgb(0, 170, 0)');
+  });
+
+  it('falls back to the default red highlight when the region has no served colour', () => {
+    setValue({ ...fullValue(), color: null } as unknown as ReadRegionPreviewValue);
+    const el: HTMLElement = fixture.nativeElement;
+
+    const box = el.querySelector('.highlight') as HTMLElement;
+    expect(box.style.borderColor).toEqual('rgb(211, 47, 47)');
   });
 
   it('shows the caption + navigate link and the legal footer', () => {
