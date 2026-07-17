@@ -838,6 +838,11 @@
         "label": "Lieu"
       },
       "example": "p.ex."
+    },
+    "regionPreview": {
+      "cannotDisplay": "Cet aperçu de région ne peut pas être affiché.",
+      "iriInputLabel": "IRI de la région",
+      "notAValidIri": "La ressource fournie n'est pas un IRI valide."
     }
   },
   "ui": {
