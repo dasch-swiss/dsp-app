@@ -111,6 +111,13 @@ The main application is **DSP-APP** - a user interface for the Swiss National Da
 - Only fails on meaningful changes (endpoints, schemas, parameters)
 - Script supports `--verbose` flag for detailed diff output
 
+**Deploy coupling — when a red check is expected:** the sync check compares the vendored spec
+against the **live dev API** (`https://api.dev.dasch.swiss/api/docs/docs.yaml`), not against a
+dsp-api branch. A PR that consumes dsp-api changes which are merged but **not yet deployed to dev**
+will therefore fail `check-openapi-sync` (and dev-server E2E) **by design** until the API deploy
+lands. Do not "fix" the spec to silence it. Sequence for stacked cross-repo changes:
+merge the dsp-api PR → wait for the dev deploy → run `npm run update-openapi` → CI turns green.
+
 ### Library Development
 - `nx run [library-name]:test` - Test specific library
 - `nx run [library-name]:lint` - Lint specific library
@@ -143,6 +150,11 @@ The `libs/vre/` directory follows domain-driven design with clear separation:
 - **resource-editor/** - Resource editing (properties, representations, forms) 
 - **shared/** - Common utilities and services
 - **ui/** - Reusable UI components
+
+**Layer ownership rules:**
+- Services that call the DSP-API over HTTP belong in `libs/vre/3rd-party-services/api` — not in `shared/` or inline in components. Extract inline HTTP calls into a dedicated `*ApiService` there (precedent: `ResourceLegalV2ApiService`, `LegalInfoApiService`).
+- Per-project caching of API data goes into a helper service (precedent: `ProjectDataRightsService` in `shared/app-helper-services`), not into each consuming component.
+- When moving a file between libs, update the barrel `index.ts` exports of both libs — imports go through `@dasch-swiss/vre/*` aliases, so a missed barrel export breaks consumers at build time.
 
 ### Key Patterns
 - **exposing exported files** via `*.index.ts` files
@@ -195,6 +207,11 @@ Multiple environment configurations available:
 - `argTypes` must include a `description` for every `@Input()` and `@Output()`
 - Run Storybook locally: `nx run vre-ui-ui:storybook`
 - Run interaction tests: `nx run vre-ui-ui:test-storybook`
+- **Stories that render a real container break when its DI changes.** Some stories mount the
+  actual container component (others mock it) — adding a service injection to a container breaks
+  exactly those stories, not the mocked ones. When you add a dependency to a component that
+  appears in stories, check which stories render it for real and stub the new providers there
+  (e.g. `provideRouter([])`, service stubs).
 
 ### TypeScript Configuration
 - **Target:** ES2022 with ES2020 modules
@@ -336,6 +353,18 @@ DSP-JS `Constants` are extensively used throughout the codebase:
 )
 ```
 
+### JSON-LD Gotchas (custom v2 endpoints)
+
+- **Single values arrive as scalars, not arrays.** JSON-LD compaction emits
+  `"prop": "value"` for one value and `"prop": ["a", "b"]` for several. A model field typed
+  `string[]` must use a coercing converter — do not assume an array. Reuse the existing
+  converters in `libs/dsp-js/src/models/v2/custom-converters/`
+  (e.g. `UnionStringArrayOfStringsConverter`, `StringOrArrayToArrayConverter`) instead of writing
+  ad-hoc checks.
+- **Set the Content-Type explicitly.** Requests to custom v2 endpoints must send
+  `Content-Type: application/ld+json` — Angular's `HttpClient` defaults to `application/json`,
+  which dsp-api rejects for JSON-LD payloads (precedent: `ResourceLegalV2ApiService`).
+
 ### Key Features
 
 **Caching Strategy:**
@@ -363,6 +392,18 @@ DSP-JS `Constants` are extensively used throughout the codebase:
 - **OpenAPI** generated client in `libs/vre/3rd-party-services/open-api`
 - Authentication via JWT tokens managed by session services
 - Error handling centralized in core error-handler library
+
+**Dual-client rule — know which client carries your data.** The app talks to dsp-api through
+*two* clients, and a new API field must be added to whichever one the consuming code path uses:
+
+- Domains read through **dsp-js models** (`ReadProject`, `ReadResource`, `CreateResource`, …)
+  require changes to the dsp-js models in `libs/dsp-js/` — regenerating the OpenAPI client does
+  **not** surface the field there. Project data, resources, and values go through dsp-js.
+- Endpoints consumed through the **generated OpenAPI client** only need
+  `npm run update-openapi` after the API is deployed to dev.
+
+If a new backend field "doesn't arrive" in the UI, check which client the reading code uses
+before debugging further.
 
 ## External Dependencies
 
