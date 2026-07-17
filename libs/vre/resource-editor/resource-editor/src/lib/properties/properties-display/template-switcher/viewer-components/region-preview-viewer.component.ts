@@ -60,31 +60,35 @@ import { ResourceFetcherService } from '../../../../representation/resource-fetc
       }
 
       <div class="footer">
-        <div class="caption">
-          <mat-icon class="cap-icon">crop_free</mat-icon>
-          <span>{{ 'resourceEditor.regionPreview.annotationFrom' | translate }}</span>
-          <a class="cap-link" [href]="fullImageLink" target="_blank">{{ value.fullImageLabel || value.fullImageIri }}</a>
-          <app-resource-explorer-button [resourceIri]="value.fullImageIri" />
-        </div>
+        <!-- One label/value grid: the source caption and the legal rows share the same columns, so the
+             source link lines up with the legal values (one consistent box). -->
+        <div class="meta-grid">
+          <span class="legal-label">
+            <mat-icon class="cap-icon">crop_free</mat-icon>
+            {{ 'resourceEditor.regionPreview.annotationFrom' | translate }}
+          </span>
+          <span class="legal-value">
+            <a class="cap-link" [href]="fullImageLink" target="_blank">{{
+              value.fullImageLabel || value.fullImageIri
+            }}</a>
+            <app-resource-explorer-button [resourceIri]="value.fullImageIri" />
+          </span>
 
-        @if (hasLegal) {
-          <div class="legal">
-            @if (value.copyrightHolder) {
-              <span class="legal-label">{{ 'resourceEditor.legal.copyrightHolder' | translate }}</span>
-              <span class="legal-value">{{ value.copyrightHolder }}</span>
-            }
-            @if (value.authorship?.length) {
-              <span class="legal-label">{{ 'resourceEditor.legal.authorship' | translate }}</span>
-              <span class="legal-value">{{ value.authorship.join(', ') }}</span>
-            }
-            @if (resolvedLicense) {
-              <span class="legal-label">{{ 'resourceEditor.legal.license' | translate }}</span>
-              <span class="legal-value">
-                <a class="license-pill" [href]="resolvedLicense.uri" target="_blank">{{ resolvedLicense.labelEn }}</a>
-              </span>
-            }
-          </div>
-        }
+          @if (value.copyrightHolder) {
+            <span class="legal-label">{{ 'resourceEditor.legal.copyrightHolder' | translate }}</span>
+            <span class="legal-value">{{ value.copyrightHolder }}</span>
+          }
+          @if (value.authorship?.length) {
+            <span class="legal-label">{{ 'resourceEditor.legal.authorship' | translate }}</span>
+            <span class="legal-value">{{ value.authorship.join(', ') }}</span>
+          }
+          @if (resolvedLicense) {
+            <span class="legal-label">{{ 'resourceEditor.legal.license' | translate }}</span>
+            <span class="legal-value">
+              <a class="license-pill" [href]="resolvedLicense.uri" target="_blank">{{ resolvedLicense.labelEn }}</a>
+            </span>
+          }
+        </div>
       </div>
     </div>
   `,
@@ -156,17 +160,31 @@ import { ResourceFetcherService } from '../../../../representation/resource-fetc
         background: #f9fafb;
         border-top: 1px solid #e5e7eb;
         color: #656a70;
-        display: flex;
-        flex-direction: column;
-        gap: 5px;
       }
 
-      .caption {
-        display: flex;
+      /* Source caption + legal rows in one grid, so all values align in the second column. */
+      .meta-grid {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        column-gap: 20px;
+        row-gap: 5px;
         align-items: center;
-        gap: 8px;
-        font-size: 12.5px;
-        flex-wrap: wrap;
+        font-size: 12px;
+      }
+
+      .legal-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-weight: 600;
+        color: #5b5f66;
+      }
+
+      .legal-value {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: #6b7280;
       }
 
       .cap-icon {
@@ -180,23 +198,21 @@ import { ResourceFetcherService } from '../../../../representation/resource-fetc
         text-decoration: none;
       }
 
-      .legal {
-        display: grid;
-        grid-template-columns: auto 1fr;
-        column-gap: 20px;
-        row-gap: 5px;
+      /* The shared explorer button is tuned for the link viewer (a -15px lift over a 0-height host).
+         Neutralize that here so it sits inline right after the source link, centered on the row,
+         and shrink its state layer so it hugs the icon instead of carrying icon-button padding. */
+      .legal-value ::ng-deep app-resource-explorer-button {
+        display: inline-flex;
         align-items: center;
-        font-size: 12px;
-        padding-left: 24px;
+        height: auto;
       }
 
-      .legal-label {
-        font-weight: 600;
-        color: #5b5f66;
-      }
-
-      .legal-value {
-        color: #6b7280;
+      .legal-value ::ng-deep app-resource-explorer-button button {
+        position: static !important;
+        --mdc-icon-button-state-layer-size: 24px;
+        width: 24px;
+        height: 24px;
+        padding: 0;
       }
 
       .license-pill {

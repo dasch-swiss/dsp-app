@@ -71,10 +71,10 @@ describe('RegionPreviewViewerComponent', () => {
     setValue(fullValue());
     const el: HTMLElement = fixture.nativeElement;
 
-    const captionLink = el.querySelector('.caption a') as HTMLAnchorElement;
+    const captionLink = el.querySelector('.cap-link') as HTMLAnchorElement;
     expect(captionLink.textContent?.trim()).toEqual('Source page 42');
     expect(captionLink.getAttribute('href')).toEqual('/resource/project/0001/img');
-    expect(el.querySelector('.legal')).toBeTruthy();
+    expect(el.querySelectorAll('.legal-label').length).toBeGreaterThan(1);
   });
 
   it('on image load failure, hides the images and shows the restricted card with caption + legal still present', () => {
@@ -89,8 +89,8 @@ describe('RegionPreviewViewerComponent', () => {
     expect(el.querySelector('img.crop')).toBeNull();
     expect(el.querySelector('img.thumb')).toBeNull();
     expect(el.querySelector('app-alert-info')).toBeTruthy();
-    expect(el.querySelector('.caption')).toBeTruthy();
-    expect(el.querySelector('.legal')).toBeTruthy();
+    expect(el.querySelector('.cap-link')).toBeTruthy();
+    expect(el.querySelectorAll('.legal-label').length).toBeGreaterThan(1);
   });
 
   it('omits the legal footer when the image has no legal info', () => {
@@ -102,7 +102,7 @@ describe('RegionPreviewViewerComponent', () => {
     } as unknown as ReadRegionPreviewValue);
     const el: HTMLElement = fixture.nativeElement;
 
-    expect(el.querySelector('.legal')).toBeNull();
+    expect(el.querySelectorAll('.legal-label').length).toBe(1);
     // the crop still renders
     expect(el.querySelector('img.crop')).toBeTruthy();
   });
@@ -116,8 +116,8 @@ describe('RegionPreviewViewerComponent', () => {
     expect(el.querySelector('img.crop')).toBeNull();
     expect(el.querySelector('img.thumb')).toBeNull();
     // caption + legal still render
-    expect(el.querySelector('.caption')).toBeTruthy();
-    expect(el.querySelector('.legal')).toBeTruthy();
+    expect(el.querySelector('.cap-link')).toBeTruthy();
+    expect(el.querySelectorAll('.legal-label').length).toBeGreaterThan(1);
   });
 
   it('resets the restricted latch and refreshes the legal footer when a new value arrives', () => {
@@ -140,6 +140,6 @@ describe('RegionPreviewViewerComponent', () => {
 
     expect(el.querySelector('app-alert-info')).toBeNull();
     expect(el.querySelector('img.crop')).toBeTruthy();
-    expect(el.querySelector('.legal')).toBeNull();
+    expect(el.querySelectorAll('.legal-label').length).toBe(1);
   });
 });
