@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnChanges } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import type { ReadFileValue, ReadRegionPreviewValue } from '@dasch-swiss/dsp-js';
 import { ResourceService } from '@dasch-swiss/vre/shared/app-common';
@@ -104,20 +104,22 @@ import { ResourceLegalComponent } from '../../../../representation/resource-lega
     `,
   ],
 })
-export class RegionPreviewViewerComponent implements OnInit {
+export class RegionPreviewViewerComponent implements OnChanges {
   @Input({ required: true }) value!: ReadRegionPreviewValue;
   imageFailed = false;
 
-  // Computed ONCE in ngOnInit — a getter returning a fresh object literal each call breaks OnPush:
-  // Angular's dev-mode second CD pass compares [fileValue] by reference and throws
-  // ExpressionChangedAfterItHasBeenCheckedError (and defeats OnPush memoization).
+  // Recomputed in ngOnChanges (not a getter): a getter returning a fresh object literal each call breaks
+  // OnPush — Angular's dev-mode second CD pass compares [fileValue] by reference and throws
+  // ExpressionChangedAfterItHasBeenCheckedError. Deriving on input change (rather than once in ngOnInit)
+  // keeps the legal footer + restricted latch in sync when Angular reuses this instance across a reload.
   // ResourceLegalComponent only reads copyrightHolder/authorship/license, so the structurally-overlapping
   // object is assignable to ReadFileValue via a targeted assertion (no `any`).
   legalFileValue!: ReadFileValue;
 
   constructor(private readonly _resourceService: ResourceService) {}
 
-  ngOnInit() {
+  ngOnChanges() {
+    this.imageFailed = false; // a new value gets a fresh image-load attempt (no stale restricted latch)
     this.legalFileValue = {
       copyrightHolder: this.value.copyrightHolder,
       authorship: this.value.authorship,

@@ -24,10 +24,9 @@ const fullValue = () =>
 
 describe('RegionPreviewViewerComponent', () => {
   let fixture: ComponentFixture<RegionPreviewViewerComponent>;
-  let component: RegionPreviewViewerComponent;
 
   const setValue = (value: ReadRegionPreviewValue) => {
-    component.value = value;
+    fixture.componentRef.setInput('value', value);
     fixture.detectChanges();
   };
 
@@ -49,7 +48,6 @@ describe('RegionPreviewViewerComponent', () => {
     }).compileComponents();
 
     fixture = TestBed.createComponent(RegionPreviewViewerComponent);
-    component = fixture.componentInstance;
   });
 
   it('renders the crop, the thumbnail, and the highlight box positioned from the served percentages', () => {
@@ -120,5 +118,28 @@ describe('RegionPreviewViewerComponent', () => {
     // caption + legal still render
     expect(el.querySelector('.caption')).toBeTruthy();
     expect(el.querySelector('app-resource-legal')).toBeTruthy();
+  });
+
+  it('resets the restricted latch and refreshes the legal footer when a new value arrives', () => {
+    setValue(fullValue());
+    const el: HTMLElement = fixture.nativeElement;
+
+    // first value fails to load -> restricted
+    (el.querySelector('img.crop') as HTMLImageElement).dispatchEvent(new Event('error'));
+    fixture.detectChanges();
+    expect(el.querySelector('app-alert-info')).toBeTruthy();
+
+    // a new value arrives on the reused instance -> the latch resets and the image is tried again,
+    // and the legal footer reflects the new value (here: no legal info -> footer omitted)
+    setValue({
+      ...fullValue(),
+      copyrightHolder: null,
+      authorship: [],
+      license: null,
+    } as unknown as ReadRegionPreviewValue);
+
+    expect(el.querySelector('app-alert-info')).toBeNull();
+    expect(el.querySelector('img.crop')).toBeTruthy();
+    expect(el.querySelector('app-resource-legal')).toBeNull();
   });
 });
