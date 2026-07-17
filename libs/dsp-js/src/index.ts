@@ -189,6 +189,7 @@ export { ReadGeomValue, RegionGeometry, Point2D } from './models/v2/resources/va
 export { ReadIntValue } from './models/v2/resources/values/read/read-int-value';
 export { ReadIntervalValue } from './models/v2/resources/values/read/read-interval-value';
 export { ReadLinkValue } from './models/v2/resources/values/read/read-link-value';
+export { ReadRegionPreviewValue } from './models/v2/resources/values/read/read-region-preview-value';
 export { ReadListValue } from './models/v2/resources/values/read/read-list-value';
 export {
   ReadTextValue,
@@ -221,6 +222,7 @@ export { UpdateGeomValue } from './models/v2/resources/values/update/update-geom
 export { UpdateIntValue } from './models/v2/resources/values/update/update-int-value';
 export { UpdateIntervalValue } from './models/v2/resources/values/update/update-interval-value';
 export { UpdateLinkValue } from './models/v2/resources/values/update/update-link-value';
+export { UpdateRegionPreviewValue } from './models/v2/resources/values/update/update-region-preview-value';
 export { UpdateListValue } from './models/v2/resources/values/update/update-list-value';
 export {
   UpdateTextValueAsString,
@@ -251,6 +253,7 @@ export { CreateGeomValue } from './models/v2/resources/values/create/create-geom
 export { CreateIntValue } from './models/v2/resources/values/create/create-int-value';
 export { CreateIntervalValue } from './models/v2/resources/values/create/create-interval-value';
 export { CreateLinkValue } from './models/v2/resources/values/create/create-link-value';
+export { CreateRegionPreviewValue } from './models/v2/resources/values/create/create-region-preview-value';
 export { CreateListValue } from './models/v2/resources/values/create/create-list-value';
 export { CreateTextValueAsString, CreateTextValueAsXml } from './models/v2/resources/values/create/create-text-value';
 export { CreateUriValue } from './models/v2/resources/values/create/create-uri-value';

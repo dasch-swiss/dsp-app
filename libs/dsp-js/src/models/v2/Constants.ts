@@ -40,6 +40,7 @@ export class Constants {
   static TextValue = `${Constants.KnoraApiV2 + Constants.HashDelimiter}TextValue`;
   static LinkValue = `${Constants.KnoraApiV2 + Constants.HashDelimiter}LinkValue`;
   static HasLinkToValue = `${Constants.KnoraApiV2 + Constants.HashDelimiter}hasLinkToValue`;
+  static RegionPreviewValue = `${Constants.KnoraApiV2 + Constants.HashDelimiter}RegionPreviewValue`;
   static UriValue = `${Constants.KnoraApiV2 + Constants.HashDelimiter}UriValue`;
   static GeomValue = `${Constants.KnoraApiV2 + Constants.HashDelimiter}GeomValue`;
   static FileValue = `${Constants.KnoraApiV2 + Constants.HashDelimiter}FileValue`;
@@ -158,6 +159,16 @@ export class Constants {
   static hasAuthorship = `${Constants.KnoraApiV2 + Constants.HashDelimiter}hasAuthorship`;
   static hasLicense = `${Constants.KnoraApiV2 + Constants.HashDelimiter}hasLicense`;
   static hasResourceAuthorship = `${Constants.KnoraApiV2 + Constants.HashDelimiter}hasResourceAuthorship`;
+
+  // Region preview read-field IRIs (RegionPreviewValue)
+  static IsRegionPreviewOf = `${Constants.KnoraApiV2 + Constants.HashDelimiter}isRegionPreviewOf`;
+  static HasPreviewCropUrl = `${Constants.KnoraApiV2 + Constants.HashDelimiter}hasPreviewCropUrl`;
+  static HasPreviewThumbnailUrl = `${Constants.KnoraApiV2 + Constants.HashDelimiter}hasPreviewThumbnailUrl`;
+  static HasPreviewHighlightBoxX = `${Constants.KnoraApiV2 + Constants.HashDelimiter}hasPreviewHighlightBoxX`;
+  static HasPreviewHighlightBoxY = `${Constants.KnoraApiV2 + Constants.HashDelimiter}hasPreviewHighlightBoxY`;
+  static HasPreviewHighlightBoxW = `${Constants.KnoraApiV2 + Constants.HashDelimiter}hasPreviewHighlightBoxW`;
+  static HasPreviewHighlightBoxH = `${Constants.KnoraApiV2 + Constants.HashDelimiter}hasPreviewHighlightBoxH`;
+  static HasPreviewFullImage = `${Constants.KnoraApiV2 + Constants.HashDelimiter}hasPreviewFullImage`;
 
   static MatchText = `${Constants.KnoraApiV2 + Constants.HashDelimiter}matchText`;
 

@@ -28,6 +28,7 @@ import { ReadIntValue } from './values/read/read-int-value';
 import { ReadIntervalValue } from './values/read/read-interval-value';
 import { ReadLinkValue } from './values/read/read-link-value';
 import { ReadListValue } from './values/read/read-list-value';
+import { ReadRegionPreviewValue } from './values/read/read-region-preview-value';
 import {
   ReadTextValue,
   ReadTextValueAsHtml,
@@ -576,6 +577,19 @@ export namespace ResourcesConversionUtil {
             return val;
           })
         );
+        break;
+      }
+
+      case Constants.RegionPreviewValue: {
+        const rp = jsonConvert.deserialize(valueJsonld as object, ReadRegionPreviewValue) as ReadRegionPreviewValue;
+        rp.regionIri = valueJsonld[Constants.IsRegionPreviewOf]?.['@id'] ?? '';
+        const fullImg = valueJsonld[Constants.HasPreviewFullImage];
+        if (fullImg) {
+          rp.fullImageIri = fullImg['@id'];
+          rp.fullImageLabel = fullImg[Constants.Label] ?? ''; // Constants.Label = full IRI rdf-schema#label
+        }
+        rp.strval = rp.fullImageLabel || rp.regionIri; // human-readable fallback, like the LinkValue case
+        value = of(rp);
         break;
       }
 
