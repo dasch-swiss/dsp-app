@@ -153,6 +153,16 @@ import { TimeValueComponent } from './value-components/time-value.component';
         [label]="('resourceEditor.templateSwitcher.example' | translate) + ' https://en.wikipedia.org'"
         [validatorErrors]="[{ errorKey: 'pattern', message: 'This is not a valid link.' }]" />
     </ng-template>
+
+    <ng-template #regionPreviewEditorTpl let-item="item">
+      <app-common-input
+        [control]="item"
+        [withLabel]="false"
+        [label]="'resourceEditor.regionPreview.iriInputLabel' | translate"
+        [validatorErrors]="[
+          { errorKey: 'pattern', message: 'resourceEditor.regionPreview.notAValidIri' | translate },
+        ]" />
+    </ng-template>
   `,
 })
 export class TemplateEditorSwitcherComponent implements AfterViewInit {
@@ -177,6 +187,7 @@ export class TemplateEditorSwitcherComponent implements AfterViewInit {
   @ViewChild('listEditorTpl') listEditorTpl!: TemplateRef<any>;
   @ViewChild('geoNameEditorTpl') geoNameEditorTpl!: TemplateRef<any>;
   @ViewChild('linkEditorTpl') linkEditorTpl!: TemplateRef<any>;
+  @ViewChild('regionPreviewEditorTpl') regionPreviewEditorTpl!: TemplateRef<any>;
   @ViewChild('uriEditorTpl') uriEditorTpl!: TemplateRef<any>;
 
   get propertyDefinition() {
@@ -211,6 +222,8 @@ export class TemplateEditorSwitcherComponent implements AfterViewInit {
         return this.geoNameEditorTpl;
       case Constants.LinkValue:
         return this.linkEditorTpl;
+      case Constants.RegionPreviewValue:
+        return this.regionPreviewEditorTpl;
       case Constants.UriValue:
         return this.uriEditorTpl;
       default: {
