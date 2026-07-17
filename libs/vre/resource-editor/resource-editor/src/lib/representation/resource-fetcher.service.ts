@@ -48,15 +48,8 @@ export class ResourceFetcherService {
   ) {}
 
   loadResource(resourceIri: string, resourceVersion?: string) {
-    // TEMP DEBUG (DEV-6568): trace fetch trigger.
-    // eslint-disable-next-line no-console
-    console.warn(
-      `[DEV-6568] (3) loadResource resourceIri=${JSON.stringify(resourceIri)} version=${JSON.stringify(resourceVersion)}`
-    );
     this.resourceVersion = resourceVersion;
     this._getResource(resourceIri, resourceVersion).subscribe(resource => {
-      // eslint-disable-next-line no-console
-      console.warn('[DEV-6568] (5) loadResource emitting DspResource ->', resource);
       this._resourceSubject.next(resource);
     });
   }
@@ -74,23 +67,6 @@ export class ResourceFetcherService {
   }
 
   private _getResource(resourceIri: string, resourceVersion?: string) {
-    return this._dspApiConnection.v2.res.getResource(resourceIri, resourceVersion).pipe(
-      map(readResource => {
-        // TEMP DEBUG (DEV-6568): raw API payload — inspect properties[*] filenames here.
-        /* eslint-disable no-console */
-        console.warn('[DEV-6568] (4) getResource raw ReadResource ->', readResource);
-        console.warn('[DEV-6568] (4) raw properties keys =', Object.keys(readResource?.properties ?? {}));
-        console.warn(
-          '[DEV-6568] (4) raw file values =',
-          Object.entries(readResource?.properties ?? {}).map(([prop, vals]) => ({
-            prop,
-            values: (vals as any[])?.map(v => ({ type: v?.type, filename: v?.filename, fileUrl: v?.fileUrl })),
-          }))
-        );
-        /* eslint-enable no-console */
-        return readResource;
-      }),
-      map(generateDspResource)
-    );
+    return this._dspApiConnection.v2.res.getResource(resourceIri, resourceVersion).pipe(map(generateDspResource));
   }
 }

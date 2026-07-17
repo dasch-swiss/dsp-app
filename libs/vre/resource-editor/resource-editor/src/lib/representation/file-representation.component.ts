@@ -58,15 +58,6 @@ export class FileRepresentationComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['src']) {
-      // TEMP DEBUG (DEV-6568): file-representation input right before getFileInfo.
-      // eslint-disable-next-line no-console
-      console.warn(
-        `[DEV-6568] (8) FileRepresentation ngOnChanges src.filename=${JSON.stringify(
-          this.src?.filename
-        )} src.fileUrl=${JSON.stringify(this.src?.fileUrl)} src.userHasPermission=${JSON.stringify(
-          this.src?.userHasPermission
-        )}`
-      );
       this._rs
         .getFileInfo(this.src.fileUrl)
         .pipe(

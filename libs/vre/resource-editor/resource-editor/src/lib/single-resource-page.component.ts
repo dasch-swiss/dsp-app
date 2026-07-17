@@ -22,21 +22,9 @@ export class SingleResourcePageComponent {
     map(params => {
       const projectCode = params['project'];
       const resourceUuid = params['resource'];
-      // TEMP DEBUG (DEV-6568): trace routing -> resourceIri.
-      // eslint-disable-next-line no-console
-      console.warn(
-        `[DEV-6568] (1) SingleResourcePage route params project=${JSON.stringify(projectCode)} resource=${JSON.stringify(
-          resourceUuid
-        )}`
-      );
       if (projectCode && resourceUuid) {
-        const iri = this._resourceService.getResourceIri(projectCode, resourceUuid);
-        // eslint-disable-next-line no-console
-        console.warn(`[DEV-6568] (2) SingleResourcePage resolved resourceIri=${JSON.stringify(iri)}`);
-        return iri;
+        return this._resourceService.getResourceIri(projectCode, resourceUuid);
       }
-      // eslint-disable-next-line no-console
-      console.warn('[DEV-6568] (2) SingleResourcePage no project/resource in params -> undefined');
       return undefined;
     })
   );
