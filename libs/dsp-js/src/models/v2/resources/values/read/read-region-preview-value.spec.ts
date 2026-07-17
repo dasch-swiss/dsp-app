@@ -41,6 +41,7 @@ const regionFields = (authorship: string | string[] = ['Ada Lovelace']) => ({
   [Constants.HasPreviewHighlightBoxY]: decimal('20'),
   [Constants.HasPreviewHighlightBoxW]: decimal('30'),
   [Constants.HasPreviewHighlightBoxH]: decimal('40'),
+  [Constants.HasPreviewColor]: '#ff3333',
   [Constants.HasPreviewFullImage]: {
     '@id': FULL_IMAGE_IRI,
     '@type': Constants.StillImageFileValue,
@@ -74,6 +75,8 @@ describe('ReadRegionPreviewValue', () => {
       expect(rp.highlightBoxY).toEqual(20);
       expect(rp.highlightBoxW).toEqual(30);
       expect(rp.highlightBoxH).toEqual(40);
+      // the region's color -> plain hex string
+      expect(rp.color).toEqual('#ff3333');
       // legal fields
       expect(rp.copyrightHolder).toEqual('DaSCH');
       expect(rp.authorship).toEqual(['Ada Lovelace']);
@@ -173,6 +176,7 @@ describe('ReadRegionPreviewValue', () => {
         // decorated computed fields survive the full path
         expect(typed.cropUrl).toEqual(CROP_URL);
         expect(typed.highlightBoxW).toEqual(30);
+        expect(typed.color).toEqual('#ff3333');
         // generic post-processing
         expect(typed.property).toEqual(PROP_IRI);
         done();

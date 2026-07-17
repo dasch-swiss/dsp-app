@@ -39,6 +39,10 @@ export class ReadRegionPreviewValue extends ReadValue {
   @JsonProperty(Constants.HasPreviewHighlightBoxH, DecimalConverter, true)
   highlightBoxH: number | null = null;
 
+  // the region's color (knora-base:hasColor) — a bare hex string, used to tint the highlight box
+  @JsonProperty(Constants.HasPreviewColor, String, true)
+  color: string | null = null;
+
   // legal-info (from the full image) — same field names ReadFileValue exposes so resource-legal can consume it
   @JsonProperty(Constants.hasCopyrightHolder, String, true)
   copyrightHolder: string | null = null;

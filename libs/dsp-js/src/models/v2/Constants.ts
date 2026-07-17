@@ -168,6 +168,7 @@ export class Constants {
   static HasPreviewHighlightBoxY = `${Constants.KnoraApiV2 + Constants.HashDelimiter}hasPreviewHighlightBoxY`;
   static HasPreviewHighlightBoxW = `${Constants.KnoraApiV2 + Constants.HashDelimiter}hasPreviewHighlightBoxW`;
   static HasPreviewHighlightBoxH = `${Constants.KnoraApiV2 + Constants.HashDelimiter}hasPreviewHighlightBoxH`;
+  static HasPreviewColor = `${Constants.KnoraApiV2 + Constants.HashDelimiter}hasPreviewColor`;
   static HasPreviewFullImage = `${Constants.KnoraApiV2 + Constants.HashDelimiter}hasPreviewFullImage`;
 
   static MatchText = `${Constants.KnoraApiV2 + Constants.HashDelimiter}matchText`;
