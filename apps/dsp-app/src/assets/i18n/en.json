@@ -556,7 +556,8 @@
     },
     "legal": {
       "copyrightHolder": "Copyright holder",
-      "authorship": "Authorship"
+      "authorship": "Authorship",
+      "license": "License"
     },
     "navigation": {
       "firstPage": "First page",
@@ -840,6 +841,7 @@
       "example": "e.g."
     },
     "regionPreview": {
+      "annotationFrom": "Annotation from",
       "cannotDisplay": "This region preview cannot be displayed.",
       "iriInputLabel": "Region IRI",
       "notAValidIri": "The provided resource is not a valid IRI."

@@ -750,7 +750,8 @@
     },
     "legal": {
       "copyrightHolder": "Urheberrechtsinhaber",
-      "authorship": "Autorenschaft"
+      "authorship": "Autorenschaft",
+      "license": "Lizenz"
     },
     "navigation": {
       "firstPage": "Erste Seite",
@@ -840,6 +841,7 @@
       "example": "z.B."
     },
     "regionPreview": {
+      "annotationFrom": "Annotation aus",
       "cannotDisplay": "Diese Regionen-Vorschau kann nicht angezeigt werden.",
       "iriInputLabel": "Region-IRI",
       "notAValidIri": "Die angegebene Ressource ist keine gültige IRI."

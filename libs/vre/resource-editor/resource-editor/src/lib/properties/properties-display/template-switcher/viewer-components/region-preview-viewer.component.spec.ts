@@ -74,7 +74,7 @@ describe('RegionPreviewViewerComponent', () => {
     const captionLink = el.querySelector('.caption a') as HTMLAnchorElement;
     expect(captionLink.textContent?.trim()).toEqual('Source page 42');
     expect(captionLink.getAttribute('href')).toEqual('/resource/project/0001/img');
-    expect(el.querySelector('app-resource-legal')).toBeTruthy();
+    expect(el.querySelector('.legal')).toBeTruthy();
   });
 
   it('on image load failure, hides the images and shows the restricted card with caption + legal still present', () => {
@@ -90,7 +90,7 @@ describe('RegionPreviewViewerComponent', () => {
     expect(el.querySelector('img.thumb')).toBeNull();
     expect(el.querySelector('app-alert-info')).toBeTruthy();
     expect(el.querySelector('.caption')).toBeTruthy();
-    expect(el.querySelector('app-resource-legal')).toBeTruthy();
+    expect(el.querySelector('.legal')).toBeTruthy();
   });
 
   it('omits the legal footer when the image has no legal info', () => {
@@ -102,7 +102,7 @@ describe('RegionPreviewViewerComponent', () => {
     } as unknown as ReadRegionPreviewValue);
     const el: HTMLElement = fixture.nativeElement;
 
-    expect(el.querySelector('app-resource-legal')).toBeNull();
+    expect(el.querySelector('.legal')).toBeNull();
     // the crop still renders
     expect(el.querySelector('img.crop')).toBeTruthy();
   });
@@ -117,7 +117,7 @@ describe('RegionPreviewViewerComponent', () => {
     expect(el.querySelector('img.thumb')).toBeNull();
     // caption + legal still render
     expect(el.querySelector('.caption')).toBeTruthy();
-    expect(el.querySelector('app-resource-legal')).toBeTruthy();
+    expect(el.querySelector('.legal')).toBeTruthy();
   });
 
   it('resets the restricted latch and refreshes the legal footer when a new value arrives', () => {
@@ -140,6 +140,6 @@ describe('RegionPreviewViewerComponent', () => {
 
     expect(el.querySelector('app-alert-info')).toBeNull();
     expect(el.querySelector('img.crop')).toBeTruthy();
-    expect(el.querySelector('app-resource-legal')).toBeNull();
+    expect(el.querySelector('.legal')).toBeNull();
   });
 });
