@@ -5,6 +5,7 @@
       "license": "Licenza",
       "copyrightHolder": "Titolare dei diritti",
       "authorship": "Autore",
+      "authorshipHint": "Digita un nome e premi Invio per aggiungere ogni autore.",
       "edit": "Modifica",
       "removeAuthor": "Rimuovi {{name}}",
       "uncategorized": "Le informazioni legali di questa risorsa non sono ancora state definite — si prega di aggiungerle.",
