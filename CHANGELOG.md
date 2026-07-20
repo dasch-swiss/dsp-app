@@ -1,5 +1,39 @@
 # Changelog
 
+## [13.10.0](https://github.com/dasch-swiss/dsp-app/compare/v13.9.0...v13.10.0) (2026-07-20)
+
+
+### Enhancements
+
+* display FileValues with placeholder values (DEV-6568) ([#3239](https://github.com/dasch-swiss/dsp-app/issues/3239)) ([64a383d](https://github.com/dasch-swiss/dsp-app/commit/64a383d5ca250893804e6ffb7af0fba5b76d4b3f))
+* **resource-editor:** legal-metadata title + loading spinner, trim Incoming Links spinner padding (DEV-6740) ([#3243](https://github.com/dasch-swiss/dsp-app/issues/3243)) ([9f61285](https://github.com/dasch-swiss/dsp-app/commit/9f61285e4d27634b4ca2c06a3df1c6a7ea6d0775))
+
+
+### Bug Fixes
+
+* adapt "close" button padding to the other filters ([#3241](https://github.com/dasch-swiss/dsp-app/issues/3241)) ([092f7dc](https://github.com/dasch-swiss/dsp-app/commit/092f7dc94a341ea2c5b3d0fd13c334f70f713c6d))
+* clarify authorship input requires Enter, commit pending value on blur (DEV-6761) ([#3242](https://github.com/dasch-swiss/dsp-app/issues/3242)) ([545b372](https://github.com/dasch-swiss/dsp-app/commit/545b3726fea4b08b4ae0b05c4f8558970d9580f8))
+* left-align License row in project description "Read more" slider ([#3238](https://github.com/dasch-swiss/dsp-app/issues/3238)) ([d07cee4](https://github.com/dasch-swiss/dsp-app/commit/d07cee42a7daf3092c315121f21c982b553ebc31))
+* **legal:** show the already-set license immediately in Legal Settings ([#3245](https://github.com/dasch-swiss/dsp-app/issues/3245)) ([79a5360](https://github.com/dasch-swiss/dsp-app/commit/79a536038b1be0df2529aeb9524e693ddbc1fbf7))
+* **project:** build the Description edit form without waiting on the all-projects fetch ([#3248](https://github.com/dasch-swiss/dsp-app/issues/3248)) ([c4e1972](https://github.com/dasch-swiss/dsp-app/commit/c4e1972aa3412a96f7dcebb7c0a2c00cc4db623c))
+* **project:** render the Description settings submit button with the form ([#3247](https://github.com/dasch-swiss/dsp-app/issues/3247)) ([c947161](https://github.com/dasch-swiss/dsp-app/commit/c947161171fe936a71b6ca01d4398147cc7f0f5f))
+* restore DaSCH blue save-confirmation snackbar (DEV-6747) ([#3244](https://github.com/dasch-swiss/dsp-app/issues/3244)) ([889d04e](https://github.com/dasch-swiss/dsp-app/commit/889d04eccbb31a57c162ff04f87801233301220c))
+
+
+### Maintenances
+
+* **deps:** update prettier 3.8.5 → 3.9.5 and reformat ([#3249](https://github.com/dasch-swiss/dsp-app/issues/3249)) ([1d1d94a](https://github.com/dasch-swiss/dsp-app/commit/1d1d94ab0598fd5708bef31e6d242501ae907a99))
+
+
+### Documentation
+
+* document lib-layer ownership, dual-client rule and OpenAPI deploy gate (DEV-6719) ([#3229](https://github.com/dasch-swiss/dsp-app/issues/3229)) ([853bd15](https://github.com/dasch-swiss/dsp-app/commit/853bd1524fb4315897d831058f1c466296f1944d))
+
+
+### Tests
+
+* stop flaky e2e ontology names colliding with reserved words (DEV-6764) ([#3246](https://github.com/dasch-swiss/dsp-app/issues/3246)) ([e8c94ab](https://github.com/dasch-swiss/dsp-app/commit/e8c94ab7219931fdbad01b45cbb4705e839c99ba))
+
 ## [13.9.0](https://github.com/dasch-swiss/dsp-app/compare/v13.8.1...v13.9.0) (2026-07-13)
 
 
