@@ -14,7 +14,7 @@ import { ProjectDataRightsService } from '@dasch-swiss/vre/shared/app-helper-ser
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { AuthorshipChipEditorComponent } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { map, Observable } from 'rxjs';
+import { map, Observable, startWith } from 'rxjs';
 
 /**
  * Localized summary translation keys for the CC-BY family, keyed by license IRI.
@@ -157,15 +157,29 @@ export class ResourceSideLegalFormComponent implements OnInit {
       dataAuthorship: new FormControl<string[]>(this.project.defaultDataAuthorship ?? [], { nonNullable: true }),
     });
 
-    this.ccLicenses$ = this._legalInfoApi
-      .getLicenses(this.project.shortcode)
-      .pipe(
-        map(licenses =>
-          licenses
-            .filter(l => l.id.startsWith(CC_BY_IRI_PREFIX))
-            .map(l => ({ iri: l.id, summaryKey: CC_BY_SUMMARY_KEYS[l.id], fallbackLabel: l.labelEn }))
-        )
-      );
+    // Seed the dropdown with the already-selected license so mat-select can render its label
+    // immediately, before the (uncached) license catalog request resolves. Otherwise the field
+    // shows blank for a round-trip, because mat-select only renders a selected value's label once a
+    // matching <mat-option> exists. The label comes from the static CC_BY_SUMMARY_KEYS map, so the
+    // seed needs no network. The fetched list then supersedes it. See DEV-6763.
+    const preselected = this.project.dataLicense ? [this._toCcLicenseOption(this.project.dataLicense)] : [];
+
+    this.ccLicenses$ = this._legalInfoApi.getLicenses(this.project.shortcode).pipe(
+      map(licenses =>
+        licenses.filter(l => l.id.startsWith(CC_BY_IRI_PREFIX)).map(l => this._toCcLicenseOption(l.id, l.labelEn))
+      ),
+      startWith(preselected)
+    );
+  }
+
+  /**
+   * Maps a license IRI to a dropdown option. The CC-BY family label comes from the static
+   * CC_BY_SUMMARY_KEYS map (translated in the template), so a preselected license can be shown
+   * without waiting for the catalog fetch; `fallbackLabel` (the API's labelEn) is only used for
+   * licenses not registered in that map.
+   */
+  private _toCcLicenseOption(iri: string, fallbackLabel = ''): CcLicenseOption {
+    return { iri, summaryKey: CC_BY_SUMMARY_KEYS[iri], fallbackLabel };
   }
 
   /** Builds the per-chip remove-button aria-label; arrow so it binds correctly when passed as an @Input. */

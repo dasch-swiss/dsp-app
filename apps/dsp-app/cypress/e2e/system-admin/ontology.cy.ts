@@ -1,5 +1,6 @@
 import { CreateOntology } from '../../../../../libs/dsp-js/src';
 import { faker } from '@faker-js/faker';
+import { uniqueName } from '../../support/helpers/unique-name';
 import ProjectPage from '../../support/pages/project-page';
 
 describe('Ontology', () => {
@@ -11,7 +12,7 @@ describe('Ontology', () => {
 
   it('should create new ontology', () => {
     const data = {
-      name: faker.string.alpha({ length: { min: 3, max: 16 } }),
+      name: uniqueName(),
       label: faker.lorem.words(5),
       comment: faker.lorem.words(10),
     };
@@ -47,7 +48,7 @@ describe('Ontology', () => {
 
   it('should update ontology', () => {
     const data = <CreateOntology>{
-      name: faker.string.alpha({ length: { min: 3, max: 16 } }).replace(' ', ''),
+      name: uniqueName(),
       label: faker.lorem.words(5),
       comment: faker.lorem.words(10),
     };
