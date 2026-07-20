@@ -6,7 +6,9 @@ import { ResourceHeaderComponent } from '../../header/resource-header.component'
 import { ResourceRestrictionComponent } from '../../meta/resource-restriction.component';
 import { PropertiesDisplayService } from '../../properties/properties-display/property-value/properties-display.service';
 import { getFileValue } from '../../representation/get-file-value';
+import { isPlaceholderFileValue } from '../../representation/is-placeholder-file-value';
 import { RegionService } from '../../representation/region.service';
+import { RepresentationPlaceholderComponent } from '../../representation/representation-placeholder.component';
 import { ResourceLegalComponent } from '../../representation/resource-legal.component';
 import { ResourceRepresentationContainerComponent } from '../../representation/resource-representation-container.component';
 import { ResourceImageTabsComponent } from '../../resource-image-tabs.component';
@@ -21,7 +23,9 @@ import { StillImageComponent } from './still-image.component';
     }
     <app-resource-header [resource]="resource" />
     <app-resource-legal [fileValue]="fileValue" />
-    @if (fileValue.type === svgStillImage) {
+    @if (isPlaceholder) {
+      <app-representation-placeholder />
+    } @else if (fileValue.type === svgStillImage) {
       <app-resource-representation-container>
         <app-vector-image [resource]="resource.res" />
       </app-resource-representation-container>
@@ -40,6 +44,7 @@ import { StillImageComponent } from './still-image.component';
     ResourceRestrictionComponent,
     ResourceHeaderComponent,
     ResourceLegalComponent,
+    RepresentationPlaceholderComponent,
     StillImageComponent,
     VectorImageComponent,
     ResourceRepresentationContainerComponent,
@@ -57,6 +62,10 @@ export class ResourceImageComponent implements OnChanges, OnDestroy {
 
   get fileValue() {
     return getFileValue(this.resource.res)!;
+  }
+
+  get isPlaceholder() {
+    return isPlaceholderFileValue(this.fileValue);
   }
 
   ngOnChanges() {
