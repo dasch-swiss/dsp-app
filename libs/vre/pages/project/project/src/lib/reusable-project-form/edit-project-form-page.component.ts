@@ -20,18 +20,23 @@ import { ReusableProjectFormComponent } from './reusable-project-form.component'
       <app-reusable-project-form [formData]="formData" (afterFormInit)="form = $event" />
     }
 
-    <div style="display: flex; justify-content: space-between">
-      <button
-        mat-raised-button
-        type="submit"
-        color="primary"
-        (click)="onSubmit()"
-        appLoadingButton
-        [isLoading]="loading"
-        data-cy="submit-button">
-        {{ 'ui.common.actions.submit' | translate }}
-      </button>
-    </div>
+    <!-- Gate the submit button on the built form so it appears together with the fields, not before
+         them. Without this it renders on the first pass, ahead of the async project fetch and form
+         build, leaving a lone Submit button over empty content. See DEV-6746. -->
+    @if (form) {
+      <div style="display: flex; justify-content: space-between">
+        <button
+          mat-raised-button
+          type="submit"
+          color="primary"
+          (click)="onSubmit()"
+          appLoadingButton
+          [isLoading]="loading"
+          data-cy="submit-button">
+          {{ 'ui.common.actions.submit' | translate }}
+        </button>
+      </div>
+    }
   `,
   imports: [AsyncPipe, MatButton, TranslatePipe, LoadingButtonDirective, ReusableProjectFormComponent],
 })
