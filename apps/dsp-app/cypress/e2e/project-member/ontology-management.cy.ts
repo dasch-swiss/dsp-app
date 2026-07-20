@@ -1,5 +1,6 @@
 import { faker } from '@faker-js/faker';
 import { UserProfiles } from '../../models/user-profiles';
+import { uniqueName } from '../../support/helpers/unique-name';
 import { Project0001Page } from '../../support/pages/existing-ontology-class-page';
 
 describe('Project Member - Ontology management', () => {
@@ -18,7 +19,7 @@ describe('Project Member - Ontology management', () => {
   describe('Ontology Management', () => {
     it('should create new ontology and edit the ontology', () => {
       const createData = {
-        name: faker.string.alpha({ length: { min: 3, max: 16 } }),
+        name: uniqueName(),
         label: faker.lorem.words(5),
         comment: faker.lorem.words(10),
       };
