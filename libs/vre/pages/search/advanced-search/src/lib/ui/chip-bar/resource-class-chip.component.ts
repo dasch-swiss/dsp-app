@@ -99,7 +99,6 @@ import { CHIP_POPOVER_POSITIONS } from './chip-bar.helpers';
       /* Match the filter chip's remove (✕) icon: dimmed at rest, full-strength on hover, so both chips'
          close affordances read the same shade of primary. */
       .resource-class-chip__remove {
-        margin-left: 4px;
         cursor: pointer;
         opacity: 0.7;
       }
