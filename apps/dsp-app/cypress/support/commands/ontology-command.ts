@@ -1,6 +1,7 @@
 import { CreateOntology, OntologyMetadata } from '../../../../../libs/dsp-js/src';
 import { faker } from '@faker-js/faker';
 import { JsonConvert } from 'json2typescript';
+import { uniqueName } from '../helpers/unique-name';
 import ProjectPage from '../pages/project-page';
 
 const getAuthHeaders = () => ({
@@ -12,7 +13,7 @@ Cypress.Commands.add(
   (
     projectPage: ProjectPage,
     ontology: CreateOntology = {
-      name: faker.string.alpha({ length: { min: 3, max: 16 } }),
+      name: uniqueName(),
       attachedToProject: projectPage.projectIri,
       comment: faker.lorem.words(10),
       label: faker.lorem.words(5),
