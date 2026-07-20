@@ -5,6 +5,7 @@
       "license": "Licence",
       "copyrightHolder": "Titulaire des droits",
       "authorship": "Auteur·ice",
+      "authorshipHint": "Saisissez un nom et appuyez sur Entrée pour ajouter chaque auteur·ice.",
       "edit": "Modifier",
       "removeAuthor": "Supprimer {{name}}",
       "uncategorized": "Les informations légales de cette ressource n'ont pas encore été définies — veuillez les ajouter.",
@@ -555,6 +556,7 @@
       "goToSegment": "Aller au segment"
     },
     "legal": {
+      "title": "Informations légales",
       "copyrightHolder": "Titulaire des droits d'auteur",
       "authorship": "Auteur·ice"
     },
