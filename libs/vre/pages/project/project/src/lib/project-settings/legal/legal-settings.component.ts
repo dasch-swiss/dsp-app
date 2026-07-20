@@ -129,11 +129,10 @@ export class LegalSettingsComponent {
         first(),
         switchMap(currentProject =>
           this._dialog
-            .open<
+            .open<CreateCopyrightHolderDialogComponent, CreateCopyrightHolderDialogProps, boolean>(
               CreateCopyrightHolderDialogComponent,
-              CreateCopyrightHolderDialogProps,
-              boolean
-            >(CreateCopyrightHolderDialogComponent, { data: { projectShortcode: currentProject.shortcode } })
+              { data: { projectShortcode: currentProject.shortcode } }
+            )
             .afterClosed()
         )
       )
