@@ -106,6 +106,7 @@ import { CreateResourceFormInterface } from './create-resource-form.interface';
             [control]="form.controls.resourceAuthorship"
             [ariaLabel]="'legal.dataSide.authorship' | translate"
             [placeholder]="'resourceEditor.resourceCreator.authorship.placeholder' | translate"
+            [hint]="'legal.dataSide.authorshipHint' | translate"
             [removeAuthorLabel]="removeDataAuthorLabel"
             dataCy="data-authorship-chips" />
         </app-create-resource-form-row>

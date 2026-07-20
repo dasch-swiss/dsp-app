@@ -10,6 +10,10 @@ import { MatIconModule } from '@angular/material/icon';
  * Kept small and focused: no autocomplete, no seeded defaults — the caller wires the control shape,
  * label and placeholder. Add/remove operations mutate the bound control and mark it dirty so
  * `[disabled]="form.pristine"` on Save behaves naturally.
+ *
+ * The input commits a pending value on blur (`matChipInputAddOnBlur`) as well as on Enter, so a
+ * typed-but-un-confirmed author isn't silently dropped when the user clicks away. Pass an optional
+ * `hint` to make the "press Enter" affordance explicit.
  */
 @Component({
   selector: 'app-authorship-chip-editor',
@@ -33,8 +37,12 @@ import { MatIconModule } from '@angular/material/icon';
           [attr.data-cy]="dataCy"
           [placeholder]="placeholder"
           [matChipInputFor]="chipGrid"
+          [matChipInputAddOnBlur]="true"
           (matChipInputTokenEnd)="add($event)" />
       </mat-chip-grid>
+      @if (hint) {
+        <mat-hint>{{ hint }}</mat-hint>
+      }
     </mat-form-field>
   `,
   imports: [MatChipsModule, MatFormFieldModule, MatIconModule, ReactiveFormsModule],
@@ -49,6 +57,8 @@ export class AuthorshipChipEditorComponent {
   @Input() label?: string;
   /** Placeholder rendered inside the input when the chip list is empty. */
   @Input() placeholder = '';
+  /** Optional helper text shown under the field (e.g. "Type a name and press Enter to add each author"). */
+  @Input() hint?: string;
   /** Optional data-cy hook for E2E tests. */
   @Input() dataCy?: string;
 
