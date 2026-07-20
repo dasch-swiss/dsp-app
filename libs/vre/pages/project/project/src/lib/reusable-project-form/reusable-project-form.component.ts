@@ -90,6 +90,16 @@ export class ReusableProjectFormComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    // The all-projects list is only needed to validate a *new* shortcode's uniqueness. When editing
+    // an existing project the shortcode field is disabled, so build the form immediately instead of
+    // blocking the render on the uncached "fetch every project" request. See DEV-6765.
+    const isEditingExistingProject = this.formData.shortcode !== '';
+    if (isEditingExistingProject) {
+      this._buildForm([]);
+      this.afterFormInit.emit(this.form);
+      return;
+    }
+
     this._allProjectsService.allProjects$
       .pipe(map(projects => projects.map(project => project.shortcode)))
       .subscribe(shortcodes => {

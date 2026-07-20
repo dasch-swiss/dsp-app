@@ -102,23 +102,22 @@ a {
   z-index: 1000;
 }
 
-// SNACK BAR
-// Angular Material v18 snack-bar styles - Using correct CSS custom properties
+// SNACK BAR — DaSCH blue / red / amber by panelClass
 .mat-mdc-snack-bar-container.success {
-  --mat-snackbar-container-color: rgba(51, 103, 144, 0.9) !important;
-  --mat-snackbar-supporting-text-color: rgb(255, 255, 255) !important;
+  --mat-snack-bar-container-color: rgba(51, 103, 144, 0.9) !important;
+  --mat-snack-bar-supporting-text-color: rgb(255, 255, 255) !important;
   --mat-snack-bar-button-color: rgb(255, 255, 255) !important;
 }
 
 .mat-mdc-snack-bar-container.error {
-  --mat-snackbar-container-color: rgba(225, 29, 72, 0.9) !important;
-  --mat-snackbar-supporting-text-color: rgb(255, 255, 255) !important;
+  --mat-snack-bar-container-color: rgba(225, 29, 72, 0.9) !important;
+  --mat-snack-bar-supporting-text-color: rgb(255, 255, 255) !important;
   --mat-snack-bar-button-color: rgb(255, 255, 255) !important;
 }
 
 .mat-mdc-snack-bar-container.note {
-  --mat-snackbar-container-color: rgba(251, 191, 36, 0.9) !important;
-  --mat-snackbar-supporting-text-color: rgb(255, 255, 255) !important;
+  --mat-snack-bar-container-color: rgba(251, 191, 36, 0.9) !important;
+  --mat-snack-bar-supporting-text-color: rgb(255, 255, 255) !important;
   --mat-snack-bar-button-color: rgb(255, 255, 255) !important;
 }
 

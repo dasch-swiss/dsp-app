@@ -103,12 +103,7 @@ describe('CreateUserDialogComponent', () => {
   it('should not create user when form is invalid', () => {
     // Initialize form with empty controls that will be invalid
     const mockUserForm = new FormBuilder().group({
-      givenName: [
-        '',
-        [
-          /* add required validator to make it invalid */
-        ],
-      ],
+      givenName: ['', [/* add required validator to make it invalid */]],
       familyName: [''],
       email: [''],
       username: [''],
