@@ -80,8 +80,10 @@ import { TranslatePipe } from '@ngx-translate/core';
                       #chipInput
                       autocomplete="off"
                       [matChipInputFor]="chipGrid"
+                      [matChipInputAddOnBlur]="true"
                       (matChipInputTokenEnd)="addEditAuthor($event)" />
                   </mat-chip-grid>
+                  <mat-hint>{{ 'legal.dataSide.authorshipHint' | translate }}</mat-hint>
                 </mat-form-field>
                 <button
                   type="button"

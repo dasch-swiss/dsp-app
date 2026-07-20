@@ -48,15 +48,9 @@ import { finalize } from 'rxjs/operators';
             {{ option }}
           </mat-option>
         }
-
-        @if (
-          filteredAuthorship.length === 0 && autocompleteFormControl.value && autocompleteFormControl.value.length > 0
-        ) {
-          <mat-option [disabled]="true">{{
-            'resourceEditor.resourceCreator.authorship.pressEnterOrTab' | translate
-          }}</mat-option>
-        }
       </mat-autocomplete>
+
+      <mat-hint>{{ 'resourceEditor.resourceCreator.authorship.pressEnterOrTab' | translate }}</mat-hint>
 
       @if (control.invalid && control.touched && control.errors![0]; as error) {
         <mat-error>

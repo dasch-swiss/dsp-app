@@ -5,6 +5,7 @@
       "license": "License",
       "copyrightHolder": "Copyright holder",
       "authorship": "Authorship",
+      "authorshipHint": "Type a name and press Enter to add each author.",
       "edit": "Edit",
       "removeAuthor": "Remove {{name}}",
       "uncategorized": "This resource's legal information hasn't been set yet — please add it.",

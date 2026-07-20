@@ -96,6 +96,7 @@ type ResourceSideForm = FormGroup<{
           [control]="form.controls.dataAuthorship"
           [label]="'legal.dataSide.authorship' | translate"
           [ariaLabel]="'legal.dataSide.authorship' | translate"
+          [hint]="'legal.dataSide.authorshipHint' | translate"
           [removeAuthorLabel]="removeAuthorLabel" />
 
         <div style="display: flex; gap: 8px; justify-content: flex-end; margin-top: 16px">
