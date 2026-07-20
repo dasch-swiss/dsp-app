@@ -68,11 +68,10 @@ export class AccountComponent {
 
   onEditPassword(user: ReadUser) {
     this._matDialog
-      .open<
+      .open<EditPasswordDialogComponent, EditPasswordDialogProps, boolean>(
         EditPasswordDialogComponent,
-        EditPasswordDialogProps,
-        boolean
-      >(EditPasswordDialogComponent, DspDialogConfig.dialogDrawerConfig({ user }, true))
+        DspDialogConfig.dialogDrawerConfig({ user }, true)
+      )
       .afterClosed()
       .subscribe();
   }
