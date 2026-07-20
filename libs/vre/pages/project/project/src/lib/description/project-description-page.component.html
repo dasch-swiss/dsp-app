@@ -50,6 +50,7 @@
             [copyrightHolder]="rights.copyrightHolder"
             [showAuthorship]="false"
             [isAdmin]="(hasProjectAdminRights$ | async) ?? false"
+            labelAlign="start"
             (editLegalInfo)="goToLegalSettings()" />
         </section>
       }
