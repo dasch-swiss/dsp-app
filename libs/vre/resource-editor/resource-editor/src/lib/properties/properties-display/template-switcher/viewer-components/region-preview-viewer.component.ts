@@ -1,20 +1,20 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, OnInit } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import type { ReadRegionPreviewValue } from '@dasch-swiss/dsp-js';
-import { ResourceService } from '@dasch-swiss/vre/shared/app-common';
 import { AdminAPIApiService, ProjectLicenseDto } from '@dasch-swiss/vre/3rd-party-services/open-api';
+import { ResourceService } from '@dasch-swiss/vre/shared/app-common';
 import { TranslatePipe } from '@ngx-translate/core';
 import { switchMap, take } from 'rxjs';
 // Direct relative imports (NOT the lib barrel) for same-lib components to avoid the intra-lib DI cycle.
 import { AlertInfoComponent } from '../../../../header/alert-info.component';
-import { ResourceExplorerButtonComponent } from '../../../resource-explorer-button.component';
 import { ResourceFetcherService } from '../../../../representation/resource-fetcher.service';
+import { ResourceExplorerButtonComponent } from '../../../resource-explorer-button.component';
 
 /**
  * Renders a RegionPreviewValue: the region crop image, the full-page thumbnail with the region
  * highlighted, the caption (a subdued image label for context + the region as the navigable target),
  * and the legal footer. No OpenSeadragon and no geometry math — the region is highlighted directly
- * from the served percentages: the whole page is lightened + desaturated and only the region rectangle
+ * from the served percentages: the whole page is darkened + desaturated and only the region rectangle
  * is revealed at normal brightness (no drawn box). The API always returns a crop, so there are two
  * image states:
  *  - restricted: the user cannot view the full image, so Sipi denies the pixels and <img> fails
@@ -143,10 +143,10 @@ import { ResourceFetcherService } from '../../../../representation/resource-fetc
         width: 100%;
       }
 
-      /* Region highlight: darken (~60%) + desaturate the whole page. The region itself is revealed
+      /* Region highlight: darken (~48%) + desaturate the whole page. The region itself is revealed
          at normal brightness by the .thumb--region overlay clipped to the region rectangle. */
       .thumb--dimmed {
-        filter: brightness(0.4) saturate(0.3);
+        filter: brightness(0.52) saturate(0.3);
       }
 
       .thumb--region {
@@ -326,7 +326,7 @@ export class RegionPreviewViewerComponent implements OnChanges, OnInit {
   }
 
   // clip-path inset() that reveals only the region rectangle (percentages of the thumbnail). It punches
-  // the normal-brightness region window through the lightened + desaturated base layer.
+  // the normal-brightness region window through the darkened + desaturated base layer.
   // inset(top right bottom left): top=Y, right=100-(X+W), bottom=100-(Y+H), left=X; clamped at 0.
   get regionClip(): string | null {
     if (!this.hasBox) {
