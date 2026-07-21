@@ -5,6 +5,7 @@
       "license": "Licenza",
       "copyrightHolder": "Titolare dei diritti",
       "authorship": "Autore",
+      "authorshipHint": "Digita un nome e premi Invio per aggiungere ogni autore.",
       "edit": "Modifica",
       "removeAuthor": "Rimuovi {{name}}",
       "uncategorized": "Le informazioni legali di questa risorsa non sono ancora state definite — si prega di aggiungerle.",
@@ -555,6 +556,7 @@
       "goToSegment": "Vai al segmento"
     },
     "legal": {
+      "title": "Informazioni legali",
       "copyrightHolder": "Titolare del copyright",
       "authorship": "Autore",
       "license": "Licenza"
@@ -627,6 +629,10 @@
       },
       "text": {
         "title": "Testo (csv, txt, xml)"
+      },
+      "placeholder": {
+        "title": "Segnaposto – file non ancora disponibile",
+        "message": "Questa risorsa fa riferimento a un segnaposto. Il file effettivo non è ancora stato fornito."
       },
       "stillImage": {
         "createAnnotation": "Crea annotazione",

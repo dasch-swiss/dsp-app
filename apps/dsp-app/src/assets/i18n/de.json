@@ -5,6 +5,7 @@
       "license": "Lizenz",
       "copyrightHolder": "Rechteinhaber:in",
       "authorship": "Urheber:innen",
+      "authorshipHint": "Namen eingeben und mit Enter bestätigen, um Urheber:innen hinzuzufügen.",
       "edit": "Bearbeiten",
       "removeAuthor": "{{name}} entfernen",
       "uncategorized": "Die rechtlichen Angaben dieser Ressource wurden noch nicht festgelegt — bitte ergänzen.",
@@ -612,6 +613,10 @@
       "text": {
         "title": "Text (csv, txt, xml)"
       },
+      "placeholder": {
+        "title": "Platzhalter – Datei noch nicht verfügbar",
+        "message": "Diese Ressource verweist auf einen Platzhalter. Die eigentliche Datei wurde noch nicht geliefert."
+      },
       "replaceFileDialog": {
         "willBeReplaced": "Diese Datei wird ersetzt."
       },
@@ -749,6 +754,7 @@
       "goToSegment": "Zum Segment gehen"
     },
     "legal": {
+      "title": "Rechtliches",
       "copyrightHolder": "Urheberrechtsinhaber",
       "authorship": "Autorenschaft",
       "license": "Lizenz"

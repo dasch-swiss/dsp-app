@@ -39,7 +39,7 @@ import { sortByKeys } from './property-value/sortByKeys';
         [label]="'resourceEditor.propertiesDisplay.incomingLinkLabel' | translate"
         [borderBottom]="true"
         [isEmptyRow]="true">
-        <app-progress-indicator />
+        <app-progress-indicator [compact]="true" />
       </app-property-row>
     }
   `,

@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ReadFileValue } from '@dasch-swiss/dsp-js';
 import { AdminAPIApiService, ProjectLicenseDto } from '@dasch-swiss/vre/3rd-party-services/open-api';
+import { AppProgressIndicatorComponent } from '@dasch-swiss/vre/ui/progress-indicator';
 import { TranslatePipe } from '@ngx-translate/core';
 import { switchMap, take } from 'rxjs';
 import { ResourceFetcherService } from './resource-fetcher.service';
@@ -15,6 +16,7 @@ import { ResourceLegalLicenseComponent } from './resource-legal-license.componen
         style="border: 1px solid #292929; text-align: left;
     background: #292929; border-radius: 8px;
     color: #e4e9ed; padding: 8px; padding-bottom: 16px; margin-top: 8px; position: relative; top: 12px">
+        <div style="font-weight: bold; margin-bottom: 8px">{{ 'resourceEditor.legal.title' | translate }}</div>
         <div style="display: flex; justify-content: space-between">
           <div>
             @if (fileValue.copyrightHolder) {
@@ -34,9 +36,11 @@ import { ResourceLegalLicenseComponent } from './resource-legal-license.componen
               </div>
             }
           </div>
-          <div style="display: flex; justify-content: flex-end">
+          <div style="display: flex; justify-content: flex-end; align-items: center">
             @if (license) {
               <app-resource-legal-license [license]="license" />
+            } @else if (isLoadingLicense) {
+              <app-progress-indicator [compact]="true" size="xsmall" />
             }
           </div>
         </div>
@@ -44,12 +48,13 @@ import { ResourceLegalLicenseComponent } from './resource-legal-license.componen
     }
   `,
   styles: ['.label { display: inline-block; width: 170px; font-weight: bold}'],
-  imports: [TranslatePipe, ResourceLegalLicenseComponent],
+  imports: [TranslatePipe, ResourceLegalLicenseComponent, AppProgressIndicatorComponent],
 })
 export class ResourceLegalComponent implements OnInit {
   @Input({ required: true }) fileValue!: ReadFileValue;
 
   licenses: ProjectLicenseDto[] = [];
+  isLoadingLicense = false;
 
   get license() {
     return this.licenses.find(license => license.id === this.fileValue.license?.id);
@@ -61,7 +66,10 @@ export class ResourceLegalComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this._fetchLicense();
+    if (this.fileValue.license) {
+      this.isLoadingLicense = true;
+      this._fetchLicense();
+    }
   }
 
   private _fetchLicense() {
@@ -72,8 +80,14 @@ export class ResourceLegalComponent implements OnInit {
         ),
         take(1)
       )
-      .subscribe(data => {
-        this.licenses = data.data;
+      .subscribe({
+        next: data => {
+          this.licenses = data.data;
+          this.isLoadingLicense = false;
+        },
+        error: () => {
+          this.isLoadingLicense = false;
+        },
       });
   }
 }

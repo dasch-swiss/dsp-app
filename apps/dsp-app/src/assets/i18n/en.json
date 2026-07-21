@@ -5,6 +5,7 @@
       "license": "License",
       "copyrightHolder": "Copyright holder",
       "authorship": "Authorship",
+      "authorshipHint": "Type a name and press Enter to add each author.",
       "edit": "Edit",
       "removeAuthor": "Remove {{name}}",
       "uncategorized": "This resource's legal information hasn't been set yet — please add it.",
@@ -555,6 +556,7 @@
       "goToSegment": "Go to segment"
     },
     "legal": {
+      "title": "Legal",
       "copyrightHolder": "Copyright holder",
       "authorship": "Authorship",
       "license": "License"
@@ -627,6 +629,10 @@
       },
       "text": {
         "title": "Text (csv, txt, xml)"
+      },
+      "placeholder": {
+        "title": "Placeholder – asset not yet available",
+        "message": "This resource references a placeholder. The actual file has not been delivered yet."
       },
       "stillImage": {
         "createAnnotation": "Create Annotation",

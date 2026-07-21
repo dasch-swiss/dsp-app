@@ -5,6 +5,8 @@ import { ResourceRestrictionComponent } from '../../meta/resource-restriction.co
 import { PropertiesDisplayService } from '../../properties/properties-display/property-value/properties-display.service';
 import { ResourceDefaultTabsComponent } from '../../properties/resource-default-tabs.component';
 import { getFileValue } from '../../representation/get-file-value';
+import { isPlaceholderFileValue } from '../../representation/is-placeholder-file-value';
+import { RepresentationPlaceholderComponent } from '../../representation/representation-placeholder.component';
 import { ResourceLegalComponent } from '../../representation/resource-legal.component';
 import { ResourceRepresentationContainerComponent } from '../../representation/resource-representation-container.component';
 import { TextComponent } from './text.component';
@@ -17,9 +19,13 @@ import { TextComponent } from './text.component';
     }
     <app-resource-header [resource]="resource" />
     <app-resource-legal [fileValue]="fileValue" />
-    <app-resource-representation-container height="small">
-      <app-text [src]="fileValue" [parentResource]="resource.res" />
-    </app-resource-representation-container>
+    @if (isPlaceholder) {
+      <app-representation-placeholder />
+    } @else {
+      <app-resource-representation-container height="small">
+        <app-text [src]="fileValue" [parentResource]="resource.res" />
+      </app-resource-representation-container>
+    }
     <app-resource-default-tabs [resource]="resource" style="display: block; margin-top: 50px" />
   `,
   providers: [PropertiesDisplayService],
@@ -27,6 +33,7 @@ import { TextComponent } from './text.component';
     ResourceRestrictionComponent,
     ResourceHeaderComponent,
     ResourceLegalComponent,
+    RepresentationPlaceholderComponent,
     TextComponent,
     ResourceRepresentationContainerComponent,
     ResourceDefaultTabsComponent,
@@ -37,5 +44,9 @@ export class ResourceTextComponent {
 
   get fileValue() {
     return getFileValue(this.resource.res)!;
+  }
+
+  get isPlaceholder() {
+    return isPlaceholderFileValue(this.fileValue);
   }
 }
