@@ -114,16 +114,16 @@ import { ResourceExplorerButtonComponent } from '../../../resource-explorer-butt
         background: #fff;
       }
 
-      /* Media row: constant-width full-page thumbnail on the left, region crop (centered on a beige
-         backdrop) on the right; the thumbnail is vertically centered next to a taller crop. */
+      /* Media row: constant-width full-page thumbnail on the left, region crop (centered on a black
+         backdrop) on the right; the thumbnail is vertically centered next to a taller crop. The
+         thumbnail and crop share one seamless black panel (no divider between them). */
       .media {
         display: flex;
       }
 
       .thumb-box {
         flex: 0 0 96px;
-        border-right: 1px solid #e5e7eb;
-        background: #fff;
+        background: #000;
         padding: 8px;
         display: flex;
         align-items: center;
@@ -133,9 +133,6 @@ import { ResourceExplorerButtonComponent } from '../../../resource-explorer-butt
       .thumb-wrap {
         position: relative;
         width: 100%;
-        /* Shadow lives on the wrapper, not the img, so the base layer's brightness() filter leaves
-           the drop shadow untouched. */
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.28);
       }
 
       .thumb {
@@ -163,7 +160,10 @@ import { ResourceExplorerButtonComponent } from '../../../resource-explorer-butt
         display: flex;
         align-items: center;
         justify-content: center;
-        background: #fff; /* padding around the crop is white (same as the app), not part of the image */
+        background: #000;
+        /* Slim black margin around the crop: keeps a little black visible even when the crop fills the
+           box (same padding technique as .thumb-box, which uses 8px). */
+        padding: 6px;
       }
 
       .crop {
