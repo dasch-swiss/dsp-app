@@ -212,6 +212,7 @@ export class Constants {
   static GuiColorPicker = `${Constants.SalsahGui + Constants.HashDelimiter}Colorpicker`;
   static GuiGeometry = `${Constants.SalsahGui + Constants.HashDelimiter}Geometry`;
   static GuiFileUpload = `${Constants.SalsahGui + Constants.HashDelimiter}Fileupload`;
+  static GuiRegionPreview = `${Constants.SalsahGui + Constants.HashDelimiter}RegionPreview`;
 
   static Owl = 'http://www.w3.org/2002/07/owl';
   static Ontology = `${Constants.Owl + Constants.HashDelimiter}Ontology`;
