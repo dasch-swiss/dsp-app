@@ -160,16 +160,19 @@ export class Constants {
   static hasLicense = `${Constants.KnoraApiV2 + Constants.HashDelimiter}hasLicense`;
   static hasResourceAuthorship = `${Constants.KnoraApiV2 + Constants.HashDelimiter}hasResourceAuthorship`;
 
-  // Region preview read-field IRIs (RegionPreviewValue)
+  // Region preview read-field IRIs (RegionPreviewValue) — names mirror the API's served predicates.
   static IsRegionPreviewOf = `${Constants.KnoraApiV2 + Constants.HashDelimiter}isRegionPreviewOf`;
-  static HasPreviewCropUrl = `${Constants.KnoraApiV2 + Constants.HashDelimiter}hasPreviewCropUrl`;
-  static HasPreviewThumbnailUrl = `${Constants.KnoraApiV2 + Constants.HashDelimiter}hasPreviewThumbnailUrl`;
-  static HasPreviewHighlightBoxX = `${Constants.KnoraApiV2 + Constants.HashDelimiter}hasPreviewHighlightBoxX`;
-  static HasPreviewHighlightBoxY = `${Constants.KnoraApiV2 + Constants.HashDelimiter}hasPreviewHighlightBoxY`;
-  static HasPreviewHighlightBoxW = `${Constants.KnoraApiV2 + Constants.HashDelimiter}hasPreviewHighlightBoxW`;
-  static HasPreviewHighlightBoxH = `${Constants.KnoraApiV2 + Constants.HashDelimiter}hasPreviewHighlightBoxH`;
+  static HasPreviewUrl = `${Constants.KnoraApiV2 + Constants.HashDelimiter}hasPreviewUrl`;
+  static HasThumbnailUrl = `${Constants.KnoraApiV2 + Constants.HashDelimiter}hasThumbnailUrl`;
+  static HasHighlightBoxX = `${Constants.KnoraApiV2 + Constants.HashDelimiter}hasHighlightBoxX`;
+  static HasHighlightBoxY = `${Constants.KnoraApiV2 + Constants.HashDelimiter}hasHighlightBoxY`;
+  static HasHighlightBoxW = `${Constants.KnoraApiV2 + Constants.HashDelimiter}hasHighlightBoxW`;
+  static HasHighlightBoxH = `${Constants.KnoraApiV2 + Constants.HashDelimiter}hasHighlightBoxH`;
   static HasPreviewColor = `${Constants.KnoraApiV2 + Constants.HashDelimiter}hasPreviewColor`;
-  static HasPreviewFullImage = `${Constants.KnoraApiV2 + Constants.HashDelimiter}hasPreviewFullImage`;
+  static HasFullImage = `${Constants.KnoraApiV2 + Constants.HashDelimiter}hasFullImage`;
+  static HasFullImageCopyrightHolder = `${Constants.KnoraApiV2 + Constants.HashDelimiter}hasFullImageCopyrightHolder`;
+  static HasFullImageAuthorship = `${Constants.KnoraApiV2 + Constants.HashDelimiter}hasFullImageAuthorship`;
+  static HasFullImageLicense = `${Constants.KnoraApiV2 + Constants.HashDelimiter}hasFullImageLicense`;
 
   static MatchText = `${Constants.KnoraApiV2 + Constants.HashDelimiter}matchText`;
 

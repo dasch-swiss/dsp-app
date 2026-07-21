@@ -16,6 +16,8 @@ const fullValue = () =>
     highlightBoxW: 30,
     highlightBoxH: 40,
     color: '#00aa00',
+    regionIri: 'http://rdfh.ch/0001/region',
+    regionLabel: 'A test region',
     fullImageIri: 'http://rdfh.ch/0001/img',
     fullImageLabel: 'Source page 42',
     copyrightHolder: 'DaSCH',
@@ -51,40 +53,54 @@ describe('RegionPreviewViewerComponent', () => {
     fixture = TestBed.createComponent(RegionPreviewViewerComponent);
   });
 
-  it('renders the crop, the thumbnail, and the highlight box positioned from the served percentages', () => {
+  it('highlights the region by lightening + desaturating the surroundings and revealing the region window', () => {
     setValue(fullValue());
     const el: HTMLElement = fixture.nativeElement;
 
     const crop = el.querySelector('img.crop') as HTMLImageElement;
-    const thumb = el.querySelector('img.thumb') as HTMLImageElement;
-    const box = el.querySelector('.highlight') as HTMLElement;
+    const base = el.querySelector('img.thumb:not(.thumb--region)') as HTMLImageElement;
+    const region = el.querySelector('img.thumb--region') as HTMLImageElement;
 
     expect(crop?.getAttribute('src')).toEqual('http://sipi/crop.jpg');
-    expect(thumb?.getAttribute('src')).toEqual('http://sipi/thumb.jpg');
-    expect(box).toBeTruthy();
-    expect(box.style.left).toEqual('10%');
-    expect(box.style.top).toEqual('20%');
-    expect(box.style.width).toEqual('30%');
-    expect(box.style.height).toEqual('40%');
-    // the highlight is tinted with the region's served colour (jsdom normalizes the hex to rgb)
-    expect(box.style.borderColor).toEqual('rgb(0, 170, 0)');
+    expect(base?.getAttribute('src')).toEqual('http://sipi/thumb.jpg');
+    // the whole page is lightened + desaturated ...
+    expect(base.classList).toContain('thumb--dimmed');
+    // ... except the region window, revealed at normal brightness by the clipped overlay of the same page
+    expect(region).toBeTruthy();
+    expect(region.getAttribute('src')).toEqual('http://sipi/thumb.jpg');
+    // inset(top right bottom left): top=Y, right=100-(X+W), bottom=100-(Y+H), left=X
+    expect(fixture.componentInstance.regionClip).toEqual('inset(20% 60% 40% 10%)');
   });
 
-  it('falls back to the default red highlight when the region has no served colour', () => {
-    setValue({ ...fullValue(), color: null } as unknown as ReadRegionPreviewValue);
+  it('renders the thumbnail flat (no dimming, no region overlay) when no rectangle box is served', () => {
+    setValue({
+      ...fullValue(),
+      highlightBoxX: null,
+      highlightBoxY: null,
+      highlightBoxW: null,
+      highlightBoxH: null,
+    } as unknown as ReadRegionPreviewValue);
     const el: HTMLElement = fixture.nativeElement;
 
-    const box = el.querySelector('.highlight') as HTMLElement;
-    expect(box.style.borderColor).toEqual('rgb(211, 47, 47)');
+    const base = el.querySelector('img.thumb') as HTMLImageElement;
+    expect(base).toBeTruthy();
+    expect(base.classList).not.toContain('thumb--dimmed');
+    expect(el.querySelector('img.thumb--region')).toBeNull();
+    expect(fixture.componentInstance.regionClip).toBeNull();
   });
 
-  it('shows the caption + navigate link and the legal footer', () => {
+  it('shows the region as the emphasized link (to the region page) and the image label as plain context', () => {
     setValue(fullValue());
     const el: HTMLElement = fixture.nativeElement;
 
-    const captionLink = el.querySelector('.cap-link') as HTMLAnchorElement;
-    expect(captionLink.textContent?.trim()).toEqual('Source page 42');
-    expect(captionLink.getAttribute('href')).toEqual('/resource/project/0001/img');
+    // the region label is the emphasized, navigable target -> region page
+    const regionLink = el.querySelector('.cap-region') as HTMLAnchorElement;
+    expect(regionLink.textContent?.trim()).toEqual('A test region');
+    expect(regionLink.getAttribute('href')).toEqual('/resource/project/0001/img');
+    // the image label is subdued, plain context text (not a link)
+    const imageLabel = el.querySelector('.cap-image') as HTMLElement;
+    expect(imageLabel.textContent?.trim()).toEqual('Source page 42');
+    expect(imageLabel.querySelector('a')).toBeNull();
     expect(el.querySelectorAll('.legal-label').length).toBeGreaterThan(1);
   });
 
@@ -116,19 +132,6 @@ describe('RegionPreviewViewerComponent', () => {
     expect(el.querySelectorAll('.legal-label').length).toBe(1);
     // the crop still renders
     expect(el.querySelector('img.crop')).toBeTruthy();
-  });
-
-  it('renders the "cannot be displayed" placeholder (not the restricted banner, not an <img>) when there is no crop', () => {
-    setValue({ ...fullValue(), cropUrl: null } as unknown as ReadRegionPreviewValue);
-    const el: HTMLElement = fixture.nativeElement;
-
-    expect(el.querySelector('app-centered-message')).toBeTruthy();
-    expect(el.querySelector('app-alert-info')).toBeNull();
-    expect(el.querySelector('img.crop')).toBeNull();
-    expect(el.querySelector('img.thumb')).toBeNull();
-    // caption + legal still render
-    expect(el.querySelector('.cap-link')).toBeTruthy();
-    expect(el.querySelectorAll('.legal-label').length).toBeGreaterThan(1);
   });
 
   it('resets the restricted latch and refreshes the legal footer when a new value arrives', () => {

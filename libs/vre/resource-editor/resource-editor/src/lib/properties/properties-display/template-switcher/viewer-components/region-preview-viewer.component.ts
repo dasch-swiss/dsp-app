@@ -3,7 +3,6 @@ import { MatIconModule } from '@angular/material/icon';
 import type { ReadRegionPreviewValue } from '@dasch-swiss/dsp-js';
 import { ResourceService } from '@dasch-swiss/vre/shared/app-common';
 import { AdminAPIApiService, ProjectLicenseDto } from '@dasch-swiss/vre/3rd-party-services/open-api';
-import { CenteredMessageComponent } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe } from '@ngx-translate/core';
 import { switchMap, take } from 'rxjs';
 // Direct relative imports (NOT the lib barrel) for same-lib components to avoid the intra-lib DI cycle.
@@ -12,26 +11,24 @@ import { ResourceExplorerButtonComponent } from '../../../resource-explorer-butt
 import { ResourceFetcherService } from '../../../../representation/resource-fetcher.service';
 
 /**
- * Renders a RegionPreviewValue: the region crop image, the full-page thumbnail with a static
- * percentage highlight box, the source caption + navigate-to-full-image, and the legal footer.
- * No OpenSeadragon and no geometry math — the highlight box is drawn directly from the served
- * percentages. Three mutually exclusive image states:
- *  - cannot-display: the API emits no crop for non-rectangle geometry (cropUrl == null)
+ * Renders a RegionPreviewValue: the region crop image, the full-page thumbnail with the region
+ * highlighted, the caption (a subdued image label for context + the region as the navigable target),
+ * and the legal footer. No OpenSeadragon and no geometry math — the region is highlighted directly
+ * from the served percentages: the whole page is lightened + desaturated and only the region rectangle
+ * is revealed at normal brightness (no drawn box). The API always returns a crop, so there are two
+ * image states:
  *  - restricted: the user cannot view the full image, so Sipi denies the pixels and <img> fails
- *  - normal: crop + thumbnail + highlight box
- * Caption and legal footer render in all states (metadata is always available for a value-visible user).
+ *  - normal: crop + thumbnail with the region highlighted
+ * Caption and legal footer render in both states (metadata is always available for a value-visible user).
  */
 @Component({
   selector: 'app-region-preview-viewer',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TranslatePipe, MatIconModule, CenteredMessageComponent, AlertInfoComponent, ResourceExplorerButtonComponent],
+  imports: [TranslatePipe, MatIconModule, AlertInfoComponent, ResourceExplorerButtonComponent],
   template: `
     <div class="card">
-      @if (!value.cropUrl) {
-        <!-- Non-rectangle geometry: the API emits no crop. Guard cropUrl FIRST — before any <img> — so a
-             null src never false-fires (error) and mis-renders as restricted. -->
-        <app-centered-message icon="hide_image" [message]="'resourceEditor.regionPreview.cannotDisplay' | translate" />
-      } @else if (imageFailed) {
+      @if (imageFailed) {
+        <!-- The API always returns a crop; the only non-normal state is the media server denying the pixels. -->
         <app-alert-info>
           <p>{{ 'resourceEditor.restricted' | translate }}</p>
         </app-alert-info>
@@ -41,15 +38,22 @@ import { ResourceFetcherService } from '../../../../representation/resource-fetc
           @if (value.thumbnailUrl) {
             <div class="thumb-box">
               <div class="thumb-wrap">
-                <img [src]="value.thumbnailUrl" (error)="onImageError()" class="thumb" alt="" />
+                <!-- Base layer: the whole page. When a region rectangle is served it is darkened +
+                     desaturated so the region stands out by contrast (no drawn box). -->
+                <img
+                  [src]="value.thumbnailUrl"
+                  (error)="onImageError()"
+                  class="thumb"
+                  [class.thumb--dimmed]="hasBox"
+                  alt="" />
                 @if (hasBox) {
-                  <div
-                    class="highlight"
-                    [style.border-color]="value.color || '#d32f2f'"
-                    [style.left.%]="value.highlightBoxX"
-                    [style.top.%]="value.highlightBoxY"
-                    [style.width.%]="value.highlightBoxW"
-                    [style.height.%]="value.highlightBoxH"></div>
+                  <!-- Overlay: the same page at normal brightness, clipped to just the region rectangle. -->
+                  <img
+                    [src]="value.thumbnailUrl"
+                    class="thumb thumb--region"
+                    [style.clip-path]="regionClip"
+                    alt=""
+                    aria-hidden="true" />
                 }
               </div>
             </div>
@@ -66,13 +70,17 @@ import { ResourceFetcherService } from '../../../../representation/resource-fetc
         <div class="meta-grid">
           <span class="legal-label">
             <mat-icon class="cap-icon">crop_free</mat-icon>
-            {{ 'resourceEditor.regionPreview.annotationFrom' | translate }}
+            {{ 'resourceEditor.regionPreview.annotation' | translate }}
           </span>
-          <span class="legal-value">
-            <a class="cap-link" [href]="fullImageLink" target="_blank">{{
-              value.fullImageLabel || value.fullImageIri
+          <span class="legal-value cap-value">
+            <!-- Subdued image label = plain context (which page it is from); the region is the emphasized,
+                 navigable target — both the label and the arrow open the region page. -->
+            <span class="cap-image">{{ value.fullImageLabel || value.fullImageIri }}</span>
+            <span class="cap-sep" aria-hidden="true">—</span>
+            <a class="cap-link cap-region" [href]="regionLink" target="_blank">{{
+              value.regionLabel || value.regionIri
             }}</a>
-            <app-resource-explorer-button [resourceIri]="value.fullImageIri" />
+            <app-resource-explorer-button [resourceIri]="value.regionIri" />
           </span>
 
           @if (value.copyrightHolder) {
@@ -125,12 +133,28 @@ import { ResourceFetcherService } from '../../../../representation/resource-fetc
       .thumb-wrap {
         position: relative;
         width: 100%;
+        /* Shadow lives on the wrapper, not the img, so the base layer's brightness() filter leaves
+           the drop shadow untouched. */
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.28);
       }
 
       .thumb {
         display: block;
         width: 100%;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.28);
+      }
+
+      /* Region highlight: darken (~60%) + desaturate the whole page. The region itself is revealed
+         at normal brightness by the .thumb--region overlay clipped to the region rectangle. */
+      .thumb--dimmed {
+        filter: brightness(0.4) saturate(0.3);
+      }
+
+      .thumb--region {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        pointer-events: none;
       }
 
       .crop-box {
@@ -147,13 +171,6 @@ import { ResourceFetcherService } from '../../../../representation/resource-fetc
         max-width: 100%;
         max-height: 400px; /* max preview size — a long preview can't dominate the screen */
         object-fit: contain;
-      }
-
-      .highlight {
-        position: absolute;
-        border: 2px solid #d32f2f;
-        box-sizing: border-box;
-        pointer-events: none;
       }
 
       .footer {
@@ -197,6 +214,31 @@ import { ResourceFetcherService } from '../../../../representation/resource-fetc
       .cap-link {
         color: #336790;
         text-decoration: none;
+      }
+
+      /* Caption row: subdued image label (context) — separator — emphasized region link (target). */
+      .cap-value {
+        min-width: 0; /* let the image label truncate instead of overflowing the row */
+      }
+
+      .cap-image {
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        /* Same grey/size as the legal values (.legal-value) so the caption reads as ordinary metadata;
+           the region link stays emphasized on its own via bold + link colour. */
+        color: #6b7280;
+      }
+
+      .cap-sep {
+        flex: 0 0 auto;
+        color: #6b7280; /* same grey as the label + legal values */
+      }
+
+      .cap-region {
+        flex: 0 0 auto;
+        font-weight: 600; /* emphasized: the region is the primary, navigable target */
       }
 
       /* The shared explorer button is tuned for the link viewer (a -15px lift over a 0-height host).
@@ -269,8 +311,9 @@ export class RegionPreviewViewerComponent implements OnChanges, OnInit {
   }
 
   // These getters return primitives (value-equal across CD passes) → safe under OnPush.
-  get fullImageLink() {
-    return `/resource${this._resourceService.getResourcePath(this.value.fullImageIri)}`;
+  // The caption's navigable target is the region itself (label + arrow), not the full image.
+  get regionLink() {
+    return `/resource${this._resourceService.getResourcePath(this.value.regionIri)}`;
   }
 
   get hasBox() {
@@ -280,6 +323,20 @@ export class RegionPreviewViewerComponent implements OnChanges, OnInit {
       this.value.highlightBoxW != null &&
       this.value.highlightBoxH != null
     );
+  }
+
+  // clip-path inset() that reveals only the region rectangle (percentages of the thumbnail). It punches
+  // the normal-brightness region window through the lightened + desaturated base layer.
+  // inset(top right bottom left): top=Y, right=100-(X+W), bottom=100-(Y+H), left=X; clamped at 0.
+  get regionClip(): string | null {
+    if (!this.hasBox) {
+      return null;
+    }
+    const top = this.value.highlightBoxY!;
+    const left = this.value.highlightBoxX!;
+    const right = Math.max(0, 100 - (this.value.highlightBoxX! + this.value.highlightBoxW!));
+    const bottom = Math.max(0, 100 - (this.value.highlightBoxY! + this.value.highlightBoxH!));
+    return `inset(${top}% ${right}% ${bottom}% ${left}%)`;
   }
 
   get hasLegal() {

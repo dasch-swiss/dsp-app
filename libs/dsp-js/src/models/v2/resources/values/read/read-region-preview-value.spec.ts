@@ -12,6 +12,7 @@ import { UpdateRegionPreviewValue } from '../update/update-region-preview-value'
 import { ReadRegionPreviewValue } from './read-region-preview-value';
 
 const REGION_IRI = 'http://rdfh.ch/0001/some-region';
+const REGION_LABEL = 'A test region';
 const FULL_IMAGE_IRI = 'http://rdfh.ch/0001/some-image';
 const CROP_URL = 'http://0.0.0.0:1024/0001/crop.jp2/0,0,100,100/max/0/default.jpg';
 const THUMB_URL = 'http://0.0.0.0:1024/0001/img.jp2/full/,512/0/default.jpg';
@@ -34,22 +35,22 @@ const baseValueFields = () => ({
 
 /** The RegionPreview-specific fields (anyURI/decimal arrive as typed literals). */
 const regionFields = (authorship: string | string[] = ['Ada Lovelace']) => ({
-  [Constants.IsRegionPreviewOf]: { '@id': REGION_IRI },
-  [Constants.HasPreviewCropUrl]: anyUri(CROP_URL),
-  [Constants.HasPreviewThumbnailUrl]: anyUri(THUMB_URL),
-  [Constants.HasPreviewHighlightBoxX]: decimal('10'),
-  [Constants.HasPreviewHighlightBoxY]: decimal('20'),
-  [Constants.HasPreviewHighlightBoxW]: decimal('30'),
-  [Constants.HasPreviewHighlightBoxH]: decimal('40'),
+  [Constants.IsRegionPreviewOf]: { '@id': REGION_IRI, '@type': Constants.Region, [Constants.Label]: REGION_LABEL },
+  [Constants.HasPreviewUrl]: anyUri(CROP_URL),
+  [Constants.HasThumbnailUrl]: anyUri(THUMB_URL),
+  [Constants.HasHighlightBoxX]: decimal('10'),
+  [Constants.HasHighlightBoxY]: decimal('20'),
+  [Constants.HasHighlightBoxW]: decimal('30'),
+  [Constants.HasHighlightBoxH]: decimal('40'),
   [Constants.HasPreviewColor]: '#ff3333',
-  [Constants.HasPreviewFullImage]: {
+  [Constants.HasFullImage]: {
     '@id': FULL_IMAGE_IRI,
     '@type': Constants.StillImageFileValue,
     [Constants.Label]: 'Source page 42',
   },
-  [Constants.hasCopyrightHolder]: 'DaSCH',
-  [Constants.hasAuthorship]: authorship,
-  [Constants.hasLicense]: { '@id': 'http://rdfh.ch/licenses/cc-by-4.0' },
+  [Constants.HasFullImageCopyrightHolder]: 'DaSCH',
+  [Constants.HasFullImageAuthorship]: authorship,
+  [Constants.HasFullImageLicense]: { '@id': 'http://rdfh.ch/licenses/cc-by-4.0' },
 });
 
 const jsonConvert: JsonConvert = new JsonConvert(
@@ -170,9 +171,11 @@ describe('ReadRegionPreviewValue', () => {
         const typed = rp as ReadRegionPreviewValue;
         // imperatively-set reference fields (A3)
         expect(typed.regionIri).toEqual(REGION_IRI);
+        expect(typed.regionLabel).toEqual(REGION_LABEL);
         expect(typed.fullImageIri).toEqual(FULL_IMAGE_IRI);
         expect(typed.fullImageLabel).toEqual('Source page 42');
-        expect(typed.strval).toEqual('Source page 42');
+        // strval prefers the region label (the preview is about the region)
+        expect(typed.strval).toEqual(REGION_LABEL);
         // decorated computed fields survive the full path
         expect(typed.cropUrl).toEqual(CROP_URL);
         expect(typed.highlightBoxW).toEqual(30);

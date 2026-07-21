@@ -841,8 +841,7 @@
       "example": "z.B."
     },
     "regionPreview": {
-      "annotationFrom": "Annotation aus",
-      "cannotDisplay": "Diese Regionen-Vorschau kann nicht angezeigt werden.",
+      "annotation": "Annotation",
       "iriInputLabel": "Region-IRI",
       "notAValidIri": "Die angegebene Ressource ist keine gültige IRI."
     }

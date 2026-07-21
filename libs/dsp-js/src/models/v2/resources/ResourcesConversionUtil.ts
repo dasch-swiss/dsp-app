@@ -582,13 +582,16 @@ export namespace ResourcesConversionUtil {
 
       case Constants.RegionPreviewValue: {
         const rp = jsonConvert.deserialize(valueJsonld as object, ReadRegionPreviewValue) as ReadRegionPreviewValue;
-        rp.regionIri = valueJsonld[Constants.IsRegionPreviewOf]?.['@id'] ?? '';
-        const fullImg = valueJsonld[Constants.HasPreviewFullImage];
+        // isRegionPreviewOf is a bounded reference { @id, @type, rdfs:label } — capture id + label.
+        const regionRef = valueJsonld[Constants.IsRegionPreviewOf];
+        rp.regionIri = regionRef?.['@id'] ?? '';
+        rp.regionLabel = regionRef?.[Constants.Label] ?? ''; // Constants.Label = full IRI rdf-schema#label
+        const fullImg = valueJsonld[Constants.HasFullImage];
         if (fullImg) {
           rp.fullImageIri = fullImg['@id'] ?? '';
-          rp.fullImageLabel = fullImg[Constants.Label] ?? ''; // Constants.Label = full IRI rdf-schema#label
+          rp.fullImageLabel = fullImg[Constants.Label] ?? '';
         }
-        rp.strval = rp.fullImageLabel || rp.regionIri; // human-readable fallback, like the LinkValue case
+        rp.strval = rp.regionLabel || rp.fullImageLabel || rp.regionIri; // human-readable fallback, like the LinkValue case
         value = of(rp);
         break;
       }
