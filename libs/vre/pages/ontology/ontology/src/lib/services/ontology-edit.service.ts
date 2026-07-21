@@ -34,11 +34,13 @@ import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { TranslateService } from '@ngx-translate/core';
 import {
   BehaviorSubject,
+  catchError,
   combineLatest,
   concat,
   defer,
   distinctUntilChanged,
   filter,
+  finalize,
   last,
   map,
   Observable,
@@ -47,6 +49,7 @@ import {
   switchMap,
   take,
   tap,
+  throwError,
 } from 'rxjs';
 import { UpdateOntologyData } from '../forms/ontology-form/ontology-form.type';
 import { CreatePropertyData, UpdatePropertyData } from '../forms/property-form/property-form.type';
@@ -334,6 +337,38 @@ export class OntologyEditService {
   }
 
   /**
+   * Observable variant of `assignPropertyToClass`. Emits once after the
+   * cardinality has been added and the ontology reloaded; errors are
+   * propagated to the caller. `_isTransacting` is reset in both success and
+   * error paths via `finalize`.
+   *
+   * Used by Phase 2's drag-to-assign flow so the caller can react to
+   * completion / failure (e.g., reset drag state, show a snackbar). The
+   * existing void method is kept for backwards-compatibility with the menu
+   * call site.
+   */
+  assignPropertyToClass$(propertyId: string, classDefinition: ClassDefinition): Observable<void> {
+    this._isTransacting.next(true);
+
+    const guiOrder = Math.max(0, ...classDefinition.propertiesList.map(p => p.guiOrder ?? 0)) + 1;
+    const propCard: IHasProperty = {
+      propertyIndex: propertyId,
+      cardinality: 1, // default: not required, not multiple
+      guiOrder,
+    };
+
+    const updateOntology = MakeOntologyFor.updateCardinalityOfResourceClass(this.ctx, classDefinition.id, [propCard]);
+    const ontoIri = this.ontologyId;
+
+    return this._dspApiConnection.v2.onto.addCardinalityToResourceClass(updateOntology).pipe(
+      take(1),
+      switchMap(() => this._loadOntology$(ontoIri, propertyId)),
+      catchError(err => throwError(() => err)),
+      finalize(() => this._isTransacting.next(false))
+    );
+  }
+
+  /**
    * Yes, we need to pass an UpdateOntology<UpdateResourceClassCardinality> containing an array of the one property
    * we like to remove to deleteCardinalityFromResourceClass in order to remove that property ...
    */
@@ -496,12 +531,23 @@ export class OntologyEditService {
   }
 
   private _loadOntology(iri: string, highLightItem?: string) {
-    this._dspApiConnection.v2.onto
-      .getOntology(iri, true)
-      .pipe(take(1))
-      .subscribe(onto => {
-        this._afterUpdateOntology(onto, highLightItem);
-      });
+    this._loadOntology$(iri, highLightItem).subscribe();
+  }
+
+  /**
+   * Observable variant of `_loadOntology`. Emits once after the ontology has been
+   * fetched and `_afterUpdateOntology` has updated state. Callers can chain
+   * (`switchMap`, `tap`) instead of fire-and-forget subscribing.
+   *
+   * The existing void `_loadOntology` delegates here so all current call sites
+   * keep their fire-and-forget semantics.
+   */
+  private _loadOntology$(iri: string, highLightItem?: string): Observable<void> {
+    return this._dspApiConnection.v2.onto.getOntology(iri, true).pipe(
+      take(1),
+      tap(onto => this._afterUpdateOntology(onto, highLightItem)),
+      map(() => undefined)
+    );
   }
 
   private _afterUpdateOntology(onto: ReadOntology, highLightItem?: string) {

@@ -8,7 +8,7 @@ describe('Data models page', () => {
         cy.get('[data-cy=edit-button]').should('not.exist');
       });
     cy.get('[data-cy=ontology-button]').first().scrollIntoView().should('be.visible').click();
-    cy.url().should('include', '/project/0803/ontology/incunabula/editor/classes');
+    cy.url().should('include', '/project/0803/ontology/incunabula/editor');
 
     cy.get('[data-cy=add-property-button]').should('not.exist');
     cy.get('[data-cy=create-class-button]').should('not.exist');

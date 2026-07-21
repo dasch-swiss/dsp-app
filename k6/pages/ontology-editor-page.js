@@ -6,7 +6,7 @@ export class OntologyEditorPage {
   }
 
   async goto() {
-    await this.page.goto(__ENV.APP_URL + '/project/' + BEOL.id + '/ontology/beol/editor/classes');
+    await this.page.goto(__ENV.APP_URL + '/project/' + BEOL.id + '/ontology/beol/editor');
   }
 
   async projectLongname() {
