@@ -1,12 +1,21 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import type { ReadRegionPreviewValue } from '@dasch-swiss/dsp-js';
 import { AdminAPIApiService, ProjectLicenseDto } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { ResourceService } from '@dasch-swiss/vre/shared/app-common';
 import { TranslatePipe } from '@ngx-translate/core';
-import { switchMap, take } from 'rxjs';
+import { forkJoin, Subscription, switchMap, take } from 'rxjs';
 // Direct relative imports (NOT the lib barrel) for same-lib components to avoid the intra-lib DI cycle.
 import { AlertInfoComponent } from '../../../../header/alert-info.component';
+import { RepresentationService } from '../../../../representation/representation.service';
 import { ResourceFetcherService } from '../../../../representation/resource-fetcher.service';
 import { ResourceExplorerButtonComponent } from '../../../resource-explorer-button.component';
 
@@ -17,9 +26,11 @@ import { ResourceExplorerButtonComponent } from '../../../resource-explorer-butt
  * from the served percentages: the whole page is darkened + desaturated and only the region rectangle
  * is revealed at normal brightness (no drawn box). The API always returns a crop, so there are two
  * image states:
- *  - restricted: the user cannot view the full image, so Sipi denies the pixels and <img> fails
+ *  - restricted: Sipi denies the pixels (the authenticated fetch errors), so the crop cannot be shown
  *  - normal: crop + thumbnail with the region highlighted
- * Caption and legal footer render in both states (metadata is always available for a value-visible user).
+ * The crop/thumbnail are fetched with the user's JWT and rendered as blob: URLs — a bare <img> cannot
+ * carry the token (see RepresentationService.getImageBlob). Caption and legal footer render in both
+ * states (metadata is always available for a value-visible user).
  */
 @Component({
   selector: 'app-region-preview-viewer',
@@ -32,24 +43,21 @@ import { ResourceExplorerButtonComponent } from '../../../resource-explorer-butt
         <app-alert-info>
           <p>{{ 'resourceEditor.restricted' | translate }}</p>
         </app-alert-info>
-      } @else {
-        <!-- Media row: full-page thumbnail (constant width) on the left, the region crop on the right. -->
+      } @else if (cropSrc) {
+        <!-- Media row: full-page thumbnail (constant width) on the left, the region crop on the right.
+             src is a blob: URL from the authenticated fetch so the JWT reaches Sipi; while the fetch is
+             in flight (no cropSrc yet, not failed) this block is blank. -->
         <div class="media">
-          @if (value.thumbnailUrl) {
+          @if (thumbnailSrc) {
             <div class="thumb-box">
               <div class="thumb-wrap">
                 <!-- Base layer: the whole page. When a region rectangle is served it is darkened +
                      desaturated so the region stands out by contrast (no drawn box). -->
-                <img
-                  [src]="value.thumbnailUrl"
-                  (error)="onImageError()"
-                  class="thumb"
-                  [class.thumb--dimmed]="hasBox"
-                  alt="" />
+                <img [src]="thumbnailSrc" class="thumb" [class.thumb--dimmed]="hasBox" alt="" />
                 @if (hasBox) {
                   <!-- Overlay: the same page at normal brightness, clipped to just the region rectangle. -->
                   <img
-                    [src]="value.thumbnailUrl"
+                    [src]="thumbnailSrc"
                     class="thumb thumb--region"
                     [style.clip-path]="regionClip"
                     alt=""
@@ -59,7 +67,7 @@ import { ResourceExplorerButtonComponent } from '../../../resource-explorer-butt
             </div>
           }
           <div class="crop-box">
-            <img [src]="value.cropUrl" (error)="onImageError()" class="crop" alt="" />
+            <img [src]="cropSrc" class="crop" alt="" />
           </div>
         </div>
       }
@@ -272,9 +280,14 @@ import { ResourceExplorerButtonComponent } from '../../../resource-explorer-butt
     `,
   ],
 })
-export class RegionPreviewViewerComponent implements OnChanges, OnInit {
+export class RegionPreviewViewerComponent implements OnChanges, OnDestroy, OnInit {
   @Input({ required: true }) value!: ReadRegionPreviewValue;
   imageFailed = false;
+
+  // blob: object URLs from the authenticated fetch; null while in flight (media row stays blank).
+  cropSrc: string | null = null;
+  thumbnailSrc: string | null = null;
+  private _imgSub?: Subscription;
 
   // The value carries only the license IRI (License.id); the human-readable label + uri come from the
   // project's license list, fetched once. Same mechanism as ResourceLegalComponent.
@@ -284,11 +297,56 @@ export class RegionPreviewViewerComponent implements OnChanges, OnInit {
     private readonly _resourceService: ResourceService,
     private readonly _adminApiService: AdminAPIApiService,
     private readonly _resourceFetcher: ResourceFetcherService,
+    private readonly _representationService: RepresentationService,
     private readonly _cd: ChangeDetectorRef
   ) {}
 
   ngOnChanges() {
-    this.imageFailed = false; // a new value gets a fresh image-load attempt (no stale restricted latch)
+    // a new value gets a fresh image-load attempt: release the old blobs, cancel any in-flight fetch,
+    // and reset the restricted latch before re-fetching.
+    this._revokeUrls();
+    this._imgSub?.unsubscribe();
+    this.imageFailed = false;
+    this.cropSrc = null;
+    this.thumbnailSrc = null;
+
+    if (!this.value.cropUrl) {
+      this.imageFailed = true;
+      return;
+    }
+
+    this._imgSub = forkJoin({
+      crop: this._representationService.getImageBlob(this.value.cropUrl),
+      ...(this.value.thumbnailUrl ? { thumb: this._representationService.getImageBlob(this.value.thumbnailUrl) } : {}),
+    }).subscribe({
+      next: ({ crop, thumb }) => {
+        this.cropSrc = URL.createObjectURL(crop);
+        if (thumb) {
+          this.thumbnailSrc = URL.createObjectURL(thumb);
+        }
+        this._cd.markForCheck(); // OnPush: the async result must trigger a view update
+      },
+      error: () => {
+        // Any failure (Sipi denies the pixels for a resource this user can't view, or a transport error)
+        // falls back to the restricted card — same outcome the bare <img> (error) handler produced before.
+        this.imageFailed = true;
+        this._cd.markForCheck();
+      },
+    });
+  }
+
+  ngOnDestroy() {
+    this._imgSub?.unsubscribe();
+    this._revokeUrls();
+  }
+
+  private _revokeUrls() {
+    if (this.cropSrc) {
+      URL.revokeObjectURL(this.cropSrc);
+    }
+    if (this.thumbnailSrc) {
+      URL.revokeObjectURL(this.thumbnailSrc);
+    }
   }
 
   ngOnInit() {
@@ -341,9 +399,5 @@ export class RegionPreviewViewerComponent implements OnChanges, OnInit {
 
   get hasLegal() {
     return !!(this.value.copyrightHolder || this.value.authorship?.length || this.value.license);
-  }
-
-  onImageError() {
-    this.imageFailed = true;
   }
 }

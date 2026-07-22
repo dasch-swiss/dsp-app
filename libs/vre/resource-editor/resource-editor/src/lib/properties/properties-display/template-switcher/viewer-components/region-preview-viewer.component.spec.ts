@@ -3,7 +3,8 @@ import { ReadRegionPreviewValue } from '@dasch-swiss/dsp-js';
 import { AdminAPIApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { ResourceService } from '@dasch-swiss/vre/shared/app-common';
 import { provideTranslateService } from '@ngx-translate/core';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
+import { RepresentationService } from '../../../../representation/representation.service';
 import { ResourceFetcherService } from '../../../../representation/resource-fetcher.service';
 import { RegionPreviewViewerComponent } from './region-preview-viewer.component';
 
@@ -27,6 +28,7 @@ const fullValue = () =>
 
 describe('RegionPreviewViewerComponent', () => {
   let fixture: ComponentFixture<RegionPreviewViewerComponent>;
+  let representationService: { getImageBlob: jest.Mock };
 
   const setValue = (value: ReadRegionPreviewValue) => {
     fixture.componentRef.setInput('value', value);
@@ -34,11 +36,18 @@ describe('RegionPreviewViewerComponent', () => {
   };
 
   beforeEach(async () => {
+    // jsdom implements neither, and the component creates/revokes blob URLs for the fetched images.
+    URL.createObjectURL = jest.fn().mockReturnValue('blob:mock');
+    URL.revokeObjectURL = jest.fn();
+    // Default: the authenticated crop/thumbnail fetch succeeds (the images are viewable).
+    representationService = { getImageBlob: jest.fn().mockReturnValue(of(new Blob())) };
+
     await TestBed.configureTestingModule({
       imports: [RegionPreviewViewerComponent],
       providers: [
         provideTranslateService(),
         { provide: ResourceService, useValue: { getResourcePath: jest.fn().mockReturnValue('/project/0001/img') } },
+        { provide: RepresentationService, useValue: representationService },
         // app-resource-legal (nested) needs these two or it throws NullInjectorError.
         { provide: ResourceFetcherService, useValue: { projectShortcode$: of('0001') } },
         {
@@ -61,13 +70,16 @@ describe('RegionPreviewViewerComponent', () => {
     const base = el.querySelector('img.thumb:not(.thumb--region)') as HTMLImageElement;
     const region = el.querySelector('img.thumb--region') as HTMLImageElement;
 
-    expect(crop?.getAttribute('src')).toEqual('http://sipi/crop.jpg');
-    expect(base?.getAttribute('src')).toEqual('http://sipi/thumb.jpg');
+    // the crop/thumbnail are fetched with the JWT (a bare <img> can't) and shown via a blob: URL
+    expect(representationService.getImageBlob).toHaveBeenCalledWith('http://sipi/crop.jpg');
+    expect(representationService.getImageBlob).toHaveBeenCalledWith('http://sipi/thumb.jpg');
+    expect(crop?.getAttribute('src')).toEqual('blob:mock');
+    expect(base?.getAttribute('src')).toEqual('blob:mock');
     // the whole page is lightened + desaturated ...
     expect(base.classList).toContain('thumb--dimmed');
     // ... except the region window, revealed at normal brightness by the clipped overlay of the same page
     expect(region).toBeTruthy();
-    expect(region.getAttribute('src')).toEqual('http://sipi/thumb.jpg');
+    expect(region.getAttribute('src')).toEqual('blob:mock');
     // inset(top right bottom left): top=Y, right=100-(X+W), bottom=100-(Y+H), left=X
     expect(fixture.componentInstance.regionClip).toEqual('inset(20% 60% 40% 10%)');
   });
@@ -104,14 +116,11 @@ describe('RegionPreviewViewerComponent', () => {
     expect(el.querySelectorAll('.legal-label').length).toBeGreaterThan(1);
   });
 
-  it('on image load failure, hides the images and shows the restricted card with caption + legal still present', () => {
+  it('on image fetch failure, hides the images and shows the restricted card with caption + legal still present', () => {
+    // Sipi denies the pixels for a resource this user can't view -> the authenticated fetch errors
+    representationService.getImageBlob.mockReturnValue(throwError(() => ({ status: 403 })));
     setValue(fullValue());
     const el: HTMLElement = fixture.nativeElement;
-
-    // dispatching the DOM error event triggers OnPush change detection, like a real Sipi denial
-    const crop = el.querySelector('img.crop') as HTMLImageElement;
-    crop.dispatchEvent(new Event('error'));
-    fixture.detectChanges();
 
     expect(el.querySelector('img.crop')).toBeNull();
     expect(el.querySelector('img.thumb')).toBeNull();
@@ -135,16 +144,15 @@ describe('RegionPreviewViewerComponent', () => {
   });
 
   it('resets the restricted latch and refreshes the legal footer when a new value arrives', () => {
+    // first value fails to load -> restricted
+    representationService.getImageBlob.mockReturnValue(throwError(() => ({ status: 403 })));
     setValue(fullValue());
     const el: HTMLElement = fixture.nativeElement;
-
-    // first value fails to load -> restricted
-    (el.querySelector('img.crop') as HTMLImageElement).dispatchEvent(new Event('error'));
-    fixture.detectChanges();
     expect(el.querySelector('app-alert-info')).toBeTruthy();
 
-    // a new value arrives on the reused instance -> the latch resets and the image is tried again,
-    // and the legal footer reflects the new value (here: no legal info -> footer omitted)
+    // a new value arrives on the reused instance -> the latch resets and the image is fetched again
+    // (now viewable), and the legal footer reflects the new value (here: no legal info -> footer omitted)
+    representationService.getImageBlob.mockReturnValue(of(new Blob()));
     setValue({
       ...fullValue(),
       copyrightHolder: null,
