@@ -38,8 +38,12 @@ import { sortByKeys } from './property-value/sortByKeys';
         [tooltip]="'resourceEditor.propertiesDisplay.incomingLinkTooltip' | translate"
         [label]="'resourceEditor.propertiesDisplay.incomingLinkLabel' | translate"
         [borderBottom]="true"
-        [isEmptyRow]="true">
-        <app-progress-indicator [compact]="true" />
+        [singleRow]="false"
+        [isEmptyRow]="true"
+        [loading]="true">
+        <div style="display: inline-block; padding-top: 12px">
+          <app-progress-indicator [compact]="true" />
+        </div>
       </app-property-row>
     }
   `,
