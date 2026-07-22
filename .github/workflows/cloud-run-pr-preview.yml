@@ -138,7 +138,7 @@ jobs:
           | **Commit** | ${COMMIT} |
           | **Backend** | DEV API (\`api.dev.dasch.swiss\`) |
 
-          _Updated on every push. Deleted when PR closes or after 4 days._
+          _Updated on every push. Deleted when PR closes or after 90 days._
           EOF
 
           echo "${METHOD} ${ENDPOINT}"
@@ -285,7 +285,7 @@ jobs:
           | **Branch** | \`${BRANCH}\` |
           | **Backend** | DEV API (\`api.dev.dasch.swiss\`) |
 
-          _Deployed manually via workflow_dispatch. Deleted when PR closes or after 4 days._
+          _Deployed manually via workflow_dispatch. Deleted when PR closes or after 90 days._
           EOF
 
           echo "${METHOD} ${ENDPOINT}"
@@ -324,7 +324,7 @@ jobs:
             --delete-tags --quiet 2>/dev/null || echo "Image not found, nothing to clean up."
 
   cleanup-stale:
-    name: Clean up stale (>4 days)
+    name: Clean up stale (>90 days)
     if: github.event_name == 'schedule'
     runs-on: ubuntu-latest
     permissions:
@@ -339,9 +339,9 @@ jobs:
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v3
 
-      - name: Delete stale PR preview services older than 4 days
+      - name: Delete stale PR preview services older than 90 days
         run: |
-          CUTOFF=$(date -u -d '4 days ago' +%Y-%m-%dT%H:%M:%SZ)
+          CUTOFF=$(date -u -d '90 days ago' +%Y-%m-%dT%H:%M:%SZ)
           SERVICES=$(gcloud run services list \
             --region="${{ secrets.GCP_REGION }}" \
             --filter="metadata.name:dsp-app-pr-" \
