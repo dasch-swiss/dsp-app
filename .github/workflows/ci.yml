@@ -216,10 +216,12 @@ jobs:
           repository: dasch-swiss/dsp-api
           ref: main
           path: dsp-api
+      - name: Set up just
+        uses: extractions/setup-just@v2
       - name: Start API
         run: |
           cd dsp-api
-          make init-db-test
+          just init-db-test
           docker compose -f docker-compose.yml up -d sipi ingest api
           ./modules/webapi/scripts/wait-for-api.sh
       - name: Wait for app to be ready
