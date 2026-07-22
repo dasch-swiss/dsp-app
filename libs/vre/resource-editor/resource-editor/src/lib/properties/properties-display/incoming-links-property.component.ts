@@ -39,7 +39,8 @@ import { sortByKeys } from './property-value/sortByKeys';
         [label]="'resourceEditor.propertiesDisplay.incomingLinkLabel' | translate"
         [borderBottom]="true"
         [singleRow]="false"
-        [isEmptyRow]="false">
+        [isEmptyRow]="true"
+        [loading]="true">
         <div style="display: inline-block; padding-top: 12px">
           <app-progress-indicator [compact]="true" />
         </div>
