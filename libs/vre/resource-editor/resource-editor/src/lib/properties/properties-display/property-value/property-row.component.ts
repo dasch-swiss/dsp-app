@@ -10,7 +10,7 @@ import { PropertiesDisplayService } from './properties-display.service';
   template: ` <div
     class="property-row"
     [class.border-bottom]="borderBottom"
-    [ngClass]="{ hidden: (showAllProperties | async) === false && isEmptyRow }">
+    [ngClass]="{ hidden: (showAllProperties | async) === false && isEmptyRow && !loading }">
     <div class="label mat-subtitle-2" [matTooltip]="tooltip ?? ''" matTooltipPosition="above">{{ label }}</div>
     <div style="flex: 1" class="value" [ngClass]="{ 'with-styling': singleRow }">
       <ng-content />
@@ -25,6 +25,8 @@ export class PropertyRowComponent {
   @Input() tooltip: string | undefined;
   @Input() prop: PropertyInfoValues | undefined;
   @Input() singleRow = true;
+  /** Keeps the row visible while its values are still loading, independently of `isEmptyRow`. */
+  @Input() loading = false;
 
   showAllProperties = this._propertiesDisplayService.showAllProperties$;
 

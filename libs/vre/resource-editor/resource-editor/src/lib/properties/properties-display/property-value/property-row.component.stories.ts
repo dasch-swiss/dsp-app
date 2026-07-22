@@ -34,6 +34,10 @@ const meta: Meta<PropertyRowComponent> = {
       description: 'Optional tooltip shown on the label.',
       table: { type: { summary: 'string' }, category: 'State' },
     },
+    loading: {
+      description: 'Keeps the row visible while its values are still loading, independently of isEmptyRow.',
+      table: { type: { summary: 'boolean' }, category: 'State' },
+    },
   },
 };
 export default meta;
@@ -73,6 +77,27 @@ export const EmptyRow: Story = {
     await step('Row is rendered with hidden class', async () => {
       const row = canvasElement.querySelector('.property-row');
       await expect(row?.classList.contains('hidden')).toBe(true);
+    });
+  },
+};
+
+export const LoadingRow: Story = {
+  name: 'Stays visible while loading even when show-all is off and the row is empty',
+  decorators: [
+    applicationConfig({
+      providers: [{ provide: PropertiesDisplayService, useValue: { showAllProperties$: of(false) } }],
+    }),
+  ],
+  args: {
+    label: 'Incoming Links',
+    borderBottom: true,
+    isEmptyRow: true,
+    loading: true,
+  },
+  play: async ({ canvasElement, step }) => {
+    await step('Row is not hidden despite being empty with show-all off', async () => {
+      const row = canvasElement.querySelector('.property-row');
+      await expect(row?.classList.contains('hidden')).toBe(false);
     });
   },
 };
