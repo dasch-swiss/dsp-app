@@ -162,6 +162,12 @@
       "enabled": false
     },
     {
+      "description": "eslint-plugin-storybook: major updates disabled — its peer dependency pins storybook to the same major, and storybook's own major is ceiling-locked by @nx/storybook (peer storybook <11.0.0) and @storybook/angular (peer @angular <23.0.0). It is therefore bound by the same nx + Angular major coupling that freezes the storybook packages above, and is upgraded in lockstep during nx migrate / ng update",
+      "matchPackageNames": ["eslint-plugin-storybook"],
+      "matchUpdateTypes": ["major"],
+      "enabled": false
+    },
+    {
       "description": "@jscutlery/swc-angular: fully disabled — bridges frozen Angular with SWC; package is at v0.x so the major-disable rule is a no-op, and any update is a coordinated toolchain decision",
       "matchPackageNames": ["@jscutlery/swc-angular"],
       "enabled": false
@@ -270,11 +276,6 @@
         "ngx-color-picker"
       ],
       "groupName": "angular-ecosystem-deps"
-    },
-    {
-      "description": "Storybook packages — @storybook/test-runner lives in a separate repo (storybookjs/test-runner) and is not covered by the monorepo:storybook preset in config:recommended; explicit group prevents sync drift on minor/patch updates",
-      "matchPackageNames": ["storybook", "/^@storybook//"],
-      "groupName": "storybook-deps"
     },
     {
       "description": "Automerge all dev dependency updates (patch + minor) — 3-day age guard prevents adopting a broken release before it gets yanked; dev deps don't affect production",
