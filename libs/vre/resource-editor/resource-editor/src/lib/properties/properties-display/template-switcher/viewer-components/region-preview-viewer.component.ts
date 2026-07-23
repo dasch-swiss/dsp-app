@@ -124,7 +124,8 @@ import { ResourceExplorerButtonComponent } from '../../../resource-explorer-butt
 
       /* Media row: constant-width full-page thumbnail on the left, region crop (centered on a black
          backdrop) on the right; the thumbnail is vertically centered next to a taller crop. The
-         thumbnail and crop share one seamless black panel (no divider between them). */
+         thumbnail and crop sit on one black panel, separated by a slim grey hairline that marks the
+         (otherwise invisible) boundary between them. */
       .media {
         display: flex;
       }
@@ -136,6 +137,9 @@ import { ResourceExplorerButtonComponent } from '../../../resource-explorer-butt
         display: flex;
         align-items: center;
         justify-content: center;
+        /* Slim grey hairline marking the seam between the thumbnail and the crop (both are #000, so
+           without it the boundary is invisible). Full-height: the flex row stretches this box. */
+        border-right: 1px solid #3a3f45;
       }
 
       .thumb-wrap {
