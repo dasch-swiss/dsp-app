@@ -1,5 +1,33 @@
 # Changelog
 
+## [13.10.1](https://github.com/dasch-swiss/dsp-app/compare/v13.10.0...v13.10.1) (2026-07-24)
+
+
+### Bug Fixes
+
+* show Incoming Links label and spinner while loading (DEV-6775) ([#3250](https://github.com/dasch-swiss/dsp-app/issues/3250)) ([3ab659f](https://github.com/dasch-swiss/dsp-app/commit/3ab659f36de6a835663889e305f24608dc8f9087))
+
+
+### Maintenances
+
+* **ci:** extend PR preview stale-teardown from 4 to 90 days ([#3256](https://github.com/dasch-swiss/dsp-app/issues/3256)) ([8306b75](https://github.com/dasch-swiss/dsp-app/commit/8306b753497478df51f20a2c1decf5eb461aeaa7))
+* **ci:** use 'just init-db-test' after dsp-api Makefile removal ([#3251](https://github.com/dasch-swiss/dsp-app/issues/3251)) ([0741f29](https://github.com/dasch-swiss/dsp-app/commit/0741f291d94e14e052c610b016d9753bff9d4f68))
+* **deps:** align storybook packages to 10.5.2 ([#3263](https://github.com/dasch-swiss/dsp-app/issues/3263)) ([3ce266f](https://github.com/dasch-swiss/dsp-app/commit/3ce266f6a8f63ebaa820bea2a15079c882588bd5))
+* **deps:** Update dependency @openapitools/openapi-generator-cli from 2.39.1 to 2.40.0 ([#3267](https://github.com/dasch-swiss/dsp-app/issues/3267)) ([3c87c16](https://github.com/dasch-swiss/dsp-app/commit/3c87c169a0ca04425856f7d82839a971a74acca8))
+* **deps:** Update dependency @sentry/angular from 10.62.0 to 10.66.0 ([#3260](https://github.com/dasch-swiss/dsp-app/issues/3260)) ([9a16357](https://github.com/dasch-swiss/dsp-app/commit/9a16357e50ba59d2fb79be3bb17016ef5d3c7edc))
+* **deps:** Update dependency @sentry/angular from 10.66.0 to 10.67.0 ([#3268](https://github.com/dasch-swiss/dsp-app/issues/3268)) ([fe56d0e](https://github.com/dasch-swiss/dsp-app/commit/fe56d0e072ad419a27c69a80c3c1c7ac2a6c6a6d))
+* **deps:** Update dependency @sentry/cli from 3.6.0 to 3.6.1 ([#3265](https://github.com/dasch-swiss/dsp-app/issues/3265)) ([9a4c002](https://github.com/dasch-swiss/dsp-app/commit/9a4c002d19bc68610271f981bc51d08da1b348d7))
+* **deps:** Update dependency angular-html-parser from 10.10.0 to 10.11.0 ([#3261](https://github.com/dasch-swiss/dsp-app/issues/3261)) ([fe87599](https://github.com/dasch-swiss/dsp-app/commit/fe87599a7e2f1c809ea5c1252775a4b6c973a895))
+* **deps:** Update dependency cypress from 15.18.0 to 15.18.1 ([#3253](https://github.com/dasch-swiss/dsp-app/issues/3253)) ([3d00493](https://github.com/dasch-swiss/dsp-app/commit/3d004935593a7983383a7d1b499df14773668549))
+* **deps:** Update dependency eslint from 9.39.4 to 9.39.5 ([#3254](https://github.com/dasch-swiss/dsp-app/issues/3254)) ([f24af4e](https://github.com/dasch-swiss/dsp-app/commit/f24af4eb14427145ddc92accf06b7b338000d27a))
+* **deps:** Update dependency mkdocs-material from 9.7.6 to 9.7.7 ([#3257](https://github.com/dasch-swiss/dsp-app/issues/3257)) ([4a274f2](https://github.com/dasch-swiss/dsp-app/commit/4a274f23139a840e5419ae134cccd8c32b664dd4))
+* **deps:** Update grafana-faro-deps from 2.8.1 to 2.8.2 ([#3258](https://github.com/dasch-swiss/dsp-app/issues/3258)) ([ee0d075](https://github.com/dasch-swiss/dsp-app/commit/ee0d0752eb142431b82f0cadbd07c5dcf9553541))
+* **deps:** Update postcss-deps ([#3259](https://github.com/dasch-swiss/dsp-app/issues/3259)) ([f8e4418](https://github.com/dasch-swiss/dsp-app/commit/f8e441843a98b4f06efb00d9bfb79901a2078771))
+* **deps:** Update storybook monorepo from 10.5.2 to 10.5.3 ([#3266](https://github.com/dasch-swiss/dsp-app/issues/3266)) ([dde7792](https://github.com/dasch-swiss/dsp-app/commit/dde7792b45ad3417d82123c200f510fa540e9a04))
+* **deps:** Update swc-deps ([#3269](https://github.com/dasch-swiss/dsp-app/issues/3269)) ([62c51f9](https://github.com/dasch-swiss/dsp-app/commit/62c51f93d4deda6ea7bbe75766fd8fb1d96e6598))
+* **deps:** Update typescript-eslint monorepo from 8.62.1 to 8.65.0 ([#3270](https://github.com/dasch-swiss/dsp-app/issues/3270)) ([ef5ed9b](https://github.com/dasch-swiss/dsp-app/commit/ef5ed9b86fcc1f0f20412d948aa2bead47e632f6))
+* **renovate:** treat eslint-plugin-storybook as part of the storybook monorepo set ([#3264](https://github.com/dasch-swiss/dsp-app/issues/3264)) ([9b3afa6](https://github.com/dasch-swiss/dsp-app/commit/9b3afa6ad0b83139c81b2032b0f807bc48377d82))
+
 ## [13.10.0](https://github.com/dasch-swiss/dsp-app/compare/v13.9.0...v13.10.0) (2026-07-20)
 
 
