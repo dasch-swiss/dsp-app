@@ -28,6 +28,7 @@ import { ReadIntValue } from './values/read/read-int-value';
 import { ReadIntervalValue } from './values/read/read-interval-value';
 import { ReadLinkValue } from './values/read/read-link-value';
 import { ReadListValue } from './values/read/read-list-value';
+import { ReadRegionPreviewValue } from './values/read/read-region-preview-value';
 import {
   ReadTextValue,
   ReadTextValueAsHtml,
@@ -576,6 +577,22 @@ export namespace ResourcesConversionUtil {
             return val;
           })
         );
+        break;
+      }
+
+      case Constants.RegionPreviewValue: {
+        const rp = jsonConvert.deserialize(valueJsonld as object, ReadRegionPreviewValue) as ReadRegionPreviewValue;
+        // isRegionPreviewOf is a bounded reference { @id, @type, rdfs:label } — capture id + label.
+        const regionRef = valueJsonld[Constants.IsRegionPreviewOf];
+        rp.regionIri = regionRef?.['@id'] ?? '';
+        rp.regionLabel = regionRef?.[Constants.Label] ?? ''; // Constants.Label = full IRI rdf-schema#label
+        const fullImg = valueJsonld[Constants.HasFullImage];
+        if (fullImg) {
+          rp.fullImageIri = fullImg['@id'] ?? '';
+          rp.fullImageLabel = fullImg[Constants.Label] ?? '';
+        }
+        rp.strval = rp.regionLabel || rp.fullImageLabel || rp.regionIri; // human-readable fallback, like the LinkValue case
+        value = of(rp);
         break;
       }
 

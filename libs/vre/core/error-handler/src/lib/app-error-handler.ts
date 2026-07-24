@@ -69,12 +69,18 @@ export class AppErrorHandler implements ErrorHandler {
       message = this._translateService.instant('core.errorHandler.noInternet');
     } else if (error.message.includes('knora.json: 0 Unknown Error')) {
       message = this._translateService.instant('core.errorHandler.iiifServerError');
-    } else if (
-      error.status === 400 &&
-      (error as AjaxError).response['knora-api:error'] &&
-      (error as AjaxError).response['knora-api:error'].match(this.badRequestRegexMatch).length > 0
-    ) {
-      message = (error as AjaxError).response['knora-api:error'].match(this.badRequestRegexMatch)[1];
+    } else if (error.status === 400) {
+      // A 400 carries an actionable reason. Support both response shapes: the older JSON-LD
+      // `knora-api:error` ("dsp.errors.BadRequestException: <msg>") and the newer `{ message }`.
+      // Use a null-safe match (a present-but-non-matching string must not throw on `.length`).
+      const response = (error as AjaxError).response as { 'knora-api:error'?: string; message?: string } | undefined;
+      const knoraError = response?.['knora-api:error'];
+      const knoraErrorMatch = typeof knoraError === 'string' ? knoraError.match(this.badRequestRegexMatch) : null;
+      message =
+        knoraErrorMatch?.[1] ??
+        response?.message ??
+        knoraError ??
+        this._translateService.instant('core.errorHandler.contactSupport');
     } else if (error.status === 403) {
       message = this._translateService.instant('core.errorHandler.noPermission');
     } else if (error.status === 404) {

@@ -25,6 +25,7 @@ import { IntervalViewerComponent } from './viewer-components/interval-viewer.com
 import { LinkViewerComponent } from './viewer-components/link-viewer.component';
 import { ListViewerComponent } from './viewer-components/list-viewer.component';
 import { ParagraphViewerComponent } from './viewer-components/paragraph-viewer.component';
+import { RegionPreviewViewerComponent } from './viewer-components/region-preview-viewer.component';
 import { RichTextViewerComponent } from './viewer-components/rich-text-viewer.component';
 import { TextHtmlViewerComponent } from './viewer-components/text-html-viewer.component';
 import { TimeViewerComponent } from './viewer-components/time-viewer.component';
@@ -44,6 +45,7 @@ import { UriViewerComponent } from './viewer-components/uri-viewer.component';
     DateViewerComponent,
     GeonameViewerComponent,
     LinkViewerComponent,
+    RegionPreviewViewerComponent,
     UriViewerComponent,
   ],
   template: `
@@ -99,6 +101,10 @@ import { UriViewerComponent } from './viewer-components/uri-viewer.component';
       <app-link-viewer [value]="item" />
     </ng-template>
 
+    <ng-template #regionPreviewDisplayTpl let-item="item">
+      <app-region-preview-viewer [value]="item" />
+    </ng-template>
+
     <ng-template #uriDisplayTpl let-item="item">
       <app-uri-viewer [value]="item" />
     </ng-template>
@@ -123,6 +129,7 @@ export class TemplateViewerSwitcherComponent implements AfterViewInit {
   @ViewChild('listDisplayTpl') listDisplayTpl!: TemplateRef<any>;
   @ViewChild('geoNameDisplayTpl') geoNameDisplayTpl!: TemplateRef<any>;
   @ViewChild('linkDisplayTpl') linkDisplayTpl!: TemplateRef<any>;
+  @ViewChild('regionPreviewDisplayTpl') regionPreviewDisplayTpl!: TemplateRef<any>;
   @ViewChild('uriDisplayTpl') uriDisplayTpl!: TemplateRef<any>;
   @ViewChild('textDisplayTpl') textDisplayTpl!: TemplateRef<any>;
   @ViewChild('paragraphDisplayTpl') paragraphDisplayTpl!: TemplateRef<any>;
@@ -160,6 +167,8 @@ export class TemplateViewerSwitcherComponent implements AfterViewInit {
         return this.geoNameDisplayTpl;
       case Constants.LinkValue:
         return this.linkDisplayTpl;
+      case Constants.RegionPreviewValue:
+        return this.regionPreviewDisplayTpl;
       case Constants.UriValue:
         return this.uriDisplayTpl;
       default: {

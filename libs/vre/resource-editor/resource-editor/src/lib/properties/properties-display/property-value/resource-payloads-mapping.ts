@@ -11,6 +11,7 @@ import {
   CreateIntValue,
   CreateLinkValue,
   CreateListValue,
+  CreateRegionPreviewValue,
   CreateTextValueAsString,
   CreateTextValueAsXml,
   CreateTimeValue,
@@ -25,6 +26,7 @@ import {
   ReadIntValue,
   ReadLinkValue,
   ReadListValue,
+  ReadRegionPreviewValue,
   ReadTextValue,
   ReadTimeValue,
   ReadUriValue,
@@ -39,6 +41,7 @@ import {
   UpdateIntValue,
   UpdateLinkValue,
   UpdateListValue,
+  UpdateRegionPreviewValue,
   UpdateTextValueAsString,
   UpdateTextValueAsXml,
   UpdateTimeValue,
@@ -328,6 +331,25 @@ export const propertiesTypeMapping = new Map<string, MappingParameters<any>>([
         newLinkValue.id = id;
         newLinkValue.linkedResourceIri = value;
         return newLinkValue;
+      },
+    },
+  ],
+  [
+    Constants.RegionPreviewValue,
+    {
+      control: (value?: ReadRegionPreviewValue) =>
+        new FormControl(value?.regionIri, [Validators.pattern(/http:\/\/rdfh.ch\/.*/)]),
+      isNullValue: defaultNullValue,
+      createValue: (value: string) => {
+        const newRegionPreviewValue = new CreateRegionPreviewValue();
+        newRegionPreviewValue.regionIri = value;
+        return newRegionPreviewValue;
+      },
+      updateValue: (id: string, value: string) => {
+        const newRegionPreviewValue = new UpdateRegionPreviewValue();
+        newRegionPreviewValue.id = id;
+        newRegionPreviewValue.regionIri = value;
+        return newRegionPreviewValue;
       },
     },
   ],

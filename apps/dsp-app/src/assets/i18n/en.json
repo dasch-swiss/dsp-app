@@ -558,7 +558,8 @@
     "legal": {
       "title": "Legal",
       "copyrightHolder": "Copyright holder",
-      "authorship": "Authorship"
+      "authorship": "Authorship",
+      "license": "License"
     },
     "navigation": {
       "firstPage": "First page",
@@ -844,6 +845,11 @@
         "label": "Location"
       },
       "example": "e.g."
+    },
+    "regionPreview": {
+      "annotation": "Annotation",
+      "iriInputLabel": "Region IRI",
+      "notAValidIri": "The provided resource is not a valid IRI."
     }
   },
   "ui": {

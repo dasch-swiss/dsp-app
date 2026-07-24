@@ -29,9 +29,16 @@ export class PropertyValueUpdateComponent {
   }
 
   update(group: FormValueGroup) {
-    this._dspApiConnection.v2.values.updateValue(this._getPayload(this.index, group)).subscribe(() => {
-      this._resourceFetcherService.reload();
-      this.propertyValueService.toggleOpenedValue(this.index);
+    this._dspApiConnection.v2.values.updateValue(this._getPayload(this.index, group)).subscribe({
+      next: () => {
+        this._resourceFetcherService.reload();
+        this.propertyValueService.toggleOpenedValue(this.index);
+      },
+      // Surface the API rejection (e.g. re-pointing to a non-Region) via the global AppErrorHandler
+      // instead of silently swallowing it.
+      error: e => {
+        throw e;
+      },
     });
   }
 

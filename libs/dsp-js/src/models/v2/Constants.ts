@@ -40,6 +40,7 @@ export class Constants {
   static TextValue = `${Constants.KnoraApiV2 + Constants.HashDelimiter}TextValue`;
   static LinkValue = `${Constants.KnoraApiV2 + Constants.HashDelimiter}LinkValue`;
   static HasLinkToValue = `${Constants.KnoraApiV2 + Constants.HashDelimiter}hasLinkToValue`;
+  static RegionPreviewValue = `${Constants.KnoraApiV2 + Constants.HashDelimiter}RegionPreviewValue`;
   static UriValue = `${Constants.KnoraApiV2 + Constants.HashDelimiter}UriValue`;
   static GeomValue = `${Constants.KnoraApiV2 + Constants.HashDelimiter}GeomValue`;
   static FileValue = `${Constants.KnoraApiV2 + Constants.HashDelimiter}FileValue`;
@@ -159,6 +160,20 @@ export class Constants {
   static hasLicense = `${Constants.KnoraApiV2 + Constants.HashDelimiter}hasLicense`;
   static hasResourceAuthorship = `${Constants.KnoraApiV2 + Constants.HashDelimiter}hasResourceAuthorship`;
 
+  // Region preview read-field IRIs (RegionPreviewValue) — names mirror the API's served predicates.
+  static IsRegionPreviewOf = `${Constants.KnoraApiV2 + Constants.HashDelimiter}isRegionPreviewOf`;
+  static HasPreviewUrl = `${Constants.KnoraApiV2 + Constants.HashDelimiter}hasPreviewUrl`;
+  static HasThumbnailUrl = `${Constants.KnoraApiV2 + Constants.HashDelimiter}hasThumbnailUrl`;
+  static HasHighlightBoxX = `${Constants.KnoraApiV2 + Constants.HashDelimiter}hasHighlightBoxX`;
+  static HasHighlightBoxY = `${Constants.KnoraApiV2 + Constants.HashDelimiter}hasHighlightBoxY`;
+  static HasHighlightBoxW = `${Constants.KnoraApiV2 + Constants.HashDelimiter}hasHighlightBoxW`;
+  static HasHighlightBoxH = `${Constants.KnoraApiV2 + Constants.HashDelimiter}hasHighlightBoxH`;
+  static HasPreviewColor = `${Constants.KnoraApiV2 + Constants.HashDelimiter}hasPreviewColor`;
+  static HasFullImage = `${Constants.KnoraApiV2 + Constants.HashDelimiter}hasFullImage`;
+  static HasFullImageCopyrightHolder = `${Constants.KnoraApiV2 + Constants.HashDelimiter}hasFullImageCopyrightHolder`;
+  static HasFullImageAuthorship = `${Constants.KnoraApiV2 + Constants.HashDelimiter}hasFullImageAuthorship`;
+  static HasFullImageLicense = `${Constants.KnoraApiV2 + Constants.HashDelimiter}hasFullImageLicense`;
+
   static MatchText = `${Constants.KnoraApiV2 + Constants.HashDelimiter}matchText`;
 
   static OntologyName = `${Constants.KnoraApiV2 + Constants.HashDelimiter}ontologyName`;
@@ -197,6 +212,7 @@ export class Constants {
   static GuiColorPicker = `${Constants.SalsahGui + Constants.HashDelimiter}Colorpicker`;
   static GuiGeometry = `${Constants.SalsahGui + Constants.HashDelimiter}Geometry`;
   static GuiFileUpload = `${Constants.SalsahGui + Constants.HashDelimiter}Fileupload`;
+  static GuiRegionPreview = `${Constants.SalsahGui + Constants.HashDelimiter}RegionPreview`;
 
   static Owl = 'http://www.w3.org/2002/07/owl';
   static Ontology = `${Constants.Owl + Constants.HashDelimiter}Ontology`;

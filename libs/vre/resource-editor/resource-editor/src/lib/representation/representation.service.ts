@@ -4,7 +4,7 @@ import { ReadDocumentFileValue } from '@dasch-swiss/dsp-js';
 import { ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { AppConfigService } from '@dasch-swiss/vre/core/config';
 import { AccessTokenService, UserService } from '@dasch-swiss/vre/core/session';
-import { map, take } from 'rxjs';
+import { map, Observable, take } from 'rxjs';
 import { FileRepresentationInput, ParentResourceInput } from './representation-inputs';
 import { ResourceUtil } from './resource.util';
 
@@ -23,6 +23,15 @@ export class RepresentationService {
   getFileInfo(url: string) {
     const pathToJson = `${url.substring(0, url.lastIndexOf('/'))}/knora.json`;
     return this._http.get<{ originalFilename?: string }>(pathToJson, { withCredentials: true });
+  }
+
+  // A bare <img src> can't carry the JWT, so Sipi treats it as anonymous and denies non-public
+  // images even for admins. Any future Sipi image shown outside OpenSeadragon must fetch through
+  // here (Bearer header) and render the resulting blob, not bind the URL to <img> directly.
+  getImageBlob(url: string): Observable<Blob> {
+    const authToken = this._accessTokenService.getAccessToken();
+    const headers = authToken ? new HttpHeaders({ Authorization: `Bearer ${authToken}` }) : undefined;
+    return this._http.get(url, { responseType: 'blob', headers });
   }
 
   getIngestFileUrl(projectShort: string, assetId: string): string {
