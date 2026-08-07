@@ -190,6 +190,46 @@
       },
       "projectShortDescription": {
         "readMore": "Read more"
+      },
+      "viewRestrictions": {
+        "tab": "View restrictions",
+        "title": "View restrictions",
+        "intro": "Every resource class in the project with how many resources it holds, and for each audience how many items are hidden or served in restricted view. Open a row to see the affected resources and their per-audience visibility.",
+        "groupBy": "Group by",
+        "byClass": "Resource class",
+        "byProperty": "Property",
+        "filters": "Filters",
+        "resourceClass": "Resource class",
+        "property": "Property",
+        "resources": "Resources",
+        "total": "Total",
+        "itemsInside": "restricted items inside",
+        "noRestrictions": "No restrictions found for this filter.",
+        "audience": {
+          "anonymous": "Logged out",
+          "authenticated": "Logged in",
+          "projectMember": "Project member"
+        },
+        "itemType": {
+          "all": "All items",
+          "resource": "Resources",
+          "file": "File values",
+          "value": "Values",
+          "comment": "Comments"
+        },
+        "groupByAria": "Group by",
+        "filtersAria": "Filter by item type",
+        "visibility": {
+          "hidden": "Hidden",
+          "restrictedView": "Restricted view",
+          "visible": "Visible"
+        },
+        "summaryLoadFailed": "The restrictions could not be loaded. Please try again later.",
+        "itemsLoadFailed": "The affected resources could not be loaded. Close and reopen the row to retry.",
+        "hiddenCount": "Hidden — nothing is served",
+        "restrictedViewCount": "Restricted view — a degraded version is served",
+        "countAria": "{{hidden}} hidden, {{restricted}} in restricted view",
+        "countNone": "No restrictions"
       }
     },
     "system": {

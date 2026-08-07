@@ -1,0 +1,22 @@
+@use '../../../../../../../../../apps/dsp-app/src/styles/config' as *;
+
+:host {
+  display: block;
+}
+
+.col-aud {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 4px;
+}
+
+// hidden = red, restricted-view = amber. A fully visible cell renders no icon at all
+// (the state is conveyed by aria-label / tooltip instead).
+.vis-hidden {
+  color: $red;
+}
+
+.vis-restricted {
+  color: $yellow_700;
+}

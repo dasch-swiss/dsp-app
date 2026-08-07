@@ -36,6 +36,7 @@ export class RouteConstants {
   static readonly dataModels = 'data-models';
   static readonly imageSettings = 'image-settings';
   static readonly legalSettings = 'legal-settings';
+  static readonly viewRestrictions = 'view-restrictions';
 
   static readonly myProfile = 'my-profile';
   static readonly data = 'data';

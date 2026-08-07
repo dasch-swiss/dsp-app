@@ -190,6 +190,46 @@
       },
       "projectShortDescription": {
         "readMore": "Leggi di più"
+      },
+      "viewRestrictions": {
+        "tab": "Restrizioni di visualizzazione",
+        "title": "Restrizioni di visualizzazione",
+        "intro": "Ogni classe di risorsa del progetto con il numero di risorse che contiene e, per ogni pubblico, quanti elementi sono nascosti o serviti in vista limitata. Apri una riga per vedere le risorse interessate e la loro visibilità per ogni pubblico.",
+        "groupBy": "Raggruppa per",
+        "byClass": "Classe di risorsa",
+        "byProperty": "Proprietà",
+        "filters": "Filtri",
+        "resourceClass": "Classe di risorsa",
+        "property": "Proprietà",
+        "resources": "Risorse",
+        "total": "Totale",
+        "itemsInside": "elementi con restrizioni all'interno",
+        "noRestrictions": "Nessuna restrizione trovata per questo filtro.",
+        "audience": {
+          "anonymous": "Disconnesso",
+          "authenticated": "Connesso",
+          "projectMember": "Membro del progetto"
+        },
+        "itemType": {
+          "all": "Tutti gli elementi",
+          "resource": "Risorse",
+          "file": "Valori di file",
+          "value": "Valori",
+          "comment": "Commenti"
+        },
+        "groupByAria": "Raggruppa per",
+        "filtersAria": "Filtra per tipo di elemento",
+        "visibility": {
+          "hidden": "Nascosto",
+          "restrictedView": "Vista limitata",
+          "visible": "Visibile"
+        },
+        "summaryLoadFailed": "Non è stato possibile caricare le restrizioni. Riprovare più tardi.",
+        "itemsLoadFailed": "Non è stato possibile caricare le risorse interessate. Chiudere e riaprire la riga per riprovare.",
+        "hiddenCount": "Nascosto – non viene servito nulla",
+        "restrictedViewCount": "Vista limitata – viene servita una versione ridotta",
+        "countAria": "{{hidden}} nascosti, {{restricted}} in vista limitata",
+        "countNone": "Nessuna restrizione"
       }
     },
     "system": {

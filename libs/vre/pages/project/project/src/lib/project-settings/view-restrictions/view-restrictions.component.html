@@ -1,0 +1,189 @@
+<h2>{{ 'pages.project.viewRestrictions.title' | translate }}</h2>
+<p class="subtitle">{{ 'pages.project.viewRestrictions.intro' | translate }}</p>
+
+<!-- Group by: resource class <-> property -->
+<div class="controls">
+  <span class="control-label">{{ 'pages.project.viewRestrictions.groupBy' | translate }}</span>
+  <mat-button-toggle-group
+    [value]="(groupBy$ | async)"
+    (change)="onGroupBy($event.value)"
+    [attr.aria-label]="'pages.project.viewRestrictions.groupByAria' | translate">
+    <mat-button-toggle [value]="GroupBy.ResourceClass">
+      <mat-icon>account_tree</mat-icon>
+      {{ 'pages.project.viewRestrictions.byClass' | translate }}
+    </mat-button-toggle>
+    <mat-button-toggle [value]="GroupBy.Property">
+      <mat-icon>sell</mat-icon>
+      {{ 'pages.project.viewRestrictions.byProperty' | translate }}
+    </mat-button-toggle>
+  </mat-button-toggle-group>
+</div>
+
+<!-- Item-type filter chips -->
+<div class="controls">
+  <span class="control-label">
+    <mat-icon>filter_list</mat-icon>
+    {{ 'pages.project.viewRestrictions.filters' | translate }}
+  </span>
+  <mat-chip-listbox
+    [value]="(itemType$ | async)"
+    (change)="onItemType($event.value)"
+    [attr.aria-label]="'pages.project.viewRestrictions.filtersAria' | translate">
+    @for (chip of itemTypeChips; track chip) {
+      <mat-chip-option [value]="chip" [disabled]="isChipDisabled(chip)" [selectable]="!isChipDisabled(chip)">
+        {{ itemTypeKey(chip) | translate }}
+      </mat-chip-option>
+    }
+  </mat-chip-listbox>
+</div>
+
+@if (summaryState$ | async; as state) {
+  @if (state.loading) {
+    <app-progress-indicator />
+  } @else if (state.failed) {
+    <div class="load-error">
+      <mat-icon>error_outline</mat-icon>
+      {{ 'pages.project.viewRestrictions.summaryLoadFailed' | translate }}
+    </div>
+  } @else if (state.summary; as summary) {
+    <!--
+      In class mode every class is listed, so rows exist even with nothing restricted; the @empty branch
+      below would never fire. Say it outright instead of leaving a table of dashes to be interpreted.
+    -->
+    @if (summary.groups?.length && hasNoRestrictions(summary)) {
+      <div class="empty-note">
+        <mat-icon>check_circle</mat-icon>
+        {{ 'pages.project.viewRestrictions.noRestrictions' | translate }}
+      </div>
+    }
+
+    <!-- the "Resources" column is class-mode only: a property has no resource population (design 1i) -->
+    @let showTotals = this.showTotals(groupBy$ | async);
+
+  <div class="matrix" [class.with-totals]="showTotals">
+    <!-- header row -->
+    <div class="matrix-head">
+      <div class="col-group">
+        {{
+          (groupBy$ | async) === GroupBy.Property
+            ? ('pages.project.viewRestrictions.property' | translate)
+            : ('pages.project.viewRestrictions.resourceClass' | translate)
+        }}
+      </div>
+      @if (showTotals) {
+        <div class="col-total">{{ 'pages.project.viewRestrictions.resources' | translate }}</div>
+      }
+      <div class="col-aud"><mat-icon>public</mat-icon>{{ 'pages.project.viewRestrictions.audience.anonymous' | translate }}</div>
+      <div class="col-aud"><mat-icon>person</mat-icon>{{ 'pages.project.viewRestrictions.audience.authenticated' | translate }}</div>
+      <div class="col-aud"><mat-icon>group</mat-icon>{{ 'pages.project.viewRestrictions.audience.projectMember' | translate }}</div>
+    </div>
+
+    @for (group of summary.groups; track group.id) {
+      <button type="button" class="matrix-row" (click)="toggleGroup(group)">
+        <span class="col-group">
+          <mat-icon class="chevron">{{ isExpanded(group.id) ? 'expand_more' : 'chevron_right' }}</mat-icon>
+          <span class="group-label">
+            <span class="group-name">{{ group.label }}</span>
+            @if (group.propertyName || group.ontology) {
+              <span class="group-sub">{{ group.propertyName || group.ontology }}</span>
+            }
+          </span>
+        </span>
+        @if (showTotals) {
+          <span class="col-total">{{ group.totalResources ?? '–' }}</span>
+        }
+        <app-count-cell [counts]="group.counts.anonymous" />
+        <app-count-cell [counts]="group.counts.authenticated" />
+        <app-count-cell [counts]="group.counts.projectMember" />
+      </button>
+
+      @if (isExpanded(group.id)) {
+        @if (isLoading(group.id)) {
+          <app-progress-indicator />
+        } @else if (isFailed(group.id)) {
+          <div class="load-error">
+            <mat-icon>error_outline</mat-icon>
+            {{ 'pages.project.viewRestrictions.itemsLoadFailed' | translate }}
+          </div>
+        } @else if (expandedGroup(group.id); as eg) {
+          @if (eg.page.pagination.totalPages > 1) {
+            <div class="pager">
+              <app-pager
+                [numberOfAllResults]="eg.page.pagination.totalItems"
+                [pageSize]="pageSize"
+                (pageIndexChanged)="onPageIndexChanged(group.id, $event)" />
+            </div>
+          }
+          @for (res of eg.page.data; track res.resourceIri) {
+            @if (isCombo(res)) {
+              <!-- combo row: fully-visible resource with a single restricted item, on one line (design 1g/1h) -->
+              @let comboItem = res.items[0];
+              <div class="drill-res">
+                <span class="col-group indent-1 combo">
+                  <mat-icon class="kind-icon">description</mat-icon>
+                  <a class="link-label res-name" [href]="resourceLink(res.resourceIri)" target="_blank" rel="noopener" [title]="res.label">{{ res.label }}</a>
+                  <mat-icon class="combo-sep">chevron_right</mat-icon>
+                  <mat-icon class="kind-icon">{{ itemIcon(comboItem) }}</mat-icon>
+                  @let comboLabel = hasPropertyLabel(comboItem) ? comboItem.propertyLabel : (itemTypeKey(comboItem.type) | translate);
+                  <a class="link-label" [href]="itemLink(res.resourceIri, comboItem.valueIri)" target="_blank" rel="noopener" [title]="comboLabel">{{ comboLabel }}</a>
+                  <span class="tag">{{ itemTypeKey(comboItem.type) | translate }}</span>
+                </span>
+                <app-visibility-cell [visibility]="comboItem.visibility.anonymous" />
+                <app-visibility-cell [visibility]="comboItem.visibility.authenticated" />
+                <app-visibility-cell [visibility]="comboItem.visibility.projectMember" />
+              </div>
+            } @else {
+              <div class="drill-res">
+                <span class="col-group indent-1">
+                  <mat-icon class="kind-icon">description</mat-icon>
+                  <a class="link-label" [href]="resourceLink(res.resourceIri)" target="_blank" rel="noopener" [title]="res.label">{{ res.label }}</a>
+                  @if (res.items?.length) {
+                    <span class="child-info">
+                      {{ res.items.length }} {{ 'pages.project.viewRestrictions.itemsInside' | translate }}
+                    </span>
+                  }
+                </span>
+                <app-visibility-cell [visibility]="res.resourceVisibility.anonymous" />
+                <app-visibility-cell [visibility]="res.resourceVisibility.authenticated" />
+                <app-visibility-cell [visibility]="res.resourceVisibility.projectMember" />
+              </div>
+
+              @for (item of res.items; track item.valueIri || $index) {
+                <div class="drill-item">
+                  <span class="col-group indent-2">
+                    <mat-icon class="kind-icon">{{ itemIcon(item) }}</mat-icon>
+                    @let itemLabel = hasPropertyLabel(item) ? item.propertyLabel : (itemTypeKey(item.type) | translate);
+                    <a class="link-label" [href]="itemLink(res.resourceIri, item.valueIri)" target="_blank" rel="noopener" [title]="itemLabel">{{ itemLabel }}</a>
+                    <span class="tag">{{ itemTypeKey(item.type) | translate }}</span>
+                  </span>
+                  <app-visibility-cell [visibility]="item.visibility.anonymous" />
+                  <app-visibility-cell [visibility]="item.visibility.authenticated" />
+                  <app-visibility-cell [visibility]="item.visibility.projectMember" />
+                </div>
+              }
+            }
+          }
+
+        }
+      }
+    } @empty {
+      <div class="empty">{{ 'pages.project.viewRestrictions.noRestrictions' | translate }}</div>
+    }
+
+    <!-- footer totals -->
+    @if (summary.groups?.length) {
+      <div class="matrix-foot">
+        <div class="col-group">{{ 'pages.project.viewRestrictions.total' | translate }}</div>
+        @if (showTotals) {
+          <div class="col-total">{{ totalResources(summary.groups) }}</div>
+        }
+        <app-count-cell [counts]="summary.totals.anonymous" />
+        <app-count-cell [counts]="summary.totals.authenticated" />
+        <app-count-cell [counts]="summary.totals.projectMember" />
+      </div>
+    }
+    </div>
+  }
+} @else {
+  <app-progress-indicator />
+}

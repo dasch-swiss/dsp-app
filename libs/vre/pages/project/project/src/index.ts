@@ -9,6 +9,7 @@ export * from './lib/project-settings/image-settings/settings-page.component';
 export * from './lib/project-settings/image-settings/image-settings.component';
 export * from './lib/project-settings/legal/legal-settings.component';
 export * from './lib/project-settings/resource-metadata/resource-metadata.component';
+export * from './lib/project-settings/view-restrictions/view-restrictions.component';
 
 // Data browser page components (moved from data-browser library)
 export * from './lib/data-browser-page.component';

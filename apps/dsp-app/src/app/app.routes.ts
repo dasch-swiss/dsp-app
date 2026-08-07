@@ -21,6 +21,7 @@ import {
   ProjectPageGuard,
   ResourceMetadataComponent,
   SettingsPageComponent,
+  ViewRestrictionsComponent,
 } from '@dasch-swiss/vre/pages/project/project';
 import { AdvancedSearchPageComponent } from '@dasch-swiss/vre/pages/search/advanced-search';
 import { FulltextSearchResultsPageComponent, GlobalPageComponent } from '@dasch-swiss/vre/pages/search/search';
@@ -115,6 +116,10 @@ export const routes: Routes = [
           {
             path: RouteConstants.collaboration,
             component: CollaborationPageComponent,
+          },
+          {
+            path: RouteConstants.viewRestrictions,
+            component: ViewRestrictionsComponent,
           },
         ],
       },

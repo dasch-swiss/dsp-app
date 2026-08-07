@@ -1,0 +1,44 @@
+@use '../../../../../../../../../apps/dsp-app/src/styles/config' as *;
+
+:host {
+  display: block;
+}
+
+// One line: the states present for this audience, side by side.
+.col-aud {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 6px 8px;
+  min-height: 38px;
+  box-sizing: border-box;
+  font-size: 13px;
+}
+
+.count-hidden,
+.count-restricted {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 500;
+
+  mat-icon {
+    font-size: 15px;
+    width: 15px;
+    height: 15px;
+  }
+}
+
+// hidden = red (nothing is served), restricted view = amber (a degraded version is served)
+.count-hidden {
+  color: $red_700;
+}
+
+.count-restricted {
+  color: $yellow_800;
+}
+
+.count-none {
+  color: rgba($black, 0.4);
+}
