@@ -54,13 +54,13 @@ describe('Project Member - Ontology management', () => {
       cy.get('[data-cy=submit-button]').click();
 
       cy.wait('@submitRequest');
-      cy.url().should('include', `project/${projectPage.projectShortCode}/ontology/${createData.name}/editor/classes`);
+      cy.url().should('include', `project/${projectPage.projectShortCode}/ontology/${createData.name}/editor`);
       cy.get('[data-cy=ontology-label]').contains(createData.label).should('be.visible');
       cy.get('[data-cy=edit-ontology-button]').scrollIntoView().should('be.visible').click();
       cy.get('[data-cy=label-input]').clear().type(editData.label);
       cy.get('[data-cy=comment-textarea]').clear().type(editData.comment);
       cy.get('[data-cy=submit-button]').click();
-      cy.url().should('include', `project/${projectPage.projectShortCode}/ontology/${createData.name}/editor/classes`);
+      cy.url().should('include', `project/${projectPage.projectShortCode}/ontology/${createData.name}/editor`);
       cy.get('[data-cy=ontology-label]').contains(editData.label).should('be.visible');
     });
   });
