@@ -254,13 +254,44 @@ describe('VectorImageComponent', () => {
       } as any;
     });
 
-    it('should zoom out on wheel down', () => {
+    it('should zoom out on wheel down when zoomed in', () => {
+      component.viewerService.zoom(1); // zoom in first, so there is room to zoom out again
       const zoomSpy = jest.spyOn(component.viewerService, 'zoom');
       const event = new WheelEvent('wheel', { deltaY: 100 });
 
       component.onWheel(event);
 
       expect(zoomSpy).toHaveBeenCalledWith(-1, expect.any(Number), expect.any(Number));
+    });
+
+    it('should let the page scroll instead of zooming out below the default view', () => {
+      const zoomSpy = jest.spyOn(component.viewerService, 'zoom');
+      const event = new WheelEvent('wheel', { deltaY: 100, cancelable: true });
+
+      component.onWheel(event);
+
+      expect(zoomSpy).not.toHaveBeenCalled();
+      expect(event.defaultPrevented).toBe(false);
+    });
+
+    it('should still zoom out on pinch gestures at the default view', () => {
+      const zoomSpy = jest.spyOn(component.viewerService, 'zoom');
+      const event = new WheelEvent('wheel', { deltaY: 100, ctrlKey: true, cancelable: true });
+
+      component.onWheel(event);
+
+      expect(zoomSpy).toHaveBeenCalledWith(-1, expect.any(Number), expect.any(Number));
+      expect(event.defaultPrevented).toBe(true);
+    });
+
+    it('should ignore horizontal wheel gestures', () => {
+      const zoomSpy = jest.spyOn(component.viewerService, 'zoom');
+      const event = new WheelEvent('wheel', { deltaX: 100, deltaY: 0, cancelable: true });
+
+      component.onWheel(event);
+
+      expect(zoomSpy).not.toHaveBeenCalled();
+      expect(event.defaultPrevented).toBe(false);
     });
 
     it('should zoom in on wheel up', () => {

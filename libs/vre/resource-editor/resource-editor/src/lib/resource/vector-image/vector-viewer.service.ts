@@ -25,6 +25,10 @@ export class VectorViewerService {
 
   state$ = this._stateSubject.asObservable();
 
+  get scale(): number {
+    return this._scale;
+  }
+
   get translateX(): number {
     return this._translateX;
   }

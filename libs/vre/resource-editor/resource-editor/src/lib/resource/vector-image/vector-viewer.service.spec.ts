@@ -20,6 +20,16 @@ describe('VectorViewerService', () => {
     });
   });
 
+  describe('scale', () => {
+    it('should expose the current scale', () => {
+      expect(service.scale).toBe(1);
+
+      service.zoom(1);
+
+      expect(service.scale).toBeCloseTo(1.2);
+    });
+  });
+
   describe('zoom', () => {
     it('should zoom in by factor of 1.2', () => {
       service.zoom(1);

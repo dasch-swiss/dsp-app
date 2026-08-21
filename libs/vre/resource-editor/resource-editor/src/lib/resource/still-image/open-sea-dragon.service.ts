@@ -21,6 +21,7 @@ export class OpenSeaDragonService {
 
   private readonly _OVERLAY_COLOR = 'rgba(255,0,0,0.3)';
   private readonly _ZOOM_FACTOR = 0.2;
+  private readonly _MIN_ZOOM_EPSILON = 1e-6;
 
   private _viewer!: OpenSeadragon.Viewer;
 
@@ -57,6 +58,45 @@ export class OpenSeaDragonService {
 
     this._viewer = new OpenSeadragon.Viewer(viewerConfig);
     this._addCustomHandlers(this._viewer);
+    this._letPageScrollAtMinZoom(this._viewer);
+  }
+
+  /**
+   * At minimum zoom the image cannot shrink further, so a zoom-out wheel gesture would be a no-op.
+   * Hide it from OpenSeadragon instead and let it bubble, so the page scrolls rather than the
+   * user having to move the cursor beside the viewer. Zooming in is never intercepted.
+   */
+  private _letPageScrollAtMinZoom(viewer: OpenSeadragon.Viewer): void {
+    viewer.element.addEventListener(
+      'wheel',
+      (event: WheelEvent) => {
+        // ctrlKey means trackpad pinch or browser zoom, not a scroll gesture.
+        if (event.ctrlKey || Math.abs(event.deltaY) <= Math.abs(event.deltaX)) {
+          return;
+        }
+
+        const zoomingOut = event.deltaY > 0;
+        if (!zoomingOut) {
+          return;
+        }
+
+        const viewport = viewer.viewport;
+        if (!viewport) {
+          return;
+        }
+
+        // Compare the *target* zoom (getZoom(false)), not the current animated one. OpenSeadragon
+        // glides toward its target over ~1.2s, so the current value still sits above the floor for
+        // the whole animation - gating on it would swallow every wheel tick until the spring
+        // settled. The target is clamped to getMinZoom() immediately, on the first tick that
+        // bottoms out, so the page starts scrolling right away.
+        if (viewport.getZoom(false) <= viewport.getMinZoom() + this._MIN_ZOOM_EPSILON) {
+          // Do not preventDefault: scrolling the page IS the default action we want here.
+          event.stopPropagation();
+        }
+      },
+      { capture: true }
+    );
   }
 
   toggleDrawing(): void {

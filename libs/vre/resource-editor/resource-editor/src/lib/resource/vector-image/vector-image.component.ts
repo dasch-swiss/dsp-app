@@ -116,6 +116,8 @@ export class VectorImageComponent implements OnChanges, AfterViewInit, OnDestroy
   viewportHeight = '100%';
 
   private readonly _NAVIGATOR_SCALE = 8;
+  /** Wheel zoom-out stops here and gives the gesture back to the page; the toolbar can still go lower. */
+  private readonly _MIN_WHEEL_ZOOM_OUT_SCALE = 1;
   private _dragStartX = 0;
   private _dragStartY = 0;
   private _lastTranslateX = 0;
@@ -206,9 +208,22 @@ export class VectorImageComponent implements OnChanges, AfterViewInit, OnDestroy
   }
 
   onWheel(event: WheelEvent): void {
-    event.preventDefault();
     if (!this.containerRef?.nativeElement) return;
+
+    // Horizontal gestures are not zoom gestures; leave them to the browser.
+    if (Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return;
+
     const direction = event.deltaY > 0 ? -1 : 1;
+
+    // Zooming out below the default view is not useful here, so let the event through instead:
+    // the page scrolls rather than the user having to move the cursor beside the viewer.
+    // ctrlKey means a trackpad pinch or browser zoom, which must keep working as a zoom gesture.
+    if (direction === -1 && !event.ctrlKey && this.viewerService.scale <= this._MIN_WHEEL_ZOOM_OUT_SCALE) {
+      return;
+    }
+
+    event.preventDefault();
+
     // Get the position relative to container center for zoom-to-cursor
     const rect = this.containerRef.nativeElement.getBoundingClientRect();
     const centerX = rect.width / 2;
