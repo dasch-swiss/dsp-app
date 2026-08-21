@@ -1,0 +1,62 @@
+@use '../../../../../../../../../apps/dsp-app/src/styles/config' as *;
+
+:host {
+  display: block;
+}
+
+// One line per unit in scope (usually one; two in the combined "All" view). Stacked rather than inlined
+// so the figures of different units never read as one run of numbers.
+.col-aud {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 6px 8px;
+  min-height: 38px;
+  box-sizing: border-box;
+  font-size: 13px;
+}
+
+// one unit's line: an optional unit icon, then the state counts present for it
+.count-line {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+// marks which unit the line counts; only rendered in the combined view, and muted, since it labels
+// rather than reports
+.unit-icon {
+  font-size: 14px;
+  width: 14px;
+  height: 14px;
+  color: rgba($black, 0.35);
+}
+
+.count-hidden,
+.count-restricted {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 500;
+
+  mat-icon {
+    font-size: 15px;
+    width: 15px;
+    height: 15px;
+  }
+}
+
+// hidden = red (nothing is served), restricted view = amber (a degraded version is served)
+.count-hidden {
+  color: $red_700;
+}
+
+.count-restricted {
+  color: $yellow_800;
+}
+
+.count-none {
+  color: rgba($black, 0.4);
+}

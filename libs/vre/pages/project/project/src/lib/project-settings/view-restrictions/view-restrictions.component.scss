@@ -1,0 +1,413 @@
+@use '../../../../../../../../../apps/dsp-app/src/styles/config' as *;
+
+:host {
+  display: block;
+}
+
+// Runs the full width of the page, like the matrix it introduces. No measure cap: at this width the
+// intro is three lines rather than the six a 640px column gave it, and it no longer ends in a ragged
+// gap beside a full-width table.
+.subtitle {
+  color: $black-60-opacity;
+  margin: 0 0 20px;
+}
+
+// Label column + control column, so "Group by" and "Filters" stack into a column and the toggle group
+// and the chips both start at the same x. `max-content` on the first column lets the label column take
+// the width of the widest label in the active language, which a fixed width could only get right for one.
+.controls {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+
+  .control-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    color: rgba($black, 0.5);
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+  }
+
+  // The grid stretches every cell to the column's full width, which would blow the toggle group out
+  // from its two buttons to the whole row. Both controls size to their content and sit at the start of
+  // the column instead; alignment comes from the shared column, not from them filling it.
+  mat-button-toggle-group,
+  mat-chip-listbox {
+    justify-self: start;
+    min-width: 0;
+  }
+}
+
+// shown above the matrix when every class is listed but nothing is restricted
+.empty-note {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba($green_600, 0.08);
+  border: 1px solid rgba($green_600, 0.4);
+  border-radius: $border-radius;
+  padding: 8px 12px;
+  margin-bottom: 12px;
+  font-size: 13px;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    color: $green_600;
+  }
+}
+
+.load-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba($red, 0.08);
+  border: 1px solid rgba($red, 0.4);
+  border-radius: $border-radius;
+  padding: 12px;
+  font-size: 13px;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    color: $red;
+  }
+}
+
+.matrix {
+  border: 1px solid $black-12-opacity;
+  border-radius: 8px;
+  overflow: hidden;
+
+  // Design 1i grid. Class mode inserts a fixed 96px "Resources" column between the label and the
+  // audience cells; property mode has no resource population to report, so it drops the column and
+  // gives the label a wider minimum instead.
+  $grid: minmax(430px, 2.6fr) 1fr 1fr 1fr;
+  $grid-with-totals: minmax(400px, 2.6fr) 96px 1fr 1fr 1fr;
+
+  .matrix-head,
+  .matrix-row,
+  .matrix-foot,
+  .drill-res,
+  .drill-item {
+    display: grid;
+    grid-template-columns: $grid;
+    align-items: center;
+  }
+
+  &.with-totals {
+    .matrix-head,
+    .matrix-row,
+    .matrix-foot,
+    .drill-res,
+    .drill-item {
+      grid-template-columns: $grid-with-totals;
+    }
+
+    // Drill-down rows have no resources count of their own — the population is a property of the
+    // class, not of an individual resource — so their label spans the label + Resources columns
+    // (design 1i `iSpan`). Without this the per-audience cells would shift one column left and no
+    // longer line up under their headers.
+    .drill-res > .col-group,
+    .drill-item > .col-group {
+      grid-column: span 2;
+    }
+  }
+
+  // The class population: a plain neutral number, deliberately quieter than the restriction counts
+  // next to it — it is the denominator, not a finding.
+  .col-total {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    padding: 6px 8px;
+    font-size: 13px;
+    color: rgba($black, 0.6);
+    border-left: 1px solid rgba($black, 0.06);
+  }
+
+  .matrix-head {
+    background: $cool_gray_50;
+    border-bottom: 1px solid $black-12-opacity;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: rgba($black, 0.5);
+
+    .col-aud {
+      flex-direction: column;
+      gap: 2px;
+      padding: 10px 4px;
+
+      mat-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+      }
+    }
+
+    // inherits the head's uppercase caption styling; bottom-aligned to sit on the same
+    // baseline as the audience labels, which are pushed down by their icons
+    .col-total {
+      align-items: flex-end;
+      padding: 12px 10px;
+      font-size: inherit;
+      font-weight: inherit;
+      color: inherit;
+      border-left: none;
+    }
+  }
+
+  .col-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    min-width: 0;
+  }
+
+  .col-aud {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 4px;
+
+    &.count {
+      font-weight: 500;
+    }
+  }
+
+  .matrix-row {
+    width: 100%;
+    background: $white;
+    border: none;
+    border-top: 1px solid rgba($black, 0.06);
+    cursor: pointer;
+    text-align: left;
+    font: inherit;
+    padding: 0;
+
+    &:hover {
+      background: $secondary_50;
+    }
+
+    // A row with nothing to drill into is a data line, not a control: no pointer, no hover response.
+    // It keeps the normal text colour — it is ordinary data, and greying it out would read as
+    // "unavailable" when the row is in fact reporting a perfectly good result (nothing restricted).
+    &.is-inert {
+      cursor: default;
+      // `disabled` makes the UA grey the text; restate it, since the row is ordinary data and not an
+      // unavailable control. `font: inherit` above does not carry colour.
+      color: inherit;
+
+      &:hover {
+        background: $white;
+      }
+    }
+
+    .chevron {
+      color: rgba($black, 0.4);
+    }
+
+    // Holds the chevron's place on an inert row so every group label starts at the same x, whether or
+    // not the row opens. Matches mat-icon's default box, which the chevron does not override.
+    .chevron-spacer {
+      display: inline-block;
+      width: 24px;
+      height: 24px;
+      flex: none;
+    }
+
+    .group-label {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .group-name {
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .group-sub {
+      font-size: 11px;
+      color: rgba($black, 0.5);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
+  .drill-res,
+  .drill-item {
+    background: $primary_50;
+    border-top: 1px solid $primary_100;
+  }
+
+  // combo row: resource + single item inline (design 1g/1h)
+  .col-group.combo {
+    // both labels share the leftover width and ellipsis independently;
+    // icons, chevron and tag are fixed-size and never shrink or get pushed off.
+    .link-label {
+      flex: 1 1 0;
+      min-width: 3ch; // keep a few chars before the ellipsis so neither label vanishes
+    }
+
+    .res-name {
+      font-weight: 500;
+    }
+
+    .kind-icon,
+    .combo-sep,
+    .tag {
+      flex: none;
+    }
+
+    .combo-sep {
+      font-size: 15px;
+      width: 15px;
+      height: 15px;
+      color: rgba(0, 0, 0, 0.4);
+    }
+  }
+
+  .indent-1 {
+    padding-left: 48px;
+  }
+
+  .indent-2 {
+    padding-left: 80px;
+  }
+
+  .link-label {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0; // allow the flex item to shrink so ellipsis actually applies
+  }
+
+  // labels that are links to open the resource / value in a new tab
+  a.link-label {
+    color: $primary;
+    text-decoration: none;
+    cursor: pointer;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  .drill-item .link-label {
+    font-size: 13px;
+  }
+
+  .child-info {
+    font-size: 11px;
+    color: rgba($black, 0.5);
+    white-space: nowrap;
+  }
+
+  .tag {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: rgba($black, 0.5);
+    border: 1px solid $black-20-opacity;
+    border-radius: 999px;
+    padding: 1px 7px;
+    white-space: nowrap;
+  }
+
+  .kind-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    color: $primary;
+  }
+
+  .matrix-foot {
+    background: $cool_gray_50;
+    border-top: 2px solid rgba($black, 0.18);
+    font-weight: 500;
+
+    // the footer's population total is the one place the neutral number is emphasised
+    .col-total {
+      font-weight: 500;
+      color: rgba($black, 0.87);
+    }
+  }
+
+  .empty {
+    padding: 24px 16px;
+    text-align: center;
+    color: rgba($black, 0.5);
+  }
+
+  // the drill-down failure sits between grid rows, so keep it flush rather than boxed
+  .load-error {
+    border: none;
+    border-radius: 0;
+    padding: 12px 16px 12px 48px;
+  }
+
+  // wrapper chrome around the shared `app-pager`, which brings its own MUI buttons and layout
+  .pager {
+    background: $cool_gray_50;
+    border-bottom: 1px solid rgba($black, 0.06);
+    padding: 0 8px;
+  }
+}
+
+// The per-audience cells live in `app-visibility-cell`, which owns its own eye colours.
+
+// Key to the two state glyphs used throughout the matrix and its drill-down. Sits below the table:
+// the intro paragraph already explains the screen for a first read, so this is reference material,
+// consulted when a colour needs decoding rather than read up front.
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  margin-top: 12px;
+  font-size: 12px;
+  color: rgba($black, 0.6);
+
+  .legend-entry {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  // deliberately the count cells' own sizes and colours: the legend is a key to those glyphs, so any
+  // divergence would make it a picture of something else
+  mat-icon {
+    font-size: 15px;
+    width: 15px;
+    height: 15px;
+  }
+
+  .legend-hidden {
+    color: $red_700;
+  }
+
+  .legend-restricted {
+    color: $yellow_800;
+  }
+}

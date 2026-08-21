@@ -73,6 +73,11 @@ export class SettingsPageComponent {
       route: RouteConstants.collaboration,
       icon: 'group',
     },
+    {
+      label: this._translateService.instant('pages.project.viewRestrictions.tab'),
+      route: RouteConstants.viewRestrictions,
+      icon: 'visibility_off',
+    },
   ];
 
   trackByFn = (index: number, item: MenuItem) => `${index}-${item.route}`;
