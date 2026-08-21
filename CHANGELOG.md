@@ -1,5 +1,17 @@
 # Changelog
 
+## [13.13.0](https://github.com/dasch-swiss/dsp-app/compare/v13.12.5...v13.13.0) (2026-08-21)
+
+
+### Enhancements
+
+* show the resource class on search results (DEV-5452) ([#3360](https://github.com/dasch-swiss/dsp-app/issues/3360)) ([4a9ad21](https://github.com/dasch-swiss/dsp-app/commit/4a9ad2144b6a21d1a71376bee4df5307ba475f19))
+
+
+### Maintenances
+
+* **deps:** Update dependency ng-mocks from 14.17.1 to 14.17.2 ([#3362](https://github.com/dasch-swiss/dsp-app/issues/3362)) ([c013f65](https://github.com/dasch-swiss/dsp-app/commit/c013f650174d5395dfde5cecdbe6a7c12656d9ad))
+
 ## [13.12.5](https://github.com/dasch-swiss/dsp-app/compare/v13.12.4...v13.12.5) (2026-08-19)
 
 
