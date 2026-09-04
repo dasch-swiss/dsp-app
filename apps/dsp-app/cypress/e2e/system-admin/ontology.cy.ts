@@ -42,7 +42,7 @@ describe('Ontology', () => {
     cy.get('[data-cy=submit-button]').click();
 
     cy.wait('@submitRequest');
-    cy.url().should('include', `project/${projectPage.projectUuid}/ontology/${data.name}/editor/classes`);
+    cy.url().should('include', `project/${projectPage.projectUuid}/ontology/${data.name}/editor`);
     cy.get('[data-cy=ontology-label]').contains(data.label).should('be.visible');
   });
 
@@ -62,10 +62,7 @@ describe('Ontology', () => {
       cy.get('[data-cy=submit-button]').click();
 
       cy.wait('@updateRequest');
-      cy.url().should(
-        'include',
-        `project/${projectPage.projectUuid}/ontology/${ontology.ontology.name}/editor/classes`
-      );
+      cy.url().should('include', `project/${projectPage.projectUuid}/ontology/${ontology.ontology.name}/editor`);
       cy.get('[data-cy=ontology-label]').contains(data.label).should('be.visible');
     });
   });
