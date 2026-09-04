@@ -1,5 +1,24 @@
 # Changelog
 
+## [13.13.2](https://github.com/dasch-swiss/dsp-app/compare/v13.13.1...v13.13.2) (2026-09-04)
+
+
+### Bug Fixes
+
+* **ontology:** load project ontologies and lists once per editor visit (DEV-7130) ([#3396](https://github.com/dasch-swiss/dsp-app/issues/3396)) ([48705ac](https://github.com/dasch-swiss/dsp-app/commit/48705ac88686c2627f59799bf1a9d6b019ef2e03))
+* **styles:** load Material Icons locally so glyphs are not clipped (DEV-7068, DEV-7069) ([#3384](https://github.com/dasch-swiss/dsp-app/issues/3384)) ([e12138a](https://github.com/dasch-swiss/dsp-app/commit/e12138a371fcfa587171a0254f6c168f0ca19262))
+* translate the "Found in" property names on search results (DEV-5452) ([#3391](https://github.com/dasch-swiss/dsp-app/issues/3391)) ([f7fb298](https://github.com/dasch-swiss/dsp-app/commit/f7fb29894e1b18c09bc3eeeac9039a7bdf958a9c))
+* translate the help page and footer (DEV-7006) ([#3367](https://github.com/dasch-swiss/dsp-app/issues/3367)) ([374f4ee](https://github.com/dasch-swiss/dsp-app/commit/374f4ee61e5b4f8f63898a7d860d0f9b174d82cb))
+
+
+### Maintenances
+
+* **deps:** Update dependency @sentry/angular from 10.72.0 to 10.73.0 ([#3394](https://github.com/dasch-swiss/dsp-app/issues/3394)) ([8013a14](https://github.com/dasch-swiss/dsp-app/commit/8013a1424894acc64bdeedb247221c28160f7f20))
+* **deps:** Update dependency postcss-preset-env from 11.5.0 to 11.5.1 ([#3393](https://github.com/dasch-swiss/dsp-app/issues/3393)) ([7c9f47b](https://github.com/dasch-swiss/dsp-app/commit/7c9f47b1fbe9aa90db76f0823f9dba9b1e01a6db))
+* **deps:** Update jest-deps from 30.4.2 to 30.5.0 ([#3389](https://github.com/dasch-swiss/dsp-app/issues/3389)) ([4aa33c9](https://github.com/dasch-swiss/dsp-app/commit/4aa33c948b315ec9504080d6e43a330783005a87))
+* **open-api:** bump dsp-api spec v37.8.0-6-ge1c71e1 → v38.0.0-6-gf814ae1 ([#3392](https://github.com/dasch-swiss/dsp-app/issues/3392)) ([116ae9f](https://github.com/dasch-swiss/dsp-app/commit/116ae9f1acde92f2b37deb89e1ca4ad96eb416da))
+* **open-api:** bump dsp-api spec v38.0.0-6-gf814ae1 → v38.0.0-8-gdf2abf9 ([#3395](https://github.com/dasch-swiss/dsp-app/issues/3395)) ([d13158e](https://github.com/dasch-swiss/dsp-app/commit/d13158ea5d353c49755f41bcddbe127eaa58d263))
+
 ## [13.13.1](https://github.com/dasch-swiss/dsp-app/compare/v13.13.0...v13.13.1) (2026-08-31)
 
 
