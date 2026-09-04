@@ -10,7 +10,6 @@ export const makeReadProject = (partial: Partial<ReadProject> = {}): ReadProject
     shortcode: '0001',
     shortname: 'testproj',
     longname: 'Test Project',
-    status: true,
     selfjoin: false,
     keywords: [],
     description: [{ language: 'en', value: 'A test project description.' }],

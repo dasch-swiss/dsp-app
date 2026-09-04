@@ -26,7 +26,6 @@
       </mat-card-subtitle>
     </div>
     <span>
-      @if ((project$ | async)?.status) {
       <span>
         @if (classHovered || menuOpen) {
         <button
@@ -40,7 +39,6 @@
         </button>
         }
       </span>
-      }
       <span
         [matTooltip]="
           expandClasses
@@ -72,7 +70,7 @@
 </mat-card>
 
 <mat-menu #resClassMenu="matMenu" xPosition="before">
-  @if ((hasProjectAdminRights$ | async) === true && (project$ | async)?.status === true) {
+  @if ((hasProjectAdminRights$ | async) === true) {
   <button mat-menu-item data-cy="edit-button" (click)="editResourceClassInfo()">
     <mat-icon>edit</mat-icon>
     {{ 'pages.ontology.resourceClassInfo.edit' | translate }}
@@ -90,7 +88,7 @@
     <mat-icon>content_copy</mat-icon>
     {{ 'pages.ontology.resourceClassInfo.copyId' | translate }}
   </button>
-  @if ((hasProjectAdminRights$ | async) === true && (project$ | async)?.status === true) {
+  @if ((hasProjectAdminRights$ | async) === true) {
   <button
     [matTooltip]="
       classCanBeDeleted ? '' : _translate.instant('pages.ontology.resourceClassInfo.cannotDelete')

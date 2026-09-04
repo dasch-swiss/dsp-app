@@ -10,24 +10,20 @@
       <app-sort-button [sortProps]="sortProps" [activeKey]="sortBy" (sortKeyChange)="sortList($event)" />
     </div>
 
-    @if (isUserActive && createNewButtonEnabled && (isSysAdmin$ | async) === true) {
+    @if (createNewButtonEnabled && (isSysAdmin$ | async) === true) {
     <button mat-flat-button [color]="'primary'" (click)="createNewProject()">
       {{ 'pages.system.projectsList.createNew' | translate }}
     </button>
     }
   </div>
   <!-- content: projectsList -->
-  <table [class.deactivated]="!isUserActive">
+  <table>
     @for (project of projectsList; track trackByFn($index, project); let last = $last) {
     <tr [class.no-border]="last" data-cy="project-row">
       <!-- logo -->
       <td style="padding: 0 16px">
         <mat-icon mat-list-icon>
-          @if (isUserActive) {
           <span>assignment</span>
-          } @if (!isUserActive) {
-          <span>lock</span>
-          }
         </mat-icon>
       </td>
       <td style="width: 100%; padding: 16px 0; cursor: pointer">
@@ -55,27 +51,12 @@
           <mat-icon>more_horiz</mat-icon>
         </button>
         <mat-menu #projectMenu="matMenu" xPosition="before">
-          @if (isUserActive) {
           <button mat-menu-item (click)="editProject(project.id)" data-cy="edit-button">
             {{ 'pages.system.projectsList.edit' | translate }}
           </button>
-          } @if (isUserActive) {
-          <button
-            mat-menu-item
-            (click)="askToDeactivateProject(project.shortname, project.id)"
-            data-cy="deactivate-button">
-            {{ 'pages.system.projectsList.deactivate' | translate }}
-          </button>
-          } @if (allowEraseProject && (isSysAdmin$ | async)) {
+          @if (allowEraseProject && (isSysAdmin$ | async)) {
           <button mat-menu-item (click)="askToEraseProject(project)" data-cy="erase-button">
             {{ 'pages.system.projectsList.erase' | translate }}
-          </button>
-          } @if (!isUserActive) {
-          <button
-            mat-menu-item
-            (click)="askToActivateProject(project.shortname, project.id)"
-            data-cy="reactivate-button">
-            {{ 'pages.system.projectsList.reactivate' | translate }}
           </button>
           }
         </mat-menu>

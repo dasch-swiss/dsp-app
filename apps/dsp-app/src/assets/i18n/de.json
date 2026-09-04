@@ -260,16 +260,11 @@
         "sortShortCode": "Shortcode",
         "sortShortName": "Kurzname",
         "sortProjectName": "Projektname",
-        "statusDeactivated": "Deaktiviert",
         "createNew": "Neues Projekt erstellen",
         "projectAdmin": "Projekt-Admin",
         "edit": "Projektinformationen bearbeiten",
-        "reactivate": "Projekt reaktivieren",
-        "deactivate": "Projekt deaktivieren",
         "erase": "Projekt löschen",
         "eraseConfirmation": "Projekt \"{{0}}\" wurde gelöscht.",
-        "deactivateConfirmation": "Möchten Sie Projekt \"{{0}}\" deaktivieren?",
-        "reactivateConfirmation": "Möchten Sie Projekt \"{{0}}\" reaktivieren?",
         "eraseConfirmationDialog": {
           "title": "Bitte geben Sie die erforderlichen Informationen ein, um das Projekt zu löschen.",
           "subtitle": "Projekt löschen",
@@ -944,7 +939,6 @@
         "badLinks": "Fehlerhafte Links:"
       },
       "status": {
-        "active": "Aktiv",
         "loading": "Laden..."
       },
       "entities": {

@@ -16,7 +16,7 @@
       <h3>{{ 'pages.landingPage.usersProjects' | translate }}</h3>
     </div>
     <div class="project-grid">
-      @for (project of usersActiveProjects$ | async; track trackByFn(index, project); let index = $index) {
+      @for (project of usersProjects$ | async; track trackByFn(index, project); let index = $index) {
       <app-project-card [project]="project" [index]="index" />
       }
     </div>
@@ -24,14 +24,14 @@
       <h3>{{ 'pages.landingPage.notUsersProjects' | translate }}</h3>
     </div>
     <div class="project-grid">
-      @for (project of notUsersActiveProjects$ | async; track trackByFn(index, project); let index = $index) {
+      @for (project of otherProjects$ | async; track trackByFn(index, project); let index = $index) {
       <app-project-card [project]="project" [index]="index" />
       }
     </div>
   </div>
   } @else {
   <div class="project-grid">
-    @for (project of activeProjects$ | async; track trackByFn(index, project); let index = $index) {
+    @for (project of allProjects$ | async; track trackByFn(index, project); let index = $index) {
     <app-project-card [project]="project" [index]="index" />
     }
   </div>

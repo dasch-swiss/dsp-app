@@ -52,12 +52,6 @@ export class Project {
   shortname = '';
 
   /**
-   * The status of the user / group / project. It is false if the entity has been deactivated (deleted).
-   */
-  @JsonProperty('status', Boolean)
-  status = false;
-
-  /**
    * The data-side (resource record) license IRI of the project, if configured. Creative Commons only.
    */
   @JsonProperty('dataLicense', String, true)

@@ -3,6 +3,7 @@ import { ReadUser } from '@dasch-swiss/dsp-js';
 import { UserApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { AppError } from '@dasch-swiss/vre/core/error-handler';
 import { UserPermissions } from '@dasch-swiss/vre/shared/app-common';
+import { SortingHelper } from '@dasch-swiss/vre/shared/app-helper-services';
 import { BehaviorSubject, catchError, map, Observable, tap } from 'rxjs';
 
 @Injectable({
@@ -15,8 +16,9 @@ export class UserService {
   user$ = this._user$.asObservable();
   isLoggedIn$ = this._user$.pipe(map(user => user !== null));
   isSysAdmin$ = this._user$.pipe(map(user => (user ? UserPermissions.hasSysAdminRights(user) : false)));
-  userActiveProjects$ = this._user$.pipe(map(user => (user ? user.projects.filter(project => project.status) : [])));
-  userInactiveProjects$ = this._user$.pipe(map(user => (user ? user.projects.filter(project => !project.status) : [])));
+  userProjects$ = this._user$.pipe(
+    map(user => (user ? SortingHelper.keySortByAlphabetical(user.projects, 'longname') : []))
+  );
 
   constructor(private readonly _userApiService: UserApiService) {}
 

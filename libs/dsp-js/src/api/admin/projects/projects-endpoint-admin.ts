@@ -74,18 +74,6 @@ export class ProjectsEndpointAdmin extends Endpoint {
   }
 
   /**
-   * Deletes a project. This method does not actually delete a project, but sets the status to false.
-   *
-   * @param iri The project IRI.
-   */
-  deleteProject(iri: string) {
-    return this.httpDelete(`/iri/${encodeURIComponent(iri)}`).pipe(
-      map(ajaxResponse => ApiResponseData.fromAjaxResponse(ajaxResponse, ProjectResponse, this.jsonConvert)),
-      catchError(error => this.handleError(error))
-    );
-  }
-
-  /**
    * Gets a project by a property.
    *
    * @param property The name of the property by which the project is identified.

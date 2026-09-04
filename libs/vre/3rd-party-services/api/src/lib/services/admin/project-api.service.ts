@@ -45,10 +45,6 @@ export class ProjectApiService extends BaseApi {
     return this._http.put<ProjectResponse>(this._projectRoute(iri), updatedProject);
   }
 
-  delete(iri: string) {
-    return this._http.delete<ProjectResponse>(this._projectRoute(iri));
-  }
-
   erase(shortCode: string) {
     return this._http.delete<ProjectResponse>(`${this._projectRoute(shortCode, ProjectIdentifier.ShortCode)}/erase`);
   }

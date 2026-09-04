@@ -7,16 +7,14 @@ import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { Router } from '@angular/router';
 import { Constants, StoredProject } from '@dasch-swiss/dsp-js';
-import { ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { AppConfigService, RouteConstants } from '@dasch-swiss/vre/core/config';
 import { AppError } from '@dasch-swiss/vre/core/error-handler';
 import { UserService } from '@dasch-swiss/vre/core/session';
 import { UserPermissions } from '@dasch-swiss/vre/shared/app-common';
 import { ProjectService, SortingHelper } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
-import { DialogService } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { filter, map, Observable, Subject, switchMap, take, takeUntil } from 'rxjs';
+import { filter, map, Observable, Subject, take, takeUntil } from 'rxjs';
 import { SortButtonComponent, SortProp } from '../../sort-button/sort-button.component';
 import {
   EraseProjectDialogComponent,
@@ -55,7 +53,6 @@ import {
 export class ProjectsListComponent implements OnInit, OnDestroy {
   private _ngUnsubscribe = new Subject<void>();
 
-  @Input({ required: true }) isUserActive!: boolean;
   @Input({ required: true }) projectsList!: StoredProject[];
   @Input() createNewButtonEnabled = false;
   @Input() isUsersProjects = false;
@@ -96,9 +93,7 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
   constructor(
     private readonly _appConfigService: AppConfigService,
     private readonly _dialog: MatDialog,
-    private readonly _dialogService: DialogService,
     private readonly _notification: NotificationService,
-    private readonly _projectApiService: ProjectApiService,
     private readonly _router: Router,
     private readonly _userService: UserService,
     private readonly _translateService: TranslateService
@@ -155,32 +150,6 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
   editProject(iri: string) {
     const uuid = ProjectService.IriToUuid(iri);
     this._router.navigate([RouteConstants.project, uuid, RouteConstants.settings, RouteConstants.edit]);
-  }
-
-  askToActivateProject(name: string, id: string) {
-    this._dialogService
-      .afterConfirmation(
-        this._translateService.instant('pages.system.projectsList.reactivateConfirmation', {
-          0: name,
-        })
-      )
-      .pipe(switchMap(() => this._projectApiService.update(id, { status: true })))
-      .subscribe(() => {
-        this.refreshParent.emit();
-      });
-  }
-
-  askToDeactivateProject(name: string, id: string) {
-    this._dialogService
-      .afterConfirmation(
-        this._translateService.instant('pages.system.projectsList.deactivateConfirmation', {
-          0: name,
-        })
-      )
-      .pipe(switchMap(() => this._projectApiService.delete(id)))
-      .subscribe(() => {
-        this.refreshParent.emit();
-      });
   }
 
   askToEraseProject(project: StoredProject) {

@@ -23,9 +23,9 @@ export class ProjectOverviewComponent implements AfterViewInit {
   loading = true;
   private _filter$ = new BehaviorSubject<string>('');
 
-  activeProjects$!: Observable<StoredProject[]>;
-  usersActiveProjects$!: Observable<StoredProject[]>;
-  notUsersActiveProjects$!: Observable<StoredProject[]>;
+  allProjects$!: Observable<StoredProject[]>;
+  usersProjects$!: Observable<StoredProject[]>;
+  otherProjects$!: Observable<StoredProject[]>;
   userHasProjects$!: Observable<boolean>;
   isSysAdmin$!: Observable<boolean>;
 
@@ -33,22 +33,22 @@ export class ProjectOverviewComponent implements AfterViewInit {
     private readonly _userService: UserService,
     private readonly _allProjectsService: AllProjectsService
   ) {
-    this.activeProjects$ = combineLatest([this._allProjectsService.allActiveProjects$, this._filter$]).pipe(
+    this.allProjects$ = combineLatest([this._allProjectsService.allProjects$, this._filter$]).pipe(
       map(([projects, searchTerm]) => projects.filter(p => this.matchesSearchTerm(p, searchTerm))),
       tap(() => {
         this.loading = false;
       })
     );
-    this.usersActiveProjects$ = combineLatest([this._userService.userActiveProjects$, this._filter$]).pipe(
+    this.usersProjects$ = combineLatest([this._userService.userProjects$, this._filter$]).pipe(
       map(([projects, searchTerm]) => projects.filter(p => this.matchesSearchTerm(p, searchTerm)))
     );
-    this.notUsersActiveProjects$ = combineLatest([this._allProjectsService.otherProjects$, this._filter$]).pipe(
+    this.otherProjects$ = combineLatest([this._allProjectsService.otherProjects$, this._filter$]).pipe(
       map(([projects, searchTerm]) => projects.filter(p => this.matchesSearchTerm(p, searchTerm))),
       tap(() => {
         this.loading = false;
       })
     );
-    this.userHasProjects$ = this.usersActiveProjects$.pipe(map(projects => projects.length > 0));
+    this.userHasProjects$ = this.usersProjects$.pipe(map(projects => projects.length > 0));
     this.isSysAdmin$ = this._userService.isSysAdmin$;
   }
 

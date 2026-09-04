@@ -6,6 +6,5 @@
     "description": [{"value": "a project created with a custom IRI", "language": "en"}],
     "keywords": ["projectIRI"],
     "logo": "/fu/bar/baz.jpg",
-    "status": true,
     "selfjoin": false
 }

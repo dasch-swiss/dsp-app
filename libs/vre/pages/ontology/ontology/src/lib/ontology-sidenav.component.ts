@@ -58,22 +58,14 @@ import { OntologyPageService } from './ontology-page.service';
             }}
           </button>
           @if (hasProjectAdminRights$ | async) {
-            <button
-              [disabled]="!(project$ | async)?.status"
-              mat-button
-              data-cy="create-class-button"
-              [matMenuTriggerFor]="addResClassMenu">
+            <button mat-button data-cy="create-class-button" [matMenuTriggerFor]="addResClassMenu">
               <mat-icon>add</mat-icon>
               {{ 'pages.ontology.sidenav.createNewClass' | translate }}
             </button>
           }
           <mat-menu #addResClassMenu="matMenu" xPosition="before">
             @for (type of defaultClasses; track trackByDefaultClassFn($index, type)) {
-              <button
-                [disabled]="!(project$ | async)?.status"
-                [attr.data-cy]="type.iri.split('#').pop()"
-                mat-menu-item
-                (click)="openCreateResourceClass(type)">
+              <button [attr.data-cy]="type.iri.split('#').pop()" mat-menu-item (click)="openCreateResourceClass(type)">
                 <mat-icon>{{ type.icon }}</mat-icon>
                 {{ type.label }}
               </button>
@@ -86,11 +78,7 @@ import { OntologyPageService } from './ontology-page.service';
         <div>
           <!-- Properties tab content -->
           @if (hasProjectAdminRights$ | async) {
-            <button
-              mat-button
-              data-cy="create-property-button"
-              [disabled]="!(project$ | async)?.status"
-              [matMenuTriggerFor]="newFromPropType">
+            <button mat-button data-cy="create-property-button" [matMenuTriggerFor]="newFromPropType">
               <mat-icon>add</mat-icon>
               {{ 'pages.ontology.sidenav.addProperty' | translate }}
             </button>
@@ -151,7 +139,6 @@ import { OntologyPageService } from './ontology-page.service';
   ],
 })
 export class OntologySidenavComponent {
-  project$ = this._projectPageService.currentProject$;
   hasProjectAdminRights$ = this._projectPageService.hasProjectAdminRights$;
 
   readonly defaultClasses: DefaultClass[] = DefaultResourceClasses.data;

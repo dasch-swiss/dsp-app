@@ -82,7 +82,7 @@
       }
     </span>
   </div>
-  @if ((hasProjectAdminRights$ | async) && (project$ | async)?.status && showActionBubble) {
+  @if ((hasProjectAdminRights$ | async) && showActionBubble) {
   <div class="action-bubble">
     <div class="button-container">
       <button

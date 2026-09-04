@@ -95,7 +95,6 @@ describe('DataClassPanelComponent', () => {
         description: [{ value: 'A test project', language: 'en' }],
         keywords: [],
         logo: null,
-        status: true,
         selfjoin: false,
       },
     } as any;
