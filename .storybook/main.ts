@@ -3,7 +3,9 @@ import { dirname } from "node:path";
 import type { StorybookConfig } from '@storybook/angular';
 
 const config: StorybookConfig = {
-  stories: ['../libs/**/*.stories.@(ts|mdx)', '../apps/**/*.stories.@(ts|mdx)'],
+  // PoC: narrowed to ~25 stories for fast pixeleye runs. Restore the full glob
+  // ['../libs/**/*.stories.@(ts|mdx)', '../apps/**/*.stories.@(ts|mdx)'] before baselining.
+  stories: ['../libs/vre/shared/**/*.stories.@(ts|mdx)'],
   addons: [],
   framework: {
     name: getAbsolutePath("@storybook/angular"),
