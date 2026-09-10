@@ -20,6 +20,7 @@ import {
 import { JsLibPotentialError } from '../property-value/JsLibPotentialError';
 import { ColorViewerComponent } from './viewer-components/color-viewer.component';
 import { DateViewerComponent } from './viewer-components/date-viewer.component';
+import { GeolocationViewerComponent } from './viewer-components/geolocation-viewer.component';
 import { GeonameViewerComponent } from './viewer-components/geoname-viewer.component';
 import { IntervalViewerComponent } from './viewer-components/interval-viewer.component';
 import { LinkViewerComponent } from './viewer-components/link-viewer.component';
@@ -43,6 +44,7 @@ import { UriViewerComponent } from './viewer-components/uri-viewer.component';
     TextHtmlViewerComponent,
     ColorViewerComponent,
     DateViewerComponent,
+    GeolocationViewerComponent,
     GeonameViewerComponent,
     LinkViewerComponent,
     RegionPreviewViewerComponent,
@@ -97,6 +99,10 @@ import { UriViewerComponent } from './viewer-components/uri-viewer.component';
       <app-geoname-viewer [value]="item" />
     </ng-template>
 
+    <ng-template #geolocationDisplayTpl let-item="item">
+      <app-geolocation-viewer [value]="item" />
+    </ng-template>
+
     <ng-template #linkDisplayTpl let-item="item">
       <app-link-viewer [value]="item" />
     </ng-template>
@@ -128,6 +134,7 @@ export class TemplateViewerSwitcherComponent implements AfterViewInit {
   @ViewChild('intervalDisplayTpl') intervalDisplayTpl!: TemplateRef<any>;
   @ViewChild('listDisplayTpl') listDisplayTpl!: TemplateRef<any>;
   @ViewChild('geoNameDisplayTpl') geoNameDisplayTpl!: TemplateRef<any>;
+  @ViewChild('geolocationDisplayTpl') geolocationDisplayTpl!: TemplateRef<any>;
   @ViewChild('linkDisplayTpl') linkDisplayTpl!: TemplateRef<any>;
   @ViewChild('regionPreviewDisplayTpl') regionPreviewDisplayTpl!: TemplateRef<any>;
   @ViewChild('uriDisplayTpl') uriDisplayTpl!: TemplateRef<any>;
@@ -165,6 +172,8 @@ export class TemplateViewerSwitcherComponent implements AfterViewInit {
         return this.listDisplayTpl;
       case Constants.GeonameValue:
         return this.geoNameDisplayTpl;
+      case Constants.GeolocationValue:
+        return this.geolocationDisplayTpl;
       case Constants.LinkValue:
         return this.linkDisplayTpl;
       case Constants.RegionPreviewValue:
