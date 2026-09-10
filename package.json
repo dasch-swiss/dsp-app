@@ -125,7 +125,7 @@
     "jest-environment-jsdom": "30.5.1",
     "jest-preset-angular": "16.2.0",
     "jsdom": "28.1.0",
-    "ng-mocks": "14.17.4",
+    "ng-mocks": "14.17.5",
     "ng-packagr": "21.2.5",
     "nx": "23.0.1",
     "nyc": "^18.0.0",
