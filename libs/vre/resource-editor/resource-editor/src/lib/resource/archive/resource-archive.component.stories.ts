@@ -16,6 +16,7 @@ import {
   DEFAULT_HAS_PERMISSIONS,
   dspApiConnectionStub,
   resourceFetcherServiceStub,
+  withheldFileValue,
 } from '../../resource-stories.helper';
 import { ResourceArchiveComponent } from './resource-archive.component';
 
@@ -42,6 +43,14 @@ const makeResource = (permission = 'CR'): DspResource => {
   };
   return generateDspResource(addDescriptionToResource(res, permission));
 };
+
+/**
+ * Same resource, but its file value is withheld: `getFileValue()` returns `null` while the
+ * resource stays viewable. The class still declares the `HasArchiveFileValue` cardinality,
+ * which is what routes it to this wrapper rather than to the plain view (DEV-7072).
+ */
+const makeResourceWithheldFile = (): DspResource =>
+  generateDspResource(withheldFileValue(makeResource().res, Constants.HasArchiveFileValue));
 
 const meta: Meta<ResourceArchiveComponent> = {
   title: 'Resource Editor / Resource / Archive',
@@ -101,6 +110,22 @@ export const ReadOnly: Story = {
   play: async ({ canvasElement, step }) => {
     await step('Restriction banner is rendered', async () => {
       await expect(canvasElement.querySelector('app-resource-restriction')).not.toBeNull();
+    });
+  },
+};
+
+export const WithheldFileValue: Story = {
+  name: 'Shows the restricted notice instead of the viewer when the file value is withheld',
+  args: { resource: makeResourceWithheldFile() },
+  play: async ({ canvasElement, step }) => {
+    await step('Restricted notice is rendered', async () => {
+      await expect(canvasElement.querySelector('app-representation-restricted')).not.toBeNull();
+    });
+    await step('Viewer is not rendered', async () => {
+      await expect(canvasElement.querySelector('app-archive')).toBeNull();
+    });
+    await step('Legal panel is not rendered, so it never receives a null file value', async () => {
+      await expect(canvasElement.querySelector('app-resource-legal')).toBeNull();
     });
   },
 };

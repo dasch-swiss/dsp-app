@@ -2,6 +2,7 @@ import { OverlayModule } from '@angular/cdk/overlay';
 import { Component, importProvidersFrom, Input } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import {
+  Constants,
   CountQueryResponse,
   ReadResource,
   ResourceClassAndPropertyDefinitions,
@@ -18,6 +19,7 @@ import { expect, waitFor } from 'storybook/test';
 
 import { ResourceFetcherService } from './representation/resource-fetcher.service';
 import { ResourceDispatcherComponent } from './resource-dispatcher.component';
+import { makeEntityInfo, makeFilePropEntry } from './resource-stories.helper';
 
 // ---------------------------------------------------------------------------
 // Fixture helpers
@@ -48,6 +50,28 @@ const makePlainResource = (label: string): DspResource => {
   res.userHasPermission = 'CR';
   res.properties = {};
   res.entityInfo = makeEmptyEntityInfo(res.type);
+
+  const dsp = new DspResource(res);
+  dsp.resProps = [];
+  return dsp;
+};
+
+// A representation whose file value is withheld: `properties` carries no file value, but the
+// class still declares the hasMovingImageFileValue cardinality. Before DEV-7072 this fell
+// through to the async compound count and rendered <app-resource-plain>, so the media
+// wrapper's restricted notice was unreachable.
+const WITHHELD_VIDEO_TYPE = 'http://example.org/onto#Video';
+
+const makeWithheldVideoResource = (): DspResource => {
+  const res = new ReadResource();
+  res.id = 'http://rdfh.ch/resource/withheld-video-1';
+  res.type = WITHHELD_VIDEO_TYPE;
+  res.label = 'Restricted video';
+  res.attachedToProject = 'http://rdfh.ch/projects/test';
+  res.attachedToUser = 'http://rdfh.ch/users/test';
+  res.userHasPermission = 'V';
+  res.properties = {};
+  res.entityInfo = makeEntityInfo(res.type, [makeFilePropEntry(Constants.HasMovingImageFileValue)], 'Video');
 
   const dsp = new DspResource(res);
   dsp.resProps = [];
@@ -229,6 +253,32 @@ export const PreservesSubtreeOnSameIdReload: Story = {
         },
         { timeout: 1000 }
       );
+    });
+  },
+};
+
+export const RoutesWithheldRepresentationToItsMediaWrapper: Story = {
+  name: 'routes a representation with a withheld file value to its media wrapper, not the plain view',
+  args: { resource: makeWithheldVideoResource() },
+  play: async ({ canvasElement, step }) => {
+    await step('The video wrapper is rendered', async () => {
+      await waitFor(
+        () => {
+          expect(canvasElement.querySelector('app-resource-video')).not.toBeNull();
+        },
+        { timeout: 2000 }
+      );
+    });
+
+    await step('The plain view is NOT rendered', async () => {
+      // Regression guard for DEV-7072: getResourceType() returned null for a withheld
+      // representation, so the dispatcher fell through to its compound count and rendered
+      // the plain view — silently, with no media area and no no-access message.
+      expect(canvasElement.querySelector('app-resource-plain')).toBeNull();
+    });
+
+    await step('The restricted notice is shown in place of the player', async () => {
+      expect(canvasElement.querySelector('app-representation-restricted')).not.toBeNull();
     });
   },
 };
