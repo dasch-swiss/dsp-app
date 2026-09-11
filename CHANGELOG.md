@@ -1,5 +1,22 @@
 # Changelog
 
+## [13.14.2](https://github.com/dasch-swiss/dsp-app/compare/v13.14.1...v13.14.2) (2026-09-11)
+
+
+### Bug Fixes
+
+* **resource-editor,help-page:** stop button icons being clipped (DEV-7011) ([#3410](https://github.com/dasch-swiss/dsp-app/issues/3410)) ([d49e3af](https://github.com/dasch-swiss/dsp-app/commit/d49e3af9ce06488af2326c48a087e0169ca4818e))
+* **resource-editor:** show the no-access notice for any restricted media (DEV-7072) ([#3415](https://github.com/dasch-swiss/dsp-app/issues/3415)) ([fbcc79f](https://github.com/dasch-swiss/dsp-app/commit/fbcc79f2ee559c4cdad73bf7d715fa674aae9e61))
+
+
+### Maintenances
+
+* **deps:** Update dependency ng-mocks from 14.17.3 to 14.17.4 ([#3414](https://github.com/dasch-swiss/dsp-app/issues/3414)) ([18a717e](https://github.com/dasch-swiss/dsp-app/commit/18a717e983be1d302f5471c288c8a0ecc49eb216))
+* **deps:** Update dependency ng-mocks from 14.17.4 to 14.17.5 ([#3418](https://github.com/dasch-swiss/dsp-app/issues/3418)) ([ee5bb84](https://github.com/dasch-swiss/dsp-app/commit/ee5bb84fa555ea0c2835e85707baede9f7c3af2b))
+* **deps:** Update typescript-eslint monorepo from 8.69.0 to 8.70.0 ([#3419](https://github.com/dasch-swiss/dsp-app/issues/3419)) ([d4fd568](https://github.com/dasch-swiss/dsp-app/commit/d4fd5689e3988658513e28dca1f01e346907096e))
+* **open-api:** bump dsp-api spec v38.0.0-8-gdf2abf9 → v38.1.0-5-g35a36e3 ([#3416](https://github.com/dasch-swiss/dsp-app/issues/3416)) ([3096816](https://github.com/dasch-swiss/dsp-app/commit/309681667b295fab48a134c2dbdf469670661e3c))
+* remove the active/inactive project concept from dsp-app ([#3397](https://github.com/dasch-swiss/dsp-app/issues/3397)) ([9f8ac74](https://github.com/dasch-swiss/dsp-app/commit/9f8ac7472d4193554753df4c4c98f48323b8b0ae))
+
 ## [13.14.1](https://github.com/dasch-swiss/dsp-app/compare/v13.14.0...v13.14.1) (2026-09-07)
 
 
