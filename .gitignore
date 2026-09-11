@@ -38,6 +38,7 @@ testem.log
 /typings
 metals*
 .npmrc
+!/.npmrc
 
 #Documentation Files
 docs/_site/
