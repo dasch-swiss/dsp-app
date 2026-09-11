@@ -1,0 +1,259 @@
+# Pixeleye — hardened single-VM deployment (advisory CI trial, DEV-7238)
+#
+# This is a STANDALONE compose file, deliberately not an overlay on
+# ../docker-compose-self-hosting.yml: compose merges `ports:` entries and cannot
+# remove them, so a hardened config must redeclare every service from scratch.
+#
+# Compared to the self-hosting file:
+#   - Six published ports deleted (mailslurper 4436/4437, kratos admin 4434,
+#     postgres 5431, rabbitmq 5672/15672). Services reach each other by name on
+#     the compose network; those mappings existed only for local-dev convenience.
+#   - Caddy added as the only publicly bound container (80/443), terminating TLS
+#     with real Let's Encrypt certificates.
+#   - Every credential comes from .env — no CHANGEME anywhere.
+#   - Pixeleye gets a SCOPED MinIO service account, not the root credentials.
+#   - Postgres has a healthcheck so migrations cannot race it on boot.
+#
+# Generate config and start:   ./render.sh && docker compose up -d
+
+services:
+  caddy:
+    image: caddy:2.8
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./generated/Caddyfile:/etc/caddy/Caddyfile:ro
+      # caddy-data MUST persist: it holds issued certificates and the ACME
+      # account key. Losing it re-issues on every restart and will hit Let's
+      # Encrypt rate limits — which are shared across all sslip.io users.
+      - caddy-data:/data
+      - caddy-config:/config
+    networks:
+      - intranet
+    depends_on:
+      - pixeleye-frontend
+      - pixeleye-backend
+      - kratos
+      - minio
+
+  mailslurper:
+    image: oryd/mailslurper:latest-smtps
+    restart: unless-stopped
+    # NO PORTS. 4437 is a web inbox of every Kratos verification and password
+    # reset link — publishing it is account takeover with no credentials.
+    networks:
+      - intranet
+
+  minio:
+    image: minio/minio:latest
+    command: server /data
+    restart: unless-stopped
+    # NO PORTS. Public access is via Caddy on the s3.* hostname only.
+    volumes:
+      - minio-data:/data
+    networks:
+      - intranet
+    environment:
+      - MINIO_ROOT_USER=${MINIO_ROOT_USER}
+      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
+      # Sign presigned URLs against the external hostname, not the container
+      # name — otherwise clients receive URLs they cannot resolve.
+      - MINIO_SERVER_URL=https://s3.${PIXELEYE_HOST_BASE}
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  minio-init:
+    image: minio/mc:latest
+    depends_on:
+      minio:
+        condition: service_started
+    networks:
+      - intranet
+    volumes:
+      - ./minio-policy.json:/policy.json:ro
+    environment:
+      - MINIO_ROOT_USER=${MINIO_ROOT_USER}
+      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
+      - S3_ACCESS_KEY_ID=${S3_ACCESS_KEY_ID}
+      - S3_KEY_SECRET=${S3_KEY_SECRET}
+    entrypoint: >
+      /bin/sh -c "
+      set -e;
+      until mc alias set local http://minio:9000 \"$$MINIO_ROOT_USER\" \"$$MINIO_ROOT_PASSWORD\"; do sleep 2; done;
+      mc mb --ignore-existing local/pixeleye;
+      mc anonymous set none local/pixeleye;
+      mc admin user add local \"$$S3_ACCESS_KEY_ID\" \"$$S3_KEY_SECRET\" || true;
+      mc admin policy create local pixeleye-rw /policy.json || true;
+      mc admin policy attach local pixeleye-rw --user \"$$S3_ACCESS_KEY_ID\" || true;
+      echo 'minio init complete';
+      exit 0;
+      "
+
+  postgres:
+    build:
+      context: ../config
+      dockerfile: ./Dockerfile.psql
+    restart: unless-stopped
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=${DB_USERNAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=guest
+      - PGPORT=5431
+      - POSTGRES_MULTIPLE_DATABASES=pixeleye,kratos
+    # NO PORTS.
+    shm_size: 256mb
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME} -p 5431"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    networks:
+      - intranet
+
+  rabbitmq:
+    image: rabbitmq:3.13
+    restart: unless-stopped
+    environment:
+      - RABBITMQ_DEFAULT_USER=${AMQP_USER}
+      - RABBITMQ_DEFAULT_PASS=${AMQP_PASSWORD}
+    # NO PORTS. 15672 is the management UI; 5672 is the broker.
+    networks:
+      - intranet
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+
+  pixeleye-migrate:
+    image: pixeleye/pixeleye-migrations:latest
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - DB_HOST=postgres
+      - DB_PORT=5431
+      - DB_NAME=pixeleye
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_PARAMS=sslmode=disable
+    restart: on-failure
+    networks:
+      - intranet
+
+  pixeleye-backend:
+    image: pixeleye/pixeleye:latest
+    restart: unless-stopped
+    depends_on:
+      pixeleye-migrate:
+        condition: service_started
+      postgres:
+        condition: service_healthy
+    # NO PORTS. Public access is via Caddy on the api.* hostname.
+    environment:
+      - STAGE_STATUS=prod
+      - BACKEND_URL=https://api.${PIXELEYE_HOST_BASE}
+      - FRONTEND_URL=https://${PIXELEYE_HOST_BASE}
+      - DB_HOST=postgres
+      - DB_PORT=5431
+      - DB_NAME=pixeleye
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_SSL_MODE=disable
+      - DB_MAX_CONNECTIONS=20
+      - DB_MAX_IDLE_CONNECTIONS=4
+      - DB_MAX_LIFTTIME_CONNECTIONS=1
+      - S3_BUCKET=pixeleye
+      # S3_ENDPOINT is server-to-storage (internal).
+      - S3_ENDPOINT=http://minio:9000
+      # S3_CLIENT_ENDPOINT is baked into presigned URLs handed to the CI runner
+      # and the browser — it MUST be publicly reachable and validly certificated.
+      # A cert the browser rejects makes snapshots fail SILENTLY (blank tiles).
+      - S3_CLIENT_ENDPOINT=https://s3.${PIXELEYE_HOST_BASE}
+      - S3_ACCESS_KEY_ID=${S3_ACCESS_KEY_ID}
+      - S3_KEY_SECRET=${S3_KEY_SECRET}
+      - ORY_URL=http://kratos:4433
+      - ORY_ADMIN_URL=http://kratos:4434
+      - AMQP_USER=${AMQP_USER}
+      - AMQP_PASSWORD=${AMQP_PASSWORD}
+      - AMQP_HOST=rabbitmq
+      - AMQP_PORT=5672
+      - AMQP_VHOST=/
+      - AMQP_TLS=false
+      - SMTP_HOST=mailslurper
+      - SMTP_PORT=1025
+      - SMTP_USER=test
+      - SMTP_PASSWORD=test
+      - SMTP_SENDER=no-reply@pixeleye.local
+    networks:
+      - intranet
+
+  pixeleye-frontend:
+    image: pixeleye/pixeleye-frontend:latest
+    restart: unless-stopped
+    depends_on:
+      - pixeleye-backend
+    # NO PORTS. Public access is via Caddy on the apex hostname.
+    environment:
+      # ---------------------------------------------------------------------
+      # CAUTION: these names are INVERTED relative to intuition. Verified by
+      # the Phase 0 spike:
+      #   NEXT_PUBLIC_BACKEND_URL -> used by the SERVER-side render, must be
+      #                              internally resolvable
+      #   BACKEND_URL             -> used by the BROWSER, must be public
+      # Setting NEXT_PUBLIC_* to the public hostname makes SSR fail with
+      # ECONNREFUSED 127.0.0.1:443 and reproduces upstream issue #343.
+      # ---------------------------------------------------------------------
+      - NEXT_PUBLIC_BACKEND_URL=http://pixeleye-backend:5000
+      - BACKEND_URL=https://api.${PIXELEYE_HOST_BASE}
+      - ORY_URL=http://kratos:4433
+      - CLIENT_ORY_URL=https://auth.${PIXELEYE_HOST_BASE}
+    networks:
+      - intranet
+
+  kratos-migrate:
+    image: oryd/kratos:v1.0.0
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - DSN=postgres://${DB_USERNAME}:${DB_PASSWORD}@postgres:5431/kratos?sslmode=disable&max_conns=20&max_idle_conns=4
+    volumes:
+      - ./generated/kratos:/etc/config/kratos
+    command: -c /etc/config/kratos/kratos.yml migrate sql -e --yes
+    restart: on-failure
+    networks:
+      - intranet
+
+  kratos:
+    image: "oryd/kratos:v1.0.0"
+    depends_on:
+      - kratos-migrate
+    restart: unless-stopped
+    # NO PORTS — and note 4434 in particular: the Kratos ADMIN API is
+    # unauthenticated by design. Anyone who can reach it can create identities,
+    # set passwords and mint sessions. The backend reaches it as
+    # http://kratos:4434 over the compose network.
+    environment:
+      - DSN=postgres://${DB_USERNAME}:${DB_PASSWORD}@postgres:5431/kratos?sslmode=disable&max_conns=20&max_idle_conns=4
+      - LOG_LEVEL=info
+    command: serve -c /etc/config/kratos/kratos.yml --watch-courier
+    volumes:
+      - ./generated/kratos:/etc/config/kratos
+    networks:
+      - intranet
+
+networks:
+  intranet:
+    driver: bridge
+
+volumes:
+  postgres-data:
+  rabbitmq-data:
+  minio-data:
+  caddy-data:
+  caddy-config:

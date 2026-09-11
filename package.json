@@ -35,7 +35,9 @@
     "storybook": "nx run dsp-app:storybook",
     "build-storybook": "nx run dsp-app:build-storybook",
     "test-storybook": "nx run dsp-app:test-storybook",
-    "postinstall": "npm run generate-openapi-module && nx reset"
+    "pixeleye": "pixeleye storybook http://localhost:4400",
+    "postinstall": "npm run generate-openapi-module && nx reset",
+    "pixeleye:ci": "pixeleye storybook http://localhost:6006"
   },
   "private": true,
   "dependencies": {
@@ -95,6 +97,7 @@
     "@nx/web": "23.0.1",
     "@nx/workspace": "23.0.1",
     "@openapitools/openapi-generator-cli": "^2.31.1",
+    "@pixeleye/cli-devices": "^0.4.8",
     "@schematics/angular": "21.2.9",
     "@sentry/cli": "^3.0.0",
     "@storybook/angular": "10.6.0",
@@ -129,6 +132,8 @@
     "ng-packagr": "21.2.5",
     "nx": "23.0.1",
     "nyc": "^18.0.0",
+    "pixeleye": "^0.8.8",
+    "playwright-core": "^1.44.1",
     "postcss": "^8.5.11",
     "postcss-import": "~17.0.0",
     "postcss-preset-env": "~11.5.0",
@@ -153,6 +158,9 @@
     "webpack": "^5.0.0",
     "webpack-dev-middleware": "^7.0.0",
     "webpack-dev-server": "^5.0.0",
-    "webpack-merge": "^6.0.0"
+    "webpack-merge": "^6.0.0",
+    "@pixeleye/cli-install": {
+      "playwright-core": "1.59.0"
+    }
   }
 }
