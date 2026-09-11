@@ -81,6 +81,17 @@ Caddy on `s3.<HOST_BASE>`, not directly.
 
 ## Known gotchas
 
+- **Never run the CLI from a developer machine against this instance.** Baselines are
+  environment-specific: a macOS-rendered snapshot compared against an Ubuntu CI render
+  flags *every* glyph, because font antialiasing and hinting differ between platforms.
+  It looks exactly like "the text changed" when nothing changed. Baselines must be
+  established by CI and compared against CI. This was learned the hard way — the first
+  CI build flagged 22 of 25 snapshots against a laptop-seeded baseline, and the only
+  ones that passed were the logo-only stories with no text.
+- **Leave `snapshotThreshold` at pixeleye's default of `0.05`.** Setting it to `0` makes
+  a single differing pixel a failure, which guarantees antialiasing noise. `snapshotBlur`
+  is also on for the same reason.
+
 - **`NEXT_PUBLIC_BACKEND_URL` is the INTERNAL one.** The names are inverted:
   `NEXT_PUBLIC_BACKEND_URL` is consumed server-side, `BACKEND_URL` by the browser.
   Setting `NEXT_PUBLIC_*` to the public hostname gives `ECONNREFUSED 127.0.0.1:443`
