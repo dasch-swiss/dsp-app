@@ -1,4 +1,5 @@
 import {
+  Cardinality,
   Constants,
   IHasPropertyWithPropertyDefinition,
   ReadResource,
@@ -6,6 +7,7 @@ import {
   ResourceClassAndPropertyDefinitions,
   ResourceClassDefinitionWithPropertyDefinition,
   ResourcePropertyDefinition,
+  SystemPropertyDefinition,
 } from '@dasch-swiss/dsp-js';
 import { NEVER, of } from 'rxjs';
 
@@ -70,6 +72,39 @@ export const makeEntityInfo = (
     propertiesList: propEntries,
   } as unknown as ResourceClassDefinitionWithPropertyDefinition;
   return new ResourceClassAndPropertyDefinitions({ [resourceType]: classStub }, {});
+};
+
+/**
+ * Cardinality entry for a file-value property, e.g. `Constants.HasMovingImageFileValue`.
+ *
+ * Real representation classes always declare one of these, whether or not the file value itself
+ * is readable, which is what lets `getResourceType()` classify a withheld representation.
+ */
+export const makeFilePropEntry = (filePropertyIri: string): IHasPropertyWithPropertyDefinition => {
+  const def = new SystemPropertyDefinition();
+  def.id = filePropertyIri;
+  def.subPropertyOf = [];
+  return {
+    propertyIndex: filePropertyIri,
+    cardinality: Cardinality._0_1,
+    guiOrder: 0,
+    isInherited: false,
+    propertyDefinition: def,
+  };
+};
+
+/**
+ * Turns a resource fixture into the withheld-file-value case (DEV-7072): the file value is
+ * removed from `properties`, as dsp-api omits values the user may not read, while the class
+ * keeps declaring the file-value cardinality. `userHasPermission` stays `V` — the resource
+ * itself is still viewable, only its file value is not.
+ */
+export const withheldFileValue = (res: ReadResource, filePropertyIri: string): ReadResource => {
+  const existingProps = res.entityInfo?.classes?.[res.type]?.propertiesList ?? [];
+  res.userHasPermission = 'V';
+  delete res.properties[filePropertyIri];
+  res.entityInfo = makeEntityInfo(res.type, [...existingProps, makeFilePropEntry(filePropertyIri)], res.label);
+  return res;
 };
 
 export const makeDescriptionProperty = (userHasPermission = 'RV') => {

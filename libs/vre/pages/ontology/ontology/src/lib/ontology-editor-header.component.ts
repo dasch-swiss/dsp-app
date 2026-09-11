@@ -52,7 +52,6 @@ import { OntologyEditService } from './services/ontology-edit.service';
                 [matTooltip]="
                   (hasProjectAdminRights$ | async) ? _translate.instant('pages.ontology.editor.editInfo') : ''
                 "
-                [disabled]="(project$ | async)?.status !== true"
                 (click)="$event.stopPropagation(); editOntology(ontology)">
                 <mat-icon>edit</mat-icon>
                 {{ _translate.instant('ui.common.actions.edit') }}
@@ -82,7 +81,6 @@ import { OntologyEditService } from './services/ontology-edit.service';
 export class OntologyEditorHeaderComponent {
   ontology$ = this._oes.currentOntologyInfo$;
   currentOntologyCanBeDeleted$ = this._oes.currentOntologyCanBeDeleted$;
-  project$ = this._projectPageService.currentProject$;
   hasProjectAdminRights$ = this._projectPageService.hasProjectAdminRights$;
 
   protected readonly _translate = inject(TranslateService);

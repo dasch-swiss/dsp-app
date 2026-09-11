@@ -9,6 +9,7 @@ import { getFileValue } from '../../representation/get-file-value';
 import { isPlaceholderFileValue } from '../../representation/is-placeholder-file-value';
 import { RegionService } from '../../representation/region.service';
 import { RepresentationPlaceholderComponent } from '../../representation/representation-placeholder.component';
+import { RepresentationRestrictedComponent } from '../../representation/representation-restricted.component';
 import { ResourceLegalComponent } from '../../representation/resource-legal.component';
 import { ResourceRepresentationContainerComponent } from '../../representation/resource-representation-container.component';
 import { ResourceImageTabsComponent } from '../../resource-image-tabs.component';
@@ -22,17 +23,21 @@ import { StillImageComponent } from './still-image.component';
       <app-resource-restriction />
     }
     <app-resource-header [resource]="resource" />
-    <app-resource-legal [fileValue]="fileValue" />
-    @if (isPlaceholder) {
-      <app-representation-placeholder />
-    } @else if (fileValue.type === svgStillImage) {
-      <app-resource-representation-container>
-        <app-vector-image [resource]="resource.res" />
-      </app-resource-representation-container>
+    @if (fileValue; as file) {
+      <app-resource-legal [fileValue]="file" />
+      @if (isPlaceholder) {
+        <app-representation-placeholder />
+      } @else if (file.type === svgStillImage) {
+        <app-resource-representation-container>
+          <app-vector-image [resource]="resource.res" />
+        </app-resource-representation-container>
+      } @else {
+        <app-resource-representation-container>
+          <app-still-image [compoundMode]="false" [resource]="resource.res" />
+        </app-resource-representation-container>
+      }
     } @else {
-      <app-resource-representation-container>
-        <app-still-image [compoundMode]="false" [resource]="resource.res" />
-      </app-resource-representation-container>
+      <app-representation-restricted />
     }
     <app-resource-image-tabs
       [resource]="resource"
@@ -45,6 +50,7 @@ import { StillImageComponent } from './still-image.component';
     ResourceHeaderComponent,
     ResourceLegalComponent,
     RepresentationPlaceholderComponent,
+    RepresentationRestrictedComponent,
     StillImageComponent,
     VectorImageComponent,
     ResourceRepresentationContainerComponent,
@@ -61,7 +67,7 @@ export class ResourceImageComponent implements OnChanges, OnDestroy {
   constructor(private readonly _regionService: RegionService) {}
 
   get fileValue() {
-    return getFileValue(this.resource.res)!;
+    return getFileValue(this.resource.res);
   }
 
   get isPlaceholder() {

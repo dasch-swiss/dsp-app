@@ -133,7 +133,6 @@ ui.common/
 ```typescript
 'ui.common.actions.cancel'              // Generic action button
 'ui.common.fields.username'             // Generic field label
-'ui.common.status.active'               // Generic status
 'pages.search.advancedSearch.title'     // Feature-specific title
 ```
 

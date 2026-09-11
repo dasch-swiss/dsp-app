@@ -72,7 +72,6 @@ export class CreateProjectFormPageComponent {
         description: this.form.getRawValue().description,
         keywords: this.form.getRawValue().keywords,
         selfjoin: true,
-        status: true,
       })
       .pipe(
         finalize(() => {

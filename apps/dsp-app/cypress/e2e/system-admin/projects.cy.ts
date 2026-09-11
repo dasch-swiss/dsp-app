@@ -68,19 +68,4 @@ describe('Projects', () => {
     cy.visit(`/project/${projectUuid}`);
     cy.contains(projectPage.project.shortcode).should('be.visible');
   });
-
-  it('admin can deactivate a project', () => {
-    cy.intercept('DELETE', `/admin/projects/iri/${encodeURIComponent(projectPage.projectIri)}`).as('deactivateRequest');
-
-    cy.visit('/system/projects');
-    cy.get('[data-cy=active-projects-section]')
-      .contains('[data-cy=project-row]', projectPage.project.shortcode)
-      .find('[data-cy=more-button]')
-      .scrollIntoView()
-      .should('be.visible')
-      .click();
-    cy.get('[data-cy=deactivate-button]').scrollIntoView().click({ force: true });
-    cy.get('[data-cy=confirmation-button]').click();
-    cy.wait('@deactivateRequest');
-  });
 });

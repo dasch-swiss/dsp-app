@@ -30,6 +30,15 @@
         color: $primary;
         font-weight: 400;
       }
+
+      /* Give each arrow a box as wide as its glyph so it is not cropped.
+         Material narrows button icons to `width: 1.125rem` while `_config.scss`'s imported
+         Google Fonts sheet is inlined per component and keeps `font-size: 24px`, so the glyph
+         is wider than the box that `overflow: hidden` clips it to (DEV-7011). Both arrows are
+         affected; it is only obvious on "Next", whose icon is flush with the button edge. */
+      mat-icon {
+        width: 1em;
+      }
     }
 
     .range {

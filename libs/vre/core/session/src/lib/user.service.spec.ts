@@ -20,8 +20,8 @@ describe('UserService', () => {
     lang: 'en',
     password: '',
     projects: [
-      { id: 'project1', shortname: 'proj1', status: true },
-      { id: 'project2', shortname: 'proj2', status: false },
+      { id: 'project1', shortname: 'proj1', longname: 'B Project' },
+      { id: 'project2', shortname: 'proj2', longname: 'A Project' },
     ],
     permissions: {
       groupsPerProject: {},
@@ -74,15 +74,8 @@ describe('UserService', () => {
       });
     });
 
-    it('should return empty active projects initially', done => {
-      service.userActiveProjects$.subscribe(projects => {
-        expect(projects).toEqual([]);
-        done();
-      });
-    });
-
-    it('should return empty inactive projects initially', done => {
-      service.userInactiveProjects$.subscribe(projects => {
+    it('should return empty projects initially', done => {
+      service.userProjects$.subscribe(projects => {
         expect(projects).toEqual([]);
         done();
       });
@@ -227,16 +220,19 @@ describe('UserService', () => {
       });
     });
 
-    it('should return active projects correctly', done => {
-      service.userActiveProjects$.subscribe(projects => {
-        expect(projects).toEqual([{ id: 'project1', shortname: 'proj1', status: true }]);
+    it('should return all member projects, sorted alphabetically by long name', done => {
+      service.userProjects$.subscribe(projects => {
+        expect(projects).toEqual([
+          { id: 'project2', shortname: 'proj2', longname: 'A Project' },
+          { id: 'project1', shortname: 'proj1', longname: 'B Project' },
+        ]);
         done();
       });
     });
 
-    it('should return inactive projects correctly', done => {
-      service.userInactiveProjects$.subscribe(projects => {
-        expect(projects).toEqual([{ id: 'project2', shortname: 'proj2', status: false }]);
+    it('should still include a member project that carries no status field (REQ-5.4)', done => {
+      service.userProjects$.subscribe(projects => {
+        expect(projects.find(p => p.id === 'project2')).toBeDefined();
         done();
       });
     });
@@ -250,15 +246,8 @@ describe('UserService', () => {
       });
     });
 
-    it('should return empty array for active projects when user is null', done => {
-      service.userActiveProjects$.subscribe(projects => {
-        expect(projects).toEqual([]);
-        done();
-      });
-    });
-
-    it('should return empty array for inactive projects when user is null', done => {
-      service.userInactiveProjects$.subscribe(projects => {
+    it('should return empty array for projects when user is null', done => {
+      service.userProjects$.subscribe(projects => {
         expect(projects).toEqual([]);
         done();
       });

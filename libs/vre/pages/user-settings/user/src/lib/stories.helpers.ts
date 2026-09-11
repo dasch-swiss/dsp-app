@@ -31,7 +31,6 @@ export const makeStoredProject = (partial: Partial<StoredProject> = {}): StoredP
   p.shortcode = '0001';
   p.shortname = 'testproj';
   p.longname = 'Test Project';
-  p.status = true;
   p.selfjoin = false;
   p.keywords = [];
   p.description = [];
@@ -42,8 +41,7 @@ export const makeUserServiceStub = (partial: Partial<UserService> = {}): Partial
   isSysAdmin$: of(false),
   user$: of(makeReadUser()),
   currentUser: makeReadUser(),
-  userActiveProjects$: of([]),
-  userInactiveProjects$: of([]),
+  userProjects$: of([]),
   reloadUser: () => of(undefined),
   ...partial,
 });

@@ -20,7 +20,6 @@ describe('ProjectPageGuard', () => {
     id: 'http://rdf.dasch.swiss/projects/0001',
     shortname: 'test-project',
     longname: 'Test Project',
-    status: true,
     description: [{ language: 'en', value: 'Test description' }],
     keywords: [],
     logo: '',

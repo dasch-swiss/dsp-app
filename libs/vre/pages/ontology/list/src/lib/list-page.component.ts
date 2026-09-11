@@ -56,7 +56,6 @@ export class ListPageComponent implements OnInit, OnDestroy {
   );
 
   hasProjectAdminRights$ = this._projectPageService.hasProjectAdminRights$;
-  project$ = this._projectPageService.currentProject$;
 
   isListsLoading$ = of(false);
 

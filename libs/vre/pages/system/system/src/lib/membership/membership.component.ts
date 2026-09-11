@@ -156,7 +156,6 @@ export class MembershipComponent implements OnDestroy, OnChanges {
     return projects
       .filter(
         p =>
-          p.status &&
           p.id !== Constants.SystemProjectIRI &&
           p.id !== Constants.DefaultSharedOntologyIRI &&
           user.projects!.every(userProject => (userProject.id as unknown as string) !== p.id)

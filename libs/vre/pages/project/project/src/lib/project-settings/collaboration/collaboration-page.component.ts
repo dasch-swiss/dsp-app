@@ -13,10 +13,8 @@ import { ProjectMembersComponent } from './project-members.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-collaboration-page',
   template: `
-    @if (project$ | async; as project) {
-      @if (project.status) {
-        <app-add-user [projectUuid]="projectUuid" />
-      }
+    @if (project$ | async) {
+      <app-add-user [projectUuid]="projectUuid" />
     }
     @if (activeProjectMembers$ | async; as activeProjectMembers) {
       @if (inactiveProjectMembers$ | async; as inactiveProjectMembers) {

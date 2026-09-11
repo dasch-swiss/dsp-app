@@ -56,6 +56,10 @@
 
         .mat-icon.suffix {
           margin-left: 16px;
+          /* Match the box to the glyph so the trailing icon is not cropped: Material narrows
+             button icons to `width: 1.125rem` while the per-component copy of the imported
+             Google Fonts sheet keeps `font-size: 24px` (DEV-7011). */
+          width: 1em;
         }
       }
     }

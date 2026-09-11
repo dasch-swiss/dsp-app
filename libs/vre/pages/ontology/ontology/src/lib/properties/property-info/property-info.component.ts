@@ -41,7 +41,6 @@ export class PropertyInfoComponent {
   );
 
   isLockHovered = false;
-  project$ = this._projectPageService.currentProject$;
 
   protected readonly _translate = inject(TranslateService);
 

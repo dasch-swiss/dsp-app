@@ -18,7 +18,6 @@ function makeProject(id: string, shortcode: string, shortname: string, longname:
   p.shortcode = shortcode;
   p.shortname = shortname;
   p.longname = longname;
-  p.status = true;
   p.selfjoin = false;
   p.keywords = [];
   p.description = [];
@@ -36,24 +35,24 @@ const OTHER_PROJECTS: StoredProject[] = [
   makeProject('0807', '0807', 'knora', 'Knora Demo'),
 ];
 
-const ALL_ACTIVE_PROJECTS = [...MY_PROJECTS, ...OTHER_PROJECTS];
+const ALL_PROJECTS = [...MY_PROJECTS, ...OTHER_PROJECTS];
 
 // ---------------------------------------------------------------------------
 // Service mocks
 // ---------------------------------------------------------------------------
 
 const userServiceMock = {
-  userActiveProjects$: of(MY_PROJECTS),
+  userProjects$: of(MY_PROJECTS),
   isSysAdmin$: of(false),
 };
 
 const allProjectsServiceMock = {
-  allActiveProjects$: of(ALL_ACTIVE_PROJECTS),
+  allProjects$: of(ALL_PROJECTS),
   otherProjects$: of(OTHER_PROJECTS),
 };
 
 const sysAdminUserServiceMock = {
-  userActiveProjects$: of([]),
+  userProjects$: of([]),
   isSysAdmin$: of(true),
 };
 
@@ -125,8 +124,8 @@ export const EmptyState: Story = {
     applicationConfig({
       providers: [
         provideRouter([]),
-        { provide: UserService, useValue: { userActiveProjects$: of([]), isSysAdmin$: of(true) } },
-        { provide: AllProjectsService, useValue: { allActiveProjects$: of([]), otherProjects$: of([]) } },
+        { provide: UserService, useValue: { userProjects$: of([]), isSysAdmin$: of(true) } },
+        { provide: AllProjectsService, useValue: { allProjects$: of([]), otherProjects$: of([]) } },
       ],
     }),
   ],

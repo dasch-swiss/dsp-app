@@ -44,10 +44,4 @@ export class UpdateProjectRequest {
    */
   @JsonProperty('shortname', String, true)
   shortname?: string = undefined;
-
-  /**
-   * The status of the user / group / project. It is false if the entity has been deactivated (deleted).
-   */
-  @JsonProperty('status', Boolean, true)
-  status?: boolean = undefined;
 }

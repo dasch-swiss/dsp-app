@@ -313,16 +313,11 @@
         "sortShortCode": "Code court",
         "sortShortName": "Nom court",
         "sortProjectName": "Nom du projet",
-        "statusDeactivated": "Désactivé",
         "createNew": "Créer un nouveau projet",
         "projectAdmin": "Administrateur·trice du projet",
         "edit": "Modifier les informations du projet",
-        "reactivate": "Réactiver le projet",
-        "deactivate": "Désactiver le projet",
         "erase": "Effacer le projet",
         "eraseConfirmation": "Le projet \"{{0}}\" a été effacé.",
-        "deactivateConfirmation": "Voulez-vous désactiver le projet \"{{0}}\" ?",
-        "reactivateConfirmation": "Voulez-vous réactiver le projet \"{{0}}\" ?",
         "eraseConfirmationDialog": {
           "title": "Veuillez entrer les informations requises pour effacer le projet.",
           "subtitle": "Effacer le projet",
@@ -997,7 +992,6 @@
         "badLinks": "Liens incorrects :"
       },
       "status": {
-        "active": "Actif",
         "loading": "Chargement..."
       },
       "entities": {

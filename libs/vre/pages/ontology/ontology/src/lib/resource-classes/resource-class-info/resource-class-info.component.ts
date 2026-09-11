@@ -69,8 +69,6 @@ import { PropertyItemComponent } from './property-item.component';
 export class ResourceClassInfoComponent implements OnInit, OnDestroy {
   @Input({ required: true }) resourceClass!: ResourceClassInfo;
 
-  project$ = this._projectPageService.currentProject$;
-
   hasProjectAdminRights$ = this._projectPageService.hasProjectAdminRights$;
 
   classHovered = false;

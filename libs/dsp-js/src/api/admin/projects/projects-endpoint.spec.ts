@@ -63,7 +63,6 @@ describe('ProjectsEndpoint', () => {
 
       project.keywords = ['keywords'];
       project.logo = '/fu/bar/baz.jpg';
-      project.status = true;
       project.selfjoin = false;
 
       const user = require('../../../../test/data/api/admin/projects/get-project-response.json');
@@ -156,7 +155,6 @@ describe('ProjectsEndpoint', () => {
 
       projectInfo.keywords = ['updated', 'keywords'];
       projectInfo.logo = '/fu/bar/baz-updated.jpg';
-      projectInfo.status = true;
       projectInfo.selfjoin = true;
 
       const user = require('../../../../test/data/api/admin/projects/get-project-response.json');
@@ -179,28 +177,6 @@ describe('ProjectsEndpoint', () => {
           const payload = require('../../../../test/data/api/admin/projects/update-project-request.json');
 
           expect(request?.body).toEqual(payload);
-
-          done();
-        });
-    });
-  });
-
-  describe('Method deleteProject', () => {
-    it('should delete a project', done => {
-      const project = require('../../../../test/data/api/admin/projects/get-project-response.json');
-
-      ajaxMock.setMockResponse(project);
-
-      knoraApiConnection.admin.projectsEndpoint
-        .deleteProject('http://rdfh.ch/projects/00FF')
-        .subscribe((response: ApiResponseData<ProjectResponse>) => {
-          expect(response.body.project.id).toEqual('http://rdfh.ch/projects/00FF');
-
-          const request = ajaxMock.getLastRequest();
-
-          expect(request?.url).toBe('http://localhost:3333/admin/projects/iri/http%3A%2F%2Frdfh.ch%2Fprojects%2F00FF');
-
-          expect(request?.method).toEqual('DELETE');
 
           done();
         });

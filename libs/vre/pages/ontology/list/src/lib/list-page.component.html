@@ -30,7 +30,6 @@
         <button
           color="primary"
           mat-button
-          [disabled]="(project$ | async)?.status !== true"
           (click)="editList(list!)"
           [matTooltip]="'pages.ontology.list.editInfo' | translate"
           data-cy="edit-button">
@@ -40,7 +39,6 @@
         <button
           color="warn"
           mat-button
-          [disabled]="(project$ | async)?.status !== true"
           (click)="askToDeleteList(list)"
           [matTooltip]="'pages.ontology.list.deleteList' | translate"
           data-cy="delete-button">

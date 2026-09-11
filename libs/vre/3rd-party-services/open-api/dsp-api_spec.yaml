@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: DSP-API
-  version: v38.0.0-8-gdf2abf9
+  version: v38.1.0-5-g35a36e3
   summary: DSP-API is part of the DaSCH Service Platform, a repository for the long-term
     preservation and reuse of data in the humanities.
   contact:
@@ -120,7 +120,6 @@ paths:
                     - example
                     - project
                     ontologies: []
-                    status: true
                     selfjoin: false
                     allowedCopyrightHolders: []
                     enabledLicenses:
@@ -234,7 +233,6 @@ paths:
                     - example
                     - project
                     ontologies: []
-                    status: true
                     selfjoin: false
                     allowedCopyrightHolders: []
                     enabledLicenses:
@@ -343,7 +341,6 @@ paths:
                     - example
                     - project
                     ontologies: []
-                    status: true
                     selfjoin: false
                     allowedCopyrightHolders: []
                     enabledLicenses:
@@ -464,7 +461,6 @@ paths:
                     - example
                     - project
                     ontologies: []
-                    status: true
                     selfjoin: false
                     allowedCopyrightHolders: []
                     enabledLicenses:
@@ -573,7 +569,6 @@ paths:
                     - example
                     - project
                     ontologies: []
-                    status: true
                     selfjoin: false
                     allowedCopyrightHolders: []
                     enabledLicenses:
@@ -691,7 +686,6 @@ paths:
                       - example
                       - project
                       ontologies: []
-                      status: true
                       selfjoin: false
                       allowedCopyrightHolders: []
                       enabledLicenses:
@@ -725,7 +719,6 @@ paths:
                     - example
                     - project
                     ontologies: []
-                    status: true
                     selfjoin: false
                     allowedCopyrightHolders: []
                     enabledLicenses:
@@ -842,7 +835,6 @@ paths:
                     - example
                     - project
                     ontologies: []
-                    status: true
                     selfjoin: false
                     allowedCopyrightHolders: []
                     enabledLicenses:
@@ -4135,72 +4127,6 @@ paths:
       security:
       - httpAuth: []
       - httpAuth1: []
-    delete:
-      tags:
-      - Admin API
-      description: Deletes a project identified by the IRI. Requires SystemAdmin or
-        ProjectAdmin permissions for the project.
-      operationId: deleteAdminProjectsIriProjectiri
-      parameters:
-      - name: projectIri
-        in: path
-        description: The IRI of a project. Must be URL-encoded.
-        required: true
-        schema:
-          type: string
-        example: http://rdfh.ch/projects/0001
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProjectOperationResponseADM'
-        '400':
-          description: ''
-          content:
-            application/json:
-              schema:
-                anyOf:
-                - $ref: '#/components/schemas/OntologyConstraintException'
-                - $ref: '#/components/schemas/DuplicateValueException'
-                - $ref: '#/components/schemas/ValidationException'
-                - $ref: '#/components/schemas/BadRequestException'
-                - $ref: '#/components/schemas/GravsearchException'
-                - $ref: '#/components/schemas/EditConflictException'
-        '401':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BadCredentialsException'
-        '403':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ForbiddenException'
-        '404':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/NotFoundException'
-        '409':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ConflictException'
-        '500':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-      security:
-      - httpAuth: []
-      - httpAuth1: []
   /admin/projects/shortcode/{projectShortcode}:
     get:
       tags:
@@ -5448,7 +5374,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/DC7wQS-LRgK4j6Sgq2dNfQ
+        example: http://rdfh.ch/users/5dwVB-OSSKOu8vBluAFUFw
       responses:
         '200':
           description: ''
@@ -5512,7 +5438,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/DC7wQS-LRgK4j6Sgq2dNfQ
+        example: http://rdfh.ch/users/5dwVB-OSSKOu8vBluAFUFw
       responses:
         '200':
           description: ''
@@ -5576,7 +5502,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/DC7wQS-LRgK4j6Sgq2dNfQ
+        example: http://rdfh.ch/users/5dwVB-OSSKOu8vBluAFUFw
       responses:
         '200':
           description: ''
@@ -5765,7 +5691,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/DC7wQS-LRgK4j6Sgq2dNfQ
+        example: http://rdfh.ch/users/5dwVB-OSSKOu8vBluAFUFw
       responses:
         '200':
           description: ''
@@ -5831,7 +5757,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/DC7wQS-LRgK4j6Sgq2dNfQ
+        example: http://rdfh.ch/users/5dwVB-OSSKOu8vBluAFUFw
       responses:
         '200':
           description: ''
@@ -6035,7 +5961,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/DC7wQS-LRgK4j6Sgq2dNfQ
+        example: http://rdfh.ch/users/5dwVB-OSSKOu8vBluAFUFw
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -6108,7 +6034,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/DC7wQS-LRgK4j6Sgq2dNfQ
+        example: http://rdfh.ch/users/5dwVB-OSSKOu8vBluAFUFw
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -6182,7 +6108,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/DC7wQS-LRgK4j6Sgq2dNfQ
+        example: http://rdfh.ch/users/5dwVB-OSSKOu8vBluAFUFw
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -6255,7 +6181,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/DC7wQS-LRgK4j6Sgq2dNfQ
+        example: http://rdfh.ch/users/5dwVB-OSSKOu8vBluAFUFw
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -6329,7 +6255,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/DC7wQS-LRgK4j6Sgq2dNfQ
+        example: http://rdfh.ch/users/5dwVB-OSSKOu8vBluAFUFw
       - name: groupIri
         in: path
         description: The IRI of a group. Must be URL-encoded.
@@ -6402,7 +6328,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/DC7wQS-LRgK4j6Sgq2dNfQ
+        example: http://rdfh.ch/users/5dwVB-OSSKOu8vBluAFUFw
       - name: groupIri
         in: path
         description: The IRI of a group. Must be URL-encoded.
@@ -6476,7 +6402,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/DC7wQS-LRgK4j6Sgq2dNfQ
+        example: http://rdfh.ch/users/5dwVB-OSSKOu8vBluAFUFw
       requestBody:
         content:
           application/json:
@@ -6549,7 +6475,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/DC7wQS-LRgK4j6Sgq2dNfQ
+        example: http://rdfh.ch/users/5dwVB-OSSKOu8vBluAFUFw
       requestBody:
         content:
           application/json:
@@ -6622,7 +6548,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/DC7wQS-LRgK4j6Sgq2dNfQ
+        example: http://rdfh.ch/users/5dwVB-OSSKOu8vBluAFUFw
       requestBody:
         content:
           application/json:
@@ -6695,7 +6621,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/DC7wQS-LRgK4j6Sgq2dNfQ
+        example: http://rdfh.ch/users/5dwVB-OSSKOu8vBluAFUFw
       requestBody:
         content:
           application/json:
@@ -7595,7 +7521,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/lists/0001/RPysa-O2TiWIGHmxzWSqoQ
+        example: http://rdfh.ch/lists/0001/kVdHzsZ9S9e3jJiJQBURIQ
       - name: allLanguages
         in: query
         description: If true, return rdfs:label and rdfs:comment as JSON-LD arrays
@@ -7723,7 +7649,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/lists/0001/RPysa-O2TiWIGHmxzWSqoQ
+        example: http://rdfh.ch/lists/0001/kVdHzsZ9S9e3jJiJQBURIQ
       - name: allLanguages
         in: query
         description: If true, return rdfs:label and rdfs:comment as JSON-LD arrays
@@ -17113,8 +17039,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/VersionResponse'
               example:
-                webapi: v38.0.0-8-gdf2abf9
-                buildCommit: df2abf98f
+                webapi: v38.1.0-5-g35a36e3
+                buildCommit: 35a36e335
                 buildTime: dev
                 fuseki: 6.1.0
                 scala: 3.8.4
@@ -17277,9 +17203,6 @@ paths:
       - httpAuth1: []
 components:
   schemas:
-    Active:
-      title: Active
-      type: object
     AddClassMappingsRequest:
       title: AddClassMappingsRequest
       type: object
@@ -17977,9 +17900,6 @@ components:
           type: boolean
         message:
           type: string
-    Inactive:
-      title: Inactive
-      type: object
     IriPassword:
       title: IriPassword
       type: object
@@ -18693,7 +18613,6 @@ components:
       - id
       - shortname
       - shortcode
-      - status
       - selfjoin
       properties:
         id:
@@ -18719,8 +18638,6 @@ components:
           type: array
           items:
             type: string
-        status:
-          $ref: '#/components/schemas/Status'
         selfjoin:
           $ref: '#/components/schemas/SelfJoin'
         allowedCopyrightHolders:
@@ -18755,7 +18672,6 @@ components:
       required:
       - shortname
       - shortcode
-      - status
       - selfjoin
       properties:
         id:
@@ -18777,8 +18693,6 @@ components:
             $ref: '#/components/schemas/Keyword'
         logo:
           $ref: '#/components/schemas/Logo'
-        status:
-          $ref: '#/components/schemas/Status'
         selfjoin:
           $ref: '#/components/schemas/SelfJoin'
         allowedCopyrightHolders:
@@ -18877,8 +18791,6 @@ components:
             $ref: '#/components/schemas/Keyword'
         logo:
           $ref: '#/components/schemas/Logo'
-        status:
-          $ref: '#/components/schemas/Status'
         selfjoin:
           $ref: '#/components/schemas/SelfJoin'
     ProjectsGetResponse:
@@ -19282,11 +19194,6 @@ components:
       properties:
         message:
           type: string
-    Status:
-      title: Status
-      oneOf:
-      - $ref: '#/components/schemas/Active'
-      - $ref: '#/components/schemas/Inactive'
     StatusChangeRequest:
       title: StatusChangeRequest
       type: object

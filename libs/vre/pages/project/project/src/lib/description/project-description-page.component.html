@@ -1,7 +1,7 @@
 @if ((readProject$ | async); as project) {
 <app-closing-dialog>
   <div style="display: flex; justify-content: end">
-    @if ((hasProjectAdminRights$ | async) && project.status) {
+    @if (hasProjectAdminRights$ | async) {
     <button
       mat-button
       class="right"
