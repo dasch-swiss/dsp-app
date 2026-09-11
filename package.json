@@ -36,7 +36,8 @@
     "build-storybook": "nx run dsp-app:build-storybook",
     "test-storybook": "nx run dsp-app:test-storybook",
     "pixeleye": "pixeleye storybook http://localhost:4400",
-    "postinstall": "npm run generate-openapi-module && nx reset"
+    "postinstall": "npm run generate-openapi-module && nx reset",
+    "pixeleye:ci": "pixeleye storybook http://localhost:6006"
   },
   "private": true,
   "dependencies": {
@@ -96,6 +97,7 @@
     "@nx/web": "23.0.1",
     "@nx/workspace": "23.0.1",
     "@openapitools/openapi-generator-cli": "^2.31.1",
+    "@pixeleye/cli-devices": "^0.4.8",
     "@schematics/angular": "21.2.9",
     "@sentry/cli": "^3.0.0",
     "@storybook/angular": "10.6.0",

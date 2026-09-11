@@ -1,0 +1,30 @@
+# Rendered by render.sh — edit the template, not generated/Caddyfile.
+#
+# No `local_certs` here (unlike the spike): these are public hostnames, so Caddy
+# obtains real Let's Encrypt certificates over HTTP-01 automatically.
+
+{
+	email ${ACME_EMAIL}
+}
+
+# Dashboard
+${PIXELEYE_HOST_BASE} {
+	reverse_proxy pixeleye-frontend:3000
+}
+
+# Backend API — the CI runner uploads here
+api.${PIXELEYE_HOST_BASE} {
+	reverse_proxy pixeleye-backend:5000
+}
+
+# Ory Kratos PUBLIC API only (4433). The admin API on 4434 is deliberately
+# unrouted and unpublished — it has no authentication.
+auth.${PIXELEYE_HOST_BASE} {
+	reverse_proxy kratos:4433
+}
+
+# MinIO S3 API. Must be its own hostname: MinIO signs against host+path, so a
+# path prefix breaks presigned URL signatures.
+s3.${PIXELEYE_HOST_BASE} {
+	reverse_proxy minio:9000
+}

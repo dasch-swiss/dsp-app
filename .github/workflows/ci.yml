@@ -433,6 +433,147 @@ jobs:
           npx wait-on tcp:6006 --timeout 60000
           npx nx run dsp-app:test-storybook:ci -- --maxWorkers=2
 
+  pixeleye:
+    name: Pixeleye Visual Regression (advisory)
+    needs: [changes]
+    if: |
+      needs.changes.result == 'success' &&
+      needs.changes.outputs.automation_skip == 'false' &&
+      needs.changes.outputs.only_workflows == 'false'
+    runs-on: ubuntu-latest
+    # Advisory trial (DEV-7238): this job must never block a merge. It is
+    # deliberately absent from required status checks. Note the pixeleye CLI
+    # exits 0 even on a changed/rejected verdict, so continue-on-error guards
+    # infrastructure failure (VM down, expired token), not visual diffs.
+    continue-on-error: true
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          # Full history required: the CLI resolves baselines with
+          # `git log -n 128` and `git merge-base HEAD <targetBranch>`.
+          fetch-depth: 0
+      - name: Fetch main for merge-base
+        # `git merge-base HEAD main` cannot resolve `origin/main`, so main must
+        # exist as a local ref. Skipped on main itself, where the fetch would
+        # fail with "refusing to fetch into current branch".
+        if: github.ref_name != 'main'
+        run: git fetch origin main:main || echo "::warning::could not fetch main; baseline may fall back to latest build on the base branch"
+      - name: Set up Node
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci --prefer-offline --no-audit --ignore-scripts
+        env:
+          NODE_OPTIONS: '--max-old-space-size=4096'
+      - name: Generate OpenAPI client
+        run: npm run generate-openapi-module
+      - name: Build Storybook
+        run: npx nx run dsp-app:build-storybook:ci
+      - name: Cache Playwright browsers
+        # The CLI's installBrowsers() runs on every invocation and installs
+        # chromium + firefox + webkit plus OS deps regardless of the
+        # single-device config, because `npm ci --ignore-scripts` suppresses the
+        # postinstall. Caching keeps the marginal cost of this job honest.
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ms-playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          restore-keys: ms-playwright-${{ runner.os }}-
+      - name: Capture and upload snapshots
+        run: |
+          npx http-server dist/storybook --port 6006 --silent &
+          npx wait-on tcp:6006 --timeout 60000
+          npm run pixeleye:ci
+        env:
+          PIXELEYE_TOKEN: ${{ secrets.PIXELEYE_TOKEN }}
+          PIXELEYE_ENDPOINT: ${{ vars.PIXELEYE_ENDPOINT }}
+      - name: Resolve build and report
+        id: build
+        env:
+          PIXELEYE_TOKEN: ${{ secrets.PIXELEYE_TOKEN }}
+          PIXELEYE_ENDPOINT: ${{ vars.PIXELEYE_ENDPOINT }}
+          PIXELEYE_FRONTEND_URL: ${{ vars.PIXELEYE_FRONTEND_URL }}
+          SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          RESP=$(curl -sS -m 30 -X POST "${PIXELEYE_ENDPOINT}/v1/client/latestBuilds" \
+            -H "Authorization: Bearer ${PIXELEYE_TOKEN}" \
+            -H 'Content-Type: application/json' \
+            -d "{\"shas\":[\"${SHA}\"]}" || echo '[]')
+
+          ID=$(echo "$RESP" | jq -r '.[0].id // empty')
+          if [ -z "$ID" ]; then
+            # Liveness assertion. Without this a dead trial (VM stopped, token
+            # expired, disk full) reports green forever, and the resulting
+            # silence reads as "no regressions" rather than "broken instrument".
+            echo "::warning::No pixeleye build found for ${SHA} — the instance may be unreachable. This run produced no visual coverage."
+            echo "found=false" >> "$GITHUB_OUTPUT"
+            exit 1
+          fi
+
+          echo "found=true"                                            >> "$GITHUB_OUTPUT"
+          echo "id=${ID}"                                              >> "$GITHUB_OUTPUT"
+          echo "number=$(echo "$RESP" | jq -r '.[0].buildNumber')"     >> "$GITHUB_OUTPUT"
+          echo "status=$(echo "$RESP" | jq -r '.[0].status')"          >> "$GITHUB_OUTPUT"
+          echo "url=${PIXELEYE_FRONTEND_URL}/builds/${ID}"             >> "$GITHUB_OUTPUT"
+      - name: Comment on PR
+        # Builds are not viewable without a dashboard login, so the comment
+        # carries the verdict rather than only a link. Per-snapshot counts are
+        # unavailable to CI (that endpoint requires a user session).
+        if: steps.build.outputs.found == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          BRANCH: ${{ github.ref_name }}
+          NUMBER: ${{ steps.build.outputs.number }}
+          STATUS: ${{ steps.build.outputs.status }}
+          URL: ${{ steps.build.outputs.url }}
+        run: |
+          set -euo pipefail
+          PR_NUMBER=$(gh pr list --repo "$REPO" --head "$BRANCH" --state open --json number --jq '.[0].number // empty')
+          if [ -z "$PR_NUMBER" ]; then
+            echo "No open PR for branch '${BRANCH}'; skipping comment."
+            exit 0
+          fi
+
+          case "$STATUS" in
+            unchanged)            SUMMARY="✅ No visual changes." ;;
+            approved)             SUMMARY="✅ Visual changes approved." ;;
+            unreviewed)           SUMMARY="👀 **Visual changes detected** — needs a look." ;;
+            rejected)             SUMMARY="❌ Visual changes rejected." ;;
+            orphaned)             SUMMARY="🌱 No baseline to compare against yet (first build on this branch)." ;;
+            failed|aborted)       SUMMARY="⚠️ Build did not complete." ;;
+            *)                    SUMMARY="Status: \`${STATUS}\`" ;;
+          esac
+
+          MARKER='<!-- pixeleye-visual-regression -->'
+          COMMENT_ID=$(gh api "repos/${REPO}/issues/${PR_NUMBER}/comments" --paginate \
+            --jq ".[] | select(.user.login == \"github-actions[bot]\") | select(.body | contains(\"${MARKER}\")) | .id" \
+            | head -n1 || true)
+
+          if [ -n "${COMMENT_ID}" ]; then
+            ENDPOINT="repos/${REPO}/issues/comments/${COMMENT_ID}"; METHOD="PATCH"
+          else
+            ENDPOINT="repos/${REPO}/issues/${PR_NUMBER}/comments"; METHOD="POST"
+          fi
+
+          gh api -X "${METHOD}" "${ENDPOINT}" -F body=@- >/dev/null <<EOF
+          ${MARKER}
+          ### Visual regression — build #${NUMBER}
+
+          ${SUMMARY}
+
+          [Open build #${NUMBER}](${URL}) · status \`${STATUS}\`
+
+          <sub>Advisory only — this never blocks the PR. Opening the build requires a pixeleye dashboard login.</sub>
+          EOF
+
   docs-build-test:
     name: Docs Build Test
     needs: [changes]
