@@ -476,15 +476,21 @@ jobs:
       - name: Build Storybook
         run: npx nx run dsp-app:build-storybook:ci
       - name: Cache Playwright browsers
-        # The CLI's installBrowsers() runs on every invocation and installs
-        # chromium + firefox + webkit plus OS deps regardless of the
-        # single-device config, because `npm ci --ignore-scripts` suppresses the
-        # postinstall. Caching keeps the marginal cost of this job honest.
+        # `npm ci --ignore-scripts` suppresses playwright's postinstall, so
+        # browsers must be installed explicitly below. Caching keeps the
+        # marginal cost of this job over storybook-tests honest.
         uses: actions/cache@v4
         with:
           path: ~/.cache/ms-playwright
           key: ms-playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
           restore-keys: ms-playwright-${{ runner.os }}-
+      - name: Install Playwright browsers
+        # Installed via playwright-core's own CLI rather than `npx playwright`,
+        # so the browser revision matches the playwright-core that pixeleye
+        # actually launches — a mismatch fails with "Executable doesn't exist".
+        # chromium-headless-shell is a SEPARATE download from chromium and is
+        # the binary the pixeleye booth server launches.
+        run: node node_modules/playwright-core/cli.js install --with-deps chromium chromium-headless-shell
       - name: Capture and upload snapshots
         run: |
           npx http-server dist/storybook --port 6006 --silent &
