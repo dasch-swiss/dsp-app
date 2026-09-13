@@ -46,7 +46,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 - **Depends on**: `dsp-js`, `vre/3rd-party-services/analytics`, `vre/3rd-party-services/open-api`, `vre/core/config`, `vre/core/error-handler`, `vre/core/session`, `vre/pages/ontology/list`, `vre/pages/ontology/ontology`, `vre/pages/project/project`, `vre/pages/search/advanced-search`, `vre/pages/search/search`, `vre/pages/system/system`, `vre/pages/user-settings/user`, `vre/resource-editor/resource-editor`, `vre/shared/app-help-page`, `vre/shared/app-helper-services`, `vre/ui/date-picker`, `vre/ui/ui`
 - **Used by**: none
 - **Boundary rules**:
-  - `src/app/app.routes.ts` is the only URL surface. `RouteConstants` in `vre/core/config` supplies the strings but is not authoritative and contains entries no route uses. `docs-only`
+  - `src/app/app.routes.ts` is the only URL surface. `RouteConstants` in `vre/core/config` supplies the strings but is not authoritative: 26 of its 74 members are referenced nowhere, so its presence is not evidence that a route exists. `docs-only`
   - Config is fetched at runtime by `src/main.ts` before `bootstrapApplication`, not compiled in. `src/environments/*` only selects which `src/config/config.<name>.json` to fetch. `structure`
   - i18n keys must exist in all four of `en/de/fr/it`. Romansh is bound to English at runtime by `src/app/i18n-fallback-translate-loader.ts` and has no file (DEV-6629). See `src/assets/i18n/CLAUDE.md`. `docs-only`
   - Project cover images are keyed by project shortcode at `src/assets/images/project/width-500/{shortcode}.webp`. See that directory's `CLAUDE.md`. `docs-only`
@@ -135,6 +135,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
   - This library holds five unrelated concerns: config parsing, dsp-js DI tokens, `RouteConstants`, an assorted-constants drawer, and build-tag fetching. Its fan-in of 19 is driven mainly by `RouteConstants`, not by config. Splitting the routing vocabulary into its own zero-dependency library is what would actually reduce coupling. `docs-only`
   - `DspApiConnectionToken` is declared here but provided from `vre/pages/user-settings/user`, so the application's root injector cannot boot without loading a page library. `docs-only`
   - `AppConfigService` getters hand out mutable objects. `dspApiConfig` in particular is the live JWT holder. `docs-only`
+  - `RouteConstants` carries five advanced-search query-parameter names (`advancedSearchQ`, `advancedSearchOntology`, `advancedSearchClass`, `advancedSearchFilters`, `advancedSearchOrderBy`) that nothing reads. `SearchUrlSyncService` hardcodes the same literals instead, so the URL contract has two sources and only one of them is live. `docs-only`
 - **Durable state**: `AppConfigService._dspApiConfig`, the shared dsp-js `KnoraApiConfig`. Five writers across four libraries. See `vre/core/session`.
 
 ### vre/core/session
