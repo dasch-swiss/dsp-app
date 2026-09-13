@@ -216,9 +216,31 @@ That cost is concentrated, not spread: the type tier is already clean under thes
 - Applications cannot be imported by anything, regardless of tags; Nx enforces this independently of `depConstraints`. So "nothing depends on the app" is free rather than earned, and `type:app` should not be credited for it.
 - Nx 20 and later, in TypeScript-monorepo mode, restrict project names to a single `/`. Names such as `@dasch-swiss/vre/pages/project/project` carry three. This is a forward-compatibility risk on a future Nx migration, not a current problem.
 
+### Inherited configuration: `useInferencePlugins: false`
+
+Recorded here because it looks like a decision and is not one, and because the next person to read `nx.json` will otherwise assume somebody weighed it.
+
+`nx.json` sets `"useInferencePlugins": false`. That was written by an automated Nx codemod named `update-18-0-0/disable-crystal-for-existing-workspaces`, whose entire body is `nxJson.useInferencePlugins = false;`. It arrived in commit `1718fb0a7` on 2024-12-09, in a pull request titled "chore: update nx to v18.2.0 and angular to v17.3.0". The same diff carries the other codemods from that migration: `npmScope` removed, `affected.defaultBase` hoisted to `defaultBase`, `cacheableOperations` replaced by per-target `"cache": true`. Nx's intent was that upgrading should not silently change behaviour. The effect is that the pre-18 default has been carried forward through every migration since, and the workspace now runs Nx 23 on it.
+
+The flag is narrower than its name suggests. It gates whether `nx init` and `nx add` **register** inference plugins in future. It does not switch off plugins already listed in `plugins[]`, so `@nx/eslint/plugin` and `@nx/jest/plugin` both run.
+
+The result is that target definition is split three ways, and the split follows no rule:
+
+| Target | Declared in `project.json` | Actually comes from |
+| --- | --- | --- |
+| `lint` | 1 of 29 projects | inferred by `@nx/eslint/plugin` |
+| `test` | 29 of 29, but with no `executor` | inferred by `@nx/jest/plugin`; `project.json` only overlays `options` and `configurations` |
+| `build`, `serve`, `e2e`, `storybook` | explicit, with executors | declared outright, pre-inference style |
+
+**Why this is worth fixing rather than tolerating.** Reading a project's `project.json` does not tell you what targets that project has. A `test` entry with no executor is not a target definition, it is a patch applied to one declared somewhere else, and nothing in the file says so. Anyone reasoning about the workspace from its files, a new contributor or an agent working from the repository alone, has to already know which plugins are registered before the configuration means anything. That is the same failure mode as the empty `"tags": []` arrays this ADR exists to fix: configuration that reads as a decision but is an artefact.
+
+The cleanup is to register the remaining inference plugins (`@nx/angular` for `build` and `serve`, `@nx/cypress/plugin`, `@nx/storybook/plugin`) so that every target is inferred and `project.json` holds only genuine per-project overrides. That is deliberately **not** decided here. It is unrelated to boundaries, it touches every `project.json`, and doing it alongside the tag migration would make a broken build ambiguous about which change caused it. It is recorded as known technical debt with a known shape.
+
+One interaction worth noting for ADR-0006: `@nx/cypress/plugin` infers an `e2e` target from any `cypress.config.ts`. If it were registered, the new `dsp-app-e2e` project would receive its target rather than declaring one. That changes the mechanics of ADR-0006, not its decision.
+
 ## Alternatives rejected
 
-- **Leave `* -> *` in place.** Costs nothing today. It is what produced the twelve cross-page edges, the `core -> ui` edge and twenty-five untagged projects, and there is no reason to expect a different result from the same configuration.
+- **Leave `* -> *` in place.** Costs nothing today. It is what produced the twelve cross-page edges, the `core -> ui` edge and twenty-four empty `tags` arrays, and there is no reason to expect a different result from the same configuration.
 - **Loose `type:ui` (`ui -> ui, util, data-access`).** Legitimises the `LocalizationService` dependency and removes the need for the `dsp-js` dual tag, so it is cheaper by roughly four files. Rejected because it also legitimises every future service injection into a presentational component, which is the drift this ADR exists to stop. The measured cost of strictness is six files, against thirty-nine for the scope tier that must be paid regardless. Strictness in the `ui` tier is the cheap part of this ADR, not the expensive one.
 - **Express the feature-to-feature ban as a type constraint.** Simpler to read, but it leaves a genuinely shared feature such as `resource-editor` with no legal home, forcing either an exception or an artificial split. Scope-level expression handles it without a special case.
 - **Sheriff (SoftArc) instead of Nx tags.** Sheriff enforces at folder level and closes the deep-import gap that Nx leaves open. It is not rejected on merit; it is deferred to ADR-0002, where the gap it closes is actually discussed. Adopting two boundary tools in one change would make a failing build ambiguous.
