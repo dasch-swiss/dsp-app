@@ -33,7 +33,7 @@ The composition root that makes page-to-page imports unnecessary already exists 
 
 2. **The type constraint fixes the tier.** (**static-analysis**)
 
-   ```
+   ```text
    type:app          ->  type:feature, type:ui, type:data-access, type:util
    type:feature      ->  type:feature, type:ui, type:data-access, type:util
    type:ui           ->  type:ui, type:util
@@ -46,7 +46,7 @@ The composition root that makes page-to-page imports unnecessary already exists 
 
 3. **The scope constraint fixes the domain, and is what forbids feature-to-feature coupling.** (**static-analysis**)
 
-   ```
+   ```text
    scope:shared      ->  scope:shared
    scope:<domain>    ->  scope:<domain>, scope:shared
    scope:app         ->  *
@@ -96,6 +96,8 @@ The composition root that makes page-to-page imports unnecessary already exists 
    - **`joinPlaceholderLegalValues`** from `shared/app-common`, used by `ui/ui/src/lib/resource-rights-statement.component.ts:7`. A pure function. Same util library.
    - **`pickPreferredLanguageString`** from `shared/app-helper-services`, used by `ui/string-literal/src/lib/stringify-string-literal.pipe.ts:5`. A pure function. Same util library.
    - **`LanguageStringDto` and `StringLiteralWithLanguage`** from `3rd-party-services/open-api`, used type-only by two files in `ui/string-literal`. Declare the shape locally in the UI library. Share concepts, never shapes (ADR-0004, decision 6).
+
+     This is a collapse, not an addition. `ui/string-literal` currently holds **four** types for the single concept "a string in several languages": `StringLiteral` and `StringLiteralV2` from `dsp-js`, and `LanguageStringDto` and `StringLiteralWithLanguage` from the generated client. `CONTEXT.md` flags the first pair under its own ambiguity and resolves it with "pick by which client you are on, not by preference". That guidance is right for code that is on a client. A presentational library is on neither, which is why the answer here is a local declaration instead, and why this ADR settles that flagged ambiguity for the `type:ui` tier specifically. One local type replaces four imported ones; it does not become a fifth.
    - **`LocalizationService`** from `shared/app-helper-services`, injected by two files in `ui/string-literal`. This is the one genuine `ui -> data-access` dependency and the only one requiring a design decision. Two candidates: pass the active language in as a component input, or read `LOCALE_ID` from `@angular/core`, which is a framework token rather than a workspace dependency. Resolved in the implementing issue, not here.
    - **`dsp-js` value types in `ui/*`** (eight files: `KnoraDate`, `KnoraPeriod`, `Precision`, `Constants`, `StringLiteral`, `StringLiteralV2`, `ListNodeV2WithAllLanguages`). These are runtime values, not type-only imports, so they cannot be carved out with a type-only exemption. See decision 8, which removes them from the violation list.
 

@@ -9,7 +9,7 @@ date: 2026-09-13
 
 ## Overview
 
-DSP-APP is the Angular browser client for the DaSCH Service Platform, built as an Nx monorepo: one application (`apps/dsp-app`) composed from 29 libraries, plus `libs/dsp-js`, which is also published to NPM. The application shell holds only bootstrap, routing and configuration; every page lives in a `libs/vre/pages/*` library, and the resource viewer/editor is its own large library. The client talks to DSP-API through two separate clients, `libs/dsp-js` (hand-written, JSON-LD, the v2 surface) and `libs/vre/3rd-party-services/open-api` (generated from a vendored spec, the admin surface); knowing which one carries a given field is the single most load-bearing fact about this codebase. Vocabulary is defined in [CONTEXT.md](CONTEXT.md), which also records where UI wording deliberately differs from code wording. Component names below are the TypeScript path aliases from `tsconfig.base.json`, because that is what import statements and the boundary lint match on; each entry also gives its Nx project name, which differs and is often surprising.
+DSP-APP is the Angular browser client for the DaSCH Service Platform, built as an Nx monorepo: one application (`apps/dsp-app`) composed from 28 libraries, one of which (`libs/dsp-js`) is also published to NPM. That is 29 Nx projects in total. The application shell holds only bootstrap, routing and configuration; every page lives in a `libs/vre/pages/*` library, and the resource viewer/editor is its own large library. The client talks to DSP-API through two separate clients, `libs/dsp-js` (hand-written, JSON-LD, the v2 surface) and `libs/vre/3rd-party-services/open-api` (generated from a vendored spec, the admin surface); knowing which one carries a given field is the single most load-bearing fact about this codebase. Vocabulary is defined in [CONTEXT.md](CONTEXT.md), which also records where UI wording deliberately differs from code wording. Component names below are the TypeScript path aliases from `tsconfig.base.json`, because that is what import statements and the boundary lint match on; each entry also gives its Nx project name, which differs and is often surprising.
 
 Load this file on demand for blast-radius and boundary questions. It is not meant to be read end to end.
 
@@ -62,10 +62,10 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 - **Key entities**: `projectPage`, `ontology-command`, `file-uploader`
 - **Public interface**: None.
 - **Local-context kit**: `apps/dsp-app/cypress.config.ts`, `apps/dsp-app/cypress/tsconfig.json`, `cypress/support/commands.ts`, `cypress/support/pages/project-page.ts`, `.github/workflows/ci.yml` (the `dsp-app-e2e-tests` job)
-- **Depends on**: `dsp-js` and the generated OpenAPI client, both by relative path rather than by alias. Two of those paths no longer exist; see the boundary rules.
+- **Depends on**: three libraries, every one by relative path rather than by alias. `libs/dsp-js/src` exists but is reached past its barrel; `libs/vre/open-api/src` and `libs/vre/shared/app-representations/src` do not exist at all. See the boundary rules.
 - **Used by**: none
 - **Boundary rules**:
-  - Run by `.github/workflows/ci.yml`, job `dsp-app-e2e-tests`, as a two-runner matrix (`heavy` and `light`) invoking `npx cypress run` directly. There is no Nx `e2e` target. `static-analysis`
+  - **CI bypasses the configured Nx target.** `apps/dsp-app` defines a working `e2e` target (`@nx/cypress:cypress`, with `devServerTarget` set for `production`, `development` and `cypress-cloud`), and `package.json` exposes it as `e2e-ci` and `e2e-ci-dev`. Nothing calls any of it. `.github/workflows/ci.yml` job `dsp-app-e2e-tests` instead backgrounds `dsp-app:serve:production`, polls port 4200 with `curl` for up to 180 seconds, then runs `npx cypress run` from `apps/dsp-app`, as a two-runner matrix (`heavy` and `rest`). See ADR-0006. `docs-only`
   - The matrix mixes two styles: `project-member`, `logged-out-user` and `performance` are globbed, while all ten `system-admin` specs are enumerated one by one. All 20 specs are covered today, but a new `system-admin` spec will not run until the matrix is edited, and nothing reports that omission. `docs-only`
   - `dsp-app-e2e-tests-status` is the required gate that aggregates the matrix. `static-analysis`
   - **Nothing type-checks this subtree.** `apps/dsp-app/cypress/tsconfig.json` exists but no target runs `tsc` against it, and `eslint.config.mjs:173` excludes the directory. Cypress bundles specs transpile-only, so a broken type-only import is erased before runtime and the suite stays green. Five files currently import from `libs/vre/open-api/src` and `libs/vre/shared/app-representations/src`, neither of which exists. `docs-only`
@@ -573,13 +573,16 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 
 - **Nx project**: none
 - **Paths**: `docs/**`, `mkdocs.yml`, `README.md`, `LICENSE`
-- **Purpose**: The MkDocs documentation site and repository-level readme.
-- **Key entities**: `mkdocs.yml` nav
-- **Public interface**: The published documentation site.
-- **Local-context kit**: `mkdocs.yml`, `docs/index.md`, `docs/contribution/index.md`
+- **Purpose**: The MkDocs documentation site, the architecture decision records in `docs/adr/`, and the repository-level readme.
+- **Key entities**: `mkdocs.yml` nav, `docs/adr/index.md`
+- **Public interface**: The published documentation site. `docs/adr/` is the authoritative record of architectural decisions; `ARCH-MAP.md` describes what is, the ADRs decide what should be.
+- **Local-context kit**: `mkdocs.yml`, `docs/index.md`, `docs/contribution/index.md`, `docs/adr/index.md`
 - **Depends on**: none
 - **Used by**: none
-- **Boundary rules**: Per-library `README.md` files are not part of this component and are largely stale. See Cross-cutting concerns. `docs-only`
+- **Boundary rules**:
+  - Per-library `README.md` files are not part of this component and are largely stale. See Cross-cutting concerns. `docs-only`
+  - Every ADR carries an enforcement level from the same enum this map uses (`structure | static-analysis | review | docs-only`). ADR-0001 through ADR-0006 are Accepted; none is superseded. `docs-only`
+  - A new ADR must be added to the `nav` in `mkdocs.yml` and to the table in `docs/adr/index.md`. `mkdocs build --strict` does not catch an omission from either, because an un-navigated page is an INFO, not a warning. `review`
 - **Durable state**: none.
 
 ### agent-context
@@ -594,7 +597,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 - **Used by**: none
 - **Boundary rules**:
   - Two further `CLAUDE.md` files exist outside this component and are authoritative in their directories: `apps/dsp-app/src/assets/i18n/CLAUDE.md` and `apps/dsp-app/src/assets/images/project/CLAUDE.md`. `docs-only`
-  - No library has its own `CLAUDE.md` and there are no ADRs anywhere in the repository. `docs-only`
+  - No library has its own `CLAUDE.md`. Architectural decisions live in `docs/adr/` (ADR-0001 through ADR-0006) and are owned by the `project-docs` component, not this one. `docs-only`
 - **Durable state**: none.
 
 ## Cross-cutting concerns
