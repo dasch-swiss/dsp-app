@@ -18,6 +18,7 @@ nav:
       - "ADR-0003: Feature state is component-provided": adr/0003-feature-state-is-component-provided.md
       - "ADR-0004: Cross-feature access": adr/0004-cross-feature-access.md
       - "ADR-0005: What shared means": adr/0005-what-shared-means.md
+      - "ADR-0006: The e2e suite is its own project": adr/0006-the-e2e-suite-is-its-own-project.md
 
 plugins:
   - include-markdown
