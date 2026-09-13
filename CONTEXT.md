@@ -201,4 +201,4 @@ _Avoid_: Collection (in code)
 
 - **Role spellings reaching users.** "Project Administrator", "Project Admin", and "Admin" all appear in UI strings for one role, as do "Shortcode" and "Short code". Pick one per role in the i18n files.
 
-- **`StringLiteral` versus `StringLiteralV2`.** Two live types for one concept, differing only in wire keys, because the admin and v2 APIs disagree. Pick by which client you are on, not by preference.
+- **`StringLiteral` versus `StringLiteralV2`.** Two live types for one concept, differing only in wire keys, because the admin and v2 APIs disagree. Pick by which client you are on, not by preference. The generated client adds two more for the same concept, `LanguageStringDto` and `StringLiteralWithLanguage`, and `vre/ui/string-literal` currently imports all four. For presentational libraries, which are on no client, ADR-0001 decision 7 settles this differently: declare the shape locally and import none of them.
