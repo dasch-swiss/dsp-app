@@ -58,16 +58,19 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 
 - **Nx project**: none
 - **Paths**: `apps/dsp-app/cypress/**`
-- **Purpose**: A Cypress end-to-end suite that is wired to nothing. It has no Nx target, no CI workflow references it, and `eslint.config.mjs:173` excludes it from linting. It is recorded as its own component so that its state is visible rather than hidden inside `dsp-app`.
+- **Purpose**: The Cypress end-to-end suite: 20 specs across `logged-out-user`, `project-member`, `system-admin` and `performance`. It is recorded as its own component rather than folded into `dsp-app` because it is built and checked by a different toolchain from everything else in the repository.
 - **Key entities**: `projectPage`, `ontology-command`, `file-uploader`
 - **Public interface**: None.
-- **Local-context kit**: `apps/dsp-app/cypress.config.ts`, `cypress/support/commands.ts`, `cypress/support/pages/project-page.ts`
-- **Depends on**: unresolvable. It imports two paths that no longer exist (`libs/vre/open-api/src`, `libs/vre/shared/app-representations/src`) and reaches `libs/dsp-js/src` by relative path rather than by alias.
+- **Local-context kit**: `apps/dsp-app/cypress.config.ts`, `apps/dsp-app/cypress/tsconfig.json`, `cypress/support/commands.ts`, `cypress/support/pages/project-page.ts`, `.github/workflows/ci.yml` (the `dsp-app-e2e-tests` job)
+- **Depends on**: `dsp-js` and the generated OpenAPI client, both by relative path rather than by alias. Two of those paths no longer exist; see the boundary rules.
 - **Used by**: none
 - **Boundary rules**:
-  - Nothing here is executed or checked by any pipeline. Treat its contents as unverified. `docs-only`
-  - Do not copy its import style. It bypasses the `@dasch-swiss/*` aliases because the boundary lint is disabled for this subtree. `docs-only`
-- **Durable state**: `cypress.config.ts` carries a hardcoded expired JWT in `env.authToken`.
+  - Run by `.github/workflows/ci.yml`, job `dsp-app-e2e-tests`, as a two-runner matrix (`heavy` and `light`) invoking `npx cypress run` directly. There is no Nx `e2e` target. `static-analysis`
+  - The matrix mixes two styles: `project-member`, `logged-out-user` and `performance` are globbed, while all ten `system-admin` specs are enumerated one by one. All 20 specs are covered today, but a new `system-admin` spec will not run until the matrix is edited, and nothing reports that omission. `docs-only`
+  - `dsp-app-e2e-tests-status` is the required gate that aggregates the matrix. `static-analysis`
+  - **Nothing type-checks this subtree.** `apps/dsp-app/cypress/tsconfig.json` exists but no target runs `tsc` against it, and `eslint.config.mjs:173` excludes the directory. Cypress bundles specs transpile-only, so a broken type-only import is erased before runtime and the suite stays green. Five files currently import from `libs/vre/open-api/src` and `libs/vre/shared/app-representations/src`, neither of which exists. `docs-only`
+  - Do not copy its import style. It bypasses the `@dasch-swiss/*` aliases because the boundary lint is disabled here. `docs-only`
+- **Durable state**: `cypress.config.ts` carries a hardcoded JWT literal in `env.authToken`, alongside localhost URLs for api, ingest and IIIF. It is a local-stack fixture, not a credential for a deployed environment.
 
 ### vre/3rd-party-services/api
 
@@ -410,7 +413,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 - **Boundary rules**:
   - No cache. Every mutation calls `ListApiService` directly from a component and re-fetches. Writers are spread across six files. `docs-only`
   - `src/lib/list-page.component.ts` constructs a list IRI by string interpolation rather than through a helper. `docs-only`
-  - This library has no unit tests and no stories. Its only coverage is the orphaned Cypress suite. `docs-only`
+  - This library has no unit tests and no stories. Its only coverage is the Cypress suite (`lists.cy.ts`, `list-management.cy.ts`), which runs in CI but is not type-checked. `docs-only`
 - **Durable state**: `ListItemService`, component-scoped, holding `_projectInfos` and a bare public `onUpdate$` Subject that any of its three injectors can push to. An event bus with no ownership.
 
 ### vre/pages/search/advanced-search
@@ -536,7 +539,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
   - release-please owns `CHANGELOG.md` and every version field. Never hand-edit either. `review`
   - `dsp-js` publishes to NPM on `dsp-js-v*` tags via `.github/workflows/release-dsp-js.yml`. `docs-only`
   - `check-openapi-sync` runs on every push and opens an auto-bump PR on mismatch. A red check is expected while a dsp-api change is undeployed. `static-analysis`
-  - No workflow references the Cypress suite. `docs-only`
+  - `ci.yml` runs the Cypress suite as the `dsp-app-e2e-tests` matrix, gated by the required `dsp-app-e2e-tests-status` job. `static-analysis`
 - **Durable state**: `.release-please-manifest.json`, the released version of record.
 
 ### deployment
