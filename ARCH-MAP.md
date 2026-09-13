@@ -1,8 +1,8 @@
 ---
 dune_map: true
 schema_version: 1
-last_verified_commit: fbcc79f2ee559c4cdad73bf7d715fa674aae9e61
-date: 2026-09-13
+last_verified_commit: c3b46dd806b11e76c390547cc9cc8d0914f006e1
+date: 2026-09-14
 ---
 
 # ARCH-MAP
