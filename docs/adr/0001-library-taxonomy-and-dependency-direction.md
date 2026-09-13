@@ -1,7 +1,7 @@
 # ADR-0001: Library taxonomy and enforced dependency direction
 
 - **Status:** Accepted (2026-09-13)
-- **Relates to:** ADR-0002 (the barrel is the public interface), ADR-0004 (cross-feature access), ADR-0005 (what `shared/` means)
+- **Relates to:** ADR-0002 (the barrel is the public interface), ADR-0004 (cross-feature access), ADR-0005 (what `shared/` means), ADR-0006 (the e2e suite is its own project)
 
 ## Context
 
@@ -25,9 +25,9 @@ The composition root that makes page-to-page imports unnecessary already exists 
 
 1. **Every project carries one `type:` tag and one `scope:` tag.** (**structure**)
 
-   Types: `app`, `feature`, `ui`, `data-access`, `util`. This is the Nx taxonomy and it is adopted unchanged so that external documentation applies without translation.
+   Types: `app`, `feature`, `ui`, `data-access`, `util`, `e2e`. This is the Nx taxonomy and it is adopted unchanged so that external documentation applies without translation.
 
-   Nx's taxonomy also has `e2e`, which is omitted because there is nothing to apply it to. The Cypress suite is not an Nx project: it lives inside the application at `apps/dsp-app/cypress/` with `apps/dsp-app/cypress.config.ts`, and `eslint.config.mjs:173` excludes that directory from linting entirely. It is therefore outside boundary enforcement altogether, which is the same root cause as its never being type-checked (DEV-7251). Making the suite its own project would bring it inside both, and is tracked there rather than decided here.
+   `e2e` has nothing to apply it to at the time of writing. The Cypress suite is not an Nx project: it lives inside the application at `apps/dsp-app/cypress/` as a directory plus an `e2e` target on `apps/dsp-app`, and `eslint.config.mjs:173` excludes that directory from linting entirely, boundary rule included. **ADR-0006 creates `dsp-app-e2e` as a project and gives `e2e` something to tag**, along with the constraint in decision 2. Until that lands, the tag is declared and unused.
 
    Scopes: `shared` for anything reusable across domains, one scope per page domain (`project`, `ontology`, `search`, `user`, `system`, `data-browser`), and `app` for the application itself.
 
@@ -39,6 +39,7 @@ The composition root that makes page-to-page imports unnecessary already exists 
    type:ui           ->  type:ui, type:util
    type:data-access  ->  type:data-access, type:util
    type:util         ->  type:util
+   type:e2e          ->  type:data-access, type:util
    ```
 
    `type:ui -> type:ui, type:util` is the strict reading. It comes from the Nrwl "Enterprise Angular Monorepo Patterns" taxonomy. Nx's own more recent blog material sometimes shows `ui -> data-access`. The sources genuinely disagree. We take the strict reading deliberately; see Alternatives rejected.
@@ -135,6 +136,7 @@ The composition root that makes page-to-page imports unnecessary already exists 
       { sourceTag: 'type:ui',          onlyDependOnLibsWithTags: ['type:ui', 'type:util'] },
       { sourceTag: 'type:data-access', onlyDependOnLibsWithTags: ['type:data-access', 'type:util'] },
       { sourceTag: 'type:util',        onlyDependOnLibsWithTags: ['type:util'] },
+      { sourceTag: 'type:e2e',         onlyDependOnLibsWithTags: ['type:data-access', 'type:util'] },
 
       { sourceTag: 'scope:app',          onlyDependOnLibsWithTags: ['*'] },
       { sourceTag: 'scope:shared',       onlyDependOnLibsWithTags: ['scope:shared'] },
