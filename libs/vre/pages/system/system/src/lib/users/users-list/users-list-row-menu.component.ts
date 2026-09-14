@@ -142,13 +142,13 @@ export class UsersListRowMenuComponent {
   }
 
   private deactivateUser(userIri: string) {
-    this._userApiService.delete(userIri).subscribe(response => {
+    this._userApiService.delete(userIri).subscribe(_response => {
       this._reloadUserList();
     });
   }
 
   private activateUser(userIri: string) {
-    this._userApiService.updateStatus(userIri, true).subscribe(response => {
+    this._userApiService.updateStatus(userIri, true).subscribe(_response => {
       this._reloadUserList();
     });
   }

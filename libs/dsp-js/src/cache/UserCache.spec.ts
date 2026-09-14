@@ -28,7 +28,7 @@ describe('UserCache', () => {
   beforeEach(() => {
     getUserSpy = jest
       .spyOn(knoraApiConnection.admin.usersEndpoint, 'getUser')
-      .mockImplementation((prop: 'iri' | 'username' | 'email', userId: string) => {
+      .mockImplementation((_prop: 'iri' | 'username' | 'email', _userId: string) => {
         return of({ body: userResp } as ApiResponseData<UserResponse>);
       });
 
@@ -64,15 +64,15 @@ describe('UserCache', () => {
     });
 
     it('should get the same user from the cache several times asynchronously', () => {
-      userCache['getItem']('http://rdfh.ch/users/root').subscribe((res: UserResponse) => {
+      userCache['getItem']('http://rdfh.ch/users/root').subscribe((_res: UserResponse) => {
         expect(getUserSpy).toHaveBeenCalledTimes(1);
       });
 
-      userCache['getItem']('http://rdfh.ch/users/root').subscribe((res: UserResponse) => {
+      userCache['getItem']('http://rdfh.ch/users/root').subscribe((_res: UserResponse) => {
         expect(getUserSpy).toHaveBeenCalledTimes(1);
       });
 
-      userCache['getItem']('http://rdfh.ch/users/root').subscribe((res: UserResponse) => {
+      userCache['getItem']('http://rdfh.ch/users/root').subscribe((_res: UserResponse) => {
         expect(getUserSpy).toHaveBeenCalledTimes(1);
       });
 
@@ -81,10 +81,10 @@ describe('UserCache', () => {
     });
 
     it('should get a user from the cache and refresh the entry', done => {
-      userCache['getItem']('http://rdfh.ch/users/root').subscribe((res: UserResponse) => {
+      userCache['getItem']('http://rdfh.ch/users/root').subscribe((_res: UserResponse) => {
         expect(getUserSpy).toHaveBeenCalledTimes(1);
 
-        userCache['reloadItem']('http://rdfh.ch/users/root').subscribe((res2: UserResponse) => {
+        userCache['reloadItem']('http://rdfh.ch/users/root').subscribe((_res2: UserResponse) => {
           expect(getUserSpy).toHaveBeenCalledTimes(2);
           done();
         });

@@ -22,7 +22,7 @@ export class CustomDateAdapter extends NativeDateAdapter {
    * @param displayFormat - The display format (unused, kept for compatibility)
    * @returns Formatted date string in DD.MM.YYYY format
    */
-  override format(date: Date, displayFormat: unknown): string {
+  override format(date: Date, _displayFormat: unknown): string {
     const day = date.getDate();
     const month = date.getMonth() + 1;
     const year = date.getFullYear();

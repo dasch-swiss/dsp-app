@@ -50,7 +50,6 @@ export const WithOneClass: Story = {
   name: 'Renders grid with one resource class card',
   decorators: [applicationConfig({ providers: sharedProviders })],
   play: async ({ canvasElement, step }) => {
-    const canvas = within(canvasElement);
     await step('Grid container is rendered', async () => {
       await expect(canvasElement).toBeInTheDocument();
     });
@@ -68,7 +67,6 @@ export const EmptyOntology: Story = {
     }),
   ],
   play: async ({ canvasElement, step }) => {
-    const canvas = within(canvasElement);
     await step('Component renders without error', async () => {
       await expect(canvasElement).toBeInTheDocument();
     });

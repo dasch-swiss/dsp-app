@@ -351,7 +351,7 @@ export class OntologyEditService {
     this._dspApiConnection.v2.onto
       .addCardinalityToResourceClass(updateOntology)
       .pipe(take(1))
-      .subscribe((res: ResourceClassDefinitionWithAllLanguages) => {
+      .subscribe((_res: ResourceClassDefinitionWithAllLanguages) => {
         this._loadOntology(this.ontologyId, propertyId);
       });
   }
@@ -461,7 +461,7 @@ export class OntologyEditService {
     this._dspApiConnection.v2.onto
       .replaceCardinalityOfResourceClass(updateOntology) // yes, someone called the properties "cardinalities" in the API
       .pipe(take(1))
-      .subscribe(response => {
+      .subscribe(_response => {
         this._loadOntology(this.ontologyId, classId);
       });
   }
