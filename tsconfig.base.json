@@ -40,7 +40,6 @@
       "@dasch-swiss/vre/shared/app-help-page": ["libs/vre/shared/app-help-page/src/index.ts"],
       "@dasch-swiss/vre/shared/app-helper-services": ["libs/vre/shared/app-helper-services/src/index.ts"],
       "@dasch-swiss/vre/shared/app-helper-services/testing": ["libs/vre/shared/app-helper-services/src/testing.ts"],
-      "@dasch-swiss/vre/shared/assets/status-msg": ["libs/vre/shared/assets/status-msg/src/index.ts"],
       "@dasch-swiss/vre/shared/calendar": ["libs/vre/shared/calendar/src/index.ts"],
       "@dasch-swiss/vre/ui/date-picker": ["libs/vre/ui/date-picker/src/index.ts"],
       "@dasch-swiss/vre/ui/nested-menu": ["libs/vre/ui/nested-menu/src/index.ts"],
