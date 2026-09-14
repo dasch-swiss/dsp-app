@@ -11,9 +11,10 @@ import { RepresentationService } from '../../representation/representation.servi
 import { ResourceFetcherService } from '../../representation/resource-fetcher.service';
 import { Segment } from '../../representation/segments/segment';
 import { SegmentsService } from '../../representation/segments/segments.service';
+import { STORY_VIDEO_URL } from '../../stories.helpers';
 import { VideoComponent } from './video.component';
 
-const makeSrc = (fileUrl = 'https://example.org/video.mp4'): FileRepresentationInput => ({
+const makeSrc = (fileUrl = STORY_VIDEO_URL): FileRepresentationInput => ({
   fileUrl,
   userHasPermission: 'RV',
   filename: 'video.mp4',
@@ -114,12 +115,10 @@ const meta: Meta<VideoComponent> = {
 export default meta;
 type Story = StoryObj<VideoComponent>;
 
-const STAGE_VIDEO_URL = 'https://iiif.stage.dasch.swiss:443/0869/3xUzuLcE9nC-MjBgXRjjsos.mp4/file';
-
 export const WithLiveVideo: Story = {
   name: 'Plays a real video from the DSP stage server',
   args: {
-    src: makeSrc(STAGE_VIDEO_URL),
+    src: makeSrc(STORY_VIDEO_URL),
     parentResource: makeParentResource(),
   },
 };
@@ -132,7 +131,7 @@ export const WithAnnotations: Story = {
     }),
   ],
   args: {
-    src: makeSrc(STAGE_VIDEO_URL),
+    src: makeSrc(STORY_VIDEO_URL),
     parentResource: makeParentResource(),
   },
 };

@@ -7,6 +7,7 @@ import { expect } from 'storybook/test';
 import { RegionService } from '../../representation/region.service';
 import { RepresentationService } from '../../representation/representation.service';
 import { ResourceFetcherService } from '../../representation/resource-fetcher.service';
+import { STORY_EXTERNAL_IIIF_URL, STORY_IIIF_BASE_URL, STORY_IMAGE_URL } from '../../stories.helpers';
 import { CompoundService } from '../compound/compound.service';
 import { OpenSeaDragonService } from './open-sea-dragon.service';
 import { OsdDrawerService } from './osd-drawer.service';
@@ -27,8 +28,8 @@ const makeInternalResource = (): ReadResource =>
         {
           type: Constants.StillImageFileValue,
           id: 'http://rdfh.ch/value/image-1',
-          fileUrl: 'https://iiif.dev.dasch.swiss/0803/1awyJYmiA5Z-FQ9xDcEh2Hi.jp2/full/1333,1815/0/default.jpg',
-          iiifBaseUrl: 'https://iiif.dev.dasch.swiss/0803',
+          fileUrl: STORY_IMAGE_URL,
+          iiifBaseUrl: STORY_IIIF_BASE_URL,
           filename: '1awyJYmiA5Z-FQ9xDcEh2Hi.jp2',
           dimX: 1333,
           dimY: 1815,
@@ -49,7 +50,7 @@ const makeExternalResource = (): ReadResource =>
         {
           type: Constants.StillImageExternalFileValue,
           id: 'http://rdfh.ch/value/image-external',
-          externalUrl: 'https://iiif.io/api/image/3.0/example/reference/59d09991-54f1-46e1-86e4-f0a35722b657',
+          externalUrl: STORY_EXTERNAL_IIIF_URL,
           userHasPermission: 'RV',
         } as unknown as ReadStillImageExternalFileValue,
       ],

@@ -4,12 +4,12 @@ import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular'
 import { of } from 'rxjs';
 import { expect } from 'storybook/test';
 
-import { notificationServiceStub } from '../stories.helpers';
+import { STORY_VIDEO_URL, notificationServiceStub } from '../stories.helpers';
 import { DownloadMenuItemComponent } from './download-menu-item.component';
 import { RepresentationService } from './representation.service';
 
 const makeSrc = () => ({
-  fileUrl: 'https://example.org/file.mp4',
+  fileUrl: STORY_VIDEO_URL,
   userHasPermission: 'RV',
   filename: 'file.mp4',
 });
@@ -28,7 +28,7 @@ const meta: Meta<DownloadMenuItemComponent> = {
       providers: [
         {
           provide: RepresentationService,
-          useValue: { downloadProjectFile: () => {}, getIngestOriginalUrl: () => of('https://example.org/file.mp4') },
+          useValue: { downloadProjectFile: () => {}, getIngestOriginalUrl: () => of(STORY_VIDEO_URL) },
         },
         { provide: NotificationService, useValue: notificationServiceStub },
         { provide: Clipboard, useValue: { copy: () => true } },

@@ -21,6 +21,7 @@ import {
   makeTextValue,
   resourceFetcherServiceStub,
 } from '../../resource-stories.helper';
+import { STORY_AUDIO_URL } from '../../stories.helpers';
 import { ResourceAudioSegmentComponent } from './resource-audio-segment.component';
 
 const AUDIO_IRI = 'http://rdfh.ch/resource/audio-1';
@@ -38,7 +39,7 @@ const makeAudioResource = (): ReadResource =>
         {
           type: Constants.AudioFileValue,
           id: 'http://rdfh.ch/value/audio-1',
-          fileUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+          fileUrl: STORY_AUDIO_URL,
           filename: 'audio.mp3',
           userHasPermission: 'CR',
         } as unknown as ReadAudioFileValue,

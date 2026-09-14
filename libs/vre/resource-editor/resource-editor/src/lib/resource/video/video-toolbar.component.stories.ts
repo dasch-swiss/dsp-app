@@ -9,6 +9,7 @@ import { FileRepresentationInput, ParentResourceInput } from '../../representati
 import { RepresentationService } from '../../representation/representation.service';
 import { ResourceFetcherService } from '../../representation/resource-fetcher.service';
 import {
+  STORY_VIDEO_URL,
   makeResourceFetcherServiceStub,
   notificationServiceStub,
   representationServiceStub,
@@ -17,7 +18,7 @@ import { MediaPlayerService } from './media-player.service';
 import { VideoToolbarComponent } from './video-toolbar.component';
 
 const makeSrc = (): FileRepresentationInput => ({
-  fileUrl: 'https://example.org/video.mp4',
+  fileUrl: STORY_VIDEO_URL,
   userHasPermission: 'RV',
   filename: 'video.mp4',
 });

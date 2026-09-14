@@ -8,6 +8,7 @@ import { expect } from 'storybook/test';
 import { RepresentationService } from '../../representation/representation.service';
 import { ResourceFetcherService } from '../../representation/resource-fetcher.service';
 import { makeResourceFetcherServiceStub, notificationServiceStub } from '../../stories.helpers';
+import { STORY_VECTOR_IMAGE_URL } from '../../stories.helpers';
 import { VectorImageToolbarComponent } from './vector-image-toolbar.component';
 
 const makeResource = () =>
@@ -19,7 +20,7 @@ const makeResource = () =>
       [Constants.HasStillImageFileValue]: [
         {
           type: 'http://api.dasch.swiss/ontology/knora-api/v2#StillImageFileValue',
-          fileUrl: 'https://example.org/image.svg',
+          fileUrl: STORY_VECTOR_IMAGE_URL,
           arkUrl: 'http://ark.dasch.swiss/ark:/72163/1/1',
           userHasPermission: 'RV',
         },

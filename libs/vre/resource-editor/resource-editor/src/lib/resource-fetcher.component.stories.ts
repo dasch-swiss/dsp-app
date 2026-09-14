@@ -22,6 +22,7 @@ import { expect, within } from 'storybook/test';
 
 import { RepresentationService } from './representation/representation.service';
 import { ResourceFetcherComponent } from './resource-fetcher.component';
+import { STORY_VIDEO_URL } from './stories.helpers';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -92,7 +93,7 @@ const makeVideoReadResource = (): ReadResource => {
     [Constants.HasMovingImageFileValue]: [
       {
         type: Constants.MovingImageFileValue,
-        fileUrl: 'https://iiif.stage.dasch.swiss:443/0869/3xUzuLcE9nC-MjBgXRjjsos.mp4/file',
+        fileUrl: STORY_VIDEO_URL,
         filename: 'video.mp4',
         userHasPermission: 'RV',
       } as unknown as ReadMovingImageFileValue,
