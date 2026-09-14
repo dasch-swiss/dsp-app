@@ -49,10 +49,10 @@ describe('Projects', () => {
 
     const projectUuid = projectPage.projectIri.match(/\/([^\/]+)$/)[1];
     cy.visit(`/project/${projectUuid}/settings/edit`);
-    cy.get('[data-cy=shortcode-input] input').should('have.value', projectPage.project.shortcode.value);
-    cy.get('[data-cy=shortname-input] input').should('have.value', projectPage.project.shortname.value);
+    cy.get('[data-cy=shortcode-input] input').should('have.value', projectPage.project.shortcode);
+    cy.get('[data-cy=shortname-input] input').should('have.value', projectPage.project.shortname);
     cy.get('[data-cy=longname-input] input')
-      .should('have.value', projectPage.project.longname.value)
+      .should('have.value', projectPage.project.longname)
       .clear()
       .type(data.longname);
     cy.get('[data-cy=description-input] textarea')
@@ -66,6 +66,6 @@ describe('Projects', () => {
 
     cy.wait('@submitRequest');
     cy.visit(`/project/${projectUuid}`);
-    cy.contains(projectPage.project.shortcode.value).should('be.visible');
+    cy.contains(projectPage.project.shortcode).should('be.visible');
   });
 });

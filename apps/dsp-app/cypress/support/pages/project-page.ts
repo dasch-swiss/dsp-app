@@ -1,4 +1,9 @@
-import { Project, ProjectOperationResponseADM } from '@dasch-swiss/vre/3rd-party-services/open-api';
+// The generated OpenAPI client's Project model types shortcode/shortname/longname as
+// { value: string } wrapper objects (per dsp-api_spec.yaml), but the live admin API
+// returns plain strings for these fields, confirmed by a failing e2e run against it.
+// dsp-js's admin Project model (also used by the real app for this exact endpoint)
+// types them correctly, so use its response shape here instead.
+import { ProjectResponse, ReadProject } from '@dasch-swiss/dsp-js';
 
 const getAuthHeaders = () => ({
   Authorization: `Bearer ${localStorage.getItem('ACCESS_TOKEN')}`,
@@ -7,7 +12,7 @@ const getAuthHeaders = () => ({
 class ProjectPage {
   projectIri: string;
   projectUuid: string;
-  project: Project;
+  project: ReadProject;
 
   visit() {
     cy.visit(`/project/${this.projectIri.match(/\/([^\/]+)$/)[1]}`);
@@ -28,7 +33,7 @@ class ProjectPage {
       selfjoin: true,
     };
 
-    cy.request<ProjectOperationResponseADM>({
+    cy.request<ProjectResponse>({
       method: 'GET',
       url: `${Cypress.env('apiUrl')}/admin/projects/shortcode/A0A0`,
       headers: getAuthHeaders(),
@@ -40,7 +45,7 @@ class ProjectPage {
         this.project = getResponse.body.project;
         this.visit();
       } else {
-        cy.request<ProjectOperationResponseADM>({
+        cy.request<ProjectResponse>({
           method: 'POST',
           url: `${Cypress.env('apiUrl')}/admin/projects`,
           headers: getAuthHeaders(),
