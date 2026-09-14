@@ -7,7 +7,21 @@
   },
   "engines": {
     "node": "^22.13.0",
-    "npm": "^10.9.0"
+    "npm": "^10.9.0 || ^11 || ^12"
+  },
+  "allowScripts": {
+    "@openapitools/openapi-generator-cli": true,
+    "@parcel/watcher": true,
+    "@sentry/cli": true,
+    "@swc/core": true,
+    "core-js-pure": true,
+    "cypress": true,
+    "esbuild": true,
+    "fsevents": true,
+    "lmdb": true,
+    "msgpackr-extract": true,
+    "nx": true,
+    "unrs-resolver": true
   },
   "scripts": {
     "ng": "ng",
