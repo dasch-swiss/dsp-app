@@ -623,6 +623,7 @@
   "resourceEditor": {
     "properties": "Eigenschaften",
     "labelAnnotations": "Annotationen",
+    "representation": "Repräsentation",
     "restricted": "Nur eingeschränkte Anzeige verfügbar. Bilder werden möglicherweise nicht in voller Qualität angezeigt und gewisse Werte sind eventuell ausgeblendet.",
     "versioned": "Dies ist eine ältere Version der Ressource.",
     "seeCurrentVersion": "Zur aktuellen Version",
