@@ -6,6 +6,7 @@
     "sourceMap": false,
     "types": ["cypress", "node"],
     "emitDecoratorMetadata": true,
-    "experimentalDecorators": true
+    "experimentalDecorators": true,
+    "moduleResolution": "bundler"
   }
 }
