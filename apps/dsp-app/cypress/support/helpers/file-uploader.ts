@@ -1,4 +1,9 @@
-import { UploadedFileResponse } from '../../../../../libs/vre/shared/app-representations/src';
+// Local mirror of libs/vre/resource-editor's internal upload-file-response.interface.ts,
+// which the resource-editor barrel does not export publicly.
+interface UploadedFileResponse {
+  internalFilename: string;
+  originalFilename: string;
+}
 
 export function uploadProjectFile(
   filePath: string,
