@@ -163,11 +163,6 @@ export const routes: Routes = [
         canActivate: [AuthGuard],
       },
       {
-        path: RouteConstants.projects,
-        component: UserComponent,
-        canActivate: [AuthGuard],
-      },
-      {
         path: RouteConstants.system,
         component: SystemPageComponent,
         canActivate: [SysAdminGuard],
