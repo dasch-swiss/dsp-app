@@ -1,4 +1,3 @@
-export * from './user.components';
 export * from './lib/user.component';
 export * from './lib/account/account.component';
 export * from './lib/account/api-connection-token.provider';
