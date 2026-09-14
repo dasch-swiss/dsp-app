@@ -23,7 +23,7 @@ import { ProfileComponent } from './profile/profile.component';
           <mat-icon class="tab-icon">settings</mat-icon>
           {{ 'pages.userSettings.navigation.myAccount' | translate }}
         </a>
-        <a mat-tab-link [routerLink]="[PROJECTS]" routerLinkActive="active-link">
+        <a mat-tab-link [routerLink]="['/', MY_PROFILE, PROJECTS]" routerLinkActive="active-link">
           <mat-icon class="tab-icon">assignment</mat-icon>
           {{ 'pages.userSettings.navigation.myProjects' | translate }}
         </a>
