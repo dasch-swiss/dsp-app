@@ -1,22 +1,50 @@
 import { ChangeDetectorRef, CUSTOM_ELEMENTS_SCHEMA, SimpleChange } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Constants, CountQueryResponse, ReadResource } from '@dasch-swiss/dsp-js';
+import { Cardinality, Constants, CountQueryResponse, ReadResource } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { of, Subject } from 'rxjs';
 import { ResourceDispatcherComponent } from './resource-dispatcher.component';
 import { ResourceType } from './resource-type';
 
-// Minimal resource factory
-const makeResource = (overrides: Partial<ReadResource> = {}): DspResource =>
+const DEFAULT_CLASS = 'http://example.org/onto#SomeClass';
+
+/**
+ * Builds the `entityInfo` a real `ReadResource` always carries.
+ *
+ * `ResourcesConversionUtil.createReadResource()` assigns it unconditionally from the ontology
+ * cache, so a resource holding a file value in `properties` always also declares that
+ * property's cardinality on its class — the two are never independent.
+ */
+const makeEntityInfo = (resourceType: string, propertyIris: string[]) =>
   ({
+    classes: {
+      [resourceType]: {
+        propertiesList: propertyIris.map(propertyIndex => ({
+          propertyIndex,
+          cardinality: Cardinality._0_1,
+          isInherited: false,
+        })),
+      },
+    },
+    properties: {},
+  }) as unknown as ReadResource['entityInfo'];
+
+// Minimal resource factory. `filePropertyIris` are the file-value cardinalities the class
+// declares; they default to the keys present in `properties` so fixtures stay in step.
+const makeResource = (overrides: Partial<ReadResource> = {}, filePropertyIris?: string[]): DspResource => {
+  const type = (overrides.type as string) ?? DEFAULT_CLASS;
+  const properties = overrides.properties ?? {};
+  return {
     res: {
       id: 'http://rdfh.ch/resource1',
-      type: 'http://example.org/onto#SomeClass',
-      properties: {},
+      type,
+      properties,
+      entityInfo: makeEntityInfo(type, filePropertyIris ?? Object.keys(properties)),
       ...overrides,
     } as unknown as ReadResource,
-  }) as unknown as DspResource;
+  } as unknown as DspResource;
+};
 
 const makeImageResource = (): DspResource =>
   makeResource({
@@ -63,8 +91,15 @@ const makeSegmentResource = (): DspResource =>
     properties: {},
   });
 
-const makePlainResource = (): DspResource =>
-  makeResource({ type: 'http://example.org/onto#SomeClass', properties: {} });
+const makePlainResource = (): DspResource => makeResource({ type: DEFAULT_CLASS, properties: {} });
+
+/**
+ * A representation whose file value is withheld (DEV-7072): `properties` is empty because
+ * dsp-api drops unreadable values and removes the property key, while the class still declares
+ * the cardinality — which is what identifies it as a representation.
+ */
+const makeWithheldRepresentation = (filePropertyIri: string): DspResource =>
+  makeResource({ type: DEFAULT_CLASS, properties: {}, userHasPermission: 'V' }, [filePropertyIri]);
 
 describe('ResourceDispatcherComponent', () => {
   let component: ResourceDispatcherComponent;
@@ -237,6 +272,24 @@ describe('ResourceDispatcherComponent', () => {
     it('completes without error', () => {
       triggerNgOnChanges(makeImageResource());
       expect(() => component.ngOnDestroy()).not.toThrow();
+    });
+  });
+  describe('when the resource is a representation whose file value is withheld (DEV-7072)', () => {
+    it('sets resourceType synchronously, so the media wrapper can show the restricted notice', () => {
+      triggerNgOnChanges(makeWithheldRepresentation(Constants.HasMovingImageFileValue));
+      expect(component.resourceType).toBe(ResourceType.Video);
+    });
+
+    it('does not fall through to the compound count API call', () => {
+      triggerNgOnChanges(makeWithheldRepresentation(Constants.HasStillImageFileValue));
+      expect(component.resourceType).toBe(ResourceType.Image);
+      expect(dspApiMock.v2.search.doSearchStillImageRepresentationsCount).not.toHaveBeenCalled();
+    });
+
+    it('never renders the plain view for a withheld representation', () => {
+      triggerNgOnChanges(makeWithheldRepresentation(Constants.HasTextFileValue));
+      expect(component.resourceType).not.toBe(ResourceType.Plain);
+      expect(component.resourceType).toBe(ResourceType.Text);
     });
   });
 });
