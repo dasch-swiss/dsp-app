@@ -289,14 +289,3 @@ export class OrderByItem {
     return new OrderByItem(this.id, this.labels, this.disabled, this.orderBy, direction);
   }
 }
-
-export interface QueryObject {
-  query: string;
-  properties: StatementElement[];
-}
-
-export interface SearchFormsState {
-  selectedResourceClass: IriLabelPair;
-  statementElements: StatementElement[];
-  orderBy: OrderByItem[];
-}
