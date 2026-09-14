@@ -79,7 +79,7 @@ export default [
       'prefer-destructuring': 'off',
       radix: 'off',
       'unused-imports/no-unused-vars': [
-        'off',
+        'error',
         {
           vars: 'all',
           varsIgnorePattern: '^_',
