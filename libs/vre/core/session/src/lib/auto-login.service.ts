@@ -31,7 +31,13 @@ export class AutoLoginService {
     }
 
     if (!this._accessTokenService.isValidToken()) {
+      // Clear BOTH channels. `removeToken()` only empties localStorage, which `authInterceptorFn`
+      // reads per request; dsp-js instead sends the in-memory copy on the shared `KnoraApiConfig`,
+      // seeded at startup by `apiConnectionTokenProvider`. Leaving that copy set made dsp-js keep
+      // sending `Authorization: Bearer <expired>` for the rest of the page lifetime while HttpClient
+      // correctly sent nothing (DEV-7249). `afterLogout()` already clears both; this branch must too.
       this._accessTokenService.removeToken();
+      this._dspApiConnection.v2.jsonWebToken = '';
       this.hasCheckedCredentials$.next(true);
       return;
     }
