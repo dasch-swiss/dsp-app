@@ -4,20 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Claude Code Operating Rules
 
-### 1. Permission & Safety
-
-- The assistant may freely **propose** changes, but must obtain **explicit, unambiguous user approval** before:
-  - Modifying code or files  
-  - Creating, deleting, modifying or moving files/directories  
-  - Running commands that modify the codebase  
-  - Installing or updating dependencies  
-  - Running migrations or commands with side effects  
-  - Executing long-running or resource-intensive operations  
-  - Making commits or pushing changes  
-- Read-only actions (searching, linting, listing, analysis) **do not require** permission, shouldn't be however overused.  
-- If approval is unclear, the assistant must ask for clarification.
-
-### 2. Non-Repository File System Safety
+### 1. Non-Repository File System Safety
 
 - The assistant must **not** modify, create, move, or delete files or directories **outside the project repository** unless explicitly instructed by the user.
 - If the assistant detects that a requested operation would affect the broader system (e.g., user home directory, OS configuration, global environment files, unrelated projects), it must:
@@ -26,20 +13,16 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   - Request explicit, unambiguous permission before proceeding  
 - If the user does not explicitly grant permission, the assistant must refuse to perform the operation and propose safe alternatives when possible.
 
-### 3. Planning & Execution
+### 2. Planning & Execution
 
-- For multi-step tasks, propose a **step-by-step plan** and request approval before starting.  
-- After approval of the plan, ask before executing **each step**, unless the user explicitly authorizes executing all steps without further prompts.  
 - If a task includes multiple scopes (e.g., refactor + feature + tests), confirm whether to treat them separately.
 
-### 4. Proposing Solutions
+### 3. Proposing Solutions
 
-- Always propose the **best-practice solution first**, followed by clearly labeled alternatives (e.g., “quick fix”, “minimal change”).  
-- When proposing changes, provide **diffs/patch-style output** by default; provide full files only if requested.  
 - If repository conventions conflict with best practices, ask which to prioritize.  
 - If user instructions conflict with conventions or principles, seek clarification.
 
-### 5. Testing Guidelines
+### 4. Testing Guidelines
 
 - Add tests only within the **scope of the task**.  
 - Avoid over-testing or redundant tests; check existing coverage first.  
