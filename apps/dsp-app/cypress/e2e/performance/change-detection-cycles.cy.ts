@@ -24,7 +24,7 @@ describe.skip('Change Detection Performance', () => {
       }
 
       // Navigate to user-heavy page (project overview with user permissions)
-      cy.visit('/projects');
+      cy.visit('/my-profile/projects');
 
       // Start profiling change detection
       const profileStart = performance.now();
