@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker';
-import { ListGetResponseADM } from '../../../../../libs/vre/open-api/src';
+import { ListGetResponseADM } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { Project00FFPayloads } from '../../fixtures/project00FF-resource-payloads';
 import { ClassPropertyPayloads } from '../../fixtures/property-definition-payloads';
 import { ResourceRequests, ResponseUtil } from '../../fixtures/requests';

@@ -1,4 +1,4 @@
-import { ProjectADM, ProjectOperationResponseADM } from '../../../../../libs/vre/open-api/src';
+import { Project, ProjectOperationResponseADM } from '@dasch-swiss/vre/3rd-party-services/open-api';
 
 const getAuthHeaders = () => ({
   Authorization: `Bearer ${localStorage.getItem('ACCESS_TOKEN')}`,
@@ -7,7 +7,7 @@ const getAuthHeaders = () => ({
 class ProjectPage {
   projectIri: string;
   projectUuid: string;
-  project: ProjectADM;
+  project: Project;
 
   visit() {
     cy.visit(`/project/${this.projectIri.match(/\/([^\/]+)$/)[1]}`);
