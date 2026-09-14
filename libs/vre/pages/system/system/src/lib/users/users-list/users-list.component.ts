@@ -68,11 +68,6 @@ export class UsersListComponent {
       '=1': `1 ${this._ts.instant('ui.common.entities.user')}`,
       other: `# ${this._ts.instant('ui.common.entities.users')}`,
     },
-    member: {
-      // eslint-disable-next-line @typescript-eslint/naming-convention
-      '=1': `1 ${this._ts.instant('ui.common.entities.member')}`,
-      other: `# ${this._ts.instant('ui.common.entities.members')}`,
-    },
   };
 
   readonly sortProps: SortProperty[] = [

@@ -1,5 +1,35 @@
 # Changelog
 
+## [13.14.2](https://github.com/dasch-swiss/dsp-app/compare/v13.14.1...v13.14.2) (2026-09-14)
+
+
+### Bug Fixes
+
+* **dsp-app:** bind isUsersProjects on /my-profile/projects route ([#3432](https://github.com/dasch-swiss/dsp-app/issues/3432)) ([c75c885](https://github.com/dasch-swiss/dsp-app/commit/c75c8858c05cfdf42434014fe75d737acd7de9bc))
+* fresh clone setup fails loud on the wrong toolchain ([#3422](https://github.com/dasch-swiss/dsp-app/issues/3422)) ([6b5e056](https://github.com/dasch-swiss/dsp-app/commit/6b5e0565f797324d49a2fd034c3754cd8b12d2a7))
+* **resource-editor,help-page:** stop button icons being clipped (DEV-7011) ([#3410](https://github.com/dasch-swiss/dsp-app/issues/3410)) ([d49e3af](https://github.com/dasch-swiss/dsp-app/commit/d49e3af9ce06488af2326c48a087e0169ca4818e))
+* **resource-editor:** show the no-access notice for any restricted media (DEV-7072) ([#3415](https://github.com/dasch-swiss/dsp-app/issues/3415)) ([fbcc79f](https://github.com/dasch-swiss/dsp-app/commit/fbcc79f2ee559c4cdad73bf7d715fa674aae9e61))
+* **routing:** remove the orphaned /projects route and its 404ing tab link ([#3435](https://github.com/dasch-swiss/dsp-app/issues/3435)) ([4974cc4](https://github.com/dasch-swiss/dsp-app/commit/4974cc43b0f3598629b8b8c80d9e4c97616668b2))
+* type-check e2e cypress specs and repair imports to deleted libraries ([#3434](https://github.com/dasch-swiss/dsp-app/issues/3434)) ([182a2a4](https://github.com/dasch-swiss/dsp-app/commit/182a2a4bd610fcbba3ca95d3f78206528e33abc0))
+
+
+### Maintenances
+
+* **deps:** Lock file maintenance ([#3430](https://github.com/dasch-swiss/dsp-app/issues/3430)) ([478c717](https://github.com/dasch-swiss/dsp-app/commit/478c717f4f4b38f9b8375bd578cfa3d4ff0eb822))
+* **deps:** Update dependency @sentry/angular from 10.73.0 to 10.74.0 ([#3427](https://github.com/dasch-swiss/dsp-app/issues/3427)) ([b1cf512](https://github.com/dasch-swiss/dsp-app/commit/b1cf512dba85d73a72e419ce843da7dd155802d9))
+* **deps:** Update dependency angular-html-parser from 10.11.0 to 10.12.0 ([#3428](https://github.com/dasch-swiss/dsp-app/issues/3428)) ([49c922b](https://github.com/dasch-swiss/dsp-app/commit/49c922b141d25b33f522dcc474f27609d0a8c4dd))
+* **deps:** Update dependency autoprefixer from 10.5.5 to 10.5.6 ([#3424](https://github.com/dasch-swiss/dsp-app/issues/3424)) ([33b7316](https://github.com/dasch-swiss/dsp-app/commit/33b7316d8fb26146518e3159bbbcbc1cb4c086e5))
+* **deps:** Update dependency ng-mocks from 14.17.3 to 14.17.4 ([#3414](https://github.com/dasch-swiss/dsp-app/issues/3414)) ([18a717e](https://github.com/dasch-swiss/dsp-app/commit/18a717e983be1d302f5471c288c8a0ecc49eb216))
+* **deps:** Update dependency ng-mocks from 14.17.4 to 14.17.5 ([#3418](https://github.com/dasch-swiss/dsp-app/issues/3418)) ([ee5bb84](https://github.com/dasch-swiss/dsp-app/commit/ee5bb84fa555ea0c2835e85707baede9f7c3af2b))
+* **deps:** Update dependency ng-mocks from 14.17.5 to 14.17.6 ([#3425](https://github.com/dasch-swiss/dsp-app/issues/3425)) ([8eab77f](https://github.com/dasch-swiss/dsp-app/commit/8eab77f9b3cc0125fb93387036a897e57d9c029e))
+* **deps:** Update dependency openseadragon from 6.1.0 to 6.1.1 ([#3426](https://github.com/dasch-swiss/dsp-app/issues/3426)) ([196f020](https://github.com/dasch-swiss/dsp-app/commit/196f020f1485235a93fe9ba22fa43c6015896a5a))
+* **deps:** Update dependency zod from 4.5.4 to 4.6.2 ([#3429](https://github.com/dasch-swiss/dsp-app/issues/3429)) ([d9feda8](https://github.com/dasch-swiss/dsp-app/commit/d9feda87713d8471847a5a16d35a0e3c3feb345b))
+* **deps:** Update typescript-eslint monorepo from 8.69.0 to 8.70.0 ([#3419](https://github.com/dasch-swiss/dsp-app/issues/3419)) ([d4fd568](https://github.com/dasch-swiss/dsp-app/commit/d4fd5689e3988658513e28dca1f01e346907096e))
+* **open-api:** bump dsp-api spec v38.0.0-8-gdf2abf9 → v38.1.0-5-g35a36e3 ([#3416](https://github.com/dasch-swiss/dsp-app/issues/3416)) ([3096816](https://github.com/dasch-swiss/dsp-app/commit/309681667b295fab48a134c2dbdf469670661e3c))
+* **openapi:** clear the real generated output dir before regenerating ([#3431](https://github.com/dasch-swiss/dsp-app/issues/3431)) ([47ebc35](https://github.com/dasch-swiss/dsp-app/commit/47ebc356e206f8f28ecdf162add08b6d4fd54bb5))
+* remove pre-Claude-5 ceremony from CLAUDE.md ([#3420](https://github.com/dasch-swiss/dsp-app/issues/3420)) ([5b543f9](https://github.com/dasch-swiss/dsp-app/commit/5b543f9c36de4ef1cab569fca9329428e049d8f5))
+* remove the active/inactive project concept from dsp-app ([#3397](https://github.com/dasch-swiss/dsp-app/issues/3397)) ([9f8ac74](https://github.com/dasch-swiss/dsp-app/commit/9f8ac7472d4193554753df4c4c98f48323b8b0ae))
+
 ## [13.14.1](https://github.com/dasch-swiss/dsp-app/compare/v13.14.0...v13.14.1) (2026-09-07)
 
 

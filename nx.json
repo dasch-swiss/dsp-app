@@ -144,7 +144,6 @@
         "libs/vre/shared/app-common-to-move/**/*",
         "libs/vre/shared/app-help-page/**/*",
         "libs/vre/shared/app-helper-services/**/*",
-        "libs/vre/shared/assets/status-msg/**/*",
         "libs/vre/shared/calendar/**/*",
         "libs/vre/ui/date-picker/**/*",
         "libs/vre/ui/nested-menu/**/*",
