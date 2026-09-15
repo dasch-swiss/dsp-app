@@ -40,7 +40,7 @@ class CheckFailureConverter implements JsonCustomConvert<
     );
   }
 
-  serialize(obj: CanSetCardinalityCheckFailure[]): any {}
+  serialize(_obj: CanSetCardinalityCheckFailure[]): any {}
 }
 
 /**

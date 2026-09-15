@@ -96,7 +96,6 @@ export const DefaultView: Story = {
     fileInfo: makeFileInfo(),
   },
   play: async ({ canvasElement, step }) => {
-    const canvas = within(canvasElement);
     await step('Play button shows play_arrow icon when paused', async () => {
       const playButton = canvasElement.querySelector('[data-cy="play-pause-button"] mat-icon');
       await expect(playButton?.textContent?.trim()).toBe('play_arrow');

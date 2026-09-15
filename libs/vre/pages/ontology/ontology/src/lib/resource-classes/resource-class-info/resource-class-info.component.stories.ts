@@ -53,7 +53,6 @@ export const EmptyClass: Story = {
   decorators: [applicationConfig({ providers: sharedProviders })],
   args: { resourceClass },
   play: async ({ canvasElement, step }) => {
-    const canvas = within(canvasElement);
     await step('Class card is rendered', async () => {
       await expect(canvasElement).toBeInTheDocument();
     });

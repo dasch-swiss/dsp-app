@@ -168,7 +168,7 @@ export class ResourcesListFetcherComponent implements OnChanges {
       withLatestFrom(this._classParam$),
       startWith([[] as ReadResource[], null]),
       pairwise(),
-      map(([[prevResources, prevClass], [currResources, currClass]]) => {
+      map(([[_prevResources, prevClass], [currResources, currClass]]) => {
         const selectFirstResource = prevClass !== currClass;
         if (selectFirstResource && !this._multipleViewerService.selectMode && currResources) {
           if (currResources.length >= 1) {

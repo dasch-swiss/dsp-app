@@ -30,7 +30,6 @@ export const Empty: Story = {
     validators: [],
   },
   play: async ({ canvasElement, step }) => {
-    const canvas = within(canvasElement);
     await step('Chip input is rendered', async () => {
       await expect(canvasElement.querySelector('mat-chip-grid')).not.toBeNull();
     });

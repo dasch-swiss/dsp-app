@@ -27,6 +27,10 @@ export class GrafanaFaroService {
     try {
       // Dynamically import Faro dependencies only when enabled
       const [
+        // Destructured for its TYPE only (see `disabledLevels` below). A static `import type` is
+        // deliberately avoided here: `@grafana/faro-core` is not a direct dependency and this file
+        // keeps Faro out of the eager graph (see the `type Faro = any` note at the top).
+        // eslint-disable-next-line unused-imports/no-unused-vars
         { LogLevel },
         { OtlpHttpTransport },
         { getWebInstrumentations, initializeFaro },

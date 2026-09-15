@@ -23,7 +23,7 @@ export class AdministrativePermissionsPerProjectConverter implements JsonCustomC
     PropertyMatchingRule.CASE_STRICT
   );
 
-  serialize(permissions: { [key: string]: Permission[] }): any {
+  serialize(_permissions: { [key: string]: Permission[] }): any {
     return {};
   }
 
