@@ -623,6 +623,7 @@
   "resourceEditor": {
     "properties": "Properties",
     "labelAnnotations": "Annotations",
+    "representation": "Representation",
     "restricted": "Access restricted: Images may be of lower quality and some values may be hidden.",
     "versioned": "This is an outdated version of the resource.",
     "seeCurrentVersion": "Go to current version",

@@ -2,7 +2,6 @@ import { AsyncPipe, NgClass } from '@angular/common';
 import { ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatTabChangeEvent, MatTabsModule } from '@angular/material/tabs';
-import { ReadResource } from '@dasch-swiss/dsp-js';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
@@ -26,7 +25,7 @@ import { CompoundService } from './compound.service';
       </mat-tab>
 
       @if (incomingResource) {
-        <mat-tab [label]="resourceClassLabel(incomingResource.res)">
+        <mat-tab [label]="'resourceEditor.representation' | translate">
           <app-incoming-resource-header [resource]="incomingResource.res" />
           <app-properties-display [resource]="incomingResource" [parentResourceId]="resource.res.id" />
         </mat-tab>
@@ -106,8 +105,6 @@ export class ResourceCompoundTabsComponent implements OnInit, OnDestroy {
     private readonly _compoundService: CompoundService,
     public readonly propertiesDisplayService: PropertiesDisplayService
   ) {}
-
-  resourceClassLabel = (resource: ReadResource | undefined) => resource?.entityInfo?.classes[resource.type].label || '';
 
   ngOnInit() {
     this._compoundService.incomingResource$.pipe(takeUntil(this._destroy$)).subscribe(resource => {
