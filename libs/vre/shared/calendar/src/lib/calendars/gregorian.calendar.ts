@@ -38,6 +38,20 @@ import { CalendarDate, CalendarOperations } from '../types/calendar.types';
 const truncate = (num: number): number => Math[num < 0 ? 'ceil' : 'floor'](num);
 
 /**
+ * The calendar reform boundary, expressed both ways.
+ *
+ * Pope Gregory XIII's reform took effect on 15 October 1582; 4 October 1582 (Julian) was followed
+ * directly by 15 October. Dates on or after the boundary use the Gregorian rule, dates before it
+ * the Julian one.
+ *
+ * `gregorianToJDN` needs the date form (it has a date and no JDN yet) and `gregorianFromJDN` the
+ * JDN form (it has a JDN and no date yet). Both must describe the same instant, or the two
+ * functions stop being inverses — which is exactly the defect DEV-7264 recorded.
+ */
+const GREGORIAN_START_YYYYMMDD = 15821015;
+const GREGORIAN_START_JDN = 2299161;
+
+/**
  * Converts a Gregorian calendar date to Julian Day Number (JDN).
  *
  * The algorithm handles the transition from Julian to Gregorian calendar
@@ -69,7 +83,7 @@ function gregorianToJDN(date: CalendarDate): number {
   const idate = date.year * 10000 + (date.month ?? 1) * 100 + (date.day ?? 1);
   let b = 0;
 
-  if (idate >= 15821015) {
+  if (idate >= GREGORIAN_START_YYYYMMDD) {
     // Gregorian calendar
     const a = truncate(year / 100.0);
     b = 2 - a + truncate(a / 4);
@@ -100,8 +114,17 @@ function gregorianFromJDN(jdn: number): CalendarDate {
   const z = truncate(jdn + 0.5);
   const f = jdn + 0.5 - z;
 
-  const alpha = truncate((z - 1867216.25) / 36524.25);
-  const a = z + 1 + alpha - truncate(alpha / 4);
+  // Mirror the switchover branch in `gregorianToJDN`: dates before 15 October 1582 (JDN 2299161)
+  // were encoded with the Julian rule, so they must be decoded with it too. Applying the Gregorian
+  // `alpha` correction unconditionally made the two functions disagree and broke the round trip by
+  // up to 10 days for pre-1582 dates (DEV-7264).
+  let a: number;
+  if (z < GREGORIAN_START_JDN) {
+    a = z;
+  } else {
+    const alpha = truncate((z - 1867216.25) / 36524.25);
+    a = z + 1 + alpha - truncate(alpha / 4);
+  }
 
   const b = a + 1524;
   const c = truncate((b - 122.1) / 365.25);
