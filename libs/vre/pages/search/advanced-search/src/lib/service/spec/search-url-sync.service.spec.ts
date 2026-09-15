@@ -10,7 +10,7 @@ import { FilterParam, SearchUrlParams, SearchUrlSyncService } from '../search-ur
  *
  * These specs pin the URL param CONTRACT so the migration cannot silently change
  * the encoding. Existing bookmarked/shared URLs must keep working, so the format
- * (`q`, `ontology`, `class`, `filters`, `orderBy`) and the filters encoding
+ * (`q`, `ontology`, `class`, `filters`, `orderBy`, `orderDir`) and the filters encoding
  * (URI-encoded JSON) are treated as a stable public interface.
  *
  * Router/ActivatedRoute are stubbed: we assert what the service *reads from* and
@@ -235,6 +235,63 @@ describe('SearchUrlSyncService — URL param contract (DEV-6576 Phase 0)', () =>
         queryParams: { q: null, ontology: null, class: null, filters: null, orderBy: null, orderDir: null },
         queryParamsHandling: 'merge',
         replaceUrl: true,
+      });
+    });
+  });
+
+  describe('orderDir', () => {
+    // `orderDir` is the one param with a rule beyond "non-empty string wins": it is meaningful only
+    // alongside `orderBy`, and only `desc` changes behaviour. These pin both halves of that rule so a
+    // hand-edited or stale URL can never produce a half-set sort state.
+    describe('reading', () => {
+      it('decodes desc when orderBy is present', () => {
+        queryParams = { orderBy: 'http://x/p', orderDir: 'desc' };
+
+        expect(service.readParams().orderDir).toBe('desc');
+      });
+
+      it('drops an orphan direction with no orderBy to sort', () => {
+        queryParams = { orderDir: 'desc' };
+
+        expect(service.readParams().orderDir).toBeUndefined();
+      });
+
+      it('normalises asc to undefined (ascending is the default and stays out of the URL)', () => {
+        queryParams = { orderBy: 'http://x/p', orderDir: 'asc' };
+
+        expect(service.readParams().orderDir).toBeUndefined();
+      });
+
+      it('normalises an unrecognised direction to undefined', () => {
+        queryParams = { orderBy: 'http://x/p', orderDir: 'sideways' };
+
+        expect(service.readParams().orderDir).toBeUndefined();
+      });
+    });
+
+    describe('writing', () => {
+      it('writes desc through', () => {
+        service.writeState({ orderBy: 'http://x/p', orderDir: 'desc' });
+
+        expect(navigateSpy.mock.calls[0][1].queryParams).toEqual({ orderBy: 'http://x/p', orderDir: 'desc' });
+      });
+
+      it('nulls asc so merge navigation removes it rather than writing the default', () => {
+        service.writeState({ orderBy: 'http://x/p', orderDir: 'asc' });
+
+        expect(navigateSpy.mock.calls[0][1].queryParams).toEqual({ orderBy: 'http://x/p', orderDir: null });
+      });
+
+      it('nulls an explicitly-supplied undefined (presence, not truthiness)', () => {
+        service.writeState({ orderDir: undefined });
+
+        expect(navigateSpy.mock.calls[0][1].queryParams).toEqual({ orderDir: null });
+      });
+
+      it('leaves orderDir untouched when the caller did not supply it', () => {
+        service.writeState({ q: 'whale' });
+
+        expect(navigateSpy.mock.calls[0][1].queryParams).toEqual({ q: 'whale' });
       });
     });
   });

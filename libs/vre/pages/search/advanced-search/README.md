@@ -24,9 +24,10 @@ page: query = toSignal(gravsearchQuery$) → @if(query()) → <app-advanced-sear
 ### Key pieces
 
 - **`SearchUrlSyncService`** — the read side (`params$`) and the single write API (`writeState` /
-  `clearAll`). URL param schema: `q`, `ontology`, `class`, `filters` (URI-encoded JSON), `orderBy`.
+  `clearAll`). URL param schema: `q`, `ontology`, `class`, `filters` (URI-encoded JSON), `orderBy`, `orderDir`
+  (`desc` only; ascending is the default and stays out of the URL). The names live in `ADVANCED_SEARCH_PARAM`.
 - **`SearchDerivationService`** — all derivations above. No committed form state lives anywhere else.
-- **`PropertyFormManager`** — owns the *ephemeral* editing tree (blank rows, in-progress children,
+- **`PropertyFormManager`** — owns the _ephemeral_ editing tree (blank rows, in-progress children,
   auto-grow) in its own store, seeded from `searchState$` on every URL change. Never written to the URL
   until a filter is **committed**.
 - **`GravsearchService.generateGravSearchQuery(...)`** — pure; takes statements/fulltext/class/orderBy
@@ -37,7 +38,7 @@ page: query = toSignal(gravsearchQuery$) → @if(query()) → <app-advanced-sear
 
 - **Committed** = filters the user confirmed → encoded in the `filters` URL param → drive the query.
 - **Ephemeral** = pristine/incomplete rows and in-progress children → live only in
-  `PropertyFormManager`'s store, never in the URL. A valid-but-*unconfirmed* row does **not** affect
+  `PropertyFormManager`'s store, never in the URL. A valid-but-_unconfirmed_ row does **not** affect
   results (it must be confirmed first).
 
 ### Adding a new search control
