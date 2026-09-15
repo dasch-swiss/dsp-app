@@ -60,7 +60,6 @@ export const WithProperties: Story = {
   name: 'Renders list of ontology properties',
   decorators: [applicationConfig({ providers: sharedProviders })],
   play: async ({ canvasElement, step }) => {
-    const canvas = within(canvasElement);
     await step('Properties list is rendered', async () => {
       await expect(canvasElement).toBeInTheDocument();
     });
@@ -78,7 +77,6 @@ export const EmptyList: Story = {
     }),
   ],
   play: async ({ canvasElement, step }) => {
-    const canvas = within(canvasElement);
     await step('Component renders without error', async () => {
       await expect(canvasElement).toBeInTheDocument();
     });

@@ -25,7 +25,6 @@ type Story = StoryObj<LoginFormComponent>;
 export const DefaultView: Story = {
   name: 'Shows username and password fields with login button',
   play: async ({ canvasElement, step }) => {
-    const canvas = within(canvasElement);
     await step('Username input is rendered', async () => {
       await expect(canvasElement.querySelector('[data-cy="username-input"]')).not.toBeNull();
     });

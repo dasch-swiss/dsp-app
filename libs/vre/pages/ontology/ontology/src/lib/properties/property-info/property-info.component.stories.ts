@@ -61,7 +61,6 @@ export const DefaultView: Story = {
   decorators: [applicationConfig({ providers: sharedProviders })],
   args: { property: sampleProperty },
   play: async ({ canvasElement, step }) => {
-    const canvas = within(canvasElement);
     await step('Component renders without error', async () => {
       await expect(canvasElement).toBeInTheDocument();
     });

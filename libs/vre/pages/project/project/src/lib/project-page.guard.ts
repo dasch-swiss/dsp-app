@@ -14,7 +14,7 @@ export class ProjectPageGuard implements CanActivate {
     private readonly _dataRights: ProjectDataRightsService,
     private readonly _router: Router
   ) {}
-  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean | UrlTree> {
+  canActivate(route: ActivatedRouteSnapshot, _state: RouterStateSnapshot): Observable<boolean | UrlTree> {
     const projectUuid = route.params[RouteConstants.uuidParameter];
     if (!projectUuid) {
       return of(this._routeTo404());

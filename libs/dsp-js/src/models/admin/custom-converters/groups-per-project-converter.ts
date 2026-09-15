@@ -6,7 +6,7 @@ import { CustomConverterUtils } from '../../../util/utils';
  */
 @JsonConverter
 export class GroupsPerProjectConverter implements JsonCustomConvert<{ [key: string]: string[] }> {
-  serialize(groups: { [key: string]: string[] }): any {
+  serialize(_groups: { [key: string]: string[] }): any {
     return {};
   }
 

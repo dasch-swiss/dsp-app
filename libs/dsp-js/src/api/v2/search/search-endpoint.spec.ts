@@ -112,7 +112,7 @@ describe('SearchEndpoint', () => {
       ajaxMock.setMockError({}, 400);
 
       knoraApiConnection.v2.search.doFulltextSearch('thing', 0).subscribe(
-        (response: ReadResourceSequence) => {},
+        (_response: ReadResourceSequence) => {},
         (err: ApiResponseError) => {
           expect(err instanceof ApiResponseError).toBeTruthy();
           expect(err.status).toEqual(400);
@@ -379,7 +379,7 @@ describe('SearchEndpoint', () => {
       ajaxMock.setMockError({}, 400);
 
       knoraApiConnection.v2.search.doExtendedSearch(gravsearchQuery).subscribe(
-        (response: ReadResourceSequence) => {},
+        (_response: ReadResourceSequence) => {},
         (err: ApiResponseError) => {
           expect(err instanceof ApiResponseError).toBeTruthy();
           expect(err.status).toEqual(400);
@@ -416,7 +416,7 @@ describe('SearchEndpoint', () => {
 
       knoraApiConnection.v2.search
         .doExtendedSearch(gravsearchQuery, 'http://rdfh.ch/projects/0001')
-        .subscribe((response: ReadResourceSequence) => {
+        .subscribe((_response: ReadResourceSequence) => {
           const request = ajaxMock.getLastRequest();
 
           expect(request?.url).toBe(
@@ -484,7 +484,7 @@ describe('SearchEndpoint', () => {
 
       knoraApiConnection.v2.search
         .doExtendedSearchCountQuery(gravsearchQuery, 'http://rdfh.ch/projects/0001')
-        .subscribe((response: CountQueryResponse) => {
+        .subscribe((_response: CountQueryResponse) => {
           const request = ajaxMock.getLastRequest();
 
           expect(request?.url).toBe(
@@ -515,7 +515,7 @@ describe('SearchEndpoint', () => {
       ajaxMock.setMockError({}, 400);
 
       knoraApiConnection.v2.search.doExtendedSearchCountQuery(gravsearchQuery).subscribe(
-        (response: CountQueryResponse) => {},
+        (_response: CountQueryResponse) => {},
         (err: ApiResponseError) => {
           expect(err instanceof ApiResponseError).toBeTruthy();
           expect(err.status).toEqual(400);
@@ -584,7 +584,7 @@ describe('SearchEndpoint', () => {
       ajaxMock.setMockError({}, 400);
 
       knoraApiConnection.v2.search.doSearchByLabel('thing', 0).subscribe(
-        (response: ReadResourceSequence) => {},
+        (_response: ReadResourceSequence) => {},
         (err: ApiResponseError) => {
           expect(err instanceof ApiResponseError).toBeTruthy();
           expect(err.status).toEqual(400);

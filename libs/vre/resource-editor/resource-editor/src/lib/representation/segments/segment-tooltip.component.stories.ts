@@ -4,12 +4,6 @@ import { expect } from 'storybook/test';
 import { SegmentTooltipComponent } from './segment-tooltip.component';
 import { SegmentsService } from './segments.service';
 
-const makeSegment = () => ({
-  id: 'http://rdfh.ch/segment/1',
-  label: 'Intro',
-  hasSegmentBounds: { start: 0, end: 30 },
-});
-
 const meta: Meta<SegmentTooltipComponent> = {
   title: 'Resource Editor / 3. Representation / Segments / Segment Tooltip',
   component: SegmentTooltipComponent,

@@ -15,7 +15,7 @@ export class IIIFUrl {
   static createUrl(url: string): IIIFUrl | null {
     try {
       return new IIIFUrl(url);
-    } catch (error) {
+    } catch {
       return null;
     }
   }

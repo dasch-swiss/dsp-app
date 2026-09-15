@@ -31,7 +31,7 @@ export class UserCache extends GenericCache<UserResponse> {
     return this.reloadItem(key);
   }
 
-  protected requestItemFromKnora(key: string, isDependency: boolean) {
+  protected requestItemFromKnora(key: string, _isDependency: boolean) {
     return this.knoraApiConnection.admin.usersEndpoint.getUser('iri', key).pipe(
       map((response: ApiResponseData<UserResponse>) => {
         return [response.body];
@@ -43,7 +43,7 @@ export class UserCache extends GenericCache<UserResponse> {
     return item.user.id;
   }
 
-  protected getDependenciesOfItem(item: UserResponse): string[] {
+  protected getDependenciesOfItem(_item: UserResponse): string[] {
     return [];
   }
 }

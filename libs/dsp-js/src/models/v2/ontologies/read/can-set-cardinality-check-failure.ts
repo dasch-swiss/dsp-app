@@ -39,7 +39,7 @@ class CheckFailedConverter implements JsonCustomConvert<ResourceClass[] | Resour
     );
   }
 
-  serialize(obj: ResourceClass[]): any {}
+  serialize(_obj: ResourceClass[]): any {}
 }
 
 /**
