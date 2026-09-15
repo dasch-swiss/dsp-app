@@ -93,7 +93,7 @@ export class EditResourceClassDialogComponent implements OnInit {
     this._oes
       .updateResourceClass$({ id: this.data.data.id, labels, comments } as UpdateResourceClassData)
       .pipe(take(1))
-      .subscribe(res => {
+      .subscribe(_res => {
         this.loading = false;
         this.dialogRef.close();
       });

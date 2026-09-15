@@ -18,6 +18,7 @@ import {
   dspApiConnectionStub,
   resourceFetcherServiceStub,
 } from '../../resource-stories.helper';
+import { STORY_AUDIO_URL } from '../../stories.helpers';
 import { ResourceAudioComponent } from './resource-audio.component';
 
 const makeResource = (permission = 'CR'): DspResource => {
@@ -35,7 +36,7 @@ const makeResource = (permission = 'CR'): DspResource => {
       {
         type: Constants.AudioFileValue,
         id: 'http://rdfh.ch/value/audio-1',
-        fileUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+        fileUrl: STORY_AUDIO_URL,
         filename: 'audio.mp3',
         userHasPermission: 'RV',
       } as unknown as ReadAudioFileValue,

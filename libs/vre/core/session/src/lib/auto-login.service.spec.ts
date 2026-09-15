@@ -106,12 +106,29 @@ describe('AutoLoginService', () => {
     it('should remove tokens and set hasCheckedCredentials$ when token is invalid', () => {
       mockAccessTokenService.tokenExists = jest.fn().mockReturnValue(true);
       mockAccessTokenService.isValidToken = jest.fn().mockReturnValue(false);
+      // Seed the in-memory token the way `apiConnectionTokenProvider` does at startup, so this
+      // asserts the branch CLEARS it rather than that the mock happened to start empty (DEV-7249).
+      mockDspApiConnection.v2!.jsonWebToken = TEST_CONSTANTS.JWT_TOKEN;
 
       service.setup();
 
       expect(mockAccessTokenService.isValidToken).toHaveBeenCalled();
       expect(mockAccessTokenService.removeToken).toHaveBeenCalled();
       expect(service.hasCheckedCredentials$.value).toBe(true);
+      expect(mockDspApiConnection.v2!.jsonWebToken).toBe('');
+    });
+
+    it('clears the in-memory dsp-js token so it cannot outlive the one removed from storage', () => {
+      // DEV-7249: `removeToken()` only empties localStorage, which `authInterceptorFn` reads per
+      // request. dsp-js sends the separate in-memory copy on the shared KnoraApiConfig. Leaving it
+      // set made dsp-js keep sending `Authorization: Bearer <expired>` for the rest of the page
+      // lifetime while HttpClient correctly sent nothing.
+      mockAccessTokenService.tokenExists = jest.fn().mockReturnValue(true);
+      mockAccessTokenService.isValidToken = jest.fn().mockReturnValue(false);
+      mockDspApiConnection.v2!.jsonWebToken = 'expired-jwt';
+
+      service.setup();
+
       expect(mockDspApiConnection.v2!.jsonWebToken).toBe('');
     });
 

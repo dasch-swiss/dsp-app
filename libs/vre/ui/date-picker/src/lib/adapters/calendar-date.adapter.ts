@@ -232,7 +232,7 @@ export class CalendarDateAdapter extends DateAdapter<CalendarDate> {
    * Note: Outputs 1-based months in the string (e.g., "2024-01-15" for January)
    * matching CalendarDate's internal 1-based month representation.
    */
-  override format(date: CalendarDate, displayFormat: object): string {
+  override format(date: CalendarDate, _displayFormat: object): string {
     if (!date) return '';
     // Simple format: YYYY-MM-DD
     const year = date.year;

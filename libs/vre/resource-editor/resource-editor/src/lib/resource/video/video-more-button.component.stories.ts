@@ -4,11 +4,11 @@ import { expect } from 'storybook/test';
 
 import { RepresentationService } from '../../representation/representation.service';
 import { ResourceFetcherService } from '../../representation/resource-fetcher.service';
-import { makeResourceFetcherServiceStub, notificationServiceStub } from '../../stories.helpers';
+import { STORY_VIDEO_URL, makeResourceFetcherServiceStub, notificationServiceStub } from '../../stories.helpers';
 import { VideoMoreButtonComponent } from './video-more-button.component';
 
 const makeSrc = () => ({
-  fileUrl: 'https://example.org/video.mp4',
+  fileUrl: STORY_VIDEO_URL,
   userHasPermission: 'RV',
   filename: 'video.mp4',
 });

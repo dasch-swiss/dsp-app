@@ -59,7 +59,6 @@ export const SingleRow: Story = {
     segments: [makeSegment('Intro', 0, 10, 0), makeSegment('Main', 15, 40, 0), makeSegment('Outro', 45, 60, 0)],
   },
   play: async ({ canvasElement, step }) => {
-    const canvas = within(canvasElement);
     await step('Three segment bars are rendered', async () => {
       const segments = canvasElement.querySelectorAll('.segment');
       await expect(segments.length).toBe(3);

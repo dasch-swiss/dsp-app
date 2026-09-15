@@ -5,7 +5,7 @@ import { JsonConverter, JsonCustomConvert } from 'json2typescript';
  */
 @JsonConverter
 export class GuiAttributeConverter implements JsonCustomConvert<string[]> {
-  serialize(attrs: string[]): any {}
+  serialize(_attrs: string[]): any {}
 
   deserialize(attrs: any): string[] {
     let guiAttributes: string[];

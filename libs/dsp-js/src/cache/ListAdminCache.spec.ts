@@ -28,9 +28,11 @@ describe('ListCache', () => {
   const listResp = jsonConvert.deserializeObject(list, ListResponse);
 
   beforeEach(() => {
-    getListSpy = jest.spyOn(knoraApiConnection.admin.listsEndpoint, 'getList').mockImplementation((listIri: string) => {
-      return of({ body: listResp } as ApiResponseData<ListResponse> | ApiResponseData<ListChildNodeResponse>);
-    });
+    getListSpy = jest
+      .spyOn(knoraApiConnection.admin.listsEndpoint, 'getList')
+      .mockImplementation((_listIri: string) => {
+        return of({ body: listResp } as ApiResponseData<ListResponse> | ApiResponseData<ListChildNodeResponse>);
+      });
 
     listCache = new ListAdminCache(knoraApiConnection.admin);
   });
@@ -67,15 +69,15 @@ describe('ListCache', () => {
     });
 
     it('should get the same full list from the cache several times asynchronously', () => {
-      listCache['getItem']('http://rdfh.ch/lists/0001/treeList').subscribe((res: ListResponse) => {
+      listCache['getItem']('http://rdfh.ch/lists/0001/treeList').subscribe((_res: ListResponse) => {
         expect(getListSpy).toHaveBeenCalledTimes(1);
       });
 
-      listCache['getItem']('http://rdfh.ch/lists/0001/treeList').subscribe((res: ListResponse) => {
+      listCache['getItem']('http://rdfh.ch/lists/0001/treeList').subscribe((_res: ListResponse) => {
         expect(getListSpy).toHaveBeenCalledTimes(1);
       });
 
-      listCache['getItem']('http://rdfh.ch/lists/0001/treeList').subscribe((res: ListResponse) => {
+      listCache['getItem']('http://rdfh.ch/lists/0001/treeList').subscribe((_res: ListResponse) => {
         expect(getListSpy).toHaveBeenCalledTimes(1);
       });
 

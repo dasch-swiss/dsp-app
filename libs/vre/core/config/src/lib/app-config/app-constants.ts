@@ -17,21 +17,15 @@ export class RouteConstants {
   static readonly home = '';
   static readonly help = 'help';
   static readonly userAccount = 'account';
-  static readonly systemAdmin = 'system';
   static readonly settings = 'settings';
   static readonly refresh = 'refresh';
-  static readonly users = 'users';
-  static readonly logout = 'logout';
 
   static readonly projects = 'projects';
   static readonly project = 'project';
   static readonly createNew = 'create-new';
   static readonly collaboration = 'collaboration';
-  static readonly ontologies = 'ontologies';
-  static readonly lists = 'lists';
   static readonly edit = 'edit';
   static readonly resourceMetadata = 'resource-metadata';
-  static readonly addOntology = 'add-ontology';
   static readonly ontology = 'ontology';
   static readonly dataModels = 'data-models';
   static readonly imageSettings = 'image-settings';
@@ -44,7 +38,6 @@ export class RouteConstants {
 
   static readonly projectDescription = 'description';
   static readonly advancedSearch = 'advanced-search';
-  static readonly gravSearch = 'gravsearch';
   static readonly search = 'search';
   static readonly system = 'system';
   static readonly systemProjects = 'projects';
@@ -53,7 +46,6 @@ export class RouteConstants {
   static readonly editor = 'editor';
 
   static readonly list = 'list';
-  static readonly addClassInstance = 'add';
 
   static readonly cookiePolicy = 'cookie-policy';
   static readonly notFound = '404';
@@ -63,46 +55,33 @@ export class RouteConstants {
 
   static readonly uuidParameter = 'uuid';
   static readonly ontoParameter = 'onto';
+  // Composed into `projectResourceRelative` below — it has no direct consumer of its own, so a
+  // repo-wide search for `RouteConstants.projectParameter` finds nothing. Do not remove without
+  // checking the `*Relative` members in this file (DEV-7253).
   static readonly projectParameter = 'project';
+  // Composed into `projectResourceRelative` below — see the note on `projectParameter`.
   static readonly resourceParameter = 'resource';
-  static readonly modeParameter = 'mode';
   static readonly qParameter = 'q';
   static readonly ontologyParameter = 'ontology';
   static readonly classParameter = 'class';
-  static readonly instanceParameter = 'instance';
   static readonly listParameter = 'list';
   static readonly classes = 'classes';
   static readonly properties = 'properties';
   static readonly assignCurrentUser = 'assign-current-user';
 
-  static readonly homeRelative = `/${RouteConstants.home}`;
-  static readonly userAccountRelative = `/${RouteConstants.userAccount}`;
   static readonly refreshRelative = `/${RouteConstants.refresh}`;
 
-  static readonly projectsRelative = `/${RouteConstants.projects}`;
   static readonly projectRelative = `/${RouteConstants.project}`;
-  static readonly projectEditRelative = `${RouteConstants.settings}/${RouteConstants.edit}`;
+  // Composed into `ontologyEditorRelative` below — see the note on `projectParameter`.
   static readonly ontologyRelative = `${RouteConstants.ontology}/:${RouteConstants.ontoParameter}`;
   static readonly ontologyEditorRelative = `${RouteConstants.ontologyRelative}/${RouteConstants.editor}`;
   static readonly projectUuidRelative = `${RouteConstants.project}/:${RouteConstants.uuidParameter}`;
   static readonly createNewProjectRelative = `${RouteConstants.createNew}/${RouteConstants.project}`;
   static readonly projectResourceRelative = `${RouteConstants.resource}/:${RouteConstants.projectParameter}/:${RouteConstants.resourceParameter}`;
 
-  static readonly OntologyClassAddRelative = `${RouteConstants.ontology}/:${RouteConstants.ontoParameter}/:${RouteConstants.classParameter}/${RouteConstants.addClassInstance}`;
-  static readonly OntologyClassRelative = `${RouteConstants.ontology}/:${RouteConstants.ontoParameter}/:${RouteConstants.classParameter}`;
-
-  static readonly searchProjectRelative = `:${RouteConstants.modeParameter}/:${RouteConstants.qParameter}/:${RouteConstants.projectParameter}`;
   static readonly searchRelative = `${RouteConstants.search}/:${RouteConstants.qParameter}`;
 
-  static readonly notFoundWildcardRelative = `/${RouteConstants.notFound}`;
-
   static readonly annotationQueryParam = 'annotation';
-
-  static readonly advancedSearchQ = 'q';
-  static readonly advancedSearchOntology = 'ontology';
-  static readonly advancedSearchClass = 'class';
-  static readonly advancedSearchFilters = 'filters';
-  static readonly advancedSearchOrderBy = 'orderBy';
 
   /**
    * Absolute router commands to a project's Legal Settings tab.

@@ -319,10 +319,10 @@ export class DateValueHandlerComponent
   }
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function,@typescript-eslint/no-unused-vars
-  onContainerClick(event: MouseEvent): void {}
+  onContainerClick(_event: MouseEvent): void {}
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function,@typescript-eslint/no-unused-vars
-  setDescribedByIds(ids: string[]): void {}
+  setDescribedByIds(_ids: string[]): void {}
 
   /* eslint-enable @typescript-eslint/no-unused-vars */
   handlePickerClose() {

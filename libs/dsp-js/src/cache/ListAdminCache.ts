@@ -31,7 +31,7 @@ export class ListAdminCache extends GenericCache<ListResponse> {
     return this.reloadItem(key);
   }
 
-  protected requestItemFromKnora(key: string, isDependency: boolean) {
+  protected requestItemFromKnora(key: string, _isDependency: boolean) {
     return this.adminEndpoint.listsEndpoint.getList(key).pipe(
       map((response: ApiResponseData<ListResponse>) => {
         return [response.body];
@@ -43,7 +43,7 @@ export class ListAdminCache extends GenericCache<ListResponse> {
     return item.list.listinfo.id;
   }
 
-  protected getDependenciesOfItem(item: ListResponse): string[] {
+  protected getDependenciesOfItem(_item: ListResponse): string[] {
     return [];
   }
 }

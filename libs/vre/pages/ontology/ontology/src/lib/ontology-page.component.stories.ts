@@ -61,7 +61,6 @@ export const DefaultView: Story = {
   name: 'Renders ontology editor layout with header and sidenav',
   decorators: [applicationConfig({ providers: sharedProviders })],
   play: async ({ canvasElement, step }) => {
-    const canvas = within(canvasElement);
     await step('Ontology page container renders', async () => {
       await expect(canvasElement).toBeInTheDocument();
     });

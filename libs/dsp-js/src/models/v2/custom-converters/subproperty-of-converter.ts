@@ -6,7 +6,7 @@ import { CustomConverterUtils } from '../../../util/utils';
  */
 @JsonConverter
 export class SubPropertyOfConverter implements JsonCustomConvert<string[]> {
-  serialize(subproperties: string[]): any {}
+  serialize(_subproperties: string[]): any {}
 
   deserialize(items: any): string[] {
     const subPropOf: string[] = [];

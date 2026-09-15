@@ -26,14 +26,6 @@ describe('DocumentComponent', () => {
     strval: 'test-document.pdf',
   } as ReadDocumentFileValue;
 
-  const mockNonPdfFileValue: ReadDocumentFileValue = {
-    id: 'http://rdf.dasch.swiss/0001/test-file',
-    type: Constants.HasDocumentFileValue,
-    filename: 'test-document.docx',
-    fileUrl: 'http://example.com/test-document.docx',
-    strval: 'test-document.docx',
-  } as ReadDocumentFileValue;
-
   const mockParentResource: ReadResource = {
     id: 'http://rdf.dasch.swiss/0001/test-resource',
     type: 'http://www.knora.org/ontology/knora-api/v2#Resource',

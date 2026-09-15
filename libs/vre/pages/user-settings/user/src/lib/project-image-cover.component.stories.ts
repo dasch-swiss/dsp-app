@@ -35,7 +35,6 @@ export const FallbackText: Story = {
     project: { shortcode: 'XXXX', shortname: 'myproj' },
   },
   play: async ({ canvasElement, step }) => {
-    const canvas = within(canvasElement);
     await step('Component renders', async () => {
       await expect(canvasElement).toBeInTheDocument();
     });

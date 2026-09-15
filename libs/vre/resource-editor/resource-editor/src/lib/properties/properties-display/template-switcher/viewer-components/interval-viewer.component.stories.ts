@@ -24,7 +24,6 @@ export const DefaultView: Story = {
   },
   play: async ({ canvasElement, step }) => {
     await step('Interval text is rendered', async () => {
-      const canvas = within(canvasElement);
       const text = canvasElement.textContent ?? '';
       await expect(text).toContain('1:05');
       await expect(text).toContain('2:10');

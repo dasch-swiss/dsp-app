@@ -37,7 +37,6 @@ export const WithOntologies: Story = {
   name: 'Renders list of project ontologies',
   decorators: [applicationConfig({ providers: sharedProviders })],
   play: async ({ canvasElement, step }) => {
-    const canvas = within(canvasElement);
     await step('Page renders without error', async () => {
       await expect(canvasElement).toBeInTheDocument();
     });
@@ -58,7 +57,6 @@ export const EmptyProject: Story = {
     }),
   ],
   play: async ({ canvasElement, step }) => {
-    const canvas = within(canvasElement);
     await step('Page renders without error', async () => {
       await expect(canvasElement).toBeInTheDocument();
     });

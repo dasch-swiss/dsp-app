@@ -7,7 +7,7 @@ import { expect } from 'storybook/test';
 
 import { RepresentationService } from '../../representation/representation.service';
 import { ResourceFetcherService } from '../../representation/resource-fetcher.service';
-import { makeResourceFetcherServiceStub, notificationServiceStub } from '../../stories.helpers';
+import { STORY_IMAGE_URL, makeResourceFetcherServiceStub, notificationServiceStub } from '../../stories.helpers';
 import { OpenSeaDragonService } from './open-sea-dragon.service';
 import { StillImageToolbarComponent } from './still-image-toolbar.component';
 
@@ -20,7 +20,7 @@ const makeResource = () =>
       [Constants.HasStillImageFileValue]: [
         {
           type: Constants.StillImageFileValue,
-          fileUrl: 'https://example.org/image.jpx',
+          fileUrl: STORY_IMAGE_URL,
           arkUrl: 'http://ark.dasch.swiss/ark:/72163/1/1',
           userHasPermission: 'RV',
         } as unknown as ReadStillImageFileValue,

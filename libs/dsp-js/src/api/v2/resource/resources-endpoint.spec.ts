@@ -128,7 +128,7 @@ describe('ResourcesEndpoint', () => {
       ajaxMock.setMockError({}, 404);
 
       knoraApiConnection.v2.res.getResource('http://rdfh.ch/0001/H6gBWUuJSuuO-CilHV8kQw').subscribe(
-        (response: ReadResource) => {},
+        (_response: ReadResource) => {},
         (err: ApiResponseError) => {
           expect(err instanceof ApiResponseError).toBeTruthy();
           expect(err.status).toEqual(404);
@@ -174,7 +174,7 @@ describe('ResourcesEndpoint', () => {
       knoraApiConnection.v2.res
         .getResources(['http://rdfh.ch/0001/H6gBWUuJSuuO-CilHV8kQw', 'http://rdfh.ch/0001/uqmMo72OQ2K2xe7mkIytlg'])
         .subscribe(
-          (response: ReadResourceSequence) => {},
+          (_response: ReadResourceSequence) => {},
           (err: ApiResponseError) => {
             expect(err instanceof ApiResponseError).toBeTruthy();
             expect(err.status).toEqual(404);
@@ -309,7 +309,7 @@ describe('ResourcesEndpoint', () => {
       ajaxMock.setMockError({}, 400);
 
       knoraApiConnection.v2.res.createResource(createResource).subscribe(
-        (res: ReadResource) => {},
+        (_res: ReadResource) => {},
         (err: ApiResponseError) => {
           expect(err instanceof ApiResponseError).toBeTruthy();
           expect(err.status).toEqual(400);
@@ -483,7 +483,7 @@ describe('ResourcesEndpoint', () => {
       ajaxMock.setMockError({}, 400);
 
       knoraApiConnection.v2.res.updateResourceMetadata(updateResourceMetadata).subscribe(
-        (res: UpdateResourceMetadataResponse) => {},
+        (_res: UpdateResourceMetadataResponse) => {},
         (err: ApiResponseError) => {
           expect(err instanceof ApiResponseError).toBeTruthy();
           expect(err.status).toEqual(400);
@@ -608,7 +608,7 @@ describe('ResourcesEndpoint', () => {
       ajaxMock.setMockError({}, 400);
 
       knoraApiConnection.v2.res.deleteResource(deleteResource).subscribe(
-        (res: DeleteResourceResponse) => {},
+        (_res: DeleteResourceResponse) => {},
         (err: ApiResponseError) => {
           expect(err instanceof ApiResponseError).toBeTruthy();
           expect(err.status).toEqual(400);

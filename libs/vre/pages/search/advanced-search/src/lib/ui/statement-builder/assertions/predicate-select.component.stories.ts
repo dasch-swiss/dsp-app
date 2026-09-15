@@ -54,7 +54,6 @@ export const WithClassFilter: Story = {
   },
   decorators: [applicationConfig({ providers: sharedProviders })],
   play: async ({ canvasElement, step }) => {
-    const canvas = within(canvasElement);
     await step('Property label reflects selected class', async () => {
       await expect(canvasElement.querySelector('mat-label')).not.toBeNull();
     });

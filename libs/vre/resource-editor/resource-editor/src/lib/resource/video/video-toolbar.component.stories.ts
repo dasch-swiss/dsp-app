@@ -9,6 +9,7 @@ import { FileRepresentationInput, ParentResourceInput } from '../../representati
 import { RepresentationService } from '../../representation/representation.service';
 import { ResourceFetcherService } from '../../representation/resource-fetcher.service';
 import {
+  STORY_VIDEO_URL,
   makeResourceFetcherServiceStub,
   notificationServiceStub,
   representationServiceStub,
@@ -17,7 +18,7 @@ import { MediaPlayerService } from './media-player.service';
 import { VideoToolbarComponent } from './video-toolbar.component';
 
 const makeSrc = (): FileRepresentationInput => ({
-  fileUrl: 'https://example.org/video.mp4',
+  fileUrl: STORY_VIDEO_URL,
   userHasPermission: 'RV',
   filename: 'video.mp4',
 });
@@ -96,7 +97,6 @@ export const DefaultView: Story = {
     fileInfo: makeFileInfo(),
   },
   play: async ({ canvasElement, step }) => {
-    const canvas = within(canvasElement);
     await step('Play button shows play_arrow icon when paused', async () => {
       const playButton = canvasElement.querySelector('[data-cy="play-pause-button"] mat-icon');
       await expect(playButton?.textContent?.trim()).toBe('play_arrow');

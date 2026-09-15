@@ -10,6 +10,7 @@ import { RepresentationService } from '../../representation/representation.servi
 import { ResourceFetcherService } from '../../representation/resource-fetcher.service';
 import { SegmentsService } from '../../representation/segments/segments.service';
 import {
+  STORY_AUDIO_URL,
   makeResourceFetcherServiceStub,
   makeSegment,
   makeSegmentsServiceStub,
@@ -18,15 +19,13 @@ import {
 } from '../../stories.helpers';
 import { AudioComponent } from './audio.component';
 
-const PUBLIC_AUDIO_URL = 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3';
-
-const makeSrc = (fileUrl = PUBLIC_AUDIO_URL): FileRepresentationInput => ({
+const makeSrc = (fileUrl = STORY_AUDIO_URL): FileRepresentationInput => ({
   fileUrl,
   userHasPermission: 'RV',
   filename: 'audio.mp3',
 });
 
-const makeParentResource = (fileUrl = PUBLIC_AUDIO_URL): ParentResourceInput => ({
+const makeParentResource = (fileUrl = STORY_AUDIO_URL): ParentResourceInput => ({
   id: 'http://rdfh.ch/resource/1',
   properties: {
     [Constants.HasAudioFileValue]: [{ fileUrl, userHasPermission: 'RV' } as any],
@@ -103,7 +102,7 @@ export const WithAnnotations: Story = {
 export const Loading: Story = {
   name: 'Shows audio icon while player is loading',
   args: {
-    src: makeSrc('https://example.org/audio.mp3'),
+    src: makeSrc(STORY_AUDIO_URL),
     parentResource: makeParentResource(),
   },
   play: async ({ canvasElement, step }) => {
