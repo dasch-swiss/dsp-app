@@ -41,7 +41,7 @@ describe('Test class Endpoint', () => {
     ajaxMock.setMockError({ msg: 'Not Found' }, 404);
 
     endpoint['httpGet']().subscribe(
-      response => {},
+      _response => {},
       err => {
         expect(err.status).toEqual(404);
 
@@ -144,7 +144,7 @@ describe('Test class Endpoint', () => {
     ajaxMock.setMockError({ msg: 'Not Found' }, 404);
 
     endpoint['httpPost']('', { mydata: 'data' }).subscribe(
-      response => {},
+      _response => {},
       err => {
         expect(err.status).toEqual(404);
 
@@ -297,7 +297,7 @@ describe('Test class Endpoint', () => {
     ajaxMock.setMockError({ msg: 'Not Found' }, 404);
 
     endpoint['httpPut']('', { mydata: 'data' }).subscribe(
-      response => {},
+      _response => {},
       err => {
         expect(err.status).toEqual(404);
 
@@ -408,7 +408,7 @@ describe('Test class Endpoint', () => {
     ajaxMock.setMockError({ msg: 'Not Found' }, 404);
 
     endpoint['httpDelete']().subscribe(
-      response => {},
+      _response => {},
       err => {
         expect(err.status).toEqual(404);
 

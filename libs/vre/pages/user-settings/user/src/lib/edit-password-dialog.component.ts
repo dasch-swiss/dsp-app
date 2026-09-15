@@ -113,7 +113,7 @@ export class EditPasswordDialogComponent {
         () => {
           this.stepper.next();
         },
-        e => {
+        _e => {
           this.adminPasswordControl.setErrors({ incorrect: true });
         }
       );

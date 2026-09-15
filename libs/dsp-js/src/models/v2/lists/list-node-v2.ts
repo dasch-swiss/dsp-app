@@ -27,7 +27,7 @@ export class SubListNodeConverter implements JsonCustomConvert<ListNodeV2[]> {
     PropertyMatchingRule.CASE_STRICT
   );
 
-  serialize(subclasses: ListNodeV2[]): any {}
+  serialize(_subclasses: ListNodeV2[]): any {}
 
   deserialize(subnodes: any): ListNodeV2[] {
     let children: object[];
@@ -54,7 +54,7 @@ export class SubListNodeWithAllLanguagesConverter implements JsonCustomConvert<L
     PropertyMatchingRule.CASE_STRICT
   );
 
-  serialize(subclasses: ListNodeV2WithAllLanguages[]): any {}
+  serialize(_subclasses: ListNodeV2WithAllLanguages[]): any {}
 
   deserialize(subnodes: any): ListNodeV2WithAllLanguages[] {
     let children: object[];

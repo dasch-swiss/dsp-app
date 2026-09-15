@@ -50,7 +50,7 @@ export class DynamicFormsDataService {
               }) as IriLabelPair
           )
         ),
-        catchError(err => {
+        catchError(_err => {
           return of([]); // return an empty array on error wrapped in an observable
         })
       );
@@ -58,7 +58,7 @@ export class DynamicFormsDataService {
 
   getListWithAllLanguages$(rootNodeIri: string): Observable<ListNodeV2WithAllLanguages | undefined> {
     return this._dspApiConnection.v2.list.getListWithAllLanguages(rootNodeIri).pipe(
-      catchError(err => {
+      catchError(_err => {
         return of(undefined);
       })
     );

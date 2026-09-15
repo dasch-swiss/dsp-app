@@ -334,8 +334,8 @@ describe('OntologyCache', () => {
     describe('Method getItem()', () => {
       it('should attempt get an ontology with dependencies from the cache', done => {
         knoraApiConnection.v2.ontologyCache.getOntology('http://api.knora.org/ontology/knora-api/v2').subscribe(
-          ontos => {},
-          (err: ApiResponseError) => {
+          _ontos => {},
+          (_err: ApiResponseError) => {
             expect(getOntoSpy).toHaveBeenCalledTimes(1);
             expect(getOntoSpy).toHaveBeenCalledWith('http://api.knora.org/ontology/knora-api/v2', true);
 

@@ -206,6 +206,8 @@ jobs:
         run: npx cypress install
       - name: Generate OpenAPI client
         run: npm run generate-openapi-module
+      - name: Type-check e2e specs
+        run: npx tsc --noEmit -p apps/dsp-app/cypress/tsconfig.json
       - name: Start app (background)
         run: npx nx run dsp-app:serve:production &
         env:

@@ -158,13 +158,8 @@ export const routes: Routes = [
         component: UserComponent,
         children: [
           { path: RouteConstants.userAccount, component: AccountComponent },
-          { path: RouteConstants.projects, component: ProjectsComponent },
+          { path: RouteConstants.projects, component: ProjectsComponent, data: { isUsersProjects: true } },
         ],
-        canActivate: [AuthGuard],
-      },
-      {
-        path: RouteConstants.projects,
-        component: UserComponent,
         canActivate: [AuthGuard],
       },
       {

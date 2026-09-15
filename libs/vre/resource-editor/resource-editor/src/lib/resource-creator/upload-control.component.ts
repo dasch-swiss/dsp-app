@@ -45,7 +45,7 @@ export class UploadControlComponent implements ControlValueAccessor {
     ngControl.valueAccessor = this;
   }
 
-  writeValue(value: null): void {}
+  writeValue(_value: null): void {}
 
   registerOnChange(fn: any): void {
     this.onChange = fn;

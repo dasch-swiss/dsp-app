@@ -155,7 +155,7 @@ export class OntologyCache extends GenericCache<ReadOntology> {
     return this.reloadItem(key);
   }
 
-  protected requestItemFromKnora(key: string, isDependency: boolean) {
+  protected requestItemFromKnora(key: string, _isDependency: boolean) {
     // Cache all-language label/comment arrays so consumers can re-render and re-sort
     // on UI language change without re-fetching the ontology. Trade-off: cached
     // ReadOntology instances are larger (one string per supported language instead

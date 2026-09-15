@@ -15,7 +15,7 @@ This monorepo is built on:
 
 ## Quick Start
 
-Use the NodeJs version supported by the installed Angular version ([compatibility table](https://angular.dev/reference/versions)), or the version pinned in [.nvmrc](.nvmrc).
+Activate the Node.js version pinned in [.nvmrc](.nvmrc) — for example `nvm use`, `fnm use`, or `n auto` — before running `npm install`.
 
 ```shell
 npm install
