@@ -18,6 +18,7 @@ import {
   makeTextValue,
   resourceFetcherServiceStub,
 } from '../../resource-stories.helper';
+import { STORY_IIIF_BASE_URL, STORY_IMAGE_URL } from '../../stories.helpers';
 import { OpenSeaDragonService } from '../still-image/open-sea-dragon.service';
 import { OsdDrawerService } from '../still-image/osd-drawer.service';
 import { ResourceAnnotationComponent } from './resource-annotation.component';
@@ -35,8 +36,8 @@ const makeImageResource = (): ReadResource =>
         {
           type: Constants.StillImageFileValue,
           id: 'http://rdfh.ch/value/image-1',
-          fileUrl: 'https://iiif.dev.dasch.swiss/0803/1awyJYmiA5Z-FQ9xDcEh2Hi.jp2/full/1333,1815/0/default.jpg',
-          iiifBaseUrl: 'https://iiif.dev.dasch.swiss/0803',
+          fileUrl: STORY_IMAGE_URL,
+          iiifBaseUrl: STORY_IIIF_BASE_URL,
           filename: '1awyJYmiA5Z-FQ9xDcEh2Hi.jp2',
           dimX: 1333,
           dimY: 1815,

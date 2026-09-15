@@ -4,6 +4,7 @@ import { expect } from 'storybook/test';
 
 import { RepresentationService } from '../../representation/representation.service';
 import { ResourceFetcherService } from '../../representation/resource-fetcher.service';
+import { STORY_AUDIO_URL } from '../../stories.helpers';
 import { AudioMoreButtonComponent } from './audio-more-button.component';
 
 const makeParentResource = () => ({
@@ -12,10 +13,10 @@ const makeParentResource = () => ({
   attachedToProject: 'http://rdfh.ch/projects/test',
   properties: {
     'http://api.knora.org/ontology/knora-api/v2#hasAudioFileValue': [
-      { fileUrl: 'https://example.org/audio.mp3', userHasPermission: 'RV' },
+      { fileUrl: STORY_AUDIO_URL, userHasPermission: 'RV' },
     ],
   },
-  getValues: () => [{ fileUrl: 'https://example.org/audio.mp3', userHasPermission: 'RV' }],
+  getValues: () => [{ fileUrl: STORY_AUDIO_URL, userHasPermission: 'RV' }],
 });
 
 const meta: Meta<AudioMoreButtonComponent> = {

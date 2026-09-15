@@ -18,6 +18,7 @@ import {
   dspApiConnectionStub,
   resourceFetcherServiceStub,
 } from '../../resource-stories.helper';
+import { STORY_VIDEO_URL } from '../../stories.helpers';
 import { ResourceVideoComponent } from './resource-video.component';
 
 const makeResource = (permission = 'CR'): DspResource => {
@@ -35,7 +36,7 @@ const makeResource = (permission = 'CR'): DspResource => {
       {
         type: Constants.MovingImageFileValue,
         id: 'http://rdfh.ch/value/video-1',
-        fileUrl: 'https://iiif.stage.dasch.swiss:443/0869/3xUzuLcE9nC-MjBgXRjjsos.mp4/file',
+        fileUrl: STORY_VIDEO_URL,
         filename: 'video.mp4',
         userHasPermission: 'RV',
       } as unknown as ReadMovingImageFileValue,

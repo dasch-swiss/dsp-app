@@ -1,0 +1,115 @@
+version: v0.13.0
+
+dsn: memory
+
+serve:
+  public:
+    base_url: https://auth.${PIXELEYE_HOST_BASE}/
+    cors:
+      enabled: true
+  admin:
+    base_url: http://kratos:4434/
+
+selfservice:
+  default_browser_return_url: https://${PIXELEYE_HOST_BASE}/
+  allowed_return_urls:
+    - https://${PIXELEYE_HOST_BASE}
+
+  methods:
+    password:
+      enabled: true
+    # oidc:
+    #   config:
+    #     providers:
+    #       - client_id: CHANGE_ME
+    #         client_secret: CHANGE_ME
+    #         id: github
+    #         label: github
+    #         mapper_url: file:///etc/config/kratos/github.jsonnet
+    #         provider: github-app
+    #         scope: []
+    #   enabled: true
+
+  flows:
+    error:
+      ui_url: https://${PIXELEYE_HOST_BASE}/auth-error
+
+    settings:
+      ui_url: https://${PIXELEYE_HOST_BASE}/settings/account
+      privileged_session_max_age: 15m
+      required_aal: highest_available
+
+    recovery:
+      enabled: true
+      ui_url: https://${PIXELEYE_HOST_BASE}/recovery
+      use: code
+
+    verification:
+      enabled: true
+      ui_url: https://${PIXELEYE_HOST_BASE}/verification
+      use: code
+      after:
+        default_browser_return_url: https://${PIXELEYE_HOST_BASE}/dashboard
+
+    logout:
+      after:
+        default_browser_return_url: https://${PIXELEYE_HOST_BASE}/login
+
+    login:
+      ui_url: https://${PIXELEYE_HOST_BASE}/login
+      lifespan: 10m
+      after:
+        default_browser_return_url: https://${PIXELEYE_HOST_BASE}/dashboard
+
+    registration:
+      lifespan: 10m
+      ui_url: https://${PIXELEYE_HOST_BASE}/registration
+      after:
+        password:
+          hooks:
+            - hook: session
+            - hook: show_verification_ui
+        oidc:
+          hooks:
+            - hook: show_verification_ui
+            - hook: session
+
+log:
+  level: info
+  format: text
+  leak_sensitive_values: false
+
+secrets:
+  cookie:
+    - ${KRATOS_COOKIE_SECRET}
+  cipher:
+    - ${KRATOS_CIPHER_SECRET}
+
+ciphers:
+  algorithm: xchacha20-poly1305
+
+hashers:
+  algorithm: bcrypt
+  bcrypt:
+    cost: 8
+
+identity:
+  default_schema_id: default
+  schemas:
+    - id: default
+      url: file:///etc/config/kratos/identity.schema.json
+
+courier:
+  smtp:
+    connection_uri: smtps://test:test@mailslurper:1025/?skip_ssl_verify=true
+
+# Frontend and Kratos live on different subdomains, so the session cookie must
+# be scoped to the shared parent domain or the dashboard never sees the session.
+cookies:
+  domain: ${PIXELEYE_HOST_BASE}
+  same_site: Lax
+
+session:
+  cookie:
+    domain: ${PIXELEYE_HOST_BASE}
+    same_site: Lax

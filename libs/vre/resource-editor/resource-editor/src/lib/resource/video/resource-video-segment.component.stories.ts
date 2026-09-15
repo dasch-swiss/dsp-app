@@ -27,6 +27,7 @@ import {
   makeTextValue,
   resourceFetcherServiceStub,
 } from '../../resource-stories.helper';
+import { STORY_VIDEO_URL } from '../../stories.helpers';
 import { ResourceVideoSegmentComponent } from './resource-video-segment.component';
 
 const VIDEO_IRI = 'http://rdfh.ch/resource/video-1';
@@ -44,7 +45,7 @@ const makeVideoResource = (): ReadResource =>
         {
           type: Constants.MovingImageFileValue,
           id: 'http://rdfh.ch/value/video-1',
-          fileUrl: 'https://iiif.stage.dasch.swiss:443/0869/3xUzuLcE9nC-MjBgXRjjsos.mp4/file',
+          fileUrl: STORY_VIDEO_URL,
           filename: 'video.mp4',
           userHasPermission: 'CR',
         } as unknown as ReadMovingImageFileValue,
