@@ -63,6 +63,49 @@ describe('GregorianCalendar', () => {
     });
   });
 
+  describe('toJDN/fromJDN round trip (DEV-7264)', () => {
+    // The two functions must agree about which calendar a JDN represents. `toJDN` encodes dates
+    // before 15 Oct 1582 with the Julian rule; `fromJDN` applied the Gregorian correction
+    // unconditionally, so the pair was not invertible and the day drifted by up to 10.
+    const CASES: Array<[string, number, number, number]> = [
+      ['moon landing', 1969, 7, 20],
+      ['first Gregorian day', 1582, 10, 15],
+      ['last Julian day', 1582, 10, 4],
+      ['Columbus reaches America', 1492, 10, 12],
+      ['Magna Carta', 1215, 6, 15],
+      ['Charlemagne crowned', 800, 12, 25],
+      ['Ides of March, 44 BCE', -43, 3, 15],
+    ];
+
+    it.each(CASES)('round-trips %s', (_label, year, month, day) => {
+      const input = createDate('GREGORIAN', year, month, day);
+      const result = GregorianCalendar.fromJDN(GregorianCalendar.toJDN(input));
+
+      expect(result.year).toBe(year);
+      expect(result.month).toBe(month);
+      expect(result.day).toBe(day);
+    });
+
+    it('round-trips every JDN across the 1582 boundary', () => {
+      // Sweep a window spanning the reform so a regression on either side is caught.
+      const failures: number[] = [];
+      for (let jdn = 2299100; jdn <= 2299220; jdn++) {
+        if (GregorianCalendar.toJDN(GregorianCalendar.fromJDN(jdn)) !== jdn) failures.push(jdn);
+      }
+      expect(failures).toEqual([]);
+    });
+
+    it('maps the ten days the reform skipped forward rather than round-tripping them', () => {
+      // 5-14 October 1582 never existed: 4 Oct was followed directly by 15 Oct. Dates in that gap
+      // are not expected to survive a round trip, and must not be mistaken for a regression.
+      const result = GregorianCalendar.fromJDN(GregorianCalendar.toJDN(createDate('GREGORIAN', 1582, 10, 5)));
+
+      expect(result.year).toBe(1582);
+      expect(result.month).toBe(10);
+      expect(result.day).toBe(15);
+    });
+  });
+
   describe('fromJDN', () => {
     it('should convert JDN 2451545 to January 1, 2000', () => {
       const result = GregorianCalendar.fromJDN(2451545);
@@ -73,8 +116,10 @@ describe('GregorianCalendar', () => {
       expect(result.era).toBe('CE');
     });
 
-    it('should convert JDN 1721426 to January 1, 1 CE', () => {
-      const result = GregorianCalendar.fromJDN(1721426);
+    it('should convert JDN 1721424 to January 1, 1 CE', () => {
+      // 1721424, not 1721426: `toJDN(1 Jan 1 CE)` returns 1721424, and before DEV-7264 this
+      // assertion passed only because `fromJDN` decoded pre-1582 dates with the wrong rule.
+      const result = GregorianCalendar.fromJDN(1721424);
       expect(result.year).toBe(1);
       expect(result.month).toBe(1);
       expect(result.day).toBe(1);
@@ -100,7 +145,11 @@ describe('GregorianCalendar', () => {
     });
 
     it('should set era to BCE for negative years', () => {
-      const result = GregorianCalendar.fromJDN(1721059); // Year 0
+      // Era follows the sign of the astronomical year, matching `createDate`'s documented default
+      // (`year >= 0 ? 'CE' : 'BCE'`). Year 0 is therefore CE by that rule even though it is 1 BCE
+      // historically, so this needs a genuinely negative year to exercise the BCE branch.
+      const result = GregorianCalendar.fromJDN(1705426); // 15 March, year -43
+      expect(result.year).toBeLessThan(0);
       expect(result.era).toBe('BCE');
     });
 
