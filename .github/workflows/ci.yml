@@ -481,7 +481,7 @@ jobs:
         # `npm ci --ignore-scripts` suppresses playwright's postinstall, so
         # browsers must be installed explicitly below. Caching keeps the
         # marginal cost of this job over storybook-tests honest.
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/.cache/ms-playwright
           key: ms-playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
