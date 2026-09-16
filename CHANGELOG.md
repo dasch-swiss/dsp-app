@@ -1,5 +1,28 @@
 # Changelog
 
+## [13.15.0](https://github.com/dasch-swiss/dsp-app/compare/v13.14.2...v13.15.0) (2026-09-16)
+
+
+### Enhancements
+
+* **ci:** add advisory pixeleye visual regression job (DEV-7238) ([#3421](https://github.com/dasch-swiss/dsp-app/issues/3421)) ([5bbaad8](https://github.com/dasch-swiss/dsp-app/commit/5bbaad8a16e11741bce4e2a1c18312f096ccd0df))
+
+
+### Bug Fixes
+
+* **calendar:** make Gregorian toJDN/fromJDN inverses before 1582 ([#3442](https://github.com/dasch-swiss/dsp-app/issues/3442)) ([3b3e4e9](https://github.com/dasch-swiss/dsp-app/commit/3b3e4e92cf377637559d1a00373e2169e6495f8a))
+* **date-picker:** remove unreachable KnoraDate adapter with wrong BCE conversion ([#3441](https://github.com/dasch-swiss/dsp-app/issues/3441)) ([6383270](https://github.com/dasch-swiss/dsp-app/commit/638327081e554d2c327fb9c6b66165fe62456f74))
+* **session:** stop sending an expired JWT from dsp-js after auto-login rejects it ([#3436](https://github.com/dasch-swiss/dsp-app/issues/3436)) ([b61ecb6](https://github.com/dasch-swiss/dsp-app/commit/b61ecb63e547e5a11bbcbd5068b84892fd002292))
+
+
+### Maintenances
+
+* **advanced-search:** single source of truth for URL param names ([#3433](https://github.com/dasch-swiss/dsp-app/issues/3433)) ([15e5b48](https://github.com/dasch-swiss/dsp-app/commit/15e5b483fcc1ad36e397a82dd83971a98e4e2d69))
+* **ci:** empty commit to give pixeleye a base branch (DEV-7238) ([#3444](https://github.com/dasch-swiss/dsp-app/issues/3444)) ([785f406](https://github.com/dasch-swiss/dsp-app/commit/785f406f90f4e1f07e573be6805ad5393612ee16))
+* **deps:** Update docker-deps ([#3445](https://github.com/dasch-swiss/dsp-app/issues/3445)) ([dd37394](https://github.com/dasch-swiss/dsp-app/commit/dd37394ac7fb918c91fb3e71238ff02d012a89e6))
+* enable unused-imports lint rule at error and clear all 80 violations ([#3439](https://github.com/dasch-swiss/dsp-app/issues/3439)) ([659e316](https://github.com/dasch-swiss/dsp-app/commit/659e316e01d13f8f382c58db34c95ff110da38c5))
+* remove verified dead code (DEV-7253) ([#3437](https://github.com/dasch-swiss/dsp-app/issues/3437)) ([c400a2f](https://github.com/dasch-swiss/dsp-app/commit/c400a2f3b1e81fe8c9d3f7aba58e8b4cbd6616c6))
+
 ## [13.14.2](https://github.com/dasch-swiss/dsp-app/compare/v13.14.1...v13.14.2) (2026-09-14)
 
 
