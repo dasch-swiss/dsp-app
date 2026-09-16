@@ -3,13 +3,25 @@
   <div>
     <div class="mb-2">
       <mat-radio-group class="radio-group" [(ngModel)]="imageSettings" [ngModelOptions]="{standalone: true}">
-        <mat-radio-button [value]="imageSettingsEnum.Off">
-          {{ 'pages.project.imageSettings.off' | translate }}
+        <mat-radio-button
+          data-cy="image-settings-default"
+          [attr.aria-describedby]="inheritedSize ? 'image-settings-default-hint' : null"
+          [value]="imageSettingsEnum.Default">
+          {{ 'pages.project.imageSettings.default' | translate }}
         </mat-radio-button>
-        <mat-radio-button [value]="imageSettingsEnum.Watermark">
+        @if (inheritedDimensions; as dimensions) {
+        <p class="radio-hint" id="image-settings-default-hint" data-cy="image-settings-default-hint">
+          {{ 'pages.project.imageSettings.defaultHintPixels' | translate: dimensions }}
+        </p>
+        } @else if (inheritedPercentage; as percentage) {
+        <p class="radio-hint" id="image-settings-default-hint" data-cy="image-settings-default-hint">
+          {{ 'pages.project.imageSettings.defaultHintPercentage' | translate: { percentage } }}
+        </p>
+        }
+        <mat-radio-button data-cy="image-settings-watermark" [value]="imageSettingsEnum.Watermark">
           {{ 'pages.project.imageSettings.isWatermark' | translate }}
         </mat-radio-button>
-        <mat-radio-button [value]="imageSettingsEnum.RestrictImageSize">
+        <mat-radio-button data-cy="image-settings-restrict-size" [value]="imageSettingsEnum.RestrictImageSize">
           {{ 'pages.project.imageSettings.restrictImageSize' | translate }}
         </mat-radio-button>
       </mat-radio-group>
@@ -53,6 +65,7 @@
 <div class="action-buttons mt-2">
   <button
     mat-raised-button
+    data-cy="image-settings-submit"
     type="submit"
     color="primary"
     [disabled]="!hasChanges
