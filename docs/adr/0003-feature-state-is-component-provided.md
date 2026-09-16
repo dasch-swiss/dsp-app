@@ -23,11 +23,11 @@ The page component declares it once. Every one of those eight services is create
 
 The benefit is concrete and already being collected: no stale state when a page is revisited, no cross-page leakage, no growth in the root injector as features are added, and a feature's state graph readable in one file.
 
-Where the codebase does not do this, the costs are visible and have been filed as defects:
+Where the codebase does not do this, the costs are visible and have been filed as defects. Two of the four below were fixed between this record being written and being merged; they stay here because they are the evidence for the rule:
 
-- `ProjectPageService` (`pages/project/project`) and `AllProjectsService` (`pages/user-settings/user`) are `providedIn: 'root'` inside page libraries. Being root singletons is precisely why six and four other page libraries respectively import them: the instance is already there, so reaching for it costs nothing at the call site. Root provision inside a feature library is what makes cross-feature coupling cheap (ADR-0004).
-- `KnoraApiConfig.jsonWebToken` is written from more than one place. After auto-login clears storage, an expired token continues to be sent (DEV-7249). This is a security defect whose direct cause is that no single component owns the value.
-- The advanced search URL parameters have two sources of truth: `SearchUrlSyncService` is the designed write API, but four components also write parameters directly, with the parameter names repeated as string literals (DEV-7252).
+- `ProjectPageService` (`pages/project/project`) and `AllProjectsService` (`pages/user-settings/user`) are `providedIn: 'root'` inside page libraries. Being root singletons is precisely why three and two other page libraries respectively import them: the instance is already there, so reaching for it costs nothing at the call site. Root provision inside a feature library is what makes cross-feature coupling cheap (ADR-0004).
+- `KnoraApiConfig.jsonWebToken` was written from more than one place. After auto-login cleared storage, an expired token continued to be sent (DEV-7249, fixed in #3436). It was a security defect whose direct cause was that no single component owned the value.
+- The advanced search URL parameter names had two sources of truth: the literals inside `SearchUrlSyncService`, which were live, and five constants on `RouteConstants`, which nothing read (DEV-7252, fixed in #3433 by deleting the constants).
 - `MultipleViewerService`, `ResourceResultService`, `LocalizationService` and `OntologyEditService.latestChangedItem` each accept writes from more than one library.
 
 The useful vocabulary here is **connascence** (Page-Jones, as popularised by Richards and Ford). Two components that must agree on a value's *name* are statically connascent, and a compiler or a rename refactor can keep them in step. Two components that must agree on *the identity of a mutable object*, which is what shared writable state is, are dynamically connascent: nothing checks the agreement, it cannot be found by searching, and it breaks at runtime in a component that did not change. Dynamic connascence of identity is the expensive kind, and it is the kind that `providedIn: 'root'` on a feature service creates by default.
@@ -37,6 +37,8 @@ The useful vocabulary here is **connascence** (Page-Jones, as popularised by Ric
 1. **A service that holds feature state is provided by the feature's component, not in the root injector.** (**review**)
 
    Feature state means anything whose correct lifetime is the page or the component: drafts, selections, the result of the query this page ran, form state, view mode. If the answer to "what should happen to this value when the user leaves the page?" is "it should be gone", it is feature state.
+
+   `ProjectPageService` is the worked example, and ADR-0004 decision 2 reaches the same answer from the other side. It holds two `BehaviorSubject`s (the current project id and a reload trigger), so it is feature state, not a stateless lookup. Because three other page libraries need it, the class moves to `scope:shared, type:data-access`. Because it is feature state, the provision moves from `providedIn: 'root'` to the `providers:` array of `ProjectPageComponent`: the ontology editor, the list editor and advanced search are all routed as children of that component, so they inject the ancestor's instance and nothing changes at their call sites. One constraint is left to the implementing issue: `ProjectPageGuard.canActivate` currently seeds the service, and a root-provided guard cannot inject a component-provided service, so the seeding has to move to the component or to a resolver on the same route.
 
 2. **A feature library groups its providers in a `provide<Feature>(): Provider[]` function exported from its barrel.** (**review**)
 
@@ -63,7 +65,7 @@ The useful vocabulary here is **connascence** (Page-Jones, as popularised by Ric
 
 5. **State that must outlive the component goes in the URL, not in a root service.** (**review**)
 
-   Advanced search already does this: state is reconstructible from the URL alone, which is what makes a search shareable and bookmarkable. That is a product property, and it is a better answer to "this must survive navigation" than promoting a service to the root injector. Where the URL carries state, one service owns the writes to it (decision 4), which is the fix DEV-7252 describes.
+   Advanced search already does this: state is reconstructible from the URL alone, which is what makes a search shareable and bookmarkable. That is a product property, and it is a better answer to "this must survive navigation" than promoting a service to the root injector. Where the URL carries state, one service owns the writes to it (decision 4), which is what the DEV-7252 fix did.
 
 ## Consequences
 

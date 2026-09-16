@@ -23,7 +23,7 @@ The Cypress suite lives at `apps/dsp-app/cypress/`: twenty spec files plus page 
 
 `package.json` exposes it as `e2e-ci` and `e2e-ci-dev`. `cypress.config.ts` builds on `nxE2EPreset` from `@nx/cypress`. `apps/dsp-app/cypress/tsconfig.json` exists, includes `**/*.ts`, and is listed in the `references` array of `apps/dsp-app/tsconfig.json`. Somebody set this up properly.
 
-**Four things are nonetheless wrong, and they compound.**
+**Four things were nonetheless wrong when this record was written, and they compound.** Two of them have since been patched in place by #3434; the structural cause remains, and so does the case for this decision.
 
 1. **CI does not use any of it.** No workflow calls `nx run dsp-app:e2e` or either npm script. The `dsp-app-e2e-tests` job hand-rolls the whole sequence instead:
 
@@ -36,21 +36,21 @@ The Cypress suite lives at `apps/dsp-app/cypress/`: twenty spec files plus page 
 
    A backgrounded server with no teardown, a hand-written readiness poll, and a hardcoded port, all of which `devServerTarget` already handles. The configured target is effectively dead code.
 
-2. **Nothing type-checks the suite.** The tsconfig exists and is referenced, but a project reference is only resolved by `tsc --build`, and no target or CI step runs one over it. The reference is decorative.
+2. **Nothing type-checked the suite.** The tsconfig exists and is referenced, but a project reference is only resolved by `tsc --build`, and until #3434 no target or CI step ran one over it. That PR added a `Type-check e2e specs` step to the `dsp-app-e2e-tests` job running `npx tsc --noEmit -p apps/dsp-app/cypress/tsconfig.json`. It works, and it is one more hand-rolled step that no Nx target knows about, which is item 1 again.
 
 3. **Nothing lints it.** `eslint.config.mjs:173` lists `apps/dsp-app/cypress/` under `ignores`. That removes it from every rule, `@nx/enforce-module-boundaries` included.
 
-4. **So the imports have rotted, silently.** Eight relative imports across five files reach out of the suite, and two of the three libraries they name are gone:
+4. **So the imports had rotted, silently.** When this record was written, eight relative imports across five files reached out of the suite, and two of the three libraries they named were gone:
 
-   | Imported path | Sites | State |
+   | Imported path | Sites | State then |
    | --- | --- | --- |
    | `../../../../../libs/vre/open-api/src` | 4 | **gone**, the library moved to `libs/vre/3rd-party-services/open-api` |
    | `../../../../../libs/dsp-js/src` | 3 | exists, but reaches past the library's barrel |
    | `../../../../../libs/vre/shared/app-representations/src` | 1 | **gone**, no library exists at any path |
 
-   The last one is in `apps/dsp-app/cypress/support/helpers/file-uploader.ts:1` and is the awkward case: unlike the open-api import it cannot be repointed, because there is nothing to repoint it at. Every one of these forms is precisely what `noRelativeOrAbsoluteImportsAcrossLibraries` rejects, and all of them would have been caught on the day they broke. The affected specs run green today because they are never compiled (DEV-7251).
+   Every one of these forms is precisely what `noRelativeOrAbsoluteImportsAcrossLibraries` rejects, and all of them would have been caught on the day they broke. The affected specs ran green because they were never compiled (DEV-7251). #3434 repointed the open-api imports to their alias and declared `UploadedFileResponse` locally in `support/helpers/file-uploader.ts`, which was the right call: the type is internal to `resource-editor`, and an end-to-end suite should not import a component library to get it. What remains are four relative imports of `libs/dsp-js/src`, in `support/commands.ts`, `support/commands/ontology-command.ts`, `e2e/system-admin/data-model-class.cy.ts` and `e2e/system-admin/ontology.cy.ts`, each reaching past the barrel.
 
-The suite being a directory rather than a project is what makes 2, 3 and 4 possible. A project has its own lint target, its own type-check, and its own tags. A directory inside an application inherits the application's configuration, and in this case inherits an explicit exclusion from it.
+The suite being a directory rather than a project is what made 2, 3 and 4 possible, and is why the fix for 2 had to be a hand-rolled step. A project has its own lint target, its own type-check, and its own tags. A directory inside an application inherits the application's configuration, and in this case inherits an explicit exclusion from it.
 
 ## Decision
 
@@ -72,9 +72,7 @@ The suite being a directory rather than a project is what makes 2, 3 and 4 possi
 
    The specs legitimately need request and response shapes from `dsp-js` and the generated OpenAPI client to build fixtures. They do not need components, pages or UI libraries, and an end-to-end test that imports a component is testing the wrong thing.
 
-   Seven of the eight rotted relative imports become alias imports: `@dasch-swiss/vre/3rd-party-services/open-api` and `@dasch-swiss/dsp-js`. That fixes the dead path and the barrel bypass in the same edit, and the boundary rule keeps them fixed.
-
-   The eighth, `UploadedFileResponse` from the non-existent `app-representations`, has no alias to migrate to. Resolving it is a prerequisite rather than part of the rewrite: either the type is declared in the suite, or the helper that uses it is deleted along with whatever it was supporting. Do not let it be quietly dropped by a find-and-replace over the other seven.
+   The four remaining relative imports of `libs/dsp-js/src` become `@dasch-swiss/dsp-js` alias imports. That fixes the barrel bypass, and the boundary rule keeps it fixed. The open-api imports already went through their alias and `UploadedFileResponse` is already a local declaration (#3434), so nothing else in the suite needs to move.
 
 4. **CI calls the Nx target.** (**structure**)
 
@@ -84,13 +82,13 @@ The suite being a directory rather than a project is what makes 2, 3 and 4 possi
 
 5. **The project is linted and type-checked like any other.** (**static-analysis**)
 
-   `apps/dsp-app/cypress/` comes out of the `ignores` list in `eslint.config.mjs`, the new project is added to the `include` list of the `@nx/eslint/plugin` entry in `nx.json`, and its tsconfig is wired to a target that actually runs. This is what closes DEV-7251 structurally rather than by fixing the four files once.
+   `apps/dsp-app/cypress/` comes out of the `ignores` list in `eslint.config.mjs`, the new project is added to the `include` list of the `@nx/eslint/plugin` entry in `nx.json`, and its tsconfig is wired to a target that replaces the hand-rolled CI step. DEV-7251 was closed by #3434 fixing the files and adding that step; this is what stops the class of defect recurring, because the type-check and the lint exist as a consequence of the suite being a project rather than because someone remembered to add a step.
 
 ## Consequences
 
-**Positive.** The rotted imports are caught by the same rule that protects every other library, so the class of bug ends rather than the instance. CI loses a backgrounded process, a polling loop and a hardcoded port. `type:e2e` becomes meaningful, and the taxonomy in ADR-0001 stops carrying an apology. The suite gains a lint target and a type-check, which it has never had.
+**Positive.** The rotted imports are caught by the same rule that protects every other library, so the class of bug ends rather than the instance. CI loses a backgrounded process, a polling loop and a hardcoded port. `type:e2e` becomes meaningful, and the taxonomy in ADR-0001 stops carrying an apology. The suite gains a lint target, which it has never had, and its type-check becomes a target rather than a CI step.
 
-**Negative and costs.** Moving the directory rewrites every relative path inside the suite, which is a large but mechanical diff, and it will conflict with any in-flight branch touching Cypress. The `dsp-app-e2e-tests` workflow job needs rewriting, and a mistake there is invisible until the next PR that touches the app. Fixing the seven imports may surface real type errors that the suite has been hiding since the open-api library moved, so the true size of the change is not knowable until it type-checks once.
+**Negative and costs.** Moving the directory rewrites every relative path inside the suite, which is a large but mechanical diff, and it will conflict with any in-flight branch touching Cypress. The `dsp-app-e2e-tests` workflow job needs rewriting, and a mistake there is invisible until the next PR that touches the app. The suite already type-checks under the #3434 CI step, so the four remaining import rewrites are mechanical.
 
 **This ADR is independently landable.** Unlike ADR-0001, which cannot switch on its constraint block until ADR-0004 and ADR-0005 are carried out, nothing here waits on the library migration. Tagging a new project is safe while `{ sourceTag: '*', onlyDependOnLibsWithTags: ['*'] }` is still in place, per ADR-0001 decision 6.
 

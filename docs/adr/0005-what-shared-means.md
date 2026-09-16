@@ -31,7 +31,7 @@ A library qualifies for `scope:shared` only if it passes both tests.
 
    A shared library is consumed more than it consumes. A library that reaches into more libraries than reach into it is a consumer wearing a provider's name, and belongs in a feature scope.
 
-   This test fails `app-common-to-move` today, at six in against nine out. `resource-editor` also has a fan-out of fourteen against a fan-in of two, and is nonetheless correctly `scope:shared` under ADR-0001 decision 3, because it is `type:feature`. **The direction test applies to `type:ui`, `type:util` and `type:data-access` libraries.** A shared feature is shared because more than one domain routes to it, not because it is a leaf.
+   This test fails `app-common-to-move` today, at six in against nine out. `resource-editor` also has a fan-out of fourteen against a fan-in of three (`apps/dsp-app`, `pages/data-browser`, and `pages/project` through a dynamic `import()`), and is nonetheless correctly `scope:shared` under ADR-0001 decision 3, because it is `type:feature`. **The direction test applies to `type:ui`, `type:util` and `type:data-access` libraries.** A shared feature is shared because more than one domain routes to it, not because it is a leaf.
 
 2. **The cohesion test: the library is describable in one sentence without the word "and".** (**review**)
 
@@ -51,9 +51,11 @@ A library qualifies for `scope:shared` only if it passes both tests.
 
 6. **A library with no consumers is reviewed, not kept by default.** (**review**)
 
-   `shared/assets/status-msg` currently has zero runtime importers. Zero consumers is not by itself proof of death, since a service can be reached through a route or a provider list, but it is the trigger for checking. `libs/dsp-js` is explicitly exempt: it is published to NPM, so unused inside this repository says nothing about its external consumers (ADR-0002, decision 5).
+   Zero consumers is not by itself proof of death, since a service can be reached through a route or a provider list, but it is the trigger for checking. `libs/dsp-js` is explicitly exempt: it is published to NPM, so unused inside this repository says nothing about its external consumers (ADR-0002, decision 5).
 
-   The same review catches the opposite failure. `tsconfig.base.json:28` declares the path alias `@dasch-swiss/vre/ontology/ontology-properties` pointing at `libs/vre/pages/ontology/ontology-properties/src/index.ts`. That directory does not exist, and there is no `project.json` for it. Nothing imports it, so nothing fails. A path alias with no library behind it is stale configuration and is removed on sight.
+   The same review catches the opposite failure: a path alias in `tsconfig.base.json` with no library behind it. Nothing imports it, so nothing fails, and it is stale configuration to remove on sight.
+
+   Both halves have a precedent that has already been executed. When this record was written, `shared/assets/status-msg` had zero runtime importers and `@dasch-swiss/vre/ontology/ontology-properties` pointed at a directory that did not exist. #3437 deleted the library and the alias.
 
 ## The known work
 
@@ -68,14 +70,14 @@ Stating it so that the ADR is falsifiable rather than aspirational.
 
 ### `app-common-to-move` in detail
 
-This one is different from the other three, because it cannot be resolved by tagging it honestly and deferring the move. Its name promised a relocation that never happened, and in the meantime five different page scopes came to depend on it across nine files. Every available tag breaks something: `scope:app` makes all nine importing files illegal, and `scope:shared` is a claim the direction test refuses, at a fan-in of six against a fan-out of nine.
+This one is different from the other three, because it cannot be resolved by tagging it honestly and deferring the move. Its name promised a relocation that never happened, and in the meantime five different page scopes came to depend on it across eight files. Every available tag breaks something: `scope:app` makes all eight importing files illegal, and `scope:shared` is a claim the direction test refuses, at a fan-in of six against a fan-out of nine.
 
 So it is split rather than tagged, and that split is a precondition for ADR-0001 step (c). What is actually inside it, by consumer:
 
 | Contents | Taken by | Destination |
 | --- | --- | --- |
 | `UserForm`, `UserFormComponent`, `PasswordConfirmFormComponent`, `PasswordFormFieldComponent` | `pages/system`, `pages/user-settings` | `scope:shared`, `type:ui` |
-| `SearchTipsComponent` | both search libraries | `scope:shared`, `type:ui` |
+| `SearchTipsComponent` | `pages/search/advanced-search` | `scope:shared`, `type:ui` |
 | `SplitPipe` | `pages/ontology` | `scope:shared`, `type:util` |
 | `search-params.interface.ts` | (type only) | `scope:shared`, `type:util` |
 | `HeaderComponent`, `HeaderLogoComponent`, `HeaderUserActionsComponent` | `pages/search/search`, `pages/project/project` | see below |

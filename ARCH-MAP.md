@@ -9,7 +9,7 @@ date: 2026-09-14
 
 ## Overview
 
-DSP-APP is the Angular browser client for the DaSCH Service Platform, built as an Nx monorepo: one application (`apps/dsp-app`) composed from 28 libraries, one of which (`libs/dsp-js`) is also published to NPM. That is 29 Nx projects in total. The application shell holds only bootstrap, routing and configuration; every page lives in a `libs/vre/pages/*` library, and the resource viewer/editor is its own large library. The client talks to DSP-API through two separate clients, `libs/dsp-js` (hand-written, JSON-LD, the v2 surface) and `libs/vre/3rd-party-services/open-api` (generated from a vendored spec, the admin surface); knowing which one carries a given field is the single most load-bearing fact about this codebase. Vocabulary is defined in [CONTEXT.md](CONTEXT.md), which also records where UI wording deliberately differs from code wording. Component names below are the TypeScript path aliases from `tsconfig.base.json`, because that is what import statements and the boundary lint match on; each entry also gives its Nx project name, which differs and is often surprising.
+DSP-APP is the Angular browser client for the DaSCH Service Platform, built as an Nx monorepo: one application (`apps/dsp-app`) composed from 27 libraries, one of which (`libs/dsp-js`) is also published to NPM. That is 28 Nx projects in total. The application shell holds only bootstrap, routing and configuration; every page lives in a `libs/vre/pages/*` library, and the resource viewer/editor is its own large library. The client talks to DSP-API through two separate clients, `libs/dsp-js` (hand-written, JSON-LD, the v2 surface) and `libs/vre/3rd-party-services/open-api` (generated from a vendored spec, the admin surface); knowing which one carries a given field is the single most load-bearing fact about this codebase. Vocabulary is defined in [CONTEXT.md](CONTEXT.md), which also records where UI wording deliberately differs from code wording. Component names below are the TypeScript path aliases from `tsconfig.base.json`, because that is what import statements and the boundary lint match on; each entry also gives its Nx project name, which differs and is often surprising.
 
 Load this file on demand for blast-radius and boundary questions. It is not meant to be read end to end.
 
@@ -335,19 +335,6 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
   - It is the only library with its own `package.json` and a real `build` target, and the only one with one spec per implementation file. `docs-only`
 - **Durable state**: none.
 
-### vre/shared/assets/status-msg
-
-- **Nx project**: `vre-shared-assets-status-msg`
-- **Paths**: `libs/vre/shared/assets/status-msg/**`
-- **Purpose**: A lookup table of HTTP status codes to human-readable messages. It has no consumers anywhere in the repository and is dead.
-- **Key entities**: `HttpStatusMsg`
-- **Public interface**: `HttpStatusMsg`, imported by nothing.
-- **Local-context kit**: `src/index.ts`, `src/lib/status-msg/statusMsg.ts`, `project.json`, `README.md`. That is the whole library.
-- **Depends on**: none
-- **Used by**: none
-- **Boundary rules**: Dead. The last substantive edit to its only source file was December 2023, and that commit was a repository-wide reformat. Removing the library also requires deleting its alias from `tsconfig.base.json`, which is the only thing keeping it addressable. `docs-only`
-- **Durable state**: `HttpStatusMsg.default`, typed `any`, on a root singleton. No writers, because there are no consumers.
-
 ### vre/pages/project/project
 
 - **Nx project**: `vre-pages-project-project`
@@ -357,7 +344,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 - **Public interface**: 19 `export *` from `src/index.ts`, but only the routed components, two services and two guards are consumed elsewhere. In practice the outside world imports one symbol: `ProjectPageService`.
 - **Local-context kit**: `src/index.ts`, `src/lib/project-page.service.ts`, `src/lib/project-page.guard.ts`, `src/lib/data-browser-page.component.ts`, `src/lib/project-settings/view-restrictions/view-restrictions-page.service.ts`, `src/lib/stories.helpers.ts`, `apps/dsp-app/src/app/app.routes.ts`
 - **Depends on**: `dsp-js`, `vre/3rd-party-services/api`, `vre/3rd-party-services/open-api`, `vre/core/config`, `vre/core/error-handler`, `vre/core/session`, `vre/pages/data-browser`, `vre/pages/system/system`, `vre/pages/user-settings/user`, `vre/resource-editor/resource-editor`, `vre/shared/app-common`, `vre/shared/app-common-to-move`, `vre/shared/app-helper-services`, `vre/ui/notification`, `vre/ui/progress-indicator`, `vre/ui/string-literal`, `vre/ui/ui`
-- **Used by**: `dsp-app`, `vre/pages/ontology/list`, `vre/pages/ontology/ontology`, `vre/pages/search/advanced-search`, `vre/pages/search/search`
+- **Used by**: `dsp-app`, `vre/pages/ontology/list`, `vre/pages/ontology/ontology`, `vre/pages/search/advanced-search`
 - **Boundary rules**:
   - Page-level state is a component-provided service listed in `providers:`, not a root singleton. `docs-only`
   - A project identifier is a UUID in routes and an IRI in services. `ProjectService.IriToUuid` and `uuidToIri` are the only permitted conversion. `docs-only`
@@ -445,7 +432,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 - **Key entities**: `SearchResultComponent`, `FulltextSearchResultsPageComponent`, `ProjectFulltextSearchPageComponent`, `GlobalPageComponent`, `SearchParamsService`
 - **Public interface**: Six exports, of which only `FulltextSearchResultsPageComponent` and `GlobalPageComponent` are used outside the library.
 - **Local-context kit**: `src/index.ts`, `src/lib/search-result.component.ts`, `src/lib/fulltext-search-results-page.component.ts`, `src/lib/project-fulltext-search-page.component.ts`
-- **Depends on**: `dsp-js`, `vre/core/config`, `vre/core/error-handler`, `vre/pages/data-browser`, `vre/pages/project/project`, `vre/shared/app-common`, `vre/shared/app-common-to-move`, `vre/shared/app-helper-services`, `vre/ui/progress-indicator`, `vre/ui/ui`
+- **Depends on**: `dsp-js`, `vre/core/config`, `vre/core/error-handler`, `vre/pages/data-browser`, `vre/shared/app-common`, `vre/shared/app-common-to-move`, `vre/shared/app-helper-services`, `vre/ui/progress-indicator`, `vre/ui/ui`
 - **Used by**: `dsp-app`
 - **Boundary rules**:
   - Full-text search here is a different mechanism from the full-text field inside advanced search. This library calls `doFulltextSearch` with no Gravsearch involved. See CONTEXT.md. `docs-only`
@@ -524,7 +511,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
   - `@nx/enforce-module-boundaries` is configured with a single permissive constraint (`sourceTag: '*'` to `onlyDependOnLibsWithTags: ['*']`), so it enforces barrel-only imports and buildable-library dependencies but no layering. `static-analysis`
   - The boundary lint is disabled for `**/*.spec.ts`, `**/environment*.ts` and all of `apps/dsp-app/cypress/`. It is not disabled for `**/*.stories.ts`, so stories do count toward the Nx project graph even when the runtime does not depend on the import. `static-analysis`
   - Storybook config lives at the workspace root but its targets are declared in `apps/dsp-app/project.json`. `docs-only`
-- **Durable state**: `tsconfig.base.json` `paths`, 31 aliases. One of them, `@dasch-swiss/vre/ontology/ontology-properties`, points at a directory that does not exist and is referenced by nothing.
+- **Durable state**: `tsconfig.base.json` `paths`, 29 aliases: one per library, a `testing` secondary entry for `app-helper-services`, and `@dsp-app/*` for the application. Every alias points at a directory that exists.
 
 ### ci-release
 
@@ -618,7 +605,7 @@ These are values or mechanisms that span components and would multiply-map if tr
 
 - **localStorage keys.** Six in total, owned by five different components: `ACCESS_TOKEN` (`vre/core/session`), `dsp_language` (`vre/shared/app-helper-services`), `SHOW_ALL_PROPERTIES` and `SHOW_ALL_COMMENTS` (`vre/resource-editor/resource-editor`), `sortProjectsBy` and `sortUsersBy` (`vre/pages/system/system`), `cookieBanner` (`dsp-app`). There is no shared registry of key names and no sessionStorage anywhere.
 
-- **Stale per-library READMEs.** 17 of the 28 library `README.md` files name an Nx project that does not exist, because libraries were renamed and the generated readmes were not, so the `nx test <name>` command in them does not resolve. The 11 that do name their project correctly are `dsp-js`, `vre/3rd-party-services/api`, `vre/3rd-party-services/open-api`, `vre/3rd-party-services/analytics`, `vre/ui/nested-menu`, `vre/shared/app-common`, `vre/shared/app-common-to-move`, `vre/shared/app-helper-services`, `vre/shared/calendar`, and `vre/pages/search/advanced-search`; `vre/shared/assets/status-msg` names no project at all. Two of those carry a stale name alongside the correct one: `analytics` (`vre-shared-app-analytics` in the title) and `advanced-search` (`vre-advanced-search` in the heading, plus two renamed classes in its body). A separate trap: `vre/3rd-party-services/api`'s readme matches its `project.json`, but that project name (`vre-shared-app-api`) is itself stale relative to the library's path. Treat a library README's project name as unreliable and read `project.json` instead.
+- **Stale per-library READMEs.** 17 of the 27 library `README.md` files name an Nx project that does not exist, because libraries were renamed and the generated readmes were not, so the `nx test <name>` command in them does not resolve. The 10 that do name their project correctly are `dsp-js`, `vre/3rd-party-services/api`, `vre/3rd-party-services/open-api`, `vre/3rd-party-services/analytics`, `vre/ui/nested-menu`, `vre/shared/app-common`, `vre/shared/app-common-to-move`, `vre/shared/app-helper-services`, `vre/shared/calendar`, and `vre/pages/search/advanced-search`. Two of those carry a stale name alongside the correct one: `analytics` (`vre-shared-app-analytics` in the title) and `advanced-search` (`vre-advanced-search` in the heading, plus two renamed classes in its body). A separate trap: `vre/3rd-party-services/api`'s readme matches its `project.json`, but that project name (`vre-shared-app-api`) is itself stale relative to the library's path. Treat a library README's project name as unreliable and read `project.json` instead.
 
 ## Conventions
 
@@ -639,7 +626,7 @@ Recorded from the observed runtime graph, not from folder names.
 | Imports cross a library boundary through the `@dasch-swiss/*` alias, never a deep path. | `static-analysis` (Nx), disabled for `*.spec.ts`, `environment*.ts` and `apps/dsp-app/cypress/**` |
 | No library imports application SCSS. **Currently violated in 20 files across six libraries**, which `@use '../../../../../../../../apps/dsp-app/src/styles/config'`. Sass imports are invisible to the boundary lint. | `docs-only` |
 | The `ui/*` tier depends only on `ui/*` and `dsp-js`. **Holds at runtime for five of six libraries.** The exception is `vre/ui/string-literal`, which genuinely needs `LocalizationService`. `vre/core/error-handler` also depends on `vre/ui/notification`, inverting the tier. | `docs-only` |
-| `pages/*` libraries do not depend on each other. **Currently violated**: `project/project` to `system/system` and `user-settings/user`; `ontology/ontology` to `ontology/list`, `project/project` and `user-settings/user`; `system/system` to `user-settings/user`; both search libraries to `project/project`. | `docs-only` |
+| `pages/*` libraries do not depend on each other. **Currently violated**: `project/project` to `system/system` and `user-settings/user`; `ontology/ontology` to `ontology/list`, `project/project` and `user-settings/user`; `system/system` to `user-settings/user`; `search/advanced-search` to `project/project`. | `docs-only` |
 
 **Promotion path.** Every `docs-only` rule above could become `static-analysis` today. Nx tags already exist on four projects (`dsp-js` carries `scope:shared` and `type:data-access`; three `ui` libraries carry `type:ui`), but `depConstraints` in `eslint.config.mjs` is the permissive default, so no tag constrains anything. Populating tags on all 29 projects and writing real `depConstraints` would move the tier and page rules from hope to CI. The SCSS rule cannot be promoted this way, because no mechanism in the repository inspects Sass imports.
 

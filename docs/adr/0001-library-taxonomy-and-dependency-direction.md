@@ -5,21 +5,21 @@
 
 ## Context
 
-The repository is an Nx monorepo with 29 projects. The folder names (`core/`, `ui/`, `shared/`, `pages/`, `resource-editor/`) suggest a layered architecture. Nothing enforces it.
+The repository is an Nx monorepo with 28 projects. The folder names (`core/`, `ui/`, `shared/`, `pages/`, `resource-editor/`) suggest a layered architecture. Nothing enforces it.
 
-The decision was started and then abandoned. All twenty-eight library `project.json` files carry a `"tags"` key. Twenty-four of them are `[]`. Four carry real tags using the canonical Nx `type:`/`scope:` convention: `libs/dsp-js` (`scope:shared`, `type:data-access`), `libs/vre/ui/ui`, `libs/vre/ui/nested-menu` and `libs/vre/ui/string-literal` (all `type:ui`). The twenty-ninth project, `apps/dsp-app`, has no `tags` key at all. The rule in `eslint.config.mjs:99` is configured with a single permissive constraint:
+The decision was started and then abandoned. All twenty-seven library `project.json` files carry a `"tags"` key. Twenty-three of them are `[]`. Four carry real tags using the canonical Nx `type:`/`scope:` convention: `libs/dsp-js` (`scope:shared`, `type:data-access`), `libs/vre/ui/ui`, `libs/vre/ui/nested-menu` and `libs/vre/ui/string-literal` (all `type:ui`). The twenty-eighth project, `apps/dsp-app`, has no `tags` key at all. The rule in `eslint.config.mjs:99` is configured with a single permissive constraint:
 
 ```js
 depConstraints: [{ sourceTag: '*', onlyDependOnLibsWithTags: ['*'] }]
 ```
 
-This permits every dependency. Consequently the folder names carry no weight and layering has drifted. Measured on the current tree:
+This permits every dependency. Consequently the folder names carry no weight and layering has drifted. Measured against `main` at `238000ec2`, counting runtime code only (`*.spec.ts`, `*.stories.ts` and `stories.helpers.ts` excluded, since decision 5 exempts them):
 
-- Eight page libraries form twelve dependency edges among themselves, covering seventeen distinct symbols. The two most-imported are `ProjectPageService` (six importers) and `AllProjectsService` (four).
+- The eight libraries under `libs/vre/pages/` form eleven dependency edges among themselves, covering seventeen distinct symbols. Seven of the eight are routed pages; `pages/data-browser` is a component library that `pages/project` routes to. The two most-imported symbols are `ProjectPageService` (three other page libraries, sixteen files) and `AllProjectsService` (two, three files).
 - `core/error-handler` depends on `ui/notification`.
 - `ui/*` reaches into `shared/app-common`, `shared/app-helper-services` and `3rd-party-services/open-api` in four files, and into `dsp-js` in eight more.
 
-The composition root that makes page-to-page imports unnecessary already exists and is already used: `apps/dsp-app/src/app/app.routes.ts` imports all eight page libraries directly and contains zero `loadComponent` and zero `loadChildren` calls. Pages are already assembled by the application. They simply also import each other, which is the part that has no justification.
+The composition root that makes page-to-page imports unnecessary already exists and is already used: `apps/dsp-app/src/app/app.routes.ts` imports all seven routed page libraries directly (the eighth library under `pages/`, `data-browser`, is reached through `DataBrowserPageComponent` in `pages/project`) and contains zero `loadComponent` and zero `loadChildren` calls. Pages are already assembled by the application. They simply also import each other, which is the part that has no justification.
 
 ## Decision
 
@@ -29,7 +29,7 @@ The composition root that makes page-to-page imports unnecessary already exists 
 
    `e2e` has nothing to apply it to at the time of writing. The Cypress suite is not an Nx project: it lives inside the application at `apps/dsp-app/cypress/` as a directory plus an `e2e` target on `apps/dsp-app`, and `eslint.config.mjs:173` excludes that directory from linting entirely, boundary rule included. **ADR-0006 creates `dsp-app-e2e` as a project and gives `e2e` something to tag**, along with the constraint in decision 2. Until that lands, the tag is declared and unused.
 
-   Scopes: `shared` for anything reusable across domains, one scope per page domain (`project`, `ontology`, `search`, `user`, `system`, `data-browser`), and `app` for the application itself.
+   Scopes: `shared` for anything reusable across domains, one scope per page domain (`project`, `ontology`, `search`, `user`, `system`), and `app` for the application itself.
 
 2. **The type constraint fixes the tier.** (**static-analysis**)
 
@@ -54,7 +54,7 @@ The composition root that makes page-to-page imports unnecessary already exists 
 
    Nx evaluates every matching constraint, so a library tagged `scope:project, type:feature` must satisfy both blocks. A page library therefore cannot import another page library, because their scopes differ, even though the type rule would permit `feature -> feature`.
 
-   This placement is deliberate. Expressing the ban at scope level rather than type level means a feature that genuinely serves more than one domain has a legal home: it moves to `scope:shared`. `resource-editor` is already exactly that. It is imported by `apps/dsp-app` and by `pages/data-browser`, and it imports no page library at all. It becomes `scope:shared, type:feature` and the existing edge stays legal.
+   This placement is deliberate. Expressing the ban at scope level rather than type level means a feature that genuinely serves more than one domain has a legal home: it moves to `scope:shared`. `resource-editor` is already exactly that. It is imported by `apps/dsp-app`, by `pages/data-browser` and, through a dynamic `import()` in `data-class-panel.component.ts`, by `pages/project`, and it imports no page library at all. It becomes `scope:shared, type:feature` and all three edges stay legal. `pages/data-browser` is the second case: nothing routes to it directly and three libraries render it inside themselves (ADR-0004, decision 7), so it carries the same tags despite its folder.
 
 4. **The tag is the truth. The folder is a hint.** (**review**)
 
@@ -68,7 +68,7 @@ The composition root that makes page-to-page imports unnecessary already exists 
 
    The Nx rule states: "A project without tags matching at least one constraint cannot depend on any libraries." The moment one real constraint replaces the `*` constraint, every project matching none of the constraints loses the ability to depend on anything. The order is therefore:
 
-   a. Tag all twenty-nine projects and add the stories exemption, while `{ sourceTag: '*', onlyDependOnLibsWithTags: ['*'] }` is still in place. No lint behaviour changes.
+   a. Tag all twenty-eight projects and add the stories exemption, while `{ sourceTag: '*', onlyDependOnLibsWithTags: ['*'] }` is still in place. No lint behaviour changes.
    b. Clear the blocking imports listed in decision 7.
    c. Replace the constraint block in a single commit.
 
@@ -76,9 +76,9 @@ The composition root that makes page-to-page imports unnecessary already exists 
 
 7. **The known blocking imports, and the shape of each fix.** (**review**)
 
-   The constraint block was simulated against the current runtime graph, with all twenty-nine projects tagged as in the table below, applying Nx's own evaluation rules: every constraint whose `sourceTag` appears in the source's tags must pass, and within one `onlyDependOnLibsWithTags` the target needs one matching tag. `*.spec.ts` and `*.stories.ts` were excluded as exempt.
+   The constraint block was simulated against the current runtime graph, with all twenty-eight projects tagged as in the table below, applying Nx's own evaluation rules: every constraint whose `sourceTag` appears in the source's tags must pass, and within one `onlyDependOnLibsWithTags` the target needs one matching tag. `*.spec.ts` and `*.stories.ts` were excluded as exempt.
 
-   The result is **twenty-one violating edges across forty-five distinct files**, distributed very unevenly:
+   The result is **seventeen violating edges across thirty-nine distinct files**, distributed very unevenly:
 
    | Constraint | Violating edges | Distinct files |
    | --- | --- | --- |
@@ -86,7 +86,7 @@ The composition root that makes page-to-page imports unnecessary already exists 
    | `type:util` | 0 | 0 |
    | `type:feature`, `type:app` | 0 | 0 |
    | `type:ui` | 4 | 6 |
-   | `scope:*` | 17 | 39 |
+   | `scope:*` | 13 | 33 |
 
    The type tier is almost clean. Tagging `dsp-js` per decision 8 and `ui/notification` per decision 4 removes every violation in the `data-access` and `util` tiers, and `type:feature` is unconstrained enough to pass as-is. Essentially all the work is in the scope tier, which is the feature-to-feature coupling ADR-0004 addresses.
 
@@ -101,14 +101,14 @@ The composition root that makes page-to-page imports unnecessary already exists 
    - **`LocalizationService`** from `shared/app-helper-services`, injected by two files in `ui/string-literal`. This is the one genuine `ui -> data-access` dependency and the only one requiring a design decision. Two candidates: pass the active language in as a component input, or read `LOCALE_ID` from `@angular/core`, which is a framework token rather than a workspace dependency. Resolved in the implementing issue, not here.
    - **`dsp-js` value types in `ui/*`** (eight files: `KnoraDate`, `KnoraPeriod`, `Precision`, `Constants`, `StringLiteral`, `StringLiteralV2`, `ListNodeV2WithAllLanguages`). These are runtime values, not type-only imports, so they cannot be carved out with a type-only exemption. See decision 8, which removes them from the violation list.
 
-   **`scope:*`: thirty-nine files, of which the largest single cause is one library.**
+   **`scope:*`: thirty-three files, of which the largest single cause is one library.**
 
-   Seventeen edges, listed in full in ADR-0004. Two facts from the simulation shape the work:
+   Thirteen edges, listed in full in ADR-0004. Two facts from the simulation shape the work:
 
-   - **`shared/app-common-to-move` is a hub, not a leaf.** Five different page scopes import it across nine files. It cannot simply be retagged, because any tag makes some of those edges illegal: `scope:app` breaks all nine, and `scope:shared` is a lie about a library whose fan-out exceeds its fan-in (ADR-0005). It has to be split before the constraint block is swapped, so it is on the critical path. What the pages actually take from it is four user-form components (`UserForm`, `UserFormComponent`, `PasswordConfirmFormComponent`, `PasswordFormFieldComponent`, used by `system` and `user`), `SearchTipsComponent` (both search libraries), `SplitPipe` (ontology), and three header components.
+   - **`shared/app-common-to-move` is a hub, not a leaf.** Five different page scopes import it across eight files. It cannot simply be retagged, because any tag makes some of those edges illegal: `scope:app` breaks all nine, and `scope:shared` is a lie about a library whose fan-out exceeds its fan-in (ADR-0005). It has to be split before the constraint block is swapped, so it is on the critical path. What the pages actually take from it is four user-form components (`UserForm`, `UserFormComponent`, `PasswordConfirmFormComponent`, `PasswordFormFieldComponent`, used by `system` and `user`), `SearchTipsComponent` (`advanced-search`), `SplitPipe` (ontology), and three header components.
    - **Two page libraries import the application header.** `pages/search/search` imports `HeaderComponent` and `pages/project/project` imports `HeaderLogoComponent` and `HeaderUserActionsComponent`. The application shell does not own its own header exclusively; two pages render pieces of it. That is a genuine design question rather than a mechanical move, and it is the one part of the split that is not obvious.
 
-   The remaining scope violations are the cross-page symbols triaged in ADR-0004, and `ontology -> project` alone accounts for twelve files, all importing `ProjectPageService`.
+   The remaining scope violations are the cross-page symbols triaged in ADR-0004, and `ontology -> project` alone accounts for fourteen files (twelve in `pages/ontology/ontology`, two in `pages/ontology/list`), all importing `ProjectPageService`.
 
 8. **`dsp-js` is tagged both `type:data-access` and `type:util`, as a named and expiring compromise.** (**static-analysis**)
 
@@ -147,7 +147,6 @@ The composition root that makes page-to-page imports unnecessary already exists 
       { sourceTag: 'scope:search',       onlyDependOnLibsWithTags: ['scope:search', 'scope:shared'] },
       { sourceTag: 'scope:user',         onlyDependOnLibsWithTags: ['scope:user', 'scope:shared'] },
       { sourceTag: 'scope:system',       onlyDependOnLibsWithTags: ['scope:system', 'scope:shared'] },
-      { sourceTag: 'scope:data-browser', onlyDependOnLibsWithTags: ['scope:data-browser', 'scope:shared'] },
     ],
   },
 ],
@@ -176,8 +175,8 @@ This is the table step 6(a) applies. It is the assignment the simulation in deci
 | `libs/vre/ui/progress-indicator` | `scope:shared`, `type:ui` |
 | `libs/vre/ui/notification` | `scope:shared`, `type:util` |
 | `libs/vre/shared/calendar` | `scope:shared`, `type:util` |
-| `libs/vre/shared/assets/status-msg` | `scope:shared`, `type:util` |
 | `libs/vre/resource-editor/resource-editor` | `scope:shared`, `type:feature` |
+| `libs/vre/pages/data-browser` | `scope:shared`, `type:feature` |
 | `libs/vre/shared/app-help-page` | `scope:shared`, `type:feature` |
 | `libs/vre/shared/app-common-to-move` | none yet, see below |
 | `libs/vre/pages/project/project` | `scope:project`, `type:feature` |
@@ -187,15 +186,14 @@ This is the table step 6(a) applies. It is the assignment the simulation in deci
 | `libs/vre/pages/search/advanced-search` | `scope:search`, `type:feature` |
 | `libs/vre/pages/user-settings/user` | `scope:user`, `type:feature` |
 | `libs/vre/pages/system/system` | `scope:system`, `type:feature` |
-| `libs/vre/pages/data-browser` | `scope:data-browser`, `type:feature` |
 
 Three entries need their reasoning stated, because none of them follows from the folder name.
 
 `core/config`, `shared/app-common` and `shared/app-helper-services` are `type:data-access`, not `type:util`. Each vends stateful services or reaches the API: `core/config` provides `KnoraApiConnection` through `dsp-api-tokens.ts`, and `app-common` contains `resource.service.ts`. Tagging them `util` would be the convenient choice and would silence the `type:ui` violations, at the cost of letting any utility library import the API connection. The strict reading in decision 2 is worth nothing if the tags are bent to fit it.
 
-`shared/app-common-to-move` is deliberately left unassigned. Decision 7 explains why: every available tag makes some of its nine importing files illegal, so it is split rather than tagged, and the split is a precondition for step (c).
+`shared/app-common-to-move` is deliberately left unassigned. Decision 7 explains why: every available tag makes some of its eight importing files illegal, so it is split rather than tagged, and the split is a precondition for step (c).
 
-`pages/data-browser` is tagged as its own scope provisionally. Four of its internals are embedded in `pages/project`, which may mean it is shared infrastructure rather than a page. ADR-0004 records this as an open question; if it resolves to shared, its tags become `scope:shared, type:feature` and four violations disappear without any code moving.
+`pages/data-browser` is `scope:shared` although it sits under `pages/`. It is a component library, not a routed page: `apps/dsp-app/src/app/app.routes.ts` never imports it, `pages/project` routes to it through `DataBrowserPageComponent`, and three page libraries embed its internals. ADR-0004 decision 7 records the reasoning. Tagging it honestly makes six cross-page imports across five files legal without any code moving.
 
 Every project carries exactly one `type:` and one `scope:` tag, except `libs/dsp-js`, which carries two `type:` tags per decision 8.
 
@@ -205,7 +203,7 @@ Nx evaluates every constraint whose `sourceTag` appears in the source project's 
 
 **Positive.** A contributor can read a library's tags and know what it may import, without reading its history. `nx affected` becomes sharper as the graph loses its false edges. Once page libraries stop importing each other, route-level lazy loading becomes possible for the first time; today it is blocked because every page is reachable from every other, so nothing can be split out of the main bundle. The seventeen cross-page symbols get triaged rather than accumulating (ADR-0004).
 
-**Negative and costs.** Forty-five files must change before the constraint block can be swapped: six in the `ui` tier, thirty-nine across page scopes. `shared/app-common-to-move` must be split first, and splitting it surfaces a design question about who owns the application header. The `LocalizationService` question is likewise unresolved, and both block step (c). `dsp-js` keeps a dual tag that will outlive this ADR, with the hole decision 8 describes. Tagging twenty-nine projects is mechanical but touches every `project.json`.
+**Negative and costs.** Thirty-nine files must change before the constraint block can be swapped: six in the `ui` tier, thirty-three across page scopes. `shared/app-common-to-move` must be split first, and splitting it surfaces a design question about who owns the application header. The `LocalizationService` question is likewise unresolved, and both block step (c). `dsp-js` keeps a dual tag that will outlive this ADR, with the hole decision 8 describes. Tagging twenty-eight projects is mechanical but touches every `project.json`.
 
 That cost is concentrated, not spread: the type tier is already clean under these tags, and essentially all of it is the feature-to-feature coupling ADR-0004 exists to remove. This ADR is therefore not independently landable. Step (c) depends on ADR-0004 and ADR-0005 being carried out first.
 
@@ -216,7 +214,6 @@ That cost is concentrated, not spread: the type tier is already clean under thes
 - Aliased deep imports into files a library does not export are not reliably blocked (Nx issue #29258, closed as "not planned"). ADR-0002 covers this and names the tool that would close it.
 - Dynamic `import()` **is** analysed by the rule. There is no gap there, and no need to treat lazy loading as an escape hatch.
 - Applications cannot be imported by anything, regardless of tags; Nx enforces this independently of `depConstraints`. So "nothing depends on the app" is free rather than earned, and `type:app` should not be credited for it.
-- Nx 20 and later, in TypeScript-monorepo mode, restrict project names to a single `/`. Names such as `@dasch-swiss/vre/pages/project/project` carry three. This is a forward-compatibility risk on a future Nx migration, not a current problem.
 
 ### Inherited configuration: `useInferencePlugins: false`
 
@@ -230,8 +227,8 @@ The result is that target definition is split three ways, and the split follows 
 
 | Target | Declared in `project.json` | Actually comes from |
 | --- | --- | --- |
-| `lint` | 1 of 29 projects | inferred by `@nx/eslint/plugin` |
-| `test` | 29 of 29, but with no `executor` | inferred by `@nx/jest/plugin`; `project.json` only overlays `options` and `configurations` |
+| `lint` | 1 of 28 projects | inferred by `@nx/eslint/plugin` |
+| `test` | 28 of 28, but with no `executor` | inferred by `@nx/jest/plugin`; `project.json` only overlays `options` and `configurations` |
 | `build`, `serve`, `e2e`, `storybook` | explicit, with executors | declared outright, pre-inference style |
 
 **Why this is worth fixing rather than tolerating.** Reading a project's `project.json` does not tell you what targets that project has. A `test` entry with no executor is not a target definition, it is a patch applied to one declared somewhere else, and nothing in the file says so. Anyone reasoning about the workspace from its files, a new contributor or an agent working from the repository alone, has to already know which plugins are registered before the configuration means anything. That is the same failure mode as the empty `"tags": []` arrays this ADR exists to fix: configuration that reads as a decision but is an artefact.
@@ -242,8 +239,8 @@ One interaction worth noting for ADR-0006: `@nx/cypress/plugin` infers an `e2e` 
 
 ## Alternatives rejected
 
-- **Leave `* -> *` in place.** Costs nothing today. It is what produced the twelve cross-page edges, the `core -> ui` edge and twenty-four empty `tags` arrays, and there is no reason to expect a different result from the same configuration.
-- **Loose `type:ui` (`ui -> ui, util, data-access`).** Legitimises the `LocalizationService` dependency and removes the need for the `dsp-js` dual tag, so it is cheaper by roughly four files. Rejected because it also legitimises every future service injection into a presentational component, which is the drift this ADR exists to stop. The measured cost of strictness is six files, against thirty-nine for the scope tier that must be paid regardless. Strictness in the `ui` tier is the cheap part of this ADR, not the expensive one.
+- **Leave `* -> *` in place.** Costs nothing today. It is what produced the eleven cross-page edges, the `core -> ui` edge and twenty-four empty `tags` arrays, and there is no reason to expect a different result from the same configuration.
+- **Loose `type:ui` (`ui -> ui, util, data-access`).** Legitimises the `LocalizationService` dependency and removes the need for the `dsp-js` dual tag, so it is cheaper by roughly four files. Rejected because it also legitimises every future service injection into a presentational component, which is the drift this ADR exists to stop. The measured cost of strictness is six files, against thirty-three for the scope tier that must be paid regardless. Strictness in the `ui` tier is the cheap part of this ADR, not the expensive one.
 - **Express the feature-to-feature ban as a type constraint.** Simpler to read, but it leaves a genuinely shared feature such as `resource-editor` with no legal home, forcing either an exception or an artificial split. Scope-level expression handles it without a special case.
 - **Sheriff (SoftArc) instead of Nx tags.** Sheriff enforces at folder level and closes the deep-import gap that Nx leaves open. It is not rejected on merit; it is deferred to ADR-0002, where the gap it closes is actually discussed. Adopting two boundary tools in one change would make a failing build ambiguous.
 - **Feature-Sliced Design.** A real and well-documented methodology, but its tooling, documentation and community are React-centric and it has effectively no Angular presence. Adopting it would mean translating every rule ourselves, with no external material to point a new contributor at.
