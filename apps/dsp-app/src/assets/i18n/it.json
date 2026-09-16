@@ -555,7 +555,8 @@
           "integer": "Il valore deve essere un numero intero.",
           "decimal": "Il valore deve essere un valore decimale."
         },
-        "fulltextSearchPlaceholder": "Cerca…"
+        "fulltextSearchPlaceholder": "Cerca…",
+        "noDataModel": "Questo progetto non ha ancora un modello di dati. È necessario un modello di dati per cercare le sue risorse."
       }
     },
     "dataBrowser": {

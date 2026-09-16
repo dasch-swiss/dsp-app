@@ -43,6 +43,11 @@ import { ResourceClassChipComponent } from './resource-class-chip.component';
   template: `
     @if (ontologyLoading$ | async) {
       <mat-progress-bar mode="query" />
+    } @else if (hasNoDataModel$ | async) {
+      <div class="no-data-model">
+        <mat-icon>info_outline</mat-icon>
+        <span>{{ 'pages.search.advancedSearch.noDataModel' | translate }}</span>
+      </div>
     } @else {
       <mat-form-field appearance="outline" style="margin-left: 8px; width: 600px" subscriptSizing="dynamic">
         <mat-label>{{ 'pages.search.advancedSearch.fulltextSearch' | translate }}</mat-label>
@@ -108,6 +113,8 @@ export class AdvancedSearchBarComponent implements OnInit {
   readonly confirmedStatements = signal<StatementElement[]>([]);
 
   readonly ontologyLoading$ = this._ontologyDataService.ontologyLoading$;
+
+  readonly hasNoDataModel$ = this._ontologyDataService.ontologies$.pipe(map(ontologies => ontologies.length === 0));
 
   // Show the reset button only when there is something to clear. Any of the persisted search params
   // (fulltext, data model, resource class, filters, sort) counts as active state — reset wipes them all.

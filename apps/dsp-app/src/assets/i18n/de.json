@@ -555,7 +555,8 @@
           "integer": "Der Wert muss eine Ganzzahl sein.",
           "decimal": "Der Wert muss ein Dezimalwert sein."
         },
-        "fulltextSearchPlaceholder": "Suchen…"
+        "fulltextSearchPlaceholder": "Suchen…",
+        "noDataModel": "Dieses Projekt hat noch kein Datenmodell. Ein Datenmodell wird benötigt, um die Ressourcen zu durchsuchen."
       }
     },
     "dataBrowser": {
