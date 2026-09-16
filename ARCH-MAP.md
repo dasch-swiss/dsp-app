@@ -385,7 +385,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 - **Boundary rules**:
   - The property-type registry is not in this library. Adding a property type touches `default-properties.ts` and `ontology.service.ts` in `vre/shared/app-helper-services`, then possibly `make-ontology-for.ts` here and a branch in `property-form.component.ts`. Four files, two libraries, no single registry. `docs-only`
   - `OntologyPageComponent` owns the DI scope through `providers: [OntologyPageService, OntologyEditService]`. `structure`
-  - DSP-API calls the class-to-property assignment a "cardinality". Two code comments in this library complain about the name. See CONTEXT.md. `docs-only`
+  - A "cardinality" is the class-to-property binding with its count, which is dsp-api's meaning of the term; the dsp-js `Cardinality` enum is only the count. Two code comments in this library complain about the overlap. See CONTEXT.md. `docs-only`
 - **Durable state**: `OntologyEditService`, component-scoped, roughly 670 lines, holding `_currentOntology`, `_currentOntologyInfo`, `_projectOntologiesSubject`, `_listsInProjectSubject`, `_isTransacting` and `_canDeletePropertyMap`. Two of those are `take(1)` snapshots of parent state (DEV-7130), so a controlled vocabulary created in `vre/pages/ontology/list` is stale here until re-navigation. `latestChangedItem` is a public BehaviorSubject written both by the service and by `property-item.component.ts`.
 
 ### vre/pages/ontology/list
@@ -620,7 +620,7 @@ These are values or mechanisms that span components and would multiply-map if tr
 Recorded from the observed runtime graph, not from folder names.
 
 | Rule | Enforcement |
-|---|---|
+| --- | --- |
 | No dependency cycles between libraries. Verified: the graph is a clean DAG. | `static-analysis` (Nx) |
 | No library imports `@dsp-app/*` in TypeScript. Verified clean. | `static-analysis` (Nx) |
 | Imports cross a library boundary through the `@dasch-swiss/*` alias, never a deep path. | `static-analysis` (Nx), disabled for `*.spec.ts`, `environment*.ts` and `apps/dsp-app/cypress/**` |
@@ -649,7 +649,7 @@ Recorded from the observed runtime graph, not from folder names.
 ### Banned constructs
 
 | Locally attractive pattern | Why it couples globally | Supported alternative | Enforcement |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | Editing one of the two template switchers in `resource-editor` | `template-viewer-switcher` and `template-editor-switcher` mirror thirteen cases each; editing one leaves the other silently wrong for that value type | Edit both, plus `resource-payloads-mapping.ts`, and `file-value-mapping.ts` for file values | `docs-only` |
 | Adding a property type in `pages/ontology/ontology` | The registry is in another library; the local edit compiles and does nothing | Add to `DefaultProperties.data` and branch `getDefaultProperty` in `vre/shared/app-helper-services`, then `_guiAttrFor` and the form branch here | `docs-only` |
 | Adding a resource-type `@case` without the `imports:` entry | `resource-dispatcher.component.ts` needs both; missing the second fails at runtime, not at compile time | Edit both places, and declare `providers: [PropertiesDisplayService]` on the new wrapper | `docs-only` |

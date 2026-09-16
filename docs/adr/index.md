@@ -39,6 +39,6 @@ ADR-0001 is the anchor: it defines the tags, the dependency direction, and the o
 ## Related documents
 
 - `ARCH-MAP.md` at the repository root records the current topology: every component, its files, and its edges. It describes what is, where these records describe what should be.
-- `CONTEXT.md` at the repository root records the domain vocabulary.
+- `CONTEXT.md` at the repository root records the domain vocabulary. dsp-api's `CONTEXT.md` and its per-context files own the domain terms; the root file here defers to them and adds the client-side notes.
 - `CLAUDE.md` records operating rules and conventions that are not architectural decisions.
 - The `dasch-ops-platform` repository keeps its own ADRs. ADR-0004 here adapts its ADR-0013. Records in the two repositories are numbered independently, so always cite the repository by name.
