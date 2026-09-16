@@ -9,16 +9,16 @@ Every library in the workspace exposes a `src/index.ts` barrel, and consumers im
 
 Unusually for a codebase of this age, the rule holds. There are zero deep-path reach-ins across the workspace, and exactly one suppression of the boundary rule in the entire repository, at `libs/vre/shared/app-help-page/src/lib/help-page/help-page.component.ts:6`, where it is commented and reads the root `package.json` for a version string. This is the single strongest boundary the codebase currently has, and it holds by habit rather than by decision. Writing it down costs nothing and protects it against the first contributor who does not share the habit.
 
-What does not hold is the narrowness of the barrels themselves. Of twenty-eight library barrels, twenty-five re-export with `export *` and three are hand-curated named-export lists:
+What does not hold is the narrowness of the barrels themselves. Of twenty-seven library barrels, twenty-four re-export with `export *` (one of them, `pages/data-browser`, mixes both styles in five statements) and three are hand-curated named-export lists:
 
 | Library | Barrel style |
 | --- | --- |
 | `libs/vre/shared/calendar` | 7 named exports, zero `export *` |
 | `libs/vre/core/session` | 8 named exports, zero `export *` |
 | `libs/dsp-js` | 194 named exports, zero `export *` |
-| the other 25 | `export *` only, from 1 to 47 statements |
+| the other 24 | `export *`, from 1 to 46 statements |
 
-`export *` means the public surface is whatever happens to be exported from the files listed, so a symbol becomes public the moment somebody adds `export` to it, with no review step and no diff in the barrel. `libs/vre/ui/ui` has 47 such statements. That is not a public interface, it is the absence of one.
+`export *` means the public surface is whatever happens to be exported from the files listed, so a symbol becomes public the moment somebody adds `export` to it, with no review step and no diff in the barrel. `libs/vre/ui/ui` has 46 such statements. That is not a public interface, it is the absence of one.
 
 The counter-example already in the tree is instructive. `resource-editor` contains 403 files and its barrel lists four, each naming a specific component file rather than a folder index:
 
@@ -39,7 +39,7 @@ Four files out of 403 are reachable. The surface is genuinely narrow even though
 
 3. **New libraries use curated named exports.** `export { A, B } from './lib/x'`, not `export * from './lib/x'`. Adding a symbol to the public surface then requires editing the barrel, which puts it in the diff and in front of a reviewer. `shared/calendar` is the reference shape (ADR-0005). (**review**)
 
-4. **Existing `export *` barrels are not converted wholesale.** Converting twenty-five barrels at once produces a very large diff with no behavioural change and no way to review it meaningfully. A barrel is converted when its library is otherwise being worked on. If `export *` is kept, it targets leaf files rather than folder indexes, as `resource-editor` does. (**review**)
+4. **Existing `export *` barrels are not converted wholesale.** Converting twenty-four barrels at once produces a very large diff with no behavioural change and no way to review it meaningfully. A barrel is converted when its library is otherwise being worked on. If `export *` is kept, it targets leaf files rather than folder indexes, as `resource-editor` does. (**review**)
 
 5. **`libs/dsp-js` is a published package and its barrel is a contract.** Anything exported from `libs/dsp-js/src/index.ts` is part of the published `@dasch-swiss/dsp-js` surface. A symbol being unused inside this repository is not evidence that it is unused; removing it is a breaking change for external consumers, not cleanup. This is why the dead-code work explicitly excludes `dsp-js`. (**review**)
 
@@ -59,6 +59,6 @@ Sheriff is **not adopted now**, deliberately. The workspace currently has zero d
 
 ## Alternatives rejected
 
-- **Convert all twenty-five barrels now.** Mechanical, reviewable only in aggregate, and produces a diff nobody can meaningfully check. The value of a curated barrel comes from the review step at the moment a symbol is added, which a bulk conversion does not provide retroactively.
+- **Convert all twenty-four barrels now.** Mechanical, reviewable only in aggregate, and produces a diff nobody can meaningfully check. The value of a curated barrel comes from the review step at the moment a symbol is added, which a bulk conversion does not provide retroactively.
 - **Adopt Sheriff alongside Nx tags immediately.** Correct in the long run and rejected only on timing, as set out above.
 - **Drop barrels and import by deep path with a lint rule listing permitted paths.** Some workspaces do this to improve tree-shaking. It replaces one reviewable file per library with a central allowlist that every team edits, which is a worse place to put the decision, and the bundler already handles what it would buy.

@@ -13,12 +13,12 @@ nav:
       - Release Notes: contribution/release-notes.md
   - Architecture Decisions:
       - Overview: adr/index.md
-      - "ADR-0001: Library taxonomy and dependency direction": adr/0001-library-taxonomy-and-dependency-direction.md
-      - "ADR-0002: The barrel is the public interface": adr/0002-the-barrel-is-the-public-interface.md
-      - "ADR-0003: Feature state is component-provided": adr/0003-feature-state-is-component-provided.md
+      - "ADR-0001: Library taxonomy and enforced dependency direction": adr/0001-library-taxonomy-and-dependency-direction.md
+      - "ADR-0002: The barrel is the only public interface": adr/0002-the-barrel-is-the-public-interface.md
+      - "ADR-0003: Feature state is component-provided, with one writer per value": adr/0003-feature-state-is-component-provided.md
       - "ADR-0004: Cross-feature access": adr/0004-cross-feature-access.md
-      - "ADR-0005: What shared means": adr/0005-what-shared-means.md
-      - "ADR-0006: The e2e suite is its own project": adr/0006-the-e2e-suite-is-its-own-project.md
+      - "ADR-0005: What shared/ means, and what it does not": adr/0005-what-shared-means.md
+      - "ADR-0006: The end-to-end suite is its own project": adr/0006-the-e2e-suite-is-its-own-project.md
 
 plugins:
   - include-markdown

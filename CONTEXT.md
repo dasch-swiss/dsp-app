@@ -130,8 +130,8 @@ The association of a User with a Project or Group.
 _Avoid_: Project ownership
 
 **Permission profile**:
-A User's effective Groups and administration flags, computed by dsp-api and carried on every authenticated request. In dsp-js this is the admin model `Permissions` on a user.
-_Avoid_: Permissions data, permission object
+A User's effective Groups and administration flags, computed by dsp-api and carried on every authenticated request. In dsp-js this is `PermissionsData`, the type of the `permissions` field on `ReadUser`. The similarly named class `Permissions` in the same folder has no consumers.
+_Avoid_: Permissions (unqualified), permission object
 
 **Object-access permission**:
 The fine-grained grant recorded on a Resource or Value saying which Groups may do what with it, evaluated against the requesting User's Permission profile.
@@ -252,7 +252,7 @@ _Avoid_: Collection (in code)
 
 - **"Cardinality" carries the count and the binding.** dsp-api's definition covers both: a Cardinality is the Data Model constraint binding a Class, a Property and a count, so `UpdateResourceClassCardinality` adding a property to a class is the API's meaning, not a misnomer. The dsp-js `Cardinality` enum names only the count part; the binding is `IHasProperty`, which carries that enum together with the property IRI and GUI order. Two code comments in the repo complain about the overlap. Read an `IHasProperty` as "a cardinality" and its `cardinality` field as "the count".
 
-- **"Permissions" names two unrelated types.** The admin model `Permissions` (a User's Groups and administrative grants) is the **Permission profile**. The `PermissionUtil.Permissions` enum (RV/V/M/D/CR) is the **Permission level** ladder. Use the domain terms in prose and let the code names stand.
+- **"Permissions" names three types, one of them dead.** The admin model `PermissionsData` (a User's Groups and administrative grants, carried on `ReadUser.permissions`) is the **Permission profile**. The `PermissionUtil.Permissions` enum (RV/V/M/D/CR) is the **Permission level** ladder. The admin class `Permissions` is exported from dsp-js but used by nothing; do not reach for it because its name looks right. Use the domain terms in prose and let the code names stand.
 
 - **"Restricted view" is a setting and a level.** `RestrictedViewSettings` in the admin API and the view-restrictions page under project settings are the Project setting, owned by dsp-api's Projects context. RV in the permission ladder is the level. The setting is what a User at level RV gets. Say which one is meant.
 

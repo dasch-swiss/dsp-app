@@ -376,7 +376,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 
 - **Nx project**: `vre-pages-ontology-ontology`
 - **Paths**: `libs/vre/pages/ontology/ontology/**`
-- **Purpose**: The data-model editor: the ontology landing page, the resource-class editor and the property editor, including cardinality and GUI-element configuration.
+- **Purpose**: The data-model editor: the data-model landing page, the resource-class editor and the property editor, including cardinality and GUI-element configuration.
 - **Key entities**: `OntologyEditService`, `OntologyPageService`, `MakeOntologyFor`, `ResourceClassInfo`, `PropertyInfo`, `ClassPropertyInfo`, `PropToAdd`, `PropertyForm`, `CreatePropertyData`, `CardinalityComponent`, `GuiAttrListComponent`
 - **Public interface**: Four routed components. `OntologyEditService` is deliberately not exported; it is component-scoped.
 - **Local-context kit**: `src/index.ts`, `src/lib/ontology-page.component.ts`, `src/lib/services/ontology-edit.service.ts`, `src/lib/services/make-ontology-for.ts`, `src/lib/ontology.types.ts`, `src/lib/forms/property-form/property-form.type.ts`, `libs/vre/shared/app-helper-services/src/lib/default-data/default-properties.ts`
@@ -626,7 +626,7 @@ Recorded from the observed runtime graph, not from folder names.
 | Imports cross a library boundary through the `@dasch-swiss/*` alias, never a deep path. | `static-analysis` (Nx), disabled for `*.spec.ts`, `environment*.ts` and `apps/dsp-app/cypress/**` |
 | No library imports application SCSS. **Currently violated in 20 files across six libraries**, which `@use '../../../../../../../../apps/dsp-app/src/styles/config'`. Sass imports are invisible to the boundary lint. | `docs-only` |
 | The `ui/*` tier depends only on `ui/*` and `dsp-js`. **Holds at runtime for five of six libraries.** The exception is `vre/ui/string-literal`, which genuinely needs `LocalizationService`. `vre/core/error-handler` also depends on `vre/ui/notification`, inverting the tier. | `docs-only` |
-| `pages/*` libraries do not depend on each other. **Currently violated**: `project/project` to `system/system` and `user-settings/user`; `ontology/ontology` to `ontology/list`, `project/project` and `user-settings/user`; `system/system` to `user-settings/user`; `search/advanced-search` to `project/project`. | `docs-only` |
+| `pages/*` libraries do not depend on each other. **Currently violated**: `project/project` to `system/system` and `user-settings/user`; `ontology/ontology` to `ontology/list`, `project/project` and `user-settings/user`; `ontology/list` to `project/project`; `system/system` to `user-settings/user`; `search/advanced-search` to `project/project`. | `docs-only` |
 
 **Promotion path.** Every `docs-only` rule above could become `static-analysis` today. Nx tags already exist on four projects (`dsp-js` carries `scope:shared` and `type:data-access`; three `ui` libraries carry `type:ui`), but `depConstraints` in `eslint.config.mjs` is the permissive default, so no tag constrains anything. Populating tags on all 29 projects and writing real `depConstraints` would move the tier and page rules from hope to CI. The SCSS rule cannot be promoted this way, because no mechanism in the repository inspects Sass imports.
 
