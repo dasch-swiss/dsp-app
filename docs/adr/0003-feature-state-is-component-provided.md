@@ -34,11 +34,23 @@ The useful vocabulary here is **connascence** (Page-Jones, as popularised by Ric
 
 ## Decision
 
-1. **A service that holds feature state is provided by the feature's component, not in the root injector.** (**review**)
+1. **A service that holds feature state is provided by the feature, not by the root injector.** (**review**)
 
    Feature state means anything whose correct lifetime is the page or the component: drafts, selections, the result of the query this page ran, form state, view mode. If the answer to "what should happen to this value when the user leaves the page?" is "it should be gone", it is feature state.
 
-   `ProjectPageService` is the worked example, and ADR-0004 decision 2 reaches the same answer from the other side. It holds two `BehaviorSubject`s (the current project id and a reload trigger), so it is feature state, not a stateless lookup. Because three other page libraries need it, the class moves to `scope:shared, type:data-access`. Because it is feature state, the provision moves from `providedIn: 'root'` to the `providers:` array of `ProjectPageComponent`: the ontology editor, the list editor and advanced search are all routed as children of that component, so they inject the ancestor's instance and nothing changes at their call sites. One constraint is left to the implementing issue: `ProjectPageGuard.canActivate` currently seeds the service, and a root-provided guard cannot inject a component-provided service, so the seeding has to move to the component or to a resolver on the same route.
+   `ProjectPageService` is the worked example, and ADR-0004 decision 2 reaches the same answer from the other side. It holds two `BehaviorSubject`s (the current project id and a reload trigger), so it is feature state, not a stateless lookup. Because three other page libraries need it, the class moves to `scope:shared, type:data-access`. Because it is feature state, the provision moves off `providedIn: 'root'`. It moves to the **route**, not to `ProjectPageComponent`, and one existing caller decides that: `ProjectPageGuard.canActivate` seeds the service today. A guard cannot inject a component-provided instance, and a resolver cannot either, because the router resolves guards and resolvers alike from the route's *environment* injector (`futureARS._environmentInjector`, `@angular/router` 21) and never from a component's node injector. `Route.providers` is the form that satisfies both sides:
+
+   ```ts
+   {
+     path: RouteConstants.projectUuidRelative,
+     component: ProjectPageComponent,
+     canActivate: [ProjectPageGuard],
+     providers: [ProjectPageService],   // one instance for this route and its children
+     children: [ /* data, data-models, ontology, list, settings, advanced-search */ ],
+   }
+   ```
+
+   Angular creates that environment injector when the route is entered and destroys it when the route is left, so the lifetime this decision asks for is unchanged. The guard, `ProjectPageComponent`, and the ontology, list and advanced-search routes, which are all children of it, then share one instance and nothing changes at their call sites. Component `providers:` stays the default for state that no guard or resolver on the same route touches, which is every other case in this repository.
 
 2. **A feature library groups its providers in a `provide<Feature>(): Provider[]` function exported from its barrel.** (**review**)
 

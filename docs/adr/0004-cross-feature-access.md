@@ -64,7 +64,7 @@ The distribution matters more than the total. Fourteen of the thirty-three files
 
    This is the answer for eleven of the seventeen symbols above. The five `data-browser` symbols need nothing once decision 7 applies, and `ListInfoFormComponent` needs no action, because `pages/ontology/ontology` and `pages/ontology/list` share `scope:ontology`.
 
-   `ProjectPageService` shows both halves of the first bullet together. Three other page libraries import it, so the class moves to `scope:shared, type:data-access`. It holds two `BehaviorSubject`s, so after the move it is not root-provided: `ProjectPageComponent` provides it, and the ontology, list and advanced-search routes, all children of that component, inject the ancestor's instance. ADR-0003 decision 1 records the same resolution and the guard-seeding constraint that comes with it.
+   `ProjectPageService` shows both halves of the first bullet together. Three other page libraries import it, so the class moves to `scope:shared, type:data-access`. It holds two `BehaviorSubject`s, so after the move it is not root-provided: the project route provides it through `Route.providers`, and `ProjectPageGuard`, `ProjectPageComponent` and the ontology, list and advanced-search routes, all children of that route, share that one instance. ADR-0003 decision 1 records why the provider sits on the route rather than on the component.
 
 3. **Features are composed by the application, through the routing table.** (**structure**)
 
