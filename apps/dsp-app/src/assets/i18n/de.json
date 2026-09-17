@@ -165,7 +165,9 @@
         "image": "Bild"
       },
       "imageSettings": {
-        "off": "Aus",
+        "default": "Standard",
+        "defaultHintPixels": "Bilder sind auf {{width}} × {{height}} Pixel begrenzt, den Plattformstandard.",
+        "defaultHintPercentage": "Bilder sind auf {{percentage}}% des Originals begrenzt, den Plattformstandard.",
         "isWatermark": "Wasserzeichen anwenden",
         "ratio": "Verhältnis",
         "restrictImageSize": "Bildgrösse einschränken",

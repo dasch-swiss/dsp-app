@@ -165,7 +165,9 @@
         "image": "Image"
       },
       "imageSettings": {
-        "off": "Éteint",
+        "default": "Par défaut",
+        "defaultHintPixels": "Les images sont limitées à {{width}} × {{height}} pixels, la valeur par défaut de la plateforme.",
+        "defaultHintPercentage": "Les images sont limitées à {{percentage}}% de l'original, la valeur par défaut de la plateforme.",
         "isWatermark": "Appliquer un filigrane",
         "ratio": "Rapport",
         "restrictImageSize": "Limiter la taille de l'image",

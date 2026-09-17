@@ -5,7 +5,6 @@ import {
   MembersResponse,
   Project,
   ProjectResponse,
-  ProjectRestrictedViewSettingsResponse,
   ProjectsResponse,
   UpdateProjectRequest,
 } from '@dasch-swiss/dsp-js';
@@ -59,12 +58,6 @@ export class ProjectApiService extends BaseApi {
 
   getAdminMembersForProject(id: string, idType: ProjectIdentifier = ProjectIdentifier.Iri) {
     return this._http.get<MembersResponse>(`${this._projectRoute(id, idType)}/admin-members`);
-  }
-
-  getRestrictedViewSettingsForProject(id: string, idType: ProjectIdentifier = ProjectIdentifier.Iri) {
-    return this._http.get<ProjectRestrictedViewSettingsResponse>(
-      `${this._projectRoute(id, idType)}/RestrictedViewSettings`
-    );
   }
 
   private _projectRoute(id: string, idType: ProjectIdentifier = ProjectIdentifier.Iri) {
