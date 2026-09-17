@@ -42,7 +42,7 @@ Four files out of 403 are reachable. The surface is genuinely narrow even though
    **Promotion path (`review` -> `static-analysis`).** ESLint's own `no-restricted-syntax` carries the check:
 
    ```js
-   { files: ['libs/*/src/index.ts'], rules: { 'no-restricted-syntax': ['error',
+   { files: ['libs/**/src/index.ts'], rules: { 'no-restricted-syntax': ['error',
      { selector: 'ExportAllDeclaration', message: 'Barrels use named exports (ADR-0002).' }] } }
    ```
 

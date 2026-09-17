@@ -79,8 +79,9 @@ The useful vocabulary here is **connascence** (Page-Jones, as popularised by Ric
        message: 'Feature state is provided by the feature (ADR-0003).' }] } }
    ```
 
-   The selector was run against the workspace: it reports `project-page.service.ts:10`. The `ignores` entry is decision 3's guard-and-resolver exemption expressed as configuration. The gate lands once the nine declarations in the backlog below are cleared or carry their `@Injectable` comment, and an `eslint-disable-next-line` with that comment is the reviewable form of "it may still be correct".
+   The selector was run against the workspace: it reports the ten declarations this decision's backlog lists, `project-page.service.ts:10` among them, and none of the guards. The `ignores` entry is decision 3's guard-and-resolver exemption expressed as configuration. The gate lands once the nine declarations in the backlog below are cleared or carry their `@Injectable` comment, and an `eslint-disable-next-line` with that comment is the reviewable form of "it may still be correct".
 
+   **This block and ADR-0002's must be merged, not stacked.** Both configure `no-restricted-syntax`, and a later flat-config block replaces that rule's options for every file it matches rather than adding to them. Stacked as two blocks, the nine barrels under `libs/vre/pages/**` and `libs/vre/resource-editor/**` silently lose the `ExportAllDeclaration` check: measured, 15 of the 24 `export *` barrels are still reported instead of 24. One block carrying both selectors reports all 24.
 
 4. **One writer per value.** (**review**)
 
