@@ -9,7 +9,7 @@ ADR-0004 makes relocation to `scope:shared` the default answer when two features
 
 The repository already contains both the answer and the failure.
 
-**The answer is `libs/vre/shared/calendar`.** It imports nothing from `@dasch-swiss`. It has no Angular dependency injection. It is pure functions and immutable value objects: a `CalendarOperations` strategy interface, one implementation per calendar, a factory, and a Julian Day Number pivot for conversion. Its barrel is seven hand-written named exports with a `@packageDocumentation` block, one of only three curated barrels in the workspace. It has its own `package.json` and a real `@nx/js:tsc` build target emitting to `dist/libs/vre/shared/calendar`. Test coverage is one spec file per implementation file, seven and seven. It has exactly one consumer, `ui/date-picker`, across fourteen files.
+**The answer is `libs/vre/shared/calendar`.** It imports nothing from `@dasch-swiss`. It has no Angular dependency injection. It is pure functions and immutable value objects: a `CalendarOperations` strategy interface, one implementation per calendar, a factory, and a Julian Day Number pivot for conversion. Its barrel is seven hand-written named exports with a `@packageDocumentation` block, one of only three curated barrels in the workspace. It has its own `package.json` and a real `@nx/js:tsc` build target emitting to `dist/libs/vre/shared/calendar`. Test coverage is one spec file per implementation file, seven and seven. It has exactly one consumer, `ui/date-picker`, across eight runtime files, twelve counting its specs and its one story.
 
 That last fact is worth stating plainly rather than hiding: the best library in the repository is used by one other library. Being a good library is not the same as being widely used, and the criteria below measure the former.
 
@@ -19,7 +19,7 @@ That last fact is worth stating plainly rather than hiding: the best library in 
 
 `libs/vre/shared/app-helper-services` is imported by sixty-nine files and contains eight unrelated things: a localization service, an ontology service, a project service, a per-project rights cache, a result-state service, a sorting helper, a pure language-picking function, and a `default-data` folder. The ontology property-type registry lives here rather than in the ontology library.
 
-`libs/vre/shared/app-common` is imported by eighty-two files and contains animations, regular expressions, directives, a download helper, a resource model, form validators, two generators, XML handling, legal helpers, list GUI attributes, an interface, a service that calls the API, RxJS operators and permission logic.
+`libs/vre/shared/app-common` is imported by eighty-one files and contains animations, regular expressions, directives, a download helper, a resource model, form validators, two generators, XML handling, legal helpers, list GUI attributes, an interface, a service that calls the API, RxJS operators and permission logic.
 
 The last two are instructive because a fan-in-versus-fan-out test passes both of them. `app-common` has a fan-in of twelve libraries against a fan-out of two. By direction alone it looks like an excellent shared library. It is not, because it has no single reason to change. One test is not enough.
 
@@ -65,7 +65,7 @@ Stating it so that the ADR is falsifiable rather than aspirational.
 | --- | --- | --- |
 | `shared/app-common-to-move` | direction | Split, see below. It cannot be retagged, and it blocks ADR-0001 step (c). |
 | `shared/app-helper-services` | cohesion | Split. `LocalizationService` per ADR-0001 decision 7; the ontology property-type registry into the ontology domain; `pickPreferredLanguageString` and `sorting.helper` to `type:util`; the project and rights services to `type:data-access`; `ResourceResultService` reviewed against ADR-0003. |
-| `shared/app-common` | cohesion | Split by kind: directives and animations to `type:ui`, validators, regexes and operators to `type:util`, `resource.service.ts` to `type:data-access`. Eighty-two importing files, so this is the largest of the three and should be done in slices. |
+| `shared/app-common` | cohesion | Split by kind: directives and animations to `type:ui`, validators, regexes and operators to `type:util`, `resource.service.ts` to `type:data-access`. Eighty-one importing files, so this is the largest of the three and should be done in slices. |
 | `ui/notification` | naming | One service file wrapping `MatSnackBar`. Tagged `type:util` per ADR-0001 decision 4. Folder renamed opportunistically. |
 
 ### `app-common-to-move` in detail
@@ -90,9 +90,9 @@ The other three libraries in the table above do not block anything. Their tags c
 
 ## Consequences
 
-**Positive.** `scope:shared` has a definition, so ADR-0004's relocation rule has somewhere safe to relocate to. Two grab bags with one hundred and fifty-one importing files between them get a stated resolution rather than continuing to absorb whatever arrives. New libraries have a reference shape to copy.
+**Positive.** `scope:shared` has a definition, so ADR-0004's relocation rule has somewhere safe to relocate to. Two grab bags with one hundred and fifty importing files between them get a stated resolution rather than continuing to absorb whatever arrives. New libraries have a reference shape to copy.
 
-**Negative and costs.** Both tests are judgment, enforced at review, and nothing in the toolchain checks either. The direction test is computable from the Nx project graph and could be scripted later; the cohesion test cannot. Splitting `app-common` touches eighty-two files, and ADR-0002 decision 4 means the barrels involved keep their `export *` form through the move, so the surface does not narrow at the same time. Three libraries keep misleading names for as long as they keep working.
+**Negative and costs.** Both tests are judgment, enforced at review, and nothing in the toolchain checks either. The direction test is computable from the Nx project graph and could be scripted later; the cohesion test cannot. Splitting `app-common` touches eighty-one files, and ADR-0002 decision 4 means the barrels involved keep their `export *` form through the move, so the surface does not narrow at the same time. Three libraries keep misleading names for as long as they keep working.
 
 **Honest limit.** These criteria describe a good shared library. They do not, on their own, stop a well-named cohesive library from being created for something that should not have been shared at all. That judgment stays with ADR-0004 decision 2.
 

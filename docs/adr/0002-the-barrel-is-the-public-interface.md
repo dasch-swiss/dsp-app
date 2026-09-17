@@ -7,14 +7,14 @@
 
 Every library in the workspace exposes a `src/index.ts` barrel, and consumers import through the `@dasch-swiss/*` path aliases declared in `tsconfig.base.json`. `@nx/enforce-module-boundaries` rejects imports that reach past a barrel into a library's internal files.
 
-Unusually for a codebase of this age, the rule holds. There are zero deep-path reach-ins across the workspace, and exactly one suppression of the boundary rule in the entire repository, at `libs/vre/shared/app-help-page/src/lib/help-page/help-page.component.ts:6`, where it is commented and reads the root `package.json` for a version string. This is the single strongest boundary the codebase currently has, and it holds by habit rather than by decision. Writing it down costs nothing and protects it against the first contributor who does not share the habit.
+Unusually for a codebase of this age, the rule holds. There are zero deep-path reach-ins in any linted file, and exactly one suppression of the boundary rule in the entire repository, at `libs/vre/shared/app-help-page/src/lib/help-page/help-page.component.ts:6`, where it is commented and reads the root `package.json` for a version string. The one un-linted subtree is the exception: `apps/dsp-app/cypress/` holds four relative cross-project imports of `libs/dsp-js/src`, which ADR-0006 covers. This is the single strongest boundary the codebase currently has, and it holds by habit rather than by decision. Writing it down costs nothing and protects it against the first contributor who does not share the habit.
 
 What does not hold is the narrowness of the barrels themselves. Of twenty-seven library barrels, twenty-four re-export with `export *` (one of them, `pages/data-browser`, mixes both styles in five statements) and three are hand-curated named-export lists:
 
 | Library | Barrel style |
 | --- | --- |
 | `libs/vre/shared/calendar` | 7 named exports, zero `export *` |
-| `libs/vre/core/session` | 8 named exports, zero `export *` |
+| `libs/vre/core/session` | 7 named exports, zero `export *` |
 | `libs/dsp-js` | 194 named exports, zero `export *` |
 | the other 24 | `export *`, from 1 to 46 statements |
 
@@ -55,7 +55,7 @@ Sheriff is **not adopted now**, deliberately. The workspace currently has zero d
 
 **Positive.** The strongest existing boundary becomes a stated rule rather than a shared habit, and survives contributor turnover. New libraries get a reviewable public surface from the start. The refactoring freedom that a narrow barrel buys, changing anything not exported without touching a consumer, becomes real rather than accidental.
 
-**Negative and costs.** Curated barrels are more work per change than `export *`: adding a component means editing two files. Twenty-five libraries keep a wide surface indefinitely under decision 4, so the benefit arrives slowly and unevenly. The Nx deep-import gap stays open, accepted knowingly.
+**Negative and costs.** Curated barrels are more work per change than `export *`: adding a component means editing two files. Twenty-four libraries keep a wide surface indefinitely under decision 4, so the benefit arrives slowly and unevenly. The Nx deep-import gap stays open, accepted knowingly.
 
 ## Alternatives rejected
 

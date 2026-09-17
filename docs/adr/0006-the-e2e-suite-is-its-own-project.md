@@ -40,15 +40,15 @@ The Cypress suite lives at `apps/dsp-app/cypress/`: twenty spec files plus page 
 
 3. **Nothing lints it.** `eslint.config.mjs:173` lists `apps/dsp-app/cypress/` under `ignores`. That removes it from every rule, `@nx/enforce-module-boundaries` included.
 
-4. **So the imports had rotted, silently.** When this record was written, eight relative imports across five files reached out of the suite, and two of the three libraries they named were gone:
+4. **So the imports had rotted, silently.** When this record was written, nine relative imports, one per file, reached out of the suite, and two of the three libraries they named were gone, which accounts for five of the nine:
 
    | Imported path | Sites | State then |
    | --- | --- | --- |
    | `../../../../../libs/vre/open-api/src` | 4 | **gone**, the library moved to `libs/vre/3rd-party-services/open-api` |
-   | `../../../../../libs/dsp-js/src` | 3 | exists, but reaches past the library's barrel |
+   | `../../../../../libs/dsp-js/src` | 4 | exists; the path resolves to the barrel itself, but bypasses the `@dasch-swiss/dsp-js` alias |
    | `../../../../../libs/vre/shared/app-representations/src` | 1 | **gone**, no library exists at any path |
 
-   Every one of these forms is precisely what `noRelativeOrAbsoluteImportsAcrossLibraries` rejects, and all of them would have been caught on the day they broke. The affected specs ran green because they were never compiled (DEV-7251). #3434 repointed the open-api imports to their alias and declared `UploadedFileResponse` locally in `support/helpers/file-uploader.ts`, which was the right call: the type is internal to `resource-editor`, and an end-to-end suite should not import a component library to get it. What remains are four relative imports of `libs/dsp-js/src`, in `support/commands.ts`, `support/commands/ontology-command.ts`, `e2e/system-admin/data-model-class.cy.ts` and `e2e/system-admin/ontology.cy.ts`, each reaching past the barrel.
+   Every one of these forms is precisely what `noRelativeOrAbsoluteImportsAcrossLibraries` rejects, and all of them would have been caught on the day they broke. The affected specs ran green because they were never compiled (DEV-7251). #3434 repointed the open-api imports to their alias and declared `UploadedFileResponse` locally in `support/helpers/file-uploader.ts`, which was the right call: the type is internal to `resource-editor`, and an end-to-end suite should not import a component library to get it. What remains are four relative imports of `libs/dsp-js/src`, in `support/commands.ts`, `support/commands/ontology-command.ts`, `e2e/system-admin/data-model-class.cy.ts` and `e2e/system-admin/ontology.cy.ts`, each bypassing the alias.
 
 The suite being a directory rather than a project is what made 2, 3 and 4 possible, and is why the fix for 2 had to be a hand-rolled step. A project has its own lint target, its own type-check, and its own tags. A directory inside an application inherits the application's configuration, and in this case inherits an explicit exclusion from it.
 
@@ -72,7 +72,7 @@ The suite being a directory rather than a project is what made 2, 3 and 4 possib
 
    The specs legitimately need request and response shapes from `dsp-js` and the generated OpenAPI client to build fixtures. They do not need components, pages or UI libraries, and an end-to-end test that imports a component is testing the wrong thing.
 
-   The four remaining relative imports of `libs/dsp-js/src` become `@dasch-swiss/dsp-js` alias imports. That fixes the barrel bypass, and the boundary rule keeps it fixed. The open-api imports already went through their alias and `UploadedFileResponse` is already a local declaration (#3434), so nothing else in the suite needs to move.
+   The four remaining relative imports of `libs/dsp-js/src` become `@dasch-swiss/dsp-js` alias imports. That fixes the alias bypass, and the boundary rule keeps it fixed. The open-api imports already went through their alias and `UploadedFileResponse` is already a local declaration (#3434), so nothing else in the suite needs to move.
 
 4. **CI calls the Nx target.** (**structure**)
 
