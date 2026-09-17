@@ -18,7 +18,7 @@
 
 services:
   caddy:
-    image: caddy:2.8
+    image: caddy:2.11
     restart: unless-stopped
     ports:
       - "80:80"
@@ -216,7 +216,7 @@ services:
       - intranet
 
   kratos-migrate:
-    image: oryd/kratos:v1.0.0
+    image: oryd/kratos:v1.3.1
     depends_on:
       postgres:
         condition: service_healthy
@@ -230,7 +230,7 @@ services:
       - intranet
 
   kratos:
-    image: "oryd/kratos:v1.0.0"
+    image: "oryd/kratos:v1.3.1"
     depends_on:
       - kratos-migrate
     restart: unless-stopped
