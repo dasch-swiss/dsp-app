@@ -165,7 +165,9 @@
         "image": "Image"
       },
       "imageSettings": {
-        "off": "Off",
+        "default": "Default",
+        "defaultHintPixels": "Images are limited to {{width}} × {{height}} pixels, the platform default.",
+        "defaultHintPercentage": "Images are limited to {{percentage}}% of the original, the platform default.",
         "isWatermark": "Apply watermark",
         "ratio": "Ratio",
         "restrictImageSize": "Restrict image size",
