@@ -105,7 +105,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
   - `src/generated/**` is gitignored and deleted by `rm -rf` on every generate. Edits there cannot be committed and cannot survive. `structure`
   - Never edit `dsp-api_spec.yaml` to silence `check-openapi-sync`. A red check is expected until the dsp-api change is deployed to dev. Use the `update-openapi-client` skill. `review`
   - You do not add code here. Bump the spec and regenerate. `docs-only`
-- **Durable state**: `dsp-api_spec.yaml`, currently pinned at `info.version: v38.1.0-5-g35a36e3`. Written by `npm run update-openapi` or by the CI auto-bump PR.
+- **Durable state**: `dsp-api_spec.yaml`, currently pinned at `info.version: v39.0.0-17-g9ddad36`. Written by `npm run update-openapi` or by the CI auto-bump PR.
 
 ### vre/3rd-party-services/analytics
 
