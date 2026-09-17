@@ -64,7 +64,7 @@ The distribution matters more than the total. Fourteen of the thirty-three files
 
    This is the answer for eleven of the seventeen symbols above. The five `data-browser` symbols need nothing once decision 7 applies, and `ListInfoFormComponent` needs no action, because `pages/ontology/ontology` and `pages/ontology/list` share `scope:ontology`.
 
-   `ProjectPageService` shows both halves of the first bullet together. Three other page libraries import it, so the class moves to `scope:shared, type:data-access`. It holds two `BehaviorSubject`s, so after the move it is not root-provided: `ProjectPageComponent` provides it, and the ontology, list and advanced-search routes, all children of that component, inject the ancestor's instance. ADR-0003 decision 1 records the same resolution and the guard-seeding constraint that comes with it.
+   `ProjectPageService` shows both halves of the first bullet together. Three other page libraries import it, so the class moves to `scope:shared, type:data-access`. It holds two `BehaviorSubject`s, so after the move it is not root-provided: the project route provides it through `Route.providers`, and `ProjectPageGuard`, `ProjectPageComponent` and the ontology, list and advanced-search routes, all children of that route, share that one instance. ADR-0003 decision 1 records why the provider sits on the route rather than on the component.
 
 3. **Features are composed by the application, through the routing table.** (**structure**)
 
@@ -91,7 +91,7 @@ The distribution matters more than the total. Fourteen of the thirty-three files
 
 7. **`pages/data-browser` is tagged `scope:shared, type:feature`.** (**static-analysis**)
 
-   The question was whether it is a page or shared infrastructure, and the import graph answers it without product input. `apps/dsp-app/src/app/app.routes.ts` never imports it: the route that shows it is `DataBrowserPageComponent` in `pages/project`. `pages/project` embeds four of its internals (`MultipleViewerComponent`, `MultipleViewerService`, `ResourcesListComponent`, `ResourceClassCountApi`) across four files, and both search libraries embed `ResourceBrowserComponent`. A library that nothing routes to and that three features render inside themselves is shared infrastructure, whatever folder it sits in. It carries the same tags as `resource-editor`, and the six imports of it across five files become legal with no code moving. The folder is a hint and the tag is the truth (ADR-0001 decision 4); it leaves `pages/` opportunistically, because that rename touches every importer and buys nothing the tag does not.
+   The question was whether it is a page or shared infrastructure, and the import graph answers it without product input. `apps/dsp-app/src/app/app.routes.ts` never imports it: the route that shows it is `DataBrowserPageComponent` in `pages/project`. `pages/project` embeds four of its internals (`MultipleViewerComponent`, `MultipleViewerService`, `ResourcesListComponent`, `ResourceClassCountApi`) across four files, and both search libraries embed `ResourceBrowserComponent`. A library that nothing routes to and that three features render inside themselves is shared infrastructure, whatever folder it sits in. It carries the same tags as `resource-editor`, and the six imports of it across six files become legal with no code moving. The folder is a hint and the tag is the truth (ADR-0001 decision 4); it leaves `pages/` opportunistically, because that rename touches every importer and buys nothing the tag does not.
 
 ## What does not transfer from ADR-0013
 
@@ -109,7 +109,7 @@ Stating this explicitly, because adopting the vocabulary without the limits woul
 
 **Negative and costs.** Relocating eleven symbols touches thirty-three files plus both barrels on each move, and `CLAUDE.md` already warns that a missed barrel export breaks consumers at build time. Until the moves land, ADR-0001's constraint block cannot be switched on, so this ADR is on the critical path for that one.
 
-**`data-browser`.** Decision 7 settles the highest-leverage question in the migration by tagging rather than moving: six imports across five files stop being violations. What it does not settle is when the library leaves the `pages/` folder. That is a rename touching every importer and is done opportunistically, as ADR-0001 decision 4 says for every folder-versus-tag mismatch.
+**`data-browser`.** Decision 7 settles the highest-leverage question in the migration by tagging rather than moving: six imports across six files stop being violations. What it does not settle is when the library leaves the `pages/` folder. That is a rename touching every importer and is done opportunistically, as ADR-0001 decision 4 says for every folder-versus-tag mismatch.
 
 **Risk.** Decision 2 makes `scope:shared` the destination for everything that two features need. Applied without judgment, that grows a shared tier that is itself a big ball of mud, which is the failure ADR-0005 exists to prevent. Relocation is the default answer, not an automatic one.
 

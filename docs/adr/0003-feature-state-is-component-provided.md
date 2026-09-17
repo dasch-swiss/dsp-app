@@ -34,11 +34,23 @@ The useful vocabulary here is **connascence** (Page-Jones, as popularised by Ric
 
 ## Decision
 
-1. **A service that holds feature state is provided by the feature's component, not in the root injector.** (**review**)
+1. **A service that holds feature state is provided by the feature, not by the root injector.** (**review**)
 
    Feature state means anything whose correct lifetime is the page or the component: drafts, selections, the result of the query this page ran, form state, view mode. If the answer to "what should happen to this value when the user leaves the page?" is "it should be gone", it is feature state.
 
-   `ProjectPageService` is the worked example, and ADR-0004 decision 2 reaches the same answer from the other side. It holds two `BehaviorSubject`s (the current project id and a reload trigger), so it is feature state, not a stateless lookup. Because three other page libraries need it, the class moves to `scope:shared, type:data-access`. Because it is feature state, the provision moves from `providedIn: 'root'` to the `providers:` array of `ProjectPageComponent`: the ontology editor, the list editor and advanced search are all routed as children of that component, so they inject the ancestor's instance and nothing changes at their call sites. One constraint is left to the implementing issue: `ProjectPageGuard.canActivate` currently seeds the service, and a root-provided guard cannot inject a component-provided service, so the seeding has to move to the component or to a resolver on the same route.
+   `ProjectPageService` is the worked example, and ADR-0004 decision 2 reaches the same answer from the other side. It holds two `BehaviorSubject`s (the current project id and a reload trigger), so it is feature state, not a stateless lookup. Because three other page libraries need it, the class moves to `scope:shared, type:data-access`. Because it is feature state, the provision moves off `providedIn: 'root'`. It moves to the **route**, not to `ProjectPageComponent`, and one existing caller decides that: `ProjectPageGuard.canActivate` seeds the service today. A guard cannot inject a component-provided instance, and a resolver cannot either, because the router resolves guards and resolvers alike from the route's *environment* injector (`futureARS._environmentInjector`, `@angular/router` 21) and never from a component's node injector. `Route.providers` is the form that satisfies both sides:
+
+   ```ts
+   {
+     path: RouteConstants.projectUuidRelative,
+     component: ProjectPageComponent,
+     canActivate: [ProjectPageGuard],
+     providers: [ProjectPageService],   // one instance for this route and its children
+     children: [ /* data, data-models, ontology, list, settings, advanced-search */ ],
+   }
+   ```
+
+   Angular creates that environment injector when the route is entered and destroys it when the route is left, so the lifetime this decision asks for is unchanged. The guard, `ProjectPageComponent`, and the ontology, list and advanced-search routes, which are all children of it, then share one instance and nothing changes at their call sites. Component `providers:` stays the default for state that no guard or resolver on the same route touches, which is every other case in this repository.
 
 2. **A feature library groups its providers in a `provide<Feature>(): Provider[]` function exported from its barrel.** (**review**)
 
@@ -57,6 +69,20 @@ The useful vocabulary here is **connascence** (Page-Jones, as popularised by Ric
 
    A root-provided service **in a `type:feature` library** is otherwise a defect by default. It may still be correct, and if it is, the reason belongs in a comment at the `@Injectable` declaration. (**review**)
 
+   **Promotion path (`review` -> `static-analysis`).** The declaration is a literal in the decorator, so `no-restricted-syntax` sees it:
+
+   ```js
+   { files: ['libs/vre/pages/**/*.ts', 'libs/vre/resource-editor/**/*.ts'],
+     ignores: ['**/*.guard.ts', '**/*.resolver.ts', '**/*.spec.ts', '**/*.stories.ts'],
+     rules: { 'no-restricted-syntax': ['error', { selector:
+       'Property[key.name="providedIn"][value.value="root"]',
+       message: 'Feature state is provided by the feature (ADR-0003).' }] } }
+   ```
+
+   The selector was run against the workspace: it reports the ten declarations this decision's backlog lists, `project-page.service.ts:10` among them, and none of the guards. The `ignores` entry is decision 3's guard-and-resolver exemption expressed as configuration. The gate lands once the nine declarations in the backlog below are cleared or carry their `@Injectable` comment, and an `eslint-disable-next-line` with that comment is the reviewable form of "it may still be correct".
+
+   **This block and ADR-0002's must be merged, not stacked.** Both configure `no-restricted-syntax`, and a later flat-config block replaces that rule's options for every file it matches rather than adding to them. Stacked as two blocks, the nine barrels under `libs/vre/pages/**` and `libs/vre/resource-editor/**` silently lose the `ExportAllDeclaration` check: measured, 15 of the 24 `export *` barrels are still reported instead of 24. One block carrying both selectors reports all 24.
+
 4. **One writer per value.** (**review**)
 
    Every piece of mutable state has exactly one component or service that writes it. Everyone else reads. Where a reader needs to cause a change, it calls a method on the owner rather than assigning to the value.
@@ -73,7 +99,7 @@ The useful vocabulary here is **connascence** (Page-Jones, as popularised by Ric
 
 **Negative and costs.** Two components that genuinely need to share state must have a common ancestor providing it, which occasionally forces a container component that would not otherwise exist. Contributors used to reaching for `providedIn: 'root'` have to think about lifetime, which is slower at the point of writing. The rule is `review`-enforced and not mechanically checkable: nothing in the toolchain will flag a root-provided service in a feature library, so it depends on reviewers knowing this ADR exists.
 
-**The size of the backlog this creates, stated so the rule is not mistaken for describing the status quo.** Thirteen `providedIn: 'root'` declarations currently sit in libraries that ADR-0001 tags `type:feature`. Two are the route guards exempted above and one is an API service, which decision 3 also permits. That leaves ten to review, six of them in `resource-editor` (`geoname`, `math-jax`, `representation`, `segment-api`, `upload-file`, `open-sea-dragon`). Several will turn out to be correct: a MathJax loader is plausibly application-wide. The rule requires that the reason be written down, not that every one of them move.
+**The size of the backlog this creates, stated so the rule is not mistaken for describing the status quo.** Twelve `providedIn: 'root'` declarations currently sit in libraries that ADR-0001 tags `type:feature`. Two are the route guards exempted above and one is an API service, which decision 3 also permits. That leaves nine to review, six of them in `resource-editor` (`geoname`, `math-jax`, `representation`, `segment-api`, `upload-file`, `open-sea-dragon`). Several will turn out to be correct: a MathJax loader is plausibly application-wide. The rule requires that the reason be written down, not that every one of them move.
 
 **Interaction with Storybook.** Stories that mount a real container break when its injected dependencies change, and stories that mock it do not. `CLAUDE.md` already records this. Grouping providers behind `provide<Feature>()` reduces the blast radius, because a story stubs one function rather than tracking a list.
 
