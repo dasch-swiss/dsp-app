@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: DSP-API
-  version: v38.1.0-5-g35a36e3
+  version: v39.0.0-17-g9ddad36
   summary: DSP-API is part of the DaSCH Service Platform, a repository for the long-term
     preservation and reuse of data in the humanities.
   contact:
@@ -15,11 +15,12 @@ paths:
     get:
       tags:
       - Admin API
-      description: Returns the permission code and the project's restricted view settings
-        for a given filename. Publicly accessible. The `{shortcode}` path segment
-        is not authoritative and does not affect the result — the file is identified
-        by its filename alone (internal filenames are globally-unique asset IDs);
-        the segment is retained only for URL compatibility.
+      description: 'Returns the access decision for a given filename: what the caller
+        may receive for the original and what it may receive for the derivative. Publicly
+        accessible. The `{shortcode}` path segment is not authoritative and does not
+        affect the result - the file is identified by its filename alone (internal
+        filenames are globally-unique asset IDs); the segment is retained only for
+        URL compatibility.'
       operationId: getAdminFilesProjectshortcodeFilename
       parameters:
       - name: projectShortcode
@@ -40,7 +41,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PermissionCodeAndProjectRestrictedViewSettings'
+                $ref: '#/components/schemas/AssetAccessResponse'
         '400':
           description: ''
           content:
@@ -4402,7 +4403,7 @@ paths:
           This can be either a size restriction or a watermark.
           For that, we support two of the (IIIF size)[https://iiif.io/api/image/3.0/#42-size] forms:
           * `!d,d` The returned image is scaled so that the width and height of the returned image are not greater than d, while maintaining the aspect ratio.
-          * `pct:n` The width and height of the returned image is scaled to n percent of the width and height of the original image. 1<= n <= 100.
+          * `pct:n` The width and height of the returned image is scaled to n percent of the width and height of the original image. 1<= n <= 99.
 
           If the watermark is set to `true`, the returned image will be watermarked, otherwise the default size !128,128 is set.
 
@@ -4420,7 +4421,74 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RestrictedViewResponse'
+                $ref: '#/components/schemas/ProjectRestrictedViewSettingsGetResponseADM'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                anyOf:
+                - $ref: '#/components/schemas/OntologyConstraintException'
+                - $ref: '#/components/schemas/DuplicateValueException'
+                - $ref: '#/components/schemas/ValidationException'
+                - $ref: '#/components/schemas/BadRequestException'
+                - $ref: '#/components/schemas/GravsearchException'
+                - $ref: '#/components/schemas/EditConflictException'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadCredentialsException'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenException'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - httpAuth: []
+      - httpAuth1: []
+    delete:
+      tags:
+      - Admin API
+      description: Removes the project's own restricted view setting, so it inherits
+        the platform default !128,128 again. Requires SystemAdmin or ProjectAdmin
+        permissions for the project.
+      operationId: deleteAdminProjectsIriProjectiriRestrictedviewsettings
+      parameters:
+      - name: projectIri
+        in: path
+        description: The IRI of a project. Must be URL-encoded.
+        required: true
+        schema:
+          type: string
+        example: http://rdfh.ch/projects/0001
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectRestrictedViewSettingsGetResponseADM'
         '400':
           description: ''
           content:
@@ -4550,7 +4618,7 @@ paths:
           This can be either a size restriction or a watermark.
           For that, we support two of the (IIIF size)[https://iiif.io/api/image/3.0/#42-size] forms:
           * `!d,d` The returned image is scaled so that the width and height of the returned image are not greater than d, while maintaining the aspect ratio.
-          * `pct:n` The width and height of the returned image is scaled to n percent of the width and height of the original image. 1<= n <= 100.
+          * `pct:n` The width and height of the returned image is scaled to n percent of the width and height of the original image. 1<= n <= 99.
 
           If the watermark is set to `true`, the returned image will be watermarked, otherwise the default size !128,128 is set.
 
@@ -4568,7 +4636,74 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RestrictedViewResponse'
+                $ref: '#/components/schemas/ProjectRestrictedViewSettingsGetResponseADM'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                anyOf:
+                - $ref: '#/components/schemas/OntologyConstraintException'
+                - $ref: '#/components/schemas/DuplicateValueException'
+                - $ref: '#/components/schemas/ValidationException'
+                - $ref: '#/components/schemas/BadRequestException'
+                - $ref: '#/components/schemas/GravsearchException'
+                - $ref: '#/components/schemas/EditConflictException'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadCredentialsException'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenException'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundException'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictException'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - httpAuth: []
+      - httpAuth1: []
+    delete:
+      tags:
+      - Admin API
+      description: Removes the project's own restricted view setting, so it inherits
+        the platform default !128,128 again. Requires SystemAdmin or ProjectAdmin
+        permissions for the project.
+      operationId: deleteAdminProjectsShortcodeProjectshortcodeRestrictedviewsettings
+      parameters:
+      - name: projectShortcode
+        in: path
+        description: The shortcode of a project. Must be a 4 digit hexadecimal String.
+        required: true
+        schema:
+          type: string
+        example: '0001'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectRestrictedViewSettingsGetResponseADM'
         '400':
           description: ''
           content:
@@ -5374,7 +5509,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/5dwVB-OSSKOu8vBluAFUFw
+        example: http://rdfh.ch/users/bQXC7uy6SnCRTT5KPjBGFw
       responses:
         '200':
           description: ''
@@ -5438,7 +5573,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/5dwVB-OSSKOu8vBluAFUFw
+        example: http://rdfh.ch/users/bQXC7uy6SnCRTT5KPjBGFw
       responses:
         '200':
           description: ''
@@ -5502,7 +5637,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/5dwVB-OSSKOu8vBluAFUFw
+        example: http://rdfh.ch/users/bQXC7uy6SnCRTT5KPjBGFw
       responses:
         '200':
           description: ''
@@ -5691,7 +5826,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/5dwVB-OSSKOu8vBluAFUFw
+        example: http://rdfh.ch/users/bQXC7uy6SnCRTT5KPjBGFw
       responses:
         '200':
           description: ''
@@ -5757,7 +5892,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/5dwVB-OSSKOu8vBluAFUFw
+        example: http://rdfh.ch/users/bQXC7uy6SnCRTT5KPjBGFw
       responses:
         '200':
           description: ''
@@ -5961,7 +6096,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/5dwVB-OSSKOu8vBluAFUFw
+        example: http://rdfh.ch/users/bQXC7uy6SnCRTT5KPjBGFw
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -6034,7 +6169,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/5dwVB-OSSKOu8vBluAFUFw
+        example: http://rdfh.ch/users/bQXC7uy6SnCRTT5KPjBGFw
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -6108,7 +6243,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/5dwVB-OSSKOu8vBluAFUFw
+        example: http://rdfh.ch/users/bQXC7uy6SnCRTT5KPjBGFw
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -6181,7 +6316,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/5dwVB-OSSKOu8vBluAFUFw
+        example: http://rdfh.ch/users/bQXC7uy6SnCRTT5KPjBGFw
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -6255,7 +6390,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/5dwVB-OSSKOu8vBluAFUFw
+        example: http://rdfh.ch/users/bQXC7uy6SnCRTT5KPjBGFw
       - name: groupIri
         in: path
         description: The IRI of a group. Must be URL-encoded.
@@ -6328,7 +6463,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/5dwVB-OSSKOu8vBluAFUFw
+        example: http://rdfh.ch/users/bQXC7uy6SnCRTT5KPjBGFw
       - name: groupIri
         in: path
         description: The IRI of a group. Must be URL-encoded.
@@ -6402,7 +6537,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/5dwVB-OSSKOu8vBluAFUFw
+        example: http://rdfh.ch/users/bQXC7uy6SnCRTT5KPjBGFw
       requestBody:
         content:
           application/json:
@@ -6475,7 +6610,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/5dwVB-OSSKOu8vBluAFUFw
+        example: http://rdfh.ch/users/bQXC7uy6SnCRTT5KPjBGFw
       requestBody:
         content:
           application/json:
@@ -6548,7 +6683,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/5dwVB-OSSKOu8vBluAFUFw
+        example: http://rdfh.ch/users/bQXC7uy6SnCRTT5KPjBGFw
       requestBody:
         content:
           application/json:
@@ -6621,7 +6756,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/5dwVB-OSSKOu8vBluAFUFw
+        example: http://rdfh.ch/users/bQXC7uy6SnCRTT5KPjBGFw
       requestBody:
         content:
           application/json:
@@ -7521,7 +7656,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/lists/0001/kVdHzsZ9S9e3jJiJQBURIQ
+        example: http://rdfh.ch/lists/0001/OwMRI9_PTWi-pdcYIpVlnw
       - name: allLanguages
         in: query
         description: If true, return rdfs:label and rdfs:comment as JSON-LD arrays
@@ -7649,7 +7784,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/lists/0001/kVdHzsZ9S9e3jJiJQBURIQ
+        example: http://rdfh.ch/lists/0001/OwMRI9_PTWi-pdcYIpVlnw
       - name: allLanguages
         in: query
         description: If true, return rdfs:label and rdfs:comment as JSON-LD arrays
@@ -17039,12 +17174,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/VersionResponse'
               example:
-                webapi: v38.1.0-5-g35a36e3
-                buildCommit: 35a36e335
+                webapi: v39.0.0-17-g9ddad36
+                buildCommit: 9ddad36b7
                 buildTime: dev
-                fuseki: 6.1.0
+                fuseki: 6.2.0
                 scala: 3.8.4
-                sipi: v8.0.0
+                sipi: v9.1.0
                 name: version
         '400':
           description: ''
@@ -17263,6 +17398,21 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/AdministrativePermissionADM'
+    AssetAccessResponse:
+      title: AssetAccessResponse
+      type: object
+      required:
+      - derivative
+      - original
+      properties:
+        derivative:
+          type: string
+        original:
+          type: string
+        size:
+          type: string
+        watermark:
+          type: boolean
     AudienceRestrictionCounts:
       title: AudienceRestrictionCounts
       type: object
@@ -18523,17 +18673,6 @@ components:
         permissionCode:
           type: integer
           format: int32
-    PermissionCodeAndProjectRestrictedViewSettings:
-      title: PermissionCodeAndProjectRestrictedViewSettings
-      type: object
-      required:
-      - permissionCode
-      properties:
-        permissionCode:
-          type: integer
-          format: int32
-        restrictedViewSettings:
-          $ref: '#/components/schemas/ProjectRestrictedViewSettingsADM'
     PermissionDeleteResponseADM:
       title: PermissionDeleteResponseADM
       type: object
@@ -18772,9 +18911,12 @@ components:
       type: object
       required:
       - settings
+      - isDefault
       properties:
         settings:
           $ref: '#/components/schemas/ProjectRestrictedViewSettingsADM'
+        isDefault:
+          type: boolean
     ProjectUpdateRequest:
       title: ProjectUpdateRequest
       type: object
@@ -19072,14 +19214,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/RestrictedItem'
-    RestrictedViewResponse:
-      title: RestrictedViewResponse
-      type: object
-      properties:
-        size:
-          $ref: '#/components/schemas/Size'
-        watermark:
-          $ref: '#/components/schemas/Watermark'
     RestrictionCounts:
       title: RestrictionCounts
       type: object
