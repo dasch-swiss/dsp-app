@@ -221,6 +221,17 @@ export class DefaultProperties {
           guiElement: Constants.GuiGeonames,
           group: 'Location',
         },
+        {
+          // A sibling of Place, not an alternative: a resource may legitimately carry a GeoNames link
+          // and coordinates for the same location.
+          icon: 'my_location',
+          label: 'Coordinates',
+          description: 'Geographic coordinates on Earth',
+          subPropOf: Constants.HasValue,
+          objectType: Constants.GeolocationValue,
+          guiElement: Constants.GuiGeolocation,
+          group: 'Location',
+        },
       ],
     },
     {

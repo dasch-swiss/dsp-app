@@ -199,6 +199,7 @@ export {
 } from './models/v2/resources/values/read/read-text-value';
 export { ReadUriValue } from './models/v2/resources/values/read/read-uri-value';
 export { ReadTimeValue } from './models/v2/resources/values/read/read-time-value';
+export { ReadGeolocationValue } from './models/v2/resources/values/read/read-geolocation-value';
 export { ReadGeonameValue } from './models/v2/resources/values/read/read-geoname-value';
 export { ReadValue } from './models/v2/resources/values/read/read-value';
 
@@ -231,6 +232,7 @@ export {
 } from './models/v2/resources/values/update/update-text-value';
 export { UpdateUriValue } from './models/v2/resources/values/update/update-uri-value';
 export { UpdateTimeValue } from './models/v2/resources/values/update/update-time-value';
+export { UpdateGeolocationValue } from './models/v2/resources/values/update/update-geolocation-value';
 export { UpdateGeonameValue } from './models/v2/resources/values/update/update-geoname-value';
 
 export { CreateValue } from './models/v2/resources/values/create/create-value';
@@ -258,6 +260,7 @@ export { CreateListValue } from './models/v2/resources/values/create/create-list
 export { CreateTextValueAsString, CreateTextValueAsXml } from './models/v2/resources/values/create/create-text-value';
 export { CreateUriValue } from './models/v2/resources/values/create/create-uri-value';
 export { CreateTimeValue } from './models/v2/resources/values/create/create-time-value';
+export { CreateGeolocationValue } from './models/v2/resources/values/create/create-geolocation-value';
 export { CreateGeonameValue } from './models/v2/resources/values/create/create-geoname-value';
 
 export { BaseValue } from './models/v2/resources/values/base-value';

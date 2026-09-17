@@ -16,6 +16,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { JsLibPotentialError } from '../property-value/JsLibPotentialError';
 import { BooleanValueComponent } from './value-components/boolean-value.component';
 import { ColorValueComponent } from './value-components/color-value.component';
+import { GeolocationValueComponent } from './value-components/geolocation-value.component';
 import { GeonameValueComponent } from './value-components/geoname-value.component';
 import { IntervalValueComponent } from './value-components/interval-value.component';
 import { LinkValueComponent } from './value-components/link-value.component';
@@ -39,6 +40,7 @@ import { TimeValueComponent } from './value-components/time-value.component';
     DateValueHandlerComponent,
     TimeValueComponent,
     IntervalValueComponent,
+    GeolocationValueComponent,
     GeonameValueComponent,
     LinkValueComponent,
   ],
@@ -136,6 +138,10 @@ import { TimeValueComponent } from './value-components/time-value.component';
       <app-geoname-value [control]="item" />
     </ng-template>
 
+    <ng-template #geolocationEditorTpl let-item="item">
+      <app-geolocation-value [control]="item" />
+    </ng-template>
+
     <ng-template #linkEditorTpl let-item="item">
       <app-link-value
         [control]="item"
@@ -186,6 +192,7 @@ export class TemplateEditorSwitcherComponent implements AfterViewInit {
   @ViewChild('intervalEditorTpl') intervalEditorTpl!: TemplateRef<any>;
   @ViewChild('listEditorTpl') listEditorTpl!: TemplateRef<any>;
   @ViewChild('geoNameEditorTpl') geoNameEditorTpl!: TemplateRef<any>;
+  @ViewChild('geolocationEditorTpl') geolocationEditorTpl!: TemplateRef<any>;
   @ViewChild('linkEditorTpl') linkEditorTpl!: TemplateRef<any>;
   @ViewChild('regionPreviewEditorTpl') regionPreviewEditorTpl!: TemplateRef<any>;
   @ViewChild('uriEditorTpl') uriEditorTpl!: TemplateRef<any>;
@@ -220,6 +227,8 @@ export class TemplateEditorSwitcherComponent implements AfterViewInit {
         return this.listEditorTpl;
       case Constants.GeonameValue:
         return this.geoNameEditorTpl;
+      case Constants.GeolocationValue:
+        return this.geolocationEditorTpl;
       case Constants.LinkValue:
         return this.linkEditorTpl;
       case Constants.RegionPreviewValue:
