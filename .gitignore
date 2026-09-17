@@ -68,7 +68,9 @@ apps/dsp-app/cypress/downloads
 # Sentry Config File
 .sentryclirc
 
-.envrc
+# `.envrc` itself is tracked and holds only `use flake`; personal env and
+# secrets go in `.envrc.local`, which it sources if present.
+.envrc.local
 
 # OpenAPI generated files
 libs/vre/3rd-party-services/open-api/src/generated/
@@ -80,3 +82,6 @@ libs/vre/3rd-party-services/open-api/src/generated/
 
 # ad-hoc E2E driver scripts (scratch)
 .drive-e2e*.mjs
+
+# direnv
+.direnv/
