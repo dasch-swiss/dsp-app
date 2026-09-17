@@ -118,7 +118,7 @@ services:
       - intranet
 
   rabbitmq:
-    image: rabbitmq:3.13
+    image: rabbitmq:4.3
     restart: unless-stopped
     environment:
       - RABBITMQ_DEFAULT_USER=${AMQP_USER}
@@ -216,7 +216,7 @@ services:
       - intranet
 
   kratos-migrate:
-    image: oryd/kratos:v1.3.1
+    image: oryd/kratos:v26.2.0
     depends_on:
       postgres:
         condition: service_healthy
@@ -230,7 +230,7 @@ services:
       - intranet
 
   kratos:
-    image: "oryd/kratos:v1.3.1"
+    image: "oryd/kratos:v26.2.0"
     depends_on:
       - kratos-migrate
     restart: unless-stopped
