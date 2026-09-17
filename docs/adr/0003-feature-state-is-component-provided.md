@@ -69,6 +69,19 @@ The useful vocabulary here is **connascence** (Page-Jones, as popularised by Ric
 
    A root-provided service **in a `type:feature` library** is otherwise a defect by default. It may still be correct, and if it is, the reason belongs in a comment at the `@Injectable` declaration. (**review**)
 
+   **Promotion path (`review` -> `static-analysis`).** The declaration is a literal in the decorator, so `no-restricted-syntax` sees it:
+
+   ```js
+   { files: ['libs/vre/pages/**/*.ts', 'libs/vre/resource-editor/**/*.ts'],
+     ignores: ['**/*.guard.ts', '**/*.resolver.ts', '**/*.spec.ts', '**/*.stories.ts'],
+     rules: { 'no-restricted-syntax': ['error', { selector:
+       'Property[key.name="providedIn"][value.value="root"]',
+       message: 'Feature state is provided by the feature (ADR-0003).' }] } }
+   ```
+
+   The selector was run against the workspace: it reports `project-page.service.ts:10`. The `ignores` entry is decision 3's guard-and-resolver exemption expressed as configuration. The gate lands once the nine declarations in the backlog below are cleared or carry their `@Injectable` comment, and an `eslint-disable-next-line` with that comment is the reviewable form of "it may still be correct".
+
+
 4. **One writer per value.** (**review**)
 
    Every piece of mutable state has exactly one component or service that writes it. Everyone else reads. Where a reader needs to cause a change, it calls a method on the owner rather than assigning to the value.

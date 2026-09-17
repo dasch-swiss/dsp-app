@@ -39,6 +39,15 @@ Four files out of 403 are reachable. The surface is genuinely narrow even though
 
 3. **New libraries use curated named exports.** `export { A, B } from './lib/x'`, not `export * from './lib/x'`. Adding a symbol to the public surface then requires editing the barrel, which puts it in the diff and in front of a reviewer. `shared/calendar` is the reference shape (ADR-0005). (**review**)
 
+   **Promotion path (`review` -> `static-analysis`).** ESLint's own `no-restricted-syntax` carries the check:
+
+   ```js
+   { files: ['libs/*/src/index.ts'], rules: { 'no-restricted-syntax': ['error',
+     { selector: 'ExportAllDeclaration', message: 'Barrels use named exports (ADR-0002).' }] } }
+   ```
+
+   The selector was run against the workspace: it reports `ui/notification`'s barrel and stays silent on `shared/calendar`'s. It cannot be switched on tree-wide while decision 4 holds, because it would fail the twenty-four barrels that keep `export *` on purpose; either the rule lands with those files listed as overrides, shrinking as barrels convert, or it waits. That is why this rule is `review` and not a lint error today.
+
 4. **Existing `export *` barrels are not converted wholesale.** Converting twenty-four barrels at once produces a very large diff with no behavioural change and no way to review it meaningfully. A barrel is converted when its library is otherwise being worked on. If `export *` is kept, it targets leaf files rather than folder indexes, as `resource-editor` does. (**review**)
 
 5. **`libs/dsp-js` is a published package and its barrel is a contract.** Anything exported from `libs/dsp-js/src/index.ts` is part of the published `@dasch-swiss/dsp-js` surface. A symbol being unused inside this repository is not evidence that it is unused; removing it is a breaking change for external consumers, not cleanup. This is why the dead-code work explicitly excludes `dsp-js`. (**review**)

@@ -209,7 +209,16 @@ That cost is concentrated, not spread: the type tier is already clean under thes
 
 **What this does not catch.** Stating the limits is the point of recording an enforcement level.
 
-- **Sass is invisible.** Twenty SCSS files `@use` relative paths into `apps/dsp-app/src/styles/`, which inverts the app-to-library arrow. The Nx rule parses TypeScript imports only. This violation remains `docs-only` after this ADR lands and is not fixed by it.
+- **Sass is invisible.** Twenty-eight library files reach into `apps/dsp-app/src/styles/`, which inverts the app-to-library arrow. Twenty use an explicit relative path, and one of those twenty is not a stylesheet at all: `pages/ontology/ontology/.../property-item.component.ts:130` carries an inline `styles:` block that `@use`s the app's config. The other eight use a bare specifier, `@use 'config'`, `'mixins'` or `'responsive'`, resolved by `stylePreprocessorOptions.includePaths: ["apps/dsp-app/src/styles"]` in `apps/dsp-app/project.json`. That form contains no trace of `apps/dsp-app`, so searching for the path finds twenty of the twenty-eight and reads as clean progress. The Nx rule parses TypeScript imports only, so it catches none of them.
+
+  **Promotion path (`docs-only` -> `static-analysis`).** A CI grep covering both forms, failing on any hit under `libs/`:
+
+  ```bash
+  grep -rnE '^[[:space:]]*@(use|import)[[:space:]]' libs --include='*.scss' --include='*.ts' \
+    | grep -E "apps/dsp-app/src/styles|['\"](ck-editor|config|elements|font|layout|mixins|responsive|typography)['\"]"
+  ```
+
+  The second alternation is the basename list of `apps/dsp-app/src/styles/_*.scss`, which is what makes the bare form visible. It matches thirty-four statements in twenty-eight files today, so the gate lands after those files move, not before; until then this stays `docs-only`.
 - `templateUrl`, `styleUrls` and `assets` entries are strings and are not analysed.
 - Aliased deep imports into files a library does not export are not reliably blocked (Nx issue #29258, closed as "not planned"). ADR-0002 covers this and names the tool that would close it.
 - Dynamic `import()` **is** analysed by the rule. There is no gap there, and no need to treat lazy loading as an escape hatch.

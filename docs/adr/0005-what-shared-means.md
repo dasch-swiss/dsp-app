@@ -33,6 +33,8 @@ A library qualifies for `scope:shared` only if it passes both tests.
 
    This test fails `app-common-to-move` today, at six in against nine out. `resource-editor` also has a fan-out of fourteen against a fan-in of three (`apps/dsp-app`, `pages/data-browser`, and `pages/project` through a dynamic `import()`), and is nonetheless correctly `scope:shared` under ADR-0001 decision 3, because it is `type:feature`. **The direction test applies to `type:ui`, `type:util` and `type:data-access` libraries.** A shared feature is shared because more than one domain routes to it, not because it is a leaf.
 
+   **Promotion path (`review` -> `static-analysis`).** This half is computable, unlike decision 2. `nx graph --file=graph.json` (verified on Nx 23.0.1) emits `graph.nodes` and `graph.dependencies`, from which a script counts fan-in and fan-out per project and fails when a project tagged `scope:shared` with `type:ui`, `type:util` or `type:data-access` has a fan-out at or above its fan-in. It is worth having as a check and worth nothing as the *only* check, which is the distinction the rejected alternative below is about: it would pass `app-common` and `app-helper-services`, so it never replaces decision 2.
+
 2. **The cohesion test: the library is describable in one sentence without the word "and".** (**review**)
 
    "Converts between historical calendars" passes. "Localization, ontology lookups, project lookups, rights caching, result state, sorting and language selection" does not. If the sentence needs a list, the library is a folder.
@@ -92,12 +94,12 @@ The other three libraries in the table above do not block anything. Their tags c
 
 **Positive.** `scope:shared` has a definition, so ADR-0004's relocation rule has somewhere safe to relocate to. Two grab bags with one hundred and fifty importing files between them get a stated resolution rather than continuing to absorb whatever arrives. New libraries have a reference shape to copy.
 
-**Negative and costs.** Both tests are judgment, enforced at review, and nothing in the toolchain checks either. The direction test is computable from the Nx project graph and could be scripted later; the cohesion test cannot. Splitting `app-common` touches eighty-one files, and ADR-0002 decision 4 means the barrels involved keep their `export *` form through the move, so the surface does not narrow at the same time. Three libraries keep misleading names for as long as they keep working.
+**Negative and costs.** Both tests are judgment, enforced at review, and nothing in the toolchain checks either. The direction test is computable and decision 1 names the script that would enforce it; the cohesion test cannot be automated at all. Splitting `app-common` touches eighty-one files, and ADR-0002 decision 4 means the barrels involved keep their `export *` form through the move, so the surface does not narrow at the same time. Three libraries keep misleading names for as long as they keep working.
 
 **Honest limit.** These criteria describe a good shared library. They do not, on their own, stop a well-named cohesive library from being created for something that should not have been shared at all. That judgment stays with ADR-0004 decision 2.
 
 ## Alternatives rejected
 
 - **Ban a shared tier entirely and duplicate instead.** Duplication is a real and underused option, and for small pure functions it is often correct. As a blanket rule it fails here, because the genuinely shared things in this workspace, the API clients, the design-system components, the calendar conversions, are exactly the things that must not diverge between features.
-- **One criterion, fan-in versus fan-out.** Computable and therefore promotable from `review` to `static-analysis`, which is attractive. Rejected because it passes `app-common` and `app-helper-services`, the two libraries this ADR most needs to catch. A mechanical test that misses the main cases is worse than a judgment call, because it looks like coverage.
+- **One criterion, fan-in versus fan-out.** Computable and therefore promotable from `review` to `static-analysis`, which is attractive, and decision 1 records how. Rejected as the *whole* test because it passes `app-common` and `app-helper-services`, the two libraries this ADR most needs to catch. A mechanical test that misses the main cases is worse than a judgment call, because it looks like coverage.
 - **Rename the three libraries now.** Cheap to describe, and it would make the names honest immediately. Rejected because a rename touches every importer without changing any boundary, producing a large diff that makes the subsequent split harder to review. Names follow the split.
