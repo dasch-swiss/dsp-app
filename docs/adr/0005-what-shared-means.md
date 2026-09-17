@@ -21,7 +21,7 @@ That last fact is worth stating plainly rather than hiding: the best library in 
 
 `libs/vre/shared/app-common` is imported by eighty-one files and contains animations, regular expressions, directives, a download helper, a resource model, form validators, two generators, XML handling, legal helpers, list GUI attributes, an interface, a service that calls the API, RxJS operators and permission logic.
 
-The last two are instructive because a fan-in-versus-fan-out test passes both of them. `app-common` has a fan-in of twelve libraries against a fan-out of two. By direction alone it looks like an excellent shared library. It is not, because it has no single reason to change. One test is not enough.
+The last two are instructive because a fan-in-versus-fan-out test passes both of them. `app-common` has a fan-in of eleven libraries against a fan-out of two. By direction alone it looks like an excellent shared library. It is not, because it has no single reason to change. One test is not enough.
 
 ## Decision
 
