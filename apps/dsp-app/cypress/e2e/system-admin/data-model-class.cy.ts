@@ -241,12 +241,15 @@ describe('Data Model Class', () => {
   });
 
   it('should delete a data model class', () => {
+    cy.intercept('GET', '/v2/ontologies/candeleteclass/*').as('canDeleteClassRequest');
     cy.createDataModelClass(projectPage);
     const classCard = cy.get('[data-cy=class-card] mat-card-header');
     classCard.should('be.visible');
     classCard.trigger('mouseenter').wait(100);
     cy.get('[data-cy=more-button]').scrollIntoView().should('be.visible').click();
-    cy.get('[data-cy=delete-button]').click();
+    // the delete item stays disabled until /candeleteclass answers
+    cy.wait('@canDeleteClassRequest');
+    cy.get('[data-cy=delete-button]').should('not.be.disabled').click();
     cy.get('[data-cy=confirmation-button]').click();
     classCard.should('not.exist');
   });
