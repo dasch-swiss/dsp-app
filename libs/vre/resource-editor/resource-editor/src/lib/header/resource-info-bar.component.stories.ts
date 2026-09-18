@@ -67,3 +67,51 @@ export const DefaultView: Story = {
     });
   },
 };
+
+/**
+ * The info bar is right-aligned by its callers (annotation tab, segment tab, incoming
+ * resource header) with `flex-direction: row-reverse`. DEV-6682: in that layout the
+ * metadata line used to sit flush against the card's right border. The component keeps
+ * its own right padding so the text never touches the edge.
+ */
+const MIN_RIGHT_PADDING_PX = 16;
+
+const rightGapOf = (canvasElement: HTMLElement) => {
+  const host = canvasElement.querySelector('app-resource-info-bar') as HTMLElement;
+  const infobar = host.querySelector('.infobar') as HTMLElement;
+  const range = document.createRange();
+  range.selectNodeContents(infobar);
+  return host.getBoundingClientRect().right - range.getBoundingClientRect().right;
+};
+
+const rightAlignedCard = (width: string) => ({
+  template: `
+    <div style="width: ${width}; border: 1px solid #ccc; padding: 0 24px 16px; overflow: hidden">
+      <app-resource-info-bar [resource]="resource" style="display: flex; flex-direction: row-reverse" />
+    </div>`,
+});
+
+export const KeepsRightPaddingFromCardEdge: Story = {
+  name: 'Keeps right padding when right-aligned in a card',
+  args: { resource: makeResource() },
+  render: args => ({ props: args, ...rightAlignedCard('420px') }),
+  play: async ({ canvasElement, step }) => {
+    await step('Metadata text is rendered', async () => {
+      await expect(canvasElement.textContent).toContain('test');
+    });
+    await step('Metadata text does not touch the right edge', async () => {
+      await expect(rightGapOf(canvasElement)).toBeGreaterThanOrEqual(MIN_RIGHT_PADDING_PX);
+    });
+  },
+};
+
+export const KeepsRightPaddingWhenLineOverflowsNarrowPanel: Story = {
+  name: 'Keeps right padding when the line is too long for the panel',
+  args: { resource: makeResource() },
+  render: args => ({ props: args, ...rightAlignedCard('240px') }),
+  play: async ({ canvasElement, step }) => {
+    await step('Metadata text does not touch the right edge', async () => {
+      await expect(rightGapOf(canvasElement)).toBeGreaterThanOrEqual(MIN_RIGHT_PADDING_PX);
+    });
+  },
+};
