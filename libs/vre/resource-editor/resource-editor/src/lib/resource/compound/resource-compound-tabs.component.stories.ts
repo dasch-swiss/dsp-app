@@ -42,6 +42,25 @@ const makeResource = (): DspResource => {
   return generateDspResource(res);
 };
 
+/**
+ * The incoming representation shown in the second tab. Its ontology class label is deliberately
+ * German ("Bild Original", as in the DEV-7043 report) while the Storybook UI runs in English, so
+ * a regression that renders the class label instead of the translated one is visible in the DOM.
+ */
+const makeIncomingResource = (): DspResource => {
+  const res = new ReadResource();
+  res.id = 'http://rdfh.ch/resource/incoming-1';
+  res.type = 'http://api.dasch.swiss/ontology/knora-api/v2#StillImageRepresentation';
+  res.label = '[Image #1]';
+  res.attachedToProject = 'http://rdfh.ch/projects/0001';
+  res.attachedToUser = 'http://rdfh.ch/users/test';
+  res.userHasPermission = 'CR';
+  res.creationDate = '2024-03-15T10:30:00Z';
+  res.properties = {};
+  res.entityInfo = makeEntityInfo(res.type, [], 'Bild Original');
+  return generateDspResource(res);
+};
+
 const makeRegion = (id: string, label: string): DspResource => {
   const res = new ReadResource();
   res.id = id;
@@ -166,6 +185,41 @@ export const WithRegions: Story = {
         },
         { timeout: 3000 }
       );
+    });
+  },
+};
+
+export const IncomingResourceTabIsLocalized: Story = {
+  name: 'Labels the incoming representation tab in the UI language, not the ontology language',
+  decorators: [
+    applicationConfig({
+      providers: [
+        ...sharedProviders,
+        // Angular resolves the last provider for a token, so this replaces the
+        // `incomingResource$: of(undefined)` stub in `sharedProviders`.
+        { provide: CompoundService, useValue: { incomingResource$: of(makeIncomingResource()) } },
+        {
+          provide: RegionService,
+          useValue: { regions$: of([]), regionsLoading$: of(false), selectedRegion$: of(null), showRegions: () => {} },
+        },
+      ],
+    }),
+  ],
+  args: { resource: makeResource() },
+  play: async ({ canvasElement, step }) => {
+    await step('The representation tab appears next to the properties tab', async () => {
+      await waitFor(
+        () => {
+          expect(canvasElement.querySelectorAll('.mat-mdc-tab').length).toBe(2);
+        },
+        { timeout: 3000 }
+      );
+    });
+
+    await step('Its label is the translated string, not the German ontology class label', async () => {
+      const labels = Array.from(canvasElement.querySelectorAll('.mat-mdc-tab')).map(t => t.textContent?.trim());
+      await expect(labels).toEqual(['Properties', 'Representation']);
+      await expect(labels).not.toContain('Bild Original');
     });
   },
 };

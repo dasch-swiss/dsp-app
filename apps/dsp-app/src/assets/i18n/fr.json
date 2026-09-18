@@ -625,6 +625,7 @@
   "resourceEditor": {
     "properties": "Propriétés",
     "labelAnnotations": "Annotations",
+    "representation": "Représentation",
     "restricted": "Accès restreint : les images sont susceptibles d'être de qualité inférieure et certaines valeurs d'être masquées.",
     "versioned": "Ceci est une version obsolète de cette ressource.",
     "seeCurrentVersion": "Aller à la version actuelle",
