@@ -1,5 +1,41 @@
 # Changelog
 
+## [13.15.0](https://github.com/dasch-swiss/dsp-app/compare/v13.14.2...v13.15.0) (2026-09-18)
+
+
+### Enhancements
+
+* **ci:** add advisory pixeleye visual regression job (DEV-7238) ([#3421](https://github.com/dasch-swiss/dsp-app/issues/3421)) ([5bbaad8](https://github.com/dasch-swiss/dsp-app/commit/5bbaad8a16e11741bce4e2a1c18312f096ccd0df))
+* **project-settings:** replace the Off image setting with Default (DEV-7244) ([#3453](https://github.com/dasch-swiss/dsp-app/issues/3453)) ([bdc9d60](https://github.com/dasch-swiss/dsp-app/commit/bdc9d606aab2e3275d129a80d64388ac7b1fcff7))
+* support the geolocation value type in dsp-js and dsp-app (DEV-7286) ([#3448](https://github.com/dasch-swiss/dsp-app/issues/3448)) ([286af86](https://github.com/dasch-swiss/dsp-app/commit/286af861dc0e53352bd03f70ac120450648d69b2))
+
+
+### Bug Fixes
+
+* **calendar:** make Gregorian toJDN/fromJDN inverses before 1582 ([#3442](https://github.com/dasch-swiss/dsp-app/issues/3442)) ([3b3e4e9](https://github.com/dasch-swiss/dsp-app/commit/3b3e4e92cf377637559d1a00373e2169e6495f8a))
+* **ci:** freeze storybook animations so pixeleye stops reporting phantom diffs (DEV-7238) ([#3449](https://github.com/dasch-swiss/dsp-app/issues/3449)) ([238000e](https://github.com/dasch-swiss/dsp-app/commit/238000ec21737d9842b3c33ecfd31f26d7e3ba00))
+* **date-picker:** remove unreachable KnoraDate adapter with wrong BCE conversion ([#3441](https://github.com/dasch-swiss/dsp-app/issues/3441)) ([6383270](https://github.com/dasch-swiss/dsp-app/commit/638327081e554d2c327fb9c6b66165fe62456f74))
+* **e2e:** wait for the candeleteclass check before deleting a data model class ([#3457](https://github.com/dasch-swiss/dsp-app/issues/3457)) ([440805a](https://github.com/dasch-swiss/dsp-app/commit/440805a714d2b7273c4eb138c2166298ba6548fc))
+* **session:** stop sending an expired JWT from dsp-js after auto-login rejects it ([#3436](https://github.com/dasch-swiss/dsp-app/issues/3436)) ([b61ecb6](https://github.com/dasch-swiss/dsp-app/commit/b61ecb63e547e5a11bbcbd5068b84892fd002292))
+
+
+### Maintenances
+
+* **advanced-search:** single source of truth for URL param names ([#3433](https://github.com/dasch-swiss/dsp-app/issues/3433)) ([15e5b48](https://github.com/dasch-swiss/dsp-app/commit/15e5b483fcc1ad36e397a82dd83971a98e4e2d69))
+* **ci:** empty commit to give pixeleye a base branch (DEV-7238) ([#3444](https://github.com/dasch-swiss/dsp-app/issues/3444)) ([785f406](https://github.com/dasch-swiss/dsp-app/commit/785f406f90f4e1f07e573be6805ad5393612ee16))
+* **deps:** Update actions/cache action from v4.3.0 to v6.1.0 ([#3446](https://github.com/dasch-swiss/dsp-app/issues/3446)) ([bc1764b](https://github.com/dasch-swiss/dsp-app/commit/bc1764b619a369dd09085fe09a3fc14e624d1169))
+* **deps:** Update docker-deps ([#3445](https://github.com/dasch-swiss/dsp-app/issues/3445)) ([dd37394](https://github.com/dasch-swiss/dsp-app/commit/dd37394ac7fb918c91fb3e71238ff02d012a89e6))
+* **deps:** Update docker-deps (major) ([#3451](https://github.com/dasch-swiss/dsp-app/issues/3451)) ([9ad6394](https://github.com/dasch-swiss/dsp-app/commit/9ad6394d2c9e1cb4ce64388384136de37c4c316b))
+* enable unused-imports lint rule at error and clear all 80 violations ([#3439](https://github.com/dasch-swiss/dsp-app/issues/3439)) ([659e316](https://github.com/dasch-swiss/dsp-app/commit/659e316e01d13f8f382c58db34c95ff110da38c5))
+* **nix:** add a dev shell pinned to .nvmrc, with direnv ([#3454](https://github.com/dasch-swiss/dsp-app/issues/3454)) ([437725b](https://github.com/dasch-swiss/dsp-app/commit/437725b682ef147c2ad5accdeae798ffa1374ff3))
+* remove verified dead code (DEV-7253) ([#3437](https://github.com/dasch-swiss/dsp-app/issues/3437)) ([c400a2f](https://github.com/dasch-swiss/dsp-app/commit/c400a2f3b1e81fe8c9d3f7aba58e8b4cbd6616c6))
+
+
+### Documentation
+
+* add ARCH-MAP, CONTEXT and ADR-0001 through ADR-0006 ([#3423](https://github.com/dasch-swiss/dsp-app/issues/3423)) ([34a4c29](https://github.com/dasch-swiss/dsp-app/commit/34a4c297d78e4648d03250c464b99740930444e7))
+* correct the ADR counts, name the promotion paths and re-anchor ARCH-MAP ([#3456](https://github.com/dasch-swiss/dsp-app/issues/3456)) ([0dbe98b](https://github.com/dasch-swiss/dsp-app/commit/0dbe98bc35b2cade7698874183b3d4a12f1bf12e))
+
 ## [13.14.2](https://github.com/dasch-swiss/dsp-app/compare/v13.14.1...v13.14.2) (2026-09-14)
 
 
