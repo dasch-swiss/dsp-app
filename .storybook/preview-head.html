@@ -1,0 +1,32 @@
+<!--
+  Freeze CSS animations and transitions in the story iframe.
+
+  Pixeleye captures a story as soon as it renders, so anything still animating is
+  photographed at an arbitrary frame. An indeterminate `mat-spinner` (the `Loading`
+  stories of resource-fetcher, video, audio, advanced-search-results, search-result,
+  resources-list, property-row) rotates forever, so every build diffs against its
+  own baseline and reports a change that is not one (DEV-7238).
+
+  This cannot be fixed from `pixeleye.config.ts`: `@pixeleye/storybook`'s
+  `captureStories` forwards only `name`, `variant`, `selector` and `devices` to the
+  snapshot and drops the config-level `css` and `wait`. So the freeze lives here,
+  in the head Storybook injects into `iframe.html` — the exact page pixeleye loads.
+
+  Durations are 1ms rather than `none` so animations run to their end state instead
+  of snapping back to the base style, and negative delays skip any start offset.
+  This also steadies the interaction tests, which no longer race transitions.
+-->
+<style>
+  *,
+  *::before,
+  *::after {
+    animation-delay: -1ms !important;
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-delay: -1ms !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+    /* A blinking caret in a focused input is the same problem in miniature. */
+    caret-color: transparent !important;
+  }
+</style>

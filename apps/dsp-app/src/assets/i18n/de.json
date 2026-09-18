@@ -165,7 +165,9 @@
         "image": "Bild"
       },
       "imageSettings": {
-        "off": "Aus",
+        "default": "Standard",
+        "defaultHintPixels": "Bilder sind auf {{width}} × {{height}} Pixel begrenzt, den Plattformstandard.",
+        "defaultHintPercentage": "Bilder sind auf {{percentage}}% des Originals begrenzt, den Plattformstandard.",
         "isWatermark": "Wasserzeichen anwenden",
         "ratio": "Verhältnis",
         "restrictImageSize": "Bildgrösse einschränken",
@@ -952,6 +954,20 @@
       "geonameValue": {
         "placeholder": "Ort suchen...",
         "label": "Ort"
+      },
+      "geolocationValue": {
+        "crsLabel": "Koordinatenbezugssystem",
+        "crs": {
+          "crs84": "WGS84 (Länge/Breite)",
+          "lv95": "Schweiz LV95",
+          "lv03": "Schweiz LV03"
+        },
+        "longitude": "Längengrad",
+        "latitude": "Breitengrad",
+        "easting": "Ostwert",
+        "northing": "Nordwert",
+        "reinterpretationWarning": "Ein Wechsel des Koordinatenbezugssystems interpretiert diese Koordinaten neu, er rechnet sie nicht um. Die Zahlen bleiben unverändert und bezeichnen nun einen anderen Ort.",
+        "outOfRange": "{{ordinate}} muss für {{crs}} zwischen {{min}} und {{max}} liegen."
       },
       "example": "z.B."
     },

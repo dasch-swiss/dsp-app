@@ -165,7 +165,9 @@
         "image": "Image"
       },
       "imageSettings": {
-        "off": "Éteint",
+        "default": "Par défaut",
+        "defaultHintPixels": "Les images sont limitées à {{width}} × {{height}} pixels, la valeur par défaut de la plateforme.",
+        "defaultHintPercentage": "Les images sont limitées à {{percentage}}% de l'original, la valeur par défaut de la plateforme.",
         "isWatermark": "Appliquer un filigrane",
         "ratio": "Rapport",
         "restrictImageSize": "Limiter la taille de l'image",
@@ -952,6 +954,20 @@
       "geonameValue": {
         "placeholder": "Rechercher un lieu...",
         "label": "Lieu"
+      },
+      "geolocationValue": {
+        "crsLabel": "Système de référence de coordonnées",
+        "crs": {
+          "crs84": "WGS84 (longitude/latitude)",
+          "lv95": "Suisse LV95",
+          "lv03": "Suisse LV03"
+        },
+        "longitude": "Longitude",
+        "latitude": "Latitude",
+        "easting": "Coordonnée est",
+        "northing": "Coordonnée nord",
+        "reinterpretationWarning": "Changer le système de référence réinterprète ces coordonnées, il ne les convertit pas. Les nombres restent identiques et désignent désormais un autre lieu.",
+        "outOfRange": "{{ordinate}} doit être comprise entre {{min}} et {{max}} pour {{crs}}."
       },
       "example": "p.ex."
     },
