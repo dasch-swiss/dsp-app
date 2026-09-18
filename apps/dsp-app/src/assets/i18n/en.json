@@ -557,7 +557,8 @@
           "integer": "Value must be an integer value.",
           "decimal": "Value must be a decimal value."
         },
-        "fulltextSearchPlaceholder": "Search…"
+        "fulltextSearchPlaceholder": "Search…",
+        "noDataModel": "This project has no data model yet. A data model is needed before you can search its resources."
       }
     },
     "dataBrowser": {
