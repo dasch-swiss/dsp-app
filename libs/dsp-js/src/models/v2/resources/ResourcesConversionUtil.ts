@@ -23,6 +23,7 @@ import {
   ReadStillImageVectorFileValue,
   ReadTextFileValue,
 } from './values/read/read-file-value';
+import { ReadGeolocationValue } from './values/read/read-geolocation-value';
 import { ParseReadGeomValue, ReadGeomValue } from './values/read/read-geom-value';
 import { ReadGeonameValue } from './values/read/read-geoname-value';
 import { ReadIntValue } from './values/read/read-int-value';
@@ -616,6 +617,19 @@ export namespace ResourcesConversionUtil {
         value = geonameVal.pipe(
           map((val: ReadGeonameValue) => {
             val.strval = val.geoname;
+            return val;
+          })
+        );
+        break;
+      }
+
+      case Constants.GeolocationValue: {
+        const geolocationVal = handleSimpleValue(valueJsonld, ReadGeolocationValue, jsonConvert);
+        value = geolocationVal.pipe(
+          map((val: ReadGeolocationValue) => {
+            // The coordinates when dsp-api derived them, else the stored literal: the derived fields
+            // are optional, so strval must not depend on one being present.
+            val.strval = val.coordinates || val.geolocation;
             return val;
           })
         );
