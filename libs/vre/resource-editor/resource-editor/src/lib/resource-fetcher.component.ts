@@ -29,9 +29,9 @@ type HideReason = 'NotFound' | 'Deleted' | 'Unauthorized' | null;
   selector: 'app-resource-fetcher',
   template: `
     <div #scrollTarget>
-      @if (resourceVersion) {
+      @if (outdatedVersion) {
         <app-resource-version-warning
-          [resourceVersion]="resourceVersion"
+          [resourceVersion]="outdatedVersion"
           (navigateToCurrentVersion)="navigateToCurrentVersion()" />
       }
 
@@ -73,6 +73,19 @@ export class ResourceFetcherComponent implements OnInit, OnChanges, OnDestroy {
   hideStatus: HideReason = null;
   annotationIri: string | null = null;
 
+  /**
+   * The version the warning banner announces, set only once the resource has loaded and the
+   * requested version turns out to be an older one.
+   *
+   * The `version` query param cannot drive the banner directly: it is readable on the very first
+   * render, whereas deciding whether it is *outdated* needs `lastModificationDate` off the fetched
+   * resource. Binding the param made the banner appear and then vanish for a version that turned
+   * out to be current — which is what an ARK to a never-modified resource always produces, since
+   * its version is the creation date and there is no `lastModificationDate` to compare against
+   * (DEV-7208).
+   */
+  outdatedVersion?: string;
+
   private _destroy$ = new Subject<void>();
 
   get resourceVersion() {
@@ -105,6 +118,9 @@ export class ResourceFetcherComponent implements OnInit, OnChanges, OnDestroy {
           if (resource?.res.type === Constants.DeletedResource) {
             this.hideStatus = 'Deleted';
             this.resource = resource;
+            // A deleted resource has no version to compare against, so keep announcing whatever
+            // version was asked for rather than silently dropping the banner.
+            this.outdatedVersion = this.resourceVersion;
             this.afterResourceDeleted.emit(resource.res);
             return;
           }
@@ -112,8 +128,6 @@ export class ResourceFetcherComponent implements OnInit, OnChanges, OnDestroy {
           this.hideStatus = null;
           this.resource = resource;
           this.annotationIri = this._route.snapshot.queryParamMap.get(RouteConstants.annotationQueryParam) ?? null;
-
-          this._cdr.detectChanges();
 
           const normalizeToCompactFormat = (isoDate: string): string => {
             return isoDate.replace(/[-:.]/g, '');
@@ -123,6 +137,12 @@ export class ResourceFetcherComponent implements OnInit, OnChanges, OnDestroy {
             (!!this.resourceVersion &&
               this.resourceVersion === normalizeToCompactFormat(resource?.res.lastModificationDate || '')) ||
             (!!this.resourceVersion && !resource?.res.lastModificationDate);
+
+          // Resolved before the first change detection that can paint the banner, so an
+          // up-to-date version never flashes one on its way to being purged.
+          this.outdatedVersion = hasResourceVersionOfLatestVersion ? undefined : this.resourceVersion;
+
+          this._cdr.detectChanges();
 
           if (hasResourceVersionOfLatestVersion) {
             this._purgeVersionParam();
@@ -154,10 +174,12 @@ export class ResourceFetcherComponent implements OnInit, OnChanges, OnDestroy {
   ngOnChanges() {
     this.hideStatus = null;
     this.resource = undefined;
+    this.outdatedVersion = undefined;
     this._resourceFetcherService.loadResource(this.resourceIri, this.resourceVersion);
   }
 
   navigateToCurrentVersion() {
+    this.outdatedVersion = undefined;
     this._purgeVersionParam();
     this._resourceFetcherService.loadResource(this.resourceIri);
   }
