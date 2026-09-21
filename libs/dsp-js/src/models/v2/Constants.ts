@@ -31,6 +31,7 @@ export class Constants {
   static BooleanValue = `${Constants.KnoraApiV2 + Constants.HashDelimiter}BooleanValue`;
   static ColorValue = `${Constants.KnoraApiV2 + Constants.HashDelimiter}ColorValue`;
   static GeonameValue = `${Constants.KnoraApiV2 + Constants.HashDelimiter}GeonameValue`;
+  static GeolocationValue = `${Constants.KnoraApiV2 + Constants.HashDelimiter}GeolocationValue`;
   static DateValue = `${Constants.KnoraApiV2 + Constants.HashDelimiter}DateValue`;
   static IntValue = `${Constants.KnoraApiV2 + Constants.HashDelimiter}IntValue`;
   static DecimalValue = `${Constants.KnoraApiV2 + Constants.HashDelimiter}DecimalValue`;
@@ -99,6 +100,11 @@ export class Constants {
   static BooleanValueAsBoolean = `${Constants.KnoraApiV2 + Constants.HashDelimiter}booleanValueAsBoolean`;
   static ColorValueAsColor = `${Constants.KnoraApiV2 + Constants.HashDelimiter}colorValueAsColor`;
   static GeonameValueAsGeonameCode = `${Constants.KnoraApiV2 + Constants.HashDelimiter}geonameValueAsGeonameCode`;
+  static GeolocationValueAsGeolocation = `${Constants.KnoraApiV2 + Constants.HashDelimiter}geolocationValueAsGeolocation`;
+  // Derived on read by dsp-api; never sent on create or update.
+  static GeolocationValueHasCrs = `${Constants.KnoraApiV2 + Constants.HashDelimiter}geolocationValueHasCrs`;
+  static GeolocationValueHasShape = `${Constants.KnoraApiV2 + Constants.HashDelimiter}geolocationValueHasShape`;
+  static GeolocationValueHasCoordinates = `${Constants.KnoraApiV2 + Constants.HashDelimiter}geolocationValueHasCoordinates`;
   static DateValueHasCalendar = `${Constants.KnoraApiV2 + Constants.HashDelimiter}dateValueHasCalendar`;
   static DateValueHasEndDay = `${Constants.KnoraApiV2 + Constants.HashDelimiter}dateValueHasEndDay`;
   static DateValueHasEndEra = `${Constants.KnoraApiV2 + Constants.HashDelimiter}dateValueHasEndEra`;
@@ -209,6 +215,7 @@ export class Constants {
   static GuiSpinbox = `${Constants.SalsahGui + Constants.HashDelimiter}Spinbox`;
   static GuiSearchbox = `${Constants.SalsahGui + Constants.HashDelimiter}Searchbox`;
   static GuiGeonames = `${Constants.SalsahGui + Constants.HashDelimiter}Geonames`;
+  static GuiGeolocation = `${Constants.SalsahGui + Constants.HashDelimiter}Geolocation`;
   static GuiColorPicker = `${Constants.SalsahGui + Constants.HashDelimiter}Colorpicker`;
   static GuiGeometry = `${Constants.SalsahGui + Constants.HashDelimiter}Geometry`;
   static GuiFileUpload = `${Constants.SalsahGui + Constants.HashDelimiter}Fileupload`;

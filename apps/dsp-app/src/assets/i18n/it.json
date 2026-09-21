@@ -955,6 +955,20 @@
         "placeholder": "Cerca una località...",
         "label": "Località"
       },
+      "geolocationValue": {
+        "crsLabel": "Sistema di riferimento delle coordinate",
+        "crs": {
+          "crs84": "WGS84 (longitudine/latitudine)",
+          "lv95": "Svizzera LV95",
+          "lv03": "Svizzera LV03"
+        },
+        "longitude": "Longitudine",
+        "latitude": "Latitudine",
+        "easting": "Coordinata est",
+        "northing": "Coordinata nord",
+        "reinterpretationWarning": "Cambiare il sistema di riferimento reinterpreta queste coordinate, non le converte. I numeri restano invariati e ora indicano un luogo diverso.",
+        "outOfRange": "{{ordinate}} deve essere compresa tra {{min}} e {{max}} per {{crs}}."
+      },
       "example": "es."
     },
     "annotationPreview": {

@@ -6,6 +6,7 @@ import {
   CreateColorValue,
   CreateDateValue,
   CreateDecimalValue,
+  CreateGeolocationValue,
   CreateGeonameValue,
   CreateIntervalValue,
   CreateIntValue,
@@ -21,6 +22,7 @@ import {
   ReadColorValue,
   ReadDateValue,
   ReadDecimalValue,
+  ReadGeolocationValue,
   ReadGeonameValue,
   ReadIntervalValue,
   ReadIntValue,
@@ -36,6 +38,7 @@ import {
   UpdateColorValue,
   UpdateDateValue,
   UpdateDecimalValue,
+  UpdateGeolocationValue,
   UpdateGeonameValue,
   UpdateIntervalValue,
   UpdateIntValue,
@@ -49,6 +52,11 @@ import {
   UpdateValue,
 } from '@dasch-swiss/dsp-js';
 import { CustomRegex, handleXML } from '@dasch-swiss/vre/shared/app-common';
+import {
+  composeGeolocation,
+  GeolocationFormValue,
+  parseGeolocation,
+} from '../template-switcher/value-components/geolocation-crs';
 import { DateTime } from './date-time';
 import { convertTimestampToDateTime, dateTimeTimestamp } from './date-time-timestamp';
 import { populateValue } from './populate-value-method';
@@ -312,6 +320,26 @@ export const propertiesTypeMapping = new Map<string, MappingParameters<any>>([
         newGeonameValue.id = id;
         newGeonameValue.geoname = value;
         return newGeonameValue;
+      },
+    },
+  ],
+  [
+    Constants.GeolocationValue,
+    {
+      // A composite control like IntervalValue, not a scalar one: the form value carries the CRS and
+      // both ordinates, and the mapping composes and parses the literal.
+      control: (value?: ReadGeolocationValue) => new FormControl(parseGeolocation(value)),
+      isNullValue: defaultNullValue,
+      createValue: (value: GeolocationFormValue) => {
+        const newGeolocationValue = new CreateGeolocationValue();
+        newGeolocationValue.geolocation = composeGeolocation(value);
+        return newGeolocationValue;
+      },
+      updateValue: (id: string, value: GeolocationFormValue) => {
+        const newGeolocationValue = new UpdateGeolocationValue();
+        newGeolocationValue.id = id;
+        newGeolocationValue.geolocation = composeGeolocation(value);
+        return newGeolocationValue;
       },
     },
   ],
