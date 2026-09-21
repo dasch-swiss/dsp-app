@@ -1,5 +1,5 @@
 import { provideRouter } from '@angular/router';
-import { ReadResource } from '@dasch-swiss/dsp-js';
+import { ReadResource, StringLiteralV2 } from '@dasch-swiss/dsp-js';
 import { ProjectApiService, ResourceLegalV2ApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { AppConfigService, DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { UserService } from '@dasch-swiss/vre/core/session';
@@ -39,25 +39,6 @@ const makeResource = (): DspResource => {
     ],
   };
   res.entityInfo = makeEntityInfo(res.type, propEntries, 'Still Image Representation');
-  return generateDspResource(res);
-};
-
-/**
- * The incoming representation shown in the second tab. Its ontology class label is deliberately
- * German ("Bild Original", as in the DEV-7043 report) while the Storybook UI runs in English, so
- * a regression that renders the class label instead of the translated one is visible in the DOM.
- */
-const makeIncomingResource = (): DspResource => {
-  const res = new ReadResource();
-  res.id = 'http://rdfh.ch/resource/incoming-1';
-  res.type = 'http://api.dasch.swiss/ontology/knora-api/v2#StillImageRepresentation';
-  res.label = '[Image #1]';
-  res.attachedToProject = 'http://rdfh.ch/projects/0001';
-  res.attachedToUser = 'http://rdfh.ch/users/test';
-  res.userHasPermission = 'CR';
-  res.creationDate = '2024-03-15T10:30:00Z';
-  res.properties = {};
-  res.entityInfo = makeEntityInfo(res.type, [], 'Bild Original');
   return generateDspResource(res);
 };
 
@@ -111,6 +92,60 @@ const sharedProviders = [
   { provide: UserService, useValue: { user$: of(null) } },
   { provide: NotificationService, useValue: { openSnackBar: () => {} } },
 ];
+
+const literal = (language: string, value: string): StringLiteralV2 => ({ language, value }) as StringLiteralV2;
+
+/**
+ * The incoming representation shown in the second tab, modelled on the DEV-7043 report: a
+ * German-authored `Bild Original` class whose resource label is the bulk-import placeholder
+ * `[Image #1]`, viewed with the Storybook UI in English.
+ *
+ * `classLabels` is what varies between the stories below — it is the per-language array the
+ * ontology cache really holds (it fetches with `allLanguages=true`), and the tab label is
+ * resolved from it, not from the single-language `label`.
+ */
+const makeIncomingResource = (classLabels: StringLiteralV2[]): DspResource => {
+  const res = new ReadResource();
+  res.id = 'http://rdfh.ch/resource/incoming-1';
+  res.type = 'http://api.dasch.swiss/ontology/knora-api/v2#StillImageRepresentation';
+  res.label = '[Image #1]';
+  res.attachedToProject = 'http://rdfh.ch/projects/0001';
+  res.attachedToUser = 'http://rdfh.ch/users/test';
+  res.userHasPermission = 'CR';
+  res.creationDate = '2024-03-15T10:30:00Z';
+  res.properties = {};
+  res.entityInfo = makeEntityInfo(res.type, [], classLabels[0]?.value ?? '', classLabels);
+  return generateDspResource(res);
+};
+
+const incomingResourceStory = (classLabels: StringLiteralV2[]) => ({
+  decorators: [
+    applicationConfig({
+      providers: [
+        ...sharedProviders,
+        // Angular resolves the last provider for a token, so this replaces the
+        // `incomingResource$: of(undefined)` stub in `sharedProviders`.
+        { provide: CompoundService, useValue: { incomingResource$: of(makeIncomingResource(classLabels)) } },
+        {
+          provide: RegionService,
+          useValue: { regions$: of([]), regionsLoading$: of(false), selectedRegion$: of(null), showRegions: () => {} },
+        },
+      ],
+    }),
+  ],
+  args: { resource: makeResource() },
+});
+
+const tabLabels = (canvasElement: HTMLElement) =>
+  Array.from(canvasElement.querySelectorAll('.mat-mdc-tab')).map(t => t.textContent?.trim());
+
+const waitForBothTabs = async (canvasElement: HTMLElement) =>
+  waitFor(
+    () => {
+      expect(canvasElement.querySelectorAll('.mat-mdc-tab').length).toBe(2);
+    },
+    { timeout: 3000 }
+  );
 
 const meta: Meta<ResourceCompoundTabsComponent> = {
   title: 'Resource Editor / Resource / Compound / Compound Tabs',
@@ -189,37 +224,44 @@ export const WithRegions: Story = {
   },
 };
 
-export const IncomingResourceTabIsLocalized: Story = {
-  name: 'Labels the incoming representation tab in the UI language, not the ontology language',
-  decorators: [
-    applicationConfig({
-      providers: [
-        ...sharedProviders,
-        // Angular resolves the last provider for a token, so this replaces the
-        // `incomingResource$: of(undefined)` stub in `sharedProviders`.
-        { provide: CompoundService, useValue: { incomingResource$: of(makeIncomingResource()) } },
-        {
-          provide: RegionService,
-          useValue: { regions$: of([]), regionsLoading$: of(false), selectedRegion$: of(null), showRegions: () => {} },
-        },
-      ],
-    }),
-  ],
-  args: { resource: makeResource() },
+export const IncomingResourceTabUsesClassLabelInUiLanguage: Story = {
+  name: 'Labels the representation tab with the ontology class label in the UI language',
+  ...incomingResourceStory([literal('de', 'Bild Original'), literal('en', 'Original image')]),
   play: async ({ canvasElement, step }) => {
     await step('The representation tab appears next to the properties tab', async () => {
-      await waitFor(
-        () => {
-          expect(canvasElement.querySelectorAll('.mat-mdc-tab').length).toBe(2);
-        },
-        { timeout: 3000 }
-      );
+      await waitForBothTabs(canvasElement);
     });
 
-    await step('Its label is the translated string, not the German ontology class label', async () => {
-      const labels = Array.from(canvasElement.querySelectorAll('.mat-mdc-tab')).map(t => t.textContent?.trim());
-      await expect(labels).toEqual(['Properties', 'Representation']);
-      await expect(labels).not.toContain('Bild Original');
+    await step('It carries the English class label, not the German one', async () => {
+      await expect(tabLabels(canvasElement)).toEqual(['Properties', 'Original image']);
+    });
+  },
+};
+
+export const IncomingResourceTabFallsBackToAuthoredLanguage: Story = {
+  name: 'Falls back to the authored class label when the ontology has no variant for the UI language',
+  ...incomingResourceStory([literal('de', 'Bild Original')]),
+  play: async ({ canvasElement, step }) => {
+    await step('The representation tab appears next to the properties tab', async () => {
+      await waitForBothTabs(canvasElement);
+    });
+
+    await step('It keeps the German class label rather than dropping the information', async () => {
+      await expect(tabLabels(canvasElement)).toEqual(['Properties', 'Bild Original']);
+    });
+  },
+};
+
+export const IncomingResourceTabFallsBackToTranslatedLabel: Story = {
+  name: 'Falls back to the translated generic label when the class has no label at all',
+  ...incomingResourceStory([]),
+  play: async ({ canvasElement, step }) => {
+    await step('The representation tab appears next to the properties tab', async () => {
+      await waitForBothTabs(canvasElement);
+    });
+
+    await step('It shows the translated generic label instead of a blank tab', async () => {
+      await expect(tabLabels(canvasElement)).toEqual(['Properties', 'Representation']);
     });
   },
 };

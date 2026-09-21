@@ -7,6 +7,7 @@ import {
   ResourceClassAndPropertyDefinitions,
   ResourceClassDefinitionWithPropertyDefinition,
   ResourcePropertyDefinition,
+  StringLiteralV2,
   SystemPropertyDefinition,
 } from '@dasch-swiss/dsp-js';
 import { NEVER, of } from 'rxjs';
@@ -61,13 +62,23 @@ export const makeTextValue = (id: string, text: string, userHasPermission = 'RV'
   return v;
 };
 
+/**
+ * `classLabels` mirrors what the ontology cache really holds: it fetches with
+ * `allLanguages=true`, so a class carries one `rdfs:label` per language the project
+ * authored. Components display it through `appStringifyStringLiteral`, which reads the
+ * array — not the single-language `label`. It defaults to an English literal built from
+ * `classLabel` so existing fixtures keep rendering; pass it explicitly to exercise a
+ * project ontology authored in another language, or `[]` for a class with no label at all.
+ */
 export const makeEntityInfo = (
   resourceType: string,
   propEntries: IHasPropertyWithPropertyDefinition[] = [],
-  classLabel = 'Thing'
+  classLabel = 'Thing',
+  classLabels: StringLiteralV2[] = [{ language: 'en', value: classLabel } as StringLiteralV2]
 ): ResourceClassAndPropertyDefinitions => {
   const classStub = {
     label: classLabel,
+    labels: classLabels,
     getResourcePropertiesList: () => propEntries,
     propertiesList: propEntries,
   } as unknown as ResourceClassDefinitionWithPropertyDefinition;
