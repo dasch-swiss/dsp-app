@@ -1,4 +1,4 @@
-import { Component, Inject, OnDestroy } from '@angular/core';
+import { Component, Inject, inject, OnDestroy } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialogActions, MatDialogClose, MatDialogContent, MatDialogRef } from '@angular/material/dialog';
@@ -10,7 +10,7 @@ import { CustomRegex } from '@dasch-swiss/vre/shared/app-common';
 import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { LoadingButtonDirective } from '@dasch-swiss/vre/ui/progress-indicator';
 import { CommonInputComponent, DialogHeaderComponent } from '@dasch-swiss/vre/ui/ui';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { map, Subject, takeUntil } from 'rxjs';
 import { MakeOntologyFor } from '../../services/make-ontology-for';
 import { OntologyFormComponent } from './ontology-form.component';
@@ -62,13 +62,15 @@ import { OntologyForm } from './ontology-form.type';
 export class CreateOntologyFormDialogComponent implements OnDestroy {
   private _destroy$ = new Subject<void>();
 
+  private readonly _ts = inject(TranslateService);
+
   loading = false;
   form: any;
   readonly forbiddenNames = ['knora', 'salsah', 'standoff', 'ontology', 'simple', 'shared'] as const;
 
   readonly ontoNamePatternErrorMsg = {
     errorKey: 'pattern',
-    message: 'pages.ontology.ontologyForm.namePatternError',
+    message: this._ts.instant('pages.ontology.ontologyForm.namePatternError'),
   };
 
   readonly ontoNameExistsErrorMsg = {
