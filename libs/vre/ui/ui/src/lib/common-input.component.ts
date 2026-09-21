@@ -8,7 +8,7 @@ import { HumanReadableErrorPipe } from './human-readable-error.pipe';
 @Component({
   selector: 'app-common-input',
   template: `
-    <mat-form-field style="width: 100%">
+    <mat-form-field style="width: 100%" subscriptSizing="dynamic">
       @if (withLabel) {
         <mat-label data-cy="common-input-label">{{ label }}</mat-label>
       }
