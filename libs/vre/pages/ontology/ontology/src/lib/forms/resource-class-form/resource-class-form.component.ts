@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ensureWithDefaultLanguage } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { existingNamesAsyncValidator } from '@dasch-swiss/vre/pages/user-settings/user';
@@ -10,7 +10,7 @@ import {
   DEFAULT_MULTILANGUAGE_FORM,
 } from '@dasch-swiss/vre/ui/string-literal';
 import { CommonInputComponent } from '@dasch-swiss/vre/ui/ui';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { OntologyEditService } from '../../services/ontology-edit.service';
 import { ResourceClassForm, ResourceClassFormData } from './resource-class-form.type';
 
@@ -23,7 +23,7 @@ import { ResourceClassForm, ResourceClassFormData } from './resource-class-form.
         data-cy="name-input"
         [control]="form.controls.name"
         [label]="'pages.ontology.resourceClassForm.name' | translate"
-        [validatorErrors]="[{ errorKey: 'pattern', message: 'pages.ontology.resourceClassForm.patternError' }]"
+        [validatorErrors]="[namePatternErrorMsg]"
         prefixIcon="fingerprint" />
 
       <app-multi-language-input
@@ -57,6 +57,13 @@ export class ResourceClassFormComponent implements OnInit {
   @Output() afterFormInit = new EventEmitter<ResourceClassForm>();
 
   form!: ResourceClassForm;
+
+  private readonly _ts = inject(TranslateService);
+
+  readonly namePatternErrorMsg = {
+    errorKey: 'pattern',
+    message: this._ts.instant('pages.ontology.resourceClassForm.patternError'),
+  };
 
   readonly labelsValidators = [Validators.maxLength(2000)];
   readonly commentsValidators = [Validators.maxLength(2000)];
