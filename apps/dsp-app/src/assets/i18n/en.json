@@ -417,7 +417,7 @@
       },
       "cardinalityDialog": {
         "title": "Update cardinality",
-        "subtitle": "Set the cardinality for property {{group}}: {{label}}",
+        "subtitle": "Set the cardinality for property “{{label}}”",
         "notPossible": "Changing the cardinality is not possible.",
         "attention": "Attention",
         "confirmMessage": "Please note that this change may not be reversible. Do you want to change the cardinality?",

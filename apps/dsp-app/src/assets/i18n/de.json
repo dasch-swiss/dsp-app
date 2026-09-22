@@ -417,7 +417,7 @@
       },
       "cardinalityDialog": {
         "title": "Kardinalität aktualisieren",
-        "subtitle": "Kardinalität für Eigenschaft {{group}}: {{label}} festlegen",
+        "subtitle": "Kardinalität für die Eigenschaft „{{label}}“ festlegen",
         "notPossible": "Die Änderung der Kardinalität ist nicht möglich.",
         "attention": "Achtung",
         "confirmMessage": "Bitte beachten Sie, dass diese Änderung möglicherweise nicht rückgängig gemacht werden kann. Möchten Sie die Kardinalität ändern?",
