@@ -16,6 +16,7 @@ import {
 import { PropertyItemComponent } from './property-item.component';
 
 const classProp = makeClassPropertyInfo();
+const classLabels = [{ language: 'en', value: 'Test Class' }];
 
 const meta: Meta<PropertyItemComponent> = {
   title: 'Ontology Editor / 3a. Resource Classes Tab / Resource Class Info / Property Item',
@@ -46,7 +47,7 @@ const sharedProviders = [
 export const DefaultView: Story = {
   name: 'Shows property label and type icon',
   decorators: [applicationConfig({ providers: sharedProviders })],
-  args: { classProp },
+  args: { classProp, classLabels },
   play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
     await step('Property label is visible', async () => {
@@ -65,7 +66,7 @@ export const ReadOnlyForNonAdmin: Story = {
       ],
     }),
   ],
-  args: { classProp },
+  args: { classProp, classLabels },
   play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
     await step('Property label is still visible', async () => {

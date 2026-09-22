@@ -2,9 +2,11 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, Inject, 
 import { MatButton } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogActions, MatDialogContent, MatDialogRef } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
-import { Cardinality, Constants, KnoraApiConnection } from '@dasch-swiss/dsp-js';
+import { Cardinality, Constants, KnoraApiConnection, StringLiteralV2 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
+import { LocalizationService, pickPreferredLanguageString } from '@dasch-swiss/vre/shared/app-helper-services';
 import { ProgressIndicatorOverlayComponent } from '@dasch-swiss/vre/ui/progress-indicator';
+import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
 import { DialogHeaderComponent } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { take } from 'rxjs';
@@ -12,6 +14,8 @@ import { PropertyInfo } from '../../../ontology.types';
 
 export interface CardinalityInfo {
   classIri: string;
+  /** All-language labels of the owning class; resolved for display like any other data-side label. */
+  classLabels: StringLiteralV2[];
   currentCardinality: Cardinality;
   propertyInfo: PropertyInfo;
   targetCardinality: Cardinality;
@@ -23,10 +27,8 @@ export interface CardinalityInfo {
     <app-dialog-header
       [title]="_translate.instant('pages.ontology.cardinalityDialog.title')"
       [subtitle]="
-        _translate.instant('pages.ontology.cardinalityDialog.subtitle', {
-          group: data.propertyInfo.propType.group,
-          label: data.propertyInfo.propType.label,
-        })
+        'pages.ontology.cardinalityDialog.subtitle'
+          | translate: { label: data.propertyInfo.propDef.labels | appStringifyStringLiteral }
       " />
     <mat-dialog-content>
       <div class="cando-headline">
@@ -94,6 +96,7 @@ export interface CardinalityInfo {
     MatDialogContent,
     MatIcon,
     ProgressIndicatorOverlayComponent,
+    StringifyStringLiteralPipe,
     TranslatePipe,
   ],
 })
@@ -105,6 +108,7 @@ export class CardinalityChangeDialogComponent implements OnInit {
   };
 
   protected readonly _translate = inject(TranslateService);
+  private readonly _localizationService = inject(LocalizationService);
 
   get changeToMultiple() {
     return this.data.targetCardinality && this.data?.targetCardinality > 1 && this.data.currentCardinality < 2;
@@ -117,12 +121,18 @@ export class CardinalityChangeDialogComponent implements OnInit {
     );
   }
 
+  // `propDef.label` / the class IRI fragment are not display labels: the singular `label` is whichever
+  // language dsp-api happened to emit first, and the IRI fragment is an internal name. Resolve both
+  // from their all-language arrays so the dialog shows what the property row behind it shows.
   get classLabel(): string {
-    return this.data.classIri.split('#')[1];
+    return pickPreferredLanguageString(this.data.classLabels, this._localizationService.currentLanguage);
   }
 
   get propertyLabel(): string {
-    return this.data.propertyInfo.propDef?.label || '';
+    return pickPreferredLanguageString(
+      this.data.propertyInfo.propDef.labels,
+      this._localizationService.currentLanguage
+    );
   }
 
   constructor(

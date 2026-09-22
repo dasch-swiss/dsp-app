@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
-import { Cardinality, Constants } from '@dasch-swiss/dsp-js';
+import { Cardinality, Constants, StringLiteralV2 } from '@dasch-swiss/dsp-js';
 import { TranslatePipe } from '@ngx-translate/core';
 import { ClassPropertyInfo } from '../../../ontology.types';
 import { CardinalityChangeDialogComponent, CardinalityInfo } from './cardinality-change-dialog.component';
@@ -65,6 +65,8 @@ import { CardinalityChangeDialogComponent, CardinalityInfo } from './cardinality
 })
 export class CardinalityComponent implements OnInit {
   @Input({ required: true }) classProp!: ClassPropertyInfo;
+  /** All-language labels of the owning class, for the confirmation dialog's messages. */
+  @Input({ required: true }) classLabels!: StringLiteralV2[];
   @Input() disabled = false;
   @Output() cardinalityChange = new EventEmitter<Cardinality>();
 
@@ -108,6 +110,7 @@ export class CardinalityComponent implements OnInit {
     const targetCardinality: Cardinality = this._determineTargetCardinality();
     const cardinalityInfo: CardinalityInfo = {
       classIri: this.classProp.classId,
+      classLabels: this.classLabels,
       propertyInfo: this.classProp,
       currentCardinality: this.classProp.iHasProperty.cardinality,
       targetCardinality,

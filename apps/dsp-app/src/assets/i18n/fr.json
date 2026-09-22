@@ -417,7 +417,7 @@
       },
       "cardinalityDialog": {
         "title": "Mettre à jour la cardinalité",
-        "subtitle": "Définir la cardinalité pour la propriété {{group}}: {{label}}",
+        "subtitle": "Définir la cardinalité pour la propriété « {{label}} »",
         "notPossible": "La modification de la cardinalité n'est pas possible.",
         "attention": "Attention",
         "confirmMessage": "Veuillez noter que cette modification peut être irréversible. Voulez-vous modifier la cardinalité ?",

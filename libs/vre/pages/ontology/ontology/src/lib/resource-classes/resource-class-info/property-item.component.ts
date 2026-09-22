@@ -21,7 +21,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatListItem, MatListItemIcon } from '@angular/material/list';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatTooltip } from '@angular/material/tooltip';
-import { Cardinality, IHasProperty } from '@dasch-swiss/dsp-js';
+import { Cardinality, IHasProperty, StringLiteralV2 } from '@dasch-swiss/dsp-js';
 import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
 import { SplitPipe } from '@dasch-swiss/vre/shared/app-common-to-move';
@@ -95,6 +95,7 @@ import { CardinalityComponent } from './cardinality-component/cardinality.compon
           <app-cardinality
             [disabled]="(isAdmin$ | async) !== true"
             [classProp]="classProp"
+            [classLabels]="classLabels"
             (cardinalityChange)="updateCardinality($event)" />
         </div>
         <div class="edit-menu">
@@ -234,6 +235,8 @@ import { CardinalityComponent } from './cardinality-component/cardinality.compon
 })
 export class PropertyItemComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input({ required: true }) classProp!: ClassPropertyInfo;
+  /** All-language labels of the owning class; passed through to the cardinality confirmation dialog. */
+  @Input({ required: true }) classLabels!: StringLiteralV2[];
   @Output() cardinalityChange = new EventEmitter<IHasProperty>();
 
   @ViewChild('propertyCardRipple') propertyCardRipple!: MatRipple;

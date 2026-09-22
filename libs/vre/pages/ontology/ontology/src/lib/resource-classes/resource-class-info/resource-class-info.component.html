@@ -57,7 +57,10 @@
     @if (resourceClass.properties?.length) {
     <mat-list cdkDropList (cdkDropListDropped)="onPropertyDropped($event)">
       @for (prop of resourceClass.properties; track trackByPropToDisplayFn(i, prop); let i = $index) {
-      <app-property-item [classProp]="prop" (cardinalityChange)="onCardinalityChange($event)" />
+      <app-property-item
+        [classProp]="prop"
+        [classLabels]="resourceClass.labels"
+        (cardinalityChange)="onCardinalityChange($event)" />
       }
     </mat-list>
     } @else {
