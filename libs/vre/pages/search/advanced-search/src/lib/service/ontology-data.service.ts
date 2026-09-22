@@ -106,7 +106,12 @@ export class OntologyDataService {
           this._ontologies.next(ontologies);
           if (ontologies.length > 0) {
             this.setOntology(ontology?.iri || ontologies[0].iri);
+            return;
           }
+          // A project with no data model returns an empty list, so `setOntology` — the only other
+          // place that settles `_ontologyLoading` — never runs. Without this the Search tab shows a
+          // progress bar forever instead of an empty state (DEV-6738).
+          this._ontologyLoading.next(false);
         },
       });
   }

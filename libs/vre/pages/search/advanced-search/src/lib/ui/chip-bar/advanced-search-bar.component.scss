@@ -8,3 +8,11 @@
   // chip host — so the alignment holds whether or not the data-model chip is rendered.
   padding: 8px 0 8px 8px;
 }
+
+.no-data-model {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 0 16px 8px;
+  color: var(--mat-sys-on-surface-variant, rgba(0, 0, 0, 0.6));
+}

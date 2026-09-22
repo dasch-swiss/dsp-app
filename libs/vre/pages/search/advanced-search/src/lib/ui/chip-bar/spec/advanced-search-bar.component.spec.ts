@@ -76,6 +76,18 @@ class FakeDraftStore {
   }
 }
 
+/**
+ * The component reads several OntologyDataService streams at field-initialisation time, so every
+ * one it touches must exist on the stub or construction throws before any test runs. `ontologies$`
+ * drives the "project has no data model" empty state (DEV-6738); these specs exercise the loaded
+ * case, so it emits a non-empty list.
+ */
+const ontologyDataServiceStub = {
+  ontologyLoading$: of(false),
+  ontologies$: of([{ iri: ONTO, labels: [{ value: 'Webern', language: 'en' }] }]),
+  init: () => {},
+};
+
 describe('AdvancedSearchBarComponent.onRemoveStatement (DEV-6576)', () => {
   let component: AdvancedSearchBarComponent;
   let writeState: jest.Mock;
@@ -89,7 +101,7 @@ describe('AdvancedSearchBarComponent.onRemoveStatement (DEV-6576)', () => {
       imports: [AdvancedSearchBarComponent],
       providers: [
         { provide: SearchUrlSyncService, useValue: urlSyncStub },
-        { provide: OntologyDataService, useValue: { ontologyLoading$: of(false), init: () => {} } },
+        { provide: OntologyDataService, useValue: ontologyDataServiceStub },
         { provide: DerivedSearchStateService, useValue: { searchState$: of({ statements: [] }) } },
         { provide: SearchFlowLogger, useValue: { filterRemoved: () => {} } },
         { provide: StatementDraftStore, useValue: store },
@@ -188,7 +200,7 @@ describe('AdvancedSearchBarComponent — valueLabel URL persistence (DEV-6857)',
       imports: [AdvancedSearchBarComponent],
       providers: [
         { provide: SearchUrlSyncService, useValue: urlSyncStub },
-        { provide: OntologyDataService, useValue: { ontologyLoading$: of(false), init: () => {} } },
+        { provide: OntologyDataService, useValue: ontologyDataServiceStub },
         { provide: DerivedSearchStateService, useValue: { searchState$: of({ statements: [] }) } },
         { provide: SearchFlowLogger, useValue: { filterConfirmed: () => {} } },
         { provide: StatementDraftStore, useValue: store },
@@ -303,7 +315,7 @@ describe('AdvancedSearchBarComponent fulltext term rules (DEV-6930)', () => {
           provide: SearchUrlSyncService,
           useValue: { params$: of({}), writeState, readParams: () => ({}), encodeFilters: () => '' },
         },
-        { provide: OntologyDataService, useValue: { ontologyLoading$: of(false), init: () => {} } },
+        { provide: OntologyDataService, useValue: ontologyDataServiceStub },
         { provide: DerivedSearchStateService, useValue: { searchState$: of({ statements: [] }) } },
         { provide: SearchFlowLogger, useValue: { fulltextChanged: () => {} } },
         { provide: StatementDraftStore, useValue: new FakeDraftStore([]) },
