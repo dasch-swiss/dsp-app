@@ -12,8 +12,11 @@ import { CardinalityChangeDialogComponent, CardinalityInfo } from './cardinality
 
 const classProp = makeClassPropertyInfo();
 
+const classLabels = [{ language: 'en', value: 'Test Class' }];
+
 const canDoCardinalityData: CardinalityInfo = {
   classIri: 'http://0.0.0.0:3333/ontology/0001/test/v2#TestClass',
+  classLabels,
   currentCardinality: Cardinality._0_1,
   targetCardinality: Cardinality._0_n,
   propertyInfo: classProp,
@@ -21,6 +24,7 @@ const canDoCardinalityData: CardinalityInfo = {
 
 const cannotDoCardinalityData: CardinalityInfo = {
   classIri: 'http://0.0.0.0:3333/ontology/0001/test/v2#TestClass',
+  classLabels,
   currentCardinality: Cardinality._0_n,
   targetCardinality: Cardinality._1,
   propertyInfo: classProp,
@@ -70,6 +74,15 @@ export const CanChangeCardinality: Story = {
         expect(container).not.toBeNull();
       });
     });
+    await step('Subtitle names the property by its own label, not its type (DEV-6649)', async () => {
+      await waitFor(() => {
+        const subtitle = document.querySelector('mat-dialog-container .subtitle');
+        // "Title" is the property's label; "Text"/"Short" is its DefaultProperty type, which used
+        // to be rendered here instead.
+        expect(subtitle?.textContent).toContain('Title');
+        expect(subtitle?.textContent).not.toContain('Text');
+      });
+    });
   },
 };
 
@@ -99,6 +112,15 @@ export const CannotChangeCardinality: Story = {
       await waitFor(() => {
         const container = document.querySelector('mat-dialog-container');
         expect(container).not.toBeNull();
+      });
+    });
+    await step('Error message names the property and the class by their labels (DEV-6649)', async () => {
+      await waitFor(() => {
+        const content = document.querySelector('mat-dialog-container')?.textContent ?? '';
+        expect(content).toContain('Title');
+        // The class used to be shown as the raw IRI fragment ("TestClass").
+        expect(content).toContain('Test Class');
+        expect(content).not.toContain('TestClass');
       });
     });
   },
