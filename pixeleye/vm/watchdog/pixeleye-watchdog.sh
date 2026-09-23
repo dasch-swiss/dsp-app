@@ -56,11 +56,16 @@ echo "probe failed (HTTP ${code}, 000 = timeout/unreachable), consecutive failur
 
 now=$(date +%s)
 if [ $((now - last_restart)) -lt "$RESTART_COOLDOWN" ]; then
-  echo "restart skipped: last restart was $((now - last_restart))s ago (cooldown ${RESTART_COOLDOWN}s) — needs a human" >&2
+  # Deliberately keeps retrying once the cooldown expires: on an unattended VM a
+  # restart is cheap, and giving up would leave the instance down until noticed.
+  echo "restart skipped: cooldown active, retrying in $((RESTART_COOLDOWN - (now - last_restart)))s — restarts repeating in the journal need a human" >&2
   exit 1
 fi
 
 echo "restarting pixeleye-backend" >&2
-cd "$COMPOSE_DIR" && docker compose restart pixeleye-backend
+cd "$COMPOSE_DIR" && docker compose restart pixeleye-backend || {
+  echo "restart failed" >&2
+  exit 1
+}
 echo "$now" > "$STATE_DIR/last_restart"
 echo 0 > "$STATE_DIR/failures"
