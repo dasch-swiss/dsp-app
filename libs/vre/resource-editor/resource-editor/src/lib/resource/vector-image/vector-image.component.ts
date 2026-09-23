@@ -1,4 +1,3 @@
-import { HttpClient } from '@angular/common/http';
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
@@ -20,6 +19,7 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { Constants, ReadResource, ReadStillImageVectorFileValue } from '@dasch-swiss/dsp-js';
 import { NoResultsFoundComponent } from '@dasch-swiss/vre/ui/ui';
 import { TranslateService } from '@ngx-translate/core';
+import { RepresentationService } from '../../representation/representation.service';
 import { CompoundArrowNavigationComponent } from '../compound/compound-arrow-navigation.component';
 import { CompoundSliderComponent } from '../compound/compound-slider.component';
 import { VectorImageToolbarComponent } from './vector-image-toolbar.component';
@@ -128,9 +128,9 @@ export class VectorImageComponent implements OnChanges, AfterViewInit, OnDestroy
 
   constructor(
     private readonly _cdr: ChangeDetectorRef,
-    private readonly _http: HttpClient,
     private readonly _sanitizer: DomSanitizer,
     private readonly _translateService: TranslateService,
+    private readonly _representationService: RepresentationService,
     public readonly viewerService: VectorViewerService
   ) {}
 
@@ -329,8 +329,8 @@ export class VectorImageComponent implements OnChanges, AfterViewInit, OnDestroy
     const vectorImage = image as ReadStillImageVectorFileValue;
 
     // Fetch SVG content as text
-    this._http
-      .get(vectorImage.fileUrl, { responseType: 'text' })
+    this._representationService
+      .getSvgContent(vectorImage.fileUrl)
       .pipe(takeUntilDestroyed(this._destroyRef))
       .subscribe({
         next: svgContent => {

@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { CUSTOM_ELEMENTS_SCHEMA, SimpleChange } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
@@ -45,7 +46,14 @@ describe('VectorImageComponent', () => {
         provideTranslateService(),
         { provide: NotificationService, useValue: { openSnackBar: jest.fn() } },
         { provide: ResourceFetcherService, useValue: { userCanEdit$: of(true) } },
-        { provide: RepresentationService, useValue: { downloadProjectFile: jest.fn() } },
+        {
+          provide: RepresentationService,
+          useFactory: (http: HttpClient) => ({
+            downloadProjectFile: jest.fn(),
+            getSvgContent: (url: string) => http.get(url, { responseType: 'text' }),
+          }),
+          deps: [HttpClient],
+        },
         { provide: MatDialog, useValue: { open: jest.fn() } },
         { provide: TranslateService, useValue: translateServiceMock },
       ],
