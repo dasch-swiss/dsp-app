@@ -417,7 +417,7 @@
       },
       "cardinalityDialog": {
         "title": "Update cardinality",
-        "subtitle": "Set the cardinality for property {{group}}: {{label}}",
+        "subtitle": "Set the cardinality for property “{{label}}”",
         "notPossible": "Changing the cardinality is not possible.",
         "attention": "Attention",
         "confirmMessage": "Please note that this change may not be reversible. Do you want to change the cardinality?",
@@ -557,7 +557,8 @@
           "integer": "Value must be an integer value.",
           "decimal": "Value must be a decimal value."
         },
-        "fulltextSearchPlaceholder": "Search…"
+        "fulltextSearchPlaceholder": "Search…",
+        "noDataModel": "This project has no data model yet. A data model is needed before you can search its resources."
       }
     },
     "dataBrowser": {
