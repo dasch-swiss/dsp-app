@@ -417,7 +417,7 @@
       },
       "cardinalityDialog": {
         "title": "Mettre à jour la cardinalité",
-        "subtitle": "Définir la cardinalité pour la propriété {{group}}: {{label}}",
+        "subtitle": "Définir la cardinalité pour la propriété « {{label}} »",
         "notPossible": "La modification de la cardinalité n'est pas possible.",
         "attention": "Attention",
         "confirmMessage": "Veuillez noter que cette modification peut être irréversible. Voulez-vous modifier la cardinalité ?",
@@ -557,7 +557,8 @@
           "integer": "La valeur doit être un nombre entier.",
           "decimal": "La valeur doit être une valeur décimale."
         },
-        "fulltextSearchPlaceholder": "Rechercher…"
+        "fulltextSearchPlaceholder": "Rechercher…",
+        "noDataModel": "Ce projet n'a pas encore de modèle de données. Un modèle de données est nécessaire pour rechercher ses ressources."
       }
     },
     "dataBrowser": {

@@ -1,6 +1,6 @@
 {
   "name": "dsp-app",
-  "version": "13.14.2",
+  "version": "13.15.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/dasch-swiss/dsp-app.git"
@@ -8,6 +8,13 @@
   "engines": {
     "node": "^22.13.0",
     "npm": "^10.9.0 || ^11 || ^12"
+  },
+  "devEngines": {
+    "packageManager": {
+      "name": "npm",
+      "version": "^10.9.0",
+      "onFail": "warn"
+    }
   },
   "allowScripts": {
     "@openapitools/openapi-generator-cli": true,

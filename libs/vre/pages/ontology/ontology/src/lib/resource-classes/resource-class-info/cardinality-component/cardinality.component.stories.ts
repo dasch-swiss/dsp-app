@@ -5,6 +5,7 @@ import { makeClassPropertyInfo } from '../../../stories.helpers';
 import { CardinalityComponent } from './cardinality.component';
 
 const classProp = makeClassPropertyInfo();
+const classLabels = [{ language: 'en', value: 'Test Class' }];
 
 const meta: Meta<CardinalityComponent> = {
   title: 'Ontology Editor / 3a. Resource Classes Tab / Resource Class Info / Cardinality',
@@ -13,6 +14,10 @@ const meta: Meta<CardinalityComponent> = {
     classProp: {
       description: 'The class property info containing the IHasProperty cardinality data.',
       table: { type: { summary: 'ClassPropertyInfo' }, category: 'Inputs' },
+    },
+    classLabels: {
+      description: "All-language labels of the owning class, shown in the confirmation dialog's messages.",
+      table: { type: { summary: 'StringLiteralV2[]' }, category: 'Inputs' },
     },
     disabled: {
       description: 'When true the checkboxes are read-only.',
@@ -32,6 +37,7 @@ export const NotRequiredNotMultiple: Story = {
   name: 'Shows unchecked checkboxes for 0-1 cardinality',
   args: {
     classProp: { ...classProp, iHasProperty: { ...classProp.iHasProperty, cardinality: Cardinality._0_1 } },
+    classLabels,
     disabled: false,
   },
   play: async ({ canvasElement, step }) => {
@@ -52,6 +58,7 @@ export const RequiredSingle: Story = {
   name: 'Shows required checked for exactly-one cardinality',
   args: {
     classProp: { ...classProp, iHasProperty: { ...classProp.iHasProperty, cardinality: Cardinality._1 } },
+    classLabels,
     disabled: false,
   },
   play: async ({ canvasElement, step }) => {
@@ -67,6 +74,7 @@ export const DisabledState: Story = {
   name: 'Disables checkboxes when disabled input is true',
   args: {
     classProp,
+    classLabels,
     disabled: true,
   },
   play: async ({ canvasElement, step }) => {

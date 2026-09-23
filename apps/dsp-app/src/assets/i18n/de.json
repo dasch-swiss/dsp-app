@@ -417,7 +417,7 @@
       },
       "cardinalityDialog": {
         "title": "Kardinalität aktualisieren",
-        "subtitle": "Kardinalität für Eigenschaft {{group}}: {{label}} festlegen",
+        "subtitle": "Kardinalität für die Eigenschaft „{{label}}“ festlegen",
         "notPossible": "Die Änderung der Kardinalität ist nicht möglich.",
         "attention": "Achtung",
         "confirmMessage": "Bitte beachten Sie, dass diese Änderung möglicherweise nicht rückgängig gemacht werden kann. Möchten Sie die Kardinalität ändern?",
@@ -557,7 +557,8 @@
           "integer": "Der Wert muss eine Ganzzahl sein.",
           "decimal": "Der Wert muss ein Dezimalwert sein."
         },
-        "fulltextSearchPlaceholder": "Suchen…"
+        "fulltextSearchPlaceholder": "Suchen…",
+        "noDataModel": "Dieses Projekt hat noch kein Datenmodell. Ein Datenmodell wird benötigt, um die Ressourcen zu durchsuchen."
       }
     },
     "dataBrowser": {

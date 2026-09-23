@@ -101,3 +101,52 @@ export const AcceptsUserInput: Story = {
     });
   },
 };
+
+export const WrapsLongValidationError: Story = {
+  name: 'Wraps a long validation error instead of clipping it',
+  args: {
+    control: new FormControl('12312323', Validators.pattern(/^[a-zA-Z][a-zA-Z0-9._-]*$/)) as FormControl<string>,
+    label: 'Set a unique name',
+    validatorErrors: [
+      {
+        errorKey: 'pattern',
+        // The real DEV-7283 message: long enough to need more than one line in a narrow field.
+        message:
+          'The name must start with a letter and may only contain letters, digits, hyphens, dots and underscores.',
+      },
+    ],
+    type: 'text',
+  },
+  // Constrain the width so the message is guaranteed to wrap, as it does in the dialog.
+  render: args => ({
+    props: args,
+    template: `<div style="width: 320px"><app-common-input [control]="control" [label]="label"
+        [validatorErrors]="validatorErrors" [type]="type" /></div>`,
+    moduleMetadata: { imports: [CommonInputComponent] },
+  }),
+  play: async ({ canvasElement, args, step }) => {
+    const canvas = within(canvasElement);
+    await step('Field is touched to trigger validation', async () => {
+      (args.control as FormControl).markAsTouched();
+      (args.control as FormControl).updateValueAndValidity();
+      await userEvent.click(canvas.getByPlaceholderText('Set a unique name'));
+      await userEvent.tab();
+    });
+    await step('The subscript grows to contain the wrapped error instead of clipping it', async () => {
+      const error = canvas.getByText(/The name must start with a letter/);
+      await expect(error).toBeInTheDocument();
+
+      // The message is long enough to wrap onto more than one line at this width.
+      const errorHeight = error.getBoundingClientRect().height;
+      const lineHeight = parseFloat(getComputedStyle(error).lineHeight);
+      await expect(errorHeight).toBeGreaterThan(lineHeight * 1.5);
+
+      // Without subscriptSizing="dynamic" the error is absolutely positioned inside a subscript
+      // reserved for a single line, so the wrapper stays short and the extra lines are clipped.
+      // The fix makes the wrapper grow to contain the full message (DEV-7283).
+      const wrapper = error.closest('.mat-mdc-form-field-subscript-wrapper') as HTMLElement;
+      await expect(wrapper).not.toBeNull();
+      await expect(wrapper.getBoundingClientRect().height).toBeGreaterThanOrEqual(errorHeight);
+    });
+  },
+};
