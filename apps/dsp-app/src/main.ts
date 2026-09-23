@@ -1,5 +1,6 @@
 import { enableProdMode, provideZoneChangeDetection } from '@angular/core';
 import { bootstrapApplication } from '@angular/platform-browser';
+import { loadFathom } from '@dasch-swiss/vre/3rd-party-services/analytics';
 import { AppConfigToken } from '@dasch-swiss/vre/core/config';
 import { AppComponent } from './app/app.component';
 import { appConfig } from './app/app.config';
@@ -60,6 +61,7 @@ function configListener() {
   try {
     const configuration = JSON.parse(this.responseText);
     initSentry(configuration.instrumentation.environment);
+    loadFathom(configuration.instrumentation.environment);
     // pass config to bootstrap process using an injection token
     // which will make the encapsulated value available inside
     // services that inject this token
