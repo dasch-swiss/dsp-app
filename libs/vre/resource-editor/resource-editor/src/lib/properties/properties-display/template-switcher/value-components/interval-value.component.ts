@@ -1,4 +1,5 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, Input, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl } from '@angular/forms';
 import { MatError } from '@angular/material/form-field';
 import { HumanReadableErrorPipe, TimeInputComponent } from '@dasch-swiss/vre/ui/ui';
@@ -30,24 +31,28 @@ export class IntervalValueComponent implements OnInit {
   startControl = new FormControl(0);
   endControl = new FormControl(0);
 
+  private readonly _destroyRef = inject(DestroyRef);
+
   ngOnInit() {
     let updating = false;
 
-    this.control.valueChanges.pipe(startWith(this.control.value)).subscribe(change => {
-      if (updating) {
-        return;
-      }
-      updating = true;
+    this.control.valueChanges
+      .pipe(startWith(this.control.value), takeUntilDestroyed(this._destroyRef))
+      .subscribe(change => {
+        if (updating) {
+          return;
+        }
+        updating = true;
 
-      if (change === null) {
-        this.startControl.setValue(null, { emitEvent: false });
-        this.endControl.setValue(null, { emitEvent: false });
-      } else {
-        this.startControl.setValue(change.start, { emitEvent: false });
-        this.endControl.setValue(change.end, { emitEvent: false });
-      }
-      updating = false;
-    });
+        if (change === null) {
+          this.startControl.setValue(null, { emitEvent: false });
+          this.endControl.setValue(null, { emitEvent: false });
+        } else {
+          this.startControl.setValue(change.start, { emitEvent: false });
+          this.endControl.setValue(change.end, { emitEvent: false });
+        }
+        updating = false;
+      });
 
     this.startControl.valueChanges.subscribe(start => {
       if (updating) {
