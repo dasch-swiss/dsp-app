@@ -30,13 +30,12 @@ export class RepresentationService {
   // images even for admins. Any future Sipi image shown outside OpenSeadragon must fetch through
   // here (Bearer header) and render the resulting blob, not bind the URL to <img> directly.
   getImageBlob(url: string): Observable<Blob> {
-    const authToken = this._accessTokenService.getAccessToken();
-    const headers = authToken ? new HttpHeaders({ Authorization: `Bearer ${authToken}` }) : undefined;
-    return this._http.get(url, { responseType: 'blob', headers });
+    return this._http.get(url, { responseType: 'blob', headers: this._sipiAuthHeaders() });
   }
 
+  // Same reason as getImageBlob: without the Bearer header Sipi denies non-public SVGs.
   getSvgContent(url: string): Observable<string> {
-    return this._http.get(url, { responseType: 'text' });
+    return this._http.get(url, { responseType: 'text', headers: this._sipiAuthHeaders() });
   }
 
   getIngestFileUrl(projectShort: string, assetId: string): string {
@@ -105,5 +104,10 @@ export class RepresentationService {
 
         triggerBlobDownload(res.body!, fileName);
       });
+  }
+
+  private _sipiAuthHeaders(): HttpHeaders | undefined {
+    const authToken = this._accessTokenService.getAccessToken();
+    return authToken ? new HttpHeaders({ Authorization: `Bearer ${authToken}` }) : undefined;
   }
 }
