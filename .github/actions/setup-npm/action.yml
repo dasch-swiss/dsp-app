@@ -1,0 +1,11 @@
+name: Set up npm
+description: >-
+  Installs the npm version from package.json devEngines.packageManager, the same field
+  Renovate uses to pick its npm. CI and Renovate then write and read package-lock.json
+  with the same npm major, whatever npm the .nvmrc Node release bundles.
+runs:
+  using: composite
+  steps:
+    - name: Install npm from devEngines
+      shell: bash
+      run: npm install --global --no-audit --no-fund "npm@$(node -p "require('./package.json').devEngines.packageManager.version")" && npm --version
