@@ -37,9 +37,10 @@ import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
 import { KnoraDate } from '@dasch-swiss/dsp-js';
-import { getCalendar } from '@dasch-swiss/vre/shared/calendar';
+import { CalendarSystem, getCalendar } from '@dasch-swiss/vre/shared/calendar';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
+import { ValueService } from '../date-value-handler/value.service';
 
 /** error when invalid control is dirty, touched, or submitted. */
 export class DatePickerErrorStateMatcher implements ErrorStateMatcher {
@@ -240,7 +241,8 @@ export class AppDatePickerComponent
     @Optional() @Self() public readonly ngControl: NgControl,
     fb: UntypedFormBuilder,
     private readonly _elRef: ElementRef<HTMLElement>,
-    private readonly _fm: FocusMonitor
+    private readonly _fm: FocusMonitor,
+    private readonly _valueService: ValueService
   ) {
     this.dateForm = fb.group({
       date: [null, Validators.required],
@@ -461,12 +463,67 @@ export class AppDatePickerComponent
   }
 
   /**
+   * rewrites the form's fields so they describe the same day in the newly selected calendar.
+   *
+   * Detects the switch by comparing the form's calendar against the entered date's own, rather
+   * than by subscribing to the control: `buildForm()` replaces the form on every value change, so
+   * a subscription would be discarded and its first emission arrives before a date exists.
+   *
+   * Precision and era come back from the conversion, so a year-only date stays year-only and a BCE
+   * date stays BCE. Where the target calendar cannot represent the date the switch is abandoned
+   * and the previous calendar restored — the selector only offers representable calendars, so that
+   * is a guard rather than a path a user can reach.
+   *
+   * @returns true when it converted, meaning the caller should stand down for this pass; the
+   * conversion re-enters through `setDate`.
+   */
+  private _convertToSelectedCalendar(): boolean {
+    const target = this.form.controls['calendar'].value?.toUpperCase() as CalendarSystem;
+    // `this.value` rather than `this.date`: the latter is only assigned by `setDate`, so it is
+    // still undefined on the first switch after a value is written in from outside.
+    const current = this.value;
+
+    if (!target || !current || current.calendar.toUpperCase() === target) {
+      return false;
+    }
+
+    const converted = this._valueService.convertKnoraDateTo(current, target);
+    if (converted === undefined) {
+      this.form.controls['calendar'].setValue(current.calendar, { emitEvent: false });
+      return true;
+    }
+
+    // A converted year or month can span two of the target calendar's; the picker holds a single
+    // date, so it takes the start of that span. Rendering the span is the viewer's concern.
+    const start = converted.start;
+
+    this.calendar = target;
+    this.era = start.era;
+    this.year = start.year;
+    this.month = start.month ?? 0;
+    this.day = start.day;
+
+    this.form.patchValue({ era: start.era, year: start.year, month: start.month ?? '' }, { emitEvent: false });
+
+    this.setDate(start.day);
+    return true;
+  }
+
+  /**
    * this method is for the form error handling
    *
    * @param data Data which changed.
    */
   onValueChanged(data?: any) {
     if (!this.form) {
+      return;
+    }
+
+    // A calendar change is the one edit that must not be read off the form as typed. Everything
+    // below rebuilds the date from whatever year/month/day sit in the controls, which for a
+    // calendar change means relabelling 15.06.2024 Gregorian as 15.06.2024 Julian — a different
+    // day, saved without a word. Converting first puts the right numbers in the controls.
+    if (this._convertToSelectedCalendar()) {
       return;
     }
 

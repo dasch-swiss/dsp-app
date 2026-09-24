@@ -14,8 +14,9 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
-import { Cardinality, ReadValue } from '@dasch-swiss/dsp-js';
+import { Cardinality, Constants, KnoraDate, KnoraPeriod, ReadValue } from '@dasch-swiss/dsp-js';
 import { ResourceService } from '@dasch-swiss/vre/shared/app-common';
+import { ValueService } from '@dasch-swiss/vre/ui/date-picker';
 import { AppProgressIndicatorComponent } from '@dasch-swiss/vre/ui/progress-indicator';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Observable, of, Subscription, switchMap } from 'rxjs';
@@ -119,6 +120,7 @@ export class PropertyValueEditComponent implements OnInit, OnDestroy {
 
   private readonly _cd = inject(ChangeDetectorRef);
   private readonly _resourceService = inject(ResourceService);
+  private readonly _valueService = inject(ValueService);
   public propertyValueService = inject(PropertyValueService);
 
   protected readonly Cardinality = Cardinality;
@@ -130,12 +132,53 @@ export class PropertyValueEditComponent implements OnInit, OnDestroy {
       comment: new FormControl(this.readValue?.valueHasComment || null),
     });
 
+    const originalItem = this.group.controls.item.value;
+    const originalComment = this.group.controls.comment.value;
+
     this.hasValidValue$ = this.group.valueChanges.pipe(
       startWith(null),
-      switchMap(() => of(this.group.controls.item.valid && this.group.controls.item.value !== null))
+      switchMap(() =>
+        of(
+          this.group.controls.item.valid &&
+            this.group.controls.item.value !== null &&
+            this._hasChanged(originalItem, originalComment)
+        )
+      )
     );
 
     this._watchAndSetupCommentStatus();
+  }
+
+  /**
+   * whether the user has actually altered the value, as opposed to restating it.
+   *
+   * Only date values are compared, and only when editing an existing one. Everything else keeps
+   * the previous behaviour, where validity alone enables saving: widening this would quietly
+   * change how all fifteen value types behave, which is not what this change is for.
+   *
+   * A date needs the comparison because converting it to another calendar rewrites every field
+   * while meaning the same day — 15.06.2024 Gregorian is 02.06.2024 Julian. Comparing the fields
+   * would report an edit the user never made, and since the calendar travels in the update
+   * payload, saving it would rewrite the stored calendar of a value someone merely looked at.
+   */
+  private _hasChanged(originalItem: unknown, originalComment: string | null): boolean {
+    // Adding a value: there is nothing to differ from, so validity is the only question.
+    if (this.readValue === undefined) {
+      return true;
+    }
+
+    if (this.propertyValueService.propertyDefinition.objectType !== Constants.DateValue) {
+      return true;
+    }
+
+    if (this.group.controls.comment.value !== originalComment) {
+      return true;
+    }
+
+    return !this._valueService.dateValuesDenoteSameInstant(
+      originalItem as KnoraDate | KnoraPeriod | null,
+      this.group.controls.item.value as KnoraDate | KnoraPeriod | null
+    );
   }
 
   ngOnDestroy() {
