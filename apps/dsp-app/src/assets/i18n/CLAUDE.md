@@ -63,13 +63,11 @@ PY
 2. Add proper translations to `de.json`, `fr.json`, and `it.json`
 3. **Update the relevant code** to replace hardcoded text with the translation key (e.g., `"Add user"` → `{{ 'pages.project.add' | translate }}`)
 4. Run the parity check (see **Key Parity Verification**)
-5. Test the application to ensure functionality
 
 ### When Updating Existing Keys:
 1. Update the key in `en.json`
 2. Update translations in other language files as needed
 3. Run the parity check (see **Key Parity Verification**)
-4. Test the application
 
 ### When Removing Keys:
 1. Remove from `en.json` first
@@ -80,15 +78,10 @@ PY
 ## Common Issues to Avoid
 
 1. **Partial Updates**: Never update only some language files - always maintain parity
-2. **Key Typos**: Double-check key names when copying between files
 
 ## Testing Translations
 
-After making translation changes:
-1. Run the parity check (see **Key Parity Verification**)
-2. Start the application: `npm run start-local`
-3. Switch between languages in the UI to verify functionality
-4. Check that no translation keys show as raw keys (e.g., `"pages.project.legalSettings.tab"`)
+After making translation changes, run the parity check (see **Key Parity Verification**); it is the gate. When a browser tool is available and the app is already running (`npm run start-local`), also switch languages in the UI and check that no key shows raw (e.g. `"pages.project.legalSettings.tab"`).
 
 ## Translation Structure
 

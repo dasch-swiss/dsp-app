@@ -6,20 +6,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### 1. Non-Repository File System Safety
 
-- The assistant must **not** modify, create, move, or delete files or directories **outside the project repository** unless explicitly instructed by the user.
-- If the assistant detects that a requested operation would affect the broader system (e.g., user home directory, OS configuration, global environment files, unrelated projects), it must:
-  - Clearly **highlight** this fact to the user  
-  - Explain potential risks or side effects  
-  - Request explicit, unambiguous permission before proceeding  
-- If the user does not explicitly grant permission, the assistant must refuse to perform the operation and propose safe alternatives when possible.
+- Don't modify the user's home directory, OS or global configuration, or unrelated projects without asking first, and say what the change affects. Tool caches (`~/.npm`, Playwright browsers) and the session scratchpad are fine.
 
 ### 2. Planning & Execution
 
-- If a task includes multiple scopes (e.g., refactor + feature + tests), confirm whether to treat them separately.
+- Ask before bundling unrelated scopes in one change (e.g. a refactor riding along a feature); tests that belong to the change are part of its scope.
 
 ### 3. Proposing Solutions
 
-- If repository conventions conflict with best practices, ask which to prioritize.  
 - If user instructions conflict with conventions or principles, seek clarification.
 
 ### 4. Testing Guidelines
@@ -73,8 +67,8 @@ Standard `nx` / `npm` invocations live in `package.json` scripts. Regenerating t
 - Use `storyName` when the export name would be awkward
 - Every story must have at least one `play()` function asserting a user-visible outcome
 - `argTypes` must include a `description` for every `@Input()` and `@Output()`
-- Run Storybook locally: `nx run vre-ui-ui:storybook`
-- Run interaction tests: `nx run vre-ui-ui:test-storybook`
+- Run Storybook locally: `npm run storybook`
+- Run interaction tests: `npm run test-storybook`
 - **Stories that render a real container break when its DI changes.** Some stories mount the
   actual container component (others mock it) — adding a service injection to a container breaks
   exactly those stories, not the mocked ones. When you add a dependency to a component that
