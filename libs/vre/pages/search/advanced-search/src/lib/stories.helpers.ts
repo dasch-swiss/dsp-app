@@ -53,6 +53,21 @@ const STORY_TRANSLATIONS = {
         retry: 'Retry',
       },
     },
+    // The date operand renders app-date-picker, so its keys have to be here too or a story
+    // showing a date term displays raw key ids instead of calendar names.
+    datePicker: {
+      clickToSelect: 'Click to select a date',
+      calendar: 'Calendar',
+      today: 'Today',
+      month: 'Month',
+      none: 'None',
+      year: 'Year',
+      willBeStoredAs: 'will be stored as {{date}}',
+    },
+    calendarMarker: {
+      storedAs: 'stored as {{calendar}}',
+      calendars: { GREGORIAN: 'Gregorian', JULIAN: 'Julian', ISLAMIC: 'Islamic' },
+    },
   },
   pages: {
     search: {
