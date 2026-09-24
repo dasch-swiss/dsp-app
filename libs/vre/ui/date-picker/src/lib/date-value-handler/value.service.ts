@@ -1,6 +1,26 @@
 import { Injectable } from '@angular/core';
 import { Constants, KnoraDate, KnoraPeriod, Precision } from '@dasch-swiss/dsp-js';
-import { CalendarDate, createDate, getCalendar, isEqual } from '@dasch-swiss/vre/shared/calendar';
+import {
+  CALENDAR_SYSTEMS,
+  CalendarDate,
+  CalendarSystem,
+  convertCalendarResult,
+  createDate,
+  getCalendar,
+  isEqual,
+} from '@dasch-swiss/vre/shared/calendar';
+
+/**
+ * A date value seen through a calendar other than the one it is stored in.
+ *
+ * `end` is present only when the source covers a range in the target calendar — a Julian year
+ * straddling two Gregorian ones, say. Keeping it optional is what stops a caller printing a single
+ * date for something the source never pinned down that precisely.
+ */
+export interface ConvertedKnoraDate {
+  readonly start: KnoraDate;
+  readonly end?: KnoraDate;
+}
 
 @Injectable({
   providedIn: 'root',
@@ -60,6 +80,79 @@ export class ValueService {
     } else {
       throw Error('Invalid precision');
     }
+  }
+
+  /**
+   * given an astronomical year, returns the historical year and its era.
+   *
+   * The inverse of {@link convertHistoricalYearToAstronomicalYear}. There is no year zero in
+   * historical dating — 1 BCE is followed directly by 1 CE — so astronomical year 0 is 1 BCE,
+   * −1 is 2 BCE, and so on. Getting this backwards is a one-year error on every pre-CE date, which
+   * is what took down the adapter removed in #3441.
+   *
+   * @param yearAstro astronomical year, which may be zero or negative.
+   * @param calendar the target calendar; the Islamic calendar carries no era.
+   */
+  convertAstronomicalYearToHistoricalYear(yearAstro: number, calendar: CalendarSystem): { year: number; era: string } {
+    if (calendar === 'ISLAMIC') {
+      return { year: yearAstro, era: 'noEra' };
+    }
+    return yearAstro > 0 ? { year: yearAstro, era: 'CE' } : { year: -yearAstro + 1, era: 'BCE' };
+  }
+
+  /**
+   * builds a KnoraDate from a calendar date, preserving precision and era.
+   *
+   * The inverse of {@link createJDNCalendarDateFromKnoraDate}. The two type systems spell the
+   * absent era differently — `NONE` here, `noEra` in KnoraDate — so the mapping is explicit.
+   *
+   * @param date the calendar date.
+   */
+  createKnoraDateFromCalendarDate(date: CalendarDate): KnoraDate {
+    const { year, era } = this.convertAstronomicalYearToHistoricalYear(date.year, date.calendar);
+    return new KnoraDate(date.calendar, era, year, date.month, date.day);
+  }
+
+  /**
+   * shows a date in another calendar, as a single date or as the span it covers.
+   *
+   * Returns `undefined` when the target calendar cannot represent the date at all — a pre-Hijra
+   * date has no Islamic form. Callers offer only the calendars {@link availableCalendarsFor}
+   * reports, so a reader is never handed this case, but a caller that ignores that still cannot
+   * accidentally render a fabricated date.
+   *
+   * @param date the date to show.
+   * @param calendar the calendar to show it in.
+   */
+  convertKnoraDateTo(date: KnoraDate, calendar: CalendarSystem): ConvertedKnoraDate | undefined {
+    const result = convertCalendarResult(this.createJDNCalendarDateFromKnoraDate(date), calendar);
+
+    if (result.kind === 'refused') {
+      return undefined;
+    }
+    if (result.kind === 'exact') {
+      return { start: this.createKnoraDateFromCalendarDate(result.date) };
+    }
+    return {
+      start: this.createKnoraDateFromCalendarDate(result.start),
+      end: this.createKnoraDateFromCalendarDate(result.end),
+    };
+  }
+
+  /**
+   * which calendars a date value can be shown in.
+   *
+   * The stored calendar is always among them. A period is representable only where both of its
+   * ends are, because a period carries one calendar for the whole value.
+   *
+   * @param value the date or period.
+   */
+  availableCalendarsFor(value: KnoraDate | KnoraPeriod): CalendarSystem[] {
+    const dates = value instanceof KnoraPeriod ? [value.start, value.end] : [value];
+
+    return CALENDAR_SYSTEMS.filter(calendar =>
+      dates.every(date => this.convertKnoraDateTo(date, calendar) !== undefined)
+    );
   }
 
   /**
