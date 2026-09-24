@@ -1063,6 +1063,14 @@
       "none": "Nessuno",
       "year": "Anno",
       "bceWarning": "Attenzione: Data <strong>prima dell'era comune</strong>."
+    },
+    "calendarMarker": {
+      "storedAs": "memorizzato come {{calendar}}",
+      "calendars": {
+        "GREGORIAN": "Gregoriano",
+        "JULIAN": "Giuliano",
+        "ISLAMIC": "Islamico"
+      }
     }
   },
   "shared": {

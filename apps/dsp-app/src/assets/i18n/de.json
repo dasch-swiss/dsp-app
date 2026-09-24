@@ -1063,6 +1063,14 @@
       "none": "Keine",
       "year": "Jahr",
       "bceWarning": "Achtung: Datum <strong>vor der Zeitrechnung</strong>."
+    },
+    "calendarMarker": {
+      "storedAs": "gespeichert als {{calendar}}",
+      "calendars": {
+        "GREGORIAN": "Gregorianisch",
+        "JULIAN": "Julianisch",
+        "ISLAMIC": "Islamisch"
+      }
     }
   },
   "shared": {
