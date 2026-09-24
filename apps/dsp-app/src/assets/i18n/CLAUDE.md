@@ -63,6 +63,7 @@ PY
 2. Add proper translations to `de.json`, `fr.json`, and `it.json`
 3. **Update the relevant code** to replace hardcoded text with the translation key (e.g., `"Add user"` → `{{ 'pages.project.add' | translate }}`)
 4. Run the parity check (see **Key Parity Verification**)
+5. Run the tests of each project whose templates you changed (`npx nx test <project>`), and `npm run test-storybook` if a changed component appears in stories (see the Storybook caveat above)
 
 ### When Updating Existing Keys:
 1. Update the key in `en.json`

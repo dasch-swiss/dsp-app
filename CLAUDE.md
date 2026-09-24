@@ -4,19 +4,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Claude Code Operating Rules
 
-### 1. Non-Repository File System Safety
-
-- Don't modify the user's home directory, OS or global configuration, or unrelated projects without asking first, and say what the change affects. Tool caches (`~/.npm`, Playwright browsers) and the session scratchpad are fine.
-
-### 2. Planning & Execution
+### 1. Planning & Execution
 
 - Ask before bundling unrelated scopes in one change (e.g. a refactor riding along a feature); tests that belong to the change are part of its scope.
 
-### 3. Proposing Solutions
+### 2. Proposing Solutions
 
 - If user instructions conflict with conventions or principles, seek clarification.
 
-### 4. Testing Guidelines
+### 3. Testing Guidelines
 
 - Add tests only within the **scope of the task**.  
 - Avoid over-testing or redundant tests; check existing coverage first.  
