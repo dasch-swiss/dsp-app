@@ -298,6 +298,7 @@ export class AppDatePickerComponent
   }
 
   ngOnDestroy() {
+    this._fm.stopMonitoring(this._elRef.nativeElement);
     this.stateChanges.complete();
   }
 
