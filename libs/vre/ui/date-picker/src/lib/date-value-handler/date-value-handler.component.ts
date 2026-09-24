@@ -23,7 +23,7 @@ import { MatFormFieldControl, MatFormFieldModule } from '@angular/material/form-
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { KnoraDate, KnoraPeriod } from '@dasch-swiss/dsp-js';
-import { compareDates } from '@dasch-swiss/vre/shared/calendar';
+import { CalendarSystem, compareDates } from '@dasch-swiss/vre/shared/calendar';
 import { Subject, Subscription } from 'rxjs';
 import { AppDatePickerComponent } from '../app-date-picker/app-date-picker.component';
 import { ValueService } from './value.service';
@@ -105,13 +105,24 @@ export class DateValueHandlerComponent
 
     if (!this.isPeriodControl.value) {
       return this.startDate.value;
-    } else {
-      if (this.endDate.value && this.startDate.value.calendar !== this.endDate.value.calendar) {
-        this.endDate.value.calendar = this.startDate.value.calendar;
-      }
-
-      return new KnoraPeriod(this.startDate.value, this.endDate.value);
     }
+
+    const start: KnoraDate = this.startDate.value;
+    let end: KnoraDate = this.endDate.value;
+
+    // A period carries one calendar: CreateDateValue and UpdateDateValue have a single `calendar`
+    // field for the whole value, so the two ends cannot disagree. This used to be enforced by
+    // writing through `end.calendar`, which relabelled the end date as a different day and only
+    // compiled because the value arrives untyped from a form control — `KnoraDate.calendar` is
+    // readonly. Converting produces a new date that still means what it meant.
+    if (end && start.calendar !== end.calendar) {
+      const converted = this._valueService.convertKnoraDateTo(end, start.calendar.toUpperCase() as CalendarSystem);
+      if (converted !== undefined) {
+        end = converted.start;
+      }
+    }
+
+    return new KnoraPeriod(start, end);
   }
 
   set value(date: KnoraDate | KnoraPeriod | null) {

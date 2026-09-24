@@ -33,13 +33,20 @@
     <div class="calendar-selector panel">
       <mat-form-field class="calendar">
         <mat-label>{{ 'ui.datePicker.calendar' | translate }}</mat-label>
-        <mat-select formControlName="calendar" class="center">
+        <mat-select formControlName="calendar" class="center" data-cy="calendar-select">
           @for (cal of calendars; track cal) {
-          <mat-option [value]="cal"> {{ titleCase(cal) }} </mat-option>
+          <mat-option [value]="cal" [disabled]="!isCalendarAvailable(cal)" [attr.data-cy]="'calendar-option-' + cal">
+            {{ 'ui.calendarMarker.calendars.' + cal | translate }}
+          </mat-option>
           }
         </mat-select>
       </mat-form-field>
       <span class="fill-remaining-space"></span>
+      @if (value) {
+      <span class="will-be-stored" data-cy="will-be-stored">
+        {{ 'ui.datePicker.willBeStoredAs' | translate: { date: transform(value, 'dd.MM.YYYY', 'all') } }}
+      </span>
+      }
       <div class="action">
         <!-- go to the current date -->
         <button mat-button (click)="setToday()">{{ 'ui.datePicker.today' | translate }}</button>

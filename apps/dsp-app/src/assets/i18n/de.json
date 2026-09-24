@@ -1062,7 +1062,8 @@
       "month": "Monat",
       "none": "Keine",
       "year": "Jahr",
-      "bceWarning": "Achtung: Datum <strong>vor der Zeitrechnung</strong>."
+      "bceWarning": "Achtung: Datum <strong>vor der Zeitrechnung</strong>.",
+      "willBeStoredAs": "wird gespeichert als {{date}}"
     },
     "calendarMarker": {
       "storedAs": "gespeichert als {{calendar}}",

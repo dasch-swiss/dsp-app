@@ -477,6 +477,21 @@ export class AppDatePickerComponent
    * @returns true when it converted, meaning the caller should stand down for this pass; the
    * conversion re-enters through `setDate`.
    */
+  /**
+   * whether the entered date can be expressed in a calendar.
+   *
+   * An unrepresentable calendar is disabled rather than offered and then refused, so the picker
+   * never has to show an error for a choice it allowed. With nothing entered yet every calendar is
+   * open, since there is no date to fail on.
+   */
+  isCalendarAvailable(calendar: string): boolean {
+    const current = this.value;
+    if (!current) {
+      return true;
+    }
+    return this._valueService.availableCalendarsFor(current).includes(calendar.toUpperCase() as CalendarSystem);
+  }
+
   private _convertToSelectedCalendar(): boolean {
     const target = this.form.controls['calendar'].value?.toUpperCase() as CalendarSystem;
     // `this.value` rather than `this.date`: the latter is only assigned by `setDate`, so it is

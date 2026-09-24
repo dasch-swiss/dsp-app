@@ -1062,7 +1062,8 @@
       "month": "Mois",
       "none": "Aucun",
       "year": "Année",
-      "bceWarning": "Attention : Date <strong>avant l'ère commune</strong>."
+      "bceWarning": "Attention : Date <strong>avant l'ère commune</strong>.",
+      "willBeStoredAs": "sera enregistré comme {{date}}"
     },
     "calendarMarker": {
       "storedAs": "enregistré en calendrier {{calendar}}",

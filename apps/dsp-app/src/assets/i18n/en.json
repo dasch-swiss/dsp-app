@@ -1062,7 +1062,8 @@
       "month": "Month",
       "none": "None",
       "year": "Year",
-      "bceWarning": "Attention: Date <strong>before common era</strong>."
+      "bceWarning": "Attention: Date <strong>before common era</strong>.",
+      "willBeStoredAs": "will be stored as {{date}}"
     },
     "calendarMarker": {
       "storedAs": "stored as {{calendar}}",
