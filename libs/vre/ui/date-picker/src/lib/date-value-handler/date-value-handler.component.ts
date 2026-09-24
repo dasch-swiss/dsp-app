@@ -118,7 +118,11 @@ export class DateValueHandlerComponent
     if (end && start.calendar !== end.calendar) {
       const converted = this._valueService.convertKnoraDateTo(end, start.calendar.toUpperCase() as CalendarSystem);
       if (converted !== undefined) {
-        end = converted.start;
+        // The end of a span, not its start: an imprecise end date covers a range in the target
+        // calendar, and a period ends at the last day that range includes. Taking the start here
+        // would shorten the period — a Julian year end converted to Gregorian would lose the
+        // second year the span runs into, and this value is saved, not merely displayed.
+        end = converted.end ?? converted.start;
       }
     }
 

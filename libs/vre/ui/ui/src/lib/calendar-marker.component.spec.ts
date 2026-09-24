@@ -17,8 +17,8 @@ describe('CalendarMarkerComponent', () => {
 
     fixture = TestBed.createComponent(CalendarMarkerComponent);
     component = fixture.componentInstance;
-    component.storedCalendar = 'JULIAN';
-    component.availableCalendars = ['GREGORIAN', 'JULIAN', 'ISLAMIC'];
+    fixture.componentRef.setInput('storedCalendar', 'JULIAN');
+    fixture.componentRef.setInput('availableCalendars', ['GREGORIAN', 'JULIAN', 'ISLAMIC']);
     fixture.detectChanges();
   });
 
@@ -49,11 +49,11 @@ describe('CalendarMarkerComponent', () => {
   it("never modifies the stored calendar, which is the reader's anchor", () => {
     asAny().selectCalendar('GREGORIAN');
 
-    expect(component.storedCalendar).toBe('JULIAN');
+    expect(component.storedCalendar()).toBe('JULIAN');
   });
 
   it('refuses a calendar the value cannot be represented in', () => {
-    component.availableCalendars = ['GREGORIAN', 'JULIAN'];
+    fixture.componentRef.setInput('availableCalendars', ['GREGORIAN', 'JULIAN']);
     const emitted: string[] = [];
     component.displayCalendarChange.subscribe(calendar => emitted.push(calendar));
 
@@ -64,7 +64,7 @@ describe('CalendarMarkerComponent', () => {
   });
 
   it('always allows the stored calendar, whatever the availability list says', () => {
-    component.availableCalendars = [];
+    fixture.componentRef.setInput('availableCalendars', []);
 
     expect(asAny().isAvailable('JULIAN')).toBe(true);
     expect(asAny().isAvailable('GREGORIAN')).toBe(false);
@@ -80,5 +80,16 @@ describe('CalendarMarkerComponent', () => {
 
       expect(asAny().accessibleLabel()).toBe('Calendar: GREGORIAN, stored as JULIAN');
     });
+  });
+
+  // A plain @Input would be captured once by computed() and then go stale. Signal inputs are what
+  // make this pass; it fails if anyone converts them back.
+  it('reflects a new storedCalendar on a reused instance, rather than going stale', () => {
+    expect(asAny().displayCalendar()).toBe('JULIAN');
+
+    fixture.componentRef.setInput('storedCalendar', 'GREGORIAN');
+    fixture.detectChanges();
+
+    expect(asAny().displayCalendar()).toBe('GREGORIAN');
   });
 });

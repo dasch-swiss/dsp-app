@@ -84,12 +84,19 @@ export function convertCalendarResult(date: CalendarDate, toCalendar: CalendarSy
   const { first, last } = jdnRange(date);
 
   const floor = firstRepresentableJDN(toCalendar);
-  if (floor !== undefined && first < floor) {
+  // Refuse only when the whole range precedes the target calendar's first day. A year or month
+  // that straddles the epoch is still partly representable, and refusing it wholesale would deny
+  // the Islamic calendar to early-Hijra material recorded at year or month precision — the very
+  // dates where it matters most. July 622 CE is the first sixteen days of 1 AH; the day converts,
+  // so the month containing it must too. Where the range starts earlier, it is clamped to the
+  // epoch and the result reports the part that exists.
+  if (floor !== undefined && last < floor) {
     return { kind: 'refused', reason: 'BEFORE_TARGET_EPOCH' };
   }
+  const rangeStart = floor !== undefined && first < floor ? floor : first;
 
   const target = getCalendar(toCalendar);
-  const startFull = target.fromJDN(first);
+  const startFull = target.fromJDN(rangeStart);
   const endFull = target.fromJDN(last);
 
   // Re-state the endpoints at the source's precision: a year-precision source says nothing about

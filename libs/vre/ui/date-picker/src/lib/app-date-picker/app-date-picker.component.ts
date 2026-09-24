@@ -463,21 +463,6 @@ export class AppDatePickerComponent
   }
 
   /**
-   * rewrites the form's fields so they describe the same day in the newly selected calendar.
-   *
-   * Detects the switch by comparing the form's calendar against the entered date's own, rather
-   * than by subscribing to the control: `buildForm()` replaces the form on every value change, so
-   * a subscription would be discarded and its first emission arrives before a date exists.
-   *
-   * Precision and era come back from the conversion, so a year-only date stays year-only and a BCE
-   * date stays BCE. Where the target calendar cannot represent the date the switch is abandoned
-   * and the previous calendar restored — the selector only offers representable calendars, so that
-   * is a guard rather than a path a user can reach.
-   *
-   * @returns true when it converted, meaning the caller should stand down for this pass; the
-   * conversion re-enters through `setDate`.
-   */
-  /**
    * whether the entered date can be expressed in a calendar.
    *
    * An unrepresentable calendar is disabled rather than offered and then refused, so the picker
@@ -492,6 +477,21 @@ export class AppDatePickerComponent
     return this._valueService.availableCalendarsFor(current).includes(calendar.toUpperCase() as CalendarSystem);
   }
 
+  /**
+   * rewrites the form's fields so they describe the same day in the newly selected calendar.
+   *
+   * Detects the switch by comparing the form's calendar against the entered date's own, rather
+   * than by subscribing to the control: `buildForm()` replaces the form on every value change, so
+   * a subscription would be discarded and its first emission arrives before a date exists.
+   *
+   * Precision and era come back from the conversion, so a year-only date stays year-only and a BCE
+   * date stays BCE. Where the target calendar cannot represent the date the switch is abandoned
+   * and the previous calendar restored — the selector only offers representable calendars, so that
+   * is a guard rather than a path a user can reach.
+   *
+   * @returns true when it converted, meaning the caller should stand down for this pass; the
+   * conversion re-enters through `setDate`.
+   */
   private _convertToSelectedCalendar(): boolean {
     const target = this.form.controls['calendar'].value?.toUpperCase() as CalendarSystem;
     // `this.value` rather than `this.date`: the latter is only assigned by `setDate`, so it is

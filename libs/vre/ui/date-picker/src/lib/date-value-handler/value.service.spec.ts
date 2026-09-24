@@ -194,4 +194,22 @@ describe('ValueService', () => {
       expect(service.availableCalendarsFor(period)).toEqual(['GREGORIAN', 'JULIAN']);
     });
   });
+
+  describe('converting a period end (DEV-7372)', () => {
+    // A period ends at the LAST day its end date covers. Taking the span's start here shortened
+    // the period by a year, and unlike a display conversion this value is saved.
+    it('reports both ends of the span an imprecise end date covers', () => {
+      const result = service.convertKnoraDateTo(new KnoraDate('JULIAN', 'CE', 1582), 'GREGORIAN');
+
+      expect(result?.start.year).toBe(1582);
+      expect(result?.end?.year).toBe(1583);
+    });
+
+    it('gives an exact end no span, so a caller falling back to start is still correct', () => {
+      const result = service.convertKnoraDateTo(new KnoraDate('JULIAN', 'CE', 2024, 6, 2), 'GREGORIAN');
+
+      expect(result?.end).toBeUndefined();
+      expect(result?.start.day).toBe(15);
+    });
+  });
 });

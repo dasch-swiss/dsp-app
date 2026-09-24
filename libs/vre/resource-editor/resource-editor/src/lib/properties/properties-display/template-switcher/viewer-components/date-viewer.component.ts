@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
 import { KnoraDate, KnoraPeriod, ReadDateValue } from '@dasch-swiss/dsp-js';
 import { CalendarSystem } from '@dasch-swiss/vre/shared/calendar';
 import { ValueService } from '@dasch-swiss/vre/ui/date-picker';
@@ -25,14 +25,19 @@ import { CalendarMarkerComponent, KnoraDatePipe } from '@dasch-swiss/vre/ui/ui';
     <span data-cy="date-text">{{ displayText() }}</span>
     <span data-cy="date-switch" style="display: inline-block; margin-left: 8px">
       <app-calendar-marker
-        [storedCalendar]="storedCalendar"
-        [availableCalendars]="availableCalendars"
+        [storedCalendar]="storedCalendar()"
+        [availableCalendars]="availableCalendars()"
         (displayCalendarChange)="displayCalendar.set($event)" />
     </span>
   `,
 })
-export class DateViewerComponent implements OnInit {
-  @Input({ required: true }) value!: ReadDateValue;
+export class DateViewerComponent {
+  /**
+   * A signal input rather than a plain `@Input`, because the computeds below read it: `computed()`
+   * tracks signal reads only, so a plain input would be captured once and then silently go stale
+   * if this instance were reused with a different value instead of being recreated.
+   */
+  readonly value = input.required<ReadDateValue>();
 
   private readonly _valueService = inject(ValueService);
   private readonly _datePipe = new KnoraDatePipe();
@@ -40,25 +45,24 @@ export class DateViewerComponent implements OnInit {
   /** The calendar the reader is looking at. Ephemeral, per value, never saved. */
   protected readonly displayCalendar = signal<CalendarSystem | undefined>(undefined);
 
-  protected storedCalendar!: CalendarSystem;
-  protected availableCalendars: CalendarSystem[] = [];
+  /** The calendar the value is stored in — its start, for a period, which governs both ends. */
+  protected readonly storedCalendar = computed<CalendarSystem>(() => {
+    const date = this.value().date;
+    const stored = date instanceof KnoraPeriod ? date.start : date;
+    return stored.calendar.toUpperCase() as CalendarSystem;
+  });
+
+  protected readonly availableCalendars = computed(() => this._valueService.availableCalendarsFor(this.value().date));
 
   protected readonly displayText = computed(() => {
     const target = this.displayCalendar();
-    const date = this.value.date;
+    const date = this.value().date;
 
     if (date instanceof KnoraPeriod) {
       return `${this._render(date.start, target)} - ${this._render(date.end, target)}`;
     }
     return this._render(date, target);
   });
-
-  ngOnInit() {
-    const date = this.value.date;
-    const stored = date instanceof KnoraPeriod ? date.start : date;
-    this.storedCalendar = stored.calendar.toUpperCase() as CalendarSystem;
-    this.availableCalendars = this._valueService.availableCalendarsFor(date);
-  }
 
   /**
    * One date as text, in the chosen calendar.

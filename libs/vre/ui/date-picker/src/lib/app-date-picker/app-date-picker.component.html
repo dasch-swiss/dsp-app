@@ -6,7 +6,7 @@
     [floatLabel]="'always'"
     class="child-input-component date-picker-value"
     [matMenuTriggerFor]="datePicker">
-    <mat-label>{{ titleCase(calendar) }}</mat-label>
+    <mat-label>{{ 'ui.calendarMarker.calendars.' + calendar | translate }}</mat-label>
     <input
       matInput
       class="date-picker-input date"

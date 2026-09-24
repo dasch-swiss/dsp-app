@@ -274,4 +274,28 @@ describe('calendar round trips (DEV-7372)', () => {
       expect(() => convertCalendar(source, 'GREGORIAN')).not.toThrow();
     });
   });
+
+  describe('a range that straddles the target calendar\u2019s epoch', () => {
+    // Refusing these wholesale denied the Islamic calendar to early-Hijra material recorded at
+    // year or month precision — the dates where it matters most. The day converts, so the month
+    // containing it must too.
+    it('converts a Gregorian year containing the Hijra', () => {
+      const result = convertCalendarResult(createDate('GREGORIAN', 622), 'ISLAMIC');
+
+      expect(result.kind).not.toBe('refused');
+    });
+
+    it('converts the Gregorian month containing the Hijra, consistently with its days', () => {
+      const month = convertCalendarResult(createDate('GREGORIAN', 622, 7), 'ISLAMIC');
+      const day = convertCalendarResult(createDate('GREGORIAN', 622, 7, 16), 'ISLAMIC');
+
+      expect(day.kind).toBe('exact');
+      expect(month.kind).not.toBe('refused');
+    });
+
+    it('still refuses a range that ends before the epoch', () => {
+      expect(convertCalendarResult(createDate('GREGORIAN', 621), 'ISLAMIC').kind).toBe('refused');
+      expect(convertCalendarResult(createDate('GREGORIAN', 500, 1, 1), 'ISLAMIC').kind).toBe('refused');
+    });
+  });
 });

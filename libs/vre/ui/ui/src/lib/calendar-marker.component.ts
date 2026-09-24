@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, computed, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Output, computed, input, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
@@ -35,7 +35,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 
     @if (isConverted()) {
       <span class="calendar-marker-stored" data-cy="calendar-marker-stored">
-        {{ 'ui.calendarMarker.storedAs' | translate: { calendar: calendarLabelKey(storedCalendar) | translate } }}
+        {{ 'ui.calendarMarker.storedAs' | translate: { calendar: calendarLabelKey(storedCalendar()) | translate } }}
       </span>
     }
 
@@ -67,8 +67,14 @@ import { TranslatePipe } from '@ngx-translate/core';
   ],
 })
 export class CalendarMarkerComponent {
-  /** The calendar the value is stored in. The anchor the marker always reports. */
-  @Input({ required: true }) storedCalendar!: CalendarSystem;
+  /**
+   * The calendar the value is stored in. The anchor the marker always reports.
+   *
+   * A signal input rather than a plain `@Input`, because the computeds below read it: `computed()`
+   * tracks signal reads only, so a plain input would be captured once and then silently go stale
+   * if this instance were ever reused with a different value instead of being recreated.
+   */
+  readonly storedCalendar = input.required<CalendarSystem>();
 
   /**
    * Calendars this value can be shown in.
@@ -77,7 +83,7 @@ export class CalendarMarkerComponent {
    * depends on the value, so the owner computes it. An unavailable calendar is disabled rather
    * than offered and then refused, which keeps a failure state off the display path entirely.
    */
-  @Input({ required: true }) availableCalendars!: readonly CalendarSystem[];
+  readonly availableCalendars = input.required<readonly CalendarSystem[]>();
 
   /** Emits the calendar the reader chose. Ephemeral: the owner re-renders, it never saves. */
   @Output() displayCalendarChange = new EventEmitter<CalendarSystem>();
@@ -87,9 +93,9 @@ export class CalendarMarkerComponent {
   private readonly _selected = signal<CalendarSystem | undefined>(undefined);
 
   /** The calendar on screen: what the reader picked, or the stored one until they pick. */
-  protected readonly displayCalendar = computed<CalendarSystem>(() => this._selected() ?? this.storedCalendar);
+  protected readonly displayCalendar = computed<CalendarSystem>(() => this._selected() ?? this.storedCalendar());
 
-  protected readonly isConverted = computed(() => this.displayCalendar() !== this.storedCalendar);
+  protected readonly isConverted = computed(() => this.displayCalendar() !== this.storedCalendar());
 
   /**
    * Names both calendars when they differ, so assistive technology hears what the sighted reader
@@ -97,12 +103,12 @@ export class CalendarMarkerComponent {
    */
   protected readonly accessibleLabel = computed(() =>
     this.isConverted()
-      ? `Calendar: ${this.displayCalendar()}, stored as ${this.storedCalendar}`
-      : `Calendar: ${this.storedCalendar}`
+      ? `Calendar: ${this.displayCalendar()}, stored as ${this.storedCalendar()}`
+      : `Calendar: ${this.storedCalendar()}`
   );
 
   protected isAvailable(calendar: CalendarSystem): boolean {
-    return calendar === this.storedCalendar || this.availableCalendars.includes(calendar);
+    return calendar === this.storedCalendar() || this.availableCalendars().includes(calendar);
   }
 
   protected calendarLabelKey(calendar: CalendarSystem): string {

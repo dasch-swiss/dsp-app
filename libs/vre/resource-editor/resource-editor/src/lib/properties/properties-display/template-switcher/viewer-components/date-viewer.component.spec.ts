@@ -14,7 +14,7 @@ describe('DateViewerComponent', () => {
   const mount = (value: ReadDateValue) => {
     fixture = TestBed.createComponent(DateViewerComponent);
     component = fixture.componentInstance;
-    component.value = value;
+    fixture.componentRef.setInput('value', value);
     fixture.detectChanges();
     return fixture;
   };
@@ -34,7 +34,7 @@ describe('DateViewerComponent', () => {
     mount(asValue(new KnoraDate('GREGORIAN', 'CE', 2024, 6, 15)));
 
     expect(asAny().displayText()).toBe('15.06.2024');
-    expect(asAny().storedCalendar).toBe('GREGORIAN');
+    expect(asAny().storedCalendar()).toBe('GREGORIAN');
   });
 
   it('renders both ends of a period', () => {
@@ -52,7 +52,7 @@ describe('DateViewerComponent', () => {
       asValue(new KnoraPeriod(new KnoraDate('JULIAN', 'CE', 2020, 1, 1), new KnoraDate('JULIAN', 'CE', 2024, 12, 31)))
     );
 
-    expect(asAny().storedCalendar).toBe('JULIAN');
+    expect(asAny().storedCalendar()).toBe('JULIAN');
   });
 
   describe('showing the value in another calendar', () => {
@@ -100,7 +100,7 @@ describe('DateViewerComponent', () => {
 
       expect(date.calendar).toBe('GREGORIAN');
       expect(date.day).toBe(15);
-      expect(component.value.date).toBe(date);
+      expect(component.value().date).toBe(date);
     });
   });
 
@@ -108,13 +108,13 @@ describe('DateViewerComponent', () => {
     it('offers all three for a modern date', () => {
       mount(asValue(new KnoraDate('GREGORIAN', 'CE', 2024, 6, 15)));
 
-      expect(asAny().availableCalendars).toEqual(['GREGORIAN', 'JULIAN', 'ISLAMIC']);
+      expect(asAny().availableCalendars()).toEqual(['GREGORIAN', 'JULIAN', 'ISLAMIC']);
     });
 
     it('withholds the Islamic calendar from a pre-Hijra date', () => {
       mount(asValue(new KnoraDate('GREGORIAN', 'CE', 500, 1, 1)));
 
-      expect(asAny().availableCalendars).toEqual(['GREGORIAN', 'JULIAN']);
+      expect(asAny().availableCalendars()).toEqual(['GREGORIAN', 'JULIAN']);
     });
 
     it('withholds a calendar a period cannot be shown in end to end', () => {
@@ -124,7 +124,7 @@ describe('DateViewerComponent', () => {
         )
       );
 
-      expect(asAny().availableCalendars).toEqual(['GREGORIAN', 'JULIAN']);
+      expect(asAny().availableCalendars()).toEqual(['GREGORIAN', 'JULIAN']);
     });
   });
 
@@ -149,7 +149,7 @@ describe('DateViewerComponent', () => {
       firstComponent.displayCalendar.set('JULIAN');
 
       const second = TestBed.createComponent(DateViewerComponent);
-      second.componentInstance.value = asValue(new KnoraDate('GREGORIAN', 'CE', 2024, 6, 15));
+      second.componentRef.setInput('value', asValue(new KnoraDate('GREGORIAN', 'CE', 2024, 6, 15)));
       second.detectChanges();
 
       expect((second.componentInstance as any).displayText()).toBe('15.06.2024');
@@ -162,5 +162,18 @@ describe('DateViewerComponent', () => {
     // would break the view for anonymous readers without failing any other test.
     expect(() => mount(asValue(new KnoraDate('GREGORIAN', 'CE', 2024, 6, 15)))).not.toThrow();
     expect(asAny().displayText()).toBe('15.06.2024');
+  });
+
+  // A plain @Input would be captured once by computed() and then go stale. Signal inputs are what
+  // make this pass; it fails if anyone converts them back.
+  it('re-renders when the value input changes on a reused instance', () => {
+    mount(asValue(new KnoraDate('GREGORIAN', 'CE', 2024, 6, 15)));
+    expect(asAny().displayText()).toBe('15.06.2024');
+
+    fixture.componentRef.setInput('value', asValue(new KnoraDate('JULIAN', 'CE', 1999, 1, 2)));
+    fixture.detectChanges();
+
+    expect(asAny().displayText()).toBe('02.01.1999');
+    expect(asAny().storedCalendar()).toBe('JULIAN');
   });
 });
