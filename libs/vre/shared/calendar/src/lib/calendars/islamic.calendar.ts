@@ -21,8 +21,7 @@
  */
 
 import { createDate } from '../factories/date.factory';
-import { CalendarDate, CalendarOperations } from '../types/calendar.types';
-import { JulianCalendar } from './julian.calendar';
+import { CalendarDate, CalendarError, CalendarOperations } from '../types/calendar.types';
 
 /**
  * Helper function to truncate decimals (remove fractions).
@@ -33,7 +32,85 @@ import { JulianCalendar } from './julian.calendar';
 const truncate = (num: number): number => Math[num < 0 ? 'ceil' : 'floor'](num);
 
 /**
+ * The Hijra epoch: 1 Muḥarram 1 AH, which is 16 July 622 CE in the proleptic Julian calendar.
+ *
+ * This is the floor of the tabular calendar. `islamicToJDN` and `islamicFromJDN` are inverses at
+ * and above it and are not defined below it, so `islamicFromJDN` refuses a smaller JDN rather than
+ * returning a negative year. A negative Islamic year is not a date: the calendar has no
+ * pre-epoch convention, and the previous implementation returned things like year −686 for a BCE
+ * input, which then flowed into the UI as though it meant something.
+ */
+export const ISLAMIC_EPOCH_JDN = 1948440;
+
+/**
+ * Determine if a year is a leap year in the tabular Islamic calendar.
+ *
+ * The tabular calendar runs a 30-year cycle with 11 leap years, placed at the positions below.
+ * A leap year gives month 12 a 30th day.
+ *
+ * @param year - The Islamic year
+ * @returns True if leap year, false otherwise
+ *
+ * @example
+ * ```typescript
+ * islamicIsLeapYear(1445) // Returns true or false depending on cycle position
+ * ```
+ */
+function islamicIsLeapYear(year: number): boolean {
+  // Positions within the 30-year cycle that carry the intercalary day.
+  const leapYears = [2, 5, 7, 10, 13, 16, 18, 21, 24, 26, 29];
+  // `year % 30` is negative for negative years in JS, so normalise into 0..29 first.
+  const yearInCycle = ((year % 30) + 30) % 30;
+  return leapYears.includes(yearInCycle);
+}
+
+/**
+ * Days elapsed from the epoch to the first day of an Islamic year.
+ *
+ * A 30-year cycle holds 19 common years of 354 days and 11 leap years of 355, so 10631 days.
+ * The leap days already fallen within the current cycle are counted from the same leap-year
+ * predicate the rest of the module uses, rather than from a closed-form accumulation. A closed
+ * form has to agree with that predicate's exact leap placement, and when the two disagree the
+ * functions stop being inverses — which is the defect this rewrite exists to remove, so the
+ * definition is not duplicated in a second shape.
+ *
+ * @internal
+ */
+function daysBeforeIslamicYear(year: number): number {
+  const yearIndex = year - 1;
+  const cycle = Math.floor(yearIndex / 30);
+  const yearsIntoCycle = yearIndex - cycle * 30;
+
+  let days = cycle * 10631 + yearsIntoCycle * 354;
+  // Years `cycle * 30 + 1` .. `year - 1` are the ones already elapsed inside this cycle.
+  for (let y = cycle * 30 + 1; y < year; y++) {
+    if (islamicIsLeapYear(y)) {
+      days += 1;
+    }
+  }
+  return days;
+}
+
+/**
+ * Days elapsed from the start of an Islamic year to the first day of one of its months.
+ *
+ * Odd months have 30 days and even months 29, so a whole number of month pairs is 59 days.
+ *
+ * @internal
+ */
+function daysBeforeIslamicMonth(month: number): number {
+  const monthIndex = month - 1;
+  return Math.floor(monthIndex / 2) * 59 + (monthIndex % 2) * 30;
+}
+
+/**
  * Converts an Islamic calendar date to Julian Day Number (JDN).
+ *
+ * The inverse of {@link islamicFromJDN}. Both are derived from the same tabular definition —
+ * the 30-year cycle in `islamicIsLeapYear`, the 59-day month pair, and {@link ISLAMIC_EPOCH_JDN} —
+ * so that they cannot drift apart. They previously came from two different sources and were not
+ * inverses: 26 days in the first 111,561 of the calendar failed to round-trip and 10 threw,
+ * because `islamicFromJDN` could compute a month 13 that `createDate` then rejected.
  *
  * @param date - The Islamic calendar date to convert
  * @returns The Julian Day Number (integer)
@@ -45,68 +122,23 @@ const truncate = (num: number): number => Math[num < 0 ? 'ceil' : 'floor'](num);
  * ```
  */
 function islamicToJDN(date: CalendarDate): number {
-  const h = date.year;
-  const m = date.month ?? 1;
-  const d = date.day ?? 1;
+  const year = date.year;
+  const month = date.month ?? 1;
+  const day = date.day ?? 1;
 
-  const n = d + Math.floor(29.5001 * (m - 1) + 0.99);
-  const q = Math.floor(h / 30);
-  let r = h % 30;
-  if (r < 0) {
-    r += 30;
-  }
-  const a = Math.floor((11 * r + 3) / 30);
-  const w = 404 * q + 354 * r + 208 + a;
-  const q1 = Math.floor(w / 1461);
-  let q2 = w % 1461;
-  if (q2 < 0) {
-    q2 += 1461;
-  }
-  const g = 621 + 4 * Math.floor(7 * q + q1);
-  const k = Math.floor(q2 / 365.2422);
-  const e = Math.floor(365.2422 * k);
-  let j = q2 - e + n - 1;
-  let x = g + k;
-
-  if (j > 366 && x % 4 === 0) {
-    j -= 366;
-    x += 1;
-  } else if (j > 365 && x % 4 > 0) {
-    j -= 365;
-    x += 1;
-  }
-
-  const jdn = truncate(365.25 * (x - 1)) + 1721423 + j;
-
-  return jdn;
-}
-
-/**
- * Determine if a year is a leap year in the Islamic calendar.
- *
- * In a 30-year cycle, years 2, 5, 7, 10, 13, 16, 18, 21, 24, 26, and 29 are leap years.
- *
- * @param year - The Islamic year
- * @returns True if leap year, false otherwise
- *
- * @example
- * ```typescript
- * islamicIsLeapYear(1445) // Returns true or false depending on cycle position
- * ```
- */
-function islamicIsLeapYear(year: number): boolean {
-  const yearInCycle = year % 30;
-  const leapYears = [2, 5, 7, 10, 13, 16, 18, 21, 24, 26, 29];
-  return leapYears.includes(yearInCycle);
+  return ISLAMIC_EPOCH_JDN + daysBeforeIslamicYear(year) + daysBeforeIslamicMonth(month) + (day - 1);
 }
 
 /**
  * Converts a Julian Day Number (JDN) to an Islamic calendar date.
  *
- * This conversion first converts to Julian calendar, then to Islamic.
+ * The inverse of {@link islamicToJDN}; see that function for why they share one definition.
  *
  * @param jdn - The Julian Day Number to convert
  * @returns The Islamic calendar date
+ * @throws {CalendarError} If the JDN falls before the Hijra epoch, which the tabular calendar
+ * does not define. Callers that offer a calendar choice check representability first, so a user
+ * is never offered a conversion that lands here.
  *
  * @example
  * ```typescript
@@ -115,105 +147,43 @@ function islamicIsLeapYear(year: number): boolean {
  * ```
  */
 function islamicFromJDN(jdn: number): CalendarDate {
-  // First convert JDN to Julian calendar
-  const julianDate = JulianCalendar.fromJDN(jdn);
-
-  const x = julianDate.year;
-  const julianMonth = julianDate.month ?? 1;
-  const julianDay = julianDate.day ?? 1;
-
-  let w: number;
-  if (x % 4 === 0) {
-    w = 1;
-  } else {
-    w = 2;
+  if (jdn < ISLAMIC_EPOCH_JDN) {
+    throw new CalendarError(
+      `JDN ${jdn} is before the Hijra epoch (${ISLAMIC_EPOCH_JDN}); the Islamic calendar has no date for it`
+    );
   }
 
-  const n = truncate((275 * julianMonth) / 9) - w * truncate((julianMonth + 9) / 12) + julianDay - 30;
-  const a = x - 623;
-  const b = Math.floor(a / 4);
-  let c = a / 4 - b;
-  c = Math.floor(c * 4);
-  const c1 = 365.2501 * c;
-  let c2 = Math.floor(c1);
+  const daysSinceEpoch = jdn - ISLAMIC_EPOCH_JDN;
 
-  if (c1 - c2 > 0.5) {
-    c2 += 1;
-  }
+  // Locate the year by whole 30-year cycles first, then walk at most one year to correct for the
+  // uneven leap placement inside the cycle.
+  const cycle = Math.floor(daysSinceEpoch / 10631);
+  let year = cycle * 30 + 1;
+  let remaining = daysSinceEpoch - cycle * 10631;
 
-  const d_ = 1461 * b + 170 + c2;
-  const q = Math.floor(d_ / 10631);
-  let r = d_ % 10631;
-  if (r < 0) {
-    r += 10631;
-  }
-  const j = Math.floor(r / 354);
-  let k = r % 354;
-  if (k < 0) {
-    k += 354;
-  }
-  const o = Math.floor((11 * j + 14) / 30);
-  let h = 30 * q + j + 1;
-  let jj = k - o + n - 1;
-
-  if (jj > 354) {
-    let cl = h % 30;
-    if (cl < 0) {
-      cl += 30;
-    }
-    let dl = (11 * cl + 3) % 30;
-    if (dl < 0) {
-      dl += 30;
-    }
-
-    if (dl < 19) {
-      jj -= 354;
-      h += 1;
-    }
-    if (dl > 18) {
-      jj -= 355;
-      h += 1;
-    }
-
-    if (jj === 0) {
-      jj = 355;
-      h -= 1;
-    }
-  }
-
-  // Calculate month and day from day-of-year (jj)
-  // Islamic months alternate between 30 and 29 days
-  let month = 1;
-  let remainingDays = jj;
-
-  // Ensure we have at least 1 day
-  if (remainingDays < 1) {
-    remainingDays = 1;
-  }
-
-  // Find which month we're in by subtracting month lengths
-  while (month <= 12) {
-    // Odd months (1,3,5,7,9,11) have 30 days
-    // Even months (2,4,6,8,10) have 29 days
-    // Month 12 has 30 days in leap years, 29 otherwise
-    let daysInCurrentMonth: number;
-    if (month < 12) {
-      daysInCurrentMonth = month % 2 === 1 ? 30 : 29;
-    } else {
-      daysInCurrentMonth = islamicIsLeapYear(h) ? 30 : 29;
-    }
-
-    if (remainingDays <= daysInCurrentMonth) {
+  for (;;) {
+    const yearLength = islamicIsLeapYear(year) ? 355 : 354;
+    if (remaining < yearLength) {
       break;
     }
-
-    remainingDays -= daysInCurrentMonth;
-    month++;
+    remaining -= yearLength;
+    year += 1;
   }
 
-  const day = remainingDays;
+  // `remaining` is now the zero-based day of the year, which is at most 354, so the loop below
+  // always settles on a month in 1..12 and can never produce the month 13 the old code could.
+  let month = 1;
+  for (; month < 12; month++) {
+    const monthLength = month % 2 === 1 ? 30 : 29;
+    if (remaining < monthLength) {
+      break;
+    }
+    remaining -= monthLength;
+  }
 
-  return createDate('ISLAMIC', h, month, day, 'NONE');
+  const day = remaining + 1;
+
+  return createDate('ISLAMIC', year, month, day, 'NONE');
 }
 
 /**

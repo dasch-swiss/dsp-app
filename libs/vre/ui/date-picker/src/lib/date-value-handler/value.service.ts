@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Constants, KnoraDate, Precision } from '@dasch-swiss/dsp-js';
-import { CalendarDate, createDate, getCalendar } from '@dasch-swiss/vre/shared/calendar';
+import { Constants, KnoraDate, KnoraPeriod, Precision } from '@dasch-swiss/dsp-js';
+import { CalendarDate, createDate, getCalendar, isEqual } from '@dasch-swiss/vre/shared/calendar';
 
 @Injectable({
   providedIn: 'root',
@@ -60,5 +60,55 @@ export class ValueService {
     } else {
       throw Error('Invalid precision');
     }
+  }
+
+  /**
+   * whether two dates denote the same instant, whatever calendar represents them.
+   *
+   * Converting a date to another calendar rewrites every field while meaning the same day:
+   * 15.06.2024 Gregorian and 02.06.2024 Julian are one instant. Comparing the fields therefore
+   * reports a change the user never made, which is why a calendar switch must be measured this
+   * way and not by equality of `calendar`, `year`, `month` and `day`.
+   *
+   * Precision is part of what a date says, so a year and a day inside it are not the same instant.
+   *
+   * @param a the first date.
+   * @param b the second date.
+   */
+  knoraDatesDenoteSameInstant(a: KnoraDate, b: KnoraDate): boolean {
+    if (a.precision !== b.precision) {
+      return false;
+    }
+    return isEqual(this.createJDNCalendarDateFromKnoraDate(a), this.createJDNCalendarDateFromKnoraDate(b));
+  }
+
+  /**
+   * whether two date values denote the same instant, for single dates and periods alike.
+   *
+   * A period equals another period when both ends do; a period never equals a single date.
+   *
+   * @param a the first value.
+   * @param b the second value.
+   */
+  dateValuesDenoteSameInstant(
+    a: KnoraDate | KnoraPeriod | null | undefined,
+    b: KnoraDate | KnoraPeriod | null | undefined
+  ): boolean {
+    if (a == null || b == null) {
+      return a == null && b == null;
+    }
+
+    const aIsPeriod = a instanceof KnoraPeriod;
+    const bIsPeriod = b instanceof KnoraPeriod;
+
+    if (aIsPeriod !== bIsPeriod) {
+      return false;
+    }
+
+    if (aIsPeriod && bIsPeriod) {
+      return this.knoraDatesDenoteSameInstant(a.start, b.start) && this.knoraDatesDenoteSameInstant(a.end, b.end);
+    }
+
+    return this.knoraDatesDenoteSameInstant(a as KnoraDate, b as KnoraDate);
   }
 }

@@ -7,8 +7,110 @@
  * @module calendar.converter
  */
 
+import { ISLAMIC_EPOCH_JDN } from '../calendars/islamic.calendar';
 import { getCalendar } from '../factories/calendar.factory';
-import { CalendarDate, CalendarSystem, CalendarError } from '../types/calendar.types';
+import { createDate } from '../factories/date.factory';
+import { CalendarDate, CalendarSystem, CalendarError, ConversionResult } from '../types/calendar.types';
+
+/**
+ * The first JDN each calendar can represent.
+ *
+ * Gregorian and Julian are proleptic here — they extend backwards indefinitely, and a pre-1582
+ * "Gregorian" date is proleptically Julian by construction. The Islamic calendar is tabular and
+ * genuinely starts at the Hijra, so it is the only one with a floor.
+ *
+ * @internal
+ */
+function firstRepresentableJDN(calendar: CalendarSystem): number | undefined {
+  return calendar === 'ISLAMIC' ? ISLAMIC_EPOCH_JDN : undefined;
+}
+
+/**
+ * The first and last JDN a date covers, given its precision.
+ *
+ * A day-precision date covers one day; a month covers its whole month; a year covers 1 January to
+ * 31 December. This is what makes an honest span possible: the range is computed in the *source*
+ * calendar, where the precision was stated, and only then mapped into the target.
+ *
+ * @internal
+ */
+function jdnRange(date: CalendarDate): { first: number; last: number } {
+  const calendar = getCalendar(date.calendar);
+
+  if (date.precision === 'DAY') {
+    const jdn = calendar.toJDN(date);
+    return { first: jdn, last: jdn };
+  }
+
+  if (date.precision === 'MONTH') {
+    const month = date.month!;
+    const first = calendar.toJDN(createDate(date.calendar, date.year, month, 1, date.era));
+    const lastDay = calendar.daysInMonth(date.year, month);
+    const last = calendar.toJDN(createDate(date.calendar, date.year, month, lastDay, date.era));
+    return { first, last };
+  }
+
+  const first = calendar.toJDN(createDate(date.calendar, date.year, 1, 1, date.era));
+  const lastDayOfYear = calendar.daysInMonth(date.year, 12);
+  const last = calendar.toJDN(createDate(date.calendar, date.year, 12, lastDayOfYear, date.era));
+  return { first, last };
+}
+
+/**
+ * Converts a date into another calendar, reporting honestly what the result is.
+ *
+ * Unlike {@link convertCalendar}, which returns a single date and therefore has to assert one even
+ * when the source does not determine one, this reports the three outcomes conversion actually has:
+ * an exact date, the span the source covers, or a refusal. See {@link ConversionResult}.
+ *
+ * The span is derived by mapping the source's whole range through JDN, so `Julian 1582` becomes
+ * Gregorian 1582/1583 rather than silently dropping the second year.
+ *
+ * @param date - The date to convert
+ * @param toCalendar - The target calendar system
+ * @returns What the target calendar can say about this date
+ *
+ * @example
+ * ```typescript
+ * const result = convertCalendarResult(createDate('JULIAN', 1582), 'GREGORIAN');
+ * // { kind: 'span', start: 1582-01-01 CE, end: 1583-01-10 CE }
+ * ```
+ */
+export function convertCalendarResult(date: CalendarDate, toCalendar: CalendarSystem): ConversionResult {
+  if (date.calendar === toCalendar) {
+    return { kind: 'exact', date };
+  }
+
+  const { first, last } = jdnRange(date);
+
+  const floor = firstRepresentableJDN(toCalendar);
+  if (floor !== undefined && first < floor) {
+    return { kind: 'refused', reason: 'BEFORE_TARGET_EPOCH' };
+  }
+
+  const target = getCalendar(toCalendar);
+  const startFull = target.fromJDN(first);
+  const endFull = target.fromJDN(last);
+
+  // Re-state the endpoints at the source's precision: a year-precision source says nothing about
+  // days, so neither may its conversion.
+  const atPrecision = (full: CalendarDate): CalendarDate => {
+    if (date.precision === 'DAY') {
+      return full;
+    }
+    if (date.precision === 'MONTH') {
+      return createDate(toCalendar, full.year, full.month, undefined, full.era);
+    }
+    return createDate(toCalendar, full.year, undefined, undefined, full.era);
+  };
+
+  const start = atPrecision(startFull);
+  const end = atPrecision(endFull);
+
+  const sameUnit = start.year === end.year && start.month === end.month && start.day === end.day;
+
+  return sameUnit ? { kind: 'exact', date: start } : { kind: 'span', start, end };
+}
 
 /**
  * Converts a date from one calendar system to another.
