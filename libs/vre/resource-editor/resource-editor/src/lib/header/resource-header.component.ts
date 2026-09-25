@@ -1,15 +1,18 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, Input, ViewContainerRef } from '@angular/core';
+import { Component, Input, OnChanges, ViewContainerRef } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { ReadResource, ResourceClassDefinitionWithPropertyDefinition } from '@dasch-swiss/dsp-js';
+import { Constants, ReadResource, ResourceClassDefinitionWithPropertyDefinition } from '@dasch-swiss/dsp-js';
 import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
-import { DspResource } from '@dasch-swiss/vre/shared/app-common';
+import { DspResource, PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
 import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
 import { TranslatePipe } from '@ngx-translate/core';
+import { PropertyValuesWithFootnotesComponent } from '../properties/properties-display/property-value/property-values-with-footnotes.component';
 import { ResourceFetcherService } from '../representation/resource-fetcher.service';
+import { ResourceUtil } from '../representation/resource.util';
+import { showsDescriptionInHeader } from '../resource-description';
 import { EditResourceLabelDialogComponent } from './more-menu/edit-resource-label-dialog.component';
 import { ResourceInfoBarComponent } from './resource-info-bar.component';
 import { ResourceToolbarComponent } from './resource-toolbar.component';
@@ -40,12 +43,25 @@ import { ResourceToolbarComponent } from './resource-toolbar.component';
         </button>
       }
     </div>
+    @if (showDescription) {
+      <div
+        class="resource-description"
+        role="group"
+        data-cy="resource-header-description"
+        [attr.aria-label]="descriptionProp!.propDef.labels | appStringifyStringLiteral">
+        <app-property-values-with-footnotes [prop]="descriptionProp!" [resource]="resource.res" />
+      </div>
+    }
     <app-resource-info-bar [resource]="resource.res" />
   </div>`,
   styles: [
     `
       .resource-header {
         margin-bottom: 24px;
+      }
+
+      .resource-description {
+        margin-top: 4px;
       }
 
       .resource-label h4 {
@@ -99,10 +115,14 @@ import { ResourceToolbarComponent } from './resource-toolbar.component';
     TranslatePipe,
     ResourceInfoBarComponent,
     ResourceToolbarComponent,
+    PropertyValuesWithFootnotesComponent,
   ],
 })
-export class ResourceHeaderComponent {
+export class ResourceHeaderComponent implements OnChanges {
   @Input({ required: true }) resource!: DspResource;
+
+  descriptionProp: PropertyInfoValues | undefined;
+  showDescription = false;
 
   get resourceClassType(): ResourceClassDefinitionWithPropertyDefinition {
     return this.resource.res.entityInfo.classes[this.resource.res.type];
@@ -113,6 +133,16 @@ export class ResourceHeaderComponent {
     private readonly _viewContainerRef: ViewContainerRef,
     public resourceFetcherService: ResourceFetcherService
   ) {}
+
+  ngOnChanges(): void {
+    // Computed here, not in a getter: a fresh PropertyInfoValues per change-detection cycle
+    // would reset PropertyValueService.lastOpenedItem$ inside the descendant edit components.
+    this.descriptionProp = showsDescriptionInHeader(this.resource.res)
+      ? this.resource.resProps?.find(prop => prop.propDef.id === Constants.HasDescription)
+      : undefined;
+    this.showDescription =
+      !!this.descriptionProp && (this.descriptionProp.values.length > 0 || ResourceUtil.userCanEdit(this.resource.res));
+  }
 
   openEditLabelDialog() {
     this._dialog.open<EditResourceLabelDialogComponent, ReadResource, boolean>(EditResourceLabelDialogComponent, {
