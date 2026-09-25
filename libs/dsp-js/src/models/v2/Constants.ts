@@ -81,6 +81,7 @@ export class Constants {
   static HasGeometry = `${Constants.KnoraApiV2 + Constants.HashDelimiter}hasGeometry`;
   static HasColor = `${Constants.KnoraApiV2 + Constants.HashDelimiter}hasColor`;
   static HasComment = `${Constants.KnoraApiV2 + Constants.HashDelimiter}hasComment`;
+  static HasDescription = `${Constants.KnoraApiV2 + Constants.HashDelimiter}hasDescription`;
   static IsRegionOfValue = `${Constants.KnoraApiV2 + Constants.HashDelimiter}isRegionOfValue`;
 
   static AttachedToProject = `${Constants.KnoraApiV2 + Constants.HashDelimiter}attachedToProject`;
