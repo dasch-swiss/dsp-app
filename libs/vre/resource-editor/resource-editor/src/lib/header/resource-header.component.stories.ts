@@ -10,6 +10,7 @@ import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular'
 import { of } from 'rxjs';
 import { expect } from 'storybook/test';
 
+import { PropertiesDisplayService } from '../properties/properties-display/property-value/properties-display.service';
 import { ResourceFetcherService } from '../representation/resource-fetcher.service';
 import { makeResourceFetcherServiceStub, notificationServiceStub } from '../stories.helpers';
 import { ResourceHeaderComponent } from './resource-header.component';
@@ -25,6 +26,7 @@ const makeTextValue = (id: string, text: string) =>
     valueHasComment: null,
     property: Constants.HasDescription,
     userHasPermission: 'RV',
+    hasPermissions: 'CR knora-admin:ProjectAdmin|V knora-admin:KnownUser',
     uuid: id,
     valueCreationDate: '2024-06-15T10:00:00Z',
   }) as any;
@@ -55,6 +57,7 @@ const makeResource = (options?: { descriptionValues?: any[]; userCanEdit?: boole
       attachedToUser: 'http://rdfh.ch/users/test-user',
       creationDate: '2024-06-15T10:00:00.000Z',
       userHasPermission: options?.userCanEdit ? 'CR' : 'RV',
+      hasPermissions: 'CR knora-admin:ProjectAdmin|V knora-admin:KnownUser',
       entityInfo: {
         classes: {
           [THING_CLASS]: {
@@ -92,6 +95,7 @@ const meta: Meta<ResourceHeaderComponent> = {
           },
         },
         { provide: NotificationService, useValue: notificationServiceStub },
+        { provide: PropertiesDisplayService, useValue: { showAllProperties$: of(true), showComments$: of(false) } },
         { provide: ResourceService, useValue: { getResourcePath: () => '/project/test/resource/1' } },
         { provide: UserService, useValue: { user$: of(null) } },
         { provide: DspApiConnectionToken, useValue: { v2: { res: { canDeleteResource: () => of({ canDo: true }) } } } },
@@ -178,6 +182,7 @@ export const ShowsAddAffordanceWhenNoDescriptionAndEditor: Story = {
           },
         },
         { provide: NotificationService, useValue: notificationServiceStub },
+        { provide: PropertiesDisplayService, useValue: { showAllProperties$: of(true), showComments$: of(false) } },
         { provide: ResourceService, useValue: { getResourcePath: () => '/project/test/resource/1' } },
         { provide: UserService, useValue: { user$: of(null) } },
         { provide: DspApiConnectionToken, useValue: { v2: { res: { canDeleteResource: () => of({ canDo: true }) } } } },
@@ -229,6 +234,7 @@ export const WithEditPermission: Story = {
           },
         },
         { provide: NotificationService, useValue: notificationServiceStub },
+        { provide: PropertiesDisplayService, useValue: { showAllProperties$: of(true), showComments$: of(false) } },
         { provide: ResourceService, useValue: { getResourcePath: () => '/project/test/resource/1' } },
         { provide: UserService, useValue: { user$: of(null) } },
         { provide: DspApiConnectionToken, useValue: { v2: { res: { canDeleteResource: () => of({ canDo: true }) } } } },
