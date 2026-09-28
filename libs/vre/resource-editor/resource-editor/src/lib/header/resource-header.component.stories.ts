@@ -1,6 +1,6 @@
 import { importProvidersFrom } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { Constants } from '@dasch-swiss/dsp-js';
+import { Constants, ReadTextValueAsString } from '@dasch-swiss/dsp-js';
 import { ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { UserService } from '@dasch-swiss/vre/core/session';
@@ -18,7 +18,7 @@ import { ResourceHeaderComponent } from './resource-header.component';
 const THING_CLASS = 'http://example.org/Thing';
 
 const makeTextValue = (id: string, text: string) =>
-  ({
+  Object.assign(new ReadTextValueAsString(), {
     id,
     type: Constants.TextValue,
     text,
@@ -29,7 +29,7 @@ const makeTextValue = (id: string, text: string) =>
     hasPermissions: 'CR knora-admin:ProjectAdmin|V knora-admin:KnownUser',
     uuid: id,
     valueCreationDate: '2024-06-15T10:00:00Z',
-  }) as any;
+  });
 
 const makeDescriptionProp = (values: any[]) => ({
   guiDef: {
@@ -39,6 +39,7 @@ const makeDescriptionProp = (values: any[]) => ({
   } as any,
   propDef: {
     id: Constants.HasDescription,
+    objectType: Constants.TextValue,
     isEditable: true,
     labels: [{ language: 'en', value: 'Description' }],
     comments: [],
