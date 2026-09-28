@@ -25,7 +25,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { KnoraDate, KnoraPeriod } from '@dasch-swiss/dsp-js';
 import { CALENDAR_SYSTEMS, CalendarSystem, compareDates } from '@dasch-swiss/vre/shared/calendar';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Subject, Subscription } from 'rxjs';
 import { AppDatePickerComponent } from '../app-date-picker/app-date-picker.component';
 import { ValueService } from './value.service';
@@ -242,7 +242,8 @@ export class DateValueHandlerComponent
     @Optional() public readonly parentForm: NgForm,
     @Optional() public readonly parentFormGroup: FormGroupDirective,
     public readonly defaultErrorStateMatcher: ErrorStateMatcher,
-    private readonly _valueService: ValueService
+    private readonly _valueService: ValueService,
+    private readonly _translate: TranslateService
   ) {
     if (this.ngControl != null) {
       // setting the value accessor directly (instead of using
@@ -393,7 +394,7 @@ export class DateValueHandlerComponent
       return '';
     }
     const start = this._formatDate(this.storedStartDate);
-    const calendar = this.storedStartDate.calendar.toUpperCase();
+    const calendar = this._calendarName(this.storedStartDate.calendar);
     if (this.storedEndDate === null) {
       return `${start} ${calendar}`;
     }
@@ -509,6 +510,18 @@ export class DateValueHandlerComponent
     } finally {
       this._converting = false;
     }
+  }
+
+  /**
+   * the calendar's name as a reader should see it.
+   *
+   * This line previously printed the bare `ISLAMIC`/`GREGORIAN` the value carries — untranslated in
+   * every language, and silent about which Islamic calendar is meant (DEV-7429).
+   */
+  private _calendarName(calendar: string): string {
+    const key = `ui.calendarMarker.calendars.${calendar.toUpperCase()}`;
+    const translated = this._translate.instant(key);
+    return translated && translated !== key ? translated : calendar.toUpperCase();
   }
 
   /** one date as dd.MM.yyyy at whatever precision it carries. */

@@ -38,7 +38,7 @@ import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
 import { KnoraDate } from '@dasch-swiss/dsp-js';
 import { CalendarSystem, getCalendar } from '@dasch-swiss/vre/shared/calendar';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import { ValueService } from '../date-value-handler/value.service';
 
@@ -250,6 +250,14 @@ export class AppDatePickerComponent
 
     this.stateChanges.next();
     this.buildForm();
+
+    // `buildForm` runs `_setDays`, which clears a day the month cannot hold. When it did, the date
+    // written above is impossible and the form still holds it — `value` reads back from the form,
+    // not from these fields — so it is rewritten here at the precision that survived. Without this
+    // an impossible date written straight in is kept and saved, no edit required.
+    if (dateValue instanceof KnoraDate && dateValue.day !== undefined && this.day === undefined) {
+      this.setDate(undefined);
+    }
   }
 
   get empty() {
@@ -270,7 +278,8 @@ export class AppDatePickerComponent
     fb: UntypedFormBuilder,
     private readonly _elRef: ElementRef<HTMLElement>,
     private readonly _fm: FocusMonitor,
-    private readonly _valueService: ValueService
+    private readonly _valueService: ValueService,
+    private readonly _translate: TranslateService
   ) {
     this.dateForm = fb.group({
       date: [null, Validators.required],
@@ -429,10 +438,10 @@ export class AppDatePickerComponent
         return value + (date.era === 'noEra' ? '' : date.era === 'BCE' || date.era === 'AD' ? ` ${date.era}` : '');
       case 'calendar':
         // displays date without era but with calendar type
-        return `${value} ${this.titleCase(date.calendar)}`;
+        return `${value} ${this.calendarName(date.calendar)}`;
       case 'calendarOnly':
         // displays only the selected calendar type without any data
-        return this.titleCase(date.calendar);
+        return this.calendarName(date.calendar);
       case 'gravsearch':
         // GREGORIAN:2023-8-2
         // CE is default era so no need to add it
@@ -440,12 +449,28 @@ export class AppDatePickerComponent
         return `${date.calendar}:${value}${era}`;
       case 'all':
         // displays date with era (only as BCE) and selected calendar type
-        return `${value + (date.era === 'noEra' ? '' : date.era === 'BCE' ? ` ${date.era}` : '')} ${this.titleCase(
+        return `${value + (date.era === 'noEra' ? '' : date.era === 'BCE' ? ` ${date.era}` : '')} ${this.calendarName(
           date.calendar
         )}`;
       default:
         return '';
     }
+  }
+
+  /**
+   * the calendar's name as a reader should see it.
+   *
+   * Translated rather than title-cased: the name was previously English in every language, and the
+   * Islamic entry now also states which Islamic calendar this is — there are several, and they
+   * disagree by a day or two, so a bare "Islamic" claims more than the app can back (DEV-7429).
+   *
+   * The `gravsearch` branch of {@link addDisplayOptions} deliberately does not use this: it emits a
+   * literal dsp-api parses, so its calendar name must stay bare.
+   */
+  calendarName(calendar: string): string {
+    const key = `ui.calendarMarker.calendars.${calendar.toUpperCase()}`;
+    const translated = this._translate.instant(key);
+    return translated && translated !== key ? translated : this.titleCase(calendar);
   }
 
   /**
@@ -820,6 +845,23 @@ export class AppDatePickerComponent
 
     // count the days of the month
     let days = this.calculateDaysInMonth(calendar.toUpperCase(), yearAstro, month);
+
+    // Drop a selected day the month cannot hold, rather than moving it to the last day that fits.
+    //
+    // Four things reach this method — a month change, a year change, an era switch and the initial
+    // write — and each can leave a day stranded: 31 January becomes 31 February, 29 February in a
+    // leap year becomes 29 February in a common one, and leapness flips across the CE/BCE boundary
+    // because the astronomical year is `year * -1 + 1`. A date can also arrive impossible without
+    // any edit at all. Before this, the grid rendered empty while the value kept the stranded day
+    // and was saved: dsp-api accepts such a date and silently shifts it into the next month
+    // (DEV-7428), so nothing anywhere reported it.
+    //
+    // Clearing rather than clamping, because 31 January is not evidence that the user meant 28
+    // February. The value degrades to month precision, which is true, and the save gate compares
+    // instants so the loss of precision registers as a real change rather than a silent one.
+    if (this.day !== undefined && this.day > days) {
+      this.day = undefined;
+    }
 
     // calculate the week day and the position of the first day of the month
     // if date is before October 4th 1582, we should use the julian date converter for week day

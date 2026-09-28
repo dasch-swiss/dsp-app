@@ -160,6 +160,41 @@ describe('DateValueHandlerComponent', () => {
     });
   });
 
+  describe('what the period states and accepts (DEV-7372)', () => {
+    it('inherits the day guard through its pickers rather than implementing its own', () => {
+      // The handler delegates both ends to app-date-picker, so the guard there covers the period.
+      component.writeValue(new KnoraDate('GREGORIAN', 'CE', 2024, 1, 31));
+      fixture.detectChanges();
+
+      const picker = fixture.debugElement.children[0];
+      expect(picker).toBeTruthy();
+      // The start control holds whatever the picker settled on; the handler adds no second rule.
+      expect(component.startDate.value).toBeTruthy();
+    });
+
+    it('names the Islamic scheme in its stored-value line', () => {
+      // This line printed the bare `ISLAMIC` the value carries — untranslated in every language,
+      // and silent about which Islamic calendar is meant (DEV-7429).
+      const translate = TestBed.inject(TranslateService);
+      translate.setTranslation('en', {
+        ui: { calendarMarker: { calendars: { ISLAMIC: 'Islamic (tabular)' } } },
+      });
+      translate.use('en');
+
+      component.writeValue(new KnoraDate('ISLAMIC', 'noEra', 1445, 12, 8));
+      fixture.detectChanges();
+
+      expect(component.storedValueText).toContain('Islamic (tabular)');
+    });
+
+    it('falls back to the bare calendar name when a translation is missing', () => {
+      component.writeValue(new KnoraDate('GREGORIAN', 'CE', 2024, 6, 15));
+      fixture.detectChanges();
+
+      expect(component.storedValueText).not.toContain('ui.calendarMarker');
+    });
+  });
+
   describe('a single date in the handler', () => {
     it('converts a lone start date with no end', () => {
       component.writeValue(new KnoraDate('JULIAN', 'CE', 1582, 6, 15));

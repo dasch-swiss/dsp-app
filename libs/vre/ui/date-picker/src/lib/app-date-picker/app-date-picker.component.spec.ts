@@ -8,7 +8,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { KnoraDate } from '@dasch-swiss/dsp-js';
+import { KnoraDate, Precision } from '@dasch-swiss/dsp-js';
 import { provideTranslateService, TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import { ValueService } from '../date-value-handler/value.service';
@@ -291,6 +291,162 @@ describe('DatePickerComponent', () => {
       component.setToday();
 
       expect(component.era).toBe('noEra');
+    });
+  });
+
+  describe('a day the month cannot hold (DEV-7372)', () => {
+    // The picker used to keep a stranded day while rendering an empty grid, and save it. dsp-api
+    // accepts such a date and silently shifts it into the next month (DEV-7428), so an impossible
+    // date could be entered, stored as a different day, and read back changed, unreported.
+    //
+    // It is cleared rather than moved: 31 January is not evidence the user meant 28 February.
+
+    it('clears a day when the month no longer holds it', () => {
+      component.value = new KnoraDate('GREGORIAN', 'CE', 2024, 1, 31);
+      fixture.detectChanges();
+
+      component.form.controls['month'].setValue(2);
+      fixture.detectChanges();
+
+      expect(component.value?.day).toBeUndefined();
+      expect(component.value?.month).toBe(2);
+    });
+
+    it('degrades to month precision rather than leaving a stale day', () => {
+      component.value = new KnoraDate('GREGORIAN', 'CE', 2024, 1, 31);
+      fixture.detectChanges();
+
+      component.form.controls['month'].setValue(2);
+      fixture.detectChanges();
+
+      expect(component.value?.precision).toBe(Precision.monthPrecision);
+    });
+
+    it('clears a leap day when the year is no longer a leap year', () => {
+      component.value = new KnoraDate('GREGORIAN', 'CE', 2024, 2, 29);
+      fixture.detectChanges();
+
+      component.form.controls['year'].setValue(2025);
+      fixture.detectChanges();
+
+      expect(component.value?.day).toBeUndefined();
+    });
+
+    it('clears an Islamic day the month cannot hold', () => {
+      // Islamic months alternate 30/29, so month 2 has 29 days.
+      component.value = new KnoraDate('ISLAMIC', 'noEra', 1445, 1, 30);
+      fixture.detectChanges();
+
+      component.form.controls['month'].setValue(2);
+      fixture.detectChanges();
+
+      expect(component.value?.day).toBeUndefined();
+    });
+
+    it('clears a day written in impossible, with no edit at all', () => {
+      // 5 CE is not a leap year. This arrives already impossible rather than being made so by an
+      // edit, and was the case the first guard missed: `value` reads back from the form, which
+      // still held the day the grid had already rejected.
+      component.value = new KnoraDate('GREGORIAN', 'CE', 5, 2, 29);
+      fixture.detectChanges();
+
+      expect(component.value?.day).toBeUndefined();
+      expect(component.value?.month).toBe(2);
+    });
+
+    it('keeps a day the new month can hold', () => {
+      // The guard must not clear more than it must.
+      component.value = new KnoraDate('GREGORIAN', 'CE', 2024, 1, 29);
+      fixture.detectChanges();
+
+      component.form.controls['month'].setValue(3);
+      fixture.detectChanges();
+
+      expect(component.value?.day).toBe(29);
+    });
+
+    it('keeps a legal day written straight in', () => {
+      component.value = new KnoraDate('GREGORIAN', 'CE', 2024, 2, 29);
+      fixture.detectChanges();
+
+      expect(component.value?.day).toBe(29);
+    });
+
+    it('never produces a day outside its month when converting', () => {
+      // Conversion goes through JDN, so it cannot strand a day. Pinned so a future change to the
+      // conversion path cannot quietly acquire the defect the edit path had.
+      for (const month of [1, 3, 5, 7, 9, 11]) {
+        component.value = new KnoraDate('GREGORIAN', 'CE', 2024, month, 28);
+        fixture.detectChanges();
+        component.form.controls['calendar'].setValue('ISLAMIC');
+        fixture.detectChanges();
+
+        const converted = component.value!;
+        const daysInMonth = component.calculateDaysInMonth('ISLAMIC', converted.year, converted.month!);
+        expect(converted.day!).toBeLessThanOrEqual(daysInMonth);
+
+        component.form.controls['calendar'].setValue('GREGORIAN');
+        fixture.detectChanges();
+      }
+    });
+  });
+
+  describe('naming the calendar (DEV-7372)', () => {
+    // The app implements the tabular Islamic calendar, and so does dsp-api, but neither says so.
+    // A bare "Islamic" presents one of several normative schemes as *the* Islamic date, which for
+    // historical material is a claim the software cannot back (DEV-7429).
+    const ISLAMIC_KEY = 'ui.calendarMarker.calendars.ISLAMIC';
+
+    beforeEach(() => {
+      const translate = TestBed.inject(TranslateService);
+      translate.setTranslation('en', {
+        ui: { calendarMarker: { calendars: { ISLAMIC: 'Islamic (tabular)', GREGORIAN: 'Gregorian' } } },
+      });
+      translate.use('en');
+    });
+
+    it('names the Islamic scheme when stating a date with its calendar', () => {
+      const date = new KnoraDate('ISLAMIC', 'noEra', 1445, 12, 8);
+
+      expect(component.transform(date, 'dd.MM.YYYY', 'all')).toContain('Islamic (tabular)');
+    });
+
+    it('names the scheme when stating the calendar alone', () => {
+      const date = new KnoraDate('ISLAMIC', 'noEra', 1445, 12, 8);
+
+      expect(component.transform(date, 'dd.MM.YYYY', 'calendarOnly')).toBe('Islamic (tabular)');
+    });
+
+    it('leaves a gravsearch literal bare, because dsp-api parses it', () => {
+      // The single most dangerous line in this change: the bracketed name in a query literal would
+      // break every date search in the app.
+      const date = new KnoraDate('ISLAMIC', 'noEra', 1445, 12, 8);
+
+      const literal = component.transform(date, 'YYYY-MM-dd', 'gravsearch');
+
+      expect(literal).toContain('ISLAMIC:');
+      expect(literal).not.toContain('tabular');
+      expect(literal).not.toContain('(');
+    });
+
+    it('leaves a Gregorian gravsearch literal bare too', () => {
+      const date = new KnoraDate('GREGORIAN', 'CE', 2024, 6, 15);
+
+      expect(component.transform(date, 'YYYY-MM-dd', 'gravsearch')).toContain('GREGORIAN:');
+    });
+
+    it('translates the calendar name rather than printing English in every language', () => {
+      // This line was title-cased English regardless of locale, for all three calendars.
+      const date = new KnoraDate('GREGORIAN', 'CE', 2024, 6, 15);
+
+      expect(component.transform(date, 'dd.MM.YYYY', 'calendarOnly')).toBe('Gregorian');
+    });
+
+    it('falls back to title case when a calendar has no translation', () => {
+      // Guards the fallback: a missing key must not surface a raw i18n path to a reader.
+      expect(component.calendarName('JULIAN')).toBe('Julian');
+      expect(component.calendarName('JULIAN')).not.toContain(ISLAMIC_KEY);
+      expect(component.calendarName('JULIAN')).not.toContain('ui.');
     });
   });
 
