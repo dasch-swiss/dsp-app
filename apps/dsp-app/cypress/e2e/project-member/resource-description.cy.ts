@@ -5,6 +5,17 @@ import { Project0001Page } from '../../support/pages/existing-ontology-class-pag
 const anythingOntology = 'http://0.0.0.0:3333/ontology/0001/anything/v2#';
 const knoraApi = 'http://api.knora.org/ontology/knora-api/v2#';
 
+// Description is a regular 0-n rich-text property (`app-properties-display` renders it via
+// `[attr.data-cy]="'row-' + prop.propDef.id"`), shown for project classes and Segments only
+// (see `resource-description.ts`'s `showsDescriptionProperty`).
+const descriptionRowSelector = `[data-cy="row-${knoraApi}hasDescription"]`;
+// The create-resource form renders the same property via a `creator-row-<propertyIri>` hook
+// (see `create-resource-form-properties.component.ts`).
+const descriptionCreatorRowSelector = `[data-cy="creator-row-${knoraApi}hasDescription"]`;
+// `hasDescription` declares `salsah-gui:guiElement salsah-gui:Richtext` in knora-base.ttl, so both
+// rows render it through `app-ck-editor`, a CKEditor `contenteditable` region.
+const richTextContentSelector = '.ck-content[contenteditable=true]';
+
 // `anything:VideoThing` test-data fixture (`test_data/project_data/anything-data.ttl` in dsp-api),
 // a MovingImageRepresentation instance every anything-project test can rely on existing.
 const videoThingIri = 'http://rdfh.ch/0001/zUelKon-SdmuL9iiHMgnGw';
@@ -128,64 +139,65 @@ describe('Resource description', () => {
       });
     });
 
-    it('adds a description in the header, and the property list has no hasDescription row', () => {
+    it('adds a description in the hasDescription row, and a second one is also listed', () => {
       visitResource(thingIri);
       cy.intercept('POST', '**/v2/values').as('createValue');
+      const row = () => cy.get(descriptionRowSelector);
 
-      cy.get('[data-cy=resource-header-description]').should('be.visible');
-      cy.get('[data-cy=resource-header-description]').find('[data-cy=add-property-value-button]').click();
+      row().should('be.visible');
+      row().find('[data-cy=add-property-value-button]').click();
 
       const description = faker.lorem.sentence();
-      cy.get('[data-cy=resource-header-description]')
-        .find('[data-cy=common-input-text]')
-        .should('be.visible')
-        .type(description);
-      cy.get('[data-cy=resource-header-description]').find('[data-cy=save-button]').click();
+      row().find(richTextContentSelector).should('be.visible').type(description);
+      row().find('[data-cy=save-button]').click();
+      cy.wait('@createValue').its('response.statusCode').should('eq', 200);
+      row().contains(description);
+
+      row().find('[data-cy=add-property-value-button]').click();
+      const secondDescription = faker.lorem.sentence();
+      row().find(richTextContentSelector).should('be.visible').type(secondDescription);
+      row().find('[data-cy=save-button]').click();
       cy.wait('@createValue').its('response.statusCode').should('eq', 200);
 
-      cy.get('[data-cy=resource-header-description]').contains(description);
-      cy.get(`[data-cy="row-${knoraApi}hasDescription"]`).should('not.exist');
+      row().contains(description);
+      row().contains(secondDescription);
+      row().find('[data-cy=property-value]').should('have.length', 2);
     });
 
-    it('edits and then deletes the description in the header', () => {
+    it('edits and then deletes the description in the row', () => {
       getAnythingAdminToken().then(token => {
         createThing(token, faker.lorem.words(3), faker.lorem.sentence()).then(iri => {
           visitResource(iri);
+          const row = () => cy.get(descriptionRowSelector);
 
           cy.intercept('PUT', '**/v2/values').as('updateValue');
-          cy.get('[data-cy=resource-header-description]').find('[data-cy=property-value]').trigger('mouseenter');
-          cy.get('[data-cy=resource-header-description]')
-            .find('[data-cy="action-bubble"] .edit-button')
-            .should('be.visible')
-            .click({ force: true });
+          row().find('[data-cy=property-value]').trigger('mouseenter');
+          row().find('[data-cy="action-bubble"] .edit-button').should('be.visible').click({ force: true });
 
           const updatedDescription = faker.lorem.sentence();
-          cy.get('[data-cy=resource-header-description]')
-            .find('[data-cy=common-input-text]')
+          row()
+            .find(richTextContentSelector)
             .should('be.visible')
-            .clear()
+            .type('{selectall}{backspace}')
             .type(updatedDescription);
-          cy.get('[data-cy=resource-header-description]').find('[data-cy=save-button]').click();
+          row().find('[data-cy=save-button]').click();
           cy.wait('@updateValue').its('response.statusCode').should('eq', 200);
-          cy.get('[data-cy=resource-header-description]').contains(updatedDescription);
+          row().contains(updatedDescription);
 
           cy.intercept('POST', '**/v2/values/delete').as('deleteValue');
-          cy.get('[data-cy=resource-header-description]').find('[data-cy=property-value]').trigger('mouseenter');
-          cy.get('[data-cy=resource-header-description]')
-            .find('[data-cy="delete-button"]')
-            .should('be.visible')
-            .click();
+          row().find('[data-cy=property-value]').trigger('mouseenter');
+          row().find('[data-cy="delete-button"]').should('be.visible').click();
           cy.get('[data-cy="delete-comment"]').should('be.visible').type(faker.lorem.sentence());
           cy.get('[data-cy="confirm-button"]').click();
           cy.wait('@deleteValue').its('response.statusCode').should('eq', 200);
-          cy.get('[data-cy=resource-header-description]').find('[data-cy=property-value]').should('not.exist');
+          row().find('[data-cy=property-value]').should('not.exist');
         });
       });
     });
   });
 
   describe('as a user without edit rights', () => {
-    it('sees the description with no edit controls', () => {
+    it('sees the description in the row with no edit controls', () => {
       const description = faker.lorem.sentence();
       getAnythingAdminToken().then(token => {
         createThing(token, faker.lorem.words(3), description).then(iri => {
@@ -194,13 +206,12 @@ describe('Resource description', () => {
           visitResource(iri);
           cy.get('[data-cy=accept-cookies]').click();
 
-          cy.get('[data-cy=resource-header-description]').should('be.visible');
-          cy.get('[data-cy=resource-header-description]').contains(description);
-          cy.get('[data-cy=resource-header-description]')
-            .find('[data-cy=add-property-value-button]')
-            .should('not.exist');
-          cy.get('[data-cy=resource-header-description]').find('[data-cy=property-value]').trigger('mouseenter');
-          cy.get('[data-cy=resource-header-description]').find('[data-cy="action-bubble"]').should('not.exist');
+          const row = () => cy.get(descriptionRowSelector);
+          row().should('be.visible');
+          row().contains(description);
+          row().find('[data-cy=add-property-value-button]').should('not.exist');
+          row().find('[data-cy=property-value]').trigger('mouseenter');
+          row().find('[data-cy="action-bubble"]').should('not.exist');
         });
       });
     });
@@ -218,9 +229,7 @@ describe('Resource description', () => {
             createVideoSegment(token, faker.lorem.words(3), description).then(iri => {
               visitResource(iri);
 
-              cy.get('[data-cy=resource-header-description]').should('be.visible');
-              cy.get('[data-cy=resource-header-description]').contains(description);
-              cy.get(`[data-cy="row-${knoraApi}hasDescription"]`).should('exist');
+              cy.get(descriptionRowSelector).should('exist').contains(description);
             });
           });
         });
@@ -229,7 +238,7 @@ describe('Resource description', () => {
   });
 
   describe('regions', () => {
-    it('shows no resource-header-description on a region opened on its own page', () => {
+    it('shows no hasDescription row on a region opened on its own page', () => {
       cy.readFile('cypress/fixtures/user_profiles.json').then((json: UserProfiles) => {
         cy.login({
           username: json.anythingProjectAdmin_username,
@@ -237,8 +246,56 @@ describe('Resource description', () => {
         }).then(() => {
           visitResource(existingRegionIri);
           cy.get('[data-cy=resource-header-label]').should('be.visible');
-          cy.get('[data-cy=resource-header-description]').should('not.exist');
+          cy.get(descriptionRowSelector).should('not.exist');
         });
+      });
+    });
+  });
+
+  describe('creating a resource from the anything:Thing class view', () => {
+    beforeEach(() => {
+      cy.readFile('cypress/fixtures/user_profiles.json').then((json: UserProfiles) => {
+        cy.login({
+          username: json.anythingProjectAdmin_username,
+          password: json.anythingProjectAdmin_password,
+        });
+      });
+    });
+
+    it('shows the description entered in the create-resource form on the new resource', () => {
+      new Project0001Page().visitClass('Thing');
+      cy.get('[data-cy=create-resource-btn]').click();
+
+      const label = faker.lorem.words(3);
+      cy.get('[data-cy=resource-label]').find('[data-cy=common-input-text]').type(label, { force: true });
+
+      const description = faker.lorem.sentence();
+      cy.get(descriptionCreatorRowSelector).find(richTextContentSelector).should('be.visible').type(description);
+
+      cy.intercept('GET', '**/resources/**').as('resourceRequest');
+      cy.get('[data-cy=submit-button]').click();
+      cy.wait('@resourceRequest').its('response.statusCode').should('eq', 200);
+
+      cy.get('[data-cy=resource-dialog]').within(() => {
+        cy.get('[data-cy=resource-header-label]').contains(label);
+        cy.get(descriptionRowSelector).contains(description);
+      });
+    });
+
+    it('creates a resource without touching Description, and shows no description value', () => {
+      new Project0001Page().visitClass('Thing');
+      cy.get('[data-cy=create-resource-btn]').click();
+
+      const label = faker.lorem.words(3);
+      cy.get('[data-cy=resource-label]').find('[data-cy=common-input-text]').type(label, { force: true });
+
+      cy.intercept('GET', '**/resources/**').as('resourceRequest');
+      cy.get('[data-cy=submit-button]').click();
+      cy.wait('@resourceRequest').its('response.statusCode').should('eq', 200);
+
+      cy.get('[data-cy=resource-dialog]').within(() => {
+        cy.get('[data-cy=resource-header-label]').contains(label);
+        cy.get(descriptionRowSelector).find('[data-cy=property-value]').should('not.exist');
       });
     });
   });
