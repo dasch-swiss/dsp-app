@@ -286,8 +286,12 @@ describe('calendar round trips (DEV-7372)', () => {
     });
 
     it('converts the Gregorian month containing the Hijra, consistently with its days', () => {
-      const month = convertCalendarResult(createDate('GREGORIAN', 622, 7), 'ISLAMIC');
-      const day = convertCalendarResult(createDate('GREGORIAN', 622, 7, 16), 'ISLAMIC');
+      // Derived rather than written down: the Hijra is 16 July 622 in the Julian calendar but
+      // 19 July in the proleptic Gregorian one, and hardcoding either invites using the wrong
+      // calendar's numerals under the other's label.
+      const hijra = getCalendar('GREGORIAN').fromJDN(ISLAMIC_EPOCH_JDN);
+      const month = convertCalendarResult(createDate('GREGORIAN', hijra.year, hijra.month), 'ISLAMIC');
+      const day = convertCalendarResult(createDate('GREGORIAN', hijra.year, hijra.month, hijra.day), 'ISLAMIC');
 
       expect(day.kind).toBe('exact');
       expect(month.kind).not.toBe('refused');
