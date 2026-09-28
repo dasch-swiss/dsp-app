@@ -229,4 +229,49 @@ describe('calendar round trips (DEV-7372)', () => {
       expect(result.date.day).toBe(1);
     });
   });
+
+  describe('dates far before the common era', () => {
+    // The rounding helper truncated towards zero where Meeus requires floor. The two agree for
+    // non-negative operands, so every CE date was fine and nothing noticed; below zero they
+    // diverge, and dates from roughly 4100 BCE back were wrong by a day, then by months, until
+    // `fromJDN` produced a negative month and `createDate` threw rather than returning a date.
+    it.each(['GREGORIAN', 'JULIAN'] as const)(
+      '%s round-trips every year back to 6000 BCE',
+      calendar => {
+        const cal = getCalendar(calendar);
+        const failures: string[] = [];
+
+        for (let year = -6000; year <= 0; year++) {
+          for (const [month, day] of [
+            [1, 1],
+            [3, 15],
+            [12, 31],
+          ]) {
+            const input = createDate(calendar, year, month, day, 'BCE');
+            const result = cal.fromJDN(cal.toJDN(input));
+            if (result.year !== year || result.month !== month || result.day !== day) {
+              failures.push(`${year}-${month}-${day}`);
+            }
+          }
+        }
+
+        expect(failures).toEqual([]);
+      },
+      60000
+    );
+
+    it('never yields a month outside 1..12 for a deep-BCE date', () => {
+      // `createDate` threw `Invalid month: -8` here, so the failure surfaced as an uncaught
+      // exception in the picker rather than as a wrong date.
+      const cal = getCalendar('GREGORIAN');
+
+      expect(() => cal.fromJDN(cal.toJDN(createDate('GREGORIAN', -5000, 3, 1, 'BCE')))).not.toThrow();
+    });
+
+    it('converts a deep-BCE date between calendars without throwing', () => {
+      const source = createDate('JULIAN', -5000, 3, 1, 'BCE');
+
+      expect(() => convertCalendar(source, 'GREGORIAN')).not.toThrow();
+    });
+  });
 });

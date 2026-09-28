@@ -24,12 +24,15 @@ import { createDate } from '../factories/date.factory';
 import { CalendarDate, CalendarError, CalendarOperations } from '../types/calendar.types';
 
 /**
- * Helper function to truncate decimals (remove fractions).
- * Works correctly for both positive and negative numbers.
+ * Rounds down, towards negative infinity.
+ *
+ * Meeus' algorithms are stated in terms of floor, not truncation. The two agree for non-negative
+ * operands, which is why rounding towards zero here went unnoticed: every CE date produces only
+ * non-negative operands. They diverge below zero, corrupting deep-BCE dates.
  *
  * @internal
  */
-const truncate = (num: number): number => Math[num < 0 ? 'ceil' : 'floor'](num);
+const floorDiv = (num: number): number => Math.floor(num);
 
 /**
  * The Hijra epoch: 1 Muḥarram 1 AH, which is 16 July 622 CE in the proleptic Julian calendar.
@@ -236,7 +239,7 @@ function islamicDaysInMonth(year: number, month: number): number {
  */
 function islamicDayOfWeek(date: CalendarDate): number {
   const jdn = islamicToJDN(date);
-  return truncate(jdn + 1.5) % 7;
+  return floorDiv(jdn + 1.5) % 7;
 }
 
 /**

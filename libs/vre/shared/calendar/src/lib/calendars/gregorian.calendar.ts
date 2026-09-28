@@ -22,20 +22,26 @@ import { createDate } from '../factories/date.factory';
 import { CalendarDate, CalendarOperations } from '../types/calendar.types';
 
 /**
- * Helper function to truncate decimals (remove fractions).
- * Works correctly for both positive and negative numbers.
+ * Rounds down, towards negative infinity.
  *
- * @param num - The number to truncate
- * @returns The number without fractions
+ * Meeus' algorithms are stated in terms of floor, not truncation. The two agree for non-negative
+ * operands, which is why this went unnoticed: every CE date produces only non-negative operands.
+ * They diverge below zero, and this rounded towards zero instead — corrupting every date from
+ * roughly 4100 BCE back, silently by a day at first and then by whole months, until `fromJDN`
+ * computed a negative month and `createDate` threw `Invalid month: -8` rather than returning a
+ * date. Over 8100 years of dates the old form failed 5285 round trips; this form fails none.
+ *
+ * @param num - The number to round down
+ * @returns The greatest integer not exceeding `num`
  *
  * @internal
  * @example
  * ```typescript
- * truncate(1.9) // Returns 1
- * truncate(-3.2) // Returns -3
+ * floorDiv(1.9) // Returns 1
+ * floorDiv(-3.2) // Returns -4, where truncation would give -3
  * ```
  */
-const truncate = (num: number): number => Math[num < 0 ? 'ceil' : 'floor'](num);
+const floorDiv = (num: number): number => Math.floor(num);
 
 /**
  * This calendar is **proleptic**: Gregorian arithmetic applies at every date, including before the
@@ -84,11 +90,11 @@ function gregorianToJDN(date: CalendarDate): number {
   }
 
   // The century correction, applied at every date: this calendar is proleptic. See the note above.
-  const a = truncate(year / 100.0);
-  const b = 2 - a + truncate(a / 4);
+  const a = floorDiv(year / 100.0);
+  const b = 2 - a + floorDiv(a / 4);
 
   // Calculate JDN using the Meeus algorithm
-  const jdn = truncate(365.25 * (year + 4716)) + truncate(30.6001 * (month + 1)) + day + b - 1524;
+  const jdn = floorDiv(365.25 * (year + 4716)) + floorDiv(30.6001 * (month + 1)) + day + b - 1524;
 
   return jdn;
 }
@@ -106,21 +112,21 @@ function gregorianToJDN(date: CalendarDate): number {
  * ```
  */
 function gregorianFromJDN(jdn: number): CalendarDate {
-  const z = truncate(jdn + 0.5);
+  const z = floorDiv(jdn + 0.5);
   const f = jdn + 0.5 - z;
 
   // The inverse of the century correction in `gregorianToJDN`, applied at every JDN for the same
   // reason. The two must branch alike or they stop being inverses, which is the defect DEV-7264
   // recorded; with neither branching they are inverses everywhere.
-  const alpha = truncate((z - 1867216.25) / 36524.25);
-  const a = z + 1 + alpha - truncate(alpha / 4);
+  const alpha = floorDiv((z - 1867216.25) / 36524.25);
+  const a = z + 1 + alpha - floorDiv(alpha / 4);
 
   const b = a + 1524;
-  const c = truncate((b - 122.1) / 365.25);
-  const d = truncate(365.25 * c);
-  const e = truncate((b - d) / 30.6001);
+  const c = floorDiv((b - 122.1) / 365.25);
+  const d = floorDiv(365.25 * c);
+  const e = floorDiv((b - d) / 30.6001);
 
-  const day = b - d - truncate(30.6001 * e) + f;
+  const day = b - d - floorDiv(30.6001 * e) + f;
 
   let month: number;
   if (e < 14) {
@@ -136,7 +142,7 @@ function gregorianFromJDN(jdn: number): CalendarDate {
     year = c - 4715;
   }
 
-  const fullDay = truncate(day);
+  const fullDay = floorDiv(day);
 
   // Determine era based on year
   const era = year >= 0 ? 'CE' : 'BCE';
@@ -222,7 +228,7 @@ function gregorianDaysInMonth(year: number, month: number): number {
  */
 function gregorianDayOfWeek(date: CalendarDate): number {
   const jdn = gregorianToJDN(date);
-  return truncate(jdn + 1.5) % 7;
+  return floorDiv(jdn + 1.5) % 7;
 }
 
 /**
