@@ -18,3 +18,47 @@
   margin-top: -1em;
   padding-bottom: 1em;
 }
+
+// One calendar control for the whole period, above both ends — the calendar is a property of the
+// value, not of either date, so showing one per picker offered a state the API cannot store.
+.period-calendar {
+  margin-bottom: 8px;
+
+  .calendar-segmented {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    width: 100%;
+
+    mat-button-toggle {
+      font-size: 13px;
+    }
+  }
+
+  .calendar-caption {
+    margin: 4px 0 0;
+    font-size: 12px;
+    color: #4b5563;
+  }
+}
+
+.stored-value-line,
+.picker-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+  margin: 0 0 8px;
+  font-size: 12px;
+  line-height: 1.4;
+  color: #4b5563;
+}
+
+.picker-note.converted {
+  color: #1d4ed8;
+}
+
+.line-icon {
+  font-size: 14px;
+  width: 14px;
+  height: 14px;
+  flex: none;
+}

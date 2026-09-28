@@ -166,3 +166,11 @@
     color: #b45309;
   }
 }
+
+// Where the calendar belongs to the whole value, the picker states it rather than offering it.
+.calendar-tag {
+  margin: 0 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #1f2937;
+}

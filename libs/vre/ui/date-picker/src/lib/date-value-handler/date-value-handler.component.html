@@ -1,10 +1,60 @@
 <div [formGroup]="form">
+  <!-- the value as stored, so a user editing a period can see what they are changing -->
+  @if (storedStartDate) {
+  <p class="stored-value-line" data-cy="period-stored-value">
+    <mat-icon class="line-icon">lock</mat-icon>
+    {{ 'ui.datePicker.storedValue' | translate: { date: storedValueText } }}
+  </p>
+  }
+
+  <!-- one calendar for the whole value: CreateDateValue and UpdateDateValue carry a single
+  `calendar` field, so it belongs to the period rather than to either end -->
+  <div class="period-calendar">
+    <mat-button-toggle-group
+      class="calendar-segmented"
+      formControlName="calendar"
+      data-cy="period-calendar-select"
+      [attr.aria-label]="'ui.datePicker.calendar' | translate"
+      (change)="onCalendarSelected($event.value)">
+      @for (cal of calendars; track cal) {
+      <mat-button-toggle
+        [value]="cal"
+        [disabled]="!isCalendarAvailable(cal)"
+        [attr.data-cy]="'period-calendar-option-' + cal">
+        {{ 'ui.calendarMarker.calendars.' + cal | translate }}
+      </mat-button-toggle>
+      }
+    </mat-button-toggle-group>
+    <p class="calendar-caption">{{ 'ui.datePicker.oneCalendarForValue' | translate }}</p>
+
+    @if (!isCalendarAvailable('ISLAMIC')) {
+    <p class="picker-note" data-cy="period-pre-hijra-note">
+      <mat-icon class="line-icon">info</mat-icon>
+      {{ 'ui.datePicker.preHijraNote' | translate }}
+    </p>
+    }
+
+    @if (convertedFromText) {
+    <p class="picker-note converted" data-cy="period-converted-from">
+      <mat-icon class="line-icon">swap_horiz</mat-icon>
+      @if (convertedFromIsStored) {
+      {{ 'ui.datePicker.convertedFromStored' | translate: { date: convertedFromText } }}
+      } @else {
+      {{ 'ui.datePicker.convertedFrom' | translate: { date: convertedFromText } }}
+      }
+    </p>
+    }
+  </div>
+
   <div class="date-form-grid">
     <div class="date-form-field">
       <app-date-picker
         class="start-date"
         [formControlName]="'startDate'"
         [storedValue]="storedStartDate"
+        [disableCalendarSelector]="true"
+        [calendar]="calendarControl.value"
+        (emitDateChanged)="onEndEdited()"
         (closed)="handlePickerClose()" />
     </div>
 
@@ -29,7 +79,8 @@
         [formControlName]="'endDate'"
         [storedValue]="storedEndDate"
         [disableCalendarSelector]="true"
-        [calendar]="startDate.value.calendar" />
+        [calendar]="startDate.value.calendar"
+        (emitDateChanged)="onEndEdited()" />
     </div>
     }
   </div>
@@ -45,7 +96,9 @@
     </mat-error>
     } @if (startDate.hasError('periodStartEnd')) {
     <mat-error>
-      <span class="custom-error-message">End date must be after start date.</span>
+      <span class="custom-error-message" data-cy="period-order-error">{{
+        'ui.datePicker.endBeforeStart' | translate
+      }}</span>
     </mat-error>
     }
   </div>

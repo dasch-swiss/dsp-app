@@ -330,6 +330,25 @@ describe('DatePickerComponent', () => {
       expect(query('will-be-stored')).not.toBeNull();
     });
 
+    it('offers the calendar on a standalone picker, as advanced search renders it', () => {
+      // Advanced search renders `app-date-picker` bare, with no `disableCalendarSelector`, so the
+      // control has to stay in the picker and be suppressed for a period rather than moved out.
+      component.value = new KnoraDate('GREGORIAN', 'CE', 2024, 6, 15);
+
+      expect(query('calendar-select')).not.toBeNull();
+      expect(query('calendar-tag')).toBeNull();
+    });
+
+    it('states the calendar instead of offering it where the value owns it', () => {
+      // A period carries one calendar for the whole value, so the handler renders one control
+      // above both ends and each picker only names it.
+      component.disableCalendarSelector = true;
+      component.value = new KnoraDate('GREGORIAN', 'CE', 2024, 6, 15);
+
+      expect(query('calendar-select')).toBeNull();
+      expect(query('calendar-tag')).not.toBeNull();
+    });
+
     it('opens the menu so the panel can be asserted at all', () => {
       // Guards the assumption the rest of this block rests on: these hooks live inside the
       // mat-menu, and the "absent" assertions above would pass vacuously if it never rendered.

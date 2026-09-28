@@ -1,5 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/angular';
-import { expect } from 'storybook/test';
+import { expect, userEvent } from 'storybook/test';
 
 import { AppDatePickerComponent } from './app-date-picker.component';
 
@@ -77,8 +77,16 @@ export const WithCalendarSelectorDisabled: Story = {
     disableCalendarSelector: true,
   },
   play: async ({ canvasElement, step }) => {
-    await step('Date picker is rendered without calendar selector', async () => {
+    await step('Date picker is rendered', async () => {
       await expect(canvasElement.querySelector('app-date-picker')).not.toBeNull();
+    });
+    await step('The calendar is stated rather than offered, since the period owns it', async () => {
+      // This asserted only that the picker existed, which was true either way. A period carries
+      // one calendar for the whole value, so the handler offers it once above both ends and each
+      // picker names it — two controls could offer a state the API cannot store.
+      await userEvent.click(canvasElement.querySelector('.date-picker-value') as HTMLElement);
+      await expect(document.querySelector('[data-cy="calendar-select"]')).toBeNull();
+      await expect(document.querySelector('[data-cy="calendar-tag"]')).not.toBeNull();
     });
   },
 };

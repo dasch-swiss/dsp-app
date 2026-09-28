@@ -37,7 +37,9 @@
     </p>
     }
 
-    <!-- select calendar -->
+    <!-- select calendar; suppressed where the calendar belongs to the whole value rather than to
+    this picker, as in a period, where the handler renders one control above both ends -->
+    @if (!disableCalendarSelector) {
     <div class="calendar-selector panel">
       <mat-button-toggle-group
         class="calendar-segmented"
@@ -51,9 +53,15 @@
         }
       </mat-button-toggle-group>
     </div>
+    } @else {
+    <p class="calendar-tag panel" data-cy="calendar-tag">
+      {{ 'ui.calendarMarker.calendars.' + calendar | translate }}
+    </p>
+    }
 
-    <!-- why Islamic cannot be chosen, rather than only greying it out -->
-    @if (!isCalendarAvailable('ISLAMIC')) {
+    <!-- why Islamic cannot be chosen, rather than only greying it out; shown beside the control
+    that offers the choice, so it moves to the handler for a period -->
+    @if (!disableCalendarSelector && !isCalendarAvailable('ISLAMIC')) {
     <p class="picker-note" data-cy="pre-hijra-note">
       <mat-icon class="line-icon">info</mat-icon>
       {{ 'ui.datePicker.preHijraNote' | translate }}

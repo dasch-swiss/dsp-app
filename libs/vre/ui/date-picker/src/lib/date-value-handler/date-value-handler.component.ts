@@ -18,12 +18,14 @@ import {
   Validators,
 } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { MatFormFieldControl, MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { KnoraDate, KnoraPeriod } from '@dasch-swiss/dsp-js';
-import { CalendarSystem, compareDates } from '@dasch-swiss/vre/shared/calendar';
+import { CALENDAR_SYSTEMS, CalendarSystem, compareDates } from '@dasch-swiss/vre/shared/calendar';
+import { TranslatePipe } from '@ngx-translate/core';
 import { Subject, Subscription } from 'rxjs';
 import { AppDatePickerComponent } from '../app-date-picker/app-date-picker.component';
 import { ValueService } from './value.service';
@@ -55,10 +57,12 @@ export function periodStartEndValidator(
   imports: [
     AppDatePickerComponent,
     MatButtonModule,
+    MatButtonToggleModule,
     MatFormFieldModule,
     MatIconModule,
     MatTooltipModule,
     ReactiveFormsModule,
+    TranslatePipe,
   ],
   templateUrl: './date-value-handler.component.html',
   styleUrls: ['./date-value-handler.component.scss'],
@@ -103,6 +107,28 @@ export class DateValueHandlerComponent
   storedEndDate: KnoraDate | null = null;
 
   private _storedValueCaptured = false;
+
+  /**
+   * what a calendar switch converts the period from — the stored period while editing.
+   *
+   * Held here rather than in the pickers because a period carries one calendar for the whole
+   * value, so the conversion is a property of the pair. Once the user edits either end, that
+   * entry becomes the basis, as it does for a single date.
+   */
+  private _baseIsStored = true;
+
+  /**
+   * set while this component is rewriting both ends for a calendar change.
+   *
+   * The two ends are written one after the other, so mid-conversion the value is momentarily torn:
+   * a Gregorian start beside a still-Julian end. Those are genuinely different instants, so the
+   * edit detection below would read the conversion as a user edit and rebase onto its own output —
+   * after which switching back no longer restored the stored period.
+   */
+  private _converting = false;
+
+  /** every calendar until a value says otherwise; an empty picker rules nothing out. */
+  private _availableCalendars: CalendarSystem[] = [...CALENDAR_SYSTEMS];
 
   readonly controlType = 'app-date-value-handler';
 
@@ -225,7 +251,10 @@ export class DateValueHandlerComponent
     }
 
     this.isPeriodControl = new UntypedFormControl(false); // tODO: if period, check if start is before end
-    this.calendarControl = new UntypedFormControl(null);
+    // Seeded rather than null: the pickers now take their calendar from this control, and a null
+    // reaches `_setDays` as `null.toUpperCase()`. The `value` setter overwrites it from the
+    // written value, so this is only what an empty handler starts on.
+    this.calendarControl = new UntypedFormControl('GREGORIAN');
 
     this.endDate = new UntypedFormControl(null);
     this.startDate = new UntypedFormControl(null);
@@ -354,7 +383,203 @@ export class DateValueHandlerComponent
   }
 
   handleInput(): void {
+    this._refreshAvailableCalendars();
     this.onChange(this.value);
+  }
+
+  /** the stored value as text, for the lines that state what is stored and what was converted. */
+  get storedValueText(): string {
+    if (this.storedStartDate === null) {
+      return '';
+    }
+    const start = this._formatDate(this.storedStartDate);
+    const calendar = this.storedStartDate.calendar.toUpperCase();
+    if (this.storedEndDate === null) {
+      return `${start} ${calendar}`;
+    }
+    return `${start} – ${this._formatDate(this.storedEndDate)} ${calendar}`;
+  }
+
+  /**
+   * which calendars this value can be expressed in; a period needs both ends representable.
+   *
+   * Reads a list recomputed on value changes rather than converting during rendering: called from
+   * the template it ran against a half-written period mid-conversion and answered differently
+   * within one change-detection pass, which Angular reports as NG0100.
+   */
+  isCalendarAvailable(calendar: string): boolean {
+    return this._availableCalendars.includes(calendar.toUpperCase() as CalendarSystem);
+  }
+
+  /** recomputes which calendars the current value can be expressed in. */
+  private _refreshAvailableCalendars(): void {
+    const current = this.value;
+    this._availableCalendars = current ? this._valueService.availableCalendarsFor(current) : [...CALENDAR_SYSTEMS];
+  }
+
+  /**
+   * whether the value is shown in a calendar other than the one it is measured from.
+   *
+   * A stored flag rather than a getter comparing the live form: read during change detection, such
+   * a getter can answer differently within one pass — the calendar control and the two date
+   * controls are written separately — which Angular reports as NG0100. Set once per conversion,
+   * where the answer is actually decided.
+   */
+  isConverted = false;
+
+  /**
+   * the "converted from" line as plain text, or empty when there is nothing to say.
+   *
+   * Stored rather than computed from getters in the template: the pickers write their values
+   * during change detection, so a condition built from live form state can answer differently
+   * within one pass, which Angular reports as NG0100.
+   */
+  convertedFromText = '';
+
+  /** whether that line should name the stored value as the basis. */
+  convertedFromIsStored = false;
+
+  /** whether conversions still measure from the stored value, which "(Stored value)" states. */
+  get isBaseTheStoredValue(): boolean {
+    return this._baseIsStored && this.storedStartDate !== null;
+  }
+
+  /** the period a conversion measures from: the stored one while it is still the basis. */
+  get conversionBase(): { start: KnoraDate; end: KnoraDate | null } | null {
+    if (this._baseIsStored && this.storedStartDate !== null) {
+      return { start: this.storedStartDate, end: this.storedEndDate };
+    }
+    return null;
+  }
+
+  /**
+   * rewrites both ends so they describe the same span in the newly selected calendar.
+   *
+   * The start takes the **first** day of its converted span and the end the **last**, so an
+   * imprecise period never shrinks: Julian 1580–1585 covers Gregorian 1580–1586, and taking each
+   * span's start would end it in 1585 and silently drop a year of the period.
+   *
+   * Converts from the stored period while that is still the basis, so switching away and back
+   * restores it exactly, as the single picker does.
+   */
+  onCalendarSelected(calendar: string): void {
+    const target = calendar.toUpperCase() as CalendarSystem;
+    const base = this.conversionBase;
+    const start: KnoraDate | null = base ? base.start : this.startDate.value;
+    const end: KnoraDate | null = base ? base.end : this.endDate.value;
+
+    if (!start) {
+      return;
+    }
+
+    const convertedStart =
+      start.calendar.toUpperCase() === target ? start : this._valueService.convertKnoraDateTo(start, target)?.start;
+
+    if (convertedStart === undefined) {
+      return;
+    }
+
+    let convertedEnd: KnoraDate | null = null;
+    if (end) {
+      if (end.calendar.toUpperCase() === target) {
+        convertedEnd = end;
+      } else {
+        const converted = this._valueService.convertKnoraDateTo(end, target);
+        if (converted === undefined) {
+          return;
+        }
+        // The last day of the end's span, not its first: a period ends where its span ends.
+        convertedEnd = converted.end ?? converted.start;
+      }
+    }
+
+    // Decided before the writes, not after: writing the controls runs change detection, and state
+    // that flips afterwards has already been read in that pass — Angular reports the block
+    // appearing late as NG0100.
+    this.isConverted = base !== null && base.start.calendar.toUpperCase() !== target;
+    this.convertedFromIsStored = this._baseIsStored && this.storedStartDate !== null;
+    this.convertedFromText = this.isConverted ? this.storedValueText : '';
+
+    this._converting = true;
+    try {
+      this.startDate.setValue(convertedStart);
+      if (convertedEnd) {
+        this.endDate.setValue(convertedEnd);
+      }
+    } finally {
+      this._converting = false;
+    }
+  }
+
+  /** one date as dd.MM.yyyy at whatever precision it carries. */
+  private _formatDate(date: KnoraDate): string {
+    const pad = (n: number) => `${n}`.padStart(2, '0');
+    if (date.day !== undefined && date.month !== undefined) {
+      return `${pad(date.day)}.${pad(date.month)}.${date.year}`;
+    }
+    if (date.month !== undefined) {
+      return `${pad(date.month)}.${date.year}`;
+    }
+    return `${date.year}`;
+  }
+
+  /**
+   * notices when an end was genuinely edited rather than converted.
+   *
+   * The picker emits on every write to its value, its own conversions included, so this cannot
+   * take the event as evidence of a user edit. Nor can it compare against the stored period
+   * directly: a conversion is *supposed* to move the ends — Julian 1580–1585 becomes Gregorian
+   * 1580–1586, the end taking the last day of its span so the period does not shrink — so any such
+   * comparison reads a correct conversion as an edit.
+   *
+   * It compares against what converting the stored period into the calendar now selected would
+   * produce. Equal means the user is looking at a conversion; different means they changed a date.
+   */
+  onEndEdited(): void {
+    if (this._converting || !this._baseIsStored || this.storedStartDate === null) {
+      return;
+    }
+
+    const start: KnoraDate | null = this.startDate.value;
+    if (start === null) {
+      return;
+    }
+
+    const target = start.calendar.toUpperCase() as CalendarSystem;
+    const expectedStart = this._convertEnd(this.storedStartDate, target, 'start');
+
+    if (expectedStart === null || !this._valueService.knoraDatesDenoteSameInstant(expectedStart, start)) {
+      this._baseIsStored = false;
+      return;
+    }
+
+    const end: KnoraDate | null = this.endDate.value;
+    if (this.storedEndDate === null || end === null) {
+      return;
+    }
+
+    const expectedEnd = this._convertEnd(this.storedEndDate, target, 'end');
+    if (expectedEnd === null || !this._valueService.knoraDatesDenoteSameInstant(expectedEnd, end)) {
+      this._baseIsStored = false;
+    }
+  }
+
+  /**
+   * one end of the period in another calendar.
+   *
+   * A start takes the first day of its converted span and an end the last, which is what keeps an
+   * imprecise period from shrinking; both callers of this rule have to agree, so it lives here
+   * rather than being written out twice.
+   */
+  private _convertEnd(date: KnoraDate, target: CalendarSystem, which: 'start' | 'end'): KnoraDate | null {
+    if (date.calendar.toUpperCase() === target) {
+      return date;
+    }
+    const converted = this._valueService.convertKnoraDateTo(date, target);
+    if (converted === undefined) {
+      return null;
+    }
+    return which === 'end' ? (converted.end ?? converted.start) : converted.start;
   }
 
   togglePeriodControl(ev: Event) {

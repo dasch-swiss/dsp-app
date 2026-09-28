@@ -1,405 +1,191 @@
-describe('test to fix', () => {
-  it('test to fix', () => {
-    expect(true).toBeTruthy();
-  });
-});
-/*
-@Component({
-  template: ` <div [formGroup]="form">
-    <app-date-value-handler #dateValueHandler [formControlName]="'date'" />
-  </div>`,
-})
-class TestHostComponent implements OnInit {
-  @ViewChild('dateValueHandler')
-  dateValueHandlerComponent: DateValueHandlerComponent;
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ReactiveFormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatSelectModule } from '@angular/material/select';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { KnoraDate, KnoraPeriod } from '@dasch-swiss/dsp-js';
+import { provideTranslateService, TranslateService } from '@ngx-translate/core';
+import { Subject } from 'rxjs';
 
-  form: UntypedFormGroup;
-
-  constructor(private readonly _fb: UntypedFormBuilder) {}
-
-  ngOnInit(): void {
-    this.form = this._fb.group({
-      date: [new KnoraDate('JULIAN', 'CE', 2018, 5, 19)],
-    });
-  }
-}
-@Component({
-  template: ` <div [formGroup]="form">
-    <app-date-value-handler #dateValueHandler [formControlName]="'date'" [valueRequiredValidator]="false" />
-  </div>`,
-})
-class NoValueRequiredTestHostComponent implements OnInit {
-  @ViewChild('dateValueHandler')
-  dateValueHandlerComponent: DateValueHandlerComponent;
-
-  form: UntypedFormGroup;
-
-  constructor(private readonly _fb: UntypedFormBuilder) {}
-
-  ngOnInit(): void {
-    this.form = this._fb.group({
-      date: new UntypedFormControl(null),
-    });
-  }
-}
-
-@Component({
-  // eslint-disable-next-line @angular-eslint/component-selector
-  selector: 'app-date-picker',
-  template: '',
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      multi: true,
-      useExisting: forwardRef(() => TestDatePickerComponent),
-    },
-    { provide: MatFormFieldControl, useExisting: TestDatePickerComponent },
-  ],
-})
-class TestDatePickerComponent implements ControlValueAccessor, MatFormFieldControl<any> {
-  @Input() disableCalendarSelector: boolean;
-
-  @Input() value;
-  @Input() disabled: boolean;
-  @Input() empty: boolean;
-  @Input() placeholder: string;
-  @Input() required: boolean;
-  @Input() shouldLabelFloat: boolean;
-  @Input() errorStateMatcher: ErrorStateMatcher;
-  @Input() valueRequiredValidator = true;
-
-  @Input() calendar: string;
-  stateChanges = new Subject<void>();
-
-  errorState = false;
-  focused = false;
-  id = 'testid';
-  ngControl: NgControl | null;
-  onChange = (_: any) => {};
-
-  writeValue(date: KnoraDate | null): void {
-    this.value = date;
-  }
-
-  registerOnChange(fn: any): void {
-    this.onChange = fn;
-  }
-
-  registerOnTouched(fn: any): void {}
-
-  onContainerClick(event: MouseEvent): void {}
-
-  setDescribedByIds(ids: string[]): void {}
-
-  _handleInput(): void {
-    this.onChange(this.value);
-  }
-}
+import { DateValueHandlerComponent } from './date-value-handler.component';
 
 describe('DateValueHandlerComponent', () => {
-  let testHostComponent: TestHostComponent;
-  let testHostFixture: ComponentFixture<TestHostComponent>;
+  let component: DateValueHandlerComponent;
+  let fixture: ComponentFixture<DateValueHandlerComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [DateValueHandlerComponent, TestDatePickerComponent, TestHostComponent],
       imports: [
+        DateValueHandlerComponent,
         BrowserAnimationsModule,
         MatButtonModule,
+        MatButtonToggleModule,
         MatFormFieldModule,
         MatIconModule,
         MatInputModule,
-        MatTooltipModule,
-        ReactiveFormsModule,
-      ],
-    }).compileComponents();
-  });
-
-  beforeEach(() => {
-    testHostFixture = TestBed.createComponent(TestHostComponent);
-    testHostComponent = testHostFixture.componentInstance;
-    testHostFixture.detectChanges();
-
-    expect(testHostComponent).toBeTruthy();
-  });
-
-  it('should initialize a date correctly', async () => {
-    expect(testHostComponent.dateValueHandlerComponent.startDate.value).toEqual(
-      new KnoraDate('JULIAN', 'CE', 2018, 5, 19)
-    );
-
-    expect(testHostComponent.dateValueHandlerComponent.isPeriodControl.value).toBeFalse();
-
-    expect(testHostComponent.dateValueHandlerComponent.endDate.value).toBeNull();
-
-    const hostCompDe = testHostFixture.debugElement;
-    const datePickerComponentDe = hostCompDe.query(By.directive(TestDatePickerComponent));
-
-    expect((datePickerComponentDe.componentInstance as TestDatePickerComponent).value).toEqual(
-      new KnoraDate('JULIAN', 'CE', 2018, 5, 19)
-    );
-
-    expect(testHostComponent.dateValueHandlerComponent.form.valid).toBe(true);
-
-    expect(testHostComponent.dateValueHandlerComponent.value instanceof KnoraDate).toBe(true);
-
-    expect(testHostComponent.dateValueHandlerComponent.value).toEqual(new KnoraDate('JULIAN', 'CE', 2018, 5, 19));
-  });
-
-  it('should initialize a period correctly', async () => {
-    testHostComponent.form.controls.date.setValue(
-      new KnoraPeriod(new KnoraDate('JULIAN', 'CE', 2018, 5, 19), new KnoraDate('JULIAN', 'CE', 2019, 5, 19))
-    );
-
-    expect(testHostComponent.dateValueHandlerComponent.calendarControl.value).toEqual('JULIAN');
-
-    expect(testHostComponent.dateValueHandlerComponent.startDate.value).toEqual(
-      new KnoraDate('JULIAN', 'CE', 2018, 5, 19)
-    );
-
-    expect(testHostComponent.dateValueHandlerComponent.isPeriodControl.value).toBeTrue();
-
-    expect(testHostComponent.dateValueHandlerComponent.endDate.value).toEqual(
-      new KnoraDate('JULIAN', 'CE', 2019, 5, 19)
-    );
-
-    testHostFixture.detectChanges();
-
-    const hostCompDe = testHostFixture.debugElement;
-
-    const startDateEditComponentDe = hostCompDe.query(By.css('.start-date'));
-
-    const endDateEditComponentDe = hostCompDe.query(By.css('.end-date'));
-
-    expect((startDateEditComponentDe.componentInstance as TestDatePickerComponent).value).toEqual(
-      new KnoraDate('JULIAN', 'CE', 2018, 5, 19)
-    );
-
-    expect((endDateEditComponentDe.componentInstance as TestDatePickerComponent).value).toEqual(
-      new KnoraDate('JULIAN', 'CE', 2019, 5, 19)
-    );
-
-    expect(testHostComponent.dateValueHandlerComponent.form.valid).toBe(true);
-
-    expect(testHostComponent.dateValueHandlerComponent.value instanceof KnoraPeriod).toBe(true);
-
-    expect(testHostComponent.dateValueHandlerComponent.value).toEqual(
-      new KnoraPeriod(new KnoraDate('JULIAN', 'CE', 2018, 5, 19), new KnoraDate('JULIAN', 'CE', 2019, 5, 19))
-    );
-  });
-
-  it('should react correctly to changing the calendar for a period', () => {
-    testHostComponent.form.controls.date.setValue(
-      new KnoraPeriod(new KnoraDate('JULIAN', 'CE', 2018, 5, 19), new KnoraDate('JULIAN', 'CE', 2019, 5, 19))
-    );
-
-    // expect(testHostComponent.dateValueHandlerComponent.calendarControl.value).toEqual('JULIAN');
-
-    expect(testHostComponent.dateValueHandlerComponent.startDate.value).toEqual(
-      new KnoraDate('JULIAN', 'CE', 2018, 5, 19)
-    );
-
-    expect(testHostComponent.dateValueHandlerComponent.isPeriodControl.value).toBeTrue();
-
-    expect(testHostComponent.dateValueHandlerComponent.endDate.value).toEqual(
-      new KnoraDate('JULIAN', 'CE', 2019, 5, 19)
-    );
-
-    testHostFixture.detectChanges();
-
-    const hostCompDe = testHostFixture.debugElement;
-
-    const startDateEditComponentDe = hostCompDe.query(By.css('.start-date'));
-
-    expect((startDateEditComponentDe.componentInstance as TestDatePickerComponent).value.calendar).toEqual('JULIAN');
-
-    const endDateEditComponentDe = hostCompDe.query(By.css('.end-date'));
-
-    expect((endDateEditComponentDe.componentInstance as TestDatePickerComponent).value.calendar).toEqual('JULIAN');
-
-    testHostComponent.dateValueHandlerComponent.startDate.setValue(new KnoraDate('GREGORIAN', 'CE', 2018, 5, 19));
-
-    testHostFixture.detectChanges();
-
-    expect((startDateEditComponentDe.componentInstance as TestDatePickerComponent).value.calendar).toEqual('GREGORIAN');
-
-    expect((endDateEditComponentDe.componentInstance as TestDatePickerComponent).value.calendar).toEqual('GREGORIAN');
-  });
-
-  it('should propagate changes made by the user for a single date', async () => {
-    const hostCompDe = testHostFixture.debugElement;
-
-    const startDateEditComponentDe = hostCompDe.query(By.css('.start-date'));
-
-    (startDateEditComponentDe.componentInstance as TestDatePickerComponent).writeValue(
-      new KnoraDate('JULIAN', 'CE', 2019, 5, 19)
-    );
-    (startDateEditComponentDe.componentInstance as TestDatePickerComponent)._handleInput();
-
-    await testHostFixture.whenStable();
-
-    expect(testHostComponent.dateValueHandlerComponent.form.valid).toBe(true);
-
-    expect(testHostComponent.form.controls.date.value).toEqual(new KnoraDate('JULIAN', 'CE', 2019, 5, 19));
-  });
-
-  it('should propagate changes made by the user for a period', async () => {
-    testHostComponent.dateValueHandlerComponent.isPeriodControl.setValue(true);
-
-    testHostFixture.detectChanges();
-
-    const hostCompDe = testHostFixture.debugElement;
-
-    const startDateEditComponentDe = hostCompDe.query(By.css('.start-date'));
-
-    (startDateEditComponentDe.componentInstance as TestDatePickerComponent).writeValue(
-      new KnoraDate('JULIAN', 'CE', 2019, 5, 19)
-    );
-    (startDateEditComponentDe.componentInstance as TestDatePickerComponent)._handleInput();
-
-    testHostFixture.detectChanges();
-
-    const endDateEditComponentDe = hostCompDe.query(By.css('.end-date'));
-
-    (endDateEditComponentDe.componentInstance as TestDatePickerComponent).writeValue(
-      new KnoraDate('JULIAN', 'CE', 2020, 5, 19)
-    );
-    (endDateEditComponentDe.componentInstance as TestDatePickerComponent)._handleInput();
-
-    testHostFixture.detectChanges();
-
-    await testHostFixture.whenStable();
-
-    expect(testHostComponent.dateValueHandlerComponent.form.valid).toBe(true);
-
-    expect(testHostComponent.form.controls.date.value).toEqual(
-      new KnoraPeriod(new KnoraDate('JULIAN', 'CE', 2019, 5, 19), new KnoraDate('JULIAN', 'CE', 2020, 5, 19))
-    );
-
-    // access private _subscriptions property and ensure that each subscription is still open
-    testHostComponent.dateValueHandlerComponent['_subscriptions'].forEach(sub => {
-      expect(sub.closed).toBeFalse();
-    });
-  });
-
-  it('should return "null" for an invalid user input (start date greater than end date)', async () => {
-    testHostComponent.dateValueHandlerComponent.isPeriodControl.setValue(true);
-
-    testHostComponent.dateValueHandlerComponent.startDate.setValue(new KnoraDate('JULIAN', 'CE', 2021, 5, 19));
-
-    testHostComponent.dateValueHandlerComponent.endDate.setValue(new KnoraDate('JULIAN', 'CE', 2020, 5, 19));
-
-    await testHostFixture.whenStable();
-
-    expect(testHostComponent.dateValueHandlerComponent.form.valid).toBe(false);
-
-    expect(testHostComponent.form.controls.date.value).toBeNull();
-  });
-
-  it('should return "null" for an invalid user input (start date greater than end date) 2', async () => {
-    testHostComponent.dateValueHandlerComponent.isPeriodControl.setValue(true);
-
-    testHostComponent.dateValueHandlerComponent.startDate.setValue(new KnoraDate('JULIAN', 'CE', 2021, 5, 19));
-
-    testHostComponent.dateValueHandlerComponent.endDate.setValue(new KnoraDate('JULIAN', 'BCE', 2022, 5, 19));
-
-    await testHostFixture.whenStable();
-
-    expect(testHostComponent.dateValueHandlerComponent.form.valid).toBe(false);
-
-    expect(testHostComponent.form.controls.date.value).toBeNull();
-  });
-
-  it('should initialize the date with an empty value', () => {
-    testHostComponent.form.controls.date.setValue(null);
-
-    expect(testHostComponent.dateValueHandlerComponent.startDate.value).toBe(null);
-    expect(testHostComponent.dateValueHandlerComponent.isPeriodControl.value).toBe(false);
-    expect(testHostComponent.dateValueHandlerComponent.endDate.value).toBe(null);
-    expect(testHostComponent.dateValueHandlerComponent.calendarControl.value).toEqual('GREGORIAN');
-
-    expect(testHostComponent.dateValueHandlerComponent.form.valid).toBe(false);
-  });
-});
-
-describe('DateValueHandlerComponent (no validator required)', () => {
-  let testHostComponent: NoValueRequiredTestHostComponent;
-  let testHostFixture: ComponentFixture<NoValueRequiredTestHostComponent>;
-
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
-      imports: [
-        ReactiveFormsModule,
-        MatFormFieldModule,
-        MatInputModule,
+        MatMenuModule,
         MatSelectModule,
-        MatOptionModule,
-        MatCheckboxModule,
         MatTooltipModule,
-        MatIconModule,
-        BrowserAnimationsModule,
+        ReactiveFormsModule,
       ],
-      declarations: [DateValueHandlerComponent, TestDatePickerComponent, NoValueRequiredTestHostComponent],
+      providers: [Subject, provideTranslateService(), TranslateService],
     }).compileComponents();
-  }));
 
-  beforeEach(() => {
-    testHostFixture = TestBed.createComponent(NoValueRequiredTestHostComponent);
-    testHostComponent = testHostFixture.componentInstance;
-    testHostFixture.detectChanges();
-
-    expect(testHostComponent).toBeTruthy();
+    fixture = TestBed.createComponent(DateValueHandlerComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
   });
 
-  it('should propagate changes made by the user for a period', async () => {
-    expect(testHostComponent.dateValueHandlerComponent.isPeriodControl.value).toBeFalse();
+  /** Editing an existing period: the first write is the stored value. */
+  const editPeriod = (period: KnoraPeriod) => {
+    component.writeValue(period);
+    fixture.detectChanges();
+  };
 
-    testHostComponent.dateValueHandlerComponent.isPeriodControl.setValue(true);
+  const switchTo = (calendar: string) => {
+    component.calendarControl.setValue(calendar);
+    component.onCalendarSelected(calendar);
+    fixture.detectChanges();
+  };
 
-    expect(testHostComponent.dateValueHandlerComponent.isPeriodControl.value).toBeTrue();
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
 
-    testHostFixture.detectChanges();
+  describe('one calendar for the whole value (DEV-7372)', () => {
+    it('converts both ends together', () => {
+      editPeriod(
+        new KnoraPeriod(new KnoraDate('JULIAN', 'CE', 1580, 1, 1), new KnoraDate('JULIAN', 'CE', 1585, 6, 30))
+      );
 
-    const hostCompDe = testHostFixture.debugElement;
+      switchTo('GREGORIAN');
 
-    const startDateEditComponentDe = hostCompDe.query(By.css('.start-date'));
+      expect(component.startDate.value.calendar).toBe('GREGORIAN');
+      expect(component.endDate.value.calendar).toBe('GREGORIAN');
+    });
 
-    (startDateEditComponentDe.componentInstance as TestDatePickerComponent).writeValue(
-      new KnoraDate('JULIAN', 'CE', 2019, 5, 19)
-    );
-    (startDateEditComponentDe.componentInstance as TestDatePickerComponent)._handleInput();
+    it('takes the first day of the start span and the last of the end span', () => {
+      // An imprecise period must never shrink: Julian 1580–1585 covers Gregorian 1580–1586, and
+      // taking each span's start would end it in 1585 and silently drop a year of the period.
+      editPeriod(new KnoraPeriod(new KnoraDate('JULIAN', 'CE', 1580), new KnoraDate('JULIAN', 'CE', 1585)));
 
-    testHostFixture.detectChanges();
+      switchTo('GREGORIAN');
 
-    const endDateEditComponentDe = hostCompDe.query(By.css('.end-date'));
+      expect(component.startDate.value.year).toBe(1580);
+      expect(component.endDate.value.year).toBe(1586);
+    });
 
-    (endDateEditComponentDe.componentInstance as TestDatePickerComponent).writeValue(
-      new KnoraDate('JULIAN', 'CE', 2020, 5, 19)
-    );
-    (endDateEditComponentDe.componentInstance as TestDatePickerComponent)._handleInput();
+    it('does not shrink a period that spans a calendar boundary', () => {
+      const before = new KnoraPeriod(new KnoraDate('JULIAN', 'CE', 1580), new KnoraDate('JULIAN', 'CE', 1585));
+      editPeriod(before);
 
-    testHostFixture.detectChanges();
+      switchTo('GREGORIAN');
 
-    await testHostFixture.whenStable();
+      const start = component.startDate.value as KnoraDate;
+      const end = component.endDate.value as KnoraDate;
+      expect(end.year - start.year).toBeGreaterThanOrEqual(1585 - 1580);
+    });
 
-    expect(testHostComponent.dateValueHandlerComponent.form.valid).toBe(true);
+    it('restores the stored period exactly when switched away and back', () => {
+      editPeriod(new KnoraPeriod(new KnoraDate('JULIAN', 'CE', 1580), new KnoraDate('JULIAN', 'CE', 1585)));
 
-    expect(testHostComponent.form.controls.date.value).toEqual(
-      new KnoraPeriod(new KnoraDate('JULIAN', 'CE', 2019, 5, 19), new KnoraDate('JULIAN', 'CE', 2020, 5, 19))
-    );
+      switchTo('GREGORIAN');
+      switchTo('JULIAN');
 
-    // access private _subscriptions property and ensure that each subscription is still open
-    testHostComponent.dateValueHandlerComponent['_subscriptions'].forEach(sub => {
-      expect(sub.closed).toBeFalse();
+      expect(component.startDate.value.year).toBe(1580);
+      expect(component.endDate.value.year).toBe(1585);
+    });
+
+    it('offers a calendar only when both ends can be expressed in it', () => {
+      // A period carries one calendar, so a calendar that cannot express one end cannot express
+      // the value — offering it would produce a period with no Islamic form for half of itself.
+      editPeriod(
+        new KnoraPeriod(new KnoraDate('GREGORIAN', 'CE', 500, 1, 1), new KnoraDate('GREGORIAN', 'CE', 700, 1, 1))
+      );
+
+      expect(component.isCalendarAvailable('ISLAMIC')).toBe(false);
+      expect(component.isCalendarAvailable('JULIAN')).toBe(true);
+    });
+
+    it('offers every calendar when both ends are representable', () => {
+      editPeriod(
+        new KnoraPeriod(new KnoraDate('GREGORIAN', 'CE', 2020, 1, 1), new KnoraDate('GREGORIAN', 'CE', 2024, 1, 1))
+      );
+
+      expect(component.isCalendarAvailable('ISLAMIC')).toBe(true);
+    });
+
+    it('reports that conversions still measure from the stored period', () => {
+      editPeriod(new KnoraPeriod(new KnoraDate('JULIAN', 'CE', 1580), new KnoraDate('JULIAN', 'CE', 1585)));
+
+      switchTo('GREGORIAN');
+
+      expect(component.isBaseTheStoredValue).toBe(true);
+    });
+
+    it('measures from the user entry once they edit an end', () => {
+      editPeriod(new KnoraPeriod(new KnoraDate('JULIAN', 'CE', 1580), new KnoraDate('JULIAN', 'CE', 1585)));
+
+      component.endDate.setValue(new KnoraDate('JULIAN', 'CE', 1590));
+      component.onEndEdited();
+
+      expect(component.isBaseTheStoredValue).toBe(false);
+    });
+
+    it('still measures from the stored period after a conversion alone', () => {
+      // A conversion moves the ends on purpose — Julian 1580–1585 becomes Gregorian 1580–1586 so
+      // the period does not shrink — so moved ends are not evidence of an edit.
+      editPeriod(new KnoraPeriod(new KnoraDate('JULIAN', 'CE', 1580), new KnoraDate('JULIAN', 'CE', 1585)));
+
+      switchTo('GREGORIAN');
+      component.onEndEdited();
+
+      expect(component.isBaseTheStoredValue).toBe(true);
+    });
+
+    it('notices an edit made after a conversion', () => {
+      editPeriod(new KnoraPeriod(new KnoraDate('JULIAN', 'CE', 1580), new KnoraDate('JULIAN', 'CE', 1585)));
+      switchTo('GREGORIAN');
+
+      component.endDate.setValue(new KnoraDate('GREGORIAN', 'CE', 1600));
+      component.onEndEdited();
+
+      expect(component.isBaseTheStoredValue).toBe(false);
     });
   });
 
-  it('should not receive the propagated valueRequiredValidator from the parent component', () => {
-    expect(testHostComponent.dateValueHandlerComponent.valueRequiredValidator).toBe(false);
-  });
+  describe('a single date in the handler', () => {
+    it('converts a lone start date with no end', () => {
+      component.writeValue(new KnoraDate('JULIAN', 'CE', 1582, 6, 15));
+      fixture.detectChanges();
 
-  it("should mark the form's validity correctly", () => {
-    expect(testHostComponent.dateValueHandlerComponent.form.valid).toBe(true);
+      switchTo('GREGORIAN');
+
+      expect(component.startDate.value.calendar).toBe('GREGORIAN');
+      expect(component.endDate.value).toBeNull();
+    });
+
+    it('records the stored value from the first write only', () => {
+      // Later writes are the user's own edits; letting them move the stored value would make the
+      // conversion basis follow the edits and defeat the exact round trip.
+      const stored = new KnoraDate('JULIAN', 'CE', 1582, 6, 15);
+      component.writeValue(stored);
+      component.writeValue(new KnoraDate('JULIAN', 'CE', 1600, 1, 1));
+
+      expect(component.storedStartDate).toBe(stored);
+    });
+
+    it('records no stored value when adding', () => {
+      component.writeValue(null);
+
+      expect(component.storedStartDate).toBeNull();
+      expect(component.isBaseTheStoredValue).toBe(false);
+    });
   });
 });
-*/

@@ -1069,7 +1069,9 @@
       "convertedFromStored": "Converted from {{date}} (Stored value)",
       "preHijraNote": "Islamic is not available: this date lies before the Hijra. Islamic years start at 1 AH and have no negative years.",
       "sameAsStored": "Same date as the stored value. Nothing to save.",
-      "differsFromStored": "Differs from the stored value."
+      "differsFromStored": "Differs from the stored value.",
+      "oneCalendarForValue": "One calendar for the whole value, applied to start and end.",
+      "endBeforeStart": "End date must be after start date."
     },
     "calendarMarker": {
       "calendars": {

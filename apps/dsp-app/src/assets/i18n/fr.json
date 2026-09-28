@@ -1069,7 +1069,9 @@
       "convertedFromStored": "Converti depuis {{date}} (valeur enregistrée)",
       "preHijraNote": "Le calendrier islamique n'est pas disponible : cette date est antérieure à l'Hégire. Les années islamiques commencent à 1 AH et n'ont pas d'années négatives.",
       "sameAsStored": "Même date que la valeur enregistrée. Rien à enregistrer.",
-      "differsFromStored": "Diffère de la valeur enregistrée."
+      "differsFromStored": "Diffère de la valeur enregistrée.",
+      "oneCalendarForValue": "Un seul calendrier pour toute la valeur, appliqué au début et à la fin.",
+      "endBeforeStart": "La date de fin doit être postérieure à la date de début."
     },
     "calendarMarker": {
       "calendars": {
