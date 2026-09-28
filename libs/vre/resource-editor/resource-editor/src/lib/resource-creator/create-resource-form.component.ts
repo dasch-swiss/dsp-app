@@ -310,7 +310,12 @@ export class CreateResourceFormComponent implements OnInit {
         this.resourceClass = onto.classes[this.resourceClassIri];
         this.properties = this.resourceClass
           .getResourcePropertiesList()
-          .filter(v => v.propertyIndex.indexOf(ApiConstants.apiKnoraOntologyUrl))
+          // Description is the one knora-api property offered as a regular property on every project class.
+          .filter(
+            v =>
+              v.propertyIndex === Constants.HasDescription ||
+              !v.propertyIndex.startsWith(ApiConstants.apiKnoraOntologyUrl)
+          )
           .map(v => {
             // Safe cast: the ontology was loaded via OntologyCache.reloadCachedItem above,
             // which always requests allLanguages=true (see OntologyCache.requestItemFromKnora),

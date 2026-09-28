@@ -1,12 +1,35 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
+import { Cardinality, Constants, KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { ProjectDataRights, ProjectDataRightsService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { provideTranslateService, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
+import { FormValueArray, FormValueGroup } from '../properties/properties-display/property-value/form-value-array.type';
 import { CreateResourceFormComponent } from './create-resource-form.component';
+
+const KNORA_API_V2 = 'http://api.knora.org/ontology/knora-api/v2#';
+const TEST_CLASS_IRI = 'http://test.org/TestClass';
+
+const makeResourceProperty = (
+  propertyIndex: string,
+  cardinality: Cardinality,
+  objectType: string,
+  guiElement?: string
+) => ({
+  propertyIndex,
+  cardinality,
+  isInherited: false,
+  propertyDefinition: {
+    id: propertyIndex,
+    objectType,
+    guiElement,
+    isEditable: true,
+    labels: [],
+    comments: [],
+  },
+});
 
 describe('CreateResourceFormComponent', () => {
   let component: CreateResourceFormComponent;
@@ -147,6 +170,76 @@ describe('CreateResourceFormComponent', () => {
 
       expect(fixture.nativeElement.textContent).not.toContain(PLACEHOLDER);
       expect(fixture.nativeElement.innerHTML).not.toContain(PLACEHOLDER);
+    });
+  });
+
+  describe('hasDescription as a regular property', () => {
+    const HAS_STANDOFF_LINK_TO = `${KNORA_API_V2}hasStandoffLinkTo`;
+    const PROJECT_PROP = 'http://test.org/hasTitle';
+
+    const setResourceProperties = (props: unknown[]) => {
+      (mockDspApiConnection.v2.ontologyCache.getResourceClassDefinition as jest.Mock).mockReturnValue(
+        of({
+          classes: {
+            [TEST_CLASS_IRI]: {
+              id: TEST_CLASS_IRI,
+              getResourcePropertiesList: jest.fn().mockReturnValue(props),
+            },
+          },
+          properties: {},
+        })
+      );
+    };
+
+    it('includes hasDescription when the class has the cardinality, and excludes other knora-api properties', () => {
+      setResourceProperties([
+        makeResourceProperty(Constants.HasDescription, Cardinality._0_n, Constants.TextValue, Constants.GuiRichText),
+        makeResourceProperty(HAS_STANDOFF_LINK_TO, Cardinality._0_n, Constants.LinkValue),
+        makeResourceProperty(PROJECT_PROP, Cardinality._0_1, Constants.TextValue, Constants.GuiSimpleText),
+      ]);
+
+      component.ngOnInit();
+      fixture.detectChanges();
+
+      const ids = component.properties.map(prop => prop.propDef.id);
+      expect(ids).toContain(Constants.HasDescription);
+      expect(ids).toContain(PROJECT_PROP);
+      expect(ids).not.toContain(HAS_STANDOFF_LINK_TO);
+    });
+
+    it('sends a filled description in the payload under Constants.HasDescription', () => {
+      setResourceProperties([
+        makeResourceProperty(Constants.HasDescription, Cardinality._0_n, Constants.TextValue, Constants.GuiRichText),
+      ]);
+
+      component.ngOnInit();
+      fixture.detectChanges();
+
+      component.form.controls.label.setValue('My resource');
+      const descriptionArray = component.form.controls.properties.controls[Constants.HasDescription] as FormValueArray;
+      (descriptionArray.controls[0] as FormValueGroup).controls.item.setValue('<p>Hello world</p>');
+
+      component.submitData();
+
+      const payload = (mockDspApiConnection.v2.res.createResource as jest.Mock).mock.calls[0][0];
+      expect(payload.properties[Constants.HasDescription]).toBeDefined();
+      expect(payload.properties[Constants.HasDescription][0].xml).toContain('Hello world');
+    });
+
+    it('does not send an untouched description in the payload', () => {
+      setResourceProperties([
+        makeResourceProperty(Constants.HasDescription, Cardinality._0_n, Constants.TextValue, Constants.GuiRichText),
+      ]);
+
+      component.ngOnInit();
+      fixture.detectChanges();
+
+      component.form.controls.label.setValue('My resource');
+
+      component.submitData();
+
+      const payload = (mockDspApiConnection.v2.res.createResource as jest.Mock).mock.calls[0][0];
+      expect(payload.properties[Constants.HasDescription]).toBeUndefined();
     });
   });
 });
