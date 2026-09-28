@@ -721,11 +721,20 @@ export class AppDatePickerComponent
    * enters today's date, expressed in the calendar currently selected.
    *
    * Today is a Gregorian fact — that is what the system clock reports — and every other calendar
-   * is reached by the same conversion the rest of the picker uses. This replaced a per-calendar
-   * implementation that derived Islamic today from `Intl.DateTimeFormat`'s Umm al-Qura calendar
-   * and Julian today from a hand-written `0.75` century offset. The Julian offset agreed, but
-   * Umm al-Qura is an astronomical calendar and this app's is tabular, so "Today" entered an
-   * Islamic date two days from the one the viewer would then display back for it.
+   * is reached by the same conversion the rest of the picker uses.
+   *
+   * This replaced a per-calendar implementation: Julian from a hand-written `0.75` century offset,
+   * which agreed, and Islamic from `Intl.DateTimeFormat('en-TN-u-ca-islamic')`, which did not.
+   * That locale resolves to ICU's observation-based `islamic`, while this app, dsp-api and this
+   * picker's own day grid all use the tabular *civil* calendar. So "Today" was the only code in
+   * either layer on a different calendar, and on roughly 0.9% of days it produced a date with no
+   * place in the grid the user clicks — 30.08.1422, say, in a month rendered with 29 days, which
+   * reads back as 01.09.1422.
+   *
+   * There is no single correct Islamic calendar, so this is not a claim that one scheme beats
+   * another: it removes a disagreement inside one component. See
+   * `06-islamic-calendar-consistency.md` in dasch-specs, and the anchors in
+   * `islamic.calendar.spec.ts` that pin the client to dsp-api's stored values.
    */
   setToday() {
     const now = new Date();
