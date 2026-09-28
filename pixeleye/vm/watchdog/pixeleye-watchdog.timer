@@ -1,0 +1,9 @@
+[Unit]
+Description=Probe pixeleye-backend every 2 minutes
+
+[Timer]
+OnBootSec=5min
+OnUnitActiveSec=2min
+
+[Install]
+WantedBy=timers.target

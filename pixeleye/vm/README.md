@@ -79,6 +79,24 @@ done
 Only 80 and 443 should answer. Port 9000 closing is correct — MinIO is reached through
 Caddy on `s3.<HOST_BASE>`, not directly.
 
+## Watchdog
+
+The backend leaks DB transactions when snapshot ingestion hits `lock_timeout` (typically
+two builds ingesting concurrently). Once all `DB_MAX_CONNECTIONS` pool slots are bound to
+dead transactions, every DB-touching request hangs forever while the container stays
+`Up` — the dashboard spins, CI uploads hang, unauthenticated probes still answer. Upstream
+is dormant, so [`watchdog/`](watchdog/) probes an authenticated endpoint every 2 minutes
+and restarts `pixeleye-backend` after 2 consecutive failures (10-minute cooldown).
+
+Install (copy `watchdog/` to the VM first):
+
+```bash
+sudo ./watchdog/install.sh   # creates /etc/pixeleye-watchdog.env (0600)
+sudo $EDITOR /etc/pixeleye-watchdog.env   # set PIXELEYE_TOKEN
+sudo ./watchdog/install.sh   # enables the timer and runs a first probe
+journalctl -u pixeleye-watchdog -f
+```
+
 ## Known gotchas
 
 - **Never run the CLI from a developer machine against this instance.** Baselines are
