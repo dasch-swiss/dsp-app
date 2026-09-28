@@ -189,14 +189,15 @@ describe('calendar round trips (DEV-7372)', () => {
       expect(getCalendar('GREGORIAN').toJDN(firstGregorian)).toBe(2299161);
     });
 
-    it('maps the ten skipped days forward rather than round-tripping them', () => {
-      // 5–14 October 1582 never happened in the Gregorian calendar. They must not round-trip,
-      // and must not be mistaken for a regression when they do not.
+    it('round-trips the ten days the reform skipped, because the calendar is proleptic', () => {
+      // The reform skipped 5–14 October 1582 where it was enacted, but this calendar applies the
+      // Gregorian rule at every date and has no gap. DSP does not adjudicate which reckoning a
+      // source used — the project declares it — so a date recorded in that window is kept as
+      // recorded rather than silently moved ten days forward.
       for (let day = 5; day <= 14; day++) {
-        const skipped = createDate('GREGORIAN', 1582, 10, day);
-        const jdn = getCalendar('GREGORIAN').toJDN(skipped);
+        const jdn = getCalendar('GREGORIAN').toJDN(createDate('GREGORIAN', 1582, 10, day));
 
-        expect(getCalendar('GREGORIAN').fromJDN(jdn).day).not.toBe(day);
+        expect(getCalendar('GREGORIAN').fromJDN(jdn).day).toBe(day);
       }
     });
   });

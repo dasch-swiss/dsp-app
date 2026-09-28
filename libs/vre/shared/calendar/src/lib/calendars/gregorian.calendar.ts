@@ -38,24 +38,29 @@ import { CalendarDate, CalendarOperations } from '../types/calendar.types';
 const truncate = (num: number): number => Math[num < 0 ? 'ceil' : 'floor'](num);
 
 /**
- * The calendar reform boundary, expressed both ways.
+ * This calendar is **proleptic**: Gregorian arithmetic applies at every date, including before the
+ * reform of 15 October 1582.
  *
- * Pope Gregory XIII's reform took effect on 15 October 1582; 4 October 1582 (Julian) was followed
- * directly by 15 October. Dates on or after the boundary use the Gregorian rule, dates before it
- * the Julian one.
+ * That is a deliberate choice and it matches dsp-api, which builds its ICU calendar with
+ * `setGregorianChange(new Date(Long.MIN_VALUE))` — ICU's documented way of saying "the reform has
+ * always been in effect". Its own test suite pins `GREGORIAN:1291-08-01 CE` to JDN 2192801, seven
+ * days from the Julian reading of the same numerals, which only a proleptic calendar produces.
  *
- * `gregorianToJDN` needs the date form (it has a date and no JDN yet) and `gregorianFromJDN` the
- * JDN form (it has a JDN and no date yet). Both must describe the same instant, or the two
- * functions stop being inverses — which is exactly the defect DEV-7264 recorded.
+ * This library previously switched to the Julian rule before 1582. That made a project's declared
+ * calendar silently ignored for pre-reform dates — "Gregorian" meant Julian — and put the client
+ * seven days out from the server for exactly those dates. It also made `toJDN` non-injective: the
+ * ten days the reform skipped shared JDNs with the ten that replaced them, so two distinct stored
+ * values compared equal and one of them changed on a round trip.
+ *
+ * DSP does not adjudicate which calendar a source used; the project declares it and the software
+ * honours it. A witness may well have written a date in a reckoning that was not yet, or no longer,
+ * official where they lived, and the archive has to be able to hold that.
  */
-const GREGORIAN_START_YYYYMMDD = 15821015;
-const GREGORIAN_START_JDN = 2299161;
 
 /**
  * Converts a Gregorian calendar date to Julian Day Number (JDN).
  *
- * The algorithm handles the transition from Julian to Gregorian calendar
- * on October 15, 1582. Dates before this use Julian calendar calculations.
+ * Proleptic: the Gregorian rule applies at every date. See the note above the function.
  *
  * @param date - The Gregorian calendar date to convert
  * @returns The Julian Day Number (integer)
@@ -78,19 +83,9 @@ function gregorianToJDN(date: CalendarDate): number {
     month += 12;
   }
 
-  // Check if date is before October 15, 1582 (Gregorian calendar introduction)
-  // If before, use Julian calendar calculation
-  const idate = date.year * 10000 + (date.month ?? 1) * 100 + (date.day ?? 1);
-  let b = 0;
-
-  if (idate >= GREGORIAN_START_YYYYMMDD) {
-    // Gregorian calendar
-    const a = truncate(year / 100.0);
-    b = 2 - a + truncate(a / 4);
-  } else {
-    // Julian calendar
-    b = 0;
-  }
+  // The century correction, applied at every date: this calendar is proleptic. See the note above.
+  const a = truncate(year / 100.0);
+  const b = 2 - a + truncate(a / 4);
 
   // Calculate JDN using the Meeus algorithm
   const jdn = truncate(365.25 * (year + 4716)) + truncate(30.6001 * (month + 1)) + day + b - 1524;
@@ -114,17 +109,11 @@ function gregorianFromJDN(jdn: number): CalendarDate {
   const z = truncate(jdn + 0.5);
   const f = jdn + 0.5 - z;
 
-  // Mirror the switchover branch in `gregorianToJDN`: dates before 15 October 1582 (JDN 2299161)
-  // were encoded with the Julian rule, so they must be decoded with it too. Applying the Gregorian
-  // `alpha` correction unconditionally made the two functions disagree and broke the round trip by
-  // up to 10 days for pre-1582 dates (DEV-7264).
-  let a: number;
-  if (z < GREGORIAN_START_JDN) {
-    a = z;
-  } else {
-    const alpha = truncate((z - 1867216.25) / 36524.25);
-    a = z + 1 + alpha - truncate(alpha / 4);
-  }
+  // The inverse of the century correction in `gregorianToJDN`, applied at every JDN for the same
+  // reason. The two must branch alike or they stop being inverses, which is the defect DEV-7264
+  // recorded; with neither branching they are inverses everywhere.
+  const alpha = truncate((z - 1867216.25) / 36524.25);
+  const a = z + 1 + alpha - truncate(alpha / 4);
 
   const b = a + 1524;
   const c = truncate((b - 122.1) / 365.25);

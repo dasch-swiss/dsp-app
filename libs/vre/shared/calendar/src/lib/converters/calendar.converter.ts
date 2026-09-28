@@ -15,9 +15,9 @@ import { CalendarDate, CalendarSystem, CalendarError, ConversionResult } from '.
 /**
  * The first JDN each calendar can represent.
  *
- * Gregorian and Julian are proleptic here — they extend backwards indefinitely, and a pre-1582
- * "Gregorian" date is proleptically Julian by construction. The Islamic calendar is tabular and
- * genuinely starts at the Hijra, so it is the only one with a floor.
+ * Gregorian and Julian are both proleptic — each applies its own rule at every date and extends
+ * backwards indefinitely. The Islamic calendar is tabular and genuinely starts at the Hijra, so it
+ * is the only one with a floor.
  *
  * @internal
  */
