@@ -12,7 +12,7 @@ const TRANSLATIONS = {
     calendarMarker: {
       inEachCalendar: 'Stored in the {{calendar}} calendar. Show this date in every calendar.',
       beforeHijra: 'Before the Hijra',
-      calendars: { GREGORIAN: 'Gregorian', JULIAN: 'Julian', ISLAMIC: 'Islamic' },
+      calendars: { GREGORIAN: 'Gregorian', JULIAN: 'Julian', ISLAMIC: 'Islamic (tabular)' },
     },
   },
 };

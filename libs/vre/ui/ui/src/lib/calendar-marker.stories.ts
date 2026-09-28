@@ -11,7 +11,7 @@ const TRANSLATIONS = {
     calendarMarker: {
       inEachCalendar: 'Stored in the {{calendar}} calendar. Show this date in every calendar.',
       beforeHijra: 'Before the Hijra',
-      calendars: { GREGORIAN: 'Gregorian', JULIAN: 'Julian', ISLAMIC: 'Islamic' },
+      calendars: { GREGORIAN: 'Gregorian', JULIAN: 'Julian', ISLAMIC: 'Islamic (tabular)' },
     },
   },
 };
@@ -171,8 +171,10 @@ export const NamesItsPurposeToAssistiveTechnology: Story = {
     await step('The accessible name states the stored calendar and the action', async () => {
       // A bare "Islamic" would read as a label; the name has to say that activating it does
       // something, since the visible dotted underline conveys that only to sighted readers.
+      // The scheme is named to assistive technology as well as on screen: a screen-reader user
+      // otherwise gets a bare "Islamic" that claims more than the app can back (DEV-7429).
       await expect(marker(canvasElement).getAttribute('aria-label')).toBe(
-        'Stored in the Islamic calendar. Show this date in every calendar.'
+        'Stored in the Islamic (tabular) calendar. Show this date in every calendar.'
       );
     });
     await step('Opening state is exposed, not only drawn', async () => {

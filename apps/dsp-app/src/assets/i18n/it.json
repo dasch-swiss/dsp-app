@@ -1077,7 +1077,7 @@
       "calendars": {
         "GREGORIAN": "Gregoriano",
         "JULIAN": "Giuliano",
-        "ISLAMIC": "Islamico"
+        "ISLAMIC": "Islamico (tabulare)"
       },
       "beforeHijra": "Prima dell'Egira",
       "inEachCalendar": "{{calendar}}. Questa data in ogni calendario"

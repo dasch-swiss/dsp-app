@@ -1,10 +1,30 @@
-import { Pipe, PipeTransform } from '@angular/core';
+import { inject, Pipe, PipeTransform } from '@angular/core';
 import { KnoraDate } from '@dasch-swiss/dsp-js';
+import { TranslateService } from '@ngx-translate/core';
 
 @Pipe({
   name: 'knoraDate',
 })
 export class KnoraDatePipe implements PipeTransform {
+  /**
+   * Optional because this pipe is also constructed directly with `new KnoraDatePipe()` — by the
+   * date viewer and by its own spec — where there is no injector. Without a translate service the
+   * calendar name falls back to title case, which is what it printed before.
+   */
+  private readonly _translate = inject(TranslateService, { optional: true });
+
+  /**
+   * The calendar's name as a reader should see it.
+   *
+   * Translated rather than title-cased: the name was previously English in every language, and the
+   * Islamic entry now also states which Islamic calendar this is — there are several, and they
+   * disagree by a day or two, so a bare "Islamic" claims more than the app can back (DEV-7429).
+   */
+  private _calendarName(calendar: string): string {
+    const key = `ui.calendarMarker.calendars.${calendar.toUpperCase()}`;
+    const translated = this._translate?.instant(key);
+    return translated && translated !== key ? translated : this._titleCase(calendar);
+  }
   transform(date: KnoraDate, format?: string, displayOptions?: 'era' | 'calendar' | 'calendarOnly' | 'all'): string {
     if (!(date instanceof KnoraDate)) {
       // console.error('Non-KnoraDate provided. Expected a valid KnoraDate');
@@ -37,14 +57,14 @@ export class KnoraDatePipe implements PipeTransform {
         return value + (date.era === 'noEra' ? '' : date.era === 'BCE' || date.era === 'AD' ? ` ${date.era}` : '');
       case 'calendar':
         // displays date without era but with calendar type
-        return `${value} ${this._titleCase(date.calendar)}`;
+        return `${value} ${this._calendarName(date.calendar)}`;
       case 'calendarOnly':
         // displays only the selected calendar type without any data
-        return this._titleCase(date.calendar);
+        return this._calendarName(date.calendar);
       case 'all':
       default:
         // displays date with era (only as BCE) and selected calendar type
-        return `${value + (date.era === 'noEra' ? '' : date.era === 'BCE' ? ` ${date.era}` : '')} ${this._titleCase(
+        return `${value + (date.era === 'noEra' ? '' : date.era === 'BCE' ? ` ${date.era}` : '')} ${this._calendarName(
           date.calendar
         )}`;
     }

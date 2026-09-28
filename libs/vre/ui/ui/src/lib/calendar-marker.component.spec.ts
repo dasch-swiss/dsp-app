@@ -113,4 +113,20 @@ describe('CalendarMarkerComponent', () => {
       expect(asAny().ordered()[0].date).toBe('09.09.1999');
     });
   });
+  describe('naming which Islamic calendar (DEV-7372)', () => {
+    // There are several normative Islamic calendars and they disagree by a day or two. The app
+    // implements the tabular one; a bare "Islamic" would present it as *the* Islamic date, which
+    // for historical material is a claim the app cannot back (DEV-7429).
+
+    it('names the scheme through the same key as every other calendar', () => {
+      // The marker renders `ui.calendarMarker.calendars.<CALENDAR>`, so naming the scheme in that
+      // one key reaches the trigger and every reading row at once — including for a value the
+      // reader never chose, which is the case that matters most.
+      fixture.componentRef.setInput('storedCalendar', 'ISLAMIC');
+      fixture.componentRef.setInput('readings', [{ calendar: 'ISLAMIC', date: '08.12.1445' }]);
+      fixture.detectChanges();
+
+      expect((component as any).storedLabel()).toBe('ui.calendarMarker.calendars.ISLAMIC');
+    });
+  });
 });

@@ -67,7 +67,7 @@ const STORY_TRANSLATIONS = {
     // Advanced search renders the picker, not the viewer's calendar marker, so only the picker's
     // own calendar names are needed here.
     calendarMarker: {
-      calendars: { GREGORIAN: 'Gregorian', JULIAN: 'Julian', ISLAMIC: 'Islamic' },
+      calendars: { GREGORIAN: 'Gregorian', JULIAN: 'Julian', ISLAMIC: 'Islamic (tabular)' },
     },
   },
   pages: {
