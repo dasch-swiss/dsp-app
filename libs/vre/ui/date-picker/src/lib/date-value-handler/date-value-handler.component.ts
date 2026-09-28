@@ -91,6 +91,19 @@ export class DateValueHandlerComponent
   pickerClosed = false;
   readonly focused = false;
 
+  /**
+   * the value as it was stored, when this handler is editing an existing one.
+   *
+   * Captured from the first write rather than taken as an input: `writeValue` delivers the stored
+   * value when a form is initialised for editing, and delivers null when adding. Later writes are
+   * the user's own edits, which must not move this — it is what the picker's calendar switches
+   * convert from, so that switching away and back restores the stored date exactly.
+   */
+  storedStartDate: KnoraDate | null = null;
+  storedEndDate: KnoraDate | null = null;
+
+  private _storedValueCaptured = false;
+
   readonly controlType = 'app-date-value-handler';
 
   calendars = ['GREGORIAN', 'JULIAN', 'ISLAMIC'];
@@ -313,7 +326,23 @@ export class DateValueHandlerComponent
   }
 
   writeValue(date: KnoraDate | KnoraPeriod | null): void {
+    this._captureStoredValue(date);
     this.value = date;
+  }
+
+  /** records the first written value as the stored one, which is what conversions measure from. */
+  private _captureStoredValue(date: KnoraDate | KnoraPeriod | null): void {
+    if (this._storedValueCaptured) {
+      return;
+    }
+    this._storedValueCaptured = true;
+
+    if (date instanceof KnoraDate) {
+      this.storedStartDate = date;
+    } else if (date instanceof KnoraPeriod) {
+      this.storedStartDate = date.start;
+      this.storedEndDate = date.end;
+    }
   }
 
   registerOnChange(fn: any): void {

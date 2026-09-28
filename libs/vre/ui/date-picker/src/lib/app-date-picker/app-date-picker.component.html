@@ -29,27 +29,70 @@
 <!-- <button mat-button [matMenuTriggerFor]="menu">Menu</button> -->
 <mat-menu #datePicker="matMenu" [formGroup]="form" class="date-picker" (closed)="datePickerClosed.emit()">
   <div class="date-picker-content" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()">
-    <!-- select calendar and button to close date picker -->
+    <!-- the value as stored, so a reader editing it can see what they are changing -->
+    @if (storedValue) {
+    <p class="stored-value-line" data-cy="stored-value-line">
+      <mat-icon class="line-icon">lock</mat-icon>
+      {{ 'ui.datePicker.storedValue' | translate: { date: transform(storedValue, 'dd.MM.YYYY', 'all') } }}
+    </p>
+    }
+
+    <!-- select calendar -->
     <div class="calendar-selector panel">
-      <mat-form-field class="calendar">
-        <mat-label>{{ 'ui.datePicker.calendar' | translate }}</mat-label>
-        <mat-select formControlName="calendar" class="center" data-cy="calendar-select">
-          @for (cal of calendars; track cal) {
-          <mat-option [value]="cal" [disabled]="!isCalendarAvailable(cal)" [attr.data-cy]="'calendar-option-' + cal">
-            {{ 'ui.calendarMarker.calendars.' + cal | translate }}
-          </mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
-      <span class="fill-remaining-space"></span>
+      <mat-button-toggle-group
+        class="calendar-segmented"
+        formControlName="calendar"
+        data-cy="calendar-select"
+        [attr.aria-label]="'ui.datePicker.calendar' | translate">
+        @for (cal of calendars; track cal) {
+        <mat-button-toggle [value]="cal" [disabled]="!isCalendarAvailable(cal)" [attr.data-cy]="'calendar-option-' + cal">
+          {{ 'ui.calendarMarker.calendars.' + cal | translate }}
+        </mat-button-toggle>
+        }
+      </mat-button-toggle-group>
+    </div>
+
+    <!-- why Islamic cannot be chosen, rather than only greying it out -->
+    @if (!isCalendarAvailable('ISLAMIC')) {
+    <p class="picker-note" data-cy="pre-hijra-note">
+      <mat-icon class="line-icon">info</mat-icon>
+      {{ 'ui.datePicker.preHijraNote' | translate }}
+    </p>
+    }
+
+    <!-- what this entry was converted from, so the shift is never silent -->
+    @if (isConverted() && conversionBase) {
+    <p class="picker-note converted" data-cy="converted-from">
+      <mat-icon class="line-icon">swap_horiz</mat-icon>
+      @if (isBaseTheStoredValue()) {
+      {{ 'ui.datePicker.convertedFromStored' | translate: { date: transform(conversionBase, 'dd.MM.YYYY', 'all') } }}
+      } @else {
+      {{ 'ui.datePicker.convertedFrom' | translate: { date: transform(conversionBase, 'dd.MM.YYYY', 'all') } }}
+      }
+    </p>
+    }
+
+    <div class="picker-footer panel">
       @if (value) {
       <span class="will-be-stored" data-cy="will-be-stored">
         {{ 'ui.datePicker.willBeStoredAs' | translate: { date: transform(value, 'dd.MM.YYYY', 'all') } }}
       </span>
       }
+      <!-- whether saving would change anything: has to agree with the save gate, which compares
+      instants, so a calendar switch alone reads as nothing to save -->
+      @if (storedValue && value) {
+      <span class="save-status" [class.differs]="!isUnchangedFromStored()" data-cy="save-status">
+        @if (isUnchangedFromStored()) {
+        {{ 'ui.datePicker.sameAsStored' | translate }}
+        } @else {
+        {{ 'ui.datePicker.differsFromStored' | translate }}
+        }
+      </span>
+      }
+      <span class="fill-remaining-space"></span>
       <div class="action">
         <!-- go to the current date -->
-        <button mat-button (click)="setToday()">{{ 'ui.datePicker.today' | translate }}</button>
+        <button mat-button (click)="setToday(); closeDatePicker()">{{ 'ui.datePicker.today' | translate }}</button>
         <!-- submit button (which is needed if date doesn't have precision on an exact day) -->
         <button mat-icon-button color="primary" [disabled]="!form.valid" (click)="setDate(day); closeDatePicker()">
           <mat-icon>done</mat-icon>

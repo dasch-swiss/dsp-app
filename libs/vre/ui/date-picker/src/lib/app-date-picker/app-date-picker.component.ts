@@ -98,6 +98,19 @@ export class AppDatePickerComponent
   // set predefinde calendar
   @Input() calendar = 'GREGORIAN';
 
+  /**
+   * the value as it is stored, when editing an existing one; absent when adding a new one.
+   *
+   * This is what a calendar switch converts from while editing, so switching away and back
+   * restores the stored date exactly rather than the round trip's drift: Julian 1582 converts to
+   * Gregorian 1582/1583, and converting that back lands on 1581. Measuring every switch from the
+   * stored value instead means the user can explore calendars without silently editing the value.
+   *
+   * A new value has nothing to measure from, so it converts from the current entry and the drift
+   * is real — the user is choosing the date, not reading one.
+   */
+  @Input() storedValue: KnoraDate | null = null;
+
   @HostBinding()
   id = `app-date-picker-${AppDatePickerComponent.nextId++}`;
 
@@ -152,6 +165,21 @@ export class AppDatePickerComponent
 
   era = 'CE';
   // ------
+
+  /**
+   * what the next calendar switch converts from.
+   *
+   * Deliberately a plain field rather than form state: `buildForm()` replaces the form on every
+   * write to `value` — including this component's own re-entry through `setDate()` — and the
+   * `value` setter reassigns `this.calendar` from the incoming date each time. A base held in the
+   * form, or recomputed from `this.calendar`, would be reset by the component's own conversion and
+   * every switch would measure from the last conversion again, which is the drift this exists to
+   * avoid.
+   *
+   * Starts as the stored value while editing, becomes the user's entry once they edit a date
+   * field, and is null while adding, where each switch converts from the current entry.
+   */
+  private _conversionBase: KnoraDate | null = null;
 
   private _required = false;
   private _disabled = false;
@@ -277,6 +305,13 @@ export class AppDatePickerComponent
     // update the calendar form control
     if (changes['calendar'] && this.disableCalendarSelector) {
       this._updateForm();
+    }
+
+    // A stored value arriving means this picker is editing rather than adding, so conversions
+    // start measuring from it. Seeded here rather than in the `value` setter because that setter
+    // also runs on the component's own conversions, which must not move the base.
+    if (changes['storedValue']) {
+      this._conversionBase = this.storedValue;
     }
   }
 
@@ -502,7 +537,19 @@ export class AppDatePickerComponent
       return false;
     }
 
-    const converted = this._valueService.convertKnoraDateTo(current, target);
+    // Convert from the base, not from what is on screen. While editing an existing value the base
+    // is the stored date, so switching Julian → Gregorian → Julian restores it exactly; converting
+    // the displayed date each time would land on 1581 for a stored 1582.
+    const source = this._conversionBase ?? current;
+
+    // Returning to the base's own calendar is a return, not a conversion: take the base verbatim
+    // so an imprecise date comes back at its stored precision rather than at a span's start.
+    if (source.calendar.toUpperCase() === target) {
+      this._applyDate(source);
+      return true;
+    }
+
+    const converted = this._valueService.convertKnoraDateTo(source, target);
     if (converted === undefined) {
       this.form.controls['calendar'].setValue(current.calendar, { emitEvent: false });
       return true;
@@ -510,18 +557,24 @@ export class AppDatePickerComponent
 
     // A converted year or month can span two of the target calendar's; the picker holds a single
     // date, so it takes the start of that span. Rendering the span is the viewer's concern.
-    const start = converted.start;
-
-    this.calendar = target;
-    this.era = start.era;
-    this.year = start.year;
-    this.month = start.month ?? 0;
-    this.day = start.day;
-
-    this.form.patchValue({ era: start.era, year: start.year, month: start.month ?? '' }, { emitEvent: false });
-
-    this.setDate(start.day);
+    this._applyDate(converted.start);
     return true;
+  }
+
+  /** writes one date into the picker's fields and its form, without re-triggering a conversion. */
+  private _applyDate(date: KnoraDate): void {
+    this.calendar = date.calendar.toUpperCase();
+    this.era = date.era;
+    this.year = date.year;
+    this.month = date.month ?? 0;
+    this.day = date.day;
+
+    this.form.patchValue(
+      { calendar: this.calendar, era: date.era, year: date.year, month: date.month ?? '' },
+      { emitEvent: false }
+    );
+
+    this.setDate(date.day);
   }
 
   /**
@@ -583,6 +636,12 @@ export class AppDatePickerComponent
     });
 
     this.setDate(this.day);
+
+    // After `setDate`, not before: `this.value` is read off the form's committed date, so calling
+    // this any earlier compares the base against the pre-edit value, finds them equal, and never
+    // rebases. Reaching here at all means this pass was a real edit to year, month, era or day
+    // rather than a calendar switch, which returned above.
+    this._rebaseOnUserEdit();
   }
 
   setDate(day?: number) {
@@ -601,64 +660,90 @@ export class AppDatePickerComponent
     }
   }
 
+  /**
+   * moves the conversion base onto the user's own entry.
+   *
+   * Only meaningful while editing an existing value: adding has no base, and each switch already
+   * converts from the current entry. Once the entry differs from the stored value, "(Stored value)"
+   * stops being true of what conversions measure from, which is what {@link isBaseTheStoredValue}
+   * reports.
+   */
+  private _rebaseOnUserEdit(): void {
+    const current = this.value;
+    if (current === null || this.storedValue === null) {
+      return;
+    }
+    if (
+      this._conversionBase !== null &&
+      this._valueService.knoraDatesDenoteSameInstant(this._conversionBase, current)
+    ) {
+      return;
+    }
+    this._conversionBase = current;
+  }
+
+  /** whether conversions still measure from the stored value, which the "(Stored value)" suffix states. */
+  isBaseTheStoredValue(): boolean {
+    return this.storedValue !== null && this._conversionBase === this.storedValue;
+  }
+
+  /**
+   * whether the entry still denotes the same day as the stored value.
+   *
+   * Compares instants rather than fields, so a calendar switch alone reads as unchanged: that is
+   * the same comparison the save gate uses, and the status line has to agree with it or the picker
+   * would promise a save the gate then refuses (REQ-3.9).
+   */
+  isUnchangedFromStored(): boolean {
+    const current = this.value;
+    if (this.storedValue === null || current === null) {
+      return false;
+    }
+    return this._valueService.knoraDatesDenoteSameInstant(this.storedValue, current);
+  }
+
+  /** the date a conversion measures from, for the "Converted from ..." line. */
+  get conversionBase(): KnoraDate | null {
+    return this._conversionBase;
+  }
+
+  /** whether the entry is shown in a calendar other than the one it is measured from. */
+  isConverted(): boolean {
+    const current = this.value;
+    return (
+      current !== null &&
+      this._conversionBase !== null &&
+      current.calendar.toUpperCase() !== this._conversionBase.calendar.toUpperCase()
+    );
+  }
+
+  /**
+   * enters today's date, expressed in the calendar currently selected.
+   *
+   * Today is a Gregorian fact — that is what the system clock reports — and every other calendar
+   * is reached by the same conversion the rest of the picker uses. This replaced a per-calendar
+   * implementation that derived Islamic today from `Intl.DateTimeFormat`'s Umm al-Qura calendar
+   * and Julian today from a hand-written `0.75` century offset. The Julian offset agreed, but
+   * Umm al-Qura is an astronomical calendar and this app's is tabular, so "Today" entered an
+   * Islamic date two days from the one the viewer would then display back for it.
+   */
   setToday() {
-    const today = new Date();
+    const now = new Date();
+    const today = new KnoraDate('GREGORIAN', 'CE', now.getFullYear(), now.getMonth() + 1, now.getDate());
 
-    let day: number;
-    let month: number;
-    let year: number;
+    const target = this.calendar.toUpperCase() as CalendarSystem;
+    const converted = target === 'GREGORIAN' ? today : this._valueService.convertKnoraDateTo(today, target)?.start;
 
-    let islamicDay: string;
-    let islamicMonth: string;
-    let islamicYear: string;
-
-    let julianDate: Date;
-    let difference: number;
-
-    this.era = 'CE';
-
-    switch (this.calendar) {
-      // islamic calendar
-      case 'ISLAMIC':
-        // found solution and formula here:
-        // https://medium.com/@Saf_Bes/get-today-hijri-date-in-javascript-90855d3cd45b
-        islamicDay = new Intl.DateTimeFormat('en-TN-u-ca-islamic', {
-          day: 'numeric',
-        }).format(today);
-        islamicMonth = new Intl.DateTimeFormat('en-TN-u-ca-islamic', {
-          month: 'numeric',
-        }).format(today);
-        islamicYear = new Intl.DateTimeFormat('en-TN-u-ca-islamic', {
-          year: 'numeric',
-        }).format(today);
-        day = parseInt(islamicDay, 10);
-        month = parseInt(islamicMonth, 10);
-        year = parseInt(islamicYear.substring(0, 4), 10);
-        this.era = 'noEra';
-        break;
-
-      // julian calendar
-      case 'JULIAN':
-        // found solution and formula here:
-        // https://sciencing.com/convert-julian-date-calender-date-6017669.html
-        julianDate = new Date();
-        difference = parseInt(`${julianDate.getFullYear()}`.substring(0, 2), 10) * 0.75 - 1.25;
-        julianDate.setDate(julianDate.getDate() - Math.floor(difference));
-        day = julianDate.getDate();
-        month = julianDate.getMonth() + 1;
-        year = julianDate.getFullYear();
-        break;
-
-      // gregorian calendar
-      default:
-        day = today.getDate();
-        month = today.getMonth() + 1;
-        year = today.getFullYear();
+    // Every calendar can express today, so this is a guard rather than a reachable path; leaving
+    // the entry untouched is the honest response to a conversion that did not happen.
+    if (converted === undefined) {
+      return;
     }
 
-    this.day = day;
-    this.month = month;
-    this.year = year;
+    this.era = converted.era;
+    this.day = converted.day;
+    this.month = converted.month ?? 0;
+    this.year = converted.year;
     this._updateForm();
   }
 

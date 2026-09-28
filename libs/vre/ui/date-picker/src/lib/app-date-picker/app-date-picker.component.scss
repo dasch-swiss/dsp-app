@@ -22,9 +22,28 @@
   }
 
   &.calendar-selector {
-    .calendar {
+    display: block;
+
+    // Three equal columns, so the control reads as one choice among three rather than as a row of
+    // buttons, and so a longer translation ("Islamisch", "islamique") does not resize its
+    // neighbours.
+    .calendar-segmented {
       width: 100%;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+
+      mat-button-toggle {
+        font-size: 13px;
+      }
     }
+  }
+
+  &.picker-footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
+    margin-top: 8px;
 
     .action {
       display: flex;
@@ -109,5 +128,41 @@
     mat-icon {
       margin: 6px;
     }
+  }
+}
+
+// The lines that explain what the picker is doing to the value: what is stored, what a conversion
+// came from, why a calendar is unavailable, and whether saving would change anything. Quiet by
+// default — they are read when the user wonders, not announcements.
+.stored-value-line,
+.picker-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+  margin: 8px 8px 0;
+  width: 280px;
+  font-size: 12px;
+  line-height: 1.4;
+  color: #4b5563;
+}
+
+.picker-note.converted {
+  color: #1d4ed8;
+}
+
+.line-icon {
+  font-size: 14px;
+  width: 14px;
+  height: 14px;
+  flex: none;
+}
+
+.save-status {
+  font-size: 12px;
+  color: #4b5563;
+
+  // A real edit is the state worth noticing: it is the one that will be written.
+  &.differs {
+    color: #b45309;
   }
 }

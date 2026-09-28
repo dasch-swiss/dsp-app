@@ -1063,7 +1063,13 @@
       "none": "None",
       "year": "Year",
       "bceWarning": "Attention: Date <strong>before common era</strong>.",
-      "willBeStoredAs": "will be stored as {{date}}"
+      "willBeStoredAs": "will be stored as {{date}}",
+      "storedValue": "Stored value: {{date}}",
+      "convertedFrom": "Converted from {{date}}",
+      "convertedFromStored": "Converted from {{date}} (Stored value)",
+      "preHijraNote": "Islamic is not available: this date lies before the Hijra. Islamic years start at 1 AH and have no negative years.",
+      "sameAsStored": "Same date as the stored value. Nothing to save.",
+      "differsFromStored": "Differs from the stored value."
     },
     "calendarMarker": {
       "calendars": {

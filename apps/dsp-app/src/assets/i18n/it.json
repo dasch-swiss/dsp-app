@@ -1063,7 +1063,13 @@
       "none": "Nessuno",
       "year": "Anno",
       "bceWarning": "Attenzione: Data <strong>prima dell'era comune</strong>.",
-      "willBeStoredAs": "sarà memorizzato come {{date}}"
+      "willBeStoredAs": "sarà memorizzato come {{date}}",
+      "storedValue": "Valore memorizzato: {{date}}",
+      "convertedFrom": "Convertito da {{date}}",
+      "convertedFromStored": "Convertito da {{date}} (valore memorizzato)",
+      "preHijraNote": "Il calendario islamico non è disponibile: questa data precede l'Egira. Gli anni islamici iniziano con 1 AH e non hanno anni negativi.",
+      "sameAsStored": "Stessa data del valore memorizzato. Niente da salvare.",
+      "differsFromStored": "Differisce dal valore memorizzato."
     },
     "calendarMarker": {
       "calendars": {
