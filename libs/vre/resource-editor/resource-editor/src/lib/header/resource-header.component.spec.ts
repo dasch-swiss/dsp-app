@@ -7,7 +7,6 @@ import { of } from 'rxjs';
 import { ResourceFetcherService } from '../representation/resource-fetcher.service';
 import { ResourceHeaderComponent } from './resource-header.component';
 
-const KNORA_API_V2 = 'http://api.knora.org/ontology/knora-api/v2#';
 const PROJECT_CLASS = 'http://example.org/ontology#Photograph';
 
 const makeEntityInfo = (resourceType: string, propertyIris: string[]) =>
