@@ -1066,12 +1066,13 @@
       "willBeStoredAs": "sarà memorizzato come {{date}}"
     },
     "calendarMarker": {
-      "storedAs": "memorizzato come {{calendar}}",
       "calendars": {
         "GREGORIAN": "Gregoriano",
         "JULIAN": "Giuliano",
         "ISLAMIC": "Islamico"
-      }
+      },
+      "beforeHijra": "Prima dell'Egira",
+      "inEachCalendar": "{{calendar}}. Questa data in ogni calendario"
     }
   },
   "shared": {

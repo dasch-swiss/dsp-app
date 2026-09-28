@@ -1,125 +1,184 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Output, computed, input, signal } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
+import { CdkConnectedOverlay, CdkOverlayOrigin } from '@angular/cdk/overlay';
+import { ChangeDetectionStrategy, Component, computed, input, signal } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
-import { MatMenuModule } from '@angular/material/menu';
-import { CALENDAR_SYSTEMS, CalendarSystem } from '@dasch-swiss/vre/shared/calendar';
+import { CalendarSystem } from '@dasch-swiss/vre/shared/calendar';
 import { TranslatePipe } from '@ngx-translate/core';
 
 /**
- * States which calendar a date value is stored in, and lets a reader see it in another one.
+ * One reading of a date in a calendar, ready to display.
+ *
+ * `date` is absent when the calendar cannot express this value — a date before the Hijra has no
+ * Islamic form — and the marker then says so in its place rather than dropping the row. Hiding it
+ * would leave a reader unsure whether the calendar was forgotten or genuinely does not apply.
+ */
+export interface CalendarReading {
+  readonly calendar: CalendarSystem;
+  readonly date?: string;
+}
+
+/**
+ * States which calendar a date is stored in, and shows that date in the others on click.
  *
  * The calendar is part of what a source says — projects record a date in the calendar the document
- * used — so it is shown at rest, with no interaction, rather than being something to go looking
- * for. This is also why the control is not a toggle: with three calendars and a stored-versus-
- * displayed distinction, a toggle can only ever show the state you are not in.
+ * used — so it is named at rest, with no interaction needed to discover it.
  *
- * Choosing another calendar changes this value only, and only until the view is rebuilt. Nothing is
- * written back: the stored calendar stays visible as the anchor, so a reader quoting the date can
- * always see what the source actually said.
+ * It **compares rather than switches**. An earlier version let a reader pick a calendar and
+ * re-rendered the value in it, which meant reading one calendar at a time and holding the others in
+ * mind; comparing is what a researcher actually does. Listing all three at once also removes the
+ * displayed-versus-stored distinction entirely: what is on the page is always the stored date, so
+ * there is no state to track and no way for a reader to lose the source.
  */
 @Component({
   selector: 'app-calendar-marker',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatButtonModule, MatIconModule, MatMenuModule, TranslatePipe],
+  imports: [CdkConnectedOverlay, CdkOverlayOrigin, MatIconModule, TranslatePipe],
   template: `
     <button
-      mat-button
+      type="button"
       class="calendar-marker"
       data-cy="calendar-marker"
-      [attr.aria-label]="accessibleLabel()"
-      [matMenuTriggerFor]="calendarMenu">
-      <mat-icon>event</mat-icon>
-      <span data-cy="calendar-marker-label">{{ calendarLabelKey(displayCalendar()) | translate }}</span>
-      <mat-icon>arrow_drop_down</mat-icon>
+      cdkOverlayOrigin
+      #trigger="cdkOverlayOrigin"
+      [attr.aria-expanded]="isOpen()"
+      [attr.aria-label]="'ui.calendarMarker.inEachCalendar' | translate: { calendar: storedLabel() | translate }"
+      (click)="toggle()">
+      <mat-icon class="calendar-marker-icon">event</mat-icon>
+      <span data-cy="calendar-marker-label">{{ storedLabel() | translate }}</span>
     </button>
 
-    @if (isConverted()) {
-      <span class="calendar-marker-stored" data-cy="calendar-marker-stored">
-        {{ 'ui.calendarMarker.storedAs' | translate: { calendar: calendarLabelKey(storedCalendar()) | translate } }}
-      </span>
-    }
-
-    <mat-menu #calendarMenu="matMenu">
-      @for (calendar of calendars; track calendar) {
-        <button
-          mat-menu-item
-          [attr.data-cy]="'calendar-option-' + calendar"
-          [disabled]="!isAvailable(calendar)"
-          (click)="selectCalendar(calendar)">
-          @if (calendar === displayCalendar()) {
-            <mat-icon>check</mat-icon>
-          } @else {
-            <mat-icon style="visibility: hidden">check</mat-icon>
-          }
-          <span>{{ calendarLabelKey(calendar) | translate }}</span>
-        </button>
-      }
-    </mat-menu>
+    <ng-template
+      cdkConnectedOverlay
+      [cdkConnectedOverlayOrigin]="trigger"
+      [cdkConnectedOverlayOpen]="isOpen()"
+      [cdkConnectedOverlayHasBackdrop]="true"
+      cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+      (backdropClick)="close()"
+      (detach)="close()"
+      (overlayKeydown)="onOverlayKeydown($event)">
+      <div
+        class="calendar-marker-popover"
+        role="dialog"
+        data-cy="calendar-marker-popover"
+        [attr.aria-label]="'ui.calendarMarker.inEachCalendar' | translate: { calendar: storedLabel() | translate }">
+        @for (reading of ordered(); track reading.calendar) {
+          <span class="calendar-marker-date" [class.is-stored]="reading.calendar === storedCalendar()">
+            @if (reading.date) {
+              {{ reading.date }}
+            } @else {
+              <span class="calendar-marker-absent">{{ 'ui.calendarMarker.beforeHijra' | translate }}</span>
+            }
+          </span>
+          <span
+            class="calendar-marker-name"
+            [class.is-stored]="reading.calendar === storedCalendar()"
+            [attr.data-cy]="'calendar-reading-' + reading.calendar">
+            {{ 'ui.calendarMarker.calendars.' + reading.calendar | translate }}
+          </span>
+        }
+      </div>
+    </ng-template>
   `,
   styles: [
     `
-      .calendar-marker-stored {
-        margin-left: 4px;
+      .calendar-marker {
+        background: none;
+        border: 0;
+        padding: 0;
+        margin-left: 6px;
+        display: inline-flex;
+        align-items: center;
+        gap: 2px;
+        font: inherit;
         font-size: 12px;
+        color: rgba(0, 0, 0, 0.6);
+        cursor: pointer;
+        /* Dotted, not solid: it opens a reading, it does not change the value. */
+        text-decoration: underline dotted;
+        text-underline-offset: 3px;
+        transition: color 150ms;
+      }
+
+      .calendar-marker:hover,
+      .calendar-marker:focus-visible {
+        color: #336790;
+      }
+
+      .calendar-marker-icon {
+        font-size: 14px;
+        width: 14px;
+        height: 14px;
+      }
+
+      .calendar-marker-popover {
+        display: grid;
+        grid-template-columns: max-content max-content;
+        column-gap: 10px;
+        row-gap: 4px;
+        padding: 8px 12px;
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 6px;
+        box-shadow:
+          0 10px 15px -3px rgb(0 0 0 / 0.1),
+          0 4px 6px -4px rgb(0 0 0 / 0.05);
+        font-size: 12px;
+      }
+
+      .calendar-marker-date {
+        font-variant-numeric: tabular-nums;
+      }
+
+      .calendar-marker-name {
+        opacity: 0.7;
+      }
+
+      .is-stored {
+        font-weight: 700;
+        opacity: 1;
+      }
+
+      .calendar-marker-absent {
+        font-style: italic;
         opacity: 0.7;
       }
     `,
   ],
 })
 export class CalendarMarkerComponent {
-  /**
-   * The calendar the value is stored in. The anchor the marker always reports.
-   *
-   * A signal input rather than a plain `@Input`, because the computeds below read it: `computed()`
-   * tracks signal reads only, so a plain input would be captured once and then silently go stale
-   * if this instance were ever reused with a different value instead of being recreated.
-   */
+  /** The calendar the value is stored in — named at rest, and listed first and bold when open. */
   readonly storedCalendar = input.required<CalendarSystem>();
 
   /**
-   * Calendars this value can be shown in.
+   * This date read in every calendar. The owner converts; this component formats and lists.
    *
-   * A conversion can be unrepresentable — a pre-Hijra date has no Islamic form — and the answer
-   * depends on the value, so the owner computes it. An unavailable calendar is disabled rather
-   * than offered and then refused, which keeps a failure state off the display path entirely.
+   * Signal inputs rather than plain `@Input`s, because the computeds below read them: `computed()`
+   * tracks signal reads only, so a plain input would be captured once and then silently go stale.
    */
-  readonly availableCalendars = input.required<readonly CalendarSystem[]>();
+  readonly readings = input.required<readonly CalendarReading[]>();
 
-  /** Emits the calendar the reader chose. Ephemeral: the owner re-renders, it never saves. */
-  @Output() displayCalendarChange = new EventEmitter<CalendarSystem>();
+  private readonly _open = signal(false);
 
-  protected readonly calendars = CALENDAR_SYSTEMS;
+  protected readonly isOpen = this._open.asReadonly();
 
-  private readonly _selected = signal<CalendarSystem | undefined>(undefined);
+  protected readonly storedLabel = computed(() => `ui.calendarMarker.calendars.${this.storedCalendar()}`);
 
-  /** The calendar on screen: what the reader picked, or the stored one until they pick. */
-  protected readonly displayCalendar = computed<CalendarSystem>(() => this._selected() ?? this.storedCalendar());
+  /** Stored calendar first; the others keep the order the owner supplied. */
+  protected readonly ordered = computed(() => {
+    const stored = this.storedCalendar();
+    return [...this.readings()].sort((a, b) => Number(b.calendar === stored) - Number(a.calendar === stored));
+  });
 
-  protected readonly isConverted = computed(() => this.displayCalendar() !== this.storedCalendar());
-
-  /**
-   * Names both calendars when they differ, so assistive technology hears what the sighted reader
-   * sees: the date is shown in one calendar and stored in another.
-   */
-  protected readonly accessibleLabel = computed(() =>
-    this.isConverted()
-      ? `Calendar: ${this.displayCalendar()}, stored as ${this.storedCalendar()}`
-      : `Calendar: ${this.storedCalendar()}`
-  );
-
-  protected isAvailable(calendar: CalendarSystem): boolean {
-    return calendar === this.storedCalendar() || this.availableCalendars().includes(calendar);
+  protected toggle(): void {
+    this._open.update(open => !open);
   }
 
-  protected calendarLabelKey(calendar: CalendarSystem): string {
-    return `ui.calendarMarker.calendars.${calendar}`;
+  protected close(): void {
+    this._open.set(false);
   }
 
-  protected selectCalendar(calendar: CalendarSystem): void {
-    if (!this.isAvailable(calendar)) {
-      return;
+  protected onOverlayKeydown(event: KeyboardEvent): void {
+    if (event.key === 'Escape') {
+      this.close();
     }
-    this._selected.set(calendar);
-    this.displayCalendarChange.emit(calendar);
   }
 }

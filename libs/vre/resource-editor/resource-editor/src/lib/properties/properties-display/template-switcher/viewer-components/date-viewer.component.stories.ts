@@ -10,7 +10,8 @@ import { DateViewerComponent } from './date-viewer.component';
 const TRANSLATIONS = {
   ui: {
     calendarMarker: {
-      storedAs: 'stored as {{calendar}}',
+      inEachCalendar: 'Stored in the {{calendar}} calendar. Show this date in every calendar.',
+      beforeHijra: 'Before the Hijra',
       calendars: { GREGORIAN: 'Gregorian', JULIAN: 'Julian', ISLAMIC: 'Islamic' },
     },
   },
@@ -23,6 +24,16 @@ class StoryTranslateLoader implements TranslateLoader {
 }
 
 const asValue = (date: KnoraDate | KnoraPeriod): ReadDateValue => ({ date }) as unknown as ReadDateValue;
+
+const marker = (canvasElement: HTMLElement) =>
+  canvasElement.querySelector('[data-cy="calendar-marker"]') as HTMLElement;
+const dateText = (canvasElement: HTMLElement) => canvasElement.querySelector('[data-cy="date-text"]');
+/** The popover renders in a CDK overlay, outside the story canvas. */
+const popover = () => document.querySelector('[data-cy="calendar-marker-popover"]');
+const readingRow = (calendar: string) => popover()?.querySelector(`[data-cy="calendar-reading-${calendar}"]`);
+
+/** The date cell of a reading row: the popover pairs each date with its calendar name. */
+const readingDate = (calendar: string) => readingRow(calendar)?.previousElementSibling?.textContent?.trim();
 
 const meta: Meta<DateViewerComponent> = {
   title:
@@ -50,8 +61,7 @@ export const SingleDate: Story = {
   },
   play: async ({ canvasElement, step }) => {
     await step('The date is rendered in its stored calendar', async () => {
-      const text = canvasElement.querySelector('[data-cy="date-text"]');
-      await expect(text?.textContent?.trim()).toBe('15.06.2024');
+      await expect(dateText(canvasElement)?.textContent?.trim()).toBe('15.06.2024');
     });
     await step('The marker names the stored calendar', async () => {
       const label = canvasElement.querySelector('[data-cy="calendar-marker-label"]');
@@ -69,8 +79,7 @@ export const PeriodDate: Story = {
   },
   play: async ({ canvasElement, step }) => {
     await step('Both ends are rendered', async () => {
-      const text = canvasElement.querySelector('[data-cy="date-text"]');
-      await expect(text?.textContent?.trim()).toBe('01.01.2020 - 31.12.2024');
+      await expect(dateText(canvasElement)?.textContent?.trim()).toBe('01.01.2020 - 31.12.2024');
     });
     await step('Exactly one marker governs the period, because a period has one calendar', async () => {
       // This asserted two markers before DEV-7372: one per end. A period carries a single
@@ -81,23 +90,30 @@ export const PeriodDate: Story = {
   },
 };
 
-export const ConvertsToAnotherCalendar: Story = {
-  name: 'Re-renders the date when the reader picks another calendar',
+export const ReadsTheDateInEveryCalendar: Story = {
+  name: 'Lists the date in every calendar at once, leaving the page unchanged',
   args: {
     value: asValue(new KnoraDate('GREGORIAN', 'CE', 2024, 6, 15)),
   },
   play: async ({ canvasElement, step }) => {
-    await step('The reader switches the marker to Julian', async () => {
-      await userEvent.click(canvasElement.querySelector('[data-cy="calendar-marker"]') as HTMLElement);
-      await userEvent.click(document.querySelector('[data-cy="calendar-option-JULIAN"]') as HTMLElement);
+    await step('The reader opens the marker', async () => {
+      await userEvent.click(marker(canvasElement));
+      await expect(popover()).not.toBeNull();
     });
-    await step('The same day is now shown in the Julian calendar', async () => {
-      const text = canvasElement.querySelector('[data-cy="date-text"]');
-      await expect(text?.textContent?.trim()).toBe('02.06.2024');
+    await step('All three calendars are listed, so they can be compared rather than cycled', async () => {
+      await expect(readingDate('GREGORIAN')).toBe('15.06.2024');
+      await expect(readingDate('JULIAN')).toBe('02.06.2024');
+      await expect(readingDate('ISLAMIC')).toBe('08.12.1445');
     });
-    await step('The stored calendar stays visible, so a citation stays honest', async () => {
-      const stored = canvasElement.querySelector('[data-cy="calendar-marker-stored"]');
-      await expect(stored?.textContent).toContain('Gregorian');
+    await step('The stored calendar is marked, so a citation stays honest', async () => {
+      await expect(readingRow('GREGORIAN')?.classList.contains('is-stored')).toBe(true);
+      await expect(readingRow('JULIAN')?.classList.contains('is-stored')).toBe(false);
+    });
+    await step('The date on the page is still the stored one', async () => {
+      // This story replaced `ConvertsToAnotherCalendar`, which asserted the page text became
+      // `02.06.2024`. Re-rendering the value in a chosen calendar means reading one at a time and
+      // leaves a reader unsure which they are looking at; the page now always shows the source.
+      await expect(dateText(canvasElement)?.textContent?.trim()).toBe('15.06.2024');
     });
   },
 };
@@ -110,33 +126,76 @@ export const YearPrecisionRendersASpan: Story = {
     value: asValue(new KnoraDate('JULIAN', 'CE', 1582)),
   },
   play: async ({ canvasElement, step }) => {
-    await step('At rest the stored year stands alone', async () => {
-      const text = canvasElement.querySelector('[data-cy="date-text"]');
-      await expect(text?.textContent?.trim()).toBe('1582');
+    await step('The stored year stands alone on the page', async () => {
+      await expect(dateText(canvasElement)?.textContent?.trim()).toBe('1582');
     });
-    await step('The reader switches to Gregorian', async () => {
-      await userEvent.click(canvasElement.querySelector('[data-cy="calendar-marker"]') as HTMLElement);
-      await userEvent.click(document.querySelector('[data-cy="calendar-option-GREGORIAN"]') as HTMLElement);
+    await step('The reader opens the marker', async () => {
+      await userEvent.click(marker(canvasElement));
     });
-    await step('Both years it covers are shown', async () => {
-      const text = canvasElement.querySelector('[data-cy="date-text"]');
-      await expect(text?.textContent?.trim()).toBe('1582/1583');
+    await step('The Gregorian reading names both years it covers', async () => {
+      await expect(readingDate('GREGORIAN')).toBe('1582/1583');
     });
   },
 };
 
-export const WithholdsAnUnrepresentableCalendar: Story = {
-  name: 'Does not offer the Islamic calendar for a pre-Hijra date',
+export const StatesThatACalendarCannotExpressTheDate: Story = {
+  name: 'Says a pre-Hijra date has no Islamic form rather than omitting it',
   args: {
     value: asValue(new KnoraDate('GREGORIAN', 'CE', 500, 1, 1)),
   },
   play: async ({ canvasElement, step }) => {
     await step('The reader opens the marker', async () => {
-      await userEvent.click(canvasElement.querySelector('[data-cy="calendar-marker"]') as HTMLElement);
+      await userEvent.click(marker(canvasElement));
     });
-    await step('Islamic cannot be chosen, because the date precedes the Hijra', async () => {
-      const islamic = document.querySelector('[data-cy="calendar-option-ISLAMIC"]') as HTMLButtonElement;
-      await expect(islamic.disabled).toBe(true);
+    await step('Islamic is listed with no date, because the date precedes the Hijra', async () => {
+      // The earlier version disabled an Islamic menu option. Dropping or greying the row leaves a
+      // reader unsure whether the calendar was forgotten; saying so in words answers the question.
+      await expect(readingDate('ISLAMIC')).toBe('Before the Hijra');
+    });
+    await step('The calendars that can express it still show a date', async () => {
+      await expect(readingDate('JULIAN')).toMatch(/\d{2}\.\d{2}\.\d{3}/);
+    });
+  },
+};
+
+export const ClosesOnEscape: Story = {
+  name: 'Closes the popover on Escape',
+  args: {
+    value: asValue(new KnoraDate('GREGORIAN', 'CE', 2024, 6, 15)),
+  },
+  play: async ({ canvasElement, step }) => {
+    await step('The reader opens the marker', async () => {
+      await userEvent.click(marker(canvasElement));
+      await expect(popover()).not.toBeNull();
+    });
+    await step('Escape dismisses it without touching the value', async () => {
+      await userEvent.keyboard('{Escape}');
+      await expect(popover()).toBeNull();
+      await expect(dateText(canvasElement)?.textContent?.trim()).toBe('15.06.2024');
+    });
+  },
+};
+
+export const OpensClosed: Story = {
+  name: 'Renders with the popover closed',
+  args: {
+    value: asValue(new KnoraDate('JULIAN', 'CE', 1582, 10, 5)),
+  },
+  play: async ({ canvasElement, step }) => {
+    // REQ-1.12: a viewer rebuilt for a different value must not inherit an open popover from the
+    // one before it. Property rows are recycled as a resource is navigated, and an overlay left
+    // open would then be attached to a date it was never opened for.
+    await step('Nothing is open until the reader asks', async () => {
+      await expect(popover()).toBeNull();
+    });
+    await step('The stored date is on the page regardless', async () => {
+      await expect(dateText(canvasElement)?.textContent?.trim()).toBe('05.10.1582');
+    });
+    await step('Opening and closing leaves no overlay behind', async () => {
+      await userEvent.click(marker(canvasElement));
+      await expect(popover()).not.toBeNull();
+      await userEvent.keyboard('{Escape}');
+      await expect(popover()).toBeNull();
     });
   },
 };

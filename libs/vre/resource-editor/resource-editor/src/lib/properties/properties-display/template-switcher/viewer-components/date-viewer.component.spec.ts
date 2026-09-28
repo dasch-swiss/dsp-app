@@ -21,6 +21,10 @@ describe('DateViewerComponent', () => {
 
   // `protected` members exist at runtime; the modifier only shapes the template's API.
   const asAny = () => component as any;
+  const reading = (calendar: string) =>
+    asAny()
+      .readings()
+      .find((r: { calendar: string }) => r.calendar === calendar);
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -30,10 +34,10 @@ describe('DateViewerComponent', () => {
     }).compileComponents();
   });
 
-  it('renders a date in its stored calendar', () => {
+  it('renders the date in the calendar it is stored in', () => {
     mount(asValue(new KnoraDate('GREGORIAN', 'CE', 2024, 6, 15)));
 
-    expect(asAny().displayText()).toBe('15.06.2024');
+    expect(asAny().storedText()).toBe('15.06.2024');
     expect(asAny().storedCalendar()).toBe('GREGORIAN');
   });
 
@@ -44,10 +48,10 @@ describe('DateViewerComponent', () => {
       )
     );
 
-    expect(asAny().displayText()).toBe('01.01.2020 - 31.12.2024');
+    expect(asAny().storedText()).toBe('01.01.2020 - 31.12.2024');
   });
 
-  it('takes a period’s calendar from its start, since a period carries one calendar', () => {
+  it('takes a period\u2019s calendar from its start, since a period carries one calendar', () => {
     mount(
       asValue(new KnoraPeriod(new KnoraDate('JULIAN', 'CE', 2020, 1, 1), new KnoraDate('JULIAN', 'CE', 2024, 12, 31)))
     );
@@ -55,48 +59,56 @@ describe('DateViewerComponent', () => {
     expect(asAny().storedCalendar()).toBe('JULIAN');
   });
 
-  describe('showing the value in another calendar', () => {
-    it('re-renders the date in the chosen calendar', () => {
+  describe('reading the value in every calendar', () => {
+    it('offers one reading per calendar', () => {
       mount(asValue(new KnoraDate('GREGORIAN', 'CE', 2024, 6, 15)));
 
-      asAny().displayCalendar.set('JULIAN');
-
-      expect(asAny().displayText()).toBe('02.06.2024');
+      expect(asAny().readings().length).toBe(3);
     });
 
-    it('converts both ends of a period together', () => {
+    it('reads the same day in each', () => {
+      mount(asValue(new KnoraDate('GREGORIAN', 'CE', 2024, 6, 15)));
+
+      expect(reading('GREGORIAN').date).toBe('15.06.2024');
+      expect(reading('JULIAN').date).toBe('02.06.2024');
+      expect(reading('ISLAMIC').date).toBe('08.12.1445');
+    });
+
+    it('reads a period end to end in each calendar', () => {
       mount(
         asValue(
           new KnoraPeriod(new KnoraDate('GREGORIAN', 'CE', 2024, 6, 15), new KnoraDate('GREGORIAN', 'CE', 2024, 7, 15))
         )
       );
 
-      asAny().displayCalendar.set('JULIAN');
-
-      expect(asAny().displayText()).toBe('02.06.2024 - 02.07.2024');
+      expect(reading('JULIAN').date).toBe('02.06.2024 - 02.07.2024');
     });
 
-    it('shows the span a year-precision date covers rather than one year', () => {
-      mount(asValue(new KnoraDate('JULIAN', 'CE', 1582)));
+    it('leaves a calendar without a date where the value cannot be expressed in it', () => {
+      mount(asValue(new KnoraDate('GREGORIAN', 'CE', 500, 1, 1)));
 
-      asAny().displayCalendar.set('GREGORIAN');
-
-      expect(asAny().displayText()).toBe('1582/1583');
+      expect(reading('ISLAMIC').date).toBeUndefined();
+      expect(reading('JULIAN').date).toBeDefined();
     });
+  });
 
-    it('never renders a day for a year-precision value', () => {
-      mount(asValue(new KnoraDate('JULIAN', 'CE', 1582)));
-
-      asAny().displayCalendar.set('GREGORIAN');
-
-      expect(asAny().displayText()).not.toMatch(/\d{2}\.\d{2}\./);
-    });
-
-    it('leaves the stored value untouched, so the choice is a lens and not an edit', () => {
+  describe('the rendered date never changes', () => {
+    // The whole point of comparing rather than switching: what is on the page is always the stored
+    // date, so a reader cannot lose track of what the source said. An earlier version re-rendered
+    // the value in a chosen calendar, and a story asserted exactly that.
+    it('shows the stored date whatever the other calendars say', () => {
       const date = new KnoraDate('GREGORIAN', 'CE', 2024, 6, 15);
       mount(asValue(date));
 
-      asAny().displayCalendar.set('JULIAN');
+      expect(asAny().storedText()).toBe('15.06.2024');
+      expect(asAny().storedText()).not.toBe(reading('JULIAN').date);
+    });
+
+    it('leaves the stored value untouched', () => {
+      const date = new KnoraDate('GREGORIAN', 'CE', 2024, 6, 15);
+      mount(asValue(date));
+
+      asAny().readings();
 
       expect(date.calendar).toBe('GREGORIAN');
       expect(date.day).toBe(15);
@@ -104,56 +116,52 @@ describe('DateViewerComponent', () => {
     });
   });
 
-  describe('which calendars are offered', () => {
-    it('offers all three for a modern date', () => {
-      mount(asValue(new KnoraDate('GREGORIAN', 'CE', 2024, 6, 15)));
+  describe('spans', () => {
+    it('reads a year-precision date as the span it covers', () => {
+      mount(asValue(new KnoraDate('JULIAN', 'CE', 1582)));
 
-      expect(asAny().availableCalendars()).toEqual(['GREGORIAN', 'JULIAN', 'ISLAMIC']);
+      expect(reading('GREGORIAN').date).toBe('1582/1583');
     });
 
-    it('withholds the Islamic calendar from a pre-Hijra date', () => {
-      mount(asValue(new KnoraDate('GREGORIAN', 'CE', 500, 1, 1)));
+    it('never states a day for a year-precision value', () => {
+      mount(asValue(new KnoraDate('JULIAN', 'CE', 1582)));
 
-      expect(asAny().availableCalendars()).toEqual(['GREGORIAN', 'JULIAN']);
-    });
-
-    it('withholds a calendar a period cannot be shown in end to end', () => {
-      mount(
-        asValue(
-          new KnoraPeriod(new KnoraDate('GREGORIAN', 'CE', 500, 1, 1), new KnoraDate('GREGORIAN', 'CE', 2024, 6, 15))
-        )
-      );
-
-      expect(asAny().availableCalendars()).toEqual(['GREGORIAN', 'JULIAN']);
+      expect(reading('GREGORIAN').date).not.toMatch(/\d{2}\.\d{2}\./);
     });
   });
 
-  describe('the choice is ephemeral', () => {
-    // The workspace sets no RouteReuseStrategy, so Angular destroys and recreates this component
-    // on reload and on navigating away and back. Recreating it is therefore the faithful test.
-    it('returns to the stored calendar when the component is rebuilt', () => {
-      const value = asValue(new KnoraDate('GREGORIAN', 'CE', 2024, 6, 15));
-      mount(value);
-      asAny().displayCalendar.set('JULIAN');
-      expect(asAny().displayText()).toBe('02.06.2024');
+  describe('era', () => {
+    // Era where it carries information: "450" alone is ambiguous in a corpus holding BCE material,
+    // "2024 CE" is noise.
+    it('states the era for a BCE date', () => {
+      mount(asValue(new KnoraDate('JULIAN', 'BCE', 44, 3, 15)));
 
-      fixture.destroy();
-      mount(value);
-
-      expect(asAny().displayText()).toBe('15.06.2024');
+      expect(asAny().storedText()).toContain('BCE');
     });
 
-    it('keeps one viewer’s choice out of another’s', () => {
-      const first = mount(asValue(new KnoraDate('GREGORIAN', 'CE', 2024, 6, 15)));
-      const firstComponent = first.componentInstance as any;
-      firstComponent.displayCalendar.set('JULIAN');
+    it('states the era for a CE year below 1000', () => {
+      mount(asValue(new KnoraDate('GREGORIAN', 'CE', 450, 6, 1)));
 
-      const second = TestBed.createComponent(DateViewerComponent);
-      second.componentRef.setInput('value', asValue(new KnoraDate('GREGORIAN', 'CE', 2024, 6, 15)));
-      second.detectChanges();
+      expect(asAny().storedText()).toBe('01.06.450 CE');
+    });
 
-      expect((second.componentInstance as any).displayText()).toBe('15.06.2024');
-      expect(firstComponent.displayText()).toBe('02.06.2024');
+    it('omits the era for a modern CE year', () => {
+      mount(asValue(new KnoraDate('GREGORIAN', 'CE', 2024, 6, 15)));
+
+      expect(asAny().storedText()).toBe('15.06.2024');
+    });
+
+    it('never states an era for an Islamic date', () => {
+      mount(asValue(new KnoraDate('ISLAMIC', 'noEra', 1445, 12, 8)));
+
+      expect(asAny().storedText()).toBe('08.12.1445');
+    });
+
+    it('states a shared era once across a span, not on both ends', () => {
+      mount(asValue(new KnoraDate('JULIAN', 'BCE', 754)));
+
+      const gregorian = reading('GREGORIAN').date;
+      expect(gregorian.match(/BCE/g)?.length ?? 0).toBe(1);
     });
   });
 
@@ -161,19 +169,5 @@ describe('DateViewerComponent', () => {
     // Nothing here injects a session service; this pins that, because a later dependency on one
     // would break the view for anonymous readers without failing any other test.
     expect(() => mount(asValue(new KnoraDate('GREGORIAN', 'CE', 2024, 6, 15)))).not.toThrow();
-    expect(asAny().displayText()).toBe('15.06.2024');
-  });
-
-  // A plain @Input would be captured once by computed() and then go stale. Signal inputs are what
-  // make this pass; it fails if anyone converts them back.
-  it('re-renders when the value input changes on a reused instance', () => {
-    mount(asValue(new KnoraDate('GREGORIAN', 'CE', 2024, 6, 15)));
-    expect(asAny().displayText()).toBe('15.06.2024');
-
-    fixture.componentRef.setInput('value', asValue(new KnoraDate('JULIAN', 'CE', 1999, 1, 2)));
-    fixture.detectChanges();
-
-    expect(asAny().displayText()).toBe('02.01.1999');
-    expect(asAny().storedCalendar()).toBe('JULIAN');
   });
 });

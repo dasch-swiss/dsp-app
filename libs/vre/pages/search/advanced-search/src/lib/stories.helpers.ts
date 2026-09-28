@@ -64,8 +64,9 @@ const STORY_TRANSLATIONS = {
       year: 'Year',
       willBeStoredAs: 'will be stored as {{date}}',
     },
+    // Advanced search renders the picker, not the viewer's calendar marker, so only the picker's
+    // own calendar names are needed here.
     calendarMarker: {
-      storedAs: 'stored as {{calendar}}',
       calendars: { GREGORIAN: 'Gregorian', JULIAN: 'Julian', ISLAMIC: 'Islamic' },
     },
   },

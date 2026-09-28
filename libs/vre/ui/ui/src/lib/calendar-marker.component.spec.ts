@@ -2,11 +2,17 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideTranslateService } from '@ngx-translate/core';
 
-import { CalendarMarkerComponent } from './calendar-marker.component';
+import { CalendarMarkerComponent, CalendarReading } from './calendar-marker.component';
 
 describe('CalendarMarkerComponent', () => {
   let fixture: ComponentFixture<CalendarMarkerComponent>;
   let component: CalendarMarkerComponent;
+
+  const READINGS: CalendarReading[] = [
+    { calendar: 'GREGORIAN', date: '12.06.1582' },
+    { calendar: 'JULIAN', date: '02.06.1582' },
+    { calendar: 'ISLAMIC', date: '20.09.990' },
+  ];
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -18,78 +24,93 @@ describe('CalendarMarkerComponent', () => {
     fixture = TestBed.createComponent(CalendarMarkerComponent);
     component = fixture.componentInstance;
     fixture.componentRef.setInput('storedCalendar', 'JULIAN');
-    fixture.componentRef.setInput('availableCalendars', ['GREGORIAN', 'JULIAN', 'ISLAMIC']);
+    fixture.componentRef.setInput('readings', READINGS);
     fixture.detectChanges();
   });
 
-  // `protected` members are reachable at runtime; the modifier only shapes the template's API.
+  // `protected` members exist at runtime; the modifier only shapes the template's API.
   const asAny = () => component as any;
 
-  it('reports the stored calendar until the reader picks another', () => {
-    expect(asAny().displayCalendar()).toBe('JULIAN');
-    expect(asAny().isConverted()).toBe(false);
+  it('names the stored calendar at rest', () => {
+    expect(asAny().storedLabel()).toBe('ui.calendarMarker.calendars.JULIAN');
   });
 
-  it('reports the chosen calendar once picked, and says it is converted', () => {
-    asAny().selectCalendar('GREGORIAN');
-
-    expect(asAny().displayCalendar()).toBe('GREGORIAN');
-    expect(asAny().isConverted()).toBe(true);
+  it('starts closed', () => {
+    expect(asAny().isOpen()).toBe(false);
   });
 
-  it('emits the chosen calendar so the owner can re-render', () => {
-    const emitted: string[] = [];
-    component.displayCalendarChange.subscribe(calendar => emitted.push(calendar));
+  it('opens and closes on the trigger', () => {
+    asAny().toggle();
+    expect(asAny().isOpen()).toBe(true);
 
-    asAny().selectCalendar('ISLAMIC');
-
-    expect(emitted).toEqual(['ISLAMIC']);
+    asAny().toggle();
+    expect(asAny().isOpen()).toBe(false);
   });
 
-  it("never modifies the stored calendar, which is the reader's anchor", () => {
-    asAny().selectCalendar('GREGORIAN');
+  it('closes on Escape', () => {
+    asAny().toggle();
 
-    expect(component.storedCalendar()).toBe('JULIAN');
+    asAny().onOverlayKeydown(new KeyboardEvent('keydown', { key: 'Escape' }));
+
+    expect(asAny().isOpen()).toBe(false);
   });
 
-  it('refuses a calendar the value cannot be represented in', () => {
-    fixture.componentRef.setInput('availableCalendars', ['GREGORIAN', 'JULIAN']);
-    const emitted: string[] = [];
-    component.displayCalendarChange.subscribe(calendar => emitted.push(calendar));
+  it('ignores other keys', () => {
+    asAny().toggle();
 
-    asAny().selectCalendar('ISLAMIC');
+    asAny().onOverlayKeydown(new KeyboardEvent('keydown', { key: 'a' }));
 
-    expect(asAny().displayCalendar()).toBe('JULIAN');
-    expect(emitted).toEqual([]);
+    expect(asAny().isOpen()).toBe(true);
   });
 
-  it('always allows the stored calendar, whatever the availability list says', () => {
-    fixture.componentRef.setInput('availableCalendars', []);
-
-    expect(asAny().isAvailable('JULIAN')).toBe(true);
-    expect(asAny().isAvailable('GREGORIAN')).toBe(false);
-  });
-
-  describe('accessible name', () => {
-    it('states the stored calendar at rest', () => {
-      expect(asAny().accessibleLabel()).toBe('Calendar: JULIAN');
+  describe('the listing', () => {
+    it('puts the stored calendar first, whatever order the owner supplied', () => {
+      expect(asAny().ordered()[0].calendar).toBe('JULIAN');
     });
 
-    it('names both calendars once converted, matching what a sighted reader sees', () => {
-      asAny().selectCalendar('GREGORIAN');
+    it('lists every calendar, including ones this value cannot be expressed in', () => {
+      // A row with no date says "Before the Hijra" rather than disappearing, so a reader can tell
+      // "no such date" from "not shown".
+      fixture.componentRef.setInput('readings', [
+        { calendar: 'GREGORIAN', date: '01.01.0500' },
+        { calendar: 'JULIAN', date: '01.01.0500' },
+        { calendar: 'ISLAMIC' },
+      ]);
+      fixture.detectChanges();
 
-      expect(asAny().accessibleLabel()).toBe('Calendar: GREGORIAN, stored as JULIAN');
+      expect(asAny().ordered().length).toBe(3);
+      expect(
+        asAny()
+          .ordered()
+          .find((r: CalendarReading) => r.calendar === 'ISLAMIC')?.date
+      ).toBeUndefined();
+    });
+
+    it('does not mutate the readings it was given', () => {
+      const order = READINGS.map(r => r.calendar);
+
+      asAny().ordered();
+
+      expect(READINGS.map(r => r.calendar)).toEqual(order);
     });
   });
 
   // A plain @Input would be captured once by computed() and then go stale. Signal inputs are what
-  // make this pass; it fails if anyone converts them back.
-  it('reflects a new storedCalendar on a reused instance, rather than going stale', () => {
-    expect(asAny().displayCalendar()).toBe('JULIAN');
+  // make these pass; they fail if anyone converts them back.
+  describe('reacting to input changes on a reused instance', () => {
+    it('reflects a new stored calendar', () => {
+      fixture.componentRef.setInput('storedCalendar', 'GREGORIAN');
+      fixture.detectChanges();
 
-    fixture.componentRef.setInput('storedCalendar', 'GREGORIAN');
-    fixture.detectChanges();
+      expect(asAny().storedLabel()).toBe('ui.calendarMarker.calendars.GREGORIAN');
+      expect(asAny().ordered()[0].calendar).toBe('GREGORIAN');
+    });
 
-    expect(asAny().displayCalendar()).toBe('GREGORIAN');
+    it('reflects new readings', () => {
+      fixture.componentRef.setInput('readings', [{ calendar: 'JULIAN', date: '09.09.1999' }]);
+      fixture.detectChanges();
+
+      expect(asAny().ordered()[0].date).toBe('09.09.1999');
+    });
   });
 });
