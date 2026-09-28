@@ -59,11 +59,11 @@ describe('PropertiesDisplayComponent', () => {
     component = fixture.componentInstance;
   });
 
-  it('hides the hasDescription row for a project resource', () => {
+  it('shows the hasDescription row for a project resource', () => {
     component.resource = makeDspResource(PROJECT_CLASS, [Constants.HasDescription]);
     component.ngOnChanges();
 
-    expect(component.editableProperties.some(prop => prop.propDef.id === Constants.HasDescription)).toBe(false);
+    expect(component.editableProperties.some(prop => prop.propDef.id === Constants.HasDescription)).toBe(true);
   });
 
   it('hides the hasDescription row for a Region', () => {

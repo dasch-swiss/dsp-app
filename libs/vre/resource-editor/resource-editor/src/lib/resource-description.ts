@@ -17,11 +17,12 @@ export function isSegmentClass(resource: ReadResource): boolean {
   return classProperties(resource).some(property => property.propertyIndex === HAS_SEGMENT_BOUNDS);
 }
 
-export function showsDescriptionInHeader(resource: ReadResource): boolean {
+/**
+ * Description is shown and edited as a regular property for project resource classes and for
+ * Segments; knora-base classes instantiated directly (e.g. `knora-api:Region`, `knora-api:LinkObj`)
+ * inherit the cardinality but do not show it.
+ */
+export function showsDescriptionProperty(resource: ReadResource): boolean {
   const isProjectClass = !resource.type.startsWith(`${Constants.KnoraApiV2}#`);
-  const hasCardinality = classProperties(resource).some(
-    property => property.propertyIndex === Constants.HasDescription
-  );
-
-  return isProjectClass && hasCardinality && !isSegmentClass(resource);
+  return isProjectClass || isSegmentClass(resource);
 }
