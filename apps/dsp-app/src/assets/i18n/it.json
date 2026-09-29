@@ -1071,7 +1071,9 @@
       "sameAsStored": "Stessa data del valore memorizzato. Niente da salvare.",
       "differsFromStored": "Differisce dal valore memorizzato.",
       "oneCalendarForValue": "Un solo calendario per l'intero valore, applicato a inizio e fine.",
-      "endBeforeStart": "La data di fine deve essere successiva alla data di inizio."
+      "endBeforeStart": "La data di fine deve essere successiva alla data di inizio.",
+      "era": "Era",
+      "yearMustBePositive": "Un anno valido è maggiore di 0."
     },
     "calendarMarker": {
       "calendars": {

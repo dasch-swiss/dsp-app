@@ -1,0 +1,99 @@
+.date-picker-panel {
+  width: 296px;
+  padding: 8px 8px 16px 8px;
+}
+
+.month-year-selector {
+  display: inline-flex;
+  align-items: flex-start;
+  width: 280px;
+  margin: 0 8px;
+
+  .month {
+    width: 126px;
+
+    // Islamic month names are far longer than "Jan", so the field needs the room.
+    &.larger {
+      width: 136px;
+    }
+  }
+
+  .year {
+    width: 136px;
+    padding-left: 2px;
+
+    &.withButtonToggle {
+      width: 180px;
+    }
+
+    .era mat-button-toggle {
+      width: 40px;
+      font-size: 12px;
+    }
+  }
+}
+
+.day-selector {
+  width: 280px;
+  margin: 0 8px;
+
+  // Inert rather than hidden: the grid stays visible so the panel does not jump.
+  &.disabled {
+    opacity: 25%;
+  }
+
+  .week-days,
+  .week {
+    display: flex;
+    margin: 0;
+  }
+
+  .day {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 32px;
+    font-size: 12px;
+
+    .selectable {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      cursor: pointer;
+
+      &:hover {
+        background: rgba(0, 0, 0, 0.06);
+      }
+
+      &.disabled {
+        cursor: not-allowed;
+      }
+    }
+
+    &.selected .selectable {
+      background: #336790;
+      color: #fff;
+    }
+  }
+}
+
+.picker-footer {
+  display: flex;
+  align-items: center;
+  width: 280px;
+  margin: 8px 8px 0;
+}
+
+.calendar-tag {
+  font-size: 12px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.fill-remaining-space {
+  flex: 1 1 auto;
+}

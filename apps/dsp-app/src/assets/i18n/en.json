@@ -1071,7 +1071,9 @@
       "sameAsStored": "Same date as the stored value. Nothing to save.",
       "differsFromStored": "Differs from the stored value.",
       "oneCalendarForValue": "One calendar for the whole value, applied to start and end.",
-      "endBeforeStart": "End date must be after start date."
+      "endBeforeStart": "End date must be after start date.",
+      "era": "Era",
+      "yearMustBePositive": "A valid year is greater than 0."
     },
     "calendarMarker": {
       "calendars": {

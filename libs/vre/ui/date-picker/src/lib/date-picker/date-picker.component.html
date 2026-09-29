@@ -1,0 +1,116 @@
+<div class="date-picker-panel" data-cy="date-picker-panel">
+  <!-- month, year and era -->
+  <div class="month-year-selector">
+    <mat-form-field class="month" [class.larger]="calendar() === 'ISLAMIC'">
+      <mat-label>{{ 'ui.datePicker.month' | translate }}</mat-label>
+      <mat-select
+        [value]="draft().month"
+        [disabled]="disabled() || !hasValidYear()"
+        data-cy="month-select"
+        (valueChange)="onMonthChange($event)">
+        <!-- choosing nothing is how a date stays at year precision -->
+        <mat-option [value]="null" data-cy="month-none">{{ 'ui.datePicker.none' | translate }}</mat-option>
+        @for (month of months; track month[0]; let i = $index) {
+          <mat-option [value]="i + 1">
+            {{ calendar() === 'ISLAMIC' ? month[1] : month[0] }}
+          </mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field class="year" [class.withButtonToggle]="showsEra()">
+      <mat-label>{{ 'ui.datePicker.year' | translate }}</mat-label>
+      <input
+        matInput
+        type="number"
+        min="1"
+        class="center"
+        data-cy="year-input"
+        [value]="draft().year ?? ''"
+        [disabled]="disabled()"
+        (input)="onYearChange($any($event.target).value)" />
+      @if (!hasValidYear() && draft().year !== null) {
+        <mat-error data-cy="year-error">{{ 'ui.datePicker.yearMustBePositive' | translate }}</mat-error>
+      }
+      <!-- Islamic has no era, so the toggle is absent rather than disabled -->
+      @if (showsEra()) {
+        <mat-button-toggle-group
+          class="era suffix-toggle-group"
+          matSuffix
+          data-cy="era-toggle"
+          [value]="draft().era"
+          [disabled]="disabled()"
+          [attr.aria-label]="'ui.datePicker.era' | translate"
+          (change)="onEraChange($event.value)">
+          <mat-button-toggle value="CE" data-cy="era-CE">CE</mat-button-toggle>
+          <mat-button-toggle value="BCE" data-cy="era-BCE">BCE</mat-button-toggle>
+        </mat-button-toggle-group>
+      }
+    </mat-form-field>
+  </div>
+
+  <!-- the day grid -->
+  <div class="day-selector" [class.disabled]="daySelectionDisabled()" data-cy="day-grid">
+    @if (draft().era === 'CE') {
+      <p class="week-days">
+        @for (d of weekDays; track $index) {
+          <span class="day">{{ d }}</span>
+        }
+      </p>
+    } @else if (draft().era === 'BCE') {
+      <p class="mat-caption center" data-cy="bce-warning" [innerHTML]="'ui.datePicker.bceWarning' | translate"></p>
+    }
+
+    @for (week of monthGrid().weeks; track $index; let last = $last) {
+      <div class="week">
+        @for (d of week; track $index) {
+          <span class="day" [class.selected]="d === selectedDay()">
+            @if (d > 0) {
+              <span
+                class="selectable link"
+                [class.disabled]="daySelectionDisabled()"
+                [attr.data-cy]="'day-' + d"
+                (click)="!daySelectionDisabled() && onDayChange(d)"
+                >{{ d }}</span
+              >
+            }
+          </span>
+        }
+        <!-- dropping to month precision; sits in the last row when it has room -->
+        @if (last && week.length < 7) {
+          <span class="day">
+            <span
+              class="selectable link"
+              data-cy="no-day"
+              [class.disabled]="daySelectionDisabled()"
+              (click)="!daySelectionDisabled() && onDayChange(null)">
+              <mat-icon>not_interested</mat-icon>
+            </span>
+          </span>
+        }
+      </div>
+    }
+    <!-- a month ending on a Sunday leaves no room above, so it gets its own row -->
+    @if (monthGrid().weeks.length > 0 && monthGrid().weeks[monthGrid().weeks.length - 1].length === 7) {
+      <div class="week">
+        <span class="day">
+          <span
+            class="selectable link"
+            data-cy="no-day-overflow"
+            [class.disabled]="daySelectionDisabled()"
+            (click)="!daySelectionDisabled() && onDayChange(null)">
+            <mat-icon>not_interested</mat-icon>
+          </span>
+        </span>
+      </div>
+    }
+  </div>
+
+  <div class="picker-footer">
+    <span class="calendar-tag" data-cy="calendar-tag">{{ calendarLabel() | translate }}</span>
+    <span class="fill-remaining-space"></span>
+    <button mat-button data-cy="today-button" [disabled]="disabled()" (click)="onToday()">
+      {{ 'ui.datePicker.today' | translate }}
+    </button>
+  </div>
+</div>

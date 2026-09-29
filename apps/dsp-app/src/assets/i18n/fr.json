@@ -1071,7 +1071,9 @@
       "sameAsStored": "Même date que la valeur enregistrée. Rien à enregistrer.",
       "differsFromStored": "Diffère de la valeur enregistrée.",
       "oneCalendarForValue": "Un seul calendrier pour toute la valeur, appliqué au début et à la fin.",
-      "endBeforeStart": "La date de fin doit être postérieure à la date de début."
+      "endBeforeStart": "La date de fin doit être postérieure à la date de début.",
+      "era": "Ère",
+      "yearMustBePositive": "Une année valide est supérieure à 0."
     },
     "calendarMarker": {
       "calendars": {
