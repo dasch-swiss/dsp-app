@@ -613,6 +613,14 @@ export class AppDatePickerComponent
       return;
     }
 
+    // `this.year`, `this.month` and `this.day` still describe the date in its *previous* calendar,
+    // while `this.calendar` is already the new one. Anything that rebuilds the value from those
+    // fields now — `_updateForm`, whose `setValue` emits into `onValueChanged` and through to
+    // `setDate` — produces the old numerals under the new calendar's name. That relabel is the
+    // reported bug: 01.04.2020 Gregorian became 01.04.2020 Julian, and switching back then showed
+    // 19.03.2020 under a Gregorian label. It overwrote the correct conversion because it ran both
+    // before and after it on the same change-detection pass.
+
     const source = this._conversionBase ?? current;
 
     // Returning to the base's own calendar is a return, not a conversion: take it verbatim so an
@@ -624,6 +632,9 @@ export class AppDatePickerComponent
 
     const converted = this._valueService.convertKnoraDateTo(source, target);
     if (converted === undefined) {
+      // The target cannot express this date. Restoring the calendar the value actually has is the
+      // only honest answer; `_updateForm` here would stamp the unrepresentable calendar onto it.
+      this.calendar = current.calendar.toUpperCase();
       this._updateForm();
       return;
     }
