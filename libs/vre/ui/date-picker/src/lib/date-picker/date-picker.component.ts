@@ -7,9 +7,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { KnoraDate } from '@dasch-swiss/dsp-js';
 import { CalendarSystem } from '@dasch-swiss/vre/shared/calendar';
+import { CalendarDateService } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe } from '@ngx-translate/core';
-
-import { CalendarDateService } from '../calendar-date/calendar-date.service';
 
 /**
  * A date being built, which is not yet necessarily a date.

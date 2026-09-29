@@ -45,10 +45,23 @@ export interface MonthGrid {
 @Injectable({ providedIn: 'root' })
 export class CalendarDateService {
   /**
-   * Optional so this service can be constructed without an injector, which `KnoraDatePipe` does.
-   * Without it a calendar name falls back to title case, as it rendered before translation.
+   * The translate service, when there is an injector to ask for one.
+   *
+   * `{ optional: true }` is not enough on its own: it covers a missing *provider*, but `inject()`
+   * still throws NG0203 when called outside an injection context at all — which is exactly the case
+   * this has to survive, because the date viewer constructs this service's consumers with `new`.
+   * Hence the try/catch. Without a service the calendar name falls back to title case, as it
+   * rendered before translation existed.
    */
-  private readonly _translate = inject(TranslateService, { optional: true });
+  private readonly _translate = CalendarDateService._injectTranslateIfPossible();
+
+  private static _injectTranslateIfPossible(): TranslateService | null {
+    try {
+      return inject(TranslateService, { optional: true });
+    } catch {
+      return null;
+    }
+  }
 
   // ---------------------------------------------------------------------------------------------
   // Converting

@@ -5,9 +5,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { KnoraDate, KnoraPeriod } from '@dasch-swiss/dsp-js';
 import { CalendarSystem, compareDates } from '@dasch-swiss/vre/shared/calendar';
+import { CalendarDateService } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe } from '@ngx-translate/core';
 
-import { CalendarDateService } from '../calendar-date/calendar-date.service';
 import { CalendarSelectorComponent } from '../calendar-selector/calendar-selector.component';
 import { DatePickerComponent } from '../date-picker/date-picker.component';
 

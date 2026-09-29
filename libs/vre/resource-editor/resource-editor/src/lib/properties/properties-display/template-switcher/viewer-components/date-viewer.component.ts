@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/c
 import { input } from '@angular/core';
 import { KnoraDate, KnoraPeriod, ReadDateValue } from '@dasch-swiss/dsp-js';
 import { CALENDAR_SYSTEMS, CalendarSystem } from '@dasch-swiss/vre/shared/calendar';
-import { CalendarDateService } from '@dasch-swiss/vre/ui/date-picker';
+import { CalendarDateService } from '@dasch-swiss/vre/ui/ui';
 import { CalendarMarkerComponent, CalendarReading, KnoraDatePipe } from '@dasch-swiss/vre/ui/ui';
 
 /**
