@@ -35,6 +35,10 @@ export class RepresentationService {
     return this._http.get(url, { responseType: 'blob', headers });
   }
 
+  getSvgContent(url: string): Observable<string> {
+    return this._http.get(url, { responseType: 'text' });
+  }
+
   getIngestFileUrl(projectShort: string, assetId: string): string {
     const url = `${this._appConfigService.dspIngestConfig.url}/projects/${projectShort}/assets/${assetId}`;
     return url;
