@@ -28,13 +28,13 @@ import { CALENDAR_SYSTEMS, CalendarSystem, compareDates } from '@dasch-swiss/vre
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Subject, Subscription } from 'rxjs';
 import { AppDatePickerComponent } from '../app-date-picker/app-date-picker.component';
-import { ValueService } from './value.service';
+import { CalendarDateService } from '../calendar-date/calendar-date.service';
 
 /** if a period is defined, start date must be before end date */
 export function periodStartEndValidator(
   isPeriod: UntypedFormControl,
   endDate: UntypedFormControl,
-  valueService: ValueService
+  valueService: CalendarDateService
 ): ValidatorFn {
   return (control: AbstractControl): { [key: string]: any } | null => {
     if (isPeriod.value && control.value !== null && endDate.value !== null) {
@@ -253,7 +253,7 @@ export class DateValueHandlerComponent
     @Optional() public readonly parentForm: NgForm,
     @Optional() public readonly parentFormGroup: FormGroupDirective,
     public readonly defaultErrorStateMatcher: ErrorStateMatcher,
-    private readonly _valueService: ValueService,
+    private readonly _valueService: CalendarDateService,
     private readonly _translate: TranslateService
   ) {
     if (this.ngControl != null) {

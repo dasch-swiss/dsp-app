@@ -16,7 +16,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Cardinality, Constants, KnoraDate, KnoraPeriod, ReadValue } from '@dasch-swiss/dsp-js';
 import { ResourceService } from '@dasch-swiss/vre/shared/app-common';
-import { ValueService } from '@dasch-swiss/vre/ui/date-picker';
+import { CalendarDateService } from '@dasch-swiss/vre/ui/date-picker';
 import { AppProgressIndicatorComponent } from '@dasch-swiss/vre/ui/progress-indicator';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Observable, of, Subscription, switchMap } from 'rxjs';
@@ -120,7 +120,7 @@ export class PropertyValueEditComponent implements OnInit, OnDestroy {
 
   private readonly _cd = inject(ChangeDetectorRef);
   private readonly _resourceService = inject(ResourceService);
-  private readonly _valueService = inject(ValueService);
+  private readonly _calendarDates = inject(CalendarDateService);
   public propertyValueService = inject(PropertyValueService);
 
   protected readonly Cardinality = Cardinality;
@@ -175,7 +175,7 @@ export class PropertyValueEditComponent implements OnInit, OnDestroy {
       return true;
     }
 
-    return !this._valueService.dateValuesDenoteSameInstant(
+    return !this._calendarDates.dateValuesDenoteSameInstant(
       originalItem as KnoraDate | KnoraPeriod | null,
       this.group.controls.item.value as KnoraDate | KnoraPeriod | null
     );

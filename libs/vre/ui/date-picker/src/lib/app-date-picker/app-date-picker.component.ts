@@ -40,7 +40,7 @@ import { KnoraDate } from '@dasch-swiss/dsp-js';
 import { CalendarSystem, getCalendar } from '@dasch-swiss/vre/shared/calendar';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
-import { ValueService } from '../date-value-handler/value.service';
+import { CalendarDateService } from '../calendar-date/calendar-date.service';
 
 /** error when invalid control is dirty, touched, or submitted. */
 export class DatePickerErrorStateMatcher implements ErrorStateMatcher {
@@ -278,7 +278,7 @@ export class AppDatePickerComponent
     fb: UntypedFormBuilder,
     private readonly _elRef: ElementRef<HTMLElement>,
     private readonly _fm: FocusMonitor,
-    private readonly _valueService: ValueService,
+    private readonly _valueService: CalendarDateService,
     private readonly _translate: TranslateService
   ) {
     this.dateForm = fb.group({

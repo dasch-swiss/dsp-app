@@ -11,7 +11,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { KnoraDate, Precision } from '@dasch-swiss/dsp-js';
 import { provideTranslateService, TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
-import { ValueService } from '../date-value-handler/value.service';
+import { CalendarDateService } from '../calendar-date/calendar-date.service';
 import { AppDatePickerComponent } from './app-date-picker.component';
 
 describe('DatePickerComponent', () => {
@@ -264,7 +264,7 @@ describe('DatePickerComponent', () => {
 
       component.setToday();
 
-      const service = new ValueService();
+      const service = TestBed.inject(CalendarDateService);
       const expected = service.convertKnoraDateTo(
         new KnoraDate('GREGORIAN', 'CE', now.getFullYear(), now.getMonth() + 1, now.getDate()),
         'ISLAMIC'

@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/c
 import { input } from '@angular/core';
 import { KnoraDate, KnoraPeriod, ReadDateValue } from '@dasch-swiss/dsp-js';
 import { CALENDAR_SYSTEMS, CalendarSystem } from '@dasch-swiss/vre/shared/calendar';
-import { ValueService } from '@dasch-swiss/vre/ui/date-picker';
+import { CalendarDateService } from '@dasch-swiss/vre/ui/date-picker';
 import { CalendarMarkerComponent, CalendarReading, KnoraDatePipe } from '@dasch-swiss/vre/ui/ui';
 
 /**
@@ -36,7 +36,7 @@ export class DateViewerComponent {
    */
   readonly value = input.required<ReadDateValue>();
 
-  private readonly _valueService = inject(ValueService);
+  private readonly _calendarDates = inject(CalendarDateService);
   private readonly _datePipe = new KnoraDatePipe();
 
   /** The calendar the value is stored in — its start, for a period, which governs both ends. */
@@ -82,7 +82,7 @@ export class DateViewerComponent {
       return this._format(date);
     }
 
-    const converted = this._valueService.convertKnoraDateTo(date, target);
+    const converted = this._calendarDates.convertKnoraDateTo(date, target);
     if (converted === undefined) {
       return undefined;
     }
