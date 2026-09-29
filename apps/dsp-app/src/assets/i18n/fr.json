@@ -1073,7 +1073,11 @@
       "oneCalendarForValue": "Un seul calendrier pour toute la valeur, appliqué au début et à la fin.",
       "endBeforeStart": "La date de fin doit être postérieure à la date de début.",
       "era": "Ère",
-      "yearMustBePositive": "Une année valide est supérieure à 0."
+      "yearMustBePositive": "Une année valide est supérieure à 0.",
+      "addEndDate": "Ajouter une date de fin",
+      "removeEndDate": "Supprimer la date de fin",
+      "dateRequired": "Une date est requise",
+      "endDateRequired": "Une date de fin est requise"
     },
     "calendarMarker": {
       "calendars": {

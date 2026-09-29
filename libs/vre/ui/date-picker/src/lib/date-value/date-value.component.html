@@ -1,0 +1,93 @@
+<div class="date-value">
+  <!-- what is stored, so a user editing it can see what they are changing -->
+  @if (isEditingStoredValue()) {
+    <p class="stored-value-line" data-cy="stored-value-line">
+      <mat-icon class="line-icon">lock</mat-icon>
+      {{ 'ui.datePicker.storedValue' | translate: { date: storedText() } }}
+    </p>
+  }
+
+  <!-- one calendar for the whole value: CreateDateValue and UpdateDateValue carry a single
+  `calendar` field, so it belongs to the value rather than to either end -->
+  <app-calendar-selector
+    [calendar]="state().calendar"
+    [available]="availableCalendars()"
+    [disabled]="disabled()"
+    [caption]="state().isPeriod ? 'ui.datePicker.oneCalendarForValue' : null"
+    (calendarChange)="onCalendarChange($event)" />
+
+  <!-- what this was converted from, so the shift is never silent -->
+  @if (isConverted()) {
+    <p class="picker-note converted" data-cy="converted-from">
+      <mat-icon class="line-icon">swap_horiz</mat-icon>
+      @if (baseIsStored()) {
+        {{ 'ui.datePicker.convertedFromStored' | translate: { date: storedText() } }}
+      } @else {
+        {{ 'ui.datePicker.convertedFrom' | translate: { date: storedText() } }}
+      }
+    </p>
+  }
+
+  <div class="date-fields">
+    <app-date-picker-v2
+      class="start-date"
+      data-cy="start-picker"
+      [date]="state().start"
+      [calendar]="state().calendar"
+      [disabled]="disabled()"
+      (dateChange)="onStartChange($event)" />
+
+    <button
+      mat-button
+      class="toggle-period-control"
+      data-cy="toggle-period"
+      [disabled]="disabled() || !state().start"
+      [matTooltip]="(state().isPeriod ? 'ui.datePicker.removeEndDate' : 'ui.datePicker.addEndDate') | translate"
+      matTooltipPosition="above"
+      (click)="onTogglePeriod($event)">
+      <mat-icon>{{ state().isPeriod ? 'remove' : 'keyboard_tab' }}</mat-icon>
+    </button>
+
+    @if (state().isPeriod && state().start) {
+      <app-date-picker-v2
+        class="end-date"
+        data-cy="end-picker"
+        [date]="state().end"
+        [calendar]="state().calendar"
+        [disabled]="disabled()"
+        (dateChange)="onEndChange($event)" />
+    }
+  </div>
+
+  <div class="date-value-footer">
+    @if (willBeStoredText()) {
+      <span class="will-be-stored" data-cy="will-be-stored">
+        {{ 'ui.datePicker.willBeStoredAs' | translate: { date: willBeStoredText() } }}
+      </span>
+    }
+
+    <!-- whether saving would change anything; must agree with the save gate, which compares
+    instants, so a calendar switch alone reads as nothing to save -->
+    @if (isEditingStoredValue() && willBeStoredText()) {
+      <span class="save-status" [class.differs]="!isUnchangedFromStored()" data-cy="save-status">
+        @if (isUnchangedFromStored()) {
+          {{ 'ui.datePicker.sameAsStored' | translate }}
+        } @else {
+          {{ 'ui.datePicker.differsFromStored' | translate }}
+        }
+      </span>
+    }
+  </div>
+
+  <div class="date-value-errors">
+    @if (showStartRequired()) {
+      <p class="error-message" data-cy="start-required">{{ 'ui.datePicker.dateRequired' | translate }}</p>
+    }
+    @if (showEndRequired()) {
+      <p class="error-message" data-cy="end-required">{{ 'ui.datePicker.endDateRequired' | translate }}</p>
+    }
+    @if (endBeforeStart()) {
+      <p class="error-message" data-cy="period-order-error">{{ 'ui.datePicker.endBeforeStart' | translate }}</p>
+    }
+  </div>
+</div>
