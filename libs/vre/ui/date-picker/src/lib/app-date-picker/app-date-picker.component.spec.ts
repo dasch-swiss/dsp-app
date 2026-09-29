@@ -294,6 +294,70 @@ describe('DatePickerComponent', () => {
     });
   });
 
+  describe('the calendar input an owner drives (DEV-7372)', () => {
+    // A period's calendar belongs to the whole value, so the handler renders one control and pushes
+    // the result down through `[calendar]`. That input used to write the new calendar over the
+    // existing numerals — relabelling 01.04.2020 Gregorian as 01.04.2020 Julian, a different day.
+    // It was harmless while the input only arrived alongside an already-converted value; once both
+    // ends of a period took their calendar from one control, the ordering was not guaranteed.
+
+    const driveCalendar = (calendar: string) => {
+      component.calendar = calendar;
+      component.ngOnChanges({
+        calendar: { currentValue: calendar, previousValue: null, firstChange: false },
+      } as never);
+      fixture.detectChanges();
+    };
+
+    beforeEach(() => {
+      component.disableCalendarSelector = true;
+    });
+
+    it('converts the date rather than relabelling it', () => {
+      component.value = new KnoraDate('GREGORIAN', 'CE', 2020, 4, 1);
+      fixture.detectChanges();
+
+      driveCalendar('JULIAN');
+
+      expect(component.value?.calendar).toBe('JULIAN');
+      expect([component.value?.day, component.value?.month]).toEqual([19, 3]);
+    });
+
+    it('leaves the numerals changed, which is what distinguishes a conversion from a relabel', () => {
+      component.value = new KnoraDate('GREGORIAN', 'CE', 2020, 4, 1);
+      fixture.detectChanges();
+
+      driveCalendar('JULIAN');
+
+      const relabelled = component.value?.day === 1 && component.value?.month === 4;
+      expect(relabelled).toBe(false);
+    });
+
+    it('converts to Islamic rather than relabelling', () => {
+      component.value = new KnoraDate('GREGORIAN', 'CE', 2020, 4, 1);
+      fixture.detectChanges();
+
+      driveCalendar('ISLAMIC');
+
+      expect(component.value?.calendar).toBe('ISLAMIC');
+      expect(component.value?.year).toBe(1441);
+    });
+
+    it('does nothing when the calendar it is told is the one it already shows', () => {
+      component.value = new KnoraDate('GREGORIAN', 'CE', 2020, 4, 1);
+      fixture.detectChanges();
+
+      driveCalendar('GREGORIAN');
+
+      expect([component.value?.day, component.value?.month, component.value?.year]).toEqual([1, 4, 2020]);
+    });
+
+    it('survives being told a calendar before it holds a value', () => {
+      // The period's end picker is rendered before an end date exists.
+      expect(() => driveCalendar('JULIAN')).not.toThrow();
+    });
+  });
+
   describe('a day the month cannot hold (DEV-7372)', () => {
     // The picker used to keep a stranded day while rendering an empty grid, and save it. dsp-api
     // accepts such a date and silently shifts it into the next month (DEV-7428), so an impossible

@@ -360,11 +360,30 @@ export class DateValueHandlerComponent
     this.value = date;
   }
 
+  /**
+   * Captures the stored value on the first write that actually carries one.
+   *
+   * The editor renders this handler through a `formControl` that is empty at first render and
+   * filled once the resource loads, so the first `writeValue` is a null and the second is the
+   * stored value. Treating the null as "the first write" left `storedStartDate` null for the rest
+   * of the component's life: `[storedValue]` reached the pickers as null, no conversion base was
+   * ever seeded, and a period switched away and back drifted off its stored value — 1580 came back
+   * as 1579.
+   */
+
   /** records the first written value as the stored one, which is what conversions measure from. */
   private _captureStoredValue(date: KnoraDate | KnoraPeriod | null): void {
     if (this._storedValueCaptured) {
       return;
     }
+
+    // A null write is the empty form before the resource arrives, not a value being added: there
+    // is nothing to record yet, and recording it would lock in "nothing is stored" forever. The
+    // add path simply never reaches a non-null first write from outside, so it stays uncaptured.
+    if (date === null) {
+      return;
+    }
+
     this._storedValueCaptured = true;
 
     if (date instanceof KnoraDate) {

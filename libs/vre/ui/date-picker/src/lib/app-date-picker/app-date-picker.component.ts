@@ -310,10 +310,30 @@ export class AppDatePickerComponent
   onTouched = () => {};
 
   ngOnChanges(changes: SimpleChanges) {
-    // in case the calendar has changed (from parent e.g. in a period)
-    // update the calendar form control
+    // The owner changed the calendar this picker displays — a period, whose calendar belongs to the
+    // whole value rather than to either end.
+    //
+    // Converting rather than calling `_updateForm()` directly. That method writes the incoming
+    // calendar over the existing year, month and day, which relabels the date as a different day:
+    // 01.04.2020 Gregorian becomes 01.04.2020 Julian, ten days earlier, saved without a word. It
+    // was written when this input only ever arrived alongside a value the owner had already
+    // converted, so the relabel was a harmless no-op; once both ends of a period took their
+    // calendar from one control, the ordering was no longer guaranteed.
+    //
+    // `_convertToSelectedCalendar` reads the target from the form, so the control is written first
+    // and the conversion follows, measured from the conversion base like any other switch.
     if (changes['calendar'] && this.disableCalendarSelector) {
-      this._updateForm();
+      const target = this.calendar?.toUpperCase();
+      const currentCalendar = this.value?.calendar?.toUpperCase();
+
+      if (this.form && target && currentCalendar && target !== currentCalendar) {
+        this.form.controls['calendar'].setValue(this.calendar, { emitEvent: false });
+        if (!this._convertToSelectedCalendar()) {
+          this._updateForm();
+        }
+      } else {
+        this._updateForm();
+      }
     }
 
     // A stored value arriving means this picker is editing rather than adding, so conversions
