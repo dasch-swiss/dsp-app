@@ -29,7 +29,7 @@
   }
 
   <div class="date-fields">
-    <app-date-picker-v2
+    <app-date-picker
       class="start-date"
       data-cy="start-picker"
       [date]="state().start"
@@ -49,7 +49,7 @@
     </button>
 
     @if (state().isPeriod && state().start) {
-      <app-date-picker-v2
+      <app-date-picker
         class="end-date"
         data-cy="end-picker"
         [date]="state().end"

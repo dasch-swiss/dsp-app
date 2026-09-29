@@ -10,7 +10,7 @@ import {
   ReadTextValueAsXml,
   ReadValue,
 } from '@dasch-swiss/dsp-js';
-import { DateValueHandlerComponent } from '@dasch-swiss/vre/ui/date-picker';
+import { DateValueComponent } from '@dasch-swiss/vre/ui/date-picker';
 import { CkEditorComponent, CommonInputComponent, HumanReadableErrorPipe } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe } from '@ngx-translate/core';
 import { JsLibPotentialError } from '../property-value/JsLibPotentialError';
@@ -37,7 +37,7 @@ import { TimeValueComponent } from './value-components/time-value.component';
     ColorValueComponent,
     CkEditorComponent,
     CommonInputComponent,
-    DateValueHandlerComponent,
+    DateValueComponent,
     TimeValueComponent,
     IntervalValueComponent,
     GeolocationValueComponent,
@@ -120,7 +120,7 @@ import { TimeValueComponent } from './value-components/time-value.component';
     </ng-template>
 
     <ng-template #dateEditorTpl let-control="item">
-      <app-date-value-handler [formControl]="control" />
+      <app-date-value [formControl]="control" />
       @if (control.touched && control.errors; as errors) {
         <mat-error>{{ errors | humanReadableError }}</mat-error>
       }

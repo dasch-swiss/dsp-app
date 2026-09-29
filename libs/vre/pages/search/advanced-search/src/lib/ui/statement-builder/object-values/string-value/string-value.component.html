@@ -65,7 +65,10 @@
 }
 <!-- date value -->
 @case (constants.DateValue) {
-<div [formGroup]="dateFormGroup" class="width-100-percent">
-  <app-date-picker [formControlName]="'date'" (emitDateChanged)="onDateSelected($event)" />
+<div class="width-100-percent">
+  <!-- The calendar is chosen beside the picker rather than inside it: the picker is told a calendar
+  and never changes one, which is what stops it relabelling a date. -->
+  <app-calendar-selector [calendar]="searchCalendar()" (calendarChange)="onCalendarSelected($event)" />
+  <app-date-picker [date]="dateControl.value" [calendar]="searchCalendar()" (dateChange)="onDateSelected($event)" />
 </div>
 } }

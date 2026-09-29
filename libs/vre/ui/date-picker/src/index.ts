@@ -1,5 +1,6 @@
-export * from './lib/app-date-picker/app-date-picker.component';
-export * from './lib/date-value-handler/date-value-handler.component';
+export { DatePickerComponent } from './lib/date-picker/date-picker.component';
+export { CalendarSelectorComponent } from './lib/calendar-selector/calendar-selector.component';
+export { DateValueComponent } from './lib/date-value/date-value.component';
 export {
   CalendarDateService,
   type ConvertedKnoraDate,

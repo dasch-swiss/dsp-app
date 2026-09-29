@@ -46,16 +46,17 @@ describe('StringValueComponent date operand', () => {
   it('sends a Gregorian term tagged Gregorian', fakeAsync(() => {
     const seen = emitted();
 
-    component.onDateSelected('GREGORIAN:2024-06-15');
+    component.onDateSelected(new KnoraDate('GREGORIAN', 'CE', 2024, 6, 15));
     settle();
 
     expect(seen).toEqual(['GREGORIAN:2024-06-15']);
   }));
 
   it('sends a Julian term tagged Julian, not silently converted to Gregorian', fakeAsync(() => {
+    // dsp-api compares across calendars server-side, so the term keeps the calendar the user chose.
     const seen = emitted();
 
-    component.onDateSelected('JULIAN:2024-06-02');
+    component.onDateSelected(new KnoraDate('JULIAN', 'CE', 2024, 6, 2));
     settle();
 
     expect(seen).toEqual(['JULIAN:2024-06-02']);
@@ -64,7 +65,7 @@ describe('StringValueComponent date operand', () => {
   it('sends an Islamic term tagged Islamic', fakeAsync(() => {
     const seen = emitted();
 
-    component.onDateSelected('ISLAMIC:1445-12-08');
+    component.onDateSelected(new KnoraDate('ISLAMIC', 'noEra', 1445, 12, 8));
     settle();
 
     expect(seen).toEqual(['ISLAMIC:1445-12-08']);
@@ -73,21 +74,65 @@ describe('StringValueComponent date operand', () => {
   it('carries the era through untouched', fakeAsync(() => {
     const seen = emitted();
 
-    component.onDateSelected('JULIAN:0044-03-15 BCE');
+    component.onDateSelected(new KnoraDate('JULIAN', 'BCE', 44, 3, 15));
     settle();
 
-    expect(seen).toEqual(['JULIAN:0044-03-15 BCE']);
+    expect(seen).toEqual(['JULIAN:44-03-15 BCE']);
   }));
 
-  it('passes the term through unaltered, so no conversion happens on this side', fakeAsync(() => {
+  it('sends a year-precision term without inventing a month or day', fakeAsync(() => {
     const seen = emitted();
-    const term = 'JULIAN:1582-10-04';
 
-    component.onDateSelected(term);
+    component.onDateSelected(new KnoraDate('JULIAN', 'CE', 1582));
     settle();
 
-    expect(seen[0]).toBe(term);
+    expect(seen).toEqual(['JULIAN:1582']);
   }));
+
+  it('keeps the calendar name bare, never the translated display name', fakeAsync(() => {
+    // The single most dangerous thing this component could get wrong: dsp-api parses this literal,
+    // so a human-readable calendar name here breaks every date query in the app.
+    const seen = emitted();
+
+    component.onDateSelected(new KnoraDate('ISLAMIC', 'noEra', 1445, 12, 8));
+    settle();
+
+    expect(seen[0]).toContain('ISLAMIC:');
+    expect(seen[0]).not.toMatch(/tabular|Islamic \(/);
+  }));
+
+  it('does not leave a stale term behind when the date is cleared', fakeAsync(() => {
+    component.onDateSelected(new KnoraDate('GREGORIAN', 'CE', 2024, 6, 15));
+    settle();
+    const seen = emitted();
+
+    component.onDateSelected(null);
+    settle();
+
+    // Whatever reaches the stream, the term itself must not still be the old date.
+    expect(seen).not.toContain('GREGORIAN:2024-06-15');
+  }));
+
+  describe('choosing a calendar for the term', () => {
+    it('converts the entered date into the chosen calendar', fakeAsync(() => {
+      component.onDateSelected(new KnoraDate('GREGORIAN', 'CE', 2020, 4, 1));
+      settle();
+      const seen = emitted();
+
+      component.onCalendarSelected('JULIAN');
+      settle();
+
+      // Converted, not relabelled: 01.04 Gregorian is 19.03 Julian.
+      expect(seen).toEqual(['JULIAN:2020-03-19']);
+    }));
+
+    it('records the chosen calendar so the picker is told it', fakeAsync(() => {
+      component.onCalendarSelected('ISLAMIC');
+      settle();
+
+      expect(component.searchCalendar()).toBe('ISLAMIC');
+    }));
+  });
 
   describe('reading a stored term back into the picker', () => {
     it('restores the calendar the term was written in', () => {

@@ -62,7 +62,7 @@ const WEEKDAYS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
  * business knowing what a period is.
  */
 @Component({
-  selector: 'app-date-picker-v2',
+  selector: 'app-date-picker',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatButtonModule,
