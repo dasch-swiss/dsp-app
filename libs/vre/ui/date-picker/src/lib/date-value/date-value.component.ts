@@ -190,7 +190,7 @@ export class DateValueComponent implements ControlValueAccessor, Validator {
   );
 
   protected readonly showEndRequired = computed(
-    () => this.valueRequired() && this._touched() && this._state().isPeriod && this._state().end === null
+    () => this._touched() && this._state().isPeriod && this._state().end === null
   );
 
   // -----------------------------------------------------------------------------------------
@@ -228,14 +228,25 @@ export class DateValueComponent implements ControlValueAccessor, Validator {
     this._disabled.set(isDisabled);
   }
 
+  /**
+   * Whether the value is complete and coherent.
+   *
+   * A period that has been asked for but not yet finished is genuinely incomplete, so it is
+   * invalid — saving half a period would store a single date under a user's intent to store a
+   * range. But the message is withheld until the field has been touched: an error appearing the
+   * instant a user clicks "add end date" is scolding them for not having done something yet.
+   * {@link showEndRequired} owns that display rule; this owns the truth.
+   */
   validate(): ValidationErrors | null {
     const { start, end, isPeriod } = this._state();
 
     if (this.valueRequired() && start === null) {
       return { required: true };
     }
-    if (isPeriod && this.valueRequired() && end === null) {
-      return { required: true };
+    if (isPeriod && end === null) {
+      // Not gated on `valueRequired`: that input says whether a value must exist at all, not
+      // whether a period a user has explicitly asked for may be left half-built.
+      return { endRequired: true };
     }
     if (this.endBeforeStart()) {
       return { periodStartEnd: true };
@@ -376,6 +387,16 @@ export class DateValueComponent implements ControlValueAccessor, Validator {
     }
   }
 
+  /**
+   * The state as a value the form can hold.
+   *
+   * A period with no end yet is **still the start date**, not nothing. Asking for an end date is a
+   * statement of intent, not a retraction of what has already been entered — an earlier version
+   * returned null here, so clicking "add end date" on a complete date emptied the form and turned
+   * a valid control invalid before the user had picked anything. That reads as data loss.
+   *
+   * The value only becomes a `KnoraPeriod` once there are two ends to make one from.
+   */
   private _asValue(state: DateValueState): KnoraDate | KnoraPeriod | null {
     if (state.start === null) {
       return null;
@@ -383,7 +404,7 @@ export class DateValueComponent implements ControlValueAccessor, Validator {
     if (state.isPeriod && state.end !== null) {
       return new KnoraPeriod(state.start, state.end);
     }
-    return state.isPeriod ? null : state.start;
+    return state.start;
   }
 
   private _calendarOf(value: KnoraDate | KnoraPeriod | null): CalendarSystem {

@@ -190,6 +190,104 @@ describe('DateValueComponent, as the resource editor renders it', () => {
     });
   });
 
+  describe('asking for an end date does not discard the start', () => {
+    // Found in review. Clicking "add end date" on a complete date used to empty the form: the
+    // value became null and the control invalid, before the user had picked anything. Asking for
+    // an end date is a statement of intent, not a retraction of what is already entered.
+    const toggle = () =>
+      (component() as never as { onTogglePeriod: (e: Event) => void }).onTogglePeriod(new Event('click'));
+    const pickEnd = (date: KnoraDate) =>
+      (component() as never as { onEndChange: (d: KnoraDate) => void }).onEndChange(date);
+
+    beforeEach(() => load(new KnoraDate('GREGORIAN', 'CE', 2024, 6, 15)));
+
+    it('keeps the start date when a period is asked for', () => {
+      toggle();
+      fixture.detectChanges();
+
+      expect(asDate()).not.toBeNull();
+      expect([asDate().day, asDate().month, asDate().year]).toEqual([15, 6, 2024]);
+    });
+
+    it('becomes a period once there are two ends to make one from', () => {
+      toggle();
+      pickEnd(new KnoraDate('GREGORIAN', 'CE', 2024, 12, 31));
+      fixture.detectChanges();
+
+      const period = value() as KnoraPeriod;
+      expect(period).toBeInstanceOf(KnoraPeriod);
+      expect([period.start.day, period.end.day]).toEqual([15, 31]);
+    });
+
+    it('recovers the single date when the period is toggled back off', () => {
+      toggle();
+      pickEnd(new KnoraDate('GREGORIAN', 'CE', 2024, 12, 31));
+      fixture.detectChanges();
+      toggle();
+      fixture.detectChanges();
+
+      expect([asDate().day, asDate().month, asDate().year]).toEqual([15, 6, 2024]);
+    });
+  });
+
+  describe('what validation reports', () => {
+    const toggle = () =>
+      (component() as never as { onTogglePeriod: (e: Event) => void }).onTogglePeriod(new Event('click'));
+
+    it('reports nothing entered on an empty form', () => {
+      expect(host.control.errors).toEqual({ required: true });
+    });
+
+    it('reports nothing wrong with a complete date', () => {
+      load(new KnoraDate('GREGORIAN', 'CE', 2024, 6, 15));
+
+      expect(host.control.valid).toBe(true);
+    });
+
+    it('reports a half-built period as missing its end, not as missing everything', () => {
+      // `required` would be a lie: a date has plainly been entered. Saving half a period would
+      // store a single date under a user's stated intent to store a range, so it is still invalid.
+      load(new KnoraDate('GREGORIAN', 'CE', 2024, 6, 15));
+
+      toggle();
+      fixture.detectChanges();
+
+      expect(host.control.errors).toEqual({ endRequired: true });
+    });
+
+    it('reports a period whose ends are out of order', () => {
+      load(new KnoraPeriod(new KnoraDate('JULIAN', 'CE', 1585), new KnoraDate('JULIAN', 'CE', 1580)));
+
+      expect(host.control.errors).toEqual({ periodStartEnd: true });
+    });
+
+    it('compares those ends through JDN, so two calendars still order correctly', () => {
+      // Deliberately a case where the two comparisons disagree. Julian 01.04.2020 is Gregorian
+      // 14.04.2020, four days AFTER the Gregorian end — so the period is out of order. Comparing
+      // fields would see day 1 against day 10 in the same month, call it ordered, and accept a
+      // period that runs backwards. An earlier version of this test used numerals that both
+      // comparisons rejected, so it passed without proving anything.
+      load(new KnoraPeriod(new KnoraDate('JULIAN', 'CE', 2020, 4, 1), new KnoraDate('GREGORIAN', 'CE', 2020, 4, 10)));
+
+      expect(host.control.errors).toEqual({ periodStartEnd: true });
+    });
+
+    it('accepts a cross-calendar period that is genuinely in order', () => {
+      // The other half: Julian 01.04.2020 is Gregorian 14.04.2020, before the Gregorian end.
+      load(new KnoraPeriod(new KnoraDate('JULIAN', 'CE', 2020, 4, 1), new KnoraDate('GREGORIAN', 'CE', 2020, 4, 20)));
+
+      expect(host.control.valid).toBe(true);
+    });
+
+    it('stays valid across a calendar switch, which changes no instant', () => {
+      load(new KnoraDate('GREGORIAN', 'CE', 2020, 4, 1));
+
+      switchTo('JULIAN');
+
+      expect(host.control.valid).toBe(true);
+    });
+  });
+
   describe('one user action, one emission', () => {
     it('emits once for one calendar switch', () => {
       load(new KnoraDate('GREGORIAN', 'CE', 2020, 4, 1));
