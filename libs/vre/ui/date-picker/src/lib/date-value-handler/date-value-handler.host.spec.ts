@@ -149,6 +149,108 @@ describe('DateValueHandlerComponent, as the resource editor renders it', () => {
     });
   });
 
+  describe('what the user actually sees after switching', () => {
+    // Reported from the deployed preview and reproduced in a browser before this was written: the
+    // displayed date lagged the label by one switch. Choosing Julian left 01.04.2020 on screen,
+    // and choosing Gregorian again showed 19.03.2020 — the Julian date under a Gregorian label.
+    //
+    // Every earlier test drove the picker's own calendar control, which converts through a
+    // different path. In the editor that control is suppressed: the handler owns the calendar and
+    // pushes it down through `[calendar]`, so that input is the only thing converting the value.
+    // These assert the rendered input, which is what the reporter was reading.
+
+    const displayed = () =>
+      (fixture.nativeElement as HTMLElement).querySelector<HTMLInputElement>('input.date-picker-input')?.value;
+
+    beforeEach(() => load(new KnoraDate('GREGORIAN', 'CE', 2020, 4, 1)));
+
+    it('shows the stored date before anything is switched', () => {
+      expect(displayed()).toBe('01.04.2020');
+    });
+
+    it('shows the converted date immediately after switching to Julian', () => {
+      switchTo('JULIAN');
+
+      expect(displayed()).toBe('19.03.2020');
+    });
+
+    it('shows the stored date again after switching back', () => {
+      switchTo('JULIAN');
+      switchTo('GREGORIAN');
+
+      expect(displayed()).toBe('01.04.2020');
+    });
+
+    it('never shows one calendar\u2019s numerals under another\u2019s label', () => {
+      switchTo('JULIAN');
+
+      expect(displayed()).not.toBe('01.04.2020');
+    });
+
+    it('shows the Islamic date immediately after switching to Islamic', () => {
+      switchTo('ISLAMIC');
+
+      expect(displayed()).toBe('07.08.1441');
+    });
+
+    it('suppresses the picker\u2019s own calendar selector, since the handler owns it', () => {
+      // The condition that made the bug reachable: with its own selector shown, the picker's form
+      // control also converts and masked the defect in every earlier test.
+      expect(startPicker().disableCalendarSelector).toBe(true);
+    });
+  });
+
+  describe('adding a new value, where nothing is stored', () => {
+    // The add path renders the same handler with an empty control. A date the user picks here is
+    // their entry, not a stored value — but it travels back through `writeValue` after `onChange`
+    // reports it, so a naive "first non-null write" rule captures it as stored. That put a
+    // stored-value line on a form where nothing is stored, and the extra element broke an
+    // unrelated E2E selector that expected one input and found two.
+
+    it('records no stored value when the user picks a date', () => {
+      // `setDate` is what a click on the day grid calls, and it is the path that reports the value
+      // through `onChange` — which is how the entry travels back in as a write.
+      const picker = startPicker();
+      picker.form.controls['year'].setValue(2024);
+      picker.form.controls['month'].setValue(6);
+      fixture.detectChanges();
+      picker.setDate(15);
+      fixture.detectChanges();
+
+      expect(handler().storedStartDate).toBeNull();
+    });
+
+    it('renders no stored-value line on the add path', () => {
+      const picker = startPicker();
+      picker.form.controls['year'].setValue(2024);
+      picker.form.controls['month'].setValue(6);
+      fixture.detectChanges();
+      picker.setDate(15);
+      fixture.detectChanges();
+
+      const line = (fixture.nativeElement as HTMLElement).querySelector('[data-cy="period-stored-value"]');
+      expect(line).toBeNull();
+    });
+
+    it('renders the stored-value line once a value is loaded from outside', () => {
+      load(new KnoraDate('GREGORIAN', 'CE', 2020, 4, 1));
+
+      const line = (fixture.nativeElement as HTMLElement).querySelector('[data-cy="period-stored-value"]');
+      expect(line).not.toBeNull();
+    });
+
+    it('converts from the current entry when adding, since there is nothing to measure from', () => {
+      startPicker().value = new KnoraDate('JULIAN', 'CE', 1582);
+      fixture.detectChanges();
+
+      switchTo('GREGORIAN');
+      switchTo('JULIAN');
+
+      // No stored value to anchor on, so the round trip drifts — the user is choosing the date.
+      expect(handler().isBaseTheStoredValue).toBe(false);
+    });
+  });
+
   describe('switching the calendar on a stored period', () => {
     beforeEach(() => load(new KnoraPeriod(new KnoraDate('JULIAN', 'CE', 1580), new KnoraDate('JULIAN', 'CE', 1585))));
 

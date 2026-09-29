@@ -109,6 +109,17 @@ export class DateValueHandlerComponent
   private _storedValueCaptured = false;
 
   /**
+   * Set while this component is emitting its own change, so the write that comes back is not
+   * mistaken for a stored value.
+   *
+   * On the add path the user picks a date, `onChange` reports it, and Angular may write that same
+   * value straight back through `writeValue`. Treating that as the first stored value made an
+   * *added* value behave as an edited one: the stored-value line appeared on a form where nothing
+   * is stored yet, which also put an extra element in the DOM and broke an unrelated E2E selector.
+   */
+  private _emittingOwnChange = false;
+
+  /**
    * what a calendar switch converts the period from — the stored period while editing.
    *
    * Held here rather than in the pickers because a period carries one calendar for the whole
@@ -378,9 +389,15 @@ export class DateValueHandlerComponent
     }
 
     // A null write is the empty form before the resource arrives, not a value being added: there
-    // is nothing to record yet, and recording it would lock in "nothing is stored" forever. The
-    // add path simply never reaches a non-null first write from outside, so it stays uncaptured.
+    // is nothing to record yet, and recording it would lock in "nothing is stored" forever.
     if (date === null) {
+      return;
+    }
+
+    // A value arriving because this component just emitted it is the user's own entry, not
+    // something that was stored. Only a write originating outside — Angular writing an existing
+    // value into the form — records a stored value.
+    if (this._emittingOwnChange) {
       return;
     }
 
@@ -404,7 +421,12 @@ export class DateValueHandlerComponent
 
   handleInput(): void {
     this._refreshAvailableCalendars();
-    this.onChange(this.value);
+    this._emittingOwnChange = true;
+    try {
+      this.onChange(this.value);
+    } finally {
+      this._emittingOwnChange = false;
+    }
   }
 
   /** the stored value as text, for the lines that state what is stored and what was converted. */

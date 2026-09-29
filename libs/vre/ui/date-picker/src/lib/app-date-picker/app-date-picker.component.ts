@@ -310,30 +310,9 @@ export class AppDatePickerComponent
   onTouched = () => {};
 
   ngOnChanges(changes: SimpleChanges) {
-    // The owner changed the calendar this picker displays — a period, whose calendar belongs to the
-    // whole value rather than to either end.
-    //
-    // Converting rather than calling `_updateForm()` directly. That method writes the incoming
-    // calendar over the existing year, month and day, which relabels the date as a different day:
-    // 01.04.2020 Gregorian becomes 01.04.2020 Julian, ten days earlier, saved without a word. It
-    // was written when this input only ever arrived alongside a value the owner had already
-    // converted, so the relabel was a harmless no-op; once both ends of a period took their
-    // calendar from one control, the ordering was no longer guaranteed.
-    //
-    // `_convertToSelectedCalendar` reads the target from the form, so the control is written first
-    // and the conversion follows, measured from the conversion base like any other switch.
+    // The owner changed the calendar this picker displays — see `_applyOwnerCalendar`.
     if (changes['calendar'] && this.disableCalendarSelector) {
-      const target = this.calendar?.toUpperCase();
-      const currentCalendar = this.value?.calendar?.toUpperCase();
-
-      if (this.form && target && currentCalendar && target !== currentCalendar) {
-        this.form.controls['calendar'].setValue(this.calendar, { emitEvent: false });
-        if (!this._convertToSelectedCalendar()) {
-          this._updateForm();
-        }
-      } else {
-        this._updateForm();
-      }
+      this._applyOwnerCalendar();
     }
 
     // A stored value arriving means this picker is editing rather than adding, so conversions
@@ -604,6 +583,52 @@ export class AppDatePickerComponent
     // date, so it takes the start of that span. Rendering the span is the viewer's concern.
     this._applyDate(converted.start);
     return true;
+  }
+
+  /**
+   * converts this picker's date into the calendar its owner selected.
+   *
+   * A period carries one calendar for the whole value, so the handler renders a single control and
+   * pushes the result down through `[calendar]`. Both ends have their own selector suppressed, so
+   * this is the *only* path that converts them — nothing else is running to correct it afterwards.
+   *
+   * Converts from the base directly rather than writing the target into the form and letting
+   * `_convertToSelectedCalendar` pick it up. That indirection is what produced the reported bug:
+   * `_convertToSelectedCalendar` reads its target from `this.form`, and the `value` setter calls
+   * `buildForm()`, which replaces that form — so the control written a moment earlier was gone and
+   * the conversion ran against the previous calendar. The display then lagged the label by one
+   * switch: choosing Julian left 01.04.2020 on screen, and choosing Gregorian again showed
+   * 19.03.2020, the Julian date under a Gregorian label.
+   *
+   * The picker's own selector, where it is shown, still goes through `_convertToSelectedCalendar`:
+   * there the form *is* the source of the user's choice.
+   */
+  private _applyOwnerCalendar(): void {
+    const target = this.calendar?.toUpperCase() as CalendarSystem | undefined;
+    const current = this.value;
+
+    if (!target || !current || current.calendar.toUpperCase() === target) {
+      // Nothing to convert — but the form still has to show the calendar the owner named.
+      this._updateForm();
+      return;
+    }
+
+    const source = this._conversionBase ?? current;
+
+    // Returning to the base's own calendar is a return, not a conversion: take it verbatim so an
+    // imprecise date comes back at its stored precision rather than at a span's start.
+    if (source.calendar.toUpperCase() === target) {
+      this._applyDate(source);
+      return;
+    }
+
+    const converted = this._valueService.convertKnoraDateTo(source, target);
+    if (converted === undefined) {
+      this._updateForm();
+      return;
+    }
+
+    this._applyDate(converted.start);
   }
 
   /** writes one date into the picker's fields and its form, without re-triggering a conversion. */
