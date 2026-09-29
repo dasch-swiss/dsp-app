@@ -288,6 +288,69 @@ describe('DateValueComponent, as the resource editor renders it', () => {
     });
   });
 
+  describe('being reused for a second value', () => {
+    // The editor binds this component to an input rather than recreating it per value, so a second
+    // resource arrives as another writeValue on the same instance. Capturing the stored value only
+    // once left every later judgement — "nothing to save", "converted from" — measured against the
+    // first resource's date.
+    it('re-anchors on the newly loaded value', () => {
+      load(new KnoraDate('GREGORIAN', 'CE', 2020, 4, 1));
+      load(new KnoraDate('GREGORIAN', 'CE', 1999, 1, 15));
+
+      // The rendered line interpolates through translate, which has no catalogue here, so the
+      // stored text itself is what this asserts.
+      expect((component() as never as { storedText: () => string }).storedText()).toContain('15.01.1999');
+    });
+
+    it('measures conversions from the new value, not the old one', () => {
+      load(new KnoraDate('GREGORIAN', 'CE', 2020, 4, 1));
+      switchTo('JULIAN');
+      load(new KnoraDate('GREGORIAN', 'CE', 1999, 1, 15));
+
+      switchTo('JULIAN');
+      switchTo('GREGORIAN');
+
+      expect([asDate().day, asDate().month, asDate().year]).toEqual([15, 1, 1999]);
+    });
+
+    it('forgets that the previous value had been edited', () => {
+      load(new KnoraDate('GREGORIAN', 'CE', 2020, 4, 1));
+      (component() as never as { onStartChange: (d: KnoraDate) => void }).onStartChange(
+        new KnoraDate('GREGORIAN', 'CE', 2020, 5, 5)
+      );
+      fixture.detectChanges();
+
+      load(new KnoraDate('GREGORIAN', 'CE', 1999, 1, 15));
+      switchTo('JULIAN');
+
+      // "(Stored value)" must refer to 1999, which means the base was re-anchored.
+      expect(el('converted-from')?.textContent).toContain('convertedFromStored');
+    });
+  });
+
+  describe('being cleared', () => {
+    it('keeps the period shape the user asked for when the form is reset', () => {
+      // Angular calls writeValue(null) on reset. Dropping isPeriod here silently turned a range
+      // back into a single date with nothing to notice it.
+      load(new KnoraPeriod(new KnoraDate('JULIAN', 'CE', 1580), new KnoraDate('JULIAN', 'CE', 1585)));
+
+      component().writeValue(null);
+      fixture.detectChanges();
+
+      expect((component() as never as { state: () => { isPeriod: boolean } }).state().isPeriod).toBe(true);
+    });
+
+    it('clears the dates themselves', () => {
+      load(new KnoraPeriod(new KnoraDate('JULIAN', 'CE', 1580), new KnoraDate('JULIAN', 'CE', 1585)));
+
+      component().writeValue(null);
+      fixture.detectChanges();
+
+      const state = (component() as never as { state: () => { start: unknown; end: unknown } }).state();
+      expect([state.start, state.end]).toEqual([null, null]);
+    });
+  });
+
   describe('one user action, one emission', () => {
     it('emits once for one calendar switch', () => {
       load(new KnoraDate('GREGORIAN', 'CE', 2020, 4, 1));

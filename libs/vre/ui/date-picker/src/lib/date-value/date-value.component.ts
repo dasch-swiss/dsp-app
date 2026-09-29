@@ -204,8 +204,23 @@ export class DateValueComponent implements ControlValueAccessor, Validator {
   private _emitting = false;
 
   writeValue(value: KnoraDate | KnoraPeriod | null): void {
-    if (value !== null && !this._emitting && this._stored() === null) {
+    // A write that did not originate here is a value being loaded, so it replaces what is stored
+    // and re-anchors conversions on it. Without this the component would keep measuring against
+    // the first value it ever saw: it is bound to an input rather than recreated per value, so a
+    // second resource would be edited against the first one's stored date, and every "nothing to
+    // save" judgement would be made against the wrong thing.
+    if (!this._emitting) {
       this._stored.set(value);
+      this._baseIsStored.set(true);
+      this._touched.set(false);
+    }
+
+    // A null write is the form being cleared or reset, not a period becoming a single date. The
+    // period shape belongs to what the user asked for, and dropping it here silently turned a
+    // range back into one date with nothing to notice it.
+    if (value === null) {
+      this._state.update(state => ({ ...state, start: null, end: null }));
+      return;
     }
 
     this._state.set({
