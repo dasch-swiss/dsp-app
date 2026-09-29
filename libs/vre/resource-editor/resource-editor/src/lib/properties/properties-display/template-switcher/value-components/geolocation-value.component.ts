@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, Input, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AbstractControl, FormControl, FormGroupDirective, NgForm, ReactiveFormsModule } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -109,6 +110,8 @@ export class GeolocationValueComponent implements OnInit {
   private _initialCrs: string | null = null;
   private _initialCoordinates: string | null = null;
 
+  private readonly _destroyRef = inject(DestroyRef);
+
   get selectedCrs(): Crs {
     return crsByIri(this.crsControl.value) ?? CRS_84;
   }
@@ -136,29 +139,31 @@ export class GeolocationValueComponent implements OnInit {
   ngOnInit() {
     let updating = false;
 
-    this.control.valueChanges.pipe(startWith(this.control.value)).subscribe(change => {
-      if (updating) {
-        return;
-      }
-      updating = true;
-
-      if (change === null) {
-        this.xControl.setValue('', { emitEvent: false });
-        this.yControl.setValue('', { emitEvent: false });
-      } else {
-        // REQ-3.2: the selector opens on the value's own CRS, never on a default — getting this wrong
-        // silently relabels a Swiss coordinate as WGS84.
-        this.crsControl.setValue(change.crs, { emitEvent: false });
-        this.xControl.setValue(change.x, { emitEvent: false });
-        this.yControl.setValue(change.y, { emitEvent: false });
-        if (this._initialCrs === null) {
-          this._initialCrs = change.crs;
-          this._initialCoordinates = `${change.x} ${change.y}`;
+    this.control.valueChanges
+      .pipe(startWith(this.control.value), takeUntilDestroyed(this._destroyRef))
+      .subscribe(change => {
+        if (updating) {
+          return;
         }
-      }
-      this._applyRangeErrors();
-      updating = false;
-    });
+        updating = true;
+
+        if (change === null) {
+          this.xControl.setValue('', { emitEvent: false });
+          this.yControl.setValue('', { emitEvent: false });
+        } else {
+          // REQ-3.2: the selector opens on the value's own CRS, never on a default — getting this wrong
+          // silently relabels a Swiss coordinate as WGS84.
+          this.crsControl.setValue(change.crs, { emitEvent: false });
+          this.xControl.setValue(change.x, { emitEvent: false });
+          this.yControl.setValue(change.y, { emitEvent: false });
+          if (this._initialCrs === null) {
+            this._initialCrs = change.crs;
+            this._initialCoordinates = `${change.x} ${change.y}`;
+          }
+        }
+        this._applyRangeErrors();
+        updating = false;
+      });
 
     // The two-way sync loops without this guard; it is copied from IntervalValueComponent for that
     // reason.
