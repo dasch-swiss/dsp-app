@@ -1,7 +1,7 @@
 import { ErrorHandler, SimpleChange } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Title } from '@angular/platform-browser';
-import { ReadResource } from '@dasch-swiss/dsp-js';
+import { ApiResponseError, ReadResource } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { ErrorReportingService } from '@dasch-swiss/vre/core/error-handler';
 import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
@@ -112,6 +112,34 @@ describe('AdvancedSearchResultsComponent', () => {
       // An empty array would render the no-results state, which is the regression this guards.
       expect(emitted).not.toContainEqual([]);
       expect(handleError).toHaveBeenCalled();
+      sub.unsubscribe();
+    });
+
+    it('shows a query dsp-api rejected in the panel only, reporting it without a snackbar (DEV-7370)', () => {
+      const rejection = Object.assign(Object.create(ApiResponseError.prototype), { status: 400 });
+      doExtendedSearch.mockReturnValue(throwError(() => rejection));
+      const component = renderComponent();
+
+      const sub = component.resources$.subscribe();
+
+      expect(component.failed()).toBe(true);
+      expect(report).toHaveBeenCalledWith(rejection, {
+        component: 'AdvancedSearchResultsComponent',
+        operation: 'gravsearchQuery',
+      });
+      expect(handleError).not.toHaveBeenCalled();
+      sub.unsubscribe();
+    });
+
+    it('still notifies the user of a server fault', () => {
+      const fault = Object.assign(Object.create(ApiResponseError.prototype), { status: 500 });
+      doExtendedSearch.mockReturnValue(throwError(() => fault));
+      const component = renderComponent();
+
+      const sub = component.resources$.subscribe();
+
+      expect(component.failed()).toBe(true);
+      expect(handleError).toHaveBeenCalledWith(fault);
       sub.unsubscribe();
     });
 
