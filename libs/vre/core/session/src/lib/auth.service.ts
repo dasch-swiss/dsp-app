@@ -19,7 +19,9 @@ export class AuthService {
   ) {}
 
   /**
-   * Complete authentication by loading user and setting language preferences
+   * Complete authentication by loading user and setting language preferences.
+   * Must not reload the page: auto-login calls this on every startup, so a reload here would loop.
+   * Interactive login reloads in `login$` instead.
    * @param encodedJWT
    * @param identifierOrIri can be email, username, or user IRI
    * @param identifierType type of identifier: 'email', 'username', or 'iri'

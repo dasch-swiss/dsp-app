@@ -42,7 +42,7 @@ function createMockUser(overrides?: Partial<ReadUser>): ReadUser {
   } as ReadUser;
 }
 
-// Helper to intercept the page reload triggered by logout().
+// Helper to intercept the page reload triggered by login$() and logout().
 // jsdom >=26 makes `window.location` and its members [LegacyUnforgeable]
 // (non-configurable + non-writable), so they cannot be mocked directly. AuthService
 // wraps the reload in a `reloadPage()` seam that we spy on instead.
