@@ -20,7 +20,7 @@ export class GenerateProperty {
       .filter(
         // temporary guard/feature flag after https://linear.app/dasch/issue/DEV-7433/resdescr-basic-implementation - removes hasDescription for all resources except AudioSegment and VideoSegment
         prop =>
-          prop.propDef.id != Constants.HasDescription ||
+          prop.propDef.id !== Constants.HasDescription ||
           resource.type === `${ApiConstants.apiKnoraOntologyUrl}#AudioSegment` ||
           resource.type === `${ApiConstants.apiKnoraOntologyUrl}#VideoSegment`
       )
