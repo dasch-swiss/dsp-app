@@ -134,6 +134,11 @@ $fg-subtle: #9ca3af;
   color: #1f2937;
 }
 
+// Sits above the month/year/era row, so the calendar is chosen before the date it applies to.
+.panel-calendar {
+  padding: 8px 14px 0;
+}
+
 // Month, year and era as one row of equal-height boxes, each captioned above.
 .panel-controls {
   display: flex;

@@ -63,6 +63,10 @@ const STORY_TRANSLATIONS = {
       none: 'None',
       year: 'Year',
       willBeStoredAs: 'will be stored as {{date}}',
+      era: 'Era',
+      noDay: 'No day (month precision)',
+      yearPrecision: 'Year precision. Choose a month to select a day.',
+      done: 'Done',
     },
     // Advanced search renders the picker, not the viewer's calendar marker, so only the picker's
     // own calendar names are needed here.

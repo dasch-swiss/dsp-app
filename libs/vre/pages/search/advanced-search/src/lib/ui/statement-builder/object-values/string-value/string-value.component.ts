@@ -20,7 +20,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
 import { Constants, KnoraDate } from '@dasch-swiss/dsp-js';
 import { CalendarSystem } from '@dasch-swiss/vre/shared/calendar';
-import { CalendarSelectorComponent, DatePickerComponent } from '@dasch-swiss/vre/ui/date-picker';
+import { DatePickerComponent } from '@dasch-swiss/vre/ui/date-picker';
 import { CalendarDateService } from '@dasch-swiss/vre/ui/ui';
 import { TranslateModule } from '@ngx-translate/core';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
@@ -47,7 +47,6 @@ class ValueErrorStateMatcher implements ErrorStateMatcher {
   standalone: true,
   selector: 'app-string-value',
   imports: [
-    CalendarSelectorComponent,
     DatePickerComponent,
     MatButtonModule,
     MatInputModule,

@@ -490,6 +490,57 @@ describe('DatePickerComponent', () => {
     });
   });
 
+  // A lone date inside a row of selects has nowhere to put a calendar control: stacking one above
+  // the field made that column twice the height of its neighbours. The panel can hold it instead.
+  describe('offering the calendar in the panel', () => {
+    const selector = () => overlay().querySelector('app-calendar-selector');
+
+    it('offers no calendar by default, since most owners keep the choice', () => {
+      show(new KnoraDate('GREGORIAN', 'CE', 2024, 6, 15));
+
+      expect(selector()).toBeNull();
+    });
+
+    it('offers one when the owner asks for it', () => {
+      fixture.componentRef.setInput('showsCalendarSelector', true);
+      show(new KnoraDate('GREGORIAN', 'CE', 2024, 6, 15));
+
+      expect(selector()).not.toBeNull();
+    });
+
+    // The tag and the selector would otherwise name the same calendar twice.
+    it('drops the calendar tag, which the selector now names', () => {
+      fixture.componentRef.setInput('showsCalendarSelector', true);
+      show(new KnoraDate('GREGORIAN', 'CE', 2024, 6, 15));
+
+      expect(el('calendar-tag')).toBeNull();
+    });
+
+    it('keeps the tag when the owner keeps the choice', () => {
+      show(new KnoraDate('GREGORIAN', 'CE', 2024, 6, 15));
+
+      expect(el('calendar-tag')).not.toBeNull();
+    });
+
+    // The invariant the rewrite exists to protect: this component reports a calendar and is told
+    // one. It must not convert, and must not write its own `calendar`.
+    it('reports the choice without changing the date it holds', () => {
+      fixture.componentRef.setInput('showsCalendarSelector', true);
+      show(new KnoraDate('GREGORIAN', 'CE', 2024, 6, 15));
+
+      const reported: string[] = [];
+      component.calendarChange.subscribe(c => reported.push(c));
+
+      el('calendar-option-JULIAN')!.click();
+      fixture.detectChanges();
+
+      expect(reported).toEqual(['JULIAN']);
+      // Still showing what it was given: the owner converts and hands a new date back.
+      expect(selectedDay()).toBe('15');
+      expect(emitted).toEqual([]);
+    });
+  });
+
   describe('the closed field', () => {
     it('shows the date it was given', () => {
       fixture.componentRef.setInput('date', new KnoraDate('GREGORIAN', 'CE', 2024, 6, 15));

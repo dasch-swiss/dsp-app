@@ -33,15 +33,31 @@ deliberate act, so two of these side by side stay one line tall. -->
   (detach)="close()"
   (overlayKeydown)="onOverlayKeydown($event)">
   <div class="date-picker-panel" role="dialog" data-cy="date-picker-panel" [attr.aria-label]="fieldLabel() | translate">
-    <!-- which field this panel belongs to, and which calendar it is picking in: with the calendar
-    selector owned by the value, the panel would otherwise never name its own calendar -->
+    <!-- which field this panel belongs to, and which calendar it is picking in -->
     <div class="panel-header">
       @if (label()) {
       <span class="panel-title" data-cy="panel-title">{{ label()! | translate }}</span>
       }
       <span class="fill-remaining-space"></span>
+      <!-- The tag names the calendar when the owner keeps the choice; when the choice lives here,
+      the selector below names it and a tag beside it would say the same thing twice. -->
+      @if (!showsCalendarSelector()) {
       <span class="calendar-tag" data-cy="calendar-tag">{{ calendarLabel() | translate }}</span>
+      }
     </div>
+
+    <!-- The calendar, for an owner that has nowhere better to put it. This picker still never
+    changes one: the choice is reported upward and comes back as a new `calendar` and a converted
+    `date`, exactly as when the control sits outside. -->
+    @if (showsCalendarSelector()) {
+    <div class="panel-calendar">
+      <app-calendar-selector
+        [calendar]="calendar()"
+        [available]="availableCalendars()"
+        [disabled]="disabled()"
+        (calendarChange)="calendarChange.emit($event)" />
+    </div>
+    }
 
     <!-- month, year and era. Native controls rather than mat-form-fields: the design is a row of
     three equal-height bordered boxes with captions above, which Material's floating labels and

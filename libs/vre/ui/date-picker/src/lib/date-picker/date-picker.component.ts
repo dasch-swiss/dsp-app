@@ -2,9 +2,10 @@ import { CdkConnectedOverlay, CdkOverlayOrigin, ConnectedPosition } from '@angul
 import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { KnoraDate } from '@dasch-swiss/dsp-js';
-import { CalendarSystem } from '@dasch-swiss/vre/shared/calendar';
+import { CALENDAR_SYSTEMS, CalendarSystem } from '@dasch-swiss/vre/shared/calendar';
 import { CalendarDateService, WEEKDAY_KEYS } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe } from '@ngx-translate/core';
+import { CalendarSelectorComponent } from '../calendar-selector/calendar-selector.component';
 
 /**
  * A date being built, which is not yet necessarily a date.
@@ -82,7 +83,7 @@ const PANEL_POSITIONS: readonly ConnectedPosition[] = [
   changeDetection: ChangeDetectionStrategy.OnPush,
   // Only the trigger's icon is Material now: the panel is native controls styled to the design,
   // which is a row of equal-height bordered boxes Material's form fields cannot express.
-  imports: [CdkConnectedOverlay, CdkOverlayOrigin, MatIconModule, TranslatePipe],
+  imports: [CalendarSelectorComponent, CdkConnectedOverlay, CdkOverlayOrigin, MatIconModule, TranslatePipe],
   templateUrl: './date-picker.component.html',
   styleUrls: ['./date-picker.component.scss'],
 })
@@ -106,8 +107,28 @@ export class DatePickerComponent {
    */
   readonly label = input<string | null>(null);
 
+  /**
+   * Whether the panel offers the calendar choice, for an owner with nowhere better to put it.
+   *
+   * Off by default: a period carries one calendar for the whole value, so its owner shows a single
+   * control above both fields and must not have one per picker. Advanced search compares against a
+   * lone date inside a row of selects, where a control of its own made the row twice as tall as
+   * its neighbours — there the choice belongs in the panel.
+   *
+   * Showing it changes nothing about what this component does with a calendar: it still never
+   * converts and never writes one. The choice is reported through {@link calendarChange} and comes
+   * back as a new `calendar` and an already-converted `date`.
+   */
+  readonly showsCalendarSelector = input(false);
+
+  /** Which calendars the owner will accept, passed through to the selector it renders. */
+  readonly availableCalendars = input<readonly CalendarSystem[]>(CALENDAR_SYSTEMS);
+
   /** Emitted when the user commits a date. Never fired by the component writing to itself. */
   readonly dateChange = output<KnoraDate | null>();
+
+  /** Emitted when the user picks a calendar in the panel. The owner converts and passes it back. */
+  readonly calendarChange = output<CalendarSystem>();
 
   protected readonly months = MONTHS;
   protected readonly weekDays = WEEKDAY_HEADER;

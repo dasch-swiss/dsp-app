@@ -65,10 +65,16 @@
 }
 <!-- date value -->
 @case (constants.DateValue) {
+<!-- The calendar is chosen inside the picker's panel here. A control of its own stacked above the
+field made this column twice the height of the selects beside it, and the row centres its children,
+so the toggles sat above them and the field hung below. The picker still never changes a calendar:
+it reports the choice and is handed back a converted date. -->
 <div class="width-100-percent">
-  <!-- The calendar is chosen beside the picker rather than inside it: the picker is told a calendar
-  and never changes one, which is what stops it relabelling a date. -->
-  <app-calendar-selector [calendar]="searchCalendar()" (calendarChange)="onCalendarSelected($event)" />
-  <app-date-picker [date]="dateControl.value" [calendar]="searchCalendar()" (dateChange)="onDateSelected($event)" />
+  <app-date-picker
+    [date]="dateControl.value"
+    [calendar]="searchCalendar()"
+    [showsCalendarSelector]="true"
+    (dateChange)="onDateSelected($event)"
+    (calendarChange)="onCalendarSelected($event)" />
 </div>
 } }
