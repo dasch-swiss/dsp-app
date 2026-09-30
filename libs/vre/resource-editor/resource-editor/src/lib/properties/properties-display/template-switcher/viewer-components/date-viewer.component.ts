@@ -63,6 +63,7 @@ export class DateViewerComponent {
     if (date instanceof KnoraPeriod) {
       return {
         weekday: this._calendarDates.weekdayOf(date.start),
+        endWeekday: this._calendarDates.weekdayOf(date.end),
         jdn: this._calendarDates.julianDayNumber(date.start),
         endJdn: this._calendarDates.julianDayNumber(date.end),
         durationDays: this._calendarDates.durationInDays(date),

@@ -211,7 +211,7 @@ export const OpensClosed: Story = {
   },
 };
 
-const facts = () => document.querySelector('[data-cy="calendar-marker-facts"]');
+const factsRow = (hook: string) => document.querySelector(`[data-cy="calendar-marker-${hook}"]`);
 
 export const StatesTheWeekdayAndDayNumber: Story = {
   name: 'States the weekday and Julian Day Number of a single day',
@@ -221,11 +221,13 @@ export const StatesTheWeekdayAndDayNumber: Story = {
 
     // One instant has one weekday and one day number whatever calendar names it, so they are
     // stated once below the readings rather than repeated on each row.
-    await step('The weekday is named', async () => {
-      await expect(facts()?.textContent).toContain('Wednesday');
+    await step('The weekday is named on its own line', async () => {
+      await expect(factsRow('weekday')?.textContent?.trim()).toBe('Wednesday');
     });
-    await step('And the day number given', async () => {
-      await expect(facts()?.textContent).toContain('JDN 1685161');
+    // The number sits in the left column and "JDN" in the right, so it lines up with the dates
+    // above it and reads as a unit rather than a prefix.
+    await step('And the day number given, labelled like a calendar', async () => {
+      await expect(factsRow('jdn')?.textContent?.trim()).toBe('1685161');
     });
     await step('Once, not per calendar', async () => {
       await expect(document.querySelectorAll('[data-cy="calendar-marker-weekday"]').length).toBe(1);
@@ -244,12 +246,15 @@ export const StatesHowLongAPeriodRan: Story = {
     await userEvent.click(marker(canvasElement));
 
     // Counted inclusively, as a span is spoken about: 1-12 January is twelve days, not eleven.
-    await step('The duration is counted inclusively', async () => {
-      await expect(facts()?.textContent).toContain('Period of 12 days');
+    await step('The duration is counted inclusively, on a line of its own', async () => {
+      await expect(factsRow('duration')?.textContent?.trim()).toBe('Period of 12 days');
     });
-    await step('And the day numbers read as a range', async () => {
-      await expect(facts()?.textContent).toContain('2460311');
-      await expect(facts()?.textContent).toContain('2460322');
+    await step('The day numbers read as a range', async () => {
+      await expect(factsRow('jdn')?.textContent?.trim()).toBe('2460311–2460322');
+    });
+    // Both ends, because the pair is what says this is a period.
+    await step('And both weekdays are named', async () => {
+      await expect(factsRow('weekday')?.textContent?.trim()).toBe('Monday–Friday');
     });
   },
 };
@@ -262,8 +267,10 @@ export const SaysNothingItCannotKnow: Story = {
 
     // A year covers 365 days, so it has no weekday and no one day number. Showing the first day's
     // would assert a precision the source never had.
-    await step('No facts row appears at all', async () => {
-      await expect(facts()).toBeNull();
+    await step('No facts rows appear at all', async () => {
+      await expect(factsRow('facts')).toBeNull();
+      await expect(factsRow('weekday')).toBeNull();
+      await expect(factsRow('jdn')).toBeNull();
     });
     await step('While the readings are still listed', async () => {
       await expect(document.querySelector('[data-cy="calendar-marker-popover"]')).not.toBeNull();

@@ -40,6 +40,7 @@ export interface CalendarReading {
  */
 export interface CalendarFacts {
   readonly weekday?: string;
+  readonly endWeekday?: string;
   readonly jdn?: number;
   readonly endJdn?: number;
   readonly durationDays?: number;
@@ -106,21 +107,27 @@ export interface CalendarFacts {
           </span>
         }
 
-        <!-- One instant, one weekday and one JDN, so they are stated once rather than per row. -->
+        <!-- One instant has one weekday and one day number whatever calendar names it, so these
+        are stated once below the readings rather than repeated on every row. They keep the same
+        two columns — value left, what it is right — so the numbers stay aligned with the dates
+        above them. -->
         @if (hasFacts()) {
-          <div class="calendar-marker-facts" data-cy="calendar-marker-facts">
-            @if (facts().weekday) {
-              <span data-cy="calendar-marker-weekday">{{ facts().weekday }}</span>
-            }
-            @if (jdnText()) {
-              <span data-cy="calendar-marker-jdn">{{ 'ui.calendarMarker.jdn' | translate }} {{ jdnText() }}</span>
-            }
-            @if (facts().durationDays !== undefined) {
-              <span data-cy="calendar-marker-duration">
-                {{ 'ui.calendarMarker.periodOfDays' | translate: { count: facts().durationDays } }}
-              </span>
-            }
-          </div>
+          <span class="calendar-marker-rule" data-cy="calendar-marker-facts"></span>
+
+          @if (jdnText()) {
+            <span class="calendar-marker-date" data-cy="calendar-marker-jdn">{{ jdnText() }}</span>
+            <span class="calendar-marker-name">{{ 'ui.calendarMarker.jdn' | translate }}</span>
+          }
+
+          @if (weekdayText()) {
+            <span class="calendar-marker-weekdays" data-cy="calendar-marker-weekday">{{ weekdayText() }}</span>
+          }
+
+          @if (facts().durationDays !== undefined) {
+            <span class="calendar-marker-duration" data-cy="calendar-marker-duration">
+              {{ 'ui.calendarMarker.periodOfDays' | translate: { count: facts().durationDays } }}
+            </span>
+          }
         }
       </div>
     </ng-template>
@@ -195,17 +202,19 @@ export interface CalendarFacts {
         color: #4b5563;
       }
 
-      /* Spans the popover's two columns, since it describes the value rather than one calendar. */
-      .calendar-marker-facts {
+      /* Separates the readings from what holds for the value itself. A row of its own rather than
+         a border on the next one, so the rule spans both columns whatever follows it. */
+      .calendar-marker-rule {
         grid-column: 1 / -1;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 2px 10px;
-        margin-top: 6px;
-        padding-top: 6px;
+        margin-top: 2px;
         border-top: 1px solid #e5e7eb;
+      }
+
+      /* These say one thing each, so they run the full width rather than sitting in a column. */
+      .calendar-marker-weekdays,
+      .calendar-marker-duration {
+        grid-column: 1 / -1;
         color: #4b5563;
-        font-variant-numeric: tabular-nums;
       }
     `,
   ],
@@ -241,6 +250,20 @@ export class CalendarMarkerComponent {
   protected readonly hasFacts = computed(() => {
     const { weekday, jdn, durationDays } = this.facts();
     return weekday !== undefined || jdn !== undefined || durationDays !== undefined;
+  });
+
+  /**
+   * Both ends of a period, or the one weekday of a single date.
+   *
+   * A period that begins and ends on the same weekday still shows both, because the pair is what
+   * says it is a period; collapsing it would read as a single date.
+   */
+  protected readonly weekdayText = computed(() => {
+    const { weekday, endWeekday } = this.facts();
+    if (weekday === undefined) {
+      return '';
+    }
+    return endWeekday === undefined ? weekday : `${weekday}–${endWeekday}`;
   });
 
   /** A period spans two, so it reads as a range; a single date shows the one. */
