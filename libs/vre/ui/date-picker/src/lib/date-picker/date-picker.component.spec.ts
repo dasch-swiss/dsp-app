@@ -1,3 +1,4 @@
+import { OverlayContainer } from '@angular/cdk/overlay';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
@@ -15,6 +16,7 @@ describe('DatePickerComponent', () => {
   let fixture: ComponentFixture<DatePickerComponent>;
   let component: DatePickerComponent;
   let emitted: (KnoraDate | null)[];
+  let overlayContainer: OverlayContainer;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -35,21 +37,38 @@ describe('DatePickerComponent', () => {
     component = fixture.componentInstance;
     emitted = [];
     component.dateChange.subscribe(d => emitted.push(d));
+    overlayContainer = TestBed.inject(OverlayContainer);
   });
 
+  afterEach(() => overlayContainer.ngOnDestroy());
+
+  /**
+   * Shows a date with the panel open.
+   *
+   * The panel is closed at rest and rendered in the CDK overlay container, so every test about what
+   * the panel contains has to open it first — which is also the interaction a user performs.
+   */
   const show = (date: KnoraDate | null, calendar = 'GREGORIAN') => {
     fixture.componentRef.setInput('date', date);
     fixture.componentRef.setInput('calendar', calendar);
     fixture.detectChanges();
+    if (!panel()) {
+      field()?.click();
+      fixture.detectChanges();
+    }
   };
 
-  const el = (hook: string) => (fixture.nativeElement as HTMLElement).querySelector<HTMLElement>(`[data-cy="${hook}"]`);
+  /** The panel lives in the overlay container, outside the fixture's own element. */
+  const overlay = () => overlayContainer.getContainerElement();
+  const panel = () => overlay().querySelector<HTMLElement>('[data-cy="date-picker-panel"]');
+  const field = () => (fixture.nativeElement as HTMLElement).querySelector<HTMLElement>('[data-cy="date-field"]');
+
+  const el = (hook: string) =>
+    (fixture.nativeElement as HTMLElement).querySelector<HTMLElement>(`[data-cy="${hook}"]`) ??
+    overlay().querySelector<HTMLElement>(`[data-cy="${hook}"]`);
   const dayCells = () =>
-    Array.from((fixture.nativeElement as HTMLElement).querySelectorAll('[data-cy^="day-"]')).map(e =>
-      Number(e.textContent?.trim())
-    );
-  const selectedDay = () =>
-    (fixture.nativeElement as HTMLElement).querySelector('.day.selected .selectable')?.textContent?.trim();
+    Array.from(overlay().querySelectorAll('[data-cy^="day-"]')).map(e => Number(e.textContent?.trim()));
+  const selectedDay = () => overlay().querySelector('.day-cell.is-selected')?.textContent?.trim();
 
   /** What a click on the grid does. */
   const clickDay = (day: number) => {
@@ -219,7 +238,222 @@ describe('DatePickerComponent', () => {
     it('shows Islamic month names when the calendar is Islamic', () => {
       show(new KnoraDate('ISLAMIC', 'noEra', 1445, 1, 1), 'ISLAMIC');
 
-      expect((fixture.nativeElement as HTMLElement).textContent).not.toContain('Jan');
+      expect(panel()!.textContent).not.toContain('Jan');
+    });
+  });
+
+  // The panel used to render inline and always open. Two of them stacked into a column, and low in
+  // a property list the lower one ran off the bottom of the screen.
+  describe('opening and closing', () => {
+    const openPanel = () => {
+      field()!.click();
+      fixture.detectChanges();
+    };
+
+    it('shows no panel until the field is clicked', () => {
+      fixture.detectChanges();
+
+      expect(panel()).toBeNull();
+    });
+
+    it('opens the panel on a click on the field', () => {
+      fixture.detectChanges();
+      openPanel();
+
+      expect(panel()).not.toBeNull();
+    });
+
+    it('closes again on a second click', () => {
+      fixture.detectChanges();
+      openPanel();
+      openPanel();
+
+      expect(panel()).toBeNull();
+    });
+
+    it('closes on Done', () => {
+      show(new KnoraDate('GREGORIAN', 'CE', 2024, 6, 15));
+
+      el('done-button')!.click();
+      fixture.detectChanges();
+
+      expect(panel()).toBeNull();
+    });
+
+    // Today is a commit, not a navigation, so it ends the interaction like Done does.
+    it('closes on Today', () => {
+      show(new KnoraDate('GREGORIAN', 'CE', 2024, 6, 15));
+
+      el('today-button')!.click();
+      fixture.detectChanges();
+
+      expect(panel()).toBeNull();
+    });
+
+    it('does not open while disabled', () => {
+      fixture.componentRef.setInput('disabled', true);
+      fixture.detectChanges();
+
+      field()!.click();
+      fixture.detectChanges();
+
+      expect(panel()).toBeNull();
+    });
+  });
+
+  // Opening a brand-new value used to show a panel with no month and no grid — nothing to click.
+  // The first fix seeded the draft with today, which created a worse bug: a seeded draft is
+  // indistinguishable from an entry, so the controls disagreed with each other and an era switch
+  // published a date nobody typed. The grid now falls back to the current month for display only.
+  describe('opening an empty picker', () => {
+    const openEmpty = () => {
+      fixture.detectChanges();
+      field()!.click();
+      fixture.detectChanges();
+    };
+
+    const monthSelect = () => overlay().querySelector<HTMLSelectElement>('[data-cy="month-select"]');
+
+    it('offers a month grid straight away', () => {
+      openEmpty();
+
+      expect(dayCells().length).toBeGreaterThan(0);
+    });
+
+    it('emits nothing, because the user has not chosen a date', () => {
+      openEmpty();
+
+      expect(emitted).toEqual([]);
+    });
+
+    it('selects no day, leaving that to the user', () => {
+      openEmpty();
+
+      expect(selectedDay()).toBeUndefined();
+    });
+
+    it('leaves the field showing its placeholder', () => {
+      openEmpty();
+
+      expect(field()!.querySelector('.is-placeholder')).not.toBeNull();
+    });
+
+    // Every control has to tell the same story. A Month select naming a month while no day is
+    // selected and the field is empty invites the user to trust a value that does not exist.
+    it('shows no month in the select, matching the empty value', () => {
+      openEmpty();
+
+      expect(monthSelect()!.value).toBe('');
+    });
+
+    it('shows no year in the input', () => {
+      openEmpty();
+
+      expect(overlay().querySelector<HTMLInputElement>('[data-cy="year-input"]')!.value).toBe('');
+    });
+
+    // The reported sequence: open the picker, switch to BCE, choose no day precision. The seeded
+    // month and year rode along and were published as a date the user never entered.
+    it('publishes nothing when only the era is switched', () => {
+      openEmpty();
+
+      el('era-BCE')!.click();
+      fixture.detectChanges();
+
+      expect(emitted).toEqual([null]);
+    });
+
+    it('still shows no month after an era switch', () => {
+      openEmpty();
+
+      el('era-BCE')!.click();
+      fixture.detectChanges();
+
+      expect(monthSelect()!.value).toBe('');
+    });
+
+    // The fallback grid is only a starting point until a day is clicked; then it is the entry.
+    it('adopts the month it was showing when a day is picked', () => {
+      openEmpty();
+
+      // `dayCells()` reads the rendered cells, which start with blanks before the first weekday.
+      const firstDay = dayCells().find(d => d > 0)!;
+      clickDay(firstDay);
+
+      const published = emitted[emitted.length - 1];
+      expect(published).not.toBeNull();
+      expect(published!.day).toBe(firstDay);
+      expect(published!.month).not.toBeUndefined();
+      expect(published!.year).toBeGreaterThan(0);
+    });
+
+    it('does not overwrite a date it was given', () => {
+      show(new KnoraDate('GREGORIAN', 'CE', 1999, 3, 7));
+
+      expect(selectedDay()).toBe('7');
+    });
+  });
+
+  // A year with no month is a legitimate precision, and the panel has to say so rather than
+  // showing a grid for a month the user has not chosen.
+  describe('a year with no month', () => {
+    const openWith = (year: string) => {
+      fixture.detectChanges();
+      field()!.click();
+      fixture.detectChanges();
+      const input = overlay().querySelector<HTMLInputElement>('[data-cy="year-input"]')!;
+      input.value = year;
+      input.dispatchEvent(new Event('input'));
+      fixture.detectChanges();
+    };
+
+    it('shows no day grid', () => {
+      openWith('1850');
+
+      expect(el('day-grid')!.querySelector('.day-grid')).toBeNull();
+    });
+
+    it('explains that a month is needed to pick a day', () => {
+      openWith('1850');
+
+      expect(el('year-precision-note')).not.toBeNull();
+    });
+
+    it('publishes the year on its own', () => {
+      openWith('1850');
+
+      const published = emitted[emitted.length - 1];
+      expect(published!.year).toBe(1850);
+      expect(published!.month).toBeUndefined();
+    });
+  });
+
+  describe('the closed field', () => {
+    it('shows the date it was given', () => {
+      fixture.componentRef.setInput('date', new KnoraDate('GREGORIAN', 'CE', 2024, 6, 15));
+      fixture.detectChanges();
+
+      expect(field()!.textContent).toContain('15.06.2024');
+    });
+
+    it('invites a click when there is no date yet', () => {
+      fixture.detectChanges();
+
+      expect(field()!.querySelector('.is-placeholder')).not.toBeNull();
+    });
+
+    // The two ends of a period are only distinguishable if each field says which one it is.
+    it('names itself when it was given a label', () => {
+      fixture.componentRef.setInput('label', 'ui.datePicker.endDate');
+      fixture.detectChanges();
+
+      expect(el('date-field-caption')).not.toBeNull();
+    });
+
+    it('carries no caption when it is the only date', () => {
+      fixture.detectChanges();
+
+      expect(el('date-field-caption')).toBeNull();
     });
   });
 

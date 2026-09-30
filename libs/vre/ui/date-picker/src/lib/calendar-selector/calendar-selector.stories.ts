@@ -42,7 +42,7 @@ export default meta;
 type Story = StoryObj<CalendarSelectorComponent>;
 
 const option = (canvas: HTMLElement, calendar: string) =>
-  canvas.querySelector<HTMLElement>(`[data-cy="calendar-option-${calendar}"] button`);
+  canvas.querySelector<HTMLElement>(`[data-cy="calendar-option-${calendar}"]`);
 
 export const OffersEveryCalendar: Story = {
   name: 'Offers all three calendars and marks the chosen one',
@@ -75,33 +75,38 @@ export const ExplainsAnUnavailableCalendar: Story = {
   },
 };
 
-export const ReportsAChoice: Story = {
-  name: 'Reports a choice when the user makes one',
+export const DoesNotSelectItself: Story = {
+  name: 'Shows the calendar it was given, not the one that was clicked',
   args: { calendar: 'GREGORIAN' },
   play: async ({ canvasElement, step }) => {
-    await step('Clicking Julian selects it', async () => {
-      // Material renders a single-select toggle group as radios, so the state is `aria-checked`,
-      // not `aria-pressed` — which also gives the radiogroup semantics the design asked for.
+    // It reports and nothing else: the owner converts the value and passes a new `calendar` back.
+    // A control that selected itself would be a second place the calendar lives, which is the
+    // shape the relabelling defect grew in. That it emits is covered by the jsdom spec, which can
+    // see the output; what a browser can show is that the click alone changes nothing here.
+    await step('Clicking Julian leaves Gregorian selected', async () => {
       await userEvent.click(option(canvasElement, 'JULIAN') as HTMLElement);
-      await expect(option(canvasElement, 'JULIAN')).toHaveAttribute('aria-checked', 'true');
+      await expect(option(canvasElement, 'JULIAN')).toHaveAttribute('aria-checked', 'false');
+      await expect(option(canvasElement, 'GREGORIAN')).toHaveAttribute('aria-checked', 'true');
     });
+
     await step('And it reads as a radio, not a toggle button', async () => {
       await expect(option(canvasElement, 'JULIAN')).toHaveAttribute('role', 'radio');
     });
   },
 };
 
-export const CarriesACaptionForAPeriod: Story = {
-  name: 'Carries a caption when the owner needs to explain the scope',
+export const CarriesACaptionWhenGivenOne: Story = {
+  name: 'Carries a caption when the owner supplies one',
   args: {
     calendar: 'JULIAN',
-    caption: 'ui.datePicker.oneCalendarForValue',
+    caption: 'ui.datePicker.calendar',
     hookPrefix: 'period-',
   },
   play: async ({ canvasElement, step }) => {
-    await step('The caption explains the calendar covers the whole value', async () => {
+    // The caption is an opt-in slot the owner fills, not something this control says by itself.
+    await step('The supplied caption is rendered', async () => {
       const caption = canvasElement.querySelector('[data-cy="period-calendar-caption"]');
-      await expect(caption?.textContent).toContain('whole value');
+      await expect(caption?.textContent?.trim()).toBe('Calendar');
     });
     await step('The hooks are prefixed, so a period and a single date stay distinguishable', async () => {
       await expect(canvasElement.querySelector('[data-cy="period-calendar-select"]')).not.toBeNull();

@@ -27,9 +27,14 @@ const meta: Meta<DatePickerComponent> = {
       table: { type: { summary: 'CalendarSystem' }, category: 'State' },
     },
     disabled: {
-      description: 'When true, no control accepts input.',
+      description: 'When true, the field does not open and no control accepts input.',
       control: 'boolean',
       table: { type: { summary: 'boolean' }, category: 'Behavior' },
+    },
+    label: {
+      description:
+        'Names this field ("Start date", "End date") on the closed field and the open panel. Null for a lone date.',
+      table: { type: { summary: 'string | null' }, category: 'State' },
     },
     dateChange: {
       description: 'Emitted when the user commits a date. Never fired by the component writing to itself.',
@@ -40,19 +45,34 @@ const meta: Meta<DatePickerComponent> = {
 export default meta;
 type Story = StoryObj<DatePickerComponent>;
 
-const day = (canvas: HTMLElement, d: number) => canvas.querySelector<HTMLElement>(`[data-cy="day-${d}"]`);
-const selected = (canvas: HTMLElement) => canvas.querySelector('.day.selected .selectable')?.textContent?.trim();
+/**
+ * The panel renders in the CDK overlay container, which is a sibling of the story canvas rather
+ * than inside it — so everything about the panel is queried from the document, and every story
+ * that inspects the panel opens it first, the way a user does.
+ */
+const field = (canvas: HTMLElement) => canvas.querySelector<HTMLElement>('[data-cy="date-field"]')!;
+const panel = () => document.querySelector<HTMLElement>('[data-cy="date-picker-panel"]');
+const open = async (canvas: HTMLElement) => {
+  if (!panel()) {
+    await userEvent.click(field(canvas));
+  }
+  return panel()!;
+};
+
+const day = (d: number) => panel()?.querySelector<HTMLElement>(`[data-cy="day-${d}"]`) ?? null;
+const selected = () => panel()?.querySelector('.day-cell.is-selected')?.textContent?.trim();
 
 export const ShowsTheGivenDate: Story = {
   name: 'Shows the date it is given, in the calendar it is told',
   args: { date: new KnoraDate('GREGORIAN', 'CE', 2024, 6, 15), calendar: 'GREGORIAN' },
   play: async ({ canvasElement, step }) => {
+    await open(canvasElement);
     await step('The given day is marked', async () => {
-      await expect(selected(canvasElement)).toBe('15');
+      await expect(selected()).toBe('15');
     });
     await step('The month is rendered at its real length', async () => {
-      await expect(day(canvasElement, 30)).not.toBeNull();
-      await expect(day(canvasElement, 31)).toBeNull();
+      await expect(day(30)).not.toBeNull();
+      await expect(day(31)).toBeNull();
     });
   },
 };
@@ -63,12 +83,13 @@ export const NeverRelabelsWhenToldAnotherCalendar: Story = {
   play: async ({ canvasElement, step }) => {
     // The bug that motivated the rewrite: the old picker stamped a new calendar onto unchanged
     // numerals. This component has no code path that writes a calendar at all.
+    await open(canvasElement);
     await step('The date shown is the one it was given', async () => {
-      await expect(selected(canvasElement)).toBe('19');
+      await expect(selected()).toBe('19');
     });
     await step('Its calendar is the one it was told', async () => {
       // Translated here, unlike in the jsdom spec, because Storybook loads the real locale files.
-      const tag = canvasElement.querySelector('[data-cy="calendar-tag"]');
+      const tag = panel()!.querySelector('[data-cy="calendar-tag"]');
       await expect(tag?.textContent?.trim()).toBe('Julian');
     });
   },
@@ -78,13 +99,14 @@ export const ClearsADayTheMonthCannotHold: Story = {
   name: 'Drops a day the month cannot hold rather than moving it',
   args: { date: new KnoraDate('GREGORIAN', 'CE', 2024, 2, 31), calendar: 'GREGORIAN' },
   play: async ({ canvasElement, step }) => {
+    await open(canvasElement);
     await step('31 February is not shown as selected', async () => {
       // Derived, not stored: there is no stale day to display.
-      await expect(selected(canvasElement)).toBeUndefined();
+      await expect(selected()).toBeUndefined();
     });
     await step('February is still rendered at its real length', async () => {
-      await expect(day(canvasElement, 29)).not.toBeNull();
-      await expect(day(canvasElement, 30)).toBeNull();
+      await expect(day(29)).not.toBeNull();
+      await expect(day(30)).toBeNull();
     });
   },
 };
@@ -93,10 +115,11 @@ export const SkipsTheGregorianReform: Story = {
   name: 'Skips the ten days the Gregorian reform deleted',
   args: { date: new KnoraDate('GREGORIAN', 'CE', 1582, 10, 1), calendar: 'GREGORIAN' },
   play: async ({ canvasElement, step }) => {
+    await open(canvasElement);
     await step('October 1582 runs 1-4 then 15-31', async () => {
-      await expect(day(canvasElement, 4)).not.toBeNull();
-      await expect(day(canvasElement, 5)).toBeNull();
-      await expect(day(canvasElement, 15)).not.toBeNull();
+      await expect(day(4)).not.toBeNull();
+      await expect(day(5)).toBeNull();
+      await expect(day(15)).not.toBeNull();
     });
   },
 };
@@ -105,11 +128,12 @@ export const OmitsTheEraForIslamic: Story = {
   name: 'Omits the era toggle for Islamic, which has none',
   args: { date: new KnoraDate('ISLAMIC', 'noEra', 1445, 12, 8), calendar: 'ISLAMIC' },
   play: async ({ canvasElement, step }) => {
+    const opened = await open(canvasElement);
     await step('No era toggle is offered', async () => {
-      await expect(canvasElement.querySelector('[data-cy="era-toggle"]')).toBeNull();
+      await expect(opened.querySelector('[data-cy="era-toggle"]')).toBeNull();
     });
     await step('Islamic month names are used', async () => {
-      await expect(canvasElement.textContent).not.toContain('Jan');
+      await expect(opened.textContent).not.toContain('Jan');
     });
   },
 };
@@ -118,9 +142,56 @@ export const PicksADay: Story = {
   name: 'Selects a day when the user clicks one',
   args: { date: new KnoraDate('GREGORIAN', 'CE', 2024, 6, 15), calendar: 'GREGORIAN' },
   play: async ({ canvasElement, step }) => {
+    await open(canvasElement);
     await step('Clicking the 20th selects it', async () => {
-      await userEvent.click(day(canvasElement, 20) as HTMLElement);
-      await expect(selected(canvasElement)).toBe('20');
+      await userEvent.click(day(20) as HTMLElement);
+      await expect(selected()).toBe('20');
+    });
+  },
+};
+
+export const StaysClosedUntilAsked: Story = {
+  name: 'Shows a field rather than an open calendar until it is clicked',
+  args: { date: new KnoraDate('GREGORIAN', 'CE', 2024, 6, 15), calendar: 'GREGORIAN' },
+  play: async ({ canvasElement, step }) => {
+    // Two always-open panels stacked into a column and, low in a property list, ran off the
+    // bottom of the screen. The field is what keeps a date value one line tall.
+    await step('No calendar is on the page at rest', async () => {
+      await expect(panel()).toBeNull();
+    });
+    await step('The field shows the date instead', async () => {
+      await expect(field(canvasElement).textContent).toContain('15.06.2024');
+    });
+    await step('Clicking the field opens the calendar', async () => {
+      await userEvent.click(field(canvasElement));
+      await expect(panel()).not.toBeNull();
+    });
+  },
+};
+
+export const ClosesOnDone: Story = {
+  name: 'Closes the calendar when the user is done',
+  args: { date: new KnoraDate('GREGORIAN', 'CE', 2024, 6, 15), calendar: 'GREGORIAN' },
+  play: async ({ canvasElement, step }) => {
+    const opened = await open(canvasElement);
+    await step('Done dismisses the panel', async () => {
+      await userEvent.click(opened.querySelector('[data-cy="done-button"]') as HTMLElement);
+      await expect(panel()).toBeNull();
+    });
+  },
+};
+
+export const NamesItselfWhenItIsOneEndOfAPeriod: Story = {
+  name: 'Captions the field when it is the start or end of a period',
+  args: { date: new KnoraDate('GREGORIAN', 'CE', 1580, 1, 1), calendar: 'GREGORIAN', label: 'ui.datePicker.endDate' },
+  play: async ({ canvasElement, step }) => {
+    await step('The field says which end it is', async () => {
+      const caption = canvasElement.querySelector('[data-cy="date-field-caption"]');
+      await expect(caption?.textContent?.trim()).toBe('End date');
+    });
+    await step('The open panel repeats it as a title', async () => {
+      const opened = await open(canvasElement);
+      await expect(opened.querySelector('[data-cy="panel-title"]')?.textContent?.trim()).toBe('End date');
     });
   },
 };

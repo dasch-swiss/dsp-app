@@ -1,10 +1,6 @@
+import { CdkConnectedOverlay, CdkOverlayOrigin, ConnectedPosition } from '@angular/cdk/overlay';
 import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatButtonToggleModule } from '@angular/material/button-toggle';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
 import { KnoraDate } from '@dasch-swiss/dsp-js';
 import { CalendarSystem } from '@dasch-swiss/vre/shared/calendar';
 import { CalendarDateService } from '@dasch-swiss/vre/ui/ui';
@@ -42,6 +38,20 @@ const MONTHS: readonly (readonly [string, string])[] = [
 
 const WEEKDAYS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
 
+/** The two eras offered as a segmented choice. Islamic has none and shows a fixed AH instead. */
+const ERAS = ['CE', 'BCE'] as const;
+
+/**
+ * Below the field, falling back to above it.
+ *
+ * The panel is taller than most rows in a property list, so near the bottom of the viewport the
+ * only way to show it whole is to flip it. Leaving it below is what cut it off.
+ */
+const PANEL_POSITIONS: readonly ConnectedPosition[] = [
+  { originX: 'start', originY: 'bottom', overlayX: 'start', overlayY: 'top', offsetY: 6 },
+  { originX: 'start', originY: 'top', overlayX: 'start', overlayY: 'bottom', offsetY: -6 },
+];
+
 /**
  * Picks a date in the calendar it is told to use.
  *
@@ -63,15 +73,9 @@ const WEEKDAYS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
 @Component({
   selector: 'app-date-picker',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    MatButtonModule,
-    MatButtonToggleModule,
-    MatFormFieldModule,
-    MatIconModule,
-    MatInputModule,
-    MatSelectModule,
-    TranslatePipe,
-  ],
+  // Only the trigger's icon is Material now: the panel is native controls styled to the design,
+  // which is a row of equal-height bordered boxes Material's form fields cannot express.
+  imports: [CdkConnectedOverlay, CdkOverlayOrigin, MatIconModule, TranslatePipe],
   templateUrl: './date-picker.component.html',
   styleUrls: ['./date-picker.component.scss'],
 })
@@ -89,11 +93,30 @@ export class DatePickerComponent {
 
   readonly disabled = input(false);
 
+  /**
+   * Names this field — "Start date", "End date" — as a caption on the closed field and a title on
+   * the open panel. Null for a lone date, which needs no name to be unambiguous.
+   */
+  readonly label = input<string | null>(null);
+
   /** Emitted when the user commits a date. Never fired by the component writing to itself. */
   readonly dateChange = output<KnoraDate | null>();
 
   protected readonly months = MONTHS;
   protected readonly weekDays = WEEKDAYS;
+  protected readonly eras = ERAS;
+  protected readonly PANEL_POSITIONS = PANEL_POSITIONS;
+
+  /**
+   * Whether the panel is showing.
+   *
+   * Closed at rest: two pickers that both render their grid inline stack into a column and, low in
+   * a property list, run off the bottom of the screen. Opening one is the user's choice, and only
+   * one panel exists per picker, so a period reads as two fields on one line.
+   */
+  private readonly _open = signal(false);
+
+  protected readonly isOpen = this._open.asReadonly();
 
   private readonly _calendarDates = inject(CalendarDateService);
 
@@ -130,16 +153,57 @@ export class DatePickerComponent {
     return year !== null && year > 0;
   });
 
-  /** Without a month there is no grid to pick a day from, so the day selector is inert. */
-  protected readonly daySelectionDisabled = computed(() => !this.hasValidYear() || !this.draft().month);
+  /**
+   * The month the grid draws, which is today's while the user has entered nothing.
+   *
+   * **Display only — it is never written to the draft.** An empty picker used to be seeded with
+   * today so there was something to click, but a seeded draft is indistinguishable from an entry:
+   * switching the era then published `{2026, Sep, BCE}`, a date nobody typed, and the Month select
+   * showed a month while no day was selected. Falling back here instead keeps the value empty
+   * until the user actually picks a day, and keeps every control telling the same story.
+   */
+  private readonly _gridMonth = computed<{ year: number; month: number; era: string } | null>(() => {
+    const { year, month, era } = this.draft();
+    if (this.hasValidYear() && month) {
+      return { year: year!, month, era };
+    }
+    // Nothing entered yet: show the current month so the panel opens on something clickable.
+    if (year === null && month === null) {
+      const today = this._calendarDates.today(this.calendar());
+      if (today?.month !== undefined) {
+        return { year: today.year, month: today.month, era: this._eraFor(today.era) };
+      }
+    }
+    return null;
+  });
+
+  /**
+   * Whether there is a month to show days for.
+   *
+   * Reads the grid rather than the draft, so an empty picker — whose grid falls back to the
+   * current month — still shows days to click. Gating on the draft is what left a new value with
+   * an empty panel.
+   */
+  protected readonly hasDayGrid = computed(() => this._gridMonth() !== null);
 
   protected readonly monthGrid = computed(() => {
-    const { year, month, era } = this.draft();
-    if (!this.hasValidYear() || !month) {
+    const grid = this._gridMonth();
+    if (grid === null) {
       return { weeks: [] as number[][] };
     }
-    return this._calendarDates.monthGrid(this.calendar(), era, year!, month);
+    return this._calendarDates.monthGrid(this.calendar(), grid.era, grid.year, grid.month);
   });
+
+  /**
+   * The month as one flat run of cells, for a seven-column grid.
+   *
+   * `null` is a leading blank before the first weekday; the service already pads with `0` for
+   * those. A grid rather than rows of weeks, so the columns line up under the weekday header even
+   * in a month whose last week is short.
+   */
+  protected readonly dayCells = computed<(number | null)[]>(() =>
+    this.monthGrid().weeks.flatMap(week => week.map(day => (day > 0 ? day : null)))
+  );
 
   /**
    * The day the grid shows as selected.
@@ -182,6 +246,9 @@ export class DatePickerComponent {
 
   protected readonly calendarLabel = computed(() => `ui.calendarMarker.calendars.${this.calendar()}`);
 
+  /** What the trigger and the panel are called, for screen readers and the panel's own header. */
+  protected readonly fieldLabel = computed(() => this.label() ?? 'ui.datePicker.calendar');
+
   // -----------------------------------------------------------------------------------------
   // User intent. Each of these is a thing the user did; each ends in exactly one emission.
   // -----------------------------------------------------------------------------------------
@@ -199,11 +266,27 @@ export class DatePickerComponent {
     this._edit({ era });
   }
 
+  /**
+   * Picks a day from the grid.
+   *
+   * On an empty picker the grid is showing the current month as a fallback, so the click has to
+   * adopt that month and year as well — otherwise it would set a day against no year and publish
+   * nothing. This is the point where the fallback becomes the user's entry, because it is the
+   * first moment they have chosen anything.
+   */
   protected onDayChange(day: number | null): void {
+    const { year, month } = this.draft();
+    if (year === null && month === null) {
+      const grid = this._gridMonth();
+      if (grid !== null) {
+        this._edit({ day, year: grid.year, month: grid.month, era: grid.era });
+        return;
+      }
+    }
     this._edit({ day });
   }
 
-  /** Today, in the calendar this picker was told to use. */
+  /** Today, in the calendar this picker was told to use. It commits, so it also closes. */
   protected onToday(): void {
     const today = this._calendarDates.today(this.calendar());
     if (today === undefined) {
@@ -215,6 +298,23 @@ export class DatePickerComponent {
       day: today.day ?? null,
       era: this._eraFor(today.era),
     });
+    this.close();
+  }
+
+  protected toggle(): void {
+    if (!this.disabled()) {
+      this._open.update(open => !open);
+    }
+  }
+
+  protected close(): void {
+    this._open.set(false);
+  }
+
+  protected onOverlayKeydown(event: KeyboardEvent): void {
+    if (event.key === 'Escape') {
+      this.close();
+    }
   }
 
   private _edit(change: Partial<DateDraft>): void {

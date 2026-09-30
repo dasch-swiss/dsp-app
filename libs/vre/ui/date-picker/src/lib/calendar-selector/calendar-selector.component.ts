@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
-import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatIconModule } from '@angular/material/icon';
 import { CALENDAR_SYSTEMS, CalendarSystem } from '@dasch-swiss/vre/shared/calendar';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -19,25 +18,31 @@ import { TranslatePipe } from '@ngx-translate/core';
 @Component({
   selector: 'app-calendar-selector',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatButtonToggleModule, MatIconModule, TranslatePipe],
+  // Native buttons rather than mat-button-toggle: the design is a 32px-high segmented control
+  // whose selected option is filled, and Material's toggle brings its own height, ripple and
+  // selection tick, each of which had to be overridden to get there.
+  imports: [MatIconModule, TranslatePipe],
   template: `
     <div class="calendar-selector">
-      <mat-button-toggle-group
+      <div
         class="calendar-segmented"
+        role="radiogroup"
         [attr.data-cy]="hookPrefix() + 'calendar-select'"
-        [value]="calendar()"
-        [disabled]="disabled()"
-        [attr.aria-label]="'ui.datePicker.calendar' | translate"
-        (change)="calendarChange.emit($event.value)">
+        [attr.aria-label]="'ui.datePicker.calendar' | translate">
         @for (cal of calendars; track cal) {
-          <mat-button-toggle
-            [value]="cal"
-            [disabled]="!isAvailable(cal)"
-            [attr.data-cy]="hookPrefix() + 'calendar-option-' + cal">
+          <button
+            type="button"
+            role="radio"
+            class="calendar-option"
+            [class.is-selected]="cal === calendar()"
+            [attr.aria-checked]="cal === calendar()"
+            [attr.data-cy]="hookPrefix() + 'calendar-option-' + cal"
+            [disabled]="disabled() || !isAvailable(cal)"
+            (click)="calendarChange.emit(cal)">
             {{ 'ui.calendarMarker.calendars.' + cal | translate }}
-          </mat-button-toggle>
+          </button>
         }
-      </mat-button-toggle-group>
+      </div>
 
       @if (caption()) {
         <p class="calendar-caption" [attr.data-cy]="hookPrefix() + 'calendar-caption'">
@@ -62,11 +67,57 @@ import { TranslatePipe } from '@ngx-translate/core';
       // neighbours.
       .calendar-segmented {
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(3, minmax(0, 1fr));
         width: 100%;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        overflow: hidden;
+      }
 
-        mat-button-toggle {
-          font-size: 13px;
+      .calendar-option {
+        height: 32px;
+        padding: 0 6px;
+        border: 0;
+        // Hairlines between the options, not around them: the group owns the outer border.
+        border-right: 1px solid #e5e7eb;
+        background: #fff;
+        font-family: inherit;
+        font-size: 13px;
+        font-weight: 400;
+        line-height: 1;
+        color: #374151;
+        cursor: pointer;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        transition:
+          background 150ms,
+          color 150ms;
+
+        &:last-child {
+          border-right: 0;
+        }
+
+        &:hover:not(:disabled):not(.is-selected) {
+          background: #f9fafb;
+        }
+
+        // Filled rather than ticked: a checkmark left the label unreadable.
+        &.is-selected {
+          background: #336790;
+          color: #fff;
+          font-weight: 700;
+        }
+
+        // Dimmed rather than hidden, so a reader can see the calendar exists but does not apply.
+        &:disabled {
+          cursor: default;
+          opacity: 0.4;
+        }
+
+        &:focus-visible {
+          outline: 2px solid #336790;
+          outline-offset: -2px;
         }
       }
 

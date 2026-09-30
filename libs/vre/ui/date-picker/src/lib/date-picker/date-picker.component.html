@@ -1,116 +1,159 @@
-<div class="date-picker-panel" data-cy="date-picker-panel">
-  <!-- month, year and era -->
-  <div class="month-year-selector">
-    <mat-form-field class="month" [class.larger]="calendar() === 'ISLAMIC'">
-      <mat-label>{{ 'ui.datePicker.month' | translate }}</mat-label>
-      <mat-select
-        [value]="draft().month"
-        [disabled]="disabled() || !hasValidYear()"
-        data-cy="month-select"
-        (valueChange)="onMonthChange($event)">
-        <!-- choosing nothing is how a date stays at year precision -->
-        <mat-option [value]="null" data-cy="month-none">{{ 'ui.datePicker.none' | translate }}</mat-option>
-        @for (month of months; track month[0]; let i = $index) {
-          <mat-option [value]="i + 1">
+<!-- The field is the trigger: a date picker at rest is a value, not a calendar. Opening is a
+deliberate act, so two of these side by side stay one line tall. -->
+<button
+  type="button"
+  class="date-field"
+  data-cy="date-field"
+  cdkOverlayOrigin
+  #trigger="cdkOverlayOrigin"
+  [class.is-open]="isOpen()"
+  [disabled]="disabled()"
+  [attr.aria-expanded]="isOpen()"
+  [attr.aria-label]="fieldLabel() | translate"
+  (click)="toggle()">
+  <span class="date-field-text">
+    @if (label()) {
+    <span class="date-field-caption" data-cy="date-field-caption">{{ label()! | translate }}</span>
+    }
+    <span class="date-field-value" [class.is-placeholder]="!displayText()" data-cy="date-field-value">
+      {{ displayText() || ('ui.datePicker.clickToSelect' | translate) }}
+    </span>
+  </span>
+  <mat-icon class="date-field-icon">event</mat-icon>
+</button>
+
+<ng-template
+  cdkConnectedOverlay
+  [cdkConnectedOverlayOrigin]="trigger"
+  [cdkConnectedOverlayOpen]="isOpen()"
+  [cdkConnectedOverlayHasBackdrop]="true"
+  cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+  [cdkConnectedOverlayPositions]="PANEL_POSITIONS"
+  (backdropClick)="close()"
+  (detach)="close()"
+  (overlayKeydown)="onOverlayKeydown($event)">
+  <div class="date-picker-panel" role="dialog" data-cy="date-picker-panel" [attr.aria-label]="fieldLabel() | translate">
+    <!-- which field this panel belongs to, and which calendar it is picking in: with the calendar
+    selector owned by the value, the panel would otherwise never name its own calendar -->
+    <div class="panel-header">
+      @if (label()) {
+      <span class="panel-title" data-cy="panel-title">{{ label()! | translate }}</span>
+      }
+      <span class="fill-remaining-space"></span>
+      <span class="calendar-tag" data-cy="calendar-tag">{{ calendarLabel() | translate }}</span>
+    </div>
+
+    <!-- month, year and era. Native controls rather than mat-form-fields: the design is a row of
+    three equal-height bordered boxes with captions above, which Material's floating labels and
+    baseline underlines cannot express without fighting them. -->
+    <div class="panel-controls">
+      <label class="control month">
+        <span class="control-caption">{{ 'ui.datePicker.month' | translate }}</span>
+        <!-- `[selected]` per option rather than `[value]` on the select: the select's value is
+        applied before `@for` has created the options, so the browser falls back to the first one
+        and a chosen month rendered as "None". -->
+        <select
+          class="control-input"
+          data-cy="month-select"
+          [disabled]="disabled() || !hasValidYear()"
+          (change)="onMonthChange($any($event.target).value === '' ? null : +$any($event.target).value)">
+          <!-- choosing nothing is how a date stays at year precision -->
+          <option value="" data-cy="month-none" [selected]="draft().month === null">
+            {{ 'ui.datePicker.none' | translate }}
+          </option>
+          @for (month of months; track month[0]; let i = $index) {
+          <option [value]="i + 1" [selected]="draft().month === i + 1">
             {{ calendar() === 'ISLAMIC' ? month[1] : month[0] }}
-          </mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
+          </option>
+          }
+        </select>
+      </label>
 
-    <mat-form-field class="year" [class.withButtonToggle]="showsEra()">
-      <mat-label>{{ 'ui.datePicker.year' | translate }}</mat-label>
-      <input
-        matInput
-        type="number"
-        min="1"
-        class="center"
-        data-cy="year-input"
-        [value]="draft().year ?? ''"
-        [disabled]="disabled()"
-        (input)="onYearChange($any($event.target).value)" />
-      @if (!hasValidYear() && draft().year !== null) {
-        <mat-error data-cy="year-error">{{ 'ui.datePicker.yearMustBePositive' | translate }}</mat-error>
-      }
-      <!-- Islamic has no era, so the toggle is absent rather than disabled -->
-      @if (showsEra()) {
-        <mat-button-toggle-group
-          class="era suffix-toggle-group"
-          matSuffix
-          data-cy="era-toggle"
-          [value]="draft().era"
+      <label class="control year">
+        <span class="control-caption">{{ 'ui.datePicker.year' | translate }}</span>
+        <input
+          class="control-input"
+          type="number"
+          min="1"
+          data-cy="year-input"
+          [value]="draft().year ?? ''"
           [disabled]="disabled()"
-          [attr.aria-label]="'ui.datePicker.era' | translate"
-          (change)="onEraChange($event.value)">
-          <mat-button-toggle value="CE" data-cy="era-CE">CE</mat-button-toggle>
-          <mat-button-toggle value="BCE" data-cy="era-BCE">BCE</mat-button-toggle>
-        </mat-button-toggle-group>
+          (input)="onYearChange($any($event.target).value)" />
+      </label>
+
+      <div class="control era">
+        <span class="control-caption">{{ 'ui.datePicker.era' | translate }}</span>
+        @if (showsEra()) {
+        <div
+          class="segmented"
+          role="radiogroup"
+          data-cy="era-toggle"
+          [attr.aria-label]="'ui.datePicker.era' | translate">
+          @for (era of eras; track era) {
+          <button
+            type="button"
+            role="radio"
+            class="segment"
+            [class.is-selected]="draft().era === era"
+            [attr.aria-checked]="draft().era === era"
+            [attr.data-cy]="'era-' + era"
+            [disabled]="disabled()"
+            (click)="onEraChange(era)">
+            {{ era }}
+          </button>
+          }
+        </div>
+        } @else {
+        <!-- Islamic has no era; AH is stated rather than offered as a choice -->
+        <span class="era-fixed" data-cy="era-fixed">AH</span>
+        }
+      </div>
+    </div>
+
+    <!-- the day grid -->
+    <div class="panel-days" data-cy="day-grid">
+      @if (draft().era === 'BCE') {
+      <p class="bce-warning" data-cy="bce-warning" [innerHTML]="'ui.datePicker.bceWarning' | translate"></p>
       }
-    </mat-form-field>
-  </div>
 
-  <!-- the day grid -->
-  <div class="day-selector" [class.disabled]="daySelectionDisabled()" data-cy="day-grid">
-    @if (draft().era === 'CE') {
-      <p class="week-days">
+      <div class="weekday-row">
         @for (d of weekDays; track $index) {
-          <span class="day">{{ d }}</span>
-        }
-      </p>
-    } @else if (draft().era === 'BCE') {
-      <p class="mat-caption center" data-cy="bce-warning" [innerHTML]="'ui.datePicker.bceWarning' | translate"></p>
-    }
-
-    @for (week of monthGrid().weeks; track $index; let last = $last) {
-      <div class="week">
-        @for (d of week; track $index) {
-          <span class="day" [class.selected]="d === selectedDay()">
-            @if (d > 0) {
-              <span
-                class="selectable link"
-                [class.disabled]="daySelectionDisabled()"
-                [attr.data-cy]="'day-' + d"
-                (click)="!daySelectionDisabled() && onDayChange(d)"
-                >{{ d }}</span
-              >
-            }
-          </span>
-        }
-        <!-- dropping to month precision; sits in the last row when it has room -->
-        @if (last && week.length < 7) {
-          <span class="day">
-            <span
-              class="selectable link"
-              data-cy="no-day"
-              [class.disabled]="daySelectionDisabled()"
-              (click)="!daySelectionDisabled() && onDayChange(null)">
-              <mat-icon>not_interested</mat-icon>
-            </span>
-          </span>
+        <span class="weekday">{{ d }}</span>
         }
       </div>
-    }
-    <!-- a month ending on a Sunday leaves no room above, so it gets its own row -->
-    @if (monthGrid().weeks.length > 0 && monthGrid().weeks[monthGrid().weeks.length - 1].length === 7) {
-      <div class="week">
-        <span class="day">
-          <span
-            class="selectable link"
-            data-cy="no-day-overflow"
-            [class.disabled]="daySelectionDisabled()"
-            (click)="!daySelectionDisabled() && onDayChange(null)">
-            <mat-icon>not_interested</mat-icon>
-          </span>
-        </span>
-      </div>
-    }
-  </div>
 
-  <div class="picker-footer">
-    <span class="calendar-tag" data-cy="calendar-tag">{{ calendarLabel() | translate }}</span>
-    <span class="fill-remaining-space"></span>
-    <button mat-button data-cy="today-button" [disabled]="disabled()" (click)="onToday()">
-      {{ 'ui.datePicker.today' | translate }}
-    </button>
+      @if (hasDayGrid()) {
+      <div class="day-grid">
+        @for (cell of dayCells(); track $index) { @if (cell === null) {
+        <span class="day-blank"></span>
+        } @else {
+        <button
+          type="button"
+          class="day-cell"
+          [class.is-selected]="cell === selectedDay()"
+          [attr.aria-pressed]="cell === selectedDay()"
+          [attr.data-cy]="'day-' + cell"
+          (click)="onDayChange(cell)">
+          {{ cell }}
+        </button>
+        } }
+      </div>
+      <!-- dropping to month precision -->
+      <button type="button" class="link-button" data-cy="no-day" (click)="onDayChange(null)">
+        {{ 'ui.datePicker.noDay' | translate }}
+      </button>
+      } @else {
+      <p class="day-grid-empty" data-cy="year-precision-note">{{ 'ui.datePicker.yearPrecision' | translate }}</p>
+      }
+    </div>
+
+    <div class="panel-footer">
+      <button type="button" class="ghost-button" data-cy="today-button" [disabled]="disabled()" (click)="onToday()">
+        {{ 'ui.datePicker.today' | translate }}
+      </button>
+      <button type="button" class="primary-button" data-cy="done-button" (click)="close()">
+        {{ 'ui.datePicker.done' | translate }}
+      </button>
+    </div>
   </div>
-</div>
+</ng-template>

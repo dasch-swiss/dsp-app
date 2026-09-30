@@ -28,9 +28,9 @@ describe('CalendarSelectorComponent', () => {
 
   const el = (hook: string) => (fixture.nativeElement as HTMLElement).querySelector<HTMLElement>(`[data-cy="${hook}"]`);
   const option = (calendar: string) => el(`calendar-option-${calendar}`);
-  /** Material renders the toggle's own button inside the element carrying the hook. */
+  /** The hook sits on the option's own button, so it is the thing to click. */
   const clickOption = (calendar: string) => {
-    option(calendar)?.querySelector<HTMLElement>('button')?.click();
+    option(calendar)?.click();
     fixture.detectChanges();
   };
 
@@ -65,7 +65,7 @@ describe('CalendarSelectorComponent', () => {
       fixture.componentRef.setInput('available', ['GREGORIAN', 'JULIAN']);
       fixture.detectChanges();
 
-      expect(option('ISLAMIC')?.querySelector('button')?.hasAttribute('disabled')).toBe(true);
+      expect(option('ISLAMIC')?.hasAttribute('disabled')).toBe(true);
     });
 
     it('shows an unavailable calendar rather than hiding it', () => {
@@ -91,7 +91,7 @@ describe('CalendarSelectorComponent', () => {
     });
 
     it('offers everything by default, since an owner that says nothing rules nothing out', () => {
-      expect(option('ISLAMIC')?.querySelector('button')?.hasAttribute('disabled')).toBe(false);
+      expect(option('ISLAMIC')?.hasAttribute('disabled')).toBe(false);
     });
   });
 
@@ -113,7 +113,7 @@ describe('CalendarSelectorComponent', () => {
     it('shows a caption only when the owner supplies one', () => {
       expect(el('calendar-caption')).toBeNull();
 
-      fixture.componentRef.setInput('caption', 'ui.datePicker.oneCalendarForValue');
+      fixture.componentRef.setInput('caption', 'ui.datePicker.calendar');
       fixture.detectChanges();
 
       expect(el('calendar-caption')).not.toBeNull();
