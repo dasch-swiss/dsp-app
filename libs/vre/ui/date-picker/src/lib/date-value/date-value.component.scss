@@ -1,9 +1,33 @@
+// One line: start, en dash, end, and the control that adds or removes the end. The pickers are
+// closed fields rather than open panels, so the row stays a row.
 .date-fields {
   display: flex;
   flex-wrap: wrap;
-  align-items: flex-start;
+  align-items: center;
   gap: 8px;
   margin-top: 8px;
+}
+
+// `min-width: 0` on a flex child is what lets a long date be ellipsised instead of pushing its
+// neighbour onto the next line.
+//
+// They do not grow: a lone start date stretched across the whole row, which made the same field
+// two different widths depending on whether an end existed. A fixed basis keeps one field the
+// same size whether or not it has a partner.
+.start-date,
+.end-date {
+  flex: 0 1 220px;
+  min-width: 0;
+}
+
+.date-fields-separator {
+  flex: none;
+  font-size: 14px;
+  color: #4b5563;
+}
+
+.toggle-period-control {
+  flex: none;
 }
 
 .stored-value-line,
@@ -36,13 +60,6 @@
   margin-top: 8px;
   font-size: 12px;
   color: #4b5563;
-}
-
-.save-status {
-  // A real edit is the state worth noticing: it is the one that will be written.
-  &.differs {
-    color: #b45309;
-  }
 }
 
 .error-message {

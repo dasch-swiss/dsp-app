@@ -51,7 +51,7 @@ type Story = StoryObj<DateValueStoryHost>;
 
 const controlValue = (canvas: HTMLElement) => canvas.querySelector('[data-cy="control-value"]')?.textContent?.trim();
 const calendarOption = (canvas: HTMLElement, cal: string) =>
-  canvas.querySelector<HTMLElement>(`[data-cy="calendar-option-${cal}"] button`);
+  canvas.querySelector<HTMLElement>(`[data-cy="calendar-option-${cal}"]`);
 
 export const ConvertsRatherThanRelabels: Story = {
   name: 'Converts a stored date instead of relabelling it',
@@ -86,20 +86,45 @@ export const RoundTripsThroughIslamic: Story = {
   },
 };
 
-export const SaysNothingToSaveAfterASwitch: Story = {
-  name: 'Says a calendar switch alone changes nothing',
+export const SaysTheDayIsUnchangedAfterASwitch: Story = {
+  name: 'Says the day is unchanged and names the calendar it is now expressed in',
   args: { initial: new KnoraDate('GREGORIAN', 'CE', 2020, 4, 1) },
   play: async ({ canvasElement, step }) => {
     await step('Switching the calendar', async () => {
       await userEvent.click(calendarOption(canvasElement, 'JULIAN') as HTMLElement);
     });
-    await step('The status line agrees with the save gate', async () => {
+
+    // The one thing the numerals cannot show: 01.04.2020 Gregorian and 19.03.2020 Julian are the
+    // same day. The calendar is a stored field, so this is a real edit — not "nothing to save".
+    await step('The status line names the calendar the value will be stored in', async () => {
       const status = canvasElement.querySelector('[data-cy="save-status"]');
-      await expect(status?.textContent).toContain('Nothing to save');
+      await expect(status?.textContent).toContain('Same day as the stored value');
+      await expect(status?.textContent).toContain('Julian');
+    });
+    await step('And does not claim there is nothing to save', async () => {
+      const status = canvasElement.querySelector('[data-cy="save-status"]');
+      await expect(status?.textContent).not.toContain('Nothing to save');
     });
     await step('And names the stored value as what it converted from', async () => {
       const note = canvasElement.querySelector('[data-cy="converted-from"]');
       await expect(note?.textContent).toContain('Stored value');
+    });
+  },
+};
+
+export const SaysNothingWhenTheUserPicksAnotherDay: Story = {
+  name: 'Says nothing once the user picks a different day',
+  args: { initial: new KnoraDate('GREGORIAN', 'CE', 2020, 4, 1) },
+  play: async ({ canvasElement, step }) => {
+    await step('Picking a different day', async () => {
+      await userEvent.click(canvasElement.querySelector<HTMLElement>('[data-cy="date-field"]')!);
+      await userEvent.click(document.querySelector<HTMLElement>('[data-cy="day-9"]')!);
+    });
+
+    // A user who has just chosen a different date can see that it differs; saying so read as a
+    // warning about something they did on purpose.
+    await step('No status line appears', async () => {
+      await expect(canvasElement.querySelector('[data-cy="save-status"]')).toBeNull();
     });
   },
 };
@@ -132,9 +157,73 @@ export const OffersOneCalendarForAPeriod: Story = {
     await step('A period carries one calendar, so it gets one control', async () => {
       await expect(canvasElement.querySelectorAll('app-calendar-selector').length).toBe(1);
     });
-    await step('And says so', async () => {
-      const caption = canvasElement.querySelector('[data-cy="calendar-caption"]');
-      await expect(caption?.textContent).toContain('whole value');
+    // One control is the whole statement. Spelling it out in a caption under the control told the
+    // user something the single control already shows.
+    await step('Without a caption explaining it', async () => {
+      await expect(canvasElement.querySelector('[data-cy="calendar-caption"]')).toBeNull();
+    });
+  },
+};
+
+export const KeepsAPeriodOnOneLine: Story = {
+  name: 'Puts the start and end of a period side by side, both closed',
+  args: {
+    initial: new KnoraPeriod(new KnoraDate('JULIAN', 'CE', 1580), new KnoraDate('JULIAN', 'CE', 1585)),
+  },
+  play: async ({ canvasElement, step }) => {
+    // The reported bug: both pickers rendered their calendar inline, so a period was two stacked
+    // grids, and the lower one was cut off wherever the page ran out of room.
+    await step('Neither end is showing a calendar', async () => {
+      await expect(document.querySelectorAll('[data-cy="date-picker-panel"]').length).toBe(0);
+    });
+    await step('Both ends are fields on the same line', async () => {
+      const fields = canvasElement.querySelectorAll<HTMLElement>('[data-cy="date-field"]');
+      await expect(fields.length).toBe(2);
+      await expect(fields[0].getBoundingClientRect().top).toBe(fields[1].getBoundingClientRect().top);
+    });
+    await step('Opening one end shows exactly one calendar', async () => {
+      await userEvent.click(canvasElement.querySelectorAll<HTMLElement>('[data-cy="date-field"]')[0]);
+      await expect(document.querySelectorAll('[data-cy="date-picker-panel"]').length).toBe(1);
+    });
+  },
+};
+
+export const OpensANewValueOnAUsableMonth: Story = {
+  name: 'Opens a new value on a month that can be clicked',
+  args: { initial: null },
+  play: async ({ canvasElement, step }) => {
+    // The reported bug: a new value had no year, so the panel opened with no month and no grid —
+    // nothing to click, and no hint that a year had to be typed first.
+    const field = canvasElement.querySelector<HTMLElement>('[data-cy="date-field"]')!;
+    await userEvent.click(field);
+
+    await step('A day grid is there to click', async () => {
+      const days = document.querySelectorAll('[data-cy^="day-"]');
+      await expect(days.length).toBeGreaterThan(0);
+    });
+    await step('But nothing has been chosen yet', async () => {
+      await expect(document.querySelector('.day-cell.is-selected')).toBeNull();
+      await expect(field.querySelector('.is-placeholder')).not.toBeNull();
+    });
+    await step('So the value is still empty', async () => {
+      await expect(controlValue(canvasElement)).toBe('null');
+    });
+
+    // The grid is a starting point for the eye, never an entry. Seeding the draft with it made
+    // the Month select name a month the user had not chosen, while the field stayed empty.
+    await step('And the controls agree: no month, no year', async () => {
+      const month = document.querySelector<HTMLSelectElement>('[data-cy="month-select"]');
+      const year = document.querySelector<HTMLInputElement>('[data-cy="year-input"]');
+      await expect(month?.value).toBe('');
+      await expect(year?.value).toBe('');
+    });
+
+    // The reported sequence: open, switch era, drop to a coarser precision. The seeded month and
+    // year used to ride along and be stored as a date nobody entered.
+    await step('Switching the era alone still stores nothing', async () => {
+      await userEvent.click(document.querySelector<HTMLElement>('[data-cy="era-BCE"]')!);
+      await expect(controlValue(canvasElement)).toBe('null');
+      await expect(document.querySelector<HTMLSelectElement>('[data-cy="month-select"]')?.value).toBe('');
     });
   },
 };

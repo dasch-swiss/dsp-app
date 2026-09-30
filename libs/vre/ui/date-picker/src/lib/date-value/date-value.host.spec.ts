@@ -125,12 +125,29 @@ describe('DateValueComponent, as the resource editor renders it', () => {
       expect(el('stored-value-line')).not.toBeNull();
     });
 
-    it('reports the value as unchanged after a calendar switch alone', () => {
+    it('says the day is unchanged and names the calendar it is now expressed in', () => {
       switchTo('JULIAN');
 
       // No translation catalogue in jsdom, so the key is what renders; the Storybook test asserts
       // the translated copy.
-      expect(el('save-status')?.textContent).toContain('sameAsStored');
+      expect(el('save-status')?.textContent).toContain('sameDayOtherCalendar');
+    });
+
+    // The calendar is a stored field, so switching it is a real edit. Calling it "nothing to save"
+    // both misdescribed it and matched a save gate that refused to write it.
+    it('does not call a calendar switch nothing to save', () => {
+      switchTo('JULIAN');
+
+      expect(el('save-status')?.textContent).not.toContain('Nothing to save');
+    });
+
+    // A user who has just picked a different day can see that it differs; saying so read as a
+    // warning about something they did deliberately.
+    it('says nothing at all once the user picks a different day', () => {
+      component().writeValue(new KnoraDate('GREGORIAN', 'CE', 2021, 8, 9));
+      fixture.detectChanges();
+
+      expect(el('save-status')).toBeNull();
     });
 
     it('says the conversion came from the stored value', () => {

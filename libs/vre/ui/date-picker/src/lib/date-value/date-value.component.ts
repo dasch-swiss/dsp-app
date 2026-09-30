@@ -154,20 +154,30 @@ export class DateValueComponent implements ControlValueAccessor, Validator {
   });
 
   /**
-   * Whether saving would change anything.
+   * Whether this is the stored day, restated in a different calendar.
    *
-   * Compares the instant a date denotes rather than its fields, so a calendar switch alone reads as
-   * unchanged — the same comparison the save gate uses. Saying otherwise would promise a save the
-   * gate then refuses.
+   * The one thing a reader cannot work out from the numerals: 15.06.2024 Gregorian and 02.06.2024
+   * Julian look like different dates and are not. The line names the calendar the value will now
+   * be stored in, because that calendar is itself saved — `UpdateDateValue` carries it as a field
+   * beside the numerals — so this is a real edit rather than a no-op.
+   *
+   * The opposite case needs no line: a user who has just picked a different day can see that it
+   * differs, and saying so read as a warning about something they did on purpose.
    */
-  protected readonly isUnchangedFromStored = computed(() => {
+  protected readonly isSameInstantInAnotherCalendar = computed(() => {
     const stored = this._stored();
     const current = this._asValue(this._state());
     if (stored === null || current === null) {
       return false;
     }
+    if (this._calendarOf(stored) === this._state().calendar) {
+      return false;
+    }
     return this._calendarDates.dateValuesDenoteSameInstant(stored, current);
   });
+
+  /** The calendar now chosen, for the line that names it. */
+  protected readonly calendarLabel = computed(() => `ui.calendarMarker.calendars.${this._state().calendar}`);
 
   /** The period's ends are out of order — shown in the card, not only as a form error. */
   protected readonly endBeforeStart = computed(() => {
