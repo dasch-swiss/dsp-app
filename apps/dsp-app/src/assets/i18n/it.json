@@ -1091,15 +1091,36 @@
       "beforeHijra": "Prima dell'Egira",
       "inEachCalendar": "{{calendar}}. Questa data in ogni calendario",
       "jdn": "GG",
-      "periodOfDays": "Periodo di {{count}} giorni",
-      "weekdays": {
-        "monday": "lunedì",
-        "tuesday": "martedì",
-        "wednesday": "mercoledì",
-        "thursday": "giovedì",
-        "friday": "venerdì",
-        "saturday": "sabato",
-        "sunday": "domenica"
+      "periodOfDays": "Periodo di {{count}} giorni"
+    },
+    "weekdays": {
+      "monday": {
+        "long": "lunedì",
+        "short": "L"
+      },
+      "tuesday": {
+        "long": "martedì",
+        "short": "M"
+      },
+      "wednesday": {
+        "long": "mercoledì",
+        "short": "M"
+      },
+      "thursday": {
+        "long": "giovedì",
+        "short": "G"
+      },
+      "friday": {
+        "long": "venerdì",
+        "short": "V"
+      },
+      "saturday": {
+        "long": "sabato",
+        "short": "S"
+      },
+      "sunday": {
+        "long": "domenica",
+        "short": "D"
       }
     }
   },

@@ -1091,15 +1091,36 @@
       "beforeHijra": "Vor der Hidschra",
       "inEachCalendar": "{{calendar}}. Dieses Datum in jedem Kalender",
       "jdn": "JTZ",
-      "periodOfDays": "Zeitraum von {{count}} Tagen",
-      "weekdays": {
-        "monday": "Montag",
-        "tuesday": "Dienstag",
-        "wednesday": "Mittwoch",
-        "thursday": "Donnerstag",
-        "friday": "Freitag",
-        "saturday": "Samstag",
-        "sunday": "Sonntag"
+      "periodOfDays": "Zeitraum von {{count}} Tagen"
+    },
+    "weekdays": {
+      "monday": {
+        "long": "Montag",
+        "short": "M"
+      },
+      "tuesday": {
+        "long": "Dienstag",
+        "short": "D"
+      },
+      "wednesday": {
+        "long": "Mittwoch",
+        "short": "M"
+      },
+      "thursday": {
+        "long": "Donnerstag",
+        "short": "D"
+      },
+      "friday": {
+        "long": "Freitag",
+        "short": "F"
+      },
+      "saturday": {
+        "long": "Samstag",
+        "short": "S"
+      },
+      "sunday": {
+        "long": "Sonntag",
+        "short": "S"
       }
     }
   },

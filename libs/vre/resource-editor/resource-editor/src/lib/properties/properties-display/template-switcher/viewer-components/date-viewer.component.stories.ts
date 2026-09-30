@@ -15,15 +15,17 @@ const TRANSLATIONS = {
       calendars: { GREGORIAN: 'Gregorian', JULIAN: 'Julian', ISLAMIC: 'Islamic (tabular)' },
       jdn: 'JDN',
       periodOfDays: 'Period of {{count}} days',
-      weekdays: {
-        monday: 'Monday',
-        tuesday: 'Tuesday',
-        wednesday: 'Wednesday',
-        thursday: 'Thursday',
-        friday: 'Friday',
-        saturday: 'Saturday',
-        sunday: 'Sunday',
-      },
+    },
+    // Shared with the date picker's grid header, so they sit beside calendarMarker rather than
+    // inside it.
+    weekdays: {
+      monday: { long: 'Monday', short: 'M' },
+      tuesday: { long: 'Tuesday', short: 'T' },
+      wednesday: { long: 'Wednesday', short: 'W' },
+      thursday: { long: 'Thursday', short: 'T' },
+      friday: { long: 'Friday', short: 'F' },
+      saturday: { long: 'Saturday', short: 'S' },
+      sunday: { long: 'Sunday', short: 'S' },
     },
   },
 };

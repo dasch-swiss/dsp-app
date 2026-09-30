@@ -1091,15 +1091,36 @@
       "beforeHijra": "Avant l'Hégire",
       "inEachCalendar": "{{calendar}}. Cette date dans chaque calendrier",
       "jdn": "JJ",
-      "periodOfDays": "Période de {{count}} jours",
-      "weekdays": {
-        "monday": "lundi",
-        "tuesday": "mardi",
-        "wednesday": "mercredi",
-        "thursday": "jeudi",
-        "friday": "vendredi",
-        "saturday": "samedi",
-        "sunday": "dimanche"
+      "periodOfDays": "Période de {{count}} jours"
+    },
+    "weekdays": {
+      "monday": {
+        "long": "lundi",
+        "short": "L"
+      },
+      "tuesday": {
+        "long": "mardi",
+        "short": "M"
+      },
+      "wednesday": {
+        "long": "mercredi",
+        "short": "M"
+      },
+      "thursday": {
+        "long": "jeudi",
+        "short": "J"
+      },
+      "friday": {
+        "long": "vendredi",
+        "short": "V"
+      },
+      "saturday": {
+        "long": "samedi",
+        "short": "S"
+      },
+      "sunday": {
+        "long": "dimanche",
+        "short": "D"
       }
     }
   },

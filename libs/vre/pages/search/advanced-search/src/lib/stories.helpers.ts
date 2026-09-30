@@ -69,6 +69,16 @@ const STORY_TRANSLATIONS = {
     calendarMarker: {
       calendars: { GREGORIAN: 'Gregorian', JULIAN: 'Julian', ISLAMIC: 'Islamic (tabular)' },
     },
+    // The picker's day-grid header reads these.
+    weekdays: {
+      monday: { short: 'M' },
+      tuesday: { short: 'T' },
+      wednesday: { short: 'W' },
+      thursday: { short: 'T' },
+      friday: { short: 'F' },
+      saturday: { short: 'S' },
+      sunday: { short: 'S' },
+    },
   },
   pages: {
     search: {

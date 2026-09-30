@@ -1091,15 +1091,36 @@
       "beforeHijra": "Before the Hijra",
       "inEachCalendar": "{{calendar}}. This date in each calendar",
       "jdn": "JDN",
-      "periodOfDays": "Period of {{count}} days",
-      "weekdays": {
-        "monday": "Monday",
-        "tuesday": "Tuesday",
-        "wednesday": "Wednesday",
-        "thursday": "Thursday",
-        "friday": "Friday",
-        "saturday": "Saturday",
-        "sunday": "Sunday"
+      "periodOfDays": "Period of {{count}} days"
+    },
+    "weekdays": {
+      "monday": {
+        "long": "Monday",
+        "short": "M"
+      },
+      "tuesday": {
+        "long": "Tuesday",
+        "short": "T"
+      },
+      "wednesday": {
+        "long": "Wednesday",
+        "short": "W"
+      },
+      "thursday": {
+        "long": "Thursday",
+        "short": "T"
+      },
+      "friday": {
+        "long": "Friday",
+        "short": "F"
+      },
+      "saturday": {
+        "long": "Saturday",
+        "short": "S"
+      },
+      "sunday": {
+        "long": "Sunday",
+        "short": "S"
       }
     }
   },

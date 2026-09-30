@@ -11,8 +11,13 @@ import {
 } from '@dasch-swiss/vre/shared/calendar';
 import { TranslateService } from '@ngx-translate/core';
 
-/** Weekday names by `jdn % 7`, where 0 is Monday. Keys into `ui.calendarMarker.weekdays.*`. */
-const WEEKDAY_KEYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'] as const;
+/**
+ * Weekday names by `jdn % 7`, where 0 is Monday.
+ *
+ * Keys into `ui.weekdays.*`, which the picker's grid header reads too — hence a namespace of its
+ * own rather than one belonging to either surface.
+ */
+export const WEEKDAY_KEYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'] as const;
 
 /**
  * A date value seen through a calendar other than the one it is stored in.
@@ -264,7 +269,7 @@ export class CalendarDateService {
       return undefined;
     }
     const key = WEEKDAY_KEYS[((jdn % 7) + 7) % 7];
-    return this._translate?.instant(`ui.calendarMarker.weekdays.${key}`) ?? key;
+    return this._translate?.instant(`ui.weekdays.${key}.long`) ?? key;
   }
 
   /**

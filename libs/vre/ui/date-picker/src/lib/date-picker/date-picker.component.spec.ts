@@ -428,6 +428,26 @@ describe('DatePickerComponent', () => {
     });
   });
 
+  // "M T W T F S S" is English. German runs M D M D F S S and French L M M J V S D, so a
+  // hardcoded header mislabels every column for most of the app's languages.
+  describe('the weekday header', () => {
+    it('renders seven columns', () => {
+      show(new KnoraDate('GREGORIAN', 'CE', 2024, 6, 15));
+
+      expect(overlay().querySelectorAll('.weekday').length).toBe(7);
+    });
+
+    it('reads its labels from translation keys rather than hardcoded letters', () => {
+      show(new KnoraDate('GREGORIAN', 'CE', 2024, 6, 15));
+
+      // No catalogue in jsdom, so the key itself renders — which is the proof that it goes
+      // through translation at all. Storybook asserts the translated letters.
+      const labels = Array.from(overlay().querySelectorAll('.weekday')).map(e => e.textContent?.trim());
+      expect(labels[0]).toBe('ui.weekdays.monday.short');
+      expect(labels[6]).toBe('ui.weekdays.sunday.short');
+    });
+  });
+
   describe('the closed field', () => {
     it('shows the date it was given', () => {
       fixture.componentRef.setInput('date', new KnoraDate('GREGORIAN', 'CE', 2024, 6, 15));

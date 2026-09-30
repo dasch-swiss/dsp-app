@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, input, output, si
 import { MatIconModule } from '@angular/material/icon';
 import { KnoraDate } from '@dasch-swiss/dsp-js';
 import { CalendarSystem } from '@dasch-swiss/vre/shared/calendar';
-import { CalendarDateService } from '@dasch-swiss/vre/ui/ui';
+import { CalendarDateService, WEEKDAY_KEYS } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe } from '@ngx-translate/core';
 
 /**
@@ -36,7 +36,14 @@ const MONTHS: readonly (readonly [string, string])[] = [
   ['Dec', 'Ḏū al-Ḥijjah'],
 ];
 
-const WEEKDAYS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+/**
+ * The grid header, as translation keys rather than letters.
+ *
+ * "M T W T F S S" is English: German runs M D M D F S S and French L M M J V S D, so a hardcoded
+ * row mislabels every column for most of the app's languages. The short forms live beside the full
+ * names the reading popover uses, so the two cannot drift apart.
+ */
+const WEEKDAY_HEADER = WEEKDAY_KEYS.map(key => `ui.weekdays.${key}.short`);
 
 /** The two eras offered as a segmented choice. Islamic has none and shows a fixed AH instead. */
 const ERAS = ['CE', 'BCE'] as const;
@@ -103,7 +110,7 @@ export class DatePickerComponent {
   readonly dateChange = output<KnoraDate | null>();
 
   protected readonly months = MONTHS;
-  protected readonly weekDays = WEEKDAYS;
+  protected readonly weekDays = WEEKDAY_HEADER;
   protected readonly eras = ERAS;
   protected readonly PANEL_POSITIONS = PANEL_POSITIONS;
 
