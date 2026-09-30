@@ -3,7 +3,7 @@ import { input } from '@angular/core';
 import { KnoraDate, KnoraPeriod, ReadDateValue } from '@dasch-swiss/dsp-js';
 import { CALENDAR_SYSTEMS, CalendarSystem } from '@dasch-swiss/vre/shared/calendar';
 import { CalendarDateService } from '@dasch-swiss/vre/ui/ui';
-import { CalendarMarkerComponent, CalendarReading, KnoraDatePipe } from '@dasch-swiss/vre/ui/ui';
+import { CalendarFacts, CalendarMarkerComponent, CalendarReading, KnoraDatePipe } from '@dasch-swiss/vre/ui/ui';
 
 /**
  * Renders a date value in the calendar it is stored in, with a marker that reads it in the others.
@@ -24,7 +24,7 @@ import { CalendarMarkerComponent, CalendarReading, KnoraDatePipe } from '@dasch-
   template: `
     <span data-cy="date-text">{{ storedText() }}</span>
     <span data-cy="date-switch" style="display: inline-block; margin-left: 8px">
-      <app-calendar-marker [storedCalendar]="storedCalendar()" [readings]="readings()" />
+      <app-calendar-marker [storedCalendar]="storedCalendar()" [readings]="readings()" [facts]="facts()" />
     </span>
   `,
 })
@@ -48,6 +48,31 @@ export class DateViewerComponent {
 
   /** What is on the page: always the stored date, in the calendar it was recorded in. */
   protected readonly storedText = computed(() => this._readIn(this.storedCalendar()) ?? '');
+
+  /**
+   * What holds for the value itself: its weekday, its position in the day count, its length.
+   *
+   * Computed from the stored date rather than any conversion, because they describe the instant
+   * and not a reading of it. Each is omitted where it does not apply — a value stored at year or
+   * month precision names no single day, so it has no weekday and no single JDN, and only a period
+   * has a duration.
+   */
+  protected readonly facts = computed<CalendarFacts>(() => {
+    const date = this.value().date;
+
+    if (date instanceof KnoraPeriod) {
+      return {
+        weekday: this._calendarDates.weekdayOf(date.start),
+        jdn: this._calendarDates.julianDayNumber(date.start),
+        endJdn: this._calendarDates.julianDayNumber(date.end),
+        durationDays: this._calendarDates.durationInDays(date),
+      };
+    }
+    return {
+      weekday: this._calendarDates.weekdayOf(date),
+      jdn: this._calendarDates.julianDayNumber(date),
+    };
+  });
 
   /**
    * This value read in each calendar, for the marker to list.

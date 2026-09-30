@@ -1089,7 +1089,18 @@
         "ISLAMIC": "Islamic (tabular)"
       },
       "beforeHijra": "Before the Hijra",
-      "inEachCalendar": "{{calendar}}. This date in each calendar"
+      "inEachCalendar": "{{calendar}}. This date in each calendar",
+      "jdn": "JDN",
+      "periodOfDays": "Period of {{count}} days",
+      "weekdays": {
+        "monday": "Monday",
+        "tuesday": "Tuesday",
+        "wednesday": "Wednesday",
+        "thursday": "Thursday",
+        "friday": "Friday",
+        "saturday": "Saturday",
+        "sunday": "Sunday"
+      }
     }
   },
   "shared": {

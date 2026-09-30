@@ -13,6 +13,17 @@ const TRANSLATIONS = {
       inEachCalendar: '{{calendar}}. This date in each calendar',
       beforeHijra: 'Before the Hijra',
       calendars: { GREGORIAN: 'Gregorian', JULIAN: 'Julian', ISLAMIC: 'Islamic (tabular)' },
+      jdn: 'JDN',
+      periodOfDays: 'Period of {{count}} days',
+      weekdays: {
+        monday: 'Monday',
+        tuesday: 'Tuesday',
+        wednesday: 'Wednesday',
+        thursday: 'Thursday',
+        friday: 'Friday',
+        saturday: 'Saturday',
+        sunday: 'Sunday',
+      },
     },
   },
 };
@@ -196,6 +207,66 @@ export const OpensClosed: Story = {
       await expect(popover()).not.toBeNull();
       await userEvent.keyboard('{Escape}');
       await expect(popover()).toBeNull();
+    });
+  },
+};
+
+const facts = () => document.querySelector('[data-cy="calendar-marker-facts"]');
+
+export const StatesTheWeekdayAndDayNumber: Story = {
+  name: 'States the weekday and Julian Day Number of a single day',
+  args: { value: asValue(new KnoraDate('JULIAN', 'BCE', 100, 9, 20)) },
+  play: async ({ canvasElement, step }) => {
+    await userEvent.click(marker(canvasElement));
+
+    // One instant has one weekday and one day number whatever calendar names it, so they are
+    // stated once below the readings rather than repeated on each row.
+    await step('The weekday is named', async () => {
+      await expect(facts()?.textContent).toContain('Wednesday');
+    });
+    await step('And the day number given', async () => {
+      await expect(facts()?.textContent).toContain('JDN 1685161');
+    });
+    await step('Once, not per calendar', async () => {
+      await expect(document.querySelectorAll('[data-cy="calendar-marker-weekday"]').length).toBe(1);
+    });
+  },
+};
+
+export const StatesHowLongAPeriodRan: Story = {
+  name: 'States how many days a period covers',
+  args: {
+    value: asValue(
+      new KnoraPeriod(new KnoraDate('GREGORIAN', 'CE', 2024, 1, 1), new KnoraDate('GREGORIAN', 'CE', 2024, 1, 12))
+    ),
+  },
+  play: async ({ canvasElement, step }) => {
+    await userEvent.click(marker(canvasElement));
+
+    // Counted inclusively, as a span is spoken about: 1-12 January is twelve days, not eleven.
+    await step('The duration is counted inclusively', async () => {
+      await expect(facts()?.textContent).toContain('Period of 12 days');
+    });
+    await step('And the day numbers read as a range', async () => {
+      await expect(facts()?.textContent).toContain('2460311');
+      await expect(facts()?.textContent).toContain('2460322');
+    });
+  },
+};
+
+export const SaysNothingItCannotKnow: Story = {
+  name: 'Omits the weekday and day number for a date that names no single day',
+  args: { value: asValue(new KnoraDate('JULIAN', 'CE', 1582)) },
+  play: async ({ canvasElement, step }) => {
+    await userEvent.click(marker(canvasElement));
+
+    // A year covers 365 days, so it has no weekday and no one day number. Showing the first day's
+    // would assert a precision the source never had.
+    await step('No facts row appears at all', async () => {
+      await expect(facts()).toBeNull();
+    });
+    await step('While the readings are still listed', async () => {
+      await expect(document.querySelector('[data-cy="calendar-marker-popover"]')).not.toBeNull();
     });
   },
 };

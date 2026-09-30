@@ -122,6 +122,77 @@ describe('CalendarDateService', () => {
     });
   });
 
+  describe('facts about the instant', () => {
+    // Verified against independent JDN arithmetic: 20.09.100 BCE Julian is JDN 1685161.
+    it('gives the Julian Day Number of a day-precision date', () => {
+      expect(service.julianDayNumber(new KnoraDate('JULIAN', 'BCE', 100, 9, 20))).toBe(1685161);
+    });
+
+    // No catalogue is loaded in jsdom, so the key is what comes back; the Storybook test asserts
+    // the translated name. What matters here is which weekday it resolved to.
+    it('names the weekday of a day-precision date', () => {
+      expect(service.weekdayOf(new KnoraDate('JULIAN', 'BCE', 100, 9, 20))).toContain('wednesday');
+    });
+
+    it('agrees across calendars, since they name one instant', () => {
+      const julian = new KnoraDate('JULIAN', 'CE', 2024, 6, 2);
+      const gregorian = new KnoraDate('GREGORIAN', 'CE', 2024, 6, 15);
+
+      expect(service.julianDayNumber(julian)).toBe(service.julianDayNumber(gregorian));
+      expect(service.weekdayOf(julian)).toBe(service.weekdayOf(gregorian));
+    });
+
+    // A year covers 365 days and a month about thirty, so neither has one of either. Saying
+    // nothing is the only honest answer; picking the first day would invent a precision.
+    it('gives no JDN for a year', () => {
+      expect(service.julianDayNumber(new KnoraDate('GREGORIAN', 'CE', 1582))).toBeUndefined();
+    });
+
+    it('gives no weekday for a year', () => {
+      expect(service.weekdayOf(new KnoraDate('GREGORIAN', 'CE', 1582))).toBeUndefined();
+    });
+
+    it('gives no weekday for a month', () => {
+      expect(service.weekdayOf(new KnoraDate('GREGORIAN', 'CE', 1582, 6))).toBeUndefined();
+    });
+
+    it('counts a period inclusively, as a span is spoken about', () => {
+      const period = new KnoraPeriod(
+        new KnoraDate('GREGORIAN', 'CE', 2024, 1, 1),
+        new KnoraDate('GREGORIAN', 'CE', 2024, 1, 12)
+      );
+
+      expect(service.durationInDays(period)).toBe(12);
+    });
+
+    it('counts a single-day period as one day', () => {
+      const period = new KnoraPeriod(
+        new KnoraDate('GREGORIAN', 'CE', 2024, 1, 1),
+        new KnoraDate('GREGORIAN', 'CE', 2024, 1, 1)
+      );
+
+      expect(service.durationInDays(period)).toBe(1);
+    });
+
+    it('counts a period whose ends sit in different calendars', () => {
+      const period = new KnoraPeriod(
+        new KnoraDate('JULIAN', 'CE', 2024, 6, 2),
+        new KnoraDate('GREGORIAN', 'CE', 2024, 6, 16)
+      );
+
+      expect(service.durationInDays(period)).toBe(2);
+    });
+
+    it('gives no duration when an end is imprecise', () => {
+      const period = new KnoraPeriod(
+        new KnoraDate('GREGORIAN', 'CE', 2024, 1, 1),
+        new KnoraDate('GREGORIAN', 'CE', 2024)
+      );
+
+      expect(service.durationInDays(period)).toBeUndefined();
+    });
+  });
+
   describe('conversion', () => {
     it('converts a day between calendars', () => {
       const julian = service.convertKnoraDateTo(new KnoraDate('GREGORIAN', 'CE', 2020, 4, 1), 'JULIAN');

@@ -5,13 +5,6 @@ import { CalendarSystem } from '@dasch-swiss/vre/shared/calendar';
 import { TranslatePipe } from '@ngx-translate/core';
 
 /**
- * One reading of a date in a calendar, ready to display.
- *
- * `date` is absent when the calendar cannot express this value — a date before the Hijra has no
- * Islamic form — and the marker then says so in its place rather than dropping the row. Hiding it
- * would leave a reader unsure whether the calendar was forgotten or genuinely does not apply.
- */
-/**
  * Just below the trigger and slightly left of it, falling back to above near the viewport bottom.
  *
  * The small negative x-offset lines the popover's first column up with the trigger's text rather
@@ -22,9 +15,34 @@ const POPOVER_POSITIONS: readonly ConnectedPosition[] = [
   { originX: 'start', originY: 'top', overlayX: 'start', overlayY: 'bottom', offsetX: -10, offsetY: -6 },
 ];
 
+/**
+ * One reading of a date in a calendar, ready to display.
+ *
+ * `date` is absent when the calendar cannot express this value — a date before the Hijra has no
+ * Islamic form — and the marker then says so in its place rather than dropping the row. Hiding it
+ * would leave a reader unsure whether the calendar was forgotten or genuinely does not apply.
+ */
 export interface CalendarReading {
   readonly calendar: CalendarSystem;
   readonly date?: string;
+}
+
+/**
+ * What the value is, beyond how each calendar spells it.
+ *
+ * These belong to the instant rather than to any one calendar — the same day has one weekday and
+ * one Julian Day Number whichever calendar names it — so the marker states them once, below the
+ * readings, instead of repeating them on every row.
+ *
+ * Every field is optional because none of them always applies: a date stored at year or month
+ * precision spans many days, so it has no single weekday and no single JDN, and the marker says
+ * nothing rather than picking one. `durationDays` exists only for a period.
+ */
+export interface CalendarFacts {
+  readonly weekday?: string;
+  readonly jdn?: number;
+  readonly endJdn?: number;
+  readonly durationDays?: number;
 }
 
 /**
@@ -86,6 +104,23 @@ export interface CalendarReading {
             [attr.data-cy]="'calendar-reading-' + reading.calendar">
             {{ 'ui.calendarMarker.calendars.' + reading.calendar | translate }}
           </span>
+        }
+
+        <!-- One instant, one weekday and one JDN, so they are stated once rather than per row. -->
+        @if (hasFacts()) {
+          <div class="calendar-marker-facts" data-cy="calendar-marker-facts">
+            @if (facts().weekday) {
+              <span data-cy="calendar-marker-weekday">{{ facts().weekday }}</span>
+            }
+            @if (jdnText()) {
+              <span data-cy="calendar-marker-jdn">{{ 'ui.calendarMarker.jdn' | translate }} {{ jdnText() }}</span>
+            }
+            @if (facts().durationDays !== undefined) {
+              <span data-cy="calendar-marker-duration">
+                {{ 'ui.calendarMarker.periodOfDays' | translate: { count: facts().durationDays } }}
+              </span>
+            }
+          </div>
         }
       </div>
     </ng-template>
@@ -159,6 +194,19 @@ export interface CalendarReading {
         font-style: italic;
         color: #4b5563;
       }
+
+      /* Spans the popover's two columns, since it describes the value rather than one calendar. */
+      .calendar-marker-facts {
+        grid-column: 1 / -1;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 2px 10px;
+        margin-top: 6px;
+        padding-top: 6px;
+        border-top: 1px solid #e5e7eb;
+        color: #4b5563;
+        font-variant-numeric: tabular-nums;
+      }
     `,
   ],
 })
@@ -174,6 +222,14 @@ export class CalendarMarkerComponent {
    */
   readonly readings = input.required<readonly CalendarReading[]>();
 
+  /**
+   * What holds for the value itself, whatever calendar names it.
+   *
+   * Empty by default, so a caller that has nothing to add — the advanced search's preview, say —
+   * gets the readings alone and no empty row.
+   */
+  readonly facts = input<CalendarFacts>({});
+
   protected readonly POPOVER_POSITIONS = POPOVER_POSITIONS;
 
   private readonly _open = signal(false);
@@ -181,6 +237,20 @@ export class CalendarMarkerComponent {
   protected readonly isOpen = this._open.asReadonly();
 
   protected readonly storedLabel = computed(() => `ui.calendarMarker.calendars.${this.storedCalendar()}`);
+
+  protected readonly hasFacts = computed(() => {
+    const { weekday, jdn, durationDays } = this.facts();
+    return weekday !== undefined || jdn !== undefined || durationDays !== undefined;
+  });
+
+  /** A period spans two, so it reads as a range; a single date shows the one. */
+  protected readonly jdnText = computed(() => {
+    const { jdn, endJdn } = this.facts();
+    if (jdn === undefined) {
+      return '';
+    }
+    return endJdn === undefined || endJdn === jdn ? `${jdn}` : `${jdn}–${endJdn}`;
+  });
 
   /** Stored calendar first; the others keep the order the owner supplied. */
   protected readonly ordered = computed(() => {

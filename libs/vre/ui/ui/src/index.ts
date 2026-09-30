@@ -44,7 +44,7 @@ export * from './lib/human-readable-error.pipe';
 export * from './lib/clickable-list-card.component';
 export * from './lib/resource-rights-statement.component';
 export * from './lib/authorship-chip-editor.component';
-export { CalendarMarkerComponent, type CalendarReading } from './lib/calendar-marker.component';
+export { CalendarMarkerComponent, type CalendarFacts, type CalendarReading } from './lib/calendar-marker.component';
 export {
   CalendarDateService,
   type ConvertedKnoraDate,

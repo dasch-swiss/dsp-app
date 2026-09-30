@@ -1089,7 +1089,18 @@
         "ISLAMIC": "Islamico (tabulare)"
       },
       "beforeHijra": "Prima dell'Egira",
-      "inEachCalendar": "{{calendar}}. Questa data in ogni calendario"
+      "inEachCalendar": "{{calendar}}. Questa data in ogni calendario",
+      "jdn": "GG",
+      "periodOfDays": "Periodo di {{count}} giorni",
+      "weekdays": {
+        "monday": "lunedì",
+        "tuesday": "martedì",
+        "wednesday": "mercoledì",
+        "thursday": "giovedì",
+        "friday": "venerdì",
+        "saturday": "sabato",
+        "sunday": "domenica"
+      }
     }
   },
   "shared": {

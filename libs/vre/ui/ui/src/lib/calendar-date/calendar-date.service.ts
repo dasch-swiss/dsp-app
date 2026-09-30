@@ -11,6 +11,9 @@ import {
 } from '@dasch-swiss/vre/shared/calendar';
 import { TranslateService } from '@ngx-translate/core';
 
+/** Weekday names by `jdn % 7`, where 0 is Monday. Keys into `ui.calendarMarker.weekdays.*`. */
+const WEEKDAY_KEYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'] as const;
+
 /**
  * A date value seen through a calendar other than the one it is stored in.
  *
@@ -230,6 +233,53 @@ export class CalendarDateService {
     // JavaScript's % keeps the sign of the dividend, and a proleptic date can land on a negative
     // JDN, so the result is normalised into 0..6 before being shifted to 1 = Monday.
     return (((jdn % 7) + 7) % 7) + 1;
+  }
+
+  /**
+   * the Julian Day Number of a date, or `undefined` unless it names a single day.
+   *
+   * A JDN is one day's position in a continuous count, so only a day-precision date has one: a
+   * value stored as `1582` covers 365 of them and a month covers about thirty. Returning
+   * `undefined` there is what stops a caller printing one number for a span the source never
+   * narrowed down.
+   */
+  julianDayNumber(date: KnoraDate): number | undefined {
+    if (date.precision !== Precision.dayPrecision) {
+      return undefined;
+    }
+    const calendar = date.calendar.toUpperCase() as CalendarSystem;
+    return getCalendar(calendar).toJDN(this.createJDNCalendarDateFromKnoraDate(date));
+  }
+
+  /**
+   * which day of the week a date falls on, or `undefined` unless it names a single day.
+   *
+   * Counted from the JDN, which is a continuous day count: JDN 0 was a Monday. The name is
+   * translated where a translate service is available, and falls back to English otherwise — the
+   * same arrangement the calendar names use.
+   */
+  weekdayOf(date: KnoraDate): string | undefined {
+    const jdn = this.julianDayNumber(date);
+    if (jdn === undefined) {
+      return undefined;
+    }
+    const key = WEEKDAY_KEYS[((jdn % 7) + 7) % 7];
+    return this._translate?.instant(`ui.calendarMarker.weekdays.${key}`) ?? key;
+  }
+
+  /**
+   * how many days a period covers, counting both ends.
+   *
+   * Inclusive, because that is how a span is spoken about: 1–12 January is twelve days, not
+   * eleven. `undefined` unless both ends name a single day, for the same reason a JDN is.
+   */
+  durationInDays(period: KnoraPeriod): number | undefined {
+    const start = this.julianDayNumber(period.start);
+    const end = this.julianDayNumber(period.end);
+    if (start === undefined || end === undefined) {
+      return undefined;
+    }
+    return end - start + 1;
   }
 
   // ---------------------------------------------------------------------------------------------

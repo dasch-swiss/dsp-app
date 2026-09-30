@@ -1089,7 +1089,18 @@
         "ISLAMIC": "Islamisch (tabellarisch)"
       },
       "beforeHijra": "Vor der Hidschra",
-      "inEachCalendar": "{{calendar}}. Dieses Datum in jedem Kalender"
+      "inEachCalendar": "{{calendar}}. Dieses Datum in jedem Kalender",
+      "jdn": "JTZ",
+      "periodOfDays": "Zeitraum von {{count}} Tagen",
+      "weekdays": {
+        "monday": "Montag",
+        "tuesday": "Dienstag",
+        "wednesday": "Mittwoch",
+        "thursday": "Donnerstag",
+        "friday": "Freitag",
+        "saturday": "Samstag",
+        "sunday": "Sonntag"
+      }
     }
   },
   "shared": {
