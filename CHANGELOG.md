@@ -1,5 +1,18 @@
 # Changelog
 
+## [13.15.2](https://github.com/dasch-swiss/dsp-app/compare/v13.15.1...v13.15.2) (2026-09-30)
+
+
+### Bug Fixes
+
+* guard hasDescription property from being displayed for all but s… ([#3484](https://github.com/dasch-swiss/dsp-app/issues/3484)) ([f4b9711](https://github.com/dasch-swiss/dsp-app/commit/f4b97116491ca382bb05745caa02f0086cfa70b0))
+
+
+### Maintenances
+
+* **deps:** Update grafana/grafana Docker tag to v13.2.2 ([#3480](https://github.com/dasch-swiss/dsp-app/issues/3480)) ([2b3c56b](https://github.com/dasch-swiss/dsp-app/commit/2b3c56bb818dc192b8e765df8fa6be31522f2d07))
+* **deps:** Update jest-deps ([#3481](https://github.com/dasch-swiss/dsp-app/issues/3481)) ([b8ea4b6](https://github.com/dasch-swiss/dsp-app/commit/b8ea4b6cb61f32a8912dcb88ade2928cf233c606))
+
 ## [13.15.1](https://github.com/dasch-swiss/dsp-app/compare/v13.15.0...v13.15.1) (2026-09-28)
 
 
