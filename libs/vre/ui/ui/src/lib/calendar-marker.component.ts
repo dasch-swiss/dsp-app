@@ -1,4 +1,4 @@
-import { CdkConnectedOverlay, CdkOverlayOrigin } from '@angular/cdk/overlay';
+import { CdkConnectedOverlay, CdkOverlayOrigin, ConnectedPosition } from '@angular/cdk/overlay';
 import { ChangeDetectionStrategy, Component, computed, input, signal } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { CalendarSystem } from '@dasch-swiss/vre/shared/calendar';
@@ -11,6 +11,17 @@ import { TranslatePipe } from '@ngx-translate/core';
  * Islamic form — and the marker then says so in its place rather than dropping the row. Hiding it
  * would leave a reader unsure whether the calendar was forgotten or genuinely does not apply.
  */
+/**
+ * Just below the trigger and slightly left of it, falling back to above near the viewport bottom.
+ *
+ * The small negative x-offset lines the popover's first column up with the trigger's text rather
+ * than with its padding edge.
+ */
+const POPOVER_POSITIONS: readonly ConnectedPosition[] = [
+  { originX: 'start', originY: 'bottom', overlayX: 'start', overlayY: 'top', offsetX: -10, offsetY: 6 },
+  { originX: 'start', originY: 'top', overlayX: 'start', overlayY: 'bottom', offsetX: -10, offsetY: -6 },
+];
+
 export interface CalendarReading {
   readonly calendar: CalendarSystem;
   readonly date?: string;
@@ -50,6 +61,7 @@ export interface CalendarReading {
       cdkConnectedOverlay
       [cdkConnectedOverlayOrigin]="trigger"
       [cdkConnectedOverlayOpen]="isOpen()"
+      [cdkConnectedOverlayPositions]="POPOVER_POSITIONS"
       [cdkConnectedOverlayHasBackdrop]="true"
       cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
       (backdropClick)="close()"
@@ -90,23 +102,27 @@ export interface CalendarReading {
         gap: 2px;
         font: inherit;
         font-size: 12px;
-        color: rgba(0, 0, 0, 0.6);
+        color: #4b5563;
         cursor: pointer;
         /* Dotted, not solid: it opens a reading, it does not change the value. */
         text-decoration: underline dotted;
+        text-decoration-color: #d1d5db;
         text-underline-offset: 3px;
-        transition: color 150ms;
+        transition:
+          color 150ms,
+          text-decoration-color 150ms;
       }
 
       .calendar-marker:hover,
       .calendar-marker:focus-visible {
         color: #336790;
+        text-decoration-color: #a8c0d4;
       }
 
       .calendar-marker-icon {
-        font-size: 14px;
-        width: 14px;
-        height: 14px;
+        font-size: 12px;
+        width: 12px;
+        height: 12px;
       }
 
       .calendar-marker-popover {
@@ -125,21 +141,23 @@ export interface CalendarReading {
       }
 
       .calendar-marker-date {
+        color: #111827;
         font-variant-numeric: tabular-nums;
       }
 
+      /* A stated colour rather than opacity over whatever the row inherits, which would drift. */
       .calendar-marker-name {
-        opacity: 0.7;
+        color: #4b5563;
       }
 
       .is-stored {
         font-weight: 700;
-        opacity: 1;
+        color: #111827;
       }
 
       .calendar-marker-absent {
         font-style: italic;
-        opacity: 0.7;
+        color: #4b5563;
       }
     `,
   ],
@@ -155,6 +173,8 @@ export class CalendarMarkerComponent {
    * tracks signal reads only, so a plain input would be captured once and then silently go stale.
    */
   readonly readings = input.required<readonly CalendarReading[]>();
+
+  protected readonly POPOVER_POSITIONS = POPOVER_POSITIONS;
 
   private readonly _open = signal(false);
 

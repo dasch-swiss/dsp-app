@@ -9,7 +9,7 @@ import { CalendarMarkerComponent } from './calendar-marker.component';
 const TRANSLATIONS = {
   ui: {
     calendarMarker: {
-      inEachCalendar: 'Stored in the {{calendar}} calendar. Show this date in every calendar.',
+      inEachCalendar: '{{calendar}}. This date in each calendar',
       beforeHijra: 'Before the Hijra',
       calendars: { GREGORIAN: 'Gregorian', JULIAN: 'Julian', ISLAMIC: 'Islamic (tabular)' },
     },
@@ -174,7 +174,7 @@ export const NamesItsPurposeToAssistiveTechnology: Story = {
       // The scheme is named to assistive technology as well as on screen: a screen-reader user
       // otherwise gets a bare "Islamic" that claims more than the app can back (DEV-7429).
       await expect(marker(canvasElement).getAttribute('aria-label')).toBe(
-        'Stored in the Islamic (tabular) calendar. Show this date in every calendar.'
+        'Islamic (tabular). This date in each calendar'
       );
     });
     await step('Opening state is exposed, not only drawn', async () => {
