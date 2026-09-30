@@ -9,9 +9,12 @@ import { PropertyValueEditComponent } from './property-value-edit.component';
 import { PropertyValueService } from './property-value.service';
 
 /**
- * A calendar switch restates a date; it does not edit it. The save button must stay inert, or a
- * reader who merely looks at a value in another calendar can rewrite its stored calendar — the
- * calendar travels in the update payload, so that save is a real mutation (DEV-7372).
+ * Which edits to a date value are worth saving.
+ *
+ * The calendar is part of the value: `UpdateDateValue` carries it as a stored field beside the
+ * numerals, so choosing a different one changes what the record says the source used, and must be
+ * saveable. Only restating both the same instant *and* the same calendar is a no-op — which is
+ * what stops a value someone merely looked at from being rewritten (DEV-7372).
  */
 describe('PropertyValueEditComponent save gating', () => {
   let fixture: ComponentFixture<PropertyValueEditComponent>;
@@ -55,11 +58,19 @@ describe('PropertyValueEditComponent save gating', () => {
       await expect(canSave()).resolves.toBe(false);
     });
 
-    it('cannot be saved after only the calendar changed, because the day is the same', async () => {
+    it('can be saved after only the calendar changed, because the calendar is stored', async () => {
       await mount(Constants.DateValue, dateValue(new KnoraDate('GREGORIAN', 'CE', 2024, 6, 15)));
 
       // What the picker produces on a switch: the same instant, every field rewritten.
       component.group.controls.item.setValue(new KnoraDate('JULIAN', 'CE', 2024, 6, 2));
+
+      await expect(canSave()).resolves.toBe(true);
+    });
+
+    it('cannot be saved when the same date is restated in the same calendar', async () => {
+      await mount(Constants.DateValue, dateValue(new KnoraDate('GREGORIAN', 'CE', 2024, 6, 15)));
+
+      component.group.controls.item.setValue(new KnoraDate('GREGORIAN', 'CE', 2024, 6, 15));
 
       await expect(canSave()).resolves.toBe(false);
     });
@@ -102,11 +113,21 @@ describe('PropertyValueEditComponent save gating', () => {
     const period = () =>
       new KnoraPeriod(new KnoraDate('GREGORIAN', 'CE', 2024, 6, 15), new KnoraDate('GREGORIAN', 'CE', 2024, 7, 15));
 
-    it('cannot be saved after only the calendar changed on both ends', async () => {
+    it('can be saved after only the calendar changed on both ends', async () => {
       await mount(Constants.DateValue, dateValue(period()));
 
       component.group.controls.item.setValue(
         new KnoraPeriod(new KnoraDate('JULIAN', 'CE', 2024, 6, 2), new KnoraDate('JULIAN', 'CE', 2024, 7, 2))
+      );
+
+      await expect(canSave()).resolves.toBe(true);
+    });
+
+    it('cannot be saved when the same period is restated in the same calendar', async () => {
+      await mount(Constants.DateValue, dateValue(period()));
+
+      component.group.controls.item.setValue(
+        new KnoraPeriod(new KnoraDate('GREGORIAN', 'CE', 2024, 6, 15), new KnoraDate('GREGORIAN', 'CE', 2024, 7, 15))
       );
 
       await expect(canSave()).resolves.toBe(false);

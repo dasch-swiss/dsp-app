@@ -27,6 +27,18 @@ import { PropertyValueBasicCommentComponent } from './property-value-basic-comme
 import { PropertyValueService } from './property-value.service';
 import { propertiesTypeMapping } from './resource-payloads-mapping';
 
+/**
+ * The calendar a date value is expressed in, or null when there is no value.
+ *
+ * A period carries one calendar for the whole value, which its start holds.
+ */
+function calendarOf(value: KnoraDate | KnoraPeriod | null): string | null {
+  if (value === null) {
+    return null;
+  }
+  return value instanceof KnoraPeriod ? value.start.calendar : value.calendar;
+}
+
 @Component({
   selector: 'app-property-value-edit',
   imports: [
@@ -156,10 +168,14 @@ export class PropertyValueEditComponent implements OnInit, OnDestroy {
    * the previous behaviour, where validity alone enables saving: widening this would quietly
    * change how all fifteen value types behave, which is not what this change is for.
    *
-   * A date needs the comparison because converting it to another calendar rewrites every field
-   * while meaning the same day — 15.06.2024 Gregorian is 02.06.2024 Julian. Comparing the fields
-   * would report an edit the user never made, and since the calendar travels in the update
-   * payload, saving it would rewrite the stored calendar of a value someone merely looked at.
+   * A date needs a comparison because converting it to another calendar rewrites every field
+   * while meaning the same day — 15.06.2024 Gregorian is 02.06.2024 Julian — so comparing the
+   * numerals alone would report an edit the user never made.
+   *
+   * **The calendar is part of the value, not a way of looking at it.** `UpdateDateValue` carries
+   * `calendar` as a stored field beside the numerals, so choosing a different one is a real edit:
+   * it changes what the record says the source used. Only restating both the same instant *and*
+   * the same calendar is a no-op.
    */
   private _hasChanged(originalItem: unknown, originalComment: string | null): boolean {
     // Adding a value: there is nothing to differ from, so validity is the only question.
@@ -175,10 +191,14 @@ export class PropertyValueEditComponent implements OnInit, OnDestroy {
       return true;
     }
 
-    return !this._calendarDates.dateValuesDenoteSameInstant(
-      originalItem as KnoraDate | KnoraPeriod | null,
-      this.group.controls.item.value as KnoraDate | KnoraPeriod | null
-    );
+    const original = originalItem as KnoraDate | KnoraPeriod | null;
+    const current = this.group.controls.item.value as KnoraDate | KnoraPeriod | null;
+
+    if (calendarOf(original) !== calendarOf(current)) {
+      return true;
+    }
+
+    return !this._calendarDates.dateValuesDenoteSameInstant(original, current);
   }
 
   ngOnDestroy() {
