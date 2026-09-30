@@ -10,7 +10,7 @@ import { DateViewerComponent } from './date-viewer.component';
 const TRANSLATIONS = {
   ui: {
     calendarMarker: {
-      inEachCalendar: 'Stored in the {{calendar}} calendar. Show this date in every calendar.',
+      inEachCalendar: '{{calendar}}. This date in each calendar',
       beforeHijra: 'Before the Hijra',
       calendars: { GREGORIAN: 'Gregorian', JULIAN: 'Julian', ISLAMIC: 'Islamic (tabular)' },
     },
@@ -79,7 +79,7 @@ export const PeriodDate: Story = {
   },
   play: async ({ canvasElement, step }) => {
     await step('Both ends are rendered', async () => {
-      await expect(dateText(canvasElement)?.textContent?.trim()).toBe('01.01.2020 - 31.12.2024');
+      await expect(dateText(canvasElement)?.textContent?.trim()).toBe('01.01.2020 – 31.12.2024');
     });
     await step('Exactly one marker governs the period, because a period has one calendar', async () => {
       // This asserted two markers before DEV-7372: one per end. A period carries a single

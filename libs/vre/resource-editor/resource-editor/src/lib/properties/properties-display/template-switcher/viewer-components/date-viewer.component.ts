@@ -71,7 +71,8 @@ export class DateViewerComponent {
     if (date instanceof KnoraPeriod) {
       const start = this._renderDate(date.start, target);
       const end = this._renderDate(date.end, target);
-      return start && end ? `${start} - ${end}` : undefined;
+      // En dash, not a hyphen: this is a range between two dates, not a compound word.
+      return start && end ? `${start} – ${end}` : undefined;
     }
     return this._renderDate(date, target);
   }

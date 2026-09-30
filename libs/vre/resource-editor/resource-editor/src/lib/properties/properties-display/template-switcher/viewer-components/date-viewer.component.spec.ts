@@ -48,7 +48,7 @@ describe('DateViewerComponent', () => {
       )
     );
 
-    expect(asAny().storedText()).toBe('01.01.2020 - 31.12.2024');
+    expect(asAny().storedText()).toBe('01.01.2020 – 31.12.2024');
   });
 
   it('takes a period\u2019s calendar from its start, since a period carries one calendar', () => {
@@ -81,7 +81,7 @@ describe('DateViewerComponent', () => {
         )
       );
 
-      expect(reading('JULIAN').date).toBe('02.06.2024 - 02.07.2024');
+      expect(reading('JULIAN').date).toBe('02.06.2024 – 02.07.2024');
     });
 
     it('leaves a calendar without a date where the value cannot be expressed in it', () => {

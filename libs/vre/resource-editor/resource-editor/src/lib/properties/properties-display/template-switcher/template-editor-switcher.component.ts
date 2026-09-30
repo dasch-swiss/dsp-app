@@ -119,11 +119,12 @@ import { TimeValueComponent } from './value-components/time-value.component';
       }
     </ng-template>
 
+    <!-- No mat-error here: app-date-value reports its own failures, and it can say which one it
+    is — "One date is required", "End date is required", "End date must be after start date" —
+    where the generic pipe only ever says "This field is required". Rendering both showed the same
+    problem twice, the second time less accurately. -->
     <ng-template #dateEditorTpl let-control="item">
       <app-date-value [formControl]="control" />
-      @if (control.touched && control.errors; as errors) {
-        <mat-error>{{ errors | humanReadableError }}</mat-error>
-      }
     </ng-template>
 
     <ng-template #timeEditorTpl let-item="item">
