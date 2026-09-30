@@ -12,6 +12,7 @@ import { ProjectPageService } from './project-page.service';
   selector: 'app-project-page-header',
   template: ` <mat-toolbar style="background-color: inherit; height: 56px">
       <span style="flex: 1; display: flex; align-items: center; min-width: 0">
+      tada
         <app-header-logo />
         <a class="title" [routerLink]="projectLink$ | async">{{ currentProjectName$ | async }}</a>
       </span>
