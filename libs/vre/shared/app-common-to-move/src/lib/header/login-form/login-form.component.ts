@@ -1,13 +1,12 @@
-import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import { ApiResponseError, KnoraApiConnection } from '@dasch-swiss/dsp-js';
-import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
+import { ApiResponseError } from '@dasch-swiss/dsp-js';
 import { AuthService } from '@dasch-swiss/vre/core/session';
 import { LoadingButtonDirective } from '@dasch-swiss/vre/ui/progress-indicator';
 import { CommonInputComponent } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { finalize, Subscription, switchMap } from 'rxjs';
+import { finalize, Subscription } from 'rxjs';
 import { PasswordFormFieldComponent } from '../password-form/password-form-field.component';
 
 @Component({
@@ -73,8 +72,7 @@ export class LoginFormComponent implements OnInit, OnDestroy {
   constructor(
     private readonly _fb: FormBuilder,
     private readonly _authService: AuthService,
-    private readonly _translateService: TranslateService,
-    @Inject(DspApiConnectionToken) private readonly _dspApiConnection: KnoraApiConnection
+    private readonly _translateService: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -101,10 +99,9 @@ export class LoginFormComponent implements OnInit, OnDestroy {
     const identifierType = identifier.indexOf('@') > -1 ? 'email' : 'username';
 
     this.loginSubscription?.unsubscribe();
-    this.loginSubscription = this._dspApiConnection.v2.auth
-      .login(identifierType, identifier, this.form.controls.password.value)
+    this.loginSubscription = this._authService
+      .login$(identifierType, identifier, this.form.controls.password.value)
       .pipe(
-        switchMap(response => this._authService.afterSuccessfulLogin$(response.body.token, identifier, identifierType)),
         finalize(() => {
           this.loading = false;
         })
