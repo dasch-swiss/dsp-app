@@ -136,13 +136,34 @@ export class DatePickerComponent {
    */
   private readonly _draft = signal<DateDraft | null>(null);
 
-  /** The draft, falling back to the input while the user has not typed anything. */
+  /**
+   * Every `date` the draft has already accounted for: the one it was seeded from, and each one it
+   * has published since.
+   *
+   * This is what lets the component tell a new instruction from its own echo. The owner writes
+   * `date` back after every emission, and some owners do not write it back at all, so "has this
+   * value passed through here already?" is the question that distinguishes the two — not "is this
+   * the most recent one".
+   */
+  private readonly _accountedFor = signal<readonly (KnoraDate | null)[]>([]);
+
+  /**
+   * The draft, falling back to the input while the user has not typed anything.
+   *
+   * **A new `date` from the owner wins over the draft.** The owner converts the value when the
+   * calendar changes and hands the result down; a draft that shadowed the input for the
+   * component's life kept the field showing the pre-conversion date while the value underneath had
+   * already moved. The draft still wins over the *same* `date` arriving again, which is the
+   * component's own emission travelling back through the owner — treating that as an instruction
+   * would discard a half-typed year on every keystroke.
+   */
   protected readonly draft = computed<DateDraft>(() => {
+    const given = this.date();
     const local = this._draft();
-    if (local !== null) {
+
+    if (local !== null && this._hasAccountedFor(given)) {
       return local;
     }
-    const given = this.date();
     return {
       year: given?.year ?? null,
       month: given?.month ?? null,
@@ -150,6 +171,18 @@ export class DatePickerComponent {
       era: this._eraFor(given?.era),
     };
   });
+
+  /** Whether this exact date has already passed through the draft, in either direction. */
+  private _hasAccountedFor(given: KnoraDate | null): boolean {
+    return this._accountedFor().some(seen => this._sameDate(seen, given));
+  }
+
+  private _sameDate(a: KnoraDate | null, b: KnoraDate | null): boolean {
+    if (a === null || b === null) {
+      return a === b;
+    }
+    return a.calendar === b.calendar && a.era === b.era && a.year === b.year && a.month === b.month && a.day === b.day;
+  }
 
   /** Islamic has no era, so the toggle is absent and the value is always `noEra`. */
   protected readonly showsEra = computed(() => this.calendar() !== 'ISLAMIC');
@@ -325,8 +358,24 @@ export class DatePickerComponent {
   }
 
   private _edit(change: Partial<DateDraft>): void {
-    this._draft.set({ ...this.draft(), ...change });
-    this.dateChange.emit(this.committed());
+    // Read before anything is recorded: `draft()` consults `_accountedFor`, so adding to it first
+    // would make this read the stale local draft rather than the date currently displayed.
+    const base = this.draft();
+
+    // The input the draft is diverging from counts as accounted for too: an owner that never
+    // writes `date` back would otherwise look like it was issuing that same date as a fresh
+    // instruction on the next read, discarding the edit that had just been made.
+    const seeded = this.date();
+    this._accountedFor.update(seen => (seen.some(d => this._sameDate(d, seeded)) ? seen : [...seen, seeded]));
+
+    this._draft.set({ ...base, ...change });
+
+    // What the owner is about to be told, and so what it will write back. Recording it here is
+    // what lets {@link draft} recognise that echo and keep the user's entry, while still yielding
+    // to a `date` the owner arrived at some other way — a conversion, or a reload.
+    const published = this.committed();
+    this._accountedFor.update(seen => [...seen, published]);
+    this.dateChange.emit(published);
   }
 
   /** Islamic dates carry no era; everything else defaults to CE rather than inheriting `noEra`. */

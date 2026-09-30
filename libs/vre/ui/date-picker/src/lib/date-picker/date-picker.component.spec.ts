@@ -448,6 +448,48 @@ describe('DatePickerComponent', () => {
     });
   });
 
+  // The owner converts a value and hands the picker a new `date`. Until this was fixed, a picker
+  // the user had already typed into ignored it: `_draft` shadowed the input for the component's
+  // life, so the field kept showing the pre-conversion date while the value underneath had moved.
+  describe('being handed a converted date after the user has edited', () => {
+    it('shows the date it was given, not the one the user typed', () => {
+      show(new KnoraDate('GREGORIAN', 'CE', 2026, 9, 3));
+      clickDay(3);
+
+      // What the owner does on a calendar switch: converts and passes the result back.
+      fixture.componentRef.setInput('calendar', 'JULIAN');
+      fixture.componentRef.setInput('date', new KnoraDate('JULIAN', 'CE', 2026, 8, 21));
+      fixture.detectChanges();
+
+      expect(field()!.textContent).toContain('21.08.2026');
+    });
+
+    it('marks the converted day in the grid', () => {
+      show(new KnoraDate('GREGORIAN', 'CE', 2026, 9, 3));
+      clickDay(3);
+
+      fixture.componentRef.setInput('calendar', 'JULIAN');
+      fixture.componentRef.setInput('date', new KnoraDate('JULIAN', 'CE', 2026, 8, 21));
+      fixture.detectChanges();
+
+      expect(selectedDay()).toBe('21');
+    });
+
+    it('keeps the user editing from the converted date', () => {
+      show(new KnoraDate('GREGORIAN', 'CE', 2026, 9, 3));
+      clickDay(3);
+
+      fixture.componentRef.setInput('calendar', 'JULIAN');
+      fixture.componentRef.setInput('date', new KnoraDate('JULIAN', 'CE', 2026, 8, 21));
+      fixture.detectChanges();
+
+      clickDay(22);
+
+      const published = emitted[emitted.length - 1];
+      expect([published!.day, published!.month, published!.year]).toEqual([22, 8, 2026]);
+    });
+  });
+
   describe('the closed field', () => {
     it('shows the date it was given', () => {
       fixture.componentRef.setInput('date', new KnoraDate('GREGORIAN', 'CE', 2024, 6, 15));

@@ -118,6 +118,42 @@ describe('DateValueComponent, as the resource editor renders it', () => {
     });
   });
 
+  // The reported bug: for a value that is not stored yet, switching the calendar converted the
+  // value underneath but left the picker's field showing the pre-conversion date.
+  describe('switching the calendar on a value that is not stored yet', () => {
+    const pickerField = () =>
+      (fixture.nativeElement as HTMLElement).querySelector<HTMLElement>('[data-cy="date-field"]');
+
+    beforeEach(() => {
+      fixture.detectChanges();
+      // Entered through the picker, as a user does. Arriving via `writeValue` instead would be
+      // captured as a stored value, which is what this case is not.
+      (component() as never as { onStartChange: (d: KnoraDate) => void }).onStartChange(
+        new KnoraDate('GREGORIAN', 'CE', 2026, 9, 3)
+      );
+      fixture.detectChanges();
+    });
+
+    it('converts the value', () => {
+      switchTo('JULIAN');
+
+      expect([asDate().day, asDate().month, asDate().year]).toEqual([21, 8, 2026]);
+    });
+
+    it('shows the converted date in the field, not the one before the switch', () => {
+      switchTo('JULIAN');
+
+      expect(pickerField()!.textContent).toContain('21.08.2026');
+      expect(pickerField()!.textContent).not.toContain('03.09.2026');
+    });
+
+    it('does not claim a stored value it never had', () => {
+      switchTo('JULIAN');
+
+      expect(el('stored-value-line')).toBeNull();
+    });
+  });
+
   describe('knowing what is stored', () => {
     beforeEach(() => load(new KnoraDate('GREGORIAN', 'CE', 2020, 4, 1)));
 

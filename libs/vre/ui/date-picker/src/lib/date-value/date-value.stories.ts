@@ -227,3 +227,33 @@ export const OpensANewValueOnAUsableMonth: Story = {
     });
   },
 };
+
+export const ConvertsAValueThatIsNotStoredYet: Story = {
+  name: 'Converts a newly entered date when the calendar changes',
+  args: { initial: null },
+  play: async ({ canvasElement, step }) => {
+    // Entering a date the way a user does, on a value that has never been saved.
+    await step('Enter a date', async () => {
+      await userEvent.click(canvasElement.querySelector<HTMLElement>('[data-cy="date-field"]')!);
+      await userEvent.click(document.querySelector<HTMLElement>('[data-cy="day-3"]')!);
+      await userEvent.click(document.querySelector<HTMLElement>('[data-cy="done-button"]')!);
+    });
+
+    // The reported bug: the value underneath converted but the field kept showing the date from
+    // before the switch, so the form disagreed with itself about what was about to be saved.
+    await step('Switching the calendar converts what the field shows', async () => {
+      await userEvent.click(calendarOption(canvasElement, 'JULIAN') as HTMLElement);
+
+      const field = canvasElement.querySelector<HTMLElement>('[data-cy="date-field-value"]');
+      await expect(field?.textContent?.trim()).not.toBe('');
+      await expect(controlValue(canvasElement)).toContain('JULIAN');
+    });
+
+    await step('And the field agrees with the value', async () => {
+      const field = canvasElement.querySelector<HTMLElement>('[data-cy="date-field-value"]')!;
+      const shown = field.textContent!.trim();
+      const [day, month] = shown.split('.');
+      await expect(controlValue(canvasElement)).toContain(`${Number(day)}.${Number(month)}.`);
+    });
+  },
+};
