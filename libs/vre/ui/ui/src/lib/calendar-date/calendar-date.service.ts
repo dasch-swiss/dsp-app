@@ -169,8 +169,7 @@ export class CalendarDateService {
   /**
    * one month laid out for a day grid, as rows of seven.
    *
-   * `0` pads the first row so the 1st lands under its weekday. That padding is omitted for BCE
-   * dates, which is how the grid renders today.
+   * `0` pads the first row so the 1st lands under its weekday, in every calendar and every era.
    *
    * October 1582 is a special case with a special cause: the Gregorian reform deleted ten days, so
    * that month runs 1–4 then 15–31 and holds 21 days. It applies only to GREGORIAN/CE — the Julian
@@ -178,14 +177,13 @@ export class CalendarDateService {
    */
   monthGrid(calendar: string, era: string, year: number, month: number): MonthGrid {
     const yearAstro = this.convertHistoricalYearToAstronomicalYear(year, era);
-    let days = this.daysInMonth(calendar.toUpperCase(), yearAstro, month);
+    const calendarSystem = calendar.toUpperCase() as CalendarSystem;
+    let days = this.daysInMonth(calendarSystem, yearAstro, month);
 
     const cells: number[] = [];
 
-    if (era === 'CE') {
-      for (let i = 1; i < this._firstWeekdayOfMonth(calendar, year, month); i++) {
-        cells.push(0);
-      }
+    for (let i = 1; i < this._firstWeekdayOfMonth(calendarSystem, yearAstro, month); i++) {
+      cells.push(0);
     }
 
     for (let i = 1; i <= days; i++) {
@@ -206,31 +204,32 @@ export class CalendarDateService {
   /**
    * which weekday the 1st falls on, 1 = Monday.
    *
-   * Hand-written arithmetic with a branch at the Gregorian reform: before 15 October 1582, and for
-   * any Julian date, the Julian rule applies. Moved verbatim from the picker — the two branches
-   * genuinely disagree, and characterisation tests pin both.
+   * Counted from the Julian Day Number, which is a continuous day count: JDN 0 was a Monday, so
+   * `jdn % 7` is the weekday with no calendar knowledge of its own. Every calendar the library
+   * supports already converts to JDN — it is how conversion and comparison work — so this needs no
+   * rule per calendar, no branch at the Gregorian reform, and no special case for BCE or for a
+   * calendar without an era.
+   *
+   * It replaces hand-written Zeller-style arithmetic that was fed the *historical* year while the
+   * day count beside it used the astronomical one, and whose caller skipped padding entirely
+   * unless the era was CE. A BCE month therefore started every row on Monday, and 20.09.100 BCE
+   * Julian — a Wednesday — was drawn as a Saturday (DEV-7372).
+   *
+   * `year` is astronomical here, as the library expects: 100 BCE is -99.
    */
-  private _firstWeekdayOfMonth(calendar: string, year: number, month: number): number {
-    const h = month <= 2 ? month + 12 : month;
-    const k = month <= 2 ? year - 1 : year;
+  private _firstWeekdayOfMonth(calendar: CalendarSystem, yearAstro: number, month: number): number {
+    const firstOfMonth = createDate(
+      calendar,
+      yearAstro,
+      month,
+      1,
+      calendar === 'ISLAMIC' ? 'NONE' : yearAstro <= 0 ? 'BCE' : 'CE'
+    );
+    const jdn = getCalendar(calendar).toJDN(firstOfMonth);
 
-    let firstDayOfMonth: number;
-    if (year < 1582 || (year === 1582 && month <= 10) || calendar === 'JULIAN') {
-      firstDayOfMonth = (1 + 2 * h + Math.floor((3 * h + 3) / 5) + k + Math.floor(k / 4) - 1) % 7;
-    } else {
-      firstDayOfMonth =
-        (1 +
-          2 * h +
-          Math.floor((3 * h + 3) / 5) +
-          k +
-          Math.floor(k / 4) -
-          Math.floor(k / 100) +
-          Math.floor(k / 400) +
-          1) %
-        7;
-    }
-
-    return firstDayOfMonth === 0 ? 7 : firstDayOfMonth;
+    // JavaScript's % keeps the sign of the dividend, and a proleptic date can land on a negative
+    // JDN, so the result is normalised into 0..6 before being shifted to 1 = Monday.
+    return (((jdn % 7) + 7) % 7) + 1;
   }
 
   // ---------------------------------------------------------------------------------------------

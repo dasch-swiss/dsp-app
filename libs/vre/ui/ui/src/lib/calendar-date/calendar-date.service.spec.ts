@@ -77,16 +77,39 @@ describe('CalendarDateService', () => {
       expect(dayNumbers(cells('GREGORIAN', 'BCE', 1582, 10))).toContain(5);
     });
 
+    // Blank counts are the weekday of the 1st, minus one. Each is checked against the Julian Day
+    // Number, which is a continuous day count and so independent of any calendar's own rules.
     it.each([
+      // 01.06.2024 Gregorian was a Saturday.
       ['GREGORIAN', 'CE', 2024, 6, 5],
-      ['GREGORIAN', 'CE', 1500, 3, 6],
+      // 01.03.1500 proleptic Gregorian was a Thursday. The previous implementation answered Sunday
+      // here: it took its Julian branch for any year before 1582, even when asked for Gregorian.
+      ['GREGORIAN', 'CE', 1500, 3, 3],
+      // 01.06.2024 Julian was a Friday.
       ['JULIAN', 'CE', 2024, 6, 4],
     ])('positions %s %s %i-%i with %i leading blanks', (cal, era, year, month, expected) => {
       expect(leadingBlanks(cal as string, era as string, year as number, month as number)).toBe(expected);
     });
 
-    it('omits the leading blanks for a BCE date', () => {
-      expect(leadingBlanks('GREGORIAN', 'BCE', 44, 3)).toBe(0);
+    // A BCE month used to get no padding at all, so every one of them started on a Monday.
+    it('positions a BCE month by its real weekday', () => {
+      // 01.03.44 BCE Julian was a Wednesday.
+      expect(leadingBlanks('JULIAN', 'BCE', 44, 3)).toBe(2);
+    });
+
+    // The date from the bug report: drawn as a Saturday, actually a Wednesday.
+    it('puts 20.09.100 BCE Julian on a Wednesday', () => {
+      const grid = service.monthGrid('JULIAN', 'BCE', 100, 9);
+      const flat = grid.weeks.flat();
+
+      // Monday is column 0, so Wednesday is column 2.
+      expect(flat.indexOf(20) % 7).toBe(2);
+    });
+
+    // Islamic has no era, so it fell through the same CE-only guard as BCE did.
+    it('positions an Islamic month by its real weekday', () => {
+      // 1 Muharram 1445 was a Wednesday — the conversion check date in the DEV-7372 handoff.
+      expect(leadingBlanks('ISLAMIC', 'noEra', 1445, 1)).toBe(2);
     });
 
     it('does not drain its own output, unlike the implementation it replaces', () => {
