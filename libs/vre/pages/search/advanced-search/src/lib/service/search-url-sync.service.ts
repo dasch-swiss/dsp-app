@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { distinctUntilChanged, map, Observable } from 'rxjs';
 import { decodeFilters, encodeFilters, FilterParam, FilterParamInput } from '../filter-params.codec';
 import { OrderDirection } from '../model';
+import { SearchFilterState } from '../search-filter-state';
 import { SearchFlowLogger } from './search-flow-logger.service';
 
 export interface SearchUrlParams {
@@ -76,7 +77,7 @@ function copyParam<K extends keyof SearchUrlParams>(
 const ORDER_DIR_DESC: OrderDirection = 'desc';
 
 @Injectable()
-export class SearchUrlSyncService {
+export class SearchUrlSyncService implements SearchFilterState {
   private readonly _router = inject(Router);
   private readonly _route = inject(ActivatedRoute);
   private readonly _logger = inject(SearchFlowLogger);
@@ -86,6 +87,9 @@ export class SearchUrlSyncService {
    * Emits on every navigation (initial, user action, back/forward), deduped on the decoded shape so
    * identical params do not re-trigger downstream work. Fires immediately with the current params on
    * subscribe (Router's `queryParams` replays the latest value).
+   *
+   * Declared before the port members below: they are field initialisers that read it, and class fields
+   * initialise in source order.
    */
   readonly params$: Observable<SearchUrlParams> = this._route.queryParams.pipe(
     map(p => this._mapParams(p)),
@@ -99,6 +103,71 @@ export class SearchUrlSyncService {
         a.orderDir === b.orderDir
     )
   );
+
+  // ── SearchFilterState port ────────────────────────────────────────────────
+  // The Search tab's answer to "where does search state live": all six params in the URL. The chip bar
+  // reads only through these; everything below them is this page's own business.
+
+  readonly filters$: Observable<FilterParam[]> = this.params$.pipe(
+    map(p => (p.filters ? decodeFilters(p.filters) : [])),
+    distinctUntilChanged((a, b) => a.length === b.length && a.every((f, i) => f === b[i]))
+  );
+
+  readonly fulltextTerm$: Observable<string> = this.params$.pipe(
+    map(p => p.q ?? ''),
+    distinctUntilChanged()
+  );
+
+  readonly ontologyIri$: Observable<string | undefined> = this.params$.pipe(
+    map(p => p.ontology),
+    distinctUntilChanged()
+  );
+
+  readonly resourceClassIri$: Observable<string | undefined> = this.params$.pipe(
+    map(p => p.class),
+    distinctUntilChanged()
+  );
+
+  /**
+   * Any of the persisted search params counts as active state — reset wipes them all. `orderDir` is
+   * deliberately absent: on this page a direction without an `orderBy` is meaningless and is dropped on
+   * read, so it can never be the only thing set.
+   */
+  readonly hasActiveState$: Observable<boolean> = this.params$.pipe(
+    map(p => !!(p.q || p.ontology || p.class || p.filters || p.orderBy)),
+    distinctUntilChanged()
+  );
+
+  setFulltextTerm(term: string | undefined): void {
+    this._logger.fulltextChanged(term ?? '');
+    this.writeState({ q: term || undefined }, { replaceUrl: false });
+  }
+
+  /**
+   * Persist the confirmed filters, folding a now-orphaned sort into the same navigation.
+   *
+   * This page sorts by a *filter's predicate*, so removing the filter that is currently sorted on leaves
+   * `orderBy` dangling. Clearing it has to ride along in this one `writeState`: two synchronous router
+   * navigations are coalesced and the second discards the first, which would lose the filter change.
+   */
+  setFilters(filters: FilterParam[], removedPredicateIri?: string): void {
+    // `parentIndex` is `null` in the decoded shape but omitted in the encoded one, so a top-level filter
+    // keeps serialising to the same string it always has — shared links stay byte-identical.
+    const encoded = filters.length
+      ? encodeFilters(filters.map(f => ({ ...f, parentIndex: f.parentIndex ?? undefined })))
+      : undefined;
+    const clearsOrderBy = !!removedPredicateIri && removedPredicateIri === this.readParams().orderBy;
+    this.writeState(
+      { filters: encoded, ...(clearsOrderBy ? { orderBy: undefined, orderDir: undefined } : {}) },
+      { replaceUrl: false }
+    );
+  }
+
+  reset(): void {
+    this.clearAll();
+  }
+
+  // ── URL plumbing ──────────────────────────────────────────────────────────
 
   readParams(): SearchUrlParams {
     const params = this._mapParams(this._route.snapshot.queryParams);
