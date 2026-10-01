@@ -1,7 +1,7 @@
 import { STORY_PROVIDERS } from '@dasch-swiss/vre/pages/search/search-filters';
 import { applicationConfig, Meta, StoryObj } from '@storybook/angular';
-import { expect, userEvent, within } from 'storybook/test';
 import { BehaviorSubject } from 'rxjs';
+import { expect, userEvent, within } from 'storybook/test';
 import { DataClassLabelHeaderComponent } from './data-class-label-header.component';
 import { DataClassUrlStateService } from './data-class-url-state.service';
 

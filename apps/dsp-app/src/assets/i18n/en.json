@@ -634,6 +634,10 @@
         "zToA": "Z–A",
         "sortAscending": "Sort by label, A to Z",
         "sortDescending": "Sort by label, Z to A"
+      },
+      "resultMeta": {
+        "range": "{{start}} – {{end}} of {{total}}",
+        "pageOf": "{{current}} of {{total}}"
       }
     }
   },

@@ -5,11 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 import { ResourceClassDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
 import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
-import {
-  MultipleViewerService,
-  ResourceClassCountApi,
-  ResultCountComponent,
-} from '@dasch-swiss/vre/pages/data-browser';
+import { MultipleViewerService, ResourceClassCountApi } from '@dasch-swiss/vre/pages/data-browser';
 import { AdvancedSearchBarComponent } from '@dasch-swiss/vre/pages/search/search-filters';
 import { filterUndefined, generateDspResource } from '@dasch-swiss/vre/shared/app-common';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
@@ -17,6 +13,7 @@ import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { combineLatest, first, from, switchMap } from 'rxjs';
 import { DataBrowserPageService } from './data-browser-page.service';
+import { DataClassResultMetaComponent } from './data-class-result-meta.component';
 import { DownloadDialogComponent } from './download/download-dialog.component';
 import { ProjectPageService } from './project-page.service';
 
@@ -64,7 +61,7 @@ interface CreateResourceDialogProps {
         searchLabelKey="pages.dataBrowser.dataClassHeader.searchLabel"
         searchPlaceholderKey="pages.dataBrowser.dataClassHeader.searchPlaceholder" />
 
-      <app-result-count />
+      <app-data-class-result-meta />
     </div>
   `,
   styleUrl: './data-class-header.component.scss',
@@ -75,7 +72,7 @@ interface CreateResourceDialogProps {
     TranslatePipe,
     StringifyStringLiteralPipe,
     AdvancedSearchBarComponent,
-    ResultCountComponent,
+    DataClassResultMetaComponent,
   ],
   providers: [StringifyStringLiteralPipe],
 })

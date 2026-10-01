@@ -30,9 +30,9 @@ export class ResourcesListComponent {
   /**
    * Whether to render the count and pager above the list.
    *
-   * The two Search pages keep them here. The Data tab turns them off and renders `app-result-count`
-   * in its class header instead, where the PRD's three-row layout puts them — above the split, not
-   * inside the list column.
+   * The two Search pages keep them here. The Data tab turns them off: its class header renders
+   * `app-data-class-result-meta` instead — a different design (inline range plus a compact pager,
+   * no bordered card, no page input) sitting above the split rather than inside the list column.
    */
   @Input() showResultCount = true;
 }

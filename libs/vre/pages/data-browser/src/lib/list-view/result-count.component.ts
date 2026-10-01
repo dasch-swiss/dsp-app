@@ -6,10 +6,10 @@ import { TranslatePipe } from '@ngx-translate/core';
 /**
  * The result total, and the pager once there is more than one page of them.
  *
- * Extracted from `ResourcesListComponent` so the Data tab can render it in its class header, above
- * the split, while the two Search pages keep it where it has always been — inside the list column.
- * One implementation rather than two: the count-unavailable branch and the page-size threshold are
- * both easy to get subtly wrong, and a second copy would drift.
+ * The Search pages' presentation: a bordered card wrapping either the shared `PagerComponent` or a
+ * plain total. The Data tab does *not* use this — it has its own `DataClassResultMetaComponent`
+ * with a different design — so this is effectively `ResourcesListComponent`'s own markup, split out
+ * only so the list can switch it off.
  */
 @Component({
   selector: 'app-result-count',

@@ -634,6 +634,10 @@
         "zToA": "Z–A",
         "sortAscending": "Nach Bezeichnung sortieren, A bis Z",
         "sortDescending": "Nach Bezeichnung sortieren, Z bis A"
+      },
+      "resultMeta": {
+        "range": "{{start}} – {{end}} von {{total}}",
+        "pageOf": "{{current}} von {{total}}"
       }
     }
   },

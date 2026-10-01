@@ -1,0 +1,84 @@
+import { STORY_PROVIDERS } from '@dasch-swiss/vre/pages/search/search-filters';
+import { ResourceResultService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { applicationConfig, Meta, StoryObj } from '@storybook/angular';
+import { expect, userEvent, within } from 'storybook/test';
+import { DataClassResultMetaComponent } from './data-class-result-meta.component';
+
+/**
+ * The count and page position are page state rather than inputs, so each story seeds a real
+ * `ResourceResultService` instead of setting args.
+ */
+const seeded = (total: number | null, pageIndex = 0) => {
+  const service = new ResourceResultService();
+  service.numberOfResults = total;
+  service.updatePageIndex(pageIndex);
+  return service;
+};
+
+const meta: Meta<DataClassResultMetaComponent> = {
+  title: 'Data Browser / Result Meta / Pagination',
+  component: DataClassResultMetaComponent,
+  decorators: [applicationConfig({ providers: STORY_PROVIDERS })],
+};
+
+export default meta;
+type Story = StoryObj<DataClassResultMetaComponent>;
+
+export const ShowsRangeAndPagerOnTheFirstPage: Story = {
+  decorators: [applicationConfig({ providers: [{ provide: ResourceResultService, useValue: seeded(4024, 0) }] })],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByText('1 – 25 of 4024')).toBeInTheDocument();
+    await expect(canvas.getByText('1 of 161')).toBeInTheDocument();
+  },
+};
+
+export const DisablesTheStartControlsOnTheFirstPage: Story = {
+  decorators: [applicationConfig({ providers: [{ provide: ResourceResultService, useValue: seeded(4024, 0) }] })],
+  play: async ({ canvasElement }) => {
+    // Rendered, not hidden: a pager that changes width at its edges moves the next target under
+    // the cursor just as you reach for it.
+    const buttons = [...canvasElement.querySelectorAll('[data-cy=result-pager] button')];
+    await expect(buttons).toHaveLength(4);
+    await expect(buttons[0]).toBeDisabled();
+    await expect(buttons[1]).toBeDisabled();
+    await expect(buttons[3]).toBeEnabled();
+  },
+};
+
+export const ClampsTheRangeOnAPartialLastPage: Story = {
+  decorators: [applicationConfig({ providers: [{ provide: ResourceResultService, useValue: seeded(4024, 160) }] })],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByText('4001 – 4024 of 4024')).toBeInTheDocument();
+  },
+};
+
+export const OmitsThePagerWhenEverythingFitsOnOnePage: Story = {
+  decorators: [applicationConfig({ providers: [{ provide: ResourceResultService, useValue: seeded(19, 0) }] })],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByText('1 – 19 of 19')).toBeInTheDocument();
+    await expect(canvasElement.querySelector('[data-cy=result-pager]')).toBeNull();
+  },
+};
+
+export const AdvancesThePageWhenNextIsClicked: Story = {
+  decorators: [applicationConfig({ providers: [{ provide: ResourceResultService, useValue: seeded(4024, 0) }] })],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByRole('button', { name: 'Next' }));
+
+    await expect(canvas.getByText('26 – 50 of 4024')).toBeInTheDocument();
+    await expect(canvas.getByText('2 of 161')).toBeInTheDocument();
+  },
+};
+
+export const StatesTheCountIsUnavailableWhenTheCountQueryFailed: Story = {
+  decorators: [applicationConfig({ providers: [{ provide: ResourceResultService, useValue: seeded(null, 0) }] })],
+  play: async ({ canvasElement }) => {
+    // The pager cannot be sized against an unknown total, so paging goes away rather than guessing.
+    await expect(canvasElement.querySelector('[data-cy=count-unavailable]')).not.toBeNull();
+    await expect(canvasElement.querySelector('[data-cy=result-pager]')).toBeNull();
+  },
+};

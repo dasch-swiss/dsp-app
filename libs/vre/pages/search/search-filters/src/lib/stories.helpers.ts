@@ -65,7 +65,13 @@ const STORY_TRANSLATIONS = {
     common: {
       actions: {
         retry: 'Retry',
+        next: 'Next',
       },
+    },
+    pager: {
+      firstPage: 'First page',
+      previousPage: 'Previous page',
+      lastPage: 'Last page',
     },
   },
   pages: {
@@ -142,6 +148,13 @@ const STORY_TRANSLATIONS = {
       resourcesListFetcher: {
         noResourcesFound: 'No resources found',
         noResourcesMatchFilters: 'No resources match these filters.',
+      },
+      resourcesList: {
+        countUnavailable: 'Result count unavailable',
+      },
+      resultMeta: {
+        range: '{{start}} – {{end}} of {{total}}',
+        pageOf: '{{current}} of {{total}}',
       },
     },
   },

@@ -634,6 +634,10 @@
         "zToA": "Z–A",
         "sortAscending": "Ordina per etichetta, dalla A alla Z",
         "sortDescending": "Ordina per etichetta, dalla Z alla A"
+      },
+      "resultMeta": {
+        "range": "{{start}} – {{end}} di {{total}}",
+        "pageOf": "{{current}} di {{total}}"
       }
     }
   },
