@@ -131,8 +131,8 @@ describe('AdvancedSearchResultsComponent', () => {
       sub.unsubscribe();
     });
 
-    it('still notifies the user of a server fault', () => {
-      const fault = Object.assign(Object.create(ApiResponseError.prototype), { status: 500 });
+    it.each([401, 403, 500])('still notifies the user of a %p', status => {
+      const fault = Object.assign(Object.create(ApiResponseError.prototype), { status });
       doExtendedSearch.mockReturnValue(throwError(() => fault));
       const component = renderComponent();
 

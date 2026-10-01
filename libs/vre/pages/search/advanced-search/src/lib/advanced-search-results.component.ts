@@ -117,7 +117,7 @@ export class AdvancedSearchResultsComponent implements OnChanges {
           this.failureReason.set(userFacingReason(err));
           this.queryIsExecuting.set(false);
           this.failed.set(true);
-          // A 4xx is dsp-api rejecting the query, and the failure panel already says so. A snackbar
+          // A 400 or 409 is dsp-api rejecting the query, and the failure panel already says so. A snackbar
           // on top outlives it: search-as-you-type can send half-typed Lucene syntax the input does
           // not catch, such as `(foo`, and the toast stayed up over the results of the finished term
           // (DEV-7370). Report it without notifying the user.
@@ -195,7 +195,13 @@ export class AdvancedSearchResultsComponent implements OnChanges {
   }
 }
 
+/**
+ * The statuses with which dsp-api rejects the query itself. Other 4xx keep the snackbar: a 401 or 403 on
+ * this page means the session or the permissions changed, and the panel's generic wording would hide it.
+ */
+const QUERY_REJECTED_STATUSES = new Set([400, 409]);
+
 function isRejectedByApi(err: unknown): boolean {
   const status = err instanceof ApiResponseError || err instanceof HttpErrorResponse ? err.status : undefined;
-  return status !== undefined && status >= 400 && status < 500;
+  return status !== undefined && QUERY_REJECTED_STATUSES.has(status);
 }
