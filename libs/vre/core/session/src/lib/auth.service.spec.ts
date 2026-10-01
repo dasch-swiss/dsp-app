@@ -42,7 +42,7 @@ function createMockUser(overrides?: Partial<ReadUser>): ReadUser {
   } as ReadUser;
 }
 
-// Helper to intercept the page reload triggered by logout().
+// Helper to intercept the page reload triggered by login$() and logout().
 // jsdom >=26 makes `window.location` and its members [LegacyUnforgeable]
 // (non-configurable + non-writable), so they cannot be mocked directly. AuthService
 // wraps the reload in a `reloadPage()` seam that we spy on instead.
@@ -84,6 +84,7 @@ describe('AuthService', () => {
       v2: {
         auth: {
           checkCredentials: jest.fn(),
+          login: jest.fn(),
           logout: jest.fn(),
         },
         jsonWebToken: '',
@@ -183,6 +184,16 @@ describe('AuthService', () => {
 
       expect(setLanguageSpy).toHaveBeenCalledWith('de');
     });
+
+    it('should not reload the page, as auto-login on startup would loop', async () => {
+      const { reloadMock, restore } = mockWindowReload(service);
+      mockUserService.loadUser = jest.fn().mockReturnValue(of(mockUser));
+
+      await firstValueFrom(service.afterSuccessfulLogin$(TEST_CONSTANTS.JWT_TOKEN, TEST_CONSTANTS.USER_IRI, 'iri'));
+
+      expect(reloadMock).not.toHaveBeenCalled();
+      restore();
+    });
   });
 
   describe('afterLogout()', () => {
@@ -199,6 +210,51 @@ describe('AuthService', () => {
       service.afterLogout();
 
       expect(mockDspApiConnection.v2!.jsonWebToken).toBe('');
+    });
+  });
+
+  describe('login$()', () => {
+    beforeEach(() => {
+      mockDspApiConnection.v2!.auth!.login = jest
+        .fn()
+        .mockReturnValue(of({ body: { token: TEST_CONSTANTS.JWT_TOKEN } }));
+      mockUserService.loadUser = jest.fn().mockReturnValue(of(mockUser));
+    });
+
+    it('should log in via the API and complete authentication with the returned token', async () => {
+      const { restore } = mockWindowReload(service);
+      const afterLoginSpy = jest.spyOn(service, 'afterSuccessfulLogin$');
+
+      await firstValueFrom(service.login$('username', TEST_CONSTANTS.USERNAME, TEST_CONSTANTS.PASSWORD));
+
+      expect(mockDspApiConnection.v2!.auth!.login).toHaveBeenCalledWith(
+        'username',
+        TEST_CONSTANTS.USERNAME,
+        TEST_CONSTANTS.PASSWORD
+      );
+      expect(afterLoginSpy).toHaveBeenCalledWith(TEST_CONSTANTS.JWT_TOKEN, TEST_CONSTANTS.USERNAME, 'username');
+      restore();
+    });
+
+    it('should reload the page after a successful login', async () => {
+      const { reloadMock, restore } = mockWindowReload(service);
+
+      await firstValueFrom(service.login$('username', TEST_CONSTANTS.USERNAME, TEST_CONSTANTS.PASSWORD));
+
+      expect(reloadMock).toHaveBeenCalledTimes(1);
+      restore();
+    });
+
+    it('should not reload the page when the login fails', async () => {
+      const { reloadMock, restore } = mockWindowReload(service);
+      mockDspApiConnection.v2!.auth!.login = jest.fn().mockReturnValue(throwError(() => ({ status: 401 })));
+
+      await expect(
+        firstValueFrom(service.login$('username', TEST_CONSTANTS.USERNAME, TEST_CONSTANTS.WRONG_PASSWORD))
+      ).rejects.toEqual({ status: 401 });
+
+      expect(reloadMock).not.toHaveBeenCalled();
+      restore();
     });
   });
 
