@@ -532,6 +532,7 @@
         "usePreviousSearch": "Use previous search",
         "fulltextSearch": "Full-text search",
         "reset": "Reset",
+        "clearSearch": "Clear search",
         "addFilter": "Add filter",
         "add": "Add",
         "operator": "Operator",

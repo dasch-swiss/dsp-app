@@ -20,6 +20,13 @@ const meta: Meta<AdvancedSearchBarComponent> = {
   component: AdvancedSearchBarComponent,
   argTypes: {
     projectUuid: { description: 'UUID of the project whose ontologies are loaded.' },
+    density: {
+      description:
+        'Control sizing. `compact` (30px controls, 13px text) is the Data tab treatment for a narrow split column; `standard` is Material default sizing.',
+    },
+    searchFieldWidth: { description: 'CSS width of the fulltext field. The Data tab passes a narrower value.' },
+    searchLabelKey: { description: 'Translation key for the fulltext field label.' },
+    searchPlaceholderKey: { description: 'Translation key for the fulltext field placeholder.' },
   },
 };
 export default meta;
@@ -136,6 +143,70 @@ export const ShowsResetWhenActiveAndClearsOnClick: Story = {
     await step('Clicking Reset clears the search state', async () => {
       await userEvent.click(canvas.getByRole('button', { name: /Reset/i }));
       await expect(reset).toHaveBeenCalled();
+    });
+  },
+};
+
+// A state carrying a term, with a spy on the clear path.
+const setFulltextTerm = fn().mockName('setFulltextTerm');
+const termStateStub = {
+  provide: SearchFilterState,
+  useValue: {
+    ...activeSearchState,
+    setFulltextTerm,
+  } as unknown as SearchFilterState,
+};
+
+export const ShowsClearControlWhenTermIsSet: Story = {
+  name: 'Search field offers a clear control once a term is entered',
+  args: { projectUuid: '0001' },
+  decorators: [
+    applicationConfig({
+      providers: [
+        ...STORY_PROVIDERS,
+        importProvidersFrom(OverlayModule),
+        { provide: DspApiConnectionToken, useValue: makeDspApiConnectionStub() },
+        ...provideSearchFilters(),
+        ...SEARCH_FILTER_SERVICE_STUBS,
+        { provide: OntologyDataService, useValue: makeOntologyDataServiceStub() },
+        termStateStub,
+      ],
+    }),
+  ],
+  play: async ({ canvasElement, step }) => {
+    setFulltextTerm.mockClear();
+    await step('Clear control is rendered while the field holds a term', async () => {
+      await expect(canvasElement.querySelector('[data-cy="clear-search-btn"]')).not.toBeNull();
+    });
+    await step('Clicking it clears the term immediately, without waiting out the debounce', async () => {
+      await userEvent.click(canvasElement.querySelector('[data-cy="clear-search-btn"]') as HTMLElement);
+      await expect(setFulltextTerm).toHaveBeenCalledWith(undefined);
+    });
+  },
+};
+
+export const HidesClearControlWhenEmpty: Story = {
+  name: 'Search field shows the search icon, not a clear control, when empty',
+  args: { projectUuid: '0001' },
+  decorators: [applicationConfig({ providers: baseProviders })],
+  play: async ({ canvasElement, step }) => {
+    await step('No clear control is rendered', async () => {
+      await expect(canvasElement.querySelector('[data-cy="clear-search-btn"]')).toBeNull();
+    });
+  },
+};
+
+export const CompactDensityForTheDataTab: Story = {
+  name: 'Compact density shrinks the controls for a narrow column',
+  args: { projectUuid: '0001', density: 'compact', searchFieldWidth: '260px' },
+  decorators: [applicationConfig({ providers: baseProviders })],
+  play: async ({ canvasElement, step }) => {
+    await step('The host carries the compact class, so the density tokens apply', async () => {
+      await expect(canvasElement.querySelector('app-advanced-search-bar.compact')).not.toBeNull();
+    });
+    await step('The search field honours the narrower width', async () => {
+      const field = canvasElement.querySelector('mat-form-field') as HTMLElement;
+      await expect(field.style.width).toBe('260px');
     });
   },
 };

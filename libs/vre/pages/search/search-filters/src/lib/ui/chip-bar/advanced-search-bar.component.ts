@@ -1,5 +1,14 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, Input, OnInit, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  HostBinding,
+  inject,
+  Input,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -44,14 +53,26 @@ import { FilterChipComponent } from './filter-chip.component';
         <span>{{ 'pages.search.advancedSearch.noDataModel' | translate }}</span>
       </div>
     } @else {
-      <mat-form-field appearance="outline" style="margin-left: 8px; width: 600px" subscriptSizing="dynamic">
-        <mat-label>{{ 'pages.search.advancedSearch.fulltextSearch' | translate }}</mat-label>
-        <input
-          matInput
-          type="text"
-          [formControl]="fulltextControl"
-          [placeholder]="'pages.search.advancedSearch.fulltextSearchPlaceholder' | translate" />
-        <mat-icon matSuffix>search</mat-icon>
+      <mat-form-field
+        appearance="outline"
+        subscriptSizing="dynamic"
+        [style.margin-left.px]="8"
+        [style.width]="searchFieldWidth">
+        <mat-label>{{ searchLabelKey | translate }}</mat-label>
+        <input matInput type="text" [formControl]="fulltextControl" [placeholder]="searchPlaceholderKey | translate" />
+        @if (fulltextControl.value) {
+          <button
+            mat-icon-button
+            matSuffix
+            type="button"
+            data-cy="clear-search-btn"
+            [attr.aria-label]="'pages.search.advancedSearch.clearSearch' | translate"
+            (click)="onClearFulltext()">
+            <mat-icon>close</mat-icon>
+          </button>
+        } @else {
+          <mat-icon matSuffix>search</mat-icon>
+        }
         @if (fulltextTooShort()) {
           <mat-error>{{ 'pages.search.termValidation.tooShort' | translate }}</mat-error>
         }
@@ -91,6 +112,22 @@ import { FilterChipComponent } from './filter-chip.component';
 })
 export class AdvancedSearchBarComponent implements OnInit {
   @Input({ required: true }) projectUuid!: string;
+
+  /**
+   * `compact` is the Data tab's treatment: 30px controls and 13px text, so the bar fits a narrow split
+   * column without crowding out the class identity. Styling only — behaviour is identical.
+   */
+  @Input() density: 'standard' | 'compact' = 'standard';
+
+  /** The Search tab gives the field the page width it has; the Data tab has a split column to fit. */
+  @Input() searchFieldWidth = '600px';
+
+  @Input() searchLabelKey = 'pages.search.advancedSearch.fulltextSearch';
+  @Input() searchPlaceholderKey = 'pages.search.advancedSearch.fulltextSearchPlaceholder';
+
+  @HostBinding('class.compact') get isCompact(): boolean {
+    return this.density === 'compact';
+  }
 
   private readonly _ontologyDataService = inject(OntologyDataService);
   private readonly _destroyRef = inject(DestroyRef);
@@ -172,6 +209,17 @@ export class AdvancedSearchBarComponent implements OnInit {
     if (invalid) {
       this.fulltextControl.markAsTouched();
     }
+  }
+
+  /**
+   * Clear the term immediately rather than waiting out the debounce: the click IS the intent, and an
+   * empty value is valid, so routing it through `valueChanges` would both delay the re-query by 300ms
+   * and leave a stale too-short error on screen in the meantime.
+   */
+  onClearFulltext(): void {
+    this.fulltextControl.setValue('', { emitEvent: false });
+    this._refreshFulltextError();
+    this._state.setFulltextTerm(undefined);
   }
 
   onChipOpenChange(chipId: string, isOpen: boolean): void {

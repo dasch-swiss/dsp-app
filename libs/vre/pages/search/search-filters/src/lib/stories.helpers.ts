@@ -87,6 +87,7 @@ const STORY_TRANSLATIONS = {
         fulltextSearch: 'Full-text search',
         fulltextSearchPlaceholder: 'Search…',
         reset: 'Reset',
+        clearSearch: 'Clear search',
         addFilter: 'Add filter',
         add: 'Add',
         operator: 'Operator',

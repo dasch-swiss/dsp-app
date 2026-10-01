@@ -16,3 +16,25 @@
   padding: 16px 0 16px 8px;
   color: var(--mat-sys-on-surface-variant, rgba(0, 0, 0, 0.6));
 }
+
+// Compact density — the Data tab's treatment. The bar there sits inside a narrow split column above a
+// master-detail view, so it runs at 30px controls and 13px text rather than standard Material sizing.
+// Styling only: every behaviour is identical to the standard density.
+//
+// Expressed entirely through *inherited* CSS custom properties and host-level rules. Material renders
+// the field's internals in its own component, which this component's emulated encapsulation cannot
+// select into — and `::ng-deep` is forbidden in this codebase. Custom properties inherit through that
+// boundary, so setting Material's own density tokens on the host is what actually reaches them.
+:host(.compact) {
+  --mat-form-field-container-height: 30px;
+  --mat-form-field-container-vertical-padding: 4px;
+  --mat-form-field-filled-with-label-container-padding-top: 4px;
+  --mat-form-field-filled-with-label-container-padding-bottom: 4px;
+
+  font-size: 13px;
+
+  .chip-bar {
+    gap: 6px;
+    padding: 6px 0 6px 8px;
+  }
+}
