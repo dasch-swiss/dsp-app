@@ -271,6 +271,9 @@ export class AdvancedSearchBarComponent implements OnInit {
     // re-seeds from the (now empty) state and `_refreshChips` drops every chip; the fulltext input
     // re-seeds from the empty term.
     this.openChipId.set(OPEN_CHIP_NONE);
+    // Drafts are not part of the host's stored state, so a reset with nothing else set would not
+    // re-seed the store and a half-built filter would survive the click. Discard them explicitly.
+    this.draftStore.discardDrafts();
     this._state.reset();
   }
 

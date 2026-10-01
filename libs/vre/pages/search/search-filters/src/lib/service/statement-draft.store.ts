@@ -81,6 +81,19 @@ export class StatementDraftStore {
     this._statements.next(confirmed.length === 0 ? [this._makeRootStatement()] : [...confirmed]);
   }
 
+  /**
+   * Throw away every in-progress edit and start from a single blank row.
+   *
+   * Reset normally clears drafts for free: it changes the host's stored state, which re-seeds the store.
+   * But a draft the user never confirmed is not *in* that state, so when nothing else is set there is
+   * nothing to change and no reseed fires — leaving a half-built filter sitting in an open popover after
+   * the user asked for a clean slate. Called explicitly by the bar so the two paths agree.
+   */
+  discardDrafts(): void {
+    this._editingIds.clear();
+    this._setStatements([this._makeRootStatement()]);
+  }
+
   /** Direct children of a statement in the ephemeral tree (one level). */
   childrenOf(parent: StatementElement): StatementElement[] {
     return this.currentStatements.filter(s => s.parentId === parent.id);
