@@ -5,7 +5,7 @@ import { ReadProject, ReadResource } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken, RouteConstants } from '@dasch-swiss/vre/core/config';
 import { ErrorReportingService } from '@dasch-swiss/vre/core/error-handler';
 import { MultipleViewerService } from '@dasch-swiss/vre/pages/data-browser';
-import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
+import { DataBrowserPageService, ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
 import { SearchFilterState } from '@dasch-swiss/vre/pages/search/search-filters';
 import { ResourceResultService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { TranslateModule } from '@ngx-translate/core';
@@ -23,6 +23,8 @@ describe('ResourcesListFetcherComponent', () => {
   /** The query the component is told to run. A filter, sort or class change is a new value here. */
   let querySubject: BehaviorSubject<string>;
   let hasActiveStateSubject: BehaviorSubject<boolean>;
+  /** Real instance: the reload trigger is a BehaviorSubject whose replay behaviour is under test. */
+  let dataBrowserPageService: DataBrowserPageService;
   let handleError: jest.Mock;
   let report: jest.Mock;
 
@@ -42,6 +44,7 @@ describe('ResourcesListFetcherComponent', () => {
     ResourceResultService,
     { provide: ProjectPageService, useValue: { currentProject$: currentProjectSubject.asObservable() } },
     { provide: MultipleViewerService, useValue: mockMultipleViewerService },
+    { provide: DataBrowserPageService, useValue: dataBrowserPageService },
     { provide: DataClassQueryService, useValue: { query$: querySubject.asObservable() } },
     { provide: SearchFilterState, useValue: { hasActiveState$: hasActiveStateSubject.asObservable() } },
     { provide: ErrorHandler, useValue: { handleError } },
@@ -53,6 +56,7 @@ describe('ResourcesListFetcherComponent', () => {
     currentProjectSubject = new BehaviorSubject(mockProject);
     querySubject = new BehaviorSubject(QUERY);
     hasActiveStateSubject = new BehaviorSubject(false);
+    dataBrowserPageService = new DataBrowserPageService();
 
     mockDspApiConnection = {
       v2: {
@@ -340,6 +344,27 @@ describe('ResourcesListFetcherComponent', () => {
       // Entry behaviour only. Widening the filter again should find the user's resource still open,
       // so a filter-driven empty result must not clear the viewer (REQ-2.8).
       expect(mockMultipleViewerService.reset).not.toHaveBeenCalled();
+      sub.unsubscribe();
+    });
+
+    it('reloads when the panel reports a newly created resource', () => {
+      const sub = start();
+      const callsBefore = mockDspApiConnection.v2.search.doExtendedSearch.mock.calls.length;
+
+      dataBrowserPageService.reloadNavigation();
+
+      // Creating a resource adds a row this list cannot predict. Losing this trigger is silent — the
+      // list simply does not show the resource the user just created, and every other test passes.
+      expect(mockDspApiConnection.v2.search.doExtendedSearch.mock.calls.length).toBeGreaterThan(callsBefore);
+      sub.unsubscribe();
+    });
+
+    it('does not run the initial load twice for the replayed reload value', () => {
+      const sub = start();
+
+      // `onNavigationReload$` is a BehaviorSubject, so it replays on subscribe. Without skip(1) that
+      // replay fires a second full load on every mount.
+      expect(mockDspApiConnection.v2.search.doExtendedSearch).toHaveBeenCalledTimes(1);
       sub.unsubscribe();
     });
 

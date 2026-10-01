@@ -11,7 +11,8 @@ import { ResourceResultService } from '@dasch-swiss/vre/shared/app-helper-servic
 import { AppProgressIndicatorComponent } from '@dasch-swiss/vre/ui/progress-indicator';
 import { CenteredBoxComponent, CenteredMessageComponent, SearchFailedComponent } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe } from '@ngx-translate/core';
-import { BehaviorSubject, catchError, combineLatest, first, map, Observable, of, switchMap } from 'rxjs';
+import { BehaviorSubject, catchError, combineLatest, first, map, Observable, of, skip, switchMap } from 'rxjs';
+import { DataBrowserPageService } from '../../data-browser-page.service';
 import { DataClassQueryService } from '../../data-class-query.service';
 import { ProjectPageService } from '../../project-page.service';
 
@@ -87,6 +88,7 @@ export class ResourcesListFetcherComponent implements OnChanges {
   constructor(
     @Inject(DspApiConnectionToken) private readonly _dspApiConnection: KnoraApiConnection,
     private readonly _multipleViewerService: MultipleViewerService,
+    private readonly _dataBrowserPageService: DataBrowserPageService,
     private readonly _resourceResult: ResourceResultService,
     private readonly _query: DataClassQueryService,
     private readonly _searchState: SearchFilterState,
@@ -97,6 +99,14 @@ export class ResourcesListFetcherComponent implements OnChanges {
     public projectPageService: ProjectPageService
   ) {
     this._searchState.hasActiveState$.pipe(takeUntilDestroyed()).subscribe(active => (this._filtersAreActive = active));
+
+    // Creating a resource adds a row this list cannot predict, so the panel pings the page service
+    // and the list reloads. Folded into the retry subject rather than merged in as a second outer
+    // trigger: `onNavigationReload$` is a BehaviorSubject and would otherwise replay on subscribe and
+    // run the initial load twice. `skip(1)` drops exactly that replayed value.
+    this._dataBrowserPageService.onNavigationReload$
+      .pipe(skip(1), takeUntilDestroyed())
+      .subscribe(() => this._retrySubject.next());
   }
 
   ngOnChanges() {
