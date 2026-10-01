@@ -12,6 +12,7 @@ import { CenteredBoxComponent, NoResultsFoundComponent } from '@dasch-swiss/vre/
 import { TranslatePipe } from '@ngx-translate/core';
 import { AngularSplitModule } from 'angular-split';
 import { combineLatest, distinctUntilChanged, EMPTY, first, map, skip } from 'rxjs';
+import { DataClassHeaderComponent } from './data-class-header.component';
 import { DataClassPanelComponent } from './data-class-panel.component';
 import { provideDataClassSearch } from './data-class-query.service';
 import { DataClassUrlStateService } from './data-class-url-state.service';
@@ -26,6 +27,7 @@ import { ProjectPageService } from './project-page.service';
           <app-no-results-found [message]="'pages.dataBrowser.dataClassView.noData' | translate" />
         </app-centered-box>
       } @else {
+        <app-data-class-header [classSelected]="classSelected" />
         <as-split>
           <as-split-area [size]="34" cdkScrollable>
             <app-data-class-panel [classSelected]="classSelected" />
@@ -46,6 +48,7 @@ import { ProjectPageService } from './project-page.service';
     CenteredBoxComponent,
     NoResultsFoundComponent,
     AppProgressIndicatorComponent,
+    DataClassHeaderComponent,
     DataClassPanelComponent,
     MultipleViewerComponent,
   ],

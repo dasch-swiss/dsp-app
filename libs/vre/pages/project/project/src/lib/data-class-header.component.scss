@@ -1,0 +1,19 @@
+.data-class-header {
+  padding: 16px 16px 0;
+}
+
+.identity-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.class-label {
+  flex: 1;
+  margin: 0;
+}
+
+.class-description {
+  font-style: italic;
+  margin: 8px 0 0;
+}

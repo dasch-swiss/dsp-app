@@ -621,6 +621,10 @@
         "progressXofN": "Esportate {{x}} su {{n}} risorse",
         "buildingCsv": "Creazione del file CSV in corso — tieni aperta questa scheda. Il download inizierà non appena il file sarà pronto.",
         "preparing": "Preparazione…"
+      },
+      "dataClassHeader": {
+        "searchLabel": "Cerca",
+        "searchPlaceholder": "Cerca in questa classe"
       }
     }
   },

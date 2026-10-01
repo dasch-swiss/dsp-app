@@ -3,6 +3,7 @@ export { ResourceBrowserComponent } from './lib/comparison/resource-browser.comp
 
 // Child components used by ResourceBrowserComponent
 export { ResourcesListComponent } from './lib/list-view/resources-list.component';
+export { ResultCountComponent } from './lib/list-view/result-count.component';
 export { MultipleViewerComponent } from './lib/comparison/multiple-viewer.component';
 
 // Service used by ResourceBrowserComponent

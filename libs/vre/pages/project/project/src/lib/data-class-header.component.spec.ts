@@ -11,13 +11,13 @@ import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
 import { provideTranslateService, TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, of } from 'rxjs';
 import { DataBrowserPageService } from './data-browser-page.service';
-import { DataClassPanelComponent } from './data-class-panel.component';
+import { DataClassHeaderComponent } from './data-class-header.component';
 import { DownloadDialogComponent } from './download/download-dialog.component';
 import { ProjectPageService } from './project-page.service';
 
-describe('DataClassPanelComponent', () => {
-  let component: DataClassPanelComponent;
-  let fixture: ComponentFixture<DataClassPanelComponent>;
+describe('DataClassHeaderComponent', () => {
+  let component: DataClassHeaderComponent;
+  let fixture: ComponentFixture<DataClassHeaderComponent>;
   let mockDialog: jest.Mocked<MatDialog>;
   let mockViewContainerRef: jest.Mocked<ViewContainerRef>;
   let mockProjectPageService: jest.Mocked<ProjectPageService>;
@@ -122,7 +122,7 @@ describe('DataClassPanelComponent', () => {
     mockLocalizationService = createMockLocalizationService('en').service;
 
     await TestBed.configureTestingModule({
-      imports: [DataClassPanelComponent],
+      imports: [DataClassHeaderComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       providers: [
         { provide: MatDialog, useValue: mockDialog },
@@ -137,7 +137,7 @@ describe('DataClassPanelComponent', () => {
         TranslateService,
       ],
     })
-      .overrideComponent(DataClassPanelComponent, {
+      .overrideComponent(DataClassHeaderComponent, {
         set: {
           // Template is overridden to isolate unit test from template rendering
           template: '<div>Mock Template</div>',
@@ -146,7 +146,7 @@ describe('DataClassPanelComponent', () => {
       })
       .compileComponents();
 
-    fixture = TestBed.createComponent(DataClassPanelComponent);
+    fixture = TestBed.createComponent(DataClassHeaderComponent);
     component = fixture.componentInstance;
 
     // Set required input

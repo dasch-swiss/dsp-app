@@ -27,7 +27,8 @@ import { ProjectPageService } from '../../project-page.service';
     } @else if (data) {
       @if (userCanViewResources) {
         @if (data.resources.length > 0) {
-          <app-resources-list [resources]="data.resources" />
+          <!-- The count and pager live in the class header now, above the split. -->
+          <app-resources-list [resources]="data.resources" [showResultCount]="false" />
         } @else {
           <app-centered-message [message]="'pages.dataBrowser.resourcesListFetcher.noResourcesFound' | translate" />
         }
