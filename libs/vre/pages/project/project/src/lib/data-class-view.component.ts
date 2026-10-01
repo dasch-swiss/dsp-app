@@ -4,13 +4,15 @@ import { ActivatedRoute } from '@angular/router';
 import { ResourceClassDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { MultipleViewerComponent } from '@dasch-swiss/vre/pages/data-browser';
-import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { provideSearchFilters } from '@dasch-swiss/vre/pages/search/search-filters';
+import { OntologyService, ResourceResultService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { AppProgressIndicatorComponent } from '@dasch-swiss/vre/ui/progress-indicator';
 import { CenteredBoxComponent, NoResultsFoundComponent } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AngularSplitModule } from 'angular-split';
 import { combineLatest, EMPTY, first, map } from 'rxjs';
 import { DataClassPanelComponent } from './data-class-panel.component';
+import { provideDataClassSearch } from './data-class-query.service';
 import { ProjectPageService } from './project-page.service';
 
 @Component({
@@ -45,6 +47,11 @@ import { ProjectPageService } from './project-page.service';
     DataClassPanelComponent,
     MultipleViewerComponent,
   ],
+  // Scoped here rather than on the panel so the class header and the list resolve one query, and so
+  // a class switch tears the whole search state down with the view. `ResourceResultService` joins
+  // them for the same reason: the count and pager move into the header in Phase 4, and they have to
+  // read the same instance the list writes.
+  providers: [...provideSearchFilters(), ...provideDataClassSearch(), ResourceResultService],
 })
 export class DataClassViewComponent {
   dataIsNotFound = false;
