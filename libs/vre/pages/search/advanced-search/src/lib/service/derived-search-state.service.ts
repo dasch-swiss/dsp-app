@@ -1,10 +1,15 @@
 import { inject, Injectable } from '@angular/core';
 import { Constants } from '@dasch-swiss/dsp-js';
+import {
+  IriLabelPair,
+  OrderByItem,
+  OrderDirection,
+  StatementElement,
+} from '@dasch-swiss/vre/pages/search/search-filters';
+import { ConfirmedSearchStateService } from '@dasch-swiss/vre/pages/search/search-filters';
+import { GravsearchService } from '@dasch-swiss/vre/pages/search/search-filters';
+import { OntologyDataService } from '@dasch-swiss/vre/pages/search/search-filters';
 import { combineLatest, distinctUntilChanged, map, Observable } from 'rxjs';
-import { IriLabelPair, OrderByItem, OrderDirection, StatementElement } from '../model';
-import { ConfirmedSearchStateService } from './confirmed-search-state.service';
-import { GravsearchService } from './gravsearch.service';
-import { OntologyDataService } from './ontology-data.service';
 import { SearchUrlSyncService } from './search-url-sync.service';
 
 /**

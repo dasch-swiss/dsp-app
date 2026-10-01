@@ -6,9 +6,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule, MatSelectionListChange } from '@angular/material/list';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { OrderByItem, OrderDirection } from '@dasch-swiss/vre/pages/search/search-filters';
 import { LocalizationService, pickPreferredLanguageString } from '@dasch-swiss/vre/shared/app-helper-services';
 import { TranslateModule } from '@ngx-translate/core';
-import { OrderByItem, OrderDirection } from '../../model';
 import { DerivedSearchStateService } from '../../service/derived-search-state.service';
 import { SearchUrlSyncService } from '../../service/search-url-sync.service';
 

@@ -1,7 +1,7 @@
 import { Constants } from '@dasch-swiss/dsp-js';
+import { FilterParam } from '../filter-params.codec';
 import { NodeValue } from '../model';
 import { Operator } from '../operators.config';
-import { FilterParam } from '../service/search-url-sync.service';
 import { makePredicate } from '../testing/test-data-builders';
 import { buildStatementsFromFilterParams } from './build-statements';
 

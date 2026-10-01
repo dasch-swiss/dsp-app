@@ -1,10 +1,15 @@
 import { inject, Injectable } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import {
+  decodeFilters,
+  encodeFilters,
+  FilterParam,
+  FilterParamInput,
+} from '@dasch-swiss/vre/pages/search/search-filters';
+import { OrderDirection } from '@dasch-swiss/vre/pages/search/search-filters';
+import { SearchFilterState } from '@dasch-swiss/vre/pages/search/search-filters';
+import { SearchFlowLogger } from '@dasch-swiss/vre/pages/search/search-filters';
 import { distinctUntilChanged, map, Observable } from 'rxjs';
-import { decodeFilters, encodeFilters, FilterParam, FilterParamInput } from '../filter-params.codec';
-import { OrderDirection } from '../model';
-import { SearchFilterState } from '../search-filter-state';
-import { SearchFlowLogger } from './search-flow-logger.service';
 
 export interface SearchUrlParams {
   q?: string;
@@ -18,7 +23,7 @@ export interface SearchUrlParams {
 
 // The filter wire format is shared across every page that hosts the chip bar, so it lives in the codec
 // rather than here. Re-exported because this service is still the import site for most callers.
-export type { FilterParam } from '../filter-params.codec';
+export type { FilterParam } from '@dasch-swiss/vre/pages/search/search-filters';
 
 /**
  * Each URL parameter name must be spelled identically to its `SearchUrlParams` key.

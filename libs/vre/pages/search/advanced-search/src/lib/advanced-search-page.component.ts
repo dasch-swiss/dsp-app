@@ -2,12 +2,12 @@ import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/c
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatDivider } from '@angular/material/divider';
 import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
+import { AdvancedSearchBarComponent } from '@dasch-swiss/vre/pages/search/search-filters';
 import { SearchTipsComponent } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { map } from 'rxjs';
 import { AdvancedSearchResultsComponent } from './advanced-search-results.component';
 import { provideAdvancedSearch } from './providers';
 import { DerivedSearchStateService } from './service/derived-search-state.service';
-import { AdvancedSearchBarComponent } from './ui/chip-bar/advanced-search-bar.component';
 import { DataModelChipComponent } from './ui/chip-bar/data-model-chip.component';
 import { ResourceClassChipComponent } from './ui/chip-bar/resource-class-chip.component';
 import { OrderByComponent } from './ui/order-by/order-by.component';

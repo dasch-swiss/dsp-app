@@ -15,13 +15,13 @@ import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { ErrorReportingService, userFacingReason } from '@dasch-swiss/vre/core/error-handler';
 import { ResourceBrowserComponent } from '@dasch-swiss/vre/pages/data-browser';
 import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
+import { SearchFlowLogger } from '@dasch-swiss/vre/pages/search/search-filters';
 import { filterNull } from '@dasch-swiss/vre/shared/app-common';
 import { ResourceResultService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { AppProgressIndicatorComponent } from '@dasch-swiss/vre/ui/progress-indicator';
 import { CenteredBoxComponent, NoResultsFoundComponent, SearchFailedComponent } from '@dasch-swiss/vre/ui/ui';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, catchError, combineLatest, map, of, startWith, switchMap } from 'rxjs';
-import { SearchFlowLogger } from './service/search-flow-logger.service';
 
 @Component({
   selector: 'app-advanced-search-results',

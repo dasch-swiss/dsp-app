@@ -4,12 +4,11 @@ import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
 import { expect, fn, userEvent, within } from 'storybook/test';
-import { provideAdvancedSearch } from '../../providers';
+import { provideSearchFilters } from '../../providers';
 import { SearchFilterState } from '../../search-filter-state';
 import { OntologyDataService } from '../../service/ontology-data.service';
-import { SearchUrlSyncService } from '../../service/search-url-sync.service';
 import {
-  ADVANCED_SEARCH_SERVICE_STUBS,
+  SEARCH_FILTER_SERVICE_STUBS,
   makeDspApiConnectionStub,
   makeOntologyDataServiceStub,
   STORY_PROVIDERS,
@@ -30,8 +29,8 @@ const baseProviders = [
   ...STORY_PROVIDERS,
   importProvidersFrom(OverlayModule),
   { provide: DspApiConnectionToken, useValue: makeDspApiConnectionStub() },
-  ...provideAdvancedSearch(),
-  ...ADVANCED_SEARCH_SERVICE_STUBS,
+  ...provideSearchFilters(),
+  ...SEARCH_FILTER_SERVICE_STUBS,
   { provide: OntologyDataService, useValue: makeOntologyDataServiceStub() },
 ];
 
@@ -40,12 +39,6 @@ export const Empty: Story = {
   args: { projectUuid: '0001' },
   decorators: [applicationConfig({ providers: baseProviders })],
   play: async ({ canvasElement, step }) => {
-    await step('Data model chip is rendered', async () => {
-      await expect(canvasElement.querySelector('app-data-model-chip')).not.toBeNull();
-    });
-    await step('Resource class chip is rendered', async () => {
-      await expect(canvasElement.querySelector('app-resource-class-chip')).not.toBeNull();
-    });
     await step('Add filter button is rendered', async () => {
       await expect(canvasElement.querySelector('app-add-filter-button')).not.toBeNull();
     });
@@ -64,8 +57,8 @@ export const LoadingState: Story = {
         ...STORY_PROVIDERS,
         importProvidersFrom(OverlayModule),
         { provide: DspApiConnectionToken, useValue: makeDspApiConnectionStub() },
-        ...provideAdvancedSearch(),
-        ...ADVANCED_SEARCH_SERVICE_STUBS,
+        ...provideSearchFilters(),
+        ...SEARCH_FILTER_SERVICE_STUBS,
         { provide: OntologyDataService, useValue: makeOntologyDataServiceStub({ ontologyLoading$: of(true) }) },
       ],
     }),
@@ -75,7 +68,7 @@ export const LoadingState: Story = {
       await expect(canvasElement.querySelector('mat-progress-bar')).not.toBeNull();
     });
     await step('Chip bar content is hidden during loading', async () => {
-      await expect(canvasElement.querySelector('app-data-model-chip')).toBeNull();
+      await expect(canvasElement.querySelector('app-add-filter-button')).toBeNull();
     });
   },
 };
@@ -112,12 +105,6 @@ const activeSearchState = {
   reset,
 };
 
-const activeUrlSyncStub = {
-  provide: SearchUrlSyncService,
-  useValue: activeSearchState as Partial<SearchUrlSyncService>,
-};
-
-// The bar reads the port, so the active state has to be visible there too.
 const activeStateStub = {
   provide: SearchFilterState,
   useValue: activeSearchState as unknown as SearchFilterState,
@@ -132,11 +119,10 @@ export const ShowsResetWhenActiveAndClearsOnClick: Story = {
         ...STORY_PROVIDERS,
         importProvidersFrom(OverlayModule),
         { provide: DspApiConnectionToken, useValue: makeDspApiConnectionStub() },
-        ...provideAdvancedSearch(),
-        ...ADVANCED_SEARCH_SERVICE_STUBS,
+        ...provideSearchFilters(),
+        ...SEARCH_FILTER_SERVICE_STUBS,
         { provide: OntologyDataService, useValue: makeOntologyDataServiceStub() },
-        // Override the default (empty) stubs last so active state wins.
-        activeUrlSyncStub,
+        // Override the default (empty) stub last so active state wins.
         activeStateStub,
       ],
     }),

@@ -1,16 +1,16 @@
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Constants } from '@dasch-swiss/dsp-js';
+import { IriLabelPair, Predicate } from '@dasch-swiss/vre/pages/search/search-filters';
+import { Operator } from '@dasch-swiss/vre/pages/search/search-filters';
+import { SearchFilterState } from '@dasch-swiss/vre/pages/search/search-filters';
+import { makeIriLabelPair, makePredicate } from '@dasch-swiss/vre/pages/search/search-filters';
+import { ConfirmedSearchStateService } from '@dasch-swiss/vre/pages/search/search-filters';
+import { GravsearchService } from '@dasch-swiss/vre/pages/search/search-filters';
+import { OntologyDataService } from '@dasch-swiss/vre/pages/search/search-filters';
+import { SearchFlowLogger } from '@dasch-swiss/vre/pages/search/search-filters';
 import { BehaviorSubject, firstValueFrom, map, of } from 'rxjs';
-import { IriLabelPair, Predicate } from '../../model';
-import { Operator } from '../../operators.config';
-import { SearchFilterState } from '../../search-filter-state';
-import { makeIriLabelPair, makePredicate } from '../../testing/test-data-builders';
-import { ConfirmedSearchStateService } from '../confirmed-search-state.service';
 import { DerivedSearchStateService } from '../derived-search-state.service';
-import { GravsearchService } from '../gravsearch.service';
-import { OntologyDataService } from '../ontology-data.service';
-import { SearchFlowLogger } from '../search-flow-logger.service';
 import { FilterParam, SearchUrlParams, SearchUrlSyncService } from '../search-url-sync.service';
 
 /**

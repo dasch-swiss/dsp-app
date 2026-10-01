@@ -1,8 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Operator } from '@dasch-swiss/vre/pages/search/search-filters';
+import { SearchFlowLogger } from '@dasch-swiss/vre/pages/search/search-filters';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
-import { Operator } from '../../operators.config';
-import { SearchFlowLogger } from '../search-flow-logger.service';
 import { FilterParam, SearchUrlParams, SearchUrlSyncService } from '../search-url-sync.service';
 
 /**

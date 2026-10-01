@@ -1,9 +1,9 @@
 import { OverlayModule } from '@angular/cdk/overlay';
 import { importProvidersFrom } from '@angular/core';
+import { OntologyDataService } from '@dasch-swiss/vre/pages/search/search-filters';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
 import { expect, userEvent, within } from 'storybook/test';
-import { OntologyDataService } from '../../service/ontology-data.service';
 import { makeOntologyDataServiceStub, SAMPLE_ONTOLOGIES, STORY_PROVIDERS } from '../../stories.helpers';
 import { DataModelChipComponent } from './data-model-chip.component';
 
