@@ -6,6 +6,7 @@ import { PropertiesDisplayService } from '../../properties/properties-display/pr
 import { ResourceMediaTabsComponent } from '../../properties/resource-media-tabs.component';
 import { getFileValue } from '../../representation/get-file-value';
 import { isPlaceholderFileValue } from '../../representation/is-placeholder-file-value';
+import { isRestrictedFileValue } from '../../representation/is-restricted-file-value';
 import { RepresentationPlaceholderComponent } from '../../representation/representation-placeholder.component';
 import { RepresentationRestrictedComponent } from '../../representation/representation-restricted.component';
 import { ResourceLegalComponent } from '../../representation/resource-legal.component';
@@ -25,7 +26,7 @@ import { AudioComponent } from './audio.component';
       @if (isPlaceholder) {
         <app-representation-placeholder />
       } @else {
-        <app-resource-representation-container height="small">
+        <app-resource-representation-container height="small" [restrictedView]="isRestrictedAsset(file)">
           <app-audio [src]="file" [parentResource]="resource.res" />
         </app-resource-representation-container>
       }
@@ -56,4 +57,7 @@ export class ResourceAudioComponent {
   get isPlaceholder() {
     return isPlaceholderFileValue(this.fileValue);
   }
+
+  /** Asset-level restriction: read off the file value, never the resource (DEV-7392). */
+  protected readonly isRestrictedAsset = isRestrictedFileValue;
 }
