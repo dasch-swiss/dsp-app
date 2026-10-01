@@ -5,6 +5,8 @@ import {
   decodeFilters,
   encodeFilters,
   FilterParam,
+  OrderByItem,
+  RDFS_LABEL,
   SearchFilterState,
 } from '@dasch-swiss/vre/pages/search/search-filters';
 import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
@@ -121,6 +123,23 @@ export class DataClassUrlStateService implements SearchFilterState {
   readonly sortDescending$: Observable<boolean> = this._params$.pipe(
     map(p => p.orderDir === DESC),
     distinctUntilChanged()
+  );
+
+  /**
+   * The sort in the shape `GravsearchService` consumes.
+   *
+   * `_getOrderByString` keeps only items with `orderBy: true`, and routes `rdfs:label` to the
+   * assembly's shared `?label` variable rather than a statement-indexed `?resN` — which is exactly
+   * what this page wants, since label is its only sortable field and it is sortable whether or not
+   * any statement mentions it. Labels stay empty: nothing here renders this item in a picker, the
+   * way advanced search's order-by dropdown does.
+   *
+   * The ascending item is emitted rather than omitted. An empty array would produce the same
+   * `ORDER BY ASC(?label)` by falling through to the service's default, but saying it outright keeps
+   * the query a function of the URL instead of of a default two layers away.
+   */
+  readonly orderByItems$: Observable<OrderByItem[]> = this.sortDescending$.pipe(
+    map(descending => [new OrderByItem(RDFS_LABEL, [], false, true, descending ? 'desc' : 'asc')])
   );
 
   setFulltextTerm(term: string | undefined): void {

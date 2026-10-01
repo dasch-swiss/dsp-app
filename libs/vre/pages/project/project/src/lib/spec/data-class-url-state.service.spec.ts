@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ReadProject } from '@dasch-swiss/dsp-js';
+import { RDFS_LABEL } from '@dasch-swiss/vre/pages/search/search-filters';
 import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { BehaviorSubject, firstValueFrom, of } from 'rxjs';
 import { DataClassUrlStateService } from '../data-class-url-state.service';
@@ -91,6 +92,30 @@ describe('DataClassUrlStateService', () => {
     it('removes orderDir when sorting ascending, keeping the default out of the URL', () => {
       service.setSortDescending(false);
       expect(lastNav().queryParams).toEqual({ orderDir: null });
+    });
+  });
+
+  describe('orderByItems$ speaks GravsearchService’s language', () => {
+    it('maps a bare orderDir=desc onto a descending rdfs:label item', async () => {
+      queryParams$.next({ orderDir: 'desc' });
+      expect(await firstValueFrom(service.orderByItems$)).toEqual([
+        expect.objectContaining({ id: RDFS_LABEL, direction: 'desc', orderBy: true }),
+      ]);
+    });
+
+    it('emits the ascending item explicitly rather than an empty array', async () => {
+      queryParams$.next({});
+      expect(await firstValueFrom(service.orderByItems$)).toEqual([
+        expect.objectContaining({ id: RDFS_LABEL, direction: 'asc', orderBy: true }),
+      ]);
+    });
+
+    // `_getOrderByString` drops every item with `orderBy: false`, so an item that is not flagged
+    // would silently fall through to the service default and a `desc` URL would sort ascending.
+    it('always flags the item as active so the sort survives the orderBy filter', async () => {
+      queryParams$.next({ orderDir: 'desc' });
+      const [item] = await firstValueFrom(service.orderByItems$);
+      expect(item.orderBy).toBe(true);
     });
   });
 
