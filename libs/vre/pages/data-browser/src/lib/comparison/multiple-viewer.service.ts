@@ -2,6 +2,14 @@ import { Injectable } from '@angular/core';
 import { ReadResource } from '@dasch-swiss/dsp-js';
 import { BehaviorSubject } from 'rxjs';
 
+/**
+ * Selection is compared by `ReadResource.id`, never by object identity.
+ *
+ * Every re-query builds fresh `ReadResource` instances, so after a filter change the resource the
+ * user has open is a different object with the same IRI. Under identity comparison it stopped
+ * counting as selected: it rendered unselected in the list and `removeResources` could not find it
+ * to take it out of the comparison set.
+ */
 @Injectable()
 export class MultipleViewerService {
   private _selectedResourcesSubject = new BehaviorSubject<ReadResource[]>([]);
@@ -18,7 +26,7 @@ export class MultipleViewerService {
     }
 
     resources.forEach(resource => {
-      if (!currentResources.includes(resource)) {
+      if (!currentResources.some(selected => selected.id === resource.id)) {
         currentResources.push(resource);
       }
     });
@@ -31,7 +39,7 @@ export class MultipleViewerService {
     const currentResources = this._selectedResourcesSubject.getValue();
 
     resources.forEach(resource => {
-      const index = currentResources.indexOf(resource);
+      const index = currentResources.findIndex(selected => selected.id === resource.id);
       if (index < 0) {
         return;
       }

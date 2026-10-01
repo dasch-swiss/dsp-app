@@ -1,18 +1,20 @@
 import { AsyncPipe } from '@angular/common';
 import { Component } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { ResourceClassDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { MultipleViewerComponent } from '@dasch-swiss/vre/pages/data-browser';
-import { provideSearchFilters } from '@dasch-swiss/vre/pages/search/search-filters';
+import { provideSearchFilters, StatementDraftStore } from '@dasch-swiss/vre/pages/search/search-filters';
 import { OntologyService, ResourceResultService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { AppProgressIndicatorComponent } from '@dasch-swiss/vre/ui/progress-indicator';
 import { CenteredBoxComponent, NoResultsFoundComponent } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AngularSplitModule } from 'angular-split';
-import { combineLatest, EMPTY, first, map } from 'rxjs';
+import { combineLatest, distinctUntilChanged, EMPTY, first, map, skip } from 'rxjs';
 import { DataClassPanelComponent } from './data-class-panel.component';
 import { provideDataClassSearch } from './data-class-query.service';
+import { DataClassUrlStateService } from './data-class-url-state.service';
 import { ProjectPageService } from './project-page.service';
 
 @Component({
@@ -88,8 +90,36 @@ export class DataClassViewComponent {
   constructor(
     private readonly _projectPageService: ProjectPageService,
     private readonly _route: ActivatedRoute,
-    private readonly _ontologyService: OntologyService
-  ) {}
+    private readonly _ontologyService: OntologyService,
+    private readonly _urlState: DataClassUrlStateService,
+    private readonly _draftStore: StatementDraftStore
+  ) {
+    this._clearSearchStateOnClassSwitch();
+  }
+
+  /**
+   * A filter belongs to the class it was built against: its predicates come from that class, and
+   * carrying `?filters=…` across a class switch would either silently match nothing or, worse, be
+   * stripped field by field with no explanation.
+   *
+   * `skip(1)` is what makes a deep link work. The first emission is arrival, not a switch, and
+   * resetting there would wipe the filters and sort out of the very URL the user was sent.
+   */
+  private _clearSearchStateOnClassSwitch(): void {
+    this._route.params
+      .pipe(
+        map(params => params[RouteConstants.classParameter] as string),
+        distinctUntilChanged(),
+        skip(1),
+        takeUntilDestroyed()
+      )
+      .subscribe(() => {
+        this._urlState.reset();
+        // Not part of the URL, so the reset navigation alone would leave a half-built filter from the
+        // previous class sitting in the editor.
+        this._draftStore.discardDrafts();
+      });
+  }
 
   onResourceDeleted() {
     this._projectPageService.reloadProject();
