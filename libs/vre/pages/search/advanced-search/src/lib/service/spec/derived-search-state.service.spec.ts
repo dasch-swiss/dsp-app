@@ -1,10 +1,12 @@
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Constants } from '@dasch-swiss/dsp-js';
-import { BehaviorSubject, firstValueFrom, of } from 'rxjs';
+import { BehaviorSubject, firstValueFrom, map, of } from 'rxjs';
 import { IriLabelPair, Predicate } from '../../model';
 import { Operator } from '../../operators.config';
+import { SearchFilterState } from '../../search-filter-state';
 import { makeIriLabelPair, makePredicate } from '../../testing/test-data-builders';
+import { ConfirmedSearchStateService } from '../confirmed-search-state.service';
 import { DerivedSearchStateService } from '../derived-search-state.service';
 import { GravsearchService } from '../gravsearch.service';
 import { OntologyDataService } from '../ontology-data.service';
@@ -33,15 +35,32 @@ describe('DerivedSearchStateService (DEV-6576 Phase 2)', () => {
   const encode = (filters: { predicateIri: string; operator: Operator; value: string; parentIndex?: number }[]) =>
     encodeURIComponent(JSON.stringify(filters));
 
-  const urlSyncStub: Partial<SearchUrlSyncService> = {
-    decodeFilters: (raw: string): FilterParam[] => {
-      if (!raw) return [];
-      return (JSON.parse(decodeURIComponent(raw)) as FilterParam[]).map(s => ({
-        ...s,
-        parentIndex: s.parentIndex ?? null,
-      }));
-    },
+  const decodeFilters = (raw: string): FilterParam[] => {
+    if (!raw) return [];
+    return (JSON.parse(decodeURIComponent(raw)) as FilterParam[]).map(s => ({
+      ...s,
+      parentIndex: s.parentIndex ?? null,
+    }));
   };
+
+  const urlSyncStub: Partial<SearchUrlSyncService> = { decodeFilters };
+
+  /**
+   * The `SearchFilterState` port, projected off the same stubbed `params$` the URL-service stub uses, so
+   * driving `params$` still drives the whole derivation. Hydration now lives behind the port in
+   * `ConfirmedSearchStateService`, which these specs provide for real — the assertions are unchanged.
+   */
+  const portFor = (p$: BehaviorSubject<SearchUrlParams>): SearchFilterState =>
+    ({
+      filters$: p$.pipe(map(p => (p.filters ? decodeFilters(p.filters) : []))),
+      fulltextTerm$: p$.pipe(map(p => p.q ?? '')),
+      ontologyIri$: p$.pipe(map(p => p.ontology)),
+      resourceClassIri$: p$.pipe(map(p => p.class)),
+      hasActiveState$: p$.pipe(map(p => !!(p.q || p.ontology || p.class || p.filters || p.orderBy))),
+      setFulltextTerm: jest.fn(),
+      setFilters: jest.fn(),
+      reset: jest.fn(),
+    }) as SearchFilterState;
 
   // GravsearchService still sources the ontology IRI/short-code from OntologyDataService (by design —
   // ontology is URL-driven but not committed *form* state). Every ontology stub must supply it or the
@@ -70,6 +89,8 @@ describe('DerivedSearchStateService (DEV-6576 Phase 2)', () => {
         DerivedSearchStateService,
         GravsearchService,
         { provide: SearchUrlSyncService, useValue: { ...urlSyncStub, params$ } },
+        { provide: SearchFilterState, useValue: portFor(params$) },
+        ConfirmedSearchStateService,
         { provide: OntologyDataService, useValue: ontologyStub },
       ],
     });
@@ -216,6 +237,8 @@ describe('DerivedSearchStateService (DEV-6576 Phase 2)', () => {
           DerivedSearchStateService,
           GravsearchService,
           { provide: SearchUrlSyncService, useValue: { ...urlSyncStub, params$: p$ } },
+          { provide: SearchFilterState, useValue: portFor(p$) },
+          ConfirmedSearchStateService,
           { provide: OntologyDataService, useValue: ontologyStub },
         ],
       });
@@ -262,6 +285,8 @@ describe('DerivedSearchStateService (DEV-6576 Phase 2)', () => {
           DerivedSearchStateService,
           GravsearchService,
           { provide: SearchUrlSyncService, useValue: { ...urlSyncStub, params$: p$ } },
+          { provide: SearchFilterState, useValue: portFor(p$) },
+          ConfirmedSearchStateService,
           { provide: OntologyDataService, useValue: ontologyStub },
         ],
       });
@@ -314,6 +339,8 @@ describe('DerivedSearchStateService (DEV-6576 Phase 2)', () => {
           DerivedSearchStateService,
           GravsearchService,
           { provide: SearchUrlSyncService, useValue: { ...urlSyncStub, params$: p$ } },
+          { provide: SearchFilterState, useValue: portFor(p$) },
+          ConfirmedSearchStateService,
           {
             provide: OntologyDataService,
             useValue: ontologyStubBase({
@@ -401,6 +428,8 @@ describe('DerivedSearchStateService (DEV-6576 Phase 2)', () => {
           DerivedSearchStateService,
           GravsearchService,
           { provide: SearchUrlSyncService, useValue: { ...urlSyncStub, params$ } },
+          { provide: SearchFilterState, useValue: portFor(params$) },
+          ConfirmedSearchStateService,
           {
             provide: OntologyDataService,
             useValue: ontologyStubBase({ getProperties$: () => of([titlePred, authorPred, listPred, yearPred]) }),
@@ -495,6 +524,8 @@ describe('DerivedSearchStateService (DEV-6576 Phase 2)', () => {
           DerivedSearchStateService,
           GravsearchService,
           { provide: SearchUrlSyncService, useValue: { ...urlSyncStub, params$: p$ } },
+          { provide: SearchFilterState, useValue: portFor(p$) },
+          ConfirmedSearchStateService,
           {
             provide: OntologyDataService,
             useValue: ontologyStubBase({
@@ -537,6 +568,10 @@ describe('DerivedSearchStateService (DEV-6576 Phase 2)', () => {
           DerivedSearchStateService,
           GravsearchService,
           SearchUrlSyncService,
+          // The real service IS the port here — that is the point of the round-trip: encode, through the
+          // URL, back out via the port, into hydration, and on to the query.
+          { provide: SearchFilterState, useExisting: SearchUrlSyncService },
+          ConfirmedSearchStateService,
           {
             provide: Router,
             useValue: { events: of(), lastSuccessfulNavigation: () => null, navigate: () => Promise.resolve(true) },
@@ -602,6 +637,8 @@ describe('DerivedSearchStateService (DEV-6576 Phase 2)', () => {
           DerivedSearchStateService,
           GravsearchService,
           { provide: SearchUrlSyncService, useValue: { ...urlSyncStub, params$: p$ } },
+          { provide: SearchFilterState, useValue: portFor(p$) },
+          ConfirmedSearchStateService,
           { provide: OntologyDataService, useValue: stub },
         ],
       });

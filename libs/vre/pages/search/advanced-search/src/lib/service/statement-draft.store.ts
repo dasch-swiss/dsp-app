@@ -3,7 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { BehaviorSubject, distinctUntilChanged, Observable } from 'rxjs';
 import { PropertyObjectType, StatementElement, Predicate, IriLabelPair, NodeValue } from '../model';
 import { Operator } from '../operators.config';
-import { DerivedSearchStateService } from './derived-search-state.service';
+import { ConfirmedSearchStateService } from './confirmed-search-state.service';
 
 /**
  * Owns the **ephemeral** in-progress statement tree (blank rows, in-progress subcriteria, unconfirmed
@@ -16,7 +16,7 @@ import { DerivedSearchStateService } from './derived-search-state.service';
  */
 @Injectable()
 export class StatementDraftStore {
-  private readonly _derivation = inject(DerivedSearchStateService);
+  private readonly _confirmed = inject(ConfirmedSearchStateService);
   private readonly _destroyRef = inject(DestroyRef);
 
   // The ephemeral tree — this service's own source of truth for in-progress editing.
@@ -46,12 +46,12 @@ export class StatementDraftStore {
   }
 
   constructor() {
-    // Reactive seed: on every URL change the confirmed tree comes from `searchState$` with fresh
-    // StatementElement instances (new ids). Rebuild the ephemeral store so in-progress children re-key
-    // onto the *current* confirmed parents, and each confirmed link/resource statement gets a trailing
-    // blank child to edit. Unconfirmed rows do not survive a URL change — that is correct: only the URL
-    // is durable. No DI cycle: DerivedSearchStateService does not depend on StatementDraftStore.
-    this._derivation.searchState$.pipe(takeUntilDestroyed(this._destroyRef)).subscribe(state => {
+    // Reactive seed: on every change to the host's stored state the confirmed tree comes from
+    // `confirmedState$` with fresh StatementElement instances (new ids). Rebuild the ephemeral store so
+    // in-progress children re-key onto the *current* confirmed parents. Unconfirmed rows do not survive
+    // such a change — that is correct: only what the page persisted is durable.
+    // No DI cycle: ConfirmedSearchStateService does not depend on StatementDraftStore.
+    this._confirmed.confirmedState$.pipe(takeUntilDestroyed(this._destroyRef)).subscribe(state => {
       this._resourceClass = state.resourceClass;
       this._seedFromConfirmed(state.statements);
     });

@@ -4,7 +4,7 @@ import { EMPTY, of } from 'rxjs';
 import { IriLabelPair, NodeValue, StatementElement } from '../../model';
 import { Operator } from '../../operators.config';
 import { makeIriLabelPair, makePredicate } from '../../testing/test-data-builders';
-import { DerivedSearchStateService } from '../derived-search-state.service';
+import { ConfirmedSearchStateService } from '../confirmed-search-state.service';
 import { StatementDraftStore } from '../statement-draft.store';
 
 describe('StatementDraftStore', () => {
@@ -26,9 +26,9 @@ describe('StatementDraftStore', () => {
     TestBed.configureTestingModule({
       providers: [
         StatementDraftStore,
-        // The store seeds from searchState$ on construction; an inert stream leaves the default single
+        // The store seeds from confirmedState$ on construction; an inert stream leaves the default single
         // blank root in place so these tests drive the tree directly.
-        { provide: DerivedSearchStateService, useValue: { searchState$: EMPTY } as Partial<DerivedSearchStateService> },
+        { provide: ConfirmedSearchStateService, useValue: { confirmedState$: EMPTY } as Partial<ConfirmedSearchStateService> },
       ],
     });
     service = TestBed.inject(StatementDraftStore);
@@ -50,18 +50,18 @@ describe('StatementDraftStore', () => {
     expect(service.currentStatements[0].selectedObjectValue).toBe('test value');
   });
 
-  describe('reactive seed from searchState$', () => {
-    // Build against a searchState$ that carries a selected resource class, mirroring a URL with `?class=`.
+  describe('reactive seed from confirmedState$', () => {
+    // Build against a confirmedState$ that carries a selected resource class, mirroring a URL with `?class=`.
     const buildWithClass = (resourceClass: IriLabelPair | null, statements: StatementElement[] = []) => {
       TestBed.resetTestingModule();
       TestBed.configureTestingModule({
         providers: [
           StatementDraftStore,
           {
-            provide: DerivedSearchStateService,
+            provide: ConfirmedSearchStateService,
             useValue: {
-              searchState$: of({ resourceClass, statements, orderByItems: [] }),
-            } as Partial<DerivedSearchStateService>,
+              confirmedState$: of({ resourceClass, statements, orderByItems: [] }),
+            } as Partial<ConfirmedSearchStateService>,
           },
         ],
       });

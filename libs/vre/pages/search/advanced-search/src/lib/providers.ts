@@ -1,4 +1,6 @@
 import { Provider } from '@angular/core';
+import { SearchFilterState } from './search-filter-state';
+import { ConfirmedSearchStateService } from './service/confirmed-search-state.service';
 import { DerivedSearchStateService } from './service/derived-search-state.service';
 import { DynamicFormsDataService } from './service/dynamic-forms-data.service';
 import { GravsearchService } from './service/gravsearch.service';
@@ -16,6 +18,9 @@ export function provideAdvancedSearch(): Provider[] {
     GravsearchService,
     ListNodeLabelResolver,
     SearchUrlSyncService,
+    // The Search tab's answer to the port: all search state lives in the URL.
+    { provide: SearchFilterState, useExisting: SearchUrlSyncService },
+    ConfirmedSearchStateService,
     DerivedSearchStateService,
     SearchFlowLogger,
   ];
