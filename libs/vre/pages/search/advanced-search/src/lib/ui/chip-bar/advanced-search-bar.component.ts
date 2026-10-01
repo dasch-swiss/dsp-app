@@ -23,7 +23,10 @@ import { FilterChipComponent } from './filter-chip.component';
 import { ResourceClassChipComponent } from './resource-class-chip.component';
 
 /** The inline message for each way the fulltext term can be refused, in the order they are checked. */
-const FULLTEXT_ERROR_MESSAGES: Record<string, string> = {
+const FULLTEXT_ERROR_MESSAGES: Record<
+  'searchTermTooShort' | 'searchTermUnclosedPhrase' | 'searchTermTrailingEscape',
+  string
+> = {
   searchTermTooShort: 'pages.search.termValidation.tooShort',
   searchTermUnclosedPhrase: 'pages.search.termValidation.unclosedPhrase',
   searchTermTrailingEscape: 'pages.search.termValidation.trailingEscape',
@@ -191,7 +194,9 @@ export class AdvancedSearchBarComponent implements OnInit {
    */
   private _refreshFulltextError(): void {
     const errors = this.fulltextControl.errors ?? {};
-    const errorKey = Object.keys(FULLTEXT_ERROR_MESSAGES).find(key => key in errors);
+    const errorKey = (Object.keys(FULLTEXT_ERROR_MESSAGES) as (keyof typeof FULLTEXT_ERROR_MESSAGES)[]).find(
+      key => key in errors
+    );
     this.fulltextError.set(errorKey ? FULLTEXT_ERROR_MESSAGES[errorKey] : null);
     if (this.fulltextControl.invalid) {
       this.fulltextControl.markAsTouched();

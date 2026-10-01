@@ -1,7 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { ApiResponseError } from '@dasch-swiss/dsp-js';
 import { AjaxError } from 'rxjs/ajax';
-import { reasonFromApiError, reasonFromErrorBody, userFacingReason } from './api-error-reason';
+import { isRequestRejection, reasonFromApiError, reasonFromErrorBody, userFacingReason } from './api-error-reason';
 
 const makeApiResponseError = (status: number, response: unknown): ApiResponseError => {
   const ajax = Object.create(AjaxError.prototype) as AjaxError;
@@ -109,5 +109,20 @@ describe('userFacingReason', () => {
 
   it('returns undefined when a reason-bearing status carries no reason', () => {
     expect(userFacingReason(makeApiResponseError(400, {}))).toBeUndefined();
+  });
+});
+
+describe('isRequestRejection (DEV-7370)', () => {
+  it.each([400, 409])('treats a %p as dsp-api rejecting the request', status => {
+    expect(isRequestRejection(makeApiResponseError(status, {}))).toBe(true);
+    expect(isRequestRejection(new HttpErrorResponse({ status }))).toBe(true);
+  });
+
+  it.each([401, 403, 404, 500, 504])('does not treat a %p as a rejection', status => {
+    expect(isRequestRejection(makeApiResponseError(status, {}))).toBe(false);
+  });
+
+  it('does not treat an error without a status as a rejection', () => {
+    expect(isRequestRejection(new Error('network down'))).toBe(false);
   });
 });

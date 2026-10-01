@@ -56,8 +56,10 @@ export function incompleteLuceneSyntax(term: string): 'unclosedPhrase' | 'traili
 }
 
 /**
- * Rejects a term Lucene cannot parse yet (see {@link incompleteLuceneSyntax}). Holds on every search path
- * whose term reaches Lucene as typed, and pairs with {@link searchTermMinLengthValidator}.
+ * Rejects a term Lucene cannot parse yet (see {@link incompleteLuceneSyntax}). Applied by the advanced
+ * search bar, which searches as the user types. Not part of {@link fulltextSearchTermValidator}: the
+ * simple search runs only on submit, so it was left out of DEV-7370 and is unverified against
+ * `/v2/search/:term`, not known to be unneeded there.
  */
 export function searchTermCompleteSyntaxValidator(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {

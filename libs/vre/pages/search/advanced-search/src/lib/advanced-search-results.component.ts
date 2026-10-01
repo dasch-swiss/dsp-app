@@ -1,5 +1,4 @@
 import { AsyncPipe } from '@angular/common';
-import { HttpErrorResponse } from '@angular/common/http';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -11,9 +10,9 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { ApiResponseError, KnoraApiConnection } from '@dasch-swiss/dsp-js';
+import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
-import { ErrorReportingService, userFacingReason } from '@dasch-swiss/vre/core/error-handler';
+import { ErrorReportingService, isRequestRejection, userFacingReason } from '@dasch-swiss/vre/core/error-handler';
 import { ResourceBrowserComponent } from '@dasch-swiss/vre/pages/data-browser';
 import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
 import { filterNull } from '@dasch-swiss/vre/shared/app-common';
@@ -121,7 +120,7 @@ export class AdvancedSearchResultsComponent implements OnChanges {
           // on top outlives it: search-as-you-type can send half-typed Lucene syntax the input does
           // not catch, such as `(foo`, and the toast stayed up over the results of the finished term
           // (DEV-7370). Report it without notifying the user.
-          if (isRejectedByApi(err)) {
+          if (isRequestRejection(err)) {
             this._errorReporting.report(err, {
               component: 'AdvancedSearchResultsComponent',
               operation: 'gravsearchQuery',
@@ -193,15 +192,4 @@ export class AdvancedSearchResultsComponent implements OnChanges {
         })
       );
   }
-}
-
-/**
- * The statuses with which dsp-api rejects the query itself. Other 4xx keep the snackbar: a 401 or 403 on
- * this page means the session or the permissions changed, and the panel's generic wording would hide it.
- */
-const QUERY_REJECTED_STATUSES = new Set([400, 409]);
-
-function isRejectedByApi(err: unknown): boolean {
-  const status = err instanceof ApiResponseError || err instanceof HttpErrorResponse ? err.status : undefined;
-  return status !== undefined && QUERY_REJECTED_STATUSES.has(status);
 }
