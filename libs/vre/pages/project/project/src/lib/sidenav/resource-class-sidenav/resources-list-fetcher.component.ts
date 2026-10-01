@@ -29,6 +29,11 @@ import { ProjectPageService } from '../../project-page.service';
         @if (data.resources.length > 0) {
           <!-- The count and pager live in the class header now, above the split. -->
           <app-resources-list [resources]="data.resources" [showResultCount]="false" />
+        } @else if (filtersAreActive) {
+          <!-- Distinct from noResourcesFound: "this class is empty" and "your filter matched
+               nothing" call for different next actions, and conflating them reads as data loss. -->
+          <app-centered-message
+            [message]="'pages.dataBrowser.resourcesListFetcher.noResourcesMatchFilters' | translate" />
         } @else {
           <app-centered-message [message]="'pages.dataBrowser.resourcesListFetcher.noResourcesFound' | translate" />
         }
@@ -82,7 +87,7 @@ export class ResourcesListFetcherComponent implements OnChanges {
    * Folding it into the `combineLatest` would make it a *trigger* — toggling a filter would fire a
    * second request alongside the one the query change already causes.
    */
-  private _filtersAreActive = false;
+  filtersAreActive = false;
 
   data$!: Observable<{ resources: ReadResource[]; selectFirstResource: boolean } | null>;
 
@@ -99,7 +104,7 @@ export class ResourcesListFetcherComponent implements OnChanges {
     protected router: Router,
     public projectPageService: ProjectPageService
   ) {
-    this._searchState.hasActiveState$.pipe(takeUntilDestroyed()).subscribe(active => (this._filtersAreActive = active));
+    this._searchState.hasActiveState$.pipe(takeUntilDestroyed()).subscribe(active => (this.filtersAreActive = active));
 
     // Creating a resource adds a row this list cannot predict, so the panel pings the page service
     // and the list reloads. Folded into the retry subject rather than merged in as a second outer
@@ -192,7 +197,7 @@ export class ResourcesListFetcherComponent implements OnChanges {
   private _applyCount(resources: ReadResource[], pageIndex: number, numberOfResults: number | null): ReadResource[] {
     this.userCanViewResources =
       numberOfResults === null ||
-      this._filtersAreActive ||
+      this.filtersAreActive ||
       !(pageIndex === 0 && resources.length === 0 && numberOfResults > 0);
 
     // Passed through unchanged, null included: resources-list states that the count is unavailable

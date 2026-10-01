@@ -587,7 +587,8 @@
       "resourcesListFetcher": {
         "noResourcesFound": "Keine Ressourcen für diese Klasse gefunden.",
         "noPermissions": "Es scheint, dass Sie nicht über die erforderlichen Berechtigungen verfügen.",
-        "checkPermissions": "Überprüfen Sie bei einem Projektadministrator, ob Sie über die erforderliche Berechtigung verfügen oder ob Sie angemeldet sind."
+        "checkPermissions": "Überprüfen Sie bei einem Projektadministrator, ob Sie über die erforderliche Berechtigung verfügen oder ob Sie angemeldet sind.",
+        "noResourcesMatchFilters": "Keine Ressourcen entsprechen diesen Filtern."
       },
       "multipleViewer": {
         "selectResource": "Wählen Sie eine Ressource im linken Bereich aus",
@@ -620,11 +621,19 @@
         "largeExportWarning": "Dieser Export enthält {{count}} Ressourcen und kann mehrere Minuten dauern. Bitte lassen Sie diesen Tab geöffnet.",
         "progressXofN": "{{x}} von {{n}} Ressourcen exportiert",
         "buildingCsv": "Ihre CSV-Datei wird erstellt — bitte lassen Sie diesen Tab geöffnet. Der Download startet, sobald die Datei bereit ist.",
-        "preparing": "Wird vorbereitet…"
+        "preparing": "Wird vorbereitet…",
+        "scopeNote": "Der Export umfasst alle Ressourcen dieser Klasse, unabhängig von den aktuell gesetzten Filtern."
       },
       "dataClassHeader": {
         "searchLabel": "Suche",
         "searchPlaceholder": "In dieser Klasse suchen"
+      },
+      "labelHeader": {
+        "label": "Bezeichnung",
+        "aToZ": "A–Z",
+        "zToA": "Z–A",
+        "sortAscending": "Nach Bezeichnung sortieren, A bis Z",
+        "sortDescending": "Nach Bezeichnung sortieren, Z bis A"
       }
     }
   },
