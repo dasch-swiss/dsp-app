@@ -1,3 +1,12 @@
+@use '@angular/material' as mat;
+
+// Was an inline `[style.margin-left.px]="8"` on the field. Moved here so density can override it —
+// an inline style wins over any stylesheet rule, which left the Data tab unable to align its input
+// with the heading and pagination above and below it.
+mat-form-field {
+  margin-left: 8px;
+}
+
 .chip-bar {
   display: flex;
   flex-wrap: wrap;
@@ -26,15 +35,74 @@
 // select into — and `::ng-deep` is forbidden in this codebase. Custom properties inherit through that
 // boundary, so setting Material's own density tokens on the host is what actually reaches them.
 :host(.compact) {
-  --mat-form-field-container-height: 30px;
-  --mat-form-field-container-vertical-padding: 4px;
-  --mat-form-field-filled-with-label-container-padding-top: 4px;
-  --mat-form-field-filled-with-label-container-padding-bottom: 4px;
+  // Density, not hand-set tokens. The previous attempt set `--mat-form-field-filled-*` properties
+  // while the field renders `appearance="outline"`, so none of them applied and the control stayed
+  // at Material's default 48px. The density mixin is the supported lever and reaches the outlined
+  // field. -5 is the floor of Material's scale (36px); the design's 30px is not reachable without
+  // replacing the Material field outright, and 36px sits correctly against the 28px pager buttons.
+  @include mat.form-field-density(-5);
 
   font-size: 13px;
 
+  // One row: the search input, then `Add filter` and `Reset` beside it. The standard density keeps
+  // them stacked because the Search tab projects the data-model and resource-class chips into the
+  // leading slot, and those do not fit alongside a search field. The Data tab projects nothing, so
+  // the second row would otherwise be a near-empty strip under a full-width input.
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+
   .chip-bar {
     gap: 6px;
-    padding: 6px 0 6px 8px;
+    // No left padding here: in a single row the chips follow the input rather than sitting beneath
+    // it, so there is nothing to line up with.
+    padding: 6px 0;
+  }
+
+  // Flush left, so the field's outline starts on the same vertical line as the class heading above
+  // and the result range below. The 8px the standard density uses would break that column.
+  mat-form-field {
+    margin-left: 0;
+  }
+
+  // A quieter box than Material's default: a hairline outline and 13px text, per the design of
+  // record. Set as Material's own tokens because the field renders its internals in a component
+  // this one cannot select into, and `::ng-deep` is forbidden here — custom properties inherit
+  // across that boundary, plain selectors do not.
+  --mdc-outlined-text-field-outline-color: rgba(0, 0, 0, 0.18);
+  --mdc-outlined-text-field-container-shape: 4px;
+  --mat-form-field-container-text-size: 13px;
+  --mat-form-field-container-text-line-height: 18px;
+
+  // The leading magnifier is an affordance, not an action: muted, and sized to the 13px text rather
+  // than Material's 24px default.
+  mat-icon[matPrefix] {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    line-height: 18px;
+    margin-right: 4px;
+    color: rgba(0, 0, 0, 0.5);
+  }
+
+  // The clear button carries Material's 48px touch target, which made it the tallest item in the
+  // field's flex row — so the control stayed 48px tall and the 36px text area sat top-aligned
+  // inside it, leaving the text visibly above centre. Shrinking it lets the text area set the
+  // height. It is declared in this component's own template, so a plain selector reaches it; the
+  // field's internals are what needed the token treatment.
+  button[matSuffix] {
+    --mdc-icon-button-state-layer-size: 28px;
+
+    width: 28px;
+    height: 28px;
+    padding: 0;
+
+    mat-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+      line-height: 16px;
+    }
   }
 }

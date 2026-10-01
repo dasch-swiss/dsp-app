@@ -1,5 +1,9 @@
 .data-class-header {
-  padding: 16px 16px 0;
+  padding: 16px 16px 4px;
+  // Closes the header off against the split below it. Without it the result meta line and the
+  // LABEL column header read as one stack, and the boundary between "this is about the whole
+  // result set" and "this is the list" disappears.
+  border-bottom: 1px solid #dcdcdc;
 }
 
 .identity-row {

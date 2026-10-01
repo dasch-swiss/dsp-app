@@ -208,5 +208,14 @@ export const CompactDensityForTheDataTab: Story = {
       const field = canvasElement.querySelector('mat-form-field') as HTMLElement;
       await expect(field.style.width).toBe('260px');
     });
+    await step('The field and the filter controls share one row', async () => {
+      // Compact is the Data tab's treatment, and there the design of record puts the input,
+      // `Add filter` and `Reset` on a single line. Standard density keeps them stacked, because the
+      // Search tab projects its data-model and resource-class chips into the leading slot.
+      const field = canvasElement.querySelector('mat-form-field') as HTMLElement;
+      const chipBar = canvasElement.querySelector('.chip-bar') as HTMLElement;
+      const delta = Math.abs(field.getBoundingClientRect().y - chipBar.getBoundingClientRect().y);
+      await expect(delta).toBeLessThan(24);
+    });
   },
 };

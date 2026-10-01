@@ -53,13 +53,19 @@ import { FilterChipComponent } from './filter-chip.component';
         <span>{{ 'pages.search.advancedSearch.noDataModel' | translate }}</span>
       </div>
     } @else {
-      <mat-form-field
-        appearance="outline"
-        subscriptSizing="dynamic"
-        [style.margin-left.px]="8"
-        [style.width]="searchFieldWidth">
-        <mat-label>{{ searchLabelKey | translate }}</mat-label>
-        <input matInput type="text" [formControl]="fulltextControl" [placeholder]="searchPlaceholderKey | translate" />
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" [style.width]="searchFieldWidth">
+        @if (showSearchLabel) {
+          <mat-label>{{ searchLabelKey | translate }}</mat-label>
+        }
+        @if (searchIconPosition === 'leading') {
+          <mat-icon matPrefix>search</mat-icon>
+        }
+        <input
+          matInput
+          type="text"
+          [formControl]="fulltextControl"
+          [placeholder]="searchPlaceholderKey | translate"
+          [attr.aria-label]="showSearchLabel ? null : (searchLabelKey | translate)" />
         @if (fulltextControl.value) {
           <button
             mat-icon-button
@@ -70,7 +76,7 @@ import { FilterChipComponent } from './filter-chip.component';
             (click)="onClearFulltext()">
             <mat-icon>close</mat-icon>
           </button>
-        } @else {
+        } @else if (searchIconPosition === 'trailing') {
           <mat-icon matSuffix>search</mat-icon>
         }
         @if (fulltextTooShort()) {
@@ -124,6 +130,21 @@ export class AdvancedSearchBarComponent implements OnInit {
 
   @Input() searchLabelKey = 'pages.search.advancedSearch.fulltextSearch';
   @Input() searchPlaceholderKey = 'pages.search.advancedSearch.fulltextSearchPlaceholder';
+
+  /**
+   * Where the magnifier sits. `trailing` is the Search tab's long-standing look, where the icon only
+   * shows while the field is empty and gives way to the clear button. `leading` is the Data tab's
+   * design of record: the icon is a persistent affordance on the left and the clear button owns the
+   * right, so both can be visible at once.
+   */
+  @Input() searchIconPosition: 'leading' | 'trailing' = 'trailing';
+
+  /**
+   * Whether to float a label above the field. The Data tab's design has none — the placeholder and
+   * the magnifier carry the meaning — so it renders without one and the label key becomes the
+   * input's `aria-label` instead, keeping the field named for assistive technology either way.
+   */
+  @Input() showSearchLabel = true;
 
   @HostBinding('class.compact') get isCompact(): boolean {
     return this.density === 'compact';

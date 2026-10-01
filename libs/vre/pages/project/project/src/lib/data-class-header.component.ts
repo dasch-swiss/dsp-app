@@ -57,7 +57,9 @@ interface CreateResourceDialogProps {
       <app-advanced-search-bar
         [projectUuid]="projectUuid"
         density="compact"
-        searchFieldWidth="100%"
+        searchFieldWidth="260px"
+        searchIconPosition="leading"
+        [showSearchLabel]="false"
         searchLabelKey="pages.dataBrowser.dataClassHeader.searchLabel"
         searchPlaceholderKey="pages.dataBrowser.dataClassHeader.searchPlaceholder" />
 
