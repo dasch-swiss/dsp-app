@@ -54,7 +54,7 @@ class ValueErrorStateMatcher implements ErrorStateMatcher {
     TranslateModule,
   ],
   templateUrl: './string-value.component.html',
-  styleUrl: '../../../../advanced-search.component.scss',
+  styleUrl: '../../../../statement-builder.scss',
 })
 export class StringValueComponent implements OnInit, OnChanges, AfterViewInit {
   private readonly destroyRef = inject(DestroyRef);

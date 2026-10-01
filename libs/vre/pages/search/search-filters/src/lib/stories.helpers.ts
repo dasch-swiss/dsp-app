@@ -127,6 +127,23 @@ const STORY_TRANSLATIONS = {
         },
       },
     },
+    dataBrowser: {
+      dataClassHeader: {
+        searchLabel: 'Search',
+        searchPlaceholder: 'Search in this class',
+      },
+      labelHeader: {
+        label: 'Label',
+        aToZ: 'A–Z',
+        zToA: 'Z–A',
+        sortAscending: 'Sort by label, A to Z',
+        sortDescending: 'Sort by label, Z to A',
+      },
+      resourcesListFetcher: {
+        noResourcesFound: 'No resources found',
+        noResourcesMatchFilters: 'No resources match these filters.',
+      },
+    },
   },
 };
 

@@ -101,7 +101,7 @@ import { DynamicFormsDataService } from '../../../../service/dynamic-forms-data.
       </mat-autocomplete>
     </mat-form-field>
   `,
-  styleUrl: '../../../../advanced-search.component.scss',
+  styleUrl: '../../../../statement-builder.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LinkValueComponent implements OnInit, AfterViewInit, OnChanges, OnDestroy {
