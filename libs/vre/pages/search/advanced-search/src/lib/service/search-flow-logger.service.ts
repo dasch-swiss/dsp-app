@@ -1,5 +1,11 @@
 import { Injectable, isDevMode } from '@angular/core';
-import { SearchUrlParams } from './search-url-sync.service';
+
+/**
+ * The URL params a page carries, as far as the logger is concerned: a flat bag of optional strings.
+ * Deliberately structural rather than the Search tab's `SearchUrlParams` — each page that hosts the chip
+ * bar owns its own param set, and the logger only ever prints what it is handed.
+ */
+export type LoggedUrlParams = Record<string, string | undefined>;
 
 const TAG = '[SearchFlow]';
 const c = {
@@ -17,11 +23,11 @@ const c = {
 export class SearchFlowLogger {
   // ── URL sync ─────────────────────────────────────────────────────────────
 
-  urlRead(params: SearchUrlParams): void {
+  urlRead(params: LoggedUrlParams): void {
     this._log('URL read', c.stage, params);
   }
 
-  urlWrite(state: SearchUrlParams): void {
+  urlWrite(state: LoggedUrlParams): void {
     this._log('URL write', c.data, state);
   }
 

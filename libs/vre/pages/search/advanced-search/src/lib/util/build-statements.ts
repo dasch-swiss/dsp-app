@@ -1,5 +1,5 @@
 import { NodeValue, Predicate, PropertyObjectType, StatementElement } from '../model';
-import { FilterParam } from '../service/search-url-sync.service';
+import { FilterParam } from '../filter-params.codec';
 import { toLabels } from './labels';
 
 /**
