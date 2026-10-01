@@ -8,14 +8,36 @@ import { AdvancedSearchResultsComponent } from './advanced-search-results.compon
 import { provideAdvancedSearch } from './providers';
 import { DerivedSearchStateService } from './service/derived-search-state.service';
 import { AdvancedSearchBarComponent } from './ui/chip-bar/advanced-search-bar.component';
+import { DataModelChipComponent } from './ui/chip-bar/data-model-chip.component';
+import { ResourceClassChipComponent } from './ui/chip-bar/resource-class-chip.component';
+import { OrderByComponent } from './ui/order-by/order-by.component';
 
 @Component({
   selector: 'app-advanced-search-page',
-  imports: [MatDivider, AdvancedSearchBarComponent, AdvancedSearchResultsComponent, SearchTipsComponent],
+  imports: [
+    MatDivider,
+    AdvancedSearchBarComponent,
+    AdvancedSearchResultsComponent,
+    DataModelChipComponent,
+    OrderByComponent,
+    ResourceClassChipComponent,
+    SearchTipsComponent,
+  ],
   template: `
     <div class="search-bar">
       <div class="search-bar__inner">
-        <app-advanced-search-bar [projectUuid]="uuid" />
+        <!-- The data-model, resource-class and order-by chips write query params this page owns, so they
+             are projected in from here rather than built into the shared bar. The Data tab projects
+             nothing: its route fixes the model and class, and it sorts by label from a column header. -->
+        <app-advanced-search-bar [projectUuid]="uuid">
+          <ng-container searchFiltersLeading>
+            <app-data-model-chip />
+            <app-resource-class-chip />
+          </ng-container>
+          <ng-container searchFiltersTrailing>
+            <app-order-by />
+          </ng-container>
+        </app-advanced-search-bar>
       </div>
     </div>
 

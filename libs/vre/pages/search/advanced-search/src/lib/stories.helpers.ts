@@ -6,6 +6,7 @@ import { UserService } from '@dasch-swiss/vre/core/session';
 import { TranslateLoader, TranslateModule, TranslationObject } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { IriLabelPair, OrderByItem } from './model';
+import { SearchFilterState } from './search-filter-state';
 import { DerivedSearchStateService } from './service/derived-search-state.service';
 import { ListNodeLabelResolver } from './service/list-node-label.resolver';
 import { OntologyDataService } from './service/ontology-data.service';
@@ -14,18 +15,37 @@ import { SearchUrlSyncService } from './service/search-url-sync.service';
 import { StatementDraftStore } from './service/statement-draft.store';
 import { toLabels } from './util/labels';
 
+/**
+ * A quiet search state: no filters, no term, nothing active. Satisfies both the `SearchUrlSyncService`
+ * surface (for the Search tab's own derivation) and the `SearchFilterState` port the chip bar reads.
+ * Every stream must emit at least once — the derivation and the bar subscribe on construction.
+ */
+const emptySearchState = {
+  params$: of({}),
+  readParams: () => ({}),
+  writeState: () => {},
+  clearAll: () => {},
+  encodeFilters: () => '',
+  decodeFilters: () => [],
+  filters$: of([]),
+  fulltextTerm$: of(''),
+  ontologyIri$: of(undefined),
+  resourceClassIri$: of(undefined),
+  hasActiveState$: of(false),
+  setFulltextTerm: () => {},
+  setFilters: () => {},
+  reset: () => {},
+};
+
 const searchUrlSyncServiceStub = {
   provide: SearchUrlSyncService,
-  useValue: {
-    // The URL-derived pipeline (DerivedSearchStateService) subscribes to `params$` on construction, so
-    // stories that provide the real services need it to emit at least once.
-    params$: of({}),
-    readParams: () => ({}),
-    writeState: () => {},
-    clearAll: () => {},
-    encodeFilters: () => '',
-    decodeFilters: () => [],
-  } as Partial<SearchUrlSyncService>,
+  useValue: emptySearchState as Partial<SearchUrlSyncService>,
+};
+
+// The bar depends on the port, not on any page's URL service, so stories must provide it explicitly.
+const searchFilterStateStub = {
+  provide: SearchFilterState,
+  useValue: emptySearchState as unknown as SearchFilterState,
 };
 
 const searchFlowLoggerStub = {
@@ -132,11 +152,12 @@ export const STORY_PROVIDERS = [
   ),
   { provide: UserService, useValue: { currentUser: null } as Partial<UserService> },
   searchUrlSyncServiceStub,
+  searchFilterStateStub,
   searchFlowLoggerStub,
 ];
 
 /** Use these AFTER provideAdvancedSearch() to override the real services with story-safe stubs. */
-export const ADVANCED_SEARCH_SERVICE_STUBS = [searchUrlSyncServiceStub, searchFlowLoggerStub];
+export const ADVANCED_SEARCH_SERVICE_STUBS = [searchUrlSyncServiceStub, searchFilterStateStub, searchFlowLoggerStub];
 
 export const SAMPLE_ONTOLOGIES: IriLabelPair[] = [
   { iri: 'http://0.0.0.0:3333/ontology/0001/test/v2', labels: toLabels('Test Ontology'), comments: [] },

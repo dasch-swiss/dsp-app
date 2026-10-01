@@ -28,7 +28,10 @@ describe('StatementDraftStore', () => {
         StatementDraftStore,
         // The store seeds from confirmedState$ on construction; an inert stream leaves the default single
         // blank root in place so these tests drive the tree directly.
-        { provide: ConfirmedSearchStateService, useValue: { confirmedState$: EMPTY } as Partial<ConfirmedSearchStateService> },
+        {
+          provide: ConfirmedSearchStateService,
+          useValue: { confirmedState$: EMPTY } as Partial<ConfirmedSearchStateService>,
+        },
       ],
     });
     service = TestBed.inject(StatementDraftStore);

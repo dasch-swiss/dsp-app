@@ -4,26 +4,43 @@ import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { Constants } from '@dasch-swiss/dsp-js';
 import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, of } from 'rxjs';
+import { FilterParam } from '../../../filter-params.codec';
 import { StatementElement } from '../../../model';
 import { Operator } from '../../../operators.config';
-import { DerivedSearchStateService } from '../../../service/derived-search-state.service';
+import { SearchFilterState } from '../../../search-filter-state';
 import { OntologyDataService } from '../../../service/ontology-data.service';
 import { SearchFlowLogger } from '../../../service/search-flow-logger.service';
-import { SearchUrlParams, SearchUrlSyncService } from '../../../service/search-url-sync.service';
 import { StatementDraftStore } from '../../../service/statement-draft.store';
 import { makePredicate } from '../../../testing/test-data-builders';
-import { OrderByComponent } from '../../order-by/order-by.component';
 import { AddFilterButtonComponent } from '../add-filter-button.component';
 import { AdvancedSearchBarComponent } from '../advanced-search-bar.component';
-import { DataModelChipComponent } from '../data-model-chip.component';
 import { FilterChipComponent } from '../filter-chip.component';
-import { ResourceClassChipComponent } from '../resource-class-chip.component';
 
 /**
- * Regression coverage for `onRemoveStatement` (DEV-6576). Removing a filter that is *also* the active
- * sort must clear `orderBy`/`orderDir` in the SAME `writeState` as the filter change — two synchronous
- * navigations get coalesced by the Router (the second discards the first), which previously dropped the
- * filter removal and left only the orderBy cleared.
+ * A `SearchFilterState` whose mutators are spies. The bar is host-agnostic now, so these specs assert
+ * what it *hands the host*, not what lands in a URL — the encoding and any coupled param cleanup belong
+ * to the host's own implementation and are covered in its spec.
+ */
+function makeStatePort(overrides: Partial<SearchFilterState> = {}) {
+  return {
+    filters$: of([] as FilterParam[]),
+    fulltextTerm$: of(''),
+    ontologyIri$: of(undefined),
+    resourceClassIri$: of(undefined),
+    hasActiveState$: of(false),
+    setFulltextTerm: jest.fn(),
+    setFilters: jest.fn(),
+    reset: jest.fn(),
+    ...overrides,
+  };
+}
+
+/**
+ * Regression coverage for `onRemoveStatement` (DEV-6576). The bar's half of the contract is to report the
+ * removed filter's predicate alongside the surviving filters, in ONE call, so a host that sorts by that
+ * predicate can clear its sort in the same navigation — two synchronous navigations get coalesced by the
+ * Router (the second discards the first), which previously dropped the filter removal. The clearing
+ * itself now lives in `SearchUrlSyncService.setFilters` and is covered by its spec.
  */
 const ONTO = 'http://api.stage.dasch.swiss/ontology/0806/webern-onto/v2';
 const TITLE_IRI = `${ONTO}#hasTitle`;
@@ -45,7 +62,7 @@ function makeConfirmedTitleStatement(value = 'x'): StatementElement {
 /**
  * Minimal stateful stand-in for StatementDraftStore: holds a flat statement tree and re-emits on
  * delete, mirroring the real store closely enough that `confirmedStatements` (a store projection) and
- * `_writeFiltersToUrl` behave as they do in the app. No auto-grow / seeding — the tests seed directly.
+ * `_persistFilters` behave as they do in the app. No auto-grow / seeding — the tests seed directly.
  */
 class FakeDraftStore {
   private readonly _statements: BehaviorSubject<StatementElement[]>;
@@ -90,8 +107,7 @@ const ontologyDataServiceStub = {
 
 describe('AdvancedSearchBarComponent.onRemoveStatement (DEV-6576)', () => {
   let component: AdvancedSearchBarComponent;
-  let writeState: jest.Mock;
-  let readParams: jest.Mock<SearchUrlParams, []>;
+  let statePort: ReturnType<typeof makeStatePort>;
   let store: FakeDraftStore;
 
   /** Wire the component to a fake store seeded with `statements`, then bootstrap it via ngOnInit. */
@@ -100,9 +116,8 @@ describe('AdvancedSearchBarComponent.onRemoveStatement (DEV-6576)', () => {
     TestBed.configureTestingModule({
       imports: [AdvancedSearchBarComponent],
       providers: [
-        { provide: SearchUrlSyncService, useValue: urlSyncStub },
+        { provide: SearchFilterState, useValue: statePort },
         { provide: OntologyDataService, useValue: ontologyDataServiceStub },
-        { provide: DerivedSearchStateService, useValue: { searchState$: of({ statements: [] }) } },
         { provide: SearchFlowLogger, useValue: { filterRemoved: () => {} } },
         { provide: StatementDraftStore, useValue: store },
       ],
@@ -117,58 +132,42 @@ describe('AdvancedSearchBarComponent.onRemoveStatement (DEV-6576)', () => {
     );
   };
 
-  let urlSyncStub: Partial<SearchUrlSyncService>;
-
   beforeEach(() => {
-    writeState = jest.fn();
-    readParams = jest.fn<SearchUrlParams, []>().mockReturnValue({});
-    urlSyncStub = {
-      params$: of({}),
-      writeState,
-      readParams,
-      encodeFilters: (statements): string => encodeURIComponent(JSON.stringify(statements)),
-    };
+    statePort = makeStatePort();
   });
 
-  it('clears orderBy AND orderDir in a single writeState when the removed filter owns the active sort', () => {
+  it('reports the removed predicate with the surviving filters in a single call', () => {
     const stmt = makeConfirmedTitleStatement();
     setup([stmt]);
-    readParams.mockReturnValue({ orderBy: TITLE_IRI, orderDir: 'desc' });
 
     component.onRemoveStatement(stmt);
 
-    // One navigation only — the filter removal and the orderBy cleanup must be folded together, or the
-    // Router coalesces them and the filter change is lost (the original bug).
-    expect(writeState).toHaveBeenCalledTimes(1);
-    const [state, opts] = writeState.mock.calls[0];
-    // The only confirmed statement was removed, so `filters` is dropped (undefined).
-    expect(state).toEqual({ filters: undefined, orderBy: undefined, orderDir: undefined });
-    expect(opts).toEqual({ replaceUrl: false });
+    // One call only — the filter set and the predicate that was removed must reach the host together, or
+    // a host that folds a sort cleanup into the same navigation cannot do so (the original bug).
+    expect(statePort.setFilters).toHaveBeenCalledTimes(1);
+    const [filters, removedPredicateIri] = statePort.setFilters.mock.calls[0];
+    // The only confirmed statement was removed, so nothing survives.
+    expect(filters).toEqual([]);
+    expect(removedPredicateIri).toBe(TITLE_IRI);
   });
 
-  it('leaves orderBy untouched when the removed filter is not the active sort', () => {
+  it('still reports the surviving filters when one of several is removed', () => {
     const removed = makeConfirmedTitleStatement('gone');
     const kept = makeConfirmedTitleStatement('stays');
     setup([removed, kept]);
-    // Active sort points at a different predicate, so removing `removed` must not touch orderBy.
-    readParams.mockReturnValue({ orderBy: `${ONTO}#hasAuthor` });
 
     component.onRemoveStatement(removed);
 
-    expect(writeState).toHaveBeenCalledTimes(1);
-    const [state] = writeState.mock.calls[0];
-    // `orderBy`/`orderDir` are absent from the write, so `merge` preserves the existing param.
-    expect(state).not.toHaveProperty('orderBy');
-    expect(state).not.toHaveProperty('orderDir');
-    // The surviving filter is still encoded.
-    expect(typeof state.filters).toBe('string');
-    expect(decodeURIComponent(state.filters)).toContain('stays');
-    expect(decodeURIComponent(state.filters)).not.toContain('gone');
+    expect(statePort.setFilters).toHaveBeenCalledTimes(1);
+    const [filters, removedPredicateIri] = statePort.setFilters.mock.calls[0];
+    expect(filters).toHaveLength(1);
+    expect(filters[0].value).toBe('stays');
+    expect(removedPredicateIri).toBe(TITLE_IRI);
   });
 });
 
 /**
- * `_writeFiltersToUrl` decides which chips get a `valueLabel` persisted alongside their IRI (DEV-6857).
+ * `_persistFilters` decides which chips get a `valueLabel` persisted alongside their IRI (DEV-6857).
  * A rendered label in the URL fossilises the language it was written in — the chip then can't retranslate
  * on language switch. We only accept that trade-off for link values, whose label ("Rita" for an author
  * IRI) is not derivable from anything the search page already fetches. For list values and resource-class
@@ -184,24 +183,17 @@ describe('AdvancedSearchBarComponent — valueLabel URL persistence (DEV-6857)',
   const LINK_IRI = 'http://rdfh.ch/0801/abc';
 
   let component: AdvancedSearchBarComponent;
-  let writeState: jest.Mock;
+  let statePort: ReturnType<typeof makeStatePort>;
   let store: FakeDraftStore;
 
   const setup = (statements: StatementElement[]): void => {
     store = new FakeDraftStore(statements);
-    writeState = jest.fn();
-    const urlSyncStub: Partial<SearchUrlSyncService> = {
-      params$: of({}),
-      writeState,
-      readParams: jest.fn().mockReturnValue({}),
-      encodeFilters: (filters): string => encodeURIComponent(JSON.stringify(filters)),
-    };
+    statePort = makeStatePort();
     TestBed.configureTestingModule({
       imports: [AdvancedSearchBarComponent],
       providers: [
-        { provide: SearchUrlSyncService, useValue: urlSyncStub },
+        { provide: SearchFilterState, useValue: statePort },
         { provide: OntologyDataService, useValue: ontologyDataServiceStub },
-        { provide: DerivedSearchStateService, useValue: { searchState$: of({ statements: [] }) } },
         { provide: SearchFlowLogger, useValue: { filterConfirmed: () => {} } },
         { provide: StatementDraftStore, useValue: store },
       ],
@@ -214,7 +206,9 @@ describe('AdvancedSearchBarComponent — valueLabel URL persistence (DEV-6857)',
     );
   };
 
-  const decodeSingle = (encoded: string): Record<string, unknown> => JSON.parse(decodeURIComponent(encoded))[0];
+  /** The single filter the bar handed the host on the last `setFilters` call. */
+  const persistedSingle = (): Record<string, unknown> =>
+    statePort.setFilters.mock.calls[0][0][0] as Record<string, unknown>;
 
   const makeListValueStatement = (): StatementElement => {
     const stmt = new StatementElement();
@@ -265,10 +259,9 @@ describe('AdvancedSearchBarComponent — valueLabel URL persistence (DEV-6857)',
 
     component.onFilterConfirmed(stmt.id);
 
-    const [state] = writeState.mock.calls[0];
-    const decoded = decodeSingle(state.filters);
+    const decoded = persistedSingle();
     expect(decoded['value']).toBe(LIST_NODE_IRI);
-    expect(decoded).not.toHaveProperty('valueLabel');
+    expect(decoded['valueLabel']).toBeUndefined();
   });
 
   it('omits valueLabel for resource-class Matches chips (labels come from the ontology at render time)', () => {
@@ -277,10 +270,9 @@ describe('AdvancedSearchBarComponent — valueLabel URL persistence (DEV-6857)',
 
     component.onFilterConfirmed(stmt.id);
 
-    const [state] = writeState.mock.calls[0];
-    const decoded = decodeSingle(state.filters);
+    const decoded = persistedSingle();
     expect(decoded['value']).toBe(CLASS_IRI);
-    expect(decoded).not.toHaveProperty('valueLabel');
+    expect(decoded['valueLabel']).toBeUndefined();
   });
 
   it('persists valueLabel for link-value chips (no alternative label source for a resource IRI)', () => {
@@ -289,8 +281,7 @@ describe('AdvancedSearchBarComponent — valueLabel URL persistence (DEV-6857)',
 
     component.onFilterConfirmed(stmt.id);
 
-    const [state] = writeState.mock.calls[0];
-    const decoded = decodeSingle(state.filters);
+    const decoded = persistedSingle();
     expect(decoded['value']).toBe(LINK_IRI);
     expect(decoded['valueLabel']).toBe('Rita');
   });
@@ -299,39 +290,28 @@ describe('AdvancedSearchBarComponent — valueLabel URL persistence (DEV-6857)',
 describe('AdvancedSearchBarComponent fulltext term rules (DEV-6930)', () => {
   let fixture: ComponentFixture<AdvancedSearchBarComponent>;
   let component: AdvancedSearchBarComponent;
-  let writeState: jest.Mock;
+  let statePort: ReturnType<typeof makeStatePort>;
 
   const errorText = (): string | null =>
     (fixture.nativeElement as HTMLElement).querySelector('mat-error')?.textContent?.trim() ?? null;
 
   beforeEach(() => {
     jest.useFakeTimers();
-    writeState = jest.fn();
+    statePort = makeStatePort();
     TestBed.configureTestingModule({
       imports: [AdvancedSearchBarComponent, TranslateModule.forRoot()],
       providers: [
         provideNoopAnimations(),
-        {
-          provide: SearchUrlSyncService,
-          useValue: { params$: of({}), writeState, readParams: () => ({}), encodeFilters: () => '' },
-        },
+        { provide: SearchFilterState, useValue: statePort },
         { provide: OntologyDataService, useValue: ontologyDataServiceStub },
-        { provide: DerivedSearchStateService, useValue: { searchState$: of({ statements: [] }) } },
         { provide: SearchFlowLogger, useValue: { fulltextChanged: () => {} } },
         { provide: StatementDraftStore, useValue: new FakeDraftStore([]) },
       ],
     });
-    // Only the fulltext field is under test; the chip children need the whole ontology pipeline.
+    // Only the fulltext field is under test; the chip children need the whole ontology pipeline. The
+    // page-specific chips are projected content now, so there is nothing of theirs to remove here.
     TestBed.overrideComponent(AdvancedSearchBarComponent, {
-      remove: {
-        imports: [
-          DataModelChipComponent,
-          ResourceClassChipComponent,
-          FilterChipComponent,
-          AddFilterButtonComponent,
-          OrderByComponent,
-        ],
-      },
+      remove: { imports: [FilterChipComponent, AddFilterButtonComponent] },
       add: { schemas: [NO_ERRORS_SCHEMA] },
     });
     fixture = TestBed.createComponent(AdvancedSearchBarComponent);
@@ -347,7 +327,7 @@ describe('AdvancedSearchBarComponent fulltext term rules (DEV-6930)', () => {
     jest.advanceTimersByTime(400);
     fixture.detectChanges();
 
-    expect(writeState).not.toHaveBeenCalled();
+    expect(statePort.setFulltextTerm).not.toHaveBeenCalled();
   });
 
   it('shows the message without needing the field to be blurred first', () => {
@@ -363,7 +343,7 @@ describe('AdvancedSearchBarComponent fulltext term rules (DEV-6930)', () => {
     jest.advanceTimersByTime(400);
     fixture.detectChanges();
 
-    expect(writeState).toHaveBeenCalledWith({ q: 'ide' }, { replaceUrl: false });
+    expect(statePort.setFulltextTerm).toHaveBeenCalledWith('ide');
     expect(errorText()).toBeNull();
   });
 });

@@ -10,17 +10,15 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { searchTermMinLengthValidator } from '@dasch-swiss/vre/shared/app-common';
 import { TranslateModule } from '@ngx-translate/core';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs';
+import { FilterParam } from '../../filter-params.codec';
 import { PropertyObjectType, StatementElement } from '../../model';
+import { SearchFilterState } from '../../search-filter-state';
 import { OntologyDataService } from '../../service/ontology-data.service';
 import { SearchFlowLogger } from '../../service/search-flow-logger.service';
-import { SearchUrlParams, SearchUrlSyncService } from '../../service/search-url-sync.service';
 import { StatementDraftStore } from '../../service/statement-draft.store';
-import { OrderByComponent } from '../order-by/order-by.component';
 import { AddFilterButtonComponent } from './add-filter-button.component';
 import { OPEN_CHIP_NONE, OpenChipId } from './chip-bar.helpers';
-import { DataModelChipComponent } from './data-model-chip.component';
 import { FilterChipComponent } from './filter-chip.component';
-import { ResourceClassChipComponent } from './resource-class-chip.component';
 
 @Component({
   selector: 'app-advanced-search-bar',
@@ -28,16 +26,13 @@ import { ResourceClassChipComponent } from './resource-class-chip.component';
   imports: [
     AddFilterButtonComponent,
     AsyncPipe,
-    DataModelChipComponent,
     FilterChipComponent,
     MatButtonModule,
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
     MatProgressBarModule,
-    OrderByComponent,
     ReactiveFormsModule,
-    ResourceClassChipComponent,
     TranslateModule,
   ],
   template: `
@@ -62,8 +57,9 @@ import { ResourceClassChipComponent } from './resource-class-chip.component';
         }
       </mat-form-field>
       <div class="chip-bar">
-        <app-data-model-chip />
-        <app-resource-class-chip (classSelected)="onResourceClassSelected()" />
+        <!-- Chips that write params this page owns — the data model and resource class on the Search
+             tab, nothing on the Data tab, where the sidenav route already fixes both. -->
+        <ng-content select="[searchFiltersLeading]" />
 
         @for (stmt of confirmedStatements(); track stmt.id) {
           <app-filter-chip
@@ -77,7 +73,9 @@ import { ResourceClassChipComponent } from './resource-class-chip.component';
         }
 
         <app-add-filter-button (filterConfirmed)="onFilterConfirmed($event)" />
-        <app-order-by />
+        <!-- Sorting is page-specific: the Search tab sorts by a filter's predicate, the Data tab by
+             label from its own column header. -->
+        <ng-content select="[searchFiltersTrailing]" />
 
         @if (hasActiveState$ | async) {
           <button mat-button color="primary" type="button" (click)="onReset()">
@@ -96,7 +94,7 @@ export class AdvancedSearchBarComponent implements OnInit {
 
   private readonly _ontologyDataService = inject(OntologyDataService);
   private readonly _destroyRef = inject(DestroyRef);
-  private readonly _urlSync = inject(SearchUrlSyncService);
+  private readonly _state = inject(SearchFilterState);
   private readonly _logger = inject(SearchFlowLogger);
   readonly draftStore = inject(StatementDraftStore);
 
@@ -116,12 +114,9 @@ export class AdvancedSearchBarComponent implements OnInit {
 
   readonly hasNoDataModel$ = this._ontologyDataService.ontologies$.pipe(map(ontologies => ontologies.length === 0));
 
-  // Show the reset button only when there is something to clear. Any of the persisted search params
-  // (fulltext, data model, resource class, filters, sort) counts as active state — reset wipes them all.
-  readonly hasActiveState$ = this._urlSync.params$.pipe(
-    map(p => !!(p.q || p.ontology || p.class || p.filters || p.orderBy)),
-    distinctUntilChanged()
-  );
+  // Show the reset button only when there is something to clear. What counts as "something" is the
+  // host page's call — the Search tab counts its five params, the Data tab also counts its sort.
+  readonly hasActiveState$ = this._state.hasActiveState$;
 
   ngOnInit(): void {
     this._ontologyDataService.init(`http://rdfh.ch/projects/${this.projectUuid}`);
@@ -135,22 +130,16 @@ export class AdvancedSearchBarComponent implements OnInit {
     // Top-level, valid statements only: subcriteria are edited inside the parent popover, not as chips.
     this.draftStore.statements$.pipe(takeUntilDestroyed(this._destroyRef)).subscribe(() => this._refreshChips());
 
-    // Seed the fulltext input from the `q` param on any URL change, without echoing back into the URL
+    // Seed the fulltext input from the host's stored term on any change, without echoing back into it
     // (`emitEvent: false`), so back/forward restores the field but does not re-push history.
-    this._urlSync.params$
-      .pipe(
-        map(params => params.q ?? ''),
-        distinctUntilChanged(),
-        takeUntilDestroyed(this._destroyRef)
-      )
-      .subscribe(q => {
-        if ((this.fulltextControl.value ?? '') !== q) {
-          this.fulltextControl.setValue(q, { emitEvent: false });
-        }
-        // A deep link can carry a term the input would have refused. The query still runs (the URL is
-        // the source of truth, and its failure is DEV-6866's panel), but the field says what is wrong.
-        this._refreshFulltextError();
-      });
+    this._state.fulltextTerm$.pipe(distinctUntilChanged(), takeUntilDestroyed(this._destroyRef)).subscribe(q => {
+      if ((this.fulltextControl.value ?? '') !== q) {
+        this.fulltextControl.setValue(q, { emitEvent: false });
+      }
+      // A deep link can carry a term the input would have refused. The query still runs (the URL is
+      // the source of truth, and its failure is DEV-6866's panel), but the field says what is wrong.
+      this._refreshFulltextError();
+    });
 
     // Fulltext: after the user pauses typing (debounce), push one history entry so back/forward
     // steps through searched terms. The debounce coalesces a burst of keystrokes into a single entry.
@@ -164,8 +153,7 @@ export class AdvancedSearchBarComponent implements OnInit {
         if (this.fulltextControl.invalid) {
           return;
         }
-        this._logger.fulltextChanged(q ?? '');
-        this._urlSync.writeState({ q: q ?? undefined }, { replaceUrl: false });
+        this._state.setFulltextTerm(q ?? undefined);
       });
   }
 
@@ -202,7 +190,7 @@ export class AdvancedSearchBarComponent implements OnInit {
     this._logger.filterConfirmed(chipId);
     this.openChipId.set(OPEN_CHIP_NONE);
     this._refreshChips();
-    this._writeFiltersToUrl();
+    this._persistFilters();
   }
 
   onFilterConfirmed(chipId: string): void {
@@ -212,9 +200,9 @@ export class AdvancedSearchBarComponent implements OnInit {
     // The statement is already valid and in the draft store, so it belongs in the chip row now. Refresh
     // the projection here (a signal write inside this click handler, so OnPush re-renders immediately —
     // the store's own emission during typing fired outside a render pass and left the chip hidden until
-    // the next interaction). Subcriteria travel with the parent and are encoded by _writeFiltersToUrl.
+    // the next interaction). Subcriteria travel with the parent and are encoded by _persistFilters.
     this._refreshChips();
-    this._writeFiltersToUrl();
+    this._persistFilters();
   }
 
   /**
@@ -231,34 +219,29 @@ export class AdvancedSearchBarComponent implements OnInit {
   }
 
   onReset(): void {
-    // Full reset: clearAll nulls every search param in a single navigation. The store re-seeds from the
-    // (now empty) URL and `_refreshChips` drops every chip; the fulltext input re-seeds from the empty `q`.
+    // Full reset: the host clears everything it considers search state in a single navigation. The store
+    // re-seeds from the (now empty) state and `_refreshChips` drops every chip; the fulltext input
+    // re-seeds from the empty term.
     this.openChipId.set(OPEN_CHIP_NONE);
-    this._urlSync.clearAll();
-  }
-
-  onResourceClassSelected(): void {
-    // No-op beyond the class write (owned by resource-class-chip). The query re-derives from the URL.
+    this._state.reset();
   }
 
   onRemoveStatement(stmt: StatementElement): void {
     this._logger.filterRemoved(stmt.id);
     // deleteStatement updates the store; `confirmedStatements` (a store projection) drops the chip.
     this.draftStore.deleteStatement(stmt);
-    // Stale-orderBy cleanup: if the removed filter was the active sort, drop `orderBy` (and its direction)
-    // too. This must go out in the SAME writeState as the filter change — two synchronous navigations get
-    // coalesced by the Router, and the second would discard the first, so the filter removal would be lost.
-    const clearsOrderBy =
-      !!stmt.selectedPredicate?.iri && stmt.selectedPredicate.iri === this._urlSync.readParams().orderBy;
-    this._writeFiltersToUrl(clearsOrderBy ? { orderBy: undefined, orderDir: undefined } : undefined);
+    // Hand the removed filter's predicate to the host: a page that sorts by a filter's predicate needs to
+    // drop a now-orphaned sort, and must do it in the same navigation as the filter change. Whether that
+    // applies is the host's business, not the bar's.
+    this._persistFilters(stmt.selectedPredicate?.iri);
   }
 
-  private _writeFiltersToUrl(extra?: Partial<SearchUrlParams>): void {
+  private _persistFilters(removedPredicateIri?: string): void {
     // Flatten each top-level chip's whole subtree, keeping every parent before its descendants so the
     // `parentIndex` back-references stay valid. Subcriteria are not chips but must be encoded here.
     const stmts = this.confirmedStatements().flatMap(stmt => [stmt, ...this.draftStore.descendantsOf(stmt)]);
     const idxById = new Map(stmts.map((s, i) => [s.id, i]));
-    const filterArgs = stmts
+    const filterArgs: FilterParam[] = stmts
       // Drop any statement whose parent is not in the flattened set (a phantom orphan) rather than
       // encoding `parentIndex: undefined`, which would decode as a spurious top-level filter. The flatten
       // above keeps every parent before its descendants, so a present parent always resolves here.
@@ -274,11 +257,8 @@ export class AdvancedSearchBarComponent implements OnInit {
         // string here would fossilize the label in the writer's language (DEV-6857). Plain string values
         // carry no label (the value IS the label).
         valueLabel: stmt.objectType === PropertyObjectType.LinkValueObject ? stmt.selectedObjectLabel : undefined,
-        parentIndex: stmt.parentId !== undefined ? idxById.get(stmt.parentId) : undefined,
+        parentIndex: stmt.parentId !== undefined ? (idxById.get(stmt.parentId) ?? null) : null,
       }));
-    const encoded = stmts.length ? this._urlSync.encodeFilters(filterArgs) : null;
-    // `merge` handling preserves any param not named here (e.g. an unaffected orderBy, written by
-    // OrderByComponent). `extra` folds any coupled change into this single navigation.
-    this._urlSync.writeState({ filters: encoded ?? undefined, ...extra }, { replaceUrl: false });
+    this._state.setFilters(filterArgs, removedPredicateIri);
   }
 }

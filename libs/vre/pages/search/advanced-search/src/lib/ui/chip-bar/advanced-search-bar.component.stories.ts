@@ -5,6 +5,7 @@ import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular'
 import { of } from 'rxjs';
 import { expect, fn, userEvent, within } from 'storybook/test';
 import { provideAdvancedSearch } from '../../providers';
+import { SearchFilterState } from '../../search-filter-state';
 import { OntologyDataService } from '../../service/ontology-data.service';
 import { SearchUrlSyncService } from '../../service/search-url-sync.service';
 import {
@@ -92,18 +93,34 @@ export const HidesResetWhenNoActiveState: Story = {
   },
 };
 
-// Emits an active search state (a fulltext term) so the Reset button shows, and spies on clearAll.
-const clearAll = fn().mockName('clearAll');
+// Emits an active search state (a fulltext term) so the Reset button shows, and spies on reset.
+const reset = fn().mockName('reset');
+const activeSearchState = {
+  params$: of({ q: 'foo' }),
+  readParams: () => ({ q: 'foo' }),
+  writeState: () => {},
+  clearAll: reset,
+  encodeFilters: () => '',
+  decodeFilters: () => [],
+  filters$: of([]),
+  fulltextTerm$: of('foo'),
+  ontologyIri$: of(undefined),
+  resourceClassIri$: of(undefined),
+  hasActiveState$: of(true),
+  setFulltextTerm: () => {},
+  setFilters: () => {},
+  reset,
+};
+
 const activeUrlSyncStub = {
   provide: SearchUrlSyncService,
-  useValue: {
-    params$: of({ q: 'foo' }),
-    readParams: () => ({ q: 'foo' }),
-    writeState: () => {},
-    clearAll,
-    encodeFilters: () => '',
-    decodeFilters: () => [],
-  } as Partial<SearchUrlSyncService>,
+  useValue: activeSearchState as Partial<SearchUrlSyncService>,
+};
+
+// The bar reads the port, so the active state has to be visible there too.
+const activeStateStub = {
+  provide: SearchFilterState,
+  useValue: activeSearchState as unknown as SearchFilterState,
 };
 
 export const ShowsResetWhenActiveAndClearsOnClick: Story = {
@@ -118,20 +135,21 @@ export const ShowsResetWhenActiveAndClearsOnClick: Story = {
         ...provideAdvancedSearch(),
         ...ADVANCED_SEARCH_SERVICE_STUBS,
         { provide: OntologyDataService, useValue: makeOntologyDataServiceStub() },
-        // Override the default (empty) url-sync stub last so active state wins.
+        // Override the default (empty) stubs last so active state wins.
         activeUrlSyncStub,
+        activeStateStub,
       ],
     }),
   ],
   play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
-    clearAll.mockClear();
+    reset.mockClear();
     await step('Reset button is visible', async () => {
       await expect(canvas.getByRole('button', { name: /Reset/i })).toBeTruthy();
     });
-    await step('Clicking Reset calls clearAll', async () => {
+    await step('Clicking Reset clears the search state', async () => {
       await userEvent.click(canvas.getByRole('button', { name: /Reset/i }));
-      await expect(clearAll).toHaveBeenCalled();
+      await expect(reset).toHaveBeenCalled();
     });
   },
 };

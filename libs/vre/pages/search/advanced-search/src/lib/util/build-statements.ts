@@ -1,5 +1,5 @@
-import { NodeValue, Predicate, PropertyObjectType, StatementElement } from '../model';
 import { FilterParam } from '../filter-params.codec';
+import { NodeValue, Predicate, PropertyObjectType, StatementElement } from '../model';
 import { toLabels } from './labels';
 
 /**

@@ -52,6 +52,68 @@ describe('SearchUrlSyncService — URL param contract (DEV-6576 Phase 0)', () =>
     service = TestBed.inject(SearchUrlSyncService);
   });
 
+  /**
+   * `setFilters` is the Search tab's half of the DEV-6576 contract. The chip bar reports the surviving
+   * filters plus the predicate of the one just removed; this page sorts by a filter's predicate, so when
+   * those coincide the sort is now orphaned and must be cleared in the SAME navigation — two synchronous
+   * `navigate` calls get coalesced by the Router (the second discards the first), which previously
+   * dropped the filter removal and left only the sort cleared.
+   */
+  describe('setFilters — orphaned sort cleanup (DEV-6576)', () => {
+    const TITLE_IRI = 'http://x/hasTitle';
+    const AUTHOR_IRI = 'http://x/hasAuthor';
+
+    const filter = (predicateIri: string, value: string): FilterParam => ({
+      predicateIri,
+      operator: Operator.Equals,
+      value,
+      parentIndex: null,
+    });
+
+    const writtenParams = (): Record<string, string | null> => navigateSpy.mock.calls[0][1].queryParams;
+
+    it('clears orderBy and orderDir in one navigation when the removed filter owned the active sort', () => {
+      queryParams = { orderBy: TITLE_IRI, orderDir: 'desc' };
+
+      service.setFilters([], TITLE_IRI);
+
+      expect(navigateSpy).toHaveBeenCalledTimes(1);
+      const params = writtenParams();
+      // Nothing survives, so `filters` is nulled — which under `merge` removes it.
+      expect(params['filters']).toBeNull();
+      expect(params['orderBy']).toBeNull();
+      expect(params['orderDir']).toBeNull();
+    });
+
+    it('leaves the sort untouched when the removed filter was not the active sort', () => {
+      queryParams = { orderBy: AUTHOR_IRI };
+
+      service.setFilters([filter(TITLE_IRI, 'stays')], TITLE_IRI);
+
+      expect(navigateSpy).toHaveBeenCalledTimes(1);
+      const params = writtenParams();
+      // Absent from the write, so `merge` preserves the existing param.
+      expect(params).not.toHaveProperty('orderBy');
+      expect(params).not.toHaveProperty('orderDir');
+      expect(decodeURIComponent(params['filters'] as string)).toContain('stays');
+    });
+
+    it('leaves the sort untouched when no filter was removed', () => {
+      queryParams = { orderBy: TITLE_IRI };
+
+      service.setFilters([filter(TITLE_IRI, 'stays')]);
+
+      expect(writtenParams()).not.toHaveProperty('orderBy');
+    });
+
+    it('omits parentIndex for a top-level filter, so shared links stay byte-identical', () => {
+      service.setFilters([filter(TITLE_IRI, 'x')]);
+
+      const encoded = decodeURIComponent(writtenParams()['filters'] as string);
+      expect(encoded).not.toContain('parentIndex');
+    });
+  });
+
   describe('encodeFilters / decodeFilters round-trip', () => {
     it('round-trips a single flat filter to an equivalent FilterParam', () => {
       const input = [{ predicateIri: 'http://x/hasTitle', operator: Operator.Equals, value: 'Moby Dick' }];
