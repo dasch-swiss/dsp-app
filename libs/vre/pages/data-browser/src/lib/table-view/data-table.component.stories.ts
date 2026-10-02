@@ -530,3 +530,118 @@ export const MarksOnlyTheRowTheExpandedViewerIsShowing: Story = {
     await expect(open[0].closest('tr')?.textContent).toContain('BRAUT001b');
   },
 };
+
+// ── Keyboard reachability ───────────────────────────────────────────────────
+
+const onReorder = fn().mockName('columnsReordered');
+const onResize = fn().mockName('columnResized');
+
+const keyboardStory = (): Story => ({
+  render: storyArgs => ({
+    props: { ...storyArgs, onReorder, onResize },
+    template: `<app-data-table
+      [resources]="resources"
+      [columns]="columns"
+      [visibleColumns]="visibleColumns"
+      (columnsReordered)="onReorder($event)"
+      (columnResized)="onResize($event)" />`,
+  }),
+  beforeEach: () => {
+    onReorder.mockClear();
+    onResize.mockClear();
+  },
+});
+
+/**
+ * CDK drag-drop offers no keyboard reorder at all, so without the arrow keys on the grip the whole
+ * feature is pointer-only.
+ */
+export const MovesAColumnWithTheKeyboardFromItsGrip: Story = {
+  ...keyboardStory(),
+  play: async ({ canvasElement }) => {
+    const grip = canvasElement.querySelectorAll('[data-cy="column-grip"]')[0] as HTMLElement;
+    grip.focus();
+    await userEvent.keyboard('{ArrowRight}');
+
+    await expect(onReorder).toHaveBeenCalledWith([LABEL_COLUMN_KEY, `${ONTO}hasPlace`, `${ONTO}hasTitle`]);
+  },
+};
+
+/** The sticky label column stays at index 0, for the keyboard exactly as for a drop (REQ-2.10). */
+export const RefusesToMoveAColumnInFrontOfTheStickyOne: Story = {
+  ...keyboardStory(),
+  play: async ({ canvasElement }) => {
+    const grip = canvasElement.querySelectorAll('[data-cy="column-grip"]')[0] as HTMLElement;
+    grip.focus();
+    await userEvent.keyboard('{ArrowLeft}');
+
+    await expect(onReorder).not.toHaveBeenCalled();
+  },
+};
+
+export const ResizesAColumnWithTheKeyboardFromItsHandle: Story = {
+  ...keyboardStory(),
+  play: async ({ canvasElement }) => {
+    const handle = canvasElement.querySelectorAll('[data-cy="column-resize"]')[0] as HTMLElement;
+    // Reachable without a pointer at all: the handle is in the tab order and announces the width
+    // it is changing.
+    await expect(handle).toHaveAttribute('tabindex', '0');
+    await expect(handle).toHaveAttribute('aria-valuenow', '200');
+
+    // Measured, not assumed. The table is `min-width: 100%`, so a class with few columns is
+    // stretched past the widths the model asked for — and the keyboard step works from what is on
+    // screen, exactly as the pointer drag does.
+    const before = Math.round((handle.closest('th') as HTMLElement).getBoundingClientRect().width);
+
+    handle.focus();
+    await userEvent.keyboard('{ArrowRight}');
+
+    await expect(onResize).toHaveBeenCalledWith({ key: `${ONTO}hasTitle`, width: before + 16 });
+  },
+};
+
+/**
+ * REQ-1.12: a class wider than the viewport scrolls sideways rather than reflowing. The columns
+ * keep the widths they were given — a table that reflowed would silently stop being a grid the
+ * user can scan a property down.
+ */
+export const ScrollsHorizontallyAtNarrowWidthsInsteadOfReflowing: Story = {
+  render: storyArgs => ({
+    props: storyArgs,
+    template: `<div style="width: 320px">
+      <app-data-table [resources]="resources" [columns]="columns" [visibleColumns]="visibleColumns" />
+    </div>`,
+  }),
+  play: async ({ canvasElement }) => {
+    const scroller = canvasElement.querySelector('.table-scroll') as HTMLElement;
+
+    await expect(scroller.scrollWidth).toBeGreaterThan(scroller.clientWidth);
+    // The header still reports the width it was told to, so nothing was squeezed to fit.
+    await expect((canvasElement.querySelectorAll('th')[1] as HTMLElement).style.width).toBe('200px');
+  },
+};
+
+/**
+ * Every hover-revealed control is also revealed by focus.
+ *
+ * Hover-only reveal makes a control unusable without a pointer, and the cell's edit affordance is
+ * the *only* way into editing — so this is not a polish item but the difference between the
+ * feature existing and not existing for a keyboard user.
+ */
+export const RevealsEveryHoverOnlyControlOnKeyboardFocus: Story = {
+  ...editingStory({}),
+  play: async ({ canvasElement }) => {
+    const hidden = ['[data-cy="cell-edit"]', '[data-cy="row-check"] input', '[data-cy="row-open"]'];
+
+    for (const selector of hidden) {
+      const control = canvasElement.querySelector(selector) as HTMLElement;
+      control.focus();
+
+      await expect(document.activeElement === control || canvasElement.contains(document.activeElement)).toBe(true);
+      // The reveal is on an ancestor, so the opacity that matters is the cluster's, not the
+      // button's own.
+      const revealed = control.closest('.row-controls') ?? control;
+      await expect(getComputedStyle(revealed).opacity).toBe('1');
+    }
+  },
+};

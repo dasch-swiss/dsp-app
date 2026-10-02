@@ -116,7 +116,9 @@ interface RenderColumn extends TableColumn {
                     class="header-grip"
                     cdkDragHandle
                     data-cy="column-grip"
-                    [attr.aria-label]="'pages.dataBrowser.table.moveColumn' | translate: { column: column.label }">
+                    [attr.aria-label]="'pages.dataBrowser.table.moveColumn' | translate: { column: column.label }"
+                    [attr.aria-keyshortcuts]="'ArrowLeft ArrowRight'"
+                    (keydown)="onGripKeydown(column.key, $event)">
                     <mat-icon>drag_indicator</mat-icon>
                   </button>
                 }
@@ -156,6 +158,7 @@ interface RenderColumn extends TableColumn {
                   data-cy="column-resize"
                   [minWidth]="column.minWidth"
                   [defaultWidth]="column.defaultWidth"
+                  [width]="column.width"
                   (widthChanged)="onColumnResized(column.key, $event)"
                   [attr.aria-label]="
                     'pages.dataBrowser.table.resizeColumn' | translate: { column: column.label }
@@ -464,6 +467,36 @@ export class DataTableComponent {
 
   protected onRowCheckChanged(resource: ReadResource, event: MatCheckboxChange): void {
     this.resourceCheckedChanged.emit({ resource, checked: event.checked });
+  }
+
+  /**
+   * Move a column with the keyboard.
+   *
+   * CDK drag-drop has no keyboard equivalent at all — a pointer is the only way to reorder a
+   * `cdkDropList` — so without this the whole reorder feature is unavailable to anyone not using a
+   * mouse. The grip is already a button with an accessible name; the arrow keys give it the action
+   * its name promises.
+   */
+  protected onGripKeydown(key: string, event: KeyboardEvent): void {
+    const delta = event.key === 'ArrowLeft' ? -1 : event.key === 'ArrowRight' ? 1 : 0;
+    if (delta === 0) {
+      return;
+    }
+
+    const order = [...this.visibleColumns()];
+    const from = order.indexOf(key);
+    const to = from + delta;
+    // `to > 0`, not `>= 0`: index 0 is the sticky label column, which stays pinned to the left edge
+    // (REQ-2.10) — the same rule `canDropAt` enforces for the pointer.
+    if (from < 0 || to <= 0 || to >= order.length) {
+      return;
+    }
+
+    // Otherwise the arrow also scrolls the table horizontally, so the column the user just moved
+    // slides out from under them.
+    event.preventDefault();
+    moveItemInArray(order, from, to);
+    this.columnsReordered.emit(order);
   }
 
   protected onColumnDropped(event: CdkDragDrop<unknown>): void {

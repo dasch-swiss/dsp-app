@@ -18,14 +18,25 @@ import { DestroyRef, Directive, ElementRef, inject, input, NgZone, output } from
  * time for class names that only exist once an ontology is loaded. Under `table-layout: fixed` the
  * header cell's width is authoritative for the whole column anyway, so one inline write resizes it.
  */
+/** How much one arrow-key press moves the edge. Coarse enough to be useful, fine enough to aim. */
+const KEYBOARD_STEP_PX = 16;
+
 @Directive({
   selector: '[appColumnResize]',
   host: {
     class: 'column-resize-handle',
     role: 'separator',
     'aria-orientation': 'vertical',
+    // A focusable separator is the ARIA window-splitter pattern, and it is what makes the handle
+    // reachable at all: the pointer gesture below has no keyboard equivalent, and resize would
+    // otherwise be a mouse-only feature.
+    tabindex: '0',
+    'aria-keyshortcuts': 'ArrowLeft ArrowRight Home',
+    '[attr.aria-valuenow]': 'width()',
+    '[attr.aria-valuemin]': 'minWidth()',
     '(pointerdown)': 'onPointerDown($event)',
     '(dblclick)': 'onDoubleClick()',
+    '(keydown)': 'onKeydown($event)',
   },
 })
 export class ColumnResizeDirective {
@@ -33,6 +44,13 @@ export class ColumnResizeDirective {
   readonly minWidth = input.required<number>();
   /** Where a double-click puts the column back to. */
   readonly defaultWidth = input.required<number>();
+  /**
+   * The width the host currently renders this column at.
+   *
+   * Only announced, never applied — the pointer gesture reads the live width off the DOM, because
+   * during a drag the inline style is ahead of anything the host has been told about.
+   */
+  readonly width = input.required<number>();
 
   /**
    * Emitted once per gesture, on release — not per pointer move.
@@ -100,6 +118,38 @@ export class ColumnResizeDirective {
   onDoubleClick(): void {
     this._applyWidth(this.defaultWidth());
     this.widthChanged.emit(this.defaultWidth());
+  }
+
+  /**
+   * The keyboard equivalent of the drag: arrows nudge the edge, Home is the double-click.
+   *
+   * Each press commits, unlike the drag which commits once on release. A press is already a
+   * discrete gesture, and holding the key down repeats it slowly enough that a persisted layout
+   * write per repeat costs nothing.
+   */
+  onKeydown(event: KeyboardEvent): void {
+    if (event.key === 'Home') {
+      event.preventDefault();
+      this.onDoubleClick();
+      return;
+    }
+
+    const delta = event.key === 'ArrowLeft' ? -KEYBOARD_STEP_PX : event.key === 'ArrowRight' ? KEYBOARD_STEP_PX : 0;
+    if (delta === 0) {
+      return;
+    }
+
+    // Otherwise the arrow also scrolls the table sideways while the column is being sized.
+    event.preventDefault();
+
+    // Measured rather than taken from `width()`: a column the user has never resized renders at
+    // its default, and the input is the only thing that knows that — but a column mid-session
+    // carries an inline width the host may not have round-tripped yet.
+    const current = this._host.nativeElement.closest('th')?.getBoundingClientRect().width ?? this.width();
+    const next = Math.max(this.minWidth(), Math.round(current + delta));
+
+    this._applyWidth(next);
+    this.widthChanged.emit(next);
   }
 
   private _resizeTo(clientX: number): void {

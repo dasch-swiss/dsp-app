@@ -157,6 +157,14 @@ table {
   &:hover {
     background: rgba(51, 103, 144, 0.25);
   }
+
+  // Keyboard-reachable, so it needs a focus ring and must stay visible while it has focus — the
+  // hover rule on the header cell cannot cover a pointerless user.
+  &:focus-visible {
+    opacity: 1;
+    outline: 2px solid var(--primary, #336790);
+    outline-offset: -1px;
+  }
 }
 
 // The preview is cloned out of the table and so loses `display: table-cell`, which is what was
