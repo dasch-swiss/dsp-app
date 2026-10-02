@@ -1,5 +1,9 @@
 import { FormControl } from '@angular/forms';
-import { fulltextSearchTermValidator, searchTermMinLengthValidator } from './search-term.validator';
+import {
+  fulltextSearchTermValidator,
+  searchTermCompleteSyntaxValidator,
+  searchTermMinLengthValidator,
+} from './search-term.validator';
 
 describe('searchTermMinLengthValidator', () => {
   const validator = searchTermMinLengthValidator();
@@ -63,5 +67,43 @@ describe('fulltextSearchTermValidator', () => {
 
   it('still refuses a short wildcard term standing outside a phrase', () => {
     expect(validate('"a b*" de*')).toEqual({ searchWildcardTooShort: { requiredLength: 3 } });
+  });
+});
+
+describe('searchTermCompleteSyntaxValidator (DEV-7370)', () => {
+  const validator = searchTermCompleteSyntaxValidator();
+  const validate = (value: string | null) => validator(new FormControl(value));
+
+  it.each([null, '', '   '])('leaves an empty value alone (%p)', value => {
+    expect(validate(value)).toBeNull();
+  });
+
+  // The first two are the half-typed terms from the stage traces that dsp-api answered with a parse error.
+  it.each(['"rod of asclepious', '\\"rod of asclepious"', 'buch "a b" "c', '\\\\"open'])(
+    'holds back %p while its phrase is still open',
+    term => {
+      expect(validate(term)).toEqual({ searchTermUnclosedPhrase: true });
+    }
+  );
+
+  it.each(['foo \\', '\\', 'a\\\\\\'])('holds back %p, which ends on a lone backslash', term => {
+    expect(validate(term)).toEqual({ searchTermTrailingEscape: true });
+  });
+
+  // A backslash escapes the next character, so escaped quotes and escaped backslashes keep working.
+  it.each([
+    'rod of asclepious',
+    '"rod of asclepious"',
+    '\\"rod of asclepious\\"',
+    'say \\"hi',
+    '"a \\" b"',
+    '\\\\"a"',
+    'C:\\\\',
+  ])('accepts %p', term => {
+    expect(validate(term)).toBeNull();
+  });
+
+  it('counts a backslash before trailing whitespace as trailing, since the term is sent trimmed', () => {
+    expect(validate('foo \\ ')).toEqual({ searchTermTrailingEscape: true });
   });
 });

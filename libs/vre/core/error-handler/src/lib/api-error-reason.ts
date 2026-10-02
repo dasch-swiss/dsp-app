@@ -66,6 +66,16 @@ export function reasonFromApiError(error: unknown): string | undefined {
  */
 const REASON_BEARING_STATUSES = new Set([400, 409]);
 
+/**
+ * Whether dsp-api rejected the request itself (a status in {@link REASON_BEARING_STATUSES}), as opposed
+ * to failing to serve it. A caller whose own UI already shows the rejection, such as the advanced
+ * search's failure panel, uses this to skip the snackbar on top of it (DEV-7370).
+ */
+export function isRequestRejection(error: unknown): boolean {
+  const status = error instanceof ApiResponseError || error instanceof HttpErrorResponse ? error.status : undefined;
+  return status !== undefined && REASON_BEARING_STATUSES.has(status);
+}
+
 /** dsp-api prefixes its own exceptions with their class; the user only wants what follows it. */
 const DSP_EXCEPTION_PREFIX = /^dsp\.errors\.\w+:\s*([\s\S]*)$/;
 
@@ -87,9 +97,7 @@ const FOREIGN_EXCEPTION = /^[a-z][\w$]*(\.[\w$]+)*\.[A-Z][\w$]*(Exception|Error)
  * "something went wrong, please try again", advice that cannot work for a malformed query (DEV-6866).
  */
 export function userFacingReason(error: unknown): string | undefined {
-  const status = error instanceof ApiResponseError || error instanceof HttpErrorResponse ? error.status : undefined;
-
-  if (status === undefined || !REASON_BEARING_STATUSES.has(status)) {
+  if (!isRequestRejection(error)) {
     return undefined;
   }
 
