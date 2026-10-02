@@ -6,6 +6,7 @@ import { PropertiesDisplayService } from '../../properties/properties-display/pr
 import { ResourceDefaultTabsComponent } from '../../properties/resource-default-tabs.component';
 import { getFileValue } from '../../representation/get-file-value';
 import { isPlaceholderFileValue } from '../../representation/is-placeholder-file-value';
+import { isRestrictedFileValue } from '../../representation/is-restricted-file-value';
 import { RepresentationPlaceholderComponent } from '../../representation/representation-placeholder.component';
 import { RepresentationRestrictedComponent } from '../../representation/representation-restricted.component';
 import { ResourceLegalComponent } from '../../representation/resource-legal.component';
@@ -24,7 +25,7 @@ import { PdfDocumentComponent } from './pdf-document.component';
       @if (isPlaceholder) {
         <app-representation-placeholder />
       } @else {
-        <app-resource-representation-container>
+        <app-resource-representation-container [restrictedView]="isRestrictedAsset(file)">
           <app-pdf-document [src]="file" [parentResource]="resource.res" />
         </app-resource-representation-container>
       }
@@ -55,4 +56,7 @@ export class ResourcePdfComponent {
   get isPlaceholder() {
     return isPlaceholderFileValue(this.fileValue);
   }
+
+  /** Asset-level restriction: read off the file value, never the resource (DEV-7392). */
+  protected readonly isRestrictedAsset = isRestrictedFileValue;
 }
