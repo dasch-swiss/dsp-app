@@ -80,7 +80,7 @@
     "@ngx-translate/core": "^17.0.0",
     "@ngx-translate/http-loader": "^17.0.0",
     "@nx/angular": "23.0.1",
-    "@sentry/angular": "^10.47.0",
+    "@sentry/angular": "^11.0.0",
     "angular-imask": "^7.5.0",
     "angular-split": "^20.0.0",
     "ckeditor5-custom-build": "github:dasch-swiss/ckeditor_custom_build#v2.1.5",
