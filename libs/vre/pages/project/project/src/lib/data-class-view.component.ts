@@ -1,10 +1,12 @@
 import { AsyncPipe } from '@angular/common';
-import { Component } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, computed, inject } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { MatIconButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
 import { ActivatedRoute } from '@angular/router';
 import { ResourceClassDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
-import { MultipleViewerComponent } from '@dasch-swiss/vre/pages/data-browser';
+import { MultipleViewerComponent, TableViewStateService } from '@dasch-swiss/vre/pages/data-browser';
 import { provideSearchFilters, StatementDraftStore } from '@dasch-swiss/vre/pages/search/search-filters';
 import { OntologyService, ResourceResultService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { AppProgressIndicatorComponent } from '@dasch-swiss/vre/ui/progress-indicator';
@@ -15,7 +17,7 @@ import { combineLatest, distinctUntilChanged, EMPTY, first, map, skip } from 'rx
 import { DataClassHeaderComponent } from './data-class-header.component';
 import { DataClassPanelComponent } from './data-class-panel.component';
 import { provideDataClassSearch } from './data-class-query.service';
-import { DataClassUrlStateService } from './data-class-url-state.service';
+import { DataClassUrlStateService, DataClassView } from './data-class-url-state.service';
 import { ProjectPageService } from './project-page.service';
 
 @Component({
@@ -29,11 +31,27 @@ import { ProjectPageService } from './project-page.service';
       } @else {
         <app-data-class-header [classSelected]="classSelected" />
         <as-split>
-          <as-split-area [size]="34" cdkScrollable>
+          <as-split-area [size]="panelSize()" cdkScrollable>
             <app-data-class-panel [classSelected]="classSelected" />
           </as-split-area>
-          <as-split-area [size]="66">
-            <app-multiple-viewer (afterResourceDeleted)="onResourceDeleted()" />
+          <!-- Hidden rather than sized to zero: a zero-width area still draws its gutter and still
+               renders the viewer, which would keep fetching the selected resource for a panel
+               nobody can see. -->
+          <as-split-area [size]="viewerSize()" [visible]="viewerIsVisible()">
+            <div class="viewer-area">
+              @if (viewerIsCollapsible()) {
+                <div class="viewer-toolbar">
+                  <button
+                    mat-icon-button
+                    data-cy="collapse-viewer"
+                    [attr.aria-label]="'pages.dataBrowser.table.collapseViewer' | translate"
+                    (click)="collapseViewer()">
+                    <mat-icon>close</mat-icon>
+                  </button>
+                </div>
+              }
+              <app-multiple-viewer (afterResourceDeleted)="onResourceDeleted()" />
+            </div>
           </as-split-area>
         </as-split>
       }
@@ -41,9 +59,30 @@ import { ProjectPageService } from './project-page.service';
       <app-progress-indicator />
     }
   `,
+  styles: [
+    `
+      .viewer-area {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        min-height: 0;
+      }
+      .viewer-toolbar {
+        display: flex;
+        justify-content: flex-end;
+        flex: none;
+      }
+      app-multiple-viewer {
+        flex: 1;
+        min-height: 0;
+      }
+    `,
+  ],
   imports: [
     AsyncPipe,
     TranslatePipe,
+    MatIcon,
+    MatIconButton,
     AngularSplitModule,
     CenteredBoxComponent,
     NoResultsFoundComponent,
@@ -59,6 +98,32 @@ import { ProjectPageService } from './project-page.service';
   providers: [...provideSearchFilters(), ...provideDataClassSearch(), ResourceResultService],
 })
 export class DataClassViewComponent {
+  /**
+   * How the split is divided, and whether the right half exists at all.
+   *
+   * Read off {@link TableViewStateService} rather than passed up from the table through the panel:
+   * the control that expands the viewer is a row control, three components down, and the thing it
+   * resizes is this template. That is the same sibling gap the column layout crosses, so it uses
+   * the same service rather than a second one shaped like it.
+   *
+   * The list view is unaffected — it has always shown the viewer, and a list row is too narrow to
+   * read anything from, so collapsing it there would leave the user with nothing.
+   */
+  private readonly _tableState = inject(TableViewStateService);
+  private readonly _view = toSignal(inject(DataClassUrlStateService).view$, { initialValue: 'list' as DataClassView });
+
+  /** Only the table ever collapses the viewer, so only the table offers the control to bring it back. */
+  readonly viewerIsCollapsible = computed(() => this._view() === 'table');
+  readonly viewerIsVisible = computed(() => this._view() !== 'table' || this._tableState.viewerExpanded());
+
+  /**
+   * The table is the point of table view, so it keeps the larger half even with the viewer open —
+   * the reverse of the list, which is a column of labels next to the resource you are reading.
+   * Full width when the viewer is hidden, so the two visible sizes always add up to 100.
+   */
+  readonly panelSize = computed(() => (this._view() === 'table' ? (this.viewerIsVisible() ? 65 : 100) : 34));
+  readonly viewerSize = computed(() => (this._view() === 'table' ? 35 : 66));
+
   dataIsNotFound = false;
   data$ = combineLatest([
     this._route.params,
@@ -122,6 +187,10 @@ export class DataClassViewComponent {
         // previous class sitting in the editor.
         this._draftStore.discardDrafts();
       });
+  }
+
+  collapseViewer() {
+    this._tableState.collapseViewer();
   }
 
   onResourceDeleted() {

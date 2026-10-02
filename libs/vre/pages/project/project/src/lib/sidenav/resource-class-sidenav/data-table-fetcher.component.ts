@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, ErrorHandler, Inject, inject, Input, OnChanges, signal } from '@angular/core';
+import { Component, computed, ErrorHandler, Inject, inject, Input, OnChanges, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   KnoraApiConnection,
@@ -66,10 +66,14 @@ import { ProjectPageService } from '../../project-page.service';
             [columnWidths]="layout().widths"
             [density]="layout().density"
             [selectedResourceId]="selectedResourceId()"
+            [checkedResourceIds]="checkedResourceIds()"
+            [openedResourceId]="openedResourceId()"
             [sortedColumnKey]="sortedColumnKey()"
             [sortDescending]="sortDescending()"
             [filteredColumnKeys]="filteredColumnKeys()"
             (resourceSelected)="onResourceSelected($event)"
+            (resourceOpened)="onResourceOpened($event)"
+            (resourceCheckedChanged)="onResourceCheckedChanged($event)"
             (columnsReordered)="onColumnsReordered($event)"
             (columnResized)="onColumnResized($event)"
             (sortToggled)="onSortToggled($event)"
@@ -128,7 +132,45 @@ export class DataTableFetcherComponent implements OnChanges {
   readonly columns = this._tableState.columns;
   readonly layout = this._tableState.layout;
 
-  readonly selectedResourceId = signal<string | undefined>(undefined);
+  /**
+   * The comparison selection, as the service last published it.
+   *
+   * Held raw and projected by the two computeds below rather than split at subscription time,
+   * because `MultipleViewerService` writes `selectMode` *after* it pushes the new selection
+   * (`addResources`, `removeResources`). A subscriber reading the flag as the value arrives still
+   * sees the old one, so the first box the user ticks would render itself back off. A computed is
+   * invalidated by the push and evaluated during the change-detection pass that follows it, by
+   * which time the flag has been written.
+   */
+  private readonly _selectedResources = signal<ReadResource[]>([]);
+
+  /**
+   * The row the viewer is showing, highlighted in the table.
+   *
+   * Nothing is highlighted in select mode: the viewer is then comparing several resources, and
+   * pointing at one of them would claim a primacy it does not have. The checkboxes say which they
+   * are.
+   */
+  readonly selectedResourceId = computed<string | undefined>(() =>
+    this._multipleViewerService.selectMode ? undefined : this._selectedResources()[0]?.id
+  );
+
+  /** Which rows are in the comparison set, so their checkboxes read as checked (REQ-5.4). */
+  readonly checkedResourceIds = computed<ReadonlySet<string>>(() =>
+    this._multipleViewerService.selectMode
+      ? new Set(this._selectedResources().map(resource => resource.id))
+      : new Set<string>()
+  );
+
+  /**
+   * The row the expanded viewer belongs to, which marks that row's open control.
+   *
+   * Collapsed, nothing is marked: the control's filled state says "this row is the one on the
+   * right", which is false while there is no panel on the right (REQ-5.2, REQ-5.3).
+   */
+  readonly openedResourceId = computed<string | undefined>(() =>
+    this._tableState.viewerExpanded() ? this._selectedResources()[0]?.id : undefined
+  );
 
   /**
    * The sort the query is running, mirrored onto the header that announces it.
@@ -178,11 +220,13 @@ export class DataTableFetcherComponent implements OnChanges {
       .pipe(skip(1), takeUntilDestroyed())
       .subscribe(() => this._retrySubject.next());
 
-    // The table highlights whatever the viewer has open, so switching between list and table keeps
-    // the user's place rather than losing it at the boundary.
+    // The table highlights whatever the viewer has open and ticks whatever is in the comparison
+    // set, so switching between list and table keeps the user's place and their selection rather
+    // than losing either at the boundary (REQ-5.5). The service is provided by the data-browser
+    // page, above both views, so neither switch tears it down.
     this._multipleViewerService.selectedResources$
       .pipe(takeUntilDestroyed())
-      .subscribe(resources => this.selectedResourceId.set(resources[0]?.id));
+      .subscribe(resources => this._selectedResources.set(resources));
 
     this._urlState.sortPredicateIri$
       .pipe(takeUntilDestroyed())
@@ -220,6 +264,32 @@ export class DataTableFetcherComponent implements OnChanges {
 
   onResourceSelected(resource: ReadResource) {
     this._multipleViewerService.selectOneResource(resource);
+  }
+
+  /**
+   * The row's open control: select the resource *and* expand the viewer beside the table (REQ-5.1).
+   *
+   * Distinct from a row click, which only selects. In table view the viewer starts collapsed, so a
+   * click that both selected and expanded would make the table narrow the moment the user touched
+   * any row — the grid is what they came for.
+   */
+  onResourceOpened(resource: ReadResource) {
+    this._multipleViewerService.selectOneResource(resource);
+    this._tableState.expandViewer();
+  }
+
+  /**
+   * The row checkbox, mapped onto the same two calls `ResourceListItemComponent` makes.
+   *
+   * Nothing is capped here. Past six selected resources the viewer itself swaps the comparison for
+   * its too-many message, which is the list view's behaviour and so is the table's (REQ-5.4).
+   */
+  onResourceCheckedChanged({ resource, checked }: { resource: ReadResource; checked: boolean }) {
+    if (checked) {
+      this._multipleViewerService.addResources([resource]);
+    } else {
+      this._multipleViewerService.removeResources([resource]);
+    }
   }
 
   /**
@@ -330,6 +400,12 @@ export class DataTableFetcherComponent implements OnChanges {
 
   /** Identical heuristic to the list's: see `ResourcesListFetcherComponent._applyCount`. */
   private _applyCount(resources: ReadResource[], pageIndex: number, numberOfResults: number | null): ReadResource[] {
+    // The table's entry behaviour is to select nothing and leave the viewer collapsed (REQ-5.3) —
+    // but that is still a resolution, and it has to be recorded, or switching to the list would
+    // count as a fresh class entry there and select a first row over the user's own choice
+    // (REQ-5.5).
+    this._dataBrowserPageService.selectionResolvedForClass = this.classLabel;
+
     this.userCanViewResources =
       numberOfResults === null ||
       this.filtersAreActive ||

@@ -73,16 +73,6 @@ export class ResourcesListFetcherComponent implements OnChanges {
   private readonly _retrySubject = new BehaviorSubject<void>(undefined);
 
   /**
-   * The class this component last auto-selected a resource for.
-   *
-   * Auto-selecting the first result is an *entry* behaviour — it is what makes the viewer show
-   * something when you click a class in the sidenav. Re-running it on a filter change, a sort change
-   * or a retry would yank the viewer away from whatever the user was reading, so every re-query
-   * within one class leaves the selection alone.
-   */
-  private _autoSelectedClass: string | null = null;
-
-  /**
    * Latest `hasActiveState$`, mirrored into a field rather than combined into the data stream.
    * Folding it into the `combineLatest` would make it a *trigger* — toggling a filter would fire a
    * second request alongside the one the query change already causes.
@@ -206,9 +196,20 @@ export class ResourcesListFetcherComponent implements OnChanges {
     return resources;
   }
 
+  /**
+   * Auto-select the first result, but only on entry to the class.
+   *
+   * Re-running it on a filter change, a sort change or a retry would yank the viewer away from
+   * whatever the user was reading, so every re-query within one class leaves the selection alone.
+   *
+   * The memory of "entry already happened" lives on `DataBrowserPageService`, not on this
+   * component: a List ⇄ Table switch destroys and recreates this fetcher, and an instance with no
+   * memory would treat the switch as a fresh entry and select its own first row over the resource
+   * the user had open in the table (REQ-5.5).
+   */
   private _applySelection(resources: ReadResource[]): { resources: ReadResource[]; selectFirstResource: boolean } {
-    const isClassEntry = this.classLabel !== this._autoSelectedClass;
-    this._autoSelectedClass = this.classLabel;
+    const isClassEntry = this.classLabel !== this._dataBrowserPageService.selectionResolvedForClass;
+    this._dataBrowserPageService.selectionResolvedForClass = this.classLabel;
 
     if (isClassEntry && !this._multipleViewerService.selectMode) {
       if (resources.length >= 1) {

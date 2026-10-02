@@ -69,7 +69,11 @@ const meta: Meta<DataTableComponent> = {
     sortedColumnKey: { description: 'Column the query is sorted by, so its header announces aria-sort.' },
     sortDescending: { description: 'Direction of that sort.' },
     filteredColumnKeys: { description: 'Keys of the columns a filter chip currently exists on.' },
+    checkedResourceIds: { description: 'IRIs in the comparison selection, so those rows read as checked.' },
+    openedResourceId: { description: "IRI the expanded viewer is showing, marking that row's open control." },
     resourceSelected: { description: 'Emits the resource of the clicked row.' },
+    resourceOpened: { description: 'Emits the row whose open control was activated: select it and expand the viewer.' },
+    resourceCheckedChanged: { description: 'Emits a row and whether its checkbox is now checked.' },
     columnsReordered: { description: 'Emits the whole new display order after a header is dragged.' },
     columnResized: { description: 'Emits a column key and its new pixel width once a resize gesture ends.' },
     sortToggled: { description: 'Emits the column to sort by and the direction the click asks for.' },
@@ -443,5 +447,86 @@ export const ClosingAnOpenCellRestoresTheDisplayedValue: Story = {
 
     await expect(canvasElement.querySelector('app-table-row-edit-host')).toBeNull();
     await expect(canvasElement.querySelector('[data-cy="cell-edit"]')).not.toBeNull();
+  },
+};
+
+// ── Selection and the side panel ────────────────────────────────────────────
+
+const onOpen = fn().mockName('resourceOpened');
+const onCheck = fn().mockName('resourceCheckedChanged');
+
+/**
+ * Bound through a host template rather than through args so the assertions run against the real
+ * output bindings the fetcher uses, the same way the header-control stories do.
+ */
+const rowControlsStory = (args: Story['args']): Story => ({
+  render: storyArgs => ({
+    props: {
+      ...storyArgs,
+      checkedResourceIds: storyArgs.checkedResourceIds ?? new Set<string>(),
+      onOpen,
+      onCheck,
+    },
+    template: `<app-data-table
+      [resources]="resources"
+      [columns]="columns"
+      [visibleColumns]="visibleColumns"
+      [checkedResourceIds]="checkedResourceIds"
+      [openedResourceId]="openedResourceId"
+      (resourceOpened)="onOpen($event)"
+      (resourceCheckedChanged)="onCheck($event)" />`,
+  }),
+  args,
+  beforeEach: () => {
+    onOpen.mockClear();
+    onCheck.mockClear();
+  },
+});
+
+/** REQ-5.4: the row checkbox feeds the comparison selection, exactly as the list view's does. */
+export const AddsARowToTheComparisonWhenItIsChecked: Story = {
+  ...rowControlsStory({}),
+  play: async ({ canvasElement }) => {
+    await userEvent.click(canvasElement.querySelectorAll('[data-cy="row-check"] input')[0] as HTMLElement);
+
+    await expect(onCheck).toHaveBeenCalledWith({ resource: ROWS[0], checked: true });
+  },
+};
+
+export const RemovesARowFromTheComparisonWhenItIsUnchecked: Story = {
+  ...rowControlsStory({ checkedResourceIds: new Set(['http://rdfh.ch/0001/a']) }),
+  play: async ({ canvasElement }) => {
+    const checkbox = canvasElement.querySelectorAll('[data-cy="row-check"] input')[0] as HTMLInputElement;
+    await expect(checkbox.checked).toBe(true);
+
+    await userEvent.click(checkbox);
+
+    await expect(onCheck).toHaveBeenCalledWith({ resource: ROWS[0], checked: false });
+  },
+};
+
+/**
+ * REQ-5.1: the open control is a separate gesture from clicking the row. A row click only selects;
+ * this is what also expands the viewer, which is why it is the only control that emits here.
+ */
+export const OpensARowInTheViewerFromItsOwnControl: Story = {
+  ...rowControlsStory({}),
+  play: async ({ canvasElement }) => {
+    await userEvent.click(canvasElement.querySelectorAll('[data-cy="row-open"]')[1] as HTMLElement);
+
+    await expect(onOpen).toHaveBeenCalledWith(ROWS[1]);
+  },
+};
+
+/**
+ * REQ-5.2 and REQ-5.3 seen from the table: nothing claims to be "the row on the right" while the
+ * viewer is collapsed, and exactly one row does once it is open.
+ */
+export const MarksOnlyTheRowTheExpandedViewerIsShowing: Story = {
+  ...rowControlsStory({ openedResourceId: 'http://rdfh.ch/0001/b' }),
+  play: async ({ canvasElement }) => {
+    const open = canvasElement.querySelectorAll('[data-cy="row-open"].is-open');
+    await expect(open).toHaveLength(1);
+    await expect(open[0].closest('tr')?.textContent).toContain('BRAUT001b');
   },
 };

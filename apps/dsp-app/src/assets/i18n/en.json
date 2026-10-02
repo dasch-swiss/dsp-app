@@ -659,7 +659,10 @@
         "editCell": "Edit {{column}}",
         "closeCellEditor": "Close the {{column}} editor",
         "cellNotEditable": "This property cannot be edited here",
-        "editNotApplied": "This value was changed elsewhere, so your edit was not applied. The row has been reloaded with the current value."
+        "editNotApplied": "This value was changed elsewhere, so your edit was not applied. The row has been reloaded with the current value.",
+        "selectRow": "Add {{label}} to the comparison",
+        "openRow": "Open {{label}} in the resource viewer",
+        "collapseViewer": "Close the resource viewer"
       },
       "viewOptions": {
         "title": "View options",

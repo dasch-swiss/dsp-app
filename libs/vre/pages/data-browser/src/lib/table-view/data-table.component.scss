@@ -1,5 +1,23 @@
 @use '@angular/material' as mat;
 
+/**
+ * Room for the absolutely positioned row-control cluster — 76px, which is the checkbox's full
+ * 40px touch target plus the 24px open control and their margins; shrinking the touch target to
+ * save width would be the wrong trade. The header is indented to match so the
+ * two read as one column with a control gutter — which is what the design draws as two separate
+ * narrow columns.
+ *
+ * Mixed into each density block rather than written once outside them: those blocks set `padding`
+ * on every cell through a two-class descendant selector, which outranks anything a single-class
+ * rule can say about the label column no matter where in the file it sits.
+ */
+@mixin label-column-gutter {
+  .is-label-cell,
+  .is-label-header {
+    padding-left: 76px;
+  }
+}
+
 .table-scroll {
   // The table is allowed to be wider than the viewport at any width — there is no column cap and
   // no responsive fallback, so horizontal scroll is the normal case rather than an edge case.
@@ -179,6 +197,12 @@ table {
     background: #f5f7f9;
   }
 
+  // Checked first, selected second: a row can be both, and "this is the one the viewer is showing"
+  // is the stronger statement of the two.
+  &.is-checked {
+    background: #eef3f7;
+  }
+
   &.is-selected {
     background: #d6e0e8;
   }
@@ -187,6 +211,67 @@ table {
 .is-label-cell {
   border-right: 1px solid #ebebeb;
   font-weight: 500;
+}
+
+.row-controls {
+  position: absolute;
+  left: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  // Material's own token, so the checkbox shrinks to fit the gutter without reaching into its
+  // internals — `::ng-deep` is not available to us and would not survive a Material upgrade.
+  --mdc-checkbox-state-layer-size: 28px;
+  opacity: 0;
+
+  // Idle rows show no controls: at twenty-five rows a permanent column of checkboxes and arrows
+  // reads as chrome rather than as a thing to act on. Hover is only half of that — `focus-within`
+  // is what keeps both controls reachable from the keyboard, which is the only way in without a
+  // pointer.
+  tr:hover &,
+  tr:focus-within & {
+    opacity: 1;
+  }
+}
+
+// A checked row and the open row keep their controls visible regardless of the pointer: the state
+// is the point, and a checkbox you have to hover to see is a selection you cannot count.
+tr.is-checked .row-controls,
+.row-controls:has(.row-open.is-open) {
+  opacity: 1;
+}
+
+.row-open {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  color: rgba(0, 0, 0, 0.54);
+
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+  }
+
+  &.is-open {
+    background: var(--primary, #336790);
+    color: #fff;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--primary, #336790);
+    outline-offset: 1px;
+  }
 }
 
 // Sticky columns inherit the row background so the scrolling columns do not show through them.
@@ -335,6 +420,9 @@ table {
     padding: 4px 10px;
     font-size: 13px;
   }
+
+  // After the padding shorthand above, which it must beat at equal specificity.
+  @include label-column-gutter;
 }
 
 .density-default {
@@ -349,6 +437,9 @@ table {
   .mat-mdc-header-cell {
     padding: 8px 12px;
   }
+
+  // After the padding shorthand above, which it must beat at equal specificity.
+  @include label-column-gutter;
 }
 
 .density-comfortable {
@@ -363,4 +454,7 @@ table {
   .mat-mdc-header-cell {
     padding: 12px;
   }
+
+  // After the padding shorthand above, which it must beat at equal specificity.
+  @include label-column-gutter;
 }

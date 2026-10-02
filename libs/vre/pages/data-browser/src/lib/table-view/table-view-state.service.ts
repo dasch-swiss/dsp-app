@@ -49,11 +49,40 @@ export class TableViewStateService {
     return this.columns().map(column => ({ column, isVisible: visible.has(column.key) }));
   });
 
+  /**
+   * Whether the resource viewer beside the table is expanded.
+   *
+   * Lives here for the same reason the column layout does: the table raises the request from below
+   * the split and the class view answers it by resizing the split above, and the two are siblings.
+   *
+   * Starts collapsed, which is what REQ-5.3 asks for — a class entered in table view shows the
+   * table at full width even though a resource may already be selected, because arriving in a
+   * table is a request to read the grid, not to read one row.
+   */
+  readonly viewerExpanded = signal(false);
+
   /** Load a class's columns and whatever layout the user last left them in. */
   init(classIri: string, columns: TableColumn[]): void {
+    // Only on a genuine class change. `init` also re-runs whenever the ontology object identity
+    // changes — which `reloadProject()` does after every resource delete — and collapsing the
+    // viewer there would snatch the panel away from a user who had just deleted something in it.
+    if (this._classIri !== classIri) {
+      this.viewerExpanded.set(false);
+    }
+
     this._classIri = classIri;
     this.columns.set(columns);
     this.layout.set(this._layoutStore.load(classIri, columns));
+  }
+
+  /** Called when a row's open control is activated (REQ-5.1). */
+  expandViewer(): void {
+    this.viewerExpanded.set(true);
+  }
+
+  /** Called from the viewer's own collapse control, returning the table to full width (REQ-5.2). */
+  collapseViewer(): void {
+    this.viewerExpanded.set(false);
   }
 
   setDensity(density: TableDensity): void {

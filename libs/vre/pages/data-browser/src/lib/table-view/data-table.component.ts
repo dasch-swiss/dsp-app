@@ -11,6 +11,7 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
+import { MatCheckbox, MatCheckboxChange } from '@angular/material/checkbox';
 import { MatIcon } from '@angular/material/icon';
 import { MatTable, MatTableModule } from '@angular/material/table';
 import { ReadResource } from '@dasch-swiss/dsp-js';
@@ -99,6 +100,7 @@ interface RenderColumn extends TableColumn {
               mat-header-cell
               *matHeaderCellDef
               scope="col"
+              [class.is-label-header]="column.isSticky"
               [style.width.px]="column.width"
               [attr.aria-label]="column.label"
               [attr.aria-sort]="column.ariaSort"
@@ -162,6 +164,33 @@ interface RenderColumn extends TableColumn {
             </th>
 
             <td mat-cell *matCellDef="let row" [class.is-label-cell]="column.isSticky">
+              <!-- The row's own controls ride in the sticky label cell rather than in two columns
+                   of their own, as the design draws them. Two extra columns would be two more
+                   sticky offsets to recompute on every resize and two more keys to reconcile in
+                   the persisted layout — for columns the user can neither hide, move nor resize.
+                   They are positioned absolutely, so the cell keeps its table-cell display and the
+                   generic cell rendering below is untouched; the header's label is indented by the
+                   same amount so the two line up. -->
+              @if (column.isSticky) {
+                <div class="row-controls" (click)="$event.stopPropagation()">
+                  <mat-checkbox
+                    data-cy="row-check"
+                    [checked]="checkedResourceIds().has(row.id)"
+                    [attr.aria-label]="'pages.dataBrowser.table.selectRow' | translate: { label: row.label }"
+                    (change)="onRowCheckChanged(row.resource, $event)" />
+                  <button
+                    type="button"
+                    class="row-open"
+                    data-cy="row-open"
+                    [class.is-open]="row.id === openedResourceId()"
+                    [attr.aria-label]="'pages.dataBrowser.table.openRow' | translate: { label: row.label }"
+                    [attr.aria-expanded]="row.id === openedResourceId()"
+                    (click)="resourceOpened.emit(row.resource)">
+                    <mat-icon>arrow_forward</mat-icon>
+                  </button>
+                </div>
+              }
+
               @let cell = row.cells[column.key];
               @if (isCellOpen(row.id, column.key)) {
                 <!-- Every click inside the editor — the save button included — is also a click on
@@ -232,6 +261,7 @@ interface RenderColumn extends TableColumn {
           mat-row
           *matRowDef="let row; columns: visibleColumns()"
           [class.is-selected]="row.id === selectedResourceId()"
+          [class.is-checked]="checkedResourceIds().has(row.id)"
           (click)="resourceSelected.emit(row.resource)"></tr>
       </table>
     </div>
@@ -241,6 +271,7 @@ interface RenderColumn extends TableColumn {
     MatTableModule,
     MatIcon,
     TranslatePipe,
+    MatCheckbox,
     CdkDropList,
     CdkDrag,
     CdkDragHandle,
@@ -273,8 +304,29 @@ export class DataTableComponent {
    * the bar stops being indicated here with no further wiring (REQ-3.8).
    */
   readonly filteredColumnKeys = input<ReadonlySet<string>>(new Set<string>());
+  /**
+   * IRIs of the resources in the comparison selection, so their row checkboxes read as checked.
+   *
+   * A set rather than the resources themselves: the table compares by IRI, never by identity. Every
+   * re-query builds fresh `ReadResource` instances, so after a filter change the resource the user
+   * had checked is a different object with the same IRI — the reason `MultipleViewerService` is
+   * written to compare by `id` too.
+   */
+  readonly checkedResourceIds = input<ReadonlySet<string>>(new Set<string>());
+  /** The row whose resource the expanded viewer is showing, if any. Marks that row's open control. */
+  readonly openedResourceId = input<string | undefined>(undefined);
 
   readonly resourceSelected = output<ReadResource>();
+  /** The row whose open control was activated: select it *and* expand the viewer (REQ-5.1). */
+  readonly resourceOpened = output<ReadResource>();
+  /**
+   * A row's checkbox, as a change rather than as "add" and "remove" outputs.
+   *
+   * The host maps it onto `MultipleViewerService.addResources` / `removeResources`, which is how
+   * the list view's row behaves — including past six, where the viewer itself takes over and shows
+   * the too-many-resources message (REQ-5.4).
+   */
+  readonly resourceCheckedChanged = output<{ resource: ReadResource; checked: boolean }>();
   /** The whole new display order, not a delta — the host persists the array as it stands. */
   readonly columnsReordered = output<string[]>();
   readonly columnResized = output<{ key: string; width: number }>();
@@ -409,6 +461,10 @@ export class DataTableComponent {
    * index 1, pinned to the left edge with a scrolling column underneath it (REQ-2.10).
    */
   protected readonly canDropAt = (index: number) => index > 0;
+
+  protected onRowCheckChanged(resource: ReadResource, event: MatCheckboxChange): void {
+    this.resourceCheckedChanged.emit({ resource, checked: event.checked });
+  }
 
   protected onColumnDropped(event: CdkDragDrop<unknown>): void {
     if (event.previousIndex === event.currentIndex) {

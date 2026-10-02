@@ -123,6 +123,35 @@ describe('ResourcesListFetcherComponent', () => {
     expect(mockMultipleViewerService.reset).toHaveBeenCalled();
   });
 
+  /**
+   * REQ-5.5. A List ⇄ Table switch destroys and recreates this fetcher, so "entry already
+   * happened" cannot live on the instance: a fresh one would select its own first row over the
+   * resource the user had opened in the table view they just left.
+   */
+  it('should not auto-select when another view already resolved the selection for this class', async () => {
+    dataBrowserPageService.selectionResolvedForClass = 'TestClass';
+    mockDspApiConnection.v2.search.doExtendedSearch.mockReturnValue(of({ resources: [mockResource1, mockResource2] }));
+    mockDspApiConnection.v2.search.doExtendedSearchCountQuery.mockReturnValue(of({ numberOfResults: 2 }));
+
+    component.ngOnChanges();
+
+    await firstValueFrom(component.data$);
+
+    expect(mockMultipleViewerService.selectOneResource).not.toHaveBeenCalled();
+  });
+
+  it('should auto-select again when the resolved class is a different one', async () => {
+    dataBrowserPageService.selectionResolvedForClass = 'OtherClass';
+    mockDspApiConnection.v2.search.doExtendedSearch.mockReturnValue(of({ resources: [mockResource1, mockResource2] }));
+    mockDspApiConnection.v2.search.doExtendedSearchCountQuery.mockReturnValue(of({ numberOfResults: 2 }));
+
+    component.ngOnChanges();
+
+    await firstValueFrom(component.data$);
+
+    expect(mockMultipleViewerService.selectOneResource).toHaveBeenCalledWith(mockResource1);
+  });
+
   it('should not auto-select when selectMode is true', async () => {
     mockMultipleViewerService.selectMode = true;
     mockDspApiConnection.v2.search.doExtendedSearch.mockReturnValue(of({ resources: [mockResource1, mockResource2] }));
