@@ -1,22 +1,18 @@
 import { Provider } from '@angular/core';
+import { provideSearchFilters, SearchFilterState } from '@dasch-swiss/vre/pages/search/search-filters';
 import { DerivedSearchStateService } from './service/derived-search-state.service';
-import { DynamicFormsDataService } from './service/dynamic-forms-data.service';
-import { GravsearchService } from './service/gravsearch.service';
-import { ListNodeLabelResolver } from './service/list-node-label.resolver';
-import { OntologyDataService } from './service/ontology-data.service';
-import { SearchFlowLogger } from './service/search-flow-logger.service';
 import { SearchUrlSyncService } from './service/search-url-sync.service';
-import { StatementDraftStore } from './service/statement-draft.store';
 
+/**
+ * The Search tab's wiring: the shared filter stack, plus this page's answer to where search state lives
+ * — all six parameters in the URL — and the derivation it builds on top (sorting by a filter's
+ * predicate, and the query assembled from those parameters).
+ */
 export function provideAdvancedSearch(): Provider[] {
   return [
-    StatementDraftStore,
-    OntologyDataService,
-    DynamicFormsDataService,
-    GravsearchService,
-    ListNodeLabelResolver,
+    ...provideSearchFilters(),
     SearchUrlSyncService,
+    { provide: SearchFilterState, useExisting: SearchUrlSyncService },
     DerivedSearchStateService,
-    SearchFlowLogger,
   ];
 }
