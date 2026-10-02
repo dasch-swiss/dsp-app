@@ -15,18 +15,9 @@
       autocomplete="off"
       readonly />
     <mat-icon color="primary" matSuffix class="link">event</mat-icon>
-    <!-- <mat-error *ngIf="dateForm.controls.date.hasError('required')">
-    Date is <strong>required</strong>
-  </mat-error> -->
   </mat-form-field>
 </div>
 
-<!-- <mat-form-field class="date" [matMenuTriggerFor]="datePicker">
-<mat-label>{{calendar}} {{era}}</mat-label>
-<input matInput class="link" autocomplete="off" readonly placeholder="dd/mm/yyyy or mm/yyyy or yyyy" [value]="date | knoraDate">
-<mat-icon matSuffix class="link">event</mat-icon>
-</mat-form-field> -->
-<!-- <button mat-button [matMenuTriggerFor]="menu">Menu</button> -->
 <mat-menu #datePicker="matMenu" [formGroup]="form" class="date-picker" (closed)="datePickerClosed.emit()">
   <div class="date-picker-content" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()">
     <!-- select calendar and button to close date picker -->
