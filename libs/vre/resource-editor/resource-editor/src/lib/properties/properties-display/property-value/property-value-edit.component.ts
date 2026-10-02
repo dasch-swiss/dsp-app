@@ -14,9 +14,10 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
-import { Cardinality, ReadValue } from '@dasch-swiss/dsp-js';
+import { Cardinality, Constants, KnoraDate, KnoraPeriod, ReadValue } from '@dasch-swiss/dsp-js';
 import { ResourceService } from '@dasch-swiss/vre/shared/app-common';
 import { AppProgressIndicatorComponent } from '@dasch-swiss/vre/ui/progress-indicator';
+import { CalendarDateService } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Observable, of, Subscription, switchMap } from 'rxjs';
 import { startWith, takeWhile } from 'rxjs/operators';
@@ -25,6 +26,18 @@ import { FormValueGroup } from './form-value-array.type';
 import { PropertyValueBasicCommentComponent } from './property-value-basic-comment.component';
 import { PropertyValueService } from './property-value.service';
 import { propertiesTypeMapping } from './resource-payloads-mapping';
+
+/**
+ * The calendar a date value is expressed in, or null when there is no value.
+ *
+ * A period carries one calendar for the whole value, which its start holds.
+ */
+function calendarOf(value: KnoraDate | KnoraPeriod | null): string | null {
+  if (value === null) {
+    return null;
+  }
+  return value instanceof KnoraPeriod ? value.start.calendar : value.calendar;
+}
 
 @Component({
   selector: 'app-property-value-edit',
@@ -119,6 +132,7 @@ export class PropertyValueEditComponent implements OnInit, OnDestroy {
 
   private readonly _cd = inject(ChangeDetectorRef);
   private readonly _resourceService = inject(ResourceService);
+  private readonly _calendarDates = inject(CalendarDateService);
   public propertyValueService = inject(PropertyValueService);
 
   protected readonly Cardinality = Cardinality;
@@ -130,12 +144,61 @@ export class PropertyValueEditComponent implements OnInit, OnDestroy {
       comment: new FormControl(this.readValue?.valueHasComment || null),
     });
 
+    const originalItem = this.group.controls.item.value;
+    const originalComment = this.group.controls.comment.value;
+
     this.hasValidValue$ = this.group.valueChanges.pipe(
       startWith(null),
-      switchMap(() => of(this.group.controls.item.valid && this.group.controls.item.value !== null))
+      switchMap(() =>
+        of(
+          this.group.controls.item.valid &&
+            this.group.controls.item.value !== null &&
+            this._hasChanged(originalItem, originalComment)
+        )
+      )
     );
 
     this._watchAndSetupCommentStatus();
+  }
+
+  /**
+   * whether the user has actually altered the value, as opposed to restating it.
+   *
+   * Only date values are compared, and only when editing an existing one. Everything else keeps
+   * the previous behaviour, where validity alone enables saving: widening this would quietly
+   * change how all fifteen value types behave, which is not what this change is for.
+   *
+   * A date needs a comparison because converting it to another calendar rewrites every field
+   * while meaning the same day — 15.06.2024 Gregorian is 02.06.2024 Julian — so comparing the
+   * numerals alone would report an edit the user never made.
+   *
+   * **The calendar is part of the value, not a way of looking at it.** `UpdateDateValue` carries
+   * `calendar` as a stored field beside the numerals, so choosing a different one is a real edit:
+   * it changes what the record says the source used. Only restating both the same instant *and*
+   * the same calendar is a no-op.
+   */
+  private _hasChanged(originalItem: unknown, originalComment: string | null): boolean {
+    // Adding a value: there is nothing to differ from, so validity is the only question.
+    if (this.readValue === undefined) {
+      return true;
+    }
+
+    if (this.propertyValueService.propertyDefinition.objectType !== Constants.DateValue) {
+      return true;
+    }
+
+    if (this.group.controls.comment.value !== originalComment) {
+      return true;
+    }
+
+    const original = originalItem as KnoraDate | KnoraPeriod | null;
+    const current = this.group.controls.item.value as KnoraDate | KnoraPeriod | null;
+
+    if (calendarOf(original) !== calendarOf(current)) {
+      return true;
+    }
+
+    return !this._calendarDates.dateValuesDenoteSameInstant(original, current);
   }
 
   ngOnDestroy() {

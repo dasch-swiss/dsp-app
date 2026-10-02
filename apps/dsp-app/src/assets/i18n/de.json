@@ -1057,12 +1057,71 @@
     },
     "datePicker": {
       "clickToSelect": "Klicken Sie, um ein Datum auszuwählen",
+      "startDate": "Startdatum",
+      "endDate": "Enddatum",
+      "done": "Fertig",
       "calendar": "Kalender",
       "today": "Heute",
       "month": "Monat",
       "none": "Keine",
+      "noDay": "Kein Tag (Monatsgenauigkeit)",
+      "yearPrecision": "Jahresgenauigkeit. Wählen Sie einen Monat, um einen Tag auszuwählen.",
       "year": "Jahr",
-      "bceWarning": "Achtung: Datum <strong>vor der Zeitrechnung</strong>."
+      "bceWarning": "Achtung: Datum <strong>vor der Zeitrechnung</strong>.",
+      "willBeStoredAs": "wird gespeichert als {{date}}",
+      "storedValue": "Gespeicherter Wert: {{date}}",
+      "convertedFrom": "Umgerechnet aus {{date}}",
+      "convertedFromStored": "Umgerechnet aus {{date}} (gespeicherter Wert)",
+      "preHijraNote": "Islamisch ist nicht verfügbar: Dieses Datum liegt vor der Hidschra. Islamische Jahre beginnen mit 1 AH und haben keine negativen Jahre.",
+      "sameDayOtherCalendar": "Gleicher Tag wie der gespeicherte Wert, ausgedrückt im Kalender {{calendar}}.",
+      "endBeforeStart": "Das Enddatum muss nach dem Startdatum liegen.",
+      "era": "Ära",
+      "yearMustBePositive": "Ein gültiges Jahr ist grösser als 0.",
+      "addEndDate": "Enddatum hinzufügen",
+      "removeEndDate": "Enddatum löschen",
+      "dateRequired": "Ein Datum ist erforderlich",
+      "endDateRequired": "Ein Enddatum ist erforderlich"
+    },
+    "calendarMarker": {
+      "calendars": {
+        "GREGORIAN": "Gregorianisch",
+        "JULIAN": "Julianisch",
+        "ISLAMIC": "Islamisch (tabellarisch)"
+      },
+      "beforeHijra": "Vor der Hidschra",
+      "inEachCalendar": "{{calendar}}. Dieses Datum in jedem Kalender",
+      "jdn": "JTZ",
+      "periodOfDays": "Zeitraum von {{count}} Tagen"
+    },
+    "weekdays": {
+      "monday": {
+        "long": "Montag",
+        "short": "M"
+      },
+      "tuesday": {
+        "long": "Dienstag",
+        "short": "D"
+      },
+      "wednesday": {
+        "long": "Mittwoch",
+        "short": "M"
+      },
+      "thursday": {
+        "long": "Donnerstag",
+        "short": "D"
+      },
+      "friday": {
+        "long": "Freitag",
+        "short": "F"
+      },
+      "saturday": {
+        "long": "Samstag",
+        "short": "S"
+      },
+      "sunday": {
+        "long": "Sonntag",
+        "short": "S"
+      }
     }
   },
   "shared": {

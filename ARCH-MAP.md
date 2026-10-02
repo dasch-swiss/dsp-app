@@ -179,10 +179,10 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 - **Nx project**: `vre-ui-ui`
 - **Paths**: `libs/vre/ui/ui/**`
 - **Purpose**: The shared component kit: dialogs, form controls, layout primitives, pipes and directives. It also carries a tail of page-shaped and domain-specific components that do not belong in a kit.
-- **Key entities**: `DialogService`, `ConfirmDialogComponent`, `DialogHeaderComponent`, `CkEditorComponent`, `CommonInputComponent`, `ChipListInputComponent`, `TimeInputComponent`, `PagerComponent`, `KnoraDatePipe`, `HumanReadableErrorPipe`, `AdminImageDirective`, `NotAllowedPageComponent`, `NoResultsFoundPageComponent`, `ResourceRightsStatementComponent`
-- **Public interface**: 46 `export *` lines from `src/index.ts`.
+- **Key entities**: `DialogService`, `ConfirmDialogComponent`, `DialogHeaderComponent`, `CkEditorComponent`, `CommonInputComponent`, `ChipListInputComponent`, `TimeInputComponent`, `PagerComponent`, `KnoraDatePipe`, `HumanReadableErrorPipe`, `AdminImageDirective`, `NotAllowedPageComponent`, `NoResultsFoundPageComponent`, `ResourceRightsStatementComponent`, `CalendarMarkerComponent`
+- **Public interface**: 46 `export *` lines from `src/index.ts`, plus one curated named export (`CalendarMarkerComponent`).
 - **Local-context kit**: `src/index.ts`, `src/lib/dialog/dialog.service.ts`, `src/lib/dialog/confirm-dialog.component.ts`, `src/lib/common-input.component.ts`, `src/lib/pipes/formatting/knoradate.pipe.ts`, `src/lib/search-failed.component.ts`
-- **Depends on**: `dsp-js`, `vre/shared/app-common`
+- **Depends on**: `dsp-js`, `vre/shared/app-common`, `vre/shared/calendar`
 - **Used by**: `dsp-app`, `vre/pages/data-browser`, `vre/pages/ontology/list`, `vre/pages/ontology/ontology`, `vre/pages/project/project`, `vre/pages/search/advanced-search`, `vre/pages/search/search`, `vre/pages/system/system`, `vre/pages/user-settings/user`, `vre/resource-editor/resource-editor`, `vre/shared/app-common-to-move`, `vre/ui/string-literal`
 - **Boundary rules**:
   - `NotAllowedPageComponent` and `NoResultsFoundPageComponent` are mounted as routes at `/403` and `/404`. Routed pages in a component kit are an exception, not a pattern to copy. `docs-only`
@@ -194,15 +194,17 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 - **Nx project**: `vre-ui-date-picker`
 - **Paths**: `libs/vre/ui/date-picker/**`
 - **Purpose**: The adapter layer binding DSP's `KnoraDate` and the `shared/calendar` `CalendarDate` model onto Angular Material's datepicker. It carries translation logic, not calendar arithmetic.
-- **Key entities**: `AppDatePickerComponent`, `DateValueHandlerComponent`, `CalendarDateAdapter`, `CALENDAR_DATE_FORMATS`, `provideCalendarDateAdapter`, `ValueService`
-- **Public interface**: Components, adapters, `provideCalendarDateAdapter()` and validators, from `src/index.ts`.
-- **Local-context kit**: `src/index.ts`, `src/lib/adapters/calendar-date.adapter.ts`, `src/lib/adapters/calendar-date-adapter.providers.ts`, `src/lib/date-value-handler/value.service.ts`, `src/lib/validators/date.validators.ts`, `apps/dsp-app/src/app/app.config.ts`
+- **Key entities**: `AppDatePickerComponent`, `DateValueHandlerComponent`, `ValueService`
+- **Public interface**: `AppDatePickerComponent`, `DateValueHandlerComponent` and `ValueService`, from `src/index.ts`.
+- **Local-context kit**: `src/index.ts`, `src/lib/app-date-picker/app-date-picker.component.ts`, `src/lib/date-value-handler/value.service.ts`, `src/lib/date-value-handler/date-value-handler.component.ts`
 - **Depends on**: `dsp-js`, `vre/shared/calendar`
 - **Used by**: `dsp-app`, `vre/pages/search/advanced-search`, `vre/resource-editor/resource-editor`
 - **Boundary rules**:
   - There is one `KnoraDate` to `CalendarDate` conversion path, `src/lib/date-value-handler/value.service.ts`, which applies the astronomical-year conversion for BCE. A second, unreachable adapter negated the year instead and disagreed by one year; #3441 deleted it. `docs-only`
   - Era vocabulary differs between layers: dsp-js uses `AD` and `noEra`, `shared/calendar` uses `CE` and `NONE`. The normalisation lives in `value.service.ts`. `docs-only`
-- **Durable state**: `provideCalendarDateAdapter()` replaces Angular Material's root `DateAdapter` and `MAT_DATE_FORMATS` application-wide at `apps/dsp-app/src/app/app.config.ts`. Single writer, but every Material datepicker in the application is affected.
+  - Calendar *arithmetic* lives in `vre/shared/calendar`; this library holds the `KnoraDate` bridge on top of it — `convertKnoraDateTo`, `availableCalendarsFor` and the instant-equality comparison, all in `value.service.ts`. An agent fixing a BCE or era defect must check both layers: the astronomical-year translation here participates in every result the arithmetic returns. `docs-only`
+  - Conversion has three outcomes, not one. `shared/calendar`'s `convertCalendarResult` returns an exact date, a span (a year or month covering a range in the target calendar), or a refusal. A caller that takes only the span's start must say why; a period *end* takes its end, or the period silently shortens. `docs-only`
+- **Durable state**: none. `provideCalendarDateAdapter()` previously replaced Angular Material's root `DateAdapter` and `MAT_DATE_FORMATS` application-wide; it and the adapter stack behind it were deleted in DEV-7372, and `time-value.component.ts` supplies its own `CustomDateAdapter` at component level.
 
 ### vre/ui/string-literal
 
@@ -326,14 +328,17 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 - **Nx project**: `calendar`
 - **Paths**: `libs/vre/shared/calendar/**`
 - **Purpose**: A framework-free multi-calendar date library (Gregorian, Julian, Islamic) using the Julian Day Number as the conversion pivot, with comparison and period validation.
-- **Key entities**: `CalendarSystem`, `CALENDAR_SYSTEMS`, `Era`, `ERAS`, `DatePrecision`, `CalendarDate`, `CalendarPeriod`, `CalendarOperations`, `CalendarError`, `createDate`, `convertCalendar`, `compareDates`, `validatePeriod`, `GregorianCalendar`, `JulianCalendar`, `IslamicCalendar`, `getCalendar`
+- **Key entities**: `CalendarSystem`, `CALENDAR_SYSTEMS`, `Era`, `ERAS`, `DatePrecision`, `CalendarDate`, `CalendarPeriod`, `CalendarOperations`, `CalendarError`, `createDate`, `convertCalendar`, `compareDates`, `validatePeriod`, `GregorianCalendar`, `JulianCalendar`, `IslamicCalendar`, `getCalendar`, `convertCalendarResult`, `ConversionResult`, `ConversionRefusalReason`, `ISLAMIC_EPOCH_JDN`
 - **Public interface**: The only hand-curated barrel in the repository: named `export` and `export type` blocks with a `@packageDocumentation` usage example, no `export *`.
 - **Local-context kit**: `src/index.ts`, `src/lib/types/calendar.types.ts`, `src/lib/factories/calendar.factory.ts`, `src/lib/factories/date.factory.ts`, `src/lib/converters/calendar.converter.ts`, `src/lib/calendars/gregorian.calendar.ts`, `README.md`
 - **Depends on**: none
-- **Used by**: `vre/ui/date-picker`
+- **Used by**: `vre/ui/date-picker`, `vre/ui/ui`
 - **Boundary rules**:
   - Zero `@dasch-swiss` imports, no Angular DI, pure functions and immutable value objects. This is the reference example in the repository for how a library should be shaped. `structure`
   - It is the only library with its own `package.json` and a real `build` target, and the only one with one spec per implementation file. `docs-only`
+  - It knows nothing of `KnoraDate`, and must not. The layer above — `vre/ui/date-picker`'s `value.service.ts` — maps astronomical years to historical ones and `NONE` to `noEra` before and after calling here, so a BCE or era defect can live in either layer. `docs-only`
+  - `convertCalendarResult` reports three outcomes: an exact date, a span, or a refusal. A year or month rarely maps onto a single unit of another calendar, and the Islamic calendar has no date before `ISLAMIC_EPOCH_JDN`. Returning a single date would fabricate precision or a date that does not exist. `docs-only`
+  - `toJDN`/`fromJDN` must be mutual inverses, and the round-trip suite asserts it over every JDN in range rather than sampling. Two calendars have already drifted apart here — Gregorian in DEV-7264, Islamic in DEV-7372 — both because the pair was derived from two sources instead of one. `docs-only`
 - **Durable state**: none.
 
 ### vre/pages/project/project

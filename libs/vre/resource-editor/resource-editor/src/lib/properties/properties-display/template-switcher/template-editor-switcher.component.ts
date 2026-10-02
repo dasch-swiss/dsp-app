@@ -10,7 +10,7 @@ import {
   ReadTextValueAsXml,
   ReadValue,
 } from '@dasch-swiss/dsp-js';
-import { DateValueHandlerComponent } from '@dasch-swiss/vre/ui/date-picker';
+import { DateValueComponent } from '@dasch-swiss/vre/ui/date-picker';
 import { CkEditorComponent, CommonInputComponent, HumanReadableErrorPipe } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe } from '@ngx-translate/core';
 import { JsLibPotentialError } from '../property-value/JsLibPotentialError';
@@ -37,7 +37,7 @@ import { TimeValueComponent } from './value-components/time-value.component';
     ColorValueComponent,
     CkEditorComponent,
     CommonInputComponent,
-    DateValueHandlerComponent,
+    DateValueComponent,
     TimeValueComponent,
     IntervalValueComponent,
     GeolocationValueComponent,
@@ -119,11 +119,12 @@ import { TimeValueComponent } from './value-components/time-value.component';
       }
     </ng-template>
 
+    <!-- No mat-error here: app-date-value reports its own failures, and it can say which one it
+    is — "One date is required", "End date is required", "End date must be after start date" —
+    where the generic pipe only ever says "This field is required". Rendering both showed the same
+    problem twice, the second time less accurately. -->
     <ng-template #dateEditorTpl let-control="item">
-      <app-date-value-handler [formControl]="control" />
-      @if (control.touched && control.errors; as errors) {
-        <mat-error>{{ errors | humanReadableError }}</mat-error>
-      }
+      <app-date-value [formControl]="control" />
     </ng-template>
 
     <ng-template #timeEditorTpl let-item="item">
