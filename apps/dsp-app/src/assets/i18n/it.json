@@ -644,6 +644,12 @@
         "label": "Mostra le risorse come",
         "list": "Elenco",
         "table": "Tabella"
+      },
+      "table": {
+        "label": "Risorse di questa classe",
+        "notSet": "— non impostato",
+        "showMore": "Mostra altri {{count}}",
+        "showLess": "Mostra meno"
       }
     }
   },

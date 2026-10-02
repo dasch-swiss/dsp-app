@@ -9,3 +9,11 @@ export { MultipleViewerComponent } from './lib/comparison/multiple-viewer.compon
 // Service used by ResourceBrowserComponent
 export { MultipleViewerService } from './lib/comparison/multiple-viewer.service';
 export * from './lib/resource-class-count.api';
+
+// Table view. The component takes its column model as an input rather than reaching for a service,
+// so the Advanced Search results page can adopt it later without a rewrite.
+export { DataTableComponent } from './lib/table-view/data-table.component';
+export { buildColumnModel } from './lib/table-view/build-column-model';
+export { TableLayoutService } from './lib/table-view/table-layout.service';
+export type { TableLayout } from './lib/table-view/table-layout.service';
+export * from './lib/table-view/table-column.model';

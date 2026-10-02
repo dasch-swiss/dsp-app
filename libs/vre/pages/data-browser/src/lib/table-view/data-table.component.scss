@@ -1,0 +1,153 @@
+@use '@angular/material' as mat;
+
+.table-scroll {
+  // The table is allowed to be wider than the viewport at any width — there is no column cap and
+  // no responsive fallback, so horizontal scroll is the normal case rather than an edge case.
+  overflow: auto;
+  height: 100%;
+  min-height: 0;
+}
+
+table {
+  // `fixed` is what makes the header's per-column widths authoritative, and what lets the table
+  // exceed its container instead of squeezing forty columns into the viewport.
+  width: max-content;
+  min-width: 100%;
+}
+
+// Density tokens set `height`, which clips a cell holding three stacked values. Turning them into
+// a floor keeps short rows at the chosen density and lets multi-value rows grow.
+.mat-mdc-row,
+.mat-mdc-cell,
+.mat-mdc-header-cell {
+  height: auto;
+  min-height: var(--mat-table-row-item-container-height);
+}
+
+.mat-mdc-header-cell {
+  // Sticky cells are transparent by default, so rows would show through the header as they scroll
+  // under it.
+  background: #f9fafb;
+}
+
+.header-label {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font: 500 12px/16px var(--font-sans, inherit);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.mat-mdc-row {
+  cursor: pointer;
+
+  &:hover {
+    background: #f5f7f9;
+  }
+
+  &.is-selected {
+    background: #d6e0e8;
+  }
+}
+
+.is-label-cell {
+  border-right: 1px solid #ebebeb;
+  font-weight: 500;
+}
+
+// Sticky columns inherit the row background so the scrolling columns do not show through them.
+.mat-mdc-table-sticky {
+  background: inherit;
+}
+
+.cell-values {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  padding: 2px 0;
+}
+
+.cell-value {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cell-empty {
+  font-style: italic;
+  color: rgba(0, 0, 0, 0.38);
+}
+
+.cell-more {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  border: none;
+  background: transparent;
+  padding: 0;
+  margin-top: 2px;
+  cursor: pointer;
+  color: var(--primary, #336790);
+  font: 500 12px/18px var(--font-sans, inherit);
+
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+  }
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+// Three runtime densities. `mat.table-density` takes a whole theme object and so cannot express a
+// per-instance choice; the override mixin emits the same custom properties under a class, which
+// can.
+.density-compact {
+  @include mat.table-overrides(
+    (
+      header-container-height: 48px,
+      row-item-container-height: 44px,
+    )
+  );
+
+  .mat-mdc-cell,
+  .mat-mdc-header-cell {
+    padding: 4px 10px;
+    font-size: 13px;
+  }
+}
+
+.density-default {
+  @include mat.table-overrides(
+    (
+      header-container-height: 56px,
+      row-item-container-height: 52px,
+    )
+  );
+
+  .mat-mdc-cell,
+  .mat-mdc-header-cell {
+    padding: 8px 12px;
+  }
+}
+
+.density-comfortable {
+  @include mat.table-overrides(
+    (
+      header-container-height: 64px,
+      row-item-container-height: 72px,
+    )
+  );
+
+  .mat-mdc-cell,
+  .mat-mdc-header-cell {
+    padding: 12px;
+  }
+}

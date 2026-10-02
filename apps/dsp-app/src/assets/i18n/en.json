@@ -644,6 +644,12 @@
         "label": "Show resources as",
         "list": "List",
         "table": "Table"
+      },
+      "table": {
+        "label": "Resources of this class",
+        "notSet": "— not set",
+        "showMore": "Show {{count}} more",
+        "showLess": "Show less"
       }
     }
   },
