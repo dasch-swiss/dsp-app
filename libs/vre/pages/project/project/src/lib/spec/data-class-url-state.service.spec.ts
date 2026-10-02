@@ -62,7 +62,7 @@ describe('DataClassUrlStateService', () => {
 
     it('never writes ontology or class as query params', () => {
       service.setFilters([]);
-      service.setSortDescending(true);
+      service.setSort(RDFS_LABEL, true);
       service.setFulltextTerm('whale');
 
       for (const call of navigate.mock.calls) {
@@ -90,8 +90,45 @@ describe('DataClassUrlStateService', () => {
     });
 
     it('removes orderDir when sorting ascending, keeping the default out of the URL', () => {
-      service.setSortDescending(false);
-      expect(lastNav().queryParams).toEqual({ orderDir: null });
+      service.setSort(RDFS_LABEL, false);
+      expect(lastNav().queryParams).toEqual({ orderBy: null, orderDir: null });
+    });
+  });
+
+  describe('sorting by a property, not just label (DEV-7453)', () => {
+    const CREATOR = 'http://0.0.0.0:3333/ontology/0001/test/v2#hasCreator';
+
+    it('writes the predicate and the direction in one navigation', () => {
+      service.setSort(CREATOR, true);
+
+      // Two synchronous navigations get coalesced and the second discards the first, so a property
+      // change that also resets direction has to arrive as one write or half of it is lost.
+      expect(lastNav().queryParams).toEqual({ orderBy: CREATOR, orderDir: 'desc' });
+      expect(navigate).toHaveBeenCalledTimes(1);
+    });
+
+    it('keeps the default sort out of the URL', () => {
+      service.setSort(RDFS_LABEL, false);
+      expect(lastNav().queryParams).toEqual({ orderBy: null, orderDir: null });
+    });
+
+    it('reads the predicate back off the URL', async () => {
+      queryParams$.next({ orderBy: CREATOR, orderDir: 'desc' });
+
+      expect(await firstValueFrom(service.sortPredicateIri$)).toBe(CREATOR);
+      expect(await firstValueFrom(service.orderByItems$)).toEqual([
+        expect.objectContaining({ id: CREATOR, direction: 'desc', orderBy: true }),
+      ]);
+    });
+
+    it('falls back to label when no predicate is named', async () => {
+      queryParams$.next({ orderDir: 'desc' });
+      expect(await firstValueFrom(service.sortPredicateIri$)).toBe(RDFS_LABEL);
+    });
+
+    it('counts a property sort as active state, so Reset shows', async () => {
+      queryParams$.next({ orderBy: CREATOR });
+      expect(await firstValueFrom(service.hasActiveState$)).toBe(true);
     });
   });
 
@@ -131,7 +168,7 @@ describe('DataClassUrlStateService', () => {
     });
 
     it('pushes a history entry for a sort change', () => {
-      service.setSortDescending(true);
+      service.setSort(RDFS_LABEL, true);
       expect(lastNav().replaceUrl).toBe(false);
     });
   });
@@ -140,7 +177,7 @@ describe('DataClassUrlStateService', () => {
     it('clears term, filters and sort in a single navigation', () => {
       service.reset();
       expect(navigate).toHaveBeenCalledTimes(1);
-      expect(lastNav().queryParams).toEqual({ q: null, filters: null, orderDir: null });
+      expect(lastNav().queryParams).toEqual({ q: null, filters: null, orderBy: null, orderDir: null });
     });
 
     it('stays out of history', () => {

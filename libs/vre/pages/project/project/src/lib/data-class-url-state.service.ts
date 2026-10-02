@@ -19,18 +19,22 @@ import { ProjectPageService } from './project-page.service';
  * Deliberately *not* advanced search's six. The ontology and resource class are route path
  * segments here — the sidenav fixes them — so writing them as query params would duplicate the route
  * and, worse, collide with it: the path params on this route are themselves named `ontology` and
- * `class`. And because label is the only sortable field, the direction needs no companion `orderBy`.
+ * `class`. The sort carries both a predicate and a direction, but label is the default on both
+ * counts, so an unsorted view writes neither.
  */
 export interface DataClassUrlParams {
   q?: string;
   filters?: string;
-  /** `desc` or absent. Unlike advanced search, this is meaningful on its own — label is implied. */
+  /** Predicate IRI to sort by. Absent means `rdfs:label`, the default, so it stays out of the URL. */
+  orderBy?: string;
+  /** `desc` or absent. Meaningful on its own: with no `orderBy` the sort is label descending. */
   orderDir?: 'desc';
 }
 
 export const DATA_CLASS_PARAM = {
   q: 'q',
   filters: 'filters',
+  orderBy: 'orderBy',
   orderDir: 'orderDir',
 } as const satisfies { [K in keyof Required<DataClassUrlParams>]: K };
 
@@ -55,11 +59,14 @@ export class DataClassUrlStateService implements SearchFilterState {
     map(p => ({
       q: p[DATA_CLASS_PARAM.q] || undefined,
       filters: p[DATA_CLASS_PARAM.filters] || undefined,
+      orderBy: p[DATA_CLASS_PARAM.orderBy] || undefined,
       // Anything but the literal `desc` normalises away, so a hand-edited URL cannot produce a
       // half-set sort.
       orderDir: p[DATA_CLASS_PARAM.orderDir] === DESC ? DESC : undefined,
     })),
-    distinctUntilChanged((a, b) => a.q === b.q && a.filters === b.filters && a.orderDir === b.orderDir)
+    distinctUntilChanged(
+      (a, b) => a.q === b.q && a.filters === b.filters && a.orderBy === b.orderBy && a.orderDir === b.orderDir
+    )
   );
 
   /** The route path segments that fix what is being browsed. */
@@ -111,11 +118,11 @@ export class DataClassUrlStateService implements SearchFilterState {
 
   /**
    * A non-default sort counts as active state here, unlike on the Search tab. There, a direction
-   * without an `orderBy` is meaningless and is dropped on read; here label is implied, so `orderDir`
-   * alone is a real, resettable choice and must reveal the Reset control (REQ-1.10).
+   * without an `orderBy` is meaningless and is dropped on read; here label is the implied default, so
+   * `orderDir` alone is a real, resettable choice and must reveal the Reset control (REQ-1.10).
    */
   readonly hasActiveState$: Observable<boolean> = this._params$.pipe(
-    map(p => !!(p.q || p.filters || p.orderDir)),
+    map(p => !!(p.q || p.filters || p.orderBy || p.orderDir)),
     distinctUntilChanged()
   );
 
@@ -125,22 +132,29 @@ export class DataClassUrlStateService implements SearchFilterState {
     distinctUntilChanged()
   );
 
+  /** The predicate being sorted by. Absent from the URL means the default, `rdfs:label`. */
+  readonly sortPredicateIri$: Observable<string> = this._params$.pipe(
+    map(p => p.orderBy || RDFS_LABEL),
+    distinctUntilChanged()
+  );
+
   /**
    * The sort in the shape `GravsearchService` consumes.
    *
-   * `_getOrderByString` keeps only items with `orderBy: true`, and routes `rdfs:label` to the
-   * assembly's shared `?label` variable rather than a statement-indexed `?resN` — which is exactly
-   * what this page wants, since label is its only sortable field and it is sortable whether or not
-   * any statement mentions it. Labels stay empty: nothing here renders this item in a picker, the
-   * way advanced search's order-by dropdown does.
+   * `_getOrderByString` keeps only items with `orderBy: true`. `rdfs:label` routes to the assembly's
+   * shared `?label` variable; any other predicate gets a variable bound for it on demand, which is
+   * what makes sorting by a property nobody filtered on possible at all.
    *
-   * The ascending item is emitted rather than omitted. An empty array would produce the same
+   * Labels stay empty — the picker renders its own text from the ontology, not from this item.
+   *
+   * The ascending label item is emitted rather than omitted. An empty array would produce the same
    * `ORDER BY ASC(?label)` by falling through to the service's default, but saying it outright keeps
    * the query a function of the URL instead of of a default two layers away.
    */
-  readonly orderByItems$: Observable<OrderByItem[]> = this.sortDescending$.pipe(
-    map(descending => [new OrderByItem(RDFS_LABEL, [], false, true, descending ? 'desc' : 'asc')])
-  );
+  readonly orderByItems$: Observable<OrderByItem[]> = combineLatest([
+    this.sortPredicateIri$,
+    this.sortDescending$,
+  ]).pipe(map(([iri, descending]) => [new OrderByItem(iri, [], false, true, descending ? 'desc' : 'asc')]));
 
   setFulltextTerm(term: string | undefined): void {
     // Replace rather than push: the bar debounces at 300 ms, so pushing would turn one typed term
@@ -149,8 +163,8 @@ export class DataClassUrlStateService implements SearchFilterState {
   }
 
   /**
-   * `removedPredicateIri` is ignored: this page sorts by label, never by a filter's predicate, so no
-   * filter removal can orphan the sort.
+   * `removedPredicateIri` is ignored. The sort predicate is chosen from the class's properties, not
+   * from the filters, so removing a filter cannot orphan it — the sort binds its own variable.
    */
   setFilters(filters: FilterParam[]): void {
     const encoded = filters.length
@@ -159,12 +173,25 @@ export class DataClassUrlStateService implements SearchFilterState {
     this._write({ filters: encoded }, { replaceUrl: false });
   }
 
-  setSortDescending(descending: boolean): void {
-    this._write({ orderDir: descending ? DESC : undefined }, { replaceUrl: false });
+  /**
+   * Predicate and direction in one navigation. Two synchronous `navigate` calls get coalesced by the
+   * Router and the second discards the first, so changing the property and resetting the direction
+   * have to arrive together or one of them is silently lost.
+   *
+   * `rdfs:label` is the default and writes no `orderBy`, keeping the common case out of the URL.
+   */
+  setSort(predicateIri: string, descending: boolean): void {
+    this._write(
+      {
+        orderBy: predicateIri === RDFS_LABEL ? undefined : predicateIri,
+        orderDir: descending ? DESC : undefined,
+      },
+      { replaceUrl: false }
+    );
   }
 
   reset(): void {
-    this._write({ q: undefined, filters: undefined, orderDir: undefined }, { replaceUrl: true });
+    this._write({ q: undefined, filters: undefined, orderBy: undefined, orderDir: undefined }, { replaceUrl: true });
   }
 
   // ── URL plumbing ──────────────────────────────────────────────────────────

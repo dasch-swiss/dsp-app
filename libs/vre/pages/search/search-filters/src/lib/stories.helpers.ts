@@ -138,12 +138,13 @@ const STORY_TRANSLATIONS = {
         searchLabel: 'Search',
         searchPlaceholder: 'Search in this class',
       },
-      labelHeader: {
-        label: 'Label',
+      sortHeader: {
+        sortBy: 'Sort by',
+        chooseProperty: 'Choose a property to sort by',
         aToZ: 'A–Z',
         zToA: 'Z–A',
-        sortAscending: 'Sort by label, A to Z',
-        sortDescending: 'Sort by label, Z to A',
+        sortAscending: 'Sort ascending',
+        sortDescending: 'Sort descending',
       },
       resourcesListFetcher: {
         noResourcesFound: 'No resources found',

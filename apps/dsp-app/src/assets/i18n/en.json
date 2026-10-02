@@ -628,16 +628,17 @@
         "searchLabel": "Search",
         "searchPlaceholder": "Search in this class"
       },
-      "labelHeader": {
-        "label": "Label",
-        "aToZ": "A–Z",
-        "zToA": "Z–A",
-        "sortAscending": "Sort by label, A to Z",
-        "sortDescending": "Sort by label, Z to A"
-      },
       "resultMeta": {
         "range": "{{start}} – {{end}} of {{total}}",
         "pageOf": "{{current}} of {{total}}"
+      },
+      "sortHeader": {
+        "sortBy": "Sort by",
+        "chooseProperty": "Choose a property to sort by",
+        "aToZ": "A–Z",
+        "zToA": "Z–A",
+        "sortAscending": "Sort ascending",
+        "sortDescending": "Sort descending"
       }
     }
   },

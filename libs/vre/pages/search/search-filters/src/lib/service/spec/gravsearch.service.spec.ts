@@ -410,7 +410,7 @@ describe('Gravsearch Service and Writer - sorting by an unfiltered property', ()
   it('binds the property so there is something to order by', () => {
     const query = queryWithSortBy(PROP);
 
-    expect(query).toContain(`?mainRes <${PROP}> ?orderBy0 .`);
+    expect(query).toContain(`OPTIONAL { ?mainRes <${PROP}> ?orderBy0 . }`);
     expect(query).toContain('ORDER BY ASC(?orderBy0)');
     // The bug this replaces: a failed findIndex produced an unbound `?res-1`.
     expect(query).not.toContain('?res-1');
@@ -433,10 +433,11 @@ describe('Gravsearch Service and Writer - sorting by an unfiltered property', ()
     expect(query.indexOf('?orderBy0 .')).toBeLessThan(whereEnd);
   });
 
-  it('leaves the result set narrowed, not reordered — the binding is not OPTIONAL', () => {
-    // Deliberate: a resource with no value for the sort property drops out, and the count drops
-    // with it. Verified against the dev API — sorting incunabula:Book by hasCreator took 19 to 15.
-    expect(queryWithSortBy(PROP)).not.toContain('OPTIONAL');
+  it('reorders without filtering — the binding is OPTIONAL', () => {
+    // A non-optional binding drops every resource lacking the property, and the count with it:
+    // measured against the dev API, sorting incunabula:Book by hasCreator took 19 results to 15.
+    // OPTIONAL keeps all 19 and sorts the four without a creator to one end.
+    expect(queryWithSortBy(PROP)).toContain('OPTIONAL {');
   });
 });
 

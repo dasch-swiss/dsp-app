@@ -109,9 +109,10 @@ export class GravsearchService {
    * `?res-1` from a failed `findIndex`. The Data tab lets you sort by any property of the class, so
    * the query has to bind it on demand.
    *
-   * The binding is **not** `OPTIONAL`: a resource with no value for the sort property drops out of
-   * the result set, and the count drops with it. That is a deliberate product choice — it means a
-   * property sort narrows what you are browsing, not just reorders it.
+   * The binding is `OPTIONAL`, so a property sort *reorders* the class rather than filtering it: a
+   * resource with no value for the sort property stays in the results and the count is unchanged.
+   * Without it, sorting incunabula:Book by hasCreator silently dropped 19 results to 15. Unbound
+   * values sort first ascending, so those resources cluster at one end.
    *
    * Returns an empty map when every sort predicate is already bound, so a query that does not use
    * this — advanced search, which only ever offers predicates drawn from its own statements —
@@ -132,7 +133,7 @@ export class GravsearchService {
         variableByIri.set(o.id, variable);
         // Mirrors a statement's own object projection, so the variable is the value object — the
         // same shape `_getOrderByString` already sorts on for filtered properties.
-        triples.push(`${MAIN_RESOURCE_PLACEHOLDER} <${sanitizeSparqlIri(o.id)}> ${variable} .`);
+        triples.push(`OPTIONAL { ${MAIN_RESOURCE_PLACEHOLDER} <${sanitizeSparqlIri(o.id)}> ${variable} . }`);
       });
 
     return { variableByIri, whereStatements: triples.length ? `${triples.join('\n')}\n` : '' };
