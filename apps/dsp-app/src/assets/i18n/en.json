@@ -651,7 +651,11 @@
         "showMore": "Show {{count}} more",
         "showLess": "Show less",
         "moveColumn": "Move the {{column}} column",
-        "resizeColumn": "Resize the {{column}} column"
+        "resizeColumn": "Resize the {{column}} column",
+        "sortColumnAscending": "Sort by {{column}}, ascending",
+        "sortColumnDescending": "Sort by {{column}}, descending",
+        "filterByColumn": "Filter by {{column}}",
+        "editColumnFilter": "Edit the filter on {{column}}"
       },
       "viewOptions": {
         "title": "View options",

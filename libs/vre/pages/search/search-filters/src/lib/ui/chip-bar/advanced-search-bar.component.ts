@@ -8,6 +8,8 @@ import {
   Input,
   OnInit,
   signal,
+  viewChild,
+  viewChildren,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
@@ -18,10 +20,11 @@ import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { searchTermMinLengthValidator } from '@dasch-swiss/vre/shared/app-common';
 import { TranslateModule } from '@ngx-translate/core';
-import { debounceTime, distinctUntilChanged, map } from 'rxjs';
+import { debounceTime, distinctUntilChanged, first, map } from 'rxjs';
 import { FilterParam } from '../../filter-params.codec';
 import { PropertyObjectType, StatementElement } from '../../model';
 import { SearchFilterState } from '../../search-filter-state';
+import { FilterEditorRequestService } from '../../service/filter-editor-request.service';
 import { OntologyDataService } from '../../service/ontology-data.service';
 import { SearchFlowLogger } from '../../service/search-flow-logger.service';
 import { StatementDraftStore } from '../../service/statement-draft.store';
@@ -154,7 +157,17 @@ export class AdvancedSearchBarComponent implements OnInit {
   private readonly _destroyRef = inject(DestroyRef);
   private readonly _state = inject(SearchFilterState);
   private readonly _logger = inject(SearchFlowLogger);
+  private readonly _filterEditorRequests = inject(FilterEditorRequestService);
   readonly draftStore = inject(StatementDraftStore);
+
+  /**
+   * The rendered chips and the add button, so a request arriving from outside the bar can drive the
+   * same popovers a click on them would. Queried rather than reimplemented: both components own an
+   * editing draft whose lifecycle (clone, commit, discard) is the hard part, and a second way of
+   * opening the editor would be a second place for it to leak.
+   */
+  private readonly _chips = viewChildren(FilterChipComponent);
+  private readonly _addFilterButton = viewChild(AddFilterButtonComponent);
 
   readonly openChipId = signal<OpenChipId>(OPEN_CHIP_NONE);
   // Only the min-length half of the term rules: this term travels through Gravsearch `matchFulltext`,
@@ -187,6 +200,11 @@ export class AdvancedSearchBarComponent implements OnInit {
     // point at a parent from a later emission (different id), and subcriteria would vanish on re-open.
     // Top-level, valid statements only: subcriteria are edited inside the parent popover, not as chips.
     this.draftStore.statements$.pipe(takeUntilDestroyed(this._destroyRef)).subscribe(() => this._refreshChips());
+
+    // Something outside the bar (a Data tab column header) naming a property to filter on.
+    this._filterEditorRequests.requests$
+      .pipe(takeUntilDestroyed(this._destroyRef))
+      .subscribe(predicateIri => this.openEditorFor(predicateIri));
 
     // Seed the fulltext input from the host's stored term on any change, without echoing back into it
     // (`emitEvent: false`), so back/forward restores the field but does not re-push history.
@@ -241,6 +259,42 @@ export class AdvancedSearchBarComponent implements OnInit {
     this.fulltextControl.setValue('', { emitEvent: false });
     this._refreshFulltextError();
     this._state.setFulltextTerm(undefined);
+  }
+
+  /**
+   * Open the filter editor on one property, wherever the request came from.
+   *
+   * An existing chip on that property is re-opened rather than joined by a second one (PRD REQ-3.7).
+   * That is not merely tidier: two chips on the same predicate produce two `FILTER` clauses ANDed
+   * together in Gravsearch, so a user who filtered twice from the same column header would silently
+   * narrow their results to the intersection and have no single chip to undo it with.
+   *
+   * The predicate is resolved through the ontology rather than passed in, because a caller outside
+   * this lib has a property IRI and no `Predicate` — and `StatementElement` needs the whole thing
+   * (object value type, link-ness, list root) to decide which operators and which value editor to
+   * offer.
+   */
+  openEditorFor(predicateIri: string): void {
+    const existing = this.confirmedStatements().find(stmt => stmt.selectedPredicate?.iri === predicateIri);
+    if (existing) {
+      this._chips()
+        .find(chip => chip.statement.id === existing.id)
+        ?.onOpen();
+      return;
+    }
+
+    this._ontologyDataService
+      .getProperties$()
+      .pipe(first(), takeUntilDestroyed(this._destroyRef))
+      .subscribe(predicates => {
+        const predicate = predicates.find(p => p.iri === predicateIri);
+        // Silently ignored when the ontology does not offer the property as a filterable predicate:
+        // the request came from a column the bar cannot express, and opening a blank editor would
+        // be a worse answer than doing nothing.
+        if (predicate) {
+          this._addFilterButton()?.openFor(predicate);
+        }
+      });
   }
 
   onChipOpenChange(chipId: string, isOpen: boolean): void {

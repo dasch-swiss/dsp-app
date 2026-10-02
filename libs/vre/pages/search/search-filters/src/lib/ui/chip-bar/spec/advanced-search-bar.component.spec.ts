@@ -8,6 +8,7 @@ import { FilterParam } from '../../../filter-params.codec';
 import { StatementElement } from '../../../model';
 import { Operator } from '../../../operators.config';
 import { SearchFilterState } from '../../../search-filter-state';
+import { FilterEditorRequestService } from '../../../service/filter-editor-request.service';
 import { OntologyDataService } from '../../../service/ontology-data.service';
 import { SearchFlowLogger } from '../../../service/search-flow-logger.service';
 import { StatementDraftStore } from '../../../service/statement-draft.store';
@@ -120,6 +121,7 @@ describe('AdvancedSearchBarComponent.onRemoveStatement (DEV-6576)', () => {
         { provide: OntologyDataService, useValue: ontologyDataServiceStub },
         { provide: SearchFlowLogger, useValue: { filterRemoved: () => {} } },
         { provide: StatementDraftStore, useValue: store },
+        FilterEditorRequestService,
       ],
     });
     const fixture = TestBed.createComponent(AdvancedSearchBarComponent);
@@ -196,6 +198,7 @@ describe('AdvancedSearchBarComponent — valueLabel URL persistence (DEV-6857)',
         { provide: OntologyDataService, useValue: ontologyDataServiceStub },
         { provide: SearchFlowLogger, useValue: { filterConfirmed: () => {} } },
         { provide: StatementDraftStore, useValue: store },
+        FilterEditorRequestService,
       ],
     });
     const fixture = TestBed.createComponent(AdvancedSearchBarComponent);
@@ -306,6 +309,7 @@ describe('AdvancedSearchBarComponent fulltext term rules (DEV-6930)', () => {
         { provide: OntologyDataService, useValue: ontologyDataServiceStub },
         { provide: SearchFlowLogger, useValue: { fulltextChanged: () => {} } },
         { provide: StatementDraftStore, useValue: new FakeDraftStore([]) },
+        FilterEditorRequestService,
       ],
     });
     // Only the fulltext field is under test; the chip children need the whole ontology pipeline. The

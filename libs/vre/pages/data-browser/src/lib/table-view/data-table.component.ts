@@ -8,9 +8,24 @@ import { ColumnResizeDirective } from './column-resize.directive';
 import { DEFAULT_DENSITY, TableColumn, TableDensity } from './table-column.model';
 import { buildRows, TableRow } from './table-row.model';
 
-/** A column with its width already resolved, so the template does no lookups. */
+/**
+ * A column with everything its header needs already resolved.
+ *
+ * Computed once per change to the inputs rather than looked up per binding: a class may carry forty
+ * columns, and a header that asked a method for its icon, its label and its `aria-sort` would run
+ * those three calls on every change-detection pass, forever.
+ */
 interface RenderColumn extends TableColumn {
   readonly width: number;
+  /** `null` on every column but the sorted one — exactly one header may announce the sort. */
+  readonly ariaSort: 'ascending' | 'descending' | null;
+  readonly isSorted: boolean;
+  readonly sortIcon: string;
+  /** What the sort button would do next, which is also what its accessible name must say. */
+  readonly nextSortDescending: boolean;
+  readonly sortLabelKey: string;
+  readonly isFiltered: boolean;
+  readonly filterLabelKey: string;
 }
 
 /**
@@ -67,16 +82,14 @@ interface RenderColumn extends TableColumn {
               scope="col"
               [style.width.px]="column.width"
               [attr.aria-label]="column.label"
-              [attr.aria-sort]="
-                column.key === sortedColumnKey() ? (sortDescending() ? 'descending' : 'ascending') : null
-              "
+              [attr.aria-sort]="column.ariaSort"
               cdkDrag
               [cdkDragDisabled]="column.isSticky">
               <div class="header-content">
                 @if (!column.isSticky) {
-                  <!-- The drag lives on a handle, not on the whole cell. Phase 5 puts sort and
-                       filter buttons in this header, and a cell-wide drag would turn every click
-                       on them into a one-pixel column move. -->
+                  <!-- The drag lives on a handle, not on the whole cell: a cell-wide drag would
+                       turn every click on the sort and filter buttons below into a one-pixel
+                       column move. -->
                   <button
                     type="button"
                     class="header-grip"
@@ -87,6 +100,33 @@ interface RenderColumn extends TableColumn {
                   </button>
                 }
                 <span class="header-label" [title]="column.label">{{ column.label }}</span>
+
+                <!-- Only where the Data tab's own sort rule allows it (REQ-3.2). A control the
+                     query cannot honour is worse than none: the user would click it and watch the
+                     order not change. -->
+                @if (column.isSortable) {
+                  <button
+                    type="button"
+                    class="header-sort"
+                    [class.is-active]="column.isSorted"
+                    data-cy="column-sort"
+                    [attr.aria-label]="column.sortLabelKey | translate: { column: column.label }"
+                    (click)="sortToggled.emit({ key: column.key, descending: column.nextSortDescending })">
+                    <mat-icon>{{ column.sortIcon }}</mat-icon>
+                  </button>
+                }
+
+                @if (column.isFilterable) {
+                  <button
+                    type="button"
+                    class="header-filter"
+                    [class.is-active]="column.isFiltered"
+                    data-cy="column-filter"
+                    [attr.aria-label]="column.filterLabelKey | translate: { column: column.label }"
+                    (click)="filterRequested.emit(column.key)">
+                    <mat-icon>filter_list</mat-icon>
+                  </button>
+                }
               </div>
 
               @if (!column.isSticky) {
@@ -159,11 +199,30 @@ export class DataTableComponent {
   /** The sort the query is running, so the matching header can announce `aria-sort`. */
   readonly sortedColumnKey = input<string | undefined>(undefined);
   readonly sortDescending = input(false);
+  /**
+   * Keys of the columns a filter chip currently exists on.
+   *
+   * Derived from the shared filter state, not from anything the table did — so a chip removed in
+   * the bar stops being indicated here with no further wiring (REQ-3.8).
+   */
+  readonly filteredColumnKeys = input<ReadonlySet<string>>(new Set<string>());
 
   readonly resourceSelected = output<ReadResource>();
   /** The whole new display order, not a delta — the host persists the array as it stands. */
   readonly columnsReordered = output<string[]>();
   readonly columnResized = output<{ key: string; width: number }>();
+  /**
+   * The sort the user just asked for, already resolved to a direction.
+   *
+   * The direction is decided here rather than by the host because the table is the only thing that
+   * knows which header was clicked relative to the one currently sorted. Two-state by design
+   * (REQ-3.1): a third "unsorted" step would have to mean *something* to Gravsearch, which always
+   * orders by label when nothing else is asked for — so it would really be "sort by label", a state
+   * the label column's own control already offers.
+   */
+  readonly sortToggled = output<{ key: string; descending: boolean }>();
+  /** The column whose filter the user wants to edit. The host decides where the editor opens. */
+  readonly filterRequested = output<string>();
 
   private readonly _table = viewChild(MatTable);
 
@@ -171,7 +230,37 @@ export class DataTableComponent {
 
   protected readonly renderColumns = computed<RenderColumn[]>(() => {
     const widths = this.columnWidths();
-    return this.columns().map(column => ({ ...column, width: widths[column.key] ?? column.defaultWidth }));
+    const sortedKey = this.sortedColumnKey();
+    const descending = this.sortDescending();
+    const filtered = this.filteredColumnKeys();
+
+    return this.columns().map((column): RenderColumn => {
+      const isSorted = column.key === sortedKey;
+      // Clicking the column that is already sorted flips it; clicking any other starts ascending,
+      // which is what "sort by this" means before the user has expressed a direction.
+      const nextSortDescending = isSorted && !descending;
+      const isFiltered = filtered.has(column.key);
+
+      return {
+        ...column,
+        width: widths[column.key] ?? column.defaultWidth,
+        ariaSort: isSorted ? (descending ? 'descending' : 'ascending') : null,
+        isSorted,
+        // `swap_vert` reads as "this can be sorted"; the arrows as "this is sorted, this way".
+        sortIcon: isSorted ? (descending ? 'arrow_downward' : 'arrow_upward') : 'swap_vert',
+        nextSortDescending,
+        // The name states the outcome of the click, not the current state — a screen-reader user
+        // gets the current state from `aria-sort` on the header and needs the button to say what
+        // pressing it will do.
+        sortLabelKey: nextSortDescending
+          ? 'pages.dataBrowser.table.sortColumnDescending'
+          : 'pages.dataBrowser.table.sortColumnAscending',
+        isFiltered,
+        filterLabelKey: isFiltered
+          ? 'pages.dataBrowser.table.editColumnFilter'
+          : 'pages.dataBrowser.table.filterByColumn',
+      };
+    });
   });
 
   protected readonly densityClass = computed(() => `density-${this.density()}`);

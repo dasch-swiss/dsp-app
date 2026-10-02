@@ -37,7 +37,8 @@ table {
   &:hover,
   &:focus-within {
     .header-grip,
-    .column-resize-handle {
+    .column-resize-handle,
+    .header-sort {
       opacity: 1;
     }
   }
@@ -76,6 +77,51 @@ table {
     width: 14px;
     height: 14px;
   }
+}
+
+// Shared shape for the two header controls. They differ only in when they are visible: the sort
+// button hides until the column is hovered *unless* it is the active sort, which must stay readable
+// from across the table (REQ-3.3), while the filter button is always drawn so the absence of a
+// filter is as legible as its presence.
+.header-sort,
+.header-filter {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 3px;
+  background: transparent;
+  padding: 1px;
+  cursor: pointer;
+  color: rgba(0, 0, 0, 0.45);
+
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+  }
+
+  &:focus-visible {
+    opacity: 1;
+    outline: 2px solid var(--primary, #336790);
+    outline-offset: 1px;
+  }
+}
+
+.header-sort {
+  opacity: 0;
+
+  &.is-active {
+    // Beats the hover rule above, which only ever raises opacity.
+    opacity: 1;
+    color: var(--primary, #336790);
+  }
+}
+
+.header-filter.is-active {
+  background: #d6e0e8;
+  color: var(--primary, #336790);
 }
 
 .column-resize-handle {

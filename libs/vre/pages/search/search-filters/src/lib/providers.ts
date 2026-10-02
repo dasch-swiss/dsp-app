@@ -1,6 +1,7 @@
 import { Provider } from '@angular/core';
 import { ConfirmedSearchStateService } from './service/confirmed-search-state.service';
 import { DynamicFormsDataService } from './service/dynamic-forms-data.service';
+import { FilterEditorRequestService } from './service/filter-editor-request.service';
 import { GravsearchService } from './service/gravsearch.service';
 import { ListNodeLabelResolver } from './service/list-node-label.resolver';
 import { OntologyDataService } from './service/ontology-data.service';
@@ -18,6 +19,7 @@ export function provideSearchFilters(): Provider[] {
     ConfirmedSearchStateService,
     OntologyDataService,
     DynamicFormsDataService,
+    FilterEditorRequestService,
     GravsearchService,
     ListNodeLabelResolver,
     SearchFlowLogger,

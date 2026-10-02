@@ -17,7 +17,11 @@ import {
   MultipleViewerService,
   TableViewStateService,
 } from '@dasch-swiss/vre/pages/data-browser';
-import { RDFS_LABEL, SearchFilterState } from '@dasch-swiss/vre/pages/search/search-filters';
+import {
+  FilterEditorRequestService,
+  RDFS_LABEL,
+  SearchFilterState,
+} from '@dasch-swiss/vre/pages/search/search-filters';
 import { ResourceResultService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { AppProgressIndicatorComponent } from '@dasch-swiss/vre/ui/progress-indicator';
 import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
@@ -64,9 +68,12 @@ import { ProjectPageService } from '../../project-page.service';
             [selectedResourceId]="selectedResourceId()"
             [sortedColumnKey]="sortedColumnKey()"
             [sortDescending]="sortDescending()"
+            [filteredColumnKeys]="filteredColumnKeys()"
             (resourceSelected)="onResourceSelected($event)"
             (columnsReordered)="onColumnsReordered($event)"
-            (columnResized)="onColumnResized($event)" />
+            (columnResized)="onColumnResized($event)"
+            (sortToggled)="onSortToggled($event)"
+            (filterRequested)="onFilterRequested($event)" />
         } @else if (filtersAreActive) {
           <app-centered-message
             [message]="'pages.dataBrowser.resourcesListFetcher.noResourcesMatchFilters' | translate" />
@@ -133,6 +140,14 @@ export class DataTableFetcherComponent implements OnChanges {
   readonly sortedColumnKey = signal<string | undefined>(undefined);
   readonly sortDescending = signal(false);
 
+  /**
+   * Which columns carry a filter chip, so their headers can say so (REQ-3.7).
+   *
+   * Read off the shared filter state rather than tracked by the table, which is what makes removing
+   * a chip in the bar clear the header indication with no code of its own (REQ-3.8).
+   */
+  readonly filteredColumnKeys = signal<ReadonlySet<string>>(new Set<string>());
+
   /** Re-triggers the load after a failure. Replays on subscribe so the initial load runs too. */
   private readonly _retrySubject = new BehaviorSubject<void>(undefined);
 
@@ -148,6 +163,7 @@ export class DataTableFetcherComponent implements OnChanges {
     private readonly _resourceResult: ResourceResultService,
     private readonly _query: DataClassQueryService,
     private readonly _searchState: SearchFilterState,
+    private readonly _filterEditorRequests: FilterEditorRequestService,
     private readonly _urlState: DataClassUrlStateService,
     private readonly _stringify: StringifyStringLiteralPipe,
     private readonly _errorHandler: ErrorHandler,
@@ -170,9 +186,23 @@ export class DataTableFetcherComponent implements OnChanges {
 
     this._urlState.sortPredicateIri$
       .pipe(takeUntilDestroyed())
-      .subscribe(iri => this.sortedColumnKey.set(iri === RDFS_LABEL ? LABEL_COLUMN_KEY : iri));
+      .subscribe(iri => this.sortedColumnKey.set(this._columnKeyOf(iri)));
 
     this._urlState.sortDescending$.pipe(takeUntilDestroyed()).subscribe(desc => this.sortDescending.set(desc));
+
+    // Only top-level filters become chips; a subcriterion constrains the resource its parent links
+    // to, not a column of this table, so indicating it on a header would point at the wrong data.
+    this._searchState.filters$
+      .pipe(takeUntilDestroyed())
+      .subscribe(filters =>
+        this.filteredColumnKeys.set(
+          new Set(
+            filters
+              .filter(filterParam => filterParam.parentIndex === null || filterParam.parentIndex === undefined)
+              .map(filterParam => this._columnKeyOf(filterParam.predicateIri))
+          )
+        )
+      );
   }
 
   ngOnChanges() {
@@ -203,6 +233,44 @@ export class DataTableFetcherComponent implements OnChanges {
 
   onColumnResized({ key, width }: { key: string; width: number }) {
     this._tableState.setColumnWidth(key, width);
+  }
+
+  /**
+   * The same writer the list view's sort header uses, so the two controls share one piece of state
+   * and a sort set in the table survives a switch back to the list (REQ-3.4).
+   *
+   * No page-index reset here. `_data$` already resets the offset when the query changes, and
+   * `data-class-sort-header.component.ts` carries the standing warning that a second writer leaves
+   * no way to tell which one won (REQ-3.10).
+   */
+  onSortToggled({ key, descending }: { key: string; descending: boolean }) {
+    this._urlState.setSort(this._predicateIriOf(key), descending);
+  }
+
+  /**
+   * Hand the column's property to the chip bar and let it open its own editor.
+   *
+   * The table deliberately does not host a filter popover of its own: the bar is the only component
+   * that knows which chips exist, and so the only one that can re-open the chip on this property
+   * instead of adding a second filter to it (REQ-3.6, REQ-3.7).
+   */
+  onFilterRequested(key: string) {
+    this._filterEditorRequests.open(this._predicateIriOf(key));
+  }
+
+  /**
+   * Translate between the two names for the resource label.
+   *
+   * The URL and the filter codec call it `rdfs:label`, the column model calls it the synthetic label
+   * column — it is not a property and so has no IRI of its own. Everything crossing that boundary
+   * goes through this pair rather than repeating the conditional at each call site.
+   */
+  private _columnKeyOf(predicateIri: string): string {
+    return predicateIri === RDFS_LABEL ? LABEL_COLUMN_KEY : predicateIri;
+  }
+
+  private _predicateIriOf(columnKey: string): string {
+    return columnKey === LABEL_COLUMN_KEY ? RDFS_LABEL : columnKey;
   }
 
   /**

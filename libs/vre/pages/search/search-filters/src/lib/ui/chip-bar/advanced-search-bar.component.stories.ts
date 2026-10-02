@@ -3,16 +3,19 @@ import { importProvidersFrom } from '@angular/core';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
-import { expect, fn, userEvent, within } from 'storybook/test';
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { provideSearchFilters } from '../../providers';
 import { SearchFilterState } from '../../search-filter-state';
+import { FilterEditorRequestService } from '../../service/filter-editor-request.service';
 import { OntologyDataService } from '../../service/ontology-data.service';
 import {
   SEARCH_FILTER_SERVICE_STUBS,
   makeDspApiConnectionStub,
   makeOntologyDataServiceStub,
+  SAMPLE_ONTOLOGIES,
   STORY_PROVIDERS,
 } from '../../stories.helpers';
+import { makePredicate } from '../../testing/test-data-builders';
 import { AdvancedSearchBarComponent } from './advanced-search-bar.component';
 
 const meta: Meta<AdvancedSearchBarComponent> = {
@@ -231,6 +234,52 @@ export const LeadingIconWithoutALabel: Story = {
       const input = canvasElement.querySelector('input') as HTMLInputElement;
       const gap = input.getBoundingClientRect().left - icon.getBoundingClientRect().right;
       await expect(gap).toBeLessThanOrEqual(12);
+    });
+  },
+};
+
+const TITLE_PREDICATE = makePredicate(
+  `${SAMPLE_ONTOLOGIES[0].iri}#hasTitle`,
+  'Title',
+  'http://api.knora.org/ontology/knora-api/v2#TextValue',
+  false
+);
+
+const headerFilterRequests = new FilterEditorRequestService();
+
+/**
+ * The Data tab's column headers do not host a filter editor of their own; they name a property and
+ * the bar opens its own (DEV-7466 REQ-3.5). Driven here through the real service rather than by
+ * calling the method, because the routing *is* what is under test.
+ */
+export const OpensTheEditorOnAPropertyNamedFromOutsideTheBar: Story = {
+  name: 'A column header can ask the bar to open a filter on one property',
+  args: { projectUuid: '0001' },
+  decorators: [
+    applicationConfig({
+      providers: [
+        ...STORY_PROVIDERS,
+        importProvidersFrom(OverlayModule),
+        { provide: DspApiConnectionToken, useValue: makeDspApiConnectionStub() },
+        ...provideSearchFilters(),
+        ...SEARCH_FILTER_SERVICE_STUBS,
+        {
+          provide: OntologyDataService,
+          useValue: makeOntologyDataServiceStub({ getProperties$: () => of([TITLE_PREDICATE]) }),
+        },
+        // Held by the story rather than resolved out of the injector, so the request can be raised
+        // from outside the component tree exactly as a column header raises it.
+        { provide: FilterEditorRequestService, useValue: headerFilterRequests },
+      ],
+    }),
+  ],
+  play: async ({ step }) => {
+    await step('Naming a property opens the editor, and adds no chip of its own', async () => {
+      headerFilterRequests.open(TITLE_PREDICATE.iri);
+
+      // The popover renders into a CDK overlay, which attaches to the body, not to the canvas.
+      await waitFor(() => expect(document.body.querySelector('app-filter-editor-popover')).not.toBeNull());
+      await expect(document.body.querySelectorAll('app-filter-chip')).toHaveLength(0);
     });
   },
 };

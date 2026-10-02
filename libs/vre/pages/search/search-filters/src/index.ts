@@ -8,6 +8,7 @@ export * from './lib/stories.helpers';
 export * from './lib/testing/test-data-builders';
 export * from './lib/service/confirmed-search-state.service';
 export * from './lib/service/dynamic-forms-data.service';
+export * from './lib/service/filter-editor-request.service';
 export * from './lib/service/gravsearch.service';
 export * from './lib/service/list-node-label.resolver';
 export * from './lib/service/ontology-data.service';
