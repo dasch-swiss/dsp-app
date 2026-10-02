@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, ErrorHandler, Inject, Input, OnChanges, signal } from '@angular/core';
+import { Component, ErrorHandler, Inject, inject, Input, OnChanges, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   KnoraApiConnection,
@@ -15,9 +15,7 @@ import {
   DataTableComponent,
   LABEL_COLUMN_KEY,
   MultipleViewerService,
-  TableColumn,
-  TableLayout,
-  TableLayoutService,
+  TableViewStateService,
 } from '@dasch-swiss/vre/pages/data-browser';
 import { RDFS_LABEL, SearchFilterState } from '@dasch-swiss/vre/pages/search/search-filters';
 import { ResourceResultService } from '@dasch-swiss/vre/shared/app-helper-services';
@@ -66,7 +64,9 @@ import { ProjectPageService } from '../../project-page.service';
             [selectedResourceId]="selectedResourceId()"
             [sortedColumnKey]="sortedColumnKey()"
             [sortDescending]="sortDescending()"
-            (resourceSelected)="onResourceSelected($event)" />
+            (resourceSelected)="onResourceSelected($event)"
+            (columnsReordered)="onColumnsReordered($event)"
+            (columnResized)="onColumnResized($event)" />
         } @else if (filtersAreActive) {
           <app-centered-message
             [message]="'pages.dataBrowser.resourcesListFetcher.noResourcesMatchFilters' | translate" />
@@ -109,8 +109,17 @@ export class DataTableFetcherComponent implements OnChanges {
   readonly failed = signal(false);
   readonly failureReason = signal<string | undefined>(undefined);
 
-  readonly columns = signal<TableColumn[]>([]);
-  readonly layout = signal<TableLayout>({ visible: [], hidden: [], widths: {}, density: 'default' });
+  /**
+   * The column model and the shaping the user has applied to it.
+   *
+   * Held in a service rather than here because the View options menu that edits them is rendered
+   * by the class header, above the split — a sibling this component cannot reach with an output.
+   * This component is still what *builds* the model, since it is the only one holding the
+   * ontology.
+   */
+  private readonly _tableState = inject(TableViewStateService);
+  readonly columns = this._tableState.columns;
+  readonly layout = this._tableState.layout;
 
   readonly selectedResourceId = signal<string | undefined>(undefined);
 
@@ -140,7 +149,6 @@ export class DataTableFetcherComponent implements OnChanges {
     private readonly _query: DataClassQueryService,
     private readonly _searchState: SearchFilterState,
     private readonly _urlState: DataClassUrlStateService,
-    private readonly _tableLayout: TableLayoutService,
     private readonly _stringify: StringifyStringLiteralPipe,
     private readonly _errorHandler: ErrorHandler,
     private readonly _errorReporting: ErrorReportingService,
@@ -185,6 +193,19 @@ export class DataTableFetcherComponent implements OnChanges {
   }
 
   /**
+   * Both shaping gestures persist and redraw, and neither re-runs the query: the page's resources
+   * already carry every property, so which columns are drawn and how wide they are is a rendering
+   * decision the client makes on its own (REQ-2.3).
+   */
+  onColumnsReordered(order: string[]) {
+    this._tableState.setVisibleOrder(order);
+  }
+
+  onColumnResized({ key, width }: { key: string; width: number }) {
+    this._tableState.setColumnWidth(key, width);
+  }
+
+  /**
    * The class's columns, and the layout the user last left them in.
    *
    * Built from the ontology's own property definitions rather than from `OntologyDataService`,
@@ -205,8 +226,7 @@ export class DataTableFetcherComponent implements OnChanges {
       'Label'
     );
 
-    this.columns.set(columns);
-    this.layout.set(this._tableLayout.load(this.resClass.id, columns));
+    this._tableState.init(this.resClass.id, columns);
   }
 
   private _data$(): Observable<{ resources: ReadResource[] } | null> {

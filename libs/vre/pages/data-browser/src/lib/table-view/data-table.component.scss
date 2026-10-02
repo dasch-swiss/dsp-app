@@ -28,6 +28,91 @@ table {
   // Sticky cells are transparent by default, so rows would show through the header as they scroll
   // under it.
   background: #f9fafb;
+  // Anchors the resize handle, which hangs off the cell's right edge.
+  position: relative;
+
+  // Both affordances are noise until the pointer is near the column they belong to; at forty
+  // columns, always-on grips and handles read as a row of dense clutter rather than as controls.
+  // `focus-within` keeps them reachable without a pointer.
+  &:hover,
+  &:focus-within {
+    .header-grip,
+    .column-resize-handle {
+      opacity: 1;
+    }
+  }
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+}
+
+.header-grip {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: grab;
+  color: rgba(0, 0, 0, 0.38);
+  opacity: 0;
+
+  &:active {
+    cursor: grabbing;
+  }
+
+  &:focus-visible {
+    opacity: 1;
+    outline: 2px solid var(--primary, #336790);
+    outline-offset: 1px;
+  }
+
+  mat-icon {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+  }
+}
+
+.column-resize-handle {
+  // Overhangs the border so the grab area straddles the line the user is aiming at, rather than
+  // sitting entirely inside one of the two columns it separates.
+  position: absolute;
+  top: 0;
+  right: -4px;
+  bottom: 0;
+  width: 8px;
+  z-index: 1;
+  cursor: col-resize;
+  opacity: 0;
+
+  &:hover {
+    background: rgba(51, 103, 144, 0.25);
+  }
+}
+
+// The preview is cloned out of the table and so loses `display: table-cell`, which is what was
+// giving the cell its width — without a box model of its own it would collapse to the width of its
+// text. The clone keeps the inline width this component binds on the header cell, so making it a
+// border-box flex row is enough to hold the column's real width.
+.cdk-drag-preview {
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  padding: 8px 12px;
+  background: #f9fafb;
+  border-radius: 4px;
+  box-shadow:
+    0 5px 5px -3px rgba(0, 0, 0, 0.2),
+    0 8px 10px 1px rgba(0, 0, 0, 0.14);
+}
+
+.cdk-drag-placeholder {
+  opacity: 0.35;
 }
 
 .header-label {

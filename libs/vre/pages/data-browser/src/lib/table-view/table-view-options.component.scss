@@ -1,0 +1,65 @@
+.view-options-trigger {
+  height: 36px;
+  color: rgba(0, 0, 0, 0.6);
+  font: 500 13px/18px var(--font-sans, inherit);
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+}
+
+.view-options-panel {
+  // A class with forty properties produces forty picker rows. Capped and scrolled rather than
+  // allowed to grow, so the menu never runs past the bottom of the viewport and strands the
+  // columns at the end of the list.
+  width: 260px;
+  max-height: 520px;
+  overflow-y: auto;
+}
+
+.section-header {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 0;
+  padding: 10px 16px 4px;
+  font: 500 11px/16px var(--font-sans, inherit);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.section-meta {
+  margin-left: auto;
+  letter-spacing: normal;
+  text-transform: none;
+  font-size: 11px;
+}
+
+.option-row {
+  // Material's own menu-item height leaves a 40-column list taller than the cap above; 36px keeps
+  // roughly a dozen rows in view without the list reading as cramped.
+  height: 36px;
+  font: 400 14px/20px var(--font-sans, inherit);
+
+  .option-mark {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    margin-right: 8px;
+    color: var(--primary, #336790);
+  }
+}
+
+.option-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.option-meta {
+  margin-left: 8px;
+  font-size: 13px;
+  color: rgba(0, 0, 0, 0.5);
+}

@@ -649,7 +649,19 @@
         "label": "Resources of this class",
         "notSet": "— not set",
         "showMore": "Show {{count}} more",
-        "showLess": "Show less"
+        "showLess": "Show less",
+        "moveColumn": "Move the {{column}} column",
+        "resizeColumn": "Resize the {{column}} column"
+      },
+      "viewOptions": {
+        "title": "View options",
+        "density": "Density",
+        "densityCompact": "Compact",
+        "densityDefault": "Default",
+        "densityComfortable": "Comfortable",
+        "columns": "Columns",
+        "columnsShown": "{{count}} of {{total}} shown",
+        "alwaysShown": "Always"
       }
     }
   },

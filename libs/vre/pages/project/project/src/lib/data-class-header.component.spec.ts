@@ -12,6 +12,7 @@ import { provideTranslateService, TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, of } from 'rxjs';
 import { DataBrowserPageService } from './data-browser-page.service';
 import { DataClassHeaderComponent } from './data-class-header.component';
+import { DataClassUrlStateService } from './data-class-url-state.service';
 import { DownloadDialogComponent } from './download/download-dialog.component';
 import { ProjectPageService } from './project-page.service';
 
@@ -133,6 +134,9 @@ describe('DataClassHeaderComponent', () => {
         { provide: NotificationService, useValue: mockNotificationService },
         { provide: DataBrowserPageService, useValue: mockDataBrowserPageService },
         { provide: LocalizationService, useValue: mockLocalizationService },
+        // The header reads the view out of the URL to decide whether to offer the table's View
+        // options menu. The real service is route-scoped, which this isolated fixture has none of.
+        { provide: DataClassUrlStateService, useValue: { view$: of('list') } },
         provideTranslateService(),
         TranslateService,
       ],

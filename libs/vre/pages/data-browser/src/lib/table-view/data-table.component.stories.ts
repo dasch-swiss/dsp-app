@@ -69,6 +69,8 @@ const meta: Meta<DataTableComponent> = {
     sortedColumnKey: { description: 'Column the query is sorted by, so its header announces aria-sort.' },
     sortDescending: { description: 'Direction of that sort.' },
     resourceSelected: { description: 'Emits the resource of the clicked row.' },
+    columnsReordered: { description: 'Emits the whole new display order after a header is dragged.' },
+    columnResized: { description: 'Emits a column key and its new pixel width once a resize gesture ends.' },
   },
 };
 
@@ -143,6 +145,45 @@ export const AnnouncesTheSortOnExactlyOneHeader: Story = {
     const canvas = within(canvasElement);
     await expect(canvas.getByRole('columnheader', { name: 'Title' })).toHaveAttribute('aria-sort', 'descending');
     await expect(canvas.getByRole('columnheader', { name: 'Label' })).not.toHaveAttribute('aria-sort');
+  },
+};
+
+/**
+ * What a class looks like when it is reopened after the user shaped it and the browser was
+ * restarted — the order, the widths and the density all come back off the persisted layout.
+ */
+export const RestoresAPersistedOrderWidthAndDensity: Story = {
+  args: {
+    visibleColumns: [LABEL_COLUMN_KEY, `${ONTO}hasPlace`, `${ONTO}hasTitle`],
+    columnWidths: { [`${ONTO}hasPlace`]: 320 },
+    density: 'compact',
+  },
+  play: async ({ canvasElement }) => {
+    const headers = Array.from(canvasElement.querySelectorAll('th'));
+    await expect(headers.map(th => th.querySelector('.header-label')?.textContent?.trim())).toEqual([
+      'Label',
+      'Place',
+      'Title',
+    ]);
+
+    await expect(headers[1].style.width).toBe('320px');
+
+    await expect(canvasElement.querySelector('.density-compact')).not.toBeNull();
+  },
+};
+
+/**
+ * The grip exists so the drag does not swallow the sort and filter controls Phase 5 puts in the
+ * same header, and the label column has none because it must stay pinned to the left edge.
+ */
+export const OffersADragGripOnEveryColumnButTheStickyOne: Story = {
+  play: async ({ canvasElement }) => {
+    const grips = canvasElement.querySelectorAll('[data-cy="column-grip"]');
+    await expect(grips).toHaveLength(2);
+
+    const labelHeader = canvasElement.querySelector('th');
+    await expect(labelHeader?.querySelector('[data-cy="column-grip"]')).toBeNull();
+    await expect(labelHeader?.querySelector('[data-cy="column-resize"]')).toBeNull();
   },
 };
 

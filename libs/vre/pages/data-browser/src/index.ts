@@ -17,3 +17,10 @@ export { buildColumnModel } from './lib/table-view/build-column-model';
 export { TableLayoutService } from './lib/table-view/table-layout.service';
 export type { TableLayout } from './lib/table-view/table-layout.service';
 export * from './lib/table-view/table-column.model';
+
+// The column picker and the state it edits. Both cross the lib boundary because the menu is
+// rendered by the class header in `vre/pages/project`, above the split, while the table it shapes
+// is rendered below it.
+export { TableViewOptionsComponent } from './lib/table-view/table-view-options.component';
+export { TableViewStateService } from './lib/table-view/table-view-state.service';
+export type { ColumnPickerEntry } from './lib/table-view/table-view-state.service';

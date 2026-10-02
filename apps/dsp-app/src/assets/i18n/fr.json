@@ -649,7 +649,19 @@
         "label": "Ressources de cette classe",
         "notSet": "— non défini",
         "showMore": "Afficher {{count}} de plus",
-        "showLess": "Afficher moins"
+        "showLess": "Afficher moins",
+        "moveColumn": "Déplacer la colonne {{column}}",
+        "resizeColumn": "Redimensionner la colonne {{column}}"
+      },
+      "viewOptions": {
+        "title": "Options d'affichage",
+        "density": "Densité",
+        "densityCompact": "Compact",
+        "densityDefault": "Par défaut",
+        "densityComfortable": "Confortable",
+        "columns": "Colonnes",
+        "columnsShown": "{{count}} sur {{total}} affichées",
+        "alwaysShown": "Toujours"
       }
     }
   },

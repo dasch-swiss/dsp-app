@@ -1,11 +1,16 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, Input, ViewContainerRef } from '@angular/core';
+import { Component, inject, Input, ViewContainerRef } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 import { ResourceClassDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
 import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
-import { MultipleViewerService, ResourceClassCountApi } from '@dasch-swiss/vre/pages/data-browser';
+import {
+  MultipleViewerService,
+  ResourceClassCountApi,
+  TableViewOptionsComponent,
+  TableViewStateService,
+} from '@dasch-swiss/vre/pages/data-browser';
 import { AdvancedSearchBarComponent } from '@dasch-swiss/vre/pages/search/search-filters';
 import { filterUndefined, generateDspResource } from '@dasch-swiss/vre/shared/app-common';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
@@ -14,6 +19,7 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { combineLatest, first, from, switchMap } from 'rxjs';
 import { DataBrowserPageService } from './data-browser-page.service';
 import { DataClassResultMetaComponent } from './data-class-result-meta.component';
+import { DataClassUrlStateService } from './data-class-url-state.service';
 import { DataClassViewToggleComponent } from './data-class-view-toggle.component';
 import { DownloadDialogComponent } from './download/download-dialog.component';
 import { ProjectPageService } from './project-page.service';
@@ -70,6 +76,16 @@ interface CreateResourceDialogProps {
       <div class="meta-row">
         <app-data-class-result-meta />
         <span class="meta-spacer"></span>
+        <!-- Only in table view, and only once the table has told us what its columns are. The list
+             view has nothing to shape, and an empty menu is worse than no menu. -->
+        @if ((view$ | async) === 'table' && tableState.columns().length > 0) {
+          <app-table-view-options
+            [entries]="tableState.pickerEntries()"
+            [density]="tableState.layout().density"
+            (densityChanged)="tableState.setDensity($event)"
+            (columnVisibilityChanged)="tableState.setColumnVisible($event.key, $event.isVisible)" />
+          <span class="meta-divider"></span>
+        }
         <app-data-class-view-toggle />
       </div>
     </div>
@@ -84,10 +100,16 @@ interface CreateResourceDialogProps {
     AdvancedSearchBarComponent,
     DataClassResultMetaComponent,
     DataClassViewToggleComponent,
+    TableViewOptionsComponent,
   ],
   providers: [StringifyStringLiteralPipe],
 })
 export class DataClassHeaderComponent {
+  /** Shared with the table below the split, which is what populates it. */
+  readonly tableState = inject(TableViewStateService);
+
+  readonly view$ = inject(DataClassUrlStateService).view$;
+
   @Input({ required: true }) classSelected!: {
     classLabel: string;
     ontologyLabel: string;

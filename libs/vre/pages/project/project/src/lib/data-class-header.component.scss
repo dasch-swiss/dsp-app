@@ -34,3 +34,12 @@
 .meta-spacer {
   flex: 1;
 }
+
+// Separates the two things on the right of the row: what the table looks like, and which view is
+// drawn. Without it the View options button reads as a third tab next to List and Table.
+.meta-divider {
+  width: 1px;
+  height: 20px;
+  background: #dcdcdc;
+  margin: 0 4px;
+}

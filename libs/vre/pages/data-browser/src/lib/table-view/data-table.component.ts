@@ -1,8 +1,10 @@
-import { ChangeDetectionStrategy, Component, computed, input, output, signal } from '@angular/core';
+import { CdkDrag, CdkDragDrop, CdkDragHandle, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
+import { ChangeDetectionStrategy, Component, computed, input, output, signal, viewChild } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
-import { MatTableModule } from '@angular/material/table';
+import { MatTable, MatTableModule } from '@angular/material/table';
 import { ReadResource } from '@dasch-swiss/dsp-js';
 import { TranslatePipe } from '@ngx-translate/core';
+import { ColumnResizeDirective } from './column-resize.directive';
 import { DEFAULT_DENSITY, TableColumn, TableDensity } from './table-column.model';
 import { buildRows, TableRow } from './table-row.model';
 
@@ -28,13 +30,25 @@ interface RenderColumn extends TableColumn {
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="table-scroll" [class]="densityClass()">
+      <!-- The drop list is the table rather than the header row, and that is not a style choice:
+           cdkDrag resolves its drop list through the injector of the view it was declared in, and
+           the header cells are declared inside the column definitions below, which are children of
+           the table and not of the row. On the row, every grip would come up with no drop list.
+           The element container points back at the header row so the drop placeholder is inserted
+           between the cells rather than appended to the table, where a stray th would be hoisted
+           out of the table by the browser mid-drag. -->
       <table
         mat-table
         [dataSource]="rows()"
         [fixedLayout]="true"
         [trackBy]="trackRow"
         role="grid"
-        [attr.aria-label]="'pages.dataBrowser.table.label' | translate">
+        [attr.aria-label]="'pages.dataBrowser.table.label' | translate"
+        cdkDropList
+        cdkDropListOrientation="horizontal"
+        cdkDropListElementContainer="thead tr"
+        [cdkDropListSortPredicate]="canDropAt"
+        (cdkDropListDropped)="onColumnDropped($event)">
         <!-- Every column keeps its definition mounted; only the displayed-columns array changes.
              Dropping a def when its column is hidden makes MatTable re-register the remaining
              ones, and a displayed key with no surviving def throws. -->
@@ -43,16 +57,49 @@ interface RenderColumn extends TableColumn {
             <!-- Width on the header only: under table-layout fixed the first row fixes the column
                  widths, so binding it on every cell would be 25x the bindings for the same result.
                  MatTable emits role=columnheader but no scope, and no aria-sort unless matSort is
-                 used — the Data tab's sort lives in the URL, so both are set here. -->
+                 used — the Data tab's sort lives in the URL, so both are set here. The name is
+                 given explicitly too: the grip and the resize handle sit inside the cell and carry
+                 labels of their own, which would otherwise be read out as part of the column's
+                 name. -->
             <th
               mat-header-cell
               *matHeaderCellDef
               scope="col"
               [style.width.px]="column.width"
+              [attr.aria-label]="column.label"
               [attr.aria-sort]="
                 column.key === sortedColumnKey() ? (sortDescending() ? 'descending' : 'ascending') : null
-              ">
-              <span class="header-label" [title]="column.label">{{ column.label }}</span>
+              "
+              cdkDrag
+              [cdkDragDisabled]="column.isSticky">
+              <div class="header-content">
+                @if (!column.isSticky) {
+                  <!-- The drag lives on a handle, not on the whole cell. Phase 5 puts sort and
+                       filter buttons in this header, and a cell-wide drag would turn every click
+                       on them into a one-pixel column move. -->
+                  <button
+                    type="button"
+                    class="header-grip"
+                    cdkDragHandle
+                    data-cy="column-grip"
+                    [attr.aria-label]="'pages.dataBrowser.table.moveColumn' | translate: { column: column.label }">
+                    <mat-icon>drag_indicator</mat-icon>
+                  </button>
+                }
+                <span class="header-label" [title]="column.label">{{ column.label }}</span>
+              </div>
+
+              @if (!column.isSticky) {
+                <span
+                  appColumnResize
+                  data-cy="column-resize"
+                  [minWidth]="column.minWidth"
+                  [defaultWidth]="column.defaultWidth"
+                  (widthChanged)="onColumnResized(column.key, $event)"
+                  [attr.aria-label]="
+                    'pages.dataBrowser.table.resizeColumn' | translate: { column: column.label }
+                  "></span>
+              }
             </th>
 
             <td mat-cell *matCellDef="let row" [class.is-label-cell]="column.isSticky">
@@ -95,7 +142,7 @@ interface RenderColumn extends TableColumn {
     </div>
   `,
   styleUrl: './data-table.component.scss',
-  imports: [MatTableModule, MatIcon, TranslatePipe],
+  imports: [MatTableModule, MatIcon, TranslatePipe, CdkDropList, CdkDrag, CdkDragHandle, ColumnResizeDirective],
 })
 export class DataTableComponent {
   /** The page's resources, already fetched in full. */
@@ -114,6 +161,11 @@ export class DataTableComponent {
   readonly sortDescending = input(false);
 
   readonly resourceSelected = output<ReadResource>();
+  /** The whole new display order, not a delta — the host persists the array as it stands. */
+  readonly columnsReordered = output<string[]>();
+  readonly columnResized = output<{ key: string; width: number }>();
+
+  private readonly _table = viewChild(MatTable);
 
   readonly rows = computed<TableRow[]>(() => buildRows(this.resources(), this.columns()));
 
@@ -146,6 +198,37 @@ export class DataTableComponent {
       }
       return next;
     });
+  }
+
+  /**
+   * Refuse a drop onto the first slot.
+   *
+   * The label column is drag-disabled, which stops it being *picked up* but says nothing about
+   * another column being dropped in front of it. Without this the sticky column could end up at
+   * index 1, pinned to the left edge with a scrolling column underneath it (REQ-2.10).
+   */
+  protected readonly canDropAt = (index: number) => index > 0;
+
+  protected onColumnDropped(event: CdkDragDrop<unknown>): void {
+    if (event.previousIndex === event.currentIndex) {
+      return;
+    }
+
+    // CDK reports indices in visual order, which for a header row is the displayed order — so this
+    // is the array to move within, not the full column model.
+    const order = [...this.visibleColumns()];
+    moveItemInArray(order, event.previousIndex, event.currentIndex);
+    this.columnsReordered.emit(order);
+  }
+
+  protected onColumnResized(key: string, width: number): void {
+    this.columnResized.emit({ key, width });
+
+    // Sticky offsets are derived from cached cell widths under `fixedLayout`, and MatTable only
+    // invalidates that cache when the set of columns changes. A resize changes a width without
+    // changing the set, so the label column would keep the offset of the old layout and the
+    // columns next to it would slide under it.
+    this._table()?.updateStickyColumnStyles();
   }
 
   /** Stable across re-queries, so a page change re-uses rows instead of rebuilding every cell. */
