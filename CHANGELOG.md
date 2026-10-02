@@ -1,5 +1,18 @@
 # Changelog
 
+## [13.15.3](https://github.com/dasch-swiss/dsp-app/compare/v13.15.2...v13.15.3) (2026-10-02)
+
+
+### Bug Fixes
+
+* **auth:** reload the page after login so permission-dependent data is re-fetched (DEV-7410) ([#3485](https://github.com/dasch-swiss/dsp-app/issues/3485)) ([a5c8a28](https://github.com/dasch-swiss/dsp-app/commit/a5c8a28272127fcd1aeb56c48dd75a8fa48d788f))
+
+
+### Maintenances
+
+* **deps:** Update dependency wait-on from 9.1.0 to 9.4.0 ([#3490](https://github.com/dasch-swiss/dsp-app/issues/3490)) ([2acc6c7](https://github.com/dasch-swiss/dsp-app/commit/2acc6c71059f5d1ff785ec35b87fe9dadf6a2844))
+* **deps:** Update typescript-eslint monorepo from 8.70.1 to 8.71.0 ([#3491](https://github.com/dasch-swiss/dsp-app/issues/3491)) ([87e7975](https://github.com/dasch-swiss/dsp-app/commit/87e79757e2075b6562a5c553ee444c80fa0bbacb))
+
 ## [13.15.2](https://github.com/dasch-swiss/dsp-app/compare/v13.15.1...v13.15.2) (2026-09-30)
 
 
