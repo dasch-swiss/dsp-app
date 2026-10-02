@@ -77,13 +77,38 @@ mat-form-field {
 
   // The leading magnifier is an affordance, not an action: muted, and sized to the 13px text rather
   // than Material's 24px default.
+  //
+  // `padding: 0` is the important part. Material ships the prefix icon with 12px of horizontal
+  // padding, which stacks on the prefix wrapper's own spacing and left a 20px dead gap between the
+  // glyph and the text — the icon read as detached from the field rather than part of it. With the
+  // padding gone the inset and the gap are set here explicitly: 10px from the border, 6px to the
+  // text.
   mat-icon[matPrefix] {
     font-size: 18px;
     width: 18px;
     height: 18px;
     line-height: 18px;
-    margin-right: 4px;
+    padding: 0;
+    margin: 0 6px 0 10px;
     color: rgba(0, 0, 0, 0.5);
+  }
+
+  // The text area is shorter than the box Material lays it out in, and it is top-aligned there, so
+  // both the value and the placeholder rode ~3px above the control's centre line. Filling the box
+  // lets the browser centre the single line itself. `100%` rather than a fixed height so this
+  // follows the density rather than hard-coding the padding that density happens to produce.
+  // Material lays the input out at its line-box height and top-aligns it in a taller box, so the
+  // value and the placeholder both rode 3px above the control's centre line.
+  //
+  // `input[matInput]`, not a bare `input`: a one-element selector loses to Material's
+  // `.mat-mdc-input-element`. And an explicit height rather than `100%`, because the infix's 36px
+  // is a *used* value coming from `min-height` — a percentage has no specified height to resolve
+  // against and silently falls back to auto. 24px is that 36px less the infix's 6px padding above
+  // and below; both numbers come from the density below, so they move together.
+  input[matInput] {
+    height: 24px;
+    line-height: normal;
+    box-sizing: border-box;
   }
 
   // The clear button carries Material's 48px touch target, which made it the tallest item in the

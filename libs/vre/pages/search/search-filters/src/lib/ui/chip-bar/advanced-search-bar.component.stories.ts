@@ -22,11 +22,19 @@ const meta: Meta<AdvancedSearchBarComponent> = {
     projectUuid: { description: 'UUID of the project whose ontologies are loaded.' },
     density: {
       description:
-        'Control sizing. `compact` (30px controls, 13px text) is the Data tab treatment for a narrow split column; `standard` is Material default sizing.',
+        'Control sizing. `compact` (36px controls, 13px text) is the Data tab treatment for a narrow split column, and also puts the field and the filter controls on one row; `standard` is Material default sizing with the two stacked.',
     },
     searchFieldWidth: { description: 'CSS width of the fulltext field. The Data tab passes a narrower value.' },
     searchLabelKey: { description: 'Translation key for the fulltext field label.' },
     searchPlaceholderKey: { description: 'Translation key for the fulltext field placeholder.' },
+    searchIconPosition: {
+      description:
+        'Where the magnifier sits. `trailing` (default) shows it only while the field is empty, giving way to the clear button. `leading` keeps it on the left permanently so both it and the clear button can show at once.',
+    },
+    showSearchLabel: {
+      description:
+        'Whether to float a label above the field. When false the label key becomes the input’s `aria-label` instead, so the field stays named for assistive technology.',
+    },
   },
 };
 export default meta;
@@ -192,6 +200,37 @@ export const HidesClearControlWhenEmpty: Story = {
   play: async ({ canvasElement, step }) => {
     await step('No clear control is rendered', async () => {
       await expect(canvasElement.querySelector('[data-cy="clear-search-btn"]')).toBeNull();
+    });
+  },
+};
+
+export const LeadingIconWithoutALabel: Story = {
+  name: 'Leading magnifier and no floating label is the Data tab input',
+  args: {
+    projectUuid: '0001',
+    density: 'compact',
+    searchFieldWidth: '260px',
+    searchIconPosition: 'leading',
+    showSearchLabel: false,
+  },
+  decorators: [applicationConfig({ providers: baseProviders })],
+  play: async ({ canvasElement, step }) => {
+    await step('The magnifier leads the field and no label floats above it', async () => {
+      await expect(canvasElement.querySelector('mat-icon[matPrefix]')).not.toBeNull();
+      await expect(canvasElement.querySelector('mat-label')).toBeNull();
+    });
+    await step('Dropping the label does not leave the field unnamed', async () => {
+      // The label key becomes the aria-label, so a screen reader still announces the field.
+      const input = canvasElement.querySelector('input') as HTMLInputElement;
+      await expect(input.getAttribute('aria-label')).toBeTruthy();
+    });
+    await step('The magnifier sits beside the text, not adrift from it', async () => {
+      // Material ships the prefix icon with 12px of its own horizontal padding, which stacked with
+      // the wrapper's spacing and left a 20px dead gap that read as a detached icon.
+      const icon = canvasElement.querySelector('mat-icon[matPrefix]') as HTMLElement;
+      const input = canvasElement.querySelector('input') as HTMLInputElement;
+      const gap = input.getBoundingClientRect().left - icon.getBoundingClientRect().right;
+      await expect(gap).toBeLessThanOrEqual(12);
     });
   },
 };
