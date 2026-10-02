@@ -1,4 +1,3 @@
-import { STORY_PROVIDERS } from '@dasch-swiss/vre/pages/search/search-filters';
 import { applicationConfig, Meta, StoryObj } from '@storybook/angular';
 import { BehaviorSubject } from 'rxjs';
 import { expect, userEvent, within } from 'storybook/test';
@@ -34,10 +33,20 @@ const story = (stub: UrlStateStub) => [
 /** Held outside the story so its `play` can assert on what the click did or did not write. */
 let activeTabStub: UrlStateStub;
 
+/**
+ * No `STORY_PROVIDERS` decorator here, and that is deliberate rather than an omission.
+ *
+ * The search-filters bundle installs a `TranslateLoader` of its own that serves a fixed object of
+ * search strings, which overrides the real `en.json` the Storybook preview loads over HTTP. Under
+ * it the translate pipe emitted raw keys, so every assertion on the tabs' visible names failed —
+ * these stories were red from the day they were written. The toggle needs nothing from that
+ * bundle: its only dependency is `DataClassUrlStateService`, stubbed below. Dropping the decorator
+ * restores the app's own translations, which is also what makes these stories assert the strings
+ * a user actually sees rather than key names.
+ */
 const meta: Meta<DataClassViewToggleComponent> = {
   title: 'Data Browser / View Toggle / List and Table',
   component: DataClassViewToggleComponent,
-  decorators: [applicationConfig({ providers: STORY_PROVIDERS })],
   argTypes: {
     // No inputs or outputs: the component is bound to `DataClassUrlStateService` rather than to a
     // parent, because the view is URL state and a parent holding it would be a second source.
