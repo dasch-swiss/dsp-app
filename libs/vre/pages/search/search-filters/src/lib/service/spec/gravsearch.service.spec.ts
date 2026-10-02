@@ -373,6 +373,73 @@ OFFSET 0`;
   });
 });
 
+/**
+ * Sorting by a property the query does not otherwise mention (DEV-7453). Before this, the only
+ * sortable things were `rdfs:label` and properties you had already filtered on, because they were
+ * the only variables the WHERE clause bound — anything else fell through `findIndex` to `?res-1`.
+ */
+describe('Gravsearch Service and Writer - sorting by an unfiltered property', () => {
+  const PROP = 'http://0.0.0.0:3333/ontology/0001/test/v2#hasCreator';
+  const ONTO = 'http://0.0.0.0:3333/ontology/0001/test/v2';
+  let gravsearchService: GravsearchService;
+  let searchStateService: StatementStore;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      providers: [
+        GravsearchService,
+        OntologyDataService,
+        { provide: DspApiConnectionToken, useValue: {} },
+        { provide: LocalizationService, useValue: mockLocalizationService },
+        { provide: TranslateLoader, useValue: mockTranslateLoader },
+      ],
+    });
+
+    gravsearchService = TestBed.inject(GravsearchService);
+    searchStateService = new StatementStore();
+    jest
+      .spyOn(TestBed.inject(OntologyDataService), 'selectedOntology', 'get')
+      .mockReturnValue(makeIriLabelPair(ONTO, 'test'));
+  });
+
+  const queryWithSortBy = (iri: string, direction: 'asc' | 'desc' = 'asc') =>
+    gravsearchService.generateGravSearchQuery(searchStateService.validStatementElements, undefined, '', [
+      new OrderByItem(iri, [], false, true, direction),
+    ]);
+
+  it('binds the property so there is something to order by', () => {
+    const query = queryWithSortBy(PROP);
+
+    expect(query).toContain(`?mainRes <${PROP}> ?orderBy0 .`);
+    expect(query).toContain('ORDER BY ASC(?orderBy0)');
+    // The bug this replaces: a failed findIndex produced an unbound `?res-1`.
+    expect(query).not.toContain('?res-1');
+  });
+
+  it('carries the direction through to the bound variable', () => {
+    expect(queryWithSortBy(PROP, 'desc')).toContain('ORDER BY DESC(?orderBy0)');
+  });
+
+  it('binds nothing extra for rdfs:label, which the query already binds', () => {
+    const query = queryWithSortBy(RDFS_LABEL);
+
+    expect(query).toContain('ORDER BY ASC(?label)');
+    expect(query).not.toContain('?orderBy0');
+  });
+
+  it('puts the binding inside the WHERE clause, not after it', () => {
+    const query = queryWithSortBy(PROP);
+    const whereEnd = query.lastIndexOf('}');
+    expect(query.indexOf('?orderBy0 .')).toBeLessThan(whereEnd);
+  });
+
+  it('leaves the result set narrowed, not reordered — the binding is not OPTIONAL', () => {
+    // Deliberate: a resource with no value for the sort property drops out, and the count drops
+    // with it. Verified against the dev API — sorting incunabula:Book by hasCreator took 19 to 15.
+    expect(queryWithSortBy(PROP)).not.toContain('OPTIONAL');
+  });
+});
+
 describe('Gravsearch Service and Writer - TextValue', () => {
   let gravsearchService: GravsearchService;
   let searchStateService: StatementStore;

@@ -7,6 +7,8 @@ export const RDFS_LABEL = 'rdfs:label';
 export const LABEL_VARIABLE = '?label';
 export const MAIN_RESOURCE_PLACEHOLDER = '?mainRes';
 export const RESOURCE_PLACEHOLDER = '?res';
+/** Variable bound solely so a property that is not filtered on can still be sorted by. */
+export const SORT_PLACEHOLDER = '?orderBy';
 export const VALUE_SUFFIX = 'val';
 export const RDFS_TYPE = 'a';
 

@@ -1,6 +1,12 @@
 import { inject, Injectable } from '@angular/core';
-import { LABEL_VARIABLE, RDFS_LABEL, RESOURCE_PLACEHOLDER } from '../constants';
-import { escapeSparqlStringLiteral, OrderByItem, StatementElement } from '../model';
+import {
+  LABEL_VARIABLE,
+  MAIN_RESOURCE_PLACEHOLDER,
+  RDFS_LABEL,
+  RESOURCE_PLACEHOLDER,
+  SORT_PLACEHOLDER,
+} from '../constants';
+import { escapeSparqlStringLiteral, OrderByItem, sanitizeSparqlIri, StatementElement } from '../model';
 import { GravsearchWriter } from './gravsearch-writer';
 import { OntologyDataService } from './ontology-data.service';
 
@@ -47,6 +53,9 @@ export class GravsearchService {
     // it only names the selected data model. Omit it (and skip `ontoShortCode`, which throws on an empty
     // IRI) when no data model is selected, so a project-wide fulltext-only search still generates.
     const ontoPrefix = this.ontoIri ? `PREFIX ${this.ontoShortCode}: <${this.ontoIri}#>\n` : '';
+    // Bind any sort predicate the statements do not already bind. Empty for advanced search, whose
+    // order-by options are drawn from its own statements.
+    const sortBindings = this._sortBindings(statements, orderBy);
 
     return (
       'PREFIX knora-api: <http://api.knora.org/ontology/knora-api/v2#>\n' +
@@ -70,8 +79,9 @@ export class GravsearchService {
       `?mainRes rdfs:label ${LABEL_VARIABLE} .\n` +
       `${fulltextTriple}` +
       `${whereClause}\n` +
+      `${sortBindings.whereStatements}` +
       '}\n' +
-      `${this._getOrderByString(statements, orderBy)}\n` +
+      `${this._getOrderByString(statements, orderBy, sortBindings.variableByIri)}\n` +
       'OFFSET 0'
     );
   }
@@ -91,17 +101,62 @@ export class GravsearchService {
     return '?mainRes a knora-api:Resource .';
   }
 
-  private _getOrderByString(statements: StatementElement[], orderBy: OrderByItem[]): string {
+  /**
+   * Variables for sort predicates that no statement binds, plus the triples that bind them.
+   *
+   * Sorting used to be possible only on `rdfs:label` or on a property you had already filtered by,
+   * because those are the only variables the WHERE clause binds — anything else resolved to
+   * `?res-1` from a failed `findIndex`. The Data tab lets you sort by any property of the class, so
+   * the query has to bind it on demand.
+   *
+   * The binding is **not** `OPTIONAL`: a resource with no value for the sort property drops out of
+   * the result set, and the count drops with it. That is a deliberate product choice — it means a
+   * property sort narrows what you are browsing, not just reorders it.
+   *
+   * Returns an empty map when every sort predicate is already bound, so a query that does not use
+   * this — advanced search, which only ever offers predicates drawn from its own statements —
+   * generates byte-for-byte as before.
+   */
+  private _sortBindings(statements: StatementElement[], orderBy: OrderByItem[]) {
+    const variableByIri = new Map<string, string>();
+    const triples: string[] = [];
+
+    orderBy
+      .filter(o => o.orderBy && o.id !== RDFS_LABEL)
+      .filter(o => !statements.some(stm => stm.selectedPredicate?.iri === o.id))
+      .forEach(o => {
+        if (variableByIri.has(o.id)) {
+          return;
+        }
+        const variable = `${SORT_PLACEHOLDER}${variableByIri.size}`;
+        variableByIri.set(o.id, variable);
+        // Mirrors a statement's own object projection, so the variable is the value object — the
+        // same shape `_getOrderByString` already sorts on for filtered properties.
+        triples.push(`${MAIN_RESOURCE_PLACEHOLDER} <${sanitizeSparqlIri(o.id)}> ${variable} .`);
+      });
+
+    return { variableByIri, whereStatements: triples.length ? `${triples.join('\n')}\n` : '' };
+  }
+
+  private _getOrderByString(
+    statements: StatementElement[],
+    orderBy: OrderByItem[],
+    variableByIri: Map<string, string>
+  ): string {
     const orderByProps: string[] = orderBy
       .filter(o => o.orderBy)
       .map(o => {
         // A ResourceLabel statement filters on the assembly's shared `?label` variable and no longer
         // binds a `?resN` object variable, so sort on `?label` for it; other statements sort on the
-        // `?resN` bound by their object projection, indexed by statement position.
+        // `?resN` bound by their object projection, indexed by statement position. A property that is
+        // sorted by but not filtered on has neither, so it uses the variable bound for it above.
+        const statementIndex = statements.findIndex(stm => stm.selectedPredicate?.iri === o.id);
         const variable =
           o.id === RDFS_LABEL
             ? LABEL_VARIABLE
-            : `${RESOURCE_PLACEHOLDER}${statements.findIndex(stm => stm.selectedPredicate?.iri === o.id)}`;
+            : statementIndex >= 0
+              ? `${RESOURCE_PLACEHOLDER}${statementIndex}`
+              : (variableByIri.get(o.id) ?? LABEL_VARIABLE);
         const fn = o.direction === 'desc' ? 'DESC' : 'ASC';
         return `${fn}(${variable})`;
       });
