@@ -46,6 +46,10 @@ export const makeMultipleViewerServiceStub = (
   addResources: () => {},
   removeResources: () => {},
   reset: () => {},
+  // `ComparisonComponent` subscribes to this in its constructor, so a story that mounts a viewer
+  // throws on a stub without it.
+  resourceChanged$: EMPTY,
+  notifyResourceChanged: () => {},
   ...partial,
 });
 

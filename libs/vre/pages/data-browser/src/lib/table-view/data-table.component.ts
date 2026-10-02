@@ -345,6 +345,14 @@ export class DataTableComponent {
   readonly sortToggled = output<{ key: string; descending: boolean }>();
   /** The column whose filter the user wants to edit. The host decides where the editor opens. */
   readonly filterRequested = output<string>();
+  /**
+   * A row's resource as dsp-api holds it after a cell was saved.
+   *
+   * The table has already re-rendered the row from it; this is for whoever else is showing the
+   * same resource — the viewer beside the table owns a `ResourceFetcherService` of its own and
+   * would otherwise keep displaying the value the user has just replaced.
+   */
+  readonly resourceReloaded = output<ReadResource>();
 
   private readonly _table = viewChild(MatTable);
   private readonly _rowFetchers = inject(TableRowFetcherRegistry);
@@ -548,6 +556,7 @@ export class DataTableComponent {
    */
   protected onResourceReloaded(resource: ReadResource): void {
     this._reloaded.update(current => new Map(current).set(resource.id, resource));
+    this.resourceReloaded.emit(resource);
   }
 
   /** Stable across re-queries, so a page change re-uses rows instead of rebuilding every cell. */

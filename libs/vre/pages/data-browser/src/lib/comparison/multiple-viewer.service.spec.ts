@@ -103,6 +103,21 @@ describe('MultipleViewerService', () => {
     });
   });
 
+  /**
+   * The channel the Data tab's table uses to tell the viewer that a resource it is showing was
+   * edited elsewhere (DEV-7466). A plain `Subject`, not a replaying one: a late subscriber must
+   * not be told to re-read a resource for an edit that happened before it existed.
+   */
+  describe('resourceChanged$', () => {
+    it('should announce the IRI of a resource changed outside the viewer', async () => {
+      const announced = firstValueFrom(service.resourceChanged$);
+
+      service.notifyResourceChanged(mockResource1.id);
+
+      expect(await announced).toBe(mockResource1.id);
+    });
+  });
+
   describe('reset', () => {
     it('should clear single selected resource and set selectMode to false', async () => {
       service.selectOneResource(mockResource1);

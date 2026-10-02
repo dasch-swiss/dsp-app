@@ -77,7 +77,8 @@ import { ProjectPageService } from '../../project-page.service';
             (columnsReordered)="onColumnsReordered($event)"
             (columnResized)="onColumnResized($event)"
             (sortToggled)="onSortToggled($event)"
-            (filterRequested)="onFilterRequested($event)" />
+            (filterRequested)="onFilterRequested($event)"
+            (resourceReloaded)="onResourceReloaded($event)" />
         } @else if (filtersAreActive) {
           <app-centered-message
             [message]="'pages.dataBrowser.resourcesListFetcher.noResourcesMatchFilters' | translate" />
@@ -276,6 +277,17 @@ export class DataTableFetcherComponent implements OnChanges {
   onResourceOpened(resource: ReadResource) {
     this._multipleViewerService.selectOneResource(resource);
     this._tableState.expandViewer();
+  }
+
+  /**
+   * A cell was saved and the row re-read, so anything else showing that resource is now stale.
+   *
+   * The announcement carries only the IRI, and the viewer re-reads from dsp-api rather than taking
+   * the resource handed to it — what it shows is then the stored state rather than this
+   * component's copy of it.
+   */
+  onResourceReloaded(resource: ReadResource) {
+    this._multipleViewerService.notifyResourceChanged(resource.id);
   }
 
   /**

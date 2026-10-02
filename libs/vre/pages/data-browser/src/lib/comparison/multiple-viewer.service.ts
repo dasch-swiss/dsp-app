@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ReadResource } from '@dasch-swiss/dsp-js';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 
 /**
  * Selection is compared by `ReadResource.id`, never by object identity.
@@ -18,6 +18,26 @@ export class MultipleViewerService {
   selectMode = false;
 
   searchKeyword?: string;
+
+  private _resourceChangedSubject = new Subject<string>();
+
+  /**
+   * The IRI of a resource that was changed somewhere other than in the viewer showing it.
+   *
+   * The Data tab's table edits a value in a cell, under a `ResourceFetcherService` scoped to that
+   * row — a different instance from the one the viewer owns. Without this the viewer would keep
+   * rendering the value the user has just replaced, side by side with the table cell showing the
+   * new one (DEV-7466).
+   *
+   * Deliberately an IRI and not the reloaded resource: the viewer re-reads from dsp-api rather
+   * than trusting a resource handed to it, so what it shows is the stored state and not one
+   * component's idea of it.
+   */
+  resourceChanged$ = this._resourceChangedSubject.asObservable();
+
+  notifyResourceChanged(resourceIri: string) {
+    this._resourceChangedSubject.next(resourceIri);
+  }
 
   addResources(resources: ReadResource[]) {
     const currentResources = this._selectedResourcesSubject.getValue();
