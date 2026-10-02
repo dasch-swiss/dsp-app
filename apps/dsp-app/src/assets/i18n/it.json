@@ -655,7 +655,11 @@
         "sortColumnAscending": "Ordina per {{column}}, crescente",
         "sortColumnDescending": "Ordina per {{column}}, decrescente",
         "filterByColumn": "Filtra per {{column}}",
-        "editColumnFilter": "Modifica il filtro su {{column}}"
+        "editColumnFilter": "Modifica il filtro su {{column}}",
+        "editCell": "Modifica {{column}}",
+        "closeCellEditor": "Chiudi l'editor di {{column}}",
+        "cellNotEditable": "Questa proprietà non può essere modificata qui",
+        "editNotApplied": "Questo valore è stato modificato altrove, quindi la tua modifica non è stata applicata. La riga è stata ricaricata con il valore attuale."
       },
       "viewOptions": {
         "title": "Opzioni di visualizzazione",

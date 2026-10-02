@@ -655,7 +655,11 @@
         "sortColumnAscending": "Sort by {{column}}, ascending",
         "sortColumnDescending": "Sort by {{column}}, descending",
         "filterByColumn": "Filter by {{column}}",
-        "editColumnFilter": "Edit the filter on {{column}}"
+        "editColumnFilter": "Edit the filter on {{column}}",
+        "editCell": "Edit {{column}}",
+        "closeCellEditor": "Close the {{column}} editor",
+        "cellNotEditable": "This property cannot be edited here",
+        "editNotApplied": "This value was changed elsewhere, so your edit was not applied. The row has been reloaded with the current value."
       },
       "viewOptions": {
         "title": "View options",

@@ -655,7 +655,11 @@
         "sortColumnAscending": "Trier par {{column}}, ordre croissant",
         "sortColumnDescending": "Trier par {{column}}, ordre décroissant",
         "filterByColumn": "Filtrer par {{column}}",
-        "editColumnFilter": "Modifier le filtre sur {{column}}"
+        "editColumnFilter": "Modifier le filtre sur {{column}}",
+        "editCell": "Modifier {{column}}",
+        "closeCellEditor": "Fermer l'éditeur de {{column}}",
+        "cellNotEditable": "Cette propriété ne peut pas être modifiée ici",
+        "editNotApplied": "Cette valeur a été modifiée ailleurs, votre modification n'a donc pas été appliquée. La ligne a été rechargée avec la valeur actuelle."
       },
       "viewOptions": {
         "title": "Options d'affichage",

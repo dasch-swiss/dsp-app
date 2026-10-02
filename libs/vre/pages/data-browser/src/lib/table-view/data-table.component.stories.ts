@@ -1,7 +1,7 @@
 import { ReadResource } from '@dasch-swiss/dsp-js';
 import { applicationConfig, Meta, StoryObj } from '@storybook/angular';
 import { expect, fn, userEvent, within } from 'storybook/test';
-import { makeReadResource, STORY_PROVIDERS } from '../stories.helpers';
+import { EDITABLE_PROPERTY_IRI, makeEditableReadResource, makeReadResource, STORY_PROVIDERS } from '../stories.helpers';
 import { DataTableComponent } from './data-table.component';
 import { LABEL_COLUMN_KEY, TableColumn } from './table-column.model';
 
@@ -337,5 +337,111 @@ export const OffersNoFilterControlWhereTheBarCannotExpressOne: Story = {
 
     await expect(place?.querySelector('[data-cy="column-filter"]')).toBeNull();
     await expect(place?.querySelector('[data-cy="column-sort"]')).not.toBeNull();
+  },
+};
+
+// ── Per-cell editing ────────────────────────────────────────────────────────
+
+/**
+ * Columns for the editing stories: one the resource editor can open, one it cannot.
+ *
+ * `hasPlace` stands in for the whole read-only family — link, file value, geometry and anything
+ * not `isEditable`. `GenerateProperty.commonProperty` drops all of them, so there is no editor
+ * component to mount and the cell must stay plain text (REQ-4.7).
+ */
+const EDITING_COLUMNS: TableColumn[] = [
+  // `buildColumnModel` marks the label column non-editable: the label is not a property value, so
+  // it has no `PropertyInfoValues` and no editor. The local `column()` helper defaults the other
+  // way, so it has to be said here.
+  column(LABEL_COLUMN_KEY, 'Label', { isEditable: false }),
+  column(EDITABLE_PROPERTY_IRI, 'Integer'),
+  column(`${ONTO}hasPlace`, 'Place', { isEditable: false }),
+];
+
+const EDITING_VISIBLE = EDITING_COLUMNS.map(c => c.key);
+
+const editingStory = (args: Story['args']): Story => ({
+  args: {
+    resources: [makeEditableReadResource({ id: 'http://rdfh.ch/0001/a', label: 'BRAUT001a' })],
+    columns: EDITING_COLUMNS,
+    visibleColumns: EDITING_VISIBLE,
+    ...args,
+  },
+});
+
+export const OffersAnEditAffordanceOnlyWhereTheEditorCanOpen: Story = {
+  ...editingStory({}),
+  play: async ({ canvasElement }) => {
+    const cells = Array.from(canvasElement.querySelectorAll('td'));
+    const [labelCell, integerCell, placeCell] = cells;
+
+    await expect(integerCell.querySelector('[data-cy="cell-edit"]')).not.toBeNull();
+    // The label is not a property value — it has no `PropertyInfoValues` and no editor — and the
+    // read-only column has none either.
+    await expect(labelCell.querySelector('[data-cy="cell-edit"]')).toBeNull();
+    await expect(placeCell.querySelector('[data-cy="cell-edit"]')).toBeNull();
+  },
+};
+
+/**
+ * REQ-4.6: the gate is the resource editor's own permission check, so a resource the viewer would
+ * refuse to edit is not editable from the table either.
+ */
+export const OffersNoEditAffordanceWithoutModifyPermission: Story = {
+  ...editingStory({
+    resources: [makeEditableReadResource({ id: 'http://rdfh.ch/0001/a', label: 'BRAUT001a', userHasPermission: 'RV' })],
+  }),
+  play: async ({ canvasElement }) => {
+    await expect(canvasElement.querySelectorAll('[data-cy="cell-edit"]')).toHaveLength(0);
+  },
+};
+
+/**
+ * REQ-4.13: nothing of the editor exists until the cell is opened. At forty columns by twenty-five
+ * rows, that is the difference between a thousand idle editors and none.
+ */
+export const MountsNoEditorUntilTheCellIsOpened: Story = {
+  ...editingStory({}),
+  play: async ({ canvasElement }) => {
+    await expect(canvasElement.querySelector('app-table-row-edit-host')).toBeNull();
+
+    await userEvent.click(canvasElement.querySelector('[data-cy="cell-edit"]') as HTMLElement);
+
+    await expect(canvasElement.querySelector('app-table-row-edit-host')).not.toBeNull();
+    // The resource editor's own display component, not a lookalike built for the table (REQ-4.1).
+    await expect(canvasElement.querySelector('[data-cy="property-value"]')).not.toBeNull();
+  },
+};
+
+/** REQ-4.2: one cell at a time, across the whole table and not merely within a row. */
+export const OpeningASecondCellClosesTheFirst: Story = {
+  ...editingStory({
+    resources: [
+      makeEditableReadResource({ id: 'http://rdfh.ch/0001/a', label: 'BRAUT001a' }),
+      makeEditableReadResource({ id: 'http://rdfh.ch/0001/b', label: 'BRAUT001b' }),
+    ],
+  }),
+  play: async ({ canvasElement }) => {
+    const openFirst = canvasElement.querySelectorAll('[data-cy="cell-edit"]')[0] as HTMLElement;
+    await userEvent.click(openFirst);
+    await expect(canvasElement.querySelectorAll('app-table-row-edit-host')).toHaveLength(1);
+
+    const openSecond = canvasElement.querySelectorAll('[data-cy="cell-edit"]')[0] as HTMLElement;
+    await userEvent.click(openSecond);
+
+    await expect(canvasElement.querySelectorAll('app-table-row-edit-host')).toHaveLength(1);
+  },
+};
+
+/** REQ-4.8 and the way out of an open cell: closing restores the cell's read-only rendering. */
+export const ClosingAnOpenCellRestoresTheDisplayedValue: Story = {
+  ...editingStory({}),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvasElement.querySelector('[data-cy="cell-edit"]') as HTMLElement);
+    await userEvent.click(canvas.getByRole('button', { name: 'Close the Integer editor' }));
+
+    await expect(canvasElement.querySelector('app-table-row-edit-host')).toBeNull();
+    await expect(canvasElement.querySelector('[data-cy="cell-edit"]')).not.toBeNull();
   },
 };

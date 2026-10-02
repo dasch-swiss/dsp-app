@@ -149,7 +149,9 @@ export class DataClassUrlStateService implements SearchFilterState {
 
   /** List unless the URL says otherwise. */
   readonly view$: Observable<DataClassView> = this._params$.pipe(
-    map(p => (p.view === TABLE ? TABLE : 'list')),
+    // Annotated: the app's build widens the ternary to `string`, where the lib's own tsconfig
+    // keeps the literal union, and only the former is what Storybook and `nx build` compile with.
+    map((p): DataClassView => (p.view === TABLE ? TABLE : 'list')),
     distinctUntilChanged()
   );
 

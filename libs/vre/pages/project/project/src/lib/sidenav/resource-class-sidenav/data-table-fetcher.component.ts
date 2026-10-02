@@ -372,7 +372,9 @@ export class DataTableFetcherComponent implements OnChanges {
       // trusted. A resource the batch did not return is dropped: it disappeared or became
       // unreadable between the two requests, and a row with no data is worse than no row.
       map(full => {
-        const byIri = new Map(full.map(resource => [resource.id, resource]));
+        // The tuple is annotated because the app's build infers `any[]` for the pair, which no
+        // `Map` constructor overload accepts.
+        const byIri = new Map(full.map((resource): [string, ReadResource] => [resource.id, resource]));
         return iris.map(iri => byIri.get(iri)).filter((resource): resource is ReadResource => resource !== undefined);
       })
     );

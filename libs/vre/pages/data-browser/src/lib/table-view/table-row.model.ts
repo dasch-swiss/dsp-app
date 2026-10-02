@@ -1,4 +1,5 @@
 import { ReadResource } from '@dasch-swiss/dsp-js';
+import { ResourceUtil } from '@dasch-swiss/vre/resource-editor/resource-editor';
 import { LABEL_COLUMN_KEY, TableColumn } from './table-column.model';
 
 /** How many values a cell shows before it collapses the rest behind a "show more" control. */
@@ -33,7 +34,29 @@ export interface TableRow {
   /** The resource IRI. Used as the `trackBy` key. */
   readonly id: string;
   readonly label: string;
+  /**
+   * Whether this user may modify this resource at all.
+   *
+   * The gate on every cell's edit affordance (REQ-4.6). Resolved per row rather than per cell
+   * because the permission is the resource's, and asking forty times per row would be thirty-nine
+   * identical answers.
+   */
+  readonly canEdit: boolean;
   readonly cells: Readonly<Record<string, TableCell>>;
+}
+
+/** The permission strings dsp-api issues. Anything else is not a permission we can reason about. */
+const KNOWN_PERMISSIONS: ReadonlySet<string> = new Set(['RV', 'V', 'M', 'D', 'CR']);
+
+/**
+ * The resource editor's own permission check, applied defensively.
+ *
+ * `ResourceUtil` delegates to `PermissionUtil.allUserPermissions`, which *throws* on a string it
+ * does not recognise rather than answering "no". One resource with a missing `userHasPermission`
+ * would otherwise take the whole page's render down, so the string is checked before it is used.
+ */
+function userCanEditResource(resource: ReadResource): boolean {
+  return KNOWN_PERMISSIONS.has(resource.userHasPermission) && ResourceUtil.userCanEdit(resource);
 }
 
 function cellFor(resource: ReadResource, column: TableColumn): TableCell {
@@ -65,6 +88,7 @@ export function buildRows(resources: ReadResource[], columns: TableColumn[]): Ta
     resource,
     id: resource.id,
     label: resource.label,
+    canEdit: userCanEditResource(resource),
     cells: columns.reduce<Record<string, TableCell>>((cells, column) => {
       cells[column.key] = cellFor(resource, column);
       return cells;
