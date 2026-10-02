@@ -29,6 +29,8 @@ export interface DataClassUrlParams {
   orderBy?: string;
   /** `desc` or absent. Meaningful on its own: with no `orderBy` the sort is label descending. */
   orderDir?: 'desc';
+  /** `table` or absent. List is the default and stays out of the URL. */
+  view?: 'table';
 }
 
 export const DATA_CLASS_PARAM = {
@@ -36,10 +38,17 @@ export const DATA_CLASS_PARAM = {
   filters: 'filters',
   orderBy: 'orderBy',
   orderDir: 'orderDir',
+  view: 'view',
 } as const satisfies { [K in keyof Required<DataClassUrlParams>]: K };
 
 /** The only direction ever written; ascending is the default and stays out of the URL. */
 const DESC = 'desc' as const;
+
+/** How the result page is rendered. */
+export type DataClassView = 'list' | 'table';
+
+/** The only view ever written; list is the default and stays out of the URL. */
+const TABLE = 'table' as const;
 
 /**
  * Where the Data tab keeps its search state.
@@ -63,9 +72,17 @@ export class DataClassUrlStateService implements SearchFilterState {
       // Anything but the literal `desc` normalises away, so a hand-edited URL cannot produce a
       // half-set sort.
       orderDir: p[DATA_CLASS_PARAM.orderDir] === DESC ? DESC : undefined,
+      // Same normalisation, same reason: `?view=grid` falls back to the list rather than rendering
+      // nothing at all.
+      view: p[DATA_CLASS_PARAM.view] === TABLE ? TABLE : undefined,
     })),
     distinctUntilChanged(
-      (a, b) => a.q === b.q && a.filters === b.filters && a.orderBy === b.orderBy && a.orderDir === b.orderDir
+      (a, b) =>
+        a.q === b.q &&
+        a.filters === b.filters &&
+        a.orderBy === b.orderBy &&
+        a.orderDir === b.orderDir &&
+        a.view === b.view
     )
   );
 
@@ -120,9 +137,19 @@ export class DataClassUrlStateService implements SearchFilterState {
    * A non-default sort counts as active state here, unlike on the Search tab. There, a direction
    * without an `orderBy` is meaningless and is dropped on read; here label is the implied default, so
    * `orderDir` alone is a real, resettable choice and must reveal the Reset control (REQ-1.10).
+   *
+   * `view` is deliberately absent. It narrows nothing — it only changes how the same results are
+   * drawn — so counting it would leave the Reset control permanently lit in table view and imply
+   * that Reset would switch the user back to the list (DEV-7466 REQ-1.14).
    */
   readonly hasActiveState$: Observable<boolean> = this._params$.pipe(
     map(p => !!(p.q || p.filters || p.orderBy || p.orderDir)),
+    distinctUntilChanged()
+  );
+
+  /** List unless the URL says otherwise. */
+  readonly view$: Observable<DataClassView> = this._params$.pipe(
+    map(p => (p.view === TABLE ? TABLE : 'list')),
     distinctUntilChanged()
   );
 
@@ -190,6 +217,20 @@ export class DataClassUrlStateService implements SearchFilterState {
     );
   }
 
+  /**
+   * Which view is showing is a choice about presentation, not about the query, so switching it is
+   * pushed rather than replaced: Back should step between list and table the way the user expects
+   * of a visible mode switch.
+   */
+  setView(view: DataClassView): void {
+    this._write({ view: view === TABLE ? TABLE : undefined }, { replaceUrl: false });
+  }
+
+  /**
+   * `view` is not named here, and `_write` only touches the keys it is given — so Reset clears the
+   * query the user built without also throwing away the view they are reading it in (REQ-1.14).
+   * The same omission is what carries the view across a class switch, which calls this (REQ-1.15).
+   */
   reset(): void {
     this._write({ q: undefined, filters: undefined, orderBy: undefined, orderDir: undefined }, { replaceUrl: true });
   }

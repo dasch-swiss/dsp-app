@@ -14,6 +14,7 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { combineLatest, first, from, switchMap } from 'rxjs';
 import { DataBrowserPageService } from './data-browser-page.service';
 import { DataClassResultMetaComponent } from './data-class-result-meta.component';
+import { DataClassViewToggleComponent } from './data-class-view-toggle.component';
 import { DownloadDialogComponent } from './download/download-dialog.component';
 import { ProjectPageService } from './project-page.service';
 
@@ -63,7 +64,14 @@ interface CreateResourceDialogProps {
         searchLabelKey="pages.dataBrowser.dataClassHeader.searchLabel"
         searchPlaceholderKey="pages.dataBrowser.dataClassHeader.searchPlaceholder" />
 
-      <app-data-class-result-meta />
+      <!-- Count and pager on the left, view toggle hard right. The toggle belongs on this row
+           rather than up with the class actions: it changes how the result set is drawn, which is
+           what this row is about. -->
+      <div class="meta-row">
+        <app-data-class-result-meta />
+        <span class="meta-spacer"></span>
+        <app-data-class-view-toggle />
+      </div>
     </div>
   `,
   styleUrl: './data-class-header.component.scss',
@@ -75,6 +83,7 @@ interface CreateResourceDialogProps {
     StringifyStringLiteralPipe,
     AdvancedSearchBarComponent,
     DataClassResultMetaComponent,
+    DataClassViewToggleComponent,
   ],
   providers: [StringifyStringLiteralPipe],
 })

@@ -21,3 +21,16 @@
   font-style: italic;
   margin: 8px 0 0;
 }
+
+.meta-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+// A spacer rather than `justify-content: space-between`: the result meta is one child today but
+// grows more, and space-between would start distributing gaps between those instead of keeping the
+// toggle pinned right.
+.meta-spacer {
+  flex: 1;
+}

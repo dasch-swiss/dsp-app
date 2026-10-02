@@ -639,6 +639,11 @@
         "zToA": "Z–A",
         "sortAscending": "Trier par ordre croissant",
         "sortDescending": "Trier par ordre décroissant"
+      },
+      "viewToggle": {
+        "label": "Afficher les ressources en",
+        "list": "Liste",
+        "table": "Tableau"
       }
     }
   },

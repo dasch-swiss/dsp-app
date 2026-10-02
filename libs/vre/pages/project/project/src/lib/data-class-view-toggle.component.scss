@@ -1,0 +1,45 @@
+.view-toggle {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.view-tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 36px;
+  padding: 0 4px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font: 500 13px/18px var(--font-sans, inherit);
+  color: rgba(0, 0, 0, 0.6);
+
+  // Sits on the header's own bottom border rather than above it, so the active underline reads as
+  // the tab owning the content below instead of as a second rule floating over the boundary.
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+
+  &:hover:not(.is-active) {
+    color: rgba(0, 0, 0, 0.87);
+  }
+
+  // Hover alone is not reachable from a keyboard, and the two tabs are otherwise distinguished only
+  // by colour — so focus gets its own visible ring rather than borrowing the hover treatment.
+  &:focus-visible {
+    outline: 2px solid var(--primary, #336790);
+    outline-offset: 2px;
+  }
+
+  &.is-active {
+    color: var(--primary, #336790);
+    border-bottom-color: var(--primary, #336790);
+  }
+}
