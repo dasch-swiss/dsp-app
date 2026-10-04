@@ -18,11 +18,15 @@ export function isSegmentClass(resource: ReadResource): boolean {
 }
 
 /**
- * Description is shown and edited as a regular property for project resource classes and for
- * Segments; knora-base classes instantiated directly (e.g. `knora-api:Region`, `knora-api:LinkObj`)
- * inherit the cardinality but do not show it.
+ * The resource header shows and edits the description of project resources whose class has the
+ * `hasDescription` cardinality (every class once dsp-api inherits it from `kb:Resource`).
+ * knora-base classes instantiated directly (e.g. `knora-api:Region`, `knora-api:LinkObj`) inherit
+ * it too but show none, and Segments keep their Description property row instead.
  */
-export function showsDescriptionProperty(resource: ReadResource): boolean {
+export function showsDescriptionInHeader(resource: ReadResource): boolean {
   const isProjectClass = !resource.type.startsWith(`${Constants.KnoraApiV2}#`);
-  return isProjectClass || isSegmentClass(resource);
+  const hasCardinality = classProperties(resource).some(
+    property => property.propertyIndex === Constants.HasDescription
+  );
+  return isProjectClass && hasCardinality && !isSegmentClass(resource);
 }

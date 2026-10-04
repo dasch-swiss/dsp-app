@@ -1,5 +1,5 @@
 import { Cardinality, Constants, ReadResource } from '@dasch-swiss/dsp-js';
-import { isSegmentClass, showsDescriptionProperty } from './resource-description';
+import { isSegmentClass, showsDescriptionInHeader } from './resource-description';
 
 const KNORA_API_V2 = 'http://api.knora.org/ontology/knora-api/v2#';
 const HAS_SEGMENT_BOUNDS = `${KNORA_API_V2}hasSegmentBounds`;
@@ -27,49 +27,36 @@ const makeResource = (type: string, propertyIris: string[]): ReadResource =>
     entityInfo: makeEntityInfo(type, propertyIris),
   }) as unknown as ReadResource;
 
-describe('showsDescriptionProperty', () => {
-  it('returns true for a plain project class carrying the hasDescription cardinality', () => {
-    const resource = makeResource(PROJECT_CLASS, [Constants.HasDescription]);
-    expect(showsDescriptionProperty(resource)).toBe(true);
+describe('showsDescriptionInHeader', () => {
+  it('returns true for a project class carrying the hasDescription cardinality', () => {
+    expect(showsDescriptionInHeader(makeResource(PROJECT_CLASS, [Constants.HasDescription]))).toBe(true);
   });
 
-  it('returns true for a project class without the hasDescription cardinality (project classes always show it)', () => {
-    const resource = makeResource(PROJECT_CLASS, []);
-    expect(showsDescriptionProperty(resource)).toBe(true);
+  it('returns false for a project class without the cardinality (a dsp-api older than knora-base v58)', () => {
+    expect(showsDescriptionInHeader(makeResource(PROJECT_CLASS, []))).toBe(false);
   });
 
-  it('returns false for knora-api:Region', () => {
-    const resource = makeResource(Constants.Region, [Constants.HasDescription]);
-    expect(showsDescriptionProperty(resource)).toBe(false);
+  it.each([Constants.Region, Constants.LinkObj])('returns false for %s', type => {
+    expect(showsDescriptionInHeader(makeResource(type, [Constants.HasDescription]))).toBe(false);
   });
 
-  it('returns false for knora-api:LinkObj', () => {
-    const resource = makeResource(Constants.LinkObj, [Constants.HasDescription]);
-    expect(showsDescriptionProperty(resource)).toBe(false);
+  it.each(['AudioSegment', 'VideoSegment'])('returns false for %s, which keeps its property row', segment => {
+    const resource = makeResource(`${KNORA_API_V2}${segment}`, [Constants.HasDescription, HAS_SEGMENT_BOUNDS]);
+    expect(showsDescriptionInHeader(resource)).toBe(false);
   });
 
-  it('returns true for AudioSegment', () => {
-    const resource = makeResource(`${KNORA_API_V2}AudioSegment`, [Constants.HasDescription, HAS_SEGMENT_BOUNDS]);
-    expect(showsDescriptionProperty(resource)).toBe(true);
-  });
-
-  it('returns true for VideoSegment', () => {
-    const resource = makeResource(`${KNORA_API_V2}VideoSegment`, [Constants.HasDescription, HAS_SEGMENT_BOUNDS]);
-    expect(showsDescriptionProperty(resource)).toBe(true);
-  });
-
-  it('returns true for a project subclass declaring hasSegmentBounds', () => {
+  it('returns false for a project subclass declaring hasSegmentBounds', () => {
     const resource = makeResource('http://example.org/ontology#CustomSegment', [
       Constants.HasDescription,
       HAS_SEGMENT_BOUNDS,
     ]);
-    expect(showsDescriptionProperty(resource)).toBe(true);
+    expect(showsDescriptionInHeader(resource)).toBe(false);
   });
 
-  it('returns true and does not throw when entityInfo is missing, since the project-class rule alone decides', () => {
+  it('returns false and does not throw when entityInfo is missing', () => {
     const resource = { type: PROJECT_CLASS, properties: {} } as unknown as ReadResource;
-    expect(() => showsDescriptionProperty(resource)).not.toThrow();
-    expect(showsDescriptionProperty(resource)).toBe(true);
+    expect(() => showsDescriptionInHeader(resource)).not.toThrow();
+    expect(showsDescriptionInHeader(resource)).toBe(false);
   });
 });
 
