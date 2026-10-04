@@ -1,4 +1,14 @@
-import { ChangeDetectorRef, Component, DestroyRef, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  DestroyRef,
+  EventEmitter,
+  Inject,
+  inject,
+  Input,
+  OnInit,
+  Output,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -19,7 +29,7 @@ import {
   ResourcePropertyDefinition,
   ResourcePropertyDefinitionWithAllLanguages,
 } from '@dasch-swiss/dsp-js';
-import { ApiConstants, DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
+import { ApiConstants, DspApiConnectionToken, RESOURCE_DESCRIPTION_ENABLED } from '@dasch-swiss/vre/core/config';
 import { PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
 import { ProjectDataRightsService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { AppProgressIndicatorComponent, LoadingButtonDirective } from '@dasch-swiss/vre/ui/progress-indicator';
@@ -220,6 +230,8 @@ export class CreateResourceFormComponent implements OnInit {
 
   protected readonly Constants = Constants;
 
+  private readonly _resourceDescriptionEnabled = inject(RESOURCE_DESCRIPTION_ENABLED);
+
   get ontologyIri() {
     return this.resourceClassIri.split('#')[0];
   }
@@ -310,10 +322,10 @@ export class CreateResourceFormComponent implements OnInit {
         this.resourceClass = onto.classes[this.resourceClassIri];
         this.properties = this.resourceClass
           .getResourcePropertiesList()
-          // Description is the one knora-api property offered as a regular property on every project class.
+          // Description is the one knora-api property offered as a regular property, behind its feature flag.
           .filter(
             v =>
-              v.propertyIndex === Constants.HasDescription ||
+              (this._resourceDescriptionEnabled && v.propertyIndex === Constants.HasDescription) ||
               !v.propertyIndex.startsWith(ApiConstants.apiKnoraOntologyUrl)
           )
           .map(v => {

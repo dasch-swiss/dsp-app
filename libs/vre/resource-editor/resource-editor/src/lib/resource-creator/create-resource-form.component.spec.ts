@@ -2,7 +2,7 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Cardinality, Constants, KnoraApiConnection } from '@dasch-swiss/dsp-js';
-import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
+import { DspApiConnectionToken, RESOURCE_DESCRIPTION_ENABLED } from '@dasch-swiss/vre/core/config';
 import { ProjectDataRights, ProjectDataRightsService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { provideTranslateService, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
@@ -35,6 +35,7 @@ describe('CreateResourceFormComponent', () => {
   let component: CreateResourceFormComponent;
   let fixture: ComponentFixture<CreateResourceFormComponent>;
   let mockDspApiConnection: jest.Mocked<KnoraApiConnection>;
+  let resourceDescriptionEnabled = true;
 
   beforeEach(async () => {
     mockDspApiConnection = {
@@ -65,6 +66,7 @@ describe('CreateResourceFormComponent', () => {
       providers: [
         FormBuilder,
         { provide: DspApiConnectionToken, useValue: mockDspApiConnection },
+        { provide: RESOURCE_DESCRIPTION_ENABLED, useFactory: () => resourceDescriptionEnabled },
         // The form loads the project's resource-side legal info on init; stub the rights service.
         {
           provide: ProjectDataRightsService,
@@ -240,6 +242,24 @@ describe('CreateResourceFormComponent', () => {
 
       const payload = (mockDspApiConnection.v2.res.createResource as jest.Mock).mock.calls[0][0];
       expect(payload.properties[Constants.HasDescription]).toBeUndefined();
+    });
+
+    describe('with the feature flag off', () => {
+      // beforeAll runs before the outer beforeEach creates the component.
+      beforeAll(() => (resourceDescriptionEnabled = false));
+      afterAll(() => (resourceDescriptionEnabled = true));
+
+      it('drops hasDescription like every other knora-api property', () => {
+        setResourceProperties([
+          makeResourceProperty(Constants.HasDescription, Cardinality._0_n, Constants.TextValue, Constants.GuiRichText),
+          makeResourceProperty(PROJECT_PROP, Cardinality._0_1, Constants.TextValue, Constants.GuiSimpleText),
+        ]);
+
+        component.ngOnInit();
+        fixture.detectChanges();
+
+        expect(component.properties.map(prop => prop.propDef.id)).toEqual([PROJECT_PROP]);
+      });
     });
   });
 });
