@@ -865,6 +865,11 @@
         "subtitle": "Modifier le label de la ressource",
         "label": "Label"
       },
+      "editDescription": {
+        "subtitle": "Modifier la description de la ressource",
+        "add": "Ajouter une description",
+        "edit": "Modifier la description"
+      },
       "eraseResource": {
         "title": "Voulez-vous effacer définitivement cette ressource ?",
         "subtitle": "Effacer l'instance de ressource",

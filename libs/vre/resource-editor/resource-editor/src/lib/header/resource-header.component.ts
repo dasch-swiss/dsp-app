@@ -11,6 +11,7 @@ import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
 import { TranslatePipe } from '@ngx-translate/core';
 import { ResourceFetcherService } from '../representation/resource-fetcher.service';
 import { EditResourceLabelDialogComponent } from './more-menu/edit-resource-label-dialog.component';
+import { ResourceHeaderDescriptionComponent } from './resource-header-description.component';
 import { ResourceInfoBarComponent } from './resource-info-bar.component';
 import { ResourceToolbarComponent } from './resource-toolbar.component';
 
@@ -27,6 +28,7 @@ import { ResourceToolbarComponent } from './resource-toolbar.component';
       </h3>
       <app-resource-toolbar [resource]="resource.res" />
     </div>
+    <app-resource-info-bar [resource]="resource.res" />
     <div class="resource-label" style="display: flex; justify-content: space-between">
       <h4 data-cy="resource-header-label">{{ resource.res.label }}</h4>
       @if (resourceFetcherService.userCanEdit$ | async) {
@@ -40,7 +42,7 @@ import { ResourceToolbarComponent } from './resource-toolbar.component';
         </button>
       }
     </div>
-    <app-resource-info-bar [resource]="resource.res" />
+    <app-resource-header-description [resource]="resource.res" />
   </div>`,
   styles: [
     `
@@ -97,6 +99,7 @@ import { ResourceToolbarComponent } from './resource-toolbar.component';
     MatTooltipModule,
     StringifyStringLiteralPipe,
     TranslatePipe,
+    ResourceHeaderDescriptionComponent,
     ResourceInfoBarComponent,
     ResourceToolbarComponent,
   ],

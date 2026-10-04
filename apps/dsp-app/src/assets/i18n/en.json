@@ -865,6 +865,11 @@
         "subtitle": "Edit resource label",
         "label": "Label"
       },
+      "editDescription": {
+        "subtitle": "Edit resource description",
+        "add": "Add a description",
+        "edit": "Edit description"
+      },
       "eraseResource": {
         "title": "Do you want to erase this resource forever?",
         "subtitle": "Erase resource instance",
