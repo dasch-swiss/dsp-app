@@ -2,7 +2,7 @@ import { CUSTOM_ELEMENTS_SCHEMA, ErrorHandler } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ReadProject, ReadResource } from '@dasch-swiss/dsp-js';
-import { DspApiConnectionToken, RouteConstants } from '@dasch-swiss/vre/core/config';
+import { DspApiConnectionToken, RESOURCE_DESCRIPTION_ENABLED, RouteConstants } from '@dasch-swiss/vre/core/config';
 import { ErrorReportingService } from '@dasch-swiss/vre/core/error-handler';
 import { MultipleViewerService } from '@dasch-swiss/vre/pages/data-browser';
 import { DataBrowserPageService, ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
@@ -21,6 +21,7 @@ describe('ResourcesListFetcherComponent', () => {
   let currentProjectSubject: BehaviorSubject<ReadProject>;
   let handleError: jest.Mock;
   let report: jest.Mock;
+  let resourceDescriptionEnabled = false;
 
   const mockResource1 = { id: 'resource-1', label: 'Resource 1' } as ReadResource;
   const mockResource2 = { id: 'resource-2', label: 'Resource 2' } as ReadResource;
@@ -38,6 +39,7 @@ describe('ResourcesListFetcherComponent', () => {
     { provide: DataBrowserPageService, useValue: { onNavigationReload$: of(undefined) } },
     { provide: ErrorHandler, useValue: { handleError } },
     { provide: ErrorReportingService, useValue: { report } },
+    { provide: RESOURCE_DESCRIPTION_ENABLED, useFactory: () => resourceDescriptionEnabled },
   ];
 
   beforeEach(async () => {
@@ -131,6 +133,36 @@ describe('ResourcesListFetcherComponent', () => {
    * Failure-path coverage for DEV-6871. The component previously had no error handling at all, so any
    * failure left `data$` non-emitting and the template rendered the progress indicator forever.
    */
+  describe('resource descriptions', () => {
+    const queries = () => ({
+      paged: mockDspApiConnection.v2.search.doExtendedSearch.mock.calls[0][0] as string,
+      count: mockDspApiConnection.v2.search.doExtendedSearchCountQuery.mock.calls[0][0] as string,
+    });
+
+    it('does not ask for descriptions while the feature flag is off', async () => {
+      component.ngOnChanges();
+      await firstValueFrom(component.data$);
+
+      expect(queries().paged).not.toContain('hasDescription');
+    });
+
+    describe('with the feature flag on', () => {
+      // beforeAll runs before the outer beforeEach creates the component.
+      beforeAll(() => (resourceDescriptionEnabled = true));
+      afterAll(() => (resourceDescriptionEnabled = false));
+
+      it('fetches descriptions optionally in the paged query, and leaves the count query alone', async () => {
+        component.ngOnChanges();
+        await firstValueFrom(component.data$);
+
+        const { paged, count } = queries();
+        expect(paged).toContain('?mainRes knora-api:hasDescription ?description .');
+        expect(paged).toContain('OPTIONAL { ?mainRes knora-api:hasDescription ?description . }');
+        expect(count).not.toContain('hasDescription');
+      });
+    });
+  });
+
   describe('failure handling (DEV-6871)', () => {
     /** Collects every emission, unlike firstValueFrom, so the retry case can be observed. */
     const collectData = () => {
