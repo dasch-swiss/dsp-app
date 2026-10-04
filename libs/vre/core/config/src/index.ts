@@ -7,5 +7,6 @@ export * from './lib/app-config/dsp-config';
 export * from './lib/app-config/dsp-dialog-config';
 export * from './lib/app-config/dsp-iiif-config';
 export * from './lib/app-config/dsp-instrumentation-config';
+export * from './lib/app-config/resource-description-flag';
 export * from './lib/build-tag/build-tag-token';
 export * from './lib/build-tag/build-tag';
