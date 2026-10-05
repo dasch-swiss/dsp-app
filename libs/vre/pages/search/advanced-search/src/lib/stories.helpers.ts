@@ -64,6 +64,7 @@ const STORY_TRANSLATIONS = {
         tooShort: 'Enter at least 3 characters',
         unclosedPhrase: 'Close the quotation mark to search for a phrase',
         trailingEscape: 'A backslash needs a character after it',
+        danglingOperator: 'AND, OR and NOT need a search term next to them',
       },
       advancedSearch: {
         allResourceClasses: 'All resources',

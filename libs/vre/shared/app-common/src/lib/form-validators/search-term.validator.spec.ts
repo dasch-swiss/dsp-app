@@ -103,6 +103,20 @@ describe('searchTermCompleteSyntaxValidator (DEV-7370)', () => {
     expect(validate(term)).toBeNull();
   });
 
+  // The first seven were measured against the dev API as Lucene parse errors (DEV-7441).
+  it.each(['foo AND', 'foo OR', 'foo NOT', 'foo &&', 'foo ||', 'AND foo', 'OR foo', '"a b" AND', 'NOT'])(
+    'holds back %p, whose Boolean operator is missing its term',
+    term => {
+      expect(validate(term)).toEqual({ searchTermDanglingOperator: true });
+    }
+  );
+
+  // `NOT foo`, `foo AND bar` and `"foo AND"` were measured to run. Lowercase is no operator, and quotes
+  // or a backslash make it a literal.
+  it.each(['NOT foo', 'foo AND bar', '"foo AND"', 'foo and', '"AND foo"', 'foo \\AND'])('accepts %p', term => {
+    expect(validate(term)).toBeNull();
+  });
+
   it('counts a backslash before trailing whitespace as trailing, since the term is sent trimmed', () => {
     expect(validate('foo \\ ')).toEqual({ searchTermTrailingEscape: true });
   });

@@ -499,7 +499,8 @@
         "tooShort": "Saisissez au moins 3 caractères",
         "wildcardTooShort": "Un caractère générique nécessite au moins 3 autres caractères dans le même mot",
         "unclosedPhrase": "Fermez les guillemets pour rechercher une expression",
-        "trailingEscape": "Une barre oblique inverse doit être suivie d'un caractère"
+        "trailingEscape": "Une barre oblique inverse doit être suivie d'un caractère",
+        "danglingOperator": "AND, OR et NOT doivent être accompagnés d'un terme de recherche"
       },
       "searchTips": {
         "title": "Conseils de recherche",

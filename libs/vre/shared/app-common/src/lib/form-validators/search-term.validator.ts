@@ -31,16 +31,26 @@ export function searchTermMinLengthValidator(): ValidatorFn {
 }
 
 /**
+ * Boolean operators that need a term after them (at the end of the term), and those that also need one
+ * before them (at the start). Measured against the dev API: `foo AND`, `foo NOT`, `AND foo` and
+ * `foo &&` are parse errors, while `NOT foo` and `foo AND bar` run. Lucene only reads them in uppercase,
+ * so `foo and` is an ordinary term.
+ */
+const OPERATORS_NEEDING_A_TERM_AFTER = new Set(['AND', 'OR', 'NOT', '&&', '||']);
+const OPERATORS_NEEDING_A_TERM_BEFORE = new Set(['AND', 'OR', '&&', '||']);
+
+/**
  * Where a term stops in the middle of Lucene syntax, so dsp-api could only answer it with a parse error:
  * `'unclosedPhrase'` when a quoted phrase is still open, `'trailingEscape'` when the term ends on a lone
- * backslash, `null` when it is complete. Search-as-you-type sends such a term whenever the user pauses
- * before the closing quote (DEV-7370).
+ * backslash, `'danglingOperator'` when it ends (or starts) on a Boolean operator, `null` when it is
+ * complete. Search-as-you-type sends such a term whenever the user pauses before the closing quote
+ * (DEV-7370) or before the term after an `AND` (DEV-7441).
  *
  * Follows Lucene's escaping rule: a backslash escapes the next character, whatever it is. So `\"` is a
  * literal quote and opens no phrase, while `\\"` is a literal backslash followed by a real quote. Check
  * the term as typed: the SPARQL escaping of the query literal is undone by dsp-api before Lucene sees it.
  */
-export function incompleteLuceneSyntax(term: string): 'unclosedPhrase' | 'trailingEscape' | null {
+export function incompleteLuceneSyntax(term: string): 'unclosedPhrase' | 'trailingEscape' | 'danglingOperator' | null {
   let inPhrase = false;
   for (let i = 0; i < term.length; i++) {
     if (term[i] === '\\') {
@@ -52,7 +62,16 @@ export function incompleteLuceneSyntax(term: string): 'unclosedPhrase' | 'traili
       inPhrase = !inPhrase;
     }
   }
-  return inPhrase ? 'unclosedPhrase' : null;
+  if (inPhrase) {
+    return 'unclosedPhrase';
+  }
+  // The phrases are closed, so a whitespace-separated token at either end is a whole operator only when
+  // it stands outside one: an edge of a phrase always carries its quote (`"foo AND"` ends on `AND"`),
+  // and an escaped operator its backslash.
+  const tokens = term.split(/\s+/);
+  return OPERATORS_NEEDING_A_TERM_AFTER.has(tokens[tokens.length - 1]) || OPERATORS_NEEDING_A_TERM_BEFORE.has(tokens[0])
+    ? 'danglingOperator'
+    : null;
 }
 
 /**
@@ -64,10 +83,16 @@ export function incompleteLuceneSyntax(term: string): 'unclosedPhrase' | 'traili
 export function searchTermCompleteSyntaxValidator(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
     const incomplete = incompleteLuceneSyntax((control.value ?? '').trim());
-    if (incomplete === 'unclosedPhrase') {
-      return { searchTermUnclosedPhrase: true };
+    switch (incomplete) {
+      case 'unclosedPhrase':
+        return { searchTermUnclosedPhrase: true };
+      case 'trailingEscape':
+        return { searchTermTrailingEscape: true };
+      case 'danglingOperator':
+        return { searchTermDanglingOperator: true };
+      default:
+        return null;
     }
-    return incomplete === 'trailingEscape' ? { searchTermTrailingEscape: true } : null;
   };
 }
 
