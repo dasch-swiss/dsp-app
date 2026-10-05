@@ -150,3 +150,37 @@ export const WrapsLongValidationError: Story = {
     });
   },
 };
+
+export const ReservesSpaceBelowPristineField: Story = {
+  name: 'Keeps a gap below a pristine field so stacked fields do not touch',
+  args: {
+    control: new FormControl('') as FormControl<string>,
+    label: 'Project name',
+    type: 'text',
+  },
+  // Two stacked fields: the only thing separating them is the subscript the form field reserves
+  // under each one. A form field sized `dynamic` while showing no message reserves nothing, and
+  // the two fields touch — the DEV-7450 regression.
+  render: args => ({
+    props: args,
+    template: `<div style="width: 320px">
+        <app-common-input [control]="control" label="Shortcode" [type]="type" />
+        <app-common-input [control]="control" [label]="label" [type]="type" />
+      </div>`,
+    moduleMetadata: { imports: [CommonInputComponent] },
+  }),
+  play: async ({ canvasElement, step }) => {
+    await step('Neither field shows a message', async () => {
+      await expect(canvasElement.querySelector('mat-error')).toBeNull();
+    });
+    await step('A gap is kept between the two fields', async () => {
+      const [first, second] = Array.from(canvasElement.querySelectorAll('.mat-mdc-text-field-wrapper'));
+      await expect(second).not.toBeUndefined();
+
+      // The reserved subscript is 16px (Material's `.mat-mdc-form-field-bottom-align::before`);
+      // the floor is loose enough to survive a theme tweak and tight enough to catch a collapse.
+      const gap = second.getBoundingClientRect().top - first.getBoundingClientRect().bottom;
+      await expect(gap).toBeGreaterThanOrEqual(12);
+    });
+  },
+};
