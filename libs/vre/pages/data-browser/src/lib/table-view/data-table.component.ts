@@ -15,11 +15,17 @@ import { MatCheckbox, MatCheckboxChange } from '@angular/material/checkbox';
 import { MatIcon } from '@angular/material/icon';
 import { MatTable, MatTableModule } from '@angular/material/table';
 import { ReadResource } from '@dasch-swiss/dsp-js';
-import { ResourceExplorerButtonComponent } from '@dasch-swiss/vre/resource-editor/resource-editor';
+import {
+  FootnoteService,
+  PropertyValueService,
+  ResourceExplorerButtonComponent,
+  ResourceFetcherService,
+} from '@dasch-swiss/vre/resource-editor/resource-editor';
 import { TranslatePipe } from '@ngx-translate/core';
 import { ColumnResizeDirective } from './column-resize.directive';
 import { TableRowFetcherRegistry } from './editing/row-fetcher-registry.service';
 import { TableRowEditHostComponent } from './editing/table-row-edit-host.component';
+import { TableCellValueComponent } from './table-cell-value.component';
 import { DEFAULT_DENSITY, TableColumn, TableDensity } from './table-column.model';
 import { buildRows, TableRow } from './table-row.model';
 
@@ -216,11 +222,26 @@ interface RenderColumn extends TableColumn {
               } @else {
                 @if (cell.isEmpty) {
                   <span class="cell-empty">{{ 'pages.dataBrowser.table.notSet' | translate }}</span>
+                } @else if (cell.text !== undefined) {
+                  <!-- The label column. Kept inside the same wrapper as a property cell so the
+                       two line up: cell-value only truncates as a flex item. -->
+                  <div class="cell-values">
+                    <span class="cell-value">{{ cell.text }}</span>
+                  </div>
                 } @else {
                   @let expanded = isExpanded(row.id, column.key);
                   <div class="cell-values">
-                    @for (value of expanded ? cell.values : cell.collapsedValues; track $index) {
-                      <span class="cell-value">{{ value }}</span>
+                    <!-- Tracked by the value's own IRI, not by position: a save supersedes the
+                         value it edited, and the replacement has to arrive as a new view. The
+                         switcher reports its template once, from ngAfterViewInit, so a reused
+                         view would keep playing back the template chosen for the value it no
+                         longer holds. -->
+                    @for (value of expanded ? cell.values : cell.collapsedValues; track value.id) {
+                      <app-table-cell-value
+                        class="cell-value"
+                        [value]="value"
+                        [index]="$index"
+                        [propertyDefinition]="cell.propertyDefinition" />
                     }
                     @if (cell.isCollapsible) {
                       <button
@@ -281,10 +302,27 @@ interface RenderColumn extends TableColumn {
     ColumnResizeDirective,
     TableRowEditHostComponent,
     ResourceExplorerButtonComponent,
+    TableCellValueComponent,
   ],
-  // Per table, not per row: the rows the registry caches for are exactly the ones this table is
-  // showing, and it is this component that knows when they are replaced.
-  providers: [TableRowFetcherRegistry],
+  providers: [
+    // Per table, not per row: the rows the registry caches for are exactly the ones this table is
+    // showing, and it is this component that knows when they are replaced.
+    TableRowFetcherRegistry,
+
+    // What the viewer templates a cell renders inject but nothing provides in root — the resource
+    // editor provides all three per property, which a table has no equivalent of. `ListViewer`
+    // takes the first two, `RichTextViewer` and its footnote pipe the third.
+    //
+    // Per table rather than per cell, and that is the whole reason they are here and not on
+    // `TableCellValueComponent`: `PropertyValueService` is the /v2/lists cache, so one instance
+    // turns a list column's twenty-five cells into a single request instead of twenty-five.
+    // `ResourceFetcherService` is never loaded here — the list viewer only uses it to build a
+    // search link, and an unloaded fetcher simply never emits, so the link stays absent rather
+    // than costing a fetch per row.
+    PropertyValueService,
+    ResourceFetcherService,
+    FootnoteService,
+  ],
 })
 export class DataTableComponent {
   /** The page's resources, already fetched in full. */

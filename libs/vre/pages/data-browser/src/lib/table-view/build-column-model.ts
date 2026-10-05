@@ -104,6 +104,7 @@ export function buildColumnModel(
         propertyIri: propDef.id,
         label: localise(propDef),
         valueType,
+        propertyDefinition: propDef,
         cardinality: hasProperty.cardinality,
         guiOrder: hasProperty.guiOrder,
         isEditable: isEditableInResourceEditor(propDef),

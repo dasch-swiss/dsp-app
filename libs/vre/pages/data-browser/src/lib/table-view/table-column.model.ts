@@ -1,4 +1,4 @@
-import { Cardinality, Constants } from '@dasch-swiss/dsp-js';
+import { Cardinality, Constants, ResourcePropertyDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
 
 /**
  * The synthetic key of the resource-label column.
@@ -66,6 +66,15 @@ export interface TableColumn {
   readonly label: string;
   /** The dsp-api value type, e.g. `Constants.TextValue`. Empty on the label column. */
   readonly valueType: string;
+  /**
+   * The ontology's own definition of the property. Absent on the label column.
+   *
+   * Carried whole rather than reduced to the handful of fields the table itself reads, because a
+   * cell renders its values through the resource viewer's template switcher and that switcher
+   * takes the definition — it reads `guiElement` to choose between the three text renderings and
+   * `guiAttributes` to find a list's root node. Narrowing it here would mean rebuilding it there.
+   */
+  readonly propertyDefinition?: ResourcePropertyDefinitionWithAllLanguages;
   /** How many values a resource may carry for this property. Drives the multi-value cell. */
   readonly cardinality?: Cardinality;
   /** The ontology's own ordering. Ties are broken by the order the class lists its properties in. */

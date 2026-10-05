@@ -171,6 +171,19 @@ describe('buildColumnModel', () => {
     expect(columns[1].cardinality).toBe(Cardinality._1);
   });
 
+  // The cell renders its values through the resource viewer's template switcher, which takes the
+  // definition itself — it reads `guiElement` to choose between the three text renderings and
+  // `guiAttributes` to find a list's root. A column that lost it would fall back to `strval`.
+  it('CarriesThePropertyDefinitionOntoTheColumnForTheViewerTemplates', () => {
+    const def = propDef({ id: `${ONTO}hasText` });
+
+    const [labelColumn, textColumn] = build([def]);
+
+    expect(textColumn.propertyDefinition).toBe(def);
+    // The label is not a property value, so there is nothing for a viewer template to render.
+    expect(labelColumn.propertyDefinition).toBeUndefined();
+  });
+
   it('GivesADateColumnANarrowerDefaultWidthThanAText', () => {
     const text = propDef({ id: `${ONTO}hasText`, objectType: Constants.TextValue });
     const date = propDef({ id: `${ONTO}hasDate`, objectType: Constants.DateValue });

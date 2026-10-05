@@ -1,4 +1,12 @@
-import { ReadResource } from '@dasch-swiss/dsp-js';
+import {
+  Constants,
+  ReadBooleanValue,
+  ReadDateValue,
+  ReadResource,
+  ReadTextValueAsString,
+  ReadValue,
+  ResourcePropertyDefinitionWithAllLanguages,
+} from '@dasch-swiss/dsp-js';
 import { applicationConfig, Meta, StoryObj } from '@storybook/angular';
 import { expect, fn, userEvent, within } from 'storybook/test';
 import { EDITABLE_PROPERTY_IRI, makeEditableReadResource, makeReadResource, STORY_PROVIDERS } from '../stories.helpers';
@@ -7,20 +15,47 @@ import { LABEL_COLUMN_KEY, TableColumn } from './table-column.model';
 
 const ONTO = 'http://0.0.0.0:3333/ontology/0001/test/v2#';
 
+/**
+ * Enough of an ontology definition for the viewer's template switcher, which is what a cell now
+ * renders its values through. It reads `objectType` to choose the template and `guiElement` to
+ * pick between the three text renderings, so a column that carried neither would fall back to
+ * plain `strval` and the stories would stop exercising the thing they are about.
+ */
+function propDef(id: string, objectType: string): ResourcePropertyDefinitionWithAllLanguages {
+  return {
+    id,
+    objectType,
+    isEditable: true,
+    isLinkProperty: false,
+    isLinkValueProperty: false,
+    subPropertyOf: [],
+    labels: [],
+    comments: [],
+    guiAttributes: [],
+  } as unknown as ResourcePropertyDefinitionWithAllLanguages;
+}
+
 function column(key: string, label: string, overrides: Partial<TableColumn> = {}): TableColumn {
+  const isLabel = key === LABEL_COLUMN_KEY;
   return {
     key,
-    propertyIri: key === LABEL_COLUMN_KEY ? undefined : key,
+    propertyIri: isLabel ? undefined : key,
     label,
-    valueType: '',
+    valueType: isLabel ? '' : Constants.TextValue,
+    propertyDefinition: isLabel ? undefined : propDef(key, Constants.TextValue),
     isEditable: true,
     isSortable: true,
     isFilterable: true,
-    isSticky: key === LABEL_COLUMN_KEY,
+    isSticky: isLabel,
     defaultWidth: 200,
     minWidth: 90,
     ...overrides,
   };
+}
+
+/** A column of `valueType`, with the matching definition — the two must not drift apart. */
+function typedColumn(key: string, label: string, valueType: string): TableColumn {
+  return column(key, label, { valueType, propertyDefinition: propDef(key, valueType) });
 }
 
 const COLUMNS: TableColumn[] = [
@@ -31,25 +66,77 @@ const COLUMNS: TableColumn[] = [
 
 const VISIBLE = COLUMNS.map(c => c.key);
 
+/** Unique per value, because the cell's `@for` tracks by value IRI. */
+let valueCounter = 0;
+
+function seedValue<T extends ReadValue>(value: T, property: string, strval: string): T {
+  value.id = `http://rdfh.ch/0001/a/values/${(valueCounter += 1)}`;
+  value.property = property;
+  value.strval = strval;
+  return value;
+}
+
+/** The switcher's default text template renders `item.text`, so `strval` alone is not enough. */
+function textValue(property: string, text: string): ReadTextValueAsString {
+  const value = seedValue(new ReadTextValueAsString(), property, text);
+  value.text = text;
+  return value;
+}
+
+function booleanValue(property: string, bool: boolean): ReadBooleanValue {
+  const value = seedValue(new ReadBooleanValue(), property, String(bool));
+  value.bool = bool;
+  return value;
+}
+
 /**
- * `getValuesAsStringArray` is what the row builder calls, so the stub resolves it off a plain map
- * rather than constructing real `ReadValue` instances — the table only ever sees strings.
+ * A single Gregorian day.
+ *
+ * `ReadDateValue` derives its `KnoraDate` in its constructor from dsp-js's internal parse shape,
+ * which the library does not export — so the literal is built here and typed off the constructor
+ * rather than restated. Equal start and end make it a date rather than a period.
  */
-function resource(id: string, label: string, values: Record<string, string[]>): ReadResource {
+function dateValue(property: string, year: number, month: number, day: number): ReadDateValue {
+  const datestring = `GREGORIAN:${year}-${month}-${day}`;
+  const parsed = {
+    calendar: 'GREGORIAN',
+    datestring,
+    startYear: year,
+    endYear: year,
+    startMonth: month,
+    endMonth: month,
+    startDay: day,
+    endDay: day,
+  } as unknown as ConstructorParameters<typeof ReadDateValue>[0];
+
+  return seedValue(new ReadDateValue(parsed), property, datestring);
+}
+
+/**
+ * `getValues` is what the row builder calls now: a cell carries the `ReadValue`s themselves, so
+ * that each one can be rendered through the viewer's own template rather than through `strval`.
+ */
+function resource(id: string, label: string, values: Record<string, ReadValue[]>): ReadResource {
   return makeReadResource({
     id,
     label,
-    getValuesAsStringArray: (property: string) => values[property] ?? [],
+    properties: values,
+    getValues: (property: string) => values[property] ?? [],
   } as unknown as Partial<ReadResource>);
+}
+
+/** Text values, spelled out once so each story does not have to build them. */
+function texts(property: string, ...values: string[]): Record<string, ReadValue[]> {
+  return { [property]: values.map(value => textValue(property, value)) };
 }
 
 const ROWS = [
   resource('http://rdfh.ch/0001/a', 'BRAUT001a', {
-    [`${ONTO}hasTitle`]: ['Brautpaar in Tracht'],
-    [`${ONTO}hasPlace`]: ['Moskau'],
+    ...texts(`${ONTO}hasTitle`, 'Brautpaar in Tracht'),
+    ...texts(`${ONTO}hasPlace`, 'Moskau'),
   }),
   resource('http://rdfh.ch/0001/b', 'BRAUT001b', {
-    [`${ONTO}hasTitle`]: ['Hochzeitszug'],
+    ...texts(`${ONTO}hasTitle`, 'Hochzeitszug'),
     [`${ONTO}hasPlace`]: [],
   }),
 ];
@@ -91,6 +178,89 @@ export const RendersAColumnPerPropertyAndARowPerResource: Story = {
   },
 };
 
+// ── Cell rendering ──────────────────────────────────────────────────────────
+
+const DATE_PROPERTY = `${ONTO}hasDate`;
+const BOOLEAN_PROPERTY = `${ONTO}isPublished`;
+const GEOMETRY_PROPERTY = `${ONTO}hasGeometry`;
+
+const TYPED_COLUMNS: TableColumn[] = [
+  column(LABEL_COLUMN_KEY, 'Label'),
+  typedColumn(DATE_PROPERTY, 'Date', Constants.DateValue),
+  typedColumn(BOOLEAN_PROPERTY, 'Published', Constants.BooleanValue),
+];
+
+/**
+ * The reason the cell mounts the viewer's template switcher at all (PRD §6): a value reads the
+ * same in the grid as it does in the panel beside it. `strval` cannot express either of these —
+ * dsp-api ships a date as `GREGORIAN:2024-6-15` and a boolean as the word "true".
+ */
+export const RendersTypedValuesThroughTheViewersOwnTemplates: Story = {
+  args: {
+    columns: TYPED_COLUMNS,
+    visibleColumns: TYPED_COLUMNS.map(c => c.key),
+    resources: [
+      resource('http://rdfh.ch/0001/t', 'BRAUT001a', {
+        [DATE_PROPERTY]: [dateValue(DATE_PROPERTY, 2024, 6, 15)],
+        [BOOLEAN_PROPERTY]: [booleanValue(BOOLEAN_PROPERTY, true)],
+      }),
+    ],
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(canvas.getByText('15.06.2024')).toBeInTheDocument();
+    await expect(canvas.getByText('(Gregorian)')).toBeInTheDocument();
+    await expect(canvas.queryByText(/GREGORIAN:/)).toBeNull();
+
+    const toggle = canvas.getByRole('switch');
+    await expect(toggle).toHaveAttribute('aria-checked', 'true');
+    // Read-only: the cell displays, it does not edit. Editing is the cell editor's job.
+    await expect(toggle).toBeDisabled();
+    await expect(canvas.queryByText('true')).toBeNull();
+  },
+};
+
+const FALLBACK_COLUMNS: TableColumn[] = [
+  column(LABEL_COLUMN_KEY, 'Label'),
+  // Geometry is one of the types the switcher has no template for, so its `default` branch throws.
+  typedColumn(GEOMETRY_PROPERTY, 'Geometry', Constants.GeomValue),
+  typedColumn(BOOLEAN_PROPERTY, 'Published', Constants.BooleanValue),
+];
+
+/**
+ * One unrenderable property must cost its own cell, not the page.
+ *
+ * The switcher throws from `ngAfterViewInit` for an object type it has no case for, which would
+ * abort the change-detection pass the entire table renders in. The column model is built straight
+ * from the ontology, so that is reachable from ordinary data — hence the guard, and hence this
+ * story: the geometry cell degrades to the string it always showed while the boolean beside it
+ * still renders through the viewer.
+ */
+export const DegradesToPlainTextWhereTheViewerHasNoTemplate: Story = {
+  args: {
+    columns: FALLBACK_COLUMNS,
+    visibleColumns: FALLBACK_COLUMNS.map(c => c.key),
+    resources: [
+      resource('http://rdfh.ch/0001/g', 'BRAUT001a', {
+        [GEOMETRY_PROPERTY]: [textValue(GEOMETRY_PROPERTY, '{"type":"rectangle"}')],
+        [BOOLEAN_PROPERTY]: [booleanValue(BOOLEAN_PROPERTY, false)],
+      }),
+    ],
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const fallback = canvasElement.querySelector('[data-cy="cell-value-text"]');
+    await expect(fallback).not.toBeNull();
+    await expect(fallback?.textContent).toContain('{"type":"rectangle"}');
+
+    // The rest of the row is unaffected — which is the whole claim.
+    await expect(canvasElement.querySelector('mat-slide-toggle')).not.toBeNull();
+    await expect(canvas.getByText('BRAUT001a')).toBeInTheDocument();
+  },
+};
+
 export const ShowsAPlaceholderWhereAResourceHasNoValue: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -103,7 +273,7 @@ export const CollapsesACellWithMoreThanThreeValues: Story = {
   args: {
     resources: [
       resource('http://rdfh.ch/0001/p', 'Petrowa, Anna', {
-        [`${ONTO}hasPlace`]: ['Moskau', 'Kiew', 'Odessa', 'Tiflis', 'Riga'],
+        ...texts(`${ONTO}hasPlace`, 'Moskau', 'Kiew', 'Odessa', 'Tiflis', 'Riga'),
       }),
     ],
   },
@@ -119,7 +289,7 @@ export const ExpandsACollapsedCellOnDemand: Story = {
   args: {
     resources: [
       resource('http://rdfh.ch/0001/p', 'Petrowa, Anna', {
-        [`${ONTO}hasPlace`]: ['Moskau', 'Kiew', 'Odessa', 'Tiflis', 'Riga'],
+        ...texts(`${ONTO}hasPlace`, 'Moskau', 'Kiew', 'Odessa', 'Tiflis', 'Riga'),
       }),
     ],
   },
@@ -356,7 +526,7 @@ const EDITING_COLUMNS: TableColumn[] = [
   // it has no `PropertyInfoValues` and no editor. The local `column()` helper defaults the other
   // way, so it has to be said here.
   column(LABEL_COLUMN_KEY, 'Label', { isEditable: false }),
-  column(EDITABLE_PROPERTY_IRI, 'Integer'),
+  typedColumn(EDITABLE_PROPERTY_IRI, 'Integer', Constants.IntValue),
   column(`${ONTO}hasPlace`, 'Place', { isEditable: false }),
 ];
 

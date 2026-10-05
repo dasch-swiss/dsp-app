@@ -20,3 +20,17 @@ export { ResourceUtil } from './lib/representation/resource.util';
 // The drawer-dialog open control. Shared with the data browser's table so a row opens a resource
 // exactly the way the rest of the app does, rather than growing a second way to do it.
 export { ResourceExplorerButtonComponent } from './lib/properties/resource-explorer-button.component';
+
+// The viewer's read-only rendering, exported for the Data tab's table cells (DEV-7466). A cell
+// shows a value through the very switcher the resource viewer uses, so a date, a list node, a link
+// or a colour reads the same in the grid as it does in the panel beside it — rather than as the
+// `strval` dsp-api happens to ship.
+//
+// The two services come with it for the same reason the editor's did: three viewer templates
+// inject services the editor provides per property and nothing provides in root, so a host that
+// omits them gets a `NullInjectorError` the first time someone opens a class with a list, a rich
+// text or a region property. `PropertyValueService` is also the list cache, so the host decides
+// how many /v2/lists requests a list column costs by choosing where to provide it.
+export { TemplateViewerSwitcherComponent } from './lib/properties/properties-display/template-switcher/template-viewer-switcher.component';
+export { PropertyValueService } from './lib/properties/properties-display/property-value/property-value.service';
+export { FootnoteService } from './lib/properties/properties-display/footnotes/footnote.service';
