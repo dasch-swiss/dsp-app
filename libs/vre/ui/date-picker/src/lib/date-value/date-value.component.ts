@@ -115,68 +115,62 @@ export class DateValueComponent implements ControlValueAccessor, Validator {
   /** The stored value as text, for the lines that state what is stored and what was converted. */
   protected readonly storedText = computed(() => {
     const stored = this._stored();
-    if (stored === null) {
-      return '';
-    }
-    const calendar = this._calendarDates.calendarName(
-      stored instanceof KnoraPeriod ? stored.start.calendar : stored.calendar
-    );
-    if (stored instanceof KnoraPeriod) {
-      return `${this._plain(stored.start)} – ${this._plain(stored.end)} ${calendar}`;
-    }
-    return `${this._plain(stored)} ${calendar}`;
-  });
-
-  /** Whether what is shown is a conversion of the stored value rather than the stored value itself. */
-  protected readonly isConverted = computed(() => {
-    const stored = this._stored();
-    if (stored === null) {
-      return false;
-    }
-    const storedCalendar = (stored instanceof KnoraPeriod ? stored.start.calendar : stored.calendar).toUpperCase();
-    return storedCalendar !== this._state().calendar;
-  });
-
-  /** Whether conversions still measure from the stored value, which "(Stored value)" states. */
-  protected readonly baseIsStored = computed(() => this._baseIsStored() && this._stored() !== null);
-
-  /** What would be written, as text. */
-  protected readonly willBeStoredText = computed(() => {
-    const value = this._asValue(this._state());
-    if (value === null) {
-      return '';
-    }
-    const calendar = this._calendarDates.calendarName(this._state().calendar);
-    if (value instanceof KnoraPeriod) {
-      return `${this._plain(value.start)} – ${this._plain(value.end)} ${calendar}`;
-    }
-    return `${this._plain(value)} ${calendar}`;
+    return stored === null ? '' : this._text(stored);
   });
 
   /**
-   * Whether this is the stored day, restated in a different calendar.
+   * The stored value converted into the calendar now chosen, while the form still holds it.
    *
-   * The one thing a reader cannot work out from the numerals: 15.06.2024 Gregorian and 02.06.2024
-   * Julian look like different dates and are not. The line names the calendar the value will now
-   * be stored in, because that calendar is itself saved — `UpdateDateValue` carries it as a field
-   * beside the numerals — so this is a real edit rather than a no-op.
-   *
-   * The opposite case needs no line: a user who has just picked a different day can see that it
-   * differs, and saying so read as a warning about something they did on purpose.
+   * What the conversion hint is about. Measured from the stored value rather than read from the
+   * form, so the hint stays true when the user adds an end to a converted single date: the start is
+   * still the conversion. Once the user changes a date that came from the stored value, the hint
+   * would name a date no longer in the form, so there is none; the stored-value line above the
+   * fields still says what is stored.
    */
-  protected readonly isSameInstantInAnotherCalendar = computed(() => {
+  private readonly _convertedStored = computed<KnoraDate | KnoraPeriod | null>(() => {
     const stored = this._stored();
-    const current = this._asValue(this._state());
-    if (stored === null || current === null) {
-      return false;
+    const { start, end, calendar } = this._state();
+    if (stored === null || start === null || this._calendarOf(stored) === calendar) {
+      return null;
     }
-    if (this._calendarOf(stored) === this._state().calendar) {
-      return false;
+    const holds = (converted: KnoraDate | null, current: KnoraDate | null): converted is KnoraDate =>
+      converted !== null && current !== null && this._calendarDates.knoraDatesDenoteSameInstant(converted, current);
+
+    if (stored instanceof KnoraPeriod) {
+      const convertedStart = this._convert(stored.start, calendar, 'start');
+      const convertedEnd = this._convert(stored.end, calendar, 'end');
+      return holds(convertedStart, start) && holds(convertedEnd, end)
+        ? new KnoraPeriod(convertedStart, convertedEnd)
+        : null;
     }
-    return this._calendarDates.dateValuesDenoteSameInstant(stored, current);
+    const converted = this._convert(stored, calendar, 'start');
+    return holds(converted, start) ? converted : null;
   });
 
-  /** The calendar now chosen, for the line that names it. */
+  /**
+   * The conversion hint: its translation key and the converted value as text, or null.
+   *
+   * The "same day" clause is the one thing a reader cannot work out from the numerals: 15.06.2024
+   * Gregorian and 02.06.2024 Julian look like different dates and are not. An imprecise date gets no
+   * such clause, because a Julian year covers different days than the Gregorian year it becomes.
+   */
+  protected readonly conversionHint = computed(() => {
+    const stored = this._stored();
+    const converted = this._convertedStored();
+    if (stored === null || converted === null) {
+      return null;
+    }
+    let key = 'ui.datePicker.convertedStored';
+    if (this._calendarDates.dateValuesDenoteSameInstant(stored, converted)) {
+      key =
+        converted instanceof KnoraPeriod
+          ? 'ui.datePicker.convertedStoredSamePeriod'
+          : 'ui.datePicker.convertedStoredSameDay';
+    }
+    return { key, converted: this._text(converted) };
+  });
+
+  /** The calendar now chosen, for the hint that names it. */
   protected readonly calendarLabel = computed(() => `ui.calendarMarker.calendars.${this._state().calendar}`);
 
   /** The period's ends are out of order — shown in the card, not only as a form error. */
@@ -328,7 +322,9 @@ export class DateValueComponent implements ControlValueAccessor, Validator {
     event.preventDefault();
     this._touch();
     const isPeriod = !this._state().isPeriod;
-    this._commit({ ...this._state(), isPeriod, end: isPeriod ? this._state().end : null });
+    const end = isPeriod ? this._state().end : null;
+    this._rebaseIfEdited(this._state().start, end);
+    this._commit({ ...this._state(), isPeriod, end });
   }
 
   // -----------------------------------------------------------------------------------------
@@ -385,8 +381,11 @@ export class DateValueComponent implements ControlValueAccessor, Validator {
     const expectedEnd = source.end === null ? null : this._convert(source.end, calendar, 'end');
 
     const startMoved = expectedStart === null || !this._calendarDates.knoraDatesDenoteSameInstant(expectedStart, start);
+    // Adding or removing an end is an edit too: the stored value's ends no longer describe the value.
     const endMoved =
-      expectedEnd !== null && end !== null && !this._calendarDates.knoraDatesDenoteSameInstant(expectedEnd, end);
+      end === null || expectedEnd === null
+        ? (end === null) !== (expectedEnd === null)
+        : !this._calendarDates.knoraDatesDenoteSameInstant(expectedEnd, end);
 
     if (startMoved || endMoved) {
       this._baseIsStored.set(false);
@@ -438,6 +437,14 @@ export class DateValueComponent implements ControlValueAccessor, Validator {
     }
     const date = value instanceof KnoraPeriod ? value.start : value;
     return date.calendar.toUpperCase() as CalendarSystem;
+  }
+
+  private _text(value: KnoraDate | KnoraPeriod): string {
+    const calendar = this._calendarDates.calendarName(this._calendarOf(value));
+    if (value instanceof KnoraPeriod) {
+      return `${this._plain(value.start)} – ${this._plain(value.end)} ${calendar}`;
+    }
+    return `${this._plain(value)} ${calendar}`;
   }
 
   private _plain(date: KnoraDate): string {

@@ -1,3 +1,6 @@
+// Named and valued as in date-picker.component.scss, whose local tokens this follows.
+$primary-600: #336790;
+
 // One line: start, en dash, end, and the control that adds or removes the end. The pickers are
 // closed fields rather than open panels, so the row stays a row.
 .date-fields {
@@ -30,8 +33,7 @@
   flex: none;
 }
 
-.stored-value-line,
-.picker-note {
+.stored-value-line {
   display: flex;
   align-items: flex-start;
   gap: 4px;
@@ -41,8 +43,12 @@
   color: #4b5563;
 }
 
-.picker-note.converted {
-  color: #1d4ed8;
+// Icon at the top of the text, as on the stored-value line, so it stays put when the note wraps.
+.converted {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 4px;
+  color: $primary-600;
 }
 
 .line-icon {
@@ -59,6 +65,7 @@
   gap: 8px;
   margin-top: 8px;
   font-size: 12px;
+  line-height: 1.4;
   color: #4b5563;
 }
 

@@ -166,30 +166,53 @@ describe('DateValueComponent, as the resource editor renders it', () => {
 
       // No translation catalogue in jsdom, so the key is what renders; the Storybook test asserts
       // the translated copy.
-      expect(el('save-status')?.textContent).toContain('sameDayOtherCalendar');
+      expect(el('converted-from')?.textContent).toContain('convertedStoredSameDay');
     });
 
-    // The calendar is a stored field, so switching it is a real edit. Calling it "nothing to save"
-    // both misdescribed it and matched a save gate that refused to write it.
-    it('does not call a calendar switch nothing to save', () => {
+    // The hint is about the converted stored date, so an end added beside it does not make it false.
+    it('keeps the hint when an end is added to the converted date', () => {
+      switchTo('JULIAN');
+      const c = component() as never as { onTogglePeriod: (e: Event) => void; onEndChange: (d: KnoraDate) => void };
+      c.onTogglePeriod(new Event('click'));
+      c.onEndChange(new KnoraDate('JULIAN', 'CE', 2020, 3, 25));
+      fixture.detectChanges();
+
+      expect(el('converted-from')?.textContent).toContain('convertedStoredSameDay');
+    });
+
+    it('calls a converted period the same period', () => {
+      load(
+        new KnoraPeriod(new KnoraDate('GREGORIAN', 'CE', 2025, 5, 23), new KnoraDate('GREGORIAN', 'CE', 2025, 6, 2))
+      );
       switchTo('JULIAN');
 
-      expect(el('save-status')?.textContent).not.toContain('Nothing to save');
+      expect(el('converted-from')?.textContent).toContain('convertedStoredSamePeriod');
+    });
+
+    // A Julian year covers different days than the Gregorian year it becomes.
+    it('does not call an imprecise conversion the same day', () => {
+      load(new KnoraDate('JULIAN', 'CE', 1585));
+      switchTo('GREGORIAN');
+
+      expect(el('converted-from')?.textContent).toContain('convertedStored');
+      expect(el('converted-from')?.textContent).not.toContain('Same');
     });
 
     // A user who has just picked a different day can see that it differs; saying so read as a
     // warning about something they did deliberately.
-    it('says nothing at all once the user picks a different day', () => {
-      component().writeValue(new KnoraDate('GREGORIAN', 'CE', 2021, 8, 9));
+    // "Converted from the stored value to this" would describe a conversion that never happened.
+    it('shows no hint once the user picks a different day after a switch', () => {
+      switchTo('JULIAN');
+      (component() as never as { onStartChange: (d: KnoraDate) => void }).onStartChange(
+        new KnoraDate('JULIAN', 'CE', 2021, 8, 9)
+      );
       fixture.detectChanges();
 
-      expect(el('save-status')).toBeNull();
+      expect(el('converted-from')).toBeNull();
     });
 
-    it('says the conversion came from the stored value', () => {
-      switchTo('JULIAN');
-
-      expect(el('converted-from')?.textContent).toContain('convertedFromStored');
+    it('says nothing while the value is in its stored calendar', () => {
+      expect(el('converted-from')).toBeNull();
     });
   });
 
@@ -308,6 +331,52 @@ describe('DateValueComponent, as the resource editor renders it', () => {
       expect(host.control.errors).toEqual({ endRequired: true });
     });
 
+    // The stored value has no end, so converting from it on a calendar switch dropped the end the
+    // user had just added and reported a period missing its end.
+    it('converts an end added to a stored single date, rather than dropping it', () => {
+      load(new KnoraDate('JULIAN', 'CE', 2025, 5, 10));
+
+      toggle();
+      (component() as never as { onEndChange: (d: KnoraDate) => void }).onEndChange(
+        new KnoraDate('JULIAN', 'CE', 2025, 5, 20)
+      );
+      fixture.detectChanges();
+      switchTo('GREGORIAN');
+
+      expect(host.control.errors).toBeNull();
+      const period = value() as KnoraPeriod;
+      expect(period).toBeInstanceOf(KnoraPeriod);
+      expect([period.start.calendar, period.start.day, period.start.month]).toEqual(['GREGORIAN', 23, 5]);
+      expect([period.end.calendar, period.end.day, period.end.month]).toEqual(['GREGORIAN', 2, 6]);
+    });
+
+    // The mirror case: converting from the stored period brought back the end the user had removed.
+    describe('an end removed from a stored period stays removed across a calendar switch', () => {
+      beforeEach(() =>
+        load(new KnoraPeriod(new KnoraDate('JULIAN', 'CE', 2025, 5, 10), new KnoraDate('JULIAN', 'CE', 2025, 5, 20)))
+      );
+
+      it('when the end is cleared', () => {
+        (component() as never as { onEndChange: (d: KnoraDate | null) => void }).onEndChange(null);
+        fixture.detectChanges();
+        switchTo('GREGORIAN');
+
+        expect(value()).not.toBeInstanceOf(KnoraPeriod);
+        expect(host.control.errors).toEqual({ endRequired: true });
+      });
+
+      it('when the period is turned off and on again', () => {
+        toggle();
+        fixture.detectChanges();
+        switchTo('GREGORIAN');
+        toggle();
+        fixture.detectChanges();
+
+        expect(value()).not.toBeInstanceOf(KnoraPeriod);
+        expect(host.control.errors).toEqual({ endRequired: true });
+      });
+    });
+
     it('reports a period whose ends are out of order', () => {
       load(new KnoraPeriod(new KnoraDate('JULIAN', 'CE', 1585), new KnoraDate('JULIAN', 'CE', 1580)));
 
@@ -344,8 +413,7 @@ describe('DateValueComponent, as the resource editor renders it', () => {
   describe('being reused for a second value', () => {
     // The editor binds this component to an input rather than recreating it per value, so a second
     // resource arrives as another writeValue on the same instance. Capturing the stored value only
-    // once left every later judgement — "nothing to save", "converted from" — measured against the
-    // first resource's date.
+    // once left the "converted from" hint measured against the first resource's date.
     it('re-anchors on the newly loaded value', () => {
       load(new KnoraDate('GREGORIAN', 'CE', 2020, 4, 1));
       load(new KnoraDate('GREGORIAN', 'CE', 1999, 1, 15));
@@ -376,8 +444,8 @@ describe('DateValueComponent, as the resource editor renders it', () => {
       load(new KnoraDate('GREGORIAN', 'CE', 1999, 1, 15));
       switchTo('JULIAN');
 
-      // "(Stored value)" must refer to 1999, which means the base was re-anchored.
-      expect(el('converted-from')?.textContent).toContain('convertedFromStored');
+      // "(stored value)" must refer to 1999, which means the base was re-anchored.
+      expect(el('converted-from')?.textContent).toContain('convertedStored');
     });
   });
 

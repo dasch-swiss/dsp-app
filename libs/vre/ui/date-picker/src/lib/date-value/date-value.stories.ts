@@ -86,8 +86,8 @@ export const RoundTripsThroughIslamic: Story = {
   },
 };
 
-export const SaysTheDayIsUnchangedAfterASwitch: Story = {
-  name: 'Says the day is unchanged and names the calendar it is now expressed in',
+export const ShowsBothDatesAndTheSameDayAfterASwitch: Story = {
+  name: 'Shows the stored and the converted date, and that it is the same day, after a switch',
   args: { initial: new KnoraDate('GREGORIAN', 'CE', 2020, 4, 1) },
   play: async ({ canvasElement, step }) => {
     await step('Switching the calendar', async () => {
@@ -95,25 +95,18 @@ export const SaysTheDayIsUnchangedAfterASwitch: Story = {
     });
 
     // The one thing the numerals cannot show: 01.04.2020 Gregorian and 19.03.2020 Julian are the
-    // same day. The calendar is a stored field, so this is a real edit — not "nothing to save".
-    await step('The status line names the calendar the value will be stored in', async () => {
-      const status = canvasElement.querySelector('[data-cy="save-status"]');
-      await expect(status?.textContent).toContain('Same day as the stored value');
-      await expect(status?.textContent).toContain('Julian');
-    });
-    await step('And does not claim there is nothing to save', async () => {
-      const status = canvasElement.querySelector('[data-cy="save-status"]');
-      await expect(status?.textContent).not.toContain('Nothing to save');
-    });
-    await step('And names the stored value as what it converted from', async () => {
-      const note = canvasElement.querySelector('[data-cy="converted-from"]');
-      await expect(note?.textContent).toContain('Stored value');
+    // same day. One hint says what the stored value became, and that the day is unchanged.
+    await step('The hint names both dates, says it is the same day, and names the calendar', async () => {
+      const hint = canvasElement.querySelector('[data-cy="converted-from"]');
+      await expect(hint?.textContent).toContain(
+        '19.03.2020 Julian has been converted from 01.04.2020 Gregorian (stored value): same day, simply expressed in Julian.'
+      );
     });
   },
 };
 
-export const SaysNothingWhenTheUserPicksAnotherDay: Story = {
-  name: 'Says nothing once the user picks a different day',
+export const ShowsNoHintWhenTheUserPicksAnotherDay: Story = {
+  name: 'Shows no hint once the user picks a different day in the stored calendar',
   args: { initial: new KnoraDate('GREGORIAN', 'CE', 2020, 4, 1) },
   play: async ({ canvasElement, step }) => {
     await step('Picking a different day', async () => {
@@ -123,8 +116,8 @@ export const SaysNothingWhenTheUserPicksAnotherDay: Story = {
 
     // A user who has just chosen a different date can see that it differs; saying so read as a
     // warning about something they did on purpose.
-    await step('No status line appears', async () => {
-      await expect(canvasElement.querySelector('[data-cy="save-status"]')).toBeNull();
+    await step('No hint appears', async () => {
+      await expect(canvasElement.querySelector('[data-cy="converted-from"]')).toBeNull();
     });
   },
 };

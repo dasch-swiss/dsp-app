@@ -15,15 +15,6 @@
     [disabled]="disabled()"
     (calendarChange)="onCalendarChange($event)" />
 
-  <!-- what this was converted from, so the shift is never silent -->
-  @if (isConverted()) {
-  <p class="picker-note converted" data-cy="converted-from">
-    <mat-icon class="line-icon">swap_horiz</mat-icon>
-    @if (baseIsStored()) { {{ 'ui.datePicker.convertedFromStored' | translate: { date: storedText() } }} } @else { {{
-    'ui.datePicker.convertedFrom' | translate: { date: storedText() } }} }
-  </p>
-  }
-
   <!-- Start and end read as the two ends of one value, so they sit on one line. Each picker is a
   field that opens its own panel, which is what keeps the row one line tall. -->
   <div class="date-fields">
@@ -61,19 +52,16 @@
     </button>
   </div>
 
-  <div class="date-value-footer">
-    @if (willBeStoredText()) {
-    <span class="will-be-stored" data-cy="will-be-stored">
-      {{ 'ui.datePicker.willBeStoredAs' | translate: { date: willBeStoredText() } }}
-    </span>
-    }
-
-    <!-- Only the one case a reader cannot see for themselves: the numerals changed but the day
-    did not, because the value is now expressed in another calendar. That a date the user just
-    picked differs from the stored one is obvious and needs no telling. -->
-    @if (isSameInstantInAnotherCalendar()) {
-    <span class="save-status" data-cy="save-status">
-      {{ 'ui.datePicker.sameDayOtherCalendar' | translate: { calendar: calendarLabel() | translate } }}
+  <!-- A status region, so a screen reader announces the hint when a calendar switch brings it. It
+  is always rendered: a live region added together with its content is not announced. -->
+  <div class="date-value-footer" role="status">
+    <!-- What the stored value became in the calendar now chosen, and — the one thing the numerals
+    cannot show — whether it is still the same day. Below the fields rather than above them, so
+    appearing on a calendar switch does not push the fields down. -->
+    @if (conversionHint(); as hint) {
+    <span class="converted" data-cy="converted-from">
+      <mat-icon class="line-icon">swap_horiz</mat-icon>
+      {{ hint.key | translate: { from: storedText(), to: hint.converted, calendar: calendarLabel() | translate } }}
     </span>
     }
   </div>

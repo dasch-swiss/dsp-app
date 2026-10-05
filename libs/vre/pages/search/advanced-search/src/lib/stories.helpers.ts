@@ -62,7 +62,6 @@ const STORY_TRANSLATIONS = {
       month: 'Month',
       none: 'None',
       year: 'Year',
-      willBeStoredAs: 'will be stored as {{date}}',
       era: 'Era',
       noDay: 'No day (month precision)',
       yearPrecision: 'Year precision. Choose a month to select a day.',
