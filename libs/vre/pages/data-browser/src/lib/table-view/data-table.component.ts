@@ -3,8 +3,6 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
-  effect,
-  inject,
   input,
   linkedSignal,
   output,
@@ -17,23 +15,14 @@ import { MatTable, MatTableModule } from '@angular/material/table';
 import { ReadResource } from '@dasch-swiss/dsp-js';
 import {
   FootnoteService,
-  PropertyValueService,
+  PropertiesDisplayService,
   ResourceExplorerButtonComponent,
-  ResourceFetcherService,
 } from '@dasch-swiss/vre/resource-editor/resource-editor';
 import { TranslatePipe } from '@ngx-translate/core';
 import { ColumnResizeDirective } from './column-resize.directive';
-import { TableRowFetcherRegistry } from './editing/row-fetcher-registry.service';
-import { TableRowEditHostComponent } from './editing/table-row-edit-host.component';
-import { TableCellValueComponent } from './table-cell-value.component';
 import { DEFAULT_DENSITY, TableColumn, TableDensity } from './table-column.model';
+import { TablePropertyCellComponent } from './table-property-cell.component';
 import { buildRows, TableRow } from './table-row.model';
-
-/** Which cell the user has open for editing. At most one exists at a time (REQ-4.2). */
-interface OpenCell {
-  readonly rowId: string;
-  readonly columnKey: string;
-}
 
 /**
  * A column with everything its header needs already resolved.
@@ -201,80 +190,56 @@ interface RenderColumn extends TableColumn {
               }
 
               @let cell = row.cells[column.key];
-              @if (isCellOpen(row.id, column.key)) {
-                <!-- Every click inside the editor — the save button included — is also a click on
-                     the row, which selects the resource in the viewer. Stopped once here rather
-                     than on each control the editor happens to own. -->
-                <div class="cell-editor" (click)="$event.stopPropagation()">
-                  <app-table-row-edit-host
-                    [resource]="row.resource"
-                    [propertyIri]="column.propertyIri ?? ''"
-                    (resourceReloaded)="onResourceReloaded($event)" />
-                  <button
-                    type="button"
-                    class="cell-editor-close"
-                    data-cy="cell-editor-close"
-                    [attr.aria-label]="'pages.dataBrowser.table.closeCellEditor' | translate: { column: column.label }"
-                    (click)="closeCell()">
-                    <mat-icon>close</mat-icon>
-                  </button>
-                </div>
-              } @else {
-                @if (cell.isEmpty) {
-                  <span class="cell-empty">{{ 'pages.dataBrowser.table.notSet' | translate }}</span>
-                } @else if (cell.text !== undefined) {
-                  <!-- The label column. Kept inside the same wrapper as a property cell so the
-                       two line up: cell-value only truncates as a flex item. -->
-                  <div class="cell-values">
-                    <span class="cell-value">{{ cell.text }}</span>
-                  </div>
-                } @else {
-                  @let expanded = isExpanded(row.id, column.key);
-                  <div class="cell-values">
-                    <!-- Tracked by the value's own IRI, not by position: a save supersedes the
-                         value it edited, and the replacement has to arrive as a new view. The
-                         switcher reports its template once, from ngAfterViewInit, so a reused
-                         view would keep playing back the template chosen for the value it no
-                         longer holds. -->
-                    @for (value of expanded ? cell.values : cell.collapsedValues; track value.id) {
-                      <app-table-cell-value
-                        class="cell-value"
-                        [value]="value"
-                        [index]="$index"
-                        [propertyDefinition]="cell.propertyDefinition" />
-                    }
-                    @if (cell.isCollapsible) {
-                      <button
-                        type="button"
-                        class="cell-more"
-                        data-cy="cell-more"
-                        (click)="toggleExpanded(row.id, column.key); $event.stopPropagation()">
-                        <mat-icon>{{ expanded ? 'expand_less' : 'expand_more' }}</mat-icon>
-                        @if (expanded) {
-                          {{ 'pages.dataBrowser.table.showLess' | translate }}
-                        } @else {
-                          {{ 'pages.dataBrowser.table.showMore' | translate: { count: cell.hiddenCount } }}
-                        }
-                      </button>
-                    }
-                  </div>
-                }
+              @if (cell.isEmpty) {
+                <!-- Drawn even on a cell that can be edited, where the viewer unit below it is
+                     reduced to its add control. The table's whole reason to exist is scanning a
+                     property down a page — "which of these is missing a sender?" — and a bare add
+                     button answers that question only to a reader who already knows the column is
+                     editable. -->
+                <span class="cell-empty">{{ 'pages.dataBrowser.table.notSet' | translate }}</span>
+              }
 
-                <!-- Two gates, both of which must hold. The column's isEditable flag says the
-                     resource editor has an editor for this property at all: link, file-value,
-                     geometry and non-editable properties have none, so those cells stay plain
-                     text (REQ-4.7). The row's canEdit is the editor's own permission check on the
-                     resource (REQ-4.6). -->
-                @if (column.isEditable && row.canEdit) {
-                  <button
-                    type="button"
-                    class="cell-edit"
-                    data-cy="cell-edit"
-                    [attr.aria-label]="'pages.dataBrowser.table.editCell' | translate: { column: column.label }"
-                    (click)="openCell(row.id, column.key); $event.stopPropagation()">
-                    <mat-icon>edit</mat-icon>
-                  </button>
-                }
+              @if (cell.text !== undefined) {
+                <!-- The label column. Kept inside the same wrapper as a property cell so the two
+                     line up: cell-value only truncates as a flex item. -->
+                <div class="cell-values">
+                  <span class="cell-value">{{ cell.text }}</span>
+                </div>
+              } @else if (cell.propertyInfo; as propertyInfo) {
+                <!-- Every click inside the cell is also a click on the row, which selects the
+                     resource in the viewer. Stopped once here rather than on each of the dozen
+                     controls the viewer's unit brings with it. -->
+                <div class="cell-property" (click)="$event.stopPropagation()">
+                  <app-table-property-cell
+                    [dspResource]="row.dspResource!"
+                    [myProperty]="propertyInfo"
+                    (resourceReloaded)="onResourceReloaded($event)" />
+                </div>
+              } @else if (!cell.isEmpty) {
+                <!-- The read-only family: link, file-value, geometry and anything the ontology
+                     does not mark editable. GenerateProperty.commonProperty drops them, so there
+                     is no PropertyInfoValues to hand the viewer and no editor to mount — they
+                     render as text, and keep the collapse a viewer cell cannot have (REQ-4.7). -->
+                @let expanded = isExpanded(row.id, column.key);
+                <div class="cell-values">
+                  @for (value of expanded ? cell.values : cell.collapsedValues; track value.id) {
+                    <span class="cell-value">{{ value.strval }}</span>
+                  }
+                  @if (cell.isCollapsible) {
+                    <button
+                      type="button"
+                      class="cell-more"
+                      data-cy="cell-more"
+                      (click)="toggleExpanded(row.id, column.key); $event.stopPropagation()">
+                      <mat-icon>{{ expanded ? 'expand_less' : 'expand_more' }}</mat-icon>
+                      @if (expanded) {
+                        {{ 'pages.dataBrowser.table.showLess' | translate }}
+                      } @else {
+                        {{ 'pages.dataBrowser.table.showMore' | translate: { count: cell.hiddenCount } }}
+                      }
+                    </button>
+                  }
+                </div>
               }
             </td>
           </ng-container>
@@ -300,27 +265,19 @@ interface RenderColumn extends TableColumn {
     CdkDrag,
     CdkDragHandle,
     ColumnResizeDirective,
-    TableRowEditHostComponent,
     ResourceExplorerButtonComponent,
-    TableCellValueComponent,
+    TablePropertyCellComponent,
   ],
   providers: [
-    // Per table, not per row: the rows the registry caches for are exactly the ones this table is
-    // showing, and it is this component that knows when they are replaced.
-    TableRowFetcherRegistry,
-
-    // What the viewer templates a cell renders inject but nothing provides in root — the resource
-    // editor provides all three per property, which a table has no equivalent of. `ListViewer`
-    // takes the first two, `RichTextViewer` and its footnote pipe the third.
+    // Two services the viewer's subtree injects but does not provide, and which are genuinely
+    // table-wide rather than per cell.
     //
-    // Per table rather than per cell, and that is the whole reason they are here and not on
-    // `TableCellValueComponent`: `PropertyValueService` is the /v2/lists cache, so one instance
-    // turns a list column's twenty-five cells into a single request instead of twenty-five.
-    // `ResourceFetcherService` is never loaded here — the list viewer only uses it to build a
-    // search link, and an unloaded fetcher simply never emits, so the link stays absent rather
-    // than costing a fetch per row.
-    PropertyValueService,
-    ResourceFetcherService,
+    // `PropertiesDisplayService` is a pair of user preferences read out of `localStorage` in its
+    // constructor; one per cell would be a thousand `localStorage` reads per page, for a setting
+    // that cannot differ between two cells of the same table. `FootnoteService` collects the
+    // footnotes a rich-text value declares — the table renders no footnote list, so a shared sink
+    // is enough and spares each cell an instance.
+    PropertiesDisplayService,
     FootnoteService,
   ],
 })
@@ -390,7 +347,6 @@ export class DataTableComponent {
   readonly resourceReloaded = output<ReadResource>();
 
   private readonly _table = viewChild(MatTable);
-  private readonly _rowFetchers = inject(TableRowFetcherRegistry);
 
   /**
    * What the table is currently showing, as one value.
@@ -398,7 +354,8 @@ export class DataTableComponent {
    * Changing either half means the rows on screen are no longer the rows that were there — a new
    * page, a new sort, a new filter, a new class. Everything the user did *to* those rows is keyed
    * off this so that it is discarded exactly then, which is what REQ-4.11 asks for, rather than by
-   * each of those five gestures remembering to clear it.
+   * each of those five gestures remembering to clear it. The open editors go with them: a cell's
+   * editor lives inside the row's view, so replacing the rows destroys it.
    */
   private readonly _dataIdentity = computed(() => ({ resources: this.resources(), columns: this.columns() }));
 
@@ -415,28 +372,12 @@ export class DataTableComponent {
     computation: () => new Map(),
   });
 
-  private readonly _openCell = linkedSignal<unknown, OpenCell | null>({
-    source: this._dataIdentity,
-    computation: () => null,
-  });
-
   readonly rows = computed<TableRow[]>(() => {
     const reloaded = this._reloaded();
     const resources =
       reloaded.size === 0 ? this.resources() : this.resources().map(resource => reloaded.get(resource.id) ?? resource);
     return buildRows(resources, this.columns());
   });
-
-  constructor() {
-    // The cached fetchers belong to rows that are no longer on screen. Released in an effect
-    // rather than in the two `linkedSignal`s above because it is a side effect on a cache, not a
-    // value anything renders — nothing reads it until the next cell is opened, so the one
-    // change-detection pass this lags behind costs nothing.
-    effect(() => {
-      this._dataIdentity();
-      this._rowFetchers.clear();
-    });
-  }
 
   protected readonly renderColumns = computed<RenderColumn[]>(() => {
     const widths = this.columnWidths();
@@ -476,7 +417,7 @@ export class DataTableComponent {
   protected readonly densityClass = computed(() => `density-${this.density()}`);
 
   /**
-   * Which `(rowId, columnKey)` cells the user has expanded.
+   * Which `(rowId, columnKey)` read-only cells the user has expanded.
    *
    * Keyed by both, not stored on the row: rows are rebuilt on every data emission, and expansion
    * is a reading state the user set, not a property of the data. A space separator is safe — a
@@ -564,30 +505,13 @@ export class DataTableComponent {
     this._table()?.updateStickyColumnStyles();
   }
 
-  protected isCellOpen(rowId: string, columnKey: string): boolean {
-    const open = this._openCell();
-    return open !== null && open.rowId === rowId && open.columnKey === columnKey;
-  }
-
   /**
-   * Open a cell for editing, closing whatever was open.
-   *
-   * One signal for the whole table, so single-open arbitration (REQ-4.2) is a property of the
-   * state rather than a close-the-other step every call site has to remember.
-   */
-  protected openCell(rowId: string, columnKey: string): void {
-    this._openCell.set({ rowId, columnKey });
-  }
-
-  protected closeCell(): void {
-    this._openCell.set(null);
-  }
-
-  /**
-   * Replace one row's resource with what dsp-api returned after a save.
+   * Replace one row's resource with what dsp-api returned after a save, a delete or a reorder.
    *
    * Only the overlay moves; `resources` is left as the query returned it, so the row keeps its
-   * position and `trackBy` keeps its view — including the open editor inside it.
+   * position and `trackBy` keeps its view. Every cell of the row is rebound, which re-primes each
+   * one's fetcher and returns any open editor in the row to display mode — the same thing the
+   * resource viewer does to its own properties when it reloads.
    */
   protected onResourceReloaded(resource: ReadResource): void {
     this._reloaded.update(current => new Map(current).set(resource.id, resource));

@@ -288,85 +288,24 @@ tr.is-checked .row-controls {
 }
 
 .mat-mdc-cell {
-  // Anchors the edit affordance, which floats over the cell's right edge rather than taking a
-  // column of its own — at forty columns a dedicated edit gutter per cell would cost more width
-  // than some of the columns it sits beside.
+  // Anchors the action bubble the viewer's own value display floats over its value. The bubble is
+  // positioned against the nearest positioned ancestor, and without this that would be the scroll
+  // container — so every row's bubble would pile up at the top-left corner of the table.
   position: relative;
-
-  &:hover,
-  &:focus-within {
-    .cell-edit {
-      opacity: 1;
-    }
-  }
 }
 
-.cell-edit {
-  position: absolute;
-  top: 50%;
-  right: 2px;
-  transform: translateY(-50%);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  border-radius: 3px;
-  background: rgba(255, 255, 255, 0.9);
-  padding: 2px;
-  cursor: pointer;
-  color: var(--primary, #336790);
-  opacity: 0;
+// The viewer's property unit, dropped into a cell.
+//
+// It is laid out for the properties panel, which is several hundred pixels wide and has one row
+// per property. A column is 200px and has twenty-five of them, so the only thing done to it here
+// is to stop it widening its column: everything else — the bubble, the comment line, the drag
+// handles, the add control — is left exactly as the viewer draws it, which is the point.
+.cell-property {
+  min-width: 0;
 
-  mat-icon {
-    font-size: 16px;
-    width: 16px;
-    height: 16px;
-  }
-
-  // Hover-only reveal is not reachable without a pointer, and this is the only way into editing.
-  &:focus-visible {
-    opacity: 1;
-    outline: 2px solid var(--primary, #336790);
-    outline-offset: 1px;
-  }
-}
-
-.cell-editor {
-  display: flex;
-  align-items: flex-start;
-  gap: 4px;
-  // The editor is wider than its column on purpose (see the host's own stylesheet). `relative`
-  // keeps it painted above the cells it overlaps instead of behind them, which `table-layout:
-  // fixed` would otherwise decide by document order.
-  position: relative;
-  z-index: 2;
-  background: #fff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
-  border-radius: 4px;
-  padding: 4px 8px;
-}
-
-.cell-editor-close {
-  flex: none;
-  display: inline-flex;
-  align-items: center;
-  border: none;
-  background: transparent;
-  padding: 2px;
-  margin-top: 4px;
-  cursor: pointer;
-  color: rgba(0, 0, 0, 0.54);
-
-  mat-icon {
-    font-size: 18px;
-    width: 18px;
-    height: 18px;
-  }
-
-  &:focus-visible {
-    outline: 2px solid var(--primary, #336790);
-    outline-offset: 1px;
-  }
+  // The bubble is absolutely positioned and sits above the value it belongs to. A cell that
+  // clipped its overflow would cut it in half against the row above.
+  overflow: visible;
 }
 
 .cell-more {

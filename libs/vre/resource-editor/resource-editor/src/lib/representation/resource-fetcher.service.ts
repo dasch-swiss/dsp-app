@@ -54,6 +54,27 @@ export class ResourceFetcherService {
     });
   }
 
+  /**
+   * Adopt a resource the caller has already fetched, without issuing a request.
+   *
+   * Everything else here assumes this service is the one that fetched: `reload()` reads the IRI
+   * back out of `_resourceSubject` and throws when nothing has filled it, and the subtree's
+   * action bubble dereferences the first emission unguarded. So a host that mounts the editor's
+   * own components over a resource it already holds — the Data tab's table, which batch-fetches
+   * all 25 rows in full before it renders any of them (DEV-7466) — has no way in short of
+   * re-fetching each one single-file behind the batch it just did.
+   *
+   * Priming is that way in. The fetcher is seeded rather than sent shopping; `reload()` then
+   * works normally and re-reads exactly that one resource after a save, which is the behaviour
+   * the table wants.
+   *
+   * Call it before the subtree renders. It is safe to call again with a newer copy of the same
+   * resource — that is how a host re-seeds a row it has just reloaded.
+   */
+  prime(resource: DspResource) {
+    this._resourceSubject.next(resource);
+  }
+
   reload() {
     const resourceIri = this._resourceSubject.value?.res.id;
     if (!resourceIri) {

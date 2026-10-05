@@ -4,6 +4,8 @@ import { UserApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { AdminAPIApiService, APIV2ApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { UserService } from '@dasch-swiss/vre/core/session';
+import { FootnoteService, PropertiesDisplayService } from '@dasch-swiss/vre/resource-editor/resource-editor';
+import { ResourceService } from '@dasch-swiss/vre/shared/app-common';
 import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { EMPTY, of } from 'rxjs';
@@ -64,16 +66,17 @@ export const makeUserServiceStub = (partial: Partial<UserService> = {}): Partial
 export const EDITABLE_PROPERTY_IRI = `${TEST_RESOURCE_TYPE.split('#')[0]}#hasInteger`;
 
 /**
- * A resource complete enough to open a table cell on.
+ * A resource complete enough to mount the resource editor over.
  *
- * `makeReadResource` is shaped for components that only read a label and a class. An open cell
- * runs `generateDspResource`, which walks `entityInfo.classes[type].getResourcePropertiesList()`
- * and calls `getValues()` per property — so a cell opened over the lighter stub throws rather than
- * rendering. An integer property is used because it is the one value type whose editor needs
- * nothing but a number: no list fetch, no geoname lookup, no rich-text build.
+ * `makeReadResource` is shaped for components that only read a label and a class. Every table
+ * property cell runs `generateDspResource`, which walks
+ * `entityInfo.classes[type].getResourcePropertiesList()` and calls `getValues()` per property —
+ * so a cell built over the lighter stub falls down the plain-text path rather than rendering the
+ * viewer. An integer property is used because it is the one value type whose editor needs nothing
+ * but a number: no list fetch, no geoname lookup, no rich-text build.
  *
- * `userHasPermission: 'CR'` by default, because a resource the user cannot modify has no edit
- * affordance at all and there would be nothing to open. Pass `'RV'` to story that case.
+ * `userHasPermission: 'CR'` by default. Pass `'RV'` to story a user who may read but not modify;
+ * the editor then mounts read-only, with no Edit, Delete or add control.
  */
 export const makeEditableReadResource = (partial: Partial<ReadResource> & { values?: string[] } = {}): ReadResource => {
   const { values = ['42'], ...rest } = partial;
@@ -132,12 +135,12 @@ export const makeLocalizationServiceStub = (language = 'en'): Partial<Localizati
 });
 
 /**
- * Enough of a connection for the table's open cell.
+ * Enough of a connection for a table cell's resource editor.
  *
- * `getResource` deliberately never emits. `ResourceFetcherService` calls it when a row's fetcher is
- * seeded, and an emission would run `generateDspResource` over a stub and then rebind the editor —
- * neither of which a story about opening a cell is asserting. The writes resolve so that a save
- * driven from a story completes rather than throwing.
+ * `getResource` deliberately never emits. Nothing fetches a row any more — each cell's
+ * `ResourceFetcherService` is primed with the resource the table already holds — but `reload()`
+ * after a save still goes through it, and an emission would rebind the editor mid-assertion. The
+ * writes resolve so that a save driven from a story completes rather than throwing.
  */
 export const makeDspApiConnectionStub = () => ({
   v2: {
@@ -154,14 +157,26 @@ export const STORY_PROVIDERS = [
   { provide: ProjectShortnameService, useValue: { getProjectShortname: () => of('testproj') } },
   { provide: MultipleViewerService, useValue: makeMultipleViewerServiceStub() },
 
-  // An open table cell mounts the resource editor's own property editor, which drags that lib's
-  // dependency tree across the boundary with it (DEV-7466). Stubbed here rather than story by
-  // story, because a story that merely *renders a table* can reach them by clicking an edit
-  // affordance — the two API services are constructor dependencies of `ResourceFetcherService`
-  // and so are resolved the moment a row's fetcher is created, whether or not anything subscribes.
+  // Every editable table cell mounts the resource editor's own property unit, which drags that
+  // lib's dependency tree across the boundary with it (DEV-7466). Stubbed here rather than story
+  // by story, because a story that merely *renders a table* now reaches all of it: the two API
+  // services are constructor dependencies of `ResourceFetcherService`, which every property cell
+  // provides, whether or not anything subscribes.
   { provide: DspApiConnectionToken, useValue: makeDspApiConnectionStub() },
   { provide: NotificationService, useValue: { openSnackBar: () => {} } },
   { provide: AdminAPIApiService, useValue: { getAdminProjectsIriProjectiri: () => EMPTY } },
   { provide: UserApiService, useValue: { get: () => EMPTY } },
   { provide: APIV2ApiService, useValue: { putV2ValuesOrder: () => EMPTY } },
+
+  // `DataTableComponent` provides these two itself, per table. They are here as well so that a
+  // story can mount a single cell without standing a whole table up around it — the component
+  // provider still wins wherever a table is present.
+  PropertiesDisplayService,
+  FootnoteService,
+
+  // Reached only once a value's editor is opened: `PropertyValueEditComponent` asks
+  // `ResourceService` for the project shortcode, and the real one pulls the API host out of
+  // `AppConfigService`, which needs the app's own config token. Stubbed rather than configured,
+  // because no story asserts on a shortcode.
+  { provide: ResourceService, useValue: { getProjectShortcode: () => 'test' } },
 ];

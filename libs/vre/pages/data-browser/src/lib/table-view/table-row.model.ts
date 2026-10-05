@@ -1,35 +1,43 @@
-import { ReadResource, ReadValue, ResourcePropertyDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
-import { ResourceUtil } from '@dasch-swiss/vre/resource-editor/resource-editor';
+import { ReadResource, ReadValue } from '@dasch-swiss/dsp-js';
+import { DspResource, generateDspResource, PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
 import { LABEL_COLUMN_KEY, TableColumn } from './table-column.model';
 
-/** How many values a cell shows before it collapses the rest behind a "show more" control. */
+/**
+ * How many values a read-only cell shows before it collapses the rest behind a "show more"
+ * control.
+ *
+ * Read-only cells only. A cell the resource editor can open renders every value, because it
+ * renders them through `app-property-values` — the viewer's own unit, which knows nothing of a
+ * table and shows a property's values in full. Collapsing three of them would mean either
+ * reimplementing the viewer's list (the thing this feature exists not to do) or hiding values
+ * that carry their own edit and delete controls, which is worse than a tall row.
+ */
 export const COLLAPSED_VALUE_COUNT = 3;
 
 /**
  * One cell, resolved to what it will render.
  *
- * Carries the `ReadValue`s themselves rather than their `strval`s: a cell renders each value
- * through the resource viewer's own template switcher, and that needs the value object. A date's
- * calendar, a list value's node, a link's target IRI and a boolean's `bool` are all absent from
- * the string dsp-api derives — which is why a date read `2024-06-15` in the grid and
- * `15.06.2024 (Gregorian)` two inches to the right of it.
+ * Two shapes, discriminated by which field is set. `propertyInfo` means the cell mounts the
+ * resource viewer's own property unit and renders — and edits — its values exactly as the panel
+ * beside the table does. `values` means the plain-text path, which is what a read-only column
+ * gets: `GenerateProperty.commonProperty` drops link, file-value and geometry properties, so
+ * there is no `PropertyInfoValues` for them and nothing of the viewer to mount.
  */
 export interface TableCell {
   readonly columnKey: string;
   /**
    * The label column's text.
    *
-   * Undefined on every property column, and the discriminant the table branches on. The resource
-   * label is not a value: there is no `ReadValue` to hand a viewer template and no property
-   * definition to pick one with, so it stays plain text.
+   * Undefined on every property column. The resource label is not a value: there is no
+   * `ReadValue` behind it and no property definition, so it stays plain text.
    */
   readonly text?: string;
   /**
-   * The column's property definition, needed to pick the viewer template. Undefined on the label
-   * column, and on a column whose property the ontology had no definition for.
+   * What `app-property-values` needs on its `myProperty` input, or undefined when this column has
+   * no editor to mount.
    */
-  readonly propertyDefinition?: ResourcePropertyDefinitionWithAllLanguages;
-  /** Every value, in the order dsp-api returned them. Empty when the resource carries none. */
+  readonly propertyInfo?: PropertyInfoValues;
+  /** The plain-text path's values, in the order dsp-api returned them. Empty on a viewer cell. */
   readonly values: readonly ReadValue[];
   /** The first `COLLAPSED_VALUE_COUNT` of them, so the collapsed branch needs no slicing. */
   readonly collapsedValues: readonly ReadValue[];
@@ -52,17 +60,20 @@ export interface TableCell {
  */
 export interface TableRow {
   readonly resource: ReadResource;
+  /**
+   * The same resource as the resource editor models it, built once per row.
+   *
+   * Every cell of the row needs it — to seed its `ResourceFetcherService` and to find its own
+   * `PropertyInfoValues` — and `generateDspResource` walks the whole class each time it is
+   * called. Once per row is 25 walks per page; once per cell would be a thousand.
+   *
+   * Undefined when the resource cannot be modelled at all, which sends every cell of the row down
+   * the plain-text path. See {@link _generate}.
+   */
+  readonly dspResource?: DspResource;
   /** The resource IRI. Used as the `trackBy` key. */
   readonly id: string;
   readonly label: string;
-  /**
-   * Whether this user may modify this resource at all.
-   *
-   * The gate on every cell's edit affordance (REQ-4.6). Resolved per row rather than per cell
-   * because the permission is the resource's, and asking forty times per row would be thirty-nine
-   * identical answers.
-   */
-  readonly canEdit: boolean;
   readonly cells: Readonly<Record<string, TableCell>>;
 }
 
@@ -70,41 +81,77 @@ export interface TableRow {
 const KNOWN_PERMISSIONS: ReadonlySet<string> = new Set(['RV', 'V', 'M', 'D', 'CR']);
 
 /**
- * The resource editor's own permission check, applied defensively.
+ * Model the resource the way the resource editor does, or give up on it.
  *
- * `ResourceUtil` delegates to `PermissionUtil.allUserPermissions`, which *throws* on a string it
- * does not recognise rather than answering "no". One resource with a missing `userHasPermission`
- * would otherwise take the whole page's render down, so the string is checked before it is used.
+ * Two things in that subtree throw rather than answering "no", and both are reachable from
+ * ordinary data:
+ *
+ * - `GenerateProperty.commonProperty` indexes `entityInfo.classes[resource.type]`, which is absent
+ *   if the batch fetch returned a resource of a class the page's ontology does not describe.
+ * - `app-property-values` asks `ResourceUtil.userCanEdit` on every change-detection pass, and that
+ *   delegates to `PermissionUtil.allUserPermissions`, which *throws* on a permission string it
+ *   does not recognise. One such resource would take down the render of the whole page, every
+ *   pass, not just its own row — so the string is checked before anything is mounted over it.
+ *
+ * Giving up costs the row its editors and leaves it readable. That is the right trade: the
+ * alternative is twenty-five blank rows.
  */
-function userCanEditResource(resource: ReadResource): boolean {
-  return KNOWN_PERMISSIONS.has(resource.userHasPermission) && ResourceUtil.userCanEdit(resource);
+function _generate(resource: ReadResource): DspResource | undefined {
+  if (!KNOWN_PERMISSIONS.has(resource.userHasPermission)) {
+    return undefined;
+  }
+
+  try {
+    return generateDspResource(resource);
+  } catch {
+    return undefined;
+  }
 }
 
 const EMPTY_VALUES: readonly ReadValue[] = [];
 
-function cellFor(resource: ReadResource, column: TableColumn): TableCell {
+function _labelCell(resource: ReadResource, column: TableColumn): TableCell {
+  return {
+    columnKey: column.key,
+    text: resource.label,
+    values: EMPTY_VALUES,
+    collapsedValues: EMPTY_VALUES,
+    hiddenCount: 0,
+    isCollapsible: false,
+    isEmpty: resource.label === '',
+  };
+}
+
+function cellFor(resource: ReadResource, dspResource: DspResource | undefined, column: TableColumn): TableCell {
   if (column.key === LABEL_COLUMN_KEY) {
+    return _labelCell(resource, column);
+  }
+
+  // The resource editor's own answer to "is there an editor for this property", not a second
+  // opinion: a property `commonProperty` dropped has no `PropertyInfoValues` here either, which is
+  // exactly the read-only family of PRD §9.11. The column model's `isEditable` agrees, but this is
+  // the authority — it is the object the editor would actually be handed.
+  const propertyInfo = dspResource?.resProps.find(prop => prop.propDef.id === column.propertyIri);
+  if (propertyInfo) {
     return {
       columnKey: column.key,
-      text: resource.label,
+      propertyInfo,
       values: EMPTY_VALUES,
       collapsedValues: EMPTY_VALUES,
       hiddenCount: 0,
       isCollapsible: false,
-      isEmpty: resource.label === '',
+      isEmpty: propertyInfo.values.length === 0,
     };
   }
 
-  // Every value, including one whose `strval` dsp-api could not produce. The string path used to
-  // drop those, because an unrenderable string is worse than nothing; a value object is not in
-  // that position — the viewer templates read the typed fields, so a date with no `strval` still
-  // renders as a date.
+  // Every value, including one whose `strval` dsp-api could not produce: an empty string in a cell
+  // that holds a value still says "something is here", which is more honest than the "— not set"
+  // an omitted value would read as.
   const values = resource.getValues(column.propertyIri ?? '');
   const isCollapsible = values.length > COLLAPSED_VALUE_COUNT;
 
   return {
     columnKey: column.key,
-    propertyDefinition: column.propertyDefinition,
     values,
     collapsedValues: isCollapsible ? values.slice(0, COLLAPSED_VALUE_COUNT) : values,
     hiddenCount: isCollapsible ? values.length - COLLAPSED_VALUE_COUNT : 0,
@@ -115,14 +162,18 @@ function cellFor(resource: ReadResource, column: TableColumn): TableCell {
 
 /** Resolve a page of resources against the column model. */
 export function buildRows(resources: ReadResource[], columns: TableColumn[]): TableRow[] {
-  return resources.map(resource => ({
-    resource,
-    id: resource.id,
-    label: resource.label,
-    canEdit: userCanEditResource(resource),
-    cells: columns.reduce<Record<string, TableCell>>((cells, column) => {
-      cells[column.key] = cellFor(resource, column);
-      return cells;
-    }, {}),
-  }));
+  return resources.map(resource => {
+    const dspResource = _generate(resource);
+
+    return {
+      resource,
+      dspResource,
+      id: resource.id,
+      label: resource.label,
+      cells: columns.reduce<Record<string, TableCell>>((cells, column) => {
+        cells[column.key] = cellFor(resource, dspResource, column);
+        return cells;
+      }, {}),
+    };
+  });
 }

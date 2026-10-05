@@ -1,7 +1,9 @@
 import {
+  Cardinality,
   Constants,
   ReadBooleanValue,
   ReadDateValue,
+  ReadIntValue,
   ReadResource,
   ReadTextValueAsString,
   ReadValue,
@@ -9,17 +11,17 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { applicationConfig, Meta, StoryObj } from '@storybook/angular';
 import { expect, fn, userEvent, within } from 'storybook/test';
-import { EDITABLE_PROPERTY_IRI, makeEditableReadResource, makeReadResource, STORY_PROVIDERS } from '../stories.helpers';
+import { EDITABLE_PROPERTY_IRI, makeReadResource, STORY_PROVIDERS } from '../stories.helpers';
 import { DataTableComponent } from './data-table.component';
 import { LABEL_COLUMN_KEY, TableColumn } from './table-column.model';
 
 const ONTO = 'http://0.0.0.0:3333/ontology/0001/test/v2#';
 
 /**
- * Enough of an ontology definition for the viewer's template switcher, which is what a cell now
- * renders its values through. It reads `objectType` to choose the template and `guiElement` to
- * pick between the three text renderings, so a column that carried neither would fall back to
- * plain `strval` and the stories would stop exercising the thing they are about.
+ * Enough of an ontology definition for the resource viewer, which is what a cell now renders and
+ * edits its values through. The switcher reads `objectType` to choose the template and
+ * `guiElement` to pick between the three text renderings; `GenerateProperty.commonProperty` reads
+ * `isLinkProperty` and `subPropertyOf` to decide whether the property has an editor at all.
  */
 function propDef(id: string, objectType: string): ResourcePropertyDefinitionWithAllLanguages {
   return {
@@ -33,6 +35,15 @@ function propDef(id: string, objectType: string): ResourcePropertyDefinitionWith
     comments: [],
     guiAttributes: [],
   } as unknown as ResourcePropertyDefinitionWithAllLanguages;
+}
+
+/**
+ * A definition the resource editor drops, standing in for the whole read-only family — link, file
+ * value and geometry. `commonProperty` filters link properties out, so no `PropertyInfoValues`
+ * reaches the cell and it renders as text (REQ-4.7).
+ */
+function readOnlyPropDef(id: string, objectType: string): ResourcePropertyDefinitionWithAllLanguages {
+  return { ...propDef(id, objectType), isLinkProperty: true } as ResourcePropertyDefinitionWithAllLanguages;
 }
 
 function column(key: string, label: string, overrides: Partial<TableColumn> = {}): TableColumn {
@@ -58,6 +69,15 @@ function typedColumn(key: string, label: string, valueType: string): TableColumn
   return column(key, label, { valueType, propertyDefinition: propDef(key, valueType) });
 }
 
+/** A column whose property the resource editor has no editor for, definition included. */
+function readOnlyColumn(key: string, label: string, valueType: string = Constants.TextValue): TableColumn {
+  return column(key, label, {
+    valueType,
+    propertyDefinition: readOnlyPropDef(key, valueType),
+    isEditable: false,
+  });
+}
+
 const COLUMNS: TableColumn[] = [
   column(LABEL_COLUMN_KEY, 'Label'),
   column(`${ONTO}hasTitle`, 'Title'),
@@ -73,6 +93,11 @@ function seedValue<T extends ReadValue>(value: T, property: string, strval: stri
   value.id = `http://rdfh.ch/0001/a/values/${(valueCounter += 1)}`;
   value.property = property;
   value.strval = strval;
+  // The action bubble gates its Edit and Delete controls on the *value's* permission, not the
+  // resource's, and dates its Info tooltip from `valueCreationDate`. A value without them renders
+  // a bubble with nothing in it.
+  value.userHasPermission = 'CR';
+  value.valueCreationDate = '2024-06-15T10:00:00Z';
   return value;
 }
 
@@ -113,15 +138,52 @@ function dateValue(property: string, year: number, month: number, day: number): 
 }
 
 /**
- * `getValues` is what the row builder calls now: a cell carries the `ReadValue`s themselves, so
- * that each one can be rendered through the viewer's own template rather than through `strval`.
+ * A resource complete enough for the resource editor to be mounted over it.
+ *
+ * Every property cell runs `generateDspResource`, which walks
+ * `entityInfo.classes[type].getResourcePropertiesList()` — so a resource built without one falls
+ * down the plain-text path and the stories stop exercising the thing they are about. The columns
+ * are the source of that list, which keeps the two from drifting apart.
+ *
+ * `userHasPermission: 'CR'` by default: `PermissionUtil` throws on a string it does not know, and
+ * `buildRows` answers that by refusing to model the resource at all, so a resource with no
+ * permission would render as text everywhere. Pass `'RV'` to story a read-only user.
  */
-function resource(id: string, label: string, values: Record<string, ReadValue[]>): ReadResource {
+function resource(
+  id: string,
+  label: string,
+  values: Record<string, ReadValue[]>,
+  columns: TableColumn[] = COLUMNS,
+  userHasPermission = 'CR'
+): ReadResource {
+  const type = 'http://0.0.0.0:3333/ontology/0001/test/v2#Book';
+
   return makeReadResource({
     id,
     label,
+    type,
+    userHasPermission,
     properties: values,
     getValues: (property: string) => values[property] ?? [],
+    getValuesAs: (property: string) => values[property] ?? [],
+    entityInfo: {
+      classes: {
+        [type]: {
+          labels: [{ language: 'en', value: 'Book' }],
+          getResourcePropertiesList: () =>
+            columns
+              .filter(tableColumn => tableColumn.propertyDefinition !== undefined)
+              .map((tableColumn, index) => ({
+                propertyIndex: tableColumn.propertyIri,
+                cardinality: Cardinality._0_n,
+                guiOrder: index + 1,
+                propertyDefinition: tableColumn.propertyDefinition,
+              })),
+        },
+      },
+      properties: {},
+      getPropertyDefinitionsByType: () => [],
+    },
   } as unknown as Partial<ReadResource>);
 }
 
@@ -163,6 +225,9 @@ const meta: Meta<DataTableComponent> = {
     columnResized: { description: 'Emits a column key and its new pixel width once a resize gesture ends.' },
     sortToggled: { description: 'Emits the column to sort by and the direction the click asks for.' },
     filterRequested: { description: 'Emits the column whose filter the user wants to edit.' },
+    resourceReloaded: {
+      description: "Emits a row's resource after a cell saved, deleted or reordered one of its values.",
+    },
   },
 };
 
@@ -182,7 +247,7 @@ export const RendersAColumnPerPropertyAndARowPerResource: Story = {
 
 const DATE_PROPERTY = `${ONTO}hasDate`;
 const BOOLEAN_PROPERTY = `${ONTO}isPublished`;
-const GEOMETRY_PROPERTY = `${ONTO}hasGeometry`;
+const LINK_PROPERTY = `${ONTO}hasAuthorValue`;
 
 const TYPED_COLUMNS: TableColumn[] = [
   column(LABEL_COLUMN_KEY, 'Label'),
@@ -191,8 +256,8 @@ const TYPED_COLUMNS: TableColumn[] = [
 ];
 
 /**
- * The reason the cell mounts the viewer's template switcher at all (PRD §6): a value reads the
- * same in the grid as it does in the panel beside it. `strval` cannot express either of these —
+ * The reason a cell mounts the viewer's own property unit at all (PRD §6): a value reads the same
+ * in the grid as it does in the panel beside it. `strval` cannot express either of these —
  * dsp-api ships a date as `GREGORIAN:2024-6-15` and a boolean as the word "true".
  */
 export const RendersTypedValuesThroughTheViewersOwnTemplates: Story = {
@@ -200,10 +265,15 @@ export const RendersTypedValuesThroughTheViewersOwnTemplates: Story = {
     columns: TYPED_COLUMNS,
     visibleColumns: TYPED_COLUMNS.map(c => c.key),
     resources: [
-      resource('http://rdfh.ch/0001/t', 'BRAUT001a', {
-        [DATE_PROPERTY]: [dateValue(DATE_PROPERTY, 2024, 6, 15)],
-        [BOOLEAN_PROPERTY]: [booleanValue(BOOLEAN_PROPERTY, true)],
-      }),
+      resource(
+        'http://rdfh.ch/0001/t',
+        'BRAUT001a',
+        {
+          [DATE_PROPERTY]: [dateValue(DATE_PROPERTY, 2024, 6, 15)],
+          [BOOLEAN_PROPERTY]: [booleanValue(BOOLEAN_PROPERTY, true)],
+        },
+        TYPED_COLUMNS
+      ),
     ],
   },
   play: async ({ canvasElement }) => {
@@ -215,47 +285,48 @@ export const RendersTypedValuesThroughTheViewersOwnTemplates: Story = {
 
     const toggle = canvas.getByRole('switch');
     await expect(toggle).toHaveAttribute('aria-checked', 'true');
-    // Read-only: the cell displays, it does not edit. Editing is the cell editor's job.
+    // Read-only until the bubble's Edit control opens the editor, exactly as in the viewer.
     await expect(toggle).toBeDisabled();
     await expect(canvas.queryByText('true')).toBeNull();
   },
 };
 
-const FALLBACK_COLUMNS: TableColumn[] = [
+const READ_ONLY_COLUMNS: TableColumn[] = [
   column(LABEL_COLUMN_KEY, 'Label'),
-  // Geometry is one of the types the switcher has no template for, so its `default` branch throws.
-  typedColumn(GEOMETRY_PROPERTY, 'Geometry', Constants.GeomValue),
+  readOnlyColumn(LINK_PROPERTY, 'Author'),
   typedColumn(BOOLEAN_PROPERTY, 'Published', Constants.BooleanValue),
 ];
 
 /**
- * One unrenderable property must cost its own cell, not the page.
- *
- * The switcher throws from `ngAfterViewInit` for an object type it has no case for, which would
- * abort the change-detection pass the entire table renders in. The column model is built straight
- * from the ontology, so that is reachable from ordinary data — hence the guard, and hence this
- * story: the geometry cell degrades to the string it always showed while the boolean beside it
- * still renders through the viewer.
+ * REQ-4.7. Link, file-value, geometry and non-editable properties are dropped by
+ * `GenerateProperty.commonProperty`, so there is no `PropertyInfoValues` to hand the viewer and
+ * no editor to mount. Those cells render as text — and the rest of the row is unaffected, which
+ * is the other half of the claim.
  */
-export const DegradesToPlainTextWhereTheViewerHasNoTemplate: Story = {
+export const RendersAColumnTheEditorCannotOpenAsPlainText: Story = {
   args: {
-    columns: FALLBACK_COLUMNS,
-    visibleColumns: FALLBACK_COLUMNS.map(c => c.key),
+    columns: READ_ONLY_COLUMNS,
+    visibleColumns: READ_ONLY_COLUMNS.map(c => c.key),
     resources: [
-      resource('http://rdfh.ch/0001/g', 'BRAUT001a', {
-        [GEOMETRY_PROPERTY]: [textValue(GEOMETRY_PROPERTY, '{"type":"rectangle"}')],
-        [BOOLEAN_PROPERTY]: [booleanValue(BOOLEAN_PROPERTY, false)],
-      }),
+      resource(
+        'http://rdfh.ch/0001/g',
+        'BRAUT001a',
+        {
+          ...texts(LINK_PROPERTY, 'Petrowa, Anna'),
+          [BOOLEAN_PROPERTY]: [booleanValue(BOOLEAN_PROPERTY, false)],
+        },
+        READ_ONLY_COLUMNS
+      ),
     ],
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+    const cells = Array.from(canvasElement.querySelectorAll('td'));
+    const authorCell = cells[1];
 
-    const fallback = canvasElement.querySelector('[data-cy="cell-value-text"]');
-    await expect(fallback).not.toBeNull();
-    await expect(fallback?.textContent).toContain('{"type":"rectangle"}');
+    await expect(authorCell.querySelector('app-table-property-cell')).toBeNull();
+    await expect(authorCell.textContent).toContain('Petrowa, Anna');
 
-    // The rest of the row is unaffected — which is the whole claim.
     await expect(canvasElement.querySelector('mat-slide-toggle')).not.toBeNull();
     await expect(canvas.getByText('BRAUT001a')).toBeInTheDocument();
   },
@@ -264,18 +335,28 @@ export const DegradesToPlainTextWhereTheViewerHasNoTemplate: Story = {
 export const ShowsAPlaceholderWhereAResourceHasNoValue: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    // BRAUT001b carries no place; an unset cell must read as unset rather than as blank space.
+    // BRAUT001b carries no place. The cell is editable, so the viewer unit in it is reduced to an
+    // add control — which says nothing to a reader scanning the column for gaps, hence the
+    // placeholder beside it (REQ-1.6).
     await expect(canvas.getByText('— not set')).toBeInTheDocument();
   },
 };
 
-export const CollapsesACellWithMoreThanThreeValues: Story = {
+const COLLAPSING_COLUMNS: TableColumn[] = [column(LABEL_COLUMN_KEY, 'Label'), readOnlyColumn(LINK_PROPERTY, 'Author')];
+
+const manyAuthors = () =>
+  resource(
+    'http://rdfh.ch/0001/p',
+    'Petrowa, Anna',
+    texts(LINK_PROPERTY, 'Moskau', 'Kiew', 'Odessa', 'Tiflis', 'Riga'),
+    COLLAPSING_COLUMNS
+  );
+
+export const CollapsesAReadOnlyCellWithMoreThanThreeValues: Story = {
   args: {
-    resources: [
-      resource('http://rdfh.ch/0001/p', 'Petrowa, Anna', {
-        ...texts(`${ONTO}hasPlace`, 'Moskau', 'Kiew', 'Odessa', 'Tiflis', 'Riga'),
-      }),
-    ],
+    columns: COLLAPSING_COLUMNS,
+    visibleColumns: COLLAPSING_COLUMNS.map(c => c.key),
+    resources: [manyAuthors()],
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -285,13 +366,11 @@ export const CollapsesACellWithMoreThanThreeValues: Story = {
   },
 };
 
-export const ExpandsACollapsedCellOnDemand: Story = {
+export const ExpandsACollapsedReadOnlyCellOnDemand: Story = {
   args: {
-    resources: [
-      resource('http://rdfh.ch/0001/p', 'Petrowa, Anna', {
-        ...texts(`${ONTO}hasPlace`, 'Moskau', 'Kiew', 'Odessa', 'Tiflis', 'Riga'),
-      }),
-    ],
+    columns: COLLAPSING_COLUMNS,
+    visibleColumns: COLLAPSING_COLUMNS.map(c => c.key),
+    resources: [manyAuthors()],
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -302,72 +381,35 @@ export const ExpandsACollapsedCellOnDemand: Story = {
   },
 };
 
-export const HidesAColumnLeftOutOfTheVisibleSet: Story = {
-  args: { visibleColumns: [LABEL_COLUMN_KEY, `${ONTO}hasTitle`] },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    await expect(canvas.getByRole('columnheader', { name: 'Title' })).toBeInTheDocument();
-    await expect(canvas.queryByRole('columnheader', { name: 'Place' })).toBeNull();
-    // The definition stays mounted even while hidden — dropping it would make MatTable throw the
-    // next time the column is shown again.
-    await expect(canvas.queryByText('Moskau')).toBeNull();
-  },
-};
-
-export const AnnouncesTheSortOnExactlyOneHeader: Story = {
-  args: { sortedColumnKey: `${ONTO}hasTitle`, sortDescending: true },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    await expect(canvas.getByRole('columnheader', { name: 'Title' })).toHaveAttribute('aria-sort', 'descending');
-    await expect(canvas.getByRole('columnheader', { name: 'Label' })).not.toHaveAttribute('aria-sort');
-  },
-};
+const MULTI_VALUE_COLUMNS: TableColumn[] = [column(LABEL_COLUMN_KEY, 'Label'), column(`${ONTO}hasPlace`, 'Place')];
 
 /**
- * What a class looks like when it is reopened after the user shaped it and the browser was
- * restarted — the order, the widths and the density all come back off the persisted layout.
+ * The trade made when the cell adopted the viewer's unit, pinned here so it cannot be lost by
+ * accident.
+ *
+ * `app-property-values` renders a property's values in full — each with its own action bubble,
+ * its own delete control and its own drag handle. Hiding three of them behind "show 2 more" would
+ * mean hiding controls, which is worse than a tall row; and reimplementing the list so it could
+ * collapse is the reimplementation this feature exists to avoid. So an editable cell has no
+ * collapse at all, and a resource with a dozen values gets a dozen rows' worth of height.
  */
-export const RestoresAPersistedOrderWidthAndDensity: Story = {
+export const RendersEveryValueOfAnEditableCellWithNoCollapse: Story = {
   args: {
-    visibleColumns: [LABEL_COLUMN_KEY, `${ONTO}hasPlace`, `${ONTO}hasTitle`],
-    columnWidths: { [`${ONTO}hasPlace`]: 320 },
-    density: 'compact',
+    columns: MULTI_VALUE_COLUMNS,
+    visibleColumns: MULTI_VALUE_COLUMNS.map(c => c.key),
+    resources: [
+      resource(
+        'http://rdfh.ch/0001/p',
+        'Petrowa, Anna',
+        texts(`${ONTO}hasPlace`, 'Moskau', 'Kiew', 'Odessa', 'Tiflis', 'Riga'),
+        MULTI_VALUE_COLUMNS
+      ),
+    ],
   },
   play: async ({ canvasElement }) => {
-    const headers = Array.from(canvasElement.querySelectorAll('th'));
-    await expect(headers.map(th => th.querySelector('.header-label')?.textContent?.trim())).toEqual([
-      'Label',
-      'Place',
-      'Title',
-    ]);
-
-    await expect(headers[1].style.width).toBe('320px');
-
-    await expect(canvasElement.querySelector('.density-compact')).not.toBeNull();
-  },
-};
-
-/**
- * The grip exists so the drag does not swallow the sort and filter controls Phase 5 puts in the
- * same header, and the label column has none because it must stay pinned to the left edge.
- */
-export const OffersADragGripOnEveryColumnButTheStickyOne: Story = {
-  play: async ({ canvasElement }) => {
-    const grips = canvasElement.querySelectorAll('[data-cy="column-grip"]');
-    await expect(grips).toHaveLength(2);
-
-    const labelHeader = canvasElement.querySelector('th');
-    await expect(labelHeader?.querySelector('[data-cy="column-grip"]')).toBeNull();
-    await expect(labelHeader?.querySelector('[data-cy="column-resize"]')).toBeNull();
-  },
-};
-
-export const HighlightsTheSelectedRow: Story = {
-  args: { selectedResourceId: 'http://rdfh.ch/0001/b' },
-  play: async ({ canvasElement }) => {
-    const selected = canvasElement.querySelectorAll('tr.is-selected');
-    await expect(selected).toHaveLength(1);
-    await expect(selected[0].textContent).toContain('BRAUT001b');
+    const canvas = within(canvasElement);
+    await expect(canvas.getByText('Riga')).toBeInTheDocument();
+    await expect(canvasElement.querySelector('[data-cy="cell-more"]')).toBeNull();
   },
 };
 
@@ -512,109 +554,132 @@ export const OffersNoFilterControlWhereTheBarCannotExpressOne: Story = {
   },
 };
 
-// ── Per-cell editing ────────────────────────────────────────────────────────
+// ── Editing in place ────────────────────────────────────────────────────────
 
 /**
  * Columns for the editing stories: one the resource editor can open, one it cannot.
  *
- * `hasPlace` stands in for the whole read-only family — link, file value, geometry and anything
- * not `isEditable`. `GenerateProperty.commonProperty` drops all of them, so there is no editor
- * component to mount and the cell must stay plain text (REQ-4.7).
+ * An integer property is used because it is the one value type whose editor needs nothing but a
+ * number — no list fetch, no geoname lookup, no rich-text build.
  */
 const EDITING_COLUMNS: TableColumn[] = [
-  // `buildColumnModel` marks the label column non-editable: the label is not a property value, so
-  // it has no `PropertyInfoValues` and no editor. The local `column()` helper defaults the other
-  // way, so it has to be said here.
+  // The label is not a property value: no `PropertyInfoValues`, no editor, plain text.
   column(LABEL_COLUMN_KEY, 'Label', { isEditable: false }),
   typedColumn(EDITABLE_PROPERTY_IRI, 'Integer', Constants.IntValue),
-  column(`${ONTO}hasPlace`, 'Place', { isEditable: false }),
+  readOnlyColumn(LINK_PROPERTY, 'Author'),
 ];
 
-const EDITING_VISIBLE = EDITING_COLUMNS.map(c => c.key);
+function intValue(strval: string, userHasPermission = 'CR'): ReadValue {
+  const value = seedValue(new ReadIntValue(), EDITABLE_PROPERTY_IRI, strval);
+  value.int = Number(strval);
+  // The action bubble gates Edit and Delete on the *value's* permission, not the resource's, so a
+  // story about a read-only user has to say so twice.
+  value.userHasPermission = userHasPermission;
+  return value;
+}
+
+const editableRow = (id: string, label: string, userHasPermission = 'CR') =>
+  resource(
+    id,
+    label,
+    {
+      [EDITABLE_PROPERTY_IRI]: [intValue('42', userHasPermission)],
+      ...texts(LINK_PROPERTY, 'Petrowa, Anna'),
+    },
+    EDITING_COLUMNS,
+    userHasPermission
+  );
 
 const editingStory = (args: Story['args']): Story => ({
   args: {
-    resources: [makeEditableReadResource({ id: 'http://rdfh.ch/0001/a', label: 'BRAUT001a' })],
+    resources: [editableRow('http://rdfh.ch/0001/a', 'BRAUT001a')],
     columns: EDITING_COLUMNS,
-    visibleColumns: EDITING_VISIBLE,
+    visibleColumns: EDITING_COLUMNS.map(c => c.key),
     ...args,
   },
 });
 
-export const OffersAnEditAffordanceOnlyWhereTheEditorCanOpen: Story = {
+/**
+ * REQ-4.1 and the whole shape of the feature: there is no table-specific editing affordance. A
+ * cell the editor can open *is* the editor's own unit, mounted in the cell; a cell it cannot open
+ * is text.
+ */
+export const MountsTheViewersOwnUnitOnlyWhereTheEditorCanOpen: Story = {
   ...editingStory({}),
   play: async ({ canvasElement }) => {
-    const cells = Array.from(canvasElement.querySelectorAll('td'));
-    const [labelCell, integerCell, placeCell] = cells;
+    const [labelCell, integerCell, authorCell] = Array.from(canvasElement.querySelectorAll('td'));
 
-    await expect(integerCell.querySelector('[data-cy="cell-edit"]')).not.toBeNull();
-    // The label is not a property value — it has no `PropertyInfoValues` and no editor — and the
-    // read-only column has none either.
-    await expect(labelCell.querySelector('[data-cy="cell-edit"]')).toBeNull();
-    await expect(placeCell.querySelector('[data-cy="cell-edit"]')).toBeNull();
+    await expect(integerCell.querySelector('app-table-property-cell')).not.toBeNull();
+    // `data-cy="property-value"` is emitted by the resource editor's own display component, so
+    // finding it is proof the viewer's subtree mounted here rather than a lookalike.
+    await expect(integerCell.querySelector('[data-cy="property-value"]')).not.toBeNull();
+
+    await expect(labelCell.querySelector('app-table-property-cell')).toBeNull();
+    await expect(authorCell.querySelector('app-table-property-cell')).toBeNull();
   },
 };
 
 /**
- * REQ-4.6: the gate is the resource editor's own permission check, so a resource the viewer would
- * refuse to edit is not editable from the table either.
+ * The action bubble is the viewer's, not a table control: Info, Edit and Delete, revealed by
+ * hovering the value rather than the cell. This is what the user asked for in so many words — a
+ * cell must behave exactly like a property value in the list view.
  */
-export const OffersNoEditAffordanceWithoutModifyPermission: Story = {
-  ...editingStory({
-    resources: [makeEditableReadResource({ id: 'http://rdfh.ch/0001/a', label: 'BRAUT001a', userHasPermission: 'RV' })],
-  }),
+export const ShowsTheViewersActionBubbleWhenAValueIsHovered: Story = {
+  ...editingStory({}),
   play: async ({ canvasElement }) => {
-    await expect(canvasElement.querySelectorAll('[data-cy="cell-edit"]')).toHaveLength(0);
+    await expect(canvasElement.querySelector('[data-cy="action-bubble"]')).toBeNull();
+
+    await userEvent.hover(canvasElement.querySelector('[data-cy="property-value"]') as HTMLElement);
+
+    const bubble = canvasElement.querySelector('[data-cy="action-bubble"]');
+    await expect(bubble).not.toBeNull();
+    await expect(bubble?.querySelector('[data-cy="edit-button"]')).not.toBeNull();
+    await expect(bubble?.querySelector('[data-cy="delete-button"]')).not.toBeNull();
+  },
+};
+
+/** REQ-4.1 again, from the other end: the control opens the editor the resource viewer opens. */
+export const OpensTheViewersOwnEditorFromTheBubble: Story = {
+  ...editingStory({}),
+  play: async ({ canvasElement }) => {
+    await userEvent.hover(canvasElement.querySelector('[data-cy="property-value"]') as HTMLElement);
+    await userEvent.click(canvasElement.querySelector('[data-cy="edit-button"]') as HTMLElement);
+
+    // `app-property-value-edit` is the resource editor's own edit host — it carries the value-type
+    // editor switcher, the comment control and the undo/save pair.
+    await expect(canvasElement.querySelector('app-property-value-edit')).not.toBeNull();
+    await expect(canvasElement.querySelector('[data-cy="property-value"]')).toBeNull();
   },
 };
 
 /**
- * REQ-4.13: nothing of the editor exists until the cell is opened. At forty columns by twenty-five
- * rows, that is the difference between a thousand idle editors and none.
+ * REQ-4.6: the gate is the resource editor's own permission check, applied by the editor itself.
+ * The table adds nothing — which is exactly why a resource the viewer would refuse to edit is not
+ * editable from a cell either.
  */
-export const MountsNoEditorUntilTheCellIsOpened: Story = {
-  ...editingStory({}),
-  play: async ({ canvasElement }) => {
-    await expect(canvasElement.querySelector('app-table-row-edit-host')).toBeNull();
-
-    await userEvent.click(canvasElement.querySelector('[data-cy="cell-edit"]') as HTMLElement);
-
-    await expect(canvasElement.querySelector('app-table-row-edit-host')).not.toBeNull();
-    // The resource editor's own display component, not a lookalike built for the table (REQ-4.1).
-    await expect(canvasElement.querySelector('[data-cy="property-value"]')).not.toBeNull();
-  },
-};
-
-/** REQ-4.2: one cell at a time, across the whole table and not merely within a row. */
-export const OpeningASecondCellClosesTheFirst: Story = {
+export const OffersNoEditOrDeleteWithoutModifyPermission: Story = {
   ...editingStory({
-    resources: [
-      makeEditableReadResource({ id: 'http://rdfh.ch/0001/a', label: 'BRAUT001a' }),
-      makeEditableReadResource({ id: 'http://rdfh.ch/0001/b', label: 'BRAUT001b' }),
-    ],
+    resources: [editableRow('http://rdfh.ch/0001/a', 'BRAUT001a', 'RV')],
   }),
   play: async ({ canvasElement }) => {
-    const openFirst = canvasElement.querySelectorAll('[data-cy="cell-edit"]')[0] as HTMLElement;
-    await userEvent.click(openFirst);
-    await expect(canvasElement.querySelectorAll('app-table-row-edit-host')).toHaveLength(1);
+    // `buildRows` refuses to model a resource whose permission string it cannot parse; 'RV' is a
+    // string it can, so the unit still mounts — read-only.
+    await expect(canvasElement.querySelector('app-table-property-cell')).not.toBeNull();
 
-    const openSecond = canvasElement.querySelectorAll('[data-cy="cell-edit"]')[0] as HTMLElement;
-    await userEvent.click(openSecond);
+    await userEvent.hover(canvasElement.querySelector('[data-cy="property-value"]') as HTMLElement);
 
-    await expect(canvasElement.querySelectorAll('app-table-row-edit-host')).toHaveLength(1);
+    await expect(canvasElement.querySelector('[data-cy="edit-button"]')).toBeNull();
+    await expect(canvasElement.querySelector('[data-cy="delete-button"]')).toBeNull();
+    await expect(canvasElement.querySelector('[data-cy="add-property-value-button"]')).toBeNull();
   },
 };
 
-/** REQ-4.8 and the way out of an open cell: closing restores the cell's read-only rendering. */
-export const ClosingAnOpenCellRestoresTheDisplayedValue: Story = {
+/** REQ-4.12: adding a value is the editor's own control, offered where cardinality allows one. */
+export const OffersTheViewersAddControlWhereCardinalityAllowsAnotherValue: Story = {
   ...editingStory({}),
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    await userEvent.click(canvasElement.querySelector('[data-cy="cell-edit"]') as HTMLElement);
-    await userEvent.click(canvas.getByRole('button', { name: 'Close the Integer editor' }));
-
-    await expect(canvasElement.querySelector('app-table-row-edit-host')).toBeNull();
-    await expect(canvasElement.querySelector('[data-cy="cell-edit"]')).not.toBeNull();
+    const integerCell = Array.from(canvasElement.querySelectorAll('td'))[1];
+    await expect(integerCell.querySelector('[data-cy="add-property-value-button"]')).not.toBeNull();
   },
 };
 
@@ -774,16 +839,16 @@ export const ScrollsHorizontallyAtNarrowWidthsInsteadOfReflowing: Story = {
 };
 
 /**
- * Every hover-revealed control is also revealed by focus.
+ * Every hover-revealed row control is also revealed by focus.
  *
- * Hover-only reveal makes a control unusable without a pointer, and the cell's edit affordance is
- * the *only* way into editing — so this is not a polish item but the difference between the
- * feature existing and not existing for a keyboard user.
+ * Hover-only reveal makes a control unusable without a pointer. (The value action bubble inside a
+ * cell is the resource editor's own and is covered by that component's stories; it behaves here
+ * exactly as it does in the panel beside the table, which is the point.)
  */
 export const RevealsEveryHoverOnlyControlOnKeyboardFocus: Story = {
   ...editingStory({}),
   play: async ({ canvasElement }) => {
-    const hidden = ['[data-cy="cell-edit"]', '[data-cy="row-check"] input', '[data-cy="row-open"]'];
+    const hidden = ['[data-cy="row-check"] input', '[data-cy="row-open"]'];
 
     for (const selector of hidden) {
       const control = canvasElement.querySelector(selector) as HTMLElement;
