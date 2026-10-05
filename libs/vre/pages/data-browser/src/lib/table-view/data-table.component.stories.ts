@@ -407,9 +407,12 @@ export const ShowsEveryRowsCheckboxWhileASetIsBeingBuilt: Story = {
 
     // The open arrow acts on one row and says nothing about the selection, so it stays with the
     // pointer rather than joining twenty-five others in the gutter.
+    //
+    // Only its absence is asserted. `userEvent.hover` dispatches pointer events; it does not move
+    // a real cursor, so the browser never enters the CSS `:hover` state and the positive case is
+    // not reachable from a play function. It is covered by the rule itself and by manual check.
     const unhoveredArrow = rows[1].querySelector('.row-open') as HTMLElement;
     await expect(getComputedStyle(unhoveredArrow).opacity).toBe('0');
-    await expect(getComputedStyle(rows[0].querySelector('.row-open') as HTMLElement).opacity).toBe('1');
   },
 };
 
