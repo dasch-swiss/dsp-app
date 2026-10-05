@@ -1,6 +1,7 @@
 import { Constants } from '@dasch-swiss/dsp-js';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { expect, userEvent, within } from 'storybook/test';
+import { Operator } from '../../../../operators.config';
 import { STORY_PROVIDERS } from '../../../../stories.helpers';
 import { StringValueComponent } from './string-value.component';
 
@@ -11,6 +12,10 @@ const meta: Meta<StringValueComponent> = {
   argTypes: {
     valueType: { description: 'The Knora value type constant that determines which input to render.' },
     value: { description: 'The pre-filled value to show in the input.' },
+    showError: { description: 'Marks the input as touched so a validation error shows without a blur.' },
+    operator: {
+      description: 'The statement operator. With "is like", a label or text value must be a valid regex.',
+    },
     emitValueChanged: { description: 'Emitted with the new value string when the input changes.' },
   },
 };
@@ -136,6 +141,24 @@ export const ShowsValidationErrorForInvalidInteger: Story = {
     });
     await step('Validation error is shown', async () => {
       await expect(canvasElement.querySelector('mat-error')).not.toBeNull();
+    });
+  },
+};
+
+export const ShowsErrorForInvalidRegexWithIsLike: Story = {
+  name: 'Shows an error for a glob-style pattern with the "is like" operator',
+  args: { valueType: Constants.TextValue, operator: Operator.IsLike },
+  decorators: baseDecorators,
+  play: async ({ canvasElement, step }) => {
+    const canvas = within(canvasElement);
+    await step('Type a glob-style wildcard pattern', async () => {
+      const input = canvas.getByRole('textbox');
+      await userEvent.click(input);
+      await userEvent.type(input, '*MAL*');
+      await userEvent.tab();
+    });
+    await step('The regex error is shown', async () => {
+      await expect(canvas.getByText(/Not a valid regular expression/)).toBeInTheDocument();
     });
   },
 };

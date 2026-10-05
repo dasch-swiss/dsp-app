@@ -555,7 +555,8 @@
         "errors": {
           "uri": "Der Wert muss ein URI-Wert sein.",
           "integer": "Der Wert muss eine Ganzzahl sein.",
-          "decimal": "Der Wert muss ein Dezimalwert sein."
+          "decimal": "Der Wert muss ein Dezimalwert sein.",
+          "invalidRegex": "Kein gültiger regulärer Ausdruck. Verwenden Sie .* für beliebige Zeichen, z. B. .*Wort.*"
         },
         "fulltextSearchPlaceholder": "Suchen…",
         "noDataModel": "Dieses Projekt hat noch kein Datenmodell. Ein Datenmodell wird benötigt, um die Ressourcen zu durchsuchen."

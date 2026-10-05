@@ -98,6 +98,7 @@ const STORY_TRANSLATIONS = {
           uri: 'Value must be a URI value.',
           integer: 'Value must be an integer value.',
           decimal: 'Value must be a decimal value.',
+          invalidRegex: 'Not a valid regular expression. Use .* to match any characters, e.g. .*word.*',
         },
         tooltips: {
           addCriteria: 'Add search criteria',

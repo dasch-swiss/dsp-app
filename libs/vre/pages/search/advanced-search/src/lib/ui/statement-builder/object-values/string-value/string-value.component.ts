@@ -20,8 +20,10 @@ import { MatSelectModule } from '@angular/material/select';
 import { Constants, KnoraDate } from '@dasch-swiss/dsp-js';
 import { AppDatePickerComponent } from '@dasch-swiss/vre/ui/date-picker';
 import { TranslateModule } from '@ngx-translate/core';
-import { debounceTime, distinctUntilChanged } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs';
 import { ResourceLabel } from '../../../../constants';
+import { Operator } from '../../../../operators.config';
+import { regexPatternValidator } from './regex-pattern.validator';
 
 class CustomRegex {
   public static readonly INT_REGEX = /^-?\d+$/;
@@ -62,6 +64,8 @@ export class StringValueComponent implements OnInit, OnChanges, AfterViewInit {
   @Input({ required: true }) valueType!: string;
   @Input() value?: string;
   @Input() showError = false;
+  /** The statement's operator. With "is like", a label or text value is a regex and must compile. */
+  @Input() operator?: Operator;
 
   @Output() emitValueChanged = new EventEmitter<string>();
 
@@ -76,16 +80,28 @@ export class StringValueComponent implements OnInit, OnChanges, AfterViewInit {
   dateFormGroup = new FormGroup({ date: this.dateControl });
 
   ngOnInit() {
+    // Validity is part of the distinct check: an operator change re-validates the same value (see
+    // ngOnChanges), and its new outcome must still be emitted.
     this.inputControl.valueChanges
-      .pipe(debounceTime(300), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
-      .subscribe(value => this._emitValueChanged(value));
+      .pipe(
+        debounceTime(300),
+        map(value => ({ value, valid: this.inputControl.valid })),
+        distinctUntilChanged((a, b) => a.value === b.value && a.valid === b.valid),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe(({ value }) => this._emitValueChanged(value));
 
-    this.inputControl.setValidators([Validators.required, ...this._getValidators(this.valueType)]);
+    this._applyValidators();
   }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['value'] && !changes['value'].firstChange) {
       this._setValue();
+    }
+    // Switching to or from "is like" turns the regex rule on or off for the value already typed.
+    if (changes['operator'] && !changes['operator'].firstChange) {
+      this._applyValidators();
+      this.inputControl.updateValueAndValidity();
     }
     if (changes['showError']?.currentValue) {
       this.inputControl.markAsTouched();
@@ -129,6 +145,10 @@ export class StringValueComponent implements OnInit, OnChanges, AfterViewInit {
     }
   }
 
+  private _applyValidators(): void {
+    this.inputControl.setValidators([Validators.required, ...this._getValidators(this.valueType)]);
+  }
+
   private _getValidators(objectType: string | undefined): ValidatorFn[] {
     const validators: ValidatorFn[] = [];
 
@@ -143,6 +163,13 @@ export class StringValueComponent implements OnInit, OnChanges, AfterViewInit {
 
       case Constants.UriValue:
         validators.push(Validators.pattern(CustomRegex.URI_REGEX));
+        break;
+
+      case ResourceLabel:
+      case Constants.TextValue:
+        if (this.operator === Operator.IsLike) {
+          validators.push(regexPatternValidator());
+        }
         break;
     }
 

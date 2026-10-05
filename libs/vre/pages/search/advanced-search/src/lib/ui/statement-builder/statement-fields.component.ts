@@ -55,6 +55,7 @@ import { StringValueComponent } from './object-values/string-value/string-value.
           <app-string-value
             [valueType]="statement.selectedPredicate!.objectValueType"
             [value]="asString(statement.selectedObjectValue)"
+            [operator]="statement.selectedOperator"
             [showError]="showErrors"
             (emitValueChanged)="draftStore.setObjectValue(statement, $event)" />
         }

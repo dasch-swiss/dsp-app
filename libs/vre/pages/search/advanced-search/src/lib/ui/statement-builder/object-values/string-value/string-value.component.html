@@ -2,11 +2,21 @@
 <mat-form-field class="width-100-percent" appearance="fill">
   <mat-label>{{ 'pages.search.advancedSearch.valueLabels.label' | translate }}</mat-label>
   <input matInput type="text" [formControl]="inputControl" data-cy="label-input" required />
+  @if (inputControl.hasError('invalidRegex')) {
+  <mat-error>
+    <span class="custom-error-message"> {{ 'pages.search.advancedSearch.errors.invalidRegex' | translate }} </span>
+  </mat-error>
+  }
 </mat-form-field>
 } @case (constants.TextValue) {
 <mat-form-field class="width-100-percent" appearance="fill">
   <mat-label>{{ 'pages.search.advancedSearch.valueLabels.text' | translate }}</mat-label>
   <input matInput type="text" [formControl]="inputControl" data-cy="text-value-input" required />
+  @if (inputControl.hasError('invalidRegex')) {
+  <mat-error>
+    <span class="custom-error-message"> {{ 'pages.search.advancedSearch.errors.invalidRegex' | translate }} </span>
+  </mat-error>
+  }
 </mat-form-field>
 } @case (constants.BooleanValue) {
 <mat-form-field class="width-100-percent" appearance="fill">

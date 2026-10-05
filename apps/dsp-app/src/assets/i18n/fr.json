@@ -555,7 +555,8 @@
         "errors": {
           "uri": "La valeur doit être une valeur URI.",
           "integer": "La valeur doit être un nombre entier.",
-          "decimal": "La valeur doit être une valeur décimale."
+          "decimal": "La valeur doit être une valeur décimale.",
+          "invalidRegex": "Expression régulière non valide. Utilisez .* pour n'importe quels caractères, p. ex. .*mot.*"
         },
         "fulltextSearchPlaceholder": "Rechercher…",
         "noDataModel": "Ce projet n'a pas encore de modèle de données. Un modèle de données est nécessaire pour rechercher ses ressources."
