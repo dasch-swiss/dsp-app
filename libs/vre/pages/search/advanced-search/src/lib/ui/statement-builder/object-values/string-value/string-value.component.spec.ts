@@ -81,4 +81,26 @@ describe('StringValueComponent "is like" pattern (DEV-7441)', () => {
 
     expect(emitted.at(-1)).toBeUndefined();
   });
+
+  it('keeps the typed text when the statement hands back the undefined it was given', () => {
+    render(ResourceLabel, Operator.IsLike);
+    type('.*MAL.*');
+    type('*MAL*');
+    expect(emitted.at(-1)).toBeUndefined();
+
+    component.value = undefined;
+    component.ngOnChanges({ value: new SimpleChange('.*MAL.*', undefined, false) });
+
+    expect(component.inputControl.value).toBe('*MAL*');
+  });
+
+  it('still applies a value set from outside', () => {
+    render(ResourceLabel, Operator.IsLike);
+    type('*MAL*');
+
+    component.value = '.*other.*';
+    component.ngOnChanges({ value: new SimpleChange(undefined, '.*other.*', false) });
+
+    expect(component.inputControl.value).toBe('.*other.*');
+  });
 });

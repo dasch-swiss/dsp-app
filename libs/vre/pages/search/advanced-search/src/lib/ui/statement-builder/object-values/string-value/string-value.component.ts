@@ -73,6 +73,7 @@ export class StringValueComponent implements OnInit, OnChanges, AfterViewInit {
   resourceLabel = ResourceLabel;
 
   matcher = new ValueErrorStateMatcher();
+  private _lastEmitted?: string;
   inputControl = new FormControl();
 
   // separate control and FormGroup needed for the date picker
@@ -95,7 +96,9 @@ export class StringValueComponent implements OnInit, OnChanges, AfterViewInit {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['value'] && !changes['value'].firstChange) {
+    // An invalid value is emitted as undefined, and the statement hands that back as the new `value`.
+    // Applying our own echo would wipe what the user typed, and the error with it (DEV-7441).
+    if (changes['value'] && !changes['value'].firstChange && changes['value'].currentValue !== this._lastEmitted) {
       this._setValue();
     }
     // Switching to or from "is like" turns the regex rule on or off for the value already typed.
@@ -146,7 +149,10 @@ export class StringValueComponent implements OnInit, OnChanges, AfterViewInit {
   }
 
   private _applyValidators(): void {
-    this.inputControl.setValidators([Validators.required, ...this._getValidators(this.valueType)]);
+    // Keyed on the operator alone: whichever value types `operators.config.ts` offers "is like" for, the
+    // value reaches dsp-api as a regex (DEV-7441).
+    const regex = this.operator === Operator.IsLike ? [regexPatternValidator()] : [];
+    this.inputControl.setValidators([Validators.required, ...this._getValidators(this.valueType), ...regex]);
   }
 
   private _getValidators(objectType: string | undefined): ValidatorFn[] {
@@ -164,13 +170,6 @@ export class StringValueComponent implements OnInit, OnChanges, AfterViewInit {
       case Constants.UriValue:
         validators.push(Validators.pattern(CustomRegex.URI_REGEX));
         break;
-
-      case ResourceLabel:
-      case Constants.TextValue:
-        if (this.operator === Operator.IsLike) {
-          validators.push(regexPatternValidator());
-        }
-        break;
     }
 
     return validators;
@@ -178,8 +177,9 @@ export class StringValueComponent implements OnInit, OnChanges, AfterViewInit {
 
   private _emitValueChanged(value: string) {
     // value could be 0 in the case of a number
-    if (this.inputControl.valid && value !== null && value !== undefined)
-      this.emitValueChanged.emit(value.toString().trim());
-    else this.emitValueChanged.emit(undefined);
+    const emitted =
+      this.inputControl.valid && value !== null && value !== undefined ? value.toString().trim() : undefined;
+    this._lastEmitted = emitted;
+    this.emitValueChanged.emit(emitted);
   }
 }

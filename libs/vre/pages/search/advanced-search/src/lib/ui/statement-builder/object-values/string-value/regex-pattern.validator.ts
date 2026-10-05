@@ -27,7 +27,11 @@ export function isCompilableRegex(pattern: string): boolean {
   }
 }
 
-/** Rejects an "is like" value that is not a valid regular expression (see {@link isCompilableRegex}). */
+/**
+ * Rejects an "is like" value that is not a valid regular expression (see {@link isCompilableRegex}).
+ * The value is embedded in the Gravsearch `regex()` FILTER by `escapeForGravsearchStringLiteral` in
+ * `model.ts`, which escapes only the string layers and leaves regex syntax to the user.
+ */
 export function regexPatternValidator(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
     const value = control.value;

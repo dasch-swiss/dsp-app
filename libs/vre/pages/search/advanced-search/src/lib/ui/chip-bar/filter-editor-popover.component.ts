@@ -9,6 +9,7 @@ import {
   ViewEncapsulation,
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 import { TranslateModule } from '@ngx-translate/core';
 import { StatementElement } from '../../model';
 import { StatementDraftStore } from '../../service/statement-draft.store';
@@ -42,15 +43,14 @@ import { StatementFieldsComponent } from '../statement-builder/statement-fields.
         justify-content: flex-end;
         margin-top: 8px;
       }
-      /* Collapse the reserved hint/error subscript under the inputs — but ONLY inside this popover.
-         The .filter-editor-popover prefix scopes these rules to fields rendered here (encapsulation is
-         None on the field components), leaving the same shared field components untouched elsewhere. */
-      .filter-editor-popover .mat-mdc-form-field-subscript-wrapper {
-        display: none;
-      }
     `,
   ],
   encapsulation: ViewEncapsulation.None,
+  // Collapse the reserved hint/error space under the inputs, but only inside this popover: a dynamic
+  // subscript takes no room until a field has something to say. Hiding the subscript wrapper instead
+  // also hid every validation error here, so an invalid value could not be added and nothing said why
+  // (DEV-7441).
+  providers: [{ provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { subscriptSizing: 'dynamic' } }],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FilterEditorPopoverComponent {
