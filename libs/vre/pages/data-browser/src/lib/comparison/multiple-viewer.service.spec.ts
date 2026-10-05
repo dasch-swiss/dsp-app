@@ -137,4 +137,44 @@ describe('MultipleViewerService', () => {
       expect(service.selectMode).toBe(false);
     });
   });
+
+  /**
+   * The bug behind DEV-7466's invisible checkboxes: these used to mutate and re-emit the array
+   * they had just read, so a `signal.set` of it was `Object.is`-equal and notified nobody.
+   */
+  describe('emission identity', () => {
+    /** The array the subject is currently holding, read synchronously. */
+    const emitted = (): ReadResource[] => {
+      let value: ReadResource[] = [];
+      service.selectedResources$.subscribe(resources => (value = resources)).unsubscribe();
+      return value;
+    };
+
+    it('EmitsANewArrayWhenAResourceIsAdded', () => {
+      const before = emitted();
+
+      service.addResources([createMockResource('resource-a')]);
+
+      expect(emitted()).not.toBe(before);
+    });
+
+    it('EmitsANewArrayWhenAResourceIsRemoved', () => {
+      const resource = createMockResource('resource-a');
+      service.addResources([resource]);
+      const before = emitted();
+
+      service.removeResources([resource]);
+
+      expect(emitted()).not.toBe(before);
+    });
+
+    it('DoesNotMutateAPreviouslyEmittedArray', () => {
+      service.addResources([createMockResource('resource-a')]);
+      const first = emitted();
+
+      service.addResources([createMockResource('resource-b')]);
+
+      expect(first).toHaveLength(1);
+    });
+  });
 });

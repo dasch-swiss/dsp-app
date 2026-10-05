@@ -60,7 +60,7 @@ interface RenderColumn extends TableColumn {
   selector: 'app-data-table',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="table-scroll" [class]="densityClass()">
+    <div class="table-scroll" [class]="scrollClasses()">
       <!-- The drop list is the table rather than the header row, and that is not a style choice:
            cdkDrag resolves its drop list through the injector of the view it was declared in, and
            the header cells are declared inside the column definitions below, which are children of
@@ -190,12 +190,11 @@ interface RenderColumn extends TableColumn {
               }
 
               @let cell = row.cells[column.key];
-              @if (cell.isEmpty) {
-                <!-- Drawn even on a cell that can be edited, where the viewer unit below it is
-                     reduced to its add control. The table's whole reason to exist is scanning a
-                     property down a page — "which of these is missing a sender?" — and a bare add
-                     button answers that question only to a reader who already knows the column is
-                     editable. -->
+              @if (cell.isEmpty && !cell.propertyInfo) {
+                <!-- Read-only cells only. A cell that mounts the viewer unit already says it is
+                     empty the way the viewer says it — an add control and nothing above it — and
+                     stacking a label on top of that is both a second answer to the same question
+                     and a second line in every empty row. -->
                 <span class="cell-empty">{{ 'pages.dataBrowser.table.notSet' | translate }}</span>
               }
 
@@ -312,6 +311,15 @@ export class DataTableComponent {
    * written to compare by `id` too.
    */
   readonly checkedResourceIds = input<ReadonlySet<string>>(new Set<string>());
+  /**
+   * Whether the user is building a comparison set.
+   *
+   * While they are, every row shows its checkbox rather than only the one under the pointer —
+   * which is what the list view does (`resource-list-item` renders its checkbox on
+   * `showCheckbox || selectMode`). Hover-only would mean the set you are assembling is visible one
+   * row at a time, and the next row you want is always the one you cannot see.
+   */
+  readonly selectionActive = input(false);
 
   readonly resourceSelected = output<ReadResource>();
   /**
@@ -414,7 +422,17 @@ export class DataTableComponent {
     });
   });
 
-  protected readonly densityClass = computed(() => `density-${this.density()}`);
+  /**
+   * One binding, not `[class]` plus `[class.selection-active]`.
+   *
+   * Mixing a string `[class]` with a specific `[class.x]` on the same element leaves the two
+   * fighting over the same attribute, and which wins is a detail of Angular's binding precedence
+   * rather than something this template should depend on. Composing the string here removes the
+   * question.
+   */
+  protected readonly scrollClasses = computed(
+    () => `density-${this.density()}${this.selectionActive() ? ' selection-active' : ''}`
+  );
 
   /**
    * Which `(rowId, columnKey)` read-only cells the user has expanded.

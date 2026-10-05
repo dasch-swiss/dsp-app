@@ -67,6 +67,7 @@ import { ProjectPageService } from '../../project-page.service';
             [density]="layout().density"
             [selectedResourceId]="selectedResourceId()"
             [checkedResourceIds]="checkedResourceIds()"
+            [selectionActive]="selectionActive()"
             [sortedColumnKey]="sortedColumnKey()"
             [sortDescending]="sortDescending()"
             [filteredColumnKeys]="filteredColumnKeys()"
@@ -150,16 +151,39 @@ export class DataTableFetcherComponent implements OnChanges {
    * pointing at one of them would claim a primacy it does not have. The checkboxes say which they
    * are.
    */
-  readonly selectedResourceId = computed<string | undefined>(() =>
-    this._multipleViewerService.selectMode ? undefined : this._selectedResources()[0]?.id
-  );
+  readonly selectedResourceId = computed<string | undefined>(() => {
+    const selected = this._selectedResources();
+    return this._multipleViewerService.selectMode ? undefined : selected[0]?.id;
+  });
+
+  /**
+   * Whether the user is building a comparison set.
+   *
+   * `MultipleViewerService.selectMode` is a plain mutable field with no change notification, so
+   * the selection's emission is what these three computeds react to. Note the shape they all
+   * share: **the signal is read first, unconditionally**, and only then is the flag consulted.
+   *
+   * That is not a style preference. Written the natural way —
+   * `selectMode && this._selectedResources().length > 0` — the `&&` short-circuits while
+   * `selectMode` is false, the signal read never happens, Angular records no dependency, and the
+   * computed is cached as `false` for the lifetime of the component. Ticking a checkbox then
+   * changed nothing anyone could see: the row never gained `is-checked`, the table never gained
+   * `selection-active`, and only the checkbox's own internal state made it look selected.
+   *
+   * `selectMode` is always written alongside the selection, so reading it after the signal costs
+   * nothing — but it is written *after* the subject emits, which is why it cannot simply be
+   * captured in the subscription instead.
+   */
+  readonly selectionActive = computed<boolean>(() => {
+    const selected = this._selectedResources();
+    return this._multipleViewerService.selectMode && selected.length > 0;
+  });
 
   /** Which rows are in the comparison set, so their checkboxes read as checked (REQ-5.4). */
-  readonly checkedResourceIds = computed<ReadonlySet<string>>(() =>
-    this._multipleViewerService.selectMode
-      ? new Set(this._selectedResources().map(resource => resource.id))
-      : new Set<string>()
-  );
+  readonly checkedResourceIds = computed<ReadonlySet<string>>(() => {
+    const selected = this._selectedResources();
+    return this._multipleViewerService.selectMode ? new Set(selected.map(resource => resource.id)) : new Set<string>();
+  });
 
   /**
    * The sort the query is running, mirrored onto the header that announces it.

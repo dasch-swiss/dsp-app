@@ -39,36 +39,34 @@ export class MultipleViewerService {
     this._resourceChangedSubject.next(resourceIri);
   }
 
+  /**
+   * Every emission is a new array, never the previous one mutated.
+   *
+   * These two used to `push` and `splice` the array they had just read out of the subject and
+   * re-emit that same reference. A `BehaviorSubject` forwards it regardless, so an async pipe
+   * still updated and the list view looked correct — but anything comparing by reference saw
+   * nothing happen: a `signal.set` of the same array is `Object.is`-equal and notifies no one,
+   * and `distinctUntilChanged` swallows it. That is what left the Data tab's table unable to see
+   * its own checkboxes being ticked (DEV-7466).
+   */
   addResources(resources: ReadResource[]) {
     const currentResources = this._selectedResourcesSubject.getValue();
-    if (!this.selectMode && currentResources.length === 1) {
-      currentResources.length = 0; // Clear the previous single selection if switching to multi-mode
-    }
+    // A single click-selection is not the start of a comparison set — it is the thing the viewer
+    // is showing. Ticking a checkbox turns one into the other, and the click-selection goes.
+    const base = !this.selectMode && currentResources.length === 1 ? [] : currentResources;
+    const added = resources.filter(resource => !base.some(selected => selected.id === resource.id));
 
-    resources.forEach(resource => {
-      if (!currentResources.some(selected => selected.id === resource.id)) {
-        currentResources.push(resource);
-      }
-    });
-    this._selectedResourcesSubject.next(currentResources);
-
+    this._selectedResourcesSubject.next([...base, ...added]);
     this.selectMode = true;
   }
 
   removeResources(resources: ReadResource[]) {
-    const currentResources = this._selectedResourcesSubject.getValue();
+    const remaining = this._selectedResourcesSubject
+      .getValue()
+      .filter(selected => !resources.some(resource => resource.id === selected.id));
 
-    resources.forEach(resource => {
-      const index = currentResources.findIndex(selected => selected.id === resource.id);
-      if (index < 0) {
-        return;
-      }
-
-      currentResources.splice(index, 1);
-    });
-
-    this._selectedResourcesSubject.next(currentResources);
-    this.selectMode = currentResources.length > 0;
+    this._selectedResourcesSubject.next(remaining);
+    this.selectMode = remaining.length > 0;
   }
 
   selectOneResource(resource: ReadResource) {

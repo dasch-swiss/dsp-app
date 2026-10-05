@@ -214,6 +214,7 @@ const meta: Meta<DataTableComponent> = {
     visibleColumns: { description: 'Keys of the columns to show, in display order. Label first.' },
     columnWidths: { description: 'Pixel widths the user has set; a column absent here uses its default.' },
     density: { description: 'Row height and cell padding: compact, default or comfortable.' },
+    selectionActive: { description: 'Whether a comparison set is being built; every row then shows its checkbox.' },
     selectedResourceId: { description: 'IRI of the resource open in the viewer, highlighted in the table.' },
     sortedColumnKey: { description: 'Column the query is sorted by, so its header announces aria-sort.' },
     sortDescending: { description: 'Direction of that sort.' },
@@ -332,13 +333,19 @@ export const RendersAColumnTheEditorCannotOpenAsPlainText: Story = {
   },
 };
 
-export const ShowsAPlaceholderWhereAResourceHasNoValue: Story = {
+/**
+ * An editable cell says it is empty the way the viewer says it: the unit collapses to its add
+ * control and nothing sits above it. A placeholder there would be a second answer to the same
+ * question, and a second line in every empty row of the page.
+ */
+export const LeavesAnEmptyEditableCellToTheViewersOwnAddControl: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    // BRAUT001b carries no place. The cell is editable, so the viewer unit in it is reduced to an
-    // add control — which says nothing to a reader scanning the column for gaps, hence the
-    // placeholder beside it (REQ-1.6).
-    await expect(canvas.getByText('— not set')).toBeInTheDocument();
+    const emptyCell = canvasElement.querySelectorAll('tr.mat-mdc-row')[1].querySelectorAll('td')[2];
+
+    await expect(emptyCell.querySelector('app-table-property-cell')).not.toBeNull();
+    await expect(emptyCell.querySelector('.cell-empty')).toBeNull();
+    await expect(canvas.queryByText('— not set')).toBeNull();
   },
 };
 
@@ -351,6 +358,65 @@ const manyAuthors = () =>
     texts(LINK_PROPERTY, 'Moskau', 'Kiew', 'Odessa', 'Tiflis', 'Riga'),
     COLLAPSING_COLUMNS
   );
+
+/**
+ * A read-only column has no add control, so an empty cell there would be indistinguishable from
+ * one the reader has simply not scrolled to (REQ-1.6).
+ */
+export const MarksAnEmptyReadOnlyCellAsNotSet: Story = {
+  args: {
+    columns: COLLAPSING_COLUMNS,
+    visibleColumns: COLLAPSING_COLUMNS.map(c => c.key),
+    resources: [resource('http://rdfh.ch/0001/q', 'Sokolow, Iwan', { [LINK_PROPERTY]: [] }, COLLAPSING_COLUMNS)],
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByText('— not set')).toBeInTheDocument();
+  },
+};
+
+/**
+ * Hover is not the only reason a row shows its controls. A checked or selected row keeps them
+ * regardless of where the pointer is — otherwise moving to another row hides the very checkbox
+ * that says what you have collected, and a selection you have to re-find is one you cannot count.
+ */
+export const KeepsTheControlsOnACheckedRowWhileAnotherIsHovered: Story = {
+  args: { selectionActive: true, checkedResourceIds: new Set(['http://rdfh.ch/0001/a']) },
+  play: async ({ canvasElement }) => {
+    const rows = canvasElement.querySelectorAll('tr.mat-mdc-row');
+    await userEvent.hover(rows[1]);
+
+    const checkedControls = rows[0].querySelector('.row-controls') as HTMLElement;
+    await expect(getComputedStyle(checkedControls).opacity).toBe('1');
+  },
+};
+
+/**
+ * The list view's rule, not a table-specific one: `resource-list-item` renders its checkbox on
+ * `showCheckbox || selectMode`, so once a set is being built every row offers one. A set you can
+ * only assemble one hover at a time is a set you can never see.
+ */
+export const ShowsEveryRowsCheckboxWhileASetIsBeingBuilt: Story = {
+  args: { selectionActive: true, checkedResourceIds: new Set(['http://rdfh.ch/0001/a']) },
+  play: async ({ canvasElement }) => {
+    const rows = canvasElement.querySelectorAll('tr.mat-mdc-row');
+    await userEvent.hover(rows[0]);
+
+    const unhovered = rows[1].querySelector('.row-controls') as HTMLElement;
+    await expect(getComputedStyle(unhovered).opacity).toBe('1');
+  },
+};
+
+/** With no set under way the controls stay out of the way until the pointer asks for them. */
+export const HidesTheControlsOnIdleRowsWhenNoSetIsBeingBuilt: Story = {
+  play: async ({ canvasElement }) => {
+    const rows = canvasElement.querySelectorAll('tr.mat-mdc-row');
+    await userEvent.hover(rows[0]);
+
+    const idle = rows[1].querySelector('.row-controls') as HTMLElement;
+    await expect(getComputedStyle(idle).opacity).toBe('0');
+  },
+};
 
 export const CollapsesAReadOnlyCellWithMoreThanThreeValues: Story = {
   args: {

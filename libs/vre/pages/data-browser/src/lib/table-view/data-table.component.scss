@@ -244,9 +244,19 @@ table {
   }
 }
 
-// A checked row keeps its controls visible regardless of the pointer: the state is the point, and
-// a checkbox you have to hover to see is a selection you cannot count.
-tr.is-checked .row-controls {
+// Three ways a row keeps its controls once the pointer has moved on.
+//
+// `.selection-active` is the list view's rule — `resource-list-item` renders its checkbox on
+// `showCheckbox || selectMode`, so while a comparison set is being built every row offers one.
+// The other two are the row the user is actually working with: a set you assemble one hover at a
+// time is a set you can never see, and a row whose controls vanish the moment you look elsewhere
+// is a row you have to find again to act on.
+//
+// All three outrank the `opacity: 0` above, which is the only rule that hides anything — the hover
+// rule only ever raises opacity, so it has nothing to conflict with.
+.selection-active .row-controls,
+tr.is-checked .row-controls,
+tr.is-selected .row-controls {
   opacity: 1;
 }
 
