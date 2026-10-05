@@ -252,6 +252,10 @@ export function isEqual(a: CalendarDate, b: CalendarDate): boolean {
 /**
  * Validates that a period's start date is before or equal to its end date.
  *
+ * Compares the first day the start covers with the last day the end covers, as dsp-api does. An
+ * imprecise end may therefore contain the start — 15.03.1850 to 03.1850 — which is how projects
+ * record uncertain historical dates.
+ *
  * @param start - The start date
  * @param end - The end date
  * @throws {CalendarError} If start is after end
@@ -272,7 +276,7 @@ export function validatePeriod(start: CalendarDate, end: CalendarDate): void {
     );
   }
 
-  if (isAfter(start, end)) {
+  if (jdnRange(start).first > jdnRange(end).last) {
     throw new CalendarError('Period start date must be before or equal to end date');
   }
 }
