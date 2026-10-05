@@ -635,8 +635,6 @@
       "sortHeader": {
         "sortBy": "Sortieren nach",
         "chooseProperty": "Eigenschaft zum Sortieren wählen",
-        "aToZ": "A–Z",
-        "zToA": "Z–A",
         "sortAscending": "Aufsteigend sortieren",
         "sortDescending": "Absteigend sortieren"
       },

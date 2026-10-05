@@ -141,8 +141,6 @@ const STORY_TRANSLATIONS = {
       sortHeader: {
         sortBy: 'Sort by',
         chooseProperty: 'Choose a property to sort by',
-        aToZ: 'A–Z',
-        zToA: 'Z–A',
         sortAscending: 'Sort ascending',
         sortDescending: 'Sort descending',
       },

@@ -9,6 +9,12 @@
 .sort-by {
   font: 400 12px/16px Roboto, sans-serif;
   color: rgba(0, 0, 0, 0.6);
+  // The label is two words and the panel is narrow enough to break them apart, which turns a
+  // 36px header into a 52px one and shunts the list down with it. `flex: none` stops the label
+  // being the item flex chooses to shrink; the property name beside it already ellipsises and is
+  // the right thing to give way.
+  flex: none;
+  white-space: nowrap;
 }
 
 .property-trigger,
@@ -54,13 +60,4 @@
   height: 16px;
   line-height: 16px;
   color: var(--primary);
-}
-
-/* Right-aligned, per PRD §9: the direction reads as the control's current value. */
-.direction {
-  margin-left: auto;
-  padding-left: 8px;
-  font: 400 12px/16px Roboto, sans-serif;
-  color: var(--primary);
-  white-space: nowrap;
 }

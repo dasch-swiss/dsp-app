@@ -635,8 +635,6 @@
       "sortHeader": {
         "sortBy": "Trier par",
         "chooseProperty": "Choisir une propriété de tri",
-        "aToZ": "A–Z",
-        "zToA": "Z–A",
         "sortAscending": "Trier par ordre croissant",
         "sortDescending": "Trier par ordre décroissant"
       },

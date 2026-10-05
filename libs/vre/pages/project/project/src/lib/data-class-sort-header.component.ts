@@ -55,10 +55,6 @@ interface SortOption {
         (click)="toggleDirection()">
         <mat-icon class="sort-icon">{{ descending ? 'arrow_downward' : 'arrow_upward' }}</mat-icon>
       </button>
-
-      <span class="direction">
-        {{ (descending ? 'pages.dataBrowser.sortHeader.zToA' : 'pages.dataBrowser.sortHeader.aToZ') | translate }}
-      </span>
     </div>
 
     <mat-menu #propertyMenu="matMenu">
