@@ -111,6 +111,21 @@ describe('searchTermCompleteSyntaxValidator (DEV-7370)', () => {
     }
   );
 
+  // The first three were measured as parse errors: an operator against a group's parenthesis, anywhere.
+  it.each(['(foo AND)', '(AND foo)', 'bar (foo AND)', 'bar (foo NOT) baz'])(
+    'holds back %p, whose operator lacks its term inside the group',
+    term => {
+      expect(validate(term)).toEqual({ searchTermDanglingOperator: true });
+    }
+  );
+
+  it.each(['(foo AND bar)', 'foo AND (bar)', '(NOT foo)', '"(foo AND)"', 'foo \\(AND)'])(
+    'accepts %p, whose operators all have their terms',
+    term => {
+      expect(validate(term)).toBeNull();
+    }
+  );
+
   // `NOT foo`, `foo AND bar` and `"foo AND"` were measured to run. Lowercase is no operator, and quotes
   // or a backslash make it a literal.
   it.each(['NOT foo', 'foo AND bar', '"foo AND"', 'foo and', '"AND foo"', 'foo \\AND'])('accepts %p', term => {
