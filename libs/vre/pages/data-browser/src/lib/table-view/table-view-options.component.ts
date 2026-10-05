@@ -73,6 +73,24 @@ const DENSITIES: readonly { value: TableDensity; labelKey: string }[] = [
           </span>
         </h4>
 
+        <!-- One control rather than a Show all beside a Hide all: only one of the two is ever the
+             useful next move, and the pair would make the user read both to find out which. It
+             reads the current state and offers the other, the way a select-all checkbox does. -->
+        <button
+          mat-menu-item
+          type="button"
+          class="option-row bulk-row"
+          data-cy="columns-bulk-toggle"
+          (click)="$event.stopPropagation(); allColumnsVisibilityChanged.emit(!allShown())">
+          <mat-icon class="option-mark">{{ allShown() ? 'check_box' : 'check_box_outline_blank' }}</mat-icon>
+          <span class="option-label">
+            {{
+              (allShown() ? 'pages.dataBrowser.viewOptions.hideAll' : 'pages.dataBrowser.viewOptions.showAll')
+                | translate
+            }}
+          </span>
+        </button>
+
         @for (entry of entries(); track entry.column.key) {
           <button
             mat-menu-item
@@ -108,8 +126,19 @@ export class TableViewOptionsComponent {
 
   readonly densityChanged = output<TableDensity>();
   readonly columnVisibilityChanged = output<{ key: string; isVisible: boolean }>();
+  /** True to show every column, false to hide every column but the sticky one. */
+  readonly allColumnsVisibilityChanged = output<boolean>();
 
   protected readonly densities = DENSITIES;
 
   protected readonly visibleCount = computed(() => this.entries().filter(entry => entry.isVisible).length);
+
+  /**
+   * Whether every column the user can actually hide is currently shown.
+   *
+   * The sticky column is excluded rather than counted as always-on: counting it would mean a class
+   * whose only hideable columns are all hidden still reported "not all shown", and the control
+   * would offer to hide what is already hidden.
+   */
+  protected readonly allShown = computed(() => this.entries().every(entry => entry.column.isSticky || entry.isVisible));
 }

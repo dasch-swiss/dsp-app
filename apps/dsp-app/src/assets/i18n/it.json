@@ -671,7 +671,9 @@
         "densityComfortable": "Comoda",
         "columns": "Colonne",
         "columnsShown": "{{count}} di {{total}} visualizzate",
-        "alwaysShown": "Sempre"
+        "alwaysShown": "Sempre",
+        "showAll": "Mostra tutte le colonne",
+        "hideAll": "Nascondi tutte le colonne"
       }
     }
   },

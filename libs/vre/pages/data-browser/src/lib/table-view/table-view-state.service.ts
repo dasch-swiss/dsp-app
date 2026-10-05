@@ -119,6 +119,35 @@ export class TableViewStateService {
     });
   }
 
+  /**
+   * Show or hide every column at once.
+   *
+   * A class with forty properties is the reason this exists: reaching a working table from the
+   * default eight means ticking thirty-two rows, and getting back means ticking them again. The
+   * sticky label column is exempt in both directions, so "hide all" leaves a table of labels
+   * rather than a table of nothing (REQ-2.10).
+   *
+   * Showing all appends the hidden columns in model order rather than rebuilding the whole list,
+   * so a user who has already dragged their visible columns into an order keeps it.
+   */
+  setAllColumnsVisible(isVisible: boolean): void {
+    const order = this.columns().map(column => column.key);
+    const hideable = this.columns().filter(column => !column.isSticky);
+
+    this._update(layout => {
+      if (isVisible) {
+        const appended = layout.hidden.filter(key => order.includes(key));
+        return { ...layout, visible: [...layout.visible, ...appended], hidden: [] };
+      }
+
+      return {
+        ...layout,
+        visible: layout.visible.filter(key => !hideable.some(column => column.key === key)),
+        hidden: hideable.map(column => column.key),
+      };
+    });
+  }
+
   private _insertInModelOrder(keys: string[], key: string): string[] {
     const order = this.columns().map(column => column.key);
     const next = [...keys, key];

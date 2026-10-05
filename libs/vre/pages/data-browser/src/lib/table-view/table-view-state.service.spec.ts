@@ -33,6 +33,45 @@ describe('TableViewStateService', () => {
     service.init(CLASS_IRI, COLUMNS);
   });
 
+  describe('showing or hiding every column at once', () => {
+    it('ShowsEveryHiddenColumn', () => {
+      service.setColumnVisible('p1', false);
+      service.setColumnVisible('p2', false);
+
+      service.setAllColumnsVisible(true);
+
+      expect(service.layout().hidden).toEqual([]);
+      expect(service.layout().visible).toEqual([LABEL_COLUMN_KEY, 'p0', 'p1', 'p2']);
+    });
+
+    /**
+     * The label column is what keeps a row identifiable once the table scrolls sideways, so
+     * "hide all" has to leave a table of labels rather than a table of nothing (REQ-2.10).
+     */
+    it('LeavesTheStickyLabelColumnShowingWhenHidingEverything', () => {
+      service.setAllColumnsVisible(false);
+
+      expect(service.layout().visible).toEqual([LABEL_COLUMN_KEY]);
+      expect(service.layout().hidden).toEqual(['p0', 'p1', 'p2']);
+    });
+
+    /** A user who has dragged their columns into an order keeps it when the rest come back. */
+    it('AppendsReturningColumnsRatherThanRebuildingTheOrder', () => {
+      service.setColumnVisible('p0', false);
+      service.setVisibleOrder([LABEL_COLUMN_KEY, 'p2', 'p1']);
+
+      service.setAllColumnsVisible(true);
+
+      expect(service.layout().visible).toEqual([LABEL_COLUMN_KEY, 'p2', 'p1', 'p0']);
+    });
+
+    it('PersistsTheResultLikeAnySingleColumnToggle', () => {
+      service.setAllColumnsVisible(false);
+
+      expect(layoutStore.load(CLASS_IRI, COLUMNS).visible).toEqual([LABEL_COLUMN_KEY]);
+    });
+  });
+
   describe('the column picker', () => {
     it('MarksEveryColumnWithWhetherItIsCurrentlyDrawn', () => {
       service.setColumnVisible('p1', false);

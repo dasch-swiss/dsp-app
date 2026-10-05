@@ -32,6 +32,7 @@ const ENTRIES: ColumnPickerEntry[] = [
 
 const onDensity = fn().mockName('densityChanged');
 const onVisibility = fn().mockName('columnVisibilityChanged');
+const onAllVisibility = fn().mockName('allColumnsVisibilityChanged');
 
 /** The menu renders into a CDK overlay, which is attached to the body rather than to the canvas. */
 const overlay = () => within(document.body);
@@ -39,6 +40,7 @@ const overlay = () => within(document.body);
 const openMenu = async () => {
   onDensity.mockClear();
   onVisibility.mockClear();
+  onAllVisibility.mockClear();
   await userEvent.click(overlay().getByRole('button', { name: /View options/i }));
 };
 
@@ -49,12 +51,13 @@ const meta: Meta<TableViewOptionsComponent> = {
   // A host template rather than args, so each assertion runs through the real output bindings the
   // class header uses instead of poking the component's outputs directly.
   render: args => ({
-    props: { ...args, onDensity, onVisibility },
+    props: { ...args, onDensity, onVisibility, onAllVisibility },
     template: `<app-table-view-options
       [entries]="entries"
       [density]="density"
       (densityChanged)="onDensity($event)"
-      (columnVisibilityChanged)="onVisibility($event)" />`,
+      (columnVisibilityChanged)="onVisibility($event)"
+      (allColumnsVisibilityChanged)="onAllVisibility($event)" />`,
   }),
   args: { entries: ENTRIES, density: 'default' },
   argTypes: {
@@ -119,5 +122,48 @@ export const ChangesTheRowDensityFromTheRadioGroup: Story = {
     await userEvent.click(menu.getByRole('menuitemradio', { name: /Compact/ }));
 
     await expect(onDensity).toHaveBeenCalledWith('compact');
+  },
+};
+
+// ── Showing or hiding every column at once ──────────────────────────────────
+
+/**
+ * With something hidden, the useful next move is to bring it back, so that is what the control
+ * offers. Only one of show-all and hide-all is ever worth doing; a pair of buttons would make the
+ * user read both to work out which.
+ */
+export const OffersShowAllWhileAnyColumnIsHidden: Story = {
+  play: async () => {
+    await openMenu();
+    const toggle = overlay().getByRole('menuitem', { name: /Show all columns/ });
+
+    await userEvent.click(toggle);
+
+    await expect(onAllVisibility).toHaveBeenCalledWith(true);
+  },
+};
+
+export const OffersHideAllOnceEveryColumnIsShown: Story = {
+  args: { entries: ENTRIES.map(e => ({ ...e, isVisible: true })) },
+  play: async () => {
+    await openMenu();
+    const toggle = overlay().getByRole('menuitem', { name: /Hide all columns/ });
+
+    await userEvent.click(toggle);
+
+    await expect(onAllVisibility).toHaveBeenCalledWith(false);
+  },
+};
+
+/**
+ * The sticky column cannot be hidden, so it must not count towards "everything is shown" — if it
+ * did, a class whose every hideable column was already hidden would still offer to hide them.
+ */
+export const IgnoresTheStickyColumnWhenDecidingWhichActionToOffer: Story = {
+  args: { entries: ENTRIES.map(e => ({ ...e, isVisible: e.column.isSticky })) },
+  play: async () => {
+    await openMenu();
+
+    await expect(overlay().getByRole('menuitem', { name: /Show all columns/ })).toBeInTheDocument();
   },
 };

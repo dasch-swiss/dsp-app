@@ -32,12 +32,7 @@ describe('ResourceClassSidenavItemComponent', () => {
 
     const route = { firstChild: null } as unknown as ActivatedRoute;
 
-    component = new ResourceClassSidenavItemComponent(
-      {} as OntologyService,
-      {} as ProjectPageService,
-      router,
-      route
-    );
+    component = new ResourceClassSidenavItemComponent({} as OntologyService, {} as ProjectPageService, router, route);
     component.iri = CLASS_IRI;
   });
 

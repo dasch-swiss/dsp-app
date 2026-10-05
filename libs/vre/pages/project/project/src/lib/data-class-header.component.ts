@@ -83,7 +83,8 @@ interface CreateResourceDialogProps {
             [entries]="tableState.pickerEntries()"
             [density]="tableState.layout().density"
             (densityChanged)="tableState.setDensity($event)"
-            (columnVisibilityChanged)="tableState.setColumnVisible($event.key, $event.isVisible)" />
+            (columnVisibilityChanged)="tableState.setColumnVisible($event.key, $event.isVisible)"
+            (allColumnsVisibilityChanged)="tableState.setAllColumnsVisible($event)" />
           <span class="meta-divider"></span>
         }
         <app-data-class-view-toggle />
