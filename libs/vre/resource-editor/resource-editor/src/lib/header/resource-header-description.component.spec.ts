@@ -83,6 +83,12 @@ describe('ResourceHeaderDescriptionComponent', () => {
     );
   });
 
+  it('opens the dialog from the placeholder too', () => {
+    render(makeResource(PROJECT_CLASS, []), { userCanEdit: true });
+    query('[data-cy="add-description-placeholder"]').click();
+    expect(dialog.open).toHaveBeenCalledWith(EditResourceDescriptionDialogComponent, expect.anything());
+  });
+
   it('gives a viewer no edit button', () => {
     render(makeResource(PROJECT_CLASS, [makeDescription('first')]));
     expect(query('[data-cy="edit-description-button"]')).toBeNull();

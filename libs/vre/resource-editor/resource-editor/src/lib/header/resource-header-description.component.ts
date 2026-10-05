@@ -35,15 +35,29 @@ import {
         @if (value) {
           <app-rich-text-viewer class="text" [value]="value" />
         } @else {
-          <span class="text placeholder">{{
-            'resourceEditor.resourceProperties.editDescription.add' | translate
-          }}</span>
+          <!-- Only rendered for editors (there is no value). A pointer shortcut to the pencil button,
+               which stays the one keyboard and screen-reader control. -->
+          <button
+            type="button"
+            class="text placeholder"
+            data-cy="add-description-placeholder"
+            tabindex="-1"
+            aria-hidden="true"
+            (click)="openEditDialog()">
+            {{ 'resourceEditor.resourceProperties.editDescription.add' | translate }}
+          </button>
         }
         @if (canEdit) {
           <button
             mat-icon-button
             data-cy="edit-description-button"
             color="primary"
+            [attr.aria-label]="
+              (value
+                ? 'resourceEditor.resourceProperties.editDescription.edit'
+                : 'resourceEditor.resourceProperties.editDescription.add'
+              ) | translate
+            "
             [matTooltip]="
               (value
                 ? 'resourceEditor.resourceProperties.editDescription.edit'
@@ -76,6 +90,13 @@ import {
 
       .placeholder {
         color: rgba(0, 0, 0, 0.54);
+        background: none;
+        border: none;
+        padding-left: 0;
+        padding-right: 0;
+        font: inherit;
+        text-align: left;
+        cursor: pointer;
       }
     `,
   ],
