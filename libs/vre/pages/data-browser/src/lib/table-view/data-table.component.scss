@@ -244,42 +244,23 @@ table {
   }
 }
 
-// A checked row and the open row keep their controls visible regardless of the pointer: the state
-// is the point, and a checkbox you have to hover to see is a selection you cannot count.
-tr.is-checked .row-controls,
-.row-controls:has(.row-open.is-open) {
+// A checked row keeps its controls visible regardless of the pointer: the state is the point, and
+// a checkbox you have to hover to see is a selection you cannot count.
+tr.is-checked .row-controls {
   opacity: 1;
 }
 
 .row-open {
   flex: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  border: none;
-  border-radius: 50%;
-  background: transparent;
-  padding: 0;
-  cursor: pointer;
-  color: rgba(0, 0, 0, 0.54);
 
-  mat-icon {
-    font-size: 16px;
-    width: 16px;
-    height: 16px;
-  }
-
-  &.is-open {
-    background: var(--primary, #336790);
-    color: #fff;
-  }
-
-  &:focus-visible {
-    outline: 2px solid var(--primary, #336790);
-    outline-offset: 1px;
-  }
+  // The shared explorer button is laid out for the properties pane, where it hangs off a row of
+  // text: zero-height host, scaled down, nudged 15px up. None of that is true in this gutter, so
+  // the offsets are reset through the custom properties the component exposes rather than fought
+  // with ::ng-deep.
+  --resource-explorer-display: inline-flex;
+  --resource-explorer-height: auto;
+  --resource-explorer-scale: 0.75;
+  --resource-explorer-top: 0;
 }
 
 // Sticky columns inherit the row background so the scrolling columns do not show through them.

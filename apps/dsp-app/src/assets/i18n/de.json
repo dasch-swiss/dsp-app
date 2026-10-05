@@ -661,8 +661,7 @@
         "cellNotEditable": "Diese Eigenschaft kann hier nicht bearbeitet werden",
         "editNotApplied": "Dieser Wert wurde anderswo geändert, Ihre Bearbeitung wurde deshalb nicht übernommen. Die Zeile wurde mit dem aktuellen Wert neu geladen.",
         "selectRow": "{{label}} zum Vergleich hinzufügen",
-        "openRow": "{{label}} in der Ressourcenansicht öffnen",
-        "collapseViewer": "Ressourcenansicht schliessen"
+        "openRow": "{{label}} öffnen"
       },
       "viewOptions": {
         "title": "Ansichtsoptionen",

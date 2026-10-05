@@ -661,8 +661,7 @@
         "cellNotEditable": "Cette propriété ne peut pas être modifiée ici",
         "editNotApplied": "Cette valeur a été modifiée ailleurs, votre modification n'a donc pas été appliquée. La ligne a été rechargée avec la valeur actuelle.",
         "selectRow": "Ajouter {{label}} à la comparaison",
-        "openRow": "Ouvrir {{label}} dans la visionneuse de ressources",
-        "collapseViewer": "Fermer la visionneuse de ressources"
+        "openRow": "Ouvrir {{label}}"
       },
       "viewOptions": {
         "title": "Options d'affichage",

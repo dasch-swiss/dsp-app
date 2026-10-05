@@ -33,33 +33,6 @@ describe('TableViewStateService', () => {
     service.init(CLASS_IRI, COLUMNS);
   });
 
-  describe('the resource viewer beside the table', () => {
-    it('StartsCollapsedSoTheTableFillsTheWidthOnEntry', () => {
-      expect(service.viewerExpanded()).toBe(false);
-    });
-
-    it('CollapsesAgainWhenANewClassIsOpened', () => {
-      service.expandViewer();
-
-      service.init('http://0.0.0.0:3333/ontology/0001/anything/v2#Other', COLUMNS);
-
-      expect(service.viewerExpanded()).toBe(false);
-    });
-
-    /**
-     * `init` re-runs whenever the ontology object identity changes, which `reloadProject()` does
-     * after every resource delete. Collapsing there would take the panel away from the user who
-     * had just deleted something in it.
-     */
-    it('StaysExpandedWhenTheSameClassIsReinitialised', () => {
-      service.expandViewer();
-
-      service.init(CLASS_IRI, COLUMNS);
-
-      expect(service.viewerExpanded()).toBe(true);
-    });
-  });
-
   describe('the column picker', () => {
     it('MarksEveryColumnWithWhetherItIsCurrentlyDrawn', () => {
       service.setColumnVisible('p1', false);

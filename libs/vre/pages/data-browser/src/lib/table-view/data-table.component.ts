@@ -15,6 +15,7 @@ import { MatCheckbox, MatCheckboxChange } from '@angular/material/checkbox';
 import { MatIcon } from '@angular/material/icon';
 import { MatTable, MatTableModule } from '@angular/material/table';
 import { ReadResource } from '@dasch-swiss/dsp-js';
+import { ResourceExplorerButtonComponent } from '@dasch-swiss/vre/resource-editor/resource-editor';
 import { TranslatePipe } from '@ngx-translate/core';
 import { ColumnResizeDirective } from './column-resize.directive';
 import { TableRowFetcherRegistry } from './editing/row-fetcher-registry.service';
@@ -181,16 +182,15 @@ interface RenderColumn extends TableColumn {
                     [checked]="checkedResourceIds().has(row.id)"
                     [attr.aria-label]="'pages.dataBrowser.table.selectRow' | translate: { label: row.label }"
                     (change)="onRowCheckChanged(row.resource, $event)" />
-                  <button
-                    type="button"
+                  <!-- The app's own drawer-dialog control, not a bespoke one. Opening a resource
+                       from a table row should land the user in the same place as opening it from
+                       a property or a link elsewhere; a second presentation of the same resource
+                       would be a second thing to keep in step. -->
+                  <app-resource-explorer-button
                     class="row-open"
                     data-cy="row-open"
-                    [class.is-open]="row.id === openedResourceId()"
-                    [attr.aria-label]="'pages.dataBrowser.table.openRow' | translate: { label: row.label }"
-                    [attr.aria-expanded]="row.id === openedResourceId()"
-                    (click)="resourceOpened.emit(row.resource)">
-                    <mat-icon>arrow_forward</mat-icon>
-                  </button>
+                    [resourceIri]="row.id"
+                    [ariaLabel]="'pages.dataBrowser.table.openRow' | translate: { label: row.label }" />
                 </div>
               }
 
@@ -280,6 +280,7 @@ interface RenderColumn extends TableColumn {
     CdkDragHandle,
     ColumnResizeDirective,
     TableRowEditHostComponent,
+    ResourceExplorerButtonComponent,
   ],
   // Per table, not per row: the rows the registry caches for are exactly the ones this table is
   // showing, and it is this component that knows when they are replaced.
@@ -316,12 +317,8 @@ export class DataTableComponent {
    * written to compare by `id` too.
    */
   readonly checkedResourceIds = input<ReadonlySet<string>>(new Set<string>());
-  /** The row whose resource the expanded viewer is showing, if any. Marks that row's open control. */
-  readonly openedResourceId = input<string | undefined>(undefined);
 
   readonly resourceSelected = output<ReadResource>();
-  /** The row whose open control was activated: select it *and* expand the viewer (REQ-5.1). */
-  readonly resourceOpened = output<ReadResource>();
   /**
    * A row's checkbox, as a change rather than as "add" and "remove" outputs.
    *

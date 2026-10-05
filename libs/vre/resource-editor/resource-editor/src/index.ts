@@ -16,3 +16,7 @@ export { PropertyValuesComponent } from './lib/properties/properties-display/pro
 export { PropertiesDisplayService } from './lib/properties/properties-display/property-value/properties-display.service';
 export { ResourceFetcherService } from './lib/representation/resource-fetcher.service';
 export { ResourceUtil } from './lib/representation/resource.util';
+
+// The drawer-dialog open control. Shared with the data browser's table so a row opens a resource
+// exactly the way the rest of the app does, rather than growing a second way to do it.
+export { ResourceExplorerButtonComponent } from './lib/properties/resource-explorer-button.component';

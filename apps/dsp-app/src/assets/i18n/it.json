@@ -661,8 +661,7 @@
         "cellNotEditable": "Questa proprietà non può essere modificata qui",
         "editNotApplied": "Questo valore è stato modificato altrove, quindi la tua modifica non è stata applicata. La riga è stata ricaricata con il valore attuale.",
         "selectRow": "Aggiungi {{label}} al confronto",
-        "openRow": "Apri {{label}} nel visualizzatore di risorse",
-        "collapseViewer": "Chiudi il visualizzatore di risorse"
+        "openRow": "Apri {{label}}"
       },
       "viewOptions": {
         "title": "Opzioni di visualizzazione",

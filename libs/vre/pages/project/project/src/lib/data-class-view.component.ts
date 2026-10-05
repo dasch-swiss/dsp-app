@@ -1,8 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import { Component, computed, inject } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { MatIconButton } from '@angular/material/button';
-import { MatIcon } from '@angular/material/icon';
 import { ActivatedRoute } from '@angular/router';
 import { ResourceClassDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
@@ -38,20 +36,7 @@ import { ProjectPageService } from './project-page.service';
                renders the viewer, which would keep fetching the selected resource for a panel
                nobody can see. -->
           <as-split-area [size]="viewerSize()" [visible]="viewerIsVisible()">
-            <div class="viewer-area">
-              @if (viewerIsCollapsible()) {
-                <div class="viewer-toolbar">
-                  <button
-                    mat-icon-button
-                    data-cy="collapse-viewer"
-                    [attr.aria-label]="'pages.dataBrowser.table.collapseViewer' | translate"
-                    (click)="collapseViewer()">
-                    <mat-icon>close</mat-icon>
-                  </button>
-                </div>
-              }
-              <app-multiple-viewer (afterResourceDeleted)="onResourceDeleted()" />
-            </div>
+            <app-multiple-viewer (afterResourceDeleted)="onResourceDeleted()" />
           </as-split-area>
         </as-split>
       }
@@ -81,8 +66,6 @@ import { ProjectPageService } from './project-page.service';
   imports: [
     AsyncPipe,
     TranslatePipe,
-    MatIcon,
-    MatIconButton,
     AngularSplitModule,
     CenteredBoxComponent,
     NoResultsFoundComponent,
@@ -101,28 +84,19 @@ export class DataClassViewComponent {
   /**
    * How the split is divided, and whether the right half exists at all.
    *
-   * Read off {@link TableViewStateService} rather than passed up from the table through the panel:
-   * the control that expands the viewer is a row control, three components down, and the thing it
-   * resizes is this template. That is the same sibling gap the column layout crosses, so it uses
-   * the same service rather than a second one shaped like it.
+   * The table has no side viewer: a row opens in the app's drawer dialog, the same one a resource
+   * opens in everywhere else. A panel beside the table would be a second rendering of the same
+   * resource to keep in step, so table view is simply full width.
    *
-   * The list view is unaffected — it has always shown the viewer, and a list row is too narrow to
-   * read anything from, so collapsing it there would leave the user with nothing.
+   * Hidden rather than sized to zero — a zero-width area still draws its gutter and still renders
+   * the viewer, which would keep fetching the selected resource for a panel nobody can see.
    */
-  private readonly _tableState = inject(TableViewStateService);
   private readonly _view = toSignal(inject(DataClassUrlStateService).view$, { initialValue: 'list' as DataClassView });
 
-  /** Only the table ever collapses the viewer, so only the table offers the control to bring it back. */
-  readonly viewerIsCollapsible = computed(() => this._view() === 'table');
-  readonly viewerIsVisible = computed(() => this._view() !== 'table' || this._tableState.viewerExpanded());
+  readonly viewerIsVisible = computed(() => this._view() !== 'table');
 
-  /**
-   * The table is the point of table view, so it keeps the larger half even with the viewer open —
-   * the reverse of the list, which is a column of labels next to the resource you are reading.
-   * Full width when the viewer is hidden, so the two visible sizes always add up to 100.
-   */
-  readonly panelSize = computed(() => (this._view() === 'table' ? (this.viewerIsVisible() ? 65 : 100) : 34));
-  readonly viewerSize = computed(() => (this._view() === 'table' ? 35 : 66));
+  readonly panelSize = computed(() => (this._view() === 'table' ? 100 : 34));
+  readonly viewerSize = computed(() => 66);
 
   dataIsNotFound = false;
   data$ = combineLatest([
@@ -187,10 +161,6 @@ export class DataClassViewComponent {
         // previous class sitting in the editor.
         this._draftStore.discardDrafts();
       });
-  }
-
-  collapseViewer() {
-    this._tableState.collapseViewer();
   }
 
   onResourceDeleted() {

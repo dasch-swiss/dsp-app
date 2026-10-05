@@ -67,12 +67,10 @@ import { ProjectPageService } from '../../project-page.service';
             [density]="layout().density"
             [selectedResourceId]="selectedResourceId()"
             [checkedResourceIds]="checkedResourceIds()"
-            [openedResourceId]="openedResourceId()"
             [sortedColumnKey]="sortedColumnKey()"
             [sortDescending]="sortDescending()"
             [filteredColumnKeys]="filteredColumnKeys()"
             (resourceSelected)="onResourceSelected($event)"
-            (resourceOpened)="onResourceOpened($event)"
             (resourceCheckedChanged)="onResourceCheckedChanged($event)"
             (columnsReordered)="onColumnsReordered($event)"
             (columnResized)="onColumnResized($event)"
@@ -161,16 +159,6 @@ export class DataTableFetcherComponent implements OnChanges {
     this._multipleViewerService.selectMode
       ? new Set(this._selectedResources().map(resource => resource.id))
       : new Set<string>()
-  );
-
-  /**
-   * The row the expanded viewer belongs to, which marks that row's open control.
-   *
-   * Collapsed, nothing is marked: the control's filled state says "this row is the one on the
-   * right", which is false while there is no panel on the right (REQ-5.2, REQ-5.3).
-   */
-  readonly openedResourceId = computed<string | undefined>(() =>
-    this._tableState.viewerExpanded() ? this._selectedResources()[0]?.id : undefined
   );
 
   /**
@@ -265,18 +253,6 @@ export class DataTableFetcherComponent implements OnChanges {
 
   onResourceSelected(resource: ReadResource) {
     this._multipleViewerService.selectOneResource(resource);
-  }
-
-  /**
-   * The row's open control: select the resource *and* expand the viewer beside the table (REQ-5.1).
-   *
-   * Distinct from a row click, which only selects. In table view the viewer starts collapsed, so a
-   * click that both selected and expanded would make the table narrow the moment the user touched
-   * any row — the grid is what they came for.
-   */
-  onResourceOpened(resource: ReadResource) {
-    this._multipleViewerService.selectOneResource(resource);
-    this._tableState.expandViewer();
   }
 
   /**
