@@ -63,6 +63,11 @@
       <mat-icon class="line-icon">swap_horiz</mat-icon>
       {{ hint.key | translate: { from: hint.from, to: hint.to, calendar: calendarLabel() | translate } }}
     </span>
+    } @if (reformGap(); as gap) {
+    <span class="reform-gap" data-cy="reform-gap">
+      <mat-icon class="line-icon">info</mat-icon>
+      {{ 'ui.calendarMarker.reformGapNote' | translate: gap }}
+    </span>
     }
   </div>
 

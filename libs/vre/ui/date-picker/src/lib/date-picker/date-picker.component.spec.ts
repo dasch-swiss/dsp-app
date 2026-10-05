@@ -260,12 +260,21 @@ describe('DatePickerComponent', () => {
   });
 
   describe('the grid it renders', () => {
-    it('skips the ten days the Gregorian reform deleted', () => {
+    // Proleptic, as in dsp-api: the ten days the reform skipped can be picked, and are marked.
+    it('offers and marks the ten days the Gregorian reform skipped', () => {
       show(new KnoraDate('GREGORIAN', 'CE', 1582, 10, 1));
 
-      expect(dayCells()).toContain(4);
-      expect(dayCells()).not.toContain(5);
-      expect(dayCells()).toContain(15);
+      expect(dayCells()).toContain(5);
+      expect(el('day-5')!.classList).toContain('is-reform-gap');
+      expect(el('day-14')!.classList).toContain('is-reform-gap');
+      expect(el('day-4')!.classList).not.toContain('is-reform-gap');
+      expect(el('day-15')!.classList).not.toContain('is-reform-gap');
+    });
+
+    it('marks nothing in the Julian October 1582', () => {
+      show(new KnoraDate('JULIAN', 'CE', 1582, 10, 1), 'JULIAN');
+
+      expect(el('day-5')!.classList).not.toContain('is-reform-gap');
     });
 
     it('shows Islamic month names when the calendar is Islamic', () => {

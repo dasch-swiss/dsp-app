@@ -350,6 +350,33 @@ describe('DateValueComponent, as the resource editor renders it', () => {
     });
   });
 
+  // Stored as given, in the proleptic Gregorian calendar, and said so rather than passed off.
+  describe('a day the Gregorian reform skipped', () => {
+    it('is noted when the user picks one', () => {
+      (component() as never as { onStartChange: (d: KnoraDate) => void }).onStartChange(
+        new KnoraDate('GREGORIAN', 'CE', 1582, 10, 5)
+      );
+      fixture.detectChanges();
+
+      expect(el('reform-gap')?.textContent).toContain('reformGapNote');
+      expect([asDate().calendar, asDate().day, asDate().month]).toEqual(['GREGORIAN', 5, 10]);
+    });
+
+    it('is noted when a conversion produces one', () => {
+      load(new KnoraDate('JULIAN', 'CE', 1582, 9, 25));
+      switchTo('GREGORIAN');
+
+      expect([asDate().day, asDate().month]).toEqual([5, 10]);
+      expect(el('reform-gap')).not.toBeNull();
+    });
+
+    it('is not noted for the days around it', () => {
+      load(new KnoraDate('GREGORIAN', 'CE', 1582, 10, 15));
+
+      expect(el('reform-gap')).toBeNull();
+    });
+  });
+
   // An imprecise start has no day to pick, so the end is filled in with the next month or year.
   describe('adding an end to an imprecise start', () => {
     const toggle = () =>

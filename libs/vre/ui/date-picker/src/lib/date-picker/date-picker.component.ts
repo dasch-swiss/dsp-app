@@ -272,6 +272,24 @@ export class DatePickerComponent {
     return this.isSuggested() && grid !== null ? { ...draft, year: grid.year, month: grid.month } : draft;
   });
 
+  /**
+   * The grid's days that the Gregorian reform skipped: 5–14 October 1582, in Gregorian.
+   *
+   * They can be picked — the calendar is proleptic, as in dsp-api, and stores them as given — but
+   * they are marked, because they never occurred where the reform took effect.
+   */
+  protected readonly reformGapDays = computed<ReadonlySet<number>>(() => {
+    const grid = this._gridMonth();
+    if (grid === null) {
+      return new Set();
+    }
+    const skipped = (day: number) =>
+      this._calendarDates.isSkippedByGregorianReform(
+        new KnoraDate(this.calendar(), grid.era, grid.year, grid.month, day)
+      );
+    return new Set(this.dayCells().filter((day): day is number => day !== null && skipped(day)));
+  });
+
   /** Ties the suggestion note to the controls it describes; unique, as a period has two pickers. */
   protected readonly suggestionNoteId = `date-picker-suggestion-${nextPickerId++}`;
 

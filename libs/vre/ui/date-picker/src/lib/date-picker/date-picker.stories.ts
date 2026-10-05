@@ -111,15 +111,18 @@ export const ClearsADayTheMonthCannotHold: Story = {
   },
 };
 
-export const SkipsTheGregorianReform: Story = {
-  name: 'Skips the ten days the Gregorian reform deleted',
+export const MarksTheDaysTheGregorianReformSkipped: Story = {
+  name: 'Offers and marks the ten days the Gregorian reform skipped',
   args: { date: new KnoraDate('GREGORIAN', 'CE', 1582, 10, 1), calendar: 'GREGORIAN' },
   play: async ({ canvasElement, step }) => {
     await open(canvasElement);
-    await step('October 1582 runs 1-4 then 15-31', async () => {
-      await expect(day(4)).not.toBeNull();
-      await expect(day(5)).toBeNull();
-      await expect(day(15)).not.toBeNull();
+    // Proleptic, as in dsp-api: 5–14 October 1582 are valid Gregorian dates, so they can be picked,
+    // but they never occurred where the reform took effect, so they are marked.
+    await step('October 1582 has every day, the skipped ones marked', async () => {
+      await expect(day(5)).not.toBeNull();
+      await expect(day(5)!.classList.contains('is-reform-gap')).toBe(true);
+      await expect(day(4)!.classList.contains('is-reform-gap')).toBe(false);
+      await expect(day(15)!.classList.contains('is-reform-gap')).toBe(false);
     });
   },
 };

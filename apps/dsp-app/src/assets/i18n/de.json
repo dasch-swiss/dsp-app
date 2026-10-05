@@ -1067,6 +1067,7 @@
       "noDay": "Monatsgenauigkeit (kein Tag)",
       "yearPrecisionShortcut": "Jahresgenauigkeit",
       "suggestedMonth": "Der aktuelle Monat ist als Vorschlag angezeigt. Erst wenn Sie einen Tag oder Monat wählen, wird etwas eingetragen.",
+      "skippedByReform": "Durch die gregorianische Reform übersprungen",
       "yearPrecision": "Jahresgenauigkeit. Wählen Sie einen Monat, um einen Tag auszuwählen.",
       "year": "Jahr",
       "bceWarning": "Achtung: Datum <strong>vor der Zeitrechnung</strong>.",
@@ -1092,7 +1093,8 @@
       "beforeHijra": "Vor der Hidschra",
       "inEachCalendar": "{{calendar}}. Dieses Datum in jedem Kalender",
       "jdn": "JTZ",
-      "periodOfDays": "Zeitraum von {{count}} Tagen"
+      "periodOfDays": "Zeitraum von {{count}} Tagen",
+      "reformGapNote": "{{date}} liegt in den zehn Tagen, die die gregorianische Reform im Oktober 1582 übersprungen hat. Es wird wie angegeben gespeichert, im proleptischen gregorianischen Kalender — derselbe Tag wie {{julian}}."
     },
     "weekdays": {
       "monday": {

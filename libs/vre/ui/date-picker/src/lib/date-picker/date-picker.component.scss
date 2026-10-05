@@ -310,6 +310,12 @@ $fg-subtle: #9ca3af;
   }
 }
 
+// A day the Gregorian reform skipped: pickable, but marked as one that never occurred.
+.day-cell.is-reform-gap:not(.is-selected) {
+  color: #92400e;
+  text-decoration: line-through;
+}
+
 // The suggested year and month: shown, not entered. Muted and italic so they do not read as a value.
 .control-input.is-suggested {
   color: $fg-muted;

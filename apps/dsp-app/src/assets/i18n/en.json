@@ -1067,6 +1067,7 @@
       "noDay": "Month precision (no day)",
       "yearPrecisionShortcut": "Year precision",
       "suggestedMonth": "Showing the current month as a suggestion. Nothing is entered until you pick a day or choose a month.",
+      "skippedByReform": "Skipped by the Gregorian reform",
       "yearPrecision": "Year precision. Choose a month to select a day.",
       "year": "Year",
       "bceWarning": "Attention: Date <strong>before common era</strong>.",
@@ -1092,7 +1093,8 @@
       "beforeHijra": "Before the Hijra",
       "inEachCalendar": "{{calendar}}. This date in each calendar",
       "jdn": "JDN",
-      "periodOfDays": "Period of {{count}} days"
+      "periodOfDays": "Period of {{count}} days",
+      "reformGapNote": "{{date}} lies in the ten days the Gregorian reform skipped in October 1582. It is stored as given, in the proleptic Gregorian calendar — the same day as {{julian}}."
     },
     "weekdays": {
       "monday": {

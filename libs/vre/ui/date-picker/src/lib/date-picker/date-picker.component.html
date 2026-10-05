@@ -159,6 +159,11 @@ deliberate act, so two of these side by side stay one line tall. -->
           type="button"
           class="day-cell"
           [class.is-selected]="cell === selectedDay()"
+          [class.is-reform-gap]="reformGapDays().has(cell)"
+          [attr.title]="reformGapDays().has(cell) ? ('ui.datePicker.skippedByReform' | translate) : null"
+          [attr.aria-label]="
+            reformGapDays().has(cell) ? cell + ', ' + ('ui.datePicker.skippedByReform' | translate) : null
+          "
           [attr.aria-pressed]="cell === selectedDay()"
           [attr.data-cy]="'day-' + cell"
           (click)="onDayChange(cell)">

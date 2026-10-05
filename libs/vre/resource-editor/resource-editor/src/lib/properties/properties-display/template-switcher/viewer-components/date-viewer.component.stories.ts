@@ -15,6 +15,8 @@ const TRANSLATIONS = {
       calendars: { GREGORIAN: 'Gregorian', JULIAN: 'Julian', ISLAMIC: 'Islamic (tabular)' },
       jdn: 'JDN',
       periodOfDays: 'Period of {{count}} days',
+      reformGapNote:
+        '{{date}} lies in the ten days the Gregorian reform skipped in October 1582. It is stored as given, in the proleptic Gregorian calendar — the same day as {{julian}}.',
     },
     // Shared with the date picker's grid header, so they sit beside calendarMarker rather than
     // inside it.
@@ -167,6 +169,25 @@ export const StatesThatACalendarCannotExpressTheDate: Story = {
     });
     await step('The calendars that can express it still show a date', async () => {
       await expect(readingDate('JULIAN')).toMatch(/\d{2}\.\d{2}\.\d{3}/);
+    });
+  },
+};
+
+export const NotesADayTheGregorianReformSkipped: Story = {
+  name: 'Notes that a stored day lies in the days the Gregorian reform skipped',
+  args: {
+    value: asValue(new KnoraDate('GREGORIAN', 'CE', 1582, 10, 5)),
+  },
+  play: async ({ canvasElement, step }) => {
+    await step('The reader opens the marker', async () => {
+      await userEvent.click(marker(canvasElement));
+    });
+    // A valid proleptic date, stored as given — but one that never occurred where the reform took
+    // effect, so the panel says so and names the Julian day it is.
+    await step('The panel names the skipped day and its Julian equivalent', async () => {
+      const note = document.querySelector('[data-cy="calendar-marker-reform-gap"]');
+      await expect(note?.textContent).toContain('the Gregorian reform skipped');
+      await expect(note?.textContent).toContain('25.09.1582 Julian');
     });
   },
 };

@@ -1067,6 +1067,7 @@
       "noDay": "Precisione al mese (nessun giorno)",
       "yearPrecisionShortcut": "Precisione all'anno",
       "suggestedMonth": "Il mese corrente è mostrato come suggerimento. Nulla viene inserito finché non scegli un giorno o un mese.",
+      "skippedByReform": "Saltato dalla riforma gregoriana",
       "yearPrecision": "Precisione all'anno. Scegli un mese per selezionare un giorno.",
       "year": "Anno",
       "bceWarning": "Attenzione: Data <strong>prima dell'era comune</strong>.",
@@ -1092,7 +1093,8 @@
       "beforeHijra": "Prima dell'Egira",
       "inEachCalendar": "{{calendar}}. Questa data in ogni calendario",
       "jdn": "GG",
-      "periodOfDays": "Periodo di {{count}} giorni"
+      "periodOfDays": "Periodo di {{count}} giorni",
+      "reformGapNote": "{{date}} cade nei dieci giorni saltati dalla riforma gregoriana nell'ottobre 1582. Viene memorizzata così com'è, nel calendario gregoriano prolettico — lo stesso giorno del {{julian}}."
     },
     "weekdays": {
       "monday": {

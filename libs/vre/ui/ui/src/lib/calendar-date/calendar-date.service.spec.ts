@@ -56,14 +56,14 @@ describe('CalendarDateService', () => {
       expect(d.length).toBe(30);
     });
 
-    it('skips the ten days the Gregorian reform deleted', () => {
-      const d = dayNumbers(cells('GREGORIAN', 'CE', 1582, 10));
+    // The Gregorian calendar is proleptic, as in dsp-api, so 5–14 October 1582 are valid dates.
+    // Deleting them drew 15–31 under the wrong weekdays.
+    it('draws every day of the Gregorian October 1582, each under its weekday', () => {
+      const all = cells('GREGORIAN', 'CE', 1582, 10);
 
-      expect(d).toContain(4);
-      expect(d).not.toContain(5);
-      expect(d).not.toContain(14);
-      expect(d).toContain(15);
-      expect(d.length).toBe(21);
+      expect(dayNumbers(all).length).toBe(31);
+      // 15 October 1582 was a Friday; the grid's columns run Monday to Sunday.
+      expect(all.indexOf(15) % 7).toBe(4);
     });
 
     it('leaves the Julian October 1582 whole, since that calendar had no reform', () => {
@@ -227,6 +227,105 @@ describe('CalendarDateService', () => {
       )?.start;
 
       expect(service.today('ISLAMIC')?.day).toBe(expected?.day);
+    });
+  });
+
+  // The editor's rule, which differs from the viewer's reading on purpose: someone who entered
+  // "July 1600" means that month, not the span of days it covers.
+  describe('restating a date for the editor', () => {
+    const shape = (d: KnoraDate | undefined) => d && [d.calendar, d.era, d.year, d.month, d.day];
+
+    it('converts a day', () => {
+      expect(shape(service.restateKnoraDateIn(new KnoraDate('GREGORIAN', 'CE', 2020, 4, 1), 'JULIAN'))).toEqual([
+        'JULIAN',
+        'CE',
+        2020,
+        3,
+        19,
+      ]);
+    });
+
+    it('keeps a month and a year between Julian and Gregorian, BCE included', () => {
+      expect(shape(service.restateKnoraDateIn(new KnoraDate('GREGORIAN', 'CE', 1600, 7), 'JULIAN'))).toEqual([
+        'JULIAN',
+        'CE',
+        1600,
+        7,
+        undefined,
+      ]);
+      expect(shape(service.restateKnoraDateIn(new KnoraDate('JULIAN', 'BCE', 44), 'GREGORIAN'))).toEqual([
+        'GREGORIAN',
+        'BCE',
+        44,
+        undefined,
+        undefined,
+      ]);
+    });
+
+    it('takes the Islamic month or year that contains the first day, and back', () => {
+      expect(shape(service.restateKnoraDateIn(new KnoraDate('GREGORIAN', 'CE', 1600, 7), 'ISLAMIC'))).toEqual([
+        'ISLAMIC',
+        'noEra',
+        1008,
+        12,
+        undefined,
+      ]);
+      expect(shape(service.restateKnoraDateIn(new KnoraDate('GREGORIAN', 'CE', 1600), 'ISLAMIC'))).toEqual([
+        'ISLAMIC',
+        'noEra',
+        1008,
+        undefined,
+        undefined,
+      ]);
+      expect(service.restateKnoraDateIn(new KnoraDate('ISLAMIC', 'noEra', 1008), 'GREGORIAN')?.year).toBe(1599);
+    });
+
+    it('refuses a year or month whose first day precedes the Hijra', () => {
+      expect(service.restateKnoraDateIn(new KnoraDate('GREGORIAN', 'CE', 622, 7), 'ISLAMIC')).toBeUndefined();
+      expect(service.restatableCalendarsFor(new KnoraDate('GREGORIAN', 'CE', 622, 7))).not.toContain('ISLAMIC');
+    });
+
+    it('returns a date already in the target calendar unchanged', () => {
+      const date = new KnoraDate('JULIAN', 'CE', 1600, 7);
+
+      expect(service.restateKnoraDateIn(date, 'JULIAN')).toBe(date);
+    });
+  });
+
+  describe('the next date, for a period end', () => {
+    const next = (d: KnoraDate) => {
+      const n = service.nextKnoraDate(d)!;
+      return [n.calendar, n.era, n.year, n.month, n.day];
+    };
+
+    it('takes the next day, across a year end and by each calendar’s leap rule', () => {
+      expect(next(new KnoraDate('GREGORIAN', 'CE', 1600, 12, 31))).toEqual(['GREGORIAN', 'CE', 1601, 1, 1]);
+      // 1700 is a leap year in Julian and not in Gregorian.
+      expect(next(new KnoraDate('JULIAN', 'CE', 1700, 2, 28))).toEqual(['JULIAN', 'CE', 1700, 2, 29]);
+      expect(next(new KnoraDate('GREGORIAN', 'CE', 1700, 2, 28))).toEqual(['GREGORIAN', 'CE', 1700, 3, 1]);
+    });
+
+    it('takes the next month, rolling December into January', () => {
+      expect(next(new KnoraDate('GREGORIAN', 'CE', 1600, 7))).toEqual(['GREGORIAN', 'CE', 1600, 8, undefined]);
+      expect(next(new KnoraDate('ISLAMIC', 'noEra', 1008, 12))).toEqual(['ISLAMIC', 'noEra', 1009, 1, undefined]);
+    });
+
+    it('takes the next year, with no year 0 between the eras', () => {
+      expect(next(new KnoraDate('GREGORIAN', 'BCE', 1))).toEqual(['GREGORIAN', 'CE', 1, undefined, undefined]);
+      expect(next(new KnoraDate('JULIAN', 'BCE', 44))).toEqual(['JULIAN', 'BCE', 43, undefined, undefined]);
+    });
+  });
+
+  describe('the days the Gregorian reform skipped', () => {
+    it('marks 5–14 October 1582 Gregorian and nothing around them', () => {
+      const day = (calendar: string, d: number) => new KnoraDate(calendar, 'CE', 1582, 10, d);
+
+      expect(service.isSkippedByGregorianReform(day('GREGORIAN', 5))).toBe(true);
+      expect(service.isSkippedByGregorianReform(day('GREGORIAN', 14))).toBe(true);
+      expect(service.isSkippedByGregorianReform(day('GREGORIAN', 4))).toBe(false);
+      expect(service.isSkippedByGregorianReform(day('GREGORIAN', 15))).toBe(false);
+      expect(service.isSkippedByGregorianReform(day('JULIAN', 5))).toBe(false);
+      expect(service.isSkippedByGregorianReform(new KnoraDate('GREGORIAN', 'CE', 1582, 10))).toBe(false);
     });
   });
 

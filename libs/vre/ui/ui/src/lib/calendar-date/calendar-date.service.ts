@@ -8,6 +8,7 @@ import {
   createDate,
   getCalendar,
   isEqual,
+  isPeriodOutOfOrder,
 } from '@dasch-swiss/vre/shared/calendar';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -81,6 +82,9 @@ export class CalendarDateService {
    * `undefined` where the target cannot express it — an Islamic reading of a date before the Hijra.
    * A range comes back with both ends when the source covers one: a Julian year is two Gregorian
    * ones, and reporting only the first would claim a precision the source never had.
+   *
+   * This is the *reading*, which the date viewer shows. Editing restates a year or a month instead
+   * of converting it to the days it covers — see {@link restateKnoraDateIn}.
    */
   convertKnoraDateTo(date: KnoraDate, calendar: CalendarSystem): ConvertedKnoraDate | undefined {
     const result = convertCalendarResult(this.createJDNCalendarDateFromKnoraDate(date), calendar);
@@ -109,6 +113,111 @@ export class CalendarDateService {
     return CALENDAR_SYSTEMS.filter(calendar =>
       dates.every(date => this.convertKnoraDateTo(date, calendar) !== undefined)
     );
+  }
+
+  /**
+   * a date as the editor restates it when the user switches its calendar.
+   *
+   * A day converts. A year or a month does not: someone who entered "July 1600" or "1600" means that
+   * month or year, not the span of days it covers — which is what {@link convertKnoraDateTo}, the
+   * viewer's reading, reports. Julian and Gregorian name their years and months alike, so the
+   * numbers stay. Islamic names its own, so the date takes the Islamic year or month that contains
+   * its first day, and the other way round.
+   *
+   * `undefined` where the target cannot express it — including a year or month whose first day lies
+   * before the Hijra, which no Islamic year or month contains.
+   */
+  restateKnoraDateIn(date: KnoraDate, calendar: CalendarSystem): KnoraDate | undefined {
+    if (date.calendar.toUpperCase() === calendar) {
+      return date;
+    }
+    if (date.precision === Precision.dayPrecision) {
+      return this.convertKnoraDateTo(date, calendar)?.start;
+    }
+    const involvesIslamic = date.calendar.toUpperCase() === 'ISLAMIC' || calendar === 'ISLAMIC';
+    if (!involvesIslamic) {
+      return new KnoraDate(calendar, date.era, date.year, date.month);
+    }
+    const firstDay = new KnoraDate(date.calendar, date.era, date.year, date.month ?? 1, 1);
+    const converted = this.convertKnoraDateTo(firstDay, calendar)?.start;
+    if (converted === undefined) {
+      return undefined;
+    }
+    const month = date.precision === Precision.monthPrecision ? converted.month : undefined;
+    return new KnoraDate(converted.calendar, converted.era, converted.year, month);
+  }
+
+  /** which calendars the editor can restate a value in, by {@link restateKnoraDateIn}. */
+  restatableCalendarsFor(value: KnoraDate | KnoraPeriod): CalendarSystem[] {
+    const dates = value instanceof KnoraPeriod ? [value.start, value.end] : [value];
+
+    return CALENDAR_SYSTEMS.filter(calendar =>
+      dates.every(date => this.restateKnoraDateIn(date, calendar) !== undefined)
+    );
+  }
+
+  /**
+   * the next day, month or year after a date, at its precision — what a period's end starts as.
+   *
+   * Days count through the day number, so month ends, leap days and each calendar's own rules take
+   * care of themselves. Years count astronomically, so 1 BCE is followed by 1 CE.
+   */
+  nextKnoraDate(date: KnoraDate): KnoraDate | undefined {
+    const calendar = date.calendar.toUpperCase() as CalendarSystem;
+    if (date.precision === Precision.dayPrecision) {
+      const jdn = this.julianDayNumber(date);
+      return jdn === undefined
+        ? undefined
+        : this.createKnoraDateFromCalendarDate(getCalendar(calendar).fromJDN(jdn + 1));
+    }
+    const astronomical = this.convertHistoricalYearToAstronomicalYear(date.year, date.era);
+    if (date.precision === Precision.yearPrecision) {
+      const { year, era } = this.convertAstronomicalYearToHistoricalYear(astronomical + 1, calendar);
+      return new KnoraDate(date.calendar, era, year);
+    }
+    const rollsOver = date.month === 12;
+    const { year, era } = this.convertAstronomicalYearToHistoricalYear(
+      rollsOver ? astronomical + 1 : astronomical,
+      calendar
+    );
+    return new KnoraDate(date.calendar, era, year, rollsOver ? 1 : date.month! + 1);
+  }
+
+  /**
+   * whether a day lies in the ten the Gregorian reform skipped: 5–14 October 1582.
+   *
+   * The Gregorian calendar here is proleptic, as in dsp-api, so these are valid dates and are
+   * stored as given — the same days as 25 September to 4 October 1582 Julian. But they never
+   * occurred where the reform took effect, so wherever one is shown or produced, it is said so
+   * rather than passed off as an ordinary day.
+   */
+  isSkippedByGregorianReform(date: KnoraDate): boolean {
+    return (
+      date.calendar.toUpperCase() === 'GREGORIAN' &&
+      date.era !== 'BCE' &&
+      date.year === 1582 &&
+      date.month === 10 &&
+      date.day !== undefined &&
+      date.day >= 5 &&
+      date.day <= 14
+    );
+  }
+
+  /**
+   * what to say about a value one of whose days the Gregorian reform skipped, or `undefined`.
+   *
+   * The day as stored, and the Julian day it is — the one the calendar in use there at the time
+   * would have written. Shared by the editor and the viewer, so both say the same thing.
+   */
+  reformGapOf(value: KnoraDate | KnoraPeriod): { date: string; julian: string } | undefined {
+    const dates = value instanceof KnoraPeriod ? [value.start, value.end] : [value];
+    const skipped = dates.find(date => this.isSkippedByGregorianReform(date));
+    const julian = skipped && this.convertKnoraDateTo(skipped, 'JULIAN')?.start;
+    if (skipped === undefined || julian === undefined) {
+      return undefined;
+    }
+    const text = (date: KnoraDate) => `${this.format(date, 'dd.MM.YYYY', 'era')} ${this.calendarName(date.calendar)}`;
+    return { date: text(skipped), julian: text(julian) };
   }
 
   /**
@@ -147,6 +256,14 @@ export class CalendarDateService {
     return isEqual(this.createJDNCalendarDateFromKnoraDate(a), this.createJDNCalendarDateFromKnoraDate(b));
   }
 
+  /** whether a period's start lies after its end, by the rule dsp-api applies. */
+  isPeriodOutOfOrder(start: KnoraDate, end: KnoraDate): boolean {
+    return isPeriodOutOfOrder(
+      this.createJDNCalendarDateFromKnoraDate(start),
+      this.createJDNCalendarDateFromKnoraDate(end)
+    );
+  }
+
   /** the same question for a whole value, which may be a period. */
   dateValuesDenoteSameInstant(
     a: KnoraDate | KnoraPeriod | null | undefined,
@@ -179,14 +296,15 @@ export class CalendarDateService {
    *
    * `0` pads the first row so the 1st lands under its weekday, in every calendar and every era.
    *
-   * October 1582 is a special case with a special cause: the Gregorian reform deleted ten days, so
-   * that month runs 1–4 then 15–31 and holds 21 days. It applies only to GREGORIAN/CE — the Julian
-   * calendar had no reform, and a BCE October is untouched.
+   * Every day of every month, October 1582 included: the Gregorian calendar is proleptic, as in
+   * dsp-api, so 5–14 October 1582 are valid dates. Deleting them drew 15–31 under the wrong weekdays
+   * and left days a conversion could produce with no cell to show them; they are marked instead —
+   * see {@link isSkippedByGregorianReform}.
    */
   monthGrid(calendar: string, era: string, year: number, month: number): MonthGrid {
     const yearAstro = this.convertHistoricalYearToAstronomicalYear(year, era);
     const calendarSystem = calendar.toUpperCase() as CalendarSystem;
-    let days = this.daysInMonth(calendarSystem, yearAstro, month);
+    const days = this.daysInMonth(calendarSystem, yearAstro, month);
 
     const cells: number[] = [];
 
@@ -195,10 +313,6 @@ export class CalendarDateService {
     }
 
     for (let i = 1; i <= days; i++) {
-      if (calendar === 'GREGORIAN' && year === 1582 && month === 10 && i === 5 && era === 'CE') {
-        i = 15;
-        days = 31;
-      }
       cells.push(i);
     }
 

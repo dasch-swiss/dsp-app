@@ -86,6 +86,19 @@ describe('CalendarMarkerComponent', () => {
       ).toBeUndefined();
     });
 
+    // The reform's skipped days are valid proleptic dates, and the panel says what they are.
+    it('states the note for a day the Gregorian reform skipped', () => {
+      fixture.componentRef.setInput('facts', {
+        reformGap: { date: '05.10.1582 Gregorian', julian: '25.09.1582 Julian' },
+      });
+      fixture.detectChanges();
+      asAny().toggle();
+      fixture.detectChanges();
+
+      const note = document.querySelector('[data-cy="calendar-marker-reform-gap"]');
+      expect(note?.textContent).toContain('reformGapNote');
+    });
+
     it('does not mutate the readings it was given', () => {
       const order = READINGS.map(r => r.calendar);
 

@@ -35,7 +35,7 @@ function firstRepresentableJDN(calendar: CalendarSystem): number | undefined {
  * It is also what dsp-api stores: a period's start JDN is the first day of its start and its end
  * JDN the last day of its end, whatever precision each end has.
  */
-export function jdnRange(date: CalendarDate): { first: number; last: number } {
+function jdnRange(date: CalendarDate): { first: number; last: number } {
   const calendar = getCalendar(date.calendar);
 
   if (date.precision === 'DAY') {
@@ -250,11 +250,21 @@ export function isEqual(a: CalendarDate, b: CalendarDate): boolean {
 }
 
 /**
+ * Whether a period's start lies after its end.
+ *
+ * The one place this rule lives. It compares the first day the start covers with the last day the
+ * end covers, as dsp-api does, so an imprecise end may contain the start — 15.03.1850 to 03.1850 —
+ * which is how projects record uncertain historical dates. Through JDN, so the two ends may be in
+ * different calendars.
+ */
+export function isPeriodOutOfOrder(start: CalendarDate, end: CalendarDate): boolean {
+  return jdnRange(start).first > jdnRange(end).last;
+}
+
+/**
  * Validates that a period's start date is before or equal to its end date.
  *
- * Compares the first day the start covers with the last day the end covers, as dsp-api does. An
- * imprecise end may therefore contain the start — 15.03.1850 to 03.1850 — which is how projects
- * record uncertain historical dates.
+ * Ordered by {@link isPeriodOutOfOrder}; unlike it, this also requires one calendar for both ends.
  *
  * @param start - The start date
  * @param end - The end date
@@ -276,7 +286,7 @@ export function validatePeriod(start: CalendarDate, end: CalendarDate): void {
     );
   }
 
-  if (jdnRange(start).first > jdnRange(end).last) {
+  if (isPeriodOutOfOrder(start, end)) {
     throw new CalendarError('Period start date must be before or equal to end date');
   }
 }

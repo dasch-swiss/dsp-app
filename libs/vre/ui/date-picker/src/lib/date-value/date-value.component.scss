@@ -51,6 +51,14 @@ $primary-600: #336790;
   color: $primary-600;
 }
 
+// A day the Gregorian reform skipped: stored as given, and said so.
+.reform-gap {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 4px;
+  color: #92400e;
+}
+
 .line-icon {
   font-size: 14px;
   width: 14px;

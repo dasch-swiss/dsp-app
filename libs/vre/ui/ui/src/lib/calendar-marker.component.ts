@@ -44,6 +44,8 @@ export interface CalendarFacts {
   readonly jdn?: number;
   readonly endJdn?: number;
   readonly durationDays?: number;
+  /** Set when a day of the value lies in the ten the Gregorian reform skipped. */
+  readonly reformGap?: { readonly date: string; readonly julian: string };
 }
 
 /**
@@ -126,6 +128,12 @@ export interface CalendarFacts {
           @if (facts().durationDays !== undefined) {
             <span class="calendar-marker-duration" data-cy="calendar-marker-duration">
               {{ 'ui.calendarMarker.periodOfDays' | translate: { count: facts().durationDays } }}
+            </span>
+          }
+
+          @if (facts().reformGap; as gap) {
+            <span class="calendar-marker-reform-gap" data-cy="calendar-marker-reform-gap">
+              {{ 'ui.calendarMarker.reformGapNote' | translate: gap }}
             </span>
           }
         }
@@ -216,6 +224,12 @@ export interface CalendarFacts {
         grid-column: 1 / -1;
         color: #4b5563;
       }
+
+      .calendar-marker-reform-gap {
+        grid-column: 1 / -1;
+        max-width: 280px;
+        color: #92400e;
+      }
     `,
   ],
 })
@@ -248,8 +262,8 @@ export class CalendarMarkerComponent {
   protected readonly storedLabel = computed(() => `ui.calendarMarker.calendars.${this.storedCalendar()}`);
 
   protected readonly hasFacts = computed(() => {
-    const { weekday, jdn, durationDays } = this.facts();
-    return weekday !== undefined || jdn !== undefined || durationDays !== undefined;
+    const { weekday, jdn, durationDays, reformGap } = this.facts();
+    return weekday !== undefined || jdn !== undefined || durationDays !== undefined || reformGap !== undefined;
   });
 
   /**
