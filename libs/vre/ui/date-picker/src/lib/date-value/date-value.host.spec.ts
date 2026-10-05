@@ -189,13 +189,32 @@ describe('DateValueComponent, as the resource editor renders it', () => {
       expect(el('converted-from')?.textContent).toContain('convertedStoredSamePeriod');
     });
 
-    // A Julian year covers different days than the Gregorian year it becomes.
-    it('does not call an imprecise conversion the same day', () => {
+    // A year or month is restated, not converted, so "has been converted" would not be true.
+    it('says a year was taken over rather than converted between Julian and Gregorian', () => {
       load(new KnoraDate('JULIAN', 'CE', 1585));
       switchTo('GREGORIAN');
 
-      expect(el('converted-from')?.textContent).toContain('convertedStored');
-      expect(el('converted-from')?.textContent).not.toContain('Same');
+      expect(el('converted-from')?.textContent).toContain('keptStored');
+    });
+
+    // Only the day was converted; the year is kept without comment.
+    it('names only the converted day of a period whose other end is a year', () => {
+      load(new KnoraPeriod(new KnoraDate('GREGORIAN', 'CE', 1600, 3, 15), new KnoraDate('GREGORIAN', 'CE', 1601)));
+      switchTo('JULIAN');
+
+      const hint = el('converted-from')?.textContent;
+      expect(hint).toContain('convertedStoredSameDay');
+      expect(hint).not.toContain('keptStored');
+      expect((component() as never as { conversionHint: () => unknown }).conversionHint()).toEqual(
+        expect.objectContaining({ from: '15.03.1600 Gregorian', to: '05.03.1600 Julian' })
+      );
+    });
+
+    it('calls an Islamic year the equivalent of the stored one', () => {
+      load(new KnoraDate('GREGORIAN', 'CE', 1600));
+      switchTo('ISLAMIC');
+
+      expect(el('converted-from')?.textContent).toContain('equivalentStored');
     });
 
     // A user who has just picked a different day can see that it differs; saying so read as a
@@ -244,13 +263,11 @@ describe('DateValueComponent, as the resource editor renders it', () => {
       expect(period.end.calendar).toBe('GREGORIAN');
     });
 
-    it('does not shrink an imprecise period', () => {
-      // Julian 1580–1585 covers Gregorian 1580–1586: the end takes the last day of its span.
+    it('keeps the years of an imprecise period between Julian and Gregorian', () => {
       switchTo('GREGORIAN');
 
       const period = value() as KnoraPeriod;
-      expect(period.start.year).toBe(1580);
-      expect(period.end.year).toBe(1586);
+      expect([period.start.year, period.end.year]).toEqual([1580, 1585]);
     });
 
     it('returns to exactly the stored period', () => {
@@ -263,6 +280,90 @@ describe('DateValueComponent, as the resource editor renders it', () => {
 
     it('offers one calendar control for the whole value', () => {
       expect((fixture.nativeElement as HTMLElement).querySelectorAll('app-calendar-selector').length).toBe(1);
+    });
+  });
+
+  // Someone who entered "July 1600" or "1600" still means July 1600 or 1600 in the other calendar.
+  describe('a year or a month across calendars', () => {
+    const shape = (d: KnoraDate) => [d.calendar, d.era, d.year, d.month, d.day];
+
+    it('keeps a month between Gregorian and Julian', () => {
+      load(new KnoraDate('GREGORIAN', 'CE', 1600, 7));
+      switchTo('JULIAN');
+
+      expect(shape(asDate())).toEqual(['JULIAN', 'CE', 1600, 7, undefined]);
+    });
+
+    it('keeps a year between Julian and Gregorian, BCE included', () => {
+      load(new KnoraDate('JULIAN', 'BCE', 44));
+      switchTo('GREGORIAN');
+
+      expect(shape(asDate())).toEqual(['GREGORIAN', 'BCE', 44, undefined, undefined]);
+    });
+
+    it('takes the Islamic month that contains the first day of the month', () => {
+      // 01.07.1600 Gregorian falls in Dhu al-Hijjah 1008; Muharram 1009 begins later that month.
+      load(new KnoraDate('GREGORIAN', 'CE', 1600, 7));
+      switchTo('ISLAMIC');
+
+      expect(shape(asDate())).toEqual(['ISLAMIC', 'noEra', 1008, 12, undefined]);
+    });
+
+    it('takes the Islamic year that contains the first day of the year', () => {
+      load(new KnoraDate('GREGORIAN', 'CE', 1600));
+      switchTo('ISLAMIC');
+
+      expect(shape(asDate())).toEqual(['ISLAMIC', 'noEra', 1008, undefined, undefined]);
+    });
+
+    it('still converts a day', () => {
+      load(new KnoraDate('GREGORIAN', 'CE', 1600, 7, 15));
+      switchTo('JULIAN');
+
+      expect(shape(asDate())).toEqual(['JULIAN', 'CE', 1600, 7, 5]);
+    });
+  });
+
+  // An imprecise start has no day to pick, so the end is filled in with the next month or year.
+  describe('adding an end to an imprecise start', () => {
+    const toggle = () =>
+      (component() as never as { onTogglePeriod: (e: Event) => void }).onTogglePeriod(new Event('click'));
+    const end = () => (value() as KnoraPeriod).end;
+
+    it('presets the next month', () => {
+      load(new KnoraDate('GREGORIAN', 'CE', 1600, 7));
+      toggle();
+
+      expect([end().year, end().month, end().day]).toEqual([1600, 8, undefined]);
+      expect(host.control.valid).toBe(true);
+    });
+
+    it('rolls a December over into January of the next year', () => {
+      load(new KnoraDate('ISLAMIC', 'noEra', 1008, 12));
+      toggle();
+
+      expect([end().calendar, end().year, end().month]).toEqual(['ISLAMIC', 1009, 1]);
+    });
+
+    it('presets the next year', () => {
+      load(new KnoraDate('JULIAN', 'CE', 1600));
+      toggle();
+
+      expect([end().year, end().month]).toEqual([1601, undefined]);
+    });
+
+    it('counts across the turn of the era, which has no year 0', () => {
+      load(new KnoraDate('GREGORIAN', 'BCE', 1));
+      toggle();
+
+      expect([end().era, end().year]).toEqual(['CE', 1]);
+    });
+
+    it('presets nothing for a day, which is anyone’s guess', () => {
+      load(new KnoraDate('GREGORIAN', 'CE', 1600, 7, 15));
+      toggle();
+
+      expect(host.control.errors).toEqual({ endRequired: true });
     });
   });
 

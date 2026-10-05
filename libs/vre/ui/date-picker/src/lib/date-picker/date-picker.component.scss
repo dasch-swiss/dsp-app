@@ -310,6 +310,12 @@ $fg-subtle: #9ca3af;
   }
 }
 
+.precision-shortcuts {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 16px;
+}
+
 .link-button {
   margin-top: 8px;
   padding: 4px 0;

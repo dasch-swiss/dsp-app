@@ -323,6 +323,11 @@ export class DatePickerComponent {
     this._edit({ month });
   }
 
+  /** Drops to year precision. The day goes too, so choosing a month again does not revive it. */
+  protected onYearPrecision(): void {
+    this._edit({ month: null, day: null });
+  }
+
   protected onEraChange(era: string): void {
     this._edit({ era });
   }

@@ -190,6 +190,29 @@ describe('DatePickerComponent', () => {
       expect(emitted.at(-1)?.month).toBe(6);
     });
 
+    it('drops to year precision, day included, when the user asks for year precision', () => {
+      show(new KnoraDate('GREGORIAN', 'CE', 2024, 6, 15));
+
+      el('year-precision')!.click();
+      fixture.detectChanges();
+
+      expect([emitted.at(-1)?.year, emitted.at(-1)?.month, emitted.at(-1)?.day]).toEqual([2024, undefined, undefined]);
+    });
+
+    it('offers year precision only while there is a month to drop', () => {
+      show(new KnoraDate('GREGORIAN', 'CE', 2024));
+
+      expect(el('year-precision')).toBeNull();
+    });
+
+    it('asks for the year before the month', () => {
+      show(new KnoraDate('GREGORIAN', 'CE', 2024, 6, 15));
+
+      const year = el('year-input')!;
+      const month = el('month-select')!;
+      expect(year.compareDocumentPosition(month) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    });
+
     it('offers a no-day affordance even when the month fills its last row', () => {
       // A month ending on a Sunday leaves no spare cell, so the affordance needs its own row.
       show(new KnoraDate('GREGORIAN', 'CE', 2024, 3, 1));

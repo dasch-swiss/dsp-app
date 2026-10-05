@@ -3,7 +3,7 @@ import { ControlValueAccessor, NG_VALIDATORS, NG_VALUE_ACCESSOR, ValidationError
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { KnoraDate, KnoraPeriod } from '@dasch-swiss/dsp-js';
+import { KnoraDate, KnoraPeriod, Precision } from '@dasch-swiss/dsp-js';
 import { CalendarSystem, jdnRange } from '@dasch-swiss/vre/shared/calendar';
 import { CalendarDateService } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -137,22 +137,22 @@ export class DateValueComponent implements ControlValueAccessor, Validator {
       converted !== null && current !== null && this._calendarDates.knoraDatesDenoteSameInstant(converted, current);
 
     if (stored instanceof KnoraPeriod) {
-      const convertedStart = this._convert(stored.start, calendar, 'start');
-      const convertedEnd = this._convert(stored.end, calendar, 'end');
+      const convertedStart = this._convert(stored.start, calendar);
+      const convertedEnd = this._convert(stored.end, calendar);
       return holds(convertedStart, start) && holds(convertedEnd, end)
         ? new KnoraPeriod(convertedStart, convertedEnd)
         : null;
     }
-    const converted = this._convert(stored, calendar, 'start');
+    const converted = this._convert(stored, calendar);
     return holds(converted, start) ? converted : null;
   });
 
   /**
-   * The conversion hint: its translation key and the converted value as text, or null.
+   * The conversion hint: its translation key and the two values it names as text, or null.
    *
    * The "same day" clause is the one thing a reader cannot work out from the numerals: 15.06.2024
-   * Gregorian and 02.06.2024 Julian look like different dates and are not. An imprecise date gets no
-   * such clause, because a Julian year covers different days than the Gregorian year it becomes.
+   * Gregorian and 02.06.2024 Julian look like different dates and are not. A year or a month is
+   * restated rather than converted, so it gets its own wording instead.
    */
   protected readonly conversionHint = computed(() => {
     const stored = this._stored();
@@ -160,15 +160,40 @@ export class DateValueComponent implements ControlValueAccessor, Validator {
     if (stored === null || converted === null) {
       return null;
     }
-    let key = 'ui.datePicker.convertedStored';
-    if (this._calendarDates.dateValuesDenoteSameInstant(stored, converted)) {
-      key =
-        converted instanceof KnoraPeriod
-          ? 'ui.datePicker.convertedStoredSamePeriod'
-          : 'ui.datePicker.convertedStoredSameDay';
+    if (!this._isImprecise(stored)) {
+      return this._convertedHint(stored, converted);
     }
-    return { key, converted: this._text(converted) };
+    if (this._involvesIslamic(this._startOf(stored), this._state().calendar)) {
+      return this._hintFor('ui.datePicker.equivalentStored', stored, converted);
+    }
+    // Between Julian and Gregorian only a day is converted. In a period with one day and one year
+    // or month, the hint names the day alone; the year or month is kept without comment, because
+    // calling the whole period "taken over" would be only half true.
+    if (stored instanceof KnoraPeriod && converted instanceof KnoraPeriod) {
+      if (stored.start.precision === Precision.dayPrecision) {
+        return this._convertedHint(stored.start, converted.start);
+      }
+      if (stored.end.precision === Precision.dayPrecision) {
+        return this._convertedHint(stored.end, converted.end);
+      }
+    }
+    return this._hintFor('ui.datePicker.keptStored', stored, converted);
   });
+
+  private _convertedHint(stored: KnoraDate | KnoraPeriod, converted: KnoraDate | KnoraPeriod) {
+    if (!this._calendarDates.dateValuesDenoteSameInstant(stored, converted)) {
+      return this._hintFor('ui.datePicker.convertedStored', stored, converted);
+    }
+    const key =
+      converted instanceof KnoraPeriod
+        ? 'ui.datePicker.convertedStoredSamePeriod'
+        : 'ui.datePicker.convertedStoredSameDay';
+    return this._hintFor(key, stored, converted);
+  }
+
+  private _hintFor(key: string, stored: KnoraDate | KnoraPeriod, converted: KnoraDate | KnoraPeriod) {
+    return { key, from: this._text(stored), to: this._text(converted) };
+  }
 
   /** The calendar now chosen, for the hint that names it. */
   protected readonly calendarLabel = computed(() => `ui.calendarMarker.calendars.${this._state().calendar}`);
@@ -292,14 +317,14 @@ export class DateValueComponent implements ControlValueAccessor, Validator {
       return;
     }
 
-    const start = this._convert(source.start, calendar, 'start');
+    const start = this._convert(source.start, calendar);
     if (start === null) {
       // The target cannot express this date. Restoring what the value actually has is the honest
       // answer; stamping the unrepresentable calendar onto it is what relabelling looked like.
       return;
     }
 
-    const end = source.end === null ? null : this._convert(source.end, calendar, 'end');
+    const end = source.end === null ? null : this._convert(source.end, calendar);
     if (source.end !== null && end === null) {
       return;
     }
@@ -323,7 +348,7 @@ export class DateValueComponent implements ControlValueAccessor, Validator {
     event.preventDefault();
     this._touch();
     const isPeriod = !this._state().isPeriod;
-    const end = isPeriod ? this._state().end : null;
+    const end = isPeriod ? (this._state().end ?? this._presetEnd(this._state().start)) : null;
     this._rebaseIfEdited(this._state().start, end);
     this._commit({ ...this._state(), isPeriod, end });
   }
@@ -343,22 +368,66 @@ export class DateValueComponent implements ControlValueAccessor, Validator {
   /**
    * One end of the value in another calendar.
    *
-   * A start takes the first day of its converted span and an end the last, so an imprecise period
-   * never shrinks: a Julian 1580–1585 covers Gregorian 1580–1586, and taking each span's start
-   * would silently drop a year of a value that is saved rather than merely displayed.
+   * A day is converted. A year or a month is not: someone who entered "July 1600" or "1600" means
+   * that month or year, not the span of days it happens to cover, so the switch keeps what they
+   * said — see {@link _renameImprecise}.
    *
    * Returning to the source's own calendar is a return, not a conversion: the date is taken
-   * verbatim, so an imprecise one comes back at its stored precision rather than a span's start.
+   * verbatim.
    */
-  private _convert(date: KnoraDate, target: CalendarSystem, which: 'start' | 'end'): KnoraDate | null {
+  private _convert(date: KnoraDate, target: CalendarSystem): KnoraDate | null {
     if (date.calendar.toUpperCase() === target) {
       return date;
     }
-    const converted = this._calendarDates.convertKnoraDateTo(date, target);
+    if (date.precision !== Precision.dayPrecision) {
+      return this._renameImprecise(date, target);
+    }
+    return this._calendarDates.convertKnoraDateTo(date, target)?.start ?? null;
+  }
+
+  /**
+   * A year or a month restated in another calendar, at the same precision.
+   *
+   * Julian and Gregorian name their years and months alike, so the numbers stay. Islamic names its
+   * own, so the date takes the Islamic year or month that contains its first day — and the other
+   * way round.
+   */
+  private _renameImprecise(date: KnoraDate, target: CalendarSystem): KnoraDate | null {
+    if (!this._involvesIslamic(date, target)) {
+      return new KnoraDate(target, date.era, date.year, date.month);
+    }
+    const firstDay = new KnoraDate(date.calendar, date.era, date.year, date.month ?? 1, 1);
+    const converted = this._calendarDates.convertKnoraDateTo(firstDay, target)?.start;
     if (converted === undefined) {
       return null;
     }
-    return which === 'end' ? (converted.end ?? converted.start) : converted.start;
+    const month = date.precision === Precision.monthPrecision ? converted.month : undefined;
+    return new KnoraDate(converted.calendar, converted.era, converted.year, month);
+  }
+
+  private _involvesIslamic(date: KnoraDate, target: CalendarSystem): boolean {
+    return date.calendar.toUpperCase() === 'ISLAMIC' || target === 'ISLAMIC';
+  }
+
+  /**
+   * The end a period starts with when the user adds one to an imprecise start: the next month or
+   * year, at the start's precision. A day-precision start gets no preset, because which day is meant
+   * is anyone's guess.
+   */
+  private _presetEnd(start: KnoraDate | null): KnoraDate | null {
+    if (start === null || start.precision === Precision.dayPrecision) {
+      return null;
+    }
+    const calendar = start.calendar.toUpperCase() as CalendarSystem;
+    const byMonth = start.precision === Precision.monthPrecision;
+    const rollsOver = byMonth && start.month === 12;
+    const astronomical = this._calendarDates.convertHistoricalYearToAstronomicalYear(start.year, start.era);
+    const { year, era } = this._calendarDates.convertAstronomicalYearToHistoricalYear(
+      byMonth && !rollsOver ? astronomical : astronomical + 1,
+      calendar
+    );
+    const month = byMonth ? (rollsOver ? 1 : start.month! + 1) : undefined;
+    return new KnoraDate(start.calendar, era, year, month);
   }
 
   /**
@@ -378,8 +447,8 @@ export class DateValueComponent implements ControlValueAccessor, Validator {
     }
 
     const calendar = this._state().calendar;
-    const expectedStart = this._convert(source.start, calendar, 'start');
-    const expectedEnd = source.end === null ? null : this._convert(source.end, calendar, 'end');
+    const expectedStart = this._convert(source.start, calendar);
+    const expectedEnd = source.end === null ? null : this._convert(source.end, calendar);
 
     const startMoved = expectedStart === null || !this._calendarDates.knoraDatesDenoteSameInstant(expectedStart, start);
     // Adding or removing an end is an edit too: the stored value's ends no longer describe the value.
@@ -438,6 +507,16 @@ export class DateValueComponent implements ControlValueAccessor, Validator {
     }
     const date = value instanceof KnoraPeriod ? value.start : value;
     return date.calendar.toUpperCase() as CalendarSystem;
+  }
+
+  private _startOf(value: KnoraDate | KnoraPeriod): KnoraDate {
+    return value instanceof KnoraPeriod ? value.start : value;
+  }
+
+  /** Whether any end of the value is a year or a month rather than a day. */
+  private _isImprecise(value: KnoraDate | KnoraPeriod): boolean {
+    const dates = value instanceof KnoraPeriod ? [value.start, value.end] : [value];
+    return dates.some(date => date.precision !== Precision.dayPrecision);
   }
 
   private _text(value: KnoraDate | KnoraPeriod): string {

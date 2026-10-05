@@ -59,10 +59,23 @@ deliberate act, so two of these side by side stay one line tall. -->
     </div>
     }
 
-    <!-- month, year and era. Native controls rather than mat-form-fields: the design is a row of
-    three equal-height bordered boxes with captions above, which Material's floating labels and
-    baseline underlines cannot express without fighting them. -->
+    <!-- year, month and era: year first, because a date is narrowed down from the year. Native
+    controls rather than mat-form-fields: the design is a row of three equal-height bordered boxes
+    with captions above, which Material's floating labels and baseline underlines cannot express
+    without fighting them. -->
     <div class="panel-controls">
+      <label class="control year">
+        <span class="control-caption">{{ 'ui.datePicker.year' | translate }}</span>
+        <input
+          class="control-input"
+          type="number"
+          min="1"
+          data-cy="year-input"
+          [value]="draft().year ?? ''"
+          [disabled]="disabled()"
+          (input)="onYearChange($any($event.target).value)" />
+      </label>
+
       <label class="control month">
         <span class="control-caption">{{ 'ui.datePicker.month' | translate }}</span>
         <!-- `[selected]` per option rather than `[value]` on the select: the select's value is
@@ -83,18 +96,6 @@ deliberate act, so two of these side by side stay one line tall. -->
           </option>
           }
         </select>
-      </label>
-
-      <label class="control year">
-        <span class="control-caption">{{ 'ui.datePicker.year' | translate }}</span>
-        <input
-          class="control-input"
-          type="number"
-          min="1"
-          data-cy="year-input"
-          [value]="draft().year ?? ''"
-          [disabled]="disabled()"
-          (input)="onYearChange($any($event.target).value)" />
       </label>
 
       <div class="control era">
@@ -154,10 +155,17 @@ deliberate act, so two of these side by side stay one line tall. -->
         </button>
         } }
       </div>
-      <!-- dropping to month precision -->
-      <button type="button" class="link-button" data-cy="no-day" (click)="onDayChange(null)">
-        {{ 'ui.datePicker.noDay' | translate }}
-      </button>
+      <!-- dropping to month or to year precision -->
+      <div class="precision-shortcuts">
+        <button type="button" class="link-button" data-cy="no-day" (click)="onDayChange(null)">
+          {{ 'ui.datePicker.noDay' | translate }}
+        </button>
+        @if (hasValidYear() && draft().month !== null) {
+        <button type="button" class="link-button" data-cy="year-precision" (click)="onYearPrecision()">
+          {{ 'ui.datePicker.yearPrecisionShortcut' | translate }}
+        </button>
+        }
+      </div>
       } @else {
       <p class="day-grid-empty" data-cy="year-precision-note">{{ 'ui.datePicker.yearPrecision' | translate }}</p>
       }

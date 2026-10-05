@@ -122,17 +122,16 @@ export const ShowsNoHintWhenTheUserPicksAnotherDay: Story = {
   },
 };
 
-export const DoesNotShrinkAPeriod: Story = {
-  name: 'Converts a period without shrinking it',
+export const KeepsTheYearsOfAPeriod: Story = {
+  name: 'Keeps the years of a year-precision period between Julian and Gregorian',
   args: {
     initial: new KnoraPeriod(new KnoraDate('JULIAN', 'CE', 1580), new KnoraDate('JULIAN', 'CE', 1585)),
   },
   play: async ({ canvasElement, step }) => {
-    await step('Julian 1580–1585 covers Gregorian 1580–1586', async () => {
-      // The end takes the last day of its span; taking the first would drop a year of a value that
-      // is saved rather than merely displayed.
+    await step('Julian 1580–1585 becomes Gregorian 1580–1585', async () => {
+      // Someone who entered years means those years, not the span of days they cover.
       await userEvent.click(calendarOption(canvasElement, 'GREGORIAN') as HTMLElement);
-      await expect(controlValue(canvasElement)).toBe('-.-.1580 GREGORIAN – -.-.1586 GREGORIAN');
+      await expect(controlValue(canvasElement)).toBe('-.-.1580 GREGORIAN – -.-.1585 GREGORIAN');
     });
     await step('And back is exactly the stored period', async () => {
       await userEvent.click(calendarOption(canvasElement, 'JULIAN') as HTMLElement);
