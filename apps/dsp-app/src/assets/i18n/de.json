@@ -1066,6 +1066,7 @@
       "none": "Keine",
       "noDay": "Monatsgenauigkeit (kein Tag)",
       "yearPrecisionShortcut": "Jahresgenauigkeit",
+      "suggestedMonth": "Der aktuelle Monat ist als Vorschlag angezeigt. Erst wenn Sie einen Tag oder Monat wählen, wird etwas eingetragen.",
       "yearPrecision": "Jahresgenauigkeit. Wählen Sie einen Monat, um einen Tag auszuwählen.",
       "year": "Jahr",
       "bceWarning": "Achtung: Datum <strong>vor der Zeitrechnung</strong>.",

@@ -310,6 +310,21 @@ $fg-subtle: #9ca3af;
   }
 }
 
+// The suggested year and month: shown, not entered. Muted and italic so they do not read as a value.
+.control-input.is-suggested {
+  color: $fg-muted;
+  font-style: italic;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
 .precision-shortcuts {
   display: flex;
   flex-wrap: wrap;

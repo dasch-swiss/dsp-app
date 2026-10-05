@@ -210,8 +210,7 @@ export const OpensANewValueOnAUsableMonth: Story = {
       await expect(year?.value).toBe(String(new Date().getFullYear()));
     });
 
-    // The reported sequence: open, switch era, drop to a coarser precision. The seeded month and
-    // year used to ride along and be stored as a date nobody entered.
+    // Switching the era enters nothing, so nothing may be stored.
     await step('Switching the era alone still stores nothing', async () => {
       await userEvent.click(document.querySelector<HTMLElement>('[data-cy="era-BCE"]')!);
       await expect(controlValue(canvasElement)).toBe('null');

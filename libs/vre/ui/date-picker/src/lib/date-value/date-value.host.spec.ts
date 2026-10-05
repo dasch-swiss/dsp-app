@@ -322,6 +322,26 @@ describe('DateValueComponent, as the resource editor renders it', () => {
       expect(shape(asDate())).toEqual(['ISLAMIC', 'noEra', 1008, undefined, undefined]);
     });
 
+    // An end added beside a stored single date — its preset included — is not an edit of it.
+    it('restores a stored month exactly after an end is added in Islamic', () => {
+      load(new KnoraDate('GREGORIAN', 'CE', 1600, 7));
+      switchTo('ISLAMIC');
+      (component() as never as { onTogglePeriod: (e: Event) => void }).onTogglePeriod(new Event('click'));
+      fixture.detectChanges();
+      switchTo('GREGORIAN');
+
+      expect(shape((value() as KnoraPeriod).start)).toEqual(['GREGORIAN', 'CE', 1600, 7, undefined]);
+    });
+
+    // The first day of Gregorian 07.622 lies before the Hijra, so no Islamic month contains it.
+    it('does not offer Islamic for a month that straddles the Hijra', () => {
+      load(new KnoraDate('GREGORIAN', 'CE', 622, 7));
+
+      expect((component() as never as { availableCalendars: () => string[] }).availableCalendars()).not.toContain(
+        'ISLAMIC'
+      );
+    });
+
     it('still converts a day', () => {
       load(new KnoraDate('GREGORIAN', 'CE', 1600, 7, 15));
       switchTo('JULIAN');
@@ -586,7 +606,7 @@ describe('DateValueComponent, as the resource editor renders it', () => {
       switchTo('JULIAN');
 
       // "(stored value)" must refer to 1999, which means the base was re-anchored.
-      expect(el('converted-from')?.textContent).toContain('convertedStored');
+      expect(el('converted-from')?.textContent).toContain('convertedStoredSameDay');
     });
   });
 

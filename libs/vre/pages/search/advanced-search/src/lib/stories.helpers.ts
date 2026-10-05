@@ -63,7 +63,10 @@ const STORY_TRANSLATIONS = {
       none: 'None',
       year: 'Year',
       era: 'Era',
-      noDay: 'No day (month precision)',
+      noDay: 'Month precision (no day)',
+      yearPrecisionShortcut: 'Year precision',
+      suggestedMonth:
+        'Showing the current month as a suggestion. Nothing is entered until you pick a day or choose a month.',
       yearPrecision: 'Year precision. Choose a month to select a day.',
       done: 'Done',
     },

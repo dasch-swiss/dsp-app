@@ -95,8 +95,8 @@ export class DateValueComponent implements ControlValueAccessor, Validator {
    * What conversions measure from: the stored value, until the user edits a date.
    *
    * Switching away and back then restores the stored value exactly, rather than accumulating the
-   * drift of converting a conversion — a Julian year is a two-year Gregorian span, and converting
-   * that back lands a year early.
+   * drift of converting a conversion — an Islamic year or month restated by its first day comes back
+   * as the neighbouring Gregorian one.
    */
   private readonly _baseIsStored = signal(true);
 
@@ -109,7 +109,16 @@ export class DateValueComponent implements ControlValueAccessor, Validator {
   /** Which calendars can express this value; a period needs both ends representable. */
   protected readonly availableCalendars = computed<readonly CalendarSystem[]>(() => {
     const value = this._asValue(this._state());
-    return value ? this._calendarDates.availableCalendarsFor(value) : (['GREGORIAN', 'JULIAN', 'ISLAMIC'] as const);
+    if (value === null) {
+      return ['GREGORIAN', 'JULIAN', 'ISLAMIC'] as const;
+    }
+    // Checked against this editor's own rule as well: a year or month restated in Islamic takes the
+    // one its first day falls in, which a Gregorian 622 straddling the Hijra does not have — and an
+    // offered calendar that then refuses the switch is a control that does nothing.
+    const dates = value instanceof KnoraPeriod ? [value.start, value.end] : [value];
+    return this._calendarDates
+      .availableCalendarsFor(value)
+      .filter(calendar => dates.every(date => this._convert(date, calendar) !== null));
   });
 
   /** The stored value as text, for the lines that state what is stored and what was converted. */
@@ -177,17 +186,13 @@ export class DateValueComponent implements ControlValueAccessor, Validator {
   });
 
   private _convertedHint(stored: KnoraDate | KnoraPeriod, converted: KnoraDate | KnoraPeriod) {
-    if (!this._calendarDates.dateValuesDenoteSameInstant(stored, converted)) {
-      return this._hintFor('ui.datePicker.convertedStored', stored, converted);
+    let key = 'ui.datePicker.convertedStored';
+    if (this._calendarDates.dateValuesDenoteSameInstant(stored, converted)) {
+      key =
+        converted instanceof KnoraPeriod
+          ? 'ui.datePicker.convertedStoredSamePeriod'
+          : 'ui.datePicker.convertedStoredSameDay';
     }
-    const key =
-      converted instanceof KnoraPeriod
-        ? 'ui.datePicker.convertedStoredSamePeriod'
-        : 'ui.datePicker.convertedStoredSameDay';
-    return this._hintFor(key, stored, converted);
-  }
-
-  private _hintFor(key: string, stored: KnoraDate | KnoraPeriod, converted: KnoraDate | KnoraPeriod) {
     return { key, from: this._text(stored), to: this._text(converted) };
   }
 
@@ -200,12 +205,9 @@ export class DateValueComponent implements ControlValueAccessor, Validator {
     if (!isPeriod || start === null || end === null) {
       return false;
     }
-    // The first day the start covers against the last day the end covers, as dsp-api checks. An
-    // imprecise end may then contain the start — 15.03.1850 to 03.1850 — which is how projects
-    // record uncertain historical dates, and which the API accepts and may already hold.
-    //
-    // Compared through JDN rather than by field, so a period whose ends sit in different calendars
-    // still validates correctly — which comparing year/month/day would not.
+    // The first day the start covers against the last day the end covers, as dsp-api checks — so an
+    // imprecise end may contain the start (15.03.1850 to 03.1850), as projects record uncertain
+    // dates. Through JDN, so ends in different calendars still compare correctly.
     const startFirst = jdnRange(this._calendarDates.createJDNCalendarDateFromKnoraDate(start)).first;
     const endLast = jdnRange(this._calendarDates.createJDNCalendarDateFromKnoraDate(end)).last;
     return startFirst > endLast;
@@ -355,7 +357,11 @@ export class DateValueComponent implements ControlValueAccessor, Validator {
   private _conversionSource(): { start: KnoraDate; end: KnoraDate | null } | null {
     const stored = this._stored();
     if (this._baseIsStored() && stored !== null) {
-      return stored instanceof KnoraPeriod ? { start: stored.start, end: stored.end } : { start: stored, end: null };
+      // An end beside a stored single date is the user's own — entered or preset — so it converts
+      // from where it is, while the start keeps measuring from the stored date.
+      return stored instanceof KnoraPeriod
+        ? { start: stored.start, end: stored.end }
+        : { start: stored, end: this._state().end };
     }
     const { start, end } = this._state();
     return start === null ? null : { start, end };
@@ -452,14 +458,15 @@ export class DateValueComponent implements ControlValueAccessor, Validator {
 
     const calendar = this._state().calendar;
     const expectedStart = this._convert(source.start, calendar);
-    const expectedEnd = source.end === null ? null : this._convert(source.end, calendar);
-
     const startMoved = expectedStart === null || !this._calendarDates.knoraDatesDenoteSameInstant(expectedStart, start);
-    // Adding or removing an end is an edit too: the stored value's ends no longer describe the value.
+
+    // Only a stored end can be moved. Removing or changing it is an edit; an end added beside a
+    // stored single date is not, so adding one — or its preset — keeps the start restoring exactly.
+    const stored = this._stored();
+    const expectedEnd = stored instanceof KnoraPeriod ? this._convert(stored.end, calendar) : null;
     const endMoved =
-      end === null || expectedEnd === null
-        ? (end === null) !== (expectedEnd === null)
-        : !this._calendarDates.knoraDatesDenoteSameInstant(expectedEnd, end);
+      stored instanceof KnoraPeriod &&
+      (end === null || expectedEnd === null || !this._calendarDates.knoraDatesDenoteSameInstant(expectedEnd, end));
 
     if (startMoved || endMoved) {
       this._baseIsStored.set(false);
@@ -511,10 +518,6 @@ export class DateValueComponent implements ControlValueAccessor, Validator {
     }
     const date = value instanceof KnoraPeriod ? value.start : value;
     return date.calendar.toUpperCase() as CalendarSystem;
-  }
-
-  private _startOf(value: KnoraDate | KnoraPeriod): KnoraDate {
-    return value instanceof KnoraPeriod ? value.start : value;
   }
 
   /** Whether any end of the value is a year or a month rather than a day. */

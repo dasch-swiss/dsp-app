@@ -1066,6 +1066,7 @@
       "none": "Nessuno",
       "noDay": "Precisione al mese (nessun giorno)",
       "yearPrecisionShortcut": "Precisione all'anno",
+      "suggestedMonth": "Il mese corrente è mostrato come suggerimento. Nulla viene inserito finché non scegli un giorno o un mese.",
       "yearPrecision": "Precisione all'anno. Scegli un mese per selezionare un giorno.",
       "year": "Anno",
       "bceWarning": "Attenzione: Data <strong>prima dell'era comune</strong>.",

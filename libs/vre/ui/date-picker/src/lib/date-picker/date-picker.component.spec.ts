@@ -199,6 +199,16 @@ describe('DatePickerComponent', () => {
       expect([emitted.at(-1)?.year, emitted.at(-1)?.month, emitted.at(-1)?.day]).toEqual([2024, undefined, undefined]);
     });
 
+    // The button sits in the day-grid block that year precision removes.
+    it('keeps focus in the panel when dropping to year precision', () => {
+      show(new KnoraDate('GREGORIAN', 'CE', 2024, 6, 15));
+
+      el('year-precision')!.click();
+      fixture.detectChanges();
+
+      expect(document.activeElement).toBe(overlay().querySelector('[data-cy="month-select"]'));
+    });
+
     it('offers year precision only while there is a month to drop', () => {
       show(new KnoraDate('GREGORIAN', 'CE', 2024));
 
@@ -324,11 +334,9 @@ describe('DatePickerComponent', () => {
     });
   });
 
-  // Opening a brand-new value used to show a panel with no month and no grid — nothing to click.
-  // The first fix seeded the draft with today, which created a worse bug: a seeded draft is
-  // indistinguishable from an entry, and an era switch published a date nobody typed. The panel now
-  // shows the current year and month — in the grid and in the controls, so it says what it offers —
-  // without entering them.
+  // An empty picker shows the current year and month, in the grid and in the controls, without
+  // entering them: a seeded draft is indistinguishable from an entry, so an era switch would publish
+  // a date nobody typed.
   describe('opening an empty picker', () => {
     const openEmpty = () => {
       fixture.detectChanges();
@@ -399,6 +407,31 @@ describe('DatePickerComponent', () => {
       fixture.detectChanges();
 
       expect(emitted).toEqual([null]);
+    });
+
+    it('marks the suggested year and month, for the eye and for a screen reader', () => {
+      openEmpty();
+
+      const year = overlay().querySelector<HTMLInputElement>('[data-cy="year-input"]')!;
+      expect(year.classList).toContain('is-suggested');
+      const note = document.getElementById(year.getAttribute('aria-describedby')!);
+      expect(note?.textContent).toContain('suggestedMonth');
+    });
+
+    // Refilling a cleared year with the current one turned the next keystroke into "20261".
+    it('does not refill a cleared year with the current one', () => {
+      openEmpty();
+      const year = overlay().querySelector<HTMLInputElement>('[data-cy="year-input"]')!;
+
+      year.value = '1850';
+      year.dispatchEvent(new Event('input'));
+      fixture.detectChanges();
+      year.value = '';
+      year.dispatchEvent(new Event('input'));
+      fixture.detectChanges();
+
+      expect(year.value).toBe('');
+      expect(year.classList).not.toContain('is-suggested');
     });
 
     it('still only shows the month after an era switch', () => {

@@ -1,5 +1,15 @@
 import { CdkConnectedOverlay, CdkOverlayOrigin, ConnectedPosition } from '@angular/cdk/overlay';
-import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  computed,
+  inject,
+  input,
+  output,
+  signal,
+  viewChild,
+} from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { KnoraDate } from '@dasch-swiss/dsp-js';
 import { CALENDAR_SYSTEMS, CalendarSystem } from '@dasch-swiss/vre/shared/calendar';
@@ -78,6 +88,8 @@ const PANEL_POSITIONS: readonly ConnectedPosition[] = [
  * stored values and save semantics belong to whatever owns this component — a date picker has no
  * business knowing what a period is.
  */
+let nextPickerId = 0;
+
 @Component({
   selector: 'app-date-picker',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -238,15 +250,32 @@ export class DatePickerComponent {
     return null;
   });
 
-  /** What the controls show: the draft, or the month the grid is offering while nothing is entered. */
+  /**
+   * Whether the Year and Month controls are showing the grid's month as a suggestion.
+   *
+   * Only until the user first enters something: a user who clears the year is emptying it, and
+   * refilling it with the current year mid-edit turned their next keystroke into "20261". Switching
+   * the era enters nothing, so the suggestion stays.
+   */
+  protected readonly isSuggested = computed(() => {
+    const { year, month } = this.draft();
+    return !this._entered() && year === null && month === null && this._gridMonth() !== null;
+  });
+
+  /** Whether the user has entered anything other than an era. */
+  private readonly _entered = signal(false);
+
+  /** What the controls show: the draft, or the suggested month while nothing is entered. */
   protected readonly shown = computed<DateDraft>(() => {
     const draft = this.draft();
     const grid = this._gridMonth();
-    if (draft.year === null && draft.month === null && grid !== null) {
-      return { ...draft, year: grid.year, month: grid.month };
-    }
-    return draft;
+    return this.isSuggested() && grid !== null ? { ...draft, year: grid.year, month: grid.month } : draft;
   });
+
+  /** Ties the suggestion note to the controls it describes; unique, as a period has two pickers. */
+  protected readonly suggestionNoteId = `date-picker-suggestion-${nextPickerId++}`;
+
+  private readonly _monthSelect = viewChild<ElementRef<HTMLSelectElement>>('monthSelect');
 
   /** A month can be chosen once there is a year, entered or shown. */
   protected readonly canChooseMonth = computed(() => {
@@ -335,22 +364,41 @@ export class DatePickerComponent {
     this._edit({ year: Number.isFinite(year as number) ? year : null });
   }
 
+  /** Chooses a month; on an untouched picker it builds on the suggested year. */
   protected onMonthChange(month: number | null): void {
-    this._edit({ month });
+    this._edit({ month }, 'shown');
   }
 
-  /** Drops to year precision. The day goes too, so choosing a month again does not revive it. */
+  /**
+   * Drops to year precision. The day goes too, so choosing a month again does not revive it.
+   *
+   * The button sits in the day-grid block that this removes, so focus moves to the Month select,
+   * which now reads "None", rather than falling out of the panel.
+   */
   protected onYearPrecision(): void {
-    this._edit({ month: null, day: null });
+    this._edit({ month: null, day: null }, 'shown');
+    this._monthSelect()?.nativeElement.focus();
   }
 
   protected onEraChange(era: string): void {
-    this._edit({ era });
+    this._edit({ era }, 'draft', { entersSomething: false });
   }
 
-  /** Picks a day from the grid; on an empty picker, {@link _edit} adopts the month it shows. */
+  /**
+   * Picks a day from the grid.
+   *
+   * With no year and month entered, the grid is drawing the current month as a fallback, so the
+   * click adopts that month and year as well — otherwise it would set a day against no year and
+   * publish nothing.
+   */
   protected onDayChange(day: number | null): void {
-    this._edit({ day });
+    const { year, month } = this.draft();
+    const grid = this._gridMonth();
+    if (year === null && month === null && grid !== null) {
+      this._edit({ day, year: grid.year, month: grid.month });
+      return;
+    }
+    this._edit({ day }, 'shown');
   }
 
   /** Today, in the calendar this picker was told to use. It commits, so it also closes. */
@@ -384,17 +432,26 @@ export class DatePickerComponent {
     }
   }
 
-  private _edit(change: Partial<DateDraft>): void {
+  /**
+   * Applies one user change to the draft and publishes the result.
+   *
+   * `builds on` says what the change is applied to. A month or a precision shortcut builds on what
+   * the controls `shown` — on an untouched picker, the suggested year and month — because that is
+   * what the user saw when they made it. Everything else builds on the `draft`: typing "1850" means
+   * a year, and keeping the suggested month would invent a precision nobody gave; an era switch
+   * alone would publish a date nobody chose.
+   */
+  private _edit(
+    change: Partial<DateDraft>,
+    buildsOn: 'draft' | 'shown' = 'draft',
+    { entersSomething } = { entersSomething: true }
+  ): void {
     // Read before anything is recorded: `draft()` consults `_accountedFor`, so adding to it first
     // would make this read the stale local draft rather than the date currently displayed.
-    //
-    // On an untouched picker the year and month it shows become the entry with the first change
-    // that builds on them — a day, a month, a precision shortcut — because that is what the user saw
-    // when they made it. Typing a year does not: "1850" means a year, and keeping the shown month
-    // would invent a precision the user never gave. Nor does an era switch alone, which would
-    // publish a date nobody chose.
-    const keepsWhatIsShown = !('year' in change) && !(Object.keys(change).length === 1 && 'era' in change);
-    const base = keepsWhatIsShown ? this.shown() : this.draft();
+    const base = buildsOn === 'shown' ? this.shown() : this.draft();
+    if (entersSomething) {
+      this._entered.set(true);
+    }
 
     // The input the draft is diverging from counts as accounted for too: an owner that never
     // writes `date` back would otherwise look like it was issuing that same date as a fresh
