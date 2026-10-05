@@ -59,3 +59,31 @@ export const DefaultView: Story = {
     });
   },
 };
+
+export const SpacesItsFieldsEvenly: Story = {
+  name: 'Keeps a gap between every pair of adjacent fields',
+  // DEV-7450: Label/Start and Title/Description/Keywords touched here while End/Title stayed
+  // spaced, because only some of these controls reserve the subscript below the field.
+  play: async ({ step }) => {
+    await step('The six annotation fields are rendered', async () => {
+      const fields = document.querySelectorAll('.mat-mdc-dialog-content .mat-mdc-text-field-wrapper');
+      await expect(fields.length).toBeGreaterThanOrEqual(6);
+    });
+    await step('No two adjacent fields touch', async () => {
+      // Label, Start, End, Title, Description, Keywords — in DOM order. The CKEditor comment that
+      // follows them is not a form field, so it is left out.
+      const fields = Array.from(document.querySelectorAll('.mat-mdc-dialog-content .mat-mdc-text-field-wrapper')).slice(
+        0,
+        6
+      );
+
+      const gaps = fields
+        .slice(1)
+        .map((field, index) => field.getBoundingClientRect().top - fields[index].getBoundingClientRect().bottom);
+
+      for (const gap of gaps) {
+        await expect(gap).toBeGreaterThanOrEqual(12);
+      }
+    });
+  },
+};
