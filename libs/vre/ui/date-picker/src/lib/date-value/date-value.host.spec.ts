@@ -383,6 +383,28 @@ describe('DateValueComponent, as the resource editor renders it', () => {
       expect(host.control.errors).toEqual({ periodStartEnd: true });
     });
 
+    // dsp-api accepts an imprecise end that contains the start, which is how projects record
+    // uncertain historical dates, so such values may already be stored and must stay editable.
+    describe('an imprecise end that contains the start', () => {
+      it('accepts a day to its own month', () => {
+        load(new KnoraPeriod(new KnoraDate('GREGORIAN', 'CE', 1850, 3, 15), new KnoraDate('GREGORIAN', 'CE', 1850, 3)));
+
+        expect(host.control.valid).toBe(true);
+      });
+
+      it('accepts a month to its own year', () => {
+        load(new KnoraPeriod(new KnoraDate('GREGORIAN', 'CE', 1850, 5), new KnoraDate('GREGORIAN', 'CE', 1850)));
+
+        expect(host.control.valid).toBe(true);
+      });
+
+      it('still rejects an imprecise end that lies wholly before the start', () => {
+        load(new KnoraPeriod(new KnoraDate('GREGORIAN', 'CE', 1850, 5, 15), new KnoraDate('GREGORIAN', 'CE', 1850, 4)));
+
+        expect(host.control.errors).toEqual({ periodStartEnd: true });
+      });
+    });
+
     it('compares those ends through JDN, so two calendars still order correctly', () => {
       // Deliberately a case where the two comparisons disagree. Julian 01.04.2020 is Gregorian
       // 14.04.2020, four days AFTER the Gregorian end — so the period is out of order. Comparing

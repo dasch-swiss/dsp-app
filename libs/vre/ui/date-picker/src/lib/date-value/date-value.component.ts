@@ -4,7 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { KnoraDate, KnoraPeriod } from '@dasch-swiss/dsp-js';
-import { CalendarSystem, compareDates } from '@dasch-swiss/vre/shared/calendar';
+import { CalendarSystem, jdnRange } from '@dasch-swiss/vre/shared/calendar';
 import { CalendarDateService } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe } from '@ngx-translate/core';
 
@@ -179,14 +179,15 @@ export class DateValueComponent implements ControlValueAccessor, Validator {
     if (!isPeriod || start === null || end === null) {
       return false;
     }
+    // The first day the start covers against the last day the end covers, as dsp-api checks. An
+    // imprecise end may then contain the start — 15.03.1850 to 03.1850 — which is how projects
+    // record uncertain historical dates, and which the API accepts and may already hold.
+    //
     // Compared through JDN rather than by field, so a period whose ends sit in different calendars
     // still validates correctly — which comparing year/month/day would not.
-    return (
-      compareDates(
-        this._calendarDates.createJDNCalendarDateFromKnoraDate(start),
-        this._calendarDates.createJDNCalendarDateFromKnoraDate(end)
-      ) > 0
-    );
+    const startFirst = jdnRange(this._calendarDates.createJDNCalendarDateFromKnoraDate(start)).first;
+    const endLast = jdnRange(this._calendarDates.createJDNCalendarDateFromKnoraDate(end)).last;
+    return startFirst > endLast;
   });
 
   protected readonly showStartRequired = computed(

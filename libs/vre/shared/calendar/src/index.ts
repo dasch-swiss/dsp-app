@@ -56,5 +56,6 @@ export {
   isBefore,
   isAfter,
   isEqual,
+  jdnRange,
   validatePeriod,
 } from './lib/converters/calendar.converter';
