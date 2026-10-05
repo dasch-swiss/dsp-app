@@ -189,12 +189,12 @@ describe('DateValueComponent, as the resource editor renders it', () => {
       expect(el('converted-from')?.textContent).toContain('convertedStoredSamePeriod');
     });
 
-    // A year or month is restated, not converted, so "has been converted" would not be true.
-    it('says a year was taken over rather than converted between Julian and Gregorian', () => {
+    // A year or month is restated by a fixed rule, not converted, so there is nothing to state.
+    it('shows no hint for a year between Julian and Gregorian', () => {
       load(new KnoraDate('JULIAN', 'CE', 1585));
       switchTo('GREGORIAN');
 
-      expect(el('converted-from')?.textContent).toContain('keptStored');
+      expect(el('converted-from')).toBeNull();
     });
 
     // Only the day was converted; the year is kept without comment.
@@ -204,17 +204,23 @@ describe('DateValueComponent, as the resource editor renders it', () => {
 
       const hint = el('converted-from')?.textContent;
       expect(hint).toContain('convertedStoredSameDay');
-      expect(hint).not.toContain('keptStored');
       expect((component() as never as { conversionHint: () => unknown }).conversionHint()).toEqual(
         expect.objectContaining({ from: '15.03.1600 Gregorian', to: '05.03.1600 Julian' })
       );
     });
 
-    it('calls an Islamic year the equivalent of the stored one', () => {
-      load(new KnoraDate('GREGORIAN', 'CE', 1600));
+    it('shows no hint for a month restated in Islamic', () => {
+      load(new KnoraDate('GREGORIAN', 'CE', 1600, 7));
       switchTo('ISLAMIC');
 
-      expect(el('converted-from')?.textContent).toContain('equivalentStored');
+      expect(el('converted-from')).toBeNull();
+    });
+
+    it('names only the converted day of a period whose other end is a month, in Islamic too', () => {
+      load(new KnoraPeriod(new KnoraDate('GREGORIAN', 'CE', 1600, 3, 15), new KnoraDate('GREGORIAN', 'CE', 1600, 7)));
+      switchTo('ISLAMIC');
+
+      expect(el('converted-from')?.textContent).toContain('convertedStoredSameDay');
     });
 
     // A user who has just picked a different day can see that it differs; saying so read as a
@@ -359,11 +365,20 @@ describe('DateValueComponent, as the resource editor renders it', () => {
       expect([end().era, end().year]).toEqual(['CE', 1]);
     });
 
-    it('presets nothing for a day, which is anyone’s guess', () => {
-      load(new KnoraDate('GREGORIAN', 'CE', 1600, 7, 15));
+    it('presets the next day, across the end of a year', () => {
+      load(new KnoraDate('GREGORIAN', 'CE', 1600, 12, 31));
       toggle();
 
-      expect(host.control.errors).toEqual({ endRequired: true });
+      expect([end().calendar, end().year, end().month, end().day]).toEqual(['GREGORIAN', 1601, 1, 1]);
+      expect(host.control.valid).toBe(true);
+    });
+
+    it('presets the next day in a leap February, by the Julian rule', () => {
+      // 1700 is a leap year in Julian and not in Gregorian.
+      load(new KnoraDate('JULIAN', 'CE', 1700, 2, 28));
+      toggle();
+
+      expect([end().month, end().day]).toEqual([2, 29]);
     });
   });
 
@@ -382,8 +397,8 @@ describe('DateValueComponent, as the resource editor renders it', () => {
       toggle();
       fixture.detectChanges();
 
-      expect(asDate()).not.toBeNull();
-      expect([asDate().day, asDate().month, asDate().year]).toEqual([15, 6, 2024]);
+      const start = (value() as KnoraPeriod).start;
+      expect([start.day, start.month, start.year]).toEqual([15, 6, 2024]);
     });
 
     it('becomes a period once there are two ends to make one from', () => {
@@ -427,6 +442,7 @@ describe('DateValueComponent, as the resource editor renders it', () => {
       load(new KnoraDate('GREGORIAN', 'CE', 2024, 6, 15));
 
       toggle();
+      (component() as never as { onEndChange: (d: KnoraDate | null) => void }).onEndChange(null);
       fixture.detectChanges();
 
       expect(host.control.errors).toEqual({ endRequired: true });
@@ -473,8 +489,10 @@ describe('DateValueComponent, as the resource editor renders it', () => {
         toggle();
         fixture.detectChanges();
 
-        expect(value()).not.toBeInstanceOf(KnoraPeriod);
-        expect(host.control.errors).toEqual({ endRequired: true });
+        // The new end is the preset — the day after the start — not the removed 02.06.2025.
+        const period = value() as KnoraPeriod;
+        expect([period.start.day, period.start.month]).toEqual([23, 5]);
+        expect([period.end.day, period.end.month]).toEqual([24, 5]);
       });
     });
 

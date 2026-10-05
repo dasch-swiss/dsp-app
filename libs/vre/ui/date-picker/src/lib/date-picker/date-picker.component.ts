@@ -217,25 +217,41 @@ export class DatePickerComponent {
   /**
    * The month the grid draws, which is today's while the user has entered nothing.
    *
-   * **Display only — it is never written to the draft.** An empty picker used to be seeded with
-   * today so there was something to click, but a seeded draft is indistinguishable from an entry:
-   * switching the era then published `{2026, Sep, BCE}`, a date nobody typed, and the Month select
-   * showed a month while no day was selected. Falling back here instead keeps the value empty
-   * until the user actually picks a day, and keeps every control telling the same story.
+   * **Shown, not entered.** The Year and Month controls show it too, so the panel says which month
+   * it is offering. It is not written to the draft: a seeded draft is indistinguishable from an
+   * entry, and switching the era then published `{2026, Sep, BCE}`, a date nobody typed. The value
+   * stays empty until the user changes something, and {@link _edit} adopts it at that moment.
    */
   private readonly _gridMonth = computed<{ year: number; month: number; era: string } | null>(() => {
     const { year, month, era } = this.draft();
     if (this.hasValidYear() && month) {
       return { year: year!, month, era };
     }
-    // Nothing entered yet: show the current month so the panel opens on something clickable.
+    // Nothing entered yet: show the current month so the panel opens on something clickable. The
+    // era is the draft's, so an era chosen before anything else is what the grid draws.
     if (year === null && month === null) {
       const today = this._calendarDates.today(this.calendar());
       if (today?.month !== undefined) {
-        return { year: today.year, month: today.month, era: this._eraFor(today.era) };
+        return { year: today.year, month: today.month, era };
       }
     }
     return null;
+  });
+
+  /** What the controls show: the draft, or the month the grid is offering while nothing is entered. */
+  protected readonly shown = computed<DateDraft>(() => {
+    const draft = this.draft();
+    const grid = this._gridMonth();
+    if (draft.year === null && draft.month === null && grid !== null) {
+      return { ...draft, year: grid.year, month: grid.month };
+    }
+    return draft;
+  });
+
+  /** A month can be chosen once there is a year, entered or shown. */
+  protected readonly canChooseMonth = computed(() => {
+    const year = this.shown().year;
+    return year !== null && year > 0;
   });
 
   /**
@@ -332,23 +348,8 @@ export class DatePickerComponent {
     this._edit({ era });
   }
 
-  /**
-   * Picks a day from the grid.
-   *
-   * On an empty picker the grid is showing the current month as a fallback, so the click has to
-   * adopt that month and year as well — otherwise it would set a day against no year and publish
-   * nothing. This is the point where the fallback becomes the user's entry, because it is the
-   * first moment they have chosen anything.
-   */
+  /** Picks a day from the grid; on an empty picker, {@link _edit} adopts the month it shows. */
   protected onDayChange(day: number | null): void {
-    const { year, month } = this.draft();
-    if (year === null && month === null) {
-      const grid = this._gridMonth();
-      if (grid !== null) {
-        this._edit({ day, year: grid.year, month: grid.month, era: grid.era });
-        return;
-      }
-    }
     this._edit({ day });
   }
 
@@ -386,7 +387,14 @@ export class DatePickerComponent {
   private _edit(change: Partial<DateDraft>): void {
     // Read before anything is recorded: `draft()` consults `_accountedFor`, so adding to it first
     // would make this read the stale local draft rather than the date currently displayed.
-    const base = this.draft();
+    //
+    // On an untouched picker the year and month it shows become the entry with the first change
+    // that builds on them — a day, a month, a precision shortcut — because that is what the user saw
+    // when they made it. Typing a year does not: "1850" means a year, and keeping the shown month
+    // would invent a precision the user never gave. Nor does an era switch alone, which would
+    // publish a date nobody chose.
+    const keepsWhatIsShown = !('year' in change) && !(Object.keys(change).length === 1 && 'era' in change);
+    const base = keepsWhatIsShown ? this.shown() : this.draft();
 
     // The input the draft is diverging from counts as accounted for too: an owner that never
     // writes `date` back would otherwise look like it was issuing that same date as a fresh

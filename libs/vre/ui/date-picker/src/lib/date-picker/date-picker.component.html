@@ -71,7 +71,7 @@ deliberate act, so two of these side by side stay one line tall. -->
           type="number"
           min="1"
           data-cy="year-input"
-          [value]="draft().year ?? ''"
+          [value]="shown().year ?? ''"
           [disabled]="disabled()"
           (input)="onYearChange($any($event.target).value)" />
       </label>
@@ -84,14 +84,14 @@ deliberate act, so two of these side by side stay one line tall. -->
         <select
           class="control-input"
           data-cy="month-select"
-          [disabled]="disabled() || !hasValidYear()"
+          [disabled]="disabled() || !canChooseMonth()"
           (change)="onMonthChange($any($event.target).value === '' ? null : +$any($event.target).value)">
           <!-- choosing nothing is how a date stays at year precision -->
-          <option value="" data-cy="month-none" [selected]="draft().month === null">
+          <option value="" data-cy="month-none" [selected]="shown().month === null">
             {{ 'ui.datePicker.none' | translate }}
           </option>
           @for (month of months; track month[0]; let i = $index) {
-          <option [value]="i + 1" [selected]="draft().month === i + 1">
+          <option [value]="i + 1" [selected]="shown().month === i + 1">
             {{ calendar() === 'ISLAMIC' ? month[1] : month[0] }}
           </option>
           }
@@ -160,7 +160,7 @@ deliberate act, so two of these side by side stay one line tall. -->
         <button type="button" class="link-button" data-cy="no-day" (click)="onDayChange(null)">
           {{ 'ui.datePicker.noDay' | translate }}
         </button>
-        @if (hasValidYear() && draft().month !== null) {
+        @if (canChooseMonth() && shown().month !== null) {
         <button type="button" class="link-button" data-cy="year-precision" (click)="onYearPrecision()">
           {{ 'ui.datePicker.yearPrecisionShortcut' | translate }}
         </button>

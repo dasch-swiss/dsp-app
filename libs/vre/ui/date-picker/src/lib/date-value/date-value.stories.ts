@@ -201,13 +201,13 @@ export const OpensANewValueOnAUsableMonth: Story = {
       await expect(controlValue(canvasElement)).toBe('null');
     });
 
-    // The grid is a starting point for the eye, never an entry. Seeding the draft with it made
-    // the Month select name a month the user had not chosen, while the field stayed empty.
-    await step('And the controls agree: no month, no year', async () => {
+    // The controls name the month the grid offers, so the panel says what it is showing — but it
+    // is shown, not entered, until the user builds on it.
+    await step('The controls show the current year and month', async () => {
       const month = document.querySelector<HTMLSelectElement>('[data-cy="month-select"]');
       const year = document.querySelector<HTMLInputElement>('[data-cy="year-input"]');
-      await expect(month?.value).toBe('');
-      await expect(year?.value).toBe('');
+      await expect(month?.value).toBe(String(new Date().getMonth() + 1));
+      await expect(year?.value).toBe(String(new Date().getFullYear()));
     });
 
     // The reported sequence: open, switch era, drop to a coarser precision. The seeded month and
@@ -215,7 +215,6 @@ export const OpensANewValueOnAUsableMonth: Story = {
     await step('Switching the era alone still stores nothing', async () => {
       await userEvent.click(document.querySelector<HTMLElement>('[data-cy="era-BCE"]')!);
       await expect(controlValue(canvasElement)).toBe('null');
-      await expect(document.querySelector<HTMLSelectElement>('[data-cy="month-select"]')?.value).toBe('');
     });
   },
 };

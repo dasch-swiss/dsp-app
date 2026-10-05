@@ -326,8 +326,9 @@ describe('DatePickerComponent', () => {
 
   // Opening a brand-new value used to show a panel with no month and no grid — nothing to click.
   // The first fix seeded the draft with today, which created a worse bug: a seeded draft is
-  // indistinguishable from an entry, so the controls disagreed with each other and an era switch
-  // published a date nobody typed. The grid now falls back to the current month for display only.
+  // indistinguishable from an entry, and an era switch published a date nobody typed. The panel now
+  // shows the current year and month — in the grid and in the controls, so it says what it offers —
+  // without entering them.
   describe('opening an empty picker', () => {
     const openEmpty = () => {
       fixture.detectChanges();
@@ -361,18 +362,32 @@ describe('DatePickerComponent', () => {
       expect(field()!.querySelector('.is-placeholder')).not.toBeNull();
     });
 
-    // Every control has to tell the same story. A Month select naming a month while no day is
-    // selected and the field is empty invites the user to trust a value that does not exist.
-    it('shows no month in the select, matching the empty value', () => {
+    // The controls name the month the grid is offering, so the panel is transparent about it.
+    const today = () => new Date();
+
+    it('shows the current month in the select', () => {
       openEmpty();
 
-      expect(monthSelect()!.value).toBe('');
+      expect(monthSelect()!.value).toBe(String(today().getMonth() + 1));
     });
 
-    it('shows no year in the input', () => {
+    it('shows the current year in the input', () => {
       openEmpty();
 
-      expect(overlay().querySelector<HTMLInputElement>('[data-cy="year-input"]')!.value).toBe('');
+      expect(overlay().querySelector<HTMLInputElement>('[data-cy="year-input"]')!.value).toBe(
+        String(today().getFullYear())
+      );
+    });
+
+    it('adopts the shown year when a month is chosen', () => {
+      openEmpty();
+
+      monthSelect()!.value = '3';
+      monthSelect()!.dispatchEvent(new Event('change'));
+      fixture.detectChanges();
+
+      const published = emitted[emitted.length - 1]!;
+      expect([published.year, published.month, published.day]).toEqual([today().getFullYear(), 3, undefined]);
     });
 
     // The reported sequence: open the picker, switch to BCE, choose no day precision. The seeded
@@ -386,13 +401,14 @@ describe('DatePickerComponent', () => {
       expect(emitted).toEqual([null]);
     });
 
-    it('still shows no month after an era switch', () => {
+    it('still only shows the month after an era switch', () => {
       openEmpty();
 
       el('era-BCE')!.click();
       fixture.detectChanges();
 
-      expect(monthSelect()!.value).toBe('');
+      expect(monthSelect()!.value).toBe(String(today().getMonth() + 1));
+      expect(field()!.querySelector('.is-placeholder')).not.toBeNull();
     });
 
     // The fallback grid is only a starting point until a day is clicked; then it is the entry.

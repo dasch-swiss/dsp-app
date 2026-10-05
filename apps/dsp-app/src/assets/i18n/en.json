@@ -1073,8 +1073,6 @@
       "convertedStored": "{{to}} has been converted from {{from}} (stored value).",
       "convertedStoredSameDay": "{{to}} has been converted from {{from}} (stored value): same day, simply expressed in {{calendar}}.",
       "convertedStoredSamePeriod": "{{to}} has been converted from {{from}} (stored value): same period, simply expressed in {{calendar}}.",
-      "keptStored": "{{to}} has been taken over from {{from}} (stored value): Month and year precision dates are not converted between Julian and Gregorian.",
-      "equivalentStored": "{{to}} corresponds to {{from}} (stored value): the {{calendar}} year or month in which it begins.",
       "preHijraNote": "Islamic is not available: this date lies before the Hijra. Islamic years start at 1 AH and have no negative years.",
       "endBeforeStart": "End date must be after start date.",
       "era": "Era",

@@ -4,7 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { KnoraDate, KnoraPeriod, Precision } from '@dasch-swiss/dsp-js';
-import { CalendarSystem, jdnRange } from '@dasch-swiss/vre/shared/calendar';
+import { CalendarSystem, getCalendar, jdnRange } from '@dasch-swiss/vre/shared/calendar';
 import { CalendarDateService } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe } from '@ngx-translate/core';
 
@@ -150,9 +150,11 @@ export class DateValueComponent implements ControlValueAccessor, Validator {
   /**
    * The conversion hint: its translation key and the two values it names as text, or null.
    *
-   * The "same day" clause is the one thing a reader cannot work out from the numerals: 15.06.2024
-   * Gregorian and 02.06.2024 Julian look like different dates and are not. A year or a month is
-   * restated rather than converted, so it gets its own wording instead.
+   * Only a day is ever converted, so only a day is ever named. A year or a month is restated by a
+   * fixed rule — the same numbers between Julian and Gregorian, the containing year or month in
+   * Islamic — and goes without comment; in a period with one day and one year or month, the hint
+   * names the day alone. The "same day" clause is the one thing a reader cannot work out from the
+   * numerals: 15.06.2024 Gregorian and 02.06.2024 Julian look like different dates and are not.
    */
   protected readonly conversionHint = computed(() => {
     const stored = this._stored();
@@ -163,12 +165,6 @@ export class DateValueComponent implements ControlValueAccessor, Validator {
     if (!this._isImprecise(stored)) {
       return this._convertedHint(stored, converted);
     }
-    if (this._involvesIslamic(this._startOf(stored), this._state().calendar)) {
-      return this._hintFor('ui.datePicker.equivalentStored', stored, converted);
-    }
-    // Between Julian and Gregorian only a day is converted. In a period with one day and one year
-    // or month, the hint names the day alone; the year or month is kept without comment, because
-    // calling the whole period "taken over" would be only half true.
     if (stored instanceof KnoraPeriod && converted instanceof KnoraPeriod) {
       if (stored.start.precision === Precision.dayPrecision) {
         return this._convertedHint(stored.start, converted.start);
@@ -177,7 +173,7 @@ export class DateValueComponent implements ControlValueAccessor, Validator {
         return this._convertedHint(stored.end, converted.end);
       }
     }
-    return this._hintFor('ui.datePicker.keptStored', stored, converted);
+    return null;
   });
 
   private _convertedHint(stored: KnoraDate | KnoraPeriod, converted: KnoraDate | KnoraPeriod) {
@@ -410,15 +406,23 @@ export class DateValueComponent implements ControlValueAccessor, Validator {
   }
 
   /**
-   * The end a period starts with when the user adds one to an imprecise start: the next month or
-   * year, at the start's precision. A day-precision start gets no preset, because which day is meant
-   * is anyone's guess.
+   * The end a period starts with when the user adds one: the next day, month or year, at the
+   * start's precision. It is a starting point the user can change; a month or a year has no day to
+   * click, so without it a period of months would need an extra step to become valid.
    */
   private _presetEnd(start: KnoraDate | null): KnoraDate | null {
-    if (start === null || start.precision === Precision.dayPrecision) {
+    if (start === null) {
       return null;
     }
     const calendar = start.calendar.toUpperCase() as CalendarSystem;
+    if (start.precision === Precision.dayPrecision) {
+      // Through the day count, so month ends, leap days and the Julian–Gregorian gap take care of
+      // themselves.
+      const jdn = this._calendarDates.julianDayNumber(start);
+      return jdn === undefined
+        ? null
+        : this._calendarDates.createKnoraDateFromCalendarDate(getCalendar(calendar).fromJDN(jdn + 1));
+    }
     const byMonth = start.precision === Precision.monthPrecision;
     const rollsOver = byMonth && start.month === 12;
     const astronomical = this._calendarDates.convertHistoricalYearToAstronomicalYear(start.year, start.era);
