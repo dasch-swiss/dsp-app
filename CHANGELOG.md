@@ -1,5 +1,25 @@
 # Changelog
 
+## [13.15.3](https://github.com/dasch-swiss/dsp-app/compare/v13.15.2...v13.15.3) (2026-10-05)
+
+
+### Bug Fixes
+
+* **auth:** reload the page after login so permission-dependent data is re-fetched (DEV-7410) ([#3485](https://github.com/dasch-swiss/dsp-app/issues/3485)) ([a5c8a28](https://github.com/dasch-swiss/dsp-app/commit/a5c8a28272127fcd1aeb56c48dd75a8fa48d788f))
+* **ui:** restore the gap between stacked form fields (DEV-7450) ([#3501](https://github.com/dasch-swiss/dsp-app/issues/3501)) ([52d733e](https://github.com/dasch-swiss/dsp-app/commit/52d733edccfa464905ae464d211fcbf248d98ee1))
+
+
+### Maintenances
+
+* **deps:** Lock file maintenance ([#3496](https://github.com/dasch-swiss/dsp-app/issues/3496)) ([43c8cfc](https://github.com/dasch-swiss/dsp-app/commit/43c8cfcecd2a12c8e4f2bd18eedc58aaf85db3fb))
+* **deps:** Lock file maintenance ([#3497](https://github.com/dasch-swiss/dsp-app/issues/3497)) ([2ef9082](https://github.com/dasch-swiss/dsp-app/commit/2ef908244be8f38857ed01d2169aee7e091158f5))
+* **deps:** Lock file maintenance ([#3498](https://github.com/dasch-swiss/dsp-app/issues/3498)) ([a7bd9c8](https://github.com/dasch-swiss/dsp-app/commit/a7bd9c88c3f88d7d808332dd1754a25f8e03aacc))
+* **deps:** Update dependency postcss-preset-env from 11.5.4 to 11.5.5 ([#3493](https://github.com/dasch-swiss/dsp-app/issues/3493)) ([548a01a](https://github.com/dasch-swiss/dsp-app/commit/548a01ac970062a3bad4f1bc55c8380e7d8b4d3c))
+* **deps:** Update dependency wait-on from 9.1.0 to 9.4.0 ([#3490](https://github.com/dasch-swiss/dsp-app/issues/3490)) ([2acc6c7](https://github.com/dasch-swiss/dsp-app/commit/2acc6c71059f5d1ff785ec35b87fe9dadf6a2844))
+* **deps:** Update grafana/grafana Docker tag to v13.2.3 ([#3494](https://github.com/dasch-swiss/dsp-app/issues/3494)) ([b003f61](https://github.com/dasch-swiss/dsp-app/commit/b003f6148d100253107e57acb30266fbb773690a))
+* **deps:** Update storybook monorepo from 10.6.0 to 10.6.1 ([#3495](https://github.com/dasch-swiss/dsp-app/issues/3495)) ([de8404c](https://github.com/dasch-swiss/dsp-app/commit/de8404c43e0581a7ef77207ebdecaea7b7416540))
+* **deps:** Update typescript-eslint monorepo from 8.70.1 to 8.71.0 ([#3491](https://github.com/dasch-swiss/dsp-app/issues/3491)) ([87e7975](https://github.com/dasch-swiss/dsp-app/commit/87e79757e2075b6562a5c553ee444c80fa0bbacb))
+
 ## [13.15.2](https://github.com/dasch-swiss/dsp-app/compare/v13.15.1...v13.15.2) (2026-09-30)
 
 
